@@ -11,7 +11,7 @@
  * Description:     Easily add a newsletter optin box in any post, page or custom post type
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.0.0
+ * Version:         1.0.1
  * Text Domain:     noptin
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -34,8 +34,6 @@ if( !defined( 'ABSPATH' ) ) {
      * @since       1.0.0
      */
 
-    if ( ! class_exists( 'Noptin' ) ) {
-
         class Noptin{
 
             /**
@@ -47,7 +45,7 @@ if( !defined( 'ABSPATH' ) ) {
 
             /**
              * @access      private
-             * @var        obj $instance The one true picosearch
+             * @var        obj $instance The one true noptin
              * @since       1.0.0
              */
             private static $instance = null;
@@ -85,13 +83,14 @@ if( !defined( 'ABSPATH' ) ) {
 			 * Class Constructor.
 			 */
 			public function __construct() {
-				
+                
+                // Include core files
+                $this->includes();
+                
 				//Set global variables
 				$this->plugin_path = plugin_dir_path( __FILE__ );
                 $this->plugin_url  = plugins_url( '/', __FILE__ );
-
-                // Include core files
-				$this->includes();
+                $this->admin       = Noptin_Admin::instance();
 				
 				// Confirm current db version
 				$this->db_version = get_option('noptin_db_version', '0.0.0');				
@@ -99,7 +98,8 @@ if( !defined( 'ABSPATH' ) ) {
 					$this->create_tables();
 					update_option('noptin_db_version', $this->version);
 					$this->db_version = get_option('noptin_db_version', '1.0.0');
-				}
+                }
+                
 				
 				//initialize hooks
 				$this->init_hooks();
@@ -116,8 +116,8 @@ if( !defined( 'ABSPATH' ) ) {
              */
             private function includes() {
 												
-				// Core functions
-                //require_once $this->plugin_path . 'includes/functions.php';
+				// Admin page
+                require_once $this->plugin_path . 'admin/admin.php';
                 
                 do_action('noptin_after_includes');
             }
@@ -150,7 +150,7 @@ if( !defined( 'ABSPATH' ) ) {
             public function add_ajax_subscriber() {
                 global $wpdb;
 
-                //Check nonce
+                // Check nonce
                 $nonce = $_POST['noptin_subscribe'];
                 if ( ! wp_verify_nonce( $nonce, 'noptin-subscribe-nonce' )) {
                     echo wp_json_encode( array(
@@ -294,7 +294,6 @@ if( !defined( 'ABSPATH' ) ) {
                 dbDelta($sql);
             }
         }
-    }
 
     function noptin() {
         return Noptin::instance();

@@ -1,0 +1,248 @@
+.noptin-big {
+    font-size: 1.5em;
+}
+
+.noptin-small {
+    font-size: 0.8em;
+}
+
+.wrap.noptin-container h1 {
+    font-size: 50px;
+}
+
+.noptin-color {
+    color: #38f094 !important;
+}
+
+.noptin-bg {
+    background-color: #38f094 !important;
+}
+
+.noptin-shadow {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.noptin-divider {
+    height: 1px;
+    overflow: hidden;
+    background-color: #e0e0e0;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+
+/* Cards */
+
+.noptin-card-panel {
+    transition: box-shadow .25s;
+    padding: 20px;
+    margin: .5rem 0 1rem;
+    border-radius: 2px;
+    background-color: #fff
+}
+
+.noptin-card {
+    position: relative;
+    margin: .5rem 0 1rem;
+    background-color: #fff;
+    transition: box-shadow .25s;
+    border-radius: 2px
+}
+
+.noptin-card-title {
+    font-size: 24px;
+    font-weight: 300
+}
+
+.noptin-card-content {
+    padding: 20px;
+    border-radius: 0 0 2px 2px
+}
+
+.noptin-container {
+    margin: 0;
+    max-width: 1000px;
+    margin-top: 1rem;
+}
+
+.noptin-row {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px
+}
+
+.noptin-row:after {
+    content: "";
+    display: table;
+    clear: both
+}
+
+.noptin-col {
+    width: 100%;
+}
+
+@media only screen and (min-width: 601px) {
+    [class*="noptin-col-"] {
+        width: 100%;
+        float: left;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        padding: 0 .75rem;
+        margin-left: auto;
+        left: auto;
+        right: auto
+    }
+    [class*="noptin-push-"],
+    [class*="noptin-pull-"] {
+        position: relative
+    }
+    /* columns */
+    .noptin-col-1 {
+        width: 8.3333333333%
+    }
+    .noptin-col-2 {
+        width: 16.6666666667%
+    }
+    .noptin-col-3 {
+        width: 25%
+    }
+    .noptin-col-4 {
+        width: 33.3333333333%
+    }
+    .noptin-col-5 {
+        width: 41.6666666667%
+    }
+    .noptin-col-6 {
+        width: 50%
+    }
+    .noptin-col-7 {
+        width: 58.3333333333%
+    }
+    .noptin-col-8 {
+        width: 66.6666666667%
+    }
+    .noptin-col-9 {
+        width: 75%
+    }
+    .noptin-col-10 {
+        width: 83.3333333333%
+    }
+    .noptin-col-11 {
+        width: 91.6666666667%
+    }
+    .noptin-col-12 {
+        width: 100%
+    }
+    /* Offsets */
+    .noptin-offset-1 {
+        margin-left: 8.3333333333%
+    }
+    .noptin-offset-2 {
+        margin-left: 16.6666666667%
+    }
+    .noptin-offset-3 {
+        margin-left: 25%
+    }
+    .noptin-offset-4 {
+        margin-left: 33.3333333333%
+    }
+    .noptin-offset-5 {
+        margin-left: 41.6666666667%
+    }
+    .noptin-offset-6 {
+        margin-left: 50%
+    }
+    .noptin-offset-7 {
+        margin-left: 58.3333333333%
+    }
+    .noptin-offset-8 {
+        margin-left: 66.6666666667%
+    }
+    .noptin-offset-9 {
+        margin-left: 75%
+    }
+    .noptin-offset-10 {
+        margin-left: 83.3333333333%
+    }
+    .noptin-offset-11 {
+        margin-left: 91.6666666667%
+    }
+    .noptin-offset-12 {
+        margin-left: 100%
+    }
+    /* Pulls */
+    .noptin-pull-1 {
+        right: 8.3333333333%
+    }
+    .noptin-pull-2 {
+        right: 16.6666666667%
+    }
+    .noptin-pull-3 {
+        right: 25%
+    }
+    .noptin-pull-4 {
+        right: 33.3333333333%
+    }
+    .noptin-pull-5 {
+        right: 41.6666666667%
+    }
+    .noptin-pull-6 {
+        right: 50%
+    }
+    .noptin-pull-7 {
+        right: 58.3333333333%
+    }
+    .noptin-pull-8 {
+        right: 66.6666666667%
+    }
+    .noptin-pull-9 {
+        right: 75%
+    }
+    .noptin-pull-10 {
+        right: 83.3333333333%
+    }
+    .noptin-pull-11 {
+        right: 91.6666666667%
+    }
+    .noptin-pull-12 {
+        right: 100%
+    }
+    /* Pulls */
+    .noptin-push-1 {
+        left: 8.3333333333%
+    }
+    .noptin-push-2 {
+        left: 16.6666666667%
+    }
+    .noptin-push-3 {
+        left: 25%
+    }
+    .noptin-push-4 {
+        left: 33.3333333333%
+    }
+    .noptin-push-5 {
+        left: 41.6666666667%
+    }
+    .noptin-push-6 {
+        left: 50%
+    }
+    .noptin-push-7 {
+        left: 58.3333333333%
+    }
+    .noptin-push-8 {
+        left: 66.6666666667%
+    }
+    .noptin-push-9 {
+        left: 75%
+    }
+    .noptin-push-10 {
+        left: 83.3333333333%
+    }
+    .noptin-push-11 {
+        left: 91.6666666667%
+    }
+    .noptin-push-12 {
+        left: 100%
+    }
+}
