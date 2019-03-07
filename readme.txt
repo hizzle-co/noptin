@@ -1,4 +1,4 @@
-=== Noptin - Build Simple Newsletter Optin Forms ===
+=== Noptin - Newsletter Subscribe Forms ===
 Contributors: picocodes
 Tags: newsletter, email newsletter form, newsletter subscribe, email subscribe
 Requires at least: 5.0
@@ -12,9 +12,8 @@ Easily add a newsletter subscription form into any WordPress post, page or custo
 It can also be used to provide content upgrades to your website visitors in exchange for an email address.
 
 == Description ==
-**Note:** Noptin requires at least WordPress version 5.0 to work. For those using previous versions of WordPress, please [install Gutenberg](https://wordpress.org/plugins/gutenberg/) before installing this plugin.
-
-Noptin is a fast and lightweight newsletter opt in plugin that let\'s you to easily build newsletter subscription forms and embed them into your WordPress posts, pages and even custom post types.
+**Note:** Noptin requires at least WordPress version 5.0 to work. For those using previous versions of WordPress, please [install Gutenberg](https://wordpress.org/plugins/gutenberg/) first.
+Noptin is a fast and lightweight newsletter opt in plugin that let's you to easily build newsletter subscription forms and embed them into your WordPress posts, pages and even custom post types.
 
 With Noptin, you can easily offer content upgrades to increase your email subscribers.
 
@@ -22,6 +21,14 @@ It is not meant to replace plugins such as MailPoet, Sumo and MailOptin. Instead
 
 = How to create content upgrades and lead magnets =
 
+Here is how you can add an email subscribe form to any post, page or custom post types and use it to offer content upgrades and lead magnets.
+
+* Open the post, page or custom post type in the WordPress Editor.
+* Move the cusor to where you would like to add your optin box.
+* Type /New and select Newsletter from the options that appear.
+* A new optin box will appear.
+* Click on any text to edit it.
+* Customize the colors using the options on the left.
 
 == Installation ==
 = Option 1: =
@@ -58,7 +65,7 @@ There are a lot of ways to contribute the project:-
 
 = Will Noptin work with my theme? =
 
-Yeah. Your newsletter subscribe forms will take your theme\'s default styling.
+Yeah. Your newsletter subscribe forms will take your theme's default styling.
 
 
 == Screenshots ==

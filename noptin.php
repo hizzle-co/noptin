@@ -6,7 +6,7 @@
  *
  * @since             1.0.0
  *
- * Plugin Name:     Noptin - Simple Newsletter Optin Forms
+ * Plugin Name:     Noptin - Simple Newsletter Subscription Forms
  * Plugin URI:      https://wordpress.org/plugins/noptin
  * Description:     Easily add a newsletter optin box in any post, page or custom post type
  * Author:          Picocodes
@@ -84,12 +84,13 @@ if( !defined( 'ABSPATH' ) ) {
 			 */
 			public function __construct() {
                 
-                // Include core files
-                $this->includes();
-                
 				//Set global variables
 				$this->plugin_path = plugin_dir_path( __FILE__ );
                 $this->plugin_url  = plugins_url( '/', __FILE__ );
+               
+                // Include core files
+                $this->includes();
+                
                 $this->admin       = Noptin_Admin::instance();
 				
 				// Confirm current db version
