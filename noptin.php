@@ -11,7 +11,7 @@
  * Description:     Easily add a newsletter optin box in any post, page or custom post type
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.0.1
+ * Version:         1.0.2
  * Text Domain:     noptin
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -41,7 +41,7 @@ if( !defined( 'ABSPATH' ) ) {
              * @since       1.0.0
              */
 
-            public $version = '1.0.0';
+            public $version = '1.0.2';
 
             /**
              * @access      private
@@ -135,6 +135,7 @@ if( !defined( 'ABSPATH' ) ) {
                 do_action('noptin_before_init_hooks');
                 
                 add_action( 'init', array( $this, 'register_blocks') );
+                add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
                 add_action( 'wp_ajax_noptin_new_user', array( $this, 'add_ajax_subscriber') );
 		        add_action( 'wp_ajax_nopriv_noptin_new_user', array( $this, 'add_ajax_subscriber') );
             
@@ -189,6 +190,17 @@ if( !defined( 'ABSPATH' ) ) {
                  ));
 
                  exit;
+            }
+
+            /**
+             * Registers front end scripts
+             *
+             * @access      public
+             * @since       1.0.2
+             * @return      void
+             */
+            public function enqueue_scripts() {
+                wp_enqueue_script( 'noptin_front' );
             }
 
             /**

@@ -1,17 +1,18 @@
-=== Noptin - Newsletter Subscribe Forms ===
+=== Noptin - Easy Newsletter Subscribe Forms And Widget ===
 Contributors: picocodes
-Tags: newsletter, email newsletter form, newsletter subscribe, email subscribe
+Tags: newsletter, email newsletter form, newsletter subscribe, email subscribe, newsletter widget
 Requires at least: 5.0
 Tested up to: 5.1
 Requires PHP: 5.2
+Version: 1.0.2
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Easily add a newsletter subscription form into any WordPress post, page or custom post type. 
-It can also be used to provide content upgrades to your website visitors in exchange for an email address.
+Easily add a newsletter subscription form into any WordPress post, sidebar or any other widget area with an option to offer content upgrades or lead magnets. 
 
 == Description ==
+
 **Note:** Noptin requires at least WordPress version 5.0 to work. For those using previous versions of WordPress, please [install Gutenberg](https://wordpress.org/plugins/gutenberg/) first.
 Noptin is a fast and lightweight newsletter opt in plugin that let's you to easily build newsletter subscription forms and embed them into your WordPress posts, pages and even custom post types.
 
@@ -29,6 +30,13 @@ Here is how you can add an email subscribe form to any post, page or custom post
 * A new optin box will appear.
 * Click on any text to edit it.
 * Customize the colors using the options on the left.
+
+= How to create an email subscription form widget =
+
+* In your WordPress Dashboard;
+* Click on **Appearance->Widgets**
+* Select Noptin Newsletter Subscribe Widget
+* An email opt in box will then be addded to the selected widget area or sidebar
 
 == Installation ==
 = Option 1: =
@@ -69,6 +77,7 @@ Yeah. Your newsletter subscribe forms will take your theme's default styling.
 
 
 == Screenshots ==
-1. How to create a new subscription form
-2. Sample Subscription Form
+1. How to create a new email subscription form
+2. Sample Email Subscription Form Embeded in a post
 3. View a list of email subscribers
+3. Sample Email Subscribe Widget

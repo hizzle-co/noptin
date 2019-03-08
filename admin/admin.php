@@ -97,8 +97,8 @@ class Noptin_Admin {
      */
     private function includes() {
 
-        // Include admin files
-        //require_once $this->plugin_path . 'admin/functions.php';
+        // Include the widget class
+        require_once $this->admin_path . 'widget.php';
 
         /**
          * Runs right after including admin files.
@@ -124,6 +124,9 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_init_hooks', $this);
 
+        //Register our new widget
+        add_action( 'widgets_init', array($this, 'register_widget'));
+
         //Admin scripts
         add_action('admin_enqueue_scripts', array($this, 'enqeue_scripts'));
 
@@ -139,6 +142,17 @@ class Noptin_Admin {
          * @param array $this The admin instance
          */
         do_action('noptin_after_admin_init_hooks', $this);
+    }
+
+    /**
+     * Registers a widget area
+     *
+     * @access      public
+     * @since       1.0.2
+     * @return      self::$instance
+     */
+    public function register_widget() {
+        register_widget( 'Noptin_Widget' );
     }
 
     /**
@@ -213,8 +227,9 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_main_page', $this);
 
-        $logo_url = $this->admin_url . 'logo.png';
-        $screenshot_url = $this->admin_url . 'screenshot1.png';
+        $logo_url        = $this->admin_url . 'logo.png';
+        $screenshot_url  = $this->admin_url . 'screenshot1.png';
+        $screenshot2_url = $this->admin_url . 'screenshot2.png';
         include $this->admin_path . 'welcome.php';
 
         /**

@@ -1,7 +1,7 @@
 (function($) {
 
     //Select apply forms
-    $('.wp-block-noptin-email-optin form')
+    $('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form')
         //Watch for form submit events
         .on('submit', function(e) {
 
