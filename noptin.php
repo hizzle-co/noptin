@@ -11,7 +11,7 @@
  * Description:     Easily add a newsletter optin box in any post, page or custom post type
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.0.2
+ * Version:         1.0.3
  * Text Domain:     noptin
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
