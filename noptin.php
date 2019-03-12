@@ -28,6 +28,66 @@ if( !defined( 'ABSPATH' ) ) {
     die;
 }
 
+
+//Freemius
+if ( ! function_exists( 'noptin_fs' ) ) {
+    // Create a helper function for easy SDK access.
+    function noptin_fs() {
+        global $noptin_fs;
+
+        if ( ! isset( $noptin_fs ) ) {
+            // Activate multisite network integration.
+            if ( ! defined( 'WP_FS__PRODUCT_3412_MULTISITE' ) ) {
+                define( 'WP_FS__PRODUCT_3412_MULTISITE', true );
+            }
+
+            // Include Freemius SDK.
+            require_once dirname(__FILE__) . '/freemius/start.php';
+
+            $noptin_fs = fs_dynamic_init( array(
+                'id'                  => '3412',
+                'slug'                => 'newsletter-optin-box',
+                'premium_slug'        => 'newsletter-optin-box-premium',
+                'type'                => 'plugin',
+                'public_key'          => 'pk_94eb3c7684b641900c0154bfe6216',
+                'is_premium'          => false,
+                'has_addons'          => true,
+                'has_paid_plans'      => false,
+                'menu'                => array(
+                    'slug'           => 'noptin',
+                    'first-path'     => 'admin.php?page=noptin',
+                    'account'        => true,
+                    'support'        => false,
+                ),
+            ) );
+        }
+
+        return $noptin_fs;
+    }
+
+    // Init Freemius.
+    noptin_fs();
+    // Signal that SDK was initiated.
+    do_action( 'noptin_fs_loaded' );
+
+    //Uninstall data
+    noptin_fs()->add_action('after_uninstall', 'noptin_fs_uninstall_cleanup');
+
+    function noptin_fs_uninstall_cleanup(){
+        global $wpdb;
+
+        //Delete options
+        $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'noptin\_%'" );
+
+        //Delete subscribers table
+        $table = $wpdb->prefix . 'gp_optin_subscribers';	
+        if($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table) {
+	        $sql = "DROP TABLE $table";
+	        $wpdb->query($sql);
+        }
+    }
+}
+
     /**
      * Plugin main class
      *
@@ -104,7 +164,6 @@ if( !defined( 'ABSPATH' ) ) {
 				
 				//initialize hooks
 				$this->init_hooks();
-				
 				do_action('noptin_loaded');
             }
 

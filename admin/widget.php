@@ -98,6 +98,9 @@ class Noptin_Widget extends WP_Widget {
             color: <?php echo $color;?> !important;
             background-color: <?php echo $bg_color;?> !important;
             min-height: 400px;
+            box-sizing: border-box !important;
+            /*box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            border-radius: 5px;*/
         }
 
         .noptin-email-optin-widget .widget-title{
