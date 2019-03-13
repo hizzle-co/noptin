@@ -1,4 +1,4 @@
-=== Noptin - Easy Newsletter Subscribe Forms And Widget ===
+=== Noptin - Newsletter Subscribe Forms And Widgets ===
 Contributors: picocodes
 Tags: newsletter, email newsletter form, newsletter subscribe, email subscribe, newsletter widget
 Requires at least: 5.0
@@ -9,25 +9,39 @@ Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Easily add a newsletter subscription form into any WordPress post, sidebar or any other widget area with an option to offer content upgrades or lead magnets. 
+Add a newsletter subscription form into any WordPress post or widget area with an option to offer content upgrades or lead magnets. 
 
 == Description ==
 
-**Note:** Noptin requires at least WordPress version 5.0 to work. For those using previous versions of WordPress, please [install Gutenberg](https://wordpress.org/plugins/gutenberg/) first.
-Noptin is a fast and lightweight newsletter opt in plugin that let's you to easily build newsletter subscription forms and embed them into your WordPress posts, pages and even custom post types.
+**Note:**
 
-With Noptin, you can easily offer content upgrades to increase your email subscribers.
+Noptin requires at least WordPress version 5.0 to work. For those using previous versions of WordPress, please [install Gutenberg](https://wordpress.org/plugins/gutenberg/) first.
 
-It is not meant to replace plugins such as MailPoet, Sumo and MailOptin. Instead, it should be used alongside them to maximize the number of visitors that subscribe to your mailing list.
+Noptin is a fast and lightweight newsletter sign up plugin that let's you to easily build newsletter subscription forms and embed them into your WordPress posts, pages and even custom post types.
+
+You do not need to use shortcodes for it to work.
+
+You can also let your blog visitors sign up to your newsletter using a beautifully designed and customizable newsletter subscription widget.
+
+With Noptin, you can easily offer content upgrades and lead to increase your email subscribers.
+
+It is not meant to replace plugins such as MailPoet, Sumo Me and MailOptin. Instead, it should be used alongside them to maximize the number of visitors that subscribe to your mailing list.
+
+= How do i set up an email subscription to a wordpress blog =
+
+* Install Noptin by downloading and uploading it to your WordPress admin Dashboard.
+* Add a newsletter subscription form into your sidebar and any other widget area.
+* Optinally add newsletter sign up forms into any WordPress post that you want.
+* Connect to an email service provider using one of our extensions. Currently we support ConvertKit and MailChimp.
 
 = How to create content upgrades and lead magnets =
 
-Here is how you can add an email subscribe form to any post, page or custom post types and use it to offer content upgrades and lead magnets.
+Here is how you can add an email subscribe form to any post and use it to offer content upgrades and lead magnets.
 
-* Open the post, page or custom post type in the WordPress Editor.
-* Move the cusor to where you would like to add your optin box.
+* Open the post or page in the WordPress Editor.
+* Move the cusor to where you would like to add your newsletter subscription form.
 * Type /New and select Newsletter from the options that appear.
-* A new optin box will appear.
+* A new sign up box will appear.
 * Click on any text to edit it.
 * Customize the colors using the options on the left.
 
@@ -37,6 +51,16 @@ Here is how you can add an email subscribe form to any post, page or custom post
 * Click on **Appearance->Widgets**
 * Select Noptin Newsletter Subscribe Widget
 * An email opt in box will then be addded to the selected widget area or sidebar
+
+= How to see your wordpress email subscribers =
+
+To view your email subscribers:
+* In your WordPress admin Dashboard;
+* Click on **Noptin->Subscribers**
+* A list of all your email subscribers will appear
+* Download the list by clicking on the big download button
+
+We believe that Noptin is the best newsletter plugin for WordPress. It is free and you do not need to use any shortcodes or html codes to make it work.
 
 == Installation ==
 = Option 1: =
