@@ -81,7 +81,18 @@
     width: 100%;
 }
 
+.noptin-nag {
+    display: flex;
+    flex-flow: column;
+}
+
 @media only screen and (min-width: 601px) {
+    .noptin-nag {
+        flex-flow: row;
+    }
+    .noptin-nag-item {
+        margin-right: 16px;
+    }
     [class*="noptin-col-"] {
         width: 100%;
         float: left;

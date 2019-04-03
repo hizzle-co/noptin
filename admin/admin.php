@@ -100,6 +100,9 @@ class Noptin_Admin {
         // Include the widget class
         require_once $this->admin_path . 'widget.php';
 
+        // Include the rating hooks
+        require_once $this->admin_path . 'ratings.php';
+
         /**
          * Runs right after including admin files.
          *

@@ -29,12 +29,6 @@
                 default: i18n.__('Click the above title to edit it. You can also edit this section by clicking on it.', 'noptin'),
                 selector: '.noptin_form_description',
             },
-            label: {
-                type: 'string',
-                source: 'children',
-                default: i18n.__('Email', 'noptin'),
-                selector: '.noptin_form_label_email',
-            },
             button: {
                 type: 'string',
                 default: 'SUBSCRIBE',
@@ -187,19 +181,6 @@
                                 props.setAttributes({ description: value });
                             },
                         }),
-                        el(RichText, {
-                            tagName: 'label',
-                            inline: true,
-                            placeholder: i18n.__('Write Email Label', 'noptin'),
-                            value: attributes.label,
-                            style: {
-                                color: attributes.text_color,
-                            },
-                            className: 'noptin_form_label_email',
-                            onChange: function(value) {
-                                props.setAttributes({ label: value });
-                            },
-                        }),
                         el('input', {
                             type: 'email',
                             className: 'noptin_form_input_email',
@@ -284,12 +265,6 @@
                             },
                             value: attributes.description,
                             className: 'noptin_form_description',
-                        }),
-                        el(RichText.Content, {
-                            tagName: 'label',
-                            inline: true,
-                            value: attributes.label,
-                            className: 'noptin_form_label_email',
                         }),
                         el('input', {
                             type: 'email',
