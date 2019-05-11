@@ -166,13 +166,22 @@ class Noptin_Admin {
      * @return      self::$instance
      */
     public function enqeue_scripts() {
-        wp_enqueue_style('noptin', $this->admin_url . 'admin.css');
-        wp_register_script('noptin', $this->admin_url . 'admin.js', array('jquery'), null, true);
+        global $pagenow;
+
+        //Only enque on our pages
+        if( 'admin.php' != $pagenow || false === stripos( $_GET['page'], 'noptin') ){
+            return;
+        }
+
+        wp_enqueue_style('noptin', $this->admin_url . 'assets/admin.css');
+        wp_enqueue_script('vue', $this->admin_url . 'assets/vue.js', array(), '2.6.10');
+        $version = filemtime( $this->admin_path . 'assets/admin.js' );
+        wp_register_script('noptin', $this->admin_url . 'assets/admin.js', array('vue'), $version);
 
         // Pass variables to our js file, e.g url etc
         $params = array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'admin_nonce' => wp_create_nonce('noptin_admin_nonce'),
+            'nonce'   => wp_create_nonce('noptin_admin_nonce'),
         );
 
         // localize and enqueue the script with all of the variable inserted
@@ -198,6 +207,16 @@ class Noptin_Admin {
             array($this, 'render_main_page'),
             'dashicons-forms',
             67);
+
+        //Add the popups page
+        add_submenu_page(
+            'noptin',
+            esc_html__('Popup opt-in forms', 'noptin'),
+            esc_html__('Popups', 'noptin'),
+            'manage_options',
+            'noptin-pop-ups',
+            array($this, 'render_popups_page')
+        );
 
         //Add the subscribers page
         add_submenu_page(
@@ -230,9 +249,9 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_main_page', $this);
 
-        $logo_url        = $this->admin_url . 'logo.png';
-        $screenshot_url  = $this->admin_url . 'screenshot1.png';
-        $screenshot2_url = $this->admin_url . 'screenshot2.png';
+        $logo_url        = $this->admin_url . 'assets/logo.png';
+        $screenshot_url  = $this->admin_url . 'assets/screenshot1.png';
+        $screenshot2_url = $this->admin_url . 'assets/screenshot2.png';
         include $this->admin_path . 'welcome.php';
 
         /**
@@ -270,7 +289,7 @@ class Noptin_Admin {
             ),
             admin_url('admin-ajax.php')
         );
-        $logo_url = $this->admin_url . 'logo.png';
+        $logo_url = $this->admin_url . 'assets/logo.png';
         $subscribers = $this->get_subscribers();
         include $this->admin_path . 'subscribers.php';
 
@@ -280,6 +299,37 @@ class Noptin_Admin {
          * @param array $this The admin instance
          */
         do_action('noptin_after_admin_subscribers_page', $this);
+    }
+
+    /**
+     * Renders popups page
+     *
+     * @access      public
+     * @since       1.0.4
+     * @return      self::$instance
+     */
+    public function render_popups_page() {
+global $pagenow;
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        /**
+         * Runs before displaying the popups page.
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_before_admin_popups_page', $this);
+
+        $logo_url = $this->admin_url . 'assets/logo.png';
+        include $this->admin_path . 'popups.php';
+
+        /**
+         * Runs after displaying the popups page.
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_after_admin_popups_page', $this);
     }
 
 /**
