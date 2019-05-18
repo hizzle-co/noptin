@@ -173,14 +173,18 @@ class Noptin_Admin {
             return;
         }
 
-        wp_enqueue_style('noptin', $this->admin_url . 'assets/admin.css');
-        wp_enqueue_script('vue', $this->admin_url . 'assets/vue.js', array(), '2.6.10');
+        $version = filemtime( $this->admin_path . 'assets/admin.css' );
+        wp_enqueue_style('noptin', $this->admin_url . 'assets/admin.css', array( 'select2','wp-color-picker' ), $version);
+        wp_enqueue_script('select2', $this->admin_url . 'assets/select2.js', array( 'jquery' ), '4.0.7');
+        wp_enqueue_style('select2', $this->admin_url . 'assets/select2.css', array(), '4.0.7');
+        wp_enqueue_script('vue', $this->admin_url . 'assets/vue.js', array( 'wp-color-picker' ), '2.6.10');
         $version = filemtime( $this->admin_path . 'assets/admin.js' );
-        wp_register_script('noptin', $this->admin_url . 'assets/admin.js', array('vue'), $version);
+        wp_register_script('noptin', $this->admin_url . 'assets/admin.js', array('select2','vue'), $version);
 
         // Pass variables to our js file, e.g url etc
         $params = array(
             'ajaxurl' => admin_url('admin-ajax.php'),
+            'api_url' => get_home_url( null, 'wp-json/wp/v2/'),
             'nonce'   => wp_create_nonce('noptin_admin_nonce'),
         );
 

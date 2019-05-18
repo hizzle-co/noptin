@@ -118,6 +118,9 @@ if( !defined( 'ABSPATH' ) ) {
 												
 				// Admin page
                 require_once $this->plugin_path . 'admin/admin.php';
+
+                //Functions
+                require_once $this->plugin_path . 'functions.php';
                 
                 do_action('noptin_after_includes');
             }
