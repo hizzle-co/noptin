@@ -531,6 +531,10 @@ input:focus+.noptin-switch-slider span {
 
 /***** FRONTEND STYLES*******/
 
+.noptin-preview-showing {
+    overflow: auto;
+}
+
 .noptin-popup-form-wrapper {
     border: 4px solid;
     padding: 20px;
@@ -546,10 +550,19 @@ input:focus+.noptin-switch-slider span {
     position: absolute;
     top: 0;
     right: 0;
-    width: 24px;
-    height: 24px;
+    width: 36px;
+    height: 36px;
     cursor: pointer;
     display: none;
+}
+
+.noptin-popup-form-wrapper .noptin-popup-close path {
+    fill: rgba(255, 255, 255, 0.9);
+    transition: 0.3s;
+}
+
+.noptin-popup-form-wrapper .noptin-popup-close:hover path {
+    fill: rgba(255, 255, 255, 0.5);
 }
 
 .noptin-popup-form-wrapper form {

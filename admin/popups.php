@@ -506,12 +506,12 @@ $settings = wp_json_encode( apply_filters('noptin_popup_sidebar_settings', array
 
     //Title design
     'noptin_hide_title'             => false,
-    'noptin_title_text'             => 'Subscribe To Newsletter',
+    'noptin_title_text'             => 'Subscribe To Our Newsletter',
     'noptin_title_color'            => '#fafafa',
 
     //Description design
     'noptin_hide_description'       => false,
-    'noptin_description_text'       => 'Be the first to find out about our latest articles and news updates',
+    'noptin_description_text'       => 'Join our mailing list to receive the latest news and updates from our team.',
     'noptin_description_color'      => '#fafafa',
 
     //Note design
