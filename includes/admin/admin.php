@@ -317,7 +317,7 @@ class Noptin_Admin {
      * @return      self::$instance
      */
     public function render_popups_page() {
-global $pagenow;
+
         if (!current_user_can('manage_options')) {
             return;
         }
@@ -330,7 +330,34 @@ global $pagenow;
         do_action('noptin_before_admin_popups_page', $this);
 
         $logo_url = $this->assets_url . 'images/logo.png';
-        include $this->admin_path . 'popups.php';
+
+        if( isset($_GET['popup_id']) ){
+            include $this->admin_path . 'templates/popups-editor.php';
+        } else {
+
+            //Fetch popups
+            $args   = array(
+                'numberposts'      => -1,
+                'post_type'        => 'noptin_popups',
+            );
+            $popups = get_posts( $args );
+
+            //No popups?
+            if(! $popups ){
+
+                //Ask the user to add some
+                include $this->admin_path . 'templates/popups-empty.php';
+
+            } else {
+
+                //Show them to the user
+                include $this->admin_path . 'templates/popups-list.php';
+
+            }
+
+            
+        }
+        
 
         /**
          * Runs after displaying the popups page.

@@ -267,6 +267,94 @@
     background: #fff;
 }
 
+.noptin-list {
+    padding: 20px;
+    margin-bottom: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.noptin-list.not-found {
+    align-items: center;
+}
+
+.noptin-list-inner {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    width: 100%;
+    max-width: 720px;
+}
+
+.noptin-list-inner-not-found p {
+    font-size: 24px;
+}
+
+.noptin-list-inner-not-found div {
+    display: flex;
+    justify-content: center;
+}
+
+.noptin-list-header {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.noptin-list-action {
+    flex: 2;
+}
+
+.noptin-list-filter {
+    border-bottom: 1px solid #ecedee;
+    flex: 1;
+}
+
+.noptin-list-filter input {
+    width: auto;
+    background: transparent;
+    box-shadow: 0 0 0 !important;
+    border: 0;
+    margin-bottom: 3px;
+    padding: 12px 0 12px 50px;
+    outline: none !important;
+}
+
+.noptin-list-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.noptin-list-table th {
+    color: #666;
+    text-align: left;
+    text-transform: uppercase;
+    border-bottom: 1px solid #ecedee;
+    font-size: 14px;
+    padding: 15px;
+    vertical-align: top;
+    position: relative;
+}
+
+.noptin-list-table td {
+    color: #666;
+    text-align: left;
+    border-bottom: 1px solid #ecedee;
+    font-size: 14px;
+    padding: 15px;
+    vertical-align: top;
+    position: relative;
+}
+
+.noptin-list-table td:first-child {
+    width: 60%;
+}
+
+.noptin-list-table a {
+    color: #1ea9ea;
+    text-decoration: none;
+    border: 0;
+}
+
 .noptin-popup-editor-title {
     flex-grow: 7.5;
     font-size: 24px;
@@ -430,6 +518,27 @@
 
 .noptin-label {
     flex: 1 0 0;
+}
+
+.noptin-add-button,
+.noptin-add-button:hover,
+.noptin-add-button:active,
+.noptin-add-button:visited {
+    background: #1ea9ea;
+    border: 1px solid #1ea9ea;
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 17px;
+    padding: 10px 30px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .noptin-switch-slider {
