@@ -13,6 +13,10 @@ if (!defined('ABSPATH')) {
     die;
 }
 
+function noptin() {
+    return Noptin::instance();
+}
+
 /**
  * Renders a single field in the opt-in editor sidebar
  */

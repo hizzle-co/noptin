@@ -71,8 +71,12 @@ class Noptin_Admin {
         do_action('noptin_before_admin_load', $this);
 
         //Set global variables
-        $this->admin_path = plugin_dir_path(__FILE__);
-        $this->admin_url = plugins_url('/', __FILE__);
+        $noptin = noptin();
+        $this->admin_path  = plugin_dir_path(__FILE__);
+        $this->admin_url   = plugins_url('/', __FILE__);
+        $this->assets_url  = $noptin->plugin_url . 'includes/assets/';
+        $this->assets_path = $noptin->plugin_path . 'includes/assets/';
+        
 
         // Include core files
         $this->includes();
@@ -173,13 +177,13 @@ class Noptin_Admin {
             return;
         }
 
-        $version = filemtime( $this->admin_path . 'assets/admin.css' );
-        wp_enqueue_style('noptin', $this->admin_url . 'assets/admin.css', array( 'select2','wp-color-picker' ), $version);
-        wp_enqueue_script('select2', $this->admin_url . 'assets/select2.js', array( 'jquery' ), '4.0.7');
-        wp_enqueue_style('select2', $this->admin_url . 'assets/select2.css', array(), '4.0.7');
-        wp_enqueue_script('vue', $this->admin_url . 'assets/vue.js', array( 'wp-color-picker' ), '2.6.10');
-        $version = filemtime( $this->admin_path . 'assets/admin.js' );
-        wp_register_script('noptin', $this->admin_url . 'assets/admin.js', array('select2','vue'), $version);
+        $version = filemtime( $this->assets_path . 'css/admin.css' );
+        wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array( 'select2','wp-color-picker' ), $version);
+        wp_enqueue_script('select2', $this->assets_url . 'js/select2.js', array( 'jquery' ), '4.0.7');
+        wp_enqueue_style('select2', $this->assets_url . 'js/select2.css', array(), '4.0.7');
+        wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array( 'wp-color-picker' ), '2.6.10');
+        $version = filemtime( $this->assets_path . 'js/admin.js' );
+        wp_register_script('noptin', $this->assets_url . 'js/admin.js', array('select2','vue'), $version);
 
         // Pass variables to our js file, e.g url etc
         $params = array(
@@ -253,9 +257,9 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_main_page', $this);
 
-        $logo_url        = $this->admin_url . 'assets/logo.png';
-        $screenshot_url  = $this->admin_url . 'assets/screenshot1.png';
-        $screenshot2_url = $this->admin_url . 'assets/screenshot2.png';
+        $logo_url        = $this->assets_url . 'images/logo.png';
+        $screenshot_url  = $this->assets_url . 'images/screenshot1.png';
+        $screenshot2_url = $this->assets_url . 'images/screenshot2.png';
         include $this->admin_path . 'welcome.php';
 
         /**
@@ -293,7 +297,7 @@ class Noptin_Admin {
             ),
             admin_url('admin-ajax.php')
         );
-        $logo_url = $this->admin_url . 'assets/logo.png';
+        $logo_url    = $this->assets_url . 'images/logo.png';
         $subscribers = $this->get_subscribers();
         include $this->admin_path . 'subscribers.php';
 
@@ -325,7 +329,7 @@ global $pagenow;
          */
         do_action('noptin_before_admin_popups_page', $this);
 
-        $logo_url = $this->admin_url . 'assets/logo.png';
+        $logo_url = $this->assets_url . 'images/logo.png';
         include $this->admin_path . 'popups.php';
 
         /**
