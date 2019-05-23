@@ -465,7 +465,9 @@ $sidebar = apply_filters('noptin_popup_sidebar_section', array(
     ), 
 ));
 
-$settings = wp_json_encode( apply_filters('noptin_popup_sidebar_settings', array(
+$meta = get_post_meta( $popup, '_noptin_state' );
+
+$settings = array(
 
     //Panels
     'noteDesignOpen'                => false,
@@ -554,7 +556,13 @@ $settings = wp_json_encode( apply_filters('noptin_popup_sidebar_settings', array
     'custom_css'                    => '',
     'isPreviewShowing'              => false,
     
-)));
+);
+
+if( is_array( $meta ) ) {
+    $settings = wp_parse_args( $meta, $settings );
+}
+
+$settings = wp_json_encode( apply_filters('noptin_popup_sidebar_settings', $settings ) );
 ?>
 <style id="popupCustomCSS"></style>
 <div class="noptin-popup-designer">

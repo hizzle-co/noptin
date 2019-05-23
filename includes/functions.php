@@ -27,6 +27,62 @@ function noptin_render_editor_field( $id, $field ){
 }
 
 /**
+ * Returns all popup forms
+ */
+function noptin_get_popup_forms(){
+    $args   = array(
+        'numberposts'      => -1,
+        'post_type'        => 'noptin-popup',
+        'post_status'      => array( 'draft', 'publish' )
+    );
+    return get_posts( $args );
+}
+
+/**
+ * Creates a popup form
+ */
+function noptin_create_popup_form( $title = false ){
+
+    //Set the title
+    if(! $title ){
+        $title = __( 'New Form', 'noptin');
+    }
+
+    //Prepare the args
+    $postarr   = array(
+        'post_title'       => $title ,
+        'post_type'        => 'noptin-popup',
+    );
+
+    return wp_insert_post( $postarr, true );
+}
+
+
+/**
+ * Returns product post type details
+ */
+function noptin_get_popup_post_type_details(){
+	return apply_filters(
+		'noptin_popup_post_type_details',
+		array(
+			'labels'              => array(),
+			'description'         => '',
+			'public'              => false,
+			'show_ui'             => false,
+			'map_meta_cap'        => true,
+			'publicly_queryable'  => false,
+			'exclude_from_search' => true,
+			'hierarchical'        => false,
+			'query_var'           => false,
+			'supports'            => array(),
+			'has_archive'         => false,
+			'show_in_nav_menus'   => false,
+			'show_in_rest'        => false,
+			'menu_icon'   		  => ''
+		));
+}
+
+/**
  * Converts an array into a string of html attributes
  */
 function noptin_array_to_attrs( $array ){

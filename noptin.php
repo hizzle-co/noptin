@@ -115,6 +115,9 @@ if( !defined( 'ABSPATH' ) ) {
                 // Include core files
                 $this->includes();
 
+                //Register post types
+                $this->register_post_types();
+
                 //Init the admin
                 $this->admin  = Noptin_Admin::instance();
 
@@ -236,7 +239,39 @@ if( !defined( 'ABSPATH' ) ) {
                     update_option( 'noptin_db_version', $this->db_version );
                 }
 
-	        }
+            }
+            
+            
+	/**
+	 * Load Localisation files.
+	 *
+	 */
+	public function register_post_types() {
+
+		if ( ! is_blog_installed() || post_type_exists(  'noptin-popup' ) ) {
+			return;
+		}
+
+		/**
+		 * Fires before custom post types are registered
+		 *
+		 * @since 1.0.0
+		 *
+		*/
+		do_action( 'noptin_register_post_type' );
+
+		//popups
+		register_post_type( 'noptin-popup'	, noptin_get_popup_post_type_details() );
+
+		/**
+		 * Fires after custom post types are registered
+		 *
+		 * @since 1.0.0
+		 *
+		*/
+		do_action( 'noptin_after_register_post_type' );
+
+	}
         }
 
 //Kickstart everything

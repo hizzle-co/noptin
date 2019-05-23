@@ -329,18 +329,25 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_popups_page', $this);
 
-        $logo_url = $this->assets_url . 'images/logo.png';
+        //The popup form currently being edited
+        $popup = false;
 
-        if( isset($_GET['popup_id']) ){
+        //Is the user creating a new popup form?
+        if( isset( $_GET['action'] ) && 'new' == $_GET['action'] ){
+            $popup   = noptin_create_popup_form();
+        }
+
+        //Is the user trying to edit a new popup?
+        if( isset( $_GET['popup_id'] ) ){
+            $popup   = absint( $_GET['popup_id'] );
+        }
+
+        if( $popup ){
             include $this->admin_path . 'templates/popups-editor.php';
         } else {
 
             //Fetch popups
-            $args   = array(
-                'numberposts'      => -1,
-                'post_type'        => 'noptin_popups',
-            );
-            $popups = get_posts( $args );
+            $popups = noptin_get_popup_forms();
 
             //No popups?
             if(! $popups ){

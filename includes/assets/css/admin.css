@@ -349,6 +349,14 @@
     width: 60%;
 }
 
+.noptin-list-table .status-Inactive {
+    color: #F44336;
+}
+
+.noptin-list-table .status-Active {
+    color: #4CAF50;
+}
+
 .noptin-list-table a {
     color: #1ea9ea;
     text-decoration: none;
