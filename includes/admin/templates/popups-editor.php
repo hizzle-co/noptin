@@ -32,6 +32,14 @@ $sidebar = apply_filters('noptin_popup_sidebar_section', array(
                     'el'        => 'input',
                     'label'     => 'Popup Name',
                 ),
+                'optinStatus'   => array(
+                    'el'        => 'select',
+                    'label'     => 'Popup Status',
+                    'options'   => array(
+                        'publish'   => 'Active',
+                        'draft'     => 'Inactive',
+                    ),
+                ),
                 'subscribeAction' => array(
                     'el'        => 'select',
                     'label'     => 'What should happen after the user subscribes',
@@ -485,6 +493,7 @@ $settings = array(
     'removeBranding'                => false,
     'hideCloseButton'               => false,
     'optinName'                     => 'Sample Name',
+    'optinStatus'                   => 'draft',
     'singleLine'                    => true,
     'buttonPosition'                => 'block',
     'showNameField'                 => false,
@@ -561,6 +570,10 @@ $settings = array(
 if( is_array( $meta ) ) {
     $settings = wp_parse_args( $meta, $settings );
 }
+
+$popup = get_post( $popup );
+$settings[ 'optinName' ]   = $popup->post_title;
+$settings[ 'optinStatus' ] = $popup->post_status;
 
 $settings = wp_json_encode( apply_filters('noptin_popup_sidebar_settings', $settings ) );
 ?>

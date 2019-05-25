@@ -180,7 +180,7 @@ class Noptin_Admin {
         $version = filemtime( $this->assets_path . 'css/admin.css' );
         wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array( 'select2','wp-color-picker' ), $version);
         wp_enqueue_script('select2', $this->assets_url . 'js/select2.js', array( 'jquery' ), '4.0.7');
-        wp_enqueue_style('select2', $this->assets_url . 'js/select2.css', array(), '4.0.7');
+        wp_enqueue_style('select2', $this->assets_url . 'css/select2.css', array(), '4.0.7');
         wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array( 'wp-color-picker' ), '2.6.10');
         $version = filemtime( $this->assets_path . 'js/admin.js' );
         wp_register_script('noptin', $this->assets_url . 'js/admin.js', array('select2','vue'), $version);
@@ -340,6 +340,11 @@ class Noptin_Admin {
         //Is the user trying to edit a new popup?
         if( isset( $_GET['popup_id'] ) ){
             $popup   = absint( $_GET['popup_id'] );
+        }
+
+        //Is the user deleting a popup form?
+        if( isset( $_GET['action'] ) && 'delete' == $_GET['action'] ){
+            noptin_delete_popup_form( $_GET['delete'] );
         }
 
         if( $popup ){

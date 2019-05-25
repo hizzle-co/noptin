@@ -57,9 +57,16 @@ function noptin_create_popup_form( $title = false ){
     return wp_insert_post( $postarr, true );
 }
 
+/**
+ * Deletes a popup form
+ */
+function noptin_delete_popup_form( $id ){
+    return wp_delete_post( $id, true );
+}
+
 
 /**
- * Returns product post type details
+ * Returns popup post type details
  */
 function noptin_get_popup_post_type_details(){
 	return apply_filters(

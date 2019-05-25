@@ -319,6 +319,11 @@
     outline: none !important;
 }
 
+.noptin-list-filter .dashicons {
+    margin-top: 4px;
+    font-size: 30px;
+}
+
 .noptin-list-table {
     border-collapse: collapse;
     width: 100%;
@@ -361,6 +366,22 @@
     color: #1ea9ea;
     text-decoration: none;
     border: 0;
+}
+
+.noptin-list-table .noptin-delete {
+    color: #F44336;
+}
+
+.noptin-list-table .noptin-form-actions {
+    display: none;
+}
+
+.noptin-list-table td:hover .noptin-form-actions {
+    display: block;
+}
+
+.noptin-list-table tr:hover {
+    background: #FAFAFA;
 }
 
 .noptin-popup-editor-title {

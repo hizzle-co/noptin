@@ -89,4 +89,14 @@
         },
     })
 
+    //List filter
+    $(document).ready(function() {
+        $(".noptin-list-filter input").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $('.noptin-list-table tbody tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
 })(jQuery);
