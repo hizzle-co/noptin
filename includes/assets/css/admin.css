@@ -558,11 +558,13 @@
     background-color: #eee;
 }
 
-.noptin-checkbox-wrapper:hover input~.noptin-checkmark {
+.noptin-checkbox-wrapper:hover input~.noptin-checkmark,
+.noptin-radio-wrapper:hover input~.noptin-checkmark {
     background-color: #ccc;
 }
 
-.noptin-checkbox-wrapper input:checked~.noptin-checkmark {
+.noptin-checkbox-wrapper input:checked~.noptin-checkmark,
+.noptin-radio-wrapper input:checked~.noptin-checkmark {
     background-color: #1ea9ea;
 }
 
@@ -581,7 +583,8 @@
     transform: rotate(45deg);
 }
 
-.noptin-checkbox-wrapper input:checked~.noptin-checkmark:after {
+.noptin-checkbox-wrapper input:checked~.noptin-checkmark:after,
+.noptin-radio-wrapper input:checked~.noptin-checkmark:after {
     display: block;
 }
 
@@ -666,7 +669,12 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-radio-wrapper {
     margin-bottom: 15px;
-    margin-top: 15px;
+    margin-top: 32px;
+    display: block;
+}
+
+.noptin-radio-wrapper .noptin-checkmark {
+    border-radius: 50%;
 }
 
 .noptin-radio-wrapper span:first-child {
@@ -675,7 +683,39 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-radio-wrapper label {
     display: block;
+    margin-bottom: 12px;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.noptin-radio-button-wrapper .noptin-buttons {
+    display: flex;
+    padding-top: 20px;
     margin-bottom: 32px;
+}
+
+.noptin-radio-button-wrapper label {
+    padding: 0;
+    margin: 0;
+}
+
+.noptin-radio-button-wrapper label span {
+    padding: .5em 1em;
+    cursor: pointer;
+    border: 1px solid #eee;
+    margin-right: -1px;
+    color: #333;
+    background-color: #fafafa;
+}
+
+.noptin-radio-button-wrapper label input:checked+span {
+    background-color: #1ea9ea;
+    color: #fff;
 }
 
 #noptin-popup-preview {

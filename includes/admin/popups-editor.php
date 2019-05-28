@@ -279,17 +279,16 @@ class Noptin_Popup_Editor {
                 'label'             => 'Show/Hide on specific pages',
             ),
             'pageRestrictType'      => array(
-                'el'                => 'radio',
-                'label'             => 'Select Action',
+                'el'                => 'radio_button',
                 'restrict'          => 'hideOnPages',
                 'options'           => array(
-                    'show'  => 'Show on selected pages',
-                    'hide'  => 'Hide on selected pages'
+                    'show'  => 'Show',
+                    'hide'  => 'Hide'
                 ),
             ),
             'pagesToHide'           => array(
                 'el'                => 'multiselect',
-                'label'             => 'Select pages on which to show/hide the popups',
+                'label'             => 'Select pages on which to {{pageRestrictType}} the popup',
                 'restrict'          => 'hideOnPages',
                 'options'           => 'pages',
             ),
@@ -301,17 +300,16 @@ class Noptin_Popup_Editor {
                 'label'             => 'Show/Hide on specific posts',
             ),
             'postRestrictType'      => array(
-                'el'                => 'radio',
-                'label'             => 'Select Action',
+                'el'                => 'radio_button',
                 'restrict'          => 'hideOnPosts',
                 'options'           => array(
-                    'show'  => 'Show on selected posts',
-                    'hide'  => 'Hide on selected posts'
+                    'show'  => 'Show',
+                    'hide'  => 'Hide'
                 ),
             ),
             'postsToHide'           => array(
                 'el'                => 'multiselect',
-                'label'             => 'Select posts on which to show/hide the popups',
+                'label'             => 'Select posts on which to {{postRestrictType}} the popup',
                 'restrict'          => 'hideOnPosts',
                 'options'           => 'posts',
             ),
@@ -323,17 +321,16 @@ class Noptin_Popup_Editor {
                 'label'             => 'Show/Hide on specific post types',
             ),
             'postTypesRestrictType' => array(
-                'el'                => 'radio',
-                'label'             => 'Select Action',
+                'el'                => 'radio_button',
                 'restrict'          => 'hideOnPostTypes',
                 'options'           => array(
-                    'show'  => 'Show on selected post types',
-                    'hide'  => 'Hide on selected post types'
+                    'show'  => 'Show',
+                    'hide'  => 'Hide'
                 ),
             ),
             'postTypesToHide'       => array(
                 'el'                => 'multiselect',
-                'label'             => 'Select post types on which to show/hide the popups',
+                'label'             => 'Select post types on which to {{postTypesToHide}} the popup',
                 'restrict'          => 'hideOnPostTypes',
                 'options'           => noptin_get_post_types(),
             ),

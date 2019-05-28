@@ -240,13 +240,32 @@ function noptin_render_editor_radio( $id, $field ){
 
     if(is_array($field['options'])) {
         foreach( $field['options'] as $val => $label ){
-            echo "<label><input type='radio' v-model='$id' value='$val'> $label</label>";
+            echo "<label><input type='radio' v-model='$id' value='$val' class='screen-reader-text'> $label <span class='noptin-checkmark'></span> </label>";
         }
     }
 
     echo "</div>";
 }
 add_action( 'noptin_render_editor_radio', 'noptin_render_editor_radio', 10, 2 );
+
+/**
+ * Renders a radio button group
+ */
+function noptin_render_editor_radio_button( $id, $field ){
+    $label          = empty($field['label']) ? '' : $field['label'];
+    $restrict       = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+
+    echo "<div class='noptin-radio-button-wrapper' $restrict><span>$label</span><div class='noptin-buttons'>";
+
+    if(is_array($field['options'])) {
+        foreach( $field['options'] as $val => $label ){
+            echo "<label><input type='radio' v-model='$id' value='$val' class='screen-reader-text'><span>$label</span></label>";
+        }
+    }
+
+    echo "</div></div>";
+}
+add_action( 'noptin_render_editor_radio_button', 'noptin_render_editor_radio_button', 10, 2 );
 
 /**
  * Renders a panel
