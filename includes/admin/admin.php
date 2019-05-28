@@ -107,6 +107,9 @@ class Noptin_Admin {
         // Include the rating hooks
         require_once $this->admin_path . 'ratings.php';
 
+        //Editor
+        require_once $this->admin_path . 'popups-editor.php';
+
         /**
          * Runs right after including admin files.
          *
@@ -183,7 +186,7 @@ class Noptin_Admin {
         wp_enqueue_style('select2', $this->assets_url . 'css/select2.css', array(), '4.0.7');
         wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array( 'wp-color-picker' ), '2.6.10');
         $version = filemtime( $this->assets_path . 'js/admin.js' );
-        wp_register_script('noptin', $this->assets_url . 'js/admin.js', array('select2','vue'), $version);
+        wp_register_script('noptin', $this->assets_url . 'js/admin.js', array('select2','vue'), $version, true);
 
         // Pass variables to our js file, e.g url etc
         $params = array(
@@ -348,7 +351,8 @@ class Noptin_Admin {
         }
 
         if( $popup ){
-            include $this->admin_path . 'templates/popups-editor.php';
+            $editor = new Noptin_Popup_Editor( $popup, true );
+            $editor->output();
         } else {
 
             //Fetch popups

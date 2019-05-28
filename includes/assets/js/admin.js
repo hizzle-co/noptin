@@ -1,11 +1,12 @@
 (function($) {
+
     Vue.component('noptinselect2', {
         props: ['value', 'ajax'],
         template: '<select><slot></slot></select>',
         mounted: function() {
             var vm = this
             var data = {}
-            console.log(this.ajax)
+
             if ('0' != this.ajax) {
                 data.ajax = {
                     url: noptin.api_url + vm.ajax + '/?per_page=10',
@@ -98,5 +99,64 @@
             });
         });
     });
+
+    var vm = new Vue({
+        el: '#noptin-popups-app',
+        data: noptinEditor.data,
+        computed: {
+            showingFullName: function() {
+                return this.showNameField && !this.firstLastName
+            },
+            showingSingleName: function() {
+                return this.showNameField && this.firstLastName
+            }
+        },
+        methods: {
+            previewPopup: function() {
+                this.isPreviewShowing = true
+                var _html = jQuery('.noptin-popup-wrapper').html()
+                jQuery("#noptin-popup-preview")
+                    .html(_html)
+                    .addClass('noptin-preview-showing')
+                    .find('.noptin-popup-close')
+                    .show()
+                    .on('click', function() {
+                        vm.closePopup()
+                    })
+
+                //Hide popup when user clicks outside
+                jQuery("#noptin-popup-preview")
+                    .off('noptin-popup')
+                    .on('click', function(e) {
+                        var container = jQuery(this).find(".noptin-popup-form-wrapper");
+
+                        // if the target of the click isn't the container nor a descendant of the container
+                        if (!container.is(e.target) && container.has(e.target).length === 0) {
+                            vm.closePopup()
+                        }
+                    });
+            },
+            closePopup: function() {
+                this.isPreviewShowing = false
+                jQuery("#noptin-popup-preview").removeClass('noptin-preview-showing').html('')
+            },
+            updateCustomCss: function() {
+                jQuery('#popupCustomCSS').text(this.custom_css)
+            },
+            save: function() {
+                this.saveText = 'Saving...';
+
+                jQuery.post(noptinEditor.ajaxurl, {
+                    nonce: noptinEditor.nonce,
+                    action: "noptin_save_popup",
+                    state: vm.$data,
+                })
+
+            }
+        },
+        mounted: function() {
+            jQuery('#popupCustomCSS').text(this.custom_css)
+        },
+    })
 
 })(jQuery);

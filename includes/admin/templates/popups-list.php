@@ -30,7 +30,7 @@ $link = esc_url( add_query_arg( 'action', 'new' ) );
         <table class="noptin-list-table">
             <thead>
                 <tr>
-                    <th><?php _e( 'Title', 'noptin' )?></th>
+                    <th><?php _e( 'Name', 'noptin' )?></th>
                     <th><?php _e( 'Status', 'noptin' )?></th>
                     <th><?php _e( 'Date Created', 'noptin' )?></th>
                 </tr>

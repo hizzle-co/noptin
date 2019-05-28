@@ -293,3 +293,10 @@ function noptin_get_post_types(){
     return $return;
 
 }
+
+/**
+ * Returns the form currently being edited
+ */
+function noptin_editor_popup(){
+    return Noptin::$editor_popup;
+}
