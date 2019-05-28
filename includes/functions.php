@@ -261,7 +261,6 @@ function noptin_render_editor_panel( $id, $panel ){
                 <span v-if="%1$s"  @click="%1$s=!%1$s" class="dashicons dashicons-arrow-up-alt2 noptin-popup-editor-panel-toggle"></span>
                 <span v-if="!%1$s"  @click="%1$s=!%1$s" class="dashicons dashicons-arrow-down-alt2 noptin-popup-editor-panel-toggle"></span>
                 <h2  @click="%1$s=!%1$s" class="noptin-popup-editor-panel-title">%2$s</h2>
-                <transition name="noptin-height">
                 <div class="noptin-popup-editor-panel-body" v-if="%1$s">',
             $panel_name,
             $panel['title'],
@@ -271,7 +270,7 @@ function noptin_render_editor_panel( $id, $panel ){
         foreach( $panel['children'] as $id=>$field ){
             noptin_render_editor_field( $id, $field );
         }
-        echo "</div></transition></div>";
+        echo "</div></div>";
     }
 }
 add_action( 'noptin_render_editor_panel', 'noptin_render_editor_panel', 10, 2 );
@@ -292,11 +291,4 @@ function noptin_get_post_types(){
     }
     return $return;
 
-}
-
-/**
- * Returns the form currently being edited
- */
-function noptin_editor_popup(){
-    return Noptin::$editor_popup;
 }

@@ -664,7 +664,7 @@ class Noptin_Popup_Editor {
             'showNameField'                 => false,
             'requireNameField'              => false,
             'firstLastName'                 => false,
-            'subscribeAction'               => 'close', //close, redirect
+            'subscribeAction'               => 'message', //close, redirect
             'successMessage'                => 'Thank you for subscribing to our newsletter',
             'redirectUrl'                   => '',
 

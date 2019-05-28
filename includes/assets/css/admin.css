@@ -32,7 +32,7 @@
 /* Cards */
 
 .noptin-card-panel {
-    transition: box-shadow .25s;
+    transition: all .25s;
     padding: 20px;
     margin: .5rem 0 1rem;
     border-radius: 2px;
@@ -527,7 +527,7 @@
 }
 
 .noptin-select-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 32px;
 }
 
 .noptin-popup-editor-sidebar [type="checkbox"] {
@@ -539,13 +539,13 @@
 .noptin-checkbox-wrapper,
 .noptin-switch-wrapper {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     margin-top: 10px;
 }
 
 .noptin-text-wrapper {
     margin-top: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
     display: block;
 }
 
@@ -612,14 +612,14 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-textarea-wrapper label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     margin-top: 20px;
 }
 
 .noptin-textarea-wrapper textarea {
     width: 100%;
     height: 80px;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
 }
 
 .noptin-radio-wrapper {
@@ -633,24 +633,7 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-radio-wrapper label {
     display: block;
-    margin-bottom: 10px;
-}
-
-.noptin-height-enter-active {
-    transition: all .3s ease;
-    overflow: hidden;
-}
-
-.noptin-height-leave-active {
-    transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-    overflow: hidden;
-}
-
-.noptin-height-enter,
-.noptin-height-leave-to {
-    height: 0;
-    margin: 0;
-    padding: 0;
+    margin-bottom: 32px;
 }
 
 #noptin-popup-preview {
