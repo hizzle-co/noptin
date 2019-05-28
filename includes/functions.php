@@ -196,7 +196,7 @@ function noptin_render_editor_input( $id, $field ){
             break;
 
         case 'checkbox':
-            echo "<label class='$class' $restrict><input $attrs /> <span class='noptin-label'>$label</span></label>";
+            echo "<label class='$class' $restrict><input $attrs class='screen-reader-text'/> <span class='noptin-checkmark'></span> <span class='noptin-label'>$label</span></label>";
             break;
 
         default:
