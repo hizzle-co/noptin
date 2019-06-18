@@ -60,6 +60,29 @@
         }
     })
 
+    var editorInstances = {}
+    Vue.component('noptineditor', {
+        props: ['value', 'id'],
+        template: '<textarea><slot></slot></textarea>',
+        mounted: function() {
+            var vmEditor = this
+            var el = jQuery(this.$el)
+            var editor = wp.codeEditor.initialize( el )
+            editor.codemirror.on('change', function( cm, change ){
+                vmEditor.$emit('input', cm.getValue())
+            })
+            editorInstances[this.id] = editor
+            editorInstances[this.id].codemirror.getDoc().setValue(this.value);
+        },
+        watch: {
+            value: function(value) {
+                if( editorInstances[this.id] ) {
+                    //editorInstances[this.id].codemirror.getDoc().setValue(value);
+                }
+            },
+        }
+    })
+
     Vue.component('noptincolor', {
         props: ['value'],
         template: '<input type="color" />',

@@ -596,7 +596,7 @@ class Noptin_Popup_Editor {
         return array(
 
             'custom_css'   => array(
-                'el'       => 'textarea',
+                'el'       => 'editor',
                 'label'    => 'Enter Your Custom CSS',
                 '@input'   => 'updateCustomCss()'
             ),

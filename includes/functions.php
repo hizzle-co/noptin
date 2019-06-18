@@ -167,6 +167,27 @@ function noptin_render_editor_textarea( $id, $field ){
 add_action( 'noptin_render_editor_textarea', 'noptin_render_editor_textarea', 10, 2 );
 
 /**
+ * Renders a editor in the opt-in editor sidebar
+ */
+function noptin_render_editor_editor( $id, $field ){
+
+    //If there is a restrict field, handle it
+    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+    unset( $field['restrict'] );
+    
+    //Setup label
+    $label = empty($field['label']) ? '' : $field['label'];
+    unset( $field['label'] );
+
+    //Setup attributes
+    $attrs     = noptin_array_to_attrs( $field );
+
+    //Render the html
+    echo "<div $restrict class='noptin-textarea-wrapper'><label>$label</label><noptineditor $attrs id='$id' v-model='$id'></noptineditor> </div>";
+}
+add_action( 'noptin_render_editor_editor', 'noptin_render_editor_editor', 10, 2 );
+
+/**
  * Renders an input field in the opt-in editor sidebar
  */
 function noptin_render_editor_input( $id, $field ){

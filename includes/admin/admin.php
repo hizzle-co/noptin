@@ -198,6 +198,17 @@ class Noptin_Admin {
             'nonce'   => wp_create_nonce('noptin_admin_nonce'),
         );
 
+        //Codemirror
+        wp_enqueue_code_editor(
+			array(
+                'type'       => 'css',
+                'codemirror' => array(
+                    'indentUnit' => 2,
+                    'tabSize'    => 2,
+                ),
+            ),
+		);
+
         // localize and enqueue the script with all of the variable inserted
         wp_localize_script('noptin', 'noptin', $params);
         wp_enqueue_script('noptin');
