@@ -4,12 +4,12 @@
         props: ['value', 'ajax'],
         template: '<select><slot></slot></select>',
         mounted: function() {
-            var vm = this
+            var vmSelect = this
             var data = {}
 
             if ('0' != this.ajax) {
                 data.ajax = {
-                    url: noptin.api_url + vm.ajax + '/?per_page=10',
+                    url: noptin.api_url + vmSelect.ajax + '/?per_page=10',
                     data: function(params) {
                         var query = {
                             search: params.term
@@ -40,7 +40,7 @@
                 .trigger('change')
                 // emit event on change.
                 .on('change', function() {
-                    vm.$emit('input', this.value)
+                    vmSelect.$emit('input', this.value)
                 })
         },
         watch: {
@@ -64,17 +64,17 @@
         props: ['value'],
         template: '<input type="color" />',
         mounted: function() {
-            var vm = this
+            var vmColor = this
             jQuery(this.$el)
                 .val(this.value)
                 // init iris
                 .wpColorPicker({
                     change: function(event, ui) {
-                        vm.$emit('input', ui.color.toString())
+                        vmColor.$emit('input', ui.color.toString())
                     },
 
                     clear: function(event) {
-                        vm.$emit('input', '')
+                        vmColor.$emit('input', '')
                     }
                 })
                 .val(this.value)
@@ -113,7 +113,7 @@
         },
         methods: {
             togglePanel: function(id) {
-                console.log(id)
+                
                 var noptinPanel  = $("#noptinPanel" + id).find('.noptin-popup-editor-panel-body')
 
                 var panelHeight = 0;
@@ -177,13 +177,42 @@
             updateCustomCss: function() {
                 jQuery('#popupCustomCSS').text(this.custom_css)
             },
+            showSuccess: function( msg ) {
+                this.hasSuccess = true;
+                this.Success    = msg;
+
+                setTimeout( function(){
+                    vm.hasSuccess = false;
+                    vm.Success    = '';
+                }, 5000)
+            },
+            showError: function( msg ) {
+                this.hasError = true;
+                this.Error    = msg;
+
+                setTimeout( function(){
+                    vm.hasError = false;
+                    vm.Error    = '';
+                }, 5000)
+            },
             save: function() {
-                this.saveText = 'Saving...';
+                var saveText = this.saveText
+                this.saveText = this.savingText;
+                var that = this
 
                 jQuery.post(noptinEditor.ajaxurl, {
-                    nonce: noptinEditor.nonce,
+                    _ajax_nonce: noptinEditor.nonce,
                     action: "noptin_save_popup",
                     state: vm.$data,
+                    html: jQuery('.noptin-popup-wrapper').html()
+                })
+                .done( function(){
+                    that.showSuccess( that.savingSuccess )
+                    that.saveText = saveText
+                })
+                .fail( function(){
+                    that.showError( that.savingError )
+                    that.saveText = saveText
                 })
 
             }

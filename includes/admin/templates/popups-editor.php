@@ -13,8 +13,8 @@
         <div class="noptin-popup-editor-body">
             <div class="noptin-popup-editor-main">
                 <div class="noptin-popup-editor-main-preview">
-                    <div class="noptin-popup-notice noptin-is-error" v-if="hasError">{{Error}}</div>
-                    <div class="noptin-popup-notice noptin-is-error" v-if="hasSuccess">{{Success}}</div>
+                    <div class="noptin-popup-notice noptin-is-error" v-show="hasError" v-html="Error"></div>
+                    <div class="noptin-popup-notice noptin-is-success" v-show="hasSuccess" v-html="Success"></div>
                     <div  class="noptin-popup-wrapper"  :style="custom_css">
                         <div  class="noptin-popup-form-wrapper" :style="{backgroundColor: noptinFormBg, width: formWidth, minHeight: formHeight, borderColor: noptinFormBorderColor}">
                             <form :class="singleLine ? 'noptin-popup-single-line' : 'noptin-popup-new-line'">
@@ -59,9 +59,9 @@
 
                 <?php
                     foreach ( $sidebar as $panel => $fields ) {
-                        echo " <div class='noptin-popup-editor-{$panel}-fields'  v-if=\"'{$panel}'==currentSidebarSection\">";
+                        echo " <div class='noptin-popup-editor-{$panel}-fields'  v-show=\"'{$panel}'==currentSidebarSection\">";
                         foreach( $fields as $id=>$field ){
-                            noptin_render_editor_field( $id, $field );
+                            noptin_render_editor_field( $id, $field, $panel );
                         }
                         echo "</div>";
                     }

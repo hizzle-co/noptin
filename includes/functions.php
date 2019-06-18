@@ -20,9 +20,9 @@ function noptin() {
 /**
  * Renders a single field in the opt-in editor sidebar
  */
-function noptin_render_editor_field( $id, $field ){
+function noptin_render_editor_field( $id, $field, $panel = false ){
     if(!empty($field['el'])){
-        do_action( 'noptin_render_editor_' . $field['el'], $id, $field );
+        do_action( 'noptin_render_editor_' . $field['el'], $id, $field, $panel );
     }
 }
 
@@ -221,13 +221,13 @@ add_action( 'noptin_render_editor_input', 'noptin_render_editor_input', 10, 2 );
 /**
  * Renders a select input field in the opt-in editor sidebar
  */
-function noptin_render_editor_select( $id, $field ){
+function noptin_render_editor_select( $id, $field, $panel ){
     $label          = empty($field['label']) ? '' : $field['label'];
     $restrict       = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
     $multiselect    = 'multiselect' == $field['el'] ? ' multiple="multiple" ' : '';
     $ajax           = is_string($field['options']) ? " ajax='{$field['options']}' " : 'ajax="0"';
 
-    echo "<div class='noptin-select-wrapper' $restrict>$label<noptinselect2 $ajax $multiselect v-model='$id'>";
+    echo "<div class='noptin-select-wrapper' $restrict><label>$label</label><noptinselect2 $ajax $multiselect v-model='$id'>";
 
     if(is_array($field['options'])) {
         foreach( $field['options'] as $val => $label ){
@@ -237,8 +237,8 @@ function noptin_render_editor_select( $id, $field ){
 
     echo "</noptinselect2></div>";
 }
-add_action( 'noptin_render_editor_select', 'noptin_render_editor_select', 10, 2 );
-add_action( 'noptin_render_editor_multiselect', 'noptin_render_editor_select', 10, 2 );
+add_action( 'noptin_render_editor_select', 'noptin_render_editor_select', 10, 3 );
+add_action( 'noptin_render_editor_multiselect', 'noptin_render_editor_select', 10, 3 );
 
 /**
  * Renders a radio input field in the opt-in editor sidebar

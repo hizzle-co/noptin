@@ -146,6 +146,9 @@ class Noptin_Admin {
         //Runs when downloading subscribers
         add_action('wp_ajax_noptin_download_subscribers', array($this, 'noptin_download_subscribers'));
 
+        //Runs when saving a new opt-in form
+        add_action('wp_ajax_noptin_save_popup', array($this, 'save_popup'));
+
         /**
          * Runs right after registering admin hooks.
          *
@@ -382,6 +385,56 @@ class Noptin_Admin {
          */
         do_action('noptin_after_admin_popups_page', $this);
     }
+
+    /**
+     * Downloads subscribers
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      self::$instance
+     */
+    public function save_popup() {
+
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        //Check nonce
+        check_ajax_referer( 'noptin_admin_nonce' );
+
+        /**
+         * Runs before saving a form
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_before_save_form', $this);
+
+        //Prepare the args
+        $ID        = trim( $_POST['state']['id'] );
+        $state     = $_POST['state'];
+        $postarr   = array(
+            'post_title'        => $state['optinName'],
+            'ID'                => $ID,
+            'post_content'      => $_POST['html'],
+            'post_status'       => $state['optinStatus'],
+        );
+
+        if(! wp_update_post( $postarr ) ) {
+            status_header(400);
+            die();
+        }
+
+        update_post_meta( $ID, '_noptin_state', $_POST['state'] );
+
+        /**
+         * Runs after saving a form
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_after_save_form', $this);
+
+    exit; //This is important
+}
 
 /**
  * Downloads subscribers

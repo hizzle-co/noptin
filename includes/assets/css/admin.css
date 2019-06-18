@@ -387,6 +387,15 @@
     margin-bottom: 32px;
 }
 
+.noptin-select-wrapper label{
+    display: block;
+    width: 100%;
+}
+
+.noptin-select-wrapper .select2-container {
+    width: 90% !important;
+}
+
 .noptin-popup-editor-sidebar [type="checkbox"] {
     border-radius: 4px;
     border: 1px solid #8d96a0;

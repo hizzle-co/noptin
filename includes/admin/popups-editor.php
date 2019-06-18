@@ -616,12 +616,25 @@ class Noptin_Popup_Editor {
      */
     public function get_state() {
 
-        $saved_state = get_post_meta( $this->post->ID, '_noptin_state' );
+        $saved_state = get_post_meta( $this->post->ID, '_noptin_state', true );
         if(! is_array( $saved_state ) ) {
             $saved_state = array();
         }
 
-        $state = array_merge( $this->get_panels_state(), $this->get_options_state(), $saved_state, $this->get_misc_state());
+        $_saved_state = array();
+        foreach( $saved_state as $key => $value ){
+            if( 'false' == $value ) {
+                $_saved_state[$key] = false;
+                continue;
+            }
+            if( 'true' == $value ) {
+                $_saved_state[$key] = true;
+                continue;
+            }
+            $_saved_state[$key] = $value;
+        }
+
+        $state = array_replace( $this->get_panels_state(), $this->get_options_state(), $_saved_state, $this->get_misc_state());
         return apply_filters( 'noptin_popup_editor_state', $state, $this );
     }
 
@@ -741,6 +754,8 @@ class Noptin_Popup_Editor {
             'headerTitle'                   => __( 'Editing', 'noptin'),
             'saveText'                      => __( 'Save', 'noptin'),
             'savingText'                    => __( 'Saving...', 'noptin'),
+            'savingError'                   => __( 'There was an error saving your form.', 'noptin'),
+            'savingSuccess'                 => __( 'Your changes have been saved successfuly', 'noptin'),
             'previewText'                   => __( 'Preview', 'noptin'),
             'isPreviewShowing'              => false,
             'optinName'                     => $this->post->post_title,
