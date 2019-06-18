@@ -112,6 +112,35 @@
             }
         },
         methods: {
+            togglePanel: function(id) {
+                console.log(id)
+                var noptinPanel  = $("#noptinPanel" + id).find('.noptin-popup-editor-panel-body')
+
+                var panelHeight = 0;
+
+                if(!this[id]) {
+                    var previousCss  = $(noptinPanel).attr("style");
+
+                    $(noptinPanel).css({
+                        position:   'absolute',
+                        visibility: 'hidden',
+                        display:    'block',
+                        height: 'auto'
+                    });
+
+                    var panelHeight = $(noptinPanel).height();
+
+                    $(noptinPanel).attr("style", previousCss ? previousCss : "");
+                }
+
+                var that = this
+                $( noptinPanel ).animate({
+                    height: panelHeight,
+                }, 600, function(){
+                    that[id] = !that[id]
+                });
+                
+            },
             previewPopup: function() {
                 this.isPreviewShowing = true
                 var _html = jQuery('.noptin-popup-wrapper').html()
