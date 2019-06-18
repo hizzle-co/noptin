@@ -32,7 +32,7 @@ function noptin_render_editor_field( $id, $field ){
 function noptin_get_popup_forms(){
     $args   = array(
         'numberposts'      => -1,
-        'post_type'        => 'noptin-popup',
+        'post_type'        => 'noptin-form',
         'post_status'      => array( 'draft', 'publish' )
     );
     return get_posts( $args );
@@ -51,10 +51,21 @@ function noptin_create_popup_form( $title = false ){
     //Prepare the args
     $postarr   = array(
         'post_title'       => $title ,
-        'post_type'        => 'noptin-popup',
+        'post_type'        => 'noptin-form',
     );
 
-    return wp_insert_post( $postarr, true );
+    $id = wp_insert_post( $postarr, true );
+
+    if( is_wp_error($id) ) {
+        return $id;
+    }
+
+    $postarr   = array(
+        'post_title'        => sprintf( __( 'Form #%s', 'noptin') , $id ),
+        'ID'                => $id,
+    );
+
+    return wp_update_post( $postarr, true );
 }
 
 /**

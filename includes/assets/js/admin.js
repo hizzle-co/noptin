@@ -138,6 +138,11 @@
                     height: panelHeight,
                 }, 600, function(){
                     that[id] = !that[id]
+                    if( that[id] ){
+                        $(noptinPanel).css({
+                            height: 'auto'
+                        });
+                    }        
                 });
                 
             },

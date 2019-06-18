@@ -147,8 +147,8 @@ class Noptin_Popup_Editor {
 
             //Success message after subscription
             'successMessage' => array(
-                'type'      => 'text',
-                'el'        => 'input',
+                'type'      => 'textarea',
+                'el'        => 'textarea',
                 'label'     => 'Success message',
                 'restrict'  => "subscribeAction=='message'",
             ),
@@ -204,14 +204,6 @@ class Noptin_Popup_Editor {
                 'type'      => 'checkbox',
                 'el'        => 'input',
                 'label'     => 'After the user starts scrolling',
-            ),
-
-            //Scroll percentage after which the popup should be shown
-            'scrollDepthPercentage' => array(
-                'type'      => 'text',
-                'el'        => 'input',
-                'label'     => 'Scroll percentage after which the popup should be shown',
-                'restrict'  => 'enableScrollDepth',
             ),
 
             //After the user leaves a comment
@@ -330,7 +322,7 @@ class Noptin_Popup_Editor {
             ),
             'postTypesToHide'       => array(
                 'el'                => 'multiselect',
-                'label'             => 'Select post types on which to {{postTypesToHide}} the popup',
+                'label'             => 'Select post types on which to {{postTypesRestrictType}} the popup',
                 'restrict'          => 'hideOnPostTypes',
                 'options'           => noptin_get_post_types(),
             ),
@@ -568,23 +560,30 @@ class Noptin_Popup_Editor {
     private function get_note_settings() {
         return array(
 
-            'noptin_hide_note'   => array(
-                'type'           => 'checkbox',
-                'el'             => 'input',
-                'label'          => 'Hide note',
+            'noptin_hide_note'            => array(
+                'type'                    => 'checkbox',
+                'el'                      => 'input',
+                'label'                   => 'Hide note',
             ),
 
-            'noptin_note_text'   => array(
-                'type'           => 'text',
-                'el'             => 'input',
-                'label'          => 'Note',
-                'restrict'       => '!noptin_hide_note'
+            'noptin_hide_on_note_click'   => array(
+                'type'                    => 'checkbox',
+                'el'                      => 'input',
+                'label'                   => 'Close popup when user clicks on note?',
+                'restrict'                => '!noptin_hide_note'
             ),
-            'noptin_note_color'  => array(
-                'type'           => 'color',
-                'el'             => 'input',
-                'label'          => 'Note Color',
-                'restrict'       => '!noptin_hide_note'
+
+            'noptin_note_text'            => array(
+                'type'                    => 'text',
+                'el'                      => 'input',
+                'label'                   => 'Note',
+                'restrict'                => '!noptin_hide_note'
+            ),
+            'noptin_note_color'           => array(
+                'type'                    => 'color',
+                'el'                      => 'input',
+                'label'                   => 'Note Color',
+                'restrict'                => '!noptin_hide_note'
             ),
             
         );
@@ -691,6 +690,7 @@ class Noptin_Popup_Editor {
             'noptin_hide_note'              => true,
             'noptin_note_text'              => 'Your privacy is our priority',
             'noptin_note_color'             => '#d8d8d8',
+            'noptin_hide_on_note_click'     => false,
 
             //Trigger Options
             'enableTimeDelay'               => false,
