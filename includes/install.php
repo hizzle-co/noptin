@@ -18,7 +18,7 @@ class Noptin_Install {
 	 */
 	public function __construct( $upgrade_from ) {
 
-        //Abort if this is MU and the blog is not installed
+        //Abort if this is MS and the blog is not installed
 		if ( ! is_blog_installed() ) {
 			return;
 		}

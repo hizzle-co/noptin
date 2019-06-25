@@ -200,6 +200,20 @@
             updateCustomCss: function() {
                 jQuery('#popupCustomCSS').text(this.custom_css)
             },
+            changeFormType: function() {
+
+                //Sidebar
+                if( this.optinType == 'sidebar' ) {
+                    this.formHeight = '400px'
+                    this.formWidth  = '260px'
+                    this.singleLine = false
+                    return
+                }
+
+                this.formHeight = '250px'
+                this.formWidth  = '520px'
+
+            },
             showSuccess: function( msg ) {
                 this.hasSuccess = true;
                 this.Success    = msg;
@@ -225,7 +239,7 @@
 
                 jQuery.post(noptinEditor.ajaxurl, {
                     _ajax_nonce: noptinEditor.nonce,
-                    action: "noptin_save_popup",
+                    action: "noptin_save_optin_form",
                     state: vm.$data,
                     html: jQuery('.noptin-popup-wrapper').html()
                 })

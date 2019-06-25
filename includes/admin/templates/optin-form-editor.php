@@ -5,7 +5,7 @@
         <div class="noptin-popup-editor-header" tabindex="-1">
             <div class="noptin-popup-editor-title">{{headerTitle}} &mdash; {{optinName}}</div>
             <div class="noptin-popup-editor-toolbar">
-                <button @click="previewPopup()" type="button" class="button button-secondary noptin-popup-editor-header-button">{{previewText}}</button>
+                <button v-if="optinType == 'popup'" @click="previewPopup()" type="button" class="button button-secondary noptin-popup-editor-header-button">{{previewText}}</button>
                 <button @click="save()" type="button" class="button button-primary noptin-popup-editor-header-button">{{saveText}}</button>
             </div>
         </div>

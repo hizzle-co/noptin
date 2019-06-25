@@ -561,7 +561,7 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-radio-button-wrapper .noptin-buttons {
     display: flex;
-    padding-top: 20px;
+    padding-top: 10px;
     margin-bottom: 32px;
 }
 

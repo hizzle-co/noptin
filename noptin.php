@@ -11,7 +11,7 @@
  * Description:     Easily add a newsletter optin box in any post, page or custom post type
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.0.4
+ * Version:         1.0.5
  * Text Domain:     noptin
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -34,212 +34,261 @@ if( !defined( 'ABSPATH' ) ) {
      * @since       1.0.0
      */
 
-        class Noptin{
+    class Noptin{
 
-            /**
-             * @var       Plugin version
-             * @since       1.0.0
-             */
-            public $version = '1.0.4';
+    /**
+     * @var       Plugin version
+     * @since       1.0.0
+     */
+    public $version = '1.0.5';
 
-            /**
-             * @var       Plugin db version
-             * @since       1.0.0
-             */
-            public $db_version = 1;
+    /**
+     * @var       Plugin db version
+     * @since       1.0.0
+     */
+    public $db_version = 1;
 
-            /**
-             * @access      private
-             * @var        obj $instance The one true noptin
-             * @since       1.0.0
-             */
-            private static $instance = null;
+    /**
+     * @access      private
+     * @var        obj $instance The one true noptin
+     * @since       1.0.0
+     */
+    private static $instance = null;
 
-            /**
-			 * Local path to this plugins root directory
-             * @access      public
-             * @since       1.0.0
-             */
-            public $plugin_path = null;
+    /**
+	 * Local path to this plugins root directory
+     * @access      public
+     * @since       1.0.0
+     */
+    public $plugin_path = null;
 			
-			/**
-			 * Web path to this plugins root directory
-             * @access      public
-             * @since       1.0.0
-             */
-            public $plugin_url = null;
+	/**
+	 * Web path to this plugins root directory
+     * @access      public
+     * @since       1.0.0
+     */
+    public $plugin_url = null;
 
-            /**
-             * Get active instance
-             *
-             * @access      public
-             * @since       1.0.0
-             * @return      self::$instance The one true Noptin
-             */
-            public static function instance() {
+    /**
+     * Get active instance
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      self::$instance The one true Noptin
+     */
+    public static function instance() {
 				
-                if ( is_null( self::$instance ) )
-                    self::$instance = new self();									
+        if ( is_null( self::$instance ) )
+    	    self::$instance = new self();									
+		
+        return self::$instance;
+    }
+
+    /**
+	 * Class Constructor.
+	 */
+	public function __construct() {
+
+      	//Init the plugin after WP inits
+        add_action( 'init', array( $this, 'init'), 5 );       
 				
-                return self::$instance;
-            }
+    }
 
-            /**
-			 * Class Constructor.
-			 */
-			public function __construct() {
+    /**
+     * Init the plugin
+     *
+     * @access      public
+     * @since       1.0.5
+     * @return      void
+     */
+    public function init() {
+	
+		/**
+		 * Fires after WordPress inits but before Noptin inits
+		 *
+		 * @since 1.0.0
+		 *
+		 */
+    	do_action('before_noptin_init');
 
-                //Init the plugin after WP inits
-                add_action( 'init', array( $this, 'init'), 5 );       
-				
-            }
+        //Set global variables
+		$this->plugin_path = plugin_dir_path( __FILE__ );
+        $this->plugin_url  = plugins_url( '/', __FILE__ );
 
-            /**
-             * Init the plugin
-             *
-             * @access      public
-             * @since       1.0.5
-             * @return      void
-             */
-            public function init() {
+        //Ensure the db is up to date
+        $this->maybe_upgrade_db();
+
+        // Include core files
+        $this->includes();
+
+        //Register post types
+        $this->register_post_types();
+
+        //Init the admin
+        $this->admin  = Noptin_Admin::instance();
+
+        //Register blocks
+        $this->register_blocks();
+
+        //Load css and js
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
+		
+		/**
+		 * Fires after Noptin inits
+		 *
+		 * @since 1.0.0
+		 *
+		 */
+        do_action('noptin_init');
+    }
+
+    /**
+     * Include necessary files
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      void
+     */
+    private function includes() {
 												
-                do_action('before_noptin_init');
+		// The main admin class
+    	require_once $this->plugin_path . 'includes/admin/admin.php';
 
-                //Set global variables
-				$this->plugin_path = plugin_dir_path( __FILE__ );
-                $this->plugin_url  = plugins_url( '/', __FILE__ );
+    	//plugin functions
+        require_once $this->plugin_path . 'includes/functions.php';
+        require_once $this->plugin_path . 'includes/render-functions.php';
 
-                //Ensure the db is up to date
-                $this->maybe_upgrade_db();
+    	//Ajax handlers
+    	require_once $this->plugin_path . 'includes/ajax.php';
+		
+		/**
+		 * Fires after all plugin files and dependancies have been loaded
+		 *
+		 * @since 1.0.0
+		 *
+		*/
+    	do_action('noptin_files_loaded');
+    }
 
-                // Include core files
-                $this->includes();
+    /**
+     * Registers front end scripts
+     *
+     * @access      public
+     * @since       1.0.5
+     * @return      void
+     */
+    public function register_scripts() {
 
-                //Register post types
-                $this->register_post_types();
+		//The JS used to render the block in the editor backend
+        wp_register_script(
+            'noptin_blocks',
+            $this->plugin_url . 'includes/assets/js/blocks.js',
+            array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'underscore' ),
+            filemtime( $this->plugin_path . 'includes/assets/js/blocks.js' )
+        );
 
-                //Init the admin
-                $this->admin  = Noptin_Admin::instance();
+		//The css used to style the block in the editor backend
+        wp_register_style(
+            'noptin_blocks',
+            $this->plugin_url . 'includes/assets/css/blocks.css',
+            array(),
+            filemtime( $this->plugin_path . 'includes/assets/css/blocks.css' )
+        );
 
-                //Register blocks
-                $this->register_blocks();
+		//The JS used on the frontend
+        wp_register_script(
+            'noptin_front',
+            $this->plugin_url . 'includes/assets/js/frontend.js',
+            array( 'jquery' ),
+            filemtime( $this->plugin_path . 'includes/assets/js/frontend.js' ),
+            true
+        );
 
-                //Load css and js
-                add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
-                
-                do_action('noptin_init');
-            }
+        $params = array(
+            'ajaxurl'               => admin_url( 'admin-ajax.php' ),
+            'noptin_subscribe'		=> wp_create_nonce('noptin-subscribe-nonce'),
+        );
+        wp_localize_script( 'noptin_front', 'noptin', $params );
 
-            /**
-             * Include necessary files
-             *
-             * @access      public
-             * @since       1.0.0
-             * @return      void
-             */
-            private function includes() {
-												
-				// Admin page
-                require_once $this->plugin_path . 'includes/admin/admin.php';
+		//The css used to style the frontend
+        wp_register_style(
+            'noptin_front',
+            $this->plugin_url . 'includes/assets/css/frontend.css',
+            array(),
+            filemtime( $this->plugin_path . 'includes/assets/css/frontend.css' )
+        );
+    }
 
-                //Functions
-                require_once $this->plugin_path . 'includes/functions.php';
+    /**
+     * Registers front end scripts
+     *
+     * @access      public
+     * @since       1.0.2
+     * @return      void
+     */
+    public function enqueue_scripts() {
 
-                //Ajax
-                require_once $this->plugin_path . 'includes/ajax.php';
-                
-                do_action('noptin_after_includes');
-            }
+		//Register the assets...
+		$this->register_scripts();
 
-            /**
-             * Registers front end scripts
-             *
-             * @access      public
-             * @since       1.0.2
-             * @return      void
-             */
-            public function enqueue_scripts() {
-                wp_enqueue_script( 'noptin_front' );
-            }
+		//... then enqueue them
+		wp_enqueue_script( 'noptin_front' );
+		wp_enqueue_style( 'noptin_front' );
+    }
 
-            /**
-             * Registers the optin block
-             *
-             * @access      public
-             * @since       1.0.0
-             * @return      void
-             */
-            public function register_blocks() {
+    /**
+     * Registers the optin block
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      void
+     */
+    public function register_blocks() {
 												              
-                if ( ! function_exists( 'register_block_type' ) ) {
-                    // Gutenberg is not active.
-                    return;
-                }
+        if ( ! function_exists( 'register_block_type' ) ) {
+            // Gutenberg is not active.
+            return;
+        }
 
-                do_action('noptin_before_register_blocks');
+        /**
+		 * Fires before editor blocks are registered
+		 *
+		 * @since 1.0.0
+		 *
+		*/
+        do_action('noptin_before_register_blocks');
 
-                wp_register_script(
-                    'noptin_admin',
-                    $this->plugin_url . 'includes/assets/js/blocks.js',
-                    array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'underscore' ),
-                    filemtime( $this->plugin_path . 'includes/assets/js/blocks.js' )
-                );
+        //Register  js scripts and css styles
+        $this->register_scripts();
+        
+        //Register the blocks
+        register_block_type( 'noptin/email-optin', array(
+            'style'          => 'noptin_front',
+            'editor_script'  => 'noptin_blocks',
+            'script'         => 'noptin_front',
+            'editor_style'   => 'noptin_blocks',
+        ) );
+    }
 
-                wp_register_style(
-                    'noptin_admin',
-                    $this->plugin_url . 'includes/assets/css/blocks.css',
-                    array(),
-                    filemtime( $this->plugin_path . 'includes/assets/css/blocks.css' )
-                );
+    /**
+	 * Runs installation
+	 *
+	 * @since 1.0.5
+	 * @access public
+	 *
+	 */
+	public function maybe_upgrade_db() {
 
-                wp_register_script(
-                    'noptin_front',
-                    $this->plugin_url . 'includes/assets/js/frontend.js',
-                    array( 'jquery' ),
-                    filemtime( $this->plugin_path . 'includes/assets/js/frontend.js' ),
-                    true
-                );
+        $installed_version = absint( get_option( 'noptin_db_version', 0 ));
 
-                $params = array(
-                    'ajaxurl'               => admin_url( 'admin-ajax.php' ),
-                    'noptin_subscribe'		=> wp_create_nonce('noptin-subscribe-nonce'),
-                );
-                wp_localize_script( 'noptin_front', 'noptin', $params );
+        //Upgrade db if installed version of noptin is lower than current version
+        if( $installed_version < $this->db_version ){
+            require $this->plugin_path . 'includes/install.php';
+            new Noptin_Install( $installed_version );
+            update_option( 'noptin_db_version', $this->db_version );
+        }
 
-                wp_register_style(
-                    'noptin_front',
-                    $this->plugin_url . 'includes/assets/css/frontend.css',
-                    array(),
-                    filemtime( $this->plugin_path . 'includes/assets/css/frontend.css' )
-                );
-            
-                register_block_type( 'noptin/email-optin', array(
-                    //'style'          => 'noptin_front',
-                    'editor_script'  => 'noptin_admin',
-                    'script'         => 'noptin_front',
-                    //'editor_style'   => 'noptin_admin',
-                ) );
-            }
-
-            /**
-	         * Runs installation
-	         *
-	         * @since 1.0.5
-	         * @access public
-	         *
-	         */
-	        public function maybe_upgrade_db() {
-
-                $installed_version = absint( get_option( 'noptin_db_version', 0 ));
-
-                //Upgrade db if installed version of Ralas is lower than current version
-                if( $installed_version < $this->db_version ){
-                    require $this->plugin_path . 'includes/install.php';
-                    new Noptin_Install( $installed_version );
-                    update_option( 'noptin_db_version', $this->db_version );
-                }
-
-            }
+    }
             
             
 	/**
@@ -248,7 +297,7 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function register_post_types() {
 
-		if ( ! is_blog_installed() || post_type_exists(  'noptin-popup' ) ) {
+		if ( ! is_blog_installed() || post_type_exists(  'noptin-form' ) ) {
 			return;
 		}
 
@@ -260,8 +309,8 @@ if( !defined( 'ABSPATH' ) ) {
 		*/
 		do_action( 'noptin_register_post_type' );
 
-		//popups
-		register_post_type( 'noptin-popup'	, noptin_get_popup_post_type_details() );
+		//Optin forms
+		register_post_type( 'noptin-form'	, noptin_get_optin_form_post_type_details() );
 
 		/**
 		 * Fires after custom post types are registered
@@ -272,7 +321,7 @@ if( !defined( 'ABSPATH' ) ) {
 		do_action( 'noptin_after_register_post_type' );
 
 	}
-        }
+}
 
 //Kickstart everything
 Noptin::instance();

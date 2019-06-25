@@ -1,8 +1,8 @@
 <?php
 /**
- * Popup Editor
+ * Optin Form Editor
  *
- * Responsible for editing the popup forms
+ * Responsible for editing the optin forms
  *
  * @since             1.0.0
  *
@@ -13,17 +13,17 @@ if (!defined('ABSPATH')) {
     die;
 }
 
-class Noptin_Popup_Editor {
+class Noptin_Form_Editor {
 
     /**
-     * Id of the popup being edited
+     * Id of the form being edited
      * @access      public
      * @since       1.0.0
      */
     public $id = null;
 
     /**
-     * Post object of the popup being edited
+     * Post object of the form being edited
      * @access      public
      * @since       1.0.0
      */
@@ -59,7 +59,7 @@ class Noptin_Popup_Editor {
      */
     public function output() {
         $sidebar = $this->sidebar_fields();
-        require plugin_dir_path(__FILE__) . 'templates/popups-editor.php';
+        require plugin_dir_path(__FILE__) . 'templates/optin-form-editor.php';
     }
 
     /**
@@ -70,7 +70,7 @@ class Noptin_Popup_Editor {
             'settings' => $this->get_setting_fields(),
             'design'   => $this->get_design_fields(),
         );
-        return apply_filters( 'noptin_popup_sidebar_section', $fields, $this );
+        return apply_filters( 'noptin_optin_form_editor_sidebar_section', $fields, $this );
     }
 
     /**
@@ -82,7 +82,7 @@ class Noptin_Popup_Editor {
             //Settings field title
             'section_title' => array(
                 'el'        => 'paragraph',
-                'content'   => "Use this panel to configure your popup form settings",
+                'content'   => "Use this panel to configure your optin form settings",
             ),
 
             //Basic settings
@@ -98,6 +98,7 @@ class Noptin_Popup_Editor {
                 'el'        => 'panel',
                 'title'     => 'Trigger Options',
                 'id'        => 'triggerSettings',
+                'restrict'  => "optinType=='popup'",
                 'children'  => $this->get_trigger_settings()
             ),
 
@@ -121,17 +122,37 @@ class Noptin_Popup_Editor {
             //Title
             'optinName' => array(
                 'el'        => 'input',
-                'label'     => 'Popup Name',
+                'label'     => 'Form Name',
             ),
 
-            //Should we display the popup on the frontpage?
+            //Should we display the form on the frontpage?
             'optinStatus'   => array(
-                'el'        => 'select',
-                'label'     => 'Popup Status',
+                'el'        => 'radio_button',
+                'label'     => 'Form Status',
                 'options'   => array(
                     'publish'   => 'Active',
                     'draft'     => 'Inactive',
                 ),
+            ),
+
+            //Form type
+            'optinType'     => array(
+                'el'        => 'radio_button',
+                'label'     => 'Form Type',
+                '@change'    => 'changeFormType()',
+                'options'   => array(
+                    'popup'      => 'Popup',
+                    'inpost'     => 'InPost',
+                    'sidebar'    => 'Sidebar',
+                    //'flyin'      => 'Fly In Form',
+                    //'bar'        => 'Notification bar',
+                ),
+            ),
+
+            'inpost-info-text'     => array(
+                'el'        => 'paragraph',
+                'restrict'  => "optinType=='inpost'",
+                'content'   => 'Shortcode <strong>[noptin-form id={{id}}]</strong>',
             ),
 
             //What should happen after someone subscibes?
@@ -141,7 +162,7 @@ class Noptin_Popup_Editor {
                 'options'   => array(
                     'message'   => 'Display a success message',
                     'redirect'  => 'redirect to a different page',
-                    'close'     => 'Close the popup form',
+                    'close'     => 'Close the opt-in form',
                 ),
             ),
 
@@ -255,6 +276,7 @@ class Noptin_Popup_Editor {
             'hideOnArchives'        => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
+                'restrict'          => "optinType!='inpost'",
                 'label'             => 'Hide on archive pages',
             ),
 
@@ -408,6 +430,7 @@ class Noptin_Popup_Editor {
             'hideCloseButton' => array(
                 'type'      => 'checkbox',
                 'el'        => 'input',
+                'restrict'  => "optinType=='popup'",
                 'label'     => 'Hide Close Button',
             ),
 
@@ -415,17 +438,6 @@ class Noptin_Popup_Editor {
                 'type'      => 'checkbox',
                 'el'        => 'input',
                 'label'     => 'Show all fields in a single line',
-            ),
-
-            'buttonPosition'=> array(
-                'el'        => 'select',
-                'options'       => array(
-                    'block'     => 'Full Width',
-                    'left'      => 'Left',
-                    'right'     => 'Right'
-                ),
-                'label'     => 'Button Position',
-                'restrict'  => '!singleLine',
             ),
 
             'showNameField' => array(
@@ -483,6 +495,17 @@ class Noptin_Popup_Editor {
                 'type'              => 'text',
                 'el'                => 'input',
                 'label'             => 'Button Label',
+            ),
+
+            'buttonPosition'=> array(
+                'el'        => 'radio_button',
+                'options'       => array(
+                    'block'     => 'Block',
+                    'left'      => 'Left',
+                    'right'     => 'Right'
+                ),
+                'label'     => 'Button Position',
+                'restrict'  => '!singleLine',
             ),
 
             'noptinButtonBg'        => array(
@@ -570,7 +593,7 @@ class Noptin_Popup_Editor {
                 'type'                    => 'checkbox',
                 'el'                      => 'input',
                 'label'                   => 'Close popup when user clicks on note?',
-                'restrict'                => '!noptin_hide_note'
+                'restrict'                => "!noptin_hide_note && optinType=='popup'",
             ),
 
             'noptin_note_text'            => array(
@@ -635,7 +658,7 @@ class Noptin_Popup_Editor {
         }
 
         $state = array_replace( $this->get_panels_state(), $this->get_options_state(), $_saved_state, $this->get_misc_state());
-        return apply_filters( 'noptin_popup_editor_state', $state, $this );
+        return apply_filters( 'noptin_optin_form_editor_state', $state, $this );
     }
 
 
@@ -668,6 +691,7 @@ class Noptin_Popup_Editor {
             'hideCloseButton'               => false,
             'optinName'                     => 'Sample Name',
             'optinStatus'                   => 'draft',
+            'optinType'                     => 'popup',
             'singleLine'                    => true,
             'buttonPosition'                => 'block',
             'showNameField'                 => false,

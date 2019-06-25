@@ -108,7 +108,7 @@ class Noptin_Admin {
         require_once $this->admin_path . 'ratings.php';
 
         //Editor
-        require_once $this->admin_path . 'popups-editor.php';
+        require_once $this->admin_path . 'forms-editor.php';
 
         /**
          * Runs right after including admin files.
@@ -147,7 +147,7 @@ class Noptin_Admin {
         add_action('wp_ajax_noptin_download_subscribers', array($this, 'noptin_download_subscribers'));
 
         //Runs when saving a new opt-in form
-        add_action('wp_ajax_noptin_save_popup', array($this, 'save_popup'));
+        add_action('wp_ajax_noptin_save_optin_form', array($this, 'save_optin_form'));
 
         /**
          * Runs right after registering admin hooks.
@@ -233,14 +233,14 @@ class Noptin_Admin {
             'dashicons-forms',
             67);
 
-        //Add the popups page
+        //Add the optin forms page
         add_submenu_page(
             'noptin',
-            esc_html__('Popup opt-in forms', 'noptin'),
-            esc_html__('Popups', 'noptin'),
+            esc_html__('Newsletter opt-in forms', 'noptin'),
+            esc_html__('Newsletter Forms', 'noptin'),
             'manage_options',
-            'noptin-pop-ups',
-            array($this, 'render_popups_page')
+            'noptin-forms',
+            array($this, 'render_forms_page')
         );
 
         //Add the subscribers page
@@ -327,61 +327,61 @@ class Noptin_Admin {
     }
 
     /**
-     * Renders popups page
+     * Renders forms page
      *
      * @access      public
      * @since       1.0.4
      * @return      self::$instance
      */
-    public function render_popups_page() {
+    public function render_forms_page() {
 
         if (!current_user_can('manage_options')) {
             return;
         }
 
         /**
-         * Runs before displaying the popups page.
+         * Runs before displaying the forms page.
          *
          * @param array $this The admin instance
          */
-        do_action('noptin_before_admin_popups_page', $this);
+        do_action('noptin_before_admin_forms_page', $this);
 
-        //The popup form currently being edited
-        $popup = false;
+        //The optin form currently being edited
+        $form = false;
 
-        //Is the user creating a new popup form?
+        //Is the user creating a new optin form?
         if( isset( $_GET['action'] ) && 'new' == $_GET['action'] ){
-            $popup   = noptin_create_popup_form();
+            $form   = noptin_create_optin_form();
         }
 
-        //Is the user trying to edit a new popup?
-        if( isset( $_GET['popup_id'] ) ){
-            $popup   = absint( $_GET['popup_id'] );
+        //Is the user trying to edit a new optin form?
+        if( isset( $_GET['form_id'] ) ){
+            $form   = absint( $_GET['form_id'] );
         }
 
-        //Is the user deleting a popup form?
+        //Is the user deleting an optin form?
         if( isset( $_GET['action'] ) && 'delete' == $_GET['action'] ){
-            noptin_delete_popup_form( $_GET['delete'] );
+            noptin_delete_optin_form( $_GET['delete'] );
         }
 
-        if( $popup ){
-            $editor = new Noptin_Popup_Editor( $popup, true );
+        if( $form ){
+            $editor = new Noptin_Form_Editor( $form, true );
             $editor->output();
         } else {
 
-            //Fetch popups
-            $popups = noptin_get_popup_forms();
+            //Fetch forms
+            $forms = noptin_get_optin_forms();
 
-            //No popups?
-            if(! $popups ){
+            //No forms?
+            if(! $forms ){
 
                 //Ask the user to add some
-                include $this->admin_path . 'templates/popups-empty.php';
+                include $this->admin_path . 'templates/forms-empty.php';
 
             } else {
 
                 //Show them to the user
-                include $this->admin_path . 'templates/popups-list.php';
+                include $this->admin_path . 'templates/forms-list.php';
 
             }
 
@@ -390,11 +390,11 @@ class Noptin_Admin {
         
 
         /**
-         * Runs after displaying the popups page.
+         * Runs after displaying the forms page.
          *
          * @param array $this The admin instance
          */
-        do_action('noptin_after_admin_popups_page', $this);
+        do_action('noptin_after_admin_forms_page', $this);
     }
 
     /**
@@ -404,7 +404,7 @@ class Noptin_Admin {
      * @since       1.0.0
      * @return      self::$instance
      */
-    public function save_popup() {
+    public function save_optin_form() {
 
         if (!current_user_can('manage_options')) {
             return;
