@@ -447,12 +447,6 @@ class Noptin_Form_Editor {
     private function get_form_settings() {
         return array(
 
-            'removeBranding' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Remove Branding',
-            ),
-
             'hideCloseButton' => array(
                 'type'      => 'checkbox',
                 'el'        => 'input',
@@ -495,6 +489,12 @@ class Noptin_Form_Editor {
                 'el'        => 'input',
                 'label'     => 'Require the user to fill out the name field',
                 'restrict'  => 'showNameField',
+            ),
+
+            'formRadius'     => array(
+                'type'       => 'text',
+                'el'         => 'input',
+                'label'      => 'Border Radius',
             ),
 
             'formWidth'             => array(
@@ -725,7 +725,7 @@ class Noptin_Form_Editor {
         return array(
             
             //Opt in options
-            'removeBranding'                => false,
+            'formRadius'                    => '0px',
             'hideCloseButton'               => false,
             'closeButtonPos'                => 'inside',
             'optinName'                     => 'Sample Name',
@@ -801,7 +801,7 @@ class Noptin_Form_Editor {
             'hideOnArchives'                => false,
 
             //custom css                    
-            'custom_css'                    => '',
+            'custom_css'                    => ' /*Custom css*/ ',
         
         );
     }

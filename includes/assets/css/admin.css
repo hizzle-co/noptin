@@ -558,6 +558,10 @@ input:focus+.noptin-switch-slider span {
     user-select: none;
 }
 
+.noptin-color-wrapper {
+    display: flex;
+}
+
 .noptin-radio-button-wrapper .noptin-buttons {
     display: flex;
     padding-top: 10px;

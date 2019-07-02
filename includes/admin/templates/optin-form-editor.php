@@ -16,12 +16,12 @@
                     <div class="noptin-popup-notice noptin-is-error" v-show="hasError" v-html="Error"></div>
                     <div class="noptin-popup-notice noptin-is-success" v-show="hasSuccess" v-html="Success"></div>
                     <div  class="noptin-popup-wrapper"  :style="custom_css">
-                        <div  class="noptin-popup-form-wrapper" :style="{backgroundColor: noptinFormBg, width: formWidth, minHeight: formHeight, borderColor: noptinFormBorderColor}">
+                        <div  class="noptin-popup-form-wrapper" :style="{borderRadius: formRadius, backgroundColor: noptinFormBg, width: formWidth, minHeight: formHeight, borderColor: noptinFormBorderColor}">
                             <form :class="singleLine ? 'noptin-popup-single-line' : 'noptin-popup-new-line'">
                                 <div v-if="!noptin_hide_title" :style="{color:noptin_title_color}" class="noptin-popup-form-heading" v-html="noptin_title_text"></div>
                                 <div v-if="!noptin_hide_description"  :style="{color:noptin_description_color}" class="noptin-popup-form-description" v-html="noptin_description_text"></div>
                                 <div class="noptin-popup-fields" :style="{display: singleLine? 'flex' : 'block'}">
-                                    <input v-if="showingFullName" type="text" class="noptin-popup-field" placeholder="Full Names" :required="requireNameField" />
+                                    <input v-if="showingFullName" type="text" class="noptin-popup-field" placeholder="Name" :required="requireNameField" />
                                     <input v-if="showingSingleName" type="text" class="noptin-popup-field" placeholder="First Name" :required="requireNameField" />
                                     <input v-if="showingSingleName" type="text" class="noptin-popup-field" placeholder="Last Name" :required="requireNameField" />
                                     <input type="email" class="noptin-popup-field" placeholder="Email Address" required />
