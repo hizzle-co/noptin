@@ -565,24 +565,24 @@ class Noptin_Form_Editor {
     private function get_title_settings() {
         return array(
 
-            'noptin_hide_title'     => array(
+            'hideTitle'             => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
                 'label'             => 'Hide title',
             ),
 
-            'noptin_title_text'     => array(
+            'title'                 => array(
                 'type'              => 'text',
                 'el'                => 'input',
                 'label'             => 'Title',
-                'restrict'          => '!noptin_hide_title'
+                'restrict'          => '!hideTitle'
             ),
 
-            'noptin_title_color'    => array(
+            'titleColor'            => array(
                 'type'              => 'color',
                 'el'                => 'input',
                 'label'             => 'Title Color',
-                'restrict'          => '!noptin_hide_title'
+                'restrict'          => '!hideTitle'
             ),
         );
     }
@@ -593,22 +593,22 @@ class Noptin_Form_Editor {
     private function get_description_settings() {
         return array(
 
-            'noptin_hide_description'   => array(
+            'hideDescription'           => array(
                 'type'                  => 'checkbox',
                 'el'                    => 'input',
                 'label'                 => 'Hide description',
             ),
 
-            'noptin_description_text'   => array(
+            'description'               => array(
                 'el'                    => 'textarea',
                 'label'                 => 'Description',
-                'restrict'              => '!noptin_hide_description'
+                'restrict'              => '!hideDescription'
             ),
-            'noptin_description_color'  => array(
+            'descriptionColor'          => array(
                 'type'                  => 'color',
                 'el'                    => 'input',
                 'label'                 => 'Description Color',
-                'restrict'              => '!noptin_hide_description'
+                'restrict'              => '!hideDescription'
             ),
             
         );
@@ -620,30 +620,30 @@ class Noptin_Form_Editor {
     private function get_note_settings() {
         return array(
 
-            'noptin_hide_note'            => array(
+            'hideNote'                    => array(
                 'type'                    => 'checkbox',
                 'el'                      => 'input',
                 'label'                   => 'Hide note',
             ),
 
-            'noptin_hide_on_note_click'   => array(
+            'hideOnNoteClick'             => array(
                 'type'                    => 'checkbox',
                 'el'                      => 'input',
                 'label'                   => 'Close popup when user clicks on note?',
-                'restrict'                => "!noptin_hide_note && optinType=='popup'",
+                'restrict'                => "!hideNote && optinType=='popup'",
             ),
 
-            'noptin_note_text'            => array(
+            'note'                        => array(
                 'type'                    => 'text',
                 'el'                      => 'input',
                 'label'                   => 'Note',
-                'restrict'                => '!noptin_hide_note'
+                'restrict'                => '!hideNote'
             ),
-            'noptin_note_color'           => array(
+            'noteColor'                   => array(
                 'type'                    => 'color',
                 'el'                      => 'input',
                 'label'                   => 'Note Color',
-                'restrict'                => '!noptin_hide_note'
+                'restrict'                => '!hideNote'
             ),
             
         );
@@ -655,7 +655,7 @@ class Noptin_Form_Editor {
     private function get_custom_css_settings() {
         return array(
 
-            'custom_css'   => array(
+            'CSS'          => array(
                 'el'       => 'editor',
                 'label'    => 'Enter Your Custom CSS',
                 '@input'   => 'updateCustomCss()'
@@ -754,20 +754,20 @@ class Noptin_Form_Editor {
             'noptinButtonLabel'             => 'SUBSCRIBE',
 
             //Title design
-            'noptin_hide_title'             => false,
-            'noptin_title_text'             => 'Subscribe To Our Newsletter',
-            'noptin_title_color'            => '#fafafa',
+            'hideTitle'                     => false,
+            'title'                         => 'Subscribe To Our Newsletter',
+            'titleColor'                    => '#fafafa',
 
             //Description design
-            'noptin_hide_description'       => false,
-            'noptin_description_text'       => 'Join our mailing list to receive the latest news and updates from our team.',
-            'noptin_description_color'      => '#fafafa',
+            'hideDescription'               => false,
+            'description'                   => 'Join our mailing list to receive the latest news and updates from our team.',
+            'descriptionColor'              => '#fafafa',
 
             //Note design
-            'noptin_hide_note'              => true,
-            'noptin_note_text'              => 'Your privacy is our priority',
-            'noptin_note_color'             => '#d8d8d8',
-            'noptin_hide_on_note_click'     => false,
+            'hideNote'                      => true,
+            'note'                          => 'Your privacy is our priority',
+            'noteColor'                     => '#d8d8d8',
+            'hideOnNoteClick'               => false,
 
             //Trigger Options
             'enableTimeDelay'               => false,
@@ -801,7 +801,7 @@ class Noptin_Form_Editor {
             'hideOnArchives'                => false,
 
             //custom css                    
-            'custom_css'                    => ' /*Custom css*/ ',
+            'CSS'                           => ' /*Custom css*/ ',
         
         );
     }
@@ -825,7 +825,8 @@ class Noptin_Form_Editor {
             'optinName'                     => $this->post->post_title,
             'optinStatus'                   => $this->post->post_status,
             'id'                            => $this->post->ID,
-            'colorThemeField'               => '',
+            'colorTheme'                    => '',
+            'Template'                      => '',
         );
     }
 }

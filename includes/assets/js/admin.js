@@ -220,9 +220,9 @@
                 this.noptinFormBorderColor = colors[2]
                 this.noptinButtonColor = colors[0]
                 this.noptinButtonBg  = colors[1]
-                this.noptin_title_color  = colors[1]
-                this.noptin_description_color  = colors[1]
-                this.noptin_note_color  = colors[1]
+                this.titleColor  = colors[1]
+                this.descriptionColor  = colors[1]
+                this.noteColor  = colors[1]
             },
             showSuccess: function( msg ) {
                 this.hasSuccess = true;
@@ -265,7 +265,7 @@
             }
         },
         mounted: function() {
-            jQuery('#popupCustomCSS').text(this.custom_css)
+            jQuery('#popupCustomCSS').text(this.CSS)
         },
     })
 

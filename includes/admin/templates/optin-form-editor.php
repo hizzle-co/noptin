@@ -15,20 +15,19 @@
                 <div class="noptin-popup-editor-main-preview">
                     <div class="noptin-popup-notice noptin-is-error" v-show="hasError" v-html="Error"></div>
                     <div class="noptin-popup-notice noptin-is-success" v-show="hasSuccess" v-html="Success"></div>
-                    <div  class="noptin-popup-wrapper"  :style="custom_css">
+                    <div  class="noptin-popup-wrapper">
                         <div  class="noptin-popup-form-wrapper" :style="{borderRadius: formRadius, backgroundColor: noptinFormBg, width: formWidth, minHeight: formHeight, borderColor: noptinFormBorderColor}">
                             <form :class="singleLine ? 'noptin-popup-single-line' : 'noptin-popup-new-line'">
-                                <div v-if="!noptin_hide_title" :style="{color:noptin_title_color}" class="noptin-popup-form-heading" v-html="noptin_title_text"></div>
-                                <div v-if="!noptin_hide_description"  :style="{color:noptin_description_color}" class="noptin-popup-form-description" v-html="noptin_description_text"></div>
+                                <div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-popup-form-heading" v-html="title"></div>
+                                <div v-if="!hideDescription"  :style="{color:descriptionColor}" class="noptin-popup-form-description" v-html="description"></div>
                                 <div class="noptin-popup-fields" :style="{display: singleLine? 'flex' : 'block'}">
                                     <input v-if="showingFullName" type="text" class="noptin-popup-field" placeholder="Name" :required="requireNameField" />
                                     <input v-if="showingSingleName" type="text" class="noptin-popup-field" placeholder="First Name" :required="requireNameField" />
                                     <input v-if="showingSingleName" type="text" class="noptin-popup-field" placeholder="Last Name" :required="requireNameField" />
                                     <input type="email" class="noptin-popup-field" placeholder="Email Address" required />
                                     <input :value="noptinButtonLabel" type="submit" :style="{backgroundColor:noptinButtonBg, color: noptinButtonColor}" :class="singleLine ? '' : 'noptin-popup-botton-' + buttonPosition" class="noptin-popup-submit"/>
-                                    <input type="hidden" class="noptin_form_redirect"/>
                                 </div>
-                                <p v-if="!noptin_hide_note" :style="{ color: noptin_note_color}" class="noptin-popup-note" v-html="noptin_note_text"></p>
+                                <p v-if="!hideNote" :style="{ color: noteColor}" class="noptin-popup-note" v-html="note"></p>
                             <div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px" class="noptin_feedback_success"></div>
                             <div style="border:1px solid rgba(227, 6, 37, 0.8);display:none;padding:10px;margin-top:10px" class="noptin_feedback_error"></div>
                             </form>
