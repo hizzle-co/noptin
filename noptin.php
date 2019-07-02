@@ -89,8 +89,18 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
+        //Set global variables
+		$this->plugin_path = plugin_dir_path( __FILE__ );
+        $this->plugin_url  = plugins_url( '/', __FILE__ );
+
+        // Include core files
+        $this->includes();
+
       	//Init the plugin after WP inits
-        add_action( 'init', array( $this, 'init'), 5 );       
+        add_action( 'init', array( $this, 'init'), 5 );
+        
+        //Register our new widget
+        add_action( 'widgets_init', array($this, 'register_widget'));
 				
     }
 
@@ -109,23 +119,16 @@ if( !defined( 'ABSPATH' ) ) {
 		 * @since 1.0.0
 		 *
 		 */
-    	do_action('before_noptin_init');
-
-        //Set global variables
-		$this->plugin_path = plugin_dir_path( __FILE__ );
-        $this->plugin_url  = plugins_url( '/', __FILE__ );
+        do_action('before_noptin_init', $this);
+        
+        //Init the admin
+        $this->admin  = Noptin_Admin::instance();
 
         //Ensure the db is up to date
         $this->maybe_upgrade_db();
 
-        // Include core files
-        $this->includes();
-
         //Register post types
         $this->register_post_types();
-
-        //Init the admin
-        $this->admin  = Noptin_Admin::instance();
 
         //Register blocks
         $this->register_blocks();
@@ -159,7 +162,10 @@ if( !defined( 'ABSPATH' ) ) {
         require_once $this->plugin_path . 'includes/render-functions.php';
 
     	//Ajax handlers
-    	require_once $this->plugin_path . 'includes/ajax.php';
+        require_once $this->plugin_path . 'includes/ajax.php';
+        
+        // Include the widget class
+        require_once $this->plugin_path . 'includes/admin/widget.php';
 		
 		/**
 		 * Fires after all plugin files and dependancies have been loaded
@@ -268,6 +274,18 @@ if( !defined( 'ABSPATH' ) ) {
             'script'         => 'noptin_front',
             'editor_style'   => 'noptin_blocks',
         ) );
+    }
+
+    
+    /**
+     * Registers a widget area
+     *
+     * @access      public
+     * @since       1.0.2
+     * @return      self::$instance
+     */
+    public function register_widget() {
+        register_widget( 'Noptin_Widget' );
     }
 
     /**

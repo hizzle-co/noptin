@@ -138,3 +138,36 @@ function noptin_get_post_types(){
     return $return;
 
 }
+
+/**
+ * Returns color themess
+ */
+function noptin_get_color_themes(){
+    return apply_filters(
+		'noptin_form_color_themes',
+		array(
+            'Red'           => '#e51c23 #fafafa #c62828', //Base color, Secondary color, border color
+            'Pink'          => '#e91e63 #fafafa #ad1457',
+            'Purple'        => '#9c27b0 #fafafa #6a1b9a',
+            'Deep Purple'   => '#673ab7 #fafafa #4527a0',
+            'Purple'        => '#9c27b0 #fafafa #4527a0',
+            'Indigo'        => '#3f51b5 #fafafa #283593',
+            'Blue'          => '#2196F3 #fafafa #1565c0',
+            'Light Blue'    => '#03a9f4 #fafafa #0277bd',
+            'Cyan'          => '#00bcd4 #fafafa #00838f',
+            'Teal'          => '#009688 #fafafa #00695c',
+            'Green'         => '#4CAF50 #fafafa #2e7d32',
+            'Light Green'   => '#8bc34a #191919 #558b2f',
+            'Lime'          => '#cddc39 #191919 #9e9d24',
+            'Yellow'        => '#ffeb3b #191919 #f9a825',
+            'Amber'         => '#ffc107 #191919 #ff6f00',
+            'Orange'        => '#ff9800 #fafafa #e65100',
+            'Deep Orange'   => '#ff5722 #fafafa #bf360c',
+            'Brown'         => '#795548 #fafafa #3e2723',
+            'Blue Grey'     => '#607d8b #fafafa #263238',
+            'Black'         => '#313131 #fafafa #607d8b',
+            'White'         => '#ffffff #191919 #191919',
+            'Grey'          => '#aaaaaa #191919 #191919',
+        ));
+
+}

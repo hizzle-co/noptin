@@ -365,6 +365,14 @@ class Noptin_Form_Editor {
                 'content'   => "Use this panel to change the appearance of your popup form",
             ),
 
+            //Color themes
+            'colors'        => array(
+                'el'        => 'panel',
+                'title'     => 'Color Themes',
+                'id'        => 'colorsDesign',
+                'children'  => $this->get_color_themes_settings()
+            ),
+
             //Form Design
             'form'         => array(
                 'el'        => 'panel',
@@ -416,6 +424,24 @@ class Noptin_Form_Editor {
     }
 
     /**
+     * Returns Color themes Design Fields
+     */
+    private function get_color_themes_settings() {
+
+        $colors = noptin_get_color_themes();
+        return array(
+
+            'colorThemeField'   => array(
+                'el'            => 'select',
+                'label'         => 'Select a color theme',
+                'options'       => array_combine( array_values( $colors ), array_keys( $colors ) ),
+                '@input'        => 'changeColorTheme()',
+            ),
+
+        );
+    }
+
+    /**
      * Returns Form Design Fields
      */
     private function get_form_settings() {
@@ -432,6 +458,17 @@ class Noptin_Form_Editor {
                 'el'        => 'input',
                 'restrict'  => "optinType=='popup'",
                 'label'     => 'Hide Close Button',
+            ),
+
+            'closeButtonPos'=> array(
+                'el'        => 'radio_button',
+                'options'       => array(
+                    'inside'        => 'Inside',
+                    'outside'       => 'Outside',
+                    'along'         => 'On The Border'
+                ),
+                'label'     => 'Close Button Position',
+                'restrict'  => "optinType=='popup' && !hideCloseButton",
             ),
 
             'singleLine' => array(
@@ -657,7 +694,7 @@ class Noptin_Form_Editor {
             $_saved_state[$key] = $value;
         }
 
-        $state = array_replace( $this->get_panels_state(), $this->get_options_state(), $_saved_state, $this->get_misc_state());
+        $state = array_replace( $this->get_options_state(), $_saved_state, $this->get_panels_state(), $this->get_misc_state());
         return apply_filters( 'noptin_optin_form_editor_state', $state, $this );
     }
 
@@ -674,8 +711,9 @@ class Noptin_Form_Editor {
             'formDesignOpen'                => false,
             'targetingSettingsOpen'         => false,
             'triggerSettingsOpen'           => false,
-            'basicSettingsOpen'             => true,
+            'basicSettingsOpen'             => false,
             'customCSSOpen'                 => false,
+            'colorsDesignOpen'              => false,
             'currentSidebarSection'         => 'settings',
         );
     }
@@ -689,6 +727,7 @@ class Noptin_Form_Editor {
             //Opt in options
             'removeBranding'                => false,
             'hideCloseButton'               => false,
+            'closeButtonPos'                => 'inside',
             'optinName'                     => 'Sample Name',
             'optinStatus'                   => 'draft',
             'optinType'                     => 'popup',
@@ -700,6 +739,7 @@ class Noptin_Form_Editor {
             'subscribeAction'               => 'message', //close, redirect
             'successMessage'                => 'Thank you for subscribing to our newsletter',
             'redirectUrl'                   => '',
+            
 
             //Form Design
             'noptinFormBg'                  => '#2196f3',
@@ -785,6 +825,7 @@ class Noptin_Form_Editor {
             'optinName'                     => $this->post->post_title,
             'optinStatus'                   => $this->post->post_status,
             'id'                            => $this->post->ID,
+            'colorThemeField'               => '',
         );
     }
 }

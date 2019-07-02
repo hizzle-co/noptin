@@ -101,9 +101,6 @@ class Noptin_Admin {
      */
     private function includes() {
 
-        // Include the widget class
-        require_once $this->admin_path . 'widget.php';
-
         // Include the rating hooks
         require_once $this->admin_path . 'ratings.php';
 
@@ -134,9 +131,6 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_init_hooks', $this);
 
-        //Register our new widget
-        add_action( 'widgets_init', array($this, 'register_widget'));
-
         //Admin scripts
         add_action('admin_enqueue_scripts', array($this, 'enqeue_scripts'));
 
@@ -157,16 +151,6 @@ class Noptin_Admin {
         do_action('noptin_after_admin_init_hooks', $this);
     }
 
-    /**
-     * Registers a widget area
-     *
-     * @access      public
-     * @since       1.0.2
-     * @return      self::$instance
-     */
-    public function register_widget() {
-        register_widget( 'Noptin_Widget' );
-    }
 
     /**
      * Register admin scripts

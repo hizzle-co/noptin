@@ -214,6 +214,16 @@
                 this.formWidth  = '520px'
 
             },
+            changeColorTheme: function() {
+                var colors = this.colorThemeField.split(" ")
+                this.noptinFormBg = colors[0]
+                this.noptinFormBorderColor = colors[2]
+                this.noptinButtonColor = colors[0]
+                this.noptinButtonBg  = colors[1]
+                this.noptin_title_color  = colors[1]
+                this.noptin_description_color  = colors[1]
+                this.noptin_note_color  = colors[1]
+            },
             showSuccess: function( msg ) {
                 this.hasSuccess = true;
                 this.Success    = msg;

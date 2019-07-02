@@ -341,7 +341,6 @@
 .noptin-popup-editor-panel-toggle {
     position: absolute;
     right: 10px;
-    color: #e2e4e7;
 }
 
 .noptin-popup-editor-panel-open .dashicons-arrow-down-alt2 {
@@ -572,11 +571,8 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-radio-button-wrapper label span {
     padding: .5em 1em;
-    cursor: pointer;
-    border: 1px solid #eee;
+    border: 1px solid #9e9e9e;
     margin-right: -1px;
-    color: #333;
-    background-color: #fafafa;
 }
 
 .noptin-radio-button-wrapper label input:checked+span {
@@ -651,6 +647,16 @@ input:focus+.noptin-switch-slider span {
     display: none;
 }
 
+.noptin-popup-form-wrapper .noptin-popup-close.outside {
+    top: -36px;
+    right: -36px;
+}
+
+.noptin-popup-form-wrapper .noptin-popup-close.along {
+    top: -18px;
+    right: -18px;
+}
+
 .noptin-popup-form-wrapper .noptin-popup-close path {
     fill: rgba(255, 255, 255, 0.9);
     transition: 0.3s;
@@ -667,6 +673,8 @@ input:focus+.noptin-switch-slider span {
 .noptin-popup-form-heading {
     font-size: 24px;
     margin-bottom: 20px;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
 .noptin-popup-form-description {
@@ -682,11 +690,8 @@ input:focus+.noptin-switch-slider span {
 }
 
 input.noptin-popup-field {
-    background-color: rgba(254, 254, 254, 0.5);
     width: 100%;
     display: block;
-    color: #111;
-    border: none;
     text-align: left;
     padding: 6px 8px;
 }
