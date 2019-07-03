@@ -1,3 +1,43 @@
+.noptin-spinner {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+}
+
+.noptin-spinner:after {
+    content: " ";
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    border-color: #ff5722 transparent #f44336 transparent;
+    animation: noptin-spin 1.2s linear infinite;
+}
+
+@keyframes noptin-spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+}
+
+  .noptin-popup-designer-loader {
+    position: fixed;
+    background: #fff;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
 .noptin-big {
     font-size: 1.5em;
 }

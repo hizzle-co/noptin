@@ -1,6 +1,6 @@
 <style id="popupCustomCSS"></style>
+<div class="noptin-popup-designer-loader"><div class="noptin-spinner"></div></div>
 <div class="noptin-popup-designer">
-    
     <div id="noptin-popups-app" v-if="!isPreviewShowing">
         <div class="noptin-popup-editor-header" tabindex="-1">
             <div class="noptin-popup-editor-title">{{headerTitle}} &mdash; {{optinName}} <button @click="saveAsTemplate()" type="button" class="button button-link noptin-popup-editor-header-button">{{saveAsTemplateText}}</button></div>

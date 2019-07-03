@@ -24,12 +24,23 @@ function noptin() {
 /**
  * Returns all optin forms
  */
-function noptin_get_optin_forms(){
+function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '='){
     $args   = array(
         'numberposts'      => -1,
         'post_type'        => 'noptin-form',
         'post_status'      => array( 'draft', 'publish' )
     );
+
+    if( $meta_key ) {
+        $args['meta_query'] = array(
+                array(
+                    'key'       => $meta_key,
+                    'value'     => $meta_value,
+                    'compare'   => $compare,
+                )
+            );
+            
+    }
     return get_posts( $args );
 }
 

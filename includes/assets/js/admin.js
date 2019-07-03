@@ -297,6 +297,7 @@
         },
         mounted: function() {
             jQuery('#popupCustomCSS').text(this.CSS)
+            jQuery('.noptin-popup-designer-loader').hide()
         },
     })
 
