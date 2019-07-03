@@ -3,7 +3,7 @@
     
     <div id="noptin-popups-app" v-if="!isPreviewShowing">
         <div class="noptin-popup-editor-header" tabindex="-1">
-            <div class="noptin-popup-editor-title">{{headerTitle}} &mdash; {{optinName}}</div>
+            <div class="noptin-popup-editor-title">{{headerTitle}} &mdash; {{optinName}} <button @click="saveAsTemplate()" type="button" class="button button-link noptin-popup-editor-header-button">{{saveAsTemplateText}}</button></div>
             <div class="noptin-popup-editor-toolbar">
                 <button v-if="optinType == 'popup'" @click="previewPopup()" type="button" class="button button-secondary noptin-popup-editor-header-button">{{previewText}}</button>
                 <button @click="save()" type="button" class="button button-primary noptin-popup-editor-header-button">{{saveText}}</button>
@@ -17,7 +17,7 @@
                     <div class="noptin-popup-notice noptin-is-success" v-show="hasSuccess" v-html="Success"></div>
                     <div  class="noptin-popup-wrapper">
                         <div  class="noptin-popup-form-wrapper" :style="{borderRadius: formRadius, backgroundColor: noptinFormBg, width: formWidth, minHeight: formHeight, borderColor: noptinFormBorderColor}">
-                            <form :class="singleLine ? 'noptin-popup-single-line' : 'noptin-popup-new-line'">
+                            <form @submit.prevent="updateCustomCss" :class="singleLine ? 'noptin-popup-single-line' : 'noptin-popup-new-line'">
                                 <div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-popup-form-heading" v-html="title"></div>
                                 <div v-if="!hideDescription"  :style="{color:descriptionColor}" class="noptin-popup-form-description" v-html="description"></div>
                                 <div class="noptin-popup-fields" :style="{display: singleLine? 'flex' : 'block'}">

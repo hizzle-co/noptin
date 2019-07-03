@@ -171,3 +171,17 @@ function noptin_get_color_themes(){
         ));
 
 }
+
+/**
+ * Returns optin templates
+ */
+function noptin_get_optin_templates(){
+    $templates = get_option( 'noptin_templates' );
+
+    if(! is_array( $templates ) ) {
+        $templates = array();
+    }
+
+    return apply_filters( 'noptin_form_templates', $templates );
+
+}

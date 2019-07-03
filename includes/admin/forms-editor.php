@@ -46,10 +46,11 @@ class Noptin_Form_Editor {
      */
     public function localize_script() {
         $params = array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'api_url' => get_home_url( null, 'wp-json/wp/v2/'),
-            'nonce'   => wp_create_nonce('noptin_admin_nonce'),
-            'data'    => $this->get_state(),
+            'ajaxurl'   => admin_url('admin-ajax.php'),
+            'api_url'   => get_home_url( null, 'wp-json/wp/v2/'),
+            'nonce'     => wp_create_nonce('noptin_admin_nonce'),
+            'data'      => $this->get_state(),
+            'templates' => wp_json_encode ( noptin_get_optin_templates() ),
         );
         wp_localize_script('noptin', 'noptinEditor', $params);
     }
@@ -59,6 +60,7 @@ class Noptin_Form_Editor {
      */
     public function output() {
         $sidebar = $this->sidebar_fields();
+        $state   = $this->get_state();
         require plugin_dir_path(__FILE__) . 'templates/optin-form-editor.php';
     }
 
@@ -368,9 +370,9 @@ class Noptin_Form_Editor {
             //Color themes
             'colors'        => array(
                 'el'        => 'panel',
-                'title'     => 'Color Themes',
+                'title'     => 'Templates',
                 'id'        => 'colorsDesign',
-                'children'  => $this->get_color_themes_settings()
+                'children'  => $this->get_templates_settings()
             ),
 
             //Form Design
@@ -426,16 +428,24 @@ class Noptin_Form_Editor {
     /**
      * Returns Color themes Design Fields
      */
-    private function get_color_themes_settings() {
+    private function get_templates_settings() {
 
-        $colors = noptin_get_color_themes();
+        $colors    = noptin_get_color_themes();
+        $templates = noptin_get_optin_templates();
         return array(
 
-            'colorThemeField'   => array(
+            'colorTheme'        => array(
                 'el'            => 'select',
                 'label'         => 'Select a color theme',
                 'options'       => array_combine( array_values( $colors ), array_keys( $colors ) ),
                 '@input'        => 'changeColorTheme()',
+            ),
+
+            'Template'          => array(
+                'el'            => 'select',
+                'label'         => 'Select a template',
+                'options'       => array_combine( array_keys( $templates ), array_keys( $templates ) ),
+                '@input'        => 'changeTemplate()',
             ),
 
         );
@@ -818,8 +828,12 @@ class Noptin_Form_Editor {
             'headerTitle'                   => __( 'Editing', 'noptin'),
             'saveText'                      => __( 'Save', 'noptin'),
             'savingText'                    => __( 'Saving...', 'noptin'),
+            'saveAsTemplateText'            => __( 'Save As Template', 'noptin'),
+            'savingTemplateText'            => __( 'Saving Template...', 'noptin'),
             'savingError'                   => __( 'There was an error saving your form.', 'noptin'),
             'savingSuccess'                 => __( 'Your changes have been saved successfuly', 'noptin'),
+            'savingTemplateError'           => __( 'There was an error saving your template.', 'noptin'),
+            'savingTemplateSuccess'         => __( 'Your template has been saved successfuly', 'noptin'),
             'previewText'                   => __( 'Preview', 'noptin'),
             'isPreviewShowing'              => false,
             'optinName'                     => $this->post->post_title,

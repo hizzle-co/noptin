@@ -143,6 +143,9 @@ class Noptin_Admin {
         //Runs when saving a new opt-in form
         add_action('wp_ajax_noptin_save_optin_form', array($this, 'save_optin_form'));
 
+        //Runs when saving a form as a template
+        add_action('wp_ajax_noptin_save_optin_form_as_template', array($this, 'save_optin_form_as_template'));
+
         /**
          * Runs right after registering admin hooks.
          *
@@ -430,6 +433,74 @@ class Noptin_Admin {
 
     exit; //This is important
 }
+
+    /**
+     * Saves an optin form as a template
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      self::$instance
+     */
+    public function save_optin_form_as_template() {
+
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        //Check nonce
+        check_ajax_referer( 'noptin_admin_nonce' );
+
+        /**
+         * Runs before saving a form as a template
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_before_save_form_as_template', $this);
+
+        $templates = get_option( 'noptin_templates' );
+
+        if(! is_array( $templates ) ) {
+            $templates = array();
+        }
+
+        $fields = 'CSS hideNote note noteColor hideOnNoteClick hideDescription description descriptionColor hideTitle title titleColor noptinButtonBg noptinButtonColor noptinButtonLabel noptinFormBg noptinFormBorderColor noptinFormBorderRound formRadius hideCloseButton closeButtonPos singleLine buttonPosition showNameField requireNameField firstLastName';
+        $fields = explode(' ', $fields);
+        $data   = array();
+
+        foreach( $fields as $field ){
+            if( isset( $_POST['state'][$field] ) ) {
+
+                $value = $_POST['state'][$field];
+
+                if( 'false' == $value ) {
+                    $data[$field] = false;
+                    continue;
+                }
+
+                if( 'true' == $value ) {
+                    $data[$field] = true;
+                    continue;
+                }
+
+                $data[$field] = $value;
+            }
+        }
+
+        $title = trim( $_POST['state']['optinName'] . ' #' . time() );
+        $templates[ $title ] = $data;
+
+        update_option( 'noptin_templates', $templates );
+
+        /**
+         * Runs after saving a form as a template
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_after_save_form_as_template', $this);
+
+    exit; //This is important
+}
+
 
 /**
  * Downloads subscribers

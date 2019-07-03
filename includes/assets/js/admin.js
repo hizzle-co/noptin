@@ -121,6 +121,7 @@
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });
+
     });
 
     var vm = new Vue({
@@ -197,8 +198,28 @@
                 this.isPreviewShowing = false
                 jQuery("#noptin-popup-preview").removeClass('noptin-preview-showing').html('')
             },
+            saveAsTemplate: function() {
+                var saveText  = this.saveAsTemplateText
+                this.saveAsTemplateText = this.savingTemplateText;
+                var that = this
+
+                jQuery.post(noptinEditor.ajaxurl, {
+                    _ajax_nonce: noptinEditor.nonce,
+                    action: "noptin_save_optin_form_as_template",
+                    state: vm.$data
+                })
+                .done( function(){
+                    that.showSuccess( that.savingTemplateSuccess )
+                    that.saveAsTemplateText = saveText
+                })
+                .fail( function(){
+                    that.showError( that.savingTemplateError )
+                    that.saveAsTemplateText = saveText
+                })
+
+            },
             updateCustomCss: function() {
-                jQuery('#popupCustomCSS').text(this.custom_css)
+                jQuery('#popupCustomCSS').text(this.CSS)
             },
             changeFormType: function() {
 
@@ -215,7 +236,7 @@
 
             },
             changeColorTheme: function() {
-                var colors = this.colorThemeField.split(" ")
+                var colors = this.colorTheme.split(" ")
                 this.noptinFormBg = colors[0]
                 this.noptinFormBorderColor = colors[2]
                 this.noptinButtonColor = colors[0]
@@ -223,6 +244,16 @@
                 this.titleColor  = colors[1]
                 this.descriptionColor  = colors[1]
                 this.noteColor  = colors[1]
+            },
+            changeTemplate: function() {
+                var templates = JSON.parse( noptinEditor.templates ),
+                template = this.Template
+
+                if( templates[template] ) {
+                    Object.keys( templates[template] ).forEach( function( key ) {
+                        vm[key] = templates[template][key]
+                    })
+                }
             },
             showSuccess: function( msg ) {
                 this.hasSuccess = true;
@@ -243,7 +274,7 @@
                 }, 5000)
             },
             save: function() {
-                var saveText = this.saveText
+                var saveText  = this.saveText
                 this.saveText = this.savingText;
                 var that = this
 
