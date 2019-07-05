@@ -221,6 +221,17 @@
             updateCustomCss: function() {
                 jQuery('#popupCustomCSS').text(this.CSS)
             },
+            upload_image: function( key ) {
+                var image = wp.media({ 
+                    title: 'Upload Image',
+                    multiple: false
+                })
+                .open()
+                .on('select', function(e){
+                    var uploaded_image = image.state().get('selection').first();
+                    vm[key] = uploaded_image.toJSON().sizes.thumbnail.url;
+                })
+            },
             changeFormType: function() {
 
                 //Sidebar

@@ -18,8 +18,15 @@
                     <div  class="noptin-popup-wrapper">
                         <div  class="noptin-popup-form-wrapper" :style="{borderRadius: formRadius, backgroundColor: noptinFormBg, width: formWidth, minHeight: formHeight, borderColor: noptinFormBorderColor}">
                             <form @submit.prevent="updateCustomCss" :class="singleLine ? 'noptin-popup-single-line' : 'noptin-popup-new-line'">
-                                <div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-popup-form-heading" v-html="title"></div>
-                                <div v-if="!hideDescription"  :style="{color:descriptionColor}" class="noptin-popup-form-description" v-html="description"></div>
+                                <div class="noptin-popup-header" :class="image ? imagePos : 'no-image'">
+                                    <div class="noptin-popup-header-text">
+                                        <div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-popup-form-heading" v-html="title"></div>
+                                        <div v-if="!hideDescription"  :style="{color:descriptionColor}" class="noptin-popup-form-description" v-html="description"></div>
+                                    </div>
+                                    <div v-if="image" class="noptin-popup-header-image">
+                                        <img :src="image" />
+                                    </div>
+                                </div>
                                 <div class="noptin-popup-fields" :style="{display: singleLine? 'flex' : 'block'}">
                                     <input v-if="showingFullName" type="text" class="noptin-popup-field" placeholder="Name" :required="requireNameField" />
                                     <input v-if="showingSingleName" type="text" class="noptin-popup-field" placeholder="First Name" :required="requireNameField" />

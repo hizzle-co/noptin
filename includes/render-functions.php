@@ -154,6 +154,11 @@ function noptin_render_editor_input( $id, $field ){
         case 'checkbox':
             echo "<label class='$class' $restrict><input $attrs class='screen-reader-text'/> <span class='noptin-checkmark'></span> <span class='noptin-label'>$label</span></label>";
             break;
+        
+        case 'image':
+            $attrs = str_replace( 'type="image"', '', $attrs );  
+            echo "<div class='$class' $restrict><span class='noptin-label'>$label</span> <div class='image-uploader'><input type='text' $attrs /> <input @click=\"upload_image('$id')\" type='button' class='button button-primary' value='Upload Image' /></div></div>";
+            break;
 
         default:
             echo "<label class='$class' $restrict><span class='noptin-label'>$label</span> <input $attrs /></label>";

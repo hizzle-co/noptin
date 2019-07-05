@@ -91,6 +91,12 @@ function noptin_delete_optin_form( $id ){
     return wp_delete_post( $id, true );
 }
 
+/**
+ * Duplicates an optin form
+ */
+function noptin_duplicate_optin_form( $id ){
+    return wp_delete_post( $id, true );
+}
 
 /**
  * Returns optin post type details

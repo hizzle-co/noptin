@@ -174,6 +174,7 @@ class Noptin_Admin {
         wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array( 'select2','wp-color-picker' ), $version);
         wp_enqueue_script('select2', $this->assets_url . 'js/select2.js', array( 'jquery' ), '4.0.7');
         wp_enqueue_style('select2', $this->assets_url . 'css/select2.css', array(), '4.0.7');
+        wp_enqueue_media();
         wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array( 'wp-color-picker' ), '2.6.10');
         $version = filemtime( $this->assets_path . 'js/admin.js' );
         wp_register_script('noptin', $this->assets_url . 'js/admin.js', array('select2','vue'), $version, true);
@@ -351,6 +352,11 @@ class Noptin_Admin {
             noptin_delete_optin_form( $_GET['delete'] );
         }
 
+        //Is the user duplicating an optin form?
+        if( isset( $_GET['action'] ) && 'duplicate' == $_GET['action'] ){
+            $form   = noptin_duplicate_optin_form( $_GET['duplicate'] );
+        }
+
         if( $form ){
             $editor = new Noptin_Form_Editor( $form, true );
             $editor->output();
@@ -463,7 +469,7 @@ class Noptin_Admin {
             $templates = array();
         }
 
-        $fields = 'CSS hideNote note noteColor hideOnNoteClick hideDescription description descriptionColor hideTitle title titleColor noptinButtonBg noptinButtonColor noptinButtonLabel noptinFormBg noptinFormBorderColor noptinFormBorderRound formRadius hideCloseButton closeButtonPos singleLine buttonPosition showNameField requireNameField firstLastName';
+        $fields = 'CSS hideNote note noteColor hideOnNoteClick hideDescription description descriptionColor hideTitle title titleColor noptinButtonBg noptinButtonColor noptinButtonLabel noptinFormBg noptinFormBorderColor noptinFormBorderRound formRadius hideCloseButton closeButtonPos singleLine buttonPosition showNameField requireNameField firstLastName image imagePos';
         $fields = explode(' ', $fields);
         $data   = array();
 
@@ -486,7 +492,7 @@ class Noptin_Admin {
             }
         }
 
-        $title = trim( $_POST['state']['optinName'] . ' #' . time() );
+        $title = trim( $_POST['state']['optinName'] . ' ' . date( DATE_COOKIE ) );
         $templates[ $title ] = $data;
 
         update_option( 'noptin_templates', $templates );

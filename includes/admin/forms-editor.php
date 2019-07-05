@@ -383,6 +383,14 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_form_settings()
             ),
 
+            //Image Design
+            'image'         => array(
+                'el'        => 'panel',
+                'title'     => 'Image',
+                'id'        => 'imageDesign',
+                'children'  => $this->get_image_settings()
+            ),
+
             //Button Design
             'button'        => array(
                 'el'        => 'panel',
@@ -530,6 +538,33 @@ class Noptin_Form_Editor {
                 'el'                => 'input',
                 'label'             => 'Border Color',
             ),
+        );
+    }
+
+    /**
+     * Returns image Design Fields
+     */
+    private function get_image_settings() {
+        return array(
+
+            'image'         => array(
+                'type'      => 'image',
+                'el'        => 'input',
+                'label'     => 'Image URL',
+            ),
+
+            'imagePos'      => array(
+                'el'        => 'radio_button',
+                'options'       => array(
+                    'top'       => 'Top',
+                    'left'      => 'Left',
+                    'right'     => 'Right',
+                    'bottom'    => 'Bottom'
+                ),
+                'label'     => 'Image Position',
+                'restrict'  => 'image',
+            ),
+
         );
     }
 
@@ -724,6 +759,7 @@ class Noptin_Form_Editor {
             'basicSettingsOpen'             => false,
             'customCSSOpen'                 => false,
             'colorsDesignOpen'              => false,
+            'imageDesignOpen'               => false,
             'currentSidebarSection'         => 'settings',
         );
     }
@@ -757,6 +793,10 @@ class Noptin_Form_Editor {
             'noptinFormBorderRound'         => true,
             'formWidth'                     => '520px',
             'formHeight'                    => '250px',
+
+            //image Design
+            'image'                         => '',
+            'imagePos'                      => 'left',
 
             //Button designs
             'noptinButtonBg'                => '#fafafa',

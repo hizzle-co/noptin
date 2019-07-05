@@ -41,6 +41,7 @@ $link = esc_url( add_query_arg( 'action', 'new' ) );
                         $status         = ( 'draft' == $form->post_status ) ? __('Inactive', 'noptin') : __('Active', 'noptin');
                         $url            = esc_url( admin_url( 'admin.php?page=noptin-forms&form_id=' ) . $form->ID );
                         $delete         = esc_url( admin_url( 'admin.php?page=noptin-forms&action=delete&delete=' ) . $form->ID );
+                        $duplicate      = esc_url( admin_url( 'admin.php?page=noptin-forms&action=duplicate&duplicate=' ) . $form->ID );
                         
                         printf(
                             '<tr><td><a title="%s" href="%s">%s</a><div class="noptin-form-actions"><span>%s | </span><span>%s</span></div></td><td  class="status-%s">%s</td><td>%s</td></tr>',

@@ -573,6 +573,23 @@ input:focus+.noptin-switch-slider span {
     margin-bottom: 32px;
 }
 
+.noptin-image-wrapper {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.noptin-image-wrapper .image-uploader {
+    display: flex;
+}
+
+.noptin-popup-editor-sidebar .noptin-image-wrapper input[type="text"] {
+    padding: 4px 8px;
+}
+
+.noptin-popup-editor-sidebar .noptin-image-wrapper input[type="button"] {
+    margin-left: 4px;
+}
+
 .noptin-radio-wrapper {
     margin-bottom: 15px;
     margin-top: 32px;
@@ -674,7 +691,6 @@ input:focus+.noptin-switch-slider span {
 .noptin-popup-form-wrapper {
     border: 4px solid #2196f3;
     padding: 20px;
-    height: 250px;
     width: 520px;
     max-width: 100%;
     display: flex;
@@ -716,6 +732,50 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-popup-form-wrapper form {
     min-width: 80%;
+}
+
+.noptin-popup-header {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.noptin-popup-header.left {
+    flex-direction: row-reverse;
+}
+
+.noptin-popup-header.top {
+    flex-direction: column-reverse;
+}
+
+.noptin-popup-header.bottom {
+    flex-direction: column;
+}
+
+.noptin-popup-header img{
+    max-width: 100%;
+    max-height: 150px;
+}
+
+.noptin-popup-header.left,
+.noptin-popup-header.right{
+    text-align: left;
+}
+
+.noptin-popup-header.left .noptin-popup-header-text {
+    padding-left: 20px;
+}
+
+.noptin-popup-header.right .noptin-popup-header-text {
+    padding-right: 20px;
+}
+
+.noptin-popup-header.top .noptin-popup-header-text {
+    padding-top: 20px;
+}
+
+.noptin-popup-header.left .noptin-popup-header-image,
+.noptin-popup-header.right .noptin-popup-header-image{
+    max-width: 40%;
 }
 
 .noptin-popup-form-heading {
