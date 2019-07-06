@@ -28,6 +28,37 @@ function noptin_get_optin_form( $id ){
 }
 
 /**
+ * Creates an optin form
+ */
+function noptin_create_optin_form( $data = false ){
+    $form    = new Noptin_Form( $data );
+    $created = $form->save();
+
+    if( is_wp_error( $created ) ) {
+        return $created;
+    }
+
+    return $form->id;
+}
+
+
+/**
+ * Deletes an optin form
+ */
+function noptin_delete_optin_form( $id ){
+    return wp_delete_post( $id, true );
+}
+
+/**
+ * Duplicates an optin form
+ */
+function noptin_duplicate_optin_form( $id ){
+    $form = noptin_get_optin_form( $id );
+    $form->duplicate();
+    return $form->id;
+}
+
+/**
  * Returns all optin forms
  */
 function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '='){
@@ -48,60 +79,6 @@ function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '=
             
     }
     return get_posts( $args );
-}
-
-/**
- * Creates a new optin form
- * 
- * @param string $title Optional. The name of the new form
- */
-function noptin_create_optin_form( $title = false ){
-
-    //Set the title
-    $_title = __( 'New Form', 'noptin');
-    if(! $title ){
-        $_title = $title;
-    }
-
-    //Prepare the args...
-    $postarr   = array(
-        'post_title'       => $_title ,
-        'post_type'        => 'noptin-form',
-    );
-
-    //... then create the form
-    $id = wp_insert_post( $postarr, true );
-
-    //If an error occured, return it
-    if( is_wp_error($id) ) {
-        return $id;
-    }
-
-    //Maybe give the form a better name
-    if(! $title ){
-        $postarr   = array(
-            'post_title'        => sprintf( __( 'Form #%s', 'noptin') , $id ),
-            'ID'                => $id,
-        );
-        return wp_update_post( $postarr, true );
-    }
-    
-    return $id;
-    
-}
-
-/**
- * Deletes an optin form
- */
-function noptin_delete_optin_form( $id ){
-    return wp_delete_post( $id, true );
-}
-
-/**
- * Duplicates an optin form
- */
-function noptin_duplicate_optin_form( $id ){
-    return wp_delete_post( $id, true );
 }
 
 /**

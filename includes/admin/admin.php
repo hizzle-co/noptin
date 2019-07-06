@@ -134,6 +134,9 @@ class Noptin_Admin {
         //Admin scripts
         add_action('admin_enqueue_scripts', array($this, 'enqeue_scripts'));
 
+        //(maybe) do an action
+        add_action('admin_init', array($this, 'maybe_do_action'));
+
         //Register new menu pages
         add_action('admin_menu', array($this, 'add_menu_page'));
 
@@ -342,25 +345,10 @@ class Noptin_Admin {
         //The optin form currently being edited
         $form = false;
 
-        //Is the user creating a new optin form?
-        if( isset( $_GET['action'] ) && 'new' == $_GET['action'] ){
-            $form   = noptin_create_optin_form();
-        }
-
         //Is the user trying to edit a new optin form?
         if( isset( $_GET['form_id'] ) ){
             $form   = absint( $_GET['form_id'] );
-        }
-
-        //Is the user deleting an optin form?
-        if( isset( $_GET['action'] ) && 'delete' == $_GET['action'] ){
-            noptin_delete_optin_form( $_GET['delete'] );
-        }
-
-        //Is the user duplicating an optin form?
-        if( isset( $_GET['action'] ) && 'duplicate' == $_GET['action'] ){
-            $form   = noptin_duplicate_optin_form( $_GET['duplicate'] );
-        }
+        }       
 
         if( $form ){
             $editor = new Noptin_Form_Editor( $form, true );
@@ -660,6 +648,52 @@ class Noptin_Admin {
                     ORDER BY time DESC
                     LIMIT 100";
         return $wpdb->get_results($sql);
+
+    }
+
+    /**
+     * Does an action
+     *
+     * @access      public
+     * @since       1.0.5
+     * @return      self::$instance
+     */
+    public function maybe_do_action() {
+
+        //Ensure that this is our page...
+        if(! isset( $_GET['page'] ) || 'noptin-forms' != $_GET['page'] ) {
+            return;
+        }
+
+        //... and that there is an action
+        if(! isset( $_GET['action'] ) ) {
+            return;
+        }
+
+        //Is the user deleting an optin form?
+        if( 'delete' == $_GET['action'] ){
+            noptin_delete_optin_form( $_GET['delete'] );
+            wp_safe_redirect( admin_url( 'admin.php?page=noptin-forms' ) );
+            exit;
+        }
+
+        //Is the user duplicating an optin form?
+        if( 'duplicate' == $_GET['action'] ){
+            $form   = noptin_duplicate_optin_form( $_GET['duplicate'] );
+            wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form" ) );
+            exit;
+        }
+
+        //Is the user creating a new optin form?
+        if( 'new' == $_GET['action'] ){
+            $form   = noptin_create_optin_form();
+            if( is_int( $form ) ) {
+                wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form" ) );
+                exit;
+            }
+
+            die( $form->get_error_message());
+        }
 
     }
 

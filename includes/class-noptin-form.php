@@ -290,8 +290,8 @@ class Noptin_Form {
 	 */
 	public function __isset( $key ) {
 
-		if ( $key == 'ID' ) {
-			$key = 'id';
+		if ( 'id' == strtolower( $key ) ) {
+			return $this->id != null;
         }
 		return isset( $this->data[$key] ) && $this->data[$key] != null;
 
@@ -308,8 +308,8 @@ class Noptin_Form {
 	 */
 	public function __get( $key ) {
 
-		if ( $key == 'ID' ) {
-			$key = 'id';
+		if ( 'id' == strtolower( $key ) ) {
+			return apply_filters( "noptin_form_id", $this->id, $this );
 		}
 
 		$value = $this->data[$key];
@@ -380,22 +380,25 @@ class Noptin_Form {
 
         //Prepare the args...
         $args = $this->get_post_array();
-        unset( $args['ID'] );
+		unset( $args['ID'] );
 
         //... then create the form
-        $id = wp_insert_post( $postarr, true );
+        $id = wp_insert_post( $args, true );
 
         //If an error occured, return it
         if( is_wp_error($id) ) {
             return $id;
         }
-        
+		
+		//Set the new id
 		$this->id = $id;
+
 		$state = $this->data;
 		unset( $state['optinHTML'] );
 		unset( $state['optinType'] );
+		unset( $state['id'] );
         update_post_meta( $id, '_noptin_state', $this->data );
-        update_post_meta( $ID, '_noptin_optin_type', $this->optinType );
+        update_post_meta( $id, '_noptin_optin_type', $this->optinType );
         return true;
     }
 
@@ -413,7 +416,7 @@ class Noptin_Form {
         $args = $this->get_post_array();
 
         //... then update the form
-        $id = wp_update_post( $postarr, true );
+        $id = wp_update_post( $args, true );
 
         //If an error occured, return it
         if( is_wp_error($id) ) {
@@ -423,8 +426,9 @@ class Noptin_Form {
         $state = $this->data;
 		unset( $state['optinHTML'] );
 		unset( $state['optinType'] );
+		unset( $state['id'] );
         update_post_meta( $id, '_noptin_state', $this->data );
-        update_post_meta( $ID, '_noptin_optin_type', $this->optinType );
+        update_post_meta( $id, '_noptin_optin_type', $this->optinType );
         return true;
     }
     
@@ -437,12 +441,21 @@ class Noptin_Form {
 	 * @return mixed
 	 */
 	private function get_post_array() {
-		return array(
-            'post_title'        => $this->optinName,
+		$data = array(
+            'post_title'        => empty( $this->optinName ) ? __( 'Untitled', 'noptin' ) : $this->optinName,
             'ID'                => $this->id,
             'post_content'      => $this->optinHTML,
-            'post_status'       => $state['optinStatus'],
-        );
+			'post_status'       => $this->optinStatus,
+			'post_type'         => 'noptin-form',
+		);
+		
+		foreach( $data as $key => $val ) {
+			if( empty( $val ) ) {
+				unset( $data[$key] );
+			}
+		}
+
+		return $data;
     }
     
     /**
@@ -453,8 +466,8 @@ class Noptin_Form {
 	 *
 	 * @return mixed
 	 */
-	private function duplicate() {
-        $this->optinName = $this->optinName . " duplicate";
+	public function duplicate() {
+        $this->optinName = $this->optinName . " (duplicate)";
         $this->id = null;
         return $this->save();
 	}
