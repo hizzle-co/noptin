@@ -155,7 +155,10 @@ if( !defined( 'ABSPATH' ) ) {
     private function includes() {
 												
 		// The main admin class
-    	require_once $this->plugin_path . 'includes/admin/admin.php';
+        require_once $this->plugin_path . 'includes/admin/admin.php';
+        
+        //Form class 
+        require_once $this->plugin_path . 'includes/class-noptin-form.php';
 
     	//plugin functions
         require_once $this->plugin_path . 'includes/functions.php';

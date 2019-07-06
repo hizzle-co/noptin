@@ -34,7 +34,7 @@ class Noptin_Form_Editor {
      */
     public function __construct( $id, $localize = false ) {
         $this->id   = $id;
-        $this->post = get_post( $id );
+        $this->post = noptin_get_optin_form( $id );
 
         if( $localize ) {
             $this->localize_script();
@@ -107,9 +107,25 @@ class Noptin_Form_Editor {
             //Targeting Options
             'targeting'     => array(
                 'el'        => 'panel',
-                'title'     => 'Targeting Options',
+                'title'     => 'Page Targeting',
                 'id'        => 'targetingSettings',
                 'children'  => $this->get_targeting_settings()
+            ),
+
+            //User targeting
+            /*'userTargeting' => array(
+                'el'        => 'panel',
+                'title'     => 'User Targeting',
+                'id'        => 'userTargetingSettings',
+                'children'  => $this->get_user_settings()
+            ),*/
+
+            //Device targeting
+            'deviceTargeting'   => array(
+                'el'            => 'panel',
+                'title'         => 'Device Targeting',
+                'id'            => 'deviceTargetingSettings',
+                'children'      => $this->get_device_settings()
             ),
 
         );
@@ -197,7 +213,7 @@ class Noptin_Form_Editor {
             //Help text
             'info-text'     => array(
                 'el'        => 'paragraph',
-                'content'   => 'Display this popup...',
+                'content'   => 'Display this optin...',
                 'style'     => 'font-weight: bold;'
             ),
 
@@ -272,88 +288,130 @@ class Noptin_Form_Editor {
      * Returns setting fields fields
      */
     private function get_targeting_settings() {
+
+        $return = array(
+
+            'targeting-info-text'   => array(
+                'el'                => 'paragraph',
+                'content'           => 'Display this optin...',
+                'style'             => 'font-weight: bold;'
+            ),
+
+            'showEverywhere'        => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Everywhere',
+                'restrict'          => "!_onlyShowOn",
+            ),
+            'showHome'              => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Front page',
+                'restrict'          => "!showEverywhere && !_onlyShowOn",
+            ),
+            'showBlog'              => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Blog page',
+                'restrict'          => "!showEverywhere && !_onlyShowOn",
+            ),
+            'showSearch'            => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Search page',
+                'restrict'          => "optinType!='inpost' && !showEverywhere && !_onlyShowOn",
+            ),
+            'showArchives'          => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Archives',
+                'restrict'          => "optinType!='inpost' && !showEverywhere && !_onlyShowOn",
+            ),
+        );
+
+        foreach( noptin_get_post_types() as $name => $label ) {
+            $return["showOn$name"] = array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => $label,
+                'restrict'          => "!showEverywhere && !_onlyShowOn",
+            );
+        }
+
+        $return["neverShowOn"]  = array(
+            'el'                => 'multiselect',
+            'label'             => "Never show on:",
+            'options'           => $this->post_ids_to_options( $this->post->neverShowOn),
+            'data'              => 'all_posts',
+            'restrict'          => "!_onlyShowOn",
+        );
+
+        $return["onlyShowOn"]  = array(
+            'el'                => 'multiselect',
+            'label'             => "Only show on:",
+            'options'           => $this->post_ids_to_options( $this->post->onlyShowOn),
+            'data'              => 'all_posts',
+        );
+
+        return $return;
+    }
+
+    /**
+     * Returns setting fields fields
+     */
+    private function get_user_settings() {
         return array(
 
-            //Archives
-            'hideOnArchives'        => array(
-                'type'              => 'checkbox',
-                'el'                => 'input',
-                'restrict'          => "optinType!='inpost'",
-                'label'             => 'Hide on archive pages',
-            ),
-
-            'hideOnMobile'          => array(
-                'type'              => 'checkbox',
-                'el'                => 'input',
-                'label'             => 'Hide on small screens',
-            ),
-
-            //Pages
-            'hideOnPages'           => array(
-                'type'              => 'checkbox',
-                'el'                => 'input',
-                'label'             => 'Show/Hide on specific pages',
-            ),
-            'pageRestrictType'      => array(
+            'whoCanSee'             => array(
                 'el'                => 'radio_button',
-                'restrict'          => 'hideOnPages',
                 'options'           => array(
-                    'show'  => 'Show',
-                    'hide'  => 'Hide'
+                    'all'           => 'Everyone',
+                    'users'         => 'Logged in users',
+                    'guests'        => 'Logged out users',
+                    'roles'         => 'specific user roles'
                 ),
+                'label'             => 'Who can see this form?',
             ),
-            'pagesToHide'           => array(
+
+            'userRoles'             => array(
                 'el'                => 'multiselect',
-                'label'             => 'Select pages on which to {{pageRestrictType}} the popup',
-                'restrict'          => 'hideOnPages',
-                'options'           => 'pages',
+                'label'             => 'Select user roles',
+                'restrict'          => "whoCanSee=='roles'",
+                'options'           => array(),
             ),
-
-            //Posts
-            'hideOnPosts'           => array(
-                'type'              => 'checkbox',
-                'el'                => 'input',
-                'label'             => 'Show/Hide on specific posts',
-            ),
-            'postRestrictType'      => array(
-                'el'                => 'radio_button',
-                'restrict'          => 'hideOnPosts',
-                'options'           => array(
-                    'show'  => 'Show',
-                    'hide'  => 'Hide'
-                ),
-            ),
-            'postsToHide'           => array(
-                'el'                => 'multiselect',
-                'label'             => 'Select posts on which to {{postRestrictType}} the popup',
-                'restrict'          => 'hideOnPosts',
-                'options'           => 'posts',
-            ),
-
-            //PostTypes
-            'hideOnPostTypes'       => array(
-                'type'              => 'checkbox',
-                'el'                => 'input',
-                'label'             => 'Show/Hide on specific post types',
-            ),
-            'postTypesRestrictType' => array(
-                'el'                => 'radio_button',
-                'restrict'          => 'hideOnPostTypes',
-                'options'           => array(
-                    'show'  => 'Show',
-                    'hide'  => 'Hide'
-                ),
-            ),
-            'postTypesToHide'       => array(
-                'el'                => 'multiselect',
-                'label'             => 'Select post types on which to {{postTypesRestrictType}} the popup',
-                'restrict'          => 'hideOnPostTypes',
-                'options'           => noptin_get_post_types(),
-            ),
-
-
+ 
         );
+
     }
+
+    /**
+     * Returns setting fields fields
+     */
+    private function get_device_settings() {
+        return array(
+
+            'hideSmallScreens'      => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Hide on Mobile',
+            ),
+
+            'hideMediumScreens'     => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Hide on Tablets',
+            ),
+
+            'hideLargeScreens'      => array(
+                'type'              => 'checkbox',
+                'el'                => 'input',
+                'label'             => 'Hide on Desktops',
+            ),
+ 
+        );
+
+    }
+
 
     /**
      * Returns design settings fields
@@ -617,8 +675,7 @@ class Noptin_Form_Editor {
             ),
 
             'title'                 => array(
-                'type'              => 'text',
-                'el'                => 'input',
+                'el'                => 'textarea',
                 'label'             => 'Title',
                 'restrict'          => '!hideTitle'
             ),
@@ -679,8 +736,7 @@ class Noptin_Form_Editor {
             ),
 
             'note'                        => array(
-                'type'                    => 'text',
-                'el'                      => 'input',
+                'el'                      => 'textarea',
                 'label'                   => 'Note',
                 'restrict'                => '!hideNote'
             ),
@@ -721,26 +777,11 @@ class Noptin_Form_Editor {
      */
     public function get_state() {
 
-        $saved_state = get_post_meta( $this->post->ID, '_noptin_state', true );
-        if(! is_array( $saved_state ) ) {
-            $saved_state = array();
-        }
-
-        $_saved_state = array();
-        foreach( $saved_state as $key => $value ){
-            if( 'false' == $value ) {
-                $_saved_state[$key] = false;
-                continue;
-            }
-            if( 'true' == $value ) {
-                $_saved_state[$key] = true;
-                continue;
-            }
-            $_saved_state[$key] = $value;
-        }
-
-        $state = array_replace( $this->get_options_state(), $_saved_state, $this->get_panels_state(), $this->get_misc_state());
+        $saved_state = $this->post->get_all_data();
+        unset( $saved_state['optinHTML'] );
+        $state = array_replace( $saved_state, $this->get_panels_state(), $this->get_misc_state());
         return apply_filters( 'noptin_optin_form_editor_state', $state, $this );
+
     }
 
 
@@ -755,6 +796,8 @@ class Noptin_Form_Editor {
             'buttonDesignOpen'              => false,
             'formDesignOpen'                => false,
             'targetingSettingsOpen'         => false,
+            'userTargetingSettingsOpen'     => false,
+            'deviceTargetingSettingsOpen'   => false,
             'triggerSettingsOpen'           => false,
             'basicSettingsOpen'             => false,
             'customCSSOpen'                 => false,
@@ -764,97 +807,6 @@ class Noptin_Form_Editor {
         );
     }
 
-    /**
-     * Returns the default options state
-     */
-    private function get_options_state() {
-        return array(
-            
-            //Opt in options
-            'formRadius'                    => '0px',
-            'hideCloseButton'               => false,
-            'closeButtonPos'                => 'inside',
-            'optinName'                     => 'Sample Name',
-            'optinStatus'                   => 'draft',
-            'optinType'                     => 'popup',
-            'singleLine'                    => true,
-            'buttonPosition'                => 'block',
-            'showNameField'                 => false,
-            'requireNameField'              => false,
-            'firstLastName'                 => false,
-            'subscribeAction'               => 'message', //close, redirect
-            'successMessage'                => 'Thank you for subscribing to our newsletter',
-            'redirectUrl'                   => '',
-            
-
-            //Form Design
-            'noptinFormBg'                  => '#2196f3',
-            'noptinFormBorderColor'         => '#2196f3',
-            'noptinFormBorderRound'         => true,
-            'formWidth'                     => '520px',
-            'formHeight'                    => '250px',
-
-            //image Design
-            'image'                         => '',
-            'imagePos'                      => 'left',
-
-            //Button designs
-            'noptinButtonBg'                => '#fafafa',
-            'noptinButtonColor'             => '#2196F3',
-            'noptinButtonLabel'             => 'SUBSCRIBE',
-
-            //Title design
-            'hideTitle'                     => false,
-            'title'                         => 'Subscribe To Our Newsletter',
-            'titleColor'                    => '#fafafa',
-
-            //Description design
-            'hideDescription'               => false,
-            'description'                   => 'Join our mailing list to receive the latest news and updates from our team.',
-            'descriptionColor'              => '#fafafa',
-
-            //Note design
-            'hideNote'                      => true,
-            'note'                          => 'Your privacy is our priority',
-            'noteColor'                     => '#d8d8d8',
-            'hideOnNoteClick'               => false,
-
-            //Trigger Options
-            'enableTimeDelay'               => false,
-            'timeDelayDuration'             => 10,
-            'enableExitIntent'              => false,
-            'enableScrollDepth'             => false,
-            'scrollDepthPercentage'         => 25,
-            'hideOnMobile'                  => true,
-            'DisplayOncePerSession'         => true,
-            'triggerOnClick'                => false,
-            'cssClassOfClick'               => '',
-            'triggerAfterCommenting'        => false,
-            'displayImmeadiately'           => true,
-
-            //Restriction Options
-            'hideOnPages'                   => false,
-            'pageRestrictType'              => 'show', //hide
-            'pagesToHide'                   => array(),
-            'hideOnPosts'                   => false,
-            'postRestrictType'              => 'show', //hide
-            'postsToHide'                   => array(),
-            'hideOnTags'                    => false,
-            'tagRestrictType'               => 'show', //hide
-            'tagsToHide'                    => array(),
-            'hideOnPostTypes'               => false,
-            'postTypesRestrictType'         => 'show', //hide
-            'postTypesToHide'               => array(),
-            'hideOnCats'                    => false,
-            'catRestrictType'               => 'show', //hide
-            'catsToHide'                    => array(),
-            'hideOnArchives'                => false,
-
-            //custom css                    
-            'CSS'                           => ' /*Custom css*/ ',
-        
-        );
-    }
 
     /**
      * Returns misc state
@@ -876,11 +828,28 @@ class Noptin_Form_Editor {
             'savingTemplateSuccess'         => __( 'Your template has been saved successfuly', 'noptin'),
             'previewText'                   => __( 'Preview', 'noptin'),
             'isPreviewShowing'              => false,
-            'optinName'                     => $this->post->post_title,
-            'optinStatus'                   => $this->post->post_status,
-            'id'                            => $this->post->ID,
             'colorTheme'                    => '',
             'Template'                      => '',
         );
+    }
+
+    /**
+     * Converts an array of ids to select2 option
+     */
+    public function post_ids_to_options( $ids ) {
+
+        //Return post ids array
+        if(! is_array( $ids ) ) {
+            return array();
+        }
+
+        $options = array();
+        foreach( $ids as $id ) {
+            $post_type      = get_post_type(  $id  );
+            $title          = get_the_title(  $id  );
+            $options[$id]   = "[{$post_type}] $title";
+        }
+
+        return $options;
     }
 }

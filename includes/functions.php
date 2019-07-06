@@ -20,6 +20,12 @@ function noptin() {
     return Noptin::instance();
 }
 
+/**
+ * Returns an optin form
+ */
+function noptin_get_optin_form( $id ){
+    return new Noptin_Form( $id );
+}
 
 /**
  * Returns all optin forms
@@ -152,6 +158,8 @@ function noptin_get_post_types(){
     foreach( $post_types as $obj ){
         $return[$obj->name] = $obj->label;
     }
+    unset( $return['attachment'] );
+
     return $return;
 
 }

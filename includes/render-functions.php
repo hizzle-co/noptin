@@ -157,7 +157,7 @@ function noptin_render_editor_input( $id, $field ){
         
         case 'image':
             $attrs = str_replace( 'type="image"', '', $attrs );  
-            echo "<div class='$class' $restrict><span class='noptin-label'>$label</span> <div class='image-uploader'><input type='text' $attrs /> <input @click=\"upload_image('$id')\" type='button' class='button button-primary' value='Upload Image' /></div></div>";
+            echo "<div class='$class' $restrict><span class='noptin-label'>$label</span> <div class='image-uploader'><input type='text' $attrs /> <input @click=\"upload_image('$id')\" type='button' class='button button-secondary' value='Upload Image' /></div></div>";
             break;
 
         default:
@@ -175,11 +175,15 @@ function noptin_render_editor_select( $id, $field, $panel ){
     $label          = empty($field['label']) ? '' : $field['label'];
     $restrict       = noptin_get_editor_restrict_markup( $field );
     $multiselect    = 'multiselect' == $field['el'] ? ' multiple="multiple" ' : '';
-    $ajax           = is_string($field['options']) ? " ajax='{$field['options']}' " : 'ajax="0"';
+    $ajax           = !empty($field['data']) ? " ajax='{$field['data']}' " : 'ajax="0"';
 
     unset( $field['restrict'] );
     unset( $field['label'] );
-
+    unset( $field['data'] );
+    if(! isset( $field['placeholder'] ) ) {
+        $field['placeholder'] = 'Select';
+    }
+    
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
 
@@ -228,7 +232,7 @@ function noptin_render_editor_radio_button( $id, $field ){
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
 
-    echo "<div class='noptin-radio-button-wrapper' $restrict><span>$label</span><div class='noptin-buttons'>";
+    echo "<fieldset class='noptin-radio-button-wrapper' $restrict><legend>$label</legend><div class='noptin-buttons'>";
 
     if(is_array($field['options'])) {
         foreach( $field['options'] as $val => $label ){
@@ -236,7 +240,7 @@ function noptin_render_editor_radio_button( $id, $field ){
         }
     }
 
-    echo "</div></div>";
+    echo "</div></fieldset>";
 }
 add_action( 'noptin_render_editor_radio_button', 'noptin_render_editor_radio_button', 10, 2 );
 

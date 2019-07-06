@@ -140,6 +140,9 @@ class Noptin_Admin {
         //Runs when downloading subscribers
         add_action('wp_ajax_noptin_download_subscribers', array($this, 'noptin_download_subscribers'));
 
+        //Runs when fetching select2 options
+        add_action('wp_ajax_noptin_select_ajax', array($this, 'select_ajax'));
+
         //Runs when saving a new opt-in form
         add_action('wp_ajax_noptin_save_optin_form', array($this, 'save_optin_form'));
 
@@ -191,8 +194,10 @@ class Noptin_Admin {
 			array(
                 'type'       => 'css',
                 'codemirror' => array(
-                    'indentUnit' => 2,
-                    'tabSize'    => 2,
+                    'indentUnit'        => 1,
+                    'tabSize'           => 4,
+                    'indentWithTabs'    =>  true,
+                    'lineNumbers'       => false,
                 ),
             ),
 		);
@@ -397,6 +402,83 @@ class Noptin_Admin {
      * @since       1.0.0
      * @return      self::$instance
      */
+    public function select_ajax() {
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json( array() );
+        }
+
+        //Check nonce
+        check_ajax_referer( 'noptin_admin_nonce' );
+
+        /**
+         * Runs before fetching select options ajax
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_before_select_ajax', $this);
+
+        $items  = empty( $_GET['items'] ) ? 'all_posts' : trim( $_GET['items'] );
+
+        //Currently we only support all posts
+        if( $items != 'all_posts' ) {
+            wp_send_json( array() );
+        }
+
+        //Prepare the query args
+        $query  = array(
+            'post_type'             => array_keys( noptin_get_post_types() ),
+            'post_status'           => 'publish',
+            'posts_per_page'        => 10,
+            'paged'                 => empty( $_GET['page'] ) ? 1 : intval( trim( $_GET['page'] ) ) ,
+            'ignore_sticky_posts'   => true,
+            'order'                 => 'ASC',
+            'orderby'               => 'title'
+        );
+
+        //Maybe include a search term
+        $search = empty( $_GET['term'] ) ? '' : trim( $_GET['term'] );
+        if(! empty( $search ) ) {
+            $query['orderby'] = 'relevance';
+            $query['order'] = 'DESC';
+            $query['s'] = $search;
+        }
+
+        //Retrieve the posts from the db
+        $query  = new WP_Query( $query );
+        $posts  = array(
+            'results' => array()
+        );
+
+        if ( $query->have_posts() ) {
+            while ( $query->have_posts() ) {
+                $query->the_post();
+                $posts['results'][] = array(
+                    'id'            => $query->post->ID,
+                    'text'          => "[{$query->post->post_type}] " . get_the_title( $query->post->ID ),
+                );
+            }
+        
+            // Restore original Post Data
+            wp_reset_postdata();
+        }
+
+        //Pagination parameters
+        if( count( $posts['results'] ) == 10 ) {
+            $posts['pagination'] = array( 'more' => true );
+        }
+
+        wp_send_json( $posts );
+        exit; //This is important
+}
+
+/**
+     * Downloads subscribers
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      self::$instance
+     */
     public function save_optin_form() {
 
         if (!current_user_can('manage_options')) {
@@ -423,12 +505,14 @@ class Noptin_Admin {
             'post_status'       => $state['optinStatus'],
         );
 
-        if(! wp_update_post( $postarr ) ) {
+        $post = wp_update_post( $postarr, true );
+        if( is_wp_error( $post ) ) {
             status_header(400);
-            die();
+            die( $post->get_error_message() );
         }
 
         update_post_meta( $ID, '_noptin_state', $_POST['state'] );
+        update_post_meta( $ID, '_noptin_optin_type', $_POST['state']['optinType'] );
 
         /**
          * Runs after saving a form

@@ -1,35 +1,29 @@
 (function($) {
 
     Vue.component('noptinselect2', {
-        props: ['value', 'ajax'],
-        template: '<select><slot></slot></select>',
+        props: ['value', 'ajax', 'placeholder'],
+        template: '<select style="width: 100%"><slot></slot></select>',
         mounted: function() {
             var vmSelect = this
-            var data = {}
+            var data = {
+                placeholder : vmSelect.placeholder,
+                width: 'resolve',
+                allowClear: true
+            }
 
             if ('0' != this.ajax) {
                 data.ajax = {
-                    url: noptin.api_url + vmSelect.ajax + '/?per_page=10',
+                    url: noptinEditor.ajaxurl,
                     data: function(params) {
-                        var query = {
-                            search: params.term
+                        params._ajax_nonce = noptinEditor.nonce
+                        params.action = "noptin_select_ajax"
+                        params.items = vmSelect.ajax
+                        if(! params.page ) {
+                            params.page = 1
                         }
-
-                        return query;
+                        return params;
                     },
-                    processResults: function(data) {
-
-                        var _return = {
-                            results: []
-                        }
-                        data.forEach(function(item, index) {
-                            _return.results.push({
-                                id: item.id,
-                                text: item.title.rendered
-                            });
-                        })
-                        return _return;
-                    }
+                    delay: 250
                 }
             }
 
@@ -40,7 +34,7 @@
                 .trigger('change')
                 // emit event on change.
                 .on('change', function() {
-                    vmSelect.$emit('input', this.value)
+                    vmSelect.$emit('input', $(this).val())
                 })
         },
         watch: {
@@ -48,7 +42,7 @@
                 // update value
                 jQuery(this.$el)
                     .val(value)
-                    .trigger('change')
+                    //.trigger('change') triggers an infinite loop
             },
             options: function(options) {
                 // update options
@@ -133,6 +127,9 @@
             },
             showingSingleName: function() {
                 return this.showNameField && this.firstLastName
+            },
+            _onlyShowOn: function() {
+                return this.onlyShowOn && this.onlyShowOn.length > 0
             }
         },
         methods: {
