@@ -251,7 +251,7 @@
 }
 
 .noptin-list-table .noptin-form-actions {
-    display: none;
+    opacity: 0;
 }
 
 .noptin-list-table tr {
@@ -259,7 +259,7 @@
 }
 
 .noptin-list-table tr:hover .noptin-form-actions {
-    display: block;
+    opacity: 1;
 }
 
 .noptin-list-table tr:hover {

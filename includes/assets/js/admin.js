@@ -234,7 +234,7 @@
                 //Sidebar
                 if( this.optinType == 'sidebar' ) {
                     this.formHeight = '400px'
-                    this.formWidth  = '260px'
+                    this.formWidth  = '300px'
                     this.singleLine = false
                     return
                 }

@@ -493,7 +493,7 @@ class Noptin_Form {
 	 * @return bool True if form is published, false if not.
 	 */
 	public function is_published() {
-		return $this->post_status == 'publish';
+		return $this->optinStatus == 'publish';
 	}
 
 	/**

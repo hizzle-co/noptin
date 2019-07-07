@@ -44,10 +44,11 @@ $link = esc_url( add_query_arg( 'action', 'new' ) );
                         $duplicate      = esc_url( admin_url( 'admin.php?page=noptin-forms&action=duplicate&duplicate=' ) . $form->ID );
                         
                         printf(
-                            '<tr><td><a title="%s" href="%s">%s</a><div class="noptin-form-actions"><span>%s | </span><span>%s | </span><span>%s</span></div></td><td  class="status-%s">%s</td><td>%s</td></tr>',
+                            '<tr><td><a title="%s" href="%s">%s<strong style="color: #555"> &mdash; %s</strong></a><div class="noptin-form-actions"><span>%s | </span><span>%s | </span><span>%s</span></div></td><td  class="status-%s">%s</td><td>%s</td></tr>',
                             esc_attr( __('Click To Edit Form ', 'noptin') . $form->post_title ),
                             $url,
                             esc_html( $form->post_title ),
+                            esc_html( get_post_meta( $form->ID, '_noptin_optin_type', true ) ),
                             "<a onClick=\"return confirm('This will permanently delete the form. Are you sure?')\" href='$delete' class='noptin-delete'>Delete</a>",
                             "<a href='$duplicate'>Duplicate</a>",
                             "<a href='$url'>Edit</a>",
