@@ -725,8 +725,8 @@ input:focus+.noptin-switch-slider span {
 }
 
 .noptin-popup-form-wrapper .noptin-popup-close.along {
-    top: -18px;
-    right: -18px;
+    top: -30px;
+    right: -30px;
 }
 
 .noptin-popup-form-wrapper .noptin-popup-close path {

@@ -531,11 +531,11 @@ class Noptin_Form_Editor {
             ),
 
             'closeButtonPos'=> array(
-                'el'        => 'radio_button',
+                'el'        => 'select',
                 'options'       => array(
-                    'inside'        => 'Inside',
-                    'outside'       => 'Outside',
-                    'along'         => 'On The Border'
+                    'inside'        => 'Inside the form',
+                    'outside'       => 'Outside the form',
+                    'along'         => 'Along the border'
                 ),
                 'label'     => 'Close Button Position',
                 'restrict'  => "optinType=='popup' && !hideCloseButton",
@@ -582,7 +582,7 @@ class Noptin_Form_Editor {
             'formHeight'            => array(
                 'type'              => 'text',
                 'el'                => 'input',
-                'label'             => 'Form Height',
+                'label'             => 'Minimum Form Height',
             ),
 
             'noptinFormBg'          => array(

@@ -140,6 +140,7 @@ class Noptin_Form {
 	 */
 	public function get_defaults() {
 
+		$noptin   = noptin();
 		$defaults = array(
 			'optinName'                     => __( 'Untitled', 'noptin'),
 			'optinStatus'                   => 'draft',
@@ -150,7 +151,7 @@ class Noptin_Form {
             //Opt in options
             'formRadius'                    => '0px',
             'hideCloseButton'               => false,
-            'closeButtonPos'                => 'inside',
+            'closeButtonPos'                => 'outside',
            
             'singleLine'                    => true,
             'buttonPosition'                => 'block',
@@ -163,35 +164,35 @@ class Noptin_Form {
             
 
             //Form Design
-            'noptinFormBg'                  => '#2196f3',
-            'noptinFormBorderColor'         => '#2196f3',
+            'noptinFormBg'                  => '#ffc107',
+            'noptinFormBorderColor'         => '#ff6f00',
             'noptinFormBorderRound'         => true,
             'formWidth'                     => '520px',
             'formHeight'                    => '250px',
 
             //image Design
-            'image'                         => '',
-            'imagePos'                      => 'left',
+            'image'                         => $noptin->plugin_url . 'includes/assets/images/email-icon.png',
+            'imagePos'                      => 'right',
 
             //Button designs
-            'noptinButtonBg'                => '#fafafa',
-            'noptinButtonColor'             => '#2196F3',
-            'noptinButtonLabel'             => 'SUBSCRIBE',
+            'noptinButtonBg'                => '#191919',
+            'noptinButtonColor'             => '#ffc107',
+            'noptinButtonLabel'             => 'Subscribe Now',
 
             //Title design
             'hideTitle'                     => false,
             'title'                         => 'Subscribe To Our Newsletter',
-            'titleColor'                    => '#fafafa',
+            'titleColor'                    => '#191919',
 
             //Description design
             'hideDescription'               => false,
-            'description'                   => 'Join our mailing list to receive the latest news and updates from our team.',
-            'descriptionColor'              => '#fafafa',
+            'description'                   => 'Click on the design tab to change the appearance of this form. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>',
+            'descriptionColor'              => '#3f3f3f',
 
             //Note design
             'hideNote'                      => true,
             'note'                          => 'Your privacy is our priority',
-            'noteColor'                     => '#d8d8d8',
+            'noteColor'                     => '#5e5e5e',
             'hideOnNoteClick'               => false,
 
             //Trigger Options
