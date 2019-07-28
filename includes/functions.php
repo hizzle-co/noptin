@@ -187,3 +187,20 @@ function noptin_get_optin_templates(){
     return apply_filters( 'noptin_form_templates', $templates );
 
 }
+
+/**
+ * Returns color themess
+ */
+function noptin_get_form_design_props(){
+    return apply_filters(
+		'noptin_form_design_props',
+		array(
+            'hideCloseButton', 'closeButtonPos', 'singleLine', 'showNameField', 'firstLastName',
+            'requireNameField', 'formRadius', 'formWidth', 'formHeight', 'noptinFormBg',
+            'noptinFormBorderColor', 'image', 'imagePos', 'noptinButtonLabel', 'buttonPosition',
+            'noptinButtonBg', 'noptinButtonColor', 'hideTitle', 'title', 'titleColor',
+            'hideDescription', 'description', 'descriptionColor', 'hideNote', 'hideOnNoteClick',
+            'note', 'noteColor', 'CSS',
+        ));
+
+}

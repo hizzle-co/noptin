@@ -106,6 +106,7 @@ class Noptin_Admin {
 
         //Editor
         require_once $this->admin_path . 'forms-editor.php';
+        require_once $this->admin_path . 'forms-editor-quick.php';
 
         /**
          * Runs right after including admin files.
@@ -180,6 +181,12 @@ class Noptin_Admin {
         wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array( 'select2','wp-color-picker' ), $version);
         wp_enqueue_script('select2', $this->assets_url . 'js/select2.js', array( 'jquery' ), '4.0.7');
         wp_enqueue_style('select2', $this->assets_url . 'css/select2.css', array(), '4.0.7');
+        wp_enqueue_script('tooltipster', $this->assets_url . 'js/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
+        wp_enqueue_style('tooltipster', $this->assets_url . 'css/tooltipster.bundle.min.css', array(), '4.2.6');
+        wp_enqueue_script('slick', $this->assets_url . 'js/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
+        wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
+        wp_enqueue_script('quill', $this->assets_url . 'js/quill.js', array( 'jquery' ), '1.3.6');
+        wp_enqueue_style('quill', $this->assets_url . 'css/quill.css', array(), '1.3.6');
         wp_enqueue_media();
         wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array( 'wp-color-picker' ), '2.6.10');
         $version = filemtime( $this->assets_path . 'js/admin.js' );
@@ -351,7 +358,11 @@ class Noptin_Admin {
         }       
 
         if( $form ){
-            $editor = new Noptin_Form_Editor( $form, true );
+            if( empty( $_GET['created']) && empty( $_GET['editor_quick']) ) {
+                $editor = new Noptin_Form_Editor( $form, true );
+            } else {
+                $editor = new Noptin_Form_Editor_Quick( $form, true );
+            }     
             $editor->output();
         } else {
 
@@ -688,7 +699,7 @@ class Noptin_Admin {
         if( 'new' == $_GET['action'] ){
             $form   = noptin_create_optin_form();
             if( is_int( $form ) ) {
-                wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form" ) );
+                wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form&created=1" ) );
                 exit;
             }
 
