@@ -161,6 +161,7 @@ if( !defined( 'ABSPATH' ) ) {
         require_once $this->plugin_path . 'includes/class-noptin-form.php';
         require_once $this->plugin_path . 'includes/class-popups.php';
         require_once $this->plugin_path . 'includes/class-inpost.php';
+        require_once $this->plugin_path . 'includes/class-sidebar.php';
 
     	//plugin functions
         require_once $this->plugin_path . 'includes/functions.php';
@@ -291,6 +292,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function register_widget() {
         register_widget( 'Noptin_Widget' );
+        register_widget( 'Noptin_Sidebar' );
     }
 
     /**

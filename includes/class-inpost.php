@@ -20,6 +20,9 @@ if( !defined( 'ABSPATH' ) ) {
 
       	//Prepend/Apend inpost forms to the post content
         add_filter( 'the_content', array( $this, 'append_inpost') );
+
+        //Register shortcode
+        add_shortcode( 'noptin-form' , array( $this, 'do_shortcode') );
 				
     }
 
@@ -97,6 +100,32 @@ if( !defined( 'ABSPATH' ) ) {
         );
 
         return get_posts( $args );
+    }
+
+    /**
+     * Converts shortcode to html
+     *
+     * @access      public
+     * @since       1.0.5
+     * @return      array
+     */
+    public function do_shortcode( $atts ) {
+        
+        //Abort early if no id is specified
+        if ( empty( $atts['id'] ) ) {
+            return '';
+        }
+
+        //Prepare the form
+        $form = noptin_get_optin_form( trim( $atts['id'] ) );
+
+        //Maybe return its html
+        if( $form->can_show() ) {
+            return $form->optinHTML;
+        }
+
+        return '';
+
     }
 
 
