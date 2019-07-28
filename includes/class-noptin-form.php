@@ -153,7 +153,8 @@ class Noptin_Form {
             'hideCloseButton'               => false,
             'closeButtonPos'                => 'outside',
            
-            'singleLine'                    => true,
+			'singleLine'                    => true,
+			'inject'						=> '0',
             'buttonPosition'                => 'block',
             'showNameField'                 => false,
             'requireNameField'              => false,

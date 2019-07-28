@@ -173,6 +173,18 @@ class Noptin_Form_Editor {
                 'content'   => 'Shortcode <strong>[noptin-form id={{id}}]</strong>',
             ),
 
+            'inject'        => array(
+                'el'        => 'select',
+                'restrict'  => "optinType=='inpost'",
+                'label'     => 'Inject into post content',
+                'options'   => array(
+                    '0'         => "Don't inject",
+                    'before'    => 'Before post content',
+                    'after'     => 'After post content',
+                    'both'      => 'Before and after post content',
+                ),
+            ),
+
             //What should happen after someone subscibes?
             'subscribeAction' => array(
                 'el'        => 'select',

@@ -160,6 +160,7 @@ if( !defined( 'ABSPATH' ) ) {
         //Form class 
         require_once $this->plugin_path . 'includes/class-noptin-form.php';
         require_once $this->plugin_path . 'includes/class-popups.php';
+        require_once $this->plugin_path . 'includes/class-inpost.php';
 
     	//plugin functions
         require_once $this->plugin_path . 'includes/functions.php';
