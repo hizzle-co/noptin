@@ -246,6 +246,16 @@ class Noptin_Admin {
             array($this, 'render_forms_page')
         );
 
+        //Link to new forms creation page
+        add_submenu_page(
+            'noptin',
+            esc_html__('Add New Form', 'noptin'),
+            esc_html__('Add New Form', 'noptin'),
+            'manage_options',
+            'noptin-new-form',
+            array($this, 'render_add_new_page')
+        );
+
         //Add the subscribers page
         add_submenu_page(
             'noptin',
@@ -378,7 +388,7 @@ class Noptin_Admin {
             } else {
 
                 //Show them to the user
-                include $this->admin_path . 'templates/forms-list.php';
+                include $this->admin_path . 'templates/forms-list.php'; //welcome
 
             }
 
@@ -392,6 +402,18 @@ class Noptin_Admin {
          * @param array $this The admin instance
          */
         do_action('noptin_after_admin_forms_page', $this);
+    }
+
+    /**
+     * Renders add_new page
+     *
+     * @access      public
+     * @since       1.0.4
+     * @return      self::$instance
+     */
+    public function render_add_new_page(){
+        wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 ); 
+	    exit;
     }
 
     /**
@@ -670,6 +692,12 @@ class Noptin_Admin {
      * @return      self::$instance
      */
     public function maybe_do_action() {
+
+        //New form creation
+        if( isset( $_GET['page'] ) && 'noptin-new-form' == $_GET['page'] ) {
+            wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 ); 
+	        exit;
+        }
 
         //Ensure that this is our page...
         if(! isset( $_GET['page'] ) || 'noptin-forms' != $_GET['page'] ) {
