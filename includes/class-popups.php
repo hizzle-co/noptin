@@ -58,7 +58,7 @@ if( !defined( 'ABSPATH' ) ) {
 
             //Can it be displayed?
             if( $form->can_show() ) {
-                echo $form->optinHTML;
+                echo $form->get_html();
             }
         }
         

@@ -42,6 +42,27 @@ $noptin_color: #ff6f00;
 	overflow: auto;
 }
 
+.noptin-popup-main-wrapper {
+	position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+	background: rgba(0, 0, 0, 0.9);
+	overflow: auto;
+	display: none;
+	
+	&.open {
+		display: flex;
+	}
+	
+	.noptin-optin-form-wrapper .noptin-form-close {
+		display: inline-block;
+	}
+}
+
 .noptin-optin-form-wrapper {
 	border: 4px solid $noptin_color;
 	padding: 0;
@@ -53,6 +74,8 @@ $noptin_color: #ff6f00;
 	text-align: center;
 	position: relative;
 	background-color: $noptin_color;
+	margin-bottom: 20px;
+    margin-top: 20px;
 
 	/*Popups close button*/
 	.noptin-form-close {
@@ -80,8 +103,7 @@ $noptin_color: #ff6f00;
 		}
 
 		&:hover path {
-			top: -30px;
-			right: -30px;
+			fill: rgba(255, 255, 255, 0.4);
 		}
 	}
 
@@ -181,11 +203,11 @@ $noptin_color: #ff6f00;
 				flex: 1 0 0;
 			}
 
-			input[type="submit"].noptin-form-botton-block {
+			.noptin-form-button-block {
 				width: 100%;
 			}
 
-			input[type="submit"].noptin-form-button-right {
+			.noptin-form-button-right {
 				float: right;
 			}
 

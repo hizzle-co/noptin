@@ -188,7 +188,7 @@ class Noptin_Form {
             //Description design
             'hideDescription'               => false,
             'description'                   => 'Click on the design tab to change the appearance of this form. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>',
-            'descriptionColor'              => '#3f3f3f',
+            'descriptionColor'              => '#222222',
 
             //Note design
             'hideNote'                      => true,
@@ -577,6 +577,33 @@ class Noptin_Form {
         }
 
 		return false; //No matching rule
+	}
+
+	/**
+	 * Returns the html required to display the form
+	 *
+	 * @return string html
+	 */
+	public function get_html(){
+		$type       = esc_attr( $this->optinType );
+		$id         = $this->id;
+		$id_class   = "noptin-form-id-$id";
+		$type_class = "noptin-$type-main-wrapper";
+
+		$html  = "<div class='$type_class $id_class'>";
+		
+		//Maybe print custom css
+		if(! empty( $this->CSS ) ) {
+
+			//Our best attempt at scoping styles
+			$wrapper = '.noptin-optin-form-wrapper';
+			$css     = str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS);
+			$css     = str_ireplace( $wrapper, ".$id_class $wrapper", $css);
+			$html   .= "<style>$css</style>";
+		}
+
+		//print main form html
+		return $html . $this->optinHTML . '</div>';
 	}
 
 	/**

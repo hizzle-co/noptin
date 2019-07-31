@@ -63,12 +63,12 @@ if( !defined( 'ABSPATH' ) ) {
 
             //If we are to prepend
             if( 'both' == $form->inject || 'before' == $form->inject ) {
-                $content =  $form->optinHTML . $content;
+                $content =  $form->get_html() . $content;
             }
 
             //If we are to append
             if( 'both' == $form->inject || 'after' == $form->inject ) {
-                $content .=  $form->optinHTML;
+                $content .=  $form->get_html();
             }
         }
 
@@ -121,7 +121,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Maybe return its html
         if( $form->can_show() ) {
-            return $form->optinHTML;
+            return $form->get_html();
         }
 
         return '';

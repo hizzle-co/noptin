@@ -52,7 +52,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Display the widget
         echo $args['before_widget'];
-        echo $form->optinHTML;
+        echo $form->get_html();
         echo $args['after_widget'];
     }
 

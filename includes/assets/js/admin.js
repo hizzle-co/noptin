@@ -13,6 +13,7 @@
     //Quill Editor
     Vue.use(VueQuillEditor)
 
+    //Use divs instead of paragraphs
     var Block = VueQuillEditor.Quill.import('blots/block');
     Block.tagName = 'DIV';
     VueQuillEditor.Quill.register(Block, true);
