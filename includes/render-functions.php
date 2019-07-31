@@ -176,7 +176,7 @@ function noptin_render_editor_input( $id, $field ){
 
         //Color picker
         case 'color':
-            echo "<div class='$class' $restrict><span class='noptin-label'>$label</span> <noptincolor v-model='$id' type='text' /> </div>";
+            echo "<div class='$class' $restrict><span class='noptin-label'>$label</span> <noptin-swatch colors='material-basic' show-fallback v-model='$id' popover-to='left'></noptin-swatch></div>";
             break;
 
         case 'switch':
@@ -208,7 +208,6 @@ add_action( 'noptin_render_editor_input', 'noptin_render_editor_input', 10, 2 );
 function noptin_render_editor_select( $id, $field, $panel ){
     $label          = empty($field['label']) ? '' : $field['label'];
     $restrict       = noptin_get_editor_restrict_markup( $field );
-    $multiselect    = 'multiselect' == $field['el'] ? ' multiple="multiple" ' : '';
     $ajax           = !empty($field['data']) ? " ajax='{$field['data']}' " : 'ajax="0"';
 
     unset( $field['restrict'] );
@@ -217,19 +216,38 @@ function noptin_render_editor_select( $id, $field, $panel ){
     if(! isset( $field['placeholder'] ) ) {
         $field['placeholder'] = 'Select';
     }
+
+    $extra = '';
+    if( 'multiselect' == $field['el'] ) {
+        $extra = 'multiselect';
+    }
+
+    if(! empty( $field['taggable'] ) ) {
+        $extra .= ' taggable :create-option =" val => ({ label: val, val: val })"';
+        unset( $field['taggable'] );
+    }
     
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
-
-    echo "<div class='noptin-select-wrapper' $restrict><label>$label</label><noptinselect2 $attrs $ajax $multiselect v-model='$id'>";
-
-    if(is_array($field['options'])) {
-        foreach( $field['options'] as $val => $label ){
-            echo "<option value='$val'>$label</option>";
-        }
+    if( empty($field['options']) ) {
+        $field['options'] = array();
     }
 
-    echo "</noptinselect2></div>";
+    $options = array();
+    foreach( $field['options'] as $val => $name ){
+        $options[] = array(
+            'val'   => esc_attr( $val ),
+            'label' => esc_attr( $name ),
+        );
+
+    }
+
+    $options = wp_json_encode( $options );
+    echo "<div class='noptin-select-wrapper' $restrict><label>$label</label><noptin-select
+     :reduce='option => option.val' :clearable='false' :searchable='false' :options='$options' $attrs $ajax $extra v-model='$id'>";
+
+
+    echo "</noptin-select></div>";
 }
 add_action( 'noptin_render_editor_select', 'noptin_render_editor_select', 10, 3 );
 add_action( 'noptin_render_editor_multiselect', 'noptin_render_editor_select', 10, 3 );
@@ -380,9 +398,11 @@ function noptin_render_editor_optin_data( $id, $field ){
 
     echo "<div class='noptin-optin_data-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
-    echo "<label>Title</label><div class='noptin-title-editor'><div><div v-html='title'></div></div></div>";
-    echo "<label>Description</label><div class='noptin-description-editor'><div><div v-html='description'></div></div></div>";
-    echo "<label>Note</label><div class='noptin-note-editor'><div><div v-html='note'></div></div></div>";
+    echo "<label>Title</label>";
+    echo "<div class='noptin-title-editor'><quill-editor v-model=\"title\" :options=\"titleEditorOptions\"> </quill-editor></div>";
+    echo "<label>Description</label>";
+    echo "<div class='noptin-description-editor'><quill-editor v-model=\"description\" :options=\"descriptionEditorOptions\"> </quill-editor></div>";
+    echo "<label>Note</label><div class='noptin-note-editor'><quill-editor v-model=\"note\" :options=\"descriptionEditorOptions\"> </quill-editor></div>";
     echo "<button @click.prevent=\"currentStep='step_5'\"  class='noptin-add-button'>Continue <span class='dashicons dashicons-arrow-right-alt'></span></button>";
     echo "</div>";
     echo "<div class='noptin-templates-preview'>";

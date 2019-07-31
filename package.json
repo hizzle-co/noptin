@@ -1,0 +1,38 @@
+{
+  "name": "noptin",
+  "version": "1.0.5",
+  "description": "WordPress subscription forms",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
+    "cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
+    "css": "npm run cssa && npm run cssf",
+    "js": "browserify -p tinyify includes/assets/js/admin.js -o includes/assets/js/admin-bundled.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hizzle-co/noptin.git"
+  },
+  "keywords": [
+    "noptin"
+  ],
+  "author": "picocodes",
+  "license": "GPL 3",
+  "bugs": {
+    "url": "https://github.com/hizzle-co/noptin/issues"
+  },
+  "homepage": "https://github.com/hizzle-co/noptin#readme",
+  "dependencies": {
+    "postcss-import": "^12.0.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.6.1",
+    "cssnano": "^4.1.10",
+    "precss": "^4.0.0",
+    "tinyify": "^2.5.1",
+    "vue-quill-editor": "^3.0.6",
+    "vue-select": "^3.1.0",
+    "vue-swatches": "^1.0.3"
+  }
+}

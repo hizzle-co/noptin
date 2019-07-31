@@ -37,22 +37,8 @@ class Noptin_Form_Editor {
         $this->post = noptin_get_optin_form( $id );
 
         if( $localize ) {
-            $this->localize_script();
+            noptin_localize_optin_editor( $this->get_state() );
         }
-    }
-
-    /**
-     * Localizes JS script
-     */
-    public function localize_script() {
-        $params = array(
-            'ajaxurl'   => admin_url('admin-ajax.php'),
-            'api_url'   => get_home_url( null, 'wp-json/wp/v2/'),
-            'nonce'     => wp_create_nonce('noptin_admin_nonce'),
-            'data'      => $this->get_state(),
-            'templates' => wp_json_encode ( noptin_get_optin_templates() ),
-        );
-        wp_localize_script('noptin', 'noptinEditor', $params);
     }
 
     /**

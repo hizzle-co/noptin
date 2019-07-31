@@ -1,0 +1,209 @@
+$noptin_color: #ff6f00;
+
+.noptin-spinner {
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+
+	&:after {
+		content: " ";
+		display: block;
+		width: 46px;
+		height: 46px;
+		margin: 1px;
+		border-radius: 50%;
+		border: 5px solid #fff;
+		border-color: #ff5722 transparent #f44336 transparent;
+		animation: noptin-spin 1.2s linear infinite;
+	}
+}
+
+@keyframes noptin-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.noptin-shadow {
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+
+.noptin-padded {
+	padding: 10px;
+}
+
+
+.noptin-preview-showing {
+	overflow: auto;
+}
+
+.noptin-optin-form-wrapper {
+	border: 4px solid $noptin_color;
+	padding: 0;
+	width: 520px;
+	max-width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	position: relative;
+	background-color: $noptin_color;
+
+	/*Popups close button*/
+	.noptin-form-close {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 36px;
+		height: 36px;
+		cursor: pointer;
+		display: none;
+
+		&.outside {
+			top: -36px;
+			right: -36px;
+		}
+
+		&.along {
+			top: -30px;
+			right: -30px;
+		}
+
+		path {
+			fill: rgba(255, 255, 255, 0.9);
+			transition: 0.3s;
+		}
+
+		&:hover path {
+			top: -30px;
+			right: -30px;
+		}
+	}
+
+	/*The main opt in form*/
+	form {
+		width: 100%;
+
+		/*Appears at the top of fields and contains title, image and description*/
+		.noptin-form-header {
+			display: flex;
+			padding: 20px;
+
+			/*image on left of heading*/
+			&.left {
+				flex-direction: row-reverse;
+				text-align: left;
+
+				.noptin-form-header-text {
+					padding-left: 20px;
+				}
+
+				.noptin-form-header-image {
+					max-width: 40%;
+				}
+			}
+
+			/*image on right of heading*/
+			&.right {
+				text-align: left;
+
+				.noptin-form-header-text {
+					padding-right: 20px;
+				}
+
+				.noptin-form-header-image {
+					max-width: 40%;
+				}
+			}
+
+			/*image on top of heading*/
+			&.top {
+				flex-direction: column-reverse;
+
+				.noptin-form-header-text {
+					padding-top: 20px;
+				}
+			}
+
+			/*image at bottom of heading*/
+			&.bottom {
+				flex-direction: column;
+			}
+
+			img {
+				max-width: 100%;
+				max-height: 150px;
+			}
+
+			.noptin-form-heading {
+				font-size: 24px;
+				margin-bottom: 20px;
+				line-height: 1.2;
+			}
+
+			.noptin-form-description {
+				font-size: 16px;
+				margin-top: 10px;
+				margin-bottom: 26px;
+			}
+		}
+
+		/* Contains the form fields and footer texts*/
+		.noptin-form-footer {
+			padding: 20px;
+
+			.noptin-form-fields::after {
+				content: "";
+				clear: both;
+				display: table;
+			}
+
+			.noptin-form-field {
+				width: 100%;
+				display: block;
+				text-align: left;
+				padding: 6px 8px;
+			}
+
+			.noptin-form-submit {
+				background-color: #e91e63;
+				display: block;
+				border: none;
+				color: #fafafa;
+				text-align: center;
+				font-weight: 500;
+				padding: 6px 8px;
+				flex: 1 0 0;
+			}
+
+			input[type="submit"].noptin-form-botton-block {
+				width: 100%;
+			}
+
+			input[type="submit"].noptin-form-button-right {
+				float: right;
+			}
+
+			.noptin-form-note {
+				font-size: 14px;
+			}
+		}
+
+		&.noptin-form-new-line {
+			.noptin-form-field {
+				margin-bottom: 4px;
+			}
+		}
+
+		&.noptin-form-single-line {
+			.noptin-form-fields {
+				display: flex;
+			}
+		}
+	}
+}

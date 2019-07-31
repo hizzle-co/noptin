@@ -200,7 +200,23 @@ function noptin_get_form_design_props(){
             'noptinFormBorderColor', 'image', 'imagePos', 'noptinButtonLabel', 'buttonPosition',
             'noptinButtonBg', 'noptinButtonColor', 'hideTitle', 'title', 'titleColor',
             'hideDescription', 'description', 'descriptionColor', 'hideNote', 'hideOnNoteClick',
-            'note', 'noteColor', 'CSS',
+            'note', 'noteColor', 'CSS', 'optinType'
         ));
 
+}
+
+/**
+ * Function noptin editor localize 
+ */
+function noptin_localize_optin_editor( $state ){
+    $params = array(
+        'ajaxurl'      => admin_url('admin-ajax.php'),
+        'api_url'      => get_home_url( null, 'wp-json/wp/v2/'),
+        'nonce'        => wp_create_nonce('noptin_admin_nonce'),
+        'data'         => $state,
+        'templates'    => noptin_get_optin_templates(),
+        'color_themes' => noptin_get_color_themes(),
+        'design_props' => noptin_get_form_design_props(),
+    );
+    wp_localize_script('noptin', 'noptinEditor', $params);
 }

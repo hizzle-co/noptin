@@ -177,29 +177,22 @@ class Noptin_Admin {
             return;
         }
 
+        //Admin styles
         $version = filemtime( $this->assets_path . 'css/admin.css' );
-        wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array( 'select2','wp-color-picker' ), $version);
-        wp_enqueue_script('select2', $this->assets_url . 'js/select2.js', array( 'jquery' ), '4.0.7');
-        wp_enqueue_style('select2', $this->assets_url . 'css/select2.css', array(), '4.0.7');
+        wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array(), $version);
+
+        //Tooltips https://iamceege.github.io/tooltipster/
         wp_enqueue_script('tooltipster', $this->assets_url . 'js/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
         wp_enqueue_style('tooltipster', $this->assets_url . 'css/tooltipster.bundle.min.css', array(), '4.2.6');
+        
+        //Slick selects https://designwithpc.com/Plugins/ddSlick#demo
         wp_enqueue_script('slick', $this->assets_url . 'js/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
         wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
-        wp_enqueue_script('quill', $this->assets_url . 'js/quill.js', array( 'jquery' ), '1.3.6');
-        wp_enqueue_style('quill', $this->assets_url . 'css/quill.css', array(), '1.3.6');
+        
+        //Enque media for image uploads
         wp_enqueue_media();
-        wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array( 'wp-color-picker' ), '2.6.10');
-        $version = filemtime( $this->assets_path . 'js/admin.js' );
-        wp_register_script('noptin', $this->assets_url . 'js/admin.js', array('select2','vue'), $version, true);
 
-        // Pass variables to our js file, e.g url etc
-        $params = array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'api_url' => get_home_url( null, 'wp-json/wp/v2/'),
-            'nonce'   => wp_create_nonce('noptin_admin_nonce'),
-        );
-
-        //Codemirror
+        //Codemirror for editor css
         wp_enqueue_code_editor(
 			array(
                 'type'       => 'css',
@@ -211,6 +204,20 @@ class Noptin_Admin {
                 ),
             ),
 		);
+
+        //Vue js
+        wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array(), '2.6.10');
+
+        //Custom admin scripts
+        $version = filemtime( $this->assets_path . 'js/admin-bundled.js' );
+        wp_register_script('noptin', $this->assets_url . 'js/admin-bundled.js', array('vue'), $version, true);
+
+        // Pass variables to our js file, e.g url etc
+        $params = array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'api_url' => get_home_url( null, 'wp-json/wp/v2/'),
+            'nonce'   => wp_create_nonce('noptin_admin_nonce'),
+        );
 
         // localize and enqueue the script with all of the variable inserted
         wp_localize_script('noptin', 'noptin', $params);

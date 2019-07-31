@@ -110,7 +110,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      array
      */
     public function do_shortcode( $atts ) {
-        
+
         //Abort early if no id is specified
         if ( empty( $atts['id'] ) ) {
             return '';
