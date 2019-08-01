@@ -76,7 +76,7 @@ class Noptin_Admin {
         $this->admin_url   = plugins_url('/', __FILE__);
         $this->assets_url  = $noptin->plugin_url . 'includes/assets/';
         $this->assets_path = $noptin->plugin_path . 'includes/assets/';
-        
+
 
         // Include core files
         $this->includes();
@@ -184,11 +184,11 @@ class Noptin_Admin {
         //Tooltips https://iamceege.github.io/tooltipster/
         wp_enqueue_script('tooltipster', $this->assets_url . 'js/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
         wp_enqueue_style('tooltipster', $this->assets_url . 'css/tooltipster.bundle.min.css', array(), '4.2.6');
-        
+
         //Slick selects https://designwithpc.com/Plugins/ddSlick#demo
         wp_enqueue_script('slick', $this->assets_url . 'js/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
         wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
-        
+
         //Enque media for image uploads
         wp_enqueue_media();
 
@@ -202,7 +202,7 @@ class Noptin_Admin {
                     'indentWithTabs'    =>  true,
                     'lineNumbers'       => false,
                 ),
-            ),
+            )
 		);
 
         //Vue js
@@ -372,14 +372,14 @@ class Noptin_Admin {
         //Is the user trying to edit a new optin form?
         if( isset( $_GET['form_id'] ) ){
             $form   = absint( $_GET['form_id'] );
-        }       
+        }
 
         if( $form ){
             if( empty( $_GET['created']) && empty( $_GET['editor_quick']) ) {
                 $editor = new Noptin_Form_Editor( $form, true );
             } else {
                 $editor = new Noptin_Form_Editor_Quick( $form, true );
-            }     
+            }
             $editor->output();
         } else {
 
@@ -399,9 +399,9 @@ class Noptin_Admin {
 
             }
 
-            
+
         }
-        
+
 
         /**
          * Runs after displaying the forms page.
@@ -419,7 +419,7 @@ class Noptin_Admin {
      * @return      self::$instance
      */
     public function render_add_new_page(){
-        wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 ); 
+        wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
 	    exit;
     }
 
@@ -486,7 +486,7 @@ class Noptin_Admin {
                     'text'          => "[{$query->post->post_type}] " . get_the_title( $query->post->ID ),
                 );
             }
-        
+
             // Restore original Post Data
             wp_reset_postdata();
         }
@@ -702,7 +702,7 @@ class Noptin_Admin {
 
         //New form creation
         if( isset( $_GET['page'] ) && 'noptin-new-form' == $_GET['page'] ) {
-            wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 ); 
+            wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
 	        exit;
         }
 
