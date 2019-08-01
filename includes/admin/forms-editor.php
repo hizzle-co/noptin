@@ -143,7 +143,6 @@ class Noptin_Form_Editor {
             'optinType'     => array(
                 'el'        => 'radio_button',
                 'label'     => 'Form Type',
-                '@change'    => 'changeFormType()',
                 'options'   => array(
                     'popup'      => 'Popup',
                     'inpost'     => 'InPost',
@@ -324,31 +323,25 @@ class Noptin_Form_Editor {
                 'el'                => 'input',
                 'label'             => 'Archives',
                 'restrict'          => "optinType!='inpost' && !showEverywhere && !_onlyShowOn",
+			),
+			'showPostTypes'         => array(
+                'el'                => 'multi_checkbox',
+				'options'			=> noptin_get_post_types(),
+                'restrict'          => "!showEverywhere && !_onlyShowOn",
             ),
         );
 
-        foreach( noptin_get_post_types() as $name => $label ) {
-            $return["showOn$name"] = array(
-                'type'              => 'checkbox',
-                'el'                => 'input',
-                'label'             => $label,
-                'restrict'          => "!showEverywhere && !_onlyShowOn",
-            );
-        }
-
         $return["neverShowOn"]  = array(
-            'el'                => 'multiselect',
+            'el'                => 'input',
             'label'             => "Never show on:",
-            'options'           => $this->post_ids_to_options( $this->post->neverShowOn),
-            'data'              => 'all_posts',
+            'options'           => $this->post->neverShowOn,
             'restrict'          => "!_onlyShowOn",
         );
 
         $return["onlyShowOn"]  = array(
-            'el'                => 'multiselect',
+            'el'                => 'input',
             'label'             => "Only show on:",
-            'options'           => $this->post_ids_to_options( $this->post->onlyShowOn),
-            'data'              => 'all_posts',
+            'options'           => $this->post->onlyShowOn,
         );
 
         return $return;
@@ -377,7 +370,7 @@ class Noptin_Form_Editor {
                 'restrict'          => "whoCanSee=='roles'",
                 'options'           => array(),
             ),
- 
+
         );
 
     }
@@ -394,18 +387,12 @@ class Noptin_Form_Editor {
                 'label'             => 'Hide on Mobile',
             ),
 
-            'hideMediumScreens'     => array(
-                'type'              => 'checkbox',
-                'el'                => 'input',
-                'label'             => 'Hide on Tablets',
-            ),
-
             'hideLargeScreens'      => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
                 'label'             => 'Hide on Desktops',
             ),
- 
+
         );
 
     }
@@ -525,7 +512,7 @@ class Noptin_Form_Editor {
                 'type'      => 'checkbox',
                 'el'        => 'input',
                 'restrict'  => "optinType=='popup'",
-                'label'     => 'Hide Close Button',
+                'label'     => __('Hide Close Button', 'noptin'),
             ),
 
             'closeButtonPos'=> array(
@@ -533,7 +520,8 @@ class Noptin_Form_Editor {
                 'options'       => array(
                     'inside'        => 'Inside the form',
                     'outside'       => 'Outside the form',
-                    'along'         => 'Along the border'
+					'along'         => 'Along the border',
+					'top-right'     => 'Top Right'
                 ),
                 'label'     => 'Close Button Position',
                 'restrict'  => "optinType=='popup' && !hideCloseButton",
@@ -710,7 +698,7 @@ class Noptin_Form_Editor {
                 'label'                 => 'Description Color',
                 'restrict'              => '!hideDescription'
             ),
-            
+
         );
     }
 
@@ -744,7 +732,7 @@ class Noptin_Form_Editor {
                 'label'                   => 'Note Color',
                 'restrict'                => '!hideNote'
             ),
-            
+
         );
     }
 
@@ -757,9 +745,8 @@ class Noptin_Form_Editor {
             'CSS'          => array(
                 'el'       => 'editor',
                 'label'    => 'Enter Your Custom CSS',
-                '@input'   => 'updateCustomCss()'
             ),
-            
+
         );
     }
 

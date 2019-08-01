@@ -18,6 +18,88 @@
 	Block.tagName = 'DIV';
 	VueQuillEditor.Quill.register(Block, true);
 
+	//helper functions
+	var noptin = {
+		templateData: function (key) {
+
+			var data = {}
+
+			if (noptinEditor.templates[key]) {
+				var template = noptinEditor.templates[key]['data']
+
+				Object.keys(template).forEach(function (key) {
+					data[key] = template[key]
+				})
+
+			}
+			return data
+		},
+
+		applyTemplate: function (template, instance) {
+
+			Object.keys(template).forEach(function (key) {
+				instance[key] = template[key]
+			})
+
+			noptin.updateFormSizes(instance)
+
+		},
+
+		updateFormSizes: function (instance) {
+
+			if (instance.optinType == 'sidebar') {
+				instance.formHeight = '400px'
+				instance.formWidth = '300px'
+			} else {
+				instance.formHeight = '250px'
+				instance.formWidth = '520px'
+			}
+
+		},
+
+		updateCustomCss: function (css) {
+			$('#formCustomCSS').text(css)
+		},
+
+		getColorThemeOptions: function () {
+			var themes = []
+
+			Object.keys(noptinEditor.color_themes).forEach(function (key) {
+				var theme = {
+					text: key,
+					value: noptinEditor.color_themes[key],
+					imageSrc: noptin_params.icon,
+					//description: "Description with Facebook",
+
+				}
+				themes.push(theme)
+			})
+
+			return themes
+		},
+
+		getColorTheme: function (instance) {
+			return instance.colorTheme.split(" ")
+		},
+
+		changeColorTheme: function ( instance ) {
+
+			var colors = noptin.getColorTheme(instance)
+
+			if (colors.length) {
+				instance.noptinFormBg = colors[0]
+				instance.noptinFormBorderColor = colors[2]
+				instance.noptinButtonColor = colors[0]
+				instance.noptinButtonBg = colors[1]
+				instance.titleColor = colors[1]
+				instance.descriptionColor = colors[1]
+				instance.noteColor = colors[1]
+			}
+
+
+		},
+	}
+
 	Vue.component('noptinform', {
 		props: noptinEditor.design_props,
 		template: '#noptinFormTemplate',
@@ -165,9 +247,7 @@
 					})
 
 			},
-			updateCustomCss: function () {
-				jQuery('#formCustomCSS').text(this.CSS)
-			},
+
 			upload_image: function (key) {
 				var image = wp.media({
 					title: 'Upload Image',
@@ -178,42 +258,6 @@
 						var uploaded_image = image.state().get('selection').first();
 						vm[key] = uploaded_image.toJSON().sizes.thumbnail.url;
 					})
-			},
-			changeFormType: function () {
-
-				//Sidebar
-				if (this.optinType == 'sidebar') {
-					this.formHeight = '400px'
-					this.formWidth = '300px'
-					this.singleLine = false
-					return
-				}
-
-				this.formHeight = '250px'
-				this.formWidth = '520px'
-
-			},
-			changeColorTheme: function () {
-				var colors = this.colorTheme.split(" ")
-				if (!colors.length) return;
-				this.noptinFormBg = colors[0]
-				this.noptinFormBorderColor = colors[2]
-				this.noptinButtonColor = colors[0]
-				this.noptinButtonBg = colors[1]
-				this.titleColor = colors[1]
-				this.descriptionColor = colors[1]
-				this.noteColor = colors[1]
-			},
-			changeTemplate: function () {
-				var templates = JSON.parse(noptinEditor.templates),
-					template = this.Template
-
-				if (templates[template]) {
-					Object.keys(templates[template]).forEach(function (key) {
-						vm[key] = templates[template][key]
-					})
-				}
-				jQuery('#formCustomCSS').text(this.CSS)
 			},
 			showSuccess: function (msg) {
 				this.hasSuccess = true;
@@ -255,8 +299,25 @@
 
 			}
 		},
+
+		watch: {
+			Template: function () {
+				var template = noptin.templateData(this.Template)
+				noptin.applyTemplate(template, this)
+			},
+			CSS: function () {
+				noptin.updateCustomCss(this.CSS)
+			},
+			optinType: function () {
+				noptin.updateFormSizes(this)
+			},
+			colorTheme: function() {
+				noptin.changeColorTheme( this )
+			}
+		},
+
 		mounted: function () {
-			jQuery('#formCustomCSS').text(this.CSS)
+			noptin.updateCustomCss(this.CSS)
 			jQuery('.noptin-form-designer-loader').hide()
 		},
 	})
@@ -304,9 +365,6 @@
 		},
 		methods: {
 
-			updateCustomCss: function () {
-				jQuery('#formCustomCSS').text(this.CSS)
-			},
 			upload_image: function (key) {
 				var image = wp.media({
 					title: 'Upload Image',
@@ -317,46 +375,6 @@
 						var uploaded_image = image.state().get('selection').first();
 						vmQuick[key] = uploaded_image.toJSON().sizes.thumbnail.url;
 					})
-			},
-			changeOptinType: function (form) {
-
-				this.optinType = form
-
-				//Change the form size
-				if (this.optinType == 'sidebar') {
-					this.formHeight = '400px'
-					this.formWidth = '300px'
-					this.singleLine = false
-				} else {
-					this.formHeight = '250px'
-					this.formWidth = '520px'
-				}
-
-				//Move to the next step
-				this.currentStep = 'step_2'
-
-
-			},
-			changeColorTheme: function () {
-				var colors = this.colorTheme.split(" ")
-				if (!colors.length) return;
-				this.noptinFormBg = colors[0]
-				this.noptinFormBorderColor = colors[2]
-				this.noptinButtonColor = colors[0]
-				this.noptinButtonBg = colors[1]
-				this.titleColor = colors[1]
-				this.descriptionColor = colors[1]
-				this.noteColor = colors[1]
-			},
-			changeTemplate: function () {
-				template = this.Template
-
-				if (noptinEditor.templates[template]) {
-					Object.keys(noptinEditor.templates[template]).forEach(function (key) {
-						vmQuick[key] = noptinEditor.templates[template][key]
-					})
-				}
-				this.updateCustomCss()
 			},
 			showSuccess: function (msg) {
 				this.hasSuccess = true;
@@ -389,27 +407,23 @@
 			}
 		},
 		watch: {
-			Template: function (Template) {
-				template = this.Template
-
-				if (noptinEditor.templates[template]) {
-					Object.keys(noptinEditor.templates[template]).forEach(function (key) {
-						vmQuick[key] = noptinEditor.templates[template][key]
-					})
-				}
-
-				if (this.optinType == 'sidebar') {
-					this.formHeight = '400px'
-					this.formWidth = '300px'
-				} else {
-					this.formHeight = '250px'
-					this.formWidth = '520px'
-				}
-
-				this.updateCustomCss()
+			Template: function () {
+				var template = noptin.templateData(this.Template)
+				noptin.applyTemplate(template, this)
 			},
+			CSS: function () {
+				noptin.updateCustomCss(this.CSS)
+			},
+			optinType: function () {
+				noptin.updateFormSizes(this)
+			},
+			colorTheme: function() {
+				noptin.changeColorTheme( this )
+			}
 		},
 		mounted: function () {
+			noptin.updateCustomCss(this.CSS)
+
 			jQuery('#formCustomCSS').text(this.CSS)
 			jQuery('.noptin-form-designer-loader').hide()
 			$('.noptin-tip').tooltipster();
@@ -418,9 +432,9 @@
 
 			Object.keys(noptinEditor.templates).forEach(function (key) {
 				var template = {
-					text: key,
+					text: noptinEditor.templates[key]['title'],
 					value: key,
-					imageSrc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2T0vbiOu-nBxPzKw4HKrrVSAgfXx_qxzYe8w81k6cm7eH8UcnCg",
+					imageSrc: noptin_params.icon,
 					//description: "Description with Facebook",
 
 				}
@@ -432,22 +446,10 @@
 				selectText: "Select A Template",
 				onSelected: function (data) {
 					vmQuick.Template = data.selectedData.value;
-					vmQuick.changeTemplate()
 				}
 			});
 
-			var themes = []
-
-			Object.keys(noptinEditor.color_themes).forEach(function (key) {
-				var theme = {
-					text: key,
-					value: noptinEditor.color_themes[key],
-					imageSrc: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2T0vbiOu-nBxPzKw4HKrrVSAgfXx_qxzYe8w81k6cm7eH8UcnCg",
-					//description: "Description with Facebook",
-
-				}
-				themes.push(theme)
-			})
+			var themes = noptin.getColorThemeOptions()
 
 			$('.ddslickThemes').ddslick({
 				data: themes,

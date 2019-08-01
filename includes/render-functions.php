@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Renders a single editor field
- * 
+ *
  * @param $id string Required. Unique id of the rendered field
  * @param $field array Required. The args of field to render
  * @param $panel string Optional. The panel where this field will be rendered
@@ -55,7 +55,7 @@ function noptin_render_editor_paragraph( $id, $field ){
     //If there is a restrict field, handle it
     $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
     unset( $field['restrict'] );
-    
+
     //Setup class if none exists
     if( empty($field['class']) ){
         $field['class'] = 'noptin-padded';
@@ -103,7 +103,7 @@ function noptin_render_editor_textarea( $id, $field ){
     //If there is a restrict field, handle it
     $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
     unset( $field['restrict'] );
-    
+
     //Setup label
     $label = empty($field['label']) ? '' : $field['label'];
     unset( $field['label'] );
@@ -124,7 +124,7 @@ function noptin_render_editor_editor( $id, $field ){
     //If there is a restrict field, handle it
     $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
     unset( $field['restrict'] );
-    
+
     //Setup label
     $label = empty($field['label']) ? '' : $field['label'];
     unset( $field['label'] );
@@ -188,9 +188,9 @@ function noptin_render_editor_input( $id, $field ){
         case 'checkbox':
             echo "<label class='$class' $restrict><input $attrs class='screen-reader-text'/> <span class='noptin-checkmark'></span> <span class='noptin-label'>$label</span></label>";
             break;
-        
+
         case 'image':
-            $attrs = str_replace( 'type="image"', '', $attrs );  
+            $attrs = str_replace( 'type="image"', '', $attrs );
             echo "<div class='$class' $restrict><span class='noptin-label'>$label</span> <div class='image-uploader'><input type='text' $attrs /> <input @click=\"upload_image('$id')\" type='button' class='button button-secondary' value='Upload Image' /></div></div>";
             break;
 
@@ -201,6 +201,37 @@ function noptin_render_editor_input( $id, $field ){
 
 }
 add_action( 'noptin_render_editor_input', 'noptin_render_editor_input', 10, 2 );
+
+/**
+ * Renders a multi checkbox input field
+ */
+function noptin_render_editor_multi_checkbox( $id, $field ){
+
+    //If there is a restrict field, handle it
+    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+    unset( $field['restrict'] );
+
+    //Set the model
+    $field['v-model'] = $id;
+
+    //Tooltips
+    if(! empty($field['tooltip']) ){
+        $tooltip = esc_attr( trim( $field['tooltip'] ) );
+        unset( $field['tooltip'] );
+        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
+        $label    = "$label $tooltip";
+    }
+
+    //Generate attrs html
+    $attrs = noptin_array_to_attrs( $field );
+
+    //Container class
+	foreach( $field['options'] as $name => $label ) {
+		echo "<label class='noptin-checkbox-wrapper' $restrict><input value='$name' type='checkbox' $attrs class='screen-reader-text'/> <span class='noptin-checkmark'></span> <span class='noptin-label'>$label</span></label>";
+	}
+
+}
+add_action( 'noptin_render_editor_multi_checkbox', 'noptin_render_editor_multi_checkbox', 10, 2 );
 
 /**
  * Renders a select input field in the opt-in editor sidebar
@@ -226,7 +257,7 @@ function noptin_render_editor_select( $id, $field, $panel ){
         $extra .= ' taggable :create-option =" val => ({ label: val, val: val })"';
         unset( $field['taggable'] );
     }
-    
+
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
     if( empty($field['options']) ) {
@@ -373,7 +404,7 @@ function noptin_render_editor_color_themes( $id, $field ){
 add_action( 'noptin_render_editor_color_themes', 'noptin_render_editor_color_themes', 10, 2 );
 
 /**
- * Renders an optin_data 
+ * Renders an optin_data
  */
 function noptin_render_editor_optin_data( $id, $field ){
 
@@ -414,7 +445,7 @@ function noptin_render_editor_optin_data( $id, $field ){
 add_action( 'noptin_render_editor_optin_data', 'noptin_render_editor_optin_data', 10, 2 );
 
 /**
- * Renders an optin_image 
+ * Renders an optin_image
  */
 function noptin_render_editor_optin_image( $id, $field ){
 
@@ -466,7 +497,7 @@ function noptin_render_editor_optin_image( $id, $field ){
 add_action( 'noptin_render_editor_optin_image', 'noptin_render_editor_optin_image', 10, 2 );
 
 /**
- * Renders an optin_image 
+ * Renders an optin_image
  */
 function noptin_render_editor_optin_fields( $id, $field ){
 
@@ -600,7 +631,7 @@ function noptin_render_editor_optin_types( $id, $field ){
     echo "<div class='noptin-optin_types-wrapper' $restrict><label>$label</label><div class='noptin-optin_types'>";
 
     foreach( $optin_types as $val => $args ){
-        echo "<div title='{$args['desc']}' class='noptin-tip noptin-shadow noptin-optin_type noptin-$val' @click=\"changeOptinType('$val')\">";
+        echo "<div title='{$args['desc']}' class='noptin-tip noptin-shadow noptin-optin_type noptin-$val' @click=\"optinType='$val'; currentStep='step_2'\">";
         echo "<span class='noptin-optin_type-icon dashicons dashicons-{$args['icon']}'></span>";
         echo "<h3>{$args['label']}</h3>";
         echo '</div>';
@@ -624,7 +655,7 @@ function noptin_render_editor_panel( $id, $panel ){
     $restrict   = noptin_get_editor_restrict_markup( $panel );
     $panel_name = "{$panel['id']}Open";
     $id         = "noptinPanel$panel_name";
-    
+
     //Display the panel
     printf(
             '
@@ -640,7 +671,7 @@ function noptin_render_editor_panel( $id, $panel ){
             $restrict,
             $id
         );
-        
+
     //Display the panel's content
     foreach( $panel['children'] as $id=>$field ){
         noptin_render_editor_field( $id, $field );
@@ -648,7 +679,7 @@ function noptin_render_editor_panel( $id, $panel ){
 
     //End the output
     echo "</div></div>";
-    
+
 }
 add_action( 'noptin_render_editor_panel', 'noptin_render_editor_panel', 10, 2 );
 

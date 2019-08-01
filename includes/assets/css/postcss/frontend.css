@@ -53,11 +53,11 @@ $noptin_color: #ff6f00;
 	background: rgba(0, 0, 0, 0.9);
 	overflow: auto;
 	display: none;
-	
+
 	&.open {
 		display: flex;
 	}
-	
+
 	.noptin-optin-form-wrapper .noptin-form-close {
 		display: inline-block;
 	}
@@ -95,6 +95,12 @@ $noptin_color: #ff6f00;
 		&.along {
 			top: -30px;
 			right: -30px;
+		}
+
+		&.top-right {
+			top: 60px;
+			right: 60px;
+			position: fixed;
 		}
 
 		path {

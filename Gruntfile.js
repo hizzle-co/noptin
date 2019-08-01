@@ -31,7 +31,7 @@ module.exports = function( grunt ) {
 				options: {
 					domainPath: '/languages',
 					mainFile: 'noptin.php',
-					potFilename: 'sample-plugin.pot',
+					potFilename: 'noptin.pot',
 					potHeaders: {
 						poedit: true,
 						'x-poedit-keywordslist': true
@@ -41,12 +41,22 @@ module.exports = function( grunt ) {
 				}
 			}
 		},
+
+		phpdocumentor: {
+            dist: {
+                options: {
+                    ignore: 'node_modules'
+                }
+            }
+        },
 	} );
 
 	grunt.loadNpmTasks( 'grunt-wp-i18n' );
 	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
+	grunt.loadNpmTasks('grunt-phpdocumentor');
 	grunt.registerTask( 'i18n', ['addtextdomain', 'makepot'] );
 	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
+	grunt.registerTask( 'docs', ['phpdocumentor'] );
 
 	grunt.util.linefeed = '\n';
 

@@ -216,11 +216,12 @@ class Noptin_Admin {
         $params = array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'api_url' => get_home_url( null, 'wp-json/wp/v2/'),
-            'nonce'   => wp_create_nonce('noptin_admin_nonce'),
+			'nonce'   => wp_create_nonce('noptin_admin_nonce'),
+			'icon'    => $this->assets_url . 'images/checkmark.png',
         );
 
         // localize and enqueue the script with all of the variable inserted
-        wp_localize_script('noptin', 'noptin', $params);
+        wp_localize_script('noptin', 'noptin_params', $params);
         wp_enqueue_script('noptin');
     }
 
@@ -581,11 +582,15 @@ class Noptin_Admin {
             $templates = array();
         }
 
-        $fields = 'CSS hideNote note noteColor hideOnNoteClick hideDescription description descriptionColor hideTitle title titleColor noptinButtonBg noptinButtonColor noptinButtonLabel noptinFormBg noptinFormBorderColor noptinFormBorderRound formRadius hideCloseButton closeButtonPos singleLine buttonPosition showNameField requireNameField firstLastName image imagePos';
-        $fields = explode(' ', $fields);
+        $fields = noptin_get_form_design_props();
         $data   = array();
 
         foreach( $fields as $field ){
+
+			if( 'optinType' == $field ) {
+				continue;
+			}
+
             if( isset( $_POST['state'][$field] ) ) {
 
                 $value = $_POST['state'][$field];
@@ -604,8 +609,12 @@ class Noptin_Admin {
             }
         }
 
-        $title = trim( $_POST['state']['optinName'] . ' ' . date( DATE_COOKIE ) );
-        $templates[ $title ] = $data;
+		$title = sanitize_text_field( $_POST['state']['optinName'] );
+		$key   = wp_generate_password( '4', false ) . time();
+		$templates[ $key ] = array(
+			'title' => $title,
+			'data'  => $data,
+		);
 
         update_option( 'noptin_templates', $templates );
 

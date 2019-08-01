@@ -37,7 +37,7 @@ class Noptin_Form {
 			$this->init( $form->data );
 			return;
         }
-        
+
         //... or an array of form properties
         if ( is_array( $form ) ) {
 			$this->init( $form );
@@ -89,13 +89,13 @@ class Noptin_Form {
 			if ( ! is_numeric( $value ) ) {
                 return false;
             }
-            
+
             //Ensure this is a valid form id
 			$value = intval( $value );
 			if ( $value < 1 ) {
                 return false;
             }
-				
+
 		} else {
 			return false;
 		}
@@ -104,13 +104,13 @@ class Noptin_Form {
 		if ( $form = wp_cache_get( $value, 'noptin_forms' ) ) {
             return $form;
         }
-        
+
 		//Fetch the post object from the db
 		$post = get_post( $value );
         if(! $post || $post->post_type != 'noptin-form' ) {
             return false;
 		}
-	
+
         //Init the form
         $form = array(
             'optinName'     => $post->post_title,
@@ -132,7 +132,7 @@ class Noptin_Form {
 
 		return $this->sanitize_form_data( $form );
     }
-    
+
     /**
 	 * Return default object properties
 	 *
@@ -152,7 +152,7 @@ class Noptin_Form {
             'formRadius'                    => '0px',
             'hideCloseButton'               => false,
             'closeButtonPos'                => 'outside',
-           
+
 			'singleLine'                    => true,
 			'inject'						=> '0',
             'buttonPosition'                => 'block',
@@ -162,7 +162,7 @@ class Noptin_Form {
             'subscribeAction'               => 'message', //close, redirect
             'successMessage'                => 'Thank you for subscribing to our newsletter',
             'redirectUrl'                   => '',
-            
+
 
             //Form Design
             'noptinFormBg'                  => '#ffc107',
@@ -215,23 +215,19 @@ class Noptin_Form {
             'showBlog'                   		=> true,
             'showSearch'                   		=> false,
 			'showArchives'              		=> false,
-			'neverShowOn'              			=> array(),
-			'onlyShowOn'              			=> array(),
+			'neverShowOn'              			=> '',
+			'onlyShowOn'              			=> '',
 			'whoCanSee'              			=> 'all',
 			'userRoles'              			=> array(),
 			'hideSmallScreens'              	=> false,
-			'hideMediumScreens'              	=> false,
 			'hideLargeScreens'              	=> false,
+			'showPostTypes'						=> array('post'),
 
-            //custom css                    
+            //custom css
             'CSS'                           => ' /*Custom css*/ ',
 
 		);
-		
-		foreach( noptin_get_post_types() as $name => $label ) {
-            $defaults["showOn$name"] = ( 'post' == $name );
-        }
-        
+
         return $defaults;
 
 	}
@@ -266,7 +262,7 @@ class Noptin_Form {
                 $return[$key] = true;
                 continue;
 			}
-			
+
 			if( is_array( $defaults[$key] ) && !is_array( $data[$key] ) ) {
 				$return[$key] = $defaults[$key];
                 continue;
@@ -306,7 +302,7 @@ class Noptin_Form {
 	 * @access public
 	 *
 	 * @param string $key form property to retrieve.
-	 * @return mixed Value of the given form property 
+	 * @return mixed Value of the given form property
 	 */
 	public function __get( $key ) {
 
@@ -363,13 +359,13 @@ class Noptin_Form {
             return $id;
         }
 
-		
+
         //Update the cache with our new data
         wp_cache_delete( $id, 'noptin_forms' );
         wp_cache_add($id, $this->data, 'noptin_forms' );
 		return true;
     }
-    
+
     /**
 	 * Creates a new form
 	 *
@@ -391,7 +387,7 @@ class Noptin_Form {
         if( is_wp_error($id) ) {
             return $id;
         }
-		
+
 		//Set the new id
 		$this->id = $id;
 
@@ -424,7 +420,7 @@ class Noptin_Form {
         if( is_wp_error($id) ) {
             return $id;
         }
-        
+
         $state = $this->data;
 		unset( $state['optinHTML'] );
 		unset( $state['optinType'] );
@@ -433,7 +429,7 @@ class Noptin_Form {
         update_post_meta( $id, '_noptin_optin_type', $this->optinType );
         return true;
     }
-    
+
     /**
 	 * Returns post creation/update args
 	 *
@@ -450,7 +446,7 @@ class Noptin_Form {
 			'post_status'       => $this->optinStatus,
 			'post_type'         => 'noptin-form',
 		);
-		
+
 		foreach( $data as $key => $val ) {
 			if( empty( $val ) ) {
 				unset( $data[$key] );
@@ -459,7 +455,7 @@ class Noptin_Form {
 
 		return $data;
     }
-    
+
     /**
 	 * Duplicates the form
 	 *
@@ -510,7 +506,7 @@ class Noptin_Form {
 
 	/**
 	 * Checks whether this form can be displayed on the current page
-	 * 
+	 *
 	 *
 	 * @return bool
 	 */
@@ -525,18 +521,28 @@ class Noptin_Form {
 		if( !empty( $_GET['noptin_hide'] ) && 'true' == $_GET['noptin_hide'] ) {
 			return false;
 		}
-		
+
+		//Maybe hide on mobile
+		if( $this->hideSmallScreens && wp_is_mobile() ) {
+			return false;
+		}
+
+		//Maybe hide on desktops
+		if( $this->hideLargeScreens && !wp_is_mobile() ) {
+			return false;
+		}
+
 		//Get current global post
 		$post = get_post();
 
 		//Has the user restricted this to a few posts?
 		if(! empty( $this->onlyShowOn ) ) {
-			return in_array( $post->ID, $this->onlyShowOn );
+			return in_array( $post->ID, explode( ',', $this->onlyShowOn ) );
 		}
 
 
 		//or maybe forbidden it on this post?
-		if( in_array( $post->ID, $this->neverShowOn ) ) {
+		if( in_array( $post->ID, explode( ',', $this->neverShowOn ) ) ) {
 			return false;
 		}
 
@@ -555,28 +561,25 @@ class Noptin_Form {
 			return $this->showBlog;
 		}
 
-		//search 
+		//search
 		if ( is_search() ) {
 			return $this->showSearch;
 		}
-		
-		//other archive pages 
+
+		//other archive pages
 		if ( is_archive() ) {
 			return $this->showArchives;
 		}
 
 		//Single posts
-		foreach( noptin_get_post_types() as $name => $label ) {
+		$post_types = $this->showPostTypes();
 
-			//e.g is_singular( post ) for blog post
-			if( is_singular( $name ) ) {
-				$value = $this->data["showOn$name"];
-				return apply_filters( "noptin_form_showOn{$name}", $value, $this );
-			}
+		if( is_empty( $post_types ) ) {
+			return false;
+		}
 
-        }
+		return is_singular( $post_types );
 
-		return false; //No matching rule
 	}
 
 	/**
@@ -591,7 +594,7 @@ class Noptin_Form {
 		$type_class = "noptin-$type-main-wrapper";
 
 		$html  = "<div class='$type_class $id_class'>";
-		
+
 		//Maybe print custom css
 		if(! empty( $this->CSS ) ) {
 
