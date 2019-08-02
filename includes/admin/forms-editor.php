@@ -177,7 +177,6 @@ class Noptin_Form_Editor {
                 'options'   => array(
                     'message'   => 'Display a success message',
                     'redirect'  => 'redirect to a different page',
-                    'close'     => 'Close the opt-in form',
                 ),
             ),
 

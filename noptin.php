@@ -210,9 +210,9 @@ if( !defined( 'ABSPATH' ) ) {
 		//The JS used on the frontend
         wp_register_script(
             'noptin_front',
-            $this->plugin_url . 'includes/assets/js/frontend.js',
+            $this->plugin_url . 'includes/assets/js/frontend-bundled.js',
             array( 'jquery' ),
-            filemtime( $this->plugin_path . 'includes/assets/js/frontend.js' ),
+            filemtime( $this->plugin_path . 'includes/assets/js/frontend-bundled.js' ),
             true
         );
 

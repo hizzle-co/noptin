@@ -31,6 +31,7 @@
   "dependencies": {
     "dragula": "^3.7.2",
     "install": "^0.13.0",
+    "lodash.throttle": "^4.1.1",
     "npm": "^6.10.2",
     "postcss-import": "^12.0.1"
   },
@@ -41,7 +42,6 @@
     "grunt-phpdocumentor": "^0.4.1",
     "grunt-wp-i18n": "^1.0.3",
     "grunt-wp-readme-to-markdown": "^2.0.1",
-    "ouibounce": "0.0.12",
     "precss": "^4.0.0",
     "tinyify": "^2.5.1",
     "vue-quill-editor": "^3.0.6",

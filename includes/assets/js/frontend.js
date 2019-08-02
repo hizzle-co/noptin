@@ -1,148 +1,21 @@
 (function ($) {
+	"use strict"
 
-	function ouibounce(el, custom_config) {
+	//throttle form lodash
+	var throttle = require('lodash.throttle');
 
-		var config     = custom_config || {},
-		  aggressive   = config.aggressive || false,
-		  sensitivity  = setDefault(config.sensitivity, 20),
-		  timer        = setDefault(config.timer, 1000),
-		  delay        = setDefault(config.delay, 0),
-		  callback     = config.callback || function() {},
-		  cookieExpire = setDefaultCookieExpire(config.cookieExpire) || '',
-		  cookieDomain = config.cookieDomain ? ';domain=' + config.cookieDomain : '',
-		  cookieName   = config.cookieName ? config.cookieName : 'viewedOuibounceModal',
-		  sitewide     = config.sitewide === true ? ';path=/' : '',
-		  _delayTimer  = null,
-		  _html        = document.documentElement;
+	//Quickly generates a random string
+	var randomString = function () {
+		var rand = Math.random()
+		return 'key' + rand.toString(36).replace(/[^a-z]+/g, '')
+	}
 
-		function setDefault(_property, _default) {
-		  return typeof _property === 'undefined' ? _default : _property;
-		}
-
-		function setDefaultCookieExpire(days) {
-		  // transform days to milliseconds
-		  var ms = days*24*60*60*1000;
-
-		  var date = new Date();
-		  date.setTime(date.getTime() + ms);
-
-		  return "; expires=" + date.toUTCString();
-		}
-
-		setTimeout(attachOuiBounce, timer);
-		function attachOuiBounce() {
-		  if (isDisabled()) { return; }
-
-		  _html.addEventListener('mouseleave', handleMouseleave);
-		  _html.addEventListener('mouseenter', handleMouseenter);
-		  _html.addEventListener('keydown', handleKeydown);
-		}
-
-		function handleMouseleave(e) {
-		  if (e.clientY > sensitivity) { return; }
-
-		  _delayTimer = setTimeout(fire, delay);
-		}
-
-		function handleMouseenter() {
-		  if (_delayTimer) {
-			clearTimeout(_delayTimer);
-			_delayTimer = null;
-		  }
-		}
-
-		var disableKeydown = false;
-		function handleKeydown(e) {
-		  if (disableKeydown) { return; }
-		  else if(!e.metaKey || e.keyCode !== 76) { return; }
-
-		  disableKeydown = true;
-		  _delayTimer = setTimeout(fire, delay);
-		}
-
-		function checkCookieValue(cookieName, value) {
-		  return parseCookies()[cookieName] === value;
-		}
-
-		function parseCookies() {
-		  // cookies are separated by '; '
-		  var cookies = document.cookie.split('; ');
-
-		  var ret = {};
-		  for (var i = cookies.length - 1; i >= 0; i--) {
-			var el = cookies[i].split('=');
-			ret[el[0]] = el[1];
-		  }
-		  return ret;
-		}
-
-		function isDisabled() {
-		  return checkCookieValue(cookieName, 'true') && !aggressive;
-		}
-
-		// You can use ouibounce without passing an element
-		// https://github.com/carlsednaoui/ouibounce/issues/30
-		function fire() {
-		  if (isDisabled()) { return; }
-
-		  if (el) { el.style.display = 'block'; }
-
-		  callback();
-		  disable();
-		}
-
-		function disable(custom_options) {
-		  var options = custom_options || {};
-
-		  // you can pass a specific cookie expiration when using the OuiBounce API
-		  // ex: _ouiBounce.disable({ cookieExpire: 5 });
-		  if (typeof options.cookieExpire !== 'undefined') {
-			cookieExpire = setDefaultCookieExpire(options.cookieExpire);
-		  }
-
-		  // you can pass use sitewide cookies too
-		  // ex: _ouiBounce.disable({ cookieExpire: 5, sitewide: true });
-		  if (options.sitewide === true) {
-			sitewide = ';path=/';
-		  }
-
-		  // you can pass a domain string when the cookie should be read subdomain-wise
-		  // ex: _ouiBounce.disable({ cookieDomain: '.example.com' });
-		  if (typeof options.cookieDomain !== 'undefined') {
-			cookieDomain = ';domain=' + options.cookieDomain;
-		  }
-
-		  if (typeof options.cookieName !== 'undefined') {
-			cookieName = options.cookieName;
-		  }
-
-		  document.cookie = cookieName + '=true' + cookieExpire + cookieDomain + sitewide;
-
-		  // remove listeners
-		  _html.removeEventListener('mouseleave', handleMouseleave);
-		  _html.removeEventListener('mouseenter', handleMouseenter);
-		  _html.removeEventListener('keydown', handleKeydown);
-		}
-
-		return {
-		  fire: fire,
-		  disable: disable,
-		  isDisabled: isDisabled
-		};
-	  }
-
-
-	$('body').on('click', function (event) {
-		if (!$(event.target).is('.noptin-optin-form-wrapper')) {
-			//$(".noptin-popup-main-wrapper").removeClass("open");
-		}
-	});
-
+	//Displays a popup and attaches "close" event handlers
 	var displayPopup = function (popup) {
 		$(popup)
 			.closest('.noptin-popup-main-wrapper')
 			.addClass('open')
-			.on('click', function ( e ) {
+			.on('click', function (e) {
 
 				// if the target of the click isn't the form nor a descendant of the form
 				if (!$(popup).is(e.target) && $(popup).has(e.target).length === 0) {
@@ -158,6 +31,7 @@
 			})
 	}
 
+	//Contains several triggers for displaying popups
 	var noptinDisplayPopup = {
 
 		//Displays a popup immeadiately
@@ -167,31 +41,63 @@
 
 		//Exit intent
 		before_leave: function () {
-			var popup = this
+			var popup = this,
+				key = randomString(),
+				_delayTimer = null,
+				sensitivity = 20, //how many pixels from the top should we display the popup?
+				delay = 200; //wait 100ms before displaying popup
 
-			ouibounce(false,
-				{
-					callback: function () { displayPopup(popup) },
-					aggressive: true
+			//Display popup when the user tries to leave...
+			$(document).on('mouseleave.' + key, function (e) {
+				if (e.clientY > sensitivity) { return; }
+				_delayTimer = setTimeout(function () {
+
+					//Display the popup
+					displayPopup(popup)
+
+					//Remove watchers
+					$(document).off('mouseleave.' + key)
+					$(document).off('mouseenter.' + key)
+				}, delay);
+			});
+
+			//...unless they decide to come back
+			$(document).on('mouseenter.' + key, function (e) {
+				if (_delayTimer) {
+					clearTimeout(_delayTimer);
+					_delayTimer = null;
 				}
-			);
+			});
+
 		},
 
 		//After the user starts scrolling
 		on_scroll: function () {
-			var scrollDepth = parseInt( $(this).data('on-scroll') ),
-			screenheight = parseInt($(document).height());
-			popup = this
+			var popup = this,
+				key = randomString(),
+				showPercent = parseInt($(this).data('on-scroll'))
 
-			$(document).scroll(function() {
-				console.log($(document).scrollTop());
-			})
+			var watchScroll = function () {
+				var scrolled = $(window).scrollTop(),
+					Dheight = $(document).height(),
+					Wheight = $(window).height();
+
+				var scrollPercent = (scrolled / (Dheight - Wheight)) * 100;
+
+				if (scrollPercent > showPercent) {
+					displayPopup(popup)
+					$(window).off('scroll.' + key)
+				}
+
+			}
+
+			$(window).on('scroll.' + key, throttle(watchScroll, 500))
 		},
 
 		//after_delay
 		after_delay: function () {
-			var delay = parseInt( $(this).data('after-delay') ),
-			popup = this
+			var delay = parseInt($(this).data('after-delay')),
+				popup = this
 
 			setTimeout(function () {
 				displayPopup(popup)
@@ -200,18 +106,18 @@
 
 		//after_comment
 		after_comment: function () {
-			$('#commentform').on( 'submit', function( e ){
-
-
+			$('#commentform').on('submit', function (e) {
+				//TODO
 			})
 		},
 
 		//after_click
 		after_click: function () {
-			var el = $(this).data('after-click'),
-			popup = this
 
-			$( el ).on( 'click', function( e ){
+			var el = $(this).data('after-click'),
+				popup = this
+
+			$(el).on('click', function (e) {
 				e.preventDefault()
 				displayPopup(popup)
 			})
@@ -229,48 +135,90 @@
 		}
 	})
 
-	//Select apply forms
-	$('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form')
-		//Watch for form submit events
-		.on('submit', function (e) {
+	//Submits forms via ajax
+	function subscribe_user(form) {
 
-			//Prevent the form from submitting
-			e.preventDefault();
+		//select the form
+		$(form)
 
-			//Fade out the form
-			var that = $(this);
-			$(this).fadeTo(600, 0.2);
+			//what for submit events
+			.on('submit', function (e) {
 
-			//Hide feedback divs
-			$(that).find('.noptin_feedback_success').hide();
-			$(that).find('.noptin_feedback_error').hide();
+				//Prevent the form from submitting
+				e.preventDefault();
 
-			//Retrieve the email
-			var _email = $(this).find('.noptin_form_input_email').val();
+				var that = $(this)
 
-			//Send an ajax request to the server
-			$.post(noptin.ajaxurl, {
-				email: _email,
-				action: 'noptin_new_user',
-				noptin_subscribe: noptin.noptin_subscribe
-			},
-				function (data, status, xhr) {
-					data = JSON.parse(data);
-					$(that).fadeTo(600, 1);
-					if (data.result == '1') {
-						$(that).find('.noptin_feedback_success').text(data.msg).show();
+				//Modify form state
+				$(this)
+					.fadeTo(600, 0.5)
+					.find('.noptin_feedback_success, .noptin_feedback_error')
+					.empty()
+					.hide()
 
+
+				//Prep all form data
+				var data = {},
+					fields = $(this).serializeArray()
+
+				jQuery.each(fields, function (i, field) {
+					data[field.name] = field.value
+					$("#results").append(field.value + " ");
+				});
+
+				//Add nonce and action
+				data.action = "noptin_new_user"
+				data._wpnonce = "noptin.noptin_subscribe"
+
+				//Post it to the server
+				$.post(noptin.ajaxurl, data)
+
+					//Update the user of success
+					.done( function (data, status, xhr) {
+
+						if( string == typeof data ) {
+							$(that)
+								.find('.noptin_feedback_error')
+								.text(data)
+								.show();
+							return;
+						}
+
+						if (data.action == redirect) {
+							window.location = data.redirect;
+						}
+
+						if (data.action == msg) {
+							$(that)
+								.find('.noptin_feedback_success')
+								.text(data.msg)
+								.show();
+						}
+
+						//Gutenberg
 						var url = $(that).find('.noptin_form_redirect').val();
+
 						if (url) {
 							window.location = url;
 						}
-					} else {
-						$(that).find('.noptin_feedback_error').text(data.msg).show();
-					}
-				})
-				.fail(function () {
-					$(that).fadeTo(600, 1);
-					$(that).find('.noptin_feedback_error').text('Could not establish a connection to the server.').show();
-				});
-		})
-})(jQuery);
+					})
+					.fail( function() {
+						var msg = 'Could not establish a connection to the server.'
+						$(that)
+								.find('.noptin_feedback_error')
+								.text(msg)
+								.show();
+					} )
+					.always(function(){
+						$(this).fadeTo(600, 1)
+					})
+			})
+	}
+
+	//Normal forms
+	subscribe_user('.noptin-optin-form-wrapper form');
+
+	//Gutenberg forms
+	subscribe_user('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form');
+
+}) (jQuery);
