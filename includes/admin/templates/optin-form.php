@@ -12,15 +12,14 @@
 		</div>
 		<div class="noptin-form-footer">
 			<div class="noptin-form-fields">
-				<div  v-for="field in fields"  :key="field.key" class="noptin-optin-field-wrapper"  :class="field.type">
-
-					<input v-if="field.type=='email'" name='email' type="email" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
-					<input v-if="field.type=='first_name'" name='first_name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
-					<input v-if="field.type=='last_name'" name='last_name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
-					<input v-if="field.type=='name'" name='name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
-					<input v-if="field.type=='text'" :name='field.name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
-					<label v-if="field.type=='checkbox'"><input :name='field.name' type="checkbox" :class="noptin-checkbox-form-field" :required="field.require" />{{field.label}}</label>
-					<textarea v-if="field.type=='textarea'" :name='noptin_email' class="noptin-form-field" :placeholder="field.label" :required="field.require"></textarea>
+				<div  v-for="field in fields"  :key="field.key" class="noptin-optin-field-wrapper">
+					<input v-if="field.type=='Email Address'" name='email' type="email" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
+					<input v-if="field.type=='First Name'" name='first_name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
+					<input v-if="field.type=='Last Name'" name='last_name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
+					<input v-if="field.type=='Full Name'" name='name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
+					<input v-if="field.type=='Text'" :name='field.name' type="text" class="noptin-form-field" :placeholder="field.label" :required="field.require" />
+					<label v-if="field.type=='Checkbox'"><input :name='field.name' type="checkbox" :class="noptin-checkbox-form-field" :required="field.require" />{{field.label}}</label>
+					<textarea v-if="field.type=='Textarea'" :name='noptin_email' class="noptin-form-field" :placeholder="field.label" :required="field.require"></textarea>
 				</div>
 
 				<input :value="noptinButtonLabel" type="submit"

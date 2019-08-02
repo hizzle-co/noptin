@@ -157,7 +157,7 @@ class Noptin_Form {
 			'fields'						=> array(
 				array(
 					'name'   => 'email',
-					'type'   => 'email',
+					'type'   => 'Email Address',
 					'label'  => 'Email Address',
 					'require'=> 'true',
 					'key'	 => 'noptin_email_key',
@@ -165,9 +165,6 @@ class Noptin_Form {
 			),
 			'inject'						=> '0',
             'buttonPosition'                => 'block',
-            'showNameField'                 => false,
-            'requireNameField'              => false,
-            'firstLastName'                 => false,
             'subscribeAction'               => 'message', //close, redirect
             'successMessage'                => 'Thank you for subscribing to our newsletter',
             'redirectUrl'                   => '',

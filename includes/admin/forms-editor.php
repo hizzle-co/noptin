@@ -508,32 +508,6 @@ class Noptin_Form_Editor {
                 'restrict'  => "optinType=='popup' && !hideCloseButton",
             ),
 
-            'singleLine' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Show all fields in a single line',
-            ),
-
-            'showNameField' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Display the name field',
-            ),
-
-            'firstLastName' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Request for both the first and last names',
-                'restrict'  => 'showNameField',
-            ),
-
-            'requireNameField' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Require the user to fill out the name field',
-                'restrict'  => 'showNameField',
-            ),
-
             'formRadius'     => array(
                 'type'       => 'text',
                 'el'         => 'input',
@@ -574,6 +548,12 @@ class Noptin_Form_Editor {
 
             'fields'        => array(
                 'el'        => 'form_fields',
+			),
+
+			'singleLine' => array(
+                'type'      => 'checkbox',
+                'el'        => 'input',
+                'label'     => 'Show all fields in a single line',
             ),
 
         );

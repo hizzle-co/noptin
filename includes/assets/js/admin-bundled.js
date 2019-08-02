@@ -2445,14 +2445,7 @@ console.log(dragula)
 		template: '#noptinFieldEditorTemplate',
 		data: function () {
 			return {
-				fieldTypes: [
-					{ 'val': 'email', 'label': 'Email' },
-					{ 'val': 'first_name', 'label': 'First Name' },
-					{ 'val': 'last_name', 'label': 'Last Name' },
-					{ 'val': 'name', 'label': 'Full Name' },
-					{ 'val': 'text', 'label': 'Text' },
-					{ 'val': 'textarea', 'label': 'Textarea' },
-				]
+				fieldTypes: [ 'Email Address', 'First Name', 'Last Name', 'Full Name', 'Text', 'Textarea', 'Checkbox' ]
 			}
 		},
 		methods: {
@@ -2463,8 +2456,8 @@ console.log(dragula)
 				this.fields.push(
 					{
 						name: 'name',
-						type: 'text',
-						label: 'New Field',
+						type: 'Text',
+						label: 'Text',
 						require: false,
 						key: key,
 					}
@@ -2476,11 +2469,8 @@ console.log(dragula)
 			removeField: function (item) {
 				this.fields.splice(item,1)
 			},
-			reduceOption: function (option) {
-				return option.val
-			},
 			hasCustomName: function( type ) {
-				return ['name','email','first_name','last_name'].indexOf( type ) == -1
+				return ['Email Address','First Name','Last Name','Full Name'].indexOf( type ) == -1
 			},
 			expandField: function( id ) {
 				var el = $( '#' + id)

@@ -2,7 +2,7 @@
   <button type="button" class="button button-secondary" @click="addField">Add Field</button>
 
   <ul v-noptin-dragula="fields">
-    <li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key" :class="field.type">
+    <li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key">
 		<div class="noptin-field-editor-header">
 			<span class="noptin-field-editor-title">{{ field.label }}</span>
 			<span @click="collapseField(field.key)" class="dashicons dashicons-arrow-up-alt2" style="display:none"></span>
@@ -10,16 +10,14 @@
 		</div>
 		<div class="noptin-field-editor-body" style="display:none">
 			<div class="noptin-select-wrapper">
-				<label>Type
+				<label>Type</label>
 					<noptin-select
-						:reduce="reduceOption"
 						:clearable='false'
 						:options='fieldTypes'
 						v-model="field.type"
 						:searchable='false'
-						@change="field.label=field.type">
+						@input="field.label=field.type">
 					</noptin-select>
-				</label>
 			</div>
 			<div class="noptin-text-wrapper">
 				<label>Label<input type="text" v-model="field.label"/></label>
