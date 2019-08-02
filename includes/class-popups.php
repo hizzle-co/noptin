@@ -20,7 +20,7 @@ if( !defined( 'ABSPATH' ) ) {
 
       	//Add popups to the footer
         add_action( 'wp_footer', array( $this, 'display_popups') );
-				
+
     }
 
     /**
@@ -41,15 +41,15 @@ if( !defined( 'ABSPATH' ) ) {
         if ( isset( $_GET['noptin_hide'] ) && $_GET['noptin_hide'] == 'true') {
             return;
         }
-	
+
 		/**
 		 * Fires before popups are displayed
 		 *
 		 * @since 1.0.5
 		 *
 		 */
-        do_action('before_noptin_init', $this);
-        
+        do_action('before_noptin_popup_display', $this);
+
         $popups = $this->get_popups();
 		foreach( $popups as $popup ) {
 
@@ -61,15 +61,16 @@ if( !defined( 'ABSPATH' ) ) {
                 echo $form->get_html();
             }
         }
-        
+
 		/**
 		 * Fires after popups have been displayed
 		 *
 		 * @since 1.0.5
 		 *
 		 */
-        do_action('noptin_init');
-    }
+        do_action('after_noptin_popup_display', $this);
+
+	}
 
     /**
      * Returns a list of all published popup forms
@@ -79,7 +80,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      array
      */
     public function get_popups() {
-        
+
         $args   = array(
             'numberposts'      => -1,
             'fields'           => 'ids',

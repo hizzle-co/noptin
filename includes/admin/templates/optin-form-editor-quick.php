@@ -11,9 +11,9 @@
                 <div class="noptin-popup-editor-main-preview">
                     <?php foreach ( $steps as $step=>$fields ) { ?>
                         <div v-show="currentStep=='<?php echo $step; ?>'" class="noptin-form-editor-step">
-                            <?php 
+                            <?php
                                 foreach ( $fields as $id => $field ) {
-                                    noptin_render_editor_field( $id, $field, $step );         
+                                    noptin_render_editor_field( $id, $field, $step );
                                 }
                             ?>
                         </div>
@@ -26,4 +26,7 @@
 
 <script type="text/x-template" id="noptinFormTemplate">
     <?php include 'optin-form.php'; ?>
+</script>
+<script type="text/x-template" id="noptinFieldEditorTemplate">
+    <?php include 'fields-editor.php'; ?>
 </script>

@@ -76,7 +76,7 @@ function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '=
                     'compare'   => $compare,
                 )
             );
-            
+
     }
     return get_posts( $args );
 }
@@ -115,7 +115,7 @@ function noptin_array_to_attrs( $array ){
         if( is_scalar( $val) ) {
             $val     = esc_attr($val);
             $return .= ' ' . $attr . '="' . $val . '"';
-        }   
+        }
     }
     return $return;
 
@@ -206,7 +206,7 @@ function noptin_get_form_design_props(){
 }
 
 /**
- * Function noptin editor localize 
+ * Function noptin editor localize
  */
 function noptin_localize_optin_editor( $state ){
     $params = array(
@@ -219,4 +219,38 @@ function noptin_localize_optin_editor( $state ){
         'design_props' => noptin_get_form_design_props(),
     );
     wp_localize_script('noptin', 'noptinEditor', $params);
+}
+
+/**
+ * Function noptin editor localize
+ */
+function noptin_form_template_form_props(){
+
+    $style = array(
+		'width: formWidth',
+		'minHeight: formHeight',
+	);
+
+	$style = '"{' . implode( ',', $style ) . '}"';
+	$class = "singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'";
+
+	return " @submit.prevent :class=\"$class\" :style=$style";
+}
+
+/**
+ * Function noptin editor localize
+ */
+function noptin_form_template_wrapper_props(){
+
+    $props = array(
+		':data-trigger="triggerPopup"',
+		':data-after-click="cssClassOfClick"',
+		':data-on-scroll="scrollDepthPercentage"',
+		':data-after-delay="timeDelayDuration"',
+		'class="noptin-optin-form-wrapper"',
+		':data-once-per-session="DisplayOncePerSession"',
+		':style="{borderColor: noptinFormBorderColor,  backgroundColor: noptinFormBg, borderRadius: formRadius}"'
+	);
+
+	return implode( ' ', $props );
 }

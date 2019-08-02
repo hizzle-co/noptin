@@ -233,6 +233,19 @@ function noptin_render_editor_multi_checkbox( $id, $field ){
 }
 add_action( 'noptin_render_editor_multi_checkbox', 'noptin_render_editor_multi_checkbox', 10, 2 );
 
+
+/**
+ * Renders form fields editor
+ */
+function noptin_render_editor_form_fields( $id, $field ){
+
+    //Container class
+	echo "<field-editor :fields='$id'></field-editor>";
+
+}
+add_action( 'noptin_render_editor_form_fields', 'noptin_render_editor_form_fields', 10, 2 );
+
+
 /**
  * Renders a select input field in the opt-in editor sidebar
  */

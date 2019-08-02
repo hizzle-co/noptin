@@ -3,7 +3,8 @@
 	var swatches = require('vue-swatches');
 	var VueQuillEditor = require('vue-quill-editor');
 	var VueSelect = require('vue-select');
-
+	var dragula = require('dragula');
+console.log(dragula)
 	//Color swatches
 	Vue.component('noptin-swatch', swatches.default);
 
@@ -50,10 +51,17 @@
 			if (instance.optinType == 'sidebar') {
 				instance.formHeight = '400px'
 				instance.formWidth = '300px'
-			} else {
-				instance.formHeight = '250px'
-				instance.formWidth = '520px'
+				return;
 			}
+
+			if( instance.optinType == 'popup' ){
+				instance.formWidth = '600px'
+				instance.formHeight = '320px'
+				return;
+			}
+
+			instance.formHeight = '250px'
+			instance.formWidth = '520px'
 
 		},
 
@@ -99,6 +107,124 @@
 
 		},
 	}
+
+	//Register dragula directive
+	Vue.directive('noptin-dragula', {
+		inserted: function( container, binding ) {
+
+			var list =  binding.value
+			var self = this;
+			var dragIndex;
+			var dragElm;
+			this.drake = dragula([container], {
+			  revertOnSpill: true
+			});
+
+			this.drake.on('drag', function(el, source) {
+			  dragElm = el;
+			  dragIndex = domIndexOf(el, source);
+			});
+
+			this.drake.on('drop', function(dropElm, target, source) {
+			  if (!target) return;
+			  var dropIndex = domIndexOf(dropElm, target);
+			  if (target === container) {
+				list.splice(dropIndex, 0, list.splice(dragIndex, 1)[0]);
+			  }
+			  refreshModel();
+
+			})
+
+			this.drake.on('cancel', refreshModel)
+			this.drake.on('remove', refreshModel)
+
+			function refreshModel() {
+				// trigger rerendering of the v-for items to keep the dom elements under vue's control
+				//self.vm[self.expression] = JSON.parse(JSON.stringify(self.vm[self.expression]))
+			}
+
+			function domIndexOf(child, parent) {
+			  return Array.prototype.indexOf.call(parent.children, child);
+			}
+
+		  },
+		  unbind: function() {
+			  this.drake.destroy()
+		  }
+	})
+
+
+	Vue.component('field-editor', {
+		props: ['fields'],
+		template: '#noptinFieldEditorTemplate',
+		data: function () {
+			return {
+				fieldTypes: [
+					{ 'val': 'email', 'label': 'Email' },
+					{ 'val': 'first_name', 'label': 'First Name' },
+					{ 'val': 'last_name', 'label': 'Last Name' },
+					{ 'val': 'name', 'label': 'Full Name' },
+					{ 'val': 'text', 'label': 'Text' },
+					{ 'val': 'textarea', 'label': 'Textarea' },
+				]
+			}
+		},
+		methods: {
+			addField: function () {
+				var total = this.fields.length
+				var rand  = Math.random() + total
+				var key   = 'key-' + rand.toString(36).replace(/[^a-z]+/g, '')
+				this.fields.push(
+					{
+						name: 'name',
+						type: 'text',
+						label: 'New Field',
+						require: false,
+						key: key,
+					}
+				)
+
+				this.collapseAll()
+				this.expandField(key)
+			},
+			removeField: function (item) {
+				this.fields.splice(item,1)
+			},
+			reduceOption: function (option) {
+				return option.val
+			},
+			hasCustomName: function( type ) {
+				return ['name','email','first_name','last_name'].indexOf( type ) == -1
+			},
+			expandField: function( id ) {
+				var el = $( '#' + id)
+
+				//toggle arrows
+				$(el).find('.dashicons-arrow-up-alt2').show()
+				$(el).find('.dashicons-arrow-down-alt2').hide()
+
+				//slide down the body
+				$(el).find('.noptin-field-editor-body').slideDown()
+			},
+			collapseField: function( id ) {
+				var el = $( '#' + id)
+
+				//toggle arrows
+				$(el).find('.dashicons-arrow-up-alt2').hide()
+				$(el).find('.dashicons-arrow-down-alt2').show()
+
+				//slide up the body
+				$(el).find('.noptin-field-editor-body').slideUp()
+			},
+			collapseAll: function( id ) {
+				var that = this
+
+				$.each(this.fields, function( index, value ) {
+					that.collapseField(value.key)
+				});
+			}
+		},
+	})
 
 	Vue.component('noptinform', {
 		props: noptinEditor.design_props,
@@ -207,9 +333,6 @@
 					.addClass('noptin-preview-showing')
 					.find('.noptin-popup-close')
 					.show()
-					.on('click', function () {
-						vm.closePopup()
-					})
 
 				//Hide popup when user clicks outside
 				jQuery("#noptin-popup-preview")

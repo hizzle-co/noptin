@@ -151,9 +151,18 @@ class Noptin_Form {
             //Opt in options
             'formRadius'                    => '0px',
             'hideCloseButton'               => false,
-            'closeButtonPos'                => 'outside',
+            'closeButtonPos'                => 'along',
 
 			'singleLine'                    => true,
+			'fields'						=> array(
+				array(
+					'name'   => 'email',
+					'type'   => 'email',
+					'label'  => 'Email Address',
+					'require'=> 'true',
+					'key'	 => 'noptin_email_key',
+				)
+			),
 			'inject'						=> '0',
             'buttonPosition'                => 'block',
             'showNameField'                 => false,
@@ -173,7 +182,9 @@ class Noptin_Form {
 
             //image Design
             'image'                         => $noptin->plugin_url . 'includes/assets/images/email-icon.png',
-            'imagePos'                      => 'right',
+			'imagePos'                      => 'right',
+			'imageMain'						=> '',
+			'imageMainPos'					=> '',
 
             //Button designs
             'noptinButtonBg'                => '#191919',
@@ -187,27 +198,21 @@ class Noptin_Form {
 
             //Description design
             'hideDescription'               => false,
-            'description'                   => 'Click on the design tab to change the appearance of this form. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>',
+            'description'                   => 'Enter your email to receive a weekly round-up of our best posts. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>',
             'descriptionColor'              => '#222222',
 
             //Note design
             'hideNote'                      => true,
-            'note'                          => 'Your privacy is our priority',
+            'note'                          => "We don't spam people",
             'noteColor'                     => '#5e5e5e',
             'hideOnNoteClick'               => false,
 
             //Trigger Options
-            'enableTimeDelay'               => false,
-            'timeDelayDuration'             => 10,
-            'enableExitIntent'              => false,
-            'enableScrollDepth'             => false,
+            'timeDelayDuration'             => 4,
             'scrollDepthPercentage'         => 25,
-            'hideOnMobile'                  => true,
             'DisplayOncePerSession'         => true,
-            'triggerOnClick'                => false,
-            'cssClassOfClick'               => '',
-            'triggerAfterCommenting'        => false,
-            'displayImmeadiately'           => true,
+            'cssClassOfClick'               => '#id .class',
+			'triggerPopup'					=> 'immeadiate',
 
             //Restriction Options
             'showEverywhere'                   	=> false,
@@ -253,17 +258,25 @@ class Noptin_Form {
 
         foreach( $data as $key => $value ){
 
+			//convert 'true' to a boolean true
             if( 'false' === $value ) {
                 $return[$key] = false;
                 continue;
             }
 
+			//convert 'false' to a boolean false
             if( 'true' === $value ) {
                 $return[$key] = true;
                 continue;
 			}
 
-			if( is_array( $defaults[$key] ) && !is_array( $data[$key] ) ) {
+			if( empty( $defaults[$key] ) || !is_array( $defaults[$key] ) ) {
+                $return[$key] = $value;
+                continue;
+			}
+
+			//Ensure props that expect array always receive arrays
+			if(  !is_array( $data[$key] ) ) {
 				$return[$key] = $defaults[$key];
                 continue;
 			}
@@ -572,9 +585,9 @@ class Noptin_Form {
 		}
 
 		//Single posts
-		$post_types = $this->showPostTypes();
+		$post_types = $this->showPostTypes;
 
-		if( is_empty( $post_types ) ) {
+		if( empty( $post_types ) ) {
 			return false;
 		}
 

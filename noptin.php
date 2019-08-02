@@ -61,7 +61,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @since       1.0.0
      */
     public $plugin_path = null;
-			
+
 	/**
 	 * Web path to this plugins root directory
      * @access      public
@@ -77,10 +77,10 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      self::$instance The one true Noptin
      */
     public static function instance() {
-				
+
         if ( is_null( self::$instance ) )
-    	    self::$instance = new self();									
-		
+    	    self::$instance = new self();
+
         return self::$instance;
     }
 
@@ -98,10 +98,10 @@ if( !defined( 'ABSPATH' ) ) {
 
       	//Init the plugin after WP inits
         add_action( 'init', array( $this, 'init'), 5 );
-        
+
         //Register our new widget
         add_action( 'widgets_init', array($this, 'register_widget'));
-				
+
     }
 
     /**
@@ -112,7 +112,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      void
      */
     public function init() {
-	
+
 		/**
 		 * Fires after WordPress inits but before Noptin inits
 		 *
@@ -120,7 +120,7 @@ if( !defined( 'ABSPATH' ) ) {
 		 *
 		 */
         do_action('before_noptin_init', $this);
-        
+
         //Init the admin
         $this->admin  = Noptin_Admin::instance();
 
@@ -135,7 +135,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Load css and js
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
-		
+
 		/**
 		 * Fires after Noptin inits
 		 *
@@ -153,11 +153,11 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      void
      */
     private function includes() {
-												
+
 		// The main admin class
         require_once $this->plugin_path . 'includes/admin/admin.php';
-        
-        //Form class 
+
+        //Form class
         require_once $this->plugin_path . 'includes/class-noptin-form.php';
         require_once $this->plugin_path . 'includes/class-popups.php';
         require_once $this->plugin_path . 'includes/class-inpost.php';
@@ -169,10 +169,10 @@ if( !defined( 'ABSPATH' ) ) {
 
     	//Ajax handlers
         require_once $this->plugin_path . 'includes/ajax.php';
-        
+
         // Include the widget class
         require_once $this->plugin_path . 'includes/admin/widget.php';
-		
+
 		/**
 		 * Fires after all plugin files and dependancies have been loaded
 		 *
@@ -256,7 +256,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      void
      */
     public function register_blocks() {
-												              
+
         if ( ! function_exists( 'register_block_type' ) ) {
             // Gutenberg is not active.
             return;
@@ -272,7 +272,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Register  js scripts and css styles
         $this->register_scripts();
-        
+
         //Register the blocks
         register_block_type( 'noptin/email-optin', array(
             'style'          => 'noptin_front',
@@ -282,7 +282,7 @@ if( !defined( 'ABSPATH' ) ) {
         ) );
     }
 
-    
+
     /**
      * Registers a widget area
      *
@@ -314,8 +314,8 @@ if( !defined( 'ABSPATH' ) ) {
         }
 
     }
-            
-            
+
+
 	/**
 	 * Load Localisation files.
 	 *

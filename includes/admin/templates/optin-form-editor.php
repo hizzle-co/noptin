@@ -28,7 +28,7 @@
                                 $_panel = ucfirst($panel);
                                 echo "
                                     <li>
-                                        <button 
+                                        <button
                                             class='noptin-popup-editor-sidebar-{$panel}'
                                             :class=\"{ active: currentSidebarSection == '$panel' }\"
                                             @click=\"currentSidebarSection = '$panel'\">$_panel</button>
@@ -54,4 +54,8 @@
         </div>
     </div>
 </div>
-<div id="noptin-popup-preview"></div>
+<div id="noptin-popup-preview" class="noptin-popup-main-wrapper"></div>
+
+<script type="text/x-template" id="noptinFieldEditorTemplate">
+    <?php include 'fields-editor.php'; ?>
+</script>

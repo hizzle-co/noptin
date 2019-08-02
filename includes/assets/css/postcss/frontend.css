@@ -47,10 +47,11 @@ $noptin_color: #ff6f00;
     top: 0;
     bottom: 0;
     left: 0;
-    right: 0;
+	right: 0;
+	z-index: 100000;
     align-items: center;
     justify-content: center;
-	background: rgba(0, 0, 0, 0.9);
+	background: rgba(96, 125, 139, 0.6);
 	overflow: auto;
 	display: none;
 
@@ -66,16 +67,10 @@ $noptin_color: #ff6f00;
 .noptin-optin-form-wrapper {
 	border: 4px solid $noptin_color;
 	padding: 0;
-	width: 520px;
-	max-width: 100%;
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	position: relative;
-	background-color: $noptin_color;
 	margin-bottom: 20px;
-    margin-top: 20px;
+	margin-top: 20px;
+	background-color: $noptin_color;
 
 	/*Popups close button*/
 	.noptin-form-close {
@@ -115,12 +110,19 @@ $noptin_color: #ff6f00;
 
 	/*The main opt in form*/
 	form {
-		width: 100%;
+		width: 520px;
+		max-width: 100%;
+		position: relative;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
 
 		/*Appears at the top of fields and contains title, image and description*/
 		.noptin-form-header {
 			display: flex;
 			padding: 20px;
+			flex: 1 0 auto;
+			align-items: center;
 
 			/*image on left of heading*/
 			&.left {
@@ -184,6 +186,7 @@ $noptin_color: #ff6f00;
 		/* Contains the form fields and footer texts*/
 		.noptin-form-footer {
 			padding: 20px;
+			flex-shrink: 0;
 
 			.noptin-form-fields::after {
 				content: "";
@@ -191,11 +194,16 @@ $noptin_color: #ff6f00;
 				display: table;
 			}
 
-			.noptin-form-field {
+			.noptin-optin-field-wrapper{
 				width: 100%;
 				display: block;
 				text-align: left;
-				padding: 6px 8px;
+
+				.noptin-form-field {
+					padding: 6px 8px;
+					width: 100%;
+					display: block;
+				}
 			}
 
 			.noptin-form-submit {

@@ -207,68 +207,33 @@ class Noptin_Form_Editor {
     private function get_trigger_settings() {
         return array(
 
-            //Help text
-            'info-text'     => array(
-                'el'        => 'paragraph',
-                'content'   => 'Display this optin...',
-                'style'     => 'font-weight: bold;'
-            ),
-
-            //Display immeadiately
-            'displayImmeadiately' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Immeadiately the page is loaded',
-            ),
-
-            //Once per session
+			//Once per session
             'DisplayOncePerSession' => array(
                 'type'      => 'checkbox',
                 'el'        => 'input',
-                'label'     => 'Once per session',
+                'label'     => 'Display this popup once per session',
             ),
 
-            //Before the user leaves
-            'enableExitIntent' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Before the user leaves',
-            ),
-
-            //After the user starts scrolling
-            'enableScrollDepth' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'After the user starts scrolling',
-            ),
-
-            //After the user leaves a comment
-            'triggerAfterCommenting' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'After the user leaves a comment',
-            ),
-
-            //After the user clicks something
-            'triggerOnClick' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'After the user clicks something',
-            ),
+			//trigger when
+			'triggerPopup'  => array(
+				'el'        => 'select',
+                'label'     => 'Show this popup',
+                'options'   => array(
+                    'immeadiate'      => 'Immeadiately',
+                    'before_leave'    => 'Before the user leaves',
+					'on_scroll'       => 'After the user starts scrolling',
+					'after_comment'   => 'After commenting',
+					'after_click'     => 'After clicking something',
+					'after_delay'     => 'After a time delay',
+                ),
+			),
 
             //CSS class of the items to watch out for clicks
             'cssClassOfClick' => array(
                 'type'      => 'text',
                 'el'        => 'input',
-                'label'     => 'CSS class of the items to watch out for clicks',
-                'restrict'  => 'triggerOnClick',
-            ),
-
-            //After a time delay
-            'enableTimeDelay' => array(
-                'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'After a time delay',
+                'label'     => 'CSS selector of the items to watch out for clicks',
+                'restrict'  => "triggerPopup=='after_click'",
             ),
 
             //Time in seconds to delay
@@ -276,7 +241,15 @@ class Noptin_Form_Editor {
                 'type'      => 'text',
                 'el'        => 'input',
                 'label'     => 'Time in seconds to delay',
-                'restrict'  => 'enableTimeDelay',
+                'restrict'  => "triggerPopup=='after_delay'",
+			),
+
+			//Scroll depth
+            'scrollDepthPercentage' => array(
+                'type'      => 'text',
+                'el'        => 'input',
+                'label'     => 'Scroll depth in percentage after which the popup will be shown',
+                'restrict'  => "triggerPopup=='on_scroll'",
             ),
         );
     }
@@ -424,6 +397,14 @@ class Noptin_Form_Editor {
                 'title'     => 'Form',
                 'id'        => 'formDesign',
                 'children'  => $this->get_form_settings()
+			),
+
+			//Fields Design
+            'fields'        => array(
+                'el'        => 'panel',
+                'title'     => 'Fields',
+                'id'        => 'fieldDesign',
+                'children'  => $this->get_field_settings()
             ),
 
             //Image Design
@@ -583,7 +564,21 @@ class Noptin_Form_Editor {
                 'label'             => 'Border Color',
             ),
         );
+	}
+
+	/**
+     * Returns field Design Fields
+     */
+    private function get_field_settings() {
+        return array(
+
+            'fields'        => array(
+                'el'        => 'form_fields',
+            ),
+
+        );
     }
+
 
     /**
      * Returns image Design Fields
@@ -779,7 +774,8 @@ class Noptin_Form_Editor {
             'descriptionDesignOpen'         => false,
             'titleDesignOpen'               => false,
             'buttonDesignOpen'              => false,
-            'formDesignOpen'                => false,
+			'formDesignOpen'                => false,
+			'fieldDesignOpen'               => false,
             'targetingSettingsOpen'         => false,
             'userTargetingSettingsOpen'     => false,
             'deviceTargetingSettingsOpen'   => false,
