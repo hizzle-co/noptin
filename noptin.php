@@ -46,7 +46,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @var       Plugin db version
      * @since       1.0.0
      */
-    public $db_version = 1;
+    public $db_version = 2;
 
     /**
      * @access      private
@@ -113,13 +113,18 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function init() {
 
+		global $wpdb;
+
 		/**
 		 * Fires after WordPress inits but before Noptin inits
 		 *
 		 * @since 1.0.0
 		 *
 		 */
-        do_action('before_noptin_init', $this);
+		do_action('before_noptin_init', $this);
+
+		//Register our custom meta table
+		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
 
         //Init the admin
         $this->admin  = Noptin_Admin::instance();

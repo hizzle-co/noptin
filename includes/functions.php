@@ -14,10 +14,78 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Returns a reference to the main Noptin instance
+ * Returns a reference to the main Noptin instance.
+ *
+ * * @return  object An object containing a reference to Noptin.
  */
 function noptin() {
     return Noptin::instance();
+}
+
+/**
+ * Retrieve subscriber meta field for a subscriber.
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @param   string $meta_key      The meta key to retrieve. By default, returns data for all keys.
+ * @param   bool   $single        If true, returns only the first value for the specified meta key. This parameter has no effect if $key is not specified.
+ * @return  mixed                 Will be an array if $single is false. Will be value of meta data field if $single is true.
+ * @access  public
+ * @since   1.5
+ */
+function get_noptin_subscriber_meta( $subscriber_id = 0, $meta_key = '', $single = false ) {
+	return get_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $single );
+}
+
+/**
+ * Adds subscriber meta field for a subscriber.
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @param   string $meta_key      The meta key to update.
+ * @param   mixed   $meta_value   Metadata value. Must be serializable if non-scalar.
+ * @param   mixed   $unique   Whether the same key should not be added.
+ * @return  int|false         Meta ID on success, false on failure.
+ * @access  public
+ * @since   1.5
+ */
+function add_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $unique = false ) {
+	return add_metadata( 'noptin_subscriber', $post_id, $meta_key, $meta_value, $unique );
+}
+
+/**
+ * Updates subscriber meta field for a subscriber.
+ *
+ * Use the $prev_value parameter to differentiate between meta fields with the same key and subscriber ID.
+ *
+ * If the meta field for the subscriber does not exist, it will be added and its ID returned.
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @param   string $meta_key      The meta key to update.
+ * @param   mixed   $meta_value   Metadata value. Must be serializable if non-scalar.
+ * @param   mixed   $prev_value   Previous value to check before updating.
+ * @return  mixed                 The new meta field ID if a field with the given key didn't exist and was therefore added, true on successful update, false on failure.
+ * @access  public
+ * @since   1.5
+ */
+function update_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $prev_value = '' ) {
+	return update_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value, $prev_value );
+}
+
+/**
+ * Deletes a subscriber meta field for the given subscriber ID.
+ *
+ * You can match based on the key, or key and value. Removing based on key and value, will keep from removing duplicate metadata with the same key. It also allows removing all metadata matching the key, if needed.
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @param   string $meta_key      The meta key to delete.
+ * @param   mixed   $meta_value   Metadata value. Must be serializable if non-scalar.
+ * @return  bool                 True on success, false on failure.
+ * @access  public
+ * @since   1.5
+ */
+function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value ) {
+	return delete_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value );
 }
 
 /**

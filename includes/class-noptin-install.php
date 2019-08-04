@@ -13,15 +13,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Noptin_Install {
 
+	public $charset_collate;
+
+	public $table_prefix;
+
 	/**
 	 * Install Noptin
 	 */
 	public function __construct( $upgrade_from ) {
+		global $wpdb;
 
         //Abort if this is MS and the blog is not installed
 		if ( ! is_blog_installed() ) {
 			return;
 		}
+
+		$this->charset_collate = $wpdb->get_charset_collate();
+		$this->table_prefix = $wpdb->prefix;
 
         //If this is a fresh install
 		if( !$upgrade_from ){
@@ -36,35 +44,23 @@ class Noptin_Install {
 	}
 
 	/**
-	 * Creates a single db table
-	 */
-	private function create_table( $table, $schema ) {
-		global $wpdb;
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-
-		$charset_collate = $wpdb->get_charset_collate();
-
-        //Create the table
-        $table = $wpdb->prefix . $table;
-        dbDelta( "CREATE TABLE IF NOT EXISTS $table ($schema) $charset_collate;" );
-
-	}
-
-	/**
 	 * Returns the subscribers table schema
 	 */
 	private function get_subscribers_table_schema() {
 
-		return "
-			id bigint(9) NOT NULL AUTO_INCREMENT,
-            first_name varchar(200),
-            second_name varchar(200),
-            email varchar(50) NOT NULL UNIQUE,
-            active varchar(50) DEFAULT 'unknown',
-            confirm_key varchar(50) NOT NULL,
-            confirmed INT(2) NOT NULL DEFAULT '0',
-            last_modified timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY id (id)";
+		$table = $this->table_prefix . 'noptin_subscribers';
+		$charset_collate = $this->charset_collate;
+
+		return "CREATE TABLE IF NOT EXISTS $table
+			(id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            first_name varchar(250) NOT NULL default '',
+            second_name varchar(250) NOT NULL default '',
+            email varchar(255) NOT NULL UNIQUE,
+            active tinyint(2) NOT NULL DEFAULT '0',
+            confirm_key varchar(50) NOT NULL default '',
+            confirmed tinyint(2) NOT NULL DEFAULT '0',
+            date_created DATE,
+            UNIQUE KEY id (id)) $charset_collate";
 
 	}
 
@@ -73,14 +69,17 @@ class Noptin_Install {
 	 */
 	private function get_subscriber_meta_table_schema() {
 
-		return "
-			meta_id bigint(20) unsigned NOT NULL auto_increment,
-			post_id bigint(20) unsigned NOT NULL default '0',
+		$table = $this->table_prefix . 'noptin_subscribermeta';
+		$charset_collate = $this->charset_collate;
+
+		return "CREATE TABLE IF NOT EXISTS $table
+			(meta_id bigint(20) unsigned NOT NULL auto_increment,
+			noptin_subscriber_id bigint(20) unsigned NOT NULL default '0',
 			meta_key varchar(255) default NULL,
 			meta_value longtext,
 			PRIMARY KEY  (meta_id),
-			KEY post_id (post_id),
-			KEY meta_key (meta_key($max_index_length))";
+			KEY noptin_subscriber_id (noptin_subscriber_id),
+			KEY meta_key (meta_key(191))) $charset_collate";
 
 	}
 
@@ -89,23 +88,21 @@ class Noptin_Install {
 	 */
 	private function upgrade_from_1() {
 		global $wpdb;
+
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-		$charset_collate = $wpdb->get_charset_collate();
+		$table = $this->table_prefix . 'noptin_subscribers';
 
-        //Create the subscribers table
-        $table = $wpdb->prefix . 'noptin_subscribers';
-        $sql = "CREATE TABLE IF NOT EXISTS $table (id bigint(9) NOT NULL AUTO_INCREMENT,
-            first_name varchar(200),
-            second_name varchar(200),
-            email varchar(50) NOT NULL UNIQUE,
-            source varchar(50) DEFAULT 'unknown',
-            confirm_key varchar(50) NOT NULL,
-            confirmed INT(2) NOT NULL DEFAULT '0',
-            time timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY id (id)) $charset_collate;";
+		$wpdb->query("ALTER TABLE $table ADD active tinyint(2)  NOT NULL DEFAULT '0'");
+		$wpdb->query("ALTER TABLE $table ADD date_created  DATE");
 
-        dbDelta($sql);
+		//Had not been implemented
+		$wpdb->query("ALTER TABLE $table DROP COLUMN source");
+
+		//Not really helpful
+		$wpdb->query("ALTER TABLE $table DROP COLUMN time");
+
+        dbDelta( $this->get_subscriber_meta_table_schema() );
 	}
 
 	/**
@@ -115,19 +112,11 @@ class Noptin_Install {
 		global $wpdb;
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-		$charset_collate = $wpdb->get_charset_collate();
-
-        //Create the subscribers table
-        $table = $wpdb->prefix . 'noptin_subscribers';
-        $sql = "CREATE TABLE IF NOT EXISTS $table (id bigint(9) NOT NULL AUTO_INCREMENT,
-            first_name varchar(200),
-            second_name varchar(200),
-            email varchar(50) NOT NULL UNIQUE,
-            source varchar(50) DEFAULT 'unknown',
-            confirm_key varchar(50) NOT NULL,
-            confirmed INT(2) NOT NULL DEFAULT '0',
-            time timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            UNIQUE KEY id (id)) $charset_collate;";
+		//Create the subscriber and subscriber meta table
+		$sql = array(
+			$this->get_subscribers_table_schema(),
+			$this->get_subscriber_meta_table_schema()
+		);
 
         dbDelta($sql);
 	}
