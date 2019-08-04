@@ -235,7 +235,7 @@
 	var editorInstances = {}
 	Vue.component('noptineditor', {
 		props: ['value', 'id'],
-		template: '<textarea><slot></slot></textarea>',
+		template: '<textarea :id="id"><slot></slot></textarea>',
 		mounted: function () {
 			var vmEditor = this
 			var el = jQuery(this.$el)
@@ -249,7 +249,14 @@
 		watch: {
 			value: function (value) {
 				if (editorInstances[this.id]) {
-					//editorInstances[this.id].codemirror.getDoc().setValue(value);
+
+					var editor = editorInstances[this.id].codemirror.getDoc()
+
+					//set if values are not ===
+					if( value != editor.getValue() ) {
+						editor.setValue( value )
+					}
+
 				}
 			},
 		}
@@ -275,38 +282,22 @@
 			}
 		},
 		methods: {
+
 			togglePanel: function (id) {
 
-				var noptinPanel = $("#noptinPanel" + id).find('.noptin-popup-editor-panel-body')
+				var el = $( '#' + id)
+				var isOpen = $( el ).hasClass('open')
 
-				var panelHeight = 0;
+				//toggle arrows
+				$(el).find('.dashicons-arrow-up-alt2').slideToggle()
+				$(el).find('.dashicons-arrow-down-alt2').slideToggle()
 
-				if (!this[id]) {
-					var previousCss = $(noptinPanel).attr("style");
+				//toggle the body with a sliding motion
+				$(el).find('.noptin-popup-editor-panel-body').slideToggle()
 
-					$(noptinPanel).css({
-						position: 'absolute',
-						visibility: 'hidden',
-						display: 'block',
-						height: 'auto'
-					});
+				//Toggle the open class
+				$(el).toggleClass('open')
 
-					var panelHeight = $(noptinPanel).height();
-
-					$(noptinPanel).attr("style", previousCss ? previousCss : "");
-				}
-
-				var that = this
-				$(noptinPanel).animate({
-					height: panelHeight,
-				}, 600, function () {
-					that[id] = !that[id]
-					if (that[id]) {
-						$(noptinPanel).css({
-							height: 'auto'
-						});
-					}
-				});
 
 			},
 			previewPopup: function () {

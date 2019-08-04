@@ -467,14 +467,12 @@ class Noptin_Form_Editor {
                 'el'            => 'select',
                 'label'         => 'Apply a template',
                 'options'       => array_combine( array_keys( $templates ), array_keys( $templates ) ),
-                '@input'        => 'changeTemplate()',
 			),
 
 			'colorTheme'        => array(
                 'el'            => 'select',
                 'label'         => 'Apply a color theme',
                 'options'       => array_combine( array_values( $colors ), array_keys( $colors ) ),
-                '@input'        => 'changeColorTheme()',
             ),
 
         );
@@ -736,33 +734,9 @@ class Noptin_Form_Editor {
 
         $saved_state = $this->post->get_all_data();
         unset( $saved_state['optinHTML'] );
-        $state = array_replace( $saved_state, $this->get_panels_state(), $this->get_misc_state());
+        $state = array_replace( $saved_state, $this->get_misc_state());
         return apply_filters( 'noptin_optin_form_editor_state', $state, $this );
 
-    }
-
-
-    /**
-     * Returns the default panels state
-     */
-    private function get_panels_state() {
-        return array(
-            'noteDesignOpen'                => false,
-            'descriptionDesignOpen'         => false,
-            'titleDesignOpen'               => false,
-            'buttonDesignOpen'              => false,
-			'formDesignOpen'                => false,
-			'fieldDesignOpen'               => false,
-            'targetingSettingsOpen'         => false,
-            'userTargetingSettingsOpen'     => false,
-            'deviceTargetingSettingsOpen'   => false,
-            'triggerSettingsOpen'           => false,
-            'basicSettingsOpen'             => false,
-            'customCSSOpen'                 => false,
-            'colorsDesignOpen'              => false,
-            'imageDesignOpen'               => false,
-            'currentSidebarSection'         => 'settings',
-        );
     }
 
 
@@ -774,7 +748,8 @@ class Noptin_Form_Editor {
             'hasSuccess'                    => false,
             'Success'                       => '',
             'hasError'                      => false,
-            'Error'                         => '',
+			'Error'                         => '',
+			'currentSidebarSection'         => 'settings',
             'headerTitle'                   => __( 'Editing', 'noptin'),
             'saveText'                      => __( 'Save', 'noptin'),
             'savingText'                    => __( 'Saving...', 'noptin'),

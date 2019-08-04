@@ -659,21 +659,21 @@ function noptin_render_editor_panel( $id, $panel ){
     }
 
     //Prepare the variables
-    $restrict   = noptin_get_editor_restrict_markup( $panel );
-    $panel_name = "{$panel['id']}Open";
-    $id         = "noptinPanel$panel_name";
+	$restrict   = noptin_get_editor_restrict_markup( $panel );
+	$id         = wp_generate_password( '4', false ) . time() . $panel['id'];
+	$class      = $panel['id'];
 
     //Display the panel
     printf(
             '
-            <div %3$s id="%4$s" :class="%1$s ? \'noptin-popup-editor-panel-open\' : \'noptin-popup-editor-panel-closed\'" class="noptin-popup-editor-panel">
-                <div class="noptin-popup-editor-panel-header" @click="togglePanel(\'%1$s\')">
-                    <span class="dashicons dashicons-arrow-up-alt2 noptin-popup-editor-panel-toggle"></span>
-                    <span class="dashicons dashicons-arrow-down-alt2 noptin-popup-editor-panel-toggle"></span>
+            <div %3$s id="%4$s" class="noptin-popup-editor-panel">
+                <div class="noptin-popup-editor-panel-header" @click="togglePanel(\'%4$s\')">
+                    <span class="dashicons dashicons-arrow-up-alt2 noptin-popup-editor-panel-toggle"  style="display:none"></span>
+                    <span class="dashicons dashicons-arrow-down-alt2 noptin-popup-editor-panel-toggle"  style="display:inline-block"></span>
                     <h2 class="noptin-popup-editor-panel-title">%2$s</h2>
                 </div>
-                <div class="noptin-popup-editor-panel-body">',
-            $panel_name,
+                <div class="noptin-popup-editor-panel-body" style="display:none">',
+            $id,
             $panel['title'],
             $restrict,
             $id

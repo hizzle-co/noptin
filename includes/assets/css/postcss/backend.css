@@ -281,8 +281,8 @@
 .noptin-popup-editor-sidebar {
 	flex-grow: 3;
 	max-width: 340px;
-	max-height: calc(100vh - 100px);
-	overflow: auto;
+	height: 100vh;
+	overflow-y: scroll;
 	font-size: 16px;
 }
 
@@ -358,25 +358,9 @@
 	right: 10px;
 }
 
-.noptin-popup-editor-panel-open .dashicons-arrow-down-alt2 {
-	display: none;
-}
-
-.noptin-popup-editor-panel-closed .dashicons-arrow-up-alt2 {
-	display: none;
-}
-
 .noptin-popup-editor-panel-body {
 	overflow: hidden;
 	padding: 0 20px;
-}
-
-.noptin-popup-editor-panel-closed>.noptin-popup-editor-panel-body {
-	height: 0;
-}
-
-.noptin-popup-editor-panel-open>.noptin-popup-editor-panel-body {
-	height: auto;
 }
 
 .noptin-padded {
