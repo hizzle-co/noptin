@@ -446,7 +446,7 @@ function noptin_render_editor_optin_data( $id, $field ){
     echo "<div class='noptin-title-editor'><quill-editor v-model=\"title\" :options=\"titleEditorOptions\"> </quill-editor></div>";
     echo "<label>Description</label>";
     echo "<div class='noptin-description-editor'><quill-editor v-model=\"description\" :options=\"descriptionEditorOptions\"> </quill-editor></div>";
-    echo "<label>Note</label><div class='noptin-note-editor'><quill-editor v-model=\"note\" :options=\"descriptionEditorOptions\"> </quill-editor></div>";
+    echo "<div v-if='!hideNote'><label>Note</label><div class='noptin-note-editor'><quill-editor v-model=\"note\" :options=\"descriptionEditorOptions\"> </quill-editor></div></div>";
     echo "<button @click.prevent=\"currentStep='step_5'\"  class='noptin-add-button'>Continue <span class='dashicons dashicons-arrow-right-alt'></span></button>";
     echo "</div>";
     echo "<div class='noptin-templates-preview'>";
@@ -535,22 +535,16 @@ function noptin_render_editor_optin_fields( $id, $field ){
 
     echo "<div class='noptin-optin_image-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
-    noptin_render_editor_field( 'singleLine', array(
+	noptin_render_editor_field( 'fields', array(
+		'el'        => 'form_fields',
+	) );
+
+	noptin_render_editor_field( 'singleLine', array(
         'type'      => 'checkbox',
         'el'        => 'input',
         'label'     => 'Show all fields in a single line',
     ) );
-    noptin_render_editor_field( 'showNameField', array(
-        'type'      => 'checkbox',
-        'el'        => 'input',
-        'label'     => 'Display the name field',
-    ) );
-    noptin_render_editor_field( 'firstLastName', array(
-        'type'      => 'checkbox',
-        'el'        => 'input',
-        'label'     => 'Request for both the first and last names',
-        'restrict'  => 'showNameField',
-    ) );
+
     echo "<button @click.prevent=\"finalize\"  class='noptin-add-button'>Continue <span class='dashicons dashicons-arrow-right-alt'></span></button>";
     echo "</div>";
     echo "<div class='noptin-templates-preview'>";

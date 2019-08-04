@@ -195,8 +195,8 @@ function noptin_get_form_design_props(){
     return apply_filters(
 		'noptin_form_design_props',
 		array(
-            'hideCloseButton', 'closeButtonPos', 'singleLine', 'showNameField', 'firstLastName',
-            'requireNameField', 'formRadius', 'formWidth', 'formHeight', 'noptinFormBg',
+			'hideCloseButton', 'closeButtonPos', 'singleLine', 'formRadius', 'formWidth',
+			'formHeight', 'noptinFormBg', 'fields', 'imageMain',
             'noptinFormBorderColor', 'image', 'imagePos', 'noptinButtonLabel', 'buttonPosition',
             'noptinButtonBg', 'noptinButtonColor', 'hideTitle', 'title', 'titleColor',
             'hideDescription', 'description', 'descriptionColor', 'hideNote', 'hideOnNoteClick',
@@ -209,6 +209,13 @@ function noptin_get_form_design_props(){
  * Function noptin editor localize
  */
 function noptin_localize_optin_editor( $state ){
+	$props   = noptin_get_form_design_props();
+	$props[] = 'DisplayOncePerSession';
+	$props[] = 'timeDelayDuration';
+	$props[] = 'scrollDepthPercentage';
+	$props[] = 'cssClassOfClick';
+	$props[] = 'triggerPopup';
+
     $params = array(
         'ajaxurl'      => admin_url('admin-ajax.php'),
         'api_url'      => get_home_url( null, 'wp-json/wp/v2/'),
@@ -216,7 +223,7 @@ function noptin_localize_optin_editor( $state ){
         'data'         => $state,
         'templates'    => noptin_get_optin_templates(),
         'color_themes' => noptin_get_color_themes(),
-        'design_props' => noptin_get_form_design_props(),
+        'design_props' => $props,
     );
     wp_localize_script('noptin', 'noptinEditor', $params);
 }

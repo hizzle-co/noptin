@@ -127,17 +127,15 @@ class Noptin_Form_Editor {
             'optinName' => array(
                 'el'        => 'input',
                 'label'     => 'Form Name',
+			),
+
+			//Should we display the form on the frontpage?
+            'optinStatus'   => array(
+                'type'      => 'checkbox',
+                'el'        => 'input',
+                'label'     => 'Activate this form',
             ),
 
-            //Should we display the form on the frontpage?
-            'optinStatus'   => array(
-                'el'        => 'radio_button',
-                'label'     => 'Form Status',
-                'options'   => array(
-                    'publish'   => 'Active',
-                    'draft'     => 'Inactive',
-                ),
-            ),
 
             //Form type
             'optinType'     => array(
@@ -221,7 +219,7 @@ class Noptin_Form_Editor {
                     'immeadiate'      => 'Immeadiately',
                     'before_leave'    => 'Before the user leaves',
 					'on_scroll'       => 'After the user starts scrolling',
-					'after_comment'   => 'After commenting',
+					//'after_comment'   => 'After commenting',
 					'after_click'     => 'After clicking something',
 					'after_delay'     => 'After a time delay',
                 ),
@@ -465,18 +463,18 @@ class Noptin_Form_Editor {
         $templates = noptin_get_optin_templates();
         return array(
 
-            'colorTheme'        => array(
-                'el'            => 'select',
-                'label'         => 'Select a color theme',
-                'options'       => array_combine( array_values( $colors ), array_keys( $colors ) ),
-                '@input'        => 'changeColorTheme()',
-            ),
-
             'Template'          => array(
                 'el'            => 'select',
-                'label'         => 'Select a template',
+                'label'         => 'Apply a template',
                 'options'       => array_combine( array_keys( $templates ), array_keys( $templates ) ),
                 '@input'        => 'changeTemplate()',
+			),
+
+			'colorTheme'        => array(
+                'el'            => 'select',
+                'label'         => 'Apply a color theme',
+                'options'       => array_combine( array_values( $colors ), array_keys( $colors ) ),
+                '@input'        => 'changeColorTheme()',
             ),
 
         );
@@ -510,7 +508,7 @@ class Noptin_Form_Editor {
             'formRadius'     => array(
                 'type'       => 'text',
                 'el'         => 'input',
-                'label'      => 'Border Radius',
+                'label'      => 'Form Border Radius',
             ),
 
             'formWidth'             => array(
@@ -688,12 +686,12 @@ class Noptin_Form_Editor {
                 'label'                   => 'Hide note',
             ),
 
-            'hideOnNoteClick'             => array(
+            /*'hideOnNoteClick'             => array(
                 'type'                    => 'checkbox',
                 'el'                      => 'input',
                 'label'                   => 'Close popup when user clicks on note?',
                 'restrict'                => "!hideNote && optinType=='popup'",
-            ),
+            ),*/
 
             'note'                        => array(
                 'el'                      => 'textarea',

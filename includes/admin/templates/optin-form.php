@@ -1,5 +1,5 @@
 <div  <?php echo noptin_form_template_wrapper_props(); ?>>
-	<form <?php echo noptin_form_template_form_props(); ?>>
+	<form class="noptin-optin-form" <?php echo noptin_form_template_form_props(); ?>>
 		<div class="noptin-form-header" :class="image ? imagePos : 'no-image'">
 			<div class="noptin-form-header-text">
 				<div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-form-heading" v-html="title"></div>
@@ -21,7 +21,7 @@
 					<label v-if="field.type=='Checkbox'"><input :name='field.name' type="checkbox" :class="noptin-checkbox-form-field" :required="field.require" />{{field.label}}</label>
 					<textarea v-if="field.type=='Textarea'" :name='noptin_email' class="noptin-form-field" :placeholder="field.label" :required="field.require"></textarea>
 				</div>
-
+				<input type="hidden" name="noptin_form_id" :value="id" />
 				<input :value="noptinButtonLabel" type="submit"
 					:style="{backgroundColor:noptinButtonBg, color: noptinButtonColor}"
 					:class="singleLine ? '' : 'noptin-form-button-' + buttonPosition" class="noptin-form-submit" />

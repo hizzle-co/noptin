@@ -379,7 +379,8 @@ class Noptin_Admin {
             if( empty( $_GET['created']) && empty( $_GET['editor_quick']) ) {
                 $editor = new Noptin_Form_Editor( $form, true );
             } else {
-                $editor = new Noptin_Form_Editor_Quick( $form, true );
+				//@todo $editor = new Noptin_Form_Editor_Quick( $form, true );
+				$editor = new Noptin_Form_Editor( $form, true );
             }
             $editor->output();
         } else {
@@ -526,19 +527,29 @@ class Noptin_Admin {
 
         //Prepare the args
         $ID        = trim( $_POST['state']['id'] );
-        $state     = $_POST['state'];
+		$state     = $_POST['state'];
+		$status    = 'draft';
+
+		if( 'true' == $state['optinStatus'] ) {
+			$status = 'publish';
+		}
+
         $postarr   = array(
             'post_title'        => $state['optinName'],
             'ID'                => $ID,
             'post_content'      => $_POST['html'],
-            'post_status'       => $state['optinStatus'],
+            'post_status'       => $status,
         );
 
         $post = wp_update_post( $postarr, true );
         if( is_wp_error( $post ) ) {
             status_header(400);
             die( $post->get_error_message() );
-        }
+		}
+
+		if( empty( $_POST['state']['showPostTypes'] ) ) {
+			$_POST['state']['showPostTypes'] = array();
+		}
 
         update_post_meta( $ID, '_noptin_state', $_POST['state'] );
         update_post_meta( $ID, '_noptin_optin_type', $_POST['state']['optinType'] );

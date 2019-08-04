@@ -789,6 +789,11 @@ input:focus+.noptin-switch-slider span {
 	text-decoration: none;
 }
 
+.noptin-templates-select{
+	.noptin-field-editor {
+		min-width: 260px;
+	}
+}
 
 .noptin-field-editor {
 

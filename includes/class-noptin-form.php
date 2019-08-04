@@ -114,7 +114,7 @@ class Noptin_Form {
         //Init the form
         $form = array(
             'optinName'     => $post->post_title,
-            'optinStatus'   => $post->post_status,
+            'optinStatus'   => ( $post->post_status == 'publish' ),
             'id'            => $post->ID,
             'optinHTML'     => $post->post_content,
             'optinType'     => get_post_meta( $post->ID, '_noptin_optin_type', true ),
@@ -143,7 +143,7 @@ class Noptin_Form {
 		$noptin   = noptin();
 		$defaults = array(
 			'optinName'                     => __( 'Untitled', 'noptin'),
-			'optinStatus'                   => 'draft',
+			'optinStatus'                   => false,
 			'id'                            => null,
             'optinHTML'                     => '',
             'optinType'                     => 'popup',
@@ -174,8 +174,8 @@ class Noptin_Form {
             'noptinFormBg'                  => '#fafafa',
             'noptinFormBorderColor'         => '#009688',
             'noptinFormBorderRound'         => true,
-            'formWidth'                     => '600px',
-            'formHeight'                    => '320px',
+            'formWidth'                     => '520px',
+            'formHeight'                    => '280px',
 
             //image Design
             'image'                         => $noptin->plugin_url . 'includes/assets/images/email-icon.png',
@@ -212,7 +212,7 @@ class Noptin_Form {
 			'triggerPopup'					=> 'immeadiate',
 
             //Restriction Options
-            'showEverywhere'                   	=> false,
+            'showEverywhere'                   	=> true,
             'showHome'              			=> true,
             'showBlog'                   		=> true,
             'showSearch'                   		=> false,
@@ -453,7 +453,7 @@ class Noptin_Form {
             'post_title'        => empty( $this->optinName ) ? __( 'Untitled', 'noptin' ) : $this->optinName,
             'ID'                => $this->id,
             'post_content'      => $this->optinHTML,
-			'post_status'       => $this->optinStatus,
+			'post_status'       => empty( $this->optinStatus ) ? 'draft' : 'publish',
 			'post_type'         => 'noptin-form',
 		);
 
@@ -501,7 +501,7 @@ class Noptin_Form {
 	 * @return bool True if form is published, false if not.
 	 */
 	public function is_published() {
-		return $this->optinStatus == 'publish';
+		return $this->optinStatus;
 	}
 
 	/**

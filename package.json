@@ -10,7 +10,7 @@
     "cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
     "cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
     "css": "npm run cssa && npm run cssf",
-    "jsa": "browserify includes/assets/js/admin.js -o includes/assets/js/admin-bundled.js",
+    "jsa": "browserify -p tinyify includes/assets/js/admin.js -o includes/assets/js/admin-bundled.js",
     "jsf": "browserify -p tinyify includes/assets/js/frontend.js -o includes/assets/js/frontend-bundled.js",
     "js": "npm run jsa && npm run jsf",
     "grunt": "grunt i18n && grunt readme"

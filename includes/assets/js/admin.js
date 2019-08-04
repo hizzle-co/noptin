@@ -4,7 +4,7 @@
 	var VueQuillEditor = require('vue-quill-editor');
 	var VueSelect = require('vue-select');
 	var dragula = require('dragula');
-console.log(dragula)
+
 	//Color swatches
 	Vue.component('noptin-swatch', swatches.default);
 
@@ -55,8 +55,8 @@ console.log(dragula)
 			}
 
 			if( instance.optinType == 'popup' ){
-				instance.formWidth = '600px'
-				instance.formHeight = '320px'
+				instance.formWidth = '520px'
+				instance.formHeight = '280px'
 				return;
 			}
 
@@ -270,12 +270,6 @@ console.log(dragula)
 		el: '#noptin-form-editor',
 		data: jQuery.extend(true, {}, noptinEditor.data),
 		computed: {
-			showingFullName: function () {
-				return this.showNameField && !this.firstLastName
-			},
-			showingSingleName: function () {
-				return this.showNameField && this.firstLastName
-			},
 			_onlyShowOn: function () {
 				return this.onlyShowOn && this.onlyShowOn.length > 0
 			}
@@ -569,7 +563,6 @@ console.log(dragula)
 				selectText: "Apply a theme",
 				onSelected: function (data) {
 					vmQuick.colorTheme = data.selectedData.value;
-					vmQuick.changeColorTheme()
 				}
 			});
 

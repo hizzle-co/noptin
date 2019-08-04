@@ -44,8 +44,8 @@
 			var popup = this,
 				key = randomString(),
 				_delayTimer = null,
-				sensitivity = 20, //how many pixels from the top should we display the popup?
-				delay = 200; //wait 100ms before displaying popup
+				sensitivity = 0, //how many pixels from the top should we display the popup?
+				delay = 200; //wait 200ms before displaying popup
 
 			//Display popup when the user tries to leave...
 			$(document).on('mouseleave.' + key, function (e) {

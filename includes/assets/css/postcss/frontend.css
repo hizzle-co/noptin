@@ -59,8 +59,12 @@ $noptin_color: #ff6f00;
 		display: flex;
 	}
 
-	.noptin-optin-form-wrapper .noptin-form-close {
-		display: inline-block;
+	.noptin-optin-form-wrapper {
+		margin-top: 100px;
+
+		.noptin-form-close {
+			display: inline-block;
+		}
 	}
 }
 
@@ -119,7 +123,8 @@ $noptin_color: #ff6f00;
 
 		a, a:visited, a:active, a:hover {
 			color: inherit !important;
-			text-decoration: underline;
+			text-decoration: none;
+			box-shadow: 0 1px 0 0 currentColor;
 		}
 
 		/*Appears at the top of fields and contains title, image and description*/
@@ -128,6 +133,7 @@ $noptin_color: #ff6f00;
 			padding: 20px;
 			flex: 1 0 auto;
 			align-items: center;
+			font-family: Montserrat, "Helvetica Neue", sans-serif;
 
 			/*image on left of heading*/
 			&.left {
@@ -176,15 +182,20 @@ $noptin_color: #ff6f00;
 			}
 
 			.noptin-form-heading {
-				font-size: 24px;
-				margin-bottom: 20px;
 				line-height: 1.2;
+				font-size: 23px;
+    			font-size: 1.4375rem;
+    			font-weight: 700;
+    			line-height: 1.3125;
+    			padding-top: 0.217391304em;
 			}
 
 			.noptin-form-description {
 				font-size: 16px;
-				margin-top: 10px;
-				margin-bottom: 26px;
+    			font-size: 1rem;
+    			font-weight: 500;
+    			line-height: 1.1;
+    			padding-top: 1.217391304em;
 			}
 		}
 
@@ -213,6 +224,7 @@ $noptin_color: #ff6f00;
     				background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
 					border: 1px solid #bbb;
 					border-radius: 3px;
+					width: 100%;
 				}
 			}
 
@@ -225,6 +237,10 @@ $noptin_color: #ff6f00;
 				font-weight: 500;
 				padding: 1em 2em;
 				flex: 1 0 0;
+				font-size: 0.875rem;
+    			font-weight: 800;
+				box-shadow: none;
+				text-transform: none;
 			}
 
 			.noptin-form-button-block {
@@ -251,11 +267,11 @@ $noptin_color: #ff6f00;
 				display: flex;
 
 				.noptin-form-submit {
-					padding: 1em 2em;
+					padding: 0.7em 2em;
 				}
 
 				.noptin-form-field {
-					border-radius: none;
+					border-radius: 0;
 				}
 			}
 		}

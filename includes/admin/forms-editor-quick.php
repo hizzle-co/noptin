@@ -60,7 +60,8 @@ class Noptin_Form_Editor_Quick {
             'step_3'   => $this->get_step_3(),
             'step_4'   => $this->get_step_4(),
             'step_5'   => $this->get_step_5(),
-            'step_6'   => $this->get_step_6(),
+			'step_6'   => $this->get_step_6(),
+			'step_7'   => $this->get_step_7(),
         );
         return apply_filters( 'noptin_optin_form_editor_quick_steps', $steps, $this );
     }

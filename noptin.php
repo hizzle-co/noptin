@@ -308,7 +308,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Upgrade db if installed version of noptin is lower than current version
         if( $installed_version < $this->db_version ){
-            require $this->plugin_path . 'includes/install.php';
+            require $this->plugin_path . 'includes/class-noptin-install.php';
             new Noptin_Install( $installed_version );
             update_option( 'noptin_db_version', $this->db_version );
         }

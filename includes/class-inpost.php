@@ -23,7 +23,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Register shortcode
         add_shortcode( 'noptin-form' , array( $this, 'do_shortcode') );
-				
+
     }
 
     /**
@@ -37,19 +37,19 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Abort if this is an admin page...
         if( is_admin() ){
-            return;
+            return  $content ;
         }
 
         //...or the user is hiding all popups
         if ( isset( $_GET['noptin_hide'] ) && $_GET['noptin_hide'] == 'true') {
-            return;
+            return  $content ;
         }
 
-        //... or this is not a singular post 
+        //... or this is not a singular post
         if( ! is_singular() ){
-            return;
+            return  $content ;
         }
-        
+
         $forms = $this->get_forms();
 		foreach( $forms as $form ) {
 
@@ -73,7 +73,7 @@ if( !defined( 'ABSPATH' ) ) {
         }
 
         return $content;
-        
+
     }
 
     /**
@@ -84,7 +84,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      array
      */
     public function get_forms() {
-        
+
         $args   = array(
             'numberposts'      => -1,
             'fields'           => 'ids',
