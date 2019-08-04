@@ -69,7 +69,7 @@ class Noptin_Install {
 	 */
 	private function get_subscriber_meta_table_schema() {
 
-		$table = $this->table_prefix . 'noptin_subscribermeta';
+		$table = $this->table_prefix . 'noptin_subscriber_meta';
 		$charset_collate = $this->charset_collate;
 
 		return "CREATE TABLE IF NOT EXISTS $table
@@ -102,7 +102,7 @@ class Noptin_Install {
 		//Not really helpful
 		$wpdb->query("ALTER TABLE $table DROP COLUMN time");
 
-        dbDelta( $this->get_subscriber_meta_table_schema() );
+        dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
 	}
 
 	/**

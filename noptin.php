@@ -89,9 +89,14 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
+		global $wpdb;
+
         //Set global variables
 		$this->plugin_path = plugin_dir_path( __FILE__ );
-        $this->plugin_url  = plugins_url( '/', __FILE__ );
+		$this->plugin_url  = plugins_url( '/', __FILE__ );
+
+		//Register our custom meta table
+		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
 
         // Include core files
         $this->includes();
@@ -113,7 +118,6 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function init() {
 
-		global $wpdb;
 
 		/**
 		 * Fires after WordPress inits but before Noptin inits
@@ -122,9 +126,6 @@ if( !defined( 'ABSPATH' ) ) {
 		 *
 		 */
 		do_action('before_noptin_init', $this);
-
-		//Register our custom meta table
-		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
 
         //Init the admin
         $this->admin  = Noptin_Admin::instance();

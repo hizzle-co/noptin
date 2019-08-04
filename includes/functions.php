@@ -49,7 +49,7 @@ function get_noptin_subscriber_meta( $subscriber_id = 0, $meta_key = '', $single
  * @since   1.5
  */
 function add_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $unique = false ) {
-	return add_metadata( 'noptin_subscriber', $post_id, $meta_key, $meta_value, $unique );
+	return add_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value, $unique );
 }
 
 /**
@@ -84,7 +84,7 @@ function update_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, 
  * @access  public
  * @since   1.5
  */
-function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value ) {
+function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value = '' ) {
 	return delete_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value );
 }
 
