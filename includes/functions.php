@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Returns a reference to the main Noptin instance.
  *
- * * @return  object An object containing a reference to Noptin.
+ * @return  object An object containing a reference to Noptin.
  */
 function noptin() {
     return Noptin::instance();
@@ -89,10 +89,112 @@ function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value =
 }
 
 /**
- * Returns an optin form
+ * Retrieves the URL to the subscribers page
+ *
+ * @return  string   The subscribers page url
+ * @access  public
+ * @since   1.5
+ */
+function get_noptin_subscribers_overview_url() {
+	$url = admin_url('admin.php?page=noptin-subscribers');
+	return $url;
+}
+
+/**
+ * Retrieves the URL to the forms creation page
+ *
+ *
+ *
+ * @return  string   The forms page url
+ * @access  public
+ * @since   1.5
+ */
+function get_noptin_new_form_url() {
+	$url = admin_url('admin.php?page=noptin-forms');
+	return add_query_arg( 'action', 'new', $url );
+}
+
+
+/**
+ * Retrieves the URL to the forms overview page
+ *
+ * @return  string   The forms page url
+ * @access  public
+ * @since   1.5
+ */
+function get_noptin_forms_overview_url() {
+	$url = admin_url('admin.php?page=noptin-forms');
+	return $url;
+}
+
+/**
+ * Retrieves the subscriber count
+ *
+ * @return  int   $where Restriction string
+ * @access  public
+ * @since   1.5
+ */
+function get_noptin_subscribers_count( $where = '' ) {
+	global $wpdb;
+
+	$table = $wpdb->prefix . 'noptin_subscribers';
+
+	if(! empty( $where ) ) {
+		$where = "WHERE $where";
+	}
+
+	return $wpdb->get_var("SELECT COUNT(`id`) FROM $table $where;");
+}
+
+/**
+ * Retrieves the subscriber growth
+ *
+ * @access  public
+ * @since   1.5
+ */
+function get_noptin_subscribers_growth() {
+	global $wpdb;
+
+	$table = $wpdb->prefix . 'noptin_subscribers';
+	$sql   = "SELECT COUNT(`id`)/count(distinct `date_created`) as avg FROM `$table`;";
+
+	return (float) $wpdb->get_var($sql );
+
+}
+
+/**
+ * Retrieves an optin form.
+ *
+ * @param int|Noptin_Form The id or Noptin_Form object of the optin to retrieve
+ * @return Noptin_Form
  */
 function noptin_get_optin_form( $id ){
     return new Noptin_Form( $id );
+}
+
+/**
+ * Retrieves the total opt-in forms count.
+ *
+ * @param string Optionally filter by opt-in type
+ * @return int
+ */
+function noptin_count_optin_forms( $type = '' ){
+	global $wpdb;
+
+	$sql   = "SELECT COUNT(`ID`) FROM {$wpdb->posts} as forms";
+	$where = "WHERE `post_type`='noptin-form'";
+
+	if(! empty( $type ) ) {
+		$sql = "$sql LEFT JOIN {$wpdb->postmeta} as meta
+			ON meta.post_id = forms.ID
+			AND meta.meta_key = '_noptin_optin_type'
+			AND meta.meta_value = %s";
+
+		$sql   = $wpdb->prepare( $sql, $type );
+		$where .= " AND meta.meta_key='_noptin_optin_type'";
+	}
+
+    return $wpdb->get_var("$sql $where;");
 }
 
 /**
@@ -168,25 +270,9 @@ function noptin_get_optin_form_post_type_details(){
 			'supports'            => array(),
 			'has_archive'         => false,
 			'show_in_nav_menus'   => false,
-			'show_in_rest'        => false,
+			'show_in_rest'        => true,
 			'menu_icon'   		  => ''
 		));
-}
-
-/**
- * Converts an array into a string of html attributes
- */
-function noptin_array_to_attrs( $array ){
-
-    $return = '';
-    foreach( $array as $attr=>$val ){
-        if( is_scalar( $val) ) {
-            $val     = esc_attr($val);
-            $return .= ' ' . $attr . '="' . $val . '"';
-        }
-    }
-    return $return;
-
 }
 
 /**

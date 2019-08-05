@@ -37,6 +37,43 @@ function noptin_render_editor_field( $id, $field, $panel = false ){
     }
 }
 
+/**
+ * Converts an array into a string of html attributes
+ */
+function noptin_array_to_attrs( $array ){
+
+	$return = '';
+    foreach( $array as $attr=>$val ){
+        if( is_scalar( $val) ) {
+            $val     = esc_attr($val);
+            $return .= ' ' . $attr . '="' . $val . '"';
+        }
+    }
+    return $return;
+
+}
+
+/**
+ * Returns the HTML used to restrict a given field
+ */
+function noptin_get_editor_restrict_markup( $field ){
+    return empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+}
+
+/**
+ * Returns the tooltip HTML for a given field
+ */
+function noptin_get_editor_tooltip_markup( $field ){
+
+	//Maybe abort early
+	if( empty($field['tooltip']) ){
+		return '';
+	}
+
+	$tooltip = esc_attr( trim( $field['tooltip'] ) );
+	return "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
+}
+
 
 /**
  * Renders a paragraph in the opt-in editor sidebar
@@ -53,8 +90,7 @@ function noptin_render_editor_paragraph( $id, $field ){
     unset( $field['content'] );
 
     //If there is a restrict field, handle it
-    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
-    unset( $field['restrict'] );
+    $restrict  = noptin_get_editor_restrict_markup( $field );
 
     //Setup class if none exists
     if( empty($field['class']) ){
@@ -64,8 +100,10 @@ function noptin_render_editor_paragraph( $id, $field ){
     //Setup attributes
     $attrs     = noptin_array_to_attrs( $field );
 
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+
     //Render the html
-    echo "<p $restrict $attrs>$content</p>";
+    echo "<p $restrict $attrs>$content $tooltip</p>";
 }
 add_action( 'noptin_render_editor_paragraph', 'noptin_render_editor_paragraph', 10, 2 );
 
@@ -84,14 +122,15 @@ function noptin_render_editor_hero( $id, $field ){
     unset( $field['content'] );
 
     //If there is a restrict field, handle it
-    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+    $restrict  = noptin_get_editor_restrict_markup( $field );
     unset( $field['restrict'] );
 
     //Setup attributes
     $attrs     = noptin_array_to_attrs( $field );
 
-    //Render the html
-    echo "<h2 $restrict $attrs class='noptin-hero'>$content</h2>";
+	//Render the html
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+    echo "<h2 $restrict $attrs class='noptin-hero'>$content $tooltip</h2>";
 }
 add_action( 'noptin_render_editor_hero', 'noptin_render_editor_hero', 10, 2 );
 
@@ -101,7 +140,7 @@ add_action( 'noptin_render_editor_hero', 'noptin_render_editor_hero', 10, 2 );
 function noptin_render_editor_textarea( $id, $field ){
 
     //If there is a restrict field, handle it
-    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+    $restrict  = noptin_get_editor_restrict_markup( $field );
     unset( $field['restrict'] );
 
     //Setup label
@@ -111,8 +150,9 @@ function noptin_render_editor_textarea( $id, $field ){
     //Setup attributes
     $attrs     = noptin_array_to_attrs( $field );
 
-    //Render the html
-    echo "<div $restrict class='noptin-textarea-wrapper'><label>$label</label><textarea $attrs v-model='$id'></textarea> </div>";
+	//Render the html
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+    echo "<div $restrict class='noptin-textarea-wrapper'><label>$label $tooltip</label><textarea $attrs v-model='$id'></textarea> </div>";
 }
 add_action( 'noptin_render_editor_textarea', 'noptin_render_editor_textarea', 10, 2 );
 
@@ -122,7 +162,7 @@ add_action( 'noptin_render_editor_textarea', 'noptin_render_editor_textarea', 10
 function noptin_render_editor_editor( $id, $field ){
 
     //If there is a restrict field, handle it
-    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+    $restrict  = noptin_get_editor_restrict_markup( $field );
     unset( $field['restrict'] );
 
     //Setup label
@@ -132,8 +172,9 @@ function noptin_render_editor_editor( $id, $field ){
     //Setup attributes
     $attrs     = noptin_array_to_attrs( $field );
 
-    //Render the html
-    echo "<div $restrict class='noptin-textarea-wrapper'><label>$label</label><noptineditor $attrs id='$id' v-model='$id'></noptineditor> </div>";
+	//Render the html
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+    echo "<div $restrict class='noptin-textarea-wrapper'><label>$label $tooltip</label><noptineditor $attrs id='$id' v-model='$id'></noptineditor> </div>";
 }
 add_action( 'noptin_render_editor_editor', 'noptin_render_editor_editor', 10, 2 );
 
@@ -142,12 +183,13 @@ add_action( 'noptin_render_editor_editor', 'noptin_render_editor_editor', 10, 2 
  */
 function noptin_render_editor_input( $id, $field ){
 
-    //Setup label
-    $label = empty($field['label']) ? '' : $field['label'];
+	//Setup label
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+    $label = empty($field['label']) ? '' : $field['label'] . $tooltip;
     unset( $field['label'] );
 
     //If there is a restrict field, handle it
-    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+    $restrict  = noptin_get_editor_restrict_markup( $field );
     unset( $field['restrict'] );
 
     //If no input type is set, set it to text
@@ -208,19 +250,11 @@ add_action( 'noptin_render_editor_input', 'noptin_render_editor_input', 10, 2 );
 function noptin_render_editor_multi_checkbox( $id, $field ){
 
     //If there is a restrict field, handle it
-    $restrict  = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+    $restrict  = noptin_get_editor_restrict_markup( $field );
     unset( $field['restrict'] );
 
     //Set the model
     $field['v-model'] = $id;
-
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
 
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
@@ -286,8 +320,9 @@ function noptin_render_editor_select( $id, $field, $panel ){
 
     }
 
-    $options = wp_json_encode( $options );
-    echo "<div class='noptin-select-wrapper' $restrict><label>$label</label><noptin-select
+	$options = wp_json_encode( $options );
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+    echo "<div class='noptin-select-wrapper' $restrict><label>$label $tooltip</label><noptin-select
      :reduce='option => option.val' :clearable='false' :searchable='false' :options='$options' $attrs $ajax $extra v-model='$id'>";
 
 
@@ -302,8 +337,9 @@ add_action( 'noptin_render_editor_multiselect', 'noptin_render_editor_select', 1
 function noptin_render_editor_radio( $id, $field ){
     $label          = empty($field['label']) ? '' : $field['label'];
     $restrict       = empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
-    echo "<div class='noptin-radio-wrapper' $restrict><span>$label</span>";
+    echo "<div class='noptin-radio-wrapper' $restrict><span>$label $tooltip</span>";
 
     if(is_array($field['options'])) {
         foreach( $field['options'] as $val => $label ){
@@ -328,7 +364,8 @@ function noptin_render_editor_radio_button( $id, $field ){
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
 
-    echo "<fieldset class='noptin-radio-button-wrapper' $restrict><legend>$label</legend><div class='noptin-buttons'>";
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+    echo "<fieldset class='noptin-radio-button-wrapper' $restrict><legend>$label $tooltip</legend><div class='noptin-buttons'>";
 
     if(is_array($field['options'])) {
         foreach( $field['options'] as $val => $label ){
@@ -348,14 +385,6 @@ function noptin_render_editor_optin_templates( $id, $field ){
     $templates      = noptin_get_optin_templates();
     $label          = empty($field['label']) ? '' : $field['label'];
 
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip  = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
-
     $restrict       = noptin_get_editor_restrict_markup( $field );
 
     unset( $field['restrict'] );
@@ -363,9 +392,11 @@ function noptin_render_editor_optin_templates( $id, $field ){
     unset( $field['tooltip'] );
 
     //Generate attrs html
-    $attrs = noptin_array_to_attrs( $field );
+	$attrs = noptin_array_to_attrs( $field );
 
-    echo "<div class='noptin-templates-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
+
+    echo "<div class='noptin-templates-wrapper' $restrict><label>$label $tooltip</label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
     echo "<select class='ddslickTemplates'></select>";
     echo "<button @click.prevent=\"currentStep='step_3'\"  class='noptin-add-button'>Continue <span class='dashicons dashicons-arrow-right-alt'></span></button>";
@@ -386,14 +417,6 @@ function noptin_render_editor_color_themes( $id, $field ){
     $templates      = noptin_get_color_themes();
     $label          = empty($field['label']) ? '' : $field['label'];
 
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip  = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
-
     $restrict       = noptin_get_editor_restrict_markup( $field );
 
     unset( $field['restrict'] );
@@ -402,8 +425,9 @@ function noptin_render_editor_color_themes( $id, $field ){
 
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
-    echo "<div class='noptin-color-themes-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
+    echo "<div class='noptin-color-themes-wrapper' $restrict><label>$label $tooltip</label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
     echo "<select class='ddslickThemes'></select>";
     echo "<button @click.prevent=\"currentStep='step_4'\"  class='noptin-add-button'>Continue <span class='dashicons dashicons-arrow-right-alt'></span></button>";
@@ -423,13 +447,6 @@ function noptin_render_editor_optin_data( $id, $field ){
 
     $label          = empty($field['label']) ? '' : $field['label'];
 
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip  = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
 
     $restrict       = noptin_get_editor_restrict_markup( $field );
 
@@ -439,8 +456,9 @@ function noptin_render_editor_optin_data( $id, $field ){
 
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
-    echo "<div class='noptin-optin_data-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
+    echo "<div class='noptin-optin_data-wrapper' $restrict><label>$label $tooltip</label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
     echo "<label>Title</label>";
     echo "<div class='noptin-title-editor'><quill-editor v-model=\"title\" :options=\"titleEditorOptions\"> </quill-editor></div>";
@@ -464,13 +482,6 @@ function noptin_render_editor_optin_image( $id, $field ){
 
     $label          = empty($field['label']) ? '' : $field['label'];
 
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip  = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
 
     $restrict       = noptin_get_editor_restrict_markup( $field );
 
@@ -480,8 +491,9 @@ function noptin_render_editor_optin_image( $id, $field ){
 
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
-    echo "<div class='noptin-optin_image-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
+    echo "<div class='noptin-optin_image-wrapper' $restrict><label>$label $tooltip </label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
     noptin_render_editor_field( 'image', array(
         'type'      => 'image',
@@ -516,13 +528,6 @@ function noptin_render_editor_optin_fields( $id, $field ){
 
     $label          = empty($field['label']) ? '' : $field['label'];
 
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip  = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
 
     $restrict       = noptin_get_editor_restrict_markup( $field );
 
@@ -532,8 +537,9 @@ function noptin_render_editor_optin_fields( $id, $field ){
 
     //Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
-    echo "<div class='noptin-optin_image-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
+    echo "<div class='noptin-optin_image-wrapper' $restrict><label>$label $tooltip</label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
 	noptin_render_editor_field( 'fields', array(
 		'el'        => 'form_fields',
@@ -562,14 +568,6 @@ function noptin_render_editor_optin_done( $id, $field ){
 
     $label          = empty($field['label']) ? '' : $field['label'];
 
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip  = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
-
     $restrict       = noptin_get_editor_restrict_markup( $field );
 
     unset( $field['restrict'] );
@@ -580,8 +578,9 @@ function noptin_render_editor_optin_done( $id, $field ){
     $attrs = noptin_array_to_attrs( $field );
     $id    = trim( $_GET['form_id']);
     $url   = admin_url("admin.php?page=noptin-forms");
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
-    echo "<div class='noptin-optin_image-wrapper' $restrict><label>$label</label><div class='noptin-templates'>";
+    echo "<div class='noptin-optin_image-wrapper' $restrict><label>$label $tooltip</label><div class='noptin-templates'>";
     echo "<div class='noptin-templates-select'>";
     echo "<p>That's all. <a href='$url'>View your forms</a></p>";
     echo "<a href='$url&form_id=$id'  class='noptin-add-button'>View Advanced Options <span class='dashicons dashicons-arrow-right-alt'></span></a>";
@@ -618,13 +617,6 @@ function noptin_render_editor_optin_types( $id, $field ){
     );
     $label          = empty($field['label']) ? '' : $field['label'];
 
-    //Tooltips
-    if(! empty($field['tooltip']) ){
-        $tooltip  = esc_attr( trim( $field['tooltip'] ) );
-        unset( $field['tooltip'] );
-        $tooltip  = "<span class='dashicons dashicons-info noptin-tip' title='$tooltip'></span>";
-        $label    = "$label $tooltip";
-    }
 
     $restrict       = noptin_get_editor_restrict_markup( $field );
 
@@ -633,9 +625,10 @@ function noptin_render_editor_optin_types( $id, $field ){
     unset( $field['tooltip'] );
 
     //Generate attrs html
-    $attrs = noptin_array_to_attrs( $field );
+	$attrs = noptin_array_to_attrs( $field );
+	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
-    echo "<div class='noptin-optin_types-wrapper' $restrict><label>$label</label><div class='noptin-optin_types'>";
+    echo "<div class='noptin-optin_types-wrapper' $restrict><label>$label $tooltip</label><div class='noptin-optin_types'>";
 
     foreach( $optin_types as $val => $args ){
         echo "<div title='{$args['desc']}' class='noptin-tip noptin-shadow noptin-optin_type noptin-$val' @click=\"optinType='$val'; currentStep='step_2'\">";
@@ -662,6 +655,7 @@ function noptin_render_editor_panel( $id, $panel ){
 	$restrict   = noptin_get_editor_restrict_markup( $panel );
 	$id         = wp_generate_password( '4', false ) . time() . $panel['id'];
 	$class      = $panel['id'];
+	$tooltip = noptin_get_editor_tooltip_markup( $panel );
 
     //Display the panel
     printf(
@@ -690,9 +684,4 @@ function noptin_render_editor_panel( $id, $panel ){
 }
 add_action( 'noptin_render_editor_panel', 'noptin_render_editor_panel', 10, 2 );
 
-/**
- * Returns the HTML used to restrict a given field
- */
-function noptin_get_editor_restrict_markup( $field ){
-    return empty($field['restrict']) ? '' : ' v-if="' . $field['restrict'] . '" ';
-}
+

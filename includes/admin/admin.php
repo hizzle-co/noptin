@@ -295,9 +295,19 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_main_page', $this);
 
-        $logo_url        = $this->assets_url . 'images/logo.png';
-        $screenshot_url  = $this->assets_url . 'images/screenshot1.png';
-        $screenshot2_url = $this->assets_url . 'images/screenshot2.png';
+		$today_date				 = date("Y-m-d");
+        $forms_url    	   		 = esc_url( get_noptin_forms_overview_url() );
+		$new_form_url 	   	     = esc_url( get_noptin_new_form_url() );
+		$subscribers_url   		 = esc_url( get_noptin_subscribers_overview_url() );
+		$subscribers_total       = get_noptin_subscribers_count();
+		$subscribers_today_total = get_noptin_subscribers_count( "`date_created`='$today_date'" );
+		$subscribers_growth_rate = get_noptin_subscribers_growth();
+
+		$popups = noptin_count_optin_forms('popup');
+		$inpost = noptin_count_optin_forms('inpost');
+		$widget = noptin_count_optin_forms('sidebar');
+
+
         include $this->admin_path . 'welcome.php';
 
         /**
@@ -705,7 +715,7 @@ class Noptin_Admin {
         $table = $wpdb->prefix . 'noptin_subscribers';
         $sql = "SELECT *
                     FROM $table
-                    ORDER BY time DESC
+                    ORDER BY date_created DESC
                     LIMIT 100";
         return $wpdb->get_results($sql);
 

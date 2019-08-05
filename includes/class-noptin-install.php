@@ -59,7 +59,7 @@ class Noptin_Install {
             active tinyint(2) NOT NULL DEFAULT '0',
             confirm_key varchar(50) NOT NULL default '',
             confirmed tinyint(2) NOT NULL DEFAULT '0',
-            date_created DATE,
+            date_created DATE NOT NULL DEFAULT '0000-00-00',
             UNIQUE KEY id (id)) $charset_collate";
 
 	}
