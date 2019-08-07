@@ -238,6 +238,10 @@
 	subscribe_user('.noptin-optin-form-wrapper form');
 
 	//Gutenberg forms
+	$('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form')
+		.find('input[type=email]')
+		.attr('name', 'email')
+
 	subscribe_user('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form');
 
 }) (jQuery);

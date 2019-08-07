@@ -55,6 +55,21 @@
 		}
 	}
 
+	.noptin-body{
+		margin-left: 48px;
+		border-bottom: none;
+		margin-left: 20px;
+
+		p {
+			font-size: 16px;
+		}
+
+		a{
+			font-size: 16px;
+			color: #ff6f00 !important;
+		}
+	}
+
 	.noptin-cards-container {
 		margin-bottom: 24px;
 
@@ -114,6 +129,14 @@
 	font-size: .8em;
     opacity: 0.6;
     font-weight: 400;
+}
+
+.wrap.noptin-container {
+	display: flex;
+
+	.noptin-col-2{
+		margin-right: 20px;
+	}
 }
 
 .wrap.noptin-container h1 {

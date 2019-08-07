@@ -695,7 +695,7 @@ class Noptin_Admin {
 
 		//Docs page
         if( isset( $_GET['page'] ) && 'noptin-docs' == $_GET['page'] ) {
-            wp_redirect( 'https://noptin.com/docs/e', 301 );
+            wp_redirect( 'https://noptin.com/docs/', 301 );
 	        exit;
         }
 

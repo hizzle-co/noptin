@@ -477,15 +477,9 @@ function noptin_localize_optin_editor( $state ){
  */
 function noptin_form_template_form_props(){
 
-    $style = array(
-		'width: formWidth',
-		'minHeight: formHeight',
-	);
-
-	$style = '"{' . implode( ',', $style ) . '}"';
 	$class = "singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'";
 
-	return " @submit.prevent :class=\"$class\" :style=$style";
+	return " @submit.prevent :class=\"$class\"";
 }
 
 /**
@@ -500,7 +494,13 @@ function noptin_form_template_wrapper_props(){
 		':data-after-delay="timeDelayDuration"',
 		'class="noptin-optin-form-wrapper"',
 		':data-once-per-session="DisplayOncePerSession"',
-		':style="{borderColor: noptinFormBorderColor,  backgroundColor: noptinFormBg, borderRadius: formRadius}"'
+		':style="{
+			borderColor: noptinFormBorderColor,
+			backgroundColor: noptinFormBg,
+			borderRadius: formRadius,
+			width: formWidth,
+			minHeight: formHeight
+		}"'
 	);
 
 	return implode( ' ', $props );

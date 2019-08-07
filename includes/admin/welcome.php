@@ -1,7 +1,7 @@
 <div class="wrap noptin-welcome">
 	<div class="noptin-main-header">
 		<h1>Noptin v1.0.5</h1>
-		<a href="https://noptin.com/docs/changelog/#1.0.5">See What's New?</a>
+		<a href="https://github.com/hizzle-co/noptin/issues/new/choose">Report a bug or request a feature</a>
 	</div>
 
 	<div class="noptin-header">
@@ -52,4 +52,18 @@
 		</ul>
 		<div class="noptin-card-footer-links"><a href="<?php echo $forms_url; ?>">View all forms</a> | <a href="<?php echo $new_form_url; ?>">Create a new form</a></div>
 	</div>
+
+	<div class="noptin-header">
+		<h2>What's New</h2>
+		<hr/>
+	</div>
+
+	<div class="noptin-body">
+		<h3>New Form Editor</h3>
+		<p>You can now design a beautiful opt-in form and embed it on any widget area, post, or display it in a popup. <a href="https://noptin.com/docs/optin-form-designer/">Learn More</a>.</p>
+		<hr/>
+		<p>Hundreds of hours were went into this update. Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
+	</div>
+
+
 </div>
