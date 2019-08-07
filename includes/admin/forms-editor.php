@@ -150,12 +150,6 @@ class Noptin_Form_Editor {
                 ),
             ),
 
-            'inpost-info-text'     => array(
-                'el'        => 'paragraph',
-                'restrict'  => "optinType=='inpost'",
-                'content'   => 'Shortcode <strong>[noptin-form id={{id}}]</strong>',
-            ),
-
             'inject'        => array(
                 'el'        => 'select',
                 'restrict'  => "optinType=='inpost'",

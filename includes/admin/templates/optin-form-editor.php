@@ -18,6 +18,9 @@
                     <div  class="noptin-popup-wrapper">
                         <?php include 'optin-form.php'; ?>
                     </div>
+					<div class="noptin-form-usage-details">
+						<p v-if="optinType=='inpost'">Shortcode <strong>[noptin-form id={{id}}]</strong></p>
+					</div>
                 </div>
             </div>
             <div class="noptin-popup-editor-sidebar">
