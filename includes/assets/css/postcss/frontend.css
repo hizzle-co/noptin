@@ -133,6 +133,7 @@ $noptin_color: #ff6f00;
 			padding: 20px;
 			flex: 1 0 auto;
 			align-items: center;
+			justify-content: center;
 			font-family: Montserrat, "Helvetica Neue", sans-serif;
 
 			/*image on left of heading*/
@@ -268,6 +269,10 @@ $noptin_color: #ff6f00;
 
 				.noptin-form-submit {
 					padding: 0.7em 2em;
+				}
+
+				.noptin-optin-field-wrapper {
+					margin-right: 4px;
 				}
 
 				.noptin-form-field {

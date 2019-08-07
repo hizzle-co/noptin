@@ -29,6 +29,14 @@
 			.on('click', function () {
 				$(".noptin-popup-main-wrapper").removeClass("open");
 			})
+
+			//Some forms are only set to be displayed once per session
+			if ( typeof  $(popup).data('once-per-session') !== 'undefined' ) {
+
+				var id = $(popup).find('input[name=noptin_form_id]').val()
+				sessionStorage.setItem("noptinFormDisplayed" + id, "1");
+
+			}
 	}
 
 	//Contains several triggers for displaying popups
@@ -127,6 +135,17 @@
 
 	//Loop through all popups and attach triggers
 	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each(function () {
+
+		//Some forms are only set to be displayed once per session
+		if ( typeof  $(this).data('once-per-session') !== 'undefined' ) {
+			var id = $(this).find('input[name=noptin_form_id]').val()
+
+			if( id && sessionStorage.getItem("noptinFormDisplayed" + id) ) {
+				return true;
+			}
+
+		}
+
 		var trigger = $(this).data('trigger')
 
 		if (noptinDisplayPopup[trigger]) {

@@ -228,7 +228,7 @@ class Noptin_Form {
 			'showPostTypes'						=> array('post'),
 
             //custom css
-            'CSS'                           => ' /*Custom css*/ ',
+            'CSS'                           => '.noptin-optin-form-wrapper *{}',
 
 		);
 
