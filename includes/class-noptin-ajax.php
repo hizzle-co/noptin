@@ -22,6 +22,10 @@ if( !defined( 'ABSPATH' ) ) {
 		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 
+		//Download subscribers
+        add_action('wp_ajax_noptin_download_subscribers', array($this, 'download_subscribers'));
+
+
     }
 
     /**
@@ -141,6 +145,57 @@ if( !defined( 'ABSPATH' ) ) {
 		exit;
 
 	}
+
+	/**
+	 * Downloads subscribers
+	 *
+	 * @access      public
+	 * @since       1.0.5
+	 */
+	public function download_subscribers() {
+		global $wpdb;
+
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
+		//Check nonce
+		$nonce = $_GET['admin_nonce'];
+		if (!wp_verify_nonce($nonce, 'noptin_admin_nonce')) {
+			echo 'Reload the page and try again.';
+			exit;
+		}
+
+		/**
+		 * Runs before downloading subscribers.
+		 *
+		 * @param array $this The admin instance
+		 */
+		do_action('noptin_before_download_subscribers', $this);
+
+		$output  = fopen("php://output", 'w') or die("Unsupported server");
+		$table   = $wpdb->prefix . 'noptin_subscribers';
+		$results = $wpdb->get_results("SELECT `first_name`, `second_name`, `email`, `active`, `confirmed`, `date_created`  FROM $table", ARRAY_N );
+
+		header("Content-Type:application/csv");
+		header("Content-Disposition:attachment;filename=subscribers.csv");
+
+	//create the csv
+	fputcsv($output, array( 'First Name', 'Second Name', 'Email Address', 'Active', 'Email Confirmed', 'Subscribed On' ));
+	foreach ($results as $result) {
+		fputcsv($output, $result);
+	}
+	fclose($output);
+
+	/**
+	 * Runs after after downloading.
+	 *
+	 * @param array $this The admin instance
+	 */
+	do_action('noptin_after_download_subscribers', $this);
+
+	exit; //This is important
+}
 
 }
 

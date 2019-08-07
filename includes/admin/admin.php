@@ -141,9 +141,6 @@ class Noptin_Admin {
         //Register new menu pages
         add_action('admin_menu', array($this, 'add_menu_page'));
 
-        //Runs when downloading subscribers
-        add_action('wp_ajax_noptin_download_subscribers', array($this, 'noptin_download_subscribers'));
-
         //Runs when fetching select2 options
         add_action('wp_ajax_noptin_select_ajax', array($this, 'select_ajax'));
 
@@ -660,57 +657,7 @@ class Noptin_Admin {
 }
 
 
-/**
- * Downloads subscribers
- *
- * @access      public
- * @since       1.0.0
- * @return      self::$instance
- */
-    public function noptin_download_subscribers() {
-        global $wpdb;
 
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-
-        //Check nonce
-        $nonce = $_GET['admin_nonce'];
-        if (!wp_verify_nonce($nonce, 'noptin_admin_nonce')) {
-            echo 'Reload the page and try again.';
-            exit;
-        }
-
-        /**
-         * Runs before downloading subscribers.
-         *
-         * @param array $this The admin instance
-         */
-        do_action('noptin_before_download_subscribers', $this);
-
-        $output  = fopen("php://output", 'w') or die("Unsupported server");
-        $table   = $wpdb->prefix . 'noptin_subscribers';
-        $results = $wpdb->get_col("SELECT `email` FROM $table");
-
-        header("Content-Type:application/csv");
-        header("Content-Disposition:attachment;filename=emails.csv");
-
-        //create the csv
-        fputcsv($output, array('Email Address'));
-        foreach ($results as $result) {
-            fputcsv($output, array($result));
-        }
-        fclose($output);
-
-        /**
-         * Runs after after downloading.
-         *
-         * @param array $this The admin instance
-         */
-        do_action('noptin_after_download_subscribers', $this);
-
-        exit; //This is important
-    }
 
     /**
      * Retrieves the subscribers list,, limited to 100
