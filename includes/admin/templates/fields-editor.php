@@ -4,7 +4,7 @@
   <ul v-noptin-dragula="fields">
     <li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key">
 		<div class="noptin-field-editor-header">
-			<span class="noptin-field-editor-title">{{ field.label }}</span>
+			<span class="noptin-field-editor-title">{{ field.type.label }}</span>
 			<span @click="collapseField(field.key)" class="dashicons dashicons-arrow-up-alt2" style="display:none"></span>
             <span @click="expandField(field.key)" class="dashicons dashicons-arrow-down-alt2" style="display:inline-block"></span>
 		</div>
@@ -16,14 +16,14 @@
 						:options='fieldTypes'
 						v-model="field.type"
 						:searchable='false'
-						@input="field.label=field.type">
+						:reduce='shallowCopy'>
 					</noptin-select>
 			</div>
 			<div class="noptin-text-wrapper">
-				<label>Label<input type="text" v-model="field.label"/></label>
+				<label>Label<input type="text" v-model="field.type.label"/></label>
 			</div>
-			<div class="noptin-text-wrapper" v-if="hasCustomName(field.type)">
-				<label>Name<input type="text" v-model="field.name"/></label>
+			<div class="noptin-text-wrapper" v-if="hasCustomName(field.type.type)">
+				<label>Name<input type="text" v-model="field.type.name"/></label>
 			</div>
 
 			<label class="noptin-checkbox-wrapper">

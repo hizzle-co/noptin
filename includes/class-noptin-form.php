@@ -156,9 +156,11 @@ class Noptin_Form {
 			'singleLine'                    => true,
 			'fields'						=> array(
 				array(
-					'name'   => 'email',
-					'type'   => 'Email Address',
-					'label'  => 'Email Address',
+					'type'   => array(
+						'label' => 'Email Address',
+						'name' => 'email',
+						'type' => 'email',
+					),
 					'require'=> 'true',
 					'key'	 => 'noptin_email_key',
 				)
@@ -547,12 +549,12 @@ class Noptin_Form {
 
 		//Has the user restricted this to a few posts?
 		if(! empty( $this->onlyShowOn ) ) {
-			return in_array( $post->ID, explode( ',', $this->onlyShowOn ) );
+			return is_object( $post ) && in_array( $post->ID, explode( ',', $this->onlyShowOn ) );
 		}
 
 
 		//or maybe forbidden it on this post?
-		if( in_array( $post->ID, explode( ',', $this->neverShowOn ) ) ) {
+		if( is_object( $post ) && in_array( $post->ID, explode( ',', $this->neverShowOn ) ) ) {
 			return false;
 		}
 

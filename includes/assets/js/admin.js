@@ -159,7 +159,38 @@
 		template: '#noptinFieldEditorTemplate',
 		data: function () {
 			return {
-				fieldTypes: [ 'Email Address', 'First Name', 'Last Name', 'Full Name', 'Text', 'Textarea', 'Checkbox' ]
+				fieldTypes: [
+					{
+						label : 'Email Address',
+						name : 'email',
+						type  : 'email'
+					},
+					{
+						label : 'First Name',
+						name : 'first_name',
+						type  : 'first_name'
+					},
+					{
+						label : 'Last Name',
+						name : 'last_name',
+						type  : 'last_name'
+					},
+					{
+						label : 'Full Name',
+						name : 'name',
+						type  : 'name'
+					},
+					{
+						label : 'Text',
+						name : 'text',
+						type  : 'text'
+					},
+					{
+						label : 'Textarea',
+						name : 'textarea',
+						type  : 'textarea'
+					}
+				]
 			}
 		},
 		methods: {
@@ -169,9 +200,11 @@
 				var key   = 'key-' + rand.toString(36).replace(/[^a-z]+/g, '')
 				this.fields.push(
 					{
-						name: 'name',
-						type: 'Text',
-						label: 'Text',
+						type: {
+							label : 'Text',
+							name : 'text',
+							type  : 'text'
+						},
 						require: false,
 						key: key,
 					}
@@ -181,10 +214,18 @@
 				this.expandField(key)
 			},
 			removeField: function (item) {
-				this.fields.splice(item,1)
+
+				var key = this.fields.indexOf(item)
+				if( key > -1 ) {
+					this.fields.splice(key,1)
+				}
+
+			},
+			shallowCopy: function (obj) {
+				return $.extend( {}, obj )
 			},
 			hasCustomName: function( type ) {
-				return ['Email Address','First Name','Last Name','Full Name'].indexOf( type ) == -1
+				return ['email','first_name','last_name','name'].indexOf( type ) == -1
 			},
 			expandField: function( id ) {
 				var el = $( '#' + id)
@@ -214,6 +255,7 @@
 				});
 			}
 		},
+
 	})
 
 	Vue.component('noptinform', {
@@ -221,15 +263,7 @@
 		template: '#noptinFormTemplate',
 		data: function () {
 			return {}
-		},
-		computed: {
-			showingFullName: function () {
-				return this.showNameField && !this.firstLastName
-			},
-			showingSingleName: function () {
-				return this.showNameField && this.firstLastName
-			},
-		},
+		}
 	})
 
 	var editorInstances = {}
@@ -289,11 +323,11 @@
 				var isOpen = $( el ).hasClass('open')
 
 				//toggle arrows
-				$(el).find('.dashicons-arrow-up-alt2').slideToggle()
-				$(el).find('.dashicons-arrow-down-alt2').slideToggle()
+				$(el).find('> .noptin-popup-editor-panel-header .dashicons-arrow-up-alt2').slideToggle()
+				$(el).find('> .noptin-popup-editor-panel-header .dashicons-arrow-down-alt2').slideToggle()
 
 				//toggle the body with a sliding motion
-				$(el).find('.noptin-popup-editor-panel-body').slideToggle()
+				$(el).find('> .noptin-popup-editor-panel-body').slideToggle()
 
 				//Toggle the open class
 				$(el).toggleClass('open')

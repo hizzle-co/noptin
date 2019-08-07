@@ -22,7 +22,7 @@
         <th scope="col" id="title"><?php esc_html_e('Email Address', 'noptin')?></th>
         <th scope="col" id="author"><?php esc_html_e('First Name', 'noptin')?></th>
         <th scope="col" id="categories"><?php esc_html_e('Last Name', 'noptin')?></th>
-        <th scope="col" id="date"><?php esc_html_e('Last Updated', 'noptin')?></th>	
+        <th scope="col" id="date"><?php esc_html_e('Subscribed On', 'noptin')?></th>
     </tr>
 	</thead>
 
@@ -36,7 +36,7 @@
             <td><?php echo sanitize_text_field($subscriber->email); ?></td>
             <td><?php echo sanitize_text_field($subscriber->first_name); ?></td>
             <td><?php echo sanitize_text_field($subscriber->second_name); ?></td>
-            <td><?php echo sanitize_text_field($subscriber->time); ?></td>
+            <td><?php echo sanitize_text_field($subscriber->date_created); ?></td>
         </tr>
        <?php }?>
 
@@ -47,7 +47,7 @@
         <th scope="col" id="title"><?php esc_html_e('Email Address', 'noptin')?></th>
         <th scope="col" id="author"><?php esc_html_e('First Name', 'noptin')?></th>
         <th scope="col" id="categories"><?php esc_html_e('Last Name', 'noptin')?></th>
-        <th scope="col" id="date"><?php esc_html_e('Last Updated', 'noptin')?></th>		
+        <th scope="col" id="date"><?php esc_html_e('Subscribed On', 'noptin')?></th>
     </tr>
 	</tfoot>
 

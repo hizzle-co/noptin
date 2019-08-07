@@ -165,16 +165,16 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Form class
         require_once $this->plugin_path . 'includes/class-noptin-form.php';
-        require_once $this->plugin_path . 'includes/class-popups.php';
-        require_once $this->plugin_path . 'includes/class-inpost.php';
-        require_once $this->plugin_path . 'includes/class-sidebar.php';
+        require_once $this->plugin_path . 'includes/class-noptin-popups.php';
+        require_once $this->plugin_path . 'includes/class-noptin-inpost.php';
+        require_once $this->plugin_path . 'includes/class-noptin-sidebar.php';
 
     	//plugin functions
         require_once $this->plugin_path . 'includes/functions.php';
         require_once $this->plugin_path . 'includes/render-functions.php';
 
     	//Ajax handlers
-        require_once $this->plugin_path . 'includes/ajax.php';
+        require_once $this->plugin_path . 'includes/class-noptin-ajax.php';
 
         // Include the widget class
         require_once $this->plugin_path . 'includes/admin/widget.php';
@@ -224,7 +224,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         $params = array(
             'ajaxurl'               => admin_url( 'admin-ajax.php' ),
-            'noptin_subscribe'		=> wp_create_nonce('noptin-subscribe-nonce'),
+            'nonce'					=> wp_create_nonce('noptin'),
         );
         wp_localize_script( 'noptin_front', 'noptin', $params );
 

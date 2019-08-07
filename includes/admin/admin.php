@@ -272,6 +272,16 @@ class Noptin_Admin {
             'manage_options',
             'noptin-subscribers',
             array($this, 'render_subscribers_page')
+		);
+
+		//Link to documentation
+        add_submenu_page(
+            'noptin',
+            esc_html__('Documentation', 'noptin'),
+            esc_html__('Documentation', 'noptin'),
+            'manage_options',
+            'noptin-docs',
+            array($this, 'render_add_new_page')
         );
     }
 
@@ -433,7 +443,7 @@ class Noptin_Admin {
     public function render_add_new_page(){
         wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
 	    exit;
-    }
+	}
 
     /**
      * Downloads subscribers
@@ -733,6 +743,12 @@ class Noptin_Admin {
         //New form creation
         if( isset( $_GET['page'] ) && 'noptin-new-form' == $_GET['page'] ) {
             wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
+	        exit;
+		}
+
+		//Docs page
+        if( isset( $_GET['page'] ) && 'noptin-docs' == $_GET['page'] ) {
+            wp_redirect( 'https://noptin.com/docs/e', 301 );
 	        exit;
         }
 

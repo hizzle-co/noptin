@@ -163,6 +163,96 @@ function get_noptin_subscribers_growth() {
 }
 
 /**
+ * Inserts a new subscriber into the database
+ *
+ * @access  public
+ * @since   1.5
+ */
+function add_noptin_subscriber( $fields ) {
+	global $wpdb;
+
+	$table = $wpdb->prefix . 'noptin_subscribers';
+
+	//Ensure an email address is provided and it doesn't exist already
+	if( empty( $fields['email'] ) || !is_email( $fields['email'] ) ) {
+		return "Please provide a valid email address";
+	}
+
+	if( noptin_email_exists( $fields['email'] ) ) {
+		return true;
+	}
+
+	//Maybe split name into first and last
+	if( isset( $fields['name'] ) ) {
+		$names = noptin_split_subscriber_name( $fields['name'] );
+
+		$fields['first_name']  = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
+		$fields['last_name'] = empty( $fields['last_name'] ) ? $names[1] : trim( $fields['last_name'] );
+	}
+
+	$database_fields = array(
+		'email' 		=> $fields['email'],
+		'first_name'	=> empty( $fields['first_name'] ) ? '' : $fields['first_name'],
+		'second_name'	=> empty( $fields['last_name'] ) ? '' : $fields['last_name'],
+		'confirm_key'	=> md5($email) . wp_generate_password(4, false),
+		'date_created'	=> date("Y-m-d"),
+	);
+
+	if(! $wpdb->insert( $table, $database_fields, '%s' ) ) {
+		return "An error occurred. Try again.";
+	}
+
+	$id = $wpdb->insert_id;
+
+	//Insert additional meta data
+	foreach( $fields as $field=>$value ){
+
+		if( isset( $database_fields[ $field ] ) || 'name' == $field ) {
+			continue;
+		}
+
+		update_noptin_subscriber_meta( $id, $field, $value );
+	}
+
+	return $id;
+
+}
+
+/**
+ * Converts a name field into the first and last name
+ *
+ * Simple Function, Using Regex (word char and hyphens)
+ * It makes the assumption the last name will be a single word.
+ * Makes no assumption about middle names, that all just gets grouped into first name.
+ * You could use it again, on the "first name" result to get the first and middle though.
+ *
+ * @access  public
+ * @since   1.5
+ */
+function noptin_split_subscriber_name( $name ) {
+
+	$name       = trim($name);
+    $last_name  = (strpos($name, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $name);
+    $first_name = trim( preg_replace('#'.$last_name.'#', '', $name ) );
+    return array($first_name, $last_name);
+
+}
+
+/**
+ * Checks whether the subscriber with a given email exists.
+ *
+ * @param string The email to check for
+ * @return bool
+ */
+function noptin_email_exists( $email ){
+	global $wpdb;
+	$table = $wpdb->prefix . 'noptin_subscribers';
+	$sql   = $wpdb->prepare( "SELECT COUNT(id) FROM $table WHERE email =%s;", $email );
+
+	return 0 < $wpdb->get_var( $sql );
+}
+
+/**
  * Retrieves an optin form.
  *
  * @param int|Noptin_Form The id or Noptin_Form object of the optin to retrieve

@@ -167,8 +167,8 @@
 				});
 
 				//Add nonce and action
-				data.action = "noptin_new_user"
-				data._wpnonce = "noptin.noptin_subscribe"
+				data.action = "noptin_new_subscriber"
+				data._wpnonce = noptin.nonce
 
 				//Post it to the server
 				$.post(noptin.ajaxurl, data)
@@ -176,7 +176,7 @@
 					//Update the user of success
 					.done( function (data, status, xhr) {
 
-						if( string == typeof data ) {
+						if( 'string' == typeof data ) {
 							$(that)
 								.find('.noptin_feedback_error')
 								.text(data)
@@ -184,11 +184,11 @@
 							return;
 						}
 
-						if (data.action == redirect) {
+						if (data.action == 'redirect') {
 							window.location = data.redirect;
 						}
 
-						if (data.action == msg) {
+						if (data.action == 'msg') {
 							$(that)
 								.find('.noptin_feedback_success')
 								.text(data.msg)
@@ -210,7 +210,7 @@
 								.show();
 					} )
 					.always(function(){
-						$(this).fadeTo(600, 1)
+						$(that).fadeTo(600, 1)
 					})
 			})
 	}
