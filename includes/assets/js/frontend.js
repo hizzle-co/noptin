@@ -10,6 +10,27 @@
 		return 'key' + rand.toString(36).replace(/[^a-z]+/g, '')
 	}
 
+	//Hides a displayed popup
+	var hidePopup = function(inner) {
+
+		var wrapper = $(inner).closest('.noptin-popup-main-wrapper')
+		var form = $(wrapper).find('.noptin-optin-form-wrapper')
+
+		//Maybe animate
+		$(form).removeClass('noptin-animate-after')
+
+		var timing = parseFloat( $(form).css('transition-duration') )
+		if( timing ) {
+			timing = timing * 1000
+		} else {
+			timing = 500
+		}
+
+		setTimeout(function () {
+			$(wrapper).removeClass('open')
+		}, timing)
+	}
+
 	//Displays a popup and attaches "close" event handlers
 	var displayPopup = function (popup) {
 		$(popup)
@@ -19,16 +40,19 @@
 
 				// if the target of the click isn't the form nor a descendant of the form
 				if (!$(popup).is(e.target) && $(popup).has(e.target).length === 0) {
-					$(popup)
-						.closest('.noptin-popup-main-wrapper')
-						.removeClass("open");
+					hidePopup(popup)
 				}
 
 			})
 			.find('.noptin-form-close')
 			.on('click', function () {
-				$(".noptin-popup-main-wrapper").removeClass("open");
+				hidePopup(popup)
 			})
+
+		//Maybe animate
+		setTimeout(function () {
+			$(popup).addClass('noptin-animate-after')
+		}, 100)
 
 			//Some forms are only set to be displayed once per session
 			if ( typeof  $(popup).data('once-per-session') !== 'undefined' ) {
@@ -145,6 +169,9 @@
 			}
 
 		}
+
+		//Take it to its initial state
+		$(this).addClass('noptin-animate-from')
 
 		var trigger = $(this).data('trigger')
 

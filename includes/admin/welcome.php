@@ -62,7 +62,7 @@
 		<h3>New Form Editor</h3>
 		<p>You can now design a beautiful opt-in form and embed it on any widget area, post, or display it in a popup. <a href="https://noptin.com/docs/optin-form-designer/">Learn More</a>.</p>
 		<hr/>
-		<p>Hundreds of hours were went into this update. Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
+		<p>Hundreds of hours went into this update. If you love it, Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
 	</div>
 
 

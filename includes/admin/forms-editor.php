@@ -454,13 +454,18 @@ class Noptin_Form_Editor {
     private function get_templates_settings() {
 
         $colors    = noptin_get_color_themes();
-        $templates = noptin_get_optin_templates();
+		$templates = array();
+
+		foreach( noptin_get_optin_templates() as $key => $data ){
+			$templates[$key] = $data['title'];
+		}
+
         return array(
 
             'Template'          => array(
                 'el'            => 'select',
                 'label'         => 'Apply a template',
-                'options'       => array_combine( array_keys( $templates ), array_keys( $templates ) ),
+                'options'       => $templates,
 			),
 
 			'colorTheme'        => array(
