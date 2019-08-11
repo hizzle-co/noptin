@@ -594,4 +594,6 @@
 		},
 	})
 
+	$('.noptin-tip').tooltipster();
+
 })(jQuery);

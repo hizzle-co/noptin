@@ -19,14 +19,14 @@ if( !defined( 'ABSPATH' ) ) {
 	public function __construct() {
 
         //Prepare widget args
-        $widget_ops = array( 
+        $widget_ops = array(
             'classname' => 'noptin_widget_premade',
             'description' => 'Premade newsletter opt in form.',
         );
 
         //Add it to the list of widgets
         parent::__construct( 'noptin_widget_premade', 'Noptin Premade Form', $widget_ops );
-				
+
     }
 
     /**
@@ -77,7 +77,7 @@ if( !defined( 'ABSPATH' ) ) {
             //Is it selected?
             $_selected = selected( $form, $selected, true );
 
-			echo "<option value='$form' $_selected $name</option>";
+			echo "<option value='$form' $_selected>$name</option>";
         }
     }
 
@@ -89,7 +89,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      array
      */
     public function get_forms() {
-        
+
         $args   = array(
             'numberposts'      => -1,
             'fields'           => 'ids',
@@ -115,16 +115,16 @@ if( !defined( 'ABSPATH' ) ) {
      * @return      array
      */
     public function form($instance) {
-        $form    = ! empty( $instance['form'] ) ? $instance['form'] : '';
+		$form    = ! empty( $instance['form'] ) ? $instance['form'] : '';
     ?>
-    
+
     <p>
 
 	    <label for="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>">
 	        <?php esc_attr_e( 'Form:', 'noptin' ); ?>
-	    </label> 
-	
-	    <select 
+	    </label>
+
+	    <select
             name="<?php echo esc_attr( $this->get_field_name( 'form' ) ); ?>"
             class="widefat"
             id="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>"

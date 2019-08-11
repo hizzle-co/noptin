@@ -202,7 +202,7 @@ class Noptin_Form {
 
             //Note design
             'hideNote'                      => true,
-            'note'                          => "We don't spam people",
+            'note'                          => "We do not spam people",
             'noteColor'                     => '#607D8B',
             'hideOnNoteClick'               => false,
 

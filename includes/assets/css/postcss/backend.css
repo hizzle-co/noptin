@@ -11,6 +11,20 @@
 	justify-content: center;
 }
 
+.noptin-subscribers-header {
+	display: flex;
+
+	.noptin-col-2 {
+		margin-right: 2rem;
+	}
+}
+
+.noptin-download-section {
+	margin-top: 16px;
+	display: flex;
+    flex-direction: row-reverse;
+}
+
 .noptin-welcome{
 	max-width: 800px;
 

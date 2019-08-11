@@ -1,5 +1,5 @@
-<div class="wrap noptin-container">
-	<div class="noptin-row">
+<div class="wrap">
+	<div class="noptin-subscribers-header">
         <div class="noptin-col-2">
             <img src="<?php echo $logo_url;?>" style="width: 100px;max-width: 100%;"/>
         </div>
@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="noptin-divider"></div>
-    <div class="noptin-row">
+    <div class="noptin-download-section">
         <div class="noptin-col-2 noptin-offset-10">
             <a href="<?php echo $download_url;?>" class="button button-primary noptin-download">Download CSV</a>
         </div>

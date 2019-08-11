@@ -7,7 +7,7 @@
 	<div class="noptin-header">
 		<h2>Subscribers</h2>
 		<hr/>
-		<a href="https://noptin.com/docs/subscribers"><span class="dashicons dashicons-info"></span></a>
+		<span title="These are subscribers you gained using Noptin" class="noptin-tip dashicons dashicons-info"></span>
 	</div>
 
 	<div class="noptin-cards-container">
@@ -32,7 +32,7 @@
 	<div class="noptin-header">
 		<h2>Active Opt-in Forms</h2>
 		<hr/>
-		<a href="https://noptin.com/docs/forms"><span class="dashicons dashicons-info"></span></a>
+		<span title="These are the forms that are showing on the front-end" class="noptin-tip dashicons dashicons-info"></span>
 	</div>
 
 	<div class="noptin-cards-container">
