@@ -203,7 +203,7 @@ class Noptin_Admin {
 		);
 
         //Vue js
-        wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array(), '2.6.10');
+        wp_enqueue_script('vue', $this->assets_url . 'js/vue.min.js', array(), '2.6.10');
 
         //Custom admin scripts
         $version = filemtime( $this->assets_path . 'js/admin-bundled.js' );
@@ -695,7 +695,7 @@ class Noptin_Admin {
 
 		//Docs page
         if( isset( $_GET['page'] ) && 'noptin-docs' == $_GET['page'] ) {
-            wp_redirect( 'https://noptin.com/docs/', 301 );
+            wp_redirect( 'https://noptin.com/guide/', 301 );
 	        exit;
         }
 

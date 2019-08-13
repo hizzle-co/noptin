@@ -422,11 +422,14 @@ function noptin_get_color_themes(){
  * Returns optin templates
  */
 function noptin_get_optin_templates(){
-    $templates = get_option( 'noptin_templates' );
+    $custom_templates = get_option( 'noptin_templates' );
+	$inbuilt_templates = include 'admin/templates/templates.php';
 
-    if(! is_array( $templates ) ) {
-        $templates = array();
-    }
+    if(! is_array( $custom_templates ) ) {
+        $custom_templates = array();
+	}
+
+	$templates = array_replace( $custom_templates, $inbuilt_templates);
 
     return apply_filters( 'noptin_form_templates', $templates );
 

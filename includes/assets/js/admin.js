@@ -1,5 +1,20 @@
 (function ($) {
 
+	if( 'undefined' == typeof noptinEditor ) {
+		noptinEditor = {}
+	}
+
+	//List filter
+	$(document).ready(function () {
+		$(".noptin-list-filter input").on("keyup", function () {
+			var value = $(this).val().toLowerCase();
+			$('.noptin-list-table tbody tr').filter(function () {
+				$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			});
+		});
+
+	});
+
 	var swatches = require('vue-swatches');
 	var VueQuillEditor = require('vue-quill-editor');
 	var VueSelect = require('vue-select');
@@ -54,7 +69,7 @@
 				return;
 			}
 
-			if( instance.optinType == 'popup' ){
+			if (instance.optinType == 'popup') {
 				instance.formWidth = '520px'
 				instance.formHeight = '280px'
 				return;
@@ -90,7 +105,7 @@
 			return instance.colorTheme.split(" ")
 		},
 
-		changeColorTheme: function ( instance ) {
+		changeColorTheme: function (instance) {
 
 			var colors = noptin.getColorTheme(instance)
 
@@ -110,28 +125,28 @@
 
 	//Register dragula directive
 	Vue.directive('noptin-dragula', {
-		inserted: function( container, binding ) {
+		inserted: function (container, binding) {
 
-			var list =  binding.value
+			var list = binding.value
 			var self = this;
 			var dragIndex;
 			var dragElm;
 			this.drake = dragula([container], {
-			  revertOnSpill: true
+				revertOnSpill: true
 			});
 
-			this.drake.on('drag', function(el, source) {
-			  dragElm = el;
-			  dragIndex = domIndexOf(el, source);
+			this.drake.on('drag', function (el, source) {
+				dragElm = el;
+				dragIndex = domIndexOf(el, source);
 			});
 
-			this.drake.on('drop', function(dropElm, target, source) {
-			  if (!target) return;
-			  var dropIndex = domIndexOf(dropElm, target);
-			  if (target === container) {
-				list.splice(dropIndex, 0, list.splice(dragIndex, 1)[0]);
-			  }
-			  refreshModel();
+			this.drake.on('drop', function (dropElm, target, source) {
+				if (!target) return;
+				var dropIndex = domIndexOf(dropElm, target);
+				if (target === container) {
+					list.splice(dropIndex, 0, list.splice(dragIndex, 1)[0]);
+				}
+				refreshModel();
 
 			})
 
@@ -144,13 +159,13 @@
 			}
 
 			function domIndexOf(child, parent) {
-			  return Array.prototype.indexOf.call(parent.children, child);
+				return Array.prototype.indexOf.call(parent.children, child);
 			}
 
-		  },
-		  unbind: function() {
-			  this.drake.destroy()
-		  }
+		},
+		unbind: function () {
+			this.drake.destroy()
+		}
 	})
 
 
@@ -161,34 +176,34 @@
 			return {
 				fieldTypes: [
 					{
-						label : 'Email Address',
-						name : 'email',
-						type  : 'email'
+						label: 'Email Address',
+						name: 'email',
+						type: 'email'
 					},
 					{
-						label : 'First Name',
-						name : 'first_name',
-						type  : 'first_name'
+						label: 'First Name',
+						name: 'first_name',
+						type: 'first_name'
 					},
 					{
-						label : 'Last Name',
-						name : 'last_name',
-						type  : 'last_name'
+						label: 'Last Name',
+						name: 'last_name',
+						type: 'last_name'
 					},
 					{
-						label : 'Full Name',
-						name : 'name',
-						type  : 'name'
+						label: 'Full Name',
+						name: 'name',
+						type: 'name'
 					},
 					{
-						label : 'Text',
-						name : 'text',
-						type  : 'text'
+						label: 'Text',
+						name: 'text',
+						type: 'text'
 					},
 					{
-						label : 'Textarea',
-						name : 'textarea',
-						type  : 'textarea'
+						label: 'Textarea',
+						name: 'textarea',
+						type: 'textarea'
 					}
 				]
 			}
@@ -196,14 +211,14 @@
 		methods: {
 			addField: function () {
 				var total = this.fields.length
-				var rand  = Math.random() + total
-				var key   = 'key-' + rand.toString(36).replace(/[^a-z]+/g, '')
+				var rand = Math.random() + total
+				var key = 'key-' + rand.toString(36).replace(/[^a-z]+/g, '')
 				this.fields.push(
 					{
 						type: {
-							label : 'Text',
-							name : 'text',
-							type  : 'text'
+							label: 'Text',
+							name: 'text',
+							type: 'text'
 						},
 						require: false,
 						key: key,
@@ -216,19 +231,19 @@
 			removeField: function (item) {
 
 				var key = this.fields.indexOf(item)
-				if( key > -1 ) {
-					this.fields.splice(key,1)
+				if (key > -1) {
+					this.fields.splice(key, 1)
 				}
 
 			},
 			shallowCopy: function (obj) {
-				return $.extend( {}, obj )
+				return $.extend({}, obj)
 			},
-			hasCustomName: function( type ) {
-				return ['email','first_name','last_name','name'].indexOf( type ) == -1
+			hasCustomName: function (type) {
+				return ['email', 'first_name', 'last_name', 'name'].indexOf(type) == -1
 			},
-			expandField: function( id ) {
-				var el = $( '#' + id)
+			expandField: function (id) {
+				var el = $('#' + id)
 
 				//toggle arrows
 				$(el).find('.dashicons-arrow-up-alt2').show()
@@ -237,8 +252,8 @@
 				//slide down the body
 				$(el).find('.noptin-field-editor-body').slideDown()
 			},
-			collapseField: function( id ) {
-				var el = $( '#' + id)
+			collapseField: function (id) {
+				var el = $('#' + id)
 
 				//toggle arrows
 				$(el).find('.dashicons-arrow-up-alt2').hide()
@@ -247,10 +262,10 @@
 				//slide up the body
 				$(el).find('.noptin-field-editor-body').slideUp()
 			},
-			collapseAll: function( id ) {
+			collapseAll: function (id) {
 				var that = this
 
-				$.each(this.fields, function( index, value ) {
+				$.each(this.fields, function (index, value) {
 					that.collapseField(value.key)
 				});
 			}
@@ -287,25 +302,14 @@
 					var editor = editorInstances[this.id].codemirror.getDoc()
 
 					//set if values are not ===
-					if( value != editor.getValue() ) {
-						editor.setValue( value )
+					if (value != editor.getValue()) {
+						editor.setValue(value)
 					}
 
 				}
 			},
 		}
 	})
-
-	//List filter
-	$(document).ready(function () {
-		$(".noptin-list-filter input").on("keyup", function () {
-			var value = $(this).val().toLowerCase();
-			$('.noptin-list-table tbody tr').filter(function () {
-				$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-			});
-		});
-
-	});
 
 	var vm = new Vue({
 		el: '#noptin-form-editor',
@@ -319,8 +323,8 @@
 
 			togglePanel: function (id) {
 
-				var el = $( '#' + id)
-				var isOpen = $( el ).hasClass('open')
+				var el = $('#' + id)
+				var isOpen = $(el).hasClass('open')
 
 				//toggle arrows
 				$(el).find('> .noptin-popup-editor-panel-header .dashicons-arrow-up-alt2').slideToggle()
@@ -443,8 +447,8 @@
 			optinType: function () {
 				noptin.updateFormSizes(this)
 			},
-			colorTheme: function() {
-				noptin.changeColorTheme( this )
+			colorTheme: function () {
+				noptin.changeColorTheme(this)
 			}
 		},
 
@@ -549,8 +553,8 @@
 			optinType: function () {
 				noptin.updateFormSizes(this)
 			},
-			colorTheme: function() {
-				noptin.changeColorTheme( this )
+			colorTheme: function () {
+				noptin.changeColorTheme(this)
 			}
 		},
 		mounted: function () {
