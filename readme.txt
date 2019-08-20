@@ -1,15 +1,15 @@
 === Noptin - Newsletter Subscribe Forms And Widgets ===
 Contributors: picocodes
 Tags: newsletter, email newsletter form, newsletter subscribe, email subscribe, newsletter widget
-Requires at least: 5.0
-Tested up to: 5.1
+Requires at least: 4.7
+Tested up to: 5.2
 Requires PHP: 5.2
-Version: 1.0.3
+Version: 1.0.6
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Add a newsletter subscription form into any WordPress post or widget area with an option to offer content upgrades or lead magnets. 
+Easily add a newsletter subscription form onto any post content, widget or popup with an option to offer lead magnets and content upgrades.
 
 == Description ==
 
@@ -91,8 +91,8 @@ Noptin does not send emails on its own. It only makes it easy to create email op
 
 There are a lot of ways to contribute the project:-
 
-* Star our project on [GitHub.](https://github.com/mutendebrian/noptin/)
-* [Clone the plugin,](https://github.com/mutendebrian/noptin/) make improvements to the code and send us a [pull request](https://github.com/mutendebrian/noptin/pulls) so that we can share your improvements with the world.
+* Star our project on [GitHub.](https://github.com/hizzle-co/noptin/)
+* [Clone the plugin,](https://github.com/hizzle-co/noptin/) make improvements to the code and send us a [pull request](https://github.com/hizzle-co/noptin/pulls) so that we can share your improvements with the world.
 * Give us a [5* rating](https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5) on WordPress.
 
 = Will Noptin work with my theme? =

@@ -1,4 +1,4 @@
-<div class="wrap">
+<div class="noptin-subscribers" style="margin-top: 20px;">
 	<div class="noptin-subscribers-header">
         <div class="noptin-col-2">
             <img src="<?php echo $logo_url;?>" style="width: 100px;max-width: 100%;"/>

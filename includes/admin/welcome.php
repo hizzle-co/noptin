@@ -1,4 +1,4 @@
-<div class="wrap noptin-welcome">
+<div class="noptin-welcome">
 	<div class="noptin-main-header">
 		<h1>Noptin v1.0.5</h1>
 		<a href="https://github.com/hizzle-co/noptin/issues/new/choose">Report a bug or request a feature</a>
@@ -59,8 +59,8 @@
 	</div>
 
 	<div class="noptin-body">
-		<h3>New Form Editor</h3>
-		<p>You can now design a beautiful opt-in form and embed it on any widget area, post, or display it in a popup. <a href="https://noptin.com/guide/opt-in-forms-editor/">Learn More</a>.</p>
+		<h3>New Post Notification Emails</h3>
+		<p>Notify your subscribers everytime you publish a new blog post.</p>
 		<hr/>
 		<p>Hundreds of hours went into this update. If you love it, Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
 	</div>

@@ -29,7 +29,12 @@ class Noptin_Install {
 		}
 
 		$this->charset_collate = $wpdb->get_charset_collate();
-		$this->table_prefix = $wpdb->prefix;
+		$this->table_prefix    = $wpdb->prefix;
+
+		//Force update the subscribers table
+		if( false === $upgrade_from ){
+			$this->force_update_subscribers_table();
+		}
 
         //If this is a fresh install
 		if( !$upgrade_from ){
@@ -44,6 +49,17 @@ class Noptin_Install {
 	}
 
 	/**
+	 * Force update the subscribers table
+	 */
+	private function force_update_subscribers_table(){
+		global $wpdb;
+
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        dbDelta( array( $this->get_subscribers_table_schema() ) );
+	}
+
+	/**
 	 * Returns the subscribers table schema
 	 */
 	private function get_subscribers_table_schema() {
@@ -52,15 +68,16 @@ class Noptin_Install {
 		$charset_collate = $this->charset_collate;
 
 		return "CREATE TABLE IF NOT EXISTS $table
-			(id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            first_name varchar(250) NOT NULL default '',
-            second_name varchar(250) NOT NULL default '',
-            email varchar(255) NOT NULL UNIQUE,
+			(id bigint(20) unsigned NOT NULL auto_increment,
+            first_name varchar(60) NOT NULL default '',
+            second_name varchar(60) NOT NULL default '',
+            email varchar(100) NOT NULL default '',
             active tinyint(2) NOT NULL DEFAULT '0',
             confirm_key varchar(50) NOT NULL default '',
             confirmed tinyint(2) NOT NULL DEFAULT '0',
             date_created DATE NOT NULL DEFAULT '0000-00-00',
-            UNIQUE KEY id (id)) $charset_collate";
+			PRIMARY KEY  (id),
+			KEY email (email)) $charset_collate";
 
 	}
 
@@ -113,12 +130,9 @@ class Noptin_Install {
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 		//Create the subscriber and subscriber meta table
-		$sql = array(
-			$this->get_subscribers_table_schema(),
-			$this->get_subscriber_meta_table_schema()
-		);
+		dbDelta( array( $this->get_subscribers_table_schema() ) );
+		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
 
-        dbDelta($sql);
 	}
 
 

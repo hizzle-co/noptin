@@ -84,6 +84,7 @@ $noptin_color: #ff6f00;
 	margin-top: 20px;
 	background-color: $noptin_color;
 	transition: all 0.5s;
+	max-width: 100%;
 
 	/*Popups close button*/
 	.noptin-form-close {
@@ -192,20 +193,17 @@ $noptin_color: #ff6f00;
 			}
 
 			.noptin-form-heading {
-				line-height: 1.2;
 				font-size: 23px;
-    			font-size: 1.4375rem;
     			font-weight: 700;
-    			line-height: 1.3125;
-    			padding-top: 0.217391304em;
+    			line-height: 1.4125;
+    			padding-top: 4px;
 			}
 
 			.noptin-form-description {
 				font-size: 16px;
-    			font-size: 1rem;
     			font-weight: 500;
-    			line-height: 1.1;
-    			padding-top: 1.217391304em;
+    			line-height: 1.3;
+    			padding-top: 18px;
 			}
 		}
 
@@ -226,7 +224,7 @@ $noptin_color: #ff6f00;
 				text-align: left;
 
 				.noptin-form-field {
-					padding: 0.7em 2em;
+					padding: 11px 32px;
 					width: 100%;
 					display: block;
 					color: #666;
@@ -245,9 +243,8 @@ $noptin_color: #ff6f00;
 				color: #fafafa;
 				text-align: center;
 				font-weight: 500;
-				padding: 1em 2em;
+				padding: 16px 32px;
 				flex: 1 0 0;
-				font-size: 0.875rem;
     			font-weight: 800;
 				box-shadow: none;
 				text-transform: none;
@@ -277,7 +274,7 @@ $noptin_color: #ff6f00;
 				display: flex;
 
 				.noptin-form-submit {
-					padding: 0.7em 2em;
+					padding: 11px 32px;
 				}
 
 				.noptin-optin-field-wrapper {

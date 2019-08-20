@@ -89,6 +89,156 @@ function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value =
 }
 
 /**
+ * Retrieves all default noptin options
+ *
+ * @return  array   options
+ * @access  public
+ * @since   1.6
+ */
+function get_default_noptin_options() {
+
+	$options = array(
+		'notify_new_post' => 0,
+		'from_email' 	  => get_option('admin_email'),
+		'from_name' 	  => get_option('blogname'),
+		'company' 	  	  => get_option('blogname'),
+	);
+	return $options;
+
+}
+
+/**
+ * Retrieves all noptin options
+ *
+ * @return  array   options
+ * @access  public
+ * @since   1.6
+ */
+function get_noptin_options() {
+	global $noptin_options;
+
+	if( empty( $noptin_options ) ) {
+		$noptin_options = get_option( 'noptin_options', array() );
+	}
+
+	if(! is_array( $noptin_options ) || empty( $noptin_options ) ) {
+		$noptin_options = get_default_noptin_options();
+	}
+	return $noptin_options;
+}
+
+/**
+ * Retrieves an option from the db
+ *
+ * @return  mixed|null   option or null
+ * @access  public
+ * @since   1.5
+ */
+function get_noptin_option( $key, $default = null ) {
+
+	$options = get_noptin_options();
+	$value   = $default;
+	if( isset( $options[ $key ] ) ) {
+		$value   = $options[ $key ];
+	}
+
+	return apply_filters( 'noptin_get_option', $value, $key );
+
+}
+
+/**
+ * Updates noptin options
+ *
+ * @return  array
+ * @access  public
+ * @since   1.5
+ */
+function update_noptin_options( $options ) {
+	global $noptin_options;
+
+	$noptin_options = $options;
+	update_option( 'noptin_options', $options );
+
+}
+
+/**
+ * Updates a single option
+ *
+ * @return  array
+ * @access  public
+ * @since   1.5
+ */
+function update_noptin_option( $key, $value ) {
+
+	$options       = get_noptin_options();
+	$options[$key] = $value;
+	update_noptin_options( $options );
+
+}
+
+/**
+ * Prepare noptin email body
+ *
+ * @return  sting
+ * @access  public
+ * @since   1.6
+ */
+function prepare_noptin_email( $email, $subscriber ) {
+
+	//Unsubscribe url
+	$email = str_ireplace( "{{unsubscribe_url}}", get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key ), $email);
+
+	//footer
+	$email = str_ireplace( "{{noptin_company}}", get_noptin_option( 'company', ''), $email);
+	$email = str_ireplace( "{{noptin_address}}", get_noptin_option( 'address', ''), $email);
+	$email = str_ireplace( "{{noptin_city}}", get_noptin_option( 'city', ''), $email);
+	$email = str_ireplace( "{{noptin_state}}", get_noptin_option( 'state', ''), $email);
+	$email = str_ireplace( "{{noptin_country}}", get_noptin_option( 'country', ''), $email);
+
+	return $email;
+
+}
+
+/**
+ * Returns the noptin action url
+ *
+ * @return  sting
+ * @access  public
+ * @since   1.6
+ */
+function get_noptin_action_url( $action, $value ) {
+
+	$page = get_option('noptin_actions_page');
+	if( empty( $page ) ) {
+		$page = wp_insert_post(
+			array(
+				'post_content' => '[noptin_action_page]',
+				'post_title'   => __( 'Noptin Subsciber Action', 'noptin' ),
+				'post_status'  => 'publish',
+				'post_type'	   => 'page',
+			)
+		);
+		update_option('noptin_actions_page', $page);
+	}
+
+	if( empty( $page ) ) {
+		return get_home_url();
+	}
+
+	$url = get_the_permalink( $page );
+
+	if( $url ) {
+		return add_query_arg( array(
+			'noptin_action' => $action,
+			'noptin_value'  => $value,
+		), $url );
+	}
+
+	return get_home_url();
+
+}
+
+/**
  * Retrieves the URL to the subscribers page
  *
  * @return  string   The subscribers page url
@@ -250,6 +400,30 @@ function noptin_email_exists( $email ){
 	$sql   = $wpdb->prepare( "SELECT COUNT(id) FROM $table WHERE email =%s;", $email );
 
 	return 0 < $wpdb->get_var( $sql );
+}
+
+/**
+ * Checks whether the subscribers table exists
+ *
+ * @return bool
+ */
+function noptin_subscribers_table_exists(){
+	global $wpdb;
+	$table = $wpdb->prefix . 'noptin_subscribers';
+
+	return $table == $wpdb->get_var("SHOW TABLES LIKE '$table'" );
+}
+
+/**
+ * Checks whether the subscribers meta table exists
+ *
+ * @return bool
+ */
+function noptin_subscribers_meta_table_exists(){
+	global $wpdb;
+	$table = $wpdb->prefix . 'noptin_subscriber_meta';
+
+	return $table == $wpdb->get_var("SHOW TABLES LIKE '$table'" );
 }
 
 /**

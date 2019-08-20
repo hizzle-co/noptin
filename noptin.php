@@ -7,11 +7,11 @@
  * @since             1.0.0
  *
  * Plugin Name:     Noptin - Simple Newsletter Subscription Forms
- * Plugin URI:      https://wordpress.org/plugins/noptin
- * Description:     Easily add a newsletter optin box in any post, page or custom post type
+ * Plugin URI:      https://noptin.com
+ * Description:     Easily add a newsletter optin box onto post content, widget or popup
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.0.5
+ * Version:         1.0.6
  * Text Domain:     noptin
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -161,13 +161,22 @@ if( !defined( 'ABSPATH' ) ) {
     private function includes() {
 
 		// The main admin class
-        require_once $this->plugin_path . 'includes/admin/admin.php';
+		require_once $this->plugin_path . 'includes/admin/admin.php';
 
-        //Form class
+		//Bg handlers
+
+		//Form class
+		require_once $this->plugin_path . 'includes/class-noptin-async-request.php';
+		require_once $this->plugin_path . 'includes/class-noptin-background-process.php';
+		require_once $this->plugin_path . 'includes/class-noptin-new-post-notify.php';
+
+
         require_once $this->plugin_path . 'includes/class-noptin-form.php';
         require_once $this->plugin_path . 'includes/class-noptin-popups.php';
         require_once $this->plugin_path . 'includes/class-noptin-inpost.php';
-        require_once $this->plugin_path . 'includes/class-noptin-sidebar.php';
+		require_once $this->plugin_path . 'includes/class-noptin-sidebar.php';
+
+		require_once $this->plugin_path . 'includes/class-noptin-page.php';
 
     	//plugin functions
         require_once $this->plugin_path . 'includes/functions.php';
@@ -310,14 +319,20 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function maybe_upgrade_db() {
 
+		require $this->plugin_path . 'includes/class-noptin-install.php';
+
         $installed_version = absint( get_option( 'noptin_db_version', 0 ));
 
         //Upgrade db if installed version of noptin is lower than current version
         if( $installed_version < $this->db_version ){
-            require $this->plugin_path . 'includes/class-noptin-install.php';
             new Noptin_Install( $installed_version );
             update_option( 'noptin_db_version', $this->db_version );
-        }
+		}
+
+		//Force create the subscribers table
+		if(! noptin_subscribers_table_exists() ) {
+			new Noptin_Install( false );
+		}
 
     }
 

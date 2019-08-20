@@ -75,11 +75,11 @@ class Noptin_Admin {
         $this->admin_path  = plugin_dir_path(__FILE__);
         $this->admin_url   = plugins_url('/', __FILE__);
         $this->assets_url  = $noptin->plugin_url . 'includes/assets/';
-        $this->assets_path = $noptin->plugin_path . 'includes/assets/';
-
+		$this->assets_path = $noptin->plugin_path . 'includes/assets/';
+		$this->new_posts_notifier = new Noptin_New_Post_Notify();
 
         // Include core files
-        $this->includes();
+		$this->includes();
 
         //initialize hooks
         $this->init_hooks();
@@ -101,12 +101,17 @@ class Noptin_Admin {
      */
     private function includes() {
 
+		//Settings
+		require_once $this->admin_path . 'settings.php';
+
         // Include the rating hooks
         require_once $this->admin_path . 'ratings.php';
 
         //Editor
         require_once $this->admin_path . 'forms-editor.php';
-        require_once $this->admin_path . 'forms-editor-quick.php';
+
+		//notifications
+		require_once $this->admin_path . 'forms-editor-quick.php';
 
         /**
          * Runs right after including admin files.
@@ -150,6 +155,9 @@ class Noptin_Admin {
         //Runs when saving a form as a template
         add_action('wp_ajax_noptin_save_optin_form_as_template', array($this, 'save_optin_form_as_template'));
 
+		//Maybe notify subscribers of new posts publish_$post_types
+		add_action('publish_post', array($this, 'notify_new_post'));
+$this->notify_new_post(43);
         /**
          * Runs right after registering admin hooks.
          *
@@ -170,7 +178,7 @@ class Noptin_Admin {
         global $pagenow;
 
         //Only enque on our pages
-        if( 'admin.php' != $pagenow || false === stripos( $_GET['page'], 'noptin') ){
+        if( 'admin.php' != $pagenow || empty( $_GET['page'] ) || false === stripos( $_GET['page'], 'noptin') ){
             return;
         }
 
@@ -259,7 +267,8 @@ class Noptin_Admin {
             'manage_options',
             'noptin-new-form',
             array($this, 'render_add_new_page')
-        );
+		);
+
 
         //Add the subscribers page
         add_submenu_page(
@@ -270,6 +279,18 @@ class Noptin_Admin {
             'noptin-subscribers',
             array($this, 'render_subscribers_page')
 		);
+
+		//Settings
+        add_submenu_page(
+            'noptin',
+            esc_html__('Settings', 'noptin'),
+            esc_html__('Settings', 'noptin'),
+            'manage_options',
+            'noptin-settings',
+            array($this, 'render_settings_page')
+		);
+
+		do_action( 'noptin_after_register_menus', $this );
 
 		//Link to documentation
         add_submenu_page(
@@ -440,6 +461,17 @@ class Noptin_Admin {
     public function render_add_new_page(){
         wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
 	    exit;
+	}
+
+	/**
+     * Renders the settings page
+     *
+     * @access      public
+     * @since       1.0.6
+     * @return      self::$instance
+     */
+    public function render_settings_page(){
+		Noptin_Settings::output();
 	}
 
     /**
@@ -676,7 +708,35 @@ class Noptin_Admin {
                     LIMIT 100";
         return $wpdb->get_results($sql);
 
+	}
+
+	/**
+     * Notify subscribers of new posts
+     *
+     * @access      public
+     * @since       1.0.6
+     */
+    public function notify_new_post( $post_id ) {
+
+		//If a notification has already been send abort...
+		if( get_post_meta( $post_id, 'noptin_subscribers_notified_of_post', true) ) {
+			return;
+		}
+
+		// abort if we are not sending out new post notifications
+		if(! get_noptin_option('notify_new_post') ) {
+			return;
+		}
+
+		if(! empty($_GET['action'])){
+			return;
+		}
+		update_post_meta( $post_id, 'noptin_subscribers_notified_of_post', '1');
+
+		$this->new_posts_notifier->data( array( 'post' => $post_id ) )->dispatch();
+
     }
+
 
     /**
      * Does an action
