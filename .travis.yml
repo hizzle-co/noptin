@@ -33,7 +33,7 @@ matrix:
       env: WP_TRAVISCI=phpcs
     - php: 5.3
       env: WP_VERSION=4.4
-      dist: xenial
+      dist: precise
 
 before_script:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"

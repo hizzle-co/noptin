@@ -157,7 +157,7 @@ class Noptin_Admin {
 
 		//Maybe notify subscribers of new posts publish_$post_types
 		add_action('publish_post', array($this, 'notify_new_post'));
-$this->notify_new_post(43);
+
         /**
          * Runs right after registering admin hooks.
          *

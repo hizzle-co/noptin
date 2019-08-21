@@ -57,15 +57,54 @@ $noptin_color: #ff6f00;
 
 	.noptin-optin-form-wrapper {
 		margin-top: 100px;
-
-		.noptin-form-close {
-			display: inline-block;
-		}
 	}
+
+
 
 	&.open {
 		display: flex;
 	}
+}
+
+/*Popups close button*/
+.noptin-form-close {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 36px;
+	height: 36px;
+	cursor: pointer;
+	display: none;
+
+	&.outside {
+		top: -36px;
+		right: -36px;
+	}
+
+	&.along {
+		top: -30px;
+		right: -30px;
+	}
+
+	&.top-right {
+		top: 60px;
+		right: 60px;
+		position: fixed;
+	}
+
+	path {
+		fill: rgba(255, 255, 255, 0.9);
+		transition: 0.3s;
+	}
+
+	&:hover path {
+		fill: rgba(255, 255, 255, 0.4);
+	}
+}
+
+.noptin-preview-showing .noptin-form-close,
+.noptin-popup-main-wrapper.open  .noptin-form-close{
+	display: inline-block;
 }
 
 .noptin-animate-from {
@@ -86,41 +125,6 @@ $noptin_color: #ff6f00;
 	transition: all 0.5s;
 	max-width: 100%;
 
-	/*Popups close button*/
-	.noptin-form-close {
-		position: absolute;
-		top: 0;
-		right: 0;
-		width: 36px;
-		height: 36px;
-		cursor: pointer;
-		display: none;
-
-		&.outside {
-			top: -36px;
-			right: -36px;
-		}
-
-		&.along {
-			top: -30px;
-			right: -30px;
-		}
-
-		&.top-right {
-			top: 60px;
-			right: 60px;
-			position: fixed;
-		}
-
-		path {
-			fill: rgba(255, 255, 255, 0.9);
-			transition: 0.3s;
-		}
-
-		&:hover path {
-			fill: rgba(255, 255, 255, 0.4);
-		}
-	}
 
 	/*The main opt in form*/
 	form {

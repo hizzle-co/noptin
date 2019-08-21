@@ -10,8 +10,14 @@
 		return 'key' + rand.toString(36).replace(/[^a-z]+/g, '')
 	}
 
+
+	//Avoid displaying several popups at once
+	var displayingPopup = false
+
 	//Hides a displayed popup
 	var hidePopup = function(inner) {
+
+		displayingPopup = false;
 
 		var wrapper = $(inner).closest('.noptin-popup-main-wrapper')
 		var form = $(wrapper).find('.noptin-optin-form-wrapper')
@@ -31,9 +37,17 @@
 		}, timing)
 	}
 
+
 	//Displays a popup and attaches "close" event handlers
 	var displayPopup = function (popup) {
-		$(popup)
+
+		if( displayingPopup ) {
+			return;
+		}
+
+		displayingPopup = true;
+
+		var closeButton = $(popup)
 			.closest('.noptin-popup-main-wrapper')
 			.addClass('open')
 			.on('click', function (e) {
@@ -48,6 +62,12 @@
 			.on('click', function () {
 				hidePopup(popup)
 			})
+
+		//position fixed does not work on elements with transformed parents
+		if( $(closeButton).hasClass('top-right') ) {
+			var wrapper = $(closeButton).closest('.noptin-popup-main-wrapper')
+			$(closeButton).appendTo(wrapper)
+		}
 
 		//Maybe animate
 		setTimeout(function () {

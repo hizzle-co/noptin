@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, newsletter subscribe, email subscribe, 
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 5.2
-Version: 1.0.6
+Version: 1.0.7
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html

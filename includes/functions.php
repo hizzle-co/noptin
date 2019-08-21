@@ -184,6 +184,7 @@ function update_noptin_option( $key, $value ) {
  * @since   1.6
  */
 function prepare_noptin_email( $email, $subscriber ) {
+	$noptin = noptin();
 
 	//Unsubscribe url
 	$email = str_ireplace( "{{unsubscribe_url}}", get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key ), $email);
@@ -194,6 +195,20 @@ function prepare_noptin_email( $email, $subscriber ) {
 	$email = str_ireplace( "{{noptin_city}}", get_noptin_option( 'city', ''), $email);
 	$email = str_ireplace( "{{noptin_state}}", get_noptin_option( 'state', ''), $email);
 	$email = str_ireplace( "{{noptin_country}}", get_noptin_option( 'country', ''), $email);
+
+	//homeurl
+	$email = str_ireplace( "{{home_url}}", get_home_url(), $email);
+
+	//logo url
+	$url = $noptin->admin->assets_url . '/images/square-48.png';
+	$custom_logo_id = get_theme_mod( 'custom_logo' );
+	if( $custom_logo_id ) {
+		$logo_url = wp_get_attachment_image_src( $custom_logo_id );
+		if( is_array( $logo_url ) && !empty( $logo_url[0] ) ) {
+			$url = $logo_url[0];
+		}
+	}
+	$email = str_ireplace( "{{logo_url}}", $url, $email);
 
 	return $email;
 
