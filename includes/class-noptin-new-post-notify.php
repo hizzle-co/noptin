@@ -55,6 +55,8 @@ class Noptin_New_Post_Notify extends Noptin_Async_Request {
 			$this->notify( $subscriber, $email, $post );
 		}
 
+		update_post_meta( $post->ID , 'noptin_count_subscribers_notified_of_post', count( $subscribers ) );
+
 	}
 
 	/**
@@ -81,39 +83,82 @@ class Noptin_New_Post_Notify extends Noptin_Async_Request {
 	protected function notify( $subscriber, $email, $post ) {
 
 		$email = prepare_noptin_email( $email, $subscriber );
-		$email = str_ireplace( "{{noptin_author}}", get_the_author_meta( 'display_name', $post->post_author ), $email);
-		$email = str_ireplace( "{{cta_url}}", get_permalink( $post->ID ), $email);
-		$email = str_ireplace( "{{cta_text}}", __( 'Continue Reading', 'noptin'), $email);
+		$email = str_ireplace( "[[noptin_author]]", get_the_author_meta( 'display_name', $post->post_author ), $email);
+		$email = str_ireplace( "[[cta_url]]", get_permalink( $post->ID ), $email);
+		$email = str_ireplace( "[[cta_text]]", __( 'Continue Reading', 'noptin'), $email);
 
-		$content = get_post_meta( $post->ID, 'noptin_post_notify_content', true );
-		if(! $content ) {
-			$content = get_the_excerpt( $post->ID );
+		//Content
+		$content = "<p>Hello [[first_name]],</p><p>I just published a new post on [[blog_name]].</p><p>[[excerpt]]</p>";
+
+		$_content = get_noptin_option('new_post_content');
+		if(! $_content ) {
+			$content = $_content;
 		}
-		$email = str_ireplace( "{{content}}", $content, $email);
 
-		$email = str_ireplace( "{{email_title}}", get_the_title( $post ), $email );
-		$email = str_ireplace( "{{preheader}}", __( 'We just published a new blog post. Hope you like it.', 'noptin'), $email );
+		$_content = get_post_meta( $post->ID, 'noptin_post_notify_content', true );
+		if(! $_content ) {
+			$content = $_content;
+		}
 
-		$email = str_ireplace( "{{first_name}}", $subscriber->first_name, $email);
-		$email = str_ireplace( "{{second_name}}", $subscriber->second_name, $email);
+		$email = str_ireplace( "[[content]]", $content, $email);
 
+		//Subject
+		$subject = get_noptin_option('new_post_subject');
+		if(! $subject ) {
+			$subject = '[[title]]';
+		}
+
+		//Preview
+		$preview = get_noptin_option('new_post_preview_text');
+		if(! $preview ) {
+			$preview = __( 'We just published a new blog post. Hope you like it.', 'noptin');
+		}
+		$email   = str_ireplace( "[[preheader]]", $preview, $email );
+
+		//Convert content
+		$subject   = str_ireplace( "[[title]]", get_the_title( $post ), $subject );
+		$subject   = str_ireplace( "[[email_title]]", get_the_title( $post ), $subject );
+		$subject   = str_ireplace( "[[blog_name]]", get_bloginfo('name'), $subject );
+		$subject   = str_ireplace( "[[blog_description]]", get_bloginfo('description'), $subject );
+		$subject   = str_ireplace( "[[excerpt]]", get_the_excerpt( $post ), $subject );
+		$subject   = str_ireplace( "[[post_content]]", $post->post_content, $subject );
+		$email     = str_ireplace( "[[title]]", get_the_title( $post ), $email );
+		$email     = str_ireplace( "[[email_title]]", get_the_title( $post ), $email );
+		$email     = str_ireplace( "[[blog_name]]", get_bloginfo('name'), $email );
+		$email     = str_ireplace( "[[blog_description]]", get_bloginfo('description'), $email );
+		$email     = str_ireplace( "[[excerpt]]", get_the_excerpt( $post ), $email );
+		$email     = str_ireplace( "[[post_content]]", $post->post_content, $email );
+
+
+		//Names
+		$email   = str_ireplace( "[[first_name]]", $subscriber->first_name, $email);
+		$email   = str_ireplace( "[[second_name]]", $subscriber->second_name, $email);
+		$subject = str_ireplace( "[[first_name]]", $subscriber->first_name, $subject);
+		$subject = str_ireplace( "[[second_name]]", $subscriber->second_name, $subject);
+		$preview = str_ireplace( "[[first_name]]", $subscriber->first_name, $preview);
+		$preview = str_ireplace( "[[second_name]]", $subscriber->second_name, $preview);
+
+		//Subscriber meta
 		$meta = get_noptin_subscriber_meta( $subscriber->id );
 		foreach( $meta as $key=>$values ) {
 
 			if( isset( $values[0] ) && is_string( $values[0] ) ) {
 
-				$value = esc_html( $values[0] );
-				$email = str_ireplace( "{{$key}}", $value, $email);
+				$value   = esc_html( $values[0] );
+				$email   = str_ireplace( "[[$key]]", $value, $email);
+				$subject = str_ireplace( "[[$key]]", $value, $subject);
+				$preview = str_ireplace( "[[$key]]", $value, $preview);
 
 			}
 
 		}
 
+
 		//Send the email
-		$subject = get_the_title( $post );
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 
-		if( get_noptin_option( 'from_email' ) ) {
+		$from_email = get_noptin_option( 'from_email' );
+		if( is_email($from_email) ) {
 			$name = get_noptin_option( 'from_name' );
 			$from_email = get_noptin_option( 'from_email' );
 			$headers[] = "From:$name <$from_email>";

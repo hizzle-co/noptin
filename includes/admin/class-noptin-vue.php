@@ -91,6 +91,15 @@ if( !defined( 'ABSPATH' ) ) {
 			unset( $el['class'] );
 		}
 
+		//description
+		$description = '';
+
+		if(! empty( $field['description'] ) ) {
+			$description = '<p class="description">' . $field['description'] . '</p>';
+		}
+
+		$field['description'] = $description;
+
 		//Attributes
 		$attrs = '';
 		foreach( $el as $attr=>$val ){
@@ -275,15 +284,16 @@ if( !defined( 'ABSPATH' ) ) {
 
 		printf(
 			'<div %s class="field-wrapper noptin-textarea-wrapper %s">
-				<label>%s %s</label>
-				<textarea %s v-model="%s"></textarea>
+				<label class="noptin-textarea-label">%s %s</label>
+				<div><textarea %s v-model="%s"></textarea>%s</div>
 			</div>',
 			$field['restrict'],
 			$field['_class'],
 			$field['label'],
 			$field['tooltip'],
 			$field['attrs'],
-			$id
+			$id,
+			$field['description']
 		);
 
 	}
@@ -415,11 +425,7 @@ if( !defined( 'ABSPATH' ) ) {
 		$restrict   = $field['restrict'];
 		$label      = $field['label'];
 		$tooltip    = $field['tooltip'];
-		$description = '';
-
-		if(! empty( $field['description'] ) ) {
-			$description = '<p class="description">' . $field['description'] . '</p>';
-		}
+		$description = empty( $field['description'] ) ? '' : $field['description'];
 
 
 		switch ( $type ) {

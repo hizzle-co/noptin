@@ -530,7 +530,7 @@ class Noptin_Form {
 		}
 
 		//... or the user wants to hide all forms
-		if( !empty( $_GET['noptin_hide'] ) && 'true' == $_GET['noptin_hide'] ) {
+		if( !noptin_should_show_optins() ) {
 			return false;
 		}
 

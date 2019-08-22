@@ -733,9 +733,6 @@ class Noptin_Admin {
 			return;
 		}
 
-		if(! empty($_GET['action'])){
-			return;
-		}
 		update_post_meta( $post_id, 'noptin_subscribers_notified_of_post', '1');
 
 		$this->new_posts_notifier->data( array( 'post' => $post_id ) )->dispatch();

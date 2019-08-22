@@ -142,6 +142,14 @@ function get_noptin_option( $key, $default = null ) {
 		$value   = $options[ $key ];
 	}
 
+	if( 'false' == $value ) {
+		$value = false;
+	}
+
+	if( 'true' == $value ) {
+		$value = true;
+	}
+
 	return apply_filters( 'noptin_get_option', $value, $key );
 
 }
@@ -187,17 +195,17 @@ function prepare_noptin_email( $email, $subscriber ) {
 	$noptin = noptin();
 
 	//Unsubscribe url
-	$email = str_ireplace( "{{unsubscribe_url}}", get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key ), $email);
+	$email = str_ireplace( "[[unsubscribe_url]]", get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key ), $email);
 
 	//footer
-	$email = str_ireplace( "{{noptin_company}}", get_noptin_option( 'company', ''), $email);
-	$email = str_ireplace( "{{noptin_address}}", get_noptin_option( 'address', ''), $email);
-	$email = str_ireplace( "{{noptin_city}}", get_noptin_option( 'city', ''), $email);
-	$email = str_ireplace( "{{noptin_state}}", get_noptin_option( 'state', ''), $email);
-	$email = str_ireplace( "{{noptin_country}}", get_noptin_option( 'country', ''), $email);
+	$email = str_ireplace( "[[noptin_company]]", get_noptin_option( 'company', ''), $email);
+	$email = str_ireplace( "[[noptin_address]]", get_noptin_option( 'address', ''), $email);
+	$email = str_ireplace( "[[noptin_city]]", get_noptin_option( 'city', ''), $email);
+	$email = str_ireplace( "[[noptin_state]]", get_noptin_option( 'state', ''), $email);
+	$email = str_ireplace( "[[noptin_country]]", get_noptin_option( 'country', ''), $email);
 
 	//homeurl
-	$email = str_ireplace( "{{home_url}}", get_home_url(), $email);
+	$email = str_ireplace( "[[home_url]]", get_home_url(), $email);
 
 	//logo url
 	$url = $noptin->admin->assets_url . '/images/square-48.png';
@@ -208,7 +216,12 @@ function prepare_noptin_email( $email, $subscriber ) {
 			$url = $logo_url[0];
 		}
 	}
-	$email = str_ireplace( "{{logo_url}}", $url, $email);
+	$company_logo = get_noptin_option( 'company_logo', '');
+	if( $company_log ) {
+		$logo_url = esc_url( $company_logo );
+	}
+
+	$email = str_ireplace( "[[logo_url]]", $url, $email);
 
 	return $email;
 
@@ -378,6 +391,8 @@ function add_noptin_subscriber( $fields ) {
 
 		update_noptin_subscriber_meta( $id, $field, $value );
 	}
+
+	setcookie( 'noptin_email_subscribed', '1', time() + (86400 * 30), COOKIEPATH, COOKIE_DOMAIN);
 
 	return $id;
 
@@ -571,6 +586,23 @@ function noptin_get_post_types(){
     unset( $return['attachment'] );
 
     return $return;
+
+}
+
+/**
+ * Checks whether an optin form should be displayed
+ */
+function noptin_should_show_optins(){
+
+	if(! empty( $_COOKIE['noptin_email_subscribed'] ) && get_noptin_option( 'hide_from_subscribers' ) ){
+		return false;
+	}
+
+	if(! empty( $_REQUEST['noptin_hide'] ) ) {
+		return false;
+	}
+
+	return true;
 
 }
 

@@ -18,13 +18,17 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
-      	//Maybe ask users to subscribe to the newsletter after commenting...
-		add_action( 'comment_form', array( $this, 'comment_form') );
-		add_action( 'comment_post', array( $this, 'subscribe_commentor') );
+		if( noptin_should_show_optins() ) {
 
-		//... or when registering
-		add_action( 'register_form', array( $this, 'register_form') );
-		add_action( 'user_register', array( $this, 'subscribe_registered_user') );
+			//Maybe ask users to subscribe to the newsletter after commenting...
+			add_action( 'comment_form', array( $this, 'comment_form') );
+			add_action( 'comment_post', array( $this, 'subscribe_commentor') );
+
+			//... or when registering
+			add_action( 'register_form', array( $this, 'register_form') );
+			add_action( 'user_register', array( $this, 'subscribe_registered_user') );
+
+		}
 
 
     }
@@ -42,7 +46,12 @@ if( !defined( 'ABSPATH' ) ) {
 			return;
 		}
 
-		echo '<label class="comment-form-noptin"><input name="noptin-subscribe" type="checkbox" />Subscribe to our newsletter</label>';
+		$text = get_noptin_option( 'comment_form_msg' );
+		if( empty( $text ) ) {
+			$text = __( 'Subscribe To Our Newsletter', 'noptin' );
+		}
+
+		echo "<label class='comment-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";
 
 	}
 
@@ -78,7 +87,12 @@ if( !defined( 'ABSPATH' ) ) {
 			return;
 		}
 
-		echo '<label class="register-form-noptin"><input name="noptin-subscribe" type="checkbox" />Subscribe to our newsletter</label>';
+		$text = get_noptin_option( 'register_form_msg' );
+		if( empty( $text ) ) {
+			$text = __( 'Subscribe To Our Newsletter', 'noptin' );
+		}
+
+		echo "<label class='register-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";
 
 	}
 

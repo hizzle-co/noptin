@@ -929,7 +929,8 @@ input:focus+.noptin-switch-slider span {
 		margin-top: 16px;
     	margin-bottom: 32px;
 
-		.noptin-label {
+		.noptin-label,
+		.noptin-textarea-label {
 			max-width: 200px;
 			flex: 1 0 200px;
 			font-weight: 600;
@@ -937,6 +938,10 @@ input:focus+.noptin-switch-slider span {
 
 		.noptin-content {
 			flex: 1 0 0;
+		}
+
+		&.noptin-textarea-wrapper textarea {
+			margin-bottom: 0;
 		}
 	}
 
