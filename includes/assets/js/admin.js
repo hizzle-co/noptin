@@ -18,6 +18,7 @@
 	var swatches = require('vue-swatches');
 	var VueQuillEditor = require('vue-quill-editor');
 	var VueSelect = require('vue-select');
+	var Popover = require('vue-popperjs');
 	var dragula = require('dragula');
 
 	//Color swatches
@@ -28,6 +29,9 @@
 
 	//Quill Editor
 	Vue.use(VueQuillEditor)
+
+	//Tooltips
+	Vue.component('noptin-tooltip', Popover);
 
 	//Use divs instead of paragraphs
 	var Block = VueQuillEditor.Quill.import('blots/block');
@@ -40,7 +44,7 @@
 
 			var data = {}
 
-			if (noptinEditor.templates[key]) {
+			if ( noptinEditor && noptinEditor.templates[key]) {
 				var template = noptinEditor.templates[key]['data']
 
 				Object.keys(template).forEach(function (key) {
@@ -558,6 +562,11 @@
 			}
 		},
 		mounted: function () {
+
+			if(! noptinEditor.templates ) {
+				return;
+			}
+
 			noptin.updateCustomCss(this.CSS)
 
 			jQuery('#formCustomCSS').text(this.CSS)
@@ -595,6 +604,78 @@
 				}
 			});
 
+		},
+	})
+
+	var vmSettings = new Vue({
+		el: '#noptin-settings-app',
+		data: jQuery.extend(true, {}, noptinSettings),
+		computed: {
+			_onlyShowOn: function () {
+				return this.onlyShowOn && this.onlyShowOn.length > 0
+			}
+		},
+		methods: {
+
+			saveSettings: function () {
+				var saveText = this.saveAsTemplateText
+				this.saveAsTemplateText = this.savingTemplateText;
+				var that = this
+
+				jQuery.post(noptinEditor.ajaxurl, {
+					_ajax_nonce: noptinEditor.nonce,
+					action: "noptin_save_optin_form_as_template",
+					state: vm.$data
+				})
+					.done(function () {
+						that.showSuccess(that.savingTemplateSuccess)
+						that.saveAsTemplateText = saveText
+					})
+					.fail(function () {
+						that.showError(that.savingTemplateError)
+						that.saveAsTemplateText = saveText
+					})
+
+			},
+
+			upload_image: function (key) {
+				var that = this;
+				var image = wp.media({
+					title: 'Upload Image',
+					multiple: false
+				})
+
+					.open()
+					.on('select', function (e) {
+						var uploaded_image = image.state().get('selection').first();
+						that[key] = uploaded_image.toJSON().sizes.thumbnail.url;
+					})
+			},
+			showSuccess: function (msg) {
+				this.hasSuccess = true;
+				this.Success = msg;
+				var that = this;
+				setTimeout(function () {
+					that.hasSuccess = false;
+					that.Success = '';
+				}, 5000)
+			},
+			showError: function (msg) {
+				this.hasError = true;
+				this.Error = msg;
+				var that = this;
+
+				setTimeout(function () {
+					that.hasError = false;
+					that.Error = '';
+				}, 5000)
+			},
+
+		},
+
+		mounted: function () {
+			noptin.updateCustomCss(this.CSS)
+			jQuery('.noptin-form-designer-loader').hide()
 		},
 	})
 

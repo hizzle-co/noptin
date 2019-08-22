@@ -41,13 +41,13 @@
                         ?>
                     </ul>
                 </div>
-                <div class="noptin-popup-editor-sidebar-body">
+                <div class="noptin-popup-editor-sidebar-body noptin-fields">
 
                 <?php
                     foreach ( $sidebar as $panel => $fields ) {
                         echo " <div class='noptin-popup-editor-{$panel}-fields'  v-show=\"'{$panel}'==currentSidebarSection\">";
                         foreach( $fields as $id=>$field ){
-                            noptin_render_editor_field( $id, $field, $panel );
+                            Noptin_Vue::render_el( $id, $field, $panel );
                         }
                         echo "</div>";
                     }

@@ -211,7 +211,7 @@ class Noptin_Admin {
 		);
 
         //Vue js
-        wp_enqueue_script('vue', $this->assets_url . 'js/vue.min.js', array(), '2.6.10');
+        wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array(), '2.6.10');
 
         //Custom admin scripts
         $version = filemtime( $this->assets_path . 'js/admin-bundled.js' );
@@ -226,7 +226,12 @@ class Noptin_Admin {
         );
 
         // localize and enqueue the script with all of the variable inserted
-        wp_localize_script('noptin', 'noptin_params', $params);
+		wp_localize_script('noptin', 'noptin_params', $params);
+
+		if(! empty( $_GET['page'] ) && 'noptin-settings' == $_GET['page'] ) {
+			wp_localize_script('noptin', 'noptinSettings', Noptin_Settings::get_state());
+		}
+
         wp_enqueue_script('noptin');
     }
 

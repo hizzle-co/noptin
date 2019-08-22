@@ -177,10 +177,11 @@ if( !defined( 'ABSPATH' ) ) {
 		require_once $this->plugin_path . 'includes/class-noptin-sidebar.php';
 
 		require_once $this->plugin_path . 'includes/class-noptin-page.php';
+		require_once $this->plugin_path . 'includes/class-noptin-intergrations.php';
+		require_once $this->plugin_path . 'includes/admin/class-noptin-vue.php';
 
     	//plugin functions
         require_once $this->plugin_path . 'includes/functions.php';
-        require_once $this->plugin_path . 'includes/render-functions.php';
 
     	//Ajax handlers
         require_once $this->plugin_path . 'includes/class-noptin-ajax.php';

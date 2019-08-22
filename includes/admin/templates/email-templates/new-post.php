@@ -4,7 +4,7 @@
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>{{email_title}}</title>
+  <title>[[email_title]]</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-  		{{preheader}}
+  		[[preheader]]
   </div>
   <!-- end preheader -->
 
@@ -124,8 +124,8 @@
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
           <tr>
             <td align="center" valign="top" style="padding: 36px 24px;">
-              <a href="{{home_url}}" target="_blank" style="display: inline-block;">
-                <img src="{{logo_url}}" alt="Logo" border="0" width="48" style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
+              <a href="[[home_url]]" target="_blank" style="display: inline-block;">
+                <img src="[[logo_url]]" alt="Logo" border="0" width="48" style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
               </a>
             </td>
           </tr>
@@ -150,7 +150,7 @@
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
-              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">{{email_title}}</h1>
+              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">[[email_title]]</h1>
             </td>
           </tr>
         </table>
@@ -176,7 +176,7 @@
           <!-- start copy -->
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-              	{{content}}
+              	[[content]]
             </td>
           </tr>
           <!-- end copy -->
@@ -190,7 +190,7 @@
                     <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                          <a href="{{cta_url}}" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">{{cta_text}}</a>
+                          <a href="[[cta_url]]" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">[[cta_text]]</a>
                         </td>
                       </tr>
                     </table>
@@ -205,7 +205,7 @@
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
               <p style="margin: 0;">If that doesn't work, copy and paste the following link in your browser:</p>
-              <p style="margin: 0;"><a href="{{cta_url}}" target="_blank">{{cta_url}}</a></p>
+              <p style="margin: 0;"><a href="[[cta_url]]" target="_blank">[[cta_url]]</a></p>
             </td>
           </tr>
           <!-- end copy -->
@@ -213,7 +213,7 @@
           <!-- start copy -->
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-              <p style="margin: 0;">Cheers,<br> {{noptin_author}}</p>
+              <p style="margin: 0;">Cheers,<br> [[noptin_author]]</p>
             </td>
           </tr>
           <!-- end copy -->
@@ -249,8 +249,8 @@
           <!-- start unsubscribe -->
           <tr>
             <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-              <p style="margin: 0;">To stop receiving these emails, you can <a href="{{unsubscribe_url}}" target="_blank">unsubscribe</a> at any time.</p>
-              <p style="margin: 0;">{{noptin_company}} <br/> {{noptin_address}} <br/> {{noptin_city}}, {{noptin_state}}, {{noptin_country}}</p>
+              <p style="margin: 0;">To stop receiving these emails, you can <a href="[[unsubscribe_url]]" target="_blank">unsubscribe</a> at any time.</p>
+              <p style="margin: 0;">[[noptin_company]] <br/> [[noptin_address]] <br/> [[noptin_city]], [[noptin_state]], [[noptin_country]]</p>
             </td>
           </tr>
           <!-- end unsubscribe -->

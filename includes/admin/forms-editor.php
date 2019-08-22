@@ -299,7 +299,8 @@ class Noptin_Form_Editor {
             'el'                => 'input',
             'label'             => "Never show on:",
             'options'           => $this->post->neverShowOn,
-            'restrict'          => "!_onlyShowOn",
+			'restrict'          => "!_onlyShowOn",
+			'tooltip'           => "Use a comma to separate post ids where this form should not be displayed",
         );
 
         $return["onlyShowOn"]  = array(

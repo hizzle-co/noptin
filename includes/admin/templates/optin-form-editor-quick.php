@@ -13,7 +13,7 @@
                         <div v-show="currentStep=='<?php echo $step; ?>'" class="noptin-form-editor-step">
                             <?php
                                 foreach ( $fields as $id => $field ) {
-                                    noptin_render_editor_field( $id, $field, $step );
+                                    Noptin_Vue::render_el( $id, $field, $step );
                                 }
                             ?>
                         </div>

@@ -141,7 +141,50 @@ class Noptin_Settings {
         $description  = isset( $args['description'] ) ? "<p class='description'>{$args['description']}</p>" : '';
         echo "<label for='$id'><input placeholder='$placeholder' class='$class' id='$id' name='$id' value='$value' type='$type' />$description</label>";
 
-    }
+	}
+
+	/**
+     * Returns all settings sections
+     */
+	public static function get_sections() {
+		$sections = wp_list_pluck( self::get_settings(), 'section');
+		$modified = array();
+
+		foreach( $sections as $section ) {
+			$modified[$section] = ucwords( str_replace('-',' ',$section) );
+		}
+		return $modified;
+
+	}
+
+	/**
+     * Returns a section conditional
+     */
+	public static function get_section_conditional( $args ) {
+
+		if( empty( $args['section'] ) ) {
+			return '';
+		}
+
+		return "v-show=\"currentTab=='{$args['section']}'\"";
+
+	}
+
+	/**
+     * Returns the default state
+     */
+	public static function get_state() {
+
+		$settings = array_keys( self::get_settings() );
+		$state    = array();
+
+		foreach( $settings as $setting ) {
+			$state[$setting] = get_noptin_option( $setting, '' );
+		}
+		$state['currentTab'] = 'general';
+		return $state;
+
+	}
 
     /**
      * Returns all settings fields
@@ -151,57 +194,126 @@ class Noptin_Settings {
         $settings = array(
 
 			'notify_new_post'       => array(
-				'el'              => 'checkbox',
+				'el'              => 'input',
+				'type'            => 'checkbox_alt',
+				'section'		  => 'general',
 				'label'           => __( 'New Post Notifications', 'noptin' ),
 				'description'     => __( 'Notify your active subscribers every time you publish a new post.', 'noptin' ) ,
 			),
 
+			'new_post_subject'    => array(
+				'el'              => 'input',
+				'type'            => 'text',
+				'restrict'        => 'notify_new_post',
+				'section'		  => 'general',
+				'label'           => __( 'Email Subject', 'noptin' ),
+				'placeholder'     => '[[title]]',
+				'description'     => __( 'You can use the tags [[title]], [[excerpt]], [[first_name]], [[last_name]] or any other field name that you collect.', 'noptin' ) ,
+			),
+
+			'comment_form'        => array(
+				'el'              => 'input',
+				'type'            => 'checkbox_alt',
+				'section'		  => 'general',
+				'label'           => __( 'Subscribe Commentors', 'noptin' ),
+				'description'     => __( 'Ask commentors to subscribe to the newsletter.', 'noptin' ) ,
+			),
+
+			'comment_form_msg'    => array(
+				'el'              => 'input',
+				'type'            => 'text',
+				'restrict'        => 'comment_form',
+				'section'		  => 'general',
+				'label'           => __( 'Checkbox label', 'noptin' ),
+				'placeholder'     => __( 'Subscribe To Our Newsletter', 'noptin' ),
+			),
+
+			'register_form'       => array(
+				'el'              => 'input',
+				'type'            => 'checkbox_alt',
+				'section'		  => 'general',
+				'label'           => __( 'Subscribe New Users', 'noptin' ),
+				'description'     => __( 'Ask new users to subscribe to the newsletter.', 'noptin' ) ,
+			),
+
+			'register_form_msg'    => array(
+				'el'              => 'input',
+				'type'            => 'text',
+				'restrict'        => 'register_form',
+				'section'		  => 'general',
+				'label'           => __( 'Checkbox label', 'noptin' ),
+				'placeholder'     => __( 'Subscribe To Our Newsletter', 'noptin' ),
+			),
+
+			'hide_from_subscribers'       => array(
+				'el'              => 'input',
+				'type'            => 'checkbox_alt',
+				'section'		  => 'general',
+				'label'           => __( 'Hide From Subscribers', 'noptin' ),
+				'description'     => __( 'Hide opt-in forms and methods from existing subscribers.', 'noptin' ) ,
+			),
+
 			'from_email'       => array(
 				'el'              => 'input',
+				'section'		  => 'sender',
 				'type'            => 'email',
                 'label'           => __( 'From Email', 'noptin' ),
                 'class'           => 'regular-text',
                 'placeholder'     => get_option('admin_email'),
-                'description'     =>  __( 'Set this to a valid email address.', 'noptin' ),
+                'description'     =>  __( 'Set this to a valid email address. If emails are not being delivered, leave this field blank.', 'noptin' ),
 			),
 
 			'from_name'       => array(
-                'el'              => 'input',
+				'el'              => 'input',
+				'section'		  => 'sender',
                 'label'           => __( 'From Name', 'noptin' ),
                 'class'           => 'regular-text',
                 'placeholder'     => get_option('blogname'),
 			),
 
             'company'   => array(
-                'el'              => 'input',
+				'el'              => 'input',
+				'section'		  => 'sender',
                 'label'           => __( 'Company', 'noptin' ),
 				'class'           => 'regular-text',
 				'placeholder'     => get_option('blogname'),
+			),
+
+			'company_logo'   => array(
+				'el'              => 'input',
+				'type'			  => 'image',
+				'section'		  => 'sender',
+				'label'           => __( 'Logo', 'noptin' ),
+				'description'     =>  __( "Appears on top of emails. Leave blank to use your website's logo or the default image", 'noptin' ),
             ),
 
             'address'       => array(
-                'el'              => 'input',
+				'el'              => 'input',
+				'section'		  => 'sender',
                 'label'           => __( 'Street Address', 'noptin' ),
                 'class'           => 'regular-text',
                 'placeholder'     => __( '31 North San Juan Ave. ', 'noptin' ),
             ),
 
             'city'       => array(
-                'el'              => 'input',
+				'el'              => 'input',
+				'section'		  => 'sender',
                 'label'           => __( 'City', 'noptin' ),
                 'class'           => 'regular-text',
                 'placeholder'     => __( 'Santa Clara', 'noptin' ),
 			),
 
 			'state'       => array(
-                'el'              => 'input',
+				'el'              => 'input',
+				'section'		  => 'sender',
                 'label'           => __( 'State', 'noptin' ),
                 'class'           => 'regular-text',
                 'placeholder'     => __( 'San Francisco', 'noptin' ),
 			),
 
 			'country'       => array(
-                'el'              => 'input',
+				'el'              => 'input',
+				'section'		  => 'sender',
                 'label'           => __( 'Country', 'noptin' ),
                 'class'           => 'regular-text',
                 'placeholder'     => __( 'United States', 'noptin' ),
