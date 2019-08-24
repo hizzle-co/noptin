@@ -17,15 +17,12 @@
 
 	var swatches = require('vue-swatches');
 	var VueQuillEditor = require('vue-quill-editor');
-	var VueSelect = require('vue-select');
 	var Popover = require('vue-popperjs');
 	var dragula = require('dragula');
 
 	//Color swatches
 	Vue.component('noptin-swatch', swatches.default);
 
-	//Select
-	Vue.component('noptin-select', VueSelect.default);
 
 	//Quill Editor
 	Vue.use(VueQuillEditor)
@@ -69,7 +66,8 @@
 
 			if (instance.optinType == 'sidebar') {
 				instance.formHeight = '400px'
-				instance.formWidth = '300px'
+				instance.formWidth  = '300px'
+				instance.singleLine = false
 				return;
 			}
 
@@ -312,6 +310,39 @@
 
 				}
 			},
+		}
+	})
+
+	Vue.component('noptin-select', {
+		props: ['value'],
+		template: '<select style="width: 100%;"><slot></slot></select>',
+		mounted: function () {
+			var that = this
+
+			$(this.$el)
+
+      			// init select2
+				  .select2({width: 'resolve'})
+				  .val(this.value)
+				  .trigger('change')
+
+				  // emit event on change.
+				  .on('change', function () {
+					that.$emit('input', this.value)
+				  })
+
+
+		},
+		watch: {
+			value: function (value) {
+				// update value
+				$(this.$el)
+				.val(value)
+				.trigger('change')
+			},
+		},
+		destroyed: function () {
+			$(this.$el).off().select2('destroy')
 		}
 	})
 
@@ -607,7 +638,12 @@
 		},
 	})
 
-	var vmSettings = new Vue({
+
+	if( 'undefined' == typeof noptinSettings ) {
+		noptinSettings = {}
+	}
+
+	window.noptinSettingsApp = new Vue({
 		el: '#noptin-settings-app',
 		data: jQuery.extend(true, {}, noptinSettings),
 		computed: {
@@ -673,10 +709,7 @@
 
 		},
 
-		mounted: function () {
-			noptin.updateCustomCss(this.CSS)
-			jQuery('.noptin-form-designer-loader').hide()
-		},
+		mounted: function () {},
 	})
 
 	$('.noptin-tip').tooltipster();

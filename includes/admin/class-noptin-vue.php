@@ -31,6 +31,9 @@ if( !defined( 'ABSPATH' ) ) {
 		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox'), 10, 2 );
 		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input'), 10, 2 );
 
+		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types'), 5 );
+		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings'), 5 );
+
     }
 
     /**
@@ -94,11 +97,11 @@ if( !defined( 'ABSPATH' ) ) {
 		//description
 		$description = '';
 
-		if(! empty( $field['description'] ) ) {
-			$description = '<p class="description">' . $field['description'] . '</p>';
+		if(! empty( $el['description'] ) ) {
+			$description = '<p class="description">' . $el['description'] . '</p>';
 		}
 
-		$field['description'] = $description;
+		$el['description'] = $description;
 
 		//Attributes
 		$attrs = '';
@@ -159,13 +162,18 @@ if( !defined( 'ABSPATH' ) ) {
 			$style2 = 'display:none';
 		}
 
+
 		//Echo the panel opening wrapper
 		printf(
             '<div %s id="%s" class="noptin-popup-editor-panel">
                 <div class="noptin-popup-editor-panel-header" @click="togglePanel(\'%s\')">
-                    <span class="dashicons dashicons-arrow-up-alt2 noptin-popup-editor-panel-toggle"  style="%s"></span>
-                    <span class="dashicons dashicons-arrow-down-alt2 noptin-popup-editor-panel-toggle"  style="%s"></span>
-                    <h2 class="noptin-popup-editor-panel-title">%s %s</h2>
+					<h2 class="noptin-popup-editor-panel-title">
+						<button type="button">
+							<span class="dashicons dashicons-arrow-up-alt2 noptin-popup-editor-panel-toggle"  style="%s"></span>
+							<span class="dashicons dashicons-arrow-down-alt2 noptin-popup-editor-panel-toggle"  style="%s"></span>
+							%s %s
+						</button>
+					</h2>
                 </div>
 				<div class="noptin-popup-editor-panel-body" style="%s">',
 			$panel['restrict'],
@@ -326,59 +334,139 @@ if( !defined( 'ABSPATH' ) ) {
 		echo "<field-editor :fields='$id'></field-editor>";
 	}
 
+	/**
+	 * Returns opt-in form field types
+	 */
+	public static function get_field_types( $field_types = array() ) {
+
+		$field_types[] 		 = array(
+			'label' 		 => 'Email Address',
+			'type'  		 => 'email',
+			'supports_label' => true,
+		);
+
+		$field_types[] 		   = array(
+			'label' 		   => 'First Name',
+			'type'  		   => 'first_name',
+			'supports_label'   => true,
+			'supports_require' => true,
+		);
+
+		$field_types[] 		   = array(
+			'label' 		   => 'Last Name',
+			'type'  		   => 'last_name',
+			'supports_label'   => true,
+			'supports_require' => true,
+		);
+
+		$field_types[]         = array(
+			'label' 		   => 'Full Name',
+			'type'  		   => 'name',
+			'supports_label'   => true,
+			'supports_require' => true,
+		);
+
+		$field_types[]         = array(
+			'label' 		   => 'Text',
+			'name'  		   => 'text',
+			'type'  		   => 'text',
+			'supports_label'   => true,
+			'supports_name'	   => true,
+			'supports_require' => true,
+		);
+
+		$field_types[] 		   = array(
+			'label' 		   => 'Textarea',
+			'name'  		   => 'textarea',
+			'type'  	       => 'textarea',
+			'supports_label'   => true,
+			'supports_name'	   => true,
+			'supports_require' => true,
+		);
+
+		return $field_types;
+	}
+
+	/**
+	 * Renders a select field
+	 */
+	public static function print_field_type_settings( $field_type = array() ) {
+
+
+
+		$type = $field_type['type'];
+		$v_if = "v-if=\"field.type.type=='$type'\"";
+
+		//Field label
+		if(! empty( $field_type['supports_label'] ) ) {
+
+			echo "<div class='noptin-text-wrapper' $v_if>
+					<label>Label<input type='text' v-model='field.type.label'/></label>
+				</div>";
+
+		}
+
+		//Field name
+		if(! empty( $field_type['supports_name'] ) ) {
+
+			echo "<div class='noptin-text-wrapper' $v_if>
+					<label>Name<input type='text' v-model='field.type.name'/></label>
+				</div>";
+
+		}
+
+		//Required
+		if(! empty( $field_type['supports_require'] ) ) {
+
+			echo '
+				<label class="noptin-checkbox-wrapper" '. $v_if .'>
+					<input type="checkbox" class="screen-reader-text" v-model="field.require"/>
+					<span class="noptin-checkmark"></span>
+					<span class="noptin-label">Is this field required?</span>
+				</label>';
+
+		}
+	}
+
 
 	/**
 	 * Renders a select field
 	 */
 	public static function select( $id, $field ) {
 
-		if(! isset( $field['placeholder'] ) ) {
-			$field['placeholder'] = 'Select';
-		}
-
-		$extra = '';
     	if( 'multiselect' == $field['el'] ) {
-        	$extra = 'multiselect';
-		}
-
-		if(! empty( $field['taggable'] ) ) {
-			$extra .= ' taggable :create-option =" val => ({ label: val, val: val })"';
-			unset( $field['taggable'] );
+			$field['attrs'] .= ' multiselect';
 		}
 
 		if( empty($field['options']) ) {
 			$field['options'] = array();
 		}
 
-		$options = array();
-    	foreach( $field['options'] as $val => $name ){
-        	$options[] = array(
-            	'val'   => esc_attr( $val ),
-            	'label' => esc_attr( $name ),
-        	);
+		if( isset( $field['placeholder'] ) ) {
+			$field['options'] = array_merge( array( '' => $field['placeholder'] ), $field['options'] );
 		}
-		$options = wp_json_encode( $options );
+
+		$options = '';
+    	foreach( $field['options'] as $val => $name ){
+			$val = esc_attr( $val );
+			$name = esc_html( $name );
+			$options .= "<option value='$val'>$name</option>";
+		}
 
 		printf(
 			'<div %s class="noptin-select-wrapper %s field-wrapper">
-				<label>%s %s</label>
-				<noptin-select
-					:reduce="option => option.val"
-					:clearable="false"
-					:searchable="false"
-					:options=\'%s\'
-					%s %s
-					v-model="%s">
-				</noptin-select>
+				<label class="noptin-select-label">%s %s</label>
+				<div class="noptin-content"><noptin-select v-model="%s" %s>%s</noptin-select>%s</div>
 			</div>',
 			$field['restrict'],
 			$field['_class'],
 			$field['label'],
 			$field['tooltip'],
-			$options,
-			$field['attrs'],
-			$extra,
 			$id,
+			$field['attrs'],
+			$options,
+			$field['description']
+
 		);
 
 	}

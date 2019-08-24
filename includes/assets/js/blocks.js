@@ -35,7 +35,7 @@
 			},
 			bg_color: {
 				type: 'string',
-				default: '#fafafa',
+				default: '#0071a1',
 			},
 			title_color: {
 				type: 'string',

@@ -9,26 +9,26 @@
             <span @click="expandField(field.key)" class="dashicons dashicons-arrow-down-alt2" style="display:inline-block"></span>
 		</div>
 		<div class="noptin-field-editor-body" style="display:none">
-			<?php
+			<div class="noptin-select-wrapper">
+				<label>Type</label>
+					<noptin-select
+						:clearable='false'
+						:options='fieldTypes'
+						v-model="field.type">
+					</noptin-select>
+			</div>
+			<div class="noptin-text-wrapper">
+				<label>Label<input type="text" v-model="field.type.label"/></label>
+			</div>
+			<div class="noptin-text-wrapper" v-if="hasCustomName(field.type.type)">
+				<label>Name<input type="text" v-model="field.type.name"/></label>
+			</div>
 
-				$field_types = get_noptin_optin_field_types();
-
-				//Change field type
-				$args  = array(
-					'el'        => 'select',
-					'label'     => 'Type',
-					'options'   => wp_list_pluck( $field_types, 'label', 'type' ),
-				);
-				$args  = Noptin_Vue::sanitize_el( 'field.type.type', $args );
-				Noptin_Vue::select( 'field.type.type', $args );
-
-				//Print field types specific settings
-				foreach( $field_types as $field_type ) {
-					do_action( 'noptin_field_type_settings', $field_type, $field_types );
-				}
-
-			?>
-
+			<label class="noptin-checkbox-wrapper">
+				<input type="checkbox" class='screen-reader-text' v-model="field.require"/>
+				<span class='noptin-checkmark'></span>
+				<span class='noptin-label'>Is this field required?</span>
+			</label>
 			<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)">Delete Field</a>
 
 		</div>

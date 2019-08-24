@@ -40,7 +40,7 @@ if( !defined( 'ABSPATH' ) ) {
      * @var       Plugin version
      * @since       1.0.0
      */
-    public $version = '1.0.5';
+    public $version = '1.0.7';
 
     /**
      * @var       Plugin db version
@@ -105,7 +105,15 @@ if( !defined( 'ABSPATH' ) ) {
         add_action( 'init', array( $this, 'init'), 5 );
 
         //Register our new widget
-        add_action( 'widgets_init', array($this, 'register_widget'));
+		add_action( 'widgets_init', array($this, 'register_widget'));
+
+		/**
+		 * Fires after Noptin loads
+		 *
+		 * @since 1.0.7
+		 *
+		 */
+        do_action('noptin_load');
 
     }
 
@@ -160,6 +168,9 @@ if( !defined( 'ABSPATH' ) ) {
      */
     private function includes() {
 
+		//plugin functions
+		require_once $this->plugin_path . 'includes/functions.php';
+
 		// The main admin class
 		require_once $this->plugin_path . 'includes/admin/admin.php';
 
@@ -179,9 +190,6 @@ if( !defined( 'ABSPATH' ) ) {
 		require_once $this->plugin_path . 'includes/class-noptin-page.php';
 		require_once $this->plugin_path . 'includes/class-noptin-intergrations.php';
 		require_once $this->plugin_path . 'includes/admin/class-noptin-vue.php';
-
-    	//plugin functions
-        require_once $this->plugin_path . 'includes/functions.php';
 
     	//Ajax handlers
         require_once $this->plugin_path . 'includes/class-noptin-ajax.php';

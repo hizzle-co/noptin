@@ -32,9 +32,9 @@
                                 echo "
                                     <li>
                                         <button
-                                            class='noptin-popup-editor-sidebar-{$panel}'
+                                            class='noptin-popup-editor-sidebar-section-header noptin-popup-editor-sidebar-{$panel}'
                                             :class=\"{ active: currentSidebarSection == '$panel' }\"
-                                            @click=\"currentSidebarSection = '$panel'\">$_panel</button>
+                                            @click.prevent=\"currentSidebarSection = '$panel'\">$_panel</button>
                                     </li>
                                 ";
                             }
@@ -46,7 +46,9 @@
                 <?php
                     foreach ( $sidebar as $panel => $fields ) {
                         echo " <div class='noptin-popup-editor-{$panel}-fields'  v-show=\"'{$panel}'==currentSidebarSection\">";
-                        foreach( $fields as $id=>$field ){
+
+
+						foreach( $fields as $id=>$field ){
                             Noptin_Vue::render_el( $id, $field, $panel );
                         }
                         echo "</div>";

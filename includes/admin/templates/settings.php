@@ -1,7 +1,7 @@
 <div class="wrap noptin-settings" id="noptin-settings-app">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
     <?php do_action( 'noptin_settings_page_top' ); ?>
-    <form class="noptin-settings-tab-main-form" method="post" action="<?php echo admin_url('admin.php?page=noptin-settings') ?>">
+    <form @submit.prevent="saveSettings" class="noptin-settings-tab-main-form" method="post" action="<?php echo admin_url('admin.php?page=noptin-settings') ?>">
 		<nav class="nav-tab-wrapper">
 			<?php foreach ( Noptin_Settings::get_sections() as $id => $title ) {?>
 				<a

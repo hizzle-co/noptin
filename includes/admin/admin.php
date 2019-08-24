@@ -192,7 +192,9 @@ class Noptin_Admin {
 
         //Slick selects https://designwithpc.com/Plugins/ddSlick#demo
         wp_enqueue_script('slick', $this->assets_url . 'js/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
-        wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
+		wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
+
+		wp_enqueue_script('select2', $this->assets_url . 'js/select2.js', array( 'jquery' ), '4.0.9');
 
         //Enque media for image uploads
         wp_enqueue_media();

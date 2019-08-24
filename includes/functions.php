@@ -236,11 +236,16 @@ function prepare_noptin_email( $email, $subscriber ) {
  */
 function get_noptin_action_url( $action, $value ) {
 
+	$content = '
+		<!-- wp:shortcode -->
+		[noptin_action_page]
+		<!-- /wp:shortcode -->';
+
 	$page = get_option('noptin_actions_page');
 	if( empty( $page ) ) {
 		$page = wp_insert_post(
 			array(
-				'post_content' => '[noptin_action_page]',
+				'post_content' => $content,
 				'post_title'   => __( 'Noptin Subsciber Action', 'noptin' ),
 				'post_status'  => 'publish',
 				'post_type'	   => 'page',
@@ -303,6 +308,17 @@ function get_noptin_new_form_url() {
 function get_noptin_forms_overview_url() {
 	$url = admin_url('admin.php?page=noptin-forms');
 	return $url;
+}
+
+/**
+ * Returns opt-in forms field types
+ *
+ * @return  array
+ * @access  public
+ * @since   1.0.8
+ */
+function get_noptin_optin_field_types() {
+	return apply_filters( 'noptin_field_types', array() );
 }
 
 /**

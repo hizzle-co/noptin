@@ -67,12 +67,6 @@ class Noptin_Form_Editor {
     private function get_setting_fields() {
         return array(
 
-            //Settings field title
-            'section_title' => array(
-                'el'        => 'paragraph',
-                'content'   => "Use this panel to configure your optin form settings",
-            ),
-
             //Basic settings
             'basic'         => array(
                 'el'        => 'panel',
@@ -139,12 +133,12 @@ class Noptin_Form_Editor {
 
             //Form type
             'optinType'     => array(
-                'el'        => 'radio_button',
-                'label'     => 'Form Type',
+                'el'        => 'select',
+                'label'     => 'This form will be',
                 'options'   => array(
-                    'popup'      => 'Popup',
-                    'inpost'     => 'InPost',
-                    'sidebar'    => 'Sidebar',
+                    'popup'      => 'Displayed in a popup',
+                    'inpost'     => 'Embedded in a post',
+                    'sidebar'    => 'Added to a widget area',
                     //'flyin'      => 'Fly In Form',
                     //'bar'        => 'Notification bar',
                 ),
@@ -369,13 +363,7 @@ class Noptin_Form_Editor {
     private function get_design_fields() {
         return array(
 
-            //Settings field title
-            'section_title' => array(
-                'el'        => 'paragraph',
-                'content'   => "Use this panel to change the appearance of your popup form",
-            ),
-
-            //Color themes
+			//Color themes
             'colors'        => array(
                 'el'        => 'panel',
                 'title'     => 'Templates',
