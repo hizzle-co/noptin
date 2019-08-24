@@ -31,6 +31,7 @@
   "dependencies": {
     "dragula": "^3.7.2",
     "install": "^0.13.0",
+    "lodash.find": "^4.6.0",
     "lodash.throttle": "^4.1.1",
     "npm": "^6.10.2",
     "postcss-import": "^12.0.1",

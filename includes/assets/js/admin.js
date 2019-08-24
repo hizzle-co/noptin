@@ -19,6 +19,7 @@
 	var VueQuillEditor = require('vue-quill-editor');
 	var Popover = require('vue-popperjs');
 	var dragula = require('dragula');
+	var noptinFind = require('lodash.find');
 
 	//Color swatches
 	Vue.component('noptin-swatch', swatches.default);
@@ -172,43 +173,10 @@
 
 
 	Vue.component('field-editor', {
-		props: ['fields'],
+		props: ['fields','fieldTypes'],
 		template: '#noptinFieldEditorTemplate',
 		data: function () {
-			return {
-				fieldTypes: [
-					{
-						label: 'Email Address',
-						name: 'email',
-						type: 'email'
-					},
-					{
-						label: 'First Name',
-						name: 'first_name',
-						type: 'first_name'
-					},
-					{
-						label: 'Last Name',
-						name: 'last_name',
-						type: 'last_name'
-					},
-					{
-						label: 'Full Name',
-						name: 'name',
-						type: 'name'
-					},
-					{
-						label: 'Text',
-						name: 'text',
-						type: 'text'
-					},
-					{
-						label: 'Textarea',
-						name: 'textarea',
-						type: 'textarea'
-					}
-				]
-			}
+			return {}
 		},
 		methods: {
 			addField: function () {
@@ -241,8 +209,17 @@
 			shallowCopy: function (obj) {
 				return $.extend({}, obj)
 			},
-			hasCustomName: function (type) {
-				return ['email', 'first_name', 'last_name', 'name'].indexOf(type) == -1
+			getDefaultLabel: function (fieldType) {
+
+				var data = noptinFind( this.fieldTypes, function( obj ){
+					return obj.type === fieldType
+				})
+
+				if( data ) {
+					return data['label']
+				}
+
+				return fieldType
 			},
 			expandField: function (id) {
 				var el = $('#' + id)
@@ -448,6 +425,12 @@
 					vm.Error = '';
 				}, 5000)
 			},
+			publish: function () {
+				this.optinStatus = true
+			},
+			unpublish: function () {
+				this.optinStatus = false
+			},
 			save: function () {
 				var saveText = this.saveText
 				this.saveText = this.savingText;
@@ -476,6 +459,9 @@
 				var template = noptin.templateData(this.Template)
 				noptin.applyTemplate(template, this)
 			},
+			optinStatus: function () {
+				this.save()
+			},
 			CSS: function () {
 				noptin.updateCustomCss(this.CSS)
 			},
@@ -490,6 +476,7 @@
 		mounted: function () {
 			noptin.updateCustomCss(this.CSS)
 			jQuery('.noptin-form-designer-loader').hide()
+			jQuery(this.$el).find('.noptin-popup-editor-main-preview-name-textarea').focus()
 		},
 	})
 

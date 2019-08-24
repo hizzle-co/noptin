@@ -666,7 +666,7 @@ function noptin_get_optin_templates(){
         $custom_templates = array();
 	}
 
-	$templates = array_replace( $custom_templates, $inbuilt_templates);
+	$templates = array_replace( $custom_templates, $inbuilt_templates );
 
     return apply_filters( 'noptin_form_templates', $templates );
 

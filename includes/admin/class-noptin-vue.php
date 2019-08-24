@@ -33,6 +33,8 @@ if( !defined( 'ABSPATH' ) ) {
 
 		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types'), 5 );
 		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings'), 5 );
+		add_action( 'noptin_field_type_optin_markup', array( __CLASS__, 'print_default_markup'), 5 );
+
 
     }
 
@@ -331,7 +333,7 @@ if( !defined( 'ABSPATH' ) ) {
 	 * Renders the form fields editor
 	 */
 	public static function form_fields( $id, $field ) {
-		echo "<field-editor :fields='$id'></field-editor>";
+		echo "<field-editor :fields='$id' :field-types='fieldTypes'></field-editor>";
 	}
 
 	/**
@@ -426,6 +428,21 @@ if( !defined( 'ABSPATH' ) ) {
 				</label>';
 
 		}
+	}
+
+	/**
+	 * Renders a the default fields markup
+	 */
+	public static function print_default_markup(){
+		?>
+		<input 		v-if="field.type.type=='email'" 		   name='email' 		  type="email" 		class="noptin-form-field" 			:placeholder="field.type.label"  required />
+		<input 		v-if="field.type.type=='first_name'" 	   name='first_name' 	  type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
+		<input 		v-if="field.type.type=='last_name'" 	   name='last_name' 	  type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
+		<input 		v-if="field.type.type=='name'" 			   name='name' 			  type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
+		<input 		v-if="field.type.type=='text'" 			  :name='field.type.name' type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
+		<label 		v-if="field.type.type=='checkbox'"><input :name='field.type.name' type="checkbox"   class="noptin-checkbox-form-field"  :required="field.require" />{{field.type.label}}</label>
+		<textarea   v-if="field.type.type=='textarea'" 		  :name='field.type.name' 					class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require"></textarea>
+		<?php
 	}
 
 

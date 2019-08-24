@@ -347,11 +347,6 @@
 	background: #FAFAFA;
 }
 
-.noptin-popup-editor-title {
-	flex-grow: 7.5;
-	font-size: 24px;
-}
-
 .noptin-popup-editor-toolbar {
 	flex-grow: 1.5;
 }
@@ -360,17 +355,53 @@
 	min-height: 64px;
 	display: flex;
 	align-items: center;
+
+	.noptin-popup-editor-header-button {
+		margin: 0 12px 0 3px;
+		padding: 0 12px 2px;
+		height: 33px;
+		line-height: 32px;
+		font-size: 13px;
+	}
+
+	.noptin-popup-editor-title {
+		flex-grow: 7.5;
+		font-size: 24px;
+		display: flex;
+		align-items: center;
+
+		.noptin-popup-editor-main-preview-name-textarea {
+			overflow: hidden;
+			word-wrap: break-word;
+			resize: none;
+			display: block;
+			width: 100%;
+			margin: 12px 0;
+			background: transparent;
+			line-height: 1.4;
+			color: #191e23;
+			transition: border .1s ease-out,box-shadow .1s linear;
+			padding: 4px 14px;
+			word-break: keep-all;
+			border-color: transparent;
+			border-style: solid;
+			border-width: 1px 0;
+			outline: 1px solid transparent;
+			font-size: 24px;
+			font-weight: 600;
+			box-shadow: -3px 0 0 0 #e2e4e7;
+
+			&:focus {
+				border-width: 1px 1px 1px 0;
+				border-color: rgba(66,88,99,.4);
+				box-shadow: inset 3px 0 0 0 #555d66;
+			}
+		}
+	}
+
 }
 
-.noptin-popup-editor-header .noptin-popup-editor-header-button {
-	margin: 0 12px 0 3px;
-	padding: 0 12px 2px;
-	height: 33px;
-	line-height: 32px;
-	font-size: 13px;
-	font-weight: 500;
-}
-
+.noptin-popup-editor-header,
 .noptin-popup-editor-body {
 	display: flex;
 }
@@ -382,6 +413,8 @@
 	justify-content: center;
 	min-height: calc(100vh - 200px);
 	padding: 40px;
+
+
 }
 
 .noptin-popup-editor-sidebar {

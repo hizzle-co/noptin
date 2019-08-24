@@ -142,7 +142,7 @@ class Noptin_Form {
 
 		$noptin   = noptin();
 		$defaults = array(
-			'optinName'                     => __( 'Untitled', 'noptin'),
+			'optinName'                     => __( 'Form Name', 'noptin'),
 			'optinStatus'                   => false,
 			'id'                            => null,
             'optinHTML'                     => '',

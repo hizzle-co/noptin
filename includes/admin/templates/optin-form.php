@@ -13,13 +13,7 @@
 		<div class="noptin-form-footer">
 			<div class="noptin-form-fields">
 				<div  v-for="field in fields"  :key="field.key" class="noptin-optin-field-wrapper">
-					<input v-if="field.type.type=='email'" name='email' type="email" class="noptin-form-field" :placeholder="field.type.label" required />
-					<input v-if="field.type.type=='first_name'" name='first_name' type="text" class="noptin-form-field" :placeholder="field.type.label" :required="field.require" />
-					<input v-if="field.type.type=='last_name'" name='last_name' type="text" class="noptin-form-field" :placeholder="field.type.label" :required="field.require" />
-					<input v-if="field.type.type=='name'" name='name' type="text" class="noptin-form-field" :placeholder="field.type.label" :required="field.require" />
-					<input v-if="field.type.type=='text'" :name='field.type.name' type="text" class="noptin-form-field" :placeholder="field.type.label" :required="field.require" />
-					<label v-if="field.type.type=='checkbox'"><input :name='field.type.name' type="checkbox" class="noptin-checkbox-form-field" :required="field.require" />{{field.type.label}}</label>
-					<textarea v-if="field.type.type=='textarea'" :name='field.type.name' class="noptin-form-field" :placeholder="field.type.label" :required="field.require"></textarea>
+					<?php do_action( 'noptin_field_type_optin_markup' ); ?>
 				</div>
 				<input type="hidden" name="noptin_form_id" :value="id" />
 				<input :value="noptinButtonLabel" type="submit"

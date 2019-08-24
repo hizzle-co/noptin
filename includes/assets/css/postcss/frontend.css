@@ -134,6 +134,7 @@ $noptin_color: #ff6f00;
 		text-align: center;
 		display: flex;
 		flex-direction: column;
+		justify-content: center;
 
 		a, a:visited, a:active, a:hover {
 			color: inherit !important;
@@ -145,7 +146,6 @@ $noptin_color: #ff6f00;
 		.noptin-form-header {
 			display: flex;
 			padding: 20px;
-			flex: 1 0 auto;
 			align-items: center;
 			justify-content: center;
 			font-family: Montserrat, "Helvetica Neue", sans-serif;
@@ -214,7 +214,6 @@ $noptin_color: #ff6f00;
 		/* Contains the form fields and footer texts*/
 		.noptin-form-footer {
 			padding: 20px;
-			flex-shrink: 0;
 
 			.noptin-form-fields::after {
 				content: "";

@@ -117,12 +117,6 @@ class Noptin_Form_Editor {
     private function get_basic_settings() {
         return array(
 
-            //Title
-            'optinName' => array(
-                'el'        => 'input',
-                'label'     => 'Form Name',
-			),
-
 			//Should we display the form on the frontpage?
             'optinStatus'   => array(
                 'type'      => 'checkbox',
@@ -255,7 +249,7 @@ class Noptin_Form_Editor {
             'showEverywhere'        => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Everywhere',
+				'label'             => 'Everywhere',
                 'restrict'          => "!_onlyShowOn",
             ),
             'showHome'              => array(
@@ -294,12 +288,14 @@ class Noptin_Form_Editor {
             'label'             => "Never show on:",
             'options'           => $this->post->neverShowOn,
 			'restrict'          => "!_onlyShowOn",
+			'placeholder'       => '1,10,25',
 			'tooltip'           => "Use a comma to separate post ids where this form should not be displayed",
         );
 
         $return["onlyShowOn"]  = array(
             'el'                => 'input',
-            'label'             => "Only show on:",
+			'label'             => "Only show on:",
+			'placeholder'       => '3,14,5',
             'options'           => $this->post->onlyShowOn,
         );
 
@@ -494,19 +490,19 @@ class Noptin_Form_Editor {
             'formRadius'     => array(
                 'type'       => 'text',
                 'el'         => 'input',
-                'label'      => 'Form Border Radius',
+                'label'      => 'Border Radius',
             ),
 
             'formWidth'             => array(
                 'type'              => 'text',
                 'el'                => 'input',
-                'label'             => 'Form Width',
+                'label'             => 'Preferred Width',
             ),
 
             'formHeight'            => array(
                 'type'              => 'text',
                 'el'                => 'input',
-                'label'             => 'Minimum Form Height',
+                'label'             => 'Minimum Height',
             ),
 
             'noptinFormBg'          => array(
@@ -750,7 +746,8 @@ class Noptin_Form_Editor {
             'previewText'                   => __( 'Preview', 'noptin'),
             'isPreviewShowing'              => false,
             'colorTheme'                    => '',
-            'Template'                      => '',
+			'Template'                      => '',
+			'fieldTypes'                    => get_noptin_optin_field_types(),
         );
     }
 
