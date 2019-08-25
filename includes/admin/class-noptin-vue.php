@@ -282,7 +282,7 @@ if( !defined( 'ABSPATH' ) ) {
 			$field['attrs'],
 			$field['_class'],
 			$field['content'],
-			$field['tooltip'],
+			$field['tooltip']
 		);
 
 	}
@@ -324,7 +324,7 @@ if( !defined( 'ABSPATH' ) ) {
 			$field['tooltip'],
 			$field['attrs'],
 			$id,
-			$id,
+			$id
 		);
 
 	}

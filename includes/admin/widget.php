@@ -49,9 +49,9 @@ class Noptin_Widget extends WP_Widget {
 
     // class constructor
     public function __construct() {
-        $widget_ops = array( 
+        $widget_ops = array(
             'classname' => 'noptin_widget',
-            'description' => 'New newsletter opt in form.',
+            'description' => 'Use this widget to create and add a simple newsletter subscription widget',
         );
         parent::__construct( 'noptin_widget', 'Noptin New Form', $widget_ops );
     }
@@ -82,7 +82,7 @@ class Noptin_Widget extends WP_Widget {
 
         //Submit button
         $submit = empty( $instance['submit'] ) ? esc_attr('Submit') : esc_attr($instance['submit']);
-        
+
         //Colors
         $bg_color =  sanitize_hex_color( $instance['bg_color'] );
         $color    =  sanitize_hex_color( $instance['color'] );
@@ -150,14 +150,14 @@ class Noptin_Widget extends WP_Widget {
     //Displays color select boxes
     public function noptin_color_select($color) {
         foreach ( $this->colors as $hex => $name ) {
-			
+
 			$hex = esc_attr( $hex );
 			$name = esc_html($name);
 			echo "<option value='$hex' ";
-			
+
 			//Check if the current field is being shown
 			selected( $color, $hex );
-			
+
 			echo ">$name</option>";
         }
     }
@@ -177,50 +177,50 @@ class Noptin_Widget extends WP_Widget {
 	<p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">
 	<?php esc_attr_e( 'Title:', 'noptin' ); ?>
-	</label> 
-	
-	<input 
-		class="widefat" 
-		id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" 
-		name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" 
-		type="text" 
+	</label>
+
+	<input
+		class="widefat"
+		id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"
+		name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>"
+		type="text"
 		value="<?php echo esc_attr( $title ); ?>">
     </p>
-    
+
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'desc' ) ); ?>">
 	<?php esc_attr_e( 'Description:', 'noptin' ); ?>
-	</label> 
-	
-	<input 
-		class="widefat" 
-		id="<?php echo esc_attr( $this->get_field_id( 'desc' ) ); ?>" 
-		name="<?php echo esc_attr( $this->get_field_name( 'desc' ) ); ?>" 
-		type="text" 
+	</label>
+
+	<input
+		class="widefat"
+		id="<?php echo esc_attr( $this->get_field_id( 'desc' ) ); ?>"
+		name="<?php echo esc_attr( $this->get_field_name( 'desc' ) ); ?>"
+		type="text"
 		value="<?php echo esc_attr( $desc ); ?>">
     </p>
 
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'redirect' ) ); ?>">
 	<?php esc_attr_e( 'Redirect:', 'noptin' ); ?>
-	</label> 
-	
-	<input 
-		class="widefat" 
-		id="<?php echo esc_attr( $this->get_field_id( 'redirect' ) ); ?>" 
-		name="<?php echo esc_attr( $this->get_field_name( 'redirect' ) ); ?>" 
+	</label>
+
+	<input
+		class="widefat"
+		id="<?php echo esc_attr( $this->get_field_id( 'redirect' ) ); ?>"
+		name="<?php echo esc_attr( $this->get_field_name( 'redirect' ) ); ?>"
         type="text"
-        placeholder="Optional. Where should we redirect a user after they sign up?" 
+        placeholder="Optional. Where should we redirect a user after they sign up?"
 		value="<?php echo esc_attr( $redirect ); ?>">
     </p>
-    
+
     <p>
 
 	<label for="<?php echo esc_attr( $this->get_field_id( 'bg_color' ) ); ?>">
 	<?php esc_attr_e( 'Background Color:', 'noptin' ); ?>
-	</label> 
-	
-	<select 
+	</label>
+
+	<select
         name="<?php echo esc_attr( $this->get_field_name( 'bg_color' ) ); ?>"
         class="widefat"
         id="<?php echo esc_attr( $this->get_field_id( 'bg_color' ) ); ?>"
@@ -228,14 +228,14 @@ class Noptin_Widget extends WP_Widget {
         <?php $this->noptin_color_select($bg_color );?>
     </select>
     </p>
-    
+
 
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'h2_col' ) ); ?>">
 	<?php esc_attr_e( 'Title Color:', 'noptin' ); ?>
-	</label> 
-    
-    <select 
+	</label>
+
+    <select
         name="<?php echo esc_attr( $this->get_field_name( 'h2_col' ) ); ?>"
         class="widefat"
         id="<?php echo esc_attr( $this->get_field_id( 'h2_col' ) ); ?>"
@@ -243,12 +243,12 @@ class Noptin_Widget extends WP_Widget {
         <?php $this->noptin_color_select($h2_col );?>
     </select>
     </p>
-    
+
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'color' ) ); ?>">
 	<?php esc_attr_e( 'Text Color:', 'noptin' ); ?>
-	</label> 
-	<select 
+	</label>
+	<select
         name="<?php echo esc_attr( $this->get_field_name( 'color' ) ); ?>"
         class="widefat"
         id="<?php echo esc_attr( $this->get_field_id( 'color' ) ); ?>"
@@ -256,12 +256,12 @@ class Noptin_Widget extends WP_Widget {
         <?php $this->noptin_color_select($color );?>
     </select>
     </p>
-    
+
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'btn_col' ) ); ?>">
 	<?php esc_attr_e( 'Button Color:', 'noptin' ); ?>
-	</label> 
-	<select 
+	</label>
+	<select
         name="<?php echo esc_attr( $this->get_field_name( 'btn_col' ) ); ?>"
         class="widefat"
         id="<?php echo esc_attr( $this->get_field_id( 'btn_col' ) ); ?>"
@@ -272,12 +272,12 @@ class Noptin_Widget extends WP_Widget {
 
     <label for="<?php echo esc_attr( $this->get_field_id( 'submit' ) ); ?>">
 	<?php esc_attr_e( 'Submit Button Text:', 'noptin' ); ?>
-	</label> 
-	<input 
-		class="widefat" 
-		id="<?php echo esc_attr( $this->get_field_id( 'submit' ) ); ?>" 
-		name="<?php echo esc_attr( $this->get_field_name( 'submit' ) ); ?>" 
-		type="text" 
+	</label>
+	<input
+		class="widefat"
+		id="<?php echo esc_attr( $this->get_field_id( 'submit' ) ); ?>"
+		name="<?php echo esc_attr( $this->get_field_name( 'submit' ) ); ?>"
+		type="text"
 		value="<?php echo esc_attr( $submit ); ?>">
 	</p>
 	<?php

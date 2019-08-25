@@ -121,8 +121,8 @@ class Noptin_Form_Editor {
             'optinStatus'   => array(
                 'type'      => 'checkbox',
 				'el'        => 'input',
-				'tooltip'   => 'Your website visitors will not see this from unless you check this box',
-                'label'     => 'Display on the frontend',
+				'tooltip'   => 'Your website visitors will not see this form unless you check this box',
+                'label'     => 'Publish',
             ),
 
 
@@ -450,7 +450,8 @@ class Noptin_Form_Editor {
 
             'Template'          => array(
                 'el'            => 'select',
-                'label'         => 'Apply a template',
+				'label'         => 'Apply a template',
+				'tooltip'       => 'All templates include custom css so remember to check out the Custom CSS panel after you apply a template',
                 'options'       => $templates,
 			),
 
@@ -700,7 +701,8 @@ class Noptin_Form_Editor {
         return array(
 
             'CSS'          => array(
-                'el'       => 'editor',
+				'el'       => 'editor',
+				'tooltip'  => "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page",
                 'label'    => 'Enter Your Custom CSS',
             ),
 

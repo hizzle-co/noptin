@@ -69,6 +69,21 @@ if( !defined( 'ABSPATH' ) ) {
 		}
 
 		if( isset( $_POST['noptin-subscribe'] ) ) {
+			$author = get_comment_author( $comment_id );
+
+			if( 'Anonymous' == $author ) {
+				$author = '';
+			}
+
+			$fields = array(
+				'email' 		  => get_comment_author_email( $comment_id ),
+				'name' 			  => $author,
+				'_subscriber_via' => 'comment'
+			);
+
+			if(! is_string( add_noptin_subscriber( $fields ) ) ) {
+				do_action('noptin_after_add_comment_subscriber');
+			}
 
 		}
 
@@ -110,6 +125,22 @@ if( !defined( 'ABSPATH' ) ) {
 		}
 
 		if( isset( $_POST['noptin-subscribe'] ) ) {
+
+			$user = get_userdata( $user_id );
+
+			if(! $user ) {
+				return;
+			}
+
+			$fields = array(
+				'email' 		  => $user->user_email,
+				'name' 			  => $user->display_name,
+				'_subscriber_via' => 'registration'
+			);
+
+			if(! is_string( add_noptin_subscriber( $fields ) ) ) {
+				do_action('noptin_after_add_registration_subscriber');
+			}
 
 		}
 

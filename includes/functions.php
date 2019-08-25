@@ -142,11 +142,11 @@ function get_noptin_option( $key, $default = null ) {
 		$value   = $options[ $key ];
 	}
 
-	if( 'false' == $value ) {
+	if( 'false' === $value ) {
 		$value = false;
 	}
 
-	if( 'true' == $value ) {
+	if( 'true' === $value ) {
 		$value = true;
 	}
 
@@ -409,6 +409,8 @@ function add_noptin_subscriber( $fields ) {
 	}
 
 	setcookie( 'noptin_email_subscribed', '1', time() + (86400 * 30), COOKIEPATH, COOKIE_DOMAIN);
+
+	do_action( 'noptin_insert_subscriber', $id, $fields );
 
 	return $id;
 

@@ -634,30 +634,37 @@
 	window.noptinSettingsApp = new Vue({
 		el: '#noptin-settings-app',
 		data: jQuery.extend(true, {}, noptinSettings),
-		computed: {
-			_onlyShowOn: function () {
-				return this.onlyShowOn && this.onlyShowOn.length > 0
-			}
-		},
 		methods: {
 
 			saveSettings: function () {
-				var saveText = this.saveAsTemplateText
-				this.saveAsTemplateText = this.savingTemplateText;
-				var that = this
 
-				jQuery.post(noptinEditor.ajaxurl, {
-					_ajax_nonce: noptinEditor.nonce,
-					action: "noptin_save_optin_form_as_template",
-					state: vm.$data
+				$( this.$el ).fadeTo( "fast", 0.33 );
+				var data  = this.$data
+				var error = this.error
+				var saved = this.saved
+				var el    = this.$el
+
+				$( this.$el ).find('.noptin-save-saved').hide()
+				$( this.$el ).find('.noptin-save-error').hide()
+
+				jQuery.post(noptin_params.ajaxurl, {
+					_ajax_nonce: noptin_params.nonce,
+					action: "noptin_save_options",
+					state: data
 				})
 					.done(function () {
-						that.showSuccess(that.savingTemplateSuccess)
-						that.saveAsTemplateText = saveText
+						$( el )
+							.fadeTo( "fast", 1 )
+							.find('.noptin-save-saved')
+							.show()
+							.html('<p>' + saved + '</p>')
 					})
 					.fail(function () {
-						that.showError(that.savingTemplateError)
-						that.saveAsTemplateText = saveText
+						$( el )
+							.fadeTo( "fast", 1 )
+							.find('.noptin-save-error')
+							.show()
+							.html('<p>' + error + '</p>')
 					})
 
 			},

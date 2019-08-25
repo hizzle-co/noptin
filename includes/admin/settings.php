@@ -93,7 +93,10 @@ class Noptin_Settings {
 		foreach( $settings as $setting ) {
 			$state[$setting] = get_noptin_option( $setting, '' );
 		}
+
 		$state['currentTab'] = 'general';
+		$state['saved'] = __( 'Your settings have been saved', 'noptin' );
+		$state['error'] = __( 'Your settings could not be saved.', 'noptin' );
 		return $state;
 
 	}

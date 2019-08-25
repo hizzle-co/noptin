@@ -379,9 +379,9 @@
 			transition: border .1s ease-out,box-shadow .1s linear;
 			padding: 4px 14px;
 			word-break: keep-all;
-			border-color: transparent;
+			border-color: #f5f5f5;
 			border-style: solid;
-			border-width: 1px 0;
+			border-width: 1px;
 			outline: 1px solid transparent;
 			font-size: 24px;
 			font-weight: 600;
@@ -1052,4 +1052,18 @@ input:focus+.noptin-switch-slider span {
 	right: 0;
 	z-index: 100000;
 	overflow: auto;
+}
+
+.noptin-save-saved,
+.noptin-save-error{
+	margin: 5px 0 15px;
+	background: #fff;
+	border-left: 4px solid #fff;
+	border-left-color: #46b450;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    padding: 1px 12px;
+}
+
+.noptin-save-error{
+	border-left-color: #dc3232;
 }

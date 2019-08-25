@@ -23,7 +23,10 @@ if( !defined( 'ABSPATH' ) ) {
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 
 		//Download subscribers
-        add_action('wp_ajax_noptin_download_subscribers', array($this, 'download_subscribers'));
+		add_action('wp_ajax_noptin_download_subscribers', array($this, 'download_subscribers'));
+
+		//Save settings
+		add_action('wp_ajax_noptin_save_options', array($this, 'save_options'));
 
 
     }
@@ -143,6 +146,56 @@ if( !defined( 'ABSPATH' ) ) {
 
 		wp_send_json( $result );
 		exit;
+
+	}
+
+	/**
+	 * Saves settings
+	 *
+	 * @access      public
+	 * @since       1.0.8
+	 */
+	public function save_options(){
+
+		if (!current_user_can('manage_options')) {
+			wp_die( -1, 403 );
+		}
+
+		//Check nonce
+		check_ajax_referer( 'noptin_admin_nonce' );
+
+		/**
+         * Runs before saving a settings
+         *
+         */
+		do_action('noptin_before_save_options');
+
+		//Prepare settings
+		$_settings =  $_POST['state'];
+		unset( $_settings['noptin_admin_nonce'] );
+		unset( $_settings['saved'] );
+		unset( $_settings['error'] );
+		unset( $_settings['currentTab'] );
+
+		$settings = array();
+		foreach( $_settings as $key => $val ) {
+
+			if( 'false' === $val ) {
+				$val = false;
+			}
+
+			if( 'true' === $val ) {
+				$val = true;
+			}
+
+			$settings[$key] = $val;
+		}
+		$settings = apply_filters( 'noptin_sanitize_settings', $settings );
+
+		//Save them
+		update_noptin_options( $settings );
+
+		wp_send_json_success(1);
 
 	}
 

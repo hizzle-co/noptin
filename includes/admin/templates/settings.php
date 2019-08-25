@@ -12,12 +12,13 @@
 			<?php } ?>
 		</nav>
 		<div class="settings-body noptin-fields">
+			<div class="noptin-save-saved" style="display:none"></div>
+			<div class="noptin-save-error" style="display:none"></div>
 			<?php foreach ( Noptin_Settings::get_settings() as $id => $args ) {?>
                 <div <?php echo  Noptin_Settings::get_section_conditional( $args )?>>
 					<?php Noptin_Vue::render_el(  $id, $args  )?>
 				</div>
             <?php } ?>
-        	<?php wp_nonce_field(); ?>
 			<?php submit_button(); ?>
 		</div>
     </form>

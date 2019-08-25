@@ -25,6 +25,7 @@
                     </div>
 					<div class="noptin-form-usage-details">
 						<p v-if="optinType=='inpost'">Shortcode <strong>[noptin-form id={{id}}]</strong></p>
+						<p v-if="optinType=='sidebar'">Use the <strong>Noptin Premade Form</strong> widget to add this form to a widget area</p>
 					</div>
                 </div>
             </div>

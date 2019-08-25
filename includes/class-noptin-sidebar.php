@@ -21,7 +21,7 @@ if( !defined( 'ABSPATH' ) ) {
         //Prepare widget args
         $widget_ops = array(
             'classname' => 'noptin_widget_premade',
-            'description' => 'Premade newsletter opt in form.',
+            'description' => 'Use this widget to add newsletter forms made using the Form Editor',
         );
 
         //Add it to the list of widgets

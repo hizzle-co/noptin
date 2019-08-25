@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, newsletter subscribe, email subscribe, 
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 5.2
-Version: 1.0.7
+Version: 1.0.8
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -13,21 +13,18 @@ Easily add a newsletter subscription form onto any post content, widget or popup
 
 == Description ==
 
-**Note:**
+Noptin is a very fast and lightweight newsletter sign up plugin that let's you easily build newsletter subscription forms and embed them into your WordPress posts, pages and even custom post types.
 
-Noptin requires at least WordPress version 5.0 to work. For those using previous versions of WordPress, please [install Gutenberg](https://wordpress.org/plugins/gutenberg/) first.
+You can also let your blog visitors sign up to your newsletter using a beautifully designed and customizable newsletter subscription widget...
 
-Noptin is a fast and lightweight newsletter sign up plugin that let's you to easily build newsletter subscription forms and embed them into your WordPress posts, pages and even custom post types.
+... or use a popup newsletter subscription form.
 
-You do not need to use shortcodes for it to work.
 
-You can also let your blog visitors sign up to your newsletter using a beautifully designed and customizable newsletter subscription widget.
-
-With Noptin, you can easily offer content upgrades and lead to increase your email subscribers.
+With Noptin, you can easily offer content upgrades and lead magnets to increase your email subscribers.
 
 It is not meant to replace plugins such as MailPoet, Sumo Me and MailOptin. Instead, it should be used alongside them to maximize the number of visitors that subscribe to your mailing list.
 
-= How do i set up an email subscription to a wordpress blog =
+= How to add an email subscription form on a wordpress blog =
 
 * Install Noptin by downloading and uploading it to your WordPress admin Dashboard.
 * Add a newsletter subscription form into your sidebar and any other widget area.
