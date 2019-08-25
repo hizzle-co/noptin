@@ -309,10 +309,6 @@
 	position: relative;
 }
 
-.noptin-list-table td:first-child {
-	width: 60%;
-}
-
 .noptin-list-table .status-Inactive {
 	color: #F44336;
 }
@@ -419,8 +415,8 @@
 
 .noptin-popup-editor-sidebar {
 	flex-grow: 3;
-	max-width: 300px;
-	height: 100vh;
+	width: 220px;
+	height: 90vh;
 	overflow: auto;
 	color: #555d66;
 }
@@ -532,7 +528,7 @@
 
 .noptin-popup-editor-panel-body {
 	overflow: hidden;
-	padding: 0 20px;
+	padding: 20px;
 }
 
 .noptin-padded {

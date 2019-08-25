@@ -255,10 +255,7 @@
 						}
 
 						if (data.action == 'msg') {
-							$(that)
-								.find('.noptin_feedback_success')
-								.text(data.msg)
-								.show();
+							$(that).html('<div class="noptin-big noptin-padded">' + data.msg + '</div>');
 						}
 
 						//Gutenberg

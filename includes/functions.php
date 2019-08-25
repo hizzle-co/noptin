@@ -623,6 +623,24 @@ function noptin_should_show_optins(){
 }
 
 /**
+ * Returns opt-in forms stats
+ */
+function noptin_get_optin_stats(){
+	global $wpdb;
+	$table 	= $wpdb->prefix . 'noptin_subscriber_meta';
+	$sql 	= "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `$table` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`";
+	$stats 	= $wpdb->get_results( $sql );
+
+	if(! $stats ) {
+		$stats = array();
+	}
+
+	return wp_list_pluck( $stats, 'stats', 'meta_value' );
+
+}
+
+
+/**
  * Returns color themess
  */
 function noptin_get_color_themes(){

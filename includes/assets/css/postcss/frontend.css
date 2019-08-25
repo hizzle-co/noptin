@@ -37,6 +37,9 @@ $noptin_color: #ff6f00;
 	padding: 10px;
 }
 
+.noptin-big {
+	font-size: 20px;
+}
 
 .noptin-preview-showing {
 	overflow: auto;
@@ -124,12 +127,12 @@ $noptin_color: #ff6f00;
 	background-color: $noptin_color;
 	transition: all 0.5s;
 	max-width: 100%;
+	width: 520px;
 
 
 	/*The main opt in form*/
 	form {
-		width: 520px;
-		max-width: 100%;
+		width: 100%;
 		position: relative;
 		text-align: center;
 		display: flex;

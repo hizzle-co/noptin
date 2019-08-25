@@ -12,7 +12,8 @@ if (!defined('ABSPATH')) {
     die;
 }
 
-$link = esc_url( add_query_arg( 'action', 'new' ) );
+$link  = esc_url( add_query_arg( 'action', 'new' ) );
+$stats = noptin_get_optin_stats();
 
 ?>
 <div class="noptin-popup-designer noptin-list">
@@ -31,20 +32,25 @@ $link = esc_url( add_query_arg( 'action', 'new' ) );
             <thead>
                 <tr>
                     <th><?php _e( 'Name', 'noptin' )?></th>
-                    <th><?php _e( 'Status', 'noptin' )?></th>
-                    <th><?php _e( 'Date Created', 'noptin' )?></th>
+					<th><?php _e( 'Status', 'noptin' )?></th>
+					<th><?php _e( 'Subscribers', 'noptin' )?></th>
+                    <th><?php _e( 'Created', 'noptin' )?></th>
                 </tr>
             </thead>
             <tbody>
-                <?php 
+                <?php
                     foreach( $forms as $form ){
                         $status         = ( 'draft' == $form->post_status ) ? __('Inactive', 'noptin') : __('Active', 'noptin');
                         $url            = esc_url( admin_url( 'admin.php?page=noptin-forms&form_id=' ) . $form->ID );
                         $delete         = esc_url( admin_url( 'admin.php?page=noptin-forms&action=delete&delete=' ) . $form->ID );
                         $duplicate      = esc_url( admin_url( 'admin.php?page=noptin-forms&action=duplicate&duplicate=' ) . $form->ID );
-                        
+						$subscribers	= 0;
+
+						if(! empty( $stats[$form->ID] ) ) {
+							$subscribers	= absint( $stats[$form->ID] );
+						}
                         printf(
-                            '<tr><td><a title="%s" href="%s">%s<strong style="color: #555"> &mdash; %s</strong></a><div class="noptin-form-actions"><span>%s | </span><span>%s | </span><span>%s</span></div></td><td  class="status-%s">%s</td><td>%s</td></tr>',
+                            '<tr><td><a title="%s" href="%s">%s<strong style="color: #555"> &mdash; %s</strong></a><div class="noptin-form-actions"><span>%s | </span><span>%s | </span><span>%s</span></div></td><td  class="status-%s">%s</td><td>%s</td><td>%s</td></tr>',
                             esc_attr( __('Click To Edit Form ', 'noptin') . $form->post_title ),
                             $url,
                             esc_html( $form->post_title ),
@@ -53,12 +59,13 @@ $link = esc_url( add_query_arg( 'action', 'new' ) );
                             "<a href='$duplicate'>Duplicate</a>",
                             "<a href='$url'>Edit</a>",
                             $status,
-                            $status,
-                            $form->post_date
+							$status,
+							$subscribers,
+                            date("l, dS M", strtotime( $form->post_date ) )
                         );
 
                     }
-            
+
                 ?>
             </tbody>
         </table>

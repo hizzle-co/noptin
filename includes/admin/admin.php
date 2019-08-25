@@ -144,7 +144,8 @@ class Noptin_Admin {
         add_action('admin_init', array($this, 'maybe_do_action'));
 
         //Register new menu pages
-        add_action('admin_menu', array($this, 'add_menu_page'));
+		add_action('admin_menu', array($this, 'add_menu_page'));
+		add_action( 'admin_head', array($this, 'remove_menus') );
 
         //Runs when fetching select2 options
         add_action('wp_ajax_noptin_select_ajax', array($this, 'select_ajax'));
@@ -307,7 +308,38 @@ class Noptin_Admin {
             'manage_options',
             'noptin-docs',
             array($this, 'render_add_new_page')
+		);
+
+		//Welcome page
+		add_dashboard_page(
+            esc_html__('Noptin Welcome', 'noptin-mailchimp'),
+            esc_html__('Noptin Welcome', 'noptin-mailchimp'),
+            'read',
+            'noptin-welcome',
+            array($this, 'welcome_screen_content')
         );
+	}
+
+	/**
+     * Renders main admin page
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      self::$instance
+     */
+    public function remove_menus() {
+		remove_submenu_page( 'index.php', 'noptin-welcome' );
+	}
+
+	/**
+     * Display the welcome page
+     *
+     * @access      public
+     * @since       1.0.0
+     * @return      self::$instance
+     */
+    public function welcome_screen_content() {
+        include $this->admin_path . 'welcome-screen.php';
     }
 
     /**
@@ -751,6 +783,24 @@ class Noptin_Admin {
      */
     public function maybe_do_action() {
 
+		//Redirect to welcome page
+		if (! get_option( '_noptin_has_welcomed', false ) && !wp_doing_ajax() ) {
+
+			// Ensure were not activating from network, or bulk
+			if (! is_network_admin() && !isset( $_GET['activate-multi'] ) ) {
+
+				// Prevent further redirects
+				update_option( '_noptin_has_welcomed', '1' );
+
+				// Redirect to the welcome page
+				wp_safe_redirect( add_query_arg( array( 'page' => 'noptin-welcome' ), admin_url( 'index.php' ) ) );
+				exit;
+
+			}
+
+
+		}
+
         //New form creation
         if( isset( $_GET['page'] ) && 'noptin-new-form' == $_GET['page'] ) {
             wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
@@ -796,7 +846,8 @@ class Noptin_Admin {
             }
 
             die( $form->get_error_message());
-        }
+		}
+
 
     }
 

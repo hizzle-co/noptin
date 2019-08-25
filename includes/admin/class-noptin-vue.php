@@ -49,7 +49,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		//Generate the tooltip markup
 		$tooltip  = "
-			<noptin-tooltip trigger='hover' :options=\"{placement: 'top'}\">
+			<noptin-tooltip trigger='hover' :options=\"{placement: 'bottom'}\">
 				<div class='popper'>$msg</div>
 				<span class='dashicons dashicons-info' slot='reference'></span>
 			</noptin-tooltip>";
@@ -261,7 +261,7 @@ if( !defined( 'ABSPATH' ) ) {
 			$field['attrs'],
 			$field['_class'],
 			$field['content'],
-			$field['tooltip'],
+			$field['tooltip']
 		);
 
 	}

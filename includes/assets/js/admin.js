@@ -16,25 +16,26 @@
 	});
 
 	var swatches = require('vue-swatches');
-	var VueQuillEditor = require('vue-quill-editor');
+	//var VueQuillEditor = require('vue-quill-editor');
 	var Popover = require('vue-popperjs');
 	var dragula = require('dragula');
 	var noptinFind = require('lodash.find');
+	//var noptinMediumEditor = require('medium-editor');
 
 	//Color swatches
 	Vue.component('noptin-swatch', swatches.default);
 
 
 	//Quill Editor
-	Vue.use(VueQuillEditor)
+	//Vue.use(VueQuillEditor)
 
 	//Tooltips
 	Vue.component('noptin-tooltip', Popover);
 
 	//Use divs instead of paragraphs
-	var Block = VueQuillEditor.Quill.import('blots/block');
-	Block.tagName = 'DIV';
-	VueQuillEditor.Quill.register(Block, true);
+	//var Block = VueQuillEditor.Quill.import('blots/block');
+	//Block.tagName = 'DIV';
+	//VueQuillEditor.Quill.register(Block, true);
 
 	//helper functions
 	var noptin = {

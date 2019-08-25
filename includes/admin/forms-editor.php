@@ -120,8 +120,9 @@ class Noptin_Form_Editor {
 			//Should we display the form on the frontpage?
             'optinStatus'   => array(
                 'type'      => 'checkbox',
-                'el'        => 'input',
-                'label'     => 'Activate this form',
+				'el'        => 'input',
+				'tooltip'   => 'Your website visitors will not see this from unless you check this box',
+                'label'     => 'Display on the frontend',
             ),
 
 
@@ -490,13 +491,15 @@ class Noptin_Form_Editor {
             'formRadius'     => array(
                 'type'       => 'text',
                 'el'         => 'input',
-                'label'      => 'Border Radius',
+				'label'      => 'Border Radius',
+				'tooltip'    => "Set this to 0 if you don't want the form to have rounded corners",
             ),
 
             'formWidth'             => array(
                 'type'              => 'text',
                 'el'                => 'input',
-                'label'             => 'Preferred Width',
+				'label'             => 'Preferred Width',
+				'tooltip'    		=> "The element will resize to 100% width on smaller devices",
             ),
 
             'formHeight'            => array(

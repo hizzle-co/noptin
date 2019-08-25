@@ -142,10 +142,10 @@ class Noptin_Form {
 
 		$noptin   = noptin();
 		$defaults = array(
-			'optinName'                     => __( 'Form Name', 'noptin'),
+			'optinName'                     => '',
 			'optinStatus'                   => false,
 			'id'                            => null,
-            'optinHTML'                     => '',
+            'optinHTML'                     => 'This form is incorrectly configured',
             'optinType'                     => 'popup',
 
             //Opt in options
@@ -197,7 +197,7 @@ class Noptin_Form {
 
             //Description design
             'hideDescription'               => false,
-            'description'                   => 'Enter your email to receive a weekly round-up of our best posts. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>',
+            'description'                   => 'Enter your email to receive a weekly round-up of our best posts. <a href="https://noptin.com/guide">Learn more!</a>',
             'descriptionColor'              => '#666666',
 
             //Note design
@@ -452,9 +452,9 @@ class Noptin_Form {
 	 */
 	private function get_post_array() {
 		$data = array(
-            'post_title'        => empty( $this->optinName ) ? __( 'Untitled', 'noptin' ) : $this->optinName,
+            'post_title'        => empty( $this->optinName ) ? '' : $this->optinName,
             'ID'                => $this->id,
-            'post_content'      => $this->optinHTML,
+            'post_content'      => empty( $this->optinHTML ) ? 'This form is incorrectly configured' : $this->optinHTML,
 			'post_status'       => empty( $this->optinStatus ) ? 'draft' : 'publish',
 			'post_type'         => 'noptin-form',
 		);

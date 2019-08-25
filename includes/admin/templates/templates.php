@@ -274,7 +274,7 @@
             'title' => 'WANT THE INSIDE SCOOP?',
             'titleColor' => '#f1f1f1',
             'hideDescription' => false,
-            'description' => "Join 150,000+ active members in the SPI community",
+            'description' => "Use the custom CSS panel to change the background colors",
             'descriptionColor' => '#f2f2f2',
             'hideNote' => true,
             'hideOnNoteClick' => false,
@@ -296,7 +296,10 @@
 
 .noptin-optin-form-wrapper form .noptin-form-footer .noptin-form-field {
  border:2px solid hsla(0,0%,100%,.3) !important;
-    border-radius: 2px !important;
+	border-radius: 2px !important;
+	background-color: rgba(245, 245, 245, 0.8) !important;
+    color: #000 !important;
+ text-align: center !important;
 }",
         )
 
@@ -402,10 +405,10 @@
             'noptinButtonBg' => '#ee4a03',
             'noptinButtonColor' => '#ffffff',
             'hideTitle' => false,
-            'title' => 'Sign up for Exclusive Traffic Tips',
+            'title' => 'Try Applying the Green Color Theme!',
             'titleColor' => '#fafafa',
             'hideDescription' => true,
-            'description' => 'Click on the design tab to change the appearance of this form. Learn more!',
+            'description' => 'Click on the design tab to change the appearance of this form.',
             'descriptionColor' => '#fafafa',
             'hideNote' => true,
             'hideOnNoteClick' => false,
@@ -484,7 +487,7 @@
             'title' => 'Get some love!',
             'titleColor' => '#fff',
             'hideDescription' => false,
-            'description' => 'Do you want a free $20 ebook?',
+            'description' => 'Use the Custom CSS tab to change the background color of this form.',
             'descriptionColor' => '#dff0fe',
             'hideNote' => true,
             'hideOnNoteClick' => false,
