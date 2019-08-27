@@ -78,7 +78,7 @@ class Noptin_Form_Editor {
             //Trigger Options
             'trigger'         => array(
                 'el'        => 'panel',
-                'title'     => 'Trigger Options',
+                'title'     => 'Popup Options',
                 'id'        => 'triggerSettings',
                 'restrict'  => "optinType=='popup'",
                 'children'  => $this->get_trigger_settings()
@@ -122,7 +122,7 @@ class Noptin_Form_Editor {
                 'type'      => 'checkbox',
 				'el'        => 'input',
 				'tooltip'   => 'Your website visitors will not see this form unless you check this box',
-                'label'     => 'Publish',
+                'label'     => 'Published',
             ),
 
 
@@ -142,7 +142,8 @@ class Noptin_Form_Editor {
             'inject'        => array(
                 'el'        => 'select',
                 'restrict'  => "optinType=='inpost'",
-                'label'     => 'Inject into post content',
+				'label'     => 'Inject into post content',
+				'tooltip'	=> "Noptin can automatically embed this form into your post content. You can also find the form's shortcode below the form preview",
                 'options'   => array(
                     '0'         => "Don't inject",
                     'before'    => 'Before post content',
@@ -190,7 +191,8 @@ class Noptin_Form_Editor {
 			//Once per session
             'DisplayOncePerSession' => array(
                 'type'      => 'checkbox',
-                'el'        => 'input',
+				'el'        => 'input',
+				'tooltip'   => 'Uncheck to display the popup on every page load',
                 'label'     => 'Display this popup once per session',
             ),
 
@@ -274,7 +276,7 @@ class Noptin_Form_Editor {
             'showArchives'          => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Archives',
+                'label'             => 'Archive pages',
                 'restrict'          => "optinType!='inpost' && !showEverywhere && !_onlyShowOn",
 			),
 			'showPostTypes'         => array(
@@ -290,13 +292,14 @@ class Noptin_Form_Editor {
             'options'           => $this->post->neverShowOn,
 			'restrict'          => "!_onlyShowOn",
 			'placeholder'       => '1,10,25',
-			'tooltip'           => "Use a comma to separate post ids where this form should not be displayed",
+			'tooltip'           => "Use a comma to separate post ids where this form should not be displayed. All post type ids are supported, not just post ids.",
         );
 
         $return["onlyShowOn"]  = array(
             'el'                => 'input',
 			'label'             => "Only show on:",
 			'placeholder'       => '3,14,5',
+			'tooltip'           => "If you specify any posts here, all other targeting rule will be ignored, and this form will only be displayed on posts that you specify here.",
             'options'           => $this->post->onlyShowOn,
         );
 
@@ -507,19 +510,26 @@ class Noptin_Form_Editor {
                 'type'              => 'text',
                 'el'                => 'input',
                 'label'             => 'Minimum Height',
-            ),
+			),
 
-            'noptinFormBg'          => array(
-                'type'              => 'color',
-                'el'                => 'input',
-                'label'             => 'Form Background',
-            ),
-
-            'noptinFormBorderColor' => array(
+			'noptinFormBorderColor' => array(
                 'type'              => 'color',
                 'el'                => 'input',
                 'label'             => 'Border Color',
+			),
+
+			'noptinFormBg'          => array(
+                'type'              => 'color',
+                'el'                => 'input',
+                'label'             => 'Background Color',
             ),
+
+			'noptinFormBgImg'       => array(
+                'type'      		=> 'image',
+                'el'        		=> 'input',
+                'label'     		=> 'Background Image',
+            ),
+
         );
 	}
 

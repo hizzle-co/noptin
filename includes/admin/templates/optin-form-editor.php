@@ -5,7 +5,7 @@
         <div class="noptin-popup-editor-header" tabindex="-1">
 			<div class="noptin-popup-editor-title">
 				<textarea class="noptin-popup-editor-main-preview-name-textarea" v-model="optinName" placeholder="Enter Form Name" rows="1" style="" spellcheck="false"></textarea>
-				<button @click="saveAsTemplate()" type="button" class="button button-link noptin-popup-editor-header-button">{{saveAsTemplateText}}</button>
+				<button @click="saveAsTemplate()" title="Allows you to reuse this design on your other forms" type="button" class="button button-link noptin-popup-editor-header-button">{{saveAsTemplateText}}</button>
 			</div>
             <div class="noptin-popup-editor-toolbar">
 				<button v-if="optinStatus"  @click.prevent="unpublish" type="button" class="button button-link noptin-popup-editor-header-button">Switch to Draft</button>

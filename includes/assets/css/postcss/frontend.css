@@ -128,6 +128,8 @@ $noptin_color: #ff6f00;
 	transition: all 0.5s;
 	max-width: 100%;
 	width: 520px;
+	background-position: 50%;
+    background-size: cover;
 
 
 	/*The main opt in form*/

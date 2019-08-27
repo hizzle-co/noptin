@@ -767,6 +767,7 @@ input:focus+.noptin-switch-slider span {
 
 .noptin-color-wrapper {
 	display: flex;
+	margin-bottom: 12px;
 }
 
 .noptin-radio-button-wrapper .noptin-buttons {

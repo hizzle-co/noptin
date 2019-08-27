@@ -11,8 +11,11 @@
 	}
 
 
-	//Avoid displaying several popups at once
+	//Avoid displaying several popups at once...
 	var displayingPopup = false
+
+	//... or when the user subscribes via one popup
+	var subscribed = false
 
 	//Hides a displayed popup
 	var hidePopup = function(inner) {
@@ -41,7 +44,7 @@
 	//Displays a popup and attaches "close" event handlers
 	var displayPopup = function (popup) {
 
-		if( displayingPopup ) {
+		if( displayingPopup || subscribed ) {
 			return;
 		}
 
@@ -249,6 +252,8 @@
 								.show();
 							return;
 						}
+
+						subscribed = true
 
 						if (data.action == 'redirect') {
 							window.location = data.redirect;

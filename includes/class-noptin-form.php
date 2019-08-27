@@ -172,7 +172,8 @@ class Noptin_Form {
             'redirectUrl'                   => '',
 
 
-            //Form Design
+			//Form Design
+			'noptinFormBgImg'				=> '',
             'noptinFormBg'                  => '#fafafa',
             'noptinFormBorderColor'         => '#009688',
             'noptinFormBorderRound'         => true,

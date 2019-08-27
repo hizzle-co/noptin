@@ -231,12 +231,13 @@
         'title' => 'smart passive income',
         'data' => array(
             'hideCloseButton' => false,
-            'closeButtonPos' => 'along',
-            'singleLine' => true,
-            'formRadius' => '10px',
-            'formWidth' => '720px',
-            'formHeight' => '280px',
-            'noptinFormBg' => '#4CAF50',
+            'closeButtonPos'  => 'along',
+            'singleLine' 	  => true,
+            'formRadius' 	  => '0px',
+            'formWidth' 	  => '720px',
+            'formHeight' 	  => '280px',
+			'noptinFormBg'    => '#4CAF50',
+			'noptinFormBgImg' => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg',
             'fields' => array(
                 array(
                     'type' => array(
@@ -263,12 +264,12 @@
 			),
 
             'imageMain' => '',
-            'noptinFormBorderColor' => '#4CAF50',
+            'noptinFormBorderColor' => 'rgba(0,0,0,0)',
             'image' => '',
             'imagePos' => 'right',
             'noptinButtonLabel' => 'Subscribe Now',
             'buttonPosition' => 'block',
-            'noptinButtonBg' => '#009688',
+            'noptinButtonBg' => 'rgba(0,0,0,0)',
             'noptinButtonColor' => '#fefefe',
             'hideTitle' => false,
             'title' => 'WANT THE INSIDE SCOOP?',
@@ -280,17 +281,10 @@
             'hideOnNoteClick' => false,
             'note' => "We don\'t spam people",
             'noteColor' => '#607D8B',
-            'CSS' => ".noptin-optin-form-wrapper{
-	border: none;
- border-radius: 0 !important;
- background-image: url(https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg);
- background-position: 50%;
-    background-size: cover;
-}
+            'CSS' => ".noptin-optin-form-wrapper{}
 
 .noptin-optin-form-wrapper form .noptin-form-footer .noptin-form-submit {
-	background-color: transparent !important;
- border:2px solid hsla(0,0%,100%,.3) !important;
+	border:2px solid hsla(0,0%,100%,.3) !important;
     border-radius: 2px !important;
 }
 

@@ -757,6 +757,7 @@ function noptin_form_template_wrapper_props(){
 		':style="{
 			borderColor: noptinFormBorderColor,
 			backgroundColor: noptinFormBg,
+			backgroundImage: \'url(\' + noptinFormBgImg + \')\',
 			borderRadius: formRadius,
 			width: formWidth,
 			minHeight: formHeight
