@@ -174,6 +174,7 @@ class Noptin_Form {
 
 			//Form Design
 			'noptinFormBgImg'				=> '',
+			'noptinFormBgVideo'				=> '',
             'noptinFormBg'                  => '#fafafa',
             'noptinFormBorderColor'         => '#009688',
             'noptinFormBorderRound'         => true,

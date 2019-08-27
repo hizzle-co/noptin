@@ -47,13 +47,13 @@ $noptin_color: #ff6f00;
 
 .noptin-popup-main-wrapper {
 	position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
+	top: 0;
+	bottom: 0;
+	left: 0;
 	right: 0;
 	z-index: 100000;
-    align-items: center;
-    justify-content: center;
+	align-items: center;
+	justify-content: center;
 	background: rgba(96, 125, 139, 0.6);
 	overflow: auto;
 	display: none;
@@ -106,7 +106,7 @@ $noptin_color: #ff6f00;
 }
 
 .noptin-preview-showing .noptin-form-close,
-.noptin-popup-main-wrapper.open  .noptin-form-close{
+.noptin-popup-main-wrapper.open .noptin-form-close {
 	display: inline-block;
 }
 
@@ -115,7 +115,7 @@ $noptin_color: #ff6f00;
 }
 
 .noptin-animate-after {
-	transform:scale(1) rotate(0deg);
+	transform: scale(1) rotate(0deg);
 }
 
 .noptin-optin-form-wrapper {
@@ -129,7 +129,8 @@ $noptin_color: #ff6f00;
 	max-width: 100%;
 	width: 520px;
 	background-position: 50%;
-    background-size: cover;
+	background-size: cover;
+	position: relative;
 
 
 	/*The main opt in form*/
@@ -141,7 +142,32 @@ $noptin_color: #ff6f00;
 		flex-direction: column;
 		justify-content: center;
 
-		a, a:visited, a:active, a:hover {
+		.noptin-video-container {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+
+			video {
+				min-width: 100%;
+				min-height: 100%;
+				width: auto;
+				height: auto;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+		}
+
+		a,
+		a:visited,
+		a:active,
+		a:hover {
 			color: inherit !important;
 			text-decoration: none;
 			box-shadow: 0 1px 0 0 currentColor;
@@ -153,6 +179,7 @@ $noptin_color: #ff6f00;
 			padding: 20px;
 			align-items: center;
 			justify-content: center;
+			z-index: 100;
 			font-family: Montserrat, "Helvetica Neue", sans-serif;
 
 			/*image on left of heading*/
@@ -203,22 +230,23 @@ $noptin_color: #ff6f00;
 
 			.noptin-form-heading {
 				font-size: 23px;
-    			font-weight: 700;
-    			line-height: 1.4125;
-    			padding-top: 4px;
+				font-weight: 700;
+				line-height: 1.4125;
+				padding-top: 4px;
 			}
 
 			.noptin-form-description {
 				font-size: 16px;
-    			font-weight: 500;
-    			line-height: 1.3;
-    			padding-top: 18px;
+				font-weight: 500;
+				line-height: 1.3;
+				padding-top: 18px;
 			}
 		}
 
 		/* Contains the form fields and footer texts*/
 		.noptin-form-footer {
 			padding: 20px;
+			z-index: 100;
 
 			.noptin-form-fields::after {
 				content: "";
@@ -226,7 +254,7 @@ $noptin_color: #ff6f00;
 				display: table;
 			}
 
-			.noptin-optin-field-wrapper{
+			.noptin-optin-field-wrapper {
 				width: 100%;
 				display: block;
 				text-align: left;
@@ -237,7 +265,7 @@ $noptin_color: #ff6f00;
 					display: block;
 					color: #666;
 					background: #fff;
-    				background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+					background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
 					border: 1px solid #bbb;
 					border-radius: 3px;
 					width: 100%;
@@ -253,7 +281,7 @@ $noptin_color: #ff6f00;
 				font-weight: 500;
 				padding: 16px 32px;
 				flex: 1 0 0;
-    			font-weight: 800;
+				font-weight: 800;
 				box-shadow: none;
 				text-transform: none;
 			}

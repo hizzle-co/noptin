@@ -1,5 +1,10 @@
 <div  <?php echo noptin_form_template_wrapper_props(); ?>>
 	<form class="noptin-optin-form" <?php echo noptin_form_template_form_props(); ?>>
+		<div class="noptin-video-container" :style="{borderRadius: formRadius}" v-if="noptinFormBgVideo" >
+			<video  autoplay="" muted="" loop="" >
+				<source :src="noptinFormBgVideo" type="video/mp4">
+			</video>
+		</div>
 		<div class="noptin-form-header" :class="image ? imagePos : 'no-image'">
 			<div class="noptin-form-header-text">
 				<div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-form-heading" v-html="title"></div>

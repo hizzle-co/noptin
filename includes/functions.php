@@ -738,6 +738,7 @@ function noptin_localize_optin_editor( $state ){
 function noptin_form_template_form_props(){
 
 	$class = "singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'";
+	$style = "noptinFormBgVideo ? 'background-color:rgba(0,0,0,0.4)' : 'background-color:rgba(0,0,0,0)'";
 
 	return " @submit.prevent :class=\"$class\"";
 }

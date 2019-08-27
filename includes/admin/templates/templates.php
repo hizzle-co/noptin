@@ -4,13 +4,15 @@
     	'owvP1565701640' => array(
             'title' => 'Borderless',
             'data' => array (
-                'hideCloseButton' => false,
-                'closeButtonPos'  => 'top-right',
+                'hideCloseButton'   => false,
+                'closeButtonPos'    => 'top-right',
                 'singleLine' 		=> true,
                 'formRadius' 		=> '10px',
                 'formWidth' 		=> '520px',
                 'formHeight' 		=> '280px',
-                'noptinFormBg' 	=> '#fff',
+				'noptinFormBg' 	    => '#fff',
+				'noptinFormBgImg'   => '',
+				'noptinFormBgVideo' => '',
                 'fields' 			=> array (
                     array(
                         'type' => array (
@@ -70,7 +72,9 @@
             'formRadius' => '10px',
             'formWidth' => '520px',
             'formHeight' => '280px',
-            'noptinFormBg' => '#fafafa',
+			'noptinFormBg' => '#fafafa',
+			'noptinFormBgImg' => '',
+			'noptinFormBgVideo' => '',
             'fields' => array(
                 array(
                     'type' => array(
@@ -117,7 +121,9 @@
             'formRadius' => '0px',
             'formWidth' => '520px',
             'formHeight' => '280px',
-            'noptinFormBg' => '#fafafa',
+			'noptinFormBg' => '#fafafa',
+			'noptinFormBgImg' => '',
+			'noptinFormBgVideo' => '',
             'fields' => array(
                 array(
                     'type' => array(
@@ -179,7 +185,9 @@
             'formRadius' 		=> '0px',
             'formWidth' 		=> '520px',
             'formHeight' 		=> '280px',
-            'noptinFormBg' 	=> '#ffffff',
+			'noptinFormBg' 	=> '#ffffff',
+			'noptinFormBgImg' => '',
+			'noptinFormBgVideo' => '',
             'fields' => array(
                 array(
                     'type' => array(
@@ -237,6 +245,7 @@
             'formWidth' 	  => '720px',
             'formHeight' 	  => '280px',
 			'noptinFormBg'    => '#4CAF50',
+			'noptinFormBgVideo' => '',
 			'noptinFormBgImg' => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg',
             'fields' => array(
                 array(
@@ -308,7 +317,9 @@
             'formRadius' => '20px',
             'formWidth' => '520px',
             'formHeight' => '280px',
-            'noptinFormBg' => '#e91e63',
+			'noptinFormBg' => '#e91e63',
+			'noptinFormBgImg' => '',
+			'noptinFormBgVideo' => '',
             'fields' => array(
                 array(
                     'type' => array(
@@ -375,7 +386,9 @@
             'formRadius' => '0px',
             'formWidth' => '520px',
             'formHeight' => '280px',
-            'noptinFormBg' => '#8dbf42',
+			'noptinFormBg' => '#8dbf42',
+			'noptinFormBgImg' => '',
+			'noptinFormBgVideo' => '',
             'fields' => array(
                array(
                     'type' => array(
@@ -454,7 +467,8 @@
             'formRadius' => '0px',
             'formWidth' => '520px',
             'formHeight' => '250px',
-            'noptinFormBg' => '#ffffff',
+			'noptinFormBg' => '#ffffff',
+			'noptinFormBgImg' => '',
             'fields' => array(
                 array(
                     'type' => array(

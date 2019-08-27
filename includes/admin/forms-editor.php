@@ -528,6 +528,14 @@ class Noptin_Form_Editor {
                 'type'      		=> 'image',
                 'el'        		=> 'input',
                 'label'     		=> 'Background Image',
+			),
+
+			'noptinFormBgVideo'     => array(
+                'type'      		=> 'text',
+                'el'        		=> 'input',
+				'label'     		=> 'Background Video',
+				'description'       => 'Enter the full URL to an MP4 video file',
+				'tooltip'       	=> 'Works best if the video dimensions are of the same ratio as the form',
             ),
 
         );

@@ -670,7 +670,7 @@
 			},
 
 			upload_image: function (key) {
-				var that = this;
+				var that  = this;
 				var image = wp.media({
 					title: 'Upload Image',
 					multiple: false
