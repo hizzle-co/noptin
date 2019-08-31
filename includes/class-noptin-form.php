@@ -179,7 +179,12 @@ class Noptin_Form {
             'noptinFormBorderColor'         => '#009688',
             'noptinFormBorderRound'         => true,
             'formWidth'                     => '520px',
-            'formHeight'                    => '280px',
+			'formHeight'                    => '280px',
+
+			//Overlay
+			'noptinOverlayBgImg'			=> '',
+			'noptinOverlayBgVideo'			=> '',
+            'noptinOverlayBg'               => 'rgba(96, 125, 139, 0.6)',
 
             //image Design
             'image'                         => $noptin->plugin_url . 'includes/assets/images/email-icon.png',
@@ -234,7 +239,7 @@ class Noptin_Form {
 
 		);
 
-        return $defaults;
+		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
 
 	}
 

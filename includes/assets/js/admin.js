@@ -1,6 +1,7 @@
 (function ($) {
 
-	if( 'undefined' == typeof noptinEditor ) {
+
+	if ('undefined' == typeof noptinEditor) {
 		noptinEditor = {}
 	}
 
@@ -14,6 +15,7 @@
 		});
 
 	});
+
 
 	var swatches = require('vue-swatches');
 	//var VueQuillEditor = require('vue-quill-editor');
@@ -43,7 +45,7 @@
 
 			var data = {}
 
-			if ( noptinEditor && noptinEditor.templates[key]) {
+			if (noptinEditor && noptinEditor.templates[key]) {
 				var template = noptinEditor.templates[key]['data']
 
 				Object.keys(template).forEach(function (key) {
@@ -68,7 +70,7 @@
 
 			if (instance.optinType == 'sidebar') {
 				instance.formHeight = '400px'
-				instance.formWidth  = '300px'
+				instance.formWidth = '300px'
 				instance.singleLine = false
 				return;
 			}
@@ -174,7 +176,7 @@
 
 
 	Vue.component('field-editor', {
-		props: ['fields','fieldTypes'],
+		props: noptinEditor.field_props,
 		template: '#noptinFieldEditorTemplate',
 		data: function () {
 			return {}
@@ -212,11 +214,11 @@
 			},
 			getDefaultLabel: function (fieldType) {
 
-				var data = noptinFind( this.fieldTypes, function( obj ){
+				var data = noptinFind(this.fieldTypes, function (obj) {
 					return obj.type === fieldType
 				})
 
-				if( data ) {
+				if (data) {
 					return data['label']
 				}
 
@@ -299,15 +301,15 @@
 
 			$(this.$el)
 
-      			// init select2
-				  .select2({width: 'resolve'})
-				  .val(this.value)
-				  .trigger('change')
+				// init select2
+				.select2({ width: 'resolve' })
+				.val(this.value)
+				.trigger('change')
 
-				  // emit event on change.
-				  .on('change', function () {
+				// emit event on change.
+				.on('change', function () {
 					that.$emit('input', this.value)
-				  })
+				})
 
 
 		},
@@ -315,8 +317,8 @@
 			value: function (value) {
 				// update value
 				$(this.$el)
-				.val(value)
-				.trigger('change')
+					.val(value)
+					.trigger('change')
 			},
 		},
 		destroyed: function () {
@@ -324,7 +326,8 @@
 		}
 	})
 
-	var vm = new Vue({
+	//The main Editor app
+	var vm = window.noptinOptinEditor = new Vue({
 		el: '#noptin-form-editor',
 		data: jQuery.extend(true, {}, noptinEditor.data),
 		computed: {
@@ -397,7 +400,12 @@
 
 			},
 
-			upload_image: function (key) {
+			upload_image: function (key, size) {
+
+				if ('undefined' == typeof size) {
+					size = 'thumbnail'
+				}
+
 				var image = wp.media({
 					title: 'Upload Image',
 					multiple: false
@@ -405,7 +413,7 @@
 					.open()
 					.on('select', function (e) {
 						var uploaded_image = image.state().get('selection').first();
-						vm[key] = uploaded_image.toJSON().sizes.thumbnail.url;
+						vm[key] = uploaded_image.toJSON().sizes[size].url;
 					})
 			},
 			showSuccess: function (msg) {
@@ -431,6 +439,46 @@
 			},
 			unpublish: function () {
 				this.optinStatus = false
+			},
+			copyShortcode: function (e) {
+				var text = "[noptin-form id=" + this.id + "]"
+				this.copy(text, e)
+			},
+			copy: function (text, e) {
+
+				var textarea =
+					$('<textarea>')
+						.css({
+							position: 'fixed',
+							top: 0,
+							left: 0,
+							width: '2em',
+							height: '2em',
+							padding: '2em',
+							border: 'none',
+							outline: 'none',
+							boxShadow: 'none',
+						})
+						.val(text)
+						.appendTo('body')
+						.focus()
+						.select()
+				var el = $(e.target)
+
+				try {
+					var successful = document.execCommand('copy');
+					var msg = successful ? 'copied' : 'error';
+
+					el.text(msg).addClass('copied')
+				} catch (err) {
+					el.text('error').addClass('copied')
+				}
+
+				setTimeout(function () {
+					el.text('copy').removeClass('copied')
+				}, 400)
+
+				textarea.remove()
 			},
 			save: function () {
 				var saveText = this.saveText
@@ -481,153 +529,156 @@
 		},
 	})
 
-	var vmQuick = new Vue({
-		el: '#noptin-quick-form-editor',
-		data: jQuery.extend(true, {}, noptinEditor.data),
-		computed: {
-			showingFullName: function () {
-				return this.showNameField && !this.firstLastName
-			},
-			showingSingleName: function () {
-				return this.showNameField && this.firstLastName
-			},
-			_onlyShowOn: function () {
-				return this.onlyShowOn && this.onlyShowOn.length > 0
-			},
-			titleEditorOptions: function () {
-				return {
-					theme: 'snow',
-					modules: {
-						toolbar: [
-							['bold', 'italic', 'underline', 'strike'],
-							[{ 'color': [] }, { 'background': [] }],
-							[{ 'size': ['small', false, 'large', 'huge'] }],
-							[{ 'align': [] }],
-						]
-					},
+	//Work in progress
+	/*
+		var vmQuick = new Vue({
+			el: '#noptin-quick-form-editor',
+			data: jQuery.extend(true, {}, noptinEditor.data),
+			computed: {
+				showingFullName: function () {
+					return this.showNameField && !this.firstLastName
+				},
+				showingSingleName: function () {
+					return this.showNameField && this.firstLastName
+				},
+				_onlyShowOn: function () {
+					return this.onlyShowOn && this.onlyShowOn.length > 0
+				},
+				titleEditorOptions: function () {
+					return {
+						theme: 'snow',
+						modules: {
+							toolbar: [
+								['bold', 'italic', 'underline', 'strike'],
+								[{ 'color': [] }, { 'background': [] }],
+								[{ 'size': ['small', false, 'large', 'huge'] }],
+								[{ 'align': [] }],
+							]
+						},
+					}
+				},
+				descriptionEditorOptions: function () {
+					return {
+						theme: 'snow',
+						modules: {
+							toolbar: [
+								['bold', 'italic', 'underline', 'strike'],
+								[{ 'color': [] }, { 'background': [] }],
+								[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+								[{ 'size': ['small', false, 'large', 'huge'] }],
+								[{ 'align': [] }],
+							]
+						},
+					}
 				}
 			},
-			descriptionEditorOptions: function () {
-				return {
-					theme: 'snow',
-					modules: {
-						toolbar: [
-							['bold', 'italic', 'underline', 'strike'],
-							[{ 'color': [] }, { 'background': [] }],
-							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
-							[{ 'size': ['small', false, 'large', 'huge'] }],
-							[{ 'align': [] }],
-						]
-					},
-				}
-			}
-		},
-		methods: {
+			methods: {
 
-			upload_image: function (key) {
-				var image = wp.media({
-					title: 'Upload Image',
-					multiple: false
-				})
-					.open()
-					.on('select', function (e) {
-						var uploaded_image = image.state().get('selection').first();
-						vmQuick[key] = uploaded_image.toJSON().sizes.thumbnail.url;
+				upload_image: function (key) {
+					var image = wp.media({
+						title: 'Upload Image',
+						multiple: false
 					})
-			},
-			showSuccess: function (msg) {
-				this.hasSuccess = true;
-				this.Success = msg;
+						.open()
+						.on('select', function (e) {
+							var uploaded_image = image.state().get('selection').first();
+							vmQuick[key] = uploaded_image.toJSON().sizes.thumbnail.url;
+						})
+				},
+				showSuccess: function (msg) {
+					this.hasSuccess = true;
+					this.Success = msg;
 
-				setTimeout(function () {
-					vmQuick.hasSuccess = false;
-					vmQuick.Success = '';
-				}, 5000)
-			},
-			showError: function (msg) {
-				this.hasError = true;
-				this.Error = msg;
+					setTimeout(function () {
+						vmQuick.hasSuccess = false;
+						vmQuick.Success = '';
+					}, 5000)
+				},
+				showError: function (msg) {
+					this.hasError = true;
+					this.Error = msg;
 
-				setTimeout(function () {
-					vmQuick.hasError = false;
-					vmQuick.Error = '';
-				}, 5000)
-			},
-			finalize: function () {
-				this.currentStep = 'step_7'
+					setTimeout(function () {
+						vmQuick.hasError = false;
+						vmQuick.Error = '';
+					}, 5000)
+				},
+				finalize: function () {
+					this.currentStep = 'step_7'
 
-				jQuery.post(noptinEditor.ajaxurl, {
-					_ajax_nonce: noptinEditor.nonce,
-					action: "noptin_save_optin_form",
-					state: vmQuick.$data,
-					html: jQuery('.noptin-popup-wrapper').html()
+					jQuery.post(noptinEditor.ajaxurl, {
+						_ajax_nonce: noptinEditor.nonce,
+						action: "noptin_save_optin_form",
+						state: vmQuick.$data,
+						html: jQuery('.noptin-popup-wrapper').html()
+					})
+
+				}
+			},
+			watch: {
+				Template: function () {
+					var template = noptin.templateData(this.Template)
+					noptin.applyTemplate(template, this)
+				},
+				CSS: function () {
+					noptin.updateCustomCss(this.CSS)
+				},
+				optinType: function () {
+					noptin.updateFormSizes(this)
+				},
+				colorTheme: function () {
+					noptin.changeColorTheme(this)
+				}
+			},
+			mounted: function () {
+
+				if(! noptinEditor.templates ) {
+					return;
+				}
+
+				noptin.updateCustomCss(this.CSS)
+
+				jQuery('#formCustomCSS').text(this.CSS)
+				jQuery('.noptin-form-designer-loader').hide()
+				$('.noptin-tip').tooltipster();
+
+				var ddData = []
+
+				Object.keys(noptinEditor.templates).forEach(function (key) {
+					var template = {
+						text: noptinEditor.templates[key]['title'],
+						value: key,
+						imageSrc: noptin_params.icon,
+						//description: "Description with Facebook",
+
+					}
+					ddData.push(template)
 				})
 
-			}
-		},
-		watch: {
-			Template: function () {
-				var template = noptin.templateData(this.Template)
-				noptin.applyTemplate(template, this)
+				$('.ddslickTemplates').ddslick({
+					data: ddData,
+					selectText: "Select A Template",
+					onSelected: function (data) {
+						vmQuick.Template = data.selectedData.value;
+					}
+				});
+
+				var themes = noptin.getColorThemeOptions()
+
+				$('.ddslickThemes').ddslick({
+					data: themes,
+					selectText: "Apply a theme",
+					onSelected: function (data) {
+						vmQuick.colorTheme = data.selectedData.value;
+					}
+				});
+
 			},
-			CSS: function () {
-				noptin.updateCustomCss(this.CSS)
-			},
-			optinType: function () {
-				noptin.updateFormSizes(this)
-			},
-			colorTheme: function () {
-				noptin.changeColorTheme(this)
-			}
-		},
-		mounted: function () {
+		})
+	*/
 
-			if(! noptinEditor.templates ) {
-				return;
-			}
-
-			noptin.updateCustomCss(this.CSS)
-
-			jQuery('#formCustomCSS').text(this.CSS)
-			jQuery('.noptin-form-designer-loader').hide()
-			$('.noptin-tip').tooltipster();
-
-			var ddData = []
-
-			Object.keys(noptinEditor.templates).forEach(function (key) {
-				var template = {
-					text: noptinEditor.templates[key]['title'],
-					value: key,
-					imageSrc: noptin_params.icon,
-					//description: "Description with Facebook",
-
-				}
-				ddData.push(template)
-			})
-
-			$('.ddslickTemplates').ddslick({
-				data: ddData,
-				selectText: "Select A Template",
-				onSelected: function (data) {
-					vmQuick.Template = data.selectedData.value;
-				}
-			});
-
-			var themes = noptin.getColorThemeOptions()
-
-			$('.ddslickThemes').ddslick({
-				data: themes,
-				selectText: "Apply a theme",
-				onSelected: function (data) {
-					vmQuick.colorTheme = data.selectedData.value;
-				}
-			});
-
-		},
-	})
-
-
-	if( 'undefined' == typeof noptinSettings ) {
+	//Settings app
+	if ('undefined' == typeof noptinSettings) {
 		noptinSettings = {}
 	}
 
@@ -638,30 +689,39 @@
 
 			saveSettings: function () {
 
-				$( this.$el ).fadeTo( "fast", 0.33 );
-				var data  = this.$data
+				//Provide visual feedback by fading the form
+				$(this.$el).fadeTo("fast", 0.33);
+
+				//Prepare state data
+				var data = this.$data
 				var error = this.error
 				var saved = this.saved
-				var el    = this.$el
+				var el = this.$el
 
-				$( this.$el ).find('.noptin-save-saved').hide()
-				$( this.$el ).find('.noptin-save-error').hide()
+				//Hide form notices
+				$(this.$el).find('.noptin-save-saved').hide()
+				$(this.$el).find('.noptin-save-error').hide()
 
+				//Post the state data to the server
 				jQuery.post(noptin_params.ajaxurl, {
 					_ajax_nonce: noptin_params.nonce,
 					action: "noptin_save_options",
 					state: data
 				})
+
+					//Show a success msg after we are done
 					.done(function () {
-						$( el )
-							.fadeTo( "fast", 1 )
+						$(el)
+							.fadeTo("fast", 1)
 							.find('.noptin-save-saved')
 							.show()
 							.html('<p>' + saved + '</p>')
 					})
+
+					//Else alert the user about the error
 					.fail(function () {
-						$( el )
-							.fadeTo( "fast", 1 )
+						$(el)
+							.fadeTo("fast", 1)
 							.find('.noptin-save-error')
 							.show()
 							.html('<p>' + error + '</p>')
@@ -669,44 +729,32 @@
 
 			},
 
+			//Handles image uploads
 			upload_image: function (key) {
-				var that  = this;
+				var that = this;
+
+				//Init the media uploader script
 				var image = wp.media({
 					title: 'Upload Image',
 					multiple: false
 				})
 
+					//The open the media uploader modal
 					.open()
+
+					//Update the associated key with the selected image's url
 					.on('select', function (e) {
 						var uploaded_image = image.state().get('selection').first();
 						that[key] = uploaded_image.toJSON().sizes.thumbnail.url;
 					})
-			},
-			showSuccess: function (msg) {
-				this.hasSuccess = true;
-				this.Success = msg;
-				var that = this;
-				setTimeout(function () {
-					that.hasSuccess = false;
-					that.Success = '';
-				}, 5000)
-			},
-			showError: function (msg) {
-				this.hasError = true;
-				this.Error = msg;
-				var that = this;
-
-				setTimeout(function () {
-					that.hasError = false;
-					that.Error = '';
-				}, 5000)
-			},
+			}
 
 		},
 
-		mounted: function () {},
+		mounted: function () { },
 	})
 
+	//Attach the tooltips
 	$('.noptin-tip').tooltipster();
 
 })(jQuery);

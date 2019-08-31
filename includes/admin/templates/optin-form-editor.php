@@ -21,10 +21,10 @@
 					<div class="noptin-popup-notice noptin-is-error" v-show="hasError" v-html="Error"></div>
                     <div class="noptin-popup-notice noptin-is-success" v-show="hasSuccess" v-html="Success"></div>
                     <div  class="noptin-popup-wrapper">
-                        <?php include 'optin-form.php'; ?>
+						<?php include 'optin-form.php'; ?>
                     </div>
 					<div class="noptin-form-usage-details">
-						<p v-if="optinType=='inpost'">Shortcode <strong>[noptin-form id={{id}}]</strong></p>
+						<p v-if="optinType=='inpost'">Shortcode <strong>[noptin-form id={{id}}]</strong> <button @click="copyShortcode" class="noptin-copy-button">Copy</button></p>
 						<p v-if="optinType=='sidebar'">Use the <strong>Noptin Premade Form</strong> widget to add this form to a widget area</p>
 					</div>
                 </div>

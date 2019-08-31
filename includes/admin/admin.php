@@ -178,14 +178,14 @@ class Noptin_Admin {
     public function enqeue_scripts() {
         global $pagenow;
 
+		//Admin styles
+        $version = filemtime( $this->assets_path . 'css/admin.css' );
+		wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array(), $version);
+
         //Only enque on our pages
         if( 'admin.php' != $pagenow || empty( $_GET['page'] ) || false === stripos( $_GET['page'], 'noptin') ){
             return;
         }
-
-        //Admin styles
-        $version = filemtime( $this->assets_path . 'css/admin.css' );
-        wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array(), $version);
 
         //Tooltips https://iamceege.github.io/tooltipster/
         wp_enqueue_script('tooltipster', $this->assets_url . 'js/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');

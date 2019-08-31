@@ -710,6 +710,14 @@ function noptin_get_form_design_props(){
 }
 
 /**
+ * Returns form field props
+ */
+function noptin_get_form_field_props(){
+    return apply_filters( 'noptin_form_field_props', array( 'fields','fieldTypes' ));
+
+}
+
+/**
  * Function noptin editor localize
  */
 function noptin_localize_optin_editor( $state ){
@@ -727,8 +735,10 @@ function noptin_localize_optin_editor( $state ){
         'data'         => $state,
         'templates'    => noptin_get_optin_templates(),
         'color_themes' => noptin_get_color_themes(),
-        'design_props' => $props,
-    );
+		'design_props' => $props,
+		'field_props'  => noptin_get_form_field_props(),
+	);
+
     wp_localize_script('noptin', 'noptinEditor', $params);
 }
 
@@ -767,3 +777,58 @@ function noptin_form_template_wrapper_props(){
 
 	return implode( ' ', $props );
 }
+
+/**
+ * Returns a path to the debug log
+ *
+ * @return Noptin_Debug_Log
+ */
+function noptin_get_debug_log_file(){
+
+    // get default log file location
+    $upload_dir = wp_upload_dir(null, false);
+    $file = trailingslashit($upload_dir['basedir']) . 'noptin-debug-log.php';
+
+    /**
+     * Filters the log file to write to.
+     *
+     * @param string $file The log file location. Default: /wp-content/uploads/noptin-debug.log
+     */
+    return apply_filters('noptin_debug_log_file', $file);
+
+}
+
+/**
+ * This will replace the first half of a string with "*" characters.
+ *
+ * @param string $string
+ * @return string
+ */
+function noptin_obfuscate_string($string){
+    $length = strlen($string);
+    $obfuscated_length = ceil($length / 2);
+    $string = str_repeat('*', $obfuscated_length) . substr($string, $obfuscated_length);
+    return $string;
+}
+
+/**
+ * @internal
+ * @ignore
+ */
+function _noptin_obfuscate_email_addresses_callback($m){
+    $one = $m[1] . str_repeat('*', strlen($m[2]));
+    $two = $m[3] . str_repeat('*', strlen($m[4]));
+    $three = $m[5];
+    return sprintf('%s@%s.%s', $one, $two, $three);
+}
+
+/**
+ * Obfuscates email addresses in a string.
+ *
+ * @param $string String possibly containing email address
+ * @return string
+ */
+function noptin_obfuscate_email_addresses($string){
+    return preg_replace_callback('/([\w\.]{1,4})([\w\.]*)\@(\w{1,2})(\w*)\.(\w+)/', '_noptin_obfuscate_email_addresses_callback', $string);
+}
+

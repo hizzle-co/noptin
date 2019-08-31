@@ -33,6 +33,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types'), 5 );
 		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings'), 5 );
+		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_required_settings'), 100000 );
 		add_action( 'noptin_field_type_optin_markup', array( __CLASS__, 'print_default_markup'), 5 );
 
 
@@ -329,11 +330,8 @@ if( !defined( 'ABSPATH' ) ) {
 
 	}
 
-	/**
-	 * Renders the form fields editor
-	 */
 	public static function form_fields( $id, $field ) {
-		echo "<field-editor :fields='$id' :field-types='fieldTypes'></field-editor>";
+		echo "<field-editor v-bind='\$data'></field-editor>";
 	}
 
 	/**
@@ -417,6 +415,16 @@ if( !defined( 'ABSPATH' ) ) {
 
 		}
 
+	}
+
+	/**
+	 * Renders a select field
+	 */
+	public static function print_field_type_required_settings( $field_type = array() ) {
+
+		$type = $field_type['type'];
+		$v_if = "v-if=\"field.type.type=='$type'\"";
+
 		//Required
 		if(! empty( $field_type['supports_require'] ) ) {
 
@@ -428,6 +436,7 @@ if( !defined( 'ABSPATH' ) ) {
 				</label>';
 
 		}
+
 	}
 
 	/**
@@ -537,7 +546,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 			//Color picker
 			case 'color':
-				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <noptin-swatch colors='material-basic' show-fallback v-model='$id' popover-to='left'></noptin-swatch>$description</div>";
+				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <noptin-swatch colors='material-basic' max-height='600' shapes='circles' show-fallback v-model='$id' popover-to='left'></noptin-swatch>$description</div>";
 				break;
 
 			case 'switch':
@@ -555,7 +564,8 @@ if( !defined( 'ABSPATH' ) ) {
 				break;
 
 			case 'image':
-				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <div><div class='image-uploader'><input v-model='$id' placeholder='http://' type='text' $attrs /> <input @click=\"upload_image('$id')\" type='button' class='button button-secondary' value='Upload Image' /></div>$description</div></div>";
+				$size  = empty($field['size'])? 'thumbnail'  : trim($field['size']);
+				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <div><div class='image-uploader'><input v-model='$id' placeholder='http://' type='text' $attrs /> <input @click=\"upload_image('$id', '$size')\" type='button' class='button button-secondary' value='Upload Image' /></div>$description</div></div>";
 				break;
 
 			default:

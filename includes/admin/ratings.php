@@ -29,8 +29,8 @@ function noptin_maybe_trigger_value_rating() {
 
     $table = $wpdb->prefix . 'noptin_subscribers';
     $count = $wpdb->get_var( "SELECT COUNT(email) FROM $table" );
-    $msg   = 'Congratulations on your first %s subscribers – that’s awesome! Your next target is %s. 
-    You can do it and we are glad to be helping. 
+    $msg   = 'Congratulations on your first %s subscribers – that’s awesome! Your next target is %s.
+    You can do it and we are glad to be helping.
     If you have 5 minutes, could you please do us a BIG favor and give the plugin a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.';
 
     if($count > 1000){
@@ -64,10 +64,10 @@ function noptin_maybe_trigger_value_rating() {
             return;
         }
         update_option('noptin_status_will_update_to', 1);
-        $msg   = 'Congratulations on your first subscriber – that’s awesome! 
-        Your next target is 10. You can do it and we are glad to be helping. 
+        $msg   = 'Congratulations on your first subscriber – that’s awesome!
+        Your next target is 10. You can do it and we are glad to be helping.
         If you have 5 minutes, could you please do us a BIG favor and give the plugin a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.';
-    
+
     }
 
     //If we are here, we should display an update nag
@@ -78,7 +78,7 @@ function noptin_maybe_trigger_value_rating() {
 
 add_action('admin_notices', 'noptin_maybe_show_rating_msg');
 function noptin_maybe_show_rating_msg() {
-    
+
     if(get_option( 'noptin_show_update_nag', 'no' ) != 'yes'){
         return;
     }
@@ -90,10 +90,10 @@ function noptin_maybe_show_rating_msg() {
         <ul class="noptin-nag">
             <li class="noptin-nag-item"><a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5" class="button button-primary">Leave a review</a></li>
             <li class="noptin-nag-item"><a href="' . add_query_arg( 'noptin_rate_status', 'later') .'" class="button">Maybe Later</a></li>
-            <li class="noptin-nag-item"><a href="' . add_query_arg( 'noptin_rate_status', 'did') .'" class="button">I already did</a></li>
+            <li class="noptin-nag-item"><a href="' . add_query_arg( 'noptin_rate_status', 'did') .'" class="button button-link">Hide this notice forever</a></li>
         </ul>';
 
-    printf( '<div class="%1$s"><p>%2$s</p>%3$s</div>', esc_attr( $class ), esc_html( $message ), $link ); 
+    printf( '<div class="%1$s"><p>%2$s</p>%3$s</div>', esc_attr( $class ), esc_html( $message ), $link );
 }
 
 

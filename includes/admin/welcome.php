@@ -59,8 +59,8 @@
 	</div>
 
 	<div class="noptin-body">
-		<h3>New Post Notification Emails</h3>
-		<p>Notify your subscribers everytime you publish a new blog post.</p>
+		<h3>Form Backgrounds</h3>
+		<p>You can now use images and videos as the form background</p>
 		<hr/>
 		<p>Hundreds of hours went into this update. If you love it, Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
 	</div>

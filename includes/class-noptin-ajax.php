@@ -72,10 +72,33 @@ if( !defined( 'ABSPATH' ) ) {
 
 		foreach( $fields as $field ) {
 
-			$field_type  = $field['type']['type'];
-			$field_name  = $field['type']['name'];
+			$type = $field['type']['type'];
+
+			//Prepare the field name
+			$name = '';
+
+			if( 'email' == $type ) {
+				$name = 'email';
+			}
+
+			if( 'first_name' == $type ) {
+				$name = 'first_name';
+			}
+
+			if( 'last_name' == $type ) {
+				$name = 'last_name';
+			}
+
+			if( 'name' == $type ) {
+				$name = 'name';
+			}
+
+			if( empty( $name ) ) {
+				$name = $field['type']['name'];
+			}
+
 			$field_label = $field['type']['label'];
-			$value 		 = $_REQUEST[$field_name];
+			$value 		 = $_REQUEST[$name];
 
 			//required fields
 			if( 'true' == $field['require'] && empty( $value ) ) {
@@ -85,10 +108,8 @@ if( !defined( 'ABSPATH' ) ) {
 				);
 			}
 
-
-
 			//Sanitize email fields
-			if( 'email' == $field_type && !empty( $value ) ) {
+			if( 'email' == $type && !empty( $value ) ) {
 
 				if(! $value = sanitize_email( $value ) ) {
 
@@ -101,7 +122,7 @@ if( !defined( 'ABSPATH' ) ) {
 			}
 
 			//Sanitize text fields
-			if( 'textarea' != $field_type && !is_array( $value ) ) {
+			if( 'textarea' != $type && !is_array( $value ) ) {
 				$value = sanitize_text_field( $value );
 			} else {
 				if( !is_array( $value ) ) {
@@ -109,7 +130,7 @@ if( !defined( 'ABSPATH' ) ) {
 				}
 			}
 
-			$filtered[$field_name] = $value;
+			$filtered[$name] = $value;
 
 		}
 

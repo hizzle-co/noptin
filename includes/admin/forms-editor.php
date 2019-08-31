@@ -193,7 +193,8 @@ class Noptin_Form_Editor {
                 'type'      => 'checkbox',
 				'el'        => 'input',
 				'tooltip'   => 'Uncheck to display the popup on every page load',
-                'label'     => 'Display this popup once per session',
+				'label'     => 'Display this popup once per session',
+				'restrict'  => "triggerPopup!='after_click'",
             ),
 
 			//trigger when
@@ -201,11 +202,11 @@ class Noptin_Form_Editor {
 				'el'        => 'select',
                 'label'     => 'Show this popup',
                 'options'   => array(
-                    'immeadiate'      => 'Immeadiately',
+                    'immeadiate'      => 'Immediately',
                     'before_leave'    => 'Before the user leaves',
 					'on_scroll'       => 'After the user starts scrolling',
 					//'after_comment'   => 'After commenting',
-					'after_click'     => 'After clicking something',
+					'after_click'     => 'After clicking on something',
 					'after_delay'     => 'After a time delay',
                 ),
 			),
@@ -369,7 +370,16 @@ class Noptin_Form_Editor {
                 'title'     => 'Templates',
                 'id'        => 'colorsDesign',
                 'children'  => $this->get_templates_settings()
-            ),
+			),
+
+			//overlay Design
+            'overlay'         => array(
+                'el'        => 'panel',
+				'title'     => 'Popup Overlay',
+				'restrict'  => "optinType=='popup'",
+                'id'        => 'overlayDesign',
+                //'children'  => $this->get_overlay_settings()
+			),
 
             //Form Design
             'form'         => array(
@@ -465,7 +475,34 @@ class Noptin_Form_Editor {
             ),
 
         );
-    }
+	}
+
+	/**
+     * Returns overlay Design Fields
+     */
+    private function get_overlay_settings() {
+		return array(
+			'noptinOverlayBg'          => array(
+                'type'              => 'color',
+                'el'                => 'input',
+                'label'             => 'Background Color',
+            ),
+
+			'noptinOverlayBgImg'       => array(
+                'type'      		=> 'image',
+				'el'        		=> 'input',
+				'size'        		=> 'full',
+                'label'     		=> 'Background Image',
+			),
+
+			'noptinOverlayBgVideo'     => array(
+                'type'      		=> 'text',
+                'el'        		=> 'input',
+				'label'     		=> 'Background Video',
+				'description'       => 'Enter the full URL to an MP4 video file',
+            ),
+		);
+	}
 
     /**
      * Returns Form Design Fields
@@ -526,7 +563,8 @@ class Noptin_Form_Editor {
 
 			'noptinFormBgImg'       => array(
                 'type'      		=> 'image',
-                'el'        		=> 'input',
+				'el'        		=> 'input',
+				'size'        		=> 'full',
                 'label'     		=> 'Background Image',
 			),
 
@@ -721,7 +759,7 @@ class Noptin_Form_Editor {
             'CSS'          => array(
 				'el'       => 'editor',
 				'tooltip'  => "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page",
-                'label'    => 'Enter Your Custom CSS',
+                'label'    => 'Enter Your Custom CSS <a href="https://noptin.com/guide/custom-css/" target="_blank">Read this first</a>',
             ),
 
         );
@@ -741,7 +779,7 @@ class Noptin_Form_Editor {
 
         $saved_state = $this->post->get_all_data();
         unset( $saved_state['optinHTML'] );
-        $state = array_replace( $saved_state, $this->get_misc_state());
+		$state = array_replace( $saved_state, $this->get_misc_state());
         return apply_filters( 'noptin_optin_form_editor_state', $state, $this );
 
     }

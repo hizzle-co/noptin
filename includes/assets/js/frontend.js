@@ -183,8 +183,10 @@
 	//Loop through all popups and attach triggers
 	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each(function () {
 
+		var trigger = $(this).data('trigger')
+
 		//Some forms are only set to be displayed once per session
-		if ( typeof  $(this).data('once-per-session') !== 'undefined' ) {
+		if ( typeof  $(this).data('once-per-session') !== 'undefined' && 'after_click' != trigger ) {
 			var id = $(this).find('input[name=noptin_form_id]').val()
 
 			if( id && sessionStorage.getItem("noptinFormDisplayed" + id) ) {
@@ -195,8 +197,6 @@
 
 		//Take it to its initial state
 		$(this).addClass('noptin-animate-from')
-
-		var trigger = $(this).data('trigger')
 
 		if (noptinDisplayPopup[trigger]) {
 			var cb = noptinDisplayPopup[trigger]
