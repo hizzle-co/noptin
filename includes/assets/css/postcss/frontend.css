@@ -55,6 +55,8 @@ $noptin_color: #ff6f00;
 	align-items: center;
 	justify-content: center;
 	background: rgba(96, 125, 139, 0.6);
+	background-position: 50%;
+	background-size: cover;
 	overflow: auto;
 	display: none;
 
@@ -332,4 +334,9 @@ $noptin_color: #ff6f00;
 			}
 		}
 	}
+}
+
+.comment-form-noptin input,
+.register-form-noptin input {
+	margin-right: 8px;
 }

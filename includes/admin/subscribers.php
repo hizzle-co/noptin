@@ -5,7 +5,8 @@
         </div>
         <div class="noptin-col-10">
             <h1><?php esc_html_e('Noptin', 'noptin')?></h1>
-            <p class="noptin-big"><?php esc_html_e('View and download your email subscribers.', 'noptin')?></p>
+			<p class="noptin-big"><?php esc_html_e('View and download your email subscribers.', 'noptin')?></p>
+			<p><a href="https://noptin.com/product/mailchimp/" target="_blank">Connect your Mailchimp Account</a> to automatically add new email subscribers to your Mailchimp list.</p>
         </div>
     </div>
     <div class="noptin-divider"></div>

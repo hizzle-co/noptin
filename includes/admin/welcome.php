@@ -1,7 +1,7 @@
 <div class="noptin-welcome">
 	<div class="noptin-main-header">
-		<h1>Noptin v1.0.5</h1>
-		<a href="https://github.com/hizzle-co/noptin/issues/new/choose">Report a bug or request a feature</a>
+		<h1>Noptin v1.0.9</h1>
+		<a href="https://github.com/hizzle-co/noptin/issues/new/choose" target="_blank">Report a bug or request a feature</a>
 	</div>
 
 	<div class="noptin-header">
@@ -25,7 +25,7 @@
 					<span class="noptin-card-value"><?php echo $subscribers_growth_rate; ?> <span class="noptin-small">per day</span></span>
 				</li>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo $subscribers_url; ?>">View all subscribers</a></div>
+		<div class="noptin-card-footer-links"><a href="<?php echo $subscribers_url; ?>">View all subscribers</a> | <a href="https://noptin.com/product/mailchimp/" target="_blank">Connect your Mailchimp Account</a></div>
 	</div>
 
 
@@ -59,10 +59,14 @@
 	</div>
 
 	<div class="noptin-body">
-		<h3>Form Backgrounds</h3>
+		<h3>Form Background</h3>
 		<p>You can now use images and videos as the form background</p>
+		<h3>Popup Background</h3>
+		<p>It is now possible to set any color or image as the background overlay for popup forms.</p>
+		<h3>Mailchimp Integration</h3>
+		<p>Most of you have been asking for a Mailchimp integration. We are pleased to announce the release of a <a href="https://noptin.com/product/mailchimp/" target="_blank">Mailchimp addon</a>.</p>
 		<hr/>
-		<p>Hundreds of hours went into this update. If you love it, Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
+		<p>Thousands of hours have gone into this plugin. If you love it, Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5" target="_blank">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
 	</div>
 
 

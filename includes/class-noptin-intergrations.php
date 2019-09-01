@@ -21,7 +21,7 @@ if( !defined( 'ABSPATH' ) ) {
 		if( noptin_should_show_optins() ) {
 
 			//Maybe ask users to subscribe to the newsletter after commenting...
-			add_action( 'comment_form', array( $this, 'comment_form') );
+			add_filter( 'comment_form_submit_field', array( $this, 'comment_form') );
 			add_action( 'comment_post', array( $this, 'subscribe_commentor') );
 
 			//... or when registering
@@ -40,10 +40,10 @@ if( !defined( 'ABSPATH' ) ) {
      * @since       1.0.8
      * @return      void
      */
-    public function comment_form( $post_id ) {
+    public function comment_form( $submit_field ) {
 
 		if(! get_noptin_option( 'comment_form' ) ) {
-			return;
+			return $submit_field;
 		}
 
 		$text = get_noptin_option( 'comment_form_msg' );
@@ -51,8 +51,9 @@ if( !defined( 'ABSPATH' ) ) {
 			$text = __( 'Subscribe To Our Newsletter', 'noptin' );
 		}
 
-		echo "<label class='comment-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";
+		$checkbox =  "<label class='comment-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";
 
+		return $checkbox . $submit_field;
 	}
 
 	/**

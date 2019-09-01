@@ -375,10 +375,10 @@ class Noptin_Form_Editor {
 			//overlay Design
             'overlay'         => array(
                 'el'        => 'panel',
-				'title'     => 'Popup Overlay',
+				'title'     => 'Overlay',
 				'restrict'  => "optinType=='popup'",
                 'id'        => 'overlayDesign',
-                //'children'  => $this->get_overlay_settings()
+                'children'  => $this->get_overlay_settings()
 			),
 
             //Form Design
@@ -495,12 +495,6 @@ class Noptin_Form_Editor {
                 'label'     		=> 'Background Image',
 			),
 
-			'noptinOverlayBgVideo'     => array(
-                'type'      		=> 'text',
-                'el'        		=> 'input',
-				'label'     		=> 'Background Video',
-				'description'       => 'Enter the full URL to an MP4 video file',
-            ),
 		);
 	}
 

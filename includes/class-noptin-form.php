@@ -329,7 +329,12 @@ class Noptin_Form {
 			return apply_filters( "noptin_form_id", $this->id, $this );
 		}
 
-		$value = $this->data[$key];
+		if( isset( $this->data[$key] ) ) {
+			$value = $this->data[$key];
+		} else {
+			$value = null;
+		}
+
 
 		return apply_filters( "noptin_form_{$key}", $value, $this );
 	}
@@ -611,8 +616,24 @@ class Noptin_Form {
 		$id         = $this->id;
 		$id_class   = "noptin-form-id-$id";
 		$type_class = "noptin-$type-main-wrapper";
+		$style		= '';
 
-		$html  = "<div class='$type_class $id_class'>";
+		if( $type == 'popup' ){
+
+			//Background color
+			if( $this->noptinOverlayBg ) {
+				$color = esc_attr( $this->noptinOverlayBg );
+				$style = "background-color: $color;";
+			}
+
+			//Background image
+			if( $this->noptinOverlayBgImg ) {
+				$image = esc_url( $this->noptinOverlayBgImg );
+				$style .= "background-image: url($image);";
+			}
+
+		}
+		$html  = "<div class='$type_class $id_class' style='$style'>";
 
 		//Maybe print custom css
 		if(! empty( $this->CSS ) ) {
