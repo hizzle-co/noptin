@@ -1072,6 +1072,10 @@ input:focus+.noptin-switch-slider span {
 .noptin-form-usage-details p {
 	display: flex;
 
+	strong {
+		margin: 0 4px;
+	}
+
 	.noptin-copy-button {
 		transition: all 0.2s ease;
 		background-color: #636363;

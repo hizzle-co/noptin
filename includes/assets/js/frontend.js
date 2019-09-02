@@ -36,6 +36,7 @@
 		}
 
 		setTimeout(function () {
+			$("body").css("overflow", "hidden");
 			$(wrapper).removeClass('open')
 		}, timing)
 	}
@@ -74,6 +75,7 @@
 
 		//Maybe animate
 		setTimeout(function () {
+			$("body").css("overflow", "auto");
 			$(popup).addClass('noptin-animate-after')
 		}, 100)
 

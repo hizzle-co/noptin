@@ -23,7 +23,7 @@ class Noptin_Widget extends WP_Widget {
 
     //Colors
     public $colors = array(
-        'transparent' => 'Transparent',
+        'transparent' => 'Inherit From Theme',
         '#e51c23' => 'Red',
         '#e91e63' => 'Pink',
         '#9c27b0' => 'Purple',
@@ -58,7 +58,10 @@ class Noptin_Widget extends WP_Widget {
 
     // output the widget content on the front-end
     public function widget($args, $instance) {
-        echo $args['before_widget'];
+		echo $args['before_widget'];
+
+		//ID
+		$id = $args['widget_id'];
 
         //Title
         $title = '';
@@ -88,56 +91,71 @@ class Noptin_Widget extends WP_Widget {
         $color    =  sanitize_hex_color( $instance['color'] );
         $h2_col   =  sanitize_hex_color( $instance['h2_col'] );
         $btn_col  =  sanitize_hex_color( $instance['btn_col'] );
-
+		$has_bg   = !empty( $instance['bg_color'] ) && 'transparent' != $instance['bg_color'];
     ?>
     <style>
 
-        .noptin-email-optin-widget {
-            padding: 2.4em;
-            padding-top: 80px;
-            color: <?php echo $color;?> !important;
-            background-color: <?php echo $bg_color;?> !important;
-            min-height: 400px;
+		#<?php echo $id; ?> .noptin-email-optin-widget {
+			<?php
+				if( $has_bg  ) {
+					echo "min-height: 400px; padding: 32px;padding-top: 80px; background-color: $bg_color  !important;";
+				}
+
+				if( $color && 'transparent' != $instance['color']  ) {
+					echo "color: $color; !important";
+				}
+			?>
+
             box-sizing: border-box !important;
-            /*box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            border-radius: 5px;*/
         }
 
-        .noptin-email-optin-widget .widget-title{
-            color: <?php echo $h2_col;?> !important;
-            font-size: 1.3em;
+        #<?php echo $id; ?> .noptin-email-optin-widget .widget-title{
+			<?php
+				if( $h2_col && 'transparent' != $instance['h2_col']  ) {
+					echo "color: $h2_col; !important";
+				}
+			?>
         }
 
-        .noptin-email-optin-widget  .noptin-widget-email-input{
-            background-color: rgba(255, 255, 255, 0.3) !important;;
-            border: none !important;
+		#<?php echo $id; ?> .noptin-email-optin-widget  .noptin-widget-email-input,
+		#<?php echo $id; ?> .noptin-email-optin-widget  .noptin-widget-email-input:active{
+			width: 100%;
+			padding: 12px;
+			outline: none;
         }
 
-        .noptin-email-optin-widget .noptin_feedback_success{
+        #<?php echo $id; ?> .noptin-email-optin-widget .noptin_feedback_success{
             border:1px solid rgba(6, 147, 227, 0.8);
             display:none;
             padding:10px;
             margin-top:10px;
         }
 
-        .noptin-email-optin-widget .noptin_feedback_error{
+        #<?php echo $id; ?> .noptin-email-optin-widget .noptin_feedback_error{
             border:1px solid rgba(227, 6, 37, 0.8);
             display:none;
             padding:10px;
             margin-top:10px;
         }
 
-        .noptin-email-optin-widget .noptin-widget-submit-input{
+        #<?php echo $id; ?> .noptin-email-optin-widget .noptin-widget-submit-input{
             margin-top: 5px;
             display: block;
-            width: 100%;
-            background-color: <?php echo $btn_col;?> !important;
+			width: 100%;
+			padding: 12px;
+
+			<?php
+				if( $btn_col && 'transparent' != $instance['btn_col']  ) {
+					echo "background-color: $btn_col; !important";
+				}
+			?>
+
         }
     </style>
     <div class="noptin-email-optin-widget">
         <form>
         <?php echo $title . $desc . $redirect;?>
-        <input class="noptin-widget-email-input noptin_form_input_email" type="email" placeholder="Email Address" required >
+        <input class="noptin-widget-email-input noptin_form_input_email" name="email" type="email" placeholder="Email Address" required >
         <input class="noptin-widget-submit-input" value="<?php echo $submit;?>" type="submit">
         <div class="noptin_feedback_success"></div>
         <div class="noptin_feedback_error"></div>

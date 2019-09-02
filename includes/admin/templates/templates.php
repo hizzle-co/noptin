@@ -101,7 +101,7 @@
             'title' => 'Subscribe To Our Newsletter',
             'titleColor' => '#191919',
             'hideDescription' => false,
-            'description' => "Enter your email to receive a weekly round-up of our best posts. Learn more!",
+            'description' => "Enter your email to receive a weekly round-up of our best posts. <a href='https://noptin.com/guide'>Learn more!</a>",
             'descriptionColor' => '#666666',
             'hideNote' => '1',
             'hideOnNoteClick' => false,
