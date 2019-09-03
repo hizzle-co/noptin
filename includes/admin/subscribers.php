@@ -6,13 +6,13 @@
         <div class="noptin-col-10">
             <h1><?php esc_html_e('Noptin', 'noptin')?></h1>
 			<p class="noptin-big"><?php esc_html_e('View and download your email subscribers.', 'noptin')?></p>
-			<p><a href="https://noptin.com/product/mailchimp/" target="_blank">Connect your Mailchimp Account</a> to automatically add new email subscribers to your Mailchimp list.</p>
+			<p><a href="https://noptin.com/product/mailchimp/" target="_blank"><?php printf( __("Connect your Mailchimp Account %s to automatically add new email subscribers to your Mailchimp list", 'noptin'), '</a>') ?>.</p>
         </div>
     </div>
     <div class="noptin-divider"></div>
     <div class="noptin-download-section">
         <div class="noptin-col-2 noptin-offset-10">
-            <a href="<?php echo $download_url;?>" class="button button-primary noptin-download">Download CSV</a>
+            <a href="<?php echo $download_url;?>" class="button button-primary noptin-download"><?php esc_html_e('Download CSV', 'noptin'); ?></a>
         </div>
     </div>
 

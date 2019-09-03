@@ -3,7 +3,7 @@
     <header class="noptin-list-header">
         <div class="noptin-list-action">
             <h1>Noptin 1.0.5</h1>
-            <div>Noptin makes it easy to display add email subscription forms into your posts, popups and widget areas.</div>
+            <div><?php _e( 'Noptin makes it easy to display add email subscription forms into your posts, popups and widget areas', 'noptin' ) ?>.</div>
         </div>
     </header>
     <main class="content">

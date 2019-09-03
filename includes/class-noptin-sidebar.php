@@ -20,8 +20,8 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Prepare widget args
         $widget_ops = array(
-            'classname' => 'noptin_widget_premade',
-            'description' => 'Use this widget to add newsletter forms made using the Form Editor',
+            'classname'   => 'noptin_widget_premade',
+            'description' => __( 'Use this widget to add newsletter forms made using the Form Editor', 'noptin' ),
         );
 
         //Add it to the list of widgets

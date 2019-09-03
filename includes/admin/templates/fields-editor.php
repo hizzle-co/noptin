@@ -1,5 +1,5 @@
 <div class="noptin-field-editor">
-  <button type="button" class="button button-secondary" @click="addField">Add Field</button>
+  <button type="button" class="button button-secondary" @click="addField"><?php __( 'Add Field', 'noptin' ); ?></button>
 
   <ul v-noptin-dragula="fields">
     <li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key">
@@ -30,7 +30,7 @@
 
 			?>
 
-			<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)">Delete Field</a>
+			<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php __( 'Delete Field', 'noptin' ); ?></a>
 
 		</div>
 

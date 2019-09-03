@@ -369,7 +369,7 @@ function add_noptin_subscriber( $fields ) {
 
 	//Ensure an email address is provided and it doesn't exist already
 	if( empty( $fields['email'] ) || !is_email( $fields['email'] ) ) {
-		return "Please provide a valid email address";
+		return __( "Please provide a valid email address", 'noptin' );
 	}
 
 	if( noptin_email_exists( $fields['email'] ) ) {

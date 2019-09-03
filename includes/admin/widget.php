@@ -51,7 +51,7 @@ class Noptin_Widget extends WP_Widget {
     public function __construct() {
         $widget_ops = array(
             'classname' => 'noptin_widget',
-            'description' => 'Use this widget to create and add a simple newsletter subscription widget',
+            'description' => __( 'Use this widget to create and add a simple newsletter subscription widget', 'noptin' ),
         );
         parent::__construct( 'noptin_widget', 'Noptin New Form', $widget_ops );
     }

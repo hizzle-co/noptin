@@ -70,7 +70,7 @@ class Noptin_Form_Editor {
             //Basic settings
             'basic'         => array(
                 'el'        => 'panel',
-                'title'     => 'Basic Options',
+                'title'     => __( 'Basic Options', 'noptin' ),
                 'id'        => 'basicSettings',
                 'children'  => $this->get_basic_settings()
             ),
@@ -78,7 +78,7 @@ class Noptin_Form_Editor {
             //Trigger Options
             'trigger'         => array(
                 'el'        => 'panel',
-                'title'     => 'Popup Options',
+                'title'     => __( 'Popup Options', 'noptin' ),
                 'id'        => 'triggerSettings',
                 'restrict'  => "optinType=='popup'",
                 'children'  => $this->get_trigger_settings()
@@ -87,7 +87,7 @@ class Noptin_Form_Editor {
             //Targeting Options
             'targeting'     => array(
                 'el'        => 'panel',
-                'title'     => 'Page Targeting',
+                'title'     => __( 'Page Targeting', 'noptin' ),
                 'id'        => 'targetingSettings',
                 'children'  => $this->get_targeting_settings()
             ),
@@ -103,7 +103,7 @@ class Noptin_Form_Editor {
             //Device targeting
             'deviceTargeting'   => array(
                 'el'            => 'panel',
-                'title'         => 'Device Targeting',
+                'title'         => __( 'Device Targeting', 'noptin' ),
                 'id'            => 'deviceTargetingSettings',
                 'children'      => $this->get_device_settings()
             ),
@@ -121,19 +121,19 @@ class Noptin_Form_Editor {
             'optinStatus'   => array(
                 'type'      => 'checkbox',
 				'el'        => 'input',
-				'tooltip'   => 'Your website visitors will not see this form unless you check this box',
-                'label'     => 'Published',
+				'tooltip'   => __( 'Your website visitors will not see this form unless you check this box', 'noptin' ),
+                'label'     => __( 'Published', 'noptin' ),
             ),
 
 
             //Form type
             'optinType'     => array(
                 'el'        => 'select',
-                'label'     => 'This form will be',
+                'label'     => __( 'This form will be...', 'noptin' ),
                 'options'   => array(
-                    'popup'      => 'Displayed in a popup',
-                    'inpost'     => 'Embedded in a post',
-                    'sidebar'    => 'Added to a widget area',
+                    'popup'      => __( 'Displayed in a popup', 'noptin' ),
+                    'inpost'     => __( 'Embedded in a post', 'noptin' ),
+                    'sidebar'    => __( 'Added to a widget area', 'noptin' ),
                     //'flyin'      => 'Fly In Form',
                     //'bar'        => 'Notification bar',
                 ),
@@ -142,23 +142,23 @@ class Noptin_Form_Editor {
             'inject'        => array(
                 'el'        => 'select',
                 'restrict'  => "optinType=='inpost'",
-				'label'     => 'Inject into post content',
-				'tooltip'	=> "Noptin can automatically embed this form into your post content. You can also find the form's shortcode below the form preview",
+				'label'     => __( 'Inject into post content', 'noptin' ),
+				'tooltip'	=> __( "Noptin can automatically embed this form into your post content. You can also find the form's shortcode below the form preview", 'noptin' ),
                 'options'   => array(
-                    '0'         => "Don't inject",
-                    'before'    => 'Before post content',
-                    'after'     => 'After post content',
-                    'both'      => 'Before and after post content',
+                    '0'         => __( "Don't inject", 'noptin' ),
+                    'before'    => __( 'Before post content', 'noptin' ),
+                    'after'     => __( 'After post content', 'noptin' ),
+                    'both'      => __( 'Before and after post content', 'noptin' ),
                 ),
             ),
 
             //What should happen after someone subscibes?
             'subscribeAction' => array(
                 'el'        => 'select',
-                'label'     => 'What should happen after the user subscribes',
+                'label'     => __( 'What should happen after the user subscribes', 'noptin' ),
                 'options'   => array(
-                    'message'   => 'Display a success message',
-                    'redirect'  => 'redirect to a different page',
+                    'message'   => __( 'Display a success message', 'noptin' ),
+                    'redirect'  => __( 'redirect to a different page', 'noptin' ),
                 ),
             ),
 
@@ -166,7 +166,7 @@ class Noptin_Form_Editor {
             'successMessage' => array(
                 'type'      => 'textarea',
                 'el'        => 'textarea',
-                'label'     => 'Success message',
+                'label'     => __( 'Success message', 'noptin' ),
                 'restrict'  => "subscribeAction=='message'",
             ),
 
@@ -174,7 +174,7 @@ class Noptin_Form_Editor {
             'redirectUrl' => array(
                 'type'      => 'text',
                 'el'        => 'input',
-                'label'     => 'Redirect url',
+                'label'     => __( 'Redirect url', 'noptin' ),
                 'placeholde'=> 'http://example.com/success',
                 'restrict'  => "subscribeAction=='redirect'",
             ),
@@ -192,22 +192,22 @@ class Noptin_Form_Editor {
             'DisplayOncePerSession' => array(
                 'type'      => 'checkbox',
 				'el'        => 'input',
-				'tooltip'   => 'Uncheck to display the popup on every page load',
-				'label'     => 'Display this popup once per session',
+				'tooltip'   => __( 'Uncheck to display the popup on every page load', 'noptin' ),
+				'label'     => __( 'Display this popup once per session', 'noptin' ),
 				'restrict'  => "triggerPopup!='after_click'",
             ),
 
 			//trigger when
 			'triggerPopup'  => array(
 				'el'        => 'select',
-                'label'     => 'Show this popup',
+                'label'     => __( 'Show this popup', 'noptin' ),
                 'options'   => array(
-                    'immeadiate'      => 'Immediately',
-                    'before_leave'    => 'Before the user leaves',
-					'on_scroll'       => 'After the user starts scrolling',
+                    'immeadiate'      => __( 'Immediately', 'noptin' ),
+                    'before_leave'    => __( 'Before the user leaves', 'noptin' ),
+					'on_scroll'       => __( 'After the user starts scrolling', 'noptin' ),
 					//'after_comment'   => 'After commenting',
-					'after_click'     => 'After clicking on something',
-					'after_delay'     => 'After a time delay',
+					'after_click'     => __( 'After clicking on something', 'noptin' ),
+					'after_delay'     => __( 'After a time delay', 'noptin' ),
                 ),
 			),
 
@@ -215,7 +215,7 @@ class Noptin_Form_Editor {
             'cssClassOfClick' => array(
                 'type'      => 'text',
                 'el'        => 'input',
-                'label'     => 'CSS selector of the items to watch out for clicks',
+                'label'     => __( 'CSS selector of the items to watch out for clicks', 'noptin' ),
                 'restrict'  => "triggerPopup=='after_click'",
             ),
 
@@ -223,7 +223,7 @@ class Noptin_Form_Editor {
             'timeDelayDuration' => array(
                 'type'      => 'text',
                 'el'        => 'input',
-                'label'     => 'Time in seconds to delay',
+                'label'     => __( 'Time in seconds to delay', 'noptin' ),
                 'restrict'  => "triggerPopup=='after_delay'",
 			),
 
@@ -231,7 +231,7 @@ class Noptin_Form_Editor {
             'scrollDepthPercentage' => array(
                 'type'      => 'text',
                 'el'        => 'input',
-                'label'     => 'Scroll depth in percentage after which the popup will be shown',
+                'label'     => __( 'Scroll depth in percentage after which the popup will be shown', 'noptin' ),
                 'restrict'  => "triggerPopup=='on_scroll'",
             ),
         );
@@ -246,38 +246,38 @@ class Noptin_Form_Editor {
 
             'targeting-info-text'   => array(
                 'el'                => 'paragraph',
-                'content'           => 'Display this optin...',
+                'content'           => __( 'Display this optin...', 'noptin' ),
                 'style'             => 'font-weight: bold;'
             ),
 
             'showEverywhere'        => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-				'label'             => 'Everywhere',
+				'label'             => __( 'Everywhere', 'noptin' ),
                 'restrict'          => "!_onlyShowOn",
             ),
             'showHome'              => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Front page',
+                'label'             => __( 'Front page', 'noptin' ),
                 'restrict'          => "!showEverywhere && !_onlyShowOn",
             ),
             'showBlog'              => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Blog page',
+                'label'             => __( 'Blog page', 'noptin' ),
                 'restrict'          => "!showEverywhere && !_onlyShowOn",
             ),
             'showSearch'            => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Search page',
+                'label'             => __( 'Search page', 'noptin' ),
                 'restrict'          => "optinType!='inpost' && !showEverywhere && !_onlyShowOn",
             ),
             'showArchives'          => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Archive pages',
+                'label'             => __( 'Archive pages', 'noptin' ),
                 'restrict'          => "optinType!='inpost' && !showEverywhere && !_onlyShowOn",
 			),
 			'showPostTypes'         => array(
@@ -289,18 +289,18 @@ class Noptin_Form_Editor {
 
         $return["neverShowOn"]  = array(
             'el'                => 'input',
-            'label'             => "Never show on:",
+            'label'             => __( "Never show on:", 'noptin' ),
             'options'           => $this->post->neverShowOn,
 			'restrict'          => "!_onlyShowOn",
 			'placeholder'       => '1,10,25',
-			'tooltip'           => "Use a comma to separate post ids where this form should not be displayed. All post type ids are supported, not just post ids.",
+			'tooltip'           => __( "Use a comma to separate post ids where this form should not be displayed. All post type ids are supported, not just post ids.", 'noptin' ),
         );
 
         $return["onlyShowOn"]  = array(
             'el'                => 'input',
 			'label'             => "Only show on:",
 			'placeholder'       => '3,14,5',
-			'tooltip'           => "If you specify any posts here, all other targeting rule will be ignored, and this form will only be displayed on posts that you specify here.",
+			'tooltip'           => __( "If you specify any posts here, all other targeting rule will be ignored, and this form will only be displayed on posts that you specify here.", 'noptin' ),
             'options'           => $this->post->onlyShowOn,
         );
 
@@ -316,17 +316,17 @@ class Noptin_Form_Editor {
             'whoCanSee'             => array(
                 'el'                => 'radio_button',
                 'options'           => array(
-                    'all'           => 'Everyone',
-                    'users'         => 'Logged in users',
-                    'guests'        => 'Logged out users',
-                    'roles'         => 'specific user roles'
+                    'all'           => __( 'Everyone', 'noptin' ),
+                    'users'         => __( 'Logged in users', 'noptin' ),
+                    'guests'        => __( 'Logged out users', 'noptin' ),
+                    'roles'         => __( 'specific user roles', 'noptin' )
                 ),
-                'label'             => 'Who can see this form?',
+                'label'             => __( 'Who can see this form?', 'noptin' ),
             ),
 
             'userRoles'             => array(
                 'el'                => 'multiselect',
-                'label'             => 'Select user roles',
+                'label'             => __( 'Select user roles', 'noptin' ),
                 'restrict'          => "whoCanSee=='roles'",
                 'options'           => array(),
             ),
@@ -344,13 +344,13 @@ class Noptin_Form_Editor {
             'hideSmallScreens'      => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Hide on Mobile',
+                'label'             => __( 'Hide on Mobile', 'noptin' ),
             ),
 
             'hideLargeScreens'      => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Hide on Desktops',
+                'label'             => __( 'Hide on Desktops', 'noptin' ),
             ),
 
         );
@@ -367,7 +367,7 @@ class Noptin_Form_Editor {
 			//Color themes
             'colors'        => array(
                 'el'        => 'panel',
-                'title'     => 'Templates',
+                'title'     => __( 'Templates', 'noptin' ),
                 'id'        => 'colorsDesign',
                 'children'  => $this->get_templates_settings()
 			),
@@ -375,7 +375,7 @@ class Noptin_Form_Editor {
 			//overlay Design
             'overlay'         => array(
                 'el'        => 'panel',
-				'title'     => 'Overlay',
+				'title'     => __( 'Overlay', 'noptin' ),
 				'restrict'  => "optinType=='popup'",
                 'id'        => 'overlayDesign',
                 'children'  => $this->get_overlay_settings()
@@ -384,7 +384,7 @@ class Noptin_Form_Editor {
             //Form Design
             'form'         => array(
                 'el'        => 'panel',
-                'title'     => 'Form',
+                'title'     => __( 'Form', 'noptin' ),
                 'id'        => 'formDesign',
                 'children'  => $this->get_form_settings()
 			),
@@ -392,7 +392,7 @@ class Noptin_Form_Editor {
 			//Fields Design
             'fields'        => array(
                 'el'        => 'panel',
-                'title'     => 'Fields',
+                'title'     => __( 'Fields', 'noptin' ),
                 'id'        => 'fieldDesign',
                 'children'  => $this->get_field_settings()
             ),
@@ -400,7 +400,7 @@ class Noptin_Form_Editor {
             //Image Design
             'image'         => array(
                 'el'        => 'panel',
-                'title'     => 'Image',
+                'title'     => __( 'Image', 'noptin' ),
                 'id'        => 'imageDesign',
                 'children'  => $this->get_image_settings()
             ),
@@ -408,7 +408,7 @@ class Noptin_Form_Editor {
             //Button Design
             'button'        => array(
                 'el'        => 'panel',
-                'title'     => 'Button',
+                'title'     => __( 'Button', 'noptin' ),
                 'id'        => 'buttonDesign',
                 'children'  => $this->get_button_settings()
             ),
@@ -416,7 +416,7 @@ class Noptin_Form_Editor {
             //Title Design
             'title'         => array(
                 'el'        => 'panel',
-                'title'     => 'Title',
+                'title'     => __( 'Title', 'noptin' ),
                 'id'        => 'titleDesign',
                 'children'  => $this->get_title_settings()
             ),
@@ -424,7 +424,7 @@ class Noptin_Form_Editor {
             //Description Design
             'description'   => array(
                 'el'        => 'panel',
-                'title'     => 'Description',
+                'title'     => __( 'Description', 'noptin' ),
                 'id'        => 'descriptionDesign',
                 'children'  => $this->get_description_settings()
             ),
@@ -432,7 +432,7 @@ class Noptin_Form_Editor {
             //Note Design
             'note'          => array(
                 'el'        => 'panel',
-                'title'     => 'Note',
+                'title'     => __( 'Note', 'noptin' ),
                 'id'        => 'noteDesign',
                 'children'  => $this->get_note_settings()
             ),
@@ -440,7 +440,7 @@ class Noptin_Form_Editor {
             //Css Design
             'css'          => array(
                 'el'        => 'panel',
-                'title'     => 'Custom CSS',
+                'title'     => __( 'Custom CSS', 'noptin' ),
                 'id'        => 'customCSS',
                 'children'  => $this->get_custom_css_settings()
             ),
@@ -463,14 +463,14 @@ class Noptin_Form_Editor {
 
             'Template'          => array(
                 'el'            => 'select',
-				'label'         => 'Apply a template',
-				'tooltip'       => 'All templates include custom css so remember to check out the Custom CSS panel after you apply a template',
+				'label'         => __( 'Apply a template', 'noptin' ),
+				'tooltip'       => __( 'All templates include custom css so remember to check out the Custom CSS panel after you apply a template', 'noptin' ),
                 'options'       => $templates,
 			),
 
 			'colorTheme'        => array(
                 'el'            => 'select',
-                'label'         => 'Apply a color theme',
+                'label'         => __( 'Apply a color theme', 'noptin' ),
                 'options'       => array_combine( array_values( $colors ), array_keys( $colors ) ),
             ),
 
@@ -485,14 +485,14 @@ class Noptin_Form_Editor {
 			'noptinOverlayBg'          => array(
                 'type'              => 'color',
                 'el'                => 'input',
-                'label'             => 'Background Color',
+                'label'             => __( 'Background Color', 'noptin' ),
             ),
 
 			'noptinOverlayBgImg'       => array(
                 'type'      		=> 'image',
 				'el'        		=> 'input',
 				'size'        		=> 'full',
-                'label'     		=> 'Background Image',
+                'label'     		=> __( 'Background Image', 'noptin' ),
 			),
 
 		);
@@ -514,60 +514,60 @@ class Noptin_Form_Editor {
             'closeButtonPos'=> array(
                 'el'        => 'select',
                 'options'       => array(
-                    'inside'        => 'Inside the form',
-                    'outside'       => 'Outside the form',
-					'along'         => 'Along the border',
-					'top-right'     => 'Top Right'
+                    'inside'        => __( 'Inside the form', 'noptin' ),
+                    'outside'       => __( 'Outside the form', 'noptin' ),
+					'along'         => __( 'Along the border', 'noptin' ),
+					'top-right'     => __( 'Top Right', 'noptin' )
                 ),
-                'label'     => 'Close Button Position',
+                'label'     => __( 'Close Button Position', 'noptin' ),
                 'restrict'  => "optinType=='popup' && !hideCloseButton",
             ),
 
             'formRadius'     => array(
                 'type'       => 'text',
                 'el'         => 'input',
-				'label'      => 'Border Radius',
-				'tooltip'    => "Set this to 0 if you don't want the form to have rounded corners",
+				'label'      => __( 'Border Radius', 'noptin' ),
+				'tooltip'    => __( "Set this to 0 if you don't want the form to have rounded corners", 'noptin' ),
             ),
 
             'formWidth'             => array(
                 'type'              => 'text',
                 'el'                => 'input',
-				'label'             => 'Preferred Width',
-				'tooltip'    		=> "The element will resize to 100% width on smaller devices",
+				'label'             => __( 'Preferred Width', 'noptin' ),
+				'tooltip'    		=> __( "The element will resize to 100% width on smaller devices", 'noptin' ),
             ),
 
             'formHeight'            => array(
                 'type'              => 'text',
                 'el'                => 'input',
-                'label'             => 'Minimum Height',
+                'label'             => __( 'Minimum Height', 'noptin' ),
 			),
 
 			'noptinFormBorderColor' => array(
                 'type'              => 'color',
                 'el'                => 'input',
-                'label'             => 'Border Color',
+                'label'             => __( 'Border Color', 'noptin' ),
 			),
 
 			'noptinFormBg'          => array(
                 'type'              => 'color',
                 'el'                => 'input',
-                'label'             => 'Background Color',
+                'label'             => __( 'Background Color', 'noptin' ),
             ),
 
 			'noptinFormBgImg'       => array(
                 'type'      		=> 'image',
 				'el'        		=> 'input',
 				'size'        		=> 'full',
-                'label'     		=> 'Background Image',
+                'label'     		=> __( 'Background Image', 'noptin' ),
 			),
 
 			'noptinFormBgVideo'     => array(
                 'type'      		=> 'text',
                 'el'        		=> 'input',
-				'label'     		=> 'Background Video',
-				'description'       => 'Enter the full URL to an MP4 video file',
-				'tooltip'       	=> 'Works best if the video dimensions are of the same ratio as the form',
+				'label'     		=> __( 'Background Video', 'noptin' ),
+				'description'       => __( 'Enter the full URL to an MP4 video file', 'noptin' ),
+				'tooltip'       	=> __( 'Works best if the video dimensions are of the same ratio as the form', 'noptin' ),
             ),
 
         );
@@ -586,7 +586,7 @@ class Noptin_Form_Editor {
 			'singleLine' => array(
                 'type'      => 'checkbox',
                 'el'        => 'input',
-                'label'     => 'Show all fields in a single line',
+                'label'     => __( 'Show all fields in a single line', 'noptin' ),
             ),
 
         );
@@ -602,18 +602,18 @@ class Noptin_Form_Editor {
             'image'         => array(
                 'type'      => 'image',
                 'el'        => 'input',
-                'label'     => 'Image URL',
+                'label'     => __( 'Image URL', 'noptin'),
             ),
 
             'imagePos'      => array(
                 'el'        => 'radio_button',
                 'options'       => array(
-                    'top'       => 'Top',
-                    'left'      => 'Left',
-                    'right'     => 'Right',
-                    'bottom'    => 'Bottom'
+                    'top'       => __( 'Top', 'noptin' ),
+                    'left'      => __( 'Left', 'noptin' ),
+                    'right'     => __( 'Right', 'noptin' ),
+                    'bottom'    => __( 'Bottom', 'noptin' )
                 ),
-                'label'     => 'Image Position',
+                'label'     => __( 'Image Position', 'noptin' ),
                 'restrict'  => 'image',
             ),
 
@@ -628,30 +628,30 @@ class Noptin_Form_Editor {
             'noptinButtonLabel'     => array(
                 'type'              => 'text',
                 'el'                => 'input',
-                'label'             => 'Button Label',
+                'label'             => __( 'Button Label', 'noptin' ),
             ),
 
             'buttonPosition'=> array(
                 'el'        => 'radio_button',
                 'options'       => array(
-                    'block'     => 'Block',
-                    'left'      => 'Left',
-                    'right'     => 'Right'
+                    'block'     => __( 'Block', 'noptin' ),
+                    'left'      => __( 'Left', 'noptin' ),
+                    'right'     => __( 'Right', 'noptin' )
                 ),
-                'label'     => 'Button Position',
+                'label'     => __( 'Button Position', 'noptin' ),
                 'restrict'  => '!singleLine',
             ),
 
             'noptinButtonBg'        => array(
                 'type'              => 'color',
                 'el'                => 'input',
-                'label'             => 'Button Background',
+                'label'             => __( 'Button Background', 'noptin' ),
             ),
 
             'noptinButtonColor'     => array(
                 'type'              => 'color',
                 'el'                => 'input',
-                'label'             => 'Button Color',
+                'label'             => __( 'Button Color', 'noptin' ),
             ),
         );
     }
@@ -665,19 +665,19 @@ class Noptin_Form_Editor {
             'hideTitle'             => array(
                 'type'              => 'checkbox',
                 'el'                => 'input',
-                'label'             => 'Hide title',
+                'label'             => __( 'Hide title', 'noptin' ),
             ),
 
             'title'                 => array(
                 'el'                => 'textarea',
-                'label'             => 'Title',
+                'label'             => __( 'Title', 'noptin' ),
                 'restrict'          => '!hideTitle'
             ),
 
             'titleColor'            => array(
                 'type'              => 'color',
                 'el'                => 'input',
-                'label'             => 'Title Color',
+                'label'             => __( 'Title Color', 'noptin' ),
                 'restrict'          => '!hideTitle'
             ),
         );
@@ -692,18 +692,18 @@ class Noptin_Form_Editor {
             'hideDescription'           => array(
                 'type'                  => 'checkbox',
                 'el'                    => 'input',
-                'label'                 => 'Hide description',
+                'label'                 => __( 'Hide description', 'noptin' ),
             ),
 
             'description'               => array(
                 'el'                    => 'textarea',
-                'label'                 => 'Description',
+                'label'                 => __( 'Description', 'noptin' ),
                 'restrict'              => '!hideDescription'
             ),
             'descriptionColor'          => array(
                 'type'                  => 'color',
                 'el'                    => 'input',
-                'label'                 => 'Description Color',
+                'label'                 => __( 'Description Color', 'noptin' ),
                 'restrict'              => '!hideDescription'
             ),
 
@@ -719,7 +719,7 @@ class Noptin_Form_Editor {
             'hideNote'                    => array(
                 'type'                    => 'checkbox',
                 'el'                      => 'input',
-                'label'                   => 'Hide note',
+                'label'                   => __( 'Hide note', 'noptin' ),
             ),
 
             /*'hideOnNoteClick'             => array(
@@ -731,13 +731,13 @@ class Noptin_Form_Editor {
 
             'note'                        => array(
                 'el'                      => 'textarea',
-                'label'                   => 'Note',
+                'label'                   => __( 'Note', 'noptin' ),
                 'restrict'                => '!hideNote'
             ),
             'noteColor'                   => array(
                 'type'                    => 'color',
                 'el'                      => 'input',
-                'label'                   => 'Note Color',
+                'label'                   => __( 'Note Color', 'noptin' ),
                 'restrict'                => '!hideNote'
             ),
 
@@ -752,7 +752,7 @@ class Noptin_Form_Editor {
 
             'CSS'          => array(
 				'el'       => 'editor',
-				'tooltip'  => "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page",
+				'tooltip'  => __( "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page", 'noptin' ),
                 'label'    => 'Enter Your Custom CSS <a href="https://noptin.com/guide/custom-css/" target="_blank">Read this first</a>',
             ),
 

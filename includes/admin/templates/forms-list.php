@@ -46,6 +46,11 @@ $stats = noptin_get_optin_stats();
                         $duplicate      = esc_url( admin_url( 'admin.php?page=noptin-forms&action=duplicate&duplicate=' ) . $form->ID );
 						$subscribers	= 0;
 
+						$duplicate_text = __( 'Duplicate', 'noptin' );
+						$edit_text      = __( 'Edit', 'noptin' );
+						$delete_text    = __( 'Delete', 'noptin' );
+						$delete_prompt  = esc_attr__( 'This will permanently delete the form. Are you sure?', 'noptin' );
+
 						if(! empty( $stats[$form->ID] ) ) {
 							$subscribers	= absint( $stats[$form->ID] );
 						}
@@ -55,9 +60,9 @@ $stats = noptin_get_optin_stats();
                             $url,
                             esc_html( $form->post_title ),
                             esc_html( get_post_meta( $form->ID, '_noptin_optin_type', true ) ),
-                            "<a onClick=\"return confirm('This will permanently delete the form. Are you sure?')\" href='$delete' class='noptin-delete'>Delete</a>",
-                            "<a href='$duplicate'>Duplicate</a>",
-                            "<a href='$url'>Edit</a>",
+                            "<a onClick=\"return confirm('$delete_prompt')\" href='$delete' class='noptin-delete'>$delete_text</a>",
+                            "<a href='$duplicate'>$duplicate_text</a>",
+                            "<a href='$url'>$edit_text</a>",
                             $status,
 							$status,
 							$subscribers,

@@ -1,38 +1,38 @@
 <div class="noptin-welcome">
 	<div class="noptin-main-header">
-		<h1>Noptin v1.0.9</h1>
-		<a href="https://github.com/hizzle-co/noptin/issues/new/choose" target="_blank">Report a bug or request a feature</a>
+		<h1>Noptin v1.1.0</h1>
+		<a href="https://github.com/hizzle-co/noptin/issues/new/choose" target="_blank"><?php _e( 'Report a bug or request a feature', 'noptin' ); ?></a>
 	</div>
 
 	<div class="noptin-header">
-		<h2>Subscribers</h2>
+		<h2><?php _e( 'Subscribers', 'noptin' ); ?></h2>
 		<hr/>
-		<span title="These are subscribers you gained using Noptin" class="noptin-tip dashicons dashicons-info"></span>
+		<span title="<?php esc_attr_e( 'These are subscribers you gained using Noptin', 'noptin' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 	</div>
 
 	<div class="noptin-cards-container">
 		<ul class="noptin-cards-list">
 				<li class="noptin-card">
-					<span class="noptin-card-label">Total</span>
+					<span class="noptin-card-label"><?php _e( 'Total', 'noptin' ); ?></span>
 					<span class="noptin-card-value"><?php echo $subscribers_total; ?></span>
 				</li>
 				<li class="noptin-card">
-					<span class="noptin-card-label">Today</span>
+					<span class="noptin-card-label"><?php _e( 'Today', 'noptin' ); ?></span>
 					<span class="noptin-card-value"><?php echo $subscribers_today_total; ?></span>
 				</li>
 				<li class="noptin-card">
-					<span class="noptin-card-label">Growth</span>
-					<span class="noptin-card-value"><?php echo $subscribers_growth_rate; ?> <span class="noptin-small">per day</span></span>
+					<span class="noptin-card-label"><?php _e( 'Growth', 'noptin' ); ?></span>
+					<span class="noptin-card-value"><?php echo $subscribers_growth_rate; ?> <span class="noptin-small"><?php _e( 'per day', 'noptin' ); ?></span></span>
 				</li>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo $subscribers_url; ?>">View all subscribers</a> | <a href="https://noptin.com/product/mailchimp/" target="_blank">Connect your Mailchimp Account</a></div>
+		<div class="noptin-card-footer-links"><a href="<?php echo $subscribers_url; ?>"><?php _e( 'View all subscribers', 'noptin' ); ?></a> | <a href="https://noptin.com/product/mailchimp/" target="_blank"><?php _e( 'Connect your Mailchimp Account', 'noptin' ); ?></a></div>
 	</div>
 
 
 	<div class="noptin-header">
-		<h2>Active Opt-in Forms</h2>
+		<h2><?php _e( 'Active Opt-in Forms', 'noptin' ); ?></h2>
 		<hr/>
-		<span title="These are the forms that are showing on the front-end" class="noptin-tip dashicons dashicons-info"></span>
+		<span title="<?php esc_attr_e( 'These are the forms that are showing on the front-end', 'noptin' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 	</div>
 
 	<div class="noptin-cards-container">

@@ -88,7 +88,13 @@ class Noptin_New_Post_Notify extends Noptin_Async_Request {
 		$email = str_ireplace( "[[cta_text]]", __( 'Continue Reading', 'noptin'), $email);
 
 		//Content
-		$content = "<p>Hello [[first_name]],</p><p>I just published a new post on [[blog_name]].</p><p>[[excerpt]]</p>";
+		$content = sprintf(
+			__( "%sHello %s,%s I just published a new post on %s", 'noptin' ),
+			'<p>',
+			'[[first_name]]',
+			'</p><p>',
+			' [[blog_name]].</p><p>[[excerpt]]</p>'
+		);
 
 		$_content = get_noptin_option('new_post_content');
 		if(! $_content ) {
