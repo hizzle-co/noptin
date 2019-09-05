@@ -1,4 +1,4 @@
-=== Noptin - Newsletter Subscription Forms, Widgets And Email opt-in popup ===
+=== Newsletter Subscription Forms, Optin Widgets And Email Subscription Popups - Noptin ===
 Contributors: picocodes
 Tags: email newsletter form, email opt-in, email popup, newsletter widget, email opt-in block
 Requires at least: 4.7

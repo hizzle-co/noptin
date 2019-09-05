@@ -222,6 +222,7 @@
 	left: -20px;
 	padding-left: 20px;
 	min-height: 100vh;
+	height: 100%;
 	background: #fff;
 	z-index: 100;
 }
@@ -352,12 +353,22 @@
 	display: flex;
 	align-items: center;
 
+	@media only screen and (max-width: 604px) {
+		margin-top: 60px;
+	}
+
 	.noptin-popup-editor-header-button {
 		margin: 0 12px 0 3px;
 		padding: 0 12px 2px;
 		height: 33px;
 		line-height: 32px;
 		font-size: 13px;
+
+		@media only screen and (max-width: 604px) {
+			display: block;
+    		margin: auto;
+    		margin-bottom: 10px;
+		}
 	}
 
 	.noptin-popup-editor-title {
@@ -365,6 +376,11 @@
 		font-size: 24px;
 		display: flex;
 		align-items: center;
+
+		@media only screen and (max-width: 604px) {
+			flex-direction: column-reverse;
+			width: 90%;
+		}
 
 		.noptin-popup-editor-main-preview-name-textarea {
 			overflow: hidden;
@@ -400,16 +416,26 @@
 .noptin-popup-editor-header,
 .noptin-popup-editor-body {
 	display: flex;
+
+	@media only screen and (max-width: 604px) {
+		flex-direction: column-reverse;
+	}
 }
 
 .noptin-popup-editor-main {
-	flex-grow: 7;
-	border-right: 1px solid #e2e4e7;
-	display: flex;
-	justify-content: center;
-	min-height: calc(100vh - 200px);
-	padding: 40px;
+	overflow: auto;
+	margin-bottom: 16px;
+    margin-top: 16px;
 
+	@media only screen and (min-width: 605px) {
+		flex-grow: 7;
+		border-right: 1px solid #e2e4e7;
+		max-width: 70%;
+		display: flex;
+		justify-content: center;
+		min-height: calc(100vh - 200px);
+		padding: 40px;
+	}
 
 }
 
@@ -419,6 +445,10 @@
 	height: 90vh;
 	overflow: auto;
 	color: #555d66;
+
+	@media only screen and (max-width: 604px) {
+		width: 100%;
+	}
 }
 
 .noptin-popup-editor-sidebar-header {

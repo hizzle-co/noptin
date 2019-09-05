@@ -133,12 +133,13 @@ $noptin_color: #ff6f00;
 	display: flex;
 	background-color: $noptin_color;
 	transition: all 0.5s;
-	max-width: 100%;
+	max-width: 90%;
 	width: 520px;
 	background-position: 50%;
 	background-size: cover;
 	position: relative;
 	box-sizing: border-box;
+	margin: auto;
 
 
 	/*The main opt in form*/
@@ -319,19 +320,21 @@ $noptin_color: #ff6f00;
 		}
 
 		&.noptin-form-single-line {
-			.noptin-form-fields {
-				display: flex;
+			@media only screen and (min-width: 520px) {
+				.noptin-form-fields {
+					display: flex;
 
-				.noptin-form-submit {
-					padding: 11px 32px;
-				}
+					.noptin-form-submit {
+						padding: 11px 32px;
+					}
 
-				.noptin-optin-field-wrapper {
-					margin-right: 4px;
-				}
+					.noptin-optin-field-wrapper {
+						margin-right: 4px;
+					}
 
-				.noptin-form-field {
-					border-radius: 0;
+					.noptin-form-field {
+						border-radius: 0;
+					}
 				}
 			}
 		}
