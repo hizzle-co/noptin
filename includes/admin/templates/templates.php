@@ -64,7 +64,7 @@
         ),
 
     'IEiH1565701672' => array(
-        'title' => __( 'Default', 'noptin' ),
+        'title' => __( 'Classic', 'noptin' ),
         'data' => array(
             'hideCloseButton' => false,
             'closeButtonPos' => 'along',

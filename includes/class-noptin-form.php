@@ -149,11 +149,11 @@ class Noptin_Form {
             'optinType'                     => 'popup',
 
             //Opt in options
-            'formRadius'                    => '10px',
+            'formRadius'                    => '0px',
             'hideCloseButton'               => false,
             'closeButtonPos'                => 'along',
 
-			'singleLine'                    => true,
+			'singleLine'                    => false,
 			'fields'						=> array(
 				array(
 					'type'   => array(
@@ -175,10 +175,10 @@ class Noptin_Form {
 			//Form Design
 			'noptinFormBgImg'				=> '',
 			'noptinFormBgVideo'				=> '',
-            'noptinFormBg'                  => '#fafafa',
-            'noptinFormBorderColor'         => '#009688',
+            'noptinFormBg'                  => '#eeeeee',
+            'noptinFormBorderColor'         => '#eeeeee',
             'noptinFormBorderRound'         => true,
-            'formWidth'                     => '520px',
+            'formWidth'                     => '620px',
 			'formHeight'                    => '280px',
 
 			//Overlay
@@ -187,25 +187,25 @@ class Noptin_Form {
             'noptinOverlayBg'               => 'rgba(96, 125, 139, 0.6)',
 
             //image Design
-            'image'                         => $noptin->plugin_url . 'includes/assets/images/email-icon.png',
+            'image'                         => '',
 			'imagePos'                      => 'right',
 			'imageMain'						=> '',
 			'imageMainPos'					=> '',
 
             //Button designs
-            'noptinButtonBg'                => '#009688',
+            'noptinButtonBg'                => '#313131',
             'noptinButtonColor'             => '#fefefe',
             'noptinButtonLabel'             => __( 'Subscribe Now', 'noptin' ),
 
             //Title design
             'hideTitle'                     => false,
-            'title'                         => __( 'Subscribe To Our Newsletter', 'noptin' ),
-            'titleColor'                    => '#191919',
+            'title'                         => __( 'JOIN OUR NEWSLETTER', 'noptin' ),
+            'titleColor'                    => '#313131',
 
             //Description design
             'hideDescription'               => false,
-            'description'                   => __( 'Enter your email to receive a weekly round-up of our best posts. <a href="https://noptin.com/guide">Learn more!</a>', 'noptin' ),
-            'descriptionColor'              => '#666666',
+            'description'                   => __( 'Get notified every time we publish a new blog post. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>', 'noptin' ),
+            'descriptionColor'              => '#32373c',
 
             //Note design
             'hideNote'                      => true,

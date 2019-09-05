@@ -79,13 +79,13 @@
 			}
 
 			if (instance.optinType == 'popup') {
-				instance.formWidth = '520px'
+				instance.formWidth = '620px'
 				instance.formHeight = '280px'
 				return;
 			}
 
 			instance.formHeight = '250px'
-			instance.formWidth = '520px'
+			instance.formWidth = '560px'
 
 		},
 
