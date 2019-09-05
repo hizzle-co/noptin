@@ -1,15 +1,8 @@
 (function (blocks, editor, i18n, element, components, _) {
 	var el = element.createElement;
 	var RichText = editor.RichText;
-	var MediaUpload = editor.MediaUpload;
 	var InspectorControls = editor.InspectorControls;
 	var ColorPalette = editor.ColorPalette;
-	var FontSizePicker = editor.FontSizePicker;
-	var AlignmentToolbar = editor.AlignmentToolbar;
-	var MediaUpload = editor.MediaUpload;
-
-	var CButton = components.Button;
-	var CColor = components.ColorPicker;
 	var TextControl = components.TextControl;
 
 	blocks.registerBlockType('noptin/email-optin', {
@@ -35,11 +28,11 @@
 			},
 			bg_color: {
 				type: 'string',
-				default: '#0071a1',
+				default: '#eeeeee',
 			},
 			title_color: {
 				type: 'string',
-				default: '#0085ba',
+				default: '#313131',
 			},
 			text_color: {
 				type: 'string',
@@ -47,7 +40,7 @@
 			},
 			button_color: {
 				type: 'string',
-				default: 'rgb(255, 105, 0)',
+				default: '#313131',
 			},
 			button_text_color: {
 				type: 'string',
@@ -59,10 +52,9 @@
 
 			return [
 				el(InspectorControls, { key: 'controls' },
-					el(
-						'h2', null,
-						i18n.__('Button Text', 'noptin')
-					),
+
+				el(
+					components.PanelBody, { 'title': i18n.__('Button Text', 'noptin') },
 					el(TextControl, {
 						value: attributes.button,
 						type: 'text',
@@ -70,79 +62,111 @@
 							props.setAttributes({ button: value });
 						}
 					}),
+				),
+
+					//Redirect url
 					el(
-						'h2', null,
-						i18n.__('Redirect Url', 'noptin')
-					),
-					el(
-						'p', null,
-						i18n.__('Optional. Where should we redirect users after they have successfully signed up?', 'noptin')
-					),
-					el(TextControl, {
-						value: attributes.redirect,
-						placeholder: 'http://example.com/download/gift.pdf',
-						type: 'url',
-						onChange: function (value) {
-							props.setAttributes({ redirect: value });
-						}
-					}),
-					el(
-						'h2', null,
-						i18n.__('Background Color', 'noptin')
-					),
-					el(
-						ColorPalette, {
+						components.PanelBody, { 'title': i18n.__('Redirect Url', 'noptin'), initialOpen: false },
+
+						el(
+							'h2', null,
+							i18n.__('Redirect Url', 'noptin')
+						),
+
+						el(
+							'p', null,
+							i18n.__('Optional. Where should we redirect users after they have successfully signed up?', 'noptin')
+						),
+
+						el(TextControl, {
+							value: attributes.redirect,
+							placeholder: 'http://example.com/download/gift.pdf',
+							type: 'url',
 							onChange: function (value) {
-								props.setAttributes({ bg_color: value });
+								props.setAttributes({ redirect: value });
 							}
-						}
+						}),
+
 					),
 
+
+					//Background color
 					el(
-						'h2', null,
-						i18n.__('Title Color', 'noptin')
-					),
-					el(
-						ColorPalette, {
-							onChange: function (value) {
-								props.setAttributes({ title_color: value });
-							}
-						}
-					),
-					el(
-						'h2', null,
-						i18n.__('Text Color', 'noptin')
-					),
-					el(
-						ColorPalette, {
-							onChange: function (value) {
-								props.setAttributes({ text_color: value });
-							}
-						}
+						components.PanelBody, { 'title': i18n.__('Background Color', 'noptin'), initialOpen: false },
+						el(
+							components.PanelRow, null,
+							el(
+								ColorPalette, {
+									onChange: function (value) {
+										props.setAttributes({ bg_color: value });
+									}
+								}
+							)
+						)
 					),
 
+					//Title color
 					el(
-						'h2', null,
-						i18n.__('Button Color', 'noptin')
+						components.PanelBody, { 'title': i18n.__('Title Color', 'noptin'), initialOpen: false },
+						el(
+							components.PanelRow, null,
+							el(
+								ColorPalette, {
+									onChange: function (value) {
+										props.setAttributes({ title_color: value });
+									}
+								}
+							)
+						)
 					),
+
+					//Text color
 					el(
-						ColorPalette, {
-							onChange: function (value) {
-								props.setAttributes({ button_color: value });
+						components.PanelBody, { 'title': i18n.__('Description Color', 'noptin'), initialOpen: false },
+						el(
+							components.PanelRow, null,
+							el(
+								ColorPalette, {
+									onChange: function (value) {
+										props.setAttributes({ text_color: value });
+									}
+								}
+							)
+						)
+					),
+
+					//Button
+					el(
+						components.PanelBody, { 'title': i18n.__('Button Color', 'noptin'), initialOpen: false },
+
+						//Color
+						el(
+							'p', null,
+							i18n.__('Text Color', 'noptin')
+						),
+
+						el(
+							ColorPalette, {
+								onChange: function (value) {
+									props.setAttributes({ button_text_color: value });
+								}
 							}
-						}
-					),
-					el(
-						'h2', null,
-						i18n.__('Button Text Color', 'noptin')
-					),
-					el(
-						ColorPalette, {
-							onChange: function (value) {
-								props.setAttributes({ button_text_color: value });
+						),
+
+						//Background color
+						el(
+							'p', null,
+							i18n.__('Background Color', 'noptin')
+						),
+						el(
+							ColorPalette, {
+								onChange: function (value) {
+									props.setAttributes({ button_color: value });
+								}
 							}
-						}
+						)
 					),
+
 				),
 				el('div', {
 					className: props.className,
@@ -186,28 +210,13 @@
 							className: 'noptin_form_input_email',
 							placeholder: 'Email Address',
 							required: true,
-							style: {
-								backgroundColor: 'rgba(255, 255, 255, 0.8)',
-								width: '100%',
-								display: 'block',
-								textAlign: 'left',
-								border: 'none',
-								color: '#111'
-							},
 						}),
 						el('input', {
 							value: attributes.button,
 							type: 'submit',
 							style: {
 								backgroundColor: attributes.button_color,
-								padding: '5px',
-								width: '100%',
-								display: 'block',
-								border: 'none',
 								color: attributes.button_text_color,
-								textAlign: 'center',
-								fontWeight: '700',
-								marginTop: '1em',
 							},
 							className: 'noptin_form_submit'
 						}),
@@ -271,27 +280,13 @@
 							className: 'noptin_form_input_email',
 							placeholder: 'Email Address',
 							required: true,
-							style: {
-								backgroundColor: 'rgba(254, 254, 254, 0.5)',
-								width: '100%',
-								display: 'block',
-								color: '#111',
-								border: 'none',
-								textAlign: 'left',
-							},
 						}),
 						el('input', {
 							value: attributes.button,
 							type: 'submit',
 							style: {
 								backgroundColor: attributes.button_color,
-								width: '100%',
-								display: 'block',
-								border: 'none',
 								color: attributes.button_text_color,
-								textAlign: 'center',
-								fontWeight: '700',
-								marginTop: '1em',
 							},
 							className: 'noptin_form_submit'
 						}),
