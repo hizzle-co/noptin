@@ -1108,20 +1108,25 @@ input:focus+.noptin-switch-slider span {
 
 	.noptin-copy-button {
 		transition: all 0.2s ease;
-		background-color: #636363;
-		color: #fff;
-		text-transform: uppercase;
-		font-size: 10px;
+		background-color: transparent;
+		color: #43A047;
+		text-transform: capitalize;
 		font-weight: 600;
 		border: none;
 		outline: none;
 		margin-left: 10px;
+		display: none;
 	}
 
 	.noptin-copy-button.copied {
-		animation: noptin-jello-horizontal 0.9s infinite both;
-		background-color: #E93937;
+		display: inline-block;
+		animation: noptin-vibrate 0.9s infinite both;
 	}
+}
+
+.noptin-sortable-ghost {
+	background-color: #f3f3f3;
+    color: #3c3b3b;
 }
 
  @keyframes noptin-jello-horizontal {

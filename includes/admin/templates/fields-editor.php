@@ -1,7 +1,7 @@
 <div class="noptin-field-editor">
-  <button type="button" class="button button-secondary" @click="addField"><?php __( 'Add Field', 'noptin' ); ?></button>
+  <button type="button" class="button button-secondary" @click="addField"><?php _e( 'Add Field', 'noptin' ); ?></button>
 
-  <ul v-noptin-dragula="fields">
+  <draggable :list="fields" tag="ul" ghost-class="noptin-sortable-ghost">
     <li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key">
 		<div class="noptin-field-editor-header">
 			<span class="noptin-field-editor-title">{{ field.type.label }}</span>
@@ -30,11 +30,11 @@
 
 			?>
 
-			<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php __( 'Delete Field', 'noptin' ); ?></a>
+			<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php _e( 'Delete Field', 'noptin' ); ?></a>
 
 		</div>
 
-    </li>
-  </ul>
+	</li>
+	</draggable>
 
 </div>

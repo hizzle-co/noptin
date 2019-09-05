@@ -20,9 +20,12 @@
 	var swatches = require('vue-swatches');
 	//var VueQuillEditor = require('vue-quill-editor');
 	var Popover = require('vue-popperjs');
-	var dragula = require('dragula');
 	var noptinFind = require('lodash.find');
 	//var noptinMediumEditor = require('medium-editor');
+	var draggable = require('vuedraggable');
+
+	//Drag drop
+	Vue.component('draggable', draggable);
 
 	//Color swatches
 	Vue.component('noptin-swatch', swatches.default);
@@ -128,51 +131,6 @@
 
 		},
 	}
-
-	//Register dragula directive
-	Vue.directive('noptin-dragula', {
-		inserted: function (container, binding) {
-
-			var list = binding.value
-			var self = this;
-			var dragIndex;
-			var dragElm;
-			this.drake = dragula([container], {
-				revertOnSpill: true
-			});
-
-			this.drake.on('drag', function (el, source) {
-				dragElm = el;
-				dragIndex = domIndexOf(el, source);
-			});
-
-			this.drake.on('drop', function (dropElm, target, source) {
-				if (!target) return;
-				var dropIndex = domIndexOf(dropElm, target);
-				if (target === container) {
-					list.splice(dropIndex, 0, list.splice(dragIndex, 1)[0]);
-				}
-				refreshModel();
-
-			})
-
-			this.drake.on('cancel', refreshModel)
-			this.drake.on('remove', refreshModel)
-
-			function refreshModel() {
-				// trigger rerendering of the v-for items to keep the dom elements under vue's control
-				//self.vm[self.expression] = JSON.parse(JSON.stringify(self.vm[self.expression]))
-			}
-
-			function domIndexOf(child, parent) {
-				return Array.prototype.indexOf.call(parent.children, child);
-			}
-
-		},
-		unbind: function () {
-			this.drake.destroy()
-		}
-	})
 
 
 	Vue.component('field-editor', {
@@ -463,7 +421,7 @@
 						.appendTo('body')
 						.focus()
 						.select()
-				var el = $(e.target)
+				var el = $(e.target).parent().find('.noptin-copy-button')
 
 				try {
 					var successful = document.execCommand('copy');
@@ -475,7 +433,7 @@
 				}
 
 				setTimeout(function () {
-					el.text('copy').removeClass('copied')
+					el.text('Copied').removeClass('copied')
 				}, 400)
 
 				textarea.remove()

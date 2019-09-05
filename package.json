@@ -29,14 +29,14 @@
   },
   "homepage": "https://github.com/hizzle-co/noptin#readme",
   "dependencies": {
-    "dragula": "^3.7.2",
     "install": "^0.13.0",
     "lodash.find": "^4.6.0",
     "lodash.throttle": "^4.1.1",
     "medium-editor": "^5.23.3",
     "npm": "^6.10.2",
     "postcss-import": "^12.0.1",
-    "vue-popperjs": "^2.0.4"
+    "vue-popperjs": "^2.0.4",
+    "vuedraggable": "^2.23.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.6.1",
