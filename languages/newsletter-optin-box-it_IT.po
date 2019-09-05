@@ -1,0 +1,1316 @@
+# Copyright (C) 2019 Picocodes
+# This file is distributed under the GPL3+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Noptin - Simple Newsletter Subscription Forms 1.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
+"POT-Creation-Date: 2019-09-03 19:45:26+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
+"X-Generator: grunt-wp-i18n 1.0.3\n"
+
+# noptin
+#: includes/admin/admin.php:263
+msgid "Newsletter opt-in forms"
+msgstr "Moduli di iscrizione alla newsletter"
+
+# noptin
+#: includes/admin/admin.php:264
+msgid "Newsletter Forms"
+msgstr "Moduli di newsletter"
+
+# noptin
+#: includes/admin/admin.php:273 includes/admin/admin.php:274
+#: includes/admin/templates/forms-list.php:23
+msgid "Add New Form"
+msgstr "Aggiungi nuovo modulo"
+
+# noptin
+#: includes/admin/admin.php:284 includes/admin/admin.php:285
+#: includes/admin/templates/forms-list.php:36 includes/admin/welcome.php:8
+msgid "Subscribers"
+msgstr "Iscritti"
+
+# noptin
+#: includes/admin/admin.php:294 includes/admin/admin.php:295
+msgid "Settings"
+msgstr "impostazioni"
+
+# noptin
+#: includes/admin/admin.php:306 includes/admin/admin.php:307
+msgid "Documentation"
+msgstr "Documentazione"
+
+# noptin
+#: includes/admin/admin.php:315 includes/admin/admin.php:316
+msgid "Noptin Welcome"
+msgstr "Benvenuto"
+
+# noptin
+#: includes/admin/forms-editor-quick.php:240
+#: includes/admin/forms-editor.php:792
+msgid "Editing"
+msgstr "La modifica"
+
+# noptin
+#: includes/admin/forms-editor-quick.php:241
+#: includes/admin/forms-editor.php:793
+msgid "Save"
+msgstr "Salvare"
+
+# noptin
+#: includes/admin/forms-editor-quick.php:242
+#: includes/admin/forms-editor.php:794
+msgid "Saving..."
+msgstr "Salvataggio..."
+
+# noptin
+#: includes/admin/forms-editor-quick.php:243
+#: includes/admin/forms-editor.php:795
+msgid "Save As Template"
+msgstr "Salva come modello"
+
+# noptin
+#: includes/admin/forms-editor-quick.php:244
+#: includes/admin/forms-editor.php:796
+msgid "Saving Template..."
+msgstr "salvando come modello ..."
+
+# noptin
+#: includes/admin/forms-editor-quick.php:245
+#: includes/admin/forms-editor.php:797
+msgid "There was an error saving your form."
+msgstr "Si è verificato un errore durante il salvataggio del modulo."
+
+# noptin
+#: includes/admin/forms-editor-quick.php:246
+#: includes/admin/forms-editor.php:798
+msgid "Your changes have been saved successfuly"
+msgstr "Le tue modifiche sono state salvate correttamente"
+
+# noptin
+#: includes/admin/forms-editor-quick.php:247
+#: includes/admin/forms-editor.php:799
+msgid "There was an error saving your template."
+msgstr "Si è verificato un errore."
+
+# noptin
+#: includes/admin/forms-editor-quick.php:248
+#: includes/admin/forms-editor.php:800
+msgid "Your template has been saved successfuly"
+msgstr "Il tuo modello è stato salvato correttamente"
+
+# noptin
+#: includes/admin/forms-editor-quick.php:249
+#: includes/admin/forms-editor.php:801
+msgid "Preview"
+msgstr "Anteprima"
+
+# noptin
+#: includes/admin/forms-editor.php:73
+msgid "Basic Options"
+msgstr "Opzioni di base"
+
+# noptin
+#: includes/admin/forms-editor.php:81
+msgid "Popup Options"
+msgstr "Opzioni popup"
+
+# noptin
+#: includes/admin/forms-editor.php:90
+msgid "Page Targeting"
+msgstr "Targeting per pagina"
+
+# noptin
+#: includes/admin/forms-editor.php:106
+msgid "Device Targeting"
+msgstr "Targeting per dispositivo"
+
+# noptin
+#: includes/admin/forms-editor.php:124
+msgid "Your website visitors will not see this form unless you check this box"
+msgstr "I visitatori del tuo sito Web non vedranno questo modulo se non selezioni questa casella"
+
+# noptin
+#: includes/admin/forms-editor.php:125
+msgid "Published"
+msgstr "pubblicato"
+
+# noptin
+#: includes/admin/forms-editor.php:132
+msgid "This form will be..."
+msgstr "Questo modulo sarà ..."
+
+# noptin
+#: includes/admin/forms-editor.php:134
+msgid "Displayed in a popup"
+msgstr "Visualizzato in un popup"
+
+# noptin
+#: includes/admin/forms-editor.php:135
+msgid "Embedded in a post"
+msgstr "Incorporato in un post"
+
+# noptin
+#: includes/admin/forms-editor.php:136
+msgid "Added to a widget area"
+msgstr "Aggiunto come widget"
+
+# noptin
+#: includes/admin/forms-editor.php:145
+msgid "Inject into post content"
+msgstr "Iniettare nel contenuto del post"
+
+# noptin
+#: includes/admin/forms-editor.php:146
+msgid ""
+"Noptin can automatically embed this form into your post content. You can "
+"also find the form's shortcode below the form preview"
+msgstr ""
+"Noptin può inserire automaticamente questo modulo nei tuoi contenuti "
+"post. È inoltre possibile trovare lo shortcode del modulo sotto l'anteprima "
+"del modulo"
+
+# noptin
+#: includes/admin/forms-editor.php:148
+msgid "Don't inject"
+msgstr "Non iniettare"
+
+# noptin
+#: includes/admin/forms-editor.php:149
+msgid "Before post content"
+msgstr "Inserisci prima del contenuto"
+
+# noptin
+#: includes/admin/forms-editor.php:150
+msgid "After post content"
+msgstr "Dopo il contenuto post"
+
+# noptin
+#: includes/admin/forms-editor.php:151
+msgid "Before and after post content"
+msgstr "Prima e dopo il post"
+
+# noptin
+#: includes/admin/forms-editor.php:158
+msgid "What should happen after the user subscribes"
+msgstr "Cosa dovrebbe succedere dopo che l'utente si è iscritto"
+
+# noptin
+#: includes/admin/forms-editor.php:160
+msgid "Display a success message"
+msgstr "Visualizza un messaggio di successo"
+
+# noptin
+#: includes/admin/forms-editor.php:161
+msgid "redirect to a different page"
+msgstr "reindirizzare a una pagina diversa"
+
+# noptin
+#: includes/admin/forms-editor.php:169
+msgid "Success message"
+msgstr "Messaggio di successo"
+
+# noptin
+#: includes/admin/forms-editor.php:177
+msgid "Redirect url"
+msgstr "URL di reindirizzamento"
+
+# noptin
+#: includes/admin/forms-editor.php:195
+msgid "Uncheck to display the popup on every page load"
+msgstr "Deseleziona per visualizzare il popup ad ogni caricamento della pagina"
+
+# noptin
+#: includes/admin/forms-editor.php:196
+msgid "Display this popup once per session"
+msgstr "Visualizza questo popup una volta per sessione"
+
+# noptin
+#: includes/admin/forms-editor.php:203
+msgid "Show this popup"
+msgstr "Mostra questo popup"
+
+# noptin
+#: includes/admin/forms-editor.php:205
+msgid "Immediately"
+msgstr "Subito"
+
+# noptin
+#: includes/admin/forms-editor.php:206
+msgid "Before the user leaves"
+msgstr "Prima che l'utente se ne vada"
+
+# noptin
+#: includes/admin/forms-editor.php:207
+msgid "After the user starts scrolling"
+msgstr "Dopo che l'utente inizia a scorrere"
+
+# noptin
+#: includes/admin/forms-editor.php:209
+msgid "After clicking on something"
+msgstr "Dopo aver cliccato su qualcosa"
+
+# noptin
+#: includes/admin/forms-editor.php:210
+msgid "After a time delay"
+msgstr "Dopo un ritardo"
+
+# noptin
+#: includes/admin/forms-editor.php:218
+msgid "CSS selector of the items to watch out for clicks"
+msgstr "Selettore CSS degli elementi a cui fare attenzione per i clic"
+
+# noptin
+#: includes/admin/forms-editor.php:226
+msgid "Time in seconds to delay"
+msgstr "Tempo in secondi per ritardare"
+
+# noptin
+#: includes/admin/forms-editor.php:234
+msgid "Scroll depth in percentage after which the popup will be shown"
+msgstr ""
+"Profondità di scorrimento in percentuale dopo la quale verrà visualizzato "
+"il popup"
+
+# noptin
+#: includes/admin/forms-editor.php:249
+msgid "Display this optin..."
+msgstr "Visualizza questa opzione ..."
+
+# noptin
+#: includes/admin/forms-editor.php:256
+msgid "Everywhere"
+msgstr "Ovunque"
+
+# noptin
+#: includes/admin/forms-editor.php:262
+msgid "Front page"
+msgstr "Prima pagina"
+
+# noptin
+#: includes/admin/forms-editor.php:268
+msgid "Blog page"
+msgstr "Pagina del blog"
+
+# noptin
+#: includes/admin/forms-editor.php:274
+msgid "Search page"
+msgstr "Pagina di ricerca"
+
+# noptin
+#: includes/admin/forms-editor.php:280
+msgid "Archive pages"
+msgstr "Pagine d'archivio"
+
+# noptin
+#: includes/admin/forms-editor.php:292
+msgid "Never show on:"
+msgstr "Non mostrare mai su:"
+
+# noptin
+#: includes/admin/forms-editor.php:296
+msgid ""
+"Use a comma to separate post ids where this form should not be displayed. "
+"All post type ids are supported, not just post ids."
+msgstr ""
+"Utilizzare una virgola per separare gli ID dei post in cui questo modulo "
+"non deve essere visualizzato. Sono supportati tutti gli ID tipo post, non "
+"solo gli ID post."
+
+# noptin
+#: includes/admin/forms-editor.php:303
+msgid ""
+"If you specify any posts here, all other targeting rule will be ignored, "
+"and this form will only be displayed on posts that you specify here."
+msgstr ""
+"Se specifichi dei post qui, tutte le altre regole di targeting verranno "
+"ignorate e questo modulo verrà visualizzato solo sui post specificati qui."
+
+# noptin
+#: includes/admin/forms-editor.php:319
+msgid "Everyone"
+msgstr "Tutti"
+
+# noptin
+#: includes/admin/forms-editor.php:320
+msgid "Logged in users"
+msgstr "Utenti connessi"
+
+# noptin
+#: includes/admin/forms-editor.php:321
+msgid "Logged out users"
+msgstr "Utenti disconnessi"
+
+# noptin
+#: includes/admin/forms-editor.php:322
+msgid "specific user roles"
+msgstr "ruoli utente specifici"
+
+# noptin
+#: includes/admin/forms-editor.php:324
+msgid "Who can see this form?"
+msgstr "Chi può vedere questo modulo?"
+
+# noptin
+#: includes/admin/forms-editor.php:329
+msgid "Select user roles"
+msgstr "Seleziona i ruoli utente"
+
+# noptin
+#: includes/admin/forms-editor.php:347
+msgid "Hide on Mobile"
+msgstr "Nascondi sul cellulare"
+
+# noptin
+#: includes/admin/forms-editor.php:353
+msgid "Hide on Desktops"
+msgstr "Nascondi sui desktop"
+
+# noptin
+#: includes/admin/forms-editor.php:370
+msgid "Templates"
+msgstr "Modelli"
+
+# noptin
+#: includes/admin/forms-editor.php:378
+msgid "Overlay"
+msgstr "copertura"
+
+# noptin
+#: includes/admin/forms-editor.php:387
+msgid "Form"
+msgstr "Modulo"
+
+# noptin
+#: includes/admin/forms-editor.php:395
+msgid "Fields"
+msgstr "campi"
+
+# noptin
+#: includes/admin/forms-editor.php:403
+msgid "Image"
+msgstr "Immagine"
+
+# noptin
+#: includes/admin/forms-editor.php:411
+msgid "Button"
+msgstr "Pulsante"
+
+# noptin
+#: includes/admin/forms-editor.php:419 includes/admin/forms-editor.php:673
+msgid "Title"
+msgstr "Titolo"
+
+# noptin
+#: includes/admin/forms-editor.php:427 includes/admin/forms-editor.php:700
+msgid "Description"
+msgstr "Descrizione"
+
+# noptin
+#: includes/admin/forms-editor.php:435 includes/admin/forms-editor.php:734
+msgid "Note"
+msgstr "Nota"
+
+# noptin
+#: includes/admin/forms-editor.php:443
+msgid "Custom CSS"
+msgstr "CSS personalizzato"
+
+# noptin
+#: includes/admin/forms-editor.php:466
+msgid "Apply a template"
+msgstr "Applica un modello"
+
+# noptin
+#: includes/admin/forms-editor.php:467
+msgid ""
+"All templates include custom css so remember to check out the Custom CSS "
+"panel after you apply a template"
+msgstr ""
+"Tutti i modelli includono CSS personalizzati, quindi ricorda di controllare "
+"il pannello CSS personalizzato dopo aver applicato un modello"
+
+# noptin
+#: includes/admin/forms-editor.php:473
+msgid "Apply a color theme"
+msgstr "Applica un tema colore"
+
+# noptin
+#: includes/admin/forms-editor.php:488 includes/admin/forms-editor.php:555
+msgid "Background Color"
+msgstr "Colore di sfondo"
+
+# noptin
+#: includes/admin/forms-editor.php:495 includes/admin/forms-editor.php:562
+msgid "Background Image"
+msgstr "Immagine di sfondo"
+
+# noptin
+#: includes/admin/forms-editor.php:511
+msgid "Hide Close Button"
+msgstr "Nascondi pulsante Chiudi"
+
+# noptin
+#: includes/admin/forms-editor.php:517
+msgid "Inside the form"
+msgstr "All'interno del modulo"
+
+# noptin
+#: includes/admin/forms-editor.php:518
+msgid "Outside the form"
+msgstr "Fuori dal modulo"
+
+# noptin
+#: includes/admin/forms-editor.php:519
+msgid "Along the border"
+msgstr "Lungo il confine"
+
+# noptin
+#: includes/admin/forms-editor.php:520
+msgid "Top Right"
+msgstr "In alto a destra"
+
+# noptin
+#: includes/admin/forms-editor.php:522
+msgid "Close Button Position"
+msgstr "Posizione pulsante di chiusura"
+
+# noptin
+#: includes/admin/forms-editor.php:529
+msgid "Border Radius"
+msgstr "Raggio di confine"
+
+# noptin
+#: includes/admin/forms-editor.php:530
+msgid "Set this to 0 if you don't want the form to have rounded corners"
+msgstr ""
+"Impostare questo su 0 se non si desidera che il modulo abbia gli angoli "
+"arrotondati"
+
+# noptin
+#: includes/admin/forms-editor.php:536
+msgid "Preferred Width"
+msgstr "Larghezza preferita"
+
+# noptin
+#: includes/admin/forms-editor.php:537
+msgid "The element will resize to 100% width on smaller devices"
+msgstr "L'elemento ridimensionerà al 100% di larghezza su dispositivi più piccoli"
+
+# noptin
+#: includes/admin/forms-editor.php:543
+msgid "Minimum Height"
+msgstr "Altezza minima"
+
+# noptin
+#: includes/admin/forms-editor.php:549
+msgid "Border Color"
+msgstr "Colore del bordo"
+
+# noptin
+#: includes/admin/forms-editor.php:568
+msgid "Background Video"
+msgstr "Video di sfondo"
+
+# noptin
+#: includes/admin/forms-editor.php:569
+msgid "Enter the full URL to an MP4 video file"
+msgstr "Inserisci l'URL completo per un file video MP4"
+
+# noptin
+#: includes/admin/forms-editor.php:570
+msgid "Works best if the video dimensions are of the same ratio as the form"
+msgstr ""
+"Funziona meglio se le dimensioni del video sono dello stesso rapporto del "
+"modulo"
+
+# noptin
+#: includes/admin/forms-editor.php:589
+msgid "Show all fields in a single line"
+msgstr "Mostra tutti i campi in un'unica riga"
+
+# noptin
+#: includes/admin/forms-editor.php:605
+msgid "Image URL"
+msgstr "URL dell'immagine"
+
+# noptin
+#: includes/admin/forms-editor.php:611
+msgid "Top"
+msgstr "Superiore"
+
+# noptin
+#: includes/admin/forms-editor.php:612 includes/admin/forms-editor.php:638
+msgid "Left"
+msgstr "Sinistra"
+
+# noptin
+#: includes/admin/forms-editor.php:613 includes/admin/forms-editor.php:639
+msgid "Right"
+msgstr "Destra"
+
+# noptin
+#: includes/admin/forms-editor.php:614
+msgid "Bottom"
+msgstr "Parte inferiore"
+
+# noptin
+#: includes/admin/forms-editor.php:616
+msgid "Image Position"
+msgstr "Posizione dell'immagine"
+
+# noptin
+#: includes/admin/forms-editor.php:631
+msgid "Button Label"
+msgstr "Etichetta pulsante"
+
+# noptin
+#: includes/admin/forms-editor.php:637
+msgid "Block"
+msgstr "Bloccare"
+
+# noptin
+#: includes/admin/forms-editor.php:641
+msgid "Button Position"
+msgstr "Posizione pulsante"
+
+# noptin
+#: includes/admin/forms-editor.php:648
+msgid "Button Background"
+msgstr "Colore di sfondo del pulsante"
+
+# noptin
+#: includes/admin/forms-editor.php:654
+msgid "Button Color"
+msgstr "Colore pulsante"
+
+# noptin
+#: includes/admin/forms-editor.php:668
+msgid "Hide title"
+msgstr "Nascondi titolo"
+
+# noptin
+#: includes/admin/forms-editor.php:680
+msgid "Title Color"
+msgstr "Colore del titolo"
+
+# noptin
+#: includes/admin/forms-editor.php:695
+msgid "Hide description"
+msgstr "Nascondi la descrizione"
+
+# noptin
+#: includes/admin/forms-editor.php:706
+msgid "Description Color"
+msgstr "Descrizione Colore"
+
+# noptin
+#: includes/admin/forms-editor.php:722
+msgid "Hide note"
+msgstr "Nascondi nota"
+
+# noptin
+#: includes/admin/forms-editor.php:740
+msgid "Note Color"
+msgstr "Nota Colore"
+
+# noptin
+#: includes/admin/forms-editor.php:755
+msgid ""
+"Prefix all your styles with '.noptin-optin-form-wrapper' or else they will "
+"apply to all opt-in forms on the page"
+msgstr ""
+"Prefisso tutti i tuoi stili con '.noptin-optin-form-wrapper' altrimenti si "
+"applicheranno a tutti i moduli di opt-in nella pagina"
+
+# noptin
+#: includes/admin/ratings.php:67
+msgid ""
+"Congratulations on your first subscriber – that’s awesome!\n"
+"        Your next target is 10. You can do it and we are glad to be "
+"helping.\n"
+"        If you have 5 minutes, could you please do us a BIG favor and give "
+"the plugin a 5-star rating on WordPress? Just to help us spread the word "
+"and boost our motivation."
+msgstr ""
+"Congratulazioni per il tuo primo abbonato - fantastico!\n"
+"        Il tuo prossimo obiettivo è 10. Puoi farlo e siamo lieti di "
+"aiutarti.\n"
+"        Se hai 5 minuti, potresti farci un grande favore e dare al plugin "
+"una valutazione a 5 stelle su WordPress? Solo per aiutarci a spargere la "
+"voce e aumentare la nostra motivazione."
+
+# noptin
+#: includes/admin/ratings.php:92
+msgid "Maybe Later"
+msgstr "Forse più tardi"
+
+# noptin
+#: includes/admin/ratings.php:93
+msgid "Hide this notice forever"
+msgstr "Nascondi questo messaggio per sempre"
+
+# noptin
+#: includes/admin/settings.php:98
+msgid "Your settings have been saved"
+msgstr "Le tue impostazioni sono state salvate"
+
+# noptin
+#: includes/admin/settings.php:99
+msgid "Your settings could not be saved."
+msgstr "Le tue impostazioni non possono essere salvate."
+
+# noptin
+#: includes/admin/settings.php:115
+msgid "New Post Notifications"
+msgstr "Notifiche di nuovi post"
+
+# noptin
+#: includes/admin/settings.php:116
+msgid "Notify your active subscribers every time you publish a new post."
+msgstr "Avvisa i tuoi abbonati attivi ogni volta che pubblichi un nuovo post."
+
+# noptin
+#: includes/admin/settings.php:124
+msgid "Email Subject"
+msgstr "Oggetto dell'email"
+
+# noptin
+#: includes/admin/settings.php:126 includes/admin/settings.php:136
+msgid ""
+"You can use the tags [[title]], [[first_name]], [[last_name]] or any other "
+"field name that you collect."
+msgstr ""
+"Puoi usare i tag [[title]], [[first_name]], [[last_name]] o qualsiasi altro "
+"nome di campo che raccogli."
+
+# noptin
+#: includes/admin/settings.php:134
+msgid "Email Preview Text"
+msgstr "Testo anteprima email"
+
+# noptin
+#: includes/admin/settings.php:135
+#: includes/class-noptin-new-post-notify.php:120
+msgid "We just published a new blog post. Hope you like it."
+msgstr "Abbiamo appena pubblicato un nuovo post sul blog. Spero ti piaccia."
+
+# noptin
+#: includes/admin/settings.php:143
+msgid "Email Content"
+msgstr "Contenuto e-mail"
+
+# noptin
+#: includes/admin/settings.php:145
+msgid ""
+"You can use the tags [[title]], [[excerpt]],[[post_content]], "
+"[[first_name]], [[last_name]] or any other field name that you collect."
+msgstr ""
+"Puoi utilizzare i tag [[title]], [[excerpt]], [[post_content]], "
+"[[first_name]], [[last_name]] o qualsiasi altro nome di campo che raccogli."
+
+# noptin
+#: includes/admin/settings.php:152
+msgid "Subscribe Commentors"
+msgstr "Modulo di commento"
+
+# noptin
+#: includes/admin/settings.php:153
+msgid "Ask commentors to subscribe to the newsletter."
+msgstr "Chiedi ai commentatori di iscriversi alla newsletter."
+
+# noptin
+#: includes/admin/settings.php:161 includes/admin/settings.php:178
+msgid "Checkbox label"
+msgstr "Etichetta della casella di controllo"
+
+# noptin
+#: includes/admin/settings.php:162 includes/admin/settings.php:179
+#: includes/admin/templates/templates.php:101
+#: includes/admin/templates/templates.php:164
+#: includes/admin/templates/templates.php:346
+#: includes/class-noptin-form.php:202
+#: includes/class-noptin-intergrations.php:51
+#: includes/class-noptin-intergrations.php:108
+msgid "Subscribe To Our Newsletter"
+msgstr "Iscriviti alla nostra Newsletter"
+
+# noptin
+#: includes/admin/settings.php:169
+msgid "Subscribe New Users"
+msgstr "Formulario di registrazione"
+
+# noptin
+#: includes/admin/settings.php:170
+msgid "Ask new users to subscribe to the newsletter."
+msgstr "Chiedi ai nuovi utenti di iscriversi alla newsletter."
+
+# noptin
+#: includes/admin/settings.php:186
+msgid "Hide From Subscribers"
+msgstr "Nascondi dagli abbonati"
+
+# noptin
+#: includes/admin/settings.php:187
+msgid "Hide opt-in forms and methods from existing subscribers."
+msgstr "nascondi i moduli newsletter agli abbonati."
+
+# noptin
+#: includes/admin/settings.php:194
+msgid "From Email"
+msgstr "E-mail"
+
+# noptin
+#: includes/admin/settings.php:197
+msgid ""
+"Set this to a valid email address. If emails are not being delivered, leave "
+"this field blank."
+msgstr ""
+"Impostalo su un indirizzo email valido. Se le e-mail non vengono "
+"recapitate, lascia vuoto questo campo."
+
+# noptin
+#: includes/admin/settings.php:203
+msgid "From Name"
+msgstr "Nome"
+
+# noptin
+#: includes/admin/settings.php:212
+msgid "Company"
+msgstr "Azienda"
+
+# noptin
+#: includes/admin/settings.php:221
+msgid "Logo"
+msgstr "Logo"
+
+# noptin
+#: includes/admin/settings.php:222
+msgid ""
+"Appears on top of emails. Leave blank to use your website's logo or the "
+"default image"
+msgstr ""
+"Appare in cima alle e-mail. Lascia vuoto per utilizzare il logo del tuo "
+"sito Web o l'immagine predefinita"
+
+# noptin
+#: includes/admin/settings.php:228
+msgid "Street Address"
+msgstr "Indirizzo"
+
+# noptin
+#: includes/admin/settings.php:230
+msgid "31 North San Juan Ave. "
+msgstr "31 North San Juan Avenue."
+
+# noptin
+#: includes/admin/settings.php:236
+msgid "City"
+msgstr "Città"
+
+# noptin
+#: includes/admin/settings.php:238
+msgid "Santa Clara"
+msgstr "Santa Clara"
+
+# noptin
+#: includes/admin/settings.php:244
+msgid "State"
+msgstr "Stato"
+
+#: includes/admin/settings.php:246
+msgid "San Francisco"
+msgstr ""
+
+#: includes/admin/settings.php:252
+msgid "Country"
+msgstr ""
+
+#: includes/admin/settings.php:254
+msgid "United States"
+msgstr ""
+
+#: includes/admin/subscribers.php:7
+msgid "Noptin"
+msgstr ""
+
+#: includes/admin/subscribers.php:8
+msgid "View and download your email subscribers."
+msgstr ""
+
+#: includes/admin/subscribers.php:9
+msgid ""
+"Connect your Mailchimp Account %s to automatically add new email "
+"subscribers to your Mailchimp list"
+msgstr ""
+
+#: includes/admin/subscribers.php:15
+msgid "Download CSV"
+msgstr ""
+
+#: includes/admin/subscribers.php:23 includes/admin/subscribers.php:48
+#: includes/admin/templates/templates.php:81
+#: includes/admin/templates/templates.php:194
+#: includes/admin/templates/templates.php:264
+#: includes/admin/templates/templates.php:326
+#: includes/admin/templates/templates.php:392
+#: includes/admin/templates/templates.php:472 includes/class-noptin-ajax.php:54
+#: includes/class-noptin-ajax.php:261 includes/class-noptin-form.php:160
+msgid "Email Address"
+msgstr ""
+
+#: includes/admin/subscribers.php:24 includes/admin/subscribers.php:49
+#: includes/admin/templates/templates.php:253
+#: includes/class-noptin-ajax.php:259
+msgid "First Name"
+msgstr ""
+
+#: includes/admin/subscribers.php:25 includes/admin/subscribers.php:50
+msgid "Last Name"
+msgstr ""
+
+#: includes/admin/subscribers.php:26 includes/admin/subscribers.php:51
+#: includes/class-noptin-ajax.php:264
+msgid "Subscribed On"
+msgstr ""
+
+#: includes/admin/templates/fields-editor.php:2
+msgid "Add Field"
+msgstr ""
+
+#: includes/admin/templates/fields-editor.php:33
+msgid "Delete Field"
+msgstr ""
+
+#: includes/admin/templates/forms-empty.php:19
+msgid "No email opt-in forms found. Why not create one?"
+msgstr ""
+
+#: includes/admin/templates/forms-empty.php:20
+msgid "Create New Form"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:27
+msgid "Search Forms"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:34
+msgid "Name"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:35
+msgid "Status"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:37
+msgid "Created"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:43
+msgid "Inactive"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:43
+#: includes/class-noptin-ajax.php:262
+msgid "Active"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:49
+msgid "Duplicate"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:50
+msgid "Edit"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:51
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:52
+msgid "This will permanently delete the form. Are you sure?"
+msgstr ""
+
+#: includes/admin/templates/forms-list.php:59
+msgid "Click To Edit Form "
+msgstr ""
+
+#: includes/admin/templates/optin-form-editor.php:37
+msgid "Shortcode"
+msgstr ""
+
+#: includes/admin/templates/optin-form-editor.php:38
+msgid "Copy"
+msgstr ""
+
+#: includes/admin/templates/templates.php:5
+msgid "Borderless"
+msgstr ""
+
+#: includes/admin/templates/templates.php:19
+msgid "Enter your email address here"
+msgstr ""
+
+#: includes/admin/templates/templates.php:34 includes/admin/widget.php:187
+msgid "SUBSCRIBE NOW"
+msgstr ""
+
+#: includes/admin/templates/templates.php:39
+msgid "Subscribe For Latest Updates"
+msgstr ""
+
+#: includes/admin/templates/templates.php:42
+msgid ""
+"We'll send you the best business news and informed analysis on what matters "
+"the most to you."
+msgstr ""
+
+#: includes/admin/templates/templates.php:46
+msgid "We promise not to spam you. You can unsubscribe at any time."
+msgstr ""
+
+#: includes/admin/templates/templates.php:67
+msgid "Default"
+msgstr ""
+
+#: includes/admin/templates/templates.php:96
+#: includes/admin/templates/templates.php:156
+#: includes/admin/templates/templates.php:279
+#: includes/admin/templates/templates.php:341
+#: includes/class-noptin-form.php:198
+msgid "Subscribe Now"
+msgstr ""
+
+#: includes/admin/templates/templates.php:108
+#: includes/admin/templates/templates.php:168
+#: includes/admin/templates/templates.php:291
+#: includes/admin/templates/templates.php:353
+msgid "We don't spam people"
+msgstr ""
+
+#: includes/admin/templates/templates.php:116
+msgid "Subheading"
+msgstr ""
+
+#: includes/admin/templates/templates.php:130
+msgid "Enter your name here"
+msgstr ""
+
+#: includes/admin/templates/templates.php:141
+msgid "Enter your email address"
+msgstr ""
+
+#: includes/admin/templates/templates.php:161
+msgid "DON'T MISS OUT!"
+msgstr ""
+
+#: includes/admin/templates/templates.php:180
+msgid "Border Top"
+msgstr ""
+
+#: includes/admin/templates/templates.php:214
+msgid "Join Our Newsletter"
+msgstr ""
+
+#: includes/admin/templates/templates.php:217
+msgid "get weekly access to our best tips, tricks and updates."
+msgstr ""
+
+#: includes/admin/templates/templates.php:221
+msgid "No spam. We hate it more than you do."
+msgstr ""
+
+#: includes/admin/templates/templates.php:287
+msgid "Use the custom CSS panel to change the background colors"
+msgstr ""
+
+#: includes/admin/templates/templates.php:312
+msgid "Rounded Fields"
+msgstr ""
+
+#: includes/admin/templates/templates.php:349
+msgid "Enter your email to receive a weekly round-up of our best posts. Learn more!"
+msgstr ""
+
+#: includes/admin/templates/templates.php:407
+msgid "Sign Up"
+msgstr ""
+
+#: includes/admin/templates/templates.php:412
+msgid "Try Applying the Green Color Theme!"
+msgstr ""
+
+#: includes/admin/templates/templates.php:415
+msgid "Click on the design tab to change the appearance of this form."
+msgstr ""
+
+#: includes/admin/templates/templates.php:419
+#: includes/admin/templates/templates.php:499
+msgid "Your privacy is our priority"
+msgstr ""
+
+#: includes/admin/templates/templates.php:459
+msgid "Hearts"
+msgstr ""
+
+#: includes/admin/templates/templates.php:487
+msgid "Yes Please!"
+msgstr ""
+
+#: includes/admin/templates/templates.php:492
+msgid "Get some love!"
+msgstr ""
+
+#: includes/admin/templates/templates.php:495
+msgid "Use the Custom CSS tab to change the background color of this form."
+msgstr ""
+
+#: includes/admin/templates/welcome.php:6
+msgid ""
+"Noptin makes it easy to display add email subscription forms into your "
+"posts, popups and widget areas"
+msgstr ""
+
+#: includes/admin/welcome-screen.php:2
+msgid "Welcome To Noptin"
+msgstr ""
+
+#: includes/admin/welcome-screen.php:3
+msgid ""
+"Noptin is very fast, lightweight and makes it easy to collect email "
+"addresses from your website visitors."
+msgstr ""
+
+#: includes/admin/welcome-screen.php:7
+msgid "Use the %s block to add a newsletter subscription form to your post content."
+msgstr ""
+
+#: includes/admin/welcome-screen.php:12
+msgid ""
+"Use the %s widget to add a newsletter subscription form to your widget "
+"areas."
+msgstr ""
+
+#: includes/admin/welcome-screen.php:19
+msgid "Using the Opt-in Form Editor"
+msgstr ""
+
+#: includes/admin/welcome-screen.php:21
+msgid ""
+"Noptin also comes with an %s that you can use to build a more advanced "
+"email subscription form and embed it in a post, widget or popup lightbox."
+msgstr ""
+
+#: includes/admin/welcome-screen.php:26
+msgid "To use the editor:-"
+msgstr ""
+
+#: includes/admin/welcome-screen.php:27
+msgid "First, click on Noptin on the left navigation menu"
+msgstr ""
+
+#: includes/admin/welcome-screen.php:28
+msgid ""
+"Finally, click on the Add New button to create a form and open it in the "
+"editor"
+msgstr ""
+
+#: includes/admin/welcome.php:4
+msgid "Report a bug or request a feature"
+msgstr ""
+
+#: includes/admin/welcome.php:10
+msgid "These are subscribers you gained using Noptin"
+msgstr ""
+
+#: includes/admin/welcome.php:16
+msgid "Total"
+msgstr ""
+
+#: includes/admin/welcome.php:20
+msgid "Today"
+msgstr ""
+
+#: includes/admin/welcome.php:24
+msgid "Growth"
+msgstr ""
+
+#: includes/admin/welcome.php:25
+msgid "per day"
+msgstr ""
+
+#: includes/admin/welcome.php:28
+msgid "View all subscribers"
+msgstr ""
+
+#: includes/admin/welcome.php:28
+msgid "Connect your Mailchimp Account"
+msgstr ""
+
+#: includes/admin/welcome.php:33
+msgid "Active Opt-in Forms"
+msgstr ""
+
+#: includes/admin/welcome.php:35
+msgid "These are the forms that are showing on the front-end"
+msgstr ""
+
+#: includes/admin/widget.php:54
+msgid "Use this widget to create and add a simple newsletter subscription widget"
+msgstr "Utilizzare questo widget per creare e aggiungere un semplice widget di iscrizione alla newsletter"
+
+#: includes/admin/widget.php:185
+msgid "FREE NEWSLETTER"
+msgstr "NEWSLETTER GRATUITA"
+
+#: includes/admin/widget.php:186
+msgid ""
+"Subscribe to our newsletter today and be the first to know when we publish "
+"a new blog post."
+msgstr ""
+
+#: includes/admin/widget.php:197
+msgid "Title:"
+msgstr ""
+
+#: includes/admin/widget.php:210
+msgid "Description:"
+msgstr ""
+
+#: includes/admin/widget.php:223
+msgid "Redirect:"
+msgstr ""
+
+#: includes/admin/widget.php:238
+msgid "Background Color:"
+msgstr ""
+
+#: includes/admin/widget.php:253
+msgid "Title Color:"
+msgstr ""
+
+#: includes/admin/widget.php:267
+msgid "Text Color:"
+msgstr ""
+
+#: includes/admin/widget.php:280
+msgid "Button Color:"
+msgstr ""
+
+#: includes/admin/widget.php:292
+msgid "Submit Button Text:"
+msgstr ""
+
+#: includes/class-noptin-ajax.php:147
+msgid "Thanks for subscribing to the newsletter"
+msgstr ""
+
+#: includes/class-noptin-ajax.php:239
+msgid "Reload the page and try again."
+msgstr ""
+
+#: includes/class-noptin-ajax.php:260
+msgid "Second Name"
+msgstr ""
+
+#: includes/class-noptin-ajax.php:263
+msgid "Email Confirmed"
+msgstr ""
+
+#: includes/class-noptin-background-process.php:425
+msgid "Every %d Minutes"
+msgstr ""
+
+#: includes/class-noptin-form.php:148 includes/class-noptin-form.php:469
+msgid "This form is incorrectly configured"
+msgstr ""
+
+#: includes/class-noptin-form.php:171
+msgid "Thank you for subscribing to our newsletter"
+msgstr ""
+
+#: includes/class-noptin-form.php:207
+msgid ""
+"Enter your email to receive a weekly round-up of our best posts. <a "
+"href=\"https://noptin.com/guide\">Learn more!</a>"
+msgstr ""
+
+#: includes/class-noptin-form.php:212
+msgid "We do not spam people"
+msgstr ""
+
+#: includes/class-noptin-new-post-notify.php:88
+msgid "Continue Reading"
+msgstr ""
+
+#: includes/class-noptin-new-post-notify.php:92
+msgid "%sHello %s,%s I just published a new post on %s"
+msgstr ""
+
+#: includes/class-noptin-page.php:71
+msgid "Unable to subscribe you at this time."
+msgstr ""
+
+#: includes/class-noptin-page.php:85
+msgid "You have successfully been unsubscribed from this mailing list."
+msgstr ""
+
+#: includes/class-noptin-page.php:87
+msgid "An error occured while trying to unsubscribe you from this mailing list."
+msgstr ""
+
+#: includes/class-noptin-sidebar.php:24
+msgid "Use this widget to add newsletter forms made using the Form Editor"
+msgstr "Utilizzare questo widget per aggiungere moduli newsletter creati utilizzando l'Editor moduli"
+
+#: includes/class-noptin-sidebar.php:124
+msgid "Form:"
+msgstr ""
+
+#: includes/class-noptin-sidebar.php:132
+msgid "Select form"
+msgstr "Seleziona il modulo"
+
+#: includes/functions.php:249
+msgid "Noptin Subsciber Action"
+msgstr ""
+
+#: includes/functions.php:372
+msgid "Please provide a valid email address"
+msgstr "Per favore fornisci un indirizzo email valido"
+
+#. Plugin Name of the plugin/theme
+msgid "Noptin - Simple Newsletter Subscription Forms"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://noptin.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Easily add a newsletter optin box onto post content, widget or popup"
+msgstr "Aggiungi facilmente una casella di iscrizione alla newsletter per pubblicare contenuti, widget o popup"
+
+#. Author of the plugin/theme
+msgid "Picocodes"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/picocodes"
+msgstr ""
