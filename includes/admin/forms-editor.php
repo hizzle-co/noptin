@@ -55,8 +55,9 @@ class Noptin_Form_Editor {
      */
     public function sidebar_fields() {
         $fields = array(
-            'settings' => $this->get_setting_fields(),
-            'design'   => $this->get_design_fields(),
+            'settings' 	   => $this->get_setting_fields(),
+			'design'   	   => $this->get_design_fields(),
+			'integrations' => $this->get_integration_fields(),
         );
         return apply_filters( 'noptin_optin_form_editor_sidebar_section', $fields, $this );
     }
@@ -355,7 +356,30 @@ class Noptin_Form_Editor {
 
         );
 
-    }
+	}
+
+	/**
+     * Returns integration settings fields
+     */
+    private function get_integration_fields() {
+		return array(
+			'nmi' => array(
+				'el'        => 'panel',
+				'title'     => 'Mailchimp',
+				'id'        => 'nmi',
+				'children'  => array(
+					'nmitext'               => array(
+                        'el'                => 'paragraph',
+                        'content'           => sprintf(
+							esc_html__( 'Install the %s to connect your mailchimp account.', 'noptin' ),
+							sprintf( '<a target="_blank" href="https://noptin.com/product/mailchimp/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> MailChimp addon</a>', get_home_url() )
+							),
+                        'style'             => 'color:#232222;'
+                    ),
+				)
+			),
+		);
+	}
 
 
     /**

@@ -28,6 +28,9 @@ if( !defined( 'ABSPATH' ) ) {
 			add_action( 'register_form', array( $this, 'register_form') );
 			add_action( 'user_register', array( $this, 'subscribe_registered_user') );
 
+			//Comment prompts
+			add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
+
 		}
 
 
@@ -145,6 +148,23 @@ if( !defined( 'ABSPATH' ) ) {
 
 		}
 
+	}
+
+	/**
+	 * Redirect to a custom URL after a comment is submitted
+	 * Added query arg used for displaying prompt
+	 *
+	 * @param string $location Redirect URL
+	 * @param object $comment Comment object
+	 * @return string $location New redirect URL
+	 */
+	function comment_post_redirect( $location, $comment ) {
+
+		$location = add_query_arg( array(
+			'noptin_comment_added' => $comment->comment_ID
+		), $location );
+
+		return $location;
 	}
 
 

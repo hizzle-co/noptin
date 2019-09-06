@@ -8,8 +8,7 @@
 		<div class="noptin-form-header" :class="image ? imagePos : 'no-image'">
 			<div class="noptin-form-header-text">
 				<div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-form-heading" v-html="title"></div>
-				<div v-if="!hideDescription" :style="{color:descriptionColor}" class="noptin-form-description"
-					v-html="description"></div>
+				<div v-if="!hideDescription" :style="{color:descriptionColor}" class="noptin-form-description" v-html="description"></div>
 			</div>
 			<div v-if="image" class="noptin-form-header-image">
 				<img :src="image" />

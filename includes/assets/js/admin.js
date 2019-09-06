@@ -85,7 +85,7 @@
 			}
 
 			instance.formHeight = '250px'
-			instance.formWidth = '560px'
+			instance.formWidth = '620px'
 
 		},
 
@@ -312,6 +312,7 @@
 
 
 			},
+
 			previewPopup: function () {
 				this.isPreviewShowing = true
 				var _html = jQuery('.noptin-popup-wrapper').html()
