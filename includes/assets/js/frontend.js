@@ -43,9 +43,13 @@
 
 
 	//Displays a popup and attaches "close" event handlers
-	var displayPopup = function (popup) {
+	var displayPopup = function ( popup, force ) {
 
-		if( displayingPopup || subscribed ) {
+		if( 'undefined' == typeof force ) {
+			force = false
+		}
+
+		if( !force && ( displayingPopup || subscribed ) ) {
 			return;
 		}
 
@@ -176,7 +180,7 @@
 
 			$(el).on('click', function (e) {
 				e.preventDefault()
-				displayPopup(popup)
+				displayPopup(popup, true)
 			})
 
 		}

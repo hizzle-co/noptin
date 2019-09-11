@@ -541,6 +541,11 @@ class Noptin_Form {
 			return false;
 		}
 
+		//Always display click triggered popups
+		if( 'popup' == $this->optinType && 'after_click' == $this->triggerPopup ) {
+			return true;
+		}
+
 		//... or the user wants to hide all forms
 		if( !noptin_should_show_optins() ) {
 			return false;
