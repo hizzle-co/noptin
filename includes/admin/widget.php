@@ -185,10 +185,10 @@ class Noptin_Widget extends WP_Widget {
         $title    = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'FREE NEWSLETTER', 'noptin' );
         $desc     = ! empty( $instance['desc'] ) ? $instance['desc'] : esc_html__( 'Subscribe to our newsletter today and be the first to know when we publish a new blog post.', 'noptin' );
         $submit   = ! empty( $instance['submit'] ) ? $instance['submit'] : esc_html__( 'SUBSCRIBE NOW', 'noptin' );
-        $bg_color = ! empty( $instance['bg_color'] ) ? $instance['bg_color'] : '#2196F3';
-        $color    = ! empty( $instance['color'] ) ? $instance['color'] : '#fff';
-        $h2_col   = ! empty( $instance['h2_col'] ) ? $instance['h2_col'] : '#fff';
-        $btn_col  = ! empty( $instance['btn_col'] ) ? $instance['btn_col'] : '#e51c23';
+        $bg_color = ! empty( $instance['bg_color'] ) ? $instance['bg_color'] : 'transparent';
+        $color    = ! empty( $instance['color'] ) ? $instance['color'] : 'transparent';
+        $h2_col   = ! empty( $instance['h2_col'] ) ? $instance['h2_col'] : 'transparent';
+        $btn_col  = ! empty( $instance['btn_col'] ) ? $instance['btn_col'] : 'transparent';
         $redirect = ! empty( $instance['redirect'] ) ? $instance['redirect'] : '';
 
 ?>
@@ -308,9 +308,9 @@ class Noptin_Widget extends WP_Widget {
             'submit'   => ( ! empty( $new_instance['submit'] ) ) ? strip_tags( $new_instance['submit'] ) : '',
             'desc'     => ( ! empty( $new_instance['desc'] ) ) ? strip_tags( $new_instance['desc'] ) : '',
             'bg_color' => ( ! empty( $new_instance['bg_color'] ) ) ? $new_instance['bg_color'] : 'transparent',
-            'color'    => ( ! empty( $new_instance['color'] ) ) ? $new_instance['color'] : '#313131',
-            'h2_col'   => ( ! empty( $new_instance['h2_col'] ) ) ? $new_instance['h2_col'] : '#313131',
-            'btn_col'  => ( ! empty( $new_instance['btn_col'] ) ) ? $new_instance['btn_col'] : '#ffc107',
+            'color'    => ( ! empty( $new_instance['color'] ) ) ? $new_instance['color'] : 'transparent',
+            'h2_col'   => ( ! empty( $new_instance['h2_col'] ) ) ? $new_instance['h2_col'] : 'transparent',
+            'btn_col'  => ( ! empty( $new_instance['btn_col'] ) ) ? $new_instance['btn_col'] : 'transparent',
             'redirect' => ( ! empty( $new_instance['redirect'] ) ) ? esc_url( $new_instance['redirect'] ) : '',
 
         );

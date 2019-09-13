@@ -317,7 +317,7 @@
             'formRadius' => '20px',
             'formWidth' => '520px',
             'formHeight' => '280px',
-			'noptinFormBg' => '#e91e63',
+			'noptinFormBg' => '#424242',
 			'noptinFormBgImg' => '',
 			'noptinFormBgVideo' => '',
             'fields' => array(
@@ -335,12 +335,12 @@
 			),
 
             'imageMain' => '',
-            'noptinFormBorderColor' => '#E91E63',
+            'noptinFormBorderColor' => '#424242',
             'image' => "https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/email-icon.png",
             'imagePos' => 'left',
             'noptinButtonLabel' => __( 'Subscribe Now', 'noptin' ),
             'buttonPosition' => 'block',
-            'noptinButtonBg' => '#673AB7',
+            'noptinButtonBg' => '#607D8B',
             'noptinButtonColor' => '#fafafa',
             'hideTitle' => false,
             'title' => __( 'Subscribe To Our Newsletter', 'noptin' ),
@@ -383,7 +383,7 @@
             'formRadius' => '0px',
             'formWidth' => '520px',
             'formHeight' => '280px',
-			'noptinFormBg' => '#8dbf42',
+			'noptinFormBg' => '#4CAF50',
 			'noptinFormBgImg' => '',
 			'noptinFormBgVideo' => '',
             'fields' => array(
@@ -401,7 +401,7 @@
 			),
 
             'imageMain' => false,
-            'noptinFormBorderColor' => '#8dbf42',
+            'noptinFormBorderColor' => '#4CAF50',
             'image' => '',
             'imagePos' => 'right',
             'noptinButtonLabel' => __( 'Sign Up', 'noptin' ),
@@ -506,6 +506,68 @@
 }"
         )
 
-    )
+	),
 
+	'conv21565701726' => array(
+        'title' => __( 'Convertkit', 'noptin' ),
+        'data' => array(
+            'hideCloseButton' => false,
+            'closeButtonPos' => 'along',
+            'singleLine' => true,
+            'formRadius' => '8px',
+            'formWidth' => '620px',
+            'formHeight' => '280px',
+			'noptinFormBg' => '#fb6970',
+			'noptinFormBgImg' => '',
+            'fields' => array(
+                array(
+                    'type' => array(
+                        'label' => __( 'Email Address', 'noptin' ),
+                        'name' => 'email',
+                        'type' => 'email'
+					),
+
+                    'require' => true,
+                    'key' => 'noptin_email_key'
+                )
+
+			),
+
+            'imageMain' => false,
+            'noptinFormBorderColor' => '#fb6970',
+            'image' => "",
+            'imagePos' => 'right',
+            'noptinButtonLabel' => __( 'SEND IT MY WAY!', 'noptin' ),
+            'buttonPosition' => 'block',
+            'noptinButtonBg' => '#ffffff',
+            'noptinButtonColor' => '#fb6970',
+            'hideTitle' => false,
+            'title' => __( 'Optimize your opt-ins.', 'noptin' ),
+            'titleColor' => '#212f4f',
+            'hideDescription' => false,
+            'description' => __( 'Collecting emails is easier than ever with this opt-in focused Toolkit.  Get the resources you need sent straight to your inbox.', 'noptin' ),
+            'descriptionColor' => '#ffffff',
+            'hideNote' => true,
+            'hideOnNoteClick' => false,
+            'note' => __( 'We do not spam people', 'noptin' ),
+            'noteColor' => '#fafafa',
+            'CSS' =>  "/*Custom css*/
+.noptin-optin-form-wrapper .noptin-form-submit{
+	border-radius: 5px !important;
+	font-weight: 400 !important;
+	letter-spacing: .8px !important;
+	font-size: 15px !important;
+}
+
+.noptin-optin-form-wrapper form .noptin-form-fields .noptin-form-field {
+	border-radius: 5px !important;
+	background: 0 0 !important;
+	border: 1px solid #fff !important;
+	font-size: 18px !important;
+	padding: 10px 8px !important;
+}
+			"
+        )
+
+	),
 );

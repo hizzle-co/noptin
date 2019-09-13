@@ -61,7 +61,9 @@ $noptin_color: #ff6f00;
 	display: none;
 
 	.noptin-optin-form-wrapper {
-		margin-top: 100px;
+		@media only screen and (max-width: 520px) {
+			margin-top: 100px;
+		}
 	}
 
 

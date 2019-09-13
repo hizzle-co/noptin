@@ -146,7 +146,7 @@ class Noptin_Form {
 			'optinStatus'                   => false,
 			'id'                            => null,
             'optinHTML'                     => __( 'This form is incorrectly configured', 'noptin' ),
-            'optinType'                     => 'popup',
+            'optinType'                     => 'inpost',
 
             //Opt in options
             'formRadius'                    => '0px',

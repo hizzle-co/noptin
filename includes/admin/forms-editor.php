@@ -46,7 +46,7 @@ class Noptin_Form_Editor {
      */
     public function output() {
         $sidebar = $this->sidebar_fields();
-        $state   = $this->get_state();
+		$state   = $this->get_state();
         require plugin_dir_path(__FILE__) . 'templates/optin-form-editor.php';
     }
 
@@ -123,7 +123,7 @@ class Noptin_Form_Editor {
                 'type'      => 'checkbox',
 				'el'        => 'input',
 				'tooltip'   => __( 'Your website visitors will not see this form unless you check this box', 'noptin' ),
-                'label'     => __( 'Published', 'noptin' ),
+                'label'     => __( 'Publish', 'noptin' ),
             ),
 
 
@@ -294,7 +294,7 @@ class Noptin_Form_Editor {
             'options'           => $this->post->neverShowOn,
 			'restrict'          => "!_onlyShowOn",
 			'placeholder'       => '1,10,25',
-			'tooltip'           => __( "Use a comma to separate post ids where this form should not be displayed. All post type ids are supported, not just post ids.", 'noptin' ),
+			'tooltip'           => __( "Use a comma to separate post ids where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids.", 'noptin' ),
         );
 
         $return["onlyShowOn"]  = array(
@@ -812,7 +812,7 @@ class Noptin_Form_Editor {
             'Success'                       => '',
             'hasError'                      => false,
 			'Error'                         => '',
-			'currentSidebarSection'         => 'settings',
+			'currentSidebarSection'         => 'design',
             'headerTitle'                   => __( 'Editing', 'noptin'),
             'saveText'                      => __( 'Save', 'noptin'),
             'savingText'                    => __( 'Saving...', 'noptin'),
