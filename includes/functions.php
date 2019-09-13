@@ -417,6 +417,27 @@ function add_noptin_subscriber( $fields ) {
 }
 
 /**
+ * Deletes a subscriber
+ *
+ * @access  public
+ * @since   1.1.0
+ */
+function delete_noptin_subscriber( $subscriber ) {
+	global $wpdb;
+
+	$table  = $wpdb->prefix . 'noptin_subscribers';
+	$table2 = $wpdb->prefix . 'noptin_subscriber_meta';
+
+	//Delete the subscriber...
+	$true1 = $wpdb->delete( $table, array( 'id' => $subscriber ), '%d');
+
+	//... and its meta data
+	$true2 = $wpdb->delete( $table2, array( 'noptin_subscriber_id' => $subscriber ), '%d');
+
+	return $true1 && $true2;
+}
+
+/**
  * Converts a name field into the first and last name
  *
  * Simple Function, Using Regex (word char and hyphens)
@@ -425,7 +446,7 @@ function add_noptin_subscriber( $fields ) {
  * You could use it again, on the "first name" result to get the first and middle though.
  *
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function noptin_split_subscriber_name( $name ) {
 

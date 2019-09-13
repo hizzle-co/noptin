@@ -396,14 +396,34 @@ class Noptin_Admin {
 
         if (!current_user_can('manage_options')) {
             return;
-        }
+		}
 
         /**
          * Runs before displaying the suscribers page.
          *
          * @param array $this The admin instance
          */
-        do_action('noptin_before_admin_subscribers_page', $this);
+		do_action('noptin_before_admin_subscribers_page', $this);
+
+		$deleted = false;
+
+		//Do actions
+		if(! empty( $_POST['noptin_nonce'] ) && wp_verify_nonce( $_POST['noptin_nonce'], 'noptin' ) ) {
+
+			//Delete
+			if(! empty( $_POST['action'] ) && 'delete' == $_POST['action'] ) {
+				if(! empty( $_POST['email'] ) && is_array( $_POST['email'] ) ) {
+
+					foreach( $_POST['email'] as $email ) {
+						delete_noptin_subscriber( $email );
+					}
+
+					$deleted = true;
+
+				}
+			}
+
+		}
 
         $download_url = add_query_arg(
             array(
