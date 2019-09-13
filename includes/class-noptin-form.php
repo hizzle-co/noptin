@@ -168,7 +168,7 @@ class Noptin_Form {
 			'inject'						=> '0',
             'buttonPosition'                => 'block',
             'subscribeAction'               => 'message', //redirect
-            'successMessage'                => __( 'Thank you for subscribing to our newsletter', 'noptin' ),
+            'successMessage'                => get_noptin_option( 'success_message' ),
             'redirectUrl'                   => '',
 
 
@@ -238,6 +238,10 @@ class Noptin_Form {
             'CSS'                           => '.noptin-optin-form-wrapper *{}',
 
 		);
+
+		if( empty( $defaults['successMessage'] ) ) {
+			$defaults['successMessage'] = esc_html__('Thanks for subscribing to the newsletter', 'noptin');
+		}
 
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
 
@@ -403,6 +407,8 @@ class Noptin_Form {
         //Prepare the args...
         $args = $this->get_post_array();
 		unset( $args['ID'] );
+
+		$args['post_status'] = 'draft';
 
         //... then create the form
         $id = wp_insert_post( $args, true );

@@ -252,7 +252,16 @@ class Noptin_Settings {
                 'label'           => __( 'Country', 'noptin' ),
                 'class'           => 'regular-text',
                 'placeholder'     => __( 'United States', 'noptin' ),
-            ),
+			),
+
+			'success_message'     => array(
+				'el'              => 'input',
+				'type'            => 'text',
+				'section'		  => 'general',
+				'label'           => __( 'Default Success Message', 'noptin' ),
+				'placeholder'     => esc_attr__('Thanks for subscribing to the newsletter', 'noptin'),
+				'description'     => __( 'This is the message shown to people after they successfully sign up for your newsletter. It can be overidden for every form you create in the Opt-In Forms Editor.', 'noptin' ) ,
+			),
         );
         return apply_filters( 'noptin_get_settings', $settings );
     }

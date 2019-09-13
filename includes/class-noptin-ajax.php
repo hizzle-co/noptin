@@ -144,8 +144,12 @@ if( !defined( 'ABSPATH' ) ) {
 
 		$result = array(
 			'action' => 'msg',
-			'msg'    => esc_html__('Thanks for subscribing to the newsletter', 'noptin'),
+			'msg'    => get_noptin_option( 'success_message' ),
 		);
+
+		if( empty( $result['msg'] ) ) {
+			$result['msg'] = esc_html__('Thanks for subscribing to the newsletter', 'noptin');
+		}
 
 		if( is_object( $form ) ) {
 
