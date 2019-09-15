@@ -246,7 +246,7 @@ function get_noptin_action_url( $action, $value ) {
 		$page = wp_insert_post(
 			array(
 				'post_content' => $content,
-				'post_title'   => __( 'Noptin Subsciber Action', 'noptin' ),
+				'post_title'   => __( 'Noptin Subsciber Action',  'newsletter-optin-box' ),
 				'post_status'  => 'publish',
 				'post_type'	   => 'page',
 			)
@@ -369,7 +369,7 @@ function add_noptin_subscriber( $fields ) {
 
 	//Ensure an email address is provided and it doesn't exist already
 	if( empty( $fields['email'] ) || !is_email( $fields['email'] ) ) {
-		return __( "Please provide a valid email address", 'noptin' );
+		return __( "Please provide a valid email address",  'newsletter-optin-box' );
 	}
 
 	if( noptin_email_exists( $fields['email'] ) ) {

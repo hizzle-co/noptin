@@ -260,8 +260,8 @@ class Noptin_Admin {
         //Add the optin forms page
         add_submenu_page(
             'noptin',
-            esc_html__('Newsletter opt-in forms', 'noptin'),
-            esc_html__('Newsletter Forms', 'noptin'),
+            esc_html__('Newsletter opt-in forms',  'newsletter-optin-box'),
+            esc_html__('Newsletter Forms', 'newsletter-optin-box'),
             'manage_options',
             'noptin-forms',
             array($this, 'render_forms_page')
@@ -270,8 +270,8 @@ class Noptin_Admin {
         //Link to new forms creation page
         add_submenu_page(
             'noptin',
-            esc_html__('Add New Form', 'noptin'),
-            esc_html__('Add New Form', 'noptin'),
+            esc_html__('Add New Form',  'newsletter-optin-box'),
+            esc_html__('Add New Form',  'newsletter-optin-box'),
             'manage_options',
             'noptin-new-form',
             array($this, 'render_add_new_page')
@@ -281,8 +281,8 @@ class Noptin_Admin {
         //Add the subscribers page
         add_submenu_page(
             'noptin',
-            esc_html__('Subscribers', 'noptin'),
-            esc_html__('Subscribers', 'noptin'),
+            esc_html__('Subscribers',  'newsletter-optin-box'),
+            esc_html__('Subscribers',  'newsletter-optin-box'),
             'manage_options',
             'noptin-subscribers',
             array($this, 'render_subscribers_page')
@@ -291,8 +291,8 @@ class Noptin_Admin {
 		//Settings
         add_submenu_page(
             'noptin',
-            esc_html__('Settings', 'noptin'),
-            esc_html__('Settings', 'noptin'),
+            esc_html__('Settings',  'newsletter-optin-box'),
+            esc_html__('Settings',  'newsletter-optin-box'),
             'manage_options',
             'noptin-settings',
             array($this, 'render_settings_page')
@@ -303,8 +303,8 @@ class Noptin_Admin {
 		//Link to documentation
         add_submenu_page(
             'noptin',
-            esc_html__('Documentation', 'noptin'),
-            esc_html__('Documentation', 'noptin'),
+            esc_html__('Documentation',  'newsletter-optin-box'),
+            esc_html__('Documentation',  'newsletter-optin-box'),
             'manage_options',
             'noptin-docs',
             array($this, 'render_add_new_page')
@@ -312,8 +312,8 @@ class Noptin_Admin {
 
 		//Welcome page
 		add_dashboard_page(
-            esc_html__('Noptin Welcome', 'noptin-mailchimp', 'noptin'),
-            esc_html__('Noptin Welcome', 'noptin-mailchimp', 'noptin'),
+            esc_html__('Noptin Welcome', 'noptin-mailchimp',  'newsletter-optin-box'),
+            esc_html__('Noptin Welcome', 'noptin-mailchimp',  'newsletter-optin-box'),
             'read',
             'noptin-welcome',
             array($this, 'welcome_screen_content')

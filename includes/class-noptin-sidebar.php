@@ -21,7 +21,7 @@ if( !defined( 'ABSPATH' ) ) {
         //Prepare widget args
         $widget_ops = array(
             'classname'   => 'noptin_widget_premade',
-            'description' => __( 'Use this widget to add newsletter forms made using the Form Editor', 'noptin' ),
+            'description' => __( 'Use this widget to add newsletter forms made using the Form Editor',  'newsletter-optin-box' ),
         );
 
         //Add it to the list of widgets
@@ -121,7 +121,7 @@ if( !defined( 'ABSPATH' ) ) {
     <p>
 
 	    <label for="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>">
-	        <?php esc_attr_e( 'Form:', 'noptin' ); ?>
+	        <?php esc_attr_e( 'Form:',  'newsletter-optin-box' ); ?>
 	    </label>
 
 	    <select
@@ -129,7 +129,7 @@ if( !defined( 'ABSPATH' ) ) {
             class="widefat"
             id="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>"
         >
-            <option value="" disabled <?php selected( '', $form ); ?>><?php esc_html_e( 'Select form', 'noptin' ); ?></option>
+            <option value="" disabled <?php selected( '', $form ); ?>><?php esc_html_e( 'Select form',  'newsletter-optin-box' ); ?></option>
             <?php $this->forms_select($form);?>
         </select>
     </p>

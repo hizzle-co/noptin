@@ -51,7 +51,7 @@ if( !defined( 'ABSPATH' ) ) {
 			$fields = array(
 				array(
 					'type'   => array(
-						'label' => __( 'Email Address', 'noptin' ),
+						'label' => __( 'Email Address',  'newsletter-optin-box' ),
 						'name' => 'email',
 						'type' => 'email',
 					),
@@ -148,7 +148,7 @@ if( !defined( 'ABSPATH' ) ) {
 		);
 
 		if( empty( $result['msg'] ) ) {
-			$result['msg'] = esc_html__('Thanks for subscribing to the newsletter', 'noptin');
+			$result['msg'] = esc_html__('Thanks for subscribing to the newsletter',  'newsletter-optin-box');
 		}
 
 		if( is_object( $form ) ) {
@@ -240,7 +240,7 @@ if( !defined( 'ABSPATH' ) ) {
 		//Check nonce
 		$nonce = $_GET['admin_nonce'];
 		if (!wp_verify_nonce($nonce, 'noptin_admin_nonce')) {
-			echo __( 'Reload the page and try again.', 'noptin' );
+			echo __( 'Reload the page and try again.',  'newsletter-optin-box' );
 			exit;
 		}
 
@@ -260,12 +260,12 @@ if( !defined( 'ABSPATH' ) ) {
 
 	//create the csv
 	fputcsv($output, array(
-		__( 'First Name', 'noptin' ),
-		__( 'Second Name', 'noptin' ),
-		__( 'Email Address', 'noptin' ),
-		__( 'Active', 'noptin' ),
-		__( 'Email Confirmed', 'noptin' ),
-		__( 'Subscribed On', 'noptin' )
+		__( 'First Name',  'newsletter-optin-box' ),
+		__( 'Second Name',  'newsletter-optin-box' ),
+		__( 'Email Address',  'newsletter-optin-box' ),
+		__( 'Active',  'newsletter-optin-box' ),
+		__( 'Email Confirmed',  'newsletter-optin-box' ),
+		__( 'Subscribed On',  'newsletter-optin-box' )
 	));
 	foreach ($results as $result) {
 		fputcsv($output, $result);

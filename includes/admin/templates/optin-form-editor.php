@@ -34,9 +34,9 @@
 							<?php include 'optin-form.php'; ?>
 						</div>
 						<div class="noptin-form-usage-details">
-							<p v-if="optinType=='inpost'"><?php _e( 'Shortcode', 'noptin' ); ?> <strong @click="copyShortcode">[noptin-form id={{id}}]</strong> <button
-									class="noptin-copy-button"><?php _e( 'Copied', 'noptin' ); ?></button></p>
-							<p v-if="optinType=='sidebar'"><?php printf( __( 'Use the %s widget to add this form to a widget area' ), '<strong>Noptin Premade Form</strong>' )  ?></p>
+							<p v-if="optinType=='inpost'"><?php _e( 'Shortcode',  'newsletter-optin-box' ); ?> <strong @click="copyShortcode">[noptin-form id={{id}}]</strong> <button
+									class="noptin-copy-button"><?php _e( 'Copied',  'newsletter-optin-box' ); ?></button></p>
+							<p v-if="optinType=='sidebar'"><?php printf( __( 'Use the %s widget to add this form to a widget area', 'newsletter-optin-box' ), '<strong>Noptin Premade Form</strong>' )  ?></p>
 						</div>
 					</div>
 				</div>

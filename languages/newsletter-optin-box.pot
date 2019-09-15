@@ -3,8 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Noptin - Simple Newsletter Subscription Forms 1.1.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/newsletter-optin-box\n"
-"POT-Creation-Date: 2019-09-03 19:45:26+00:00\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
+"POT-Creation-Date: 2019-09-15 11:57:33+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,622 +24,493 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Generator: grunt-wp-i18n 1.0.3\n"
 
-# newsletter-optin-box
 #: includes/admin/admin.php:263
 msgid "Newsletter opt-in forms"
-msgstr "Moduli di iscrizione alla newsletter"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/admin.php:264
 msgid "Newsletter Forms"
-msgstr "Moduli di newsletter"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/admin.php:273 includes/admin/admin.php:274
 #: includes/admin/templates/forms-list.php:23
 msgid "Add New Form"
-msgstr "Aggiungi nuovo modulo"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/admin.php:284 includes/admin/admin.php:285
 #: includes/admin/templates/forms-list.php:36 includes/admin/welcome.php:8
 msgid "Subscribers"
-msgstr "Iscritti"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/admin.php:294 includes/admin/admin.php:295
 msgid "Settings"
-msgstr "impostazioni"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/admin.php:306 includes/admin/admin.php:307
 msgid "Documentation"
-msgstr "Documentazione"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/admin.php:315 includes/admin/admin.php:316
 msgid "Noptin Welcome"
-msgstr "Benvenuto"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:240
-#: includes/admin/forms-editor.php:792
+#: includes/admin/forms-editor.php:816
 msgid "Editing"
-msgstr "La modifica"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:241
-#: includes/admin/forms-editor.php:793
+#: includes/admin/forms-editor.php:817
 msgid "Save"
-msgstr "Salvare"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:242
-#: includes/admin/forms-editor.php:794
+#: includes/admin/forms-editor.php:818
 msgid "Saving..."
-msgstr "Salvataggio..."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:243
-#: includes/admin/forms-editor.php:795
+#: includes/admin/forms-editor.php:819
 msgid "Save As Template"
-msgstr "Salva come modello"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:244
-#: includes/admin/forms-editor.php:796
+#: includes/admin/forms-editor.php:820
 msgid "Saving Template..."
-msgstr "salvando come modello ..."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:245
-#: includes/admin/forms-editor.php:797
+#: includes/admin/forms-editor.php:821
 msgid "There was an error saving your form."
-msgstr "Si è verificato un errore durante il salvataggio del modulo."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:246
-#: includes/admin/forms-editor.php:798
+#: includes/admin/forms-editor.php:822
 msgid "Your changes have been saved successfuly"
-msgstr "Le tue modifiche sono state salvate correttamente"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:247
-#: includes/admin/forms-editor.php:799
+#: includes/admin/forms-editor.php:823
 msgid "There was an error saving your template."
-msgstr "Si è verificato un errore."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:248
-#: includes/admin/forms-editor.php:800
+#: includes/admin/forms-editor.php:824
 msgid "Your template has been saved successfuly"
-msgstr "Il tuo modello è stato salvato correttamente"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor-quick.php:249
-#: includes/admin/forms-editor.php:801
+#: includes/admin/forms-editor.php:825
 msgid "Preview"
-msgstr "Anteprima"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:73
+#: includes/admin/forms-editor.php:74
 msgid "Basic Options"
-msgstr "Opzioni di base"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:81
+#: includes/admin/forms-editor.php:82
 msgid "Popup Options"
-msgstr "Opzioni popup"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:90
+#: includes/admin/forms-editor.php:91
 msgid "Page Targeting"
-msgstr "Targeting per pagina"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:106
+#: includes/admin/forms-editor.php:107
 msgid "Device Targeting"
-msgstr "Targeting per dispositivo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:124
-msgid "Your website visitors will not see this form unless you check this box"
-msgstr "I visitatori del tuo sito Web non vedranno questo modulo se non selezioni questa casella"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:125
-msgid "Published"
-msgstr "pubblicato"
+msgid "Your website visitors will not see this form unless you check this box"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:132
+#: includes/admin/forms-editor.php:126
+msgid "Publish"
+msgstr ""
+
+#: includes/admin/forms-editor.php:133
 msgid "This form will be..."
-msgstr "Questo modulo sarà ..."
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:134
-msgid "Displayed in a popup"
-msgstr "Visualizzato in un popup"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:135
-msgid "Embedded in a post"
-msgstr "Incorporato in un post"
+msgid "Displayed in a popup"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:136
+msgid "Embedded in a post"
+msgstr ""
+
+#: includes/admin/forms-editor.php:137
 msgid "Added to a widget area"
-msgstr "Aggiunto come widget"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:145
-msgid "Inject into post content"
-msgstr "Iniettare nel contenuto del post"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:146
+msgid "Inject into post content"
+msgstr ""
+
+#: includes/admin/forms-editor.php:147
 msgid ""
 "Noptin can automatically embed this form into your post content. You can "
 "also find the form's shortcode below the form preview"
 msgstr ""
-"Noptin può inserire automaticamente questo modulo nei tuoi contenuti "
-"post. È inoltre possibile trovare lo shortcode del modulo sotto l'anteprima "
-"del modulo"
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:148
-msgid "Don't inject"
-msgstr "Non iniettare"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:149
-msgid "Before post content"
-msgstr "Inserisci prima del contenuto"
+msgid "Don't inject"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:150
-msgid "After post content"
-msgstr "Dopo il contenuto post"
+msgid "Before post content"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:151
+msgid "After post content"
+msgstr ""
+
+#: includes/admin/forms-editor.php:152
 msgid "Before and after post content"
-msgstr "Prima e dopo il post"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:158
+#: includes/admin/forms-editor.php:159
 msgid "What should happen after the user subscribes"
-msgstr "Cosa dovrebbe succedere dopo che l'utente si è iscritto"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:160
-msgid "Display a success message"
-msgstr "Visualizza un messaggio di successo"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:161
+msgid "Display a success message"
+msgstr ""
+
+#: includes/admin/forms-editor.php:162
 msgid "redirect to a different page"
-msgstr "reindirizzare a una pagina diversa"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:169
+#: includes/admin/forms-editor.php:170
 msgid "Success message"
-msgstr "Messaggio di successo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:177
+#: includes/admin/forms-editor.php:178
 msgid "Redirect url"
-msgstr "URL di reindirizzamento"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:195
-msgid "Uncheck to display the popup on every page load"
-msgstr "Deseleziona per visualizzare il popup ad ogni caricamento della pagina"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:196
+msgid "Uncheck to display the popup on every page load"
+msgstr ""
+
+#: includes/admin/forms-editor.php:197
 msgid "Display this popup once per session"
-msgstr "Visualizza questo popup una volta per sessione"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:203
+#: includes/admin/forms-editor.php:204
 msgid "Show this popup"
-msgstr "Mostra questo popup"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:205
-msgid "Immediately"
-msgstr "Subito"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:206
-msgid "Before the user leaves"
-msgstr "Prima che l'utente se ne vada"
+msgid "Immediately"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:207
+msgid "Before the user leaves"
+msgstr ""
+
+#: includes/admin/forms-editor.php:208
 msgid "After the user starts scrolling"
-msgstr "Dopo che l'utente inizia a scorrere"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:209
-msgid "After clicking on something"
-msgstr "Dopo aver cliccato su qualcosa"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:210
+msgid "After clicking on something"
+msgstr ""
+
+#: includes/admin/forms-editor.php:211
 msgid "After a time delay"
-msgstr "Dopo un ritardo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:218
+#: includes/admin/forms-editor.php:219
 msgid "CSS selector of the items to watch out for clicks"
-msgstr "Selettore CSS degli elementi a cui fare attenzione per i clic"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:226
+#: includes/admin/forms-editor.php:227
 msgid "Time in seconds to delay"
-msgstr "Tempo in secondi per ritardare"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:234
+#: includes/admin/forms-editor.php:235
 msgid "Scroll depth in percentage after which the popup will be shown"
 msgstr ""
-"Profondità di scorrimento in percentuale dopo la quale verrà visualizzato "
-"il popup"
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:249
+#: includes/admin/forms-editor.php:250
 msgid "Display this optin..."
-msgstr "Visualizza questa opzione ..."
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:256
+#: includes/admin/forms-editor.php:257
 msgid "Everywhere"
-msgstr "Ovunque"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:262
+#: includes/admin/forms-editor.php:263
 msgid "Front page"
-msgstr "Prima pagina"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:268
+#: includes/admin/forms-editor.php:269
 msgid "Blog page"
-msgstr "Pagina del blog"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:274
+#: includes/admin/forms-editor.php:275
 msgid "Search page"
-msgstr "Pagina di ricerca"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:280
+#: includes/admin/forms-editor.php:281
 msgid "Archive pages"
-msgstr "Pagine d'archivio"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:292
+#: includes/admin/forms-editor.php:293
 msgid "Never show on:"
-msgstr "Non mostrare mai su:"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:296
+#: includes/admin/forms-editor.php:297
 msgid ""
 "Use a comma to separate post ids where this form should not be displayed. "
-"All post type ids are supported, not just post ids."
+"All post type ids (page, products, etc) are supported, not just blog post "
+"ids."
 msgstr ""
-"Utilizzare una virgola per separare gli ID dei post in cui questo modulo "
-"non deve essere visualizzato. Sono supportati tutti gli ID tipo post, non "
-"solo gli ID post."
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:303
+#: includes/admin/forms-editor.php:304
 msgid ""
 "If you specify any posts here, all other targeting rule will be ignored, "
 "and this form will only be displayed on posts that you specify here."
 msgstr ""
-"Se specifichi dei post qui, tutte le altre regole di targeting verranno "
-"ignorate e questo modulo verrà visualizzato solo sui post specificati qui."
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:319
-msgid "Everyone"
-msgstr "Tutti"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:320
-msgid "Logged in users"
-msgstr "Utenti connessi"
+msgid "Everyone"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:321
-msgid "Logged out users"
-msgstr "Utenti disconnessi"
+msgid "Logged in users"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:322
+msgid "Logged out users"
+msgstr ""
+
+#: includes/admin/forms-editor.php:323
 msgid "specific user roles"
-msgstr "ruoli utente specifici"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:324
+#: includes/admin/forms-editor.php:325
 msgid "Who can see this form?"
-msgstr "Chi può vedere questo modulo?"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:329
+#: includes/admin/forms-editor.php:330
 msgid "Select user roles"
-msgstr "Seleziona i ruoli utente"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:347
+#: includes/admin/forms-editor.php:348
 msgid "Hide on Mobile"
-msgstr "Nascondi sul cellulare"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:353
+#: includes/admin/forms-editor.php:354
 msgid "Hide on Desktops"
-msgstr "Nascondi sui desktop"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:370
+#: includes/admin/forms-editor.php:374
+msgid "Install the %s to connect your mailchimp account."
+msgstr ""
+
+#: includes/admin/forms-editor.php:394
 msgid "Templates"
-msgstr "Modelli"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:378
+#: includes/admin/forms-editor.php:402
 msgid "Overlay"
-msgstr "copertura"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:387
-msgid "Form"
-msgstr "Modulo"
-
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:395
-msgid "Fields"
-msgstr "campi"
-
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:403
-msgid "Image"
-msgstr "Immagine"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:411
+msgid "Form"
+msgstr ""
+
+#: includes/admin/forms-editor.php:419
+msgid "Fields"
+msgstr ""
+
+#: includes/admin/forms-editor.php:427
+msgid "Image"
+msgstr ""
+
+#: includes/admin/forms-editor.php:435
 msgid "Button"
-msgstr "Pulsante"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:419 includes/admin/forms-editor.php:673
+#: includes/admin/forms-editor.php:443 includes/admin/forms-editor.php:697
 msgid "Title"
-msgstr "Titolo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:427 includes/admin/forms-editor.php:700
+#: includes/admin/forms-editor.php:451 includes/admin/forms-editor.php:724
 msgid "Description"
-msgstr "Descrizione"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:435 includes/admin/forms-editor.php:734
+#: includes/admin/forms-editor.php:459 includes/admin/forms-editor.php:758
 msgid "Note"
-msgstr "Nota"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:443
-msgid "Custom CSS"
-msgstr "CSS personalizzato"
-
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:466
-msgid "Apply a template"
-msgstr "Applica un modello"
-
-# newsletter-optin-box
 #: includes/admin/forms-editor.php:467
+msgid "Custom CSS"
+msgstr ""
+
+#: includes/admin/forms-editor.php:490
+msgid "Apply a template"
+msgstr ""
+
+#: includes/admin/forms-editor.php:491
 msgid ""
 "All templates include custom css so remember to check out the Custom CSS "
 "panel after you apply a template"
 msgstr ""
-"Tutti i modelli includono CSS personalizzati, quindi ricorda di controllare "
-"il pannello CSS personalizzato dopo aver applicato un modello"
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:473
+#: includes/admin/forms-editor.php:497
 msgid "Apply a color theme"
-msgstr "Applica un tema colore"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:488 includes/admin/forms-editor.php:555
+#: includes/admin/forms-editor.php:512 includes/admin/forms-editor.php:579
 msgid "Background Color"
-msgstr "Colore di sfondo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:495 includes/admin/forms-editor.php:562
+#: includes/admin/forms-editor.php:519 includes/admin/forms-editor.php:586
 msgid "Background Image"
-msgstr "Immagine di sfondo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:511
+#: includes/admin/forms-editor.php:535
 msgid "Hide Close Button"
-msgstr "Nascondi pulsante Chiudi"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:517
+#: includes/admin/forms-editor.php:541
 msgid "Inside the form"
-msgstr "All'interno del modulo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:518
+#: includes/admin/forms-editor.php:542
 msgid "Outside the form"
-msgstr "Fuori dal modulo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:519
+#: includes/admin/forms-editor.php:543
 msgid "Along the border"
-msgstr "Lungo il confine"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:520
+#: includes/admin/forms-editor.php:544
 msgid "Top Right"
-msgstr "In alto a destra"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:522
+#: includes/admin/forms-editor.php:546
 msgid "Close Button Position"
-msgstr "Posizione pulsante di chiusura"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:529
+#: includes/admin/forms-editor.php:553
 msgid "Border Radius"
-msgstr "Raggio di confine"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:530
+#: includes/admin/forms-editor.php:554
 msgid "Set this to 0 if you don't want the form to have rounded corners"
 msgstr ""
-"Impostare questo su 0 se non si desidera che il modulo abbia gli angoli "
-"arrotondati"
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:536
+#: includes/admin/forms-editor.php:560
 msgid "Preferred Width"
-msgstr "Larghezza preferita"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:537
+#: includes/admin/forms-editor.php:561
 msgid "The element will resize to 100% width on smaller devices"
-msgstr "L'elemento ridimensionerà al 100% di larghezza su dispositivi più piccoli"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:543
+#: includes/admin/forms-editor.php:567
 msgid "Minimum Height"
-msgstr "Altezza minima"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:549
+#: includes/admin/forms-editor.php:573
 msgid "Border Color"
-msgstr "Colore del bordo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:568
+#: includes/admin/forms-editor.php:592
 msgid "Background Video"
-msgstr "Video di sfondo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:569
+#: includes/admin/forms-editor.php:593
 msgid "Enter the full URL to an MP4 video file"
-msgstr "Inserisci l'URL completo per un file video MP4"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:570
+#: includes/admin/forms-editor.php:594
 msgid "Works best if the video dimensions are of the same ratio as the form"
 msgstr ""
-"Funziona meglio se le dimensioni del video sono dello stesso rapporto del "
-"modulo"
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:589
+#: includes/admin/forms-editor.php:613
 msgid "Show all fields in a single line"
-msgstr "Mostra tutti i campi in un'unica riga"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:605
+#: includes/admin/forms-editor.php:629
 msgid "Image URL"
-msgstr "URL dell'immagine"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:611
+#: includes/admin/forms-editor.php:635
 msgid "Top"
-msgstr "Superiore"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:612 includes/admin/forms-editor.php:638
+#: includes/admin/forms-editor.php:636 includes/admin/forms-editor.php:662
 msgid "Left"
-msgstr "Sinistra"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:613 includes/admin/forms-editor.php:639
+#: includes/admin/forms-editor.php:637 includes/admin/forms-editor.php:663
 msgid "Right"
-msgstr "Destra"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:614
+#: includes/admin/forms-editor.php:638
 msgid "Bottom"
-msgstr "Parte inferiore"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:616
+#: includes/admin/forms-editor.php:640
 msgid "Image Position"
-msgstr "Posizione dell'immagine"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:631
+#: includes/admin/forms-editor.php:655
 msgid "Button Label"
-msgstr "Etichetta pulsante"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:637
+#: includes/admin/forms-editor.php:661
 msgid "Block"
-msgstr "Bloccare"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:641
+#: includes/admin/forms-editor.php:665
 msgid "Button Position"
-msgstr "Posizione pulsante"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:648
+#: includes/admin/forms-editor.php:672
 msgid "Button Background"
-msgstr "Colore di sfondo del pulsante"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:654
+#: includes/admin/forms-editor.php:678
 msgid "Button Color"
-msgstr "Colore pulsante"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:668
+#: includes/admin/forms-editor.php:692
 msgid "Hide title"
-msgstr "Nascondi titolo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:680
+#: includes/admin/forms-editor.php:704
 msgid "Title Color"
-msgstr "Colore del titolo"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:695
+#: includes/admin/forms-editor.php:719
 msgid "Hide description"
-msgstr "Nascondi la descrizione"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:706
+#: includes/admin/forms-editor.php:730
 msgid "Description Color"
-msgstr "Descrizione Colore"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:722
+#: includes/admin/forms-editor.php:746
 msgid "Hide note"
-msgstr "Nascondi nota"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:740
+#: includes/admin/forms-editor.php:764
 msgid "Note Color"
-msgstr "Nota Colore"
+msgstr ""
 
-# newsletter-optin-box
-#: includes/admin/forms-editor.php:755
+#: includes/admin/forms-editor.php:779
 msgid ""
 "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will "
 "apply to all opt-in forms on the page"
 msgstr ""
-"Prefisso tutti i tuoi stili con '.noptin-optin-form-wrapper' altrimenti si "
-"applicheranno a tutti i moduli di opt-in nella pagina"
 
-# newsletter-optin-box
 #: includes/admin/ratings.php:67
 msgid ""
 "Congratulations on your first subscriber – that’s awesome!\n"
@@ -649,190 +520,144 @@ msgid ""
 "the plugin a 5-star rating on WordPress? Just to help us spread the word "
 "and boost our motivation."
 msgstr ""
-"Congratulazioni per il tuo primo abbonato - fantastico!\n"
-"        Il tuo prossimo obiettivo è 10. Puoi farlo e siamo lieti di "
-"aiutarti.\n"
-"        Se hai 5 minuti, potresti farci un grande favore e dare al plugin "
-"una valutazione a 5 stelle su WordPress? Solo per aiutarci a spargere la "
-"voce e aumentare la nostra motivazione."
 
-# newsletter-optin-box
 #: includes/admin/ratings.php:92
 msgid "Maybe Later"
-msgstr "Forse più tardi"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/ratings.php:93
 msgid "Hide this notice forever"
-msgstr "Nascondi questo messaggio per sempre"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:98
 msgid "Your settings have been saved"
-msgstr "Le tue impostazioni sono state salvate"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:99
 msgid "Your settings could not be saved."
-msgstr "Le tue impostazioni non possono essere salvate."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:115
 msgid "New Post Notifications"
-msgstr "Notifiche di nuovi post"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:116
 msgid "Notify your active subscribers every time you publish a new post."
-msgstr "Avvisa i tuoi abbonati attivi ogni volta che pubblichi un nuovo post."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:124
 msgid "Email Subject"
-msgstr "Oggetto dell'email"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:126 includes/admin/settings.php:136
 msgid ""
 "You can use the tags [[title]], [[first_name]], [[last_name]] or any other "
 "field name that you collect."
 msgstr ""
-"Puoi usare i tag [[title]], [[first_name]], [[last_name]] o qualsiasi altro "
-"nome di campo che raccogli."
 
-# newsletter-optin-box
 #: includes/admin/settings.php:134
 msgid "Email Preview Text"
-msgstr "Testo anteprima email"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:135
 #: includes/class-noptin-new-post-notify.php:120
 msgid "We just published a new blog post. Hope you like it."
-msgstr "Abbiamo appena pubblicato un nuovo post sul blog. Spero ti piaccia."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:143
 msgid "Email Content"
-msgstr "Contenuto e-mail"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:145
 msgid ""
 "You can use the tags [[title]], [[excerpt]],[[post_content]], "
 "[[first_name]], [[last_name]] or any other field name that you collect."
 msgstr ""
-"Puoi utilizzare i tag [[title]], [[excerpt]], [[post_content]], "
-"[[first_name]], [[last_name]] o qualsiasi altro nome di campo che raccogli."
 
-# newsletter-optin-box
 #: includes/admin/settings.php:152
 msgid "Subscribe Commentors"
-msgstr "Modulo di commento"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:153
 msgid "Ask commentors to subscribe to the newsletter."
-msgstr "Chiedi ai commentatori di iscriversi alla newsletter."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:161 includes/admin/settings.php:178
 msgid "Checkbox label"
-msgstr "Etichetta della casella di controllo"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:162 includes/admin/settings.php:179
 #: includes/admin/templates/templates.php:101
 #: includes/admin/templates/templates.php:164
 #: includes/admin/templates/templates.php:346
-#: includes/class-noptin-form.php:202
-#: includes/class-noptin-intergrations.php:51
-#: includes/class-noptin-intergrations.php:108
+#: includes/class-noptin-intergrations.php:54
+#: includes/class-noptin-intergrations.php:111
 msgid "Subscribe To Our Newsletter"
-msgstr "Iscriviti alla nostra Newsletter"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:169
 msgid "Subscribe New Users"
-msgstr "Formulario di registrazione"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:170
 msgid "Ask new users to subscribe to the newsletter."
-msgstr "Chiedi ai nuovi utenti di iscriversi alla newsletter."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:186
 msgid "Hide From Subscribers"
-msgstr "Nascondi dagli abbonati"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:187
 msgid "Hide opt-in forms and methods from existing subscribers."
-msgstr "nascondi i moduli newsletter agli abbonati."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:194
 msgid "From Email"
-msgstr "E-mail"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:197
 msgid ""
 "Set this to a valid email address. If emails are not being delivered, leave "
 "this field blank."
 msgstr ""
-"Impostalo su un indirizzo email valido. Se le e-mail non vengono "
-"recapitate, lascia vuoto questo campo."
 
-# newsletter-optin-box
 #: includes/admin/settings.php:203
 msgid "From Name"
-msgstr "Nome"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:212
 msgid "Company"
-msgstr "Azienda"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:221
 msgid "Logo"
-msgstr "Logo"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:222
 msgid ""
 "Appears on top of emails. Leave blank to use your website's logo or the "
 "default image"
 msgstr ""
-"Appare in cima alle e-mail. Lascia vuoto per utilizzare il logo del tuo "
-"sito Web o l'immagine predefinita"
 
-# newsletter-optin-box
 #: includes/admin/settings.php:228
 msgid "Street Address"
-msgstr "Indirizzo"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:230
 msgid "31 North San Juan Ave. "
-msgstr "31 North San Juan Avenue."
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:236
 msgid "City"
-msgstr "Città"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:238
 msgid "Santa Clara"
-msgstr "Santa Clara"
+msgstr ""
 
-# newsletter-optin-box
 #: includes/admin/settings.php:244
 msgid "State"
-msgstr "Stato"
+msgstr ""
 
 #: includes/admin/settings.php:246
 msgid "San Francisco"
@@ -846,47 +671,74 @@ msgstr ""
 msgid "United States"
 msgstr ""
 
-#: includes/admin/subscribers.php:7
-msgid "Noptin"
+#: includes/admin/settings.php:261
+msgid "Default Success Message"
 msgstr ""
 
-#: includes/admin/subscribers.php:8
-msgid "View and download your email subscribers."
+#: includes/admin/settings.php:262 includes/class-noptin-ajax.php:151
+#: includes/class-noptin-form.php:243
+msgid "Thanks for subscribing to the newsletter"
 msgstr ""
 
-#: includes/admin/subscribers.php:9
+#: includes/admin/settings.php:263
 msgid ""
-"Connect your Mailchimp Account %s to automatically add new email "
-"subscribers to your Mailchimp list"
+"This is the message shown to people after they successfully sign up for "
+"your newsletter. It can be overidden for every form you create in the "
+"Opt-In Forms Editor."
 msgstr ""
 
-#: includes/admin/subscribers.php:15
+#: includes/admin/subscribers.php:6
+msgid "Email Subscribers"
+msgstr ""
+
+#: includes/admin/subscribers.php:12
+msgid "Select bulk action"
+msgstr ""
+
+#: includes/admin/subscribers.php:14
+msgid "Bulk Actions"
+msgstr ""
+
+#: includes/admin/subscribers.php:15 includes/admin/templates/forms-list.php:51
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/subscribers.php:17
+msgid "Apply"
+msgstr ""
+
+#: includes/admin/subscribers.php:19
 msgid "Download CSV"
 msgstr ""
 
-#: includes/admin/subscribers.php:23 includes/admin/subscribers.php:48
+#: includes/admin/subscribers.php:24
+msgid "The selected subscribers have been deleted."
+msgstr ""
+
+#: includes/admin/subscribers.php:32 includes/admin/subscribers.php:57
 #: includes/admin/templates/templates.php:81
 #: includes/admin/templates/templates.php:194
 #: includes/admin/templates/templates.php:264
 #: includes/admin/templates/templates.php:326
 #: includes/admin/templates/templates.php:392
-#: includes/admin/templates/templates.php:472 includes/class-noptin-ajax.php:54
-#: includes/class-noptin-ajax.php:261 includes/class-noptin-form.php:160
+#: includes/admin/templates/templates.php:472
+#: includes/admin/templates/templates.php:525 includes/class-noptin-ajax.php:54
+#: includes/class-noptin-ajax.php:265 includes/class-noptin-form.php:160
 msgid "Email Address"
 msgstr ""
 
-#: includes/admin/subscribers.php:24 includes/admin/subscribers.php:49
+#: includes/admin/subscribers.php:33 includes/admin/subscribers.php:58
 #: includes/admin/templates/templates.php:253
-#: includes/class-noptin-ajax.php:259
+#: includes/class-noptin-ajax.php:263
 msgid "First Name"
 msgstr ""
 
-#: includes/admin/subscribers.php:25 includes/admin/subscribers.php:50
+#: includes/admin/subscribers.php:34 includes/admin/subscribers.php:59
 msgid "Last Name"
 msgstr ""
 
-#: includes/admin/subscribers.php:26 includes/admin/subscribers.php:51
-#: includes/class-noptin-ajax.php:264
+#: includes/admin/subscribers.php:35 includes/admin/subscribers.php:60
+#: includes/class-noptin-ajax.php:268
 msgid "Subscribed On"
 msgstr ""
 
@@ -927,7 +779,7 @@ msgid "Inactive"
 msgstr ""
 
 #: includes/admin/templates/forms-list.php:43
-#: includes/class-noptin-ajax.php:262
+#: includes/class-noptin-ajax.php:266
 msgid "Active"
 msgstr ""
 
@@ -937,10 +789,6 @@ msgstr ""
 
 #: includes/admin/templates/forms-list.php:50
 msgid "Edit"
-msgstr ""
-
-#: includes/admin/templates/forms-list.php:51
-msgid "Delete"
 msgstr ""
 
 #: includes/admin/templates/forms-list.php:52
@@ -956,7 +804,11 @@ msgid "Shortcode"
 msgstr ""
 
 #: includes/admin/templates/optin-form-editor.php:38
-msgid "Copy"
+msgid "Copied"
+msgstr ""
+
+#: includes/admin/templates/optin-form-editor.php:39
+msgid "Use the %s widget to add this form to a widget area"
 msgstr ""
 
 #: includes/admin/templates/templates.php:5
@@ -986,7 +838,7 @@ msgid "We promise not to spam you. You can unsubscribe at any time."
 msgstr ""
 
 #: includes/admin/templates/templates.php:67
-msgid "Default"
+msgid "Classic"
 msgstr ""
 
 #: includes/admin/templates/templates.php:96
@@ -1081,6 +933,29 @@ msgstr ""
 msgid "Use the Custom CSS tab to change the background color of this form."
 msgstr ""
 
+#: includes/admin/templates/templates.php:512
+msgid "Convertkit"
+msgstr ""
+
+#: includes/admin/templates/templates.php:540
+msgid "SEND IT MY WAY!"
+msgstr ""
+
+#: includes/admin/templates/templates.php:545
+msgid "Optimize your opt-ins."
+msgstr ""
+
+#: includes/admin/templates/templates.php:548
+msgid ""
+"Collecting emails is easier than ever with this opt-in focused Toolkit.  "
+"Get the resources you need sent straight to your inbox."
+msgstr ""
+
+#: includes/admin/templates/templates.php:552
+#: includes/class-noptin-form.php:212
+msgid "We do not spam people"
+msgstr ""
+
 #: includes/admin/templates/welcome.php:6
 msgid ""
 "Noptin makes it easy to display add email subscription forms into your "
@@ -1173,11 +1048,11 @@ msgstr ""
 
 #: includes/admin/widget.php:54
 msgid "Use this widget to create and add a simple newsletter subscription widget"
-msgstr "Utilizzare questo widget per creare e aggiungere un semplice widget di iscrizione alla newsletter"
+msgstr ""
 
 #: includes/admin/widget.php:185
 msgid "FREE NEWSLETTER"
-msgstr "NEWSLETTER GRATUITA"
+msgstr ""
 
 #: includes/admin/widget.php:186
 msgid ""
@@ -1217,19 +1092,15 @@ msgstr ""
 msgid "Submit Button Text:"
 msgstr ""
 
-#: includes/class-noptin-ajax.php:147
-msgid "Thanks for subscribing to the newsletter"
-msgstr ""
-
-#: includes/class-noptin-ajax.php:239
+#: includes/class-noptin-ajax.php:243
 msgid "Reload the page and try again."
 msgstr ""
 
-#: includes/class-noptin-ajax.php:260
+#: includes/class-noptin-ajax.php:264
 msgid "Second Name"
 msgstr ""
 
-#: includes/class-noptin-ajax.php:263
+#: includes/class-noptin-ajax.php:267
 msgid "Email Confirmed"
 msgstr ""
 
@@ -1237,22 +1108,18 @@ msgstr ""
 msgid "Every %d Minutes"
 msgstr ""
 
-#: includes/class-noptin-form.php:148 includes/class-noptin-form.php:469
+#: includes/class-noptin-form.php:148 includes/class-noptin-form.php:475
 msgid "This form is incorrectly configured"
 msgstr ""
 
-#: includes/class-noptin-form.php:171
-msgid "Thank you for subscribing to our newsletter"
+#: includes/class-noptin-form.php:202
+msgid "JOIN OUR NEWSLETTER"
 msgstr ""
 
 #: includes/class-noptin-form.php:207
 msgid ""
-"Enter your email to receive a weekly round-up of our best posts. <a "
-"href=\"https://noptin.com/guide\">Learn more!</a>"
-msgstr ""
-
-#: includes/class-noptin-form.php:212
-msgid "We do not spam people"
+"Get notified every time we publish a new blog post. <a "
+"href=\"https://noptin.com/docs/creating-forms\">Learn more!</a>"
 msgstr ""
 
 #: includes/class-noptin-new-post-notify.php:88
@@ -1277,7 +1144,7 @@ msgstr ""
 
 #: includes/class-noptin-sidebar.php:24
 msgid "Use this widget to add newsletter forms made using the Form Editor"
-msgstr "Utilizzare questo widget per aggiungere moduli newsletter creati utilizzando l'Editor moduli"
+msgstr ""
 
 #: includes/class-noptin-sidebar.php:124
 msgid "Form:"
@@ -1285,7 +1152,7 @@ msgstr ""
 
 #: includes/class-noptin-sidebar.php:132
 msgid "Select form"
-msgstr "Seleziona il modulo"
+msgstr ""
 
 #: includes/functions.php:249
 msgid "Noptin Subsciber Action"
@@ -1293,7 +1160,7 @@ msgstr ""
 
 #: includes/functions.php:372
 msgid "Please provide a valid email address"
-msgstr "Per favore fornisci un indirizzo email valido"
+msgstr ""
 
 #. Plugin Name of the plugin/theme
 msgid "Noptin - Simple Newsletter Subscription Forms"
@@ -1305,7 +1172,7 @@ msgstr ""
 
 #. Description of the plugin/theme
 msgid "Easily add a newsletter optin box onto post content, widget or popup"
-msgstr "Aggiungi facilmente una casella di iscrizione alla newsletter per pubblicare contenuti, widget o popup"
+msgstr ""
 
 #. Author of the plugin/theme
 msgid "Picocodes"

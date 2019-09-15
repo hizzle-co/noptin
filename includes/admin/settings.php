@@ -95,8 +95,8 @@ class Noptin_Settings {
 		}
 
 		$state['currentTab'] = 'general';
-		$state['saved'] = __( 'Your settings have been saved', 'noptin' );
-		$state['error'] = __( 'Your settings could not be saved.', 'noptin' );
+		$state['saved'] = __( 'Your settings have been saved',  'newsletter-optin-box' );
+		$state['error'] = __( 'Your settings could not be saved.',  'newsletter-optin-box' );
 		return $state;
 
 	}
@@ -112,8 +112,8 @@ class Noptin_Settings {
 				'el'              => 'input',
 				'type'            => 'checkbox_alt',
 				'section'		  => 'general',
-				'label'           => __( 'New Post Notifications', 'noptin' ),
-				'description'     => __( 'Notify your active subscribers every time you publish a new post.', 'noptin' ) ,
+				'label'           => __( 'New Post Notifications',  'newsletter-optin-box' ),
+				'description'     => __( 'Notify your active subscribers every time you publish a new post.',  'newsletter-optin-box' ) ,
 			),
 
 			'new_post_subject'    => array(
@@ -121,9 +121,9 @@ class Noptin_Settings {
 				'type'            => 'text',
 				'restrict'        => 'notify_new_post',
 				'section'		  => 'general',
-				'label'           => __( 'Email Subject', 'noptin' ),
+				'label'           => __( 'Email Subject',  'newsletter-optin-box' ),
 				'placeholder'     => '[[title]]',
-				'description'     => __( 'You can use the tags [[title]], [[first_name]], [[last_name]] or any other field name that you collect.', 'noptin' ) ,
+				'description'     => __( 'You can use the tags [[title]], [[first_name]], [[last_name]] or any other field name that you collect.',  'newsletter-optin-box' ) ,
 			),
 
 			'new_post_preview_text'    => array(
@@ -131,26 +131,26 @@ class Noptin_Settings {
 				'type'            => 'text',
 				'restrict'        => 'notify_new_post',
 				'section'		  => 'general',
-				'label'           => __( 'Email Preview Text', 'noptin' ),
-				'placeholder'     => __( 'We just published a new blog post. Hope you like it.', 'noptin'),
-				'description'     => __( 'You can use the tags [[title]], [[first_name]], [[last_name]] or any other field name that you collect.', 'noptin' ) ,
+				'label'           => __( 'Email Preview Text',  'newsletter-optin-box' ),
+				'placeholder'     => __( 'We just published a new blog post. Hope you like it.',  'newsletter-optin-box'),
+				'description'     => __( 'You can use the tags [[title]], [[first_name]], [[last_name]] or any other field name that you collect.',  'newsletter-optin-box' ) ,
 			),
 
 			'new_post_content'    => array(
 				'el'              => 'textarea',
 				'restrict'        => 'notify_new_post',
 				'section'		  => 'general',
-				'label'           => __( 'Email Content', 'noptin' ),
+				'label'           => __( 'Email Content',  'newsletter-optin-box' ),
 				'placeholder'     => "Hello [[first_name]], \nI just published a new post on [[blog_name]]. \n[[excerpt]]",
-				'description'     => __( 'You can use the tags [[title]], [[excerpt]],[[post_content]], [[first_name]], [[last_name]] or any other field name that you collect.', 'noptin' ) ,
+				'description'     => __( 'You can use the tags [[title]], [[excerpt]],[[post_content]], [[first_name]], [[last_name]] or any other field name that you collect.',  'newsletter-optin-box' ) ,
 			),
 
 			'comment_form'        => array(
 				'el'              => 'input',
 				'type'            => 'checkbox_alt',
 				'section'		  => 'general',
-				'label'           => __( 'Subscribe Commentors', 'noptin' ),
-				'description'     => __( 'Ask commentors to subscribe to the newsletter.', 'noptin' ) ,
+				'label'           => __( 'Subscribe Commentors',  'newsletter-optin-box' ),
+				'description'     => __( 'Ask commentors to subscribe to the newsletter.',  'newsletter-optin-box' ) ,
 			),
 
 			'comment_form_msg'    => array(
@@ -158,16 +158,16 @@ class Noptin_Settings {
 				'type'            => 'text',
 				'restrict'        => 'comment_form',
 				'section'		  => 'general',
-				'label'           => __( 'Checkbox label', 'noptin' ),
-				'placeholder'     => __( 'Subscribe To Our Newsletter', 'noptin' ),
+				'label'           => __( 'Checkbox label',  'newsletter-optin-box' ),
+				'placeholder'     => __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' ),
 			),
 
 			'register_form'       => array(
 				'el'              => 'input',
 				'type'            => 'checkbox_alt',
 				'section'		  => 'general',
-				'label'           => __( 'Subscribe New Users', 'noptin' ),
-				'description'     => __( 'Ask new users to subscribe to the newsletter.', 'noptin' ) ,
+				'label'           => __( 'Subscribe New Users',  'newsletter-optin-box' ),
+				'description'     => __( 'Ask new users to subscribe to the newsletter.',  'newsletter-optin-box' ) ,
 			),
 
 			'register_form_msg'    => array(
@@ -175,32 +175,32 @@ class Noptin_Settings {
 				'type'            => 'text',
 				'restrict'        => 'register_form',
 				'section'		  => 'general',
-				'label'           => __( 'Checkbox label', 'noptin' ),
-				'placeholder'     => __( 'Subscribe To Our Newsletter', 'noptin' ),
+				'label'           => __( 'Checkbox label',  'newsletter-optin-box' ),
+				'placeholder'     => __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' ),
 			),
 
 			'hide_from_subscribers'       => array(
 				'el'              => 'input',
 				'type'            => 'checkbox_alt',
 				'section'		  => 'general',
-				'label'           => __( 'Hide From Subscribers', 'noptin' ),
-				'description'     => __( 'Hide opt-in forms and methods from existing subscribers.', 'noptin' ) ,
+				'label'           => __( 'Hide From Subscribers',  'newsletter-optin-box' ),
+				'description'     => __( 'Hide opt-in forms and methods from existing subscribers.',  'newsletter-optin-box' ) ,
 			),
 
 			'from_email'       => array(
 				'el'              => 'input',
 				'section'		  => 'sender',
 				'type'            => 'email',
-                'label'           => __( 'From Email', 'noptin' ),
+                'label'           => __( 'From Email',  'newsletter-optin-box' ),
                 'class'           => 'regular-text',
                 'placeholder'     => get_option('admin_email'),
-                'description'     =>  __( 'Set this to a valid email address. If emails are not being delivered, leave this field blank.', 'noptin' ),
+                'description'     =>  __( 'Set this to a valid email address. If emails are not being delivered, leave this field blank.',  'newsletter-optin-box' ),
 			),
 
 			'from_name'       => array(
 				'el'              => 'input',
 				'section'		  => 'sender',
-                'label'           => __( 'From Name', 'noptin' ),
+                'label'           => __( 'From Name',  'newsletter-optin-box' ),
 				'class'           => 'regular-text',
 				'restrict'		  => 'from_email',
                 'placeholder'     => get_option('blogname'),
@@ -209,7 +209,7 @@ class Noptin_Settings {
             'company'   => array(
 				'el'              => 'input',
 				'section'		  => 'sender',
-                'label'           => __( 'Company', 'noptin' ),
+                'label'           => __( 'Company',  'newsletter-optin-box' ),
 				'class'           => 'regular-text',
 				'placeholder'     => get_option('blogname'),
 			),
@@ -218,49 +218,49 @@ class Noptin_Settings {
 				'el'              => 'input',
 				'type'			  => 'image',
 				'section'		  => 'sender',
-				'label'           => __( 'Logo', 'noptin' ),
-				'description'     =>  __( "Appears on top of emails. Leave blank to use your website's logo or the default image", 'noptin' ),
+				'label'           => __( 'Logo',  'newsletter-optin-box' ),
+				'description'     =>  __( "Appears on top of emails. Leave blank to use your website's logo or the default image",  'newsletter-optin-box' ),
             ),
 
             'address'       => array(
 				'el'              => 'input',
 				'section'		  => 'sender',
-                'label'           => __( 'Street Address', 'noptin' ),
+                'label'           => __( 'Street Address',  'newsletter-optin-box' ),
                 'class'           => 'regular-text',
-                'placeholder'     => __( '31 North San Juan Ave. ', 'noptin' ),
+                'placeholder'     => __( '31 North San Juan Ave. ',  'newsletter-optin-box' ),
             ),
 
             'city'       => array(
 				'el'              => 'input',
 				'section'		  => 'sender',
-                'label'           => __( 'City', 'noptin' ),
+                'label'           => __( 'City',  'newsletter-optin-box' ),
                 'class'           => 'regular-text',
-                'placeholder'     => __( 'Santa Clara', 'noptin' ),
+                'placeholder'     => __( 'Santa Clara',  'newsletter-optin-box' ),
 			),
 
 			'state'       => array(
 				'el'              => 'input',
 				'section'		  => 'sender',
-                'label'           => __( 'State', 'noptin' ),
+                'label'           => __( 'State',  'newsletter-optin-box' ),
                 'class'           => 'regular-text',
-                'placeholder'     => __( 'San Francisco', 'noptin' ),
+                'placeholder'     => __( 'San Francisco',  'newsletter-optin-box' ),
 			),
 
 			'country'       => array(
 				'el'              => 'input',
 				'section'		  => 'sender',
-                'label'           => __( 'Country', 'noptin' ),
+                'label'           => __( 'Country',  'newsletter-optin-box' ),
                 'class'           => 'regular-text',
-                'placeholder'     => __( 'United States', 'noptin' ),
+                'placeholder'     => __( 'United States',  'newsletter-optin-box' ),
 			),
 
 			'success_message'     => array(
 				'el'              => 'input',
 				'type'            => 'text',
 				'section'		  => 'general',
-				'label'           => __( 'Default Success Message', 'noptin' ),
-				'placeholder'     => esc_attr__('Thanks for subscribing to the newsletter', 'noptin'),
-				'description'     => __( 'This is the message shown to people after they successfully sign up for your newsletter. It can be overidden for every form you create in the Opt-In Forms Editor.', 'noptin' ) ,
+				'label'           => __( 'Default Success Message',  'newsletter-optin-box' ),
+				'placeholder'     => esc_attr__('Thanks for subscribing to the newsletter',  'newsletter-optin-box'),
+				'description'     => __( 'This is the message shown to people after they successfully sign up for your newsletter. It can be overidden for every form you create in the Opt-In Forms Editor.',  'newsletter-optin-box' ) ,
 			),
         );
         return apply_filters( 'noptin_get_settings', $settings );

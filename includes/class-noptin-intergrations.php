@@ -51,7 +51,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		$text = get_noptin_option( 'comment_form_msg' );
 		if( empty( $text ) ) {
-			$text = __( 'Subscribe To Our Newsletter', 'noptin' );
+			$text = __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' );
 		}
 
 		$checkbox =  "<label class='comment-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";
@@ -108,7 +108,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		$text = get_noptin_option( 'register_form_msg' );
 		if( empty( $text ) ) {
-			$text = __( 'Subscribe To Our Newsletter', 'noptin' );
+			$text = __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' );
 		}
 
 		echo "<label class='register-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";

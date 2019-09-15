@@ -51,7 +51,7 @@ class Noptin_Widget extends WP_Widget {
     public function __construct() {
         $widget_ops = array(
             'classname' => 'noptin_widget',
-            'description' => __( 'Use this widget to create and add a simple newsletter subscription widget', 'noptin' ),
+            'description' => __( 'Use this widget to create and add a simple newsletter subscription widget',  'newsletter-optin-box' ),
         );
         parent::__construct( 'noptin_widget', 'Noptin New Form', $widget_ops );
     }
@@ -182,9 +182,9 @@ class Noptin_Widget extends WP_Widget {
 
     // output the option form field in admin Widgets screen
     public function form($instance) {
-        $title    = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'FREE NEWSLETTER', 'noptin' );
-        $desc     = ! empty( $instance['desc'] ) ? $instance['desc'] : esc_html__( 'Subscribe to our newsletter today and be the first to know when we publish a new blog post.', 'noptin' );
-        $submit   = ! empty( $instance['submit'] ) ? $instance['submit'] : esc_html__( 'SUBSCRIBE NOW', 'noptin' );
+        $title    = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'FREE NEWSLETTER',  'newsletter-optin-box' );
+        $desc     = ! empty( $instance['desc'] ) ? $instance['desc'] : esc_html__( 'Subscribe to our newsletter today and be the first to know when we publish a new blog post.',  'newsletter-optin-box' );
+        $submit   = ! empty( $instance['submit'] ) ? $instance['submit'] : esc_html__( 'SUBSCRIBE NOW',  'newsletter-optin-box' );
         $bg_color = ! empty( $instance['bg_color'] ) ? $instance['bg_color'] : 'transparent';
         $color    = ! empty( $instance['color'] ) ? $instance['color'] : 'transparent';
         $h2_col   = ! empty( $instance['h2_col'] ) ? $instance['h2_col'] : 'transparent';
@@ -194,7 +194,7 @@ class Noptin_Widget extends WP_Widget {
 ?>
 	<p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">
-	<?php esc_attr_e( 'Title:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Title:',  'newsletter-optin-box' ); ?>
 	</label>
 
 	<input
@@ -207,7 +207,7 @@ class Noptin_Widget extends WP_Widget {
 
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'desc' ) ); ?>">
-	<?php esc_attr_e( 'Description:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Description:',  'newsletter-optin-box' ); ?>
 	</label>
 
 	<input
@@ -220,7 +220,7 @@ class Noptin_Widget extends WP_Widget {
 
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'redirect' ) ); ?>">
-	<?php esc_attr_e( 'Redirect:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Redirect:',  'newsletter-optin-box' ); ?>
 	</label>
 
 	<input
@@ -235,7 +235,7 @@ class Noptin_Widget extends WP_Widget {
     <p>
 
 	<label for="<?php echo esc_attr( $this->get_field_id( 'bg_color' ) ); ?>">
-	<?php esc_attr_e( 'Background Color:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Background Color:',  'newsletter-optin-box' ); ?>
 	</label>
 
 	<select
@@ -250,7 +250,7 @@ class Noptin_Widget extends WP_Widget {
 
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'h2_col' ) ); ?>">
-	<?php esc_attr_e( 'Title Color:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Title Color:',  'newsletter-optin-box' ); ?>
 	</label>
 
     <select
@@ -264,7 +264,7 @@ class Noptin_Widget extends WP_Widget {
 
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'color' ) ); ?>">
-	<?php esc_attr_e( 'Text Color:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Text Color:',  'newsletter-optin-box' ); ?>
 	</label>
 	<select
         name="<?php echo esc_attr( $this->get_field_name( 'color' ) ); ?>"
@@ -277,7 +277,7 @@ class Noptin_Widget extends WP_Widget {
 
     <p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'btn_col' ) ); ?>">
-	<?php esc_attr_e( 'Button Color:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Button Color:',  'newsletter-optin-box' ); ?>
 	</label>
 	<select
         name="<?php echo esc_attr( $this->get_field_name( 'btn_col' ) ); ?>"
@@ -289,7 +289,7 @@ class Noptin_Widget extends WP_Widget {
 	</p>
 
     <label for="<?php echo esc_attr( $this->get_field_id( 'submit' ) ); ?>">
-	<?php esc_attr_e( 'Submit Button Text:', 'noptin' ); ?>
+	<?php esc_attr_e( 'Submit Button Text:',  'newsletter-optin-box' ); ?>
 	</label>
 	<input
 		class="widefat"

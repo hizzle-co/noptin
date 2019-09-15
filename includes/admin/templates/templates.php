@@ -2,7 +2,7 @@
 
 	return array(
     	'owvP1565701640' => array(
-            'title' => __( 'Borderless', 'noptin' ),
+            'title' => __( 'Borderless',  'newsletter-optin-box' ),
             'data' => array (
                 'hideCloseButton'   => false,
                 'closeButtonPos'    => 'top-right',
@@ -16,7 +16,7 @@
                 'fields' 			=> array (
                     array(
                         'type' => array (
-                            'label' => __( 'Enter your email address here', 'noptin' ),
+                            'label' => __( 'Enter your email address here',  'newsletter-optin-box' ),
                             'name' => 'email',
                             'type' => 'email'
 						),
@@ -31,19 +31,19 @@
                 'noptinFormBorderColor' => '#fff',
                 'image' => '',
                 'imagePos' => 'right',
-                'noptinButtonLabel' => __( 'SUBSCRIBE NOW', 'noptin' ),
+                'noptinButtonLabel' => __( 'SUBSCRIBE NOW',  'newsletter-optin-box' ),
                 'buttonPosition' => 'block',
                 'noptinButtonBg' => '#F44336',
                 'noptinButtonColor' => '#fefefe',
                 'hideTitle' => false,
-                'title' => __( 'Subscribe For Latest Updates', 'noptin' ),
+                'title' => __( 'Subscribe For Latest Updates',  'newsletter-optin-box' ),
                 'titleColor' => '#191919',
                 'hideDescription' => false,
-                'description' => __( "We'll send you the best business news and informed analysis on what matters the most to you.", 'noptin' ),
+                'description' => __( "We'll send you the best business news and informed analysis on what matters the most to you.",  'newsletter-optin-box' ),
                 'descriptionColor' => '#666666',
                 'hideNote' => false,
                 'hideOnNoteClick' => false,
-                'note' => __( 'We promise not to spam you. You can unsubscribe at any time.', 'noptin' ),
+                'note' => __( 'We promise not to spam you. You can unsubscribe at any time.',  'newsletter-optin-box' ),
                 'noteColor' => '#607D8B',
                 'CSS' => ".noptin-optin-form-wrapper .noptin-form-field{
 	text-align: center;
@@ -64,7 +64,7 @@
         ),
 
     'IEiH1565701672' => array(
-        'title' => __( 'Classic', 'noptin' ),
+        'title' => __( 'Classic',  'newsletter-optin-box' ),
         'data' => array(
             'hideCloseButton' => false,
             'closeButtonPos' => 'along',
@@ -78,7 +78,7 @@
             'fields' => array(
                 array(
                     'type' => array(
-                        'label' => __( 'Email Address', 'noptin' ),
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email',
 					),
@@ -93,19 +93,19 @@
             'noptinFormBorderColor' => '#009688',
             'image' => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/email-icon.png',
             'imagePos' => 'right',
-            'noptinButtonLabel' => __( 'Subscribe Now', 'noptin' ),
+            'noptinButtonLabel' => __( 'Subscribe Now',  'newsletter-optin-box' ),
             'buttonPosition' => 'block',
             'noptinButtonBg' => '#009688',
             'noptinButtonColor' => '#fefefe',
             'hideTitle' => false,
-            'title' => __( 'Subscribe To Our Newsletter', 'noptin' ),
+            'title' => __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' ),
             'titleColor' => '#191919',
             'hideDescription' => false,
             'description' => "Enter your email to receive a weekly round-up of our best posts. <a href='https://noptin.com/guide'>Learn more!</a>",
             'descriptionColor' => '#666666',
             'hideNote' => '1',
             'hideOnNoteClick' => false,
-            'note' => __( "We don't spam people", 'noptin' ),
+            'note' => __( "We don't spam people",  'newsletter-optin-box' ),
             'noteColor' => '#607D8B',
             'CSS' => '.noptin-optin-form-wrapper *{}'
         )
@@ -113,7 +113,7 @@
 	),
 
     'qQOv1565701677' => array(
-        'title' => __( 'Subheading', 'noptin' ),
+        'title' => __( 'Subheading',  'newsletter-optin-box' ),
         'data' => array(
             'hideCloseButton' => 'false',
             'closeButtonPos' => 'along',
@@ -127,7 +127,7 @@
             'fields' => array(
                 array(
                     'type' => array(
-                        'label' => __( 'Enter your name here', 'noptin' ),
+                        'label' => __( 'Enter your name here',  'newsletter-optin-box' ),
                         'name' => 'name',
                         'type' => 'name'
 					),
@@ -138,7 +138,7 @@
 
                 array(
                     'type' => array(
-                        'label' => __( 'Enter your email address', 'noptin' ),
+                        'label' => __( 'Enter your email address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email'
 					),
@@ -153,19 +153,19 @@
             'noptinFormBorderColor' => '#9E9E9E',
             'image' => '',
             'imagePos' => 'right',
-            'noptinButtonLabel' => __( 'Subscribe Now', 'noptin' ),
+            'noptinButtonLabel' => __( 'Subscribe Now',  'newsletter-optin-box' ),
             'buttonPosition' => 'block',
             'noptinButtonBg' => '#009688',
             'noptinButtonColor' => '#fefefe',
             'hideTitle' => false,
-            'title' => __( "DON'T MISS OUT!", 'noptin' ),
+            'title' => __( "DON'T MISS OUT!",  'newsletter-optin-box' ),
             'titleColor' => '#009688',
             'hideDescription' => '',
-            'description' => __( 'Subscribe To Our Newsletter', 'noptin' ),
+            'description' => __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' ),
             'descriptionColor' => '#666666',
             'hideNote' => false,
             'hideOnNoteClick' => false,
-            'note' => __( "We don't spam people", 'noptin' ),
+            'note' => __( "We don't spam people",  'newsletter-optin-box' ),
             'noteColor' => '#607D8B',
             'CSS' => '.noptin-optin-form-wrapper form .noptin-form-header .noptin-form-description{
 	font-size: 30px;
@@ -177,7 +177,7 @@
 	),
 
     'ICkq1565701695' => array(
-        'title' => __( 'Border Top', 'noptin' ),
+        'title' => __( 'Border Top',  'newsletter-optin-box' ),
         'data' => array(
             'hideCloseButton' => false,
             'closeButtonPos'  => 'outside',
@@ -191,7 +191,7 @@
             'fields' => array(
                 array(
                     'type' => array(
-                        'label' => __( 'Email Address', 'noptin' ),
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email',
 					),
@@ -211,14 +211,14 @@
             'noptinButtonBg' => '#795548',
             'noptinButtonColor' => '#fefefe',
             'hideTitle' => false,
-            'title' => __( 'Join Our Newsletter', 'noptin' ),
+            'title' => __( 'Join Our Newsletter',  'newsletter-optin-box' ),
             'titleColor' => '#191919',
             'hideDescription' => false,
-            'description' => __( 'get weekly access to our best tips, tricks and updates.', 'noptin' ),
+            'description' => __( 'get weekly access to our best tips, tricks and updates.',  'newsletter-optin-box' ),
             'descriptionColor' => '#666666',
             'hideNote' => false,
             'hideOnNoteClick' => false,
-            'note' => __( 'No spam. We hate it more than you do.', 'noptin' ),
+            'note' => __( 'No spam. We hate it more than you do.',  'newsletter-optin-box' ),
             'noteColor' => '#607D8B',
             'CSS' => ".noptin-optin-form-wrapper {
 	border: none;
@@ -250,7 +250,7 @@
             'fields' => array(
                 array(
                     'type' => array(
-                        'label' => __( 'First Name', 'noptin' ),
+                        'label' => __( 'First Name',  'newsletter-optin-box' ),
                         'name' => 'first_name',
                         'type' => 'first_name',
 					),
@@ -261,7 +261,7 @@
 
                 array(
                     'type' => array(
-                        'label' => __( 'Email Address', 'noptin' ),
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email'
 					),
@@ -276,7 +276,7 @@
             'noptinFormBorderColor' => 'rgba(0,0,0,0)',
             'image' => '',
             'imagePos' => 'right',
-            'noptinButtonLabel' => __( 'Subscribe Now', 'noptin' ),
+            'noptinButtonLabel' => __( 'Subscribe Now',  'newsletter-optin-box' ),
             'buttonPosition' => 'block',
             'noptinButtonBg' => 'rgba(0,0,0,0)',
             'noptinButtonColor' => '#fefefe',
@@ -284,11 +284,11 @@
             'title' => 'WANT THE INSIDE SCOOP?',
             'titleColor' => '#f1f1f1',
             'hideDescription' => false,
-            'description' => __( "Use the custom CSS panel to change the background colors", 'noptin' ),
+            'description' => __( "Use the custom CSS panel to change the background colors",  'newsletter-optin-box' ),
             'descriptionColor' => '#f2f2f2',
             'hideNote' => true,
             'hideOnNoteClick' => false,
-            'note' => __( "We don't spam people", 'noptin' ),
+            'note' => __( "We don't spam people",  'newsletter-optin-box' ),
             'noteColor' => '#607D8B',
             'CSS' => ".noptin-optin-form-wrapper{}
 
@@ -309,7 +309,7 @@
 	),
 
     'yXJo1565701704' => array(
-        'title' => __( 'Rounded Fields', 'noptin' ),
+        'title' => __( 'Rounded Fields',  'newsletter-optin-box' ),
         'data' => array(
             'hideCloseButton' => false,
             'closeButtonPos' => 'top-right',
@@ -323,7 +323,7 @@
             'fields' => array(
                 array(
                     'type' => array(
-                        'label' => __( 'Email Address', 'noptin' ),
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email'
 					),
@@ -338,19 +338,19 @@
             'noptinFormBorderColor' => '#424242',
             'image' => "https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/email-icon.png",
             'imagePos' => 'left',
-            'noptinButtonLabel' => __( 'Subscribe Now', 'noptin' ),
+            'noptinButtonLabel' => __( 'Subscribe Now',  'newsletter-optin-box' ),
             'buttonPosition' => 'block',
             'noptinButtonBg' => '#607D8B',
             'noptinButtonColor' => '#fafafa',
             'hideTitle' => false,
-            'title' => __( 'Subscribe To Our Newsletter', 'noptin' ),
+            'title' => __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' ),
             'titleColor' => '#fafafa',
             'hideDescription' => false,
-            'description' => __( "Enter your email to receive a weekly round-up of our best posts. Learn more!", 'noptin' ),
+            'description' => __( "Enter your email to receive a weekly round-up of our best posts. Learn more!",  'newsletter-optin-box' ),
             'descriptionColor' => '#fafafa',
             'hideNote' => false,
             'hideOnNoteClick' => false,
-            'note' => __( "We don't spam people", 'noptin' ),
+            'note' => __( "We don't spam people",  'newsletter-optin-box' ),
             'noteColor' => '#fafafa',
             'CSS' =>  '/*Custom css*/
 
@@ -389,7 +389,7 @@
             'fields' => array(
                array(
                     'type' => array(
-                        'label' => __( 'Email Address', 'noptin' ),
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email'
 					),
@@ -404,19 +404,19 @@
             'noptinFormBorderColor' => '#4CAF50',
             'image' => '',
             'imagePos' => 'right',
-            'noptinButtonLabel' => __( 'Sign Up', 'noptin' ),
+            'noptinButtonLabel' => __( 'Sign Up',  'newsletter-optin-box' ),
             'buttonPosition' => 'block',
             'noptinButtonBg' => '#ee4a03',
             'noptinButtonColor' => '#ffffff',
             'hideTitle' => false,
-            'title' => __( 'Try Applying the Green Color Theme!', 'noptin' ),
+            'title' => __( 'Try Applying the Green Color Theme!',  'newsletter-optin-box' ),
             'titleColor' => '#fafafa',
             'hideDescription' => true,
-            'description' => __( 'Click on the design tab to change the appearance of this form.', 'noptin' ),
+            'description' => __( 'Click on the design tab to change the appearance of this form.',  'newsletter-optin-box' ),
             'descriptionColor' => '#fafafa',
             'hideNote' => true,
             'hideOnNoteClick' => false,
-            'note' => __( 'Your privacy is our priority', 'noptin' ),
+            'note' => __( 'Your privacy is our priority',  'newsletter-optin-box' ),
             'noteColor' => '#fafafa',
             'CSS' => ".noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
 	position: absolute;
@@ -456,7 +456,7 @@
 	),
 
     'r5g21565701726' => array(
-        'title' => __( 'Hearts', 'noptin' ),
+        'title' => __( 'Hearts',  'newsletter-optin-box' ),
         'data' => array(
             'hideCloseButton' => false,
             'closeButtonPos' => 'outside',
@@ -469,7 +469,7 @@
             'fields' => array(
                 array(
                     'type' => array(
-                        'label' => __( 'Email Address', 'noptin' ),
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email'
 					),
@@ -484,19 +484,19 @@
             'noptinFormBorderColor' => '#009688',
             'image' => "https://raw.githubusercontent.com/hizzle-co/noptin/master/includes/assets/images/heart.png",
             'imagePos' => 'right',
-            'noptinButtonLabel' => __( 'Yes Please!', 'noptin' ),
+            'noptinButtonLabel' => __( 'Yes Please!',  'newsletter-optin-box' ),
             'buttonPosition' => 'block',
             'noptinButtonBg' => '#191919',
             'noptinButtonColor' => '#ffffff',
             'hideTitle' => false,
-            'title' => __( 'Get some love!', 'noptin' ),
+            'title' => __( 'Get some love!',  'newsletter-optin-box' ),
             'titleColor' => '#fff',
             'hideDescription' => false,
-            'description' => __( 'Use the Custom CSS tab to change the background color of this form.', 'noptin' ),
+            'description' => __( 'Use the Custom CSS tab to change the background color of this form.',  'newsletter-optin-box' ),
             'descriptionColor' => '#dff0fe',
             'hideNote' => true,
             'hideOnNoteClick' => false,
-            'note' => __( 'Your privacy is our priority', 'noptin' ),
+            'note' => __( 'Your privacy is our priority',  'newsletter-optin-box' ),
             'noteColor' => '#191919',
             'CSS' =>  "/*Custom css*/
 .noptin-optin-form-wrapper form {
@@ -509,7 +509,7 @@
 	),
 
 	'conv21565701726' => array(
-        'title' => __( 'Convertkit', 'noptin' ),
+        'title' => __( 'Convertkit',  'newsletter-optin-box' ),
         'data' => array(
             'hideCloseButton' => false,
             'closeButtonPos' => 'along',
@@ -522,7 +522,7 @@
             'fields' => array(
                 array(
                     'type' => array(
-                        'label' => __( 'Email Address', 'noptin' ),
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
                         'name' => 'email',
                         'type' => 'email'
 					),
@@ -537,19 +537,19 @@
             'noptinFormBorderColor' => '#fb6970',
             'image' => "",
             'imagePos' => 'right',
-            'noptinButtonLabel' => __( 'SEND IT MY WAY!', 'noptin' ),
+            'noptinButtonLabel' => __( 'SEND IT MY WAY!',  'newsletter-optin-box' ),
             'buttonPosition' => 'block',
             'noptinButtonBg' => '#ffffff',
             'noptinButtonColor' => '#fb6970',
             'hideTitle' => false,
-            'title' => __( 'Optimize your opt-ins.', 'noptin' ),
+            'title' => __( 'Optimize your opt-ins.',  'newsletter-optin-box' ),
             'titleColor' => '#212f4f',
             'hideDescription' => false,
-            'description' => __( 'Collecting emails is easier than ever with this opt-in focused Toolkit.  Get the resources you need sent straight to your inbox.', 'noptin' ),
+            'description' => __( 'Collecting emails is easier than ever with this opt-in focused Toolkit.  Get the resources you need sent straight to your inbox.',  'newsletter-optin-box' ),
             'descriptionColor' => '#ffffff',
             'hideNote' => true,
             'hideOnNoteClick' => false,
-            'note' => __( 'We do not spam people', 'noptin' ),
+            'note' => __( 'We do not spam people',  'newsletter-optin-box' ),
             'noteColor' => '#fafafa',
             'CSS' =>  "/*Custom css*/
 .noptin-optin-form-wrapper .noptin-form-submit{

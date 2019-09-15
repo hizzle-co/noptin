@@ -9,7 +9,7 @@ module.exports = function( grunt ) {
 
 		addtextdomain: {
 			options: {
-				textdomain: 'noptin',
+				textdomain: 'newsletter-optin-box',
 			},
 			target: {
 				files: {

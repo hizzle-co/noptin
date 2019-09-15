@@ -66,7 +66,7 @@ function noptin_maybe_trigger_value_rating() {
         update_option('noptin_status_will_update_to', 1);
         $msg   = esc_html__( 'Congratulations on your first subscriber – that’s awesome!
         Your next target is 10. You can do it and we are glad to be helping.
-        If you have 5 minutes, could you please do us a BIG favor and give the plugin a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.', 'noptin' );
+        If you have 5 minutes, could you please do us a BIG favor and give the plugin a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.',  'newsletter-optin-box' );
 
     }
 
@@ -89,8 +89,8 @@ function noptin_maybe_show_rating_msg() {
     $link = '
         <ul class="noptin-nag">
             <li class="noptin-nag-item"><a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5" class="button button-primary">Leave a review</a></li>
-            <li class="noptin-nag-item"><a href="' . add_query_arg( 'noptin_rate_status', 'later') .'" class="button">' . __( "Maybe Later", 'noptin' ) . '</a></li>
-            <li class="noptin-nag-item"><a href="' . add_query_arg( 'noptin_rate_status', 'did') .'" class="button button-link">' . __( "Hide this notice forever", 'noptin' ) . '</a></li>
+            <li class="noptin-nag-item"><a href="' . add_query_arg( 'noptin_rate_status', 'later') .'" class="button">' . __( "Maybe Later",  'newsletter-optin-box' ) . '</a></li>
+            <li class="noptin-nag-item"><a href="' . add_query_arg( 'noptin_rate_status', 'did') .'" class="button button-link">' . __( "Hide this notice forever",  'newsletter-optin-box' ) . '</a></li>
         </ul>';
 
     printf( '<div class="%1$s"><p>%2$s</p>%3$s</div>', esc_attr( $class ), esc_html( $message ), $link );

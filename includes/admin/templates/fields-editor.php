@@ -1,5 +1,5 @@
 <div class="noptin-field-editor">
-  <button type="button" class="button button-secondary" @click="addField"><?php _e( 'Add Field', 'noptin' ); ?></button>
+  <button type="button" class="button button-secondary" @click="addField"><?php _e( 'Add Field',  'newsletter-optin-box' ); ?></button>
 
   <draggable :list="fields" tag="ul" ghost-class="noptin-sortable-ghost">
     <li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key">
@@ -30,7 +30,7 @@
 
 			?>
 
-			<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php _e( 'Delete Field', 'noptin' ); ?></a>
+			<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php _e( 'Delete Field',  'newsletter-optin-box' ); ?></a>
 
 		</div>
 

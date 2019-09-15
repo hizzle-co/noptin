@@ -145,7 +145,7 @@ class Noptin_Form {
 			'optinName'                     => '',
 			'optinStatus'                   => false,
 			'id'                            => null,
-            'optinHTML'                     => __( 'This form is incorrectly configured', 'noptin' ),
+            'optinHTML'                     => __( 'This form is incorrectly configured',  'newsletter-optin-box' ),
             'optinType'                     => 'inpost',
 
             //Opt in options
@@ -157,7 +157,7 @@ class Noptin_Form {
 			'fields'						=> array(
 				array(
 					'type'   => array(
-						'label' => __( 'Email Address', 'noptin' ),
+						'label' => __( 'Email Address',  'newsletter-optin-box' ),
 						'name'  => 'email',
 						'type'  => 'email',
 					),
@@ -195,21 +195,21 @@ class Noptin_Form {
             //Button designs
             'noptinButtonBg'                => '#313131',
             'noptinButtonColor'             => '#fefefe',
-            'noptinButtonLabel'             => __( 'Subscribe Now', 'noptin' ),
+            'noptinButtonLabel'             => __( 'Subscribe Now',  'newsletter-optin-box' ),
 
             //Title design
             'hideTitle'                     => false,
-            'title'                         => __( 'JOIN OUR NEWSLETTER', 'noptin' ),
+            'title'                         => __( 'JOIN OUR NEWSLETTER',  'newsletter-optin-box' ),
             'titleColor'                    => '#313131',
 
             //Description design
             'hideDescription'               => false,
-            'description'                   => __( 'Get notified every time we publish a new blog post. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>', 'noptin' ),
+            'description'                   => __( 'Get notified every time we publish a new blog post. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>',  'newsletter-optin-box' ),
             'descriptionColor'              => '#32373c',
 
             //Note design
             'hideNote'                      => true,
-            'note'                          => __( "We do not spam people", 'noptin' ),
+            'note'                          => __( "We do not spam people",  'newsletter-optin-box' ),
             'noteColor'                     => '#607D8B',
             'hideOnNoteClick'               => false,
 
@@ -240,7 +240,7 @@ class Noptin_Form {
 		);
 
 		if( empty( $defaults['successMessage'] ) ) {
-			$defaults['successMessage'] = esc_html__('Thanks for subscribing to the newsletter', 'noptin');
+			$defaults['successMessage'] = esc_html__('Thanks for subscribing to the newsletter',  'newsletter-optin-box');
 		}
 
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
@@ -472,7 +472,7 @@ class Noptin_Form {
 		$data = array(
             'post_title'        => empty( $this->optinName ) ? '' : $this->optinName,
             'ID'                => $this->id,
-            'post_content'      => empty( $this->optinHTML ) ? __( 'This form is incorrectly configured', 'noptin' ) : $this->optinHTML,
+            'post_content'      => empty( $this->optinHTML ) ? __( 'This form is incorrectly configured',  'newsletter-optin-box' ) : $this->optinHTML,
 			'post_status'       => empty( $this->optinStatus ) ? 'draft' : 'publish',
 			'post_type'         => 'noptin-form',
 		);

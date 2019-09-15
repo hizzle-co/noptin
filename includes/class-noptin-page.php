@@ -68,7 +68,7 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Ensure a user key is specified
         if ( empty( $key ) ) {
-			$this->print_paragraph( __( 'Unable to subscribe you at this time.', 'noptin' ) );
+			$this->print_paragraph( __( 'Unable to subscribe you at this time.',  'newsletter-optin-box' ) );
             return;
 		}
 
@@ -82,9 +82,9 @@ if( !defined( 'ABSPATH' ) ) {
 		);
 
 		if( $updated ) {
-			$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.', 'noptin' ) );
+			$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.',  'newsletter-optin-box' ) );
 		} else {
-			$this->print_paragraph( __( 'An error occured while trying to unsubscribe you from this mailing list.', 'noptin' ) );
+			$this->print_paragraph( __( 'An error occured while trying to unsubscribe you from this mailing list.',  'newsletter-optin-box' ) );
 		}
 
 

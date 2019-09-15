@@ -85,11 +85,11 @@ class Noptin_New_Post_Notify extends Noptin_Async_Request {
 		$email = prepare_noptin_email( $email, $subscriber );
 		$email = str_ireplace( "[[noptin_author]]", get_the_author_meta( 'display_name', $post->post_author ), $email);
 		$email = str_ireplace( "[[cta_url]]", get_permalink( $post->ID ), $email);
-		$email = str_ireplace( "[[cta_text]]", __( 'Continue Reading', 'noptin'), $email);
+		$email = str_ireplace( "[[cta_text]]", __( 'Continue Reading',  'newsletter-optin-box'), $email);
 
 		//Content
 		$content = sprintf(
-			__( "%sHello %s,%s I just published a new post on %s", 'noptin' ),
+			__( "%sHello %s,%s I just published a new post on %s",  'newsletter-optin-box' ),
 			'<p>',
 			'[[first_name]]',
 			'</p><p>',
@@ -117,7 +117,7 @@ class Noptin_New_Post_Notify extends Noptin_Async_Request {
 		//Preview
 		$preview = get_noptin_option('new_post_preview_text');
 		if(! $preview ) {
-			$preview = __( 'We just published a new blog post. Hope you like it.', 'noptin');
+			$preview = __( 'We just published a new blog post. Hope you like it.',  'newsletter-optin-box');
 		}
 		$email   = str_ireplace( "[[preheader]]", $preview, $email );
 
