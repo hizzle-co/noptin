@@ -375,7 +375,7 @@ class Noptin_Form_Editor {
 							esc_html__( 'Install the %s to connect your mailchimp account.', 'newsletter-optin-box' ),
 							sprintf( '<a target="_blank" href="https://noptin.com/product/mailchimp/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> MailChimp addon</a>', get_home_url() )
 							),
-                        'style'             => 'color:#232222;'
+                        'style'             => 'color:#F44336;'
                     ),
 				)
 			),
@@ -391,7 +391,7 @@ class Noptin_Form_Editor {
 							esc_html__( 'Install the %s to connect your convertkit account.', 'newsletter-optin-box' ),
 							sprintf( '<a target="_blank" href="https://noptin.com/product/convertkit/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> ConvertKit addon</a>', get_home_url() )
 							),
-                        'style'             => 'color:#232222;'
+                        'style'             => 'color:#F44336;'
                     ),
 				)
 			),

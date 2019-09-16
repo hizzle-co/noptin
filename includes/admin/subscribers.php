@@ -4,7 +4,7 @@
 
 	<div class="noptin-subscribers wrap">
 		<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers',  'newsletter-optin-box')?></h1>
-		<p><a href="https://noptin.com/product/mailchimp/" target="_blank">Connect your Mailchimp Account </a> to automatically add new email subscribers to your Mailchimp list.</p>
+		<p><a href="https://noptin.com/products/" target="_blank">Check out our integrations</a></p>
 		<div class="noptin-divider"></div>
 		<div class="tablenav top">
 

@@ -108,6 +108,14 @@ class Noptin_Settings {
 
         $settings = array(
 
+			/*'notify_admin'        => array(
+				'el'              => 'input',
+				'type'            => 'checkbox_alt',
+				'section'		  => 'general',
+				'label'           => __( 'Admin Notifications',  'newsletter-optin-box' ),
+				'description'     => __( 'Notify the site admin every time a new subscriber signs up for the newsletter.',  'newsletter-optin-box' ) ,
+			),*/
+
 			'notify_new_post'       => array(
 				'el'              => 'input',
 				'type'            => 'checkbox_alt',

@@ -1035,7 +1035,7 @@ input:focus+.noptin-switch-slider span {
 }
 
 .settings-body.noptin-fields {
-	max-width: 600px;
+	max-width: 800px;
 	margin-top: 32px;
 
 	.field-wrapper {
@@ -1061,10 +1061,18 @@ input:focus+.noptin-switch-slider span {
 
 		.noptin-content {
 			flex: 1 0 0;
+
+			.regular-text,
+			input[type="text"],
+			select,
+			textarea {
+				max-width: 400px;
+			}
 		}
 
 		&.noptin-textarea-wrapper textarea {
 			margin-bottom: 0;
+			max-width: 400px;
 		}
 	}
 

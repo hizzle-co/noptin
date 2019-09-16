@@ -214,7 +214,7 @@ class Noptin_Admin {
 		);
 
         //Vue js
-        wp_enqueue_script('vue', $this->assets_url . 'js/vue.js', array(), '2.6.10');
+        wp_enqueue_script('vue', $this->assets_url . 'js/vue.min.js', array(), '2.6.10');
 
         //Custom admin scripts
         $version = filemtime( $this->assets_path . 'js/admin-bundled.js' );

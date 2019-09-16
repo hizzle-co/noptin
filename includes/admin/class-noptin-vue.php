@@ -461,7 +461,7 @@ if( !defined( 'ABSPATH' ) ) {
 	public static function select( $id, $field ) {
 
     	if( 'multiselect' == $field['el'] ) {
-			$field['attrs'] .= ' multiselect';
+			$field['attrs'] .= ' multiple="multiple"';
 		}
 
 		if( empty($field['options']) ) {
