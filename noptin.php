@@ -221,9 +221,9 @@ if( !defined( 'ABSPATH' ) ) {
 		//The JS used to render the block in the editor backend
         wp_register_script(
             'noptin_blocks',
-            $this->plugin_url . 'includes/assets/js/blocks.js',
+            $this->plugin_url . 'includes/assets/js/dist/blocks.js',
             array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'underscore' ),
-            filemtime( $this->plugin_path . 'includes/assets/js/blocks.js' )
+            filemtime( $this->plugin_path . 'includes/assets/js/dist/blocks.js' )
         );
 
 		//The css used to style the block in the editor backend
@@ -237,9 +237,9 @@ if( !defined( 'ABSPATH' ) ) {
 		//The JS used on the frontend
         wp_register_script(
             'noptin_front',
-            $this->plugin_url . 'includes/assets/js/frontend-bundled.js',
+            $this->plugin_url . 'includes/assets/js/dist/frontend.js',
             array( 'jquery' ),
-            filemtime( $this->plugin_path . 'includes/assets/js/frontend-bundled.js' ),
+            filemtime( $this->plugin_path . 'includes/assets/js/dist/frontend.js' ),
             true
         );
 

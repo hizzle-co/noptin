@@ -1,4 +1,4 @@
-=== Newsletter Subscription Forms, Optin Widgets And Email Subscription Popups - Noptin ===
+=== Newsletter Subscription Forms, Opt-in Widgets And Email Subscription Popups - Noptin ===
 Contributors: picocodes
 Tags: email newsletter form, email opt-in, email popup, newsletter widget, email opt-in block
 Requires at least: 4.7
@@ -9,11 +9,11 @@ Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Easily add a newsletter subscription form onto any post content, widget or popup with an option to offer lead magnets and content upgrades.
+The best email opt-in form, email subscription widget and newsletter sign up popups plugin for WordPress.
 
 == Description ==
 
-**Newsletter Opt-in Forms Plugin For WordPress**
+**The best email opt-in form, email subscription widget and newsletter sign up popups plugin for WordPress.**
 ★★★★★<br>
 
 Noptin is a very fast and lightweight newsletter sign up plugin. Use it to build newsletter subscription forms and display them in a popup, widget or embed them into your WordPress posts.

@@ -35,18 +35,13 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function append_inpost( $content ) {
 
-        //Abort if this is an admin page...
-        if( is_admin() ){
+        //Maybe abort early
+        if( is_admin() || !is_singular() || !in_the_loop() || !is_main_query() ){
             return  $content ;
         }
 
         //...or the user is hiding all popups
         if ( isset( $_GET['noptin_hide'] ) && $_GET['noptin_hide'] == 'true') {
-            return  $content ;
-        }
-
-        //... or this is not a singular post
-        if( ! is_singular() ){
             return  $content ;
         }
 

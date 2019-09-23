@@ -188,14 +188,14 @@ class Noptin_Admin {
         }
 
         //Tooltips https://iamceege.github.io/tooltipster/
-        wp_enqueue_script('tooltipster', $this->assets_url . 'js/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
+        wp_enqueue_script('tooltipster', $this->assets_url . 'js/vendor/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
         wp_enqueue_style('tooltipster', $this->assets_url . 'css/tooltipster.bundle.min.css', array(), '4.2.6');
 
         //Slick selects https://designwithpc.com/Plugins/ddSlick#demo
-        wp_enqueue_script('slick', $this->assets_url . 'js/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
+        wp_enqueue_script('slick', $this->assets_url . 'js/vendor/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
 		wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
 
-		wp_enqueue_script('select2', $this->assets_url . 'js/select2.js', array( 'jquery' ), '4.0.9');
+		wp_enqueue_script('select2', $this->assets_url . 'js/vendor/select2.js', array( 'jquery' ), '4.0.9');
 
         //Enque media for image uploads
         wp_enqueue_media();
@@ -214,11 +214,11 @@ class Noptin_Admin {
 		);
 
         //Vue js
-        wp_enqueue_script('vue', $this->assets_url . 'js/vue.min.js', array(), '2.6.10');
+        wp_enqueue_script('vue', $this->assets_url . 'js/vendor/vue.js', array(), '2.6.10');
 
         //Custom admin scripts
-        $version = filemtime( $this->assets_path . 'js/admin-bundled.js' );
-        wp_register_script('noptin', $this->assets_url . 'js/admin-bundled.js', array('vue'), $version, true);
+        $version = filemtime( $this->assets_path . 'js/dist/admin.js' );
+        wp_register_script('noptin', $this->assets_url . 'js/dist/admin.js', array('vue'), $version, true);
 
         // Pass variables to our js file, e.g url etc
         $params = array(
