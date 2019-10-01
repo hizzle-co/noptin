@@ -10,11 +10,11 @@
 		noptinSettings = {}
 	}
 
-	//List filter
-	$(document).ready(function () {
-		$(".noptin-list-filter input").on("keyup", function () {
+	//List filterf
+	$(document).ready( () => {
+		$(".noptin-list-filter input").on("keyup", () => {
 			var value = $(this).val().toLowerCase();
-			$('.noptin-list-table tbody tr').filter(function () {
+			$('.noptin-list-table tbody tr').filter( () => {
 				$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
 			});
 		});

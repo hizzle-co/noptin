@@ -40,11 +40,11 @@ var settingsApp = new Vue({
 
 	el: '#noptin-settings-app',
 
-	data: jQuery.extend(true, {}, noptinSettings),
+	data: jQuery.extend( true, {}, noptinSettings ),
 
 	methods: {
 
-		saveSettings: function () {
+		saveSettings () {
 
 			//Provide visual feedback by fading the form
 			$(this.$el).fadeTo("fast", 0.33);
@@ -67,28 +67,31 @@ var settingsApp = new Vue({
 			})
 
 				//Show a success msg after we are done
-				.done(function () {
+				.done( () => {
 					$(el)
 						.fadeTo("fast", 1)
 						.find('.noptin-save-saved')
 						.show()
-						.html('<p>' + saved + '</p>')
+						.html(`<p>${saved}</p>`)
 				})
 
 				//Else alert the user about the error
-				.fail(function () {
+				.fail( () => {
 					$(el)
 						.fadeTo("fast", 1)
 						.find('.noptin-save-error')
 						.show()
-						.html('<p>' + error + '</p>')
+						.html(`<p>${error}</p>`)
 				})
 
 		},
 
 		//Handles image uploads
-		upload_image: function (key) {
-			var that = this;
+		upload_image (key, size) {
+
+			if ('undefined' == typeof size) {
+				size = 'thumbnail'
+			}
 
 			//Init the media uploader script
 			var image = wp.media({
@@ -100,15 +103,17 @@ var settingsApp = new Vue({
 				.open()
 
 				//Update the associated key with the selected image's url
-				.on('select', function (e) {
-					var uploaded_image = image.state().get('selection').first();
-					that[key] = uploaded_image.toJSON().sizes.thumbnail.url;
+				.on('select', e => {
+					let uploaded_image = image.state().get('selection').first();
+					this[key] = uploaded_image.toJSON().sizes[size].url;
 				})
 		}
 
 	},
 
-	mounted: () => { },
+	mounted () {
+		//Runs after mounting
+	},
 })
 
 export default settingsApp

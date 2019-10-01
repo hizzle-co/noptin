@@ -47,7 +47,7 @@
 				default: '#fafafa',
 			},
 		},
-		edit: function (props) {
+		edit (props) {
 			var attributes = props.attributes;
 
 			return [
@@ -58,7 +58,7 @@
 					el(TextControl, {
 						value: attributes.button,
 						type: 'text',
-						onChange: function (value) {
+						onChange (value) {
 							props.setAttributes({ button: value });
 						}
 					}),
@@ -82,7 +82,7 @@
 							value: attributes.redirect,
 							placeholder: 'http://example.com/download/gift.pdf',
 							type: 'url',
-							onChange: function (value) {
+							onChange (value) {
 								props.setAttributes({ redirect: value });
 							}
 						}),
@@ -97,7 +97,7 @@
 							components.PanelRow, null,
 							el(
 								ColorPalette, {
-									onChange: function (value) {
+									onChange (value) {
 										props.setAttributes({ bg_color: value });
 									}
 								}
@@ -112,7 +112,7 @@
 							components.PanelRow, null,
 							el(
 								ColorPalette, {
-									onChange: function (value) {
+									onChange (value) {
 										props.setAttributes({ title_color: value });
 									}
 								}
@@ -127,7 +127,7 @@
 							components.PanelRow, null,
 							el(
 								ColorPalette, {
-									onChange: function (value) {
+									onChange (value) {
 										props.setAttributes({ text_color: value });
 									}
 								}
@@ -147,7 +147,7 @@
 
 						el(
 							ColorPalette, {
-								onChange: function (value) {
+								onChange (value) {
 									props.setAttributes({ button_text_color: value });
 								}
 							}
@@ -160,7 +160,7 @@
 						),
 						el(
 							ColorPalette, {
-								onChange: function (value) {
+								onChange (value) {
 									props.setAttributes({ button_color: value });
 								}
 							}
@@ -188,7 +188,7 @@
 							placeholder: i18n.__('Write Form title…', 'noptin'),
 							value: attributes.title,
 							className: 'noptin_form_title',
-							onChange: function (value) {
+							onChange (value) {
 								props.setAttributes({ title: value });
 							},
 						}),
@@ -201,7 +201,7 @@
 							placeholder: i18n.__('Write Form Description', 'noptin'),
 							value: attributes.description,
 							className: 'noptin_form_description',
-							onChange: function (value) {
+							onChange (value) {
 								props.setAttributes({ description: value });
 							},
 						}),
@@ -242,7 +242,7 @@
 				)
 			]
 		},
-		save: function (props) {
+		save (props) {
 			var attributes = props.attributes;
 
 			return (

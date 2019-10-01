@@ -43,6 +43,11 @@ if( !defined( 'ABSPATH' ) ) {
 		//Verify nonce
 		check_ajax_referer( 'noptin' );
 
+		// avoid bot submissions
+		if(! empty( $_REQUEST['noptin_confirm_submit'] ) ) {
+			return;
+		}
+
 		//Prepare form fields
 		$form = 0;
 

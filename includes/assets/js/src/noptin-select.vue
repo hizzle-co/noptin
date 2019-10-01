@@ -8,7 +8,7 @@
 
 module.exports = {
 	props: ['value'],
-	mounted: function () {
+	mounted () {
 			var that = this
 
 			$(this.$el)
@@ -19,21 +19,21 @@ module.exports = {
 				.trigger('change')
 
 				// emit event on change.
-				.on('change', function () {
+				.on('change', () => {
 					that.$emit('input', this.value)
 				})
 
 
 		},
 		watch: {
-			value: function (value) {
+			value (value) {
 				// update value
 				$(this.$el)
 					.val(value)
 					.trigger('change')
 			},
 		},
-		destroyed: function () {
+		destroyed () {
 			$(this.$el).off().select2('destroy')
 		}
 

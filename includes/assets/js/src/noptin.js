@@ -1,13 +1,13 @@
 export default {
 
-	templateData: function (key) {
+	templateData (key) {
 
 		var data = {}
 
 		if (noptinEditor && noptinEditor.templates[key]) {
 			var template = noptinEditor.templates[key]['data']
 
-			Object.keys(template).forEach(function (key) {
+			Object.keys(template).forEach( (key) => {
 				data[key] = template[key]
 			})
 
@@ -15,9 +15,9 @@ export default {
 		return data
 	},
 
-	applyTemplate: function (template, instance) {
+	applyTemplate (template, instance) {
 
-		Object.keys(template).forEach(function (key) {
+		Object.keys(template).forEach( (key) => {
 			instance[key] = template[key]
 		})
 
@@ -25,7 +25,7 @@ export default {
 
 	},
 
-	updateFormSizes: function (instance) {
+	updateFormSizes (instance) {
 
 		if (instance.optinType == 'sidebar') {
 			instance.formHeight = '400px'
@@ -45,14 +45,14 @@ export default {
 
 	},
 
-	updateCustomCss: function (css) {
+	updateCustomCss (css) {
 		$('#formCustomCSS').text(css)
 	},
 
-	getColorThemeOptions: function () {
+	getColorThemeOptions () {
 		var themes = []
 
-		Object.keys(noptinEditor.color_themes).forEach(function (key) {
+		Object.keys(noptinEditor.color_themes).forEach( (key) => {
 			var theme = {
 				text: key,
 				value: noptinEditor.color_themes[key],
@@ -66,11 +66,11 @@ export default {
 		return themes
 	},
 
-	getColorTheme: function (instance) {
+	getColorTheme (instance) {
 		return instance.colorTheme.split(" ")
 	},
 
-	changeColorTheme: function (instance) {
+	changeColorTheme (instance) {
 
 		var colors = noptin.getColorTheme(instance)
 

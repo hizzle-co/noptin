@@ -5,7 +5,7 @@
 	var throttle = require('lodash.throttle');
 
 	//Quickly generates a random string
-	var randomString = function () {
+	var randomString = () => {
 		var rand = Math.random()
 		return 'key' + rand.toString(36).replace(/[^a-z]+/g, '')
 	}
@@ -18,7 +18,7 @@
 	var subscribed = false
 
 	//Hides a displayed popup
-	var hidePopup = function(inner) {
+	var hidePopup = (inner) => {
 
 		displayingPopup = false;
 
@@ -35,7 +35,7 @@
 			timing = 500
 		}
 
-		setTimeout(function () {
+		setTimeout( () => {
 			$("body").css("overflow", "auto");
 			$(wrapper).removeClass('open')
 		}, timing)
@@ -43,7 +43,7 @@
 
 
 	//Displays a popup and attaches "close" event handlers
-	var displayPopup = function ( popup, force ) {
+	var displayPopup =  ( popup, force ) => {
 
 		if( 'undefined' == typeof force ) {
 			force = false
@@ -58,7 +58,7 @@
 		var closeButton = $(popup)
 			.closest('.noptin-popup-main-wrapper')
 			.addClass('open')
-			.on('click', function (e) {
+			.on('click', (e) => {
 
 				// if the target of the click isn't the form nor a descendant of the form
 				if (!$(popup).is(e.target) && $(popup).has(e.target).length === 0) {
@@ -67,7 +67,7 @@
 
 			})
 			.find('.noptin-form-close')
-			.on('click', function () {
+			.on('click', () => {
 				hidePopup(popup)
 			})
 
@@ -78,7 +78,7 @@
 		}
 
 		//Maybe animate
-		setTimeout(function () {
+		setTimeout( () => {
 			$("body").css("overflow", "hidden");
 			$(popup).addClass('noptin-animate-after')
 		}, 100)
@@ -96,12 +96,12 @@
 	var noptinDisplayPopup = {
 
 		//Displays a popup immeadiately
-		immeadiate: function () {
+		immeadiate () {
 			displayPopup(this)
 		},
 
 		//Exit intent
-		before_leave: function () {
+		before_leave () {
 			var popup = this,
 				key = randomString(),
 				_delayTimer = null,
@@ -109,9 +109,9 @@
 				delay = 200; //wait 200ms before displaying popup
 
 			//Display popup when the user tries to leave...
-			$(document).on('mouseleave.' + key, function (e) {
+			$(document).on('mouseleave.' + key,  (e) => {
 				if (e.clientY > sensitivity) { return; }
-				_delayTimer = setTimeout(function () {
+				_delayTimer = setTimeout( () => {
 
 					//Display the popup
 					displayPopup(popup)
@@ -123,7 +123,7 @@
 			});
 
 			//...unless they decide to come back
-			$(document).on('mouseenter.' + key, function (e) {
+			$(document).on('mouseenter.' + key, (e) => {
 				if (_delayTimer) {
 					clearTimeout(_delayTimer);
 					_delayTimer = null;
@@ -133,12 +133,12 @@
 		},
 
 		//After the user starts scrolling
-		on_scroll: function () {
+		on_scroll () {
 			var popup = this,
 				key = randomString(),
 				showPercent = parseInt($(this).data('on-scroll'))
 
-			var watchScroll = function () {
+			var watchScroll = () => {
 				var scrolled = $(window).scrollTop(),
 					Dheight = $(document).height(),
 					Wheight = $(window).height();
@@ -156,29 +156,29 @@
 		},
 
 		//after_delay
-		after_delay: function () {
+		after_delay () {
 			var delay = parseInt($(this).data('after-delay')),
 				popup = this
 
-			setTimeout(function () {
+			setTimeout( () => {
 				displayPopup(popup)
 			}, delay * 1000)
 		},
 
 		//after_comment
-		after_comment: function () {
-			$('#commentform').on('submit', function (e) {
+		after_comment () {
+			$('#commentform').on('submit', (e) => {
 				//TODO
 			})
 		},
 
 		//after_click
-		after_click: function () {
+		after_click () {
 
 			var el = $(this).data('after-click'),
 				popup = this
 
-			$(el).on('click', function (e) {
+			$(el).on('click', (e) => {
 				e.preventDefault()
 				displayPopup(popup, true)
 			})
@@ -187,7 +187,7 @@
 	}
 
 	//Loop through all popups and attach triggers
-	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each(function () {
+	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each( () => {
 
 		var trigger = $(this).data('trigger')
 
@@ -213,11 +213,16 @@
 	//Submits forms via ajax
 	function subscribe_user(form) {
 
+		$(form)
+
+			//https://stackoverflow.com/questions/15319942/preventing-bot-form-submission
+			.prepend('<label style="display: none;"><input type="checkbox" name="noptin_confirm_submit"/>Are you sure?</label>')
+
 		//select the form
 		$(form)
 
 			//what for submit events
-			.on('submit', function (e) {
+			.on('submit',  (e) => {
 
 				//Prevent the form from submitting
 				e.preventDefault();
@@ -236,7 +241,7 @@
 				var data = {},
 					fields = $(this).serializeArray()
 
-				jQuery.each(fields, function (i, field) {
+				jQuery.each(fields, (i, field) => {
 					data[field.name] = field.value
 					$("#results").append(field.value + " ");
 				});
@@ -249,7 +254,7 @@
 				$.post(noptin.ajaxurl, data)
 
 					//Update the user of success
-					.done( function (data, status, xhr) {
+					.done( (data, status, xhr) => {
 
 						if( 'string' == typeof data ) {
 							$(that)
@@ -276,14 +281,14 @@
 							window.location = url;
 						}
 					})
-					.fail( function() {
+					.fail( () => {
 						var msg = 'Could not establish a connection to the server.'
 						$(that)
 								.find('.noptin_feedback_error')
 								.text(msg)
 								.show();
 					} )
-					.always(function(){
+					.always( () => {
 						$(that).fadeTo(600, 1)
 					})
 			})

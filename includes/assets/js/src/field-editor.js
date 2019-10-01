@@ -29,7 +29,7 @@ export default {
 				this.collapseAll()
 				this.expandField(key)
 			},
-			removeField: function (item) {
+			removeField (item) {
 
 				var key = this.fields.indexOf(item)
 				if (key > -1) {
@@ -37,12 +37,12 @@ export default {
 				}
 
 			},
-			shallowCopy: function (obj) {
+			shallowCopy (obj) {
 				return $.extend({}, obj)
 			},
-			getDefaultLabel: function (fieldType) {
+			getDefaultLabel (fieldType) {
 
-				var data = noptinFind(this.fieldTypes, function (obj) {
+				var data = noptinFind(this.fieldTypes,  (obj) => {
 					return obj.type === fieldType
 				})
 
@@ -52,7 +52,7 @@ export default {
 
 				return fieldType
 			},
-			expandField: function (id) {
+			expandField (id) {
 				var el = $('#' + id)
 
 				//toggle arrows
@@ -62,7 +62,7 @@ export default {
 				//slide down the body
 				$(el).find('.noptin-field-editor-body').slideDown()
 			},
-			collapseField: function (id) {
+			collapseField (id) {
 				var el = $('#' + id)
 
 				//toggle arrows
@@ -72,10 +72,10 @@ export default {
 				//slide up the body
 				$(el).find('.noptin-field-editor-body').slideUp()
 			},
-			collapseAll: function (id) {
+			collapseAll (id) {
 				var that = this
 
-				$.each(this.fields, function (index, value) {
+				$.each(this.fields, (index, value) => {
 					that.collapseField(value.key)
 				});
 			}
