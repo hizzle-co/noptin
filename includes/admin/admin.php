@@ -394,6 +394,7 @@ class Noptin_Admin {
      */
     public function render_subscribers_page() {
 
+		//Only admins can access this page
         if (!current_user_can('manage_options')) {
             return;
 		}
@@ -404,6 +405,13 @@ class Noptin_Admin {
          * @param array $this The admin instance
          */
 		do_action('noptin_before_admin_subscribers_page', $this);
+
+		//Are we viewing a single subscriber or all subscribers?
+		if(! empty( $_GET['subscriber'] ) ) {
+			$this->render_single_subscriber_page( $_GET['subscriber'] );return;
+		} else {
+			$this->render_subscribers_overview_page();
+		}
 
 		$deleted = false;
 
@@ -432,8 +440,15 @@ class Noptin_Admin {
             ),
             admin_url('admin-ajax.php')
         );
-        $logo_url    = $this->assets_url . 'images/logo.png';
-        $subscribers = $this->get_subscribers();
+		$logo_url    = $this->assets_url . 'images/logo.png';
+
+		//Pagination
+		$page = 0;
+		if( isset( $_GET['page'] ) ) {
+			$page = absint( $_GET['page'] ) - 1;
+		}
+		$subscribers = $this->get_subscribers( $page );
+
         include $this->admin_path . 'subscribers.php';
 
         /**
@@ -442,6 +457,41 @@ class Noptin_Admin {
          * @param array $this The admin instance
          */
         do_action('noptin_after_admin_subscribers_page', $this);
+	}
+
+	/**
+     * Displays a single subscriber
+     *
+     * @access      public
+     * @since       1.1.1
+     * @return      self::$instance
+     */
+    public function render_single_subscriber_page( $subscriber=0 ) {
+
+        /**
+         * Runs before displaying the suscribers page.
+         *
+         * @param array $this The admin instance
+         */
+		do_action( 'noptin_before_admin_single_subscriber_page', $subscriber, $this );
+
+		$meta = get_noptin_subscriber_meta( $subscriber );
+		$data = get_noptin_subscriber( $subscriber );
+
+		if( empty( $data ) ) {
+			include $this->admin_path . 'templates/single-subscriber-404.php';
+		} else {
+			include $this->admin_path . 'templates/single-subscriber.php';
+		}
+
+
+
+        /**
+         * Runs after displaying the subscribers page.
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_after_admin_single_subscriber_page', $subscriber, $this );
     }
 
     /**
@@ -757,14 +807,16 @@ class Noptin_Admin {
      * @since       1.0.0
      * @return      self::$instance
      */
-    public function get_subscribers() {
+    public function get_subscribers( $page=0 ) {
         global $wpdb;
 
-        $table = $wpdb->prefix . 'noptin_subscribers';
+		$table = $wpdb->prefix . 'noptin_subscribers';
+		$limit = 1;
+		$offset= absint( $page ) * $limit;
         $sql = "SELECT *
                     FROM $table
                     ORDER BY date_created DESC
-                    LIMIT 100";
+					LIMIT $offset, $limit";
         return $wpdb->get_results($sql);
 
 	}

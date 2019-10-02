@@ -297,6 +297,20 @@ function get_noptin_new_form_url() {
 	return add_query_arg( 'action', 'new', $url );
 }
 
+/**
+ * Retrieves the URL to a forms edit url
+ *
+ *
+ *
+ * @return  string   The form edit page url
+ * @access  public
+ * @since   1.1.1
+ */
+function get_noptin_edit_form_url( $form_id ) {
+	$url = admin_url('admin.php?page=noptin-forms');
+	return add_query_arg( 'form_id', $form_id, $url );
+}
+
 
 /**
  * Retrieves the URL to the forms overview page
@@ -413,6 +427,21 @@ function add_noptin_subscriber( $fields ) {
 	do_action( 'noptin_insert_subscriber', $id, $fields );
 
 	return $id;
+
+}
+
+
+/**
+ * Retrieves a subscriber
+ *
+ * @access  public
+ * @since   1.1.1
+ */
+function get_noptin_subscriber( $subscriber ) {
+	global $wpdb;
+
+	$table  = $wpdb->prefix . 'noptin_subscribers';
+	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d;", $subscriber ) );
 
 }
 

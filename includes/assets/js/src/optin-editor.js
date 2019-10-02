@@ -1,3 +1,4 @@
+import noptinSelectComponent from './noptin-select.vue'
 import swatches from 'vue-swatches'
 import popover from 'vue-popperjs'
 import noptinMediumEditor from 'medium-editor'
@@ -6,13 +7,15 @@ import fieldEditor from './field-editor.js'
 import noptinForm from './noptin-form.js'
 import noptin from './noptin.js'
 import noptinEditorComponent from './css-editor.vue'
-import noptinSelectComponent from './noptin-select.vue'
 
 var vm = new Vue({
 
 	components: {
 
-		 //Drag drop
+		//Select2
+		'noptin-select': noptinSelectComponent,
+
+		//Drag drop
 		draggable,
 
 		 //Color swatches
@@ -29,9 +32,6 @@ var vm = new Vue({
 
 		//Custom CSS Editor
 		'noptineditor': noptinEditorComponent,
-
-		//Select2
-		'noptin-select': noptinSelectComponent,
 
 		//WYIWYG
 		'noptin-rich-text': noptinMediumEditor,

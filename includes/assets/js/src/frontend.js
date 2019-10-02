@@ -102,8 +102,7 @@
 
 		//Exit intent
 		before_leave () {
-			var popup = this,
-				key = randomString(),
+			var key = randomString(),
 				_delayTimer = null,
 				sensitivity = 0, //how many pixels from the top should we display the popup?
 				delay = 200; //wait 200ms before displaying popup
@@ -114,7 +113,7 @@
 				_delayTimer = setTimeout( () => {
 
 					//Display the popup
-					displayPopup(popup)
+					displayPopup(this)
 
 					//Remove watchers
 					$(document).off('mouseleave.' + key)
@@ -157,12 +156,11 @@
 
 		//after_delay
 		after_delay () {
-			var delay = parseInt($(this).data('after-delay')),
-				popup = this
+			var delay = parseInt($(this).data('after-delay')) * 1000
 
 			setTimeout( () => {
-				displayPopup(popup)
-			}, delay * 1000)
+				displayPopup(this)
+			}, delay)
 		},
 
 		//after_comment
@@ -187,7 +185,7 @@
 	}
 
 	//Loop through all popups and attach triggers
-	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each( () => {
+	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each( function() {
 
 		var trigger = $(this).data('trigger')
 
@@ -222,12 +220,10 @@
 		$(form)
 
 			//what for submit events
-			.on('submit',  (e) => {
+			.on('submit',  function (e)  {
 
 				//Prevent the form from submitting
 				e.preventDefault();
-
-				var that = $(this)
 
 				//Modify form state
 				$(this)
@@ -257,7 +253,7 @@
 					.done( (data, status, xhr) => {
 
 						if( 'string' == typeof data ) {
-							$(that)
+							$(this)
 								.find('.noptin_feedback_error')
 								.text(data)
 								.show();
@@ -271,11 +267,11 @@
 						}
 
 						if (data.action == 'msg') {
-							$(that).html('<div class="noptin-big noptin-padded">' + data.msg + '</div>');
+							$(this).html('<div class="noptin-big noptin-padded">' + data.msg + '</div>');
 						}
 
 						//Gutenberg
-						var url = $(that).find('.noptin_form_redirect').val();
+						var url = $(this).find('.noptin_form_redirect').val();
 
 						if (url) {
 							window.location = url;
@@ -283,13 +279,13 @@
 					})
 					.fail( () => {
 						var msg = 'Could not establish a connection to the server.'
-						$(that)
+						$(this)
 								.find('.noptin_feedback_error')
 								.text(msg)
 								.show();
 					} )
 					.always( () => {
-						$(that).fadeTo(600, 1)
+						$(this).fadeTo(600, 1)
 					})
 			})
 	}

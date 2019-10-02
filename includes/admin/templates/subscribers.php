@@ -16,7 +16,7 @@
 				</select>
 				<input type="submit" id="doaction" class="button action" value="<?php esc_attr_e( 'Apply',  'newsletter-optin-box')?>">
 			</div>
-			<div class="tablenav-pages one-page"><span class="displaying-num"><a href="<?php echo $download_url;?>" class="button button-primary noptin-download"><?php esc_html_e('Download CSV',  'newsletter-optin-box'); ?></a></span></div>
+			<div class="tablenav-pages one-page"><span class="displaying-num"><a href="<?php echo $download_url;?>" class="button button-link noptin-download"><?php esc_html_e('Download Subscribers',  'newsletter-optin-box'); ?></a></span></div>
 			<br class="clear">
 		</div>
 
@@ -29,10 +29,9 @@
 				<tr>
 					<td id="cb" class="manage-column column-cb check-column"><input id="cb-select-all-1"
 							type="checkbox"></td>
-					<th scope="col" id="title"><?php esc_html_e('Email Address',  'newsletter-optin-box')?></th>
-					<th scope="col" id="author"><?php esc_html_e('First Name',  'newsletter-optin-box')?></th>
-					<th scope="col" id="categories"><?php esc_html_e('Last Name',  'newsletter-optin-box')?></th>
-					<th scope="col" id="date"><?php esc_html_e('Subscribed On',  'newsletter-optin-box')?></th>
+					<th scope="col" id="title"><?php esc_html_e('Subscriber',  'newsletter-optin-box')?></th>
+					<th scope="col" id="date"><?php esc_html_e('Subscription Date',  'newsletter-optin-box')?></th>
+					<th scope="col" id="date"><?php esc_html_e('Status',  'newsletter-optin-box')?></th>
 				</tr>
 			</thead>
 
@@ -43,10 +42,9 @@
 					<th scope="row" class="check-column">
 						<input type="checkbox" name="email[]" value="<?php echo esc_attr($subscriber->id); ?>">
 					</th>
-					<td><?php echo sanitize_text_field($subscriber->email); ?></td>
-					<td><?php echo sanitize_text_field($subscriber->first_name); ?></td>
-					<td><?php echo sanitize_text_field($subscriber->second_name); ?></td>
+					<td><strong><a href="<?php echo esc_url( add_query_arg( 'subscriber', $subscriber->id )); ?>"><?php echo sanitize_text_field($subscriber->email); ?></a></strong></td>
 					<td><?php echo sanitize_text_field($subscriber->date_created); ?></td>
+					<td><?php echo $subscriber->active == 0 ? 'Active' : 'Inactive'; ?></td>
 				</tr>
 				<?php }?>
 
@@ -54,10 +52,9 @@
 			<tfoot>
 				<td id="cb2" class="manage-column column-cb check-column">
 					<input id="cb-select-all-1" type="checkbox"></td>
-				<th scope="col" id="title"><?php esc_html_e('Email Address',  'newsletter-optin-box')?></th>
-				<th scope="col" id="author"><?php esc_html_e('First Name',  'newsletter-optin-box')?></th>
-				<th scope="col" id="categories"><?php esc_html_e('Last Name',  'newsletter-optin-box')?></th>
-				<th scope="col" id="date"><?php esc_html_e('Subscribed On',  'newsletter-optin-box')?></th>
+					<th scope="col" id="title"><?php esc_html_e('Subscriber',  'newsletter-optin-box')?></th>
+					<th scope="col" id="date"><?php esc_html_e('Subscription Date',  'newsletter-optin-box')?></th>
+					<th scope="col" id="date"><?php esc_html_e('Status',  'newsletter-optin-box')?></th>
 				</tr>
 			</tfoot>
 

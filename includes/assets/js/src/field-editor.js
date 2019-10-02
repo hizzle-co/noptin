@@ -1,9 +1,17 @@
 import noptinFind from 'lodash.find'
+import noptinSelectComponent from './noptin-select.vue'
 
 export default {
 
 	props: noptinEditor.field_props,
 	template: '#noptinFieldEditorTemplate',
+
+	components: {
+
+		//Select2
+		'noptin-select': noptinSelectComponent,
+
+	},
 
 	data () {
     	return {}

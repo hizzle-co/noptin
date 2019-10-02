@@ -21,7 +21,7 @@ export default {
 			instance[key] = template[key]
 		})
 
-		noptin.updateFormSizes(instance)
+		this.updateFormSizes(instance)
 
 	},
 
@@ -72,7 +72,7 @@ export default {
 
 	changeColorTheme (instance) {
 
-		var colors = noptin.getColorTheme(instance)
+		var colors = this.getColorTheme(instance)
 
 		if (colors.length) {
 			instance.noptinFormBg = colors[0]
