@@ -408,10 +408,39 @@ class Noptin_Admin {
 
 		//Are we viewing a single subscriber or all subscribers?
 		if(! empty( $_GET['subscriber'] ) ) {
-			$this->render_single_subscriber_page( $_GET['subscriber'] );return;
+			$this->render_single_subscriber_page( $_GET['subscriber'] );
 		} else {
 			$this->render_subscribers_overview_page();
 		}
+
+        /**
+         * Runs after displaying the subscribers page.
+         *
+         * @param array $this The admin instance
+         */
+        do_action('noptin_after_admin_subscribers_page', $this);
+	}
+
+	/**
+     * Renders subscribers overview page
+     *
+     * @access      public
+     * @since       1.1.1
+     * @return      self::$instance
+     */
+    public function render_subscribers_overview_page() {
+
+		//Only admins can access this page
+        if (!current_user_can('manage_options')) {
+            return;
+		}
+
+        /**
+         * Runs before displaying the suscribers overview page.
+         *
+         * @param array $this The admin instance
+         */
+		do_action('noptin_before_subscribers_overview_page', $this);
 
 		$deleted = false;
 
@@ -440,24 +469,31 @@ class Noptin_Admin {
             ),
             admin_url('admin-ajax.php')
         );
-		$logo_url    = $this->assets_url . 'images/logo.png';
 
 		//Pagination
-		$page = 0;
-		if( isset( $_GET['page'] ) ) {
-			$page = absint( $_GET['page'] ) - 1;
+		$subscribers_total = (int) get_noptin_subscribers_count();
+		$pages 			   = $subscribers_total / 15;
+		$page  			   = 1;
+		if( isset( $_GET['pagination'] ) ) {
+			$page 		   = absint( $_GET['pagination'] );
 		}
+
+		if( $page > $pages ) {
+			$page 		   = $pages;
+		}
+
 		$subscribers = $this->get_subscribers( $page );
 
-        include $this->admin_path . 'subscribers.php';
+        include $this->admin_path . 'templates/subscribers.php';
 
         /**
-         * Runs after displaying the subscribers page.
+         * Runs after displaying the subscribers overview page.
          *
          * @param array $this The admin instance
          */
-        do_action('noptin_after_admin_subscribers_page', $this);
+        do_action('noptin_after_subscribers_overview_page', $this);
 	}
+
 
 	/**
      * Displays a single subscriber
@@ -807,12 +843,12 @@ class Noptin_Admin {
      * @since       1.0.0
      * @return      self::$instance
      */
-    public function get_subscribers( $page=0 ) {
+    public function get_subscribers( $page=1 ) {
         global $wpdb;
 
 		$table = $wpdb->prefix . 'noptin_subscribers';
-		$limit = 1;
-		$offset= absint( $page ) * $limit;
+		$limit = 15;
+		$offset= absint( $page - 1 ) * $limit;
         $sql = "SELECT *
                     FROM $table
                     ORDER BY date_created DESC

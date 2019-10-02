@@ -278,9 +278,9 @@ function get_noptin_action_url( $action, $value ) {
  * @access  public
  * @since   1.5
  */
-function get_noptin_subscribers_overview_url() {
+function get_noptin_subscribers_overview_url( $page=1 ) {
 	$url = admin_url('admin.php?page=noptin-subscribers');
-	return $url;
+	return add_query_arg( 'pagination', $page, $url );
 }
 
 /**

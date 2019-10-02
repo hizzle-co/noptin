@@ -3,7 +3,7 @@
 	<?php wp_nonce_field( 'noptin', 'noptin_nonce' ); ?>
 
 	<div class="noptin-subscribers wrap">
-		<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers',  'newsletter-optin-box')?></h1>
+		<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers',  'newsletter-optin-box')?><em> (<?php echo $subscribers_total;?>)</em></h1>
 		<p><a href="https://noptin.com/products/" target="_blank">Check out our integrations</a></p>
 		<div class="noptin-divider"></div>
 		<div class="tablenav top">
@@ -43,7 +43,7 @@
 						<input type="checkbox" name="email[]" value="<?php echo esc_attr($subscriber->id); ?>">
 					</th>
 					<td><strong><a href="<?php echo esc_url( add_query_arg( 'subscriber', $subscriber->id )); ?>"><?php echo sanitize_text_field($subscriber->email); ?></a></strong></td>
-					<td><?php echo sanitize_text_field($subscriber->date_created); ?></td>
+					<td><?php echo date( 'D, jS M Y', strtotime( $subscriber->date_created )); ?></td>
 					<td><?php echo $subscriber->active == 0 ? 'Active' : 'Inactive'; ?></td>
 				</tr>
 				<?php }?>
@@ -59,5 +59,36 @@
 			</tfoot>
 
 		</table>
+		<div style="margin-top: 16px;">
+			<?php
+
+				//Previous page
+				if( $page > 1 ) {
+
+					printf(
+						__('%sPrevious Page%s',  'newsletter-optin-box'),
+						'<a href="' . esc_url( get_noptin_subscribers_overview_url( $page - 1 ) ) . '">',
+						'</a>'
+					);
+
+				}
+
+				//Page separators
+				if( $page > 1 && $pages > $page ) {
+					echo " | ";
+				}
+
+				//Next page
+				if( $pages > $page ) {
+
+					printf(
+						__('%sNext Page%s',  'newsletter-optin-box'),
+						'<a href="' . esc_url( get_noptin_subscribers_overview_url( $page + 1 ) ) . '">',
+						'</a>'
+					);
+
+				}
+			?>
+		</div>
 	</div>
 </form>
