@@ -840,7 +840,7 @@ class Noptin_Form_Editor {
             'savingTemplateError'           => __( 'There was an error saving your template.',  'newsletter-optin-box'),
             'savingTemplateSuccess'         => __( 'Your template has been saved successfuly',  'newsletter-optin-box'),
             'previewText'                   => __( 'Preview',  'newsletter-optin-box'),
-            'isPreviewShowing'              => false,
+			'isPreviewShowing'              => false,
             'colorTheme'                    => '',
 			'Template'                      => '',
 			'fieldTypes'                    => get_noptin_optin_field_types(),

@@ -244,6 +244,12 @@ $noptin_color: #ff6f00;
 				font-weight: 700;
 				line-height: 1.4125;
 				padding-top: 4px;
+
+				p {
+					margin: 0;
+					font-size: 23px;
+					font-weight: 700;
+				}
 			}
 
 			.noptin-form-description {
@@ -251,6 +257,12 @@ $noptin_color: #ff6f00;
 				font-weight: 500;
 				line-height: 1.3;
 				padding-top: 18px;
+
+				p {
+					margin: 0;
+					font-size: 16px;
+					font-weight: 500;
+				}
 			}
 		}
 
@@ -312,6 +324,11 @@ $noptin_color: #ff6f00;
 
 			.noptin-form-note {
 				font-size: 14px;
+
+				p {
+					font-size: 14px;
+					margin: 0;
+				}
 			}
 		}
 

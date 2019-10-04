@@ -204,7 +204,7 @@ class Noptin_Form {
 
             //Description design
             'hideDescription'               => false,
-            'description'                   => __( 'Get notified every time we publish a new blog post. <a href="https://noptin.com/docs/creating-forms">Learn more!</a>',  'newsletter-optin-box' ),
+            'description'                   => __( 'Click on any element to edit it. Try <u>highlighting this text</u>.',  'newsletter-optin-box' ),
             'descriptionColor'              => '#32373c',
 
             //Note design

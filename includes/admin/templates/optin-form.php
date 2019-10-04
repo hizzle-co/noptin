@@ -7,8 +7,8 @@
 		</div>
 		<div class="noptin-form-header" :class="image ? imagePos : 'no-image'">
 			<div class="noptin-form-header-text">
-				<div v-if="!hideTitle" :style="{color:titleColor}" class="noptin-form-heading" v-html="title"></div>
-				<div v-if="!hideDescription" :style="{color:descriptionColor}" class="noptin-form-description" v-html="description"></div>
+				<noptin-rich-text v-if="!hideTitle && editing" :style="{color:titleColor}" class="noptin-form-heading" v-model="title" :text="title"></noptin-rich-text>
+				<noptin-rich-text v-if="!hideDescription && editing" :style="{color:descriptionColor}" class="noptin-form-description" v-model="description" :text="description"></noptin-rich-text>
 			</div>
 			<div v-if="image" class="noptin-form-header-image">
 				<img :src="image" />
@@ -24,7 +24,7 @@
 					:style="{backgroundColor:noptinButtonBg, color: noptinButtonColor}"
 					:class="singleLine ? '' : 'noptin-form-button-' + buttonPosition" class="noptin-form-submit" />
 			</div>
-			<p v-if="!hideNote" :style="{ color: noteColor}" class="noptin-form-note" v-html="note"></p>
+			<noptin-rich-text v-if="!hideNote && editing" :style="{ color: noteColor}" class="noptin-form-note" v-model="note" :text="note"></noptin-rich-text>
 			<div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px"
 				class="noptin_feedback_success"></div>
 			<div style="border:1px solid rgba(227, 6, 37, 0.8);display:none;padding:10px;margin-top:10px"

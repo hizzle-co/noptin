@@ -1,7 +1,7 @@
 import noptinSelectComponent from './noptin-select.vue'
 import swatches from 'vue-swatches'
 import popover from 'vue-popperjs'
-import noptinMediumEditor from 'medium-editor'
+import richText from './rich-text.js'
 import draggable from 'vuedraggable'
 import fieldEditor from './field-editor.js'
 import noptinForm from './noptin-form.js'
@@ -18,10 +18,10 @@ var vm = new Vue({
 		//Drag drop
 		draggable,
 
-		 //Color swatches
+		//Color swatches
 		'noptin-swatch': swatches,
 
-		 //Tooltips
+		//Tooltips
 		'noptin-tooltip': popover,
 
 		//Optin fields editor
@@ -34,7 +34,7 @@ var vm = new Vue({
 		'noptineditor': noptinEditorComponent,
 
 		//WYIWYG
-		'noptin-rich-text': noptinMediumEditor,
+		'noptin-rich-text': richText,
 
 	},
 
@@ -43,14 +43,14 @@ var vm = new Vue({
 	data: jQuery.extend(true, {}, noptinEditor.data),
 
 	computed: {
-		_onlyShowOn () {
+		_onlyShowOn() {
 			return this.onlyShowOn && this.onlyShowOn.length > 0
 		}
 	},
 
 	methods: {
 
-		togglePanel (id) {
+		togglePanel(id) {
 
 			var el = $('#' + id)
 			var isOpen = $(el).hasClass('open')
@@ -68,11 +68,23 @@ var vm = new Vue({
 
 		},
 
-		previewPopup () {
+		previewPopup() {
 			this.isPreviewShowing = true
-			var _html = jQuery('.noptin-popup-wrapper').html()
+
+			var el = $('.noptin-popup-wrapper').clone()
+			var whitelist = ["class","style"];
+
+			el.find('.medium-editor-element').each(function() {
+				var attributes = this.attributes;
+				var i = attributes.length;
+				while( i-- ) {
+					var attr = attributes[i];
+					if( $.inArray(attr.name,whitelist) == -1 )
+						this.removeAttributeNode(attr);
+				}
+			})
 			jQuery("#noptin-popup-preview")
-				.html(_html)
+				.html(el.html())
 				.addClass('noptin-preview-showing')
 				.find('.noptin-popup-close')
 				.show()
@@ -88,12 +100,13 @@ var vm = new Vue({
 						vm.closePopup()
 					}
 				});
+
 		},
-		closePopup () {
+		closePopup() {
 			this.isPreviewShowing = false
 			jQuery("#noptin-popup-preview").removeClass('noptin-preview-showing').html('')
 		},
-		saveAsTemplate () {
+		saveAsTemplate() {
 			var saveText = this.saveAsTemplateText
 			this.saveAsTemplateText = this.savingTemplateText;
 			var that = this
@@ -103,18 +116,18 @@ var vm = new Vue({
 				action: "noptin_save_optin_form_as_template",
 				state: vm.$data
 			})
-				.done( () => {
+				.done(() => {
 					that.showSuccess(that.savingTemplateSuccess)
 					that.saveAsTemplateText = saveText
 				})
-				.fail( () => {
+				.fail(() => {
 					that.showError(that.savingTemplateError)
 					that.saveAsTemplateText = saveText
 				})
 
 		},
 
-		upload_image (key, size) {
+		upload_image(key, size) {
 
 			if ('undefined' == typeof size) {
 				size = 'thumbnail'
@@ -130,35 +143,35 @@ var vm = new Vue({
 					vm[key] = uploaded_image.toJSON().sizes[size].url;
 				})
 		},
-		showSuccess (msg) {
+		showSuccess(msg) {
 			this.hasSuccess = true;
 			this.Success = msg;
 
-			setTimeout( () => {
+			setTimeout(() => {
 				vm.hasSuccess = false;
 				vm.Success = '';
 			}, 5000)
 		},
-		showError (msg) {
+		showError(msg) {
 			this.hasError = true;
 			this.Error = msg;
 
-			setTimeout( () => {
+			setTimeout(() => {
 				vm.hasError = false;
 				vm.Error = '';
 			}, 5000)
 		},
-		publish () {
+		publish() {
 			this.optinStatus = true
 		},
-		unpublish () {
+		unpublish() {
 			this.optinStatus = false
 		},
-		copyShortcode (e) {
+		copyShortcode(e) {
 			var text = "[noptin-form id=" + this.id + "]"
 			this.copy(text, e)
 		},
-		copy (text, e) {
+		copy(text, e) {
 
 			var textarea =
 				$('<textarea>')
@@ -188,28 +201,41 @@ var vm = new Vue({
 				el.text('error').addClass('copied')
 			}
 
-			setTimeout( () => {
+			setTimeout(() => {
 				el.text('Copied').removeClass('copied')
 			}, 400)
 
 			textarea.remove()
 		},
-		save () {
+		save() {
 			var saveText = this.saveText
 			this.saveText = this.savingText;
 			var that = this
+
+			var el = $('.noptin-popup-wrapper').clone()
+			var whitelist = ["class","style"];
+
+			el.find('.medium-editor-element').each(function() {
+				var attributes = this.attributes;
+				var i = attributes.length;
+				while( i-- ) {
+					var attr = attributes[i];
+					if( $.inArray(attr.name,whitelist) == -1 )
+						this.removeAttributeNode(attr);
+				}
+			})
 
 			jQuery.post(noptinEditor.ajaxurl, {
 				_ajax_nonce: noptinEditor.nonce,
 				action: "noptin_save_optin_form",
 				state: vm.$data,
-				html: jQuery('.noptin-popup-wrapper').html()
+				html: el.html()
 			})
-				.done( () => {
+				.done(() => {
 					that.showSuccess(that.savingSuccess)
 					that.saveText = saveText
 				})
-				.fail( () => {
+				.fail(() => {
 					that.showError(that.savingError)
 					that.saveText = saveText
 				})
@@ -218,25 +244,25 @@ var vm = new Vue({
 	},
 
 	watch: {
-		Template () {
+		Template() {
 			var template = noptin.templateData(this.Template)
 			noptin.applyTemplate(template, this)
 		},
-		optinStatus () {
+		optinStatus() {
 			this.save()
 		},
-		CSS () {
+		CSS() {
 			noptin.updateCustomCss(this.CSS)
 		},
-		optinType () {
+		optinType() {
 			noptin.updateFormSizes(this)
 		},
-		colorTheme () {
+		colorTheme() {
 			noptin.changeColorTheme(this)
 		}
 	},
 
-	mounted () {
+	mounted() {
 		noptin.updateCustomCss(this.CSS)
 		jQuery('.noptin-form-designer-loader').hide()
 		jQuery(this.$el).find('.noptin-popup-editor-main-preview-name-textarea').focus()
