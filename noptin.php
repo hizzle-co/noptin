@@ -141,9 +141,6 @@ if( !defined( 'ABSPATH' ) ) {
         //Ensure the db is up to date
         $this->maybe_upgrade_db();
 
-        //Register post types
-        $this->register_post_types();
-
         //Register blocks
 		$this->register_blocks();
 
@@ -185,7 +182,8 @@ if( !defined( 'ABSPATH' ) ) {
 		require_once $this->plugin_path . 'includes/class-noptin-new-post-notify.php';
 
 
-        require_once $this->plugin_path . 'includes/class-noptin-form.php';
+		require_once $this->plugin_path . 'includes/class-noptin-form.php';
+		require_once $this->plugin_path . 'includes/class-noptin-post-types.php';
         require_once $this->plugin_path . 'includes/class-noptin-popups.php';
         require_once $this->plugin_path . 'includes/class-noptin-inpost.php';
 		require_once $this->plugin_path . 'includes/class-noptin-sidebar.php';
@@ -385,37 +383,6 @@ if( !defined( 'ABSPATH' ) ) {
 
 	}
 
-
-	/**
-	 * Load Localisation files.
-	 *
-	 */
-	public function register_post_types() {
-
-		if ( ! is_blog_installed() || post_type_exists(  'noptin-form' ) ) {
-			return;
-		}
-
-		/**
-		 * Fires before custom post types are registered
-		 *
-		 * @since 1.0.0
-		 *
-		*/
-		do_action( 'noptin_register_post_type' );
-
-		//Optin forms
-		register_post_type( 'noptin-form'	, noptin_get_optin_form_post_type_details() );
-
-		/**
-		 * Fires after custom post types are registered
-		 *
-		 * @since 1.0.0
-		 *
-		*/
-		do_action( 'noptin_after_register_post_type' );
-
-	}
 }
 
 //Kickstart everything

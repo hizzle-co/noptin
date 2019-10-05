@@ -614,30 +614,6 @@ function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '=
 }
 
 /**
- * Returns optin post type details
- */
-function noptin_get_optin_form_post_type_details(){
-	return apply_filters(
-		'noptin_optin_form_post_type_details',
-		array(
-			'labels'              => array(),
-			'description'         => '',
-			'public'              => false,
-			'show_ui'             => false,
-			'map_meta_cap'        => true,
-			'publicly_queryable'  => false,
-			'exclude_from_search' => true,
-			'hierarchical'        => false,
-			'query_var'           => false,
-			'supports'            => array(),
-			'has_archive'         => false,
-			'show_in_nav_menus'   => false,
-			'show_in_rest'        => true,
-			'menu_icon'   		  => ''
-		));
-}
-
-/**
  * Returns post types
  */
 function noptin_get_post_types(){

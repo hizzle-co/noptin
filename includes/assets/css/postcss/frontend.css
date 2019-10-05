@@ -145,7 +145,7 @@ $noptin_color: #ff6f00;
 
 
 	/*The main opt in form*/
-	form {
+	form, .noptin-optin-form {
 		width: 100%;
 		position: relative;
 		text-align: center;

@@ -7,13 +7,18 @@ import fieldEditor from './field-editor.js'
 import noptinForm from './noptin-form.js'
 import noptin from './noptin.js'
 import noptinEditorComponent from './css-editor.vue'
+import tempForm from './noptin-temp-form.vue'
 
+var editor = jQuery('#noptin_form_editor').clone().removeClass('postbox')
+jQuery('.post-type-noptin-form #post').replaceWith( editor )
 var vm = new Vue({
 
 	components: {
 
 		//Select2
 		'noptin-select': noptinSelectComponent,
+
+		'noptin-temp-form': tempForm,
 
 		//Drag drop
 		draggable,
@@ -266,6 +271,19 @@ var vm = new Vue({
 		noptin.updateCustomCss(this.CSS)
 		jQuery('.noptin-form-designer-loader').hide()
 		jQuery(this.$el).find('.noptin-popup-editor-main-preview-name-textarea').focus()
+
+		//Positioning
+		jQuery('#noptin_form_editor .noptin-popup-designer').css({
+			top: jQuery('#wpadminbar').height(),
+			left: jQuery('#adminmenuwrap').width(),
+		})
+
+		$(window).on('resize', function(){
+			jQuery('#noptin_form_editor .noptin-popup-designer').css({
+				top: jQuery('#wpadminbar').height(),
+				left: jQuery('#adminmenuwrap').width(),
+			})
+		});
 	},
 
 })

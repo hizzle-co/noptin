@@ -138,7 +138,7 @@ class Noptin_Admin {
         do_action('noptin_before_admin_init_hooks', $this);
 
         //Admin scripts
-        add_action('admin_enqueue_scripts', array($this, 'enqeue_scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'enqeue_scripts'), 1);
 
         //(maybe) do an action
         add_action('admin_init', array($this, 'maybe_do_action'));
@@ -176,14 +176,24 @@ class Noptin_Admin {
      * @return      self::$instance
      */
     public function enqeue_scripts() {
-        global $pagenow;
 
 		//Admin styles
         $version = filemtime( $this->assets_path . 'css/admin.css' );
 		wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array(), $version);
 
-        //Only enque on our pages
-        if( 'admin.php' != $pagenow || empty( $_GET['page'] ) || false === stripos( $_GET['page'], 'noptin') ){
+		//Only enque on our pages
+		$page = '';
+
+		if( isset( $_GET['page'] ) ) {
+			$page = $_GET['page'];
+		}
+
+		$screen = get_current_screen();
+		if(! empty( $screen->post_type ) ) {
+			$page = $screen->post_type;
+		}
+
+        if( empty( $page ) || false === stripos( $page, 'noptin' ) ){
             return;
         }
 
@@ -255,28 +265,7 @@ class Noptin_Admin {
             'noptin',
             array($this, 'render_main_page'),
             'dashicons-forms',
-            67);
-
-        //Add the optin forms page
-        add_submenu_page(
-            'noptin',
-            esc_html__('Newsletter opt-in forms',  'newsletter-optin-box'),
-            esc_html__('Newsletter Forms', 'newsletter-optin-box'),
-            'manage_options',
-            'noptin-forms',
-            array($this, 'render_forms_page')
-        );
-
-        //Link to new forms creation page
-        add_submenu_page(
-            'noptin',
-            esc_html__('Add New Form',  'newsletter-optin-box'),
-            esc_html__('Add New Form',  'newsletter-optin-box'),
-            'manage_options',
-            'noptin-new-form',
-            array($this, 'render_add_new_page')
-		);
-
+            23);
 
         //Add the subscribers page
         add_submenu_page(
@@ -529,84 +518,6 @@ class Noptin_Admin {
          */
         do_action('noptin_after_admin_single_subscriber_page', $subscriber, $this );
     }
-
-    /**
-     * Renders forms page
-     *
-     * @access      public
-     * @since       1.0.4
-     * @return      self::$instance
-     */
-    public function render_forms_page() {
-
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-
-        /**
-         * Runs before displaying the forms page.
-         *
-         * @param array $this The admin instance
-         */
-        do_action('noptin_before_admin_forms_page', $this);
-
-        //The optin form currently being edited
-        $form = false;
-
-        //Is the user trying to edit a new optin form?
-        if( isset( $_GET['form_id'] ) ){
-            $form   = absint( $_GET['form_id'] );
-        }
-
-        if( $form ){
-            if( empty( $_GET['created']) && empty( $_GET['editor_quick']) ) {
-                $editor = new Noptin_Form_Editor( $form, true );
-            } else {
-				//@todo $editor = new Noptin_Form_Editor_Quick( $form, true );
-				$editor = new Noptin_Form_Editor( $form, true );
-            }
-            $editor->output();
-        } else {
-
-            //Fetch forms
-            $forms = noptin_get_optin_forms();
-
-            //No forms?
-            if(! $forms ){
-
-                //Ask the user to add some
-                include $this->admin_path . 'templates/forms-empty.php';
-
-            } else {
-
-                //Show them to the user
-                include $this->admin_path . 'templates/forms-list.php'; //welcome
-
-            }
-
-
-        }
-
-
-        /**
-         * Runs after displaying the forms page.
-         *
-         * @param array $this The admin instance
-         */
-        do_action('noptin_after_admin_forms_page', $this);
-    }
-
-    /**
-     * Renders add_new page
-     *
-     * @access      public
-     * @since       1.0.4
-     * @return      self::$instance
-     */
-    public function render_add_new_page(){
-        wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
-	    exit;
-	}
 
 	/**
      * Renders the settings page
