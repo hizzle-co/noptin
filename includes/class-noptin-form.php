@@ -643,6 +643,11 @@ class Noptin_Form {
 				$style .= "background-image: url($image);";
 			}
 
+		} else {
+
+			$count = (int) get_post_meta( $id, '_noptin_form_views', true );
+			update_post_meta( $id, '_noptin_form_views', $count + 1);
+
 		}
 		$html  = "<div class='$type_class $id_class' style='$style'>";
 

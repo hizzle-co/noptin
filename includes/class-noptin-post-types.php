@@ -30,6 +30,12 @@ if( !defined( 'ABSPATH' ) ) {
 		//Register our special meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes') );
 
+		//Filter form columns
+		add_filter ( 'manage_noptin-form_posts_columns', array( $this, 'manage_form_columns' ) );
+
+		//Display columns
+		add_action ( 'manage_noptin-form_posts_custom_column', array( $this, 'display_form_columns' ), 10, 2 );
+
     }
 
     /**
@@ -103,7 +109,7 @@ if( !defined( 'ABSPATH' ) ) {
 				'has_archive'         => false,
 				'show_in_nav_menus'   => false,
 				'show_in_rest'        => false,
-				'show_in_menu'        => 'noptin',
+				'show_in_menu'        => false,
 				'menu_icon'   		  => '',
 				'can_export'		  => false,
 			));
@@ -140,7 +146,7 @@ if( !defined( 'ABSPATH' ) ) {
 		if( $post_type == 'noptin-form' ) {
 			add_meta_box(
                 'noptin_form_editor',
-                __( 'Form Editor', 'textdomain' ),
+                __( 'Form Editor', 'newsletter-optin-box' ),
                 array( $this, 'render_form_editor' ),
                 $post_type,
                 'normal',
@@ -159,6 +165,47 @@ if( !defined( 'ABSPATH' ) ) {
 		$form   = $post->ID;
 		$editor = new Noptin_Form_Editor( $form, true );
 		$editor->output();
+
+	}
+
+	/**
+	 * Filters the form columns
+	 *
+	 */
+	public function manage_form_columns( $columns ) {
+
+		unset( $columns['author'] );
+		unset( $columns['date'] );
+		$columns['title'] 	  	  = __( 'Form', 'newsletter-optin-box' );
+		$columns['shortcode'] 	  = __( 'Shortcode', 'newsletter-optin-box' );
+		$columns['subscriptions'] = __( 'Subscriptions', 'newsletter-optin-box' );
+		$columns['date'] 	  	  = __( 'Date', 'newsletter-optin-box' );
+		return $columns;
+
+	}
+
+	/**
+	 * Displays a column
+	 *
+	 */
+	public function display_form_columns( $column, $post_id ) {
+
+		switch ( $column ) {
+			case 'subscriptions':
+				echo (int) get_post_meta ( $post_id, '_noptin_subscribers_count', true );
+				break;
+
+			case 'shortcode':
+				$post_type = get_post_meta ( $post_id, '_noptin_optin_type', true );
+
+				if( 'inpost' == $post_type ) {
+					echo "[noptin-form id=$post_id]";
+				} else {
+					echo '__';
+				}
+
+				break;
+		}
 
 	}
 

@@ -267,7 +267,16 @@ class Noptin_Admin {
             'dashicons-forms',
             23);
 
-        //Add the subscribers page
+        //Add the newsletter page
+        add_submenu_page(
+            'noptin',
+            esc_html__('Newsletter Forms',  'newsletter-optin-box'),
+            esc_html__('Newsletter Forms',  'newsletter-optin-box'),
+            'manage_options',
+            'edit.php?post_type=noptin-form'
+		);
+
+		//Add the subscribers page
         add_submenu_page(
             'noptin',
             esc_html__('Subscribers',  'newsletter-optin-box'),

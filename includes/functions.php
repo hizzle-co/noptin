@@ -293,8 +293,7 @@ function get_noptin_subscribers_overview_url( $page=1 ) {
  * @since   1.5
  */
 function get_noptin_new_form_url() {
-	$url = admin_url('admin.php?page=noptin-forms');
-	return add_query_arg( 'action', 'new', $url );
+	return admin_url('post-new.php?post_type=noptin-form');
 }
 
 /**
@@ -307,10 +306,9 @@ function get_noptin_new_form_url() {
  * @since   1.1.1
  */
 function get_noptin_edit_form_url( $form_id ) {
-	$url = admin_url('admin.php?page=noptin-forms');
-	return add_query_arg( 'form_id', $form_id, $url );
+	$url = admin_url('post.php?action=edit');
+	return add_query_arg( 'post', $form_id, $url );
 }
-
 
 /**
  * Retrieves the URL to the forms overview page
@@ -320,7 +318,7 @@ function get_noptin_edit_form_url( $form_id ) {
  * @since   1.5
  */
 function get_noptin_forms_overview_url() {
-	$url = admin_url('admin.php?page=noptin-forms');
+	$url = admin_url('edit.php?post_type=noptin-form');
 	return $url;
 }
 

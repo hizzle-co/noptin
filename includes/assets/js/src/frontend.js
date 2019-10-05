@@ -55,6 +55,13 @@
 
 		displayingPopup = true;
 
+		//Log form view
+		$.post(noptin.ajaxurl, {
+			action : "noptin_log_form_impression",
+			_wpnonce: noptin.nonce,
+			form_id: $(popup).find('input[name=noptin_form_id]').val(),
+		})
+
 		var closeButton = $(popup)
 			.closest('.noptin-popup-main-wrapper')
 			.addClass('open')

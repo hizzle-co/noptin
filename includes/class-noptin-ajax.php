@@ -22,6 +22,10 @@ if( !defined( 'ABSPATH' ) ) {
 		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 
+		//Log form impressions
+		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
+		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
+
 		//Download subscribers
 		add_action('wp_ajax_noptin_download_subscribers', array($this, 'download_subscribers'));
 
@@ -29,7 +33,28 @@ if( !defined( 'ABSPATH' ) ) {
 		add_action('wp_ajax_noptin_save_options', array($this, 'save_options'));
 
 
-    }
+	}
+
+	/**
+     * Logs a form view
+     *
+     * @access      public
+     * @since       1.1.1
+     * @return      void
+     */
+    public function log_form_impression() {
+
+		//Verify nonce
+		check_ajax_referer( 'noptin' );
+
+		if(! empty( $_REQUEST['form_id'] ) ) {
+			$form_id = intval( $_REQUEST['form_id'] );
+			$count   = (int) get_post_meta( $form_id, '_noptin_form_views', true );
+			update_post_meta( $form_id, '_noptin_form_views', $count + 1);
+		}
+		exit;
+
+	}
 
     /**
      * Adds a new subscriber via ajax
