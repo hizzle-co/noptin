@@ -395,6 +395,22 @@ class Noptin_Form_Editor {
                     ),
 				)
 			),
+
+			'mailpoet' => array(
+				'el'        => 'panel',
+				'title'     => 'MailPoet',
+				'id'        => 'mailpoet',
+				'children'  => array(
+					'mailpoettext'        	=> array(
+                        'el'                => 'paragraph',
+                        'content'           => sprintf(
+							esc_html__( 'Install the %s to email your subscribers via MailPoet.', 'newsletter-optin-box' ),
+							sprintf( '<a target="_blank" href="https://noptin.com/product/mailpoet/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> MailPoet addon</a>', get_home_url() )
+							),
+                        'style'             => 'color:#F44336;'
+                    ),
+				)
+			),
 		);
 	}
 

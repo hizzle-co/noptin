@@ -470,7 +470,7 @@ class Noptin_Admin {
 
 		//Pagination
 		$subscribers_total = (int) get_noptin_subscribers_count();
-		$pages 			   = $subscribers_total / 15;
+		$pages 			   = ceil( $subscribers_total / 15 );
 		$page  			   = 1;
 		if( isset( $_GET['pagination'] ) ) {
 			$page 		   = absint( $_GET['pagination'] );

@@ -148,7 +148,10 @@ if( !defined( 'ABSPATH' ) ) {
 		$this->load_plugin_textdomain();
 
         //Load css and js
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
+
+		 //css body class
+		 add_filter( 'body_class', array( $this, 'body_class') );
 
 		/**
 		 * Fires after Noptin inits
@@ -318,7 +321,19 @@ if( !defined( 'ABSPATH' ) ) {
     public function register_widget() {
         register_widget( 'Noptin_Widget' );
         register_widget( 'Noptin_Sidebar' );
-    }
+	}
+
+	/**
+     * Filters the body classes
+     *
+     * @access      public
+     * @since       1.1.1
+     * @return      array
+     */
+    public function body_class( $classes ) {
+		$classes['noptin'] = 'noptin';
+		return $classes;
+	}
 
     /**
 	 * Runs installation

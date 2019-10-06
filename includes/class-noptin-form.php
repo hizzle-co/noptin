@@ -178,7 +178,7 @@ class Noptin_Form {
             'noptinFormBg'                  => '#eeeeee',
             'noptinFormBorderColor'         => '#eeeeee',
             'noptinFormBorderRound'         => true,
-            'formWidth'                     => '620px',
+            'formWidth'                     => '580px',
 			'formHeight'                    => '280px',
 
 			//Overlay
@@ -204,7 +204,7 @@ class Noptin_Form {
 
             //Description design
             'hideDescription'               => false,
-            'description'                   => __( 'Click on any element to edit it. Try <u>highlighting this text</u>.',  'newsletter-optin-box' ),
+            'description'                   => __( 'Click on any text to edit it. Try <u>highlighting this text</u>.',  'newsletter-optin-box' ),
             'descriptionColor'              => '#32373c',
 
             //Note design
@@ -295,7 +295,7 @@ class Noptin_Form {
         }
 
         if( empty( $return['optinType'] ) ) {
-            $return['optinType'] = 'popup';
+            $return['optinType'] = 'inpost';
         }
 
 		return $return;

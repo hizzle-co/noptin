@@ -455,6 +455,58 @@
 
 	),
 
+	'89zl1570214684' => array(
+        'title' => 'Michael Thiessen',
+        'data' => array(
+            'hideCloseButton' => false,
+            'closeButtonPos' => 'inside',
+            'singleLine' => false,
+            'formRadius' => '8px',
+            'formWidth' => '520px',
+            'formHeight' => '250px',
+			'noptinFormBg' => '#f1f5f8',
+			'noptinFormBgImg' => '',
+			'noptinFormBgVideo' => '',
+            'fields' => array(
+               array(
+                    'type' => array(
+                        'label' => __( 'Email Address',  'newsletter-optin-box' ),
+                        'name' => 'email',
+                        'type' => 'email'
+					),
+
+                    'require' => true,
+                    'key' => 'noptin_email_key'
+                )
+
+			),
+
+            'imageMain' => false,
+            'noptinFormBorderColor' => '#6cb2eb',
+            'image' => '',
+            'imagePos' => 'right',
+            'noptinButtonLabel' => __( 'Download Now',  'newsletter-optin-box' ),
+            'buttonPosition' => 'block',
+            'noptinButtonBg' => '#2779bd',
+            'noptinButtonColor' => '#fefefe',
+            'hideTitle' => false,
+            'title' => __( 'Get my FREE book on VueJS',  'newsletter-optin-box' ),
+            'titleColor' => '#313131',
+            'hideDescription' => false,
+            'description' => __( '<ul><li><strong>144 pages</strong> of content</li><li>Solve common, <strong>frustrating</strong> problems</li><li>Understand confusing errors</li><li>And so much more!</li></ul>',  'newsletter-optin-box' ),
+            'descriptionColor' => '#313131',
+            'hideNote' => true,
+            'hideOnNoteClick' => false,
+            'note' => __( 'Your privacy is our priority',  'newsletter-optin-box' ),
+            'noteColor' => '#313131',
+            'CSS' => ".noptin-optin-form-wrapper {
+	border: 1px solid;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,.12), 0 2px 4px 0 rgba(0,0,0,.08);
+}"
+        )
+
+	),
+
     'r5g21565701726' => array(
         'title' => __( 'Hearts',  'newsletter-optin-box' ),
         'data' => array(
