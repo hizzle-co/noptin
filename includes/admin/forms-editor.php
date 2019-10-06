@@ -573,7 +573,8 @@ class Noptin_Form_Editor {
 
             'formWidth'             => array(
                 'type'              => 'text',
-                'el'                => 'input',
+				'el'                => 'input',
+				'restrict'  		=> "optinType=='popup'",
 				'label'             => __( 'Preferred Width',  'newsletter-optin-box' ),
 				'tooltip'    		=> __( "The element will resize to 100% width on smaller devices",  'newsletter-optin-box' ),
             ),

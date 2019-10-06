@@ -456,12 +456,14 @@ body.post-type-noptin-form.post-php {
 
 	.noptin-popup-editor-sidebar {
 		flex-grow: 3;
-		width: 220px;
+		width: 300px;
+		max-width: 300px;
 		overflow: auto;
 		color: #555d66;
 
 		@media only screen and (max-width: 784px) {
 			width: 100%;
+			max-width: 100%;
 		}
 	}
 

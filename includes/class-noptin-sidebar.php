@@ -129,7 +129,7 @@ if( !defined( 'ABSPATH' ) ) {
             class="widefat"
             id="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>"
         >
-            <option value="" disabled <?php selected( '', $form ); ?>><?php esc_html_e( 'Select form',  'newsletter-optin-box' ); ?></option>
+            <option value="" <?php selected( '', $form ); ?>><?php esc_html_e( 'Select a form',  'newsletter-optin-box' ); ?></option>
             <?php $this->forms_select($form);?>
         </select>
     </p>

@@ -218,6 +218,11 @@ var vm = new Vue({
 			var that = this
 
 			var el = $('.noptin-popup-wrapper').clone()
+
+			if( 'popup' != this.optinType ) {
+				el.find('.noptin-optin-form-wrapper').css('width', '100%')
+			}
+
 			var whitelist = ["class","style"];
 
 			el.find('.medium-editor-element').each(function() {
