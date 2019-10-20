@@ -101,7 +101,7 @@ class Noptin_Settings {
 
 	}
 
-    /**
+	/**
      * Returns all settings fields
      */
     public static function get_settings() {
@@ -273,5 +273,6 @@ class Noptin_Settings {
         );
         return apply_filters( 'noptin_get_settings', $settings );
     }
+
 
 }

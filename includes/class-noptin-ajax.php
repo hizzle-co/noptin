@@ -32,6 +32,9 @@ if( !defined( 'ABSPATH' ) ) {
 		//Save settings
 		add_action('wp_ajax_noptin_save_options', array($this, 'save_options'));
 
+		//Create a new automation
+		add_action( 'wp_ajax_noptin_setup_automation', array( $this, 'setup_automation' ) );
+
 
 	}
 
@@ -52,6 +55,77 @@ if( !defined( 'ABSPATH' ) ) {
 			$count   = (int) get_post_meta( $form_id, '_noptin_form_views', true );
 			update_post_meta( $form_id, '_noptin_form_views', $count + 1);
 		}
+		exit;
+
+	}
+
+	/**
+     * Sets up a new automation
+     *
+     * @access      public
+     * @since       1.1.2
+     * @return      void
+     */
+	public function setup_automation() {
+
+		//Verify nonce
+		check_ajax_referer( 'noptin_create_automation' );
+
+		$data = $_POST;
+		unset( $data['_wpnonce'] );
+		unset( $data['_wp_http_referer'] );
+		unset( $data['action'] );
+
+		if( empty( $data['automation_name'] ) ) {
+			die( __( 'Enter a name for your automation', 'newsletter-optin-box') );
+		}
+
+		if( empty( $data['automation_type'] ) ) {
+			die( __( 'There was an error retrieving that automation type', 'newsletter-optin-box') );
+		}
+
+		$data = apply_filters( 'noptin_email_automation_setup_data', $data );
+
+		if( is_string( $data ) ) {
+			die( $data );
+		}
+
+		//Create a new automation
+		$id = wp_insert_post( array(
+			'post_title'        => $data['automation_name'],
+            'post_content'      => empty( $data['default_content'] ) ? '' : $data['default_content'],
+			'post_status'       => 'draft',
+			'post_type'         => 'noptin-campaign',
+		), true );
+
+        //If an error occured, return it
+        if( is_wp_error( $id ) ) {
+            die( $id->get_error_message() );
+		}
+
+		if(! empty( $data['default_subject'] ) ) {
+			update_post_meta( $id, 'subject', $data['default_subject'] );
+		}
+
+		unset( $data['default_subject'] );
+		unset( $data['default_content'] );
+		unset( $data['automation_name'] );
+
+		foreach( $data as $key => $value ) {
+			update_post_meta( $id, $key, $value );
+		}
+
+		update_post_meta( $id, 'campaign_type', 'automation' );
+
+		/**
+    	 * Runs before displaying automation settings
+    	 *
+    	 */
+		do_action( 'noptin_setup_automation', $id, $data );
+
+		wp_send_json( array(
+			'redirect'	=> get_noptin_automation_campaign_url( $id ),
+		) );
 		exit;
 
 	}

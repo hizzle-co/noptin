@@ -280,7 +280,7 @@ function get_noptin_action_url( $action, $value ) {
  */
 function get_noptin_subscribers_overview_url( $page=1 ) {
 	$url = admin_url('admin.php?page=noptin-subscribers');
-	return add_query_arg( 'pagination', $page, $url );
+	return add_query_arg( 'paged', $page, $url );
 }
 
 /**
@@ -340,13 +340,28 @@ function get_noptin_optin_field_types() {
  * @access  public
  * @since   1.5
  */
-function get_noptin_subscribers_count( $where = '' ) {
+function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value = false ) {
 	global $wpdb;
 
-	$table = $wpdb->prefix . 'noptin_subscribers';
+	$table     		= $wpdb->prefix . 'noptin_subscribers';
+	$meta_table     = $wpdb->prefix . 'noptin_subscriber_meta';
+	$extra_sql 		= '';
+
+	if( false !== $meta_value ) {
+		$extra_sql = "INNER JOIN $meta_table ON ( $table.id = $meta_table.noptin_subscriber_id ) WHERE ( $meta_table.meta_key = '%s' AND $meta_table.meta_value = '%s' )";
+		$extra_sql = $wpdb->prepare( $extra_sql, $meta_key, $meta_value );
+	}
 
 	if(! empty( $where ) ) {
-		$where = "WHERE $where";
+
+		if( empty( $extra_sql ) ) {
+			$where = "WHERE $where";
+		} else {
+			$where = "$extra_sql AND $where";
+		}
+
+	} else {
+		$where = "$extra_sql";
 	}
 
 	return $wpdb->get_var("SELECT COUNT(`id`) FROM $table $where;");
@@ -856,3 +871,80 @@ function noptin_obfuscate_email_addresses($string){
     return preg_replace_callback('/([\w\.]{1,4})([\w\.]*)\@(\w{1,2})(\w*)\.(\w+)/', '_noptin_obfuscate_email_addresses_callback', $string);
 }
 
+/**
+ *  Returns a link to add a new newsletter campaign
+ */
+function get_noptin_new_newsletter_campaign_url() {
+
+	$param = array(
+		'page'        => 'noptin-email-campaigns',
+		'section'     => 'newsletters',
+		'sub_section' => 'new_campaign',
+	);
+	return add_query_arg( $param, admin_url( '/admin.php' ) );
+
+}
+
+/**
+ *  Returns a link to edit an automation campaign
+ */
+function get_noptin_automation_campaign_url( $id ) {
+
+	$param = array(
+		'page'        => 'noptin-email-campaigns',
+		'section'     => 'automations',
+		'sub_section' => 'edit_campaign',
+		'id' 		  => $id,
+	);
+	return add_query_arg( $param, admin_url( '/admin.php' ) );
+
+}
+
+/**
+ *  Returns the default newsletter subject
+ */
+function get_noptin_default_newsletter_subject() {
+
+	$subject = __( 'Sending newsletters in WordPress is now easier than ever', 'newsletter-optin-box' );
+
+	/**
+     * Filters the default newsletter subject
+     *
+     * @param string $subject The default newsletter subject
+     */
+    return apply_filters('noptin_default_newsletter_subject', $subject);
+
+}
+
+/**
+ *  Returns the default newsletter preview text
+ */
+function get_noptin_default_newsletter_preview_text() {
+
+	$preview_text = __( 'With this free plugin.', 'newsletter-optin-box' );
+
+	/**
+     * Filters the default newsletter preview text
+     *
+     * @param string $preview_text The default newsletter preview text
+     */
+    return apply_filters('noptin_default_newsletter_preview_text', $preview_text);
+
+}
+
+/**
+ *  Returns the default newsletter body
+ */
+function get_noptin_default_newsletter_body() {
+
+	$noptin_admin = Noptin_Admin::instance();
+	$body         = include $noptin_admin->admin_path . 'templates/default-email-body.php';
+
+	/**
+     * Filters the default newsletter body
+     *
+     * @param string $body The default newsletter body
+     */
+    return apply_filters('noptin_default_newsletter_body', $body);
+
+}

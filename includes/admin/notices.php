@@ -593,15 +593,6 @@
 		}
 	}
 
-	/**
-	 * Create an admin notice.
-	 *
-	 * @param string $id
-	 * @return AdminNotice
-	 */
-	function easyAdminNotice($id = null) {
-		return new AdminNotice($id);
-	}
 
 	if (function_exists('add_action')) {
 		add_action('admin_notices', array( 'Noptin_Notices', '_showDelayedNotices'));

@@ -246,7 +246,6 @@
 
 				jQuery.each(fields, (i, field) => {
 					data[field.name] = field.value
-					$("#results").append(field.value + " ");
 				});
 
 				//Add nonce and action

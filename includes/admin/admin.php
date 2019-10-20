@@ -40,7 +40,19 @@ class Noptin_Admin {
      * @var        obj $instance The one true noptin
      * @since       1.0.0
      */
-    private static $instance = null;
+	private static $instance = null;
+
+	/**
+     * @access      public
+     * @var        array $notices Notices
+     * @since       1.1.2
+     */
+    private $notices = array(
+		'info'    => array(),
+		'warning' => array(),
+		'error'   => array(),
+		'success' => array(),
+	);
 
     /**
      * Get active instance
@@ -81,6 +93,8 @@ class Noptin_Admin {
         // Include core files
 		$this->includes();
 
+		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
+
         //initialize hooks
         $this->init_hooks();
 
@@ -110,8 +124,10 @@ class Noptin_Admin {
         //Editor
         require_once $this->admin_path . 'forms-editor.php';
 
-		//notifications
-		require_once $this->admin_path . 'forms-editor-quick.php';
+		//Email campaigns
+		require_once $this->admin_path . 'class-noptin-email-campaigns-admin.php';
+		require_once $this->admin_path . 'class-noptin-email-newsletters-table.php';
+		require_once $this->admin_path . 'class-noptin-email-automations-table.php';
 
         /**
          * Runs right after including admin files.
@@ -158,6 +174,9 @@ class Noptin_Admin {
 
 		//Maybe notify subscribers of new posts publish_$post_types
 		add_action('publish_post', array($this, 'notify_new_post'));
+
+		//Display notices
+		add_action('admin_notices', array($this, 'show_notices'));
 
         /**
          * Runs right after registering admin hooks.
@@ -207,6 +226,9 @@ class Noptin_Admin {
 
 		wp_enqueue_script('select2', $this->assets_url . 'js/vendor/select2.js', array( 'jquery' ), '4.0.9');
 
+		//wp_enqueue_script('magnific-popup', $this->assets_url . 'js/vendor/magnific-popup.js', array( 'jquery' ), '1.1.0');
+		//wp_enqueue_style('magnific-popup', $this->assets_url . 'css/magnific.css', array(), '1.1.0');
+
         //Enque media for image uploads
         wp_enqueue_media();
 
@@ -224,7 +246,7 @@ class Noptin_Admin {
 		);
 
         //Vue js
-        wp_enqueue_script('vue', $this->assets_url . 'js/vendor/vue.min.js', array(), '2.6.10');
+        wp_enqueue_script('vue', $this->assets_url . 'js/vendor/vue.js', array(), '2.6.10');
 
         //Custom admin scripts
         $version = filemtime( $this->assets_path . 'js/dist/admin.js' );
@@ -270,17 +292,27 @@ class Noptin_Admin {
         //Add the newsletter page
         add_submenu_page(
             'noptin',
-            esc_html__('Newsletter Forms',  'newsletter-optin-box'),
-            esc_html__('Newsletter Forms',  'newsletter-optin-box'),
+            esc_html__('Email Forms',  'newsletter-optin-box'),
+            esc_html__('Email Forms',  'newsletter-optin-box'),
             'manage_options',
             'edit.php?post_type=noptin-form'
+		);
+
+		//Add the email campaigns page
+        add_submenu_page(
+            'noptin',
+            esc_html__('Email Campaigns',  'newsletter-optin-box'),
+            esc_html__('Email Campaigns',  'newsletter-optin-box'),
+            'manage_options',
+            'noptin-email-campaigns',
+            array($this, 'render_email_campaigns_page')
 		);
 
 		//Add the subscribers page
         add_submenu_page(
             'noptin',
-            esc_html__('Subscribers',  'newsletter-optin-box'),
-            esc_html__('Subscribers',  'newsletter-optin-box'),
+            esc_html__('Email Subscribers',  'newsletter-optin-box'),
+            esc_html__('Email Subscribers',  'newsletter-optin-box'),
             'manage_options',
             'noptin-subscribers',
             array($this, 'render_subscribers_page')
@@ -383,7 +415,38 @@ class Noptin_Admin {
         do_action('noptin_after_admin_main_page', $this);
     }
 
-    /**
+	/**
+     * Renders view subscribers page
+     *
+     * @access      public
+     * @since       1.1.2
+     * @return      self::$instance
+     */
+    public function render_email_campaigns_page() {
+
+		//Only admins can access this page
+        if (!current_user_can('manage_options')) {
+            return;
+		}
+
+		/**
+         * Runs before displaying the email campaigns page.
+         *
+         * @param array $this The admin instance
+         */
+		do_action('noptin_before_email_campaigns_page', $this);
+
+		include $this->admin_path . 'templates/email-campaigns.php';
+
+		/**
+         * Runs after displaying the email campaigns page.
+         *
+         * @param array $this The admin instance
+         */
+		do_action('noptin_after_email_campaigns_page', $this);
+	}
+
+	/**
      * Renders view subscribers page
      *
      * @access      public
@@ -429,7 +492,7 @@ class Noptin_Admin {
     public function render_subscribers_overview_page() {
 
 		//Only admins can access this page
-        if (!current_user_can('manage_options')) {
+        if (! current_user_can( 'manage_options' ) ) {
             return;
 		}
 
@@ -450,7 +513,7 @@ class Noptin_Admin {
 				if(! empty( $_POST['email'] ) && is_array( $_POST['email'] ) ) {
 
 					foreach( $_POST['email'] as $email ) {
-						delete_noptin_subscriber( $email );
+		 				delete_noptin_subscriber( $email );
 					}
 
 					$deleted = true;
@@ -466,23 +529,26 @@ class Noptin_Admin {
                 'admin_nonce' => urlencode(wp_create_nonce('noptin_admin_nonce')),
             ),
             admin_url('admin-ajax.php')
-        );
+		);
 
-		//Pagination
-		$subscribers_total = (int) get_noptin_subscribers_count();
-		$pages 			   = ceil( $subscribers_total / 15 );
-		$page  			   = 1;
-		if( isset( $_GET['pagination'] ) ) {
-			$page 		   = absint( $_GET['pagination'] );
-		}
+		//include $this->admin_path . 'templates/subscribers.php';
+		require_once $this->admin_path . 'class-noptin-subscribers-table.php';
 
-		if( $page > $pages ) {
-			$page 		   = $pages;
-		}
+		$table 	= new Noptin_Subscribers_Table();
+		$table->prepare_items();
 
-		$subscribers = $this->get_subscribers( $page );
-
-        include $this->admin_path . 'templates/subscribers.php';
+	?>
+		<div class="wrap">
+			<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers',  'newsletter-optin-box')?> <a href="<?php echo $download_url;?>" class="button-secondary"><?php _e( 'Download Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
+			<form id="noptin-subscribers-table" method="POST">
+				<?php $table->display(); ?>
+				<p class="description"><a href="https://noptin.com/products/" target="_blank"><?php _e( 'Check out our integrations', 'newsletter-optin-box' );?></a></p>
+			</form>
+			<div id="noptin-create-automation" style="display:none;">
+				<?php include $noptin_admin->admin_path . 'templates/new-email-automations-popup.php'; ?>
+			</div>
+		</div>
+	<?php
 
         /**
          * Runs after displaying the subscribers overview page.
@@ -666,7 +732,17 @@ class Noptin_Admin {
 		}
 
         update_post_meta( $ID, '_noptin_state', $_POST['state'] );
-        update_post_meta( $ID, '_noptin_optin_type', $_POST['state']['optinType'] );
+		update_post_meta( $ID, '_noptin_optin_type', $_POST['state']['optinType'] );
+
+		//Ensure impressions and subscriptions are set
+		//to prevent the form from being hidden when the user sorts by those fields
+		if( empty( get_post_meta ( $ID, '_noptin_subscribers_count', true ) )) {
+			update_post_meta( $ID, '_noptin_subscribers_count', 0 );
+		}
+
+		if( empty( get_post_meta ( $ID, '_noptin_form_views', true ) )) {
+			update_post_meta( $ID, '_noptin_form_views', 0 );
+		}
 
         /**
          * Runs after saving a form
@@ -763,16 +839,26 @@ class Noptin_Admin {
      * @since       1.0.0
      * @return      self::$instance
      */
-    public function get_subscribers( $page=1 ) {
+    public function get_subscribers( $page=1, $meta_key='_subscriber_via', $meta_value=false ) {
         global $wpdb;
 
-		$table = $wpdb->prefix . 'noptin_subscribers';
-		$limit = 15;
-		$offset= absint( $page - 1 ) * $limit;
+		$table     		= $wpdb->prefix . 'noptin_subscribers';
+		$meta_table     = $wpdb->prefix . 'noptin_subscriber_meta';
+		$limit 	   		= 10;
+		$offset	   		= absint( $page - 1 ) * $limit;
+		$extra_sql = '';
+
+		if( false !== $meta_value ) {
+			$extra_sql = "INNER JOIN $meta_table ON ( $table.id = $meta_table.noptin_subscriber_id ) WHERE ( $meta_table.meta_key = '%s' AND $meta_table.meta_value = '%s' )";
+			$extra_sql = $wpdb->prepare( $extra_sql, $meta_key, $meta_value );
+		}
+
         $sql = "SELECT *
                     FROM $table
+					$extra_sql
                     ORDER BY date_created DESC
 					LIMIT $offset, $limit";
+
         return $wpdb->get_results($sql);
 
 	}
@@ -829,10 +915,30 @@ class Noptin_Admin {
 
 		}
 
-        //New form creation
-        if( isset( $_GET['page'] ) && 'noptin-new-form' == $_GET['page'] ) {
-            wp_redirect( admin_url("admin.php?page=noptin-forms&action=new"), 301 );
-	        exit;
+        //Subscriber actions
+        if( isset( $_GET['page'] ) && 'noptin-subscribers' == $_GET['page'] ) {
+
+			//Maybe delete an email subscriber
+			if(! empty( $_GET['delete-subscriber'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin-subscriber' ) ) {
+				delete_noptin_subscriber( $_GET['delete-subscriber'] );
+				$this->show_success( __('Subscriber successfully deleted', 'newsletter-optin-box') );
+			}
+
+			//Delete multiple subscribers
+			if(! empty( $_POST['action'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'bulk-ids' ) ) {
+				$ids = array();
+
+				if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
+					$ids = array_map( 'intval', $_REQUEST['id'] );
+				}
+
+				foreach( $ids as $id ) {
+					delete_noptin_subscriber( $id );
+				}
+
+				$this->show_success( __('The selected subscribers have been deleted.', 'newsletter-optin-box') );
+			}
+
 		}
 
 		//Docs page
@@ -877,6 +983,64 @@ class Noptin_Admin {
 		}
 
 
-    }
+	}
+
+	/**
+     * Displays a success notice
+     *
+     * @access      public
+     * @since       1.1.2
+     */
+    public function show_success( $msg ) {
+		$this->notices['success'][] = $msg;
+	}
+
+	/**
+     * Displays a error notice
+     *
+     * @access      public
+     * @since       1.1.2
+     */
+    public function show_error( $msg ) {
+		$this->notices['error'][] = $msg;
+	}
+
+	/**
+     * Displays a warning notice
+     *
+     * @access      public
+     * @since       1.1.2
+     */
+    public function show_warning( $msg ) {
+		$this->notices['warning'][] = $msg;
+	}
+
+	/**
+     * Displays a info notice
+     *
+     * @access      public
+     * @since       1.1.2
+     */
+    public function show_info( $msg ) {
+		$this->notices['info'][] = $msg;
+	}
+
+	/**
+     * Show notices
+     *
+     * @access      public
+     * @since       1.1.2
+     */
+    public function show_notices( $msg ) {
+
+		foreach( $this->notices as $type => $messages ) {
+
+			$class = "notice notice-$type is-dismissible";
+			foreach( $messages as $message ) {
+				echo "<div class='$class'><p>$message</p></div>";
+			}
+
+		}
+	}
 
 }

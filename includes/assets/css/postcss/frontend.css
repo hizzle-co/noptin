@@ -45,6 +45,10 @@ $noptin_color: #ff6f00;
 	font-size: 20px;
 }
 
+.noptin-max-w-200 {
+	max-width: 200px !important;
+}
+
 .noptin-preview-showing {
 	overflow: auto;
 }
@@ -138,7 +142,13 @@ $noptin_color: #ff6f00;
 	box-sizing: border-box;
 	margin: auto;
 	max-width: 100%;
+	box-sizing: border-box;
 	width: 100%;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+	* {
+		box-sizing: border-box;
+	}
 
 	.noptin-inpost-main-wrapper & {
 		margin-bottom: 20px;

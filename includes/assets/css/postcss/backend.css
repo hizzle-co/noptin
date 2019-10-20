@@ -1099,6 +1099,104 @@ input:focus+.noptin-switch-slider span {
 
 }
 
+.noptin-newsletter-campaign-form.noptin-fields {
+	max-width: 1020px;
+
+	.noptin-campaign-input,
+	input,
+	select,
+	textarea {
+		max-width: 600px;
+	}
+
+}
+
+.create-new-campaign {
+	margin-top: 6px;
+}
+
+a.no-campaign-create-new-campaign {
+	display: block;
+	margin: 20px auto;
+	max-width: 400px;
+	font-size: 16px;
+}
+
+#noptin-automations-popup {
+	position: relative;
+
+	h2 {
+		margin-bottom: 24px;
+		font-size: 24px;
+	}
+
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+
+		li {
+			flex: 0 0 240px;
+			margin-right: 10px;
+			padding: 0;
+
+			.noptin-automation-type-select {
+				display: block;
+				padding: 10px;
+				border: 1px solid #f5f5f5;
+				color: #757575;
+				text-decoration: none;
+				height: 145px;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+
+				&:hover,
+				&ctive,
+				&:focus {
+					color: #757575;
+					border-color: #37474F;
+				}
+
+				&.disabled {
+					background: #fcfcfc;
+					border-color: #bdbdbd !important;
+
+					&> :last-child {
+						color: #ff5722;
+
+						a {
+							margin-left: 4px;
+							text-decoration: none;
+						}
+					}
+				}
+			}
+
+
+		}
+
+	}
+
+	&.showing {
+		ul li {
+			animation-name: noptinAnimateIn;
+			animation-duration: 250ms;
+			animation-delay: 0;
+			animation-delay: calc(var(--noptin-automation-select-order) * 100ms);
+			animation-fill-mode: both;
+			animation-timing-function: ease-in-out;
+		}
+	}
+
+	.noptin-automation-setup-form {
+		bottom: -100%;
+
+		&.showing {
+			bottom: 0;
+		}
+	}
+}
+
 .noptin-full-screen {
 	background: #fff;
 	position: fixed;
@@ -1146,6 +1244,29 @@ input:focus+.noptin-switch-slider span {
 	.noptin-copy-button.copied {
 		display: inline-block;
 		animation: noptin-vibrate 0.9s infinite both;
+	}
+}
+
+#noptin-subscribers-table,
+#noptin-automation-campaigns-table,
+#noptin-newsletter-campaigns-table {
+
+	.column-status:not(.manage-column) {
+		font-weight: 500;
+
+		.status-inactive {
+			color: #d84315;
+		}
+
+		.status-active {
+			color: #2E7D32;
+		}
+	}
+
+	@media screen and (min-width:960px) {
+		.manage-column.column-primary {
+			width: 50%;
+		}
 	}
 }
 
@@ -1211,24 +1332,13 @@ input:focus+.noptin-switch-slider span {
 	}
 }
 
-.noptin-ping {
-	animation: noptin-ping 0.8s ease-in-out infinite both;
-}
-
-
-@keyframes noptin-ping {
+@keyframes noptinAnimateIn {
 	0% {
-		transform: scale(0.2);
-		opacity: 0.8;
-	}
-
-	80% {
-		transform: scale(1.2);
 		opacity: 0;
+		transform: scale(0.6) translateY(-8px);
 	}
 
 	100% {
-		transform: scale(2.2);
-		opacity: 0;
+		opacity: 1;
 	}
 }

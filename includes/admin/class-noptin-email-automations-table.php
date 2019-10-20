@@ -1,0 +1,295 @@
+<?php
+/**
+ * Displays a list of all email automations
+ *
+ */
+
+if ( ! class_exists( 'WP_List_Table' ) ) {
+	include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
+
+/**
+ * email automations table class.
+ */
+class Noptin_Email_Automations_Table extends WP_List_Table {
+
+	/**
+	 * URL of this page
+	 *
+	 * @var   string
+	 * @since 1.1.2
+	 */
+	public $base_url;
+
+	/**
+	 * Query
+	 *
+	 * @var   string
+	 * @since 1.1.2
+	 */
+	public $query;
+
+	/**
+	 *  Constructor function.
+	 */
+	public function __construct() {
+		global $status, $page;
+
+		$this->prepare_query();
+
+		parent::__construct(
+			array(
+				'singular' => 'id',
+				'plural'   => 'ids',
+			)
+		);
+
+		$this->base_url = admin_url( 'admin.php?page=noptin-email-campaigns' );
+
+	}
+
+	/**
+	 *  Prepares the display query
+	 */
+	public function prepare_query() {
+		global $noptin_campaigns_query;
+
+		//Campaigns to display on every page
+		$per_page = 10;
+
+		//Prepare query params
+		$paged     = empty( $_GET['paged'] )   ? 1 : $_GET['paged'];
+		$orderby   = empty( $_GET['orderby'] ) ? 'id' : $_GET['orderby'];
+		$order     = empty( $_GET['order'] )   ? 'desc' : $_GET['order'];
+
+		$query_args = array(
+			'post_type' 	=> 'noptin-campaign',
+			'post_status'   => array( 'pending', 'draft', 'future', 'publish' ),
+			'meta_key'   	=> 'campaign_type',
+			'meta_value' 	=> 'automation',
+			'orderby' 		=> $orderby,
+			'order'   		=> $order,
+			'posts_per_page'=> $per_page,
+			'paged'			=> $paged,
+		);
+		$query_args = apply_filters( "manage_noptin_newsletters_wp_query_args", $query_args );
+
+		$noptin_campaigns_query = new WP_Query( $query_args  );
+		$this->query = $noptin_campaigns_query;
+
+	}
+
+	/**
+	 * Default columns.
+	 *
+	 * @param object $item        item.
+	 * @param string $column_name column name.
+	 */
+	public function column_default( $item, $column_name ) {
+
+		/**
+         * Runs after displaying the subscribers overview page.
+         *
+         * @param array $this The admin instance
+         */
+		do_action( "noptin_display_automations_table_$column_name", $item );
+
+	}
+
+	/**
+	 * Displays the automation name
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_title( $item ) {
+
+		$row_actions         = array();
+		$edit_url			 = esc_url( get_noptin_automation_campaign_url( $item->ID ) );
+		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
+
+		$row_actions['delete'] = '<a onclick="return confirm(\'Are you sure to delete this automation campaign?\');" href="' . esc_url( wp_nonce_url(
+			add_query_arg( 'delete-automation', $item->ID,$this->base_url ),
+			'noptin-campaign'
+		)) . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+
+		$title = esc_html( $item->post_title );
+		$extra = '';
+
+		if( 'publish' != $item->post_status ) {
+			$extra = '&mdash; ' . __( 'Inactive', 'newsletter-optin-box' );
+		}
+		$title = "<div><strong><a href='$edit_url'>$title</a> $extra</strong></div>";
+
+		return sprintf( '%s %s', $title, $this->row_actions( $row_actions ) );
+	}
+
+	/**
+	 * Displays the automation recipients
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_recipients( $item ) {
+		return (int) get_post_meta( $item->ID, 'noptin_recipients', true );
+	}
+
+	/**
+	 * Displays the automation opens
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_opens( $item ) {
+		return (int) get_post_meta( $item->ID, 'noptin_opens', true );
+	}
+
+	/**
+	 * Displays the automation clicks
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_clicks( $item ) {
+		return (int) get_post_meta( $item->ID, 'noptin_clicks', true );
+	}
+
+	/**
+	 * This is how checkbox column renders.
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	function column_cb( $item ) {
+		return sprintf( '<input type="checkbox" name="id[]" value="%s" />', esc_html( $item->ID ) );
+	}
+
+	/**
+	 * [OPTIONAL] Return array of bult actions if has any
+	 *
+	 * @return array
+	 */
+	function get_bulk_actions() {
+
+		$actions = array(
+			'delete' => __( 'Delete', 'newsletter-optin-box' ),
+		);
+		return apply_filters( "manage_noptin_newsletters_table_bulk_actions", $actions );
+
+	}
+
+	/**
+	 * Whether the table has items to display or not
+	 *
+	 * @return bool
+	 */
+	public function has_items() {
+		return $this->query->have_posts();
+	}
+
+	/**
+	 * Generate the table rows
+	 *
+	 * @since 1.1.2
+	 */
+	public function display_rows() {
+		foreach ( $this->query->get_posts() as $post ) {
+			$this->single_row( $post );
+		}
+	}
+
+	/**
+	 * Fetch data from the database to render on view.
+	 *
+	 */
+	function prepare_items() {
+
+		$per_page = 10;
+
+		$columns  = $this->get_columns();
+		$hidden   = array();
+		$sortable = $this->get_sortable_columns();
+
+		$this->_column_headers = array( $columns, $hidden, $sortable );
+
+		$this->process_bulk_action();
+
+		$this->set_pagination_args(
+			array(
+				'total_items' => $this->query->found_posts,
+				'per_page'    => $per_page,
+				'total_pages' => $this->query->max_num_pages,
+			)
+		);
+
+	}
+
+	/**
+	 * Table columns.
+	 *
+	 * @return array
+	 */
+	function get_columns() {
+		$columns = array(
+			'cb'            => '<input type="checkbox" />',
+			'title' 		=> __( 'Name', 'newsletter-optin-box' ),
+			'recipients' 	=> __( 'Recipients', 'newsletter-optin-box' ),
+			'opens'		    => __( 'Opens', 'newsletter-optin-box' ),
+			'clicks'		=> __( 'Clicks', 'newsletter-optin-box' ),
+
+		);
+		return apply_filters( "manage_noptin_newsletters_table_columns", $columns );
+	}
+
+	/**
+	 * Table sortable columns.
+	 *
+	 * @return array
+	 */
+	public function get_sortable_columns() {
+		$sortable = array(
+			'id'            => array( 'id', true ),
+			'title' 		=> array( 'post_title', true ),
+		);
+		return apply_filters( "manage_noptin_newsletters_sortable_table_columns", $sortable );
+	}
+
+	/**
+	 * Message to be displayed when there are no items
+	 *
+	 */
+	public function no_items() {
+
+		printf(
+			__( '%sCreate a new automated email%s', 'newsletter-optin-box' ),
+			"<a title='Create A New Automation' class='no-campaign-create-new-campaign thickbox' href='#TB_inline?&width=780&height=430&inlineId=noptin-create-automation'>",
+			'</a>'
+		);
+	}
+
+	/**
+	 * Processes bulk actions
+	 */
+	function process_bulk_action() {
+		global $wpdb;
+		$action     = filter_input( INPUT_GET, 'sub_action', FILTER_SANITIZE_STRING );
+
+		if ( 'delete' === $action ) {
+			$ids = array();
+
+			if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
+				$ids = array_map( 'intval', $_REQUEST['id'] );
+			}
+
+			foreach( $ids as $id ) {
+				wp_delete_post( $id, true );
+			}
+
+		}
+
+	}
+
+
+}
+
+
