@@ -33,7 +33,6 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 *  Constructor function.
 	 */
 	public function __construct() {
-		global $status, $page;
 
 		$this->prepare_query();
 
@@ -72,7 +71,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 			'posts_per_page'=> $per_page,
 			'paged'			=> $paged,
 		);
-		$query_args = apply_filters( "manage_noptin_newsletters_wp_query_args", $query_args );
+		$query_args = apply_filters( "manage_noptin_automations_wp_query_args", $query_args );
 
 		$noptin_campaigns_query = new WP_Query( $query_args  );
 		$this->query = $noptin_campaigns_query;
@@ -88,7 +87,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	public function column_default( $item, $column_name ) {
 
 		/**
-         * Runs after displaying the subscribers overview page.
+         * Displays a given column
          *
          * @param array $this The admin instance
          */
@@ -174,7 +173,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		$actions = array(
 			'delete' => __( 'Delete', 'newsletter-optin-box' ),
 		);
-		return apply_filters( "manage_noptin_newsletters_table_bulk_actions", $actions );
+		return apply_filters( "manage_noptin_automations_table_bulk_actions", $actions );
 
 	}
 

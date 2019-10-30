@@ -33,7 +33,6 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 *  Constructor function.
 	 */
 	public function __construct() {
-		global $status, $page;
 
 		$this->prepare_query();
 
@@ -86,54 +85,114 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 * @param string $column_name column name.
 	 */
 	public function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
+
+		/**
+         * Displays a given column
+         *
+         * @param array $this The admin instance
+         */
+		do_action( "noptin_display_newsletters_table_$column_name", $item );
+
 	}
 
 	/**
-	 * This is how id column renders.
+	 * Displays the newsletter name
 	 *
 	 * @param  object $item item.
 	 * @return HTML
 	 */
-	public function column_template_name( $item ) {
+	public function column_title( $item ) {
 
-		$row_actions['edit'] = '<a href="' . wp_nonce_url(
-			add_query_arg(
-				array(
-					'action'     => WCF_ACTION_EMAIL_TEMPLATES,
-					'sub_action' => WCF_SUB_ACTION_EDIT_EMAIL_TEMPLATES,
-					'id'         => $item['id'],
-				),
-				$this->base_url
-			),
-			WCF_EMAIL_TEMPLATES_NONCE
-		) . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
+		$row_actions         = array();
+		$edit_url			 = esc_url( get_noptin_newsletter_campaign_url( $item->ID ) );
+		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
-		$row_actions['delete'] = '<a onclick="return confirm(\'Are you sure to delete this email template?\');" href="' . wp_nonce_url(
-			add_query_arg(
-				array(
-					'action'     => WCF_ACTION_EMAIL_TEMPLATES,
-					'sub_action' => WCF_SUB_ACTION_DELETE_EMAIL_TEMPLATES,
-					'id'         => $item['id'],
-				),
-				$this->base_url
-			),
-			WCF_EMAIL_TEMPLATES_NONCE
-		) . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+		$row_actions['delete'] = '<a onclick="return confirm(\'Are you sure to delete this newsletter campaign?\');" href="' . esc_url( wp_nonce_url(
+			add_query_arg( 'delete-newsletter', $item->ID,$this->base_url ),
+			'noptin-campaign'
+		)) . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
-		$row_actions['clone'] = '<a href="' . wp_nonce_url(
-			add_query_arg(
-				array(
-					'action'     => WCF_ACTION_EMAIL_TEMPLATES,
-					'sub_action' => WCF_SUB_ACTION_CLONE_EMAIL_TEMPLATES,
-					'id'         => $item['id'],
-				),
-				$this->base_url
-			),
-			WCF_EMAIL_TEMPLATES_NONCE
-		) . '">' . __( 'Clone', 'newsletter-optin-box' ) . '</a>';
+		$title = esc_html( $item->post_title );
 
-		return sprintf( '%s %s', esc_html( $item['template_name'] ), $this->row_actions( $row_actions ) );
+		$title = "<div><strong><a href='$edit_url'>$title</a></strong></div>";
+
+		return sprintf( '%s %s', $title, $this->row_actions( $row_actions ) );
+	}
+
+	/**
+	 * Displays the newsletter status
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_status( $item ) {
+		$status = 'Draft';
+
+		if( 'future' == $item->post_status ) {
+			$status = 'Scheduled';
+		}
+
+		if( 'publish' == $item->post_status ) {
+
+			if( get_post_meta( $item->ID, 'completed', true ) ) {
+				$status = 'Sent';
+			} else {
+				$status = '<strong style="color: #00796b;">Sending</strong>';
+			}
+
+		}
+
+		echo "<span>$status</span>";
+	}
+
+	/**
+	 * Displays the newsletter's date sent day
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_date_sent( $item ) {
+		$date = '&mdash;';
+
+		if( 'future' == $item->post_status ) {
+			$date = 'Scheduled <br /> ' . $item->post_date;
+		}
+
+		if( 'publish' == $item->post_status ) {
+			$date = $item->post_date;
+		}
+
+		echo "<span>$date</span>";
+	}
+
+	/**
+	 * Displays the campaign recipients
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_recipients( $item ) {
+		return (int) get_post_meta( $item->ID, 'noptin_recipients', true );
+	}
+
+	/**
+	 * Displays the campaign opens
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_opens( $item ) {
+		return (int) get_post_meta( $item->ID, 'noptin_opens', true );
+	}
+
+	/**
+	 * Displays the campaign clicks
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function column_clicks( $item ) {
+		return (int) get_post_meta( $item->ID, 'noptin_clicks', true );
 	}
 
 	/**
@@ -143,7 +202,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	function column_cb( $item ) {
-		return sprintf( '<input type="checkbox" name="id[]" value="%s" />', esc_html( $item['id'] ) );
+		return sprintf( '<input type="checkbox" name="id[]" value="%s" />', esc_html( $item->ID ) );
 	}
 
 	/**
@@ -167,6 +226,17 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	public function has_items() {
 		return $this->query->have_posts();
+	}
+
+	/**
+	 * Generate the table rows
+	 *
+	 * @since 1.1.2
+	 */
+	public function display_rows() {
+		foreach ( $this->query->get_posts() as $post ) {
+			$this->single_row( $post );
+		}
 	}
 
 	/**
@@ -204,40 +274,14 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$columns = array(
 			'cb'            => '<input type="checkbox" />',
 			'title' 		=> __( 'Email Subject', 'newsletter-optin-box' ),
-			'status' 		=> __( 'Status', 'newsletter-optin-box' ), //draft,sending,completed - (draft,pending,publish)
+			'status' 		=> __( 'Status', 'newsletter-optin-box' ), //draft,scheduled,sending,completed
 			'recipients' 	=> __( 'Recipients', 'newsletter-optin-box' ),
-			'stats'		    => __( 'Opens/Clicks', 'newsletter-optin-box' ),
+			'opens'		    => __( 'Opens', 'newsletter-optin-box' ),
+			'clicks'		=> __( 'Clicks', 'newsletter-optin-box' ),
 			'date_sent'  	=> __( 'Sent on', 'newsletter-optin-box' ),
 
 		);
 		return apply_filters( "manage_noptin_newsletters_table_columns", $columns );
-	}
-
-
-	/**
-	 * Column name trigger_time.
-	 *
-	 * @param  object $item item.
-	 * @return string
-	 */
-	function column_trigger_time( $item ) {
-
-		return sprintf(
-			'%d %s',
-			esc_html( $item['frequency'] ),
-			' - ' . esc_html( $item['frequency_unit'] )
-		);
-	}
-
-	/**
-	 * Column name trigger_time.
-	 *
-	 * @param  object $item item.
-	 * @return string
-	 */
-	function column_is_activated( $item ) {
-
-		return sprintf( '%s', esc_html( $item['is_activated'] ? 'YES' : 'NO' ) );
 	}
 
 	/**

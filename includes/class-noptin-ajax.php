@@ -35,6 +35,9 @@ if( !defined( 'ABSPATH' ) ) {
 		//Create a new automation
 		add_action( 'wp_ajax_noptin_setup_automation', array( $this, 'setup_automation' ) );
 
+		//Send a test email
+		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
+
 
 	}
 
@@ -127,6 +130,81 @@ if( !defined( 'ABSPATH' ) ) {
 			'redirect'	=> get_noptin_automation_campaign_url( $id ),
 		) );
 		exit;
+
+	}
+
+	/**
+     * Sends a test email
+     *
+     * @access      public
+     * @since       1.1.2
+     * @return      void
+     */
+	public function send_test_email() {
+
+		//Verify nonce
+		check_ajax_referer( 'noptin_campaign' );
+
+		//Prepare data
+		$data = $_POST;
+
+		unset( $data['_wpnonce'] );
+		unset( $data['_wp_http_referer'] );
+		unset( $data['action'] );
+
+		//Ensure a valid test email has been provided
+		if( empty( $data['email'] ) || !is_email( $data['email'] ) ) {
+			wp_send_json_error( __( 'Please provide a valid email address' ) );
+			exit;
+		}
+
+		$to = sanitize_text_field( $data['email'] );
+
+		//Subject, body and preview text
+		if( empty( $data['email_subject'] ) ) {
+			wp_send_json_error( __( 'You need to provide a subject for your email.' ) );
+			exit;
+		}
+
+		if( empty( $data['email_body'] ) ) {
+			wp_send_json_error( __( 'The email body cannot be empty.' ) );
+			exit;
+		}
+
+		//Is there a subscriber with that email?
+		$subscriber      = get_noptin_subscriber_by_email( $to );
+		$merge_tags 	 = array();
+
+		if(! empty( $subscriber ) ) {
+			$merge_tags = (array) $subscriber;
+
+			$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
+
+			$meta = get_noptin_subscriber_meta( $subscriber->id );
+			foreach( $meta as $key=>$values ) {
+
+				if( isset( $values[0] ) && is_string( $values[0] ) ) {
+					$merge_tags[$key] = esc_html( $values[0] );
+				}
+
+			}
+		}
+
+		$data['merge_tags'] = $merge_tags;
+		$data['template']   = get_noptin_include_dir( 'admin/templates/email-templates/paste.php' );
+
+		$data = apply_filters( 'noptin_test_email_data', $data );
+
+		//Try sending the email
+		$mailer   = new Noptin_Mailer();
+		$email    = $mailer->get_email( $data );
+		$subject  = $mailer->get_subject( $data );
+
+		if( $mailer->send( $to, $subject, $email ) ) {
+			wp_send_json_success( __( 'Your test email has been sent' ) );
+		}
+
+		wp_send_json_error( __( 'Could not send the test email' ) );
 
 	}
 

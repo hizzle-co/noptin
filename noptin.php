@@ -153,6 +153,15 @@ if( !defined( 'ABSPATH' ) ) {
 		 //css body class
 		 add_filter( 'body_class', array( $this, 'body_class') );
 
+		//Email content
+		//add_filter( 'noptin_email_content', 'make_clickable', 9);
+		//add_filter( 'noptin_email_content', 'force_balance_tags', 25);
+		add_filter( 'noptin_email_content', 'capital_P_dangit', 11);
+		add_filter( 'noptin_email_content', 'wptexturize');
+		add_filter( 'noptin_email_content', 'wpautop');
+		add_filter( 'noptin_email_content', 'shortcode_unautop');
+		add_filter( 'noptin_email_content', 'do_shortcode', 11 );
+
 		/**
 		 * Fires after Noptin inits
 		 *
@@ -178,11 +187,10 @@ if( !defined( 'ABSPATH' ) ) {
 		require_once $this->plugin_path . 'includes/admin/admin.php';
 
 		//Bg handlers
-
-		//Form class
 		require_once $this->plugin_path . 'includes/class-noptin-async-request.php';
 		require_once $this->plugin_path . 'includes/class-noptin-background-process.php';
 		require_once $this->plugin_path . 'includes/class-noptin-new-post-notify.php';
+		require_once $this->plugin_path . 'includes/class-noptin-mailer.php';
 
 
 		require_once $this->plugin_path . 'includes/class-noptin-form.php';

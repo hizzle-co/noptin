@@ -87,4 +87,16 @@ export default {
 
 	},
 
+	getFormData (form) {
+
+		let data = {},
+			fields = $(form).serializeArray()
+
+		$.each(fields, (i, field) => {
+			data[field.name] = field.value
+		});
+
+		return data
+	},
+
 }

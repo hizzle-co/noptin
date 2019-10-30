@@ -192,39 +192,7 @@ function update_noptin_option( $key, $value ) {
  * @since   1.6
  */
 function prepare_noptin_email( $email, $subscriber ) {
-	$noptin = noptin();
-
-	//Unsubscribe url
-	$email = str_ireplace( "[[unsubscribe_url]]", get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key ), $email);
-
-	//footer
-	$email = str_ireplace( "[[noptin_company]]", get_noptin_option( 'company', ''), $email);
-	$email = str_ireplace( "[[noptin_address]]", get_noptin_option( 'address', ''), $email);
-	$email = str_ireplace( "[[noptin_city]]", get_noptin_option( 'city', ''), $email);
-	$email = str_ireplace( "[[noptin_state]]", get_noptin_option( 'state', ''), $email);
-	$email = str_ireplace( "[[noptin_country]]", get_noptin_option( 'country', ''), $email);
-
-	//homeurl
-	$email = str_ireplace( "[[home_url]]", get_home_url(), $email);
-
-	//logo url
-	$url = $noptin->admin->assets_url . '/images/square-48.png';
-	$custom_logo_id = get_theme_mod( 'custom_logo' );
-	if( $custom_logo_id ) {
-		$logo_url = wp_get_attachment_image_src( $custom_logo_id );
-		if( is_array( $logo_url ) && !empty( $logo_url[0] ) ) {
-			$url = $logo_url[0];
-		}
-	}
-	$company_logo = get_noptin_option( 'company_logo', '');
-	if( $company_log ) {
-		$logo_url = esc_url( $company_logo );
-	}
-
-	$email = str_ireplace( "[[logo_url]]", $url, $email);
-
 	return $email;
-
 }
 
 /**
@@ -455,6 +423,20 @@ function get_noptin_subscriber( $subscriber ) {
 
 	$table  = $wpdb->prefix . 'noptin_subscribers';
 	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d;", $subscriber ) );
+
+}
+
+/**
+ * Retrieves a subscriber by email
+ *
+ * @access  public
+ * @since   1.1.2
+ */
+function get_noptin_subscriber_by_email( $email ) {
+	global $wpdb;
+
+	$table  = $wpdb->prefix . 'noptin_subscribers';
+	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE email=%s;", $email ) );
 
 }
 
@@ -886,6 +868,21 @@ function get_noptin_new_newsletter_campaign_url() {
 }
 
 /**
+ *  Returns a link to edit a newsletter
+ */
+function get_noptin_newsletter_campaign_url( $id ) {
+
+	$param = array(
+		'page'        => 'noptin-email-campaigns',
+		'section'     => 'newsletters',
+		'sub_section' => 'edit_campaign',
+		'id'          => $id,
+	);
+	return add_query_arg( $param, admin_url( '/admin.php' ) );
+
+}
+
+/**
  *  Returns a link to edit an automation campaign
  */
 function get_noptin_automation_campaign_url( $id ) {
@@ -946,5 +943,15 @@ function get_noptin_default_newsletter_body() {
      * @param string $body The default newsletter body
      */
     return apply_filters('noptin_default_newsletter_body', $body);
+
+}
+
+/**
+ *  Returns a path to the includes dir
+ */
+function get_noptin_include_dir( $append = '' ) {
+
+	$noptin  = noptin();
+	return $noptin->plugin_path . "includes/$append";
 
 }

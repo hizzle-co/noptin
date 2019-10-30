@@ -221,7 +221,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	function prepare_items() {
 
-		$per_page = 15;
+		$per_page = 10;
 
 		$columns  = $this->get_columns();
 		$hidden   = array();

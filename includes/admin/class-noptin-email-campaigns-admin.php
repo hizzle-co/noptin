@@ -18,11 +18,18 @@ class Noptin_Email_Campaigns_Admin {
 		add_action( 'noptin_email_campaigns_tab_newsletters', array( $this, 'show_newsletters' ) );
 		add_action( 'noptin_newsletters_section_view_campaigns', array( $this, 'view_newsletter_campaigns' ) );
 		add_action( 'noptin_newsletters_section_new_campaign', array( $this, 'render_email_campaign_form' ) );
+		add_action( 'noptin_newsletters_section_edit_campaign', array( $this, 'render_email_campaign_form' ) );
 
 		//Display the automations page
 		add_action( 'noptin_email_campaigns_tab_automations', array( $this, 'show_automations' ) );
 		add_action( 'noptin_automations_section_view_campaigns', array( $this, 'view_automation_campaigns' ) );
 		add_action( 'noptin_automations_section_edit_campaign', array( $this, 'render_automation_campaign_form' ) );
+
+		//Maybe save campaigns
+		add_action( 'wp_loaded', array( $this, 'maybe_save_campaign' ) );
+
+		//Maybe send a campaign
+		add_action( 'transition_post_status', array( $this, 'maybe_send_campaign' ), 100, 3 );
 
 	}
 
@@ -239,6 +246,119 @@ class Noptin_Email_Campaigns_Admin {
 
 		$noptin_admin = Noptin_Admin::instance();
 		include $noptin_admin->admin_path . 'templates/automation-campaign-form.php';
+
+	}
+
+	/**
+	 *  Saves a newsletter campaign
+	 */
+	function maybe_save_campaign() {
+		$admin  = Noptin_Admin::instance();
+
+		if(! empty( $_GET['edited'] ) ) {
+			$admin->show_success( __( 'Your campaign was saved.' ) );
+		}
+
+		if(! isset( $_POST['noptin-action'] ) || 'save-newsletter-campaign' != $_POST['noptin-action'] ) {
+			return;
+		}
+
+		//Verify nonce
+		if( empty( $_POST['noptin_campaign_nonce'] ) || !wp_verify_nonce( $_POST['noptin_campaign_nonce'], 'noptin_campaign' ) ) {
+			return $admin->show_error( __( 'Unable to save your campaign' ) );
+		}
+
+		//Defaults
+		$id     = false;
+		$status = 'draft';
+
+		//Set post status
+		if( !empty( $_POST['id'] ) ) {
+			$id     = (int) $_POST['id'];
+			$status = ( 'draft' == get_post_status( $id ) ) ? 'draft' : 'publish';
+		}
+
+		if( !empty( $_POST['draft'] ) ) {
+			$status = 'draft';
+		}
+
+		if( !empty( $_POST['publish'] ) ) {
+			$status = 'publish';
+		}
+
+		//Prepare post args
+		$post = array(
+			'post_status'      => $status,
+			'post_type'        => 'noptin-campaign',
+			'post_date_gmt'    => current_time( 'mysql', true ),
+			'post_date'        => current_time( 'mysql' ),
+			'edit_date'        => 'true',
+			'post_title'	   => trim( $_POST['email_subject'] ),
+			'post_content'	   => trim( $_POST['email_body'] ),
+			'meta_input'	   => array(
+				'campaign_type'           => 'newsletter',
+				'preview_text'            => sanitize_text_field( $_POST['preview_text'] ),
+				'noptin_sends_after'      => (int) $_POST['noptin-email-schedule'],
+				'noptin_sends_after_unit' => sanitize_text_field( $_POST['noptin-email-schedule-unit'] ),
+			),
+		);
+
+		if( 'publish' == $status & !empty( $_POST['noptin-email-schedule'] ) ) {
+
+			$count      = (int) $_POST['noptin-email-schedule'];
+			$unit       = sanitize_text_field( $_POST['noptin-email-schedule-unit'] );
+			$time       = current_time( 'mysql' );
+			$time_gmt   = current_time( 'mysql', true );
+
+			$post['post_status']   = 'future';
+			$post['post_date']     = gmdate( 'Y-m-d H:i:s', strtotime("$time +$count $unit") );
+			$post['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', strtotime("$time_gmt +$count $unit") );
+
+		}
+
+		$post = apply_filters( 'noptin_save_newsletter_campaign_details', $post );
+
+		if( empty( $id ) ) {
+			$post = wp_insert_post( $post, true );
+		} else {
+			$post['ID'] = $id;
+			$post       = wp_update_post( $post, true );
+		}
+
+		if( is_wp_error( $post ) ) {
+			return $admin->show_error( $post->get_error_message() );
+		}
+
+		$url = get_noptin_newsletter_campaign_url( $post );
+		wp_safe_redirect( add_query_arg( 'edited', '1', $url ) );
+		exit;
+
+	}
+
+	/**
+	 *  (Maybe) Sends a newsletter campaign
+	 */
+	function maybe_send_campaign( $new_status, $old_status, $post ) {
+
+		//Maybe abort early
+		if( 'publish' != $new_status || 'publish' == $old_status ) {
+			return;
+		}
+
+		//Ensure this is a newsletter campaign
+		if( 'noptin-campaign' == $post->post_type && 'newsletter' == get_post_meta( $post->ID, 'campaign_type', true ) ) {
+			$this->send_campaign( $post );
+		}
+
+	}
+
+	/**
+	 *  Sends a newsletter campaign
+	 */
+	function send_campaign( $post ) {
+
+		//Todo: Background newsletter sending code goes here
+
 
 	}
 

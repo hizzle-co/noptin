@@ -220,6 +220,10 @@ class Noptin_Admin {
         wp_enqueue_script('tooltipster', $this->assets_url . 'js/vendor/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
         wp_enqueue_style('tooltipster', $this->assets_url . 'css/tooltipster.bundle.min.css', array(), '4.2.6');
 
+		//Sweetalert https://sweetalert2.github.io/
+		wp_enqueue_script('sweetalert2', $this->assets_url . 'js/vendor/sweetalert2.min.js', array(), '8.18.6');
+        wp_enqueue_style('sweetalert2', $this->assets_url . 'css/sweetalert2.min.css', array(), '8.18.6');
+
         //Slick selects https://designwithpc.com/Plugins/ddSlick#demo
         wp_enqueue_script('slick', $this->assets_url . 'js/vendor/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
 		wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
@@ -250,14 +254,16 @@ class Noptin_Admin {
 
         //Custom admin scripts
         $version = filemtime( $this->assets_path . 'js/dist/admin.js' );
-        wp_register_script('noptin', $this->assets_url . 'js/dist/admin.js', array('vue'), $version, true);
+        wp_register_script('noptin', $this->assets_url . 'js/dist/admin.js', array('vue','sweetalert2'), $version, true);
 
-        // Pass variables to our js file, e.g url etc
+		// Pass variables to our js file, e.g url etc
+		$current_user = wp_get_current_user();
         $params = array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'api_url' => get_home_url( null, 'wp-json/wp/v2/'),
-			'nonce'   => wp_create_nonce('noptin_admin_nonce'),
-			'icon'    => $this->assets_url . 'images/checkmark.png',
+            'ajaxurl' 		=> admin_url('admin-ajax.php'),
+            'api_url' 		=> get_home_url( null, 'wp-json/wp/v2/'),
+			'nonce'   		=> wp_create_nonce('noptin_admin_nonce'),
+			'icon'    		=> $this->assets_url . 'images/checkmark.png',
+			'admin_email'   => sanitize_email( $current_user->user_email ),
         );
 
         // localize and enqueue the script with all of the variable inserted

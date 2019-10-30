@@ -1,13 +1,13 @@
-<?php return 'Hi [[first_name]],
+<?php return '<p>Hi [[first_name]],</p>
 
-This is the email body. You can use <a href="https://noptin.com/guide/email-tags">email tags</a> to personalize your email.
+<p>This is the email body. You can use <a href="https://noptin.com/guide/email-tags">email tags</a> to personalize your email.</p>
 
-The final email will include a logo and your address details. You can change these on the settings page...
+<p>The final email will include a logo and your address details. You can change these on the settings page...</p>
 
-... or read our guide on <a href="https://noptin.com/guide/changing-email-templates">how to use a different email template</a>.
+<p>... or read our guide on <a href="https://noptin.com/guide/changing-email-templates">how to use a different email template</a>.</p>
 
-After you are done editing the email, you can send a test email below then click on the publish button to publish it.
+<p>After you are done editing the email, you can send a test email below then click on the publish button to publish it.</p>
 
-Cheers,
+<p>Cheers,</p>
 
-The Noptin Team.';
+<p>The Noptin Team.</p>';

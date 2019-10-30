@@ -1,13 +1,15 @@
 <div id="content">
 	<form method="post" action="<?php echo get_noptin_new_newsletter_campaign_url(); ?>" class="noptin-newsletter-campaign-form noptin-fields">
 
+		<input type="hidden" name="noptin-action" value="save-newsletter-campaign"/>
+
 		<?php if(! empty( $id ) ) { ?>
 			<input type="hidden" name="id" value="<?php echo esc_attr( $id ); ?>"/>
 		<?php } ?>
 
 		<?php
 
-			wp_nonce_field( 'noptin_campaign' );
+			wp_nonce_field( 'noptin_campaign', 'noptin_campaign_nonce' );
 
 			$display_message   = __( 'Add New Email Campaign:', 'newsletter-optin-box');
 			if ( ! empty( $id ) ) {
@@ -38,15 +40,8 @@
 							<label><b><?php _e( 'Send To:', 'newsletter-optin-box' ); ?></b></label>
 						</th>
 						<td>
-							<?php
-
-								//Load thickbox https://codex.wordpress.org/Javascript_Reference/ThickBox
-								add_thickbox();
-
-								//Filter subscribers here
-								$text = __( 'All Subscribers', 'newsletter-optin-box' );
-							?>
-							<p class="description"><?php echo $text; ?> &mdash; <a href="#TB_inline?&width=600&height=550&inlineId=noptin-recipients-filter" class="thickbox">Filter recipients</a></p>
+							<?php $text = __( 'All Subscribers', 'newsletter-optin-box' ); ?>
+							<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-recipients">Filter recipients</a></p>
 						</td>
 					</tr>
 
@@ -68,7 +63,7 @@
 							</label>
 						</th>
 						<td>
-							<?php $preview = is_object( $campaign ) ? get_post_meta( $campaign->ID, 'preview_text' ) : get_noptin_default_newsletter_preview_text(); ?>
+							<?php $preview = is_object( $campaign ) ? get_post_meta( $campaign->ID, 'preview_text', true ) : get_noptin_default_newsletter_preview_text(); ?>
 							<input style="max-width: 100%;" type="text" name="preview_text" id="noptin-email-preview" class="noptin-campaign-input" value="<?php echo esc_attr( $preview ); ?>" placeholder="<?php esc_attr_e( "Enter the text shown next to the subject", 'newsletter-optin-box' );?>" >
 						</td>
 					</tr>
@@ -85,10 +80,12 @@
 										$body,
 										'noptinemailbody',
 										array(
-											'media_buttons' => true,
-											'textarea_rows' => 15,
-											'tabindex' => 4,
-											'tinymce'  => array(
+											'media_buttons'    => true,
+											'drag_drop_upload' => true,
+											'textarea_rows'    => 15,
+											'textarea_name'	   => 'email_body',
+											'tabindex'         => 4,
+											'tinymce'          => array(
 												'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',
 											),
 										)
@@ -100,7 +97,10 @@
 
 					<tr>
 						<th>
-							<label for="noptin-email-schedule"><b><?php _e( 'Send This Campaign', 'newsletter-optin-box' ); ?></b></label>
+							<label for="noptin-email-schedule">
+								<b><?php _e( 'Send This Campaign', 'newsletter-optin-box' ); ?></b>
+								<span title="<?php esc_attr_e( 'Enter zero to send this campaign as soon as it is published.',  'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+							</label>
 						</th>
 						<td>
 							<?php $schedule = empty( $id ) ? '0' : get_post_meta( $id, 'noptin_sends_after', true ); ?>
@@ -108,11 +108,11 @@
 
 							<select class="noptin-max-w-200" name="noptin-email-schedule-unit">
 								<?php
-									$unit  = empty( $id ) ? 'MINUTE' : get_post_meta( $id, 'noptin_sends_after_unit', true );
+									$unit  = empty( $id ) ? 'minutes' : get_post_meta( $id, 'noptin_sends_after_unit', true );
 									$units = array(
-										'MINUTE' => 'Minute(s)',
-										'HOUR'   => 'Hour(s)',
-										'DAY'    => 'Day(s)',
+										'minutes' => 'Minute(s)',
+										'hours'   => 'Hour(s)',
+										'days'    => 'Day(s)',
 									);
 
 									foreach ( $units as $key => $value ) {
@@ -129,18 +129,6 @@
 						</td>
 					</tr>
 
-					<tr>
-						<?php $current_user = wp_get_current_user(); ?>
-						<th>
-							<label for="noptin-send-test-email"><b><?php _e( 'Send Test Email To:', 'newsletter-optin-box' ); ?></b></label>
-						</th>
-						<td>
-							<input type="email" id="noptin-send-test-email" name="noptin-send-test-email" value="<?php echo esc_attr( $current_user->user_email ); ?>">
-							<input class="button" type="button" value="Send a test email"/> <br/>
-							<label id="noptin_mail_response_msg"> </label>
-						</td>
-					</tr>
-
 					<?php
 						/**
         				 * Fires after printing the last row in the newsletter campaign editor
@@ -153,8 +141,8 @@
 					<tr>
 						<th></th>
 						<td>
-							<input type="submit" name="publish" class="button-primary" value="<?php echo is_object($campaign) && 'publish' == $campaign->post_status ? 'Save Changes' : 'Publish' ?>"/>
-							<input type="submit" name="draft" class="button-secondary" value="<?php echo is_object($campaign) && 'publish' == $campaign->post_status ? 'Switch to Draft' : 'Save as draft' ?>"/>
+							<input type="submit" name="publish" class="button-primary" value="<?php echo is_object($campaign) && 'draft' != $campaign->post_status ? 'Save Changes' : 'Publish' ?>"/>
+							<input type="submit" name="draft" class="button-link" value="<?php echo is_object($campaign) && 'draft' != $campaign->post_status ? 'Switch to Draft' : 'Save as draft' ?>"/>
 						</td>
 					</tr>
 
@@ -162,24 +150,5 @@
 				</div>
 			</div>
 		</div>
-
-				<div id="noptin-recipients-filter" style="display:none;">
-     				<p>
-						<?php
-
-							$filters = array(
-								'all'		=> __( 'All subscribers', 'newsletter-optin-box'),
-								'only'		=> __( 'Signed up via', 'newsletter-optin-box'),
-								'except'	=> __( 'Did not sign Up via', 'newsletter-optin-box'),
-							);
-							/**
-        					 * Fires when printing the campaign recipients filter
-        					 *
-        					 * @param object $campaign current campaign object
-        					 */
-        					do_action('noptin_newsletter_campaign_recipients', $campaign) ;
-						?>
-     				</p>
-				</div>
-			</form>
-		</div>
+	</form>
+</div>

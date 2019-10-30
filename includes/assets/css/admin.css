@@ -2543,6 +2543,12 @@
 		}
 	}
 
+	.button.noptin-send-test-email .dashicons-before {
+	vertical-align: middle;
+    margin-right: 4px;
+    color: #ff6f00;
+}
+
 	.noptin-sortable-ghost {
 	background-color: #f3f3f3;
 	color: #3c3b3b;
