@@ -955,3 +955,27 @@ function get_noptin_include_dir( $append = '' ) {
 	return $noptin->plugin_path . "includes/$append";
 
 }
+
+/**
+ *  Notifies the site admin when there is a new subscriber
+ */
+function noptin_new_subscriber_notify( $id, $fields ) {
+
+	// The blogname option is escaped with esc_html on the way into the database in sanitize_option
+    // we want to reverse this for the plain text arena of emails.
+	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+
+	/* translators: %s: site title */
+	$message = sprintf( __( 'New email subscriber on your site %s:' ), $blogname ) . "\r\n\r\n";
+
+	/* translators: %s: user email address */
+	$message .= sprintf( __( 'Email: %s' ), $fields['email'] ) . "\r\n";
+
+	$to      = get_option( 'admin_email' );
+
+	$subject = sprintf( __( '[%s] New User Registration' ), $blogname );
+
+	@wp_mail( $to, wp_specialchars_decode( $subject ), $message );
+
+}
+add_action( 'noptin_insert_subscriber', 'noptin_new_subscriber_notify', 10, 2 );

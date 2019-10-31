@@ -1254,7 +1254,6 @@ a.no-campaign-create-new-campaign {
 #noptin-newsletter-campaigns-table {
 
 	.column-status:not(.manage-column) {
-		font-weight: 500;
 
 		.status-inactive {
 			color: #d84315;

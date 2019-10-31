@@ -11,8 +11,8 @@
 	$tabs = apply_filters( 'noptin_email_campaign_tabs', $tabs );
 
 	//Prepare the current section and maybe subsection
-	$section     = filter_input( INPUT_GET, 'section', FILTER_SANITIZE_STRING );
-	$sub_section = filter_input( INPUT_GET, 'sub_section', FILTER_SANITIZE_STRING );
+	$section     = !empty( $_GET['section'] ) ? sanitize_text_field( $_GET['section'] ) : 'newsletters';
+	$sub_section = !empty( $_GET['sub_section'] ) ? sanitize_text_field( $_GET['sub_section'] ) : '';
 
 	//Default to displaying the list of newsletters if no section is provided
 	if ( ! $section || empty( $tabs[$section] ) ) {

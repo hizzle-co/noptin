@@ -136,7 +136,10 @@ if( !defined( 'ABSPATH' ) ) {
 		do_action('before_noptin_init', $this);
 
         //Init the admin
-        $this->admin  = Noptin_Admin::instance();
+		$this->admin     = Noptin_Admin::instance();
+
+		//Init the bg mailer
+		$this->bg_mailer = new Noptin_Background_Mailer();
 
         //Ensure the db is up to date
         $this->maybe_upgrade_db();
@@ -191,6 +194,7 @@ if( !defined( 'ABSPATH' ) ) {
 		require_once $this->plugin_path . 'includes/class-noptin-background-process.php';
 		require_once $this->plugin_path . 'includes/class-noptin-new-post-notify.php';
 		require_once $this->plugin_path . 'includes/class-noptin-mailer.php';
+		require_once $this->plugin_path . 'includes/class-noptin-background-mailer.php';
 
 
 		require_once $this->plugin_path . 'includes/class-noptin-form.php';

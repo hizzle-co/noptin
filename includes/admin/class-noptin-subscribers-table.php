@@ -73,11 +73,19 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$order     		= empty( $_GET['order'] )   			 ? 'desc' : $_GET['order'];
 		$via       		= empty( $_GET['_subscriber_via'] )   ? false  : $_GET['_subscriber_via'];
 
+		$meta_key		= empty( $_GET['meta_key'] )   ? false  : $_GET['meta_key'];
+		$meta_value		= empty( $_GET['meta_value'] )   ? false  : $_GET['meta_value'];
+
+		if(! empty( $_GET['_subscriber_via'] ) ) {
+			$meta_key   = '_subscriber_via';
+			$meta_value = $_GET['_subscriber_via'];
+		}
+
 		//Fetch the subscribers
 		$noptin_admin      = Noptin_Admin::instance();
-		$this->items 	   = $noptin_admin->get_subscribers( $paged, '_subscriber_via', $via );
+		$this->items 	   = $noptin_admin->get_subscribers( $paged, $meta_key, $meta_value );
 
-		$this->total_subscribers = (int) get_noptin_subscribers_count( '', '_subscriber_via', $via );
+		$this->total_subscribers = (int) get_noptin_subscribers_count( '', $meta_key, $meta_value );
 
 	}
 
@@ -257,33 +265,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		return apply_filters( "manage_noptin_newsletters_table_columns", $columns );
 	}
 
-
-	/**
-	 * Column name trigger_time.
-	 *
-	 * @param  object $item item.
-	 * @return string
-	 */
-	function column_trigger_time( $item ) {
-
-		return sprintf(
-			'%d %s',
-			esc_html( $item['frequency'] ),
-			' - ' . esc_html( $item['frequency_unit'] )
-		);
-	}
-
-	/**
-	 * Column name trigger_time.
-	 *
-	 * @param  object $item item.
-	 * @return string
-	 */
-	function column_is_activated( $item ) {
-
-		return sprintf( '%s', esc_html( $item['is_activated'] ? 'YES' : 'NO' ) );
-	}
-
 	/**
 	 * Table sortable columns.
 	 *
@@ -292,47 +273,9 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	public function get_sortable_columns() {
 		$sortable = array(
 			'id'            => array( 'id', true ),
-			'title' 		=> array( 'Email Subject', true ),
 		);
 		return apply_filters( "manage_noptin_newsletters_sortable_table_columns", $sortable );
 	}
-
-	/**
-	 * Message to be displayed when there are no items
-	 *
-	 */
-	public function no_items() {
-		$add_new_campaign_url = get_noptin_new_newsletter_campaign_url();
-
-		printf(
-			__( '%sSend your subscribers a new email%s', 'newsletter-optin-box' ),
-			"<a class='no-campaign-create-new-campaign' href='$add_new_campaign_url'>",
-			'</a>'
-		);
-	}
-
-	/**
-	 * Processes bulk actions
-	 */
-	function process_bulk_action() {
-		global $wpdb;
-		$action     = filter_input( INPUT_GET, 'sub_action', FILTER_SANITIZE_STRING );
-
-		if ( 'delete' === $action ) {
-			$ids = array();
-
-			if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
-				$ids = array_map( 'intval', $_REQUEST['id'] );
-			}
-
-			foreach( $ids as $id ) {
-				wp_delete_post( $id, true );
-			}
-
-		}
-
-	}
-
 
 }
 

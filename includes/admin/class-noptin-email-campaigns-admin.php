@@ -31,6 +31,9 @@ class Noptin_Email_Campaigns_Admin {
 		//Maybe send a campaign
 		add_action( 'transition_post_status', array( $this, 'maybe_send_campaign' ), 100, 3 );
 
+		//Delete campaign stats
+		add_action( 'delete_post', array( $this, 'maybe_delete_stats' ) );
+
 	}
 
 	/**
@@ -336,6 +339,19 @@ class Noptin_Email_Campaigns_Admin {
 	}
 
 	/**
+	 *  Deletes campaign stats
+	 */
+	function maybe_delete_stats( $post_id ) {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'noptin_subscriber_meta';
+		$wpdb->delete( $table, array(
+			'meta_key' => "_campaign_$post_id",
+		) );
+
+	}
+
+	/**
 	 *  (Maybe) Sends a newsletter campaign
 	 */
 	function maybe_send_campaign( $new_status, $old_status, $post ) {
@@ -357,8 +373,19 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	function send_campaign( $post ) {
 
-		//Todo: Background newsletter sending code goes here
+		$noptin = noptin();
 
+		$item   = array(
+			'campaign_id' 		=> $post->ID,
+			'subscribers_query' => '1=1', //By default, send this to all active subscribers
+			'campaign_data'		=> array(
+				'template' => get_noptin_include_dir( 'admin/templates/email-templates/paste.php' ),
+			),
+		);
+
+		$noptin->bg_mailer->push_to_queue( $item );
+
+		$noptin->bg_mailer->save()->dispatch();
 
 	}
 

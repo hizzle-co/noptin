@@ -22,6 +22,9 @@ export default {
 		//Filter email recipients
 		$('.noptin-filter-recipients').on('click', this.filter_recipients)
 
+		//Delete campaign
+		$('.noptin-delete-campaign').on('click', this.delete_campaign)
+
 	},
 
 	automation_events(e) {
@@ -117,6 +120,64 @@ export default {
 			.always(() => {
 				$(this).fadeTo(600, 1)
 			})
+	},
+
+	//Deletes a campagin
+	delete_campaign(e) {
+
+		e.preventDefault();
+
+		let row  = $( this ).closest( 'tr' )
+		let data = {
+			id: $( this ).data( 'id' ),
+			_wpnonce: noptin_params.nonce,
+			action: 'noptin_delete_campaign'
+		}
+
+		//Init sweetalert
+		Swal.fire({
+			titleText: `Are you sure?`,
+			text: "You are about to permanently delete this campaign.",
+  			type: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#9e9e9e',
+			confirmButtonText: 'Yes, delete it!',
+			showLoaderOnConfirm: true,
+			showCloseButton: true,
+			focusConfirm: false,
+			allowOutsideClick: () => !Swal.isLoading(),
+
+			//Fired when the user clicks on the confirm button
+			preConfirm() {
+
+				$.get( noptin_params.ajaxurl, data )
+					.done(function () {
+
+						$( row ).remove()
+						Swal.fire(
+							'Success',
+							'Your campaign was deleted',
+							'success'
+						)
+
+					})
+					.fail(function () {
+
+						Swal.fire(
+							'Error',
+							'Unable to delete your campaign. Try again.',
+							'error'
+						)
+
+					})
+
+				//Return a promise that never resolves
+				return jQuery.Deferred()
+
+			},
+		})
+
 	},
 
 	//Sends an ajax request to the server requesting it to send a test email

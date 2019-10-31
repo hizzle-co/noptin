@@ -46,6 +46,11 @@ class Noptin_Install {
 			$this->upgrade_from_1();
 		}
 
+		//Upgrading from version 2
+		if( 2 == $upgrade_from ){
+			$this->upgrade_from_2();
+		}
+
 	}
 
 	/**
@@ -119,7 +124,40 @@ class Noptin_Install {
 		//Not really helpful
 		$wpdb->query("ALTER TABLE $table DROP COLUMN time");
 
-        dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
+		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
+
+		$this->upgrade_from_2();
+	}
+
+	/**
+	 * Upgrades the db from version 2 to 3
+	 */
+	private function upgrade_from_2() {
+
+		//Create initial subscriber
+		add_noptin_subscriber( $this->get_initial_subscriber_args() );
+
+		//Add default campaigns
+
+	}
+
+	/**
+	 * Returns initial subscriber args
+	 */
+	function get_initial_subscriber_args() {
+
+		$admin_email = sanitize_email( get_bloginfo( 'admin_email' ) );
+		$args		 = array(
+			'email'  => $admin_email,
+		);
+
+		if( $admin = get_user_by( 'email', $admin_email ) ) {
+			$args['first_name'] = $admin->first_name;
+			$args['last_name'] = $admin->last_name;
+		}
+
+		return $args;
+
 	}
 
 	/**
@@ -132,6 +170,9 @@ class Noptin_Install {
 		//Create the subscriber and subscriber meta table
 		dbDelta( array( $this->get_subscribers_table_schema() ) );
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
+
+		//Add a default subscriber
+		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
 	}
 

@@ -107,10 +107,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		$edit_url			 = esc_url( get_noptin_automation_campaign_url( $item->ID ) );
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
-		$row_actions['delete'] = '<a onclick="return confirm(\'Are you sure to delete this automation campaign?\');" href="' . esc_url( wp_nonce_url(
-			add_query_arg( 'delete-automation', $item->ID,$this->base_url ),
-			'noptin-campaign'
-		)) . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID .'">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
 		$title = esc_html( $item->post_title );
 		$extra = '';
@@ -124,13 +121,47 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Links to the subscribers overview page
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 */
+	public function maybe_link( $count, $meta, $value ) {
+
+		if( empty( $count ) ) {
+			return 0;
+		}
+
+		$url    = esc_url( add_query_arg( array(
+			'meta_key'   => $meta,
+			'meta_value' => $value,
+		), get_noptin_subscribers_overview_url() ) );
+
+		return "<a href='$url' title='View Subscribers'>$count</a>";
+
+	}
+
+	/**
 	 * Displays the automation recipients
 	 *
 	 * @param  object $item item.
 	 * @return HTML
 	 */
 	public function column_recipients( $item ) {
-		return (int) get_post_meta( $item->ID, 'noptin_recipients', true );
+
+
+		$sent   = (int) get_post_meta( $item->ID, '_noptin_sends', true );
+		$sent   = $this->maybe_link( $sent, "_campaign_{$item->ID}" , '1' );
+
+		$failed = (int) get_post_meta( $item->ID, '_noptin_fails', true );
+		$failed   = $this->maybe_link( $failed, "_campaign_{$item->ID}" , '0' );
+
+		if( empty( $failed ) ) {
+			return $sent;
+		}
+
+		return "$sent ($failed failed)";
+
 	}
 
 	/**
@@ -140,7 +171,9 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_opens( $item ) {
-		return (int) get_post_meta( $item->ID, 'noptin_opens', true );
+
+		$opens  = (int) get_post_meta( $item->ID, '_noptin_opens', true );
+		return $this->maybe_link( $opens, "_campaign_{$item->ID}_opened" , '1' );
 	}
 
 	/**
@@ -150,7 +183,10 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_clicks( $item ) {
-		return (int) get_post_meta( $item->ID, 'noptin_clicks', true );
+
+		$clicks  = (int) get_post_meta( $item->ID, '_noptin_clicks', true );
+		return $this->maybe_link( $clicks, "_campaign_{$item->ID}_clicked" , '1' );
+
 	}
 
 	/**
@@ -264,28 +300,6 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 			"<a title='Create A New Automation' class='no-campaign-create-new-campaign thickbox' href='#TB_inline?&width=780&height=430&inlineId=noptin-create-automation'>",
 			'</a>'
 		);
-	}
-
-	/**
-	 * Processes bulk actions
-	 */
-	function process_bulk_action() {
-		global $wpdb;
-		$action     = filter_input( INPUT_GET, 'sub_action', FILTER_SANITIZE_STRING );
-
-		if ( 'delete' === $action ) {
-			$ids = array();
-
-			if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
-				$ids = array_map( 'intval', $_REQUEST['id'] );
-			}
-
-			foreach( $ids as $id ) {
-				wp_delete_post( $id, true );
-			}
-
-		}
-
 	}
 
 

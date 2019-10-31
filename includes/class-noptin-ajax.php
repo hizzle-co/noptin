@@ -35,6 +35,9 @@ if( !defined( 'ABSPATH' ) ) {
 		//Create a new automation
 		add_action( 'wp_ajax_noptin_setup_automation', array( $this, 'setup_automation' ) );
 
+		//Delete campaign
+		add_action( 'wp_ajax_noptin_delete_campaign', array( $this, 'delete_campaign' ) );
+
 		//Send a test email
 		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
 
@@ -63,6 +66,30 @@ if( !defined( 'ABSPATH' ) ) {
 	}
 
 	/**
+     * Deletes a campaign
+     *
+     * @access      public
+     * @since       1.1.2
+     * @return      void
+     */
+	public function delete_campaign() {
+
+		//Verify nonce
+		check_ajax_referer( 'noptin_admin_nonce' );
+
+		if( !current_user_can( 'manage_options' ) || empty( $_GET['id'] ) ) {
+			wp_die( -1, 403 );
+		}
+
+
+		if( wp_delete_post( trim(  $_GET['id'] ), true ) ) {
+			exit;
+		}
+
+		wp_die( -1, 500 );
+	}
+
+	/**
      * Sets up a new automation
      *
      * @access      public
@@ -73,6 +100,10 @@ if( !defined( 'ABSPATH' ) ) {
 
 		//Verify nonce
 		check_ajax_referer( 'noptin_create_automation' );
+
+		if (! current_user_can( 'manage_options' ) ) {
+			wp_die( -1, 403 );
+		}
 
 		$data = $_POST;
 		unset( $data['_wpnonce'] );
@@ -144,6 +175,10 @@ if( !defined( 'ABSPATH' ) ) {
 
 		//Verify nonce
 		check_ajax_referer( 'noptin_campaign' );
+
+		if (! current_user_can( 'manage_options' ) ) {
+			wp_die( -1, 403 );
+		}
 
 		//Prepare data
 		$data = $_POST;
@@ -415,8 +450,8 @@ if( !defined( 'ABSPATH' ) ) {
 	public function download_subscribers() {
 		global $wpdb;
 
-		if (!current_user_can('manage_options')) {
-			return;
+		if (! current_user_can( 'manage_options' ) ) {
+			wp_die( -1, 403 );
 		}
 
 		//Check nonce

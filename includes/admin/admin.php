@@ -88,7 +88,7 @@ class Noptin_Admin {
         $this->admin_url   = plugins_url('/', __FILE__);
         $this->assets_url  = $noptin->plugin_url . 'includes/assets/';
 		$this->assets_path = $noptin->plugin_path . 'includes/assets/';
-		$this->new_posts_notifier = new Noptin_New_Post_Notify();
+		//$this->new_posts_notifier = new Noptin_New_Post_Notify();
 
         // Include core files
 		$this->includes();
@@ -943,6 +943,26 @@ class Noptin_Admin {
 				}
 
 				$this->show_success( __('The selected subscribers have been deleted.', 'newsletter-optin-box') );
+			}
+
+		}
+
+		//Campaign actions
+        if( isset( $_GET['page'] ) && 'noptin-email-campaigns' == $_GET['page'] ) {
+
+			//Delete multiple campaigns
+			if(! empty( $_GET['action'] ) && 'delete' == $_GET['action'] && wp_verify_nonce( $_GET['_wpnonce'], 'bulk-ids' ) ) {
+				$ids = array();
+
+				if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
+					$ids = array_map( 'intval', $_REQUEST['id'] );
+				}
+
+				foreach( $ids as $id ) {
+					wp_delete_post( $id, true );
+				}
+
+				$this->show_success( __('The selected campaigns have been deleted.', 'newsletter-optin-box') );
 			}
 
 		}

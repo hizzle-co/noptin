@@ -1,6 +1,6 @@
 <?php
 /**
- * WP Background Process
+ * Noptin Background Process
  *
  * @package WP-Background-Processing
  */
@@ -422,7 +422,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 			// Adds every 5 minutes to the existing schedules.
 			$schedules[ $this->identifier . '_cron_interval' ] = array(
 				'interval' => MINUTE_IN_SECONDS * $interval,
-				'display'  => sprintf( __( 'Every %d Minutes',  'newsletter-optin-box' ), $interval ),
+				'display'  => sprintf( __( 'Every %d Minutes' ), $interval ),
 			);
 
 			return $schedules;
