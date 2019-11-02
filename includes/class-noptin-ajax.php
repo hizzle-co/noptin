@@ -380,7 +380,7 @@ if( !defined( 'ABSPATH' ) ) {
 				$result['msg'] = $form->successMessage;
 			} else {
 				//redirects
-				$result['action']   = $form->redirect;
+				$result['action']   = 'redirect';
 				$result['redirect'] = $form->redirectUrl;
 			}
 

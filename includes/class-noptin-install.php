@@ -138,7 +138,43 @@ class Noptin_Install {
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
 		//Add default campaigns
+		if(! empty( get_noptin_option('notify_new_post') ) ){
 
+			//Body
+			$content = get_noptin_option( 'new_post_content' );
+			if( empty( $content ) ) {
+				$content = '[[excerpt]]';
+			}
+
+			//Subject
+			$subject = get_noptin_option('new_post_subject');
+			if( empty( $subject ) ) {
+				$subject = '[[title]]';
+			}
+
+			//Preview text
+			$preview = get_noptin_option('new_post_preview_text');
+			if( empty( $preview ) ) {
+				$preview = __( 'We just published a new blog post. Hope you like it.',  'newsletter-optin-box');
+			}
+
+			//Create a new automation
+			wp_insert_post( array(
+				'post_title'        => __( 'New Post Notifications' ),
+            	'post_content'      => $content,
+				'post_status'       => 'publish',
+				'post_type'         => 'noptin-campaign',
+				'meta_input'	    => array(
+					'campaign_type'           => 'automation',
+					'automation_type'         => 'post_notifications',
+					'preview_text'            => sanitize_text_field( $preview ),
+					'subject'                 => sanitize_text_field( $subject ),
+					'noptin_sends_after'      => 0,
+					'noptin_sends_after_unit' => 'minutes',
+				),
+			) );
+
+		}
 	}
 
 	/**

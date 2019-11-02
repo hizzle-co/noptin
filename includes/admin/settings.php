@@ -116,43 +116,6 @@ class Noptin_Settings {
 				'description'     => __( 'Notify the site admin every time a new subscriber signs up for the newsletter.',  'newsletter-optin-box' ) ,
 			),
 
-			'notify_new_post'       => array(
-				'el'              => 'input',
-				'type'            => 'checkbox_alt',
-				'section'		  => 'general',
-				'label'           => __( 'New Post Notifications',  'newsletter-optin-box' ),
-				'description'     => __( 'Notify your active subscribers every time you publish a new post.',  'newsletter-optin-box' ) ,
-			),
-
-			'new_post_subject'    => array(
-				'el'              => 'input',
-				'type'            => 'text',
-				'restrict'        => 'notify_new_post',
-				'section'		  => 'general',
-				'label'           => __( 'Email Subject',  'newsletter-optin-box' ),
-				'placeholder'     => '[[title]]',
-				'description'     => __( 'You can use the tags [[title]], [[first_name]], [[last_name]] or any other field name that you collect.',  'newsletter-optin-box' ) ,
-			),
-
-			'new_post_preview_text'    => array(
-				'el'              => 'input',
-				'type'            => 'text',
-				'restrict'        => 'notify_new_post',
-				'section'		  => 'general',
-				'label'           => __( 'Email Preview Text',  'newsletter-optin-box' ),
-				'placeholder'     => __( 'We just published a new blog post. Hope you like it.',  'newsletter-optin-box'),
-				'description'     => __( 'You can use the tags [[title]], [[first_name]], [[last_name]] or any other field name that you collect.',  'newsletter-optin-box' ) ,
-			),
-
-			'new_post_content'    => array(
-				'el'              => 'textarea',
-				'restrict'        => 'notify_new_post',
-				'section'		  => 'general',
-				'label'           => __( 'Email Content',  'newsletter-optin-box' ),
-				'placeholder'     => "Hello [[first_name]], \nI just published a new post on [[blog_name]]. \n[[excerpt]]",
-				'description'     => __( 'You can use the tags [[title]], [[excerpt]],[[post_content]], [[first_name]], [[last_name]] or any other field name that you collect.',  'newsletter-optin-box' ) ,
-			),
-
 			'comment_form'        => array(
 				'el'              => 'input',
 				'type'            => 'checkbox_alt',
@@ -267,7 +230,7 @@ class Noptin_Settings {
 				'type'            => 'text',
 				'section'		  => 'general',
 				'label'           => __( 'Default Success Message',  'newsletter-optin-box' ),
-				'placeholder'     => esc_attr__('Thanks for subscribing to the newsletter',  'newsletter-optin-box'),
+				'placeholder'     => esc_attr__('Thanks for subscribing to our newsletter',  'newsletter-optin-box'),
 				'description'     => __( 'This is the message shown to people after they successfully sign up for your newsletter. It can be overidden for every form you create in the Opt-In Forms Editor.',  'newsletter-optin-box' ) ,
 			),
         );

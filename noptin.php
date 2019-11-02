@@ -40,13 +40,13 @@ if( !defined( 'ABSPATH' ) ) {
      * @var       Plugin version
      * @since       1.0.0
      */
-    public $version = '1.1.1';
+    public $version = '1.2.0';
 
     /**
      * @var       Plugin db version
      * @since       1.0.0
      */
-    public $db_version = 2;
+    public $db_version = 3;
 
     /**
      * @access      private

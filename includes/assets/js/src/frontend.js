@@ -270,10 +270,7 @@
 
 						if (data.action == 'redirect') {
 							window.location = data.redirect;
-						}
-
-						if (data.action == 'msg') {
-							$(this).html('<div class="noptin-big noptin-padded">' + data.msg + '</div>');
+							return;
 						}
 
 						//Gutenberg
@@ -281,7 +278,18 @@
 
 						if (url) {
 							window.location = url;
+							return;
 						}
+
+						if (data.action == 'msg') {
+							$(this).html('<div class="noptin-big noptin-padded">' + data.msg + '</div>');
+							$(this).css({
+								display: 'flex',
+    							justifyContent: 'center'
+							})
+						}
+
+
 					})
 					.fail( () => {
 						var msg = 'Could not establish a connection to the server.'

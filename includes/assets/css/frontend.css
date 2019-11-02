@@ -151,7 +151,6 @@
 	box-sizing: border-box;
 	margin: auto;
 	max-width: 100%;
-	box-sizing: border-box;
 	width: 100%;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
@@ -409,47 +408,98 @@
 	margin-right: 8px;
 }
 
-.wp-block-noptin-email-optin form h2.noptin_form_title {
-		font-size: 23px;
-		font-weight: 700;
-		line-height: 1.4125;
-		padding-top: 4px;
-		margin-bottom: 10px;
+.wp-block-noptin-email-optin{
+	min-height: 280px;
+    display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.wp-block-noptin-email-optin form {
+		width: 100%;
 	}
+
+.wp-block-noptin-email-optin form h2.noptin_form_title {
+			font-size: 23px;
+			font-weight: 700;
+			line-height: 1.4125;
+			padding-top: 4px;
+			margin-bottom: 10px;
+			margin-top: 16px;
+		}
 
 .wp-block-noptin-email-optin form p.noptin_form_description {
-		font-size: 16px;
-		line-height: 1.3;
-		margin-bottom: 10px;
-	}
+			font-size: 16px;
+			line-height: 1.3;
+			margin-bottom: 10px;
+		}
 
 .wp-block-noptin-email-optin form input.noptin_form_input_email {
-		padding: 11px 32px;
-		width: 100%;
-		font-size: 16px;
-		display: block;
-		color: #666;
-		-webkit-text-fill-color: #666;
-		background: rgba(255, 255, 255, 0.6);
-		background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
-		border: 1px solid rgba(187, 187, 187, 0.6);
-		border-radius: 3px;
-		width: 100%;
-		outline: none !important;
-		line-height: 1.45714285714286;
-		text-align: center;
-	}
+			padding: 11px 32px;
+			width: 100%;
+			font-size: 16px;
+			display: block;
+			color: #666;
+			-webkit-text-fill-color: #666;
+			background: rgba(255, 255, 255, 0.6);
+			background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+			border: 1px solid rgba(187, 187, 187, 0.6);
+			border-radius: 3px;
+			width: 100%;
+			outline: none !important;
+			line-height: 1.45714285714286;
+			text-align: center;
+		}
 
 .wp-block-noptin-email-optin form .noptin_form_submit {
-		background-color: #313131;
-		width: 100%;
-		display: block;
-		border: none;
-		margin-top: 1em;
-		text-align: center;
-		padding: 16px 32px;
-		flex: 1 0 0;
-		font-weight: 800;
-		box-shadow: none;
-		line-height: 1.45714285714286;
+			background-color: #313131;
+			width: 100%;
+			display: block;
+			border: none;
+			margin-top: 1em;
+			text-align: center;
+			padding: 16px 32px;
+			flex: 1 0 0;
+			font-weight: 800;
+			box-shadow: none;
+			line-height: 1.45714285714286;
+		}
+
+.noptin_widget .noptin-email-optin-widget {
+	box-sizing: border-box !important;
+    display: flex;
+    justify-content: center;
+	align-items: center;
+	min-height: 100px
+}
+
+.noptin_widget .noptin-email-optin-widget.noptin-email-optin-widget-has-bg {
+		min-height: 360px;
+		padding: 32px;
 	}
+
+.noptin_widget .noptin-email-optin-widget form {
+		width: 100%;
+	}
+
+.noptin_widget .noptin-email-optin-widget form .noptin-widget-email-input.noptin_form_input_email,
+		.noptin_widget .noptin-email-optin-widget form .noptin-widget-email-input.noptin_form_input_email:focus,
+		.noptin_widget .noptin-email-optin-widget form .noptin-widget-email-input.noptin_form_input_email:active {
+			width: 100%;
+			padding: 10px;
+			outline: none;
+		}
+
+.noptin_widget .noptin-email-optin-widget form .noptin_feedback_error{
+            border:1px solid #f44336;
+            display:none;
+            padding:10px;
+            margin-top:10px;
+        }
+
+.noptin_widget .noptin-email-optin-widget form .noptin-widget-submit-input {
+			margin-top: 5px;
+    		display: block;
+    		width: 100%;
+    		padding: 16px;
+		}

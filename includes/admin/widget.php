@@ -61,7 +61,7 @@ class Noptin_Widget extends WP_Widget {
 		echo $args['before_widget'];
 
 		//ID
-		$id = $args['widget_id'];
+		$id = '#' . $args['widget_id'];
 
         //Title
         $title = '';
@@ -91,68 +91,29 @@ class Noptin_Widget extends WP_Widget {
         $color    =  sanitize_hex_color( $instance['color'] );
         $h2_col   =  sanitize_hex_color( $instance['h2_col'] );
         $btn_col  =  sanitize_hex_color( $instance['btn_col'] );
-		$has_bg   = !empty( $instance['bg_color'] ) && 'transparent' != $instance['bg_color'];
+		$class    = !empty( $bg_color ) ? 'noptin-email-optin-widget-has-bg' : '';
     ?>
     <style>
 
-		#<?php echo $id; ?> .noptin-email-optin-widget {
-			<?php
-				if( $has_bg  ) {
-					echo "min-height: 400px; padding: 32px;padding-top: 80px; background-color: $bg_color  !important;";
-				}
+		<?php
+			if( $bg_color  ) {
+				echo "$id .noptin-email-optin-widget { background-color: $bg_color  !important; }";
+			}
 
-				if( $color && 'transparent' != $instance['color']  ) {
-					echo "color: $color; !important";
-				}
-			?>
+			if( $color ) {
+				echo "$id .noptin-email-optin-widget { color: $color  !important; }";
+			}
 
-            box-sizing: border-box !important;
-        }
+			if( $h2_col ) {
+				echo "$id .noptin-email-optin-widget .widget-title { color: $h2_col  !important; }";
+			}
 
-        #<?php echo $id; ?> .noptin-email-optin-widget .widget-title{
-			<?php
-				if( $h2_col && 'transparent' != $instance['h2_col']  ) {
-					echo "color: $h2_col; !important";
-				}
-			?>
-        }
-
-		#<?php echo $id; ?> .noptin-email-optin-widget  .noptin-widget-email-input,
-		#<?php echo $id; ?> .noptin-email-optin-widget  .noptin-widget-email-input:active{
-			width: 100%;
-			padding: 12px;
-			outline: none;
-        }
-
-        #<?php echo $id; ?> .noptin-email-optin-widget .noptin_feedback_success{
-            border:1px solid rgba(6, 147, 227, 0.8);
-            display:none;
-            padding:10px;
-            margin-top:10px;
-        }
-
-        #<?php echo $id; ?> .noptin-email-optin-widget .noptin_feedback_error{
-            border:1px solid rgba(227, 6, 37, 0.8);
-            display:none;
-            padding:10px;
-            margin-top:10px;
-        }
-
-        #<?php echo $id; ?> .noptin-email-optin-widget .noptin-widget-submit-input{
-            margin-top: 5px;
-            display: block;
-			width: 100%;
-			padding: 12px;
-
-			<?php
-				if( $btn_col && 'transparent' != $instance['btn_col']  ) {
-					echo "background-color: $btn_col; !important";
-				}
-			?>
-
-        }
+			if( $btn_col ) {
+				echo "$id .noptin-email-optin-widget .noptin-widget-submit-input { background-color: $btn_col  !important; }";
+			}
+		?>
     </style>
-    <div class="noptin-email-optin-widget">
+    <div class="noptin-email-optin-widget <?php echo $class; ?>">
         <form>
         <?php echo $title . $desc . $redirect;?>
         <input class="noptin-widget-email-input noptin_form_input_email" name="email" type="email" placeholder="Email Address" required >

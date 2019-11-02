@@ -8,11 +8,6 @@
 					href=""
 					@click.prevent="currentTab='<?php echo $id ?>'"
 					:class="{ 'nav-tab-active': currentTab == '<?php echo $id ?>' }"
-					<?php
-						if( $id == 'sender' ) {
-							echo 'v-if="notify_new_post"';
-						}
-					?>
 					class="nav-tab"><?php echo $title;?></a>
 			<?php } ?>
 		</nav>
