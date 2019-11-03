@@ -258,7 +258,7 @@ function get_noptin_subscribers_overview_url( $page=1 ) {
  *
  * @return  string   The forms page url
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function get_noptin_new_form_url() {
 	return admin_url('post-new.php?post_type=noptin-form');

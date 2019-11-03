@@ -404,7 +404,8 @@ class Noptin_Admin {
 		$subscribers_url   		 = esc_url( get_noptin_subscribers_overview_url() );
 		$subscribers_total       = get_noptin_subscribers_count();
 		$subscribers_today_total = get_noptin_subscribers_count( "`date_created`='$today_date'" );
-		$subscribers_growth_rate = get_noptin_subscribers_growth();
+		$this_week				 = date( 'Y-m-d', strtotime('last week sunday') );
+		$subscribers_week_total  = get_noptin_subscribers_count( "`date_created`>'$this_week'" );
 
 		$popups = noptin_count_optin_forms('popup');
 		$inpost = noptin_count_optin_forms('inpost');
@@ -741,12 +742,15 @@ class Noptin_Admin {
 		update_post_meta( $ID, '_noptin_optin_type', $_POST['state']['optinType'] );
 
 		//Ensure impressions and subscriptions are set
-		//to prevent the form from being hidden when the user sorts by those fields
-		if( empty( get_post_meta ( $ID, '_noptin_subscribers_count', true ) )) {
+        //to prevent the form from being hidden when the user sorts by those fields
+        $sub_count  = get_post_meta ( $ID, '_noptin_subscribers_count', true );
+        $form_views = get_post_meta ( $ID, '_noptin_form_views', true );
+
+		if( empty( $sub_count )) {
 			update_post_meta( $ID, '_noptin_subscribers_count', 0 );
 		}
 
-		if( empty( get_post_meta ( $ID, '_noptin_form_views', true ) )) {
+		if( empty( $form_views )) {
 			update_post_meta( $ID, '_noptin_form_views', 0 );
 		}
 

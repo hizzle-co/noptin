@@ -1,10 +1,10 @@
 === Newsletter Subscription Forms, Opt-in Widgets And Email Subscription Popups - Noptin ===
 Contributors: picocodes
-Tags: email newsletter form, email opt-in, email popup, newsletter widget, email opt-in block
+Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.7
-Tested up to: 5.2
-Requires PHP: 5.2
-Version: 1.1.1
+Tested up to: 5.3
+Requires PHP: 5.3
+Version: 1.2.0
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -19,6 +19,8 @@ The best email opt-in form, email subscription widget and newsletter sign up pop
 Noptin is a very fast and lightweight newsletter sign up plugin. Use it to build newsletter subscription forms and display them in a popup, widget or embed them into your WordPress posts.
 
 With Noptin, you can easily offer content upgrades and lead magnets to increase your email subscribers.
+
+You can then send your newsletter subscribers timely emails or set up automated email campaigns. You can also notify them everytime you publish a new blog post.
 
 Let users sign up for your email list using any of the following email opt-in form types:-
 
@@ -37,25 +39,16 @@ Noptin allows you to embed an email opt-in form inside any post, page or custom 
 Noptin ships with two widgets that make creating your newsletter subscription forms a breeze.
 
 == Installation ==
-= Option 1: =
 
 * Go to WordPress Dashboard. Locate Plugins -> Add New
-* Search **Noptin** using search option
-* Find the plugin and click Install Now button
-* After installation, click on Activate Plugin link to activate the plugin.
-
-= Option 2: =
-
-* [Download the plugin](https://downloads.wordpress.org/plugin/newsletter-optin-box.zip)
-* Go to WordPress Dashboard. Locate Plugins -> Add New
-* Click on Upload Plugin link from top
-* Upload the downloaded file and click on Install Now
+* Search form **Noptin** using search option
+* Find the plugin and click on the Install Now button
 * After installation, click on Activate Plugin link to activate the plugin.
 
 == Frequently Asked Questions ==
-= Can I send emails using MailChimp? =
+= Can I connect my email service provider? =
 
-We have a [MailChimp addon](https://noptin.com/product/mailchimp/) that makes automatically adds new email subscribers to your MailChimp list.
+Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit and MailPoet.
 
 = How can I get in touch? =
 
