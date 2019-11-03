@@ -20,7 +20,7 @@ class Noptin_Mailer {
 
 		$subject = trim( $data['email_subject'] );
 
-		if(! empty( $data['merge_tags'] ) ) {
+		if( isset( $data['merge_tags'] ) ) {
 			$subject = $this->merge( $subject, $data['merge_tags'] );
 		}
 
@@ -41,14 +41,16 @@ class Noptin_Mailer {
 
 		$content = trim( $content );
 
-		if(! empty( $data['template'] ) ) {
-			$content = $this->prepare_template( $content, $data );
-		}
-
 		if( empty( $data['merge_tags'] ) ) {
 			$data['merge_tags'] = array();
 		}
+
 		$content = $this->merge( $content, $data['merge_tags'] );
+		$content = apply_filters( 'noptin_email_body', $content, $data );
+
+		if(! empty( $data['template'] ) ) {
+			$content = $this->prepare_template( $content, $data );
+		}
 
 		return $content;
 
@@ -78,7 +80,7 @@ class Noptin_Mailer {
 		$main_content  = apply_filters( 'noptin_email_content', $main_content, $content, $data );
 
 		//Email footer
-		$footer  = $this->get_default_footer( $data );
+		$footer  = $this->get_footer( $data );
 		$footer  = apply_filters( 'noptin_email_footer', $footer, $data );
 
 		//Title
@@ -93,20 +95,26 @@ class Noptin_Mailer {
 		include $data['template'];
 		$email_content = ob_get_clean();
 
+		//Parse merge tags
+		$email_content = $this->merge( $email_content, $data['merge_tags'] );
+
 		//Remove comments
 		$email_content = preg_replace( "/<!--(.*)-->/Uis", '', $email_content );
 
+
 		//Emogrify the email
-		$noptin = noptin();
-		require_once $noptin->plugin_path . 'includes/class-noptin-emogrifier.php';
+		require_once get_noptin_include_dir( 'class-noptin-emogrifier.php' );
 
 		try {
 			$emogrifier     = new Noptin_Emogrifier( $email_content );
 			$_email_content = $emogrifier->emogrify();
 			$email_content  = $_email_content;
 		} catch (Exception $e) {
-			$email_content = $emogrifier->emogrify();
+
 		}
+
+		//Remove multiple line breaks
+		$email_content = preg_replace( "/[\r\n]+/", "\n", $email_content );
 
 		return $email_content;
 	}
@@ -146,25 +154,8 @@ class Noptin_Mailer {
 	public function get_logo( $data = array() ) {
 
 		//Default logo url
-		$noptin = noptin();
-		$url    = '';
-
-		//Maybe replace it with the websites logo
-		$custom_logo_id = get_theme_mod( 'custom_logo' );
-		if( $custom_logo_id ) {
-			$logo_url = wp_get_attachment_image_src( $custom_logo_id );
-			if( is_array( $logo_url ) && !empty( $logo_url[0] ) ) {
-				$url = $logo_url[0];
-			}
-		}
-
-		//Or the company logo
-		$company_logo = get_noptin_option( 'company_logo', '');
-		if(! empty( $company_log ) ) {
-			$url = $company_logo;
-		}
-
-		$logo_url = $footer  = apply_filters( 'noptin_email_logo_url', $url, $data );
+		$url      = '';
+		$logo_url = apply_filters( 'noptin_email_logo_url', $url, $data );
 
 		ob_start();
 		include get_noptin_include_dir( 'admin/templates/email-templates/logo.php' );
@@ -175,10 +166,10 @@ class Noptin_Mailer {
 	 * Retrieves the default email footer
 	 *
 	 */
-	public function get_default_footer( $data = array() ) {
+	public function get_footer( $data = array() ) {
 
 		ob_start();
-		include get_noptin_include_dir( 'admin/templates/email-templates/default-email-footer.php' );
+		include get_noptin_include_dir( 'admin/templates/email-templates/footer.php' );
 		return ob_get_clean();
 
 	}
@@ -207,7 +198,7 @@ class Noptin_Mailer {
 	 * Merges the email body with the specified merge tags
 	 *
 	 */
-	public function merge( $content, $tags ) {
+	public function merge( $content, $tags = array() ) {
 
 		$tags = wp_parse_args( $this->get_default_merge_tags(), $tags );
 

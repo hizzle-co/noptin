@@ -350,7 +350,7 @@ class Noptin_Emogrifier {
             /** @var $node \DOMNode */
             foreach ($nodesWithStyleDisplayNone as $node) {
                 if ($node->parentNode && is_callable(array($node->parentNode,'removeChild'))) {
-                    $node->parentNode->removeChild($node);
+                    //$node->parentNode->removeChild($node);
                 }
             }
         }

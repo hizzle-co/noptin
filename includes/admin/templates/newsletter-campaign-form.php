@@ -84,6 +84,7 @@
 											'drag_drop_upload' => true,
 											'textarea_rows'    => 15,
 											'textarea_name'	   => 'email_body',
+											'quicktags'		   => false,
 											'tabindex'         => 4,
 											'tinymce'          => array(
 												'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',

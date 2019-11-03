@@ -185,6 +185,9 @@ export default {
 
 		e.preventDefault();
 
+		//Save tinymce
+		tinyMCE.triggerSave();
+
 		//Form data
 		let data = noptin.getFormData($(this).closest('form'))
 

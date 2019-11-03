@@ -256,6 +256,11 @@ class Noptin_Email_Campaigns_Admin {
 	 *  Saves a newsletter campaign
 	 */
 	function maybe_save_campaign() {
+
+		if ( wp_doing_ajax() ) {
+            return;
+		}
+
 		$admin  = Noptin_Admin::instance();
 
 		if(! empty( $_GET['edited'] ) ) {

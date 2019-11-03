@@ -174,7 +174,7 @@ if( !defined( 'ABSPATH' ) ) {
 	public function send_test_email() {
 
 		//Verify nonce
-		check_ajax_referer( 'noptin_campaign' );
+		check_ajax_referer( 'noptin_campaign', 'noptin_campaign_nonce' );
 
 		if (! current_user_can( 'manage_options' ) ) {
 			wp_die( -1, 403 );
@@ -186,6 +186,12 @@ if( !defined( 'ABSPATH' ) ) {
 		unset( $data['_wpnonce'] );
 		unset( $data['_wp_http_referer'] );
 		unset( $data['action'] );
+
+		foreach( $data as $key => $value ) {
+			if( is_string( $value ) ) {
+				$data[$key] = stripslashes( $value );
+			}
+		}
 
 		//Ensure a valid test email has been provided
 		if( empty( $data['email'] ) || !is_email( $data['email'] ) ) {
