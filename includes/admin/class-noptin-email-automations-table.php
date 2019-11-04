@@ -297,7 +297,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 
 		printf(
 			__( '%sCreate a new automated email%s', 'newsletter-optin-box' ),
-			"<a title='Create A New Automation' class='no-campaign-create-new-campaign thickbox' href='#TB_inline?&width=780&height=430&inlineId=noptin-create-automation'>",
+			"<a title='Create A New Automation' class='no-campaign-create-new-campaign noptin-create-new-automation-campaign' href='#'>",
 			'</a>'
 		);
 	}

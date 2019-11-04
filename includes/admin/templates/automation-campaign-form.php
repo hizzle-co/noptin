@@ -1,52 +1,62 @@
 <div id="content">
-	<form method="post" action="<?php echo get_noptin_automation_campaign_url( $id ); ?>" class="noptin-newsletter-campaign-form noptin-fields">
+	<form method="post" action="<?php echo get_noptin_automation_campaign_url( $campaign_id ); ?>" class="noptin-automation-campaign-form noptin-fields">
 
-		<input type="hidden" name="id" value="<?php echo esc_attr( $id ); ?>"/>
-
-		<?php wp_nonce_field( 'noptin_campaign' );  ?>
+		<input type="hidden" name="noptin-action" value="save-automation-campaign"/>
+		<input type="hidden" name="id" value="<?php echo esc_attr( $campaign_id ); ?>"/>
+		<input type="hidden" name="campaign_type" value="automation"/>
+		<?php wp_nonce_field( 'noptin_campaign' ); ?>
 
 		<div id="poststuff">
-			<div> <!-- <div class="postbox" > -->
+			<div>
 
-                <h3><?php _e( 'Edit Automation:', 'newsletter-optin-box'); ?></h3>
+                <h3><?php _e( 'Edit Automation Campaign', 'newsletter-optin-box'); ?> &mdash; <?php echo sanitize_text_field( $campaign->post_title ); ?></h3>
 				<hr/>
 
 				<div>
-					<table class="form-table" id="noptin-addedit-automation-campaign">
+					<table class="form-table" id="noptin-edit-automation-campaign">
 
 					<?php
 						/**
         				 * Fires before printing the first row in the automation campaign editor
         				 *
         				 * @param object $campaign current campaign object
+						 * @param string $automation_type the automation type
         				 */
-        				do_action('noptin_before_automation_editor_fields', $campaign );
+        				do_action('noptin_before_automation_editor_fields', $campaign, $automation_type );
 					?>
 
-					<tr>
-						<th>
-							<label><b><?php _e( 'Send To:', 'newsletter-optin-box' ); ?></b></label>
-						</th>
-						<td>
-							<?php
+					<?php if ( $supports_filter ) { ?>
 
-								//Load thickbox https://codex.wordpress.org/Javascript_Reference/ThickBox
-								add_thickbox();
+						<tr>
+							<th>
+								<label><b><?php _e( 'Send To:', 'newsletter-optin-box' ); ?></b></label>
+							</th>
+							<td>
+								<?php $text = __( 'All Subscribers', 'newsletter-optin-box' ); ?>
+								<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-recipients">Filter recipients</a></p>
+							</td>
+						</tr>
 
-								//Filter subscribers here
-								$text = __( 'All Subscribers', 'newsletter-optin-box' );
-							?>
-							<p class="description"><?php echo $text; ?> &mdash; <a href="#TB_inline?&width=600&height=550&inlineId=noptin-recipients-filter" class="thickbox">Filter recipients</a></p>
-						</td>
-					</tr>
+					<?php } ?>
 
 					<tr>
 						<th>
 							<label for="noptin-email-subject"><b><?php _e( 'Email Subject:', 'newsletter-optin-box' ); ?></b></label>
 						</th>
 						<td>
-							<?php $subject = is_object( $campaign ) ? $campaign->post_title : ''; ?>
-							<input type="text" name="email_subject" id="noptin-email-subject" class="noptin-campaign-input" value="<?php echo esc_attr( $subject ); ?>">
+							<input style="max-width: 100%;" type="text" name="subject" id="noptin-email-subject" class="noptin-campaign-input" value="<?php echo esc_attr( $subject ); ?>" placeholder="<?php esc_attr_e( "Enter your email's subject", 'newsletter-optin-box' ); ?>">
+						</td>
+					</tr>
+
+					<tr>
+						<th>
+							<label for="noptin-email-preview">
+								<b><?php _e( 'Preview Text:', 'newsletter-optin-box' ); ?></b>
+								<span title="<?php esc_attr_e( 'Some email clients display this text next to the subject.',  'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+							</label>
+						</th>
+						<td>
+							<input style="max-width: 100%;" type="text" name="preview_text" id="noptin-email-preview" class="noptin-campaign-input" value="<?php echo esc_attr( $preview_text ); ?>" placeholder="<?php esc_attr_e( "Enter the text shown next to the subject", 'newsletter-optin-box' );?>" >
 						</td>
 					</tr>
 
@@ -56,16 +66,17 @@
 						</th>
 						<td>
 							<?php
-								$body = is_object( $campaign ) ? stripslashes( $campaign->post_content ) : '';
 
 									wp_editor(
-										$body,
-										'noptin-email-body',
+										$email_body,
+										'noptinautomationemailbody',
 										array(
-											'media_buttons' => true,
-											'textarea_rows' => 15,
-											'tabindex' => 4,
-											'tinymce'  => array(
+											'media_buttons'    => true,
+											'drag_drop_upload' => true,
+											'textarea_rows'    => 15,
+											'textarea_name'	   => 'email_body',
+											'tabindex'         => 4,
+											'tinymce'          => array(
 												'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',
 											),
 										)
@@ -75,46 +86,27 @@
 						</td>
 					</tr>
 
-					<tr>
-						<th></th>
-						<td>
-							<input type="submit" name="publish" class="button-primary" value="<?php echo 'publish' == $campaign->post_status ? 'Save Changes' : 'Publish' ?>"/>
-							<input type="submit" name="draft" class="button-secondary" value="<?php echo 'publish' == $campaign->post_status ? 'Switch to Draft' : 'Save Changes' ?>"/>
-						</td>
-					</tr>
-
 					<?php
 						/**
         				 * Fires after printing the last row in the automation campaign editor
         				 *
         				 * @param object $campaign current campaign object
+						 * @param string $automation_type the automation type
         				 */
-        				do_action('noptin_after_automation_editor_fields', $campaign) ;
+        				do_action('noptin_after_automation_editor_fields', $campaign, $automation_type );
 					?>
+
+					<tr>
+						<th></th>
+						<td>
+							<input type="submit" name="publish" class="button-primary" value="<?php echo 'publish' == $campaign->post_status ? 'Save Changes' : 'Publish' ?>"/>
+							<input type="submit" name="draft" class="button-link" value="<?php echo 'publish' == $campaign->post_status ? 'Switch to Draft' : 'Save as draft' ?>"/>
+						</td>
+					</tr>
 
 					</table>
 				</div>
 			</div>
 		</div>
-
-				<div id="noptin-recipients-filter" style="display:none;">
-     				<p>
-						<?php
-
-							$filters = array(
-								'all'		=> __( 'All subscribers', 'newsletter-optin-box'),
-								'only'		=> __( 'Signed up via', 'newsletter-optin-box'),
-								'except'	=> __( 'Did not sign Up via', 'newsletter-optin-box'),
-							);
-
-							/**
-        					 * Fires when printing the campaign recipients filter
-        					 *
-        					 * @param object $campaign current campaign object
-        					 */
-        					do_action('noptin_automation_campaign_recipients', $campaign) ;
-						?>
-     				</p>
-				</div>
-			</form>
-		</div>
+	</form>
+</div>

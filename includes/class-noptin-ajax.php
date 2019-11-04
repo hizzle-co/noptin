@@ -99,57 +99,48 @@ if( !defined( 'ABSPATH' ) ) {
 	public function setup_automation() {
 
 		//Verify nonce
-		check_ajax_referer( 'noptin_create_automation' );
+		check_ajax_referer( 'noptin_campaign' );
 
 		if (! current_user_can( 'manage_options' ) ) {
-			wp_die( -1, 403 );
+			wp_die( -1, 401 );
 		}
 
-		$data = $_POST;
+		$data = stripslashes_deep( $_POST );
 		unset( $data['_wpnonce'] );
 		unset( $data['_wp_http_referer'] );
 		unset( $data['action'] );
 
 		if( empty( $data['automation_name'] ) ) {
-			die( __( 'Enter a name for your automation', 'newsletter-optin-box') );
+			$data['automation_name'] = __( 'No Name' );
 		}
 
 		if( empty( $data['automation_type'] ) ) {
-			die( __( 'There was an error retrieving that automation type', 'newsletter-optin-box') );
+			wp_die( -1, 400 );
 		}
 
+		//Filter automation setup data
 		$data = apply_filters( 'noptin_email_automation_setup_data', $data );
 
-		if( is_string( $data ) ) {
-			die( $data );
-		}
-
 		//Create a new automation
-		$id = wp_insert_post( array(
+		$args = array(
 			'post_title'        => $data['automation_name'],
-            'post_content'      => empty( $data['default_content'] ) ? '' : $data['default_content'],
+            'post_content'      => empty( $data['email_body'] ) ? '' : $data['email_body'],
 			'post_status'       => 'draft',
 			'post_type'         => 'noptin-campaign',
-		), true );
+		);
+
+		unset( $data['automation_name'] );
+		unset( $data['email_body'] );
+
+		$data['campaign_type'] = 'automation';
+		$args['meta_input']    = $data;
+
+		$id = wp_insert_post( $args, true );
 
         //If an error occured, return it
         if( is_wp_error( $id ) ) {
-            die( $id->get_error_message() );
+			wp_die( $id, 400 );
 		}
-
-		if(! empty( $data['default_subject'] ) ) {
-			update_post_meta( $id, 'subject', $data['default_subject'] );
-		}
-
-		unset( $data['default_subject'] );
-		unset( $data['default_content'] );
-		unset( $data['automation_name'] );
-
-		foreach( $data as $key => $value ) {
-			update_post_meta( $id, $key, $value );
-		}
-
-		update_post_meta( $id, 'campaign_type', 'automation' );
 
 		/**
     	 * Runs before displaying automation settings
@@ -157,9 +148,7 @@ if( !defined( 'ABSPATH' ) ) {
     	 */
 		do_action( 'noptin_setup_automation', $id, $data );
 
-		wp_send_json( array(
-			'redirect'	=> get_noptin_automation_campaign_url( $id ),
-		) );
+		echo get_noptin_automation_campaign_url( $id );
 		exit;
 
 	}
@@ -187,11 +176,8 @@ if( !defined( 'ABSPATH' ) ) {
 		unset( $data['_wp_http_referer'] );
 		unset( $data['action'] );
 
-		foreach( $data as $key => $value ) {
-			if( is_string( $value ) ) {
-				$data[$key] = stripslashes( $value );
-			}
-		}
+		//Remove slashes
+		$data = stripslashes_deep( $data );
 
 		//Ensure a valid test email has been provided
 		if( empty( $data['email'] ) || !is_email( $data['email'] ) ) {

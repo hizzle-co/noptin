@@ -898,11 +898,30 @@ function get_noptin_automation_campaign_url( $id ) {
 }
 
 /**
+ *  Checks if a given post is a noptin campaign
+ */
+function is_noptin_campaign( $post, $campaign_type = false ) {
+
+	$campaign     = get_post( $post );
+
+	if( empty( $campaign ) || 'noptin-campaign' != $campaign->post_type ) {
+		return false;
+	}
+
+	if( empty( $campaign_type ) ) {
+		return true;
+	}
+
+	return trim( $campaign_type ) == get_post_meta( $campaign->ID, 'campaign_type', true );
+
+}
+
+/**
  *  Returns the default newsletter subject
  */
 function get_noptin_default_newsletter_subject() {
 
-	$subject = __( 'Sending newsletters in WordPress is now easier than ever', 'newsletter-optin-box' );
+	$subject = '';
 
 	/**
      * Filters the default newsletter subject
@@ -918,7 +937,7 @@ function get_noptin_default_newsletter_subject() {
  */
 function get_noptin_default_newsletter_preview_text() {
 
-	$preview_text = __( 'With this free plugin.', 'newsletter-optin-box' );
+	$preview_text = '';
 
 	/**
      * Filters the default newsletter preview text

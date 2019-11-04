@@ -93,10 +93,10 @@ if( !defined( 'ABSPATH' ) ) {
 			'noptin_optin_form_post_type_details',
 			array(
 				'labels'              => array(
-					'name'                  => _x( 'Newsletter Forms', 'Post type general name', 'newsletter-optin-box' ),
-					'singular_name'         => _x( 'Newsletter Form', 'Post type singular name', 'newsletter-optin-box' ),
-					'menu_name'             => _x( 'Newsletter Forms', 'Admin Menu text', 'newsletter-optin-box' ),
-					'name_admin_bar'        => _x( 'Newsletter Form', 'Add New on Toolbar', 'newsletter-optin-box' ),
+					'name'                  => _x( 'Email Forms', 'Post type general name', 'newsletter-optin-box' ),
+					'singular_name'         => _x( 'Email Form', 'Post type singular name', 'newsletter-optin-box' ),
+					'menu_name'             => _x( 'Email Forms', 'Admin Menu text', 'newsletter-optin-box' ),
+					'name_admin_bar'        => _x( 'Email Form', 'Add New on Toolbar', 'newsletter-optin-box' ),
 					'add_new'               => __( 'Add New', 'newsletter-optin-box' ),
         			'add_new_item'          => __( 'Add New Form', 'newsletter-optin-box' ),
         			'new_item'              => __( 'New Form', 'newsletter-optin-box' ),

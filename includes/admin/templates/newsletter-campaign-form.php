@@ -11,7 +11,7 @@
 
 			wp_nonce_field( 'noptin_campaign', 'noptin_campaign_nonce' );
 
-			$display_message   = __( 'Add New Email Campaign:', 'newsletter-optin-box');
+			$display_message   = __( 'New Email Campaign:', 'newsletter-optin-box');
 			if ( ! empty( $id ) ) {
 				$display_message   = __( 'Edit Email Campaign:', 'newsletter-optin-box');
 			}
@@ -84,7 +84,6 @@
 											'drag_drop_upload' => true,
 											'textarea_rows'    => 15,
 											'textarea_name'	   => 'email_body',
-											'quicktags'		   => false,
 											'tabindex'         => 4,
 											'tinymce'          => array(
 												'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',

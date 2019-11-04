@@ -27,6 +27,7 @@ class Noptin_Email_Campaigns_Admin {
 
 		//Maybe save campaigns
 		add_action( 'wp_loaded', array( $this, 'maybe_save_campaign' ) );
+		add_action( 'wp_loaded', array( $this, 'maybe_save_automation_campaign' ) );
 
 		//Maybe send a campaign
 		add_action( 'transition_post_status', array( $this, 'maybe_send_campaign' ), 100, 3 );
@@ -152,7 +153,7 @@ class Noptin_Email_Campaigns_Admin {
 				<input type="hidden" name="page" value="noptin-email-campaigns"/>
 				<input type="hidden" name="section" value="automations"/>
 				<div class="noptin-campaign-action-links">
-					<a title='Create A New Automation' href="#TB_inline?&width=780&height=430&inlineId=noptin-create-automation" class="button-secondary create-new-campaign thickbox"><?php _e( 'Create New Automation', 'newsletter-optin-box' ); ?></a>
+					<a href="#" class="button-secondary noptin-create-new-automation-campaign"><?php _e( 'Create New Automation', 'newsletter-optin-box' ); ?></a>
 				</div>
 
 				<?php $table->display(); ?>
@@ -174,8 +175,8 @@ class Noptin_Email_Campaigns_Admin {
 		$triggers = array(
 			'post_notifications' => array(
 				'title'			=> __( "Post Notifications", 'newsletter-optin-box' ),
-				'description'	=> __( "Notify your subscribers everytime you publish a new blog post.", 'newsletter-optin-box' ),
-				'support_delay' => __( "After a post is published", 'newsletter-optin-box' ),
+				'description'	=> __( "Notify your subscribers everytime you publish new content.", 'newsletter-optin-box' ),
+				'support_delay' => __( "After new content is published", 'newsletter-optin-box' ),
 				'support_filter'=> true,
 				'setup_cb'		=> array( $this, 'post_notifications_cb' ),
 			),
@@ -240,15 +241,92 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	function render_automation_campaign_form( $id = 0 ) {
 
-		$id       = empty( $_GET['id'] ) ? $id : $_GET['id'];
-		$campaign = false;
-
-		if ( $id ) {
-			$campaign = get_post( $id );
+		if( empty( $id ) && empty( $_GET['id'] ) ) {
+			return;
 		}
 
-		$noptin_admin = Noptin_Admin::instance();
-		include $noptin_admin->admin_path . 'templates/automation-campaign-form.php';
+		if( empty( $id ) ) {
+			$id = trim( $_GET['id'] );
+		}
+
+		//Prepare the campaign being edited
+		$campaign_id  = absint( $id );
+		$campaign     = get_post( $id );
+
+		//Ensure this is an automation campaign
+		if (! is_noptin_campaign( $campaign, 'automation' ) ) {
+			return;
+		}
+
+		//Prepare data
+		$automation_type = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'automation_type', true ) ) );
+		$preview_text    = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) );
+		$subject         = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) );
+		$email_body      = wp_kses_post( stripslashes_deep( $campaign->post_content ) );
+		$automations     = $this->get_automation_triggers();
+		$supports_filter = !empty( $automations[ $automation_type ] ) && !empty( $automations[ $automation_type ]['support_filter'] );
+
+		//Load the automation campign form
+		include get_noptin_include_dir( 'admin/templates/automation-campaign-form.php' );
+
+	}
+
+	/**
+	 *  Saves an automation campaign
+	 */
+	function maybe_save_automation_campaign() {
+
+		if ( wp_doing_ajax() ) {
+            return;
+		}
+
+		$admin  = Noptin_Admin::instance();
+
+		if(! isset( $_POST['noptin-action'] ) || 'save-automation-campaign' != $_POST['noptin-action'] ) {
+			return;
+		}
+
+		//Verify nonce
+		if( empty( $_POST['noptin_campaign_nonce'] ) || !wp_verify_nonce( $_POST['noptin_campaign_nonce'], 'noptin_campaign' ) ) {
+			return $admin->show_error( __( 'Unable to save your campaign' ) );
+		}
+
+		//Prepare data
+		$data   = stripslashes_deep( $_POST );
+		$id     = (int) $data['id'];
+
+		//Prepare post status
+		$status = get_post_status( $id );
+
+		if( !empty( $data['draft'] ) ) {
+			$status = 'draft';
+		}
+
+		if( !empty( $data['publish'] ) ) {
+			$status = 'publish';
+		}
+
+		//Prepare post args
+		$post = array(
+			'ID'			   => $id,
+			'post_status'      => $status,
+			'post_type'        => 'noptin-campaign',
+			'post_content'	   => $data['email_body'],
+			'meta_input'	   => array(
+				'subject'           	  => sanitize_text_field( $data['subject'] ),
+				'preview_text'            => sanitize_text_field( $data['preview_text'] ),
+			),
+		);
+
+		$post = apply_filters( 'noptin_save_automation_campaign_details', $post );
+
+		$post = wp_update_post( $post, true );
+
+		if( is_wp_error( $post ) ) {
+			$admin->show_error( $post->get_error_message() );
+		} else {
+			$admin->show_success( __( 'Your changes were saved successfully') );
+		}
 
 	}
 
@@ -263,6 +341,10 @@ class Noptin_Email_Campaigns_Admin {
 
 		$admin  = Noptin_Admin::instance();
 
+		if(! isset( $_GET['page'] ) || 'noptin-email-campaigns' != $_GET['page'] ) {
+			return;
+		}
+
 		if(! empty( $_GET['edited'] ) ) {
 			$admin->show_success( __( 'Your campaign was saved.' ) );
 		}
@@ -276,21 +358,24 @@ class Noptin_Email_Campaigns_Admin {
 			return $admin->show_error( __( 'Unable to save your campaign' ) );
 		}
 
+		//Prepare data
+		$data   = stripslashes_deep( $_POST );
+
 		//Defaults
 		$id     = false;
 		$status = 'draft';
 
 		//Set post status
-		if( !empty( $_POST['id'] ) ) {
-			$id     = (int) $_POST['id'];
+		if( !empty( $data['id'] ) ) {
+			$id     = (int) $data['id'];
 			$status = ( 'draft' == get_post_status( $id ) ) ? 'draft' : 'publish';
 		}
 
-		if( !empty( $_POST['draft'] ) ) {
+		if( !empty( $data['draft'] ) ) {
 			$status = 'draft';
 		}
 
-		if( !empty( $_POST['publish'] ) ) {
+		if( !empty( $data['publish'] ) ) {
 			$status = 'publish';
 		}
 
@@ -301,20 +386,20 @@ class Noptin_Email_Campaigns_Admin {
 			'post_date_gmt'    => current_time( 'mysql', true ),
 			'post_date'        => current_time( 'mysql' ),
 			'edit_date'        => 'true',
-			'post_title'	   => trim( $_POST['email_subject'] ),
-			'post_content'	   => trim( $_POST['email_body'] ),
+			'post_title'	   => trim( $data['email_subject'] ),
+			'post_content'	   => $data['email_body'],
 			'meta_input'	   => array(
 				'campaign_type'           => 'newsletter',
-				'preview_text'            => sanitize_text_field( $_POST['preview_text'] ),
-				'noptin_sends_after'      => (int) $_POST['noptin-email-schedule'],
-				'noptin_sends_after_unit' => sanitize_text_field( $_POST['noptin-email-schedule-unit'] ),
+				'preview_text'            => sanitize_text_field( $data['preview_text'] ),
+				'noptin_sends_after'      => (int) $data['noptin-email-schedule'],
+				'noptin_sends_after_unit' => sanitize_text_field( $data['noptin-email-schedule-unit'] ),
 			),
 		);
 
-		if( 'publish' == $status & !empty( $_POST['noptin-email-schedule'] ) ) {
+		if( 'publish' == $status & !empty( $data['noptin-email-schedule'] ) ) {
 
-			$count      = (int) $_POST['noptin-email-schedule'];
-			$unit       = sanitize_text_field( $_POST['noptin-email-schedule-unit'] );
+			$count      = (int) $data['noptin-email-schedule'];
+			$unit       = sanitize_text_field( $data['noptin-email-schedule-unit'] );
 			$time       = current_time( 'mysql' );
 			$time_gmt   = current_time( 'mysql', true );
 

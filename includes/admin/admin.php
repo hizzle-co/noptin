@@ -88,7 +88,6 @@ class Noptin_Admin {
         $this->admin_url   = plugins_url('/', __FILE__);
         $this->assets_url  = $noptin->plugin_url . 'includes/assets/';
 		$this->assets_path = $noptin->plugin_path . 'includes/assets/';
-		$this->new_posts_notifier = new Noptin_New_Post_Notify();
 
         // Include core files
 		$this->includes();

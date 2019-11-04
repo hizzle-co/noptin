@@ -32,8 +32,12 @@
 							?>
 
 							<div><span class="button button-primary"><?php _e( "Set Up", 'newsletter-optin-box' );?></span></div>
-							<form class="noptin-automation-setup-form noptin-fields" style="display:none">
-								<?php wp_nonce_field( 'noptin_create_automation' );?>
+							<div class='noptin-automation-type-setup-form' style="display:none">
+							<form class="noptin-automation-setup-form noptin-fields">
+
+								<h3 style="margin: 6px 0;"><?php echo $args['title'];?></h3>
+								<div><?php echo $args['description'];?></div>
+								<?php wp_nonce_field( 'noptin_campaign' );?>
 								<input type="hidden" name="automation_type" value="<?php echo esc_attr( $trigger );?>" />
 								<table class="form-table noptin-create-new-automation-campaign">
 								<?php
@@ -104,17 +108,8 @@
     								 */
 									do_action( 'noptin_after_display_automation_settings', $trigger, $args );
 								?>
-								<tr>
-
-									<th></th>
-
-									<td>
-										<input type="submit" class="button button-primary" value="Continue">
-										<div class="noptin_feedback_error" style='#f44336'></div>
-									</td>
-
-								</tr>
 							</table>
+						</div>
 
 						</form>
 

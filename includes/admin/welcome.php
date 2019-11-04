@@ -25,7 +25,7 @@
 					<span class="noptin-card-value"><?php echo $subscribers_week_total; ?></span>
 				</li>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo $subscribers_url; ?>"><?php _e( 'View all subscribers',  'newsletter-optin-box' ); ?></a> | <a href="https://noptin.com/products/?utm_medium=plugin-dashboard&utm_campaign=main-page&utm_source=<?php echo esc_url( get_home_url() ); ?>" target="_blank"><?php _e( 'Connect Your Email Service Provider',  'newsletter-optin-box' ); ?></a></div>
+		<div class="noptin-card-footer-links"><a href="<?php echo $subscribers_url; ?>"><?php _e( 'View all subscribers',  'newsletter-optin-box' ); ?></a> | <a href="<?php echo esc_url( get_noptin_new_newsletter_campaign_url() ); ?>"><?php _e( 'Send them an email',  'newsletter-optin-box' ); ?></a></div>
 	</div>
 
 

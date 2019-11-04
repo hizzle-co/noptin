@@ -6,12 +6,9 @@ export default {
 
 	init() {
 
-		//Watch for clicks on the create new automation button
-		$('.no-campaign-create-new-campaign.thickbox, .create-new-campaign.thickbox').on('click', function () {
-			$('#noptin-automations-popup').addClass('showing')
-		})
-
-		$('.noptin-automation-type-select.enabled').on('click', this.automation_events)
+		//Create a new automation
+		$('.noptin-create-new-automation-campaign').on('click', this.create_automation)
+		$( document ).on('click', '.noptin-automation-type-select.enabled', this.select_automation)
 
 		//Send test email
 		$('#wp-noptinemailbody-media-buttons').append('&nbsp;<a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span>Send a test email</a>')
@@ -27,99 +24,74 @@ export default {
 
 	},
 
-	automation_events(e) {
-
-		e.preventDefault()
-
-		this.initial_form = $('#noptin-automations-popup').clone()
-		let automation = $(this)
-
-		$('.noptin-automation-type-select').not(automation).fadeOut('fast', () => {
-
-			//Replace title with our title
-			$('#noptin-automations-popup').find('h2').html(automation.find('h3').html())
-
-			//Remove unnecessary elements
-			automation.find('h3').remove()
-			automation.find('span.button').remove()
-
-			//Display the automations form
-			automation.find('form').show()
-
-			$('.noptin-automation-setup-form').off('submit', this.createAutomation)
-			$('.noptin-automation-setup-form').on('submit', this.createAutomation)
-
-			//Hide errors
-			automation.find('.noptin_feedback_success, .noptin_feedback_error').empty()
-
-			//Find the ul and replace it with our inner form
-			$('#noptin-automations-popup').find('ul').replaceWith(automation.html())
-
-		});
-
-		let func = function () {
-			$('#noptin-automations-popup').replaceWith(initial_form)
-			$('.noptin-automation-type-select.enabled').off('click', automation_events)
-			$('.noptin-automation-type-select.enabled').on('click', automation_events)
-			$(window).unbind('tb_unload', func);
-		}
-
-		$(window).bind('tb_unload', func);;
-
-
-	},
-
-	createAutomation(e) {
+	//Creates a new automation
+	create_automation(e) {
 
 		e.preventDefault();
 
-		//Modify form state
-		$(this)
-			.fadeTo(600, 0.5)
-			.find('.noptin_feedback_success, .noptin_feedback_error')
-			.empty()
-			.hide()
+		//Init sweetalert
+		Swal.fire({
+			html: $('#noptin-create-automation').html(),
+			showConfirmButton: false,
+			showCloseButton: true,
+			width: 800,
+		})
 
-		//Prep all form data
-		var data = {},
-			fields = $(this).serializeArray()
+	},
 
-		jQuery.each(fields, (i, field) => {
-			data[field.name] = field.value
-		});
+	//Select an automation
+	select_automation( e ) {
 
-		data.action = "noptin_setup_automation";
+		e.preventDefault();
 
-		//Post it to the server
-		$.post(noptin_params.ajaxurl, data)
+		let parent = $(this).find('.noptin-automation-type-setup-form').clone().find('form').attr( 'id', 'noptinCurrentForm').parent()
+		let form   = parent.html()
+		parent.remove()
 
-			//Redirect to the form edit page
-			.done((data, status, xhr) => {
+		//Init sweetalert
+		Swal.fire({
+			html: form,
+			showCloseButton: true,
+			width: 800,
+			showCancelButton: true,
+			confirmButtonText: 'Continue',
+			showLoaderOnConfirm: true,
+			showCloseButton: true,
+			focusConfirm: false,
+			allowOutsideClick: () => !Swal.isLoading(),
 
-				if ('string' == typeof data) {
-					$(this)
-						.find('.noptin_feedback_error')
-						.text(data)
-						.show();
-					return;
-				}
+			//Fired when the user clicks on the confirm button
+			preConfirm() {
 
-				window.location = data.redirect;
+				let data = noptin.getFormData($( '#noptinCurrentForm' ))
+				data.action = "noptin_setup_automation";
 
-			})
+				$.post( noptin_params.ajaxurl, data )
 
+					.done(function ( url ) {
+						window.location = url;
+					})
 
-			.fail(() => {
-				var msg = 'Could not establish a connection to the server.'
-				$(this)
-					.find('.noptin_feedback_error')
-					.text(msg)
-					.show();
-			})
+					.fail(function ( jqXHR ) {
 
-			.always(() => {
-				$(this).fadeTo(600, 1)
-			})
+						Swal.fire({
+							type: 'error',
+							title: 'Error',
+							text: 'There was an error creating your automation',
+							showCloseButton: true,
+							confirmButtonText: 'Close',
+							confirmButtonColor: '#9e9e9e',
+							footer: `<code>Status: ${jqXHR.status} &nbsp; Status text: ${jqXHR.statusText}</code>`
+						})
+
+					})
+
+				//Return a promise that never resolves
+				return jQuery.Deferred()
+
+			},
+		})
+
 	},
 
 	//Deletes a campagin
