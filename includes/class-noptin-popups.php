@@ -33,7 +33,7 @@ if( !defined( 'ABSPATH' ) ) {
     public function display_popups() {
 
         //Abort if this is an admin page...
-        if( is_admin() ){
+        if( is_admin() || is_noptin_actions_page() || is_customize_preview() ){
             return;
         }
 

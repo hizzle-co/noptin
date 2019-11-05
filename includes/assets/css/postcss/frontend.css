@@ -478,3 +478,18 @@ $noptin_color: #ff6f00;
 		}
 	}
 }
+
+body.noptin.noptin-actions-page {
+
+	background: #fff !important;
+    background-image: none !important;
+	color: #212121 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100vh !important;
+	overflow: auto !important;
+
+}

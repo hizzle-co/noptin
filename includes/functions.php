@@ -189,28 +189,30 @@ function update_noptin_option( $key, $value ) {
  *
  * @return  sting
  * @access  public
- * @since   1.6
+ * @since   1.0.6
  */
 function prepare_noptin_email( $email, $subscriber ) {
 	return $email;
 }
 
 /**
- * Returns the noptin action url
+ * Returns the noptin action page
  *
- * @return  sting
+ * @return  int
  * @access  public
- * @since   1.6
+ * @since   1.2.0
  */
-function get_noptin_action_url( $action, $value ) {
+function get_noptin_action_page() {
 
-	$content = '
+	$page = get_option('noptin_actions_page');
+
+	if( empty( $page ) ) {
+
+		$content = '
 		<!-- wp:shortcode -->
 		[noptin_action_page]
 		<!-- /wp:shortcode -->';
 
-	$page = get_option('noptin_actions_page');
-	if( empty( $page ) ) {
 		$page = wp_insert_post(
 			array(
 				'post_content' => $content,
@@ -219,8 +221,25 @@ function get_noptin_action_url( $action, $value ) {
 				'post_type'	   => 'page',
 			)
 		);
+
 		update_option('noptin_actions_page', $page);
+
 	}
+
+	return $page;
+
+}
+
+/**
+ * Returns the noptin action url
+ *
+ * @return  sting
+ * @access  public
+ * @since   1.0.6
+ */
+function get_noptin_action_url( $action, $value ) {
+
+	$page = get_noptin_action_page();
 
 	if( empty( $page ) ) {
 		return get_home_url();
@@ -237,6 +256,17 @@ function get_noptin_action_url( $action, $value ) {
 
 	return get_home_url();
 
+}
+
+/**
+ * Checks if this is a noptin actions page
+ *
+ * @return  bool
+ * @since   1.2.0
+ */
+function is_noptin_actions_page() {
+	$page = get_noptin_action_page();
+    return !empty( $page ) && is_page( $page );
 }
 
 /**

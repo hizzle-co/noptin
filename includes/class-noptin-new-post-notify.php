@@ -24,7 +24,7 @@ class Noptin_New_Post_Notify {
 	public function default_automation_data( $data ) {
 
 		if( 'post_notifications' == $data['automation_type'] ) {
-			$data[ 'email_body' ]   = '<p>[[excerpt]]</p><p>Learn more about <a href="https://noptin.com/guide/new-post-notifications/">how to set up new post notifications</a>.</p>';
+			$data[ 'email_body' ]   = '<p>[[post_excerpt]]</p><p>Learn more about <a href="https://noptin.com/guide/new-post-notifications/">how to set up new post notifications</a>.</p>';
 			$data[ 'subject' ]      = '[[post_title]]';
 			$data[ 'preview_text' ] = __( 'New article published on [[blog_name]]' );
 		}

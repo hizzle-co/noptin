@@ -20,10 +20,16 @@ if( !defined( 'ABSPATH' ) ) {
 
 
         //Register shortcode
-		add_shortcode( 'noptin_action_page' , array( $this, 'do_shortcode') );
+		add_shortcode( 'noptin_action_page' , array( $this, 'do_shortcode' ) );
 
 		//User unsubscribe
-		add_action( "noptin_page_unsubscribe", array( $this, 'unsubscribe_user') );
+		add_action( "noptin_page_unsubscribe", array( $this, 'unsubscribe_user' ) );
+
+		//Filter template
+		add_filter( "page_template", array( $this, 'filter_page_template' ) );
+
+		//Admin bar
+		add_filter('show_admin_bar', array( $this, 'maybe_hide_admin_bar' ) );
 
     }
 
@@ -38,13 +44,13 @@ if( !defined( 'ABSPATH' ) ) {
 
         //Abort early if no action is specified
         if ( empty( $_REQUEST['noptin_action'] ) ) {
-            return '';
+			return '';
 		}
 
 		$action = sanitize_text_field( $_REQUEST['noptin_action'] );
 		$value = '';
 
-		if (! empty( $_REQUEST['noptin_value'] ) ) {
+		if ( isset( $_REQUEST['noptin_value'] ) ) {
             $value = sanitize_text_field( $_REQUEST['noptin_value'] );
 		}
 
@@ -82,16 +88,42 @@ if( !defined( 'ABSPATH' ) ) {
 		);
 
 		if( $updated ) {
-			$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.',  'newsletter-optin-box' ) );
+			$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.',  'newsletter-optin-box' )  );
 		} else {
-			$this->print_paragraph( __( 'An error occured while trying to unsubscribe you from this mailing list.',  'newsletter-optin-box' ) );
+			$this->print_paragraph( __( 'An error occured while trying to unsubscribe you from this mailing list.',  'newsletter-optin-box' )  );
 		}
 
 
 	}
 
-	public function print_paragraph( $content ){
-		echo "<p>$content</p>";
+	public function print_paragraph( $content, $class= 'noptin-padded' ){
+		echo "<p class='$class'>$content</p>";
+	}
+
+	public function filter_page_template( $template ){
+
+		if( is_noptin_actions_page() ) {
+
+			//No action specified, redirect back home
+			if( empty( $_REQUEST['noptin_action'] ) ) {
+				wp_redirect( get_home_url() );
+				exit;
+			}
+
+			$template = get_noptin_include_dir( 'admin/templates/actions-page.php' );
+			$template = apply_filters( 'noptin_actions_page_template', $template );
+		}
+		return $template;
+
+	}
+
+	public function maybe_hide_admin_bar( $status ) {
+
+		if( is_noptin_actions_page() ) {
+			return false;
+		}
+		return $status;
+
 	}
 
 
