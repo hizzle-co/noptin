@@ -178,7 +178,6 @@ class Noptin_Email_Campaigns_Admin {
 				'description'	=> __( "Notify your subscribers everytime you publish new content.", 'newsletter-optin-box' ),
 				'support_delay' => __( "After new content is published", 'newsletter-optin-box' ),
 				'support_filter'=> true,
-				'setup_cb'		=> array( $this, 'post_notifications_cb' ),
 			),
 			'post_digests' 		=> array(
 				'title'			=> __( "Post Digests", 'newsletter-optin-box' ),
@@ -204,36 +203,6 @@ class Noptin_Email_Campaigns_Admin {
 
 		return apply_filters( 'noptin_email_automation_triggers', $triggers, $this );
 
-	}
-
-	/**
-	 *  Displays the automation setup form
-	 */
-	public function post_notifications_cb() {
-		?>
-		<tr>
-
-			<th>
-				<label><b><?php _e( 'Categories', 'newsletter-optin-box' ); ?></b></label>
-			</th>
-
-			<td>
-				<?php
-
-					$args = array(
-						'show_count'   		=> 1,
-						'hide_empty'   		=> 0,
-						'hierarchical' 		=> 1,
-						'show_option_all'   => __( 'All Categories', 'newsletter-optin-box' ),
-					);
-					wp_dropdown_categories( $args );
-
-				?>
-				<p class="description">Select a category to send out new post notification for.</p>
-			</td>
-
-		</tr>
-		<?php
 	}
 
 	/**
@@ -265,6 +234,7 @@ class Noptin_Email_Campaigns_Admin {
 		$email_body      = wp_kses_post( stripslashes_deep( $campaign->post_content ) );
 		$automations     = $this->get_automation_triggers();
 		$supports_filter = !empty( $automations[ $automation_type ] ) && !empty( $automations[ $automation_type ]['support_filter'] );
+		$automations     = $this->get_automation_triggers();
 
 		//Load the automation campign form
 		include get_noptin_include_dir( 'admin/templates/automation-campaign-form.php' );

@@ -146,6 +146,8 @@ class Noptin_Install {
 				$content = '[[excerpt]]';
 			}
 
+			$content .= '<p>[[read_more_button]]Continue Reading[[/read_more_button]]</p>';
+
 			//Subject
 			$subject = get_noptin_option('new_post_subject');
 			if( empty( $subject ) ) {

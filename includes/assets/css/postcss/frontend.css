@@ -299,6 +299,7 @@ $noptin_color: #ff6f00;
 				width: 100%;
 				display: block;
 				text-align: left;
+				margin-bottom: 10px;
 
 				.noptin-form-field {
 					padding: 11px 32px;
@@ -314,6 +315,7 @@ $noptin_color: #ff6f00;
 					width: 100%;
 					outline: none !important;
 					line-height: 1.45714285714286;
+					margin: 0;
 				}
 			}
 
@@ -367,6 +369,7 @@ $noptin_color: #ff6f00;
 
 					.noptin-optin-field-wrapper {
 						margin-right: 4px;
+						margin-bottom: 0;
 					}
 
 					.noptin-form-field {

@@ -4,7 +4,7 @@
 		<input type="hidden" name="noptin-action" value="save-automation-campaign"/>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $campaign_id ); ?>"/>
 		<input type="hidden" name="campaign_type" value="automation"/>
-		<?php wp_nonce_field( 'noptin_campaign' ); ?>
+		<?php wp_nonce_field( 'noptin_campaign', 'noptin_campaign_nonce' ); ?>
 
 		<div id="poststuff">
 			<div>
@@ -29,7 +29,7 @@
 
 						<tr>
 							<th>
-								<label><b><?php _e( 'Send To:', 'newsletter-optin-box' ); ?></b></label>
+								<label><b><?php _e( 'Sends To:', 'newsletter-optin-box' ); ?></b></label>
 							</th>
 							<td>
 								<?php $text = __( 'All Subscribers', 'newsletter-optin-box' ); ?>
@@ -85,6 +85,12 @@
 							?>
 						</td>
 					</tr>
+
+					<?php
+						if ( isset( $automations[$automation_type]['setup_cb'] ) && is_callable( $automations[$automation_type]['setup_cb'] ) ) {
+							call_user_func( $automations[$automation_type]['setup_cb'], $campaign );
+						}
+					?>
 
 					<?php
 						/**

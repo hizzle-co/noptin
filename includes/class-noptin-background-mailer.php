@@ -97,13 +97,13 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	public function prepare_campaign_data( $item ) {
 
 		//A unique key for this campaign
-		$item['key'] = time() . wp_generate_password( 6, false );
+		$key = time() . wp_generate_password( 6, false );
 
 		//If this is a normal campaign, ensure it is published
 		if( isset( $item['campaign_id'] ) ) {
 
 			//Set the unique key to the campaign id
-			$item['key'] = $item['campaign_id'];
+			$key = $item['campaign_id'];
 
 			//Fetch the post and ensure it is a published campaign
 			$post        = get_post( $item['campaign_id'] );
@@ -111,6 +111,10 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 				return false;
 			}
 
+		}
+
+		if( empty( $item['key'] ) ) {
+			$item['key'] = $key;
 		}
 
 		//Fetch the next recipient of this campaign
@@ -133,6 +137,8 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 				update_post_meta( $item['campaign_id'], 'completed', 1 );
 			}
 
+			do_action( 'noptin_background_mailer_complete', $item );
+
 			return false;
 		}
 
@@ -145,7 +151,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		}
 
 		//If this is a campaign, fetch the email body and subject
-		if( isset( $item['campaign_id'] ) ) {
+		if( isset( $item['campaign_id'] ) && empty( $item['next_recipient_data']['email_body'] ) ) {
 
 			//Email body is the post content
 			$item['next_recipient_data']['email_body'] = $post->post_content;

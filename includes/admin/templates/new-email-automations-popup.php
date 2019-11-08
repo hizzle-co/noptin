@@ -65,10 +65,6 @@
 
 									<?php
 
-										if( is_callable( $args['setup_cb'] ) ) {
-											call_user_func( $args['setup_cb'], $trigger, $args );
-										}
-
 									if(! empty( $args['support_delay'] ) ) {
 
 										$label = __( 'Delay', 'newsletter-optin-box' );
@@ -87,9 +83,9 @@
 												<input style="width:100px" type="number" name="automation_delay"  value="0">
 
 												<select class="noptin-max-w-200" name="automation_delay_unit">
-													<option value="MINUTE" selected="selected">Minute(s)</option>
-													<option value="HOUR">Hour(s)</option>
-													<option value="DAY">Day(s)</option>
+													<option value="minutes" selected="selected">Minute(s)</option>
+													<option value="hours">Hour(s)</option>
+													<option value="days">Day(s)</option>
 												</select>
 
 												<?php

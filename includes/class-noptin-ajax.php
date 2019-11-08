@@ -405,7 +405,7 @@ if( !defined( 'ABSPATH' ) ) {
 		do_action('noptin_before_save_options');
 
 		//Prepare settings
-		$_settings =  $_POST['state'];
+		$_settings =  stripslashes_deep( $_POST['state'] );
 		unset( $_settings['noptin_admin_nonce'] );
 		unset( $_settings['saved'] );
 		unset( $_settings['error'] );

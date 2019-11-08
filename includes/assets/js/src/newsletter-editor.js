@@ -8,7 +8,7 @@ export default {
 
 		//Create a new automation
 		$('.noptin-create-new-automation-campaign').on('click', this.create_automation)
-		$( document ).on('click', '.noptin-automation-type-select.enabled', this.select_automation)
+		$(document).on('click', '.noptin-automation-type-select.enabled', this.select_automation)
 
 		//Send test email
 		$('#wp-noptinemailbody-media-buttons').append('&nbsp;<a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span>Send a test email</a>')
@@ -16,8 +16,10 @@ export default {
 		//Are we sending a test email?
 		$('.noptin-send-test-email').on('click', this.send_test_email)
 
-		//Filter email recipients
+		//Upsells
 		$('.noptin-filter-recipients').on('click', this.filter_recipients)
+		$('.noptin-filter-post-notifications-post-types').on('click', this.new_post_notifications_filter_post_types)
+		$('.noptin-filter-post-notifications-taxonomies').on('click', this.new_post_notifications_filter_taxonomies)
 
 		//Delete campaign
 		$('.noptin-delete-campaign').on('click', this.delete_campaign)
@@ -40,12 +42,12 @@ export default {
 	},
 
 	//Select an automation
-	select_automation( e ) {
+	select_automation(e) {
 
 		e.preventDefault();
 
-		let parent = $(this).find('.noptin-automation-type-setup-form').clone().find('form').attr( 'id', 'noptinCurrentForm').parent()
-		let form   = parent.html()
+		let parent = $(this).find('.noptin-automation-type-setup-form').clone().find('form').attr('id', 'noptinCurrentForm').parent()
+		let form = parent.html()
 		parent.remove()
 
 		//Init sweetalert
@@ -63,16 +65,16 @@ export default {
 			//Fired when the user clicks on the confirm button
 			preConfirm() {
 
-				let data = noptin.getFormData($( '#noptinCurrentForm' ))
+				let data = noptin.getFormData($('#noptinCurrentForm'))
 				data.action = "noptin_setup_automation";
 
-				$.post( noptin_params.ajaxurl, data )
+				$.post(noptin_params.ajaxurl, data)
 
-					.done(function ( url ) {
+					.done(function (url) {
 						window.location = url;
 					})
 
-					.fail(function ( jqXHR ) {
+					.fail(function (jqXHR) {
 
 						Swal.fire({
 							type: 'error',
@@ -99,9 +101,9 @@ export default {
 
 		e.preventDefault();
 
-		let row  = $( this ).closest( 'tr' )
+		let row = $(this).closest('tr')
 		let data = {
-			id: $( this ).data( 'id' ),
+			id: $(this).data('id'),
 			_wpnonce: noptin_params.nonce,
 			action: 'noptin_delete_campaign'
 		}
@@ -110,7 +112,7 @@ export default {
 		Swal.fire({
 			titleText: `Are you sure?`,
 			text: "You are about to permanently delete this campaign.",
-  			type: 'warning',
+			type: 'warning',
 			showCancelButton: true,
 			confirmButtonColor: '#d33',
 			cancelButtonColor: '#9e9e9e',
@@ -123,10 +125,10 @@ export default {
 			//Fired when the user clicks on the confirm button
 			preConfirm() {
 
-				$.get( noptin_params.ajaxurl, data )
+				$.get(noptin_params.ajaxurl, data)
 					.done(function () {
 
-						$( row ).remove()
+						$(row).remove()
 						Swal.fire(
 							'Success',
 							'Your campaign was deleted',
@@ -239,26 +241,68 @@ export default {
 
 		e.preventDefault();
 
-		if ( $('#noptin_recipients_filter_div').length ) {
+		if ($('#noptin_recipients_filter_div').length) {
 
 		} else {
 
 			Swal.fire({
 				titleText: `Addon Needed!`,
-				html: `Install the addon to filter recipients by their sign up method/form, tags or the time in which they signed up.`,
+				html: `Install the <strong>Ultimate Addons Pack</strong> to filter recipients by their sign up method/form, tags or the time in which they signed up.`,
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 				confirmButtonText: 'Install Addon',
 				showCloseButton: true,
-			}).then( (result) => {
+			}).then((result) => {
 
 				if (result.value) {
-				  window.location.href = 'https://noptin.com/product/ultimate-addons'
+					window.location.href = 'https://noptin.com/product/ultimate-addons-pack'
 				}
 
-			  })
+			})
 
 		}
+	},
+
+	new_post_notifications_filter_post_types(e) {
+
+		e.preventDefault();
+
+		Swal.fire({
+			titleText: `Addon Needed!`,
+			html: `Install the <strong>Ultimate Addons Pack</strong> to send new post notifications to other post types.`,
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Install Addon',
+			showCloseButton: true,
+		}).then((result) => {
+
+			if (result.value) {
+				window.location.href = 'https://noptin.com/product/ultimate-addons-pack'
+			}
+
+		})
+	},
+
+	new_post_notifications_filter_taxonomies(e) {
+
+		e.preventDefault();
+
+		Swal.fire({
+			titleText: `Addon Needed!`,
+			html: `Install the <strong>Ultimate Addons Pack</strong> to limit new post notifications to specific categories, tags or taxonomies.`,
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Install Addon',
+			showCloseButton: true,
+		}).then((result) => {
+
+			if (result.value) {
+				window.location.href = 'https://noptin.com/product/ultimate-addons-pack'
+			}
+
+		})
 	}
 }

@@ -162,17 +162,11 @@ class Noptin_Admin {
 		add_action('admin_menu', array($this, 'add_menu_page'));
 		add_action( 'admin_head', array($this, 'remove_menus') );
 
-        //Runs when fetching select2 options
-        add_action('wp_ajax_noptin_select_ajax', array($this, 'select_ajax'));
-
         //Runs when saving a new opt-in form
         add_action('wp_ajax_noptin_save_optin_form', array($this, 'save_optin_form'));
 
         //Runs when saving a form as a template
         add_action('wp_ajax_noptin_save_optin_form_as_template', array($this, 'save_optin_form_as_template'));
-
-		//Maybe notify subscribers of new posts publish_$post_types
-		add_action('publish_post', array($this, 'notify_new_post'));
 
 		//Display notices
 		add_action('admin_notices', array($this, 'show_notices'));
@@ -611,84 +605,7 @@ class Noptin_Admin {
 		Noptin_Settings::output();
 	}
 
-    /**
-     * Downloads subscribers
-     *
-     * @access      public
-     * @since       1.0.0
-     * @return      self::$instance
-     */
-    public function select_ajax() {
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json( array() );
-        }
-
-        //Check nonce
-        check_ajax_referer( 'noptin_admin_nonce' );
-
-        /**
-         * Runs before fetching select options ajax
-         *
-         * @param array $this The admin instance
-         */
-        do_action('noptin_before_select_ajax', $this);
-
-        $items  = empty( $_GET['items'] ) ? 'all_posts' : trim( $_GET['items'] );
-
-        //Currently we only support all posts
-        if( $items != 'all_posts' ) {
-            wp_send_json( array() );
-        }
-
-        //Prepare the query args
-        $query  = array(
-            'post_type'             => array_keys( noptin_get_post_types() ),
-            'post_status'           => 'publish',
-            'posts_per_page'        => 10,
-            'paged'                 => empty( $_GET['page'] ) ? 1 : intval( trim( $_GET['page'] ) ) ,
-            'ignore_sticky_posts'   => true,
-            'order'                 => 'ASC',
-            'orderby'               => 'title'
-        );
-
-        //Maybe include a search term
-        $search = empty( $_GET['term'] ) ? '' : trim( $_GET['term'] );
-        if(! empty( $search ) ) {
-            $query['orderby'] = 'relevance';
-            $query['order'] = 'DESC';
-            $query['s'] = $search;
-        }
-
-        //Retrieve the posts from the db
-        $query  = new WP_Query( $query );
-        $posts  = array(
-            'results' => array()
-        );
-
-        if ( $query->have_posts() ) {
-            while ( $query->have_posts() ) {
-                $query->the_post();
-                $posts['results'][] = array(
-                    'id'            => $query->post->ID,
-                    'text'          => "[{$query->post->post_type}] " . get_the_title( $query->post->ID ),
-                );
-            }
-
-            // Restore original Post Data
-            wp_reset_postdata();
-        }
-
-        //Pagination parameters
-        if( count( $posts['results'] ) == 10 ) {
-            $posts['pagination'] = array( 'more' => true );
-        }
-
-        wp_send_json( $posts );
-        exit; //This is important
-}
-
-/**
+	/**
      * Downloads subscribers
      *
      * @access      public
@@ -803,7 +720,7 @@ class Noptin_Admin {
 
             if( isset( $_POST['state'][$field] ) ) {
 
-                $value = $_POST['state'][$field];
+                $value = stripslashes_deep( $_POST['state'][$field] );
 
                 if( 'false' == $value ) {
                     $data[$field] = false;
@@ -871,31 +788,6 @@ class Noptin_Admin {
         return $wpdb->get_results($sql);
 
 	}
-
-	/**
-     * Notify subscribers of new posts
-     *
-     * @access      public
-     * @since       1.0.6
-     */
-    public function notify_new_post( $post_id ) {
-
-		//If a notification has already been send abort...
-		if( get_post_meta( $post_id, 'noptin_subscribers_notified_of_post', true) ) {
-			return;
-		}
-
-		// abort if we are not sending out new post notifications
-		if(! get_noptin_option('notify_new_post') ) {
-			return;
-		}
-
-		update_post_meta( $post_id, 'noptin_subscribers_notified_of_post', '1');
-
-		$this->new_posts_notifier->data( array( 'post' => $post_id ) )->dispatch();
-
-    }
-
 
     /**
      * Does an action
@@ -1064,7 +956,7 @@ class Noptin_Admin {
 
 		foreach( $this->notices as $type => $messages ) {
 
-			$class = "notice notice-$type is-dismissible";
+			$class = esc_attr( "notice notice-$type is-dismissible" );
 			foreach( $messages as $message ) {
 				echo "<div class='$class'><p>$message</p></div>";
 			}

@@ -20,9 +20,11 @@ class Noptin_Mailer {
 
 		$subject = trim( $data['email_subject'] );
 
-		if( isset( $data['merge_tags'] ) ) {
-			$subject = $this->merge( $subject, $data['merge_tags'] );
+		if( empty( $data['merge_tags'] ) ) {
+			$data['merge_tags'] = array();
 		}
+
+		$subject = $this->merge( $subject, $data['merge_tags'] );
 
 		return $subject;
 
