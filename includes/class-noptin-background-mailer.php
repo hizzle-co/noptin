@@ -187,7 +187,8 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		//Add the subscriber details as merge tags
 		if(! empty( $subscriber ) ) {
 
-			$item['next_recipient_data']['email'] = $subscriber->email;
+			$item['next_recipient_data']['email']         = $subscriber->email;
+			$item['next_recipient_data']['subscriber_id'] = $subscriber->id;
 
 			$item['next_recipient_data']['merge_tags'] = array_replace( $item['next_recipient_data']['merge_tags'], (array) $subscriber );
 

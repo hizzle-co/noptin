@@ -193,6 +193,8 @@ if( !defined( 'ABSPATH' ) ) {
 			exit;
 		}
 
+		$data['email_subject'] = '[TEST] ' . $data['email_subject'];
+
 		if( empty( $data['email_body'] ) ) {
 			wp_send_json_error( __( 'The email body cannot be empty.' ) );
 			exit;
@@ -349,7 +351,7 @@ if( !defined( 'ABSPATH' ) ) {
 			die( $inserted );
 		}
 
-		do_action('noptin_after_after_ajax_subscriber');
+		do_action( 'noptin_add_ajax_subscriber', $inserted, $form);
 
 		$result = array(
 			'action' => 'msg',

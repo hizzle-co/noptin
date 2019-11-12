@@ -241,9 +241,7 @@ export default {
 
 		e.preventDefault();
 
-		if ($('#noptin_recipients_filter_div').length) {
-
-		} else {
+		if (! $('#noptin_recipients_filter_div').length) {
 
 			Swal.fire({
 				titleText: `Addon Needed!`,
@@ -291,7 +289,7 @@ export default {
 
 		Swal.fire({
 			titleText: `Addon Needed!`,
-			html: `Install the <strong>Ultimate Addons Pack</strong> to limit new post notifications to specific categories, tags or taxonomies.`,
+			html: `Install the <strong>Ultimate Addons Pack</strong> to limit new post notifications to specific categories, tags or other taxonomies.`,
 			showCancelButton: true,
 			confirmButtonColor: '#3085d6',
 			cancelButtonColor: '#d33',

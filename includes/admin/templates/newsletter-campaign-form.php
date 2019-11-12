@@ -24,6 +24,16 @@
 				<hr/>
 
 				<div>
+
+					<?php
+						/**
+        				 * Fires before printing the the newsletter campaign editor table
+        				 *
+        				 * @param object $campaign current campaign object
+        				 */
+        				do_action('noptin_before_newsletter_editor_table', $campaign );
+					?>
+
 					<table class="form-table" id="noptin-addedit-newsletter-campaign">
 
 					<?php
@@ -40,7 +50,10 @@
 							<label><b><?php _e( 'Send To:', 'newsletter-optin-box' ); ?></b></label>
 						</th>
 						<td>
-							<?php $text = __( 'All Subscribers', 'newsletter-optin-box' ); ?>
+							<?php
+								$text = __( 'All Subscribers', 'newsletter-optin-box' );
+								$text = apply_filters( 'noptin_newsletter_editor_filter_subscribers_text', $text, $campaign );
+							?>
 							<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-recipients">Filter recipients</a></p>
 						</td>
 					</tr>

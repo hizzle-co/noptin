@@ -85,6 +85,10 @@ class Noptin_Mailer {
 		$footer  = $this->get_footer( $data );
 		$footer  = apply_filters( 'noptin_email_footer', $footer, $data );
 
+		//Tracker
+		$tracker  = $this->get_tracker( $data );
+		$tracker  = apply_filters( 'noptin_email_tracker', $tracker, $data );
+
 		//Title
 		$title = '';
 
@@ -173,6 +177,28 @@ class Noptin_Mailer {
 		ob_start();
 		include get_noptin_include_dir( 'admin/templates/email-templates/footer.php' );
 		return ob_get_clean();
+
+	}
+
+	/**
+	 * Retrieves tracking code
+	 *
+	 */
+	public function get_tracker( $data = array() ) {
+
+		if( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+			return '';
+		}
+		$url = get_noptin_action_url( 'email_open' );
+
+		$url = add_query_arg( array(
+			'sid' => intval( $data['subscriber_id'] ),
+			'cid' => intval( $data['campaign_id'] ),
+		), $url );
+
+		$url = esc_url( $url );
+
+		return "<img src='$url' style='border:0;width:1px;height:1px;' />";
 
 	}
 

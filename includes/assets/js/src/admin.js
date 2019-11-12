@@ -1,5 +1,4 @@
 (function ($) {
-	"use strict";
 
 	if ('undefined' == typeof noptinEditor) {
 		window.noptinEditor = {}

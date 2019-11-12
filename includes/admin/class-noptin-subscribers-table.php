@@ -187,7 +187,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_date_created( $subscriber ) {
-		return date( 'D, jS M Y', strtotime( $subscriber['date_created'] ));
+		return date_i18n( get_option( 'date_format' ), strtotime( $subscriber['date_created'] ) );
 	}
 
 	/**

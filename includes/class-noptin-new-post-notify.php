@@ -37,7 +37,7 @@ class Noptin_New_Post_Notify {
 	public function default_automation_data( $data ) {
 
 		if( 'post_notifications' == $data['automation_type'] ) {
-			$data[ 'email_body' ]   = '<h1>[[post_title]]</h1><p>[[post_excerpt]]</p><p>[[read_more_button]]Continue Reading[[/read_more_button]]</p><p>Learn more about <a href="https://noptin.com/guide/new-post-notifications/">how to set up new post notifications</a>.</p>';
+			$data[ 'email_body' ]   = noptin_ob_get_clean( get_noptin_include_dir( 'admin/templates/default-new-post-notification-body.php' ) );
 			$data[ 'subject' ]      = '[[post_title]]';
 			$data[ 'preview_text' ] = __( 'New article published on [[blog_name]]' );
 		}
@@ -51,7 +51,9 @@ class Noptin_New_Post_Notify {
 	public function register_automation_settings( array $triggers ) {
 
 		if( isset( $triggers['post_notifications'] ) ) {
-			$triggers['post_notifications']['setup_cb'] = array( $this, 'render_automation_settings' );
+			$cb = array( $this, 'render_automation_settings' );
+			$cb = apply_filters( 'noptin_post_notifications_setup_cb', $cb );
+			$triggers['post_notifications']['setup_cb'] = $cb;
 		}
 
 		return $triggers;
@@ -79,11 +81,11 @@ class Noptin_New_Post_Notify {
 		<tr>
 
 			<th>
-				<label><b><?php _e( 'Taxonomies', 'newsletter-optin-box' ); ?></b></label>
+				<label><b><?php _e( 'Terms', 'newsletter-optin-box' ); ?></b></label>
 			</th>
 
 			<td>
-				<?php $text = __( 'All taxonomies', 'newsletter-optin-box' ); ?>
+				<?php $text = __( 'All terms', 'newsletter-optin-box' ); ?>
 				<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-post-notifications-taxonomies">Change</a></p>
 			</td>
 
@@ -248,7 +250,10 @@ class Noptin_New_Post_Notify {
 		$campaign = get_post( $campaign_id );
 		$post     = get_post( $post_id, ARRAY_A, 'display' );
 
+		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 100000 );
 		$post['post_excerpt'] = get_the_excerpt( $post_id );
+		remove_filter('excerpt_more', array( $this, 'excerpt_more' ), 100000 );
+
 		$post['excerpt'] 	  = $post['post_excerpt'];
 		$post['post_content'] = apply_filters( 'the_content', $post['post_content']);
 		$post['content'] 	  = $post['post_content'];
@@ -317,7 +322,14 @@ class Noptin_New_Post_Notify {
 	 */
 	public function read_more_button( $url ) {
 		$url  = esc_url( $url );
-		return "<div style='text-align: center: padding: 20px;' align='center'> <a href='$url' style='border-radius: 6px; background: #1a82e2; display: inline-block; padding: 16px 36px; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;'>";
+		return "<div style='text-align: left; padding: 20px;' align='left'> <a href='$url' class='noptin-round' style='background: #1a82e2; display: inline-block; padding: 16px 36px; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;'>";
+	}
+
+	/**
+	 * Removes the read more link in an excerpt
+	 */
+	public function excerpt_more() {
+		return '';
 	}
 
 	/**

@@ -30,7 +30,7 @@ function noptin() {
  * @param   bool   $single        If true, returns only the first value for the specified meta key. This parameter has no effect if $key is not specified.
  * @return  mixed                 Will be an array if $single is false. Will be value of meta data field if $single is true.
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function get_noptin_subscriber_meta( $subscriber_id = 0, $meta_key = '', $single = false ) {
 	return get_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $single );
@@ -46,7 +46,7 @@ function get_noptin_subscriber_meta( $subscriber_id = 0, $meta_key = '', $single
  * @param   mixed   $unique   Whether the same key should not be added.
  * @return  int|false         Meta ID on success, false on failure.
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function add_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $unique = false ) {
 	return add_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value, $unique );
@@ -65,7 +65,7 @@ function add_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $un
  * @param   mixed   $prev_value   Previous value to check before updating.
  * @return  mixed                 The new meta field ID if a field with the given key didn't exist and was therefore added, true on successful update, false on failure.
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function update_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $prev_value = '' ) {
 	return update_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value, $prev_value );
@@ -82,10 +82,143 @@ function update_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, 
  * @param   mixed   $meta_value   Metadata value. Must be serializable if non-scalar.
  * @return  bool                 True on success, false on failure.
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value = '' ) {
 	return delete_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value );
+}
+
+/**
+ * Logs whenever a subscriber opens an email
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @param   string $campaign_id    The opened email campaign.
+ * @access  public
+ * @since   1.2.0
+ */
+function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
+
+	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
+	if(! in_array( $campaign_id, $opened_campaigns ) ) {
+		$opened_campaigns[] = $campaign_id;
+		update_noptin_subscriber_meta( $subscriber_id, "_opened_campaigns", $opened_campaigns );
+		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_opened", 1 );
+
+
+		if( is_int( $campaign_id ) ) {
+			$open_counts = (int) get_post_meta( $campaign_id, '_noptin_opens', true );
+			update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );;
+		}
+
+	}
+
+}
+
+/**
+ * Retrieves all the campaigns a given subscriber has opened
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @access  public
+ * @since   1.2.0
+ */
+function get_noptin_subscriber_opened_campaigns( $subscriber_id ) {
+
+	$opened_campaigns = get_noptin_subscriber_meta( $subscriber_id, "_opened_campaigns", true );
+	if( empty( $opened_campaigns ) ) {
+		$opened_campaigns = array();
+	}
+	return array_map( 'intval', $opened_campaigns );
+
+}
+
+/**
+ * Checks whether a subscriber opened a given campaign
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @access  public
+ * @since   1.2.0
+ */
+function did_noptin_subscriber_open_campaign( $subscriber_id, $campaign_id ) {
+
+	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
+	return in_array( $campaign_id, $opened_campaigns );
+
+}
+
+/**
+ * Logs whenever a subscriber clicks on a link in an email
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @param   string $campaign_id    The email campaign.
+ * @param   string $link    The clicked link.
+ * @access  public
+ * @since   1.2.0
+ */
+function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $link ) {
+
+	log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id );
+
+	$clicked_campaigns = get_noptin_subscriber_clicked_campaigns( $subscriber_id );
+
+	if(! isset( $clicked_campaigns[ $campaign_id ] ) ) {
+		$clicked_campaigns[ $campaign_id ] = array();
+	}
+
+	if(! in_array( $link, $clicked_campaigns[ $campaign_id ] ) ) {
+		$clicked_campaigns[ $campaign_id ][] = $link;
+		update_noptin_subscriber_meta( $subscriber_id, "_clicked_campaigns", $clicked_campaigns );
+		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_clicked", 1 );
+
+		$click_counts = (int) get_post_meta( $campaign_id, '_noptin_clicks', true );
+		update_post_meta( $campaign_id, '_noptin_clicks', $click_counts + 1 );
+	}
+
+}
+
+/**
+ * Retrieves all the campaigns a given subscriber has clicked on a link in
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @access  public
+ * @since   1.2.0
+ */
+function get_noptin_subscriber_clicked_campaigns( $subscriber_id ) {
+
+	$clicked_campaigns = get_noptin_subscriber_meta( $subscriber_id, "_clicked_campaigns", true );
+	if( empty( $clicked_campaigns ) ) {
+		$clicked_campaigns = array();
+	}
+	return $clicked_campaigns;
+
+}
+
+/**
+ * Checks whether a subscriber clicked on a link in a given campaign
+ *
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @access  public
+ * @since   1.2.0
+ */
+function did_noptin_subscriber_click_campaign( $subscriber_id, $campaign_id, $link = false ) {
+
+	$clicked_campaigns = get_noptin_subscriber_clicked_campaigns( $subscriber_id );
+
+	if( empty( $clicked_campaigns[ $campaign_id ] ) ) {
+		return false;
+	}
+
+	if( empty( $link ) ) {
+		return true;
+	}
+
+	return in_array( $link, $clicked_campaigns[ $campaign_id ] );
+
 }
 
 /**
@@ -93,7 +226,7 @@ function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value =
  *
  * @return  array   options
  * @access  public
- * @since   1.6
+ * @since   1.0.6
  */
 function get_default_noptin_options() {
 
@@ -112,7 +245,7 @@ function get_default_noptin_options() {
  *
  * @return  array   options
  * @access  public
- * @since   1.6
+ * @since   1.0.6
  */
 function get_noptin_options() {
 	global $noptin_options;
@@ -132,7 +265,7 @@ function get_noptin_options() {
  *
  * @return  mixed|null   option or null
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function get_noptin_option( $key, $default = null ) {
 
@@ -159,7 +292,7 @@ function get_noptin_option( $key, $default = null ) {
  *
  * @return  array
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function update_noptin_options( $options ) {
 	global $noptin_options;
@@ -174,7 +307,7 @@ function update_noptin_options( $options ) {
  *
  * @return  array
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function update_noptin_option( $key, $value ) {
 
@@ -237,7 +370,7 @@ function get_noptin_action_page() {
  * @access  public
  * @since   1.0.6
  */
-function get_noptin_action_url( $action, $value ) {
+function get_noptin_action_url( $action, $value = false ) {
 
 	$page = get_noptin_action_page();
 
@@ -274,7 +407,7 @@ function is_noptin_actions_page() {
  *
  * @return  string   The subscribers page url
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function get_noptin_subscribers_overview_url( $page=1 ) {
 	$url = admin_url('admin.php?page=noptin-subscribers');
@@ -313,7 +446,7 @@ function get_noptin_edit_form_url( $form_id ) {
  *
  * @return  string   The forms page url
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function get_noptin_forms_overview_url() {
 	$url = admin_url('edit.php?post_type=noptin-form');
@@ -336,7 +469,7 @@ function get_noptin_optin_field_types() {
  *
  * @return  int   $where Restriction string
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value = false ) {
 	global $wpdb;
@@ -369,7 +502,7 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
  * Retrieves the subscriber growth
  *
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function get_noptin_subscribers_growth() {
 	global $wpdb;
@@ -385,12 +518,13 @@ function get_noptin_subscribers_growth() {
  * Inserts a new subscriber into the database
  *
  * @access  public
- * @since   1.5
+ * @since   1.0.5
  */
 function add_noptin_subscriber( $fields ) {
 	global $wpdb;
 
 	$table = $wpdb->prefix . 'noptin_subscribers';
+	$fields= wp_unslash( $fields );
 
 	//Ensure an email address is provided and it doesn't exist already
 	if( empty( $fields['email'] ) || !is_email( $fields['email'] ) ) {
@@ -1006,6 +1140,17 @@ function get_noptin_include_dir( $append = '' ) {
 }
 
 /**
+ *  Includes a file
+ */
+function noptin_ob_get_clean( $file ) {
+
+	ob_start();
+	include $file;
+	return ob_get_clean();
+
+}
+
+/**
  *  Notifies the site admin when there is a new subscriber
  */
 function noptin_new_subscriber_notify( $id, $fields ) {
@@ -1015,14 +1160,25 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 	/* translators: %s: site title */
-	$message = sprintf( __( 'New email subscriber on your site %s:' ), $blogname ) . "\r\n\r\n";
+	$message = sprintf( __( '%s has a new email subscriber' ), $blogname ) . "\r\n\r\n";
+
+	unset( $fields[ 'Email' ] );
+	unset( $fields[ 'name' ] );
+
+	foreach( $fields as $key => $val ) {
+
+		if( !empty( $val ) && is_scalar( $val ) ) {
+			$message .= sprintf( '%s: %s', sanitize_text_field( $key ), esc_html( $val ) ) . "\r\n";
+		}
+
+	}
 
 	/* translators: %s: user email address */
 	$message .= sprintf( __( 'Email: %s' ), $fields['email'] ) . "\r\n";
 
 	$to      = get_option( 'admin_email' );
 
-	$subject = sprintf( __( '[%s] New User Registration' ), $blogname );
+	$subject = sprintf( __( '[%s] New Subscriber' ), $blogname );
 
 	@wp_mail( $to, wp_specialchars_decode( $subject ), $message );
 

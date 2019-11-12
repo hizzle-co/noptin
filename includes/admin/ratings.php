@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 
 //When a new subscriber registers, check count. Trigger on 1, 10,100,1000
 //Leave a review, maybe later, i already did
-add_action('noptin_after_after_ajax_subscriber', 'noptin_maybe_trigger_value_rating');
+add_action('noptin_add_ajax_subscriber', 'noptin_maybe_trigger_value_rating');
 function noptin_maybe_trigger_value_rating() {
 
     global $wpdb;

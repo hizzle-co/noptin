@@ -25,6 +25,12 @@ if( !defined( 'ABSPATH' ) ) {
 		//User unsubscribe
 		add_action( "noptin_page_unsubscribe", array( $this, 'unsubscribe_user' ) );
 
+		//Email open
+		add_filter( "noptin_actions_page_template", array( $this, 'email_open' ) );
+
+		//Email click
+		add_filter( "noptin_actions_page_template", array( $this, 'email_click' ) );
+
 		//Filter template
 		add_filter( "page_template", array( $this, 'filter_page_template' ) );
 
@@ -59,6 +65,64 @@ if( !defined( 'ABSPATH' ) ) {
 		do_action( "noptin_page_$action", $value );
 
         return ob_get_clean();
+
+	}
+
+	/**
+     * Logs email opens
+     *
+     * @access      public
+     * @since       1.2.0
+     * @return      array
+     */
+    public function email_open( $filter ) {
+
+		if( 'email_open' != $_GET['noptin_action'] ) {
+			return $filter;
+		}
+
+		if ( isset( $_GET['sid'] ) && isset( $_GET['cid'] ) ) {
+			$subscriber_id = intval( $_GET['sid'] );
+			$campaign_id   = intval( $_GET['cid'] );
+			log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id );
+		}
+
+		//Display 1x1 pixel transparent gif
+		nocache_headers();
+		header( "Content-type: image/gif" );
+		header( "Content-Length: 42" );
+		echo base64_decode('R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEA');
+		exit;
+
+	}
+
+	/**
+     * Logs email clicks
+     *
+     * @access      public
+     * @since       1.2.0
+     * @return      array
+     */
+    public function email_click( $filter ) {
+
+		if( 'email_click' != $_GET['noptin_action'] ) {
+			return $filter;
+		}
+
+		$to = get_home_url();
+
+		if( isset( $_GET['to'] ) ) {
+			$to = urldecode( $_GET['to'] );
+		}
+
+		if ( isset( $_GET['sid'] ) && isset( $_GET['cid'] ) ) {
+			$subscriber_id = intval( $_GET['sid'] );
+			$campaign_id   = intval( $_GET['cid'] );
+			log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $to );
+		}
+
+		wp_redirect( $to );
+		exit;
 
 	}
 
@@ -111,6 +175,10 @@ if( !defined( 'ABSPATH' ) ) {
 			}
 
 			$template = get_noptin_include_dir( 'admin/templates/actions-page.php' );
+			if( isset( $_REQUEST['noptin_template_empty'] ) ) {
+				$template = get_noptin_include_dir( 'admin/templates/actions-page-empty.php' );
+			}
+
 			$template = apply_filters( 'noptin_actions_page_template', $template );
 		}
 		return $template;

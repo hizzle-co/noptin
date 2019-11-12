@@ -156,10 +156,11 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		}
 
 		if( 'publish' == $item->post_status ) {
-			$date = $item->post_date;
+			$date = date_i18n( get_option( 'date_format' ), strtotime( $item->post_date ) );
 		}
 
-		echo "<span>$date</span>";
+		$title = esc_attr( $item->post_date );
+		echo "<span title='$title'>$date</span>";
 	}
 
 	/**

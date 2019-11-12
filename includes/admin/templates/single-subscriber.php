@@ -32,17 +32,24 @@
 			</tr>
 			<?php
 			foreach( $meta as $key => $value ) {
-				$value = $value[0];
 
-				//Join arrays into a string
-				if( is_array( $value ) ) {
-					$value = implode( ', ', $value );
+				if( has_filter( "noptin_format_subscriber_{$key}" ) ) {
+
+					$value = apply_filters( "noptin_format_subscriber_{$key}", $value );
+
+				} else {
+					$value = maybe_unserialize( $value[0] );
+
+					//Skip anything else that is not a scalar
+					if(! is_scalar( $value ) ) {
+						continue;
+					}
+
+					$value = esc_html( $value );
+
 				}
 
-				//Skip anything else that is not a scalar
-				if(! is_scalar( $value ) ) {
-					continue;
-				}
+
 
 				//Rename some fields
 				if( '_subscriber_via' == $key ) {
@@ -57,9 +64,14 @@
 						);
 					}
 					$key = __( 'Subscribed Via', 'newsletter-optin-box' );
-				} else {
-					$value = esc_html( $value );
 				}
+
+				$key = apply_filters( "noptin_subscriber_{$key}_label", $key );
+
+				if( 0 == stripos( $key, '_' ) ) {
+					continue;
+				}
+
 			?>
 			<tr>
 				<td><strong><?php echo esc_html( $key ); ?></strong></td>

@@ -35,6 +35,16 @@ class Noptin_Email_Campaigns_Admin {
 		//Delete campaign stats
 		add_action( 'delete_post', array( $this, 'maybe_delete_stats' ) );
 
+		//Email content
+		add_filter( 'noptin_email_body', 'make_clickable', 9);
+		add_filter( 'noptin_email_body', 'force_balance_tags', 25);
+		add_filter( 'noptin_email_body', 'capital_P_dangit', 11);
+		add_filter( 'noptin_email_body', 'wptexturize');
+		add_filter( 'noptin_email_body', 'wpautop');
+		add_filter( 'noptin_email_body', 'shortcode_unautop');
+		add_filter( 'noptin_email_body', 'do_shortcode', 11 );
+		add_filter( 'noptin_email_body', array( $this, 'make_links_trackable' ), 100, 2 );
+
 	}
 
 	/**
@@ -265,6 +275,10 @@ class Noptin_Email_Campaigns_Admin {
 		$data   = stripslashes_deep( $_POST );
 		$id     = (int) $data['id'];
 
+		unset( $data['noptin_campaign_nonce'] );
+		unset( $data['noptin-action'] );
+		unset( $data['id'] );
+
 		//Prepare post status
 		$status = get_post_status( $id );
 
@@ -276,19 +290,21 @@ class Noptin_Email_Campaigns_Admin {
 			$status = 'publish';
 		}
 
+		unset( $data['publish'] );
+		unset( $data['draft'] );
+
 		//Prepare post args
 		$post = array(
 			'ID'			   => $id,
 			'post_status'      => $status,
 			'post_type'        => 'noptin-campaign',
 			'post_content'	   => $data['email_body'],
-			'meta_input'	   => array(
-				'subject'           	  => sanitize_text_field( $data['subject'] ),
-				'preview_text'            => sanitize_text_field( $data['preview_text'] ),
-			),
 		);
 
-		$post = apply_filters( 'noptin_save_automation_campaign_details', $post );
+		unset( $data['email_body'] );
+		$post[ 'meta_input' ] = $data;
+
+		$post = apply_filters( 'noptin_save_automation_campaign_details', $post, $data );
 
 		$post = wp_update_post( $post, true );
 
@@ -439,13 +455,52 @@ class Noptin_Email_Campaigns_Admin {
 			'campaign_id' 		=> $post->ID,
 			'subscribers_query' => '1=1', //By default, send this to all active subscribers
 			'campaign_data'		=> array(
-				'template' => get_noptin_include_dir( 'admin/templates/email-templates/paste.php' ),
+				'campaign_id' 	=> $post->ID,
+				'template' 		=> get_noptin_include_dir( 'admin/templates/email-templates/paste.php' ),
 			),
 		);
 
 		$noptin->bg_mailer->push_to_queue( $item );
 
 		$noptin->bg_mailer->save()->dispatch();
+
+	}
+
+	/**
+	 *  Makes campaign links trackable
+	 */
+	function make_links_trackable( $content, $data ) {
+
+		if( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+			return $content;
+		}
+
+		$url = get_noptin_action_url( 'email_click' );
+
+		$url = add_query_arg( array(
+			'sid' => intval( $data['subscriber_id'] ),
+			'cid' => intval( $data['campaign_id'] ),
+		), $url );
+
+		$url = esc_url( $url );
+
+		$_content = preg_replace_callback(
+			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
+
+			function ( $matches ) use( $url ) {
+				$_url  = "$url&to=" . urlencode( $matches[2] );
+				$pre   = $matches[1];
+				$post  = $matches[3];
+				return "<a $pre href='$_url' $post >";
+			},
+
+			$content
+		);
+
+		if( empty( $_content ) ) {
+			return $content;
+		}
+		return $_content;
 
 	}
 

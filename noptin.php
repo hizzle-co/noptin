@@ -156,15 +156,6 @@ if( !defined( 'ABSPATH' ) ) {
 		 //css body class
 		 add_filter( 'body_class', array( $this, 'body_class') );
 
-		//Email content
-		add_filter( 'noptin_email_body', 'make_clickable', 9);
-		add_filter( 'noptin_email_body', 'force_balance_tags', 25);
-		add_filter( 'noptin_email_body', 'capital_P_dangit', 11);
-		add_filter( 'noptin_email_body', 'wptexturize');
-		add_filter( 'noptin_email_body', 'wpautop');
-		add_filter( 'noptin_email_body', 'shortcode_unautop');
-		add_filter( 'noptin_email_body', 'do_shortcode', 11 );
-
 		/**
 		 * Fires after Noptin inits
 		 *
