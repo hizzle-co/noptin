@@ -989,10 +989,9 @@ input:focus+.noptin-switch-slider span {
 	max-width: 1020px;
 
 	.noptin-campaign-input,
-	input,
 	select,
 	textarea {
-		max-width: 600px;
+		max-width: 100%;
 	}
 
 }
@@ -1031,7 +1030,7 @@ a.no-campaign-create-new-campaign {
 		text-align: left;
 
 		li {
-			flex: 0 0 250px;
+			flex: 0 0 270px;
 			padding: 10px;
 			box-sizing: border-box;
 			margin-bottom: 0;

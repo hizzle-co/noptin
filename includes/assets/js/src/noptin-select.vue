@@ -11,7 +11,7 @@ module.exports = {
 
 	mounted () {
 
-			$(this.$el)
+			jQuery(this.$el)
 
 				// init select2
 				.select2({ width: 'resolve' })
@@ -24,7 +24,7 @@ module.exports = {
 
 				// emit input event on change.
 				.on('change', ( e ) => {
-					this.$emit('input', $(e.currentTarget).val() )
+					this.$emit('input',jQuery(e.currentTarget).val() )
 				})
 
 
@@ -33,12 +33,12 @@ module.exports = {
 	watch: {
 		value (value) {
 			// update value
-			$(this.$el).val(value).trigger('change')
+			jQuery(this.$el).val(value).trigger('change')
 		},
 	},
 
 	destroyed () {
-		$(this.$el).off().select2('destroy')
+		jQuery(this.$el).off().select2('destroy')
 	}
 
 }

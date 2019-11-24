@@ -24,7 +24,7 @@
         				 */
         				do_action('noptin_before_automation_editor_fields', $campaign, $automation_type );
 					?>
-
+<!--
 					<?php if ( $supports_filter ) { ?>
 
 						<tr>
@@ -38,7 +38,7 @@
 						</tr>
 
 					<?php } ?>
-
+-->
 					<tr>
 						<th>
 							<label for="noptin-email-subject"><b><?php _e( 'Email Subject:', 'newsletter-optin-box' ); ?></b></label>

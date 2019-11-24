@@ -277,8 +277,7 @@ class Noptin_Mailer {
 	 *
 	 */
 	public function background_send( $to, $subject, $email ) {
-
-
+		//TODO
 	}
 
 }

@@ -40,13 +40,13 @@ export default {
 			return;
 		}
 
-		instance.formHeight = '250px'
+		instance.formHeight = '280px'
 		instance.formWidth = '620px'
 
 	},
 
 	updateCustomCss (css) {
-		$('#formCustomCSS').text(css)
+		jQuery('#formCustomCSS').text(css)
 	},
 
 	getColorThemeOptions () {
@@ -90,9 +90,9 @@ export default {
 	getFormData (form) {
 
 		let data = {},
-			fields = $(form).serializeArray()
+			fields = jQuery(form).serializeArray()
 
-		$.each(fields, (i, field) => {
+		jQuery.each(fields, (i, field) => {
 			data[field.name] = field.value
 		});
 

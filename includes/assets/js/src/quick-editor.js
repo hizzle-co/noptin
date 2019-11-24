@@ -143,6 +143,8 @@ var vmQuick = new Vue({
 			return;
 		}
 
+		var $ = jQuery
+
 		noptin.updateCustomCss(this.CSS)
 
 		jQuery('#formCustomCSS').text(this.CSS)

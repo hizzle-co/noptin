@@ -46,6 +46,8 @@ var settingsApp = new Vue({
 
 		saveSettings () {
 
+			var $ = jQuery
+
 			//Provide visual feedback by fading the form
 			$(this.$el).fadeTo("fast", 0.33);
 

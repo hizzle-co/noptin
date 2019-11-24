@@ -44,7 +44,7 @@ export default {
 			// we need to store the handler in order to later on detach it again
 			this.emit = event => {
 				this.$emit('edit', { event, api: this.api })
-				this.$emit('input', $(event.target).html())
+				this.$emit('input', jQuery(event.target).html())
 			}
 			this.api.subscribe('editableInput', this.emit)
 

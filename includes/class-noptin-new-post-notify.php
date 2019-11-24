@@ -29,6 +29,10 @@ class Noptin_New_Post_Notify {
 		add_action('publish_noptin-campaign', array( $this, 'maybe_send_notification' ) );
 		add_action('noptin_background_mailer_complete', array( $this, 'notification_complete' ) );
 
+		//Automation details
+		add_filter( 'noptin_automation_table_about', array( $this, 'about_automation' ), 10, 3 );
+
+
 	}
 
 	/**
@@ -371,6 +375,27 @@ class Noptin_New_Post_Notify {
 			}
 		}
 
+	}
+
+	/**
+	 * Filters an automation's details
+	 */
+	public function about_automation( $about, $type, $automation ){
+
+		if( 'post_notifications' != $type ) {
+			return $about;
+		}
+
+		$delay = 'immeadiately';
+
+		$sends_after      = (int) get_post_meta( $automation->ID, 'noptin_sends_after', true );
+		$sends_after_unit = sanitize_text_field( get_post_meta( $automation->ID, 'noptin_sends_after_unit', true ) );
+
+		if( $sends_after ) {
+			$delay = "$sends_after $sends_after_unit after";
+		}
+
+		return "Sends <em style='color: #607D8B;'>$delay</em> new content is published";
 	}
 
 }

@@ -6,6 +6,7 @@ export default {
 
 	init() {
 
+		var $ = jQuery
 		//Create a new automation
 		$('.noptin-create-new-automation-campaign').on('click', this.create_automation)
 		$(document).on('click', '.noptin-automation-type-select.enabled', this.select_automation)
@@ -33,10 +34,10 @@ export default {
 
 		//Init sweetalert
 		Swal.fire({
-			html: $('#noptin-create-automation').html(),
+			html: jQuery('#noptin-create-automation').html(),
 			showConfirmButton: false,
 			showCloseButton: true,
-			width: 800,
+			width: 600,
 		})
 
 	},
@@ -46,7 +47,7 @@ export default {
 
 		e.preventDefault();
 
-		let parent = $(this).find('.noptin-automation-type-setup-form').clone().find('form').attr('id', 'noptinCurrentForm').parent()
+		let parent = jQuery(this).find('.noptin-automation-type-setup-form').clone().find('form').attr('id', 'noptinCurrentForm').parent()
 		let form = parent.html()
 		parent.remove()
 
@@ -65,10 +66,10 @@ export default {
 			//Fired when the user clicks on the confirm button
 			preConfirm() {
 
-				let data = noptin.getFormData($('#noptinCurrentForm'))
+				let data = noptin.getFormData(jQuery('#noptinCurrentForm'))
 				data.action = "noptin_setup_automation";
 
-				$.post(noptin_params.ajaxurl, data)
+				jQuery.post(noptin_params.ajaxurl, data)
 
 					.done(function (url) {
 						window.location = url;
@@ -101,9 +102,9 @@ export default {
 
 		e.preventDefault();
 
-		let row = $(this).closest('tr')
+		let row = jQuery(this).closest('tr')
 		let data = {
-			id: $(this).data('id'),
+			id: jQuery(this).data('id'),
 			_wpnonce: noptin_params.nonce,
 			action: 'noptin_delete_campaign'
 		}
@@ -125,10 +126,10 @@ export default {
 			//Fired when the user clicks on the confirm button
 			preConfirm() {
 
-				$.get(noptin_params.ajaxurl, data)
+				jQuery.get(noptin_params.ajaxurl, data)
 					.done(function () {
 
-						$(row).remove()
+						jQuery(row).remove()
 						Swal.fire(
 							'Success',
 							'Your campaign was deleted',
@@ -163,7 +164,7 @@ export default {
 		tinyMCE.triggerSave();
 
 		//Form data
-		let data = noptin.getFormData($(this).closest('form'))
+		let data = noptin.getFormData(jQuery(this).closest('form'))
 
 		//Init sweetalert
 		Swal.fire({
@@ -188,7 +189,7 @@ export default {
 				//Add action
 				data.action = "noptin_send_test_email"
 
-				$.post(noptin_params.ajaxurl, data)
+				jQuery.post(noptin_params.ajaxurl, data)
 					.done(function (data) {
 
 						if (data.success) {
@@ -241,7 +242,7 @@ export default {
 
 		e.preventDefault();
 
-		if (! $('#noptin_recipients_filter_div').length) {
+		if (! jQuery('#noptin_recipients_filter_div').length) {
 
 			Swal.fire({
 				titleText: `Addon Needed!`,

@@ -142,50 +142,16 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Displays the automation recipients
+	 * Displays the automation details
 	 *
 	 * @param  object $item item.
 	 * @return HTML
 	 */
-	public function column_recipients( $item ) {
+	public function column_about( $item ) {
 
-
-		$sent   = (int) get_post_meta( $item->ID, '_noptin_sends', true );
-		$sent   = $this->maybe_link( $sent, "_campaign_{$item->ID}" , '1' );
-
-		$failed = (int) get_post_meta( $item->ID, '_noptin_fails', true );
-		$failed   = $this->maybe_link( $failed, "_campaign_{$item->ID}" , '0' );
-
-		if( empty( $failed ) ) {
-			return $sent;
-		}
-
-		return "$sent ($failed failed)";
-
-	}
-
-	/**
-	 * Displays the automation opens
-	 *
-	 * @param  object $item item.
-	 * @return HTML
-	 */
-	public function column_opens( $item ) {
-
-		$opens  = (int) get_post_meta( $item->ID, '_noptin_opens', true );
-		return $this->maybe_link( $opens, "_campaign_{$item->ID}_opened" , '1' );
-	}
-
-	/**
-	 * Displays the automation clicks
-	 *
-	 * @param  object $item item.
-	 * @return HTML
-	 */
-	public function column_clicks( $item ) {
-
-		$clicks  = (int) get_post_meta( $item->ID, '_noptin_clicks', true );
-		return $this->maybe_link( $clicks, "_campaign_{$item->ID}_clicked" , '1' );
+		$type  = sanitize_text_field( get_post_meta( $item->ID, 'automation_type', true ) );
+		$about = "Automation Type: $type";
+		return apply_filters( 'noptin_automation_table_about', $about, $type, $item );
 
 	}
 
@@ -268,12 +234,10 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		$columns = array(
 			'cb'            => '<input type="checkbox" />',
 			'title' 		=> __( 'Name', 'newsletter-optin-box' ),
-			'recipients' 	=> __( 'Recipients', 'newsletter-optin-box' ),
-			'opens'		    => __( 'Opens', 'newsletter-optin-box' ),
-			'clicks'		=> __( 'Clicks', 'newsletter-optin-box' ),
+			'about' 		=> __( 'About', 'newsletter-optin-box' ),
 
 		);
-		return apply_filters( "manage_noptin_newsletters_table_columns", $columns );
+		return apply_filters( "manage_noptin_automations_table_columns", $columns );
 	}
 
 	/**
@@ -286,7 +250,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 			'id'            => array( 'id', true ),
 			'title' 		=> array( 'post_title', true ),
 		);
-		return apply_filters( "manage_noptin_newsletters_sortable_table_columns", $sortable );
+		return apply_filters( "manage_noptin_automations_sortable_table_columns", $sortable );
 	}
 
 	/**

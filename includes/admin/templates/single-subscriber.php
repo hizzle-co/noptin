@@ -68,7 +68,7 @@
 
 				$key = apply_filters( "noptin_subscriber_{$key}_label", $key );
 
-				if( 0 == stripos( $key, '_' ) ) {
+				if( 0 === stripos( $key, '_' ) ) {
 					continue;
 				}
 
@@ -82,6 +82,9 @@
 	</table>
 
 	<?php
+
+		do_action( 'noptin_single_subscriber', $data, $meta );
+
 		printf(
 			__('%sGo back to the subscribers overview page.%s',  'newsletter-optin-box'),
 			'<a style="margin-top: 16px;display: block;" href="' . esc_url( get_noptin_subscribers_overview_url() ) . '">',

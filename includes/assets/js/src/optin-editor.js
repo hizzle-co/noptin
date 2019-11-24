@@ -57,6 +57,8 @@ var vm = new Vue({
 
 		togglePanel(id) {
 
+			var $ = jQuery
+
 			var el = $('#' + id)
 			var isOpen = $(el).hasClass('open')
 
@@ -76,7 +78,7 @@ var vm = new Vue({
 		previewPopup() {
 			this.isPreviewShowing = true
 
-			var el = $('.noptin-popup-wrapper').clone()
+			var el = jQuery('.noptin-popup-wrapper').clone()
 			var whitelist = ["class","style"];
 
 			el.find('.medium-editor-element').each(function() {
@@ -84,7 +86,7 @@ var vm = new Vue({
 				var i = attributes.length;
 				while( i-- ) {
 					var attr = attributes[i];
-					if( $.inArray(attr.name,whitelist) == -1 )
+					if( jQuery.inArray(attr.name,whitelist) == -1 )
 						this.removeAttributeNode(attr);
 				}
 			})
@@ -179,7 +181,7 @@ var vm = new Vue({
 		copy(text, e) {
 
 			var textarea =
-				$('<textarea>')
+				jQuery('<textarea>')
 					.css({
 						position: 'fixed',
 						top: 0,
@@ -195,7 +197,7 @@ var vm = new Vue({
 					.appendTo('body')
 					.focus()
 					.select()
-			var el = $(e.target).parent().find('.noptin-copy-button')
+			var el = jQuery(e.target).parent().find('.noptin-copy-button')
 
 			try {
 				var successful = document.execCommand('copy');
@@ -217,7 +219,7 @@ var vm = new Vue({
 			this.saveText = this.savingText;
 			var that = this
 
-			var el = $('.noptin-popup-wrapper').clone()
+			var el = jQuery('.noptin-popup-wrapper').clone()
 
 			if( 'popup' != this.optinType ) {
 				el.find('.noptin-optin-form-wrapper').css('width', '100%')
@@ -230,7 +232,7 @@ var vm = new Vue({
 				var i = attributes.length;
 				while( i-- ) {
 					var attr = attributes[i];
-					if( $.inArray(attr.name,whitelist) == -1 )
+					if( jQuery.inArray(attr.name,whitelist) == -1 )
 						this.removeAttributeNode(attr);
 				}
 			})
@@ -283,7 +285,7 @@ var vm = new Vue({
 			left: jQuery('#adminmenuwrap').width(),
 		})
 
-		$(window).on('resize', function(){
+		jQuery(window).on('resize', function(){
 			jQuery('#noptin_form_editor .noptin-popup-designer').css({
 				top: jQuery('#wpadminbar').height(),
 				left: jQuery('#adminmenuwrap').width(),

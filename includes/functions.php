@@ -111,6 +111,8 @@ function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
 			update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );;
 		}
 
+		do_action( 'log_noptin_subscriber_campaign_open', $subscriber_id, $campaign_id );
+
 	}
 
 }
@@ -175,6 +177,8 @@ function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $li
 
 		$click_counts = (int) get_post_meta( $campaign_id, '_noptin_clicks', true );
 		update_post_meta( $campaign_id, '_noptin_clicks', $click_counts + 1 );
+
+		do_action( 'log_noptin_subscriber_campaign_click', $subscriber_id, $campaign_id );
 	}
 
 }
@@ -222,6 +226,35 @@ function did_noptin_subscriber_click_campaign( $subscriber_id, $campaign_id, $li
 }
 
 /**
+ * Retrieve subscriber merge fields.
+ *
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @access  public
+ * @since   1.2.0
+ */
+function get_noptin_subscriber_merge_fields( $subscriber_id ) {
+	$subscriber     = get_noptin_subscriber( $subscriber_id );
+
+	if( empty( $subscriber ) ) {
+		return array();
+	}
+
+	$merge_tags     			   = (array) $subscriber;
+	$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
+	$meta                          = get_noptin_subscriber_meta( $subscriber_id );
+
+	foreach( $meta as $key=>$values ) {
+
+		if( isset( $values[0] ) && is_scalar( maybe_unserialize( $values[0] ) ) ) {
+				$merge_tags[$key] = esc_html( $values[0] );
+			}
+
+	}
+
+	return apply_filters( 'noptin_subscriber_merge_fields', $merge_tags, $subscriber, $meta );
+}
+
+/**
  * Retrieves all default noptin options
  *
  * @return  array   options
@@ -231,10 +264,20 @@ function did_noptin_subscriber_click_campaign( $subscriber_id, $campaign_id, $li
 function get_default_noptin_options() {
 
 	$options = array(
-		'notify_new_post' => 0,
-		'from_email' 	  => get_option('admin_email'),
-		'from_name' 	  => get_option('blogname'),
-		'company' 	  	  => get_option('blogname'),
+		'notify_admin'    			=> false,
+		'from_email' 	  			=> get_option('admin_email'),
+		'from_name' 	  			=> get_option('blogname'),
+		'company' 	  	  			=> get_option('blogname'),
+		'comment_form'	  			=> false,
+		'comment_form_msg'			=> __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' ),
+		'register_form'	  			=> false,
+		'register_form_msg'			=> __( 'Subscribe To Our Newsletter',  'newsletter-optin-box' ),
+		'hide_from_subscribers'		=> false,
+		'address'					=> __( '31 North San Juan Ave.',  'newsletter-optin-box' ),
+		'city'						=> __( 'Santa Clara',  'newsletter-optin-box' ),
+		'state'						=> __( 'San Francisco',  'newsletter-optin-box' ),
+		'country'					=> __( 'United States',  'newsletter-optin-box' ),
+		'success_message'			=> __('Thanks for subscribing to our newsletter',  'newsletter-optin-box'),
 	);
 	return $options;
 
@@ -1155,6 +1198,11 @@ function noptin_ob_get_clean( $file ) {
  */
 function noptin_new_subscriber_notify( $id, $fields ) {
 
+	//Are we sending new subscriber notifications?
+	if( empty( get_noptin_option( 'notify_admin' ) ) ) {
+		return;
+	}
+
 	// The blogname option is escaped with esc_html on the way into the database in sanitize_option
     // we want to reverse this for the plain text arena of emails.
 	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
@@ -1174,7 +1222,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	}
 
 	/* translators: %s: user email address */
-	$message .= sprintf( __( 'Email: %s' ), $fields['email'] ) . "\r\n";
+	//$message .= sprintf( __( 'Email: %s' ), $fields['email'] ) . "\r\n";
 
 	$to      = get_option( 'admin_email' );
 

@@ -243,7 +243,7 @@ class Noptin_Admin {
 		);
 
         //Vue js
-        wp_enqueue_script('vue', $this->assets_url . 'js/vendor/vue.js', array(), '2.6.10');
+        wp_enqueue_script('vue', $this->assets_url . 'js/vendor/vue.min.js', array(), '2.6.10');
 
         //Custom admin scripts
         $version = filemtime( $this->assets_path . 'js/dist/admin.js' );
@@ -539,14 +539,11 @@ class Noptin_Admin {
 
 	?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers',  'newsletter-optin-box')?> <a href="<?php echo $download_url;?>" class="button-secondary"><?php _e( 'Download Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
+			<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers',  'newsletter-optin-box')?> <a href="<?php echo $download_url;?>" class="button-secondary"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> </h1>
+			<p class="description" style='margin: 10px 0;'><a href="https://noptin.com/products/" target="_blank"><?php _e( 'Check out our integrations', 'newsletter-optin-box' );?></a></p>
 			<form id="noptin-subscribers-table" method="POST">
 				<?php $table->display(); ?>
-				<p class="description"><a href="https://noptin.com/products/" target="_blank"><?php _e( 'Check out our integrations', 'newsletter-optin-box' );?></a></p>
 			</form>
-			<div id="noptin-create-automation" style="display:none;">
-				<?php include $noptin_admin->admin_path . 'templates/new-email-automations-popup.php'; ?>
-			</div>
 		</div>
 	<?php
 

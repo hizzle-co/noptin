@@ -44,7 +44,7 @@
         				 */
         				do_action('noptin_before_newsletter_editor_fields', $campaign );
 					?>
-
+<!--
 					<tr>
 						<th>
 							<label><b><?php _e( 'Send To:', 'newsletter-optin-box' ); ?></b></label>
@@ -57,7 +57,7 @@
 							<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-recipients">Filter recipients</a></p>
 						</td>
 					</tr>
-
+-->
 					<tr>
 						<th>
 							<label for="noptin-email-subject"><b><?php _e( 'Email Subject:', 'newsletter-optin-box' ); ?></b></label>

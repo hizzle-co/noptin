@@ -46,7 +46,7 @@ export default {
 
 			},
 			shallowCopy (obj) {
-				return $.extend({}, obj)
+				return jQuery.extend({}, obj)
 			},
 			getDefaultLabel (fieldType) {
 
@@ -61,29 +61,29 @@ export default {
 				return fieldType
 			},
 			expandField (id) {
-				var el = $('#' + id)
+				var el = jQuery('#' + id)
 
 				//toggle arrows
-				$(el).find('.dashicons-arrow-up-alt2').show()
-				$(el).find('.dashicons-arrow-down-alt2').hide()
+				jQuery(el).find('.dashicons-arrow-up-alt2').show()
+				jQuery(el).find('.dashicons-arrow-down-alt2').hide()
 
 				//slide down the body
-				$(el).find('.noptin-field-editor-body').slideDown()
+				jQuery(el).find('.noptin-field-editor-body').slideDown()
 			},
 			collapseField (id) {
-				var el = $('#' + id)
+				var el = jQuery('#' + id)
 
 				//toggle arrows
-				$(el).find('.dashicons-arrow-up-alt2').hide()
-				$(el).find('.dashicons-arrow-down-alt2').show()
+				jQuery(el).find('.dashicons-arrow-up-alt2').hide()
+				jQuery(el).find('.dashicons-arrow-down-alt2').show()
 
 				//slide up the body
-				$(el).find('.noptin-field-editor-body').slideUp()
+				jQuery(el).find('.noptin-field-editor-body').slideUp()
 			},
 			collapseAll (id) {
 				var that = this
 
-				$.each(this.fields, (index, value) => {
+				jQuery.each(this.fields, (index, value) => {
 					that.collapseField(value.key)
 				});
 			}

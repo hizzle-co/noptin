@@ -3,6 +3,6 @@ module.exports = {
 	  require('postcss-import'),
       require('precss'),
       require('autoprefixer'),
-      //require('cssnano'),
+      require('cssnano'),
     ]
   }

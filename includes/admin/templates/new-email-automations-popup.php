@@ -80,9 +80,9 @@
 											</th>
 
 											<td>
-												<input style="width:100px" type="number" name="automation_delay"  value="0">
+												<input style="width:100px" type="number" name="noptin_sends_after"  value="0">
 
-												<select class="noptin-max-w-200" name="automation_delay_unit">
+												<select class="noptin-max-w-200" name="noptin_sends_after_unit">
 													<option value="minutes" selected="selected">Minute(s)</option>
 													<option value="hours">Hour(s)</option>
 													<option value="days">Day(s)</option>
@@ -95,6 +95,10 @@
 													}
 
 											echo "</td></tr>";
+
+											if(! empty( $args['pre_setup_cb'] ) ) {
+												call_user_func( $args['pre_setup_cb'] );
+											}
 
 									}
 

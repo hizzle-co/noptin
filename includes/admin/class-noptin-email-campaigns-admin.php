@@ -189,24 +189,25 @@ class Noptin_Email_Campaigns_Admin {
 				'support_delay' => __( "After new content is published", 'newsletter-optin-box' ),
 				'support_filter'=> true,
 			),
-			'post_digests' 		=> array(
+			/*'post_digests' 		=> array(
 				'title'			=> __( "Post Digests", 'newsletter-optin-box' ),
 				'description'	=> __( "Send a daily, weekly or monthly digest of new blog posts.", 'newsletter-optin-box' ),
 				'support_filter'=> true,
-			),
+			),*/
 			'welcome_email' 	=> array(
 				'title'			=> __( "Welcome Email", 'newsletter-optin-box' ),
 				'description'	=> __( "Introduce yourself to new subscribers or set up a series of welcome emails to act as an email course.", 'newsletter-optin-box' ),
-				'support_delay' => true,
+				'support_delay' => __( "After someone subscribes", 'newsletter-optin-box' ),
+				'support_filter'=> __( "All new subscribers", 'newsletter-optin-box' ),
 			),
 			'subscriber_tag' 	=> array(
 				'title'			=> __( "Subscriber Tag", 'newsletter-optin-box' ),
 				'description'	=> __( "Send an email to a subscriber when you tag them.", 'newsletter-optin-box' ),
-				'support_delay' => true,
+				'support_delay' => __( "After a subscriber is tagged", 'newsletter-optin-box' ),
 			),
 			'previous_email' 	=> array(
 				'title'			=> __( "Previous Email", 'newsletter-optin-box' ),
-				'description'	=> __( "Send an email to a subscriber when they receive, open or click on a link in another email.", 'newsletter-optin-box' ),
+				'description'	=> __( "Send an email to a subscriber when they open or click on a link in another email.", 'newsletter-optin-box' ),
 				'support_delay' => true,
 			),
 		);
