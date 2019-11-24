@@ -27,7 +27,7 @@ function noptin_render_editor_optin_templates( $id, $field ){
     unset( $field['label'] );
     unset( $field['tooltip'] );
 
-    //Generate attrs html
+    // Generate attrs html
 	$attrs = noptin_array_to_attrs( $field );
 
 	$tooltip = noptin_get_editor_tooltip_markup( $field );
@@ -59,7 +59,7 @@ function noptin_render_editor_color_themes( $id, $field ){
     unset( $field['label'] );
     unset( $field['tooltip'] );
 
-    //Generate attrs html
+    // Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
 	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
@@ -90,7 +90,7 @@ function noptin_render_editor_optin_data( $id, $field ){
     unset( $field['label'] );
     unset( $field['tooltip'] );
 
-    //Generate attrs html
+    // Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
 	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
@@ -125,7 +125,7 @@ function noptin_render_editor_optin_image( $id, $field ){
     unset( $field['label'] );
     unset( $field['tooltip'] );
 
-    //Generate attrs html
+    // Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
 	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
@@ -171,7 +171,7 @@ function noptin_render_editor_optin_fields( $id, $field ){
     unset( $field['label'] );
     unset( $field['tooltip'] );
 
-    //Generate attrs html
+    // Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
 	$tooltip = noptin_get_editor_tooltip_markup( $field );
 
@@ -210,7 +210,7 @@ function noptin_render_editor_optin_done( $id, $field ){
     unset( $field['label'] );
     unset( $field['tooltip'] );
 
-    //Generate attrs html
+    // Generate attrs html
     $attrs = noptin_array_to_attrs( $field );
     $id    = trim( $_GET['form_id']);
     $url   = admin_url("admin.php?page=noptin-forms");
@@ -260,7 +260,7 @@ function noptin_render_editor_optin_types( $id, $field ){
     unset( $field['label'] );
     unset( $field['tooltip'] );
 
-    //Generate attrs html
+    // Generate attrs html
 	$attrs = noptin_array_to_attrs( $field );
 	$tooltip = noptin_get_editor_tooltip_markup( $field );
 

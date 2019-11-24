@@ -91,20 +91,20 @@ if( !defined( 'ABSPATH' ) ) {
 
 		global $wpdb;
 
-        //Set global variables
+        // Set global variables
 		$this->plugin_path = plugin_dir_path( __FILE__ );
 		$this->plugin_url  = plugins_url( '/', __FILE__ );
 
-		//Register our custom meta table
+		// Register our custom meta table
 		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
 
         // Include core files
         $this->includes();
 
-      	//Init the plugin after WP inits
+      	// Init the plugin after WP inits
         add_action( 'init', array( $this, 'init'), 5 );
 
-        //Register our new widget
+        // Register our new widget
 		add_action( 'widgets_init', array($this, 'register_widget'));
 
 		/**
@@ -135,25 +135,25 @@ if( !defined( 'ABSPATH' ) ) {
 		 */
 		do_action('before_noptin_init', $this);
 
-        //Init the admin
+        // Init the admin
 		$this->admin     = Noptin_Admin::instance();
 
-		//Init the bg mailer
+		// Init the bg mailer
 		$this->bg_mailer = new Noptin_Background_Mailer();
 
-        //Ensure the db is up to date
+        // Ensure the db is up to date
         $this->maybe_upgrade_db();
 
-        //Register blocks
+        // Register blocks
 		$this->register_blocks();
 
 		// Set up localisation.
 		$this->load_plugin_textdomain();
 
-        //Load css and js
+        // Load css and js
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts') );
 
-		 //css body class
+		 // css body class
 		 add_filter( 'body_class', array( $this, 'body_class') );
 
 		/**
@@ -174,13 +174,13 @@ if( !defined( 'ABSPATH' ) ) {
      */
     private function includes() {
 
-		//plugin functions
+		// plugin functions
 		require_once $this->plugin_path . 'includes/functions.php';
 
 		// The main admin class
 		require_once $this->plugin_path . 'includes/admin/admin.php';
 
-		//Bg handlers
+		// Bg handlers
 		require_once $this->plugin_path . 'includes/class-noptin-async-request.php';
 		require_once $this->plugin_path . 'includes/class-noptin-background-process.php';
 		require_once $this->plugin_path . 'includes/class-noptin-new-post-notify.php';
@@ -198,7 +198,7 @@ if( !defined( 'ABSPATH' ) ) {
 		require_once $this->plugin_path . 'includes/class-noptin-intergrations.php';
 		require_once $this->plugin_path . 'includes/admin/class-noptin-vue.php';
 
-    	//Ajax handlers
+    	// Ajax handlers
         require_once $this->plugin_path . 'includes/class-noptin-ajax.php';
 
         // Include the widget class
@@ -222,7 +222,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function register_scripts() {
 
-		//The JS used to render the block in the editor backend
+		// The JS used to render the block in the editor backend
         wp_register_script(
             'noptin_blocks',
             $this->plugin_url . 'includes/assets/js/dist/blocks.js',
@@ -230,7 +230,7 @@ if( !defined( 'ABSPATH' ) ) {
             filemtime( $this->plugin_path . 'includes/assets/js/dist/blocks.js' )
         );
 
-		//The css used to style the block in the editor backend
+		// The css used to style the block in the editor backend
         wp_register_style(
             'noptin_blocks',
             $this->plugin_url . 'includes/assets/css/blocks.css',
@@ -238,7 +238,7 @@ if( !defined( 'ABSPATH' ) ) {
             filemtime( $this->plugin_path . 'includes/assets/css/blocks.css' )
         );
 
-		//The JS used on the frontend
+		// The JS used on the frontend
         wp_register_script(
             'noptin_front',
             $this->plugin_url . 'includes/assets/js/dist/frontend.js',
@@ -253,7 +253,7 @@ if( !defined( 'ABSPATH' ) ) {
         );
         wp_localize_script( 'noptin_front', 'noptin', $params );
 
-		//The css used to style the frontend
+		// The css used to style the frontend
         wp_register_style(
             'noptin_front',
             $this->plugin_url . 'includes/assets/css/frontend.css',
@@ -271,10 +271,10 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function enqueue_scripts() {
 
-		//Register the assets...
+		// Register the assets...
 		$this->register_scripts();
 
-		//... then enqueue them
+		// ... then enqueue them
 		wp_enqueue_script( 'noptin_front' );
 		wp_enqueue_style( 'noptin_front' );
     }
@@ -301,10 +301,10 @@ if( !defined( 'ABSPATH' ) ) {
 		*/
         do_action('noptin_before_register_blocks');
 
-        //Register  js scripts and css styles
+        // Register  js scripts and css styles
         $this->register_scripts();
 
-        //Register the blocks
+        // Register the blocks
         register_block_type( 'noptin/email-optin', array(
             'style'          => 'noptin_front',
             'editor_script'  => 'noptin_blocks',
@@ -351,13 +351,13 @@ if( !defined( 'ABSPATH' ) ) {
 
         $installed_version = absint( get_option( 'noptin_db_version', 0 ));
 
-        //Upgrade db if installed version of noptin is lower than current version
+        // Upgrade db if installed version of noptin is lower than current version
         if( $installed_version < $this->db_version ){
             new Noptin_Install( $installed_version );
             update_option( 'noptin_db_version', $this->db_version );
 		}
 
-		//Force create the subscribers table
+		// Force create the subscribers table
 		if(! noptin_subscribers_table_exists() ) {
 			new Noptin_Install( false );
 		}
@@ -403,5 +403,5 @@ if( !defined( 'ABSPATH' ) ) {
 
 }
 
-//Kickstart everything
+// Kickstart everything
 Noptin::instance();

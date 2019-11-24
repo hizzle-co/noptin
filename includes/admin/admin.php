@@ -82,7 +82,7 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_load', $this);
 
-        //Set global variables
+        // Set global variables
         $noptin = noptin();
         $this->admin_path  = plugin_dir_path(__FILE__);
         $this->admin_url   = plugins_url('/', __FILE__);
@@ -94,7 +94,7 @@ class Noptin_Admin {
 
 		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
 
-        //initialize hooks
+        // initialize hooks
         $this->init_hooks();
 
         /**
@@ -114,16 +114,16 @@ class Noptin_Admin {
      */
     private function includes() {
 
-		//Settings
+		// Settings
 		require_once $this->admin_path . 'settings.php';
 
         // Include the rating hooks
         require_once $this->admin_path . 'ratings.php';
 
-        //Editor
+        // Editor
         require_once $this->admin_path . 'forms-editor.php';
 
-		//Email campaigns
+		// Email campaigns
 		require_once $this->admin_path . 'class-noptin-email-campaigns-admin.php';
 		require_once $this->admin_path . 'class-noptin-email-newsletters-table.php';
 		require_once $this->admin_path . 'class-noptin-email-automations-table.php';
@@ -152,23 +152,23 @@ class Noptin_Admin {
          */
         do_action('noptin_before_admin_init_hooks', $this);
 
-        //Admin scripts
+        // Admin scripts
         add_action('admin_enqueue_scripts', array($this, 'enqeue_scripts'), 1);
 
-        //(maybe) do an action
+        // (maybe) do an action
         add_action('admin_init', array($this, 'maybe_do_action'));
 
-        //Register new menu pages
+        // Register new menu pages
 		add_action('admin_menu', array($this, 'add_menu_page'));
 		add_action( 'admin_head', array($this, 'remove_menus') );
 
-        //Runs when saving a new opt-in form
+        // Runs when saving a new opt-in form
         add_action('wp_ajax_noptin_save_optin_form', array($this, 'save_optin_form'));
 
-        //Runs when saving a form as a template
+        // Runs when saving a form as a template
         add_action('wp_ajax_noptin_save_optin_form_as_template', array($this, 'save_optin_form_as_template'));
 
-		//Display notices
+		// Display notices
 		add_action('admin_notices', array($this, 'show_notices'));
 
         /**
@@ -189,11 +189,11 @@ class Noptin_Admin {
      */
     public function enqeue_scripts() {
 
-		//Admin styles
+		// Admin styles
         $version = filemtime( $this->assets_path . 'css/admin.css' );
 		wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array(), $version);
 
-		//Only enque on our pages
+		// Only enque on our pages
 		$page = '';
 
 		if( isset( $_GET['page'] ) ) {
@@ -209,27 +209,27 @@ class Noptin_Admin {
             return;
         }
 
-        //Tooltips https://iamceege.github.io/tooltipster/
+        // Tooltips https://iamceege.github.io/tooltipster/
         wp_enqueue_script('tooltipster', $this->assets_url . 'js/vendor/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
         wp_enqueue_style('tooltipster', $this->assets_url . 'css/tooltipster.bundle.min.css', array(), '4.2.6');
 
-		//Sweetalert https://sweetalert2.github.io/
+		// Sweetalert https://sweetalert2.github.io/
 		wp_enqueue_script('sweetalert2', $this->assets_url . 'js/vendor/sweetalert2.min.js', array(), '8.18.6');
         wp_enqueue_style('sweetalert2', $this->assets_url . 'css/sweetalert2.min.css', array(), '8.18.6');
 
-        //Slick selects https://designwithpc.com/Plugins/ddSlick#demo
+        // Slick selects https://designwithpc.com/Plugins/ddSlick#demo
         wp_enqueue_script('slick', $this->assets_url . 'js/vendor/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
 		wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
 
 		wp_enqueue_script('select2', $this->assets_url . 'js/vendor/select2.js', array( 'jquery' ), '4.0.9');
 
-		//wp_enqueue_script('magnific-popup', $this->assets_url . 'js/vendor/magnific-popup.js', array( 'jquery' ), '1.1.0');
-		//wp_enqueue_style('magnific-popup', $this->assets_url . 'css/magnific.css', array(), '1.1.0');
+		// wp_enqueue_script('magnific-popup', $this->assets_url . 'js/vendor/magnific-popup.js', array( 'jquery' ), '1.1.0');
+		// wp_enqueue_style('magnific-popup', $this->assets_url . 'css/magnific.css', array(), '1.1.0');
 
-        //Enque media for image uploads
+        // Enque media for image uploads
         wp_enqueue_media();
 
-        //Codemirror for editor css
+        // Codemirror for editor css
         wp_enqueue_code_editor(
 			array(
                 'type'       => 'css',
@@ -242,10 +242,10 @@ class Noptin_Admin {
             )
 		);
 
-        //Vue js
+        // Vue js
         wp_enqueue_script('vue', $this->assets_url . 'js/vendor/vue.min.js', array(), '2.6.10');
 
-        //Custom admin scripts
+        // Custom admin scripts
         $version = filemtime( $this->assets_path . 'js/dist/admin.js' );
         wp_register_script('noptin', $this->assets_url . 'js/dist/admin.js', array('vue','sweetalert2'), $version, true);
 
@@ -278,7 +278,7 @@ class Noptin_Admin {
      */
     public function add_menu_page() {
 
-        //The main admin page
+        // The main admin page
         add_menu_page(
             'Noptin',
             'Noptin',
@@ -288,7 +288,7 @@ class Noptin_Admin {
             'dashicons-forms',
             23);
 
-        //Add the newsletter page
+        // Add the newsletter page
         add_submenu_page(
             'noptin',
             esc_html__('Email Forms',  'newsletter-optin-box'),
@@ -297,7 +297,7 @@ class Noptin_Admin {
             'edit.php?post_type=noptin-form'
 		);
 
-		//Add the email campaigns page
+		// Add the email campaigns page
         add_submenu_page(
             'noptin',
             esc_html__('Email Campaigns',  'newsletter-optin-box'),
@@ -307,7 +307,7 @@ class Noptin_Admin {
             array($this, 'render_email_campaigns_page')
 		);
 
-		//Add the subscribers page
+		// Add the subscribers page
         add_submenu_page(
             'noptin',
             esc_html__('Email Subscribers',  'newsletter-optin-box'),
@@ -317,7 +317,7 @@ class Noptin_Admin {
             array($this, 'render_subscribers_page')
 		);
 
-		//Settings
+		// Settings
         add_submenu_page(
             'noptin',
             esc_html__('Settings',  'newsletter-optin-box'),
@@ -329,7 +329,7 @@ class Noptin_Admin {
 
 		do_action( 'noptin_after_register_menus', $this );
 
-		//Link to documentation
+		// Link to documentation
         add_submenu_page(
             'noptin',
             esc_html__('Documentation',  'newsletter-optin-box'),
@@ -339,7 +339,7 @@ class Noptin_Admin {
             array($this, 'render_add_new_page')
 		);
 
-		//Welcome page
+		// Welcome page
 		add_dashboard_page(
             esc_html__('Noptin Welcome', 'noptin-mailchimp',  'newsletter-optin-box'),
             esc_html__('Noptin Welcome', 'noptin-mailchimp',  'newsletter-optin-box'),
@@ -424,7 +424,7 @@ class Noptin_Admin {
      */
     public function render_email_campaigns_page() {
 
-		//Only admins can access this page
+		// Only admins can access this page
         if (!current_user_can('manage_options')) {
             return;
 		}
@@ -455,7 +455,7 @@ class Noptin_Admin {
      */
     public function render_subscribers_page() {
 
-		//Only admins can access this page
+		// Only admins can access this page
         if (!current_user_can('manage_options')) {
             return;
 		}
@@ -467,7 +467,7 @@ class Noptin_Admin {
          */
 		do_action('noptin_before_admin_subscribers_page', $this);
 
-		//Are we viewing a single subscriber or all subscribers?
+		// Are we viewing a single subscriber or all subscribers?
 		if(! empty( $_GET['subscriber'] ) ) {
 			$this->render_single_subscriber_page( $_GET['subscriber'] );
 		} else {
@@ -491,7 +491,7 @@ class Noptin_Admin {
      */
     public function render_subscribers_overview_page() {
 
-		//Only admins can access this page
+		// Only admins can access this page
         if (! current_user_can( 'manage_options' ) ) {
             return;
 		}
@@ -505,10 +505,10 @@ class Noptin_Admin {
 
 		$deleted = false;
 
-		//Do actions
+		// Do actions
 		if(! empty( $_POST['noptin_nonce'] ) && wp_verify_nonce( $_POST['noptin_nonce'], 'noptin' ) ) {
 
-			//Delete
+			// Delete
 			if(! empty( $_POST['action'] ) && 'delete' == $_POST['action'] ) {
 				if(! empty( $_POST['email'] ) && is_array( $_POST['email'] ) ) {
 
@@ -531,7 +531,7 @@ class Noptin_Admin {
             admin_url('admin-ajax.php')
 		);
 
-		//include $this->admin_path . 'templates/subscribers.php';
+		// include $this->admin_path . 'templates/subscribers.php';
 		require_once $this->admin_path . 'class-noptin-subscribers-table.php';
 
 		$table 	= new Noptin_Subscribers_Table();
@@ -615,7 +615,7 @@ class Noptin_Admin {
             return;
         }
 
-        //Check nonce
+        // Check nonce
         check_ajax_referer( 'noptin_admin_nonce' );
 
         /**
@@ -625,7 +625,7 @@ class Noptin_Admin {
          */
         do_action('noptin_before_save_form', $this);
 
-        //Prepare the args
+        // Prepare the args
         $ID        = trim( $_POST['state']['id'] );
 		$state     = $_POST['state'];
 		$status    = 'draft';
@@ -654,8 +654,8 @@ class Noptin_Admin {
         update_post_meta( $ID, '_noptin_state', $_POST['state'] );
 		update_post_meta( $ID, '_noptin_optin_type', $_POST['state']['optinType'] );
 
-		//Ensure impressions and subscriptions are set
-        //to prevent the form from being hidden when the user sorts by those fields
+		// Ensure impressions and subscriptions are set
+        // to prevent the form from being hidden when the user sorts by those fields
         $sub_count  = get_post_meta ( $ID, '_noptin_subscribers_count', true );
         $form_views = get_post_meta ( $ID, '_noptin_form_views', true );
 
@@ -674,7 +674,7 @@ class Noptin_Admin {
          */
         do_action('noptin_after_save_form', $this);
 
-    exit; //This is important
+    exit; // This is important
 }
 
     /**
@@ -690,7 +690,7 @@ class Noptin_Admin {
             return;
         }
 
-        //Check nonce
+        // Check nonce
         check_ajax_referer( 'noptin_admin_nonce' );
 
         /**
@@ -749,7 +749,7 @@ class Noptin_Admin {
          */
         do_action('noptin_after_save_form_as_template', $this);
 
-    exit; //This is important
+    exit; // This is important
 }
 
 
@@ -795,7 +795,7 @@ class Noptin_Admin {
      */
     public function maybe_do_action() {
 
-		//Redirect to welcome page
+		// Redirect to welcome page
 		if (! get_option( '_noptin_has_welcomed', false ) && !wp_doing_ajax() ) {
 
 			// Ensure were not activating from network, or bulk
@@ -813,16 +813,16 @@ class Noptin_Admin {
 
 		}
 
-        //Subscriber actions
+        // Subscriber actions
         if( isset( $_GET['page'] ) && 'noptin-subscribers' == $_GET['page'] ) {
 
-			//Maybe delete an email subscriber
+			// Maybe delete an email subscriber
 			if(! empty( $_GET['delete-subscriber'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin-subscriber' ) ) {
 				delete_noptin_subscriber( $_GET['delete-subscriber'] );
 				$this->show_success( __('Subscriber successfully deleted', 'newsletter-optin-box') );
 			}
 
-			//Delete multiple subscribers
+			// Delete multiple subscribers
 			if(! empty( $_POST['action'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'bulk-ids' ) ) {
 				$ids = array();
 
@@ -839,10 +839,10 @@ class Noptin_Admin {
 
 		}
 
-		//Campaign actions
+		// Campaign actions
         if( isset( $_GET['page'] ) && 'noptin-email-campaigns' == $_GET['page'] ) {
 
-			//Delete multiple campaigns
+			// Delete multiple campaigns
 			if(! empty( $_GET['action'] ) && 'delete' == $_GET['action'] && wp_verify_nonce( $_GET['_wpnonce'], 'bulk-ids' ) ) {
 				$ids = array();
 
@@ -859,37 +859,37 @@ class Noptin_Admin {
 
 		}
 
-		//Docs page
+		// Docs page
         if( isset( $_GET['page'] ) && 'noptin-docs' == $_GET['page'] ) {
             wp_redirect( 'https://noptin.com/guide/', 301 );
 	        exit;
         }
 
-        //Ensure that this is our page...
+        // Ensure that this is our page...
         if(! isset( $_GET['page'] ) || 'noptin-forms' != $_GET['page'] ) {
             return;
         }
 
-        //... and that there is an action
+        // ... and that there is an action
         if(! isset( $_GET['action'] ) ) {
             return;
         }
 
-        //Is the user deleting an optin form?
+        // Is the user deleting an optin form?
         if( 'delete' == $_GET['action'] ){
             noptin_delete_optin_form( $_GET['delete'] );
             wp_safe_redirect( admin_url( 'admin.php?page=noptin-forms' ) );
             exit;
         }
 
-        //Is the user duplicating an optin form?
+        // Is the user duplicating an optin form?
         if( 'duplicate' == $_GET['action'] ){
             $form   = noptin_duplicate_optin_form( $_GET['duplicate'] );
             wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form" ) );
             exit;
         }
 
-        //Is the user creating a new optin form?
+        // Is the user creating a new optin form?
         if( 'new' == $_GET['action'] ){
             $form   = noptin_create_optin_form();
             if( is_int( $form ) ) {

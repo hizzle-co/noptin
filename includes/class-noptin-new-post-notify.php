@@ -18,18 +18,18 @@ class Noptin_New_Post_Notify {
 	 */
 	function init() {
 
-		//Default automation data
+		// Default automation data
 		add_filter( 'noptin_email_automation_setup_data', array( $this, 'default_automation_data' ) );
 
-		//Set up cb
+		// Set up cb
 		add_filter( 'noptin_email_automation_triggers', array( $this, 'register_automation_settings' ) );
 
-		//Notify subscribers
+		// Notify subscribers
 		add_action('transition_post_status', array( $this, 'maybe_schedule_notification' ), 10, 3 );
 		add_action('publish_noptin-campaign', array( $this, 'maybe_send_notification' ) );
 		add_action('noptin_background_mailer_complete', array( $this, 'notification_complete' ) );
 
-		//Automation details
+		// Automation details
 		add_filter( 'noptin_automation_table_about', array( $this, 'about_automation' ), 10, 3 );
 
 
@@ -103,17 +103,17 @@ class Noptin_New_Post_Notify {
 	 */
 	public function maybe_schedule_notification( $new_status, $old_status, $post ) {
 
-		//Ensure the post is published
+		// Ensure the post is published
 		if( 'publish' != $new_status ) {
 			return;
 		}
 
-		//If a notification has already been send abort...
+		// If a notification has already been send abort...
 		if( get_post_meta( $post->ID, 'noptin_associated_new_post_notification_campaign', true ) ) {
 			return;
 		}
 
-		//Are there any new post automations
+		// Are there any new post automations
 		$automations = $this->get_automations();
 		if( empty( $automations ) ) {
 			return;
@@ -121,7 +121,7 @@ class Noptin_New_Post_Notify {
 
 		foreach( $automations as $automation ) {
 
-			//Check if the automation applies here
+			// Check if the automation applies here
 			if( $this->is_automation_valid_for( $automation, $post ) ) {
 				$this->schedule_notification( $post, $automation );
 			}
@@ -172,7 +172,7 @@ class Noptin_New_Post_Notify {
 	 */
 	public function schedule_notification( $post, $automation ) {
 
-		//Prepare post args
+		// Prepare post args
 		$post_args = array(
 			'post_status'      => 'publish',
 			'post_type'        => 'noptin-campaign',
@@ -212,12 +212,12 @@ class Noptin_New_Post_Notify {
 	 */
 	public function maybe_send_notification( $key ) {
 
-		//Is it a bg_email?
+		// Is it a bg_email?
 		if( 'bg_email' != get_post_meta( $key, 'campaign_type', true ) ) {
 			return;
 		}
 
-		//Ensure this is a new post notification
+		// Ensure this is a new post notification
 		if( 'new_post_notification' != get_post_meta( $key, 'bg_email_type', true ) ) {
 			return;
 		}
@@ -225,7 +225,7 @@ class Noptin_New_Post_Notify {
 		$campaign_id = get_post_meta( $key, 'associated_campaign', true );
 		$post_id     = get_post_meta( $key, 'associated_post', true );
 
-		//If a notification has already been send abort...
+		// If a notification has already been send abort...
 		if( get_post_meta( $post_id, 'noptin_associated_new_post_notification_campaign', true ) ) {
 			return;
 		}
@@ -239,7 +239,7 @@ class Noptin_New_Post_Notify {
 	 */
 	public function notify( $post_id, $campaign_id, $key = '' ) {
 
-		//Ensure that both the campaign and post are published
+		// Ensure that both the campaign and post are published
 		if( 'publish' != get_post_status( $post_id ) ||  'publish' != get_post_status( $campaign_id ) ) {
 			return;
 		}
@@ -266,22 +266,22 @@ class Noptin_New_Post_Notify {
 
 		$author = get_userdata( $post['post_author'] );
 
-		//Author details
+		// Author details
 		$post['post_author']       = $author->display_name;
 		$post['post_author_email'] = $author->user_email;
 		$post['post_author_login'] = $author->user_login;
 		$post['post_author_id']    = $author->ID;
 
-		//Date
+		// Date
 		$post['post_date']         = get_the_date( '', $post_id );
 
-		//Link
+		// Link
 		$post['post_url']     = get_the_permalink( $post_id );
 
 		unset( $post['ID'] );
 		$post['post_id']	  = $post_id;
 
-		//Read more button
+		// Read more button
 		$post['read_more_button']	  = $this->read_more_button( $post['post_url'] );
 		$post['/read_more_button']    = '</a></div>';
 

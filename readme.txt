@@ -1,7 +1,7 @@
-=== Newsletter Subscription Forms, Opt-in Widgets And Email Subscription Popups - Noptin ===
+=== Newsletter Subscription Forms, Optin Widgets And Email Subscription Popups - Noptin ===
 Contributors: picocodes
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
-Requires at least: 4.7
+Requires at least: 4.9
 Tested up to: 5.3
 Requires PHP: 5.3
 Version: 1.2.0
@@ -9,18 +9,20 @@ Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-The best email opt-in form, email subscription widget and newsletter sign up popups plugin for WordPress.
+The Fastest Email Optin Form And  Newsletter Plugin For WordPress. Email Optin Forms, Widgets and Popup subscription forms.
 
 == Description ==
 
-**The best email opt-in form, email subscription widget and newsletter sign up popups plugin for WordPress.**
+**The best Email Optin Form And  Newsletter Plugin For WordPress.**
 ★★★★★<br>
+
+Easily collect unlimited email subscribers and send them unlimited email newsletters. Anytime you want to.
 
 Noptin is a very fast and lightweight newsletter sign up plugin. Use it to build newsletter subscription forms and display them in a popup, widget or embed them into your WordPress posts.
 
-With Noptin, you can easily offer content upgrades and lead magnets to increase your email subscribers.
+With Noptin, you can easily offer content upgrades and lead magnets to gain more email subscribers.
 
-You can then send your newsletter subscribers timely emails or set up automated email campaigns. You can also notify them everytime you publish a new blog post.
+You can then send your newsletter subscribers beautiful emails or set up automated email campaigns. You can also notify them everytime you publish a new blog post.
 
 Let users sign up for your email list using any of the following email opt-in form types:-
 
@@ -28,7 +30,7 @@ Let users sign up for your email list using any of the following email opt-in fo
 
 These are shown in a popup or lightbox overlay and have a very high conversion rate. You can easily create an email popup form and attach one of our trigger options.
 
-For example, you can display the newsletter form when the user is about to leave your website. Also known as Exit Intent trigger.
+For example, you can display the newsletter optin form when the user is about to leave your website. Also known as Exit Intent trigger.
 
 = Embedded Email Opt-in Forms =
 
@@ -36,7 +38,20 @@ Noptin allows you to embed an email opt-in form inside any post, page or custom 
 
 = Email Opt-in Widgets =
 
-Noptin ships with two widgets that make creating your newsletter subscription forms a breeze.
+Noptin ships with two optin widgets that make creating your newsletter subscription forms a breeze.
+
+= Content Upgrades =
+
+Noptin makes it easy to create content upgrade newsletter optin forms. You set the URL to your lead magnet as the redirect URL and new subscribers will be able to download your lead magnets after they subscribe.
+
+= Automated New Post Notifications =
+
+Get your email subscribers to re-visit your website by sending them an email everytime you publish a new blog post.
+
+= One-Time Email Newsletters =
+
+You can also send beautiful newsletters from WordPress to all your subscribers anytime you like.
+
 
 == Installation ==
 

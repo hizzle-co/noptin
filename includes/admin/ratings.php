@@ -12,14 +12,14 @@ if (!defined('ABSPATH')) {
     die;
 }
 
-//When a new subscriber registers, check count. Trigger on 1, 10,100,1000
-//Leave a review, maybe later, i already did
+// When a new subscriber registers, check count. Trigger on 1, 10,100,1000
+// Leave a review, maybe later, i already did
 add_action('noptin_add_ajax_subscriber', 'noptin_maybe_trigger_value_rating');
 function noptin_maybe_trigger_value_rating() {
 
     global $wpdb;
 
-    //Do not show update nag
+    // Do not show update nag
     update_option('noptin_show_update_nag', 'no');
 
     $status = get_option('noptin_review_status', 'later');
@@ -35,7 +35,7 @@ function noptin_maybe_trigger_value_rating() {
 
     if($count > 1000){
 
-        //If the user has already reacted to this nag, abort
+        // If the user has already reacted to this nag, abort
         if($status == 1000){
             return;
         }
@@ -70,7 +70,7 @@ function noptin_maybe_trigger_value_rating() {
 
     }
 
-    //If we are here, we should display an update nag
+    // If we are here, we should display an update nag
     update_option('noptin_show_update_nag', 'yes');
     update_option('noptin_update_nag_msg', $msg);
 }
@@ -83,7 +83,7 @@ function noptin_maybe_show_rating_msg() {
         return;
     }
 
-    //Print the nag
+    // Print the nag
     $class = 'notice notice-success is-dismissible';
     $message = get_option('noptin_update_nag_msg', '');
     $link = '

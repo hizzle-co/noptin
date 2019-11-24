@@ -64,10 +64,10 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function prepare_query() {
 
-		//Campaigns to display on every page
+		// Campaigns to display on every page
 		$per_page = 10;
 
-		//Prepare query params
+		// Prepare query params
 		$paged     		= empty( $_GET['paged'] )   			 ? 1      : $_GET['paged'];
 		$orderby   		= empty( $_GET['orderby'] ) 			 ? 'id'   : $_GET['orderby'];
 		$order     		= empty( $_GET['order'] )   			 ? 'desc' : $_GET['order'];
@@ -81,7 +81,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			$meta_value = $_GET['_subscriber_via'];
 		}
 
-		//Fetch the subscribers
+		// Fetch the subscribers
 		$noptin_admin      = Noptin_Admin::instance();
 		$this->items 	   = $noptin_admin->get_subscribers( $paged, $meta_key, $meta_value );
 

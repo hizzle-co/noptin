@@ -20,15 +20,15 @@ if( !defined( 'ABSPATH' ) ) {
 
 		if( noptin_should_show_optins() ) {
 
-			//Maybe ask users to subscribe to the newsletter after commenting...
+			// Maybe ask users to subscribe to the newsletter after commenting...
 			add_filter( 'comment_form_submit_field', array( $this, 'comment_form') );
 			add_action( 'comment_post', array( $this, 'subscribe_commentor') );
 
-			//... or when registering
+			// ... or when registering
 			add_action( 'register_form', array( $this, 'register_form') );
 			add_action( 'user_register', array( $this, 'subscribe_registered_user') );
 
-			//Comment prompts
+			// Comment prompts
 			add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
 
 		}

@@ -18,31 +18,31 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
-		//Register post types
+		// Register post types
 		add_action( 'init', array( $this, 'register_post_types') );
 
-		//Remove some meta boxes
+		// Remove some meta boxes
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes') );
 
-		//And some actions
+		// And some actions
 		add_filter( 'post_row_actions', array( $this, 'remove_actions'), 10, 2 );
 
-		//Register our special meta box
+		// Register our special meta box
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes') );
 
-		//Filter form columns
+		// Filter form columns
 		add_filter ( 'manage_noptin-form_posts_columns', array( $this, 'manage_form_columns' ) );
 
-		//Display columns
+		// Display columns
 		add_action ( 'manage_noptin-form_posts_custom_column', array( $this, 'display_form_columns' ), 10, 2 );
 
-		//Custom form filters
+		// Custom form filters
 		add_action( 'restrict_manage_posts', array( $this, 'custom_filters' ), 10 );
 
-		//Apply our custom form filters
+		// Apply our custom form filters
 		add_filter( 'parse_query', array( $this, 'apply_custom_filters' ) , 10);
 
-		//Add custom sortable colums
+		// Add custom sortable colums
 		add_filter( 'manage_edit-noptin-form_sortable_columns', array( $this, 'add_sortable_columns' ) );
     }
 
@@ -64,10 +64,10 @@ if( !defined( 'ABSPATH' ) ) {
 		*/
 		do_action( 'noptin_register_post_type' );
 
-		//Optin forms
+		// Optin forms
 		register_post_type( 'noptin-form'	, $this->get_form_post_type_details() );
 
-		//Email campaign
+		// Email campaign
 		register_post_type( 'noptin-campaign'	, $this->get_email_campaign_post_type_details() );
 
 		/**
@@ -222,11 +222,11 @@ if( !defined( 'ABSPATH' ) ) {
 		unset( $columns['date'] );
 		$columns['title'] 	  	  = __( 'Form Name', 'newsletter-optin-box' );
 		$columns['type'] 	  	  = __( 'Form Type', 'newsletter-optin-box' );
-		//$columns['shortcode'] 	  = __( 'Shortcode', 'newsletter-optin-box' );
+		// $columns['shortcode'] 	  = __( 'Shortcode', 'newsletter-optin-box' );
 		$columns['impressions']   = __( 'Impressions', 'newsletter-optin-box' );
 		$columns['subscriptions'] = __( 'Subscriptions', 'newsletter-optin-box' );
 		$columns['conversion']    = __( 'Conversion Rate', 'newsletter-optin-box' );
-		//$columns['date'] 	  	  = __( 'Date', 'newsletter-optin-box' );
+		// $columns['date'] 	  	  = __( 'Date', 'newsletter-optin-box' );
 		return $columns;
 
 	}
@@ -243,12 +243,12 @@ if( !defined( 'ABSPATH' ) ) {
 				$views  = (int) get_post_meta ( $post_id, '_noptin_subscribers_count', true );
 				if( empty( $views ) ) {
 
-					//Ensure that there is always a subscriber count for sorting to count
+					// Ensure that there is always a subscriber count for sorting to count
 					update_post_meta( $post_id, '_noptin_subscribers_count', 0 );
 
 				} else {
 
-					//Link to the list of subscribers who signed up using this specific form
+					// Link to the list of subscribers who signed up using this specific form
 					$url    = get_noptin_subscribers_overview_url();
 					$url    = esc_url( add_query_arg( '_subscriber_via', $post_id, $url ) );
 					$title  = esc_attr__( 'View the list of subscribers who signed up using this form.',  'newsletter-optin-box' );
@@ -321,12 +321,12 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function custom_filters( $post_type ) {
 
-		//Make sure this is our post type
+		// Make sure this is our post type
 		if( 'noptin-form' !== $post_type ) {
 			return;
 		}
 
-		//Filter by form type
+		// Filter by form type
 		$form_types = array(
 			'sidebar' => __( 'Widget Forms',  'newsletter-optin-box' ),
 			'inpost'  => __( 'Shortcode Forms',  'newsletter-optin-box' ),
@@ -339,7 +339,7 @@ if( !defined( 'ABSPATH' ) ) {
       		$form_type = $_REQUEST['form_type'];
 		}
 
-		//build a custom dropdown list of values to filter by
+		// build a custom dropdown list of values to filter by
 		echo '<select id="noptin-form-type" name="form_type">';
 		echo '<option value="all">' . __( 'All Forms', 'newsletter-optin-box' ) . ' </option>';
 
@@ -359,12 +359,12 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function apply_custom_filters( $query ) {
 
-		//Make sure this is our query
+		// Make sure this is our query
 		if( !is_admin() || !$query->is_main_query() || 'noptin-form' != $query->query['post_type'] ){
 			return $query;
 		}
 
-		//Filter by form type
+		// Filter by form type
 		$form_types = array(
 			'sidebar' => __( 'Widget Forms',  'newsletter-optin-box' ),
 			'inpost'  => __( 'Shortcode Forms',  'newsletter-optin-box' ),
@@ -379,7 +379,7 @@ if( !defined( 'ABSPATH' ) ) {
 				$query->query_vars['meta_query'] = array();
 			}
 
-      		//modify the query_vars.
+      		// modify the query_vars.
     		$query->query_vars['meta_query'][] = array(
 				'key' 		=> '_noptin_optin_type',
 				'value' 		=> $form_type,
@@ -389,14 +389,14 @@ if( !defined( 'ABSPATH' ) ) {
 
 		}
 
-		//Order by impressions
+		// Order by impressions
 		if ( 'impressions' === $query->get( 'orderby') ) {
 			$query->set( 'orderby', 'meta_value' );
 			$query->set( 'meta_key', '_noptin_form_views' );
 			$query->set( 'meta_type', 'numeric' );
 		}
 
-		//Order by subscriptions
+		// Order by subscriptions
 		if ( 'subscriptions' === $query->get( 'orderby') ) {
 			$query->set( 'orderby', 'meta_value' );
 			$query->set( 'meta_key', '_noptin_subscribers_count' );

@@ -18,27 +18,27 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
-      	//Register new subscriber
+      	// Register new subscriber
 		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 
-		//Log form impressions
+		// Log form impressions
 		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 
-		//Download subscribers
+		// Download subscribers
 		add_action('wp_ajax_noptin_download_subscribers', array($this, 'download_subscribers'));
 
-		//Save settings
+		// Save settings
 		add_action('wp_ajax_noptin_save_options', array($this, 'save_options'));
 
-		//Create a new automation
+		// Create a new automation
 		add_action( 'wp_ajax_noptin_setup_automation', array( $this, 'setup_automation' ) );
 
-		//Delete campaign
+		// Delete campaign
 		add_action( 'wp_ajax_noptin_delete_campaign', array( $this, 'delete_campaign' ) );
 
-		//Send a test email
+		// Send a test email
 		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
 
 
@@ -53,7 +53,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function log_form_impression() {
 
-		//Verify nonce
+		// Verify nonce
 		check_ajax_referer( 'noptin' );
 
 		if(! empty( $_REQUEST['form_id'] ) ) {
@@ -74,7 +74,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
 	public function delete_campaign() {
 
-		//Verify nonce
+		// Verify nonce
 		check_ajax_referer( 'noptin_admin_nonce' );
 
 		if( !current_user_can( 'manage_options' ) || empty( $_GET['id'] ) ) {
@@ -98,7 +98,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
 	public function setup_automation() {
 
-		//Verify nonce
+		// Verify nonce
 		check_ajax_referer( 'noptin_campaign' );
 
 		if (! current_user_can( 'manage_options' ) ) {
@@ -118,10 +118,10 @@ if( !defined( 'ABSPATH' ) ) {
 			wp_die( -1, 400 );
 		}
 
-		//Filter automation setup data
+		// Filter automation setup data
 		$data = apply_filters( 'noptin_email_automation_setup_data', $data );
 
-		//Create a new automation
+		// Create a new automation
 		$args = array(
 			'post_title'        => $data['automation_name'],
             'post_content'      => empty( $data['email_body'] ) ? '' : $data['email_body'],
@@ -137,7 +137,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		$id = wp_insert_post( $args, true );
 
-        //If an error occured, return it
+        // If an error occured, return it
         if( is_wp_error( $id ) ) {
 			wp_die( $id, 400 );
 		}
@@ -162,24 +162,24 @@ if( !defined( 'ABSPATH' ) ) {
      */
 	public function send_test_email() {
 
-		//Verify nonce
+		// Verify nonce
 		check_ajax_referer( 'noptin_campaign', 'noptin_campaign_nonce' );
 
 		if (! current_user_can( 'manage_options' ) ) {
 			wp_die( -1, 403 );
 		}
 
-		//Prepare data
+		// Prepare data
 		$data = $_POST;
 
 		unset( $data['_wpnonce'] );
 		unset( $data['_wp_http_referer'] );
 		unset( $data['action'] );
 
-		//Remove slashes
+		// Remove slashes
 		$data = stripslashes_deep( $data );
 
-		//Ensure a valid test email has been provided
+		// Ensure a valid test email has been provided
 		if( empty( $data['email'] ) || !is_email( $data['email'] ) ) {
 			wp_send_json_error( __( 'Please provide a valid email address' ) );
 			exit;
@@ -187,7 +187,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		$to = sanitize_text_field( $data['email'] );
 
-		//Subject, body and preview text
+		// Subject, body and preview text
 		if( empty( $data['email_subject'] ) ) {
 			wp_send_json_error( __( 'You need to provide a subject for your email.' ) );
 			exit;
@@ -200,7 +200,7 @@ if( !defined( 'ABSPATH' ) ) {
 			exit;
 		}
 
-		//Is there a subscriber with that email?
+		// Is there a subscriber with that email?
 		$subscriber      = get_noptin_subscriber_by_email( $to );
 		$merge_tags 	 = array();
 
@@ -224,7 +224,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		$data = apply_filters( 'noptin_test_email_data', $data );
 
-		//Try sending the email
+		// Try sending the email
 		$mailer   = new Noptin_Mailer();
 		$email    = $mailer->get_email( $data );
 		$subject  = $mailer->get_subject( $data );
@@ -246,7 +246,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function add_subscriber() {
 
-		//Verify nonce
+		// Verify nonce
 		check_ajax_referer( 'noptin' );
 
 		// avoid bot submissions
@@ -254,7 +254,7 @@ if( !defined( 'ABSPATH' ) ) {
 			return;
 		}
 
-		//Prepare form fields
+		// Prepare form fields
 		$form = 0;
 
 		if( empty( $_REQUEST['noptin_form_id'] ) ) {
@@ -273,19 +273,19 @@ if( !defined( 'ABSPATH' ) ) {
 
 		} else {
 
-			//Get the form
+			// Get the form
 			$form   = noptin_get_optin_form( $_REQUEST['noptin_form_id'] );
 			$fields = $form->fields;
 		}
 
-		//Filter and sanitize the fields
+		// Filter and sanitize the fields
 		$filtered = array();
 
 		foreach( $fields as $field ) {
 
 			$type = $field['type']['type'];
 
-			//Prepare the field name
+			// Prepare the field name
 			$name = '';
 
 			if( 'email' == $type ) {
@@ -311,7 +311,7 @@ if( !defined( 'ABSPATH' ) ) {
 			$field_label = $field['type']['label'];
 			$value 		 = $_REQUEST[$name];
 
-			//required fields
+			// required fields
 			if( 'true' == $field['require'] && empty( $value ) ) {
 				die( sprintf(
 					'%s is required',
@@ -319,7 +319,7 @@ if( !defined( 'ABSPATH' ) ) {
 				);
 			}
 
-			//Sanitize email fields
+			// Sanitize email fields
 			if( 'email' == $type && !empty( $value ) ) {
 
 				if(! $value = sanitize_email( $value ) ) {
@@ -332,7 +332,7 @@ if( !defined( 'ABSPATH' ) ) {
 				}
 			}
 
-			//Sanitize text fields
+			// Sanitize text fields
 			if( 'textarea' != $type && !is_array( $value ) ) {
 				$value = sanitize_text_field( $value );
 			} else {
@@ -364,16 +364,16 @@ if( !defined( 'ABSPATH' ) ) {
 
 		if( is_object( $form ) ) {
 
-			//Basic housekeeping
+			// Basic housekeeping
 			update_noptin_subscriber_meta( $inserted, '_subscriber_via', $form->ID );
 			$count = (int) get_post_meta( $form->ID, '_noptin_subscribers_count', true );
 			update_post_meta( $form->ID, '_noptin_subscribers_count', $count + 1);
 
-			//msg
+			// msg
 			if( $form->subscribeAction == 'message' ) {
 				$result['msg'] = $form->successMessage;
 			} else {
-				//redirects
+				// redirects
 				$result['action']   = 'redirect';
 				$result['redirect'] = $form->redirectUrl;
 			}
@@ -397,7 +397,7 @@ if( !defined( 'ABSPATH' ) ) {
 			wp_die( -1, 403 );
 		}
 
-		//Check nonce
+		// Check nonce
 		check_ajax_referer( 'noptin_admin_nonce' );
 
 		/**
@@ -406,7 +406,7 @@ if( !defined( 'ABSPATH' ) ) {
          */
 		do_action('noptin_before_save_options');
 
-		//Prepare settings
+		// Prepare settings
 		$_settings =  stripslashes_deep( $_POST['state'] );
 		unset( $_settings['noptin_admin_nonce'] );
 		unset( $_settings['saved'] );
@@ -428,7 +428,7 @@ if( !defined( 'ABSPATH' ) ) {
 		}
 		$settings = apply_filters( 'noptin_sanitize_settings', $settings );
 
-		//Save them
+		// Save them
 		update_noptin_options( $settings );
 
 		wp_send_json_success(1);
@@ -448,7 +448,7 @@ if( !defined( 'ABSPATH' ) ) {
 			wp_die( -1, 403 );
 		}
 
-		//Check nonce
+		// Check nonce
 		$nonce = $_GET['admin_nonce'];
 		if (!wp_verify_nonce($nonce, 'noptin_admin_nonce')) {
 			echo __( 'Reload the page and try again.',  'newsletter-optin-box' );
@@ -469,7 +469,7 @@ if( !defined( 'ABSPATH' ) ) {
 		header("Content-Type:application/csv");
 		header("Content-Disposition:attachment;filename=subscribers.csv");
 
-	//create the csv
+	// create the csv
 	fputcsv($output, array(
 		__( 'First Name',  'newsletter-optin-box' ),
 		__( 'Second Name',  'newsletter-optin-box' ),
@@ -490,7 +490,7 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	do_action('noptin_after_download_subscribers', $this);
 
-	exit; //This is important
+	exit; // This is important
 }
 
 }

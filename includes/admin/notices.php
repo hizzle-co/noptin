@@ -13,7 +13,7 @@
 
 		const DISMISS_PER_USER = 'user';
 		const DISMISS_PER_SITE = 'site';
-		const DISMISS_PERMANENTLY = 3153600000; //100 years in seconds.
+		const DISMISS_PERMANENTLY = 3153600000; // 100 years in seconds.
 		const DISMISS_ACTION_PREFIX = 'ye_v1_dismiss-';
 
 		const DISMISSED_OPTION_PREFIX = 'ye_is_dismissed-';
@@ -249,7 +249,7 @@
 
 		protected function enqueueScriptOnce() {
 			if (!wp_script_is('ye-dismiss-notice', 'registered')) {
-				//Note: Queueing a script also registers it.
+				// Note: Queueing a script also registers it.
 				wp_enqueue_script(
 					'ye-dismiss-notice',
 					plugins_url('dismiss-notice.js', __FILE__),
@@ -286,7 +286,7 @@
 				return $this;
 			}
 
-			//Schedule the notice to appear on the next page.
+			// Schedule the notice to appear on the next page.
 			add_user_meta(
 				get_current_user_id(),
 				static::DELAYED_NOTICE_OPTION,
@@ -314,7 +314,7 @@
 				if (isset($notice)) {
 					$notice->show();
 
-					//Only show the notice once.
+					// Only show the notice once.
 					delete_user_meta($userId, static::DELAYED_NOTICE_OPTION, wp_slash($json));
 				}
 			}
@@ -333,7 +333,7 @@
 				return null;
 			}
 
-			//Ignore notices created by other versions of this class.
+			// Ignore notices created by other versions of this class.
 			if (self::getKey($properties, '_className') !== get_called_class()) {
 				return null;
 			}
@@ -465,10 +465,10 @@
 				delete_option($this->getDismissOptionName());
 			} else {
 				if ($scope === self::DISMISS_PER_SITE) {
-					//Un-dismiss it for all users.
+					// Un-dismiss it for all users.
 					delete_metadata('user', 0, $this->getDismissOptionName(), '', true);
 				} else {
-					//Un-dismiss just for the current user.
+					// Un-dismiss just for the current user.
 					delete_user_meta(get_current_user_id(), $this->getDismissOptionName());
 				}
 			}
@@ -487,7 +487,7 @@
 			$escapedPrefix = esc_sql($wpdb->esc_like(static::DISMISSED_OPTION_PREFIX . $prefix) . '%');
 
 			if (!is_string($escapedPrefix) || (strlen($escapedPrefix) < 2)) {
-				throw new \LogicException('Prefix must not be empty.'); //This should never happen.
+				throw new \LogicException('Prefix must not be empty.'); // This should never happen.
 			}
 
 			$wpdb->query(sprintf(
@@ -555,7 +555,7 @@
 				return;
 			}
 
-			//The notice will automatically set an AJAX hook when it gets unserialized.
+			// The notice will automatically set an AJAX hook when it gets unserialized.
 			self::tryUnserializeNotice($json);
 		}
 

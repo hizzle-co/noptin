@@ -29,10 +29,10 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	public function task( $item ) {
 		global $wpdb;
 
-		//First, prepare the campaign data
+		// First, prepare the campaign data
 		$item 		    = $this->prepare_campaign_data( $item );
 
-		//And abort in case of an error
+		// And abort in case of an error
 		if( empty( $item ) ) {
 			return false;
 		}
@@ -40,19 +40,19 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		$recipient_data = $item['next_recipient_data'];
 		unset( $item['next_recipient_data'] );
 
-		//If no email is set, move on to the next recipient
+		// If no email is set, move on to the next recipient
 		if( empty( $recipient_data['email'] ) ) {
 			return $item;
 		}
 
-		//Ensure that this subscriber is yet to be sent this campaign
+		// Ensure that this subscriber is yet to be sent this campaign
 		$key = '_campaign_' . $item['key'];
 		if( isset( $recipient_data['merge_tags'][$key] ) ) {
 			return $item;
 		}
 
 
-		//Try sending the email
+		// Try sending the email
 		$mailer   = new Noptin_Mailer();
 		$email    = $mailer->get_email( $recipient_data );
 		$subject  = $mailer->get_subject( $recipient_data );
@@ -96,16 +96,16 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	 */
 	public function prepare_campaign_data( $item ) {
 
-		//A unique key for this campaign
+		// A unique key for this campaign
 		$key = time() . wp_generate_password( 6, false );
 
-		//If this is a normal campaign, ensure it is published
+		// If this is a normal campaign, ensure it is published
 		if( isset( $item['campaign_id'] ) ) {
 
-			//Set the unique key to the campaign id
+			// Set the unique key to the campaign id
 			$key = $item['campaign_id'];
 
-			//Fetch the post and ensure it is a published campaign
+			// Fetch the post and ensure it is a published campaign
 			$post        = get_post( $item['campaign_id'] );
 			if( 'noptin-campaign' != $post->post_type || 'publish' != $post->post_status ) {
 				return false;
@@ -117,20 +117,20 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 			$item['key'] = $key;
 		}
 
-		//Fetch the next recipient of this campaign
+		// Fetch the next recipient of this campaign
 		$next_recipient = false;
 
-		//User can set recipients to be an array of subcriber ids or emails...
+		// User can set recipients to be an array of subcriber ids or emails...
 		if( isset( $item['recipients'] ) ) {
 			$next_recipient = array_shift(  $item['recipients']  );
 		}
 
-		//Or a WHERE query to be executed on the subscribers table
+		// Or a WHERE query to be executed on the subscribers table
 		if( empty( $next_recipient ) && isset( $item['subscribers_query'] ) ) {
 			$next_recipient = $this->fetch_subscriber_from_query( $item );
 		}
 
-		//If there is no other subscriber... abort
+		// If there is no other subscriber... abort
 		if( empty( $next_recipient ) ) {
 
 			if(! empty( $item['campaign_id'] ) ) {
@@ -144,47 +144,47 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 
 		$item['current_recipient'] = $next_recipient;
 
-		//Recipient data
+		// Recipient data
 		$item['next_recipient_data'] = array();
 		if( isset( $item['campaign_data'] ) ) {
 			$item['next_recipient_data'] = $item['campaign_data'];
 		}
 
-		//If this is a campaign, fetch the email body and subject
+		// If this is a campaign, fetch the email body and subject
 		if( isset( $item['campaign_id'] ) && empty( $item['next_recipient_data']['email_body'] ) ) {
 
-			//Email body is the post content
+			// Email body is the post content
 			$item['next_recipient_data']['email_body'] = $post->post_content;
 
-			//Email subject is the post title for newsletters and post_meta for campaign automations
+			// Email subject is the post title for newsletters and post_meta for campaign automations
 			if( 'newsletter' == get_post_meta( $post->ID, 'campaign_type', true ) ) {
 				$item['next_recipient_data']['email_subject'] = $post->post_title;
 			} else {
 				$item['next_recipient_data']['email_subject'] = get_post_meta( $post->ID, 'email_subject', true );
 			}
 
-			//Finally, fetch the preview text
+			// Finally, fetch the preview text
 			$item['next_recipient_data']['preview_text'] = get_post_meta( $post->ID, 'preview_text', true );
 
 		}
 
-		//Maybe fetch a subscriber from an email...
+		// Maybe fetch a subscriber from an email...
 		if( is_email( $next_recipient ) ) {
 			$item['next_recipient_data']['email'] = $next_recipient;
 			$subscriber = get_noptin_subscriber_by_email( $next_recipient );
 		}
 
-		//Or a subscriber id
+		// Or a subscriber id
 		if( is_numeric( $next_recipient ) ) {
 			$subscriber = get_noptin_subscriber( $next_recipient );
 		}
 
-		//Prepare the email merge tags
+		// Prepare the email merge tags
 		if( empty( $item['next_recipient_data']['merge_tags'] ) ) {
 			$item['next_recipient_data']['merge_tags'] = array();
 		}
 
-		//Add the subscriber details as merge tags
+		// Add the subscriber details as merge tags
 		if(! empty( $subscriber ) ) {
 
 			$item['next_recipient_data']['email']         = $subscriber->email;

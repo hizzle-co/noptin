@@ -569,7 +569,7 @@ function add_noptin_subscriber( $fields ) {
 	$table = $wpdb->prefix . 'noptin_subscribers';
 	$fields= wp_unslash( $fields );
 
-	//Ensure an email address is provided and it doesn't exist already
+	// Ensure an email address is provided and it doesn't exist already
 	if( empty( $fields['email'] ) || !is_email( $fields['email'] ) ) {
 		return __( "Please provide a valid email address",  'newsletter-optin-box' );
 	}
@@ -578,7 +578,7 @@ function add_noptin_subscriber( $fields ) {
 		return true;
 	}
 
-	//Maybe split name into first and last
+	// Maybe split name into first and last
 	if( isset( $fields['name'] ) ) {
 		$names = noptin_split_subscriber_name( $fields['name'] );
 
@@ -600,7 +600,10 @@ function add_noptin_subscriber( $fields ) {
 
 	$id = $wpdb->insert_id;
 
-	//Insert additional meta data
+	unset( $fields['last_name'] );
+	unset( $fields['name'] );
+
+	// Insert additional meta data
 	foreach( $fields as $field=>$value ){
 
 		if( isset( $database_fields[ $field ] ) || 'name' == $field ) {
@@ -659,10 +662,10 @@ function delete_noptin_subscriber( $subscriber ) {
 	$table  = $wpdb->prefix . 'noptin_subscribers';
 	$table2 = $wpdb->prefix . 'noptin_subscriber_meta';
 
-	//Delete the subscriber...
+	// Delete the subscriber...
 	$true1 = $wpdb->delete( $table, array( 'id' => $subscriber ), '%d');
 
-	//... and its meta data
+	// ... and its meta data
 	$true2 = $wpdb->delete( $table2, array( 'noptin_subscriber_id' => $subscriber ), '%d');
 
 	return $true1 && $true2;
@@ -877,7 +880,7 @@ function noptin_get_color_themes(){
     return apply_filters(
 		'noptin_form_color_themes',
 		array(
-            'Red'           => '#e51c23 #fafafa #c62828', //Base color, Secondary color, border color
+            'Red'           => '#e51c23 #fafafa #c62828', // Base color, Secondary color, border color
             'Pink'          => '#e91e63 #fafafa #ad1457',
             'Purple'        => '#9c27b0 #fafafa #6a1b9a',
             'Deep Purple'   => '#673ab7 #fafafa #4527a0',
@@ -1198,7 +1201,7 @@ function noptin_ob_get_clean( $file ) {
  */
 function noptin_new_subscriber_notify( $id, $fields ) {
 
-	//Are we sending new subscriber notifications?
+	// Are we sending new subscriber notifications?
 	if( empty( get_noptin_option( 'notify_admin' ) ) ) {
 		return;
 	}
@@ -1222,7 +1225,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	}
 
 	/* translators: %s: user email address */
-	//$message .= sprintf( __( 'Email: %s' ), $fields['email'] ) . "\r\n";
+	// $message .= sprintf( __( 'Email: %s' ), $fields['email'] ) . "\r\n";
 
 	$to      = get_option( 'admin_email' );
 

@@ -13,7 +13,7 @@
 
 				$field_types = get_noptin_optin_field_types();
 
-				//Change field type
+				// Change field type
 				$args  = array(
 					'el'        => 'select',
 					'label'     => 'Type',
@@ -23,7 +23,7 @@
 				$args  = Noptin_Vue::sanitize_el( 'field.type.type', $args );
 				Noptin_Vue::select( 'field.type.type', $args );
 
-				//Print field types specific settings
+				// Print field types specific settings
 				foreach( $field_types as $field_type ) {
 					do_action( 'noptin_field_type_settings', $field_type, $field_types );
 				}

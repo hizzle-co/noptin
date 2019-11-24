@@ -40,7 +40,7 @@
 				} else {
 					$value = maybe_unserialize( $value[0] );
 
-					//Skip anything else that is not a scalar
+					// Skip anything else that is not a scalar
 					if(! is_scalar( $value ) ) {
 						continue;
 					}
@@ -51,7 +51,7 @@
 
 
 
-				//Rename some fields
+				// Rename some fields
 				if( '_subscriber_via' == $key ) {
 
 					if( is_numeric( $value ) ) {

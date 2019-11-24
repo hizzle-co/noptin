@@ -14,28 +14,28 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	function __construct() {
 
-		//Display the newsletters page
+		// Display the newsletters page
 		add_action( 'noptin_email_campaigns_tab_newsletters', array( $this, 'show_newsletters' ) );
 		add_action( 'noptin_newsletters_section_view_campaigns', array( $this, 'view_newsletter_campaigns' ) );
 		add_action( 'noptin_newsletters_section_new_campaign', array( $this, 'render_email_campaign_form' ) );
 		add_action( 'noptin_newsletters_section_edit_campaign', array( $this, 'render_email_campaign_form' ) );
 
-		//Display the automations page
+		// Display the automations page
 		add_action( 'noptin_email_campaigns_tab_automations', array( $this, 'show_automations' ) );
 		add_action( 'noptin_automations_section_view_campaigns', array( $this, 'view_automation_campaigns' ) );
 		add_action( 'noptin_automations_section_edit_campaign', array( $this, 'render_automation_campaign_form' ) );
 
-		//Maybe save campaigns
+		// Maybe save campaigns
 		add_action( 'wp_loaded', array( $this, 'maybe_save_campaign' ) );
 		add_action( 'wp_loaded', array( $this, 'maybe_save_automation_campaign' ) );
 
-		//Maybe send a campaign
+		// Maybe send a campaign
 		add_action( 'transition_post_status', array( $this, 'maybe_send_campaign' ), 100, 3 );
 
-		//Delete campaign stats
+		// Delete campaign stats
 		add_action( 'delete_post', array( $this, 'maybe_delete_stats' ) );
 
-		//Email content
+		// Email content
 		add_filter( 'noptin_email_body', 'make_clickable', 9);
 		add_filter( 'noptin_email_body', 'force_balance_tags', 25);
 		add_filter( 'noptin_email_body', 'capital_P_dangit', 11);
@@ -229,16 +229,16 @@ class Noptin_Email_Campaigns_Admin {
 			$id = trim( $_GET['id'] );
 		}
 
-		//Prepare the campaign being edited
+		// Prepare the campaign being edited
 		$campaign_id  = absint( $id );
 		$campaign     = get_post( $id );
 
-		//Ensure this is an automation campaign
+		// Ensure this is an automation campaign
 		if (! is_noptin_campaign( $campaign, 'automation' ) ) {
 			return;
 		}
 
-		//Prepare data
+		// Prepare data
 		$automation_type = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'automation_type', true ) ) );
 		$preview_text    = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) );
 		$subject         = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) );
@@ -247,7 +247,7 @@ class Noptin_Email_Campaigns_Admin {
 		$supports_filter = !empty( $automations[ $automation_type ] ) && !empty( $automations[ $automation_type ]['support_filter'] );
 		$automations     = $this->get_automation_triggers();
 
-		//Load the automation campign form
+		// Load the automation campign form
 		include get_noptin_include_dir( 'admin/templates/automation-campaign-form.php' );
 
 	}
@@ -267,12 +267,12 @@ class Noptin_Email_Campaigns_Admin {
 			return;
 		}
 
-		//Verify nonce
+		// Verify nonce
 		if( empty( $_POST['noptin_campaign_nonce'] ) || !wp_verify_nonce( $_POST['noptin_campaign_nonce'], 'noptin_campaign' ) ) {
 			return $admin->show_error( __( 'Unable to save your campaign' ) );
 		}
 
-		//Prepare data
+		// Prepare data
 		$data   = stripslashes_deep( $_POST );
 		$id     = (int) $data['id'];
 
@@ -280,7 +280,7 @@ class Noptin_Email_Campaigns_Admin {
 		unset( $data['noptin-action'] );
 		unset( $data['id'] );
 
-		//Prepare post status
+		// Prepare post status
 		$status = get_post_status( $id );
 
 		if( !empty( $data['draft'] ) ) {
@@ -294,7 +294,7 @@ class Noptin_Email_Campaigns_Admin {
 		unset( $data['publish'] );
 		unset( $data['draft'] );
 
-		//Prepare post args
+		// Prepare post args
 		$post = array(
 			'ID'			   => $id,
 			'post_status'      => $status,
@@ -340,19 +340,19 @@ class Noptin_Email_Campaigns_Admin {
 			return;
 		}
 
-		//Verify nonce
+		// Verify nonce
 		if( empty( $_POST['noptin_campaign_nonce'] ) || !wp_verify_nonce( $_POST['noptin_campaign_nonce'], 'noptin_campaign' ) ) {
 			return $admin->show_error( __( 'Unable to save your campaign' ) );
 		}
 
-		//Prepare data
+		// Prepare data
 		$data   = stripslashes_deep( $_POST );
 
-		//Defaults
+		// Defaults
 		$id     = false;
 		$status = 'draft';
 
-		//Set post status
+		// Set post status
 		if( !empty( $data['id'] ) ) {
 			$id     = (int) $data['id'];
 			$status = ( 'draft' == get_post_status( $id ) ) ? 'draft' : 'publish';
@@ -366,7 +366,7 @@ class Noptin_Email_Campaigns_Admin {
 			$status = 'publish';
 		}
 
-		//Prepare post args
+		// Prepare post args
 		$post = array(
 			'post_status'      => $status,
 			'post_type'        => 'noptin-campaign',
@@ -433,12 +433,12 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	function maybe_send_campaign( $new_status, $old_status, $post ) {
 
-		//Maybe abort early
+		// Maybe abort early
 		if( 'publish' != $new_status || 'publish' == $old_status ) {
 			return;
 		}
 
-		//Ensure this is a newsletter campaign
+		// Ensure this is a newsletter campaign
 		if( 'noptin-campaign' == $post->post_type && 'newsletter' == get_post_meta( $post->ID, 'campaign_type', true ) ) {
 			$this->send_campaign( $post );
 		}
@@ -454,7 +454,7 @@ class Noptin_Email_Campaigns_Admin {
 
 		$item   = array(
 			'campaign_id' 		=> $post->ID,
-			'subscribers_query' => '1=1', //By default, send this to all active subscribers
+			'subscribers_query' => '1=1', // By default, send this to all active subscribers
 			'campaign_data'		=> array(
 				'campaign_id' 	=> $post->ID,
 				'template' 		=> get_noptin_include_dir( 'admin/templates/email-templates/paste.php' ),

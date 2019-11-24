@@ -18,10 +18,10 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
-      	//Prepend/Apend inpost forms to the post content
+      	// Prepend/Apend inpost forms to the post content
         add_filter( 'the_content', array( $this, 'append_inpost') );
 
-        //Register shortcode
+        // Register shortcode
         add_shortcode( 'noptin-form' , array( $this, 'do_shortcode') );
 
     }
@@ -35,12 +35,12 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function append_inpost( $content ) {
 
-        //Maybe abort early
+        // Maybe abort early
         if( is_admin() || !is_singular() || !in_the_loop() || !is_main_query() || is_noptin_actions_page() ){
             return  $content ;
         }
 
-        //...or the user is hiding all popups
+        // ...or the user is hiding all popups
         if ( isset( $_GET['noptin_hide'] ) && $_GET['noptin_hide'] == 'true') {
             return  $content ;
         }
@@ -48,20 +48,20 @@ if( !defined( 'ABSPATH' ) ) {
         $forms = $this->get_forms();
 		foreach( $forms as $form ) {
 
-            //Prepare the form
+            // Prepare the form
             $form = noptin_get_optin_form( $form );
 
-            //Can it be displayed?
+            // Can it be displayed?
             if(! $form->can_show() || empty( $form->inject ) ) {
                 continue;
             }
 
-            //If we are to prepend
+            // If we are to prepend
             if( 'both' == $form->inject || 'before' == $form->inject ) {
                 $content =  $form->get_html() . $content;
             }
 
-            //If we are to append
+            // If we are to append
             if( 'both' == $form->inject || 'after' == $form->inject ) {
                 $content .=  $form->get_html();
             }
@@ -106,15 +106,15 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function do_shortcode( $atts ) {
 
-        //Abort early if no id is specified
+        // Abort early if no id is specified
         if ( empty( $atts['id'] ) ) {
             return '';
         }
 
-        //Prepare the form
+        // Prepare the form
         $form = noptin_get_optin_form( trim( $atts['id'] ) );
 
-        //Maybe return its html
+        // Maybe return its html
         if( $form->can_show() ) {
             return $form->get_html();
         }

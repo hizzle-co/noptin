@@ -64,51 +64,51 @@ class Noptin_Mailer {
 	 */
 	public function prepare_template( $content, $data ) {
 
-		//Ensure the template exists
+		// Ensure the template exists
 		if(! file_exists( $data['template'] ) ) {
 			return $content;
 		}
 
-		//Preview text
+		// Preview text
 		$preview  = $this->get_preview_text( $data );
 		$preview  = apply_filters( 'noptin_email_preview', $preview, $data );
 
-		//Logo
+		// Logo
 		$logo  = $this->get_logo( $data );
 		$logo  = apply_filters( 'noptin_email_logo', $logo, $data );
 
-		//Content
+		// Content
 		$main_content  = $this->get_content( $content, $data );
 		$main_content  = apply_filters( 'noptin_email_content', $main_content, $content, $data );
 
-		//Email footer
+		// Email footer
 		$footer  = $this->get_footer( $data );
 		$footer  = apply_filters( 'noptin_email_footer', $footer, $data );
 
-		//Tracker
+		// Tracker
 		$tracker  = $this->get_tracker( $data );
 		$tracker  = apply_filters( 'noptin_email_tracker', $tracker, $data );
 
-		//Title
+		// Title
 		$title = '';
 
 		if(! empty( $data['email_subject'] ) ) {
 			$title = trim( $data['email_subject'] );
 		}
 
-		//Load it
+		// Load it
 		ob_start();
 		include $data['template'];
 		$email_content = ob_get_clean();
 
-		//Parse merge tags
+		// Parse merge tags
 		$email_content = $this->merge( $email_content, $data['merge_tags'] );
 
-		//Remove comments
+		// Remove comments
 		$email_content = preg_replace( "/<!--(.*)-->/Uis", '', $email_content );
 
 
-		//Emogrify the email
+		// Emogrify the email
 		require_once get_noptin_include_dir( 'class-noptin-emogrifier.php' );
 
 		try {
@@ -119,7 +119,7 @@ class Noptin_Mailer {
 
 		}
 
-		//Remove multiple line breaks
+		// Remove multiple line breaks
 		$email_content = preg_replace( "/[\r\n]+/", "\n", $email_content );
 
 		return $email_content;
@@ -159,7 +159,7 @@ class Noptin_Mailer {
 	 */
 	public function get_logo( $data = array() ) {
 
-		//Default logo url
+		// Default logo url
 		$url      = '';
 		$logo_url = apply_filters( 'noptin_email_logo_url', $url, $data );
 
@@ -230,12 +230,12 @@ class Noptin_Mailer {
 
 		$tags = wp_parse_args( $this->get_default_merge_tags(), $tags );
 
-		//Replace all available tags with their values
+		// Replace all available tags with their values
 		foreach( $tags as $key => $value ) {
 			$content = str_ireplace( "[[$key]]", $value, $content );
 		}
 
-		//Remove unavailable tags
+		// Remove unavailable tags
 		$content = preg_replace( "/\[\[\w+]\]/", '', $content );
 
 		return $content;
@@ -277,7 +277,7 @@ class Noptin_Mailer {
 	 *
 	 */
 	public function background_send( $to, $subject, $email ) {
-		//TODO
+		// TODO
 	}
 
 }

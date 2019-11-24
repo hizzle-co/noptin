@@ -68,7 +68,7 @@ class Noptin_Form_Editor {
     private function get_setting_fields() {
         return array(
 
-            //Basic settings
+            // Basic settings
             'basic'         => array(
                 'el'        => 'panel',
                 'title'     => __( 'Basic Options',  'newsletter-optin-box' ),
@@ -76,7 +76,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_basic_settings()
             ),
 
-            //Trigger Options
+            // Trigger Options
             'trigger'         => array(
                 'el'        => 'panel',
                 'title'     => __( 'Popup Options',  'newsletter-optin-box' ),
@@ -85,7 +85,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_trigger_settings()
             ),
 
-            //Targeting Options
+            // Targeting Options
             'targeting'     => array(
                 'el'        => 'panel',
                 'title'     => __( 'Page Targeting',  'newsletter-optin-box' ),
@@ -93,7 +93,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_targeting_settings()
             ),
 
-            //User targeting
+            // User targeting
             /*'userTargeting' => array(
                 'el'        => 'panel',
                 'title'     => 'User Targeting',
@@ -101,7 +101,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_user_settings()
             ),*/
 
-            //Device targeting
+            // Device targeting
             'deviceTargeting'   => array(
                 'el'            => 'panel',
                 'title'         => __( 'Device Targeting',  'newsletter-optin-box' ),
@@ -118,7 +118,7 @@ class Noptin_Form_Editor {
     private function get_basic_settings() {
         return array(
 
-			//Should we display the form on the frontpage?
+			// Should we display the form on the frontpage?
             'optinStatus'   => array(
                 'type'      => 'checkbox',
 				'el'        => 'input',
@@ -127,7 +127,7 @@ class Noptin_Form_Editor {
             ),
 
 
-            //Form type
+            // Form type
             'optinType'     => array(
                 'el'        => 'select',
                 'label'     => __( 'This form will be...',  'newsletter-optin-box' ),
@@ -135,8 +135,8 @@ class Noptin_Form_Editor {
                     'popup'      => __( 'Displayed in a popup',  'newsletter-optin-box' ),
                     'inpost'     => __( 'Embedded in a post',  'newsletter-optin-box' ),
                     'sidebar'    => __( 'Added to a widget area',  'newsletter-optin-box' ),
-                    //'flyin'      => 'Fly In Form',
-                    //'bar'        => 'Notification bar',
+                    // 'flyin'      => 'Fly In Form',
+                    // 'bar'        => 'Notification bar',
                 ),
             ),
 
@@ -153,7 +153,7 @@ class Noptin_Form_Editor {
                 ),
             ),
 
-            //What should happen after someone subscibes?
+            // What should happen after someone subscibes?
             'subscribeAction' => array(
                 'el'        => 'select',
                 'label'     => __( 'What should happen after the user subscribes',  'newsletter-optin-box' ),
@@ -163,7 +163,7 @@ class Noptin_Form_Editor {
                 ),
             ),
 
-            //Success message after subscription
+            // Success message after subscription
             'successMessage' => array(
                 'type'      => 'textarea',
                 'el'        => 'textarea',
@@ -171,7 +171,7 @@ class Noptin_Form_Editor {
                 'restrict'  => "subscribeAction=='message'",
             ),
 
-            //Where should we redirect the user after subscription?
+            // Where should we redirect the user after subscription?
             'redirectUrl' => array(
                 'type'      => 'text',
                 'el'        => 'input',
@@ -189,7 +189,7 @@ class Noptin_Form_Editor {
     private function get_trigger_settings() {
         return array(
 
-			//Once per session
+			// Once per session
             'DisplayOncePerSession' => array(
                 'type'      => 'checkbox',
 				'el'        => 'input',
@@ -198,7 +198,7 @@ class Noptin_Form_Editor {
 				'restrict'  => "triggerPopup!='after_click'",
             ),
 
-			//trigger when
+			// trigger when
 			'triggerPopup'  => array(
 				'el'        => 'select',
                 'label'     => __( 'Show this popup',  'newsletter-optin-box' ),
@@ -206,13 +206,13 @@ class Noptin_Form_Editor {
                     'immeadiate'      => __( 'Immediately',  'newsletter-optin-box' ),
                     'before_leave'    => __( 'Before the user leaves',  'newsletter-optin-box' ),
 					'on_scroll'       => __( 'After the user starts scrolling',  'newsletter-optin-box' ),
-					//'after_comment'   => 'After commenting',
+					// 'after_comment'   => 'After commenting',
 					'after_click'     => __( 'After clicking on something',  'newsletter-optin-box' ),
 					'after_delay'     => __( 'After a time delay',  'newsletter-optin-box' ),
                 ),
 			),
 
-            //CSS class of the items to watch out for clicks
+            // CSS class of the items to watch out for clicks
             'cssClassOfClick' => array(
                 'type'      => 'text',
                 'el'        => 'input',
@@ -220,7 +220,7 @@ class Noptin_Form_Editor {
                 'restrict'  => "triggerPopup=='after_click'",
             ),
 
-            //Time in seconds to delay
+            // Time in seconds to delay
             'timeDelayDuration' => array(
                 'type'      => 'text',
                 'el'        => 'input',
@@ -228,7 +228,7 @@ class Noptin_Form_Editor {
                 'restrict'  => "triggerPopup=='after_delay'",
 			),
 
-			//Scroll depth
+			// Scroll depth
             'scrollDepthPercentage' => array(
                 'type'      => 'text',
                 'el'        => 'input',
@@ -421,7 +421,7 @@ class Noptin_Form_Editor {
     private function get_design_fields() {
         return array(
 
-			//Color themes
+			// Color themes
             'colors'        => array(
                 'el'        => 'panel',
                 'title'     => __( 'Templates',  'newsletter-optin-box' ),
@@ -429,7 +429,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_templates_settings()
 			),
 
-			//overlay Design
+			// overlay Design
             'overlay'         => array(
                 'el'        => 'panel',
 				'title'     => __( 'Overlay',  'newsletter-optin-box' ),
@@ -438,7 +438,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_overlay_settings()
 			),
 
-            //Form Design
+            // Form Design
             'form'         => array(
                 'el'        => 'panel',
                 'title'     => __( 'Form',  'newsletter-optin-box' ),
@@ -446,7 +446,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_form_settings()
 			),
 
-			//Fields Design
+			// Fields Design
             'fields'        => array(
                 'el'        => 'panel',
                 'title'     => __( 'Fields',  'newsletter-optin-box' ),
@@ -454,7 +454,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_field_settings()
             ),
 
-            //Image Design
+            // Image Design
             'image'         => array(
                 'el'        => 'panel',
                 'title'     => __( 'Image',  'newsletter-optin-box' ),
@@ -462,7 +462,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_image_settings()
             ),
 
-            //Button Design
+            // Button Design
             'button'        => array(
                 'el'        => 'panel',
                 'title'     => __( 'Button',  'newsletter-optin-box' ),
@@ -470,7 +470,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_button_settings()
             ),
 
-            //Title Design
+            // Title Design
             'title'         => array(
                 'el'        => 'panel',
                 'title'     => __( 'Title',  'newsletter-optin-box' ),
@@ -478,7 +478,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_title_settings()
             ),
 
-            //Description Design
+            // Description Design
             'description'   => array(
                 'el'        => 'panel',
                 'title'     => __( 'Description',  'newsletter-optin-box' ),
@@ -486,7 +486,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_description_settings()
             ),
 
-            //Note Design
+            // Note Design
             'note'          => array(
                 'el'        => 'panel',
                 'title'     => __( 'Note',  'newsletter-optin-box' ),
@@ -494,7 +494,7 @@ class Noptin_Form_Editor {
                 'children'  => $this->get_note_settings()
             ),
 
-            //Css Design
+            // Css Design
             'css'          => array(
                 'el'        => 'panel',
                 'title'     => __( 'Custom CSS',  'newsletter-optin-box' ),
@@ -869,7 +869,7 @@ class Noptin_Form_Editor {
      */
     public function post_ids_to_options( $ids ) {
 
-        //Return post ids array
+        // Return post ids array
         if(! is_array( $ids ) ) {
             return array();
         }

@@ -53,10 +53,10 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	public function prepare_query() {
 		global $noptin_campaigns_query;
 
-		//Campaigns to display on every page
+		// Campaigns to display on every page
 		$per_page = 10;
 
-		//Prepare query params
+		// Prepare query params
 		$paged     = empty( $_GET['paged'] )   ? 1 : $_GET['paged'];
 		$orderby   = empty( $_GET['orderby'] ) ? 'id' : $_GET['orderby'];
 		$order     = empty( $_GET['order'] )   ? 'desc' : $_GET['order'];

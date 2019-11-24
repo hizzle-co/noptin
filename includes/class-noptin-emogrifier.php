@@ -1,6 +1,6 @@
 <?php
 
-//https://github.com/MyIntervals/emogrifier/
+// https://github.com/MyIntervals/emogrifier/
 
 /**
  * This class provides functions for converting CSS styles into inline style attributes in your HTML code.
@@ -350,7 +350,7 @@ class Noptin_Emogrifier {
             /** @var $node \DOMNode */
             foreach ($nodesWithStyleDisplayNone as $node) {
                 if ($node->parentNode && is_callable(array($node->parentNode,'removeChild'))) {
-                    //$node->parentNode->removeChild($node);
+                    // $node->parentNode->removeChild($node);
                 }
             }
         }

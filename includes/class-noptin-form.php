@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Noptin_Form {
 
-	//Form id
+	// Form id
 	protected $id = null;
 
 	/**
@@ -32,19 +32,19 @@ class Noptin_Form {
 	 */
 	public function __construct( $form = false ) {
 
-        //If this is an instance of the class...
+        // If this is an instance of the class...
 		if ( $form instanceof Noptin_Form ) {
 			$this->init( $form->data );
 			return;
         }
 
-        //... or an array of form properties
+        // ... or an array of form properties
         if ( is_array( $form ) ) {
 			$this->init( $form );
 			return;
 		}
 
-		//Try fetching the form by its post id
+		// Try fetching the form by its post id
 		if ( ! empty( $form ) && is_numeric( $form ) ) {
 			$form = absint( $form );
 
@@ -55,7 +55,7 @@ class Noptin_Form {
 		}
 
 
-		//If we are here then the form does not exist
+		// If we are here then the form does not exist
 		$this->init( $this->get_defaults() );
 	}
 
@@ -90,7 +90,7 @@ class Noptin_Form {
                 return false;
             }
 
-            //Ensure this is a valid form id
+            // Ensure this is a valid form id
 			$value = intval( $value );
 			if ( $value < 1 ) {
                 return false;
@@ -100,18 +100,18 @@ class Noptin_Form {
 			return false;
 		}
 
-		//Maybe fetch from cache
+		// Maybe fetch from cache
 		if ( $form = wp_cache_get( $value, 'noptin_forms' ) ) {
             return $form;
         }
 
-		//Fetch the post object from the db
+		// Fetch the post object from the db
 		$post = get_post( $value );
         if(! $post || $post->post_type != 'noptin-form' ) {
             return false;
 		}
 
-        //Init the form
+        // Init the form
         $form = array(
             'optinName'     => $post->post_title,
             'optinStatus'   => ( $post->post_status == 'publish' ),
@@ -127,7 +127,7 @@ class Noptin_Form {
 
         $form = array_replace( $state, $form );
 
-		//Update the cache with out data
+		// Update the cache with out data
 		wp_cache_add( $post->ID, $form, 'noptin_forms' );
 
 		return $this->sanitize_form_data( $form );
@@ -148,7 +148,7 @@ class Noptin_Form {
             'optinHTML'                     => __( 'This form is incorrectly configured',  'newsletter-optin-box' ),
             'optinType'                     => 'inpost',
 
-            //Opt in options
+            // Opt in options
             'formRadius'                    => '0px',
             'hideCloseButton'               => false,
             'closeButtonPos'                => 'along',
@@ -167,12 +167,12 @@ class Noptin_Form {
 			),
 			'inject'						=> '0',
             'buttonPosition'                => 'block',
-            'subscribeAction'               => 'message', //redirect
+            'subscribeAction'               => 'message', // redirect
             'successMessage'                => get_noptin_option( 'success_message' ),
             'redirectUrl'                   => '',
 
 
-			//Form Design
+			// Form Design
 			'noptinFormBgImg'				=> '',
 			'noptinFormBgVideo'				=> '',
             'noptinFormBg'                  => '#eeeeee',
@@ -181,46 +181,46 @@ class Noptin_Form {
             'formWidth'                     => '580px',
 			'formHeight'                    => '280px',
 
-			//Overlay
+			// Overlay
 			'noptinOverlayBgImg'			=> '',
 			'noptinOverlayBgVideo'			=> '',
             'noptinOverlayBg'               => 'rgba(96, 125, 139, 0.6)',
 
-            //image Design
+            // image Design
             'image'                         => '',
 			'imagePos'                      => 'right',
 			'imageMain'						=> '',
 			'imageMainPos'					=> '',
 
-            //Button designs
+            // Button designs
             'noptinButtonBg'                => '#313131',
             'noptinButtonColor'             => '#fefefe',
             'noptinButtonLabel'             => __( 'Subscribe Now',  'newsletter-optin-box' ),
 
-            //Title design
+            // Title design
             'hideTitle'                     => false,
             'title'                         => __( 'JOIN OUR NEWSLETTER',  'newsletter-optin-box' ),
             'titleColor'                    => '#313131',
 
-            //Description design
+            // Description design
             'hideDescription'               => false,
             'description'                   => __( 'Click on any text to edit it. Try <u>highlighting this text</u>.',  'newsletter-optin-box' ),
             'descriptionColor'              => '#32373c',
 
-            //Note design
+            // Note design
             'hideNote'                      => true,
             'note'                          => __( "We do not spam people",  'newsletter-optin-box' ),
             'noteColor'                     => '#607D8B',
             'hideOnNoteClick'               => false,
 
-            //Trigger Options
+            // Trigger Options
             'timeDelayDuration'             => 4,
             'scrollDepthPercentage'         => 25,
             'DisplayOncePerSession'         => true,
             'cssClassOfClick'               => '#id .class',
 			'triggerPopup'					=> 'immeadiate',
 
-            //Restriction Options
+            // Restriction Options
             'showEverywhere'                   	=> true,
             'showHome'              			=> true,
             'showBlog'                   		=> true,
@@ -234,7 +234,7 @@ class Noptin_Form {
 			'hideLargeScreens'              	=> false,
 			'showPostTypes'						=> array('post'),
 
-            //custom css
+            // custom css
             'CSS'                           => '.noptin-optin-form-wrapper *{}',
 
 		);
@@ -259,7 +259,7 @@ class Noptin_Form {
 
 		$defaults = $this->get_defaults();
 
-		//Arrays only please
+		// Arrays only please
 		if (! is_array( $data ) )
 			return $defaults;
 
@@ -268,13 +268,13 @@ class Noptin_Form {
 
         foreach( $data as $key => $value ){
 
-			//convert 'true' to a boolean true
+			// convert 'true' to a boolean true
             if( 'false' === $value ) {
                 $return[$key] = false;
                 continue;
             }
 
-			//convert 'false' to a boolean false
+			// convert 'false' to a boolean false
             if( 'true' === $value ) {
                 $return[$key] = true;
                 continue;
@@ -285,7 +285,7 @@ class Noptin_Form {
                 continue;
 			}
 
-			//Ensure props that expect array always receive arrays
+			// Ensure props that expect array always receive arrays
 			if(  !is_array( $data[$key] ) ) {
 				$return[$key] = $defaults[$key];
                 continue;
@@ -388,7 +388,7 @@ class Noptin_Form {
         }
 
 
-        //Update the cache with our new data
+        // Update the cache with our new data
         wp_cache_delete( $id, 'noptin_forms' );
         wp_cache_add($id, $this->data, 'noptin_forms' );
 		return true;
@@ -404,21 +404,21 @@ class Noptin_Form {
 	 */
 	private function create() {
 
-        //Prepare the args...
+        // Prepare the args...
         $args = $this->get_post_array();
 		unset( $args['ID'] );
 
 		$args['post_status'] = 'draft';
 
-        //... then create the form
+        // ... then create the form
         $id = wp_insert_post( $args, true );
 
-        //If an error occured, return it
+        // If an error occured, return it
         if( is_wp_error($id) ) {
             return $id;
         }
 
-		//Set the new id
+		// Set the new id
 		$this->id = $id;
 
 		$state = $this->data;
@@ -440,13 +440,13 @@ class Noptin_Form {
 	 */
 	private function update() {
 
-        //Prepare the args...
+        // Prepare the args...
         $args = $this->get_post_array();
 
-        //... then update the form
+        // ... then update the form
         $id = wp_update_post( $args, true );
 
-        //If an error occured, return it
+        // If an error occured, return it
         if( is_wp_error($id) ) {
             return $id;
         }
@@ -542,71 +542,71 @@ class Noptin_Form {
 	 */
 	public function can_show(){
 
-		//Abort early if the form is not published...
+		// Abort early if the form is not published...
 		if( !$this->exists() || !$this->is_published() ) {
 			return false;
 		}
 
-		//Always display click triggered popups
+		// Always display click triggered popups
 		if( 'popup' == $this->optinType && 'after_click' == $this->triggerPopup ) {
 			return true;
 		}
 
-		//... or the user wants to hide all forms
+		// ... or the user wants to hide all forms
 		if( !noptin_should_show_optins() ) {
 			return false;
 		}
 
-		//Maybe hide on mobile
+		// Maybe hide on mobile
 		if( $this->hideSmallScreens && wp_is_mobile() ) {
 			return false;
 		}
 
-		//Maybe hide on desktops
+		// Maybe hide on desktops
 		if( $this->hideLargeScreens && !wp_is_mobile() ) {
 			return false;
 		}
 
-		//Get current global post
+		// Get current global post
 		$post = get_post();
 
-		//Has the user restricted this to a few posts?
+		// Has the user restricted this to a few posts?
 		if(! empty( $this->onlyShowOn ) ) {
 			return is_object( $post ) && in_array( $post->ID, explode( ',', $this->onlyShowOn ) );
 		}
 
 
-		//or maybe forbidden it on this post?
+		// or maybe forbidden it on this post?
 		if( is_object( $post ) && in_array( $post->ID, explode( ',', $this->neverShowOn ) ) ) {
 			return false;
 		}
 
-		//Is this form set to be shown everywhere?
+		// Is this form set to be shown everywhere?
 		if( $this->showEverywhere ) {
 			return true;
 		}
 
-		//frontpage
+		// frontpage
 		if ( is_front_page() ) {
 			return $this->showHome;
 		}
 
-		//blog page
+		// blog page
 		if ( is_home() ) {
 			return $this->showBlog;
 		}
 
-		//search
+		// search
 		if ( is_search() ) {
 			return $this->showSearch;
 		}
 
-		//other archive pages
+		// other archive pages
 		if ( is_archive() ) {
 			return $this->showArchives;
 		}
 
-		//Single posts
+		// Single posts
 		$post_types = $this->showPostTypes;
 
 		if( empty( $post_types ) ) {
@@ -631,13 +631,13 @@ class Noptin_Form {
 
 		if( $type == 'popup' ){
 
-			//Background color
+			// Background color
 			if( $this->noptinOverlayBg ) {
 				$color = esc_attr( $this->noptinOverlayBg );
 				$style = "background-color: $color;";
 			}
 
-			//Background image
+			// Background image
 			if( $this->noptinOverlayBgImg ) {
 				$image = esc_url( $this->noptinOverlayBgImg );
 				$style .= "background-image: url($image);";
@@ -651,17 +651,17 @@ class Noptin_Form {
 		}
 		$html  = "<div class='$type_class $id_class' style='$style'>";
 
-		//Maybe print custom css
+		// Maybe print custom css
 		if(! empty( $this->CSS ) ) {
 
-			//Our best attempt at scoping styles
+			// Our best attempt at scoping styles
 			$wrapper = '.noptin-optin-form-wrapper';
 			$css     = str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS);
 			$css     = str_ireplace( $wrapper, ".$id_class $wrapper", $css);
 			$html   .= "<style>$css</style>";
 		}
 
-		//print main form html
+		// print main form html
 		return $html . $this->optinHTML . '</div>';
 	}
 
