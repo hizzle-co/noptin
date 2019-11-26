@@ -396,21 +396,6 @@ class Noptin_Form_Editor {
 				)
 			),
 
-			'mailpoet' => array(
-				'el'        => 'panel',
-				'title'     => 'MailPoet',
-				'id'        => 'mailpoet',
-				'children'  => array(
-					'mailpoettext'        	=> array(
-                        'el'                => 'paragraph',
-                        'content'           => sprintf(
-							esc_html__( 'Install the %s to email your subscribers via MailPoet.', 'newsletter-optin-box' ),
-							sprintf( '<a target="_blank" href="https://noptin.com/product/mailpoet/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> MailPoet addon</a>', get_home_url() )
-							),
-                        'style'             => 'color:#F44336;'
-                    ),
-				)
-			),
 		);
 	}
 
@@ -811,7 +796,7 @@ class Noptin_Form_Editor {
             'CSS'          => array(
 				'el'       => 'editor',
 				'tooltip'  => __( "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page",  'newsletter-optin-box' ),
-                'label'    => 'Enter Your Custom CSS <a href="https://noptin.com/guide/custom-css/" target="_blank">Read this first</a>',
+                'label'    => 'Enter Your Custom CSS <a href="https://noptin.com/guide/email-forms/opt-in-forms-editor/custom-css/" target="_blank">Read this first</a>',
             ),
 
         );

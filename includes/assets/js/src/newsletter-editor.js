@@ -209,7 +209,7 @@ export default {
 								showCloseButton: true,
 								confirmButtonText: 'Close',
 								confirmButtonColor: '#9e9e9e',
-								footer: `<a href="https://noptin.com/guide/email-troubleshooting">How to troubleshoot this error.</a>`
+								footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/">How to troubleshoot this error.</a>`
 							})
 
 						}
