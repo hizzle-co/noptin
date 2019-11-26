@@ -1202,7 +1202,8 @@ function noptin_ob_get_clean( $file ) {
 function noptin_new_subscriber_notify( $id, $fields ) {
 
 	// Are we sending new subscriber notifications?
-	if( empty( get_noptin_option( 'notify_admin' ) ) ) {
+	$notify = get_noptin_option( 'notify_admin' );
+	if( empty( $notify ) ) {
 		return;
 	}
 

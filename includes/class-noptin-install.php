@@ -138,7 +138,8 @@ class Noptin_Install {
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
 		// Add default campaigns
-		if(! empty( get_noptin_option('notify_new_post') ) ){
+		$notify = get_noptin_option('notify_new_post');
+		if(! empty( $notify ) ){
 
 			// Body
 			$content = get_noptin_option( 'new_post_content' );

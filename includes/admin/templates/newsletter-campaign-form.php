@@ -133,7 +133,7 @@
 											"<option %s value='%s'>%s</option>\n",
 											selected( $key, $unit, false ),
 											esc_attr( $key ),
-											esc_html( $value ),
+											esc_html( $value )
 										);
 									}
 								?>
