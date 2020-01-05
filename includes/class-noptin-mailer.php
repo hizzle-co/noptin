@@ -65,9 +65,12 @@ class Noptin_Mailer {
 	public function prepare_template( $content, $data ) {
 
 		// Ensure the template exists
-		if(! file_exists( $data['template'] ) ) {
+		$template  = apply_filters( 'noptin_mailer_template', $data['template'], $data );
+		if(! file_exists( $template ) ) {
 			return $content;
 		}
+
+		$data['template'] = $template;
 
 		// Preview text
 		$preview  = $this->get_preview_text( $data );
@@ -107,17 +110,21 @@ class Noptin_Mailer {
 		// Remove comments
 		$email_content = preg_replace( "/<!--(.*)-->/Uis", '', $email_content );
 
+		if( class_exists( 'DOMDocument' ) ) {
+		
+			// Emogrify the email
+			require_once get_noptin_include_dir( 'class-noptin-emogrifier.php' );
 
-		// Emogrify the email
-		require_once get_noptin_include_dir( 'class-noptin-emogrifier.php' );
-
-		try {
-			$emogrifier     = new Noptin_Emogrifier( $email_content );
-			$_email_content = $emogrifier->emogrify();
-			$email_content  = $_email_content;
-		} catch (Exception $e) {
+			try {
+				$emogrifier     = new Noptin_Emogrifier( $email_content );
+				$_email_content = $emogrifier->emogrify();
+				$email_content  = $_email_content;
+			} catch (Exception $e) {
+	
+			}
 
 		}
+		
 
 		// Remove multiple line breaks
 		$email_content = preg_replace( "/[\r\n]+/", "\n", $email_content );

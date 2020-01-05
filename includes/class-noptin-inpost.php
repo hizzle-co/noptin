@@ -36,7 +36,7 @@ if( !defined( 'ABSPATH' ) ) {
     public function append_inpost( $content ) {
 
         // Maybe abort early
-        if( is_admin() || !is_singular() || !in_the_loop() || !is_main_query() || is_noptin_actions_page() ){
+        if( is_admin() || !is_singular() || !in_the_loop() || !is_main_query() || is_noptin_actions_page() || is_preview() ){
             return  $content ;
         }
 

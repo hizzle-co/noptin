@@ -861,7 +861,8 @@ class Noptin_Admin {
 
 		// Docs page
         if( isset( $_GET['page'] ) && 'noptin-docs' == $_GET['page'] ) {
-            wp_redirect( 'https://noptin.com/guide/', 301 );
+            $url = sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( get_home_url() ) );
+            wp_redirect( $url, 301 );
 	        exit;
         }
 

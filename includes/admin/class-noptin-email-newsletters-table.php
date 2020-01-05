@@ -160,7 +160,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		}
 
 		$title = esc_attr( $item->post_date );
-		echo "<span title='$title'>$date</span>";
+		echo "<span title='$title' style='border-bottom: 1px dotted #333;'>$date</span>";
 	}
 
 	/**

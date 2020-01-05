@@ -213,28 +213,24 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	public function fetch_subscriber_from_query( $item ) {
 		global $wpdb;
 
+		// Avoid sending the same campaign twice
+		$meta_query = new WP_Meta_Query( array(
+			'relation' => 'AND',
+			array(
+				'key'     => '_campaign_' . $item['key'],
+				'compare' => 'NOT EXISTS',
+			),
+		));
+
+		// Subscribers' table
 		$table  = $wpdb->prefix . 'noptin_subscribers';
-		$table2 = $wpdb->prefix . 'noptin_subscriber_meta';
 
-		$key      = $wpdb->prepare( '%s', '_campaign_' . $item['key'] );
-		$to_avoid = $wpdb->get_col( "SELECT noptin_subscriber_id FROM $table2 WHERE meta_key = $key");
+		// Retrieve join and where clauses
+		$clauses = $meta_query->get_sql( 'noptin_subscriber', $table, 'id' );
 
-		if( empty( $to_avoid ) ) {
-			$to_avoid = '1=1';
-		} else {
-			$to_avoid = implode( ',', $to_avoid );
-			$to_avoid = "$table.id NOT IN ($to_avoid)";
-		}
+		$query = "SELECT $table.id FROM $table {$clauses['join']} WHERE {$item['subscribers_query']} AND $table.active = 0 {$clauses['where']} LIMIT 1";
 
-
-
-		$query = "SELECT $table.id
-			FROM $table
-			INNER JOIN $table2 ON ($table.id = $table2.noptin_subscriber_id)
-			WHERE $to_avoid AND $table.active = 0 AND " . $item['subscribers_query'] .
-			' LIMIT 1';
-
-		return $wpdb->get_var( $wpdb->prepare( $query, '_campaign_' . $item['key'] ) );
+		return $wpdb->get_var( $query );
 
 	}
 

@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.3
 Requires PHP: 5.3
-Version: 1.2.0
+Version: 1.2.1
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -90,3 +90,11 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 5. Noptin Dashboard
 6. Opt-in Forms Editor
 7. General Settings Page
+
+
+== Changelog ==
+
+= 1.2.1 - 2020-01-06 =
+- Do not inject shortcode forms on post previews - CHANGED
+- check if class DOMDocument exists before emogrifying - ADDED
+- New filter to change email templates - ADDED

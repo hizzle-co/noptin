@@ -590,7 +590,7 @@ function add_noptin_subscriber( $fields ) {
 		'email' 		=> $fields['email'],
 		'first_name'	=> empty( $fields['first_name'] ) ? '' : $fields['first_name'],
 		'second_name'	=> empty( $fields['last_name'] ) ? '' : $fields['last_name'],
-		'confirm_key'	=> md5($email) . wp_generate_password(4, false),
+		'confirm_key'	=> md5( $fields['email'] ) . wp_generate_password(4, false),
 		'date_created'	=> date("Y-m-d"),
 	);
 
