@@ -23,8 +23,8 @@
  * @copyright       Picocodes
  */
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) {
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
     die;
 }
 

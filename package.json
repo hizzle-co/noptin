@@ -53,6 +53,7 @@
     "vue-swatches": "^1.0.3",
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "serialize-javascript": ">=2.1.1"
   }
 }

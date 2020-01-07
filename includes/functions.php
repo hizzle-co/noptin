@@ -5,12 +5,12 @@
  * Simple WordPress optin form
  *
  * @since             1.0.0
- *
+ * @package           Noptin
  */
 
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-    die;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
 /**
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  * @return  object An object containing a reference to Noptin.
  */
 function noptin() {
-    return Noptin::instance();
+	return Noptin::instance();
 }
 
 /**
@@ -39,12 +39,11 @@ function get_noptin_subscriber_meta( $subscriber_id = 0, $meta_key = '', $single
 /**
  * Adds subscriber meta field for a subscriber.
  *
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $meta_key      The meta key to update.
- * @param   mixed   $meta_value   Metadata value. Must be serializable if non-scalar.
- * @param   mixed   $unique   Whether the same key should not be added.
- * @return  int|false         Meta ID on success, false on failure.
+ * @param   int  $subscriber_id  Subscriber ID.
+ * @param   string  $meta_key      The meta key to update.
+ * @param   mixed  $meta_value   Metadata value. Must be serializable if non-scalar.
+ * @param   mixed  $unique   Whether the same key should not be added.
+ * @return  int|false  Meta ID on success, false on failure.
  * @access  public
  * @since   1.0.5
  */
@@ -59,11 +58,11 @@ function add_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $un
  *
  * If the meta field for the subscriber does not exist, it will be added and its ID returned.
  *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $meta_key      The meta key to update.
- * @param   mixed   $meta_value   Metadata value. Must be serializable if non-scalar.
- * @param   mixed   $prev_value   Previous value to check before updating.
- * @return  mixed                 The new meta field ID if a field with the given key didn't exist and was therefore added, true on successful update, false on failure.
+ * @param   int  $subscriber_id  Subscriber ID.
+ * @param   string  $meta_key      The meta key to update.
+ * @param   mixed  $meta_value   Metadata value. Must be serializable if non-scalar.
+ * @param   mixed  $prev_value   Previous value to check before updating.
+ * @return  mixed  The new meta field ID if a field with the given key didn't exist and was therefore added, true on successful update, false on failure.
  * @access  public
  * @since   1.0.5
  */
@@ -76,11 +75,10 @@ function update_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, 
  *
  * You can match based on the key, or key and value. Removing based on key and value, will keep from removing duplicate metadata with the same key. It also allows removing all metadata matching the key, if needed.
  *
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $meta_key      The meta key to delete.
- * @param   mixed   $meta_value   Metadata value. Must be serializable if non-scalar.
- * @return  bool                 True on success, false on failure.
+ * @param   int  $subscriber_id  Subscriber ID.
+ * @param   string  $meta_key      The meta key to delete.
+ * @param   mixed  $meta_value   Metadata value. Must be serializable if non-scalar.
+ * @return  bool  True on success, false on failure.
  * @access  public
  * @since   1.0.5
  */
@@ -91,22 +89,21 @@ function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value =
 /**
  * Logs whenever a subscriber opens an email
  *
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $campaign_id    The opened email campaign.
+ * @param   int  $subscriber_id  Subscriber ID.
+ * @param   string  $campaign_id    The opened email campaign.
  * @access  public
  * @since   1.2.0
  */
 function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
 
 	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
-	if(! in_array( $campaign_id, $opened_campaigns ) ) {
+	if ( ! in_array( $campaign_id, $opened_campaigns ) ) {
 		$opened_campaigns[] = $campaign_id;
 		update_noptin_subscriber_meta( $subscriber_id, "_opened_campaigns", $opened_campaigns );
 		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_opened", 1 );
 
 
-		if( is_int( $campaign_id ) ) {
+		if ( is_int( $campaign_id ) ) {
 			$open_counts = (int) get_post_meta( $campaign_id, '_noptin_opens', true );
 			update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );;
 		}
@@ -442,7 +439,7 @@ function get_noptin_action_url( $action, $value = false ) {
  */
 function is_noptin_actions_page() {
 	$page = get_noptin_action_page();
-    return !empty( $page ) && is_page( $page );
+	return !empty( $page ) && is_page( $page );
 }
 
 /**
@@ -685,9 +682,9 @@ function delete_noptin_subscriber( $subscriber ) {
 function noptin_split_subscriber_name( $name ) {
 
 	$name       = trim($name);
-    $last_name  = (strpos($name, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $name);
-    $first_name = trim( preg_replace('#'.$last_name.'#', '', $name ) );
-    return array($first_name, $last_name);
+	$last_name  = (strpos($name, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $name);
+	$first_name = trim( preg_replace('#'.$last_name.'#', '', $name ) );
+	return array($first_name, $last_name);
 
 }
 
@@ -736,7 +733,7 @@ function noptin_subscribers_meta_table_exists(){
  * @return Noptin_Form
  */
 function noptin_get_optin_form( $id ){
-    return new Noptin_Form( $id );
+	return new Noptin_Form( $id );
 }
 
 /**
@@ -761,21 +758,21 @@ function noptin_count_optin_forms( $type = '' ){
 		$where .= " AND meta.meta_key='_noptin_optin_type'";
 	}
 
-    return $wpdb->get_var("$sql $where;");
+	return $wpdb->get_var("$sql $where;");
 }
 
 /**
  * Creates an optin form
  */
 function noptin_create_optin_form( $data = false ){
-    $form    = new Noptin_Form( $data );
-    $created = $form->save();
+	$form    = new Noptin_Form( $data );
+	$created = $form->save();
 
-    if( is_wp_error( $created ) ) {
-        return $created;
-    }
+	if( is_wp_error( $created ) ) {
+		return $created;
+	}
 
-    return $form->id;
+	return $form->id;
 }
 
 
@@ -783,58 +780,58 @@ function noptin_create_optin_form( $data = false ){
  * Deletes an optin form
  */
 function noptin_delete_optin_form( $id ){
-    return wp_delete_post( $id, true );
+	return wp_delete_post( $id, true );
 }
 
 /**
  * Duplicates an optin form
  */
 function noptin_duplicate_optin_form( $id ){
-    $form = noptin_get_optin_form( $id );
-    $form->duplicate();
-    return $form->id;
+	$form = noptin_get_optin_form( $id );
+	$form->duplicate();
+	return $form->id;
 }
 
 /**
  * Returns all optin forms
  */
 function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '='){
-    $args   = array(
-        'numberposts'      => -1,
-        'post_type'        => 'noptin-form',
-        'post_status'      => array( 'draft', 'publish' )
-    );
+	$args   = array(
+		'numberposts'      => -1,
+		'post_type'        => 'noptin-form',
+		'post_status'      => array( 'draft', 'publish' )
+	);
 
-    if( $meta_key ) {
-        $args['meta_query'] = array(
-                array(
-                    'key'       => $meta_key,
-                    'value'     => $meta_value,
-                    'compare'   => $compare,
-                )
-            );
+	if( $meta_key ) {
+		$args['meta_query'] = array(
+				array(
+					'key'       => $meta_key,
+					'value'     => $meta_value,
+					'compare'   => $compare,
+				)
+			);
 
-    }
-    return get_posts( $args );
+	}
+	return get_posts( $args );
 }
 
 /**
  * Returns post types
  */
 function noptin_get_post_types(){
-    $return = array();
-    $args   = array(
-        'public'    => true,
-        'show_ui'   => true
-    );
-    $post_types = get_post_types( $args, 'objects' );
+	$return = array();
+	$args   = array(
+		'public'    => true,
+		'show_ui'   => true
+	);
+	$post_types = get_post_types( $args, 'objects' );
 
-    foreach( $post_types as $obj ){
-        $return[$obj->name] = $obj->label;
-    }
-    unset( $return['attachment'] );
+	foreach( $post_types as $obj ){
+		$return[$obj->name] = $obj->label;
+	}
+	unset( $return['attachment'] );
 
-    return $return;
+	return $return;
 
 }
 
@@ -877,32 +874,32 @@ function noptin_get_optin_stats(){
  * Returns color themess
  */
 function noptin_get_color_themes(){
-    return apply_filters(
+	return apply_filters(
 		'noptin_form_color_themes',
 		array(
-            'Red'           => '#e51c23 #fafafa #c62828', // Base color, Secondary color, border color
-            'Pink'          => '#e91e63 #fafafa #ad1457',
-            'Purple'        => '#9c27b0 #fafafa #6a1b9a',
-            'Deep Purple'   => '#673ab7 #fafafa #4527a0',
-            'Purple'        => '#9c27b0 #fafafa #4527a0',
-            'Indigo'        => '#3f51b5 #fafafa #283593',
-            'Blue'          => '#2196F3 #fafafa #1565c0',
-            'Light Blue'    => '#03a9f4 #fafafa #0277bd',
-            'Cyan'          => '#00bcd4 #fafafa #00838f',
-            'Teal'          => '#009688 #fafafa #00695c',
-            'Green'         => '#4CAF50 #fafafa #2e7d32',
-            'Light Green'   => '#8bc34a #191919 #558b2f',
-            'Lime'          => '#cddc39 #191919 #9e9d24',
-            'Yellow'        => '#ffeb3b #191919 #f9a825',
-            'Amber'         => '#ffc107 #191919 #ff6f00',
-            'Orange'        => '#ff9800 #fafafa #e65100',
-            'Deep Orange'   => '#ff5722 #fafafa #bf360c',
-            'Brown'         => '#795548 #fafafa #3e2723',
-            'Blue Grey'     => '#607d8b #fafafa #263238',
-            'Black'         => '#313131 #fafafa #607d8b',
-            'White'         => '#ffffff #191919 #191919',
-            'Grey'          => '#aaaaaa #191919 #191919',
-        ));
+			'Red'           => '#e51c23 #fafafa #c62828', // Base color, Secondary color, border color
+			'Pink'          => '#e91e63 #fafafa #ad1457',
+			'Purple'        => '#9c27b0 #fafafa #6a1b9a',
+			'Deep Purple'   => '#673ab7 #fafafa #4527a0',
+			'Purple'        => '#9c27b0 #fafafa #4527a0',
+			'Indigo'        => '#3f51b5 #fafafa #283593',
+			'Blue'          => '#2196F3 #fafafa #1565c0',
+			'Light Blue'    => '#03a9f4 #fafafa #0277bd',
+			'Cyan'          => '#00bcd4 #fafafa #00838f',
+			'Teal'          => '#009688 #fafafa #00695c',
+			'Green'         => '#4CAF50 #fafafa #2e7d32',
+			'Light Green'   => '#8bc34a #191919 #558b2f',
+			'Lime'          => '#cddc39 #191919 #9e9d24',
+			'Yellow'        => '#ffeb3b #191919 #f9a825',
+			'Amber'         => '#ffc107 #191919 #ff6f00',
+			'Orange'        => '#ff9800 #fafafa #e65100',
+			'Deep Orange'   => '#ff5722 #fafafa #bf360c',
+			'Brown'         => '#795548 #fafafa #3e2723',
+			'Blue Grey'     => '#607d8b #fafafa #263238',
+			'Black'         => '#313131 #fafafa #607d8b',
+			'White'         => '#ffffff #191919 #191919',
+			'Grey'          => '#aaaaaa #191919 #191919',
+		));
 
 }
 
@@ -910,16 +907,16 @@ function noptin_get_color_themes(){
  * Returns optin templates
  */
 function noptin_get_optin_templates(){
-    $custom_templates = get_option( 'noptin_templates' );
+	$custom_templates = get_option( 'noptin_templates' );
 	$inbuilt_templates = include 'admin/templates/templates.php';
 
-    if(! is_array( $custom_templates ) ) {
-        $custom_templates = array();
+	if(! is_array( $custom_templates ) ) {
+		$custom_templates = array();
 	}
 
 	$templates = array_replace( $custom_templates, $inbuilt_templates );
 
-    return apply_filters( 'noptin_form_templates', $templates );
+	return apply_filters( 'noptin_form_templates', $templates );
 
 }
 
@@ -927,16 +924,16 @@ function noptin_get_optin_templates(){
  * Returns color themess
  */
 function noptin_get_form_design_props(){
-    return apply_filters(
+	return apply_filters(
 		'noptin_form_design_props',
 		array(
 			'hideCloseButton', 'closeButtonPos', 'singleLine', 'formRadius', 'formWidth',
 			'formHeight', 'noptinFormBg', 'fields', 'imageMain',
-            'noptinFormBorderColor', 'image', 'imagePos', 'noptinButtonLabel', 'buttonPosition',
-            'noptinButtonBg', 'noptinButtonColor', 'hideTitle', 'title', 'titleColor',
-            'hideDescription', 'description', 'descriptionColor', 'hideNote', 'hideOnNoteClick',
-            'note', 'noteColor', 'CSS', 'optinType'
-        ));
+			'noptinFormBorderColor', 'image', 'imagePos', 'noptinButtonLabel', 'buttonPosition',
+			'noptinButtonBg', 'noptinButtonColor', 'hideTitle', 'title', 'titleColor',
+			'hideDescription', 'description', 'descriptionColor', 'hideNote', 'hideOnNoteClick',
+			'note', 'noteColor', 'CSS', 'optinType'
+		));
 
 }
 
@@ -944,7 +941,7 @@ function noptin_get_form_design_props(){
  * Returns form field props
  */
 function noptin_get_form_field_props(){
-    return apply_filters( 'noptin_form_field_props', array( 'fields','fieldTypes' ));
+	return apply_filters( 'noptin_form_field_props', array( 'fields','fieldTypes' ));
 
 }
 
@@ -959,18 +956,18 @@ function noptin_localize_optin_editor( $state ){
 	$props[] = 'cssClassOfClick';
 	$props[] = 'triggerPopup';
 
-    $params = array(
-        'ajaxurl'      => admin_url('admin-ajax.php'),
-        'api_url'      => get_home_url( null, 'wp-json/wp/v2/'),
-        'nonce'        => wp_create_nonce('noptin_admin_nonce'),
-        'data'         => $state,
-        'templates'    => noptin_get_optin_templates(),
-        'color_themes' => noptin_get_color_themes(),
+	$params = array(
+		'ajaxurl'      => admin_url('admin-ajax.php'),
+		'api_url'      => get_home_url( null, 'wp-json/wp/v2/'),
+		'nonce'        => wp_create_nonce('noptin_admin_nonce'),
+		'data'         => $state,
+		'templates'    => noptin_get_optin_templates(),
+		'color_themes' => noptin_get_color_themes(),
 		'design_props' => $props,
 		'field_props'  => noptin_get_form_field_props(),
 	);
 
-    wp_localize_script('noptin', 'noptinEditor', $params);
+	wp_localize_script('noptin', 'noptinEditor', $params);
 }
 
 /**
@@ -989,7 +986,7 @@ function noptin_form_template_form_props(){
  */
 function noptin_form_template_wrapper_props(){
 
-    $props = array(
+	$props = array(
 		':data-trigger="triggerPopup"',
 		':data-after-click="cssClassOfClick"',
 		':data-on-scroll="scrollDepthPercentage"',
@@ -1016,16 +1013,16 @@ function noptin_form_template_wrapper_props(){
  */
 function noptin_get_debug_log_file(){
 
-    // get default log file location
-    $upload_dir = wp_upload_dir(null, false);
-    $file = trailingslashit($upload_dir['basedir']) . 'noptin-debug-log.php';
+	// get default log file location
+	$upload_dir = wp_upload_dir(null, false);
+	$file = trailingslashit($upload_dir['basedir']) . 'noptin-debug-log.php';
 
-    /**
-     * Filters the log file to write to.
-     *
-     * @param string $file The log file location. Default: /wp-content/uploads/noptin-debug.log
-     */
-    return apply_filters('noptin_debug_log_file', $file);
+	/**
+	 * Filters the log file to write to.
+	 *
+	 * @param string $file The log file location. Default: /wp-content/uploads/noptin-debug.log
+	 */
+	return apply_filters('noptin_debug_log_file', $file);
 
 }
 
@@ -1036,10 +1033,10 @@ function noptin_get_debug_log_file(){
  * @return string
  */
 function noptin_obfuscate_string($string){
-    $length = strlen($string);
-    $obfuscated_length = ceil($length / 2);
-    $string = str_repeat('*', $obfuscated_length) . substr($string, $obfuscated_length);
-    return $string;
+	$length = strlen($string);
+	$obfuscated_length = ceil($length / 2);
+	$string = str_repeat('*', $obfuscated_length) . substr($string, $obfuscated_length);
+	return $string;
 }
 
 /**
@@ -1047,10 +1044,10 @@ function noptin_obfuscate_string($string){
  * @ignore
  */
 function _noptin_obfuscate_email_addresses_callback($m){
-    $one = $m[1] . str_repeat('*', strlen($m[2]));
-    $two = $m[3] . str_repeat('*', strlen($m[4]));
-    $three = $m[5];
-    return sprintf('%s@%s.%s', $one, $two, $three);
+	$one = $m[1] . str_repeat('*', strlen($m[2]));
+	$two = $m[3] . str_repeat('*', strlen($m[4]));
+	$three = $m[5];
+	return sprintf('%s@%s.%s', $one, $two, $three);
 }
 
 /**
@@ -1060,7 +1057,7 @@ function _noptin_obfuscate_email_addresses_callback($m){
  * @return string
  */
 function noptin_obfuscate_email_addresses($string){
-    return preg_replace_callback('/([\w\.]{1,4})([\w\.]*)\@(\w{1,2})(\w*)\.(\w+)/', '_noptin_obfuscate_email_addresses_callback', $string);
+	return preg_replace_callback('/([\w\.]{1,4})([\w\.]*)\@(\w{1,2})(\w*)\.(\w+)/', '_noptin_obfuscate_email_addresses_callback', $string);
 }
 
 /**
@@ -1134,11 +1131,11 @@ function get_noptin_default_newsletter_subject() {
 	$subject = '';
 
 	/**
-     * Filters the default newsletter subject
-     *
-     * @param string $subject The default newsletter subject
-     */
-    return apply_filters('noptin_default_newsletter_subject', $subject);
+	 * Filters the default newsletter subject
+	 *
+	 * @param string $subject The default newsletter subject
+	 */
+	return apply_filters('noptin_default_newsletter_subject', $subject);
 
 }
 
@@ -1150,11 +1147,11 @@ function get_noptin_default_newsletter_preview_text() {
 	$preview_text = '';
 
 	/**
-     * Filters the default newsletter preview text
-     *
-     * @param string $preview_text The default newsletter preview text
-     */
-    return apply_filters('noptin_default_newsletter_preview_text', $preview_text);
+	 * Filters the default newsletter preview text
+	 *
+	 * @param string $preview_text The default newsletter preview text
+	 */
+	return apply_filters('noptin_default_newsletter_preview_text', $preview_text);
 
 }
 
@@ -1167,11 +1164,11 @@ function get_noptin_default_newsletter_body() {
 	$body         = include $noptin_admin->admin_path . 'templates/default-email-body.php';
 
 	/**
-     * Filters the default newsletter body
-     *
-     * @param string $body The default newsletter body
-     */
-    return apply_filters('noptin_default_newsletter_body', $body);
+	 * Filters the default newsletter body
+	 *
+	 * @param string $body The default newsletter body
+	 */
+	return apply_filters('noptin_default_newsletter_body', $body);
 
 }
 
@@ -1208,7 +1205,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	}
 
 	// The blogname option is escaped with esc_html on the way into the database in sanitize_option
-    // we want to reverse this for the plain text arena of emails.
+	// we want to reverse this for the plain text arena of emails.
 	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 	/* translators: %s: site title */
