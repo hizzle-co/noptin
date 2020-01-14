@@ -421,7 +421,7 @@ class Noptin_Email_Campaigns_Admin {
 	function maybe_delete_stats( $post_id ) {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'noptin_subscriber_meta';
+		$table = get_noptin_subscribers_meta_table_name();
 		$wpdb->delete( $table, array(
 			'meta_key' => "_campaign_$post_id",
 		) );

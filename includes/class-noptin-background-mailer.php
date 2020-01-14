@@ -223,7 +223,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		));
 
 		// Subscribers' table
-		$table  = $wpdb->prefix . 'noptin_subscribers';
+		$table  = get_noptin_subscribers_table_name();
 
 		// Retrieve join and where clauses
 		$clauses = $meta_query->get_sql( 'noptin_subscriber', $table, 'id' );

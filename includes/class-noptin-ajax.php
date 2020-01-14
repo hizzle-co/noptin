@@ -463,7 +463,7 @@ if( !defined( 'ABSPATH' ) ) {
 		do_action('noptin_before_download_subscribers', $this);
 
 		$output  = fopen("php://output", 'w') or die("Unsupported server");
-		$table   = $wpdb->prefix . 'noptin_subscribers';
+		$table   = get_noptin_subscribers_table_name();
 		$results = $wpdb->get_results("SELECT `first_name`, `second_name`, `email`, `active`, `confirmed`, `date_created`  FROM $table", ARRAY_N );
 
 		header("Content-Type:application/csv");

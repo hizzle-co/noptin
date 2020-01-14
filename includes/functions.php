@@ -514,8 +514,8 @@ function get_noptin_optin_field_types() {
 function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value = false ) {
 	global $wpdb;
 
-	$table     		= $wpdb->prefix . 'noptin_subscribers';
-	$meta_table     = $wpdb->prefix . 'noptin_subscriber_meta';
+	$table     		= get_noptin_subscribers_table_name();
+	$meta_table     = get_noptin_subscribers_meta_table_name();
 	$extra_sql 		= '';
 
 	if( false !== $meta_value ) {
@@ -547,7 +547,7 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
 function get_noptin_subscribers_growth() {
 	global $wpdb;
 
-	$table = $wpdb->prefix . 'noptin_subscribers';
+	$table = get_noptin_subscribers_table_name();
 	$sql   = "SELECT COUNT(`id`)/count(distinct `date_created`) as avg FROM `$table`;";
 
 	return (float) $wpdb->get_var($sql );
@@ -563,7 +563,7 @@ function get_noptin_subscribers_growth() {
 function add_noptin_subscriber( $fields ) {
 	global $wpdb;
 
-	$table = $wpdb->prefix . 'noptin_subscribers';
+	$table = get_noptin_subscribers_table_name();
 	$fields= wp_unslash( $fields );
 
 	// Ensure an email address is provided and it doesn't exist already
@@ -628,7 +628,7 @@ function add_noptin_subscriber( $fields ) {
 function get_noptin_subscriber( $subscriber ) {
 	global $wpdb;
 
-	$table  = $wpdb->prefix . 'noptin_subscribers';
+	$table  = get_noptin_subscribers_table_name();
 	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d;", $subscriber ) );
 
 }
@@ -642,7 +642,7 @@ function get_noptin_subscriber( $subscriber ) {
 function get_noptin_subscriber_by_email( $email ) {
 	global $wpdb;
 
-	$table  = $wpdb->prefix . 'noptin_subscribers';
+	$table  = get_noptin_subscribers_table_name();
 	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE email=%s;", $email ) );
 
 }
@@ -656,8 +656,8 @@ function get_noptin_subscriber_by_email( $email ) {
 function delete_noptin_subscriber( $subscriber ) {
 	global $wpdb;
 
-	$table  = $wpdb->prefix . 'noptin_subscribers';
-	$table2 = $wpdb->prefix . 'noptin_subscriber_meta';
+	$table  = get_noptin_subscribers_table_name();
+	$table2 = get_noptin_subscribers_meta_table_name();
 
 	// Delete the subscriber...
 	$true1 = $wpdb->delete( $table, array( 'id' => $subscriber ), '%d');
@@ -696,7 +696,7 @@ function noptin_split_subscriber_name( $name ) {
  */
 function noptin_email_exists( $email ){
 	global $wpdb;
-	$table = $wpdb->prefix . 'noptin_subscribers';
+	$table = get_noptin_subscribers_table_name();
 	$sql   = $wpdb->prepare( "SELECT COUNT(id) FROM $table WHERE email =%s;", $email );
 
 	return 0 < $wpdb->get_var( $sql );
@@ -709,7 +709,7 @@ function noptin_email_exists( $email ){
  */
 function noptin_subscribers_table_exists(){
 	global $wpdb;
-	$table = $wpdb->prefix . 'noptin_subscribers';
+	$table = get_noptin_subscribers_table_name();
 
 	return $table == $wpdb->get_var("SHOW TABLES LIKE '$table'" );
 }
@@ -721,7 +721,7 @@ function noptin_subscribers_table_exists(){
  */
 function noptin_subscribers_meta_table_exists(){
 	global $wpdb;
-	$table = $wpdb->prefix . 'noptin_subscriber_meta';
+	$table = get_noptin_subscribers_meta_table_name();
 
 	return $table == $wpdb->get_var("SHOW TABLES LIKE '$table'" );
 }
@@ -857,7 +857,7 @@ function noptin_should_show_optins(){
  */
 function noptin_get_optin_stats(){
 	global $wpdb;
-	$table 	= $wpdb->prefix . 'noptin_subscriber_meta';
+	$table 	= get_noptin_subscribers_meta_table_name();
 	$sql 	= "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `$table` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`";
 	$stats 	= $wpdb->get_results( $sql );
 
@@ -1233,3 +1233,23 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 
 }
 add_action( 'noptin_insert_subscriber', 'noptin_new_subscriber_notify', 10, 2 );
+
+/**
+ *  Returns the name of the subscribers' table
+ * 
+ * @since 1.2.2
+ * @return string The name of our subscribers table
+ */
+function get_noptin_subscribers_table_name() {
+	return $GLOBALS['wpdb']->prefix . 'noptin_subscribers';
+}
+
+/**
+ *  Returns the name of the subscribers' meta table
+ * 
+ * @since 1.2.2
+ * @return string The name of our subscribers meta table
+ */
+function get_noptin_subscribers_meta_table_name() {
+	return $GLOBALS['wpdb']->prefix . 'noptin_subscriber_meta';
+}

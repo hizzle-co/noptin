@@ -762,8 +762,8 @@ class Noptin_Admin {
     public function get_subscribers( $page=1, $meta_key='_subscriber_via', $meta_value=false ) {
         global $wpdb;
 
-		$table     		= $wpdb->prefix . 'noptin_subscribers';
-		$meta_table     = $wpdb->prefix . 'noptin_subscriber_meta';
+		$table     		= get_noptin_subscribers_table_name();
+		$meta_table     = get_noptin_subscribers_meta_table_name();
 		$limit 	   		= 10;
 		$offset	   		= absint( $page - 1 ) * $limit;
 		$extra_sql = '';

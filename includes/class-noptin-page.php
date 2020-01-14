@@ -142,7 +142,7 @@ if( !defined( 'ABSPATH' ) ) {
             return;
 		}
 
-		$table   = $wpdb->prefix . 'noptin_subscribers';
+		$table   = get_noptin_subscribers_table_name();
 		$updated = $wpdb->update(
 			$table,
 			array( 'active' 	 => 1 ),
