@@ -159,7 +159,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * the process is not already running.
 		 */
 		public function maybe_handle() {
-			// Don't lock up other requests while processing
+			// Don't lock up other requests while processing.
 			session_write_close();
 
 			if ( $this->is_process_running() ) {
@@ -231,7 +231,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		protected function lock_process() {
 			$this->start_time = time(); // Set start time of current process.
 
-			$lock_duration = ( property_exists( $this, 'queue_lock_time' ) ) ? $this->queue_lock_time : 60; // 1 minute
+			$lock_duration = ( property_exists( $this, 'queue_lock_time' ) ) ? $this->queue_lock_time : 60; // 1 minute.
 			$lock_duration = apply_filters( $this->identifier . '_queue_lock_time', $lock_duration );
 
 			set_site_transient( $this->identifier . '_process_lock', microtime(), $lock_duration );
@@ -343,7 +343,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * @return bool
 		 */
 		protected function memory_exceeded() {
-			$memory_limit   = $this->get_memory_limit() * 0.9; // 90% of max memory
+			$memory_limit   = $this->get_memory_limit() * 0.9; // 90% of max memory.
 			$current_memory = memory_get_usage( true );
 			$return         = false;
 
@@ -384,7 +384,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * @return bool
 		 */
 		protected function time_exceeded() {
-			$finish = $this->start_time + apply_filters( $this->identifier . '_default_time_limit', 20 ); // 20 seconds
+			$finish = $this->start_time + apply_filters( $this->identifier . '_default_time_limit', 20 ); // 20 seconds.
 			$return = false;
 
 			if ( time() >= $finish ) {

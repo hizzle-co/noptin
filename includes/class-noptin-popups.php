@@ -1,7 +1,7 @@
 <?php
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) {
+// Exit if accessed directly.
+if( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
@@ -18,7 +18,7 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
-      	// Add popups to the footer
+      	// Add popups to the footer.
         add_action( 'wp_footer', array( $this, 'display_popups') );
 
     }
@@ -37,7 +37,7 @@ if( !defined( 'ABSPATH' ) ) {
             return;
         }
 
-        // ...or the user is hiding all popups
+        // ...or the user is hiding all popups.
         if ( isset( $_GET['noptin_hide'] ) && $_GET['noptin_hide'] == 'true') {
             return;
         }
@@ -53,7 +53,7 @@ if( !defined( 'ABSPATH' ) ) {
         $popups = $this->get_popups();
 		foreach( $popups as $popup ) {
 
-            // Prepare the form
+            // Prepare the form.
             $form = noptin_get_optin_form( $popup );
 
             // Can it be displayed?

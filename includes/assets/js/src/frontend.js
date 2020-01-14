@@ -67,7 +67,7 @@
 			.addClass('open')
 			.on('click', (e) => {
 
-				// if the target of the click isn't the form nor a descendant of the form
+				// if the target of the click isn't the form nor a descendant of the form.
 				if (!$(popup).is(e.target) && $(popup).has(e.target).length === 0) {
 					hidePopup(popup)
 				}

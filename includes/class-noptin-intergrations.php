@@ -1,7 +1,7 @@
 <?php
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) {
+// Exit if accessed directly.
+if( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
@@ -24,11 +24,11 @@ if( !defined( 'ABSPATH' ) ) {
 			add_filter( 'comment_form_submit_field', array( $this, 'comment_form') );
 			add_action( 'comment_post', array( $this, 'subscribe_commentor') );
 
-			// ... or when registering
+			// ... or when registering.
 			add_action( 'register_form', array( $this, 'register_form') );
 			add_action( 'user_register', array( $this, 'subscribe_registered_user') );
 
-			// Comment prompts
+			// Comment prompts.
 			add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
 
 		}
@@ -45,7 +45,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function comment_form( $submit_field ) {
 
-		if(! get_noptin_option( 'comment_form' ) ) {
+		if( ! get_noptin_option( 'comment_form' ) ) {
 			return $submit_field;
 		}
 
@@ -68,7 +68,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function subscribe_commentor( $comment_id ) {
 
-		if(! get_noptin_option( 'comment_form' ) ) {
+		if( ! get_noptin_option( 'comment_form' ) ) {
 			return;
 		}
 
@@ -85,7 +85,7 @@ if( !defined( 'ABSPATH' ) ) {
 				'_subscriber_via' => 'comment'
 			);
 
-			if(! is_string( add_noptin_subscriber( $fields ) ) ) {
+			if( ! is_string( add_noptin_subscriber( $fields ) ) ) {
 				do_action('noptin_after_add_comment_subscriber');
 			}
 
@@ -102,7 +102,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function register_form() {
 
-		if(! get_noptin_option( 'register_form' ) ) {
+		if( ! get_noptin_option( 'register_form' ) ) {
 			return;
 		}
 
@@ -124,7 +124,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function subscribe_registered_user( $user_id ) {
 
-		if(! get_noptin_option( 'register_form' ) ) {
+		if( ! get_noptin_option( 'register_form' ) ) {
 			return;
 		}
 
@@ -132,7 +132,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 			$user = get_userdata( $user_id );
 
-			if(! $user ) {
+			if( ! $user ) {
 				return;
 			}
 
@@ -142,7 +142,7 @@ if( !defined( 'ABSPATH' ) ) {
 				'_subscriber_via' => 'registration'
 			);
 
-			if(! is_string( add_noptin_subscriber( $fields ) ) ) {
+			if( ! is_string( add_noptin_subscriber( $fields ) ) ) {
 				do_action('noptin_after_add_registration_subscriber');
 			}
 

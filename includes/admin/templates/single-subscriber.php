@@ -20,7 +20,7 @@
 				<td><strong><?php _e( 'Email Address', 'newsletter-optin-box'); ?></strong></td>
 				<td><?php esc_html_e( $data->email ); ?></td>
 			</tr>
-			<?php if(! empty( $data->first_name ) ) { ?>
+			<?php if( ! empty( $data->first_name ) ) { ?>
 			<tr>
 				<td><strong><?php _e( 'Subscriber Name', 'newsletter-optin-box'); ?></strong></td>
 				<td><?php esc_html_e( $data->first_name . ' ' . $data->second_name ); ?></td>
@@ -40,8 +40,8 @@
 				} else {
 					$value = maybe_unserialize( $value[0] );
 
-					// Skip anything else that is not a scalar
-					if(! is_scalar( $value ) ) {
+					// Skip anything else that is not a scalar.
+					if( ! is_scalar( $value ) ) {
 						continue;
 					}
 
@@ -51,7 +51,7 @@
 
 
 
-				// Rename some fields
+				// Rename some fields.
 				if( '_subscriber_via' == $key ) {
 
 					if( is_numeric( $value ) ) {

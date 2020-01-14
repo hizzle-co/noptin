@@ -65,7 +65,7 @@
 
 									<?php
 
-									if(! empty( $args['support_delay'] ) ) {
+									if( ! empty( $args['support_delay'] ) ) {
 
 										$label = __( 'Delay', 'newsletter-optin-box' );
 										if( is_string( $args['support_delay'] ) ) {
@@ -96,7 +96,7 @@
 
 											echo "</td></tr>";
 
-											if(! empty( $args['pre_setup_cb'] ) ) {
+											if( ! empty( $args['pre_setup_cb'] ) ) {
 												call_user_func( $args['pre_setup_cb'] );
 											}
 

@@ -1,7 +1,7 @@
 <?php
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) {
+// Exit if accessed directly.
+if( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
@@ -18,13 +18,13 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public function __construct() {
 
-        // Prepare widget args
+        // Prepare widget args.
         $widget_ops = array(
             'classname'   => 'noptin_widget_premade',
             'description' => __( 'Use this widget to add newsletter forms made using the Form Editor',  'newsletter-optin-box' ),
         );
 
-        // Add it to the list of widgets
+        // Add it to the list of widgets.
         parent::__construct( 'noptin_widget_premade', 'Noptin Premade Form', $widget_ops );
 
     }
@@ -43,14 +43,14 @@ if( !defined( 'ABSPATH' ) ) {
             return;
         }
 
-        // ...or the form cannot be displayed on this page
+        // ...or the form cannot be displayed on this page.
         $form = noptin_get_optin_form( trim( $instance['form'] ) );
 
-        if( 'sidebar' != $form->optinType || !$form->can_show() ) {
+        if( 'sidebar' != $form->optinType || ! $form->can_show() ) {
             return;
         }
 
-        // Display the widget
+        // Display the widget.
         echo $args['before_widget'];
         echo $form->get_html();
         echo $args['after_widget'];
@@ -65,13 +65,13 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function forms_select( $selected ) {
 
-        // Get all widget forms
+        // Get all widget forms.
         $forms = $this->get_forms();
 
-        // Create <option> tags for each form
+        // Create <option> tags for each form.
         foreach ( $forms as $form ) {
 
-            // Fetch the form title
+            // Fetch the form title.
             $name      = esc_html( get_the_title( $form ) );
 
             // Is it selected?

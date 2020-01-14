@@ -1,7 +1,7 @@
 <?php
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) {
+// Exit if accessed directly.
+if( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
@@ -19,22 +19,22 @@ if( !defined( 'ABSPATH' ) ) {
 	public function __construct() {
 
 
-        // Register shortcode
+        // Register shortcode.
 		add_shortcode( 'noptin_action_page' , array( $this, 'do_shortcode' ) );
 
-		// User unsubscribe
+		// User unsubscribe.
 		add_action( "noptin_page_unsubscribe", array( $this, 'unsubscribe_user' ) );
 
-		// Email open
+		// Email open.
 		add_filter( "noptin_actions_page_template", array( $this, 'email_open' ) );
 
-		// Email click
+		// Email click.
 		add_filter( "noptin_actions_page_template", array( $this, 'email_click' ) );
 
-		// Filter template
+		// Filter template.
 		add_filter( "page_template", array( $this, 'filter_page_template' ) );
 
-		// Admin bar
+		// Admin bar.
 		add_filter('show_admin_bar', array( $this, 'maybe_hide_admin_bar' ) );
 
     }
@@ -48,7 +48,7 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public function do_shortcode( $atts ) {
 
-        // Abort early if no action is specified
+        // Abort early if no action is specified.
         if ( empty( $_REQUEST['noptin_action'] ) ) {
 			return '';
 		}
@@ -87,7 +87,7 @@ if( !defined( 'ABSPATH' ) ) {
 			log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id );
 		}
 
-		// Display 1x1 pixel transparent gif
+		// Display 1x1 pixel transparent gif.
 		nocache_headers();
 		header( "Content-type: image/gif" );
 		header( "Content-Length: 42" );
@@ -136,7 +136,7 @@ if( !defined( 'ABSPATH' ) ) {
     public function unsubscribe_user( $key ) {
 		global $wpdb;
 
-        // Ensure a user key is specified
+        // Ensure a user key is specified.
         if ( empty( $key ) ) {
 			$this->print_paragraph( __( 'Unable to subscribe you at this time.',  'newsletter-optin-box' ) );
             return;
@@ -168,7 +168,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		if( is_noptin_actions_page() ) {
 
-			// No action specified, redirect back home
+			// No action specified, redirect back home.
 			if( empty( $_REQUEST['noptin_action'] ) ) {
 				wp_redirect( get_home_url() );
 				exit;

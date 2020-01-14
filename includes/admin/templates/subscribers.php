@@ -62,7 +62,7 @@
 		<div style="margin-top: 16px;">
 			<?php
 
-				// Previous page
+				// Previous page.
 				if( $page > 1 ) {
 
 					printf(
@@ -73,12 +73,12 @@
 
 				}
 
-				// Page separators
+				// Page separators.
 				if( $page > 1 && $pages > $page ) {
 					echo " | ";
 				}
 
-				// Next page
+				// Next page.
 				if( $pages > $page ) {
 
 					printf(

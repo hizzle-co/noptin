@@ -1,7 +1,7 @@
 <?php
 
-// Exit if accessed directly
-if( !defined( 'ABSPATH' ) ) {
+// Exit if accessed directly.
+if( ! defined( 'ABSPATH' ) ) {
     die;
 }
 
@@ -48,14 +48,14 @@ if( !defined( 'ABSPATH' ) ) {
      */
     public static function display_tooltip( $msg, $echo=true ) {
 
-		// Generate the tooltip markup
+		// Generate the tooltip markup.
 		$tooltip  = "
 			<noptin-tooltip trigger='hover' :options=\"{placement: 'bottom'}\">
 				<div class='popper'>$msg</div>
 				<span class='dashicons dashicons-info' slot='reference'></span>
 			</noptin-tooltip>";
 
-		// Maybe print the tooltip
+		// Maybe print the tooltip.
 		if( $echo ) {
 			echo $tooltip;
 		}
@@ -68,48 +68,48 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public static function sanitize_el( $id, $el ) {
 
-		// Restrict markup
+		// Restrict markup.
 		if( empty( $el['restrict'] ) ) {
 			$el['restrict'] = '';
 		} else {
 			$el['restrict'] = 'v-if="' . $el['restrict'] . '"';
 		}
 
-		// Css id
+		// Css id.
 		$el['css_id'] = wp_generate_password( '4', false ) . time() . $id;
 
-		// tooltips
+		// tooltips.
 		if( empty( $el['tooltip'] ) ) {
 			$el['tooltip'] = '';
 		} else {
 			$el['tooltip'] = self::display_tooltip( $el['tooltip'], false );
 		}
 
-		// Label
+		// Label.
 		if( empty( $el['label'] ) ) {
 			$el['label'] = '';
 		}
 
-		// class
+		// class.
 		$el['_class'] = '';
-		if(! empty( $el['class'] ) ) {
+		if( ! empty( $el['class'] ) ) {
 			$el['_class'] = $el['class'];
 			unset( $el['class'] );
 		}
 
-		// description
+		// description.
 		$description = '';
 
-		if(! empty( $el['description'] ) ) {
+		if( ! empty( $el['description'] ) ) {
 			$description = '<p class="description">' . $el['description'] . '</p>';
 		}
 
 		$el['description'] = $description;
 
-		// Attributes
+		// Attributes.
 		$attrs = '';
 		foreach( $el as $attr=>$val ){
-			if( is_scalar( $val) && !in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class' ) ) ) {
+			if( is_scalar( $val) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class' ) ) ) {
 				$val     = esc_attr($val);
 				$attrs   = "$attrs $attr='$val'";
 			}
@@ -129,8 +129,8 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public static function render_el( $id, $field, $panel = false ) {
 
-		// Ensure an element has been specified
-		if(!empty($field['el'])){
+		// Ensure an element has been specified.
+		if( ! empty($field['el'])){
 			$field   = self::sanitize_el( $id, $field );
 			$element = $field['el'];
 
@@ -151,22 +151,22 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public static function panel( $id, $panel ) {
 
-		// Don't display empty panels
+		// Don't display empty panels.
 		if( empty( $panel['children'] ) ){
 			return;
 		}
 
-		// Default panel state
+		// Default panel state.
 		$style1 = 'display:none';
 		$style2 = 'display:inline-block';
 
-		if(! empty( $panel['open'] ) ) {
+		if( ! empty( $panel['open'] ) ) {
 			$style1 = 'display:inline-block';
 			$style2 = 'display:none';
 		}
 
 
-		// Echo the panel opening wrapper
+		// Echo the panel opening wrapper.
 		printf(
             '<div %s id="%s" class="noptin-popup-editor-panel">
                 <div class="noptin-popup-editor-panel-header" @click="togglePanel(\'%s\')">
@@ -189,12 +189,12 @@ if( !defined( 'ABSPATH' ) ) {
 			$style1
 		);
 
-		// Display all the children
+		// Display all the children.
 		foreach( $panel['children'] as $id=>$field ){
 			self::render_el( $id, $field );
 		}
 
-		// Display panel wrapper close
+		// Display panel wrapper close.
 		echo "</div></div>";
 
 	}
@@ -251,7 +251,7 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public static function paragraph( $id, $field ) {
 
-		// Abort if there is no content
+		// Abort if there is no content.
 		if( empty($field['content']) ){
 			return;
 		}
@@ -272,7 +272,7 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public static function hero( $id, $field ) {
 
-		// Abort if there is no content
+		// Abort if there is no content.
 		if( empty($field['content']) ){
 			return;
 		}
@@ -397,8 +397,8 @@ if( !defined( 'ABSPATH' ) ) {
 		$type = $field_type['type'];
 		$v_if = "v-if=\"field.type.type=='$type'\"";
 
-		// Field label
-		if(! empty( $field_type['supports_label'] ) ) {
+		// Field label.
+		if( ! empty( $field_type['supports_label'] ) ) {
 
 			echo "<div class='noptin-text-wrapper' $v_if>
 					<label>Label<input type='text' v-model='field.type.label'/></label>
@@ -406,8 +406,8 @@ if( !defined( 'ABSPATH' ) ) {
 
 		}
 
-		// Field name
-		if(! empty( $field_type['supports_name'] ) ) {
+		// Field name.
+		if( ! empty( $field_type['supports_name'] ) ) {
 
 			echo "<div class='noptin-text-wrapper' $v_if>
 					<label>Name<input type='text' v-model='field.type.name'/></label>
@@ -425,8 +425,8 @@ if( !defined( 'ABSPATH' ) ) {
 		$type = $field_type['type'];
 		$v_if = "v-if=\"field.type.type=='$type'\"";
 
-		// Required
-		if(! empty( $field_type['supports_require'] ) ) {
+		// Required.
+		if( ! empty( $field_type['supports_require'] ) ) {
 
 			echo '
 				<label class="noptin-checkbox-wrapper" '. $v_if .'>
@@ -527,7 +527,7 @@ if( !defined( 'ABSPATH' ) ) {
 	 */
 	public static function input( $id, $field ) {
 
-		// If no input type is set, set it to text
+		// If no input type is set, set it to text.
 		if( empty($field['type']) ){
 			$field['type'] = 'text';
 		}
@@ -544,7 +544,7 @@ if( !defined( 'ABSPATH' ) ) {
 
 		switch ( $type ) {
 
-			// Color picker
+			// Color picker.
 			case 'color':
 				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <noptin-swatch colors='material-basic' max-height='600' shapes='circles' show-fallback v-model='$id' popover-to='left'></noptin-swatch>$description</div>";
 				break;

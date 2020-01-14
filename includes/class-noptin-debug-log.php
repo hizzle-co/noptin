@@ -77,7 +77,7 @@ class Noptin_Debug_Log{
     public function log($level, $message) {
         $level = self::to_level($level);
 
-        // only log if message level is higher than log level
+        // only log if message level is higher than log level.
         if ($level < $this->level) {
             return false;
         }
@@ -85,30 +85,30 @@ class Noptin_Debug_Log{
         // obfuscate email addresses in log message since log might be public.
         $message = noptin_obfuscate_email_addresses((string) $message);
 
-        // first, get rid of everything between "invisible" tags
+        // first, get rid of everything between "invisible" tags.
         $message = preg_replace('/<(?:style|script|head)>.+?<\/(?:style|script|head)>/is', '', $message);
 
-        // then, strip tags (while retaining content of these tags)
+        // then, strip tags (while retaining content of these tags).
         $message = strip_tags($message);
         $message = trim($message);
 
-        // generate line
+        // generate line.
         $level_name = self::get_level_name($level);
         $datetime = date('Y-m-d H:i:s', (time() - date('Z')) + (get_option('gmt_offset', 0) * 3600));
         $message = sprintf('[%s] %s: %s', $datetime, $level_name, $message) . PHP_EOL;
 
         // did we open stream yet?
-        if (! is_resource($this->stream)) {
+        if ( ! is_resource($this->stream)) {
 
-            // open stream
+            // open stream.
             $this->stream = @fopen($this->file, 'c+');
 
             // if this failed, bail..
-            if (! is_resource($this->stream)) {
+            if ( ! is_resource($this->stream)) {
                 return false;
             }
 
-            // make sure first line of log file is a PHP tag + exit statement (to prevent direct file access)
+            // make sure first line of log file is a PHP tag + exit statement (to prevent direct file access).
             $line = fgets($this->stream);
             $php_exit_string = '<?php exit; ?>';
             if (strpos($line, $php_exit_string) !== 0) {
@@ -116,17 +116,17 @@ class Noptin_Debug_Log{
                 fwrite($this->stream, $php_exit_string . PHP_EOL . $line);
             }
 
-            // place pointer at end of file
+            // place pointer at end of file.
             fseek($this->stream, 0, SEEK_END);
         }
 
-        // lock file while we write, ignore errors (not much we can do)
+        // lock file while we write, ignore errors (not much we can do).
         flock($this->stream, LOCK_EX);
 
-        // write the message to the file
+        // write the message to the file.
         fwrite($this->stream, $message);
 
-        // unlock file again, but don't close it for remainder of this request
+        // unlock file again, but don't close it for remainder of this request.
         flock($this->stream, LOCK_UN);
 
         return true;
@@ -190,7 +190,7 @@ class Noptin_Debug_Log{
      * @return string
      */
     public static function get_level_name($level){
-        if (! isset(self::$levels[ $level ])) {
+        if ( ! isset(self::$levels[ $level ])) {
             throw new InvalidArgumentException('Level "' . $level . '" is not defined, use one of: ' . implode(', ', array_keys(self::$levels)));
         }
 

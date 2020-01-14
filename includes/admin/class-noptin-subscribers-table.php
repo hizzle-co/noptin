@@ -53,7 +53,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		$this->base_url = admin_url( 'admin.php?page=noptin-subscribers' );
 
-		if(! empty( $_GET['_subscriber_via'] ) ) {
+		if( ! empty( $_GET['_subscriber_via'] ) ) {
 			$this->base_url = add_query_arg( '_subscriber_via', $_GET['_subscriber_via'],$this->base_url );
 		}
 
@@ -64,10 +64,10 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function prepare_query() {
 
-		// Campaigns to display on every page
+		// Campaigns to display on every page.
 		$per_page = 10;
 
-		// Prepare query params
+		// Prepare query params.
 		$paged     		= empty( $_GET['paged'] )   			 ? 1      : $_GET['paged'];
 		$orderby   		= empty( $_GET['orderby'] ) 			 ? 'id'   : $_GET['orderby'];
 		$order     		= empty( $_GET['order'] )   			 ? 'desc' : $_GET['order'];
@@ -76,12 +76,12 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$meta_key		= empty( $_GET['meta_key'] )   ? false  : $_GET['meta_key'];
 		$meta_value		= empty( $_GET['meta_value'] )   ? false  : $_GET['meta_value'];
 
-		if(! empty( $_GET['_subscriber_via'] ) ) {
+		if( ! empty( $_GET['_subscriber_via'] ) ) {
 			$meta_key   = '_subscriber_via';
 			$meta_value = $_GET['_subscriber_via'];
 		}
 
-		// Fetch the subscribers
+		// Fetch the subscribers.
 		$noptin_admin      = Noptin_Admin::instance();
 		$this->items 	   = $noptin_admin->get_subscribers( $paged, $meta_key, $meta_value );
 
@@ -147,15 +147,15 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$avatar= "<img src='$avatar' height='32' width='32'/>";
 		$name  = '';
 
-		if(! empty( $subscriber['first_name'] ) ) {
+		if( ! empty( $subscriber['first_name'] ) ) {
 			$name  = sanitize_text_field( $subscriber['first_name'] );
 		}
 
-		if(! empty( $subscriber['second_name'] ) ) {
+		if( ! empty( $subscriber['second_name'] ) ) {
 			$name  .= ' ' . sanitize_text_field( $subscriber['second_name'] );
 		}
 
-		if(! empty( $name ) ) {
+		if( ! empty( $name ) ) {
 			$name  = "<div style='overflow: hidden;height: 18px;'>$name</div>";
 		}
 

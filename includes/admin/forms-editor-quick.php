@@ -8,8 +8,8 @@
  *
  */
 
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
+// Exit if accessed directly.
+if ( ! defined('ABSPATH')) {
     die;
 }
 
@@ -72,20 +72,20 @@ class Noptin_Form_Editor_Quick {
     public function get_step_1() {
         return array(
 
-            // Hero
+            // Hero.
             'step1Hero' => array(
                 'el'        => 'hero',
                 'content'   => 'First, give your form a name then click on the type of form you want to create',
             ),
 
-            // Title
+            // Title.
             'optinName' => array(
                 'el'        => 'input',
                 'label'     => 'Form Name',
                 'tooltip'   => 'This name will help you identify the form when listing all forms',
             ),
 
-            // Form type
+            // Form type.
             'optinType'     => array(
                 'el'        => 'optin_types',
                 'label'     => 'Form Type'
@@ -100,13 +100,13 @@ class Noptin_Form_Editor_Quick {
     public function get_step_2() {
         return array(
 
-            // Hero
+            // Hero.
             'step2Hero' => array(
                 'el'        => 'hero',
                 'content'   => 'Next, select the template you want to use then click on continue',
             ),
 
-            // Template
+            // Template.
             'optinTemplate' => array(
                 'el'        => 'optin_templates',
             ),
@@ -120,13 +120,13 @@ class Noptin_Form_Editor_Quick {
     public function get_step_3() {
         return array(
 
-            // Hero
+            // Hero.
             'step3Hero' => array(
                 'el'        => 'hero',
                 'content'   => 'Use a color theme to quickly style your form',
             ),
 
-            // Color Theme
+            // Color Theme.
             'optinTheme' => array(
                 'el'        => 'color_themes',
             ),
@@ -140,13 +140,13 @@ class Noptin_Form_Editor_Quick {
     public function get_step_4() {
         return array(
 
-            // Hero
+            // Hero.
             'step4Hero' => array(
                 'el'        => 'hero',
                 'content'   => 'Provide a title and description of your form',
             ),
 
-            // Title
+            // Title.
             'optinData' => array(
                 'el'        => 'optin_data',
             ),
@@ -160,13 +160,13 @@ class Noptin_Form_Editor_Quick {
     public function get_step_5() {
         return array(
 
-            // Hero
+            // Hero.
             'step5Hero' => array(
                 'el'        => 'hero',
                 'content'   => 'Do you want to attach an image to the form?',
             ),
 
-            // Title
+            // Title.
             'optinImage' => array(
                 'el'        => 'optin_image',
             ),
@@ -180,13 +180,13 @@ class Noptin_Form_Editor_Quick {
     public function get_step_6() {
         return array(
 
-            // Hero
+            // Hero.
             'step6Hero' => array(
                 'el'        => 'hero',
                 'content'   => 'Finally, set up the form fields',
             ),
 
-            // Title
+            // Title.
             'optinFields' => array(
                 'el'        => 'optin_fields',
             ),
@@ -200,7 +200,7 @@ class Noptin_Form_Editor_Quick {
     public function get_step_7() {
         return array(
 
-            // Publish? More configuration? Back to forms overview
+            // Publish? More configuration? Back to forms overview.
             'optinName' => array(
                 'el'        => 'optin_done',
             ),
@@ -259,8 +259,8 @@ class Noptin_Form_Editor_Quick {
      */
     public function post_ids_to_options( $ids ) {
 
-        // Return post ids array
-        if(! is_array( $ids ) ) {
+        // Return post ids array.
+        if( ! is_array( $ids ) ) {
             return array();
         }
 

@@ -163,11 +163,11 @@ function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $li
 
 	$clicked_campaigns = get_noptin_subscriber_clicked_campaigns( $subscriber_id );
 
-	if(! isset( $clicked_campaigns[ $campaign_id ] ) ) {
+	if( ! isset( $clicked_campaigns[ $campaign_id ] ) ) {
 		$clicked_campaigns[ $campaign_id ] = array();
 	}
 
-	if(! in_array( $link, $clicked_campaigns[ $campaign_id ] ) ) {
+	if( ! in_array( $link, $clicked_campaigns[ $campaign_id ] ) ) {
 		$clicked_campaigns[ $campaign_id ][] = $link;
 		update_noptin_subscriber_meta( $subscriber_id, "_clicked_campaigns", $clicked_campaigns );
 		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_clicked", 1 );
@@ -294,7 +294,7 @@ function get_noptin_options() {
 		$noptin_options = get_option( 'noptin_options', array() );
 	}
 
-	if(! is_array( $noptin_options ) || empty( $noptin_options ) ) {
+	if( ! is_array( $noptin_options ) || empty( $noptin_options ) ) {
 		$noptin_options = get_default_noptin_options();
 	}
 	return $noptin_options;
@@ -439,7 +439,7 @@ function get_noptin_action_url( $action, $value = false ) {
  */
 function is_noptin_actions_page() {
 	$page = get_noptin_action_page();
-	return !empty( $page ) && is_page( $page );
+	return ! empty( $page ) && is_page( $page );
 }
 
 /**
@@ -518,12 +518,12 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
 	$meta_table     = get_noptin_subscribers_meta_table_name();
 	$extra_sql 		= '';
 
-	if( false !== $meta_value ) {
+	if( false  !== $meta_value ) {
 		$extra_sql = "INNER JOIN $meta_table ON ( $table.id = $meta_table.noptin_subscriber_id ) WHERE ( $meta_table.meta_key = '%s' AND $meta_table.meta_value = '%s' )";
 		$extra_sql = $wpdb->prepare( $extra_sql, $meta_key, $meta_value );
 	}
 
-	if(! empty( $where ) ) {
+	if( ! empty( $where ) ) {
 
 		if( empty( $extra_sql ) ) {
 			$where = "WHERE $where";
@@ -566,8 +566,8 @@ function add_noptin_subscriber( $fields ) {
 	$table = get_noptin_subscribers_table_name();
 	$fields= wp_unslash( $fields );
 
-	// Ensure an email address is provided and it doesn't exist already
-	if( empty( $fields['email'] ) || !is_email( $fields['email'] ) ) {
+	// Ensure an email address is provided and it doesn't exist already.
+	if( empty( $fields['email'] ) || ! is_email( $fields['email'] ) ) {
 		return __( "Please provide a valid email address",  'newsletter-optin-box' );
 	}
 
@@ -575,7 +575,7 @@ function add_noptin_subscriber( $fields ) {
 		return true;
 	}
 
-	// Maybe split name into first and last
+	// Maybe split name into first and last.
 	if( isset( $fields['name'] ) ) {
 		$names = noptin_split_subscriber_name( $fields['name'] );
 
@@ -591,7 +591,7 @@ function add_noptin_subscriber( $fields ) {
 		'date_created'	=> date("Y-m-d"),
 	);
 
-	if(! $wpdb->insert( $table, $database_fields, '%s' ) ) {
+	if( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
 		return "An error occurred. Try again.";
 	}
 
@@ -600,7 +600,7 @@ function add_noptin_subscriber( $fields ) {
 	unset( $fields['last_name'] );
 	unset( $fields['name'] );
 
-	// Insert additional meta data
+	// Insert additional meta data.
 	foreach( $fields as $field=>$value ){
 
 		if( isset( $database_fields[ $field ] ) || 'name' == $field ) {
@@ -662,7 +662,7 @@ function delete_noptin_subscriber( $subscriber ) {
 	// Delete the subscriber...
 	$true1 = $wpdb->delete( $table, array( 'id' => $subscriber ), '%d');
 
-	// ... and its meta data
+	// ... and its meta data.
 	$true2 = $wpdb->delete( $table2, array( 'noptin_subscriber_id' => $subscriber ), '%d');
 
 	return $true1 && $true2;
@@ -748,7 +748,7 @@ function noptin_count_optin_forms( $type = '' ){
 	$sql   = "SELECT COUNT(`ID`) FROM {$wpdb->posts} as forms";
 	$where = "WHERE `post_type`='noptin-form'";
 
-	if(! empty( $type ) ) {
+	if( ! empty( $type ) ) {
 		$sql = "$sql LEFT JOIN {$wpdb->postmeta} as meta
 			ON meta.post_id = forms.ID
 			AND meta.meta_key = '_noptin_optin_type'
@@ -840,11 +840,11 @@ function noptin_get_post_types(){
  */
 function noptin_should_show_optins(){
 
-	if(! empty( $_COOKIE['noptin_email_subscribed'] ) && get_noptin_option( 'hide_from_subscribers' ) ){
+	if( ! empty( $_COOKIE['noptin_email_subscribed'] ) && get_noptin_option( 'hide_from_subscribers' ) ){
 		return false;
 	}
 
-	if(! empty( $_REQUEST['noptin_hide'] ) ) {
+	if( ! empty( $_REQUEST['noptin_hide'] ) ) {
 		return false;
 	}
 
@@ -861,7 +861,7 @@ function noptin_get_optin_stats(){
 	$sql 	= "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `$table` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`";
 	$stats 	= $wpdb->get_results( $sql );
 
-	if(! $stats ) {
+	if( ! $stats ) {
 		$stats = array();
 	}
 
@@ -877,7 +877,7 @@ function noptin_get_color_themes(){
 	return apply_filters(
 		'noptin_form_color_themes',
 		array(
-			'Red'           => '#e51c23 #fafafa #c62828', // Base color, Secondary color, border color
+			'Red'           => '#e51c23 #fafafa #c62828', // Base color, Secondary color, border color.
 			'Pink'          => '#e91e63 #fafafa #ad1457',
 			'Purple'        => '#9c27b0 #fafafa #6a1b9a',
 			'Deep Purple'   => '#673ab7 #fafafa #4527a0',
@@ -910,7 +910,7 @@ function noptin_get_optin_templates(){
 	$custom_templates = get_option( 'noptin_templates' );
 	$inbuilt_templates = include 'admin/templates/templates.php';
 
-	if(! is_array( $custom_templates ) ) {
+	if( ! is_array( $custom_templates ) ) {
 		$custom_templates = array();
 	}
 
@@ -1013,7 +1013,7 @@ function noptin_form_template_wrapper_props(){
  */
 function noptin_get_debug_log_file(){
 
-	// get default log file location
+	// get default log file location.
 	$upload_dir = wp_upload_dir(null, false);
 	$file = trailingslashit($upload_dir['basedir']) . 'noptin-debug-log.php';
 
@@ -1204,7 +1204,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 		return;
 	}
 
-	// The blogname option is escaped with esc_html on the way into the database in sanitize_option
+	// The blogname option is escaped with esc_html on the way into the database in sanitize_option.
 	// we want to reverse this for the plain text arena of emails.
 	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
@@ -1216,14 +1216,11 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 
 	foreach( $fields as $key => $val ) {
 
-		if( !empty( $val ) && is_scalar( $val ) ) {
+		if( ! empty( $val ) && is_scalar( $val ) ) {
 			$message .= sprintf( '%s: %s', sanitize_text_field( $key ), esc_html( $val ) ) . "\r\n";
 		}
 
 	}
-
-	/* translators: %s: user email address */
-	// $message .= sprintf( __( 'Email: %s' ), $fields['email'] ) . "\r\n";
 
 	$to      = get_option( 'admin_email' );
 

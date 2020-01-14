@@ -23,7 +23,7 @@ class Noptin_Install {
 	public function __construct( $upgrade_from ) {
 		global $wpdb;
 
-        // Abort if this is MS and the blog is not installed
+        // Abort if this is MS and the blog is not installed.
 		if ( ! is_blog_installed() ) {
 			return;
 		}
@@ -31,22 +31,22 @@ class Noptin_Install {
 		$this->charset_collate = $wpdb->get_charset_collate();
 		$this->table_prefix    = $wpdb->prefix;
 
-		// Force update the subscribers table
+		// Force update the subscribers table.
 		if( false === $upgrade_from ){
 			$this->force_update_subscribers_table();
 		}
 
-        // If this is a fresh install
-		if( !$upgrade_from ){
+        // If this is a fresh install.
+		if( ! $upgrade_from ){
 			$this->do_full_install();
 		}
 
-		// Upgrading from version 1
+		// Upgrading from version 1.
 		if( 1 == $upgrade_from ){
 			$this->upgrade_from_1();
 		}
 
-		// Upgrading from version 2
+		// Upgrading from version 2.
 		if( 2 == $upgrade_from ){
 			$this->upgrade_from_2();
 		}
@@ -118,10 +118,10 @@ class Noptin_Install {
 		$wpdb->query("ALTER TABLE $table ADD active tinyint(2)  NOT NULL DEFAULT '0'");
 		$wpdb->query("ALTER TABLE $table ADD date_created  DATE");
 
-		// Had not been implemented
+		// Had not been implemented.
 		$wpdb->query("ALTER TABLE $table DROP COLUMN source");
 
-		// Not really helpful
+		// Not really helpful.
 		$wpdb->query("ALTER TABLE $table DROP COLUMN time");
 
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
@@ -134,14 +134,14 @@ class Noptin_Install {
 	 */
 	private function upgrade_from_2() {
 
-		// Create initial subscriber
+		// Create initial subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
-		// Add default campaigns
+		// Add default campaigns.
 		$notify = get_noptin_option('notify_new_post');
-		if(! empty( $notify ) ){
+		if( ! empty( $notify ) ){
 
-			// Body
+			// Body.
 			$content = get_noptin_option( 'new_post_content' );
 			if( empty( $content ) ) {
 				$content = '[[excerpt]]';
@@ -149,19 +149,19 @@ class Noptin_Install {
 
 			$content .= '<p>[[read_more_button]]Continue Reading[[/read_more_button]]</p>';
 
-			// Subject
+			// Subject.
 			$subject = get_noptin_option('new_post_subject');
 			if( empty( $subject ) ) {
 				$subject = '[[title]]';
 			}
 
-			// Preview text
+			// Preview text.
 			$preview = get_noptin_option('new_post_preview_text');
 			if( empty( $preview ) ) {
 				$preview = __( 'We just published a new blog post. Hope you like it.',  'newsletter-optin-box');
 			}
 
-			// Create a new automation
+			// Create a new automation.
 			wp_insert_post( array(
 				'post_title'        => __( 'New Post Notifications' ),
             	'post_content'      => $content,
@@ -205,11 +205,11 @@ class Noptin_Install {
 		global $wpdb;
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-		// Create the subscriber and subscriber meta table
+		// Create the subscriber and subscriber meta table.
 		dbDelta( array( $this->get_subscribers_table_schema() ) );
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
 
-		// Add a default subscriber
+		// Add a default subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
 	}

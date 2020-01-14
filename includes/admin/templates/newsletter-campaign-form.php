@@ -3,7 +3,7 @@
 
 		<input type="hidden" name="noptin-action" value="save-newsletter-campaign"/>
 
-		<?php if(! empty( $id ) ) { ?>
+		<?php if( ! empty( $id ) ) { ?>
 			<input type="hidden" name="id" value="<?php echo esc_attr( $id ); ?>"/>
 		<?php } ?>
 

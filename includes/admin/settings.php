@@ -4,38 +4,38 @@ defined( 'ABSPATH'  ) || exit;
 
 class Noptin_Settings {
 
-    // Class constructor
+    // Class constructor.
     private function __construct() {}
 
-    // Renders the settings page
+    // Renders the settings page.
     public static function output() {
 
-        // Maybe save the settings
+        // Maybe save the settings.
         Noptin_Settings::maybe_save_settings();
 
-        // Render settings
+        // Render settings.
         include( 'templates/settings.php' );
     }
 
-    // Saves the settings page
+    // Saves the settings page.
     public static function maybe_save_settings() {
         global $noptin_options;
 
-        // Maybe abort early
-        if( empty( $_POST['_wpnonce'] ) || !wp_verify_nonce( $_POST['_wpnonce'] ) ) {
+        // Maybe abort early.
+        if( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'] ) ) {
             return;
         }
 
-        // Prepare the settings
+        // Prepare the settings.
         $registered_settings = self::get_settings();
         $posted_settings     = $_POST;
         unset( $posted_settings['_wpnonce'] );
         unset( $posted_settings['_wp_http_referer'] );
 
-        // Sanitize the settings
+        // Sanitize the settings.
         $options = self::sanitize_settings( $registered_settings, $posted_settings );
 
-        // Then save them
+        // Then save them.
         $noptin_options = $options;
         update_option( 'noptin_options', $options );
     }
@@ -47,7 +47,7 @@ class Noptin_Settings {
 
         foreach( $registered_settings as $id=>$args ) {
 
-            // Deal with checkboxes(unchecked ones are never posted)
+            // Deal with checkboxes(unchecked ones are never posted).
             if( 'checkbox' == $args['el'] ) {
                 $posted_settings[$id] = isset( $posted_settings[$id] ) ? '1' : '0';
             }

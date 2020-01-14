@@ -1,4 +1,4 @@
-<?php if(! empty( $logo_url ) ) { ?>
+<?php if( ! empty( $logo_url ) ) { ?>
 <!-- start logo -->
 <tr>
       <td align="center" bgcolor="#e9ecef">
