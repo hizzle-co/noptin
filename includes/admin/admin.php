@@ -117,9 +117,6 @@ class Noptin_Admin {
 		// Settings
 		require_once $this->admin_path . 'settings.php';
 
-        // Include the rating hooks
-        require_once $this->admin_path . 'ratings.php';
-
         // Editor
         require_once $this->admin_path . 'forms-editor.php';
 
