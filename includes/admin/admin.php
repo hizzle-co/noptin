@@ -185,8 +185,9 @@ class Noptin_Admin {
      * @return      self::$instance
      */
     public function enqeue_scripts() {
+        global $pagenow, $current_screen;
 
-		// Admin styles.
+		// Load our CSS styles on all pages.
         $version = filemtime( $this->assets_path . 'css/admin.css' );
 		wp_enqueue_style('noptin', $this->assets_url . 'css/admin.css', array(), $version);
 
@@ -197,28 +198,29 @@ class Noptin_Admin {
 			$page = $_GET['page'];
 		}
 
-		$screen = get_current_screen();
-		if( ! empty( $screen->post_type ) ) {
-			$page = $screen->post_type;
+		if( ! empty( $current_screen->post_type ) && in_array( $pagenow, array( 'post.php', 'post-new.php' ) ) ) {
+			$page = $current_screen->post_type;
 		}
 
         if( empty( $page ) || false === stripos( $page, 'noptin' ) ){
             return;
         }
 
+        // Sweetalert https://sweetalert2.github.io/.
+        wp_enqueue_script('promise-polyfill', $this->assets_url . 'vendor/sweetalert/promise-polyfill.min.js', array(), '8.1.3');
+        wp_enqueue_script('sweetalert2', $this->assets_url . 'vendor/sweetalert/sweetalert2.all.min.js', array( 'promise-polyfill' ), '9.6.0', true);
+
         // Tooltips https://iamceege.github.io/tooltipster/.
-        wp_enqueue_script('tooltipster', $this->assets_url . 'js/vendor/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.6');
-        wp_enqueue_style('tooltipster', $this->assets_url . 'css/tooltipster.bundle.min.css', array(), '4.2.6');
+        wp_enqueue_script('tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.7');
+        wp_enqueue_style('tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.css', array(), '4.2.7', true);
 
-		// Sweetalert https://sweetalert2.github.io/.
-		wp_enqueue_script('sweetalert2', $this->assets_url . 'js/vendor/sweetalert2.min.js', array(), '8.18.6');
-        wp_enqueue_style('sweetalert2', $this->assets_url . 'css/sweetalert2.min.css', array(), '8.18.6');
 
-        // Slick selects https://designwithpc.com/Plugins/ddSlick#demo.
-        wp_enqueue_script('slick', $this->assets_url . 'js/vendor/jquery.ddslick.min.js', array( 'jquery' ), '4.2.6');
-		wp_enqueue_style('slick', $this->assets_url . 'css/slick.css', array(), '4.2.6');
+        // Select 2 https://select2.org/.
+        wp_enqueue_script( 'select2', $this->assets_url . 'vendor/select2/select2.full.min.js', array( 'jquery' ), '4.0.12', true );
+        wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
 
-		wp_enqueue_script('select2', $this->assets_url . 'js/vendor/select2.js', array( 'jquery' ), '4.0.9');
+        // Vue js.
+        wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.js', array(), '2.6.11', true );
 
         // Enque media for image uploads.
         wp_enqueue_media();
@@ -236,12 +238,9 @@ class Noptin_Admin {
             )
 		);
 
-        // Vue js.
-        wp_enqueue_script('vue', $this->assets_url . 'js/vendor/vue.min.js', array(), '2.6.10');
-
         // Custom admin scripts.
         $version = filemtime( $this->assets_path . 'js/dist/admin.js' );
-        wp_register_script('noptin', $this->assets_url . 'js/dist/admin.js', array('vue','sweetalert2'), $version, true);
+        wp_register_script('noptin', $this->assets_url . 'js/dist/admin.js', array( 'tooltipster' ), $version, true);
 
 		// Pass variables to our js file, e.g url etc.
 		$current_user = wp_get_current_user();
@@ -256,11 +255,26 @@ class Noptin_Admin {
         // localize and enqueue the script with all of the variable inserted.
 		wp_localize_script('noptin', 'noptin_params', $params);
 
-		if( ! empty( $_GET['page'] ) && 'noptin-settings' == $_GET['page'] ) {
-			wp_localize_script('noptin', 'noptinSettings', Noptin_Settings::get_state());
-		}
-
         wp_enqueue_script('noptin');
+
+        // Settings page.
+        if( 'noptin-settings' === $page ) {
+            $version = filemtime( $this->assets_path . 'js/dist/settings.js' );
+            wp_enqueue_script('noptin-settings', $this->assets_url . 'js/dist/settings.js', array( 'vue', 'select2', 'sweetalert2' ), $version, true);
+            wp_localize_script('noptin-settings', 'noptinSettings', Noptin_Settings::get_state());
+        }
+
+        // Optin forms editor.
+        if( 'noptin-form' === $page ) {
+            $version = filemtime( $this->assets_path . 'js/dist/optin-editor.js' );
+            wp_enqueue_script('noptin-optin-editor', $this->assets_url . 'js/dist/optin-editor.js', array( 'vue', 'select2', 'sweetalert2' ), $version, true);
+        }
+
+        // Email campaigns page.
+        if( 'noptin-email-campaigns' === $page ) {
+            $version = filemtime( $this->assets_path . 'js/dist/newsletter-editor.js' );
+            wp_enqueue_script('noptin-settings', $this->assets_url . 'js/dist/newsletter-editor.js', array( 'select2', 'sweetalert2' ), $version, true);
+        }
     }
 
     /**

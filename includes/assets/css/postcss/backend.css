@@ -1230,3 +1230,7 @@ a.no-campaign-create-new-campaign {
 		opacity: 1;
 	}
 }
+
+.settings-body.noptin-fields .select2-container .select2-selection--single {
+	height: 32px;
+}

@@ -9,19 +9,16 @@
 		window.noptinSettings = {}
 	}
 
-	//The main Editor apps
-	window.noptinOptinEditor = require ( './optin-editor.js' ).default
-	window.noptinSettingsApp = require ( './settings.js' ).default
-	window.noptinNewsletterEditor = require ( './newsletter-editor.js' ).default
+	// Global noptin object
+	window.noptin = {}
 
-	//Newsletter select recipients
+	// Hook management
+	noptin.hooks = require ( '@wordpress/hooks' )
+
+	// Attach the tooltips
 	$(document).ready(function(){
 
-		//Attach the tooltips
 		$('.noptin-tip').tooltipster();
-
-		//Init the newsletter editor
-		noptinNewsletterEditor.init()
 
 	});
 
