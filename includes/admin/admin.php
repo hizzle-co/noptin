@@ -565,16 +565,16 @@ class Noptin_Admin {
          */
 		do_action( 'noptin_before_admin_single_subscriber_page', $subscriber, $this );
 
-		$meta = get_noptin_subscriber_meta( $subscriber );
-		$data = get_noptin_subscriber( $subscriber );
+        $args = array(
+            'meta' => get_noptin_subscriber_meta( $subscriber ),
+            'data' => get_noptin_subscriber( $subscriber ),
+        );
 
-		if( empty( $data ) ) {
-			include $this->admin_path . 'templates/single-subscriber-404.php';
+		if( empty( $args['data'] ) ) {
+            get_noptin_template( 'single-subscriber-404.php', $args );
 		} else {
-			include $this->admin_path . 'templates/single-subscriber.php';
+            get_noptin_template( 'single-subscriber.php', $args );
 		}
-
-
 
         /**
          * Runs after displaying the subscribers page.

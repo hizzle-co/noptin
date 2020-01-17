@@ -13,9 +13,10 @@ class Noptin_Settings {
         // Maybe save the settings.
         Noptin_Settings::maybe_save_settings();
 
-        // Render settings.
-        include( 'templates/settings.php' );
-    }
+		// Render settings.
+		get_noptin_template( 'settings.php' );
+
+	}
 
     // Saves the settings page.
     public static function maybe_save_settings() {
