@@ -135,11 +135,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		 */
 		do_action('before_noptin_init', $this);
 
-        // Init the admin
+        // Init the admin.
 		$this->admin     = Noptin_Admin::instance();
 
-		// Init the bg mailer
-		$this->bg_mailer = new Noptin_Background_Mailer();
+		// Init the bg mailer.
+        $this->bg_mailer = new Noptin_Background_Mailer();
+        
+        // Actions page controller.
+        $this->actions_page = new Noptin_Page();
 
         // Ensure the db is up to date
         $this->maybe_upgrade_db();

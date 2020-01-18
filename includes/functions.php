@@ -410,7 +410,7 @@ function get_noptin_action_page() {
  * @access  public
  * @since   1.0.6
  */
-function get_noptin_action_url( $action, $value = false ) {
+function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
 	$page = get_noptin_action_page();
 
@@ -421,10 +421,17 @@ function get_noptin_action_url( $action, $value = false ) {
 	$url = get_the_permalink( $page );
 
 	if( $url ) {
-		return add_query_arg( array(
-			'noptin_action' => $action,
-			'noptin_value'  => $value,
-		), $url );
+
+		$args = array(
+			'na' => $action,
+			'nv'  => $value,
+		);
+
+		if( $empty ) {
+			$args['nte'] = 1;
+		}
+
+		return add_query_arg( $args, $url );
 	}
 
 	return get_home_url();

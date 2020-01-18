@@ -8,6 +8,8 @@ defined( 'ABSPATH' ) || exit;
 
 class Noptin_Mailer {
 
+	public $emogrify = true;
+
 	/**
 	 * Returns the email subject
 	 *
@@ -110,7 +112,7 @@ class Noptin_Mailer {
 		// Remove comments.
 		$email_content = preg_replace( "/<!--(.*)-->/Uis", '', $email_content );
 
-		if( class_exists( 'DOMDocument' ) ) {
+		if( class_exists( 'DOMDocument' ) && $this->emogrify ) {
 		
 			// Emogrify the email.
 			require_once get_noptin_include_dir( 'class-noptin-emogrifier.php' );

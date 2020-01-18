@@ -104,6 +104,10 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	public function column_title( $item ) {
 
 		$row_actions         = array();
+
+		$preview_url            = esc_url( get_noptin_action_url( 'preview_email', $item->ID, true ) );
+		$row_actions['_preview'] = '<a href="' . $preview_url . '" target="_blank" >' . __( 'Preview', 'newsletter-optin-box' ) . '</a>';
+
 		$edit_url			 = esc_url( get_noptin_newsletter_campaign_url( $item->ID ) );
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 

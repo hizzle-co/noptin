@@ -457,7 +457,7 @@ class Noptin_Email_Campaigns_Admin {
 			'subscribers_query' => '1=1', // By default, send this to all active subscribers.
 			'campaign_data'		=> array(
 				'campaign_id' 	=> $post->ID,
-				'template' 		=> get_noptin_include_dir( 'admin/templates/email-templates/paste.php' ),
+				'template' 		=> locate_noptin_template( 'email-templates/paste.php' ),
 			),
 		);
 
