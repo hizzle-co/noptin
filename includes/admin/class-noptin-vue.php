@@ -1,62 +1,61 @@
 <?php
 
 // Exit if accessed directly.
-if( ! defined( 'ABSPATH' ) ) {
-    die;
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-    /**
-     * Handles display of Vue Apps
-     *
-     * @since       1.0.8
-     */
+	/**
+	 * Handles display of Vue Apps
+	 *
+	 * @since       1.0.8
+	 */
 
-    class Noptin_Vue{
+class Noptin_Vue {
 
-    /**
+	/**
 	 * registers action and filter hooks
 	 */
 	public static function init_hooks() {
 
-		add_action( 'noptin_render_editor_panel', array( __CLASS__, 'panel'), 10, 2 );
-		add_action( 'noptin_render_editor_radio', array( __CLASS__, 'radio'), 10, 2 );
-		add_action( 'noptin_render_editor_radio_button', array( __CLASS__, 'radio_button'), 10, 2 );
-		add_action( 'noptin_render_editor_paragraph', array( __CLASS__, 'paragraph'), 10, 2 );
-		add_action( 'noptin_render_editor_hero', array( __CLASS__, 'hero'), 10, 2 );
-		add_action( 'noptin_render_editor_textarea', array( __CLASS__, 'textarea'), 10, 2 );
-		add_action( 'noptin_render_editor_editor', array( __CLASS__, 'editor'), 10, 2 );
-		add_action( 'noptin_render_editor_form_fields', array( __CLASS__, 'form_fields'), 10, 2 );
-		add_action( 'noptin_render_editor_select', array( __CLASS__, 'select'), 10, 2 );
-		add_action( 'noptin_render_editor_multiselect', array( __CLASS__, 'select'), 10, 2 );
-		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox'), 10, 2 );
-		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input'), 10, 2 );
+		add_action( 'noptin_render_editor_panel', array( __CLASS__, 'panel' ), 10, 2 );
+		add_action( 'noptin_render_editor_radio', array( __CLASS__, 'radio' ), 10, 2 );
+		add_action( 'noptin_render_editor_radio_button', array( __CLASS__, 'radio_button' ), 10, 2 );
+		add_action( 'noptin_render_editor_paragraph', array( __CLASS__, 'paragraph' ), 10, 2 );
+		add_action( 'noptin_render_editor_hero', array( __CLASS__, 'hero' ), 10, 2 );
+		add_action( 'noptin_render_editor_textarea', array( __CLASS__, 'textarea' ), 10, 2 );
+		add_action( 'noptin_render_editor_editor', array( __CLASS__, 'editor' ), 10, 2 );
+		add_action( 'noptin_render_editor_form_fields', array( __CLASS__, 'form_fields' ), 10, 2 );
+		add_action( 'noptin_render_editor_select', array( __CLASS__, 'select' ), 10, 2 );
+		add_action( 'noptin_render_editor_multiselect', array( __CLASS__, 'select' ), 10, 2 );
+		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox' ), 10, 2 );
+		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input' ), 10, 2 );
 
-		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types'), 5 );
-		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings'), 5 );
-		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_required_settings'), 100000 );
-		add_action( 'noptin_field_type_optin_markup', array( __CLASS__, 'print_default_markup'), 5 );
+		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types' ), 5 );
+		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings' ), 5 );
+		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_required_settings' ), 100000 );
+		add_action( 'noptin_field_type_optin_markup', array( __CLASS__, 'print_default_markup' ), 5 );
 
+	}
 
-    }
-
-    /**
-     * Displays tooltips
-     *
-     * @access      public
-     * @since       1.0.8
-     * @return      void
-     */
-    public static function display_tooltip( $msg, $echo=true ) {
+	/**
+	 * Displays tooltips
+	 *
+	 * @access      public
+	 * @since       1.0.8
+	 * @return      void
+	 */
+	public static function display_tooltip( $msg, $echo = true ) {
 
 		// Generate the tooltip markup.
-		$tooltip  = "
+		$tooltip = "
 			<noptin-tooltip trigger='hover' :options=\"{placement: 'bottom'}\">
 				<div class='popper'>$msg</div>
 				<span class='dashicons dashicons-info' slot='reference'></span>
 			</noptin-tooltip>";
 
 		// Maybe print the tooltip.
-		if( $echo ) {
+		if ( $echo ) {
 			echo $tooltip;
 		}
 
@@ -69,7 +68,7 @@ if( ! defined( 'ABSPATH' ) ) {
 	public static function sanitize_el( $id, $el ) {
 
 		// Restrict markup.
-		if( empty( $el['restrict'] ) ) {
+		if ( empty( $el['restrict'] ) ) {
 			$el['restrict'] = '';
 		} else {
 			$el['restrict'] = 'v-if="' . $el['restrict'] . '"';
@@ -79,20 +78,20 @@ if( ! defined( 'ABSPATH' ) ) {
 		$el['css_id'] = wp_generate_password( '4', false ) . time() . $id;
 
 		// tooltips.
-		if( empty( $el['tooltip'] ) ) {
+		if ( empty( $el['tooltip'] ) ) {
 			$el['tooltip'] = '';
 		} else {
 			$el['tooltip'] = self::display_tooltip( $el['tooltip'], false );
 		}
 
 		// Label.
-		if( empty( $el['label'] ) ) {
+		if ( empty( $el['label'] ) ) {
 			$el['label'] = '';
 		}
 
 		// class.
 		$el['_class'] = '';
-		if( ! empty( $el['class'] ) ) {
+		if ( ! empty( $el['class'] ) ) {
 			$el['_class'] = $el['class'];
 			unset( $el['class'] );
 		}
@@ -100,7 +99,7 @@ if( ! defined( 'ABSPATH' ) ) {
 		// description.
 		$description = '';
 
-		if( ! empty( $el['description'] ) ) {
+		if ( ! empty( $el['description'] ) ) {
 			$description = '<p class="description">' . $el['description'] . '</p>';
 		}
 
@@ -108,20 +107,21 @@ if( ! defined( 'ABSPATH' ) ) {
 
 		// Attributes.
 		$attrs = '';
-		foreach( $el as $attr=>$val ){
-			if( is_scalar( $val) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class' ) ) ) {
-				$val     = esc_attr($val);
-				$attrs   = "$attrs $attr='$val'";
+		foreach ( $el as $attr => $val ) {
+			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class' ) ) ) {
+				$val   = esc_attr( $val );
+				$attrs = "$attrs $attr='$val'";
 			}
 		}
 		$el['attrs'] = $attrs;
 
 		return $el;
 
-    }
+	}
 
 	/**
 	 * Renders an element or component
+	 *
 	 * @param $id string Required. Unique id of the rendered field
 	 * @param $field array Required. The args of field to render
 	 * @param $panel string Optional. The panel where this field will be rendered
@@ -130,16 +130,14 @@ if( ! defined( 'ABSPATH' ) ) {
 	public static function render_el( $id, $field, $panel = false ) {
 
 		// Ensure an element has been specified.
-		if( ! empty($field['el'])){
+		if ( ! empty( $field['el'] ) ) {
 			$field   = self::sanitize_el( $id, $field );
 			$element = $field['el'];
-
 
 			/**
 			 * Fires when rendering an editor field
 			 *
 			 * @since 1.0.0
-			 *
 			*/
 			do_action( "noptin_render_editor_{$element}", $id, $field, $panel );
 		}
@@ -152,7 +150,7 @@ if( ! defined( 'ABSPATH' ) ) {
 	public static function panel( $id, $panel ) {
 
 		// Don't display empty panels.
-		if( empty( $panel['children'] ) ){
+		if ( empty( $panel['children'] ) ) {
 			return;
 		}
 
@@ -160,15 +158,14 @@ if( ! defined( 'ABSPATH' ) ) {
 		$style1 = 'display:none';
 		$style2 = 'display:inline-block';
 
-		if( ! empty( $panel['open'] ) ) {
+		if ( ! empty( $panel['open'] ) ) {
 			$style1 = 'display:inline-block';
 			$style2 = 'display:none';
 		}
 
-
 		// Echo the panel opening wrapper.
 		printf(
-            '<div %s id="%s" class="noptin-popup-editor-panel">
+			'<div %s id="%s" class="noptin-popup-editor-panel">
                 <div class="noptin-popup-editor-panel-header" @click="togglePanel(\'%s\')">
 					<h2 class="noptin-popup-editor-panel-title">
 						<button type="button">
@@ -190,12 +187,12 @@ if( ! defined( 'ABSPATH' ) ) {
 		);
 
 		// Display all the children.
-		foreach( $panel['children'] as $id=>$field ){
+		foreach ( $panel['children'] as $id => $field ) {
 			self::render_el( $id, $field );
 		}
 
 		// Display panel wrapper close.
-		echo "</div></div>";
+		echo '</div></div>';
 
 	}
 
@@ -206,8 +203,8 @@ if( ! defined( 'ABSPATH' ) ) {
 
 		$attrs   = $field['attrs'];
 		$options = '';
-		if(is_array($field['options'])) {
-			foreach( $field['options'] as $val => $label ){
+		if ( is_array( $field['options'] ) ) {
+			foreach ( $field['options'] as $val => $label ) {
 				$options .= "<label><input $attrs type='radio' v-model='$id' value='$val' class='screen-reader-text'>$label <span class='noptin-checkmark'></span> </label>";
 			}
 		}
@@ -229,8 +226,8 @@ if( ! defined( 'ABSPATH' ) ) {
 
 		$attrs   = $field['attrs'];
 		$options = '';
-		if(is_array($field['options'])) {
-			foreach( $field['options'] as $val => $label ){
+		if ( is_array( $field['options'] ) ) {
+			foreach ( $field['options'] as $val => $label ) {
 				$options .= "<label><input $attrs type='radio' v-model='$id' value='$val' class='screen-reader-text'><span>$label</span></label>";
 			}
 		}
@@ -244,7 +241,7 @@ if( ! defined( 'ABSPATH' ) ) {
 			$options
 		);
 
-    }
+	}
 
 	/**
 	 * Renders paragraph
@@ -252,7 +249,7 @@ if( ! defined( 'ABSPATH' ) ) {
 	public static function paragraph( $id, $field ) {
 
 		// Abort if there is no content.
-		if( empty($field['content']) ){
+		if ( empty( $field['content'] ) ) {
 			return;
 		}
 
@@ -273,7 +270,7 @@ if( ! defined( 'ABSPATH' ) ) {
 	public static function hero( $id, $field ) {
 
 		// Abort if there is no content.
-		if( empty($field['content']) ){
+		if ( empty( $field['content'] ) ) {
 			return;
 		}
 
@@ -339,48 +336,48 @@ if( ! defined( 'ABSPATH' ) ) {
 	 */
 	public static function get_field_types( $field_types = array() ) {
 
-		$field_types[] 		 = array(
-			'label' 		 => 'Email Address',
-			'type'  		 => 'email',
+		$field_types[] = array(
+			'label'          => 'Email Address',
+			'type'           => 'email',
 			'supports_label' => true,
 		);
 
-		$field_types[] 		   = array(
-			'label' 		   => 'First Name',
-			'type'  		   => 'first_name',
+		$field_types[] = array(
+			'label'            => 'First Name',
+			'type'             => 'first_name',
 			'supports_label'   => true,
 			'supports_require' => true,
 		);
 
-		$field_types[] 		   = array(
-			'label' 		   => 'Last Name',
-			'type'  		   => 'last_name',
+		$field_types[] = array(
+			'label'            => 'Last Name',
+			'type'             => 'last_name',
 			'supports_label'   => true,
 			'supports_require' => true,
 		);
 
-		$field_types[]         = array(
-			'label' 		   => 'Full Name',
-			'type'  		   => 'name',
+		$field_types[] = array(
+			'label'            => 'Full Name',
+			'type'             => 'name',
 			'supports_label'   => true,
 			'supports_require' => true,
 		);
 
-		$field_types[]         = array(
-			'label' 		   => 'Text',
-			'name'  		   => 'text',
-			'type'  		   => 'text',
+		$field_types[] = array(
+			'label'            => 'Text',
+			'name'             => 'text',
+			'type'             => 'text',
 			'supports_label'   => true,
-			'supports_name'	   => true,
+			'supports_name'    => true,
 			'supports_require' => true,
 		);
 
-		$field_types[] 		   = array(
-			'label' 		   => 'Textarea',
-			'name'  		   => 'textarea',
-			'type'  	       => 'textarea',
+		$field_types[] = array(
+			'label'            => 'Textarea',
+			'name'             => 'textarea',
+			'type'             => 'textarea',
 			'supports_label'   => true,
-			'supports_name'	   => true,
+			'supports_name'    => true,
 			'supports_require' => true,
 		);
 
@@ -392,13 +389,11 @@ if( ! defined( 'ABSPATH' ) ) {
 	 */
 	public static function print_field_type_settings( $field_type = array() ) {
 
-
-
 		$type = $field_type['type'];
 		$v_if = "v-if=\"field.type.type=='$type'\"";
 
 		// Field label.
-		if( ! empty( $field_type['supports_label'] ) ) {
+		if ( ! empty( $field_type['supports_label'] ) ) {
 
 			echo "<div class='noptin-text-wrapper' $v_if>
 					<label>Label<input type='text' v-model='field.type.label'/></label>
@@ -407,7 +402,7 @@ if( ! defined( 'ABSPATH' ) ) {
 		}
 
 		// Field name.
-		if( ! empty( $field_type['supports_name'] ) ) {
+		if ( ! empty( $field_type['supports_name'] ) ) {
 
 			echo "<div class='noptin-text-wrapper' $v_if>
 					<label>Name<input type='text' v-model='field.type.name'/></label>
@@ -426,10 +421,10 @@ if( ! defined( 'ABSPATH' ) ) {
 		$v_if = "v-if=\"field.type.type=='$type'\"";
 
 		// Required.
-		if( ! empty( $field_type['supports_require'] ) ) {
+		if ( ! empty( $field_type['supports_require'] ) ) {
 
 			echo '
-				<label class="noptin-checkbox-wrapper" '. $v_if .'>
+				<label class="noptin-checkbox-wrapper" ' . $v_if . '>
 					<input type="checkbox" class="screen-reader-text" v-model="field.require"/>
 					<span class="noptin-checkmark"></span>
 					<span class="noptin-label">Is this field required?</span>
@@ -442,7 +437,7 @@ if( ! defined( 'ABSPATH' ) ) {
 	/**
 	 * Renders a the default fields markup
 	 */
-	public static function print_default_markup(){
+	public static function print_default_markup() {
 		?>
 		<input 		v-if="field.type.type=='email'" 		   name='email' 		  type="email" 		class="noptin-form-field" 			:placeholder="field.type.label"  required />
 		<input 		v-if="field.type.type=='first_name'" 	   name='first_name' 	  type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
@@ -460,22 +455,22 @@ if( ! defined( 'ABSPATH' ) ) {
 	 */
 	public static function select( $id, $field ) {
 
-    	if( 'multiselect' == $field['el'] ) {
+		if ( 'multiselect' == $field['el'] ) {
 			$field['attrs'] .= ' multiple="multiple"';
 		}
 
-		if( empty($field['options']) ) {
+		if ( empty( $field['options'] ) ) {
 			$field['options'] = array();
 		}
 
-		if( isset( $field['placeholder'] ) ) {
+		if ( isset( $field['placeholder'] ) ) {
 			$field['options'] = array_merge( array( '' => $field['placeholder'] ), $field['options'] );
 		}
 
 		$options = '';
-    	foreach( $field['options'] as $val => $name ){
-			$val = esc_attr( $val );
-			$name = esc_html( $name );
+		foreach ( $field['options'] as $val => $name ) {
+			$val      = esc_attr( $val );
+			$name     = esc_html( $name );
 			$options .= "<option value='$val'>$name</option>";
 		}
 
@@ -492,7 +487,6 @@ if( ! defined( 'ABSPATH' ) ) {
 			$field['attrs'],
 			$options,
 			$field['description']
-
 		);
 
 	}
@@ -502,7 +496,7 @@ if( ! defined( 'ABSPATH' ) ) {
 	 */
 	public static function multi_checkbox( $id, $field ) {
 
-		foreach( $field['options'] as $name => $label ) {
+		foreach ( $field['options'] as $name => $label ) {
 			printf(
 				'<label %s class="field-wrapper noptin-checkbox-wrapper %s">
 					<input value="%s" type="checkbox" v-model="%s" %s class="screen-reader-text"/>
@@ -518,8 +512,6 @@ if( ! defined( 'ABSPATH' ) ) {
 			);
 		}
 
-
-
 	}
 
 	/**
@@ -528,19 +520,18 @@ if( ! defined( 'ABSPATH' ) ) {
 	public static function input( $id, $field ) {
 
 		// If no input type is set, set it to text.
-		if( empty($field['type']) ){
+		if ( empty( $field['type'] ) ) {
 			$field['type'] = 'text';
 		}
 
-		$class 		= "noptin-{$field['type']}-wrapper field-wrapper";
-		$_class		= $field['_class'];
-		$attrs 		= $field['attrs'];
-		$type  		= $field['type'];
-		$restrict   = $field['restrict'];
-		$label      = $field['label'];
-		$tooltip    = $field['tooltip'];
+		$class       = "noptin-{$field['type']}-wrapper field-wrapper";
+		$_class      = $field['_class'];
+		$attrs       = $field['attrs'];
+		$type        = $field['type'];
+		$restrict    = $field['restrict'];
+		$label       = $field['label'];
+		$tooltip     = $field['tooltip'];
 		$description = empty( $field['description'] ) ? '' : $field['description'];
-
 
 		switch ( $type ) {
 
@@ -550,8 +541,8 @@ if( ! defined( 'ABSPATH' ) ) {
 				break;
 
 			case 'switch':
-				$on  = empty($field['on'])? ''  : '<span class="on">' . $field['on'] . '</span>';
-				$off = empty($field['off'])? '' : '<span class="off">' . $field['off'] . '</span>';
+				$on  = empty( $field['on'] ) ? '' : '<span class="on">' . $field['on'] . '</span>';
+				$off = empty( $field['off'] ) ? '' : '<span class="off">' . $field['off'] . '</span>';
 				echo "<label class='$class $_class' $restrict><input type='checkbox' v-model='$id' class='screen-reader-text'> <span class='noptin-switch-slider'><span> </span></span><span class='noptin-label'> $label $tooltip</span>$description</label>";
 				break;
 
@@ -564,7 +555,7 @@ if( ! defined( 'ABSPATH' ) ) {
 				break;
 
 			case 'image':
-				$size  = empty($field['size'])? 'thumbnail'  : trim($field['size']);
+				$size = empty( $field['size'] ) ? 'thumbnail' : trim( $field['size'] );
 				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <div><div class='image-uploader'><input v-model='$id' placeholder='http://' type='text' $attrs /> <input @click=\"upload_image('$id', '$size')\" type='button' class='button button-secondary' value='Upload Image' /></div>$description</div></div>";
 				break;
 

@@ -1,7 +1,6 @@
 <?php
 /**
  * Displays a list of all email automations
- *
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -57,24 +56,24 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		$per_page = 10;
 
 		// Prepare query params.
-		$paged     = empty( $_GET['paged'] )   ? 1 : $_GET['paged'];
-		$orderby   = empty( $_GET['orderby'] ) ? 'id' : $_GET['orderby'];
-		$order     = empty( $_GET['order'] )   ? 'desc' : $_GET['order'];
+		$paged   = empty( $_GET['paged'] ) ? 1 : $_GET['paged'];
+		$orderby = empty( $_GET['orderby'] ) ? 'id' : $_GET['orderby'];
+		$order   = empty( $_GET['order'] ) ? 'desc' : $_GET['order'];
 
 		$query_args = array(
-			'post_type' 	=> 'noptin-campaign',
-			'post_status'   => array( 'pending', 'draft', 'future', 'publish' ),
-			'meta_key'   	=> 'campaign_type',
-			'meta_value' 	=> 'automation',
-			'orderby' 		=> $orderby,
-			'order'   		=> $order,
-			'posts_per_page'=> $per_page,
-			'paged'			=> $paged,
+			'post_type'      => 'noptin-campaign',
+			'post_status'    => array( 'pending', 'draft', 'future', 'publish' ),
+			'meta_key'       => 'campaign_type',
+			'meta_value'     => 'automation',
+			'orderby'        => $orderby,
+			'order'          => $order,
+			'posts_per_page' => $per_page,
+			'paged'          => $paged,
 		);
-		$query_args = apply_filters( "manage_noptin_automations_wp_query_args", $query_args );
+		$query_args = apply_filters( 'manage_noptin_automations_wp_query_args', $query_args );
 
-		$noptin_campaigns_query = new WP_Query( $query_args  );
-		$this->query = $noptin_campaigns_query;
+		$noptin_campaigns_query = new WP_Query( $query_args );
+		$this->query            = $noptin_campaigns_query;
 
 	}
 
@@ -87,10 +86,10 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	public function column_default( $item, $column_name ) {
 
 		/**
-         * Displays a given column
-         *
-         * @param array $this The admin instance
-         */
+		 * Displays a given column
+		 *
+		 * @param array $this The admin instance
+		 */
 		do_action( "noptin_display_automations_table_$column_name", $item );
 
 	}
@@ -104,15 +103,15 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	public function column_title( $item ) {
 
 		$row_actions         = array();
-		$edit_url			 = esc_url( get_noptin_automation_campaign_url( $item->ID ) );
+		$edit_url            = esc_url( get_noptin_automation_campaign_url( $item->ID ) );
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
-		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID .'">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
 		$title = esc_html( $item->post_title );
 		$extra = '';
 
-		if( 'publish' !== $item->post_status ) {
+		if ( 'publish' !== $item->post_status ) {
 			$extra = '&mdash; ' . __( 'Inactive', 'newsletter-optin-box' );
 		}
 		$title = "<div><strong><a href='$edit_url'>$title</a> $extra</strong></div>";
@@ -128,14 +127,19 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 */
 	public function maybe_link( $count, $meta, $value ) {
 
-		if( empty( $count ) ) {
+		if ( empty( $count ) ) {
 			return 0;
 		}
 
-		$url    = esc_url( add_query_arg( array(
-			'meta_key'   => $meta,
-			'meta_value' => $value,
-		), get_noptin_subscribers_overview_url() ) );
+		$url = esc_url(
+			add_query_arg(
+				array(
+					'meta_key'   => $meta,
+					'meta_value' => $value,
+				),
+				get_noptin_subscribers_overview_url()
+			)
+		);
 
 		return "<a href='$url' title='View Subscribers'>$count</a>";
 
@@ -175,7 +179,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		$actions = array(
 			'delete' => __( 'Delete', 'newsletter-optin-box' ),
 		);
-		return apply_filters( "manage_noptin_automations_table_bulk_actions", $actions );
+		return apply_filters( 'manage_noptin_automations_table_bulk_actions', $actions );
 
 	}
 
@@ -201,7 +205,6 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 
 	/**
 	 * Fetch data from the database to render on view.
-	 *
 	 */
 	function prepare_items() {
 
@@ -232,12 +235,12 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'cb'            => '<input type="checkbox" />',
-			'title' 		=> __( 'Name', 'newsletter-optin-box' ),
-			'about' 		=> __( 'About', 'newsletter-optin-box' ),
+			'cb'    => '<input type="checkbox" />',
+			'title' => __( 'Name', 'newsletter-optin-box' ),
+			'about' => __( 'About', 'newsletter-optin-box' ),
 
 		);
-		return apply_filters( "manage_noptin_automations_table_columns", $columns );
+		return apply_filters( 'manage_noptin_automations_table_columns', $columns );
 	}
 
 	/**
@@ -247,20 +250,19 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable = array(
-			'id'            => array( 'id', true ),
-			'title' 		=> array( 'post_title', true ),
+			'id'    => array( 'id', true ),
+			'title' => array( 'post_title', true ),
 		);
-		return apply_filters( "manage_noptin_automations_sortable_table_columns", $sortable );
+		return apply_filters( 'manage_noptin_automations_sortable_table_columns', $sortable );
 	}
 
 	/**
 	 * Message to be displayed when there are no items
-	 *
 	 */
 	public function no_items() {
 
 		printf(
-			__( '%sCreate a new automated email%s', 'newsletter-optin-box' ),
+			__( '%1$sCreate a new automated email%2$s', 'newsletter-optin-box' ),
 			"<a title='Create A New Automation' class='no-campaign-create-new-campaign noptin-create-new-automation-campaign' href='#'>",
 			'</a>'
 		);

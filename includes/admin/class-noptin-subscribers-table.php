@@ -1,7 +1,6 @@
 <?php
 /**
  * Displays a list of all email subscribers
- *
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -53,8 +52,8 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		$this->base_url = admin_url( 'admin.php?page=noptin-subscribers' );
 
-		if( ! empty( $_GET['_subscriber_via'] ) ) {
-			$this->base_url = add_query_arg( '_subscriber_via', $_GET['_subscriber_via'],$this->base_url );
+		if ( ! empty( $_GET['_subscriber_via'] ) ) {
+			$this->base_url = add_query_arg( '_subscriber_via', $_GET['_subscriber_via'], $this->base_url );
 		}
 
 	}
@@ -68,22 +67,22 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$per_page = 10;
 
 		// Prepare query params.
-		$paged     		= empty( $_GET['paged'] )   			 ? 1      : $_GET['paged'];
-		$orderby   		= empty( $_GET['orderby'] ) 			 ? 'id'   : $_GET['orderby'];
-		$order     		= empty( $_GET['order'] )   			 ? 'desc' : $_GET['order'];
-		$via       		= empty( $_GET['_subscriber_via'] )   ? false  : $_GET['_subscriber_via'];
+		$paged   = empty( $_GET['paged'] ) ? 1 : $_GET['paged'];
+		$orderby = empty( $_GET['orderby'] ) ? 'id' : $_GET['orderby'];
+		$order   = empty( $_GET['order'] ) ? 'desc' : $_GET['order'];
+		$via     = empty( $_GET['_subscriber_via'] ) ? false : $_GET['_subscriber_via'];
 
-		$meta_key		= empty( $_GET['meta_key'] )   ? false  : $_GET['meta_key'];
-		$meta_value		= empty( $_GET['meta_value'] )   ? false  : $_GET['meta_value'];
+		$meta_key   = empty( $_GET['meta_key'] ) ? false : $_GET['meta_key'];
+		$meta_value = empty( $_GET['meta_value'] ) ? false : $_GET['meta_value'];
 
-		if( ! empty( $_GET['_subscriber_via'] ) ) {
+		if ( ! empty( $_GET['_subscriber_via'] ) ) {
 			$meta_key   = '_subscriber_via';
 			$meta_value = $_GET['_subscriber_via'];
 		}
 
 		// Fetch the subscribers.
-		$noptin_admin      = Noptin_Admin::instance();
-		$this->items 	   = $noptin_admin->get_subscribers( $paged, $meta_key, $meta_value );
+		$noptin_admin = Noptin_Admin::instance();
+		$this->items  = $noptin_admin->get_subscribers( $paged, $meta_key, $meta_value );
 
 		$this->total_subscribers = (int) get_noptin_subscribers_count( '', $meta_key, $meta_value );
 
@@ -111,10 +110,10 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	public function column_default( $item, $column_name ) {
 
 		/**
-         * Runs after displaying the subscribers overview page.
-         *
-         * @param array $this The admin instance
-         */
+		 * Runs after displaying the subscribers overview page.
+		 *
+		 * @param array $this The admin instance
+		 */
 		do_action( "noptin_display_subscribers_table_$column_name", $item );
 
 	}
@@ -127,40 +126,43 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function column_subscriber( $subscriber ) {
 
-		$row_actions         = array();
-		$view_url			 = esc_url( wp_nonce_url(
-			add_query_arg( 'subscriber', $subscriber['id'],$this->base_url ),
-			'noptin-subscriber'
-		) );
+		$row_actions = array();
+		$view_url    = esc_url(
+			wp_nonce_url(
+				add_query_arg( 'subscriber', $subscriber['id'], $this->base_url ),
+				'noptin-subscriber'
+			)
+		);
 
 		$row_actions['view'] = '<a href="' . $view_url . '">' . __( 'View', 'newsletter-optin-box' ) . '</a>';
 
-		$row_actions['delete'] = '<a onclick="return confirm(\'Are you sure to delete this subscriber?\');" href="' . esc_url( wp_nonce_url(
-			add_query_arg( 'delete-subscriber', $subscriber['id'],$this->base_url ),
-			'noptin-subscriber'
-		)) . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+		$row_actions['delete'] = '<a onclick="return confirm(\'Are you sure to delete this subscriber?\');" href="' . esc_url(
+			wp_nonce_url(
+				add_query_arg( 'delete-subscriber', $subscriber['id'], $this->base_url ),
+				'noptin-subscriber'
+			)
+		) . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
 		$row_actions = $this->row_actions( $row_actions );
 
-		$email = sanitize_text_field( $subscriber['email'] );
-		$avatar= esc_url( get_avatar_url( $email ) );
-		$avatar= "<img src='$avatar' height='32' width='32'/>";
-		$name  = '';
+		$email  = sanitize_text_field( $subscriber['email'] );
+		$avatar = esc_url( get_avatar_url( $email ) );
+		$avatar = "<img src='$avatar' height='32' width='32'/>";
+		$name   = '';
 
-		if( ! empty( $subscriber['first_name'] ) ) {
-			$name  = sanitize_text_field( $subscriber['first_name'] );
+		if ( ! empty( $subscriber['first_name'] ) ) {
+			$name = sanitize_text_field( $subscriber['first_name'] );
 		}
 
-		if( ! empty( $subscriber['second_name'] ) ) {
-			$name  .= ' ' . sanitize_text_field( $subscriber['second_name'] );
+		if ( ! empty( $subscriber['second_name'] ) ) {
+			$name .= ' ' . sanitize_text_field( $subscriber['second_name'] );
 		}
 
-		if( ! empty( $name ) ) {
-			$name  = "<div style='overflow: hidden;height: 18px;'>$name</div>";
+		if ( ! empty( $name ) ) {
+			$name = "<div style='overflow: hidden;height: 18px;'>$name</div>";
 		}
 
 		$email = "<div><a href='$view_url'>$email</a></div>";
-
 
 		return "<div style='display: flex;'><div>$avatar</div><div style='margin-left: 10px;'>$name<strong>$email</strong>$row_actions</div></div>";
 
@@ -174,7 +176,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function column_status( $subscriber ) {
 
-		$status = empty( $subscriber['active'] ) ? __( 'Active',  'newsletter-optin-box' ) : __( 'Inactive',  'newsletter-optin-box' );
+		$status = empty( $subscriber['active'] ) ? __( 'Active', 'newsletter-optin-box' ) : __( 'Inactive', 'newsletter-optin-box' );
 		$class  = empty( $subscriber['active'] ) ? 'status-active' : 'status-inactive';
 
 		return "<span class='$class'>$status</span>";
@@ -210,7 +212,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$actions = array(
 			'delete' => __( 'Delete', 'newsletter-optin-box' ),
 		);
-		return apply_filters( "manage_noptin_newsletters_table_bulk_actions", $actions );
+		return apply_filters( 'manage_noptin_newsletters_table_bulk_actions', $actions );
 
 	}
 
@@ -225,7 +227,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 	/**
 	 * Fetch data from the database to render on view.
-	 *
 	 */
 	function prepare_items() {
 
@@ -256,13 +257,13 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'cb'            => '<input type="checkbox" />',
-			'subscriber' 	=> __( 'Subscriber', 'newsletter-optin-box' ),
-			'status' 		=> __( 'Status', 'newsletter-optin-box' ),
-			'date_created' 	=> __( 'Subscription Date', 'newsletter-optin-box' ),
+			'cb'           => '<input type="checkbox" />',
+			'subscriber'   => __( 'Subscriber', 'newsletter-optin-box' ),
+			'status'       => __( 'Status', 'newsletter-optin-box' ),
+			'date_created' => __( 'Subscription Date', 'newsletter-optin-box' ),
 
 		);
-		return apply_filters( "manage_noptin_newsletters_table_columns", $columns );
+		return apply_filters( 'manage_noptin_newsletters_table_columns', $columns );
 	}
 
 	/**
@@ -272,9 +273,9 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable = array(
-			'id'            => array( 'id', true ),
+			'id' => array( 'id', true ),
 		);
-		return apply_filters( "manage_noptin_newsletters_sortable_table_columns", $sortable );
+		return apply_filters( 'manage_noptin_newsletters_sortable_table_columns', $sortable );
 	}
 
 }

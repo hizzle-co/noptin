@@ -1,7 +1,6 @@
 <?php
 /**
  * Displays a list of all email newsletters
- *
  */
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -57,24 +56,24 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$per_page = 10;
 
 		// Prepare query params.
-		$paged     = empty( $_GET['paged'] )   ? 1 : $_GET['paged'];
-		$orderby   = empty( $_GET['orderby'] ) ? 'id' : $_GET['orderby'];
-		$order     = empty( $_GET['order'] )   ? 'desc' : $_GET['order'];
+		$paged   = empty( $_GET['paged'] ) ? 1 : $_GET['paged'];
+		$orderby = empty( $_GET['orderby'] ) ? 'id' : $_GET['orderby'];
+		$order   = empty( $_GET['order'] ) ? 'desc' : $_GET['order'];
 
 		$query_args = array(
-			'post_type' 	=> 'noptin-campaign',
-			'post_status'   => array( 'pending', 'draft', 'future', 'publish' ),
-			'meta_key'   	=> 'campaign_type',
-			'meta_value' 	=> 'newsletter',
-			'orderby' 		=> $orderby,
-			'order'   		=> $order,
-			'posts_per_page'=> $per_page,
-			'paged'			=> $paged,
+			'post_type'      => 'noptin-campaign',
+			'post_status'    => array( 'pending', 'draft', 'future', 'publish' ),
+			'meta_key'       => 'campaign_type',
+			'meta_value'     => 'newsletter',
+			'orderby'        => $orderby,
+			'order'          => $order,
+			'posts_per_page' => $per_page,
+			'paged'          => $paged,
 		);
-		$query_args = apply_filters( "manage_noptin_newsletters_wp_query_args", $query_args );
+		$query_args = apply_filters( 'manage_noptin_newsletters_wp_query_args', $query_args );
 
-		$noptin_campaigns_query = new WP_Query( $query_args  );
-		$this->query = $noptin_campaigns_query;
+		$noptin_campaigns_query = new WP_Query( $query_args );
+		$this->query            = $noptin_campaigns_query;
 
 	}
 
@@ -87,10 +86,10 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	public function column_default( $item, $column_name ) {
 
 		/**
-         * Displays a given column
-         *
-         * @param array $this The admin instance
-         */
+		 * Displays a given column
+		 *
+		 * @param array $this The admin instance
+		 */
 		do_action( "noptin_display_newsletters_table_$column_name", $item );
 
 	}
@@ -103,15 +102,15 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	public function column_title( $item ) {
 
-		$row_actions         = array();
+		$row_actions = array();
 
-		$preview_url            = esc_url( get_noptin_action_url( 'preview_email', $item->ID, true ) );
+		$preview_url             = esc_url( get_noptin_action_url( 'preview_email', $item->ID, true ) );
 		$row_actions['_preview'] = '<a href="' . $preview_url . '" target="_blank" >' . __( 'Preview', 'newsletter-optin-box' ) . '</a>';
 
-		$edit_url			 = esc_url( get_noptin_newsletter_campaign_url( $item->ID ) );
+		$edit_url            = esc_url( get_noptin_newsletter_campaign_url( $item->ID ) );
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
-		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID .'">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
 		$title = esc_html( $item->post_title );
 
@@ -129,18 +128,17 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	public function column_status( $item ) {
 		$status = 'Draft';
 
-		if( 'future' == $item->post_status ) {
+		if ( 'future' == $item->post_status ) {
 			$status = 'Scheduled';
 		}
 
-		if( 'publish' == $item->post_status ) {
+		if ( 'publish' == $item->post_status ) {
 
-			if( get_post_meta( $item->ID, 'completed', true ) ) {
+			if ( get_post_meta( $item->ID, 'completed', true ) ) {
 				$status = 'Sent';
 			} else {
 				$status = '<strong style="color: #00796b;">Sending</strong>';
 			}
-
 		}
 
 		echo "<span>$status</span>";
@@ -155,11 +153,11 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	public function column_date_sent( $item ) {
 		$date = '&mdash;';
 
-		if( 'future' == $item->post_status ) {
+		if ( 'future' == $item->post_status ) {
 			$date = 'Scheduled <br /> ' . $item->post_date;
 		}
 
-		if( 'publish' == $item->post_status ) {
+		if ( 'publish' == $item->post_status ) {
 			$date = date_i18n( get_option( 'date_format' ), strtotime( $item->post_date ) );
 		}
 
@@ -175,14 +173,19 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	public function maybe_link( $count, $meta, $value ) {
 
-		if( empty( $count ) ) {
+		if ( empty( $count ) ) {
 			return 0;
 		}
 
-		$url    = esc_url( add_query_arg( array(
-			'meta_key'   => $meta,
-			'meta_value' => $value,
-		), get_noptin_subscribers_overview_url() ) );
+		$url = esc_url(
+			add_query_arg(
+				array(
+					'meta_key'   => $meta,
+					'meta_value' => $value,
+				),
+				get_noptin_subscribers_overview_url()
+			)
+		);
 
 		return "<a href='$url' title='View Subscribers'>$count</a>";
 
@@ -196,14 +199,13 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	public function column_recipients( $item ) {
 
-
-		$sent   = (int) get_post_meta( $item->ID, '_noptin_sends', true );
-		$sent   = $this->maybe_link( $sent, "_campaign_{$item->ID}" , '1' );
+		$sent = (int) get_post_meta( $item->ID, '_noptin_sends', true );
+		$sent = $this->maybe_link( $sent, "_campaign_{$item->ID}", '1' );
 
 		$failed = (int) get_post_meta( $item->ID, '_noptin_fails', true );
-		$failed   = $this->maybe_link( $failed, "_campaign_{$item->ID}" , '0' );
+		$failed = $this->maybe_link( $failed, "_campaign_{$item->ID}", '0' );
 
-		if( empty( $failed ) ) {
+		if ( empty( $failed ) ) {
 			return $sent;
 		}
 
@@ -219,8 +221,8 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	public function column_opens( $item ) {
 
-		$opens  = (int) get_post_meta( $item->ID, '_noptin_opens', true );
-		return $this->maybe_link( $opens, "_campaign_{$item->ID}_opened" , '1' );
+		$opens = (int) get_post_meta( $item->ID, '_noptin_opens', true );
+		return $this->maybe_link( $opens, "_campaign_{$item->ID}_opened", '1' );
 
 	}
 
@@ -232,8 +234,8 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	public function column_clicks( $item ) {
 
-		$clicks  = (int) get_post_meta( $item->ID, '_noptin_clicks', true );
-		return $this->maybe_link( $clicks, "_campaign_{$item->ID}_clicked" , '1' );
+		$clicks = (int) get_post_meta( $item->ID, '_noptin_clicks', true );
+		return $this->maybe_link( $clicks, "_campaign_{$item->ID}_clicked", '1' );
 
 	}
 
@@ -257,7 +259,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$actions = array(
 			'delete' => __( 'Delete', 'newsletter-optin-box' ),
 		);
-		return apply_filters( "manage_noptin_newsletters_table_bulk_actions", $actions );
+		return apply_filters( 'manage_noptin_newsletters_table_bulk_actions', $actions );
 
 	}
 
@@ -283,7 +285,6 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 
 	/**
 	 * Fetch data from the database to render on view.
-	 *
 	 */
 	function prepare_items() {
 
@@ -314,16 +315,16 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'cb'            => '<input type="checkbox" />',
-			'title' 		=> __( 'Email Subject', 'newsletter-optin-box' ),
-			'status' 		=> __( 'Status', 'newsletter-optin-box' ), // draft,scheduled,sending,completed.
-			'recipients' 	=> __( 'Recipients', 'newsletter-optin-box' ),
-			'opens'		    => __( 'Opens', 'newsletter-optin-box' ),
-			'clicks'		=> __( 'Clicks', 'newsletter-optin-box' ),
-			'date_sent'  	=> __( 'Sent on', 'newsletter-optin-box' ),
+			'cb'         => '<input type="checkbox" />',
+			'title'      => __( 'Email Subject', 'newsletter-optin-box' ),
+			'status'     => __( 'Status', 'newsletter-optin-box' ), // draft,scheduled,sending,completed.
+			'recipients' => __( 'Recipients', 'newsletter-optin-box' ),
+			'opens'      => __( 'Opens', 'newsletter-optin-box' ),
+			'clicks'     => __( 'Clicks', 'newsletter-optin-box' ),
+			'date_sent'  => __( 'Sent on', 'newsletter-optin-box' ),
 
 		);
-		return apply_filters( "manage_noptin_newsletters_table_columns", $columns );
+		return apply_filters( 'manage_noptin_newsletters_table_columns', $columns );
 	}
 
 	/**
@@ -333,21 +334,20 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable = array(
-			'id'            => array( 'id', true ),
-			'title' 		=> array( 'post_title', true ),
+			'id'    => array( 'id', true ),
+			'title' => array( 'post_title', true ),
 		);
-		return apply_filters( "manage_noptin_newsletters_sortable_table_columns", $sortable );
+		return apply_filters( 'manage_noptin_newsletters_sortable_table_columns', $sortable );
 	}
 
 	/**
 	 * Message to be displayed when there are no items
-	 *
 	 */
 	public function no_items() {
 		$add_new_campaign_url = get_noptin_new_newsletter_campaign_url();
 
 		printf(
-			__( '%sSend your subscribers a new email%s', 'newsletter-optin-box' ),
+			__( '%1$sSend your subscribers a new email%2$s', 'newsletter-optin-box' ),
 			"<a class='no-campaign-create-new-campaign' href='$add_new_campaign_url'>",
 			'</a>'
 		);

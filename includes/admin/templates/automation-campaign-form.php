@@ -9,7 +9,7 @@
 		<div id="poststuff">
 			<div>
 
-                <h3><?php _e( 'Edit Automation Campaign', 'newsletter-optin-box'); ?> &mdash; <?php echo sanitize_text_field( $campaign->post_title ); ?></h3>
+				<h3><?php _e( 'Edit Automation Campaign', 'newsletter-optin-box' ); ?> &mdash; <?php echo sanitize_text_field( $campaign->post_title ); ?></h3>
 				<hr/>
 
 				<div>
@@ -17,12 +17,12 @@
 
 					<?php
 						/**
-        				 * Fires before printing the first row in the automation campaign editor
-        				 *
-        				 * @param object $campaign current campaign object
+						 * Fires before printing the first row in the automation campaign editor
+						 *
+						 * @param object $campaign current campaign object
 						 * @param string $automation_type the automation type
-        				 */
-        				do_action('noptin_before_automation_editor_fields', $campaign, $automation_type );
+						 */
+						do_action( 'noptin_before_automation_editor_fields', $campaign, $automation_type );
 					?>
 <!--
 					<?php if ( $supports_filter ) { ?>
@@ -52,11 +52,11 @@
 						<th>
 							<label for="noptin-email-preview">
 								<b><?php _e( 'Preview Text:', 'newsletter-optin-box' ); ?></b>
-								<span title="<?php esc_attr_e( 'Some email clients display this text next to the subject.',  'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+								<span title="<?php esc_attr_e( 'Some email clients display this text next to the subject.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 							</label>
 						</th>
 						<td>
-							<input style="max-width: 100%;" type="text" name="preview_text" id="noptin-email-preview" class="noptin-campaign-input" value="<?php echo esc_attr( $preview_text ); ?>" placeholder="<?php esc_attr_e( "Enter the text shown next to the subject", 'newsletter-optin-box' );?>" >
+							<input style="max-width: 100%;" type="text" name="preview_text" id="noptin-email-preview" class="noptin-campaign-input" value="<?php echo esc_attr( $preview_text ); ?>" placeholder="<?php esc_attr_e( 'Enter the text shown next to the subject', 'newsletter-optin-box' ); ?>" >
 						</td>
 					</tr>
 
@@ -71,42 +71,42 @@
 										$email_body,
 										'noptinautomationemailbody',
 										array(
-											'media_buttons'    => true,
+											'media_buttons' => true,
 											'drag_drop_upload' => true,
-											'textarea_rows'    => 15,
-											'textarea_name'	   => 'email_body',
-											'tabindex'         => 4,
-											'tinymce'          => array(
+											'textarea_rows' => 15,
+											'textarea_name' => 'email_body',
+											'tabindex' => 4,
+											'tinymce'  => array(
 												'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',
 											),
 										)
 									);
 
-							?>
+									?>
 						</td>
 					</tr>
 
 					<?php
-						if ( isset( $automations[$automation_type]['setup_cb'] ) && is_callable( $automations[$automation_type]['setup_cb'] ) ) {
-							call_user_func( $automations[$automation_type]['setup_cb'], $campaign );
-						}
+					if ( isset( $automations[ $automation_type ]['setup_cb'] ) && is_callable( $automations[ $automation_type ]['setup_cb'] ) ) {
+						call_user_func( $automations[ $automation_type ]['setup_cb'], $campaign );
+					}
 					?>
 
 					<?php
 						/**
-        				 * Fires after printing the last row in the automation campaign editor
-        				 *
-        				 * @param object $campaign current campaign object
+						 * Fires after printing the last row in the automation campaign editor
+						 *
+						 * @param object $campaign current campaign object
 						 * @param string $automation_type the automation type
-        				 */
-        				do_action('noptin_after_automation_editor_fields', $campaign, $automation_type );
+						 */
+						do_action( 'noptin_after_automation_editor_fields', $campaign, $automation_type );
 					?>
 
 					<tr>
 						<th></th>
 						<td>
-							<input type="submit" name="publish" class="button-primary" value="<?php echo 'publish' == $campaign->post_status ? 'Save Changes' : 'Publish' ?>"/>
-							<input type="submit" name="draft" class="button-link" value="<?php echo 'publish' == $campaign->post_status ? 'Switch to Draft' : 'Save as draft' ?>"/>
+							<input type="submit" name="publish" class="button-primary" value="<?php echo 'publish' == $campaign->post_status ? 'Save Changes' : 'Publish'; ?>"/>
+							<input type="submit" name="draft" class="button-link" value="<?php echo 'publish' == $campaign->post_status ? 'Switch to Draft' : 'Save as draft'; ?>"/>
 						</td>
 					</tr>
 

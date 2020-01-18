@@ -6,50 +6,49 @@
 
 			$counter = 1;
 
-			foreach( $triggers as $trigger => $args ) {
-				$disabled = empty( $args['setup_cb'] );
-				$outer_tag= $disabled ? 'div' : 'a';
-				$class	  = $disabled ? 'disabled' : 'enabled';
-				$style    = "--noptin-automation-select-order: $counter;";
-				$counter++;
-		?>
+		foreach ( $triggers as $trigger => $args ) {
+			$disabled  = empty( $args['setup_cb'] );
+			$outer_tag = $disabled ? 'div' : 'a';
+			$class     = $disabled ? 'disabled' : 'enabled';
+			$style     = "--noptin-automation-select-order: $counter;";
+			$counter++;
+			?>
 			<li style="<?php echo $style; ?>">
 				<<?php echo $outer_tag; ?> href="#" class="noptin-automation-type-select <?php echo $class; ?>">
-					<h3><?php echo $args['title'];?></h3>
-					<div style="flex: 1 0 0;"><?php echo $args['description'];?></div>
+					<h3><?php echo $args['title']; ?></h3>
+					<div style="flex: 1 0 0;"><?php echo $args['description']; ?></div>
 
-					<?php
-						if( $disabled ) {
+				<?php
+				if ( $disabled ) {
 
-							$string   = __( "Install Addon", 'newsletter-optin-box' );
-							$disabled = __( "Disabled", 'newsletter-optin-box' );
-							echo "<div>
+					$string   = __( 'Install Addon', 'newsletter-optin-box' );
+					$disabled = __( 'Disabled', 'newsletter-optin-box' );
+					echo "<div>
 									<span class='button button-disabled'>$disabled</span>
 									<a class='button button-link' href='https://noptin.com/product/ultimate-addons-pack/'>$string</a>
 								</div>";
 
-						} else {
-							?>
+				} else {
+					?>
 
-							<div><span class="button button-primary"><?php _e( "Set Up", 'newsletter-optin-box' );?></span></div>
+							<div><span class="button button-primary"><?php _e( 'Set Up', 'newsletter-optin-box' ); ?></span></div>
 							<div class='noptin-automation-type-setup-form' style="display:none">
 							<form class="noptin-automation-setup-form noptin-fields">
 
-								<h3 style="margin: 6px 0;"><?php echo $args['title'];?></h3>
-								<div><?php echo $args['description'];?></div>
-								<?php wp_nonce_field( 'noptin_campaign' );?>
-								<input type="hidden" name="automation_type" value="<?php echo esc_attr( $trigger );?>" />
+								<h3 style="margin: 6px 0;"><?php echo $args['title']; ?></h3>
+								<div><?php echo $args['description']; ?></div>
+						<?php wp_nonce_field( 'noptin_campaign' ); ?>
+								<input type="hidden" name="automation_type" value="<?php echo esc_attr( $trigger ); ?>" />
 								<table class="form-table noptin-create-new-automation-campaign">
-								<?php
+						<?php
 
-									/**
-    								 * Runs before displaying automation settings
-    								 *
-    								 */
-									do_action( 'noptin_before_display_automation_settings', $trigger, $args );
+							/**
+							 * Runs before displaying automation settings
+							 */
+							do_action( 'noptin_before_display_automation_settings', $trigger, $args );
 
-									$automation_name = esc_attr( $args['title'] );
-									?>
+							$automation_name = esc_attr( $args['title'] );
+						?>
 									<tr>
 
 										<th>
@@ -63,16 +62,16 @@
 
 									</tr>
 
-									<?php
+								<?php
 
-									if( ! empty( $args['support_delay'] ) ) {
+								if ( ! empty( $args['support_delay'] ) ) {
 
-										$label = __( 'Delay', 'newsletter-optin-box' );
-										if( is_string( $args['support_delay'] ) ) {
-											$label = __( 'Sends', 'newsletter-optin-box' );
-										}
+									$label = __( 'Delay', 'newsletter-optin-box' );
+									if ( is_string( $args['support_delay'] ) ) {
+										$label = __( 'Sends', 'newsletter-optin-box' );
+									}
 
-										?>
+									?>
 										<tr>
 
 											<th>
@@ -88,32 +87,30 @@
 													<option value="days">Day(s)</option>
 												</select>
 
-												<?php
+											<?php
 
-													if( is_string( $args['support_delay'] ) ) {
-														echo "<span class='description'>{$args['support_delay']}</span>";
-													}
-
-											echo "</td></tr>";
-
-											if( ! empty( $args['pre_setup_cb'] ) ) {
-												call_user_func( $args['pre_setup_cb'] );
+											if ( is_string( $args['support_delay'] ) ) {
+												echo "<span class='description'>{$args['support_delay']}</span>";
 											}
 
-									}
+											echo '</td></tr>';
 
-									/**
-    								 * Runs after displaying automation settings
-    								 *
-    								 */
-									do_action( 'noptin_after_display_automation_settings', $trigger, $args );
+											if ( ! empty( $args['pre_setup_cb'] ) ) {
+												call_user_func( $args['pre_setup_cb'] );
+											}
+								}
+
+								/**
+								 * Runs after displaying automation settings
+								 */
+								do_action( 'noptin_after_display_automation_settings', $trigger, $args );
 								?>
 							</table>
 						</div>
 
 						</form>
 
-			  		<?php	} ?>
+					<?php	} ?>
 
 				</<?php echo $outer_tag; ?>>
 			</li>

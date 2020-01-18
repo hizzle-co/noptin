@@ -34,9 +34,9 @@
 							<?php include 'optin-form.php'; ?>
 						</div>
 						<div class="noptin-form-usage-details">
-							<p v-if="optinType=='inpost'"><?php _e( 'Shortcode',  'newsletter-optin-box' ); ?> <strong @click="copyShortcode">[noptin-form id={{id}}]</strong> <button
-									class="noptin-copy-button"><?php _e( 'Copied',  'newsletter-optin-box' ); ?></button></p>
-							<p v-if="optinType=='sidebar'"><?php printf( __( 'Use the %s widget to add this form to a widget area', 'newsletter-optin-box' ), '<strong>Noptin Premade Form</strong>' )  ?></p>
+							<p v-if="optinType=='inpost'"><?php _e( 'Shortcode', 'newsletter-optin-box' ); ?> <strong @click="copyShortcode">[noptin-form id={{id}}]</strong> <button
+									class="noptin-copy-button"><?php _e( 'Copied', 'newsletter-optin-box' ); ?></button></p>
+							<p v-if="optinType=='sidebar'"><?php printf( __( 'Use the %s widget to add this form to a widget area', 'newsletter-optin-box' ), '<strong>Noptin Premade Form</strong>' ); ?></p>
 						</div>
 					</div>
 				</div>
@@ -44,9 +44,9 @@
 					<div class="noptin-popup-editor-sidebar-header">
 						<ul>
 							<?php
-                            foreach ( array_keys($sidebar) as $panel ) {
-                                $_panel = ucfirst($panel);
-                                echo "
+							foreach ( array_keys( $sidebar ) as $panel ) {
+								$_panel = ucfirst( $panel );
+								echo "
                                     <li>
                                         <button
                                             class='noptin-popup-editor-sidebar-section-header noptin-popup-editor-sidebar-{$panel}'
@@ -54,23 +54,23 @@
                                             @click.prevent=\"currentSidebarSection = '$panel'\">$_panel</button>
                                     </li>
                                 ";
-                            }
-                        ?>
+							}
+							?>
 						</ul>
 					</div>
 					<div class="noptin-popup-editor-sidebar-body noptin-fields">
 
 						<?php
-                    foreach ( $sidebar as $panel => $fields ) {
-                        echo " <div class='noptin-popup-editor-{$panel}-fields'  v-show=\"'{$panel}'==currentSidebarSection\">";
+						foreach ( $sidebar as $panel => $fields ) {
+							echo " <div class='noptin-popup-editor-{$panel}-fields'  v-show=\"'{$panel}'==currentSidebarSection\">";
 
 
-						foreach( $fields as $id=>$field ){
-                            Noptin_Vue::render_el( $id, $field, $panel );
-                        }
-                        echo "</div>";
-                    }
-                ?>
+							foreach ( $fields as $id => $field ) {
+								Noptin_Vue::render_el( $id, $field, $panel );
+							}
+							echo '</div>';
+						}
+						?>
 					</div>
 				</div>
 			</div>
@@ -80,5 +80,5 @@
 </div>
 
 <script type="text/x-template" id="noptinFieldEditorTemplate">
-    <?php include 'fields-editor.php'; ?>
+	<?php include 'fields-editor.php'; ?>
 </script>
