@@ -1,6 +1,6 @@
 <div class="noptin-welcome">
 	<div class="noptin-main-header">
-		<h1>Noptin v1.2.0</h1>
+		<h1>Noptin v1.2.2</h1>
 		<a href="https://github.com/hizzle-co/noptin/issues/new/choose" target="_blank"><?php _e( 'Report a bug or request a feature', 'newsletter-optin-box' ); ?></a>
 	</div>
 

@@ -183,31 +183,50 @@ class Noptin_Ajax {
 		$table    = get_noptin_subscribers_table_name();
 		$imported = 0;
 		$mappings = array(
-			'First Name'		=> 'first_name',
-			'Second Name'		=> 'second_name',
-			'Last Name' 		=> 'second_name',
-			'Email Address'		=> 'email',
-			'Active' 			=> 'active',
-			'Email Confirmed' 	=> 'confirmed',
-			'Subscribed On' 	=> 'date_created',
-			'Confirm Key' 		=> 'confirm_key',
-			'Meta' 				=> 'meta',
+			'first name'		=> 'first_name',
+			'second name'		=> 'second_name',
+			'last name' 		=> 'second_name',
+			'email address'		=> 'email',
+			'email'				=> 'email',
+			'active' 			=> 'active',
+			'list status' 		=> 'active',
+			'email confirmed' 	=> 'confirmed',
+			'global status' 	=> 'confirmed',
+			'subscribed on' 	=> 'date_created',
+			'confirm key' 		=> 'confirm_key',
+			'meta' 				=> 'meta',
 		);
 
 		foreach( $subscribers as $subscriber ) {
-
+			
 			// Prepare subscriber fields.
-			foreach( $mappings as $key => $value ) {
+			foreach( $subscriber as $key => $value ) {
+				$lowercase = strtolower( $key );
 
-				if( isset( $subscriber[ $key ] ) ) {
-					$subscriber[$value] = $subscriber[ $key ];
+				if( isset( $mappings[ $lowercase ] ) ) {
+					$subscriber[ $mappings[ $lowercase ] ] = $value;
 					unset( $subscriber[ $key ] );
 				}
+
 			}
 
 			// Ensure that there is a unique email address.
 			if( empty( $subscriber[ 'email' ] ) || ! is_email( $subscriber['email'] ) || noptin_email_exists( $subscriber['email'] ) ) {
 				continue;
+			}
+
+			// Sanitize email status
+			if( empty( $subscriber['confirmed'] ) || 'false' == $subscriber['confirmed'] || 'unconfirmed'  == $subscriber['confirmed'] ) {
+				$subscriber['confirmed'] = 0;
+			} else {
+				$subscriber['confirmed'] = 1;
+			}
+
+			// Sanitize subscriber status
+			if( empty( $subscriber['active'] ) || 'true' == $subscriber['active'] || 'subscribed'  == $subscriber['active'] ) {
+				$subscriber['active'] = 0;
+			} else {
+				$subscriber['active'] = 1;
 			}
 
 			// Save the main subscriber fields.
@@ -217,8 +236,8 @@ class Noptin_Ajax {
 				'second_name'  => empty( $subscriber['second_name'] ) ? '' : $subscriber['second_name'],
 				'confirm_key'  => empty( $subscriber['confirm_key'] ) ? md5( $subscriber['email'] ) . wp_generate_password( 4, false ) : $subscriber['confirm_key'],
 				'date_created' => empty( $subscriber['date_created'] ) ? date( 'Y-m-d' ) : $subscriber['date_created'],
-				'confirmed'	   => empty( $subscriber['confirmed'] ) ? 0 : (int) $subscriber['confirmed'],
-				'active'	   => empty( $subscriber['active'] ) ? 1 : (int) $subscriber['active'],
+				'confirmed'	   => $subscriber['confirmed'],
+				'active'	   => $subscriber['active'],
 			);
 
 			if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
@@ -229,6 +248,8 @@ class Noptin_Ajax {
 
 			$meta = array();
 			if( !empty( $subscriber['meta'] ) ) {
+
+				$subscriber['meta'] = maybe_unserialize( $subscriber['meta'] );
 
 				// Arrays
 				if( is_array( $subscriber['meta'] ) ) {
@@ -248,9 +269,31 @@ class Noptin_Ajax {
 				$meta = array();
 			}
 
-			$meta += array_diff_key( $subscriber, $database_fields );
+			$extra_meta = array_diff_key( $subscriber, $database_fields );
+			foreach ( $extra_meta as $field => $value ) {
+
+				if( is_null( $value ) ) {
+					continue;
+				}
+				
+				if( ! isset( $meta[$field] ) ) {
+					$meta[$field] = array();
+				}
+
+				$meta[$field][] = $value;
+
+			}
+
 			foreach ( $meta as $field => $value ) {
-				update_noptin_subscriber_meta( $id, $field, $value );
+
+				if( ! is_array( $value ) ) {
+					$value = array( $value );
+				}
+
+				foreach( $value as $val ) {
+					update_noptin_subscriber_meta( $id, $field, $val );
+				}
+				
 			}
 
 			$imported += 1;
@@ -583,7 +626,7 @@ class Noptin_Ajax {
 
 		$output  = fopen( 'php://output', 'w' ) or die( 'Unsupported server' );
 		$table   = get_noptin_subscribers_table_name();
-		$results = $wpdb->get_results( "SELECT `first_name`, `second_name`, `email`, `active`, `confirmed`, `date_created`  FROM $table", ARRAY_N );
+		$results = $wpdb->get_results( "SELECT `id`, `first_name`, `second_name`, `email`, `active`, `confirmed`, `date_created`, `confirm_key`  FROM $table", ARRAY_N );
 
 		header( 'Content-Type:application/csv' );
 		header( 'Content-Disposition:attachment;filename=subscribers.csv' );
@@ -598,9 +641,14 @@ class Noptin_Ajax {
 				__( 'Active', 'newsletter-optin-box' ),
 				__( 'Email Confirmed', 'newsletter-optin-box' ),
 				__( 'Subscribed On', 'newsletter-optin-box' ),
+				__( 'Confirm Key', 'newsletter-optin-box' ),
+				__( 'Meta', 'newsletter-optin-box' ),
 			)
 		);
+
 		foreach ( $results as $result ) {
+			$result[] = wp_json_encode( get_noptin_subscriber_meta( $result[0] ) );
+			unset( $result[0] );
 			fputcsv( $output, $result );
 		}
 		fclose( $output );
