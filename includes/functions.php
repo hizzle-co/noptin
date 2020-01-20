@@ -1271,6 +1271,22 @@ function get_noptin_subscribers_meta_table_name() {
 }
 
 /**
+ *  Returns the appropriate capability to check against
+ *
+ * @since 1.2.2
+ * @return string capability to check against
+ * @param string $capalibilty Optional. The alternative capability to check against.
+ */
+function get_noptin_capability( $capalibilty = 'manage_noptin' ) {
+
+	if ( current_user_can( 'manage_options' ) ) {
+		return 'manage_options';
+	};
+
+	return $capalibilty;
+}
+
+/**
  * Gets and includes template files.
  *
  * @since 1.2.2

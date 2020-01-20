@@ -14,4 +14,18 @@
 
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<config name="minimum_supported_wp_version" value="4.7" />
+
+	<rule ref="Squiz.Commenting.FileComment">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="newsletter-optin-box" />
+		</properties>
+	</rule>
+
 </ruleset>

@@ -220,7 +220,7 @@ class Noptin_Admin {
 		wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
 
 		// Vue js.
-		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.js', array(), '2.6.11', true );
+		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.min.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
 		wp_enqueue_media();
@@ -274,6 +274,21 @@ class Noptin_Admin {
 		if ( 'noptin-email-campaigns' === $page ) {
 			$version = filemtime( $this->assets_path . 'js/dist/newsletter-editor.js' );
 			wp_enqueue_script( 'noptin-settings', $this->assets_url . 'js/dist/newsletter-editor.js', array( 'select2', 'sweetalert2' ), $version, true );
+		}
+
+		// Subscribers page.
+		if ( 'noptin-subscribers' === $page ) {
+			$version = filemtime( $this->assets_path . 'js/dist/subscribers.js' );
+			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2' ), $version, true );
+
+			$params       = array(
+				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+				'nonce'       => wp_create_nonce( 'noptin_subscribers' ),
+			);
+	
+			// localize and enqueue the script with all of the variable inserted.
+			wp_localize_script( 'noptin-subscribers', 'noptinSubscribers', $params );
+
 		}
 	}
 
@@ -545,7 +560,7 @@ class Noptin_Admin {
 
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers', 'newsletter-optin-box' ); ?> <a href="<?php echo $download_url; ?>" class="button-secondary"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> </h1>
+			<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers', 'newsletter-optin-box' ); ?> <a href="#" class="button-secondary noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="button-secondary"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> </h1>
 			<p class="description" style='margin: 10px 0;'><a href="https://noptin.com/products/" target="_blank"><?php _e( 'Check out our integrations', 'newsletter-optin-box' ); ?></a></p>
 			<form id="noptin-subscribers-table" method="POST">
 				<?php $table->display(); ?>

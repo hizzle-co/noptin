@@ -41,6 +41,9 @@ class Noptin_Ajax {
 		// Send a test email.
 		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
 
+		// Import subscribers.
+		add_action( 'wp_ajax_noptin_import_subscribers', array( $this, 'import_subscribers' ) );
+
 	}
 
 	/**
@@ -146,6 +149,124 @@ class Noptin_Ajax {
 		do_action( 'noptin_setup_automation', $id, $data );
 
 		echo get_noptin_automation_campaign_url( $id );
+		exit;
+
+	}
+
+	/**
+	 * Imports subscribers
+	 *
+	 * @access      public
+	 * @since       1.2.2
+	 * @return      void
+	 */
+	public function import_subscribers() {
+		global $wpdb;
+
+		// Ensure the nonce is valid...
+		check_ajax_referer( 'noptin_subscribers' );
+
+		// ... and that the user can import subscribers.
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			wp_die( -1, 403 );
+		}
+
+		// Prepare subscribers.
+		$subscribers = stripslashes_deep( $_POST['subscribers'] );
+
+		// Are there subscribers?
+		if ( empty( $subscribers ) ) {
+			wp_send_json_error( __( 'The import file is either empty or corrupted' ) );
+			exit;
+		}
+
+		$table    = get_noptin_subscribers_table_name();
+		$imported = 0;
+		$mappings = array(
+			'First Name'		=> 'first_name',
+			'Second Name'		=> 'second_name',
+			'Last Name' 		=> 'second_name',
+			'Email Address'		=> 'email',
+			'Active' 			=> 'active',
+			'Email Confirmed' 	=> 'confirmed',
+			'Subscribed On' 	=> 'date_created',
+			'Confirm Key' 		=> 'confirm_key',
+			'Meta' 				=> 'meta',
+		);
+
+		foreach( $subscribers as $subscriber ) {
+
+			// Prepare subscriber fields.
+			foreach( $mappings as $key => $value ) {
+
+				if( isset( $subscriber[ $key ] ) ) {
+					$subscriber[$value] = $subscriber[ $key ];
+					unset( $subscriber[ $key ] );
+				}
+			}
+
+			// Ensure that there is a unique email address.
+			if( empty( $subscriber[ 'email' ] ) || ! is_email( $subscriber['email'] ) || noptin_email_exists( $subscriber['email'] ) ) {
+				continue;
+			}
+
+			// Save the main subscriber fields.
+			$database_fields = array(
+				'email'        => $subscriber['email'],
+				'first_name'   => empty( $subscriber['first_name'] ) ? '' : $subscriber['first_name'],
+				'second_name'  => empty( $subscriber['second_name'] ) ? '' : $subscriber['second_name'],
+				'confirm_key'  => empty( $subscriber['confirm_key'] ) ? md5( $subscriber['email'] ) . wp_generate_password( 4, false ) : $subscriber['confirm_key'],
+				'date_created' => empty( $subscriber['date_created'] ) ? date( 'Y-m-d' ) : $subscriber['date_created'],
+				'confirmed'	   => empty( $subscriber['confirmed'] ) ? 0 : (int) $subscriber['confirmed'],
+				'active'	   => empty( $subscriber['active'] ) ? 1 : (int) $subscriber['active'],
+			);
+
+			if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
+				continue;
+			}
+
+			$id = $wpdb->insert_id;
+
+			$meta = array();
+			if( !empty( $subscriber['meta'] ) ) {
+
+				// Arrays
+				if( is_array( $subscriber['meta'] ) ) {
+					$meta = array( $subscriber['meta'] );
+				}
+
+				// Json
+				if( is_string( $subscriber['meta'] ) ) {
+					$meta = json_decode( $subscriber['meta'], true );
+				}
+
+				unset( $subscriber['meta'] );
+
+			}
+
+			if( empty( $meta ) ) {
+				$meta = array();
+			}
+
+			$meta += array_diff_key( $subscriber, $database_fields );
+			foreach ( $meta as $field => $value ) {
+				update_noptin_subscriber_meta( $id, $field, $value );
+			}
+
+			$imported += 1;
+
+		}
+
+		// Did we import any subscribers?
+		if ( empty( $imported ) ) {
+			wp_send_json_error( __( 'There was no unique subscriber to import' ) );
+			exit;
+		}
+
+		wp_send_json_success( sprintf(
+			__( 'Successfuly imported %s subscribers' ),
+			$imported
+		)  );
 		exit;
 
 	}

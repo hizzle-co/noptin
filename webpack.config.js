@@ -2,14 +2,15 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-	mode: "development",
+	mode: "production",
 	entry: {
 		admin: "./includes/assets/js/src/admin.js",
 		settings: "./includes/assets/js/src/settings.js",
-		"newsletter-editor": "./includes/assets/js/src/admin.js",
-		"optin-editor": "./includes/assets/js/src/admin.js",
+		"newsletter-editor": "./includes/assets/js/src/newsletter-editor.js",
+		"optin-editor": "./includes/assets/js/src/optin-editor.js",
 		frontend: "./includes/assets/js/src/frontend.js",
-		blocks: "./includes/assets/js/src/blocks.js"
+		blocks: "./includes/assets/js/src/blocks.js",
+		subscribers: "./includes/assets/js/src/subscribers.js"
 	},
 	output: {
 		filename: "[name].js",

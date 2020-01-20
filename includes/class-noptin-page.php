@@ -280,7 +280,8 @@ class Noptin_Page {
 		if ( is_noptin_actions_page() ) {
 
 			// No action specified, redirect back home.
-			if ( empty( $this->get_request_action() ) ) {
+			$action = $this->get_request_action();
+			if ( empty( $action ) ) {
 				wp_redirect( get_home_url() );
 				exit;
 			}

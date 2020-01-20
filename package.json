@@ -33,14 +33,15 @@
     "lodash.throttle": "^4.1.1",
     "medium-editor": "^5.23.3",
     "npm": "^6.13.6",
+    "papaparse": "^5.1.1",
     "postcss-import": "^12.0.1",
-    "vue-popperjs": "^2.0.4",
-    "vuedraggable": "^2.23.0"
+    "vue-popperjs": "^2.3.0",
+    "vuedraggable": "^2.23.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "autoprefixer": "^9.6.1",
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "autoprefixer": "^9.7.4",
     "babel-loader": "^8.0.6",
     "cssnano": "^4.1.10",
     "grunt": "^1.0.4",
@@ -49,12 +50,12 @@
     "grunt-wp-readme-to-markdown": "^2.0.1",
     "precss": "^4.0.0",
     "serialize-javascript": ">=2.1.1",
-    "vue-loader": "^15.7.1",
+    "vue-loader": "^15.8.3",
     "vue-quill-editor": "^3.0.6",
-    "vue-select": "^3.1.0",
-    "vue-swatches": "^1.0.3",
-    "vue-template-compiler": "^2.6.10",
+    "vue-select": "^3.4.0",
+    "vue-swatches": "^1.0.4",
+    "vue-template-compiler": "^2.6.11",
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.10"
   }
 }
