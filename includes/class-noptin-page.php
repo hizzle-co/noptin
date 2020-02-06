@@ -39,6 +39,9 @@ class Noptin_Page {
 		// Admin bar.
 		add_filter( 'show_admin_bar', array( $this, 'maybe_hide_admin_bar' ) );
 
+		// Exclude from sitemap.
+		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'hide_from_yoast_sitemap' ) );
+
 	}
 
 	/**
@@ -304,6 +307,11 @@ class Noptin_Page {
 		}
 		return $status;
 
+	}
+
+	public function hide_from_yoast_sitemap( $ids = array() ) {
+		$ids[] = get_noptin_action_page();
+		return $ids;
 	}
 
 
