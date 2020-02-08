@@ -53,10 +53,9 @@ class Noptin_System_Info {
      */
     public function get_info_as_text() {
 
-        $info = $this->info;
         $text = "### Begin System Info ###\n\n";
 
-        foreach ( $info as $cat => $info ) {
+        foreach ( $this->info as $cat => $info ) {
 
             $cat = esc_html( $cat );
 
@@ -66,7 +65,7 @@ class Noptin_System_Info {
 
                 foreach ( $info as $label => $value ) {
 
-                    if ( is_array( $value ) ) {
+                    if ( ! is_scalar( $value ) ) {
                         $value = print_r( $value, true );
                     }
 
@@ -107,7 +106,7 @@ class Noptin_System_Info {
         return apply_filters( 'noptin_site_system_info', array(
             'Site URL'  => site_url(),
             'Home URL'  => home_url(),
-            'Multisite' => (is_multisite() ? 'Yes' : 'No'),
+            'Multisite' => ( is_multisite() ? 'Yes' : 'No' ),
         ));
     }
 
@@ -124,7 +123,7 @@ class Noptin_System_Info {
         $theme_data = wp_get_theme();
         $theme      = $theme_data->Name . ' ' . $theme_data->Version . ' (' . $theme_data->uri . ')';
 
-        return apply_filters('hubaga_wordpress_config_system_info', array(
+        return apply_filters('noptin_wordpress_config_system_info', array(
             'Version'               => get_bloginfo('version'),
             'Language'              => get_locale(),
             'Permalink Structure'   => (get_option('permalink_structure') ? get_option('permalink_structure') : 'Default'),

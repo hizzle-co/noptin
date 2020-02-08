@@ -1038,27 +1038,6 @@ function noptin_form_template_wrapper_props() {
 }
 
 /**
- * Returns a path to the debug log
- *
- * @return string
- * @since 1.1.0
- */
-function noptin_get_debug_log_file() {
-
-	// get default log file location.
-	$upload_dir = wp_upload_dir( null, false );
-	$file       = trailingslashit( $upload_dir['basedir'] ) . 'noptin-debug-log.php';
-
-	/**
-	 * Filters the log file to write to.
-	 *
-	 * @param string $file The log file location. Default: /wp-content/uploads/noptin-debug.log
-	 */
-	return apply_filters( 'noptin_debug_log_file', $file );
-
-}
-
-/**
  * This will replace the first half of a string with "*" characters.
  *
  * @param string $string
@@ -1462,4 +1441,71 @@ function noptin_clean( $var ) {
 	}
     
     return is_string( $var ) ? sanitize_text_field( $var ) : $var;
+}
+
+/**
+ * Logs a message.
+ *
+ * @since 1.2.3
+ * @param mixed  $message
+ * @param string  $code.
+ * @see get_logged_noptin_messages
+ * @return bool.
+ */
+function log_noptin_message( $message, $code = 'error' ) {
+
+	// Scalars only please.
+	if( ! is_scalar( $message ) ) {
+		$message = print_r( $message, true );
+	}
+
+	// Obfuscate email addresses in log message since log might be public.
+	$message = noptin_obfuscate_email_addresses( (string) $message );
+
+	// First, get rid of everything between "invisible" tags.
+	$message = preg_replace( '/<(?:style|script|head)>.+?<\/(?:style|script|head)>/is', '', $message );
+
+	// Then, strip tags (while retaining content of these tags).
+	$message = strip_tags( $message );
+	
+	// Next, retrieve the array of existing logged messages.
+	$messages   = get_logged_noptin_messages();
+
+	// Add our message.
+	$messages[] = array(
+		'level'	=> $code,
+		'msg'	=> trim( $message ),
+		'time'	=> current_time( 'mysql' ),
+	);
+
+	// Then save to the database.
+	return update_option( 'noptin_logged_messages', array( $messages ) );
+
+}
+
+/**
+ * Logs a message.
+ *
+ * @since 1.2.3
+ * @see log_noptin_message
+ * @return array.
+ */
+function get_logged_noptin_messages() {
+	
+	// Retrieve the logged messages.
+	$messages = get_option( 'noptin_logged_messages', array() );
+
+	// Ensure it is an array...
+	if( ! is_array( $messages ) ) {
+		$messages = array();
+	}
+
+	// ... of no more than 20 elements.
+	if( 20 < count( $messages ) ) {
+		$messages   = array_slice( $messages, -20 );
+		update_option( 'noptin_logged_messages', array( $messages ) );
+	}
+
+	return $messages;
+
 }
