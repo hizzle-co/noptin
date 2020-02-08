@@ -968,7 +968,7 @@ function noptin_get_color_themes() {
  */
 function noptin_get_optin_templates() {
 	$custom_templates  = get_option( 'noptin_templates' );
-	$inbuilt_templates = include 'admin/templates/templates.php';
+	$inbuilt_templates = include locate_noptin_template( 'optin-templates.php' );
 
 	if ( ! is_array( $custom_templates ) ) {
 		$custom_templates = array();
@@ -1250,7 +1250,7 @@ function get_noptin_default_newsletter_preview_text() {
 function get_noptin_default_newsletter_body() {
 
 	$noptin_admin = Noptin_Admin::instance();
-	$body         = include $noptin_admin->admin_path . 'templates/default-email-body.php';
+	$body         = include locate_noptin_template( 'default-email-body.php' );
 
 	/**
 	 * Filters the default newsletter body
@@ -1267,10 +1267,17 @@ function get_noptin_default_newsletter_body() {
  * @since 1.2.0
  */
 function get_noptin_include_dir( $append = '' ) {
+	return get_noptin_plugin_path("includes/$append");
+}
 
+/**
+ * Returns a path to the noptin dir.
+ * 
+ * @since 1.2.3
+ */
+function get_noptin_plugin_path( $append = '' ) {
 	$noptin = noptin();
-	return $noptin->plugin_path . "includes/$append";
-
+	return $noptin->plugin_path . $append;
 }
 
 /**
@@ -1369,7 +1376,7 @@ function get_noptin_capability( $capalibilty = 'manage_noptin' ) {
  * @param mixed  $template_name
  * @param array  $args (default: array()).
  * @param string $template_path (default: 'noptin').
- * @param string $default_path (default: 'includes/admin/templates').
+ * @param string $default_path (default: 'templates').
  */
 function get_noptin_template( $template_name, $args = array(), $template_path = 'noptin', $default_path = '' ) {
 
@@ -1394,7 +1401,7 @@ function get_noptin_template( $template_name, $args = array(), $template_path = 
  * @since 1.2.2
  * @param string      $template_name
  * @param string      $template_path (default: 'noptin').
- * @param string|bool $default_path (default: 'includes/admin/templates') False to not load a default.
+ * @param string|bool $default_path (default: 'templates') False to not load a default.
  * @return string
  */
 function locate_noptin_template( $template_name, $template_path = 'noptin', $default_path = '' ) {
@@ -1411,7 +1418,7 @@ function locate_noptin_template( $template_name, $template_path = 'noptin', $def
 	if ( ! $template && false !== $default_path ) {
 
 		if ( empty( $default_path ) ) {
-			$default_path = get_noptin_include_dir( 'admin/templates' );
+			$default_path = get_noptin_plugin_path( 'templates' );
 		}
 
 		if ( file_exists( trailingslashit( $default_path ) . $template_name ) ) {

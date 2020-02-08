@@ -109,8 +109,7 @@ class Noptin_Email_Campaigns_Admin {
 			$campaign = get_post( $id );
 		}
 
-		$noptin_admin = Noptin_Admin::instance();
-		include $noptin_admin->admin_path . 'templates/newsletter-campaign-form.php';
+		get_noptin_template( 'newsletter-campaign-form.php', compact( 'id', 'campaign' ) );
 
 	}
 
@@ -145,7 +144,6 @@ class Noptin_Email_Campaigns_Admin {
 	function view_automation_campaigns() {
 
 		$triggers     = $this->get_automation_triggers();
-		$noptin_admin = Noptin_Admin::instance();
 		$table        = new Noptin_Email_Automations_Table();
 		$table->prepare_items();
 
@@ -164,7 +162,7 @@ class Noptin_Email_Campaigns_Admin {
 				<p class="description"><?php _e( 'Use this page to create emails that will be automatically emailed to your subscribers', 'newsletter-optin-box' ); ?></p>
 			</form>
 			<div id="noptin-create-automation" style="display:none;">
-				<?php include $noptin_admin->admin_path . 'templates/new-email-automations-popup.php'; ?>
+				<?php get_noptin_template( 'new-email-automations-popup.php', compact( 'triggers' ) ); ?>
 			</div>
 		</div>
 		<?php
@@ -243,7 +241,7 @@ class Noptin_Email_Campaigns_Admin {
 		$automations     = $this->get_automation_triggers();
 
 		// Load the automation campign form.
-		include get_noptin_include_dir( 'admin/templates/automation-campaign-form.php' );
+		include locate_noptin_template( 'automation-campaign-form.php' );
 
 	}
 

@@ -459,7 +459,7 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_before_email_campaigns_page', $this );
 
-		include $this->admin_path . 'templates/email-campaigns.php';
+		get_noptin_template( 'email-campaigns.php' );
 
 		/**
 		 * Runs after displaying the email campaigns page.

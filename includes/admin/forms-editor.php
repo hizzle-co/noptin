@@ -48,7 +48,7 @@ class Noptin_Form_Editor {
 	public function output() {
 		$sidebar = $this->sidebar_fields();
 		$state   = $this->get_state();
-		require plugin_dir_path( __FILE__ ) . 'templates/optin-form-editor.php';
+		get_noptin_template( 'optin-form-editor.php', compact( 'sidebar', 'state' ) );
 	}
 
 	/**

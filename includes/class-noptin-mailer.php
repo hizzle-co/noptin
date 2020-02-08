@@ -136,47 +136,32 @@ class Noptin_Mailer {
 		if ( empty( $data['preview_text'] ) ) {
 			return '';
 		}
-
 		$preview_text = trim( $data['preview_text'] );
 
-		ob_start();
-		include get_noptin_include_dir( 'admin/templates/email-templates/preview-text.php' );
-		return ob_get_clean();
+		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/preview-text.php' ), compact( 'preview_text', 'data' ) );
+
 	}
 
 	/**
 	 * Retrieves the content markup for the email
 	 */
 	public function get_content( $content, $data = array() ) {
-
-		ob_start();
-		include get_noptin_include_dir( 'admin/templates/email-templates/content.php' );
-		return ob_get_clean();
+		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/content.php' ), compact( 'content', 'data' ) ); 
 	}
 
 	/**
 	 * Retrieves the markup for the email logo
 	 */
 	public function get_logo( $data = array() ) {
-
-		// Default logo url.
-		$url      = '';
-		$logo_url = apply_filters( 'noptin_email_logo_url', $url, $data );
-
-		ob_start();
-		include get_noptin_include_dir( 'admin/templates/email-templates/logo.php' );
-		return ob_get_clean();
+		$logo_url = apply_filters( 'noptin_email_logo_url', '', $data );
+		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/logo.php' ), compact( 'logo_url', 'data' ) );
 	}
 
 	/**
 	 * Retrieves the default email footer
 	 */
 	public function get_footer( $data = array() ) {
-
-		ob_start();
-		include get_noptin_include_dir( 'admin/templates/email-templates/footer.php' );
-		return ob_get_clean();
-
+		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/footer.php' ), compact( 'data' ) );
 	}
 
 	/**

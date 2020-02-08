@@ -39,7 +39,7 @@ class Noptin_New_Post_Notify {
 	public function default_automation_data( $data ) {
 
 		if ( 'post_notifications' == $data['automation_type'] ) {
-			$data['email_body']   = noptin_ob_get_clean( get_noptin_include_dir( 'admin/templates/default-new-post-notification-body.php' ) );
+			$data['email_body']   = noptin_ob_get_clean( locate_noptin_template( 'default-new-post-notification-body.php' ) );
 			$data['subject']      = '[[post_title]]';
 			$data['preview_text'] = __( 'New article published on [[blog_name]]' );
 		}
@@ -294,7 +294,7 @@ class Noptin_New_Post_Notify {
 				'email_body'    => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
 				'email_subject' => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
 				'preview_text'  => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
-				'template'      => get_noptin_include_dir( 'admin/templates/email-templates/paste.php' ),
+				'template'      => locate_noptin_template( 'email-templates/paste.php' ),
 				'merge_tags'    => $post,
 			),
 		);

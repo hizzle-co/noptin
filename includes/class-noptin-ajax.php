@@ -380,7 +380,7 @@ class Noptin_Ajax {
 		}
 
 		$data['merge_tags'] = $merge_tags;
-		$data['template']   = get_noptin_include_dir( 'admin/templates/email-templates/paste.php' );
+		$data['template']   = locate_noptin_template( 'email-templates/paste.php' );
 
 		$data = apply_filters( 'noptin_test_email_data', $data );
 

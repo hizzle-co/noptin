@@ -48,7 +48,7 @@ class Noptin_Form_Editor_Quick {
 	public function output() {
 		$steps = $this->steps();
 		$state = $this->get_state();
-		require plugin_dir_path( __FILE__ ) . 'templates/optin-form-editor-quick.php';
+		get_noptin_template( 'optin-form-editor-quick.php', compact( 'steps', 'state' ) );
 	}
 
 	/**
