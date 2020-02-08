@@ -19,7 +19,7 @@ class Noptin_Post_Types {
 	public function __construct() {
 
 		// Register post types.
-		add_action( 'init', array( $this, 'register_post_types' ) );
+		$this->register_post_types();
 
 		// Remove some meta boxes.
 		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
@@ -405,5 +405,3 @@ class Noptin_Post_Types {
 	}
 
 }
-
-new Noptin_Post_Types();

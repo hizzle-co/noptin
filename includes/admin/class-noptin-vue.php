@@ -567,5 +567,3 @@ class Noptin_Vue {
 	}
 
 }
-
-Noptin_Vue::init_hooks();

@@ -77,9 +77,10 @@ class Noptin_Admin {
 	public function __construct() {
 
 		/**
-		 * Runs right before admin module loads.
+		 * Runs right before Noptin Admin loads.
 		 *
-		 * @param array $this The admin instance
+		 * @param Noptin_Admin $admin The admin instance
+		 * @since 1.0.1
 		 */
 		do_action( 'noptin_before_admin_load', $this );
 
@@ -90,48 +91,18 @@ class Noptin_Admin {
 		$this->assets_url  = $noptin->plugin_url . 'includes/assets/';
 		$this->assets_path = $noptin->plugin_path . 'includes/assets/';
 
-		// Include core files.
-		$this->includes();
-
 		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
 
 		// initialize hooks.
 		$this->init_hooks();
 
 		/**
-		 * Runs right after admin module loads.
+		 * Runs after Noptin Admin loads.
 		 *
-		 * @param array $this The admin instance
+		 * @param Noptin_Admin $admin The admin instance
+		 * @since 1.0.1
 		 */
 		do_action( 'noptin_admin_loaded', $this );
-	}
-
-	/**
-	 * Include necessary files
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	private function includes() {
-
-		// Settings.
-		require_once $this->admin_path . 'settings.php';
-
-		// Editor.
-		require_once $this->admin_path . 'forms-editor.php';
-
-		// Email campaigns.
-		require_once $this->admin_path . 'class-noptin-email-campaigns-admin.php';
-		require_once $this->admin_path . 'class-noptin-email-newsletters-table.php';
-		require_once $this->admin_path . 'class-noptin-email-automations-table.php';
-
-		/**
-		 * Runs right after including admin files.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_admin_includes', $this );
 	}
 
 	/**
@@ -168,6 +139,8 @@ class Noptin_Admin {
 
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
+
+		Noptin_Vue::init_hooks();
 
 		/**
 		 * Runs right after registering admin hooks.
@@ -552,8 +525,6 @@ class Noptin_Admin {
 			),
 			admin_url( 'admin-ajax.php' )
 		);
-
-		require_once $this->admin_path . 'class-noptin-subscribers-table.php';
 
 		$table = new Noptin_Subscribers_Table();
 		$table->prepare_items();

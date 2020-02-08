@@ -664,5 +664,3 @@ class Noptin_Ajax {
 	}
 
 }
-
-new Noptin_Ajax();

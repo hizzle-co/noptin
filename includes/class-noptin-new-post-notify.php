@@ -399,6 +399,3 @@ class Noptin_New_Post_Notify {
 	}
 
 }
-
-$post_notifications = new Noptin_New_Post_Notify();
-$post_notifications->init();

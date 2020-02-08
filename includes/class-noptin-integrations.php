@@ -169,5 +169,3 @@ class Noptin_Integrations {
 
 
 }
-
-new Noptin_Integrations();

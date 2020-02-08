@@ -98,5 +98,3 @@ class Noptin_Popups {
 
 
 }
-
-new Noptin_Popups();

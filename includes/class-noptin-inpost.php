@@ -125,5 +125,3 @@ class Noptin_Inpost {
 
 
 }
-
-new Noptin_Inpost();
