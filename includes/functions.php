@@ -592,6 +592,68 @@ function add_noptin_subscriber( $fields ) {
 
 }
 
+/**
+ * Updates a WordPress subscriber
+ *
+ * @access  public
+ * @since   1.2.3
+ */
+function update_noptin_subscriber( $subscriber_id, $details = array() ) {
+	global $wpdb;
+	$subscriber_id = absint( $subscriber_id );
+
+	// Ensure the subscriber exists.
+	$subscriber = get_noptin_subscriber( $subscriber_id );
+	if( empty( $subscriber ) ) {
+		return false;
+	}
+
+	// Prepare main variables.
+	$table     = get_noptin_subscribers_table_name();
+	$fields    = wp_unslash( $details );
+	$to_update = array();
+
+	// Maybe split name into first and last.
+	if ( isset( $fields['name'] ) ) {
+		$names = noptin_split_subscriber_name( $fields['name'] );
+
+		$fields['first_name'] = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
+		$fields['second_name']= empty( $fields['second_name'] ) ? $names[1] : trim( $fields['second_name'] );
+		unset( $fields['name'] );
+
+	}
+
+	if ( isset( $fields['last_name'] ) ) {
+		$fields['second_name']  = empty( $fields['second_name'] ) ? trim( $fields['last_name'] ) : $fields['second_name'];
+		unset( $fields['last_name'] );
+	}
+
+	if ( isset( $fields['id'] ) ) {
+		unset( $fields['id'] );
+	}
+
+	foreach( noptin_parse_list( 'email first_name second_name confirm_key date_created active confirmed' ) as $field ) {
+		if( isset( $fields[ $field ] ) ) {
+			$to_update[ $field ] = noptin_clean( $fields[ $field ] );
+			unset( $fields[ $field ] );
+		}
+	}
+
+	if( ! empty( $to_update ) ) {
+		$wpdb->update( $table, $to_update, array( 'id' => $subscriber_id ) );
+	}
+
+	// Insert additional meta data.
+	foreach ( $fields as $field => $value ) {
+		update_noptin_subscriber_meta( $subscriber_id, $field, $value );
+	}
+
+	do_action( 'noptin_update_subscriber', $subscriber_id, $details );
+
+	return true;
+
+}
+
 
 /**
  * Retrieves a subscriber
@@ -1465,8 +1527,8 @@ function log_noptin_message( $message, $code = 'error' ) {
 	// First, get rid of everything between "invisible" tags.
 	$message = preg_replace( '/<(?:style|script|head)>.+?<\/(?:style|script|head)>/is', '', $message );
 
-	// Then, strip tags (while retaining content of these tags).
-	$message = strip_tags( $message );
+	// Then, strip some tags.
+	$message = wp_kses( $message, 'user_description' );
 	
 	// Next, retrieve the array of existing logged messages.
 	$messages   = get_logged_noptin_messages();
@@ -1508,4 +1570,153 @@ function get_logged_noptin_messages() {
 
 	return $messages;
 
+}
+
+/**
+ * Synces users to existing subscribers.
+ *
+ * @since 1.2.3
+ * @param string|array $users_to_sync The WordPress users to sync to Noptin.
+ * @see sync_noptin_subscribers_to_users
+ * @return void.
+ */
+function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
+	
+	// Arrays only please.
+	$users_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $users_to_sync ) ) );
+
+	foreach( array_unique( $users_to_sync ) as $user_id ) {
+
+		// Get the user data...
+		$user_info = get_userdata( $user_id );
+
+		// ... and abort if it is missing.
+		if( empty( $user_info ) ) {
+			continue;
+		}
+
+		// If the user is not yet subscribed, subscribe them.
+		add_noptin_subscriber( array(
+			'email' 			=> $user_info->user_email,
+			'name'  			=> $user_info->display_name,
+			'_subscriber_via'	=> 'users_sync'
+		) );
+
+		// Then update the subscriber.
+		$subscriber = get_noptin_subscriber_by_email( $user_info->user_email );
+
+		if( empty( $subscriber ) ) {
+			continue;
+		}
+
+		$to_update = array(
+			'description' => $user_info->description,
+			'website'	  => esc_url( $user_info->user_url ),
+			'wp_user_id'  => $user_info->ID, 
+		);
+
+		$to_update = apply_filters( 'noptin_sync_users_to_subscribers', $to_update, $subscriber, $user_info );
+		foreach( $to_update as $key => $value ) {
+			if( is_null( $value ) ) {
+				unset( $to_update[$key] );
+			}
+		}
+
+		if( ! empty( $to_update ) ) {
+			update_noptin_subscriber( $to_update );
+		}
+
+	}
+
+}
+
+/**
+ * Synces existing subscribers to WordPress users.
+ *
+ * @since 1.2.3
+ * @param string|array $subscribers_to_sync The Noptin subscribers to sync to WordPress Users.
+ * @see sync_noptin_subscribers_to_users
+ * @return void.
+ */
+function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
+	
+	// Arrays only please.
+	$subscribers_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $subscribers_to_sync ) ) );
+
+	foreach( array_unique( $subscribers_to_sync ) as $subscriber_id ) {
+
+		// Get the subscriber data...
+		$subscriber = get_noptin_subscriber( $subscriber_id );
+
+		// ... and abort if it is missing.
+		if( empty( $subscriber ) ) {
+			continue;
+		}
+
+		// If the subscriber is a WordPress user, continue.
+		$user = get_user_by( 'email', $subscriber->email );
+		if ( $user ) {
+			update_noptin_subscriber_meta( $subscriber->id, 'wp_user_id', $user->ID );
+			continue;
+		}
+
+		// Prepare user values.
+		$args = array(
+			'user_login' => noptin_generate_user_name( $subscriber->email ),
+			'user_pass'  => wp_generate_password(),
+			'user_email' => $subscriber->email,
+			'role'       => 'subscriber',
+		);
+
+		$user_id = wp_insert_user( $args );
+		if( is_wp_error( $user_id ) ) {
+			log_noptin_message( sprintf(
+				__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-subscriber-box' ),
+				$user_id->get_error_message(),
+				$subscriber->email
+			));
+			continue;
+		}
+
+		update_user_option( $user_id, 'default_password_nag', true, true ); // Set up the Password change nag.
+		update_noptin_subscriber_meta( $subscriber->id, 'wp_user_id', $user_id );
+		wp_send_new_user_notifications( $user_id, 'user' );
+
+	}
+
+}
+
+/**
+ * Generates a unique username for new users.
+ *
+ * @since 1.2.3
+ * @param string $prefix
+ * @return string.
+ */
+function noptin_generate_user_name( $prefix = '' ) {
+	
+	// If prefix is an email, retrieve the part before the email.
+	$prefix = strtok( $prefix,  '@' );
+
+	// Trim to 4 characters max.
+	$prefix = sanitize_user( substr( $prefix, 0, 4 ) );
+
+	/** @ignore */
+	$illegal_logins = (array) apply_filters( 'illegal_user_logins', array() );
+	if ( empty( $prefix ) || in_array( strtolower( $prefix ), array_map( 'strtolower', $illegal_logins ), true ) ) {
+		$prefix = 'noptin';
+	}
+
+	$username = $prefix . '_' . zeroise( wp_rand( 0, 9999 ), 4 );
+	if ( username_exists( $username ) ) {
+		return noptin_generate_user_name( $prefix );
+	}
+
+	/**
+	 * Filters an autogenerated user_name.
+	 *
+	 * @since 1.2.3
+	 * @param string $prefix      A prefix for the user name. Can be any string including an email address.
+	 */
+	return apply_filters( 'noptin_generate_user_name', $prefix );
 }
