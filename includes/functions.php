@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Returns a reference to the main Noptin instance.
  *
  * @since 1.0.4
- * @return  object An object containing a reference to Noptin.
+ * @return  Noptin An object containing a reference to Noptin.
  */
 function noptin() {
 	return Noptin::instance();
@@ -1548,7 +1548,7 @@ function log_noptin_message( $message, $code = 'error' ) {
 	);
 
 	// Then save to the database.
-	return update_option( 'noptin_logged_messages', array( $messages ) );
+	return update_option( 'noptin_logged_messages', $messages );
 
 }
 
@@ -1572,7 +1572,7 @@ function get_logged_noptin_messages() {
 	// ... of no more than 20 elements.
 	if( 20 < count( $messages ) ) {
 		$messages   = array_slice( $messages, -20 );
-		update_option( 'noptin_logged_messages', array( $messages ) );
+		update_option( 'noptin_logged_messages', $messages );
 	}
 
 	return $messages;
@@ -1616,6 +1616,8 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 			continue;
 		}
 
+		update_user_meta( $user_info->ID, 'noptin_subscriber_id', $subscriber->id );
+
 		$to_update = array(
 			'description' => $user_info->description,
 			'website'	  => esc_url( $user_info->user_url ),
@@ -1630,7 +1632,7 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 		}
 
 		if( ! empty( $to_update ) ) {
-			update_noptin_subscriber( $to_update );
+			update_noptin_subscriber( $subscriber->id, $to_update );
 		}
 
 	}
@@ -1686,6 +1688,7 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 		}
 
 		update_user_option( $user_id, 'default_password_nag', true, true ); // Set up the Password change nag.
+		update_user_meta( $user_id, 'noptin_subscriber_id', $subscriber->id );
 		update_noptin_subscriber_meta( $subscriber->id, 'wp_user_id', $user_id );
 		wp_send_new_user_notifications( $user_id, 'user' );
 

@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 class Noptin_System_Info {
 
-    private $info = null;
+    public $info = null;
 
     /**
      * The main constructor
@@ -120,14 +120,21 @@ class Noptin_System_Info {
     public function get_wordpress_config() {
 
         global $wpdb;
+
+        // Retrieve active theme.
         $theme_data = wp_get_theme();
-        $theme      = $theme_data->Name . ' ' . $theme_data->Version . ' (' . $theme_data->uri . ')';
+        $theme_name = strip_tags( $theme_data->Name . ' ' . $theme_data->Version );
+
+        if( ! empty( $theme_data->author ) ) {
+            $author     = $theme_data->author ;
+            $theme_name.= " by $author";
+        }
 
         return apply_filters('noptin_wordpress_config_system_info', array(
             'Version'               => get_bloginfo('version'),
             'Language'              => get_locale(),
             'Permalink Structure'   => (get_option('permalink_structure') ? get_option('permalink_structure') : 'Default'),
-            'Active Theme'          => $theme,
+            'Active Theme'          => $theme_name,
             'Table Prefix'          => $wpdb->prefix,
             'WP_DEBUG'              => (defined('WP_DEBUG') ? WP_DEBUG ? 'Enabled' : 'Disabled' : 'Not set'),
             'Memory Limit'          => WP_MEMORY_LIMIT,
@@ -148,8 +155,6 @@ class Noptin_System_Info {
         $server_data = array();
 
         if ( function_exists( 'ini_get' ) ) {
-
-            $server_data['Post Max Size']   = size_format(ini_get('post_max_size'));
             $server_data['Safe Mode']       = ini_get('safe_mode') ? 'Enabled' : 'Disabled';
             $server_data['Memory Limit']    = ini_get('memory_limit');
             $server_data['Upload Max Size'] = ini_get('upload_max_filesize');
@@ -185,38 +190,46 @@ class Noptin_System_Info {
         $plugins             = get_plugins();
         $active_plugins_keys = get_option('active_plugins', array());
         $active_plugins      = array();
+        $inactive_plugins    = array();
 
-        foreach ($plugins as $k => $v) {
+        foreach ( $plugins as $k => $v ) {
 
             // Take care of formatting the data how we want it.
-            $formatted         = array();
-            $formatted['name'] = strip_tags($v['Name']);
+            $details           = '';
+            $plugin_name       = strip_tags($v['Name']);
 
-            if (isset($v['Version'])) {
-                $formatted['version'] = strip_tags($v['Version']);
+            // (Maybe) Link the plugin name to its url.
+            if ( ! empty( $v['PluginURI'] ) ) {
+                $plugin_url  = esc_url(  $v['PluginURI'] );
+                $plugin_name = '<a href="' . $plugin_url . '" aria-label="' . esc_attr__( 'Visit plugin homepage' , 'newsletter-optin-box' ) . '" target="_blank">' . $plugin_name . '</a>';
             }
 
-            if (isset($v['Author'])) {
-                $formatted['author'] = strip_tags($v['Author']);
+            if ( ! empty( $v['Author'] ) ) {
+                $author  = strip_tags( $v['Author'] );
+
+                if( ! empty( $v['Author'] ) ) {
+                    $author_url = esc_url(  $v['AuthorURI'] );
+                    $author = '<a href="' . $author_url . '" aria-label="' . esc_attr__( 'Visit author homepage' , 'newsletter-optin-box' ) . '" target="_blank">' . $author . '</a>';
+                }
+                $details = "by $author &mdash; ";
             }
 
-            if (isset($v['Network'])) {
-                $formatted['network'] = strip_tags($v['Network']);
+            if ( ! empty( $v['Version'] ) ) {
+                $details .= strip_tags( $v['Version'] );
             }
 
-            if (isset($v['PluginURI'])) {
-                $formatted['plugin_uri'] = strip_tags($v['PluginURI']);
+            if ( !empty( $v['Network'] ) ) {
+                $details .= " (Network Activated)";
             }
+
             
-            if (in_array($k, $active_plugins_keys)) {
-                // Remove active plugins from list so we can show active and inactive separately
-                unset($plugins[$k]);
-                $active_plugins[$k] = $formatted;
+            if ( in_array( $k, $active_plugins_keys ) ) {
+                $active_plugins[ $plugin_name ] = $details;
             } else {
-                $plugins[$k] = $formatted;
+                $inactive_plugins[ $plugin_name ] = $details;
             }
         }
 
-        return array('active_plugins' => $active_plugins, 'inactive_plugins' => $plugins);
+        return array('active_plugins' => $active_plugins, 'inactive_plugins' => $inactive_plugins);
     }
 }

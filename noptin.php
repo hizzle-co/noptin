@@ -31,6 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	/**
 	 * Plugin main class
 	 *
+	 * @property Noptin_Background_Sync bg_sync
 	 * @since       1.0.0
 	 */
 
@@ -72,6 +73,24 @@ class Noptin {
 	public $plugin_url = null;
 
 	/**
+	 * Background Mailer
+	 *
+	 * @var Noptin_Background_Mailer
+	 * @access      public
+	 * @since       1.2.3
+	 */
+	public $bg_mailer = null;
+
+	/**
+	 * New post notifications.
+	 *
+	 * @var Noptin_New_Post_Notify
+	 * @access      public
+	 * @since       1.2.3
+	 */
+	public $post_notifications = null;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -80,7 +99,7 @@ class Noptin {
 	 */
 	public static function instance() {
 
-		if ( is_null( self::$instance ) ) {
+		if ( empty( self::$instance ) ) {
 			self::$instance = new self();
 		}
 
@@ -92,7 +111,7 @@ class Noptin {
 	 * 
 	 * @since 1.0.0
 	 */
-	public function __construct() {
+	private function __construct() {
 
 		// Set up globals.
 		$this->setup_globals();
@@ -122,6 +141,10 @@ class Noptin {
 	 */
 	public function init() {
 
+		if( did_action( 'before_noptin_init' ) ) {
+			return;
+		}
+
 		/**
 		 * Fires after WordPress inits but before Noptin inits
 		 *
@@ -131,28 +154,29 @@ class Noptin {
 		do_action( 'before_noptin_init', $this );
 
 		// Init the admin.
-		$this->admin = Noptin_Admin::instance();
+		$this->admin 			  = Noptin_Admin::instance();
 
-		// Init the bg mailer.
-		$this->bg_mailer = new Noptin_Background_Mailer();
+		// Bg processes.
+		$this->bg_mailer 		  = new Noptin_Background_Mailer();
 		$this->post_notifications = new Noptin_New_Post_Notify();
 		$this->post_notifications->init();
+		
 
 		// Actions page controller.
-		$this->actions_page = new Noptin_Page();
+		$this->actions_page 	  = new Noptin_Page();
 
 		// Post types controller.
-		$this->post_types   = new Noptin_Post_Types();
+		$this->post_types   	  = new Noptin_Post_Types();
 
 		// Form types.
-		$this->popups = new Noptin_Popups();
-		$this->inpost = new Noptin_Inpost();
+		$this->popups 			  = new Noptin_Popups();
+		$this->inpost 			  = new Noptin_Inpost();
 
 		// Integrations.
-		$this->integrations = new Noptin_Integrations();
+		$this->integrations 	  = new Noptin_Integrations();
 
 		// Ajax.
-		$this->ajax = new Noptin_Ajax();
+		$this->ajax 			  = new Noptin_Ajax();
 
 		// Ensure the db is up to date.
 		$this->maybe_upgrade_db();
@@ -212,7 +236,8 @@ class Noptin {
 
 		// Register autoloader.
 		try {
-			spl_autoload_register( array( $this, 'autoload' ), true );
+			// spl_autoload_register( array( $this, 'autoload' ), true );
+			require_once $this->plugin_path . 'includes/load.php';
 		} catch( Exception $e ) {
 			log_noptin_message( $e->getMessage() );
 			require_once $this->plugin_path . 'includes/load.php';
@@ -380,8 +405,6 @@ class Noptin {
 	 */
 	public function maybe_upgrade_db() {
 
-		require $this->plugin_path . 'includes/class-noptin-install.php';
-
 		$installed_version = absint( get_option( 'noptin_db_version', 0 ) );
 
 		// Upgrade db if installed version of noptin is lower than current version
@@ -406,7 +429,7 @@ class Noptin {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'noptin',
+			'newsletter-optin-box',
 			false,
 			$this->plugin_path . 'languages/'
 		);
@@ -414,8 +437,9 @@ class Noptin {
 		/** Set our unique textdomain string */
 		$textdomain = 'newsletter-optin-box';
 
-		/** The 'plugin_locale' filter is also used by default in load_plugin_textdomain() */
-		$locale = apply_filters( 'plugin_locale', get_locale(), $textdomain );
+		$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+		/** @ignore */
+		$locale = apply_filters( 'plugin_locale', $locale, $textdomain );
 
 		/** Set filter for WordPress languages directory */
 		$wp_lang_dir = apply_filters(

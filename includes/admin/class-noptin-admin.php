@@ -56,6 +56,15 @@ class Noptin_Admin {
 	);
 
 	/**
+	 * Background Sync
+	 *
+	 * @var Noptin_Background_Sync
+	 * @access      public
+	 * @since       1.2.3
+	 */
+	public $bg_sync = null;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -92,6 +101,7 @@ class Noptin_Admin {
 		$this->assets_path = $noptin->plugin_path . 'includes/assets/';
 
 		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
+		$this->bg_sync 		   = new Noptin_Background_Sync();
 
 		// initialize hooks.
 		$this->init_hooks();
@@ -322,6 +332,16 @@ class Noptin_Admin {
 			'manage_options',
 			'noptin-settings',
 			array( $this, 'render_settings_page' )
+		);
+
+		// Tools.
+		add_submenu_page(
+			'noptin',
+			esc_html__( 'Noptin Tools', 'newsletter-optin-box' ),
+			esc_html__( 'Tools', 'newsletter-optin-box' ),
+			'manage_options',
+			'noptin-tools',
+			array( $this, 'render_tools_page' )
 		);
 
 		do_action( 'noptin_after_register_menus', $this );
@@ -588,10 +608,22 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.6
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function render_settings_page() {
 		Noptin_Settings::output();
+	}
+
+	/**
+	 * Renders the tools page
+	 *
+	 * @access      public
+	 * @since       1.2.3
+	 * @return      void
+	 */
+	public function render_tools_page() {
+		$this->tools = new Noptin_Tools();
+		Noptin_Tools::output();
 	}
 
 	/**
@@ -599,7 +631,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function save_optin_form() {
 
@@ -852,6 +884,26 @@ class Noptin_Admin {
 			$url = sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( get_home_url() ) );
 			wp_redirect( $url, 301 );
 			exit;
+		}
+
+		// Tools.
+		if ( isset( $_GET['page'] ) && 'noptin-tools' == $_GET['page'] && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin_tool' ) ) {
+
+			// Sync subscribers.
+			if ( isset( $_GET['tool'] ) && 'sync_users' == $_GET['tool'] ) {
+
+				if( get_option( 'noptin_subscribers_syncing' ) ) {
+					$this->show_error( __( 'Your WordPress users and subscribers are already syncing.', 'newsletter-optin-box' ) );
+				} else {
+					add_option( 'noptin_subscribers_syncing', 1 );
+					$this->bg_sync->push_to_queue( 'subscriber' );
+					$this->bg_sync->push_to_queue( 'wp_user' );
+					$this->bg_sync->save()->dispatch();
+					$this->show_info( __( 'Your WordPress users and subscribers are now syncing in the background.', 'newsletter-optin-box' ) );
+				}
+				
+			}
+
 		}
 
 		// Ensure that this is our page...

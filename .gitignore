@@ -88,3 +88,16 @@ typings/
 .dynamodb/
 
 package-lock.json
+
+# Editors
+.idea
+*.esproj
+*.tmproj
+*.tmproject
+tmtags
+.*.sw[a-z]
+*.un~
+Session.vim
+*.swp
+.~lock*
+.vscode

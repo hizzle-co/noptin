@@ -28,14 +28,14 @@
 		//Maybe animate
 		$(form).removeClass('noptin-animate-after')
 
-		var timing = parseFloat( $(form).css('transition-duration') )
-		if( timing ) {
+		var timing = parseFloat($(form).css('transition-duration'))
+		if (timing) {
 			timing = timing * 1000
 		} else {
 			timing = 500
 		}
 
-		setTimeout( () => {
+		setTimeout(() => {
 			$("body").css("overflow", "auto");
 			$(wrapper).removeClass('open')
 		}, timing)
@@ -43,13 +43,13 @@
 
 
 	//Displays a popup and attaches "close" event handlers
-	var displayPopup =  ( popup, force ) => {
+	var displayPopup = (popup, force) => {
 
-		if( 'undefined' == typeof force ) {
+		if ('undefined' == typeof force) {
 			force = false
 		}
 
-		if( !force && ( displayingPopup || subscribed ) ) {
+		if (!force && (displayingPopup || subscribed)) {
 			return;
 		}
 
@@ -57,7 +57,7 @@
 
 		//Log form view
 		$.post(noptin.ajaxurl, {
-			action : "noptin_log_form_impression",
+			action: "noptin_log_form_impression",
 			_wpnonce: noptin.nonce,
 			form_id: $(popup).find('input[name=noptin_form_id]').val(),
 		})
@@ -79,45 +79,45 @@
 			})
 
 		//position fixed does not work on elements with transformed parents
-		if( $(closeButton).hasClass('top-right') ) {
+		if ($(closeButton).hasClass('top-right')) {
 			var wrapper = $(closeButton).closest('.noptin-popup-main-wrapper')
 			$(closeButton).appendTo(wrapper)
 		}
 
 		//Maybe animate
-		setTimeout( () => {
+		setTimeout(() => {
 			$("body").css("overflow", "hidden");
 			$(popup).addClass('noptin-animate-after')
 		}, 100)
 
-			//Some forms are only set to be displayed once per session
-			if ( typeof  $(popup).data('once-per-session') !== 'undefined' ) {
+		//Some forms are only set to be displayed once per session
+		if (typeof $(popup).data('once-per-session') !== 'undefined') {
 
-				var id = $(popup).find('input[name=noptin_form_id]').val()
-				sessionStorage.setItem("noptinFormDisplayed" + id, "1");
+			var id = $(popup).find('input[name=noptin_form_id]').val()
+			sessionStorage.setItem("noptinFormDisplayed" + id, "1");
 
-			}
+		}
 	}
 
 	//Contains several triggers for displaying popups
 	var noptinDisplayPopup = {
 
 		//Displays a popup immeadiately
-		immeadiate () {
+		immeadiate() {
 			displayPopup(this)
 		},
 
 		//Exit intent
-		before_leave () {
+		before_leave() {
 			var key = randomString(),
 				_delayTimer = null,
 				sensitivity = 0, //how many pixels from the top should we display the popup?
 				delay = 200; //wait 200ms before displaying popup
 
 			//Display popup when the user tries to leave...
-			$(document).on('mouseleave.' + key,  (e) => {
+			$(document).on('mouseleave.' + key, (e) => {
 				if (e.clientY > sensitivity) { return; }
-				_delayTimer = setTimeout( () => {
+				_delayTimer = setTimeout(() => {
 
 					//Display the popup
 					displayPopup(this)
@@ -139,7 +139,7 @@
 		},
 
 		//After the user starts scrolling
-		on_scroll () {
+		on_scroll() {
 			var popup = this,
 				key = randomString(),
 				showPercent = parseInt($(this).data('on-scroll'))
@@ -162,23 +162,23 @@
 		},
 
 		//after_delay
-		after_delay () {
+		after_delay() {
 			var delay = parseInt($(this).data('after-delay')) * 1000
 
-			setTimeout( () => {
+			setTimeout(() => {
 				displayPopup(this)
 			}, delay)
 		},
 
 		//after_comment
-		after_comment () {
+		after_comment() {
 			$('#commentform').on('submit', (e) => {
 				//TODO
 			})
 		},
 
 		//after_click
-		after_click () {
+		after_click() {
 
 			var el = $(this).data('after-click'),
 				popup = this
@@ -192,15 +192,15 @@
 	}
 
 	//Loop through all popups and attach triggers
-	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each( function() {
+	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each(function () {
 
 		var trigger = $(this).data('trigger')
 
 		//Some forms are only set to be displayed once per session
-		if ( typeof  $(this).data('once-per-session') !== 'undefined' && 'after_click' != trigger ) {
+		if (typeof $(this).data('once-per-session') !== 'undefined' && 'after_click' != trigger) {
 			var id = $(this).find('input[name=noptin_form_id]').val()
 
-			if( id && sessionStorage.getItem("noptinFormDisplayed" + id) ) {
+			if (id && sessionStorage.getItem("noptinFormDisplayed" + id)) {
 				return true;
 			}
 
@@ -227,7 +227,7 @@
 		$(form)
 
 			//what for submit events
-			.on('submit',  function (e)  {
+			.on('submit', function (e) {
 
 				//Prevent the form from submitting
 				e.preventDefault();
@@ -256,14 +256,27 @@
 				$.post(noptin.ajaxurl, data)
 
 					//Update the user of success
-					.done( (data, status, xhr) => {
+					.done((data, status, xhr) => {
 
-						if( 'string' == typeof data ) {
+						if ('string' == typeof data) {
 							$(this)
 								.find('.noptin_feedback_error')
 								.text(data)
 								.show();
 							return;
+						}
+
+						// Google Analytics
+						try {
+
+							if (typeof ga === 'function') {
+								ga('send', 'event', 'Noptin Form', 'Subscribe', 'Noptin');
+							} else if (typeof gtag === 'function') {
+								gtag('event', 'subscribe', { 'method': 'Noptin Form' });
+							}
+
+						} catch (err) {
+							console.error( err.message );
 						}
 
 						subscribed = true
@@ -285,20 +298,20 @@
 							$(this).html('<div class="noptin-big noptin-padded">' + data.msg + '</div>');
 							$(this).css({
 								display: 'flex',
-    							justifyContent: 'center'
+								justifyContent: 'center'
 							})
 						}
 
 
 					})
-					.fail( () => {
+					.fail(() => {
 						var msg = 'Could not establish a connection to the server.'
 						$(this)
-								.find('.noptin_feedback_error')
-								.text(msg)
-								.show();
-					} )
-					.always( () => {
+							.find('.noptin_feedback_error')
+							.text(msg)
+							.show();
+					})
+					.always(() => {
 						$(this).fadeTo(600, 1)
 					})
 			})
@@ -314,4 +327,4 @@
 
 	subscribe_user('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form');
 
-}) (jQuery);
+})(jQuery);

@@ -1234,3 +1234,43 @@ a.no-campaign-create-new-campaign {
 .settings-body.noptin-fields .select2-container .select2-selection--single {
 	height: 32px;
 }
+
+/** Tools */
+.noptin-admin-table.noptin-admin-tools-table {
+	margin-bottom: 1em;
+
+	.noptin-tool-row {
+		th,td {
+			padding: 1.5em; 
+			border-bottom: solid 1px #eee;
+		}
+		.name {
+			display: block; 
+			margin-bottom: .5em;
+		}
+		.noptin-run-tool {
+			text-align: right;
+		}
+	}
+}
+
+/** Error Logs*/
+#noptin-tools-page {
+
+	.noptin-tool-error th{
+		color: #b01d1d;
+	}
+
+	.noptin-tool-info th{
+		color: #1266bf;
+	}
+
+	.noptin-tool-notice th{
+		color: #3c47e8;
+	}
+
+	.noptin-tool-warning th{
+		color: #b59209;
+	}
+
+}
