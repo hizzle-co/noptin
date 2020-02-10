@@ -235,6 +235,15 @@ class Noptin_Settings {
 				'placeholder' => esc_attr__( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
 				'description' => __( 'This is the message shown to people after they successfully sign up for your newsletter. It can be overidden for every form you create in the Opt-In Forms Editor.', 'newsletter-optin-box' ),
 			),
+
+			'ipgeolocation_io_api_key'       => array(
+				'el'          => 'input',
+				'type'        => 'text',
+				'section'     => 'general',
+				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
+				'placeholder' => '****************************',
+				'description' => __( 'Enter your ipgeolocation.io API key if you want to GeoLocate your subscribers.', 'newsletter-optin-box' ),
+			),
 		);
 		return apply_filters( 'noptin_get_settings', $settings );
 	}

@@ -5,7 +5,6 @@ require_once get_noptin_include_dir('admin/class-noptin-admin.php');
 require_once get_noptin_include_dir('admin/class-noptin-vue.php');
 require_once get_noptin_include_dir('admin/class-noptin-settings.php');
 require_once get_noptin_include_dir('admin/class-noptin-tools.php');
-require_once get_noptin_include_dir('admin/class-noptin-tools.php');
 require_once get_noptin_include_dir('admin/class-noptin-system-info.php');
 require_once get_noptin_include_dir('admin/class-noptin-subscribers-table.php');
 
@@ -29,6 +28,7 @@ require_once get_noptin_include_dir('class-noptin-popups.php');
 require_once get_noptin_include_dir('class-noptin-inpost.php');
 require_once get_noptin_include_dir('class-noptin-sidebar.php');
 require_once get_noptin_include_dir('admin/class-noptin-widget.php');
+require_once get_noptin_include_dir('admin/class-noptin-form-editor.php');
 
 // Misc.
 require_once get_noptin_include_dir('class-noptin-page.php');

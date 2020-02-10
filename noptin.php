@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Noptin
  *
@@ -28,12 +29,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Plugin main class
-	 *
-	 * @property Noptin_Background_Sync bg_sync
-	 * @since       1.0.0
-	 */
+/**
+ * Plugin main class
+ *
+ * @property Noptin_Background_Sync bg_sync
+ * @since       1.0.0
+ */
 
 class Noptin {
 
@@ -41,7 +42,7 @@ class Noptin {
 	 * @var       Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.2.2';
+	public $version = '1.2.3';
 
 	/**
 	 * @var       Plugin db version
@@ -51,10 +52,17 @@ class Noptin {
 
 	/**
 	 * @access      private
-	 * @var        obj $instance The one true noptin
+	 * @var         Noptin $instance The one true noptin
 	 * @since       1.0.0
 	 */
 	private static $instance = null;
+
+	/**
+	 * @access      public
+	 * @var         string Main plugin file;
+	 * @since       1.0.0
+	 */
+	public static $file = __FILE__;
 
 	/**
 	 * Local path to this plugins root directory
@@ -113,14 +121,14 @@ class Noptin {
 	 */
 	private function __construct() {
 
+		// Load files / register the autoloader.
+		$this->load_files();
+
 		// Set up globals.
 		$this->setup_globals();
 
-		// Loads files and registers the autoloader.
-		$this->load_files();
-
-		// Init the plugin after WP inits
-		add_action( 'init', array( $this, 'init' ), 5 );
+		// Set up hooks.
+		$this->register_hooks();
 
 		/**
 		 * Fires after Noptin loads.
@@ -133,6 +141,80 @@ class Noptin {
 	}
 
 	/**
+	 * Includes files.
+	 *
+	 * @access      public
+	 * @since       1.2.3
+	 * @return      void
+	 */
+	private function load_files() {
+
+		$plugin_path = plugin_dir_path( __FILE__ );
+
+		// plugin functions.
+		require_once $plugin_path . 'includes/functions.php';
+
+		// Register autoloader.
+		try {
+			//spl_autoload_register( array( $this, 'autoload' ), true );
+			require_once $plugin_path . 'includes/load.php';
+		} catch( Exception $e ) {
+			log_noptin_message( $e->getMessage() );
+			require_once $plugin_path . 'includes/load.php';
+		}
+	}
+
+	/**
+	 * Sets up globals.
+	 *
+	 * @access      public
+	 * @since       1.2.3
+	 * @return      void
+	 */
+	private function setup_globals() {
+		global $wpdb;
+
+		// Set up globals;
+		$this->plugin_path = plugin_dir_path( __FILE__ );
+		$this->plugin_url  = plugins_url( '/', __FILE__ );
+
+		// Register our custom meta table.
+		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
+	}
+
+	/**
+	 * Registers hooks.
+	 *
+	 * @access      public
+	 * @since       1.2.3
+	 * @return      void
+	 */
+	private function register_hooks() {
+
+		// Init the plugin after WP inits
+		add_action( 'init', array( $this, 'init' ), 5 );
+
+		// Register subscription block.
+		add_action( 'init', array( $this, 'register_blocks' ) );
+
+		// Set up localisation.
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+
+		// (Maybe) upgrade the database;
+		add_action( 'init', array( $this, 'maybe_upgrade_db' ) );
+
+		// Load css and js.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
+		// css body class.
+		add_filter( 'body_class', array( $this, 'body_class' ) );
+
+		// Register our new widget.
+		add_action( 'widgets_init', array( $this, 'register_widget' ) );
+
+	}
+
+	/**
 	 * Init the plugin after WordPress inits.
 	 *
 	 * @access      public
@@ -140,10 +222,6 @@ class Noptin {
 	 * @return      void
 	 */
 	public function init() {
-
-		if( did_action( 'before_noptin_init' ) ) {
-			return;
-		}
 
 		/**
 		 * Fires after WordPress inits but before Noptin inits
@@ -153,14 +231,13 @@ class Noptin {
 		 */
 		do_action( 'before_noptin_init', $this );
 
-		// Init the admin.
-		$this->admin 			  = Noptin_Admin::instance();
-
 		// Bg processes.
-		$this->bg_mailer 		  = new Noptin_Background_Mailer();
+		$this->bg_mailer   = new Noptin_Background_Mailer();
 		$this->post_notifications = new Noptin_New_Post_Notify();
 		$this->post_notifications->init();
-		
+
+		// Init the admin.
+		$this->admin 			  = Noptin_Admin::instance();
 
 		// Actions page controller.
 		$this->actions_page 	  = new Noptin_Page();
@@ -178,70 +255,12 @@ class Noptin {
 		// Ajax.
 		$this->ajax 			  = new Noptin_Ajax();
 
-		// Ensure the db is up to date.
-		$this->maybe_upgrade_db();
-
-		// Register blocks.
-		$this->register_blocks();
-
-		// Set up localisation.
-		$this->load_plugin_textdomain();
-
-		// Load css and js.
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-
-		// css body class.
-		add_filter( 'body_class', array( $this, 'body_class' ) );
-
-		// Register our new widget.
-		add_action( 'widgets_init', array( $this, 'register_widget' ) );
-
 		/**
 		 * Fires after Noptin inits
 		 *
 		 * @since 1.0.0
 		 */
 		do_action( 'noptin_init' );
-	}
-
-	/**
-	 * Sets up globals.
-	 *
-	 * @access      public
-	 * @since       1.2.3
-	 * @return      void
-	 */
-	private function setup_globals() {
-		global $wpdb;
-
-		// Set global variables.
-		$this->plugin_path = plugin_dir_path( __FILE__ );
-		$this->plugin_url  = plugins_url( '/', __FILE__ );
-
-		// Register our custom meta table.
-		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
-	}
-
-	/**
-	 * Includes files.
-	 *
-	 * @access      public
-	 * @since       1.2.3
-	 * @return      void
-	 */
-	private function load_files() {
-
-		// plugin functions.
-		require_once $this->plugin_path . 'includes/functions.php';
-
-		// Register autoloader.
-		try {
-			// spl_autoload_register( array( $this, 'autoload' ), true );
-			require_once $this->plugin_path . 'includes/load.php';
-		} catch( Exception $e ) {
-			log_noptin_message( $e->getMessage() );
-			require_once $this->plugin_path . 'includes/load.php';
-		}
 	}
 
 	/**
@@ -252,7 +271,9 @@ class Noptin {
 	 * @return      void
 	 */
 	private function autoload( $class_name ) {
-		$class_name = strtolower( $class_name );
+
+		$plugin_path = plugin_dir_path( __FILE__ );
+		$class_name  = strtolower( $class_name );
 
 		// Make sure this is our class.
 		if ( false === strpos( $class_name, 'noptin' ) ) {
@@ -262,10 +283,10 @@ class Noptin {
 		$file_name  = 'class-' . str_replace( '_', '-', $class_name ) . '.php';
 
 		// Load the class.
-		if( file_exists( get_noptin_include_dir( $file_name ) ) ) {
-			include get_noptin_include_dir( $file_name );
-		} elseif( file_exists( get_noptin_include_dir( "admin/$file_name" ) ) ) {
-			include get_noptin_include_dir( "admin/$file_name" );
+		if( file_exists( "{$plugin_path}includes/$file_name" ) ) {
+			include "{$plugin_path}includes/$file_name";
+		} elseif( file_exists( "{$plugin_path}includes/admin/$file_name" ) ) {
+			include "{$plugin_path}includes/admin/$file_name";
 		}
 
 	}
@@ -393,7 +414,8 @@ class Noptin {
 	 * @return      array
 	 */
 	public function body_class( $classes ) {
-		$classes['noptin'] = 'noptin';
+		$classes['noptin']  = 'noptin';
+		$classes['noptinv'] = 'noptin-v' . sanitize_html_class( $this->version );
 		return $classes;
 	}
 

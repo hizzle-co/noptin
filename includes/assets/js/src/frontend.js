@@ -10,6 +10,15 @@
 		return 'key' + rand.toString(36).replace(/[^a-z]+/g, '')
 	}
 
+	var ipAddress = ''
+	$.getJSON("https://api.ipify.org?format=jsonp&callback=?",
+		function (json) {
+			if( json.ip ) {
+				ipAddress = json.ip
+			}
+		}
+	);
+
 
 	//Avoid displaying several popups at once...
 	var displayingPopup = false
@@ -251,6 +260,7 @@
 				//Add nonce and action
 				data.action = "noptin_new_subscriber"
 				data._wpnonce = noptin.nonce
+				data.ipAddress = ipAddress
 
 				//Post it to the server
 				$.post(noptin.ajaxurl, data)
@@ -276,7 +286,7 @@
 							}
 
 						} catch (err) {
-							console.error( err.message );
+							console.error(err.message);
 						}
 
 						subscribed = true

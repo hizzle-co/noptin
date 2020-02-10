@@ -195,8 +195,8 @@ class Noptin_Admin {
 		wp_enqueue_script( 'sweetalert2', $this->assets_url . 'vendor/sweetalert/sweetalert2.all.min.js', array( 'promise-polyfill' ), '9.6.0', true );
 
 		// Tooltips https://iamceege.github.io/tooltipster/.
-		wp_enqueue_script( 'tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.7' );
-		wp_enqueue_style( 'tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.css', array(), '4.2.7', true );
+		wp_enqueue_script( 'tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.7', true );
+		wp_enqueue_style( 'tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.css', array(), '4.2.7' );
 
 		// Select 2 https://select2.org/.
 		wp_enqueue_script( 'select2', $this->assets_url . 'vendor/select2/select2.full.min.js', array( 'jquery' ), '4.0.12', true );

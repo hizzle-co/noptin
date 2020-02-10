@@ -517,6 +517,18 @@ class Noptin_Ajax {
 
 		do_action( 'noptin_add_ajax_subscriber', $inserted, $form );
 
+		// This will only work if there is an ip address and an API key.
+		$address = '';
+		if( ! empty( $_REQUEST['ipAddress'] ) ) {
+			$address = trim( sanitize_text_field( $_REQUEST['ipAddress'] ) );
+		}
+		$location_info = noptin_locate_ip_address( $address );
+		if( ! empty( $location_info ) ) {
+			foreach( $location_info as $key => $value ) {
+				update_noptin_subscriber_meta( $inserted, $key, $value );
+			}
+		}
+
 		$result = array(
 			'action' => 'msg',
 			'msg'    => get_noptin_option( 'success_message' ),

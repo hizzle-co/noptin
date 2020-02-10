@@ -45,7 +45,13 @@
 						continue;
 					}
 
-					$value = esc_html( $value );
+					if ( 'country_flag' === $key ) {
+						$value = esc_url( $value );
+						$value = "<img src='$value'  width='36' />";
+					} else {
+						$value = esc_html( $value );
+					}
+					
 
 				}
 

@@ -1276,8 +1276,7 @@ function get_noptin_include_dir( $append = '' ) {
  * @since 1.2.3
  */
 function get_noptin_plugin_path( $append = '' ) {
-	$noptin = noptin();
-	return $noptin->plugin_path . $append;
+	return plugin_dir_path( Noptin::$file ) . $append;
 }
 
 /**
@@ -1431,18 +1430,44 @@ function locate_noptin_template( $template_name, $template_path = 'noptin', $def
 }
 
 /**
+ * Fetches the current user's ip address.
+ *
+ * @since 1.2.3
+ * @param string      $ip_address
+ * @return string
+ */
+function noptin_get_user_ip() {
+    $ip = '';
+
+    if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+        $ip = sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
+    } elseif ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+        $ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+    } elseif( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
+        $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
+    }
+
+    return apply_filters( 'noptin_get_user_ip', $ip );
+}
+
+/**
  * GeoLocates an ip address.
  *
  * @since 1.2.3
  * @param string      $ip_address
  * @return bool|array
  */
-function noptin_locate_ip_address( $ip_address ) {
+function noptin_locate_ip_address( $ip_address = '' ) {
+
+	// Prepare ip address.
+	if( empty( $ip_address ) ) {
+		$ip_address = noptin_get_user_ip();
+	}
 
 	// Retrieve API key.
 	$api_key = get_noptin_option( 'ipgeolocation_io_api_key' );
 
-	if( empty( $api_key ) ) {
+	if( empty( $api_key ) || empty( $ip_address ) ) {
 		return false;
 	}
 
@@ -1455,6 +1480,7 @@ function noptin_locate_ip_address( $ip_address ) {
 
 	$geo = json_decode( wp_remote_retrieve_body( $response ), true );
 	if( empty( $geo ) ) {
+		log_noptin_message( __( 'Error fetching GeoLocation information.', 'newsletter_optin_box' ) );
 		return false;
 	}
 
@@ -1463,12 +1489,33 @@ function noptin_locate_ip_address( $ip_address ) {
 	}
 
 	if( ! empty( $geo['currency'] ) ) {
-		$geo['currency_code']   = $geo['currency']['code'];
-		$geo['currency_symbol'] = $geo['currency']['symbol'];
 		$geo['currency'] 		= $geo['currency']['name'];
 	}
 
-	return noptin_clean( $geo );
+	if( ! empty( $geo['continent_name'] ) ) {
+		$geo['continent'] 		= $geo['continent_name'];
+		unset( $geo['continent_name'] );
+	}
+
+	if( ! empty( $geo['country_name'] ) ) {
+		$geo['country'] 		= $geo['country_name'];
+		unset( $geo['country_name'] );
+	}
+
+	if( ! empty( $geo['state_prov'] ) ) {
+		$geo['state'] 			= $geo['state_prov'];
+		unset( $geo['state_prov'] );
+	}
+
+	$return = array();
+	$fields = noptin_parse_list( 'continent country state city zipcode calling_code languages country_flag currency time_zone' );
+
+	foreach( $fields as $field ) {
+		if( ! empty( $geo[$field] ) ) {
+			$return[$field] = $geo[$field];
+		}
+	}
+	return noptin_clean( $return );
 
 }
 
