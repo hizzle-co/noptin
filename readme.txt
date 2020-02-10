@@ -94,6 +94,14 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.2.3 - 2020-02-10 =
+- Debug log viewer - ADDED
+- System status viewer - ADDED
+- Ability to sync your WordPress users with your Noptin subscribers - ADDED
+- Tooltips not showing - FIXED
+- Subscriber GeoLocation - ADDED
+- Google Analytics integration - ADDED
+
 = 1.2.2 - 2020-01-20 =
 - Ability to preview email campaigns - ADDED
 - Ability to import email subscribers - ADDED

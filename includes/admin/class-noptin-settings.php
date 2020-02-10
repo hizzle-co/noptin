@@ -117,14 +117,6 @@ class Noptin_Settings {
 				'description' => __( 'Notify the site admin every time a new subscriber signs up for the newsletter.', 'newsletter-optin-box' ),
 			),
 
-			'double_optin'    => array(
-				'el'          => 'input',
-				'type'        => 'checkbox_alt',
-				'section'     => 'general',
-				'label'       => __( 'Double Optin', 'newsletter-optin-box' ),
-				'description' => __( 'Require new subscribers to confirm their email addresses.', 'newsletter-optin-box' ),
-			),
-
 			'comment_form'          => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',

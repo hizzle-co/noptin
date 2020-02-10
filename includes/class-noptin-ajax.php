@@ -5,12 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Handles Noptin Ajax Requests
-	 *
-	 * @since       1.0.5
-	 */
-
+/**
+ * Handles Noptin Ajax Requests
+ *
+ * @since       1.0.5
+ */
 class Noptin_Ajax {
 
 	/**
@@ -183,18 +182,18 @@ class Noptin_Ajax {
 		$table    = get_noptin_subscribers_table_name();
 		$imported = 0;
 		$mappings = array(
-			'first name'		=> 'first_name',
-			'second name'		=> 'second_name',
-			'last name' 		=> 'second_name',
-			'email address'		=> 'email',
-			'email'				=> 'email',
-			'active' 			=> 'active',
-			'list status' 		=> 'active',
-			'email confirmed' 	=> 'confirmed',
-			'global status' 	=> 'confirmed',
-			'subscribed on' 	=> 'date_created',
-			'confirm key' 		=> 'confirm_key',
-			'meta' 				=> 'meta',
+			'first name'      => 'first_name',
+			'second name'     => 'second_name',
+			'last name'       => 'second_name',
+			'email address'   => 'email',
+			'email'           => 'email',
+			'active'          => 'active',
+			'list status'     => 'active',
+			'email confirmed' => 'confirmed',
+			'global status'   => 'confirmed',
+			'subscribed on'   => 'date_created',
+			'confirm key'     => 'confirm_key',
+			'meta'            => 'meta',
 		);
 
 		foreach ( $subscribers as $subscriber ) {
@@ -215,14 +214,14 @@ class Noptin_Ajax {
 			}
 
 			// Sanitize email status
-			if( empty( $subscriber['confirmed'] ) || 'false' == $subscriber['confirmed'] || 'unconfirmed'  == $subscriber['confirmed'] ) {
+			if ( empty( $subscriber['confirmed'] ) || 'false' == $subscriber['confirmed'] || 'unconfirmed' == $subscriber['confirmed'] ) {
 				$subscriber['confirmed'] = 0;
 			} else {
 				$subscriber['confirmed'] = 1;
 			}
 
 			// Sanitize subscriber status
-			if( empty( $subscriber['active'] ) || 'true' == $subscriber['active'] || 'subscribed'  == $subscriber['active'] ) {
+			if ( empty( $subscriber['active'] ) || 'true' == $subscriber['active'] || 'subscribed' == $subscriber['active'] ) {
 				$subscriber['active'] = 0;
 			} else {
 				$subscriber['active'] = 1;
@@ -246,17 +245,17 @@ class Noptin_Ajax {
 			$id = $wpdb->insert_id;
 
 			$meta = array();
-			if( !empty( $subscriber['meta'] ) ) {
+			if ( ! empty( $subscriber['meta'] ) ) {
 
 				$subscriber['meta'] = maybe_unserialize( $subscriber['meta'] );
 
 				// Arrays
-				if( is_array( $subscriber['meta'] ) ) {
+				if ( is_array( $subscriber['meta'] ) ) {
 					$meta = array( $subscriber['meta'] );
 				}
 
 				// Json
-				if( is_string( $subscriber['meta'] ) ) {
+				if ( is_string( $subscriber['meta'] ) ) {
 					$meta = json_decode( $subscriber['meta'], true );
 				}
 
@@ -264,35 +263,33 @@ class Noptin_Ajax {
 
 			}
 
-			if( empty( $meta ) ) {
+			if ( empty( $meta ) ) {
 				$meta = array();
 			}
 
 			$extra_meta = array_diff_key( $subscriber, $database_fields );
 			foreach ( $extra_meta as $field => $value ) {
 
-				if( is_null( $value ) ) {
+				if ( is_null( $value ) ) {
 					continue;
 				}
-				
-				if( ! isset( $meta[$field] ) ) {
-					$meta[$field] = array();
+				if ( ! isset( $meta[ $field ] ) ) {
+					$meta[ $field ] = array();
 				}
 
-				$meta[$field][] = $value;
+				$meta[ $field ][] = $value;
 
 			}
 
 			foreach ( $meta as $field => $value ) {
 
-				if( ! is_array( $value ) ) {
+				if ( ! is_array( $value ) ) {
 					$value = array( $value );
 				}
 
-				foreach( $value as $val ) {
+				foreach ( $value as $val ) {
 					update_noptin_subscriber_meta( $id, $field, $val );
 				}
-				
 			}
 
 			$imported += 1;
@@ -305,10 +302,12 @@ class Noptin_Ajax {
 			exit;
 		}
 
-		wp_send_json_success( sprintf(
-			__( 'Successfuly imported %s subscribers', 'newsletter-optin-box' ),
-			$imported
-		)  );
+		wp_send_json_success(
+			sprintf(
+				__( 'Successfuly imported %s subscribers', 'newsletter-optin-box' ),
+				$imported
+			)
+		);
 		exit;
 
 	}
@@ -483,7 +482,8 @@ class Noptin_Ajax {
 			// Sanitize email fields.
 			if ( 'email' == $type && ! empty( $value ) ) {
 
-				if ( ! $value = sanitize_email( $value ) ) {
+				$value = sanitize_email( $value );
+				if ( empty( $value ) ) {
 
 					die(
 						sprintf(
@@ -518,12 +518,12 @@ class Noptin_Ajax {
 
 		// This will only work if there is an ip address and an API key.
 		$address = '';
-		if( ! empty( $_REQUEST['ipAddress'] ) ) {
+		if ( ! empty( $_REQUEST['ipAddress'] ) ) {
 			$address = trim( sanitize_text_field( $_REQUEST['ipAddress'] ) );
 		}
 		$location_info = noptin_locate_ip_address( $address );
-		if( ! empty( $location_info ) ) {
-			foreach( $location_info as $key => $value ) {
+		if ( ! empty( $location_info ) ) {
+			foreach ( $location_info as $key => $value ) {
 				update_noptin_subscriber_meta( $inserted, $key, $value );
 			}
 		}

@@ -1,7 +1,7 @@
 <div class="noptin-field-editor">
-  <button type="button" class="button button-secondary" @click="addField"><?php _e( 'Add Field', 'newsletter-optin-box' ); ?></button>
+	<button type="button" class="button button-secondary" @click="addField"><?php _e( 'Add Field', 'newsletter-optin-box' ); ?></button>
 
-  <draggable :list="fields" tag="ul" ghost-class="noptin-sortable-ghost">
+	<draggable :list="fields" tag="ul" ghost-class="noptin-sortable-ghost">
 	<li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key">
 		<div class="noptin-field-editor-header">
 			<span class="noptin-field-editor-title">{{ field.type.label }}</span>

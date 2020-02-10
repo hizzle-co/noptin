@@ -1,10 +1,13 @@
 <?php
 /**
- * class Noptin_New_Post_Notify class.
+ * Class Noptin_New_Post_Notify class.
  */
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * New posts notifications handler.
+ */
 class Noptin_New_Post_Notify {
 
 	/**
@@ -34,11 +37,13 @@ class Noptin_New_Post_Notify {
 	}
 
 	/**
-	 * Filters default automation data
+	 * Filters default automation data.
+	 *
+	 * @param array $data The automation data.
 	 */
 	public function default_automation_data( $data ) {
 
-		if ( 'post_notifications' == $data['automation_type'] ) {
+		if ( 'post_notifications' === $data['automation_type'] ) {
 			$data['email_body']   = noptin_ob_get_clean( locate_noptin_template( 'default-new-post-notification-body.php' ) );
 			$data['subject']      = '[[post_title]]';
 			$data['preview_text'] = __( 'New article published on [[blog_name]]', 'newsletter-optin-box' );
@@ -48,7 +53,9 @@ class Noptin_New_Post_Notify {
 	}
 
 	/**
-	 * Filters default automation data
+	 * Filters default automation data.
+	 *
+	 * @param $array $triggers Registered triggers.
 	 */
 	public function register_automation_settings( array $triggers ) {
 
@@ -102,7 +109,7 @@ class Noptin_New_Post_Notify {
 	public function maybe_schedule_notification( $new_status, $old_status, $post ) {
 
 		// Ensure the post is published.
-		if ( 'publish' != $new_status ) {
+		if ( 'publish' !== $new_status ) {
 			return;
 		}
 
@@ -157,7 +164,7 @@ class Noptin_New_Post_Notify {
 
 		$allowed_post_types = apply_filters( 'noptin_new_post_notification_allowed_post_types', array( 'post' ), $automation );
 
-		if ( ! in_array( $post->post_type, $allowed_post_types ) ) {
+		if ( ! in_array( $post->post_type, $allowed_post_types, true ) ) {
 			return false;
 		}
 
@@ -211,12 +218,12 @@ class Noptin_New_Post_Notify {
 	public function maybe_send_notification( $key ) {
 
 		// Is it a bg_email?
-		if ( 'bg_email' != get_post_meta( $key, 'campaign_type', true ) ) {
+		if ( 'bg_email' !== get_post_meta( $key, 'campaign_type', true ) ) {
 			return;
 		}
 
 		// Ensure this is a new post notification.
-		if ( 'new_post_notification' != get_post_meta( $key, 'bg_email_type', true ) ) {
+		if ( 'new_post_notification' !== get_post_meta( $key, 'bg_email_type', true ) ) {
 			return;
 		}
 
@@ -238,7 +245,7 @@ class Noptin_New_Post_Notify {
 	public function notify( $post_id, $campaign_id, $key = '' ) {
 
 		// Ensure that both the campaign and post are published.
-		if ( 'publish' != get_post_status( $post_id ) || 'publish' != get_post_status( $campaign_id ) ) {
+		if ( 'publish' !== get_post_status( $post_id ) || 'publish' !== get_post_status( $campaign_id ) ) {
 			return;
 		}
 
@@ -299,15 +306,18 @@ class Noptin_New_Post_Notify {
 			),
 		);
 
-		if ( $content  = get_post_meta( $post_id, 'noptin_post_notify_content', true ) ) {
+		$content  = get_post_meta( $post_id, 'noptin_post_notify_content', true );
+		if ( ! empty( $content ) ) {
 			$item['campaign_data']['email_body'] = wp_kses_post( stripslashes_deep( $content ) );
 		}
 
-		if ( $subject = get_post_meta( $post_id, 'noptin_post_notify_subject', true ) ) {
+		$subject = get_post_meta( $post_id, 'noptin_post_notify_subject', true );
+		if ( ! empty( $subject ) ) {
 			$item['campaign_data']['email_subject'] = sanitize_text_field( stripslashes_deep( $subject ) );
 		}
 
-		if ( $preview = get_post_meta( $post_id, 'noptin_post_notify_preview_text', true ) ) {
+		$preview = get_post_meta( $post_id, 'noptin_post_notify_preview_text', true );
+		if ( ! empty( $preview ) ) {
 			$item['campaign_data']['preview_text'] = sanitize_text_field( stripslashes_deep( $preview ) );
 		}
 
@@ -382,7 +392,7 @@ class Noptin_New_Post_Notify {
 	 */
 	public function about_automation( $about, $type, $automation ) {
 
-		if ( 'post_notifications' != $type ) {
+		if ( 'post_notifications' !== $type ) {
 			return $about;
 		}
 

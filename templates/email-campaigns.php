@@ -36,7 +36,7 @@
 
 		$class = 'nav-tab';
 
-		if ( $section == $key ) {
+		if ( $section === $key ) {
 			$class = 'nav-tab nav-tab-active';
 		}
 

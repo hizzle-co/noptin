@@ -216,7 +216,9 @@ class Noptin_Mailer {
 
 		// Replace all available tags with their values.
 		foreach ( $tags as $key => $value ) {
-			$content = str_ireplace( "[[$key]]", $value, $content );
+			if ( ! is_array( $value ) ) {
+				$content = str_ireplace( "[[$key]]", $value, $content );
+			}
 		}
 
 		// Remove unavailable tags.

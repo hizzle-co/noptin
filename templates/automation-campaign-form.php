@@ -105,8 +105,8 @@
 					<tr>
 						<th></th>
 						<td>
-							<input type="submit" name="publish" class="button-primary" value="<?php echo 'publish' == $campaign->post_status ? 'Save Changes' : 'Publish'; ?>"/>
-							<input type="submit" name="draft" class="button-link" value="<?php echo 'publish' == $campaign->post_status ? 'Switch to Draft' : 'Save as draft'; ?>"/>
+							<input type="submit" name="publish" class="button-primary" value="<?php echo 'publish' === $campaign->post_status ? 'Save Changes' : 'Publish'; ?>"/>
+							<input type="submit" name="draft" class="button-link" value="<?php echo 'publish' === $campaign->post_status ? 'Switch to Draft' : 'Save as draft'; ?>"/>
 						</td>
 					</tr>
 
