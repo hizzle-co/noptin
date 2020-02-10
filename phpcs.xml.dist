@@ -15,12 +15,33 @@
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/includes/class-noptin-emogrifier.php</exclude-pattern>
 
 	<config name="minimum_supported_wp_version" value="4.7" />
 
 	<rule ref="Squiz.Commenting.FileComment">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
+
+	<rule ref="Squiz.Commenting.InlineComment.InvalidEndChar">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="Generic.Formatting.MultipleStatementAlignment.IncorrectWarning">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WhiteSpace.DisallowInlineTabs.NonIndentTabsUsed">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>*/noptin.php</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>	
 
 	<rule ref="WordPress.WP.I18n">
 		<properties>

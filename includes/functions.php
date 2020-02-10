@@ -94,11 +94,12 @@ function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value =
  * @param   string $campaign_id    The opened email campaign.
  * @access  public
  * @since   1.2.0
+ * @return  void
  */
 function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
 
 	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
-	if ( ! in_array( $campaign_id, $opened_campaigns ) ) {
+	if ( ! in_array( (int) $campaign_id, $opened_campaigns, true ) ) {
 		$opened_campaigns[] = $campaign_id;
 		update_noptin_subscriber_meta( $subscriber_id, '_opened_campaigns', $opened_campaigns );
 		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_opened", 1 );
@@ -121,6 +122,7 @@ function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
  * @param   int $subscriber_id  Subscriber ID.
  * @access  public
  * @since   1.2.0
+ * @return  int[] Array of opened campaigns.
  */
 function get_noptin_subscriber_opened_campaigns( $subscriber_id ) {
 
@@ -128,7 +130,7 @@ function get_noptin_subscriber_opened_campaigns( $subscriber_id ) {
 	if ( empty( $opened_campaigns ) ) {
 		$opened_campaigns = array();
 	}
-	return array_map( 'intval', $opened_campaigns );
+	return array_map( 'intval', noptin_parse_list( $opened_campaigns ) );
 
 }
 
@@ -136,13 +138,14 @@ function get_noptin_subscriber_opened_campaigns( $subscriber_id ) {
  * Checks whether a subscriber opened a given campaign
  *
  * @param   int $subscriber_id  Subscriber ID.
+ * @param   int $campaign_id    The campaign to check for.
  * @access  public
  * @since   1.2.0
  */
 function did_noptin_subscriber_open_campaign( $subscriber_id, $campaign_id ) {
 
 	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
-	return in_array( $campaign_id, $opened_campaigns );
+	return in_array( (int) $campaign_id, $opened_campaigns, true );
 
 }
 
@@ -165,8 +168,8 @@ function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $li
 		$clicked_campaigns[ $campaign_id ] = array();
 	}
 
-	if ( ! in_array( $link, $clicked_campaigns[ $campaign_id ] ) ) {
-		$clicked_campaigns[ $campaign_id ][] = $link;
+	if ( ! in_array( $link, $clicked_campaigns[ $campaign_id ], true ) ) {
+		$clicked_campaigns[ $campaign_id ][] = noptin_clean( $link );
 		update_noptin_subscriber_meta( $subscriber_id, '_clicked_campaigns', $clicked_campaigns );
 		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_clicked", 1 );
 
@@ -198,7 +201,9 @@ function get_noptin_subscriber_clicked_campaigns( $subscriber_id ) {
 /**
  * Checks whether a subscriber clicked on a link in a given campaign
  *
- * @param   int $subscriber_id  Subscriber ID.
+ * @param   int    $subscriber_id  Subscriber ID.
+ * @param   int    $campaign_id    The campaign id to check for a click from.
+ * @param   string $link        Optional. The specific link to check for.
  * @access  public
  * @since   1.2.0
  */
@@ -214,7 +219,7 @@ function did_noptin_subscriber_click_campaign( $subscriber_id, $campaign_id, $li
 		return true;
 	}
 
-	return in_array( $link, $clicked_campaigns[ $campaign_id ] );
+	return in_array( noptin_clean( $link ), $clicked_campaigns[ $campaign_id ], true );
 
 }
 
@@ -299,6 +304,8 @@ function get_noptin_options() {
  * Retrieves an option from the db
  *
  * @return  mixed|null   option or null
+ * @param   string $key The option key.
+ * @param   mixed  $default The default value for the option.
  * @access  public
  * @since   1.0.5
  */
@@ -325,7 +332,8 @@ function get_noptin_option( $key, $default = null ) {
 /**
  * Updates noptin options
  *
- * @return  array
+ * @return  void
+ * @param   array $options The updated Noptin options.
  * @access  public
  * @since   1.0.5
  */
@@ -340,7 +348,9 @@ function update_noptin_options( $options ) {
 /**
  * Updates a single option
  *
- * @return  array
+ * @return  void
+ * @param   string $key The key to update.
+ * @param   mixed  $value The new value.
  * @access  public
  * @since   1.0.5
  */
@@ -379,7 +389,7 @@ function get_noptin_action_page() {
 			)
 		);
 
-		if( empty( $page ) ) {
+		if ( empty( $page ) ) {
 			return 0;
 		}
 
@@ -395,6 +405,9 @@ function get_noptin_action_page() {
  * Returns the noptin action url
  *
  * @return  sting
+ * @param   string $action The action to execute.
+ * @param   string $value  Optional. The value to pass to the action handler.
+ * @param   bool   $empty  Optional. Whether or not to use an empty template. 
  * @access  public
  * @since   1.0.6
  */
@@ -577,7 +590,7 @@ function add_noptin_subscriber( $fields ) {
 	// Insert additional meta data.
 	foreach ( $fields as $field => $value ) {
 
-		if ( isset( $database_fields[ $field ] ) || 'name' == $field ) {
+		if ( isset( $database_fields[ $field ] ) || 'name' === $field ) {
 			continue;
 		}
 
@@ -604,7 +617,7 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 
 	// Ensure the subscriber exists.
 	$subscriber = get_noptin_subscriber( $subscriber_id );
-	if( empty( $subscriber ) ) {
+	if ( empty( $subscriber ) ) {
 		return false;
 	}
 
@@ -617,8 +630,8 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 	if ( isset( $fields['name'] ) ) {
 		$names = noptin_split_subscriber_name( $fields['name'] );
 
-		$fields['first_name'] = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
-		$fields['second_name']= empty( $fields['second_name'] ) ? $names[1] : trim( $fields['second_name'] );
+		$fields['first_name']  = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
+		$fields['second_name'] = empty( $fields['second_name'] ) ? $names[1] : trim( $fields['second_name'] );
 		unset( $fields['name'] );
 
 	}
@@ -632,14 +645,14 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 		unset( $fields['id'] );
 	}
 
-	foreach( noptin_parse_list( 'email first_name second_name confirm_key date_created active confirmed' ) as $field ) {
-		if( isset( $fields[ $field ] ) ) {
+	foreach ( noptin_parse_list( 'email first_name second_name confirm_key date_created active confirmed' ) as $field ) {
+		if ( isset( $fields[ $field ] ) ) {
 			$to_update[ $field ] = noptin_clean( $fields[ $field ] );
 			unset( $fields[ $field ] );
 		}
 	}
 
-	if( ! empty( $to_update ) ) {
+	if ( ! empty( $to_update ) ) {
 		$wpdb->update( $table, $to_update, array( 'id' => $subscriber_id ) );
 	}
 
@@ -749,7 +762,7 @@ function noptin_subscribers_table_exists() {
 	global $wpdb;
 	$table = get_noptin_subscribers_table_name();
 
-	return $table == $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
+	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
 }
 
 /**
@@ -762,7 +775,7 @@ function noptin_subscribers_meta_table_exists() {
 	global $wpdb;
 	$table = get_noptin_subscribers_meta_table_name();
 
-	return $table == $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
+	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
 }
 
 /**
@@ -830,8 +843,9 @@ function noptin_delete_optin_form( $id ) {
 
 /**
  * Duplicates an optin form.
- * 
+ *
  * @since 1.0.5
+ * @return int
  */
 function noptin_duplicate_optin_form( $id ) {
 	$form = noptin_get_optin_form( $id );
@@ -841,8 +855,9 @@ function noptin_duplicate_optin_form( $id ) {
 
 /**
  * Returns all optin forms.
- * 
+ *
  * @since 1.0.4
+ * @return array
  */
 function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '=' ) {
 	$args = array(
@@ -866,7 +881,7 @@ function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '=
 
 /**
  * Returns post types.
- * 
+ *
  * @since 1.0.4
  */
 function noptin_get_post_types() {
@@ -888,8 +903,9 @@ function noptin_get_post_types() {
 
 /**
  * Checks whether an optin form should be displayed.
- * 
+ *
  * @since 1.0.7
+ * @return bool
  */
 function noptin_should_show_optins() {
 
@@ -907,8 +923,9 @@ function noptin_should_show_optins() {
 
 /**
  * Returns opt-in forms stats.
- * 
+ *
  * @since 1.0.7
+ * @return array
  */
 function noptin_get_optin_stats() {
 	global $wpdb;
@@ -927,8 +944,9 @@ function noptin_get_optin_stats() {
 
 /**
  * Returns color themess.
- * 
+ *
  * @since 1.0.7
+ * @return array
  */
 function noptin_get_color_themes() {
 	return apply_filters(
@@ -963,8 +981,9 @@ function noptin_get_color_themes() {
 
 /**
  * Returns optin templates.
- * 
+ *
  * @since 1.0.7
+ * @return array
  */
 function noptin_get_optin_templates() {
 	$custom_templates  = get_option( 'noptin_templates' );
@@ -982,8 +1001,9 @@ function noptin_get_optin_templates() {
 
 /**
  * Returns opt-in form properties.
- * 
+ *
  * @since 1.0.5
+ * @return array
  */
 function noptin_get_form_design_props() {
 	return apply_filters(
@@ -1024,8 +1044,9 @@ function noptin_get_form_design_props() {
 
 /**
  * Returns form field props.
- * 
+ *
  * @since 1.0.5
+ * @return array
  */
 function noptin_get_form_field_props() {
 	return apply_filters( 'noptin_form_field_props', array( 'fields', 'fieldTypes' ) );
@@ -1034,8 +1055,10 @@ function noptin_get_form_field_props() {
 
 /**
  * Function noptin editor localize.
- * 
+ *
+ * @param array $state the current editor state.
  * @since 1.0.5
+ * @return void
  */
 function noptin_localize_optin_editor( $state ) {
 	$props   = noptin_get_form_design_props();
@@ -1061,7 +1084,7 @@ function noptin_localize_optin_editor( $state ) {
 
 /**
  * Function noptin editor localize.
- * 
+ *
  * @since 1.0.5
  */
 function noptin_form_template_form_props() {
@@ -1074,7 +1097,7 @@ function noptin_form_template_form_props() {
 
 /**
  * Function noptin editor localize.
- * 
+ *
  * @since 1.0.5
  */
 function noptin_form_template_wrapper_props() {
@@ -1102,7 +1125,7 @@ function noptin_form_template_wrapper_props() {
 /**
  * This will replace the first half of a string with "*" characters.
  *
- * @param string $string
+ * @param string $string The string to obfuscate.
  * @since 1.1.0
  * @return string
  */
@@ -1114,6 +1137,9 @@ function noptin_obfuscate_string( $string ) {
 }
 
 /**
+ * Callback to obfuscate an email address.
+ *
+ * @param string $m The mail to obfuscate.
  * @internal
  * @ignore
  */
@@ -1127,7 +1153,7 @@ function _noptin_obfuscate_email_addresses_callback( $m ) {
 /**
  * Obfuscates email addresses in a string.
  *
- * @param $string String possibly containing email address.
+ * @param string $string possibly containing email address.
  * @since 1.1.0
  * @return string
  */
@@ -1137,8 +1163,9 @@ function noptin_obfuscate_email_addresses( $string ) {
 
 /**
  * Returns a link to add a new newsletter campaign.
- * 
+ *
  * @since 1.2.0
+ * @return string
  */
 function get_noptin_new_newsletter_campaign_url() {
 
@@ -1153,8 +1180,10 @@ function get_noptin_new_newsletter_campaign_url() {
 
 /**
  * Returns a link to edit a newsletter.
- * 
+ *
  * @since 1.2.0
+ * @param int $id The campaign's id.
+ * @return string.
  */
 function get_noptin_newsletter_campaign_url( $id ) {
 
@@ -1169,9 +1198,11 @@ function get_noptin_newsletter_campaign_url( $id ) {
 }
 
 /**
- *  Returns a link to edit an automation campaign.
- * 
+ * Returns a link to edit an automation campaign.
+ *
  * @since 1.2.0
+ * @param int $id The campaign's id.
+ * @return string.
  */
 function get_noptin_automation_campaign_url( $id ) {
 
@@ -1186,15 +1217,18 @@ function get_noptin_automation_campaign_url( $id ) {
 }
 
 /**
- *  Checks if a given post is a noptin campaign.
- * 
+ * Checks if a given post is a noptin campaign.
+ *
+ * @param int|WP_Post $post The post to check for.
+ * @param bool|string $campaign_type Optional. Specify if you need to check for a specific campaign type.
  * @since 1.2.0
+ * @return bool.
  */
 function is_noptin_campaign( $post, $campaign_type = false ) {
 
 	$campaign = get_post( $post );
 
-	if ( empty( $campaign ) || 'noptin-campaign' != $campaign->post_type ) {
+	if ( empty( $campaign ) || 'noptin-campaign' !== $campaign->post_type ) {
 		return false;
 	}
 
@@ -1202,14 +1236,15 @@ function is_noptin_campaign( $post, $campaign_type = false ) {
 		return true;
 	}
 
-	return trim( $campaign_type ) == get_post_meta( $campaign->ID, 'campaign_type', true );
+	return trim( $campaign_type ) === get_post_meta( $campaign->ID, 'campaign_type', true );
 
 }
 
 /**
  * Returns the default newsletter subject.
- * 
+ *
  * @since 1.2.0
+ * @return string
  */
 function get_noptin_default_newsletter_subject() {
 
@@ -1226,8 +1261,9 @@ function get_noptin_default_newsletter_subject() {
 
 /**
  * Returns the default newsletter preview text.
- * 
+ *
  * @since 1.2.0
+ * @return string
  */
 function get_noptin_default_newsletter_preview_text() {
 
@@ -1244,8 +1280,9 @@ function get_noptin_default_newsletter_preview_text() {
 
 /**
  * Returns the default newsletter body.
- * 
+ *
  * @since 1.2.0
+ * @return string.
  */
 function get_noptin_default_newsletter_body() {
 
@@ -1263,29 +1300,36 @@ function get_noptin_default_newsletter_body() {
 
 /**
  * Returns a path to the includes dir.
- * 
+ *
+ * @param string $append The path to append to the include dir path.
+ * @return string
  * @since 1.2.0
  */
 function get_noptin_include_dir( $append = '' ) {
-	return get_noptin_plugin_path("includes/$append");
+	return get_noptin_plugin_path( "includes/$append" );
 }
 
 /**
  * Returns a path to the noptin dir.
- * 
+ *
  * @since 1.2.3
+ * @param string $append The path to append to the include dir path.
+ * @return string
  */
 function get_noptin_plugin_path( $append = '' ) {
 	return plugin_dir_path( Noptin::$file ) . $append;
 }
 
 /**
- *  Includes a file.
- * 
+ * Includes a file.
+ *
+ * @param string $file The file path.
+ * @param array  $args Defaults to an empty array.
  * @since 1.2.0
  */
 function noptin_ob_get_clean( $file, $args = array() ) {
 
+	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 	extract( $args );
 	ob_start();
 	include $file;
@@ -1294,8 +1338,10 @@ function noptin_ob_get_clean( $file, $args = array() ) {
 }
 
 /**
- *  Notifies the site admin when there is a new subscriber.
- * 
+ * Notifies the site admin when there is a new subscriber.
+ *
+ * @param int   $id The id of the new subscriber.
+ * @param array $fields The subscription field values.
  * @since 1.2.0
  */
 function noptin_new_subscriber_notify( $id, $fields ) {
@@ -1372,7 +1418,7 @@ function get_noptin_capability( $capalibilty = 'manage_noptin' ) {
  * Gets and includes template files.
  *
  * @since 1.2.2
- * @param mixed  $template_name
+ * @param mixed  $template_name The file name of the template to load.
  * @param array  $args (default: array()).
  * @param string $template_path (default: 'noptin').
  * @param string $default_path (default: 'templates').
@@ -1398,7 +1444,7 @@ function get_noptin_template( $template_name, $args = array(), $template_path = 
  *      $default_path   /   $template_name
  *
  * @since 1.2.2
- * @param string      $template_name
+ * @param string      $template_name The template's file name.
  * @param string      $template_path (default: 'noptin').
  * @param string|bool $default_path (default: 'templates') False to not load a default.
  * @return string
@@ -1433,76 +1479,78 @@ function locate_noptin_template( $template_name, $template_path = 'noptin', $def
  * Fetches the current user's ip address.
  *
  * @since 1.2.3
- * @param string      $ip_address
  * @return string
  */
 function noptin_get_user_ip() {
-    $ip = '';
+	$ip = '';
 
-    if ( !empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-        $ip = sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
-    } elseif ( !empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-        $ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
-    } elseif( !empty( $_SERVER['REMOTE_ADDR'] ) ) {
-        $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
-    }
+	if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+		$ip = sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
+	} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+		$ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+	} elseif ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+		$ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
+	}
 
-    return apply_filters( 'noptin_get_user_ip', $ip );
+	return apply_filters( 'noptin_get_user_ip', $ip );
 }
 
 /**
  * GeoLocates an ip address.
  *
  * @since 1.2.3
- * @param string      $ip_address
+ * @param string $ip_address Optional. The ip address to located. Default's to the current user's IP Address.
  * @return bool|array
  */
 function noptin_locate_ip_address( $ip_address = '' ) {
 
 	// Prepare ip address.
-	if( empty( $ip_address ) ) {
+	if ( empty( $ip_address ) ) {
 		$ip_address = noptin_get_user_ip();
 	}
 
 	// Retrieve API key.
 	$api_key = get_noptin_option( 'ipgeolocation_io_api_key' );
 
-	if( empty( $api_key ) || empty( $ip_address ) ) {
+	if ( empty( $api_key ) || empty( $ip_address ) ) {
 		return false;
 	}
 
 	// Geolocate the ip.
-	$response = wp_remote_get( 'https://api.ipgeolocation.io/ipgeo', array(
-		'apiKey'	=> $api_key,
-		'ip'		=> $ip_address,
-		'fields'	=> 'city,continent_name,country_name,country_code2,state_prov,zipcode,country_flag,currency,time_zone',
-	) );
+	$response = wp_remote_get(
+		'https://api.ipgeolocation.io/ipgeo',
+		array(
+			'apiKey' => $api_key,
+			'ip'     => $ip_address,
+			'fields' => 'city,continent_name,country_name,country_code2,state_prov,zipcode,country_flag,currency,time_zone',
+		)
+	);
 
 	$geo = json_decode( wp_remote_retrieve_body( $response ), true );
-	if( empty( $geo ) ) {
+	if ( empty( $geo ) ) {
 		log_noptin_message( __( 'Error fetching GeoLocation information.', 'newsletter-optin-box' ) );
 		return false;
 	}
 
-	if( ! empty( $geo['time_zone'] ) ) {
+	if ( ! empty( $geo['time_zone'] ) ) {
 		$geo['time_zone'] = $geo['time_zone']['name'];
 	}
 
-	if( ! empty( $geo['currency'] ) ) {
+	if ( ! empty( $geo['currency'] ) ) {
 		$geo['currency'] 		= $geo['currency']['name'];
 	}
 
-	if( ! empty( $geo['continent_name'] ) ) {
+	if ( ! empty( $geo['continent_name'] ) ) {
 		$geo['continent'] 		= $geo['continent_name'];
 		unset( $geo['continent_name'] );
 	}
 
-	if( ! empty( $geo['country_name'] ) ) {
+	if ( ! empty( $geo['country_name'] ) ) {
 		$geo['country'] 		= $geo['country_name'];
 		unset( $geo['country_name'] );
 	}
 
-	if( ! empty( $geo['state_prov'] ) ) {
+	if ( ! empty( $geo['state_prov'] ) ) {
 		$geo['state'] 			= $geo['state_prov'];
 		unset( $geo['state_prov'] );
 	}
@@ -1510,9 +1558,9 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 	$return = array();
 	$fields = noptin_parse_list( 'continent country state city zipcode calling_code languages country_flag currency time_zone' );
 
-	foreach( $fields as $field ) {
-		if( ! empty( $geo[$field] ) ) {
-			$return[$field] = $geo[$field];
+	foreach ( $fields as $field ) {
+		if ( ! empty( $geo[ $field ] ) ) {
+			$return[ $field ] = $geo[ $field ];
 		}
 	}
 	return noptin_clean( $return );
@@ -1546,32 +1594,32 @@ function noptin_clean( $var ) {
 
 	if ( is_array( $var ) ) {
 		return array_map( 'noptin_clean', $var );
-    }
+	}
 
-    if ( is_object( $var ) ) {
+	if ( is_object( $var ) ) {
 		$object_vars = get_object_vars( $var );
 		foreach ( $object_vars as $property_name => $property_value ) {
 			$var->$property_name = noptin_clean( $property_value );
-        }
-        return $var;
+		}
+		return $var;
 	}
-    
-    return is_string( $var ) ? sanitize_text_field( $var ) : $var;
+
+	return is_string( $var ) ? sanitize_text_field( $var ) : $var;
 }
 
 /**
  * Logs a message.
  *
  * @since 1.2.3
- * @param mixed  $message
- * @param string  $code.
+ * @param mixed  $message The message to log.
+ * @param string $code   Optional. The error code.
  * @see get_logged_noptin_messages
  * @return bool.
  */
 function log_noptin_message( $message, $code = 'error' ) {
 
 	// Scalars only please.
-	if( ! is_scalar( $message ) ) {
+	if ( ! is_scalar( $message ) ) {
 		$message = print_r( $message, true );
 	}
 
@@ -1583,7 +1631,7 @@ function log_noptin_message( $message, $code = 'error' ) {
 
 	// Then, strip some tags.
 	$message = wp_kses( $message, 'user_description' );
-	
+
 	// Next, retrieve the array of existing logged messages.
 	$messages   = get_logged_noptin_messages();
 
@@ -1607,17 +1655,17 @@ function log_noptin_message( $message, $code = 'error' ) {
  * @return array.
  */
 function get_logged_noptin_messages() {
-	
+
 	// Retrieve the logged messages.
 	$messages = get_option( 'noptin_logged_messages', array() );
 
 	// Ensure it is an array...
-	if( ! is_array( $messages ) ) {
+	if ( ! is_array( $messages ) ) {
 		$messages = array();
 	}
 
 	// ... of no more than 20 elements.
-	if( 20 < count( $messages ) ) {
+	if ( 20 < count( $messages ) ) {
 		$messages   = array_slice( $messages, -20 );
 		update_option( 'noptin_logged_messages', $messages );
 	}
@@ -1635,31 +1683,33 @@ function get_logged_noptin_messages() {
  * @return void.
  */
 function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
-	
+
 	// Arrays only please.
 	$users_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $users_to_sync ) ) );
 
-	foreach( array_unique( $users_to_sync ) as $user_id ) {
+	foreach ( array_unique( $users_to_sync ) as $user_id ) {
 
 		// Get the user data...
 		$user_info = get_userdata( $user_id );
 
 		// ... and abort if it is missing.
-		if( empty( $user_info ) ) {
+		if ( empty( $user_info ) ) {
 			continue;
 		}
 
 		// If the user is not yet subscribed, subscribe them.
-		add_noptin_subscriber( array(
-			'email' 			=> $user_info->user_email,
-			'name'  			=> $user_info->display_name,
-			'_subscriber_via'	=> 'users_sync'
-		) );
+		add_noptin_subscriber(
+			array(
+				'email'           => $user_info->user_email,
+				'name'            => $user_info->display_name,
+				'_subscriber_via' => 'users_sync',
+			)
+		);
 
 		// Then update the subscriber.
 		$subscriber = get_noptin_subscriber_by_email( $user_info->user_email );
 
-		if( empty( $subscriber ) ) {
+		if ( empty( $subscriber ) ) {
 			continue;
 		}
 
@@ -1668,20 +1718,19 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 		$to_update = array(
 			'description' => $user_info->description,
 			'website'	  => esc_url( $user_info->user_url ),
-			'wp_user_id'  => $user_info->ID, 
+			'wp_user_id'  => $user_info->ID,
 		);
 
 		$to_update = apply_filters( 'noptin_sync_users_to_subscribers', $to_update, $subscriber, $user_info );
-		foreach( $to_update as $key => $value ) {
-			if( is_null( $value ) ) {
-				unset( $to_update[$key] );
+		foreach ( $to_update as $key => $value ) {
+			if ( is_null( $value ) ) {
+				unset( $to_update[ $key ] );
 			}
 		}
 
-		if( ! empty( $to_update ) ) {
+		if ( ! empty( $to_update ) ) {
 			update_noptin_subscriber( $subscriber->id, $to_update );
 		}
-
 	}
 
 }
@@ -1695,17 +1744,17 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
  * @return void.
  */
 function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
-	
+
 	// Arrays only please.
 	$subscribers_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $subscribers_to_sync ) ) );
 
-	foreach( array_unique( $subscribers_to_sync ) as $subscriber_id ) {
+	foreach ( array_unique( $subscribers_to_sync ) as $subscriber_id ) {
 
 		// Get the subscriber data...
 		$subscriber = get_noptin_subscriber( $subscriber_id );
 
 		// ... and abort if it is missing.
-		if( empty( $subscriber ) ) {
+		if ( empty( $subscriber ) ) {
 			continue;
 		}
 
@@ -1725,12 +1774,14 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 		);
 
 		$user_id = wp_insert_user( $args );
-		if( is_wp_error( $user_id ) ) {
-			log_noptin_message( sprintf(
-				__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-optin-box' ),
-				$user_id->get_error_message(),
-				$subscriber->email
-			));
+		if ( is_wp_error( $user_id ) ) {
+			log_noptin_message(
+				sprintf(
+					__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-optin-box' ),
+					$user_id->get_error_message(),
+					$subscriber->email
+				)
+			);
 			continue;
 		}
 
@@ -1747,17 +1798,18 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
  * Generates a unique username for new users.
  *
  * @since 1.2.3
- * @param string $prefix
+ * @param string $prefix The prefix to use for the generated user name.
  * @return string.
  */
 function noptin_generate_user_name( $prefix = '' ) {
-	
+
 	// If prefix is an email, retrieve the part before the email.
-	$prefix = strtok( $prefix,  '@' );
+	$prefix = strtok( $prefix, '@' );
 
 	// Trim to 4 characters max.
 	$prefix = sanitize_user( substr( $prefix, 0, 4 ) );
 
+	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
 	/** @ignore */
 	$illegal_logins = (array) apply_filters( 'illegal_user_logins', array() );
 	if ( empty( $prefix ) || in_array( strtolower( $prefix ), array_map( 'strtolower', $illegal_logins ), true ) ) {

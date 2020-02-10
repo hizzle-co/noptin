@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since       1.0.0
  */
-
 class Noptin_Admin {
 
 	/**
@@ -25,6 +24,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
+	 * @var         string|null
 	 */
 	public $admin_path = null;
 
@@ -33,19 +33,24 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
+	 * @var         string|null
 	 */
 	public $admin_url = null;
 
 	/**
+	 * The main admin class instance.
+	 *
 	 * @access      private
-	 * @var        obj $instance The one true noptin
+	 * @var         Noptin_Admin $instance
 	 * @since       1.0.0
 	 */
 	private static $instance = null;
 
 	/**
+	 * Contains an array of any admin notices to be displayed in this session.
+	 *
 	 * @access      public
-	 * @var        array $notices Notices
+	 * @var         array $notices Notices
 	 * @since       1.1.2
 	 */
 	private $notices = array(
@@ -56,7 +61,7 @@ class Noptin_Admin {
 	);
 
 	/**
-	 * Background Sync
+	 * Background Sync.
 	 *
 	 * @var Noptin_Background_Sync
 	 * @access      public
@@ -166,7 +171,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function enqeue_scripts() {
 		global $pagenow, $current_screen;
@@ -182,7 +187,7 @@ class Noptin_Admin {
 			$page = $_GET['page'];
 		}
 
-		if ( ! empty( $current_screen->post_type ) && in_array( $pagenow, array( 'post.php', 'post-new.php' ) ) ) {
+		if ( ! empty( $current_screen->post_type ) && in_array( $pagenow, noptin_parse_list( 'post.php post-new.php' ), true ) ) {
 			$page = $current_screen->post_type;
 		}
 
@@ -265,10 +270,10 @@ class Noptin_Admin {
 			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2' ), $version, true );
 
 			$params       = array(
-				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-				'nonce'       => wp_create_nonce( 'noptin_subscribers' ),
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'noptin_subscribers' ),
 			);
-	
+
 			// localize and enqueue the script with all of the variable inserted.
 			wp_localize_script( 'noptin-subscribers', 'noptinSubscribers', $params );
 
@@ -280,7 +285,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function add_menu_page() {
 
@@ -371,7 +376,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function remove_menus() {
 		remove_submenu_page( 'index.php', 'noptin-welcome' );
@@ -382,7 +387,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function welcome_screen_content() {
 		include $this->admin_path . 'welcome-screen.php';
@@ -393,7 +398,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function render_main_page() {
 
@@ -436,7 +441,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.1.2
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function render_email_campaigns_page() {
 
@@ -467,7 +472,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function render_subscribers_page() {
 
@@ -503,7 +508,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.1.1
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function render_subscribers_overview_page() {
 
@@ -525,7 +530,7 @@ class Noptin_Admin {
 		if ( ! empty( $_POST['noptin_nonce'] ) && wp_verify_nonce( $_POST['noptin_nonce'], 'noptin' ) ) {
 
 			// Delete.
-			if ( ! empty( $_POST['action'] ) && 'delete' == $_POST['action'] ) {
+			if ( ! empty( $_POST['action'] ) && 'delete' === $_POST['action'] ) {
 				if ( ! empty( $_POST['email'] ) && is_array( $_POST['email'] ) ) {
 
 					foreach ( $_POST['email'] as $email ) {
@@ -569,11 +574,12 @@ class Noptin_Admin {
 
 
 	/**
-	 * Displays a single subscriber
+	 * Displays a single subscriber.
 	 *
+	 * @param       int $subscriber The subscriber to display.
 	 * @access      public
 	 * @since       1.1.1
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function render_single_subscriber_page( $subscriber = 0 ) {
 
@@ -650,17 +656,17 @@ class Noptin_Admin {
 		do_action( 'noptin_before_save_form', $this );
 
 		// Prepare the args.
-		$ID     = trim( $_POST['state']['id'] );
+		$id     = trim( $_POST['state']['id'] );
 		$state  = $_POST['state'];
 		$status = 'draft';
 
-		if ( 'true' == $state['optinStatus'] ) {
+		if ( true === (bool) $state['optinStatus'] ) {
 			$status = 'publish';
 		}
 
 		$postarr = array(
 			'post_title'   => $state['optinName'],
-			'ID'           => $ID,
+			'ID'           => $id,
 			'post_content' => $_POST['html'],
 			'post_status'  => $status,
 		);
@@ -675,20 +681,20 @@ class Noptin_Admin {
 			$_POST['state']['showPostTypes'] = array();
 		}
 
-		update_post_meta( $ID, '_noptin_state', $_POST['state'] );
-		update_post_meta( $ID, '_noptin_optin_type', $_POST['state']['optinType'] );
+		update_post_meta( $id, '_noptin_state', $_POST['state'] );
+		update_post_meta( $id, '_noptin_optin_type', $_POST['state']['optinType'] );
 
 		// Ensure impressions and subscriptions are set.
 		// to prevent the form from being hidden when the user sorts by those fields.
-		$sub_count  = get_post_meta( $ID, '_noptin_subscribers_count', true );
-		$form_views = get_post_meta( $ID, '_noptin_form_views', true );
+		$sub_count  = get_post_meta( $id, '_noptin_subscribers_count', true );
+		$form_views = get_post_meta( $id, '_noptin_form_views', true );
 
 		if ( empty( $sub_count ) ) {
-			update_post_meta( $ID, '_noptin_subscribers_count', 0 );
+			update_post_meta( $id, '_noptin_subscribers_count', 0 );
 		}
 
 		if ( empty( $form_views ) ) {
-			update_post_meta( $ID, '_noptin_form_views', 0 );
+			update_post_meta( $id, '_noptin_form_views', 0 );
 		}
 
 		/**
@@ -706,7 +712,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function save_optin_form_as_template() {
 
@@ -735,7 +741,7 @@ class Noptin_Admin {
 
 		foreach ( $fields as $field ) {
 
-			if ( 'optinType' == $field ) {
+			if ( 'optinType' === $field ) {
 				continue;
 			}
 
@@ -743,12 +749,12 @@ class Noptin_Admin {
 
 				$value = stripslashes_deep( $_POST['state'][ $field ] );
 
-				if ( 'false' == $value ) {
+				if ( 'false' === $value ) {
 					$data[ $field ] = false;
 					continue;
 				}
 
-				if ( 'true' == $value ) {
+				if ( 'true' === $value ) {
 					$data[ $field ] = true;
 					continue;
 				}
@@ -782,9 +788,12 @@ class Noptin_Admin {
 	/**
 	 * Retrieves the subscribers list,, limited to 100
 	 *
+	 * @param       int    $page The page to retrieve.
+	 * @param       string $meta_key Filter subscribers by a meta key.
+	 * @param       string $meta_value Filter subscribers by a meta value.
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance
+	 * @return      array|null
 	 */
 	public function get_subscribers( $page = 1, $meta_key = '_subscriber_via', $meta_value = false ) {
 		global $wpdb;
@@ -815,7 +824,7 @@ class Noptin_Admin {
 	 *
 	 * @access      public
 	 * @since       1.0.5
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function maybe_do_action() {
 
@@ -836,7 +845,7 @@ class Noptin_Admin {
 		}
 
 		// Subscriber actions.
-		if ( isset( $_GET['page'] ) && 'noptin-subscribers' == $_GET['page'] ) {
+		if ( isset( $_GET['page'] ) && 'noptin-subscribers' === $_GET['page'] ) {
 
 			// Maybe delete an email subscriber.
 			if ( ! empty( $_GET['delete-subscriber'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin-subscriber' ) ) {
@@ -861,10 +870,10 @@ class Noptin_Admin {
 		}
 
 		// Campaign actions.
-		if ( isset( $_GET['page'] ) && 'noptin-email-campaigns' == $_GET['page'] ) {
+		if ( isset( $_GET['page'] ) && 'noptin-email-campaigns' === $_GET['page'] ) {
 
 			// Delete multiple campaigns.
-			if ( ! empty( $_GET['action'] ) && 'delete' == $_GET['action'] && wp_verify_nonce( $_GET['_wpnonce'], 'bulk-ids' ) ) {
+			if ( ! empty( $_GET['action'] ) && 'delete' === $_GET['action'] && wp_verify_nonce( $_GET['_wpnonce'], 'bulk-ids' ) ) {
 				$ids = array();
 
 				if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
@@ -880,19 +889,19 @@ class Noptin_Admin {
 		}
 
 		// Docs page.
-		if ( isset( $_GET['page'] ) && 'noptin-docs' == $_GET['page'] ) {
+		if ( isset( $_GET['page'] ) && 'noptin-docs' === trim( $_GET['page'] ) ) {
 			$url = sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( get_home_url() ) );
 			wp_redirect( $url, 301 );
 			exit;
 		}
 
 		// Tools.
-		if ( isset( $_GET['page'] ) && 'noptin-tools' == $_GET['page'] && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin_tool' ) ) {
+		if ( isset( $_GET['page'] ) && 'noptin-tools' === $_GET['page'] && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin_tool' ) ) {
 
 			// Sync subscribers.
-			if ( isset( $_GET['tool'] ) && 'sync_users' == $_GET['tool'] ) {
+			if ( isset( $_GET['tool'] ) && 'sync_users' === trim( $_GET['tool'] ) ) {
 
-				if( get_option( 'noptin_subscribers_syncing' ) ) {
+				if ( get_option( 'noptin_subscribers_syncing' ) ) {
 					$this->show_error( __( 'Your WordPress users and subscribers are already syncing.', 'newsletter-optin-box' ) );
 				} else {
 					add_option( 'noptin_subscribers_syncing', 1 );
@@ -901,11 +910,8 @@ class Noptin_Admin {
 					$this->bg_sync->save()->dispatch();
 					$this->show_info( __( 'Your WordPress users and subscribers are now syncing in the background.', 'newsletter-optin-box' ) );
 				}
-				
 			}
-
 		}
-
 		// Ensure that this is our page...
 		if ( ! isset( $_GET['page'] ) || 'noptin-forms' !== $_GET['page'] ) {
 			return;
@@ -917,21 +923,21 @@ class Noptin_Admin {
 		}
 
 		// Is the user deleting an optin form?
-		if ( 'delete' == $_GET['action'] ) {
+		if ( 'delete' === $_GET['action'] ) {
 			noptin_delete_optin_form( $_GET['delete'] );
 			wp_safe_redirect( admin_url( 'admin.php?page=noptin-forms' ) );
 			exit;
 		}
 
 		// Is the user duplicating an optin form?
-		if ( 'duplicate' == $_GET['action'] ) {
+		if ( 'duplicate' === $_GET['action'] ) {
 			$form = noptin_duplicate_optin_form( $_GET['duplicate'] );
 			wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form" ) );
 			exit;
 		}
 
 		// Is the user creating a new optin form?
-		if ( 'new' == $_GET['action'] ) {
+		if ( 'new' === $_GET['action'] ) {
 			$form = noptin_create_optin_form();
 			if ( is_int( $form ) ) {
 				wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form&created=1" ) );
@@ -946,6 +952,7 @@ class Noptin_Admin {
 	/**
 	 * Displays a success notice
 	 *
+	 * @param       string $msg The message to qeue.
 	 * @access      public
 	 * @since       1.1.2
 	 */
@@ -957,6 +964,7 @@ class Noptin_Admin {
 	 * Displays a error notice
 	 *
 	 * @access      public
+	 * @param       string $msg The message to qeue.
 	 * @since       1.1.2
 	 */
 	public function show_error( $msg ) {
@@ -967,6 +975,7 @@ class Noptin_Admin {
 	 * Displays a warning notice
 	 *
 	 * @access      public
+	 * @param       string $msg The message to qeue.
 	 * @since       1.1.2
 	 */
 	public function show_warning( $msg ) {
@@ -977,6 +986,7 @@ class Noptin_Admin {
 	 * Displays a info notice
 	 *
 	 * @access      public
+	 * @param       string $msg The message to qeue.
 	 * @since       1.1.2
 	 */
 	public function show_info( $msg ) {
@@ -989,7 +999,7 @@ class Noptin_Admin {
 	 * @access      public
 	 * @since       1.1.2
 	 */
-	public function show_notices( $msg ) {
+	public function show_notices() {
 
 		foreach ( $this->notices as $type => $messages ) {
 

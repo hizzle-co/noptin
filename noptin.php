@@ -5,7 +5,6 @@
  *
  * Simple WordPress optin form
  *
- * @since             1.0.0
  *
  * Plugin Name:     Noptin - Simple Newsletter Subscription Forms
  * Plugin URI:      https://noptin.com
@@ -18,6 +17,7 @@
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
  * Domain Path:     /languages
  *
+ * @since           1.0.0
  * @author          Picocodes
  * @author          Kaz
  * @license         GNU General Public License, version 3
@@ -35,22 +35,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @property Noptin_Background_Sync bg_sync
  * @since       1.0.0
  */
-
 class Noptin {
 
 	/**
-	 * @var       Plugin version
+	 * The current plugin version.
+	 *
+	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
 	public $version = '1.2.3';
 
 	/**
-	 * @var       Plugin db version
+	 * The current database version.
+	 *
+	 * @var         int Plugin db version
 	 * @since       1.0.0
 	 */
 	public $db_version = 3;
 
 	/**
+	 * Stores the main Noptin instance.
+	 *
 	 * @access      private
 	 * @var         Noptin $instance The one true noptin
 	 * @since       1.0.0
@@ -58,6 +63,8 @@ class Noptin {
 	private static $instance = null;
 
 	/**
+	 * The main plugin file.
+	 *
 	 * @access      public
 	 * @var         string Main plugin file;
 	 * @since       1.0.0
@@ -68,13 +75,15 @@ class Noptin {
 	 * Local path to this plugins root directory
 	 *
 	 * @access      public
+	 * @var         string|null the local plugin path.
 	 * @since       1.0.0
 	 */
 	public $plugin_path = null;
 
 	/**
-	 * Web path to this plugins root directory
+	 * Web path to this plugins root directory.
 	 *
+	 * @var         string|null the plugin url path.
 	 * @access      public
 	 * @since       1.0.0
 	 */
@@ -116,7 +125,7 @@ class Noptin {
 
 	/**
 	 * Class Constructor.
-	 * 
+	 *
 	 * @since 1.0.0
 	 */
 	private function __construct() {
@@ -157,7 +166,7 @@ class Noptin {
 		// Register autoloader.
 		try {
 			spl_autoload_register( array( $this, 'autoload' ), true );
-		} catch( Exception $e ) {
+		} catch ( Exception $e ) {
 			log_noptin_message( $e->getMessage() );
 			require_once $plugin_path . 'includes/load.php';
 		}
@@ -231,7 +240,7 @@ class Noptin {
 		do_action( 'before_noptin_init', $this );
 
 		// Bg processes.
-		$this->bg_mailer   = new Noptin_Background_Mailer();
+		$this->bg_mailer          = new Noptin_Background_Mailer();
 		$this->post_notifications = new Noptin_New_Post_Notify();
 		$this->post_notifications->init();
 
@@ -245,8 +254,8 @@ class Noptin {
 		$this->post_types   	  = new Noptin_Post_Types();
 
 		// Form types.
-		$this->popups 			  = new Noptin_Popups();
-		$this->inpost 			  = new Noptin_Inpost();
+		$this->popups = new Noptin_Popups();
+		$this->inpost = new Noptin_Inpost();
 
 		// Integrations.
 		$this->integrations 	  = new Noptin_Integrations();
@@ -265,6 +274,7 @@ class Noptin {
 	/**
 	 * Class autoloader
 	 *
+	 * @param       string $class_name The name of the class to load.
 	 * @access      public
 	 * @since       1.2.3
 	 * @return      void
@@ -276,15 +286,15 @@ class Noptin {
 
 		// Make sure this is our class.
 		if ( false === strpos( $class_name, 'noptin' ) ) {
-            return;
+			return;
 		}
-		
-		$file_name  = 'class-' . str_replace( '_', '-', $class_name ) . '.php';
+
+		$file_name = 'class-' . str_replace( '_', '-', $class_name ) . '.php';
 
 		// Load the class.
-		if( file_exists( "{$plugin_path}includes/$file_name" ) ) {
+		if ( file_exists( "{$plugin_path}includes/$file_name" ) ) {
 			include "{$plugin_path}includes/$file_name";
-		} elseif( file_exists( "{$plugin_path}includes/admin/$file_name" ) ) {
+		} elseif ( file_exists( "{$plugin_path}includes/admin/$file_name" ) ) {
 			include "{$plugin_path}includes/admin/$file_name";
 		}
 
@@ -398,7 +408,7 @@ class Noptin {
 	 *
 	 * @access      public
 	 * @since       1.0.2
-	 * @return      self::$instance
+	 * @return      void
 	 */
 	public function register_widget() {
 		register_widget( 'Noptin_Widget' );
@@ -409,6 +419,7 @@ class Noptin {
 	 * Filters the body classes
 	 *
 	 * @access      public
+	 * @param       array $classes Array of existing class names.
 	 * @since       1.1.1
 	 * @return      array
 	 */
@@ -459,6 +470,8 @@ class Noptin {
 		$textdomain = 'newsletter-optin-box';
 
 		$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
+
+		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
 		/** @ignore */
 		$locale = apply_filters( 'plugin_locale', $locale, $textdomain );
 

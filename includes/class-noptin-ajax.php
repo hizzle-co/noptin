@@ -197,21 +197,20 @@ class Noptin_Ajax {
 			'meta' 				=> 'meta',
 		);
 
-		foreach( $subscribers as $subscriber ) {
-			
+		foreach ( $subscribers as $subscriber ) {
+
 			// Prepare subscriber fields.
-			foreach( $subscriber as $key => $value ) {
+			foreach ( $subscriber as $key => $value ) {
 				$lowercase = strtolower( $key );
 
-				if( isset( $mappings[ $lowercase ] ) ) {
+				if ( isset( $mappings[ $lowercase ] ) ) {
 					$subscriber[ $mappings[ $lowercase ] ] = $value;
 					unset( $subscriber[ $key ] );
 				}
-
 			}
 
 			// Ensure that there is a unique email address.
-			if( empty( $subscriber[ 'email' ] ) || ! is_email( $subscriber['email'] ) || noptin_email_exists( $subscriber['email'] ) ) {
+			if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) || noptin_email_exists( $subscriber['email'] ) ) {
 				continue;
 			}
 
@@ -546,7 +545,7 @@ class Noptin_Ajax {
 			update_post_meta( $form->ID, '_noptin_subscribers_count', $count + 1 );
 
 			// msg.
-			if ( $form->subscribeAction == 'message' ) {
+			if ( $form->subscribeAction === 'message' ) {
 				$result['msg'] = $form->successMessage;
 			} else {
 				// redirects.

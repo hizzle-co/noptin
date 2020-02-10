@@ -194,15 +194,6 @@ class Noptin_Settings {
 				'placeholder' => get_option( 'blogname' ),
 			),
 
-			/*
-			'company_logo'   => array(
-				'el'              => 'input',
-				'type'			  => 'image',
-				'section'		  => 'sender',
-				'label'           => __( 'Logo',  'newsletter-optin-box' ),
-				'description'     =>  __( "Appears on top of emails. Leave blank to use your website's logo or the default image",  'newsletter-optin-box' ),
-			),*/
-
 			'address'               => array(
 				'el'          => 'input',
 				'section'     => 'sender',

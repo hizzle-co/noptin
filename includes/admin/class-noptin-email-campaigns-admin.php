@@ -5,7 +5,7 @@
  */
 
 /**
- * email campaigns table class.
+ * Email campaigns table class.
  */
 class Noptin_Email_Campaigns_Admin {
 
@@ -181,12 +181,6 @@ class Noptin_Email_Campaigns_Admin {
 				'support_delay'  => __( 'After new content is published', 'newsletter-optin-box' ),
 				'support_filter' => true,
 			),
-			/*
-			'post_digests'        => array(
-				'title'			=> __( "Post Digests", 'newsletter-optin-box' ),
-				'description'	=> __( "Send a daily, weekly or monthly digest of new blog posts.", 'newsletter-optin-box' ),
-				'support_filter'=> true,
-			),*/
 			'welcome_email'      => array(
 				'title'          => __( 'Welcome Email', 'newsletter-optin-box' ),
 				'description'    => __( 'Introduce yourself to new subscribers or set up a series of welcome emails to act as an email course.', 'newsletter-optin-box' ),
@@ -430,12 +424,12 @@ class Noptin_Email_Campaigns_Admin {
 	function maybe_send_campaign( $new_status, $old_status, $post ) {
 
 		// Maybe abort early.
-		if ( 'publish' != $new_status || 'publish' == $old_status ) {
+		if ( 'publish' !== $new_status || 'publish' === $old_status ) {
 			return;
 		}
 
 		// Ensure this is a newsletter campaign.
-		if ( 'noptin-campaign' == $post->post_type && 'newsletter' == get_post_meta( $post->ID, 'campaign_type', true ) ) {
+		if ( 'noptin-campaign' === $post->post_type && 'newsletter' === get_post_meta( $post->ID, 'campaign_type', true ) ) {
 			$this->send_campaign( $post );
 		}
 

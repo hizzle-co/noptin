@@ -37,7 +37,7 @@ class Noptin_Tools {
 			do_action( "noptin_admin_tool_$tool" );
 
 		} else {
-			
+
 			/**
 			 * Runs when displaying a list of all available tools.
 			 * 
@@ -48,7 +48,7 @@ class Noptin_Tools {
 
 		/**
 		 * Runs after displaying the tools page.
-		 * 
+		 *
 		 * @since 1.2.3
 		 */
 		do_action( 'noptin_after_admin_tools' );

@@ -1,7 +1,7 @@
 <div class="wrap" style="max-width: 420px;">
 	<div>
-		<span style="float:left"><?php echo  0 == $data->active ? 'Active' : 'Inactive'; ?></span>
-		<span style="float:right"><?php echo 1 == $data->confirmed ? 'Confirmed' : 'Not Confirmed'; ?></span>
+		<span style="float:left"><?php echo  0 === (int) $data->active ? 'Active' : 'Inactive'; ?></span>
+		<span style="float:right"><?php echo 1 === (int) $data->confirmed ? 'Confirmed' : 'Not Confirmed'; ?></span>
 	</div>
 	<div style="display: flex;justify-content: center;">
 		<img style="margin-top: 40px;" src="<?php echo esc_url( get_avatar_url( $data->email ) ); ?>" />
@@ -51,14 +51,12 @@
 					} else {
 						$value = esc_html( $value );
 					}
-					
-
 				}
 
 
 
 				// Rename some fields.
-				if ( '_subscriber_via' == $key ) {
+				if ( '_subscriber_via' === $key ) {
 
 					if ( is_numeric( $value ) ) {
 						$form  = noptin_get_optin_form( $value );

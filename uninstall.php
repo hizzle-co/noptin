@@ -11,14 +11,12 @@ $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'noptin\_%'" 
 
 // Delete subscribers table.
 $table = $wpdb->prefix . 'noptin_subscribers';
-if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) == $table ) {
-	$sql = "DROP TABLE $table";
-	$wpdb->query( $sql );
+if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+	$wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
 }
 
 // Delete subscribers meta table.
 $table = $wpdb->prefix . 'noptin_subscriber_meta';
-if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) == $table ) {
-	$sql = "DROP TABLE $table";
-	$wpdb->query( $sql );
+if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+	$wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
 }
