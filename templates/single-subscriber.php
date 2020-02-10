@@ -14,21 +14,21 @@
 		<tbody>
 			<tr>
 				<td><strong><?php _e( 'Subscriber Id', 'newsletter-optin-box' ); ?></strong></td>
-				<td><?php esc_html_e( $data->id ); ?></td>
+				<td><?php esc_html( $data->id ); ?></td>
 			</tr>
 			<tr>
 				<td><strong><?php _e( 'Email Address', 'newsletter-optin-box' ); ?></strong></td>
-				<td><?php esc_html_e( $data->email ); ?></td>
+				<td><?php esc_html( $data->email ); ?></td>
 			</tr>
 			<?php if ( ! empty( $data->first_name ) ) { ?>
 			<tr>
 				<td><strong><?php _e( 'Subscriber Name', 'newsletter-optin-box' ); ?></strong></td>
-				<td><?php esc_html_e( $data->first_name . ' ' . $data->second_name ); ?></td>
+				<td><?php esc_html( $data->first_name . ' ' . $data->second_name ); ?></td>
 			</tr>
 			<?php } ?>
 			<tr>
 				<td><strong><?php _e( 'Subscribed On', 'newsletter-optin-box' ); ?></strong></td>
-				<td><?php esc_html_e( $data->date_created ); ?></td>
+				<td><?php esc_html( $data->date_created ); ?></td>
 			</tr>
 			<?php
 			foreach ( $meta as $key => $value ) {

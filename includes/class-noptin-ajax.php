@@ -112,7 +112,7 @@ class Noptin_Ajax {
 		unset( $data['action'] );
 
 		if ( empty( $data['automation_name'] ) ) {
-			$data['automation_name'] = __( 'No Name' );
+			$data['automation_name'] = __( 'No Name', 'newsletter-optin-box' );
 		}
 
 		if ( empty( $data['automation_type'] ) ) {
@@ -176,7 +176,7 @@ class Noptin_Ajax {
 
 		// Are there subscribers?
 		if ( empty( $subscribers ) ) {
-			wp_send_json_error( __( 'The import file is either empty or corrupted' ) );
+			wp_send_json_error( __( 'The import file is either empty or corrupted', 'newsletter-optin-box' ) );
 			exit;
 		}
 
@@ -302,12 +302,12 @@ class Noptin_Ajax {
 
 		// Did we import any subscribers?
 		if ( empty( $imported ) ) {
-			wp_send_json_error( __( 'There was no unique subscriber to import' ) );
+			wp_send_json_error( __( 'There was no unique subscriber to import', 'newsletter-optin-box' ) );
 			exit;
 		}
 
 		wp_send_json_success( sprintf(
-			__( 'Successfuly imported %s subscribers' ),
+			__( 'Successfuly imported %s subscribers', 'newsletter-optin-box' ),
 			$imported
 		)  );
 		exit;
@@ -342,7 +342,7 @@ class Noptin_Ajax {
 
 		// Ensure a valid test email has been provided.
 		if ( empty( $data['email'] ) || ! is_email( $data['email'] ) ) {
-			wp_send_json_error( __( 'Please provide a valid email address' ) );
+			wp_send_json_error( __( 'Please provide a valid email address', 'newsletter-optin-box' ) );
 			exit;
 		}
 
@@ -350,14 +350,14 @@ class Noptin_Ajax {
 
 		// Subject, body and preview text.
 		if ( empty( $data['email_subject'] ) ) {
-			wp_send_json_error( __( 'You need to provide a subject for your email.' ) );
+			wp_send_json_error( __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
 			exit;
 		}
 
 		$data['email_subject'] = '[TEST] ' . $data['email_subject'];
 
 		if ( empty( $data['email_body'] ) ) {
-			wp_send_json_error( __( 'The email body cannot be empty.' ) );
+			wp_send_json_error( __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
 			exit;
 		}
 
@@ -390,10 +390,10 @@ class Noptin_Ajax {
 		$subject = $mailer->get_subject( $data );
 
 		if ( $mailer->send( $to, $subject, $email ) ) {
-			wp_send_json_success( __( 'Your test email has been sent' ) );
+			wp_send_json_success( __( 'Your test email has been sent', 'newsletter-optin-box' ) );
 		}
 
-		wp_send_json_error( __( 'Could not send the test email' ) );
+		wp_send_json_error( __( 'Could not send the test email', 'newsletter-optin-box' ) );
 
 	}
 

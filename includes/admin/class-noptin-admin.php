@@ -358,8 +358,8 @@ class Noptin_Admin {
 
 		// Welcome page.
 		add_dashboard_page(
-			esc_html__( 'Noptin Welcome', 'noptin-mailchimp', 'newsletter-optin-box' ),
-			esc_html__( 'Noptin Welcome', 'noptin-mailchimp', 'newsletter-optin-box' ),
+			esc_html__( 'Noptin Welcome', 'newsletter-optin-box' ),
+			esc_html__( 'Noptin Welcome', 'newsletter-optin-box' ),
 			'read',
 			'noptin-welcome',
 			array( $this, 'welcome_screen_content' )

@@ -1311,7 +1311,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 	/* translators: %s: site title */
-	$message = sprintf( __( '%s has a new email subscriber' ), $blogname ) . "\r\n\r\n";
+	$message = sprintf( __( '%s has a new email subscriber', 'newsletter-optin-box' ), $blogname ) . "\r\n\r\n";
 
 	unset( $fields['Email'] );
 	unset( $fields['name'] );
@@ -1325,7 +1325,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 
 	$to = get_option( 'admin_email' );
 
-	$subject = sprintf( __( '[%s] New Subscriber' ), $blogname );
+	$subject = sprintf( __( '[%s] New Subscriber', 'newsletter-optin-box' ), $blogname );
 
 	@wp_mail( $to, wp_specialchars_decode( $subject ), $message );
 
@@ -1480,7 +1480,7 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 
 	$geo = json_decode( wp_remote_retrieve_body( $response ), true );
 	if( empty( $geo ) ) {
-		log_noptin_message( __( 'Error fetching GeoLocation information.', 'newsletter_optin_box' ) );
+		log_noptin_message( __( 'Error fetching GeoLocation information.', 'newsletter-optin-box' ) );
 		return false;
 	}
 
@@ -1727,7 +1727,7 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 		$user_id = wp_insert_user( $args );
 		if( is_wp_error( $user_id ) ) {
 			log_noptin_message( sprintf(
-				__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-subscriber-box' ),
+				__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-optin-box' ),
 				$user_id->get_error_message(),
 				$subscriber->email
 			));

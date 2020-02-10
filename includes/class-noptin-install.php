@@ -163,7 +163,7 @@ class Noptin_Install {
 			// Create a new automation.
 			wp_insert_post(
 				array(
-					'post_title'   => __( 'New Post Notifications' ),
+					'post_title'   => __( 'New Post Notifications', 'newsletter-optin-box' ),
 					'post_content' => $content,
 					'post_status'  => 'publish',
 					'post_type'    => 'noptin-campaign',

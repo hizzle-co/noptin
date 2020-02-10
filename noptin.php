@@ -12,8 +12,8 @@
  * Description:     Easily add a newsletter optin box onto post content, widget or popup
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.2.2
- * Text Domain:     noptin
+ * Version:         1.2.3
+ * Text Domain:     newsletter-optin-box
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
  * Domain Path:     /languages
@@ -156,8 +156,7 @@ class Noptin {
 
 		// Register autoloader.
 		try {
-			//spl_autoload_register( array( $this, 'autoload' ), true );
-			require_once $plugin_path . 'includes/load.php';
+			spl_autoload_register( array( $this, 'autoload' ), true );
 		} catch( Exception $e ) {
 			log_noptin_message( $e->getMessage() );
 			require_once $plugin_path . 'includes/load.php';

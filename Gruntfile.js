@@ -31,7 +31,7 @@ module.exports = function( grunt ) {
 				options: {
 					domainPath: '/languages',
 					mainFile: 'noptin.php',
-					potFilename: 'noptin.pot',
+					potFilename: 'newsletter-optin-box.pot',
 					potHeaders: {
 						poedit: true,
 						'x-poedit-keywordslist': true

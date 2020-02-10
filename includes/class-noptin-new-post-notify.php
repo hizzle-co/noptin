@@ -41,7 +41,7 @@ class Noptin_New_Post_Notify {
 		if ( 'post_notifications' == $data['automation_type'] ) {
 			$data['email_body']   = noptin_ob_get_clean( locate_noptin_template( 'default-new-post-notification-body.php' ) );
 			$data['subject']      = '[[post_title]]';
-			$data['preview_text'] = __( 'New article published on [[blog_name]]' );
+			$data['preview_text'] = __( 'New article published on [[blog_name]]', 'newsletter-optin-box' );
 		}
 		return $data;
 

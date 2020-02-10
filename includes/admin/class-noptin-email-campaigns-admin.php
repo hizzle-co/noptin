@@ -262,7 +262,7 @@ class Noptin_Email_Campaigns_Admin {
 
 		// Verify nonce.
 		if ( empty( $_POST['noptin_campaign_nonce'] ) || ! wp_verify_nonce( $_POST['noptin_campaign_nonce'], 'noptin_campaign' ) ) {
-			return $admin->show_error( __( 'Unable to save your campaign' ) );
+			return $admin->show_error( __( 'Unable to save your campaign', 'newsletter-optin-box' ) );
 		}
 
 		// Prepare data.
@@ -305,7 +305,7 @@ class Noptin_Email_Campaigns_Admin {
 		if ( is_wp_error( $post ) ) {
 			$admin->show_error( $post->get_error_message() );
 		} else {
-			$admin->show_success( __( 'Your changes were saved successfully' ) );
+			$admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );
 		}
 
 	}
@@ -326,7 +326,7 @@ class Noptin_Email_Campaigns_Admin {
 		}
 
 		if ( ! empty( $_GET['edited'] ) ) {
-			$admin->show_success( __( 'Your campaign was saved.' ) );
+			$admin->show_success( __( 'Your campaign was saved.', 'newsletter-optin-box' ) );
 		}
 
 		if ( ! isset( $_POST['noptin-action'] ) || 'save-newsletter-campaign' !== $_POST['noptin-action'] ) {
@@ -335,7 +335,7 @@ class Noptin_Email_Campaigns_Admin {
 
 		// Verify nonce.
 		if ( empty( $_POST['noptin_campaign_nonce'] ) || ! wp_verify_nonce( $_POST['noptin_campaign_nonce'], 'noptin_campaign' ) ) {
-			return $admin->show_error( __( 'Unable to save your campaign' ) );
+			return $admin->show_error( __( 'Unable to save your campaign', 'newsletter-optin-box' ) );
 		}
 
 		// Prepare data.

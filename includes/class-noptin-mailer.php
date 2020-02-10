@@ -35,7 +35,7 @@ class Noptin_Mailer {
 	 */
 	public function get_email( $data = array() ) {
 
-		$content = __( 'No content' );
+		$content = __( 'No content', 'newsletter-optin-box' );
 		if ( ! empty( $data['email_body'] ) ) {
 			$content = $data['email_body'];
 		}

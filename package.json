@@ -11,7 +11,7 @@
     "cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
     "css": "npm run cssa && npm run cssf",
     "js": "npx webpack --watch",
-    "grunt": "grunt i18n && grunt readme"
+    "grunt": "grunt i18n"
   },
   "repository": {
     "type": "git",
