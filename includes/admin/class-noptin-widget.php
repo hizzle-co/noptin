@@ -17,10 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since       1.0.0
  */
-
 class Noptin_Widget extends WP_Widget {
 
-	// Colors.
+	/**
+	 * Available colors.
+	 *
+	 * @var array
+	 */
 	public $colors = array(
 		'transparent' => 'Inherit From Theme',
 		'#e51c23'     => 'Red',
@@ -46,7 +49,9 @@ class Noptin_Widget extends WP_Widget {
 		'#aaa'        => 'Grey',
 	);
 
-	// class constructor.
+	/**
+	 * Class constructor.
+	 */
 	public function __construct() {
 		$widget_ops = array(
 			'classname'   => 'noptin_widget',
@@ -55,7 +60,12 @@ class Noptin_Widget extends WP_Widget {
 		parent::__construct( 'noptin_widget', 'Noptin New Form', $widget_ops );
 	}
 
-	// output the widget content on the front-end.
+	/**
+	 * Outputs the widget content on the front-end.
+	 *
+	 * @param string $args     The widget args to use.
+	 * @param string $instance The instance args to use.
+	 */
 	public function widget( $args, $instance ) {
 		echo $args['before_widget'];
 
@@ -126,7 +136,11 @@ class Noptin_Widget extends WP_Widget {
 		echo $args['after_widget'];
 	}
 
-	// Displays color select boxes.
+	/**
+	 * Displays color select boxes.
+	 *
+	 * @param string $color the currently selected color.
+	 */
 	public function noptin_color_select( $color ) {
 		foreach ( $this->colors as $hex => $name ) {
 
@@ -141,7 +155,11 @@ class Noptin_Widget extends WP_Widget {
 		}
 	}
 
-	// output the option form field in admin Widgets screen.
+	/**
+	 * Displays the widget settings field.
+	 *
+	 * @param array $instance current instance options.
+	 */
 	public function form( $instance ) {
 		$title    = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'FREE NEWSLETTER', 'newsletter-optin-box' );
 		$desc     = ! empty( $instance['desc'] ) ? $instance['desc'] : esc_html__( 'Subscribe to our newsletter today and be the first to know when we publish a new blog post.', 'newsletter-optin-box' );
@@ -262,7 +280,12 @@ class Noptin_Widget extends WP_Widget {
 		<?php
 	}
 
-	// save options.
+	/**
+	 * Saves widget options.
+	 *
+	 * @param array $new_instance new instance options.
+	 * @param array $old_instance old instance options.
+	 */
 	public function update( $new_instance, $old_instance ) {
 		return array(
 			'title'    => ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '',

@@ -1,15 +1,19 @@
 <?php
 /**
- * class Noptin_Background_Mailer class.
+ * Class Noptin_Background_Mailer class.
  *
  * @extends Noptin_Background_Process
  */
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * The background mailing class. 
+ */
 class Noptin_Background_Mailer extends Noptin_Background_Process {
 
 	/**
+	 * The background action for our mailing process.
 	 * @var string
 	 */
 	protected $action = 'noptin_bg_mailer';
@@ -22,7 +26,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	 * in the next pass through. Or, return false to remove the
 	 * item from the queue.
 	 *
-	 * @param array $item
+	 * @param array $item The current item being processed.
 	 *
 	 * @return mixed
 	 */
@@ -87,7 +91,9 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	}
 
 	/**
-	 * Prepares campaign data
+	 * Prepares campaign data.
+	 * 
+	 * @param array item The item to prepare campaign data for.
 	 */
 	public function prepare_campaign_data( $item ) {
 
@@ -102,7 +108,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 
 			// Fetch the post and ensure it is a published campaign.
 			$post = get_post( $item['campaign_id'] );
-			if ( 'noptin-campaign' != $post->post_type || 'publish' != $post->post_status ) {
+			if ( 'noptin-campaign' !== $post->post_type || 'publish' !== $post->post_status ) {
 				return false;
 			}
 		}
@@ -151,7 +157,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 			$item['next_recipient_data']['email_body'] = $post->post_content;
 
 			// Email subject is the post title for newsletters and post_meta for campaign automations.
-			if ( 'newsletter' == get_post_meta( $post->ID, 'campaign_type', true ) ) {
+			if ( 'newsletter' === get_post_meta( $post->ID, 'campaign_type', true ) ) {
 				$item['next_recipient_data']['email_subject'] = $post->post_title;
 			} else {
 				$item['next_recipient_data']['email_subject'] = get_post_meta( $post->ID, 'email_subject', true );
@@ -201,7 +207,9 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	}
 
 	/**
-	 * Fetches a subscriber from a subscribers query
+	 * Fetches a subscriber from a subscribers query.
+	 *
+	 * @param array item The item to fetch a subscriber for.
 	 */
 	public function fetch_subscriber_from_query( $item ) {
 		global $wpdb;

@@ -143,8 +143,8 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	function view_automation_campaigns() {
 
-		$triggers     = $this->get_automation_triggers();
-		$table        = new Noptin_Email_Automations_Table();
+		$triggers = $this->get_automation_triggers();
+		$table    = new Noptin_Email_Automations_Table();
 		$table->prepare_items();
 
 		add_thickbox();
@@ -204,7 +204,9 @@ class Noptin_Email_Campaigns_Admin {
 	}
 
 	/**
-	 *  Displays the automation campaign creation form
+	 *  Displays the automation campaign creation form.
+	 *
+	 * @param int $id the form being rendered.
 	 */
 	function render_automation_campaign_form( $id = 0 ) {
 
@@ -342,7 +344,7 @@ class Noptin_Email_Campaigns_Admin {
 		// Set post status.
 		if ( ! empty( $data['id'] ) ) {
 			$id     = (int) $data['id'];
-			$status = ( 'draft' == get_post_status( $id ) ) ? 'draft' : 'publish';
+			$status = ( 'draft' === get_post_status( $id ) ) ? 'draft' : 'publish';
 		}
 
 		if ( ! empty( $data['draft'] ) ) {
@@ -370,7 +372,7 @@ class Noptin_Email_Campaigns_Admin {
 			),
 		);
 
-		if ( 'publish' == $status & ! empty( $data['noptin-email-schedule'] ) ) {
+		if ( 'publish' === $status & ! empty( $data['noptin-email-schedule'] ) ) {
 
 			$count    = (int) $data['noptin-email-schedule'];
 			$unit     = sanitize_text_field( $data['noptin-email-schedule-unit'] );
@@ -403,7 +405,9 @@ class Noptin_Email_Campaigns_Admin {
 	}
 
 	/**
-	 *  Deletes campaign stats
+	 *  Deletes campaign stats.
+	 *
+	 * @param int $post_id the form whose stats should be delete.
 	 */
 	function maybe_delete_stats( $post_id ) {
 		global $wpdb;
@@ -419,7 +423,11 @@ class Noptin_Email_Campaigns_Admin {
 	}
 
 	/**
-	 *  (Maybe) Sends a newsletter campaign
+	 *  (Maybe) Sends a newsletter campaign.
+	 *
+	 * @param string  $new_status The new campaign status.
+	 * @param string  $old_status The old campaign status.
+	 * @param WP_Post $post The new campaign post object.
 	 */
 	function maybe_send_campaign( $new_status, $old_status, $post ) {
 
@@ -436,7 +444,9 @@ class Noptin_Email_Campaigns_Admin {
 	}
 
 	/**
-	 *  Sends a newsletter campaign
+	 * Sends a newsletter campaign.
+	 *
+	 * @param WP_Post $post The new campaign post object.
 	 */
 	function send_campaign( $post ) {
 
@@ -458,7 +468,10 @@ class Noptin_Email_Campaigns_Admin {
 	}
 
 	/**
-	 *  Makes campaign links trackable
+	 * Makes campaign links trackable.
+	 *
+	 * @param string $content The email content.
+	 * @param array  $data The new campaign data.
 	 */
 	function make_links_trackable( $content, $data ) {
 

@@ -5,12 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Displays popups on the front page
-	 *
-	 * @since       1.0.5
-	 */
-
+/**
+ * Displays popups on the front page
+ *
+ * @since       1.0.5
+ */
 class Noptin_Popups {
 
 	/**
@@ -38,7 +37,7 @@ class Noptin_Popups {
 		}
 
 		// ...or the user is hiding all popups.
-		if ( isset( $_GET['noptin_hide'] ) && $_GET['noptin_hide'] == 'true' ) {
+		if ( ! empty( $_GET['noptin_hide'] ) ) {
 			return;
 		}
 

@@ -413,13 +413,13 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_before_admin_main_page', $this );
 
-		$today_date              = date( 'Y-m-d' );
+		$today_date              = date_i18n( 'Y-m-d' );
 		$forms_url               = esc_url( get_noptin_forms_overview_url() );
 		$new_form_url            = esc_url( get_noptin_new_form_url() );
 		$subscribers_url         = esc_url( get_noptin_subscribers_overview_url() );
 		$subscribers_total       = get_noptin_subscribers_count();
 		$subscribers_today_total = get_noptin_subscribers_count( "`date_created`='$today_date'" );
-		$this_week               = date( 'Y-m-d', strtotime( 'last week sunday' ) );
+		$this_week               = date_i18n( 'Y-m-d', strtotime( 'last week sunday' ) );
 		$subscribers_week_total  = get_noptin_subscribers_count( "`date_created`>'$this_week'" );
 
 		$popups = noptin_count_optin_forms( 'popup' );

@@ -5,12 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Handles registration of post types
-	 *
-	 * @since       1.1.1
-	 */
-
+/**
+ * Handles registration of post types
+ *
+ * @since       1.1.1
+ */
 class Noptin_Post_Types {
 
 	/**
@@ -167,11 +166,14 @@ class Noptin_Post_Types {
 	}
 
 	/**
-	 * Removes unnecessary actions
+	 * Filters the array of row action links on the Posts list table.
+	 *
+	 * @param string[] $actions An array of row action links. Defaults are 'Edit', 'Quick Edit', 'Restore', 'Trash', 'Delete Permanently', 'Preview', and 'View'.
+	 * @param WP_Post  $post    The post object.
 	 */
 	public function remove_actions( $actions, $post ) {
 
-		if ( $post->post_type == 'noptin-form' ) {
+		if ( 'noptin-form' === $post->post_type ) {
 			unset( $actions['inline hide-if-no-js'] );
 		}
 		return $actions;
@@ -179,11 +181,13 @@ class Noptin_Post_Types {
 	}
 
 	/**
-	 * Registers the meta box required to render our form edit screen
+	 * Registers the meta box required to render our form edit screen.
+	 *
+	 * @param string $post_type Post type of the post being edited.
 	 */
 	public function add_meta_boxes( $post_type ) {
 
-		if ( $post_type == 'noptin-form' ) {
+		if ( 'noptin-form' === $post_type ) {
 			add_meta_box(
 				'noptin_form_editor',
 				__( 'Form Editor', 'newsletter-optin-box' ),
@@ -197,7 +201,9 @@ class Noptin_Post_Types {
 	}
 
 	/**
-	 * Renders the form editor
+	 * Renders the form editor.
+	 *
+	 * @param WP_Post $post The post being edited.
 	 */
 	public function render_form_editor( $post ) {
 
@@ -208,7 +214,10 @@ class Noptin_Post_Types {
 	}
 
 	/**
-	 * Filters the form columns
+	 * Filters the form columns.
+	 *
+	 * @param array $columns The opt-in forms overview table columns.
+	 * @return array
 	 */
 	public function manage_form_columns( $columns ) {
 
@@ -224,7 +233,11 @@ class Noptin_Post_Types {
 	}
 
 	/**
-	 * Displays a column
+	 * Displays a column.
+	 *
+	 * @param string $column  The column being displayed.
+	 * @param int    $post_id The post being displayed.
+	 * @return void
 	 */
 	public function display_form_columns( $column, $post_id ) {
 
@@ -259,12 +272,12 @@ class Noptin_Post_Types {
 				$type  = get_post_meta( $post_id, '_noptin_optin_type', true );
 
 				if ( empty( $types[ $type ] ) ) {
-					echo '<strong>' . sanitize_text_field( $type ) . '</strong>';
+					echo '<strong>' . noptin_clean( $type ) . '</strong>';
 				} else {
 					echo '<strong>' . esc_html( $types[ $type ] ) . '</strong>';
 				}
 
-				if ( 'inpost' == $type ) {
+				if ( 'inpost' === $type ) {
 					$title = esc_attr__( 'Use this shortcode to display the form on your website', 'newsletter-optin-box' );
 					echo "<br><input title='$title' style='color: #607D8B;' onClick='this.select();' type='text' value='[noptin-form id=$post_id]' disabled />";
 				}
@@ -289,9 +302,9 @@ class Noptin_Post_Types {
 				break;
 
 			case 'shortcode':
-				$post_type = get_post_meta( $post_id, '_noptin_optin_type', true );
+				$form_type = get_post_meta( $post_id, '_noptin_optin_type', true );
 
-				if ( 'inpost' == $post_type ) {
+				if ( 'inpost' === $form_type ) {
 					echo "[noptin-form id=$post_id]";
 				} else {
 					echo '__';
@@ -303,7 +316,10 @@ class Noptin_Post_Types {
 	}
 
 	/**
-	 * Registers custom opt-in form filters
+	 * Registers custom opt-in form filters.
+	 *
+	 * @param string $post_type The post type being displayed.
+	 * @return void
 	 */
 	public function custom_filters( $post_type ) {
 
@@ -340,12 +356,15 @@ class Noptin_Post_Types {
 	}
 
 	/**
-	 * Applies our custom filters and custom sorting
+	 * Applies our custom filters and custom sorting.
+	 *
+	 * @param WP_Query $query The query used to retrieve the opt-forms.
+	 * @return WP_Query
 	 */
 	public function apply_custom_filters( $query ) {
 
 		// Make sure this is our query.
-		if ( ! is_admin() || ! $query->is_main_query() || 'noptin-form' != $query->query['post_type'] ) {
+		if ( ! is_admin() || ! $query->is_main_query() || 'noptin-form' !== $query->query['post_type'] ) {
 			return $query;
 		}
 
@@ -395,6 +414,8 @@ class Noptin_Post_Types {
 	 * Adds more sortable columns to the forms list
 	 *
 	 * @see Noptin_Post_Types::apply_custom_filters()
+	 * @param array $columns An array of sortable form columns.
+	 * @return array
 	 */
 	public function add_sortable_columns( $columns ) {
 

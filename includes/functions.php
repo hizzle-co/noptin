@@ -407,7 +407,7 @@ function get_noptin_action_page() {
  * @return  sting
  * @param   string $action The action to execute.
  * @param   string $value  Optional. The value to pass to the action handler.
- * @param   bool   $empty  Optional. Whether or not to use an empty template. 
+ * @param   bool   $empty  Optional. Whether or not to use an empty template.
  * @access  public
  * @since   1.0.6
  */
@@ -454,6 +454,7 @@ function is_noptin_actions_page() {
  * Retrieves the URL to the subscribers page
  *
  * @return  string   The subscribers page url
+ * @param   int $page the page to load.
  * @access  public
  * @since   1.0.5
  */
@@ -575,7 +576,7 @@ function add_noptin_subscriber( $fields ) {
 		'first_name'   => empty( $fields['first_name'] ) ? '' : $fields['first_name'],
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
 		'confirm_key'  => md5( $fields['email'] ) . wp_generate_password( 4, false ),
-		'date_created' => date( 'Y-m-d' ),
+		'date_created' => date_i18n( 'Y-m-d' ),
 	);
 
 	if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
@@ -740,7 +741,7 @@ function noptin_split_subscriber_name( $name ) {
 /**
  * Checks whether the subscriber with a given email exists.
  *
- * @param string The email to check for
+ * @param string $email The email to check for.
  * @since 1.0.5
  * @return bool
  */
@@ -781,7 +782,7 @@ function noptin_subscribers_meta_table_exists() {
 /**
  * Retrieves an optin form.
  *
- * @param int|Noptin_Form The id or Noptin_Form object of the optin to retrieve
+ * @param int|Noptin_Form $id The id or Noptin_Form object of the optin to retrieve.
  * @since 1.0.5
  * @return Noptin_Form
  */
@@ -792,7 +793,7 @@ function noptin_get_optin_form( $id ) {
 /**
  * Retrieves the total opt-in forms count.
  *
- * @param string Optionally filter by opt-in type
+ * @param string $type Optionally filter by opt-in type.
  * @since 1.0.6
  * @return int
  */
@@ -817,7 +818,7 @@ function noptin_count_optin_forms( $type = '' ) {
 
 /**
  * Creates an optin form.
- * 
+ *
  * @since 1.0.5
  */
 function noptin_create_optin_form( $data = false ) {
@@ -834,7 +835,7 @@ function noptin_create_optin_form( $data = false ) {
 
 /**
  * Deletes an optin form.
- * 
+ *
  * @since 1.0.5
  */
 function noptin_delete_optin_form( $id ) {

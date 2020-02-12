@@ -5,12 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Handles integrations with other products and services
-	 *
-	 * @since       1.0.8
-	 */
-
+/**
+ * Handles integrations with other products and services
+ *
+ * @since       1.0.8
+ */
 class Noptin_Integrations {
 
 	/**
@@ -40,7 +39,8 @@ class Noptin_Integrations {
 	 *
 	 * @access      public
 	 * @since       1.0.8
-	 * @return      void
+	 * @param       string $submit_field The html for the comment submit string.
+	 * @return      string
 	 */
 	public function comment_form( $submit_field ) {
 
@@ -61,6 +61,7 @@ class Noptin_Integrations {
 	/**
 	 * Maybe subscribe a commentor
 	 *
+	 * @param       int $comment_id The id of the comment.
 	 * @access      public
 	 * @since       1.0.8
 	 * @return      void
@@ -74,7 +75,7 @@ class Noptin_Integrations {
 		if ( isset( $_POST['noptin-subscribe'] ) ) {
 			$author = get_comment_author( $comment_id );
 
-			if ( 'Anonymous' == $author ) {
+			if ( 'Anonymous' === $author ) {
 				$author = '';
 			}
 
@@ -116,6 +117,7 @@ class Noptin_Integrations {
 	/**
 	 * Maybe subscribe a registered user
 	 *
+	 * @param       int $user_id The id of the newly registered user.
 	 * @access      public
 	 * @since       1.0.8
 	 * @return      void
@@ -151,8 +153,8 @@ class Noptin_Integrations {
 	 * Redirect to a custom URL after a comment is submitted
 	 * Added query arg used for displaying prompt
 	 *
-	 * @param string $location Redirect URL
-	 * @param object $comment Comment object
+	 * @param string $location Redirect URL.
+	 * @param object $comment Comment object.
 	 * @return string $location New redirect URL
 	 */
 	function comment_post_redirect( $location, $comment ) {

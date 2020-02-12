@@ -27,7 +27,9 @@ If you want to install this plugin on a live website, please use the [Noptin plu
 
 ## Contributing
 
-Contributing isn't just writing code - it's anything that improves the project. All contributions for Noptin are managed right here on GitHub. Here are some ways you can help:
+Contributing isn't just writing code - it's anything that improves the project. All contributions for Noptin are managed right here on GitHub. 
+
+Here are some ways you can help:
 
 ### Reporting bugs
 
@@ -39,7 +41,9 @@ New features and enhancements are also managed via [issues](https://github.com/h
 
 ### Write and submit a patch
 
-If you'd like to fix a bug or make an enhancement, you can submit a Pull Request. To do this:-
+If you'd like to fix a bug or make an enhancement, you can submit a Pull Request. 
+
+To do this:-
 
 1. [Fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) this repo on GitHub.
 2. Make the changes you want to submit.
@@ -61,6 +65,8 @@ The `master` branch is the development branch which means it contains the next v
 6. **Merge into stable:** Make a non-fast-forward merge from `master` into `stable`. `stable` contains the latest stable version.
 9. **Test:** Check out the `stable` branch and test for functionality locally.
 10. **Release on GitHub:** Create a new GitHub release and copy the changelog for the release into the Release body. Create a tag for the release as `X.Y.Z` then publish the release. Users will now be able to update the plugin from their WordPress dashboards.
+
+**NOTE:** After each release, merge the `stable` branch into the `stable-dev` branch. Urgent fixes will go into the `stable-dev` branch and released ASAP.
 
 
 ## Support Level

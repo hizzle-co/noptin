@@ -8,7 +8,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * email subscribers table class.
+ * Email subscribers table class.
  */
 class Noptin_Subscribers_Table extends WP_List_Table {
 
@@ -93,7 +93,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 *
 	 * @since 1.1.2
 	 *
-	 * @param object $item The current item
+	 * @param object $item The current item.
 	 */
 	public function single_row( $item ) {
 		echo '<tr>';
@@ -222,7 +222,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 * @return bool
 	 */
 	public function has_items() {
-		return $this->total_subscribers != 0;
+		return ! empty( $this->total_subscribers );
 	}
 
 	/**

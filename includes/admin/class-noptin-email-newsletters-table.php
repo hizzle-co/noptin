@@ -8,7 +8,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * email newsletters table class.
+ * Email newsletters table class.
  */
 class Noptin_Email_Newsletters_Table extends WP_List_Table {
 
@@ -122,17 +122,17 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	/**
 	 * Displays the newsletter status
 	 *
-	 * @param  object $item item.
-	 * @return HTML
+	 * @param  WP_Post $item item.
+	 * @return void
 	 */
 	public function column_status( $item ) {
 		$status = 'Draft';
 
-		if ( 'future' == $item->post_status ) {
+		if ( 'future' === $item->post_status ) {
 			$status = 'Scheduled';
 		}
 
-		if ( 'publish' == $item->post_status ) {
+		if ( 'publish' === $item->post_status ) {
 
 			if ( get_post_meta( $item->ID, 'completed', true ) ) {
 				$status = 'Sent';
@@ -148,16 +148,16 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	 * Displays the newsletter's date sent day
 	 *
 	 * @param  object $item item.
-	 * @return HTML
+	 * @return void
 	 */
 	public function column_date_sent( $item ) {
 		$date = '&mdash;';
 
-		if ( 'future' == $item->post_status ) {
+		if ( 'future' === $item->post_status ) {
 			$date = 'Scheduled <br /> ' . $item->post_date;
 		}
 
-		if ( 'publish' == $item->post_status ) {
+		if ( 'publish' === $item->post_status ) {
 			$date = date_i18n( get_option( 'date_format' ), strtotime( $item->post_date ) );
 		}
 
@@ -166,9 +166,11 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Links to the subscribers overview page
+	 * Links to the subscribers overview page.
 	 *
-	 * @param  object $item item.
+	 * @param  int    $count The number to link.
+	 * @param  string $meta The subscriber meta key to filter by.
+	 * @param  string $value The subscriber meta value to filter by.
 	 * @return HTML
 	 */
 	public function maybe_link( $count, $meta, $value ) {

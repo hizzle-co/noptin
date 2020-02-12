@@ -5,12 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Displays inpost forms on the front page
-	 *
-	 * @since       1.0.5
-	 */
-
+/**
+ * Displays inpost forms on the front page
+ *
+ * @since       1.0.5
+ */
 class Noptin_Inpost {
 
 	/**
@@ -30,8 +29,9 @@ class Noptin_Inpost {
 	 * Appends opt in forms to post content
 	 *
 	 * @access      public
+	 * @param       string $content The content to append an opt-in form to.
 	 * @since       1.0.5
-	 * @return      void
+	 * @return      string
 	 */
 	public function append_inpost( $content ) {
 
@@ -40,9 +40,9 @@ class Noptin_Inpost {
 			return  $content;
 		}
 
-		// ...or the user is hiding all popups.
-		if ( isset( $_GET['noptin_hide'] ) && $_GET['noptin_hide'] == 'true' ) {
-			return  $content;
+		// ...or the user is hiding all opt-in forms.
+		if ( ! empty( $_GET['noptin_hide'] ) ) {
+			return;
 		}
 
 		$forms = $this->get_forms();
@@ -56,13 +56,16 @@ class Noptin_Inpost {
 				continue;
 			}
 
+			// Type of injection.
+			$inject = noptin_clean( $form->inject );
+
 			// If we are to prepend.
-			if ( 'both' == $form->inject || 'before' == $form->inject ) {
+			if ( 'both' === $inject || 'before' === $inject ) {
 				$content = $form->get_html() . $content;
 			}
 
 			// If we are to append.
-			if ( 'both' == $form->inject || 'after' == $form->inject ) {
+			if ( 'both' === $inject || 'after' === $inject ) {
 				$content .= $form->get_html();
 			}
 		}
@@ -101,8 +104,9 @@ class Noptin_Inpost {
 	 * Converts shortcode to html
 	 *
 	 * @access      public
+	 * @param       array $atts An array containing the form `id` to display.
 	 * @since       1.0.5
-	 * @return      array
+	 * @return      string
 	 */
 	public function do_shortcode( $atts ) {
 

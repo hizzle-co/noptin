@@ -15,8 +15,15 @@
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<!-- Skip for third-party classes -->
 	<exclude-pattern>*/includes/class-noptin-emogrifier.php</exclude-pattern>
+	<exclude-pattern>*/includes/class-noptin-background-sync.php</exclude-pattern>
+	<exclude-pattern>*/includes/class-noptin-background-mailer.php</exclude-pattern>
+
 	<exclude name="Squiz.Commenting.FileComment.MissingPackageTag" />
+	<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />
+	<exclude name="Internal.NoCodeFound" />
 
 	<config name="minimum_supported_wp_version" value="4.7" />
 

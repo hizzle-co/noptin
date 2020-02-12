@@ -16,7 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Noptin_Form {
 
-	// Form id.
+	/**
+	 * Form id
+	 *
+	 * @since 1.0.5
+	 * @var int
+	 */
 	protected $id = null;
 
 	/**
@@ -30,7 +35,7 @@ class Noptin_Form {
 	/**
 	 * Class constructor. Loads form data.
 	 *
-	 * @param mixed $form Form ID, array, or Noptin_Form instance
+	 * @param mixed $form Form ID, array, or Noptin_Form instance.
 	 */
 	public function __construct( $form = false ) {
 
@@ -50,7 +55,8 @@ class Noptin_Form {
 		if ( ! empty( $form ) && is_numeric( $form ) ) {
 			$form = absint( $form );
 
-			if ( $data = $this->get_data_by( 'id', $form ) ) {
+			$data = $this->get_data_by( 'id', $form );
+			if ( $data ) {
 				$this->init( $data );
 				return;
 			}
@@ -63,7 +69,7 @@ class Noptin_Form {
 	/**
 	 * Sets up object properties
 	 *
-	 * @param array $data contains form details
+	 * @param array $data contains form details.
 	 */
 	public function init( $data ) {
 
@@ -76,14 +82,14 @@ class Noptin_Form {
 	/**
 	 * Fetch a form from the db/cache
 	 *
-	 * @param string     $field The field to query against: At the moment only ID is allowed
-	 * @param string|int $value The field value
+	 * @param string     $field The field to query against: At the moment only ID is allowed.
+	 * @param string|int $value The field value.
 	 * @return array|false array of form details on success. False otherwise.
 	 */
 	public function get_data_by( $field, $value ) {
 
 		// 'ID' is an alias of 'id'...
-		if ( 'id' == strtolower( $field ) ) {
+		if ( 'id' === strtolower( $field ) ) {
 
 			// Make sure the value is numeric to avoid casting objects, for example, to int 1.
 			if ( ! is_numeric( $value ) ) {
@@ -100,20 +106,21 @@ class Noptin_Form {
 		}
 
 		// Maybe fetch from cache.
-		if ( $form = wp_cache_get( $value, 'noptin_forms' ) ) {
+		$form = wp_cache_get( $value, 'noptin_forms' );
+		if ( $form ) {
 			return $form;
 		}
 
 		// Fetch the post object from the db.
 		$post = get_post( $value );
-		if ( ! $post || $post->post_type != 'noptin-form' ) {
+		if ( ! $post || 'noptin-form' !== $post->post_type ) {
 			return false;
 		}
 
 		// Init the form.
 		$form = array(
 			'optinName'   => $post->post_title,
-			'optinStatus' => ( $post->post_status == 'publish' ),
+			'optinStatus' => ( 'publish' === $post->post_status ),
 			'id'          => $post->ID,
 			'optinHTML'   => $post->post_content,
 			'optinType'   => get_post_meta( $post->ID, '_noptin_optin_type', true ),
@@ -135,7 +142,7 @@ class Noptin_Form {
 	/**
 	 * Return default object properties
 	 *
-	 * @param array $data contains form props
+	 * @return array
 	 */
 	public function get_defaults() {
 
@@ -250,7 +257,7 @@ class Noptin_Form {
 	 *
 	 * @since 1.0.5
 	 * @access public
-	 *
+	 * @param  array $data the unsanitized data.
 	 * @return array the sanitized data
 	 */
 	public function sanitize_form_data( $data ) {
@@ -305,15 +312,15 @@ class Noptin_Form {
 	 *
 	 * @since 1.0.5
 	 * @access public
-	 *
+	 * @param string $key The key to check for.
 	 * @return bool Whether the given form field is set.
 	 */
 	public function __isset( $key ) {
 
-		if ( 'id' == strtolower( $key ) ) {
-			return $this->id != null;
+		if ( 'id' === strtolower( $key ) ) {
+			return null !== $this->id;
 		}
-		return isset( $this->data[ $key ] ) && $this->data[ $key ] != null;
+		return isset( $this->data[ $key ] ) && null !== $this->data[ $key ];
 
 	}
 
@@ -328,7 +335,7 @@ class Noptin_Form {
 	 */
 	public function __get( $key ) {
 
-		if ( 'id' == strtolower( $key ) ) {
+		if ( 'id' === strtolower( $key ) ) {
 			return apply_filters( 'noptin_form_id', $this->id, $this );
 		}
 
@@ -347,12 +354,14 @@ class Noptin_Form {
 	 * This method does not update custom fields in the database. It only stores
 	 * the value on the Noptin_Form instance.
 	 *
+	 * @param string $key   The key to set.
+	 * @param mixed  $value The new value for the key.
 	 * @since 1.0.5
 	 * @access public
 	 */
 	public function __set( $key, $value ) {
 
-		if ( 'id' == strtolower( $key ) ) {
+		if ( 'id' === strtolower( $key ) ) {
 
 			$this->id         = $value;
 			$this->data['id'] = $value;
@@ -503,7 +512,7 @@ class Noptin_Form {
 	 * @return bool True if form exists in the database, false if not.
 	 */
 	public function exists() {
-		return null != $this->id;
+		return null !== $this->id;
 	}
 
 	/**
@@ -524,7 +533,7 @@ class Noptin_Form {
 	 * @return bool
 	 */
 	public function is_form() {
-		$is_form = ( $this->exists() && get_post_type( $this->id ) == 'noptin-form' );
+		$is_form = ( $this->exists() && get_post_type( $this->id ) === 'noptin-form' );
 		return apply_filters( 'noptin_is_form', $is_form, $this );
 	}
 
@@ -541,7 +550,7 @@ class Noptin_Form {
 		}
 
 		// Always display click triggered popups.
-		if ( 'popup' == $this->optinType && 'after_click' == $this->triggerPopup ) {
+		if ( 'popup' === $this->optinType && 'after_click' === $this->triggerPopup ) {
 			return true;
 		}
 
@@ -565,11 +574,11 @@ class Noptin_Form {
 
 		// Has the user restricted this to a few posts?
 		if ( ! empty( $this->onlyShowOn ) ) {
-			return is_object( $post ) && in_array( $post->ID, explode( ',', $this->onlyShowOn ) );
+			return is_object( $post ) && in_array( $post->ID, array_map( 'absint', noptin_parse_list( $this->onlyShowOn ) ), true );
 		}
 
 		// or maybe forbidden it on this post?
-		if ( is_object( $post ) && in_array( $post->ID, explode( ',', $this->neverShowOn ) ) ) {
+		if ( is_object( $post ) && in_array( $post->ID, array_map( 'absint', noptin_parse_list( $this->neverShowOn ) ), true ) ) {
 			return false;
 		}
 
@@ -621,7 +630,7 @@ class Noptin_Form {
 		$type_class = "noptin-$type-main-wrapper";
 		$style      = '';
 
-		if ( $type == 'popup' ) {
+		if ( 'popup' === $type ) {
 
 			// Background color.
 			if ( $this->noptinOverlayBg ) {
