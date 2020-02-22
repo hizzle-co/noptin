@@ -212,6 +212,12 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$actions = array(
 			'delete' => __( 'Delete', 'newsletter-optin-box' ),
 		);
+		
+		/**
+		 * Filters the bulk table actions shown on Newsletter tables.
+		 * 
+		 * @param array $actions An array of bulk actions.
+		 */
 		return apply_filters( 'manage_noptin_newsletters_table_bulk_actions', $actions );
 
 	}
@@ -263,6 +269,12 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'date_created' => __( 'Subscription Date', 'newsletter-optin-box' ),
 
 		);
+
+		/**
+		 * Filters the columns shown in a newsletter table.
+		 * 
+		 * @param array $columns Newsletter table columns.
+		 */
 		return apply_filters( 'manage_noptin_newsletters_table_columns', $columns );
 	}
 
@@ -275,6 +287,12 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$sortable = array(
 			'id' => array( 'id', true ),
 		);
+
+		/**
+		 * Filters the sortable columns in the newsletter overview table.
+		 * 
+		 * @param array $sortable An array of sortable columns.
+		 */
 		return apply_filters( 'manage_noptin_newsletters_sortable_table_columns', $sortable );
 	}
 

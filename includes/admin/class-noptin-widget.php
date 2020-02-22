@@ -75,6 +75,8 @@ class Noptin_Widget extends WP_Widget {
 		// Title.
 		$title = '';
 		if ( ! empty( $instance['title'] ) ) {
+			// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+			/** @ignore */
 			$_title = apply_filters( 'widget_title', $instance['title'] );
 			$title  = $args['before_title'] . $_title . $args['after_title'];
 		}

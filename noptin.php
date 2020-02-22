@@ -266,9 +266,10 @@ class Noptin {
 		/**
 		 * Fires after Noptin inits
 		 *
+		 * @param Noptin $noptin The Noptin instance.
 		 * @since 1.0.0
 		 */
-		do_action( 'noptin_init' );
+		do_action( 'noptin_init', $this );
 	}
 
 	/**
@@ -383,9 +384,10 @@ class Noptin {
 		/**
 		 * Fires before editor blocks are registered
 		 *
+		 * @param Noptin $noptin The Noptin instance.
 		 * @since 1.0.0
 		*/
-		do_action( 'noptin_before_register_blocks' );
+		do_action( 'noptin_before_register_blocks', $this );
 
 		// Register  js scripts and css styles
 		$this->register_scripts();
@@ -475,7 +477,10 @@ class Noptin {
 		/** @ignore */
 		$locale = apply_filters( 'plugin_locale', $locale, $textdomain );
 
-		/** Set filter for WordPress languages directory */
+		/** 
+		 * Set filter for WordPress languages directory.
+		 * 
+		 */
 		$wp_lang_dir = apply_filters(
 			'noptin_wp_lang_dir',
 			WP_LANG_DIR . '/newsletter-optin-box/' . $textdomain . '-' . $locale . '.mo'

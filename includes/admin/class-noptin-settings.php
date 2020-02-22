@@ -53,6 +53,12 @@ class Noptin_Settings {
 				$posted_settings[ $id ] = isset( $posted_settings[ $id ] ) ? '1' : '0';
 			}
 		}
+
+		/**
+		 * Filters Noptin settings before they are saved in the database.
+		 * 
+		 * @param array $posted_settings An array of posted settings.
+		 */
 		return apply_filters( 'noptin_sanitize_settings', $posted_settings );
 	}
 
@@ -236,6 +242,12 @@ class Noptin_Settings {
 				'description' => __( 'Enter your ipgeolocation.io API key if you want to GeoLocate your subscribers.', 'newsletter-optin-box' ),
 			),
 		);
+
+		/**
+		 * Filters Noptin settings.
+		 * 
+		 * @param array $settings An array of Noptin settings.
+		 */
 		return apply_filters( 'noptin_get_settings', $settings );
 	}
 

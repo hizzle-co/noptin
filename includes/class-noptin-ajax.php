@@ -118,7 +118,11 @@ class Noptin_Ajax {
 			wp_die( -1, 400 );
 		}
 
-		// Filter automation setup data.
+		/**
+		 * Filters email automation setup data.
+		 * 
+		 * @param array $data The automation setup data.
+		 */
 		$data = apply_filters( 'noptin_email_automation_setup_data', $data );
 
 		// Create a new automation.
@@ -232,7 +236,7 @@ class Noptin_Ajax {
 				'email'        => $subscriber['email'],
 				'first_name'   => empty( $subscriber['first_name'] ) ? '' : $subscriber['first_name'],
 				'second_name'  => empty( $subscriber['second_name'] ) ? '' : $subscriber['second_name'],
-				'confirm_key'  => empty( $subscriber['confirm_key'] ) ? md5( $subscriber['email'] ) . wp_generate_password( 4, false ) : $subscriber['confirm_key'],
+				'confirm_key'  => empty( $subscriber['confirm_key'] ) ? md5( $subscriber['email'] . wp_generate_password( 32 ) ) : $subscriber['confirm_key'],
 				'date_created' => empty( $subscriber['date_created'] ) ? date( 'Y-m-d' ) : $subscriber['date_created'],
 				'confirmed'	   => $subscriber['confirmed'],
 				'active'	   => $subscriber['active'],
@@ -380,6 +384,11 @@ class Noptin_Ajax {
 		$data['merge_tags'] = $merge_tags;
 		$data['template']   = locate_noptin_template( 'email-templates/paste.php' );
 
+		/**
+		 * Filters the newsletter test email data.
+		 * 
+		 * @param array $data The test email data.
+		 */
 		$data = apply_filters( 'noptin_test_email_data', $data );
 
 		// Try sending the email.
@@ -599,6 +608,12 @@ class Noptin_Ajax {
 
 			$settings[ $key ] = $val;
 		}
+
+		/**
+		 * Sanitizes noptin settings.
+		 * 
+		 * @param array $settings Noptin settings.
+		 */
 		$settings = apply_filters( 'noptin_sanitize_settings', $settings );
 
 		// Save them.

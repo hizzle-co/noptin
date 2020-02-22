@@ -118,7 +118,7 @@ class Noptin_Mailer {
 				$_email_content = $emogrifier->emogrify();
 				$email_content  = $_email_content;
 			} catch ( Exception $e ) {
-
+				log_noptin_message( $e->getMessage() );
 			}
 		}
 

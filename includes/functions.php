@@ -575,7 +575,7 @@ function add_noptin_subscriber( $fields ) {
 		'email'        => $fields['email'],
 		'first_name'   => empty( $fields['first_name'] ) ? '' : $fields['first_name'],
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
-		'confirm_key'  => md5( $fields['email'] ) . wp_generate_password( 4, false ),
+		'confirm_key'  => md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
 		'date_created' => date_i18n( 'Y-m-d' ),
 	);
 
@@ -1585,6 +1585,103 @@ function noptin_parse_list( $list ) {
 }
 
 /**
+ * Cleans up an array, comma- or space-separated list of integer values.
+ *
+ * @since 1.2.4
+ *
+ * @param array|string $list List of values.
+ * @return array Sanitized array of values.
+ */
+function noptin_parse_int_list( $list, $cb = 'absint' ) {
+	return array_map( $cb, noptin_parse_list( $list ) );
+}
+
+/**
+ * Parses an array, comma- or space-separated list of post ids and urls.
+ *
+ * @since 1.2.4
+ *
+ * @param array|string $list List of values.
+ * @return array Sanitized array of values.
+ */
+function noptin_parse_post_list( $list ) {
+	
+	// Convert to array.
+	$list = noptin_parse_list( $list );
+
+	// Treat numeric values as ids.
+	$ids  = array_filter( $list, 'is_numeric' );
+
+	// Assume the rest to be urls.
+	$urls = array_diff( $list, $ids );
+	
+	// Return an array or ids and urls
+	return array(
+		'ids'  => array_map( 'absint', $ids ), // convert to integers.
+		'urls' => array_map( 'noptin_clean_url', $urls ), // clean the urls.
+	);
+}
+
+/**
+ * Wrapper for is_singular() that takes post ids and urls as a parameter instead of post types.
+ *
+ * @since 1.2.4
+ *
+ * @param array|string $posts Array or comma/space-separrated List of post ids and urls to check against.
+ * @return bool
+ */
+function noptin_is_singular( $posts = '' ) {
+
+	// Looking for any single page.
+	if ( empty( $posts ) ) {
+		return is_singular();
+	}
+
+	// Parse the list into ids and urls.
+	$posts = noptin_parse_post_list( $posts );
+
+	// Check if the current post is in one of the post ids.
+	$ids   = $posts['ids'];
+	if ( ! empty( $ids ) && ( is_single( $ids ) || is_page( $ids ) || is_attachment( $ids ) ) ) {
+		return true;
+	}
+
+	// Check if current url is in one of the urls.
+	return in_array( noptin_clean_url(), $posts['urls'], true );
+
+}
+
+/**
+ * Returns the hostname and path of a url.
+ *
+ * @since 1.2.4
+ *
+ * @param string $url The url to parse.
+ * @return string
+ */
+function noptin_clean_url( $url = '' ) {
+
+	// If no url is passed, use the current url.
+	if ( empty( $url ) ) {
+		$url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	}
+
+	// Remove query variables
+	$clean_url = strtok( $url, '?' );
+
+	// Remove the scheme and www parts.
+	$clean_url = preg_replace('#^(http(s)?://)?(www\.)?(.+\.)#i', '$4', $clean_url );
+
+	// Take care of edge cases
+	$clean_url = preg_replace('#^http(s)?://#i', '', $clean_url );
+
+	// remove forwad slash at the end of the url
+	$clean_url = strtolower( untrailingslashit( $clean_url ) );
+
+	return apply_filters( 'noptin_clean_url', $clean_url, $url ); 
+}
+
+/**
  * Clean variables using sanitize_text_field.
  *
  * @param string|array $var Data to sanitize.
@@ -1618,6 +1715,10 @@ function noptin_clean( $var ) {
  * @return bool.
  */
 function log_noptin_message( $message, $code = 'error' ) {
+
+	if ( is_wp_error( $message ) ) {
+		$message = $message->get_error_message();
+	}
 
 	// Scalars only please.
 	if ( ! is_scalar( $message ) ) {

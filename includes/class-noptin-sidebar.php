@@ -5,12 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Displays registers sidebar widget
-	 *
-	 * @since       1.0.5
-	 */
-
+/**
+ * Displays registers sidebar widget
+ *
+ * @since       1.0.5
+ */
 class Noptin_Sidebar extends WP_Widget {
 
 	/**
@@ -35,6 +34,8 @@ class Noptin_Sidebar extends WP_Widget {
 	 * @access      public
 	 * @since       1.0.5
 	 * @return      void
+	 * @param string $args     The widget args to use.
+	 * @param string $instance The instance args to use.
 	 */
 	public function widget( $args, $instance ) {
 
@@ -46,7 +47,7 @@ class Noptin_Sidebar extends WP_Widget {
 		// ...or the form cannot be displayed on this page.
 		$form = noptin_get_optin_form( trim( $instance['form'] ) );
 
-		if ( 'sidebar' != $form->optinType || ! $form->can_show() ) {
+		if ( 'sidebar' !== $form->optinType || ! $form->can_show() ) {
 			return;
 		}
 
@@ -62,6 +63,7 @@ class Noptin_Sidebar extends WP_Widget {
 	 * @access      public
 	 * @since       1.0.5
 	 * @return      void
+	 * @param       int $selected the currently selected form.
 	 */
 	public function forms_select( $selected ) {
 
@@ -86,7 +88,7 @@ class Noptin_Sidebar extends WP_Widget {
 	 *
 	 * @access      public
 	 * @since       1.0.5
-	 * @return      array
+	 * @return      int[]
 	 */
 	public function get_forms() {
 
@@ -112,7 +114,8 @@ class Noptin_Sidebar extends WP_Widget {
 	 *
 	 * @access      public
 	 * @since       1.0.5
-	 * @return      array
+	 * @return      void
+	 * @param       array $instance current instance options.
 	 */
 	public function form( $instance ) {
 		$form = ! empty( $instance['form'] ) ? $instance['form'] : '';
@@ -143,6 +146,8 @@ class Noptin_Sidebar extends WP_Widget {
 	 * @access      public
 	 * @since       1.0.5
 	 * @return      array
+	 * @param       array $new_instance new instance options.
+	 * @param       array $old_instance old instance options.
 	 */
 	public function update( $new_instance, $old_instance ) {
 		return array(

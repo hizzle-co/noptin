@@ -38,7 +38,12 @@ class Noptin_System_Info {
 
 		$plugins = $this->get_all_plugins();
 
-		// These have intentionally been untranslated.
+		/**
+		 * Filters the system info.
+		 * 
+		 * @since 1.2.3
+		 * @param array $info The current system information.
+		 */
 		return apply_filters(
 			'noptin_system_info',
 			array(
@@ -83,6 +88,13 @@ class Noptin_System_Info {
 		}
 
 		$text .= "\n ### End System Info ###";
+
+		/**
+		 * Filters the TEXT system info.
+		 * 
+		 * @since 1.2.3
+		 * @param string $info The current system information string.
+		 */
 		return apply_filters( 'noptin_system_info_text', $text );
 
 	}
@@ -96,6 +108,13 @@ class Noptin_System_Info {
 	public function get_info_as_json() {
 
 		$info = wp_json_encode( $this->info );
+
+		/**
+		 * Filters the JSON system info.
+		 * 
+		 * @since 1.2.3
+		 * @param string $info The current system information in JSON format.
+		 */
 		return apply_filters( 'noptin_system_info_json', $info );
 
 	}
@@ -108,6 +127,12 @@ class Noptin_System_Info {
 	 */
 	public function get_site_info() {
 
+		/**
+		 * Filters the system info shown on Noptin's system info admin page.
+		 * 
+		 * @since 1.2.3
+		 * @param array $system_info An array of system information.
+		 */
 		return apply_filters(
 			'noptin_site_system_info',
 			array(
@@ -137,6 +162,12 @@ class Noptin_System_Info {
 			$theme_name .= " by $author";
 		}
 
+		/**
+		 * Filters the WordPress configuration info shown on Noptin's system info admin page.
+		 * 
+		 * @since 1.2.3
+		 * @param array $wordpress An array of the current WordPress configuration information.
+		 */
 		return apply_filters(
 			'noptin_wordpress_config_system_info',
 			array(
@@ -171,6 +202,12 @@ class Noptin_System_Info {
 			$server_data['Max Input Vars']  = ini_get( 'max_input_vars' );
 		}
 
+		/**
+		 * Filters the server system info shown on Noptin's system info admin page.
+		 * 
+		 * @since 1.2.3
+		 * @param array $server_data An array of the current server information.
+		 */
 		return apply_filters(
 			'noptin_server_system_info',
 			array_merge(

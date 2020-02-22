@@ -543,6 +543,16 @@ class Noptin_Form {
 	 * @return bool
 	 */
 	public function can_show() {
+		return apply_filters( 'noptin_can_show_form', $this->_can_show(), $this );
+	}
+
+	/**
+	 * Contains the logic for Noptin_Form::can_show()
+	 *
+	 * @internal
+	 * @return bool
+	 */
+	protected function _can_show() {
 
 		// Abort early if the form is not published...
 		if ( ! $this->exists() || ! $this->is_published() ) {
@@ -569,16 +579,13 @@ class Noptin_Form {
 			return false;
 		}
 
-		// Get current global post.
-		$post = get_post();
-
 		// Has the user restricted this to a few posts?
 		if ( ! empty( $this->onlyShowOn ) ) {
-			return is_object( $post ) && in_array( $post->ID, array_map( 'absint', noptin_parse_list( $this->onlyShowOn ) ), true );
+			return noptin_is_singular( $this->onlyShowOn );
 		}
 
 		// or maybe forbidden it on this post?
-		if ( is_object( $post ) && in_array( $post->ID, array_map( 'absint', noptin_parse_list( $this->neverShowOn ) ), true ) ) {
+		if ( ! empty( $this->neverShowOn ) && noptin_is_singular( $this->neverShowOn ) ) {
 			return false;
 		}
 

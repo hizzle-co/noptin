@@ -60,6 +60,13 @@ class Noptin_Form_Editor {
 			'design'       => $this->get_design_fields(),
 			'integrations' => $this->get_integration_fields(),
 		);
+
+		/**
+		 * Filters the Noptin Form Editor's sidebar fields.
+		 * 
+		 * @param array $fields Sidebar fields.
+		 * @param Noptin_Form_Editor $form_editor The form editor instance.
+		 */
 		return apply_filters( 'noptin_optin_form_editor_sidebar_section', $fields, $this );
 	}
 
@@ -292,14 +299,14 @@ class Noptin_Form_Editor {
 			'options'     => $this->post->neverShowOn,
 			'restrict'    => '!_onlyShowOn',
 			'placeholder' => '1,10,25',
-			'tooltip'     => __( 'Use a comma to separate post ids where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids.', 'newsletter-optin-box' ),
+			'tooltip'     => __( 'Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids.', 'newsletter-optin-box' ),
 		);
 
 		$return['onlyShowOn'] = array(
 			'el'          => 'input',
 			'label'       => 'Only show on:',
 			'placeholder' => '3,14,5',
-			'tooltip'     => __( 'If you specify any posts here, all other targeting rule will be ignored, and this form will only be displayed on posts that you specify here.', 'newsletter-optin-box' ),
+			'tooltip'     => __( 'If you specify any posts here, all other targeting rule will be ignored, and this form will only be displayed on posts or urls that you specify here.', 'newsletter-optin-box' ),
 			'options'     => $this->post->onlyShowOn,
 		);
 
@@ -816,6 +823,13 @@ class Noptin_Form_Editor {
 		$saved_state = $this->post->get_all_data();
 		unset( $saved_state['optinHTML'] );
 		$state = array_replace( $saved_state, $this->get_misc_state() );
+
+		/**
+		 * Filters the Noptin Form Editor's state.
+		 * 
+		 * @param array $state Editor state.
+		 * @param Noptin_Form_Editor $form_editor The form editor instance.
+		 */
 		return apply_filters( 'noptin_optin_form_editor_state', $state, $this );
 
 	}

@@ -21,13 +21,21 @@
 	<exclude-pattern>*/includes/class-noptin-background-sync.php</exclude-pattern>
 	<exclude-pattern>*/includes/class-noptin-background-mailer.php</exclude-pattern>
 
-	<exclude name="Squiz.Commenting.FileComment.MissingPackageTag" />
-	<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />
-	<exclude name="Internal.NoCodeFound" />
-
 	<config name="minimum_supported_wp_version" value="4.7" />
 
 	<rule ref="Squiz.Commenting.FileComment">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FileComment.MissingPackageTag">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="Internal.NoCodeFound">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 

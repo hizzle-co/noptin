@@ -85,6 +85,12 @@ class Noptin_Tools {
 
 		);
 
+		/**
+		 * Filters Noptin admin tools.
+		 * 
+		 * @param array $tools An array of admin tools.
+		 * @since 1.2.3
+		 */
 		return apply_filters( 'get_noptin_admin_tools', $tools );
 	}
 

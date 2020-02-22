@@ -340,22 +340,6 @@ class Noptin_Emogrifier {
 			$node->setAttribute( 'style', $this->generateStyleStringFromDeclarationsArrays( $currentStyleAttributes, $styleAttributesForNode ) );
 		}
 
-		// This removes styles from your email that contain display:none.
-		// We need to look for display:none, but we need to do a case-insensitive search. Since DOMDocument only supports XPath 1.0,
-		// lower-case() isn't available to us. We've thus far only set attributes to lowercase, not attribute values. Consequently, we need
-		// to translate() the letters that would be in 'NONE' ("NOE") to lowercase.
-		$nodesWithStyleDisplayNone = $xpath->query( '//*[contains(translate(translate(@style," ",""),"NOE","noe"),"display:none")]' );
-		// The checks on parentNode and is_callable below ensure that if we've deleted the parent node,
-		// we don't try to call removeChild on a nonexistent child node
-		if ( $nodesWithStyleDisplayNone->length > 0 ) {
-			/** @var $node \DOMNode */
-			foreach ( $nodesWithStyleDisplayNone as $node ) {
-				if ( $node->parentNode && is_callable( array( $node->parentNode, 'removeChild' ) ) ) {
-					// $node->parentNode->removeChild($node);
-				}
-			}
-		}
-
 		$this->copyCssWithMediaToStyleNode( $cssParts, $xmlDocument );
 
 		if ( $this->preserveEncoding ) {
