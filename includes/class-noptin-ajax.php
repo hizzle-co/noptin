@@ -420,6 +420,8 @@ class Noptin_Ajax {
 		if ( ! empty( $_REQUEST['noptin_confirm_submit'] ) ) {
 			return;
 		}
+		
+		do_action( 'noptin_before_add_ajax_subscriber' );
 
 		// Prepare form fields.
 		$form = 0;
@@ -445,7 +447,11 @@ class Noptin_Ajax {
 			$fields = $form->fields;
 		}
 
-		// Filter and sanitize the fields.
+		/**
+		 * Fires before a subscriber is added via ajax.
+		 * 
+		 * @since 1.2.4
+		 */
 		$filtered = array();
 
 		foreach ( $fields as $field ) {
@@ -517,6 +523,12 @@ class Noptin_Ajax {
 
 		}
 
+		/**
+		 * Filters subscriber details when adding a new subscriber via ajax.
+		 * 
+		 * @since 1.2.4
+		 */
+		$filtered = apply_filters( 'noptin_add_ajax_subscriber_filter_details', $filtered, $form );
 		$inserted = add_noptin_subscriber( $filtered );
 
 		if ( is_string( $inserted ) ) {
