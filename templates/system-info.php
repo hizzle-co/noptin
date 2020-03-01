@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<h3><?php _e( 'System Info', 'newsletter-optin-box' ); ?></h3>
 
 <div class="notice">
 	<p><?php _e( 'Please copy and paste this information in your ticket when contacting support:', 'newsletter-optin-box' ); ?> </p>

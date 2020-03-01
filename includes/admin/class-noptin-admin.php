@@ -341,9 +341,10 @@ class Noptin_Admin {
 		);
 
 		// Tools.
+		$tools_page_title = apply_filters( 'noptin_admin_tools_page_title', __( 'Noptin Tools', 'newsletter-optin-box' ) );
 		add_submenu_page(
 			'noptin',
-			esc_html__( 'Noptin Tools', 'newsletter-optin-box' ),
+			esc_html( $tools_page_title ),
 			esc_html__( 'Tools', 'newsletter-optin-box' ),
 			'manage_options',
 			'noptin-tools',

@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<h3><?php _e( 'Debug Log', 'newsletter-optin-box' ); ?></h3>
 
 <table class="noptin-admin-table noptin-admin-tools-table widefat" cellspacing="0">
 	<thead>

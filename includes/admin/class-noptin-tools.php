@@ -101,7 +101,7 @@ class Noptin_Tools {
 	 * @since 1.2.3
 	 */
 	public function display_opening_wrap() {
-		echo '<div class="wrap noptin-tools" id="noptin-tools-page"><h1>' . esc_html( get_admin_page_title() ) . '</h1>';
+		echo '<div class="wrap noptin-tools" id="noptin-tools-page"><h1 style="margin-bottom: 20px;">' . esc_html( get_admin_page_title() ) . '</h1>';
 	}
 
 	/**
