@@ -701,10 +701,20 @@ function get_noptin_subscriber_by_email( $email ) {
  * Deletes a subscriber
  *
  * @access  public
+ * @param int $subscriber The subscriber being deleted
  * @since   1.1.0
  */
 function delete_noptin_subscriber( $subscriber ) {
 	global $wpdb;
+
+	/**
+     * Fires immediately before a subscriber is deleted from the database.
+     *
+     * @since 1.2.4
+     *
+     * @param int      $subscriber       ID of the subscriber to delete.
+     */
+	do_action( 'delete_noptin_subscriber', $subscriber );
 
 	$table  = get_noptin_subscribers_table_name();
 	$table2 = get_noptin_subscribers_meta_table_name();
