@@ -663,31 +663,69 @@ class Noptin_Ajax {
 		do_action( 'noptin_before_download_subscribers', $this );
 
 		$output  = fopen( 'php://output', 'w' ) or die( 'Unsupported server' );
-		$table   = get_noptin_subscribers_table_name();
-		$results = $wpdb->get_results( "SELECT `id`, `first_name`, `second_name`, `email`, `active`, `confirmed`, `date_created`, `confirm_key`  FROM $table", ARRAY_N );
 
+		// Retrieve subscribers.
+		$table       = get_noptin_subscribers_table_name();
+		$subscribers = $wpdb->get_results( "SELECT *  FROM $table" );
+
+		// Prepare columns for the csv fild.
+		$fields  = get_noptin_subscribers_fields();
+
+		// Let the browser know what content we're streaming and how it should save the content.
+		$name = 'noptin-subscribers-' . time() . '.csv';
 		header( 'Content-Type:application/csv' );
-		header( 'Content-Disposition:attachment;filename=subscribers.csv' );
+		header( "Content-Disposition:attachment;filename=$name" );
 
-		// create the csv.
-		fputcsv(
-			$output,
-			array(
-				__( 'First Name', 'newsletter-optin-box' ),
-				__( 'Second Name', 'newsletter-optin-box' ),
-				__( 'Email Address', 'newsletter-optin-box' ),
-				__( 'Active', 'newsletter-optin-box' ),
-				__( 'Email Confirmed', 'newsletter-optin-box' ),
-				__( 'Subscribed On', 'newsletter-optin-box' ),
-				__( 'Confirm Key', 'newsletter-optin-box' ),
-				__( 'Meta', 'newsletter-optin-box' ),
-			)
-		);
+		$headers   = $fields;
+		$headers[] = __( 'Meta', 'newsletter-optin-box' );
 
-		foreach ( $results as $result ) {
-			$result[] = wp_json_encode( get_noptin_subscriber_meta( $result[0] ) );
-			unset( $result[0] );
-			fputcsv( $output, $result );
+		// Output the csv column headers.
+		fputcsv( $output, noptin_sanitize_title_slug( $headers ) );
+
+		// Loop through 
+		foreach ( $subscribers as $subscriber ) {
+			$row  = array();
+
+			// Fetch meta data.
+			$meta = get_noptin_subscriber_meta( $subscriber->id );
+			if ( ! is_array( $meta ) ) {
+				$meta = array();
+			}
+
+			foreach ( $fields as $field ) {
+
+				if ( $field === 'active' ) {
+					$row[] = empty( $subscriber->active ) ? 1 : 0;
+					continue;
+				}
+
+				// Check if this is a core field.
+				if ( isset( $subscriber->{$field} ) ) {
+					$row[] = $subscriber->{$field};
+					continue;
+				}
+
+				// Special meta field.
+				if( isset( $meta[$field] ) ) {
+					$meta_value = $meta[$field][0];
+					unset( $meta[$field] );
+
+					if ( is_scalar( $meta_value ) ) {
+						$row[] = $meta_value;
+					} else {
+						$row[] = maybe_serialize( $meta_value );
+					}
+
+					continue;
+				}
+
+				// Missing value for the field.
+				$row[] = '';
+			}
+
+			$row[] = wp_json_encode( $meta );
+
+			fputcsv( $output, $row );
 		}
 		fclose( $output );
 

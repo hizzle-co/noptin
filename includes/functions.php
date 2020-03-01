@@ -1416,6 +1416,34 @@ function get_noptin_subscribers_meta_table_name() {
 }
 
 /**
+ *  Returns a list of available subscriber fields.
+ *
+ * @since 1.2.4
+ * @return array An array of subscriber fields.
+ */
+function get_noptin_subscribers_fields() {
+	global $wpdb;
+
+	// Base subscriber fields.
+	$fields = array( 'first_name', 'second_name', 'email', 'active', 'confirmed', 'date_created' );
+
+	// Add in some meta fields.
+	$table       = get_noptin_subscribers_meta_table_name();
+	$meta_fields = $wpdb->get_col( "SELECT DISTINCT `meta_key` FROM `$table`" );
+	$ignore      = noptin_parse_list( 'name asn district zipcode country_tld currency_code currency_symbol organization connection_type isp geoname_id country_flag country_capital currency continent_name country_code3 country_code2 continent_code continent time_zone languages state_prov' );
+
+	if ( is_array( $meta_fields ) ) {
+		foreach ( $meta_fields as $field ) {
+			if ( 0 !== stripos( $field, '_' ) && ! is_numeric( $field ) && ! in_array( strtolower( $field ), $ignore, true ) ) {
+				$fields[] = $field;
+			}
+		}
+	}
+
+	return apply_filters( 'noptin_subscribers_fields', $fields );
+}
+
+/**
  *  Returns the appropriate capability to check against
  *
  * @since 1.2.2
@@ -1946,4 +1974,17 @@ function noptin_generate_user_name( $prefix = '' ) {
 	 * @param string $prefix      A prefix for the user name. Can be any string including an email address.
 	 */
 	return apply_filters( 'noptin_generate_user_name', $prefix );
+}
+
+/**
+ * Sanitizes a slug
+ *
+ * @since 1.2.4
+ * @param array|string $slug The slug to sanitize.
+ * @return string|string[].
+ */
+function noptin_sanitize_title_slug( $slug = '' ) {
+	$slug = str_ireplace( array( '_', '-' ), ' ', $slug );
+	$slug = map_deep( $slug, 'ucwords' );
+	return noptin_clean( $slug );
 }
