@@ -179,56 +179,78 @@ class Noptin_Ajax {
 
 		// Are there subscribers?
 		if ( empty( $subscribers ) ) {
-			wp_send_json_error( __( 'The import file is either empty or corrupted', 'newsletter-optin-box' ) );
+			wp_send_json_success( array(
+				'imported'	=> 0,
+				'skipped'	=> 0,
+			) );
 			exit;
 		}
 
 		$table    = get_noptin_subscribers_table_name();
 		$imported = 0;
-		$mappings = array(
-			'first name'      => 'first_name',
-			'second name'     => 'second_name',
-			'last name'       => 'second_name',
-			'email address'   => 'email',
-			'email'           => 'email',
-			'active'          => 'active',
-			'list status'     => 'active',
-			'email confirmed' => 'confirmed',
-			'global status'   => 'confirmed',
-			'subscribed on'   => 'date_created',
-			'confirm key'     => 'confirm_key',
-			'meta'            => 'meta',
-		);
+		$skipped  = 0;
 
 		foreach ( $subscribers as $subscriber ) {
-
-			// Prepare subscriber fields.
-			foreach ( $subscriber as $key => $value ) {
-				$lowercase = strtolower( $key );
-
-				if ( isset( $mappings[ $lowercase ] ) ) {
-					$subscriber[ $mappings[ $lowercase ] ] = $value;
-					unset( $subscriber[ $key ] );
-				}
+			if( ! is_array( $subscriber ) ) {
+				$skipped ++;
+				continue;
 			}
+
+			$subscriber = apply_filters( 'noptin_format_imported_subscriber_fields', $subscriber );
 
 			// Ensure that there is a unique email address.
 			if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) || noptin_email_exists( $subscriber['email'] ) ) {
+				$skipped ++;
 				continue;
 			}
 
 			// Sanitize email status
-			if ( empty( $subscriber['confirmed'] ) || 'false' == $subscriber['confirmed'] || 'unconfirmed' == $subscriber['confirmed'] ) {
+			if( ! isset( $subscriber['confirmed'] ) ) {
+				$subscriber['confirmed'] = 0;
+			}
+
+			if( ! is_string( $subscriber['confirmed'] ) ) {
+				$subscriber['confirmed'] = strtolower( $subscriber['confirmed'] );
+			}
+
+			if ( ( is_numeric( $subscriber['confirmed'] ) && 0 === ( int ) $subscriber['confirmed'] ) || 
+			    false         === $subscriber['confirmed'] || 
+				'false'       === $subscriber['confirmed'] || 
+				'unconfirmed' === $subscriber['confirmed'] || 
+				''            === $subscriber['confirmed'] || 
+				'no'          === $subscriber['confirmed'] ) {
 				$subscriber['confirmed'] = 0;
 			} else {
 				$subscriber['confirmed'] = 1;
 			}
 
 			// Sanitize subscriber status
-			if ( empty( $subscriber['active'] ) || 'true' == $subscriber['active'] || 'subscribed' == $subscriber['active'] ) {
+
+			if( ! isset( $subscriber['active'] ) ) {
+				$subscriber['active'] = 1;
+			}
+
+			if( ! is_string( $subscriber['active'] ) ) {
+				$subscriber['active'] = strtolower( $subscriber['active'] );
+			}
+			if ( 
+				( is_numeric( $subscriber['confirmed'] ) && 1 === ( int ) $subscriber['confirmed'] )  || 
+				true         === $subscriber['active'] ||
+				'true'       === $subscriber['active'] ||
+				'subscribed' === $subscriber['active'] ||
+				'yes'        === $subscriber['active'] ) {
 				$subscriber['active'] = 0;
 			} else {
 				$subscriber['active'] = 1;
+			}
+
+			// Maybe split name into first and last.
+			if ( isset( $subscriber['name'] ) ) {
+				$names = noptin_split_subscriber_name( $subscriber['name'] );
+
+				$subscriber['first_name']   = empty( $subscriber['first_name'] ) ? $names[0] : trim( $subscriber['first_name'] );
+				$subscriber['second_name']  = empty( $subscriber['second_name'] ) ? $names[1] : trim( $subscriber['second_name'] );
+				unset( $subscriber['name'] );
 			}
 
 			// Save the main subscriber fields.
@@ -243,33 +265,14 @@ class Noptin_Ajax {
 			);
 
 			if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
+				$skipped ++;
 				continue;
 			}
 
 			$id = $wpdb->insert_id;
 
-			$meta = array();
-			if ( ! empty( $subscriber['meta'] ) ) {
-
-				$subscriber['meta'] = maybe_unserialize( $subscriber['meta'] );
-
-				// Arrays
-				if ( is_array( $subscriber['meta'] ) ) {
-					$meta = array( $subscriber['meta'] );
-				}
-
-				// Json
-				if ( is_string( $subscriber['meta'] ) ) {
-					$meta = json_decode( $subscriber['meta'], true );
-				}
-
-				unset( $subscriber['meta'] );
-
-			}
-
-			if ( empty( $meta ) ) {
-				$meta = array();
-			}
+			$meta = $subscriber['meta'];
+			unset( $subscriber['meta'] );
 
 			$extra_meta = array_diff_key( $subscriber, $database_fields );
 			foreach ( $extra_meta as $field => $value ) {
@@ -300,18 +303,10 @@ class Noptin_Ajax {
 
 		}
 
-		// Did we import any subscribers?
-		if ( empty( $imported ) ) {
-			wp_send_json_error( __( 'There was no unique subscriber to import', 'newsletter-optin-box' ) );
-			exit;
-		}
-
-		wp_send_json_success(
-			sprintf(
-				__( 'Successfuly imported %s subscribers', 'newsletter-optin-box' ),
-				$imported
-			)
-		);
+		wp_send_json_success( array(
+			'imported'	=> $imported,
+			'skipped'	=> $skipped,
+		) );
 		exit;
 
 	}

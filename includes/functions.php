@@ -1425,7 +1425,7 @@ function get_noptin_subscribers_fields() {
 	global $wpdb;
 
 	// Base subscriber fields.
-	$fields = array( 'first_name', 'second_name', 'email', 'active', 'confirmed', 'date_created' );
+	$fields = array( 'first_name', 'second_name', 'email', 'active', 'confirm_key', 'confirmed', 'date_created' );
 
 	// Add in some meta fields.
 	$table       = get_noptin_subscribers_meta_table_name();

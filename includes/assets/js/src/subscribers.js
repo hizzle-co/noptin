@@ -3,24 +3,77 @@
 	// CSV Parser
 	let Papa = require('papaparse')
 
-	const Toast = Swal.mixin({
-		toast: true,
-		position: 'bottom-end',
-		showConfirmButton: false,
-		timer: 3000,
-		timerProgressBar: true,
-		onOpen: (toast) => {
-			toast.addEventListener('mouseenter', Swal.stopTimer)
-			toast.addEventListener('mouseleave', Swal.resumeTimer)
-		}
-	})
-
 	// Imports
 	$(document).ready(function () {
 
 		$(document).on('click', '.noptin-import-subscribers', function (e) {
 
 			e.preventDefault();
+
+			let imported = 0,
+				skipped  = 0,
+				rows     = [],
+				error    = 'All subscribers imported successfully',
+				icon     = 'info',
+				title    = 'Done!'
+
+			// Imports subscribers.
+			let noptin_import_subscribers = ( subscribers, success = false ) => {
+
+				// Remove null values from subscriber properties.
+				let _subscribers = []
+				subscribers.forEach( subscriber => {
+					if ( typeof subscriber === 'object' && subscriber !== null) {
+
+						// remove null values.
+						Object.keys(subscriber).forEach( (key) => ( subscriber[key] == null ) && delete subscriber[key] );
+						_subscribers.push( subscriber )
+					}
+				});
+
+				let request = {
+					_wpnonce: noptinSubscribers.nonce,
+					subscribers: _subscribers,
+					action: 'noptin_import_subscribers'
+				}
+
+				jQuery.post(noptinSubscribers.ajaxurl, request)
+
+					.done(function (data) {
+
+						if ( typeof data !== 'object' || ! data.success ) {
+							skipped = skipped + _subscribers.length
+							error    = 'An error occurred while importing subscribers'
+							icon     = 'error'
+							title    = 'Error!'
+							console.log( data )
+						} else {
+							imported = imported + data.data.imported
+							skipped = skipped + data.data.skipped
+						}
+
+					})
+
+					.fail(function (jqXHR) {
+						console.log(jqXHR)
+						error    = jqXHR.statusText
+						icon     = 'error'
+						title    = 'Error!'
+						skipped  = skipped + _subscribers.length
+					})
+
+					.always( function() {
+						if ( success ) {
+							Swal.fire({
+								icon: icon,
+								title: title,
+								confirmButtonText: 'Close',
+								html: `Imported: ${imported} &nbsp; Skipped: ${skipped}`,
+								footer: error
+							})
+						}
+					})
+			}
 
 			Swal.fire({
 				//title: 'Import Subscribers',
@@ -43,58 +96,26 @@
 
 					if (file) {
 						Papa.parse(file, {
-							complete: function (data) {
+							complete () { noptin_import_subscribers( rows, true ) },
 
-								let request = {
-									_wpnonce: noptinSubscribers.nonce,
-									subscribers: data.data,
-									action: 'noptin_import_subscribers'
+							step ( row ) {
+
+								// Ensure there is data.
+								if ( row.data ) {
+									let length = rows.push( row.data )
+									if ( length == 10 ) {
+										setTimeout( function(){
+											noptin_import_subscribers( rows )
+										}, 100 )
+										rows = []
+									}
 								}
 
-								jQuery.post(noptinSubscribers.ajaxurl, request)
-
-									.done(function (data) {
-
-										if (data.success) {
-
-											Swal.fire(
-												'',
-												data.data,
-												'success'
-											)
-
-										} else {
-
-											Swal.fire({
-												icon: 'error',
-												title: 'Error!',
-												text: data.data,
-												showCloseButton: true,
-												confirmButtonText: 'Close',
-												confirmButtonColor: '#9e9e9e',
-											})
-
-										}
-
-									})
-
-									.fail(function (jqXHR) {
-
-										Swal.fire({
-											icon: 'error',
-											title: 'Unable to connect',
-											text: 'This might be a problem with your server or your internet connection',
-											showCloseButton: true,
-											confirmButtonText: 'Close',
-											confirmButtonColor: '#9e9e9e',
-											footer: `<code>Status: ${jqXHR.status} &nbsp; Status text: ${jqXHR.statusText}</code>`
-										})
-				
-									})
-
 							},
-							worker: false,
-							header: true
+
+							worker: true,
+							header: true,
+							dynamicTyping: true
 						});
 
 						//Return a promise that never resolves

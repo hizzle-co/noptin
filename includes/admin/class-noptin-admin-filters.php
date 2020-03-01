@@ -33,6 +33,9 @@ class Noptin_Admin_Filters {
 		add_filter( "noptin_subscriber_wp_user_id_label", array( $this, 'wp_user_id_label' ) );
 		add_filter( "noptin_format_subscriber_wp_user_id", array( $this, 'format_user_id' ), 10, 2 );
 
+		// Filters Noptin subscriber's fields.
+		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ) );
+
 	}
 
 	/**
@@ -113,6 +116,81 @@ class Noptin_Admin_Filters {
 
 		delete_noptin_subscriber_meta( $data->id, 'wp_user_id' );
 		return '<span style="color: #f44336;" class="dashicons dashicons-no"></span>';
+	}
+
+	/**
+	 * Formats imported subscriber fields.
+	 * 
+	 * @param array $subscriber Subscriber fields.
+	 */
+	public function format_imported_subscriber_fields( $subscriber ) {
+
+		$mappings = array(
+			'firstname'      => 'first_name',
+			'fname'          => 'first_name',
+			'secondname'     => 'second_name',
+			'lastname'       => 'second_name',
+			'lname'          => 'second_name',
+			'name'           => 'name',
+			'fullname'       => 'name',
+			'familyname'     => 'name',
+			'displayname'    => 'name',
+			'emailaddress'   => 'email',
+			'email'          => 'email',
+			'active'         => 'active',
+			'liststatus'     => 'active',
+			'status'         => 'active',
+			'emailconfirmed' => 'confirmed',
+			'confirmed'      => 'confirmed',
+			'globalstatus'   => 'confirmed',
+			'subscribedon'   => 'date_created',
+			'datecreated'    => 'date_created',
+			'date'           => 'date_created',
+			'confirmkey'     => 'confirm_key',
+			'meta'           => 'meta',
+			'metafields'     => 'meta',
+		);
+
+		// Prepare subscriber fields.
+		foreach ( (array) $subscriber as $key => $value ) {
+			$sanitized = strtolower( str_ireplace( array( '_', '-', ' ' ), '', $key ) );
+
+			if ( isset( $mappings[ $sanitized ] ) && empty( $subscriber[ $mappings[ $sanitized ] ] ) ) {
+				$subscriber[ $mappings[ $sanitized ] ] = $value;
+				unset( $subscriber[ $key ] );
+			}
+
+		}
+
+		// Meta data.
+		if ( empty( $subscriber['meta'] ) ) {
+			$subscriber['meta'] = array();
+		}
+
+		$subscriber['meta'] = maybe_unserialize( $subscriber['meta'] );
+
+		if ( is_string( $subscriber['meta'] ) ) {
+			$subscriber['meta'] = json_decode( $subscriber['meta'], true );
+		}
+
+		if ( empty( $subscriber['meta'] ) ) {
+			$subscriber['meta'] = array();
+		}
+
+		$subscriber['meta'] = (array) $subscriber['meta'];
+
+		// Fill in meta fields for missing core fields.
+		foreach ( $subscriber['meta'] as $key => $value ) {
+			$sanitized = strtolower( str_ireplace( array( '_', '-', ' ' ), '', $key ) );
+
+			if ( isset( $mappings[ $sanitized ] ) && empty( $subscriber[ $mappings[ $sanitized ] ] ) ) {
+				$subscriber[ $mappings[ $sanitized ] ] = $value;
+				unset( $subscriber['meta'][ $key ] );
+			}
+		}
+
+		return $subscriber;
+
 	}
 
 }
