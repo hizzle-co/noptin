@@ -35,7 +35,7 @@
 
 				if ( has_filter( "noptin_format_subscriber_{$key}" ) ) {
 
-					$value = apply_filters( "noptin_format_subscriber_{$key}", $value );
+					$value = apply_filters( "noptin_format_subscriber_{$key}", $value, $data, $meta );
 
 				} else {
 					$value = maybe_unserialize( $value[0] );
