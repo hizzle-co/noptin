@@ -716,6 +716,12 @@ function delete_noptin_subscriber( $subscriber ) {
      */
 	do_action( 'delete_noptin_subscriber', $subscriber );
 
+	// Maybe delete WP User connection.
+	$user_id = get_noptin_subscriber_meta ( (int) $subscriber, 'wp_user_id', true );
+	if ( ! empty( $user_id ) ) {
+		delete_user_meta ( $user_id, 'noptin_subscriber_id' );
+	}
+
 	$table  = get_noptin_subscribers_table_name();
 	$table2 = get_noptin_subscribers_meta_table_name();
 

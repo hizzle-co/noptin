@@ -24,7 +24,6 @@ class Noptin_Admin_Filters {
 	public function __construct() {
 		
 		add_filter( 'noptin_admin_tools_page_title', array( $this, 'filter_tools_page_titles' ) );
-		do_action( 'delete_noptin_subscriber', array( $this, 'delete_subscriber_user_link' ) );
 
 		// Show subscriber connection on user's list table.
         add_filter( 'manage_users_columns', array( $this, 'modify_users_table' ) );
@@ -52,21 +51,6 @@ class Noptin_Admin_Filters {
 		}
 
 		return $title;
-
-	}
-
-	/**
-	 * Deletes a subscriber > user connection.
-	 * @since       1.2.4
-	 * @param int $subscriber_id The id of the subscriber being deleted
-	 */
-	public function delete_subscriber_user_link( $subscriber_id ) {
-		$user_id = get_noptin_subscriber_meta ( $subscriber_id, 'wp_user_id', true );
-
-		if ( ! empty( $user_id ) ) {
-			delete_noptin_subscriber_meta( $subscriber_id, 'wp_user_id' );
-			delete_user_meta ( $user_id, 'noptin_subscriber_id' );
-		}
 
 	}
 

@@ -136,16 +136,19 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		$row_actions['view'] = '<a href="' . $view_url . '">' . __( 'View', 'newsletter-optin-box' ) . '</a>';
 
-		$row_actions['delete'] = '<a onclick="return confirm(\'Are you sure to delete this subscriber?\');" href="' . esc_url(
+		$email       = sanitize_email( $subscriber['email'] );
+		$delete_url  = esc_url(
 			wp_nonce_url(
 				add_query_arg( 'delete-subscriber', $subscriber['id'], $this->base_url ),
 				'noptin-subscriber'
 			)
-		) . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+		);
+		$delete_text = __( 'Delete', 'newsletter-optin-box' );
+
+		$row_actions['delete'] = "<a class='noptin-delete-single-subscriber' data-email='$email' href='$delete_url'>$delete_text</a>";
 
 		$row_actions = $this->row_actions( $row_actions );
 
-		$email  = sanitize_text_field( $subscriber['email'] );
 		$avatar = esc_url( get_avatar_url( $email ) );
 		$avatar = "<img src='$avatar' height='32' width='32'/>";
 		$name   = '';
