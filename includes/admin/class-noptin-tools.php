@@ -111,6 +111,12 @@ class Noptin_Tools {
 	 * @since 1.2.3
 	 */
 	public function display_closing_wrap() {
+		
+		if ( ! empty( $_GET['tool'] ) && 'sync_users' != $_GET['tool'] ) {
+			$tools_page = esc_url( admin_url( 'admin.php?page=noptin-tools' ) );
+			$text       = __( 'Go back to tools page', 'noptin' );
+			echo "<p class='description'><a href='$tools_page'>$text</a></p>";
+		}
 		echo '</div>';
 	}
 
