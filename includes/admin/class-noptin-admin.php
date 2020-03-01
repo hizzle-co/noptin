@@ -107,6 +107,7 @@ class Noptin_Admin {
 
 		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
 		$this->bg_sync 		   = new Noptin_Background_Sync();
+		$this->filters         = new Noptin_Admin_Filters();
 
 		// initialize hooks.
 		$this->init_hooks();

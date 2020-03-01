@@ -2,6 +2,7 @@
 
 // Admin.
 require_once get_noptin_include_dir( 'admin/class-noptin-admin.php' );
+require_once get_noptin_include_dir( 'admin/class-noptin-admin-filters.php' );
 require_once get_noptin_include_dir( 'admin/class-noptin-vue.php' );
 require_once get_noptin_include_dir( 'admin/class-noptin-settings.php' );
 require_once get_noptin_include_dir( 'admin/class-noptin-tools.php' );
