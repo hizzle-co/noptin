@@ -185,6 +185,85 @@
 
 		})
 
+		// Delete a subscriber.
+		$('.noptin-delete-single-subscriber').on('click', function( e ){
+			e.preventDefault();
+
+			let href = $( this ).attr( 'href' )
+			let email = $( this ).data( 'email' )
+
+			//Init sweetalert
+			Swal.fire({
+				icon: 'warning',
+				titleText: `Delete subscriber`,
+				text: email,
+				footer: `This will delete the subscriber and all associated data`,
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Delete',
+				showCloseButton: true,
+
+				//Fired when the user clicks on the confirm button
+				preConfirm() {
+					window.location.href = href
+				}
+			})
+		})
+
+		// Delete all subcribers.
+		$('.noptin-delete-subscribers').on('click', function( e ){
+			e.preventDefault();
+
+			//Init sweetalert
+			Swal.fire({
+				icon: 'question',
+				text: `Are you sure you want to delete all subscribers?`,
+				footer: `You won't be able to revert this!`,
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Delete',
+				showCloseButton: true,
+				allowOutsideClick: () => !Swal.isLoading(),
+				showLoaderOnConfirm: true,
+
+				//Fired when the user clicks on the confirm button
+				preConfirm() {
+
+					let request = {
+						_wpnonce: noptinSubscribers.nonce,
+						action: 'noptin_delete_all_subscribers'
+					}
+	
+					jQuery.post(noptinSubscribers.ajaxurl, request)
+	
+						.done(function () {
+							
+							Swal.fire({
+								icon: 'success',
+								title: 'Deleted Subscribers',
+								showConfirmButton: false,
+								footer: `Reloading the page`
+							})
+							window.location = window.location
+						})
+	
+						.fail(function (jqXHR) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Could not delete subscribers',
+								confirmButtonText: 'Close',
+								footer: jqXHR.statusText
+							})
+							console.log(jqXHR)
+						})
+	
+					return jQuery.Deferred()
+				}
+			})
+		})
+
 	});
 
 })(jQuery);

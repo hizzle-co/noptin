@@ -43,6 +43,9 @@ class Noptin_Ajax {
 		// Import subscribers.
 		add_action( 'wp_ajax_noptin_import_subscribers', array( $this, 'import_subscribers' ) );
 
+		// Delete subscribers.
+		add_action( 'wp_ajax_noptin_delete_all_subscribers', array( $this, 'delete_all_subscribers' ) );
+
 	}
 
 	/**
@@ -154,6 +157,34 @@ class Noptin_Ajax {
 		echo get_noptin_automation_campaign_url( $id );
 		exit;
 
+	}
+
+	/**
+	 * Deletes all subscribers.
+	 *
+	 * @access      public
+	 * @since       1.2.4
+	 * @return      void
+	 */
+	public function delete_all_subscribers() {
+		global $wpdb;
+
+		// Ensure the nonce is valid...
+		check_ajax_referer( 'noptin_subscribers' );
+
+		// ... and that the user can import subscribers.
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			wp_die( -1, 403 );
+		}
+
+		$table    = get_noptin_subscribers_table_name();
+		$wpdb->query( "TRUNCATE TABLE $table" );
+
+		$table    = get_noptin_subscribers_meta_table_name();
+		$wpdb->query( "TRUNCATE TABLE $table" );
+
+		$wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'noptin_subscriber_id' ), '%s' );
+		exit;
 	}
 
 	/**
@@ -298,6 +329,8 @@ class Noptin_Ajax {
 					update_noptin_subscriber_meta( $id, $field, $val );
 				}
 			}
+
+			update_noptin_subscriber_meta( $id, '_subscriber_via', 'import' );
 
 			$imported += 1;
 

@@ -1274,3 +1274,9 @@ a.no-campaign-create-new-campaign {
 	}
 
 }
+
+#wpbody-content .noptin-danger-button{
+	border: none;
+    background: transparent;
+    color: #b71c1c !important;
+}

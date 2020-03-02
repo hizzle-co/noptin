@@ -558,7 +558,7 @@ class Noptin_Admin {
 
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers', 'newsletter-optin-box' ); ?> <a href="#" class="button-secondary noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="button-secondary noptin-export-subscribers"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> </h1>
+			<h1 class="wp-heading-inline"><?php _e( 'Email Subscribers', 'newsletter-optin-box' ); ?> <a href="#" class="button-secondary noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="button-secondary noptin-export-subscribers"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> <a href="#" class="button-secondary noptin-danger-button noptin-delete-subscribers"><?php _e( 'Delete All Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
 			<p class="description" style='margin: 10px 0;'><a href="https://noptin.com/products/" target="_blank"><?php _e( 'Check out our integrations', 'newsletter-optin-box' ); ?></a></p>
 			<form id="noptin-subscribers-table" method="POST">
 				<?php $table->display(); ?>
