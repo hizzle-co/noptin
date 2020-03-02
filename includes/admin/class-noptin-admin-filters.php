@@ -36,6 +36,9 @@ class Noptin_Admin_Filters {
 		// Filters Noptin subscriber's fields.
 		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ) );
 
+		// Select fields.
+		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'subscriber_fields_select' ) );
+
 	}
 
 	/**
@@ -191,6 +194,27 @@ class Noptin_Admin_Filters {
 
 		return $subscriber;
 
+	}
+
+	/**
+	 * Select subscriber fields.
+	 * 
+	 */
+	public function subscriber_fields_select() {
+		echo '<div id="noptin-subscriber-fields-select-template" style="display:none"><p>';
+		echo __( 'Select the subscriber fields to export', 'newsletter-optin-box' );
+		echo '<style>.select2-container {z-index: 99999999999999 !important;}</style>';
+		echo '</p><select class="noptin-subscriber-fields-select" name="noptin-subscriber-fields[]" multiple="multiple">';
+
+		$default = array( 'first_name', 'second_name', 'email', 'active', 'confirmed' );
+		$fields  = get_noptin_subscribers_fields();
+
+		foreach( $fields as $field ) {
+			$field    = noptin_clean( $field );
+			$selected = selected( in_array( $field, $default ), true, false );
+			echo "<option value='$field' $selected>$field</option>";
+		}
+		echo '</select></div>';
 	}
 
 }

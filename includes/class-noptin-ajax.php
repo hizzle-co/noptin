@@ -659,23 +659,116 @@ class Noptin_Ajax {
 
 		$output  = fopen( 'php://output', 'w' ) or die( 'Unsupported server' );
 
+		$fields    = empty( $_GET['fields'] )    ? get_noptin_subscribers_fields() : $_GET['fields'];
+		$file_type = empty( $_GET['file_type'] ) ? 'csv' : sanitize_text_field( $_GET['file_type'] );
+
+		// Let the browser know what content we're streaming and how it should save the content.
+		$name = uniqid();
+		header( "Content-Type:application/$file_type" );
+		header( "Content-Disposition:attachment;filename=noptin-subscribers-$name.$file_type" );
+
+		if ( empty( $_GET['file_type'] ) || 'csv' == $_GET['file_type'] ) {
+			$this->download_subscribers_csv( $fields, $output );
+		} else {
+			$this->download_subscribers_json( $fields, $output );
+		}
+
+		fclose( $output );
+
+		/**
+		 * Runs after after downloading.
+		 *
+		 * @param array $this The admin instance
+		 */
+		do_action( 'noptin_after_download_subscribers', $this );
+
+		exit; // This is important.
+	}
+
+	/**
+	 * Downloads subscribers as csv
+	 *
+	 * @access      public
+	 * @since       1.2.4
+	 */
+	public function download_subscribers_csv( $fields, $output ) {
+		global $wpdb;
+
 		// Retrieve subscribers.
 		$table       = get_noptin_subscribers_table_name();
 		$subscribers = $wpdb->get_results( "SELECT *  FROM $table" );
 
-		// Prepare columns for the csv fild.
-		$fields  = get_noptin_subscribers_fields();
-
-		// Let the browser know what content we're streaming and how it should save the content.
-		$name = 'noptin-subscribers-' . time() . '.csv';
-		header( 'Content-Type:application/csv' );
-		header( "Content-Disposition:attachment;filename=$name" );
-
-		$headers   = $fields;
-		$headers[] = __( 'Meta', 'newsletter-optin-box' );
-
 		// Output the csv column headers.
-		fputcsv( $output, noptin_sanitize_title_slug( $headers ) );
+		fputcsv( $output, noptin_sanitize_title_slug( $fields ) );
+
+		// Loop through 
+		foreach ( $subscribers as $subscriber ) {
+			$row  = array();
+
+			// Fetch meta data.
+			$meta = get_noptin_subscriber_meta( $subscriber->id );
+			if ( ! is_array( $meta ) ) {
+				$meta = array();
+			}
+
+			foreach ( $fields as $field ) {
+
+				if ( $field === 'confirmed' ) {
+					$row[] = intval( $subscriber->confirmed );
+					continue;
+				}
+
+				if ( $field === 'active' ) {
+					$row[] = empty( $subscriber->active ) ? 1 : 0;
+					continue;
+				}
+
+				if ( $field === 'full_name' ) {
+					$row[] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					continue;
+				}
+
+				// Check if this is a core field.
+				if ( isset( $subscriber->{$field} ) ) {
+					$row[] = $subscriber->{$field};
+					continue;
+				}
+
+				// Special meta field.
+				if( isset( $meta[$field] ) ) {
+
+					if ( 1 === count( $meta[$field] ) ) {
+						$row[] = maybe_serialize( $meta[$field][0] );
+					} else {
+						$row[] = maybe_serialize( $meta[$field] );
+					}
+
+					continue;
+				}
+
+				// Missing value for the field.
+				$row[] = '';
+			}
+
+			fputcsv( $output, $row );
+		}
+		fclose( $output );
+
+	}
+
+	/**
+	 * Downloads subscribers as json
+	 *
+	 * @access      public
+	 * @since       1.2.4
+	 */
+	public function download_subscribers_json( $fields, $stream ) {
+		global $wpdb;
+
+		// Retrieve subscribers.
+		$table       = get_noptin_subscribers_table_name();
+		$subscribers = $wpdb->get_results( "SELECT *  FROM $table" );
+		$output      = array();
 
 		// Loop through 
 		foreach ( $subscribers as $subscriber ) {
@@ -690,48 +783,48 @@ class Noptin_Ajax {
 			foreach ( $fields as $field ) {
 
 				if ( $field === 'active' ) {
-					$row[] = empty( $subscriber->active ) ? 1 : 0;
+					$row[ $field ] = empty( $subscriber->active ) ? 1 : 0;
 					continue;
 				}
 
+				if ( $field === 'confirmed' ) {
+					$row[ $field ] = intval( $subscriber->confirmed );
+					continue;
+				}
+
+				if ( $field === 'full_name' ) {
+					$row[ $field ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					continue;
+				}
+				
 				// Check if this is a core field.
 				if ( isset( $subscriber->{$field} ) ) {
-					$row[] = $subscriber->{$field};
+					$row[$field] = $subscriber->{$field};
 					continue;
 				}
 
 				// Special meta field.
 				if( isset( $meta[$field] ) ) {
-					$meta_value = $meta[$field][0];
-					unset( $meta[$field] );
 
-					if ( is_scalar( $meta_value ) ) {
-						$row[] = $meta_value;
+					if ( 1 === count( $meta[$field] ) ) {
+						$row[$field] = $meta[$field][0];
 					} else {
-						$row[] = maybe_serialize( $meta_value );
+						$row[$field] = $meta[$field];
 					}
 
 					continue;
 				}
 
 				// Missing value for the field.
-				$row[] = '';
+				$row[$field] = null;
 			}
 
-			$row[] = wp_json_encode( $meta );
+			$output[] = $row;
 
-			fputcsv( $output, $row );
 		}
-		fclose( $output );
+		
+		fwrite( $stream, wp_json_encode( $output ) );
 
-		/**
-		 * Runs after after downloading.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_download_subscribers', $this );
-
-		exit; // This is important.
 	}
 
 }
