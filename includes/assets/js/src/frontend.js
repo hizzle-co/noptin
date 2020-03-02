@@ -100,12 +100,13 @@
 		}, 100)
 
 		//Some forms are only set to be displayed once per session
+		var id     = $(popup).find('input[name=noptin_form_id]').val()
 		if (typeof $(popup).data('once-per-session') !== 'undefined') {
-
-			var id = $(popup).find('input[name=noptin_form_id]').val()
-			sessionStorage.setItem("noptinFormDisplayed" + id, "1");
-
+			localStorage.setItem("noptinFormDisplayed" + id, new Date().getTime() );
+		} else {
+			sessionStorage.setItem("noptinFormDisplayed" + id, '1' );
 		}
+
 	}
 
 	//Contains several triggers for displaying popups
@@ -206,13 +207,27 @@
 		var trigger = $(this).data('trigger')
 
 		//Some forms are only set to be displayed once per session
+		var id = $(this).find('input[name=noptin_form_id]').val()
 		if (typeof $(this).data('once-per-session') !== 'undefined' && 'after_click' != trigger) {
-			var id = $(this).find('input[name=noptin_form_id]').val()
 
-			if (id && sessionStorage.getItem("noptinFormDisplayed" + id)) {
-				return true;
+			if (id) {
+				
+				var addedTime = localStorage.getItem("noptinFormDisplayed" + id)
+				var time = new Date().getTime()
+
+				// Only display the popup once per week.
+				if( addedTime && ( time - addedTime ) < 604800000 ) {
+					return true;
+				}
+				localStorage.removeItem("noptinFormDisplayed" + id)
 			}
-
+			
+		} else {
+			if ( id && 'after_click' != trigger ) {
+				if ( sessionStorage.getItem("noptinFormDisplayed" + id) ) {
+					return;
+				}
+			}
 		}
 
 		//Take it to its initial state

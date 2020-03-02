@@ -239,7 +239,10 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
 				'placeholder' => '****************************',
-				'description' => __( 'Enter your ipgeolocation.io API key if you want to GeoLocate your subscribers.', 'newsletter-optin-box' ),
+				'description' => sprintf( 
+					__( 'Enter your %s API key if you want to GeoLocate your subscribers.', 'newsletter-optin-box' ),
+					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
+				)
 			),
 		);
 

@@ -199,8 +199,8 @@ class Noptin_Form_Editor {
 			'DisplayOncePerSession' => array(
 				'type'     => 'checkbox',
 				'el'       => 'input',
-				'tooltip'  => __( 'Uncheck to display the popup on every page load', 'newsletter-optin-box' ),
-				'label'    => __( 'Display this popup once per session', 'newsletter-optin-box' ),
+				'tooltip'  => __( 'Uncheck to display the popup once per session instead of once per week', 'newsletter-optin-box' ),
+				'label'    => __( 'Display this popup once per week', 'newsletter-optin-box' ),
 				'restrict' => "triggerPopup!='after_click'",
 			),
 
