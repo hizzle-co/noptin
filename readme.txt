@@ -1,10 +1,10 @@
-=== Newsletter Subscription Forms, Optin Widgets And Email Subscription Popups - Noptin ===
+=== WordPress Newsletter Plugin - Noptin ===
 Contributors: picocodes
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
 Tested up to: 5.3
 Requires PHP: 5.3
-Version: 1.2.3
+Version: 1.2.4
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -93,6 +93,17 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 
 == Changelog ==
+
+= 1.2.4 - 2020-03-03 =
+- Update NPM dependancies.
+- Form display rules now support absolute URL's in addition to post ids - ADDED
+- Tool pages now display the name of the tool - CHANGED
+- Export specific email subscriber fields - ADDED
+- Export email subscribers as JSON, XML or CSV - ADDED
+- Subscriber import now supports importing thousands of subscribers without crashing - FIXED
+- Button to delete all subscribers - ADDED
+- Display popup forms once per week instead of once per session - CHANGED
+- GDPR consent checkbox - ADDED
 
 = 1.2.3 - 2020-02-10 =
 - Debug log viewer - ADDED

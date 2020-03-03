@@ -298,14 +298,14 @@ class Noptin_Form_Editor {
 			'label'       => __( 'Never show on:', 'newsletter-optin-box' ),
 			'options'     => $this->post->neverShowOn,
 			'restrict'    => '!_onlyShowOn',
-			'placeholder' => '1,10,25',
+			'placeholder' => '1,10,25,' . noptin_clean_url( home_url( 'contact' ) ),
 			'tooltip'     => __( 'Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids.', 'newsletter-optin-box' ),
 		);
 
 		$return['onlyShowOn'] = array(
 			'el'          => 'input',
 			'label'       => 'Only show on:',
-			'placeholder' => '3,14,5',
+			'placeholder' => '3,14,5,' . noptin_clean_url( home_url( 'about' ) ),
 			'tooltip'     => __( 'If you specify any posts here, all other targeting rule will be ignored, and this form will only be displayed on posts or urls that you specify here.', 'newsletter-optin-box' ),
 			'options'     => $this->post->onlyShowOn,
 		);

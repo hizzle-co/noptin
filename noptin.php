@@ -6,12 +6,12 @@
  * Simple WordPress optin form
  *
  *
- * Plugin Name:     Noptin - Simple Newsletter Subscription Forms
+ * Plugin Name:     Noptin - WordPress Newsletter Plugin
  * Plugin URI:      https://noptin.com
- * Description:     Easily add a newsletter optin box onto post content, widget or popup
+ * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.2.3
+ * Version:         1.2.4
  * Text Domain:     newsletter-optin-box
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -43,7 +43,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.2.3';
+	public $version = '1.2.4';
 
 	/**
 	 * The current database version.

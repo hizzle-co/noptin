@@ -179,6 +179,7 @@ class Noptin_Admin_Filters {
 			'date'           => 'date_created',
 			'confirmkey'     => 'confirm_key',
 			'meta'           => 'meta',
+			'fields'         => 'meta',
 			'metafields'     => 'meta',
 		);
 
@@ -213,9 +214,10 @@ class Noptin_Admin_Filters {
 		// Fill in meta fields for missing core fields.
 		foreach ( $subscriber['meta'] as $key => $value ) {
 			$sanitized = strtolower( str_ireplace( array( '_', '-', ' ' ), '', $key ) );
+			$value     = maybe_unserialize( $value );
 
 			if ( isset( $mappings[ $sanitized ] ) && empty( $subscriber[ $mappings[ $sanitized ] ] ) ) {
-				$subscriber[ $mappings[ $sanitized ] ] = $value;
+				$subscriber[ $mappings[ $sanitized ] ] = is_array( $value ) ? $value[0] : $value;
 				unset( $subscriber['meta'][ $key ] );
 			}
 		}
