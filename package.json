@@ -32,15 +32,15 @@
     "lodash.find": "4.6.0",
     "lodash.throttle": "4.1.1",
     "medium-editor": "5.23.3",
-    "npm": "6.14.0",
+    "npm": "6.14.1",
     "papaparse": "5.1.1",
     "postcss-import": "12.0.1",
     "vue-popperjs": "2.3.0",
     "vuedraggable": "2.23.2"
   },
   "devDependencies": {
-    "@babel/core": "7.8.4",
-    "@babel/preset-env": "7.8.4",
+    "@babel/core": "7.8.6",
+    "@babel/preset-env": "7.8.6",
     "autoprefixer": "9.7.4",
     "babel-loader": "8.0.6",
     "cssnano": "4.1.10",
