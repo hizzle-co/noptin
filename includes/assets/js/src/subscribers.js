@@ -41,7 +41,8 @@
 						inputValue: 'json',
 						inputOptions: {
 							csv: 'CSV',
-							json: 'JSON'
+							json: 'JSON',
+							xml: 'XML'
 						},
 						confirmButtonText: 'Download',
 						showCancelButton: true,

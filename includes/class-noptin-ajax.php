@@ -205,6 +205,11 @@ class Noptin_Ajax {
 			wp_die( -1, 403 );
 		}
 
+		// Maybe abort early.
+		if ( ! isset( $_POST['subscribers'] ) ) {
+			wp_die( -1, 400 );
+		}
+
 		// Prepare subscribers.
 		$subscribers = stripslashes_deep( $_POST['subscribers'] );
 
@@ -713,7 +718,11 @@ class Noptin_Ajax {
 
 		if ( empty( $_GET['file_type'] ) || 'csv' == $_GET['file_type'] ) {
 			$this->download_subscribers_csv( $fields, $output );
-		} else {
+		} else if( 'xml' == $_GET['file_type'] ) {
+			$this->download_subscribers_xml( $fields, $output );
+		}
+
+		else {
 			$this->download_subscribers_json( $fields, $output );
 		}
 
@@ -867,6 +876,107 @@ class Noptin_Ajax {
 		}
 		
 		fwrite( $stream, wp_json_encode( $output ) );
+
+	}
+
+	/**
+	 * Downloads subscribers as xml
+	 *
+	 * @access      public
+	 * @since       1.2.4
+	 */
+	public function download_subscribers_xml( $fields, $stream ) {
+		global $wpdb;
+
+		// Retrieve subscribers.
+		$table       = get_noptin_subscribers_table_name();
+		$subscribers = $wpdb->get_results( "SELECT *  FROM $table" );
+		$output      = array();
+
+		// Loop through 
+		foreach ( $subscribers as $subscriber ) {
+			$row  = array();
+
+			// Fetch meta data.
+			$meta = get_noptin_subscriber_meta( $subscriber->id );
+			if ( ! is_array( $meta ) ) {
+				$meta = array();
+			}
+
+			foreach ( $fields as $field ) {
+
+				if ( $field === 'active' ) {
+					$row[ $field ] = empty( $subscriber->active ) ? 1 : 0;
+					continue;
+				}
+
+				if ( $field === 'confirmed' ) {
+					$row[ $field ] = intval( $subscriber->confirmed );
+					continue;
+				}
+
+				if ( $field === 'full_name' ) {
+					$row[ $field ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					continue;
+				}
+				
+				// Check if this is a core field.
+				if ( isset( $subscriber->{$field} ) ) {
+					$row[$field] = $subscriber->{$field};
+					continue;
+				}
+
+				// Special meta field.
+				if( isset( $meta[$field] ) ) {
+
+					if ( 1 === count( $meta[$field] ) ) {
+						$row[$field] = $meta[$field][0];
+					} else {
+						$row[$field] = $meta[$field];
+					}
+
+					continue;
+				}
+
+				// Missing value for the field.
+				$row[$field] = null;
+			}
+
+			$output[] = $row;
+
+		}
+		
+		$xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
+		$this->convert_array_xml( $output, $xml );
+
+		fwrite( $stream, $xml->asXML() );
+
+	}
+
+	/**
+	 * Converts subscribers array to xml
+	 *
+	 * @access      public
+	 * @since       1.2.4
+	 */
+	public function convert_array_xml( $data, $xml ) {
+
+		// Loop through 
+		foreach ( $data as $key => $value ) {
+
+			if ( is_array( $value ) ) {
+
+				if( is_numeric( $key ) ){
+					$key = 'item'.$key; //dealing with <0/>..<n/> issues
+				}
+
+				$subnode = $xml->addChild( $key );
+				$this->convert_array_xml( $value, $subnode );
+
+			} else {
+				$xml->addChild( $key, htmlspecialchars( $value ) );
+			}
+		}
 
 	}
 
