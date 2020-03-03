@@ -67,74 +67,107 @@
 
 			e.preventDefault();
 
-			let imported = 0,
-				skipped = 0,
-				rows = [],
-				error = 'All subscribers imported successfully',
-				icon = 'info',
-				title = 'Done!'
+			// Simple object for concurrent uploads.
+			let importer    = {
+				totalBatches: 0,
+				processedBatches: 0,
+				imported: 0,
+				skipped: 0,
+				running: false,
+				queue : [],
 
-			// Imports subscribers.
-			let noptin_import_subscribers = (subscribers, success = false) => {
+				async import( batch ) {
+					batch = await this.clean( batch )
+					this.queue.push(batch);
+					this.totalBatches++;
+  					this.run();
+				},
 
-				// Remove null values from subscriber properties.
-				let _subscribers = []
-				subscribers.forEach(subscriber => {
-					if (typeof subscriber === 'object' && subscriber !== null) {
+				async clean( batch ) {
+					let _clean = []
+					batch.forEach(subscriber => {
+						if (typeof subscriber === 'object' && subscriber !== null ) {
 
-						// remove null values.
-						Object.keys(subscriber).forEach((key) => (subscriber[key] == null) && delete subscriber[key]);
-						_subscribers.push(subscriber)
+							// remove null values.
+							Object.keys(subscriber).forEach((key) => (subscriber[key] == null) && delete subscriber[key]);
+							_clean.push(subscriber)
+						}
+					});
+					return _clean
+				},
+
+				async run() {
+
+					if ( this.queue.length && ! this.running ) {
+						this.running = true
+						$('.swal2-footer').find('.noptin-imported').text(this.imported)
+						$('.swal2-footer').find('.noptin-skipped').text(this.skipped)
+						this.doImport()
 					}
-				});
 
-				let request = {
-					_wpnonce: noptinSubscribers.nonce,
-					subscribers: _subscribers,
-					action: 'noptin_import_subscribers'
+					if ( this.totalBatches == this.processedBatches ) {
+						this.done()
+					}
+
+				},
+
+				async doImport() {
+					let subscribers = this.queue.shift()
+
+					let request = {
+						_wpnonce: noptinSubscribers.nonce,
+						subscribers,
+						action: 'noptin_import_subscribers'
+					}
+
+					jQuery.post(noptinSubscribers.ajaxurl, request)
+
+						.done( (data) => {
+
+							if ( typeof data !== 'object' || !data.success ) {
+								this.skipped = this.skipped + subcribers.length
+								console.log(data)
+							} else {
+								this.imported = this.imported + data.data.imported
+								this.skipped  = this.skipped + data.data.skipped
+							}
+
+						})
+
+						.fail( (jqXHR) => {
+							console.log(jqXHR)
+							this.skipped = this.skipped + subscribers.length
+						})
+
+						.always( () => {
+							// Then move on to the next batch.
+							this.processedBatches++
+							this.running = false
+							this.run();
+						})
+
+				},
+
+				async done() {
+					Swal.fire({
+						icon: ( this.imported > 0 ) ? 'success' : 'info',
+						title: 'Done!',
+						confirmButtonText: 'Close',
+						html: `Imported: ${this.imported} &nbsp; Skipped: ${this.skipped}`,
+						footer: ( this.imported > 0 ) ? '' : 'Check your browser console to see why your subscribers were not imported.',
+					})
+					if ( this.imported > 0 ) {
+						window.location = window.location
+					}
 				}
-
-				jQuery.post(noptinSubscribers.ajaxurl, request)
-
-					.done(function (data) {
-
-						if (typeof data !== 'object' || !data.success) {
-							skipped = skipped + _subscribers.length
-							error = 'An error occurred while importing subscribers'
-							icon = 'error'
-							title = 'Error!'
-							console.log(data)
-						} else {
-							imported = imported + data.data.imported
-							skipped = skipped + data.data.skipped
-						}
-
-					})
-
-					.fail(function (jqXHR) {
-						console.log(jqXHR)
-						error = jqXHR.statusText
-						icon = 'error'
-						title = 'Error!'
-						skipped = skipped + _subscribers.length
-					})
-
-					.always(function () {
-						if (success) {
-							Swal.fire({
-								icon: icon,
-								title: title,
-								confirmButtonText: 'Close',
-								html: `Imported: ${imported} &nbsp; Skipped: ${skipped}`,
-								footer: error
-							})
-						}
-					})
 			}
+
+			let rows = []
 
 			Swal.fire({
 				//title: 'Import Subscribers',
-				text: 'Select your Noptin export file below to import subscribers',
+				text: 'Select your CSV file',
+				footer: `Import subscribers from any system into Noptin`,
 				input: 'file',
 				inputAttributes: {
 					accept: '.csv',
@@ -152,18 +185,21 @@
 				preConfirm(file) {
 
 					if (file) {
+
+						// Change the modal footer.
+						$('.swal2-footer').html('<div>Imported: <span class="noptin-imported">0</span></div><div>&nbsp; Skipped: <span class="noptin-skipped">0</span></div>')
 						Papa.parse(file, {
-							complete() { noptin_import_subscribers(rows, true) },
+							complete() {
+								// Import the remaining rows
+								importer.import(rows)
+							},
 
 							step(row) {
 
 								// Ensure there is data.
 								if (row.data) {
-									let length = rows.push(row.data)
-									if (length == 10) {
-										setTimeout(function () {
-											noptin_import_subscribers(rows)
-										}, 100)
+									if ( rows.push( row.data ) == 10) {
+										importer.import(rows)
 										rows = []
 									}
 								}
@@ -181,7 +217,6 @@
 
 				}
 			})
-
 
 		})
 

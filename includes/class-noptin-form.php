@@ -160,6 +160,8 @@ class Noptin_Form {
 			'closeButtonPos'        => 'along',
 
 			'singleLine'            => false,
+			'gdprCheckbox'          => false,
+			'gdprConsentText'       => __( 'I consent to receive promotional emails about your products and services.', 'newsletter-optin-box' ),
 			'fields'                => array(
 				array(
 					'type'    => array(
@@ -213,8 +215,8 @@ class Noptin_Form {
 			'descriptionColor'      => '#32373c',
 
 			// Note design.
-			'hideNote'              => true,
-			'note'                  => __( 'We do not spam people', 'newsletter-optin-box' ),
+			'hideNote'              => false,
+			'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 			'noteColor'             => '#607D8B',
 			'hideOnNoteClick'       => false,
 

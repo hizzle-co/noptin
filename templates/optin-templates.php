@@ -43,7 +43,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'We promise not to spam you. You can unsubscribe at any time.', 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-field{
 	text-align: center;
@@ -103,9 +103,9 @@
 				'hideDescription'       => false,
 				'description'           => "Enter your email to receive a weekly round-up of our best posts. <a href='https://noptin.com/guide'>Learn more!</a>",
 				'descriptionColor'      => '#666666',
-				'hideNote'              => '1',
+				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( "We don't spam people", 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
 				'CSS'                   => '.noptin-optin-form-wrapper *{}',
 			),
@@ -165,7 +165,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( "We don't spam people", 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
 				'CSS'                   => '.noptin-optin-form-wrapper form .noptin-form-header .noptin-form-description{
 	font-size: 30px;
@@ -218,7 +218,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'No spam. We hate it more than you do.', 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
 				'CSS'                   => '.noptin-optin-form-wrapper {
 	border: none;
@@ -288,7 +288,7 @@
 				'descriptionColor'      => '#f2f2f2',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( "We don't spam people", 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
 				'CSS'                   => '.noptin-optin-form-wrapper{}
 
@@ -350,7 +350,7 @@
 				'descriptionColor'      => '#fafafa',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( "We don't spam people", 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#fafafa',
 				'CSS'                   => '/*Custom css*/
 
@@ -416,7 +416,7 @@
 				'descriptionColor'      => '#fafafa',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'Your privacy is our priority', 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#fafafa',
 				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
 	position: absolute;
@@ -495,9 +495,9 @@
 				'hideDescription'       => false,
 				'description'           => __( '<ul><li><strong>144 pages</strong> of content</li><li>Solve common, <strong>frustrating</strong> problems</li><li>Understand confusing errors</li><li>And so much more!</li></ul>', 'newsletter-optin-box' ),
 				'descriptionColor'      => '#313131',
-				'hideNote'              => true,
+				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'Your privacy is our priority', 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#313131',
 				'CSS'                   => '.noptin-optin-form-wrapper {
 	border: 1px solid;
@@ -546,10 +546,10 @@
 				'hideDescription'       => false,
 				'description'           => __( 'Use the Custom CSS tab to change the background color of this form.', 'newsletter-optin-box' ),
 				'descriptionColor'      => '#dff0fe',
-				'hideNote'              => true,
+				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'Your privacy is our priority', 'newsletter-optin-box' ),
-				'noteColor'             => '#191919',
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#fff',
 				'CSS'                   => '/*Custom css*/
 .noptin-optin-form-wrapper form {
 	background-color: #009688;
@@ -601,7 +601,7 @@
 				'descriptionColor'      => '#ffffff',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'We do not spam people', 'newsletter-optin-box' ),
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#fafafa',
 				'CSS'                   => '/*Custom css*/
 .noptin-optin-form-wrapper .noptin-form-submit{

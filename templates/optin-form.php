@@ -24,6 +24,9 @@
 					:style="{backgroundColor:noptinButtonBg, color: noptinButtonColor}"
 					:class="singleLine ? '' : 'noptin-form-button-' + buttonPosition" class="noptin-form-submit" />
 			</div>
+			<div class="noptin-gdpr-checkbox-wrapper" v-if="gdprCheckbox">
+				<label><input type='checkbox' value='1' name='noptin_gdpr_checkbox' required="required"/>{{gdprConsentText}}</label>
+			</div>
 			<noptin-rich-text v-if="!hideNote" :style="{ color: noteColor}" class="noptin-form-note" v-model="note" :text="note"></noptin-rich-text>
 			<div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px"
 				class="noptin_feedback_success"></div>

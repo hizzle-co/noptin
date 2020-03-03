@@ -628,13 +628,26 @@ class Noptin_Form_Editor {
 		return array(
 
 			'fields'     => array(
-				'el' => 'form_fields',
+				'el'     => 'form_fields',
 			),
 
 			'singleLine' => array(
-				'type'  => 'checkbox',
+				'type'   => 'checkbox',
+				'el'     => 'input',
+				'label'  => __( 'Show all fields in a single line', 'newsletter-optin-box' ),
+			),
+
+			'gdprCheckbox' => array(
+				'type'     => 'checkbox',
+				'el'       => 'input',
+				'label'    => __( 'Show GDPR checkbox', 'newsletter-optin-box' ),
+			),
+
+			'gdprConsentText' => array(
+				'type'  => 'text',
 				'el'    => 'input',
-				'label' => __( 'Show all fields in a single line', 'newsletter-optin-box' ),
+				'restrict' => 'gdprCheckbox',
+				'label' => __( 'Consent Text', 'newsletter-optin-box' ),
 			),
 
 		);

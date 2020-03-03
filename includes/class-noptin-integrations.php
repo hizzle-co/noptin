@@ -50,7 +50,7 @@ class Noptin_Integrations {
 
 		$text = get_noptin_option( 'comment_form_msg' );
 		if ( empty( $text ) ) {
-			$text = __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' );
+			$text = __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts.', 'newsletter-optin-box' );
 		}
 
 		$checkbox = "<label class='comment-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";
@@ -107,7 +107,7 @@ class Noptin_Integrations {
 
 		$text = get_noptin_option( 'register_form_msg' );
 		if ( empty( $text ) ) {
-			$text = __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' );
+			$text = __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts.', 'newsletter-optin-box' );
 		}
 
 		echo "<label class='register-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";

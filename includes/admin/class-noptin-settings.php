@@ -137,7 +137,7 @@ class Noptin_Settings {
 				'restrict'    => 'comment_form',
 				'section'     => 'general',
 				'label'       => __( 'Checkbox label', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts.', 'newsletter-optin-box' ),
 			),
 
 			'register_form'         => array(
@@ -154,7 +154,7 @@ class Noptin_Settings {
 				'restrict'    => 'register_form',
 				'section'     => 'general',
 				'label'       => __( 'Checkbox label', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts', 'newsletter-optin-box' ),
 			),
 
 			'hide_from_subscribers' => array(

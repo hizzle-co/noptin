@@ -351,6 +351,15 @@ $noptin_color: #ff6f00;
 					margin: 0;
 				}
 			}
+
+			.noptin-gdpr-checkbox-wrapper {
+				margin-top: 10px;
+				text-align: left;
+
+				input {
+					margin-right: 4px;
+				}
+			}
 		}
 
 		&.noptin-form-new-line {

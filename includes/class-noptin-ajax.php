@@ -265,7 +265,7 @@ class Noptin_Ajax {
 				$subscriber['active'] = strtolower( $subscriber['active'] );
 			}
 			if ( 
-				( is_numeric( $subscriber['confirmed'] ) && 1 === ( int ) $subscriber['confirmed'] )  || 
+				( is_numeric( $subscriber['active'] ) && 1 === ( int ) $subscriber['active'] )  || 
 				true         === $subscriber['active'] ||
 				'true'       === $subscriber['active'] ||
 				'subscribed' === $subscriber['active'] ||
@@ -449,6 +449,11 @@ class Noptin_Ajax {
 			return;
 		}
 		
+		/**
+		 * Fires before a subscriber is added via ajax.
+		 * 
+		 * @since 1.2.4
+		 */
 		do_action( 'noptin_before_add_ajax_subscriber' );
 
 		// Prepare form fields.
@@ -475,12 +480,17 @@ class Noptin_Ajax {
 			$fields = $form->fields;
 		}
 
-		/**
-		 * Fires before a subscriber is added via ajax.
-		 * 
-		 * @since 1.2.4
-		 */
 		$filtered = array();
+
+		// Check gdpr.
+		if ( is_object( $form ) && $form->gdprCheckbox && empty( $_REQUEST['noptin_gdpr_checkbox'] ) ) {
+			echo __( 'You must consent to receive promotional emails.', 'newsletter-optin-box' );
+			exit;
+		}
+
+		if ( ! empty( $_REQUEST['noptin_gdpr_checkbox'] ) ) {
+			$filtered['GDPR_consent'] = 1;
+		}
 
 		foreach ( $fields as $field ) {
 
@@ -575,6 +585,7 @@ class Noptin_Ajax {
 			foreach ( $location_info as $key => $value ) {
 				update_noptin_subscriber_meta( $inserted, $key, $value );
 			}
+			update_noptin_subscriber_meta( $inserted, 'ip_address', $address );
 		}
 
 		$result = array(
@@ -785,7 +796,6 @@ class Noptin_Ajax {
 
 			fputcsv( $output, $row );
 		}
-		fclose( $output );
 
 	}
 
