@@ -294,6 +294,11 @@ class Noptin_Form {
 			}
 
 			// Ensure props that expect array always receive arrays.
+			if( is_scalar( $data[ $key ] ) ) {
+				$return[ $key ] = noptin_parse_list( $data[ $key ] );
+				continue;
+			}
+
 			if ( ! is_array( $data[ $key ] ) ) {
 				$return[ $key ] = $defaults[ $key ];
 				continue;
