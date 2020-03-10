@@ -1,5 +1,5 @@
 === WordPress Newsletter Plugin - Noptin ===
-Contributors: picocodes
+Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
 Tested up to: 5.3
@@ -8,23 +8,31 @@ Version: 1.2.4
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Donate link: https://noptin.com/products/
 
-The Fastest Email Optin Form And  Newsletter Plugin For WordPress. Email Optin Forms, Widgets and Popup subscription forms.
+The fastest GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribers and send them newsletter emails or new blog post notifications.
 
 == Description ==
 
-**The best Email Optin Form And  Newsletter Plugin For WordPress.**
+**The only lightweight Email Optin Form And  Newsletter Plugin For WordPress.**
 ★★★★★<br>
 
-Easily collect unlimited email subscribers and send them unlimited email newsletters. Anytime you want to.
+Noptin is the only lightweight WordPress email newsletter plugin. It allows you to:-
 
-Noptin is a very fast and lightweight newsletter sign up plugin. Use it to build newsletter subscription forms and display them in a popup, widget or embed them into your WordPress posts.
+- Create unlimited newsletter subscription forms and embed it anywhere using a shortcode or display it in a popup or widget area.
+- Collect unlimited newsletter subscribers.
+- Send your email subscribers one-off newsletters.
+- Automatically notify your subscribers everytime you publish a new blog post so that they can keep coming back to your website.
 
-With Noptin, you can easily offer content upgrades and lead magnets to gain more email subscribers.
+You do all this within WordPress. If you are worried about deliverability, you can install any SMTP plugin of your choice and Noptin will automatically use it to send your newsletters. No configuration needed!
 
-You can then send your newsletter subscribers beautiful emails or set up automated email campaigns. You can also notify them everytime you publish a new blog post.
+Noptin can scale to thousands of subscribers without hurting your servers. So feel free to use some of the world class conversion optimizarion techniques we offer out of the box. For free.
 
-Let users sign up for your email list using any of the following email opt-in form types:-
+**For example**, you can easily offer content upgrades and lead magnets with your email optin forms to gain more newsletter subscribers.
+
+Studies suggest that repeat website visitors are more likely to convert than first-time visitors. That is why Noptin makes it easy to notify your email subscribers every time you publish a new blog post.
+
+Let users sign up for your newsletter using any of the following email opt-in form types:-
 
 = Popup Email Opt-in Forms =
 
@@ -38,32 +46,33 @@ Noptin allows you to embed an email opt-in form inside any post, page or custom 
 
 = Email Opt-in Widgets =
 
-Noptin ships with two optin widgets that make creating your newsletter subscription forms a breeze.
+Noptin ships with two newsletter optin widgets.
 
 = Content Upgrades =
 
-Noptin makes it easy to create content upgrade newsletter optin forms. You set the URL to your lead magnet as the redirect URL and new subscribers will be able to download your lead magnets after they subscribe.
+Noptin makes it easy to add content upgrades to your newsletter optin forms. You set the URL to your lead magnet as the redirect URL and new subscribers will be able to download your lead magnets after they subscribe.
 
 = Automated New Post Notifications =
 
-Get your email subscribers to re-visit your website by sending them an email everytime you publish a new blog post.
+Increase traffic to your website by automatically emailing you newsletter subscribers everytime you publish a new blog post.
 
 = One-Time Email Newsletters =
 
-You can also send beautiful newsletters from WordPress to all your subscribers anytime you like.
+You can also send beautiful newsletters from WordPress to all your subscribers anytime you like. There is no limit to the number of newsletter emails you can send.
 
 
 == Installation ==
 
-* Go to WordPress Dashboard. Locate Plugins -> Add New
-* Search form **Noptin** using search option
+* Go to WordPress Dashboard.
+* Click on Plugins -> Add New
+* Search form "**WordPress Newsletter Plugin – Noptin**"
 * Find the plugin and click on the Install Now button
 * After installation, click on Activate Plugin link to activate the plugin.
 
 == Frequently Asked Questions ==
 = Can I connect my email service provider? =
 
-Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit and MailPoet.
+Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit, Campaign Monitor and MailPoet.
 
 = How can I get in touch? =
 
@@ -71,9 +80,9 @@ Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit an
 
 = How can I contribute to Noptin? =
 
-There are a lot of ways to contribute the project:-
+There are a lot of ways to contribute this newsletter plugin:-
 
-* Star our project on [GitHub.](https://github.com/hizzle-co/noptin/)
+* Star the plugin on [GitHub.](https://github.com/hizzle-co/noptin/)
 * [Clone the plugin,](https://github.com/hizzle-co/noptin/) make improvements to the code and send us a [pull request](https://github.com/hizzle-co/noptin/pulls) so that we can share your improvements with the world.
 * Give us a [5* rating](https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5) on WordPress.
 
@@ -83,10 +92,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 
 == Screenshots ==
-1. How to create a new email subscription form
+1. How to create a new email newsletter subscription form
 2. Sample Email Subscription Form Embeded in a post
 3. View a list of email subscribers
-4. Sample Email Subscribe Widget
+4. Sample newsletter subscription Widget
 5. Noptin Dashboard
 6. Opt-in Forms Editor
 7. General Settings Page
