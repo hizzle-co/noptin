@@ -585,6 +585,8 @@ function add_noptin_subscriber( $fields ) {
 
 	$id = $wpdb->insert_id;
 
+	$fields = array_merge( $fields, $database_fields );
+
 	unset( $fields['last_name'] );
 	unset( $fields['name'] );
 

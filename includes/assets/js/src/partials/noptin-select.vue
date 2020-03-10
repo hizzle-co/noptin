@@ -20,7 +20,7 @@ module.exports = {
 				.val(this.value)
 
 				//Then trigger a change event
-				.trigger('change')
+				.trigger('change.select2')
 
 				// emit input event on change.
 				.on('change', ( e ) => {
@@ -33,7 +33,7 @@ module.exports = {
 	watch: {
 		value (value) {
 			// update value
-			jQuery(this.$el).val(value).trigger('change')
+			jQuery(this.$el).val(value).trigger('change.select2')
 		},
 	},
 

@@ -968,6 +968,7 @@ input:focus+.noptin-switch-slider span {
 			.regular-text,
 			input[type="text"],
 			select,
+			.select2-container,
 			textarea {
 				max-width: 400px;
 			}

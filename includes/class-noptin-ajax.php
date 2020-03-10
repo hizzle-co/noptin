@@ -566,6 +566,20 @@ class Noptin_Ajax {
 
 		}
 
+		if ( ! empty( $_REQUEST['ipAddress'] ) ) {
+			$address                = trim( sanitize_text_field( $_REQUEST['ipAddress'] ) );
+			$filtered['ip_address'] = $address;
+
+			$location_info = noptin_locate_ip_address( $address );
+			if ( ! empty( $location_info ) ) {
+				$filtered = array_merge( $location_info, $filtered );
+			}
+		}
+
+		if ( is_object( $form ) ) {
+			$filtered['_subscriber_via'] = $form->ID;
+		}
+
 		/**
 		 * Filters subscriber details when adding a new subscriber via ajax.
 		 * 
@@ -580,19 +594,6 @@ class Noptin_Ajax {
 
 		do_action( 'noptin_add_ajax_subscriber', $inserted, $form );
 
-		// This will only work if there is an ip address and an API key.
-		$address = '';
-		if ( ! empty( $_REQUEST['ipAddress'] ) ) {
-			$address = trim( sanitize_text_field( $_REQUEST['ipAddress'] ) );
-		}
-		$location_info = noptin_locate_ip_address( $address );
-		if ( ! empty( $location_info ) ) {
-			foreach ( $location_info as $key => $value ) {
-				update_noptin_subscriber_meta( $inserted, $key, $value );
-			}
-			update_noptin_subscriber_meta( $inserted, 'ip_address', $address );
-		}
-
 		$result = array(
 			'action' => 'msg',
 			'msg'    => get_noptin_option( 'success_message' ),
@@ -604,8 +605,6 @@ class Noptin_Ajax {
 
 		if ( is_object( $form ) ) {
 
-			// Basic housekeeping.
-			update_noptin_subscriber_meta( $inserted, '_subscriber_via', $form->ID );
 			$count = (int) get_post_meta( $form->ID, '_noptin_subscribers_count', true );
 			update_post_meta( $form->ID, '_noptin_subscribers_count', $count + 1 );
 
