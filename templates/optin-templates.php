@@ -1,6 +1,94 @@
 <?php
 
 	return array(
+
+		'PRO20200311'  => array(
+			'title' => 'Professional',
+			'data'  => array(
+				'hideCloseButton'       => false,
+				'closeButtonPos'        => 'top-right',
+				'singleLine'            => true,
+				'formRadius'            => '0px',
+				'formWidth'             => '520px',
+				'formHeight'            => '280px',
+				'noptinFormBg'          => '#f8f9fa',
+				'noptinFormBgImg'       => '',
+				'noptinFormBgVideo'     => '',
+				'fields'                => array(
+					array(
+						'type'    => array(
+							'label' => __( 'Email Address', 'newsletter-optin-box' ),
+							'name'  => 'email',
+							'type'  => 'email',
+						),
+
+						'require' => true,
+						'key'     => 'noptin_email_key',
+					),
+
+				),
+
+				'imageMain'             => false,
+				'noptinFormBorderColor' => '#f8f9fa',
+				'image'                 => 'https://cdn.noptin.com/templates/images/avatar.png',
+				'imagePos'              => 'left',
+				'noptinButtonLabel'     => __( 'Sign Up', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#00d07e',
+				'noptinButtonColor'     => '#ffffff',
+				'hideTitle'             => false,
+				'title'                 => __( 'Get Exclusive SEO Tips', 'newsletter-optin-box' ),
+				'titleColor'            => '#010101',
+				'hideDescription'       => false,
+				'description'           => __( 'Receive the same tips I used to double my traffic in just two weeks!', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#010101',
+				'hideNote'              => true,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#010101',
+				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
+	position: absolute;
+ 	right: 5px;
+ 	top: 6px;
+ 	bottom: 6px;
+ 	border-radius: 4px;
+ 	font-weight: 500;
+	border: 1px solid transparent;
+	padding: 6px 32px !important;
+}
+
+.noptin-optin-form-wrapper .noptin-form-header-image img{
+    border-radius: 50%;
+}
+
+.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-field {
+    border-radius: 4px;
+ 	padding: 1.2em 2em;
+ border: 1px solid transparent;
+ font-size: 16px;
+}
+
+.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields{
+ position: relative;
+}
+
+.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-header {
+	flex: 0 0 auto;
+ 	justify-content: center;
+}
+
+.noptin-optin-form-wrapper form.noptin-form-single-line {
+	justify-content: center
+}
+
+.noptin-popup-main-wrapper{
+ 	background-color: #e4e2dd;
+}',
+			),
+
+		),
+
+
 		'owvP1565701640'  => array(
 			'title' => __( 'Borderless', 'newsletter-optin-box' ),
 			'data'  => array(
