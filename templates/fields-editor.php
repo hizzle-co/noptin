@@ -4,7 +4,7 @@
 	<draggable :list="fields" tag="ul" ghost-class="noptin-sortable-ghost">
 	<li v-for="field in fields" :key="field.key" class="noptin-field-editor-field" :id="field.key">
 		<div class="noptin-field-editor-header">
-			<span class="noptin-field-editor-title">{{ field.type.label }}</span>
+			<span class="noptin-field-editor-title" v-html="field.type.label"></span>
 			<span @click="collapseField(field.key)" class="dashicons dashicons-arrow-up-alt2" style="display:none"></span>
 			<span @click="expandField(field.key)" class="dashicons dashicons-arrow-down-alt2" style="display:inline-block"></span>
 		</div>

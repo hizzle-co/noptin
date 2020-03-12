@@ -422,6 +422,23 @@ class Noptin_Form_Editor {
 				),
 			),
 
+			
+			'campaign_monitor' => array(
+				'el'       => 'panel',
+				'title'    => 'Campaign Monitor',
+				'id'       => 'campaign_monitor',
+				'children' => array(
+					'campaign_monitor' => array(
+						'el'      => 'paragraph',
+						'content' => sprintf(
+							esc_html__( 'Install the %s to connect your Campaign Monitor account.', 'newsletter-optin-box' ),
+							sprintf( '<a target="_blank" href="https://noptin.com/product/campaign-monitor/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s">Campaign Monitor addon</a>', get_home_url() )
+						),
+						'style'   => 'color:#F44336;',
+					),
+				),
+			),
+
 		);
 	}
 

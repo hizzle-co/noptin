@@ -512,6 +512,16 @@ $noptin_color: #ff6f00;
 				padding-top: 0 !important;
 			}
 
+			.noptin-optin-field-wrapper-checkbox {
+				input {
+					margin-right: 4px;
+    				outline: 0;
+    				cursor: pointer;
+    				text-align: center;
+    				vertical-align: middle;
+				}
+			}
+
 			.noptin-form-submit {
 				background-color: #524b4d;
 				display: block;

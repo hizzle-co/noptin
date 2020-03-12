@@ -60,8 +60,8 @@ class Noptin_Ajax {
 		// Verify nonce.
 		check_ajax_referer( 'noptin' );
 
-		if ( ! empty( $_REQUEST['form_id'] ) ) {
-			$form_id = intval( $_REQUEST['form_id'] );
+		if ( ! empty( $_POST['form_id'] ) ) {
+			$form_id = intval( $_POST['form_id'] );
 			$count   = (int) get_post_meta( $form_id, '_noptin_form_views', true );
 			update_post_meta( $form_id, '_noptin_form_views', $count + 1 );
 		}
@@ -450,7 +450,7 @@ class Noptin_Ajax {
 		check_ajax_referer( 'noptin' );
 
 		// avoid bot submissions.
-		if ( ! empty( $_REQUEST['noptin_confirm_submit'] ) ) {
+		if ( ! empty( $_POST['noptin_confirm_submit'] ) ) {
 			return;
 		}
 		
@@ -464,7 +464,7 @@ class Noptin_Ajax {
 		// Prepare form fields.
 		$form = 0;
 
-		if ( empty( $_REQUEST['noptin_form_id'] ) ) {
+		if ( empty( $_POST['noptin_form_id'] ) ) {
 
 			$fields = array(
 				array(
@@ -481,19 +481,19 @@ class Noptin_Ajax {
 		} else {
 
 			// Get the form.
-			$form   = noptin_get_optin_form( $_REQUEST['noptin_form_id'] );
+			$form   = noptin_get_optin_form( $_POST['noptin_form_id'] );
 			$fields = $form->fields;
 		}
 
 		$filtered = array();
 
 		// Check gdpr.
-		if ( is_object( $form ) && $form->gdprCheckbox && empty( $_REQUEST['noptin_gdpr_checkbox'] ) ) {
+		if ( is_object( $form ) && $form->gdprCheckbox && empty( $_POST['noptin_gdpr_checkbox'] ) ) {
 			echo __( 'You must consent to receive promotional emails.', 'newsletter-optin-box' );
 			exit;
 		}
 
-		if ( ! empty( $_REQUEST['noptin_gdpr_checkbox'] ) ) {
+		if ( ! empty( $_POST['noptin_gdpr_checkbox'] ) ) {
 			$filtered['GDPR_consent'] = 1;
 		}
 
@@ -525,7 +525,12 @@ class Noptin_Ajax {
 			}
 
 			$field_label = $field['type']['label'];
-			$value       = $_REQUEST[ $name ];
+
+			if ( isset( $_POST[ $name ] ) ) {
+				$value = $_POST[ $name ];
+			} else {
+				$value = 0;
+			}
 
 			// required fields.
 			if ( 'true' == $field['require'] && empty( $value ) ) {
@@ -566,8 +571,8 @@ class Noptin_Ajax {
 
 		}
 
-		if ( ! empty( $_REQUEST['ipAddress'] ) ) {
-			$address                = trim( sanitize_text_field( $_REQUEST['ipAddress'] ) );
+		if ( ! empty( $_POST['ipAddress'] ) ) {
+			$address                = trim( sanitize_text_field( $_POST['ipAddress'] ) );
 			$filtered['ip_address'] = $address;
 
 			$location_info = noptin_locate_ip_address( $address );
