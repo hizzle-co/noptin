@@ -648,27 +648,37 @@ class Noptin_Form_Editor {
 	private function get_field_settings() {
 		return array(
 
-			'fields'     => array(
-				'el'     => 'form_fields',
+			'hideFields'   => array(
+				'type'     => 'checkbox',
+				'el'       => 'input',
+				'label'    => __( 'Hide opt-in fields', 'newsletter-optin-box' ),
 			),
 
-			'singleLine' => array(
-				'type'   => 'checkbox',
-				'el'     => 'input',
-				'label'  => __( 'Show all fields in a single line', 'newsletter-optin-box' ),
+			'fields'       => array(
+				'el'       => 'form_fields',
+				'restrict' => "!hideFields",
+			),
+
+			'singleLine'   => array(
+				'type'     => 'checkbox',
+				'el'       => 'input',
+				'label'    => __( 'Show all fields in a single line', 'newsletter-optin-box' ),
+				'restrict' => "!hideFields",
 			),
 
 			'gdprCheckbox' => array(
 				'type'     => 'checkbox',
 				'el'       => 'input',
 				'label'    => __( 'Show GDPR checkbox', 'newsletter-optin-box' ),
+				'restrict' => "!hideFields",
 			),
 
 			'gdprConsentText' => array(
-				'type'  => 'text',
-				'el'    => 'input',
-				'restrict' => 'gdprCheckbox',
-				'label' => __( 'Consent Text', 'newsletter-optin-box' ),
+				'type'        => 'text',
+				'el'          => 'input',
+				'restrict'    => 'gdprCheckbox',
+				'label'       => __( 'Consent Text', 'newsletter-optin-box' ),
+				'restrict'    => "!hideFields",
 			),
 
 		);

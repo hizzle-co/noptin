@@ -173,6 +173,7 @@ class Noptin_Form {
 					'key'     => 'noptin_email_key',
 				),
 			),
+			'hideFields'            => false,
 			'inject'                => '0',
 			'buttonPosition'        => 'block',
 			'subscribeAction'       => 'message', // redirect.
