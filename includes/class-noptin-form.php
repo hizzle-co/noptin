@@ -678,7 +678,7 @@ class Noptin_Form {
 		}
 
 		// print main form html.
-		return $html . $this->optinHTML . '</div>';
+		return do_shortcode( $html . $this->optinHTML . '</div>' );
 	}
 
 	/**

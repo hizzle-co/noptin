@@ -179,7 +179,7 @@
 
 				'imageMain'             => false,
 				'noptinFormBorderColor' => '#009688',
-				'image'                 => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/email-icon.png',
+				'image'                 => 'https://cdn.noptin.com/templates/images/email-icon.png',
 				'imagePos'              => 'right',
 				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
 				'buttonPosition'        => 'block',
@@ -424,7 +424,7 @@
 
 				'imageMain'             => '',
 				'noptinFormBorderColor' => '#424242',
-				'image'                 => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/email-icon.png',
+				'image'                 => 'https://cdn.noptin.com/templates/images/email-icon.png',
 				'imagePos'              => 'left',
 				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
 				'buttonPosition'        => 'block',
