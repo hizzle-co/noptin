@@ -648,12 +648,6 @@ class Noptin_Form_Editor {
 	private function get_field_settings() {
 		return array(
 
-			'hideFields'   => array(
-				'type'     => 'checkbox',
-				'el'       => 'input',
-				'label'    => __( 'Hide opt-in fields', 'newsletter-optin-box' ),
-			),
-
 			'fields'       => array(
 				'el'       => 'form_fields',
 				'restrict' => "!hideFields",
@@ -676,9 +670,14 @@ class Noptin_Form_Editor {
 			'gdprConsentText' => array(
 				'type'        => 'text',
 				'el'          => 'input',
-				'restrict'    => 'gdprCheckbox',
 				'label'       => __( 'Consent Text', 'newsletter-optin-box' ),
-				'restrict'    => "!hideFields",
+				'restrict'    => "gdprCheckbox && !hideFields",
+			),
+
+			'hideFields'   => array(
+				'type'     => 'checkbox',
+				'el'       => 'input',
+				'label'    => __( 'Hide opt-in fields', 'newsletter-optin-box' ),
 			),
 
 		);

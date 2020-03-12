@@ -328,7 +328,7 @@ class Noptin_Vue {
 	}
 
 	public static function form_fields( $id, $field ) {
-		echo "<field-editor v-bind='\$data'></field-editor>";
+		echo "<field-editor {$field['restrict']} v-bind='\$data'></field-editor>";
 	}
 
 	/**
@@ -381,6 +381,14 @@ class Noptin_Vue {
 			'supports_require' => true,
 		);
 
+		$field_types[] = array(
+			'label'            => 'Hidden',
+			'name'             => 'hidden',
+			'type'             => 'hidden',
+			'supports_value'   => true,
+			'supports_name'    => true,
+		);
+
 		return $field_types;
 	}
 
@@ -406,6 +414,15 @@ class Noptin_Vue {
 
 			echo "<div class='noptin-text-wrapper' $v_if>
 					<label>Name<input type='text' v-model='field.type.name'/></label>
+				</div>";
+
+		}
+
+		// Field value.
+		if ( ! empty( $field_type['supports_value'] ) ) {
+
+			echo "<div class='noptin-text-wrapper' $v_if>
+					<label>Value<input type='text' v-model='field.type.value'/></label>
 				</div>";
 
 		}
@@ -444,6 +461,7 @@ class Noptin_Vue {
 		<input 		v-if="field.type.type=='last_name'" 	   name='last_name' 	  type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
 		<input 		v-if="field.type.type=='name'" 			   name='name' 			  type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
 		<input 		v-if="field.type.type=='text'" 			  :name='field.type.name' type="text" 		class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require" />
+		<input 		v-if="field.type.type=='hidden'" 		  :name='field.type.name' type="hidden" 	v-model="field.type.value"/>
 		<label 		v-if="field.type.type=='checkbox'"><input :name='field.type.name' type="checkbox"   class="noptin-checkbox-form-field"  :required="field.require" />{{field.type.label}}</label>
 		<textarea   v-if="field.type.type=='textarea'" 		  :name='field.type.name' 					class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require"></textarea>
 		<?php

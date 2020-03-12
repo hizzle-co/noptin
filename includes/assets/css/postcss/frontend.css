@@ -477,7 +477,7 @@ $noptin_color: #ff6f00;
 				display: table;
 			}
 
-			.noptin-optin-field-wrapper {
+			.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {
 				width: 100%;
 				display: block;
 				text-align: left;
@@ -499,6 +499,17 @@ $noptin_color: #ff6f00;
 					line-height: 1.45714285714286;
 					margin: 0;
 				}
+			}
+
+			.noptin-optin-field-wrapper-hidden {
+				margin-bottom: 0 !important;
+				margin-left: 0 !important;
+				margin-right: 0 !important;
+				margin-top: 0 !important;
+				padding-left: 0 !important;
+				padding-bottom: 0 !important;
+				padding-right: 0 !important;
+				padding-top: 0 !important;
 			}
 
 			.noptin-form-submit {
@@ -559,9 +570,20 @@ $noptin_color: #ff6f00;
 						padding: 11px 32px;
 					}
 
-					.noptin-optin-field-wrapper {
+					.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {
 						margin-right: 4px;
 						margin-bottom: 0;
+					}
+
+					.noptin-optin-field-wrapper-hidden {
+						margin-bottom: 0 !important;
+						margin-left: 0 !important;
+						margin-right: 0 !important;
+						margin-top: 0 !important;
+						padding-left: 0 !important;
+						padding-bottom: 0 !important;
+						padding-right: 0 !important;
+						padding-top: 0 !important;
 					}
 
 					.noptin-form-field {

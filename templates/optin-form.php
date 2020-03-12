@@ -16,7 +16,7 @@
 		</div>
 		<div class="noptin-form-footer">
 			<div v-if="!hideFields" class="noptin-form-fields">
-				<div  v-for="field in fields"  :key="field.key" class="noptin-optin-field-wrapper">
+				<div  v-for="field in fields"  :key="field.key" class="noptin-optin-field-wrapper" :class="'noptin-optin-field-wrapper-' + field.type.type">
 					<?php do_action( 'noptin_field_type_optin_markup' ); ?>
 				</div>
 				<input type="hidden" name="noptin_form_id" :value="id" />
