@@ -226,6 +226,7 @@ class Noptin_Form {
 			'DisplayOncePerSession' => true,
 			'cssClassOfClick'       => '#id .class',
 			'triggerPopup'          => 'immeadiate',
+			'slideDirection'        => 'bottom_right',
 
 			// Restriction Options.
 			'showEverywhere'        => true,
@@ -663,7 +664,7 @@ class Noptin_Form {
 			update_post_meta( $id, '_noptin_form_views', $count + 1 );
 
 		}
-		$html = "<div class='$type_class $id_class' style='$style'>";
+		$html = "<div class='$type_class $id_class noptin-optin-main-wrapper' style='$style'>";
 
 		// Maybe print custom css.
 		if ( ! empty( $this->CSS ) ) {

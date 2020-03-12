@@ -1086,6 +1086,7 @@ function noptin_localize_optin_editor( $state ) {
 	$props[] = 'scrollDepthPercentage';
 	$props[] = 'cssClassOfClick';
 	$props[] = 'triggerPopup';
+	$props[] = 'slideDirection';
 
 	$params = array(
 		'ajaxurl'      => admin_url( 'admin-ajax.php' ),
@@ -1127,6 +1128,7 @@ function noptin_form_template_wrapper_props() {
 		':data-on-scroll="scrollDepthPercentage"',
 		':data-after-delay="timeDelayDuration"',
 		'class="noptin-optin-form-wrapper"',
+		':class="\'noptin-slide-from-\' + slideDirection"',
 		':data-once-per-session="DisplayOncePerSession"',
 		':style="{
 			borderColor: noptinFormBorderColor,

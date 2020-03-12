@@ -221,7 +221,7 @@ var vm = new Vue({
 
 			var el = jQuery('.noptin-popup-wrapper').clone()
 
-			if( 'popup' != this.optinType ) {
+			if( 'popup' != this.optinType && 'slide_in' != this.optinType ) {
 				el.find('.noptin-optin-form-wrapper').css('width', '100%')
 			}
 

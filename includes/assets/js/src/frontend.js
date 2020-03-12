@@ -13,7 +13,7 @@
 	var ipAddress = ''
 	$.getJSON("https://api.ipify.org?format=jsonp&callback=?",
 		function (json) {
-			if( json.ip ) {
+			if (json.ip) {
 				ipAddress = json.ip
 			}
 		}
@@ -50,26 +50,28 @@
 		}, timing)
 	}
 
+	// Logs a form view
+	var logFormView = (form_id) => {
+		$.post(noptin.ajaxurl, {
+			action: "noptin_log_form_impression",
+			_wpnonce: noptin.nonce,
+			form_id: form_id,
+		})
+	}
 
 	//Displays a popup and attaches "close" event handlers
 	var displayPopup = (popup, force) => {
 
-		if ('undefined' == typeof force) {
-			force = false
+		if ($(popup).closest('.noptin-optin-main-wrapper').hasClass('noptin-slide_in-main-wrapper')) {
+			return displaySlideIn(popup, force)
 		}
 
 		if (!force && (displayingPopup || subscribed)) {
 			return;
 		}
 
-		displayingPopup = true;
-
 		//Log form view
-		$.post(noptin.ajaxurl, {
-			action: "noptin_log_form_impression",
-			_wpnonce: noptin.nonce,
-			form_id: $(popup).find('input[name=noptin_form_id]').val(),
-		})
+		logFormView($(popup).find('input[name=noptin_form_id]').val())
 
 		var closeButton = $(popup)
 			.closest('.noptin-popup-main-wrapper')
@@ -100,12 +102,27 @@
 		}, 100)
 
 		//Some forms are only set to be displayed once per session
-		var id     = $(popup).find('input[name=noptin_form_id]').val()
+		var id = $(popup).find('input[name=noptin_form_id]').val()
 		if (typeof $(popup).data('once-per-session') !== 'undefined') {
-			localStorage.setItem("noptinFormDisplayed" + id, new Date().getTime() );
+			localStorage.setItem("noptinFormDisplayed" + id, new Date().getTime());
 		} else {
-			sessionStorage.setItem("noptinFormDisplayed" + id, '1' );
+			sessionStorage.setItem("noptinFormDisplayed" + id, '1');
 		}
+
+	}
+
+	//Displays a slide in and attaches "close" event handlers
+	var displaySlideIn = (slide_in, force) => {
+
+		if (!force && subscribed) {
+			return;
+		}
+
+		//Log form view
+		logFormView($(slide_in).find('input[name=noptin_form_id]').val())
+
+		//Display the form
+		$(slide_in).addClass('noptin-showing')
 
 	}
 
@@ -211,20 +228,20 @@
 		if (typeof $(this).data('once-per-session') !== 'undefined' && 'after_click' != trigger) {
 
 			if (id) {
-				
+
 				var addedTime = localStorage.getItem("noptinFormDisplayed" + id)
 				var time = new Date().getTime()
 
 				// Only display the popup once per week.
-				if( addedTime && ( time - addedTime ) < 604800000 ) {
+				if (addedTime && (time - addedTime) < 604800000) {
 					return true;
 				}
 				localStorage.removeItem("noptinFormDisplayed" + id)
 			}
-			
+
 		} else {
-			if ( id && 'after_click' != trigger ) {
-				if ( sessionStorage.getItem("noptinFormDisplayed" + id) ) {
+			if (id && 'after_click' != trigger) {
+				if (sessionStorage.getItem("noptinFormDisplayed" + id)) {
 					return;
 				}
 			}
@@ -238,6 +255,23 @@
 			cb.call(this)
 		}
 	})
+
+	//Loop through all slide ins and attach triggers
+	$('.noptin-slide_in-main-wrapper .noptin-optin-form-wrapper').each(function () {
+
+		var trigger = $(this).data('trigger')
+
+		if (noptinDisplayPopup[trigger]) {
+			var cb = noptinDisplayPopup[trigger]
+			cb.call(this)
+		}
+	})
+
+	$(document).ready(function () {
+		$(document).on('click', '.noptin-showing .noptin-form-close', function (e) {
+			$(this).closest('.noptin-showing').removeClass('noptin-showing')
+		});
+	});
 
 	//Submits forms via ajax
 	function subscribe_user(form) {
@@ -311,7 +345,7 @@
 							return;
 						}
 
-						//Gutenberg
+						// Gutenberg
 						var url = $(this).find('.noptin_form_redirect').val();
 
 						if (url) {
@@ -325,6 +359,10 @@
 								display: 'flex',
 								justifyContent: 'center'
 							})
+							setTimeout(() => {
+								$(this).closest('.noptin-showing').removeClass('noptin-showing')
+							}, 2000)
+
 						}
 
 

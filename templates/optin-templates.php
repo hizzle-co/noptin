@@ -514,6 +514,7 @@
  	border-radius: 4px;
  	font-weight: 500;
 	border: 1px solid transparent;
+	padding: 6px 32px !important;
 }
 
 .noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-field {

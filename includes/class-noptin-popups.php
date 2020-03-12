@@ -84,9 +84,15 @@ class Noptin_Popups {
 			'post_type'   => 'noptin-form',
 			'post_status' => 'publish',
 			'meta_query'  => array(
+				'relation'    => 'OR',
 				array(
 					'key'     => '_noptin_optin_type',
 					'value'   => 'popup',
+					'compare' => '=',
+				),
+				array(
+					'key'     => '_noptin_optin_type',
+					'value'   => 'slide_in',
 					'compare' => '=',
 				),
 			),

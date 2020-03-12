@@ -74,6 +74,8 @@ class Noptin_Form_Editor {
 	 * Returns setting fields fields
 	 */
 	private function get_setting_fields() {
+		$popup    = __( 'Popup Options', 'newsletter-optin-box' );
+		$slide_in = __( 'Sliding Options', 'newsletter-optin-box' );
 		return array(
 
 			// Basic settings.
@@ -87,9 +89,9 @@ class Noptin_Form_Editor {
 			// Trigger Options.
 			'trigger'         => array(
 				'el'       => 'panel',
-				'title'    => __( 'Popup Options', 'newsletter-optin-box' ),
+				'title'    => "<span v-if=\"optinType=='popup'\">$popup</span><span v-if=\"optinType=='slide_in'\">$slide_in</span>",
 				'id'       => 'triggerSettings',
-				'restrict' => "optinType=='popup'",
+				'restrict' => "optinType=='popup' || optinType=='slide_in'",
 				'children' => $this->get_trigger_settings(),
 			),
 
@@ -138,11 +140,13 @@ class Noptin_Form_Editor {
 			// Form type.
 			'optinType'       => array(
 				'el'      => 'select',
-				'label'   => __( 'This form will be...', 'newsletter-optin-box' ),
+				'label'   => __( 'Form type', 'newsletter-optin-box' ),
+				'tooltip' => __( 'Select how you would like to display the form', 'newsletter-optin-box' ),
 				'options' => array(
-					'popup'   => __( 'Displayed in a popup', 'newsletter-optin-box' ),
-					'inpost'  => __( 'Embedded in a post', 'newsletter-optin-box' ),
-					'sidebar' => __( 'Added to a widget area', 'newsletter-optin-box' ),
+					'popup'    => __( 'Popup', 'newsletter-optin-box' ),
+					'inpost'   => __( 'Shortcode', 'newsletter-optin-box' ),
+					'sidebar'  => __( 'Widget', 'newsletter-optin-box' ),
+					'slide_in' => __( 'Slide-in', 'newsletter-optin-box' ),
 				),
 			),
 
@@ -199,15 +203,32 @@ class Noptin_Form_Editor {
 			'DisplayOncePerSession' => array(
 				'type'     => 'checkbox',
 				'el'       => 'input',
-				'tooltip'  => __( 'Uncheck to display the popup once per session instead of once per week', 'newsletter-optin-box' ),
-				'label'    => __( 'Display this popup once per week', 'newsletter-optin-box' ),
-				'restrict' => "triggerPopup!='after_click'",
+				'tooltip'  => __( 'Uncheck to display the form once per session instead of once per week', 'newsletter-optin-box' ),
+				'label'    => __( 'Display this form once per week', 'newsletter-optin-box' ),
+				'restrict' => "triggerPopup!='after_click' && optinType=='popup'",
+			),
+
+			// Sliding direction.
+			'slideDirection'       => array(
+				'el'       => 'select',
+				'label'    => __( 'The form will slide from...', 'newsletter-optin-box' ),
+				'restrict' => "optinType=='slide_in'",
+				'options'  => array(
+					'top_left'      => __( 'Top Left', 'newsletter-optin-box' ),
+					'left_top'      => __( 'Top Left Alt', 'newsletter-optin-box' ),
+					'top_right'     => __( 'Top Right', 'newsletter-optin-box' ),
+					'right_top'     => __( 'Top Right Alt', 'newsletter-optin-box' ),
+					'bottom_left'   => __( 'Bottom Left', 'newsletter-optin-box' ),
+					'left_bottom'   => __( 'Bottom Left Alt', 'newsletter-optin-box' ),
+					'bottom_right'  => __( 'Bottom right', 'newsletter-optin-box' ),
+					'right_bottom'  => __( 'Bottom right Alt', 'newsletter-optin-box' ),
+				),
 			),
 
 			// trigger when.
 			'triggerPopup'          => array(
 				'el'      => 'select',
-				'label'   => __( 'Show this popup', 'newsletter-optin-box' ),
+				'label'   => __( 'Show this form', 'newsletter-optin-box' ),
 				'options' => array(
 					'immeadiate'   => __( 'Immediately', 'newsletter-optin-box' ),
 					'before_leave' => __( 'Before the user leaves', 'newsletter-optin-box' ),
@@ -237,7 +258,7 @@ class Noptin_Form_Editor {
 			'scrollDepthPercentage' => array(
 				'type'     => 'text',
 				'el'       => 'input',
-				'label'    => __( 'Scroll depth in percentage after which the popup will be shown', 'newsletter-optin-box' ),
+				'label'    => __( 'Scroll depth in percentage after which the form will appear', 'newsletter-optin-box' ),
 				'restrict' => "triggerPopup=='on_scroll'",
 			),
 		);
@@ -580,7 +601,7 @@ class Noptin_Form_Editor {
 			'formWidth'             => array(
 				'type'     => 'text',
 				'el'       => 'input',
-				'restrict' => "optinType=='popup'",
+				'restrict' => "optinType =='popup' || optinType =='slide_in'",
 				'label'    => __( 'Preferred Width', 'newsletter-optin-box' ),
 				'tooltip'  => __( 'The element will resize to 100% width on smaller devices', 'newsletter-optin-box' ),
 			),

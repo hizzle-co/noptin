@@ -40,6 +40,12 @@ export default {
 			return;
 		}
 
+		if (instance.optinType == 'slide_in') {
+			instance.formWidth = '400px'
+			instance.formHeight = '280px'
+			return;
+		}
+
 		instance.formHeight = '280px'
 		instance.formWidth = '620px'
 
