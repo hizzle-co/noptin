@@ -24,6 +24,9 @@ class Noptin_Page {
 		// User unsubscribe.
 		add_action( 'noptin_page_unsubscribe', array( $this, 'unsubscribe_user' ) );
 
+		// Email confirmation.
+		add_action( 'noptin_page_confirm', array( $this, 'confirm_subscription' ) );
+
 		// Email open.
 		add_filter( 'noptin_actions_page_template', array( $this, 'email_open' ) );
 
@@ -201,6 +204,42 @@ class Noptin_Page {
 			$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.', 'newsletter-optin-box' ) );
 		} else {
 			$this->print_paragraph( __( 'An error occured while trying to unsubscribe you from this mailing list.', 'newsletter-optin-box' ) );
+		}
+
+	}
+
+	/**
+	 * Confirms a user's subscription to the newsletter.
+	 *
+	 * @access      public
+	 * @since       1.0.6
+	 * @return      array
+	 */
+	public function confirm_subscription( $key ) {
+		global $wpdb;
+
+		// Ensure a user key is specified.
+		if ( empty( $key ) ) {
+			$this->print_paragraph( __( 'Unable to confirm your subscrption at this time.', 'newsletter-optin-box' ) );
+			return;
+		}
+
+		$table   = get_noptin_subscribers_table_name();
+		$updated = $wpdb->update(
+			$table,
+			array( 
+				'active'    => 0,
+				'confirmed' => 1,
+			),
+			array( 'confirm_key' => $key ),
+			'%d',
+			'%s'
+		);
+
+		if ( $updated ) {
+			$this->print_paragraph( __( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' ) );
+		} else {
+			$this->print_paragraph( __( 'An error occured while trying to confirm your subscription.', 'newsletter-optin-box' ) );
 		}
 
 	}

@@ -262,6 +262,7 @@ function get_default_noptin_options() {
 
 	$options = array(
 		'notify_admin'          => false,
+		'double_optin'          => false,
 		'from_email'            => get_option( 'admin_email' ),
 		'from_name'             => get_option( 'blogname' ),
 		'company'               => get_option( 'blogname' ),
@@ -577,6 +578,7 @@ function add_noptin_subscriber( $fields ) {
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
 		'confirm_key'  => md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
 		'date_created' => date_i18n( 'Y-m-d' ),
+		'active'       => get_noptin_option( 'double_optin' ) ? 1 : 0,
 	);
 
 	if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
@@ -1398,6 +1400,45 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 
 }
 add_action( 'noptin_insert_subscriber', 'noptin_new_subscriber_notify', 10, 2 );
+
+/**
+ * Sends double optin emails.
+ *
+ * @param int   $id The id of the new subscriber.
+ * @param array $fields The subscription field values.
+ * @since 1.2.4
+ */
+function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
+
+	// Is double optin enabled?
+	$double_optin = get_noptin_option( 'double_optin' );
+	if ( empty( $double_optin ) ) {
+		return;
+	}
+
+	$data = array(
+		'email_subject' => 'Please confirm your subscription',
+		'merge_tags'    => array(
+			'confirmation_link' => get_noptin_action_url( 'confirm', $fields['confirm_key'] ),
+		),
+		'template'      => locate_noptin_template( 'email-templates/confirm-subscription.php' ),
+	);
+
+
+	// Try sending the email.
+	$mailer  = new Noptin_Mailer();
+	$email   = $mailer->get_email( $data );
+	$subject = $mailer->get_subject( $data );
+	$to      = sanitize_email( $fields['email'] );
+
+	if ( $mailer->send( $to, $subject, $email ) ) {
+		return true;
+	}
+
+	log_noptin_message( "An error occured while sending a double-optin confimation email to subscriber #$id ($to)" );
+	return false;
+}
+add_action( 'noptin_insert_subscriber', 'send_new_noptin_subscriber_double_optin_email', 10, 2 );
 
 /**
  *  Returns the name of the subscribers' table

@@ -21,6 +21,7 @@ export default {
 			instance[key] = template[key]
 		})
 
+		instance.hideFields = false
 		this.updateFormSizes(instance)
 
 	},
