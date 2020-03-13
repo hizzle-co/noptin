@@ -34,6 +34,8 @@ class Noptin_Admin_Filters {
 		add_filter( "noptin_format_subscriber_wp_user_id", array( $this, 'format_user_id' ), 10, 2 );
 		add_filter( "noptin_subscriber_GDPR_consent_label", array( $this, 'gdpr_label' ) );
 		add_filter( "noptin_format_subscriber_GDPR_consent", array( $this, 'format_gdpr' ), 10, 2 );
+		add_filter( "noptin_subscriber_conversion_page_label", array( $this, 'conversion_page_label' ) );
+		add_filter( "noptin_format_subscriber_conversion_page", array( $this, 'format_conversion_page' ), 10, 2 );
 
 		// Filters Noptin subscriber's fields.
 		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ) );
@@ -106,6 +108,13 @@ class Noptin_Admin_Filters {
 	}
 
 	/**
+	 * Returns the conversion_page key label.
+	 */
+	public function conversion_page_label(){
+		return __( 'Conversion Page', 'newsletter-optin-box' );
+	}
+
+	/**
 	 * Formats the user id.
 	 * 
 	 * @param int $user_id The subscriber's user id.
@@ -121,6 +130,20 @@ class Noptin_Admin_Filters {
 
 		delete_noptin_subscriber_meta( $data->id, 'wp_user_id' );
 		return '<span style="color: #f44336;" class="dashicons dashicons-no"></span>';
+	}
+
+	/**
+	 * Formats the conversion page.
+	 * 
+	 * @param int $url The url to the conversion page.
+	 */
+	public function format_conversion_page( $url ) {
+		if( ! empty( $url[0] ) ) {
+			$url = esc_url( $url[0] );
+			return "<a target='_blank' href='$url'>$url</a>";
+		} else {
+			return __( 'Uknown', 'newsletter-optin-box' );
+		}
 	}
 
 	/**
@@ -174,6 +197,7 @@ class Noptin_Admin_Filters {
 			'emailconfirmed' => 'confirmed',
 			'confirmed'      => 'confirmed',
 			'globalstatus'   => 'confirmed',
+			'datetime'       => 'date_created',
 			'subscribedon'   => 'date_created',
 			'datecreated'    => 'date_created',
 			'date'           => 'date_created',
@@ -181,11 +205,17 @@ class Noptin_Admin_Filters {
 			'meta'           => 'meta',
 			'fields'         => 'meta',
 			'metafields'     => 'meta',
+			'customfields'   => 'meta',
+			'conversionpage' => 'conversion_page',
 		);
+
+		foreach( array_keys( $mappings ) as $key ) {
+			$mappings["subscriber$key"] = $mappings[ $key ];
+		}
 
 		// Prepare subscriber fields.
 		foreach ( (array) $subscriber as $key => $value ) {
-			$sanitized = strtolower( str_ireplace( array( '_', '-', ' ' ), '', $key ) );
+			$sanitized = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
 
 			if ( isset( $mappings[ $sanitized ] ) && empty( $subscriber[ $mappings[ $sanitized ] ] ) ) {
 				$subscriber[ $mappings[ $sanitized ] ] = $value;
@@ -205,21 +235,24 @@ class Noptin_Admin_Filters {
 			$subscriber['meta'] = json_decode( $subscriber['meta'], true );
 		}
 
-		if ( empty( $subscriber['meta'] ) ) {
+		if ( ! is_array( $subscriber['meta'] ) ) {
 			$subscriber['meta'] = array();
 		}
 
-		$subscriber['meta'] = (array) $subscriber['meta'];
-
 		// Fill in meta fields for missing core fields.
 		foreach ( $subscriber['meta'] as $key => $value ) {
-			$sanitized = strtolower( str_ireplace( array( '_', '-', ' ' ), '', $key ) );
+			$sanitized = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
 			$value     = maybe_unserialize( $value );
 
 			if ( isset( $mappings[ $sanitized ] ) && empty( $subscriber[ $mappings[ $sanitized ] ] ) ) {
 				$subscriber[ $mappings[ $sanitized ] ] = is_array( $value ) ? $value[0] : $value;
 				unset( $subscriber['meta'][ $key ] );
 			}
+		}
+
+		// Date created.
+		if ( ! empty( $subscriber['date_created'] ) ) {
+			$subscriber['date_created'] = is_string( $subscriber['date_created'] ) ? date_i18n( 'Y-m-d', strtotime( $subscriber['date_created'] ) ) : date_i18n( 'Y-m-d' );
 		}
 
 		return $subscriber;

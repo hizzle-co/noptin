@@ -235,7 +235,26 @@ class Noptin_Ajax {
 			$subscriber = apply_filters( 'noptin_format_imported_subscriber_fields', $subscriber );
 
 			// Ensure that there is a unique email address.
-			if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) || noptin_email_exists( $subscriber['email'] ) ) {
+			if ( empty( $subscriber['email'] ) ) {
+				$skipped ++;
+				continue;
+			}
+
+			if ( ! is_email( $subscriber['email'] )  ) {
+				log_noptin_message( sprintf(
+					__( 'Import skipping %s: Invalid email' ),
+					esc_html( $subscriber['email'] )
+				));
+				$skipped ++;
+				continue;
+			}
+
+			// Ensure that there is a unique email address.
+			if ( noptin_email_exists( $subscriber['email'] ) ) {
+				log_noptin_message( sprintf(
+					__( 'Import skipping %s: Subscriber already exists' ),
+					esc_html( $subscriber['email'] )
+				));
 				$skipped ++;
 				continue;
 			}
@@ -579,6 +598,10 @@ class Noptin_Ajax {
 			if ( ! empty( $location_info ) ) {
 				$filtered = array_merge( $location_info, $filtered );
 			}
+		}
+
+		if ( ! empty( $_POST['conversion_page'] ) ) {
+			$filtered['conversion_page'] = esc_url_raw( trim( $_POST['conversion_page'] ) );
 		}
 
 		if ( is_object( $form ) ) {

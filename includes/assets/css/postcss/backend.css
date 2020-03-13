@@ -1258,6 +1258,11 @@ a.no-campaign-create-new-campaign {
 /** Error Logs*/
 #noptin-tools-page {
 
+	th {
+		min-width: 120px;
+		font-size: 12px;
+	}
+
 	.noptin-tool-error th{
 		color: #b01d1d;
 	}

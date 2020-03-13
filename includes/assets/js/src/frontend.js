@@ -310,6 +310,7 @@
 				data.action = "noptin_new_subscriber"
 				data._wpnonce = noptin.nonce
 				data.ipAddress = ipAddress
+				data.conversion_page = window.location.href
 
 				//Post it to the server
 				$.post(noptin.ajaxurl, data)
