@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.3
 Requires PHP: 5.3
-Version: 1.2.4
+Version: 1.2.5
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -114,6 +114,19 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.2.5 - 2020-03-16 =
+- Update npm, webpack and babel
+- Newsletter Opt-in forms now support adding hidden fields - ADDED
+- Newsletter Opt-in forms now support adding checkbox fields - ADDED
+- Save a subscriber's conversion page - ADDED
+- Support for subscriber double opt-in - ADDED
+- Ability to hide opt-in fields - ADDED
+- Ability to create sliding newsletter subscription forms - ADDED
+- Ability to add shortcodes in opt-in form titles, descriptions and notes - ADDED
+- Professional opt-in template - ADDED
+- Multi-select input fields cause pages to hang - FIXED
+- Select boxes appear longer than other fields - FIXED
+
 = 1.2.4 - 2020-03-03 =
 - Update NPM dependancies.
 - Form display rules now support absolute URL's in addition to post ids - ADDED
@@ -121,24 +134,24 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Export specific email subscriber fields - ADDED
 - Export email subscribers as JSON, XML or CSV - ADDED
 - Subscriber import now supports importing thousands of subscribers without crashing - FIXED
-- Button to delete all subscribers - ADDED
-- Display popup forms once per week instead of once per session - CHANGED
+- Button to delete all email subscribers - ADDED
+- Display popup opt-in forms once per week instead of once per session - CHANGED
 - GDPR consent checkbox - ADDED
 
 = 1.2.3 - 2020-02-10 =
 - Debug log viewer - ADDED
 - System status viewer - ADDED
-- Ability to sync your WordPress users with your Noptin subscribers - ADDED
+- Ability to sync your WordPress users with your newsletter subscribers - ADDED
 - Tooltips not showing - FIXED
 - Subscriber GeoLocation - ADDED
 - Google Analytics integration - ADDED
 
 = 1.2.2 - 2020-01-20 =
-- Ability to preview email campaigns - ADDED
-- Ability to import email subscribers - ADDED
+- Ability to preview newsletter campaigns - ADDED
+- Ability to import newsletter subscribers - ADDED
 - Template loader - ADDED
 
 = 1.2.1 - 2020-01-06 =
-- Do not inject shortcode forms on post previews - CHANGED
-- check if class DOMDocument exists before emogrifying - ADDED
+- Do not inject shortcode subscription forms on post previews - CHANGED
+- check if class DOMDocument exists before emogrifying newsletter emails - ADDED
 - New filter to change email templates - ADDED

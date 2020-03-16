@@ -265,9 +265,10 @@ class Noptin_Post_Types {
 
 			case 'type':
 				$types = array(
-					'sidebar' => __( 'Widget', 'newsletter-optin-box' ),
-					'inpost'  => __( 'Shortcode', 'newsletter-optin-box' ),
-					'popup'   => __( 'Popup', 'newsletter-optin-box' ),
+					'sidebar'  => __( 'Widget', 'newsletter-optin-box' ),
+					'inpost'   => __( 'Shortcode', 'newsletter-optin-box' ),
+					'popup'    => __( 'Popup', 'newsletter-optin-box' ),
+					'slide_in' => __( 'Sliding', 'newsletter-optin-box' ),
 				);
 				$type  = get_post_meta( $post_id, '_noptin_optin_type', true );
 
@@ -330,9 +331,10 @@ class Noptin_Post_Types {
 
 		// Filter by form type.
 		$form_types = array(
-			'sidebar' => __( 'Widget Forms', 'newsletter-optin-box' ),
-			'inpost'  => __( 'Shortcode Forms', 'newsletter-optin-box' ),
-			'popup'   => __( 'Popup Forms', 'newsletter-optin-box' ),
+			'sidebar'  => __( 'Widget Forms', 'newsletter-optin-box' ),
+			'inpost'   => __( 'Shortcode Forms', 'newsletter-optin-box' ),
+			'popup'    => __( 'Popup Forms', 'newsletter-optin-box' ),
+			'slide_in' => __( 'Sliding Forms', 'newsletter-optin-box' ),
 		);
 
 		$form_type = 'all';
@@ -370,9 +372,10 @@ class Noptin_Post_Types {
 
 		// Filter by form type.
 		$form_types = array(
-			'sidebar' => __( 'Widget Forms', 'newsletter-optin-box' ),
-			'inpost'  => __( 'Shortcode Forms', 'newsletter-optin-box' ),
-			'popup'   => __( 'Popup Forms', 'newsletter-optin-box' ),
+			'sidebar'  => __( 'Widget Forms', 'newsletter-optin-box' ),
+			'inpost'   => __( 'Shortcode Forms', 'newsletter-optin-box' ),
+			'popup'    => __( 'Popup Forms', 'newsletter-optin-box' ),
+			'slide_in' => __( 'Sliding Forms', 'newsletter-optin-box' ),
 		);
 
 		if ( isset( $_REQUEST['form_type'] ) && ! empty( $form_types[ $_REQUEST['form_type'] ] ) ) {

@@ -1,6 +1,6 @@
 <div class="noptin-welcome">
 	<div class="noptin-main-header">
-		<h1>Noptin v1.2.3</h1>
+		<h1>Noptin v1.2.5</h1>
 		<a href="https://github.com/hizzle-co/noptin/issues/new/choose" target="_blank"><?php _e( 'Report a bug or request a feature', 'newsletter-optin-box' ); ?></a>
 	</div>
 
@@ -48,6 +48,10 @@
 				<li class="noptin-card">
 					<span class="noptin-card-label">Widgets</span>
 					<span class="noptin-card-value"><?php echo $widget; ?></span>
+				</li>
+				<li class="noptin-card">
+					<span class="noptin-card-label">Slide ins</span>
+					<span class="noptin-card-value"><?php echo $slide_in; ?></span>
 				</li>
 		</ul>
 		<div class="noptin-card-footer-links"><a href="<?php echo $forms_url; ?>">View all forms</a> | <a href="<?php echo $new_form_url; ?>">Create a new form</a></div>

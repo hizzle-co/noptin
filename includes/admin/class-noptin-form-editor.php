@@ -146,7 +146,7 @@ class Noptin_Form_Editor {
 					'popup'    => __( 'Popup', 'newsletter-optin-box' ),
 					'inpost'   => __( 'Shortcode', 'newsletter-optin-box' ),
 					'sidebar'  => __( 'Widget', 'newsletter-optin-box' ),
-					'slide_in' => __( 'Slide-in', 'newsletter-optin-box' ),
+					'slide_in' => __( 'Sliding', 'newsletter-optin-box' ),
 				),
 			),
 

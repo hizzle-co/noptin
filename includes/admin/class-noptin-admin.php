@@ -424,9 +424,10 @@ class Noptin_Admin {
 		$this_week               = date_i18n( 'Y-m-d', strtotime( 'last week sunday' ) );
 		$subscribers_week_total  = get_noptin_subscribers_count( "`date_created`>'$this_week'" );
 
-		$popups = noptin_count_optin_forms( 'popup' );
-		$inpost = noptin_count_optin_forms( 'inpost' );
-		$widget = noptin_count_optin_forms( 'sidebar' );
+		$popups   = noptin_count_optin_forms( 'popup' );
+		$inpost   = noptin_count_optin_forms( 'inpost' );
+		$widget   = noptin_count_optin_forms( 'sidebar' );
+		$slide_in = noptin_count_optin_forms( 'slide_in' );
 
 		include $this->admin_path . 'welcome.php';
 
@@ -662,7 +663,7 @@ class Noptin_Admin {
 		$state  = $_POST['state'];
 		$status = 'draft';
 
-		if ( true === (bool) $state['optinStatus'] ) {
+		if ( true === $state['optinStatus'] || 'true' === $state['optinStatus'] ) {
 			$status = 'publish';
 		}
 
