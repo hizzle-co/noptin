@@ -17,20 +17,31 @@ The fastest GDPR-compliant newsletter plugin. Collect unlimited newsletter subsc
 **The only lightweight Email Optin Form And  Newsletter Plugin For WordPress.**
 ★★★★★<br>
 
-Noptin is the only lightweight WordPress email newsletter plugin. It allows you to:-
+Noptin allows you to:-
 
-- Create unlimited newsletter subscription forms and embed it anywhere using a shortcode or display it in a popup or widget area.
+- Create unlimited newsletter subscription forms.
+- Add your optin forms anywhere on your website using a shortcode.
+- Display your optin forms in a popup or lightbox.
+- Add unlimited newsletter subscription widgets on any widget areas.
 - Collect unlimited newsletter subscribers.
 - Send your email subscribers one-off newsletters.
 - Automatically notify your subscribers everytime you publish a new blog post so that they can keep coming back to your website.
 
-You do all this within WordPress. If you are worried about deliverability, you can install any SMTP plugin of your choice and Noptin will automatically use it to send your newsletters. No configuration needed!
+The best part is that you are able to do all this without leaving your WordPress dashboard. If you are worried about email deliverability, you can install any SMTP plugin of your choice and Noptin will automatically use it to send your newsletters. No configuration needed!
 
-Noptin can scale to thousands of subscribers without hurting your servers. So feel free to use some of the world class conversion optimizarion techniques we offer out of the box. For free.
+= Collect unlimited email subscribers =
+
+Noptin is **so fast** and can scale to thousands of subscribers without hurting your servers.
+
+It's built by marketers. As a result, we put most of our focus on optimizing for speed and the conversion rate. We offer several conversion rate optimization techniques out of the box.
 
 **For example**, you can easily offer content upgrades and lead magnets with your email optin forms to gain more newsletter subscribers.
 
+= Increase your website traffic =
+
 Studies suggest that repeat website visitors are more likely to convert than first-time visitors. That is why Noptin makes it easy to notify your email subscribers every time you publish a new blog post.
+
+This increases your website traffic as your newsletter subscribers login to read your new content.
 
 Let users sign up for your newsletter using any of the following email opt-in form types:-
 
@@ -38,7 +49,7 @@ Let users sign up for your newsletter using any of the following email opt-in fo
 
 These are shown in a popup or lightbox overlay and have a very high conversion rate. You can easily create an email popup form and attach one of our trigger options.
 
-For example, you can display the newsletter optin form when the user is about to leave your website. Also known as Exit Intent trigger.
+**For example**, you can display the newsletter optin form when the user is about to leave your website or a few seconds after they open a specific page.
 
 = Embedded Email Opt-in Forms =
 
