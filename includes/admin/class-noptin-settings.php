@@ -101,6 +101,8 @@ class Noptin_Settings {
 			$state[ $setting ] = get_noptin_option( $setting, '' );
 		}
 
+		$state = array_replace( get_noptin_options(), $state );
+
 		$state['currentTab'] = 'general';
 		$state['saved']      = __( 'Your settings have been saved', 'newsletter-optin-box' );
 		$state['error']      = __( 'Your settings could not be saved.', 'newsletter-optin-box' );

@@ -486,6 +486,10 @@ class Noptin_Vue {
 			$field['attrs'] .= ' multiple="multiple"';
 		}
 
+		if ( empty( $field['tags'] ) ) {
+			$field['attrs'] .= ' tags="no"';
+		}
+
 		if ( empty( $field['options'] ) ) {
 			$field['options'] = array();
 		}

@@ -814,7 +814,7 @@ class Noptin_Admin {
 		$sql = "SELECT *
                     FROM $table
 					$extra_sql
-                    ORDER BY date_created DESC
+                    ORDER BY date_created DESC, id DESC
 					LIMIT $offset, $limit";
 
 		return $wpdb->get_results( $sql );

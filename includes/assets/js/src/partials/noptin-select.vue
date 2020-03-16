@@ -7,14 +7,21 @@
 <script>
 
 module.exports = {
-	props: ['value'],
+	props: ['value','tags'],
 
 	mounted () {
+
+			let tags = this.tags == 'yes'
 
 			jQuery(this.$el)
 
 				// init select2
-				.select2({ width: 'resolve' })
+				.select2(
+					{ 
+						width: 'resolve',
+						tags
+					}
+				)
 
 				//Sync the current value
 				.val(this.value)

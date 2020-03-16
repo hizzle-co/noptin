@@ -388,9 +388,9 @@ class Noptin_Form_Editor {
 	 * Returns integration settings fields
 	 */
 	private function get_integration_fields() {
-		return array(
+		$fields = array(
 
-			'mailchimp'  => array(
+			'mailchimp'    => array(
 				'el'       => 'panel',
 				'title'    => 'Mailchimp',
 				'id'       => 'mailchimp',
@@ -400,6 +400,22 @@ class Noptin_Form_Editor {
 						'content' => sprintf(
 							esc_html__( 'Install the %s to connect your mailchimp account.', 'newsletter-optin-box' ),
 							sprintf( '<a target="_blank" href="https://noptin.com/product/mailchimp/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> MailChimp addon</a>', get_home_url() )
+						),
+						'style'   => 'color:#F44336;',
+					),
+				),
+			),
+			
+			'campaign_monitor' => array(
+				'el'       => 'panel',
+				'title'    => 'Campaign Monitor',
+				'id'       => 'campaign_monitor',
+				'children' => array(
+					'campaign_monitor' => array(
+						'el'      => 'paragraph',
+						'content' => sprintf(
+							esc_html__( 'Install the %s to connect your Campaign Monitor account.', 'newsletter-optin-box' ),
+							sprintf( '<a target="_blank" href="https://noptin.com/product/campaign-monitor/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s">Campaign Monitor addon</a>', get_home_url() )
 						),
 						'style'   => 'color:#F44336;',
 					),
@@ -422,17 +438,16 @@ class Noptin_Form_Editor {
 				),
 			),
 
-			
-			'campaign_monitor' => array(
+			'drip'         => array(
 				'el'       => 'panel',
-				'title'    => 'Campaign Monitor',
-				'id'       => 'campaign_monitor',
+				'title'    => 'Drip',
+				'id'       => 'drip',
 				'children' => array(
-					'campaign_monitor' => array(
+					'drip'        => array(
 						'el'      => 'paragraph',
 						'content' => sprintf(
-							esc_html__( 'Install the %s to connect your Campaign Monitor account.', 'newsletter-optin-box' ),
-							sprintf( '<a target="_blank" href="https://noptin.com/product/campaign-monitor/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s">Campaign Monitor addon</a>', get_home_url() )
+							esc_html__( 'Install the %s to connect your Drip account.', 'newsletter-optin-box' ),
+							sprintf( '<a target="_blank" href="https://noptin.com/product/drip/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s">Drip addon</a>', get_home_url() )
 						),
 						'style'   => 'color:#F44336;',
 					),
@@ -440,8 +455,10 @@ class Noptin_Form_Editor {
 			),
 
 		);
-	}
 
+		ksort( $fields );
+		return $fields;
+	}
 
 	/**
 	 * Returns design settings fields
