@@ -366,7 +366,7 @@ class Noptin_Post_Types {
 	public function apply_custom_filters( $query ) {
 
 		// Make sure this is our query.
-		if ( ! is_admin() || ! $query->is_main_query() || 'noptin-form' !== $query->query['post_type'] ) {
+		if ( ! is_admin() || ! $query->is_main_query() || empty( $query->query['post_type'] ) || 'noptin-form' !== $query->query['post_type'] ) {
 			return $query;
 		}
 

@@ -188,7 +188,7 @@ class Noptin_Admin {
 			$page = $_GET['page'];
 		}
 
-		if ( ! empty( $current_screen->post_type ) && in_array( $pagenow, noptin_parse_list( 'post.php post-new.php' ), true ) ) {
+		if ( ! empty( $current_screen->post_type ) ) {
 			$page = $current_screen->post_type;
 		}
 
@@ -234,11 +234,18 @@ class Noptin_Admin {
 		// Pass variables to our js file, e.g url etc.
 		$current_user = wp_get_current_user();
 		$params       = array(
-			'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-			'api_url'     => get_home_url( null, 'wp-json/wp/v2/' ),
-			'nonce'       => wp_create_nonce( 'noptin_admin_nonce' ),
-			'icon'        => $this->assets_url . 'images/checkmark.png',
-			'admin_email' => sanitize_email( $current_user->user_email ),
+			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+			'api_url'        => get_home_url( null, 'wp-json/wp/v2/' ),
+			'nonce'          => wp_create_nonce( 'noptin_admin_nonce' ),
+			'icon'           => $this->assets_url . 'images/checkmark.png',
+			'admin_email'    => sanitize_email( $current_user->user_email ),
+			'donwload_forms' => add_query_arg(
+				array(
+					'action'      => 'noptin_download_forms',
+					'admin_nonce' => wp_create_nonce( 'noptin_admin_nonce' ),
+				),
+				admin_url( 'admin-ajax.php' )
+			),
 		);
 
 		// localize and enqueue the script with all of the variable inserted.

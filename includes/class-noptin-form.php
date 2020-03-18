@@ -41,7 +41,7 @@ class Noptin_Form {
 
 		// If this is an instance of the class...
 		if ( $form instanceof Noptin_Form ) {
-			$this->init( $form->data );
+			$this->init( $form->get_all_data() );
 			return;
 		}
 
@@ -290,7 +290,7 @@ class Noptin_Form {
 				continue;
 			}
 
-			if ( empty( $defaults[ $key ] ) || ! is_array( $defaults[ $key ] ) ) {
+			if ( ! isset( $defaults[ $key ] ) || ! is_array( $defaults[ $key ] ) ) {
 				$return[ $key ] = $value;
 				continue;
 			}
@@ -388,12 +388,12 @@ class Noptin_Form {
 	 * @since 1.0.5
 	 * @access public
 	 */
-	public function save() {
+	public function save( $status = false ) {
 
 		if ( isset( $this->id ) ) {
-			$id = $this->update();
+			$id = $this->update( $status );
 		} else {
-			$id = $this->create();
+			$id = $this->create( $status );
 		}
 
 		if ( is_wp_error( $id ) ) {
@@ -414,13 +414,15 @@ class Noptin_Form {
 	 *
 	 * @return mixed True on success. WP_Error on failure
 	 */
-	private function create() {
+	private function create( $status = false ) {
 
 		// Prepare the args...
 		$args = $this->get_post_array();
 		unset( $args['ID'] );
 
-		$args['post_status'] = 'draft';
+		if ( ! empty( $status ) ) {
+			$args['post_status'] = $status;
+		}
 
 		// ... then create the form.
 		$id = wp_insert_post( $args, true );
@@ -431,7 +433,8 @@ class Noptin_Form {
 		}
 
 		// Set the new id.
-		$this->id = $id;
+		$this->id         = $id;
+		$this->data['id'] = $id;
 
 		$state = $this->data;
 		unset( $state['optinHTML'] );
@@ -450,10 +453,14 @@ class Noptin_Form {
 	 *
 	 * @return mixed True on success. WP_Error on failure
 	 */
-	private function update() {
+	private function update( $status = false ) {
 
 		// Prepare the args...
 		$args = $this->get_post_array();
+
+		if ( ! empty( $status ) ) {
+			$args['post_status'] = $status;
+		}
 
 		// ... then update the form.
 		$id = wp_update_post( $args, true );
@@ -509,7 +516,7 @@ class Noptin_Form {
 	public function duplicate() {
 		$this->optinName = $this->optinName . ' (duplicate)';
 		$this->id        = null;
-		return $this->save();
+		return $this->save( 'draft' );
 	}
 
 	/**

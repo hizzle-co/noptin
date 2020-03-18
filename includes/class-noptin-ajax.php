@@ -28,6 +28,9 @@ class Noptin_Ajax {
 		// Download subscribers.
 		add_action( 'wp_ajax_noptin_download_subscribers', array( $this, 'download_subscribers' ) );
 
+		// Download forms.
+		add_action( 'wp_ajax_noptin_download_forms', array( $this, 'download_forms' ) );
+
 		// Save settings.
 		add_action( 'wp_ajax_noptin_save_options', array( $this, 'save_options' ) );
 
@@ -42,6 +45,9 @@ class Noptin_Ajax {
 
 		// Import subscribers.
 		add_action( 'wp_ajax_noptin_import_subscribers', array( $this, 'import_subscribers' ) );
+
+		// Import forms.
+		add_action( 'wp_ajax_noptin_import_forms', array( $this, 'import_forms' ) );
 
 		// Delete subscribers.
 		add_action( 'wp_ajax_noptin_delete_all_subscribers', array( $this, 'delete_all_subscribers' ) );
@@ -364,6 +370,47 @@ class Noptin_Ajax {
 			'imported'	=> $imported,
 			'skipped'	=> $skipped,
 		) );
+		exit;
+
+	}
+
+	/**
+	 * Imports forms
+	 *
+	 * @access      public
+	 * @since       1.2.6
+	 * @return      void
+	 */
+	public function import_forms() {
+
+		// Ensure the nonce is valid...
+		check_ajax_referer( 'noptin_admin_nonce' );
+
+		// ... and that the user can import subscribers.
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			wp_die( -1, 403 );
+		}
+
+		// Maybe abort early.
+		if ( ! isset( $_POST['forms'] ) ) {
+			wp_die( -1, 400 );
+		}
+
+		// Prepare forms.
+		$forms = json_decode( stripslashes_deep( $_POST['forms'] ), true );
+
+		if ( ! is_array( $forms ) ) {
+			_e( 'Invalid export file', 'newsletter-optin-box' );
+			exit;
+		}
+
+		foreach ( $forms as $form ) {
+			$form['id'] = null;
+			$form       = new Noptin_Form( $form );
+			$form->save();
+		}
+
+		wp_send_json_success( true );
 		exit;
 
 	}
@@ -761,6 +808,57 @@ class Noptin_Ajax {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_download_subscribers', $this );
+
+		exit; // This is important.
+	}
+
+	/**
+	 * Downloads optin forms
+	 *
+	 * @access      public
+	 * @since       1.2.6
+	 */
+	public function download_forms() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( -1, 403 );
+		}
+
+		// Check nonce.
+		$nonce = $_GET['admin_nonce'];
+		if ( ! wp_verify_nonce( $nonce, 'noptin_admin_nonce' ) ) {
+			_e ( 'Reload the page and try again.', 'newsletter-optin-box' );
+			exit;
+		}
+
+		/**
+		 * Runs before downloading opt-in forms.
+		 *
+		 */
+		do_action( 'noptin_before_download_forms' );
+
+		$output = fopen( 'php://output', 'w' ) or die( 'Unsupported server' );
+
+		// Let the browser know what content we're streaming and how it should save the content.
+		$time = time();
+		header( "Content-Type:application/json" );
+		header( "Content-Disposition:attachment;filename=noptin-forms-$time.json" );
+
+		$forms = array();
+
+		foreach( get_noptin_optin_forms() as $form ) {
+			$forms[] = $form->get_all_data();
+		}
+
+		echo wp_json_encode( wp_unslash( $forms ) );
+
+		fclose( $output );
+
+		/**
+		 * Runs after after downloading opt-in forms.
+		 *
+		 */
+		do_action( 'noptin_after_download_forms' );
 
 		exit; // This is important.
 	}

@@ -877,27 +877,22 @@ function noptin_duplicate_optin_form( $id ) {
 /**
  * Returns all optin forms.
  *
- * @since 1.0.4
- * @return array
+ * @since 1.2.6
+ * @return Noptin_Form[]
  */
-function noptin_get_optin_forms( $meta_key = '', $meta_value = '', $compare = '=' ) {
-	$args = array(
+function get_noptin_optin_forms( array $args = array() ) {
+	$defaults = array(
 		'numberposts' => -1,
-		'post_type'   => 'noptin-form',
 		'post_status' => array( 'draft', 'publish' ),
 	);
 
-	if ( $meta_key ) {
-		$args['meta_query'] = array(
-			array(
-				'key'     => $meta_key,
-				'value'   => $meta_value,
-				'compare' => $compare,
-			),
-		);
+	$args              = wp_parse_args( $args, $defaults );
+	$args['post_type'] = 'noptin-form';
+	$args['fields']    = 'ids';
+	$forms             = get_posts( $args );
 
-	}
-	return get_posts( $args );
+	return array_map( 'noptin_get_optin_form', $forms );
+
 }
 
 /**
