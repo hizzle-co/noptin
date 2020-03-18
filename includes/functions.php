@@ -604,6 +604,11 @@ function add_noptin_subscriber( $fields ) {
 
 	setcookie( 'noptin_email_subscribed', '1', time() + ( 86400 * 30 ), COOKIEPATH, COOKIE_DOMAIN );
 
+	$cookie = get_noptin_option( 'subscribers_cookie' );
+	if ( ! empty( $cookie ) && is_string( $cookie ) ) {
+		setcookie( $cookie, '1', time() + ( 86400 * 30 ), COOKIEPATH, COOKIE_DOMAIN );
+	}
+
 	do_action( 'noptin_insert_subscriber', $id, $fields );
 
 	return $id;
@@ -925,8 +930,17 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
-	if ( ! empty( $_COOKIE['noptin_email_subscribed'] ) && get_noptin_option( 'hide_from_subscribers' ) ) {
-		return false;
+	if ( get_noptin_option( 'hide_from_subscribers' ) ) {
+
+		if ( ! empty( $_COOKIE['noptin_email_subscribed'] ) ) {
+			return false;
+		}
+
+		$cookie = get_noptin_option( 'subscribers_cookie' );
+		if ( ! empty( $cookie ) && is_string( $cookie ) && ! empty( $_COOKIE[ $cookie ] ) ) {
+			return false;
+		}
+
 	}
 
 	if ( ! empty( $_REQUEST['noptin_hide'] ) ) {

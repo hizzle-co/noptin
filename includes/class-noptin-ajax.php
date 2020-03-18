@@ -407,7 +407,7 @@ class Noptin_Ajax {
 		foreach ( $forms as $form ) {
 			$form['id'] = null;
 			$form       = new Noptin_Form( $form );
-			$form->save();
+			$form->create();
 		}
 
 		wp_send_json_success( true );

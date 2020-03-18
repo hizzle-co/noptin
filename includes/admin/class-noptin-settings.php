@@ -176,6 +176,15 @@ class Noptin_Settings {
 				'description' => __( 'Hide opt-in forms and methods from existing subscribers.', 'newsletter-optin-box' ),
 			),
 
+			'subscribers_cookie' => array(
+				'el'          => 'input',
+				'type'        => 'text',
+				'section'     => 'general',
+				'label'       => __( 'Subscribers Cookie', 'newsletter-optin-box' ),
+				'placeholder' => '',
+				'description' => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
+			),
+
 			'from_email'            => array(
 				'el'          => 'input',
 				'section'     => 'sender',
@@ -241,7 +250,7 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'label'       => __( 'Default Success Message', 'newsletter-optin-box' ),
 				'placeholder' => esc_attr__( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
-				'description' => __( 'This is the message shown to people after they successfully sign up for your newsletter. It can be overidden for every form you create in the Opt-In Forms Editor.', 'newsletter-optin-box' ),
+				'description' => __( 'This is the message shown to people after they successfully sign up for your newsletter.', 'newsletter-optin-box' ),
 			),
 
 			'ipgeolocation_io_api_key'       => array(
@@ -255,6 +264,7 @@ class Noptin_Settings {
 					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
 				)
 			),
+
 		);
 
 		/**
