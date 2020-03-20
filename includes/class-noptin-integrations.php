@@ -32,6 +32,11 @@ class Noptin_Integrations {
 
 		}
 
+		// Ninja forms integration.
+		if ( class_exists( 'Ninja_Forms' ) ) {
+			include plugin_dir_path( __FILE__ ) . 'class-noptin-ninja-forms.php';
+		}
+
 	}
 
 	/**

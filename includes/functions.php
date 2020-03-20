@@ -595,7 +595,7 @@ function add_noptin_subscriber( $fields ) {
 	// Insert additional meta data.
 	foreach ( $fields as $field => $value ) {
 
-		if ( isset( $database_fields[ $field ] ) || 'name' === $field ) {
+		if ( isset( $database_fields[ $field ] ) || 'name' === $field || 'integration_data' === $field ) {
 			continue;
 		}
 
