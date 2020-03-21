@@ -24,7 +24,9 @@ class Noptin_Integrations {
 			add_action( 'comment_post', array( $this, 'subscribe_commentor' ) );
 
 			// ... or when registering.
-			add_action( 'register_form', array( $this, 'register_form' ) );
+			add_action( 'register_form', array( $this, 'register_form' ), 20 );
+			add_action( 'um_after_register_fields', array( $this, 'register_form' ), 20 );
+			add_action( 'woocommerce_register_form', array( $this, 'register_form' ), 20 );
 			add_action( 'user_register', array( $this, 'subscribe_registered_user' ) );
 
 			// Comment prompts.
