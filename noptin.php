@@ -297,6 +297,8 @@ class Noptin {
 			include "{$plugin_path}includes/$file_name";
 		} elseif ( file_exists( "{$plugin_path}includes/admin/$file_name" ) ) {
 			include "{$plugin_path}includes/admin/$file_name";
+		} elseif ( file_exists( "{$plugin_path}includes/integrations/$file_name" ) ) {
+			include "{$plugin_path}includes/integrations/$file_name";
 		}
 
 	}

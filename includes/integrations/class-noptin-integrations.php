@@ -34,9 +34,26 @@ class Noptin_Integrations {
 
 		// Ninja forms integration.
 		if ( class_exists( 'Ninja_Forms' ) ) {
-			include plugin_dir_path( __FILE__ ) . 'class-noptin-ninja-forms.php';
+			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-ninja-forms.php';
 		}
 
+		// WPForms integration.
+		add_action( 'wpforms_loaded', array( $this, 'load_wpforms_integration' ) );
+		if ( did_action( 'wpforms_loaded' ) ) {
+			$this->load_wpforms_integration();
+		}
+
+	}
+
+	/**
+	 * Loads WPForms integration
+	 *
+	 * @access      public
+	 * @since       1.2.6
+	 */
+	public function load_wpforms_integration() {
+		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-wpforms.php';
+		new Noptin_WPForms();
 	}
 
 	/**

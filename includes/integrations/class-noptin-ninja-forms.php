@@ -107,6 +107,8 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 
 		$noptin_fields['integration_data'] = $data;
 
+		$noptin_fields = apply_filters( 'noptin_ninja_forms_integration_new_subscriber_fields', $noptin_fields );
+
 		add_noptin_subscriber( $noptin_fields );
 
 		return $data;
