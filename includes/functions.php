@@ -707,6 +707,20 @@ function get_noptin_subscriber_by_email( $email ) {
 }
 
 /**
+ * Retrieves a subscriber id by email
+ *
+ * @access  public
+ * @since   1.2.6
+ */
+function get_noptin_subscriber_id_by_email( $email ) {
+	global $wpdb;
+
+	$table = get_noptin_subscribers_table_name();
+	return $wpdb->get_col( $wpdb->prepare( "SELECT id FROM $table WHERE email=%s;", $email ) );
+
+}
+
+/**
  * Deletes a subscriber
  *
  * @access  public

@@ -607,8 +607,14 @@ $noptin_color: #ff6f00;
 }
 
 .comment-form-noptin input,
-.register-form-noptin input {
+.register-form-noptin input,
+.noptin-integration-subscription-checkbox input {
 	margin-right: 8px;
+}
+
+#noptin_woocommerce_optin_checkbox label {
+	font-weight: inherit;
+	font-size: inherit;
 }
 
 .wp-block-noptin-email-optin{

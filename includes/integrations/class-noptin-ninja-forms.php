@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) || ! class_exists( 'NF_Abstracts_Action' )  ) {
 }
 
 /**
- * Handles integrations with other Ninja Forms
+ * Handles integrations with Ninja Forms
  *
  * @since       1.2.6
  */

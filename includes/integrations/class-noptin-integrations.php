@@ -13,9 +13,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Noptin_Integrations {
 
 	/**
+	 * @var Noptin_WooCommerce The Noptin and WooCommerce integration instance.
+	 */
+	public $woocommerce = null;
+
+	/**
 	 * Class Constructor.
 	 */
 	public function __construct() {
+
+		// The base class for most integrations.
+		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-integration.php';
 
 		if ( noptin_should_show_optins() ) {
 
@@ -43,6 +51,12 @@ class Noptin_Integrations {
 		add_action( 'wpforms_loaded', array( $this, 'load_wpforms_integration' ) );
 		if ( did_action( 'wpforms_loaded' ) ) {
 			$this->load_wpforms_integration();
+		}
+
+		// WooCommerce integration.
+		if ( class_exists( 'WooCommerce' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-woocommerce.php';
+			$this->woocommerce = new Noptin_WooCommerce();
 		}
 
 	}
