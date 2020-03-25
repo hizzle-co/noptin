@@ -668,6 +668,11 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 
 	// Insert additional meta data.
 	foreach ( $fields as $field => $value ) {
+
+		if ( 'name' === $field || 'integration_data' === $field ) {
+			continue;
+		}
+
 		update_noptin_subscriber_meta( $subscriber_id, $field, $value );
 	}
 

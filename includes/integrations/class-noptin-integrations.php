@@ -13,9 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Noptin_Integrations {
 
 	/**
-	 * @var Noptin_WooCommerce The Noptin and WooCommerce integration instance.
+	 * @var array Available Noptin integrations.
 	 */
-	public $woocommerce = null;
+	public $integrations = array();
+
+	/**
+	 * @var Noptin_EDD The Noptin and EDD integration instance.
+	 */
+	public $edd = null;
 
 	/**
 	 * Class Constructor.
@@ -24,6 +29,7 @@ class Noptin_Integrations {
 
 		// The base class for most integrations.
 		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-integration.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-ecommerce-integration.php';
 
 		if ( noptin_should_show_optins() ) {
 
@@ -56,7 +62,13 @@ class Noptin_Integrations {
 		// WooCommerce integration.
 		if ( class_exists( 'WooCommerce' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-woocommerce.php';
-			$this->woocommerce = new Noptin_WooCommerce();
+			$this->integrations['woocommerce'] = new Noptin_WooCommerce();
+		}
+
+		// EDD integration.
+		if ( class_exists( 'Easy_Digital_Downloads' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-edd.php';
+			$this->edd = new Noptin_EDD();
 		}
 
 	}

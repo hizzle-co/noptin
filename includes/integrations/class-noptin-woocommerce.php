@@ -10,38 +10,28 @@ if ( ! defined( 'ABSPATH' )  ) {
  *
  * @since       1.2.6
  */
-class Noptin_WooCommerce extends Noptin_Abstract_Integration {
+class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 	/**
-	 * Init variables.
+	 * @var string Slug, used as an unique identifier for this integration.
+	 * @since 1.2.6
 	 */
-	public function before_initialize() {
-
-		$this->slug = 'woocommerce';
-		$this->name = 'WooCommerce';
-
-	}
+	public $slug = 'woocommerce';
 
 	/**
-	 * Setup hooks.
+	 * @var string Name of this integration.
+	 * @since 1.2.6
+	 */
+	public $name = 'WooCommerce';
+
+	/**
+	 * Setup hooks in case the integration is enabled.
+	 *
+	 * @since 1.2.6
 	 */
 	public function initialize() {
 
-		// Display a subscription checkbox.
-		$checkbox_position = get_noptin_option( 'noptin_woocommerce_integration_checkout_position' );
-		if ( ! empty( $checkbox_position ) ) {
-
-			if ( 'after_email_field' === $checkbox_position ) {
-				add_filter( 'woocommerce_form_field_email', array( $this, 'add_checkbox_after_email_field' ), 100, 2 );
-			} else {
-				add_action( $checkbox_position, array( $this, 'output_checkbox' ), 20 );
-			}
-
-			add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
-
-		}
-
-		add_action( 'woocommerce_checkout_order_processed', array( $this, 'subscribe_from_woocommerce_checkout' ) );
+		add_action( 'woocommerce_checkout_order_processed', array( $this, 'add_order_subscriber' ) );
 		add_action( 'woocommerce_checkout_order_processed', array( $this, 'checkout_processed' ), 20 );
 		add_action( 'woocommerce_order_status_completed', array( $this, 'order_completed' ), 20 );
 		add_action( 'woocommerce_payment_complete', array( $this, 'order_paid' ), 20 );
@@ -50,40 +40,38 @@ class Noptin_WooCommerce extends Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Integration options.
+	 * Hooks the display checkbox code.
+	 *
+	 * @since 1.2.6
+	 * @param string $checkbox_position The checkbox position to display the checkbox.
 	 */
-	public function get_options( $options ) {
+	public function hook_show_checkbox_code( $checkbox_position ) {
 
-		$options = $this->add_enable_integration_option( $options );
+		if ( 'after_email_field' === $checkbox_position ) {
+			add_filter( 'woocommerce_form_field_email', array( $this, 'add_checkbox_after_email_field' ), 100, 2 );
+		} else {
+			add_action( $checkbox_position, array( $this, 'output_checkbox' ), 20 );
+		}
 
-		$options = $this->add_autosubscribe_integration_option( 
-			$options,
-			null,
-			__( 'Check to display a subscription checkbox instead of automatically subscribing new customers.', 'newsletter-optin-box' ),
-			'false'
+		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
+		add_filter( 'noptin_woocommerce_integration_subscription_checkbox_attributes', array( $this, 'add_woocommerce_class_to_checkbox' ) );
+	}
+
+	/**
+	 * Returns an array of subscription checkbox positions.
+	 *
+	 * @since 1.2.6
+	 * @return array
+	 */
+	public function checkbox_positions() {
+		return array(
+			'after_email_field'                           => __( 'After email field', 'newsletter-optin-box' ),
+			'woocommerce_checkout_billing'                => __( 'After billing details', 'newsletter-optin-box' ),
+			'woocommerce_checkout_shipping'               => __( 'After shipping details', 'newsletter-optin-box' ),
+			'woocommerce_checkout_after_customer_details' => __( 'After customer details', 'newsletter-optin-box' ),
+			'woocommerce_review_order_before_submit'      => __( 'Before submit button', 'newsletter-optin-box' ),
+			'woocommerce_after_order_notes'               => __( 'After order notes', 'newsletter-optin-box' ),
 		);
-
-		$options['noptin_woocommerce_integration_checkout_position'] = array(
-            'el'                    => 'select',
-            'section'		        => 'integrations',
-            'label'                 => __( 'Checkbox position', 'newsletter-optin-box' ),
-			'description'           => __( 'Where should we add a newsletter subscription checkbox?', 'newsletter-optin-box' ),
-			'restrict'              => 'noptin_enable_woocommerce_integration && noptin_woocommerce_integration_manual_subscription',
-			'options'               => array(
-				'after_email_field'                           => __( 'After email field', 'newsletter-optin-box' ),
-				'woocommerce_checkout_billing'                => __( 'After billing details', 'newsletter-optin-box' ),
-				'woocommerce_checkout_shipping'               => __( 'After shipping details', 'newsletter-optin-box' ),
-				'woocommerce_checkout_after_customer_details' => __( 'After customer details', 'newsletter-optin-box' ),
-				'woocommerce_review_order_before_submit'      => __( 'Before submit button', 'newsletter-optin-box' ),
-				'woocommerce_after_order_notes'               => __( 'After order notes', 'newsletter-optin-box' ),
-			),
-			'placeholder'           => __( 'Do not subscribe new customers', 'newsletter-optin-box' ),
-		);
-
-		$options = $this->add_checkbox_message_integration_option( $options );
-		$options[ $this->get_checkbox_message_integration_option_name() ]['restrict'] .= ' && noptin_woocommerce_integration_checkout_position';
-
-		return $options;
 	}
 
 	/**
@@ -147,28 +135,15 @@ class Noptin_WooCommerce extends Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Get a string of attributes for the checkbox element.
+	 * Adds the woocommerce checkbox class to the subscription checkbox.
 	 *
-	 * @return string
+	 * @param array $attributes An array of checkbox attributes.
+	 * @since 1.2.6
+	 * @return array
 	 */
-	protected function get_checkbox_attributes() {
-
-		$attributes = array(
-			'type'  => 'checkbox',
-			'name'  => 'noptin-subscribe',
-			'value' => '1',
-			'class' => 'input-checkbox',
-		);
-		$attributes = (array) apply_filters( 'noptin_integration_subscription_checkbox_attributes', $attributes, $this );
-
-		$attributes = (array) apply_filters( "noptin_{$this->slug}_integration_subscription_checkbox_attributes", $attributes, $this );
-
-		$string = '';
-		foreach ( $attributes as $key => $value ) {
-			$string .= sprintf( '%s="%s"', $key, esc_attr( $value ) );
-		}
-
-		return $string;
+	public function add_woocommerce_class_to_checkbox( $attributes ) {
+		$attributes['class'] = 'input-checkbox';
+		return $attributes;
 	}
 
 	/**
@@ -179,29 +154,74 @@ class Noptin_WooCommerce extends Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Subscribes a new customer after their order is processed.
-	 * 
+	 * Returns the email address of the customer associated with an order.
+	 *
 	 * @param int $order_id The order id.
-	 * @return boolean
+	 * @since 1.2.6
+	 * @return string
 	 */
-	public function subscribe_from_woocommerce_checkout( $order_id ) {
+	public function get_order_customer_email( $order_id ) {
 
-		// Should we process the subsriber?
-		if ( ! $this->triggered( $order_id ) ) {
-			return false;
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			return '';
 		}
+
+		if ( method_exists( $order, 'get_billing_email' ) ) {
+			return $order->get_billing_email();
+		}
+
+		return $order->billing_email;
+
+	}
+
+	/**
+	 * Returns the id of the customer associated with an order.
+	 *
+	 * @param int $order_id The order id.
+	 * @since 1.2.6
+	 * @return int
+	 */
+	public function get_order_customer_user_id( $order_id ) {
+
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			return 0;
+		}
+
+		if ( method_exists( $order, 'get_customer_id' ) ) {
+			return $order->get_customer_id();
+		}
+
+		return $order->customer_id;
+
+	}
+
+	/**
+	 * Returns order customer details
+	 *
+	 * @param int $order_id The order id.
+	 * @param bool $existing_subscriber Whether this is an existing subscriber or not.
+	 * @since 1.2.6
+	 * @return array
+	 */
+	public function get_order_customer_details( $order_id, $existing_subscriber = false ) {
 
 		// Fetch the order.
 		$order = wc_get_order( $order_id );
 		if ( empty( $order ) ) {
-			return false;
+			return array();
 		}
 
-		// Prepare subscriber details.
-		$noptin_fields = array(
-			'_subscriber_via' => 'woocommerce_checkout',
-			'order_id'        => $order_id,
-		);
+		$noptin_fields = array();
+
+		if ( ! $existing_subscriber ) {
+			$noptin_fields = array(
+				'_subscriber_via' => 'woocommerce_checkout',
+				'order_id'        => $order_id,
+			);
+		}
+		
 
 		if ( method_exists( $order, 'get_billing_email' ) ) {
 			$noptin_fields['email']             = $order->get_billing_email();
@@ -240,89 +260,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Integration {
 			$noptin_fields['user_agent'] = $order->customer_user_agent;
 		}
 
-		$this->add_subscriber( array_filter( $noptin_fields ), $order );
-
-	}
-
-	/**
-	 * Returns a subcriber id responsible for an order.
-	 * 
-	 * @param int $order_id The order id.
-	 * @return int|null The subscriber id.
-	 */
-	public function get_order_subscriber( $order_id ) {
-
-		// Fetch the order.
-		$order = wc_get_order( $order_id );
-		if ( empty( $order ) ) {
-			return null;
-		}
-
-		// (Maybe) Subscriber's email address.
-		if ( method_exists( $order, 'get_billing_email' ) ) {
-			$email = $order->get_billing_email();
-		} else {
-			$email = $order->billing_email;
-		}
-
-		return get_noptin_subscriber_id_by_email( $email );
-
-	}
-
-	/**
-	 * Fires a specific hook based on an order status.
-	 * 
-	 * @param int $order_id The order id.
-	 * @param int|null $subscriber_id The order subscriber.
-	 */
-	public function fire_order_hook( $status, $order_id, $subscriber_id ) {
-
-		// Only fired when there is actually a subcsriber.
-		if ( $subscriber_id ) {
-			do_action( "noptin_woocommerce_integration_order_$status", $order_id, $subscriber_id );
-			do_action( "noptin_woocommerce_integration_order", $status, $order_id, $subscriber_id );
-		}
-
-	}
-
-	/**
-	 * Fired when an order is processed.
-	 * 
-	 * @param int $order_id The order id.
-	 */
-	public function checkout_processed( $order_id ) {
-		$subscriber_id = $this->get_order_subscriber( $order_id );
-		$this->fire_order_hook( 'processed', $order_id, $subscriber_id );
-	}
-
-	/**
-	 * Fired when an order is completed.
-	 * 
-	 * @param int $order_id The order id.
-	 */
-	public function order_completed( $order_id ) {
-		$subscriber_id = $this->get_order_subscriber( $order_id );
-		$this->fire_order_hook( 'completed', $order_id, $subscriber_id );
-	}
-
-	/**
-	 * Fired when an order is paid for.
-	 * 
-	 * @param int $order_id The order id.
-	 */
-	public function order_paid( $order_id ) {
-		$subscriber_id = $this->get_order_subscriber( $order_id );
-		$this->fire_order_hook( 'paid', $order_id, $subscriber_id );
-	}
-
-	/**
-	 * Fired when an order is refunded.
-	 * 
-	 * @param int $order_id The order id.
-	 */
-	public function order_refunded( $order_id ) {
-		$subscriber_id = $this->get_order_subscriber( $order_id );
-		$this->fire_order_hook( 'refunded', $order_id, $subscriber_id );
+		return array_filter( $noptin_fields );
 	}
 
 }
