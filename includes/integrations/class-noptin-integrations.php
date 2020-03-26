@@ -18,11 +18,6 @@ class Noptin_Integrations {
 	public $integrations = array();
 
 	/**
-	 * @var Noptin_EDD The Noptin and EDD integration instance.
-	 */
-	public $edd = null;
-
-	/**
 	 * Class Constructor.
 	 */
 	public function __construct() {
@@ -36,12 +31,6 @@ class Noptin_Integrations {
 			// Maybe ask users to subscribe to the newsletter after commenting...
 			add_filter( 'comment_form_submit_field', array( $this, 'comment_form' ) );
 			add_action( 'comment_post', array( $this, 'subscribe_commentor' ) );
-
-			// ... or when registering.
-			add_action( 'register_form', array( $this, 'register_form' ), 20 );
-			add_action( 'um_after_register_fields', array( $this, 'register_form' ), 20 );
-			add_action( 'woocommerce_register_form', array( $this, 'register_form' ), 20 );
-			add_action( 'user_register', array( $this, 'subscribe_registered_user' ) );
 
 			// Comment prompts.
 			add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
@@ -68,8 +57,12 @@ class Noptin_Integrations {
 		// EDD integration.
 		if ( class_exists( 'Easy_Digital_Downloads' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-edd.php';
-			$this->edd = new Noptin_EDD();
+			$this->integrations['edd'] = new Noptin_EDD();
 		}
+
+		// WP Registration form integration.
+		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-wp-registration-form.php';
+		$this->integrations['wp_registration_form'] = new Noptin_WP_Registration_Form();
 
 	}
 
@@ -137,63 +130,6 @@ class Noptin_Integrations {
 
 			if ( ! is_string( add_noptin_subscriber( $fields ) ) ) {
 				do_action( 'noptin_after_add_comment_subscriber' );
-			}
-		}
-
-	}
-
-	/**
-	 * Maybe ask users to users to register on the registration form
-	 *
-	 * @access      public
-	 * @since       1.0.8
-	 * @return      void
-	 */
-	public function register_form() {
-
-		if ( ! get_noptin_option( 'register_form' ) ) {
-			return;
-		}
-
-		$text = get_noptin_option( 'register_form_msg' );
-		if ( empty( $text ) ) {
-			$text = __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts.', 'newsletter-optin-box' );
-		}
-
-		echo "<label class='register-form-noptin'><input name='noptin-subscribe' type='checkbox' />$text</label>";
-
-	}
-
-	/**
-	 * Maybe subscribe a registered user
-	 *
-	 * @param       int $user_id The id of the newly registered user.
-	 * @access      public
-	 * @since       1.0.8
-	 * @return      void
-	 */
-	public function subscribe_registered_user( $user_id ) {
-
-		if ( ! get_noptin_option( 'register_form' ) ) {
-			return;
-		}
-
-		if ( isset( $_POST['noptin-subscribe'] ) ) {
-
-			$user = get_userdata( $user_id );
-
-			if ( ! $user ) {
-				return;
-			}
-
-			$fields = array(
-				'email'           => $user->user_email,
-				'name'            => $user->display_name,
-				'_subscriber_via' => 'registration',
-			);
-
-			if ( ! is_string( add_noptin_subscriber( $fields ) ) ) {
-				do_action( 'noptin_after_add_registration_subscriber' );
 			}
 		}
 

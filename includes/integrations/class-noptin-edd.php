@@ -29,7 +29,7 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	 * @since 1.2.6
 	 */
 	public function initialize() {
-		add_action( 'edd_complete_purchase', array( $this, 'add_order_subscriber' ), 50 );
+		add_action( 'edd_payment_saved', array( $this, 'add_order_subscriber' ), 50 );
 		add_action( 'edd_complete_purchase', array( $this, 'order_completed' ), 100 );
 		add_action( 'edd_post_refund_payment', array( $this, 'order_refunded' ), 100 );
 	}

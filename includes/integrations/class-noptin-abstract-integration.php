@@ -213,6 +213,7 @@ abstract class Noptin_Abstract_Integration {
 
 		$this->maybe_save_default_value( $option_name, $default );
 
+		$checkbox_positions    = $this->checkbox_positions();
 		$options[$option_name] = array(
             'el'          => 'input',
 			'type'        => 'text',
@@ -220,7 +221,7 @@ abstract class Noptin_Abstract_Integration {
 				'%s && %s && %s',
 				$this->get_enable_integration_option_name(),
 				$this->get_autosubscribe_integration_option_name(),
-				$this->get_checkbox_position_option_name()
+				empty( $checkbox_positions ) ? 1 : $this->get_checkbox_position_option_name()
 			),
             'section'     => 'integrations',
             'label'       => $title,
@@ -393,7 +394,11 @@ abstract class Noptin_Abstract_Integration {
 			);
 		}
 
-		$options[ $this->get_autosubscribe_integration_option_name() ] = array(
+		$option_name = $this->get_autosubscribe_integration_option_name();
+
+		$this->maybe_save_default_value( $option_name, true );
+
+		$options[ $option_name ] = array(
             'type'                  => 'checkbox_alt',
             'el'                    => 'input',
             'section'		        => 'integrations',
@@ -509,17 +514,8 @@ abstract class Noptin_Abstract_Integration {
 	 */
 	function get_checkbox_markup( array $html_attrs = array() ) {
 
-		// Do not display a checkbox if auto_subscribe is enabled.
-		$show_checkbox = $this->can_show_checkbox();
-
-		// Filters whether to show the checkbox for all integrations.
-		$show_checkbox = (bool) apply_filters( 'noptin_integration_show_subscription_checkbox', $show_checkbox, $this->slug, $this );
-
-		// Filters whether to show the checkbox for a specific integration.
-		$show_checkbox = (bool) apply_filters( "noptin_{$this->slug}_integration_show_subscription_checkbox", $show_checkbox, $this );
-
 		// Abort if we're not displaying a checkbox.
-		if ( ! $show_checkbox ) {
+		if ( ! $this->can_show_checkbox() ) {
 			return '';
 		}
 
@@ -607,7 +603,17 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 */
 	function can_show_checkbox() {
-		return noptin_should_show_optins() && ! $this->auto_subscribe();
+
+		$show_checkbox = noptin_should_show_optins() && ! $this->auto_subscribe();
+
+		// Filters whether to show the checkbox for all integrations.
+		$show_checkbox = (bool) apply_filters( 'noptin_integration_show_subscription_checkbox', $show_checkbox, $this->slug, $this );
+
+		// Filters whether to show the checkbox for a specific integration.
+		$show_checkbox = (bool) apply_filters( "noptin_{$this->slug}_integration_show_subscription_checkbox", $show_checkbox, $this );
+
+		return $show_checkbox;
+
 	}
 
 	/**

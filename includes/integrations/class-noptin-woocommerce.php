@@ -116,7 +116,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	function before_checkbox_wrapper() {
 
-		if ( 'after_email_field' === get_noptin_option( 'noptin_woocommerce_integration_checkout_position' ) ) {
+		if ( 'after_email_field' === $this->get_checkbox_position() ) {
 			echo '<p class="form-row form-row-wide" id="noptin_woocommerce_optin_checkbox">';
 		}
 
@@ -128,7 +128,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	function after_checkbox_wrapper() {
 
-		if ( 'after_email_field' === get_noptin_option( 'noptin_woocommerce_integration_checkout_position' ) ) {
+		if ( 'after_email_field' === $this->get_checkbox_position() ) {
 			echo '</p>';
 		}
 

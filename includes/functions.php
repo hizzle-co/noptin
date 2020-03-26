@@ -560,7 +560,11 @@ function add_noptin_subscriber( $fields ) {
 		return __( 'Please provide a valid email address', 'newsletter-optin-box' );
 	}
 
-	if ( noptin_email_exists( $fields['email'] ) ) {
+
+	$subscriber_id = get_noptin_subscriber_id_by_email( trim( $fields['email'] ) );
+	if ( ! empty( $subscriber_id ) ) {
+		$fields['active'] = 1;
+		update_noptin_subscriber( $subscriber_id, $fields );
 		return true;
 	}
 
@@ -616,7 +620,7 @@ function add_noptin_subscriber( $fields ) {
 }
 
 /**
- * Updates a WordPress subscriber
+ * Updates a Noptin subscriber
  *
  * @access  public
  * @since   1.2.3
@@ -721,7 +725,7 @@ function get_noptin_subscriber_id_by_email( $email ) {
 	global $wpdb;
 
 	$table = get_noptin_subscribers_table_name();
-	return $wpdb->get_col( $wpdb->prepare( "SELECT id FROM $table WHERE email=%s;", $email ) );
+	return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE email=%s;", $email ) );
 
 }
 

@@ -468,6 +468,10 @@ body.post-type-noptin-form.post-php {
 	padding: 10px;
 }
 
+#noptin-settings-app .noptin-padded {
+	padding-left: 0;
+}
+
 .noptin-fields input[type="text"],
 .noptin-fields input[type="email"] {
 	font-size: 13px;
