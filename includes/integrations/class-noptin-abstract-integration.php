@@ -506,6 +506,26 @@ abstract class Noptin_Abstract_Integration {
 	}
 
 	/**
+	 * Appends a checkbox to a string
+	 *
+	 * @since 1.2.6
+	 * @param string $text The original text
+	 */
+	function append_checkbox( $text ) {
+		return $this->get_checkbox_markup() . $text;
+	}
+
+	/**
+	 * Prepends a checkbox to a string
+	 *
+	 * @since 1.2.6
+	 * @param string $text The original text
+	 */
+	function prepend_checkbox( $text ) {
+		return $text . $this->get_checkbox_markup();
+	}
+
+	/**
 	 * Returns the subscription checkbox markup.
 	 *
 	 * @param array $html_attrs An array of HTML attributes.

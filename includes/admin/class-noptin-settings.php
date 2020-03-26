@@ -134,23 +134,6 @@ class Noptin_Settings {
 				'description' => __( 'Require new subscribers to confirm their email addresses.', 'newsletter-optin-box' ),
 			),
 
-			'comment_form'          => array(
-				'el'          => 'input',
-				'type'        => 'checkbox_alt',
-				'section'     => 'general',
-				'label'       => __( 'Subscribe Commentors', 'newsletter-optin-box' ),
-				'description' => __( 'Ask commentors to subscribe to the newsletter.', 'newsletter-optin-box' ),
-			),
-
-			'comment_form_msg'      => array(
-				'el'          => 'input',
-				'type'        => 'text',
-				'restrict'    => 'comment_form',
-				'section'     => 'general',
-				'label'       => __( 'Checkbox label', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts.', 'newsletter-optin-box' ),
-			),
-
 			'hide_from_subscribers' => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
