@@ -50,7 +50,7 @@
     "grunt-wp-readme-to-markdown": "2.0.1",
     "precss": "4.0.0",
     "serialize-javascript": "3.0.0",
-    "vue-loader": "15.9.0",
+    "vue-loader": "15.9.1",
     "vue-quill-editor": "3.0.6",
     "vue-swatches": "1.0.4",
     "vue-template-compiler": "2.6.11",
