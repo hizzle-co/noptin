@@ -560,7 +560,6 @@ function add_noptin_subscriber( $fields ) {
 		return __( 'Please provide a valid email address', 'newsletter-optin-box' );
 	}
 
-
 	$subscriber_id = get_noptin_subscriber_id_by_email( trim( $fields['email'] ) );
 	if ( ! empty( $subscriber_id ) ) {
 		$fields['active'] = 1;

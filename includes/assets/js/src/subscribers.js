@@ -5,6 +5,75 @@
 
 	$(document).ready(function () {
 
+		// Add subscriber.
+		$(document).on('click', '.noptin-add-subscriber', function (e) {
+
+			e.preventDefault();
+			let $el   = null
+
+			Swal.fire({
+				title: 'Add Subscriber',
+				html: $('#noptin-create-subscriber-template').html(),
+				allowOutsideClick: () => !Swal.isLoading(),
+				confirmButtonText: 'Save',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#424242',
+				showCloseButton: true,
+				focusConfirm: false,
+				showLoaderOnConfirm: true,
+				onOpen(el) {
+					$el = el
+					$($el).find('.noptin-create-subscriber-name').focus()
+				},
+				preConfirm() {
+
+					let request = {
+						_wpnonce: noptinSubscribers.nonce,
+						action: 'noptin_admin_add_subscriber',
+						name: $($el).find('.noptin-create-subscriber-name').val(),
+						email:$($el).find('.noptin-create-subscriber-email').val()
+					}
+
+					if ( ! request.email ) {
+						Swal.showValidationMessage('Enter an email address')
+						Swal.hideLoading()
+						return;
+					}
+
+					jQuery.post(noptinSubscribers.ajaxurl, request)
+	
+						.done(function ( data ) {
+
+							if (typeof data === 'object' && data.success) {
+
+								Swal.fire({
+									icon: 'success',
+									title: 'New subscriber added',
+									showConfirmButton: false,
+									footer: `Reloading the page`
+								})
+
+                                window.location = window.location
+                            } else {
+                                Swal.showValidationMessage(data)
+                                Swal.hideLoading()
+							}
+							
+						})
+	
+						.fail(function (jqXHR) {
+							Swal.showValidationMessage(jqXHR.statusText)
+							Swal.hideLoading()
+							console.log(jqXHR)
+						})
+	
+					return jQuery.Deferred()
+
+				}
+			})
+
+		})
 		// Export subscribers.
 		$(document).on('click', '.noptin-export-subscribers', function (e) {
 

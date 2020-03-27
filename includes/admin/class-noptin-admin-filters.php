@@ -40,8 +40,9 @@ class Noptin_Admin_Filters {
 		// Filters Noptin subscriber's fields.
 		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ) );
 
-		// Select fields.
+		// Templates.
 		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'subscriber_fields_select' ) );
+		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'create_subscriber_template' ) );
 
 	}
 
@@ -278,6 +279,17 @@ class Noptin_Admin_Filters {
 			echo "<option value='$field' $selected>$field</option>";
 		}
 		echo '</select></div>';
+	}
+
+	/**
+	 * Create new subscriber
+	 * 
+	 */
+	public function create_subscriber_template() {
+		echo '<div id="noptin-create-subscriber-template" style="display:none"';
+		echo '<label><input type="text" name="name" placeholder="Subscriber Name" class="noptin-create-subscriber-name swal2-input" /></label>';
+		echo '<label><input type="email" name="email" placeholder="Email Address" class="noptin-create-subscriber-email swal2-input" /></label>';
+		echo '</div>';
 	}
 
 }

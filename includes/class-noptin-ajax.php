@@ -20,6 +20,7 @@ class Noptin_Ajax {
 		// Register new subscriber.
 		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
+		add_action( 'wp_ajax_noptin_admin_add_subscriber', array( $this, 'admin_add_subscriber' ) );
 
 		// Log form impressions.
 		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
@@ -696,6 +697,39 @@ class Noptin_Ajax {
 		wp_send_json( $result );
 		exit;
 
+	}
+
+	/**
+	 * Manually add a new subscriber via ajax
+	 *
+	 * @access      public
+	 * @since       1.2.6
+	 * @return      void
+	 */
+	public function admin_add_subscriber() {
+
+		// Ensure the nonce is valid...
+		check_ajax_referer( 'noptin_subscribers' );
+
+		// ... and that the user can import subscribers.
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			wp_die( -1, 403 );
+		}
+
+		$fields = array(
+			'name'            => $_POST['name'],
+			'email'           => $_POST['email'],
+			'_subscriber_via' => 'manual',
+		);
+
+		$inserted = add_noptin_subscriber( $fields );
+
+		if ( is_string( $inserted ) ) {
+			die( $inserted );
+		}
+
+		wp_send_json_success( true );
+		exit;
 	}
 
 	/**
