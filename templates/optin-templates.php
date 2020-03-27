@@ -3,8 +3,8 @@
 	return array(
 
 		'PRO20200311'  => array(
-			'title' => 'Professional',
-			'data'  => array(
+			'title'    => __( 'Professional', 'newsletter-optin-box' ),
+			'data'     => array(
 				'hideCloseButton'       => false,
 				'closeButtonPos'        => 'top-right',
 				'singleLine'            => true,
@@ -189,7 +189,11 @@
 				'title'                 => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
 				'titleColor'            => '#191919',
 				'hideDescription'       => false,
-				'description'           => "Enter your email to receive a weekly round-up of our best posts. <a href='https://noptin.com/guide'>Learn more!</a>",
+				'description'           => sprintf(
+					__( 'Enter your email to receive a weekly round-up of our best posts. %sLearn more!%s', 'newsletter-optin-box' ),
+					'<a href="https://noptin.com/guide">',
+					'</a>'
+				),
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
@@ -324,7 +328,7 @@
 		),
 
 		'BLyQ1565701700'  => array(
-			'title' => 'smart passive income',
+			'title' => 'smartpassiveincome.com',
 			'data'  => array(
 				'hideCloseButton'       => false,
 				'closeButtonPos'        => 'along',
@@ -650,7 +654,7 @@
 		),
 
 		'conv21565701726' => array(
-			'title' => __( 'Convertkit', 'newsletter-optin-box' ),
+			'title' => 'Convertkit',
 			'data'  => array(
 				'hideCloseButton'       => false,
 				'closeButtonPos'        => 'along',

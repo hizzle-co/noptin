@@ -260,12 +260,9 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 * Message to be displayed when there are no items
 	 */
 	public function no_items() {
-
-		printf(
-			__( '%1$sCreate a new automated email%2$s', 'newsletter-optin-box' ),
-			"<a title='Create A New Automation' class='no-campaign-create-new-campaign noptin-create-new-automation-campaign' href='#'>",
-			'</a>'
-		);
+		$title  = esc_attr__( 'Create A New Automation', 'newsletter-optin-box' );
+		$anchor = esc_attr__( 'Create a new automated email', 'newsletter-optin-box' );
+		echo "<a title='$title' class='no-campaign-create-new-campaign noptin-create-new-automation-campaign' href='#'>$anchor</a>";
 	}
 
 

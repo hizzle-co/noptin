@@ -337,34 +337,34 @@ class Noptin_Vue {
 	public static function get_field_types( $field_types = array() ) {
 
 		$field_types[] = array(
-			'label'          => 'Email Address',
+			'label'          => __( 'Email Address', 'newsletter-optin-box' ),
 			'type'           => 'email',
 			'supports_label' => true,
 		);
 
 		$field_types[] = array(
-			'label'            => 'First Name',
+			'label'            => __( 'First Name', 'newsletter-optin-box' ),
 			'type'             => 'first_name',
 			'supports_label'   => true,
 			'supports_require' => true,
 		);
 
 		$field_types[] = array(
-			'label'            => 'Last Name',
+			'label'            => __( 'Last Name', 'newsletter-optin-box' ),
 			'type'             => 'last_name',
 			'supports_label'   => true,
 			'supports_require' => true,
 		);
 
 		$field_types[] = array(
-			'label'            => 'Full Name',
+			'label'            => __( 'Full Name', 'newsletter-optin-box' ),
 			'type'             => 'name',
 			'supports_label'   => true,
 			'supports_require' => true,
 		);
 
 		$field_types[] = array(
-			'label'            => 'Text',
+			'label'            => __( 'Text', 'newsletter-optin-box' ),
 			'name'             => 'text',
 			'type'             => 'text',
 			'supports_label'   => true,
@@ -373,7 +373,7 @@ class Noptin_Vue {
 		);
 
 		$field_types[] = array(
-			'label'            => 'Textarea',
+			'label'            => __( 'Textarea', 'newsletter-optin-box' ),
 			'name'             => 'textarea',
 			'type'             => 'textarea',
 			'supports_label'   => true,
@@ -382,7 +382,7 @@ class Noptin_Vue {
 		);
 
 		$field_types[] = array(
-			'label'            => 'Checkbox',
+			'label'            => __( 'Checkbox', 'newsletter-optin-box' ),
 			'name'             => 'checkbox',
 			'type'             => 'checkbox',
 			'supports_require' => true,
@@ -391,7 +391,7 @@ class Noptin_Vue {
 		);
 
 		$field_types[] = array(
-			'label'            => 'Hidden',
+			'label'            => __( 'Hidden', 'newsletter-optin-box' ),
 			'name'             => 'hidden',
 			'type'             => 'hidden',
 			'supports_value'   => true,
@@ -412,8 +412,9 @@ class Noptin_Vue {
 		// Field label.
 		if ( ! empty( $field_type['supports_label'] ) ) {
 
+			$label = __( 'Label', 'newsletter-optin-box' );
 			echo "<div class='noptin-text-wrapper' $v_if>
-					<label>Label<input type='text' v-model='field.type.label'/></label>
+					<label>$label<input type='text' v-model='field.type.label'/></label>
 				</div>";
 
 		}
@@ -421,8 +422,9 @@ class Noptin_Vue {
 		// Field name.
 		if ( ! empty( $field_type['supports_name'] ) ) {
 
+			$label = __( 'Name', 'newsletter-optin-box' );
 			echo "<div class='noptin-text-wrapper' $v_if>
-					<label>Name<input type='text' v-model='field.type.name'/></label>
+					<label>$label<input type='text' v-model='field.type.name'/></label>
 				</div>";
 
 		}
@@ -430,8 +432,9 @@ class Noptin_Vue {
 		// Field value.
 		if ( ! empty( $field_type['supports_value'] ) ) {
 
+			$label = __( 'Value', 'newsletter-optin-box' );
 			echo "<div class='noptin-text-wrapper' $v_if>
-					<label>Value<input type='text' v-model='field.type.value'/></label>
+					<label>$label<input type='text' v-model='field.type.value'/></label>
 				</div>";
 
 		}
@@ -443,8 +446,9 @@ class Noptin_Vue {
 	 */
 	public static function print_field_type_required_settings( $field_type = array() ) {
 
-		$type = $field_type['type'];
-		$v_if = "v-if=\"field.type.type=='$type'\"";
+		$type  = $field_type['type'];
+		$v_if  = "v-if=\"field.type.type=='$type'\"";
+		$label = __( 'Is this field required?', 'newsletter-optin-box' );
 
 		// Required.
 		if ( ! empty( $field_type['supports_require'] ) ) {
@@ -453,7 +457,7 @@ class Noptin_Vue {
 				<label class="noptin-checkbox-wrapper" ' . $v_if . '>
 					<input type="checkbox" class="screen-reader-text" v-model="field.require"/>
 					<span class="noptin-checkmark"></span>
-					<span class="noptin-label">Is this field required?</span>
+					<span class="noptin-label">'. $label . '</span>
 				</label>';
 
 		}
@@ -587,7 +591,8 @@ class Noptin_Vue {
 
 			case 'image':
 				$size = empty( $field['size'] ) ? 'thumbnail' : trim( $field['size'] );
-				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <div><div class='image-uploader'><input v-model='$id' placeholder='http://' type='text' $attrs /> <input @click=\"upload_image('$id', '$size')\" type='button' class='button button-secondary' value='Upload Image' /></div>$description</div></div>";
+				$submit_text = esc_attr__( 'Upload Image', 'newsletter-optin-box' );
+				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <div><div class='image-uploader'><input v-model='$id' placeholder='http://' type='text' $attrs /> <input @click=\"upload_image('$id', '$size')\" type='button' class='button button-secondary' value='$submit_text' /></div>$description</div></div>";
 				break;
 
 			default:

@@ -24,35 +24,38 @@ class Noptin_Widget extends WP_Widget {
 	 *
 	 * @var array
 	 */
-	public $colors = array(
-		'transparent' => 'Inherit From Theme',
-		'#e51c23'     => 'Red',
-		'#e91e63'     => 'Pink',
-		'#9c27b0'     => 'Purple',
-		'#673ab7'     => 'Deep Purple',
-		'#3f51b5'     => 'Indigo',
-		'#2196F3'     => 'Blue',
-		'#03a9f4'     => 'Light Blue',
-		'#00bcd4'     => 'Cyan',
-		'#009688'     => 'Teal',
-		'#4CAF50'     => 'Green',
-		'#8bc34a'     => 'Light Green',
-		'#cddc39'     => 'Lime',
-		'#ffeb3b'     => 'Yellow',
-		'#ffc107'     => 'Amber',
-		'#ff9800'     => 'Orange',
-		'#ff5722'     => 'Deep Orange',
-		'#795548'     => 'Brown',
-		'#607d8b'     => 'Blue Grey',
-		'#313131'     => 'Black',
-		'#fff'        => 'White',
-		'#aaa'        => 'Grey',
-	);
+	public $colors = array();
 
 	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
+
+		$this->colors = array(
+			'transparent' => __( 'Inherit From Theme', 'newsletter-optin-box' ),
+			'#e51c23'     => __( 'Red', 'newsletter-optin-box' ),
+			'#e91e63'     => __( 'Pink', 'newsletter-optin-box' ),
+			'#9c27b0'     => __( 'Purple', 'newsletter-optin-box' ),
+			'#673ab7'     => __( 'Deep Purple', 'newsletter-optin-box' ),
+			'#3f51b5'     => __( 'Indigo', 'newsletter-optin-box' ),
+			'#2196F3'     => __( 'Blue', 'newsletter-optin-box' ),
+			'#03a9f4'     => __( 'Light Blue', 'newsletter-optin-box' ),
+			'#00bcd4'     => __( 'Cyan', 'newsletter-optin-box' ),
+			'#009688'     => __( 'Teal', 'newsletter-optin-box' ),
+			'#4CAF50'     => __( 'Green', 'newsletter-optin-box' ),
+			'#8bc34a'     => __( 'Light Green', 'newsletter-optin-box' ),
+			'#cddc39'     => __( 'Lime', 'newsletter-optin-box' ),
+			'#ffeb3b'     => __( 'Yellow', 'newsletter-optin-box' ),
+			'#ffc107'     => __( 'Amber', 'newsletter-optin-box' ),
+			'#ff9800'     => __( 'Orange', 'newsletter-optin-box' ),
+			'#ff5722'     => __( 'Deep Orange', 'newsletter-optin-box' ),
+			'#795548'     => __( 'Brown', 'newsletter-optin-box' ),
+			'#607d8b'     => __( 'Blue Grey', 'newsletter-optin-box' ),
+			'#313131'     => __( 'Black', 'newsletter-optin-box' ),
+			'#fff'        => __( 'White', 'newsletter-optin-box' ),
+			'#aaa'        => __( 'Grey', 'newsletter-optin-box' ),
+		);
+	
 		$widget_ops = array(
 			'classname'   => 'noptin_widget',
 			'description' => __( 'Use this widget to create and add a simple newsletter subscription widget', 'newsletter-optin-box' ),

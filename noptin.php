@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Picocodes
  * Author URI:      https://github.com/picocodes
- * Version:         1.2.5
+ * Version:         1.2.6
  * Text Domain:     newsletter-optin-box
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -43,7 +43,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.2.5';
+	public $version = '1.2.6';
 
 	/**
 	 * The current database version.

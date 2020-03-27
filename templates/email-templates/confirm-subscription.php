@@ -98,7 +98,7 @@
 	<!-- start preheader -->
 	<div class="preheader"
 		style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-		Please confirm your subscription to our newsletter.
+		<?php _e( 'Please confirm your subscription to our newsletter.', 'newsletter-optin-box' ); ?>
 	</div>
 	<!-- end preheader -->
 
@@ -144,9 +144,7 @@
 					<!-- start copy -->
 					<tr>
 						<td align="left" bgcolor="#ffffff" style="padding: 24px; font-size: 16px; line-height: 24px;">
-							<p style="margin: 0;">Tap the button below to confirm your subscription to our newsletter.
-								If you have received this email by mistake, you can safely delete it. You won't be
-								subscribed if you don't click on the button below.</p>
+							<p style="margin: 0;"><?php _e( 'Tap the button below to confirm your subscription to our newsletter.', 'newsletter-optin-box' ); ?> <?php _e( 'If you have received this email by mistake, you can safely delete it.', 'newsletter-optin-box' ); ?> <?php _e( "You won't be subscribed if you don't click on the button below.</p>", 'newsletter-optin-box' ); ?>
 						</td>
 					</tr>
 					<!-- end copy -->
@@ -191,7 +189,7 @@
 					<tr>
 						<td align="left" bgcolor="#ffffff"
 							style="padding: 24px; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-							<p style="margin: 0;">Cheers,<br> [[noptin_company]]</p>
+							<p style="margin: 0;"><?php _e( 'Cheers,', 'newsletter-optin-box'); ?><br> [[noptin_company]]</p>
 						</td>
 					</tr>
 					<!-- end copy -->

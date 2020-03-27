@@ -61,6 +61,10 @@ class Noptin_Form_Editor {
 			'integrations' => $this->get_integration_fields(),
 		);
 
+		$fields['settings']['label']     = __( 'Settings', 'newsletter-optin-box' );
+		$fields['design']['label']       = __( 'Design', 'newsletter-optin-box' );
+		$fields['integrations']['label'] = __( 'Integrations', 'newsletter-optin-box' );
+
 		/**
 		 * Filters the Noptin Form Editor's sidebar fields.
 		 * 
@@ -486,7 +490,7 @@ class Noptin_Form_Editor {
 			// Form Design.
 			'form'        => array(
 				'el'       => 'panel',
-				'title'    => __( 'Form', 'newsletter-optin-box' ),
+				'title'    => __( 'Form Appearance', 'newsletter-optin-box' ),
 				'id'       => 'formDesign',
 				'children' => $this->get_form_settings(),
 			),
@@ -494,7 +498,7 @@ class Noptin_Form_Editor {
 			// Fields Design.
 			'fields'      => array(
 				'el'       => 'panel',
-				'title'    => __( 'Fields', 'newsletter-optin-box' ),
+				'title'    => __( 'Opt-in Fields', 'newsletter-optin-box' ),
 				'id'       => 'fieldDesign',
 				'children' => $this->get_field_settings(),
 			),
@@ -554,26 +558,19 @@ class Noptin_Form_Editor {
 	 */
 	private function get_templates_settings() {
 
-		$colors    = noptin_get_color_themes();
-		$templates = array();
-
-		foreach ( noptin_get_optin_templates() as $key => $data ) {
-			$templates[ $key ] = $data['title'];
-		}
-
 		return array(
 
-			'Template'   => array(
+			'Template'    => array(
 				'el'      => 'select',
 				'label'   => __( 'Apply a template', 'newsletter-optin-box' ),
 				'tooltip' => __( 'All templates include custom css so remember to check out the Custom CSS panel after you apply a template', 'newsletter-optin-box' ),
-				'options' => $templates,
+				'options' => wp_list_pluck( noptin_get_optin_templates(), 'title' ),
 			),
 
-			'colorTheme' => array(
+			'colorTheme'  => array(
 				'el'      => 'select',
 				'label'   => __( 'Apply a color theme', 'newsletter-optin-box' ),
-				'options' => array_combine( array_values( $colors ), array_keys( $colors ) ),
+				'options' => noptin_get_color_themes(),
 			),
 
 		);
@@ -879,7 +876,7 @@ class Noptin_Form_Editor {
 			'CSS' => array(
 				'el'      => 'editor',
 				'tooltip' => __( "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page", 'newsletter-optin-box' ),
-				'label'   => 'Enter Your Custom CSS <a href="https://noptin.com/guide/email-forms/opt-in-forms-editor/custom-css/" target="_blank">Read this first</a>',
+				'label'   => __( 'Enter Your Custom CSS.', 'newsletter-optin-box' ) . ' <a href="https://noptin.com/guide/email-forms/opt-in-forms-editor/custom-css/" target="_blank">' . __( 'Read this first.', 'newsletter-optin-box' ) . '</a>',
 			),
 
 		);

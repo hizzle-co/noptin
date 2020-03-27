@@ -1,5 +1,5 @@
 <div id="noptin-automations-popup">
-	<h2>Select Automation Type</h2>
+	<h2><?php _e( 'Select Automation Type', 'newsletter-optin-box' ); ?></h2>
 
 	<ul>
 		<?php
@@ -57,7 +57,7 @@
 
 										<td>
 											<input type="text" name="automation_name" class="noptin-campaign-input" value="<?php echo $automation_name; ?>">
-											<p class="description">This name helps you identify this automation and is not visible to your subscribers.</p>
+											<p class="description"><?php _e( 'This name helps you identify this automation and is not visible to your subscribers.', 'newsletter-optin-box' ); ?></p>
 										</td>
 
 									</tr>
@@ -82,9 +82,9 @@
 												<input style="width:100px" type="number" name="noptin_sends_after"  value="0">
 
 												<select class="noptin-max-w-200" name="noptin_sends_after_unit">
-													<option value="minutes" selected="selected">Minute(s)</option>
-													<option value="hours">Hour(s)</option>
-													<option value="days">Day(s)</option>
+													<option value="minutes" selected="selected"><?php _e( 'Minute(s)', 'newsletter-optin-box' ); ?></option>
+													<option value="hours"><?php _e( 'Hour(s)', 'newsletter-optin-box' ); ?></option>
+													<option value="days"><?php _e( 'Day(s)', 'newsletter-optin-box' ); ?></option>
 												</select>
 
 											<?php

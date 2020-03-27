@@ -11,7 +11,7 @@
 			<tr>
 			<td align="center" valign="top" style="padding: 36px 24px;">
 					<a href="[[home_url]]" target="_blank" style="display: inline-block;">
-					<img src="<?php echo esc_url( $logo_url ); ?>" alt="Logo" border="0" width="48" style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
+					<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'Logo', 'newsletter-optin-box' ); ?>" border="0" width="48" style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
 					</a>
 			</td>
 			</tr>

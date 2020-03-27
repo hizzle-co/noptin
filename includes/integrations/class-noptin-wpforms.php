@@ -28,7 +28,7 @@ class Noptin_WPForms {
 	 * @return array
      */
     function settings_section( $sections ) {
-        $sections['noptin'] = __( 'Noptin', 'newsletter-optin-box' );
+        $sections['noptin'] = 'Noptin';
         return $sections;
 	}
 	
@@ -40,7 +40,7 @@ class Noptin_WPForms {
      */
     function settings_section_content( $instance ) {
         echo '<div class="wpforms-panel-content-section wpforms-panel-content-section-noptin">';
-        echo '<div class="wpforms-panel-content-section-title">' . __( 'Noptin', 'newsletter-optin-box' ) . '</div>';
+        echo '<div class="wpforms-panel-content-section-title">Noptin</div>';
 
         wpforms_panel_field(
             'checkbox',

@@ -1,6 +1,6 @@
 <div class="noptin-welcome">
 	<div class="noptin-main-header">
-		<h1>Noptin v1.2.5</h1>
+		<h1>Noptin v1.2.6</h1>
 		<a href="https://github.com/hizzle-co/noptin/issues/new/choose" target="_blank"><?php _e( 'Report a bug or request a feature', 'newsletter-optin-box' ); ?></a>
 	</div>
 
@@ -38,28 +38,32 @@
 	<div class="noptin-cards-container">
 		<ul class="noptin-cards-list">
 				<li class="noptin-card">
-					<span class="noptin-card-label">Popups</span>
+					<span class="noptin-card-label"><?php _e( 'Popup Forms', 'newsletter-optin-box' ); ?></span>
 					<span class="noptin-card-value"><?php echo $popups; ?></span>
 				</li>
 				<li class="noptin-card">
-					<span class="noptin-card-label">In-post</span>
+					<span class="noptin-card-label"><?php _e( 'Shortcode Forms', 'newsletter-optin-box' ); ?></span>
 					<span class="noptin-card-value"><?php echo $inpost; ?></span>
 				</li>
 				<li class="noptin-card">
-					<span class="noptin-card-label">Widgets</span>
+					<span class="noptin-card-label"><?php _e( 'Widget Forms', 'newsletter-optin-box' ); ?></span>
 					<span class="noptin-card-value"><?php echo $widget; ?></span>
 				</li>
 				<li class="noptin-card">
-					<span class="noptin-card-label">Slide ins</span>
+					<span class="noptin-card-label"><?php _e( 'Sliding Forms', 'newsletter-optin-box' ); ?></span>
 					<span class="noptin-card-value"><?php echo $slide_in; ?></span>
 				</li>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo $forms_url; ?>">View all forms</a> | <a href="<?php echo $new_form_url; ?>">Create a new form</a></div>
+		<div class="noptin-card-footer-links"><a href="<?php echo $forms_url; ?>"><?php echo sprintf( 'View all forms', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo $new_form_url; ?>"><?php echo sprintf( 'Create a new form', 'newsletter-optin-box' ); ?></a></div>
 	</div>
 
 	<div class="noptin-body">
 		<hr/>
-		<p>Thousands of hours have gone into this plugin. If you love it, Consider <a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5" target="_blank">giving us a 5* rating on WordPress.org</a>. It takes less than 5 minutes.</p>
+		<p><?php echo sprintf(
+			__( 'Thousands of hours have gone into this plugin. If you love it, Consider %sgiving us a 5* rating on WordPress.org%s. It takes less than 5 minutes.', 'newsletter-optin-box' ),
+			'<a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5" target="_blank">',
+			'</a>'
+		);?> </p>
 	</div>
 
 

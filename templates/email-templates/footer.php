@@ -21,8 +21,11 @@
 			<tr>
 				<td align="center" bgcolor="#e9ecef"
 					style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-					<p style="margin: 0;">To stop receiving these emails, you can <a href="[[unsubscribe_url]]"
-							target="_blank">unsubscribe</a> at any time.</p>
+					<p style="margin: 0;"><?php echo sprintf( 
+						__( 'To stop receiving these emails, you can %sunsubscribe%s at any time.', 'newsletter-optin-box' ),
+						'<a href="[[unsubscribe_url]]" target="_blank">',
+						'</a>'
+					); ?></p>
 					<p style="margin: 0;">[[noptin_company]] <br /> [[noptin_address]] <br /> [[noptin_city]],
 						[[noptin_state]],
 						[[noptin_country]]</p>

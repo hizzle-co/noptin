@@ -142,7 +142,7 @@ class Noptin_Admin_Filters {
 			$url = esc_url( $url[0] );
 			return "<a target='_blank' href='$url'>$url</a>";
 		} else {
-			return __( 'Uknown', 'newsletter-optin-box' );
+			return __( 'Unknown', 'newsletter-optin-box' );
 		}
 	}
 

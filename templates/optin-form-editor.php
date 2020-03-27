@@ -46,6 +46,11 @@
 							<?php
 							foreach ( array_keys( $sidebar ) as $panel ) {
 								$_panel = ucfirst( $panel );
+
+								if ( $sidebar[ $panel ]['label'] ) {
+									$_panel = $sidebar[ $panel ]['label'];
+								}
+
 								echo "
                                     <li>
                                         <button
@@ -64,6 +69,10 @@
 						foreach ( $sidebar as $panel => $fields ) {
 							echo " <div class='noptin-popup-editor-{$panel}-fields'  v-show=\"'{$panel}'==currentSidebarSection\">";
 
+
+							if ( isset( $fields['label'] ) ) {
+								unset( $fields['label'] );
+							}
 
 							foreach ( $fields as $id => $field ) {
 								Noptin_Vue::render_el( $id, $field, $panel );

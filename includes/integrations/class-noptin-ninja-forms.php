@@ -33,7 +33,7 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 	public function __construct() {
 		parent::__construct();
 
-		$this->_nicename = __( 'Noptin', 'newsletter-optin-box' );
+		$this->_nicename = 'Noptin';
 
 		$this->_settings = apply_filters( 'noptin_ninja_forms_integration_action_settings', $this->_settings );
 

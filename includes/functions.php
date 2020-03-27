@@ -1005,28 +1005,28 @@ function noptin_get_color_themes() {
 	return apply_filters(
 		'noptin_form_color_themes',
 		array(
-			'Red'         => '#e51c23 #fafafa #c62828', // Base color, Secondary color, border color.
-			'Pink'        => '#e91e63 #fafafa #ad1457',
-			'Purple'      => '#9c27b0 #fafafa #6a1b9a',
-			'Deep Purple' => '#673ab7 #fafafa #4527a0',
-			'Purple'      => '#9c27b0 #fafafa #4527a0',
-			'Indigo'      => '#3f51b5 #fafafa #283593',
-			'Blue'        => '#2196F3 #fafafa #1565c0',
-			'Light Blue'  => '#03a9f4 #fafafa #0277bd',
-			'Cyan'        => '#00bcd4 #fafafa #00838f',
-			'Teal'        => '#009688 #fafafa #00695c',
-			'Green'       => '#4CAF50 #fafafa #2e7d32',
-			'Light Green' => '#8bc34a #191919 #558b2f',
-			'Lime'        => '#cddc39 #191919 #9e9d24',
-			'Yellow'      => '#ffeb3b #191919 #f9a825',
-			'Amber'       => '#ffc107 #191919 #ff6f00',
-			'Orange'      => '#ff9800 #fafafa #e65100',
-			'Deep Orange' => '#ff5722 #fafafa #bf360c',
-			'Brown'       => '#795548 #fafafa #3e2723',
-			'Blue Grey'   => '#607d8b #fafafa #263238',
-			'Black'       => '#313131 #fafafa #607d8b',
-			'White'       => '#ffffff #191919 #191919',
-			'Grey'        => '#aaaaaa #191919 #191919',
+			'#e51c23 #fafafa #c62828' => __( 'Red', 'newsletter-optin-box' ), // Base color, Secondary color, border color.
+			'#e91e63 #fafafa #ad1457' => __( 'Pink', 'newsletter-optin-box' ),
+			'#9c27b0 #fafafa #6a1b9a' => __( 'Purple', 'newsletter-optin-box' ),
+			'#673ab7 #fafafa #4527a0' => __( 'Deep Purple', 'newsletter-optin-box' ),
+			'#9c27b0 #fafafa #4527a0' => __( 'Purple', 'newsletter-optin-box' ),
+			'#3f51b5 #fafafa #283593' => __( 'Indigo', 'newsletter-optin-box' ),
+			'#2196F3 #fafafa #1565c0' => __( 'Blue', 'newsletter-optin-box' ),
+			'#03a9f4 #fafafa #0277bd' => __( 'Light Blue', 'newsletter-optin-box' ),
+			'#00bcd4 #fafafa #00838f' => __( 'Cyan', 'newsletter-optin-box' ),
+			'#009688 #fafafa #00695c' => __( 'Teal', 'newsletter-optin-box' ),
+			'#4CAF50 #fafafa #2e7d32' => __( 'Green', 'newsletter-optin-box' ),
+			'#8bc34a #191919 #558b2f' => __( 'Light Green', 'newsletter-optin-box' ),
+			'#cddc39 #191919 #9e9d24' => __( 'Lime', 'newsletter-optin-box' ),
+			'#ffeb3b #191919 #f9a825' => __( 'Yellow', 'newsletter-optin-box' ),
+			'#ffc107 #191919 #ff6f00' => __( 'Amber', 'newsletter-optin-box' ),
+			'#ff9800 #fafafa #e65100' => __( 'Orange', 'newsletter-optin-box' ),
+			'#ff5722 #fafafa #bf360c' => __( 'Deep Orange', 'newsletter-optin-box' ),
+			'#795548 #fafafa #3e2723' => __( 'Brown', 'newsletter-optin-box' ),
+			'#607d8b #fafafa #263238' => __( 'Blue Grey', 'newsletter-optin-box' ),
+			'#313131 #fafafa #607d8b' => __( 'Black', 'newsletter-optin-box' ),
+			'#ffffff #191919 #191919' => __( 'White', 'newsletter-optin-box' ),
+			'#aaaaaa #191919 #191919' => __( 'Grey', 'newsletter-optin-box' ),
 		)
 	);
 
@@ -1128,7 +1128,7 @@ function noptin_localize_optin_editor( $state ) {
 		'nonce'        => wp_create_nonce( 'noptin_admin_nonce' ),
 		'data'         => $state,
 		'templates'    => noptin_get_optin_templates(),
-		'color_themes' => noptin_get_color_themes(),
+		'color_themes' => array_flip( noptin_get_color_themes() ),
 		'design_props' => $props,
 		'field_props'  => noptin_get_form_field_props(),
 	);
@@ -1449,7 +1449,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
 	}
 
 	$data = array(
-		'email_subject' => 'Please confirm your subscription',
+		'email_subject' => __( 'Please confirm your subscription', 'newsletter-optin-box' ),
 		'merge_tags'    => array(
 			'confirmation_link' => get_noptin_action_url( 'confirm', $fields['confirm_key'] ),
 		),
@@ -1467,7 +1467,11 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
 		return true;
 	}
 
-	log_noptin_message( "An error occured while sending a double-optin confimation email to subscriber #$id ($to)" );
+	$error = sprintf( 
+		__( 'An error occured while sending a double-optin confimation email to subscriber %s', 'newsletter-optin-box' ),
+		"#$id ($to)"
+	);
+
 	return false;
 }
 add_action( 'noptin_insert_subscriber', 'send_new_noptin_subscriber_double_optin_email', 10, 2 );

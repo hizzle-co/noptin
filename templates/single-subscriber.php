@@ -1,7 +1,7 @@
 <div class="wrap" style="max-width: 420px;">
 	<div>
-		<span style="float:left"><?php echo  0 === (int) $data->active ? 'Active' : 'Inactive'; ?></span>
-		<span style="float:right"><?php echo 1 === (int) $data->confirmed ? 'Email Confirmed' : 'Email Not Confirmed'; ?></span>
+		<span style="float:left"><?php echo  0 === (int) $data->active ? __( 'Active', 'newsletter-optin-box' ) : __( 'Inactive', 'newsletter-optin-box' ); ?></span>
+		<span style="float:right"><?php echo 1 === (int) $data->confirmed ? __( 'Email Confirmed', 'newsletter-optin-box' ) : __( 'Email Not Confirmed', 'newsletter-optin-box' ); ?></span>
 	</div>
 	<div style="display: flex;justify-content: center;">
 		<img style="margin-top: 40px;" src="<?php echo esc_url( get_avatar_url( $data->email ) ); ?>" />
@@ -88,13 +88,11 @@
 	<?php
 
 		do_action( 'noptin_single_subscriber', $data, $meta );
+		$anchor = __( 'Go back to the subscribers overview page.', 'newsletter-optin-box' );
+		$href   = esc_url( get_noptin_subscribers_overview_url() );
+		echo "<a style='margin-top: 16px;display: block;' href='$href'>$anchor</a>";
 
-		printf(
-			__( '%1$sGo back to the subscribers overview page.%2$s', 'newsletter-optin-box' ),
-			'<a style="margin-top: 16px;display: block;" href="' . esc_url( get_noptin_subscribers_overview_url() ) . '">',
-			'</a>'
-		);
-		?>
+	?>
 
 </div>
 <?php

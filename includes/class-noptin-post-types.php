@@ -265,10 +265,10 @@ class Noptin_Post_Types {
 
 			case 'type':
 				$types = array(
-					'sidebar'  => __( 'Widget', 'newsletter-optin-box' ),
-					'inpost'   => __( 'Shortcode', 'newsletter-optin-box' ),
-					'popup'    => __( 'Popup', 'newsletter-optin-box' ),
-					'slide_in' => __( 'Sliding', 'newsletter-optin-box' ),
+					'sidebar'  => _x( 'Widget', 'Subscription forms that are meant to appear in a widget area', 'newsletter-optin-box' ),
+					'inpost'   => _x( 'Shortcode', 'Subscription forms that are embedded in posts using shortcodes', 'newsletter-optin-box' ),
+					'popup'    => _x( 'Popup', 'Subscription forms that appear in a popup', 'newsletter-optin-box' ),
+					'slide_in' => _x( 'Sliding', 'Subscription forms that slide into view', 'newsletter-optin-box' ),
 				);
 				$type  = get_post_meta( $post_id, '_noptin_optin_type', true );
 

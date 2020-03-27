@@ -33,7 +33,7 @@
 							</th>
 							<td>
 								<?php $text = __( 'All Subscribers', 'newsletter-optin-box' ); ?>
-								<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-recipients">Filter recipients</a></p>
+								<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-recipients"><?php _e( 'Filter recipients', 'newsletter-optin-box' ); ?></a></p>
 							</td>
 						</tr>
 

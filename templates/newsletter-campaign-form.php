@@ -123,9 +123,9 @@
 								<?php
 									$unit  = empty( $id ) ? 'minutes' : get_post_meta( $id, 'noptin_sends_after_unit', true );
 									$units = array(
-										'minutes' => 'Minute(s)',
-										'hours'   => 'Hour(s)',
-										'days'    => 'Day(s)',
+										'minutes' => __( 'Minute(s)', 'newsletter-optin-box' ),
+										'hours'   => __( 'Hour(s)', 'newsletter-optin-box' ),
+										'days'    => __( 'Day(s)', 'newsletter-optin-box' ),
 									);
 
 									foreach ( $units as $key => $value ) {
@@ -154,8 +154,8 @@
 					<tr>
 						<th></th>
 						<td>
-							<input type="submit" name="publish" class="button-primary" value="<?php echo is_object( $campaign ) && 'draft' !== $campaign->post_status ? 'Save Changes' : 'Publish'; ?>"/>
-							<input type="submit" name="draft" class="button-link" value="<?php echo is_object( $campaign ) && 'draft' !== $campaign->post_status ? 'Switch to Draft' : 'Save as draft'; ?>"/>
+							<input type="submit" name="publish" class="button-primary" value="<?php echo is_object( $campaign ) && 'draft' !== $campaign->post_status ? __( 'Save Changes', 'newsletter-optin-box' ) : __( 'Publish', 'newsletter-optin-box' ); ?>"/>
+							<input type="submit" name="draft" class="button-link" value="<?php echo is_object( $campaign ) && 'draft' !== $campaign->post_status ? __( 'Switch to Draft', 'newsletter-optin-box' ) : __( 'Save as draft', 'newsletter-optin-box' ); ?>"/>
 						</td>
 					</tr>
 

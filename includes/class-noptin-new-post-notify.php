@@ -405,7 +405,10 @@ class Noptin_New_Post_Notify {
 			$delay = "$sends_after $sends_after_unit after";
 		}
 
-		return "Sends <em style='color: #607D8B;'>$delay</em> new content is published";
+		return sprintf(
+				__( "Sends %s new content is published", 'newsletter-optin-box' ),
+				"<em style='color: #607D8B;'>$delay</em>"
+	 	);
 	}
 
 }

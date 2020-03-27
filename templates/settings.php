@@ -22,5 +22,5 @@
 			<?php submit_button(); ?>
 		</div>
 	</form>
-	<?php do_action( 'noptin_settings_page_top' ); ?>
+	<?php do_action( 'noptin_settings_page_bottom' ); ?>
 </div>
