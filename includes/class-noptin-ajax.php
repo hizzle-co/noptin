@@ -820,7 +820,7 @@ class Noptin_Ajax {
 		$file_type = empty( $_GET['file_type'] ) ? 'csv' : sanitize_text_field( $_GET['file_type'] );
 
 		// Let the browser know what content we're streaming and how it should save the content.
-		$name = uniqid();
+		$name = time();
 		header( "Content-Type:application/$file_type" );
 		header( "Content-Disposition:attachment;filename=noptin-subscribers-$name.$file_type" );
 

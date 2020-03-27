@@ -5,7 +5,7 @@
 	</div>
 
 	<div class="noptin-header">
-		<h2><?php _e( 'Subscribers', 'newsletter-optin-box' ); ?></h2>
+		<h2><?php _e( 'Newsletter Subscribers', 'newsletter-optin-box' ); ?></h2>
 		<hr/>
 		<span title="<?php esc_attr_e( 'Your email subscribers', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 	</div>
@@ -30,9 +30,9 @@
 
 
 	<div class="noptin-header">
-		<h2><?php _e( 'Active Opt-in Forms', 'newsletter-optin-box' ); ?></h2>
+		<h2><?php _e( 'Newsletter Subscription Forms', 'newsletter-optin-box' ); ?></h2>
 		<hr/>
-		<span title="<?php esc_attr_e( 'Forms created via the Opt-In Forms Editor', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+		<span title="<?php esc_attr_e( 'Active forms created via the Opt-In Forms Editor', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 	</div>
 
 	<div class="noptin-cards-container">

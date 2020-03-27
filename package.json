@@ -1,6 +1,6 @@
 {
   "name": "noptin",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "private": true,
   "description": "WordPress subscription forms",
   "scripts": {
@@ -41,7 +41,7 @@
   "devDependencies": {
     "@babel/core": "7.8.7",
     "@babel/preset-env": "7.8.7",
-    "autoprefixer": "9.7.4",
+    "autoprefixer": "9.7.5",
     "babel-loader": "8.0.6",
     "cssnano": "4.1.10",
     "grunt": "1.0.4",
@@ -54,7 +54,7 @@
     "vue-quill-editor": "3.0.6",
     "vue-swatches": "1.0.4",
     "vue-template-compiler": "2.6.11",
-    "webpack": "4.42.0",
+    "webpack": "4.42.1",
     "webpack-cli": "3.3.11"
   }
 }
