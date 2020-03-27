@@ -414,7 +414,7 @@ class Noptin_Form {
 	 *
 	 * @return mixed True on success. WP_Error on failure
 	 */
-	private function create( $status = false ) {
+	public function create( $status = false ) {
 
 		// Prepare the args...
 		$args = $this->get_post_array();
