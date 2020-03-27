@@ -338,8 +338,10 @@ class Noptin {
 		);
 
 		$params = array(
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'noptin' ),
+			'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+			'nonce'         => wp_create_nonce( 'noptin' ),
+			'cookie'        => get_noptin_option( 'subscribers_cookie' ),
+			'cookie_path'   => COOKIEPATH,
 		);
 		wp_localize_script( 'noptin_front', 'noptin', $params );
 

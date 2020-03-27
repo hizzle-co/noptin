@@ -1470,6 +1470,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
 		__( 'An error occured while sending a double-optin confimation email to subscriber %s', 'newsletter-optin-box' ),
 		"#$id ($to)"
 	);
+	log_noptin_message( $error );
 
 	return false;
 }

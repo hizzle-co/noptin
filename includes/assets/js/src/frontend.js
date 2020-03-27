@@ -34,6 +34,10 @@
 		var wrapper = $(inner).closest('.noptin-popup-main-wrapper')
 		var form = $(wrapper).find('.noptin-optin-form-wrapper')
 
+		if ( form.length < 1 ) {
+			return
+		}
+
 		//Maybe animate
 		$(form).removeClass('noptin-animate-after')
 
@@ -329,10 +333,10 @@
 						// Google Analytics
 						try {
 
-							if (typeof ga === 'function') {
-								ga('send', 'event', 'Noptin Form', 'Subscribe', 'Noptin');
-							} else if (typeof gtag === 'function') {
+							if (typeof gtag === 'function') {
 								gtag('event', 'subscribe', { 'method': 'Noptin Form' });
+							} else if (typeof ga === 'function') {
+								ga('send', 'event', 'Noptin Form', 'Subscribe', 'Noptin');
 							}
 
 						} catch (err) {
@@ -390,5 +394,24 @@
 		.attr('name', 'email')
 
 	subscribe_user('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form');
+
+	// Existing subscribers.
+	$(document).on('click', '.noptin-mark-as-existing-subscriber', function (e) {
+
+		let setCookie = cname => {
+			let d = new Date();
+			d.setTime(d.getTime() + (30*24*60*60*1000)); // 30 days from now in milliseconds
+			let expires = "expires="+ d.toUTCString();
+			document.cookie = `${cname}=1;${expires};path=${noptin.cookie_path}`;
+		}
+
+		if ( noptin.cookie ) {
+			setCookie(noptin.cookie)
+		}
+		setCookie('noptin_email_subscribed')
+
+		hidePopup( $(this) )
+		subscribed = true
+	});
 
 })(jQuery);
