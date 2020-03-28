@@ -114,6 +114,21 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.2.6 - 2020-03-28 =
+- Ability to import and export newsletter subscription forms - ADDED
+- Ability to set an alternative subscriber's cookie - ADDED
+- Manually add new newsletter subscribers in your WordPress admin dashboard - ADDED
+- Ninja Forms integration (Use Ninja forms to collect newsletter subscribers) - ADDED
+- WPForms integration (Use your WPForms forms to collect newsletter subscribers) - ADDED
+- Collect subscribers from your Ultimate Member registration forms - ADDED
+- Collect subscribers from your UsersWP registration forms - ADDED
+- Collect subscribers from your WooCommerce registration forms and checkout pages - ADDED
+- Collect subscribers from your Easy Digital Downloads (EDD) checkout pages - ADDED
+- Auto-update your subscriber's name whenever they update their WordPress user profile - ADDED
+- WordPress 5.4 Compatiblity - ADDED
+- Add a `noptin-mark-as-existing-subscriber` class to any link/button and it will set the subscription cookie when someone clicks on it - ADDED
+- Update babel, vue-loader, npm, webpack, autoprefixer and grunt - ADDED
+
 = 1.2.5 - 2020-03-16 =
 - Update npm, webpack and babel
 - Newsletter Opt-in forms now support adding hidden fields - ADDED

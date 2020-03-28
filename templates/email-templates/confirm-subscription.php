@@ -9,10 +9,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">
 		/**
-   	     * Avoid browser level font resizing.
-   		 * 1. Windows Mobile
-   		 * 2. iOS / OSX
-   		 */
+		 * Avoid browser level font resizing.
+		 * 1. Windows Mobile
+		 * 2. iOS / OSX
+		 */
 		body,
 		table,
 		td,
@@ -26,8 +26,8 @@
 		}
 
 		/**
-   		 * Remove extra space added to tables and cells in Outlook.
-   		 */
+		 * Remove extra space added to tables and cells in Outlook.
+		 */
 		table,
 		td {
 			mso-table-rspace: 0pt;
@@ -35,15 +35,15 @@
 		}
 
 		/**
-  		 * Better fluid images in Internet Explorer.
-   		 */
+		 * Better fluid images in Internet Explorer.
+		 */
 		img {
 			-ms-interpolation-mode: bicubic;
 		}
 
 		/**
-   		 * Remove blue links for iOS devices.
-   		 */
+		 * Remove blue links for iOS devices.
+		 */
 		a[x-apple-data-detectors] {
 			font-family: inherit !important;
 			font-size: inherit !important;
@@ -54,8 +54,8 @@
 		}
 
 		/**
-   		 * Fix centering issues in Android 4.4.
-   		 */
+		 * Fix centering issues in Android 4.4.
+		 */
 		div[style*="margin: 16px 0;"] {
 			margin: 0 !important;
 		}
@@ -68,8 +68,8 @@
 		}
 
 		/**
-   	     * Collapse table borders to avoid space between cells.
-         */
+		 * Collapse table borders to avoid space between cells.
+		 */
 		table {
 			border-collapse: collapse !important;
 		}
@@ -109,10 +109,10 @@
 		<tr>
 			<td align="center" bgcolor="#e9ecef">
 				<!--[if (gte mso 9)|(IE)]>
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-        <tr>
-        <td align="center" valign="top" width="600">
-        <![endif]-->
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+		<tr>
+		<td align="center" valign="top" width="600">
+		<![endif]-->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 					<tr>
 						<td align="left" bgcolor="#ffffff" style="padding: 36px 24px 0; border-top: 3px solid #d4dadf;">
@@ -123,10 +123,10 @@
 					</tr>
 				</table>
 				<!--[if (gte mso 9)|(IE)]>
-        </td>
-        </tr>
-        </table>
-        <![endif]-->
+		</td>
+		</tr>
+		</table>
+		<![endif]-->
 			</td>
 		</tr>
 		<!-- end hero -->
@@ -135,10 +135,10 @@
 		<tr>
 			<td align="center" bgcolor="#e9ecef">
 				<!--[if (gte mso 9)|(IE)]>
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-        <tr>
-        <td align="center" valign="top" width="600">
-        <![endif]-->
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+		<tr>
+		<td align="center" valign="top" width="600">
+		<![endif]-->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 
 					<!-- start copy -->
@@ -177,7 +177,7 @@
 					<tr>
 						<td align="left" bgcolor="#ffffff" style="padding: 24px; font-size: 16px; line-height: 24px;">
 							<p style="margin: 0;">
-								<?php _e( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box'); ?>
+								<?php _e( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box' ); ?>
 							</p>
 							<p style="margin: 0;"><a href="[[confirmation_link]]"
 									target="_blank">[[confirmation_link]]</a></p>
@@ -189,17 +189,17 @@
 					<tr>
 						<td align="left" bgcolor="#ffffff"
 							style="padding: 24px; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-							<p style="margin: 0;"><?php _e( 'Cheers,', 'newsletter-optin-box'); ?><br> [[noptin_company]]</p>
+							<p style="margin: 0;"><?php _e( 'Cheers,', 'newsletter-optin-box' ); ?><br> [[noptin_company]]</p>
 						</td>
 					</tr>
 					<!-- end copy -->
 
 				</table>
 				<!--[if (gte mso 9)|(IE)]>
-        </td>
-        </tr>
-        </table>
-        <![endif]-->
+		</td>
+		</tr>
+		</table>
+		<![endif]-->
 			</td>
 		</tr>
 		<!-- end copy block -->
@@ -208,10 +208,10 @@
 		<tr>
 			<td align="center" bgcolor="#e9ecef" style="padding: 24px;">
 				<!--[if (gte mso 9)|(IE)]>
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-        <tr>
-        <td align="center" valign="top" width="600">
-        <![endif]-->
+		<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+		<tr>
+		<td align="center" valign="top" width="600">
+		<![endif]-->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 
 					<!-- start permission -->
@@ -237,10 +237,10 @@
 
 				</table>
 				<!--[if (gte mso 9)|(IE)]>
-        </td>
-        </tr>
-        </table>
-        <![endif]-->
+		</td>
+		</tr>
+		</table>
+		<![endif]-->
 			</td>
 		</tr>
 		<!-- end footer -->

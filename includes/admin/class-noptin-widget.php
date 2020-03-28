@@ -55,7 +55,7 @@ class Noptin_Widget extends WP_Widget {
 			'#fff'        => __( 'White', 'newsletter-optin-box' ),
 			'#aaa'        => __( 'Grey', 'newsletter-optin-box' ),
 		);
-	
+
 		$widget_ops = array(
 			'classname'   => 'noptin_widget',
 			'description' => __( 'Use this widget to create and add a simple newsletter subscription widget', 'newsletter-optin-box' ),

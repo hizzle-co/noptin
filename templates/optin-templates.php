@@ -2,9 +2,9 @@
 
 	return array(
 
-		'PRO20200311'  => array(
-			'title'    => __( 'Professional', 'newsletter-optin-box' ),
-			'data'     => array(
+		'PRO20200311'     => array(
+			'title' => __( 'Professional', 'newsletter-optin-box' ),
+			'data'  => array(
 				'hideCloseButton'       => false,
 				'closeButtonPos'        => 'top-right',
 				'singleLine'            => true,
@@ -190,7 +190,8 @@
 				'titleColor'            => '#191919',
 				'hideDescription'       => false,
 				'description'           => sprintf(
-					__( 'Enter your email to receive a weekly round-up of our best posts. %sLearn more!%s', 'newsletter-optin-box' ),
+					/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+					__( 'Enter your email to receive a weekly round-up of our best posts.  %1$sLearn more! %2$s', 'newsletter-optin-box' ),
 					'<a href="https://noptin.com/guide">',
 					'</a>'
 				),

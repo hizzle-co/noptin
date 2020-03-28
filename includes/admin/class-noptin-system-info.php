@@ -40,7 +40,7 @@ class Noptin_System_Info {
 
 		/**
 		 * Filters the system info.
-		 * 
+		 *
 		 * @since 1.2.3
 		 * @param array $info The current system information.
 		 */
@@ -91,7 +91,7 @@ class Noptin_System_Info {
 
 		/**
 		 * Filters the TEXT system info.
-		 * 
+		 *
 		 * @since 1.2.3
 		 * @param string $info The current system information string.
 		 */
@@ -111,7 +111,7 @@ class Noptin_System_Info {
 
 		/**
 		 * Filters the JSON system info.
-		 * 
+		 *
 		 * @since 1.2.3
 		 * @param string $info The current system information in JSON format.
 		 */
@@ -129,7 +129,7 @@ class Noptin_System_Info {
 
 		/**
 		 * Filters the system info shown on Noptin's system info admin page.
-		 * 
+		 *
 		 * @since 1.2.3
 		 * @param array $system_info An array of system information.
 		 */
@@ -164,7 +164,7 @@ class Noptin_System_Info {
 
 		/**
 		 * Filters the WordPress configuration info shown on Noptin's system info admin page.
-		 * 
+		 *
 		 * @since 1.2.3
 		 * @param array $wordpress An array of the current WordPress configuration information.
 		 */
@@ -204,7 +204,7 @@ class Noptin_System_Info {
 
 		/**
 		 * Filters the server system info shown on Noptin's system info admin page.
-		 * 
+		 *
 		 * @since 1.2.3
 		 * @param array $server_data An array of the current server information.
 		 */

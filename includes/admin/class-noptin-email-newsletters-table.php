@@ -349,6 +349,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$add_new_campaign_url = get_noptin_new_newsletter_campaign_url();
 
 		printf(
+			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 			__( '%1$sSend your subscribers a new email%2$s', 'newsletter-optin-box' ),
 			"<a class='no-campaign-create-new-campaign' href='$add_new_campaign_url'>",
 			'</a>'

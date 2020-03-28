@@ -59,11 +59,16 @@
 
 	<div class="noptin-body">
 		<hr/>
-		<p><?php echo sprintf(
-			__( 'Thousands of hours have gone into this plugin. If you love it, Consider %sgiving us a 5* rating on WordPress.org%s. It takes less than 5 minutes.', 'newsletter-optin-box' ),
-			'<a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5" target="_blank">',
-			'</a>'
-		);?> </p>
+		<p>
+			<?php
+				printf(
+					/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+					__( 'Thousands of hours have gone into this plugin. If you love it, Consider %1$sgiving us a 5* rating on WordPress.org%2$s. It takes less than 5 minutes.', 'newsletter-optin-box' ),
+					'<a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5" target="_blank">',
+					'</a>'
+				);
+			?>
+		</p>
 	</div>
 
 
