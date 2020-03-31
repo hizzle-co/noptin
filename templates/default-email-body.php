@@ -9,7 +9,7 @@ $paragraphs[] = sprintf(
 
 $paragraphs[] = sprintf(
 	/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-	__( 'This is the email body. You can use %1$semail tags%1$s to personalize your email.', 'newsletter-optin-box' ),
+	__( 'This is the email body. You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
 	'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
 	'</a>'
 );
