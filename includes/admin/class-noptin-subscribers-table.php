@@ -165,7 +165,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			$name = "<div style='overflow: hidden;height: 18px;'>$name</div>";
 		}
 
-		$email = "<div><a href='$view_url'>$email</a></div>";
+		$email = "<div class='row-title'><a href='$view_url'>$email</a></div>";
 
 		return "<div style='display: flex;'><div>$avatar</div><div style='margin-left: 10px;'>$name<strong>$email</strong>$row_actions</div></div>";
 
