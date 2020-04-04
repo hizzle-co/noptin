@@ -36,3 +36,4 @@ require_once get_noptin_include_dir( 'class-noptin-page.php' );
 require_once get_noptin_include_dir( 'integrations/class-noptin-integrations.php' );
 require_once get_noptin_include_dir( 'class-noptin-ajax.php' );
 require_once get_noptin_include_dir( 'class-noptin-install.php' );
+require_once get_noptin_include_dir( 'class-noptin-task.php' );

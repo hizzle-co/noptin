@@ -2068,3 +2068,199 @@ function noptin_sanitize_title_slug( $slug = '' ) {
 	$slug = map_deep( $slug, 'ucwords' );
 	return noptin_clean( $slug );
 }
+
+/**
+ * Creates and returns a new task object.
+ *
+ * Note that this does not run the task. You will have to manually run it.
+ *
+ * @since 1.2.7
+ * @see Noptin_Task
+ *
+ * @param array $args Required. A numerical array of task args.
+ *                    The first item is the name of the action while the other
+ *                    arguments will be passed to the action callbacks as parameters.
+ * @return Noptin_Task
+ */
+function noptin_create_task( array $args ) {
+
+	// Create a new task.
+	$task = new Noptin_Task( array_shift( $args ) );
+
+	// Maybe attach some params to the task.
+	return $task->set_params( $args );
+
+}
+
+/**
+ * Enqueue an action to run as soon as possible in the background.
+ *
+ * This is a wrapper for `do_action()`.
+ *
+ * You can pass extra arguments to the hooks, much like you can with `do_action()`.
+ *
+ * Example usage:
+ *
+ *     // The action callback function.
+ *     function log_name( $name ) {
+ *         // Log the name.
+ *         log_noptin_message( $name, 'notice' );
+ *     }
+ *     add_action( 'log_name_in_the_background', 'log_name', 10, 1 );
+ *
+ *      // Ask Noptin to fire the hook in the background.
+ *      noptin_do_background_action( 'log_name_in_the_background', 'Brian');
+ *
+ * @since 1.2.7
+ * @see Noptin_Task
+ * @see noptin_create_task
+ *
+ * @param string $tag    (required). Name of the action hook. Default: none.
+ * @param mixed  ...$arg Optional. Additional arguments to pass to callbacks when the hook triggers.
+ *  @return int|bool The action id on success. False otherwise.
+ */
+function noptin_do_background_action() {
+	return noptin_create_task( func_get_args() )->do_async();
+}
+
+/**
+ * Schedule an action to run once at some defined point in the future.
+ *
+ * This is similar to `noptin_do_background_action()` except that the
+ * background task fires in the future instead of immeadiately.
+ *
+ * You can pass extra arguments to the hooks, much like you can with `do_action()`.
+ *
+ * Example usage:
+ *
+ *     // The action callback function.
+ *     function log_name( $name ) {
+ *         // Log the name.
+ *         log_noptin_message( $name, 'notice' );
+ *     }
+ *     add_action( 'log_name_after_a_day', 'log_name', 10, 1 );
+ *
+ *      // Ask Noptin to fire the hook in in the future.
+ *      noptin_schedule_background_action( strtotime( '+1 day' ), 'log_name_after_a_day', 'Brian');
+ *
+ * @since 1.2.7
+ * @see Noptin_Task
+ * @see noptin_create_task
+ *
+ * @param int    $timestamp (required) The Unix timestamp representing the date
+ *                          you want the action to run. Default: none.
+ * @param string $tag       (required) Name of the action hook. Default: none.
+ * @param mixed  ...$arg    Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
+ *  @return int|bool The action id on success. False otherwise.
+ */
+function noptin_schedule_background_action() {
+	$args      = func_get_args();
+	$timestamp = array_shift( $args );
+	return noptin_create_task( $args )->do_once( $timestamp );
+}
+
+/**
+ * Schedule an action to run repeatedly with a specified interval in seconds.
+ *
+ * This is similar to `noptin_schedule_background_action()` except that the
+ * background task fires repeatedly.
+ *
+ * You can pass extra arguments to the hooks, much like you can with `do_action()`.
+ *
+ * Example usage:
+ *
+ *     // The action callback function.
+ *     function log_name( $name ) {
+ *         // Log the name.
+ *         log_noptin_message( $name, 'notice' );
+ *     }
+ *     add_action( 'log_name_every_day', 'log_name', 10, 1 );
+ *
+ *      // Ask Noptin to fire the hook every x seconds from tomorrow.
+ *      noptin_schedule_background_action( DAY_IN_SECONDS, strtotime( '+1 day' ), 'log_name_every_day', 'Brian');
+ *
+ * @since 1.2.7
+ * @see Noptin_Task
+ * @see noptin_create_task
+ *
+ * @param int    $interval  (required) How long ( in seconds ) to wait between runs. Default: none.
+ * @param int    $timestamp (required) The Unix timestamp representing the date you
+ *                          want the action to run for the first time. Default: none.
+ * @param string $tag       (required) Name of the action hook. Default: none.
+ * @param mixed  ...$arg    Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
+ * @return int|bool The action id on success. False otherwise.
+ */
+function noptin_schedule_recurring_background_action() {
+	$args      = func_get_args();
+	$interval  = array_shift( $args );
+	$timestamp = array_shift( $args );
+	return noptin_create_task( $args )->do_recurring( $timestamp, $interval );
+}
+
+/**
+ * Cancels a scheduled action.
+ *
+ * This is useful if you need to cancel an action that you had previously scheduled via:-
+ * - `noptin_do_background_action()`
+ * - `noptin_schedule_background_action()`
+ * - `noptin_schedule_recurring_background_action()`
+ * 
+ * Pass `all` as the only argument to cancel all actions scheduled by the above functions.
+ *
+ * @since 1.2.7
+ * @see Noptin_Task
+ * @see noptin_create_task
+ * @see noptin_do_background_action
+ * @see noptin_schedule_background_action
+ * @see noptin_schedule_recurring_background_action
+ *
+ * @param int|string|array    $action_name_id_or_array (required) The action to cancel. Accepted args:-
+ *                             - **'all'** Cancel all actions.
+ *                             - **$hook_name** Pass a string to cancel all actions using that hook.
+ *                             - **$action_id** Pass an integer to cancel an action by its id.
+ *                             - **$array** You can also pass an array of the above. If any element in the
+ *                               array can't be canceled, the function will return false.
+ *
+ * @return bool True on success. False otherwise.
+ */
+function noptin_cancel_scheduled_action( $action_name_id_or_array ) {
+
+	// Ensure the AS db store helper exists.
+	if ( class_exists( 'ActionScheduler_DBStore' ) ) {
+		return false;
+	}
+
+	// In case the developer wants to cancel all actions.
+	if ( 'all' === $action_name_id_or_array ) {
+		ActionScheduler_DBStore::instance()->cancel_actions_by_group( 'noptin' );
+		return true;
+	}
+
+	// In case the developer wants to cancel an action by id.
+	if ( is_numeric( $action_name_id_or_array ) ) {
+
+		try {
+			ActionScheduler_DBStore::instance()->cancel_action( ( int ) $action_name_id_or_array );
+			return true;
+		} catch ( InvalidArgumentException $e ) {
+			log_noptin_message( $e->getMessage() );
+			return false;
+		}
+		
+	}
+
+	// Developers can also cancel an action by a hook name.
+	if ( is_string( $action_name_id_or_array ) ) {
+		ActionScheduler_DBStore::instance()->cancel_actions_by_hook( $action_name_id_or_array );
+		return true;
+	}
+
+	// You can also pass in an array of hooks/action ids.
+	if ( is_array( $action_name_id_or_array ) ) {
+		$result = array_map( 'noptin_cancel_scheduled_action', $action_name_id_or_array );
+		return ! in_array( false, $result, true );
+	}
+
+	// We have an invalid argument.
+	return false;
+}
