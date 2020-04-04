@@ -271,7 +271,7 @@ class Noptin_Ajax {
 				$subscriber['confirmed'] = 0;
 			}
 
-			if( ! is_string( $subscriber['confirmed'] ) ) {
+			if( is_string( $subscriber['confirmed'] ) ) {
 				$subscriber['confirmed'] = strtolower( $subscriber['confirmed'] );
 			}
 
@@ -292,7 +292,7 @@ class Noptin_Ajax {
 				$subscriber['active'] = 1;
 			}
 
-			if( ! is_string( $subscriber['active'] ) ) {
+			if( is_string( $subscriber['active'] ) ) {
 				$subscriber['active'] = strtolower( $subscriber['active'] );
 			}
 			if ( 
@@ -300,6 +300,7 @@ class Noptin_Ajax {
 				true         === $subscriber['active'] ||
 				'true'       === $subscriber['active'] ||
 				'subscribed' === $subscriber['active'] ||
+				'active'     === $subscriber['active'] ||
 				'yes'        === $subscriber['active'] ) {
 				$subscriber['active'] = 0;
 			} else {
