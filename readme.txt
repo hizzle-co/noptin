@@ -1,7 +1,7 @@
 === WordPress Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
-Requires at least: 4.9
+Requires at least: 5.0
 Tested up to: 5.4
 Requires PHP: 5.3
 Version: 1.2.6

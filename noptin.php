@@ -162,6 +162,7 @@ class Noptin {
 
 		// plugin functions.
 		require_once $plugin_path . 'includes/functions.php';
+		require_once $plugin_path . 'includes/subscriber.php';
 
 		// Register autoloader.
 		try {

@@ -1,10 +1,10 @@
 <?php
 /**
- * Admin section
+ * Core functions
  *
- * Simple WordPress optin form
+ * Contains core functions.
  *
- * @since             1.0.0
+ * @since             1.0.4
  * @package           Noptin
  */
 
@@ -21,234 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function noptin() {
 	return Noptin::instance();
-}
-
-/**
- * Retrieve subscriber meta field for a subscriber.
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $meta_key      The meta key to retrieve. By default, returns data for all keys.
- * @param   bool   $single        If true, returns only the first value for the specified meta key. This parameter has no effect if $key is not specified.
- * @return  mixed                 Will be an array if $single is false. Will be value of meta data field if $single is true.
- * @access  public
- * @since   1.0.5
- */
-function get_noptin_subscriber_meta( $subscriber_id = 0, $meta_key = '', $single = false ) {
-	return get_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $single );
-}
-
-/**
- * Adds subscriber meta field for a subscriber.
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $meta_key      The meta key to update.
- * @param   mixed  $meta_value   Metadata value. Must be serializable if non-scalar.
- * @param   mixed  $unique   Whether the same key should not be added.
- * @return  int|false  Meta ID on success, false on failure.
- * @access  public
- * @since   1.0.5
- */
-function add_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $unique = false ) {
-	return add_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value, $unique );
-}
-
-/**
- * Updates subscriber meta field for a subscriber.
- *
- * Use the $prev_value parameter to differentiate between meta fields with the same key and subscriber ID.
- *
- * If the meta field for the subscriber does not exist, it will be added and its ID returned.
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $meta_key      The meta key to update.
- * @param   mixed  $meta_value   Metadata value. Must be serializable if non-scalar.
- * @param   mixed  $prev_value   Previous value to check before updating.
- * @return  mixed  The new meta field ID if a field with the given key didn't exist and was therefore added, true on successful update, false on failure.
- * @access  public
- * @since   1.0.5
- */
-function update_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value, $prev_value = '' ) {
-	return update_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value, $prev_value );
-}
-
-/**
- * Deletes a subscriber meta field for the given subscriber ID.
- *
- * You can match based on the key, or key and value. Removing based on key and value, will keep from removing duplicate metadata with the same key. It also allows removing all metadata matching the key, if needed.
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $meta_key      The meta key to delete.
- * @param   mixed  $meta_value   Metadata value. Must be serializable if non-scalar.
- * @return  bool  True on success, false on failure.
- * @access  public
- * @since   1.0.5
- */
-function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value = '' ) {
-	return delete_metadata( 'noptin_subscriber', $subscriber_id, $meta_key, $meta_value );
-}
-
-/**
- * Logs whenever a subscriber opens an email
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $campaign_id    The opened email campaign.
- * @access  public
- * @since   1.2.0
- * @return  void
- */
-function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
-
-	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
-	if ( ! in_array( (int) $campaign_id, $opened_campaigns, true ) ) {
-		$opened_campaigns[] = $campaign_id;
-		update_noptin_subscriber_meta( $subscriber_id, '_opened_campaigns', $opened_campaigns );
-		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_opened", 1 );
-
-		if ( is_int( $campaign_id ) ) {
-			$open_counts = (int) get_post_meta( $campaign_id, '_noptin_opens', true );
-			update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );
-
-		}
-
-		do_action( 'log_noptin_subscriber_campaign_open', $subscriber_id, $campaign_id );
-
-	}
-
-}
-
-/**
- * Retrieves all the campaigns a given subscriber has opened
- *
- * @param   int $subscriber_id  Subscriber ID.
- * @access  public
- * @since   1.2.0
- * @return  int[] Array of opened campaigns.
- */
-function get_noptin_subscriber_opened_campaigns( $subscriber_id ) {
-
-	$opened_campaigns = get_noptin_subscriber_meta( $subscriber_id, '_opened_campaigns', true );
-	if ( empty( $opened_campaigns ) ) {
-		$opened_campaigns = array();
-	}
-	return array_map( 'intval', noptin_parse_list( $opened_campaigns ) );
-
-}
-
-/**
- * Checks whether a subscriber opened a given campaign
- *
- * @param   int $subscriber_id  Subscriber ID.
- * @param   int $campaign_id    The campaign to check for.
- * @access  public
- * @since   1.2.0
- */
-function did_noptin_subscriber_open_campaign( $subscriber_id, $campaign_id ) {
-
-	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
-	return in_array( (int) $campaign_id, $opened_campaigns, true );
-
-}
-
-/**
- * Logs whenever a subscriber clicks on a link in an email
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   string $campaign_id    The email campaign.
- * @param   string $link    The clicked link.
- * @access  public
- * @since   1.2.0
- */
-function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $link ) {
-
-	log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id );
-
-	$clicked_campaigns = get_noptin_subscriber_clicked_campaigns( $subscriber_id );
-
-	if ( ! isset( $clicked_campaigns[ $campaign_id ] ) ) {
-		$clicked_campaigns[ $campaign_id ] = array();
-	}
-
-	if ( ! in_array( $link, $clicked_campaigns[ $campaign_id ], true ) ) {
-		$clicked_campaigns[ $campaign_id ][] = noptin_clean( $link );
-		update_noptin_subscriber_meta( $subscriber_id, '_clicked_campaigns', $clicked_campaigns );
-		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_clicked", 1 );
-
-		$click_counts = (int) get_post_meta( $campaign_id, '_noptin_clicks', true );
-		update_post_meta( $campaign_id, '_noptin_clicks', $click_counts + 1 );
-
-		do_action( 'log_noptin_subscriber_campaign_click', $subscriber_id, $campaign_id );
-	}
-
-}
-
-/**
- * Retrieves all the campaigns a given subscriber has clicked on a link in
- *
- * @param   int $subscriber_id  Subscriber ID.
- * @access  public
- * @since   1.2.0
- */
-function get_noptin_subscriber_clicked_campaigns( $subscriber_id ) {
-
-	$clicked_campaigns = get_noptin_subscriber_meta( $subscriber_id, '_clicked_campaigns', true );
-	if ( empty( $clicked_campaigns ) ) {
-		$clicked_campaigns = array();
-	}
-	return $clicked_campaigns;
-
-}
-
-/**
- * Checks whether a subscriber clicked on a link in a given campaign
- *
- * @param   int    $subscriber_id  Subscriber ID.
- * @param   int    $campaign_id    The campaign id to check for a click from.
- * @param   string $link        Optional. The specific link to check for.
- * @access  public
- * @since   1.2.0
- */
-function did_noptin_subscriber_click_campaign( $subscriber_id, $campaign_id, $link = false ) {
-
-	$clicked_campaigns = get_noptin_subscriber_clicked_campaigns( $subscriber_id );
-
-	if ( empty( $clicked_campaigns[ $campaign_id ] ) ) {
-		return false;
-	}
-
-	if ( empty( $link ) ) {
-		return true;
-	}
-
-	return in_array( noptin_clean( $link ), $clicked_campaigns[ $campaign_id ], true );
-
-}
-
-/**
- * Retrieve subscriber merge fields.
- *
- * @param   int $subscriber_id  Subscriber ID.
- * @access  public
- * @since   1.2.0
- */
-function get_noptin_subscriber_merge_fields( $subscriber_id ) {
-	$subscriber = get_noptin_subscriber( $subscriber_id );
-
-	if ( empty( $subscriber ) ) {
-		return array();
-	}
-
-	$merge_tags                    = (array) $subscriber;
-	$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
-	$meta                          = get_noptin_subscriber_meta( $subscriber_id );
-
-	foreach ( $meta as $key => $values ) {
-
-		if ( isset( $values[0] ) && is_scalar( maybe_unserialize( $values[0] ) ) ) {
-				$merge_tags[ $key ] = esc_html( $values[0] );
-		}
-	}
-
-	return apply_filters( 'noptin_subscriber_merge_fields', $merge_tags, $subscriber, $meta );
 }
 
 /**
@@ -452,19 +224,6 @@ function is_noptin_actions_page() {
 }
 
 /**
- * Retrieves the URL to the subscribers page
- *
- * @return  string   The subscribers page url
- * @param   int $page the page to load.
- * @access  public
- * @since   1.0.5
- */
-function get_noptin_subscribers_overview_url( $page = 1 ) {
-	$url = admin_url( 'admin.php?page=noptin-subscribers' );
-	return add_query_arg( 'paged', $page, $url );
-}
-
-/**
  * Retrieves the URL to the forms creation page
  *
  * @return  string   The forms page url
@@ -508,322 +267,6 @@ function get_noptin_forms_overview_url() {
  */
 function get_noptin_optin_field_types() {
 	return apply_filters( 'noptin_field_types', array() );
-}
-
-/**
- * Retrieves the subscriber count
- *
- * @return  int   $where Restriction string
- * @access  public
- * @since   1.0.5
- */
-function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value = false ) {
-	global $wpdb;
-
-	$table      = get_noptin_subscribers_table_name();
-	$meta_table = get_noptin_subscribers_meta_table_name();
-	$extra_sql  = '';
-
-	if ( false !== $meta_value ) {
-		$extra_sql = "INNER JOIN $meta_table ON ( $table.id = $meta_table.noptin_subscriber_id ) WHERE ( $meta_table.meta_key = '%s' AND $meta_table.meta_value = '%s' )";
-		$extra_sql = $wpdb->prepare( $extra_sql, $meta_key, $meta_value );
-	}
-
-	if ( ! empty( $where ) ) {
-
-		if ( empty( $extra_sql ) ) {
-			$where = "WHERE $where";
-		} else {
-			$where = "$extra_sql AND $where";
-		}
-	} else {
-		$where = "$extra_sql";
-	}
-
-	return $wpdb->get_var( "SELECT COUNT(`id`) FROM $table $where;" );
-}
-
-/**
- * Inserts a new subscriber into the database
- *
- * @access  public
- * @since   1.0.5
- */
-function add_noptin_subscriber( $fields ) {
-	global $wpdb;
-
-	$table  = get_noptin_subscribers_table_name();
-	$fields = wp_unslash( $fields );
-
-	// Ensure an email address is provided and it doesn't exist already.
-	if ( empty( $fields['email'] ) || ! is_email( $fields['email'] ) ) {
-		return __( 'Please provide a valid email address', 'newsletter-optin-box' );
-	}
-
-	$subscriber_id = get_noptin_subscriber_id_by_email( trim( $fields['email'] ) );
-	if ( ! empty( $subscriber_id ) ) {
-		$fields['active'] = 1;
-		update_noptin_subscriber( $subscriber_id, $fields );
-		return true;
-	}
-
-	// Maybe split name into first and last.
-	if ( isset( $fields['name'] ) ) {
-		$names = noptin_split_subscriber_name( $fields['name'] );
-
-		$fields['first_name'] = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
-		$fields['last_name']  = empty( $fields['last_name'] ) ? $names[1] : trim( $fields['last_name'] );
-	}
-
-	$database_fields = array(
-		'email'        => $fields['email'],
-		'first_name'   => empty( $fields['first_name'] ) ? '' : $fields['first_name'],
-		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
-		'confirm_key'  => md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
-		'date_created' => date_i18n( 'Y-m-d' ),
-		'active'       => get_noptin_option( 'double_optin' ) ? 1 : 0,
-	);
-
-	if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
-		return 'An error occurred. Try again.';
-	}
-
-	$id = $wpdb->insert_id;
-
-	$fields = array_merge( $fields, $database_fields );
-
-	unset( $fields['last_name'] );
-	unset( $fields['name'] );
-
-	// Insert additional meta data.
-	foreach ( $fields as $field => $value ) {
-
-		if ( isset( $database_fields[ $field ] ) || 'name' === $field || 'integration_data' === $field ) {
-			continue;
-		}
-
-		update_noptin_subscriber_meta( $id, $field, $value );
-	}
-
-	setcookie( 'noptin_email_subscribed', '1', time() + ( 86400 * 30 ), COOKIEPATH, COOKIE_DOMAIN );
-
-	$cookie = get_noptin_option( 'subscribers_cookie' );
-	if ( ! empty( $cookie ) && is_string( $cookie ) ) {
-		setcookie( $cookie, '1', time() + ( 86400 * 30 ), COOKIEPATH, COOKIE_DOMAIN );
-	}
-
-	do_action( 'noptin_insert_subscriber', $id, $fields );
-
-	return $id;
-
-}
-
-/**
- * Updates a Noptin subscriber
- *
- * @access  public
- * @since   1.2.3
- */
-function update_noptin_subscriber( $subscriber_id, $details = array() ) {
-	global $wpdb;
-	$subscriber_id = absint( $subscriber_id );
-
-	// Ensure the subscriber exists.
-	$subscriber = get_noptin_subscriber( $subscriber_id );
-	if ( empty( $subscriber ) ) {
-		return false;
-	}
-
-	// Prepare main variables.
-	$table     = get_noptin_subscribers_table_name();
-	$fields    = wp_unslash( $details );
-	$to_update = array();
-
-	// Maybe split name into first and last.
-	if ( isset( $fields['name'] ) ) {
-		$names = noptin_split_subscriber_name( $fields['name'] );
-
-		$fields['first_name']  = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
-		$fields['second_name'] = empty( $fields['second_name'] ) ? $names[1] : trim( $fields['second_name'] );
-		unset( $fields['name'] );
-
-	}
-
-	if ( isset( $fields['last_name'] ) ) {
-		$fields['second_name']  = empty( $fields['second_name'] ) ? trim( $fields['last_name'] ) : $fields['second_name'];
-		unset( $fields['last_name'] );
-	}
-
-	if ( isset( $fields['id'] ) ) {
-		unset( $fields['id'] );
-	}
-
-	foreach ( noptin_parse_list( 'email first_name second_name confirm_key date_created active confirmed' ) as $field ) {
-		if ( isset( $fields[ $field ] ) ) {
-			$to_update[ $field ] = noptin_clean( $fields[ $field ] );
-			unset( $fields[ $field ] );
-		}
-	}
-
-	if ( ! empty( $to_update ) ) {
-		$wpdb->update( $table, $to_update, array( 'id' => $subscriber_id ) );
-	}
-
-	// Insert additional meta data.
-	foreach ( $fields as $field => $value ) {
-
-		if ( 'name' === $field || 'integration_data' === $field ) {
-			continue;
-		}
-
-		update_noptin_subscriber_meta( $subscriber_id, $field, $value );
-	}
-
-	do_action( 'noptin_update_subscriber', $subscriber_id, $details );
-
-	return true;
-
-}
-
-
-/**
- * Retrieves a subscriber
- *
- * @access  public
- * @since   1.1.1
- */
-function get_noptin_subscriber( $subscriber ) {
-	global $wpdb;
-
-	$table = get_noptin_subscribers_table_name();
-	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d;", $subscriber ) );
-
-}
-
-/**
- * Retrieves a subscriber by email
- *
- * @access  public
- * @since   1.1.2
- */
-function get_noptin_subscriber_by_email( $email ) {
-	global $wpdb;
-
-	$table = get_noptin_subscribers_table_name();
-	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE email=%s;", $email ) );
-
-}
-
-/**
- * Retrieves a subscriber id by email
- *
- * @access  public
- * @since   1.2.6
- */
-function get_noptin_subscriber_id_by_email( $email ) {
-	global $wpdb;
-
-	$table = get_noptin_subscribers_table_name();
-	return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE email=%s;", $email ) );
-
-}
-
-/**
- * Deletes a subscriber
- *
- * @access  public
- * @param int $subscriber The subscriber being deleted
- * @since   1.1.0
- */
-function delete_noptin_subscriber( $subscriber ) {
-	global $wpdb;
-
-	/**
-     * Fires immediately before a subscriber is deleted from the database.
-     *
-     * @since 1.2.4
-     *
-     * @param int      $subscriber       ID of the subscriber to delete.
-     */
-	do_action( 'delete_noptin_subscriber', $subscriber );
-
-	// Maybe delete WP User connection.
-	$user_id = get_noptin_subscriber_meta ( (int) $subscriber, 'wp_user_id', true );
-	if ( ! empty( $user_id ) ) {
-		delete_user_meta ( $user_id, 'noptin_subscriber_id' );
-	}
-
-	$table  = get_noptin_subscribers_table_name();
-	$table2 = get_noptin_subscribers_meta_table_name();
-
-	// Delete the subscriber...
-	$true1 = $wpdb->delete( $table, array( 'id' => $subscriber ), '%d' );
-
-	// ... and its meta data.
-	$true2 = $wpdb->delete( $table2, array( 'noptin_subscriber_id' => $subscriber ), '%d' );
-
-	return $true1 && $true2;
-}
-
-/**
- * Converts a name field into the first and last name
- *
- * Simple Function, Using Regex (word char and hyphens)
- * It makes the assumption the last name will be a single word.
- * Makes no assumption about middle names, that all just gets grouped into first name.
- * You could use it again, on the "first name" result to get the first and middle though.
- *
- * @access  public
- * @since   1.0.5
- */
-function noptin_split_subscriber_name( $name ) {
-
-	$name       = trim( $name );
-	$last_name  = ( strpos( $name, ' ' ) === false ) ? '' : preg_replace( '#.*\s([\w-]*)$#', '$1', $name );
-	$first_name = trim( preg_replace( '#' . $last_name . '#', '', $name ) );
-	return array( $first_name, $last_name );
-
-}
-
-/**
- * Checks whether the subscriber with a given email exists.
- *
- * @param string $email The email to check for.
- * @since 1.0.5
- * @return bool
- */
-function noptin_email_exists( $email ) {
-	global $wpdb;
-	$table = get_noptin_subscribers_table_name();
-	$sql   = $wpdb->prepare( "SELECT COUNT(id) FROM $table WHERE email =%s;", $email );
-
-	return 0 < $wpdb->get_var( $sql );
-}
-
-/**
- * Checks whether the subscribers table exists
- *
- * @since 1.0.5
- * @return bool
- */
-function noptin_subscribers_table_exists() {
-	global $wpdb;
-	$table = get_noptin_subscribers_table_name();
-
-	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
-}
-
-/**
- * Checks whether the subscribers meta table exists
- *
- * @since 1.0.5
- * @return bool
- */
-function noptin_subscribers_meta_table_exists() {
-	global $wpdb;
-	$table = get_noptin_subscribers_meta_table_name();
-
-	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
 }
 
 /**
@@ -1392,138 +835,6 @@ function noptin_ob_get_clean( $file, $args = array() ) {
 }
 
 /**
- * Notifies the site admin when there is a new subscriber.
- *
- * @param int   $id The id of the new subscriber.
- * @param array $fields The subscription field values.
- * @since 1.2.0
- */
-function noptin_new_subscriber_notify( $id, $fields ) {
-
-	// Are we sending new subscriber notifications?
-	$notify = get_noptin_option( 'notify_admin' );
-	if ( empty( $notify ) ) {
-		return;
-	}
-
-	// The blogname option is escaped with esc_html on the way into the database in sanitize_option.
-	// we want to reverse this for the plain text arena of emails.
-	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-
-	/* translators: %s: site title */
-	$message = sprintf( __( '%s has a new email subscriber', 'newsletter-optin-box' ), $blogname ) . "\r\n\r\n";
-
-	unset( $fields['Email'] );
-	unset( $fields['name'] );
-
-	foreach ( $fields as $key => $val ) {
-
-		if ( ! empty( $val ) && is_scalar( $val ) ) {
-			$message .= sprintf( '%s: %s', sanitize_text_field( $key ), esc_html( $val ) ) . "\r\n";
-		}
-	}
-
-	$to = get_option( 'admin_email' );
-
-	$subject = sprintf( __( '[%s] New Subscriber', 'newsletter-optin-box' ), $blogname );
-
-	@wp_mail( $to, wp_specialchars_decode( $subject ), $message );
-
-}
-add_action( 'noptin_insert_subscriber', 'noptin_new_subscriber_notify', 10, 2 );
-
-/**
- * Sends double optin emails.
- *
- * @param int   $id The id of the new subscriber.
- * @param array $fields The subscription field values.
- * @since 1.2.4
- */
-function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
-
-	// Is double optin enabled?
-	$double_optin = get_noptin_option( 'double_optin' );
-	if ( empty( $double_optin ) ) {
-		return;
-	}
-
-	$data = array(
-		'email_subject' => __( 'Please confirm your subscription', 'newsletter-optin-box' ),
-		'merge_tags'    => array(
-			'confirmation_link' => get_noptin_action_url( 'confirm', $fields['confirm_key'] ),
-		),
-		'template'      => locate_noptin_template( 'email-templates/confirm-subscription.php' ),
-	);
-
-
-	// Try sending the email.
-	$mailer  = new Noptin_Mailer();
-	$email   = $mailer->get_email( $data );
-	$subject = $mailer->get_subject( $data );
-	$to      = sanitize_email( $fields['email'] );
-
-	if ( $mailer->send( $to, $subject, $email ) ) {
-		return true;
-	}
-
-	$error = sprintf( 
-		__( 'An error occured while sending a double-optin confimation email to subscriber %s', 'newsletter-optin-box' ),
-		"#$id ($to)"
-	);
-	log_noptin_message( $error );
-
-	return false;
-}
-add_action( 'noptin_insert_subscriber', 'send_new_noptin_subscriber_double_optin_email', 10, 2 );
-
-/**
- *  Returns the name of the subscribers' table
- *
- * @since 1.2.2
- * @return string The name of our subscribers table
- */
-function get_noptin_subscribers_table_name() {
-	return $GLOBALS['wpdb']->prefix . 'noptin_subscribers';
-}
-
-/**
- *  Returns the name of the subscribers' meta table
- *
- * @since 1.2.2
- * @return string The name of our subscribers meta table
- */
-function get_noptin_subscribers_meta_table_name() {
-	return $GLOBALS['wpdb']->prefix . 'noptin_subscriber_meta';
-}
-
-/**
- *  Returns a list of available subscriber fields.
- *
- * @since 1.2.4
- * @return array An array of subscriber fields.
- */
-function get_noptin_subscribers_fields() {
-	global $wpdb;
-
-	// Base subscriber fields.
-	$fields = array( 'first_name', 'second_name', 'full_name', 'email', 'active', 'confirm_key', 'confirmed', 'date_created' );
-
-	// Add in some meta fields.
-	$table       = get_noptin_subscribers_meta_table_name();
-	$meta_fields = $wpdb->get_col( "SELECT DISTINCT `meta_key` FROM `$table`" );
-
-	if ( is_array( $meta_fields ) ) {
-		foreach ( $meta_fields as $field ) {
-			if ( 0 !== stripos( $field, '_' ) && ! is_numeric( $field ) ) {
-				$fields[] = $field;
-			}
-		}
-	}
-
-	return apply_filters( 'noptin_subscribers_fields', $fields );
-}
-
-/**
  *  Returns the appropriate capability to check against
  *
  * @since 1.2.2
@@ -1901,162 +1212,6 @@ function get_logged_noptin_messages() {
 }
 
 /**
- * Synces users to existing subscribers.
- *
- * @since 1.2.3
- * @param string|array $users_to_sync The WordPress users to sync to Noptin.
- * @see sync_noptin_subscribers_to_users
- * @return void.
- */
-function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
-
-	// Arrays only please.
-	$users_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $users_to_sync ) ) );
-
-	foreach ( array_unique( $users_to_sync ) as $user_id ) {
-
-		// Get the user data...
-		$user_info = get_userdata( $user_id );
-
-		// ... and abort if it is missing.
-		if ( empty( $user_info ) ) {
-			continue;
-		}
-
-		// If the user is not yet subscribed, subscribe them.
-		add_noptin_subscriber(
-			array(
-				'email'           => $user_info->user_email,
-				'name'            => $user_info->display_name,
-				'_subscriber_via' => 'users_sync',
-			)
-		);
-
-		// Then update the subscriber.
-		$subscriber = get_noptin_subscriber_by_email( $user_info->user_email );
-
-		if ( empty( $subscriber ) ) {
-			continue;
-		}
-
-		update_user_meta( $user_info->ID, 'noptin_subscriber_id', $subscriber->id );
-
-		$to_update = array(
-			'description' => $user_info->description,
-			'website'	  => esc_url( $user_info->user_url ),
-			'wp_user_id'  => $user_info->ID,
-		);
-
-		$to_update = apply_filters( 'noptin_sync_users_to_subscribers', $to_update, $subscriber, $user_info );
-		foreach ( $to_update as $key => $value ) {
-			if ( is_null( $value ) ) {
-				unset( $to_update[ $key ] );
-			}
-		}
-
-		if ( ! empty( $to_update ) ) {
-			update_noptin_subscriber( $subscriber->id, $to_update );
-		}
-	}
-
-}
-
-/**
- * Synces existing subscribers to WordPress users.
- *
- * @since 1.2.3
- * @param string|array $subscribers_to_sync The Noptin subscribers to sync to WordPress Users.
- * @see sync_noptin_subscribers_to_users
- * @return void.
- */
-function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
-
-	// Arrays only please.
-	$subscribers_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $subscribers_to_sync ) ) );
-
-	foreach ( array_unique( $subscribers_to_sync ) as $subscriber_id ) {
-
-		// Get the subscriber data...
-		$subscriber = get_noptin_subscriber( $subscriber_id );
-
-		// ... and abort if it is missing.
-		if ( empty( $subscriber ) ) {
-			continue;
-		}
-
-		// If the subscriber is a WordPress user, continue.
-		$user = get_user_by( 'email', $subscriber->email );
-		if ( $user ) {
-			update_noptin_subscriber_meta( $subscriber->id, 'wp_user_id', $user->ID );
-			continue;
-		}
-
-		// Prepare user values.
-		$args = array(
-			'user_login' => noptin_generate_user_name( $subscriber->email ),
-			'user_pass'  => wp_generate_password(),
-			'user_email' => $subscriber->email,
-			'role'       => 'subscriber',
-		);
-
-		$user_id = wp_insert_user( $args );
-		if ( is_wp_error( $user_id ) ) {
-			log_noptin_message(
-				sprintf(
-					__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-optin-box' ),
-					$user_id->get_error_message(),
-					$subscriber->email
-				)
-			);
-			continue;
-		}
-
-		update_user_option( $user_id, 'default_password_nag', true, true ); // Set up the Password change nag.
-		update_user_meta( $user_id, 'noptin_subscriber_id', $subscriber->id );
-		update_noptin_subscriber_meta( $subscriber->id, 'wp_user_id', $user_id );
-		wp_send_new_user_notifications( $user_id, 'user' );
-
-	}
-
-}
-
-/**
- * Generates a unique username for new users.
- *
- * @since 1.2.3
- * @param string $prefix The prefix to use for the generated user name.
- * @return string.
- */
-function noptin_generate_user_name( $prefix = '' ) {
-
-	// If prefix is an email, retrieve the part before the email.
-	$prefix = strtok( $prefix, '@' );
-
-	// Trim to 4 characters max.
-	$prefix = sanitize_user( substr( $prefix, 0, 4 ) );
-
-	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-	/** @ignore */
-	$illegal_logins = (array) apply_filters( 'illegal_user_logins', array() );
-	if ( empty( $prefix ) || in_array( strtolower( $prefix ), array_map( 'strtolower', $illegal_logins ), true ) ) {
-		$prefix = 'noptin';
-	}
-
-	$username = $prefix . '_' . zeroise( wp_rand( 0, 9999 ), 4 );
-	if ( username_exists( $username ) ) {
-		return noptin_generate_user_name( $prefix );
-	}
-
-	/**
-	 * Filters an autogenerated user_name.
-	 *
-	 * @since 1.2.3
-	 * @param string $prefix      A prefix for the user name. Can be any string including an email address.
-	 */
-	return apply_filters( 'noptin_generate_user_name', $prefix );
-}
-
-/**
  * Sanitizes a slug
  *
  * @since 1.2.4
@@ -2082,7 +1237,7 @@ function noptin_sanitize_title_slug( $slug = '' ) {
  *                    arguments will be passed to the action callbacks as parameters.
  * @return Noptin_Task
  */
-function noptin_create_task( array $args ) {
+function create_noptin_task( array $args ) {
 
 	// Create a new task.
 	$task = new Noptin_Task( array_shift( $args ) );
@@ -2109,24 +1264,24 @@ function noptin_create_task( array $args ) {
  *     add_action( 'log_name_in_the_background', 'log_name', 10, 1 );
  *
  *      // Ask Noptin to fire the hook in the background.
- *      noptin_do_background_action( 'log_name_in_the_background', 'Brian');
+ *      do_noptin_background_action( 'log_name_in_the_background', 'Brian');
  *
  * @since 1.2.7
  * @see Noptin_Task
- * @see noptin_create_task
+ * @see create_noptin_task
  *
  * @param string $tag    (required). Name of the action hook. Default: none.
  * @param mixed  ...$arg Optional. Additional arguments to pass to callbacks when the hook triggers.
  *  @return int|bool The action id on success. False otherwise.
  */
-function noptin_do_background_action() {
-	return noptin_create_task( func_get_args() )->do_async();
+function do_noptin_background_action() {
+	return create_noptin_task( func_get_args() )->do_async();
 }
 
 /**
  * Schedule an action to run once at some defined point in the future.
  *
- * This is similar to `noptin_do_background_action()` except that the
+ * This is similar to `do_noptin_background_action()` except that the
  * background task fires in the future instead of immeadiately.
  *
  * You can pass extra arguments to the hooks, much like you can with `do_action()`.
@@ -2141,11 +1296,11 @@ function noptin_do_background_action() {
  *     add_action( 'log_name_after_a_day', 'log_name', 10, 1 );
  *
  *      // Ask Noptin to fire the hook in in the future.
- *      noptin_schedule_background_action( strtotime( '+1 day' ), 'log_name_after_a_day', 'Brian');
+ *      schedule_noptin_background_action( strtotime( '+1 day' ), 'log_name_after_a_day', 'Brian');
  *
  * @since 1.2.7
  * @see Noptin_Task
- * @see noptin_create_task
+ * @see create_noptin_task
  *
  * @param int    $timestamp (required) The Unix timestamp representing the date
  *                          you want the action to run. Default: none.
@@ -2153,16 +1308,16 @@ function noptin_do_background_action() {
  * @param mixed  ...$arg    Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
  *  @return int|bool The action id on success. False otherwise.
  */
-function noptin_schedule_background_action() {
+function schedule_noptin_background_action() {
 	$args      = func_get_args();
 	$timestamp = array_shift( $args );
-	return noptin_create_task( $args )->do_once( $timestamp );
+	return create_noptin_task( $args )->do_once( $timestamp );
 }
 
 /**
  * Schedule an action to run repeatedly with a specified interval in seconds.
  *
- * This is similar to `noptin_schedule_background_action()` except that the
+ * This is similar to `schedule_noptin_background_action()` except that the
  * background task fires repeatedly.
  *
  * You can pass extra arguments to the hooks, much like you can with `do_action()`.
@@ -2177,11 +1332,11 @@ function noptin_schedule_background_action() {
  *     add_action( 'log_name_every_day', 'log_name', 10, 1 );
  *
  *      // Ask Noptin to fire the hook every x seconds from tomorrow.
- *      noptin_schedule_background_action( DAY_IN_SECONDS, strtotime( '+1 day' ), 'log_name_every_day', 'Brian');
+ *      schedule_noptin_background_action( DAY_IN_SECONDS, strtotime( '+1 day' ), 'log_name_every_day', 'Brian');
  *
  * @since 1.2.7
  * @see Noptin_Task
- * @see noptin_create_task
+ * @see create_noptin_task
  *
  * @param int    $interval  (required) How long ( in seconds ) to wait between runs. Default: none.
  * @param int    $timestamp (required) The Unix timestamp representing the date you
@@ -2190,29 +1345,29 @@ function noptin_schedule_background_action() {
  * @param mixed  ...$arg    Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
  * @return int|bool The action id on success. False otherwise.
  */
-function noptin_schedule_recurring_background_action() {
+function schedule_noptin_recurring_background_action() {
 	$args      = func_get_args();
 	$interval  = array_shift( $args );
 	$timestamp = array_shift( $args );
-	return noptin_create_task( $args )->do_recurring( $timestamp, $interval );
+	return create_noptin_task( $args )->do_recurring( $timestamp, $interval );
 }
 
 /**
  * Cancels a scheduled action.
  *
  * This is useful if you need to cancel an action that you had previously scheduled via:-
- * - `noptin_do_background_action()`
- * - `noptin_schedule_background_action()`
- * - `noptin_schedule_recurring_background_action()`
+ * - `do_noptin_background_action()`
+ * - `schedule_noptin_background_action()`
+ * - `schedule_noptin_recurring_background_action()`
  * 
  * Pass `all` as the only argument to cancel all actions scheduled by the above functions.
  *
  * @since 1.2.7
  * @see Noptin_Task
- * @see noptin_create_task
- * @see noptin_do_background_action
- * @see noptin_schedule_background_action
- * @see noptin_schedule_recurring_background_action
+ * @see create_noptin_task
+ * @see do_noptin_background_action
+ * @see schedule_noptin_background_action
+ * @see schedule_noptin_recurring_background_action
  *
  * @param int|string|array    $action_name_id_or_array (required) The action to cancel. Accepted args:-
  *                             - **'all'** Cancel all actions.
@@ -2223,7 +1378,7 @@ function noptin_schedule_recurring_background_action() {
  *
  * @return bool True on success. False otherwise.
  */
-function noptin_cancel_scheduled_action( $action_name_id_or_array ) {
+function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
 
 	// Ensure the AS db store helper exists.
 	if ( class_exists( 'ActionScheduler_DBStore' ) ) {
@@ -2257,7 +1412,7 @@ function noptin_cancel_scheduled_action( $action_name_id_or_array ) {
 
 	// You can also pass in an array of hooks/action ids.
 	if ( is_array( $action_name_id_or_array ) ) {
-		$result = array_map( 'noptin_cancel_scheduled_action', $action_name_id_or_array );
+		$result = array_map( 'cancel_scheduled_noptin_action', $action_name_id_or_array );
 		return ! in_array( false, $result, true );
 	}
 

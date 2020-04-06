@@ -14,6 +14,10 @@ require_once get_noptin_include_dir( 'admin/class-noptin-email-campaigns-admin.p
 require_once get_noptin_include_dir( 'admin/class-noptin-email-newsletters-table.php' );
 require_once get_noptin_include_dir( 'admin/class-noptin-email-automations-table.php' );
 
+// Subscribers.
+require_once get_noptin_include_dir( 'class-noptin-subscriber.php' );
+require_once get_noptin_include_dir( 'class-noptin-subscriber-query.php' );
+
 // Bg handlers.
 require_once get_noptin_include_dir( 'class-noptin-async-request.php' );
 require_once get_noptin_include_dir( 'class-noptin-background-process.php' );
