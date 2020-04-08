@@ -151,6 +151,8 @@ class Noptin_Admin_Filters {
 			'metafields'     => 'meta',
 			'customfields'   => 'meta',
 			'conversionpage' => 'conversion_page',
+			'ip'             => 'ip_address',
+			'ipaddress'      => 'ip_address',
 		);
 
 		foreach( array_keys( $mappings ) as $key ) {

@@ -23,9 +23,11 @@ class Noptin_Page {
 
 		// User unsubscribe.
 		add_action( 'noptin_page_unsubscribe', array( $this, 'unsubscribe_user' ) );
+		add_action( 'noptin_pre_page_unsubscribe', array( $this, 'pre_unsubscribe_user' ) );
 
 		// Email confirmation.
 		add_action( 'noptin_page_confirm', array( $this, 'confirm_subscription' ) );
+		add_action( 'noptin_pre_page_confirm', array( $this, 'pre_confirm_subscription' ) );
 
 		// Email open.
 		add_filter( 'noptin_actions_page_template', array( $this, 'email_open' ) );
@@ -44,6 +46,9 @@ class Noptin_Page {
 
 		// Exclude from sitemap.
 		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'hide_from_yoast_sitemap' ) );
+
+		// Pages settings.
+		add_filter( 'noptin_get_settings', array( $this, 'add_options' ), 100 );
 
 	}
 
@@ -176,7 +181,7 @@ class Noptin_Page {
 	}
 
 	/**
-	 * Unsubscribes a user
+	 * Notifies the user that they have successfuly unsubscribed.
 	 *
 	 * @access      public
 	 * @since       1.0.6
@@ -191,55 +196,101 @@ class Noptin_Page {
 			return;
 		}
 
+		$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.', 'newsletter-optin-box' ) );
+
+	}
+
+	/**
+	 * Unsubscribes a user
+	 *
+	 * @access      public
+	 * @since       1.2.7
+	 * @return      array
+	 */
+	public function pre_unsubscribe_user( $page ) {
+		global $wpdb;
+
+		$value = $this->get_request_value();
+
+		if ( empty( $value ) ) {
+			return;
+		}
+
 		$table   = get_noptin_subscribers_table_name();
-		$updated = $wpdb->update(
+		$wpdb->update(
 			$table,
-			array( 'active' => 1 ),
-			array( 'confirm_key' => $key ),
+			array( 
+				'active'    => 1,
+				'confirmed' => 1,
+			),
+			array( 'confirm_key' => $value ),
 			'%d',
 			'%s'
 		);
 
-		if ( $updated ) {
-			$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.', 'newsletter-optin-box' ) );
-		} else {
-			$this->print_paragraph( __( 'An error occured while trying to unsubscribe you from this mailing list.', 'newsletter-optin-box' ) );
+		if ( is_numeric( $page ) ) {
+			$page = get_permalink( $page );
 		}
 
+		if ( ! empty( $page ) ) {
+			wp_redirect( $page );
+			exit;
+		}
+
+	}
+
+	/**
+	 * Notifies the user that they have successfully subscribed.
+	 *
+	 * @access      public
+	 * @since       1.2.5
+	 * @return      array
+	 */
+	public function confirm_subscription( $key ) {
+
+		if ( empty( $value ) ) {
+			$this->print_paragraph( __( 'Unable to confirm your subscription to this newsletter.', 'newsletter-optin-box' ) );
+			return;
+		}
+
+		$this->print_paragraph( __( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' ) );
 	}
 
 	/**
 	 * Confirms a user's subscription to the newsletter.
 	 *
 	 * @access      public
-	 * @since       1.0.6
+	 * @since       1.2.7
 	 * @return      array
 	 */
-	public function confirm_subscription( $key ) {
+	public function pre_confirm_subscription( $page ) {
 		global $wpdb;
 
-		// Ensure a user key is specified.
-		if ( empty( $key ) ) {
-			$this->print_paragraph( __( 'Unable to confirm your subscrption at this time.', 'newsletter-optin-box' ) );
+		$value = $this->get_request_value();
+
+		if ( empty( $value ) ) {
 			return;
 		}
 
 		$table   = get_noptin_subscribers_table_name();
-		$updated = $wpdb->update(
+		$wpdb->update(
 			$table,
 			array( 
 				'active'    => 0,
 				'confirmed' => 1,
 			),
-			array( 'confirm_key' => $key ),
+			array( 'confirm_key' => $value ),
 			'%d',
 			'%s'
 		);
 
-		if ( $updated ) {
-			$this->print_paragraph( __( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' ) );
-		} else {
-			$this->print_paragraph( __( 'An error occured while trying to confirm your subscription.', 'newsletter-optin-box' ) );
+		if ( is_numeric( $page ) ) {
+			$page = get_permalink( $page );
+		}
+
+		if ( ! empty( $page ) ) {
+			wp_redirect( $page );
+			exit;
 		}
 
 	}
@@ -328,6 +379,11 @@ class Noptin_Page {
 				exit;
 			}
 
+			$custom_page = get_noptin_option( "pages_{$action}_page" );
+			if ( ! empty( $custom_page ) ) {
+				do_action( "noptin_pre_page_$action", $custom_page );
+			}
+
 			$template = locate_noptin_template( 'actions-page.php' );
 			if ( isset( $_REQUEST['nte'] ) ) {
 				$template = locate_noptin_template( 'actions-page-empty.php' );
@@ -348,9 +404,46 @@ class Noptin_Page {
 
 	}
 
+	/**
+	 * Removes our pages from Yoast sitemaps.
+	 */
 	public function hide_from_yoast_sitemap( $ids = array() ) {
 		$ids[] = get_noptin_action_page();
 		return $ids;
+	}
+
+	/**
+	 * Registers integration options.
+	 *
+	 * @since 1.2.6
+	 * @param array $options Current Noptin settings.
+	 * @return array
+	 */
+	public function add_options( $options ) {
+
+		// Pages help text.
+		$options["pages_help_text"] = array(
+			'el'              => 'paragraph',
+			'section'		  => 'pages',
+			'content'         => __( "These options are all optional. If you leave them blank, Noptin will use it's default page.", 'newsletter-optin-box' ), 
+		);
+
+		$options["pages_unsubscribe_page"] = array(
+			'el'              => 'input',
+			'section'		  => 'pages',
+			'label'           => __( 'Unsubscribe Page', 'newsletter-optin-box' ),
+			'description'     => __( 'Enter an id or url to the page shown to subscribers after they unsubscribe from your newsletter', 'newsletter-optin-box' ),
+		);
+
+		$options["pages_confirm_page"] = array(
+			'el'              => 'input',
+			'section'		  => 'pages',
+			'label'           => __( 'Confirmation Page', 'newsletter-optin-box' ),
+			'description'     => __( 'Enter an id or url to the page shown to subscribers after they confirm their email', 'newsletter-optin-box' ),
+		);
+
+		return apply_filters( "noptin_page_settings", $options );
+
 	}
 
 

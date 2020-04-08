@@ -945,6 +945,12 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 		$ip_address = noptin_get_user_ip();
 	}
 
+	$transient_name = md5( "noptin_geolocation_cache_$ip_address" );
+
+	if ( get_transient( $transient_name ) ) {
+		return get_transient( $transient_name );
+	}
+
 	// Retrieve API key.
 	$api_key = get_noptin_option( 'ipgeolocation_io_api_key' );
 
@@ -953,14 +959,19 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 	}
 
 	// Geolocate the ip.
-	$response = wp_remote_get(
-		'https://api.ipgeolocation.io/ipgeo',
+	$url      = add_query_arg(
 		array(
 			'apiKey' => $api_key,
 			'ip'     => $ip_address,
-			'fields' => 'city,continent_name,country_name,country_code2,state_prov,zipcode,country_flag,currency,time_zone',
-		)
+			'fields' => 'city,continent_name,country_name,state_prov,zipcode,country_flag,currency,time_zone,latitude,longitude,calling_code',
+		),
+		'https://api.ipgeolocation.io/ipgeo'
 	);
+	$response = wp_remote_get( $url );
+
+	if ( is_wp_error( $response ) ) {
+		return false;
+	}
 
 	$geo = json_decode( wp_remote_retrieve_body( $response ), true );
 	if ( empty( $geo ) ) {
@@ -969,15 +980,15 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 	}
 
 	if ( ! empty( $geo['time_zone'] ) ) {
-		$geo['time_zone'] = $geo['time_zone']['name'];
+		$geo['time zone'] = $geo['time_zone']['name'] . ' GMT ' . $geo['time_zone']['offset'];
 	}
 
 	if ( ! empty( $geo['currency'] ) ) {
-		$geo['currency'] 		= $geo['currency']['name'];
+		$geo['currency'] = $geo['currency']['name'];
 	}
 
 	if ( ! empty( $geo['continent_name'] ) ) {
-		$geo['continent'] 		= $geo['continent_name'];
+		$geo['continent'] = $geo['continent_name'];
 		unset( $geo['continent_name'] );
 	}
 
@@ -991,15 +1002,9 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 		unset( $geo['state_prov'] );
 	}
 
-	$return = array();
-	$fields = noptin_parse_list( 'continent country state city zipcode calling_code languages country_flag currency time_zone' );
-
-	foreach ( $fields as $field ) {
-		if ( ! empty( $geo[ $field ] ) ) {
-			$return[ $field ] = $geo[ $field ];
-		}
-	}
-	return noptin_clean( $return );
+	$fields = noptin_clean( $geo );
+	set_transient( $transient_name, $fields, HOUR_IN_SECONDS );
+	return $fields;
 
 }
 

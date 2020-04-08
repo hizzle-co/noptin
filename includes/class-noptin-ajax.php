@@ -682,11 +682,6 @@ class Noptin_Ajax {
 		if ( ! empty( $_POST['ipAddress'] ) ) {
 			$address                = trim( sanitize_text_field( $_POST['ipAddress'] ) );
 			$filtered['ip_address'] = $address;
-
-			$location_info = noptin_locate_ip_address( $address );
-			if ( ! empty( $location_info ) ) {
-				$filtered = array_merge( $location_info, $filtered );
-			}
 		}
 
 		if ( ! empty( $_POST['conversion_page'] ) ) {
