@@ -349,11 +349,11 @@ function add_noptin_subscriber( $fields ) {
 		update_noptin_subscriber_meta( $id, $field, $value );
 	}
 
-	setcookie( 'noptin_email_subscribed', '1', time() + ( 86400 * 30 ), COOKIEPATH, COOKIE_DOMAIN );
+	setcookie( 'noptin_email_subscribed', $database_fields['confirm_key'], time() + ( 86400 * 30 * 12 ), COOKIEPATH, COOKIE_DOMAIN );
 
 	$cookie = get_noptin_option( 'subscribers_cookie' );
 	if ( ! empty( $cookie ) && is_string( $cookie ) ) {
-		setcookie( $cookie, '1', time() + ( 86400 * 30 ), COOKIEPATH, COOKIE_DOMAIN );
+		setcookie( $cookie, '1', time() + ( 86400 * 30 * 12 ), COOKIEPATH, COOKIE_DOMAIN );
 	}
 
 	do_action( 'noptin_insert_subscriber', $id, $fields );

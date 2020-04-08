@@ -293,7 +293,7 @@ class Noptin_New_Post_Notify {
 		$item = array(
 			'campaign_id'       => $campaign_id,
 			'associated_post'   => $post_id,
-			'subscribers_query' => '1=1',
+			'subscribers_query' => array(),
 			'key'               => $key,
 			'automation_type'   => 'post_notifications',
 			'campaign_type'     => 'automation',

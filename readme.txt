@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 5.0
 Tested up to: 5.4
 Requires PHP: 5.3
-Version: 1.2.6
+Version: 1.2.7
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -113,6 +113,14 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 
 == Changelog ==
+
+= 1.2.7 - 2020-04-08 =
+- Admininstrators can now edit email subscribers - ADDED
+- Ability to resend the subscription confirmation double opt-in email - ADDED
+- GeoLocation not showing the correct subscriber location - FIXED
+- Improved subscriber interface - CHANGED
+- Noptin_Subscriber and Noptin_Subscriber_Query classes for dealing with subscribers - ADDED
+- Ability to set custom confirmation pages for double opt-in and newsletter unscrubscription - ADDED
 
 = 1.2.6 - 2020-03-28 =
 - Ability to import and export newsletter subscription forms - ADDED

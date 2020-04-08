@@ -214,26 +214,43 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	public function fetch_subscriber_from_query( $item ) {
 		global $wpdb;
 
+		// Ensure that the query is an array...
+		$subscriber_query = ( ! is_array( $item['subscribers_query'] ) ) ? array() : $item['subscribers_query'];
+
+		// ... and it has a meta query too.
+		if ( empty( $subscriber_query['meta_query'] ) ) {
+			$subscriber_query['meta_query'] = array();
+		}
+
+		$subscriber_query['meta_query']['relation'] = 'AND';
+
 		// Avoid sending the same campaign twice.
-		$meta_query = new WP_Meta_Query(
-			array(
-				'relation' => 'AND',
-				array(
-					'key'     => '_campaign_' . $item['key'],
-					'compare' => 'NOT EXISTS',
-				),
-			)
+		$subscriber_query['meta_query'][] = array(
+			'key'     => '_campaign_' . $item['key'],
+			'compare' => 'NOT EXISTS',
 		);
 
-		// Subscribers' table.
-		$table = get_noptin_subscribers_table_name();
+		// Retrieve the id...
+		$subscriber_query['fields'] = array( 'id' );
 
-		// Retrieve join and where clauses.
-		$clauses = $meta_query->get_sql( 'noptin_subscriber', $table, 'id' );
+		// ... of the next subscriber...
+		$subscriber_query['number'] = 1;
 
-		$query = "SELECT $table.id FROM $table {$clauses['join']} WHERE {$item['subscribers_query']} AND $table.active = 0 {$clauses['where']} LIMIT 1";
+		// who is active.
+		$subscriber_query['subscriber_status'] = 'active';
 
-		return $wpdb->get_var( $query );
+		// We do not need to count the total number of subscribers.
+		$subscriber_query['count_total'] = false;
+
+		// Filters the query used to find the next recipient of a mass mail.
+		$query = apply_filters( 'noptin_background_mailer_subscriber_query', $subscriber_query, $item );
+
+		// Run the query...
+		$subscriber = new Noptin_Subscriber_Query( $query );
+		$result     = $subscriber->get_results();
+
+		// ... and return the result.
+		return empty( $result ) ? null : $result[0]->id;
 
 	}
 

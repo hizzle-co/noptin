@@ -454,7 +454,7 @@ class Noptin_Email_Campaigns_Admin {
 
 		$item = array(
 			'campaign_id'       => $post->ID,
-			'subscribers_query' => '1=1', // By default, send this to all active subscribers.
+			'subscribers_query' => array(), // By default, send this to all active subscribers.
 			'campaign_data'     => array(
 				'campaign_id' => $post->ID,
 				'template'    => locate_noptin_template( 'email-templates/paste.php' ),
