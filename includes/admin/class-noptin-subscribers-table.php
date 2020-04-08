@@ -128,10 +128,12 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		$row_actions = array();
 		$view_url    = esc_url(
-			wp_nonce_url(
-				add_query_arg( 'subscriber', $subscriber['id'], $this->base_url ),
-				'noptin-subscriber'
-			)
+			add_query_arg( 
+				array(
+					'subscriber' => $subscriber['id'],
+					'return'     => urlencode( $this->base_url ),
+				),
+				admin_url( 'admin.php?page=noptin-subscribers' ) )
 		);
 
 		$row_actions['view'] = '<a href="' . $view_url . '">' . __( 'View', 'newsletter-optin-box' ) . '</a>';

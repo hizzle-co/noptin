@@ -22,20 +22,13 @@ class Noptin_Admin_Filters {
 	 * @since       1.2.4
 	 */
 	public function __construct() {
-		
+
 		add_filter( 'noptin_admin_tools_page_title', array( $this, 'filter_tools_page_titles' ) );
+		add_filter( 'noptin_admin_subscribers_page_title', array( $this, 'filter_subscribers_page_titles' ) );
 
 		// Show subscriber connection on user's list table.
         add_filter( 'manage_users_columns', array( $this, 'modify_users_table' ) );
 		add_filter( 'manage_users_custom_column', array( $this, 'modify_users_table_row' ), 10, 3 );
-		
-		// Single subscribers.
-		add_filter( "noptin_subscriber_wp_user_id_label", array( $this, 'wp_user_id_label' ) );
-		add_filter( "noptin_format_subscriber_wp_user_id", array( $this, 'format_user_id' ), 10, 2 );
-		add_filter( "noptin_subscriber_GDPR_consent_label", array( $this, 'gdpr_label' ) );
-		add_filter( "noptin_format_subscriber_GDPR_consent", array( $this, 'format_gdpr' ), 10, 2 );
-		add_filter( "noptin_subscriber_conversion_page_label", array( $this, 'conversion_page_label' ) );
-		add_filter( "noptin_format_subscriber_conversion_page", array( $this, 'format_conversion_page' ), 10, 2 );
 
 		// Filters Noptin subscriber's fields.
 		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ) );
@@ -63,6 +56,25 @@ class Noptin_Admin_Filters {
 
 		return $title;
 
+	}
+
+	/**
+	 * Filters tools page titles.
+	 * @since       1.2.7
+	 */
+	public function filter_subscribers_page_titles( $title ) {
+		
+		if ( ! empty( $_GET['subscriber'] ) ) {
+			$subscriber = new Noptin_Subscriber( $_GET['subscriber'] );
+
+			if ( ! empty( $subscriber->email ) ) {
+				return sprintf(
+							__( 'View Noptin Subscriber (%s)', 'newsletter-optin-box' ),
+							sanitize_text_field( $subscriber->email )
+				);
+			}
+
+		}
 	}
 
 	/**
@@ -99,78 +111,6 @@ class Noptin_Admin_Filters {
         }
         return $val;
 
-	}
-	
-	/**
-	 * Returns the wp_user_id key label.
-	 */
-	public function wp_user_id_label(){
-		return __( 'Registered user', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * Returns the conversion_page key label.
-	 */
-	public function conversion_page_label(){
-		return __( 'Conversion Page', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * Formats the user id.
-	 * 
-	 * @param int $user_id The subscriber's user id.
-	 */
-	public function format_user_id( $user_id, $data ){
-		$user_id = ( int ) $user_id[0];
-		$user = get_user_by( 'id', $user_id );
-
-		if( $user ) {
-			$login = esc_html( $user->user_login );
-			return "<span style='color: #2e7d32;' class='dashicons dashicons-yes'></span>($login)";
-		} 
-
-		delete_noptin_subscriber_meta( $data->id, 'wp_user_id' );
-		return '<span style="color: #f44336;" class="dashicons dashicons-no"></span>';
-	}
-
-	/**
-	 * Formats the conversion page.
-	 * 
-	 * @param int $url The url to the conversion page.
-	 */
-	public function format_conversion_page( $url ) {
-		if( ! empty( $url[0] ) ) {
-			$url = esc_url( $url[0] );
-			return "<a target='_blank' href='$url'>$url</a>";
-		} else {
-			return __( 'Unknown', 'newsletter-optin-box' );
-		}
-	}
-
-	/**
-	 * Returns the gdpr key label.
-	 */
-	public function gdpr_label(){
-		return __( 'GDPR Consent', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * Formats the gdpr consent field.
-	 * 
-	 * @param int $gdpr The subscriber's gdpr consent status.
-	 */
-	public function format_gdpr( $gdpr ){
-
-		$gdpr = $gdpr[0];
-		if ( ! is_numeric( $gdpr ) ) {
-			return sanitize_text_field( $gdpr );
-		}
-
-		if( $gdpr == 1 ) {
-			return "<span style='color: #2e7d32;' class='dashicons dashicons-yes'></span>";
-		} 
-
-		return '<span style="color: #f44336;" class="dashicons dashicons-no"></span>';
 	}
 
 	/**

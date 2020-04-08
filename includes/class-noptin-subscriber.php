@@ -194,7 +194,7 @@ class Noptin_Subscriber {
 	 */
 	public function __isset( $key ) {
 
-		if ( isset( $this->data[ $key] ) ) {
+		if ( isset( $this->data->$key ) ) {
 			return true;
 		}
 
@@ -317,6 +317,36 @@ class Noptin_Subscriber {
 	 */
 	public function send_confirmation_email() {
 		return send_new_noptin_subscriber_double_optin_email( $this->id, $this->to_array() );
+	}
+
+	/**
+	 * Returns subscriber meta.
+	 *
+	 * @since 1.2.7
+	 *
+	 */
+	public function get_meta() {
+		return get_noptin_subscriber_meta( $this->id );
+	}
+
+	/**
+	 * Checks if the current subscriber is a WordPress user.
+	 *
+	 * @since 1.2.7
+	 * @return bool.
+	 */
+	public function is_wp_user() {
+		return false !== email_exists( $this->email );
+	}
+
+	/**
+	 * Returns the associated WordPress user id.
+	 *
+	 * @since 1.2.7
+	 * @return int|false The user's ID on success, and false on failure.
+	 */
+	public function get_wp_user() {
+		return email_exists( $this->email );
 	}
 
 }

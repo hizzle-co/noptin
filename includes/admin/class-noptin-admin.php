@@ -112,6 +112,10 @@ class Noptin_Admin {
 		// initialize hooks.
 		$this->init_hooks();
 
+		if ( ! empty( $_REQUEST['noptin_admin_action'] ) ) {
+			do_action( trim( $_REQUEST['noptin_admin_action'] ), $this );
+		}
+
 		/**
 		 * Runs after Noptin Admin loads.
 		 *
@@ -155,6 +159,9 @@ class Noptin_Admin {
 
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
+
+		// Admin save subscriber.
+		add_action( 'noptin_update_admin_edited_subscriber', array( $this, 'update_edited_subscriber' ) );
 
 		Noptin_Vue::init_hooks();
 
@@ -275,7 +282,7 @@ class Noptin_Admin {
 		// Subscribers page.
 		if ( 'noptin-subscribers' === $page ) {
 			$version = filemtime( $this->assets_path . 'js/dist/subscribers.js' );
-			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2' ), $version, true );
+			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2', 'postbox' ), $version, true );
 
 			$params       = array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
@@ -328,9 +335,10 @@ class Noptin_Admin {
 		);
 
 		// Add the subscribers page.
+		$subscribers_page_title = apply_filters( 'noptin_admin_subscribers_page_title', __( 'Email Subscribers', 'newsletter-optin-box' ) );
 		add_submenu_page(
 			'noptin',
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
+			$subscribers_page_title,
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
 			'manage_options',
 			'noptin-subscribers',
@@ -600,16 +608,18 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_before_admin_single_subscriber_page', $subscriber, $this );
 
-		$args = array(
-			'meta' => get_noptin_subscriber_meta( $subscriber ),
-			'data' => get_noptin_subscriber( $subscriber ),
-		);
+		$subscriber = new Noptin_Subscriber( $subscriber );
 
-		if ( empty( $args['data'] ) ) {
-			get_noptin_template( 'single-subscriber-404.php', $args );
+		if ( $subscriber->exists() ) {
+
+			do_action( 'add_meta_boxes_noptin_subscribers', $subscriber );
+			do_action( 'add_meta_boxes', 'noptin_subscribers', $subscriber );
+			get_noptin_template( 'admin-single-subscriber/single-subscriber.php', array( 'subscriber' => $subscriber ) );
+
 		} else {
-			get_noptin_template( 'single-subscriber.php', $args );
+			get_noptin_template( 'admin-single-subscriber/404.php', array() );
 		}
+
 
 		/**
 		 * Runs after displaying the subscribers page.
@@ -955,6 +965,43 @@ class Noptin_Admin {
 			}
 
 			die( $form->get_error_message() );
+		}
+
+	}
+
+	/**
+	 * Displays a success notice
+	 *
+	 * @param       string $msg The message to qeue.
+	 * @access      public
+	 * @since       1.1.2
+	 */
+	function update_edited_subscriber() {
+		
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-admin-update-subscriber-nonce'] ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $_POST['noptin-admin-update-subscriber-nonce'], 'noptin-admin-update-subscriber' ) ) {
+			return;
+		}
+
+		$post = wp_unslash( $_POST );
+		$data = array(
+			'email'      => sanitize_text_field( $post['email'] ),
+			'first_name' => sanitize_text_field( $post['first_name'] ),
+			'last_name'  => sanitize_text_field( $post['last_name'] ),
+			'active'     => intval( $post['status'] ),
+			'confirmed'  => intval( $post['confirmed'] ),
+		);
+
+		$meta       = empty( $post['noptin_custom_field'] ) ? array() : $post['noptin_custom_field'];
+		$data       = wp_parse_args( $meta, $data );
+		$subscriber = (int) $post['subscriber_id'];
+
+		if ( ! empty( $subscriber ) ) {
+			update_noptin_subscriber( $subscriber, $data );
+			$this->show_success( __( 'Subscriber successfully updated', 'newsletter-optin-box' ) );
 		}
 
 	}

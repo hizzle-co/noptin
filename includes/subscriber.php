@@ -429,7 +429,6 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 
 }
 
-
 /**
  * Retrieves a subscriber
  *
@@ -856,4 +855,67 @@ function noptin_generate_user_name( $prefix = '' ) {
 	 * @param string $prefix      A prefix for the user name. Can be any string including an email address.
 	 */
 	return apply_filters( 'noptin_generate_user_name', $prefix );
+}
+
+/**
+ * Registers default metaboxes.
+ *
+ * @since 1.2.7
+ */
+function register_default_noptin_subscriber_metaboxes( $subscriber ) {
+
+	add_meta_box(
+        'noptin_subscriber_details',
+        __('Subscriber Details','newsletter-optin-box'),
+        'noptin_subscriber_metabox_callback',
+		'noptin_page_noptin-subscribers',
+		'normal',
+		'default',
+		'details'
+	);
+
+	add_meta_box(
+        'noptin_subscriber_fields',
+        __('Custom Fields','newsletter-optin-box'),
+        'noptin_subscriber_metabox_callback',
+		'noptin_page_noptin-subscribers',
+		'advanced',
+		'default',
+		'fields'
+	);
+
+	add_meta_box(
+        'noptin_subscriber_save',
+        __('Save Changes','newsletter-optin-box'),
+        'noptin_subscriber_metabox_callback',
+		'noptin_page_noptin-subscribers',
+		'side',
+		'default',
+		'save'
+	);
+
+	if ( 1 !== (int) $subscriber->confirmed ) {
+
+		add_meta_box(
+			'noptin_subscriber_double_optin',
+			__('Confirmation Email','newsletter-optin-box'),
+			'noptin_subscriber_metabox_callback',
+			'noptin_page_noptin-subscribers',
+			'side',
+			'default',
+			'double-optin'
+		);
+
+	}
+
+}
+add_action( 'add_meta_boxes_noptin_subscribers', 'register_default_noptin_subscriber_metaboxes' );
+
+/**
+ * Displays a subscriber metabox.
+ *
+ * @since 1.2.7
+ */
+function noptin_subscriber_metabox_callback( $subscriber, $metabox ) {
+	get_noptin_template( "admin-single-subscriber/{$metabox['args']}.php", array( 'subscriber' => $subscriber ) );
 }

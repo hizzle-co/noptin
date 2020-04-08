@@ -316,6 +316,79 @@
 			})
 		})
 
+		// Resend a double opt-in email
+		$(document).on('click', '.send-noptin-subscriber-double-optin-email', function (e) {
+			e.preventDefault();
+
+			let email = $( this ).data( 'email' )
+
+			//Init sweetalert
+			Swal.fire({
+				icon: 'info',
+				html: `Send a new double opt-in confirmation email to <code>${email}<code>`,
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Send',
+				showCloseButton: true,
+				allowOutsideClick: () => !Swal.isLoading(),
+				showLoaderOnConfirm: true,
+
+				// Fired when the user clicks on the confirm button
+				preConfirm() {
+
+					let request = {
+						_wpnonce: noptinSubscribers.nonce,
+						action: 'noptin_send_double_optin_email',
+						email: email
+					}
+
+					jQuery.post(noptinSubscribers.ajaxurl, request)
+
+						.done( function ( data ) {
+				
+							if (data.success) {
+
+								Swal.fire(
+									'Success',
+									data.data,
+									'success'
+								)
+	
+							} else {
+
+								Swal.fire({
+									icon: 'error',
+									title: 'Error!',
+									text: data.data,
+									showCloseButton: true,
+									confirmButtonText: 'Close',
+									confirmButtonColor: '#9e9e9e',
+									footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/">How to troubleshoot this error.</a>`
+								})
+
+							}
+						})
+						
+						.fail(function (jqXHR) {
+
+							Swal.fire({
+								icon: 'error',
+								title: 'Unable to connect',
+								text: 'This might be a problem with your server or your internet connection',
+								showCloseButton: true,
+								confirmButtonText: 'Close',
+								confirmButtonColor: '#9e9e9e',
+								footer: `<code>Status: ${jqXHR.status} &nbsp; Status text: ${jqXHR.statusText}</code>`
+							})
+
+						})
+
+					return jQuery.Deferred()
+				}
+			})
+		})
+
 		// Delete all subcribers.
 		$('.noptin-delete-subscribers').on('click', function( e ){
 			e.preventDefault();
