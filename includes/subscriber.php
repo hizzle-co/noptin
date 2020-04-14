@@ -423,9 +423,27 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 		update_noptin_subscriber_meta( $subscriber_id, $field, $value );
 	}
 
+	// Clean the cache.
+	$old_subscriber = new Noptin_Subscriber( $subscriber_id );
+	$old_subscriber->clear_cache();
+
 	do_action( 'noptin_update_subscriber', $subscriber_id, $details );
 
 	return true;
+
+}
+
+/**
+ * Empties the subscriber cache.
+ *
+ * @access  public
+ * @since   1.2.8
+ */
+function clear_noptin_subscriber_cache( $subscriber ) {
+
+	// Clean the cache.
+	$old_subscriber = new Noptin_Subscriber( $subscriber );
+	$old_subscriber->clear_cache();
 
 }
 

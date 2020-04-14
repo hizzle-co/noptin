@@ -205,7 +205,7 @@ abstract class Noptin_Abstract_Integration {
 	public function add_checkbox_message_integration_option( $options, $title = null, $description = '' ) {
 
 		if ( is_null( $title ) ) {
-			$title = __( 'Enable', 'newsletter-optin-box' );
+			$title = __( 'Checkbox Message', 'newsletter-optin-box' );
 		}
 
 		$option_name = $this->get_checkbox_message_integration_option_name();

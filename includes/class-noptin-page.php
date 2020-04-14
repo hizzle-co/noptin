@@ -188,7 +188,6 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function unsubscribe_user( $key ) {
-		global $wpdb;
 
 		// Ensure a user key is specified.
 		if ( empty( $key ) ) {
@@ -228,6 +227,8 @@ class Noptin_Page {
 			'%s'
 		);
 
+		clear_noptin_subscriber_cache( $value );
+
 		if ( is_numeric( $page ) ) {
 			$page = get_permalink( $page );
 		}
@@ -248,7 +249,7 @@ class Noptin_Page {
 	 */
 	public function confirm_subscription( $key ) {
 
-		if ( empty( $value ) ) {
+		if ( empty( $key ) ) {
 			$this->print_paragraph( __( 'Unable to confirm your subscription to this newsletter.', 'newsletter-optin-box' ) );
 			return;
 		}
@@ -283,6 +284,8 @@ class Noptin_Page {
 			'%d',
 			'%s'
 		);
+
+		clear_noptin_subscriber_cache( $value );
 
 		if ( is_numeric( $page ) ) {
 			$page = get_permalink( $page );
@@ -380,9 +383,7 @@ class Noptin_Page {
 			}
 
 			$custom_page = get_noptin_option( "pages_{$action}_page" );
-			if ( ! empty( $custom_page ) ) {
-				do_action( "noptin_pre_page_$action", $custom_page );
-			}
+			do_action( "noptin_pre_page_$action", $custom_page );
 
 			$template = locate_noptin_template( 'actions-page.php' );
 			if ( isset( $_REQUEST['nte'] ) ) {

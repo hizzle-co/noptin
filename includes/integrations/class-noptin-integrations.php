@@ -25,6 +25,7 @@ class Noptin_Integrations {
 		// The base class for most integrations.
 		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-integration.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-ecommerce-integration.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-esp-integration.php';
 
 		// Comment prompts.
 		add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
@@ -59,6 +60,8 @@ class Noptin_Integrations {
 		// WP Comment form integration.
 		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-wp-comment-form.php';
 		$this->integrations['wp_comment_form'] = new Noptin_WP_Comment_Form();
+
+		do_action( 'noptin_integrations_load', $this );
 
 	}
 

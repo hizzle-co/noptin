@@ -185,6 +185,17 @@ class Noptin_Subscriber {
 	}
 
 	/**
+	 * Removes the subscriber from the cache.
+	 *
+	 * @since 1.2.8
+	 */
+	public function clear_cache() {
+		wp_cache_delete( $this->email, 'noptin_subscriber_emails' );
+		wp_cache_delete( $this->confirm_key, 'noptin_subscriber_keys' );
+		wp_cache_delete( $this->id, 'noptin_subscribers' );
+	}
+
+	/**
 	 * Magic method for checking the existence of a subscriber field.
 	 *
 	 * @since 1.2.7
