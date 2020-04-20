@@ -716,4 +716,150 @@
 			),
 
 		),
+
+		'discount21565701726' => array(
+			'title' => __( 'Discount', 'newsletter-optin-box' ),
+			'data'  => array(
+				'hideCloseButton'       => false,
+				'closeButtonPos'        => 'along',
+				'singleLine'            => false,
+				'formRadius'            => '1px',
+				'formWidth'             => '700px',
+				'formHeight'            => '500px',
+				'noptinFormBg'          => '#263238',
+				'noptinFormBgImg'       => '',
+				'fields'                => array(
+					array(
+						'type'    => array(
+							'label' => __( 'Enter your email here', 'newsletter-optin-box' ),
+							'name'  => 'email',
+							'type'  => 'email',
+						),
+
+						'require' => true,
+						'key'     => 'noptin_email_key',
+					),
+
+				),
+
+				'imageMain'             => false,
+				'noptinFormBorderColor' => '#263238',
+				'image'                 => '',
+				'imagePos'              => 'right',
+				'noptinButtonLabel'     => __( 'GET IT NOW!', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#607d8b',
+				'noptinButtonColor'     => '#ffffff',
+				'hideTitle'             => false,
+				'title'                 => '<div style="font-size: 20px;">ENTER YOUR EMAIL AND GET</div> <div style="font-size: 85px; color: #fff;">40% OFF</div>',
+				'titleColor'            => '#607d8b',
+				'hideDescription'       => false,
+				'description'           => __( 'on orders of $25 or more', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#607d8b',
+				'hideNote'              => false,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'Entering your email also makes you eligible to receive future promotional emails.', 'newsletter-optin-box' ),
+				'noteColor'             => '#607d8b',
+				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-footer .noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) .noptin-form-field{
+					background-color: #fff;
+				}',
+			),
+
+		),
+
+		'minimal21565701726' => array(
+			'title' => __( 'Minimal', 'newsletter-optin-box' ),
+			'data'  => array(
+				'hideCloseButton'       => false,
+				'closeButtonPos'        => 'along',
+				'singleLine'            => true,
+				'formRadius'            => '1px',
+				'formWidth'             => '400px',
+				'formHeight'            => '180px',
+				'noptinFormBg'          => '#263238',
+				'noptinFormBgImg'       => '',
+				'fields'                => array(
+					array(
+						'type'    => array(
+							'label' => __( 'Enter your email here', 'newsletter-optin-box' ),
+							'name'  => 'email',
+							'type'  => 'email',
+						),
+
+						'require' => true,
+						'key'     => 'noptin_email_key',
+					),
+
+				),
+
+				'imageMain'             => false,
+				'noptinFormBorderColor' => '#263238',
+				'image'                 => '',
+				'imagePos'              => 'right',
+				'noptinButtonLabel'     => __( 'Subscribe', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#607d8b',
+				'noptinButtonColor'     => '#ffffff',
+				'hideTitle'             => true,
+				'title'                 => __( 'Free Updates', 'newsletter-optin-box' ),
+				'titleColor'            => '#607d8b',
+				'hideDescription'       => true,
+				'description'           => __( 'Get free notifications whenever we publish new content.', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#607d8b',
+				'hideNote'              => false,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#607d8b',
+				'CSS'                   => '.noptin-optin-form-wrapper *{}',
+			),
+
+		),
+
+		'upgrade21565701726' => array(
+			'title' => __( 'Content Upgrades', 'newsletter-optin-box' ),
+			'data'  => array(
+				'hideCloseButton'       => false,
+				'closeButtonPos'        => 'along',
+				'singleLine'            => true,
+				'formRadius'            => '40px',
+				'formWidth'             => '520px',
+				'formHeight'            => '280px',
+				'noptinFormBg'          => '#ffffff',
+				'noptinFormBgImg'       => '',
+				'fields'                => array(
+					array(
+						'type'    => array(
+							'label' => __( 'Your Email Address', 'newsletter-optin-box' ),
+							'name'  => 'email',
+							'type'  => 'email',
+						),
+
+						'require' => true,
+						'key'     => 'noptin_email_key',
+					),
+
+				),
+
+				'imageMain'             => false,
+				'noptinFormBorderColor' => '#4caf50',
+				'image'                 => 'https://cdn.noptin.com/templates/images/mail-icon-alt.png',
+				'imagePos'              => 'top',
+				'noptinButtonLabel'     => __( 'Subscribe', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#4caf50',
+				'noptinButtonColor'     => '#ffffff',
+				'hideTitle'             => false,
+				'title'                 => __( "The Marketer's Workbook", 'newsletter-optin-box' ),
+				'titleColor'            => '#191919',
+				'hideDescription'       => false,
+				'description'           => __( 'Enter your email below to receive my best selling marketing ebook.', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#666666',
+				'hideNote'              => false,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#607D8B',
+				'CSS'                   => '.noptin-optin-form-wrapper *{}',
+			),
+
+		),
 	);

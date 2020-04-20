@@ -485,13 +485,13 @@ $noptin_color: #ff6f00;
 				margin-bottom: 10px;
 
 				.noptin-form-field {
-					padding: 11px 32px;
+					padding: 9px 32px;
 					width: 100%;
 					font-size: 16px;
 					display: block;
 					color: #666;
 					-webkit-text-fill-color: #666;
-					background: rgba(255, 255, 255, 0.6);
+					background: rgba(255, 255, 255, 0.9);
 					background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
 					border: 1px solid rgba(187, 187, 187, 0.6);
 					border-radius: 3px;
@@ -578,7 +578,8 @@ $noptin_color: #ff6f00;
 					display: flex;
 
 					.noptin-form-submit {
-						padding: 11px 32px;
+						padding: 12px 32px;
+    					margin-top: -1px;
 					}
 
 					.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {

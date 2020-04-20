@@ -173,9 +173,9 @@ abstract class Noptin_Abstract_Integration {
 		}
 
 		$options = $this->get_options( $options );
-		$options = apply_filters( "noptin_single_integration_settings", $options, $slug );
+		$options = apply_filters( "noptin_single_integration_settings", $options, $slug, $this );
 
-		return apply_filters( "noptin_{$slug}_integration_settings", $options );
+		return apply_filters( "noptin_{$slug}_integration_settings", $options, $this );
 
 	}
 

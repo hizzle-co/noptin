@@ -75,6 +75,8 @@ class Noptin_Admin_Filters {
 			}
 
 		}
+
+		return $title;
 	}
 
 	/**

@@ -385,7 +385,7 @@ class Noptin_Email_Campaigns_Admin {
 
 		}
 
-		$post = apply_filters( 'noptin_save_newsletter_campaign_details', $post );
+		$post = apply_filters( 'noptin_save_newsletter_campaign_details', $post, $data );
 
 		if ( empty( $id ) ) {
 			$post = wp_insert_post( $post, true );

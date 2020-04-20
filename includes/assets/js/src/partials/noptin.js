@@ -22,6 +22,7 @@ export default {
 		})
 
 		instance.hideFields = false
+
 		this.updateFormSizes(instance)
 
 	},
