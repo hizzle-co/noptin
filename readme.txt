@@ -119,6 +119,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - "Minimal" email optin theme - ADDED
 - "Content Upgrades" optin form theme - ADDED
 - "Discount" email optin theme - ADDED
+- Hide block and quick-form widget from existing newsletter subscribers - CHANGED
 
 = 1.2.7 - 2020-04-08 =
 - Admininstrators can now edit email subscribers - ADDED

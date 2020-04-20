@@ -70,6 +70,11 @@ class Noptin_Widget extends WP_Widget {
 	 * @param string $instance The instance args to use.
 	 */
 	public function widget( $args, $instance ) {
+
+		if ( ! noptin_should_show_optins() ) {
+			return;
+		}
+
 		echo $args['before_widget'];
 
 		// ID.

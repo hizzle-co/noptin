@@ -23,6 +23,9 @@ class Noptin_Inpost {
 		// Register shortcode.
 		add_shortcode( 'noptin-form', array( $this, 'do_shortcode' ) );
 
+		// Hide block content.
+		add_filter( 'pre_render_block', array( $this, 'maybe_hide_block' ), 10, 2 );
+
 	}
 
 	/**
@@ -124,6 +127,25 @@ class Noptin_Inpost {
 		}
 
 		return '';
+
+	}
+
+	/**
+	 * Hides a block
+	 *
+	 * @access      public
+	 * @param       string|null $pre_render The pre-rendered content.
+	 * @param       array $block The block being rendered.
+	 * @since       1.2.8
+	 * @return      string
+	 */
+	public function maybe_hide_block( $pre_render, $block ) {
+
+		if ( ! is_admin() && 'noptin/email-optin' === $block['blockName'] && ! noptin_should_show_optins() ) {
+			return '';
+		}
+
+		return $pre_render;
 
 	}
 
