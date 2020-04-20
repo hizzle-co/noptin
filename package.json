@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/hizzle-co/noptin#readme",
   "dependencies": {
-    "@wordpress/hooks": "2.7.0",
+    "@wordpress/hooks": "2.8.0",
     "install": "0.13.0",
     "lodash.find": "4.6.0",
     "lodash.throttle": "4.1.1",
