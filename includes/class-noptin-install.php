@@ -32,22 +32,27 @@ class Noptin_Install {
 
 		// Force update the subscribers table.
 		if ( false === $upgrade_from ) {
-			$this->force_update_subscribers_table();
+			return $this->force_update_subscribers_table();
 		}
 
 		// If this is a fresh install.
 		if ( ! $upgrade_from ) {
-			$this->do_full_install();
+			return $this->do_full_install();
 		}
 
 		// Upgrading from version 1.
 		if ( 1 == $upgrade_from ) {
-			$this->upgrade_from_1();
+			return $this->upgrade_from_1();
 		}
 
 		// Upgrading from version 2.
 		if ( 2 == $upgrade_from ) {
-			$this->upgrade_from_2();
+			return $this->upgrade_from_2();
+		}
+
+		// Upgrading from version 3.
+		if ( 3 == $upgrade_from ) {
+			return $this->upgrade_from_3();
 		}
 
 	}
@@ -105,6 +110,33 @@ class Noptin_Install {
 	}
 
 	/**
+	 * Returns the automation rules table schema
+	 *
+	 * @since 1.2.8
+	 */
+	private function get_automation_rules_table_schema() {
+
+		$table           = $this->table_prefix . 'noptin_automation_rules';
+		$charset_collate = $this->charset_collate;
+
+		return "CREATE TABLE IF NOT EXISTS `$table` (
+			`id` bigint(20) NOT NULL AUTO_INCREMENT,
+			`action_id` varchar(255) NOT NULL default '',
+			`action_settings` longtext DEFAULT NULL,
+			`trigger_id` varchar(255) NOT NULL default '',
+			`trigger_settings` longtext DEFAULT NULL,
+			`status` int(2) NOT NULL default '1',
+			`times_run` int(11) NOT NULL default '0',
+			`created_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			`updated_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			PRIMARY KEY (`id`),
+			KEY trigger_id (trigger_id),
+			KEY action_id (action_id)
+		) $charset_collate";
+
+	}
+
+	/**
 	 * Upgrades the db from version 1 to 2
 	 */
 	private function upgrade_from_1() {
@@ -136,6 +168,16 @@ class Noptin_Install {
 		// Create initial subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
+		$this->upgrade_from_3();
+	}
+
+	/**
+	 * Upgrades the db from version 3 to 4
+	 */
+	private function upgrade_from_3() {
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 	}
 
 	/**
@@ -164,9 +206,10 @@ class Noptin_Install {
 		global $wpdb;
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
-		// Create the subscriber and subscriber meta table.
+		// Create database tables.
 		dbDelta( array( $this->get_subscribers_table_schema() ) );
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
+		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 
 		// Add a default subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );

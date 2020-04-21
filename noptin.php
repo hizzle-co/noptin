@@ -51,7 +51,7 @@ class Noptin {
 	 * @var         int Plugin db version
 	 * @since       1.0.0
 	 */
-	public $db_version = 3;
+	public $db_version = 4;
 
 	/**
 	 * Stores the main Noptin instance.
@@ -106,6 +106,14 @@ class Noptin {
 	 * @since       1.2.3
 	 */
 	public $post_notifications = null;
+
+	/**
+	 * Automation Rules.
+	 * 
+	 * @var Noptin_Automation_Rules
+	 * @since       1.2.8
+	 */
+	public $automation_rules;
 
 	/**
 	 * Get active instance
@@ -169,8 +177,8 @@ class Noptin {
 			spl_autoload_register( array( $this, 'autoload' ), true );
 		} catch ( Exception $e ) {
 			log_noptin_message( $e->getMessage() );
-			require_once $plugin_path . 'includes/load.php';
 		}
+
 	}
 
 	/**
@@ -199,6 +207,11 @@ class Noptin {
 	 * @return      void
 	 */
 	private function register_hooks() {
+
+		// If autoloading failed.
+		if ( ! class_exists( 'Noptin_Background_Mailer' ) ) {
+			return;
+		}
 
 		// Init the plugin after WP inits
 		add_action( 'init', array( $this, 'init' ), 5 );
@@ -264,6 +277,9 @@ class Noptin {
 		// Ajax.
 		$this->ajax 			  = new Noptin_Ajax();
 
+		// Automation tasks.
+		$this->automation_rules = new Noptin_Automation_Rules();
+
 		/**
 		 * Fires after Noptin inits
 		 *
@@ -281,25 +297,39 @@ class Noptin {
 	 * @since       1.2.3
 	 * @return      void
 	 */
-	private function autoload( $class_name ) {
+	public function autoload( $class_name ) {
 
-		$plugin_path = plugin_dir_path( __FILE__ );
+		// Normalize the class name...
 		$class_name  = strtolower( $class_name );
 
-		// Make sure this is our class.
+		// ... and make sure it is our class.
 		if ( false === strpos( $class_name, 'noptin' ) ) {
 			return;
 		}
 
+		// Next, prepare the file name from the class.
 		$file_name = 'class-' . str_replace( '_', '-', $class_name ) . '.php';
 
-		// Load the class.
-		if ( file_exists( "{$plugin_path}includes/$file_name" ) ) {
-			include "{$plugin_path}includes/$file_name";
-		} elseif ( file_exists( "{$plugin_path}includes/admin/$file_name" ) ) {
-			include "{$plugin_path}includes/admin/$file_name";
-		} elseif ( file_exists( "{$plugin_path}includes/integrations/$file_name" ) ) {
-			include "{$plugin_path}includes/integrations/$file_name";
+		// And an array of possible locations in order of importance;
+		$locations = array(
+			'includes',
+			'includes/admin',
+			'includes/integrations',
+			'includes/automation-rules',
+			'includes/automation-rules/actions',
+			'includes/automation-rules/triggers',
+		);
+
+		// Base path of the classes.
+		$plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
+
+		foreach ( $locations as $location ) {
+
+			if ( file_exists( "$plugin_path/$location/$file_name" ) ) {
+				include "$plugin_path/$location/$file_name";
+				break;
+			}
+
 		}
 
 	}
