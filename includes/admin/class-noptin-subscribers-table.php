@@ -302,5 +302,3 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	}
 
 }
-
-

@@ -113,6 +113,16 @@ abstract class Noptin_Abstract_Trigger {
     }
 
     /**
+     * Returns whether or not the action can run (dependancies are installed).
+     *
+     * @since 1.2.8
+     * @return bool
+     */
+    public function can_run() {
+        return true;
+    }
+
+    /**
      * Checks if this rule is valid for the above parameters.
      *
      * @since 1.2.8

@@ -29,6 +29,7 @@ abstract class Noptin_Abstract_Action {
      * Retrieve the action's unique id.
      *
      * Only alphanumerics, dashes and underscrores are allowed.
+     * Maximum 255 characters.
      * 
      * @since 1.2.8
      * @return string
@@ -110,6 +111,16 @@ abstract class Noptin_Abstract_Action {
      */
     public function has_rules() {
         return ! empty( $this->get_rules() );
+    }
+
+    /**
+     * Returns whether or not the action can run (dependancies are installed).
+     *
+     * @since 1.2.8
+     * @return bool
+     */
+    public function can_run() {
+        return true;
     }
     
     /**
