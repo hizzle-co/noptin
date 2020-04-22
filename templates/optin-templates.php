@@ -767,6 +767,63 @@
 
 		),
 
+		'discountalt21565701726' => array(
+			'title' => __( 'Discount Alt', 'newsletter-optin-box' ),
+			'data'  => array(
+				'hideCloseButton'       => false,
+				'closeButtonPos'        => 'along',
+				'singleLine'            => false,
+				'formRadius'            => '0px',
+				'formWidth'             => '600px',
+				'formHeight'            => '280px',
+				'noptinFormBg'          => '#ffffff',
+				'noptinFormBgImg'       => '',
+				'fields'                => array(
+					array(
+						'type'    => array(
+							'label' => __( 'Enter Your Email Address', 'newsletter-optin-box' ),
+							'name'  => 'email',
+							'type'  => 'email',
+						),
+
+						'require' => true,
+						'key'     => 'noptin_email_key',
+					),
+
+				),
+
+				'imageMain'             => false,
+				'noptinFormBorderColor' => '#ffffff',
+				'image'                 => '',
+				'imagePos'              => 'right',
+				'noptinButtonLabel'     => __( 'GET IT NOW!', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#313131',
+				'noptinButtonColor'     => '#ffffff',
+				'hideTitle'             => false,
+				'title'                 => 'GET 10% OFF',
+				'titleColor'            => '#313131',
+				'hideDescription'       => false,
+				'description'           => __( 'SUBSCRIBE TO OUR NEWSLETTER & RECEIVE A COUPON', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#313131',
+				'hideNote'              => false,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( '* $50 MINIMUM PURCHASE', 'newsletter-optin-box' ),
+				'noteColor'             => '#9E9E9E',
+				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-description {
+					border-top: 1px solid #E0E0E0;
+				   border-bottom: 1px solid #E0E0E0;
+			   }
+			   
+			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading p,
+			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading {
+				  font-size: 66px;
+			   }
+			   ',
+			),
+
+		),
+
 		'minimal21565701726' => array(
 			'title' => __( 'Minimal', 'newsletter-optin-box' ),
 			'data'  => array(
