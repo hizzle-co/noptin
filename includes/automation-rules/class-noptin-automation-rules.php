@@ -29,7 +29,21 @@ class Noptin_Automation_Rules {
      * @return string
      */
     public function __construct() {
-        // Register core automations
+
+        // Register core actions
+        $this->add_action( new Noptin_Custom_Field_Action() );
+        if ( class_exists( 'WooCommerce' ) ) {
+            $this->add_action( new Noptin_WooCommerce_Coupon_Action() );
+        }
+
+        // Register core triggers
+        $this->add_trigger( new Noptin_New_Subscriber_Trigger() );
+        $this->add_trigger( new Noptin_Open_Email_Trigger() );
+        $this->add_trigger( new Noptin_Link_Click_Trigger() );
+        if ( class_exists( 'WooCommerce' ) ) {
+            $this->add_trigger( new Noptin_WooCommerce_New_Order_Trigger() );
+            $this->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger() );
+        }
 
         do_action( 'noptin_automation_rules_load', $this );
     }
@@ -67,6 +81,16 @@ class Noptin_Automation_Rules {
     }
 
     /**
+     * Returns all registered actions.
+     *
+     * @since 1.2.8
+     * @return Noptin_Abstract_Action[]
+     */
+    public function get_actions() {
+        return $this->actions;
+    }
+
+    /**
      * Registers a trigger.
      *
      * @since 1.2.8
@@ -85,6 +109,16 @@ class Noptin_Automation_Rules {
      */
     public function get_trigger( $trigger_id ) {
         return empty( $this->triggers[ $trigger_id ] ) ? null : $this->triggers[ $trigger_id ];
+    }
+
+    /**
+     * Returns all registered triggers.
+     *
+     * @since 1.2.8
+     * @return Noptin_Abstract_Trigger[]
+     */
+    public function get_triggers() {
+        return $this->triggers;
     }
 
     /**

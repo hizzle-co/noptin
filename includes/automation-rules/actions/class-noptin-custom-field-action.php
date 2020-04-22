@@ -37,7 +37,7 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
      * @inheritdoc
      */
     public function get_image() {
-        return 'https://cdn.noptin.com/templates/images/noptin-logo.png';
+        return '';
     }
 
     /**

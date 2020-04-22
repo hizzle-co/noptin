@@ -518,8 +518,8 @@ class Noptin_Admin {
 		do_action( 'noptin_before_automation_rules_page', $this );
 
 		// Are we creating a new automation or viewing all automations?
-		if ( ! empty( $_GET['new'] ) ) {
-			$this->render_create_automation_rule_page( $_GET['subscriber'] );
+		if ( ! empty( $_GET['create'] ) && is_numeric( $_GET['create'] ) ) {
+			$this->render_create_automation_rule_page( $_GET['create'] );
 		} else {
 			$this->render_automation_rules_overview_page();
 		}
@@ -553,7 +553,7 @@ class Noptin_Admin {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="<?php echo esc_url( add_query_arg( 'create', '1' ) ); ?>" class="page-title-action noptin-add-automation-rule"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a></h1>
-			<form id="noptin-subscribers-table" method="POST">
+			<form id="noptin-automation-rules-table" method="POST">
 				<?php $table->display(); ?>
 			</form>
 			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
@@ -561,12 +561,59 @@ class Noptin_Admin {
 		<?php
 
 		/**
-		 * Runs after displaying the subscribers overview page.
+		 * Runs after displaying the automation rules overview page.
 		 *
 		 * @param array $this The admin instance
 		 */
-		do_action( 'noptin_after_subscribers_overview_page', $this );
+		do_action( 'noptin_after_automation_rules_overview_page', $this );
 	}
+
+	/**
+	 * Renders the automation rule creation page.
+	 *
+	 * @access      public
+	 * @since       1.2.8
+	 * @return      void
+	 */
+	public function render_create_automation_rule_page() {
+
+		// Only admins can access this page.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		/**
+		 * Runs before displaying the automation creation page.
+		 *
+		 * @param array $this The admin instance
+		 */
+		do_action( 'noptin_before_automation_rules_create_page', $this );
+
+		?>
+		<div class="wrap" style="max-width: 800px; margin: 20px auto;">
+			<h1 class="wp-heading-inline"><?php _e( 'Create an Automation Rule', 'newsletter-optin-box' ); ?></h1>
+			<form id="noptin-automation-rule-editor" method="POST">
+				<?php
+					$step = ( int ) $_GET['create'];
+					$file = locate_noptin_template( "automation-rules/step-$step.php" );
+					
+					if ( ! empty( $file ) ) {
+						include $file;
+					}
+				?>
+			</form>
+			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
+		</div>
+		<?php
+
+		/**
+		 * Runs after displaying the automation creation page.
+		 *
+		 * @param array $this The admin instance
+		 */
+		do_action( 'noptin_after_automation_rules_create_page', $this );
+	}
+
 
 	/**
 	 * Renders view subscribers page

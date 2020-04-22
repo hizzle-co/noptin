@@ -1290,3 +1290,50 @@ a.no-campaign-create-new-campaign {
     background: transparent;
     color: #b71c1c !important;
 }
+
+#noptin-automation-rule-editor {
+
+	a {
+		color: inherit !important;
+		text-decoration: none;
+
+		&:hover .trigger,
+		&:active .trigger,
+		&:focus .trigger {
+			background: #f8f9f9;
+		}
+	}
+
+	.trigger {
+		margin: 0;
+		padding: 1em 1.5em;
+		background: #fff;
+		border: 1px solid #ccd0d4;
+		margin-bottom: -1px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+
+	}
+
+	.trigger-icon {
+		margin-right: 8px;
+
+		div {
+			width: 32px;
+			height: 32px;
+			color: #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
+	.trigger-text {
+		flex: 1;
+		h4, p {
+			margin: 0
+		}
+	}
+	
+}
