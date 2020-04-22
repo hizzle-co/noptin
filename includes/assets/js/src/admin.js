@@ -10,10 +10,7 @@
 	}
 
 	// Global noptin object
-	window.noptin = {}
-
-	// Hook management
-	noptin.hooks = require ( '@wordpress/hooks' )
+	window.noptin = window.noptin || {}
 
 	// Attach the tooltips
 	$(document).ready(function(){

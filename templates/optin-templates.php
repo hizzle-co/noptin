@@ -824,6 +824,62 @@
 
 		),
 
+		'twobg21565701726' => array(
+			'title' => __( 'Two Backgrounds', 'newsletter-optin-box' ),
+			'data'  => array(
+				'hideCloseButton'       => false,
+				'closeButtonPos'        => 'along',
+				'singleLine'            => false,
+				'formRadius'            => '0px',
+				'formWidth'             => '600px',
+				'formHeight'            => '280px',
+				'noptinFormBg'          => '#607D8B',
+				'noptinFormBgImg'       => 'https://cdn.noptin.com/templates/images/double-bg.png',
+				'fields'                => array(
+					array(
+						'type'    => array(
+							'label' => __( 'Enter Your Email Address', 'newsletter-optin-box' ),
+							'name'  => 'email',
+							'type'  => 'email',
+						),
+
+						'require' => true,
+						'key'     => 'noptin_email_key',
+					),
+
+				),
+
+				'imageMain'             => false,
+				'noptinFormBorderColor' => '#ffffff',
+				'image'                 => '',
+				'imagePos'              => 'right',
+				'noptinButtonLabel'     => __( 'Subscribe', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#313131',
+				'noptinButtonColor'     => '#ffffff',
+				'hideTitle'             => false,
+				'title'                 => 'GET FREE UPDATES',
+				'titleColor'            => '#ffffff',
+				'hideDescription'       => false,
+				'description'           => __( 'This template uses custom CSS to set a different background for the footer', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#ffffff',
+				'hideNote'              => true,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#9E9E9E',
+				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-footer {
+					background-color: aliceblue;
+			   }
+			   
+			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading p,
+			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading {
+				  font-size: 46px;
+			   }
+			   ',
+			),
+
+		),
+
 		'minimal21565701726' => array(
 			'title' => __( 'Minimal', 'newsletter-optin-box' ),
 			'data'  => array(

@@ -19,13 +19,16 @@
 				<div  v-for="field in fields"  :key="field.key" class="noptin-optin-field-wrapper" :class="'noptin-optin-field-wrapper-' + field.type.type">
 					<?php do_action( 'noptin_field_type_optin_markup' ); ?>
 				</div>
+				<div class="noptin-gdpr-checkbox-wrapper" style="margin-bottom: 10px;" v-if="gdprCheckbox && ! singleLine">
+					<label><input type='checkbox' value='1' name='noptin_gdpr_checkbox' required="required"/><span v-html="gdprConsentText"></span></label>
+				</div>
 				<input type="hidden" name="noptin_form_id" :value="id" />
 				<input :value="noptinButtonLabel" type="submit"
 					:style="{backgroundColor:noptinButtonBg, color: noptinButtonColor}"
 					:class="singleLine ? '' : 'noptin-form-button-' + buttonPosition" class="noptin-form-submit" />
 			</div>
-			<div class="noptin-gdpr-checkbox-wrapper" v-if="gdprCheckbox && !hideFields">
-				<label><input type='checkbox' value='1' name='noptin_gdpr_checkbox' required="required"/>{{gdprConsentText}}</label>
+			<div class="noptin-gdpr-checkbox-wrapper" style="margin-top: 10px;" v-if="gdprCheckbox && !hideFields && singleLine">
+				<label><input type='checkbox' value='1' name='noptin_gdpr_checkbox' required="required"/><span v-html="gdprConsentText"></span></label>
 			</div>
 			<noptin-rich-text v-if="!hideNote" :style="{ color: noteColor}" class="noptin-form-note" v-model="note" :text="note"></noptin-rich-text>
 			<div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px"
