@@ -57,7 +57,9 @@
 											<table border="0" cellpadding="0" cellspacing="0">
 												<tr>
 													<td align="center" bgcolor="#CC7953" style="border-radius: 6px;">
-														<a href="<?php echo esc_url( $cta_url ); ?>" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Merriweather', serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;"><?php $cta_text ?></a>
+														<div style='text-align: left; padding: 20px;' align='left'>
+															<a class="cta-link" href="<?php echo esc_url( $cta_url ); ?>" target="_blank" style="padding: 16px 36px; font-family: 'Merriweather', serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px; display: inline-block;"><?php echo $cta_text; ?></a>
+														</div>
 													</td>
 												</tr>
 											</table>
@@ -74,8 +76,8 @@
 
 					<!-- start copy -->
 		  				<tr>
-							<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px;">
-								<?php echo $after_cta_text; ?>
+							<td align="left" bgcolor="#ffffff" style="padding: 0 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px;">
+								<?php echo wpautop( $after_cta_text ); ?>
 							</td>
 						</tr>
 					<!-- end copy -->
@@ -86,8 +88,8 @@
 
 					<!-- start copy -->
 						<tr>
-							<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px; border-bottom: 5px solid #69BCB1">
-								<?php echo $after_cta_text2; ?>
+							<td align="left" bgcolor="#ffffff" style="padding: 0 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px; border-bottom: 5px solid #69BCB1">
+								<?php echo wpautop( $after_cta_text2 ); ?>
 							</td>
 						</tr>
 					<!-- end copy -->

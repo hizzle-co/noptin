@@ -498,11 +498,13 @@ class Noptin_Vue {
 			$field['options'] = array();
 		}
 
+		$options = '';
+
 		if ( isset( $field['placeholder'] ) ) {
-			$field['options'] = array_merge( array( '' => $field['placeholder'] ), $field['options'] );
+			$placeholder = sanitize_text_field( $field['placeholder'] );
+			$options .= "<option value='' disabled>$placeholder</option>";
 		}
 
-		$options = '';
 		foreach ( $field['options'] as $val => $name ) {
 			$val      = esc_attr( $val );
 			$name     = esc_html( $name );

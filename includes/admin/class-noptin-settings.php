@@ -199,6 +199,19 @@ class Noptin_Settings {
 				'description' => __( 'Enter a full url to your logo. Works best with rectangular images.', 'newsletter-optin-box' ),
 			),
 
+			'email_template'  => array(
+				'el'          => 'select',
+				'section'     => 'emails',
+				'label'       => __( 'Email Template', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Select a template', 'newsletter-optin-box' ),
+				'options'     => array(
+					'paste'        => __( 'Default', 'newsletter-optin-box' ),
+					'merriweather' => __( 'Merriweather', 'newsletter-optin-box' ),
+				),
+				'default'     => 'paste',
+				'description' => __( 'Select your preferred email template.', 'newsletter-optin-box' ),
+			),
+
 			'permission_text' => array(
 				'el'          => 'textarea',
 				'section'     => 'emails',

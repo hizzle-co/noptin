@@ -205,4 +205,8 @@
 		border-radius: 6px;
 	}
 
+	.cta-link {
+		display: inline-block !important;
+	}
+
 </style>

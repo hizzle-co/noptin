@@ -324,10 +324,7 @@ class Noptin_Mailer {
 		// Make links clickable.
 		$content = make_clickable( $content );
 
-		// Replace plain text chars with their formatted entities.
-		$content = wptexturize( $content );
-
-		// Ensure that shortcodes are not wrapped in paragraphs from above.
+		// Ensure that shortcodes are not wrapped in paragraphs.
 		$content = shortcode_unautop( $content );
 
 		// Execute shortcodes.
@@ -423,7 +420,7 @@ class Noptin_Mailer {
 	 *
 	 */
 	public function get_template( $data ) {
-		$template = get_noptin_option( 'email_template',  'merriweather' );
+		$template = get_noptin_option( 'email_template',  'paste' );
 		$template = apply_filters( 'noptin_mailer_email_template', $template, $data );
 
 		if ( empty( $template ) ) {
@@ -606,10 +603,12 @@ class Noptin_Mailer {
 		// If the email was not sent, log the error.
 		if ( empty( $result ) ) {
 			log_noptin_message(
-				/* Translators: %1$s Email address, %2$s Email subject. */
-				__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
-				sanitize_email( $data['to'] ),
-				wp_specialchars_decode ( $data['subject'] ),
+				sprintf(
+					/* Translators: %1$s Email address, %2$s Email subject. */
+					__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
+					sanitize_email( $data['to'] ),
+					wp_specialchars_decode ( $data['subject'] )
+				)
 			);
 		}
 

@@ -640,16 +640,40 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
 	// Is double optin enabled?
 	$double_optin = get_noptin_option( 'double_optin' );
 	if ( empty( $double_optin ) ) {
-		return;
+		return false;
 	}
 
-	$data = array(
-		'email_subject' => __( 'Please confirm your subscription', 'newsletter-optin-box' ),
-		'merge_tags'    => array(
+	$data = array (
+		'email_subject'   => __( 'Please confirm your subscription', 'newsletter-optin-box' ),
+		'merge_tags'      => array(
 			'confirmation_link' => get_noptin_action_url( 'confirm', $fields['confirm_key'] ),
 		),
-		'template'      => 'confirm-subscription',
+		'hero_text'       => __( 'Please confirm your subscription', 'newsletter-optin-box' ),
+		'email_body'      => sprintf(
+			'<p>%s %s %s</p>',
+			__( 'Tap the button below to confirm your subscription to our newsletter.', 'newsletter-optin-box' ),
+			__( 'If you have received this email by mistake, you can safely delete it.', 'newsletter-optin-box' ),
+			__( "You won't be subscribed if you don't click on the button below.", 'newsletter-optin-box' )
+		),
+		'cta_url'         => '[[confirmation_link]]',
+		'cta_text'        => __( 'Confirm your subscription', 'newsletter-optin-box' ),
+		'after_cta_text'  => sprintf(
+			'<p>%s</p><p>%s</p>',
+			__( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box' ),
+			'<a href="[[confirmation_link]]" target="_blank">[[confirmation_link]]</a>'
+		),
+		'after_cta_text2' =>  __( 'Cheers,', 'newsletter-optin-box' ) .'<br>[[noptin_company]]',
+		'permission_text' => __( "You are receiving this email because we got your request to subscribe to our newsletter. If you don't want to join the newsletter, you can safely delete this email", 'newsletter-optin-box' ),
+		'email'			  => $fields['email'],
 	);
+
+	foreach ( $fields as $key => $value ) {
+
+		if ( is_scalar( $key ) ) {
+			$data['merge_tags'][ $key ] = $value;
+		}
+
+	}
 
 	// Send the email.
 	return noptin()->mailer->prepare_then_send( $data );

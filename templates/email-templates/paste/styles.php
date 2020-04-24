@@ -16,7 +16,7 @@
 		font-family: Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	}
 
-	p{
+	p {
 		margin: 1em 0;
 		padding: 5px 0px 5px 0px;
 	}
