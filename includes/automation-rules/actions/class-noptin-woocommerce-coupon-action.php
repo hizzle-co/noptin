@@ -98,18 +98,12 @@ class Noptin_WooCommerce_Coupon_Action extends Noptin_Abstract_Action {
 			'email_body'	    => wp_kses_post( stripslashes_deep( $email_content ) ),
 			'email_subject' 	=> sanitize_text_field( stripslashes_deep( $email_subject ) ),
 			'preview_text'  	=> sanitize_text_field( stripslashes_deep( $email_preview ) ),
-			'template' 			=> locate_noptin_template( 'email-templates/paste.php' ),
 			'merge_tags'		=> $merge_tags,
 		);
 
 		$item = apply_filters( 'noptin_woocommerce_coupon_email_details', $item, $subscriber, $rule, $args );
 
-		// Try sending the email.
-		$mailer   = new Noptin_Mailer();
-		$email    = $mailer->get_email( $item );
-		$subject  = $mailer->get_subject( $item );
-
-		return $mailer->send( $subscriber->email, $subject, $email );
+        return noptin()->mailer->prepare_then_send( $item );
 
     }
 

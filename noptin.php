@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         1.2.7
+ * Version:         1.2.8
  * Text Domain:     newsletter-optin-box
  * License:         GPL3+
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -43,7 +43,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.2.7';
+	public $version = '1.2.8';
 
 	/**
 	 * The current database version.
@@ -108,6 +108,14 @@ class Noptin {
 	public $post_notifications = null;
 
 	/**
+	 * A state of the art email sender.
+	 * 
+	 * @var Noptin_Mailer
+	 * @since 1.2.8
+	 */
+	public $mailer = null;
+
+	/**
 	 * Automation Rules.
 	 * 
 	 * @var Noptin_Automation_Rules
@@ -168,9 +176,11 @@ class Noptin {
 
 		$plugin_path = plugin_dir_path( __FILE__ );
 
-		// plugin functions.
+		// Non-class files.
+		require_once $plugin_path . 'vendor/autoload.php';
 		require_once $plugin_path . 'includes/functions.php';
 		require_once $plugin_path . 'includes/subscriber.php';
+		require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
 
 		// Register autoloader.
 		try {
@@ -278,7 +288,10 @@ class Noptin {
 		$this->ajax 			  = new Noptin_Ajax();
 
 		// Automation tasks.
-		$this->automation_rules = new Noptin_Automation_Rules();
+		$this->automation_rules   = new Noptin_Automation_Rules();
+
+		// Mailer.
+		$this->mailer             = new Noptin_Mailer(); 
 
 		/**
 		 * Fires after Noptin inits

@@ -1,0 +1,17 @@
+{
+    "name": "hizzle-co/noptin",
+    "description": "WordPress Newsletter Plugin",
+    "type": "project",
+    "license": "gpl-2.0-or-later",
+    "authors": [
+        {
+            "name": "Noptin Support",
+            "email": "support@noptin.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "pelago/emogrifier": "3.1.0",
+        "symfony/css-selector": "^3.4.0"
+    }
+}

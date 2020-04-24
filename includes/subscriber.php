@@ -648,27 +648,12 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
 		'merge_tags'    => array(
 			'confirmation_link' => get_noptin_action_url( 'confirm', $fields['confirm_key'] ),
 		),
-		'template'      => locate_noptin_template( 'email-templates/confirm-subscription.php' ),
+		'template'      => 'confirm-subscription',
 	);
 
+	// Send the email.
+	return noptin()->mailer->prepare_then_send( $data );
 
-	// Try sending the email.
-	$mailer  = new Noptin_Mailer();
-	$email   = $mailer->get_email( $data );
-	$subject = $mailer->get_subject( $data );
-	$to      = sanitize_email( $fields['email'] );
-
-	if ( $mailer->send( $to, $subject, $email ) ) {
-		return true;
-	}
-
-	$error = sprintf( 
-		__( 'An error occured while sending a double-optin confimation email to subscriber %s', 'newsletter-optin-box' ),
-		"#$id ($to)"
-	);
-	log_noptin_message( $error );
-
-	return false;
 }
 add_action( 'noptin_insert_subscriber', 'send_new_noptin_subscriber_double_optin_email', 10, 2 );
 

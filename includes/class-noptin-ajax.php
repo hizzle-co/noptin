@@ -489,7 +489,7 @@ class Noptin_Ajax {
 			exit;
 		}
 
-		$to = sanitize_text_field( $data['email'] );
+		$data['email'] = sanitize_email( $data['email'] );
 
 		// Subject, body and preview text.
 		if ( empty( $data['email_subject'] ) ) {
@@ -505,25 +505,25 @@ class Noptin_Ajax {
 		}
 
 		// Is there a subscriber with that email?
-		$subscriber = get_noptin_subscriber_by_email( $to );
+		$subscriber = new Noptin_Subscriber( $data['email'] );
 		$merge_tags = array();
 
-		if ( ! empty( $subscriber ) ) {
-			$merge_tags = (array) $subscriber;
+		if ( $subscriber->exists() ) {
+			$merge_tags = $subscriber->to_array();
 
 			$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
 
-			$meta = get_noptin_subscriber_meta( $subscriber->id );
+			$meta = $subscriber->get_meta();
 			foreach ( $meta as $key => $values ) {
 
 				if ( isset( $values[0] ) && is_string( $values[0] ) ) {
 					$merge_tags[ $key ] = esc_html( $values[0] );
 				}
+
 			}
 		}
 
 		$data['merge_tags'] = $merge_tags;
-		$data['template']   = locate_noptin_template( 'email-templates/paste.php' );
 
 		/**
 		 * Filters the newsletter test email data.
@@ -532,12 +532,7 @@ class Noptin_Ajax {
 		 */
 		$data = apply_filters( 'noptin_test_email_data', $data );
 
-		// Try sending the email.
-		$mailer  = new Noptin_Mailer();
-		$email   = $mailer->get_email( $data );
-		$subject = $mailer->get_subject( $data );
-
-		if ( $mailer->send( $to, $subject, $email ) ) {
+		if ( noptin()->mailer->prepare_then_send( $data ) ) {
 			wp_send_json_success( __( 'Your test email has been sent', 'newsletter-optin-box' ) );
 		}
 

@@ -981,6 +981,7 @@ input:focus+.noptin-switch-slider span {
 		&.noptin-textarea-wrapper textarea {
 			margin-bottom: 0;
 			max-width: 400px;
+			height: 180px;
 		}
 	}
 

@@ -35,16 +35,6 @@ class Noptin_Email_Campaigns_Admin {
 		// Delete campaign stats.
 		add_action( 'delete_post', array( $this, 'maybe_delete_stats' ) );
 
-		// Email content.
-		add_filter( 'noptin_email_body', 'make_clickable', 9 );
-		add_filter( 'noptin_email_body', 'force_balance_tags', 25 );
-		add_filter( 'noptin_email_body', 'capital_P_dangit', 11 );
-		add_filter( 'noptin_email_body', 'wptexturize' );
-		add_filter( 'noptin_email_body', 'wpautop' );
-		add_filter( 'noptin_email_body', 'shortcode_unautop' );
-		add_filter( 'noptin_email_body', 'do_shortcode', 11 );
-		add_filter( 'noptin_email_body', array( $this, 'make_links_trackable' ), 100, 2 );
-
 	}
 
 	/**
@@ -466,48 +456,5 @@ class Noptin_Email_Campaigns_Admin {
 		$noptin->bg_mailer->save()->dispatch();
 
 	}
-
-	/**
-	 * Makes campaign links trackable.
-	 *
-	 * @param string $content The email content.
-	 * @param array  $data The new campaign data.
-	 */
-	function make_links_trackable( $content, $data ) {
-
-		if ( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
-			return $content;
-		}
-
-		$url = get_noptin_action_url( 'email_click' );
-
-		$url = add_query_arg(
-			array(
-				'sid' => intval( $data['subscriber_id'] ),
-				'cid' => intval( $data['campaign_id'] ),
-			),
-			$url
-		);
-
-		$url = esc_url( $url );
-
-		$_content = preg_replace_callback(
-			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
-			function ( $matches ) use ( $url ) {
-				$_url = "$url&to=" . urlencode( $matches[2] );
-				$pre  = $matches[1];
-				$post = $matches[3];
-				return "<a $pre href='$_url' $post >";
-			},
-			$content
-		);
-
-		if ( empty( $_content ) ) {
-			return $content;
-		}
-		return $_content;
-
-	}
-
 
 }

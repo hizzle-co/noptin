@@ -108,7 +108,7 @@ class Noptin_Vue {
 		// Attributes.
 		$attrs = '';
 		foreach ( $el as $attr => $val ) {
-			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class' ) ) ) {
+			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default' ) ) ) {
 				$val   = esc_attr( $val );
 				$attrs = "$attrs $attr='$val'";
 			}
@@ -293,7 +293,7 @@ class Noptin_Vue {
 		printf(
 			'<div %s class="field-wrapper noptin-textarea-wrapper %s">
 				<label class="noptin-textarea-label">%s %s</label>
-				<div><textarea %s v-model="%s"></textarea>%s</div>
+				<div class="noptin-content"><textarea %s v-model="%s"></textarea>%s</div>
 			</div>',
 			$field['restrict'],
 			$field['_class'],

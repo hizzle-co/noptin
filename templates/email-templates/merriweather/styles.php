@@ -1,14 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
+<style type="text/css">
+	/**
+     * Google webfonts. Recommended to include the .woff version for cross-client compatibility.
+     */
+    @media screen {
+    	@font-face {
+    		font-family: 'Merriweather';
+    		font-style: normal;
+    		font-weight: 400;
+    		src: local('Merriweather'), local('Merriweather'), url(http://fonts.gstatic.com/s/merriweather/v8/ZvcMqxEwPfh2qDWBPxn6nmB7wJ9CoPCp9n30ZBThZ1I.woff) format('woff');
+    	}
 
-	<meta charset="utf-8">
-	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title><?php echo $title; ?></title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="robots" content="noindex, nofollow" />
-	<style type="text/css">
-
+    	@font-face {
+    		font-family: 'Merriweather Bold';
+    		font-style: normal;
+    		font-weight: 700;
+    		src: local('Merriweather Bold'), local('Merriweather-Bold'), url(http://fonts.gstatic.com/s/merriweather/v8/ZvcMqxEwPfh2qDWBPxn6nhAPw1J91axKNXP_-QX9CC8.woff) format('woff');
+    	}
+  	}
 
 	/**
 	* Avoid browser level font resizing.
@@ -18,21 +26,26 @@
 	body,
 	table,
 	td,
+	div,
 	p,
 	a {
-	-ms-text-size-adjust: 100%; /* 1 */
-	-webkit-text-size-adjust: 100%; /* 2 */
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		-ms-text-size-adjust: 100%; /* 1 */
+		-webkit-text-size-adjust: 100%; /* 2 */
+		font-family: 'Merriweather', sans-serif;
 	}
 
-	p{
-		margin: 1em 0;
-		padding: 5px 0px 5px 0px;
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: 'Merriweather Bold', serif;
 	}
 
 	/**
-	 * Remove extra space added to tables and cells in Outlook.
-	 */
+	* Remove extra space added to tables and cells in Outlook.
+	*/
 	table,
 	td {
 		mso-table-rspace: 0pt;
@@ -40,14 +53,14 @@
 	}
 
 	/**
-	 * Better fluid images in Internet Explorer.
-	 */
+	* Better fluid images in Internet Explorer.
+	*/
 	img {
 		-ms-interpolation-mode: bicubic;
 	}
 
 	/**
-	 * Remove blue links for iOS devices.
+	* Remove blue links for iOS devices.
 	*/
 	a[x-apple-data-detectors] {
 		font-family: inherit !important;
@@ -59,8 +72,8 @@
 	}
 
 	/**
-	 * Fix centering issues in Android 4.4.
-	 */
+	* Fix centering issues in Android 4.4.
+	*/
 	div[style*="margin: 16px 0;"] {
 		margin: 0 !important;
 	}
@@ -73,14 +86,14 @@
 	}
 
 	/**
-	 * Collapse table borders to avoid space between cells.
-	 */
+	* Collapse table borders to avoid space between cells.
+	*/
 	table {
 		border-collapse: collapse !important;
 	}
 
 	a {
-		color: #1a82e2;
+		color: #CC7953;
 	}
 
 	img {
@@ -89,6 +102,20 @@
 		text-decoration: none;
 		border: 0;
 		outline: none;
+	}
+
+	p{
+		margin: 1em 0;
+		padding: 5px 0px 5px 0px;
+	}
+
+	.footer p{
+		margin: 0;
+		padding: 0;
+	}
+
+	.margin-none p {
+		margin: 0;
 	}
 
 	.wp-caption {
@@ -178,47 +205,4 @@
 		border-radius: 6px;
 	}
 
-	</style>
-
-</head>
-<body style="background-color: #e9ecef;">
-
-	<?php
-		echo $preview;
-		echo $tracker;
-	?>
-
-	<!-- start body -->
-	<table border="0" cellpadding="0" cellspacing="0" width="100%">
-
-		<?php echo $logo; ?>
-
-		<!-- start copy block -->
-		<tr>
-			<td align="center" bgcolor="#e9ecef">
-				<!--[if (gte mso 9)|(IE)]>
-					<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
-						<tr>
-							<td align="center" valign="top" width="600">
-				<![endif]-->
-				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin-top: 4px;">
-					<?php echo $main_content; ?>
-				</table>
-				<!--[if (gte mso 9)|(IE)]>
-							</td>
-						</tr>
-					</table>
-				<![endif]-->
-			</td>
-		</tr>
-		<!-- end copy block -->
-
-		<!-- start footer -->
-			<?php echo $footer; ?>
-		<!-- end footer -->
-
-	</table>
-	<!-- end body -->
-
-</body>
-</html>
+</style>

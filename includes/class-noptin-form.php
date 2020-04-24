@@ -685,7 +685,12 @@ class Noptin_Form {
 		}
 
 		// print main form html.
-		return do_shortcode( $html . $this->optinHTML . '</div>' );
+		$html = do_shortcode( $html . $this->optinHTML . '</div>' );
+
+		// Remove comments.
+		$html = preg_replace( '/<!--(.*)-->/Uis', '', $html );
+
+		return $html;
 	}
 
 	/**

@@ -35,7 +35,8 @@ function get_default_noptin_options() {
 	$options = array(
 		'notify_admin'          => false,
 		'double_optin'          => false,
-		'from_email'            => get_option( 'admin_email' ),
+		'from_email'            => noptin()->mailer->default_from_address(),
+		'reply_to'              => get_option( 'admin_email' ),
 		'from_name'             => get_option( 'blogname' ),
 		'company'               => get_option( 'blogname' ),
 		'comment_form'          => false,
@@ -43,11 +44,8 @@ function get_default_noptin_options() {
 		'register_form'         => false,
 		'register_form_msg'     => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
 		'hide_from_subscribers' => false,
-		'address'               => __( '31 North San Juan Ave.', 'newsletter-optin-box' ),
-		'city'                  => __( 'Santa Clara', 'newsletter-optin-box' ),
-		'state'                 => __( 'San Francisco', 'newsletter-optin-box' ),
-		'country'               => __( 'United States', 'newsletter-optin-box' ),
 		'success_message'       => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
+		'email_template'        => 'paste',
 	);
 	return $options;
 
@@ -866,7 +864,11 @@ function get_noptin_template( $template_name, $args = array(), $template_path = 
 		extract( $args );
 	}
 
-	include locate_noptin_template( $template_name, $template_path, $default_path );
+	$path = locate_noptin_template( $template_name, $template_path, $default_path );
+
+	if ( ! empty( $path ) ) {
+		include locate_noptin_template( $template_name, $template_path, $default_path );
+	}
 
 }
 

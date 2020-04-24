@@ -317,20 +317,25 @@ class Noptin_Emogrifier {
 
 		foreach ( $this->caches[ self::CACHE_KEY_CSS ][ $cssKey ] as $value ) {
 			// query the body for the xpath selector
-			$nodesMatchingCssSelectors = $xpath->query( $this->translateCssToXpath( $value['selector'] ) );
+			$nodesMatchingCssSelectors = @$xpath->query( $this->translateCssToXpath( $value['selector'] ) );
 
 			/** @var $node \DOMNode */
-			foreach ( $nodesMatchingCssSelectors as $node ) {
-				// if it has a style attribute, get it, process it, and append (overwrite) new stuff
-				if ( $node->hasAttribute( 'style' ) ) {
-					// break it up into an associative array
-					$oldStyleDeclarations = $this->parseCssDeclarationBlock( $node->getAttribute( 'style' ) );
-				} else {
-					$oldStyleDeclarations = array();
+			if ( is_array( $nodesMatchingCssSelectors ) ) {
+
+				foreach ( $nodesMatchingCssSelectors as $node ) {
+					// if it has a style attribute, get it, process it, and append (overwrite) new stuff
+					if ( $node->hasAttribute( 'style' ) ) {
+						// break it up into an associative array
+						$oldStyleDeclarations = $this->parseCssDeclarationBlock( $node->getAttribute( 'style' ) );
+					} else {
+						$oldStyleDeclarations = array();
+					}
+					$newStyleDeclarations = $this->parseCssDeclarationBlock( $value['attributes'] );
+					$node->setAttribute( 'style', $this->generateStyleStringFromDeclarationsArrays( $oldStyleDeclarations, $newStyleDeclarations ) );
 				}
-				$newStyleDeclarations = $this->parseCssDeclarationBlock( $value['attributes'] );
-				$node->setAttribute( 'style', $this->generateStyleStringFromDeclarationsArrays( $oldStyleDeclarations, $newStyleDeclarations ) );
+				
 			}
+			
 		}
 
 		// now iterate through the nodes that contained inline styles in the original HTML

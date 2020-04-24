@@ -3,8 +3,8 @@ Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 5.0
 Tested up to: 5.4
-Requires PHP: 5.3
-Version: 1.2.7
+Requires PHP: 5.6
+Version: 1.2.8
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -115,11 +115,16 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 == Changelog ==
 
 = 1.2.8 =
-- Subscribers page not showing a title - FIXED
-- "Minimal" email optin theme - ADDED
-- "Content Upgrades" optin form theme - ADDED
-- "Discount" email optin theme - ADDED
+- Newsletter subscribers page not showing a title - FIXED
+- "Minimal" newsletter optin template - ADDED
+- "Content Upgrades" newsletter optin template - ADDED
+- "Discount" newsletter optin template - ADDED
 - Hide block and quick-form widget from existing newsletter subscribers - CHANGED
+- Option to set a logo shown on the newsletters - ADDED
+- Ability to set a custom newsletter footer text - ADDED
+- Ability to set a "reply-to" email - ADDED
+- Ability to create automation rules - ADDED
+- *Unsubscriber form newsletter* link displays the incorrect feedback - FIXED
 
 = 1.2.7 - 2020-04-08 =
 - Admininstrators can now edit email subscribers - ADDED

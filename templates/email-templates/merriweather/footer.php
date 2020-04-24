@@ -1,0 +1,41 @@
+			<!-- start footer -->
+			<tr>
+			<td align="center" bgcolor="#D2C7BA" style="padding: 24px;"class="footer">
+				<!--[if (gte mso 9)|(IE)]>
+					<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+						<tr>
+							<td align="center" valign="top" width="600">
+				<![endif]-->
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+
+				<!-- start permission -->
+				<tr>
+					<td align="center" bgcolor="#D2C7BA" style="padding: 12px 24px; font-family: 'Merriweather', serif; font-size: 14px; line-height: 20px; color: #666;">
+						<?php echo $permission_text; ?>
+					</td>
+				</tr>
+				<!-- end permission -->
+
+				<!-- start unsubscribe -->
+				<tr>
+					<td align="center" bgcolor="#D2C7BA" style="padding: 12px 24px; font-family: 'Merriweather', serif; font-size: 14px; line-height: 20px; color: #666;">
+						<?php echo $footer_text; ?>
+					</td>
+				</tr>
+				<!-- end unsubscribe -->
+
+				</table>
+				<!--[if (gte mso 9)|(IE)]>
+							</td>
+						</tr>
+					</table>
+				<![endif]-->
+			</td>
+			</tr>
+			<!-- end footer -->
+
+		</table>
+		<!-- end body -->
+
+	</body>
+</html>

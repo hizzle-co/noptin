@@ -331,15 +331,16 @@ class Noptin_Page {
 		$user       = wp_get_current_user();
 		$subscriber = get_noptin_subscriber_by_email( $user->user_email );
 		$data       = array(
-			'campaign_id'  => $campaign->ID,
-			'template'     => locate_noptin_template( 'email-templates/paste.php' ),
-			'email_body'   => $campaign->post_content,
-			'preview_text' => get_post_meta( $campaign->ID, 'preview_text', true ),
-			'email'        => $user->user_email,
-			'merge_tags'   => array(
+			'campaign_id'   => $campaign->ID,
+			'email_subject' => $campaign->post_title,
+			'email_body'    => $campaign->post_content,
+			'preview_text'  => get_post_meta( $campaign->ID, 'preview_text', true ),
+			'email'         => $user->user_email,
+			'merge_tags'    => array(
 				'email'       => $user->user_email,
 				'first_name'  => $user->user_firstname,
 				'second_name' => $user->user_lastname,
+				'last_name'   => $user->user_lastname,
 			),
 		);
 
@@ -360,10 +361,9 @@ class Noptin_Page {
 		}
 
 		// Generate and display the email.
-		$mailer           = new Noptin_Mailer();
-		$mailer->emogrify = false;
-
-		echo  $mailer->get_email( $data );
+		$data = noptin()->mailer->prepare( $data );
+		echo $data['email_body'];
+		exit;
 
 	}
 

@@ -7,10 +7,84 @@ defined( 'ABSPATH' ) || exit;
 
 class Noptin_Mailer {
 
-	public $emogrify = true;
+	/**
+	 * Whether or not we should inline CSS into the email.
+	 */
+	public $inline_css = true;
 
 	/**
-	 * Returns the email subject
+	 * For backwards compatibility;
+	 */
+	private static $initialized = false;
+
+	/**
+	 * The class constructor.
+	 */
+	public function __construct() {
+
+		// We only want to init the class once.
+		if ( empty( self::$initialized ) ) {
+			$this->init();
+			self::$initialized = true;
+		}
+
+	}
+
+	/**
+	 * Initialize the class.
+	 */
+	private function init() {
+
+		// Send any background emails.
+		add_action( 'send_bg_noptin_email', array( $this, '_handle_background_send' ) );
+
+	}
+
+	/**
+	 * Prepares an email for sending.
+	 */
+	public function prepare( $data = array() ) {
+
+		// Ensure that we have merge tags.
+		if ( empty( $data['merge_tags'] ) ) {
+			$data['merge_tags'] = array();
+		}
+
+		// Ensure that a few variables are set.
+		$data['email_subject']   = $this->get_subject( $data );
+		$data['title']           = $data['email_subject'];
+		$data['logo_url']        = $this->get_logo_url( $data );
+		$data['tracker']         = $this->get_tracker( $data );
+		$data['permission_text'] = wpautop( $this->get_permission_text( $data ) );
+		$data['footer_text']     = wpautop( $this->get_footer_text( $data ) );
+		$data['hero_text']       = empty( $data['hero_text'] ) ? '' : $data['hero_text'];
+		$data['cta_url']         = empty( $data['cta_url'] ) ? '' : $data['cta_url'];
+		$data['cta_text']        = empty( $data['cta_text'] ) ? '' : $data['cta_text'];
+		$data['after_cta_text']  = empty( $data['after_cta_text'] ) ? '' : $data['after_cta_text'];
+		$data['after_cta_text2'] = empty( $data['after_cta_text2'] ) ? '' : $data['after_cta_text2'];
+		$data['email_body']      = $this->build_email( $data );
+
+		return $data;
+	}
+
+	/**
+	 * Prepares an email then sends it.
+	 */
+	public function prepare_then_send( $data = array() ) {
+		$data = $this->prepare( $data );
+		return $this->send( $data['email'], $data['email_subject'], $data['email_body'] );
+	}
+
+	/**
+	 * Prepares an email then sends it in the background.
+	 */
+	public function prepare_then_bg_send( $data = array() ) {
+		$data = $this->prepare( $data );
+		return $this->background_send( $data['email'], $data['email_subject'], $data['email_body'] );
+	}
+
+	/**
+	 * Returns the email subject with merge tags replaced.
 	 */
 	public function get_subject( $data = array() ) {
 
@@ -31,147 +105,30 @@ class Noptin_Mailer {
 	}
 
 	/**
-	 * Returns the email body
+	 * Returns the email body with the template compiled and merge tags replaced.
+	 *
 	 */
 	public function get_email( $data = array() ) {
-
-		$content = __( 'No content', 'newsletter-optin-box' );
-		if ( ! empty( $data['email_body'] ) ) {
-			$content = $data['email_body'];
-		}
-
-		$content = trim( $content );
-
-		if ( empty( $data['merge_tags'] ) ) {
-			$data['merge_tags'] = array();
-		}
-
-		$content = $this->merge( $content, $data['merge_tags'] );
-		$content = apply_filters( 'noptin_email_body', $content, $data );
-
-		if ( ! empty( $data['template'] ) ) {
-			$content = $this->prepare_template( $content, $data );
-		}
-
-		return $content;
-
+		$data = $this->prepare( $data );
+		return $data['email_body'];
 	}
 
 	/**
-	 * Attaches a template to an email
+	 * Retrieves the logo URL.
 	 */
-	public function prepare_template( $content, $data ) {
-
-		// Ensure the template exists.
-		$template = apply_filters( 'noptin_mailer_template', $data['template'], $data );
-		if ( ! file_exists( $template ) ) {
-			return $content;
-		}
-
-		$data['template'] = $template;
-
-		// Preview text.
-		$preview = $this->get_preview_text( $data );
-		$preview = apply_filters( 'noptin_email_preview', $preview, $data );
-
-		// Logo.
-		$logo = $this->get_logo( $data );
-		$logo = apply_filters( 'noptin_email_logo', $logo, $data );
-
-		// Content.
-		$main_content = $this->get_content( $content, $data );
-		$main_content = apply_filters( 'noptin_email_content', $main_content, $content, $data );
-
-		// Email footer.
-		$footer = $this->get_footer( $data );
-		$footer = apply_filters( 'noptin_email_footer', $footer, $data );
-
-		// Tracker.
-		$tracker = $this->get_tracker( $data );
-		$tracker = apply_filters( 'noptin_email_tracker', $tracker, $data );
-
-		// Title.
-		$title = '';
-
-		if ( ! empty( $data['email_subject'] ) ) {
-			$title = trim( $data['email_subject'] );
-		}
-
-		// Load it.
-		ob_start();
-		include $data['template'];
-		$email_content = ob_get_clean();
-
-		// Parse merge tags.
-		$email_content = $this->merge( $email_content, $data['merge_tags'] );
-
-		// Remove comments.
-		$email_content = preg_replace( '/<!--(.*)-->/Uis', '', $email_content );
-
-		if ( class_exists( 'DOMDocument' ) && $this->emogrify ) {
-
-			// Emogrify the email.
-			require_once get_noptin_include_dir( 'class-noptin-emogrifier.php' );
-
-			try {
-				$emogrifier     = new Noptin_Emogrifier( $email_content );
-				$_email_content = $emogrifier->emogrify();
-				$email_content  = $_email_content;
-			} catch ( Exception $e ) {
-				log_noptin_message( $e->getMessage() );
-			}
-		}
-
-		// Remove multiple line breaks.
-		$email_content = preg_replace( "/[\r\n]+/", "\n", $email_content );
-
-		return $email_content;
+	public function get_logo_url( $data ) {
+		return apply_filters( 'noptin_email_logo_url', get_noptin_option( 'logo_url', '' ), $data );
 	}
 
 	/**
-	 * Retrieves the markup for the email preview text
-	 */
-	public function get_preview_text( $data = array() ) {
-
-		if ( empty( $data['preview_text'] ) ) {
-			return '';
-		}
-		$preview_text = trim( $data['preview_text'] );
-
-		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/preview-text.php' ), compact( 'preview_text', 'data' ) );
-
-	}
-
-	/**
-	 * Retrieves the content markup for the email
-	 */
-	public function get_content( $content, $data = array() ) {
-		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/content.php' ), compact( 'content', 'data' ) ); 
-	}
-
-	/**
-	 * Retrieves the markup for the email logo
-	 */
-	public function get_logo( $data = array() ) {
-		$logo_url = apply_filters( 'noptin_email_logo_url', '', $data );
-		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/logo.php' ), compact( 'logo_url', 'data' ) );
-	}
-
-	/**
-	 * Retrieves the default email footer
-	 */
-	public function get_footer( $data = array() ) {
-		return noptin_ob_get_clean( locate_noptin_template( 'email-templates/footer.php' ), compact( 'data' ) );
-	}
-
-	/**
-	 * Retrieves tracking code
+	 * Returns the code used to track email opens.
 	 */
 	public function get_tracker( $data = array() ) {
 
 		if ( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
 			return '';
 		}
+
 		$url = get_noptin_action_url( 'email_open' );
 
 		$url = add_query_arg(
@@ -197,18 +154,74 @@ class Noptin_Mailer {
 			'blog_name'        => get_bloginfo( 'name' ),
 			'blog_description' => get_bloginfo( 'description' ),
 			'home_url'         => get_home_url(),
-			'noptin_country'   => get_noptin_option( 'country', '' ),
-			'noptin_state'     => get_noptin_option( 'state', '' ),
-			'noptin_city'      => get_noptin_option( 'city', '' ),
-			'noptin_address'   => get_noptin_option( 'address', '' ),
+			'noptin'   		   => sprintf(
+				'<a target="_blank" href="https://noptin.com/?utm_medium=powered-by&utm_campaign=email-campaign&utm_source=%s">Noptin</a>',
+				esc_url( get_home_url() )
+			),
 			'noptin_company'   => get_noptin_option( 'company', '' ),
 		);
-		return $default_merge_tags;
+
+		return apply_filters( 'noptin_mailer_default_merge_tags', $default_merge_tags );
 
 	}
 
 	/**
-	 * Merges the email body with the specified merge tags
+	 * Retrieves the default footer text.
+	 */
+	public function default_footer_text() {
+
+		$country = get_noptin_option( 'country', 'United States' );
+		$company = get_noptin_option( 'company', get_option( 'blogname' ) );
+		$address = get_noptin_option( 'address', '31 North San Juan Ave.' );
+		$city    = get_noptin_option( 'city', 'Santa Clara' );
+		$state   = get_noptin_option( 'state', 'San Francisco' );
+		$powered = sprintf(
+			__( 'Newsletter powered by %s', 'newsletter-optin-box' ),
+			'[[noptin]]'
+		);
+		return trim( "$address \n\n$city, $state, $country \n\n$company &mdash; $powered" );
+
+	}
+
+	/**
+	 * Returns the footer text.
+	 */
+	public function get_footer_text( $data ) {
+		$footer_text = get_noptin_option( 'footer_text', $this->default_footer_text() );
+		return apply_filters( 'noptin_mailer_email_footer_text', $footer_text, $data );
+	}
+
+	/**
+	 * Returns the default permission text.
+	 */
+	public function default_permission_text() {
+
+		$permission_text  = __(
+			'You received this email because you are subscribed to our email newsletter.',
+			'newsletter-optin-box'
+		);
+
+		$permission_text2 = sprintf(
+			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+			__( 'To stop receiving these emails, you can %1$sunsubscribe%2$s at any time.', 'newsletter-optin-box' ),
+			'<a href="[[unsubscribe_url]]" target="_blank">',
+			'</a>'
+		);
+
+		return $permission_text . ' ' . $permission_text2;
+
+	}
+
+	/**
+	 * Returns the permission text.
+	 */
+	public function get_permission_text( $data ) {
+		$permission_text = get_noptin_option( 'permission_text', $this->default_permission_text() );
+		return apply_filters( 'noptin_mailer_email_permission_text', $permission_text, $data );
+	}
+
+	/**
+	 * Merges a string with the specified merge tags
 	 */
 	public function merge( $content, $tags = array() ) {
 
@@ -228,21 +241,323 @@ class Noptin_Mailer {
 	}
 
 	/**
-	 * Retrieves email headers
+	 * Makes campaign links trackable.
+	 *
+	 * @param string $content The email content.
+	 * @param array  $data The new campaign data.
+	 */
+	public function make_links_trackable( $content, $data ) {
+
+		if ( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+			return $content;
+		}
+
+		$url = get_noptin_action_url( 'email_click' );
+
+		$url = add_query_arg(
+			array(
+				'sid' => intval( $data['subscriber_id'] ),
+				'cid' => intval( $data['campaign_id'] ),
+			),
+			$url
+		);
+
+		$url = esc_url( $url );
+
+		$_content = preg_replace_callback(
+			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
+			function ( $matches ) use ( $url ) {
+				$_url = "$url&to=" . urlencode( $matches[2] );
+				$pre  = $matches[1];
+				$post = $matches[3];
+				return "<a $pre href='$_url' $post >";
+			},
+			$content
+		);
+
+		if ( empty( $_content ) ) {
+			return $content;
+		}
+		return $_content;
+
+	}
+
+	/**
+	 * Inlines CSS into the email to make it compatible with more clients.
+	 *
+	 * @param string $content The email content.
+	 */
+	public function inline_css( $content ) {
+
+		// Check if this is PHP 5.6
+		if ( version_compare( phpversion(), '5.6', '<' ) ) {
+			return $content;
+		}
+
+		// Maybe abort early;
+		if ( ! class_exists( 'Pelago\Emogrifier\CssInliner' ) || ! $this->inline_css ) {
+			return $content;
+		}
+
+		try {
+
+			$emogrifier = Pelago\Emogrifier\CssInliner::fromHtml( $content );
+			return $emogrifier->inlineCss()->render();
+
+		} catch ( Exception $e ) {
+
+			log_noptin_message( $e->getMessage() );
+			return $content;
+
+		}
+
+	}
+
+	/**
+	 * Post processes an email message.
+	 */
+	public function post_process( $content, $data ) {
+
+		// Parse merge tags.
+		$content = $this->merge( $content, $data['merge_tags'] );
+
+		// Make links clickable.
+		$content = make_clickable( $content );
+
+		// Replace plain text chars with their formatted entities.
+		$content = wptexturize( $content );
+
+		// Ensure that shortcodes are not wrapped in paragraphs from above.
+		$content = shortcode_unautop( $content );
+
+		// Execute shortcodes.
+		$content = do_shortcode( $content );
+
+		// Balance tags.
+		$content = force_balance_tags( $content );
+
+		// Make links trackable.
+		$content = $this->make_links_trackable( $content, $data );
+
+		// Finally, inline the CSS.
+		$content = $this->inline_css( $content );
+
+		// Filters a post processed email.
+		return apply_filters( 'noptin_post_processed_mailer_email_content', $content, $data );
+	}
+
+	/**
+	 * Given merge tags, this method builds an email.
+	 *
+	 * @since 1.2.8
+	 *
+	 * @param array $data The email data.
+	 *
+	 * @return string
+	 */
+	public function build_email( $data ) {
+
+		// Filters email data before the email is generated.
+		$data = apply_filters( 'noptin_mailer_email_data', $data );
+
+		// If no template is provided, use the user set template.
+		if ( empty( $data['template'] ) ) {
+			$data['template'] = $this->get_template( $data );
+		}
+
+		$template = $data['template'];
+
+		// If we are using an empty template, return the content as is.
+		if ( 'empty' === $template ) {
+			return $this->post_process( $data['email_body'], $data );
+		}
+
+		ob_start();
+
+		// If this is a full path to the template...
+		if ( file_exists( $template ) ) {
+			include $template;
+			return $this->post_process( ob_get_clean(), $data );
+		}
+
+		// We are using a template stored in the templates directory.
+		$sections = array(
+			'header',
+			'preview-text',
+			'logo',
+			'body',
+			'footer'
+		);
+
+		foreach ( apply_filters( 'noptin_mailer_email_sections', $sections, $data, $template ) as $section ) {
+
+			$section = sanitize_text_field( $section );
+
+			// Fires before the section is printed.
+			do_action( "noptin_mailer_before{$section}_section", $data );
+
+			// Load the section.
+			get_noptin_template( "email-templates/$template/$section.php", $data );
+
+			// Fires after the section is printed.
+			do_action( "noptin_mailer_before{$section}_section", $data );
+
+		}
+
+		$email_content = ob_get_clean();
+
+		// Filters email content before it is pre-processed.
+		$email_content = apply_filters( 'noptin_mailer_pre_processed_email_content', $email_content, $data );
+
+		if ( empty( $email_content ) ) {
+			$email_content = $data['email_body'];
+		}
+
+		return $this->post_process( $email_content, $data );
+	}
+
+	/**
+	 * The email template that we'll use to send our emails.
+	 *
+	 * @since 1.2.8
+	 *
+	 */
+	public function get_template( $data ) {
+		$template = get_noptin_option( 'email_template',  'merriweather' );
+		$template = apply_filters( 'noptin_mailer_email_template', $template, $data );
+
+		if ( empty( $template ) ) {
+			$template = 'paste';
+		}
+
+		return $template;
+	}
+
+	/**
+	 * Retrieves email headers.
 	 */
 	public function get_headers() {
 
-		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+		$name       = $this->get_from_name();
+		$reply_to   = $this->get_reply_to();
+		$headers    = array( "Reply-To:$name <$reply_to>" );
 
-		$from_email = get_noptin_option( 'from_email' );
-		if ( is_email( $from_email ) ) {
-			$name       = get_noptin_option( 'from_name', 'Noptin' );
-			$from_email = get_noptin_option( 'from_email' );
-			$headers[]  = "From:$name <$from_email>";
-			$headers[]  = "Reply-To:$name <$from_email>";
+		return apply_filters( 'noptin_mailer_email_headers',  $headers );
+
+	}
+
+	/**
+	 * The default emails from address.
+	 * 
+	 * Defaults to noptin@$sitename
+	 * Some hosts will block outgoing mail from this address if it doesn't exist,
+	 * but there's no easy alternative. Defaulting to admin_email might appear to be
+	 * another option, but some hosts may refuse to relay mail from an unknown domain.
+	 *
+	 * @since 1.2.8
+	 */
+	public function default_from_address() {
+
+		// Get the site domain and get rid of www.
+		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
+		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
+			$sitename = substr( $sitename, 4 );
 		}
 
-		return $headers;
+		$from_email = 'noptin@' . $sitename;
+
+		return apply_filters( 'noptin_mailer_default_from_address', $from_email );
+
+	}
+
+	/**
+	 * Get the email reply-to.
+	 *
+	 * @since 1.2.8
+	 *
+	 * @return string The email reply-to address.
+	 */
+	public function get_reply_to() {
+
+		$reply_to = get_noptin_option( 'reply_to',  get_option( 'admin_email' ) );
+
+		if ( ! is_email( $reply_to ) ) {
+			$reply_to =  get_option( 'admin_email' );
+		}
+
+		return apply_filters( 'noptin_mailer_email_reply_to', $reply_to );
+	}
+
+	/**
+	 * Get the email from address.
+	 *
+	 * @since 1.2.8
+	 *
+	 * @return string The email from address address.
+	 */
+	public function get_from_address() {
+
+		$from_address = get_noptin_option( 'from_email',  $this->default_from_address() );
+
+		if ( ! is_email( $from_address ) ) {
+			$from_address =  $this->default_from_address();
+		}
+
+		return apply_filters( 'noptin_mailer_email_from_address', $from_address );
+
+	}
+
+	/**
+	 * Get the email from name.
+	 *
+	 * @since 1.2.8
+	 *
+	 * @return string The email from name
+	 */
+	public function get_from_name() {
+		$from_name = get_noptin_option( 'from_name',  get_bloginfo( 'name' ) );
+
+		if ( empty( $from_name ) ) {
+			$from_name =  get_bloginfo( 'name' );
+		}
+
+		return apply_filters( 'noptin_mailer_email_from_name', sanitize_text_field( $from_name ), $this );
+	}
+
+	/**
+	 * Get the email content type.
+	 *
+	 * @since 1.2.8
+	 *
+	 * @return string The email content type.
+	 */
+	public function get_content_type() {
+		return apply_filters( 'noptin_mailer_email_content_type', 'text/html' );
+	}
+
+	/**
+	 * Add filters/actions before the email is sent.
+	 *
+	 * @since 1.2.8
+	 */
+	public function before_sending() {
+
+		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ), 1000 );
+		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ), 1000 );
+		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
+
+	}
+
+	/**
+	 * Remove filters/actions after the email is sent.
+	 *
+	 * @since 1.2.8
+	 */
+	public function after_sending() {
+
+		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ), 1000 );
+		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ), 1000 );
+		remove_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
 
 	}
 
@@ -251,16 +566,84 @@ class Noptin_Mailer {
 	 */
 	public function send( $to, $subject, $email ) {
 
-		$headers = $this->get_headers();
-		return wp_mail( $to, $subject, $email, $headers );
+		// Don't send if email address is invalid.
+		if ( ! is_email( $to ) ) {
+			return false;
+		}
 
+		// Hooks before an email is sent.
+		do_action( 'before_noptin_sends_email', $to, $subject, $email, $this );
+
+		// Attach our own hooks.
+		$this->before_sending();
+
+		/*
+		 * Allow to filter data on per-email basis.
+		 */
+		$data = apply_filters(
+			'noptin_mailer_email_data',
+			array(
+				'to'          => $to,
+				'subject'     => $subject,
+				'email'       => $email,
+				'headers'     => $this->get_headers(),
+				'attachments' => array(),
+			),
+			$this
+		);
+
+		// Send the actual email.
+		$result = wp_mail(
+
+			$data['to'],
+			wp_specialchars_decode ( $data['subject'] ),
+			$data['email'],
+			$data['headers'],
+			$data['attachments']
+
+		);
+
+		// If the email was not sent, log the error.
+		if ( empty( $result ) ) {
+			log_noptin_message(
+				/* Translators: %1$s Email address, %2$s Email subject. */
+				__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
+				sanitize_email( $data['to'] ),
+				wp_specialchars_decode ( $data['subject'] ),
+			);
+		}
+
+		// Remove our hooks.
+		$this->after_sending();
+
+		// Hooks after an email is sent.
+		do_action( 'before_noptin_sends_email', $to, $subject, $email, $this, $result );
+
+		return $result;
 	}
 
 	/**
-	 * Sends an email in the background
+	 * Schedules an email to send in the background.
 	 */
 	public function background_send( $to, $subject, $email ) {
-		// TODO.
+		$data = compact( 'to', 'subject', 'email' );
+		$key  = 'noptin_' . md5( uniqid() . time() . wp_rand( 0, 1000 ) );
+		set_transient( $key, $data );
+		do_noptin_background_action( 'send_bg_noptin_email', $key );
+	}
+
+	/**
+	 * Sends a background email.
+	 */
+	public function _handle_background_send( $key ) {
+		$data = get_transient( $key );
+
+		if ( empty( $data ) || is_array( $data ) ) {
+			return;
+		}
+
+		$this->send( $data['to'], $data['subject'], $data['email'] );
+		delete_transient( $key );
 	}
 
 }

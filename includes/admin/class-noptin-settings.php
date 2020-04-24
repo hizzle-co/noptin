@@ -94,11 +94,12 @@ class Noptin_Settings {
 	 */
 	public static function get_state() {
 
-		$settings = array_keys( self::get_settings() );
+		$settings = self::get_settings();
 		$state    = array();
 
-		foreach ( $settings as $setting ) {
-			$state[ $setting ] = get_noptin_option( $setting, '' );
+		foreach ( $settings as $key => $args ) {
+			$default = isset( $args['default'] ) ? $args['default'] : '';
+			$state[ $key ] = get_noptin_option( $key, $default );
 		}
 
 		$state = array_replace( get_noptin_options(), $state );
@@ -151,63 +152,78 @@ class Noptin_Settings {
 				'description' => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
 			),
 
-			'from_email'            => array(
+			'reply_to'        => array(
 				'el'          => 'input',
-				'section'     => 'sender',
+				'section'     => 'emails',
 				'type'        => 'email',
-				'label'       => __( 'From Email', 'newsletter-optin-box' ),
+				'label'       => __( '"Reply-to" Email', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
 				'placeholder' => get_option( 'admin_email' ),
-				'description' => __( 'Set this to a valid email address. If emails are not being delivered, leave this field blank.', 'newsletter-optin-box' ),
+				'default'     => get_option( 'admin_email' ),
+				'description' => __( 'Where should subscribers reply to in case they need to get in touch with you?', 'newsletter-optin-box' ),
+			),
+
+			'from_email'            => array(
+				'el'          => 'input',
+				'section'     => 'emails',
+				'type'        => 'email',
+				'label'       => __( '"From" Email', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'placeholder' => noptin()->mailer->default_from_address(),
+				'description' => __( 'How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails.', 'newsletter-optin-box' ),
 			),
 
 			'from_name'             => array(
 				'el'          => 'input',
-				'section'     => 'sender',
-				'label'       => __( 'From Name', 'newsletter-optin-box' ),
+				'section'     => 'emails',
+				'label'       => __( '"From" Name', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
-				'restrict'    => 'from_email',
 				'placeholder' => get_option( 'blogname' ),
+				'description' => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 			),
 
-			'company'               => array(
+			'company'         => array(
 				'el'          => 'input',
-				'section'     => 'sender',
+				'section'     => 'emails',
 				'label'       => __( 'Company', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
 				'placeholder' => get_option( 'blogname' ),
+				'description' => __( 'What is the name of your company or website?', 'newsletter-optin-box' ),
 			),
 
-			'address'               => array(
+			'logo_url'        => array(
 				'el'          => 'input',
-				'section'     => 'sender',
-				'label'       => __( 'Street Address', 'newsletter-optin-box' ),
-				'class'       => 'regular-text',
-				'placeholder' => __( '31 North San Juan Ave. ', 'newsletter-optin-box' ),
+				'type'        => 'image',
+				'section'     => 'emails',
+				'label'       => __( 'Logo', 'newsletter-optin-box' ),
+				'description' => __( 'Enter a full url to your logo. Works best with rectangular images.', 'newsletter-optin-box' ),
 			),
 
-			'city'                  => array(
-				'el'          => 'input',
-				'section'     => 'sender',
-				'label'       => __( 'City', 'newsletter-optin-box' ),
-				'class'       => 'regular-text',
-				'placeholder' => __( 'Santa Clara', 'newsletter-optin-box' ),
+			'permission_text' => array(
+				'el'          => 'textarea',
+				'section'     => 'emails',
+				'label'       => __( 'Permission reminder', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					/* Translators: %s . [[unsubscribe_url]] */
+					__( '%s will be replaced by a url to the unsubscription page.', 'newsletter-optin-box' ),
+					'[[unsubscribe_url]]'
+				),
+				'placeholder' => noptin()->mailer->default_permission_text(),
+				'default'     => noptin()->mailer->default_permission_text(),
 			),
 
-			'state'                 => array(
-				'el'          => 'input',
-				'section'     => 'sender',
-				'label'       => __( 'State', 'newsletter-optin-box' ),
-				'class'       => 'regular-text',
-				'placeholder' => __( 'San Francisco', 'newsletter-optin-box' ),
-			),
-
-			'country'               => array(
-				'el'          => 'input',
-				'section'     => 'sender',
-				'label'       => __( 'Country', 'newsletter-optin-box' ),
-				'class'       => 'regular-text',
-				'placeholder' => __( 'United States', 'newsletter-optin-box' ),
+			'footer_text'     => array(
+				'el'          => 'textarea',
+				'section'     => 'emails',
+				'label'       => __( 'Footer text', 'newsletter-optin-box' ),
+				'placeholder' => noptin()->mailer->default_footer_text(),
+				'default'     => noptin()->mailer->default_footer_text(),
+				'description' => sprintf(
+					/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+					__( 'This text appears below all emails. If you are a %1$sNoptin affiliate%2$s, include your affiliate link here and earn commissions for new referrals.', 'newsletter-optin-box' ),
+					'<a href="https://noptin.com/become-an-affiliate/">',
+					'</a>'
+				),
 			),
 
 			'success_message'       => array(

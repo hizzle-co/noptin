@@ -56,11 +56,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		}
 
 		// Try sending the email.
-		$mailer  = new Noptin_Mailer();
-		$email   = $mailer->get_email( $recipient_data );
-		$subject = $mailer->get_subject( $recipient_data );
-
-		if ( $mailer->send( $recipient_data['email'], $subject, $email ) ) {
+		if ( noptin()->mailer->prepare_then_send( $recipient_data ) ) {
 
 			if ( ! empty( $item['campaign_id'] ) ) {
 

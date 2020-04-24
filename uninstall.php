@@ -20,3 +20,9 @@ $table = $wpdb->prefix . 'noptin_subscriber_meta';
 if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
 	$wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
 }
+
+// Delete automation rules table.
+$table = $wpdb->prefix . 'noptin_automation_rules';
+if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+	$wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
+}
