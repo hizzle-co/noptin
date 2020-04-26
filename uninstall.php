@@ -6,6 +6,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 global $wpdb;
 
+$page = get_option( 'noptin_actions_page' );
+if ( is_numeric( $page ) ) {
+	wp_delete_post( $page, true );
+}
+
 // Delete options.
 $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'noptin\_%'" );
 

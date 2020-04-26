@@ -1,9 +1,9 @@
 === WordPress Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
-Requires at least: 5.0
+Requires at least: 4.9
 Tested up to: 5.4
-Requires PHP: 5.6
+Requires PHP: 5.3
 Version: 1.2.8
 Stable tag: trunk
 License: GPLv3
@@ -103,14 +103,18 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 
 == Screenshots ==
-1. How to create a new email newsletter subscription form
-2. Sample Email Subscription Form Embeded in a post
-3. View a list of email subscribers
-4. Sample newsletter subscription Widget
-5. Noptin Dashboard
-6. Opt-in Forms Editor
-7. General Settings Page
-
+1. Noptin overview page
+2. Newletter optin forms overview page
+3. Write newsletters the same way that you write posts
+4. A newsletter that is currently sending
+5. Paste newsletter template preview
+6. Merriweather newsletter template preview
+7. Sample newsletter subscription form
+8. Sample newsletter subscription sliding form
+9. Sample newsletter subscription popup form
+10. Automatically send new post notifications to your customers when you publish new posts.
+11. Viewing a single newsletter subscriber
+12. State of the art newsletter subscription form editor
 
 == Changelog ==
 
