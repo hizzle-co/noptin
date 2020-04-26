@@ -144,7 +144,7 @@ function get_noptin_action_page() {
 
 	$page = get_option( 'noptin_actions_page' );
 
-	if ( empty( $page ) ) {
+	if ( empty( $page ) || 'publish' != get_post_status( $page ) ) {
 
 		$content = '
 		<!-- wp:shortcode -->
@@ -154,7 +154,7 @@ function get_noptin_action_page() {
 		$page = wp_insert_post(
 			array(
 				'post_content' => $content,
-				'post_title'   => __( 'Noptin Page', 'newsletter-optin-box' ),
+				'post_title'   => __( 'Newsletter Subscription', 'newsletter-optin-box' ),
 				'post_status'  => 'publish',
 				'post_type'    => 'page',
 			)

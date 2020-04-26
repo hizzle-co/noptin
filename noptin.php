@@ -205,6 +205,9 @@ class Noptin {
 		$this->plugin_path = plugin_dir_path( __FILE__ );
 		$this->plugin_url  = plugins_url( '/', __FILE__ );
 
+		// Mailer.
+		$this->mailer = new Noptin_Mailer(); 
+
 		// Register our custom meta table.
 		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
 	}
@@ -289,9 +292,6 @@ class Noptin {
 
 		// Automation tasks.
 		// $this->automation_rules   = new Noptin_Automation_Rules();
-
-		// Mailer.
-		$this->mailer             = new Noptin_Mailer(); 
 
 		/**
 		 * Fires after Noptin inits

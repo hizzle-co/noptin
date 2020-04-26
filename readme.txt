@@ -126,4 +126,4 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Ability to set a newsletter's "reply-to" email - ADDED
 - Newsletter confirmation page displays the incorrect feedback - FIXED
 - Automatic new post notification newsletters are sent when an existing post is updated - FIXED
-
+[View full Changelog](https://github.com/hizzle-co/noptin/blob/master/changelog.md)
