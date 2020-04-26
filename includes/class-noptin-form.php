@@ -186,7 +186,7 @@ class Noptin_Form {
 			'noptinFormBg'          => '#eeeeee',
 			'noptinFormBorderColor' => '#eeeeee',
 			'noptinFormBorderRound' => true,
-			'formWidth'             => '580px',
+			'formWidth'             => '620px',
 			'formHeight'            => '280px',
 
 			// Overlay.
@@ -212,7 +212,7 @@ class Noptin_Form {
 
 			// Description design.
 			'hideDescription'       => false,
-			'description'           => __( 'Click on any text to edit it. Try <u>highlighting this text</u>.', 'newsletter-optin-box' ),
+			'description'           => __( 'And get notified everytime we publish a new blog post.', 'newsletter-optin-box' ),
 			'descriptionColor'      => '#32373c',
 
 			// Note design.

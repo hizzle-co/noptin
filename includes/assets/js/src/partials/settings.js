@@ -107,7 +107,13 @@ var settingsApp = new Vue({
 				//Update the associated key with the selected image's url
 				.on('select', e => {
 					let uploaded_image = image.state().get('selection').first();
-					this[key] = uploaded_image.toJSON().sizes[size].url;
+
+					if ( uploaded_image.toJSON().sizes[size] ) {
+						this[key] = uploaded_image.toJSON().sizes[size].url;
+					} else {
+						this[key] = uploaded_image.toJSON().sizes['full'].url;
+					}
+					
 				})
 		}
 

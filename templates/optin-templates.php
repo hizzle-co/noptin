@@ -776,7 +776,7 @@
 				'formRadius'            => '0px',
 				'formWidth'             => '600px',
 				'formHeight'            => '280px',
-				'noptinFormBg'          => '#ffffff',
+				'noptinFormBg'          => '#fefcfc',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
 					array(
@@ -793,7 +793,7 @@
 				),
 
 				'imageMain'             => false,
-				'noptinFormBorderColor' => '#ffffff',
+				'noptinFormBorderColor' => '#E0E0E0',
 				'image'                 => '',
 				'imagePos'              => 'right',
 				'noptinButtonLabel'     => __( 'GET IT NOW!', 'newsletter-optin-box' ),
@@ -804,7 +804,7 @@
 				'title'                 => 'GET 10% OFF',
 				'titleColor'            => '#313131',
 				'hideDescription'       => false,
-				'description'           => __( 'SUBSCRIBE TO OUR NEWSLETTER & RECEIVE A COUPON', 'newsletter-optin-box' ),
+				'description'           => '<p>' . __( 'SUBSCRIBE TO OUR NEWSLETTER & RECEIVE A COUPON', 'newsletter-optin-box' ) . '</p>',
 				'descriptionColor'      => '#313131',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,

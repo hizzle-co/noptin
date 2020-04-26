@@ -55,7 +55,16 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
      * @inheritdoc
      */
     public function get_settings() {
-        return array(); // subscription_method
+        return array(
+
+        ); // subscription_method
+    }
+
+    /**
+     * Returns an array of available subscription methods.
+     */
+    public function get_subscription_methods() {
+        global $wpdb;
     }
 
     /**

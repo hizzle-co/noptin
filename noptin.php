@@ -288,7 +288,7 @@ class Noptin {
 		$this->ajax 			  = new Noptin_Ajax();
 
 		// Automation tasks.
-		$this->automation_rules   = new Noptin_Automation_Rules();
+		// $this->automation_rules   = new Noptin_Automation_Rules();
 
 		// Mailer.
 		$this->mailer             = new Noptin_Mailer(); 

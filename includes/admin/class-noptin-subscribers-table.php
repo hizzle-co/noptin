@@ -141,7 +141,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$email       = sanitize_email( $subscriber['email'] );
 		$delete_url  = esc_url(
 			wp_nonce_url(
-				add_query_arg( 'delete-subscriber', $subscriber['id'], $this->base_url ),
+				add_query_arg( 'delete-subscriber', $subscriber['id'] ),
 				'noptin-subscriber'
 			)
 		);

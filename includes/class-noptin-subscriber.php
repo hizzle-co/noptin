@@ -99,7 +99,7 @@ class Noptin_Subscriber {
 	 */
 	public function init( $data ) {
 		$this->data = (object) $data;
-		$this->id   = (int) $data->id;
+		$this->id   = (int) $this->data->id;
 	}
 
 	/**
@@ -327,7 +327,7 @@ class Noptin_Subscriber {
 	 *
 	 */
 	public function send_confirmation_email() {
-		return send_new_noptin_subscriber_double_optin_email( $this->id, $this->to_array() );
+		return send_new_noptin_subscriber_double_optin_email( $this->id, $this->to_array(), true );
 	}
 
 	/**

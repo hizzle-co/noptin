@@ -109,7 +109,8 @@ abstract class Noptin_Abstract_Trigger {
      * @return array
      */
     public function has_rules() {
-        return ! empty( $this->get_rules() );
+        $rules = $this->get_rules;
+        return ! empty( $rules );
     }
 
     /**

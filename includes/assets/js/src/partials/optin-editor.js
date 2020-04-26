@@ -146,8 +146,13 @@ var vm = new Vue({
 			})
 				.open()
 				.on('select', (e) => {
-					var uploaded_image = image.state().get('selection').first();
-					vm[key] = uploaded_image.toJSON().sizes[size].url;
+					let uploaded_image = image.state().get('selection').first();
+
+					if ( uploaded_image.toJSON().sizes[size] ) {
+						this[key] = uploaded_image.toJSON().sizes[size].url;
+					} else {
+						this[key] = uploaded_image.toJSON().sizes['full'].url;
+					}
 				})
 		},
 		showSuccess(msg) {

@@ -345,6 +345,7 @@ class Noptin_Admin {
 			array( $this, 'render_subscribers_page' )
 		);
 
+		/*
 		// Automation Rules.
 		$automations_page_title = apply_filters( 'noptin_admin_automation_rules_page_title', __( 'Automation Rules', 'newsletter-optin-box' ) );
 		add_submenu_page(
@@ -354,7 +355,7 @@ class Noptin_Admin {
 			'manage_options',
 			'noptin-automation-rules',
 			array( $this, 'render_automation_rules_page' )
-		);
+		);*/
 
 		// Settings.
 		add_submenu_page(
@@ -702,6 +703,19 @@ class Noptin_Admin {
 		$table = new Noptin_Subscribers_Table();
 		$table->prepare_items();
 
+
+		$data = '';
+		$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
+		foreach( $data_array as $key => $value ) {
+
+			if ( is_scalar( $value ) ) {
+				$value = esc_attr( $value );
+				$key   = esc_attr( $key );
+				$data .= " data-$key='$value'";
+			}
+
+		}
+
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="#" class="page-title-action noptin-add-subscriber"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a> <a href="#" class="page-title-action noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="page-title-action noptin-export-subscribers"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> <a href="#" class="button-secondary noptin-danger-button noptin-delete-subscribers"><?php _e( 'Delete All Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
@@ -709,6 +723,7 @@ class Noptin_Admin {
 			<form id="noptin-subscribers-table" method="POST">
 				<?php $table->display(); ?>
 			</form>
+			<div id='noptin-subscribers-page-data' <?php echo $data; ?>></div>
 		</div>
 		<?php
 
@@ -731,6 +746,19 @@ class Noptin_Admin {
 	 */
 	public function render_single_subscriber_page( $subscriber = 0 ) {
 
+		$data = '';
+		$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
+		foreach( $data_array as $key => $value ) {
+
+			if ( is_scalar( $value ) ) {
+				$value = esc_attr( $value );
+				$key   = esc_attr( $key );
+				$data .= " data-$key='$value'";
+			}
+
+		}
+
+		echo "<div id='noptin-subscribers-page-data' $data></div>";
 		/**
 		 * Runs before displaying the suscribers page.
 		 *

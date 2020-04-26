@@ -28,11 +28,15 @@ class Noptin_New_Post_Notify {
 
 		// Notify subscribers.
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule_notification' ), 10, 3 );
-		add_action( 'publish_noptin-campaign', array( $this, 'maybe_send_notification' ) );
+		add_action( 'noptin_new_post_notification', array( $this, 'maybe_send_notification' ), 10, 2 );
+		add_action( 'publish_noptin-campaign', array( $this, 'maybe_send_old_notification' ) );
 		add_action( 'noptin_background_mailer_complete', array( $this, 'notification_complete' ) );
 
 		// Automation details.
 		add_filter( 'noptin_automation_table_about', array( $this, 'about_automation' ), 10, 3 );
+
+		// Display a help text below the email body.
+		add_action( 'noptin_automation_campaign_after_email_body', array( $this, 'show_help_text' ), 10, 2 );
 
 	}
 
@@ -49,6 +53,34 @@ class Noptin_New_Post_Notify {
 			$data['preview_text'] = __( 'New article published on [[blog_name]]', 'newsletter-optin-box' );
 		}
 		return $data;
+
+	}
+
+	/**
+	 * Filters default automation data.
+	 *
+	 * @param array $data The automation data.
+	 */
+	public function show_help_text( $campaign, $automation_type ) {
+
+		if ( 'post_notifications' === $automation_type ) {
+			$help_text = sprintf( 
+				__( 'Learn more about %show to set up new post notifications%s.', 'newsletter-optin-box' ),
+				'<a href="https://noptin.com/guide/email-automations/new-post-notifications/">',
+				'</a>');
+
+			echo "<p class='description'>$help_text</p>";
+
+			$help_text2 = sprintf( 
+				__( 'The %sUltimate Addons Pack%s allows you to set up new post notifications for products and other post types.', 'newsletter-optin-box' ),
+				'<a href="https://noptin.com/product/ultimate-addons-pack/">',
+				'</a>');
+
+			if ( ! class_exists( 'Noptin_AP_New_Post_Notifications' ) ) {
+				echo "<p class='description'>$help_text2</p>";
+			}
+
+		}
 
 	}
 
@@ -77,7 +109,10 @@ class Noptin_New_Post_Notify {
 		<tr>
 
 			<th>
-				<label><b><?php _e( 'Post Types', 'newsletter-optin-box' ); ?></b></label>
+				<label>
+					<b><?php _e( 'Post Types', 'newsletter-optin-box' ); ?></b>
+					<span title="<?php esc_attr_e( 'Which post types will this notification send out for?', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+				</label>
 			</th>
 
 			<td>
@@ -90,11 +125,14 @@ class Noptin_New_Post_Notify {
 		<tr>
 
 			<th>
-				<label><b><?php _e( 'Terms', 'newsletter-optin-box' ); ?></b></label>
+				<label>
+					<b><?php _e( 'Tags/Categories', 'newsletter-optin-box' ); ?></b>
+					<span title="<?php esc_attr_e( 'Limit this automatic new posts notification to specific tags and categories.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+				</label>
 			</th>
 
 			<td>
-				<?php $text = __( 'All terms', 'newsletter-optin-box' ); ?>
+				<?php $text = __( 'All tags and categories', 'newsletter-optin-box' ); ?>
 				<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-post-notifications-taxonomies">Change</a></p>
 			</td>
 
@@ -109,7 +147,7 @@ class Noptin_New_Post_Notify {
 	public function maybe_schedule_notification( $new_status, $old_status, $post ) {
 
 		// Ensure the post is published.
-		if ( 'publish' !== $new_status ) {
+		if ( 'publish' === $old_status || 'publish' !== $new_status ) {
 			return;
 		}
 
@@ -177,45 +215,44 @@ class Noptin_New_Post_Notify {
 	 */
 	public function schedule_notification( $post, $automation ) {
 
-		// Prepare post args.
-		$post_args = array(
-			'post_status'   => 'publish',
-			'post_type'     => 'noptin-campaign',
-			'post_date_gmt' => current_time( 'mysql', true ),
-			'post_date'     => current_time( 'mysql' ),
-			'edit_date'     => 'true',
-			'post_title'    => 'noptin_post_notification_schedule_' . wp_generate_password( 32, false ),
-			'meta_input'    => array(
-				'campaign_type'       => 'bg_email',
-				'bg_email_type'       => 'new_post_notification',
-				'associated_campaign' => $automation->ID,
-				'associated_post'     => $post->ID,
-			),
-		);
-
 		$sends_after      = (int) get_post_meta( $automation->ID, 'noptin_sends_after', true );
 		$sends_after_unit = get_post_meta( $automation->ID, 'noptin_sends_after_unit', true );
 
 		if ( ! empty( $sends_after ) ) {
-
 			$sends_after_unit = empty( $sends_after_unit ) ? 'minutes' : $sends_after_unit;
-			$time             = current_time( 'mysql' );
-			$time_gmt         = current_time( 'mysql', true );
-
-			$post_args['post_status']   = 'future';
-			$post_args['post_date']     = gmdate( 'Y-m-d H:i:s', strtotime( "$time +$sends_after $sends_after_unit" ) );
-			$post_args['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', strtotime( "$time_gmt +$sends_after $sends_after_unit" ) );
+			$timestamp        = strtotime( "+ $sends_after $sends_after_unit", current_time( 'timestamp' ) );
+		} else {
+			$timestamp = strtotime( '-1 minute', current_time( 'timestamp' ) );
 		}
 
-		$post_args = apply_filters( 'noptin_schedule_new_post_automation_details', $post_args );
-		wp_insert_post( $post_args, true );
+		schedule_noptin_background_action( $timestamp, 'noptin_new_post_notification', $post->ID, $automation->ID );
 
 	}
 
 	/**
 	 * (Maybe) Send out a new post notification
 	 */
-	public function maybe_send_notification( $key ) {
+	public function maybe_send_notification( $post_id, $campaign_id, $key = '' ) {
+
+		// If a notification has already been send abort...
+		if ( get_post_meta( $post_id, 'noptin_associated_new_post_notification_campaign', true ) ) {
+			return;
+		}
+
+		if ( empty( $key ) ) {
+			$key = $post_id . '_' . $campaign_id;
+		}
+
+		$this->notify( $post_id, $campaign_id, $key );
+
+	}
+
+	/**
+	 * (Maybe) Send out a new post notification.
+	 *
+	 * Handles those emails that were scheduled in older versions of the plugin.
+	 */
+	public function maybe_send_old_notification( $key ) {
 
 		// Is it a bg_email?
 		if ( 'bg_email' !== get_post_meta( $key, 'campaign_type', true ) ) {
@@ -230,19 +267,14 @@ class Noptin_New_Post_Notify {
 		$campaign_id = get_post_meta( $key, 'associated_campaign', true );
 		$post_id     = get_post_meta( $key, 'associated_post', true );
 
-		// If a notification has already been send abort...
-		if ( get_post_meta( $post_id, 'noptin_associated_new_post_notification_campaign', true ) ) {
-			return;
-		}
-
-		$this->notify( $post_id, $campaign_id, $key );
+		$this->maybe_send_notification( $post_id, $campaign_id, $key );
 
 	}
 
 	/**
 	 * Send out a new post notification
 	 */
-	public function notify( $post_id, $campaign_id, $key = '' ) {
+	protected function notify( $post_id, $campaign_id, $key ) {
 
 		// Ensure that both the campaign and post are published.
 		if ( 'publish' !== get_post_status( $post_id ) || 'publish' !== get_post_status( $campaign_id ) ) {
@@ -250,10 +282,6 @@ class Noptin_New_Post_Notify {
 		}
 
 		update_post_meta( $post_id, 'noptin_associated_new_post_notification_campaign', $campaign_id );
-
-		if ( empty( $key ) ) {
-			$key = $campaign_id;
-		}
 
 		$noptin   = noptin();
 		$campaign = get_post( $campaign_id );
@@ -301,7 +329,7 @@ class Noptin_New_Post_Notify {
 				'email_body'    => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
 				'email_subject' => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
 				'preview_text'  => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
-				'template'      => locate_noptin_template( 'email-templates/paste.php' ),
+				//'template'      => locate_noptin_template( 'email-templates/paste.php' ),
 				'merge_tags'    => $post,
 			),
 		);
@@ -348,6 +376,15 @@ class Noptin_New_Post_Notify {
 	 * Runs after a post notification has been sent
 	 */
 	public function notification_complete( $item ) {
+		global $wpdb;
+
+		if ( isset( $item['automation_type'] ) && 'post_notifications' === $item['automation_type'] && isset( $item['key'] ) ) {
+			$wpdb->delete(
+				get_noptin_subscribers_meta_table_name(),
+				array( 'meta_key' => '_campaign_' . $item['key'] ),
+				'%s'
+			);
+		}
 
 		if ( ! is_array( $item ) || empty( $item['campaign_id'] ) || empty( $item['associated_post'] ) ) {
 			return;

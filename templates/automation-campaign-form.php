@@ -41,7 +41,10 @@
 -->
 					<tr>
 						<th>
-							<label for="noptin-email-subject"><b><?php _e( 'Email Subject:', 'newsletter-optin-box' ); ?></b></label>
+							<label for="noptin-email-subject">
+								<b><?php _e( 'Email Subject:', 'newsletter-optin-box' ); ?></b>
+								<span title="<?php esc_attr_e( 'Enter the subject of all emails that will be sent by this campaign.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+							</label>
 						</th>
 						<td>
 							<input style="max-width: 100%;" type="text" name="subject" id="noptin-email-subject" class="noptin-campaign-input" value="<?php echo esc_attr( $subject ); ?>" placeholder="<?php esc_attr_e( "Enter your email's subject", 'newsletter-optin-box' ); ?>">
@@ -71,18 +74,19 @@
 										$email_body,
 										'noptinautomationemailbody',
 										array(
-											'media_buttons' => true,
+											'media_buttons'    => true,
 											'drag_drop_upload' => true,
-											'textarea_rows' => 15,
-											'textarea_name' => 'email_body',
-											'tabindex' => 4,
-											'tinymce'  => array(
+											'textarea_rows'    => 15,
+											'textarea_name'    => 'email_body',
+											'tabindex'         => 4,
+											'tinymce'          => array(
 												'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',
 											),
 										)
 									);
 
 									?>
+							<?php do_action( 'noptin_automation_campaign_after_email_body', $campaign, $automation_type ); ?>
 						</td>
 					</tr>
 

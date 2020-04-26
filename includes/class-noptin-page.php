@@ -215,7 +215,7 @@ class Noptin_Page {
 			return;
 		}
 
-		$table   = get_noptin_subscribers_table_name();
+		$table = get_noptin_subscribers_table_name();
 		$wpdb->update(
 			$table,
 			array( 
@@ -286,6 +286,8 @@ class Noptin_Page {
 		);
 
 		clear_noptin_subscriber_cache( $value );
+
+		do_action( 'noptin_subscriber_confirmed', new Noptin_Subscriber( $value ) );
 
 		if ( is_numeric( $page ) ) {
 			$page = get_permalink( $page );
@@ -426,21 +428,23 @@ class Noptin_Page {
 		$options["pages_help_text"] = array(
 			'el'              => 'paragraph',
 			'section'		  => 'pages',
-			'content'         => __( "These options are all optional. If you leave them blank, Noptin will use it's default page.", 'newsletter-optin-box' ), 
+			'content'         => __( "These options are all optional. If you leave them blank, Noptin will use it's default page.", 'newsletter-optin-box' ),
 		);
 
 		$options["pages_unsubscribe_page"] = array(
 			'el'              => 'input',
 			'section'		  => 'pages',
 			'label'           => __( 'Unsubscribe Page', 'newsletter-optin-box' ),
-			'description'     => __( 'Enter an id or url to the page shown to subscribers after they unsubscribe from your newsletter', 'newsletter-optin-box' ),
+			'placeholder'     => 'https://example.com/newsletter-unsubscribed',
+			'description'     => __( 'Enter an id or a full url to the page shown to subscribers after they unsubscribe from your newsletter', 'newsletter-optin-box' ),
 		);
 
 		$options["pages_confirm_page"] = array(
 			'el'              => 'input',
 			'section'		  => 'pages',
 			'label'           => __( 'Confirmation Page', 'newsletter-optin-box' ),
-			'description'     => __( 'Enter an id or url to the page shown to subscribers after they confirm their email', 'newsletter-optin-box' ),
+			'description'     => __( 'Enter an id or  a full url to the page shown to subscribers after they confirm their email', 'newsletter-optin-box' ),
+			'placeholder'     => 'https://example.com/newsletter-confirmed',
 		);
 
 		return apply_filters( "noptin_page_settings", $options );

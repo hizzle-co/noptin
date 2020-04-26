@@ -2,6 +2,7 @@
 
 	// CSV Parser
 	let Papa = require('papaparse')
+	let subscribersPageData = $('#noptin-subscribers-page-data').data()
 
 	$(document).ready(function () {
 
@@ -32,7 +33,8 @@
 						_wpnonce: noptinSubscribers.nonce,
 						action: 'noptin_admin_add_subscriber',
 						name: $($el).find('.noptin-create-subscriber-name').val(),
-						email:$($el).find('.noptin-create-subscriber-email').val()
+						email:$($el).find('.noptin-create-subscriber-email').val(),
+						data: subscribersPageData
 					}
 
 					if ( ! request.email ) {
@@ -187,7 +189,8 @@
 					let request = {
 						_wpnonce: noptinSubscribers.nonce,
 						subscribers,
-						action: 'noptin_import_subscribers'
+						action: 'noptin_import_subscribers',
+						data: subscribersPageData,
 					}
 
 					jQuery.post(noptinSubscribers.ajaxurl, request)
@@ -340,7 +343,8 @@
 					let request = {
 						_wpnonce: noptinSubscribers.nonce,
 						action: 'noptin_send_double_optin_email',
-						email: email
+						email: email,
+						data: subscribersPageData
 					}
 
 					jQuery.post(noptinSubscribers.ajaxurl, request)
@@ -411,7 +415,8 @@
 
 					let request = {
 						_wpnonce: noptinSubscribers.nonce,
-						action: 'noptin_delete_all_subscribers'
+						action: 'noptin_delete_all_subscribers',
+						data: subscribersPageData
 					}
 	
 					jQuery.post(noptinSubscribers.ajaxurl, request)

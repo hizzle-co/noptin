@@ -5,4 +5,3 @@ while ( have_posts() ) :
 	the_content();
 
 	endwhile; // End of the loop.
-

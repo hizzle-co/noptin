@@ -403,6 +403,7 @@ class Noptin_Ajax {
 			}
 
 			update_noptin_subscriber_meta( $id, '_subscriber_via', 'import' );
+			do_action( 'noptin_after_import_subscriber', $id, $subscriber, $meta );
 
 			$imported += 1;
 
@@ -758,6 +759,8 @@ class Noptin_Ajax {
 		if ( is_string( $inserted ) ) {
 			die( $inserted );
 		}
+
+		do_action( 'noptin_after_admin_add_subscriber', $inserted );
 
 		wp_send_json_success( true );
 		exit;

@@ -635,11 +635,11 @@ add_action( 'noptin_insert_subscriber', 'noptin_new_subscriber_notify', 10, 2 );
  * @param array $fields The subscription field values.
  * @since 1.2.4
  */
-function send_new_noptin_subscriber_double_optin_email( $id, $fields ) {
+function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = false ) {
 
 	// Is double optin enabled?
 	$double_optin = get_noptin_option( 'double_optin' );
-	if ( empty( $double_optin ) ) {
+	if ( empty( $double_optin ) && ! $force ) {
 		return false;
 	}
 
