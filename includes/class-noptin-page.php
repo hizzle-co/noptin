@@ -39,7 +39,7 @@ class Noptin_Page {
 		add_action( 'noptin_page_preview_email', array( $this, 'preview_email' ) );
 
 		// Filter template.
-		add_filter( 'page_template', array( $this, 'filter_page_template' ) );
+		add_filter( 'template_include', array( $this, 'filter_page_template' ) );
 
 		// Admin bar.
 		add_filter( 'show_admin_bar', array( $this, 'maybe_hide_admin_bar' ) );
@@ -87,7 +87,13 @@ class Noptin_Page {
 	 */
 	public function get_request_action() {
 
-		// Abort early if no action is specified.
+		$matched_var = get_query_var( 'noptin_newsletter' );
+
+		if ( ! empty( $matched_var ) ) {
+			return sanitize_title_with_dashes( trim( urldecode( $matched_var ) ) );
+		}
+
+		// For backwards compatibility.
 		if ( empty( $_REQUEST['noptin_action'] ) && empty( $_REQUEST['na'] ) ) {
 			return '';
 		}
@@ -384,6 +390,10 @@ class Noptin_Page {
 				exit;
 			}
 
+			/**
+			 * Site admins are allowed to use custom pages
+			 * to render the actions page.
+			 */
 			$custom_page = get_noptin_option( "pages_{$action}_page" );
 			do_action( "noptin_pre_page_$action", $custom_page );
 
@@ -411,7 +421,12 @@ class Noptin_Page {
 	 * Removes our pages from Yoast sitemaps.
 	 */
 	public function hide_from_yoast_sitemap( $ids = array() ) {
-		$ids[] = get_noptin_action_page();
+		$page = get_noptin_action_page();
+
+		if ( ! empty( $page ) ) {
+			$ids[] = $page;
+		}
+
 		return $ids;
 	}
 

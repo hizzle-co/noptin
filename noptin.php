@@ -122,6 +122,14 @@ class Noptin {
 	 * @since       1.2.8
 	 */
 	public $automation_rules;
+	
+	/**
+	 * The class responsible for registering various hooks and filters.
+	 * 
+	 * @var Noptin_Hooks
+	 * @since       1.2.9
+	 */
+	public $hooks;
 
 	/**
 	 * Get active instance
@@ -148,6 +156,11 @@ class Noptin {
 
 		// Load files / register the autoloader.
 		$this->load_files();
+
+		// If autoloading failed.
+		if ( ! class_exists( 'Noptin_Hooks' ) ) {
+			return;
+		}
 
 		// Set up globals.
 		$this->setup_globals();
@@ -208,6 +221,9 @@ class Noptin {
 		// Mailer.
 		$this->mailer = new Noptin_Mailer(); 
 
+		// Hooks class.
+		$this->hooks = new Noptin_Hooks();
+
 		// Register our custom meta table.
 		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
 	}
@@ -220,11 +236,6 @@ class Noptin {
 	 * @return      void
 	 */
 	private function register_hooks() {
-
-		// If autoloading failed.
-		if ( ! class_exists( 'Noptin_Background_Mailer' ) ) {
-			return;
-		}
 
 		// Init the plugin after WP inits
 		add_action( 'init', array( $this, 'init' ), 5 );

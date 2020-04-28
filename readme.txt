@@ -118,7 +118,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.2.8 =
+= 1.2.9 - TBD =
+- Newsletter actions page nolonger uses a normal WordPress page - CHANGED
+
+= 1.2.8 - 2020-04-26 =
 - Newsletter subscribers page not showing a title - FIXED
 - "Minimal" newsletter optin template - ADDED
 - "Content Upgrades" newsletter optin template - ADDED

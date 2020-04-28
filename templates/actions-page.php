@@ -13,14 +13,7 @@
 <body <?php body_class( 'noptin-actions-page' ); ?>>
 
 
-<?php
-while ( have_posts() ) :
-
-	the_post();
-	the_content();
-
-	endwhile; // End of the loop.
-?>
+<?php do_shortcode( '[noptin_action_page]' ); ?>
 
 <?php wp_footer(); ?>
 

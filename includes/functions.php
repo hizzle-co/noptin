@@ -134,42 +134,18 @@ function update_noptin_option( $key, $value ) {
 }
 
 /**
- * Returns the noptin action page
+ * Returns the noptin action page.
+ *
+ * This function will always return 0 for new installs and
+ * return the old actions page for existing installs.
  *
  * @return  int
  * @access  public
+ * @deprecated 1.2.9 We are now using custom wp query vars.
  * @since   1.2.0
  */
 function get_noptin_action_page() {
-
-	$page = get_option( 'noptin_actions_page' );
-
-	if ( empty( $page ) || 'publish' != get_post_status( $page ) ) {
-
-		$content = '
-		<!-- wp:shortcode -->
-		[noptin_action_page]
-		<!-- /wp:shortcode -->';
-
-		$page = wp_insert_post(
-			array(
-				'post_content' => $content,
-				'post_title'   => __( 'Newsletter Subscription', 'newsletter-optin-box' ),
-				'post_status'  => 'publish',
-				'post_type'    => 'page',
-			)
-		);
-
-		if ( empty( $page ) ) {
-			return 0;
-		}
-
-		update_option( 'noptin_actions_page', $page );
-
-	}
-
-	return (int) $page;
-
+	return (int) get_option( 'noptin_actions_page', 0 );
 }
 
 /**
@@ -184,29 +160,28 @@ function get_noptin_action_page() {
  */
 function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
-	$page = get_noptin_action_page();
+	$permalink = get_option( 'permalink_structure' );
 
-	if ( empty( $page ) ) {
-		return get_home_url();
-	}
-
-	$url = get_the_permalink( $page );
-
-	if ( $url ) {
-
-		$args = array(
-			'na' => $action,
-			'nv' => $value,
+	// Ugly urls
+	if ( empty( $permalink ) ) {
+		return add_query_arg(
+			array(
+				'noptin_newsletter'  => $action,
+				'nv'  => $value,
+				'nte' => $empty,
+			),
+			get_home_url()
 		);
-
-		if ( $empty ) {
-			$args['nte'] = 1;
-		}
-
-		return add_query_arg( $args, $url );
 	}
 
-	return get_home_url();
+	// Pretty permalinks.
+	return add_query_arg(
+		array(
+			'nv'  => $value,
+			'nte' => $empty,
+		),
+		get_home_url( null, "noptin_newsletter/$action")
+	); 
 
 }
 
@@ -217,6 +192,14 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
  * @since   1.2.0
  */
 function is_noptin_actions_page() {
+
+	$matched_var = get_query_var( 'noptin_newsletter' );
+
+	if ( ! empty( $matched_var ) ) {
+		return true;
+	}
+
+	// Backwards compatibility.
 	$page = get_noptin_action_page();
 	return ! empty( $page ) && is_page( $page );
 }
