@@ -120,6 +120,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.2.9 - TBD =
 - Newsletter actions page nolonger uses a normal WordPress page - CHANGED
+- Ability to edit unsubscription confirmation message - ADDED
+- Ability to edit subscription confirmation message - ADDED
 
 = 1.2.8 - 2020-04-26 =
 - Newsletter subscribers page not showing a title - FIXED

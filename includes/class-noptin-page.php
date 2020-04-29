@@ -194,14 +194,13 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function unsubscribe_user( $key ) {
+		$msg = get_noptin_option( 'pages_unsubscribe_page_message' );
 
-		// Ensure a user key is specified.
-		if ( empty( $key ) ) {
-			$this->print_paragraph( __( 'Unable to subscribe you at this time.', 'newsletter-optin-box' ) );
-			return;
+		if ( empty( $msg ) ) {
+			$msg = $this->default_unsubscription_confirmation_message();
 		}
 
-		$this->print_paragraph( __( 'You have successfully been unsubscribed from this mailing list.', 'newsletter-optin-box' ) );
+		echo $msg;
 
 	}
 
@@ -255,12 +254,14 @@ class Noptin_Page {
 	 */
 	public function confirm_subscription( $key ) {
 
-		if ( empty( $key ) ) {
-			$this->print_paragraph( __( 'Unable to confirm your subscription to this newsletter.', 'newsletter-optin-box' ) );
-			return;
+		$msg = get_noptin_option( 'pages_confirm_page_message' );
+
+		if ( empty( $msg ) ) {
+			$msg = $this->default_subscription_confirmation_message();
 		}
 
-		$this->print_paragraph( __( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' ) );
+		echo $msg;
+
 	}
 
 	/**
@@ -398,12 +399,16 @@ class Noptin_Page {
 			do_action( "noptin_pre_page_$action", $custom_page );
 
 			$template = locate_noptin_template( 'actions-page.php' );
-			if ( isset( $_REQUEST['nte'] ) ) {
+			if ( isset( $_GET['nte'] ) ) {
 				$template = locate_noptin_template( 'actions-page-empty.php' );
 			}
 
 			$template = apply_filters( 'noptin_actions_page_template', $template );
+
+			include $template;
+			exit;
 		}
+
 		return $template;
 
 	}
@@ -431,7 +436,7 @@ class Noptin_Page {
 	}
 
 	/**
-	 * Registers integration options.
+	 * Registers confirmation pages options.
 	 *
 	 * @since 1.2.6
 	 * @param array $options Current Noptin settings.
@@ -439,26 +444,39 @@ class Noptin_Page {
 	 */
 	public function add_options( $options ) {
 
-		// Pages help text.
-		$options["pages_help_text"] = array(
-			'el'              => 'paragraph',
-			'section'		  => 'pages',
-			'content'         => __( "These options are all optional. If you leave them blank, Noptin will use it's default page.", 'newsletter-optin-box' ),
+		$options["pages_unsubscribe_page_message"] = array(
+			'el'              => 'textarea',
+			'section'		  => 'messages',
+			'label'           => __( 'Unsubscription Message', 'newsletter-optin-box' ),
+			'placeholder'     => $this->default_unsubscription_confirmation_message(),
+			'default'		  => $this->default_unsubscription_confirmation_message(),
+			'description'     => __( 'The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+			'restrict'		  => '! pages_unsubscribe_page'
 		);
 
 		$options["pages_unsubscribe_page"] = array(
 			'el'              => 'input',
-			'section'		  => 'pages',
-			'label'           => __( 'Unsubscribe Page', 'newsletter-optin-box' ),
+			'section'		  => 'messages',
+			'label'           => __( 'Unsubscription Redirect', 'newsletter-optin-box' ),
 			'placeholder'     => 'https://example.com/newsletter-unsubscribed',
-			'description'     => __( 'Enter an id or a full url to the page shown to subscribers after they unsubscribe from your newsletter', 'newsletter-optin-box' ),
+			'description'     => __( 'Where should we redirect subscribers after they unsubscribe?', 'newsletter-optin-box' ),
+		);
+
+		$options["pages_confirm_page_message"] = array(
+			'el'              => 'textarea',
+			'section'		  => 'messages',
+			'label'           => __( 'Confirmation Message', 'newsletter-optin-box' ),
+			'placeholder'     => $this->default_subscription_confirmation_message(),
+			'default'		  => $this->default_subscription_confirmation_message(),
+			'description'     => __( 'The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+			'restrict'		  => '! pages_confirm_page'
 		);
 
 		$options["pages_confirm_page"] = array(
 			'el'              => 'input',
-			'section'		  => 'pages',
-			'label'           => __( 'Confirmation Page', 'newsletter-optin-box' ),
-			'description'     => __( 'Enter an id or  a full url to the page shown to subscribers after they confirm their email', 'newsletter-optin-box' ),
+			'section'		  => 'messages',
+			'label'           => __( 'Confirmation Redirect', 'newsletter-optin-box' ),
+			'description'     => __( 'Where should we redirect subscribers after they confirm their emails?', 'newsletter-optin-box' ),
 			'placeholder'     => 'https://example.com/newsletter-confirmed',
 		);
 
@@ -466,5 +484,28 @@ class Noptin_Page {
 
 	}
 
+	/**
+	 * The default unsubscription confirmation message.
+	 *
+	 * @since 1.2.9
+	 * @return string
+	 */
+	public function default_unsubscription_confirmation_message() {
+		$heading = __( 'Thank You', 'newsletter-optin-box' );
+		$message = __( "You have been unsubscribed from this mailing list and won't receive any emails from us.", 'newsletter-optin-box' );
+		return "<h1>$heading</h1>\n\n<p>$message</p>";
+	}
+
+	/**
+	 * The default subscription confirmation message.
+	 *
+	 * @since 1.2.9
+	 * @return string
+	 */
+	public function default_subscription_confirmation_message() {
+		$heading = __( 'Thank You', 'newsletter-optin-box' );
+		$message = __( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' );
+		return "<h1>$heading</h1>\n\n<p>$message</p>";
+	}
 
 }
