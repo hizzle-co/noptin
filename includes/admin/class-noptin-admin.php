@@ -345,6 +345,8 @@ class Noptin_Admin {
 			array( $this, 'render_subscribers_page' )
 		);
 
+		do_action( 'noptin_after_register_menus', $this );
+
 		/*
 		// Automation Rules.
 		$automations_page_title = apply_filters( 'noptin_admin_automation_rules_page_title', __( 'Automation Rules', 'newsletter-optin-box' ) );
@@ -377,8 +379,6 @@ class Noptin_Admin {
 			'noptin-tools',
 			array( $this, 'render_tools_page' )
 		);
-
-		do_action( 'noptin_after_register_menus', $this );
 
 		// Link to documentation.
 		add_submenu_page(
@@ -431,7 +431,7 @@ class Noptin_Admin {
 	 */
 	public function render_main_page() {
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -476,7 +476,7 @@ class Noptin_Admin {
 	public function render_email_campaigns_page() {
 
 		// Only admins can access this page.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -507,7 +507,7 @@ class Noptin_Admin {
 	public function render_automation_rules_page() {
 
 		// Only admins can access this page.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -537,7 +537,7 @@ class Noptin_Admin {
 	public function render_automation_rules_overview_page() {
 
 		// Only admins can access this page.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -579,7 +579,7 @@ class Noptin_Admin {
 	public function render_create_automation_rule_page() {
 
 		// Only admins can access this page.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -626,7 +626,7 @@ class Noptin_Admin {
 	public function render_subscribers_page() {
 
 		// Only admins can access this page.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -662,7 +662,7 @@ class Noptin_Admin {
 	public function render_subscribers_overview_page() {
 
 		// Only admins can access this page.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -819,7 +819,7 @@ class Noptin_Admin {
 	 */
 	public function save_optin_form() {
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -894,7 +894,7 @@ class Noptin_Admin {
 	 */
 	public function save_optin_form_as_template() {
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 

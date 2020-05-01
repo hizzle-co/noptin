@@ -6,7 +6,7 @@
 		<input type="hidden" name="campaign_type" value="automation"/>
 		<?php wp_nonce_field( 'noptin_campaign', 'noptin_campaign_nonce' ); ?>
 
-		<div id="poststuff">
+		<div id="poststuff" style="max-width: 1020px;">
 			<div>
 
 				<h3><?php _e( 'Edit Automation Campaign', 'newsletter-optin-box' ); ?> &mdash; <?php echo sanitize_text_field( $campaign->post_title ); ?></h3>

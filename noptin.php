@@ -13,7 +13,7 @@
  * Author URI:      https://github.com/picocodes
  * Version:         1.2.8
  * Text Domain:     newsletter-optin-box
- * License:         GPL3+
+ * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
  * Domain Path:     /languages
  *

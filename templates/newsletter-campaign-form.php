@@ -17,7 +17,7 @@
 		}
 		?>
 
-		<div id="poststuff">
+		<div id="poststuff" style="max-width: 1020px;">
 			<div> <!-- <div class="postbox" > -->
 
 				<h3><?php echo $display_message; ?></h3>

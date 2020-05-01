@@ -323,7 +323,7 @@ class Noptin_Page {
 		}
 
 		// and that the current user is an administrator
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			$this->print_paragraph( __( 'Only administrators can preview email campaigns.', 'newsletter-optin-box' ) );
 			return;
 		}

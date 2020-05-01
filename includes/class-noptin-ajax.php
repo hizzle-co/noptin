@@ -91,7 +91,7 @@ class Noptin_Ajax {
 		// Verify nonce.
 		check_ajax_referer( 'noptin_admin_nonce' );
 
-		if ( ! current_user_can( 'manage_options' ) || empty( $_GET['id'] ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['id'] ) ) {
 			wp_die( -1, 403 );
 		}
 
@@ -114,7 +114,7 @@ class Noptin_Ajax {
 		// Verify nonce.
 		check_ajax_referer( 'noptin_campaign' );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			wp_die( -1, 401 );
 		}
 
@@ -470,7 +470,7 @@ class Noptin_Ajax {
 		// Verify nonce.
 		check_ajax_referer( 'noptin_campaign', 'noptin_campaign_nonce' );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			wp_die( -1, 403 );
 		}
 
@@ -774,7 +774,7 @@ class Noptin_Ajax {
 	 */
 	public function save_options() {
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			wp_die( -1, 403 );
 		}
 
@@ -830,7 +830,7 @@ class Noptin_Ajax {
 	public function download_subscribers() {
 		global $wpdb;
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			wp_die( -1, 403 );
 		}
 
@@ -888,7 +888,7 @@ class Noptin_Ajax {
 	 */
 	public function download_forms() {
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
 			wp_die( -1, 403 );
 		}
 
