@@ -23,8 +23,6 @@ $paragraphs[] = sprintf(
 	'</a>'
 );
 
-$paragraphs[] = __( 'After you are done editing the email, you can send a test email below then click on the publish button to publish it.', 'newsletter-optin-box' );
-
 $paragraphs[] = __( 'Cheers,', 'newsletter-optin-box' );
 
 $paragraphs[] = __( 'The Noptin Team.', 'newsletter-optin-box' );

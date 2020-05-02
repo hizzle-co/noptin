@@ -764,8 +764,7 @@ function get_noptin_default_newsletter_preview_text() {
  */
 function get_noptin_default_newsletter_body() {
 
-	$noptin_admin = Noptin_Admin::instance();
-	$body         = include locate_noptin_template( 'default-email-body.php' );
+	$body = include locate_noptin_template( 'default-email-body.php' );
 
 	/**
 	 * Filters the default newsletter body

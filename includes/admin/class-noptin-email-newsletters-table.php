@@ -107,8 +107,12 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$preview_url             = esc_url( get_noptin_action_url( 'preview_email', $item->ID, true ) );
 		$row_actions['_preview'] = '<a href="' . $preview_url . '" target="_blank" >' . __( 'Preview', 'newsletter-optin-box' ) . '</a>';
 
-		$edit_url            = esc_url( get_noptin_newsletter_campaign_url( $item->ID ) );
-		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
+		if ( 'publish' != $item->post_status ) {
+			$edit_url            = esc_url( get_noptin_newsletter_campaign_url( $item->ID ) );
+			$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
+		} else {
+			$edit_url = $preview_url;
+		}
 
 		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
@@ -154,7 +158,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$date = '&mdash;';
 
 		if ( 'future' === $item->post_status ) {
-			$date = 'Scheduled <br /> ' . $item->post_date;
+			$date = 'Scheduled <br /> ' . date_i18n( get_option( 'date_format' ), strtotime( $item->post_date ) );
 		}
 
 		if ( 'publish' === $item->post_status ) {
@@ -348,12 +352,50 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	public function no_items() {
 		$add_new_campaign_url = get_noptin_new_newsletter_campaign_url();
 
+		echo "<div style='min-height: 320px; display: flex; align-items: center; justify-content: center; flex-flow: column;'>";
+		echo "<span class='dashicons dashicons-email' style='font-size: 100px; height: 100px; width: 100px; color: #00acc1; line-height: 100px;'></span>";
+		
 		printf(
 			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 			__( '%1$sSend your subscribers a new email%2$s', 'newsletter-optin-box' ),
 			"<a class='no-campaign-create-new-campaign' href='$add_new_campaign_url'>",
 			'</a>'
 		);
+
+		echo "<p class='description'>Or <a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/sending-emails' target='_blank'>" . __( 'Learn more', 'noptin-lists' ) . "</a></p>";
+		echo '</div>';
+
+	}
+
+	/**
+	 * Generate the table navigation above or below the table
+	 *
+	 * @since 1.2.9
+	 * @param string $which
+	 */
+	protected function display_tablenav( $which ) {
+		if ( 'top' === $which ) {
+			wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+		}
+		?>
+	<div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+		<?php if ( $this->has_items() ) : ?>
+		<div class="alignleft actions bulkactions">
+			<?php $this->bulk_actions( $which ); ?>
+		</div>
+
+		<a href="<?php echo esc_url( get_noptin_new_newsletter_campaign_url() ); ?>" class="button button-primary create-new-campaign"><?php _e( 'Send A New Email', 'newsletter-optin-box' ); ?></a>
+			<?php
+		endif;
+
+		$this->extra_tablenav( $which );
+		$this->pagination( $which );
+		?>
+
+		<br class="clear" />
+	</div>
+		<?php
 	}
 
 }

@@ -468,7 +468,7 @@ class Noptin_Ajax {
 	public function send_test_email() {
 
 		// Verify nonce.
-		check_ajax_referer( 'noptin_campaign', 'noptin_campaign_nonce' );
+		check_ajax_referer( 'noptin-edit-newsletter', 'noptin-edit-newsletter-nonce' );
 
 		if ( ! current_user_can( get_noptin_capability() ) ) {
 			wp_die( -1, 403 );

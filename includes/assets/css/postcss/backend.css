@@ -1338,3 +1338,22 @@ a.no-campaign-create-new-campaign {
 	}
 	
 }
+
+.noptin-newsletter-schedule-control {
+	margin-bottom: 20px;
+	margin-top: 16px;
+
+	.noptin-schedule {
+		margin-top: 10px;
+		display: none;
+	}
+
+	.noptin-schedule-input-time {
+		width: 64px;
+	}
+
+	.noptin-schedule-input-date {
+		width: 160px;
+	}
+
+}

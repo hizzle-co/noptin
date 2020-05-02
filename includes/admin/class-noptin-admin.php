@@ -40,25 +40,11 @@ class Noptin_Admin {
 	/**
 	 * The main admin class instance.
 	 *
-	 * @access      private
-	 * @var         Noptin_Admin $instance
+	 * @access      protected
+	 * @var         Noptin_Admin
 	 * @since       1.0.0
 	 */
-	private static $instance = null;
-
-	/**
-	 * Contains an array of any admin notices to be displayed in this session.
-	 *
-	 * @access      public
-	 * @var         array $notices Notices
-	 * @since       1.1.2
-	 */
-	private $notices = array(
-		'info'    => array(),
-		'warning' => array(),
-		'error'   => array(),
-		'success' => array(),
-	);
+	protected static $_instance = null;
 
 	/**
 	 * Background Sync.
@@ -77,18 +63,16 @@ class Noptin_Admin {
 	 * @return      self::$instance
 	 */
 	public static function instance() {
-
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new self();
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self();
 		}
-
-		return self::$instance;
+		return self::$_instance;
 	}
 
 	/**
-	 * Class Constructor.
+	 * Initializes the admin instance.
 	 */
-	public function __construct() {
+	public function init() {
 
 		/**
 		 * Runs right before Noptin Admin loads.
@@ -276,7 +260,9 @@ class Noptin_Admin {
 		// Email campaigns page.
 		if ( 'noptin-email-campaigns' === $page ) {
 			$version = filemtime( $this->assets_path . 'js/dist/newsletter-editor.js' );
-			wp_enqueue_script( 'noptin-settings', $this->assets_url . 'js/dist/newsletter-editor.js', array( 'select2', 'sweetalert2' ), $version, true );
+			wp_enqueue_script( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.js', array(), '4.6.3', true );
+			wp_enqueue_style( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.min.css', array(), '4.6.3' );
+			wp_enqueue_script( 'noptin-email-campaigns', $this->assets_url . 'js/dist/newsletter-editor.js', array( 'select2', 'sweetalert2', 'postbox' ), $version, true );
 		}
 
 		// Subscribers page.
@@ -487,7 +473,7 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_before_email_campaigns_page', $this );
 
-		get_noptin_template( 'email-campaigns.php' );
+		$this->email_campaigns->render_campaigns_page();
 
 		/**
 		 * Runs after displaying the email campaigns page.
@@ -1165,6 +1151,50 @@ class Noptin_Admin {
 	}
 
 	/**
+	 * Returns an array of notices.
+	 *
+	 * @access      public
+	 * @since       1.2.9
+	 */
+	public function get_notices() {
+		$notices = get_option( 'noptin_notices' );
+
+		if ( ! is_array( $notices ) ) {
+			return array();
+		}
+
+		return $notices;
+	}
+
+	/**
+	 * Clears all notices
+	 *
+	 * @access      public
+	 * @since       1.2.9
+	 */
+	public function clear_notices() {
+		delete_option( 'noptin_notices' );
+	}
+
+	/**
+	 * Saves a new notice
+	 *
+	 * @access      public
+	 * @since       1.2.9
+	 */
+	public function save_notice( $type, $message ) {
+		$notices = $this->get_notices();
+
+		if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ]) ) {
+			$notices[ $type ] = array();
+		}
+		
+		$notices[ $type ][] = $message;
+
+		update_option( 'noptin_notices', $notices );
+	}
+
+	/**
 	 * Displays a success notice
 	 *
 	 * @param       string $msg The message to qeue.
@@ -1172,7 +1202,7 @@ class Noptin_Admin {
 	 * @since       1.1.2
 	 */
 	public function show_success( $msg ) {
-		$this->notices['success'][] = $msg;
+		$this->save_notice( 'success', $msg );
 	}
 
 	/**
@@ -1183,7 +1213,7 @@ class Noptin_Admin {
 	 * @since       1.1.2
 	 */
 	public function show_error( $msg ) {
-		$this->notices['error'][] = $msg;
+		$this->save_notice( 'error', $msg );
 	}
 
 	/**
@@ -1194,7 +1224,7 @@ class Noptin_Admin {
 	 * @since       1.1.2
 	 */
 	public function show_warning( $msg ) {
-		$this->notices['warning'][] = $msg;
+		$this->save_notice( 'warning', $msg );
 	}
 
 	/**
@@ -1205,7 +1235,7 @@ class Noptin_Admin {
 	 * @since       1.1.2
 	 */
 	public function show_info( $msg ) {
-		$this->notices['info'][] = $msg;
+		$this->save_notice( 'info', $msg );
 	}
 
 	/**
@@ -1216,7 +1246,20 @@ class Noptin_Admin {
 	 */
 	public function show_notices() {
 
-		foreach ( $this->notices as $type => $messages ) {
+		$notices = $this->get_notices();
+
+		// Abort if we do not have any notices.
+		if ( empty( $notices ) ) {
+			return;
+		}
+
+		$this->clear_notices();
+
+		foreach ( $notices as $type => $messages ) {
+
+			if ( ! is_array( $messages ) ) {
+				continue;
+			}
 
 			$class = esc_attr( "notice notice-$type is-dismissible" );
 			foreach ( $messages as $message ) {

@@ -81,8 +81,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		}
 
 		// Fetch the subscribers.
-		$noptin_admin = Noptin_Admin::instance();
-		$this->items  = $noptin_admin->get_subscribers( $paged, $meta_key, $meta_value );
+		$this->items  = noptin()->admin->get_subscribers( $paged, $meta_key, $meta_value );
 
 		$this->total_subscribers = (int) get_noptin_subscribers_count( '', $meta_key, $meta_value );
 

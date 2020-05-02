@@ -132,6 +132,14 @@ class Noptin {
 	public $hooks;
 
 	/**
+	 * The main admin class..
+	 * 
+	 * @var Noptin_Admin
+	 * @since       1.2.9
+	 */
+	public $admin;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -284,6 +292,7 @@ class Noptin {
 
 		// Init the admin.
 		$this->admin 			  = Noptin_Admin::instance();
+		$this->admin->init();
 
 		// Actions page controller.
 		$this->actions_page 	  = new Noptin_Page();
