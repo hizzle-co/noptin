@@ -42,7 +42,7 @@
 	</div>
 
 	<div class="changelog nmi-api-section" style="max-width: 560px;">
-		<h3 style="text-align: left;color: #1B5E20;"><?php esc_html_e( 'Email Campagins', 'newsletter-optin-box' ); ?></h3>
+		<h3 style="text-align: left;color: #1B5E20;"><?php esc_html_e( 'Email Campaigns', 'newsletter-optin-box' ); ?></h3>
 		<p>
 		<?php
 		printf(

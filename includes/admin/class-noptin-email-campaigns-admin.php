@@ -102,7 +102,6 @@ class Noptin_Email_Campaigns_Admin {
 			
 			$this->register_newsletter_metaboxes( $campaign );
 			do_action( 'add_meta_boxes_noptin_newsletters', $campaign );
-			do_action( 'add_meta_boxes', 'noptin_newsletters', $campaign );
 			get_noptin_template( 'newsletters/edit-newsletter.php', compact( 'id', 'tabs', 'campaign' ) );
 
 		} else {
@@ -264,7 +263,7 @@ class Noptin_Email_Campaigns_Admin {
 	/**
 	 *  Saves an automation campaign
 	 */
-	function maybe_save_automation() {
+	public function maybe_save_automation() {
 
 		// Ensure that this is not an ajax request.
 		if ( wp_doing_ajax() ) {
@@ -588,14 +587,14 @@ class Noptin_Email_Campaigns_Admin {
 			'save'
 		);
 
-		if ( isset( $automations[ $automation_type ]['setup_cb'] ) && is_callable( $automations[ $automation_type ]['setup_cb'] ) ) {
+		if ( 'post_notifications' == $automation_type ) {
 			
 			add_meta_box(
 				'noptin_automation_setup_cb',
 				__('Options','newsletter-optin-box'),
 				array( $this, 'render_automation_setup_metabox' ),
 				'noptin_page_noptin-automation',
-				'side',
+				'advanced',
 				'default',
 				$automations[ $automation_type ]['setup_cb']
 			);

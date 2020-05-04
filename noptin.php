@@ -533,7 +533,7 @@ class Noptin {
 		load_plugin_textdomain(
 			'newsletter-optin-box',
 			false,
-			$this->plugin_path . 'languages/'
+			'newsletter-optin-box/languages/'
 		);
 
 		/** Set our unique textdomain string */
