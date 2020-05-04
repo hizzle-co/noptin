@@ -40,7 +40,7 @@
 
 		 		<!-- start copy -->
 		  		<tr>
-					<td align="left" bgcolor="#ffffff" class="margin-none" style="padding: 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px;">
+					<td align="left" bgcolor="#ffffff" class="margin-none" style="padding: 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px; <?php if ( empty( $hero_text )) { echo 'border-top: 5px solid #69BCB1;'; } ?>">
 						<?php echo wpautop( $email_body ); ?>
 					</td>
 		 		 </tr>

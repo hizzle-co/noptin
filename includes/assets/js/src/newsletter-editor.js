@@ -87,7 +87,9 @@
 		$('.noptin-schedule-input-date').flatpickr(
 			{
 				dateFormat: "Y-m-d",
-				minDate: "today"
+				minDate: "today",
+				altInput: true,
+				altFormat: 'F j, Y'
 			}
 		)
 
@@ -96,7 +98,8 @@
 			{
 				enableTime: true,
 				noCalendar: true,
-    			dateFormat: "H:i",
+				dateFormat: "H:i",
+				time_24hr: true,
 			}
 		)
 

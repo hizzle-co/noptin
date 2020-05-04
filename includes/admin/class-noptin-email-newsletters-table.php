@@ -158,7 +158,12 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$date = '&mdash;';
 
 		if ( 'future' === $item->post_status ) {
-			$date = 'Scheduled <br /> ' . date_i18n( get_option( 'date_format' ), strtotime( $item->post_date ) );
+			$date = 'Scheduled to send in <br /> ' . human_time_diff( strtotime( $item->post_date ), current_time( 'timestamp' ) );
+
+			if ( strtotime( $item->post_date ) < current_time( 'timestamp' ) ) {
+				wp_publish_post( $item );
+			}
+
 		}
 
 		if ( 'publish' === $item->post_status ) {

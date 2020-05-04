@@ -90,7 +90,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		 *
 		 * @param array $this The admin instance
 		 */
-		do_action( "noptin_display_automations_table_$column_name", $item );
+		do_action( "noptin_display_automations_table_$column_name", $item, $this );
 
 	}
 
@@ -152,11 +152,20 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_about( $item ) {
-
 		$type  = sanitize_text_field( get_post_meta( $item->ID, 'automation_type', true ) );
 		$about = "Automation Type: $type";
-		return apply_filters( 'noptin_automation_table_about', $about, $type, $item );
+		return apply_filters( 'noptin_automation_table_about', $about, $type, $item, $this );
+	}
 
+	/**
+	 * Displays the automation type.
+	 *
+	 * @param  object $item item.
+	 * @return HTML
+	 * @since 1.2.9
+	 */
+	public function column_type( $item ) {
+		echo sanitize_text_field( get_post_meta( $item->ID, 'automation_type', true ) );
 	}
 
 	/**
@@ -237,6 +246,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		$columns = array(
 			'cb'    => '<input type="checkbox" />',
 			'title' => __( 'Name', 'newsletter-optin-box' ),
+			'type'  => __( 'Type', 'newsletter-optin-box' ),
 			'about' => __( 'About', 'newsletter-optin-box' ),
 
 		);
@@ -266,6 +276,36 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	}
 
 
+	/**
+	 * Generate the table navigation above or below the table
+	 *
+	 * @since 1.2.9
+	 * @param string $which
+	 */
+	protected function display_tablenav( $which ) {
+
+		if ( 'top' === $which ) {
+			wp_nonce_field( 'bulk-' . $this->_args['plural'] );
+		}
+		?>
+	<div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+		<?php if ( $this->has_items() ) : ?>
+		<div class="alignleft actions bulkactions">
+			<?php $this->bulk_actions( $which ); ?>
+		</div>
+
+		<a href="#" class="button button-primary noptin-create-new-automation-campaign"><?php _e( 'Create New Automation', 'newsletter-optin-box' ); ?></a>
+			<?php
+		endif;
+
+		$this->extra_tablenav( $which );
+		$this->pagination( $which );
+		?>
+
+		<br class="clear" />
+	</div>
+		<?php
+	}
+
 }
-
-

@@ -39,7 +39,7 @@
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 					<!-- start copy -->
 						<tr>
-							<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
+							<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; <?php if ( empty( $hero_text )) { echo 'border-top: 3px solid #d4dadf;'; } ?>">
 								<?php echo wpautop( $email_body ); ?>
 							</td>
 						</tr>

@@ -4,6 +4,8 @@
     $date_time = '';
     $date      = date( 'Y-m-d', current_time( 'timestamp' ) );
     $time      = date( 'H:i', current_time( 'timestamp' ) );
+    $date_format = esc_attr( get_option( 'date_format' ) );
+    $time_format = esc_attr( get_option( 'time_format' ) );
 
     if ( is_object( $campaign ) && 'future' === $campaign->post_status ) {
         $status    = 'scheduled';
@@ -16,7 +18,7 @@
 <div class="submitbox" id="submitpost">
     <div id="misc-pub-section curtime misc-pub-curtime">
 
-        <div class="noptin-newsletter-schedule-control" data-schedules="noptin_save_campaign" data-status="<?php echo $status; ?>">
+        <div class="noptin-newsletter-schedule-control" data-time-format="<?php echo $time_format; ?>" data-date-format="<?php echo $date_format; ?>" data-schedules="noptin_save_campaign" data-status="<?php echo $status; ?>">
             <span id="timestamp">
                 <span class="not-scheduled">Send this email <b>immediately</b></span>
                 <span class="scheduled" style="display: none;">Scheduled for: <b><span class="scheduled-date"><?php echo $date_time; ?></span></b></span>

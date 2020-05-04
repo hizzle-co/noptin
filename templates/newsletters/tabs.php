@@ -2,6 +2,8 @@
 
 <?php
 
+	$tab = empty( $_GET['section'] ) ? 'newsletters' : $_GET['section'];
+
 	foreach ( $tabs as $key => $label ) {
 
 		$url = esc_url(

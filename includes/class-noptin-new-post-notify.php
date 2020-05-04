@@ -105,39 +105,23 @@ class Noptin_New_Post_Notify {
 	 */
 	public function render_automation_settings( $campaign ) {
 
-		?>
-		<tr>
+		$url = add_query_arg(
+			array(
+				'utm_medium'   => 'plugin-dashboard',
+				'utm_campaign' => 'new-post-notifications',
+				'utm_source'   => esc_url( get_home_url() ),
+			),
+			'https://noptin.com/product/ultimate-addons-pack'
+		);
 
-			<th>
-				<label>
-					<b><?php _e( 'Post Types', 'newsletter-optin-box' ); ?></b>
-					<span title="<?php esc_attr_e( 'Which post types will this notification send out for?', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
-				</label>
-			</th>
-
-			<td>
-				<?php $text = __( 'Blog posts', 'newsletter-optin-box' ); ?>
-				<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-post-notifications-post-types">Change</a></p>
-			</td>
-
-		</tr>
-
-		<tr>
-
-			<th>
-				<label>
-					<b><?php _e( 'Tags/Categories', 'newsletter-optin-box' ); ?></b>
-					<span title="<?php esc_attr_e( 'Limit this automatic new posts notification to specific tags and categories.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
-				</label>
-			</th>
-
-			<td>
-				<?php $text = __( 'All tags and categories', 'newsletter-optin-box' ); ?>
-				<p class="description"><?php echo $text; ?> &mdash; <a href="#" class="noptin-filter-post-notifications-taxonomies">Change</a></p>
-			</td>
-
-		</tr>
-		<?php
+		echo '<p class="description">' . __( 'By default, this notification will be sent every time a new blog post is published.', 'newsletter-optin-box' ) . '</p>';
+		
+		echo "<div style='margin-top: 16px; font-size: 15px;'>";
+		printf(
+			__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
+			"<a href='$url' target='_blank'>Ultimate Addons Pack</a>"
+		);
+		echo '</div>';
 
 	}
 
@@ -168,6 +152,7 @@ class Noptin_New_Post_Notify {
 			if ( $this->is_automation_valid_for( $automation, $post ) ) {
 				$this->schedule_notification( $post, $automation );
 			}
+
 		}
 
 	}
