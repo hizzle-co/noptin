@@ -64,21 +64,22 @@ class Noptin_New_Post_Notify {
 	public function show_help_text( $campaign, $automation_type ) {
 
 		if ( 'post_notifications' === $automation_type ) {
+
+			$url = add_query_arg(
+				array(
+					'utm_medium'   => 'plugin-dashboard',
+					'utm_campaign' => 'new-post-notifications',
+					'utm_source'   => esc_url( get_home_url() ),
+				),
+				'https://noptin.com/guide/email-automations/new-post-notifications/'
+			);
+
 			$help_text = sprintf( 
 				__( 'Learn more about %show to set up new post notifications%s.', 'newsletter-optin-box' ),
-				'<a href="https://noptin.com/guide/email-automations/new-post-notifications/">',
+				"<a href='$url'>",
 				'</a>');
 
 			echo "<p class='description'>$help_text</p>";
-
-			$help_text2 = sprintf( 
-				__( 'The %sUltimate Addons Pack%s allows you to set up new post notifications for products and other post types.', 'newsletter-optin-box' ),
-				'<a href="https://noptin.com/product/ultimate-addons-pack/">',
-				'</a>');
-
-			if ( ! class_exists( 'Noptin_AP_New_Post_Notifications' ) ) {
-				echo "<p class='description'>$help_text2</p>";
-			}
 
 		}
 
@@ -204,13 +205,14 @@ class Noptin_New_Post_Notify {
 		$sends_after_unit = get_post_meta( $automation->ID, 'noptin_sends_after_unit', true );
 
 		if ( ! empty( $sends_after ) ) {
+
 			$sends_after_unit = empty( $sends_after_unit ) ? 'minutes' : $sends_after_unit;
-			$timestamp        = strtotime( "+ $sends_after $sends_after_unit", current_time( 'timestamp' ) );
-		} else {
-			$timestamp = strtotime( '-1 minute', current_time( 'timestamp' ) );
+			$timestamp        = strtotime( "+ $sends_after $sends_after_unit", current_time( 'timestamp', true ) );
+			return schedule_noptin_background_action( $timestamp, 'noptin_new_post_notification', $post->ID, $automation->ID );
+
 		}
 
-		schedule_noptin_background_action( $timestamp, 'noptin_new_post_notification', $post->ID, $automation->ID );
+		return do_noptin_background_action( 'noptin_new_post_notification', $post->ID, $automation->ID );
 
 	}
 

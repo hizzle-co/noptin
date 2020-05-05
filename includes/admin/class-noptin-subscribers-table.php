@@ -271,7 +271,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'subscriber'   => __( 'Subscriber', 'newsletter-optin-box' ),
 			'status'       => __( 'Status', 'newsletter-optin-box' ),
 			'date_created' => __( 'Subscription Date', 'newsletter-optin-box' ),
-
 		);
 
 		/**

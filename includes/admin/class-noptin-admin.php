@@ -705,7 +705,15 @@ class Noptin_Admin {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="#" class="page-title-action noptin-add-subscriber"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a> <a href="#" class="page-title-action noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="page-title-action noptin-export-subscribers"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> <a href="#" class="button-secondary noptin-danger-button noptin-delete-subscribers"><?php _e( 'Delete All Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
-			<p class="description" style='margin: 10px 0;'><a href="https://noptin.com/products/" target="_blank"><?php _e( 'Check out our integrations', 'newsletter-optin-box' ); ?></a></p>
+			<?php if ( ! class_exists( 'Noptin_Lists' ) ) { ?>
+			<p class="description" style='margin: 10px 0;'>
+				<?php
+					printf(
+						__( 'You can now %sgroup subscribers using lists%s based on how they sign up from and which actions they take on your website', 'newsletter-optin-box' ),
+						'<a href="https://noptin.com/product/lists" target="_blank">',
+						'</a>'
+					); ?></a></p>
+			<?php } ?>
 			<form id="noptin-subscribers-table" method="POST">
 				<?php $table->display(); ?>
 			</form>
@@ -720,7 +728,6 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_after_subscribers_overview_page', $this );
 	}
-
 
 	/**
 	 * Displays a single subscriber.

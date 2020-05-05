@@ -224,6 +224,51 @@ class Noptin_Ajax {
 			wp_die( -1, 403 );
 		}
 
+		// Check if we're only deleting a few subscribers.
+		if ( ! empty( $_POST['data'] ) && ( ! empty( $_POST['data']['meta_key'] ) || ! empty( $_POST['data']['_subscriber_via'] ) ) ) {
+
+			$data = $_POST['data'];
+			$delete = array( 'paged', 'orderby', 'order', 'page' );
+
+			foreach ( $delete as $key ) {
+				if ( isset( $data[$key] ) ) {
+					unset( $data[$key] );
+				}
+			}
+
+			if ( empty( $data['meta_query'] ) || ! is_array( $data['meta_query'] ) ) {
+				$data['meta_query'] = array();
+			}
+
+			if ( ! empty( $data['_subscriber_via'] ) ) {
+				$data['meta_query'][] = array(
+					'key'   => '_subscriber_via',
+					'value' => $data['_subscriber_via'],
+				);
+				unset( $data['_subscriber_via'] );
+			}
+
+			if ( ! empty( $data['_subscriber_via'] ) ) {
+				$data['meta_query'][] = array(
+					'key'   => '_subscriber_via',
+					'value' => $data['_subscriber_via'],
+				);
+				unset( $data['_subscriber_via'] );
+			}
+
+			$data['fields'] = array( 'id' );
+			$data['count_total'] = false;
+			$data['number'] = '-1';
+
+			$subscribers = new Noptin_Subscriber_Query( $data );
+
+            foreach ( $subscribers->get_results() as $subscriber ) {
+				delete_noptin_subscriber( $subscriber->id );
+			}
+
+			exit;
+		}
+
 		$table    = get_noptin_subscribers_table_name();
 		$wpdb->query( "TRUNCATE TABLE $table" );
 
@@ -231,6 +276,8 @@ class Noptin_Ajax {
 		$wpdb->query( "TRUNCATE TABLE $table" );
 
 		$wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'noptin_subscriber_id' ), '%s' );
+
+		do_action( 'noptin_delete_all_subscribers' );
 		exit;
 	}
 

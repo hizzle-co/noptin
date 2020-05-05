@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.4
 Requires PHP: 5.3
-Version: 1.2.8
+Version: 1.2.9
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -118,10 +118,12 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.2.9 - TBD =
+= 1.2.9 - 2020-05-05 =
 - Newsletter actions page nolonger uses a normal WordPress page - CHANGED
-- Ability to edit unsubscription confirmation message - ADDED
-- Ability to edit subscription confirmation message - ADDED
+- Ability to edit the newsletter unsubscription confirmation message - ADDED
+- Ability to edit the newsletter subscription confirmation message - ADDED
+- Danish translation thanks to [Hans Miguel Børsting](http://skibhuscentret.dk/wp)
+- Partially translated to German thanks to [Frank Jermann](https://frank-jermann.de)
 
 = 1.2.8 - 2020-04-26 =
 - Newsletter subscribers page not showing a title - FIXED

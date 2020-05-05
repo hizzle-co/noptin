@@ -16,3 +16,6 @@
             ),
         )
     );
+
+    $automation_type = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign->ID, 'automation_type', true ) ) );
+    do_action( 'noptin_automation_campaign_after_email_body', $campaign, $automation_type );

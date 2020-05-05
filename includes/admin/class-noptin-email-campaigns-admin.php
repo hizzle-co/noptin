@@ -588,7 +588,7 @@ class Noptin_Email_Campaigns_Admin {
 		);
 
 		if ( 'post_notifications' == $automation_type ) {
-			
+
 			add_meta_box(
 				'noptin_automation_setup_cb',
 				__('Options','newsletter-optin-box'),
