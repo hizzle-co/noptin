@@ -591,15 +591,17 @@ class Noptin_Mailer {
 			$this
 		);
 
-		// Send the actual email.
-		$result = wp_mail(
+		// Prepare the sending function.
+		$sending_function = apply_filters( 'noptin_mailer_email_sending_function', 'wp_mail' );
 
+		// Send the actual email.
+		$result = call_user_func(
+			$sending_function,
 			$data['to'],
 			wp_specialchars_decode ( $data['subject'] ),
 			$data['email'],
 			$data['headers'],
 			$data['attachments']
-
 		);
 
 		// If the email was not sent, log the error.

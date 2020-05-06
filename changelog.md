@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.9 - 2020-05-05
+- Newsletter actions page nolonger uses a normal WordPress page - CHANGED
+- Ability to edit the newsletter unsubscription confirmation message - ADDED
+- Ability to edit the newsletter subscription confirmation message - ADDED
+- Danish translation thanks to [Hans Miguel Børsting](http://skibhuscentret.dk/wp)
+- Partially translated to German thanks to [Frank Jermann](https://frank-jermann.de)
+
+# 1.2.8 - 2020-04-26
+- Newsletter subscribers page not showing a title - FIXED
+- "Minimal" newsletter optin template - ADDED
+- "Content Upgrades" newsletter optin template - ADDED
+- "Discount" newsletter optin template - ADDED
+- Hide block and quick-form widget from existing newsletter subscribers - CHANGED
+- Option to set the logo shown on newsletters - RE-ADDED
+- Ability to set a custom newsletter footer text - ADDED
+- Ability to set a custom newsletter permission text - ADDED
+- Ability to set a newsletter's "reply-to" email - ADDED
+- Newsletter confirmation page displays the incorrect feedback - FIXED
+- Automatic new post notification newsletters are sent when an existing post is updated - FIXED
+
 ## 1.2.7 - 2020-04-08
 - Admininstrators can now edit email subscribers - ADDED
 - Ability to resend the subscription confirmation double opt-in email - ADDED
