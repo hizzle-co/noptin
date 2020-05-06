@@ -665,6 +665,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = f
 		'after_cta_text2' =>  __( 'Cheers,', 'newsletter-optin-box' ) .'<br>[[noptin_company]]',
 		'permission_text' => __( "You are receiving this email because we got your request to subscribe to our newsletter. If you don't want to join the newsletter, you can safely delete this email", 'newsletter-optin-box' ),
 		'email'			  => $fields['email'],
+		'email_type'      => 'double_optin',
 	);
 
 	foreach ( $fields as $key => $value ) {
@@ -674,6 +675,13 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = f
 		}
 
 	}
+
+	// Allow users to filter the double opt-in email.
+	foreach ( $data as $key => $value ) {
+		$data[ $key ] = apply_filters( "noptin_double_optin_$key", $value );
+	}
+
+	$data = apply_filters( 'noptin_double_optin_data', $data );
 
 	// Send the email.
 	return noptin()->mailer->prepare_then_send( $data );
