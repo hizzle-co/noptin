@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.4
 Requires PHP: 5.3
-Version: 1.2.9
+Version: 1.3.0
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html

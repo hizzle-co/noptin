@@ -10,10 +10,6 @@ $icons  = array( 'post-status', 'email', 'email-alt', 'email-alt2' );
 $colors = array( '#f44336', '#e91e63', '#9c27b0', '#673ab7', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a' );
 ?>
 
-<div class="noptin-automation-rule-editor-loader">
-	<div class="spinner"></div>
-</div>
-
 <div id="noptin-automation-rule-editor">
     <p><?php _e( 'Start by selecting a trigger for your rule below.', 'newsletter-optin-box' ); ?></p>
     <?php foreach( $triggers as $trigger ) {?>

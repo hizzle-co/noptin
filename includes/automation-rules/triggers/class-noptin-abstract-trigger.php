@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' )  ) {
  * @since       1.2.8
  */
 abstract class Noptin_Abstract_Trigger {
-    
+
     /**
      * @var array
      */
@@ -23,8 +23,14 @@ abstract class Noptin_Abstract_Trigger {
      * @since 1.2.8
      * @return string
      */
-    public function __construct() {}
-    
+    public function __construct() {
+        // Run your add action call here.
+        // e.g add_action( 'some_action', array( $this, 'maybe_trigger' ) );
+        // The maybe_trigger method has not been defined on this class so
+        // you will want to define it in your child class. After you are done,
+        // processing the hook, class $this->trigger( $subscriber, $args )
+    }
+
     /**
      * Retrieve the trigger's unique id.
      *
@@ -80,7 +86,7 @@ abstract class Noptin_Abstract_Trigger {
     public abstract function get_settings();
 
     /**
-     * Returns all active rules attached to this action.
+     * Returns all active rules attached to this trigger.
      *
      * @since 1.2.8
      * @return array
@@ -95,7 +101,8 @@ abstract class Noptin_Abstract_Trigger {
         $table = noptin()->automation_rules->get_table();
         $this->rules = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM $table WHERE `trigger_id`=%s `status`='1'"
+                "SELECT * FROM $table WHERE `trigger_id`=%s AND `status`='1'",
+                $this->get_id()
             )
         );
 

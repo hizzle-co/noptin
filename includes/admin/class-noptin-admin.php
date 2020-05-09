@@ -333,7 +333,6 @@ class Noptin_Admin {
 
 		do_action( 'noptin_after_register_menus', $this );
 
-		/*
 		// Automation Rules.
 		$automations_page_title = apply_filters( 'noptin_admin_automation_rules_page_title', __( 'Automation Rules', 'newsletter-optin-box' ) );
 		add_submenu_page(
@@ -343,7 +342,7 @@ class Noptin_Admin {
 			'manage_options',
 			'noptin-automation-rules',
 			array( $this, 'render_automation_rules_page' )
-		);*/
+		);
 
 		// Settings.
 		add_submenu_page(

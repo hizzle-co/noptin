@@ -38,14 +38,14 @@ class Noptin_Automation_Rule {
      * @var array
      * @since 1.2.8
      */
-    public $action_settings = '';
+    public $action_settings = array();
 
     /**
      * The automation rule's trigger settings
      * @var array
      * @since 1.2.8
      */
-    public $trigger_settings = '';
+    public $trigger_settings = array();
 
     /**
      * The automation rule's status

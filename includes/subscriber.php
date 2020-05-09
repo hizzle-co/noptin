@@ -166,7 +166,7 @@ function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $li
 		$click_counts = (int) get_post_meta( $campaign_id, '_noptin_clicks', true );
 		update_post_meta( $campaign_id, '_noptin_clicks', $click_counts + 1 );
 
-		do_action( 'log_noptin_subscriber_campaign_click', $subscriber_id, $campaign_id );
+		do_action( 'log_noptin_subscriber_campaign_click', $subscriber_id, $campaign_id, $link );
 	}
 
 }
