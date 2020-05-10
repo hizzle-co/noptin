@@ -121,6 +121,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 1.3.0 - TBD =
 - Ability to filter the newletter double opt-in confirmation email - ADDED
 - Ability to filter the function used to send newsletters - ADDED
+- Improve the newsletter subscription error messages - CHANGED
 
 = 1.2.9 - 2020-05-05 =
 - Newsletter actions page nolonger uses a normal WordPress page - CHANGED

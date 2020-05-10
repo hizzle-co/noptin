@@ -604,7 +604,7 @@ class Noptin_Ajax {
 		if ( ! empty( $_POST['noptin_confirm_submit'] ) ) {
 			return;
 		}
-		
+
 		/**
 		 * Fires before a subscriber is added via ajax.
 		 * 
@@ -685,12 +685,7 @@ class Noptin_Ajax {
 
 			// required fields.
 			if ( 'true' == $field['require'] && empty( $value ) ) {
-				die(
-					sprintf(
-						'%s is required',
-						esc_html( $field_label )
-					)
-				);
+				die( __( 'Ensure that you fill all required fields.', 'newsletter-optin-box' ) );
 			}
 
 			// Sanitize email fields.
@@ -699,12 +694,7 @@ class Noptin_Ajax {
 				$value = sanitize_email( $value );
 				if ( empty( $value ) ) {
 
-					die(
-						sprintf(
-							'%s is not valid',
-							esc_html( $field_label )
-						)
-					);
+					die( __( 'That email address is not valid.', 'newsletter-optin-box' ) );
 
 				}
 			}
