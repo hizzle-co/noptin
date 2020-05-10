@@ -47,6 +47,13 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
     /**
      * @inheritdoc
      */
+    public function get_rule_description( $rule ) {
+        return __( 'When someone subscribes to the newsletter', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function get_image() {
         return '';
     }

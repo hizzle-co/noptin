@@ -78,6 +78,17 @@ abstract class Noptin_Abstract_Trigger {
     }
 
     /**
+     * Retrieve the trigger's rule description.
+     *
+     * @since 1.3.0
+     * @param Noptin_Automation_Rule $rule
+     * @return array
+     */
+    public function get_rule_description( $rule ) {
+        return $this->get_description();
+    }
+
+    /**
      * Retrieve the trigger's settings.
      *
      * @since 1.2.8

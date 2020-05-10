@@ -8,6 +8,7 @@ module.exports = {
 		settings: "./includes/assets/js/src/settings.js",
 		"newsletter-editor": "./includes/assets/js/src/newsletter-editor.js",
 		"optin-editor": "./includes/assets/js/src/optin-editor.js",
+		"automation-rules": "./includes/assets/js/src/automation-rules.js",
 		frontend: "./includes/assets/js/src/frontend.js",
 		blocks: "./includes/assets/js/src/blocks.js",
 		subscribers: "./includes/assets/js/src/subscribers.js"

@@ -1138,6 +1138,7 @@ a.no-campaign-create-new-campaign {
 
 #noptin-subscribers-table,
 #noptin-automation-campaigns-table,
+#noptin-automation-rules-table,
 #noptin-newsletter-campaigns-table {
 
 	.column-status:not(.manage-column) {
@@ -1294,47 +1295,28 @@ a.no-campaign-create-new-campaign {
 
 #noptin-automation-rule-editor {
 
-	a {
-		color: inherit !important;
-		text-decoration: none;
+	font-size: 15px;
+	margin-bottom: 20px;
 
-		&:hover .trigger,
-		&:active .trigger,
-		&:focus .trigger {
-			background: #f8f9f9;
+	form {
+		max-width: 520px;
+	}
+
+	.noptin-automation-rule-editor-section {
+		margin-bottom: 10px;
+
+		label {
+			font-weight: 500;
+			margin-bottom: 6px;
 		}
 	}
 
-	.trigger {
-		margin: 0;
-		padding: 1em 1.5em;
-		background: #fff;
-		border: 1px solid #ccd0d4;
-		margin-bottom: -1px;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-
+	.dd-select {
+		background: #fff !important;
 	}
 
-	.trigger-icon {
-		margin-right: 8px;
-
-		div {
-			width: 32px;
-			height: 32px;
-			color: #fff;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-	}
-
-	.trigger-text {
-		flex: 1;
-		h4, p {
-			margin: 0
-		}
+	.dd-selected {
+		font-weight: 400 !important;
 	}
 	
 }

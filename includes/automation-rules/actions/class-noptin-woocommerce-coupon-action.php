@@ -36,6 +36,13 @@ class Noptin_WooCommerce_Coupon_Action extends Noptin_Abstract_Action {
     /**
      * @inheritdoc
      */
+    public function get_rule_description( $rule ) {
+        return __( 'send them a WooCommerce coupon', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function get_image() {
         return 'https://cdn.noptin.com/templates/images/woocommerce-icon.png';
     }

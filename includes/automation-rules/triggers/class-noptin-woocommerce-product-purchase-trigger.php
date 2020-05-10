@@ -37,6 +37,13 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
     /**
      * @inheritdoc
      */
+    public function get_rule_description( $rule ) {
+        return __( 'When a subscriber buys a WooCommerce product', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function get_image() {
         return 'https://cdn.noptin.com/templates/images/woocommerce-icon.png';
     }

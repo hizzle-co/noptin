@@ -104,10 +104,10 @@ class Noptin_Automation_Rule {
         if ( empty( $data ) ) {
             return;
         }
-
-        foreach ( get_object_vars( $data ) as $var ) {
-            if ( property_exists( $this, $var ) ) {
-                $this->$var = maybe_unserialize( $data->$var );
+        
+        foreach ( get_object_vars( $data ) as $key => $var ) {
+            if ( property_exists( $this, $key ) ) {
+                $this->$key = maybe_unserialize( $var );
             }
         }
 

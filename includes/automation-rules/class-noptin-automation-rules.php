@@ -45,6 +45,8 @@ class Noptin_Automation_Rules {
             $this->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger() );
         }
 
+        // Handle admin rule create/update requests
+		add_action( 'noptin_create_automation_rule',  array( $this, 'admin_create_automation_rule' ) );
         do_action( 'noptin_automation_rules_load', $this );
     }
 
@@ -248,6 +250,44 @@ class Noptin_Automation_Rules {
     public function get_table() {
         global $wpdb;
         return $wpdb->prefix . 'noptin_automation_rules';
+    }
+
+    
+	/**
+	 * Saves a created list
+	 *
+	 * @access      public
+	 * @since       1.3.0
+	 * @return      void
+	 */
+	public function admin_create_automation_rule() {
+
+        if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-admin-create-automation-rule'] ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $_POST['noptin-admin-create-automation-rule'], 'noptin-admin-create-automation-rule' ) ) {
+			return;
+        }
+
+        $post       = wp_unslash( $_POST );
+        $action_id  = noptin_clean( $post[ 'action' ] );
+        $trigger_id = noptin_clean( $post[ 'trigger' ] );
+        $rule       = $this->create_rule( compact( 'action_id', 'trigger_id' ) );
+
+        if ( ! empty( $rule ) ) {
+            wp_redirect(
+                add_query_arg(
+                    'edit',
+                    $rule->id,
+                    admin_url( 'admin.php?page=noptin-automation-rules' )
+                )
+            );
+            exit;
+        }
+        
+        noptin()->admin->show_error( __( 'There was a problem creating your automation rule. Please try again.', 'newsletter-optin-box' ) );
+
     }
 
 }

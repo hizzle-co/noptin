@@ -40,7 +40,14 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
      * @inheritdoc
      */
     public function get_description() {
-        return __( 'Fired when a subscriber opens an email', 'newsletter-optin-box' );
+        return __( 'Fired when a subscriber opens an email campaign', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get_rule_description( $rule ) {
+        return __( 'When a subscriber opens an email campaign', 'newsletter-optin-box' );
     }
 
     /**
@@ -86,9 +93,9 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
             'campaign_id'     => array(
 				'el'          => 'select',
 				'label'       => __( 'Campaign', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Watch for opens on all campaigns', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Fire for all campaigns', 'newsletter-optin-box' ),
 				'options'     => $campaigns,
-				'description' => __( 'Select the campaign that you would like to watch for open.', 'newsletter-optin-box' ),
+				'description' => __( 'Select a campaign above if you want to watch for a specific campaign.', 'newsletter-optin-box' ),
             ),
 
         );

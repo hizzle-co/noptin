@@ -36,6 +36,13 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
     /**
      * @inheritdoc
      */
+    public function get_rule_description( $rule ) {
+        return __( 'update a custom field', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function get_image() {
         return '';
     }

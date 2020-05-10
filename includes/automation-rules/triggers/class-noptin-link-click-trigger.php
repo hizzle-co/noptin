@@ -46,6 +46,13 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
     /**
      * @inheritdoc
      */
+    public function get_rule_description( $rule ) {
+        return __( 'When a subscriber clicks on a link in an email address', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function get_image() {
         return '';
     }

@@ -53,6 +53,17 @@ abstract class Noptin_Abstract_Action {
     public abstract function get_description();
 
     /**
+     * Retrieve the actions's rule description.
+     *
+     * @since 1.3.0
+     * @param Noptin_Automation_Rule $rule
+     * @return array
+     */
+    public function get_rule_description( $rule ) {
+        return $this->get_description();
+    }
+
+    /**
      * Retrieve the action's image.
      *
      * @since 1.2.8
