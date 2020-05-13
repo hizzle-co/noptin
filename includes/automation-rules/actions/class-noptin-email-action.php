@@ -1,0 +1,174 @@
+<?php
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' )  ) {
+	die;
+}
+
+/**
+ * Sends a an email to subscribers.
+ *
+ * @since       1.3.0
+ */
+class Noptin_Email_Action extends Noptin_Abstract_Action {
+
+    /**
+     * Constructor.
+     *
+     * @since 1.3.0
+     * @return string
+     */
+    public function __construct() {
+        add_action( 'noptin_render_editor_email_action_content', array( $this, 'render_tinymce' ) );
+    }
+
+    /**
+     * Renders the email editor.
+     *
+     * @since 1.3.0
+     * @return string
+     */
+    public function render_tinymce() {
+
+        echo '<div class="noptin-editor-wrapper field-wrapper">';
+        printf(
+            '<label class="noptin-label">%s</label>',
+            __( 'Email Body', 'newsletter-optin-box' )
+        );
+        echo '<div class="noptin-content">';
+
+        $content = '';
+        if ( ! empty( $_GET['edit'] ) && is_numeric( $_GET['edit'] ) ) {
+            $rule = new Noptin_Automation_Rule( $_GET['edit'] );
+            $settings = $rule->action_settings;
+
+            if ( ! empty( $settings['email_content'] ) ) {
+                $content = wp_unslash( $settings['email_content'] );
+            }
+
+        }
+
+        wp_editor(
+			$content,
+			'noptinemailbody',
+			array(
+				'media_buttons'    => true,
+				'drag_drop_upload' => true,
+				'textarea_rows'    => 15,
+				'textarea_name'    => 'noptinemailbody',
+				'tabindex'         => 4,
+				'tinymce'          => array(
+					'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',
+				),
+			)
+        );
+
+        echo '</div></div>';
+
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get_id() {
+        return 'email';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get_name() {
+        return __( 'Send Email', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get_description() {
+        return __( 'Sends the subscriber an email', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get_rule_description( $rule ) {
+        return __( 'send them an email', 'newsletter-optin-box' );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get_keywords() {
+        return array(
+            'noptin',
+            'email',
+            'send email'
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get_settings() {
+        return array(
+            'email_subject'   => array(
+				'el'          => 'input',
+				'label'       => __( 'Email Subject', 'newsletter-optin-box' ),
+				'description' => __( 'What is the subject of the email?', 'newsletter-optin-box' ),
+            ),
+            'email_preview'   => array(
+				'el'          => 'input',
+				'label'       => __( 'Preview Text', 'newsletter-optin-box' ),
+				'description' => __( 'Enter an optional text that should be displayed next to the subject.', 'newsletter-optin-box' ),
+            ),
+            'email_content'   => array(
+				'el'          => 'email_action_content',
+				'label'       => __( 'Email Content', 'newsletter-optin-box' ),
+				'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
+            )
+        );
+    }
+
+    /**
+     * Sends an email to the subscriber.
+     *
+     * @since 1.3.0
+     * @param Noptin_Subscriber $subscriber The subscriber.
+     * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+     * @param array $args Extra arguments passed to the action.
+     * @return void
+     */
+    public function run( $subscriber, $rule, $args ) {
+
+        $email_content = $rule->action_settings['email_content'];
+        $email_subject = $rule->action_settings['email_subject'];
+        $email_preview = $rule->action_settings['email_preview'];
+
+        // Abort if we do not have a subject or an email.
+        if ( empty( $email_subject ) || empty( $email_content ) ) {
+            return;
+        }
+
+        // We only want to send an email to active subscribers.
+        if ( ! empty( $subscriber->active ) ) {
+			return;
+		}
+
+		$merge_tags = get_noptin_subscriber_merge_fields(  $subscriber->id  );
+
+		$item  = array(
+			'subscriber_id' 	=> $subscriber->id,
+			'email' 			=> $subscriber->email,
+			'email_body'	    => wp_kses_post( stripslashes_deep( $email_content ) ),
+			'email_subject' 	=> sanitize_text_field( stripslashes_deep( $email_subject ) ),
+			'preview_text'  	=> sanitize_text_field( stripslashes_deep( $email_preview ) ),
+			'merge_tags'		=> $merge_tags,
+		);
+
+		$item = apply_filters( 'noptin_email_action_email_details', $item, $subscriber, $rule, $args );
+
+        return noptin()->mailer->prepare_then_send( $item );
+
+    }
+
+}

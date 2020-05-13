@@ -47,7 +47,41 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
      * @inheritdoc
      */
     public function get_rule_description( $rule ) {
-        return __( 'When a subscriber clicks on a link in an email address', 'newsletter-optin-box' );
+        $settings = $rule->trigger_settings;
+
+        $campaign_id = empty( $settings['campaign_id'] ) ? 0 : (int) $settings['campaign_id'];
+        $url = empty( $settings['url'] ) ? '' : noptin_clean_url( $settings['url'] );
+
+        if ( empty( $campaign_id ) && empty( $url ) ) {
+            return __( 'When a subscriber clicks on any link from any email campaign', 'newsletter-optin-box' );
+        }
+
+        if ( empty( $campaign_id ) ) {
+            return sprintf(
+                __( 'When a subscriber clicks on the link %s from any email campaign', 'newsletter-optin-box' ),
+               "<code>$url</code>"
+            );
+        }
+
+        $campaign_title = esc_html( get_the_title( $campaign_id ) );
+
+        if ( empty( $campaign_title ) ) {
+            $campaign_title = __( 'Deleted campaign', 'newsletter-optin-box' );
+        }
+
+        if ( empty( $url ) ) {
+            return sprintf(
+                __( 'When a subscriber clicks on any link from the email campaign %s', 'newsletter-optin-box' ),
+               "<code>$campaign_title</code>"
+            );
+        }
+
+        return sprintf(
+            __( 'When a subscriber clicks on the link %s from the email campaign %s', 'newsletter-optin-box' ),
+           "<code>$url</code>",
+           "<code>$campaign_title</code>"
+        );
+
     }
 
     /**

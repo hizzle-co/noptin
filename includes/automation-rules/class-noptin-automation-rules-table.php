@@ -140,11 +140,17 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 		$time_diff = current_time( 'timestamp' ) - $updated;
 
 		if ( $updated && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
-			/* translators: %s: Human-readable time difference. */
-			return sprintf( __( '%s ago', 'newsletter-optin-box' ), human_time_diff( $updated, current_time( 'timestamp' ) ) );
+			$relative = sprintf(
+				/* translators: %s: Human-readable time difference. */
+				__( '%s ago', 'newsletter-optin-box' ),
+				human_time_diff( $updated, current_time( 'timestamp' ) )
+			);
 		} else {
-			return date( __( 'Y/m/d g:i:s a' ), $updated );
+			$relative = date( __( 'Y/m/d' ), $updated );
 		}
+
+		$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $updated ) );
+		return "<abbr title='$date'>$relative<abbr>";
 
 	}
 	
@@ -223,7 +229,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 		}
 
 		$text = ucfirst( "$trigger_text, $action_text" );
-		$text = "<div class='row-title'><a href='$edit_url'><strong>$text</strong></a></div>";
+		$text = "<div class='row-title'><a href='$edit_url'>$text</a></div>";
 
 		return "<div>$text $row_actions</div>";
 

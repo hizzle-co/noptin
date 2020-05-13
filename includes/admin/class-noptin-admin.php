@@ -196,7 +196,7 @@ class Noptin_Admin {
 		wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
 
 		// Vue js.
-		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.min.js', array(), '2.6.11', true );
+		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
 		wp_enqueue_media();
@@ -285,10 +285,10 @@ class Noptin_Admin {
 			$params = array(
 				'ajaxurl'          => admin_url( 'admin-ajax.php' ),
 				'nonce'            => wp_create_nonce( 'noptin_automation_rules' ),
-				'trigger_settings' => array(),
-				'action_settings'  => array(),
+				'trigger_settings' => new stdClass(),
+				'action_settings'  => new stdClass(),
 				'rule_id'          => 0,
-				'error'            => '',
+				'error'            => __( 'Unable to save your changes.', 'newsletter-optin-box' ),
 				'saved'            => __( 'Your automation rule has been saved.', 'newsletter-optin-box' ),
 			);
 
@@ -296,8 +296,8 @@ class Noptin_Admin {
 				$rule = new Noptin_Automation_Rule( $_GET['edit'] );
 
 				$params[ 'rule_id' ]          = $rule->id;
-				$params[ 'trigger_settings' ] = $rule->trigger_settings;
-				$params[ 'action_settings' ]  = $rule->action_settings;
+				$params[ 'trigger_settings' ] = (object) $rule->trigger_settings;
+				$params[ 'action_settings' ]  = (object) $rule->action_settings;
 
 			}
 

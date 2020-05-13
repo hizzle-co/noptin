@@ -10,7 +10,7 @@ $actions  = noptin()->automation_rules->get_actions();
 
 <div id="noptin-automation-rule-editor">
     <p><?php _e( 'Start by selecting a trigger and an action for your rule below.', 'newsletter-optin-box' ); ?></p>
-    <form>
+    <form method="POST">
 
         <div class="noptin-automation-rule-editor-section">
 

@@ -74,14 +74,18 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
      */
     public function get_settings() {
 
+        $methods = array(
+            '-1' => __( 'Fire for all subscription methods', 'newsletter-optin-box' ),
+        );
+
         return array(
 
-            'subscribed_via'     => array(
-				'el'          => 'multi_checkbox',
+            'subscribed_via'  => array(
+				'el'          => 'select',
 				'label'       => __( 'Subscription Method', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Any subscription method', 'newsletter-optin-box' ),
-				'options'     => $this->get_subscription_methods(),
-				'label' => __( 'Select a subscription method if you would like to limit this trigger to a specific subscription method.', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Select a subscription method', 'newsletter-optin-box' ),
+				'options'     => $methods + $this->get_subscription_methods(),
+				'description' => __( 'Select a subscription method if you would like to limit this trigger to a specific subscription method.', 'newsletter-optin-box' ),
             ),
 
         );
@@ -92,23 +96,27 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
      * Returns an array of available subscription methods.
      */
     public function get_subscription_methods() {
-        global $wpdb;
 
-        $table   = get_noptin_subscribers_meta_table_name();
-        $methods = $wpdb->get_col( "SELECT DISTINCT `meta_value` FROM `$table` WHERE `meta_key`='_subscriber_via'" );
-        $return  = array();
+        $args = array(
+			'numberposts' => -1,
+			'post_type'   => 'noptin-form',
+            'post_status' => array( 'draft', 'publish' ),
+            'orderby'     => 'post_title',
+            'order'       => 'ASC',
+        );
 
-        foreach ( $methods as $method ){
+        $forms  = get_posts( $args );
+        $return = array();
 
-            if ( ! is_numeric( $method ) ) {
-                $return[ $method ] = $method;
-                continue;
-            }
-            $return[ $method ] = get_the_title( $method );
-
+        foreach ( $forms as $form ){
+            $return[ $form->ID ] = get_the_title( $form );
         }
 
-        return $return;
+        $return['import'] = __( 'Imported', 'newsletter-optin-box' );
+        $return['manual'] = __( 'Manually Added', 'newsletter-optin-box' );
+
+        return apply_filters( 'noptin-subscription-methods', $return );
+
     }
 
     /**

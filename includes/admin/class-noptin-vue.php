@@ -131,6 +131,7 @@ class Noptin_Vue {
 
 		// Ensure an element has been specified.
 		if ( ! empty( $field['el'] ) ) {
+			$id      = esc_attr( $id );
 			$field   = self::sanitize_el( $id, $field );
 			$element = $field['el'];
 

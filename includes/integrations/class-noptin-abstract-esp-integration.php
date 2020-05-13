@@ -325,7 +325,7 @@ abstract class Noptin_Abstract_ESP_Integration extends Noptin_Abstract_Integrati
 	 * @return array
 	 */
 	public function get_sequences( $misc = null ) {
-		
+
 		try {
 			return $this->get_client()->get_sequences( $misc );
         } catch ( Exception $ex ) {
@@ -407,7 +407,7 @@ abstract class Noptin_Abstract_ESP_Integration extends Noptin_Abstract_Integrati
 	 * @return bool
 	 */
 	public function send_campaign( $campaign_id ) {
-		
+
 		try {
 			return $this->get_client()->send_campaign( $campaign_id );
         } catch ( Exception $ex ) {

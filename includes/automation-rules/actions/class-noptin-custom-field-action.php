@@ -30,14 +30,14 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
      * @inheritdoc
      */
     public function get_description() {
-        return __( "Adds/Updates a subscriber's custom field", 'newsletter-optin-box' );
+        return __( "Add/Update the subscriber's custom field", 'newsletter-optin-box' );
     }
 
     /**
      * @inheritdoc
      */
     public function get_rule_description( $rule ) {
-        return __( 'update a custom field', 'newsletter-optin-box' );
+        return __( 'update the custom field', 'newsletter-optin-box' );
     }
 
     /**
@@ -63,7 +63,23 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
      * @inheritdoc
      */
     public function get_settings() {
-        return array(); // field_name, field_value
+        return array(
+
+            'field_name'   => array(
+				'el'          => 'input',
+				'label'       => __( 'Field Name', 'newsletter-optin-box' ),
+                'description' => __( 'Enter the name of the field', 'newsletter-optin-box' ),
+                'placeholder' => __( 'Sample Field', 'newsletter-optin-box' ),
+            ),
+
+            'field_value'   => array(
+				'el'          => 'input',
+				'label'       => __( 'Field Value', 'newsletter-optin-box' ),
+                'description' => __( 'Enter a value to assign the field', 'newsletter-optin-box' ),
+                'placeholder' => __( 'Sample Value', 'newsletter-optin-box' ),
+            )
+
+        );
     }
 
     /**

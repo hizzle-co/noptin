@@ -20,41 +20,62 @@ var rulesApp = new Vue({
 			var $ = jQuery
 
 			// Provide visual feedback by fading the form.
-			$(this.$el).fadeTo("fast", 0.33);
+			$(this.$el).fadeTo('fast', 0.33);
+			$(this.$el)
+				.find('.save-automation-rule')
+				.css(
+					{ 'visibility': 'visible' }
+				);
 
-			//Prepare state data
-			var data  = this.$data
-			var error = this.error
-			var saved = this.saved
-			var el    = this.$el
+			// Prepare rule data.
+			let data  = {
+				'id' : this.rule_id,
+				'action_settings' : this.action_settings,
+				'trigger_settings' : this.trigger_settings,
+				'action' : 'noptin_save_automation_rule',
+				'_ajax_nonce' : noptinRules.nonce
+			}
 
-			//Hide form notices
+			if ( jQuery( '#wp-noptinemailbody-wrap').length ) {
+				this.action_settings.email_content = tinyMCE.get('noptinemailbody').getContent(  )
+			}
+
+			let error = this.error
+			let saved = this.saved
+			let el    = this.$el
+
+			// Hide form notices.
 			$(this.$el).find('.noptin-save-saved').hide()
 			$(this.$el).find('.noptin-save-error').hide()
 
-			//Post the state data to the server
-			jQuery.post(noptinRules.ajaxurl, {
-				_ajax_nonce: noptinRules.nonce,
-				action: "noptin_save_automation_rule",
-				data
-			})
+			// Post the state data to the server.
+			jQuery.post(noptinRules.ajaxurl, data)
 
-				//Show a success msg after we are done
+				// Show a success msg after we are done.
 				.done( () => {
 					$(el)
-						.fadeTo("fast", 1)
 						.find('.noptin-save-saved')
 						.show()
 						.html(`<p>${saved}</p>`)
 				})
 
-				//Else alert the user about the error
+				// Else alert the user about the error.
 				.fail( () => {
 					$(el)
-						.fadeTo("fast", 1)
 						.find('.noptin-save-error')
 						.show()
 						.html(`<p>${error}</p>`)
+				})
+
+				.always( () => {
+
+					$(el)
+						.fadeTo('fast', 1)
+						.find('.save-automation-rule')
+						.css(
+							{ 'visibility': 'hidden' }
+						);
+
 				})
 
 		},
@@ -62,7 +83,7 @@ var rulesApp = new Vue({
 	},
 
 	mounted () {
-		//Runs after mounting
+
 	},
 })
 

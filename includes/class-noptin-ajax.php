@@ -35,6 +35,9 @@ class Noptin_Ajax {
 		// Save settings.
 		add_action( 'wp_ajax_noptin_save_options', array( $this, 'save_options' ) );
 
+		// Save rule.
+		add_action( 'wp_ajax_noptin_save_automation_rule', array( $this, 'save_rule' ) );
+
 		// Create a new automation.
 		add_action( 'wp_ajax_noptin_setup_automation', array( $this, 'setup_automation' ) );
 
@@ -853,6 +856,37 @@ class Noptin_Ajax {
 
 		// Save them.
 		update_noptin_options( $settings );
+
+		wp_send_json_success( 1 );
+
+	}
+
+	/**
+	 * Saves rules
+	 *
+	 * @access      public
+	 * @since       1.3.0
+	 */
+	public function save_rule() {
+
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			wp_die( -1, 403 );
+		}
+
+		// Check nonce.
+		check_ajax_referer( 'noptin_automation_rules' );
+
+		/**
+		 * Runs before saving rules
+		 */
+		do_action( 'noptin_before_save_automation_rule' );
+
+		// Prepare the rule.
+		$action_settings  = stripslashes_deep( $_POST['action_settings'] );
+		$trigger_settings = stripslashes_deep( $_POST['trigger_settings'] );
+
+		// Save them.
+		noptin()->automation_rules->update_rule( $_POST['id'], compact( 'action_settings', 'trigger_settings' ) );
 
 		wp_send_json_success( 1 );
 

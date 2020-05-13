@@ -30,13 +30,11 @@ class Noptin_Automation_Rules {
      */
     public function __construct() {
 
-        // Register core actions
+        // Register core actions.
         $this->add_action( new Noptin_Custom_Field_Action() );
-        if ( class_exists( 'WooCommerce' ) ) {
-            $this->add_action( new Noptin_WooCommerce_Coupon_Action() );
-        }
+        $this->add_action( new Noptin_Email_Action() );
 
-        // Register core triggers
+        // Register core triggers.
         $this->add_trigger( new Noptin_New_Subscriber_Trigger() );
         $this->add_trigger( new Noptin_Open_Email_Trigger() );
         $this->add_trigger( new Noptin_Link_Click_Trigger() );
@@ -45,7 +43,7 @@ class Noptin_Automation_Rules {
             $this->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger() );
         }
 
-        // Handle admin rule create/update requests
+        // Handle admin rule create/update requests.
 		add_action( 'noptin_create_automation_rule',  array( $this, 'admin_create_automation_rule' ) );
         do_action( 'noptin_automation_rules_load', $this );
     }

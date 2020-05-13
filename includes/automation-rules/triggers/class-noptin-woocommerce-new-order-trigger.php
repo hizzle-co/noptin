@@ -62,7 +62,26 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
      * @inheritdoc
      */
     public function get_settings() {
-        return array(); // order_status, first time purchase
+
+        return array(
+
+            'order_status'    => array(
+				'el'          => 'select',
+				'label'       => __( 'Order Status', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Select an order status', 'newsletter-optin-box' ),
+				'options'     => wc_get_order_statuses(),
+				'description' => __( 'Select the order status for which this trigger should fire.', 'newsletter-optin-box' ),
+            ),
+
+            'first_time_purchase'    => array(
+                'type'        => 'checkbox_alt',
+                'el'          => 'input',
+                'label'       => __( 'New customers', 'newsletter-optin-box' ),
+                'description' => __( 'Only fire for first time purchasers?', 'newsletter-optin-box' ),
+            ),
+
+        );
+
     }
 
     /**
