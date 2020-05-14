@@ -18,6 +18,11 @@ class Noptin_Mailer {
 	private static $initialized = false;
 
 	/**
+	 * The wp_mail() data.
+	 */
+	public $wp_mail_data = null;
+
+	/**
 	 * The class constructor.
 	 */
 	public function __construct() {
@@ -535,6 +540,18 @@ class Noptin_Mailer {
 	}
 
 	/**
+	 * Ensures that our email messages are not messed up by template plugins.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return array wp_mail_data.
+	 */
+	public function ensure_email_content( $args ) {
+		$args['message'] = $this->wp_mail_data['email'];
+		return $args;
+	}
+
+	/**
 	 * Add filters/actions before the email is sent.
 	 *
 	 * @since 1.2.8
@@ -544,6 +561,7 @@ class Noptin_Mailer {
 		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ), 1000 );
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ), 1000 );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
+		add_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000000 );
 
 	}
 
@@ -557,6 +575,7 @@ class Noptin_Mailer {
 		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ), 1000 );
 		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ), 1000 );
 		remove_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
+		remove_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000000 );
 
 	}
 
@@ -573,9 +592,6 @@ class Noptin_Mailer {
 		// Hooks before an email is sent.
 		do_action( 'before_noptin_sends_email', $to, $subject, $email, $this );
 
-		// Attach our own hooks.
-		$this->before_sending();
-
 		/*
 		 * Allow to filter data on per-email basis.
 		 */
@@ -590,6 +606,11 @@ class Noptin_Mailer {
 			),
 			$this
 		);
+
+		$this->wp_mail_data = $data;
+
+		// Attach our own hooks.
+		$this->before_sending();
 
 		// Prepare the sending function.
 		$sending_function = apply_filters( 'noptin_mailer_email_sending_function', 'wp_mail' );
@@ -620,7 +641,9 @@ class Noptin_Mailer {
 		$this->after_sending();
 
 		// Hooks after an email is sent.
-		do_action( 'before_noptin_sends_email', $to, $subject, $email, $this, $result );
+		do_action( 'after_noptin_sends_email', $to, $subject, $email, $this, $result );
+
+		$this->wp_mail_data = null;
 
 		return $result;
 	}

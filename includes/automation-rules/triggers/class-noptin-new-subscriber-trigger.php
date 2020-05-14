@@ -127,12 +127,11 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
         $settings = $rule->trigger_settings;
 
         // Are we filtering by subscription method?
-        $subscribed_via = $args['subscribed_via'];
-        if ( ! empty( $settings['subscribed_via'] ) && $subscriber->_subscriber_via !== $subscribed_via ) {
-            return false;
+        if ( empty( $settings['subscribed_via'] ) || '-1' === $settings['subscribed_via'] ) {
+            return true;
         }
 
-        return true;
+        return $settings['subscribed_via'] === $subscriber->_subscriber_via;
 
     }
 
@@ -143,7 +142,12 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
      */
     public function maybe_trigger ( $subscriber ) {
         $subscriber = new Noptin_Subscriber( $subscriber );
-        $this->trigger( $subscriber->id, $subscriber->to_array() );
+
+        // Only trigger if a subscriber is active.
+        if ( empty( $subscriber->active ) ) {
+            $this->trigger( $subscriber->id, $subscriber->to_array() );
+        }
+
     }
 
 }

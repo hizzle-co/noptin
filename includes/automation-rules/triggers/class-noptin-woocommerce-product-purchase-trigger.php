@@ -63,7 +63,16 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
      * @inheritdoc
      */
     public function get_settings() {
-        return array(); // product_id, leave blank to fire for any product, separate several ids by comma.
+        return array(
+
+            'products' => array(
+				'el'          => 'input',
+                'label'       => __( 'Product Ids', 'newsletter-optin-box' ),
+                'placeholder' => '10,12,34',
+				'description' => __( 'Leave blank to fire for any product. You can separate several product ids by commas.', 'newsletter-optin-box' ),
+            )
+
+        );
     }
 
     /**
