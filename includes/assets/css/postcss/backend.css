@@ -1351,6 +1351,11 @@ a.no-campaign-create-new-campaign {
 
 	.dd-select {
 		background: #fff !important;
+
+		a {
+			text-decoration: none;
+    		color: inherit;
+		}
 	}
 
 	.dd-selected {

@@ -159,16 +159,18 @@ abstract class Noptin_Abstract_Trigger {
      * Triggers action callbacks.
      *
      * @since 1.2.8
-     * @param Noptin_Subscriber $subscriber The subscriber.
+     * @param int|object|array|Noptin_Subscriber $subscriber The subscriber.
      * @param array $args Extra arguments passed to the action.
      * @return void
      */
     public function trigger( $subscriber, $args ) {
 
+        $subscriber = new Noptin_Subscriber( $subscriber );
+
         foreach ( $this->get_rules() as $rule ) {
 
             // Retrieve the action.
-            $action = noptin()->automation_rules->get_action( $rule->action );
+            $action = noptin()->automation_rules->get_action( $rule->action_id );
             if ( empty( $action ) ) {
                 continue;
             }
@@ -178,7 +180,7 @@ abstract class Noptin_Abstract_Trigger {
 
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $subscriber, $action ) ) {
-                $action->run( $subscriber, $rule, $args );
+                $action->maybe_run( $subscriber, $rule, $args );
             }
 
         }

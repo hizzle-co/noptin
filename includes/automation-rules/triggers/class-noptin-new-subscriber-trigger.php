@@ -48,7 +48,36 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
      * @inheritdoc
      */
     public function get_rule_description( $rule ) {
-        return __( 'When someone subscribes to the newsletter', 'newsletter-optin-box' );
+
+        $settings = $rule->trigger_settings;
+
+        // Are we filtering by subscription method?
+        if ( empty( $settings['subscribed_via'] ) || '-1' === $settings['subscribed_via'] ) {
+            return __( 'When someone subscribes to the newsletter', 'newsletter-optin-box' );
+        }
+
+        $via     = $settings['subscribed_via'];
+
+        if ( 'manual' == $via ) {
+            return __( 'When someone is manually added to the newsletter', 'newsletter-optin-box' );
+        }
+
+        if ( 'import' == $via ) {
+            return __( 'When a subscriber is imported', 'newsletter-optin-box' );
+        }
+
+        $methods = $this->get_subscription_methods();
+
+        if ( isset( $methods[ $via ] ) ) {
+            $via = $methods[ $via ];
+        }
+
+        $via = noptin_clean( $via );
+
+        return sprintf(
+            __( 'When someone subscribes via %s', 'newsletter-optin-box' ),
+           "<code>$via</code>"
+        );
     }
 
     /**
@@ -145,7 +174,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 
         // Only trigger if a subscriber is active.
         if ( empty( $subscriber->active ) ) {
-            $this->trigger( $subscriber->id, $subscriber->to_array() );
+            $this->trigger( $subscriber, $subscriber->to_array() );
         }
 
     }

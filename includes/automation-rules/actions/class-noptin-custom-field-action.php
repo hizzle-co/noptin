@@ -37,7 +37,29 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
      * @inheritdoc
      */
     public function get_rule_description( $rule ) {
-        return __( 'update the custom field', 'newsletter-optin-box' );
+
+        $settings = $rule->action_settings;
+
+        if ( empty( $settings['field_name'] ) ) {
+            return __( 'update a custom field', 'newsletter-optin-box' );
+        }
+
+        $field_name  = esc_html( $settings['field_name'] );
+        if ( empty( $settings['field_value'] ) ) {
+            return sprintf(
+                __( "delete the subscriber's field %s", 'newsletter-optin-box' ),
+               "<code>$field_name</code>"
+            );
+        }
+
+        $field_value = esc_html( $settings['field_value'] );
+
+        return sprintf(
+            __( "update the subscriber's field %s to %s", 'newsletter-optin-box' ),
+           "<code>$field_name</code>",
+           "<code>$field_value</code>"
+        );
+
     }
 
     /**
@@ -92,6 +114,22 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
      * @return void
      */
     public function run( $subscriber, $rule, $args ) {
+
+        $settings = $rule->action_settings;
+
+        // Nothing to do here.
+        if ( empty( $settings['field_name'] ) ) {
+            return;
+        }
+
+        $field_name  = esc_html( $settings['field_name'] );
+        if ( empty( $settings['field_value'] ) ) {
+            return delete_noptin_subscriber_meta( $subscriber->id, $field_name );
+        }
+
+        $field_value = esc_html( $settings['field_value'] );
+
+        return update_noptin_subscriber_meta( $subscriber->id, $field_name, $field_value );
 
     }
 

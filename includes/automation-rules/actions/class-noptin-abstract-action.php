@@ -129,10 +129,37 @@ abstract class Noptin_Abstract_Action {
      * Returns whether or not the action can run (dependancies are installed).
      *
      * @since 1.2.8
+     * @param Noptin_Subscriber $subscriber The subscriber.
+     * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+     * @param array $args Extra arguments passed to the action.
      * @return bool
      */
-    public function can_run() {
+    public function can_run( $subscriber, $rule, $args ) {
         return true;
+    }
+
+    /**
+     * (Maybe) run the action.
+     *
+     * @since 1.3.0
+     * @param Noptin_Subscriber $subscriber The subscriber.
+     * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+     * @param array $args Extra arguments passed to the action.
+     */
+    public function maybe_run( $subscriber, $rule, $args ) {
+
+        // Ensure that we can run the action.
+        if ( ! $this->can_run( $subscriber, $rule, $args ) ) {
+            return;
+        }
+
+        // Run the action.
+        $this->run( $subscriber, $rule, $args );
+
+        // Update the run counts.
+        $times_run = (int) $rule->times_run + 1;
+        noptin()->automation_rules->update_rule( $rule, compact( 'times_run' ) );
+
     }
     
     /**
