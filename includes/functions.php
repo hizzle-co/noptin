@@ -1144,19 +1144,7 @@ function log_noptin_message( $message, $code = 'error' ) {
 		$message = $message->get_error_message();
 	}
 
-	// Scalars only please.
-	if ( ! is_scalar( $message ) ) {
-		$message = print_r( $message, true );
-	}
-
-	// Obfuscate email addresses in log message since log might be public.
-	$message = noptin_obfuscate_email_addresses( (string) $message );
-
-	// First, get rid of everything between "invisible" tags.
-	$message = preg_replace( '/<(?:style|script|head)>.+?<\/(?:style|script|head)>/is', '', $message );
-
-	// Then, strip some tags.
-	$message = wp_kses( $message, 'user_description' );
+	$message = noptin_clean( $message );
 
 	// Next, retrieve the array of existing logged messages.
 	$messages   = get_logged_noptin_messages();
@@ -1164,7 +1152,7 @@ function log_noptin_message( $message, $code = 'error' ) {
 	// Add our message.
 	$messages[] = array(
 		'level'	=> $code,
-		'msg'	=> trim( $message ),
+		'msg'	=> $message,
 		'time'	=> current_time( 'mysql' ),
 	);
 
@@ -1196,7 +1184,16 @@ function get_logged_noptin_messages() {
 		update_option( 'noptin_logged_messages', $messages );
 	}
 
-	return $messages;
+	$prepared = array();
+
+	foreach ( $messages as $message ) {
+		if ( ! is_scalar( $message['msg'] ) ) {
+			$message['msg'] = print_r( $message['msg'], true );
+		}
+		$prepared[] = $message;
+	}
+
+	return $prepared;
 
 }
 

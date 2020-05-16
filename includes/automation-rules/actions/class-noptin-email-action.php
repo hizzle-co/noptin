@@ -166,7 +166,18 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			return;
 		}
 
-		$merge_tags = get_noptin_subscriber_merge_fields(  $subscriber->id  );
+        $merge_tags = get_noptin_subscriber_merge_fields(  $subscriber->id  );
+        
+        if ( is_array( $args ) ) {
+
+            foreach ( $args as $key => $value ) {
+
+                if ( is_scalar( $value ) ) {
+                    $merge_tags[ $key ] = $value;
+                }
+
+            }
+        }
 
 		$item  = array(
 			'subscriber_id' 	=> $subscriber->id,
@@ -179,7 +190,8 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 
 		$item = apply_filters( 'noptin_email_action_email_details', $item, $subscriber, $rule, $args );
 
-        return noptin()->mailer->prepare_then_send( $item );
+        // Sends the email in the background.
+        return noptin()->mailer->prepare_then_bg_send( $item );
 
     }
 

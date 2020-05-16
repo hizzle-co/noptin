@@ -229,7 +229,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 		}
 
 		$text = ucfirst( "$trigger_text, $action_text" );
-		$text = "<div class='row-title'><a href='$edit_url'>$text</a></div>";
+		$text = "<div class='row-title' style='font-weight: 500;'><a href='$edit_url'>$text</a></div>";
 
 		return "<div>$text $row_actions</div>";
 

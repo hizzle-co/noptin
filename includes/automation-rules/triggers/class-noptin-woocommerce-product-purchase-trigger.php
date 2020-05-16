@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' )  ) {
  */
 class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigger {
 
-
     /**
      * @inheritdoc
      */

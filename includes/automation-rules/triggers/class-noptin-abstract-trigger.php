@@ -176,7 +176,7 @@ abstract class Noptin_Abstract_Trigger {
             }
 
             // Prepare the rule.
-            $rule   = noptin()->automation_rules->prepare_rule( $rule );
+            $rule = noptin()->automation_rules->prepare_rule( $rule );
 
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $subscriber, $action ) ) {

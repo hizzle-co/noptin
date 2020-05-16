@@ -43,8 +43,9 @@ class Noptin_Automation_Rules {
             $this->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger() );
         }
 
-        // Handle admin rule create/update requests.
-		add_action( 'noptin_create_automation_rule',  array( $this, 'admin_create_automation_rule' ) );
+        // Handle admin rule CRUDE requests.
+        add_action( 'noptin_create_automation_rule',  array( $this, 'admin_create_automation_rule' ) );
+        add_action( 'noptin_delete_automation_rule',  array( $this, 'admin_delete_automation_rule' ) );
         do_action( 'noptin_automation_rules_load', $this );
     }
 
@@ -240,6 +241,27 @@ class Noptin_Automation_Rules {
     }
 
     /**
+     * Deletes a rule.
+     *
+     * @since 1.3.0
+     * @param int|Noptin_Automation_Rule $rule The rule to update
+     * @return bool
+     */
+    public function delete_rule( $rule ) {
+        global $wpdb;
+
+        $rule = new Noptin_Automation_Rule( $rule );
+
+        // Does the rule exist?
+        if ( ! $rule->exists() ) {
+            return false;
+        }
+
+        return $wpdb->delete( $this->get_table(), array( 'id' => $rule->id ), '%d' );
+
+    }
+
+    /**
      * Returns the rule's database table.
      *
      * @since 1.2.8
@@ -252,7 +274,7 @@ class Noptin_Automation_Rules {
 
     
 	/**
-	 * Saves a created list
+	 * Saves a created rule
 	 *
 	 * @access      public
 	 * @since       1.3.0
@@ -285,6 +307,40 @@ class Noptin_Automation_Rules {
         }
         
         noptin()->admin->show_error( __( 'There was a problem creating your automation rule. Please try again.', 'newsletter-optin-box' ) );
+
+    }
+
+    /**
+	 * Deletes a rule
+	 *
+	 * @access      public
+	 * @since       1.3.0
+	 * @return      void
+	 */
+	public function admin_delete_automation_rule() {
+
+        if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['_wpnonce'] ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'noptin-automation-rule' ) ) {
+			return;
+        }
+        
+        $this->delete_rule( intval( $_GET['delete'] ) );
+
+        noptin()->admin->show_info( __( 'The automation rule has been deleted.', 'newsletter-optin-box' ) );
+
+        wp_redirect(
+            add_query_arg(
+                array(
+                    '_wpnonce'            => false,
+                    'delete'              => false,
+                    'noptin_admin_action' => false,
+                )
+            )
+        );
+        exit;
 
     }
 

@@ -16,14 +16,6 @@ abstract class Noptin_Abstract_Action {
      * @var array
      */
     protected $rules = null;
-
-    /**
-     * Constructor.
-     *
-     * @since 1.2.8
-     * @return string
-     */
-    public function __construct() {}
     
     /**
      * Retrieve the action's unique id.
@@ -107,7 +99,8 @@ abstract class Noptin_Abstract_Action {
         $table =  noptin()->automation_rules->get_table();
         $this->rules = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM $table WHERE `action_id`=%s AND `status`='1'"
+                "SELECT * FROM $table WHERE `action_id`=%s AND `status`='1'",
+                $this->get_id()
             )
         );
 

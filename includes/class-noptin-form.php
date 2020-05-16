@@ -690,7 +690,7 @@ class Noptin_Form {
 		// Remove comments.
 		$html = preg_replace( '/<!--(.*)-->/Uis', '', $html );
 
-		return $html;
+		return apply_filters( 'noptin_optin_form_html', $html, $this );
 	}
 
 	/**
