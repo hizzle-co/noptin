@@ -398,13 +398,13 @@ class Noptin_Mailer {
 			$section = sanitize_text_field( $section );
 
 			// Fires before the section is printed.
-			do_action( "noptin_mailer_before{$section}_section", $data );
+			do_action( "noptin_mailer_before_{$section}_section", $data );
 
 			// Load the section.
 			get_noptin_template( "email-templates/$template/$section.php", $data );
 
 			// Fires after the section is printed.
-			do_action( "noptin_mailer_before{$section}_section", $data );
+			do_action( "noptin_mailer_after_{$section}_section", $data );
 
 		}
 
@@ -663,13 +663,13 @@ class Noptin_Mailer {
 	 */
 	public function _handle_background_send( $key ) {
 		$data = get_transient( $key );
+		delete_transient( $key );
 
-		if ( empty( $data ) || is_array( $data ) ) {
+		if ( empty( $data ) || ! is_array( $data ) ) {
 			return;
 		}
 
 		$this->send( $data['to'], $data['subject'], $data['email'] );
-		delete_transient( $key );
 	}
 
 }
