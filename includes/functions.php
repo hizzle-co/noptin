@@ -152,6 +152,7 @@ function get_noptin_action_page() {
  * Returns the noptin action url
  *
  * @return  sting
+ * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
  * @param   string $action The action to execute.
  * @param   string $value  Optional. The value to pass to the action handler.
  * @param   bool   $empty  Optional. Whether or not to use an empty template.
@@ -159,6 +160,7 @@ function get_noptin_action_page() {
  * @since   1.0.6
  */
 function get_noptin_action_url( $action, $value = false, $empty = false ) {
+	global $wp_rewrite;
 
 	$permalink = get_option( 'permalink_structure' );
 
@@ -175,13 +177,15 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 	}
 
 	// Pretty permalinks.
+	$path = $wp_rewrite->root . "noptin_newsletter/$action";
+
 	return add_query_arg(
 		array(
 			'nv'  => $value,
 			'nte' => $empty,
 		),
-		get_home_url( null, "noptin_newsletter/$action")
-	); 
+		get_home_url( null, $path)
+	);
 
 }
 

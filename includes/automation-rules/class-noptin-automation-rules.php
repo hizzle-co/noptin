@@ -38,10 +38,6 @@ class Noptin_Automation_Rules {
         $this->add_trigger( new Noptin_New_Subscriber_Trigger() );
         $this->add_trigger( new Noptin_Open_Email_Trigger() );
         $this->add_trigger( new Noptin_Link_Click_Trigger() );
-        if ( class_exists( 'WooCommerce' ) ) {
-            $this->add_trigger( new Noptin_WooCommerce_New_Order_Trigger() );
-            $this->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger() );
-        }
 
         // Handle admin rule CRUDE requests.
         add_action( 'noptin_create_automation_rule',  array( $this, 'admin_create_automation_rule' ) );

@@ -252,7 +252,7 @@ class Noptin_Page {
 	 * @since       1.2.5
 	 * @return      array
 	 */
-	public function confirm_subscription( $key ) {
+	public function confirm_subscription() {
 
 		$msg = get_noptin_option( 'pages_confirm_page_message' );
 
@@ -280,6 +280,12 @@ class Noptin_Page {
 			return;
 		}
 
+		// Prepare the subscriber.
+		$subscriber = new Noptin_Subscriber( $value );
+		if ( ! $subscriber->exists() ) {
+			return;
+		}
+
 		$table   = get_noptin_subscribers_table_name();
 		$wpdb->update(
 			$table,
@@ -292,9 +298,9 @@ class Noptin_Page {
 			'%s'
 		);
 
-		clear_noptin_subscriber_cache( $value );
+		$subscriber->clear_cache();
 
-		do_action( 'noptin_subscriber_confirmed', new Noptin_Subscriber( $value ) );
+		do_action( 'noptin_subscriber_confirmed', new Noptin_Subscriber( $subscriber->id ) );
 
 		if ( is_numeric( $page ) ) {
 			$page = get_permalink( $page );

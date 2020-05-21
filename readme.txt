@@ -124,6 +124,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Improve the newsletter subscription error messages - CHANGED
 - Email template plugins cause broken newsletter emails - FIXED
 - Sometimes background emails do not send - FIXED
+- Newletter page not working for URLs that use 'index.php' in their permalinks - FIXED
 
 = 1.2.9 - 2020-05-05 =
 - Newsletter actions page nolonger uses a normal WordPress page - CHANGED

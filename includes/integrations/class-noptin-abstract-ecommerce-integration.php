@@ -19,6 +19,12 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	public $context = 'customers';
 
 	/**
+	 * @var string The product's post type in case this integration saves products as custom post types.
+	 * @since 1.3.0
+	 */
+	public $product_post_type = array( 'product', 'product_variation' );
+
+	/**
 	 * @var string The label for order.
 	 * @since 1.2.6
 	 */
@@ -43,6 +49,25 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$this->context     = __( 'customers', 'newsletter-optin-box' );
 		$this->order_label = __( 'Orders', 'newsletter-optin-box' );
 		parent::__construct();
+	}
+
+	/**
+	 * Setup hooks in case the integration is enabled.
+	 *
+	 * @since 1.3.0
+	 */
+	public function initialize() {
+
+		if ( empty( $this->product_post_type ) ) {
+			return;
+		}
+
+		// Product actions.
+		add_action( 'wp_trash_post', array( $this, 'product_trashed' ), $this->priority );
+		add_action( 'untrashed_post', array( $this, 'product_untrashed' ), $this->priority );
+		add_action( 'before_delete_post', array( $this, 'product_deleted' ), $this->priority );
+		add_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
+
 	}
 
 	/**
@@ -75,13 +100,14 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	}
 
 	/**
-	 * Returns an array of all complete orders.
+	 * Returns a given customer's order count.
 	 *
-	 * @since 1.2.6
-	 * @return array
+	 * @param int $customer_id_or_email The customer's id or email.
+	 * @since 1.3.0
+	 * @return int
 	 */
-	public function get_orders() {
-		return array();
+	public function get_order_count( $customer_id_or_email = null ) {
+		return 0;
 	}
 
 	/**
@@ -93,21 +119,27 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 */
 	public function get_order_details( $order_id ) {
 		return array(
+			'id'		   => $order_id,
 			'total'        => 0,
 			'tax'          => 0,
 			'fees'         => 0,
+			'currency'     => 'USD',
 			'discount'     => 0,
-			'url'          => '',
-			'id'           => '',
+			'edit_url'     => '',
+			'view_url'     => '',
+			'pay_url'      => '',
 			'title'        => '',
 			'date_created' => '',
 			'date_paid'    => '',
+			'status'       => 'pending',
 			'items'        => array(
 				array(
-					'id'       => '',
-					'name'     => '',
-					'price'    => '',
-					'quantity' => '',
+					'item_id'      => '',
+					'product_id'   => '',
+					'variation_id' => '',
+					'name'         => '',
+					'price'        => '',
+					'quantity'     => '',
 				)
 			)
 
@@ -181,6 +213,8 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		if ( $subscriber_id ) {
 			do_action( "noptin_integration_order", $action, $order_id, $subscriber_id, $this );
 			do_action( "noptin_integration_order_$action", $order_id, $subscriber_id, $this );
+			do_action( "noptin_ecommerce_integration_order_$action", $order_id, $subscriber_id, $this );
+			do_action( "noptin_ecommerce_integration_order", $action, $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_order_$action", $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_order", $action, $order_id, $subscriber_id, $this );
 		}
@@ -194,7 +228,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 * @since 1.2.6
 	 */
 	public function checkout_processed( $order_id ) {
-		$this->fire_order_hook( 'processed', $order_id );
+		$this->fire_order_hook( 'checkout_processed', $order_id );
 	}
 
 	/**
@@ -235,6 +269,12 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 */
 	public function order_completed( $order_id ) {
 		$this->fire_order_hook( 'completed', $order_id );
+
+		// Fire bought hooks for individual products.
+		$details = $this->get_order_details( $order_id );
+		foreach ( $details['items'] as $item ) {
+			$this->product_bought( $item['product_id'], $item, $order_id );
+		}
 	}
 
 	/**
@@ -245,6 +285,12 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 */
 	public function order_refunded( $order_id ) {
 		$this->fire_order_hook( 'refunded', $order_id );
+
+		// Fire refunded hooks for individual products.
+		$details = $this->get_order_details( $order_id );
+		foreach ( $details['items'] as $item ) {
+			$this->product_refunded( $item['product_id'], $item, $order_id );
+		}
 	}
 
 	/**
@@ -258,19 +304,53 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	}
 
 	/**
-	 * Returns an array of order events.
+	 * Fired when an order is fails payment.
 	 * 
-	 * @since 1.2.6
+	 * @param int $order_id The order id.
+	 * @since 1.3.0
 	 */
-	public function get_order_events() {
-		return array(
-			'created'   => __( 'An order is completed', 'newsletter-optin-box' ),
-			'updated'   => __( 'An order is updated', 'newsletter-optin-box' ),
-			'paid'      => __( 'An order is paid', 'newsletter-optin-box' ),
-			'refunded'  => __( 'An order is refunded', 'newsletter-optin-box' ),
-			'completed' => __( 'An order is completed', 'newsletter-optin-box' ),
-			'deleted'   => __( 'An order is deleted', 'newsletter-optin-box' ),
-		);
+	public function order_failed( $order_id ) {
+		$this->fire_order_hook( 'failed', $order_id );
+	}
+
+	/**
+	 * Fired when an order is cancelled.
+	 * 
+	 * @param int $order_id The order id.
+	 * @since 1.3.0
+	 */
+	public function order_cancelled( $order_id ) {
+		$this->fire_order_hook( 'cancelled', $order_id );
+	}
+
+	/**
+	 * Fired when an order is held.
+	 * 
+	 * @param int $order_id The order id.
+	 * @since 1.3.0
+	 */
+	public function order_held( $order_id ) {
+		$this->fire_order_hook( 'held', $order_id );
+	}
+
+	/**
+	 * Fired when an order is marked as processing.
+	 * 
+	 * @param int $order_id The order id.
+	 * @since 1.3.0
+	 */
+	public function order_processing( $order_id ) {
+		$this->fire_order_hook( 'processing', $order_id );
+	}
+
+	/**
+	 * Fired when an order is marked as pending.
+	 * 
+	 * @param int $order_id The order id.
+	 * @since 1.3.0
+	 */
+	public function order_pending( $order_id ) {
+		$this->fire_order_hook( 'pending', $order_id );
 	}
 
 	/**
@@ -280,6 +360,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 * @return array
 	 */
 	public function get_products() {
+		// Return self::get_product_details[]
 		return array();
 	}
 
@@ -292,9 +373,16 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 */
 	public function get_product_details( $product_id ) {
 		return array(
-			'id'       => '',
-			'name'     => '',
-			'price'    => '',
+			'id'                 => '',
+			'name'               => '',
+			'description'        => '',
+			'url'                => '',
+			'price'              => '',
+			'type'               => '',
+			'sku'                => '',
+			'inventory_quantity' => '',
+			'images'             => array(), // array of urls.
+			'variations'         => array(), // array of variations, should look similar to the parent array minus the variations key.
 		);
 	}
 
@@ -313,6 +401,8 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		if ( ! empty( $product['id'] ) ) {
 			do_action( "noptin_integration_product", $action, $product_id, $product, $this );
 			do_action( "noptin_integration_product_$action", $product_id, $product, $this );
+			do_action( "noptin_ecommerce_integration_product_$action", $product_id, $product, $this );
+			do_action( "noptin_ecommerce_integration_product", $action, $product_id, $product, $this );
 			do_action( "noptin_{$this->slug}_integration_product_$action", $product_id, $product, $this );
 			do_action( "noptin_{$this->slug}_integration_product", $action, $product_id, $product, $this );
 		}
@@ -320,13 +410,58 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	}
 
 	/**
-	 * Fired when a product is created.
+	 * Fired when a product is bought.
 	 * 
 	 * @param int $product_id The product id.
-	 * @since 1.2.6
+	 * @param array $item the item details
+	 * @param int $order_id the purchase order id
+	 * @since 1.3.0
 	 */
-	public function product_created( $product_id ) {
-		$this->fire_product_hook( 'created', $product_id );
+	public function product_bought( $product_id, $item, $order_id ) {
+		$subscriber_id = $this->get_order_subscriber( $order_id );
+
+		if ( $subscriber_id ) {
+			do_action( "noptin_ecommerce_integration_product_buy", $product_id, $item, $order_id, $subscriber_id, $this );
+			do_action( "noptin_{$this->slug}_integration_product_buy", $product_id, $item, $order_id, $subscriber_id, $this );
+		}
+
+	}
+
+	/**
+	 * Fired when a product is refunded.
+	 * 
+	 * @param int $product_id The product id.
+	 * @param array $item the item details
+	 * @param int $order_id the purchase order id
+	 * @since 1.3.0
+	 */
+	public function product_refunded( $product_id, $item, $order_id ) {
+		$subscriber_id = $this->get_order_subscriber( $order_id );
+
+		if ( $subscriber_id ) {
+			do_action( "noptin_ecommerce_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
+			do_action( "noptin_{$this->slug}_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
+		}
+	}
+
+	/**
+	 * Checks the post type of a post.
+	 * 
+	 * @param int $product_id The product id.
+	 * @since 1.3.0
+	 */
+	public function is_product_post_type( $product_id ) {
+
+		if ( empty( $product_id ) || empty( $this->product_post_type ) ) {
+			return false;
+		}
+
+		if ( is_array( $this->product_post_type ) ) {
+			return in_array( get_post_type( $product_id ), $this->product_post_type );
+		}
+
+		get_post_type( $product_id ) == $this->product_post_type;
+
 	}
 
 	/**
@@ -336,7 +471,9 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 * @since 1.2.6
 	 */
 	public function product_updated( $product_id ) {
-		$this->fire_product_hook( 'updated', $product_id );
+		if ( $this->is_product_post_type( $product_id ) ) {
+			$this->fire_product_hook( 'updated', $product_id );
+		}
 	}
 
 	/**
@@ -346,7 +483,33 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 * @since 1.2.6
 	 */
 	public function product_deleted( $product_id ) {
-		$this->fire_product_hook( 'deleted', $product_id );
+		if ( $this->is_product_post_type( $product_id ) ) {
+			$this->fire_product_hook( 'deleted', $product_id );
+		}
+	}
+
+	/**
+	 * Fired when a product is added to the trash.
+	 * 
+	 * @param int $product_id The product id.
+	 * @since 1.3.0
+	 */
+	public function product_trashed( $product_id ) {
+		if ( $this->is_product_post_type( $product_id ) ) {
+			$this->fire_product_hook( 'trashed', $product_id );
+		}
+	}
+
+	/**
+	 * Fired when a product is added removed from the trash.
+	 * 
+	 * @param int $product_id The product id.
+	 * @since 1.3.0
+	 */
+	public function product_untrashed( $product_id ) {
+		if ( $this->is_product_post_type( $product_id ) ) {
+			$this->fire_product_hook( 'untrashed', $product_id );
+		}
 	}
 
 }

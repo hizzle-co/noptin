@@ -107,9 +107,42 @@ class Noptin_Automation_Rule {
         
         foreach ( get_object_vars( $data ) as $key => $var ) {
             if ( property_exists( $this, $key ) ) {
-                $this->$key = maybe_unserialize( $var );
+                $this->$key = $this->make_bool( maybe_unserialize( $var ) );
             }
         }
+
+    }
+
+    /**
+	 * Converts bool strings to their bool counterparts.
+	 *
+	 * @since  1.3.0
+	 *
+	 * @param mixed $val The val to make boolean.
+	 */
+	public function make_bool( $val ) {
+
+        if ( is_scalar( $val ) ) {
+
+            // Make true.
+            if ( 'true' === $val ) {
+                $val = true;
+            }
+
+            // Make false.
+            if ( 'false' === $val ) {
+                $val = false;
+            }
+
+            return $val;
+
+        }
+
+        if ( is_array( $val ) ) {
+            return map_deep( $val, array( $this, 'make_bool' ) );
+        }
+
+        return $val;
 
     }
     

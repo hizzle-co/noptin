@@ -19,6 +19,12 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	public $slug = 'woocommerce';
 
 	/**
+	 * @var string The product's post type in case this integration saves products as custom post types.
+	 * @since 1.3.0
+	 */
+	public $product_post_type = array( 'product', 'product_variation' );
+
+	/**
 	 * @var string Name of this integration.
 	 * @since 1.2.6
 	 */
@@ -31,12 +37,42 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function initialize() {
 
-		add_action( 'woocommerce_checkout_order_processed', array( $this, 'add_order_subscriber' ) );
-		add_action( 'woocommerce_checkout_order_processed', array( $this, 'checkout_processed' ), 20 );
-		add_action( 'woocommerce_order_status_completed', array( $this, 'order_completed' ), 20 );
-		add_action( 'woocommerce_payment_complete', array( $this, 'order_paid' ), 20 );
-		add_action( 'woocommerce_order_refunded', array( $this, 'order_refunded' ), 20 );
+		parent::initialize();
 
+		// Orders.
+		add_action( 'woocommerce_new_order', array( $this, 'add_order_subscriber' ), 1 );
+		add_action( 'woocommerce_checkout_order_processed', array( $this, 'checkout_processed' ), $this->priority );
+		add_action( 'woocommerce_order_status_completed', array( $this, 'order_completed' ), $this->priority );
+		add_action( 'woocommerce_payment_complete', array( $this, 'order_paid' ), $this->priority );
+		add_action( 'woocommerce_order_refunded', array( $this, 'order_refunded' ), $this->priority );
+		add_action( 'woocommerce_new_order', array( $this, 'order_created' ), $this->priority );
+		add_action( 'woocommerce_update_order', array( $this, 'order_updated' ), $this->priority );
+		add_action( 'woocommerce_order_status_pending', array( $this, 'order_pending' ), $this->priority );
+		add_action( 'woocommerce_order_status_processing', array( $this, 'order_processing' ), $this->priority );
+		add_action( 'woocommerce_order_status_on-hold', array( $this, 'order_held' ), $this->priority );
+		add_action( 'woocommerce_order_status_cancelled', array( $this, 'order_cancelled' ), $this->priority );
+		add_action( 'woocommerce_order_status_failed', array( $this, 'order_failed' ), $this->priority );
+
+		// Products.
+		do_action( 'woocommerce_update_product', array( $this, 'product_updated' ), $this->priority );
+		do_action( 'woocommerce_update_product_variation', array( $this, 'product_updated' ), $this->priority );
+		do_action( 'woocommerce_new_product_variation', array( $this, 'product_updated' ), $this->priority );
+		do_action( 'woocommerce_new_product', array( $this, 'product_updated' ), $this->priority );
+		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
+
+		// Automation rules.
+		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
+	}
+
+	/**
+	 * Registers automation rules.
+	 *
+	 * @since 1.3.0
+	 * @param Noptin_Automation_Rules $rules The automation rules class.
+	 */
+	public function register_automation_rules( $rules ) {
+		$rules->add_trigger( new Noptin_WooCommerce_New_Order_Trigger( $this ) );
+        $rules->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger( $this ) );
 	}
 
 	/**
@@ -101,7 +137,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 *
 	 * @return bool
 	 */
-	function add_checkbox_after_email_field( $field, $key ) {
+	public function add_checkbox_after_email_field( $field, $key ) {
 		if ( $key !== 'billing_email' ) {
 			return $field;
 		}
@@ -114,7 +150,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * Prints the checkbox wrapper.
 	 *
 	 */
-	function before_checkbox_wrapper() {
+	public function before_checkbox_wrapper() {
 
 		if ( 'after_email_field' === $this->get_checkbox_position() ) {
 			echo '<p class="form-row form-row-wide" id="noptin_woocommerce_optin_checkbox">';
@@ -126,7 +162,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * Prints the checkbox closing wrapper.
 	 *
 	 */
-	function after_checkbox_wrapper() {
+	public function after_checkbox_wrapper() {
 
 		if ( 'after_email_field' === $this->get_checkbox_position() ) {
 			echo '</p>';
@@ -154,11 +190,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	}
 
 	/**
-	 * Returns the email address of the customer associated with an order.
-	 *
-	 * @param int $order_id The order id.
-	 * @since 1.2.6
-	 * @return string
+	 * @inheritdoc
 	 */
 	public function get_order_customer_email( $order_id ) {
 
@@ -176,11 +208,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	}
 
 	/**
-	 * Returns the id of the customer associated with an order.
-	 *
-	 * @param int $order_id The order id.
-	 * @since 1.2.6
-	 * @return int
+	 * @inheritdoc
 	 */
 	public function get_order_customer_user_id( $order_id ) {
 
@@ -198,12 +226,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	}
 
 	/**
-	 * Returns order customer details
-	 *
-	 * @param int $order_id The order id.
-	 * @param bool $existing_subscriber Whether this is an existing subscriber or not.
-	 * @since 1.2.6
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_order_customer_details( $order_id, $existing_subscriber = false ) {
 
@@ -221,7 +244,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 				'order_id'        => $order_id,
 			);
 		}
-		
 
 		if ( method_exists( $order, 'get_billing_email' ) ) {
 			$noptin_fields['email']             = $order->get_billing_email();
@@ -238,10 +260,11 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			$noptin_fields['ip_address']        = $order->get_customer_ip_address();
 			$noptin_fields['user_agent']        = $order->get_customer_user_agent();
 			$noptin_fields['formatted_address'] = $order->get_formatted_billing_address();
-			
+
 			if ( ! empty( $noptin_fields['country'] ) ) {
 				$countries = WC()->countries->get_countries();
-				$noptin_fields['country'] = isset( $countries[ $noptin_fields['country'] ] ) ? $countries[ $noptin_fields['country'] ] : $noptin_fields['country'];
+				$noptin_fields['country_short'] = $noptin_fields['country'];
+				$noptin_fields['country']       = isset( $countries[ $noptin_fields['country'] ] ) ? $countries[ $noptin_fields['country'] ] : $noptin_fields['country'];
 			}
 
 		} else {
@@ -261,6 +284,219 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return array_filter( $noptin_fields );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_order_details( $order_id ) {
+
+		// Fetch the order.
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			return parent::get_order_details( $order_id );
+		}
+
+		$details = array(
+			'id'       => $order->get_id(),
+			'total'    => $order->get_total(),
+			'tax'      => $order->get_total_tax(),
+			'fees'     => $order->get_total_fees(),
+			'currency' => $order->get_currency(),
+			'discount' => $order->get_total_discount(),
+			'edit_url' => $order->get_edit_order_url(),
+			'view_url' => $order->get_view_order_url(),
+			'pay_url'  => $order->get_checkout_payment_url(),
+			'status'   => str_replace( 'wc-', '', $order->get_status() ),
+
+			'title'    => sprintf(
+				esc_html__( 'Order #%d from %s', 'newsletter-optin-box' ),
+				$order->get_id(),
+				$order->get_billing_email()
+			),
+
+			'items'    => array_map(
+				array( $this, 'get_order_item_details' ),
+				$order->get_items()
+			)
+		);
+
+		// Date the order was created.
+		$details['date_created'] = $order->get_date_created();
+		if ( ! empty( $details['date_created'] ) ) {
+			$details['date_created'] = $details['date_created']->__toString();
+		}
+
+		// Date it was paid.
+		$details['date_paid'] = $order->get_date_completed();
+		if ( ! empty( $details['date_paid'] ) ) {
+			$details['date_paid'] = $details['date_paid']->__toString();
+		}
+
+		return $details;
+
+	}
+
+	/**
+	 * Returns an array of order item details.
+	 *
+	 * @param WC_Order_Item_Product $item The item id.
+	 * @since 1.3.0
+	 * @return array
+	 */
+	protected function get_order_item_details( $item ) {
+
+		$product_id   = $item->get_product_id();
+        $variation_id = $item->get_variation_id();
+
+        if ( empty( $variation_id ) ) {
+            $variation_id = $item->get_product_id();
+		}
+
+		return array(
+			'item_id'      => $item->get_id(),
+			'product_id'   => $product_id,
+			'variation_id' => $variation_id,
+			'name'         => $item->get_name(),
+			'price'        => $item->get_total(),
+			'quantity'     => $item->get_quantity(),
+		);
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_order_count( $customer_id_or_email = null ) {
+
+		if ( is_numeric( $customer_id_or_email ) ) {
+			return wc_get_customer_order_count( $customer_id_or_email );
+		}
+
+		$orders = wc_get_orders(
+			array(
+				'limit'         => -1,
+				'billing_email' => $customer_id_or_email,
+				'return'        => 'ids',
+				'status'        => array_keys( wc_get_order_statuses() ),
+			)
+		);
+
+		return count( $orders );
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_product_purchase_count( $customer_id_or_email = null, $product_id ) {
+
+		$orders = wc_get_orders(
+			array(
+				'limit'    => -1,
+				'customer' => $customer_id_or_email,
+				'status'   => array( 'wc-completed', 'wc-processing', 'wc-refunded' ),
+			)
+		);
+
+		$count = 0;
+
+		// Loop through each order.
+   		foreach ( $orders as $order ) {
+
+			// Fetch the items.
+			$items = $order->get_items();
+			  
+			// Compare each product to our product.
+      		foreach ( $items as $item ) {
+				$item = $this->get_order_item_details( $item );
+
+        		if ( $product_id == $item['product_id'] ) {
+            		$count += 1;
+         		} else if( $product_id == $item['variation_id'] ) {
+					$count += 1;
+				}
+    		}
+   		}
+
+		return $count;
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_products() {
+		$products = wc_get_products(
+			array(
+				'limit'  => -1,
+				'return' => 'ids',
+				'status' => 'publish',
+				'parent' => 0,
+			)
+		);
+
+		return array_filter(
+			array_map( array( $this, 'get_product_details' ), $products )
+		);
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_product_details( $product_id ) {
+		$product = wc_get_product( $product_id );
+
+		if ( empty( $product ) || $product->is_purchasable() ) {
+			return array();
+		}
+
+		$details = array(
+			'id'                 => $product->get_id(),
+			'name'               => $product->get_name(),
+			'description'        => $product->get_short_description(),
+			'url'                => $product->get_permalink(),
+			'price'              => $product->get_price(),
+			'type'               => $product->get_type(),
+			'sku'                => $product->get_sku(),
+			'inventory_quantity' => 0,
+			'variations'         => array(),
+		);
+
+		// Gallery images.
+		$images = $product->get_gallery_image_ids();
+
+		// Add featured image to the beginning.
+		array_unshift( $images, $product->get_image_id() );
+
+		// Remove duplicate and empty values.
+		$images = array_unique( array_filter( $images ) );
+
+		// Convert image ids to urls.
+		$details['images'] = array_filter( array_map( 'wp_get_attachment_url', $images ) );
+
+		// Variations.
+		$variations = $product->get_children();
+
+		foreach ( $variations as $variation ) {
+			$variation = $this->get_product_details( $variation );
+
+			if ( empty( $variation ) ) {
+				continue;
+			}
+
+			$details['variations'][] = $variation;
+
+		}
+
+		if ( empty( $details['variations'] ) ) {
+			unset( $details['variations'] );
+			$details['inventory_quantity'] = $product->get_stock_quantity();
+		}
+
+		return $details;
+
 	}
 
 }
