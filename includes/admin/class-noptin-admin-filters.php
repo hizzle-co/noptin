@@ -100,10 +100,11 @@ class Noptin_Admin_Filters {
 
         switch ( $column_name ) {
 			case 'noptin_subscriber' :
-				$subscriber_id = get_user_meta ( $user_id, 'noptin_subscriber_id', true );
+				$user = get_userdata( $user_id );
+				$id   = get_noptin_subscriber_id_by_email ( $user->user_email );
 
-				if ( $subscriber_id ) {
-					$subscriber_id = (int) $subscriber_id;
+				if ( $id ) {
+					$subscriber_id = (int) $id;
 					$view_url      = esc_url( admin_url( "admin.php?page=noptin-subscribers&subscriber=$subscriber_id" ) );
 					$text          = __( 'View', 'newsletter-optin-box' );
 					return "<span style='color: #2e7d32;' class='dashicons dashicons-yes'></span><a href='$view_url' class='description'>$text</a>";

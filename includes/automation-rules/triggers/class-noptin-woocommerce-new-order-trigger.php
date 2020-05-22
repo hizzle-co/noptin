@@ -87,7 +87,6 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 				'placeholder' => __( 'Select order state', 'newsletter-optin-box' ),
 				'options'     => array(
                     'created'    => __( 'Created', 'newsletter-optin-box' ),
-                    'updated'    => __( 'Updated', 'newsletter-optin-box' ),
                     'pending'    => __( 'Pending', 'newsletter-optin-box' ),
                     'processing' => __( 'Processing', 'newsletter-optin-box' ),
                     'held'       => __( 'Held', 'newsletter-optin-box' ),

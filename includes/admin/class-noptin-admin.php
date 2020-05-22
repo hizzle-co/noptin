@@ -803,6 +803,10 @@ class Noptin_Admin {
 	 */
 	public function render_single_subscriber_page( $subscriber = 0 ) {
 
+		if ( empty( $_GET['return'] ) ) {
+			$_GET['return'] = admin_url( 'admin.php?page=noptin-subscribers' );
+		}
+
 		$data = '';
 		$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
 		foreach( $data_array as $key => $value ) {
