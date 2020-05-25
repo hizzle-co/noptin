@@ -129,11 +129,11 @@
 <div id="major-publishing-actions" style="margin: 10px -12px -12px;">
 
 	<div id="delete-action">
-	    <a class='noptin-delete-single-subscriber' data-email='<?php echo esc_attr( $subscriber->email ); ?>' style="color: #a00;" href="<?php echo $delete_url ?>">Delete</a>
+	    <a class='noptin-delete-single-subscriber' data-email='<?php echo esc_attr( $subscriber->email ); ?>' style="color: #a00;" href="<?php echo $delete_url ?>"><?php _e( 'Delete', 'newsletter-optin-box' ); ?></a>
 	</div>
 
     <div id="publishing-action">
-		<input name="save" type="submit" class="button button-primary button-large" id="publish" value="Update">
+		<input name="save" type="submit" class="button button-primary button-large" id="publish" value="<?php esc_attr_e( 'Update', 'newsletter-optin-box' ); ?>">
 	</div>
     <div class="clear"></div>
 </div>

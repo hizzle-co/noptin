@@ -238,6 +238,9 @@ function get_noptin_subscriber_merge_fields( $subscriber_id ) {
 		}
 	}
 
+	$merge_tags['name']      = trim( $merge_tags['first_name'] . '' . $merge_tags['second_name'] );
+	$merge_tags['last_name'] = $merge_tags['second_name'];
+
 	return apply_filters( 'noptin_subscriber_merge_fields', $merge_tags, $subscriber, $meta );
 }
 
@@ -675,6 +678,8 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = f
 		}
 
 	}
+
+	$data['merge_tags'] = array_merge( get_noptin_subscriber_merge_fields( $id ), $data['merge_tags'] );
 
 	// Allow users to filter the double opt-in email.
 	foreach ( $data as $key => $value ) {

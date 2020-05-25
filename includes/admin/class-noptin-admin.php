@@ -196,7 +196,7 @@ class Noptin_Admin {
 		wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
 
 		// Vue js.
-		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.js', array(), '2.6.11', true );
+		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.min.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
 		wp_enqueue_media();
@@ -267,8 +267,41 @@ class Noptin_Admin {
 			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2', 'postbox' ), $version, true );
 
 			$params       = array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'noptin_subscribers' ),
+				'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+				'nonce'         => wp_create_nonce( 'noptin_subscribers' ),
+				'add'           => __( 'Add Subscriber', 'newsletter-optin-box' ),
+				'save'          => __( 'Save', 'newsletter-optin-box' ),
+				'missing_email' => __( 'Enter an email address', 'newsletter-optin-box' ),
+				'add_success'   => __( 'New subscriber added', 'newsletter-optin-box' ),
+				'reloading'     => __( 'Reloading the page', 'newsletter-optin-box' ),
+				'export'        => __( 'Export Subscribers', 'newsletter-optin-box' ),
+				'exportbtn'     => __( 'Export', 'newsletter-optin-box' ),
+				'file'          => __( 'Select file type', 'newsletter-optin-box' ),
+				'download'      => __( 'Download', 'newsletter-optin-box' ),
+				'done'          => __( 'Done!', 'newsletter-optin-box' ),
+				'close'         => __( 'Close', 'newsletter-optin-box' ),
+				'imported'      => __( 'Imported', 'newsletter-optin-box' ),
+				'skipped'       => __( 'Skipped', 'newsletter-optin-box' ),
+				'import_fail'   => __( 'Check your browser console to see why your subscribers were not imported', 'newsletter-optin-box' ),
+				'import_title'  => __( 'Select your CSV file', 'newsletter-optin-box' ),
+				'import_footer' => __( 'Import subscribers from any system into Noptin', 'newsletter-optin-box' ),
+				'import_label'  => __( 'select your import file', 'newsletter-optin-box' ),
+				'import'        => __( 'Import', 'newsletter-optin-box' ),
+				'delete_subscriber' => __( 'Delete subscriber', 'newsletter-optin-box' ),
+				'delete_footer'     => __( 'This will delete the subscriber and all associated data', 'newsletter-optin-box' ),
+				'delete'            => __( 'Delete', 'newsletter-optin-box' ),
+				'double_optin'      => __( 'Send a new double opt-in confirmation email to', 'newsletter-optin-box' ),
+				'send'              => __( 'Send', 'newsletter-optin-box' ),
+				'success'           => __( 'Success', 'newsletter-optin-box' ),
+				'error'             => __( 'Error!', 'newsletter-optin-box' ),
+				'troubleshoot'      => __( 'How to troubleshoot this error.', 'newsletter-optin-box' ),
+				'connect_error'     => __( 'Unable to connect', 'newsletter-optin-box' ),
+				'connect_info'      => __( 'This might be a problem with your server or your internet connection', 'newsletter-optin-box' ),
+				'delete_all'        => __( 'Are you sure you want to delete all subscribers?', 'newsletter-optin-box' ),
+				'no_revert'         => __( "You won't be able to revert this!", 'newsletter-optin-box' ),
+				'deleted'           => __( 'Deleted Subscribers', 'newsletter-optin-box' ),
+				'no_delete'         => __( 'Could not delete subscribers', 'newsletter-optin-box' ),
+				'cancel'            => __( 'Cancel', 'newsletter-optin-box' ),
 			);
 
 			// localize and enqueue the script with all of the variable inserted.
@@ -577,6 +610,7 @@ class Noptin_Admin {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="<?php echo esc_url( add_query_arg( 'create', '1' ) ); ?>" class="page-title-action noptin-add-automation-rule"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a></h1>
+			<?php $this->show_notices(); ?>
 			<form id="noptin-automation-rules-table" method="POST">
 				<?php $table->display(); ?>
 			</form>
@@ -769,16 +803,9 @@ class Noptin_Admin {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="#" class="page-title-action noptin-add-subscriber"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a> <a href="#" class="page-title-action noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="page-title-action noptin-export-subscribers"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> <a href="#" class="button-secondary noptin-danger-button noptin-delete-subscribers"><?php _e( 'Delete All Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
-			<?php if ( ! class_exists( 'Noptin_Lists' ) ) { ?>
-			<p class="description" style='margin: 10px 0;'>
-				<?php
-					printf(
-						__( 'You can now %sgroup subscribers using lists%s based on how they sign up from and which actions they take on your website', 'newsletter-optin-box' ),
-						'<a href="https://noptin.com/product/lists" target="_blank">',
-						'</a>'
-					); ?></a></p>
-			<?php } ?>
-			<form id="noptin-subscribers-table" method="POST">
+			<?php $this->show_notices(); ?>
+			<form id="noptin-subscribers-table" method="POST" action="<?php echo $table->base_url; ?>">
+				<?php $table->search_box( __( 'Search Subscribers', 'newsletter-optin-box' ), 'noptin_search_subscribers'); ?>
 				<?php $table->display(); ?>
 			</form>
 			<div id='noptin-subscribers-page-data' <?php echo $data; ?>></div>
@@ -1096,20 +1123,6 @@ class Noptin_Admin {
 				$this->show_success( __( 'Subscriber successfully deleted', 'newsletter-optin-box' ) );
 			}
 
-			// Delete multiple subscribers.
-			if ( ! empty( $_POST['action'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'bulk-ids' ) ) {
-				$ids = array();
-
-				if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
-					$ids = array_map( 'intval', $_REQUEST['id'] );
-				}
-
-				foreach ( $ids as $id ) {
-					delete_noptin_subscriber( $id );
-				}
-
-				$this->show_success( __( 'The selected subscribers have been deleted.', 'newsletter-optin-box' ) );
-			}
 		}
 
 		// Campaign actions.
@@ -1154,40 +1167,6 @@ class Noptin_Admin {
 					$this->show_info( __( 'Your WordPress users and subscribers are now syncing in the background.', 'newsletter-optin-box' ) );
 				}
 			}
-		}
-		// Ensure that this is our page...
-		if ( ! isset( $_GET['page'] ) || 'noptin-forms' !== $_GET['page'] ) {
-			return;
-		}
-
-		// ... and that there is an action.
-		if ( ! isset( $_GET['action'] ) ) {
-			return;
-		}
-
-		// Is the user deleting an optin form?
-		if ( 'delete' === $_GET['action'] ) {
-			noptin_delete_optin_form( $_GET['delete'] );
-			wp_safe_redirect( admin_url( 'admin.php?page=noptin-forms' ) );
-			exit;
-		}
-
-		// Is the user duplicating an optin form?
-		if ( 'duplicate' === $_GET['action'] ) {
-			$form = noptin_duplicate_optin_form( $_GET['duplicate'] );
-			wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form" ) );
-			exit;
-		}
-
-		// Is the user creating a new optin form?
-		if ( 'new' === $_GET['action'] ) {
-			$form = noptin_create_optin_form();
-			if ( is_int( $form ) ) {
-				wp_safe_redirect( admin_url( "admin.php?page=noptin-forms&form_id=$form&created=1" ) );
-				exit;
-			}
-
-			die( $form->get_error_message() );
 		}
 
 	}

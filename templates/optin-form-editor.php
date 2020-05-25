@@ -14,14 +14,15 @@
 						class="button button-link noptin-popup-editor-header-button">{{saveAsTemplateText}}</button>
 				</div>
 				<div class="noptin-popup-editor-toolbar">
-					<button v-if="optinStatus" @click.prevent="unpublish" type="button"
-						class="button button-link noptin-popup-editor-header-button">Switch to Draft</button>
-					<button v-if="!optinStatus" @click.prevent="publish" type="button"
-						class="button button-link noptin-popup-editor-header-button">Publish Form</button>
 					<button v-if="optinType == 'popup'" @click="previewPopup()" type="button"
 						class="button button-secondary noptin-popup-editor-header-button">{{previewText}}</button>
+					<button v-if="optinStatus" @click.prevent="unpublish" type="button"
+						class="button button-link noptin-popup-editor-header-button"><?php _e( 'Switch to Draft', 'newsletter-optin-box' );?></button>
+					<button v-if="!optinStatus" @click.prevent="publish" type="button"
+						class="button button-primary noptin-popup-editor-header-button"><?php _e( 'Publish Form', 'newsletter-optin-box' );?></button>
 					<button @click="save()" type="button"
-						class="button button-primary noptin-popup-editor-header-button">{{saveText}}</button>
+						:class="{'button-primary': optinStatus}"
+						class="button noptin-popup-editor-header-button"><span v-if='optinStatus'>{{saveText}}</span><span v-if='!optinStatus'><?php _e( 'Save Draft', 'newsletter-optin-box' );?></span></button>
 				</div>
 			</div>
 			<div class="noptin-divider"></div>

@@ -13,11 +13,12 @@
 			let $el   = null
 
 			Swal.fire({
-				title: 'Add Subscriber',
+				title: noptinSubscribers.add,
 				html: $('#noptin-create-subscriber-template').html(),
 				allowOutsideClick: () => !Swal.isLoading(),
-				confirmButtonText: 'Save',
+				confirmButtonText: noptinSubscribers.save,
 				showCancelButton: true,
+				cancelButtonText: noptinSubscribers.cancel,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#424242',
 				showCloseButton: true,
@@ -38,7 +39,7 @@
 					}
 
 					if ( ! request.email ) {
-						Swal.showValidationMessage('Enter an email address')
+						Swal.showValidationMessage( noptinSubscribers.missing_email )
 						Swal.hideLoading()
 						return;
 					}
@@ -51,9 +52,9 @@
 
 								Swal.fire({
 									icon: 'success',
-									title: 'New subscriber added',
+									title: noptinSubscribers.add_success,
 									showConfirmButton: false,
-									footer: `Reloading the page`
+									footer: noptinSubscribers.reloading
 								})
 
                                 window.location = window.location
@@ -86,11 +87,12 @@
 
 			// Select fields.
 			Swal.fire({
-				title: 'Export Subscribers',
+				title: noptinSubscribers.export,
 				html: $('#noptin-subscriber-fields-select-template').html(),
 				allowOutsideClick: () => !Swal.isLoading(),
-				confirmButtonText: 'Export',
+				confirmButtonText: noptinSubscribers.exportbtn,
 				showCancelButton: true,
+				cancelButtonText: noptinSubscribers.cancel,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#424242',
 				showCloseButton: true,
@@ -106,7 +108,7 @@
 				if (result.value) {
 					// Select export type.
 					Swal.fire({
-						title: 'Select file type',
+						title: noptinSubscribers.file,
 						allowOutsideClick: () => !Swal.isLoading(),
 						input: 'radio',
 						inputValue: 'json',
@@ -115,8 +117,9 @@
 							json: 'JSON',
 							xml: 'XML'
 						},
-						confirmButtonText: 'Download',
+						confirmButtonText: noptinSubscribers.download,
 						showCancelButton: true,
+						cancelButtonText: noptinSubscribers.cancel,
 						confirmButtonColor: '#3085d6',
 						cancelButtonColor: '#424242',
 						showLoaderOnConfirm: true,
@@ -224,10 +227,10 @@
 				async done() {
 					Swal.fire({
 						icon: ( this.imported > 0 ) ? 'success' : 'info',
-						title: 'Done!',
-						confirmButtonText: 'Close',
-						html: `Imported: ${this.imported} &nbsp; Skipped: ${this.skipped}`,
-						footer: ( this.imported > 0 ) ? '' : 'Check your browser console to see why your subscribers were not imported.',
+						title: noptinSubscribers.done,
+						confirmButtonText: noptinSubscribers.close,
+						html: `${noptinSubscribers.imported}: ${this.imported} &nbsp; ${noptinSubscribers.skipped}: ${this.skipped}`,
+						footer: ( this.imported > 0 ) ? '' : noptinSubscribers.import_fail,
 					})
 					if ( this.imported > 0 ) {
 						window.location = window.location
@@ -238,17 +241,17 @@
 			let rows = []
 
 			Swal.fire({
-				//title: 'Import Subscribers',
-				text: 'Select your CSV file',
-				footer: `Import subscribers from any system into Noptin`,
+				text: noptinSubscribers.import_title,
+				footer: noptinSubscribers.import_footer,
 				input: 'file',
 				inputAttributes: {
 					accept: '.csv',
-					'aria-label': 'select your import file'
+					'aria-label': noptinSubscribers.import_label
 				},
 				allowOutsideClick: () => !Swal.isLoading(),
-				confirmButtonText: 'Import',
+				confirmButtonText: noptinSubscribers.import,
 				showCancelButton: true,
+				cancelButtonText: noptinSubscribers.cancel,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#424242',
 				showLoaderOnConfirm: true,
@@ -303,14 +306,14 @@
 			//Init sweetalert
 			Swal.fire({
 				icon: 'warning',
-				titleText: `Delete subscriber`,
+				titleText: noptinSubscribers.delete_subscriber,
 				text: email,
-				footer: `This will delete the subscriber and all associated data`,
+				footer: noptinSubscribers.delete_footer,
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
-				confirmButtonText: 'Delete',
-				showCloseButton: true,
+				confirmButtonText: noptinSubscribers.delete,
+				cancelButtonText: noptinSubscribers.cancel,
 
 				//Fired when the user clicks on the confirm button
 				preConfirm() {
@@ -328,11 +331,11 @@
 			//Init sweetalert
 			Swal.fire({
 				icon: 'info',
-				html: `Send a new double opt-in confirmation email to <code>${email}<code>`,
+				html: `${noptinSubscribers.double_optin} <code>${email}<code>`,
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
-				confirmButtonText: 'Send',
+				confirmButtonText: noptinSubscribers.send,
 				showCloseButton: true,
 				allowOutsideClick: () => !Swal.isLoading(),
 				showLoaderOnConfirm: true,
@@ -354,7 +357,7 @@
 							if (data.success) {
 
 								Swal.fire(
-									'Success',
+									noptinSubscribers.success,
 									data.data,
 									'success'
 								)
@@ -363,12 +366,13 @@
 
 								Swal.fire({
 									icon: 'error',
-									title: 'Error!',
+									title: noptinSubscribers.error,
 									text: data.data,
 									showCloseButton: true,
-									confirmButtonText: 'Close',
+									cancelButtonText: noptinSubscribers.cancel,
+									confirmButtonText: noptinSubscribers.close,
 									confirmButtonColor: '#9e9e9e',
-									footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/">How to troubleshoot this error.</a>`
+									footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/">${noptinSubscribers.troubleshoot}</a>`
 								})
 
 							}
@@ -378,10 +382,11 @@
 
 							Swal.fire({
 								icon: 'error',
-								title: 'Unable to connect',
-								text: 'This might be a problem with your server or your internet connection',
+								title: noptinSubscribers.connect_error,
+								text: noptinSubscribers.connect_info,
 								showCloseButton: true,
-								confirmButtonText: 'Close',
+								confirmButtonText: noptinSubscribers.close,
+								cancelButtonText: noptinSubscribers.cancel,
 								confirmButtonColor: '#9e9e9e',
 								footer: `<code>Status: ${jqXHR.status} &nbsp; Status text: ${jqXHR.statusText}</code>`
 							})
@@ -400,12 +405,13 @@
 			//Init sweetalert
 			Swal.fire({
 				icon: 'question',
-				text: `Are you sure you want to delete all subscribers?`,
-				footer: `You won't be able to revert this!`,
+				text: noptinSubscribers.delete_all,
+				footer: noptinSubscribers.no_revert,
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
-				confirmButtonText: 'Delete',
+				confirmButtonText: noptinSubscribers.delete,
+				cancelButtonText: noptinSubscribers.cancel,
 				showCloseButton: true,
 				allowOutsideClick: () => !Swal.isLoading(),
 				showLoaderOnConfirm: true,
@@ -425,9 +431,9 @@
 							
 							Swal.fire({
 								icon: 'success',
-								title: 'Deleted Subscribers',
+								title: noptinSubscribers.deleted,
 								showConfirmButton: false,
-								footer: `Reloading the page`
+								footer: noptinSubscribers.reloading
 							})
 							window.location = window.location
 						})
@@ -435,8 +441,8 @@
 						.fail(function (jqXHR) {
 							Swal.fire({
 								icon: 'error',
-								title: 'Could not delete subscribers',
-								confirmButtonText: 'Close',
+								title: noptinSubscribers.no_delete,
+								confirmButtonText: noptinSubscribers.close,
 								footer: jqXHR.statusText
 							})
 							console.log(jqXHR)

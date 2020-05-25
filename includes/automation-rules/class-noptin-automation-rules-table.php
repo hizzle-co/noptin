@@ -41,8 +41,6 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 
-		$this->prepare_query();
-
 		parent::__construct(
 			array(
 				'singular' => 'id',
@@ -50,7 +48,60 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			)
 		);
 
+		$this->process_bulk_action();
+
+		$this->prepare_query();
+
 		$this->base_url = admin_url( 'admin.php?page=noptin-automation-rules' );
+
+	}
+
+	/**
+	 *  Processes a bulk action.
+	 */
+	public function process_bulk_action() {
+
+		$action = 'bulk-' . $this->_args['plural'];
+
+		if ( empty( $_POST['id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
+
+		$action = $this->current_action();
+
+		if ( 'delete' === $action ) {
+
+			foreach ( $_POST['id'] as $id ) {
+				noptin()->automation_rules->delete_rule( intval( $id ) );
+			}
+
+			noptin()->admin->show_info( __( 'The selected automation rules have been deleted.', 'newsletter-optin-box' ) );
+
+		}
+
+		if ( 'activate' === $action ) {
+
+			foreach ( $_POST['id'] as $id ) {
+				noptin()->automation_rules->update_rule( intval( $id ), array( 'status' => 1 ) );
+			}
+
+			noptin()->admin->show_info( __( 'The selected automation rules have been activated.', 'newsletter-optin-box' ) );
+
+		}
+
+		if ( 'deactivate' === $action ) {
+
+			foreach ( $_POST['id'] as $id ) {
+				noptin()->automation_rules->update_rule( intval( $id ), array( 'status' => 0 ) );
+			}
+
+			noptin()->admin->show_info( __( 'The selected automation rules have been de-activated.', 'newsletter-optin-box' ) );
+
+		}
 
 	}
 
@@ -289,8 +340,6 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$this->process_bulk_action();
-
 		$this->set_pagination_args(
 			array(
 				'total_items' => $this->total,
@@ -358,7 +407,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			'</a></div>'
 		);
 
-		echo "<p class='description'>Or <a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/automation-rules' target='_blank'>" . __( 'Learn more', 'newsletter-optin-box' ) . "</a></p>";
+		echo "<p class='description'><a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/automation-rules' target='_blank'>" . __( 'Or Learn more', 'newsletter-optin-box' ) . "</a></p>";
 		echo '</div>';
 	}
 	

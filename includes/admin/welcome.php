@@ -54,7 +54,7 @@
 					<span class="noptin-card-value"><?php echo $slide_in; ?></span>
 				</li>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo $forms_url; ?>"><?php echo sprintf( 'View all forms', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo $new_form_url; ?>"><?php echo sprintf( 'Create a new form', 'newsletter-optin-box' ); ?></a></div>
+		<div class="noptin-card-footer-links"><a href="<?php echo $forms_url; ?>"><?php _e( 'View all forms', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo $new_form_url; ?>"><?php _e( 'Create a new form', 'newsletter-optin-box' ); ?></a></div>
 	</div>
 
 	<div class="noptin-body">
