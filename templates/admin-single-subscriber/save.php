@@ -5,6 +5,7 @@
             'noptin-subscriber'
         )
     );
+
 ?>
 <div class="misc-pub-section curtime misc-pub-curtime">
 	<span id="timestamp">
@@ -23,7 +24,7 @@
     <div class="misc-pub-section misc-pub-noptin-subscriber-wp-user">
 	    <span id="subscriber-wp-user">
             <span class="dashicons dashicons-yes" style="padding-right: 3px;color: #607d8b"></span>
-            <a href="<?php echo esc_url( get_edit_profile_url( $subscriber->get_wp_user() ) ); ?>"><?php _e( 'View WordPress profile', 'newsletter-optin-box' );?></a>
+            <a href="<?php echo esc_url( add_query_arg( 'user_id', $subscriber->get_wp_user(), self_admin_url( 'user-edit.php' ) ) ); ?>"><?php _e( 'View WordPress profile', 'newsletter-optin-box' );?></a>
         </span>
     </div>
 <?php } else { ?>
