@@ -122,7 +122,7 @@ class Noptin_Admin {
 		do_action( 'noptin_before_admin_init_hooks', $this );
 
 		// Admin scripts.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqeue_scripts' ), 1 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqeue_scripts' ), 0 );
 
 		// (maybe) do an action.
 		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
@@ -183,6 +183,13 @@ class Noptin_Admin {
 			return;
 		}
 
+		// Remove AUI scripts as they break our pages.
+		if ( class_exists( 'AyeCode_UI_Settings' ) && is_callable( 'AyeCode_UI_Settings::instance' ) ) {
+			$aui = AyeCode_UI_Settings::instance();
+			remove_action( 'admin_enqueue_scripts', array( $aui, 'enqueue_scripts' ), 1 );
+			remove_action( 'admin_enqueue_scripts', array( $aui, 'enqueue_style' ), 1 );
+		}
+
 		// Sweetalert https://sweetalert2.github.io/.
 		wp_enqueue_script( 'promise-polyfill', $this->assets_url . 'vendor/sweetalert/promise-polyfill.min.js', array(), '8.1.3' );
 		wp_enqueue_script( 'sweetalert2', $this->assets_url . 'vendor/sweetalert/sweetalert2.all.min.js', array( 'promise-polyfill' ), '9.6.0', true );
@@ -196,7 +203,7 @@ class Noptin_Admin {
 		wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
 
 		// Vue js.
-		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.min.js', array(), '2.6.11', true );
+		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
 		wp_enqueue_media();
@@ -243,7 +250,7 @@ class Noptin_Admin {
 		// Settings page.
 		if ( 'noptin-settings' === $page ) {
 			$version = filemtime( $this->assets_path . 'js/dist/settings.js' );
-			wp_enqueue_script( 'noptin-settings', $this->assets_url . 'js/dist/settings.js', array( 'vue', 'select2', 'sweetalert2' ), $version, true );
+			wp_enqueue_script( 'noptin-settings', $this->assets_url . 'js/dist/settings.js', array( 'vue', 'select2', 'sweetalert2', 'noptin' ), $version, true );
 			wp_localize_script( 'noptin-settings', 'noptinSettings', Noptin_Settings::get_state() );
 		}
 

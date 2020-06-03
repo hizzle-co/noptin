@@ -715,8 +715,9 @@ class Noptin_Ajax {
 
 		}
 
-		if ( ! empty( $_POST['ipAddress'] ) ) {
-			$address                = trim( sanitize_text_field( $_POST['ipAddress'] ) );
+		// Add the subscriber's IP address.
+		$address = noptin_get_user_ip();
+		if ( ! empty( $address ) && '::1' !== $address ) {
 			$filtered['ip_address'] = $address;
 		}
 

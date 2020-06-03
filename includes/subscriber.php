@@ -948,19 +948,21 @@ function register_default_noptin_subscriber_metaboxes( $subscriber ) {
 
 	}
 
-	$ip_address = $subscriber->ip_address;
-	if ( ! empty( $ip_address ) && false !== noptin_locate_ip_address( $ip_address ) ) {
+	if ( apply_filters( 'noptin_enable_geolocation', true ) ) {
+		$ip_address = $subscriber->ip_address;
+		if ( ! empty( $ip_address ) && noptin_locate_ip_address( $ip_address ) ) {
 
-		add_meta_box(
-			'noptin_subscriber_location',
-			__('GeoLocation','newsletter-optin-box'),
-			'noptin_subscriber_metabox_callback',
-			'noptin_page_noptin-subscribers',
-			'side',
-			'default',
-			'geolocation'
-		);
+			add_meta_box(
+				'noptin_subscriber_location',
+				__('GeoLocation','newsletter-optin-box'),
+				'noptin_subscriber_metabox_callback',
+				'noptin_page_noptin-subscribers',
+				'side',
+				'default',
+				'geolocation'
+			);
 
+		}
 	}
 
 }

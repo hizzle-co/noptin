@@ -1,20 +1,24 @@
 <?php
     $geolocation = noptin_locate_ip_address( $subscriber->ip_address );
+
+    if ( ! is_array( $geolocation ) ) {
+        return;
+    }
+
     $fields      = array(
-        'continent',
-        'country',
-        'state',
-        'city',
-        'zipcode',
-        'latitude',
-        'longitude',
-        'currency',
-        'time zone'
+        'continent' => __( 'Continent', 'newsletter-optin-box' ),
+        'country'   => __( 'Country', 'newsletter-optin-box' ),
+        'state'     => __( 'State', 'newsletter-optin-box' ),
+        'city'      => __( 'City', 'newsletter-optin-box' ),
+        'latitude'  => __( 'Latitude', 'newsletter-optin-box' ),
+        'longitude' => __( 'Longitude', 'newsletter-optin-box' ),
+        'currency'  => __( 'Currency', 'newsletter-optin-box' ),
+        'time zone' => __( 'Time Zone', 'newsletter-optin-box' ),
     );
 ?>
 
 <?php
-    foreach ( $fields as $field ) {
+    foreach ( array_keys( $fields ) as $field ) {
 
         if ( ! isset( $geolocation[ $field ] ) ) {
             return;
@@ -36,7 +40,7 @@
     <div class="misc-pub-section misc-pub-noptin-subscriber-geolocate-<?php echo esc_attr( $field ); ?>">
 	    <span id="noptin-subscriber-geolocate-<?php echo esc_attr( $field ); ?>">
         <span class="dashicons dashicons-plus" style="padding-right: 3px; color: #607d8b"></span>
-            <?php echo ucfirst( esc_html( $field ) ); ?>:&nbsp;<b><?php echo $value; ?></b>
+            <?php echo $fields[ $field ]; ?>:&nbsp;<b><?php echo $value; ?></b>
         </span>
     </div>
 

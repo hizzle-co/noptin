@@ -530,7 +530,6 @@ function noptin_get_form_design_props() {
  */
 function noptin_get_form_field_props() {
 	return apply_filters( 'noptin_form_field_props', array( 'fields', 'fieldTypes' ) );
-
 }
 
 /**
@@ -900,23 +899,28 @@ function locate_noptin_template( $template_name, $template_path = 'noptin', $def
 }
 
 /**
- * Fetches the current user's ip address.
+ * Get current user IP Address.
  *
  * @since 1.2.3
  * @return string
  */
 function noptin_get_user_ip() {
-	$ip = '';
 
-	if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-		$ip = sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
-	} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-		$ip = sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
-	} elseif ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
-		$ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
+	if ( isset( $_SERVER['HTTP_X_REAL_IP'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) );
+	}
+	
+	if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+		// Proxy servers can send through this header like this: X-Forwarded-For: client1, proxy1, proxy2
+		// Make sure we always only send through the first IP in the list which should always be the client IP.
+		return (string) rest_is_ip_address( trim( current( preg_split( '/,/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) );
+	}
+	
+	if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
 	}
 
-	return apply_filters( 'noptin_get_user_ip', $ip );
+	return '';
 }
 
 /**
@@ -933,6 +937,12 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 		$ip_address = noptin_get_user_ip();
 	}
 
+	// Ensure that it is valid.
+	if (  empty( $ip_address ) || ! rest_is_ip_address( $ip_address ) ) {
+		return false;
+	}
+
+	// Try fetching from the cache.
 	$transient_name = md5( "noptin_geolocation_cache_$ip_address" );
 
 	if ( get_transient( $transient_name ) ) {
@@ -942,8 +952,8 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 	// Retrieve API key.
 	$api_key = get_noptin_option( 'ipgeolocation_io_api_key' );
 
-	if ( empty( $api_key ) || empty( $ip_address ) ) {
-		return false;
+	if ( empty( $api_key ) ) {
+		return noptin_locate_ip_address_alt( $ip_address );
 	}
 
 	// Geolocate the ip.
@@ -993,6 +1003,57 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 	$fields = noptin_clean( $geo );
 	set_transient( $transient_name, $fields, HOUR_IN_SECONDS );
 	return $fields;
+
+}
+
+/**
+ * Alternate for geolocating an ip address.
+ *
+ * @since 1.3.1
+ * @return bool|array
+ */
+function noptin_locate_ip_address_alt( $ip_address ) {
+
+	// Ensure that we have an IP.
+	if ( empty( $ip_address ) ) {
+		return false;
+	}
+
+	// Maybe fetch from cache.
+	$transient_name = md5( "noptin_geolocation_cache_$ip_address" );
+
+	if ( get_transient( $transient_name ) ) {
+		return get_transient( $transient_name );
+	}
+
+	// Retrieve API key.
+	$geo = wp_remote_get( esc_url( "http://ip-api.com/json/$ip_address?fields=9978329" ) );
+
+	if ( is_wp_error( $geo ) ) {
+		return false;
+	}
+
+	// Prepare the data.
+	$geo = json_decode( wp_remote_retrieve_body( $geo ) );
+	if ( empty( $geo ) || 'success' !== $geo->status ) {
+		log_noptin_message( __( 'Error fetching GeoLocation information.', 'newsletter-optin-box' ) );
+		return false;
+	}
+
+	$location = array(
+		'continent' => $geo->continent,
+		'country'   => $geo->country,
+		'state'     => $geo->regionName,
+		'city'      => $geo->city,
+		'latitude'  => $geo->lat,
+		'longitude' => $geo->lon,
+		'time zone' => $geo->timezone,
+		'currency'  => $geo->currency,
+	);
+
+	$location = noptin_clean( $location );
+	set_transient( $transient_name, $location, HOUR_IN_SECONDS );
+	return $location;
 
 }
 
