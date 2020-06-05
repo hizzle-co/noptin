@@ -252,7 +252,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	/**
 	 * Displays the subscriber's status
 	 *
-	 * @param  array $subscriber subscriber.
+	 * @param  Noptin_Subscriber $subscriber subscriber.
 	 * @return HTML
 	 */
 	public function column_status( $subscriber ) {
@@ -266,7 +266,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	/**
 	 * Displays the subscriber's subscription date
 	 *
-	 * @param  array $subscriber subscriber.
+	 * @param  Noptin_Subscriber $subscriber subscriber.
 	 * @return HTML
 	 */
 	public function column_date_created( $subscriber ) {

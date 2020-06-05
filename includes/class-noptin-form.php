@@ -685,12 +685,25 @@ class Noptin_Form {
 		}
 
 		// print main form html.
-		$html = do_shortcode( $html . $this->optinHTML . '</div>' );
+		$html = do_shortcode( $html . $this->_get_html() . '</div>' );
 
 		// Remove comments.
 		$html = preg_replace( '/<!--(.*)-->/Uis', '', $html );
 
 		return apply_filters( 'noptin_optin_form_html', $html, $this );
+	}
+
+	/**
+	 * Generates HTML
+	 *
+	 * @return string
+	 */
+	protected function _get_html() {
+		ob_start();
+		$data = $this->data;
+		$data['data'] = $data;
+		get_noptin_template( 'frontend-optin-form.php', $data );
+		return ob_get_clean();
 	}
 
 	/**

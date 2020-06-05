@@ -205,7 +205,8 @@ class Noptin_Settings {
 				'label'       => __( 'Email Template', 'newsletter-optin-box' ),
 				'placeholder' => __( 'Select a template', 'newsletter-optin-box' ),
 				'options'     => array(
-					'paste'        => __( 'Default', 'newsletter-optin-box' ),
+					'paste'        => __( 'Paste', 'newsletter-optin-box' ),
+					'plain'        => __( 'Plain', 'newsletter-optin-box' ),
 					'merriweather' => __( 'Merriweather', 'newsletter-optin-box' ),
 				),
 				'default'     => 'paste',

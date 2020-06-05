@@ -144,7 +144,7 @@ class Noptin {
 	 *
 	 * @access      public
 	 * @since       1.0.0
-	 * @return      self::$instance The one true Noptin
+	 * @return      Noptin The one true Noptin
 	 */
 	public static function instance() {
 

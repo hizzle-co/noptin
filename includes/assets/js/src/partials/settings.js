@@ -73,11 +73,8 @@ var settingsApp = new Vue({
 		},
 
 		//Handles image uploads
-		upload_image (key, size) {
-
-			if ('undefined' == typeof size) {
-				size = 'thumbnail'
-			}
+		upload_image (key) {
+			var size = 'large'
 
 			//Init the media uploader script
 			var image = wp.media({

@@ -35,6 +35,7 @@ class Noptin_Vue {
 		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings' ), 5 );
 		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_required_settings' ), 100000 );
 		add_action( 'noptin_field_type_optin_markup', array( __CLASS__, 'print_default_markup' ), 5 );
+		add_action( 'noptin_field_type_frontend_optin_markup', array( __CLASS__, 'print_frontend_markup' ), 10, 2 );
 
 	}
 
@@ -481,6 +482,67 @@ class Noptin_Vue {
 		<?php
 	}
 
+	/**
+	 * Renders a the frontend fields markup
+	 */
+	public static function print_frontend_markup( $field, $data ) {
+
+		// Email.
+		if ( 'email' === $field['type']['type'] ) {
+			echo '<input name="email" type="email" class="noptin-form-field" placeholder="' . esc_attr( $field['type']['label'] ) . '"  required />';
+			return;
+		}
+
+		$required = '';
+		if ( ! empty( $field['require'] ) ) {
+			$required = 'required';
+		}
+
+		// First name.
+		if ( 'first_name' === $field['type']['type'] ) {
+			echo '<input name="first_name" type="text" class="noptin-form-field" placeholder="' . esc_attr( $field['type']['label'] ) . '" '  . $required . '/>';
+			return;
+		}
+
+		// Last name.
+		if ( 'last_name' === $field['type']['type'] ) {
+			echo '<input name="last_name" type="text" class="noptin-form-field" placeholder="' . esc_attr( $field['type']['label'] ) . '" '  . $required . '/>';
+			return;
+		}
+
+		// Full name.
+		if ( 'name' === $field['type']['type'] ) {
+			echo '<input name="name" type="text" class="noptin-form-field" placeholder="' . esc_attr( $field['type']['label'] ) . '" '  . $required . '/>';
+			return;
+		}
+
+		// Text.
+		$name = '';
+		if ( ! empty( $field['type']['name'] ) ) {
+			$name = esc_attr( $field['type']['name'] );
+		}
+
+		if ( 'text' === $field['type']['type'] ) {
+			echo '<input name="' . $name .'" type="text" class="noptin-form-field" placeholder="' . esc_attr( $field['type']['label'] ) . '" '  . $required . '/>';
+		}
+
+		// Hidden.
+		if ( 'hidden' === $field['type']['type'] ) {
+			$value = esc_attr( $field['type']['value'] );
+			echo '<input name="' . $name .'" type="hidden" name="' . $value .'"/>';
+		}
+
+		// Checkbox.
+		if ( 'checkbox' === $field['type']['type'] ) {
+			echo '<label><input name="' . $name .'" type="checkbox" name=" value="1" class="noptin-checkbox-form-field" '  . $required . '/><span>'. $field['type']['label'] .'</span></label>';
+		}
+
+		// Textarea.
+		if ( 'textarea' === $field['type']['type'] ) {
+			echo '<textarea name="' . $name .'" class="noptin-form-field" placeholder="' . esc_attr( $field['type']['label'] ) . '" '  . $required . '></textarea>';
+		}
+
+	}
 
 	/**
 	 * Renders a select field

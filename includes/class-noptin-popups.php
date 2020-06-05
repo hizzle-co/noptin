@@ -41,6 +41,11 @@ class Noptin_Popups {
 			return;
 		}
 
+		// Do not show on elementor previews.
+		if ( isset( $_GET['elementor-preview'] ) ) {
+			return;
+		}
+
 		/**
 		 * Fires before popups are displayed
 		 *

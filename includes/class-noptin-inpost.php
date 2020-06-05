@@ -48,6 +48,11 @@ class Noptin_Inpost {
 			return;
 		}
 
+		// Do not show on elementor previews.
+		if ( isset( $_GET['elementor-preview'] ) ) {
+			return;
+		}
+
 		$forms = $this->get_forms();
 		foreach ( $forms as $form ) {
 
@@ -148,6 +153,5 @@ class Noptin_Inpost {
 		return $pre_render;
 
 	}
-
 
 }

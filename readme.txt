@@ -14,7 +14,7 @@ The fastest GDPR-compliant newsletter plugin. Collect unlimited newsletter subsc
 
 == Description ==
 
-**The only lightweight Email Optin Form And  Newsletter Plugin For WordPress.**
+**Noptin is a lightweight Newsletter Plugin For WordPress.**
 ★★★★★<br>
 
 Noptin allows you to:-
@@ -120,6 +120,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.3.0 - TBD =
 - General improvements
+- "Plain" newsletter template - ADDED
 
 = 1.3.0 - 2020-05-25 =
 - Ability to filter the newletter double opt-in confirmation email - ADDED
