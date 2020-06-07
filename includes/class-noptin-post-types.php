@@ -103,7 +103,7 @@ class Noptin_Post_Types {
 					'not_found'          => __( 'No forms found.', 'newsletter-optin-box' ),
 					'not_found_in_trash' => __( 'No forms found in Trash.', 'newsletter-optin-box' ),
 				),
-				'label'               => __( 'Newsletter Forms', 'newsletter-optin-box' ),
+				'label'               => __( 'Email Forms', 'newsletter-optin-box' ),
 				'description'         => '',
 				'public'              => false,
 				'show_ui'             => true,

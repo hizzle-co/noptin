@@ -457,7 +457,6 @@ class Noptin_Page {
 			'placeholder'     => $this->default_unsubscription_confirmation_message(),
 			'default'		  => $this->default_unsubscription_confirmation_message(),
 			'description'     => __( 'The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
-			'restrict'		  => '! pages_unsubscribe_page'
 		);
 
 		$options["pages_unsubscribe_page"] = array(
@@ -475,7 +474,6 @@ class Noptin_Page {
 			'placeholder'     => $this->default_subscription_confirmation_message(),
 			'default'		  => $this->default_subscription_confirmation_message(),
 			'description'     => __( 'The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
-			'restrict'		  => '! pages_confirm_page'
 		);
 
 		$options["pages_confirm_page"] = array(
