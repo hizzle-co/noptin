@@ -209,7 +209,7 @@ class Noptin_Settings {
 					'plain'        => __( 'Plain', 'newsletter-optin-box' ),
 					'merriweather' => __( 'Merriweather', 'newsletter-optin-box' ),
 				),
-				'default'     => 'paste',
+				'default'     => 'plain',
 				'description' => __( 'Select your preferred email template.', 'newsletter-optin-box' ),
 			),
 

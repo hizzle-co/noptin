@@ -1,4 +1,5 @@
 		<!-- footer -->
+		<?php if ( ! empty( $permission_text ) ) { ?>
 		<table class="footer-wrap" cellpadding="0" cellspacing="0" border="0" align="center">
 			<tbody>
 				<tr>
@@ -22,7 +23,9 @@
 				</tr>
 			</tbody>
 		</table>
+		<?php } ?>
 
+		<?php if ( ! empty( $footer_text ) ) { ?>
 		<table class="footer-wrap" cellpadding="0" cellspacing="0" border="0" align="center">
 			<tbody>
 				<tr>
@@ -46,6 +49,7 @@
 				</tr>
 			</tbody>
 		</table>
+		<?php } ?>
 		<!-- end footer -->
 
 		</td>

@@ -45,7 +45,7 @@ function get_default_noptin_options() {
 		'register_form_msg'     => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
 		'hide_from_subscribers' => false,
 		'success_message'       => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
-		'email_template'        => 'paste',
+		'email_template'        => 'plain',
 	);
 	return $options;
 

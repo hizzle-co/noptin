@@ -23,7 +23,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	/**
 	 * Query
 	 *
-	 * @var   string
+	 * @var   WP_Query
 	 * @since 1.1.2
 	 */
 	public $query;
@@ -145,6 +145,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 			}
 		}
 
+		$status = apply_filters( 'noptin_newsletter_status', $status, $item );
 		echo "<span>$status</span>";
 	}
 

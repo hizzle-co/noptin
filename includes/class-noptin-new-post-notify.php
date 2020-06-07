@@ -316,7 +316,7 @@ class Noptin_New_Post_Notify {
 				'email_body'    => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
 				'email_subject' => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
 				'preview_text'  => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
-				//'template'      => locate_noptin_template( 'email-templates/paste.php' ),
+				'template'      => 'plain',
 				'merge_tags'    => $post,
 			),
 		);
@@ -338,9 +338,10 @@ class Noptin_New_Post_Notify {
 
 		$item = apply_filters( 'noptin_mailer_new_post_automation_details', $item, $post_id, $campaign_id );
 
-		$noptin->bg_mailer->push_to_queue( $item );
-
-		$noptin->bg_mailer->save()->dispatch();
+		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $item ) ) {
+			$noptin->bg_mailer->push_to_queue( $item );
+			$noptin->bg_mailer->save()->dispatch();
+		}
 
 	}
 

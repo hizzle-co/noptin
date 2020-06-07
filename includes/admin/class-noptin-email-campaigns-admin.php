@@ -479,14 +479,15 @@ class Noptin_Email_Campaigns_Admin {
 			'campaign_id'       => $post->ID,
 			'subscribers_query' => array(), // By default, send this to all active subscribers.
 			'campaign_data'     => array(
-				'campaign_id' => $post->ID,
-				'template'    => locate_noptin_template( 'email-templates/paste.php' ),
+				'campaign_id'   => $post->ID,
+				'template'      => 'plain',
 			),
 		);
 
-		$noptin->bg_mailer->push_to_queue( $item );
-
-		$noptin->bg_mailer->save()->dispatch();
+		if ( apply_filters( 'noptin_should_send_campaign', true, $item ) ) {
+			$noptin->bg_mailer->push_to_queue( $item );
+			$noptin->bg_mailer->save()->dispatch();
+		}
 
 	}
 

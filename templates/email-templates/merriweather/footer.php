@@ -1,4 +1,5 @@
 			<!-- start footer -->
+			<?php if ( ! empty( $permission_text ) || ! empty( $footer_text ) ) { ?>
 			<tr>
 			<td align="center" bgcolor="#D2C7BA" style="padding: 24px;"class="footer">
 				<!--[if (gte mso 9)|(IE)]>
@@ -9,19 +10,23 @@
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 
 				<!-- start permission -->
+				<?php if ( ! empty( $permission_text ) ) { ?>
 				<tr>
 					<td align="center" bgcolor="#D2C7BA" style="padding: 12px 24px; font-family: 'Merriweather', serif; font-size: 14px; line-height: 20px; color: #666;">
 						<?php echo $permission_text; ?>
 					</td>
 				</tr>
+				<?php } ?>
 				<!-- end permission -->
 
 				<!-- start unsubscribe -->
+				<?php if ( ! empty( $footer_text ) ) { ?>
 				<tr>
 					<td align="center" bgcolor="#D2C7BA" style="padding: 12px 24px; font-family: 'Merriweather', serif; font-size: 14px; line-height: 20px; color: #666;">
 						<?php echo $footer_text; ?>
 					</td>
 				</tr>
+				<?php } ?>
 				<!-- end unsubscribe -->
 
 				</table>
@@ -32,6 +37,7 @@
 				<![endif]-->
 			</td>
 			</tr>
+			<?php } ?>
 			<!-- end footer -->
 
 		</table>

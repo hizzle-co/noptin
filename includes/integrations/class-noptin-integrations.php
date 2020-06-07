@@ -25,7 +25,6 @@ class Noptin_Integrations {
 		// The base class for most integrations.
 		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-integration.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-ecommerce-integration.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-esp-integration.php';
 
 		// Comment prompts.
 		add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
