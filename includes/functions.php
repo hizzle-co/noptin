@@ -1276,6 +1276,72 @@ function noptin_sanitize_title_slug( $slug = '' ) {
 }
 
 /**
+ *  Returns a list of all form fields.
+ *
+ * @since 1.3.1
+ * @return array An array of subscriber fields.
+ */
+function get_special_noptin_form_fields() {
+
+	// array of fields.
+	$fields = array();
+
+	// Retrieve subscription forms.
+	$forms = get_posts(
+		array(
+        	'numberposts' => -1,
+        	'post_status' => array( 'draft', 'publish' ),
+        	'post_type'   => 'noptin-form',
+        	'fields'      => 'ids',
+		)
+	);
+
+	// Ignore some fields.
+	$to_ignore = array(
+        'email',
+        'first_name',
+        'last_name',
+        'name',
+        'GDPR_consent'
+    );
+
+	foreach ( $forms as $form ) {
+
+        // Retrieve state.
+        $state = get_post_meta( $form, '_noptin_state', true );
+		if ( ! is_array( $state ) ) {
+			continue;
+        }
+
+        if ( empty( $state['fields'] ) ||  ! is_array( $state['fields'] ) ) {
+			continue;
+        }
+
+        foreach ( $state['fields'] as $field ) {
+            $name  = $field['type']['name'];
+            $type  = $field['type']['type'];
+            $label = $field['type']['label'];
+
+            if ( in_array( $name, $to_ignore, true ) || in_array( $type, $to_ignore, true ) ) {
+                continue;
+            }
+
+            if ( 'text' !== $name && 'checkbox' !== $type ) {
+                $label = $name;
+            }
+
+            $fields[ $name ] = array(
+                $type,
+                $label
+            );
+        }
+
+    }
+
+	return apply_filters( 'special_noptin_form_fields', $fields );
+}
+
+/**
  * Creates and returns a new task object.
  *
  * Note that this does not run the task. You will have to manually run it.

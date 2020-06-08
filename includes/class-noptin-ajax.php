@@ -26,9 +26,6 @@ class Noptin_Ajax {
 		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 
-		// Download subscribers.
-		add_action( 'wp_ajax_noptin_download_subscribers', array( $this, 'download_subscribers' ) );
-
 		// Download forms.
 		add_action( 'wp_ajax_noptin_download_forms', array( $this, 'download_forms' ) );
 
@@ -622,13 +619,13 @@ class Noptin_Ajax {
 
 			$fields = array(
 				array(
-					'type'    => array(
+					'type'      => array(
 						'label' => __( 'Email Address', 'newsletter-optin-box' ),
 						'name'  => 'email',
 						'type'  => 'email',
 					),
 					'require' => 'true',
-					'key'     => 'noptin_email_key',
+					'key'     => 'email',
 				),
 			);
 
@@ -636,6 +633,12 @@ class Noptin_Ajax {
 
 			// Get the form.
 			$form   = noptin_get_optin_form( $_POST['noptin_form_id'] );
+
+			if ( empty( $form ) || ! $form->is_published() ) {
+				echo __( 'This form is in-active.', 'newsletter-optin-box' );
+				exit;
+			}
+
 			$fields = $form->fields;
 		}
 
@@ -678,36 +681,40 @@ class Noptin_Ajax {
 				$name = $field['type']['name'];
 			}
 
-			$field_label = $field['type']['label'];
+			$key = esc_attr( $field['key'] );
 
-			if ( isset( $_POST[ $name ] ) ) {
-				$value = $_POST[ $name ];
+			if ( isset( $_POST[ $key ] ) ) {
+				$value = $_POST[ $key ];
 			} else {
-				$value = 0;
+				$value = '';
 			}
 
 			// required fields.
-			if ( 'true' == $field['require'] && empty( $value ) ) {
+			if ( ! empty( $field['require'] ) && 'false' !== $field['require'] && empty( $value ) ) {
 				die( __( 'Ensure that you fill all required fields.', 'newsletter-optin-box' ) );
 			}
 
 			// Sanitize email fields.
-			if ( 'email' == $type && ! empty( $value ) ) {
+			if ( 'email' === $type && ! empty( $value ) ) {
 
 				$value = sanitize_email( $value );
 				if ( empty( $value ) ) {
-
 					die( __( 'That email address is not valid.', 'newsletter-optin-box' ) );
-
 				}
+
+			}
+
+			// Sanitize checkboxes.
+			if ( 'checkbox' === $type && empty( $value ) ) {
+				$value = __( 'No', 'newsletter-optin-box' );
 			}
 
 			// Sanitize text fields.
-			if ( 'textarea' != $type && ! is_array( $value ) ) {
-				$value = sanitize_text_field( $value );
+			if ( 'textarea' !== $type && ! is_array( $value ) ) {
+				$value = sanitize_text_field( urldecode( $value ) );
 			} else {
 				if ( ! is_array( $value ) ) {
-					$value = esc_html( $value );
+					$value = esc_html( urldecode( $value ) );
 				}
 			}
 
@@ -734,7 +741,7 @@ class Noptin_Ajax {
 		 * 
 		 * @since 1.2.4
 		 */
-		$filtered = apply_filters( 'noptin_add_ajax_subscriber_filter_details', $filtered, $form );
+		$filtered = apply_filters( 'noptin_add_ajax_subscriber_filter_details', wp_unslash( $filtered ), $form );
 		$inserted = add_noptin_subscriber( $filtered );
 
 		if ( is_string( $inserted ) ) {
@@ -894,65 +901,6 @@ class Noptin_Ajax {
 	}
 
 	/**
-	 * Downloads subscribers
-	 *
-	 * @access      public
-	 * @since       1.0.5
-	 */
-	public function download_subscribers() {
-		global $wpdb;
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Check nonce.
-		$nonce = $_GET['admin_nonce'];
-		if ( ! wp_verify_nonce( $nonce, 'noptin_admin_nonce' ) ) {
-			echo __( 'Reload the page and try again.', 'newsletter-optin-box' );
-			exit;
-		}
-
-		/**
-		 * Runs before downloading subscribers.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_download_subscribers', $this );
-
-		$output  = fopen( 'php://output', 'w' ) or die( 'Unsupported server' );
-
-		$fields    = empty( $_GET['fields'] )    ? get_noptin_subscribers_fields() : $_GET['fields'];
-		$file_type = empty( $_GET['file_type'] ) ? 'csv' : sanitize_text_field( $_GET['file_type'] );
-
-		// Let the browser know what content we're streaming and how it should save the content.
-		$name = time();
-		header( "Content-Type:application/$file_type" );
-		header( "Content-Disposition:attachment;filename=noptin-subscribers-$name.$file_type" );
-
-		if ( empty( $_GET['file_type'] ) || 'csv' == $_GET['file_type'] ) {
-			$this->download_subscribers_csv( $fields, $output );
-		} else if( 'xml' == $_GET['file_type'] ) {
-			$this->download_subscribers_xml( $fields, $output );
-		}
-
-		else {
-			$this->download_subscribers_json( $fields, $output );
-		}
-
-		fclose( $output );
-
-		/**
-		 * Runs after after downloading.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_download_subscribers', $this );
-
-		exit; // This is important.
-	}
-
-	/**
 	 * Downloads optin forms
 	 *
 	 * @access      public
@@ -1001,248 +949,6 @@ class Noptin_Ajax {
 		do_action( 'noptin_after_download_forms' );
 
 		exit; // This is important.
-	}
-
-	/**
-	 * Downloads subscribers as csv
-	 *
-	 * @access      public
-	 * @since       1.2.4
-	 */
-	public function download_subscribers_csv( $fields, $output ) {
-		global $wpdb;
-
-		// Retrieve subscribers.
-		$table       = get_noptin_subscribers_table_name();
-		$subscribers = $wpdb->get_results( "SELECT *  FROM $table" );
-
-		// Output the csv column headers.
-		fputcsv( $output, noptin_sanitize_title_slug( $fields ) );
-
-		// Loop through 
-		foreach ( $subscribers as $subscriber ) {
-			$row  = array();
-
-			// Fetch meta data.
-			$meta = get_noptin_subscriber_meta( $subscriber->id );
-			if ( ! is_array( $meta ) ) {
-				$meta = array();
-			}
-
-			foreach ( $fields as $field ) {
-
-				if ( $field === 'confirmed' ) {
-					$row[] = intval( $subscriber->confirmed );
-					continue;
-				}
-
-				if ( $field === 'active' ) {
-					$row[] = empty( $subscriber->active ) ? 1 : 0;
-					continue;
-				}
-
-				if ( $field === 'full_name' ) {
-					$row[] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
-					continue;
-				}
-
-				// Check if this is a core field.
-				if ( isset( $subscriber->{$field} ) ) {
-					$row[] = $subscriber->{$field};
-					continue;
-				}
-
-				// Special meta field.
-				if( isset( $meta[$field] ) ) {
-
-					if ( 1 === count( $meta[$field] ) ) {
-						$row[] = maybe_serialize( $meta[$field][0] );
-					} else {
-						$row[] = maybe_serialize( $meta[$field] );
-					}
-
-					continue;
-				}
-
-				// Missing value for the field.
-				$row[] = '';
-			}
-
-			fputcsv( $output, $row );
-		}
-
-	}
-
-	/**
-	 * Downloads subscribers as json
-	 *
-	 * @access      public
-	 * @since       1.2.4
-	 */
-	public function download_subscribers_json( $fields, $stream ) {
-		global $wpdb;
-
-		// Retrieve subscribers.
-		$table       = get_noptin_subscribers_table_name();
-		$subscribers = $wpdb->get_results( "SELECT *  FROM $table" );
-		$output      = array();
-
-		// Loop through 
-		foreach ( $subscribers as $subscriber ) {
-			$row  = array();
-
-			// Fetch meta data.
-			$meta = get_noptin_subscriber_meta( $subscriber->id );
-			if ( ! is_array( $meta ) ) {
-				$meta = array();
-			}
-
-			foreach ( $fields as $field ) {
-
-				if ( $field === 'active' ) {
-					$row[ $field ] = empty( $subscriber->active ) ? 1 : 0;
-					continue;
-				}
-
-				if ( $field === 'confirmed' ) {
-					$row[ $field ] = intval( $subscriber->confirmed );
-					continue;
-				}
-
-				if ( $field === 'full_name' ) {
-					$row[ $field ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
-					continue;
-				}
-				
-				// Check if this is a core field.
-				if ( isset( $subscriber->{$field} ) ) {
-					$row[$field] = $subscriber->{$field};
-					continue;
-				}
-
-				// Special meta field.
-				if( isset( $meta[$field] ) ) {
-
-					if ( 1 === count( $meta[$field] ) ) {
-						$row[$field] = $meta[$field][0];
-					} else {
-						$row[$field] = $meta[$field];
-					}
-
-					continue;
-				}
-
-				// Missing value for the field.
-				$row[$field] = null;
-			}
-
-			$output[] = $row;
-
-		}
-		
-		fwrite( $stream, wp_json_encode( $output ) );
-
-	}
-
-	/**
-	 * Downloads subscribers as xml
-	 *
-	 * @access      public
-	 * @since       1.2.4
-	 */
-	public function download_subscribers_xml( $fields, $stream ) {
-		global $wpdb;
-
-		// Retrieve subscribers.
-		$table       = get_noptin_subscribers_table_name();
-		$subscribers = $wpdb->get_results( "SELECT *  FROM $table" );
-		$output      = array();
-
-		// Loop through 
-		foreach ( $subscribers as $subscriber ) {
-			$row  = array();
-
-			// Fetch meta data.
-			$meta = get_noptin_subscriber_meta( $subscriber->id );
-			if ( ! is_array( $meta ) ) {
-				$meta = array();
-			}
-
-			foreach ( $fields as $field ) {
-
-				if ( $field === 'active' ) {
-					$row[ $field ] = empty( $subscriber->active ) ? 1 : 0;
-					continue;
-				}
-
-				if ( $field === 'confirmed' ) {
-					$row[ $field ] = intval( $subscriber->confirmed );
-					continue;
-				}
-
-				if ( $field === 'full_name' ) {
-					$row[ $field ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
-					continue;
-				}
-				
-				// Check if this is a core field.
-				if ( isset( $subscriber->{$field} ) ) {
-					$row[$field] = $subscriber->{$field};
-					continue;
-				}
-
-				// Special meta field.
-				if( isset( $meta[$field] ) ) {
-
-					if ( 1 === count( $meta[$field] ) ) {
-						$row[$field] = $meta[$field][0];
-					} else {
-						$row[$field] = $meta[$field];
-					}
-
-					continue;
-				}
-
-				// Missing value for the field.
-				$row[$field] = null;
-			}
-
-			$output[] = $row;
-
-		}
-		
-		$xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
-		$this->convert_array_xml( $output, $xml );
-
-		fwrite( $stream, $xml->asXML() );
-
-	}
-
-	/**
-	 * Converts subscribers array to xml
-	 *
-	 * @access      public
-	 * @since       1.2.4
-	 */
-	public function convert_array_xml( $data, $xml ) {
-
-		// Loop through 
-		foreach ( $data as $key => $value ) {
-
-			if ( is_array( $value ) ) {
-
-				if( is_numeric( $key ) ){
-					$key = 'item'.$key; //dealing with <0/>..<n/> issues
-				}
-
-				$subnode = $xml->addChild( $key );
-				$this->convert_array_xml( $value, $subnode );
-
-			} else {
-				$xml->addChild( $key, htmlspecialchars( $value ) );
-			}
-		}
-
 	}
 
 }

@@ -37,6 +37,9 @@ class Noptin_Admin_Filters {
 		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'subscriber_fields_select' ) );
 		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'create_subscriber_template' ) );
 
+		// Export subscribers.
+		add_action( 'noptin_export_subscribers',  array( $this, 'export_subscribers' ) );
+
 	}
 
 	/**
@@ -209,6 +212,304 @@ class Noptin_Admin_Filters {
 	}
 
 	/**
+	 * Exports subscribers.
+	 * 
+	 * @since 1.3.1
+	 */
+	public function export_subscribers() {
+
+		// Security checks.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-export-subscribers'] ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $_POST['noptin-export-subscribers'], 'noptin-export-subscribers' ) ) {
+			return;
+		}
+
+		/**
+		 * Runs before downloading subscribers.
+		 *
+		 */
+		do_action( 'noptin_before_download_subscribers' );
+
+		$output  = fopen( 'php://output', 'w' ) or die( __( 'Unsupported server', 'newsletter-optin-box' ) );
+
+		// Prepare variables.
+		$fields    = empty( $_POST['fields'] )    ? array_keys( get_noptin_subscriber_fields() ) : $_POST['fields'];
+		$file_type = empty( $_POST['file_type'] ) ? 'csv' : sanitize_text_field( $_POST['file_type'] );
+		$file_name = empty( $_POST['file_name'] ) ? 'noptin-subscribers-' . time() : sanitize_text_field( $_POST['file_name'] );
+
+		header( "Content-Type:application/$file_type" );
+		header( "Content-Disposition:attachment;filename=$file_name.$file_type" );
+
+		$query = array(
+			'subscriber_status' => empty( $_POST['subscriber_status'] ) ? 'all' : sanitize_text_field( $_POST['subscriber_status'] ),
+			'email_status'      => empty( $_POST['email_status'] ) ? 'any' : sanitize_text_field( $_POST['email_status'] ),
+			'order'             => empty( $_POST['order'] ) ? 'DESC' : sanitize_text_field( $_POST['order'] ),
+			'orderby'           => empty( $_POST['orderby'] ) ? 'id' : sanitize_text_field( $_POST['orderby'] ),
+			'count_total'       => false,
+		);
+
+		if ( ! empty( $_POST['search'] ) ) {
+			$query['search'] = sanitize_text_field( $_POST['search'] );
+		}
+
+		if ( ! empty( $_POST['date'] ) ) {
+			$date       = sanitize_text_field( $_POST['date'] );
+			$date_query = array(
+				'relation' => 'OR'
+			);
+
+			$date_type = 'on';
+			if ( ! empty( $_POST['date_type'] ) ) {
+				$date_type = $_POST['date_type'];
+			}
+		
+			if ( 'on' === $date_type ) {
+				$date_query[] = array(
+					'year'          => date( 'Y', strtotime( $date ) ),
+					'month'         => date( 'm', strtotime( $date ) ),
+					'day'           => date( 'j', strtotime( $date ) ),
+				);
+			}
+				
+			if ( 'before' === $date_type ) {
+				$date_query[] = array(
+					'before'    => $date,
+					'inclusive' => true,
+				);
+			}
+
+			if ( 'after' === $date_type ) {
+				$date_query[] = array(
+					'after'    => $date,
+					'inclusive' => true,
+				);
+			}
+
+			$query['date_query'] = $date_query;
+
+		}
+
+		$query = apply_filters( 'noptin_filter_subscribers_export_query', $query );
+		$query = new Noptin_Subscriber_Query( $query );
+		$query->get_results();
+
+		if ( 'csv' == $file_type ) {
+			$this->download_subscribers_csv( $query->get_results(), $output, $fields );
+		} else if( 'xml' == $file_type ) {
+			$this->download_subscribers_xml( $query->get_results(), $output, $fields );
+		} else {
+			$this->download_subscribers_json( $query->get_results(), $output, $fields );
+		}
+
+		fclose( $output );
+
+		/**
+		 * Runs after after downloading.
+		 *
+		 */
+		do_action( 'noptin_after_download_subscribers' );
+
+		exit; // This is important.
+
+	}
+
+	/**
+	 * Downloads subscribers as csv
+	 *
+	 * @access      public
+	 * @param Noptin_Subscriber[] $subscribers The subscribers being downloaded.
+	 * @param resource $output The stream to output to.
+	 * @param array $fields The fields to stream.
+	 * @since       1.3.1
+	 */
+	public function download_subscribers_csv( $subscribers, $output, $fields ) {
+
+		// Retrieve subscribers.
+		$all_fields = get_noptin_subscriber_fields();
+		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
+		$labels     = array('ID');
+
+		foreach ( $fields as $field ) {
+			if ( isset( $all_fields[ $field ] ) ) {
+				$labels[] = $all_fields[ $field ];
+				continue;
+			}
+			$labels[] = noptin_sanitize_title_slug( $field );
+		}
+
+		// Output the csv column headers.
+		fputcsv( $output, $labels );
+
+		// Loop through 
+		foreach ( $subscribers as $subscriber ) {
+			$row  = array( $subscriber->id );
+
+			foreach ( $fields as $field ) {
+
+				if ( $field === 'confirmed' ) {
+					$row[] = intval( $subscriber->confirmed );
+					continue;
+				}
+
+				if ( $field === 'active' ) {
+					$row[] = empty( $subscriber->active ) ? 1 : 0;
+					continue;
+				}
+
+				if ( $field === 'full_name' ) {
+					$row[] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					continue;
+				}
+
+				$row[] = maybe_serialize( apply_filters( 'noptin_subscriber_export_field_value', $subscriber->get( $field ), $field, $subscriber ) );
+
+			}
+
+			fputcsv( $output, $row );
+		}
+
+	}
+
+	/**
+	 * Downloads subscribers as json
+	 *
+	 * @param Noptin_Subscriber[] $subscribers The subscribers being downloaded.
+	 * @param resource $stream The stream to output to.
+	 * @param array $fields The fields to stream.
+	 * @since       1.3.1
+	 */
+	public function download_subscribers_json( $subscribers, $stream, $fields ) {
+		$output     = array();
+		$all_fields = get_noptin_subscriber_fields();
+		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
+
+		// Loop through 
+		foreach ( $subscribers as $subscriber ) {
+			$row  = array();
+
+			foreach ( $fields as $field ) {
+
+				if ( isset( $all_fields[ $field ] ) ) {
+					$label  = $all_fields[ $field ];
+				} else {
+					$label = noptin_sanitize_title_slug( $field );
+				}
+
+				if ( $field === 'active' ) {
+					$row[ $label ] = empty( $subscriber->active ) ? 1 : 0;
+					continue;
+				}
+
+				if ( $field === 'confirmed' ) {
+					$row[ $label ] = intval( $subscriber->confirmed );
+					continue;
+				}
+
+				if ( $field === 'full_name' ) {
+					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					continue;
+				}
+
+				$row[ $label ] = apply_filters( 'noptin_subscriber_export_field_value', $subscriber->get( $field ), $field, $subscriber );
+
+			}
+
+			$output[] = $row;
+
+		}
+
+		fwrite( $stream, wp_json_encode( $output ) );
+
+	}
+
+	/**
+	 * Downloads subscribers as xml
+	 *
+	 * @param Noptin_Subscriber[] $subscribers The subscribers being downloaded.
+	 * @param resource $stream The stream to output to.
+	 * @param array $fields The fields to stream.
+	 * @since       1.3.1
+	 */
+	public function download_subscribers_xml( $subscribers, $stream, $fields ) {
+		$output     = array();
+		$all_fields = get_noptin_subscriber_fields();
+		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
+
+		// Loop through 
+		foreach ( $subscribers as $subscriber ) {
+			$row  = array();
+
+			foreach ( $fields as $field ) {
+
+				if ( isset( $all_fields[ $field ] ) ) {
+					$label  = $all_fields[ $field ];
+				} else {
+					$label = $field;
+				}
+
+				$label = preg_replace("/[^A-Za-z0-9_\-]/", '', $label);
+
+				if ( $field === 'active' ) {
+					$row[ $label ] = empty( $subscriber->active ) ? 1 : 0;
+					continue;
+				}
+
+				if ( $field === 'confirmed' ) {
+					$row[ $label ] = intval( $subscriber->confirmed );
+					continue;
+				}
+
+				if ( $field === 'full_name' ) {
+					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					continue;
+				}
+				
+				$row[ $label ] = apply_filters( 'noptin_subscriber_export_field_value', $subscriber->get( $field ), $field, $subscriber );
+
+			}
+
+			$output[] = $row;
+
+		}
+		
+		$xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
+		$this->convert_array_xml( $output, $xml );
+
+		fwrite( $stream, $xml->asXML() );
+
+	}
+
+	/**
+	 * Converts subscribers array to xml
+	 *
+	 * @access      public
+	 * @since       1.2.4
+	 */
+	public function convert_array_xml( $data, $xml ) {
+
+		// Loop through 
+		foreach ( $data as $key => $value ) {
+
+			if ( is_array( $value ) ) {
+
+				if( is_numeric( $key ) ){
+					$key = 'item'.$key; //dealing with <0/>..<n/> issues
+				}
+
+				$subnode = $xml->addChild( $key );
+				$this->convert_array_xml( $value, $subnode );
+
+			} else {
+				$xml->addChild( $key, htmlspecialchars( $value ) );
+			}
+		}
+
+	}
+
+	/**
 	 * Select subscriber fields.
 	 * 
 	 */
@@ -219,7 +520,7 @@ class Noptin_Admin_Filters {
 		echo '</p><select class="noptin-subscriber-fields-select" name="noptin-subscriber-fields[]" multiple="multiple">';
 
 		$default = array( 'first_name', 'second_name', 'email', 'active', 'confirmed' );
-		$fields  = get_noptin_subscribers_fields();
+		$fields  = get_noptin_subscriber_fields();
 
 		foreach( $fields as $field ) {
 			$field    = noptin_clean( $field );

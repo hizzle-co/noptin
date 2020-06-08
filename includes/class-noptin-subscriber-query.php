@@ -170,7 +170,7 @@ class Noptin_Subscriber_Query {
 	 *     @type array        $exclude             An array of subscriber IDs to exclude. Default empty array.
 	 *     @type string       $search              Search keyword. Searches for possible string matches on columns.
 	 *     @type array        $search_columns      Array of column names to be searched. Accepts 'id', 'first_name',
-	 *                                             'second_name', 'email'. Default an array containing all the above.
+	 *                                             'second_name', 'email', 'date_created'. Default an array containing all the above.
 	 *     @type string|array $orderby             Field(s) to sort the retrieved subscribers by. May be a single value,
 	 *                                             an array of values, or a multi-dimensional array with fields as
 	 *                                             keys and orders ('ASC' or 'DESC') as values. Accepted values are
@@ -349,10 +349,10 @@ class Noptin_Subscriber_Query {
 
 			$search_columns = array();
 			if ( $qv['search_columns'] ) {
-				$search_columns = array_intersect( $qv['search_columns'], array( 'id', 'first_name', 'second_name', 'email' ) );
+				$search_columns = array_intersect( $qv['search_columns'], array( 'id', 'first_name', 'second_name', 'email', 'date_created' ) );
 			}
 			if ( ! $search_columns ) {
-				$search_columns = array( 'id', 'first_name', 'second_name', 'email' );
+				$search_columns = array( 'id', 'first_name', 'second_name', 'email', 'date_created' );
 			}
 
 			$this->query_where .= $this->get_search_sql( $search, $search_columns );

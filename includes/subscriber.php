@@ -720,25 +720,35 @@ function get_noptin_subscribers_meta_table_name() {
  * @since 1.2.4
  * @return array An array of subscriber fields.
  */
-function get_noptin_subscribers_fields() {
-	global $wpdb;
+function get_noptin_subscriber_fields() {
 
 	// Base subscriber fields.
-	$fields = array( 'first_name', 'second_name', 'full_name', 'email', 'active', 'confirm_key', 'confirmed', 'date_created' );
+	$fields = array(
+		'first_name'   => __( 'First Name', 'newsletter-optin-box' ),
+		'second_name'  => __( 'Last Name', 'newsletter-optin-box' ),
+		'full_name'    => __( 'Full Name', 'newsletter-optin-box' ),
+		'email'        => __( 'Email Address', 'newsletter-optin-box' ),
+		'active'       => __( 'Active', 'newsletter-optin-box' ),
+		'confirm_key'  => __( 'Confirm Key', 'newsletter-optin-box' ),
+		'confirmed'    => __( 'Email Confirmed', 'newsletter-optin-box' ),
+		'date_created' => __( 'Subscription Date', 'newsletter-optin-box' ),
+		'GDPR_consent' => __( 'GDPR Consent', 'newsletter-optin-box' ),
+		'ip_address'   => __( 'IP Address', 'newsletter-optin-box' ),
+	);
 
-	// Add in some meta fields.
-	$table       = get_noptin_subscribers_meta_table_name();
-	$meta_fields = $wpdb->get_col( "SELECT DISTINCT `meta_key` FROM `$table`" );
+	// Subscription fields.
+    $extra_fields = get_special_noptin_form_fields();
 
-	if ( is_array( $meta_fields ) ) {
-		foreach ( $meta_fields as $field ) {
-			if ( 0 !== stripos( $field, '_' ) && ! is_numeric( $field ) ) {
-				$fields[] = $field;
-			}
+	foreach ( $extra_fields as $name => $field ) {
+		$label = wp_kses_post( $field[1] );
+
+		if ( empty( $fields[ $name ] ) ) {
+			$fields[ $name ] = $label;
 		}
+
 	}
 
-	return apply_filters( 'noptin_subscribers_fields', $fields );
+	return apply_filters( 'get_noptin_subscriber_fields', $fields );
 }
 
 /**

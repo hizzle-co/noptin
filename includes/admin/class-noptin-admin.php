@@ -731,6 +731,8 @@ class Noptin_Admin {
 		// Are we viewing a single subscriber or all subscribers?
 		if ( ! empty( $_GET['subscriber'] ) ) {
 			$this->render_single_subscriber_page( $_GET['subscriber'] );
+		} else if ( ! empty( $_GET['export'] ) ) {
+			$this->render_export_subscribers_page();
 		} else {
 			$this->render_subscribers_overview_page();
 		}
@@ -751,11 +753,6 @@ class Noptin_Admin {
 	 * @return      void
 	 */
 	public function render_subscribers_overview_page() {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
 
 		/**
 		 * Runs before displaying the suscribers overview page.
@@ -783,15 +780,8 @@ class Noptin_Admin {
 			}
 		}
 
-		$download_url = add_query_arg(
-			array(
-				'action'      => 'noptin_download_subscribers',
-				'admin_nonce' => urlencode( wp_create_nonce( 'noptin_admin_nonce' ) ),
-			),
-			admin_url( 'admin-ajax.php' )
-		);
-
-		$table = new Noptin_Subscribers_Table();
+		$download_url = add_query_arg( 'export', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) );
+		$table        = new Noptin_Subscribers_Table();
 		$table->prepare_items();
 
 
@@ -809,7 +799,7 @@ class Noptin_Admin {
 
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="#" class="page-title-action noptin-add-subscriber"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a> <a href="#" class="page-title-action noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="page-title-action noptin-export-subscribers"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> <a href="#" class="button-secondary noptin-danger-button noptin-delete-subscribers"><?php _e( 'Delete All Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
+			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="#" class="page-title-action noptin-add-subscriber"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a> <a href="#" class="page-title-action noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="page-title-action"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> <a href="#" class="button-secondary noptin-danger-button noptin-delete-subscribers"><?php _e( 'Delete All Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
 			<?php $this->show_notices(); ?>
 			<form id="noptin-subscribers-table" method="POST" action="<?php echo $table->base_url; ?>">
 				<?php $table->search_box( __( 'Search Subscribers', 'newsletter-optin-box' ), 'noptin_search_subscribers'); ?>
@@ -880,6 +870,32 @@ class Noptin_Admin {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_admin_single_subscriber_page', $subscriber, $this );
+	}
+
+	/**
+	 * Displays the export subscribers.
+	 *
+	 * @access      public
+	 * @since       1.3.1
+	 * @return      void
+	 */
+	public function render_export_subscribers_page() {
+
+		/**
+		 * Runs before displaying the suscribers export page.
+		 *
+		 * @param array $this The admin instance
+		 */
+		do_action( 'noptin_before_subscribers_export_page', $this );
+
+		get_noptin_template( 'export-subscribers.php' );
+
+		/**
+		 * Runs after displaying the subscribers export page.
+		 *
+		 * @param array $this The admin instance
+		 */
+		do_action( 'noptin_after_subscribers_export_page', $this );
 	}
 
 	/**
