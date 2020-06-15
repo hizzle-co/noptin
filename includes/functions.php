@@ -592,11 +592,13 @@ function noptin_form_template_wrapper_props() {
 		':data-once-per-session="DisplayOncePerSession"',
 		':style="{
 			borderColor: noptinFormBorderColor,
+			borderWidth: borderSize,
 			backgroundColor: noptinFormBg,
 			backgroundImage: \'url(\' + noptinFormBgImg + \')\',
 			borderRadius: formRadius,
 			width: formWidth,
-			minHeight: formHeight
+			minHeight: formHeight,
+			color: descriptionColor
 		}"',
 	);
 

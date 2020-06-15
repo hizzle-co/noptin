@@ -1,41 +1,8 @@
 $noptin_color: #ff6f00;
 
-.noptin-spinner {
-	display: inline-block;
-	width: 64px;
-	height: 64px;
-
-	&:after {
-		content: " ";
-		display: block;
-		width: 46px;
-		height: 46px;
-		margin: 1px;
-		border-radius: 50%;
-		border: 5px solid #fff;
-		border-color: #ff5722 transparent #f44336 transparent;
-		animation: noptin-spin 1.2s linear infinite;
-	}
-}
-
-@keyframes noptin-spin {
-	0% {
-		transform: rotate(0deg);
-	}
-
-	100% {
-		transform: rotate(360deg);
-	}
-}
-
-.noptin-spin {
-	animation: noptin-spin 1.2s linear infinite;
-}
-
 .noptin-shadow {
 	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
-
 
 .noptin-padded {
 	padding: 10px;
@@ -49,11 +16,20 @@ $noptin_color: #ff6f00;
 	max-width: 200px !important;
 }
 
-.noptin-preview-showing {
-	overflow: auto;
+.noptin-popup-close {
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 36px;
+	height: 36px;
+	cursor: pointer;
+	opacity: 0.6;
+	z-index: 99999999;
 }
 
-.noptin-slide_in-main-wrapper.noptin-optin-main-wrapper {
+.noptin-slide_in-main-wrapper {
+
 	.noptin-optin-form-wrapper {
 		position: fixed;
 		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
@@ -65,16 +41,10 @@ $noptin_color: #ff6f00;
 		.noptin-optin-form {
 			justify-content: end;
 
-			.noptin-form-close {
-				position: absolute;
+			.noptin-popup-close {
 				top: 1px;
 				right: 1px;
-				width: 36px;
-				height: 36px;
-				cursor: pointer;
 				display: inline-block;
-				opacity: 0.6;
-				z-index: 99999999;
 			}
 		}
 
@@ -235,84 +205,93 @@ $noptin_color: #ff6f00;
 	}
 }
 
-.noptin-popup-main-wrapper {
+/*********** POPUPS **********/
+/*
+// .noptin-popup-open     - body class for killing the scroll
+// .noptin-popup          - container to scroll within
+// .noptin-popup-inner    - positioning shell for the actual modal
+// .noptin-popup-content  - actual modal corners and stuff
+*/
+.noptin-popup-open {
+
+	.noptin-popup {
+		overflow-x: hidden;
+    	overflow-y: auto;
+	}
+
+}
+
+.noptin-popup {
 	position: fixed;
 	top: 0;
-	bottom: 0;
 	left: 0;
+	bottom: 0;
 	right: 0;
-	z-index: 100000;
-	align-items: center;
-	justify-content: center;
-	background: rgba(96, 125, 139, 0.6);
-	background-position: 50%;
-	background-size: cover;
-	overflow: auto;
-	display: none;
+	z-index: 1000000;
+	display: block;
+	width: 100%;
+  	height: 100%;
+  	overflow: hidden;
+	outline: 0;
+	background-color: rgba(0,0,0,0.4);
 
-	.noptin-optin-form-wrapper {
-		@media only screen and (max-width: 520px) {
-			margin-top: 100px;
+	&.noptin-popup-opening {
+		background-color: transparent;
+	}
+}
+
+.noptin-popup-inner {
+	width: 100%;
+	margin: .5rem;
+	display: flex;
+    align-items: center;
+	min-height: calc(100% - 1rem);
+	justify-content: center;
+
+	@media (min-width: 576px) {
+		margin: 1.75rem auto;
+		min-height: calc(100% - 3.5rem);
+	}
+
+}
+
+.noptin-popup-content {
+	max-width: 100%;
+	opacity: 1;
+	transition: none;
+	transform: translate3d(0, -150px, 0);
+
+	.noptin-popup-opened & {
+		transition: transform 0.2s ease-out;
+    	transform: translate3d(0, 0, 0);
+
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
 		}
 	}
 
+	.noptin-popup-closing & {
+		transition: transform 0.3s ease 0s, opacity 0.15s linear;
+		transform: translate3d(0, -100px, 0);
+		opacity: 0;
 
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
+		}
 
-	&.open {
-		display: flex;
 	}
+
+	.noptin-popup-close {
+		display: inline-block;
+	}
+
 }
 
-/*Popups close button*/
-.noptin-popup-wrapper .noptin-form-close,
-.noptin-popup-main-wrapper .noptin-form-close {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 36px;
-	height: 36px;
-	cursor: pointer;
+.noptin-popup-template-holder .noptin-popup-main-wrapper {
 	display: none;
-
-	&.outside {
-		top: -36px;
-		right: -36px;
-	}
-
-	&.along {
-		top: -30px;
-		right: -30px;
-	}
-
-	&.top-right {
-		top: 60px;
-		right: 60px;
-		position: fixed;
-	}
-
-	&:not(.inside) path {
-		fill: rgba(255, 255, 255, 0.9);
-		transition: 0.3s;
-	}
-
-	&:not(.inside):hover path {
-		fill: rgba(255, 255, 255, 0.4);
-	}
 }
 
-.noptin-preview-showing .noptin-form-close,
-.noptin-popup-main-wrapper.open .noptin-form-close {
-	display: inline-block;
-}
-
-.noptin-animate-from {
-	transform: scale(0) rotate(360deg);
-}
-
-.noptin-animate-after {
-	transform: scale(1) rotate(0deg);
-}
-
+/* Form Wrapper*/
 .noptin-optin-form-wrapper {
 	border: 4px solid $noptin_color;
 	padding: 0;
@@ -326,7 +305,6 @@ $noptin_color: #ff6f00;
 	margin: auto;
 	max-width: 100%;
 	width: 100%;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
 	* {
 		box-sizing: border-box;
@@ -340,283 +318,324 @@ $noptin_color: #ff6f00;
 	.noptin-popup-main-wrapper & {
 		max-width: 90%;
 		width: 520px;
+		overflow-x: hidden;
+    	overflow-y: auto;
 	}
 
+}
 
-	/*The main opt in form*/
-	.noptin-optin-form {
-		width: 100%;
-		position: relative;
-		text-align: center;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+.noptin-popup-main-wrapper {
+	background: transparent !important;
+}
 
-		.noptin-video-container {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			width: 100%;
-			height: 100%;
-			overflow: hidden;
+/* The main opt in form */
+.noptin-optin-form {
+	width: 100%;
+	position: relative;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 
-			video {
-				min-width: 100%;
-				min-height: 100%;
-				width: auto;
-				height: auto;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-			}
+	a,
+	a:visited,
+	a:active,
+	a:hover {
+		color: inherit !important;
+		text-decoration: none;
+		box-shadow: 0 1px 0 0 currentColor;
+	}
+
+	&.noptin-form-new-line {
+		.noptin-form-field {
+			margin-bottom: 4px;
 		}
+	}
 
-		a,
-		a:visited,
-		a:active,
-		a:hover {
-			color: inherit !important;
-			text-decoration: none;
-			box-shadow: 0 1px 0 0 currentColor;
-		}
+	&.noptin-form-single-line {
+		@media only screen and (min-width: 520px) {
+			.noptin-form-fields {
+				display: flex;
 
-		/*Appears at the top of fields and contains title, image and description*/
-		.noptin-form-header {
-			display: flex;
-			padding: 20px;
-			align-items: center;
-			justify-content: center;
-			z-index: 100;
-
-			ul {
-				text-align: left !important;
-				list-style-type: initial;
-			}
-
-			/*image on left of heading*/
-			&.left {
-				flex-direction: row-reverse;
-				text-align: left;
-
-				.noptin-form-header-text {
-					padding-left: 20px;
+				.noptin-form-submit {
+    				margin-top: -1px;
 				}
 
-				.noptin-form-header-image {
-					max-width: 40%;
-				}
-			}
-
-			/*image on right of heading*/
-			&.right {
-				text-align: left;
-
-				.noptin-form-header-text {
-					padding-right: 20px;
+				.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {
+					margin-right: 4px;
+					margin-bottom: 0;
 				}
 
-				.noptin-form-header-image {
-					max-width: 40%;
+				.noptin-optin-field-wrapper-hidden {
+					display: none !important;
 				}
-			}
-
-			/*image on top of heading*/
-			&.top {
-				flex-direction: column-reverse;
-
-				.noptin-form-header-text {
-					padding-top: 20px;
-				}
-			}
-
-			/*image at bottom of heading*/
-			&.bottom {
-				flex-direction: column;
-			}
-
-			img {
-				max-width: 100%;
-				max-height: 150px;
-			}
-
-			.noptin-form-heading {
-				font-size: 23px;
-				font-weight: 700;
-				line-height: 1.4125;
-				padding-top: 4px;
-
-				p {
-					margin: 0;
-					font-size: 23px;
-					font-weight: 700;
-				}
-			}
-
-			.noptin-form-description {
-				font-size: 16px;
-				line-height: 1.3;
-				margin-top: 18px;
-
-				p {
-					margin: 0;
-					font-size: 16px;
-				}
-			}
-		}
-
-		/* Contains the form fields and footer texts*/
-		.noptin-form-footer {
-			padding: 20px;
-			z-index: 100;
-
-			.noptin-form-fields::after {
-				content: "";
-				clear: both;
-				display: table;
-			}
-
-			.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {
-				width: 100%;
-				display: block;
-				text-align: left;
-				margin-bottom: 10px;
 
 				.noptin-form-field {
-					padding: 9px 32px;
-					width: 100%;
-					font-size: 16px;
-					display: block;
-					color: #666;
-					-webkit-text-fill-color: #666;
-					background: rgba(255, 255, 255, 0.9);
-					background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
-					border: 1px solid rgba(187, 187, 187, 0.6);
-					border-radius: 3px;
-					width: 100%;
-					outline: none !important;
-					line-height: 1.45714285714286;
-					margin: 0;
-				}
-			}
-
-			.noptin-optin-field-wrapper-hidden {
-				margin-bottom: 0 !important;
-				margin-left: 0 !important;
-				margin-right: 0 !important;
-				margin-top: 0 !important;
-				padding-left: 0 !important;
-				padding-bottom: 0 !important;
-				padding-right: 0 !important;
-				padding-top: 0 !important;
-			}
-
-			.noptin-optin-field-wrapper-checkbox {
-				input {
-					margin-right: 4px;
-    				outline: 0;
-    				cursor: pointer;
-    				text-align: center;
-    				vertical-align: middle;
-				}
-			}
-
-			.noptin-form-submit {
-				background-color: #524b4d;
-				display: block;
-				border: none;
-				color: #fafafa;
-				text-align: center;
-				font-weight: 500;
-				padding: 16px 32px;
-				flex: 1 0 0;
-				font-weight: 800;
-				box-shadow: none;
-				text-transform: none;
-				line-height: 1.45714285714286;
-			}
-
-			.noptin-form-button-block {
-				width: 100%;
-			}
-
-			.noptin-form-button-right {
-				float: right;
-			}
-
-			.noptin-form-note {
-				font-size: 14px;
-				margin-top: 10px;
-
-				p {
-					font-size: 14px;
-					margin: 0;
-				}
-			}
-
-			.noptin-gdpr-checkbox-wrapper {
-				text-align: left;
-
-				input {
-					margin-right: 4px;
-				}
-			}
-		}
-
-		&.noptin-form-new-line {
-			.noptin-form-field {
-				margin-bottom: 4px;
-			}
-		}
-
-		&.noptin-form-single-line {
-			@media only screen and (min-width: 520px) {
-				.noptin-form-fields {
-					display: flex;
-
-					.noptin-form-submit {
-						padding: 12px 32px;
-    					margin-top: -1px;
-					}
-
-					.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {
-						margin-right: 4px;
-						margin-bottom: 0;
-					}
-
-					.noptin-optin-field-wrapper-hidden {
-						margin-bottom: 0 !important;
-						margin-left: 0 !important;
-						margin-right: 0 !important;
-						margin-top: 0 !important;
-						padding-left: 0 !important;
-						padding-bottom: 0 !important;
-						padding-right: 0 !important;
-						padding-top: 0 !important;
-					}
-
-					.noptin-form-field {
-						border-radius: 0;
-					}
+					border-radius: 0;
 				}
 			}
 		}
 	}
 }
 
+/* Video backgrounds */
+.noptin-video-container {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+
+	video {
+		min-width: 100%;
+		min-height: 100%;
+		width: auto;
+		height: auto;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
+/* Form headers */
+.noptin-form-header {
+	display: flex;
+	padding: 20px;
+	align-items: center;
+	justify-content: center;
+	z-index: 100;
+
+	ul {
+		text-align: left !important;
+		list-style-type: initial;
+	}
+
+	/*image on left of heading*/
+	&.left {
+		flex-direction: row-reverse;
+		text-align: left;
+
+		.noptin-form-header-text {
+			padding-left: 20px;
+		}
+
+		.noptin-form-header-image {
+			max-width: 40%;
+		}
+	}
+
+	/*image on right of heading*/
+	&.right {
+		text-align: left;
+
+		.noptin-form-header-text {
+			padding-right: 20px;
+		}
+
+		.noptin-form-header-image {
+			max-width: 40%;
+		}
+	}
+
+	/*image on top of heading*/
+	&.top {
+		flex-direction: column-reverse;
+
+		.noptin-form-header-text {
+			padding-top: 20px;
+		}
+	}
+
+	/*image at bottom of heading*/
+	&.bottom {
+		flex-direction: column;
+	}
+
+	img {
+		max-width: 100%;
+		max-height: 150px;
+	}
+
+	.noptin-form-heading {
+		font-size: 1.9rem;
+		font-weight: 700;
+		line-height: 1.4125;
+		padding-top: 4px;
+
+		p {
+			margin: 0;
+			font-size: 1.9rem;
+			font-weight: 700;
+		}
+	}
+
+	.noptin-form-description {
+		font-size: 1rem;
+		line-height: 1.3;
+		margin-top: 1.125rem;
+
+		p {
+			margin: 0;
+			font-size: 1rem;
+		}
+	}
+}
+
+/* Form footers */
+.noptin-form-footer {
+	padding: 20px;
+	z-index: 100;
+
+	.noptin-form-fields::after {
+		content: "";
+		clear: both;
+		display: table;
+	}
+
+	.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {
+		width: 100%;
+		display: block;
+		text-align: left;
+		margin-bottom: 10px;
+
+		.noptin-form-field {
+			display: block;
+			width: 100%;
+			height: calc(1.6em + .9rem + 2px);
+			min-height: calc(1.6em + .9rem + 2px);
+			padding: .45rem 1.2rem;
+			font-size: 1rem;
+			font-weight: 300;
+			line-height: 1.6;
+			color: #495057;
+			background-color: #fff;
+			background-clip: padding-box;
+			border: 1px solid #ced4da;
+			border-radius: .25rem;
+			 transition: border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+			margin: 0;
+			box-shadow: none;
+
+			/* Unstyle the caret on `<select>`s in IE10+. */
+			&::-ms-expand {
+				background-color: transparent;
+				border: 0;
+			}
+
+			&:focus {
+				color: #495057;
+				background-color: #fff;
+				border-color: #73b1e9;
+				outline: 0;
+			}
+		}
+
+	}
+
+	.noptin-optin-field-wrapper-hidden {
+		display: none !important;
+	}
+
+	.noptin-optin-field-wrapper-checkbox {
+		input {
+			margin-right: 4px;
+			outline: 0;
+			cursor: pointer;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		span {
+			font-weight: normal;
+		}
+	}
+
+	.noptin-form-submit {
+		padding: .45rem 1.2rem;
+		font-size: 1rem;
+		line-height: 1.6;
+		border-radius: .25rem;
+		position: relative;
+		color: #fff;
+		background-color: #1e73be;
+		font-weight: 400;
+		text-align: center;
+		vertical-align: middle;
+		user-select: none;
+		background-clip: padding-box;
+		border: 1px solid transparent;
+		display: inline-block;
+		flex: 1 0 0;
+		box-shadow: none;
+		text-transform: none;
+		transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+		box-shadow: none;
+
+		&:focus,
+		&:hover {
+			box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+			outline: 0 !important;
+		}
+	}
+
+	.noptin-form-button-block {
+		width: 100%;
+		display: block;
+	}
+
+	.noptin-form-button-left {
+		float: left;
+	}
+
+	.noptin-form-button-right {
+		float: right;
+	}
+
+	.noptin-form-note {
+		font-size: 14px;
+		margin-top: 10px;
+
+		p {
+			font-size: 14px;
+			margin: 0;
+		}
+	}
+
+	.noptin-gdpr-checkbox-wrapper {
+		text-align: left;
+
+		input {
+			margin-right: 4px;
+			outline: 0;
+			cursor: pointer;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		span {
+			font-weight: normal;
+		}
+	}
+
+}
+
+/* Subscription Checkbox*/
 .comment-form-noptin input,
 .register-form-noptin input,
 .noptin-integration-subscription-checkbox input {
-	margin-right: 8px;
+	margin-right: 0.5rem;
 }
 
 #noptin_woocommerce_optin_checkbox label {
-	font-weight: inherit;
-	font-size: inherit;
+	font-weight: normal;
+	font-size: 1rem;
 }
 
+/** Block **/
 .wp-block-noptin-email-optin{
 	min-height: 280px;
     display: flex;
@@ -625,55 +644,84 @@ $noptin_color: #ff6f00;
 
 	form {
 		width: 100%;
+	}
 
-		h2.noptin_form_title {
-			font-size: 23px;
-			font-weight: 700;
-			line-height: 1.4125;
-			padding-top: 4px;
-			margin-bottom: 10px;
-			margin-top: 16px;
+	.noptin_form_title {
+		font-size: 23px;
+		font-weight: 700;
+		line-height: 1.4125;
+		padding-top: 4px;
+		margin-bottom: 10px;
+		margin-top: 16px;
+	}
+
+	.noptin_form_description {
+		font-size: 16px;
+		line-height: 1.3;
+		margin-bottom: 10px;
+	}
+
+	input.noptin_form_input_email {
+		display: block;
+		width: 100%;
+		height: calc(1.6em + .9rem + 2px);
+		min-height: calc(1.6em + .9rem + 2px);
+		padding: .45rem 1.2rem;
+		font-size: 1rem;
+		font-weight: 300;
+		line-height: 1.6;
+		color: #495057;
+		background-color: #fff;
+		background-clip: padding-box;
+		border: 1px solid #ced4da;
+		border-radius: .25rem;
+		transition: border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+		margin: 0;
+		box-shadow: none;
+
+		/* Unstyle the caret on `<select>`s in IE10+. */
+		&::-ms-expand {
+			background-color: transparent;
+			border: 0;
 		}
 
-		p.noptin_form_description {
-			font-size: 16px;
-			line-height: 1.3;
-			margin-bottom: 10px;
+		&:focus {
+			color: #495057;
+			background-color: #fff;
+			border-color: #73b1e9;
+			outline: 0;
 		}
+	}
 
-		input.noptin_form_input_email {
-			padding: 11px 32px;
-			width: 100%;
-			font-size: 16px;
-			display: block;
-			color: #666;
-			-webkit-text-fill-color: #666;
-			background: rgba(255, 255, 255, 0.6);
-			background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
-			border: 1px solid rgba(187, 187, 187, 0.6);
-			border-radius: 3px;
-			width: 100%;
-			outline: none !important;
-			line-height: 1.45714285714286;
-			text-align: center;
-		}
-
-		.noptin_form_submit {
-			background-color: #313131;
-			width: 100%;
-			display: block;
-			border: none;
-			margin-top: 1em;
-			text-align: center;
-			padding: 16px 32px;
-			flex: 1 0 0;
-			font-weight: 800;
-			box-shadow: none;
-			line-height: 1.45714285714286;
+	.noptin-form-submit {
+		padding: .45rem 1.2rem;
+		font-size: 1rem;
+		line-height: 1.6;
+		border-radius: .25rem;
+		position: relative;
+		color: #fff;
+		background-color: #1e73be;
+		font-weight: 400;
+		text-align: center;
+		vertical-align: middle;
+		user-select: none;
+		background-clip: padding-box;
+		border: 1px solid transparent;
+		display: inline-block;
+		flex: 1 0 0;
+		box-shadow: none;
+		text-transform: none;
+		transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+		box-shadow: none;
+		&:focus,
+		&:hover {
+			box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+			outline: 0 !important;
 		}
 	}
 }
 
+/** Quick Widget */
 .noptin_widget .noptin-email-optin-widget {
 	box-sizing: border-box !important;
     display: flex;
@@ -683,32 +731,77 @@ $noptin_color: #ff6f00;
 
 	&.noptin-email-optin-widget-has-bg {
 		min-height: 380px;
-		padding: 32px;
+		padding: 2rem;
 	}
 
 	form {
 		width: 100%;
+	}
 
-		.noptin-widget-email-input.noptin_form_input_email,
-		.noptin-widget-email-input.noptin_form_input_email:focus,
-		.noptin-widget-email-input.noptin_form_input_email:active {
-			width: 100%;
-			padding: 10px;
-			outline: none;
+	.noptin_form_input_email {
+		display: block;
+		width: 100%;
+		height: calc(1.6em + .9rem + 2px);
+		min-height: calc(1.6em + .9rem + 2px);
+		padding: .45rem 1.2rem;
+		font-size: 1rem;
+		font-weight: 300;
+		line-height: 1.6;
+		color: #495057;
+		background-color: #fff;
+		background-clip: padding-box;
+		border: 1px solid #ced4da;
+		border-radius: .25rem;
+		transition: border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+		margin: 0;
+		box-shadow: none;
+
+		/* Unstyle the caret on `<select>`s in IE10+. */
+		&::-ms-expand {
+			background-color: transparent;
+			border: 0;
 		}
 
-		.noptin_feedback_error{
-            border:1px solid #f44336;
-            display:none;
-            padding:10px;
-            margin-top:10px;
-        }
-
-		.noptin-widget-submit-input {
-			margin-top: 5px;
-    		display: block;
-    		width: 100%;
-    		padding: 16px;
+		&:focus {
+			color: #495057;
+			background-color: #fff;
+			border-color: #73b1e9;
+			outline: 0;
 		}
 	}
+
+	.noptin-widget-submit-input {
+		padding: .45rem 1.2rem;
+		margin-top: 5px;
+		font-size: 1rem;
+		line-height: 1.6;
+		border-radius: .25rem;
+		position: relative;
+		font-weight: 400;
+		text-align: center;
+		user-select: none;
+		background-clip: padding-box;
+		border: 1px solid transparent;
+		display: block;
+		width: 100%;
+		flex: 1 0 0;
+		box-shadow: none;
+		text-transform: none;
+		transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
+		box-shadow: none;
+
+		&:focus,
+		&:hover {
+			box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+			outline: 0 !important;
+		}
+	}
+}
+
+/* Feedbacks */
+.noptin_feedback_error{
+	border:1px solid #f44336;
+	display:none;
+	padding:10px;
+	margin-top:10px;
 }

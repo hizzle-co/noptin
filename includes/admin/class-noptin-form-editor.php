@@ -478,15 +478,6 @@ class Noptin_Form_Editor {
 				'children' => $this->get_templates_settings(),
 			),
 
-			// overlay Design.
-			'overlay'     => array(
-				'el'       => 'panel',
-				'title'    => __( 'Overlay', 'newsletter-optin-box' ),
-				'restrict' => "optinType=='popup'",
-				'id'       => 'overlayDesign',
-				'children' => $this->get_overlay_settings(),
-			),
-
 			// Form Design.
 			'form'        => array(
 				'el'       => 'panel',
@@ -577,49 +568,16 @@ class Noptin_Form_Editor {
 	}
 
 	/**
-	 * Returns overlay Design Fields
-	 */
-	private function get_overlay_settings() {
-		return array(
-			'noptinOverlayBg'    => array(
-				'type'  => 'color',
-				'el'    => 'input',
-				'label' => __( 'Background Color', 'newsletter-optin-box' ),
-			),
-
-			'noptinOverlayBgImg' => array(
-				'type'  => 'image',
-				'el'    => 'input',
-				'size'  => 'full',
-				'label' => __( 'Background Image', 'newsletter-optin-box' ),
-			),
-
-		);
-	}
-
-	/**
 	 * Returns Form Design Fields
 	 */
 	private function get_form_settings() {
 		return array(
 
-			'hideCloseButton'       => array(
-				'type'     => 'checkbox',
-				'el'       => 'input',
-				'restrict' => "optinType=='popup'",
-				'label'    => __( 'Hide Close Button', 'newsletter-optin-box' ),
-			),
-
-			'closeButtonPos'        => array(
-				'el'       => 'select',
-				'options'  => array(
-					'inside'    => __( 'Inside the form', 'newsletter-optin-box' ),
-					'outside'   => __( 'Outside the form', 'newsletter-optin-box' ),
-					'along'     => __( 'Along the border', 'newsletter-optin-box' ),
-					'top-right' => __( 'Top Right', 'newsletter-optin-box' ),
-				),
-				'label'    => __( 'Close Button Position', 'newsletter-optin-box' ),
-				'restrict' => "optinType=='popup' && !hideCloseButton",
+			'borderSize'            => array(
+				'type'    => 'text',
+				'el'      => 'input',
+				'label'   => __( 'Border Size', 'newsletter-optin-box' ),
+				'tooltip' => __( "Set this to 0 if you don't want the form to have a border", 'newsletter-optin-box' ),
 			),
 
 			'formRadius'            => array(

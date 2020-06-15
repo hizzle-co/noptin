@@ -34,4 +34,5 @@ class Noptin_Hooks {
 		}
 
 	}
+
 }

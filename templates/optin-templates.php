@@ -48,28 +48,18 @@
 				'noteColor'             => '#010101',
 				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
 	position: absolute;
- 	right: 5px;
- 	top: 6px;
- 	bottom: 6px;
- 	border-radius: 4px;
- 	font-weight: 500;
-	border: 1px solid transparent;
-	padding: 6px 32px !important;
+	right: 10px;
+	top: 6px;
+	bottom: 6px;
+	padding-top: 2px;
 }
 
 .noptin-optin-form-wrapper .noptin-form-header-image img{
     border-radius: 50%;
 }
 
-.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-field {
-    border-radius: 4px;
- 	padding: 1.2em 2em;
- border: 1px solid transparent;
- font-size: 16px;
-}
-
-.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields{
- position: relative;
+.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields {
+	position: relative;
 }
 
 .noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-header {
@@ -391,11 +381,10 @@
 }
 
 .noptin-optin-form-wrapper form .noptin-form-footer .noptin-form-field {
- border:2px solid hsla(0,0%,100%,.3) !important;
 	border-radius: 2px !important;
 	background-color: rgba(245, 245, 245, 0.8) !important;
     color: #000 !important;
- text-align: center !important;
+	text-align: center !important;
 }',
 			),
 
@@ -451,7 +440,7 @@
  	position: relative;
 }
 
-.noptin-optin-form-wrapper .noptin-form-single-line .noptin-form-submit{
+.noptin-optin-form-wrapper .noptin-optin-form.noptin-form-single-line .noptin-form-submit{
  	border-radius: 30px;
     position: absolute;
     bottom: 0;
@@ -513,13 +502,10 @@
 				'noteColor'             => '#fafafa',
 				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
 	position: absolute;
- 	right: 5px;
- 	top: 6px;
- 	bottom: 6px;
- 	border-radius: 4px;
- 	font-weight: 500;
-	border: 1px solid transparent;
-	padding: 6px 32px !important;
+	right: 10px;
+	top: 6px;
+	bottom: 6px;
+	padding-top: 2px;
 }
 
 .noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-field {

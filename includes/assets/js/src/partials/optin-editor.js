@@ -8,6 +8,7 @@ import noptinForm from './noptin-form.js'
 import noptin from './noptin.js'
 import noptinEditorComponent from './css-editor.vue'
 import tempForm from './noptin-temp-form.vue'
+import popups from './popups'
 
 var editor = jQuery('#noptin_form_editor').clone().removeClass('postbox')
 jQuery('.post-type-noptin-form #post').replaceWith( editor )
@@ -76,7 +77,6 @@ var vm = new Vue({
 		},
 
 		previewPopup() {
-			this.isPreviewShowing = true
 
 			var el = jQuery('.noptin-popup-wrapper').clone()
 			var whitelist = ["class","style"];
@@ -90,29 +90,11 @@ var vm = new Vue({
 						this.removeAttributeNode(attr);
 				}
 			})
-			jQuery("#noptin-popup-preview")
-				.html(el.html())
-				.addClass('noptin-preview-showing')
-				.find('.noptin-popup-close')
-				.show()
 
-			//Hide popup when user clicks outside
-			jQuery("#noptin-popup-preview")
-				.off('noptin-popup')
-				.on('click', (e) => {
-					var container = jQuery(this).find(".noptin-popup-form-wrapper");
-
-					// if the target of the click isn't the container nor a descendant of the container
-					if (!container.is(e.target) && container.has(e.target).length === 0) {
-						vm.closePopup()
-					}
-				});
+			popups.open( el )
 
 		},
-		closePopup() {
-			this.isPreviewShowing = false
-			jQuery("#noptin-popup-preview").removeClass('noptin-preview-showing').html('')
-		},
+
 		saveAsTemplate() {
 			var saveText = this.saveAsTemplateText
 			this.saveAsTemplateText = this.savingTemplateText;

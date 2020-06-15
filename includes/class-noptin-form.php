@@ -156,8 +156,6 @@ class Noptin_Form {
 
 			// Opt in options.
 			'formRadius'            => '0px',
-			'hideCloseButton'       => false,
-			'closeButtonPos'        => 'along',
 
 			'singleLine'            => false,
 			'gdprCheckbox'          => false,
@@ -185,7 +183,7 @@ class Noptin_Form {
 			'noptinFormBgVideo'     => '',
 			'noptinFormBg'          => '#eeeeee',
 			'noptinFormBorderColor' => '#eeeeee',
-			'noptinFormBorderRound' => true,
+			'borderSize'            => '4px',
 			'formWidth'             => '620px',
 			'formHeight'            => '280px',
 
@@ -651,28 +649,19 @@ class Noptin_Form {
 		$id         = $this->id;
 		$id_class   = "noptin-form-id-$id";
 		$type_class = "noptin-$type-main-wrapper";
-		$style      = '';
 
-		if ( 'popup' === $type ) {
-
-			// Background color.
-			if ( $this->noptinOverlayBg ) {
-				$color = esc_attr( $this->noptinOverlayBg );
-				$style = "background-color: $color;";
-			}
-
-			// Background image.
-			if ( $this->noptinOverlayBgImg ) {
-				$image  = esc_url( $this->noptinOverlayBgImg );
-				$style .= "background-image: url($image);";
-			}
-		} else {
+		if ( 'popup' !== $type ) {
 
 			$count = (int) get_post_meta( $id, '_noptin_form_views', true );
 			update_post_meta( $id, '_noptin_form_views', $count + 1 );
 
 		}
-		$html = "<div class='$type_class $id_class noptin-optin-main-wrapper' style='$style'>";
+
+		$html = "<div class='$type_class $id_class noptin-optin-main-wrapper'>";
+
+		if ( 'popup' === $type ) {
+			$html .= "<div class='noptin-popup-optin-inner-wrapper'>";
+		}
 
 		// Maybe print custom css.
 		if ( ! empty( $this->CSS ) ) {
@@ -684,8 +673,14 @@ class Noptin_Form {
 			$html   .= "<style>$css</style>";
 		}
 
+		$html .= $this->_get_html();
+
+		if ( 'popup' === $type ) {
+			$html .= '</div>';
+		}
+
 		// print main form html.
-		$html = do_shortcode( $html . $this->_get_html() . '</div>' );
+		$html = do_shortcode( $html . '</div>' );
 
 		// Remove comments.
 		$html = preg_replace( '/<!--(.*)-->/Uis', '', $html );

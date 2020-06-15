@@ -10,122 +10,90 @@
 		return 'key' + rand.toString(36).replace(/[^a-z]+/g, '')
 	}
 
-	//Avoid displaying several popups at once...
-	var displayingPopup = false
+	// Our little library for displaying popup forms.
+	let popups = require('./partials/popups')
 
-	//... or when the user subscribes via one popup
-	var subscribed = false
+	/**
+	 * Popup Manager.
+	 */
+	let popup_manager = function() {
 
-	//Hides a displayed popup
-	var hidePopup = (inner) => {
+		return {
 
-		displayingPopup = false;
+			//Avoid displaying a popup when the user subscribes via one popup
+			subscribed: false,
 
-		var wrapper = $(inner).closest('.noptin-popup-main-wrapper')
-		var form = $(wrapper).find('.noptin-optin-form-wrapper')
+			// Hides a displayed popup
+			hidePopup() {
+				popups.close()
+			},
 
-		if ( form.length < 1 ) {
-			return
-		}
+			// Log form view.
+			logFormView(form_id) {
+				$.post(noptin.ajaxurl, {
+					action: "noptin_log_form_impression",
+					_wpnonce: noptin.nonce,
+					form_id: form_id,
+				})
+			},
 
-		//Maybe animate
-		$(form).removeClass('noptin-animate-after')
+			// Display a popup.
+			displayPopup(popup, force) {
 
-		var timing = parseFloat($(form).css('transition-duration'))
-		if (timing) {
-			timing = timing * 1000
-		} else {
-			timing = 500
-		}
-
-		setTimeout(() => {
-			$("body").css("overflow", "auto");
-			$(wrapper).removeClass('open')
-		}, timing)
-	}
-
-	// Logs a form view
-	var logFormView = (form_id) => {
-		$.post(noptin.ajaxurl, {
-			action: "noptin_log_form_impression",
-			_wpnonce: noptin.nonce,
-			form_id: form_id,
-		})
-	}
-
-	//Displays a popup and attaches "close" event handlers
-	var displayPopup = (popup, force) => {
-
-		if ($(popup).closest('.noptin-optin-main-wrapper').hasClass('noptin-slide_in-main-wrapper')) {
-			return displaySlideIn(popup, force)
-		}
-
-		if (!force && (displayingPopup || subscribed)) {
-			return;
-		}
-
-		//Log form view
-		logFormView($(popup).find('input[name=noptin_form_id]').val())
-
-		var closeButton = $(popup)
-			.closest('.noptin-popup-main-wrapper')
-			.addClass('open')
-			.on('click', (e) => {
-
-				// if the target of the click isn't the form nor a descendant of the form.
-				if (!$(popup).is(e.target) && $(popup).has(e.target).length === 0) {
-					hidePopup(popup)
+				if ($(popup).closest('.noptin-optin-main-wrapper').hasClass('noptin-slide_in-main-wrapper')) {
+					return this.displaySlideIn(popup, force)
 				}
 
-			})
-			.find('.noptin-form-close')
-			.on('click', () => {
-				hidePopup(popup)
-			})
+				// Do not display several popups at once.
+				if ( ! force && ( popups.is_showing || this.subscribed ) ) {
+					return;
+				}
 
-		//position fixed does not work on elements with transformed parents
-		if ($(closeButton).hasClass('top-right')) {
-			var wrapper = $(closeButton).closest('.noptin-popup-main-wrapper')
-			$(closeButton).appendTo(wrapper)
-		}
+				// Log form view
+				this.logFormView($(popup).find('input[name=noptin_form_id]').val())
 
-		//Maybe animate
-		setTimeout(() => {
-			$("body").css("overflow", "hidden");
-			$(popup).addClass('noptin-animate-after')
-		}, 100)
+				// Replace the content if a popup is already showing.
+				if ( popups.is_showing ) {
+					popups.replaceContent( $( popup ).closest('.noptin-popup-main-wrapper') )
+				} else {
+					popups.open( $( popup ).closest('.noptin-popup-main-wrapper') )
+				}				
 
-		//Some forms are only set to be displayed once per session
-		var id = $(popup).find('input[name=noptin_form_id]').val()
-		if (typeof $(popup).data('once-per-session') !== 'undefined') {
-			localStorage.setItem("noptinFormDisplayed" + id, new Date().getTime());
-		} else {
-			sessionStorage.setItem("noptinFormDisplayed" + id, '1');
+				// Some forms are only set to be displayed once per session.
+				var id = $(popup).find('input[name=noptin_form_id]').val()
+				if (typeof $(popup).data('once-per-session') !== 'undefined') {
+					localStorage.setItem("noptinFormDisplayed" + id, new Date().getTime());
+				} else {
+					sessionStorage.setItem("noptinFormDisplayed" + id, '1');
+				}
+
+			},
+
+			// Displays a slide in and attaches "close" event handlers.
+			displaySlideIn( slide_in, force ) {
+
+				if (!force && subscribed) {
+					return;
+				}
+
+				//Log form view
+				logFormView($(slide_in).find('input[name=noptin_form_id]').val())
+
+				//Display the form
+				$(slide_in).addClass('noptin-showing')
+			}
 		}
 
 	}
 
-	//Displays a slide in and attaches "close" event handlers
-	var displaySlideIn = (slide_in, force) => {
-
-		if (!force && subscribed) {
-			return;
-		}
-
-		//Log form view
-		logFormView($(slide_in).find('input[name=noptin_form_id]').val())
-
-		//Display the form
-		$(slide_in).addClass('noptin-showing')
-
-	}
+	var noptin_popups = popup_manager();
 
 	//Contains several triggers for displaying popups
 	var noptinDisplayPopup = {
 
 		//Displays a popup immeadiately
 		immeadiate() {
-			displayPopup(this)
+			noptin_popups.displayPopup(this)
 		},
 
 		//Exit intent
@@ -141,7 +109,7 @@
 				_delayTimer = setTimeout(() => {
 
 					//Display the popup
-					displayPopup(this)
+					noptin_popups.displayPopup(this)
 
 					//Remove watchers
 					$(document).off('mouseleave.' + key)
@@ -173,7 +141,7 @@
 				var scrollPercent = (scrolled / (Dheight - Wheight)) * 100;
 
 				if (scrollPercent > showPercent) {
-					displayPopup(popup)
+					noptin_popups.displayPopup(popup)
 					$(window).off('scroll.' + key)
 				}
 
@@ -187,7 +155,7 @@
 			var delay = parseInt($(this).data('after-delay')) * 1000
 
 			setTimeout(() => {
-				displayPopup(this)
+				noptin_popups.displayPopup(this)
 			}, delay)
 		},
 
@@ -203,21 +171,25 @@
 
 			var el = $(this).data('after-click'),
 				popup = this
+			
+			if ( el ) {
 
-			$(el).on('click', (e) => {
-				e.preventDefault()
-				displayPopup(popup, true)
-			})
+				$('body').on('click', el,(e) => {
+					e.preventDefault()
+					noptin_popups.displayPopup(popup, true)
+				})
 
+			}
+			
 		}
 	}
 
-	//Loop through all popups and attach triggers
+	// Loop through all popups and attach triggers.
 	$('.noptin-popup-main-wrapper .noptin-optin-form-wrapper').each(function () {
 
 		var trigger = $(this).data('trigger')
 
-		//Some forms are only set to be displayed once per session
+		// Some forms are only set to be displayed once per session
 		var id = $(this).find('input[name=noptin_form_id]').val()
 		if (typeof $(this).data('once-per-session') !== 'undefined' && 'after_click' != trigger) {
 
@@ -228,7 +200,7 @@
 
 				// Only display the popup once per week.
 				if (addedTime && (time - addedTime) < 604800000) {
-					return true;
+					//return true;
 				}
 				localStorage.removeItem("noptinFormDisplayed" + id)
 			}
@@ -241,13 +213,11 @@
 			}
 		}
 
-		//Take it to its initial state
-		$(this).addClass('noptin-animate-from')
-
 		if (noptinDisplayPopup[trigger]) {
 			var cb = noptinDisplayPopup[trigger]
 			cb.call(this)
 		}
+
 	})
 
 	//Loop through all slide ins and attach triggers
@@ -261,36 +231,30 @@
 		}
 	})
 
+	// Hide slide in form.
 	$(document).ready(function () {
-		$(document).on('click', '.noptin-showing .noptin-form-close', function (e) {
+		$(document).on('click', '.noptin-showing .noptin-popup-close', function (e) {
 			$(this).closest('.noptin-showing').removeClass('noptin-showing')
 		});
 	});
 
-	//Submits forms via ajax
+	// Submits forms via ajax.
 	function subscribe_user(form) {
 
-		$(form)
-
-			//https://stackoverflow.com/questions/15319942/preventing-bot-form-submission
-			.prepend('<label style="display: none;"><input type="checkbox" name="noptin_confirm_submit"/>Are you sure?</label>')
+		$(form).prepend('<label style="display: none;"><input type="checkbox" name="noptin_confirm_submit"/>Are you sure?</label>')
 
 		//select the form
-		$(form)
+		$('body') .on('submit', form, function (e) {
 
-			//what for submit events
-			.on('submit', function (e) {
+			//Prevent the form from submitting
+			e.preventDefault();
 
-				//Prevent the form from submitting
-				e.preventDefault();
-
-				//Modify form state
-				$(this)
-					.fadeTo(600, 0.5)
-					.find('.noptin_feedback_success, .noptin_feedback_error')
-					.empty()
-					.hide()
-
+			//Modify form state
+			$(this)
+				.fadeTo(600, 0.5)
+				.find('.noptin_feedback_success, .noptin_feedback_error')
+				.empty()
+				.hide()
 
 				//Prep all form data
 				var data = {},
@@ -374,10 +338,10 @@
 			})
 	}
 
-	//Normal forms
+	// Normal forms.
 	subscribe_user('.noptin-optin-form-wrapper form');
 
-	//Gutenberg forms
+	// Gutenberg forms.
 	$('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form')
 		.find('input[type=email]')
 		.attr('name', 'email')
@@ -399,7 +363,7 @@
 		}
 		setCookie('noptin_email_subscribed')
 
-		hidePopup( $(this) )
+		popups.close()
 		subscribed = true
 	});
 

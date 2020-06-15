@@ -22,6 +22,7 @@ export default {
 		})
 
 		instance.hideFields = false
+		instance.gdprCheckbox = false
 
 		this.updateFormSizes(instance)
 
