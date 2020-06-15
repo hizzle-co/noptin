@@ -678,7 +678,7 @@ $noptin_color: #ff6f00;
 		transition: border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
 		margin: 0;
 		box-shadow: none;
-
+		
 		/* Unstyle the caret on `<select>`s in IE10+. */
 		&::-ms-expand {
 			background-color: transparent;
@@ -693,7 +693,7 @@ $noptin_color: #ff6f00;
 		}
 	}
 
-	.noptin-form-submit {
+	.noptin_form_submit {
 		padding: .45rem 1.2rem;
 		font-size: 1rem;
 		line-height: 1.6;
@@ -707,12 +707,15 @@ $noptin_color: #ff6f00;
 		user-select: none;
 		background-clip: padding-box;
 		border: 1px solid transparent;
-		display: inline-block;
 		flex: 1 0 0;
 		box-shadow: none;
 		text-transform: none;
 		transition: color 0.15s ease-in-out,background-color 0.15s ease-in-out,border-color 0.15s ease-in-out,box-shadow 0.15s ease-in-out;
 		box-shadow: none;
+		display: block;
+    	width: 100%;
+		margin-top: 10px;
+
 		&:focus,
 		&:hover {
 			box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);

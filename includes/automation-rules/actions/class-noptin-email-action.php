@@ -148,7 +148,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 				'el'          => 'textarea',
 				'label'       => __( 'Footer Text', 'newsletter-optin-box' ),
                 'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
-                'default'     => noptin()->mailer->get_footer_text( array() )
+                'default'     => noptin()->mailer->get_footer_text( array() ),
             )
         );
     }

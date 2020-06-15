@@ -890,8 +890,15 @@ class Noptin_Ajax {
 		do_action( 'noptin_before_save_automation_rule' );
 
 		// Prepare the rule.
-		$action_settings  = stripslashes_deep( $_POST['action_settings'] );
-		$trigger_settings = stripslashes_deep( $_POST['trigger_settings'] );
+		$trigger_settings = array();
+		if ( ! empty( $_POST['trigger_settings'] ) ) {
+			$trigger_settings = stripslashes_deep( $_POST['trigger_settings'] );
+		}
+
+		$action_settings = array();
+		if ( ! empty( $_POST['action_settings'] ) ) {
+			$action_settings = stripslashes_deep( $_POST['action_settings'] );
+		}
 
 		// Save them.
 		noptin()->automation_rules->update_rule( $_POST['id'], compact( 'action_settings', 'trigger_settings' ) );

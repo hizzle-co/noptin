@@ -57,7 +57,7 @@
 					popups.replaceContent( $( popup ).closest('.noptin-popup-main-wrapper') )
 				} else {
 					popups.open( $( popup ).closest('.noptin-popup-main-wrapper') )
-				}				
+				}
 
 				// Some forms are only set to be displayed once per session.
 				var id = $(popup).find('input[name=noptin_form_id]').val()
@@ -72,12 +72,12 @@
 			// Displays a slide in and attaches "close" event handlers.
 			displaySlideIn( slide_in, force ) {
 
-				if (!force && subscribed) {
+				if (!force && this.subscribed) {
 					return;
 				}
 
 				//Log form view
-				logFormView($(slide_in).find('input[name=noptin_form_id]').val())
+				this.logFormView($(slide_in).find('input[name=noptin_form_id]').val())
 
 				//Display the form
 				$(slide_in).addClass('noptin-showing')
@@ -296,7 +296,7 @@
 							console.error(err.message);
 						}
 
-						subscribed = true
+						noptin_popups.subscribed = true
 
 						if (data.action == 'redirect') {
 							window.location = data.redirect;
@@ -364,7 +364,7 @@
 		setCookie('noptin_email_subscribed')
 
 		popups.close()
-		subscribed = true
+		noptin_popups.subscribed = true
 	});
 
 })(jQuery);

@@ -5,8 +5,6 @@
 		'PRO20200311'     => array(
 			'title' => __( 'Professional', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'top-right',
 				'singleLine'            => true,
 				'formRadius'            => '0px',
 				'formWidth'             => '520px',
@@ -82,8 +80,6 @@
 		'owvP1565701640'  => array(
 			'title' => __( 'Borderless', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'top-right',
 				'singleLine'            => true,
 				'formRadius'            => '10px',
 				'formWidth'             => '520px',
@@ -144,8 +140,6 @@
 		'IEiH1565701672'  => array(
 			'title' => __( 'Classic', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => true,
 				'formRadius'            => '10px',
 				'formWidth'             => '520px',
@@ -198,8 +192,6 @@
 		'qQOv1565701677'  => array(
 			'title' => __( 'Subheading', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => 'false',
-				'closeButtonPos'        => 'along',
 				'singleLine'            => false,
 				'formRadius'            => '0px',
 				'formWidth'             => '520px',
@@ -262,8 +254,6 @@
 		'ICkq1565701695'  => array(
 			'title' => __( 'Border Top', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'outside',
 				'singleLine'            => true,
 				'formRadius'            => '0px',
 				'formWidth'             => '520px',
@@ -321,8 +311,6 @@
 		'BLyQ1565701700'  => array(
 			'title' => 'smartpassiveincome.com',
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => true,
 				'formRadius'            => '0px',
 				'formWidth'             => '720px',
@@ -393,8 +381,6 @@
 		'yXJo1565701704'  => array(
 			'title' => __( 'Rounded Fields', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'top-right',
 				'singleLine'            => true,
 				'formRadius'            => '20px',
 				'formWidth'             => '520px',
@@ -459,8 +445,6 @@
 		'BMDQ1565701721'  => array(
 			'title' => 'Backlinko',
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'top-right',
 				'singleLine'            => true,
 				'formRadius'            => '0px',
 				'formWidth'             => '520px',
@@ -538,8 +522,6 @@
 		'89zl1570214684'  => array(
 			'title' => 'Michael Thiessen',
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'inside',
 				'singleLine'            => false,
 				'formRadius'            => '8px',
 				'formWidth'             => '520px',
@@ -590,8 +572,6 @@
 		'r5g21565701726'  => array(
 			'title' => __( 'Hearts', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'outside',
 				'singleLine'            => true,
 				'formRadius'            => '0px',
 				'formWidth'             => '520px',
@@ -643,8 +623,6 @@
 		'conv21565701726' => array(
 			'title' => 'Convertkit',
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => true,
 				'formRadius'            => '8px',
 				'formWidth'             => '620px',
@@ -706,8 +684,6 @@
 		'discount21565701726' => array(
 			'title' => __( 'Discount', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => false,
 				'formRadius'            => '1px',
 				'formWidth'             => '700px',
@@ -756,8 +732,6 @@
 		'discountalt21565701726' => array(
 			'title' => __( 'Discount Alt', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => false,
 				'formRadius'            => '0px',
 				'formWidth'             => '600px',
@@ -813,8 +787,6 @@
 		'twobg21565701726' => array(
 			'title' => __( 'Two Backgrounds', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => false,
 				'formRadius'            => '0px',
 				'formWidth'             => '600px',
@@ -869,8 +841,6 @@
 		'minimal21565701726' => array(
 			'title' => __( 'Minimal', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => true,
 				'formRadius'            => '1px',
 				'formWidth'             => '400px',
@@ -917,8 +887,6 @@
 		'upgrade21565701726' => array(
 			'title' => __( 'Content Upgrades', 'newsletter-optin-box' ),
 			'data'  => array(
-				'hideCloseButton'       => false,
-				'closeButtonPos'        => 'along',
 				'singleLine'            => true,
 				'formRadius'            => '40px',
 				'formWidth'             => '520px',
