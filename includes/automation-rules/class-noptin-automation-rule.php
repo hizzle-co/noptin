@@ -111,6 +111,31 @@ class Noptin_Automation_Rule {
             }
         }
 
+        // Fill defaults.
+        $trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
+
+        if ( ! empty( $trigger ) && is_array( $trigger->get_settings() ) ) {
+
+            foreach ( $trigger->get_settings() as $key => $args ) {
+                if ( ! isset( $this->trigger_settings[ $key ] ) && isset( $args['default'] ) ) {
+                    $this->trigger_settings[ $key ] = $args['default'];
+                }
+            }
+
+        }
+
+        $action = noptin()->automation_rules->get_action( $this->action_id );
+
+        if ( ! empty( $action ) && is_array( $action->get_settings() ) ) {
+
+            foreach ( $action->get_settings() as $key => $args ) {
+                if ( ! isset( $this->action_settings[ $key ] ) && isset( $args['default'] ) ) {
+                    $this->action_settings[ $key ] = $args['default'];
+                }
+            }
+
+        }
+
     }
 
     /**
@@ -171,7 +196,7 @@ class Noptin_Automation_Rule {
         );
         
         if ( ! empty( $rule ) ) {
-            wp_cache_set( $rule->id, $rule, 'noptin_automation_rules', 1 );
+            wp_cache_set( $rule->id, $rule, 'noptin_automation_rules', 10 );
         }
         
         return $rule;

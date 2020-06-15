@@ -137,6 +137,18 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 				'el'          => 'email_action_content',
 				'label'       => __( 'Email Content', 'newsletter-optin-box' ),
 				'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
+            ),
+            'permission_reminder'   => array(
+				'el'          => 'textarea',
+				'label'       => __( 'Permission Reminder', 'newsletter-optin-box' ),
+                'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
+                'default'     => noptin()->mailer->get_permission_text( array() ),
+            ),
+            'email_footer'    => array(
+				'el'          => 'textarea',
+				'label'       => __( 'Footer Text', 'newsletter-optin-box' ),
+                'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
+                'default'     => noptin()->mailer->get_footer_text( array() )
             )
         );
     }
@@ -152,14 +164,14 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
      */
     public function run( $subscriber, $rule, $args ) {
 
+        // Abort if we do not have a subject or an email.
+        if ( empty( $rule->action_settings['email_content'] ) || empty( $rule->action_settings['email_subject'] ) ) {
+            return;
+        }
+    
         $email_content = $rule->action_settings['email_content'];
         $email_subject = $rule->action_settings['email_subject'];
         $email_preview = $rule->action_settings['email_preview'];
-
-        // Abort if we do not have a subject or an email.
-        if ( empty( $email_subject ) || empty( $email_content ) ) {
-            return;
-        }
 
         // We only want to send an email to active subscribers.
         if ( ! empty( $subscriber->active ) ) {
@@ -185,13 +197,15 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			'email_body'	    => wp_kses_post( stripslashes_deep( $email_content ) ),
 			'email_subject' 	=> sanitize_text_field( stripslashes_deep( $email_subject ) ),
 			'preview_text'  	=> sanitize_text_field( stripslashes_deep( $email_preview ) ),
-			'merge_tags'		=> $merge_tags,
+            'merge_tags'		=> $merge_tags,
+            'permission_text'   => $rule->action_settings['permission_reminder'],
+            'footer_text'       => $rule->action_settings['email_footer'],
 		);
 
 		$item = apply_filters( 'noptin_email_action_email_details', $item, $subscriber, $rule, $args );
 
         // Sends the email in the background.
-        return noptin()->mailer->prepare_then_bg_send( $item );
+        return noptin()->mailer->prepare_then_send( $item );
 
     }
 

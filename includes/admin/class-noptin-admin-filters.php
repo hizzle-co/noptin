@@ -161,6 +161,13 @@ class Noptin_Admin_Filters {
 			'ipaddress'      => 'ip_address',
 		);
 
+		$extra_mappings = get_noptin_subscriber_fields();
+
+		foreach ( $extra_mappings as $key => $label ) {
+			$label      = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
+			$mappings[ $label ] = $key;
+		}
+
 		foreach( array_keys( $mappings ) as $key ) {
 			$mappings["subscriber$key"] = $mappings[ $key ];
 		}

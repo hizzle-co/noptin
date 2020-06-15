@@ -1202,7 +1202,7 @@ class Noptin_Admin {
 	 * @since       1.1.2
 	 */
 	function update_edited_subscriber() {
-		
+
 		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-admin-update-subscriber-nonce'] ) ) {
 			return;
 		}
@@ -1223,6 +1223,10 @@ class Noptin_Admin {
 		$meta       = empty( $post['noptin_custom_field'] ) ? array() : $post['noptin_custom_field'];
 		$data       = wp_parse_args( $meta, $data );
 		$subscriber = (int) $post['subscriber_id'];
+
+		if ( ! empty( $data['active'] ) ) {
+			deactivate_noptin_subscriber( $subscriber );
+		}
 
 		if ( ! empty( $subscriber ) ) {
 			update_noptin_subscriber( $subscriber, $data );

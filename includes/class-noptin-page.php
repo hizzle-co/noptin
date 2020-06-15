@@ -212,7 +212,6 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function pre_unsubscribe_user( $page ) {
-		global $wpdb;
 
 		$value = $this->get_request_value();
 
@@ -220,17 +219,7 @@ class Noptin_Page {
 			return;
 		}
 
-		$table = get_noptin_subscribers_table_name();
-		$wpdb->update(
-			$table,
-			array( 
-				'active'    => 1,
-				'confirmed' => 1,
-			),
-			array( 'confirm_key' => $value ),
-			'%d',
-			'%s'
-		);
+		deactivate_noptin_subscriber( $value );
 
 		clear_noptin_subscriber_cache( $value );
 
@@ -282,7 +271,7 @@ class Noptin_Page {
 
 		// Prepare the subscriber.
 		$subscriber = new Noptin_Subscriber( $value );
-		if ( ! $subscriber->exists() ) {
+		if ( ! $subscriber->exists() || ! empty( $subscriber->confirmed ) ) {
 			return;
 		}
 

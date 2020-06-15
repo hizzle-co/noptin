@@ -1349,6 +1349,7 @@ a.no-campaign-create-new-campaign {
 			}
 
 			.noptin-select-label,
+			.noptin-textarea-label,
 			.noptin-label {
 
 				@media only screen and (min-width: 801px) {
@@ -1363,6 +1364,15 @@ a.no-campaign-create-new-campaign {
 				flex: 1 0 0;
 			}
 
+		}
+
+		.noptin-textarea-wrapper {
+			margin-top: 16px;
+			margin-bottom: 32px;
+			
+			textarea  {
+				margin-bottom: 0;
+			}
 		}
 
 		.noptin-checkbox_alt-wrapper .description {

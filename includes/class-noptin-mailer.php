@@ -60,9 +60,9 @@ class Noptin_Mailer {
 		$data['title']           = $data['email_subject'];
 		$data['logo_url']        = $this->get_logo_url( $data );
 		$data['tracker']         = $this->get_tracker( $data );
-		$data['permission_text'] = empty( $data['permission_text'] ) ? $this->get_permission_text( $data ) : $data['permission_text'];
+		$data['permission_text'] = ! isset( $data['permission_text'] ) ? $this->get_permission_text( $data ) : $data['permission_text'];
 		$data['permission_text'] = wpautop( $data['permission_text'] );
-		$data['footer_text']     = empty( $data['footer_text'] ) ? $this->get_footer_text( $data ) : $data['footer_text'];
+		$data['footer_text']     = ! isset( $data['footer_text'] ) ? $this->get_footer_text( $data ) : $data['footer_text'];
 		$data['footer_text']     = wpautop( $data['footer_text'] );
 		$data['hero_text']       = empty( $data['hero_text'] ) ? '' : $data['hero_text'];
 		$data['cta_url']         = empty( $data['cta_url'] ) ? '' : $data['cta_url'];
@@ -222,7 +222,7 @@ class Noptin_Mailer {
 	/**
 	 * Returns the permission text.
 	 */
-	public function get_permission_text( $data ) {
+	public function get_permission_text( $data = array() ) {
 		$permission_text = get_noptin_option( 'permission_text', $this->default_permission_text() );
 		return apply_filters( 'noptin_mailer_email_permission_text', $permission_text, $data );
 	}

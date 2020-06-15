@@ -200,7 +200,7 @@
 
 				// Only display the popup once per week.
 				if (addedTime && (time - addedTime) < 604800000) {
-					//return true;
+					return true;
 				}
 				localStorage.removeItem("noptinFormDisplayed" + id)
 			}

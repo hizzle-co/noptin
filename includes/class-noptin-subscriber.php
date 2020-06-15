@@ -8,6 +8,7 @@
 /**
  * Main class used to implement a single subscriber's object.
  *
+ * @property int $id
  * @property string $first_name
  * @property string $second_name
  * @property string $email

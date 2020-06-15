@@ -121,6 +121,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 1.3.0 - TBD =
 - General improvements
 - "Plain" newsletter template - ADDED
+- Unsubscription automation rule trigger and action - ADDED
 
 = 1.3.0 - 2020-05-25 =
 - Ability to filter the newletter double opt-in confirmation email - ADDED

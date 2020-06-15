@@ -437,6 +437,35 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 }
 
 /**
+ * De-activates a Noptin subscriber
+ *
+ * @access  public
+ * @since   1.3.1
+ */
+function deactivate_noptin_subscriber( $subscriber ) {
+	global $wpdb;
+
+	// Prepare the subscriber.
+	$subscriber = new Noptin_Subscriber( $subscriber );
+	if ( ! $subscriber->exists() || ! empty( $subscriber->active ) ) {
+		return false;
+	}
+
+	do_action( 'noptin_before_deactivate_subscriber', $subscriber );
+
+	$wpdb->update(
+		get_noptin_subscribers_table_name(),
+		array( 'active' => 1 ),
+		array( 'id' => $subscriber->id ),
+		'%d',
+		'%d'
+	);
+
+	return true;
+
+}
+
+/**
  * Empties the subscriber cache.
  *
  * @access  public

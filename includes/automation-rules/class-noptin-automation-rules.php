@@ -33,11 +33,13 @@ class Noptin_Automation_Rules {
         // Register core actions.
         $this->add_action( new Noptin_Custom_Field_Action() );
         $this->add_action( new Noptin_Email_Action() );
+        $this->add_action( new Noptin_Unsubscribe_Action() );
 
         // Register core triggers.
         $this->add_trigger( new Noptin_New_Subscriber_Trigger() );
         $this->add_trigger( new Noptin_Open_Email_Trigger() );
         $this->add_trigger( new Noptin_Link_Click_Trigger() );
+        $this->add_trigger( new Noptin_Unsubscribe_Trigger() );
 
         // Handle admin rule CRUDE requests.
         add_action( 'noptin_create_automation_rule',  array( $this, 'admin_create_automation_rule' ) );
