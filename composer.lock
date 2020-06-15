@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "914e640f21a02b86592a8d5da20ef2b9",
+    "content-hash": "40be6558548bb4820da333010fb66bf4",
     "packages": [
         {
             "name": "pelago/emogrifier",
@@ -82,7 +82,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.4.41",
+            "version": "v3.4.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
