@@ -46,7 +46,7 @@
     "serialize-javascript": "3.1.0",
     "vue-loader": "15.9.2",
     "vue-quill-editor": "3.0.6",
-    "vue-swatches": "1.0.4",
+    "vue-swatches": "2.1.0",
     "vue-template-compiler": "2.6.11",
     "webpack": "4.43.0",
     "webpack-cli": "3.3.11"
