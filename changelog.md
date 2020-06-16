@@ -1,5 +1,10 @@
 # Changelog
 
+# 1.3.0 - 2020-06-16
+- General improvements
+- "Plain" newsletter template - ADDED
+- Unsubscription automation rule trigger and action - ADDED
+
 ## 1.3.0 - 2020-05-25
 - Ability to filter the newletter double opt-in confirmation email - ADDED
 - Ability to filter the function used to send newsletters - ADDED
