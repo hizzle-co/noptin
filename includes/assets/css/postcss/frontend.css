@@ -512,7 +512,7 @@ $noptin_color: #ff6f00;
 			font-weight: 300;
 			line-height: 1.6;
 			color: #495057;
-			background-color: #fff;
+			background-color: rgba(255, 255, 255, .85);
 			background-clip: padding-box;
 			border: 1px solid #ced4da;
 			border-radius: .25rem;
@@ -547,6 +547,7 @@ $noptin_color: #ff6f00;
 			cursor: pointer;
 			text-align: center;
 			vertical-align: middle;
+			background-color: rgba(255, 255, 255, .85);
 		}
 
 		span {

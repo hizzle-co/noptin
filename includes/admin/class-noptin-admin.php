@@ -203,7 +203,7 @@ class Noptin_Admin {
 		wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
 
 		// Vue js.
-		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.js', array(), '2.6.11', true );
+		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.min.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
 		wp_enqueue_media();

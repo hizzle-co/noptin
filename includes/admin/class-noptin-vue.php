@@ -639,7 +639,7 @@ class Noptin_Vue {
 
 			// Color picker.
 			case 'color':
-				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <noptin-swatch colors='material-basic' max-height='600' shapes='circles' show-fallback v-model='$id' popover-to='left'></noptin-swatch>$description</div>";
+				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <noptin-swatch max-height='600' shapes='circles' fallback-input-class='regular-text' :swatches='swatches' row-length='5' show-fallback v-model='$id' popover-x='left'></noptin-swatch>$description</div>";
 				break;
 
 			case 'switch':
