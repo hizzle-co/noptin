@@ -393,7 +393,7 @@ function noptin_should_show_optins() {
 
 	}
 
-	if ( ! empty( $_REQUEST['noptin_hide'] ) ) {
+	if ( ! empty( $_COOKIE['noptin_hide'] ) ) {
 		return false;
 	}
 

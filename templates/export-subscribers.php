@@ -124,9 +124,9 @@
 								</td>
 							</tr>
 
-							<tr class="form-field-row-search">
+							<tr class="form-field-row-submit">
 								<th scope="row"><?php submit_button( __( 'Download Subscribers', 'newsletter-optin-box' ) ); ?></th>
-								<td></td>
+								<td><a href="https://noptin.com/guide/email-subscribers/exporting-subscribers/"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?></a></td>
 							</tr>
 
 						</tbody>

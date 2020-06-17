@@ -17,6 +17,8 @@ class Noptin_Hooks {
 		// Register our action page's endpoint.
 		add_action( 'init', array( $this, 'add_rewrite_rule' ), 10, 0 );
 
+		// Temporarily hide opt-in forms.
+		add_action( 'init', array( $this, 'maybe_hide_optin_forms' ) );
 	}
 
 	/**
@@ -31,6 +33,19 @@ class Noptin_Hooks {
 		if ( ! get_option( 'noptin_flushed_rules2' ) ) {
 			flush_rewrite_rules();
 			add_option( 'noptin_flushed_rules2', 1 );
+		}
+
+	}
+
+	/**
+	 * Hide opt-in forms from existing users.
+	 *
+	 * @since 1.3.2
+	 */
+	public function maybe_hide_optin_forms() {
+
+		if (  ! empty( $_GET['noptin_hide'] )  ) {
+			setcookie( 'noptin_hide', 'true', 0, COOKIEPATH, COOKIE_DOMAIN );
 		}
 
 	}

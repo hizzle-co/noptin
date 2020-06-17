@@ -147,7 +147,7 @@ class Noptin_Settings {
 				'el'          => 'input',
 				'type'        => 'text',
 				'section'     => 'general',
-				'label'       => __( 'Subscribers Cookie', 'newsletter-optin-box' ),
+				'label'       => __( 'Subscription Cookie', 'newsletter-optin-box' ),
 				'placeholder' => '',
 				'description' => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
 			),

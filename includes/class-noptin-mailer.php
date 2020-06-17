@@ -274,7 +274,11 @@ class Noptin_Mailer {
 		$_content = preg_replace_callback(
 			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
 			function ( $matches ) use ( $url ) {
-				$_url = "$url&to=" . urlencode( $matches[2] );
+				$_url = add_query_arg(
+					'to',
+					add_query_arg( 'noptin_hide', 'true', $matches[2] ),
+					$url
+				);
 				$pre  = $matches[1];
 				$post = $matches[3];
 				return "<a $pre href='$_url' $post >";
