@@ -58,7 +58,7 @@
 												<tr>
 													<td align="center" bgcolor="#CC7953" style="border-radius: 6px;">
 														<div style='text-align: left; padding: 20px;' align='left'>
-															<a class="cta-link" href="<?php echo esc_url( $cta_url ); ?>" target="_blank" style="padding: 16px 36px; font-family: 'Merriweather', serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px; display: inline-block;"><?php echo $cta_text; ?></a>
+															<a class="cta-link" href="<?php echo $cta_url; ?>" target="_blank" style="padding: 16px 36px; font-family: 'Merriweather', serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px; display: inline-block;"><?php echo $cta_text; ?></a>
 														</div>
 													</td>
 												</tr>
