@@ -141,13 +141,13 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
             'permission_reminder'   => array(
 				'el'          => 'textarea',
 				'label'       => __( 'Permission Reminder', 'newsletter-optin-box' ),
-                'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
+                'description' => __( 'Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
                 'default'     => noptin()->mailer->get_permission_text( array() ),
             ),
             'email_footer'    => array(
 				'el'          => 'textarea',
 				'label'       => __( 'Footer Text', 'newsletter-optin-box' ),
-                'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
+                'description' => __( 'Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
                 'default'     => noptin()->mailer->get_footer_text( array() ),
             )
         );
