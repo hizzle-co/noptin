@@ -376,6 +376,10 @@ $noptin_color: #ff6f00;
 			}
 		}
 	}
+
+	.noptin-checkbox-form-field{
+		margin-right: 4px;
+	}
 }
 
 /* Video backgrounds */

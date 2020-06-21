@@ -559,6 +559,8 @@ function noptin_localize_optin_editor( $state ) {
 		'field_props'  => noptin_get_form_field_props(),
 	);
 
+	$params = apply_filters( 'noptin_form_editor_params', $params );
+
 	wp_localize_script( 'noptin', 'noptinEditor', $params );
 }
 

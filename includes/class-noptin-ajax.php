@@ -632,7 +632,7 @@ class Noptin_Ajax {
 		} else {
 
 			// Get the form.
-			$form   = noptin_get_optin_form( $_POST['noptin_form_id'] );
+			$form = noptin_get_optin_form( $_POST['noptin_form_id'] );
 
 			if ( empty( $form ) || ! $form->is_published() ) {
 				echo __( 'This form is in-active.', 'newsletter-optin-box' );
