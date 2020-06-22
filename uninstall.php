@@ -6,28 +6,38 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 global $wpdb;
 
+// Delete the actions page.
 $page = get_option( 'noptin_actions_page' );
 if ( is_numeric( $page ) ) {
 	wp_delete_post( $page, true );
 }
 
 // Delete options.
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'noptin\_%'" );
+$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'noptin\_%';" );
 
-// Delete subscribers table.
-$table = $wpdb->prefix . 'noptin_subscribers';
-if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
-	$wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
+// Delete tables.
+$tables = array(
+	"{$wpdb->prefix}noptin_subscribers",
+	"{$wpdb->prefix}noptin_subscriber_meta",
+	"{$wpdb->prefix}noptin_automation_rules",
+);
+
+foreach ( $tables as $table ) {
+	$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 }
 
-// Delete subscribers meta table.
-$table = $wpdb->prefix . 'noptin_subscriber_meta';
-if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
-	$wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
-}
+// Delete newsletters.
+$wpdb->query( "DELETE a,b
+    FROM wp_posts a
+    LEFT JOIN wp_postmeta b
+        ON (a.ID = b.post_id)
+	WHERE a.post_type = 'noptin-campaign'
+");
 
-// Delete automation rules table.
-$table = $wpdb->prefix . 'noptin_automation_rules';
-if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
-	$wpdb->query( $wpdb->prepare( 'DROP TABLE %s', $table ) );
-}
+// Delete subscription forms.
+$wpdb->query( "DELETE a,b
+    FROM wp_posts a
+    LEFT JOIN wp_postmeta b
+        ON (a.ID = b.post_id)
+	WHERE a.post_type = 'noptin-form'
+");

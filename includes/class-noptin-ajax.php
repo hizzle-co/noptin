@@ -323,6 +323,7 @@ class Noptin_Ajax {
 		foreach ( $subscribers as $subscriber ) {
 			if( ! is_array( $subscriber ) ) {
 				$skipped ++;
+				log_noptin_message( __( 'Import error: not an array. Skipping.', 'newsletter-optin-box' ) );
 				continue;
 			}
 
@@ -330,6 +331,7 @@ class Noptin_Ajax {
 
 			// Ensure that there is a unique email address.
 			if ( empty( $subscriber['email'] ) ) {
+				log_noptin_message( __( 'Import error: email not found. Skipping.', 'newsletter-optin-box' ) );
 				$skipped ++;
 				continue;
 			}
@@ -416,6 +418,7 @@ class Noptin_Ajax {
 
 			if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
 				$skipped ++;
+				log_noptin_message( __( 'Import error:', 'newsletter-optin-box' ) . ' ' . $wpdb->last_error );
 				continue;
 			}
 

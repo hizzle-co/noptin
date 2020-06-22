@@ -122,6 +122,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Ability to delete a subscriber after they unsubscribe - ADDED
 - Subscribers marked as in-active when they resubscribe - FIXED
 - Subscription confirmation not working in Merriweather template - FIXED
+- "CLoseBtnPos not defined" error when editing popups - FIXED
+- Newsletters and Forms not deleted when the plugin is uninstalled - FIXED
 
 = 1.3.1 - 2020-06-16 =
 - General improvements
