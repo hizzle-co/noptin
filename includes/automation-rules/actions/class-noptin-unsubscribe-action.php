@@ -68,7 +68,7 @@ class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
      * @return void
      */
     public function run( $subscriber, $rule, $args ) {
-        return deactivate_noptin_subscriber( $subscriber );
+        return unsubscribe_noptin_subscriber( $subscriber );
     }
 
 }

@@ -168,15 +168,15 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
         if ( empty( $rule->action_settings['email_content'] ) || empty( $rule->action_settings['email_subject'] ) ) {
             return;
         }
-    
-        $email_content = $rule->action_settings['email_content'];
-        $email_subject = $rule->action_settings['email_subject'];
-        $email_preview = $rule->action_settings['email_preview'];
 
         // We only want to send an email to active subscribers.
         if ( ! empty( $subscriber->active ) ) {
 			return;
-		}
+        }
+
+        $email_content = $rule->action_settings['email_content'];
+        $email_subject = $rule->action_settings['email_subject'];
+        $email_preview = isset( $rule->action_settings['email_preview'] ) ? $rule->action_settings['email_preview'] : '';
 
         $merge_tags = get_noptin_subscriber_merge_fields(  $subscriber->id  );
         
@@ -198,8 +198,8 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			'email_subject' 	=> sanitize_text_field( stripslashes_deep( $email_subject ) ),
 			'preview_text'  	=> sanitize_text_field( stripslashes_deep( $email_preview ) ),
             'merge_tags'		=> $merge_tags,
-            'permission_text'   => $rule->action_settings['permission_reminder'],
-            'footer_text'       => $rule->action_settings['email_footer'],
+            'permission_text'   => isset( $rule->action_settings['permission_reminder'] ) ? $rule->action_settings['permission_reminder'] : '',
+            'footer_text'       => isset( $rule->action_settings['email_footer'] ) ? $rule->action_settings['email_footer'] : '',
 		);
 
 		$item = apply_filters( 'noptin_email_action_email_details', $item, $subscriber, $rule, $args );

@@ -100,7 +100,7 @@ class Noptin_Subscriber {
 	 */
 	public function init( $data ) {
 		$this->data = (object) $data;
-		$this->id   = (int) $this->data->id;
+		$this->id   = isset( $this->data->id ) ? (int) $this->data->id : 0;
 	}
 
 	/**

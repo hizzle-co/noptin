@@ -118,7 +118,7 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
         $settings = $rule->trigger_settings;
 
         // Ensure that we have an action for this event.
-        if ( $settings['action'] !== $args['action'] ) {
+        if ( empty( $settings['action'] ) || $settings['action'] !== $args['action'] ) {
             return false;
         }
 

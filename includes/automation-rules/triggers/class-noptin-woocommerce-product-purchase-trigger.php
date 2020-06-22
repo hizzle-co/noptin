@@ -143,6 +143,7 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
                 ),
                 'label'       => __( 'State', 'newsletter-optin-box' ),
                 'placeholder' => __( 'Select the product state', 'newsletter-optin-box' ),
+                'default'     => 'buy'
             ),
 
             'first_time'    => array(
@@ -162,12 +163,12 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
         $settings = $rule->trigger_settings;
 
         // Ensure that we have an action for this event.
-        if ( $settings['action'] !== $args['action'] ) {
+        if ( empty( $settings['action'] ) || $settings['action'] !== $args['action'] ) {
             return false;
         }
 
         // Confirm the products match.
-        if ( $settings['product_id'] != $args['product_id'] ) {
+        if ( empty( $settings['product_id'] ) || $settings['product_id'] != $args['product_id'] ) {
             return false;
         }
 

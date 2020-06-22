@@ -1,5 +1,4 @@
 			<!-- start footer -->
-			<?php if ( ! empty( $permission_text ) || ! empty( $footer_text ) ) { ?>
 			<tr>
 			<td align="center" bgcolor="#D2C7BA" style="padding: 24px;"class="footer">
 				<!--[if (gte mso 9)|(IE)]>
@@ -37,7 +36,6 @@
 				<![endif]-->
 			</td>
 			</tr>
-			<?php } ?>
 			<!-- end footer -->
 
 		</table>
