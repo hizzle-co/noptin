@@ -13,6 +13,28 @@
     </span>
 </div>
 
+<?php if ( 1 === (int) $subscriber->confirmed && ! empty( $subscriber->confirmed_on ) ) : ?>
+
+    <div class="misc-pub-section misc-pub-noptin-unsubscribed-on">
+        <span id="subscriber-unsubscribed-on">
+            <span class="dashicons dashicons-controls-pause" style="padding-right: 3px; color: #607d8b"></span>
+            <?php _e( 'Confirmed On:', 'newsletter-optin-box' ); ?>&nbsp;<b><?php echo esc_html( $subscriber->confirmed_on ); ?></b>
+        </span>
+    </div>
+
+<?php endif; ?>
+
+<?php if ( 0 !== (int) $subscriber->active && ! empty( $subscriber->unsubscribed_on ) ) : ?>
+
+<div class="misc-pub-section misc-pub-noptin-unsubscribed-on">
+    <span id="subscriber-unsubscribed-on">
+        <span class="dashicons dashicons-controls-pause" style="padding-right: 3px; color: #607d8b"></span>
+        <?php _e( 'Unsubscribed On:', 'newsletter-optin-box' ); ?>&nbsp;<b><?php echo esc_html( $subscriber->unsubscribed_on ); ?></b>
+    </span>
+</div>
+
+<?php endif; ?>
+
 <div class="misc-pub-section misc-pub-noptin-subscriber-id">
 	<span id="subscriber-id">
         <span class="dashicons dashicons-admin-users" style="padding-right: 3px; color: #607d8b"></span>

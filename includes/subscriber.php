@@ -465,6 +465,7 @@ function confirm_noptin_subscriber_email( $subscriber ) {
 	
 	$subscriber->clear_cache();
 
+	update_noptin_subscriber_meta( $subscriber->id, 'confirmed_on', current_time( 'mysql' ) );
 	do_action( 'noptin_subscriber_confirmed', new Noptin_Subscriber( $subscriber->id ) );
 
 	return true;
@@ -496,6 +497,7 @@ function deactivate_noptin_subscriber( $subscriber ) {
 		'%d'
 	);
 
+	update_noptin_subscriber_meta( $subscriber->id, 'unsubscribed_on', current_time( 'mysql' ) );
 	$subscriber->clear_cache();
 
 	return true;
