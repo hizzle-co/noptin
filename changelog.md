@@ -1,6 +1,6 @@
 # Changelog
 
-# 1.3.0 - 2020-06-16
+# 1.3.1 - 2020-06-16
 - General improvements
 - "Plain" newsletter template - ADDED
 - Unsubscription automation rule trigger and action - ADDED

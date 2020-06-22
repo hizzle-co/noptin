@@ -309,8 +309,6 @@ function add_noptin_subscriber( $fields ) {
 
 	$subscriber_id = get_noptin_subscriber_id_by_email( trim( $fields['email'] ) );
 	if ( ! empty( $subscriber_id ) ) {
-		$fields['active'] = 1;
-		update_noptin_subscriber( $subscriber_id, $fields );
 		return true;
 	}
 
@@ -437,6 +435,43 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 }
 
 /**
+ * Marks a subscriber as confirmed (Double Opt-in)
+ *
+ * @access  public
+ * @since   1.3.2
+ */
+function confirm_noptin_subscriber_email( $subscriber ) {
+	global $wpdb;
+
+	// Prepare the subscriber.
+	$subscriber = new Noptin_Subscriber( $subscriber );
+	if ( ! $subscriber->exists() || ! empty( $subscriber->confirmed ) ) {
+		return false;
+	}
+
+	do_action( 'noptin_before_confirm_subscriber_email', $subscriber );
+
+	$table = get_noptin_subscribers_table_name();
+	$wpdb->update(
+		$table,
+		array( 
+			'active'    => 0,
+			'confirmed' => 1,
+		),
+		array( 'id' => $subscriber->id ),
+		'%d',
+		'%d'
+	);
+	
+	$subscriber->clear_cache();
+
+	do_action( 'noptin_subscriber_confirmed', new Noptin_Subscriber( $subscriber->id ) );
+
+	return true;
+
+}
+
+/**
  * De-activates a Noptin subscriber
  *
  * @access  public
@@ -461,7 +496,32 @@ function deactivate_noptin_subscriber( $subscriber ) {
 		'%d'
 	);
 
+	$subscriber->clear_cache();
+
 	return true;
+
+}
+
+/**
+ * Unsubscribes a subscriber.
+ *
+ * @access  public
+ * @since   1.3.2
+ */
+function unsubscribe_noptin_subscriber( $subscriber ) {
+	$subscriber = new Noptin_Subscriber( $subscriber );
+
+	if ( $subscriber->exists() ) {
+
+		// Deactivate the subscriber.
+		deactivate_noptin_subscriber( $subscriber );
+
+		// (maybe) delete the subscriber.
+		if ( get_noptin_option( 'delete_on_unsubscribe' ) ) {
+			delete_noptin_subscriber( $subscriber->id );
+		}
+
+	}
 
 }
 

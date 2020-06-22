@@ -118,7 +118,12 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.3.0 - 2020-06-16 =
+= 1.3.2 - 2020-06-23 =
+- Ability to delete a subscriber after they unsubscribe - ADDED
+- Subscribers marked as in-active when they resubscribe - FIXED
+- Subscription confirmation not working in Merriweather template - FIXED
+
+= 1.3.1 - 2020-06-16 =
 - General improvements
 - "Plain" newsletter template - ADDED
 - Unsubscription automation rule trigger and action - ADDED

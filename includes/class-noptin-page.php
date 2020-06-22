@@ -213,20 +213,25 @@ class Noptin_Page {
 	 */
 	public function pre_unsubscribe_user( $page ) {
 
+		// Make sure that the confirmation key exists.
 		$value = $this->get_request_value();
 
-		if ( empty( $value ) ) {
+		if ( empty( $value )  ) {
 			return;
 		}
 
-		deactivate_noptin_subscriber( $value );
+		// Fetch the subscriber.
+		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $value );
 
-		clear_noptin_subscriber_cache( $value );
+		// Unsubscribe them.
+		unsubscribe_noptin_subscriber( $subscriber );
 
+		// If we are redirecting by page id, fetch the page's permalink.
 		if ( is_numeric( $page ) ) {
 			$page = get_permalink( $page );
 		}
 
+		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
 			wp_redirect( $page );
 			exit;
@@ -261,40 +266,24 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function pre_confirm_subscription( $page ) {
-		global $wpdb;
-
 		$value = $this->get_request_value();
 
 		if ( empty( $value ) ) {
 			return;
 		}
 
-		// Prepare the subscriber.
-		$subscriber = new Noptin_Subscriber( $value );
-		if ( ! $subscriber->exists() || ! empty( $subscriber->confirmed ) ) {
-			return;
-		}
+		// Fetch the subscriber.
+		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $value );
 
-		$table   = get_noptin_subscribers_table_name();
-		$wpdb->update(
-			$table,
-			array( 
-				'active'    => 0,
-				'confirmed' => 1,
-			),
-			array( 'confirm_key' => $value ),
-			'%d',
-			'%s'
-		);
+		// And de-activate them.
+		confirm_noptin_subscriber_email( $subscriber );
 
-		$subscriber->clear_cache();
-
-		do_action( 'noptin_subscriber_confirmed', new Noptin_Subscriber( $subscriber->id ) );
-
+		// If we are redirecting by page id, fetch the page's permalink.
 		if ( is_numeric( $page ) ) {
 			$page = get_permalink( $page );
 		}
 
+		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
 			wp_redirect( $page );
 			exit;
