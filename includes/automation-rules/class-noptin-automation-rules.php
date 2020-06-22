@@ -180,6 +180,8 @@ class Noptin_Automation_Rules {
         }
 
         if ( ! $wpdb->insert( $this->get_table(), $fields, '%s' ) ) {
+            log_noptin_message( $wpdb->last_query );
+            log_noptin_message( $wpdb->last_error );
             return false;
         }
 
@@ -303,7 +305,7 @@ class Noptin_Automation_Rules {
             );
             exit;
         }
-        
+
         noptin()->admin->show_error( __( 'There was a problem creating your automation rule. Please try again.', 'newsletter-optin-box' ) );
 
     }
