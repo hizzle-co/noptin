@@ -37,20 +37,26 @@ class Noptin_Inpost {
 	 * @return      string
 	 */
 	public function append_inpost( $content ) {
+		global $post;
 
 		// Maybe abort early.
 		if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() || is_noptin_actions_page() || is_preview() ) {
-			return  $content;
+			return $content;
 		}
 
 		// ...or the user is hiding all opt-in forms.
 		if ( ! empty( $_GET['noptin_hide'] ) ) {
-			return;
+			return $content;
 		}
 
 		// Do not show on elementor previews.
 		if ( isset( $_GET['elementor-preview'] ) ) {
-			return;
+			return $content;
+		}
+
+		// Or elementor pages.
+		if ( $post && noptin_is_page_built_with_elementor( $post->ID ) ) {
+			return $content;
 		}
 
 		$forms = $this->get_forms();

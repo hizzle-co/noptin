@@ -1307,7 +1307,8 @@ function get_special_noptin_form_fields() {
         'last_name',
         'name',
         'GDPR_consent'
-    );
+	);
+	$to_ignore = apply_filters( 'noptin_special_fields_to_ignore', $to_ignore );
 
 	foreach ( $forms as $form ) {
 
@@ -1539,4 +1540,19 @@ function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
 
 	// We have an invalid argument.
 	return false;
+}
+
+/**
+ * Is built with Elementor.
+ *
+ * Check whether the post was built with Elementor.
+ *
+ * @since 1.3.2
+ *
+ * @param int $post_id Post ID.
+ *
+ * @return bool Whether the post was built with Elementor.
+ */
+function noptin_is_page_built_with_elementor( $post_id ) {
+	return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
 }

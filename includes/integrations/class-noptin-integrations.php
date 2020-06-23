@@ -40,6 +40,12 @@ class Noptin_Integrations {
 			$this->load_wpforms_integration();
 		}
 
+		// Elementor forms integration.
+		add_action( 'elementor_pro/init', array( $this, 'load_elementor_forms_integration' ) );
+		if ( did_action( 'elementor_pro/init' ) ) {
+			$this->load_elementor_forms_integration();
+		}
+
 		// WooCommerce integration.
 		if ( class_exists( 'WooCommerce' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-woocommerce.php';
@@ -73,6 +79,29 @@ class Noptin_Integrations {
 	public function load_wpforms_integration() {
 		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-wpforms.php';
 		new Noptin_WPForms();
+	}
+
+	/**
+	 * Loads Elementor forms integration
+	 *
+	 * @access      public
+	 * @since       1.3.2
+	 */
+	public function load_elementor_forms_integration() {
+
+		// Ensure the elementor pro class exists.
+		if ( ! class_exists( '\ElementorPro\Plugin' ) ) {
+			return;
+		}
+
+		// Load the elementor integration.
+		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-elementor-forms-integration.php';
+
+		// Instantiate the action class
+		$action = new Noptin_Elementor_Forms_Integration();
+
+		// Register the action with form widget
+		\ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' )->add_form_action( $action->get_name(), $action );
 	}
 
 	/**

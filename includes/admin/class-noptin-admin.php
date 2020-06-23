@@ -289,7 +289,7 @@ class Noptin_Admin {
 				'close'         => __( 'Close', 'newsletter-optin-box' ),
 				'imported'      => __( 'Imported', 'newsletter-optin-box' ),
 				'skipped'       => __( 'Skipped', 'newsletter-optin-box' ),
-				'import_fail'   => __( 'Check your browser console to see why your subscribers were not imported', 'newsletter-optin-box' ),
+				'import_fail'   => __( 'Visit Noptin > Tools > Debug Log to see why your subscribers were not imported', 'newsletter-optin-box' ),
 				'import_title'  => __( 'Select your CSV file', 'newsletter-optin-box' ),
 				'import_footer' => __( 'Import subscribers from any system into Noptin', 'newsletter-optin-box' ),
 				'import_label'  => __( 'select your import file', 'newsletter-optin-box' ),
@@ -1224,11 +1224,18 @@ class Noptin_Admin {
 		$data       = wp_parse_args( $meta, $data );
 		$subscriber = (int) $post['subscriber_id'];
 
-		if ( ! empty( $data['active'] ) ) {
-			deactivate_noptin_subscriber( $subscriber );
-		}
-
 		if ( ! empty( $subscriber ) ) {
+
+			// Subscriber activation/deactivation.
+			if ( ! empty( $data['active'] ) ) {
+				deactivate_noptin_subscriber( $subscriber );
+			}
+
+			// Subscriber email confirmation.
+			if ( ! empty( $data['confirmed'] ) ) {
+				confirm_noptin_subscriber_email( $subscriber );
+			}
+
 			update_noptin_subscriber( $subscriber, $data );
 			$this->show_success( __( 'Subscriber successfully updated', 'newsletter-optin-box' ) );
 		}
