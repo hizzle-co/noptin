@@ -22,10 +22,6 @@ class Noptin_Integrations {
 	 */
 	public function __construct() {
 
-		// The base class for most integrations.
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-integration.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-abstract-ecommerce-integration.php';
-
 		// Comment prompts.
 		add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
 
@@ -48,22 +44,18 @@ class Noptin_Integrations {
 
 		// WooCommerce integration.
 		if ( class_exists( 'WooCommerce' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-woocommerce.php';
 			$this->integrations['woocommerce'] = new Noptin_WooCommerce();
 		}
 
 		// EDD integration.
 		if ( class_exists( 'Easy_Digital_Downloads' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-edd.php';
 			$this->integrations['edd'] = new Noptin_EDD();
 		}
 
 		// WP Registration form integration.
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-wp-registration-form.php';
 		$this->integrations['wp_registration_form'] = new Noptin_WP_Registration_Form();
 
 		// WP Comment form integration.
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-wp-comment-form.php';
 		$this->integrations['wp_comment_form'] = new Noptin_WP_Comment_Form();
 
 		do_action( 'noptin_integrations_load', $this );
@@ -77,7 +69,6 @@ class Noptin_Integrations {
 	 * @since       1.2.6
 	 */
 	public function load_wpforms_integration() {
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-wpforms.php';
 		new Noptin_WPForms();
 	}
 
@@ -93,9 +84,6 @@ class Noptin_Integrations {
 		if ( ! class_exists( '\ElementorPro\Plugin' ) ) {
 			return;
 		}
-
-		// Load the elementor integration.
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-elementor-forms-integration.php';
 
 		// Instantiate the action class
 		$action = new Noptin_Elementor_Forms_Integration();
@@ -115,6 +103,5 @@ class Noptin_Integrations {
 	function comment_post_redirect( $location, $comment ) {
 		return add_query_arg( 'noptin-ca', $comment->comment_ID, $location );
 	}
-
 
 }

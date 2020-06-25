@@ -252,7 +252,7 @@ class Noptin {
 		add_action( 'init', array( $this, 'register_blocks' ) );
 
 		// Set up localisation.
-		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
 
 		// (Maybe) upgrade the database;
 		add_action( 'init', array( $this, 'maybe_upgrade_db' ) );

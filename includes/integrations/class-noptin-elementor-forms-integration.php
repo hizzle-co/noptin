@@ -64,7 +64,7 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		 * @since 1.3.1
 		 */
         $subscriber = apply_filters( 'noptin_elementor_forms_subscriber_details', $subscriber, $record, $ajax_handler );
-        
+
         add_noptin_subscriber( wp_unslash( $subscriber ) );
     }
 
