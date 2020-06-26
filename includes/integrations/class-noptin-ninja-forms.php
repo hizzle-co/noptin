@@ -28,94 +28,156 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 	protected $_transient_expiration = MINUTE_IN_SECONDS;
 
 	/**
+	 * Returns an array of map fields
+	 */
+	public function get_map_fields() {
+
+		$map_fields = array(
+
+            array(
+                'name'        => 'name',
+				'label'       => __( 'Subscriber Name', 'newsletter-optin-box' ),
+				'placeholder' => __( "The subscriber's name", 'newsletter-optin-box' ),
+            ),
+
+            array(
+                'name'        => 'email',
+				'label'       => __( 'Subscriber Email', 'newsletter-optin-box' ),
+				'placeholder' => __( "The subscriber's email address", 'newsletter-optin-box' ),
+            ),
+
+            array(
+                'name'  => 'GDPR_consent',
+                'label' => __( 'GDPR Consent', 'newsletter-optin-box' ),
+			),
+			
+			array(
+                'name'  => 'conversion_page',
+                'label' => __( 'Conversion Page', 'newsletter-optin-box' ),
+            ),
+
+        );
+
+        foreach ( get_special_noptin_form_fields() as $name => $field ) {
+
+            $id    = esc_attr( sanitize_html_class( $name ) );
+            $type  = esc_attr( $field[0] );
+            $label = wp_kses_post( $field[1] );
+
+            if ( $type === 'text' || $type === 'checkbox' || $type === 'textarea' || $type === 'hidden' ) {
+
+                $map_fields[] = array(
+                    'name'    => $id,
+                    'label'   => $label,
+                );
+
+            }
+
+		}
+
+		return apply_filters( 'noptin_ninja_forms_map_fields', $map_fields );
+
+	}
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		parent::__construct();
-
 		$this->_nicename = 'Noptin';
 
+		/*
+		 * Settings
+		 */
+		$map_fields = $this->get_map_fields();
+
+		foreach ( $map_fields as $field ) {
+			$name = 'noptin_' . $field['name'];
+			$this->_settings[ $name ] = array(
+
+				'name'	         => $name,
+				'type'	         => isset( $field['type'] ) ? $field['type'] : 'textbox',
+				'label'	         => $field['label'],
+				'width'	         => isset( $field['width'] ) ? $field['width'] : 'full',
+				'group'	         => isset( $field['group'] ) ? $field['group'] : 'primary',
+				'value'	         => isset( $field['value'] ) ? $field['value'] : '',
+				'placeholder'    => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
+				'help'           => isset( $field['help'] ) ? $field['help'] : '',
+				'use_merge_tags' => isset( $field['use_merge_tags'] ) ? $field['use_merge_tags'] : true
+
+			);
+		}
+		
 		$this->_settings = apply_filters( 'noptin_ninja_forms_integration_action_settings', $this->_settings );
 
 	}
 
 	/**
-	 * Get lists.
-	 */
-	public function get_lists() {
-		return array();
-	}
-
-	/**
 	 * Process the action
 	 *
-	 * @param array $action_id
+	 * @param array $action_settings
 	 * @param int   $form_id
 	 * @param array $data
 	 *
 	 * @return array
 	 */
-	public function process( $action_id, $form_id, $data ) {
+	public function process( $action_settings, $form_id, $data ) {
 
-		// Ensure the form has fields.
-		if ( empty( $data['fields'] ) ) {
+		// All subscribers need an email address.
+		if ( ! is_email( $action_settings['noptin_email'] ) )  {
 			return $data;
 		}
 
 		// Prepare Noptin Fields.
-		$noptin_fields = array(
-			'_subscriber_via' => 'ninja_forms',
-			'ninja_form_id'   => $form_id,
-		);
+		$noptin_fields = $this->map_fields( $action_settings );
 
-		// Take care of special fields.
-		$mappings = array(
-			'firstname' => 'first_name',
-			'lastname'  => 'last_name',
-			'name'      => 'name',
-			'email'     => 'email',
-		);
+		// Add integration data.
+		$noptin_fields['integration_data'] = compact( 'action_settings', 'data', 'form_id' );
 
-		// Process each field separately.
-		foreach ( $data['fields'] as $field ) {
-
-			// Ignore submit buttons and fields that do not have a value.
-			if ( $field['type'] === 'submit' || $field['value'] === '' ) {
-				continue;
-			}
-
-			$value = $field['value'];
-
-			// Convert checkboxes to yes/no values.
-			if ( $field['type'] === 'checkbox' ) {
-
-				if ( empty( $value ) ) {
-					$value = __( 'No', 'newsletter-optin-box' );
-				} else {
-					$value = __( 'Yes', 'newsletter-optin-box' );
-				}
-			}
-
-			// Map to a special field or save as is.
-			if ( isset( $mappings[ $field['type'] ] ) ) {
-				$noptin_fields[ $mappings[ $field['type'] ] ] = $value;
-			} else {
-				$noptin_fields[ $field['label'] ] = $value;
-			}
-
-		}
-
-		$noptin_fields['integration_data'] = $data;
-
+		// Filter the subscriber fields.
 		$noptin_fields = apply_filters( 'noptin_ninja_forms_integration_new_subscriber_fields', $noptin_fields );
 
+		// Register the subscriber.
 		add_noptin_subscriber( $noptin_fields );
 
+		// Return subscriber data.
 		return $data;
 	}
 
+	/**
+	 * @param array $settings
+	 *
+	 * @return array
+	 */
+	private function map_fields( $settings ) {
+
+		// Prepare subscriber details.
+		$subscriber = array(
+            '_subscriber_via' => __( 'Ninja Forms', 'newsletter-optin-box' ),
+        );
+
+        // Add the subscriber's IP address.
+		$address = noptin_get_user_ip();
+		if ( ! empty( $address ) && '::1' !== $address ) {
+			$subscriber['ip_address'] = $address;
+		}
+
+		// Add map fields.
+		$map_fields = wp_list_pluck( $this->get_map_fields(), 'name' );
+
+		foreach ( $map_fields as $field ) {
+			if ( isset( $settings[ "noptin_$field" ] ) ) {
+				$subscriber[ $field ] = $settings[ "noptin_$field" ];
+			}
+		}
+
+		return $subscriber;
+	}
 
 }
 
 $ninja_forms = Ninja_Forms::instance();
 $ninja_forms->actions['noptin'] = new Noptin_Ninja_Forms();
+
+// WooCOmmerce integration customer reaches lifetime values
+// WooCommerce integration repeat purchase

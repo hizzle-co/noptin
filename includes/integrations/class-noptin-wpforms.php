@@ -146,7 +146,7 @@ class Noptin_WPForms {
 
 		// Prepare Noptin Fields.
 		$noptin_fields = array(
-			'_subscriber_via' => 'wpforms',
+			'_subscriber_via' => 'WPForms',
 			'email'           => $fields[ $email_field_id ]['value'],
 		);
 

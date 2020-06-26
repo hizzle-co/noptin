@@ -54,6 +54,11 @@ class Noptin_Inpost {
 			return $content;
 		}
 
+		// Do not show on Ninja Forms previews.
+		if ( isset( $_GET['nf_preview_form'] ) || isset( $_GET['nf_iframe'] ) ) {
+			return $content;
+		}
+
 		// Or elementor pages.
 		if ( $post && noptin_is_page_built_with_elementor( $post->ID ) ) {
 			return $content;

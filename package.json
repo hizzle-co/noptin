@@ -25,6 +25,9 @@
     "url": "https://github.com/hizzle-co/noptin/issues"
   },
   "homepage": "https://github.com/hizzle-co/noptin#readme",
+  "browserslist": [
+    "extends @wordpress/browserslist-config"
+  ],
   "dependencies": {
     "install": "0.13.0",
     "lodash.find": "4.6.0",
@@ -39,8 +42,11 @@
     "@babel/core": "7.10.3",
     "@babel/plugin-transform-runtime": "7.10.3",
     "@babel/preset-env": "7.10.3",
+    "@wordpress/babel-preset-default": "4.16.0",
+    "@wordpress/browserslist-config": "2.7.0",
     "autoprefixer": "9.8.2",
     "babel-loader": "8.1.0",
+    "browserslist": "4.12.1",
     "css-loader": "3.6.0",
     "cssnano": "4.1.10",
     "precss": "4.0.0",

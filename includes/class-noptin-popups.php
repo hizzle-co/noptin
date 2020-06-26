@@ -46,6 +46,11 @@ class Noptin_Popups {
 			return;
 		}
 
+		// Do not show on Ninja Forms previews.
+		if ( isset( $_GET['nf_preview_form'] ) || isset( $_GET['nf_iframe'] ) ) {
+			return;
+		}
+
 		/**
 		 * Fires before popups are displayed
 		 *

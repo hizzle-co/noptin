@@ -82,7 +82,7 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		$fields = $record->get( 'fields' );
 
 		$subscriber = array(
-            '_subscriber_via' => 'elementor',
+            '_subscriber_via' => 'Elementor',
             'conversion_page' => isset( $_POST['referrer'] ) ? $_POST['referrer'] : '',
         );
 
