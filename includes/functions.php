@@ -1556,3 +1556,16 @@ function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
 function noptin_is_page_built_with_elementor( $post_id ) {
 	return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
 }
+
+/**
+ * Pretty prints a variable's data.
+ *
+ * @since 1.3.3
+ *
+ * @param mixed $data The data to print.
+ */
+function noptin_dump( $data ) {
+	echo '<pre>';
+	var_dump( $data );
+	echo '</pre>';
+}

@@ -164,16 +164,6 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
      */
     public function run( $subscriber, $rule, $args ) {
 
-        // Abort if we do not have a subject or an email.
-        if ( empty( $rule->action_settings['email_content'] ) || empty( $rule->action_settings['email_subject'] ) ) {
-            return;
-        }
-
-        // We only want to send an email to active subscribers.
-        if ( ! empty( $subscriber->active ) ) {
-			return;
-        }
-
         $email_content = $rule->action_settings['email_content'];
         $email_subject = $rule->action_settings['email_subject'];
         $email_preview = isset( $rule->action_settings['email_preview'] ) ? $rule->action_settings['email_preview'] : '';
@@ -207,6 +197,42 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
         // Sends the email in the background.
         return noptin()->mailer->prepare_then_send( $item );
 
+    }
+
+    /**
+     * Returns whether or not the action can run (dependancies are installed).
+     *
+     * @since 1.3.3
+     * @param Noptin_Subscriber $subscriber The subscriber.
+     * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+     * @param array $args Extra arguments passed to the action.
+     * @return bool
+     */
+    public function can_run( $subscriber, $rule, $args ) {
+
+        // Abort if we do not have a subject or an email.
+        if ( empty( $rule->action_settings['email_content'] ) || empty( $rule->action_settings['email_subject'] ) ) {
+            log_noptin_message(
+                sprintf(
+                    __( 'Email automation rule action not sent to %s because either the subject or the content has not been set' ),
+                    $subscriber->email
+                )
+            );
+            return false;
+        }
+
+        // We only want to send an email to active subscribers.
+        if ( ! empty( $subscriber->active ) ) {
+            log_noptin_message(
+                sprintf(
+                    __( 'Email automation rule action not sent to %s because the subscriber is not active' ),
+                    $subscriber->email
+                )
+            );
+			return false;
+        }
+
+        return true;
     }
 
 }

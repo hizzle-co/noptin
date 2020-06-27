@@ -102,11 +102,22 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	/**
 	 * Returns a given customer's order count.
 	 *
-	 * @param int $customer_id_or_email The customer's id or email.
+	 * @param string|int $customer_id_or_email The customer's id or email.
 	 * @since 1.3.0
 	 * @return int
 	 */
-	public function get_order_count( $customer_id_or_email = null ) {
+	public function get_order_count( $customer_id_or_email ) {
+		return 0;
+	}
+
+	/**
+	 * Returns a given customer's total spent.
+	 *
+	 * @param string|int $customer_id_or_email The customer's id or email.
+	 * @since 1.3.3
+	 * @return int
+	 */
+	public function get_total_spent( $customer_id_or_email ) {
 		return 0;
 	}
 

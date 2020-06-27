@@ -62,6 +62,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Automation rules.
 		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
+
 	}
 
 	/**
@@ -72,7 +73,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function register_automation_rules( $rules ) {
 		$rules->add_trigger( new Noptin_WooCommerce_New_Order_Trigger( $this ) );
-        $rules->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger( $this ) );
+		$rules->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger( $this ) );
+		$rules->add_trigger( new Noptin_WooCommerce_Lifetime_Value_Trigger( $this ) );
 	}
 
 	/**
@@ -299,6 +301,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		$details = array(
 			'id'       => $order->get_id(),
+			'order_id' => $order->get_id(),
 			'total'    => $order->get_total(),
 			'tax'      => $order->get_total_tax(),
 			'fees'     => $order->get_total_fees(),
@@ -367,10 +370,14 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_order_count( $customer_id_or_email = null ) {
+	public function get_order_count( $customer_id_or_email ) {
+
+		if ( empty( $customer_id_or_email ) ) {
+			return 0;
+		}
 
 		if ( is_numeric( $customer_id_or_email ) ) {
-			return wc_get_customer_order_count( $customer_id_or_email );
+			return (int) wc_get_customer_order_count( $customer_id_or_email );
 		}
 
 		$orders = wc_get_orders(
@@ -383,6 +390,39 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		);
 
 		return count( $orders );
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_total_spent( $customer_id_or_email ) {
+
+		if ( empty( $customer_id_or_email ) ) {
+			return 0;
+		}
+
+		if ( is_numeric( $customer_id_or_email ) ) {
+			return (float) wc_get_customer_total_spent( $customer_id_or_email );
+		}
+
+		// Fetch all customer orders.
+		$orders = wc_get_orders(
+			array(
+				'limit'         => -1,
+				'billing_email' => $customer_id_or_email,
+				'status'        => wc_get_is_paid_statuses(),
+			)
+		);
+
+		$total = 0;
+
+		// Get the sum of order totals.
+		foreach( $orders as $order ) {
+			$total += $order->get_total();
+		}
+
+		return $total;
 
 	}
 
@@ -448,7 +488,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	public function get_product_details( $product_id ) {
 		$product = wc_get_product( $product_id );
 
-		if ( empty( $product ) || $product->is_purchasable() ) {
+		if ( empty( $product ) || ! $product->is_purchasable() ) {
 			return array();
 		}
 

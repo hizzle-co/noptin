@@ -25,8 +25,8 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
      */
     public function __construct( $bridge ) {
         $this->bridge = $bridge;
-        add_action( 'noptin_woocommerce_integration_product_refund', array( $this, 'init_refund_trigger' ), 10, 5 );
-        add_action( 'noptin_woocommerce_integration_product_buy', array( $this, 'init_buy_trigger' ), 10, 5 );
+        add_action( 'noptin_woocommerce_integration_product_refund', array( $this, 'init_refund_trigger' ), 10000, 5 );
+        add_action( 'noptin_woocommerce_integration_product_buy', array( $this, 'init_buy_trigger' ), 10000, 5 );
     }
 
     /**
@@ -73,32 +73,30 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
 
             if ( ! empty( $settings['first_time'] ) ) {
                 return sprintf(
-                    __( 'When first time customer is refunded for %s', 'newsletter-optin-box' ),
-                   "<code>$product</code>"
-                );
-            } else {
-                return sprintf(
-                    __( 'When a customer is refunded for %s', 'newsletter-optin-box' ),
+                    __( 'When a first time customer is refunded for %s', 'newsletter-optin-box' ),
                    "<code>$product</code>"
                 );
             }
 
-        } else {
-
-            if ( ! empty( $settings['first_time'] ) ) {
-                return sprintf(
-                    __( 'The first time a subscriber buys%s', 'newsletter-optin-box' ),
-                   "<code>$product</code>"
-                );
-            } else {
-                return sprintf(
-                    __( 'When a subscriber buys %s', 'newsletter-optin-box' ),
-                   "<code>$product</code>"
-                );
-            }
+            return sprintf(
+                __( 'When a customer is refunded for %s', 'newsletter-optin-box' ),
+               "<code>$product</code>"
+            );
 
         }
-        return __( 'When a subscriber buys a WooCommerce product', 'newsletter-optin-box' );
+        
+        if ( ! empty( $settings['first_time'] ) ) {
+            return sprintf(
+                __( 'The first time a subscriber buys %s', 'newsletter-optin-box' ),
+               "<code>$product</code>"
+            );
+        }
+
+        return sprintf(
+            __( 'When a subscriber buys %s', 'newsletter-optin-box' ),
+           "<code>$product</code>"
+        );
+
     }
 
     /**
@@ -174,17 +172,15 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
 
         // Are we firering for new buyers only?
         if ( ! empty( $settings['first_time'] ) ) {
-            $user = $subscriber->email;
 
-            if ( ! empty( $args['wp_user_id'] ) ) {
-                $user = $args['wp_user_id'];
+            // Fetch the user associated with the order.
+            $user = $this->bridge->get_order_customer_user_id( $args['order_id'] );
+            if ( empty( $user ) ) {
+                $user = $this->bridge->get_order_customer_email( $args['order_id'] );
             }
 
-            $count = $this->bridge->get_product_purchase_count( $user, $args['product_id'] );
-            
-            if ( $count > 1 ) {
-                return false;
-            }
+            return $this->bridge->get_product_purchase_count( $user, $args['product_id'] ) === 1;
+
         }
 
         return true;
@@ -228,4 +224,3 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
     }
 
 }
-// TODO: First time buyers of the product, rule description

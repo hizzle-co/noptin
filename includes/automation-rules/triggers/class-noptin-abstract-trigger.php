@@ -18,20 +18,6 @@ abstract class Noptin_Abstract_Trigger {
     protected $rules = null;
 
     /**
-     * Constructor.
-     *
-     * @since 1.2.8
-     * @return string
-     */
-    public function __construct() {
-        // Run your add action call here.
-        // e.g add_action( 'some_action', array( $this, 'maybe_trigger' ) );
-        // The maybe_trigger method has not been defined on this class so
-        // you will want to define it in your child class. After you are done,
-        // processing the hook, class $this->trigger( $subscriber, $args )
-    }
-
-    /**
      * Retrieve the trigger's unique id.
      *
      * Only alphanumerics, dashes and underscrores are allowed.

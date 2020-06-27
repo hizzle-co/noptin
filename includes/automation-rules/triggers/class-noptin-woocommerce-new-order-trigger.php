@@ -25,7 +25,7 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
      */
     public function __construct( $bridge ) {
         $this->bridge = $bridge;
-        add_action( 'noptin_woocommerce_integration_order', array( $this, 'init_trigger' ), 10, 4 );
+        add_action( 'noptin_woocommerce_integration_order', array( $this, 'init_trigger' ), 10000, 4 );
     }
 
     /**
@@ -53,7 +53,25 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
      * @inheritdoc
      */
     public function get_rule_description( $rule ) {
-        return __( 'When a subscriber makes a new WooCommerce order', 'newsletter-optin-box' );
+        $settings = $rule->trigger_settings;
+        $actions  = $this->get_order_actions();
+
+        if ( empty( $settings['action'] ) || ! isset( $actions[ $settings['action'] ] ) ) {
+            return __( 'When a subscriber makes a new WooCommerce order', 'newsletter-optin-box' );
+        }
+
+        if ( ! empty( $settings['new_customer'] ) ) {
+            return sprintf(
+                __( "When a first-time customer's WooCommerce order is %s", 'newsletter-optin-box' ),
+                $actions[ $settings['action'] ]
+            );
+        }
+
+        return sprintf(
+            __( "When a subscriber's WooCommerce order is %s", 'newsletter-optin-box' ),
+            $actions[ $settings['action'] ]
+        );
+
     }
 
     /**
@@ -75,6 +93,26 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
     }
 
     /**
+     * Returns an array of order actions.
+     *
+     * @return array
+     */
+    public function get_order_actions() {
+        return array(
+            'created'    => __( 'Created', 'newsletter-optin-box' ),
+            'pending'    => __( 'Pending', 'newsletter-optin-box' ),
+            'processing' => __( 'Processing', 'newsletter-optin-box' ),
+            'held'       => __( 'Held', 'newsletter-optin-box' ),
+            'paid'       => __( 'Paid', 'newsletter-optin-box' ),
+            'completed'  => __( 'Completed', 'newsletter-optin-box' ),
+            'refunded'   => __( 'Refunded', 'newsletter-optin-box' ),
+            'cancelled'  => __( 'Cancelled', 'newsletter-optin-box' ),
+            'failed'     => __( 'Failed', 'newsletter-optin-box' ),
+            'deleted'    => __( 'Deleted', 'newsletter-optin-box' ),
+        );
+    }
+
+    /**
      * @inheritdoc
      */
     public function get_settings() {
@@ -85,18 +123,7 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 				'el'          => 'select',
 				'label'       => __( 'Order status', 'newsletter-optin-box' ),
 				'placeholder' => __( 'Select order state', 'newsletter-optin-box' ),
-				'options'     => array(
-                    'created'    => __( 'Created', 'newsletter-optin-box' ),
-                    'pending'    => __( 'Pending', 'newsletter-optin-box' ),
-                    'processing' => __( 'Processing', 'newsletter-optin-box' ),
-                    'held'       => __( 'Held', 'newsletter-optin-box' ),
-                    'paid'       => __( 'Paid', 'newsletter-optin-box' ),
-                    'completed'  => __( 'Completed', 'newsletter-optin-box' ),
-                    'refunded'   => __( 'Refunded', 'newsletter-optin-box' ),
-                    'cancelled'  => __( 'Cancelled', 'newsletter-optin-box' ),
-                    'failed'     => __( 'Failed', 'newsletter-optin-box' ),
-                    'deleted'    => __( 'Deleted', 'newsletter-optin-box' ),
-                ),
+				'options'     => $this->get_order_actions(),
 				'description' => __( 'Select the order status for which this trigger should fire.', 'newsletter-optin-box' ),
             ),
 
@@ -124,13 +151,14 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 
         // Are we firering for new customers only?
         if ( ! empty( $settings['new_customer'] ) ) {
-            $user = $args['email'];
 
-            if ( ! empty( $args['wp_user_id'] ) ) {
-                $user = $args['wp_user_id'];
+            // Fetch the user associated with the order.
+            $user = $this->bridge->get_order_customer_user_id( $args['order_id'] );
+            if ( empty( $user ) ) {
+                $user = $this->bridge->get_order_customer_email( $args['order_id'] );
             }
 
-            return $this->bridge->get_order_count( $user ) == 1;
+            return $this->bridge->get_order_count( $user ) === 1;
         }
 
         return true;
