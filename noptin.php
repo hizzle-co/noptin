@@ -248,6 +248,9 @@ class Noptin {
 		// Init the plugin after WP inits
 		add_action( 'init', array( $this, 'init' ), 5 );
 
+		// Init integrations.
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+
 		// Register subscription block.
 		add_action( 'init', array( $this, 'register_blocks' ) );
 
@@ -266,6 +269,16 @@ class Noptin {
 		// Register our new widget.
 		add_action( 'widgets_init', array( $this, 'register_widget' ) );
 
+	}
+
+	/**
+	 * Load integrations after plugins are loaded.
+	 * 
+	 * @access      public
+	 * @since       1.3.3
+	 */
+	public function plugins_loaded () {
+		$this->integrations = new Noptin_Integrations();
 	}
 
 	/**
@@ -303,9 +316,6 @@ class Noptin {
 		// Form types.
 		$this->popups = new Noptin_Popups();
 		$this->inpost = new Noptin_Inpost();
-
-		// Integrations.
-		$this->integrations 	  = new Noptin_Integrations();
 
 		// Ajax.
 		$this->ajax 			  = new Noptin_Ajax();

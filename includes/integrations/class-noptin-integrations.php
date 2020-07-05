@@ -25,27 +25,22 @@ class Noptin_Integrations {
 		// Comment prompts.
 		add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
 
-		// Ninja forms integration.
-		if ( class_exists( 'Ninja_Forms' ) ) {
-			require_once plugin_dir_path( __FILE__ ) . 'class-noptin-ninja-forms.php';
-		}
+		// Load integrations.
+		$integrations = array(
+			'nf_init'            => 'load_ninja_forms_integration',
+			'wpforms_loaded'     => 'load_wpforms_integration',
+			'wpcf7_init'         => 'load_contact_form_7_integration',
+			'elementor_pro/init' => 'load_elementor_forms_integration',
+			'gform_loaded'       => 'load_gravity_forms_integration',
+		);
 
-		// WPForms integration.
-		add_action( 'wpforms_loaded', array( $this, 'load_wpforms_integration' ) );
-		if ( did_action( 'wpforms_loaded' ) ) {
-			$this->load_wpforms_integration();
-		}
+		foreach ( $integrations as $action => $method ) {
 
-		// Contact form 7.
-		add_action( 'wpcf7_init', array( $this, 'load_contact_form_7' ) );
-		if ( did_action( 'wpcf7_init' ) ) {
-			$this->load_contact_form_7();
-		}
+			add_action( $action, array( $this, $method ) );
+			if ( did_action( $action ) ) {
+				call_user_func( array( $this, $method ) );
+			}
 
-		// Elementor forms integration.
-		add_action( 'elementor_pro/init', array( $this, 'load_elementor_forms_integration' ) );
-		if ( did_action( 'elementor_pro/init' ) ) {
-			$this->load_elementor_forms_integration();
 		}
 
 		// WooCommerce integration.
@@ -79,12 +74,37 @@ class Noptin_Integrations {
 	}
 
 	/**
+	 * Loads Ninja Forms integration
+	 *
+	 * @access      public
+	 * @since       1.3.3
+	 */
+	public function load_ninja_forms_integration() {
+		if ( class_exists( 'Ninja_Forms' ) ) {
+			$ninja_forms = Ninja_Forms::instance();
+			$ninja_forms->actions['noptin'] = new Noptin_Ninja_Forms();
+		}
+	}
+
+	/**
+	 * Loads Gravity Forms integration
+	 *
+	 * @access      public
+	 * @since       1.3.3
+	 */
+	public function load_gravity_forms_integration() {
+		if ( class_exists( 'GFAddOn' ) ) {
+			GFAddOn::register( 'Noptin_Gravity_Forms' );
+		}
+	}
+
+	/**
 	 * Loads Contact Form 7 integration
 	 *
 	 * @access      public
 	 * @since       1.3.3
 	 */
-	public function load_contact_form_7() {
+	public function load_contact_form_7_integration() {
 		new Noptin_Contact_Form_7();
 	}
 

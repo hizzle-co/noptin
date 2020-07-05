@@ -121,6 +121,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 1.3.3 - 2020-06-29 =
 - WooCommerce lifetime value automation trigger - ADDED
 - Integration with Contact Forms 7 - ADDED
+- Integration with Gravity Forms - ADDED
 
 = 1.3.2 - 2020-06-23 =
 - Ability to delete a subscriber after they unsubscribe - ADDED
