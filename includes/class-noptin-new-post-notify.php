@@ -316,7 +316,6 @@ class Noptin_New_Post_Notify {
 				'email_body'    => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
 				'email_subject' => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
 				'preview_text'  => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
-				'template'      => 'plain',
 				'merge_tags'    => $post,
 			),
 		);

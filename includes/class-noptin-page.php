@@ -338,19 +338,9 @@ class Noptin_Page {
 		);
 
 		// If the current user is a subscriber, use their subscriber data as merge tags.
-		if ( ! empty( $subscriber ) ) {
-
-			$data['subscriber_id']                 = $subscriber->id;
-			$data['merge_tags']                    = (array) $subscriber;
-			$data['merge_tags']['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
-
-			$meta = get_noptin_subscriber_meta( $subscriber->id );
-			foreach ( $meta as $key => $values ) {
-
-				if ( isset( $values[0] ) && is_string( $values[0] ) ) {
-					$data['merge_tags'][ $key ] = esc_html( $values[0] );
-				}
-			}
+		if ( $subscriber->exists() ) {
+			$data['subscriber_id'] = $subscriber->id;
+			$data['merge_tags']    = array_merge( $data['merge_tags'], get_noptin_subscriber_merge_fields( $subscriber ) );
 		}
 
 		// Generate and display the email.

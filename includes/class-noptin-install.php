@@ -18,6 +18,8 @@ class Noptin_Install {
 
 	/**
 	 * Install Noptin
+	 * 
+	 * @param int|string $upgrade_from The name of a table to create or the database version to upgrade from.
 	 */
 	public function __construct( $upgrade_from ) {
 		global $wpdb;
@@ -30,9 +32,14 @@ class Noptin_Install {
 		$this->charset_collate = $wpdb->get_charset_collate();
 		$this->table_prefix    = $wpdb->prefix;
 
-		// Force update the subscribers table.
-		if ( false === $upgrade_from ) {
-			return $this->force_update_subscribers_table();
+		// We're creating a table.
+		if ( is_string( $upgrade_from ) ) {
+
+			if ( method_exists( $this, "create_{$upgrade_from}_table" ) ) {
+				call_user_func( array( $this, "create_{$upgrade_from}_table" ) );
+			}
+
+			return;
 		}
 
 		// If this is a fresh install.
@@ -41,31 +48,44 @@ class Noptin_Install {
 		}
 
 		// Upgrading from version 1.
-		if ( 1 == $upgrade_from ) {
+		if ( 1 === $upgrade_from ) {
 			return $this->upgrade_from_1();
 		}
 
 		// Upgrading from version 2.
-		if ( 2 == $upgrade_from ) {
+		if ( 2 === $upgrade_from ) {
 			return $this->upgrade_from_2();
 		}
 
 		// Upgrading from version 3.
-		if ( 3 == $upgrade_from ) {
+		if ( 3 === $upgrade_from ) {
 			return $this->upgrade_from_3();
 		}
 
 	}
 
 	/**
-	 * Force update the subscribers table
+	 * Force create the subscribers table
 	 */
-	private function force_update_subscribers_table() {
-		global $wpdb;
-
+	public function create_subscribers_table() {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-
 		dbDelta( array( $this->get_subscribers_table_schema() ) );
+	}
+
+	/**
+	 * Force create the subscribers meta table
+	 */
+	public function create_subscribers_meta_table() {
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
+	}
+
+	/**
+	 * Force create the subscribers automation rules table
+	 */
+	public function create_automation_rules_table() {
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 	}
 
 	/**

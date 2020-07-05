@@ -36,6 +36,12 @@ class Noptin_Integrations {
 			$this->load_wpforms_integration();
 		}
 
+		// Contact form 7.
+		add_action( 'wpcf7_init', array( $this, 'load_contact_form_7' ) );
+		if ( did_action( 'wpcf7_init' ) ) {
+			$this->load_contact_form_7();
+		}
+
 		// Elementor forms integration.
 		add_action( 'elementor_pro/init', array( $this, 'load_elementor_forms_integration' ) );
 		if ( did_action( 'elementor_pro/init' ) ) {
@@ -70,6 +76,16 @@ class Noptin_Integrations {
 	 */
 	public function load_wpforms_integration() {
 		new Noptin_WPForms();
+	}
+
+	/**
+	 * Loads Contact Form 7 integration
+	 *
+	 * @access      public
+	 * @since       1.3.3
+	 */
+	public function load_contact_form_7() {
+		new Noptin_Contact_Form_7();
 	}
 
 	/**

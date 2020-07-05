@@ -263,20 +263,19 @@ class Noptin_Mailer {
 
 		$url = add_query_arg(
 			array(
-				'sid' => intval( $data['subscriber_id'] ),
-				'cid' => intval( $data['campaign_id'] ),
+				'sid'         => intval( $data['subscriber_id'] ),
+				'cid'         => intval( $data['campaign_id'] ),
+				'noptin_hide' => 'true'
 			),
 			$url
 		);
-
-		$url = esc_url( $url );
 
 		$_content = preg_replace_callback(
 			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
 			function ( $matches ) use ( $url ) {
 				$_url = add_query_arg(
 					'to',
-					add_query_arg( 'noptin_hide', 'true', $matches[2] ),
+					urlencode( $matches[2] ),
 					$url
 				);
 				$pre  = $matches[1];

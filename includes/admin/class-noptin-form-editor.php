@@ -854,7 +854,7 @@ class Noptin_Form_Editor {
 
 		$saved_state = $this->post->get_all_data();
 		unset( $saved_state['optinHTML'] );
-		$state = array_replace( $saved_state, $this->get_misc_state() );
+		$state = array_merge( $saved_state, $this->get_misc_state() );
 
 		/**
 		 * Filters the Noptin Form Editor's state.

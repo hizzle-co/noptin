@@ -178,6 +178,3 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 
 $ninja_forms = Ninja_Forms::instance();
 $ninja_forms->actions['noptin'] = new Noptin_Ninja_Forms();
-
-// WooCOmmerce integration customer reaches lifetime values
-// WooCommerce integration repeat purchase

@@ -2,11 +2,11 @@
 let noptinPopup = {
 
     is_showing: false,
-    
+
     classes: {
         popup: 'noptin-popup',
         content: 'noptin-popup-content',
-        inner: 'noptin-popup-inner',
+        overlay: 'noptin-popup-overlay',
         close: 'noptin-popup-close',
         closing: 'noptin-popup-closing',
         open: 'noptin-popup-open',
@@ -24,13 +24,13 @@ let noptinPopup = {
         this.is_showing = true
 
         // Create the popup.
-        this.el = jQuery('<div></div>').addClass( `${this.classes.popup} ${this.classes.opening}` ).hide()
+        this.el = jQuery('<div></div>').addClass( `${this.classes.popup} ${this.classes.opening}` )
 
-        // Inner.
-        this.el.append(`<div class="${this.classes.inner}"></div>`)
+        // overlay.
+        this.el.append(`<div class="${this.classes.overlay}"></div>`)
 
         // Content.
-        this.el.find(`.${this.classes.inner}`).append(`<div class="${this.classes.content}"></div>`)
+        this.el.append(`<div class="${this.classes.content}"></div>`)
         this.content = this.el.find(`.${this.classes.content}`).html(jQuery(content).prop('outerHTML'))
 
         // Close when clicking outside the content.
@@ -50,16 +50,11 @@ let noptinPopup = {
         // Add to DOM
         this.el.appendTo('body')
 
-        this.transitionThen(
-            this.content,
-            () => {
-                // Apply styling to the body
-                jQuery('body').addClass( this.classes.open )
-                this.el.show()
-                this.el.removeClass( this.classes.opening )
-                this.el.addClass( this.classes.opened )
-            }
-        )
+        // Apply styling to the body
+        jQuery('body').addClass( this.classes.open )
+
+        // Remove classes.
+        this.el.removeClass( this.classes.opening ).addClass( this.classes.opened )
 
     },
 
@@ -87,7 +82,7 @@ let noptinPopup = {
         this.is_showing = false
 
         // add the closing class.
-        this.el.addClass( this.classes.closing )
+        this.el.removeClass( this.classes.opened ).addClass( this.classes.closing )
 
         // Close the popup after animations.
         this.transitionThen(

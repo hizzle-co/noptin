@@ -127,38 +127,39 @@ class Noptin_Admin_Filters {
 	public function format_imported_subscriber_fields( $subscriber ) {
 
 		$mappings = array(
-			'firstname'      => 'first_name',
-			'fname'          => 'first_name',
-			'secondname'     => 'second_name',
-			'lastname'       => 'second_name',
-			'lname'          => 'second_name',
-			'name'           => 'name',
-			'fullname'       => 'name',
-			'familyname'     => 'name',
-			'displayname'    => 'name',
-			'emailaddress'   => 'email',
-			'email'          => 'email',
-			'active'         => 'active',
-			'liststatus'     => 'active',
-			'status'         => 'active',
-			'emailconfirmed' => 'confirmed',
-			'confirmed'      => 'confirmed',
-			'globalstatus'   => 'confirmed',
-			'verified'       => 'confirmed',
-			'is_verified'    => 'confirmed',
-			'datetime'       => 'date_created',
-			'subscribedon'   => 'date_created',
-			'datecreated'    => 'date_created',
-			'createdon'      => 'date_created',
-			'date'           => 'date_created',
-			'confirmkey'     => 'confirm_key',
-			'meta'           => 'meta',
-			'fields'         => 'meta',
-			'metafields'     => 'meta',
-			'customfields'   => 'meta',
-			'conversionpage' => 'conversion_page',
-			'ip'             => 'ip_address',
-			'ipaddress'      => 'ip_address',
+			'firstname'        => 'first_name',
+			'fname'            => 'first_name',
+			'secondname'       => 'second_name',
+			'lastname'         => 'second_name',
+			'lname'            => 'second_name',
+			'name'             => 'name',
+			'fullname'         => 'name',
+			'familyname'       => 'name',
+			'displayname'      => 'name',
+			'emailaddress'     => 'email',
+			'email'            => 'email',
+			'active'           => 'active',
+			'liststatus'       => 'active',
+			'status'           => 'active',
+			'emailconfirmed'   => 'confirmed',
+			'confirmed'        => 'confirmed',
+			'globalstatus'     => 'confirmed',
+			'verified'         => 'confirmed',
+			'is_verified'      => 'confirmed',
+			'datetime'         => 'date_created',
+			'subscribedon'     => 'date_created',
+			'datecreated'      => 'date_created',
+			'subscriptiondate' => 'date_created',
+			'createdon'        => 'date_created',
+			'date'             => 'date_created',
+			'confirmkey'       => 'confirm_key',
+			'meta'             => 'meta',
+			'fields'           => 'meta',
+			'metafields'       => 'meta',
+			'customfields'     => 'meta',
+			'conversionpage'   => 'conversion_page',
+			'ip'               => 'ip_address',
+			'ipaddress'        => 'ip_address',
 		);
 
 		$extra_mappings = get_noptin_subscriber_fields();
@@ -211,7 +212,7 @@ class Noptin_Admin_Filters {
 
 		// Date created.
 		if ( ! empty( $subscriber['date_created'] ) ) {
-			$subscriber['date_created'] = is_string( $subscriber['date_created'] ) ? date_i18n( 'Y-m-d', strtotime( $subscriber['date_created'] ) ) : date_i18n( 'Y-m-d' );
+			$subscriber['date_created'] = is_string( $subscriber['date_created'] ) ? date( 'Y-m-d', strtotime( $subscriber['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) );
 		}
 
 		return $subscriber;

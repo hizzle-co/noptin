@@ -167,11 +167,10 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		// Maybe fetch a subscriber from an email...
 		if ( is_email( $next_recipient ) ) {
 			$item['next_recipient_data']['email'] = $next_recipient;
-			$subscriber                           = get_noptin_subscriber_by_email( $next_recipient );
 		}
 
 		// Or a subscriber id.
-		if ( is_numeric( $next_recipient ) ) {
+		if ( is_scalar( $next_recipient ) ) {
 			$subscriber = get_noptin_subscriber( $next_recipient );
 		}
 
@@ -181,22 +180,13 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		}
 
 		// Add the subscriber details as merge tags.
-		if ( ! empty( $subscriber ) ) {
+		if ( $subscriber->exists() ) {
 
 			$item['next_recipient_data']['email']         = $subscriber->email;
 			$item['next_recipient_data']['subscriber_id'] = $subscriber->id;
 
-			$item['next_recipient_data']['merge_tags'] = array_replace( $item['next_recipient_data']['merge_tags'], (array) $subscriber );
+			$item['next_recipient_data']['merge_tags'] = array_merge( $item['next_recipient_data']['merge_tags'], get_noptin_subscriber_merge_fields( $subscriber ) );
 
-			$item['next_recipient_data']['merge_tags']['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
-
-			$meta = get_noptin_subscriber_meta( $subscriber->id );
-			foreach ( $meta as $key => $values ) {
-
-				if ( isset( $values[0] ) && is_string( $values[0] ) ) {
-					$item['next_recipient_data']['merge_tags'][ $key ] = esc_html( $values[0] );
-				}
-			}
 		}
 
 		return $item;

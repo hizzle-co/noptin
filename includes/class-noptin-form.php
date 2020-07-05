@@ -131,7 +131,7 @@ class Noptin_Form {
 			$state = array();
 		}
 
-		$form = array_replace( $state, $form );
+		$form = array_merge( $state, $form );
 
 		// Update the cache with out data.
 		wp_cache_add( $post->ID, $form, 'noptin_forms' );
@@ -271,7 +271,7 @@ class Noptin_Form {
 			return $defaults;
 		}
 
-		$data   = array_replace( $defaults, $data );
+		$data   = array_merge( $defaults, $data );
 		$return = array();
 
 		foreach ( $data as $key => $value ) {

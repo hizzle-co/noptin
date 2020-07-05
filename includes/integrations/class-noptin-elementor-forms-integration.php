@@ -82,9 +82,13 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		$fields = $record->get( 'fields' );
 
 		$subscriber = array(
-            '_subscriber_via' => 'Elementor',
-            'conversion_page' => isset( $_POST['referrer'] ) ? $_POST['referrer'] : '',
+            '_subscriber_via' => 'Elementor'
         );
+
+        // Referral page.
+		if ( ! empty( $_REQUEST['referrer'] ) ) {
+            $subscriber['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] );
+        }
 
         // Add the subscriber's IP address.
 		$address = noptin_get_user_ip();

@@ -411,7 +411,7 @@ class Noptin_Ajax {
 				'first_name'   => empty( $subscriber['first_name'] ) ? '' : $subscriber['first_name'],
 				'second_name'  => empty( $subscriber['second_name'] ) ? '' : $subscriber['second_name'],
 				'confirm_key'  => empty( $subscriber['confirm_key'] ) ? md5( $subscriber['email'] . wp_generate_password( 32 ) ) : $subscriber['confirm_key'],
-				'date_created' => empty( $subscriber['date_created'] ) ? date( 'Y-m-d' ) : $subscriber['date_created'],
+				'date_created' => empty( $subscriber['date_created'] ) ? date( 'Y-m-d', current_time( 'timestamp' ) ) : $subscriber['date_created'],
 				'confirmed'	   => $subscriber['confirmed'],
 				'active'	   => $subscriber['active'],
 			);

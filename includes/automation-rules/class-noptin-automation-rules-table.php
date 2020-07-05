@@ -197,7 +197,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 				human_time_diff( $updated, current_time( 'timestamp' ) )
 			);
 		} else {
-			$relative = date( __( 'Y/m/d' ), $updated );
+			$relative = date_i18n( get_option( 'date_format' ), $updated );
 		}
 
 		$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $updated ) );

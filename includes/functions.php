@@ -473,7 +473,7 @@ function noptin_get_optin_templates() {
 		$custom_templates = array();
 	}
 
-	$templates = array_replace( $custom_templates, $inbuilt_templates );
+	$templates = array_merge( $custom_templates, $inbuilt_templates );
 
 	return apply_filters( 'noptin_form_templates', $templates );
 
@@ -848,15 +848,16 @@ function get_noptin_capability( $capalibilty = 'manage_noptin' ) {
  */
 function get_noptin_template( $template_name, $args = array(), $template_path = 'noptin', $default_path = '' ) {
 
-	if ( $args && is_array( $args ) ) {
-		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Please, forgive us.
-		extract( $args );
-	}
+	$the_template_path = locate_noptin_template( $template_name, $template_path, $default_path );
 
-	$path = locate_noptin_template( $template_name, $template_path, $default_path );
+	if ( ! empty( $the_template_path ) ) {
 
-	if ( ! empty( $path ) ) {
-		include locate_noptin_template( $template_name, $template_path, $default_path );
+		if ( $args && is_array( $args ) ) {
+			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Please, forgive us.
+			extract( $args );
+		}
+
+		include $the_template_path;
 	}
 
 }
@@ -1568,4 +1569,27 @@ function noptin_dump( $data ) {
 	echo '<pre>';
 	var_dump( $data );
 	echo '</pre>';
+}
+
+/**
+ * Checks whether the automation rules table exists
+ *
+ * @since 1.3.3
+ * @return bool
+ */
+function noptin_automation_rules_table_exists() {
+	global $wpdb;
+	$table = get_noptin_automation_rules_table_name();
+
+	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
+}
+
+/**
+ *  Returns the name of the automation rules table
+ *
+ * @since 1.3.3
+ * @return string The name of our subscribers meta table
+ */
+function get_noptin_automation_rules_table_name() {
+	return $GLOBALS['wpdb']->prefix . 'noptin_automation_rules';
 }

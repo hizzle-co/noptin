@@ -150,6 +150,17 @@ class Noptin_WPForms {
 			'email'           => $fields[ $email_field_id ]['value'],
 		);
 
+		// Add the subscriber's IP address.
+		$address = noptin_get_user_ip();
+		if ( ! empty( $address ) && '::1' !== $address ) {
+			$subscriber['ip_address'] = $address;
+		}
+
+		// Referral page.
+		if ( ! empty( $_REQUEST['referrer'] ) ) {
+            $subscriber['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] );
+        }
+
 		// Maybe include the subscriber name...
 		$name_field_id = $form_data['settings']['noptin_field_name'];
 		if ( isset( $name_field_id ) ) {

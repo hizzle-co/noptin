@@ -515,9 +515,29 @@ class Noptin {
 			update_option( 'noptin_db_version', $this->db_version );
 		}
 
-		// Force create the subscribers table
-		if ( ! noptin_subscribers_table_exists() ) {
-			new Noptin_Install( false );
+		// Ensure all tables we successfully created.
+		$tables = array( 'automation_rules', 'subscribers_meta', 'subscribers' );
+
+		foreach ( $tables as $table ) {
+
+			$option   = "noptin_{$table}_table_exists";
+			$function = "noptin_{$table}_table_exists";
+
+			// Do not run the query if the table is created.
+			if ( ! get_option( $option ) ) {
+
+				// Check if the table was created.
+				if ( call_user_func( $function ) ) {
+					update_option( $option, 1 );
+				}
+
+				// If not, create the table.
+				else {
+					new Noptin_Install( $table );
+				}
+
+			}
+
 		}
 
 	}

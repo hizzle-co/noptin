@@ -223,22 +223,22 @@ function did_noptin_subscriber_click_campaign( $subscriber_id, $campaign_id, $li
 function get_noptin_subscriber_merge_fields( $subscriber_id ) {
 	$subscriber = get_noptin_subscriber( $subscriber_id );
 
-	if ( empty( $subscriber ) ) {
+	if ( ! $subscriber->exists() ) {
 		return array();
 	}
 
-	$merge_tags                    = (array) $subscriber;
+	$merge_tags                    = $subscriber->to_array();
 	$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
-	$meta                          = get_noptin_subscriber_meta( $subscriber_id );
+	$meta                          = $subscriber->get_meta();
 
 	foreach ( $meta as $key => $values ) {
 
 		if ( isset( $values[0] ) && is_scalar( maybe_unserialize( $values[0] ) ) ) {
-				$merge_tags[ $key ] = esc_html( $values[0] );
+				$merge_tags[ $key ] = esc_html( maybe_unserialize( $values[0] ) );
 		}
 	}
 
-	$merge_tags['name']      = trim( $merge_tags['first_name'] . '' . $merge_tags['second_name'] );
+	$merge_tags['name']      = trim( $merge_tags['first_name'] . ' ' . $merge_tags['second_name'] );
 	$merge_tags['last_name'] = $merge_tags['second_name'];
 
 	return apply_filters( 'noptin_subscriber_merge_fields', $merge_tags, $subscriber, $meta );
@@ -307,8 +307,8 @@ function add_noptin_subscriber( $fields ) {
 		return __( 'Please provide a valid email address', 'newsletter-optin-box' );
 	}
 
-	$subscriber_id = get_noptin_subscriber_id_by_email( trim( $fields['email'] ) );
-	if ( ! empty( $subscriber_id ) ) {
+	$fields['email'] = sanitize_email( $fields['email'] );
+	if ( noptin_email_exists( $fields['email'] ) ) {
 		return true;
 	}
 
@@ -324,9 +324,9 @@ function add_noptin_subscriber( $fields ) {
 		'email'        => $fields['email'],
 		'first_name'   => empty( $fields['first_name'] ) ? '' : $fields['first_name'],
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
-		'confirm_key'  => md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
-		'date_created' => date_i18n( 'Y-m-d' ),
-		'active'       => get_noptin_option( 'double_optin' ) ? 1 : 0,
+		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] :  md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
+		'date_created' => ! empty( $fields['date_created'] ) ? date( 'Y-m-d', strtotime( $fields['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) ),
+		'active'       => isset( $fields['active'] ) ? $fields['active'] :  ( get_noptin_option( 'double_optin' ) ? 1 : 0 ),
 	);
 
 	if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
@@ -375,7 +375,7 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 
 	// Ensure the subscriber exists.
 	$subscriber = get_noptin_subscriber( $subscriber_id );
-	if ( empty( $subscriber ) ) {
+	if ( ! $subscriber->exists() ) {
 		return false;
 	}
 
@@ -546,13 +546,11 @@ function clear_noptin_subscriber_cache( $subscriber ) {
  *
  * @access  public
  * @since   1.1.1
+ * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
+ * @return Noptin_Subscriber
  */
 function get_noptin_subscriber( $subscriber ) {
-	global $wpdb;
-
-	$table = get_noptin_subscribers_table_name();
-	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d;", $subscriber ) );
-
+	return new Noptin_Subscriber( $subscriber );
 }
 
 /**
@@ -560,27 +558,24 @@ function get_noptin_subscriber( $subscriber ) {
  *
  * @access  public
  * @since   1.1.2
+ * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
+ * @return Noptin_Subscriber
  */
 function get_noptin_subscriber_by_email( $email ) {
-	global $wpdb;
-
-	$table = get_noptin_subscribers_table_name();
-	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE email=%s;", $email ) );
-
+	return new Noptin_Subscriber( $email );
 }
 
 /**
  * Retrieves a subscriber id by email
  *
  * @access  public
+ * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
  * @since   1.2.6
+ * @return int|null
  */
 function get_noptin_subscriber_id_by_email( $email ) {
-	global $wpdb;
-
-	$table = get_noptin_subscribers_table_name();
-	return $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE email=%s;", $email ) );
-
+	$subscriber = new Noptin_Subscriber( $email );
+	return $subscriber->id;
 }
 
 /**
@@ -607,6 +602,8 @@ function delete_noptin_subscriber( $subscriber ) {
 	if ( ! empty( $user_id ) ) {
 		delete_user_meta ( $user_id, 'noptin_subscriber_id' );
 	}
+
+	clear_noptin_subscriber_cache( $subscriber );
 
 	$table  = get_noptin_subscribers_table_name();
 	$table2 = get_noptin_subscribers_meta_table_name();
@@ -650,9 +647,9 @@ function noptin_split_subscriber_name( $name ) {
 function noptin_email_exists( $email ) {
 	global $wpdb;
 	$table = get_noptin_subscribers_table_name();
-	$sql   = $wpdb->prepare( "SELECT COUNT(id) FROM $table WHERE email =%s;", $email );
+	$id    = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE email =%s LIMIT 1;", $email ) );
 
-	return 0 < $wpdb->get_var( $sql );
+	return ! empty( $id );
 }
 
 /**
@@ -877,7 +874,7 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 		// Then update the subscriber.
 		$subscriber = get_noptin_subscriber_by_email( $user_info->user_email );
 
-		if ( empty( $subscriber ) ) {
+		if ( ! $subscriber->exists() ) {
 			continue;
 		}
 
@@ -922,7 +919,7 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 		$subscriber = get_noptin_subscriber( $subscriber_id );
 
 		// ... and abort if it is missing.
-		if ( empty( $subscriber ) ) {
+		if ( ! $subscriber->exists() ) {
 			continue;
 		}
 
