@@ -44,7 +44,7 @@
     "@babel/preset-env": "7.10.3",
     "@wordpress/babel-preset-default": "4.16.0",
     "@wordpress/browserslist-config": "2.7.0",
-    "autoprefixer": "9.8.2",
+    "autoprefixer": "9.8.5",
     "babel-loader": "8.1.0",
     "browserslist": "4.12.1",
     "css-loader": "3.6.0",
