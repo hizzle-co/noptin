@@ -39,9 +39,9 @@
     "vuedraggable": "2.24.0"
   },
   "devDependencies": {
-    "@babel/core": "7.10.3",
-    "@babel/plugin-transform-runtime": "7.10.3",
-    "@babel/preset-env": "7.10.3",
+    "@babel/core": "7.10.5",
+    "@babel/plugin-transform-runtime": "7.10.5",
+    "@babel/preset-env": "7.10.4",
     "@wordpress/babel-preset-default": "4.16.0",
     "@wordpress/browserslist-config": "2.7.0",
     "autoprefixer": "9.8.2",
