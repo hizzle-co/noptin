@@ -2,7 +2,7 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
-Tested up to: 5.4
+Tested up to: 5.5
 Requires PHP: 5.3
 Version: 1.3.2
 Stable tag: trunk
