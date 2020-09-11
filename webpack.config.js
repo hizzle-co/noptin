@@ -3,16 +3,6 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-function recursiveIssuer(m) {
-	if (m.issuer) {
-		return recursiveIssuer(m.issuer);
-	} else if (m.name) {
-		return m.name;
-	} else {
-		return false;
-	}
-}
-
 module.exports = {
 	mode: "production",
 
@@ -20,7 +10,7 @@ module.exports = {
 		splitChunks: {
 			cacheGroups: {
 				styles: {
-					name: 'styles',
+					name: 'modules',
 					test: /\.s(c|a)ss$/,
 					chunks: 'all',
 					enforce: true,
@@ -62,23 +52,23 @@ module.exports = {
 				test: /\.s(c|a)ss$/,
 				use: [
 					MiniCssExtractPlugin.loader,
-				  'css-loader',
-				  {
-					loader: 'sass-loader',
+					'css-loader',
+					{
+						loader: 'sass-loader',
 
-					// Requires sass-loader@^8.0.0
-					options: {
-					  implementation: require('sass'),
+						// Requires sass-loader@^8.0.0
+						options: {
+							implementation: require('sass'),
 
-					  // This is the path to your variables
-					  additionalData: "@import './includes/assets/css/postcss/variables.scss'",
+							// This is the path to your variables
+							additionalData: "@import './includes/assets/css/postcss/variables.scss'",
 
-					  sassOptions: {
-						fiber: require('fibers'),
-						indentedSyntax: true // optional
-					  },
+							sassOptions: {
+								fiber: require('fibers'),
+								indentedSyntax: true // optional
+							},
+						},
 					},
-				  },
 				],
 			},
 
@@ -88,7 +78,7 @@ module.exports = {
 				use: {
 					loader: 'babel-loader',
 					options: {
-						presets: [ '@babel/preset-env', '@wordpress/babel-preset-default' ],
+						presets: ['@babel/preset-env', '@wordpress/babel-preset-default'],
 						cacheDirectory: true
 					}
 				}

@@ -1,11 +1,11 @@
 (function ($) {
 
-	if ('undefined' == typeof noptinEditor) {
+	if ( 'undefined' == typeof noptinEditor ) {
 		window.noptinEditor = {}
 	}
 
 	//Settings app
-	if ('undefined' == typeof noptinSettings) {
+	if ( 'undefined' == typeof noptinSettings ) {
 		window.noptinSettings = {}
 	}
 
