@@ -56,7 +56,7 @@
     "vue-quill-editor": "3.0.6",
     "vue-swatches": "2.1.0",
     "vue-template-compiler": "2.6.12",
-    "webpack": "4.43.0",
+    "webpack": "4.44.1",
     "webpack-cli": "3.3.12"
   }
 }
