@@ -122,6 +122,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - WooCommerce lifetime value automation trigger - ADDED
 - Integration with Contact Forms 7 - ADDED
 - Integration with Gravity Forms - ADDED
+- WP RSS Aggregator appends the RSS title to new post notification excerpts - FIXED
 
 = 1.3.2 - 2020-06-23 =
 - Ability to delete a subscriber after they unsubscribe - ADDED

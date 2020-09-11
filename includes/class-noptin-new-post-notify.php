@@ -274,9 +274,20 @@ class Noptin_New_Post_Notify {
 		$campaign = get_post( $campaign_id );
 		$post     = get_post( $post_id, ARRAY_A, 'display' );
 
+		// Prevent wp_rss_aggregator from appending the feed name to excerpts.
+		$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
+
+		if ( false !== $wp_rss_aggregator_fix ) {
+			remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+		}
+
 		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
 		$post['post_excerpt'] = get_the_excerpt( $post_id );
 		remove_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
+
+		if ( false !== $wp_rss_aggregator_fix ) {
+			add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+		}
 
 		$post['excerpt']      = $post['post_excerpt'];
 		$post['post_content'] = apply_filters( 'the_content', $post['post_content'] );
