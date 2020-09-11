@@ -1,9 +1,34 @@
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+function recursiveIssuer(m) {
+	if (m.issuer) {
+		return recursiveIssuer(m.issuer);
+	} else if (m.name) {
+		return m.name;
+	} else {
+		return false;
+	}
+}
 
 module.exports = {
 	mode: "production",
+
+	optimization: {
+		splitChunks: {
+			cacheGroups: {
+				styles: {
+					name: 'styles',
+					test: /\.s(c|a)ss$/,
+					chunks: 'all',
+					enforce: true,
+				},
+			},
+		},
+	},
+
 	entry: {
 		admin: "./includes/assets/js/src/admin.js",
 		settings: "./includes/assets/js/src/settings.js",
@@ -27,13 +52,16 @@ module.exports = {
 
 			{
 				test: /\.css$/i,
-				use: ['style-loader', 'css-loader'],
+				use: [
+					'style-loader',
+					'css-loader'
+				],
 			},
 
 			{
 				test: /\.s(c|a)ss$/,
 				use: [
-				  'vue-style-loader',
+					MiniCssExtractPlugin.loader,
 				  'css-loader',
 				  {
 					loader: 'sass-loader',
@@ -69,9 +97,10 @@ module.exports = {
 	},
 	plugins: [
 		new VueLoaderPlugin(),
-		new VuetifyLoaderPlugin()
+		new VuetifyLoaderPlugin(),
+		new MiniCssExtractPlugin()
 	],
 	externals: {
 		vue: 'Vue'
-	  }
+	}
 };
