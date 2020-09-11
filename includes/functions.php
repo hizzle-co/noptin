@@ -490,15 +490,27 @@ function noptin_get_form_design_props() {
 		'noptin_form_design_props',
 		array(
 			'hideCloseButton',
+			'borderSize',
+			'gdprCheckbox',
+			'gdprConsentText',
+			'titleTypography',
+			'titleAdvanced',
+			'descriptionAdvanced',
+			'descriptionTypography',
+			'prefixTypography',
+			'prefixAdvanced',
+			'noteTypography',
+			'noteAdvanced',
+			'hideFields',
+			'id',
+			'imageMainPos',
 			'closeButtonPos',
 			'singleLine',
 			'formRadius',
 			'formWidth',
 			'formHeight',
-			'noptinFormBg',
 			'fields',
 			'imageMain',
-			'noptinFormBorderColor',
 			'image',
 			'imagePos',
 			'noptinButtonLabel',
@@ -508,6 +520,9 @@ function noptin_get_form_design_props() {
 			'hideTitle',
 			'title',
 			'titleColor',
+			'hidePrefix',
+			'prefix',
+			'prefixColor',
 			'hideDescription',
 			'description',
 			'descriptionColor',
@@ -572,39 +587,9 @@ function noptin_localize_optin_editor( $state ) {
 function noptin_form_template_form_props() {
 
 	$class = "singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'";
-	$style = "noptinFormBgVideo ? 'background-color:rgba(0,0,0,0.4)' : 'background-color:rgba(0,0,0,0)'";
+	$style = 'background-color:rgba(0,0,0,0)';
 
 	return " @submit.prevent :class=\"$class\"";
-}
-
-/**
- * Function noptin editor localize.
- *
- * @since 1.0.5
- */
-function noptin_form_template_wrapper_props() {
-
-	$props = array(
-		':data-trigger="triggerPopup"',
-		':data-after-click="cssClassOfClick"',
-		':data-on-scroll="scrollDepthPercentage"',
-		':data-after-delay="timeDelayDuration"',
-		'class="noptin-optin-form-wrapper"',
-		':class="\'noptin-slide-from-\' + slideDirection"',
-		':data-once-per-session="DisplayOncePerSession"',
-		':style="{
-			borderColor: noptinFormBorderColor,
-			borderWidth: borderSize,
-			backgroundColor: noptinFormBg,
-			backgroundImage: \'url(\' + noptinFormBgImg + \')\',
-			borderRadius: formRadius,
-			width: formWidth,
-			minHeight: formHeight,
-			color: descriptionColor
-		}"',
-	);
-
-	return implode( ' ', $props );
 }
 
 /**

@@ -956,7 +956,7 @@ class Noptin_Admin {
 		$postarr = array(
 			'post_title'   => $state['optinName'],
 			'ID'           => $id,
-			'post_content' => $_POST['html'],
+			'post_content' => '',
 			'post_status'  => $status,
 		);
 

@@ -1,5 +1,6 @@
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 
 module.exports = {
 	mode: "production",
@@ -30,6 +31,30 @@ module.exports = {
 			},
 
 			{
+				test: /\.s(c|a)ss$/,
+				use: [
+				  'vue-style-loader',
+				  'css-loader',
+				  {
+					loader: 'sass-loader',
+
+					// Requires sass-loader@^8.0.0
+					options: {
+					  implementation: require('sass'),
+
+					  // This is the path to your variables
+					  additionalData: "@import './includes/assets/css/postcss/variables.scss'",
+
+					  sassOptions: {
+						fiber: require('fibers'),
+						indentedSyntax: true // optional
+					  },
+					},
+				  },
+				],
+			},
+
+			{
 				test: /\.js$/,
 				exclude: /(node_modules|bower_components)/,
 				use: {
@@ -43,6 +68,10 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new VueLoaderPlugin()
-	]
+		new VueLoaderPlugin(),
+		new VuetifyLoaderPlugin()
+	],
+	externals: {
+		vue: 'Vue'
+	  }
 };

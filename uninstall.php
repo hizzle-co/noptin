@@ -29,8 +29,8 @@ foreach ( $tables as $table ) {
 // Delete newsletters.
 $wpdb->query(
 	"DELETE a,b
-    FROM wp_posts a
-    LEFT JOIN wp_postmeta b
+    FROM {$wpdb->posts} a
+    LEFT JOIN {$wpdb->postmeta} b
         ON (a.ID = b.post_id)
 	WHERE a.post_type = 'noptin-campaign'"
 );
@@ -38,8 +38,8 @@ $wpdb->query(
 // Delete subscription forms.
 $wpdb->query(
 	"DELETE a,b
-    FROM wp_posts a
-    LEFT JOIN wp_postmeta b
+    FROM {$wpdb->posts} a
+    LEFT JOIN {$wpdb->postmeta} b
         ON (a.ID = b.post_id)
 	WHERE a.post_type = 'noptin-form'"
 );

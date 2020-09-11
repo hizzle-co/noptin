@@ -1,14 +1,10 @@
-<div  <?php echo noptin_form_template_wrapper_props(); ?>>
+<div class="noptin-optin-form-wrapper"  :class="imageMain ? imageMainPos : 'no-image'">
 	<noptin-temp-form class="noptin-optin-form" <?php echo noptin_form_template_form_props(); ?>>
-		<div class="noptin-video-container" :style="{borderRadius: formRadius}" v-if="noptinFormBgVideo" >
-			<video  autoplay="" muted="" loop="" >
-				<source :src="noptinFormBgVideo" type="video/mp4">
-			</video>
-		</div>
 		<div class="noptin-form-header" :class="image ? imagePos : 'no-image'">
 			<div class="noptin-form-header-text">
-				<noptin-rich-text v-if="!hideTitle" :style="{color:titleColor}" class="noptin-form-heading" v-model="title" :text="title"></noptin-rich-text>
-				<noptin-rich-text v-if="!hideDescription" :style="{color:descriptionColor}" class="noptin-form-description" v-model="description" :text="description"></noptin-rich-text>
+				<contenteditable v-if="!hidePrefix" :style="'color:' + prefixColor + ';' + prefixTypography.generated + prefixAdvanced.generated" :class="prefixAdvanced.classes" tag="div" class="noptin-form-prefix" contenteditable @input="updateValue( 'prefix', $event )" :value="prefix" :noHTML="false" />
+				<contenteditable v-if="!hideTitle" :style="'color:' + titleColor + ';' + titleTypography.generated + titleAdvanced.generated" :class="titleAdvanced.classes" tag="div" contenteditable class="noptin-form-heading" :value="title" @input="updateValue( 'title', $event )" :noHTML="false" />
+				<contenteditable v-if="!hideDescription" :style="'color:' + descriptionColor + ';' + descriptionTypography.generated + descriptionAdvanced.generated" :class="descriptionAdvanced.classes" tag="div" class="noptin-form-description" contenteditable @input="updateValue( 'description', $event )" :value="description" :noHTML="false" />
 			</div>
 			<div v-if="image" class="noptin-form-header-image">
 				<img :src="image" />
@@ -30,7 +26,7 @@
 			<div class="noptin-gdpr-checkbox-wrapper" style="margin-top: 10px;" v-if="gdprCheckbox && !hideFields && singleLine">
 				<label><input type='checkbox' value='1' name='noptin_gdpr_checkbox' required="required"/><span v-html="gdprConsentText"></span></label>
 			</div>
-			<noptin-rich-text v-if="!hideNote" :style="{ color: noteColor}" class="noptin-form-note" v-model="note" :text="note"></noptin-rich-text>
+			<contenteditable v-if="!hideNote" :style="'color:' + noteColor + ';' + noteTypography.generated + noteAdvanced.generated" :class="noteAdvanced.classes" tag="div" class="noptin-form-note" contenteditable @input="updateValue( 'note', $event )" :value="note" :noHTML="false" />
 			<div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px"
 				class="noptin_feedback_success"></div>
 			<div style="border:1px solid rgba(227, 6, 37, 0.8);display:none;padding:10px;margin-top:10px"
@@ -50,5 +46,4 @@
 	<div v-if="imageMain" class="noptin-form-main-image">
 		<img :src="imageMain" />
 	</div>
-
 </div>

@@ -576,18 +576,22 @@ class Noptin_Vue {
 			$options .= "<option value='$val'>$name</option>";
 		}
 
+		$el = empty( $field['normal'] ) ? 'noptin-select' : 'select';
+
 		printf(
 			'<div %s class="noptin-select-wrapper %s field-wrapper">
 				<label class="noptin-select-label">%s %s</label>
-				<div class="noptin-content"><noptin-select v-model="%s" %s>%s</noptin-select>%s</div>
+				<div class="noptin-content"><%s v-model="%s" %s>%s</%s>%s</div>
 			</div>',
 			$field['restrict'],
 			$field['_class'],
 			$field['label'],
 			$field['tooltip'],
+			$el,
 			$id,
 			$field['attrs'],
 			$options,
+			$el,
 			$field['description']
 		);
 
@@ -639,7 +643,7 @@ class Noptin_Vue {
 
 			// Color picker.
 			case 'color':
-				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <noptin-swatch max-height='600' shapes='circles' fallback-input-class='regular-text' :swatches='swatches' row-length='5' show-fallback v-model='$id' popover-x='left'></noptin-swatch>$description</div>";
+				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <noptin-swatch v-model='$id' popover-x='left'></noptin-swatch>$description</div>";
 				break;
 
 			case 'switch':

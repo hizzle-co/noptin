@@ -293,18 +293,19 @@ $noptin_color: #ff6f00;
 
 /* Form Wrapper*/
 .noptin-optin-form-wrapper {
-	border: 4px solid $noptin_color;
+	border: 4px solid #eceff1;
 	padding: 0;
 	display: flex;
-	background-color: $noptin_color;
+	background-color: #eceff1;
 	transition: all 0.5s;
 	background-position: 50%;
-	background-size: cover;
+	background-repeat: repeat;
 	position: relative;
 	box-sizing: border-box;
 	margin: auto;
 	max-width: 100%;
 	width: 100%;
+	overflow: hidden;
 
 	* {
 		box-sizing: border-box;
@@ -320,6 +321,57 @@ $noptin_color: #ff6f00;
 		width: 520px;
 		overflow-x: hidden;
     	overflow-y: auto;
+	}
+
+	.noptin-form-main-image{
+
+		flex: 0 0 40%;
+
+		@media screen and (max-width: 520px) {
+			display: none;
+		}
+
+		img {
+			height: 100%;
+			width: 100%;
+		}
+		
+	}
+
+	/*image on left of form*/
+	&.left {
+		flex-direction: row-reverse;
+
+		.noptin-form-main-image {
+			margin-right: 20px;
+		}
+
+	}
+
+	/*image on right of heading*/
+	&.right {
+
+		.noptin-form-main-image {
+			margin-left: 20px;
+		}
+	}
+
+	/*image on top of heading*/
+	&.top {
+		flex-direction: column-reverse;
+
+		.noptin-form-main-image {
+			margin-bottom: 20px;
+		}
+	}
+
+	/*image at bottom of heading*/
+	&.bottom {
+		flex-direction: column;
+
+		.noptin-form-main-image {
+			margin-top: 20px;
+		}
 	}
 
 }
@@ -382,29 +434,6 @@ $noptin_color: #ff6f00;
 	}
 }
 
-/* Video backgrounds */
-.noptin-video-container {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-
-	video {
-		min-width: 100%;
-		min-height: 100%;
-		width: auto;
-		height: auto;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
-}
-
 /* Form headers */
 .noptin-form-header {
 	display: flex;
@@ -457,6 +486,12 @@ $noptin_color: #ff6f00;
 	/*image at bottom of heading*/
 	&.bottom {
 		flex-direction: column;
+	}
+
+	&.no-image {
+		.noptin-form-header-text {
+			flex: 1;
+		}
 	}
 
 	img {
@@ -584,6 +619,7 @@ $noptin_color: #ff6f00;
 		&:hover {
 			box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
 			outline: 0 !important;
+			border-color: transparent;
 		}
 	}
 

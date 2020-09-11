@@ -1,102 +1,60 @@
 <style id="formCustomCSS"></style>
+<style id="generatedCustomCSS"></style>
 <div class="noptin-form-designer-loader">
 	<div class="noptin-spinner"></div>
 </div>
 <div class="noptin-popup-designer">
-	<div id="noptin-form-editor">
-		<div v-if="!isPreviewShowing">
-			<div class="noptin-popup-editor-header" tabindex="-1">
-				<div class="noptin-popup-editor-title">
-					<textarea class="noptin-popup-editor-main-preview-name-textarea" v-model="optinName"
-						placeholder="Enter Form Name" rows="1" style="" spellcheck="false"></textarea>
-					<button @click="saveAsTemplate()" title="Allows you to reuse this design on your other forms"
-						type="button"
-						class="button button-link noptin-popup-editor-header-button">{{saveAsTemplateText}}</button>
-				</div>
-				<div class="noptin-popup-editor-toolbar">
-					<button v-if="optinType == 'popup'" @click="previewPopup()" type="button"
-						class="button button-secondary noptin-popup-editor-header-button">{{previewText}}</button>
-					<button v-if="optinStatus" @click.prevent="unpublish" type="button"
-						class="button button-link noptin-popup-editor-header-button"><?php _e( 'Switch to Draft', 'newsletter-optin-box' ); ?></button>
-					<button v-if="!optinStatus" @click.prevent="publish" type="button"
-						class="button button-primary noptin-popup-editor-header-button"><?php _e( 'Publish Form', 'newsletter-optin-box' ); ?></button>
-					<button @click="save()" type="button"
-						:class="{'button-primary': optinStatus}"
-						class="button noptin-popup-editor-header-button"><span v-if='optinStatus'>{{saveText}}</span><span v-if='!optinStatus'><?php _e( 'Save Draft', 'newsletter-optin-box' ); ?></span></button>
-				</div>
-			</div>
-			<div class="noptin-divider"></div>
-			<div class="noptin-popup-editor-body">
-				<div class="noptin-popup-editor-main">
-					<div class="noptin-popup-editor-main-preview">
-						<div class="noptin-popup-notice noptin-is-error" v-show="hasError" v-html="Error"></div>
-						<div class="noptin-popup-notice noptin-is-success" v-show="hasSuccess" v-html="Success"></div>
-						<div class="noptin-popup-wrapper">
-							<?php include 'optin-form.php'; ?>
-						</div>
-						<div class="noptin-form-usage-details">
-							<p v-if="optinType=='inpost'"><?php _e( 'Shortcode', 'newsletter-optin-box' ); ?> <strong @click="copyShortcode">[noptin-form id={{id}}]</strong> <button
-									class="noptin-copy-button"><?php _e( 'Copied', 'newsletter-optin-box' ); ?></button></p>
-							<p v-if="optinType=='sidebar'">
-								<?php
-									printf(
-										/* Translators: %s Widget name name. */
-										__( 'Use the %s widget to add this form to a widget area', 'newsletter-optin-box' ),
-										'<strong>Noptin Premade Form</strong>'
-									);
-								?>
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="noptin-popup-editor-sidebar">
-					<div class="noptin-popup-editor-sidebar-header">
-						<ul>
-							<?php
-							foreach ( array_keys( $sidebar ) as $panel ) {
-								$_panel = ucfirst( $panel );
+	<style>
 
-								if ( $sidebar[ $panel ]['label'] ) {
-									$_panel = $sidebar[ $panel ]['label'];
-								}
+		.wp-admin .v-expansion-panel-header {
+			font-weight: 500;
+		}
 
-								echo "
-                                    <li>
-                                        <button
-                                            class='noptin-popup-editor-sidebar-section-header noptin-popup-editor-sidebar-{$panel}'
-                                            :class=\"{ active: currentSidebarSection == '$panel' }\"
-                                            @click.prevent=\"currentSidebarSection = '$panel'\">$_panel</button>
-                                    </li>
-                                ";
-							}
-							?>
-						</ul>
-					</div>
-					<div class="noptin-popup-editor-sidebar-body noptin-fields">
+		.v-input__control input[type="text"] {
+			background-color: transparent;
+    		border-style: none;
+		}
 
-						<?php
-						foreach ( $sidebar as $panel => $fields ) {
-							echo " <div class='noptin-popup-editor-{$panel}-fields'  v-show=\"'{$panel}'==currentSidebarSection\">";
+		.v-input__control input[type="text"]:focus,
+		.v-input__control textarea:focus {
+			background-color: transparent;
+    		border-style: none;
+			outline: none;
+			box-shadow: none;
+		}
 
+		.noptin-sidebar-expansion-panels.theme--light.v-expansion-panels.v-expansion-panels--focusable .v-expansion-panel-header--active::before {
+    		opacity: 0;
+		}
 
-							if ( isset( $fields['label'] ) ) {
-								unset( $fields['label'] );
-							}
+		.wp-admin .v-input{
+			font-size: 14px;
+		}
 
-							foreach ( $fields as $id => $field ) {
-								Noptin_Vue::render_el( $id, $field, $panel );
-							}
-							echo '</div>';
-						}
-						?>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div id="noptin-popup-preview" class="noptin-popup-main-wrapper" :style="{backgroundColor: noptinOverlayBg,backgroundImage: 'url(' + noptinOverlayBgImg + ')'}"></div>
-	</div>
+		.noptin-field-editor .v-expansion-panel::before {
+			box-shadow: none;
+		}
+
+		.noptin-field-editor .v-expansion-panel,
+		.noptin-field-editor .v-expansion-panels:not(.v-expansion-panels--accordion):not(.v-expansion-panels--tile) > .v-expansion-panel--active + .v-expansion-panel,
+		.noptin-field-editor .v-expansion-panels:not(.v-expansion-panels--accordion):not(.v-expansion-panels--tile) > .v-expansion-panel--active {
+			box-shadow: none;
+			border: 1px solid #ccc;
+			border-radius: 0;
+		}
+
+		.noptin-field-editor .v-expansion-panel:not(.v-expansion-panel--active):not(:first-child) {
+			border-top: 0;
+		}
+
+	</style>
+	<div id="noptin-form-editor"></div>
 </div>
 
 <script type="text/x-template" id="noptinFieldEditorTemplate">
 	<?php include 'fields-editor.php'; ?>
+</script>
+
+<script type="text/x-template" id="noptinOptinFormTemplate">
+	<?php include 'optin-form.php'; ?>
 </script>

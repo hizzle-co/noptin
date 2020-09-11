@@ -7,11 +7,8 @@
 	$class       = esc_attr( "noptin-slide-from-$slideDirection" );
 	$session     = (bool) $DisplayOncePerSession;
 	$styles      = array(
-		'border-color'     => $noptinFormBorderColor,
-		'border-width'     => $borderSize,
 		'background-color' => $noptinFormBg,
 		'background-image' => "url('$noptinFormBgImg')",
-		'border-radius'    => $formRadius,
 		'width'            => $formWidth,
 		'min-height'       => $formHeight,
 		'color'            => $descriptionColor,
@@ -29,10 +26,6 @@
 		$styles['min-height'] = $styles['min-height'] . 'px';
 	}
 
-	if ( is_numeric( $styles['border-radius'] ) ) {
-		$styles['border-radius'] = $styles['border-radius'] . 'px';
-	}
-
 	if ( empty( $noptinFormBgImg ) ) {
 		unset( $styles['background-image'] );
 	}
@@ -42,26 +35,24 @@
 		$val = esc_attr( $val );
 		$wrapper_styles .= " $prop:$val;";
 	}
+
+	$wrapper_styles .= $formBorder['generated'];
+
 ?>
 <div style='<?php echo $wrapper_styles; ?>' data-trigger='<?php echo $trigger ?>' data-after-click='<?php echo $after_click ?>' data-on-scroll='<?php echo $on_scroll ?>' data-after-delay='<?php echo $delay ?>' data-once-per-session='<?php echo $session ?>' class='noptin-optin-form-wrapper <?php echo $class ?>'>
 	<form class="noptin-optin-form <?php echo $singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line' ?>">
 
-		<?php if ( ! empty( $noptinFormBgVideo ) ) { ?>
-			<div class="noptin-video-container" style="border-radius: <?php echo esc_html( $formRadius ); ?>">
-				<video  autoplay="" muted="" loop="" >
-					<source src="<?php echo $noptinFormBgVideo; ?>" type="video/mp4">
-				</video>
-			</div>
-		<?php } ?>
-
 		<div class="noptin-form-header <?php echo ! empty( $image ) ? esc_attr( $imagePos ) : 'no-image' ?>">
 
 			<div class="noptin-form-header-text">
+				<?php if ( ! $hidePrefix ) { ?>
+					<div style="color:<?php echo esc_attr( $prefixColor ); ?>;<?php echo esc_attr( $prefixTypography['generated'] ); ?><?php echo esc_attr( $prefixAdvanced['generated'] ); ?>" class="noptin-form-prefix"><?php echo $prefix; ?></div>
+				<?php } ?>
 				<?php if ( ! $hideTitle ) { ?>
-					<div style="color:<?php echo esc_attr( $titleColor ); ?>" class="noptin-form-heading"><?php echo $title; ?></div>
+					<div style="color:<?php echo esc_attr( $titleColor ); ?>;<?php echo esc_attr( $titleTypography['generated'] ); ?><?php echo esc_attr( $titleAdvanced['generated'] ); ?>" class="noptin-form-heading"><?php echo $title; ?></div>
 				<?php } ?>
 				<?php if ( ! $hideDescription ) { ?>
-					<div style="color:<?php echo esc_attr( $descriptionColor ); ?>" class="noptin-form-description"><?php echo $description; ?></div>
+					<div style="color:<?php echo esc_attr( $descriptionColor ); ?>;<?php echo esc_attr( $descriptionTypography['generated'] ); ?><?php echo esc_attr( $descriptionAdvanced['generated'] ); ?>" class="noptin-form-description"><?php echo $description; ?></div>
 				<?php } ?>
 			</div>
 
@@ -115,7 +106,7 @@
 			<?php } ?>
 
 			<?php if ( ! $hideNote ) { ?>
-				<div style="color:<?php echo esc_attr( $noteColor ); ?>" class="noptin-form-note"><?php echo $note; ?></div>
+				<div style="color:<?php echo esc_attr( $noteColor ); ?>;<?php echo esc_attr( $noteTypography['generated'] ); ?><?php echo esc_attr( $noteAdvanced['generated'] ); ?>" class="noptin-form-note"><?php echo $note; ?></div>
 			<?php } ?>
 
 			<div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px"

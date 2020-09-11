@@ -1,16 +1,34 @@
 import noptinFind from 'lodash.find'
 import noptinSelectComponent from './noptin-select.vue'
+import draggable from 'vuedraggable'
+import {
+		VCard,
+		VBtn,
+		VExpansionPanels,
+    	VExpansionPanel,
+    	VExpansionPanelHeader,
+		VExpansionPanelContent
+	} from 'vuetify/lib';
 
 export default {
 
 	props: noptinEditor.field_props,
 	template: '#noptinFieldEditorTemplate',
 
+	// We do not want the root element of a component to inherit attributes
+	inheritAttrs: false,
+
 	components: {
 
 		//Select2
 		'noptin-select': noptinSelectComponent,
-
+		draggable,
+		VCard,
+		VExpansionPanels,
+		VExpansionPanel,
+		VExpansionPanelHeader,
+		VExpansionPanelContent,
+		VBtn,
 	},
 
 	data () {
@@ -35,7 +53,6 @@ export default {
 				)
 
 				this.collapseAll()
-				this.expandField(key)
 			},
 			removeField (item) {
 
@@ -60,32 +77,6 @@ export default {
 
 				return fieldType
 			},
-			expandField (id) {
-				var el = jQuery('#' + id)
 
-				//toggle arrows
-				jQuery(el).find('.dashicons-arrow-up-alt2').show()
-				jQuery(el).find('.dashicons-arrow-down-alt2').hide()
-
-				//slide down the body
-				jQuery(el).find('.noptin-field-editor-body').slideDown()
-			},
-			collapseField (id) {
-				var el = jQuery('#' + id)
-
-				//toggle arrows
-				jQuery(el).find('.dashicons-arrow-up-alt2').hide()
-				jQuery(el).find('.dashicons-arrow-down-alt2').show()
-
-				//slide up the body
-				jQuery(el).find('.noptin-field-editor-body').slideUp()
-			},
-			collapseAll (id) {
-				var that = this
-
-				jQuery.each(this.fields, (index, value) => {
-					that.collapseField(value.key)
-				});
-			}
 		},
 }

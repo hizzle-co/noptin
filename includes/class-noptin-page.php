@@ -365,11 +365,19 @@ class Noptin_Page {
 				exit;
 			}
 
-			/**
+			/*
 			 * Site admins are allowed to use custom pages
 			 * to render the actions page.
 			 */
 			$custom_page = get_noptin_option( "pages_{$action}_page" );
+
+			// They can also set the page as a URL param.
+			if ( isset( $_GET['rdt'] ) ) {
+				$custom_page = esc_url( urldecode( $_GET['rdt'] ) );
+			}
+
+			// Provide a way to filter the page.
+			$custom_page = apply_filters( 'noptin_action_page_redirect', $custom_page, $action, $this );
 			do_action( "noptin_pre_page_$action", $custom_page );
 
 			$template = locate_noptin_template( 'actions-page.php' );

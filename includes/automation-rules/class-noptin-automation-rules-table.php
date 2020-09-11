@@ -217,11 +217,17 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 		$time_diff = current_time( 'timestamp' ) - $created;
 
 		if ( $created && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
-			/* translators: %s: Human-readable time difference. */
-			return sprintf( __( '%s ago', 'newsletter-optin-box' ), human_time_diff( $created, current_time( 'timestamp' ) ) );
+			$relative = sprintf(
+				/* translators: %s: Human-readable time difference. */
+				__( '%s ago', 'newsletter-optin-box' ),
+				human_time_diff( $created, current_time( 'timestamp' ) )
+			);
 		} else {
-			return date( __( 'Y/m/d g:i:s a' ), $created );
+			$relative = date_i18n( get_option( 'date_format' ), $created );
 		}
+
+		$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $created ) );
+		return "<abbr title='$date'>$relative<abbr>";
 
 	}
 

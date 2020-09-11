@@ -74,6 +74,7 @@ class Noptin_Form {
 	public function init( $data ) {
 
 		$data       = $this->sanitize_form_data( $data );
+		$data       = $this->convert_classic_vars( $data );
 		$this->data = apply_filters( 'noptin_get_form_data', $data, $this );
 		$this->id   = $data['id'];
 
@@ -146,7 +147,6 @@ class Noptin_Form {
 	 */
 	public function get_defaults() {
 
-		$noptin   = noptin();
 		$defaults = array(
 			'optinName'             => '',
 			'optinStatus'           => false,
@@ -196,7 +196,7 @@ class Noptin_Form {
 			'image'                 => '',
 			'imagePos'              => 'right',
 			'imageMain'             => '',
-			'imageMainPos'          => '',
+			'imageMainPos'          => 'right',
 
 			// Button designs.
 			'noptinButtonBg'        => '#313131',
@@ -207,17 +207,86 @@ class Noptin_Form {
 			'hideTitle'             => false,
 			'title'                 => __( 'JOIN OUR NEWSLETTER', 'newsletter-optin-box' ),
 			'titleColor'            => '#313131',
+			'titleTypography'       => array(
+				'font_size'      => '30',
+				'font_weight'    => '700',
+				'line_height'    => '1.5',
+				'decoration'     => '',
+				'style'          => '',
+				'generated'      => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
+			),
+			'titleAdvanced'         => array(
+				'margin' => new stdClass(),
+				'padding' => array(
+					'top' => '4'
+				),
+				'generated' => 'padding-top: 4px;',
+				'classes'     => ''
+			),
+
+			// Title design.
+			'hidePrefix'           => true,
+			'prefix'                 => __( 'Prefix', 'newsletter-optin-box' ),
+			'prefixColor'            => '#313131',
+			'prefixTypography'       => array(
+				'font_size'      => '20',
+				'font_weight'    => '500',
+				'line_height'    => '1.3',
+				'decoration'     => '',
+				'style'          => '',
+				'generated'      => 'font-size: 20px; font-weight: 500; line-height: 1.3;',
+			),
+			'prefixAdvanced'         => array(
+				'margin' => new stdClass(),
+				'padding' => array(
+					'top' => '4'
+				),
+				'generated' => 'padding-top: 4px;',
+				'classes'     => ''
+			),
 
 			// Description design.
 			'hideDescription'       => false,
 			'description'           => __( 'And get notified everytime we publish a new blog post.', 'newsletter-optin-box' ),
 			'descriptionColor'      => '#32373c',
+			'descriptionTypography' => array(
+				'font_size'      => '16',
+				'font_weight'    => '500',
+				'line_height'    => '1.3',
+				'decoration'     => '',
+				'style'          => '',
+				'generated'      => 'font-size: 16px; font-weight: 500; line-height: 1.3;',
+			),
+			'descriptionAdvanced'         => array(
+				'padding' => new stdClass(),
+				'margin' => array(
+					'top' => '18'
+				),
+				'generated' => 'margin-top: 18px;',
+				'classes'     => ''
+			),
 
 			// Note design.
 			'hideNote'              => false,
 			'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 			'noteColor'             => '#607D8B',
 			'hideOnNoteClick'       => false,
+			'noteTypography'       => array(
+				'font_size'      => '14',
+				'font_weight'    => '400',
+				'line_height'    => '1',
+				'decoration'     => '',
+				'style'          => '',
+				'generated'      => 'font-size: 14px; font-weight: 400; line-height: 1;',
+			),
+			'noteAdvanced'       => array(
+				'padding' => new stdClass(),
+				'margin'  => array(
+					'top' => '10'
+				),
+				'generated' => 'margin-top: 10px;',
+				'classes'     => ''
+			),
 
 			// Trigger Options.
 			'timeDelayDuration'     => 4,
@@ -229,17 +298,18 @@ class Noptin_Form {
 
 			// Restriction Options.
 			'showEverywhere'        => true,
-			'showHome'              => true,
-			'showBlog'              => true,
-			'showSearch'            => false,
-			'showArchives'          => false,
+			'showPlaces'            => array(
+				'showHome',
+				'showBlog',
+				'post',
+			),
 			'neverShowOn'           => '',
 			'onlyShowOn'            => '',
 			'whoCanSee'             => 'all',
 			'userRoles'             => array(),
 			'hideSmallScreens'      => false,
 			'hideLargeScreens'      => false,
-			'showPostTypes'         => array( 'post' ),
+			'showPostTypes'         => array(),
 
 			// custom css.
 			'CSS'                   => '.noptin-optin-form-wrapper *{}',
@@ -252,6 +322,41 @@ class Noptin_Form {
 
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
 
+	}
+
+	/**
+	 * Converts classic form variables.
+	 */
+	public function convert_classic_vars( $data ) {
+
+		// Convert the borders.
+		if ( empty( $data['formBorder'] ) || ! is_array( $data['formBorder'] ) ) {
+			$data['formBorder'] = array(
+				'style'         => 'solid',
+				'border_radius' => intval( $data['formRadius'] ),
+				'border_width'  => intval( $data['borderSize'] ),
+				'border_color'  => $data['noptinFormBorderColor'],
+			);
+
+			extract( $data['formBorder'] );
+			$data['formBorder']['generated'] = "border-style: solid; border-radius: {$border_radius}px; border-width: {$border_width}px; border-color: {$border_color};";
+		}
+
+		// Image position.
+		if ( empty( $data['imageMainPos'] ) ) {
+			$data['imageMainPos'] = 'right';
+		}
+
+		if ( empty( $data['imageMain'] ) ) {
+			$data['imageMain'] = '';
+		}
+
+		if ( ! empty( $data['showPostTypes'] ) ) {
+			$data['showPlaces']    = array_unique( array_merge( $data['showPlaces'], $data['showPostTypes'] ) );
+			$data['showPostTypes'] = array();
+		}
+
+		return $data;
 	}
 
 	/**
@@ -593,6 +698,24 @@ class Noptin_Form {
 			return false;
 		}
 
+		// User roles.
+		if ( 'users' == $this->whoCanSee && ! is_user_logged_in() ) {
+			return false;
+		}
+
+		if ( 'guests' == $this->whoCanSee && is_user_logged_in() ) {
+			return false;
+		}
+
+		if ( 'roles' == $this->whoCanSee ) {
+			$role = $this->get_user_role();
+
+			if ( empty( $role ) || ! is_array( $this->userRoles ) || ! in_array( $role, $this->userRoles ) ) {
+				return false;
+			}
+
+		}
+
 		// Has the user restricted this to a few posts?
 		if ( ! empty( $this->onlyShowOn ) ) {
 			return noptin_is_singular( $this->onlyShowOn );
@@ -608,35 +731,41 @@ class Noptin_Form {
 			return true;
 		}
 
+		$places = is_array( $this->showPlaces ) ? $this->showPlaces : array();
+
 		// frontpage.
 		if ( is_front_page() ) {
-			return $this->showHome;
+			return ( ! empty( $this->showHome ) || in_array( 'showHome', $places ) );
 		}
 
 		// blog page.
 		if ( is_home() ) {
-			return $this->showBlog;
+			return ( ! empty( $this->showBlog ) || in_array( 'showBlog', $places ) );
 		}
 
 		// search.
 		if ( is_search() ) {
-			return $this->showSearch;
+			return ( ! empty( $this->showSearch ) || in_array( 'showSearch', $places ) );
 		}
 
 		// other archive pages.
 		if ( is_archive() ) {
-			return $this->showArchives;
+			return ( ! empty( $this->showArchives ) || in_array( 'showArchives', $places ) );
 		}
 
 		// Single posts.
-		$post_types = $this->showPostTypes;
+		return is_singular( $places );
 
-		if ( empty( $post_types ) ) {
-			return false;
-		}
+	}
 
-		return is_singular( $post_types );
-
+	/**
+	 * Returns the current user's role.
+	 *
+	 * @return string
+	 */
+	public function get_user_role() {
+		$user = wp_get_current_user();
+		return empty( $user ) ? '' : current( $user->roles );
 	}
 
 	/**

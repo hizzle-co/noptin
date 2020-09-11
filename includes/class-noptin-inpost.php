@@ -136,7 +136,7 @@ class Noptin_Inpost {
 
 		// Prepare the form.
 		$form = noptin_get_optin_form( trim( $atts['id'] ) );
-
+		noptin_dump( $form->can_show() );
 		// Maybe return its html.
 		if ( $form->can_show() ) {
 			return $form->get_html();
