@@ -1,72 +1,69 @@
 {
-  "name": "noptin",
-  "version": "1.3.0",
-  "private": true,
-  "description": "WordPress Newsletter Plugin",
-  "scripts": {
-    "test": "test",
-    "sniff": "phpcs includes",
-    "beautify": "phpcbf includes",
-    "cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
-    "cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
-    "css": "npm run cssa && npm run cssf",
-    "js": "npx webpack --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hizzle-co/noptin.git"
-  },
-  "keywords": [
-    "noptin"
-  ],
-  "author": "picocodes",
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/hizzle-co/noptin/issues"
-  },
-  "homepage": "https://github.com/hizzle-co/noptin#readme",
-  "browserslist": [
-    "extends @wordpress/browserslist-config"
-  ],
-  "dependencies": {
-    "install": "0.13.0",
-    "lodash.find": "4.6.0",
-    "lodash.throttle": "4.1.1",
-    "medium-editor": "5.23.3",
-    "papaparse": "5.3.0",
-    "postcss-import": "12.0.1",
-    "vue": "2.6.12",
-    "vue-contenteditable": "1.0.2",
-    "vue-popperjs": "2.3.0",
-    "vuedraggable": "2.24.1",
-    "vuetify": "2.3.10"
-  },
-  "devDependencies": {
-    "@babel/core": "7.11.6",
-    "@babel/plugin-transform-runtime": "7.11.5",
-    "@babel/preset-env": "7.11.5",
-    "@mdi/js": "5.5.55",
-    "@wordpress/babel-preset-default": "4.18.0",
-    "@wordpress/browserslist-config": "2.7.0",
-    "autoprefixer": "9.8.6",
-    "babel-loader": "8.1.0",
-    "browserslist": "4.14.2",
-    "css-loader": "4.3.0",
-    "cssnano": "4.1.10",
-    "deepmerge": "4.2.2",
-    "fibers": "5.0.0",
-    "mini-css-extract-plugin": "0.11.2",
-    "precss": "4.0.0",
-    "sass": "1.26.10",
-    "sass-loader": "10.0.2",
-    "serialize-javascript": "5.0.1",
-    "style-loader": "1.2.1",
-    "vue-loader": "15.9.3",
-    "vue-quill-editor": "3.0.6",
-    "vue-swatches": "2.1.0",
-    "vuetify-loader": "1.6.0",
-    "vue-template-compiler": "2.6.12",
-    "webpack": "4.44.1",
-    "webpack-cli": "3.3.12"
-  }
+	"name": "noptin",
+	"version": "1.3.3",
+	"private": true,
+	"description": "WordPress Newsletter Plugin",
+	"scripts": {
+		"test": "test",
+		"sniff": "phpcs includes",
+		"beautify": "phpcbf includes",
+		"cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
+		"cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
+		"css": "npm run cssa && npm run cssf",
+		"js": "npx webpack --watch"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hizzle-co/noptin.git"
+	},
+	"keywords": [
+		"noptin"
+	],
+	"author": "picocodes",
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/hizzle-co/noptin/issues"
+	},
+	"homepage": "https://github.com/hizzle-co/noptin#readme",
+	"browserslist": [
+		"extends @wordpress/browserslist-config"
+	],
+	"dependencies": {
+		"install": "0.13.0",
+		"lodash.find": "4.6.0",
+		"lodash.throttle": "4.1.1",
+		"papaparse": "5.3.0",
+		"postcss-import": "12.0.1",
+		"vue": "2.6.12",
+		"vue-contenteditable": "1.0.2",
+		"vue-popperjs": "2.3.0",
+		"vuedraggable": "2.24.1",
+		"vuetify": "2.3.10"
+	},
+	"devDependencies": {
+		"@babel/core": "7.11.6",
+		"@babel/plugin-transform-runtime": "7.11.5",
+		"@babel/preset-env": "7.11.5",
+		"@mdi/js": "5.5.55",
+		"@wordpress/babel-preset-default": "4.18.0",
+		"@wordpress/browserslist-config": "2.7.0",
+		"autoprefixer": "9.8.6",
+		"babel-loader": "8.1.0",
+		"browserslist": "4.14.2",
+		"css-loader": "4.3.0",
+		"cssnano": "4.1.10",
+		"deepmerge": "4.2.2",
+		"fibers": "5.0.0",
+		"mini-css-extract-plugin": "0.11.2",
+		"precss": "4.0.0",
+		"sass": "1.26.10",
+		"sass-loader": "10.0.2",
+		"style-loader": "1.2.1",
+		"vue-loader": "15.9.3",
+		"vue-swatches": "2.1.0",
+		"vue-template-compiler": "2.6.12",
+		"vuetify-loader": "1.6.0",
+		"webpack": "4.44.1",
+		"webpack-cli": "3.3.12"
+	}
 }
