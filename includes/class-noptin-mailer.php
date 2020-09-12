@@ -610,6 +610,7 @@ class Noptin_Mailer {
 			$this
 		);
 
+		$data               = wp_unslash( $data );
 		$this->wp_mail_data = $data;
 
 		// Attach our own hooks.
@@ -622,7 +623,7 @@ class Noptin_Mailer {
 		$result = call_user_func(
 			$sending_function,
 			$data['to'],
-			wp_specialchars_decode ( $data['subject'] ),
+			html_entity_decode( $data['subject'], ENT_QUOTES, get_bloginfo( 'charset' ) ),
 			$data['email'],
 			$data['headers'],
 			$data['attachments']
