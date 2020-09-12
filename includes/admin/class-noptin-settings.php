@@ -1,122 +1,188 @@
 <?php
+/**
+ * Contains the settings handler.
+ */
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Settings handler class.
+ */
 class Noptin_Settings {
 
-	// Class constructor.
-	private function __construct() {}
-
-	// Renders the settings page.
-	public static function output() {
-
-		// Maybe save the settings.
-		Noptin_Settings::maybe_save_settings();
-
-		// Render settings.
-		get_noptin_template( 'settings.php' );
-
-	}
-
-	// Saves the settings page.
-	public static function maybe_save_settings() {
-		global $noptin_options;
-
-		// Maybe abort early.
-		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'] ) ) {
-			return;
-		}
-
-		// Prepare the settings.
-		$registered_settings = self::get_settings();
-		$posted_settings     = $_POST;
-		unset( $posted_settings['_wpnonce'] );
-		unset( $posted_settings['_wp_http_referer'] );
-
-		// Sanitize the settings.
-		$options = self::sanitize_settings( $registered_settings, $posted_settings );
-
-		// Then save them.
-		$noptin_options = $options;
-		update_option( 'noptin_options', $options );
-	}
-
 	/**
-	 * Sanitizes settings fields
+	 * Setting sections.
+	 * 
+	 * @var array
 	 */
-	public static function sanitize_settings( $registered_settings, $posted_settings ) {
+	protected static $sections;
 
-		foreach ( $registered_settings as $id => $args ) {
+	/**
+	 * Settings.
+	 * 
+	 * @var array
+	 */
+	protected static $settings;
 
-			// Deal with checkboxes(unchecked ones are never posted).
-			if ( 'checkbox' == $args['el'] ) {
-				$posted_settings[ $id ] = isset( $posted_settings[ $id ] ) ? '1' : '0';
-			}
-		}
+	/**
+	 * Current state.
+	 * 
+	 * @var array
+	 */
+	protected static $state;
 
-		/**
-		 * Filters Noptin settings before they are saved in the database.
-		 * 
-		 * @param array $posted_settings An array of posted settings.
-		 */
-		return apply_filters( 'noptin_sanitize_settings', $posted_settings );
+	/**
+	 * Class constructor.
+	 * 
+	 * It's protected since we do not want anyone to create a new instance of the class.
+	 * It's here purely for encapsulation.
+	 */
+	protected function __construct() {}
+
+	/**
+	 * Render settings.
+	 */
+	public static function output() {
+		get_noptin_template( 'settings.php' );
 	}
 
 	/**
-	 * Returns all settings sections
+	 * Returns all setting sections.
+	 * 
+	 * @return array
 	 */
 	public static function get_sections() {
-		$sections = wp_list_pluck( self::get_settings(), 'section' );
-		$modified = array();
 
-		foreach ( $sections as $section ) {
-			$modified[ $section ] = ucwords( str_replace( '-', ' ', $section ) );
+		if ( ! empty( self::$sections ) ) {
+			return self::$sections;
 		}
-		return $modified;
+
+		// Known sections.
+		$sections = apply_filters(
+			'noptin_get_setting_sections',
+			array(
+				'general'               => __( 'General', 'newsletter-optin-box' ),
+				'emails'                => array(
+					'label'             => __( 'Emails', 'newsletter-optin-box' ),
+					'children'          => array(
+						'main'          => __( 'Emails', 'newsletter-optin-box' ),
+						'double_opt_in' => __( 'Double Opt-In Email', 'newsletter-optin-box' ),
+					)
+				),
+				'integrations'          => __( 'Integrations', 'newsletter-optin-box' ),
+				'messages'              => __( 'Messages', 'newsletter-optin-box' )
+			)
+		);
+
+		// Add unknown sections.
+		foreach ( self::get_settings() as $setting ) {
+
+			// Do we have a section.
+			if ( empty( $setting['section'] ) ) {
+				continue;
+			}
+
+			// If yes, ensure that it is set.
+			$section = $setting['section'];
+			if ( empty( $sections[ $section ] ) ) {
+				$sections[ $section ] = ucwords( str_replace( '-', ' ', $section ) );
+			}
+
+			// If we have a sub-section, maybe add it.
+			if ( ! empty( $setting['sub_section'] ) ) {
+
+				$sub_section = $setting['sub_section'];
+
+				// Sections that have subsections are usually arrays.
+				if ( ! is_array( $sections[ $section ] ) ) {
+					$sections[ $section ]   = array(
+						'label'             => $sections[ $section ],
+						'children'          => array(
+							'main'          => $sections[ $section ],
+						)
+					);
+				}
+
+				if ( empty( $sections[ $section ]['children'][$sub_section] ) ) {
+					$sections[ $section ]['children'][$sub_section] = ucwords( str_replace( '-', ' ', $sub_section ) );
+				}
+
+			}
+
+		}
+
+		// Cache it.
+		self::$sections = $sections;
+		
+		return $sections;
 
 	}
 
 	/**
 	 * Returns a section conditional
+	 * 
+	 * @return string
 	 */
 	public static function get_section_conditional( $args ) {
 
+		// Ensure there is a section.
 		if ( empty( $args['section'] ) ) {
 			return '';
 		}
 
-		return "v-show=\"currentTab=='{$args['section']}'\"";
+		$section     = esc_attr( $args['section'] );
+		$sub_section = empty( $args['sub_section'] ) ? 'main' : esc_attr( $args['sub_section'] );
+
+		return "v-show=\"currentTab=='$section' && currentSection=='$sub_section' \"";
 
 	}
 
 	/**
-	 * Returns the default state
+	 * Returns the current state
+	 * 
+	 * @return array
 	 */
 	public static function get_state() {
 
-		$settings = self::get_settings();
-		$state    = array();
+		if ( ! empty( self::$state ) ) {
+			return self::$state;
+		}
 
-		foreach ( $settings as $key => $args ) {
-			$default = isset( $args['default'] ) ? $args['default'] : '';
+		// Prepare options.
+		$state = array();
+
+		foreach ( self::get_settings() as $key => $args ) {
+			$default       = isset( $args['default'] ) ? $args['default'] : '';
 			$state[ $key ] = get_noptin_option( $key, $default );
 		}
 
 		$state = array_merge( get_noptin_options(), $state );
 
-		$state['currentTab'] = 'general';
-		$state['saved']      = __( 'Your settings have been saved', 'newsletter-optin-box' );
-		$state['error']      = __( 'Your settings could not be saved.', 'newsletter-optin-box' );
+		$state['currentTab']     = 'general';
+		$state['currentSection'] = 'main';
+		$state['saved']          = __( 'Your settings have been saved', 'newsletter-optin-box' );
+		$state['error']          = __( 'Your settings could not be saved.', 'newsletter-optin-box' );
+
+		// Cache this.
+		self::$state = $state;
+
 		return $state;
 
 	}
 
 	/**
 	 * Returns all settings fields
+	 * 
+	 * @return array
 	 */
 	public static function get_settings() {
 
-		$settings = array(
+		if ( ! empty( self::$settings ) ) {
+			return self::$settings;
+		}
+
+		$double_optin = get_default_noptin_subscriber_double_optin_email();
+		$settings     = array(
 
 			'notify_admin'          => array(
 				'el'          => 'input',
@@ -268,15 +334,79 @@ class Noptin_Settings {
 				)
 			),
 
+			'double_optin_email_subject' => array(
+				'el'          => 'input',
+				'section'     => 'emails',
+				'sub_section' => 'double_opt_in',
+				'label'       => __( 'Email Subject', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'default'     => $double_optin['email_subject'],
+				'placeholder' => $double_optin['email_subject'],
+				'description' => __( 'The subject of the subscription confirmation email', 'newsletter-optin-box' ),
+			),
+
+			'double_optin_hero_text' => array(
+				'el'          => 'input',
+				'section'     => 'emails',
+				'sub_section' => 'double_opt_in',
+				'label'       => __( 'Email Title', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'default'     => $double_optin['hero_text'],
+				'placeholder' => $double_optin['hero_text'],
+				'description' => __( 'The title of the email', 'newsletter-optin-box' ),
+			),
+
+			'double_optin_email_body'     => array(
+				'el'          => 'textarea',
+				'section'     => 'emails',
+				'sub_section' => 'double_opt_in',
+				'label'       => __( 'Email Body', 'newsletter-optin-box' ),
+				'placeholder' => $double_optin['email_body'],
+				'default'     => $double_optin['email_body'],
+				'description' => __( 'This is the main content of the email', 'newsletter-optin-box' ),
+			),
+
+			'double_optin_cta_text' => array(
+				'el'          => 'input',
+				'section'     => 'emails',
+				'sub_section' => 'double_opt_in',
+				'label'       => __( 'Call to Action', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'default'     => $double_optin['cta_text'],
+				'placeholder' => $double_optin['cta_text'],
+				'description' => __( 'The text of the call to action button', 'newsletter-optin-box' ),
+			),
+
+			'double_optin_after_cta_text' => array(
+				'el'          => 'textarea',
+				'section'     => 'emails',
+				'sub_section' => 'double_opt_in',
+				'label'       => __( 'Extra Text', 'newsletter-optin-box' ),
+				'default'     => $double_optin['after_cta_text'],
+				'placeholder' => $double_optin['after_cta_text'],
+				'description' => __( 'This text is shown after the call to action button', 'newsletter-optin-box' ),
+			),
+
+			'double_optin_permission_text' => array(
+				'el'          => 'textarea',
+				'section'     => 'emails',
+				'sub_section' => 'double_opt_in',
+				'label'       => __( 'Permission Text', 'newsletter-optin-box' ),
+				'default'     => $double_optin['permission_text'],
+				'placeholder' => $double_optin['permission_text'],
+				'description' => __( 'Remind the subscriber how they signed up.', 'newsletter-optin-box' ),
+			),
+
 		);
 
-		/**
-		 * Filters Noptin settings.
-		 * 
-		 * @param array $settings An array of Noptin settings.
-		 */
-		return apply_filters( 'noptin_get_settings', $settings );
-	}
+		// Filter the settings.
+		$settings = apply_filters( 'noptin_get_settings', $settings );
 
+		// Cache them.
+		self::$settings = $settings;
+
+		return $settings;
+
+	}
 
 }

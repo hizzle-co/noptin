@@ -1,26 +1,90 @@
 <div class="wrap noptin-settings" id="noptin-settings-app">
-	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-	<?php do_action( 'noptin_settings_page_top' ); ?>
-	<form @submit.prevent="saveSettings" class="noptin-settings-tab-main-form" method="post" action="<?php echo admin_url( 'admin.php?page=noptin-settings' ); ?>">
+
+	<?php
+
+		// Display the title.
+		$title = noptin_clean( get_admin_page_title() );
+		echo "<h1>$title</h1>";
+
+		// Fire a hook before printing the settings page.
+		do_action( 'noptin_settings_page_top' );
+
+	?>
+
+	<form @submit.prevent="saveSettings" class="noptin-settings-tab-main-form">
+
+
 		<nav class="nav-tab-wrapper">
-			<?php foreach ( Noptin_Settings::get_sections() as $id => $title ) { ?>
-				<a
-					href=""
-					@click.prevent="currentTab='<?php echo $id; ?>'"
-					:class="{ 'nav-tab-active': currentTab == '<?php echo $id; ?>' }"
-					class="nav-tab"><?php echo $title; ?></a>
-			<?php } ?>
+			<?php
+			
+				foreach ( Noptin_Settings::get_sections() as $id => $title ) :
+
+					// For those sections that have sub-sections.
+					if ( is_array( $title ) ) {
+						$title = $title['label'];
+					}
+
+					$title = wpinv_clean( $title );
+					$id    = esc_attr( $id );
+
+					echo "<a href='' :class=\"tabClass('$id')\" @click.prevent=\"switchTab('$id')\">$title</a>\n\t\t\t";
+
+				endforeach;
+			?>
 		</nav>
+
+		<div class="noptin-sections-wrapper">
+
+			<?php
+
+				foreach ( Noptin_Settings::get_sections() as $key => $section ) :
+
+					// Abort if it doesn't have sub-sections.
+					if ( ! is_array( $section ) ) {
+						continue;
+					}
+
+					$key         = esc_attr( $key );
+					$subsections = array();
+
+					foreach ( $section['children'] as $id => $title ) {
+						$title         = wpinv_clean( $title );
+						$id            = esc_attr( $id );
+						$subsections[] = "<a href='' :class=\"sectionClass('$id')\" @click.prevent=\"switchSection('$id')\">$title</a>";
+					}
+
+					$html  = "<ul class='subsubsub' v-show=\"currentTab=='$key'\">\n\t<li>";
+					$html .= join( " | </li>\n\t<li>", $subsections );
+					$html .= "</li>\n</ul>\n";
+					echo $html;
+
+				endforeach;
+
+			?>
+
+		</div>
+
 		<div class="settings-body noptin-fields">
+
 			<div class="noptin-save-saved" style="display:none"></div>
 			<div class="noptin-save-error" style="display:none"></div>
-			<?php foreach ( Noptin_Settings::get_settings() as $id => $args ) { ?>
-				<div <?php echo  Noptin_Settings::get_section_conditional( $args ); ?>>
-					<?php Noptin_Vue::render_el( $id, $args ); ?>
-				</div>
-			<?php } ?>
-			<?php submit_button(); ?>
+
+			<?php
+			
+				foreach ( Noptin_Settings::get_settings() as $id => $args ) :
+					$condition = Noptin_Settings::get_section_conditional( $args );
+
+					echo "<div $condition>";
+					Noptin_Vue::render_el( $id, $args );
+					echo '</div>';
+
+				endforeach;
+				submit_button();
+
+			?>
 		</div>
+
+
 	</form>
 	<?php do_action( 'noptin_settings_page_bottom' ); ?>
 </div>

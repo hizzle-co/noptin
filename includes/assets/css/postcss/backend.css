@@ -1452,3 +1452,7 @@ a.no-campaign-create-new-campaign {
 	}
 
 }
+
+.noptin-sections-wrapper .subsubsub {
+	float: none;
+}

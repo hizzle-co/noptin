@@ -1,23 +1,15 @@
-import VSwatches from 'vue-swatches'
 import popover from 'vue-popperjs'
 import noptin from './noptin.js'
-import noptinEditorComponent from './css-editor.vue'
 import noptinSelectComponent from './noptin-select.vue'
 
 var settingsApp = new Vue({
 
 	components: {
 
-		 //Color swatches
-		'noptin-swatch': VSwatches,
-
-		 //Tooltips
+		// Tooltips
 		'noptin-tooltip': popover,
 
-		//Custom CSS Editor
-		'noptineditor': noptinEditorComponent,
-
-		//Select2
+		// Select2
 		'noptin-select': noptinSelectComponent,
 
 	},
@@ -26,20 +18,45 @@ var settingsApp = new Vue({
 
 	data: jQuery.extend(
 		true,
-		{
-			swatches: [
-				['#D81B60', '#E53935', '#8E24AA', '#5E35B1', '#3949AB' ],
-				['#1E88E5', '#039BE5', '#00ACC1', '#00897B', '#43A047' ],
-				['#7CB342', '#C0CA33', '#FDD835', '#FF8F00', '#FF9E80' ],
-				['#6D4C41', '#757575', '#546E7A', '#212121', '#FFFFFF' ]
-		  ]
-		},
+		{},
 		noptinSettings
 	),
 
 	methods: {
 
-		saveSettings () {
+		// Switches to a new tab.
+		switchTab( tab ) {
+			this.currentTab     = tab
+			this.currentSection = 'main'
+		},
+
+		// Switches to a new section.
+		switchSection( section ) {
+			this.currentSection = section
+		},
+
+		// Returns a given tab's class.
+		tabClass( tab ) {
+
+			if ( this.currentTab === tab ) {
+				return 'nav-tab nav-tab-active'
+			}
+
+			return 'nav-tab'
+		},
+
+		// Returns a given section's class.
+		sectionClass( section ) {
+
+			if ( this.currentSection === section ) {
+				return 'current'
+			}
+
+			return ''
+		},
+
+		// Persists settings to the database.
+		saveSettings() {
 
 			var $ = jQuery
 
@@ -64,7 +81,7 @@ var settingsApp = new Vue({
 			})
 
 				//Show a success msg after we are done
-				.done( () => {
+				.done(() => {
 					$(el)
 						.fadeTo("fast", 1)
 						.find('.noptin-save-saved')
@@ -73,7 +90,7 @@ var settingsApp = new Vue({
 				})
 
 				//Else alert the user about the error
-				.fail( () => {
+				.fail(() => {
 					$(el)
 						.fadeTo("fast", 1)
 						.find('.noptin-save-error')
@@ -84,7 +101,7 @@ var settingsApp = new Vue({
 		},
 
 		//Handles image uploads
-		upload_image (key) {
+		upload_image(key) {
 			var size = 'large'
 
 			//Init the media uploader script
@@ -100,18 +117,18 @@ var settingsApp = new Vue({
 				.on('select', e => {
 					let uploaded_image = image.state().get('selection').first();
 
-					if ( uploaded_image.toJSON().sizes[size] ) {
+					if (uploaded_image.toJSON().sizes[size]) {
 						this[key] = uploaded_image.toJSON().sizes[size].url;
 					} else {
 						this[key] = uploaded_image.toJSON().sizes['full'].url;
 					}
-					
+
 				})
 		}
 
 	},
 
-	mounted () {
+	mounted() {
 		//Runs after mounting
 	},
 })
