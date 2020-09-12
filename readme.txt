@@ -125,6 +125,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - WP RSS Aggregator appends the RSS title to new post notification excerpts - FIXED
 - Ability to edit the double opt-in confirmation email - ADDED
 - HTML entities in email subjects are not encoded properly - FIXED
+- Do not sync pending (e.g if BuddyPress is installed) or spam (for multisite) users - FIXED
 
 = 1.3.2 - 2020-06-23 =
 - Ability to delete a subscriber after they unsubscribe - ADDED

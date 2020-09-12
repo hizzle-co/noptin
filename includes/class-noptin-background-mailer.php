@@ -198,7 +198,6 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	 * @param array item The item to fetch a subscriber for.
 	 */
 	public function fetch_subscriber_from_query( $item ) {
-		global $wpdb;
 
 		// Ensure that the query is an array...
 		$subscriber_query = ( ! is_array( $item['subscribers_query'] ) ) ? array() : $item['subscribers_query'];
@@ -236,7 +235,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		$result     = $subscriber->get_results();
 
 		// ... and return the result.
-		return empty( $result ) ? null : $result[0]->id;
+		return empty( $result ) ? null : $result[0];
 
 	}
 

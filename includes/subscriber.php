@@ -293,8 +293,12 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
 /**
  * Inserts a new subscriber into the database
  *
+ * This function returns the subscriber id if the subscriber exists.
+ * It does not update the subscriber though.
+ *
  * @access  public
  * @since   1.0.5
+ * @return int|string Subscriber id on success, error on failure.
  */
 function add_noptin_subscriber( $fields ) {
 	global $wpdb;
@@ -307,9 +311,11 @@ function add_noptin_subscriber( $fields ) {
 		return __( 'Please provide a valid email address', 'newsletter-optin-box' );
 	}
 
+	// Abort if the email is not unique.
 	$fields['email'] = sanitize_email( $fields['email'] );
-	if ( noptin_email_exists( $fields['email'] ) ) {
-		return true;
+	$subscriber_id   = get_noptin_subscriber_id_by_email( $fields['email'] );
+	if ( ! empty( $subscriber_id ) ) {
+		return $subscriber_id;
 	}
 
 	// Maybe split name into first and last.
@@ -326,7 +332,7 @@ function add_noptin_subscriber( $fields ) {
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
 		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] :  md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
 		'date_created' => ! empty( $fields['date_created'] ) ? date( 'Y-m-d', strtotime( $fields['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) ),
-		'active'       => isset( $fields['active'] ) ? $fields['active'] :  ( get_noptin_option( 'double_optin' ) ? 1 : 0 ),
+		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] :  ( get_noptin_option( 'double_optin' ) ? 1 : 0 ),
 	);
 
 	if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
@@ -873,7 +879,7 @@ function get_noptin_subscriber_fields() {
 function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 
 	// Arrays only please.
-	$users_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $users_to_sync ) ) );
+	$users_to_sync = array_filter( noptin_parse_int_list( $users_to_sync ) );
 
 	foreach ( array_unique( $users_to_sync ) as $user_id ) {
 
@@ -886,39 +892,20 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 		}
 
 		// If the user is not yet subscribed, subscribe them.
-		add_noptin_subscriber(
+		$subscriber_id = add_noptin_subscriber(
 			array(
 				'email'           => $user_info->user_email,
 				'name'            => $user_info->display_name,
+				'active'          => 1,
 				'_subscriber_via' => 'users_sync',
 			)
 		);
 
-		// Then update the subscriber.
-		$subscriber = get_noptin_subscriber_by_email( $user_info->user_email );
-
-		if ( ! $subscriber->exists() ) {
-			continue;
+		if ( is_numeric( $subscriber_id ) ) {
+			update_user_meta( $user_id, 'noptin_subscriber_id', $subscriber_id );
+			update_noptin_subscriber_meta( $subscriber_id, 'wp_user_id', $user_id );
 		}
 
-		update_user_meta( $user_info->ID, 'noptin_subscriber_id', $subscriber->id );
-
-		$to_update = array(
-			'description' => $user_info->description,
-			'website'	  => esc_url( $user_info->user_url ),
-			'wp_user_id'  => $user_info->ID,
-		);
-
-		$to_update = apply_filters( 'noptin_sync_users_to_subscribers', $to_update, $subscriber, $user_info );
-		foreach ( $to_update as $key => $value ) {
-			if ( is_null( $value ) ) {
-				unset( $to_update[ $key ] );
-			}
-		}
-
-		if ( ! empty( $to_update ) ) {
-			update_noptin_subscriber( $subscriber->id, $to_update );
-		}
 	}
 
 }
@@ -934,7 +921,7 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 
 	// Arrays only please.
-	$subscribers_to_sync = array_filter( array_map( 'absint', noptin_parse_list( $subscribers_to_sync ) ) );
+	$subscribers_to_sync = array_filter( noptin_parse_int_list( $subscribers_to_sync ) );
 
 	foreach ( array_unique( $subscribers_to_sync ) as $subscriber_id ) {
 
@@ -953,9 +940,15 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 			continue;
 		}
 
+		$username = trim( $subscriber->first_name . $subscriber->second_name );
+
+		if ( empty( $username ) ) {
+			$username = $subscriber->email;
+		}
+
 		// Prepare user values.
 		$args = array(
-			'user_login' => noptin_generate_user_name( $subscriber->email ),
+			'user_login' => noptin_generate_user_name( $username ),
 			'user_pass'  => wp_generate_password(),
 			'user_email' => $subscriber->email,
 			'role'       => 'subscriber',
@@ -967,7 +960,7 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 				sprintf(
 					__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-optin-box' ),
 					$user_id->get_error_message(),
-					$subscriber->email
+					sanitize_email( $subscriber->email )
 				)
 			);
 			continue;
@@ -992,10 +985,13 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 function noptin_generate_user_name( $prefix = '' ) {
 
 	// If prefix is an email, retrieve the part before the email.
-	$prefix = strtok( $prefix, '@' );
+	$prefix = strtolower( trim( strtok( $prefix, '@' ) ) );
 
-	// Trim to 4 characters max.
-	$prefix = sanitize_user( substr( $prefix, 0, 4 ) );
+	// Remove whitespace.
+	$prefix = preg_replace( '|\s+|', '_', $prefix );
+
+	// Trim to 8 characters max. 
+	$prefix = sanitize_user( $prefix );
 
 	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
 	/** @ignore */
@@ -1004,8 +1000,9 @@ function noptin_generate_user_name( $prefix = '' ) {
 		$prefix = 'noptin';
 	}
 
-	$username = $prefix . '_' . zeroise( wp_rand( 0, 9999 ), 4 );
+	$username = $prefix;
 	if ( username_exists( $username ) ) {
+		$prefix = $prefix . zeroise( wp_rand( 0, 9999 ), 4 );
 		return noptin_generate_user_name( $prefix );
 	}
 

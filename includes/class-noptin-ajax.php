@@ -263,7 +263,7 @@ class Noptin_Ajax {
 			$subscribers = new Noptin_Subscriber_Query( $data );
 
             foreach ( $subscribers->get_results() as $subscriber ) {
-				delete_noptin_subscriber( $subscriber->id );
+				delete_noptin_subscriber( $subscriber );
 			}
 
 			exit;

@@ -282,6 +282,11 @@ class Noptin_Subscriber {
 	 */
 	public function get( $key, $single = true ) {
 
+		// Abort early if the subscriber does not exist.
+		if ( ! $this->exists() ) {
+			return null;
+		}
+
 		$value = null;
 
 		if ( strtolower( $key ) === 'id' ) {

@@ -36,7 +36,7 @@ class Noptin_Background_Sync extends Noptin_Background_Process {
 			$subscriber = $this->get_unsynced_subscriber();
 
 			// If all subscribers are synced, return false to stop the process.
-			if( empty( $subscriber ) ) {
+			if ( empty( $subscriber ) ) {
 				return false;
 			}
 
@@ -48,9 +48,9 @@ class Noptin_Background_Sync extends Noptin_Background_Process {
 
 			// Fetch the next user to sync.
 			$user = $this->get_unsynced_user();
-			
+
 			// If all users are synced, return false to stop the process.
-			if( empty( $user ) ) {
+			if ( empty( $user ) ) {
 				return false;
 			}
 
@@ -59,56 +59,74 @@ class Noptin_Background_Sync extends Noptin_Background_Process {
 			return $item;
 
 		}
+
 	}
 
 	/**
 	 * Fetches an unsynced subscriber.
-	 * 
+	 *
 	 * @return string|null;
 	 */
 	public function get_unsynced_subscriber() {
-		global $wpdb;
 
-		// Fetch unsynced subscribers.
-		$meta_query = new WP_Meta_Query(
+		$query = new Noptin_Subscriber_Query(
 			array(
-				'relation' => 'AND',
-				array(
-					'key'     => 'wp_user_id',
-					'compare' => 'NOT EXISTS',
-				),
+				'meta_key'	    => 'wp_user_id',
+				'meta_compare'  => 'NOT EXISTS',
+				'number'        => 1,
+				'fields'        => 'id',
+				'count_total'   => false,
 			)
 		);
 
-		// Subscribers' table.
-		$table = get_noptin_subscribers_table_name();
+		$subscriber = $query->get_results();
 
-		// Retrieve join and where clauses.
-		$clauses = $meta_query->get_sql( 'noptin_subscriber', $table, 'id' );
+		return empty( $subscriber ) ? 0 : $subscriber[0];
 
-		$query = "SELECT $table.id FROM $table {$clauses['join']} WHERE 1=1 {$clauses['where']} LIMIT 1";
+	}
 
-		return $wpdb->get_var( $query );
+	/**
+	 * Hides inactive subscribers from the sync.
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function filter_user_query( &$query ) {
+		global $wpdb;
+
+		$query->query_where .= " AND $wpdb->users.user_status = 0 ";
+
+		if ( is_multisite() ) {
+			$query->query_where .= " AND $wpdb->users.deleted = 0 AND $wpdb->users.spam = 0 ";
+		}
 
 	}
 
 	/**
 	 * Fetches an unsynced WordPress User.
-	 * 
+	 *
 	 * @return int;
 	 */
 	public function get_unsynced_user() {
 
-		$user = get_users( array(
-			'meta_key'	    => 'noptin_subscriber_id',
-			'meta_compare'	=> 'NOT EXISTS',
-			'number'		=> 1,
-			'fields'		=> 'ID',
-		));
+		// For buddypress and co, do not sync inactive users.
+		add_action( 'pre_user_query', array( $this, 'filter_user_query' ) );
+
+		$user = get_users(
+			array(
+				'meta_key'	    => 'noptin_subscriber_id',
+				'meta_compare'  => 'NOT EXISTS',
+				'number'        => 1,
+				'fields'        => 'ID',
+			)
+		);
+
+		// For buddypress and co, do not sync inactive users.
+		remove_action( 'pre_user_query', array( $this, 'filter_user_query' ) );
 
 		if( empty( $user ) ) {
 			return 0;
 		}
+
 		return $user[0];
 
 	}

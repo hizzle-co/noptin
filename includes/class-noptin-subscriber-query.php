@@ -207,7 +207,7 @@ class Noptin_Subscriber_Query {
 			$this->query_vars  = $this->fill_query_vars( $query );
 		}
 
-		if ( isset( $this->query_vars['fields'] ) && 'all' !== $this->query_vars['fields'] ) {
+		if ( ! empty( $this->query_vars['fields'] ) && 'all' !== $this->query_vars['fields'] ) {
 			$this->query_vars['fields'] = noptin_parse_list( $this->query_vars['fields'] );
 		}
 
@@ -420,7 +420,7 @@ class Noptin_Subscriber_Query {
 		if ( null === $this->results ) {
 			$this->request = "SELECT $this->query_fields $this->query_from $this->query_where $this->query_orderby $this->query_limit";
 
-			if ( is_array( $qv['fields'] ) || 'all' == $qv['fields'] ) {
+			if ( ( is_array( $qv['fields'] ) && 1 != count( $qv['fields'] ) ) || 'all' == $qv['fields'] ) {
 				$this->results = $wpdb->get_results( $this->request );
 			} else {
 				$this->results = $wpdb->get_col( $this->request );
