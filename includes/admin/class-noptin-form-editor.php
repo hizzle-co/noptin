@@ -449,6 +449,14 @@ class Noptin_Form_Editor {
 		return array(
 
 			// Form Design.
+			'formTemplate' => array(
+				'el'       => 'panel',
+				'title'    => __( 'Template', 'newsletter-optin-box' ),
+				'id'       => 'formTemplate',
+				'children' => $this->get_template_settings(),
+			),
+
+			// Form Design.
 			'form'        => array(
 				'el'       => 'panel',
 				'title'    => __( 'Form Appearance', 'newsletter-optin-box' ),
@@ -525,14 +533,14 @@ class Noptin_Form_Editor {
 	/**
 	 * Returns Color themes Design Fields
 	 */
-	private function get_templates_settings() {
+	private function get_template_settings() {
 
 		return array(
 
 			'Template'    => array(
 				'el'      => 'select',
 				'label'   => __( 'Apply a template', 'newsletter-optin-box' ),
-				'tooltip' => __( 'All templates include custom css so remember to check out the Custom CSS panel after you apply a template', 'newsletter-optin-box' ),
+				'tooltip' => __( 'Some templates include custom css so remember to check out the Custom CSS panel after you apply a template', 'newsletter-optin-box' ),
 				'options' => wp_list_pluck( noptin_get_optin_templates(), 'title' ),
 			),
 
@@ -543,6 +551,7 @@ class Noptin_Form_Editor {
 			),
 
 		);
+
 	}
 
 	/**

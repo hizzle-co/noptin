@@ -168,6 +168,19 @@
 			'color-picker': colorPicker
 		},
 
+		watch: {
+
+			// Watch the value
+			value : {
+    			handler () {
+					console.log( this.value )
+					this.value.generated = this.getStyles( this.value )
+				},
+    			immediate: true
+			},
+
+		},
+
 		methods: {
             update( key, value ) {
 				let styles = jQuery.extend( true, {}, this.value )
@@ -198,6 +211,7 @@
 				return generated;
 			}
 
-		}
+		},
+
   	}
 </script>

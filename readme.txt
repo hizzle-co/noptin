@@ -128,6 +128,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Do not sync pending (e.g if BuddyPress is installed) or spam (for multisite) users - FIXED
 - Nonce verification can now be toggled on via a hook or constant - ADDED
 - Ability to stop a sending campaign - ADDED
+- New large fields emaill subscription template - ADDED
 
 = 1.3.2 - 2020-06-23 =
 - Ability to delete a subscriber after they unsubscribe - ADDED

@@ -506,9 +506,10 @@ $noptin_color: #ff6f00;
 		padding-top: 4px;
 
 		p {
+			padding: 0;
 			margin: 0;
-			font-size: 1.9rem;
-			font-weight: 700;
+			font-size: inherit ! important;
+			font-weight: inherit ! important;
 		}
 	}
 
@@ -518,8 +519,10 @@ $noptin_color: #ff6f00;
 		margin-top: 1.125rem;
 
 		p {
+			padding: 0;
 			margin: 0;
-			font-size: 1rem;
+			font-size: inherit ! important;
+			font-weight: inherit ! important;
 		}
 	}
 }
@@ -641,8 +644,10 @@ $noptin_color: #ff6f00;
 		margin-top: 10px;
 
 		p {
-			font-size: 14px;
+			padding: 0;
 			margin: 0;
+			font-size: inherit ! important;
+			font-weight: inherit ! important;
 		}
 	}
 

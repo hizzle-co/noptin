@@ -180,7 +180,7 @@
 				let generated = this.formBorder.generated
 
 				if ( this.noptinFormBg ) {
-					generated = `${generated} background-color: ${this.noptinFormBg};`
+					generated = `${generated}; background-color: ${this.noptinFormBg};`
 				}
 
 				if ( this.noptinFormBgImg ) {
@@ -392,7 +392,7 @@
 				true,
 				{
 					activeSidebar: 'design',
-					darkMode: true,
+					darkMode: false,
 					unsaved: false,
 					icons: {
 						cog: mdiCog,

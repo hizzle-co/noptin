@@ -27,7 +27,13 @@
 				),
 
 				'imageMain'             => false,
-				'noptinFormBorderColor' => '#f8f9fa',
+				'formBorder'            => array(
+					'style'         => 'none',
+					'border_radius' => 0,
+					'border_width'  => 0,
+					'border_color'  => '#f8f9fa',
+					'generated'     => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #f8f9fa;",
+				),
 				'image'                 => 'https://cdn.noptin.com/templates/images/avatar.png',
 				'imagePos'              => 'left',
 				'noptinButtonLabel'     => __( 'Sign Up', 'newsletter-optin-box' ),
@@ -68,10 +74,7 @@
 .noptin-optin-form-wrapper form.noptin-form-single-line {
 	justify-content: center
 }
-
-.noptin-popup-main-wrapper{
- 	background-color: #e4e2dd;
-}',
+',
 			),
 
 		),
@@ -84,7 +87,7 @@
 				'formRadius'            => '10px',
 				'formWidth'             => '520px',
 				'formHeight'            => '280px',
-				'noptinFormBg'          => '#fff',
+				'noptinFormBg'          => '#ffffff',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
 				'fields'                => array(
@@ -102,7 +105,14 @@
 				),
 
 				'imageMain'             => '',
-				'noptinFormBorderColor' => '#fff',
+				'noptinFormBorderColor' => '#ffffff',
+				'formBorder'            => array(
+					'style'         => 'none',
+					'border_radius' => 0,
+					'border_width'  => 0,
+					'border_color'  => '#ffffff',
+					'generated'    => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #ffffff;",
+				),
 				'image'                 => '',
 				'imagePos'              => 'right',
 				'noptinButtonLabel'     => __( 'SUBSCRIBE NOW', 'newsletter-optin-box' ),
@@ -119,15 +129,17 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
+				'titleTypography'       => array(
+					'font_size'      => '32',
+					'font_weight'    => '700',
+					'line_height'    => '1.5',
+					'decoration'     => '',
+					'style'          => 'italic',
+					'generated'      => 'font-size: 32px; font-weight: 700; line-height: 1.5;',
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-field{
 	text-align: center;
  	font-weight: 500;
-}
-
-.noptin-optin-form-wrapper .noptin-form-heading {
-    font-size: 32px;
-    font-style: italic;
-    line-height: 1.6;
 }
 
 .noptin-optin-form-wrapper form .noptin-form-footer .noptin-form-submit{
@@ -242,10 +254,15 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
-				'CSS'                   => '.noptin-optin-form-wrapper form .noptin-form-header .noptin-form-description{
-	font-size: 30px;
- 	padding-top: 0.217391304em;
-}',
+				'descriptionTypography' => array(
+					'font_size'      => '30',
+					'font_weight'    => '700',
+					'line_height'    => '1.5',
+					'decoration'     => '',
+					'style'          => '',
+					'generated'      => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
+				),
+				'CSS'                => '',
 
 			),
 
@@ -293,10 +310,19 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
+				'formBorder'            => array(
+					'style'        => 'solid',
+					'formRadius'   => 0,
+					'border_width' => 4,
+					'border_color' => '#795548',
+					'generated'    => "border-style: solid; border-radius: 0px; border-width: 4px; border-color: #795548;",
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper {
-	border: none;
- border-top: 4px solid;
- box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+	border-top-style: solid !important;
+	border-left-style: none !important;
+	border-right-style: none !important;
+	border-bottom-style: none !important;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
 }
 
 .noptin-optin-form-wrapper form .noptin-form-header {
@@ -344,7 +370,13 @@
 				),
 
 				'imageMain'             => '',
-				'noptinFormBorderColor' => 'rgba(0,0,0,0)',
+				'formBorder'            => array(
+					'style'         => 'none',
+					'border_radius' => 0,
+					'border_width'  => 0,
+					'border_color'  => '#000000',
+					'generated'     => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #000000;",
+				),
 				'image'                 => '',
 				'imagePos'              => 'right',
 				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
@@ -561,10 +593,14 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#313131',
-				'CSS'                   => '.noptin-optin-form-wrapper {
-	border: 1px solid;
-	box-shadow: 0 4px 8px 0 rgba(0,0,0,.12), 0 2px 4px 0 rgba(0,0,0,.08);
-}',
+				'formBorder'            => array(
+					'style'         => 'solid',
+					'border_radius' => 8,
+					'border_width'  => 1,
+					'border_color'  => '#6cb2eb',
+					'generated'     => "border-style: solid; border-radius: 8px; border-width: 0px; border-color: #6cb2eb;",
+				),
+				'CSS'                   => '',
 			),
 
 		),
@@ -576,7 +612,7 @@
 				'formRadius'            => '0px',
 				'formWidth'             => '520px',
 				'formHeight'            => '250px',
-				'noptinFormBg'          => '#ffffff',
+				'noptinFormBg'          => '#009688',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
 					array(
@@ -602,19 +638,18 @@
 				'noptinButtonColor'     => '#ffffff',
 				'hideTitle'             => false,
 				'title'                 => __( 'Get some love!', 'newsletter-optin-box' ),
-				'titleColor'            => '#fff',
+				'titleColor'            => '#ffffff',
 				'hideDescription'       => false,
 				'description'           => __( 'Use the Custom CSS tab to change the background color of this form.', 'newsletter-optin-box' ),
 				'descriptionColor'      => '#dff0fe',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
-				'noteColor'             => '#fff',
+				'noteColor'             => '#ffffff',
 				'CSS'                   => '/*Custom css*/
 .noptin-optin-form-wrapper form {
-	background-color: #009688;
- padding: 10px;
- margin: 6px;
+	padding: 10px;
+	border: 6px #ffffff solid;
 }',
 			),
 
@@ -712,9 +747,12 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#607d8b',
 				'noptinButtonColor'     => '#ffffff',
+				'hidePrefix'            => false,
+				'prefix'                => __( 'ENTER YOUR EMAIL AND GET', 'newsletter-optin-box' ),
+				'prefixColor'           => '#607d8b',
 				'hideTitle'             => false,
-				'title'                 => '<div style="font-size: 20px;">ENTER YOUR EMAIL AND GET</div> <div style="font-size: 85px; color: #fff;">40% OFF</div>',
-				'titleColor'            => '#607d8b',
+				'title'                 => __( '40% OFF', 'newsletter-optin-box' ),
+				'titleColor'            => '#ffffff',
 				'hideDescription'       => false,
 				'description'           => __( 'on orders of $25 or more', 'newsletter-optin-box' ),
 				'descriptionColor'      => '#607d8b',
@@ -722,9 +760,15 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'Entering your email also makes you eligible to receive future promotional emails.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607d8b',
-				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-footer .noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) .noptin-form-field{
-					background-color: #fff;
-				}',
+				'titleTypography'       => array(
+					'font_size'      => '85',
+					'font_weight'    => '700',
+					'line_height'    => '1.5',
+					'decoration'     => '',
+					'style'          => '',
+					'generated'      => 'font-size: 85px; font-weight: 700; line-height: 1.5;',
+				),
+				'CSS'                   => '',
 			),
 
 		),
@@ -770,15 +814,18 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( '* $50 MINIMUM PURCHASE', 'newsletter-optin-box' ),
 				'noteColor'             => '#9E9E9E',
+				'titleTypography'       => array(
+					'font_size'      => '66',
+					'font_weight'    => '700',
+					'line_height'    => '1.5',
+					'decoration'     => '',
+					'style'          => '',
+					'generated'      => 'font-size: 66px; font-weight: 700; line-height: 1.5;',
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-description {
-					border-top: 1px solid #E0E0E0;
-				   border-bottom: 1px solid #E0E0E0;
-			   }
-			   
-			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading p,
-			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading {
-				  font-size: 66px;
-			   }
+	border-top: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
 			   ',
 			),
 
@@ -825,15 +872,17 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#9E9E9E',
+				'titleTypography'       => array(
+					'font_size'      => '46',
+					'font_weight'    => '700',
+					'line_height'    => '1.5',
+					'decoration'     => '',
+					'style'          => '',
+					'generated'      => 'font-size: 46px; font-weight: 700; line-height: 1.5;',
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-footer {
-					background-color: aliceblue;
-			   }
-			   
-			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading p,
-			   .noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-heading {
-				  font-size: 46px;
-			   }
-			   ',
+	background-color: aliceblue;
+}',
 			),
 
 		),
@@ -926,6 +975,124 @@
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
 				'CSS'                   => '.noptin-optin-form-wrapper *{}',
+			),
+
+		),
+
+		'spinvilla21565701726' => array(
+			'title' => __( 'Large Fields', 'newsletter-optin-box' ),
+			'data'  => array(
+				'singleLine'            => false,
+				'formRadius'            => '0',
+				'formWidth'             => '520px',
+				'formHeight'            => '280px',
+				'noptinFormBg'          => '#f0c97b',
+				'noptinFormBgImg'       => '',
+				'fields'                => array(
+					array(
+						'type'    => array(
+							'label' => __( 'Full Name', 'newsletter-optin-box' ),
+							'name'  => 'name',
+							'type'  => 'name',
+						),
+
+						'require' => false,
+						'key'     => 'noptin_name',
+					),
+					array(
+						'type'    => array(
+							'label' => __( 'Email Address', 'newsletter-optin-box' ),
+							'name'  => 'email',
+							'type'  => 'email',
+						),
+
+						'require' => true,
+						'key'     => 'noptin_email_key',
+					),
+					array(
+						'type'    => array(
+							'label' => __( 'Country', 'newsletter-optin-box' ),
+							'name'  => 'country',
+							'type'  => 'text',
+						),
+
+						'require' => false,
+						'key'     => 'noptin_country',
+					),
+					array(
+						'type'    => array(
+							'label' => __( 'Phone Number', 'newsletter-optin-box' ),
+							'name'  => 'phone',
+							'type'  => 'text',
+						),
+
+						'require' => false,
+						'key'     => 'noptin_phone',
+					),
+
+				),
+
+				'imageMain'             => false,
+				'formBorder'            => array(
+					'style'         => 'none',
+					'border_radius' => 0,
+					'border_width'  => 0,
+					'border_color'  => '#F9F7C9',
+					'generated'     => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #F9F7C9;",
+				),
+				'image'                 => '',
+				'imagePos'              => 'right',
+				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#313131',
+				'noptinButtonColor'     => '#ffffff',
+				'hideTitle'             => false,
+				'title'                 => __( 'Email Exclusive Offers!', 'newsletter-optin-box' ),
+				'titleColor'            => '#576673',
+				'hideDescription'       => false,
+				'description'           => __( 'Sign up and we will instantly send you our best exclusive bonuses.', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#576673',
+				'hideNote'              => false,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#576673',
+				'titleTypography'       => array(
+					'font_size'      => '40',
+					'font_weight'    => '700',
+					'line_height'    => '1.5',
+					'decoration'     => '',
+					'style'          => '',
+					'generated'      => 'font-size: 40px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'      => '19',
+					'font_weight'    => '500',
+					'line_height'    => '1.3',
+					'decoration'     => '',
+					'style'          => '',
+					'generated'      => 'font-size: 19px; font-weight: 500; line-height: 1.3;',
+				),
+				'descriptionAdvanced'         => array(
+					'padding' => array(
+						'left'  => '50',
+						'right' => '50'
+					),
+					'margin' => array(
+						'top' => '18'
+					),
+					'generated' => 'margin-top: 18px;padding-right: 50px;padding-left: 50px;',
+					'classes'     => ''
+				),
+				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-footer .noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) .noptin-form-field {
+	height: 55px !important;
+	font-size: 17px;
+	border: 2px #9a6807 solid;
+}
+.noptin-optin-form-wrapper .noptin-form-footer .noptin-form-submit{
+	line-height: 2;
+	font-size: 20px;
+}',
+				
 			),
 
 		),

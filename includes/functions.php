@@ -475,7 +475,7 @@ function noptin_get_optin_templates() {
 
 	$templates = array_merge( $custom_templates, $inbuilt_templates );
 
-	return apply_filters( 'noptin_form_templates', $templates );
+	return apply_filters( 'noptin_form_templates', array_map( 'noptin_convert_classic_template', $templates ) );
 
 }
 
@@ -576,7 +576,7 @@ function noptin_localize_optin_editor( $state ) {
 
 	$params = apply_filters( 'noptin_form_editor_params', $params );
 
-	wp_localize_script( 'noptin', 'noptinEditor', $params );
+	wp_localize_script( 'noptin-optin-editor', 'noptinEditor', $params );
 }
 
 /**
@@ -1587,4 +1587,116 @@ function get_noptin_automation_rules_table_name() {
  */
 function noptin_verify_subscription_nonces() {
 	return apply_filters( 'noptin_verify_nonce', NOPTIN_VERIFY_NONCE );
+}
+
+/**
+ *  Converts a classic template to the new editor.
+ *
+ * @since 1.3.3
+ * @return array
+ */
+function noptin_convert_classic_template( $template ) {
+
+	$new_fields = array(
+
+		'titleTypography'       => array(
+			'font_size'      => '30',
+			'font_weight'    => '700',
+			'line_height'    => '1.5',
+			'decoration'     => '',
+			'style'          => '',
+			'generated'      => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
+		),
+
+		'titleAdvanced'         => array(
+			'margin' => new stdClass(),
+			'padding' => array(
+				'top' => '4'
+			),
+			'generated' => 'padding-top: 4px;',
+			'classes'     => ''
+		),
+
+		'hidePrefix'           => true,
+		'prefix'                 => __( 'Prefix', 'newsletter-optin-box' ),
+		'prefixColor'            => '#313131',
+		'prefixTypography'       => array(
+			'font_size'      => '20',
+			'font_weight'    => '500',
+			'line_height'    => '1.3',
+			'decoration'     => '',
+			'style'          => '',
+			'generated'      => 'font-size: 20px; font-weight: 500; line-height: 1.3;',
+		),
+
+		'prefixAdvanced'         => array(
+			'margin' => new stdClass(),
+			'padding' => array(
+				'top' => '4'
+			),
+			'generated' => 'padding-top: 4px;',
+			'classes'     => ''
+		),
+
+		'descriptionTypography' => array(
+			'font_size'      => '16',
+			'font_weight'    => '500',
+			'line_height'    => '1.3',
+			'decoration'     => '',
+			'style'          => '',
+			'generated'      => 'font-size: 16px; font-weight: 500; line-height: 1.3;',
+		),
+
+		'descriptionAdvanced'         => array(
+			'padding' => new stdClass(),
+			'margin' => array(
+				'top' => '18'
+			),
+			'generated' => 'margin-top: 18px;',
+			'classes'     => ''
+		),
+
+		'noteTypography'       => array(
+			'font_size'      => '14',
+			'font_weight'    => '400',
+			'line_height'    => '1',
+			'decoration'     => '',
+			'style'          => '',
+			'generated'      => 'font-size: 14px; font-weight: 400; line-height: 1;',
+		),
+
+		'noteAdvanced'       => array(
+			'padding' => new stdClass(),
+			'margin'  => array(
+				'top' => '10'
+			),
+			'generated' => 'margin-top: 10px;',
+			'classes'     => ''
+		),
+
+	);
+
+	$data = $template['data'];
+
+	foreach ( $new_fields as $key => $value ) {
+		if ( ! isset( $data[ $key ] ) ) {
+			$data[ $key ] = $value;
+		}
+	}
+
+	// Convert the borders.
+	if ( empty( $data['formBorder'] ) || ! is_array( $data['formBorder'] ) ) {
+		$data['formBorder'] = array(
+			'style'         => 'solid',
+			'border_radius' => isset( $data['formRadius'] ) ? intval( $data['formRadius'] ) : 0,
+			'border_width'  => isset( $data['borderSize'] ) ? intval( $data['borderSize'] ) : 4,
+			'border_color'  => isset( $data['noptinFormBorderColor'] ) ? $data['noptinFormBorderColor'] : '#ffffff',
+		);
+
+		extract( $data['formBorder'] );
+		$data['formBorder']['generated'] = "border-style: solid; border-radius: {$border_radius}px; border-width: {$border_width}px; border-color: {$border_color};";
+	}
+
+	$template['data'] = $data;
+	return $template;
 }

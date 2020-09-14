@@ -18,6 +18,7 @@ export default {
 	applyTemplate (template, instance) {
 
 		Object.keys(template).forEach( (key) => {
+			console.log(template[key])
 			instance[key] = template[key]
 		})
 
@@ -85,14 +86,13 @@ export default {
 
 		if (colors.length) {
 			instance.noptinFormBg = colors[0]
-			instance.noptinFormBorderColor = colors[2]
+			instance.formBorder.border_color = colors[2]
 			instance.noptinButtonColor = colors[0]
 			instance.noptinButtonBg = colors[1]
 			instance.titleColor = colors[1]
 			instance.descriptionColor = colors[1]
 			instance.noteColor = colors[1]
 		}
-
 
 	},
 
