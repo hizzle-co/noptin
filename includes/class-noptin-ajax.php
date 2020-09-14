@@ -41,6 +41,9 @@ class Noptin_Ajax {
 		// Delete campaign.
 		add_action( 'wp_ajax_noptin_delete_campaign', array( $this, 'delete_campaign' ) );
 
+		// Stop campaigns.
+		add_action( 'wp_ajax_noptin_stop_campaign', array( $this, 'stop_campaign' ) );
+
 		// Send a test email.
 		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
 
@@ -96,6 +99,36 @@ class Noptin_Ajax {
 		}
 
 		if ( wp_delete_post( trim( $_GET['id'] ), true ) ) {
+			exit;
+		}
+
+		wp_die( -1, 500 );
+	}
+
+	/**
+	 * Stop sending a campaign
+	 *
+	 * @access      public
+	 * @since       1.2.3
+	 * @return      void
+	 */
+	public function stop_campaign() {
+
+		// Verify nonce.
+		check_ajax_referer( 'noptin_admin_nonce' );
+
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['id'] ) ) {
+			wp_die( -1, 403 );
+		}
+
+		$updated = wp_update_post(
+			array(
+				'ID'          => trim( $_GET['id'] ),
+				'post_status' => 'draft',
+			)
+		);
+
+		if ( ! empty( $updated ) ) {
 			exit;
 		}
 
