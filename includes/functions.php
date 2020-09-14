@@ -1578,3 +1578,13 @@ function noptin_automation_rules_table_exists() {
 function get_noptin_automation_rules_table_name() {
 	return $GLOBALS['wpdb']->prefix . 'noptin_automation_rules';
 }
+
+/**
+ *  Checks whether we should verify nonces when processing subscription forms.
+ *
+ * @since 1.3.3
+ * @return bool
+ */
+function noptin_verify_subscription_nonces() {
+	return apply_filters( 'noptin_verify_nonce', NOPTIN_VERIFY_NONCE );
+}

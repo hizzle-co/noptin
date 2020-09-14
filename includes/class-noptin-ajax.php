@@ -601,7 +601,9 @@ class Noptin_Ajax {
 	public function add_subscriber() {
 
 		// Verify nonce.
-		check_ajax_referer( 'noptin' );
+		if ( noptin_verify_subscription_nonces() ) {
+			check_ajax_referer( 'noptin' );
+		}
 
 		// avoid bot submissions.
 		if ( ! empty( $_POST['noptin_confirm_submit'] ) ) {

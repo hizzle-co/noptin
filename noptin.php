@@ -29,6 +29,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
+if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
+	define( 'NOPTIN_VERIFY_NONCE', false );
+}
+
 /**
  * Plugin main class
  *

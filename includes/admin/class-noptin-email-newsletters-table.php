@@ -141,8 +141,10 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 			if ( get_post_meta( $item->ID, 'completed', true ) ) {
 				$status = 'Sent';
 			} else {
-				$status = '<strong style="color: #00796b;">Sending</strong>';
+				$status = '<strong style="color: #00796b;">Sending</strong>&mdash;';
+				$status .= '<a class="noptin-stop-campaign" href="#" data-id="' . $item->ID . '">' . __( 'stop', 'newsletter-optin-box' ) . '</a>';
 			}
+
 		}
 
 		$status = apply_filters( 'noptin_newsletter_status', $status, $item );
