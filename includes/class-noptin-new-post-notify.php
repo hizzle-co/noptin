@@ -38,6 +38,8 @@ class Noptin_New_Post_Notify {
 		// Display a help text below the email body.
 		add_action( 'noptin_automation_campaign_after_email_body', array( $this, 'show_help_text' ), 10, 2 );
 
+		// Allow sending a test email for new post notifications.
+		add_action( 'noptin_test_email_data', array( $this, 'filter_test_email_data' ), 10, 2 );
 	}
 
 	/**
@@ -74,12 +76,14 @@ class Noptin_New_Post_Notify {
 				'https://noptin.com/guide/email-automations/new-post-notifications/'
 			);
 
-			$help_text = sprintf( 
+			$help_text = sprintf(
 				__( 'Learn more about %show to set up new post notifications%s.', 'newsletter-optin-box' ),
 				"<a href='$url'>",
-				'</a>');
+				'</a>'
+			);
 
 			echo "<p class='description'>$help_text</p>";
+			echo '<input type="hidden" name="noptin_is_new_post_notification" value="1" />';
 
 		}
 
@@ -116,7 +120,7 @@ class Noptin_New_Post_Notify {
 		);
 
 		echo '<p class="description">' . __( 'By default, this notification will be sent every time a new blog post is published.', 'newsletter-optin-box' ) . '</p>';
-		
+
 		echo "<div style='margin-top: 16px; font-size: 15px;'>";
 		printf(
 			__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
@@ -259,6 +263,81 @@ class Noptin_New_Post_Notify {
 	}
 
 	/**
+	 * Add post data to new post notification test email.
+	 */
+	public function filter_test_email_data( $data ) {
+
+		if ( ! empty( $data['noptin_is_new_post_notification'] ) ) {
+			$posts = get_posts('numberposts=1');
+
+			if ( ! empty( $posts ) ) {
+				$data['merge_tags'] = array_merge( $data['merge_tags'], $this->get_post_merge_tags( $posts[0] ) );
+			}
+		}
+
+		return $data;
+
+	}
+
+	/**
+	 * Retrieves merge tags for a given post.
+	 * 
+	 * @param WP_Post $post
+	 */
+	protected function get_post_merge_tags( $post ) {
+
+		if ( empty( $post ) ) {
+			return array();
+		}
+
+		$tags = $post->filter( 'display' )->to_array();
+
+		// Prevent wp_rss_aggregator from appending the feed name to excerpts.
+		$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
+
+		if ( false !== $wp_rss_aggregator_fix ) {
+			remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+		}
+
+		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
+		$tags['post_excerpt'] = get_the_excerpt( $post->ID );
+
+		remove_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
+		if ( false !== $wp_rss_aggregator_fix ) {
+			add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+		}
+
+		$tags['excerpt']      = $tags['post_excerpt'];
+		$tags['post_content'] = apply_filters( 'the_content', $post->post_content );
+		$tags['content']      = $tags['post_content'];
+		$tags['post_title']   = get_the_title( $post->ID);
+		$tags['title']        = $tags['post_title'];
+
+		$author = get_userdata( $tags['post_author'] );
+
+		// Author details.
+		$tags['post_author']       = $author->display_name;
+		$tags['post_author_email'] = $author->user_email;
+		$tags['post_author_login'] = $author->user_login;
+		$tags['post_author_id']    = $author->ID;
+
+		// Date.
+		$tags['post_date'] = get_the_date( '', $post->ID );
+
+		// Link.
+		$tags['post_url'] = get_the_permalink( $post->ID );
+
+		unset( $tags['ID'] );
+		$tags['post_id'] = $post->ID;
+
+		// Read more button.
+		$tags['read_more_button']  = $this->read_more_button( $tags['post_url'] );
+		$tags['/read_more_button'] = '</a></div>';
+
+		return $tags;
+	}
+
+	/**
 	 * Send out a new post notification
 	 */
 	protected function notify( $post_id, $campaign_id, $key ) {
@@ -272,49 +351,6 @@ class Noptin_New_Post_Notify {
 
 		$noptin   = noptin();
 		$campaign = get_post( $campaign_id );
-		$post     = get_post( $post_id, ARRAY_A, 'display' );
-
-		// Prevent wp_rss_aggregator from appending the feed name to excerpts.
-		$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
-
-		if ( false !== $wp_rss_aggregator_fix ) {
-			remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
-		}
-
-		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
-		$post['post_excerpt'] = get_the_excerpt( $post_id );
-		remove_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
-
-		if ( false !== $wp_rss_aggregator_fix ) {
-			add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
-		}
-
-		$post['excerpt']      = $post['post_excerpt'];
-		$post['post_content'] = apply_filters( 'the_content', $post['post_content'] );
-		$post['content']      = $post['post_content'];
-		$post['post_title']   = get_the_title( $post_id );
-		$post['title']        = $post['post_title'];
-
-		$author = get_userdata( $post['post_author'] );
-
-		// Author details.
-		$post['post_author']       = $author->display_name;
-		$post['post_author_email'] = $author->user_email;
-		$post['post_author_login'] = $author->user_login;
-		$post['post_author_id']    = $author->ID;
-
-		// Date.
-		$post['post_date'] = get_the_date( '', $post_id );
-
-		// Link.
-		$post['post_url'] = get_the_permalink( $post_id );
-
-		unset( $post['ID'] );
-		$post['post_id'] = $post_id;
-
-		// Read more button.
-		$post['read_more_button']  = $this->read_more_button( $post['post_url'] );
-		$post['/read_more_button'] = '</a></div>';
 
 		$item = array(
 			'campaign_id'       => $campaign_id,
@@ -327,7 +363,7 @@ class Noptin_New_Post_Notify {
 				'email_body'    => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
 				'email_subject' => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
 				'preview_text'  => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
-				'merge_tags'    => $post,
+				'merge_tags'    => $this->get_post_merge_tags( get_post( $post_id ) ),
 			),
 		);
 

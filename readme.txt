@@ -129,6 +129,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Nonce verification can now be toggled on via a hook or constant - ADDED
 - Ability to stop a sending campaign - ADDED
 - New large fields emaill subscription template - ADDED
+- New post notifications test email not working - FIXED
 
 = 1.3.2 - 2020-06-23 =
 - Ability to delete a subscriber after they unsubscribe - ADDED

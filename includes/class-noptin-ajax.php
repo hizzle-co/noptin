@@ -576,9 +576,13 @@ class Noptin_Ajax {
 		$data['email'] = sanitize_email( $data['email'] );
 
 		// Subject, body and preview text.
-		if ( empty( $data['email_subject'] ) ) {
+		if ( empty( $data['email_subject'] ) && empty( $data['subject'] ) ) {
 			wp_send_json_error( __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
 			exit;
+		}
+
+		if ( empty( $data['email_subject'] ) ) {
+			$data['email_subject'] = $data['subject'];
 		}
 
 		$data['email_subject'] = '[TEST] ' . $data['email_subject'];

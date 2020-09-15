@@ -1,6 +1,7 @@
 import noptinFind from 'lodash.find'
 import noptinSelectComponent from './noptin-select.vue'
 import draggable from 'vuedraggable'
+import noptinTip from './tooltip.vue'
 import {
 		VCard,
 		VBtn,
@@ -29,6 +30,7 @@ export default {
 		VExpansionPanelHeader,
 		VExpansionPanelContent,
 		VBtn,
+		noptinTip
 	},
 
 	data () {

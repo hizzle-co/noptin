@@ -414,7 +414,7 @@ class Noptin_Vue {
 		// Field label.
 		if ( ! empty( $field_type['supports_label'] ) ) {
 
-			$label = __( 'Label', 'newsletter-optin-box' );
+			$label = __( 'Frontend Label', 'newsletter-optin-box' );
 			echo "<div class='noptin-text-wrapper' $v_if>
 					<label>$label<input type='text' v-model='field.type.label'/></label>
 				</div>";
@@ -424,9 +424,10 @@ class Noptin_Vue {
 		// Field name.
 		if ( ! empty( $field_type['supports_name'] ) ) {
 
-			$label = __( 'Name', 'newsletter-optin-box' );
+			$label = __( 'Admin Label', 'newsletter-optin-box' );
+			$tip   = esc_attr__( 'You will use this as a merge tag in your emails.', 'newsletter-optin-box' );
 			echo "<div class='noptin-text-wrapper' $v_if>
-					<label>$label<input type='text' v-model='field.type.name'/></label>
+					<label>$label<noptin-tip tooltip='$tip'></noptin-tip><input type='text' v-model='field.type.name'/></label>
 				</div>";
 
 		}
