@@ -37,6 +37,7 @@ class Noptin_Background_Sync extends Noptin_Background_Process {
 
 			// If all subscribers are synced, return false to stop the process.
 			if ( empty( $subscriber ) ) {
+				delete_option( 'noptin_subscribers_syncing' );
 				return false;
 			}
 
@@ -44,13 +45,14 @@ class Noptin_Background_Sync extends Noptin_Background_Process {
 			sync_noptin_subscribers_to_users( $subscriber );
 			return $item;
 
-		} else {
+		} else if ( 'wp_user' == $item ) {
 
 			// Fetch the next user to sync.
 			$user = $this->get_unsynced_user();
 
 			// If all users are synced, return false to stop the process.
 			if ( empty( $user ) ) {
+				delete_option( 'noptin_users_bg_sync' );
 				return false;
 			}
 
@@ -129,17 +131,6 @@ class Noptin_Background_Sync extends Noptin_Background_Process {
 
 		return $user[0];
 
-	}
-
-	/**
-	 * Complete.
-	 *
-	 * Override if applicable, but ensure that the below actions are
-	 * performed, or, call parent::complete().
-	 */
-	protected function complete() {
-		delete_option( 'noptin_subscribers_syncing' );
-		parent::complete();
 	}
 
 }

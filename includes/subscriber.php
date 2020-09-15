@@ -896,7 +896,7 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 			array(
 				'email'           => $user_info->user_email,
 				'name'            => $user_info->display_name,
-				'active'          => 1,
+				'active'          => 0,
 				'_subscriber_via' => 'users_sync',
 			)
 		);

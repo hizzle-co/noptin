@@ -1180,19 +1180,32 @@ class Noptin_Admin {
 		// Tools.
 		if ( isset( $_GET['page'] ) && 'noptin-tools' === $_GET['page'] && ! empty( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin_tool' ) ) {
 
-			// Sync subscribers.
+			// Sync Users.
 			if ( isset( $_GET['tool'] ) && 'sync_users' === trim( $_GET['tool'] ) ) {
 
+				if ( get_option( 'noptin_users_bg_sync' ) ) {
+					$this->show_error( __( 'Your WordPress users are already being added to the newsletter.', 'newsletter-optin-box' ) );
+				} else {
+					add_option( 'noptin_users_bg_sync', 1 );
+					$this->bg_sync->push_to_queue( 'wp_user' );
+					$this->bg_sync->save()->dispatch();
+					$this->show_info( __( 'Your WordPress users are now syncing in the background.', 'newsletter-optin-box' ) );
+				}
+			}
+
+			// Sync Subscribers.
+			if ( isset( $_GET['tool'] ) && 'sync_subscribers' === trim( $_GET['tool'] ) ) {
+
 				if ( get_option( 'noptin_subscribers_syncing' ) ) {
-					$this->show_error( __( 'Your WordPress users and subscribers are already syncing.', 'newsletter-optin-box' ) );
+					$this->show_error( __( 'Your WordPress subscribers are already syncing.', 'newsletter-optin-box' ) );
 				} else {
 					add_option( 'noptin_subscribers_syncing', 1 );
 					$this->bg_sync->push_to_queue( 'subscriber' );
-					$this->bg_sync->push_to_queue( 'wp_user' );
 					$this->bg_sync->save()->dispatch();
-					$this->show_info( __( 'Your WordPress users and subscribers are now syncing in the background.', 'newsletter-optin-box' ) );
+					$this->show_info( __( 'Your subscribers are now syncing in the background.', 'newsletter-optin-box' ) );
 				}
 			}
+
 		}
 
 	}

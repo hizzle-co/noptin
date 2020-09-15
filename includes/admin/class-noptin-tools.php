@@ -78,9 +78,15 @@ class Noptin_Tools {
 			),
 
 			'sync_users'  => array(
-				'name'    => __( 'Sync Users', 'newsletter-optin-box' ),
-				'button'  => __( 'Sync', 'newsletter-optin-box' ),
-				'desc'    => __( 'Sync your WordPress users and Noptin Subscribers.', 'newsletter-optin-box' ),
+				'name'    => __( 'Subscribe Users', 'newsletter-optin-box' ),
+				'button'  => __( 'Subscribe', 'newsletter-optin-box' ),
+				'desc'    => __( 'Subscribe your WordPress users to the newsletter.', 'newsletter-optin-box' ),
+			),
+
+			'sync_subscribers'  => array(
+				'name'    => __( 'Register Subscribers', 'newsletter-optin-box' ),
+				'button'  => __( 'Register', 'newsletter-optin-box' ),
+				'desc'    => __( 'Register your newsletter subscribers as WordPress users.', 'newsletter-optin-box' ),
 			),
 
 		);
@@ -112,7 +118,7 @@ class Noptin_Tools {
 	 */
 	public function display_closing_wrap() {
 		
-		if ( ! empty( $_GET['tool'] ) && 'sync_users' != $_GET['tool'] ) {
+		if ( ! empty( $_GET['tool'] ) && 'sync_users' != $_GET['tool'] && 'sync_subscribers' != $_GET['tool'] ) {
 			$tools_page = esc_url( admin_url( 'admin.php?page=noptin-tools' ) );
 			$text       = __( 'Go back to tools page', 'noptin' );
 			echo "<p class='description'><a href='$tools_page'>$text</a></p>";

@@ -2,9 +2,9 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
-Tested up to: 5.4
+Tested up to: 5.5
 Requires PHP: 5.3
-Version: 1.3.2
+Version: 1.3.3
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -118,7 +118,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.3.3 - 2020-09-14 =
+= 1.3.3 - 2020-09-15 =
 - WooCommerce lifetime value automation trigger - ADDED
 - Integration with Contact Forms 7 - ADDED
 - Integration with Gravity Forms - ADDED
@@ -130,6 +130,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Ability to stop a sending campaign - ADDED
 - New large fields emaill subscription template - ADDED
 - New post notifications test email not working - FIXED
+- Users and subscribers are now synced separately - CHANGED
+- Ability to limit subscription forms to logged in users, logged out users or specific user roles - ADDED
+- Subscription form builder now supports a dark mode - ADDED
+- Ability to change the sizes and styles of subscription form headings and texts - ADDED
 
 = 1.3.2 - 2020-06-23 =
 - Ability to delete a subscriber after they unsubscribe - ADDED
