@@ -1,5 +1,23 @@
 # Changelog
 
+# 1.3.3 - 2020-09-15
+- WooCommerce lifetime value automation trigger - ADDED
+- Integration with Contact Forms 7 - ADDED
+- Integration with Gravity Forms - ADDED
+- WP RSS Aggregator appends the RSS title to new post notification excerpts - FIXED
+- Ability to edit the double opt-in confirmation email - ADDED
+- HTML entities in email subjects are not encoded properly - FIXED
+- Do not sync pending (e.g if BuddyPress is installed) or spam (for multisite) users - FIXED
+- Nonce verification can now be toggled on via a hook or constant - ADDED
+- Ability to stop a sending campaign - ADDED
+- New large fields email subscription template - ADDED
+- New post notifications test email not working - FIXED
+- Users and subscribers are now synced separately - CHANGED
+- Ability to limit subscription forms to logged-in users, logged out users or specific user roles - ADDED
+- Subscription form builder now supports a dark mode - ADDED
+- Ability to change the sizes and styles of subscription form headings and texts - ADDED
+[View full release notes](https://noptin.com/blog/noptin-1-3-3-release-notes/)
+
 # 1.3.2 - 2020-06-23
 - Ability to delete a subscriber after they unsubscribe - ADDED
 - Subscribers marked as in-active when they resubscribe - FIXED

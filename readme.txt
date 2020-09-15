@@ -128,12 +128,14 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Do not sync pending (e.g if BuddyPress is installed) or spam (for multisite) users - FIXED
 - Nonce verification can now be toggled on via a hook or constant - ADDED
 - Ability to stop a sending campaign - ADDED
-- New large fields emaill subscription template - ADDED
+- New large fields email subscription template - ADDED
 - New post notifications test email not working - FIXED
 - Users and subscribers are now synced separately - CHANGED
-- Ability to limit subscription forms to logged in users, logged out users or specific user roles - ADDED
+- Ability to limit subscription forms to logged-in users, logged out users or specific user roles - ADDED
 - Subscription form builder now supports a dark mode - ADDED
 - Ability to change the sizes and styles of subscription form headings and texts - ADDED
+
+[View full release notes](https://noptin.com/blog/noptin-1-3-3-release-notes/)
 
 = 1.3.2 - 2020-06-23 =
 - Ability to delete a subscriber after they unsubscribe - ADDED
@@ -158,24 +160,4 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Ability to search newsletter subscribers - ADDED
 - Ability to bulk activate subscribers - ADDED
 - Ability to bulk de-activate subscribers - ADDED
-
-= 1.2.9 - 2020-05-05 =
-- Newsletter actions page nolonger uses a normal WordPress page - CHANGED
-- Ability to edit the newsletter unsubscription confirmation message - ADDED
-- Ability to edit the newsletter subscription confirmation message - ADDED
-- Danish translation thanks to [Hans Miguel Børsting](http://skibhuscentret.dk/wp)
-- Partially translated to German thanks to [Frank Jermann](https://frank-jermann.de)
-
-= 1.2.8 - 2020-04-26 =
-- Newsletter subscribers page not showing a title - FIXED
-- "Minimal" newsletter optin template - ADDED
-- "Content Upgrades" newsletter optin template - ADDED
-- "Discount" newsletter optin template - ADDED
-- Hide block and quick-form widget from existing newsletter subscribers - CHANGED
-- Option to set the logo shown on newsletters - RE-ADDED
-- Ability to set a custom newsletter footer text - ADDED
-- Ability to set a custom newsletter permission text - ADDED
-- Ability to set a newsletter's "reply-to" email - ADDED
-- Newsletter confirmation page displays the incorrect feedback - FIXED
-- Automatic new post notification newsletters are sent when an existing post is updated - FIXED
 [View full Changelog](https://github.com/hizzle-co/noptin/blob/master/changelog.md)
