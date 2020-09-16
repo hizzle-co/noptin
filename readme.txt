@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.5
 Requires PHP: 5.3
-Version: 1.3.3
+Version: 1.3.4
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -117,6 +117,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.3.4 - 2020-09-16 =
+- Settings page throws an error because of a call to an undefined function (thanks @mb299) - FIXED
 
 = 1.3.3 - 2020-09-15 =
 - WooCommerce lifetime value automation trigger - ADDED
