@@ -176,16 +176,16 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 				'label'   => __( 'Feed Name', 'newsletter-optin-box' ),
 				'type'    => 'text',
 				'name'    => 'feedName',
-				'tooltip' => __( 'Provide feed name e.g "Newsletter Subscription"', 'wpinv-gf' ),
+				'tooltip' => __( 'Provide feed name e.g "Newsletter Subscription"', 'newsletter-optin-box' ),
 				'class'   => 'medium'
 			),
 
 			array (
 				'name'           => 'optinCondition',
 				'label'          => esc_html__( 'Opt-In Condition', 'newsletter-optin-box' ),
-				'checkbox_label' => __( 'Enable Condition', 'simplefeedaddon' ),
+				'checkbox_label' => __( 'Enable Condition', 'newsletter-optin-box' ),
 				'type'           => 'feed_condition',
-				'instructions'   => __( 'Only add to Noptin if', 'simplefeedaddon' )
+				'instructions'   => __( 'Only add to Noptin if', 'newsletter-optin-box' )
 			)
 
 		);

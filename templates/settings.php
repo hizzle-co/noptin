@@ -24,7 +24,7 @@
 						$title = $title['label'];
 					}
 
-					$title = wpinv_clean( $title );
+					$title = noptin_clean( $title );
 					$id    = esc_attr( $id );
 
 					echo "<a href='' :class=\"tabClass('$id')\" @click.prevent=\"switchTab('$id')\">$title</a>\n\t\t\t";
@@ -48,7 +48,7 @@
 					$subsections = array();
 
 					foreach ( $section['children'] as $id => $title ) {
-						$title         = wpinv_clean( $title );
+						$title         = noptin_clean( $title );
 						$id            = esc_attr( $id );
 						$subsections[] = "<a href='' :class=\"sectionClass('$id')\" @click.prevent=\"switchSection('$id')\">$title</a>";
 					}
