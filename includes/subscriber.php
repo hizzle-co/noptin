@@ -315,7 +315,7 @@ function add_noptin_subscriber( $fields ) {
 	$fields['email'] = sanitize_email( $fields['email'] );
 	$subscriber_id   = get_noptin_subscriber_id_by_email( $fields['email'] );
 	if ( ! empty( $subscriber_id ) ) {
-		return $subscriber_id;
+		return (int) $subscriber_id;
 	}
 
 	// Maybe split name into first and last.

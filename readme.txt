@@ -118,6 +118,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.3.5 - 2020-09-19 =
+- If an existing newsletter subscriber tries to sign up, they [get an error showing their subscriber id](https://wordpress.org/support/topic/strange-erorr-code-with-existing-email/) - FIXED
+
 = 1.3.4 - 2020-09-16 =
 - Settings page throws an error because of a call to an undefined function (thanks @mb299) - FIXED
 

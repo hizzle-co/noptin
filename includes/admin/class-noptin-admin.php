@@ -1296,7 +1296,7 @@ class Noptin_Admin {
 		if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ]) ) {
 			$notices[ $type ] = array();
 		}
-		
+
 		$notices[ $type ][] = $message;
 
 		update_option( 'noptin_notices', $notices );
