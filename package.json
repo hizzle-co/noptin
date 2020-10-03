@@ -49,7 +49,7 @@
 		"@wordpress/browserslist-config": "2.7.0",
 		"autoprefixer": "10.0.1",
 		"babel-loader": "8.1.0",
-		"browserslist": "4.14.3",
+		"browserslist": "4.14.5",
 		"css-loader": "4.3.0",
 		"cssnano": "4.1.10",
 		"deepmerge": "4.2.2",
