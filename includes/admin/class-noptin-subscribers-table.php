@@ -37,9 +37,23 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	public $total;
 
 	/**
+	 * Number of subscribers to display per page.
+	 *
+	 * @var   int
+	 * @since 1.3.4
+	 */
+	public $per_page = 10;
+
+	/**
 	 *  Constructor function.
 	 */
 	public function __construct() {
+
+		$per_page = absint( get_user_meta( get_current_user_id(), 'noptin_subscribers_per_page', true) );
+
+		if ( ! empty( $per_page ) ) {
+			$this->per_page = $per_page;
+		}
 
 		parent::__construct(
 			array(
@@ -135,7 +149,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		}
 
 		// Number of subscribers to retrieve.
-		$query['number'] = 10;
+		$query['number'] = $this->per_page;
 
 		// Subscriber via.
 		if ( ! empty( $_GET['_subscriber_via'] ) ) {
@@ -313,8 +327,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	function prepare_items() {
 
-		$per_page = 10;
-
 		$columns  = $this->get_columns();
 		$hidden   = array();
 		$sortable = $this->get_sortable_columns();
@@ -324,8 +336,8 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$this->set_pagination_args(
 			array(
 				'total_items' => $this->total,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $this->total / $per_page ),
+				'per_page'    => $this->per_page,
+				'total_pages' => ceil( $this->total / $this->per_page ),
 			)
 		);
 

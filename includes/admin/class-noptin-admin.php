@@ -143,6 +143,10 @@ class Noptin_Admin {
 		// Admin save subscriber.
 		add_action( 'noptin_update_admin_edited_subscriber', array( $this, 'update_edited_subscriber' ) );
 
+		// Display subscribers per page option.
+		add_action( 'load-noptin_page_noptin-subscribers', array( $this, 'add_subscribers_page_screen_options' ) );
+		add_filter( 'set-screen-option', array( $this, 'save_subscribers_page_screen_options' ), 10, 3 );
+
 		Noptin_Vue::init_hooks();
 
 		/**
@@ -392,7 +396,7 @@ class Noptin_Admin {
 
 		// Add the subscribers page.
 		$subscribers_page_title = apply_filters( 'noptin_admin_subscribers_page_title', __( 'Email Subscribers', 'newsletter-optin-box' ) );
-		add_submenu_page(
+		$hook = add_submenu_page(
 			'noptin',
 			$subscribers_page_title,
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
@@ -1374,6 +1378,33 @@ class Noptin_Admin {
 				echo "<div class='$class'><p>$message</p></div>";
 			}
 		}
+	}
+
+	/**
+	 * Registers screen options for the subscribers page.
+	 *
+	 * @access      public
+	 * @since       1.3.4
+	 */
+	public function add_subscribers_page_screen_options() {
+ 
+		$args = array(
+			'default' => 10,
+			'option'  => 'noptin_subscribers_per_page'
+		);
+	
+		add_screen_option( 'per_page', $args );
+
+	}
+
+	/**
+	 * Saves subscribers page screen options.
+	 *
+	 * @access      public
+	 * @since       1.3.4
+	 */
+	public function save_subscribers_page_screen_options( $skip, $option, $value ) {
+		return 'noptin_subscribers_per_page' === $option ? $value : $skip;
 	}
 
 }
