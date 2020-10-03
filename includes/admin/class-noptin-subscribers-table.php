@@ -52,13 +52,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		$this->prepare_query();
 
-		$this->base_url = add_query_arg(
-			array(
-				'delete-subscriber' => false,
-				'_wpnonce'          => false,
-			),
-			admin_url( 'admin.php?page=noptin-subscribers' )
-		);
+		$this->base_url = remove_query_arg( array( 'delete-subscriber', '_wpnonce' ) );
 
 	}
 
