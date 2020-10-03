@@ -284,7 +284,7 @@ class Noptin_Settings {
 					'default'      => __( 'Default', 'newsletter-optin-box' ),
 				),
 				'default'     => 'plain',
-				'description' => __( 'Select your preferred email template.', 'newsletter-optin-box' ) . ' ' .__( 'Select "Default" if you have an email templates plugin whose template you would like to use.', 'newsletter-optin-box' ),
+				'description' => __( 'Select "Default" if you have an email templates plugin whose template you would like to use.', 'newsletter-optin-box' ),
 			),
 
 			'permission_text' => array(

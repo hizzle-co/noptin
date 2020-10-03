@@ -351,6 +351,10 @@ class Noptin_Mailer {
 		// Make links trackable.
 		$content = $this->make_links_trackable( $content, $data );
 
+		if ( 'empty' === $data['template'] ) {
+			return $content;
+		}
+
 		// Finally, inline the CSS.
 		$content = $this->inline_css( $content );
 

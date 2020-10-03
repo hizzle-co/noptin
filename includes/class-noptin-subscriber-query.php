@@ -174,7 +174,7 @@ class Noptin_Subscriber_Query {
 	 *     @type string|array $orderby             Field(s) to sort the retrieved subscribers by. May be a single value,
 	 *                                             an array of values, or a multi-dimensional array with fields as
 	 *                                             keys and orders ('ASC' or 'DESC') as values. Accepted values are
-	 *                                             'id', 'first_name', 'second_name', 'include', 'email,
+	 *                                             'id', 'first_name', 'second_name', 'include', 'email, 'active',
 	 *                                             'date_created', 'meta_value',
 	 *                                             'meta_value_num', the value of `$meta_key`, or an array key of
 	 *                                             `$meta_query`. To use 'meta_value' or 'meta_value_num', `$meta_key`
@@ -558,7 +558,7 @@ class Noptin_Subscriber_Query {
 		$table              = get_noptin_subscribers_table_name();
 
 		$_orderby = '';
-		if ( in_array( $orderby, array( 'first_name', 'second_name', 'email', 'date_created' ) ) ) {
+		if ( in_array( $orderby, array( 'first_name', 'second_name', 'email', 'date_created', 'active' ) ) ) {
 			$_orderby = $orderby;
 		} elseif ( 'id' === strtolower( $orderby ) ) {
 			$_orderby = 'id';

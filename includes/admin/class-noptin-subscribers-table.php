@@ -368,6 +368,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'id'           => array( 'id', true ),
 			'date_created' => array( 'date_created', true ),
 			'subscriber'   => array( 'email', true ),
+			'status'       => array( 'active', false ),
 		);
 
 		/**
