@@ -23,6 +23,11 @@ class Noptin_Mailer {
 	public $wp_mail_data = null;
 
 	/**
+	 * Whether or not we should disable template plugins.
+	 */
+	public $disable_template_plugins = true;
+
+	/**
 	 * The class constructor.
 	 */
 	public function __construct() {
@@ -349,6 +354,17 @@ class Noptin_Mailer {
 		// Finally, inline the CSS.
 		$content = $this->inline_css( $content );
 
+		// inline css adds a body tag, which doesn't play nice if we are using a template plugin.
+		if ( ! $this->disable_template_plugins ) {
+			$matches = array();
+			preg_match( "/<body[^>]*>(.*?)<\/body>/is", $content, $matches );
+
+			if ( isset( $matches[1] ) ) {
+				$content = trim( $matches[1] );
+			}
+
+		}
+
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_processed_mailer_email_content', $content, $data );
 	}
@@ -373,6 +389,9 @@ class Noptin_Mailer {
 		}
 
 		$template = $data['template'];
+
+		// Whether or not we should disable template plugins.
+		$this->disable_template_plugins = 'empty' !== $template && 'default' !== $template;
 
 		// If we are using an empty template, return the content as is.
 		if ( 'empty' === $template ) {
@@ -550,7 +569,11 @@ class Noptin_Mailer {
 	 * @return array wp_mail_data.
 	 */
 	public function ensure_email_content( $args ) {
-		$args['message'] = $this->wp_mail_data['email'];
+
+		if ( $this->disable_template_plugins ) {
+			$args['message'] = $this->wp_mail_data['email'];
+		}
+
 		return $args;
 	}
 

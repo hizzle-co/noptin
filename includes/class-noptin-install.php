@@ -96,17 +96,18 @@ class Noptin_Install {
 		$table           = $this->table_prefix . 'noptin_subscribers';
 		$charset_collate = $this->charset_collate;
 
-		return "CREATE TABLE IF NOT EXISTS $table
-			(id bigint(20) unsigned NOT NULL auto_increment,
-            first_name varchar(60) NOT NULL default '',
-            second_name varchar(60) NOT NULL default '',
+		return "CREATE TABLE $table (
+			id bigint(20) unsigned NOT NULL auto_increment,
+            first_name varchar(100) NOT NULL default '',
+            second_name varchar(100) NOT NULL default '',
             email varchar(100) NOT NULL default '',
-            active tinyint(2) NOT NULL DEFAULT '0',
-            confirm_key varchar(50) NOT NULL default '',
-            confirmed tinyint(2) NOT NULL DEFAULT '0',
-            date_created DATE NOT NULL DEFAULT '0000-00-00',
+            active tinyint(2) NOT NULL default '0',
+            confirm_key varchar(255) NOT NULL default '',
+            confirmed tinyint(2) NOT NULL default '0',
+            date_created date NOT NULL DEFAULT '0000-00-00',
 			PRIMARY KEY  (id),
-			KEY email (email)) $charset_collate";
+			KEY email (email)
+) $charset_collate;";
 
 	}
 
@@ -118,14 +119,15 @@ class Noptin_Install {
 		$table           = $this->table_prefix . 'noptin_subscriber_meta';
 		$charset_collate = $this->charset_collate;
 
-		return "CREATE TABLE IF NOT EXISTS $table
-			(meta_id bigint(20) unsigned NOT NULL auto_increment,
+		return "CREATE TABLE $table (
+			meta_id bigint(20) unsigned NOT NULL auto_increment,
 			noptin_subscriber_id bigint(20) unsigned NOT NULL default '0',
 			meta_key varchar(255) default NULL,
 			meta_value longtext,
 			PRIMARY KEY  (meta_id),
 			KEY noptin_subscriber_id (noptin_subscriber_id),
-			KEY meta_key (meta_key(191))) $charset_collate";
+			KEY meta_key (meta_key(191))
+) $charset_collate;";
 
 	}
 
@@ -139,20 +141,20 @@ class Noptin_Install {
 		$table           = $this->table_prefix . 'noptin_automation_rules';
 		$charset_collate = $this->charset_collate;
 
-		return "CREATE TABLE IF NOT EXISTS `$table` (
-			`id` bigint(20) NOT NULL AUTO_INCREMENT,
-			`action_id` varchar(255) NOT NULL default '',
-			`action_settings` longtext DEFAULT NULL,
-			`trigger_id` varchar(255) NOT NULL default '',
-			`trigger_settings` longtext DEFAULT NULL,
-			`status` int(2) NOT NULL default '1',
-			`times_run` int(11) NOT NULL default '0',
-			`created_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			`updated_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			PRIMARY KEY (`id`),
+		return "CREATE TABLE $table (
+			id bigint(20) unsigned NOT NULL auto_increment,
+			action_id varchar(255) NOT NULL default '',
+			action_settings longtext DEFAULT NULL,
+			trigger_id varchar(255) NOT NULL default '',
+			trigger_settings longtext DEFAULT NULL,
+			status tinyint(2) NOT NULL default '1',
+			times_run int(11) NOT NULL default '0',
+			created_at datetime NOT NULL default '0000-00-00 00:00:00',
+			updated_at datetime NOT NULL default '0000-00-00 00:00:00',
+			PRIMARY KEY  (id),
 			KEY trigger_id (trigger_id),
 			KEY action_id (action_id)
-		) $charset_collate";
+) $charset_collate;";
 
 	}
 

@@ -459,11 +459,18 @@
 }
 
 .noptin-optin-form-wrapper .noptin-optin-form.noptin-form-single-line .noptin-form-submit{
- 	border-radius: 30px;
-    position: absolute;
-    bottom: 0;
-    top: 0;
-    right: -3px;
+	border-radius: 30px;
+}
+
+@media only screen and (min-width: 768px) {
+
+	.noptin-optin-form-wrapper .noptin-optin-form.noptin-form-single-line .noptin-form-submit{
+		position: absolute;
+		bottom: -1px;
+		top: 0;
+		right: 0px;
+	}
+
 }
 
 .noptin-optin-form-wrapper .noptin-form-single-line .noptin-form-field{
@@ -516,12 +523,14 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#fafafa',
-				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
-	position: absolute;
-	right: 10px;
-	top: 6px;
-	bottom: 6px;
-	padding-top: 2px;
+				'CSS'                   => '@media only screen and (min-width: 768px) {
+	.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
+		position: absolute;
+		right: 10px;
+		top: 6px;
+		bottom: 6px;
+		padding-top: 2px;
+	}
 }
 
 .noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-field {

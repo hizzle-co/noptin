@@ -181,9 +181,9 @@ class Noptin_WPForms {
 		foreach ( get_special_noptin_form_fields() as $name => $field ) {
 
 			$id         = esc_attr( sanitize_html_class( $name ) );
-			$form_field = $form_data['settings']['noptin_field_' . $id];
-
-			if ( isset( $form_field ) ) {
+			
+			if ( isset( $form_data['settings']['noptin_field_' . $id] ) ) {
+				$form_field = $form_data['settings']['noptin_field_' . $id];
 				$noptin_fields[ $id ] = $fields[ $form_field ]['value'];
 			}
 

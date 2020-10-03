@@ -281,9 +281,10 @@ class Noptin_Settings {
 					'paste'        => __( 'Paste', 'newsletter-optin-box' ),
 					'plain'        => __( 'Plain', 'newsletter-optin-box' ),
 					'merriweather' => __( 'Merriweather', 'newsletter-optin-box' ),
+					'default'      => __( 'Default', 'newsletter-optin-box' ),
 				),
 				'default'     => 'plain',
-				'description' => __( 'Select your preferred email template.', 'newsletter-optin-box' ),
+				'description' => __( 'Select your preferred email template.', 'newsletter-optin-box' ) . ' ' .__( 'Select "Default" if you have an email templates plugin whose template you would like to use.', 'newsletter-optin-box' ),
 			),
 
 			'permission_text' => array(
