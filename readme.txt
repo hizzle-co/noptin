@@ -123,6 +123,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Ability to order newsletter subscribers by their subscription status - ADDED
 - Clicking the back button when viewing a newsletter subscriber returns you to the first page instead of the page that you were initially viewing - FIXED
 - Ability to set the number of subscribers visible per page - ADDED ([Oleg Dmitriev](https://www.independent.wine/))
+- Ability to duplicate an email campaign - ADDED
 
 = 1.3.5 - 2020-09-19 =
 - If an existing newsletter subscriber tries to sign up, they [get an error showing their subscriber id](https://wordpress.org/support/topic/strange-erorr-code-with-existing-email/) - FIXED
