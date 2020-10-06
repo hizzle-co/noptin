@@ -121,7 +121,7 @@ class Noptin_Form {
 		// Init the form.
 		$form = array(
 			'optinName'   => $post->post_title,
-			'optinStatus' => ( 'publish' === $post->post_status ),
+			'optinStatus' => ( 'draft' !== $post->post_status ),
 			'id'          => $post->ID,
 			'optinHTML'   => $post->post_content,
 			'optinType'   => get_post_meta( $post->ID, '_noptin_optin_type', true ),
@@ -149,7 +149,7 @@ class Noptin_Form {
 
 		$defaults = array(
 			'optinName'             => '',
-			'optinStatus'           => false,
+			'optinStatus'           => true,
 			'id'                    => null,
 			'optinHTML'             => __( 'This form is incorrectly configured', 'newsletter-optin-box' ),
 			'optinType'             => 'inpost',
