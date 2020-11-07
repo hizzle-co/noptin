@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Noptin - Simple Newsletter Subscription Forms 1.2.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
-"POT-Creation-Date: 2020-10-06 05:48+0000\n"
+"POT-Creation-Date: 2020-11-07 09:05+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -447,7 +447,7 @@ msgstr ""
 msgid "Subscribe To Our Newsletter"
 msgstr ""
 
-#: includes/functions.php:47 includes/admin/class-noptin-settings.php:322
+#: includes/functions.php:47 includes/admin/class-noptin-settings.php:333
 msgid "Thanks for subscribing to our newsletter"
 msgstr ""
 
@@ -1589,7 +1589,7 @@ msgid "stop"
 msgstr ""
 
 #: includes/admin/class-noptin-email-newsletters-table.php:336
-#: includes/admin/class-noptin-settings.php:342
+#: includes/admin/class-noptin-settings.php:353
 #: templates/automations/edit-automation.php:50
 #: templates/newsletters/add-newsletter.php:34
 #: templates/newsletters/edit-newsletter.php:34
@@ -1634,7 +1634,7 @@ msgid "Design"
 msgstr ""
 
 #: includes/admin/class-noptin-form-editor.php:66
-#: includes/admin/class-noptin-settings.php:72
+#: includes/admin/class-noptin-settings.php:73
 msgid "Integrations"
 msgstr ""
 
@@ -2143,235 +2143,237 @@ msgstr ""
 msgid "Use the %s widget to add this form to a widget area"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:64
+#: includes/admin/class-noptin-settings.php:65
 msgid "General"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:66
-#: includes/admin/class-noptin-settings.php:68
+#: includes/admin/class-noptin-settings.php:67
+#: includes/admin/class-noptin-settings.php:69
 msgid "Emails"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:69
+#: includes/admin/class-noptin-settings.php:70
 msgid "Double Opt-In Email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:73
+#: includes/admin/class-noptin-settings.php:74
 msgid "Messages"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:163
+#: includes/admin/class-noptin-settings.php:164
 msgid "Your settings have been saved"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:164
+#: includes/admin/class-noptin-settings.php:165
 msgid "Your settings could not be saved."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:191
+#: includes/admin/class-noptin-settings.php:192
 msgid "Admin Notifications"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:192
+#: includes/admin/class-noptin-settings.php:193
 msgid ""
 "Notify the site admin every time a new subscriber signs up for the "
 "newsletter."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:199
+#: includes/admin/class-noptin-settings.php:200
 msgid "Double Opt-in"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:200
+#: includes/admin/class-noptin-settings.php:201
 msgid "Require new subscribers to confirm their email addresses."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:207
+#: includes/admin/class-noptin-settings.php:208
 msgid "Delete on Unsubscribe"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:208
+#: includes/admin/class-noptin-settings.php:209
 msgid ""
 "Delete subscribers after they unsubscribe instead of marking them as "
 "inactive."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:215
+#: includes/admin/class-noptin-settings.php:216
 msgid "Hide From Subscribers"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:216
+#: includes/admin/class-noptin-settings.php:217
 msgid "Hide opt-in forms and methods from existing subscribers."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:223
+#: includes/admin/class-noptin-settings.php:224
 msgid "Subscription Cookie"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:225
+#: includes/admin/class-noptin-settings.php:226
 msgid ""
 "If you are migrating from another email plugin, enter the cookie name they "
 "used to identify subscribers."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:232
+#: includes/admin/class-noptin-settings.php:233
 msgid "\"Reply-to\" Email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:236
+#: includes/admin/class-noptin-settings.php:237
 msgid ""
 "Where should subscribers reply to in case they need to get in touch with you?"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:243
+#: includes/admin/class-noptin-settings.php:244
 msgid "\"From\" Email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:246
+#: includes/admin/class-noptin-settings.php:247
 msgid ""
 "How the sender email appears in outgoing emails. Leave this field blank if "
 "you are not able to send any emails."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:252
+#: includes/admin/class-noptin-settings.php:253
 msgid "\"From\" Name"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:255
+#: includes/admin/class-noptin-settings.php:256
 msgid "How the sender name appears in outgoing emails"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:261
+#: includes/admin/class-noptin-settings.php:262
 msgid "Company"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:264
+#: includes/admin/class-noptin-settings.php:265
 msgid "What is the name of your company or website?"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:271
+#: includes/admin/class-noptin-settings.php:272
 msgid "Logo"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:272
+#: includes/admin/class-noptin-settings.php:273
 msgid "Enter a full url to your logo. Works best with rectangular images."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:278
+#: includes/admin/class-noptin-settings.php:279
 msgid "Email Template"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:279
+#: includes/admin/class-noptin-settings.php:280
 msgid "Select a template"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:281
+#: includes/admin/class-noptin-settings.php:282
 msgid "Paste"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:282
+#: includes/admin/class-noptin-settings.php:283
 msgid "Plain"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:283
+#: includes/admin/class-noptin-settings.php:284
 msgid "Merriweather"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:284
+#: includes/admin/class-noptin-settings.php:285
 msgid "Default"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:287
-msgid ""
-"Select \"Default\" if you have an email templates plugin whose template you "
-"would like to use."
+#: includes/admin/class-noptin-settings.php:290
+msgid "Select \"Default\" if you are using an email templates plugin."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:293
+#: includes/admin/class-noptin-settings.php:296
+msgid "Try our free email templates plugin."
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:304
 msgid "Permission reminder"
 msgstr ""
 
 #. %s . [[unsubscribe_url]]
-#: includes/admin/class-noptin-settings.php:296
+#: includes/admin/class-noptin-settings.php:307
 #, php-format
 msgid "%s will be replaced by a url to the unsubscription page."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:306
+#: includes/admin/class-noptin-settings.php:317
 msgid "Footer text"
 msgstr ""
 
 #. %1$s Opening link tag, %2$s Closing link tag.
-#: includes/admin/class-noptin-settings.php:311
+#: includes/admin/class-noptin-settings.php:322
 #, php-format
 msgid ""
 "This text appears below all emails. If you are a %1$sNoptin affiliate%2$s, "
 "include your affiliate link here and earn commissions for new referrals."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:321
+#: includes/admin/class-noptin-settings.php:332
 msgid "Default Success Message"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:323
+#: includes/admin/class-noptin-settings.php:334
 msgid ""
 "This is the message shown to people after they successfully sign up for your "
 "newsletter."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:330
+#: includes/admin/class-noptin-settings.php:341
 msgid "GeoLocation API Key"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:333
+#: includes/admin/class-noptin-settings.php:344
 #, php-format
 msgid ""
 "Enter your %s API key if you want to GeoLocate your subscribers using their "
 "service."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:346
+#: includes/admin/class-noptin-settings.php:357
 msgid "The subject of the subscription confirmation email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:353
+#: includes/admin/class-noptin-settings.php:364
 msgid "Email Title"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:357
+#: includes/admin/class-noptin-settings.php:368
 msgid "The title of the email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:364
+#: includes/admin/class-noptin-settings.php:375
 #: includes/automation-rules/actions/class-noptin-email-action.php:36
 msgid "Email Body"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:367
+#: includes/admin/class-noptin-settings.php:378
 msgid "This is the main content of the email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:374
+#: includes/admin/class-noptin-settings.php:385
 msgid "Call to Action"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:378
+#: includes/admin/class-noptin-settings.php:389
 msgid "The text of the call to action button"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:385
+#: includes/admin/class-noptin-settings.php:396
 msgid "Extra Text"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:388
+#: includes/admin/class-noptin-settings.php:399
 msgid "This text is shown after the call to action button"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:395
+#: includes/admin/class-noptin-settings.php:406
 msgid "Permission Text"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:398
+#: includes/admin/class-noptin-settings.php:409
 msgid "Remind the subscriber how they signed up."
 msgstr ""
 
