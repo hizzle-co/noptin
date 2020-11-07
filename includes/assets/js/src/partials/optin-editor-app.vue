@@ -37,6 +37,12 @@
 							<v-list-item-title v-else>Save Draft</v-list-item-title>
       					</v-list-item-content>
     				</v-list-item>
+					<v-list-item ripple link @click="publish()">
+    					<v-list-item-content>
+        					<v-list-item-title v-if="optinStatus">{{saveText}}</v-list-item-title>
+							<v-list-item-title v-else>{{publishText}}</v-list-item-title>
+      					</v-list-item-content>
+    				</v-list-item>
 					<v-list-item ripple link @click.prevent="saveAsTemplate()">
     					<v-list-item-content>
         					<v-list-item-title>Save As Template</v-list-item-title>

@@ -43,6 +43,7 @@ class Noptin_Settings {
 	 * Render settings.
 	 */
 	public static function output() {
+		add_thickbox();
 		get_noptin_template( 'settings.php' );
 	}
 
@@ -284,7 +285,17 @@ class Noptin_Settings {
 					'default'      => __( 'Default', 'newsletter-optin-box' ),
 				),
 				'default'     => 'plain',
-				'description' => __( 'Select "Default" if you have an email templates plugin whose template you would like to use.', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					"%s %s",
+					__( 'Select "Default" if you are using an email templates plugin.', 'newsletter-optin-box' ),
+					sprintf(
+						'<br /><a href="%s" class="thickbox open-plugin-details-modal">%s</a>',
+						esc_url(
+							admin_url("plugin-install.php?tab=plugin-information&plugin=email-customizer&TB_iframe=true&width=772&height=560")
+						),
+						__( 'Try our free email templates plugin.', 'newsletter-optin-box' )
+					)
+				),
 			),
 
 			'permission_text' => array(

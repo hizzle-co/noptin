@@ -2,6 +2,7 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+var webpack = require( 'webpack' );
 
 module.exports = {
 	mode: "production",
