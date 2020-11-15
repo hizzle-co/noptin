@@ -22,9 +22,6 @@ class Noptin_Integrations {
 	 */
 	public function __construct() {
 
-		// Comment prompts.
-		add_filter( 'comment_post_redirect', array( $this, 'comment_post_redirect' ), 10, 2 );
-
 		// Load integrations.
 		$integrations = array(
 			'nf_init'            => 'load_ninja_forms_integration',
@@ -126,18 +123,6 @@ class Noptin_Integrations {
 
 		// Register the action with form widget
 		\ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' )->add_form_action( $action->get_name(), $action );
-	}
-
-	/**
-	 * Redirect to a custom URL after a comment is submitted
-	 * Added query arg used for displaying prompt
-	 *
-	 * @param string $location Redirect URL.
-	 * @param object $comment Comment object.
-	 * @return string $location New redirect URL
-	 */
-	function comment_post_redirect( $location, $comment ) {
-		return add_query_arg( 'noptin-ca', $comment->comment_ID, $location );
 	}
 
 }
