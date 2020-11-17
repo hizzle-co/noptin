@@ -138,6 +138,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.3.8 - 2020-11-20 =
+- Anyone with a "manage_noptin" capability can now manage newsletters and subscribers.
+
 = 1.3.7 - 2020-11-15 =
 - Enable featured images in new post notification newsletters.
 

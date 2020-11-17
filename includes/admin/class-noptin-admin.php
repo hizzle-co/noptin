@@ -368,7 +368,7 @@ class Noptin_Admin {
 		add_menu_page(
 			'Noptin',
 			'Noptin',
-			'manage_options',
+			get_noptin_capability(),
 			'noptin',
 			array( $this, 'render_main_page' ),
 			'dashicons-forms',
@@ -380,7 +380,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
 			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'edit.php?post_type=noptin-form'
 		);
 
@@ -389,7 +389,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
 			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-email-campaigns',
 			array( $this, 'render_email_campaigns_page' )
 		);
@@ -400,7 +400,7 @@ class Noptin_Admin {
 			'noptin',
 			$subscribers_page_title,
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-subscribers',
 			array( $this, 'render_subscribers_page' )
 		);
@@ -413,7 +413,7 @@ class Noptin_Admin {
 			'noptin',
 			$automations_page_title,
 			esc_html__( 'Automation Rules', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-automation-rules',
 			array( $this, 'render_automation_rules_page' )
 		);
@@ -423,7 +423,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Settings', 'newsletter-optin-box' ),
 			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-settings',
 			array( $this, 'render_settings_page' )
 		);
@@ -434,7 +434,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html( $tools_page_title ),
 			esc_html__( 'Tools', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-tools',
 			array( $this, 'render_tools_page' )
 		);
@@ -444,7 +444,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Documentation', 'newsletter-optin-box' ),
 			esc_html__( 'Documentation', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-docs',
 			array( $this, 'render_add_new_page' )
 		);
