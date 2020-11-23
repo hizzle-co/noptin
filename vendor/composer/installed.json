@@ -1,133 +1,151 @@
-[
-    {
-        "name": "pelago/emogrifier",
-        "version": "v3.1.0",
-        "version_normalized": "3.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/MyIntervals/emogrifier.git",
-            "reference": "f6a5c7d44612d86c3901c93f1592f5440e6b2cd8"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/MyIntervals/emogrifier/zipball/f6a5c7d44612d86c3901c93f1592f5440e6b2cd8",
-            "reference": "f6a5c7d44612d86c3901c93f1592f5440e6b2cd8",
-            "shasum": ""
-        },
-        "require": {
-            "ext-dom": "*",
-            "ext-libxml": "*",
-            "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4",
-            "symfony/css-selector": "^2.8 || ^3.0 || ^4.0 || ^5.0"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "^2.15.3",
-            "phpmd/phpmd": "^2.7.0",
-            "phpunit/phpunit": "^5.7.27",
-            "squizlabs/php_codesniffer": "^3.5.0"
-        },
-        "time": "2019-12-26T19:37:31+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "4.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Pelago\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Oliver Klee",
-                "email": "github@oliverklee.de"
+{
+    "packages": [
+        {
+            "name": "pelago/emogrifier",
+            "version": "v5.0.0",
+            "version_normalized": "5.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MyIntervals/emogrifier.git",
+                "reference": "b43b650880d189b0ada61d95d0729c7424b1752d"
             },
-            {
-                "name": "Zoli Szabó",
-                "email": "zoli.szabo+github@gmail.com"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MyIntervals/emogrifier/zipball/b43b650880d189b0ada61d95d0729c7424b1752d",
+                "reference": "b43b650880d189b0ada61d95d0729c7424b1752d",
+                "shasum": ""
             },
-            {
-                "name": "John Reeve",
-                "email": "jreeve@pelagodesign.com"
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": "~7.1.0 || ~7.2.0 || ~7.3.0 || ~7.4.0 || ~8.0.0",
+                "symfony/css-selector": "^3.4.32 || ^4.4 || ^5.1"
             },
-            {
-                "name": "Jake Hotson",
-                "email": "jake@qzdesign.co.uk"
+            "require-dev": {
+                "php-parallel-lint/php-parallel-lint": "^1.2.0",
+                "slevomat/coding-standard": "^6.4.1",
+                "squizlabs/php_codesniffer": "^3.5.8"
             },
-            {
-                "name": "Cameron Brooks"
+            "time": "2020-11-23T18:37:25+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0.x-dev"
+                }
             },
-            {
-                "name": "Jaime Prado"
-            }
-        ],
-        "description": "Converts CSS styles into inline style attributes in your HTML code",
-        "homepage": "https://www.myintervals.com/emogrifier.php",
-        "keywords": [
-            "css",
-            "email",
-            "pre-processing"
-        ]
-    },
-    {
-        "name": "symfony/css-selector",
-        "version": "v3.4.45",
-        "version_normalized": "3.4.45.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/css-selector.git",
-            "reference": "9ccf6e78077a3fc1596e6c7b5958008965a11518"
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Pelago\\Emogrifier\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Klee",
+                    "email": "github@oliverklee.de"
+                },
+                {
+                    "name": "Zoli Szabó",
+                    "email": "zoli.szabo+github@gmail.com"
+                },
+                {
+                    "name": "John Reeve",
+                    "email": "jreeve@pelagodesign.com"
+                },
+                {
+                    "name": "Jake Hotson",
+                    "email": "jake@qzdesign.co.uk"
+                },
+                {
+                    "name": "Cameron Brooks"
+                },
+                {
+                    "name": "Jaime Prado"
+                }
+            ],
+            "description": "Converts CSS styles into inline style attributes in your HTML code",
+            "homepage": "https://www.myintervals.com/emogrifier.php",
+            "keywords": [
+                "css",
+                "email",
+                "pre-processing"
+            ],
+            "support": {
+                "issues": "https://github.com/MyIntervals/emogrifier/issues",
+                "source": "https://github.com/MyIntervals/emogrifier"
+            },
+            "install-path": "../pelago/emogrifier"
         },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/css-selector/zipball/9ccf6e78077a3fc1596e6c7b5958008965a11518",
-            "reference": "9ccf6e78077a3fc1596e6c7b5958008965a11518",
-            "shasum": ""
-        },
-        "require": {
-            "php": "^5.5.9|>=7.0.8"
-        },
-        "time": "2020-03-16T08:31:04+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.4-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Symfony\\Component\\CssSelector\\": ""
+        {
+            "name": "symfony/css-selector",
+            "version": "v3.4.46",
+            "version_normalized": "3.4.46.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/css-selector.git",
+                "reference": "da3d9da2ce0026771f5fe64cb332158f1bd2bc33"
             },
-            "exclude-from-classmap": [
-                "/Tests/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/da3d9da2ce0026771f5fe64cb332158f1bd2bc33",
+                "reference": "da3d9da2ce0026771f5fe64cb332158f1bd2bc33",
+                "shasum": ""
             },
-            {
-                "name": "Jean-François Simon",
-                "email": "jeanfrancois.simon@sensiolabs.com"
+            "require": {
+                "php": "^5.5.9|>=7.0.8"
             },
-            {
-                "name": "Symfony Community",
-                "homepage": "https://symfony.com/contributors"
-            }
-        ],
-        "description": "Symfony CssSelector Component",
-        "homepage": "https://symfony.com"
-    }
-]
+            "time": "2020-10-24T10:57:07+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\CssSelector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Jean-François Simon",
+                    "email": "jeanfrancois.simon@sensiolabs.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony CssSelector Component",
+            "homepage": "https://symfony.com",
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "../symfony/css-selector"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}
