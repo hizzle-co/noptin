@@ -48,7 +48,7 @@
 		"@mdi/js": "5.8.55",
 		"@wordpress/babel-preset-default": "4.19.0",
 		"@wordpress/browserslist-config": "2.7.0",
-		"autoprefixer": "10.0.3",
+		"autoprefixer": "10.0.4",
 		"babel-loader": "8.2.1",
 		"browserslist": "4.14.7",
 		"css-loader": "5.0.1",
