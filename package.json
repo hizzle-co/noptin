@@ -38,7 +38,7 @@
 		"vue": "2.6.12",
 		"vue-contenteditable": "1.0.2",
 		"vue-popperjs": "2.3.0",
-		"vuedraggable": "2.24.3",
+		"vuedraggable": "4.0.1",
 		"vuetify": "2.3.19"
 	},
 	"devDependencies": {
