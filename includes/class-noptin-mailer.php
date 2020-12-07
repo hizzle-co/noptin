@@ -216,7 +216,7 @@ class Noptin_Mailer {
 		$permission_text2 = sprintf(
 			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 			__( 'To stop receiving these emails, you can %1$sunsubscribe%2$s at any time.', 'newsletter-optin-box' ),
-			'<a href="[[unsubscribe_url]]" target="_blank">',
+			'<a href="[[unsubscribe_url]]" rel="nofollow" target="_blank">',
 			'</a>'
 		);
 
