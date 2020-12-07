@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.5
 Requires PHP: 5.3
-Version: 1.3.7
+Version: 1.3.9
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -138,7 +138,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.3.9 - 2020-12-08 =
+= 1.3.9 - 2020-12-07 =
 - Fix WooCommerce checkout not adding new customers to the newsletter.
 - Add a nofollow attribute to newsletter unsubscribe links (@shawnkhall).
 - Add newsletter unsubscribe email headers (@shawnkhall).

@@ -118,7 +118,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 *
 	 * @param WC_Order $order
 	 */
-	public function save_woocommerce_checkout_checkbox_value( &$order ) {
+	public function save_woocommerce_checkout_checkbox_value( $order ) {
 		if ( $this->checkbox_was_checked() ) {
 			$order->update_meta_data( 'noptin_opted_in', 1 );
 		}
