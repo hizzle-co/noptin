@@ -28,6 +28,11 @@ class Noptin_Mailer {
 	public $disable_template_plugins = true;
 
 	/**
+	 * The current emails mailer data.
+	 */
+	public $mailer_data = array();
+
+	/**
 	 * The class constructor.
 	 */
 	public function __construct() {
@@ -75,6 +80,7 @@ class Noptin_Mailer {
 		$data['after_cta_text']  = empty( $data['after_cta_text'] ) ? '' : $data['after_cta_text'];
 		$data['after_cta_text2'] = empty( $data['after_cta_text2'] ) ? '' : $data['after_cta_text2'];
 		$data['email_body']      = $this->build_email( $data );
+		$this->mailer_data       = $data;
 
 		return $data;
 	}
@@ -129,7 +135,7 @@ class Noptin_Mailer {
 	 * Retrieves the logo URL.
 	 */
 	public function get_logo_url( $data ) {
-		return apply_filters( 'noptin_email_logo_url', get_noptin_option( 'logo_url', '' ), $data );
+		return apply_filters( 'noptin_email_logo_url', get_noptin_option( 'logo_url', '' ), $data, $this );
 	}
 
 	/**
@@ -173,7 +179,7 @@ class Noptin_Mailer {
 			'noptin_company'   => get_noptin_option( 'company', '' ),
 		);
 
-		return apply_filters( 'noptin_mailer_default_merge_tags', $default_merge_tags );
+		return apply_filters( 'noptin_mailer_default_merge_tags', $default_merge_tags, $this );
 
 	}
 
@@ -200,7 +206,7 @@ class Noptin_Mailer {
 	 */
 	public function get_footer_text( $data ) {
 		$footer_text = get_noptin_option( 'footer_text', $this->default_footer_text() );
-		return apply_filters( 'noptin_mailer_email_footer_text', $footer_text, $data );
+		return apply_filters( 'noptin_mailer_email_footer_text', $footer_text, $data, $this );
 	}
 
 	/**
@@ -229,7 +235,7 @@ class Noptin_Mailer {
 	 */
 	public function get_permission_text( $data = array() ) {
 		$permission_text = get_noptin_option( 'permission_text', $this->default_permission_text() );
-		return apply_filters( 'noptin_mailer_email_permission_text', $permission_text, $data );
+		return apply_filters( 'noptin_mailer_email_permission_text', $permission_text, $data, $this );
 	}
 
 	/**
@@ -370,7 +376,7 @@ class Noptin_Mailer {
 		}
 
 		// Filters a post processed email.
-		return apply_filters( 'noptin_post_processed_mailer_email_content', $content, $data );
+		return apply_filters( 'noptin_post_processed_mailer_email_content', $content, $data, $this );
 	}
 
 	/**
@@ -385,7 +391,7 @@ class Noptin_Mailer {
 	public function build_email( $data ) {
 
 		// Filters email data before the email is generated.
-		$data = apply_filters( 'noptin_mailer_email_data', $data );
+		$data = apply_filters( 'noptin_mailer_email_data', $data, $this );
 
 		// If no template is provided, use the user set template.
 		if ( empty( $data['template'] ) ) {
@@ -419,25 +425,25 @@ class Noptin_Mailer {
 			'footer'
 		);
 
-		foreach ( apply_filters( 'noptin_mailer_email_sections', $sections, $data, $template ) as $section ) {
+		foreach ( apply_filters( 'noptin_mailer_email_sections', $sections, $data, $template, $this ) as $section ) {
 
 			$section = sanitize_text_field( $section );
 
 			// Fires before the section is printed.
-			do_action( "noptin_mailer_before_{$section}_section", $data );
+			do_action( "noptin_mailer_before_{$section}_section", $data, $this );
 
 			// Load the section.
 			get_noptin_template( "email-templates/$template/$section.php", $data );
 
 			// Fires after the section is printed.
-			do_action( "noptin_mailer_after_{$section}_section", $data );
+			do_action( "noptin_mailer_after_{$section}_section", $data, $this );
 
 		}
 
 		$email_content = ob_get_clean();
 
 		// Filters email content before it is pre-processed.
-		$email_content = apply_filters( 'noptin_mailer_pre_processed_email_content', $email_content, $data );
+		$email_content = apply_filters( 'noptin_mailer_pre_processed_email_content', $email_content, $data, $this );
 
 		if ( empty( $email_content ) ) {
 			$email_content = $data['email_body'];
@@ -454,7 +460,7 @@ class Noptin_Mailer {
 	 */
 	public function get_template( $data ) {
 		$template = get_noptin_option( 'email_template',  'plain' );
-		$template = apply_filters( 'noptin_mailer_email_template', $template, $data );
+		$template = apply_filters( 'noptin_mailer_email_template', $template, $data, $this );
 
 		if ( empty( $template ) ) {
 			$template = 'plain';
@@ -470,9 +476,17 @@ class Noptin_Mailer {
 
 		$name       = $this->get_from_name();
 		$reply_to   = $this->get_reply_to();
+		$content    = $this->get_content_type();
 		$headers    = array( "Reply-To:$name <$reply_to>" );
+		$headers[]  = "Content-Type:$content";
 
-		return apply_filters( 'noptin_mailer_email_headers',  $headers );
+		if ( ! empty( $this->mailer_data['merge_tags']['unsubscribe_url'] ) ) {
+			$url       = esc_url( $this->mailer_data['merge_tags']['unsubscribe_url'] );
+			$headers[] = "List-Unsubscribe:<$url>";
+		}
+
+		$headers = implode( "\r\n", $headers );
+		return apply_filters( 'noptin_mailer_email_headers',  $headers, $this );
 
 	}
 
@@ -496,7 +510,7 @@ class Noptin_Mailer {
 
 		$from_email = 'noptin@' . $sitename;
 
-		return apply_filters( 'noptin_mailer_default_from_address', $from_email );
+		return apply_filters( 'noptin_mailer_default_from_address', $from_email, $this );
 
 	}
 
@@ -515,7 +529,7 @@ class Noptin_Mailer {
 			$reply_to =  get_option( 'admin_email' );
 		}
 
-		return apply_filters( 'noptin_mailer_email_reply_to', $reply_to );
+		return apply_filters( 'noptin_mailer_email_reply_to', $reply_to, $this );
 	}
 
 	/**
@@ -533,7 +547,7 @@ class Noptin_Mailer {
 			$from_address =  $this->default_from_address();
 		}
 
-		return apply_filters( 'noptin_mailer_email_from_address', $from_address );
+		return apply_filters( 'noptin_mailer_email_from_address', $from_address, $this );
 
 	}
 
@@ -562,7 +576,7 @@ class Noptin_Mailer {
 	 * @return string The email content type.
 	 */
 	public function get_content_type() {
-		return apply_filters( 'noptin_mailer_email_content_type', 'text/html' );
+		return apply_filters( 'noptin_mailer_email_content_type', 'text/html', $this );
 	}
 
 	/**
@@ -634,7 +648,8 @@ class Noptin_Mailer {
 				'headers'     => $this->get_headers(),
 				'attachments' => array(),
 			),
-			$this
+			$this,
+			$this->mailer_data
 		);
 
 		$data               = wp_unslash( $data );
@@ -644,7 +659,7 @@ class Noptin_Mailer {
 		$this->before_sending();
 
 		// Prepare the sending function.
-		$sending_function = apply_filters( 'noptin_mailer_email_sending_function', 'wp_mail' );
+		$sending_function = apply_filters( 'noptin_mailer_email_sending_function', 'wp_mail', $this );
 
 		// Send the actual email.
 		$result = call_user_func(

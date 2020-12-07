@@ -140,6 +140,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.3.9 - 2020-12-08 =
 - Fix WooCommerce checkout not adding new customers to the newsletter.
+- Add a nofollow attribute to newsletter unsubscribe links (@shawnkhall).
+- Add newsletter unsubscribe email headers (@shawnkhall).
 
 = 1.3.8 - 2020-11-20 =
 - Anyone with a "manage_noptin" capability can now manage newsletters and subscribers.
