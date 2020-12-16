@@ -22,7 +22,7 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
     /**
      * Defines the version of this addon.
      */
-    protected $_version = '1.3.3';
+    protected $_version = '1.4.0';
 
     /**
      * Defines the minimum Gravity Forms version required.

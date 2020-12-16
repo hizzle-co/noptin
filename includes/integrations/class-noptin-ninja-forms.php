@@ -48,9 +48,10 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 
             array(
                 'name'  => 'GDPR_consent',
-                'label' => __( 'GDPR Consent', 'newsletter-optin-box' ),
+				'label' => __( 'GDPR Consent', 'newsletter-optin-box' ),
+				'help'  => __( 'Optional. If set, users will only join your newsletter if they consent.', 'newsletter-optin-box' ),
 			),
-			
+
 			array(
                 'name'  => 'conversion_page',
                 'label' => __( 'Conversion Page', 'newsletter-optin-box' ),
@@ -107,7 +108,7 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 
 			);
 		}
-		
+
 		$this->_settings = apply_filters( 'noptin_ninja_forms_integration_action_settings', $this->_settings );
 
 	}
@@ -128,6 +129,11 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 			return $data;
 		}
 
+		// Abort if marketing consent was not given.
+		if ( ! empty( $action_settings['noptin_GDPR_consent'] ) && __( 'Unchecked', 'newsletter-optin-box' ) === $action_settings['noptin_GDPR_consent'] )  {
+			return $data;
+		}
+		
 		// Prepare Noptin Fields.
 		$noptin_fields = $this->map_fields( $action_settings );
 
