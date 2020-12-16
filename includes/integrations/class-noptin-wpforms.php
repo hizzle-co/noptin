@@ -31,7 +31,7 @@ class Noptin_WPForms {
         $sections['noptin'] = 'Noptin';
         return $sections;
 	}
-	
+
 	/**
      * Noptin Settings Content
      *
@@ -88,7 +88,8 @@ class Noptin_WPForms {
             __( 'GDPR checkbox (Optional)', 'newsletter-optin-box' ),
             array(
                 'field_map'   => array( 'checkbox', 'gdpr-checkbox' ),
-                'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
+				'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
+				'tooltip'     => __( 'If mapped, only users who consent will join your newsletter.', 'newsletter-optin-box' ),
             )
 		);
 
@@ -140,14 +141,20 @@ class Noptin_WPForms {
 
 		// Return early if no email.
         $email_field_id = $form_data['settings']['noptin_field_email'];
-		if( ! isset( $email_field_id ) || empty( $fields[ $email_field_id ]['value'] ) ) {
+		if ( ! isset( $email_field_id ) || empty( $fields[ $email_field_id ]['value'] ) ) {
+			return;
+		}
+
+		// Or no consent.
+		$consent_field_id = $form_data['settings']['noptin_field_gdpr'];
+		if ( '' !== $consent_field_id && empty( $fields[ $consent_field_id ]['value'] ) ) {
 			return;
 		}
 
 		// Prepare Noptin Fields.
 		$noptin_fields = array(
 			'_subscriber_via' => 'WPForms',
-			'email'           => $fields[ $email_field_id ]['value'],
+			'email'           => sanitize_email( $fields[ $email_field_id ]['value'] ),
 		);
 
 		// Add the subscriber's IP address.
@@ -163,28 +170,23 @@ class Noptin_WPForms {
 
 		// Maybe include the subscriber name...
 		$name_field_id = $form_data['settings']['noptin_field_name'];
-		if ( isset( $name_field_id ) ) {
-			$noptin_fields['name'] = $fields[ $name_field_id ]['value'];
+		if ( is_numeric( $name_field_id ) ) {
+			$noptin_fields['name'] = noptin_clean( $fields[ $name_field_id ]['value'] );
 		}
 
 		// ... and their GDPR status.
-		$gdpr_field_id = $form_data['settings']['noptin_field_gdpr'];
-		if( isset( $gdpr_field_id ) ) {
-
-			if ( ! empty( $fields[ $gdpr_field_id ]['value'] ) ) {
-				$noptin_fields['GDPR_consent'] = 1;
-			}
-
+		if ( is_numeric( $consent_field_id ) && ! empty( $fields[ $consent_field_id ]['value'] ) ) {
+			$noptin_fields['GDPR_consent'] = 1;
 		}
 
 		// And special fields.
 		foreach ( get_special_noptin_form_fields() as $name => $field ) {
 
 			$id         = esc_attr( sanitize_html_class( $name ) );
-			
+
 			if ( isset( $form_data['settings']['noptin_field_' . $id] ) ) {
-				$form_field = $form_data['settings']['noptin_field_' . $id];
-				$noptin_fields[ $id ] = $fields[ $form_field ]['value'];
+				$form_field           = $form_data['settings']['noptin_field_' . $id];
+				$noptin_fields[ $id ] = noptin_clean( $fields[ $form_field ]['value'] );
 			}
 
 		}
