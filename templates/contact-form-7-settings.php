@@ -24,8 +24,6 @@
 	}
 
 	$mapped_fields     = isset( $settings['custom_fields'] ) ? $settings['custom_fields'] : array();
-	$conditional_field = isset( $settings['conditional'] ) ? $settings['conditional'] : '';
-	$cf7_form_tags     = noptin_get_contact_form_7_form_tags( $contact_form, 'acceptance' );
 
 ?>
 
@@ -39,21 +37,6 @@
 
 <table class="form-table">
 	<tbody>
-		<tr>
-			<th scope="row">
-				<label><?php _e( 'Conditional Sign-up', 'newsletter-optin-box' ); ?></label>
-			</th>
-
-			<td>
-				<select name="noptin_settings[conditional]" id="noptin_conditional_checkbox" style="width: 25em;">
-					<option <?php selected( $conditional_field, '' ) ?> value=""><?php esc_html_e( 'Disable Conditional', 'newsletter-optin-box' ) ?></option>
-					<?php foreach ( $cf7_form_tags as $key => $value): ?>
-						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $conditional_field, $value ) ?>><?php echo esc_html( $value ); ?></option>
-					<?php endforeach; ?>
-				</select>
-				<p class="description"><?php _e( 'Optional. If you select a checkbox, users will only be added to your newsletter if they check it.', 'newsletter-optin-box' ); ?></p>
-			</td>
-		</tr>
 		<?php do_action( 'noptin_contact_form_7_settings', $custom_fields, $settings, $contact_form ); ?>
 	</tbody>
 </table>
@@ -85,11 +68,14 @@
 
 				<td>
 					<select name="noptin_settings[custom_fields][<?php echo esc_attr( $field['name'] ) ?>]" id="noptin_map_field_<?php echo esc_attr( $field['name'] ) ?>" style="width: 25em;">
-						<option <?php selected( $mapped_field, '' ) ?> disabled><?php esc_html_e( 'Map Field', 'newsletter-optin-box' ) ?></option>
+						<option <?php selected( $mapped_field, '' ) ?> ><?php esc_html_e( 'Not Mapped', 'newsletter-optin-box' ) ?></option>
 						<?php foreach ( $cf7_form_tags as $key => $value): ?>
 							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $mapped_field, $value ) ?>><?php echo esc_html( $value ); ?></option>
 						<?php endforeach; ?>
 					</select>
+					<?php if ( 'GDPR_consent' === $field['name'] ) : ?>
+						<p class="description"><?php _e( 'If mapped, only users who consent will join your newsletter.', 'newsletter-optin-box' ); ?></p>
+					<?php endif; ?>
 				</td>
 			</tr>
 
