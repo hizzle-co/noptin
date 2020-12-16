@@ -151,10 +151,17 @@ class Noptin_Contact_Form_7 {
         $posted_data = $submission->get_posted_data();
 
         // Get our settings for the form.
-        $settings = get_post_meta( $contact_form->id(), 'noptin_settings', true );
+		$settings    = get_post_meta( $contact_form->id(), 'noptin_settings', true );
+		$settings    = is_array( $settings ) ? $settings : array();
+
+		// Abort if newsletter checkbox was not checked.
+		$conditional = isset( $settings['conditional'] ) ? $settings['conditional'] : '';
+		if ( ! empty( $conditional ) && empty( $posted_data[ $conditional ] ) ) {
+			return;
+		}
 
 		// Retrieve field maps.
-		$mapped_fields = ( is_array( $settings ) && isset( $settings['custom_fields'] ) ) ? $settings['custom_fields'] : array();
+		$mapped_fields = isset( $settings['custom_fields'] ) ? $settings['custom_fields'] : array();
 
 		// Prepare Noptin Fields.
 		$noptin_fields = $this->map_fields( $posted_data, $mapped_fields );
