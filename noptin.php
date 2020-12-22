@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         1.3.3
+ * Version:         1.4.0
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -47,7 +47,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.3.3';
+	public $version = '1.4.0';
 
 	/**
 	 * The current database version.
@@ -357,23 +357,23 @@ class Noptin {
 		// Next, prepare the file name from the class.
 		$file_name = 'class-' . str_replace( '_', '-', $class_name ) . '.php';
 
-		// And an array of possible locations in order of importance;
-		$locations = array(
-			'includes',
-			'includes/admin',
-			'includes/integrations',
-			'includes/automation-rules',
-			'includes/automation-rules/actions',
-			'includes/automation-rules/triggers',
-		);
-
 		// Base path of the classes.
 		$plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
 
-		foreach ( $locations as $location ) {
+		// And an array of possible locations in order of importance;
+		$locations = array(
+			"$plugin_path/includes",
+			"$plugin_path/includes/admin",
+			"$plugin_path/includes/integrations",
+			"$plugin_path/includes/automation-rules",
+			"$plugin_path/includes/automation-rules/actions",
+			"$plugin_path/includes/automation-rules/triggers",
+		);
 
-			if ( file_exists( "$plugin_path/$location/$file_name" ) ) {
-				include "$plugin_path/$location/$file_name";
+		foreach ( apply_filters( 'noptin_autoload_locations', $locations ) as $location ) {
+
+			if ( file_exists( trailingslashit( $location ) . $file_name ) ) {
+				include trailingslashit( $location ) . $file_name;
 				break;
 			}
 
@@ -557,43 +557,23 @@ class Noptin {
 	}
 
 	/**
-	 * Loads the text domain
+	 * Load Localisation files.
 	 *
+	 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
+	 *
+	 * Locales found in:
+	 *      - WP_LANG_DIR/plugins/newsletter-optin-box-LOCALE.mo
+	 *      - WP_PLUGIN_DIR/newsletter-optin-box/languages/newsletter-optin-box-LOCALE.mo
+	 * 
 	 * @since 1.1.9
-	 * @access public
 	 */
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
 			'newsletter-optin-box',
 			false,
-			'newsletter-optin-box/languages/'
+			plugin_basename( dirname( __FILE__ ) ) . '/languages/'
 		);
-
-		/** Set our unique textdomain string */
-		$textdomain = 'newsletter-optin-box';
-
-		$locale = is_admin() && function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale();
-
-		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-		/** @ignore */
-		$locale = apply_filters( 'plugin_locale', $locale, $textdomain );
-
-		/**
-		 * Set filter for WordPress languages directory.
-		 */
-		$wp_lang_dir = apply_filters(
-			'noptin_wp_lang_dir',
-			WP_LANG_DIR . '/newsletter-optin-box/' . $textdomain . '-' . $locale . '.mo'
-		);
-
-		/** Translations: First, look in WordPress' "languages" folder = custom & update-secure! */
-		load_textdomain( $textdomain, $wp_lang_dir );
-
-		/** Translations: Secondly, look in plugin's "lang" folder = default */
-		$plugin_dir = trailingslashit( $this->plugin_path );
-		$lang_dir   = apply_filters( 'noptin_lang_dir', $plugin_dir . '/languages/' );
-		load_plugin_textdomain( $textdomain, false, $lang_dir );
 
 	}
 

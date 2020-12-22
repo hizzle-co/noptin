@@ -91,7 +91,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			add_action( $checkbox_position, array( $this, 'output_checkbox' ), 20 );
 		}
 
-		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
+		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
 		add_filter( 'noptin_woocommerce_integration_subscription_checkbox_attributes', array( $this, 'add_woocommerce_class_to_checkbox' ) );
 	}
 
@@ -107,6 +107,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			'woocommerce_checkout_billing'                => __( 'After billing details', 'newsletter-optin-box' ),
 			'woocommerce_checkout_shipping'               => __( 'After shipping details', 'newsletter-optin-box' ),
 			'woocommerce_checkout_after_customer_details' => __( 'After customer details', 'newsletter-optin-box' ),
+			'woocommerce_review_order_before_payment'     => __( 'After order review', 'newsletter-optin-box' ),
 			'woocommerce_review_order_before_submit'      => __( 'Before submit button', 'newsletter-optin-box' ),
 			'woocommerce_after_order_notes'               => __( 'After order notes', 'newsletter-optin-box' ),
 		);
@@ -115,11 +116,11 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	/**
 	 * Did the user check the email subscription checkbox?
 	 *
-	 * @param int $order_id
+	 * @param WC_Order $order
 	 */
-	public function save_woocommerce_checkout_checkbox_value( $order_id ) {
+	public function save_woocommerce_checkout_checkbox_value( $order ) {
 		if ( $this->checkbox_was_checked() ) {
-			update_post_meta( $order_id, '_noptin_optin', 1 );
+			$order->update_meta_data( 'noptin_opted_in', 1 );
 		}
 	}
 
@@ -130,7 +131,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * @return bool
 	 */
 	public function triggered( $order_id = null ) {
-		$checked = get_post_meta( $order_id, '_noptin_optin', true );
+		$checked = get_post_meta( $order_id, 'noptin_opted_in', true );
 		return $this->auto_subscribe() || ! empty( $checked );
 	}
 
@@ -144,7 +145,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			return $field;
 		}
 
-		return $field . PHP_EOL . $this->get_checkbox_markup();
+		return $this->append_checkbox( $field );
 
 	}
 
@@ -154,7 +155,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function before_checkbox_wrapper() {
 
-		if ( 'after_email_field' === $this->get_checkbox_position() ) {
+		if ( 'woocommerce_checkout_after_customer_details' !== $this->get_checkbox_position() ) {
 			echo '<p class="form-row form-row-wide" id="noptin_woocommerce_optin_checkbox">';
 		}
 
@@ -166,7 +167,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function after_checkbox_wrapper() {
 
-		if ( 'after_email_field' === $this->get_checkbox_position() ) {
+		if ( 'woocommerce_checkout_after_customer_details' !== $this->get_checkbox_position() ) {
 			echo '</p>';
 		}
 

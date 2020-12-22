@@ -307,11 +307,12 @@ class Noptin_New_Post_Notify {
 			add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
 		}
 
-		$tags['excerpt']      = $tags['post_excerpt'];
-		$tags['post_content'] = apply_filters( 'the_content', $post->post_content );
-		$tags['content']      = $tags['post_content'];
-		$tags['post_title']   = get_the_title( $post->ID);
-		$tags['title']        = $tags['post_title'];
+		$tags['excerpt']        = $tags['post_excerpt'];
+		$tags['post_content']   = apply_filters( 'the_content', $post->post_content );
+		$tags['content']        = $tags['post_content'];
+		$tags['post_title']     = get_the_title( $post->ID);
+		$tags['title']          = $tags['post_title'];
+		$tags['featured_image'] = get_the_post_thumbnail();
 
 		$author = get_userdata( $tags['post_author'] );
 

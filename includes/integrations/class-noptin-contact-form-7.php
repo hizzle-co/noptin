@@ -151,14 +151,21 @@ class Noptin_Contact_Form_7 {
         $posted_data = $submission->get_posted_data();
 
         // Get our settings for the form.
-        $settings = get_post_meta( $contact_form->id(), 'noptin_settings', true );
+		$settings    = get_post_meta( $contact_form->id(), 'noptin_settings', true );
+		$settings    = is_array( $settings ) ? $settings : array();
 
 		// Retrieve field maps.
-		$mapped_fields = ( is_array( $settings ) && isset( $settings['custom_fields'] ) ) ? $settings['custom_fields'] : array();
+		$mapped_fields = isset( $settings['custom_fields'] ) ? $settings['custom_fields'] : array();
 
 		// Prepare Noptin Fields.
 		$noptin_fields = $this->map_fields( $posted_data, $mapped_fields );
 
+		// Abort if newsletter checkbox was not checked.
+		$conditional = isset( $mapped_fields['GDPR_consent'] ) ? $mapped_fields['GDPR_consent'] : '';
+		if ( ! empty( $mapped_fields['GDPR_consent'] ) && empty( $noptin_fields[ 'GDPR_consent' ] ) ) {
+			return;
+		}
+	
 		// We need an email.
 		if ( empty( $noptin_fields['email'] ) ) {
 			return;

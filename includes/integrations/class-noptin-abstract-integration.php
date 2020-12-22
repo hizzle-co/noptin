@@ -511,8 +511,8 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 * @param string $text The original text
 	 */
-	function append_checkbox( $text ) {
-		return $this->get_checkbox_markup() . $text;
+	function prepend_checkbox( $text ) {
+		return $this->get_checkbox_markup() . PHP_EOL . $text;
 	}
 
 	/**
@@ -521,8 +521,8 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 * @param string $text The original text
 	 */
-	function prepend_checkbox( $text ) {
-		return $text . $this->get_checkbox_markup();
+	function append_checkbox( $text ) {
+		return $text . PHP_EOL . $this->get_checkbox_markup();
 	}
 
 	/**
@@ -643,7 +643,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 */
 	public function checkbox_was_checked() {
-		return isset( $_POST['noptin-subscribe'] );
+		return isset( $_REQUEST['noptin-subscribe'] );
 	}
 
 	/**

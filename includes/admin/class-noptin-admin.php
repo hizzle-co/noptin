@@ -143,6 +143,10 @@ class Noptin_Admin {
 		// Admin save subscriber.
 		add_action( 'noptin_update_admin_edited_subscriber', array( $this, 'update_edited_subscriber' ) );
 
+		// Display subscribers per page option.
+		add_action( 'load-noptin_page_noptin-subscribers', array( $this, 'add_subscribers_page_screen_options' ) );
+		add_filter( 'set-screen-option', array( $this, 'save_subscribers_page_screen_options' ), 10, 3 );
+
 		Noptin_Vue::init_hooks();
 
 		/**
@@ -364,7 +368,7 @@ class Noptin_Admin {
 		add_menu_page(
 			'Noptin',
 			'Noptin',
-			'manage_options',
+			get_noptin_capability(),
 			'noptin',
 			array( $this, 'render_main_page' ),
 			'dashicons-forms',
@@ -376,7 +380,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
 			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'edit.php?post_type=noptin-form'
 		);
 
@@ -385,7 +389,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
 			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-email-campaigns',
 			array( $this, 'render_email_campaigns_page' )
 		);
@@ -396,7 +400,7 @@ class Noptin_Admin {
 			'noptin',
 			$subscribers_page_title,
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-subscribers',
 			array( $this, 'render_subscribers_page' )
 		);
@@ -409,7 +413,7 @@ class Noptin_Admin {
 			'noptin',
 			$automations_page_title,
 			esc_html__( 'Automation Rules', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-automation-rules',
 			array( $this, 'render_automation_rules_page' )
 		);
@@ -419,7 +423,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Settings', 'newsletter-optin-box' ),
 			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-settings',
 			array( $this, 'render_settings_page' )
 		);
@@ -430,7 +434,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html( $tools_page_title ),
 			esc_html__( 'Tools', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-tools',
 			array( $this, 'render_tools_page' )
 		);
@@ -440,7 +444,7 @@ class Noptin_Admin {
 			'noptin',
 			esc_html__( 'Documentation', 'newsletter-optin-box' ),
 			esc_html__( 'Documentation', 'newsletter-optin-box' ),
-			'manage_options',
+			get_noptin_capability(),
 			'noptin-docs',
 			array( $this, 'render_add_new_page' )
 		);
@@ -764,8 +768,6 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_before_subscribers_overview_page', $this );
 
-		$deleted = false;
-
 		// Do actions.
 		if ( ! empty( $_POST['noptin_nonce'] ) && wp_verify_nonce( $_POST['noptin_nonce'], 'noptin' ) ) {
 
@@ -776,8 +778,6 @@ class Noptin_Admin {
 					foreach ( $_POST['email'] as $email ) {
 						delete_noptin_subscriber( $email );
 					}
-
-					$deleted = true;
 
 				}
 			}
@@ -1120,6 +1120,10 @@ class Noptin_Admin {
 	 */
 	public function maybe_do_action() {
 
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
+
 		if ( ! empty( $_REQUEST['noptin_admin_action'] ) ) {
 			do_action( trim( $_REQUEST['noptin_admin_action'] ), $this );
 		}
@@ -1153,6 +1157,40 @@ class Noptin_Admin {
 
 		// Campaign actions.
 		if ( isset( $_GET['page'] ) && 'noptin-email-campaigns' === $_GET['page'] ) {
+
+			// Duplicate campaign.
+			if ( ! empty( $_GET['duplicate_campaign'] ) ) {
+
+				$campaign = get_post( $_GET['duplicate_campaign'] );
+
+				if ( ! empty( $campaign ) ) {
+
+					$post = array(
+						'post_status'   => 'draft',
+						'post_type'     => 'noptin-campaign',
+						'post_date'     => current_time( 'mysql' ),
+						'post_date_gmt' => current_time( 'mysql', true ),
+						'edit_date'     => true,
+						'post_title'    => trim( $campaign->post_title ),
+						'post_content'  => $campaign->post_content,
+						'meta_input'    => array(
+							'campaign_type'           => 'newsletter',
+							'preview_text'            => get_post_meta( $campaign->ID, 'preview_text', 'true' ),
+						),
+					);
+
+					$new_campaign = wp_insert_post( $post, true );
+
+					if ( is_wp_error( $new_campaign ) ) {
+						$this->show_error( $new_campaign->get_error_message() );
+					} else {
+						wp_redirect( get_noptin_newsletter_campaign_url( $new_campaign ) );
+						exit;
+					}
+
+				}
+				
+			}
 
 			// Delete multiple campaigns.
 			if ( ! empty( $_GET['action'] ) && 'delete' === $_GET['action'] && wp_verify_nonce( $_GET['_wpnonce'], 'bulk-ids' ) ) {
@@ -1296,7 +1334,7 @@ class Noptin_Admin {
 		if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ]) ) {
 			$notices[ $type ] = array();
 		}
-		
+
 		$notices[ $type ][] = $message;
 
 		update_option( 'noptin_notices', $notices );
@@ -1374,6 +1412,33 @@ class Noptin_Admin {
 				echo "<div class='$class'><p>$message</p></div>";
 			}
 		}
+	}
+
+	/**
+	 * Registers screen options for the subscribers page.
+	 *
+	 * @access      public
+	 * @since       1.3.4
+	 */
+	public function add_subscribers_page_screen_options() {
+ 
+		$args = array(
+			'default' => 10,
+			'option'  => 'noptin_subscribers_per_page'
+		);
+	
+		add_screen_option( 'per_page', $args );
+
+	}
+
+	/**
+	 * Saves subscribers page screen options.
+	 *
+	 * @access      public
+	 * @since       1.3.4
+	 */
+	public function save_subscribers_page_screen_options( $skip, $option, $value ) {
+		return 'noptin_subscribers_per_page' === $option ? $value : $skip;
 	}
 
 }
