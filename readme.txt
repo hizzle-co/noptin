@@ -138,7 +138,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.4.0 - 2020-12-16 =
+= 1.4.0 - 2020-12-22 =
 - Add a conditional newsletter subscription checkbox to Contact Form 7.
 - Add a conditional newsletter subscription checkbox to Ninja Forms.
 - Add a conditional newsletter subscription checkbox to WPForms.
