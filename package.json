@@ -33,7 +33,7 @@
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.3.0",
-		"postcss": "8.2.1",
+		"postcss": "8.2.3",
 		"postcss-import": "14.0.0",
 		"vue": "2.6.12",
 		"vue-contenteditable": "1.0.2",
