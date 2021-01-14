@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.6
 Requires PHP: 5.3
-Version: 1.4.0
+Version: 1.4.1
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -137,6 +137,12 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.4.1 - 2020-12-22 =
+- Allow your customers to subscribe to your newsletter when checking out via GetPaid.
+- Add a GetPaid new invoice automation rule.
+- Add a GetPaid lifetime value automation rule.
+- Add a GetPaid item purchased automation rule.
 
 = 1.4.0 - 2020-12-22 =
 - Add a conditional newsletter subscription checkbox to Contact Form 7.

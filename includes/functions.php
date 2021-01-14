@@ -373,7 +373,7 @@ function noptin_get_post_types() {
 }
 
 /**
- * Checks whether an optin form should be displayed.
+ * Checks whether subscription forms should be displayed.
  *
  * @since 1.0.7
  * @return bool
