@@ -143,6 +143,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Add a GetPaid new invoice automation rule.
 - Add a GetPaid lifetime value automation rule.
 - Add a GetPaid item purchased automation rule.
+- Fix Contact Form 7 not submissions not added to newsletter if the acceptance checkbox is not set.
 
 = 1.4.0 - 2020-12-22 =
 - Add a conditional newsletter subscription checkbox to Contact Form 7.

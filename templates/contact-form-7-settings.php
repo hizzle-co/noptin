@@ -56,8 +56,8 @@
 				}
 
 				$cf7_form_tags = noptin_get_contact_form_7_form_tags( $contact_form, $type );
-
-				$mapped_field = isset( $mapped_fields[ $field['name'] ] ) ? $mapped_fields[ $field['name'] ] : '';
+				$cf7_form_tags = is_array( $cf7_form_tags ) ? $cf7_form_tags : array();
+				$mapped_field  = isset( $mapped_fields[ $field['name'] ] ) ? $mapped_fields[ $field['name'] ] : '';
 
 		?>
 
@@ -68,7 +68,7 @@
 
 				<td>
 					<select name="noptin_settings[custom_fields][<?php echo esc_attr( $field['name'] ) ?>]" id="noptin_map_field_<?php echo esc_attr( $field['name'] ) ?>" style="width: 25em;">
-						<option <?php selected( $mapped_field, '' ) ?> ><?php esc_html_e( 'Not Mapped', 'newsletter-optin-box' ) ?></option>
+						<option value="" <?php selected( $mapped_field, '' ) ?> ><?php esc_html_e( 'Not Mapped', 'newsletter-optin-box' ) ?></option>
 						<?php foreach ( $cf7_form_tags as $key => $value): ?>
 							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $mapped_field, $value ) ?>><?php echo esc_html( $value ); ?></option>
 						<?php endforeach; ?>

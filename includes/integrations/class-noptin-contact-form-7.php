@@ -162,7 +162,7 @@ class Noptin_Contact_Form_7 {
 
 		// Abort if newsletter checkbox was not checked.
 		$conditional = isset( $mapped_fields['GDPR_consent'] ) ? $mapped_fields['GDPR_consent'] : '';
-		if ( ! empty( $mapped_fields['GDPR_consent'] ) && empty( $noptin_fields[ 'GDPR_consent' ] ) ) {
+		if ( ! empty( $conditional ) && empty( $noptin_fields[ 'GDPR_consent' ] ) ) {
 			return;
 		}
 	
