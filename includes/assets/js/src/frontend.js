@@ -363,6 +363,7 @@
 		}
 		setCookie('noptin_email_subscribed')
 
+		$(this).closest('.noptin-showing').removeClass('noptin-showing')
 		popups.close()
 		noptin_popups.subscribed = true
 	});
