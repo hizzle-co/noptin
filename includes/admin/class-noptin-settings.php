@@ -256,6 +256,16 @@ class Noptin_Settings {
 				'description' => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 			),
 
+			'per_hour'        => array(
+				'el'          => 'input',
+				'type'        => 'number',
+				'section'     => 'emails',
+				'label'       => __( 'Emails Per Hour', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'placeholder' => __( 'Unlimited', 'newsletter-optin-box' ),
+				'description' => __( 'The maximum number of emails to send per hour. Leave empty to send as much as possible.', 'newsletter-optin-box' ),
+			),
+
 			'company'         => array(
 				'el'          => 'input',
 				'section'     => 'emails',

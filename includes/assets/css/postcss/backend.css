@@ -1013,6 +1013,7 @@ input:focus+.noptin-switch-slider span {
 
 			.regular-text,
 			input[type="text"],
+			input[type="number"],
 			select,
 			.select2-container,
 			textarea {
