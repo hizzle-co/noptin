@@ -506,4 +506,5 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		abstract protected function task( $item );
 
 	}
+
 }

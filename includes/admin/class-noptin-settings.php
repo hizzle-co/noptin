@@ -263,7 +263,7 @@ class Noptin_Settings {
 				'label'       => __( 'Emails Per Hour', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
 				'placeholder' => __( 'Unlimited', 'newsletter-optin-box' ),
-				'description' => __( 'The maximum number of emails to send per hour. Leave empty to send as much as possible.', 'newsletter-optin-box' ),
+				'description' => __( 'The maximum number of emails to send per hour. Leave empty to send as many as possible.', 'newsletter-optin-box' ),
 			),
 
 			'company'         => array(

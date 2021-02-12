@@ -19,6 +19,15 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	protected $action = 'noptin_bg_mailer';
 
 	/**
+	 * Pushes the qeue forward to be handled in the future.
+	 *
+	 */
+	protected function push_forwards() {
+		$this->unlock_process();
+		wp_die();
+	}
+
+	/**
 	 * Task
 	 *
 	 * Override this method to perform any actions required on each
@@ -31,9 +40,13 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	 * @return mixed
 	 */
 	public function task( $item ) {
-		global $wpdb;
 
-		// First, prepare the campaign data.
+		// Abort if we've exceeded the hourly limit.
+		if ( $this->exceeded_hourly_limit() ) {
+			$this->push_forwards();
+		}
+
+		// Then, prepare the campaign data.
 		$item = $this->prepare_campaign_data( $item );
 
 		// And abort in case of an error.
@@ -80,8 +93,10 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 			if ( ! empty( $recipient_data['merge_tags']['id'] ) ) {
 				update_noptin_subscriber_meta( $recipient_data['merge_tags']['id'], $key, '0' );
 			}
+
 		}
 
+		$this->increase_emails_sent_this_hour();
 		return $item;
 
 	}
@@ -237,6 +252,43 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		// ... and return the result.
 		return empty( $result ) ? null : $result[0];
 
+	}
+
+	/**
+	 * Returns the current hour.
+	 *
+	 * @return string
+	 */
+	public function current_hour() {
+		return date( 'YmdH' );
+	}
+
+	/**
+	 * Returns the number sent this hour.
+	 *
+	 * @return int
+	 */
+	public function emails_sent_this_hour() {
+		return (int) get_transient( 'noptin_emails_sent_' . $this->current_hour() );
+	}
+
+	/**
+	 * Increase sent this hour.
+	 *
+	 * @return void
+	 */
+	public function increase_emails_sent_this_hour() {
+		set_transient( 'noptin_emails_sent_' . $this->current_hour(), $this->emails_sent_this_hour() + 1, 2 * HOUR_IN_SECONDS );
+	}
+
+	/**
+	 * Checks if we've exceeded the hourly limit.
+	 *
+	 * @return bool
+	 */
+	public function exceeded_hourly_limit() {
+		$limited = get_noptin_option( 'per_hour', 0 );
+		return ! empty( $limited ) && $this->emails_sent_this_hour() > (int) $limited;
 	}
 
 }

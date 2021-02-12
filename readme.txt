@@ -138,13 +138,14 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.4.1 - 2020-12-22 =
+= 1.4.1 - 2021-02-14 =
 - Allow your customers to subscribe to your newsletter when checking out via GetPaid.
 - Add a GetPaid new invoice automation rule.
 - Add a GetPaid lifetime value automation rule.
 - Add a GetPaid item purchased automation rule.
 - Fix Contact Form 7 not submissions not added to newsletter if the acceptance checkbox is not set.
 - The ".noptin-mark-as-existing-subscriber" CSS class can now be used to close sliding newsletter sign-up forms.
+- Ability to limit the maximum emails that can be sent per hour.
 
 = 1.4.0 - 2020-12-22 =
 - Add a conditional newsletter subscription checkbox to Contact Form 7.

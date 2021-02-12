@@ -301,8 +301,8 @@ class Noptin_New_Post_Notify {
 
 		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
 		$tags['post_excerpt'] = get_the_excerpt( $post->ID );
-
 		remove_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
+
 		if ( false !== $wp_rss_aggregator_fix ) {
 			add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
 		}
