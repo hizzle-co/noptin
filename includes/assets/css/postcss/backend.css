@@ -1461,3 +1461,12 @@ a.no-campaign-create-new-campaign {
 .noptin-sections-wrapper .subsubsub {
 	float: none;
 }
+
+.post-type-noptin-form .v-slide-group__prev.v-slide-group__prev--disabled,
+.post-type-noptin-form .v-slide-group__next .v-slide-group__next--disabled {
+	display: none !important;
+}
+
+.post-type-noptin-form .v-tab {
+	padding: 0 4px;
+}
