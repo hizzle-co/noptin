@@ -11,8 +11,8 @@
                     class="regular-checkbox"
                     name="noptin_custom_field[<?php echo $name; ?>]"
                     id="custom_field_<?php echo $id; ?>"
-                    value="1"
-                    <?php checked( ! empty( $value ) ); ?>
+                    value="<?php __( 'Yes', 'newsletter-optin-box' ); ?>"
+                    <?php checked( ! empty( $value ) && ( $value == 1 || strtolower( $value ) == 'yes') ); ?>
                 >
                 <span><?php echo $label; ?></span>
             </label>
