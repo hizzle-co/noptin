@@ -54,10 +54,10 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'woocommerce_order_status_failed', array( $this, 'order_failed' ), $this->priority );
 
 		// Products.
-		do_action( 'woocommerce_update_product', array( $this, 'product_updated' ), $this->priority );
-		do_action( 'woocommerce_update_product_variation', array( $this, 'product_updated' ), $this->priority );
-		do_action( 'woocommerce_new_product_variation', array( $this, 'product_updated' ), $this->priority );
-		do_action( 'woocommerce_new_product', array( $this, 'product_updated' ), $this->priority );
+		add_action( 'woocommerce_update_product', array( $this, 'product_updated' ), $this->priority );
+		add_action( 'woocommerce_update_product_variation', array( $this, 'product_updated' ), $this->priority );
+		add_action( 'woocommerce_new_product_variation', array( $this, 'product_updated' ), $this->priority );
+		add_action( 'woocommerce_new_product', array( $this, 'product_updated' ), $this->priority );
 		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
 
 		// Automation rules.

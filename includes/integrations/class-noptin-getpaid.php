@@ -55,8 +55,8 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'getpaid_invoice_status_wpi-failed', array( $this, 'order_failed' ), $this->priority );
 
 		// Items.
-		do_action( 'getpaid_update_item', array( $this, 'product_updated' ), $this->priority );
-		do_action( 'getpaid_new_item', array( $this, 'product_updated' ), $this->priority );
+		add_action( 'getpaid_update_item', array( $this, 'product_updated' ), $this->priority );
+		add_action( 'getpaid_new_item', array( $this, 'product_updated' ), $this->priority );
 		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
 
 		// Automation rules.

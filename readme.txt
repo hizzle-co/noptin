@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.6
 Requires PHP: 5.3
-Version: 1.4.1
+Version: 1.4.2
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -138,7 +138,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.4.1 - 2021-02-14 =
+= 1.4.2 - 2021-02-15 =
+* WooCommerce integration displays error when the Woo Product Feed addon is displayed.
+
+= 1.4.1 - 2021-02-13 =
 - Allow your customers to subscribe to your newsletter when checking out via GetPaid.
 - Add a GetPaid new invoice automation rule.
 - Add a GetPaid lifetime value automation rule.
