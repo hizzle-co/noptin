@@ -138,6 +138,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.4.3 - 2021-02-16 =
+* Fix undefined variable notice in new hook.
+
 = 1.4.2 - 2021-02-15 =
 * WooCommerce integration displays error when the Woo Product Feed addon is displayed.
 

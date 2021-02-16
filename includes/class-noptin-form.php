@@ -826,6 +826,7 @@ class Noptin_Form {
 		ob_start();
 		$data = $this->data;
 		$data['data'] = $data;
+		$data['form'] = $this;
 		get_noptin_template( 'frontend-optin-form.php', $data );
 		return ob_get_clean();
 	}
