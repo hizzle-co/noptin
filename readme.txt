@@ -4,13 +4,13 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.6
 Requires PHP: 5.3
-Version: 1.4.2
+Version: 1.4.3
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
 
-The fastest GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new blog post notifications.
+The fastest (multisite compatible) GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new blog post notifications.
 
 == Description ==
 
@@ -28,6 +28,8 @@ Noptin allows you to:-
 - Automatically notify your subscribers everytime you publish a new blog post so that they can keep coming back to your website.
 
 The best part is that you are able to do all this without leaving your WordPress dashboard. If you are worried about email deliverability, you can install any SMTP plugin of your choice and Noptin will automatically use it to send your newsletters. No configuration needed!
+
+Noptin works with WooCommerce out of the box to help you automate your WooCommerce powered store. It is also multisite compatible.
 
 = Getting Email Subscribers =
 
@@ -85,7 +87,7 @@ Noptin makes it easy to add content upgrades to your newsletter optin forms. You
 
 = Automated New Post Notifications =
 
-Increase traffic to your website by automatically emailing you newsletter subscribers everytime you publish a new blog post.
+Increase traffic to your website by automatically emailing your newsletter subscribers every time you publish a new blog post.
 
 = One-Time Email Newsletters =
 
@@ -101,9 +103,9 @@ You can also send beautiful newsletters from WordPress to all your subscribers a
 * After installation, click on Activate Plugin link to activate the plugin.
 
 == Frequently Asked Questions ==
-= Can I connect my email service provider? =
+= Can I connect to my email service provider? =
 
-Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit, Campaign Monitor and MailPoet.
+Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit, Campaign Monitor, and Drip.
 
 = How can I get in touch? =
 
@@ -111,7 +113,7 @@ Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit, C
 
 = How can I contribute to Noptin? =
 
-There are a lot of ways to contribute this newsletter plugin:-
+There are a lot of ways to contribute to this newsletter plugin:-
 
 * Star the plugin on [GitHub.](https://github.com/hizzle-co/noptin/)
 * [Clone the plugin,](https://github.com/hizzle-co/noptin/) make improvements to the code and send us a [pull request](https://github.com/hizzle-co/noptin/pulls) so that we can share your improvements with the world.
@@ -124,7 +126,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Screenshots ==
 1. Noptin overview page
-2. Newletter optin forms overview page
+2. Newsletter optin forms overview page
 3. Write newsletters the same way that you write posts
 4. A newsletter that is currently sending
 5. Paste newsletter template preview
@@ -138,20 +140,20 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.4.3 - 2021-02-16 =
+= 1.4.3 - 2021-02-17 =
 * Fix undefined variable notice in new hook.
 
 = 1.4.2 - 2021-02-15 =
-* WooCommerce integration displays error when the Woo Product Feed addon is displayed.
+* WooCommerce integration displays an error when the Woo Product Feed addon is displayed.
 
 = 1.4.1 - 2021-02-13 =
 - Allow your customers to subscribe to your newsletter when checking out via GetPaid.
 - Add a GetPaid new invoice automation rule.
 - Add a GetPaid lifetime value automation rule.
 - Add a GetPaid item purchased automation rule.
-- Fix Contact Form 7 not submissions not added to newsletter if the acceptance checkbox is not set.
+- Fix Contact Form 7 submissions not added to the newsletter if the acceptance checkbox is not set.
 - The ".noptin-mark-as-existing-subscriber" CSS class can now be used to close sliding newsletter sign-up forms.
-- Ability to limit the maximum emails that can be sent per hour.
+- Ability to limit the maximum number of emails that can be sent per hour.
 
 = 1.4.0 - 2020-12-22 =
 - Add a conditional newsletter subscription checkbox to Contact Form 7.
@@ -196,7 +198,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - New large fields email subscription template - ADDED
 - New post notifications test email not working - FIXED
 - Users and newsletter subscribers are now synced separately - CHANGED
-- Ability to limit newsletter subscription forms to logged-in users, logged out users or specific user roles - ADDED
+- Ability to limit newsletter subscription forms to logged-in users, logged out users, or specific user roles - ADDED
 - Newsletter subscription form builder now supports a dark mode - ADDED
 - Ability to change the sizes and styles of newsletter subscription form headings and texts - ADDED
 
@@ -216,12 +218,12 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 - Unsubscription automation rule trigger and action - ADDED
 
 = 1.3.0 - 2020-05-25 =
-- Ability to filter the newletter double opt-in confirmation email - ADDED
+- Ability to filter the newsletter double opt-in confirmation email - ADDED
 - Ability to filter the function used to send newsletters - ADDED
 - Improve the newsletter subscription error messages - CHANGED
 - Email template plugins cause broken newsletter emails - FIXED
 - Sometimes background emails do not send - FIXED
-- Newletter page not working for URLs that use 'index.php' in their permalinks - FIXED
+- Newsletter page not working for URLs that use 'index.php' in their permalinks - FIXED
 - Ability to search newsletter subscribers - ADDED
 - Ability to bulk activate newsletter subscribers - ADDED
 - Ability to bulk de-activate newsletter subscribers - ADDED
