@@ -50,7 +50,7 @@
 		"postcss": "8.2.5",
 		"postcss-import": "14.0.0",
 		"precss": "4.0.0",
-		"sass": "1.32.6",
+		"sass": "1.32.8",
 		"sass-loader": "11.0.1",
 		"style-loader": "2.0.0",
 		"vue-loader": "15.9.6",
