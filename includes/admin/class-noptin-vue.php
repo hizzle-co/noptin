@@ -536,7 +536,7 @@ class Noptin_Vue {
 
 		// Checkbox.
 		if ( 'checkbox' === $field['type']['type'] ) {
-			$value = __( 'Yes', 'newsletter-optin-box' );
+			$value = esc_attr__( 'Yes', 'newsletter-optin-box' );
 			echo "<label><input name='$name' type='checkbox' value='$value' class='noptin-checkbox-form-field' $required/><span>$label</span></label>";
 		}
 
