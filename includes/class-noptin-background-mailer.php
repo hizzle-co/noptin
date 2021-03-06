@@ -291,4 +291,16 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		return ! empty( $limited ) && $this->emails_sent_this_hour() > (int) $limited;
 	}
 
+	/**
+	 * Push to queue
+	 *
+	 * @param mixed $data Data.
+	 *
+	 * @return $this
+	 */
+	public function push_to_queue( $data ) {
+		$this->data[] = apply_filters( 'noptin_bg_mailer_push_to_queue', $data );
+		return $this;
+	}
+
 }

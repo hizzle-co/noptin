@@ -293,6 +293,10 @@
 	.noptin-round {
 		border-radius: 6px;
 	}
+
+	.attachment-post-thumbnail {
+		width: 100% !important;
+	}
 </style>
 
 <!--[if gte mso 9]>

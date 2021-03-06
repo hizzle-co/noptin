@@ -312,7 +312,7 @@ class Noptin_New_Post_Notify {
 		$tags['content']        = $tags['post_content'];
 		$tags['post_title']     = get_the_title( $post->ID);
 		$tags['title']          = $tags['post_title'];
-		$tags['featured_image'] = get_the_post_thumbnail();
+		$tags['featured_image'] = get_the_post_thumbnail( $post );
 
 		$author = get_userdata( $tags['post_author'] );
 
@@ -352,7 +352,7 @@ class Noptin_New_Post_Notify {
 
 		$noptin   = noptin();
 		$campaign = get_post( $campaign_id );
-
+		
 		$item = array(
 			'campaign_id'       => $campaign_id,
 			'associated_post'   => $post_id,
