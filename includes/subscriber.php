@@ -240,6 +240,7 @@ function get_noptin_subscriber_merge_fields( $subscriber_id ) {
 
 	$merge_tags                    = $subscriber->to_array();
 	$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
+	$merge_tags['resubscribe_url'] = get_noptin_action_url( 'resubscribe', $subscriber->confirm_key );
 	$meta                          = $subscriber->get_meta();
 
 	foreach ( $meta as $key => $values ) {
