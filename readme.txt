@@ -145,6 +145,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 * Fix featured image not showing in new post notification newsletter.
 * Add a [[resubscribe_url]] tag usable in emails and unsubscribe message.
 * Add the `[noptin-show-if-subscriber]` and `[noptin-show-if-non-subscriber]` shortcodes.
+* Add the `[noptin-subscriber-count]` shortcode.
 
 = 1.4.3 - 2021-02-17 =
 * Fix undefined variable notice in new hook.

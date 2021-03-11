@@ -1145,6 +1145,7 @@ function noptin_is_subscriber() {
  * 
  * @param array $atts Shortcode attributes.
  * @param string $content Shortcode content.
+ * @since 1.4.4
  * @ignore
  * @private
  */
@@ -1163,6 +1164,7 @@ add_shortcode( 'noptin-show-if-subscriber', '_noptin_show_if_subscriber' );
  * 
  * @param array $atts Shortcode attributes.
  * @param string $content Shortcode content.
+ * @since 1.4.4
  * @ignore
  * @private
  */
@@ -1175,3 +1177,15 @@ function _noptin_show_if_non_subscriber( $atts, $content ) {
 	return '';
 }
 add_shortcode( 'noptin-show-if-non-subscriber', '_noptin_show_if_non_subscriber' );
+
+/**
+ * Callback for the `[noptin-subscriber-count]` shortcode.
+ *
+ * @ignore
+ * @since 1.4.4
+ * @private
+ */
+function _noptin_show_subscriber_count() {
+	return get_noptin_subscribers_count();
+}
+add_shortcode( 'noptin-subscriber-count', '_noptin_show_subscriber_count' );
