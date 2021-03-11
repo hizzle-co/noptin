@@ -380,17 +380,8 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
-	if ( get_noptin_option( 'hide_from_subscribers' ) ) {
-
-		if ( ! empty( $_COOKIE['noptin_email_subscribed'] ) ) {
-			return false;
-		}
-
-		$cookie = get_noptin_option( 'subscribers_cookie' );
-		if ( ! empty( $cookie ) && is_string( $cookie ) && ! empty( $_COOKIE[ $cookie ] ) ) {
-			return false;
-		}
-
+	if ( get_noptin_option( 'hide_from_subscribers' ) && noptin_is_subscriber() ) {
+		return false;
 	}
 
 	if ( ! empty( $_COOKIE['noptin_hide'] ) ) {

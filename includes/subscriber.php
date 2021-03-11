@@ -1106,3 +1106,72 @@ add_action( 'add_meta_boxes_noptin_subscribers', 'register_default_noptin_subscr
 function noptin_subscriber_metabox_callback( $subscriber, $metabox ) {
 	get_noptin_template( "admin-single-subscriber/{$metabox['args']}.php", array( 'subscriber' => $subscriber ) );
 }
+
+/**
+ * Checks if the currently displayed user is subscribed to the newsletter.
+ *
+ * @since 1.4.4
+ * @return bool
+ */
+function noptin_is_subscriber() {
+
+	// If the user is logged in, check with their email address and ensure they are active.
+	$user_data = wp_get_current_user();
+	if ( ! empty( $user_data->user_email ) ) {
+		$subscriber = get_noptin_subscriber_by_email( $user_data->user_email );
+
+		if ( $subscriber->exists() ) {
+			return empty( $subscriber->active );
+		}
+
+	}
+
+	// Check from the login cookies.
+	if ( ! empty( $_COOKIE['noptin_email_subscribed'] ) ) {
+		return true;
+	}
+
+	$cookie = get_noptin_option( 'subscribers_cookie' );
+	if ( ! empty( $cookie ) && is_string( $cookie ) && ! empty( $_COOKIE[ $cookie ] ) ) {
+		return true;
+	}
+
+	return false;
+
+}
+
+/**
+ * Callback for the `[noptin-show-if-subscriber]` shortcode.
+ * 
+ * @param array $atts Shortcode attributes.
+ * @param string $content Shortcode content.
+ * @ignore
+ * @private
+ */
+function _noptin_show_if_subscriber( $atts, $content ) {
+
+	if ( noptin_is_subscriber() ) {
+		return do_shortcode( $content );
+	}
+
+	return '';
+}
+add_shortcode( 'noptin-show-if-subscriber', '_noptin_show_if_subscriber' );
+
+/**
+ * Callback for the `[noptin-show-if-non-subscriber]` shortcode.
+ * 
+ * @param array $atts Shortcode attributes.
+ * @param string $content Shortcode content.
+ * @ignore
+ * @private
+ */
+function _noptin_show_if_non_subscriber( $atts, $content ) {
+
+	if ( ! noptin_is_subscriber() ) {
+		return do_shortcode( $content );
+	}
+
+	return '';
+}
+add_shortcode( 'noptin-show-if-non-subscriber', '_noptin_show_if_non_subscriber' );
