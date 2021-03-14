@@ -140,7 +140,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.4.4 - 2021-03-08 =
+= 1.4.4 - 2021-03-14 =
 * Fix checkbox always shows no (Ville Viljanen).
 * Fix featured image not showing in new post notification newsletter.
 * Add a [[resubscribe_url]] tag usable in emails and unsubscribe message.
