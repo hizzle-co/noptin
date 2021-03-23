@@ -33,7 +33,7 @@
 		"vue-contenteditable": "1.0.2",
 		"vue-popperjs": "2.3.0",
 		"vuedraggable": "2.24.3",
-		"vuetify": "2.4.6"
+		"vuetify": "2.4.8"
 	},
 	"devDependencies": {
 		"@babel/core": "7.13.10",
