@@ -141,7 +141,10 @@ class Noptin_New_Post_Notify {
 		}
 
 		// If a notification has already been send abort...
-		if ( get_post_meta( $post->ID, 'noptin_associated_new_post_notification_campaign', true ) ) {
+		$sent_notification = get_post_meta( $post->ID, 'noptin_sent_notification_campaign', true );
+
+		// A notification was sent for this blog post.
+		if ( is_array( $sent_notification ) && $post->ID == $sent_notification[0] ) {
 			return;
 		}
 
@@ -226,7 +229,10 @@ class Noptin_New_Post_Notify {
 	public function maybe_send_notification( $post_id, $campaign_id, $key = '' ) {
 
 		// If a notification has already been send abort...
-		if ( get_post_meta( $post_id, 'noptin_associated_new_post_notification_campaign', true ) ) {
+		$sent_notification = get_post_meta( $post_id, 'noptin_sent_notification_campaign', true );
+
+		// A notification was sent for this blog post.
+		if ( is_array( $sent_notification ) && $post_id == $sent_notification[0] ) {
 			return;
 		}
 
@@ -281,7 +287,7 @@ class Noptin_New_Post_Notify {
 
 	/**
 	 * Retrieves merge tags for a given post.
-	 * 
+	 *
 	 * @param WP_Post $post
 	 */
 	protected function get_post_merge_tags( $post ) {
@@ -348,11 +354,11 @@ class Noptin_New_Post_Notify {
 			return;
 		}
 
-		update_post_meta( $post_id, 'noptin_associated_new_post_notification_campaign', $campaign_id );
+		update_post_meta( $post_id, 'noptin_sent_notification_campaign', array( $post_id, $campaign_id ) );
 
 		$noptin   = noptin();
 		$campaign = get_post( $campaign_id );
-		
+
 		$item = array(
 			'campaign_id'       => $campaign_id,
 			'associated_post'   => $post_id,

@@ -140,6 +140,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.4.5 - 2021-04-02 =
+* Fix automatic "new post notifications" do not work if the new post is a duplicate of an earlier post.
+
 = 1.4.4 - 2021-03-14 =
 * Fix checkbox always shows no (Ville Viljanen).
 * Fix featured image not showing in new post notification newsletter.
