@@ -140,6 +140,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.4.6 - 2021-04-02 =
+* WPML Noptin settings translations not loaded - FIXED
+
 = 1.4.5 - 2021-04-02 =
 * Fix automatic "new post notifications" do not work if the new post is a duplicate of an earlier post.
 

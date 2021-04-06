@@ -68,6 +68,14 @@ function get_noptin_options() {
 	if ( ! is_array( $noptin_options ) || empty( $noptin_options ) ) {
 		$noptin_options = get_default_noptin_options();
 	}
+
+	// Support for WPML.
+	if ( ! did_action( 'init' ) ) {
+		$options = $noptin_options;
+		$noptin_options = null;
+		return $options;
+	}
+
 	return $noptin_options;
 }
 
