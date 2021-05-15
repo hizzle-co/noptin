@@ -55,7 +55,7 @@
 		"sass": "1.32.13",
 		"sass-loader": "11.0.1",
 		"style-loader": "2.0.0",
-		"vue-loader": "15.9.6",
+		"vue-loader": "15.9.7",
 		"vue-template-compiler": "2.6.12",
 		"vuetify-loader": "1.7.2",
 		"webpack": "5.30.0",
