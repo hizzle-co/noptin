@@ -43,3 +43,6 @@ $wpdb->query(
         ON (a.ID = b.post_id)
 	WHERE a.post_type = 'noptin-form'"
 );
+
+// Crons.
+wp_clear_scheduled_hook( 'noptin_daily_maintenance' );

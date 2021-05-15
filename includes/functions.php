@@ -186,13 +186,18 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
 	// Pretty permalinks.
 	$path = $wp_rewrite->root . "noptin_newsletter/$action";
+	$url  = get_home_url( null, $path );
+
+	if ( function_exists( 'PLL' ) ) {
+		$url = PLL()->links_model->add_language_to_link( $url, PLL()->curlang );
+	}
 
 	return add_query_arg(
 		array(
 			'nv'  => $value,
 			'nte' => $empty,
 		),
-		get_home_url( null, $path)
+		$url
 	);
 
 }

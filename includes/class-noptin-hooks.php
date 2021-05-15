@@ -19,6 +19,10 @@ class Noptin_Hooks {
 
 		// Temporarily hide opt-in forms.
 		add_action( 'init', array( $this, 'maybe_hide_optin_forms' ) );
+
+		// (Maybe) schedule a cron that runs daily.
+		add_action( 'init', array( $this, 'maybe_create_scheduled_event' ) );
+
 	}
 
 	/**
@@ -30,9 +34,9 @@ class Noptin_Hooks {
 
 		add_rewrite_endpoint( 'noptin_newsletter', EP_ALL );
 
-		if ( ! get_option( 'noptin_flushed_rules2' ) ) {
+		if ( ! get_option( 'noptin_flushed_rules' ) ) {
 			flush_rewrite_rules();
-			add_option( 'noptin_flushed_rules2', 1 );
+			add_option( 'noptin_flushed_rules', 1 );
 		}
 
 	}
@@ -44,8 +48,21 @@ class Noptin_Hooks {
 	 */
 	public function maybe_hide_optin_forms() {
 
-		if (  ! empty( $_GET['noptin_hide'] )  ) {
+		if ( ! empty( $_GET['noptin_hide'] ) ) {
 			setcookie( 'noptin_hide', 'true', 0, COOKIEPATH, COOKIE_DOMAIN );
+		}
+
+	}
+
+	/**
+	 * Schedules a cron to run every day at 7 a.m
+	 *
+	 */
+	public function maybe_create_scheduled_event() {
+
+		if ( ! wp_next_scheduled( 'noptin_daily_maintenance' ) ) {
+			$timestamp = strtotime( 'tomorrow 07:00:00', time() );
+			wp_schedule_event( $timestamp, 'daily', 'noptin_daily_maintenance' );
 		}
 
 	}

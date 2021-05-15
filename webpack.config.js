@@ -26,6 +26,7 @@ module.exports = {
 		"optin-editor": "./includes/assets/js/src/optin-editor.js",
 		"automation-rules": "./includes/assets/js/src/automation-rules.js",
 		frontend: "./includes/assets/js/src/frontend.js",
+		helper: "./includes/assets/js/src/helper.js",
 		blocks: "./includes/assets/js/src/blocks.js",
 		subscribers: "./includes/assets/js/src/subscribers.js"
 	},

@@ -1,6 +1,6 @@
 {
 	"name": "noptin",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"private": true,
 	"description": "WordPress Newsletter Plugin",
 	"scripts": {
@@ -9,7 +9,9 @@
 		"beautify": "phpcbf includes",
 		"cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
 		"cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
-		"css": "npm run cssa && npm run cssf",
+		"csshelper": "postcss includes/assets/css/postcss/noptin-helper.css -o includes/assets/css/noptin-helper.css",
+		"cssaddons": "postcss includes/assets/css/postcss/addons-page.css -o includes/assets/css/addons-page.css",
+		"css": "npm run cssa && npm run cssf && npm run csshelper && npm run cssaddons",
 		"js": "npx webpack --watch"
 	},
 	"repository": {

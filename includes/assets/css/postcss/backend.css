@@ -1470,3 +1470,7 @@ a.no-campaign-create-new-campaign {
 .post-type-noptin-form .v-tab {
 	padding: 0 4px;
 }
+
+.noptin_page_noptin-addons .notice:not(.noptin-notice) {
+	display: none;
+}

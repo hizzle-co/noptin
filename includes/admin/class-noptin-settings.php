@@ -217,6 +217,14 @@ class Noptin_Settings {
 				'description' => __( 'Hide opt-in forms and methods from existing subscribers.', 'newsletter-optin-box' ),
 			),
 
+			'allow_tracking'        => array(
+				'label'       => __( 'Share stats', 'newsletter-optin-box' ),
+				'description' => __( 'Help improve Noptin by sharing non-sensitive usage stats.', 'newsletter-optin-box' ),
+				'type'        => 'checkbox_alt',
+				'section'     => 'general',
+				'el'          => 'input',
+			),
+
 			'subscribers_cookie' => array(
 				'el'          => 'input',
 				'type'        => 'text',

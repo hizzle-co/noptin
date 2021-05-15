@@ -3,8 +3,8 @@ Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
 Tested up to: 5.7
-Requires PHP: 5.3
-Version: 1.4.5
+Requires PHP: 5.6
+Version: 1.5.0
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -142,6 +142,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.4.6 - 2021-04-02 =
 * WPML Noptin settings translations not loaded - FIXED
+* Confirmation URLs show 404 error when using Polylang - FIXED
 
 = 1.4.5 - 2021-04-02 =
 * Fix automatic "new post notifications" do not work if the new post is a duplicate of an earlier post.

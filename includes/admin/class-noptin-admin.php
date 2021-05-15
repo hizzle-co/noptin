@@ -232,12 +232,14 @@ class Noptin_Admin {
 		// Pass variables to our js file, e.g url etc.
 		$current_user = wp_get_current_user();
 		$params       = array(
-			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
-			'api_url'        => get_home_url( null, 'wp-json/wp/v2/' ),
-			'nonce'          => wp_create_nonce( 'noptin_admin_nonce' ),
-			'icon'           => $this->assets_url . 'images/checkmark.png',
-			'admin_email'    => sanitize_email( $current_user->user_email ),
-			'donwload_forms' => add_query_arg(
+			'ajaxurl'                    => admin_url( 'admin-ajax.php' ),
+			'api_url'                    => get_home_url( null, 'wp-json/wp/v2/' ),
+			'nonce'                      => wp_create_nonce( 'noptin_admin_nonce' ),
+			'icon'                       => $this->assets_url . 'images/checkmark.png',
+			'admin_email'                => sanitize_email( $current_user->user_email ),
+			'close'                      => __( 'Close', 'newsletter-optin-box' ),
+			'cancel'                     => __( 'Cancel', 'newsletter-optin-box' ),
+			'donwload_forms'             => add_query_arg(
 				array(
 					'action'      => 'noptin_download_forms',
 					'admin_nonce' => wp_create_nonce( 'noptin_admin_nonce' ),
@@ -439,15 +441,38 @@ class Noptin_Admin {
 			array( $this, 'render_tools_page' )
 		);
 
-		// Link to documentation.
-		add_submenu_page(
-			'noptin',
-			esc_html__( 'Documentation', 'newsletter-optin-box' ),
-			esc_html__( 'Documentation', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-docs',
-			array( $this, 'render_add_new_page' )
-		);
+		// Extensions page.
+		if ( apply_filters( 'noptin_show_addons_page', true ) ) {
+
+			$count_html = Noptin_COM_Updater::get_updates_count_html();
+
+			/* translators: %s: extensions count */
+			$menu_title = sprintf( __( 'Extensions %s', 'newsletter-optin-box' ), $count_html );
+
+			add_submenu_page(
+				'noptin',
+				esc_html__( 'Noptin Extensions', 'newsletter-optin-box' ),
+				$menu_title,
+				get_noptin_capability(),
+				'noptin-addons',
+				array( 'Noptin_Addons', 'output' )
+			);
+
+		}
+
+		// Documentation page.
+		if ( apply_filters( 'noptin_show_docs_page', true ) ) {
+
+			add_submenu_page(
+				'noptin',
+				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				get_noptin_capability(),
+				'noptin-docs',
+				array( $this, 'render_add_new_page' )
+			);
+
+		}
 
 		// Welcome page.
 		add_dashboard_page(
