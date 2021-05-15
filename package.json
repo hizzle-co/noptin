@@ -49,7 +49,7 @@
 		"cssnano": "4.1.10",
 		"fibers": "5.0.0",
 		"mini-css-extract-plugin": "1.4.0",
-		"postcss": "8.2.9",
+		"postcss": "8.2.10",
 		"postcss-import": "14.0.1",
 		"precss": "4.0.0",
 		"sass": "1.32.8",
