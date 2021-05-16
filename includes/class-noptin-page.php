@@ -409,6 +409,11 @@ class Noptin_Page {
 			$data['merge_tags']    = array_merge( $data['merge_tags'], get_noptin_subscriber_merge_fields( $subscriber ) );
 		}
 
+		$custom_merge_tags = get_post_meta( $campaign->ID, 'custom_merge_tags', true );
+		if ( is_array( $custom_merge_tags ) ) {
+			$data['merge_tags'] = array_merge( $data['merge_tags'], $custom_merge_tags );
+		}
+
 		// Generate and display the email.
 		$data = noptin()->mailer->prepare( $data );
 		echo $data['email_body'];

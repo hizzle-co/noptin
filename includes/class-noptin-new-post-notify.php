@@ -30,7 +30,6 @@ class Noptin_New_Post_Notify {
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule_notification' ), 10, 3 );
 		add_action( 'noptin_new_post_notification', array( $this, 'maybe_send_notification' ), 10, 2 );
 		add_action( 'publish_noptin-campaign', array( $this, 'maybe_send_old_notification' ) );
-		add_action( 'noptin_background_mailer_complete', array( $this, 'notification_complete' ) );
 
 		// Automation details.
 		add_filter( 'noptin_automation_table_about', array( $this, 'about_automation' ), 10, 3 );
@@ -356,44 +355,48 @@ class Noptin_New_Post_Notify {
 
 		update_post_meta( $post_id, 'noptin_sent_notification_campaign', array( $post_id, $campaign_id ) );
 
-		$noptin   = noptin();
+		// Create normal campaign.
 		$campaign = get_post( $campaign_id );
-
-		$item = array(
-			'campaign_id'       => $campaign_id,
-			'associated_post'   => $post_id,
-			'subscribers_query' => array(),
-			'key'               => $key,
-			'automation_type'   => 'post_notifications',
-			'campaign_type'     => 'automation',
-			'campaign_data'     => array(
-				'email_body'    => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
-				'email_subject' => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
-				'preview_text'  => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
-				'merge_tags'    => $this->get_post_merge_tags( get_post( $post_id ) ),
+		$post     = array(
+			'post_status'   => 'publish',
+			'post_type'     => 'noptin-campaign',
+			'post_date'     => current_time( 'mysql' ),
+			'post_date_gmt' => current_time( 'mysql', true ),
+			'edit_date'     => true,
+			'post_title'    => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
+			'post_content'  => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
+			'meta_input'    => array(
+				'campaign_type'         => 'newsletter',
+				'preview_text'          => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
+				'new_post_notification' => $key,
+				'custom_merge_tags'     => $this->get_post_merge_tags( get_post( $post_id ) ),
+				'campaign_id'           => $campaign_id,
+				'associated_post'       => $post_id,
+				'subscribers_query'     => array(),
+				'custom_title'          => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), sanitize_text_field( get_the_title( $post_id ) ) ),
 			),
 		);
 
 		$content  = get_post_meta( $post_id, 'noptin_post_notify_content', true );
 		if ( ! empty( $content ) ) {
-			$item['campaign_data']['email_body'] = wp_kses_post( stripslashes_deep( $content ) );
+			$post['post_content'] = wp_kses_post( stripslashes_deep( $content ) );
 		}
 
 		$subject = get_post_meta( $post_id, 'noptin_post_notify_subject', true );
 		if ( ! empty( $subject ) ) {
-			$item['campaign_data']['email_subject'] = sanitize_text_field( stripslashes_deep( $subject ) );
+			$post['post_title'] = sanitize_text_field( stripslashes_deep( $subject ) );
 		}
 
 		$preview = get_post_meta( $post_id, 'noptin_post_notify_preview_text', true );
 		if ( ! empty( $preview ) ) {
-			$item['campaign_data']['preview_text'] = sanitize_text_field( stripslashes_deep( $preview ) );
+			$post['meta_input']['preview_text'] = sanitize_text_field( stripslashes_deep( $preview ) );
 		}
 
-		$item = apply_filters( 'noptin_mailer_new_post_automation_details', $item, $post_id, $campaign_id );
+		$post = apply_filters( 'noptin_mailer_new_post_automation_campaign_details', $post );
 
-		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $item ) ) {
-			$noptin->bg_mailer->push_to_queue( $item );
-			$noptin->bg_mailer->save()->dispatch();
+		// Send normal campaign.
+		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $post ) ) {
+			wp_insert_post( $post );
 		}
 
 	}
@@ -411,58 +414,6 @@ class Noptin_New_Post_Notify {
 	 */
 	public function excerpt_more() {
 		return '';
-	}
-
-	/**
-	 * Runs after a post notification has been sent
-	 */
-	public function notification_complete( $item ) {
-		global $wpdb;
-
-		if ( isset( $item['automation_type'] ) && 'post_notifications' === $item['automation_type'] && isset( $item['key'] ) ) {
-			$wpdb->delete(
-				get_noptin_subscribers_meta_table_name(),
-				array( 'meta_key' => '_campaign_' . $item['key'] ),
-				'%s'
-			);
-		}
-
-		if ( ! is_array( $item ) || empty( $item['campaign_id'] ) || empty( $item['associated_post'] ) ) {
-			return;
-		}
-
-		$post_ids = get_posts(
-			array(
-				'fields'      => 'ids',
-				'numberposts' => -1,
-				'post_type'   => 'noptin-campaign',
-				'meta_query'  => array(
-					array(
-						'key'   => 'campaign_type',
-						'value' => 'bg_email',
-					),
-					array(
-						'key'   => 'bg_email_type',
-						'value' => 'new_post_notification',
-					),
-					array(
-						'key'   => 'associated_campaign',
-						'value' => $item['campaign_id'],
-					),
-					array(
-						'key'   => 'associated_post',
-						'value' => $item['associated_post'],
-					),
-				),
-			)
-		);
-
-		if ( is_array( $post_ids ) ) {
-			foreach ( $post_ids as $post_id ) {
-				wp_delete_post( $post_id, true );
-			}
-		}
-
 	}
 
 	/**

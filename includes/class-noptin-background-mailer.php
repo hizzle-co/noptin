@@ -134,10 +134,8 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		// User can set recipients to be an array of subcriber ids or emails...
 		if ( isset( $item['recipients'] ) ) {
 			$next_recipient = array_shift( $item['recipients'] );
-		}
-
-		// Or a WHERE query to be executed on the subscribers table.
-		if ( empty( $next_recipient ) && isset( $item['subscribers_query'] ) ) {
+		} else if ( isset( $item['subscribers_query'] ) ) {
+			// Or a WHERE query to be executed on the subscribers table.
 			$next_recipient = $this->fetch_subscriber_from_query( $item );
 		}
 
@@ -192,6 +190,10 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 		// Prepare the email merge tags.
 		if ( empty( $item['next_recipient_data']['merge_tags'] ) ) {
 			$item['next_recipient_data']['merge_tags'] = array();
+		}
+
+		if ( isset( $item['custom_merge_tags'] ) ) {
+			$item['next_recipient_data']['merge_tags'] = array_merge( $item['next_recipient_data']['merge_tags'], $item['custom_merge_tags'] );
 		}
 
 		// Add the subscriber details as merge tags.

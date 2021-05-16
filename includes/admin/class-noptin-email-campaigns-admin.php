@@ -483,6 +483,15 @@ class Noptin_Email_Campaigns_Admin {
 			),
 		);
 
+		foreach ( array( 'custom_merge_tags', 'subscribers_query', 'recipients' ) as $key ) {
+
+			$meta_value = get_post_meta( $post->ID, $key, true );
+			if ( ! empty( $meta_value ) ) {
+				$item[ $key ] = map_deep( $meta_value, 'wp_kses_post' );
+			}
+
+		}
+
 		if ( apply_filters( 'noptin_should_send_campaign', true, $item ) ) {
 			$noptin->bg_mailer->push_to_queue( $item );
 			$noptin->bg_mailer->save()->dispatch();
