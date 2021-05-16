@@ -1052,7 +1052,7 @@ function noptin_locate_ip_address_alt( $ip_address ) {
 }
 
 /**
- * Cleans up an array, comma- or space-separated list of scalar values.
+ * Converts a comma- or space-separated list of scalar values into an array.
  *
  * @since 1.2.3
  *

@@ -728,11 +728,15 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 		}
 	}
 
-	$to = get_option( 'admin_email' );
+	$to = get_noptin_option( 'admin_email',  get_option( 'admin_email' ) );
+
+	if ( empty( $to ) ) {
+		$to = get_option( 'admin_email' );
+	}
 
 	$subject = sprintf( __( '[%s] New Subscriber', 'newsletter-optin-box' ), $blogname );
 
-	@wp_mail( $to, wp_specialchars_decode( $subject ), $message );
+	@wp_mail( noptin_parse_list( $to ), wp_specialchars_decode( $subject ), $message );
 
 }
 add_action( 'noptin_insert_subscriber', 'noptin_new_subscriber_notify', 10, 2 );
