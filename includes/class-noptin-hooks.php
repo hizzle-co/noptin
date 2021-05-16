@@ -23,6 +23,8 @@ class Noptin_Hooks {
 		// (Maybe) schedule a cron that runs daily.
 		add_action( 'init', array( $this, 'maybe_create_scheduled_event' ) );
 
+		// (Maybe) delete sent campaigns.
+		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_delete_campaigns' ) );
 	}
 
 	/**
@@ -63,6 +65,42 @@ class Noptin_Hooks {
 		if ( ! wp_next_scheduled( 'noptin_daily_maintenance' ) ) {
 			$timestamp = strtotime( 'tomorrow 07:00:00', time() );
 			wp_schedule_event( $timestamp, 'daily', 'noptin_daily_maintenance' );
+		}
+
+	}
+
+	/**
+	 * Deletes sent campaigns.
+	 *
+	 */
+	public function maybe_delete_campaigns() {
+
+		$save_days = (int) get_noptin_option( 'delete_campaigns', 0 );
+		if ( empty( $save_days ) ) {
+			return;
+		}
+
+		$args = array(
+			'posts_per_page' => -1,
+			'post_type'      => 'noptin-campaign',
+			'fields'         => 'ids',
+			'date_query'     => array(
+				'before' => "-$save_days days", 
+			),
+			'meta_query'  => array(
+				array(
+					'key'     => 'completed',
+					'value'   => '1',
+				),
+				array(
+					'key'   => 'campaign_type',
+					'value' => 'newsletter',
+				)
+			),
+		);
+
+		foreach( get_posts( $args ) as $post_id ) {
+			wp_delete_post( $post_id, true );
 		}
 
 	}

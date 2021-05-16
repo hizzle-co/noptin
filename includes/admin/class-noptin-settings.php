@@ -285,6 +285,16 @@ class Noptin_Settings {
 				'description' => __( 'The maximum number of emails to send per hour. Leave empty to send as many as possible.', 'newsletter-optin-box' ),
 			),
 
+			'delete_campaigns' => array(
+				'el'           => 'input',
+				'type'         => 'number',
+				'section'      => 'emails',
+				'label'        => __( 'Delete Campaigns', 'newsletter-optin-box' ),
+				'class'        => 'regular-text',
+				'placeholder'  => __( 'Never Delete', 'newsletter-optin-box' ),
+				'description'  => __( 'The number of days after which to delete a sent campaign. Leave empty to if you do not want to automatically delete campaigns.', 'newsletter-optin-box' ),
+			),
+
 			'company'         => array(
 				'el'          => 'input',
 				'section'     => 'emails',
