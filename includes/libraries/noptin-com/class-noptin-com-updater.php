@@ -139,7 +139,7 @@ class Noptin_COM_Updater {
 		if ( is_wp_error( $request ) ) {
 			$data['errors'][] = $request->get_error_message();
 		} else {
-			$data['products'] = (array) $request;
+			$data['products'] = json_decode( wp_json_encode( $request ), true );
 		}
 
 		set_transient( $cache_key, $data, 12 * HOUR_IN_SECONDS );

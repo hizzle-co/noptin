@@ -155,8 +155,7 @@
 			position: relative;
 			margin: 0 0.5em 1em !important;
 			padding: 0;
-			width: 25%;
-			min-width: 280px;
+			max-width: 290px;
 			min-height: 220px;
 			flex: 1;
 			overflow: hidden;
