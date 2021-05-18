@@ -189,6 +189,16 @@ class Noptin_COM {
 	 */
 	public static function get_active_licenses() {
 		$licenses = self::get( 'active_license_keys' );
+		$licenses = is_array( $licenses ) ? $licenses : array();
+
+		$old_licenses = get_option( 'noptin_updates_licenses' );
+
+		if ( is_array( $old_licenses ) ) {
+			$licenses = $licenses + array_values( $old_licenses );
+			self::update_active_licenses( $licenses );
+			delete_option( 'noptin_updates_licenses' );
+		}
+
 		return is_array( $licenses ) ? $licenses : array();
 	}
 

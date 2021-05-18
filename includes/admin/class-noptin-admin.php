@@ -130,6 +130,7 @@ class Noptin_Admin {
 		// Register new menu pages.
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'admin_head', array( $this, 'remove_menus' ) );
+		add_action( 'admin_head', array( $this, 'set_admin_menu_class' ) );
 
 		// Runs when saving a new opt-in form.
 		add_action( 'wp_ajax_noptin_save_optin_form', array( $this, 'save_optin_form' ) );
@@ -494,6 +495,19 @@ class Noptin_Admin {
 	public function remove_menus() {
 		remove_submenu_page( 'index.php', 'noptin-welcome' );
 	}
+
+	/**
+	 * Highlights current sub-menu items
+	 */
+	public function set_admin_menu_class() {
+		global $current_screen, $parent_file, $submenu_file;
+
+        if ( ! empty( $current_screen->id ) && in_array( $current_screen->id , array( 'noptin-form' ) ) ) {
+			$parent_file = 'noptin';
+			$submenu_file = 'edit.php?post_type=' . $current_screen->id;
+        }
+
+    }
 
 	/**
 	 * Display the welcome page

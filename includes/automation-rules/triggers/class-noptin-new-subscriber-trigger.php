@@ -165,7 +165,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
     }
 
     /**
-     * Called when a subscriber is activated.
+     * Called when someone subscribes to the newsletter.
      *
      * @param int $subscriber The subscriber in question.
      */

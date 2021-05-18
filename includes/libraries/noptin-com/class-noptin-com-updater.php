@@ -30,6 +30,8 @@ class Noptin_COM_Updater {
 		add_action( 'upgrader_pre_download', array( __CLASS__, 'block_expired_updates' ), 10, 2 );
 		add_filter( 'extra_plugin_headers', array( __CLASS__, 'add_extra_package_headers' ) );
 		add_filter( 'plugins_api', array( __CLASS__, 'plugins_api' ), 20, 3 );
+		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
+		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
 	}
 
 	/**
@@ -329,6 +331,72 @@ class Noptin_COM_Updater {
 
 		return $response;
 
+	}
+
+	/**
+	 * Add action for queued products to display message for unlicensed products.
+	 *
+	 * @access  public
+	 * @since   1.0.0
+	 * @return  void
+	 */
+	public static function add_notice_unlicensed_product() {
+		if ( is_admin() && function_exists( 'get_plugins' ) ) {
+			foreach ( array_keys( Noptin_COM_Helper::get_local_noptin_plugins() ) as $key ) {
+				add_action( 'in_plugin_update_message-' . $key, array( __CLASS__, 'need_license_message' ), 10, 2 );
+			}
+		}
+	}
+
+	/**
+	 * Message displayed if license not activated
+	 *
+	 * @param  array  $plugin_data The plugin data.
+	 * @param  object $r The api response.
+	 * @return void
+	 */
+	public static function need_license_message( $plugin_data, $r ) {
+
+		if ( empty( $r->package ) || 0 === strpos( $r->package, 'noptin-com-expired-' ) ) {
+
+			$notice = sprintf(
+				/* translators: %s: updates page URL. */
+				__( 'To update, please <a href="%s">activate your license key</a>.', 'noptin-updates' ),
+				admin_url( 'admin.php?page=noptin-addons&section=helper' )
+			);
+
+			echo "<span style='display: block;margin-top: 10px;font-weight: 600;'>$notice</span>";
+		}
+
+	}
+
+	/**
+	 * Change the update information for unlicensed Noptin products
+	 *
+	 * @param  object $transient The update-plugins transient.
+	 * @return object
+	 */
+	public static function change_update_information( $transient ) {
+
+		// If we are on the update core page, change the update message for unlicensed products.
+		global $pagenow;
+		if ( ( 'update-core.php' === $pagenow ) && $transient && isset( $transient->response ) && ! isset( $_GET['action'] ) ) {
+
+			$notice = sprintf(
+				/* translators: %s: updates page URL. */
+				__( 'To update, please <a href="%s">activate your license key</a>.', 'noptin-updates' ),
+				admin_url( 'admin.php?page=noptin-addons&section=helper' )
+			);
+
+			foreach ( array_keys( Noptin_COM_Helper::get_local_noptin_plugins() ) as $key ) {
+				if ( isset( $transient->response[ $key ] ) && ( empty( $transient->response[ $key ]->package ) || 0 === strpos( $transient->response[ $key ]->package, 'noptin-com-expired-' )  ) ) {
+					$transient->response[ $key ]->upgrade_notice = $notice;
+				}
+			}
+
+		}
+
+		return $transient;
 	}
 
 }

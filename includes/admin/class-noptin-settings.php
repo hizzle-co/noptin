@@ -12,28 +12,28 @@ class Noptin_Settings {
 
 	/**
 	 * Setting sections.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $sections;
 
 	/**
 	 * Settings.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $settings;
 
 	/**
 	 * Current state.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $state;
 
 	/**
 	 * Class constructor.
-	 * 
+	 *
 	 * It's protected since we do not want anyone to create a new instance of the class.
 	 * It's here purely for encapsulation.
 	 */
@@ -49,7 +49,7 @@ class Noptin_Settings {
 
 	/**
 	 * Returns all setting sections.
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_sections() {
@@ -114,14 +114,14 @@ class Noptin_Settings {
 
 		// Cache it.
 		self::$sections = $sections;
-		
+
 		return $sections;
 
 	}
 
 	/**
 	 * Returns a section conditional
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function get_section_conditional( $args ) {
@@ -140,7 +140,7 @@ class Noptin_Settings {
 
 	/**
 	 * Returns the current state
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_state() {
@@ -173,7 +173,7 @@ class Noptin_Settings {
 
 	/**
 	 * Returns all settings fields
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_settings() {
@@ -192,7 +192,7 @@ class Noptin_Settings {
 				'label'       => __( 'Admin Notifications', 'newsletter-optin-box' ),
 				'description' => __( 'Notify the site admin every time a new subscriber signs up for the newsletter.', 'newsletter-optin-box' ),
 			),
-			
+
 			'double_optin'    => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
@@ -379,7 +379,7 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
 				'placeholder' => '****************************',
-				'description' => sprintf( 
+				'description' => sprintf(
 					__( 'Enter your %s API key if you want to GeoLocate your subscribers using their service.', 'newsletter-optin-box' ),
 					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
 				)
