@@ -320,6 +320,19 @@ class Noptin_Form {
 			$defaults['successMessage'] = esc_html__( 'Thanks for subscribing to the newsletter', 'newsletter-optin-box' );
 		}
 
+		foreach ( get_noptin_connection_providers() as $key => $connection ) {
+
+			if ( ! empty( $connection->list_providers ) ) {
+				$defaults["{$key}_list"] = $connection->get_default_list_id();
+			}
+
+			if ( $connection->supports( 'tags' ) ) {
+				$defaults["{$key}_tags"]     = '';
+			}
+
+			$defaults = $connection->add_custom_default_form_state( $defaults );
+		}
+
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
 
 	}

@@ -16,6 +16,7 @@
  * @property bool   $confirmed
  * @property string $confirm_key
  * @property string $date_created
+ * @see get_noptin_subscriber
  * @since 1.2.7
  */
 class Noptin_Subscriber {
@@ -37,13 +38,13 @@ class Noptin_Subscriber {
 	protected $data;
 
 	/**
-	 * Constructor.
+	 * The Noptin_Subscriber class Constructor.
 	 *
-	 * Inits the subscriber data.
+	 * Fetches the subscriber's data and passes it to Noptin_Subscriber::init().
 	 *
 	 * @since 1.2.7
-	 *
-	 * @param int|string|array|stdClass|Noptin_Subscriber $subscriber Subscribers's ID, email, confirm key, a Noptin_Subscriber object,
+	 * @see get_noptin_subscriber
+	 * @param int|string|array|stdClass|Noptin_Subscriber $subscriber The subscribers's ID, email, confirm key, a Noptin_Subscriber object,
 	 *                                                                or a subscriber object from the DB.
 	 */
 	public function __construct( $subscriber = 0 ) {
@@ -92,7 +93,7 @@ class Noptin_Subscriber {
 	}
 
 	/**
-	 * Sets up object properties.
+	 * Sets up subscriber properties.
 	 *
 	 * @since  1.2.7
 	 *

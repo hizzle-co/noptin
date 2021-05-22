@@ -442,6 +442,64 @@ class Noptin_Vue {
 
 		}
 
+		foreach ( get_noptin_connection_providers() as $key => $connection ) {
+
+			if ( empty( $connection->list_providers ) ) {
+				continue;
+			}
+
+			$label = sprintf(
+				__( '%s Equivalent', 'newsletter-optin-box' ),
+				$connection->name
+			);
+
+			$placeholder = sprintf(
+				__( 'Select %s Equivalent', 'newsletter-optin-box' ),
+				$connection->name
+			);
+
+			if ( $connection->supports( 'universal_fields' ) ) {
+
+				// Field args.
+				$args  = array(
+					'el'          => 'select',
+					'label'       => $label,
+                    'options'     => $connection->list_providers->get_fields(),
+					'restrict'    => "field.type.type=='$type'",
+					'placeholder' => $placeholder,
+				);
+
+                $args  = self::sanitize_el( "field.$key", $args );
+				self::select( "field.$key", $args );
+
+				continue;
+			}
+
+			$list_field = "{$key}_list";
+
+			foreach ( $connection->list_providers->get_lists() as $list ) {
+
+				$fields = $list->get_fields();
+				if ( empty( $fields ) ) {
+					continue;
+				}
+
+				// Field args.
+				$args  = array(
+					'el'          => 'select',
+					'label'       => $label,
+                    'options'     => $fields,
+					'restrict'    => "field.type.type=='$type' && $list_field=='$list'",
+					'placeholder' => $placeholder,
+				);
+
+                $args  = self::sanitize_el( "field.$key", $args );
+				self::select( "field.$key", $args );
+
+			}
+
+		}
+
 	}
 
 	/**

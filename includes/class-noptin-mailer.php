@@ -13,6 +13,11 @@ class Noptin_Mailer {
 	public $inline_css = true;
 
 	/**
+	 * Strips unavailable merge tags.
+	 */
+	public $strip_tags = true;
+
+	/**
 	 * For backwards compatibility;
 	 */
 	private static $initialized = false;
@@ -253,7 +258,9 @@ class Noptin_Mailer {
 		}
 
 		// Remove unavailable tags.
-		$content = preg_replace( '/\[\[\w+]\]/', '', $content );
+		if ( $this->strip_tags ) {
+			$content = preg_replace( '/\[\[\w+]\]/', '', $content );
+		}
 
 		return $content;
 	}

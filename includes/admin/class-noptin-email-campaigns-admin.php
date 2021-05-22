@@ -478,6 +478,7 @@ class Noptin_Email_Campaigns_Admin {
 		$item = array(
 			'campaign_id'       => $post->ID,
 			'subscribers_query' => array(), // By default, send this to all active subscribers.
+			'custom_merge_tags' => array(),
 			'campaign_data'     => array(
 				'campaign_id'   => $post->ID
 			),

@@ -246,8 +246,9 @@ function get_noptin_subscriber_merge_fields( $subscriber_id ) {
 	foreach ( $meta as $key => $values ) {
 
 		if ( isset( $values[0] ) && is_scalar( maybe_unserialize( $values[0] ) ) ) {
-				$merge_tags[ $key ] = esc_html( maybe_unserialize( $values[0] ) );
+			$merge_tags[ $key ] = esc_html( maybe_unserialize( $values[0] ) );
 		}
+
 	}
 
 	$merge_tags['name']      = trim( $merge_tags['first_name'] . ' ' . $merge_tags['second_name'] );
@@ -564,7 +565,9 @@ function clear_noptin_subscriber_cache( $subscriber ) {
  *
  * @access  public
  * @since   1.1.1
- * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
+ * @param int|string|Noptin_Subscriber|object|array subscriber The subscribers's ID, email, confirm key, a Noptin_Subscriber object,
+	 *                                                                or a subscriber object from the DB.
+ * @see Noptin_Subscriber
  * @return Noptin_Subscriber
  */
 function get_noptin_subscriber( $subscriber ) {

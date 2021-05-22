@@ -548,7 +548,18 @@ function noptin_get_form_design_props() {
  * @return array
  */
 function noptin_get_form_field_props() {
-	return apply_filters( 'noptin_form_field_props', array( 'fields', 'fieldTypes' ) );
+	$props = array( 'fields', 'fieldTypes' );
+
+	foreach ( get_noptin_connection_providers() as $key => $connection ) {
+
+		if ( ! empty( $connection->list_providers ) ) {
+			$props[] = "{$key}_list";
+		}
+
+		$props = $connection->add_custom_field_props( $props );
+	}
+
+	return apply_filters( 'noptin_form_field_props', $props );
 }
 
 /**
@@ -1591,6 +1602,17 @@ function get_noptin_automation_rules_table_name() {
  */
 function noptin_verify_subscription_nonces() {
 	return apply_filters( 'noptin_verify_nonce', NOPTIN_VERIFY_NONCE );
+}
+
+/**
+ * Returns an array of connection providers.
+ *
+ * @since 1.5.1
+ * @ignore
+ * @return Noptin_Connection_Provider[]
+ */
+function get_noptin_connection_providers() {
+	return apply_filters( 'noptin_connection_providers', array() );
 }
 
 /**
