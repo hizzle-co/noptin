@@ -203,4 +203,22 @@ abstract class Noptin_List_Providers {
 		return array();
 	}
 
+	/**
+	 * Tags a subscriber.
+	 *
+	 * @param Noptin_Subscriber $subscriber
+	 * @param array $tags
+	 * @since 1.5.1
+	 */
+	public function tag_subscriber( $subscriber, $tags ) {}
+
+	/**
+	 * Untags a subscriber.
+	 *
+	 * @param Noptin_Subscriber $subscriber
+	 * @param array $tags
+	 * @since 1.5.1
+	 */
+	public function untag_subscriber( $subscriber, $tags ) {}
+
 }

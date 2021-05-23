@@ -149,6 +149,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 			}
 
+			if ( $this->supports( 'universal_tags' ) && ! empty( $integration_data['tags'] ) ) {
+				$this->list_providers->tag_subscriber( $noptin_subscriber, $integration_data['tags'] );
+			}
+
         } catch ( Exception $ex ) {
 			$this->last_error = $ex->getMessage();
             log_noptin_message( $ex->getMessage() );

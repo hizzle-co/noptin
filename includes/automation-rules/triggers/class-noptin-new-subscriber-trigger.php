@@ -19,8 +19,8 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
      * @return string
      */
     public function __construct() {
-        add_action( 'noptin_insert_subscriber', array( $this, 'maybe_trigger' ) );
-        add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_trigger' ) );
+        add_action( 'noptin_insert_subscriber', array( $this, 'maybe_trigger' ), 1000 );
+        add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_trigger' ), 1000 );
     }
 
     /**

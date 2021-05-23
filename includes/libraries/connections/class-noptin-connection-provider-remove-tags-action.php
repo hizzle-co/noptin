@@ -107,10 +107,7 @@ class Noptin_Connection_Provider_Remove_Tags_Action extends Noptin_Abstract_Acti
      */
     public function get_settings() {
 
-        $lists = $this->mailchimp->get_lists();
-        $lists = wp_list_pluck( $lists, 'name', 'id' );
-
-        return array(
+        $settings = array(
 
             'list'     => array(
 				'el'          => 'select',
@@ -125,10 +122,16 @@ class Noptin_Connection_Provider_Remove_Tags_Action extends Noptin_Abstract_Acti
 				'el'                => 'input',
 				'label'             => __( 'Tags', 'newsletter-optin-box' ),
 				'placeholder'       => 'tag, another tag',
-				'tooltip'           => __( 'The listed tags will be removed from the subscriber. Separate multiple tags with a comma.', 'newsletter-optin-box' ),
+				'description'       => __( 'The listed tags will be removed from the subscriber. Separate multiple tags with a comma.', 'newsletter-optin-box' ),
 			)
 
         );
+
+        if ( $this->provider->supports( 'universal_tags' ) ) {
+            unset( $settings['list'] );
+        }
+
+        return $settings;
 
     }
 
@@ -146,14 +149,28 @@ class Noptin_Connection_Provider_Remove_Tags_Action extends Noptin_Abstract_Acti
         $settings = $rule->action_settings;
 
         // Nothing to do here.
-        if ( empty( $settings['list'] ) || empty( $settings['tags'] ) ) {
+        if ( empty( $settings['tags'] ) ) {
             return;
         }
 
-        $list = absint( $settings['list'] );
+        if ( ! $this->provider->supports( 'universal_tags' ) && empty( $settings['list'] ) ) {
+            return;
+        }
+
         $tags = array_filter( noptin_clean( explode( ',', $settings['tags'] ) ) );
 
         if ( empty( $tags ) ) {
+            return;
+        }
+
+        if ( $this->provider->supports( 'universal_tags' ) ) {
+
+            try {
+                $this->provider->list_providers->untag_subscriber( $subscriber, $tags );
+            } catch ( Exception $ex ) {
+                log_noptin_message( $ex->getMessage() );
+            }
+
             return;
         }
 
