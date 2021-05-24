@@ -87,9 +87,11 @@ var settingsApp = new Vue({
 						.find('.noptin-save-saved')
 						.show()
 						.html(`<p>${saved}</p>`)
+
+					document.location = document.location.href + "&tab=" + this.currentTab;
 				})
 
-				//Else alert the user about the error
+				//Else alert the user about the error.
 				.fail(() => {
 					$(el)
 						.fadeTo("fast", 1)

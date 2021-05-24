@@ -145,26 +145,34 @@
 	}
 
 	.products {
-		overflow: hidden;
+		background: #fff;
+		border: 1px solid #ddd;
+		margin: 0 0 1em 0;
+		padding: 2em 2em 1em;
 		display: flex;
 		flex-flow: row;
 		flex-wrap: wrap;
-		margin: 0 -0.5em;
+		overflow: hidden;
+		justify-content: space-between;
 
 		li {
-			position: relative;
-			margin: 0 0.5em 1em !important;
-			padding: 0;
-			max-width: 290px;
-			min-height: 220px;
-			flex: 1;
-			overflow: hidden;
+			background: #fff;
 			border: 1px solid #ddd;
 			box-shadow: 0 1px 1px rgb(0 0 0 / 4%);
-			background: #fff;
 			box-sizing: border-box;
 			display: flex;
-    		flex-direction: column;
+			flex: 1 0 360px;
+			flex-direction: column;
+			margin: 0 .5em 1em!important;
+			max-width: 360px;
+			min-height: 220px;
+			overflow: hidden;
+			padding: 0;
+			position: relative;
+
+			&:hover {
+				border:1px solid #c5c2c2;
+			}
 
 			img {
 				max-width: 258px;
@@ -178,14 +186,15 @@
 
 			h2,
 			h3 {
-				margin: 0 !important;
-				padding: 1em 2em !important;
-				background: #f9f9f9;
+				margin: 0!important;
+				padding: 27px 32px!important;
+				color: #424242;
+				font-size: 24px;
 			}
 
 			h2:hover,
 			h3:hover {
-				background: #e0e0e0;
+				background: #f9f9f9;
 			}
 
 			a {
@@ -193,16 +202,14 @@
 			}
 
 			.product-description {
-				padding: .7em 2em 1em !important;
+				padding: 0 27px 32px!important;
 				margin: 0 !important;
-				border-top: 1px solid #ddd;
 				border-bottom: 1px solid #ddd;
 				flex: 1;
 			}
 
 			.footer {
 				padding: 1em 2em !important;
-				background: #f9f9f9;
 				display: flex;
 				flex-wrap: wrap;
 				justify-content: space-between;
