@@ -987,7 +987,7 @@ input:focus+.noptin-switch-slider span {
 }
 
 .settings-body.noptin-fields {
-	max-width: 800px;
+	max-width: 920px;
 	margin-top: 32px;
 
 	.field-wrapper {
@@ -1473,4 +1473,80 @@ a.no-campaign-create-new-campaign {
 
 .noptin_page_noptin-addons .notice:not(.noptin-notice) {
 	display: none;
+}
+
+.noptin-settings-section {
+
+	margin: 0;
+	margin-bottom: 10px;
+    padding: 0;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+
+	.noptin-section-header {
+		padding: 1em 1.5em;
+		font-weight: 500;
+		position: relative;
+		cursor: pointer;
+    	display: flex;
+		align-items: center;
+    	justify-content: space-between;
+		padding: 1em 3.5em 1em 1.5em;
+		min-height: 46px;
+		position: relative;
+
+		&:hover{
+			background: #f6f7f7;
+		}
+
+		.title {
+			pointer-events: none;
+			font-weight: 600;
+			flex-grow: 1;
+
+			p {
+				margin: 0;
+				font-weight: 400;
+				font-style: italic;
+				color: #716e7c;
+			}
+		}
+
+		.icon {
+			border: solid #50575e;
+			border-width: 0 2px 2px 0;
+			height: .5rem;
+			pointer-events: none;
+			position: absolute;
+			right: 1.5em;
+			top: 50%;
+			transform: translateY(-70%) rotate( 45deg );
+			width: .5rem;
+		}
+
+		.badge {
+			font-size: 13px;
+		}
+	}
+
+	&.open .noptin-section-header {
+		border-bottom: 1px solid #c3c4c7;
+
+		.icon {
+			transform: translateY(-30%) rotate(-135deg);
+		}
+
+	}
+
+	.noptin-section-body {
+		padding: 1em 1.5em;
+		height: auto;;
+	}
+
+	&:not(.open) .noptin-section-body {
+		height: 0;
+		overflow: hidden;
+		padding: 0;
+	}
+
 }

@@ -153,12 +153,24 @@ class Noptin_Settings {
 		$state = array();
 
 		foreach ( self::get_settings() as $key => $args ) {
-			$default       = isset( $args['default'] ) ? $args['default'] : '';
-			$state[ $key ] = get_noptin_option( $key, $default );
+
+			if ( ! empty( $args['el'] ) && 'settings_section' === $args['el'] ) {
+
+				foreach ( $args['children'] as $args ) {
+					$default       = isset( $args['default'] ) ? $args['default'] : '';
+					$state[ $key ] = get_noptin_option( $key, $default );
+				}
+
+			} else {
+				$default       = isset( $args['default'] ) ? $args['default'] : '';
+				$state[ $key ] = get_noptin_option( $key, $default );
+			}
+
 		}
 
 		$state = array_merge( get_noptin_options(), $state );
 
+		$state['openSections']   = array();
 		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
 		$state['currentSection'] = 'main';
 		$state['saved']          = __( 'Your settings have been saved', 'newsletter-optin-box' );
@@ -448,6 +460,15 @@ class Noptin_Settings {
 				'description' => __( 'Remind the subscriber how they signed up.', 'newsletter-optin-box' ),
 			),
 
+		);
+
+		$integration_settings = apply_filters( 'noptin_get_integration_settings', $settings );
+
+		ksort( $integration_settings );
+
+		$settings = array_merge(
+			$settings,
+			$integration_settings
 		);
 
 		// Filter the settings.

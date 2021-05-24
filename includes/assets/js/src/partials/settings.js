@@ -55,6 +55,24 @@ var settingsApp = new Vue({
 			return ''
 		},
 
+		// Toggles an active panel.
+		togglePanel( panel ) {
+
+			var index = this.openSections.indexOf(panel);
+
+			if (index === -1) {
+				this.openSections.push(panel);
+			} else {
+				this.openSections.splice(index, 1);
+			}
+
+		},
+
+		// Checks if the panel is open.
+		isOpenPanel( panel ) {
+			return -1 !== this.openSections.indexOf(panel);
+		},
+
 		// Persists settings to the database.
 		saveSettings() {
 

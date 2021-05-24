@@ -16,7 +16,7 @@
 
 		<nav class="nav-tab-wrapper">
 			<?php
-			
+
 				foreach ( Noptin_Settings::get_sections() as $id => $title ) :
 
 					// For those sections that have sub-sections.
@@ -70,12 +70,39 @@
 			<div class="noptin-save-error" style="display:none"></div>
 
 			<?php
-			
+
 				foreach ( Noptin_Settings::get_settings() as $id => $args ) :
 					$condition = Noptin_Settings::get_section_conditional( $args );
 
 					echo "<div $condition>";
-					Noptin_Vue::render_el( $id, $args );
+
+					if ( ! empty( $args['el'] ) && 'settings_section' === $args['el'] ) {
+
+						echo "<div id='noptin-settings-section-$id' class='noptin-settings-section' :class=\"{ open: isOpenPanel('$id') }\">";
+						echo    "<div class='noptin-section-header' @click=\"togglePanel('$id')\">
+									<div class='title'>
+										<span>{$args['heading']}</span>
+										<p>{$args['description']}</p>
+									</div>
+									<span class='badge'>{$args['badge']}</span>
+									<span class='icon'></span>
+								</div>";
+						echo "<div class='noptin-section-body'>";
+						foreach ( $args['children'] as $id => $args ) :
+							$condition = Noptin_Settings::get_section_conditional( $args );
+
+							echo "<div $condition>";
+							Noptin_Vue::render_el( $id, $args );
+							echo '</div>';
+
+						endforeach;
+						echo '</div>';
+						echo '</div>';
+
+					} else {
+						Noptin_Vue::render_el( $id, $args );
+					}
+
 					echo '</div>';
 
 				endforeach;

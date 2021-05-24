@@ -251,39 +251,13 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	 * Registers integration options.
 	 *
 	 * @since 1.5.1
-	 * @param array $options Current Noptin settings.
+	 * @param array $_options Current Noptin settings.
 	 * @return array
 	 */
-	public function add_options( $options ) {
+	public function add_options( $_options ) {
 
-		$slug = $this->slug;
-
-		// Integration name hero text.
-		if ( ! empty( $this->name ) ) {
-
-			$options["noptin_{$slug}_integration_hero"] = array(
-				'el'              => 'hero',
-				'section'		  => 'integrations',
-				'content'         => $this->name . $this->get_hero_extra(),
-			);
-
-		}
-
-		// Integration description text.
-		if ( ! empty( $this->description ) ) {
-
-			$options["noptin_{$slug}_integration_description"] = array(
-				'el'              => 'paragraph',
-				'section'		  => 'integrations',
-				'content'         => $this->description,
-			);
-
-		}
-
-		// Enables the integration.
-		$options = $this->add_enable_integration_option( $options );
-
-		// Adds connection options.
+		$slug    = $this->slug;
+		$options = $this->add_enable_integration_option( array() );
 		$options = $this->add_connection_options( $options );
 
 		if ( $this->is_connected() ) {
@@ -321,31 +295,19 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 		}
 
-		// Setup the integration.
-		if ( ! empty( $this->setup_page ) ) {
-
-			$url  = esc_url( $this->setup_page );
-			$text = __( 'Configure integration', 'newsletter-optin-box' );
-
-			if ( ! empty( $this->name ) ) {
-				$text = sprintf(
-					__( 'Configure %s', 'newsletter-optin-box' ),
-					$this->name
-				);
-			}
-
-			$options["noptin_{$slug}_setup"] = array(
-				'el'              => 'paragraph',
-				'section'		  => 'integrations',
-				'content'         => "<a href='$url'>$text</a>",
-				'restrict'        => $this->get_enable_integration_option_name(),
-			);
-
-		}
-
 		$options = apply_filters( "noptin_single_integration_settings", $options, $slug, $this );
 
-		return apply_filters( "noptin_{$slug}_integration_settings", $options, $this );
+		$_options["settings_section_$slug"] = array(
+			'id'          => "settings_section_$slug",
+			'el'          => 'settings_section',
+			'children'    => $options,
+			'section'     => 'integrations',
+			'heading'     => sanitize_text_field( $this->name ),
+			'description' => sanitize_text_field( $this->description ),
+			'badge'       => $this->get_hero_extra(),
+		);
+
+		return apply_filters( "noptin_{$slug}_integration_settings", $_options, $this );
 
 	}
 
@@ -377,20 +339,26 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	 */
 	public function get_hero_extra() {
 
+		$option   = $this->get_enable_integration_option_name();
+		$disabled = __( 'Disabled', 'newsletter-optin-box' );
+
 		if ( $this->is_connected() ) {
-			return '&nbsp;&mdash;&nbsp;<em style="color: #4CAF50; font-size: 14px;">' . __( 'Connected', 'newsletter-optin-box' ) . '</em>';
-		}
-
-		$error = __( 'Not Connected', 'newsletter-optin-box' );
-
-		if ( ! empty( $this->last_error ) ) {
-			$error = "$error ( {$this->last_error} )";
+			$enabled = __( 'Connected', 'newsletter-optin-box' );
 		} else {
-			return;
+
+			if ( ! empty( $this->last_error ) ) {
+				$enabled = __( 'Not Connected', 'newsletter-optin-box' );
+				$enabled = "$enabled <em>( {$this->last_error} )</em>";
+			} else {
+				$enabled = __( 'Enabled', 'newsletter-optin-box' );
+			}
+
 		}
 
-		$error = esc_html( $error );
-		return "&nbsp;&mdash;&nbsp;<em style='color: #F44336; font-size: 14px;'>$error</em>";
+		return "
+			<span style='color: #43a047;' v-if='$option'>$enabled</span>
+			<span style='color: #616161;' v-else>$disabled</span>
+		";
 
 	}
 

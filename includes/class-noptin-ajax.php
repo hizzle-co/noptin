@@ -882,6 +882,8 @@ class Noptin_Ajax {
 		unset( $_settings['saved'] );
 		unset( $_settings['error'] );
 		unset( $_settings['currentTab'] );
+		unset( $_settings['currentSection'] );
+		unset( $_settings['openSections'] );
 
 		$settings = array();
 		foreach ( $_settings as $key => $val ) {
