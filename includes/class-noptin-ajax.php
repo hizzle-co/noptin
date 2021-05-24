@@ -817,17 +817,7 @@ class Noptin_Ajax {
 	
 		}
 
-		$tags = get_noptin_subscriber_merge_fields( $inserted );
-
-		// Replace all available tags with their values.
-		foreach ( $tags as $key => $value ) {
-			if ( is_scalar( $value ) ) {
-				$result['msg'] = str_ireplace( "[[$key]]", $value, $result['msg'] );
-			}
-		}
-
-		// Remove unavailable tags.
-		$result['msg'] = wp_kses( preg_replace( '/\[\[\w+]\]/', '',$result['msg'] ), 'user_description' );
+		$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) );
 
 		wp_send_json( $result );
 		exit;

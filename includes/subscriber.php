@@ -82,7 +82,7 @@ function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value =
  *
  * @param int    $subscriber_id  ID of the subscriber metadata is for.
  * @param string $meta_key       Metadata key.
- * 
+ *
  */
 function noptin_subscriber_meta_exists( $subscriber_id, $meta_key ) {
 	return metadata_exists( 'noptin_subscriber', $subscriber_id, $meta_key );
@@ -473,7 +473,7 @@ function confirm_noptin_subscriber_email( $subscriber ) {
 	$table = get_noptin_subscribers_table_name();
 	$wpdb->update(
 		$table,
-		array( 
+		array(
 			'active'    => 0,
 			'confirmed' => 1,
 		),
@@ -481,7 +481,7 @@ function confirm_noptin_subscriber_email( $subscriber ) {
 		'%d',
 		'%d'
 	);
-	
+
 	$subscriber->clear_cache();
 
 	update_noptin_subscriber_meta( $subscriber->id, 'confirmed_on', current_time( 'mysql' ) );
@@ -1009,7 +1009,7 @@ function noptin_generate_user_name( $prefix = '' ) {
 	// Remove whitespace.
 	$prefix = preg_replace( '|\s+|', '_', $prefix );
 
-	// Trim to 8 characters max. 
+	// Trim to 8 characters max.
 	$prefix = sanitize_user( $prefix );
 
 	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
@@ -1115,6 +1115,39 @@ function noptin_subscriber_metabox_callback( $subscriber, $metabox ) {
 }
 
 /**
+ * Retrieves the current user's Noptin subscriber id.
+ *
+ * @return  false|int Subscriber id or false on failure.
+ * @access  public
+ * @since   1.5.1
+ */
+function get_current_noptin_subscriber_id() {
+
+	// If the user is logged in, check with their email address.
+	$user_data = wp_get_current_user();
+	if ( ! empty( $user_data->user_email ) ) {
+		$subscriber = get_noptin_subscriber_by_email( $user_data->user_email );
+
+		if ( $subscriber->exists() ) {
+			return $subscriber->id;
+		}
+
+	}
+
+	// Check from the subscription cookies.
+	if ( ! empty( $_COOKIE['noptin_email_subscribed'] ) ) {
+		$subscriber = new Noptin_Subscriber( sanitize_text_field( $_COOKIE['noptin_email_subscribed'] ) );
+
+		if ( $subscriber->exists() && sanitize_text_field( $_COOKIE['noptin_email_subscribed'] ) == $subscriber->confirm_key ) {
+			return $subscriber->id;
+		}
+
+	}
+
+	return false;
+}
+
+/**
  * Checks if the currently displayed user is subscribed to the newsletter.
  *
  * @since 1.4.4
@@ -1149,7 +1182,7 @@ function noptin_is_subscriber() {
 
 /**
  * Callback for the `[noptin-show-if-subscriber]` shortcode.
- * 
+ *
  * @param array $atts Shortcode attributes.
  * @param string $content Shortcode content.
  * @since 1.4.4
@@ -1168,7 +1201,7 @@ add_shortcode( 'noptin-show-if-subscriber', '_noptin_show_if_subscriber' );
 
 /**
  * Callback for the `[noptin-show-if-non-subscriber]` shortcode.
- * 
+ *
  * @param array $atts Shortcode attributes.
  * @param string $content Shortcode content.
  * @since 1.4.4
@@ -1196,3 +1229,25 @@ function _noptin_show_subscriber_count() {
 	return get_noptin_subscribers_count();
 }
 add_shortcode( 'noptin-subscriber-count', '_noptin_show_subscriber_count' );
+
+/**
+ * Callback for the `[noptin-subscriber-field]` shortcode.
+ *
+ * @ignore
+ * @since 1.4.4
+ * @param array $atts Shortcode attributes.
+ * @private
+ */
+function _noptin_show_subscriber_field( $atts ) {
+
+	$subscriber = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+
+	if ( empty( $atts['field'] ) || ! $subscriber->exists() || ! $subscriber->has_prop( $atts['field'] ) ) {
+		return '';
+	}
+
+	$value = $subscriber->get( $atts['field'] );
+	return  is_scalar( $value ) ? sanitize_text_field( $value ) : '';
+
+}
+add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );

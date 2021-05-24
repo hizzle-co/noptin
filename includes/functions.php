@@ -914,13 +914,13 @@ function noptin_get_user_ip() {
 	if ( isset( $_SERVER['HTTP_X_REAL_IP'] ) ) {
 		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) );
 	}
-	
+
 	if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
 		// Proxy servers can send through this header like this: X-Forwarded-For: client1, proxy1, proxy2
 		// Make sure we always only send through the first IP in the list which should always be the client IP.
 		return (string) rest_is_ip_address( trim( current( preg_split( '/,/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) );
 	}
-	
+
 	if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
 		return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
 	}
@@ -1099,7 +1099,7 @@ function noptin_parse_int_list( $list, $cb = 'absint' ) {
  * @return array Sanitized array of values.
  */
 function noptin_parse_post_list( $list ) {
-	
+
 	// Convert to array.
 	$list = noptin_parse_list( $list );
 
@@ -1108,7 +1108,7 @@ function noptin_parse_post_list( $list ) {
 
 	// Assume the rest to be urls.
 	$urls = array_diff( $list, $ids );
-	
+
 	// Return an array or ids and urls
 	return array(
 		'ids'  => array_map( 'absint', $ids ), // convert to integers.
@@ -1172,31 +1172,18 @@ function noptin_clean_url( $url = '' ) {
 	// remove forwad slash at the end of the url
 	$clean_url = strtolower( untrailingslashit( $clean_url ) );
 
-	return apply_filters( 'noptin_clean_url', $clean_url, $url ); 
+	return apply_filters( 'noptin_clean_url', $clean_url, $url );
 }
 
 /**
- * Clean variables using sanitize_text_field.
+ * Cleans all non-iterable elements of an array or an object.
  *
- * @param string|array $var Data to sanitize.
+ * @param string|array|object $var Data to sanitize.
  * @since 1.2.3
  * @return string|array
  */
 function noptin_clean( $var ) {
-
-	if ( is_array( $var ) ) {
-		return array_map( 'noptin_clean', $var );
-	}
-
-	if ( is_object( $var ) ) {
-		$object_vars = get_object_vars( $var );
-		foreach ( $object_vars as $property_name => $property_value ) {
-			$var->$property_name = noptin_clean( $property_value );
-		}
-		return $var;
-	}
-
-	return is_string( $var ) ? sanitize_text_field( $var ) : $var;
+	return map_deep( $var, 'sanitize_text_field' );
 }
 
 /**
@@ -1482,7 +1469,7 @@ function schedule_noptin_recurring_background_action() {
  * - `do_noptin_background_action()`
  * - `schedule_noptin_background_action()`
  * - `schedule_noptin_recurring_background_action()`
- * 
+ *
  * Pass `all` as the only argument to cancel all actions scheduled by the above functions.
  *
  * @since 1.2.7
@@ -1524,7 +1511,7 @@ function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
 			log_noptin_message( $e->getMessage() );
 			return false;
 		}
-		
+
 	}
 
 	// Developers can also cancel an action by a hook name.
@@ -1725,4 +1712,35 @@ function noptin_convert_classic_template( $template ) {
 
 	$template['data'] = $data;
 	return $template;
+}
+
+/**
+ * Applies Noptin merge tags.
+ *
+ * @param string $content
+ * @param array $merge_tags
+ * @param bool $strip_missing
+ * @param bool $strict
+ * @since 1.5.1
+ * @ignore
+ * @return Noptin_Connection_Provider[]
+ */
+function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_missing = true ) {
+
+	$merge_tags = $strict ? noptin_clean( $merge_tags ) : wp_kses_post_deep( $merge_tags );
+
+	// Replace all available tags with their values.
+	foreach ( $merge_tags as $key => $value ) {
+		if ( is_scalar( $value ) ) {
+			$content = str_ireplace( "[[$key]]", $value, $content );
+		}
+	}
+
+	// Remove unavailable tags.
+	if ( $strip_missing ) {
+		$content = preg_replace( '/\[\[\w+]\]/', '',$content );
+	}
+
+	return $content;
+
 }
