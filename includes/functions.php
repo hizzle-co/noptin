@@ -159,7 +159,7 @@ function get_noptin_action_page() {
 /**
  * Returns the noptin action url
  *
- * @return  sting
+ * @return  string
  * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
  * @param   string $action The action to execute.
  * @param   string $value  Optional. The value to pass to the action handler.

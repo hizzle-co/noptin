@@ -190,6 +190,25 @@ class Noptin_Page {
 	}
 
 	/**
+	 * Merges Noptin content.
+	 *
+	 * @access      public
+	 * @since       1.0.6
+	 * @return      array
+	 */
+	public function merge( $content ) {
+
+		$subscriber = get_current_noptin_subscriber_id();
+
+		if ( empty( $subscriber ) ) {
+			return '';
+		}
+
+		return add_noptin_merge_tags(  $content, get_noptin_subscriber_merge_fields( $subscriber ) );
+
+	}
+
+	/**
 	 * Notifies the user that they have successfuly unsubscribed.
 	 *
 	 * @access      public
@@ -205,7 +224,7 @@ class Noptin_Page {
 
 		$msg = str_ireplace( '[[resubscribe_url]]', get_noptin_action_url( 'resubscribe', $key ), $msg );
 
-		echo $msg;
+		echo $this->merge( $msg );
 
 	}
 
@@ -260,7 +279,7 @@ class Noptin_Page {
 
 		$msg = str_ireplace( '[[unsubscribe_url]]', get_noptin_action_url( 'unsubscribe', $key ), $msg );
 
-		echo $msg;
+		echo $this->merge( $msg );
 
 	}
 
@@ -320,7 +339,7 @@ class Noptin_Page {
 			$msg = $this->default_subscription_confirmation_message();
 		}
 
-		echo $msg;
+		echo $this->merge( $msg );
 
 	}
 
