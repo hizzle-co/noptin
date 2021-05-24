@@ -140,11 +140,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 1.5.0 - 2021-05-16 =
-* Ability to connect your site to Noptin.com for faster support and updates - ADDED
-* Ability to set multiple admin notification recipients - ADDED
-* Ability to view stats for sent new post notification newsletters - ADDED
-* Ability to automatically delete sent campaigns after X days - ADDED
+= 1.5.1 =
+* Ability to use merge tags in newsletter subscription success messages and pages - ADDED
 
 = 1.4.6 - 2021-04-02 =
 * WPML Noptin settings translations not loaded - FIXED
