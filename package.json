@@ -45,7 +45,7 @@
 		"@wordpress/babel-preset-default": "6.1.0",
 		"autoprefixer": "10.2.5",
 		"babel-loader": "8.2.2",
-		"css-loader": "5.2.4",
+		"css-loader": "5.2.6",
 		"cssnano": "5.0.4",
 		"fibers": "5.0.0",
 		"mini-css-extract-plugin": "1.6.0",
