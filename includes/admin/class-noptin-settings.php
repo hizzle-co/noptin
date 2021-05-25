@@ -462,9 +462,47 @@ class Noptin_Settings {
 
 		);
 
-		$integration_settings = apply_filters( 'noptin_get_integration_settings', $settings );
-
+		$integration_settings = apply_filters( 'noptin_get_integration_settings', array() );
 		ksort( $integration_settings );
+
+		foreach ( Noptin_COM::get_integrations() as $slug => $data ) {
+
+			$slug = sanitize_key( $slug );
+
+			if ( isset( $integration_settings["settings_section_$slug"] ) ) {
+				continue;
+			}
+
+			$integration_settings["settings_section_$slug"] = array(
+				'id'          => "settings_section_$slug",
+				'el'          => 'settings_section',
+				'children'    => array(
+					"noptin_{$slug}_install" => array(
+						'el'              => 'paragraph',
+						'section'		  => 'integrations',
+						'content'         => '<span class="dashicons dashicons-info" style="margin-right: 10px; color: #03a9f4; "></span>' . sprintf(
+							esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
+							sprintf(
+								'<a target="_blank" href="%s">%s</a>',
+								esc_url( $data->href ),
+								sprintf(
+									__( '%s addon', 'newsletter-optin-box' ),
+									sanitize_text_field( $data->title )
+								)
+							)
+						)
+					),
+				),
+				'section'     => 'integrations',
+				'heading'     => sanitize_text_field( $data->title ),
+				'description' => sprintf(
+					__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
+					sanitize_text_field( $data->title )
+				),
+				'badge'       => __( 'Not Installed', 'newsletter-optin-box' ),
+			);
+
+		}
 
 		$settings = array_merge(
 			$settings,

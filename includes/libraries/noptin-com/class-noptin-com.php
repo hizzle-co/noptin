@@ -376,6 +376,31 @@ class Noptin_COM {
 
 	}
 
+	/**
+	 * Fetches available integrations.
+	 *
+	 * @return array
+	 * @since 1.5.0
+	 */
+	public static function get_integrations() {
+
+		$integrations = get_transient( 'available_noptin_integrations' );
+
+		if ( is_array( $integrations ) ) {
+			return $integrations;
+		}
+
+		$integrations = Noptin_COM_API_Client::get( 'nopcom/1/extensions/integrations' );
+
+		if ( is_wp_error( $integrations ) ) {
+			$integrations = array();
+		}
+
+		set_transient( 'available_noptin_integrations', (array) $integrations, DAY_IN_SECONDS );
+
+		return $integrations;
+	}
+
 }
 
 Noptin_COM::includes();
