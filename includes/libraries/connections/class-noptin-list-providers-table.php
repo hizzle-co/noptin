@@ -89,7 +89,7 @@ class Noptin_List_Providers_Table extends WP_List_Table {
 
 		$row_actions = array(
 			'configure' => '<a href="' . $list_url . '">' . __( 'View', 'newsletter-optin-box' ) . '</a>',
-			'refresh'   => '<a href="' . wp_nonce_url( $refresh, 'noptin_provider_action' ) . '">' . __( 'Refresh Data', 'noptin-mailchimp' ) . '</a>',
+			'refresh'   => '<a href="' . wp_nonce_url( $refresh, 'noptin_provider_action' ) . '">' . __( 'Refresh Data', 'newsletter-optin-box' ) . '</a>',
 		);
 
 		$row_actions = $this->row_actions( $row_actions );

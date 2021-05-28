@@ -51,7 +51,7 @@ class Noptin_Hooks {
 	public function maybe_hide_optin_forms() {
 
 		if ( ! empty( $_GET['noptin_hide'] ) ) {
-			setcookie( 'noptin_hide', 'true', 0, COOKIEPATH, COOKIE_DOMAIN );
+			setcookie( 'noptin_hide', 'true', time() + HOUR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
 		}
 
 	}

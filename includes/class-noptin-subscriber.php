@@ -294,6 +294,10 @@ class Noptin_Subscriber {
 			$key = 'id';
 		}
 
+		if ( strtolower( $key ) === 'last_name' ) {
+			$key = 'second_name';
+		}
+
 		if ( isset( $this->data->$key ) ) {
 			$value = $this->data->$key;
 		} else {

@@ -373,26 +373,24 @@ class Noptin_Form_Editor {
 
 		$fields                = array();
 		$available_connections = get_noptin_connection_providers();
-		$all_connections       = array(
-			'mailchimp'        => 'Mailchimp',
-			'campaign_monitor' => 'Campaign Monitor',
-			'convertkit'       => 'ConvertKit',
-			'drip'             => 'Drip',
-		);
+		$all_connections       = Noptin_COM::get_integrations();
 
 		foreach ( $all_connections as $key => $connection ) {
 
+			$key            = sanitize_key( $key );
+			$name           = sanitize_text_field( $connection->title );
+			$href           = esc_url( $connection->href );
 			$fields[ $key ] = array(
 				'el'       => 'panel',
-				'title'    => $connection,
+				'title'    => $name,
 				'id'       => $key,
 				'children' => array(
 					"{$key}text" => array(
 						'el'      => 'paragraph',
 						'content' => sprintf(
 							esc_html__( 'Install the %s to add new subscribers to %s.', 'newsletter-optin-box' ),
-							sprintf( '<a target="_blank" href="https://noptin.com/product/' . str_replace( '_', '-', $key ) . '/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> ' . $connection . ' addon</a>', get_home_url() ),
-							$connection
+							'<a target="_blank" href="' . $href . '"> ' . $name . ' addon</a>',
+							$name
 						),
 						'style'   => 'color:#F44336;',
 					),
