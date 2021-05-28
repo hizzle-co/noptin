@@ -392,6 +392,9 @@ class Noptin_New_Post_Notify {
 			$post['meta_input']['preview_text'] = sanitize_text_field( stripslashes_deep( $preview ) );
 		}
 
+		$post['post_title']                 = add_noptin_merge_tags( $post['post_title'], $post['meta_input']['custom_merge_tags'], false, false );
+		$post['post_content']               = add_noptin_merge_tags( $post['post_content'], $post['meta_input']['custom_merge_tags'], false, false );
+		$post['meta_input']['preview_text'] = add_noptin_merge_tags( $post['meta_input']['preview_text'], $post['meta_input']['custom_merge_tags'], false, false );
 		$post = apply_filters( 'noptin_mailer_new_post_automation_campaign_details', $post );
 
 		// Send normal campaign.

@@ -473,6 +473,13 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	public function send_campaign( $post ) {
 
+		log_noptin_message(
+			sprintf(
+				__( 'Sending the campaign: "%s"', 'newsletter-optin-box' ),
+				sanitize_text_field( $post->post_title )
+			)
+		);
+
 		$noptin = noptin();
 
 		$item = array(
