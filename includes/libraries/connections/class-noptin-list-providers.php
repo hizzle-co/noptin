@@ -69,6 +69,24 @@ abstract class Noptin_List_Providers {
 	}
 
 	/**
+     * Empties the cache.
+     *
+     */
+    public function empty_cache() {
+		global $wpdb;
+
+		delete_transient( $this->get_cache_key( 'list_ids' ) );
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s;",
+				$wpdb->esc_like( $this->get_cache_key( 'list' ) ) . '%'
+			)
+		);
+
+	}
+
+	/**
      * Get list ID's
      *
      * @param bool $force Do not retrieve from the cache.
@@ -98,7 +116,7 @@ abstract class Noptin_List_Providers {
 	 *
 	 * @param bool $force Do not retrieve from the cache.
 	 * @since 1.5.1
-	 * @return Noptin_List_Provider[]
+	 * @return string[]
 	 */
 	public function get_dropdown_lists( $force = false ) {
 
@@ -109,6 +127,36 @@ abstract class Noptin_List_Providers {
 		}
 
 		return $lists;
+	}
+
+	/**
+	 * Returns a list type for use in a dropdown.
+	 *
+	 * @since 1.5.1
+	 * @return string[]
+	 */
+	public function get_dropdown( $list_type ) {
+		return array();
+	}
+
+	/**
+	 * Adds a subscriber to the given secondary lists.
+	 *
+	 * @since 1.5.1
+	 * @param Noptin_Subscriber $subscriber
+	 * @param string $secondary_list
+	 * @param string $list_type
+	 */
+	public function add_to( $subscriber, $secondary_list, $list_type ) {}
+
+	/**
+	 * Retrieves secondary lists.
+	 *
+	 * @return array
+	 * @since 1.5.1
+	 */
+	public function get_secondary() {
+		return array();
 	}
 
 	/**

@@ -82,13 +82,15 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		// New subscribers.
 		add_action( 'noptin_insert_subscriber', array( $this, 'add_subscriber'), $this->priority, 2 );
 
+		add_filter( 'noptin_single_integration_settings', array( $this, 'add_list_options' ), $this->priority, 3 );
+
 		// Send campaigns.
 		if ( $this->supports( 'campaigns' ) ) {
 			add_filter( 'add_meta_boxes_noptin_newsletters', array( $this, 'register_newsletter_recipients_filter_meta_box' ), $this->priority );
 			add_filter( 'add_meta_boxes_noptin_automations_post_notifications', array( $this, 'register_automation_recipients_filter_meta_box' ), $this->priority );
 			add_filter( 'noptin_save_newsletter_campaign_details', array( $this, 'save_newsletter_recipients' ), $this->priority );
 			add_filter( 'noptin_mailer_new_post_automation_campaign_details', array( $this, 'filter_new_post_data' ), $this->priority );
-			add_filter( 'noptin_should_send_campaign', array( $this, 'send_via_provider' ), $this->priority, 10, 2 );
+			add_filter( 'noptin_should_send_campaign', array( $this, 'send_via_provider' ), $this->priority, 2 );
 		}
 
 	}
@@ -107,6 +109,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		if ( $this->supports( 'tags' ) ) {
 			$automation_rules->add_action( new Noptin_Connection_Provider_Add_Tags_Action( $this ) );
 			$automation_rules->add_action( new Noptin_Connection_Provider_Remove_Tags_Action( $this ) );
+		}
+
+		foreach ( $this->list_providers->get_secondary() as $secondary => $is_universal ) {
+			$automation_rules->add_action( new Noptin_Connection_Provider_Add_Secondary_List_Action( $this, $secondary, $is_universal ) );
 		}
 
 	}
@@ -129,13 +135,29 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		$integration_data = empty( $data[ $this->slug ] ) ? array() : $data[ $this->slug ];
 		$lists            = empty( $integration_data['lists'] ) ? $this->get_default_list_id() : $integration_data['lists'];
 
-		if ( empty( $lists ) || '-1' == $lists ) {
-			return;
-		}
-
 		if ( ! is_array( $lists ) ) {
 			$lists = array( $lists );
 		}
+
+		if ( empty( $lists ) || in_array( '-1', $lists ) ) {
+			return;
+		}
+
+		$integration_data['double_optin'] = $this->enabled_double_optin();
+
+		foreach ( array_keys( $this->list_providers->get_secondary() ) as $secondary ) {
+
+			if ( empty( $integration_data[ $secondary ] ) ) {
+				$integration_data[ $secondary ] = noptin_parse_list( get_noptin_option( "noptin_{$this->slug}_default_{$secondary}", '' ), true );
+			}
+
+		}
+
+		if ( empty( $integration_data['tags'] ) ) {
+			$integration_data['tags'] = noptin_parse_list( get_noptin_option( "noptin_{$this->slug}_default_tags", '' ), true );
+		}
+
+		$integration_data['tags'] = is_array( $integration_data['tags'] ) ? array_filter( $integration_data['tags'] ) : array();
 
 		// Add the subscriber to the list(s).
 		try {
@@ -153,10 +175,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				$this->list_providers->tag_subscriber( $noptin_subscriber, $integration_data['tags'] );
 			}
 
-        } catch ( Exception $ex ) {
+		} catch ( Exception $ex ) {
 			$this->last_error = $ex->getMessage();
-            log_noptin_message( $ex->getMessage() );
-        }
+			log_noptin_message( $ex->getMessage() );
+		}
 
 	}
 
@@ -178,49 +200,81 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			$data[ $this->slug ] = array();
 		}
 
-        $form = $subscriber->get( '_subscriber_via' );
-        if( ! $form || ! is_numeric( $form ) ) {
-            return $data;
-        }
+		$form = $subscriber->get( '_subscriber_via' );
 
-        $form = absint( $form );
-        $form = noptin_get_optin_form( $form );
+		if ( empty( $form ) ) {
+			return $data;
+		}
 
-        // Ensure the form exists.
-        if ( ! $form->is_published() ) {
-            return $data;
-        }
+		if ( ! is_numeric( $form ) ) {
+			$list = get_noptin_option( sanitize_text_field( "noptin_{$this->slug}_{$form}_default_list" ) );
+			$tags = get_noptin_option( sanitize_text_field( "noptin_{$this->slug}_{$form}_default_tags" ) );
+
+			// Suscriber tags.
+			if ( $this->supports( 'tags' ) && ! isset( $data[ $this->slug ]['tags'] ) && ! empty( $tags ) ) {
+				$data[ $this->slug ]['tags'] = array_map( 'trim', explode( ',', $tags ) );
+			}
+
+			// Suscriber list.
+			if ( ! isset( $data[ $this->slug ]['lists'] ) && ! empty( $list ) ) {
+				$data[ $this->slug ]['lists'] = array_map( 'trim', explode( ',', $list ) );
+			}
+
+			foreach ( array_keys( $this->list_providers->get_secondary() ) as $secondary ) {
+				$defaults = noptin_parse_list( get_noptin_option( "noptin_{$this->slug}_default_{$secondary}", '' ), true );
+				$data[ $this->slug ][ $secondary ] = noptin_clean( $defaults );
+			}
+
+			return $data;
+		}
+
+		$form = absint( $form );
+		$form = noptin_get_optin_form( $form );
+
+		// Ensure the form exists.
+		if ( ! $form->is_published() ) {
+			return $data;
+		}
 
 		// Merge fields.
 		$fields = array();
-        foreach ( $form->fields  as $field ) {
+		foreach ( $form->fields  as $field ) {
 
-            if ( empty( $field[ $this->slug ] ) ) {
-                continue;
-            }
+			if ( empty( $field[ $this->slug ] ) ) {
+				continue;
+			}
 
-            $remote = trim( $field[ $this->slug ] );
-            $name   = trim( $field['type']['name'] );
+			$remote = trim( $field[ $this->slug ] );
+			$name   = trim( $field['type']['name'] );
 
-            if ( ! empty( $remote ) && ! empty( $subscriber->$name ) ) {
+			if ( ! empty( $remote ) && ! empty( $subscriber->$name ) ) {
 				$fields[ $remote ] = $subscriber->$name;
-            }
+			}
 
-        }
+		}
 
 		$data[ $this->slug ]['fields'] = $fields;
 
 		// Suscriber tags.
 		$tags = "{$this->slug}_tags";
-        if ( $this->supports( 'tags' ) && ! empty( $form->$tags ) ) {
-            $data[ $this->slug ]['tags'] = array_map( 'trim', explode( ',', $form->$tags ) );
-        }
+		if ( $this->supports( 'tags' ) && ! empty( $form->$tags ) ) {
+			$data[ $this->slug ]['tags'] = array_map( 'trim', explode( ',', $form->$tags ) );
+		}
 
 		// Suscriber list.
 		$list = "{$this->slug}_list";
-        if ( ! empty( $form->$list ) ) {
-            $data[ $this->slug ]['lists'] = array_map( 'trim', explode( ',', $form->$list ) );
-        }
+		if ( ! empty( $form->$list ) ) {
+			$data[ $this->slug ]['lists'] = array_map( 'trim', explode( ',', $form->$list ) );
+		}
+
+		foreach ( array_keys( $this->list_providers->get_secondary() ) as $secondary ) {
+			$key = "{$this->slug}_{$secondary}";
+
+			if ( ! empty( $form->$key ) ) {
+				$data[ $this->slug ][ $secondary ] = noptin_parse_list ( $form->$key, true );
+			}
+
+		}
 
 		return $data;
 	}
@@ -258,7 +312,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 		$slug    = $this->slug;
 		$options = $this->add_enable_integration_option( array() );
-		$options = $this->add_connection_options( $options );
+
+		if ( ! $this->supports( 'oauth' ) ) {
+			$options = $this->add_connection_options( $options );
+		}
 
 		if ( $this->is_connected() ) {
 
@@ -290,12 +347,51 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 			}
 
+			// Tags.
+			if ( $this->supports( 'tags' ) ) {
+
+				$options["noptin_{$slug}_default_tags"] = array(
+					'el'                    => 'input',
+					'section'		        => 'integrations',
+					'label'                 => __( 'Default tags', 'newsletter-optin-box' ),
+					'description'           => __( 'Enter a comma separated list of default tags to assign new suscribers.', 'newsletter-optin-box' ),
+					'restrict'              => $this->get_enable_integration_option_name(),
+					'placeholder' => 'tag 1, tag 2',
+				);
+
+			}
+
+			foreach ( $this->list_providers->get_secondary() as $secondary => $is_universal ) {
+
+				if ( $is_universal ) {
+
+					$options["noptin_{$slug}_default_{$secondary}"] = array(
+						'el'          => 'multiselect',
+						'label'       => sprintf( __( 'Default %s', 'newsletter-optin-box' ), $secondary ),
+						'options'     => $this->list_providers->get_dropdown( $secondary ),
+					);
+
+				} else {
+
+					$options["noptin_{$slug}_default_{$secondary}"] = array(
+						'el'          => 'input',
+						'label'       => sprintf( __( 'Default %s (ids)', 'newsletter-optin-box' ), $secondary ),
+					);
+
+				}
+
+			}
+
 			// Extra integration options.
 			$options = $this->get_options( $options );
 
 		}
 
 		$options = apply_filters( "noptin_single_integration_settings", $options, $slug, $this );
+
+		if ( $this->supports( 'oauth' ) ) {
+			$options = $this->add_connection_options( $options );
+		}
 
 		$_options["settings_section_$slug"] = array(
 			'id'          => "settings_section_$slug",
@@ -418,7 +514,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 	}
 
-    /**
+	/**
 	 * Registers the automation recipients list filter box.
 	 *
 	 */
@@ -435,23 +531,45 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	}
 
 	/**
+	 * Retrieves extra campaign data.
+	 *
+	 * @param null|WP_Post $campaign
+	 */
+	public function get_extra_campaign_data( $campaign ) {
+
+		if ( empty( $campaign ) ) {
+			return array();
+		}
+
+		$extra_key = sanitize_key( 'noptin_' . $this->slug . '_extra' );
+		$extra     = is_object( $campaign ) ? get_post_meta( $campaign->ID, $extra_key, true ) : array();
+
+		if ( ! is_array( $extra ) ) {
+			return array();
+		}
+
+		return $extra;
+	}
+
+	/**
 	 * Displays a newsletter recipients meta box.
 	 *
 	 * @param null|WP_Post $campaign
 	 */
 	public function render_newsletter_metabox( $campaign ) {
-		$key      = sanitize_key( 'noptin_' . $this->slug . '_list' );
-		$list     = is_object( $campaign ) ? get_post_meta( $campaign->ID, $key, true ) : '';
-		$tags_key = sanitize_key( 'noptin_' . $this->slug . '_tags' );
-		$tags     = is_object( $campaign ) ? get_post_meta( $campaign->ID, $tags_key, true ) : '';
+		$key       = sanitize_key( 'noptin_' . $this->slug . '_list' );
+		$list      = is_object( $campaign ) ? get_post_meta( $campaign->ID, $key, true ) : '';
+		$tags_key  = sanitize_key( 'noptin_' . $this->slug . '_tags' );
+		$tags      = is_object( $campaign ) ? get_post_meta( $campaign->ID, $tags_key, true ) : '';
+		$extra     = $this->get_extra_campaign_data( $campaign );
 		?>
 
-			<div style="margin: 16px 0;">
+			<div style="margin: 16px 0;" class="noptin-<?php echo esc_attr( $this->slug );?>-list">
 
 				<label style="display: block;">
 					<strong><?php echo esc_html( ucwords( $this->list_providers->get_name() ) ); ?></strong>
-					<select name="<?php echo $key; ?>" style="width: 100%;">
-						<option value="" <?php selected( empty( $list ) ) ?>><?php _e( 'Do not send', 'newsletter-optin-box' );?></option>
+					<select name="<?php echo $key; ?>" style="width: 100%;" class="list-select">
+						<option value="0" <?php selected( empty( $list ) ) ?>><?php _e( 'Do not send', 'newsletter-optin-box' );?></option>
 						<?php foreach ( $this->list_providers->get_dropdown_lists() as $id => $name ) :?>
 							<option value="<?php echo esc_attr( $id ) ?>" <?php selected( $id, $list ) ?>><?php echo esc_html( $name );?></option>
 						<?php endforeach; ?>
@@ -466,8 +584,43 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 					</label>
 				<?php endif; ?>
 
+				<?php foreach ( $this->list_providers->get_lists() as $_list ) : ?>
+					<?php foreach ( $_list->get_children() as $child_id => $child ) : ?>
+						<?php $value = isset( $extra[ $_list->get_id() ][ $child_id ] ) ? $extra[ $_list->get_id() ][ $child_id ] : ''?>
+						<div class="noptin-filter-list noptin-<?php echo esc_attr( $this->slug );?>-filter-list noptin-list-<?php echo esc_attr( $_list->get_id() ) ?>">
+							<label><strong><?php echo esc_html( $child['label'] ); ?></strong>
+								<select name="noptin_<?php echo esc_attr( $this->slug );?>_extra[<?php echo esc_attr( $_list->get_id() );?>][<?php echo esc_attr( $child_id );?>]" style="width: 100%;">
+									<option <?php selected( empty( $value ) ) ?> value='0'>
+										<?php _e( 'All', 'newsletter-optin-box' ); ?>
+									</option>
+									<?php foreach ( $child['options'] as $id => $name ) { ?>
+										<option <?php selected( $value, $id ) ?> value='<?php echo esc_attr( $id );?>'>
+											<?php echo sanitize_text_field( $name ); ?>
+										</option>
+									<?php } ?>
+								</select>
+							</label>
+						</div>
+					<?php endforeach; ?>
+				<?php endforeach; ?>
 			</div>
 
+			<script>
+				var sync = function() {
+
+					var parent   = jQuery('.noptin-<?php echo esc_js( $this->slug );?>-list')
+					var selected = parent.find( '.list-select' ).val()
+
+					// Hide list filter options.
+					parent.find('.noptin-<?php echo esc_attr( $this->slug );?>-filter-list').hide()
+
+					// Show available filters.
+					parent.find( '.noptin-list-' + selected ).show()
+
+				}
+				sync()
+				jQuery('.noptin-<?php echo esc_js( $this->slug );?>-list .list-select').on( 'change', sync )
+			</script>
 		<?php
 	}
 
@@ -492,8 +645,13 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			$campaign['meta_input'][ $tags_key ]  = $tags;
 		}
 
+		$key   = sanitize_key( 'noptin_' . $this->slug . '_extra' );
+		$extra = empty( $_POST[ $key ] ) ? array() : sanitize_text_field( $_POST[ $key ] );
+
+		$campaign['meta_input'][ $key ]  = $extra;
+
 		return $campaign;
-    }
+	}
 
 	/**
 	 * Filters new post notification data.
@@ -505,9 +663,11 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		$key         = sanitize_key( 'noptin_' . $this->slug . '_list' );
 		$list        = get_post_meta( $campaign_id, $key, true );
 
-		if ( ! empty( $list ) ) {
-			$campaign_data['meta_input'][ $key ]  = $list;
+		if ( empty( $list ) ) {
+			return $campaign_data;
 		}
+
+		$campaign_data['meta_input'][ $key ] = $list;
 
 		$tags_key = sanitize_key( 'noptin_' . $this->slug . '_tags' );
 		$tags     = get_post_meta( $campaign_id, $tags_key, true );
@@ -516,8 +676,15 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			$campaign_data['meta_input'][ $tags_key ]  = $tags;
 		}
 
+		$key   = sanitize_key( 'noptin_' . $this->slug . '_extra' );
+		$extra = get_post_meta( $campaign_id, $key, true );
+
+		if ( ! empty( $extra ) ) {
+			$campaign_data['meta_input'][ $key ]  = $extra;
+		}
+
 		return $campaign_data;
-    }
+	}
 
 	/**
 	 * Sends the newsletter via this connection.
@@ -549,6 +716,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 		$tags_key = sanitize_key( 'noptin_' . $this->slug . '_tags' );
 		$tags     = get_post_meta( $campaign['campaign_id'], $tags_key, true );
+
+		$extra_key = sanitize_key( 'noptin_' . $this->slug . '_extra' );
+		$extra     = get_post_meta( $campaign['campaign_id'], $extra_key, true );
+
 		$post     = get_post( $campaign['campaign_id'] );
 
 		$campaign['custom_merge_tags']['unsubscribe_url'] = 'http://temporaryunsubscribe.com';
@@ -560,25 +731,137 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			'preview_text'  => get_post_meta( $campaign['campaign_id'], 'preview_text', true ),
 		);
 
+		if ( $this->supports( 'overide_footers' ) ) {
+			$campaign_data['permission_text'] = '';
+			$campaign_data['footer_text'] = '';
+		}
+
 		$strip_tags       = noptin()->mailer->strip_tags;
 
 		noptin()->mailer->strip_tags = true;
 
-		$campaign         = noptin()->mailer->prepare( $campaign_data );
-		$campaign['tags'] = $tags;
+		$campaign          = noptin()->mailer->prepare( $campaign_data );
+		$campaign['tags']  = $tags;
+		$campaign['extra'] = $extra;
 
 		$campaign['email_body'] = str_replace( 'http://temporaryunsubscribe.com', $this->get_unsubscribe_tag(), $campaign['email_body'] );
 
 		noptin()->mailer->strip_tags = $strip_tags;
 
 		$list->send_campaign( $campaign );
-    }
+	}
 
 	/**
 	 * Returns the unsubscription tag.
 	 *
 	 * @since 1.5.1
 	 */
-	abstract public function get_unsubscribe_tag();
+	public function get_unsubscribe_tag() {
+		return '[[unsubscribe_url]]';
+	}
+
+	/**
+	 * Registers list options.
+	 *
+	 * @since 1.5.1
+	 * @param array $options
+	 * @param string $slug
+	 * @param Noptin_Abstract_Integration $integration
+	 */
+	public function add_list_options( $options, $slug, $integration ) {
+
+		if ( $integration->integration_type == 'normal' || $integration->integration_type == 'ecommerce' ) {
+
+			$via       = str_replace( '_form', '', $slug );
+			$via      .= $integration->integration_type == 'ecommerce' ? '_checkout' : '';
+
+			$option    = sanitize_text_field( "noptin_{$this->slug}_{$via}_default_list" );
+
+			$options[ $option ]  = array(
+				'el'          => 'select',
+				'section'     => 'integrations',
+				'label'       => sprintf(
+					'%s %s',
+					$this->name,
+					$this->list_providers->get_name()
+				),
+				'restrict'    => sprintf(
+					'%s && %s',
+					$this->get_enable_integration_option_name(),
+					$integration->get_enable_integration_option_name()
+				),
+				'options'     => $this->list_providers->get_dropdown_lists(),
+				'description' => sprintf( __( 'New subscribers will be added to this %s', 'newsletter-optin-box' ), $this->list_providers->get_name() ),
+				'placeholder' => sprintf( __( 'Select a %s', 'newsletter-optin-box' ), $this->list_providers->get_name() ),
+			);
+
+			if ( $this->supports( 'tags' ) ) {
+
+				$option    = sanitize_text_field( "noptin_{$this->slug}_{$via}_default_tags" );
+
+				$options[ $option ]  = array(
+					'el'          => 'input',
+					'section'     => 'integrations',
+					'label'       => sprintf( __( '%s tags', 'newsletter-optin-box' ), $this->name ),
+					'description' => __( 'Enter a comma separated list of tags to assign new suscribers.', 'newsletter-optin-box' ) ,
+					'placeholder' => 'tag 1, tag 2',
+					'restrict'    => sprintf(
+						'%s && %s',
+						$this->get_enable_integration_option_name(),
+						$integration->get_enable_integration_option_name()
+					),
+				);
+
+			}
+
+			foreach ( $this->list_providers->get_secondary() as $secondary => $is_universal ) {
+
+				$option    = sanitize_text_field( "noptin_{$this->slug}_{$via}_default_{$secondary}" );
+
+				if ( $is_universal ) {
+
+					$options[ $option ]  = array(
+						'el'          => 'multiselect',
+						'section'     => 'integrations',
+						'label'       => sprintf(
+							'%s %s',
+							$this->name,
+							$secondary
+						),
+						'restrict'    => sprintf(
+							'%s && %s',
+							$this->get_enable_integration_option_name(),
+							$integration->get_enable_integration_option_name()
+						),
+						'options'     => $this->list_providers->get_dropdown( $secondary ),
+						'description' => sprintf( __( 'New subscribers will be added to this %s', 'newsletter-optin-box' ), $secondary ),
+					);
+
+				} else {
+
+					$options[ $option ]  = array(
+						'el'          => 'input',
+						'section'     => 'integrations',
+						'label'       => sprintf(
+							'%s %s',
+							$this->name,
+							$secondary
+						),
+						'description' => __( 'New subscribers will be added to here', 'newsletter-optin-box' ),
+						'restrict'    => sprintf(
+							'%s && %s',
+							$this->get_enable_integration_option_name(),
+							$integration->get_enable_integration_option_name()
+						),
+					);
+
+				}
+
+			}
+
+		}
+
+		return $options;
+	}
 
 }

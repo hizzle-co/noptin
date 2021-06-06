@@ -106,7 +106,7 @@ var settingsApp = new Vue({
 						.show()
 						.html(`<p>${saved}</p>`)
 
-					document.location = document.location.href + "&tab=" + this.currentTab;
+						window.location.href = window.location.href.split('#')[0] + "&tab=" + this.currentTab;
 				})
 
 				//Else alert the user about the error.

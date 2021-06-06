@@ -195,6 +195,9 @@ class Noptin_Admin {
 			remove_action( 'admin_enqueue_scripts', array( $aui, 'enqueue_style' ), 1 );
 		}
 
+		// And EDD too.
+		add_filter( 'edd_load_admin_scripts', '__return_false', 1000 );
+
 		// Sweetalert https://sweetalert2.github.io/.
 		wp_enqueue_script( 'promise-polyfill', $this->assets_url . 'vendor/sweetalert/promise-polyfill.min.js', array(), '8.1.3' );
 		wp_enqueue_script( 'sweetalert2', $this->assets_url . 'vendor/sweetalert/sweetalert2.all.min.js', array( 'promise-polyfill' ), '9.6.0', true );
@@ -208,7 +211,7 @@ class Noptin_Admin {
 		wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
 
 		// Vue js.
-		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.min.js', array(), '2.6.11', true );
+		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
 		wp_enqueue_media();
@@ -1113,11 +1116,8 @@ class Noptin_Admin {
 		exit; // This is important.
 	}
 
-
-
-
 	/**
-	 * Retrieves the subscribers list,, limited to 100
+	 * Retrieves the subscribers list, limited to 100
 	 *
 	 * @param       int    $page The page to retrieve.
 	 * @param       string $meta_key Filter subscribers by a meta key.
@@ -1446,7 +1446,7 @@ class Noptin_Admin {
 				continue;
 			}
 
-			$class = esc_attr( "notice notice-$type is-dismissible" );
+			$class = esc_attr( "notice notice-$type noptin-notice is-dismissible" );
 			foreach ( $messages as $message ) {
 				echo "<div class='$class'><p>$message</p></div>";
 			}

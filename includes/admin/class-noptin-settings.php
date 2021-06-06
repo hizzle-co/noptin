@@ -156,7 +156,7 @@ class Noptin_Settings {
 
 			if ( ! empty( $args['el'] ) && 'settings_section' === $args['el'] ) {
 
-				foreach ( $args['children'] as $args ) {
+				foreach ( $args['children'] as $key => $args ) {
 					$default       = isset( $args['default'] ) ? $args['default'] : '';
 					$state[ $key ] = get_noptin_option( $key, $default );
 				}
@@ -170,7 +170,7 @@ class Noptin_Settings {
 
 		$state = array_merge( get_noptin_options(), $state );
 
-		$state['openSections']   = array();
+		$state['openSections']   = isset( $_GET['integration'] ) ? array( 'settings_section_' . noptin_clean( $_GET['integration'] ) ) : array();
 		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
 		$state['currentSection'] = 'main';
 		$state['saved']          = __( 'Your settings have been saved', 'newsletter-optin-box' );
@@ -467,7 +467,7 @@ class Noptin_Settings {
 
 		foreach ( Noptin_COM::get_integrations() as $slug => $data ) {
 
-			$slug = sanitize_key( $slug );
+			$slug = sanitize_key( str_replace( '-', '_', $slug ) );
 
 			if ( isset( $integration_settings["settings_section_$slug"] ) ) {
 				continue;

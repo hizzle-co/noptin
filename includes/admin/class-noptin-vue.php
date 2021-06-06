@@ -21,6 +21,7 @@ class Noptin_Vue {
 		add_action( 'noptin_render_editor_panel', array( __CLASS__, 'panel' ), 10, 2 );
 		add_action( 'noptin_render_editor_radio', array( __CLASS__, 'radio' ), 10, 2 );
 		add_action( 'noptin_render_editor_radio_button', array( __CLASS__, 'radio_button' ), 10, 2 );
+		add_action( 'noptin_render_editor_button', array( __CLASS__, 'button' ), 10, 2 );
 		add_action( 'noptin_render_editor_paragraph', array( __CLASS__, 'paragraph' ), 10, 2 );
 		add_action( 'noptin_render_editor_hero', array( __CLASS__, 'hero' ), 10, 2 );
 		add_action( 'noptin_render_editor_textarea', array( __CLASS__, 'textarea' ), 10, 2 );
@@ -246,6 +247,23 @@ class Noptin_Vue {
 	}
 
 	/**
+	 * Renders buttons
+	 */
+	public static function button( $id, $field ) {
+
+		printf(
+			'<a %s %s class="button %s" href="%s">%s %s</a>',
+			$field['restrict'],
+			$field['attrs'],
+			$field['_class'],
+			$field['url'],
+			$field['label'],
+			$field['tooltip']
+		);
+
+	}
+
+	/**
 	 * Renders paragraph
 	 */
 	public static function paragraph( $id, $field ) {
@@ -461,10 +479,16 @@ class Noptin_Vue {
 			if ( $connection->supports( 'universal_fields' ) ) {
 
 				// Field args.
-				$args  = array(
+				$fields = $connection->list_providers->get_fields();
+
+				if ( empty( $fields ) ) {
+					continue;
+				}
+
+				$args   = array(
 					'el'          => 'select',
 					'label'       => $label,
-                    'options'     => $connection->list_providers->get_fields(),
+                    'options'     => $fields,
 					'restrict'    => "field.type.type=='$type'",
 					'placeholder' => $placeholder,
 				);
@@ -485,11 +509,12 @@ class Noptin_Vue {
 				}
 
 				// Field args.
+				$_list = $list->get_id();
 				$args  = array(
 					'el'          => 'select',
 					'label'       => $label,
                     'options'     => $fields,
-					'restrict'    => "field.type.type=='$type' && $list_field=='$list'",
+					'restrict'    => "field.type.type=='$type' && $list_field=='$_list'",
 					'placeholder' => $placeholder,
 				);
 

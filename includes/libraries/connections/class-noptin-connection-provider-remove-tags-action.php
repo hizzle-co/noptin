@@ -16,177 +16,176 @@ defined( 'ABSPATH' ) || exit;
  */
 class Noptin_Connection_Provider_Remove_Tags_Action extends Noptin_Abstract_Action {
 
-    /**
-     * The connection provider.
-     * @var Noptin_Connection_Provider
-     */
-    protected $provider;
+	/**
+	 * The connection provider.
+	 * @var Noptin_Connection_Provider
+	 */
+	protected $provider;
 
-    /**
-     * Constructor.
-     *
-     * @since 1.5.1
-     * @param Noptin_Connection_Provider $connection_provider
-     * @return void
-     */
-    public function __construct( $connection_provider ) {
-        $this->provider = $connection_provider;
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.5.1
+	 * @param Noptin_Connection_Provider $connection_provider
+	 * @return void
+	 */
+	public function __construct( $connection_provider ) {
+		$this->provider = $connection_provider;
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function get_id() {
-        return sprintf(
-            'remove-%s-tags',
-            $this->provider->slug
-        );
-    }
+	/**
+	 * @inheritdoc
+	 */
+	public function get_id() {
+		return sprintf(
+			'remove-%s-tags',
+			$this->provider->slug
+		);
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function get_name() {
-        return sprintf(
-            __( '%s Untag Subscriber', 'newsletter-optin-box' ),
-            $this->provider->name
-        );
-    }
+	/**
+	 * @inheritdoc
+	 */
+	public function get_name() {
+		return sprintf(
+			__( '%s Untag Subscriber', 'newsletter-optin-box' ),
+			$this->provider->name
+		);
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function get_description() {
-        return sprintf(
-            __( 'Untag the subscriber in %s', 'newsletter-optin-box' ),
-            $this->provider->name
-        );
-    }
+	/**
+	 * @inheritdoc
+	 */
+	public function get_description() {
+		return sprintf(
+			__( 'Untag the subscriber in %s', 'newsletter-optin-box' ),
+			$this->provider->name
+		);
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function get_rule_description( $rule ) {
+	/**
+	 * @inheritdoc
+	 */
+	public function get_rule_description( $rule ) {
 
-        $settings = $rule->action_settings;
+		$settings = $rule->action_settings;
 
-        if ( empty( $settings['tags'] ) ) {
-            return $this->get_description();
-        }
+		if ( empty( $settings['tags'] ) ) {
+			return $this->get_description();
+		}
 
-        $tags = sanitize_text_field( $settings['tags'] );
+		$tags = sanitize_text_field( $settings['tags'] );
 
-        return sprintf(
-            __( 'Untag the subscriber: "%s"', 'newsletter-optin-box' ),
-            "<code>$tags</code> ({$this->provider->name})"
-        );
+		return sprintf(
+			__( 'Untag the subscriber: "%s"', 'newsletter-optin-box' ),
+			"<code>$tags</code> ({$this->provider->name})"
+		);
 
-    }
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function get_image() {
-        return '';
-    }
+	/**
+	 * @inheritdoc
+	 */
+	public function get_image() {
+		return '';
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function get_keywords() {
-        return array(
-            'noptin',
-            $this->provider->slug,
-            'remove',
-            'tags'
-        );
-    }
+	/**
+	 * @inheritdoc
+	 */
+	public function get_keywords() {
+		return array(
+			'noptin',
+			$this->provider->slug,
+			'remove',
+			'tags'
+		);
+	}
 
-    /**
-     * @inheritdoc
-     */
-    public function get_settings() {
+	/**
+	 * @inheritdoc
+	 */
+	public function get_settings() {
 
-        $settings = array(
+		$settings = array(
 
-            'list'     => array(
+			'list'     => array(
 				'el'          => 'select',
-				'label'       => __( 'List', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Select a list', 'newsletter-optin-box' ),
+				'label'       => $this->provider->list_providers->get_name(),
+				'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),
 				'options'     => $this->provider->list_providers->get_dropdown_lists(),
-                'default'     => $this->provider->get_default_list_id(),
-				'description' => __( 'Select a list to use.', 'newsletter-optin-box' ),
-            ),
+				'default'     => $this->provider->get_default_list_id(),
+			),
 
-            'tags' => array(
+			'tags' => array(
 				'el'                => 'input',
 				'label'             => __( 'Tags', 'newsletter-optin-box' ),
 				'placeholder'       => 'tag, another tag',
 				'description'       => __( 'The listed tags will be removed from the subscriber. Separate multiple tags with a comma.', 'newsletter-optin-box' ),
 			)
 
-        );
+		);
 
-        if ( $this->provider->supports( 'universal_tags' ) ) {
-            unset( $settings['list'] );
-        }
+		if ( $this->provider->supports( 'universal_tags' ) ) {
+			unset( $settings['list'] );
+		}
 
-        return $settings;
+		return $settings;
 
-    }
+	}
 
-    /**
-     * Remove the subscriber from a list.
-     *
-     * @since 1.5.1
-     * @param Noptin_Subscriber $subscriber The subscriber.
-     * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-     * @param array $args Extra arguments passed to the action.
-     * @return void
-     */
-    public function run( $subscriber, $rule, $args ) {
+	/**
+	 * Remove the subscriber from a list.
+	 *
+	 * @since 1.5.1
+	 * @param Noptin_Subscriber $subscriber The subscriber.
+	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return void
+	 */
+	public function run( $subscriber, $rule, $args ) {
 
-        $settings = $rule->action_settings;
+		$settings = $rule->action_settings;
 
-        // Nothing to do here.
-        if ( empty( $settings['tags'] ) ) {
-            return;
-        }
+		// Nothing to do here.
+		if ( empty( $settings['tags'] ) ) {
+			return;
+		}
 
-        if ( ! $this->provider->supports( 'universal_tags' ) && empty( $settings['list'] ) ) {
-            return;
-        }
+		if ( ! $this->provider->supports( 'universal_tags' ) && empty( $settings['list'] ) ) {
+			return;
+		}
 
-        $tags = array_filter( noptin_clean( explode( ',', $settings['tags'] ) ) );
+		$tags = array_filter( noptin_clean( explode( ',', $settings['tags'] ) ) );
 
-        if ( empty( $tags ) ) {
-            return;
-        }
+		if ( empty( $tags ) ) {
+			return;
+		}
 
-        if ( $this->provider->supports( 'universal_tags' ) ) {
+		if ( $this->provider->supports( 'universal_tags' ) ) {
 
-            try {
-                $this->provider->list_providers->untag_subscriber( $subscriber, $tags );
-            } catch ( Exception $ex ) {
-                log_noptin_message( $ex->getMessage() );
-            }
+			try {
+				$this->provider->list_providers->untag_subscriber( $subscriber, $tags );
+			} catch ( Exception $ex ) {
+				log_noptin_message( $ex->getMessage() );
+			}
 
-            return;
-        }
+			return;
+		}
 
-        $list = sanitize_text_field( $settings['list'] );
-        $list = $this->provider->list_providers->get_list( $list );
+		$list = sanitize_text_field( $settings['list'] );
+		$list = $this->provider->list_providers->get_list( $list );
 
-        if ( empty( $list ) ) {
-            return;
-        }
+		if ( empty( $list ) ) {
+			return;
+		}
 
-        try {
-            $list->untag_subscriber( $subscriber, $tags );
-        } catch ( Exception $ex ) {
-            log_noptin_message( $ex->getMessage() );
-        }
+		try {
+			$list->untag_subscriber( $subscriber, $tags );
+		} catch ( Exception $ex ) {
+			log_noptin_message( $ex->getMessage() );
+		}
 
-    }
+	}
 
 }

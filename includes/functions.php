@@ -1068,14 +1068,22 @@ function noptin_locate_ip_address_alt( $ip_address ) {
  * @since 1.2.3
  *
  * @param array|string $list List of values.
+ * @param bool $strict Whether to only split on commas.
  * @return array Sanitized array of values.
  */
-function noptin_parse_list( $list ) {
+function noptin_parse_list( $list, $strict = false ) {
+
 	if ( ! is_array( $list ) ) {
-		return preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+
+		if ( $strict ) {
+			$list = preg_split( '/,+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+		} else {
+			$list = preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+		}
+
 	}
 
-	return $list;
+	return map_deep( $list, 'trim' );
 }
 
 /**
@@ -1717,20 +1725,46 @@ function noptin_convert_classic_template( $template ) {
 /**
  * Applies Noptin merge tags.
  *
+ * Noptin uses a fast logic-less templating engine to parse merge tags
+ * and insert them into content.
+ *
  * @param string $content
  * @param array $merge_tags
- * @param bool $strip_missing
  * @param bool $strict
+ * @param bool $strip_missing
  * @since 1.5.1
- * @ignore
- * @return Noptin_Connection_Provider[]
+ * @return string
  */
 function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_missing = true ) {
 
-	$merge_tags = $strict ? noptin_clean( $merge_tags ) : wp_kses_post_deep( $merge_tags );
+	$merge_tags     = $strict ? noptin_clean( $merge_tags ) : wp_kses_post_deep( $merge_tags );
+	$all_merge_tags = flatten_noptin_array( $merge_tags );
+
+	// Handle conditions.
+	preg_match_all( '/\[\[#(\w*)\]\](.*?)\[\[\/\1\]\]/s', $content, $matches );
+
+	if ( ! empty( $matches ) ) {
+
+		foreach ( $matches[1] as $i => $match ) {
+
+			if ( empty( $all_merge_tags[ $match ] ) ) {
+				$content = str_replace( $matches[0][ $i ], '', $content );
+			} else {
+				$content = str_replace( $matches[0][ $i ], $matches[2][ $i ], $content );
+			}
+
+		}
+
+	}
+
+	// TODO: Handle sections.
+	// {{#users}}
+	//    {{.}} // Useful for numeric arrays.
+	//	  {{name}} // Useful for multi-dimensional arrays.
+	// {{/users}}
 
 	// Replace all available tags with their values.
-	foreach ( $merge_tags as $key => $value ) {
+	foreach ( $all_merge_tags as $key => $value ) {
 		if ( is_scalar( $value ) ) {
 			$content = str_ireplace( "[[$key]]", $value, $content );
 		}
@@ -1738,9 +1772,46 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 
 	// Remove unavailable tags.
 	if ( $strip_missing ) {
-		$content = preg_replace( '/\[\[\w+]\]/', '',$content );
+		$content = preg_replace( '/\[\[\w+\]\]/', '',$content );
 	}
 
+	$content = preg_replace( '/ +([,.!])/s', '$1', $content );
+
 	return $content;
+
+}
+
+/**
+ * Flattens a multi-dimensional array containing merge tags.
+ *
+ *
+ * @param array $array
+ * @param string $prefix
+ * @since 1.5.1
+ * @return string[]
+ */
+function flatten_noptin_array( $array, $prefix = '' ) {
+	$result = array();
+
+	foreach ( $array as $key => $value ) {
+
+		$_prefix = '' == $prefix ? "$key" : "$prefix.$key";
+
+		if ( is_array( $value ) ) {
+			$result = array_merge( $result, flatten_noptin_array( $value , $_prefix ) );
+		} else if ( is_object( $value ) ) {
+			$result = array_merge( $result, flatten_noptin_array( get_object_vars( $value ), $_prefix ) );
+		} else {
+			$result[ $_prefix ] = $value;
+
+			if ( strpos( $_prefix, '.0' ) !== false ) {
+				$result[ str_replace( '.0', '', $_prefix ) ] = $value;
+			}
+
+		}
+
+	}
+
+	return $result;
 
 }

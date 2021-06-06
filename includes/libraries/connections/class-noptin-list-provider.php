@@ -87,4 +87,25 @@ abstract class Noptin_List_Provider {
 	 */
 	public function send_campaign( $campaign ) {}
 
+	/**
+	 * Retrieves children.
+	 *
+	 * @param array $campaign
+	 * @return array
+	 * @since 1.5.1
+	 */
+	public function get_children() {
+		return array();
+	}
+
+	/**
+	 * Adds a subscriber to the given secondary lists.
+	 *
+	 * @since 1.5.1
+	 * @param Noptin_Subscriber $subscriber
+	 * @param string $secondary_list
+	 * @param string $list_type
+	 */
+	public function add_to( $subscriber, $secondary_list, $list_type ) {}
+
 }

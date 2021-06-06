@@ -377,7 +377,7 @@ class Noptin_Form_Editor {
 
 		foreach ( $all_connections as $key => $connection ) {
 
-			$key            = sanitize_key( $key );
+			$key            = sanitize_key( str_replace( '-', '_', $key ) );
 			$name           = sanitize_text_field( $connection->title );
 			$href           = esc_url( $connection->href );
 			$fields[ $key ] = array(
