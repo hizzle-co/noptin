@@ -1751,15 +1751,33 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 				$content = str_replace( $matches[0][ $i ], '', $content );
 			} else {
 
+				$array       = array();
+				$multi_array = array();
+
+				foreach ( $all_merge_tags as $key => $value ) {
+
+					if ( false !== strpos( $key, $match ) ) {
+						$key = str_replace( $match . '.', '', $key );
+
+						if ( is_numeric( $key ) ) {
+							$array[] = $value;
+						} else {
+							$multi_array[ $key ] = $value;
+						}
+
+					}
+
+				}
+
 				// Fetched matched.
 				$matched = $matches[2][ $i ];
 
 				// Handle numeric arrays.
-				if ( isset( $all_merge_tags[ $match ][0] ) && is_scalar( $all_merge_tags[ $match ][0] ) ) {
-					$numeric = '<ul><li>' . implode( '</li><li>', $all_merge_tags ) . '</li></ul>';
-					$matched = str_replace( '[[.]]', $numeric, $matched );
+				if ( isset( $array[0] ) && is_scalar( $array[0] ) ) {
+					$array   = '<ul><li>' . implode( '</li><li>', $array ) . '</li></ul>';
+					$matched = str_replace( '[[.]]', $array, $matched );
 				} else {
-					$matched = add_noptin_merge_tags( $matched, $all_merge_tags[ $match ], $strict, false );
+					$matched = add_noptin_merge_tags( $matched, $multi_array, $strict, false );
 				}
 
 				$content = str_replace( $matches[0][ $i ], $matched, $content );
@@ -1778,7 +1796,7 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 
 	// Remove unavailable tags.
 	if ( $strip_missing ) {
-		$content = preg_replace( '/\[\[\w+\]\]/', '',$content );
+		$content = preg_replace( '/\[\[[\w\.]+\]\]/', '', $content );
 	}
 
 	$content = preg_replace( '/ +([,.!])/s', '$1', $content );
@@ -1802,6 +1820,8 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 	foreach ( $array as $key => $value ) {
 
 		$_prefix = '' == $prefix ? "$key" : "$prefix.$key";
+
+		$result[ $_prefix ] = 1;
 
 		if ( is_array( $value ) ) {
 			$result = array_merge( $result, flatten_noptin_array( $value , $_prefix ) );
