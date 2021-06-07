@@ -77,8 +77,8 @@
 					echo "<div $condition>";
 
 					if ( ! empty( $args['el'] ) && 'settings_section' === $args['el'] ) {
-
-						echo "<div id='noptin-settings-section-$id' class='noptin-settings-section' :class=\"{ open: isOpenPanel('$id') }\">";
+						$class = empty( $args['class'] ) ? '' : esc_attr( $args['class'] );
+						echo "<div id='noptin-settings-section-$id' class='noptin-settings-section $class' :class=\"{ open: isOpenPanel('$id') }\">";
 						echo    "<div class='noptin-section-header' @click=\"togglePanel('$id')\">
 									<div class='title'>
 										<span>{$args['heading']}</span>

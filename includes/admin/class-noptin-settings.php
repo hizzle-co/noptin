@@ -478,6 +478,7 @@ class Noptin_Settings {
 				$integration_settings["settings_section_$slug"] = array(
 					'id'          => "settings_section_$slug",
 					'el'          => 'settings_section',
+					'class'       => 'not-installed',
 					'children'    => array(
 						"noptin_{$slug}_install" => array(
 							'el'              => 'paragraph',

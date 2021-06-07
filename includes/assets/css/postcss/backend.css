@@ -1570,4 +1570,7 @@ a.no-campaign-create-new-campaign {
 		padding: 0;
 	}
 
+	&.not-installed .noptin-section-header {
+		opacity: 0.5
+	}
 }
