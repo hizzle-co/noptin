@@ -1750,18 +1750,24 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 			if ( empty( $all_merge_tags[ $match ] ) ) {
 				$content = str_replace( $matches[0][ $i ], '', $content );
 			} else {
-				$content = str_replace( $matches[0][ $i ], $matches[2][ $i ], $content );
+
+				// Fetched matched.
+				$matched = $matches[2][ $i ];
+
+				// Handle numeric arrays.
+				if ( isset( $all_merge_tags[ $match ][0] ) && is_scalar( $all_merge_tags[ $match ][0] ) ) {
+					$numeric = '<ul><li>' . implode( '</li><li>', $all_merge_tags ) . '</li></ul>';
+					$matched = str_replace( '[[.]]', $numeric, $matched );
+				} else {
+					$matched = add_noptin_merge_tags( $matched, $all_merge_tags[ $match ], $strict, false );
+				}
+
+				$content = str_replace( $matches[0][ $i ], $matched, $content );
 			}
 
 		}
 
 	}
-
-	// TODO: Handle sections.
-	// {{#users}}
-	//    {{.}} // Useful for numeric arrays.
-	//	  {{name}} // Useful for multi-dimensional arrays.
-	// {{/users}}
 
 	// Replace all available tags with their values.
 	foreach ( $all_merge_tags as $key => $value ) {
@@ -1802,6 +1808,15 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 		} else if ( is_object( $value ) ) {
 			$result = array_merge( $result, flatten_noptin_array( get_object_vars( $value ), $_prefix ) );
 		} else {
+
+			if ( false === $value ) {
+				$value = __( 'No', 'newsletter-optin-box' );
+			}
+
+			if ( true === $value ) {
+				$value = __( 'Yes', 'newsletter-optin-box' );
+			}
+
 			$result[ $_prefix ] = $value;
 
 			if ( strpos( $_prefix, '.0' ) !== false ) {

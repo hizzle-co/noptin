@@ -340,6 +340,9 @@ class Noptin_New_Post_Notify {
 		$tags['read_more_button']  = $this->read_more_button( $tags['post_url'] );
 		$tags['/read_more_button'] = '</a></div>';
 
+		// Metadata.
+		$tags['post_meta'] = map_deep( get_post_meta( $post->ID ), 'maybe_unserialize' );
+
 		return $tags;
 	}
 
