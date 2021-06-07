@@ -375,28 +375,30 @@ class Noptin_Form_Editor {
 		$available_connections = get_noptin_connection_providers();
 		$all_connections       = Noptin_COM::get_integrations();
 
-		foreach ( $all_connections as $key => $connection ) {
+		if ( empty( $available_connections ) ) {
+			foreach ( $all_connections as $key => $connection ) {
 
-			$key            = sanitize_key( str_replace( '-', '_', $key ) );
-			$name           = sanitize_text_field( $connection->title );
-			$href           = esc_url( $connection->href );
-			$fields[ $key ] = array(
-				'el'       => 'panel',
-				'title'    => $name,
-				'id'       => $key,
-				'children' => array(
-					"{$key}text" => array(
-						'el'      => 'paragraph',
-						'content' => sprintf(
-							esc_html__( 'Install the %s to add new subscribers to %s.', 'newsletter-optin-box' ),
-							'<a target="_blank" href="' . $href . '"> ' . $name . ' addon</a>',
-							$name
+				$key            = sanitize_key( str_replace( '-', '_', $key ) );
+				$name           = sanitize_text_field( $connection->title );
+				$href           = esc_url( $connection->href );
+				$fields[ $key ] = array(
+					'el'       => 'panel',
+					'title'    => $name,
+					'id'       => $key,
+					'children' => array(
+						"{$key}text" => array(
+							'el'      => 'paragraph',
+							'content' => sprintf(
+								esc_html__( 'Install the %s to add new subscribers to %s.', 'newsletter-optin-box' ),
+								'<a target="_blank" href="' . $href . '"> ' . $name . ' addon</a>',
+								$name
+							),
+							'style'   => 'color:#F44336;',
 						),
-						'style'   => 'color:#F44336;',
 					),
-				),
-			);
+				);
 
+			}
 		}
 
 		foreach ( $available_connections as $key => $connection ) {
@@ -416,6 +418,7 @@ class Noptin_Form_Editor {
 					'el'        => 'panel',
 					'title'     => $connection->name,
 					'id'        => $key,
+					'open'      => empty( $available_connections ),
 					'children'  => array(
 						"{$key}text"   => array(
 							'el'       => 'paragraph',
