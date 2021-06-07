@@ -411,6 +411,16 @@ class Noptin_Vue {
 		);
 
 		$field_types[] = array(
+			'label'            => __( 'Dropdown', 'newsletter-optin-box' ),
+			'name'             => 'dropdown',
+			'type'             => 'dropdown',
+			'supports_require' => true,
+			'supports_name'    => true,
+			'supports_label'   => true,
+			'supports_options' => true,
+		);
+
+		$field_types[] = array(
 			'label'            => __( 'Hidden', 'newsletter-optin-box' ),
 			'name'             => 'hidden',
 			'type'             => 'hidden',
@@ -456,6 +466,16 @@ class Noptin_Vue {
 			$label = __( 'Value', 'newsletter-optin-box' );
 			echo "<div class='noptin-text-wrapper' $v_if>
 					<label>$label<input type='text' v-model='field.type.value'/></label>
+				</div>";
+
+		}
+
+		// Field value.
+		if ( ! empty( $field_type['supports_options'] ) ) {
+
+			$label = __( 'Options', 'newsletter-optin-box' );
+			echo "<div class='noptin-textarea-wrapper' $v_if>
+					<label>$label<textarea v-model='field.type.options'/></textarea></label>
 				</div>";
 
 		}
@@ -563,6 +583,10 @@ class Noptin_Vue {
 		<input 		v-if="field.type.type=='hidden'" 		  :name='field.type.name' type="hidden" 	v-model="field.type.value"/>
 		<label 		v-if="field.type.type=='checkbox'"><input :name='field.type.name' type="checkbox"   value="1"   class="noptin-checkbox-form-field"  :required="field.require" /><span v-html='field.type.label'></span></label>
 		<textarea   v-if="field.type.type=='textarea'" 		  :name='field.type.name' 					class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require"></textarea>
+		<select     v-if="field.type.type=='dropdown'"          :name='field.type.name' class="noptin-form-field" :required="field.require">
+			<option>{{field.type.label}}</option>
+			<option v-for="(option, index) in field.type.options.split(',')" :key="index">{{option | optionize}}</option>
+		</select>
 		<?php
 	}
 
@@ -626,6 +650,27 @@ class Noptin_Vue {
 		// Textarea.
 		if ( 'textarea' === $field['type']['type'] ) {
 			echo "<textarea name='$name' class='noptin-form-field' placeholder='$label' $required></textarea>";
+		}
+
+		// Select.
+		if ( 'dropdown' === $field['type']['type'] ) {
+			echo "<select name='$name' class='noptin-form-field' $required>";
+			echo "<option selected='selected'>$label</option>";
+
+			foreach ( explode( ',', $field['type']['options'] ) as $option ) {
+
+				if ( empty( $option ) ) {
+					continue;
+				}
+
+				$option = explode( '|', $option );
+				$label  = sanitize_text_field( $option[0] );
+				$value  = isset( $option[1] ) ? sanitize_text_field( $option[1] ) : $label;
+
+				echo "<option value='$value'>$label</option>";
+			}
+
+			echo "</select>";
 		}
 
 	}

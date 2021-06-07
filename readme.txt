@@ -144,5 +144,6 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 * Ability to use merge tags in newsletter subscription success messages and pages - ADDED
 * `noptin_hide` now hides newsletter subscription forms for an hour - ADDED
 * Ability to use post meta fields as merge tags - ADDED
+* Ability to add dropdown select field to opt-in forms - ADDED
 
 [View full Changelog](https://github.com/hizzle-co/noptin/blob/master/changelog.md)

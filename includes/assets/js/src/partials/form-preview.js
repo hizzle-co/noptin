@@ -23,4 +23,13 @@ export default {
 
 	},
 
+	filters: {
+		optionize: function (value) {
+		  if (!value) return ''
+
+		  value = value.toString().split('|').splice(0,1).join('')
+		  return value.toString().trim()
+		}
+	}
+
 }
