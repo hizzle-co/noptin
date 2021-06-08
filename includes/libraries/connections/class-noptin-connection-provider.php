@@ -221,7 +221,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			}
 
 			foreach ( array_keys( $this->list_providers->get_secondary() ) as $secondary ) {
-				$defaults = noptin_parse_list( get_noptin_option( "noptin_{$this->slug}_default_{$secondary}", '' ), true );
+				$defaults = noptin_parse_list( get_noptin_option( "noptin_{$this->slug}_{$form}_default_{$secondary}", '' ), true );
 				$data[ $this->slug ][ $secondary ] = noptin_clean( $defaults );
 			}
 
@@ -268,7 +268,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		}
 
 		foreach ( array_keys( $this->list_providers->get_secondary() ) as $secondary ) {
-			$key = "{$this->slug}_{$secondary}";
+			$key = sanitize_key( "{$this->slug}_{$secondary}" );
 
 			if ( ! empty( $form->$key ) ) {
 				$data[ $this->slug ][ $secondary ] = noptin_parse_list ( $form->$key, true );
