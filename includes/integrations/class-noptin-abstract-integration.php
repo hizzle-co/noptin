@@ -246,7 +246,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @return string
 	 */
 	public function get_checkbox_message_integration_default_value() {
-		return __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts', 'newsletter-optin-box' );
+		return __( 'Add me to your newsletter and keep me updated whenever you publish new blog posts', 'newsletter-optin-box' );
 	}
 
 	/**

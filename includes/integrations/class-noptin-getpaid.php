@@ -178,7 +178,7 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 	 * @since 1.4.1
 	 */
 	public function get_checkbox_message_integration_default_value() {
-		return __( 'Add me to your newsletter and keep me updated whenever your publish new products', 'newsletter-optin-box' );
+		return __( 'Add me to your newsletter and keep me updated whenever you publish new products', 'newsletter-optin-box' );
 	}
 
 	/**

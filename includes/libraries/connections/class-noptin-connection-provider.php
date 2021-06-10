@@ -212,7 +212,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 			// Suscriber tags.
 			if ( $this->supports( 'tags' ) && ! isset( $data[ $this->slug ]['tags'] ) && ! empty( $tags ) ) {
-				$data[ $this->slug ]['tags'] = array_map( 'trim', explode( ',', $tags ) );
+				$data[ $this->slug ]['tags'] = noptin_parse_list( $tags, true );
 			}
 
 			// Suscriber list.
@@ -220,9 +220,12 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				$data[ $this->slug ]['lists'] = array_map( 'trim', explode( ',', $list ) );
 			}
 
+			// Secondary fields.
 			foreach ( array_keys( $this->list_providers->get_secondary() ) as $secondary ) {
-				$defaults = noptin_parse_list( get_noptin_option( "noptin_{$this->slug}_{$form}_default_{$secondary}", '' ), true );
-				$data[ $this->slug ][ $secondary ] = noptin_clean( $defaults );
+				$default = noptin_parse_list( get_noptin_option( "noptin_{$this->slug}_{$form}_default_{$secondary}", '' ), true );
+				if ( ! isset( $data[ $this->slug ][ $secondary ] ) && ! empty( $default ) ) {
+					$data[ $this->slug ][ $secondary ] = noptin_parse_list( $default, true );
+				}
 			}
 
 			return $data;
