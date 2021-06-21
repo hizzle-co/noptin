@@ -118,7 +118,7 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
         $settings = $rule->action_settings;
 
         // Nothing to do here.
-        if ( empty( $settings['field_name'] ) ) {
+        if ( empty( $settings['field_name'] ) || $subscriber->is_virtual ) {
             return;
         }
 

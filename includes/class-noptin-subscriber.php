@@ -30,6 +30,15 @@ class Noptin_Subscriber {
 	protected $id = 0;
 
 	/**
+	 * Whether or not the subscriber is virtual.
+	 *
+	 * Use with caution.
+	 * @since 1.2.7
+	 * @var bool
+	 */
+	public $is_virtual = false;
+
+	/**
 	 * Subscriber data container.
 	 *
 	 * @since 1.2.7
@@ -53,6 +62,7 @@ class Noptin_Subscriber {
 		// ... an instance of this class...
 		if ( $subscriber instanceof Noptin_Subscriber ) {
 			$this->init( $subscriber->to_array() );
+			$this->is_virtual = $subscriber->is_virtual;
 			return;
 		}
 
@@ -211,7 +221,7 @@ class Noptin_Subscriber {
 			return true;
 		}
 
-		return metadata_exists( 'noptin_subscriber', $this->id, $key );
+		return ! $this->is_virtual && metadata_exists( 'noptin_subscriber', $this->id, $key );
 	}
 
 	/**
@@ -270,7 +280,7 @@ class Noptin_Subscriber {
 	 * @return bool True if subscriber exists in the database, false if not.
 	 */
 	public function exists() {
-		return ! empty( $this->id );
+		return $this->is_virtual || ! empty( $this->id );
 	}
 
 	/**
@@ -300,7 +310,7 @@ class Noptin_Subscriber {
 
 		if ( isset( $this->data->$key ) ) {
 			$value = $this->data->$key;
-		} else {
+		} else if ( ! $this->is_virtual ) {
 			$value = get_noptin_subscriber_meta( $this->id, $key, $single );
 		}
 
@@ -349,6 +359,16 @@ class Noptin_Subscriber {
 	 */
 	public function get_meta() {
 		return get_noptin_subscriber_meta( $this->id );
+	}
+
+	/**
+	 * Checks if the current subscriber is active.
+	 *
+	 * @since 1.2.7
+	 * @return bool.
+	 */
+	public function is_active() {
+		return $this->is_virtual || empty( $this->active );
 	}
 
 	/**

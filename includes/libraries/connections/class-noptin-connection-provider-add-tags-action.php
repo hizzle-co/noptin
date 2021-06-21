@@ -48,7 +48,7 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 	 */
 	public function get_name() {
 		return sprintf(
-			__( '%s Tag Subscriber', 'newsletter-optin-box' ),
+			esc_html__( '%s > Tag Subscriber', 'newsletter-optin-box' ),
 			$this->provider->name
 		);
 	}
@@ -57,6 +57,11 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 	 * @inheritdoc
 	 */
 	public function get_description() {
+
+		if ( $this->provider->supports( 'built_in' ) ) {
+			return __( 'Tag the subscriber', 'newsletter-optin-box' );
+		}
+
 		return sprintf(
 			__( 'Tag the subscriber in %s', 'newsletter-optin-box' ),
 			$this->provider->name

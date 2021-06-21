@@ -475,7 +475,7 @@ class Noptin_Page {
 				$template = locate_noptin_template( 'actions-page-empty.php' );
 			}
 
-			$template = apply_filters( 'noptin_actions_page_template', $template );
+			$template = apply_filters( 'noptin_actions_page_template', $template, $action );
 
 			include $template;
 			exit;

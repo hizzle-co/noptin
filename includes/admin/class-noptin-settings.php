@@ -177,7 +177,7 @@ class Noptin_Settings {
 		$state['error']          = __( 'Your settings could not be saved.', 'newsletter-optin-box' );
 
 		// Cache this.
-		self::$state = $state;
+		self::$state = apply_filters( 'noptin_settings_state', $state );
 
 		return $state;
 

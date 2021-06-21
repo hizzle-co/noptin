@@ -313,6 +313,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	 */
 	public function add_options( $_options ) {
 
+		if ( $this->supports( 'built_in' ) ) {
+			return $_options;
+		}
+
 		$slug    = $this->slug;
 		$options = $this->add_enable_integration_option( array() );
 

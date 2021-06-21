@@ -48,7 +48,7 @@ class Noptin_Connection_Provider_Remove_Tags_Action extends Noptin_Abstract_Acti
 	 */
 	public function get_name() {
 		return sprintf(
-			__( '%s Untag Subscriber', 'newsletter-optin-box' ),
+			esc_html__( '%s > Untag Subscriber', 'newsletter-optin-box' ),
 			$this->provider->name
 		);
 	}
@@ -57,6 +57,11 @@ class Noptin_Connection_Provider_Remove_Tags_Action extends Noptin_Abstract_Acti
 	 * @inheritdoc
 	 */
 	public function get_description() {
+
+		if ( $this->provider->supports( 'built_in' ) ) {
+			return __( 'Untag the subscriber.', 'newsletter-optin-box' );
+		}
+
 		return sprintf(
 			__( 'Untag the subscriber in %s', 'newsletter-optin-box' ),
 			$this->provider->name

@@ -502,7 +502,7 @@ function deactivate_noptin_subscriber( $subscriber ) {
 
 	// Prepare the subscriber.
 	$subscriber = new Noptin_Subscriber( $subscriber );
-	if ( ! $subscriber->exists() || ! empty( $subscriber->active ) ) {
+	if ( ! $subscriber->exists() || $subscriber->is_virtual || ! $subscriber->is_active() ) {
 		return false;
 	}
 
@@ -532,7 +532,7 @@ function deactivate_noptin_subscriber( $subscriber ) {
 function unsubscribe_noptin_subscriber( $subscriber ) {
 	$subscriber = new Noptin_Subscriber( $subscriber );
 
-	if ( $subscriber->exists() ) {
+	if ( $subscriber->exists() && ! $subscriber->is_virtual ) {
 
 		// Deactivate the subscriber.
 		deactivate_noptin_subscriber( $subscriber );

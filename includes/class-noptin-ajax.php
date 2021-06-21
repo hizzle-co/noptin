@@ -224,7 +224,7 @@ class Noptin_Ajax {
 			exit;
 		}
 
-		$subscriber = new Noptin_Subscriber( $_POST['email'] );
+		$subscriber = new Noptin_Subscriber( sanitize_email( $_POST['email'] ) );
 		if ( ! $subscriber->exists() ) {
 			wp_send_json_error( __( 'This subscriber no longer exists. They might have been deleted.', 'newsletter-optin-box' ) );
 			exit;

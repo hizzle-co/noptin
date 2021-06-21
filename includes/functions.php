@@ -1611,6 +1611,33 @@ function get_noptin_connection_providers() {
 }
 
 /**
+ * Returns an array of email senders.
+ *
+ * @since 1.5.2
+ * @return array
+ */
+function get_noptin_email_senders() {
+	return apply_filters(
+		'noptin_email_senders',
+		array(
+			'noptin' => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
+		)
+	);
+}
+
+/**
+ * Returns the sender to use for a specific email.
+ *
+ * @since 1.5.2
+ * @param int $campaign_id
+ * @return array
+ */
+function get_noptin_email_sender( $campaign_id ) {
+	$sender = get_post_meta( $campaign_id, 'email_sender', true );
+	return in_array( $sender, array_keys( get_noptin_email_senders() ) ) ? $sender : 'noptin';
+}
+
+/**
  *  Converts a classic template to the new editor.
  *
  * @since 1.3.3

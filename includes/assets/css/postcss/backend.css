@@ -1479,6 +1479,11 @@ a.no-campaign-create-new-campaign {
 
 }
 
+.noptin-margin-y {
+	margin-bottom: 20px;
+	margin-top: 16px;
+}
+
 .noptin-sections-wrapper .subsubsub {
 	float: none;
 }

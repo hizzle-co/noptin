@@ -12,7 +12,7 @@ class Noptin_Email_Campaigns_Admin {
 	/**
 	 *  Constructor function.
 	 */
-	function __construct() {
+	public function __construct() {
 
 		// Display the newsletters page.
 		add_action( 'noptin_email_campaigns_tab_newsletters', array( $this, 'show_newsletters' ) );
@@ -370,6 +370,7 @@ class Noptin_Email_Campaigns_Admin {
 			'post_title'    => trim( $data['email_subject'] ),
 			'post_content'  => $data['email_body'],
 			'meta_input'    => array(
+				'email_sender'            => empty( $data['email_sender'] ) ? 'noptin' : sanitize_text_field( $data['email_sender'] ),
 				'campaign_type'           => 'newsletter',
 				'preview_text'            => empty( $data['preview_text'] ) ? '' : sanitize_text_field( $data['preview_text'] ),
 			),
@@ -501,8 +502,16 @@ class Noptin_Email_Campaigns_Admin {
 		}
 
 		if ( apply_filters( 'noptin_should_send_campaign', true, $item ) ) {
-			$noptin->bg_mailer->push_to_queue( $item );
-			$noptin->bg_mailer->save()->dispatch();
+
+			$sender = get_noptin_email_sender( $post->ID );
+
+			if ( 'noptin' == $sender ) {
+				$noptin->bg_mailer->push_to_queue( $item );
+				$noptin->bg_mailer->save()->dispatch();
+			} else {
+				do_action( "handle_noptin_email_sender_$sender", $item, $post );
+			}
+
 		}
 
 	}
@@ -604,7 +613,7 @@ class Noptin_Email_Campaigns_Admin {
 			'save'
 		);
 
-		if ( 'post_notifications' == $automation_type ) {
+		if ( 'post_notifications' == $automation_type && ! empty( $automations[ $automation_type ]['setup_cb'] ) ) {
 
 			add_meta_box(
 				'noptin_automation_setup_cb',
