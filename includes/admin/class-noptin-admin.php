@@ -1215,8 +1215,14 @@ class Noptin_Admin {
 						'meta_input'    => array(
 							'campaign_type'           => 'newsletter',
 							'preview_text'            => get_post_meta( $campaign->ID, 'preview_text', 'true' ),
+							'email_sender'            => get_post_meta( $campaign->ID, 'email_sender', 'true' ),
 						),
 					);
+
+					foreach ( Noptin_Email_Campaigns_Admin::get_meta() as $meta_key ) {
+						$post['meta_input'][ $meta_key ] = get_post_meta( $campaign->ID, $meta_key, 'true' );
+					}
+					$post['meta_input'] = array_filter( $post['meta_input'] );
 
 					$new_campaign = wp_insert_post( $post, true );
 

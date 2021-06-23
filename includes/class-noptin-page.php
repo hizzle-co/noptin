@@ -408,6 +408,7 @@ class Noptin_Page {
 		// Fetch current user to use their details as merge tags.
 		$user       = wp_get_current_user();
 		$subscriber = get_noptin_subscriber_by_email( $user->user_email );
+		$sender     = get_noptin_email_sender( $campaign->ID );
 		$data       = array(
 			'campaign_id'   => $campaign->ID,
 			'email_subject' => $campaign->post_title,
@@ -427,6 +428,8 @@ class Noptin_Page {
 			$data['subscriber_id'] = $subscriber->id;
 			$data['merge_tags']    = array_merge( $data['merge_tags'], get_noptin_subscriber_merge_fields( $subscriber ) );
 		}
+
+		$data['merge_tags']    = array_merge( $data['merge_tags'], apply_filters( "noptin_{$sender}_dummy_merge_tags", array() ) );
 
 		$custom_merge_tags = get_post_meta( $campaign->ID, 'custom_merge_tags', true );
 		if ( is_array( $custom_merge_tags ) ) {

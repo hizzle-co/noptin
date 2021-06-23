@@ -1482,6 +1482,7 @@ a.no-campaign-create-new-campaign {
 .noptin-margin-y {
 	margin-bottom: 20px;
 	margin-top: 16px;
+	display: block;
 }
 
 .noptin-sections-wrapper .subsubsub {

@@ -33,6 +33,13 @@ class Noptin_Email_Campaigns_Admin {
 	}
 
 	/**
+	 *  Retrieves campaign meta data
+	 */
+	public static function get_meta() {
+		return apply_filters( 'noptin_get_newsletter_campaign_meta', array() );
+	}
+
+	/**
 	 *  Displays the newsletters section
 	 */
 	public function show_newsletters( $tabs ) {
@@ -376,6 +383,10 @@ class Noptin_Email_Campaigns_Admin {
 			),
 		);
 
+		foreach ( self::get_meta() as $meta_key ) {
+			$post['meta_input'][ $meta_key ] = empty( $data[ $meta_key ] ) ? '' : noptin_clean( $data[ $meta_key ] );
+		}
+
 		// Are we scheduling the campaign?
 		if ( 'publish' === $status && ! empty( $data['schedule-date'] ) ) {
 
@@ -488,7 +499,10 @@ class Noptin_Email_Campaigns_Admin {
 			'subscribers_query' => array(), // By default, send this to all active subscribers.
 			'custom_merge_tags' => array(),
 			'campaign_data'     => array(
-				'campaign_id'   => $post->ID
+				'campaign_id'   => $post->ID,
+				'email_body'    => $post->post_content,
+				'email_subject' => $post->post_title,
+				'preview_text'  => get_post_meta( $post->ID, 'preview_text', true ),
 			),
 		);
 

@@ -174,6 +174,8 @@ class Noptin_Mailer {
 	public function get_default_merge_tags() {
 
 		$default_merge_tags = array(
+			'date'             => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
+			'year'             => date( 'Y', current_time( 'timestamp' ) ),
 			'blog_name'        => get_bloginfo( 'name' ),
 			'blog_description' => get_bloginfo( 'description' ),
 			'home_url'         => get_home_url(),
@@ -250,19 +252,12 @@ class Noptin_Mailer {
 
 		$tags = wp_parse_args( $this->get_default_merge_tags(), $tags );
 
+		if ( ! empty( $tags['email'] ) ) {
+			$tags['avatar_url'] = get_avatar_url( $tags['email'] );
+		}
+
 		// Replace all available tags with their values.
-		foreach ( $tags as $key => $value ) {
-			if ( ! is_array( $value ) ) {
-				$content = str_ireplace( "[[$key]]", $value, $content );
-			}
-		}
-
-		// Remove unavailable tags.
-		if ( $this->strip_tags ) {
-			$content = preg_replace( '/\[\[\w+]\]/', '', $content );
-		}
-
-		return $content;
+		return add_noptin_merge_tags( $content, $tags, false, $this->strip_tags );
 	}
 
 	/**
