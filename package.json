@@ -49,7 +49,7 @@
 		"fibers": "5.0.0",
 		"mini-css-extract-plugin": "1.6.0",
 		"postcss": "8.3.0",
-		"postcss-csso": "^5.0.1",
+		"postcss-csso": "5.0.1",
 		"postcss-import": "14.0.2",
 		"precss": "4.0.0",
 		"sass": "1.34.1",
