@@ -142,6 +142,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.5.2 =
 * Ability to add newsletter sign-up checkboxes on any WordPress HTML forms - ADDED
+* Ability to disable newsletter stats - ADDED
 
 = 1.5.1 =
 * Ability to use merge tags in newsletter subscription success messages and pages - ADDED

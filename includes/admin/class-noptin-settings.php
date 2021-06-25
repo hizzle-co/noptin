@@ -229,6 +229,15 @@ class Noptin_Settings {
 				'description' => __( 'Hide opt-in forms and methods from existing subscribers.', 'newsletter-optin-box' ),
 			),
 
+			'track_campaign_stats' => array(
+				'label'       => __( 'Show campaign stats', 'newsletter-optin-box' ),
+				'description' => __( 'Enable this to display opens and clicks on campaigns that you send.', 'newsletter-optin-box' ),
+				'type'        => 'checkbox_alt',
+				'section'     => 'general',
+				'el'          => 'input',
+				'default'     => true,
+			),
+
 			'allow_tracking'        => array(
 				'label'       => __( 'Share stats', 'newsletter-optin-box' ),
 				'description' => __( 'Help improve Noptin by sharing non-sensitive usage stats.', 'newsletter-optin-box' ),

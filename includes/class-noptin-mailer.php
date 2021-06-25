@@ -148,7 +148,8 @@ class Noptin_Mailer {
 	 */
 	public function get_tracker( $data = array() ) {
 
-		if ( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
 			return '';
 		}
 
@@ -268,7 +269,8 @@ class Noptin_Mailer {
 	 */
 	public function make_links_trackable( $content, $data ) {
 
-		if ( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
 			return $content;
 		}
 

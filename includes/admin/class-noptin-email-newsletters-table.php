@@ -342,6 +342,14 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 			'date_sent'  => __( 'Sent on', 'newsletter-optin-box' ),
 
 		);
+
+		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
+
+		if ( empty( $track_campaign_stats ) ) {
+			unset( $columns['opens'] );
+			unset( $columns['clicks'] );
+		}
+
 		return apply_filters( 'manage_noptin_newsletters_table_columns', $columns );
 	}
 
