@@ -158,7 +158,6 @@ class Noptin_Admin {
 		do_action( 'noptin_after_admin_init_hooks', $this );
 	}
 
-
 	/**
 	 * Register admin scripts
 	 *

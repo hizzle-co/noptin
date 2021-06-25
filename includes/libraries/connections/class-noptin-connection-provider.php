@@ -86,11 +86,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 		// Send campaigns.
 		if ( $this->supports( 'campaigns' ) ) {
-			add_filter( 'add_meta_boxes_noptin_newsletters', array( $this, 'register_newsletter_recipients_filter_meta_box' ), $this->priority );
-			add_filter( 'add_meta_boxes_noptin_automations_post_notifications', array( $this, 'register_automation_recipients_filter_meta_box' ), $this->priority );
-			add_filter( 'noptin_save_newsletter_campaign_details', array( $this, 'save_newsletter_recipients' ), $this->priority );
-			add_filter( 'noptin_mailer_new_post_automation_campaign_details', array( $this, 'filter_new_post_data' ), $this->priority );
-			add_filter( 'noptin_should_send_campaign', array( $this, 'send_via_provider' ), $this->priority, 2 );
+			add_filter( 'noptin_email_senders', array( $this, 'register_sender' ), $this->priority );
+			add_action( 'noptin_sender_options_' . $this->slug, array( $this, 'show_sender_options' ), $this->priority );
+			add_filter( 'noptin_get_newsletter_campaign_meta', array( $this, 'register_meta' ), $this->priority );
+			add_action( 'handle_noptin_email_sender_' . $this->slug, array( $this, 'send_campaign' ), $this->priority, 2 );			
 		}
 
 	}
@@ -506,110 +505,65 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Registers the newsletter recipients list filter box.
+	 * Registers our sender.
 	 *
 	 */
-	public function register_newsletter_recipients_filter_meta_box() {
-
-		add_meta_box (
-			'noptin_newsletter_' . $this->slug,
-			$this->name,
-			array( $this, 'render_newsletter_metabox' ),
-			'noptin_page_noptin-newsletter',
-			'side'
-		);
-
+	public function register_sender( $senders ) {
+		$senders[ $this->slug ] = $this->name;
+		return $senders;
 	}
 
 	/**
-	 * Registers the automation recipients list filter box.
-	 *
-	 */
-	public function register_automation_recipients_filter_meta_box() {
-
-		add_meta_box (
-			'noptin_automation_' . $this->slug,
-			$this->name,
-			array( $this, 'render_newsletter_metabox' ),
-			'noptin_page_noptin-automation',
-			'side'
-		);
-
-	}
-
-	/**
-	 * Retrieves extra campaign data.
+	 * Displays the sender options.
 	 *
 	 * @param null|WP_Post $campaign
 	 */
-	public function get_extra_campaign_data( $campaign ) {
-
-		if ( empty( $campaign ) ) {
-			return array();
-		}
-
-		$extra_key = sanitize_key( 'noptin_' . $this->slug . '_extra' );
-		$extra     = is_object( $campaign ) ? get_post_meta( $campaign->ID, $extra_key, true ) : array();
-
-		if ( ! is_array( $extra ) ) {
-			return array();
-		}
-
-		return $extra;
-	}
-
-	/**
-	 * Displays a newsletter recipients meta box.
-	 *
-	 * @param null|WP_Post $campaign
-	 */
-	public function render_newsletter_metabox( $campaign ) {
-		$key       = sanitize_key( 'noptin_' . $this->slug . '_list' );
-		$list      = is_object( $campaign ) ? get_post_meta( $campaign->ID, $key, true ) : '';
-		$tags_key  = sanitize_key( 'noptin_' . $this->slug . '_tags' );
-		$tags      = is_object( $campaign ) ? get_post_meta( $campaign->ID, $tags_key, true ) : '';
-		$extra     = $this->get_extra_campaign_data( $campaign );
+	public function show_sender_options( $campaign ) {
+		$options = empty( $campaign ) ? array() : get_post_meta( $campaign->ID, $this->slug, true );
+		$list    = empty( $options['list'] ) ? '0' : esc_attr( $options['list'] );
+		$tags    = empty( $options['tags'] ) ? '' : esc_attr( $options['tags'] );
+		$extra   = empty( $options['extra'] ) ? array() : esc_attr( $options['extra'] );
 		?>
 
-			<div style="margin: 16px 0;" class="noptin-<?php echo esc_attr( $this->slug );?>-list">
+			<div class="noptin-<?php echo esc_attr( $this->slug );?>-list">
 
-				<label style="display: block;">
+				<label class="noptin-margin-y">
 					<strong><?php echo esc_html( ucwords( $this->list_providers->get_name() ) ); ?></strong>
-					<select name="<?php echo $key; ?>" style="width: 100%;" class="list-select">
-						<option value="0" <?php selected( empty( $list ) ) ?>><?php _e( 'Do not send', 'newsletter-optin-box' );?></option>
+					<select name="<?php echo esc_attr( $this->slug ); ?>[list]" style="width: 100%;" class="list-select">
+						<option value="0" <?php selected( empty( $list ) ) ?>><?php _e( 'Select an option', 'newsletter-optin-box' );?></option>
 						<?php foreach ( $this->list_providers->get_dropdown_lists() as $id => $name ) :?>
 							<option value="<?php echo esc_attr( $id ) ?>" <?php selected( $id, $list ) ?>><?php echo esc_html( $name );?></option>
 						<?php endforeach; ?>
 					</select>
-					<p class="description"><?php printf( __( 'Select a %s if you want to send this campaign via %s.', 'newsletter-optin-box' ), $this->list_providers->get_name(), $this->name );?></p>
 				</label>
 
 				<?php if ( $this->supports( 'tags' ) ) : ?>
-					<label style="display: block;">
+					<label class="noptin-margin-y">
 						<strong><?php _e( 'Tags', 'newsletter-optin-box' ); ?></strong>
-						<input style="width: 100%;" type="text" value="<?php echo esc_attr( $tags ) ?>" name="<?php echo $tags_key; ?>" />
+						<input style="width: 100%;" type="text" value="<?php echo esc_attr( $tags ) ?>" name="<?php echo esc_attr( $this->slug ); ?>[tags]" />
 					</label>
 				<?php endif; ?>
 
 				<?php foreach ( $this->list_providers->get_lists() as $_list ) : ?>
+					<div class="noptin-filter-list noptin-<?php echo esc_attr( $this->slug );?>-filter-list noptin-list-<?php echo esc_attr( $_list->get_id() ) ?>">
 					<?php foreach ( $_list->get_children() as $child_id => $child ) : ?>
-						<?php $value = isset( $extra[ $_list->get_id() ][ $child_id ] ) ? $extra[ $_list->get_id() ][ $child_id ] : ''?>
-						<div class="noptin-filter-list noptin-<?php echo esc_attr( $this->slug );?>-filter-list noptin-list-<?php echo esc_attr( $_list->get_id() ) ?>">
-							<label><strong><?php echo esc_html( $child['label'] ); ?></strong>
-								<select name="noptin_<?php echo esc_attr( $this->slug );?>_extra[<?php echo esc_attr( $_list->get_id() );?>][<?php echo esc_attr( $child_id );?>]" style="width: 100%;">
-									<option <?php selected( empty( $value ) ) ?> value='0'>
-										<?php _e( 'All', 'newsletter-optin-box' ); ?>
+						<?php $value = isset( $extra[ $_list->get_id() ][ $child_id ] ) ? $extra[ $_list->get_id() ][ $child_id ] : '' ?>
+						<label class="noptin-margin-y"><strong><?php echo esc_html( $child['label'] ); ?></strong>
+							<select name="<?php echo esc_attr( $this->slug ); ?>[extra][<?php echo esc_attr( $_list->get_id() ); ?>][<?php echo esc_attr( $child_id ); ?>]" style="width: 100%;">
+								<option <?php selected( empty( $value ) ) ?> value='0'>
+									<?php _e( 'All', 'newsletter-optin-box' ); ?>
+								</option>
+								<?php foreach ( $child['options'] as $id => $name ) : ?>
+									<option <?php selected( $value, $id ) ?> value='<?php echo esc_attr( $id );?>'>
+										<?php echo sanitize_text_field( $name ); ?>
 									</option>
-									<?php foreach ( $child['options'] as $id => $name ) { ?>
-										<option <?php selected( $value, $id ) ?> value='<?php echo esc_attr( $id );?>'>
-											<?php echo sanitize_text_field( $name ); ?>
-										</option>
-									<?php } ?>
-								</select>
-							</label>
-						</div>
+								<?php endforeach; ?>
+							</select>
+						</label>
 					<?php endforeach; ?>
+					</div>
 				<?php endforeach; ?>
+
 			</div>
 
 			<script>
@@ -632,118 +586,51 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Saves newsletter recipients.
+	 * Registers meta data.
 	 *
-	 * @param array $campaign
+	 * @param array $meta
 	 */
-	public function save_newsletter_recipients( $campaign ) {
-
-		// Lists.
-		$key  = sanitize_key( 'noptin_' . $this->slug . '_list' );
-		$list = empty( $_POST[ $key ] ) ? '' : sanitize_text_field( $_POST[ $key ] );
-
-		$campaign['meta_input'][ $key ]  = $list;
-
-		// Tags.
-		if ( $this->supports( 'tags' ) ) {
-			$tags_key = sanitize_key( 'noptin_' . $this->slug . '_tags' );
-			$tags     = empty( $_POST[ $tags_key ] ) ? '' : sanitize_text_field( $_POST[ $tags_key ] );
-
-			$campaign['meta_input'][ $tags_key ]  = $tags;
-		}
-
-		$key   = sanitize_key( 'noptin_' . $this->slug . '_extra' );
-		$extra = empty( $_POST[ $key ] ) ? array() : sanitize_text_field( $_POST[ $key ] );
-
-		$campaign['meta_input'][ $key ]  = $extra;
-
-		return $campaign;
+	public function register_meta( $meta ) {
+		$meta[] = $this->slug;
+		return $meta;
 	}
 
 	/**
-	 * Filters new post notification data.
+	 * Send campaign.
 	 *
-	 * @param array $campaign_data
-	 */
-	public function filter_new_post_data( $campaign_data ) {
-		$campaign_id = $campaign_data['meta_input']['campaign_id'];
-		$key         = sanitize_key( 'noptin_' . $this->slug . '_list' );
-		$list        = get_post_meta( $campaign_id, $key, true );
-
-		if ( empty( $list ) ) {
-			return $campaign_data;
-		}
-
-		$campaign_data['meta_input'][ $key ] = $list;
-
-		$tags_key = sanitize_key( 'noptin_' . $this->slug . '_tags' );
-		$tags     = get_post_meta( $campaign_id, $tags_key, true );
-
-		if ( ! empty( $tags ) ) {
-			$campaign_data['meta_input'][ $tags_key ]  = $tags;
-		}
-
-		$key   = sanitize_key( 'noptin_' . $this->slug . '_extra' );
-		$extra = get_post_meta( $campaign_id, $key, true );
-
-		if ( ! empty( $extra ) ) {
-			$campaign_data['meta_input'][ $key ]  = $extra;
-		}
-
-		return $campaign_data;
-	}
-
-	/**
-	 * Sends the newsletter via this connection.
-	 *
-	 * @param bool $should_send
 	 * @param array $campaign
+	 * @param WP_Post $post
 	 */
-	public function send_via_provider( $should_send, $campaign ) {
+	public function send_campaign( $campaign, $post ) {
 
-		// Do we have a campaign id?
-		if ( empty( $campaign['campaign_id'] ) ) {
-			return $should_send;
+		update_post_meta( $post->ID, 'completed', 1 );
+
+		$options = get_post_meta( $post->ID, $this->slug, true );
+
+		if ( empty( $options['list'] ) ) {
+			return;
 		}
 
-		$key  = sanitize_key( 'noptin_' . $this->slug . '_list' );
-		$list = get_post_meta( $campaign['campaign_id'], $key, true );
+		$list = $this->list_providers->get_list( $options['list'] );
 
 		if ( empty( $list ) ) {
-			return $should_send;
+			return;
 		}
 
-		update_post_meta( $campaign['campaign_id'], 'completed', 1 );
-
-		$list = $this->list_providers->get_list( $list );
-
-		if ( empty( $list ) ) {
-			return false;
-		}
-
-		$tags_key = sanitize_key( 'noptin_' . $this->slug . '_tags' );
-		$tags     = get_post_meta( $campaign['campaign_id'], $tags_key, true );
-
-		$extra_key = sanitize_key( 'noptin_' . $this->slug . '_extra' );
-		$extra     = get_post_meta( $campaign['campaign_id'], $extra_key, true );
-
-		$post     = get_post( $campaign['campaign_id'] );
+		$tags  = empty( $options['tags'] ) ? array() : noptin_parse_list( $options['tags'] );
+		$extra = empty( $options['extra'][ $list->get_id() ] ) ? array() : $options['extra'][ $list->get_id() ];
 
 		$campaign['custom_merge_tags']['unsubscribe_url'] = 'http://temporaryunsubscribe.com';
 
-		$campaign_data = array(
-			'merge_tags'    => $campaign['custom_merge_tags'],
-			'email_body'    => $post->post_content,
-			'email_subject' => get_the_title( $campaign['campaign_id'] ),
-			'preview_text'  => get_post_meta( $campaign['campaign_id'], 'preview_text', true ),
-		);
+		$campaign_data               = $campaign['campaign_data'];
+		$campaign_data['merge_tags'] = $campaign['custom_merge_tags'];
 
 		if ( $this->supports( 'overide_footers' ) ) {
 			$campaign_data['permission_text'] = '';
-			$campaign_data['footer_text'] = '';
+			$campaign_data['footer_text']     = '';
 		}
 
-		$strip_tags       = noptin()->mailer->strip_tags;
+		$strip_tags = noptin()->mailer->strip_tags;
 
 		noptin()->mailer->strip_tags = true;
 
