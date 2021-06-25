@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2021-05-17 04:32+0000\n"
+"PO-Revision-Date: 2021-06-25 20:51+0000\n"
 "Last-Translator: Brian Mutende\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -26,16 +26,29 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.4.0; wp-5.5.1"
 
-#: includes/admin/class-noptin-settings.php:263
+#: includes/admin/class-noptin-settings.php:284
 msgid "\"From\" Email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:272
+#: includes/admin/class-noptin-settings.php:293
 msgid "\"From\" Name"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:252
+#: includes/admin/class-noptin-settings.php:273
 msgid "\"Reply-to\" Email"
+msgstr ""
+
+#. %1$s provider tame, %2$s list type.
+#: includes/libraries/connections/class-noptin-connection-provider-add-list-action.php:53
+#: includes/libraries/connections/class-noptin-connection-provider-add-secondary-list-action.php:70
+#, php-format
+msgid "%1$ %2$s Add."
+msgstr ""
+
+#. %1$s provider tame, %2$s list type.
+#: includes/libraries/connections/class-noptin-connection-provider-remove-list-action.php:53
+#, php-format
+msgid "%1$ %2$s Remove."
 msgstr ""
 
 #. %1$s Opening link tag, %2$s Closing link tag.
@@ -45,9 +58,25 @@ msgid "%1$sCreate your first automation rule%2$s"
 msgstr ""
 
 #. %1$s Opening link tag, %2$s Closing link tag.
-#: includes/admin/class-noptin-email-newsletters-table.php:372
+#: includes/libraries/connections/class-noptin-list-providers-table.php:180
+#, php-format
+msgid "%1$sCreate your first list%2$s"
+msgstr ""
+
+#. %1$s Opening link tag, %2$s Closing link tag.
+#: includes/admin/class-noptin-email-newsletters-table.php:380
 #, php-format
 msgid "%1$sSend your subscribers a new email%2$s"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-add-tags-action.php:51
+#, php-format
+msgid "%s > Tag Subscriber"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-remove-tags-action.php:51
+#, php-format
+msgid "%s > Untag Subscriber"
 msgstr ""
 
 #. %s: product name
@@ -58,6 +87,11 @@ msgid ""
 "website."
 msgstr ""
 
+#: includes/admin/class-noptin-settings.php:501
+#, php-format
+msgid "%s addon"
+msgstr ""
+
 #. %s: Human-readable time difference.
 #: includes/automation-rules/class-noptin-automation-rules-table.php:198
 #: includes/automation-rules/class-noptin-automation-rules-table.php:224
@@ -65,14 +99,24 @@ msgstr ""
 msgid "%s ago"
 msgstr ""
 
+#: includes/admin/class-noptin-vue.php:490
+#, php-format
+msgid "%s Equivalent"
+msgstr ""
+
 #. %s: site title
-#: includes/subscriber.php:719
+#: includes/subscriber.php:722
 #, php-format
 msgid "%s has a new email subscriber"
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-connection-provider.php:699
+#, php-format
+msgid "%s tags"
+msgstr ""
+
 #. %s . [[unsubscribe_url]]
-#: includes/admin/class-noptin-settings.php:346
+#: includes/admin/class-noptin-settings.php:367
 #, php-format
 msgid "%s will be replaced by a url to the unsubscription page."
 msgstr ""
@@ -106,7 +150,7 @@ msgid ""
 "And so much more!</li></ul>"
 msgstr ""
 
-#: includes/subscriber.php:737
+#: includes/subscriber.php:740
 #, php-format
 msgid "[%s] New Subscriber"
 msgstr ""
@@ -117,7 +161,8 @@ msgstr ""
 
 #: includes/libraries/noptin-com/views/html-admin-page-addons.php:81
 msgid ""
-"A Noptin.com membership allows you to install any of our extensions for free."
+"A Noptin.com membership allows you to install any of our extensions or "
+"integrations for free."
 msgstr ""
 
 #. Description of the plugin
@@ -160,7 +205,7 @@ msgstr ""
 msgid "Activating %s"
 msgstr ""
 
-#: includes/subscriber.php:864 templates/export-subscribers.php:43
+#: includes/subscriber.php:867 templates/export-subscribers.php:43
 #: includes/admin/class-noptin-subscribers-table.php:268
 #: includes/automation-rules/class-noptin-automation-rules-table.php:168
 #: templates/admin-single-subscriber/details.php:32
@@ -173,32 +218,32 @@ msgstr ""
 msgid "Active forms created via the Opt-In Forms Editor"
 msgstr ""
 
-#: templates/fields-editor.php:33
+#: templates/fields-editor.php:32
 msgid "Add Field"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:253
+#: includes/integrations/class-noptin-abstract-integration.php:249
 msgid ""
-"Add me to your newsletter and keep me updated whenever your publish new blog "
+"Add me to your newsletter and keep me updated whenever you publish new blog "
 "posts"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:101
 msgid ""
-"Add me to your newsletter and keep me updated whenever your publish new "
+"Add me to your newsletter and keep me updated whenever you publish new "
 "downloads"
 msgstr ""
 
 #: includes/integrations/class-noptin-getpaid.php:181
 #: includes/integrations/class-noptin-woocommerce.php:192
 msgid ""
-"Add me to your newsletter and keep me updated whenever your publish new "
+"Add me to your newsletter and keep me updated whenever you publish new "
 "products"
 msgstr ""
 
 #: includes/class-noptin-post-types.php:96
-#: includes/admin/class-noptin-admin.php:651
-#: includes/admin/class-noptin-admin.php:830
+#: includes/admin/class-noptin-admin.php:667
+#: includes/admin/class-noptin-admin.php:846
 msgid "Add New"
 msgstr ""
 
@@ -211,8 +256,22 @@ msgctxt "Add New on Toolbar"
 msgid "Email Form"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:288
+#: includes/admin/class-noptin-admin.php:291
 msgid "Add Subscriber"
+msgstr ""
+
+#. %1$s provider tame, %2$s list type.
+#: includes/libraries/connections/class-noptin-connection-provider-add-list-action.php:67
+#: includes/libraries/connections/class-noptin-connection-provider-add-secondary-list-action.php:84
+#, php-format
+msgid "Add the subscriber to a %1$ %2$s."
+msgstr ""
+
+#. %1$s list type, %2$s list name.
+#: includes/libraries/connections/class-noptin-connection-provider-add-list-action.php:96
+#: includes/libraries/connections/class-noptin-connection-provider-add-secondary-list-action.php:106
+#, php-format
+msgid "Add the subscriber to the %1$ %2$s."
 msgstr ""
 
 #: includes/automation-rules/actions/class-noptin-custom-field-action.php:33
@@ -235,7 +294,7 @@ msgid ""
 "registration forms%2$s."
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:427
+#: includes/admin/class-noptin-vue.php:455
 msgid "Admin Label"
 msgstr ""
 
@@ -244,18 +303,18 @@ msgctxt "Admin Menu text"
 msgid "Email Forms"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:192
+#: includes/admin/class-noptin-settings.php:204
 msgid "Admin Notifications"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:755
-#: includes/admin/class-noptin-form-editor.php:795
-#: includes/admin/class-noptin-form-editor.php:835
-#: includes/admin/class-noptin-form-editor.php:875
+#: includes/admin/class-noptin-form-editor.php:793
+#: includes/admin/class-noptin-form-editor.php:833
+#: includes/admin/class-noptin-form-editor.php:873
+#: includes/admin/class-noptin-form-editor.php:913
 msgid "Advanced"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:216
+#: includes/admin/class-noptin-email-campaigns-admin.php:223
 msgid "After a subscriber is tagged"
 msgstr ""
 
@@ -294,7 +353,7 @@ msgstr ""
 msgid "After gateways"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:202
+#: includes/admin/class-noptin-email-campaigns-admin.php:209
 msgid "After new content is published"
 msgstr ""
 
@@ -326,7 +385,7 @@ msgstr ""
 msgid "After shipping fields"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:209
+#: includes/admin/class-noptin-email-campaigns-admin.php:216
 msgid "After someone subscribes"
 msgstr ""
 
@@ -334,11 +393,15 @@ msgstr ""
 msgid "After the user starts scrolling"
 msgstr "Dopo che l'utente inizia a scorrere"
 
+#: includes/libraries/connections/class-noptin-connection-provider.php:554
+msgid "All"
+msgstr ""
+
 #: includes/class-noptin-post-types.php:348
 msgid "All Forms"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:210
+#: includes/admin/class-noptin-email-campaigns-admin.php:217
 msgid "All new subscribers"
 msgstr ""
 
@@ -364,11 +427,11 @@ msgstr ""
 msgid "Any"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:549
+#: includes/admin/class-noptin-form-editor.php:587
 msgid "Apply a color theme"
 msgstr "Applica un tema colore"
 
-#: includes/admin/class-noptin-form-editor.php:542
+#: includes/admin/class-noptin-form-editor.php:580
 msgid "Apply a template"
 msgstr "Applica un modello"
 
@@ -376,7 +439,7 @@ msgstr "Applica un modello"
 msgid "Archive pages"
 msgstr "Pagine d'archivio"
 
-#: includes/admin/class-noptin-admin.php:316
+#: includes/admin/class-noptin-admin.php:319
 msgid "Are you sure you want to delete all subscribers?"
 msgstr ""
 
@@ -389,7 +452,7 @@ msgid "Authentication and license caches refreshed successfully."
 msgstr ""
 
 #: templates/email-campaigns.php:9
-#: includes/admin/class-noptin-email-campaigns-admin.php:512
+#: includes/admin/class-noptin-email-campaigns-admin.php:543
 msgid "Automated Emails"
 msgstr ""
 
@@ -397,8 +460,8 @@ msgstr ""
 msgid "Automation Name"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:413
-#: includes/admin/class-noptin-admin.php:417
+#: includes/admin/class-noptin-admin.php:416
+#: includes/admin/class-noptin-admin.php:420
 msgid "Automation Rules"
 msgstr ""
 
@@ -406,15 +469,15 @@ msgstr ""
 msgid "Automation Status"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:660
+#: includes/admin/class-noptin-form-editor.php:698
 msgid "Avatar Position"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:649
+#: includes/admin/class-noptin-form-editor.php:687
 msgid "Avatar URL"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:585
+#: includes/admin/class-noptin-form-editor.php:623
 msgid "Background Color"
 msgstr "Colore di sfondo"
 
@@ -422,7 +485,7 @@ msgstr "Colore di sfondo"
 msgid "Background Color:"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:592
+#: includes/admin/class-noptin-form-editor.php:630
 msgid "Background Image"
 msgstr "Immagine di sfondo"
 
@@ -481,7 +544,7 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:700
+#: includes/admin/class-noptin-form-editor.php:738
 msgid "Block"
 msgstr "Bloccare"
 
@@ -497,7 +560,7 @@ msgstr ""
 msgid "Blue Grey"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:579
+#: includes/admin/class-noptin-form-editor.php:617
 msgid "Border"
 msgstr ""
 
@@ -509,8 +572,8 @@ msgstr ""
 msgid "Borderless"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:658
-#: includes/admin/class-noptin-form-editor.php:677
+#: includes/admin/class-noptin-form-editor.php:696
+#: includes/admin/class-noptin-form-editor.php:715
 msgid "Bottom"
 msgstr "Parte inferiore"
 
@@ -542,15 +605,15 @@ msgstr ""
 msgid "Browse Extensions"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:486
+#: includes/admin/class-noptin-form-editor.php:524
 msgid "Button"
 msgstr "Pulsante"
 
-#: includes/admin/class-noptin-form-editor.php:711
+#: includes/admin/class-noptin-form-editor.php:749
 msgid "Button Background"
 msgstr "Colore di sfondo del pulsante"
 
-#: includes/admin/class-noptin-form-editor.php:717
+#: includes/admin/class-noptin-form-editor.php:755
 msgid "Button Color"
 msgstr "Colore pulsante"
 
@@ -558,11 +621,11 @@ msgstr "Colore pulsante"
 msgid "Button Color:"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:694
+#: includes/admin/class-noptin-form-editor.php:732
 msgid "Button Label"
 msgstr "Etichetta pulsante"
 
-#: includes/admin/class-noptin-form-editor.php:704
+#: includes/admin/class-noptin-form-editor.php:742
 msgid "Button Position"
 msgstr "Posizione pulsante"
 
@@ -570,7 +633,7 @@ msgstr "Posizione pulsante"
 msgid "Buy New"
 msgstr ""
 
-#: includes/class-noptin-new-post-notify.php:121
+#: includes/class-noptin-new-post-notify.php:143
 msgid ""
 "By default, this notification will be sent every time a new blog post is "
 "published."
@@ -589,7 +652,7 @@ msgid ""
 "terms of service."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:424
+#: includes/admin/class-noptin-settings.php:445
 msgid "Call to Action"
 msgstr ""
 
@@ -598,8 +661,8 @@ msgstr ""
 msgid "Campaign"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:241
-#: includes/admin/class-noptin-admin.php:320
+#: includes/admin/class-noptin-admin.php:244
+#: includes/admin/class-noptin-admin.php:323
 #: includes/libraries/noptin-com/class-noptin-com-helper.php:330
 msgid "Cancel"
 msgstr ""
@@ -609,30 +672,30 @@ msgstr ""
 msgid "Cancelled"
 msgstr ""
 
-#: includes/class-noptin-page.php:385
+#: includes/class-noptin-page.php:404
 msgid "Cannot preview this campaign type."
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:392
+#: includes/integrations/class-noptin-abstract-integration.php:388
 #, php-format
 msgid ""
 "Check to display a subscription checkbox instead of automatically "
 "subscribing new %s"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:387
+#: includes/admin/class-noptin-vue.php:405
 msgid "Checkbox"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:208
+#: includes/integrations/class-noptin-abstract-integration.php:204
 msgid "Checkbox Message"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:332
+#: includes/integrations/class-noptin-abstract-integration.php:328
 msgid "Checkbox position"
 msgstr ""
 
-#: includes/subscriber.php:765 templates/default-email-body.php:26
+#: includes/subscriber.php:768 templates/default-email-body.php:26
 #: templates/default-new-post-notification-body.php:6
 msgid "Cheers,"
 msgstr ""
@@ -653,8 +716,8 @@ msgstr ""
 msgid "Clicks"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:240
-#: includes/admin/class-noptin-admin.php:298
+#: includes/admin/class-noptin-admin.php:243
+#: includes/admin/class-noptin-admin.php:301
 #: includes/libraries/noptin-com/class-noptin-com-helper.php:326
 msgid "Close"
 msgstr ""
@@ -682,7 +745,7 @@ msgstr ""
 msgid "Comment Form"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:301
+#: includes/admin/class-noptin-settings.php:322
 msgid "Company"
 msgstr "Azienda"
 
@@ -691,15 +754,15 @@ msgstr "Azienda"
 msgid "Completed"
 msgstr ""
 
-#: includes/subscriber.php:865
+#: includes/subscriber.php:868
 msgid "Confirm Key"
 msgstr ""
 
-#: includes/subscriber.php:761
+#: includes/subscriber.php:764
 msgid "Confirm your subscription"
 msgstr ""
 
-#: includes/subscriber.php:1075
+#: includes/subscriber.php:1078
 msgid "Confirmation Email"
 msgstr ""
 
@@ -707,11 +770,11 @@ msgstr ""
 msgid "Confirmation Key"
 msgstr ""
 
-#: includes/class-noptin-page.php:537
+#: includes/class-noptin-page.php:559
 msgid "Confirmation Message"
 msgstr ""
 
-#: includes/class-noptin-page.php:546
+#: includes/class-noptin-page.php:568
 msgid "Confirmation Redirect"
 msgstr ""
 
@@ -728,11 +791,20 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-connection-provider.php:448
+msgid "Connected"
+msgstr ""
+
 #: includes/libraries/noptin-com/views/html-section-account.php:6
 msgid "Connected to Noptin.com"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:626
+#: includes/admin/class-noptin-settings.php:511
+#, php-format
+msgid "Connects Noptin to %s"
+msgstr ""
+
+#: includes/admin/class-noptin-form-editor.php:664
 msgid "Consent Text"
 msgstr ""
 
@@ -765,7 +837,7 @@ msgstr ""
 msgid "Conversion Rate"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:319
+#: includes/admin/class-noptin-admin.php:322
 msgid "Could not delete subscribers"
 msgstr ""
 
@@ -801,7 +873,7 @@ msgstr ""
 msgid "Create a new form"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:691
+#: includes/admin/class-noptin-admin.php:707
 msgid "Create an Automation Rule"
 msgstr ""
 
@@ -827,11 +899,11 @@ msgstr ""
 msgid "Currency"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:526
+#: includes/admin/class-noptin-form-editor.php:564
 msgid "Custom CSS"
 msgstr "CSS personalizzato"
 
-#: includes/subscriber.php:1053
+#: includes/subscriber.php:1056
 msgid "Custom Fields"
 msgstr ""
 
@@ -878,19 +950,34 @@ msgstr ""
 msgid "Deep Purple"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:324
+#: includes/admin/class-noptin-settings.php:345
 msgid "Default"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:371
+#: includes/libraries/connections/class-noptin-connection-provider.php:350
+#: includes/libraries/connections/class-noptin-connection-provider.php:376
+#, php-format
+msgid "Default %s"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider.php:384
+#, php-format
+msgid "Default %s (ids)"
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:392
 msgid "Default Success Message"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider.php:362
+msgid "Default tags"
 msgstr ""
 
 #: templates/new-email-automations-popup.php:69
 msgid "Delay"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:308
+#: includes/admin/class-noptin-admin.php:311
 #: includes/admin/class-noptin-email-automations-table.php:109
 #: includes/admin/class-noptin-email-automations-table.php:189
 #: includes/admin/class-noptin-email-newsletters-table.php:120
@@ -903,27 +990,27 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:830
+#: includes/admin/class-noptin-admin.php:846
 msgid "Delete All Subscribers"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:292
+#: includes/admin/class-noptin-settings.php:313
 msgid "Delete Campaigns"
 msgstr ""
 
-#: templates/fields-editor.php:28
+#: templates/fields-editor.php:27
 msgid "Delete Field"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:208
+#: includes/admin/class-noptin-settings.php:220
 msgid "Delete on Unsubscribe"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:306
+#: includes/admin/class-noptin-admin.php:309
 msgid "Delete subscriber"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:209
+#: includes/admin/class-noptin-settings.php:221
 msgid ""
 "Delete subscribers after they unsubscribe instead of marking them as "
 "inactive."
@@ -943,7 +1030,7 @@ msgstr ""
 msgid "Deleted campaign"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:318
+#: includes/admin/class-noptin-admin.php:321
 msgid "Deleted Subscribers"
 msgstr ""
 
@@ -964,6 +1051,8 @@ msgid "Device Targeting"
 msgstr "Targeting per dispositivo"
 
 #: templates/new-email-automations-popup.php:25
+#: includes/integrations/class-noptin-abstract-integration.php:142
+#: includes/libraries/connections/class-noptin-connection-provider.php:445
 msgid "Disabled"
 msgstr ""
 
@@ -987,13 +1076,18 @@ msgstr "Visualizza un messaggio di successo"
 msgid "Display this form once per week"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:341
+#: includes/admin/class-noptin-form-editor.php:450
+#, php-format
+msgid "Do not add to %s"
+msgstr ""
+
+#: includes/integrations/class-noptin-abstract-integration.php:337
 #, php-format
 msgid "Do not subscribe new %s"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:468
-#: includes/admin/class-noptin-admin.php:469
+#: includes/admin/class-noptin-admin.php:471
+#: includes/admin/class-noptin-admin.php:472
 msgid "Documentation"
 msgstr "Documentazione"
 
@@ -1005,11 +1099,11 @@ msgstr "Non iniettare"
 msgid "DON'T MISS OUT!"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:297
+#: includes/admin/class-noptin-admin.php:300
 msgid "Done!"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:200
+#: includes/admin/class-noptin-settings.php:212
 msgid "Double Opt-in"
 msgstr ""
 
@@ -1017,7 +1111,7 @@ msgstr ""
 msgid "Double Opt-In Email"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:296
+#: includes/admin/class-noptin-admin.php:299
 msgid "Download"
 msgstr ""
 
@@ -1027,6 +1121,10 @@ msgstr ""
 
 #: templates/export-subscribers.php:128
 msgid "Download Subscribers"
+msgstr ""
+
+#: includes/admin/class-noptin-vue.php:414
+msgid "Dropdown"
 msgstr ""
 
 #: includes/admin/class-noptin-email-newsletters-table.php:118
@@ -1044,7 +1142,7 @@ msgstr ""
 msgid "Edit %s"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:728
+#: includes/admin/class-noptin-admin.php:744
 msgid "Edit Automation Rule"
 msgstr ""
 
@@ -1056,7 +1154,7 @@ msgstr ""
 msgid "Edit Newsletter"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:936
+#: includes/admin/class-noptin-form-editor.php:974
 msgid "Editing"
 msgstr "La modifica"
 
@@ -1065,36 +1163,50 @@ msgid "Email"
 msgstr ""
 
 #: includes/class-noptin-ajax.php:665 includes/class-noptin-form.php:166
-#: includes/subscriber.php:863 templates/export-subscribers.php:101
+#: includes/subscriber.php:866 templates/export-subscribers.php:101
 #: templates/optin-templates.php:18 templates/optin-templates.php:165
 #: templates/optin-templates.php:284 templates/optin-templates.php:361
 #: templates/optin-templates.php:426 templates/optin-templates.php:497
 #: templates/optin-templates.php:576 templates/optin-templates.php:629
 #: templates/optin-templates.php:679 templates/optin-templates.php:1013
-#: includes/admin/class-noptin-vue.php:342
+#: includes/admin/class-noptin-vue.php:360
 #: includes/integrations/class-noptin-wpforms.php:64
 #: templates/admin-single-subscriber/details.php:4
 msgid "Email Address"
 msgstr "Indirizzo email"
 
-#: includes/admin/class-noptin-settings.php:414
+#: includes/automation-rules/actions/class-noptin-email-action.php:214
+#, php-format
+msgid ""
+"Email automation rule action not sent to %s because either the subject or "
+"the content has not been set"
+msgstr ""
+
+#: includes/automation-rules/actions/class-noptin-email-action.php:225
+#, php-format
+msgid ""
+"Email automation rule action not sent to %s because the subscriber is not "
+"active"
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:435
 #: includes/automation-rules/actions/class-noptin-email-action.php:36
 msgid "Email Body"
 msgstr ""
 
 #: includes/class-noptin-post-types.php:140 templates/email-campaigns.php:2
-#: includes/admin/class-noptin-admin.php:392
-#: includes/admin/class-noptin-admin.php:393
+#: includes/admin/class-noptin-admin.php:395
+#: includes/admin/class-noptin-admin.php:396
 #: includes/admin/welcome-screen.php:201
 msgid "Email Campaigns"
 msgstr ""
 
-#: includes/subscriber.php:866
+#: includes/subscriber.php:869
 msgid "Email Confirmed"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:542
-#: includes/admin/class-noptin-email-campaigns-admin.php:581
+#: includes/admin/class-noptin-email-campaigns-admin.php:573
+#: includes/admin/class-noptin-email-campaigns-admin.php:612
 #: includes/automation-rules/actions/class-noptin-email-action.php:138
 msgid "Email Content"
 msgstr ""
@@ -1104,8 +1216,8 @@ msgid "Email Exclusive Offers!"
 msgstr ""
 
 #: includes/class-noptin-post-types.php:106
-#: includes/admin/class-noptin-admin.php:383
-#: includes/admin/class-noptin-admin.php:384
+#: includes/admin/class-noptin-admin.php:386
+#: includes/admin/class-noptin-admin.php:387
 msgid "Email Forms"
 msgstr ""
 
@@ -1115,7 +1227,7 @@ msgid "Email Status"
 msgstr ""
 
 #: includes/admin/class-noptin-email-newsletters-table.php:337
-#: includes/admin/class-noptin-settings.php:392
+#: includes/admin/class-noptin-settings.php:413
 #: templates/automations/edit-automation.php:50
 #: templates/newsletters/add-newsletter.php:34
 #: templates/newsletters/edit-newsletter.php:34
@@ -1127,16 +1239,16 @@ msgstr "Oggetto dell'email"
 msgid "Email Subscriber"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:400
-#: includes/admin/class-noptin-admin.php:404
+#: includes/admin/class-noptin-admin.php:403
+#: includes/admin/class-noptin-admin.php:407
 msgid "Email Subscribers"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:318
+#: includes/admin/class-noptin-settings.php:339
 msgid "Email Template"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:403
+#: includes/admin/class-noptin-settings.php:424
 msgid "Email Title"
 msgstr ""
 
@@ -1145,11 +1257,11 @@ msgstr ""
 msgid "Emails"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:282
+#: includes/admin/class-noptin-settings.php:303
 msgid "Emails Per Hour"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:268
+#: includes/integrations/class-noptin-abstract-integration.php:264
 msgid "Enable"
 msgstr ""
 
@@ -1157,26 +1269,47 @@ msgstr ""
 msgid "Enable Condition"
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-connection-provider.php:335
+msgid "Enable double opt-in"
+msgstr ""
+
 #: includes/integrations/class-noptin-wpforms.php:50
 msgid "Enable Noptin Subscriptions"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:273
+#: includes/integrations/class-noptin-abstract-integration.php:269
 #, php-format
 msgid "Enable the %s Integration"
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:234
+msgid "Enable this to display opens and clicks on campaigns that you send."
+msgstr ""
+
+#: includes/integrations/class-noptin-abstract-integration.php:141
+#: includes/libraries/connections/class-noptin-connection-provider.php:455
+msgid "Enabled"
 msgstr ""
 
 #: includes/class-noptin-ajax.php:736
 msgid "Ensure that you fill all required fields."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:245
+#: includes/libraries/connections/class-noptin-connection-provider.php:363
+msgid "Enter a comma separated list of default tags to assign new suscribers."
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:266
 msgid ""
 "Enter a comma separated list of email address that should receive new "
 "subscriber notifications"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:312
+#: includes/libraries/connections/class-noptin-connection-provider.php:700
+msgid "Enter a comma separated list of tags to assign new suscribers."
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:333
 msgid "Enter a full url to your logo. Works best with rectangular images."
 msgstr ""
 
@@ -1184,11 +1317,15 @@ msgstr ""
 msgid "Enter a search term and press enter"
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-connection-provider-add-secondary-list-action.php:166
+msgid "Enter a value"
+msgstr ""
+
 #: includes/automation-rules/actions/class-noptin-custom-field-action.php:100
 msgid "Enter a value to assign the field"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:290
+#: includes/admin/class-noptin-admin.php:293
 msgid "Enter an email address"
 msgstr ""
 
@@ -1217,14 +1354,14 @@ msgstr ""
 msgid "Enter the URL to watch for clicks or leave empty to watch for all URLs."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:383
+#: includes/admin/class-noptin-settings.php:404
 #, php-format
 msgid ""
 "Enter your %s API key if you want to GeoLocate your subscribers using their "
 "service."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:891
+#: includes/admin/class-noptin-form-editor.php:929
 msgid "Enter Your Custom CSS."
 msgstr ""
 
@@ -1285,7 +1422,7 @@ msgstr ""
 msgid "Error activating your license key"
 msgstr ""
 
-#: includes/libraries/noptin-com/class-noptin-com.php:286
+#: includes/libraries/noptin-com/class-noptin-com.php:296
 msgid "Error activating your license key."
 msgstr ""
 
@@ -1293,16 +1430,16 @@ msgstr ""
 msgid "Error deactivating your license key"
 msgstr ""
 
-#: includes/functions.php:970 includes/functions.php:1033
+#: includes/functions.php:981 includes/functions.php:1044
 msgid "Error fetching GeoLocation information."
 msgstr ""
 
 #: includes/libraries/noptin-com/class-noptin-com.php:115
-#: includes/libraries/noptin-com/class-noptin-com.php:293
+#: includes/libraries/noptin-com/class-noptin-com.php:303
 msgid "Error fetching your license key."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:312
+#: includes/admin/class-noptin-admin.php:315
 msgid "Error!"
 msgstr ""
 
@@ -1328,8 +1465,8 @@ msgstr ""
 msgid "Expires on:"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:294
-#: includes/admin/class-noptin-admin.php:830
+#: includes/admin/class-noptin-admin.php:297
+#: includes/admin/class-noptin-admin.php:846
 msgid "Export"
 msgstr ""
 
@@ -1337,17 +1474,17 @@ msgstr ""
 msgid "Export File"
 msgstr ""
 
-#: templates/export-subscribers.php:6 includes/admin/class-noptin-admin.php:293
+#: templates/export-subscribers.php:6 includes/admin/class-noptin-admin.php:296
 msgid "Export Subscribers"
 msgstr ""
 
 #. %s: extensions count
-#: includes/admin/class-noptin-admin.php:450
+#: includes/admin/class-noptin-admin.php:453
 #, php-format
 msgid "Extensions %s"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:435
+#: includes/admin/class-noptin-settings.php:456
 msgid "Extra Text"
 msgstr ""
 
@@ -1357,7 +1494,7 @@ msgid "Failed"
 msgstr ""
 
 #. %1$s Email address, %2$s Email subject.
-#: includes/class-noptin-mailer.php:679
+#: includes/class-noptin-mailer.php:683
 #, php-format
 msgid "Failed sending an email to %1$s with the subject %2$s"
 msgstr ""
@@ -1435,8 +1572,8 @@ msgstr ""
 msgid "Fired when there is a new WooCommerce order"
 msgstr ""
 
-#: includes/subscriber.php:860 templates/export-subscribers.php:99
-#: templates/optin-templates.php:350 includes/admin/class-noptin-vue.php:348
+#: includes/subscriber.php:863 templates/export-subscribers.php:99
+#: templates/optin-templates.php:350 includes/admin/class-noptin-vue.php:366
 #: includes/integrations/class-noptin-elementor-forms-integration.php:134
 msgid "First Name"
 msgstr ""
@@ -1449,11 +1586,11 @@ msgstr ""
 msgid "Footer Text"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:356
+#: includes/admin/class-noptin-settings.php:377
 msgid "Footer text"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:462
+#: includes/admin/class-noptin-form-editor.php:500
 msgid "Form Appearance"
 msgstr ""
 
@@ -1489,12 +1626,12 @@ msgstr ""
 msgid "Front page"
 msgstr "Prima pagina"
 
-#: includes/admin/class-noptin-vue.php:417
+#: includes/admin/class-noptin-vue.php:445
 msgid "Frontend Label"
 msgstr ""
 
-#: includes/subscriber.php:862 templates/optin-templates.php:1003
-#: includes/admin/class-noptin-vue.php:362
+#: includes/subscriber.php:865 templates/optin-templates.php:1003
+#: includes/admin/class-noptin-vue.php:380
 #: includes/integrations/class-noptin-elementor-forms-integration.php:146
 msgid "Full Name"
 msgstr ""
@@ -1503,7 +1640,7 @@ msgstr ""
 msgid "GDPR checkbox (Optional)"
 msgstr ""
 
-#: includes/subscriber.php:868
+#: includes/subscriber.php:871
 #: includes/integrations/class-noptin-contact-form-7.php:90
 #: includes/integrations/class-noptin-elementor-forms-integration.php:159
 #: includes/integrations/class-noptin-gravity-forms.php:119
@@ -1519,11 +1656,11 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: includes/subscriber.php:1091
+#: includes/subscriber.php:1094
 msgid "GeoLocation"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:380
+#: includes/admin/class-noptin-settings.php:401
 msgid "GeoLocation API Key"
 msgstr ""
 
@@ -1595,12 +1732,12 @@ msgstr ""
 msgid "Grey"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:502
-#: includes/admin/class-noptin-form-editor.php:736
+#: includes/admin/class-noptin-form-editor.php:540
+#: includes/admin/class-noptin-form-editor.php:774
 msgid "Heading"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:743
+#: includes/admin/class-noptin-form-editor.php:781
 msgid "Heading Color"
 msgstr ""
 
@@ -1613,7 +1750,7 @@ msgstr ""
 msgid "Held"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:222
+#: includes/admin/class-noptin-settings.php:243
 msgid "Help improve Noptin by sharing non-sensitive usage stats."
 msgstr ""
 
@@ -1623,19 +1760,19 @@ msgstr ""
 msgid "Hi %s,"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:396
+#: includes/admin/class-noptin-vue.php:424
 msgid "Hidden"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:216
+#: includes/admin/class-noptin-settings.php:228
 msgid "Hide From Subscribers"
 msgstr "Nascondi dagli abbonati"
 
-#: includes/admin/class-noptin-form-editor.php:731
+#: includes/admin/class-noptin-form-editor.php:769
 msgid "Hide heading"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:851
+#: includes/admin/class-noptin-form-editor.php:889
 msgid "Hide note"
 msgstr "Nascondi nota"
 
@@ -1647,19 +1784,19 @@ msgstr "Nascondi sui desktop"
 msgid "Hide on Mobile"
 msgstr "Nascondi sul cellulare"
 
-#: includes/admin/class-noptin-form-editor.php:633
+#: includes/admin/class-noptin-form-editor.php:671
 msgid "Hide opt-in fields"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:217
+#: includes/admin/class-noptin-settings.php:229
 msgid "Hide opt-in forms and methods from existing subscribers."
 msgstr "nascondi i moduli newsletter agli abbonati."
 
-#: includes/admin/class-noptin-form-editor.php:771
+#: includes/admin/class-noptin-form-editor.php:809
 msgid "Hide prefix"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:811
+#: includes/admin/class-noptin-form-editor.php:849
 msgid "Hide sub-heading"
 msgstr ""
 
@@ -1667,17 +1804,17 @@ msgstr ""
 msgid "Hour(s)"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:266
+#: includes/admin/class-noptin-settings.php:287
 msgid ""
 "How the sender email appears in outgoing emails. Leave this field blank if "
 "you are not able to send any emails."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:275
+#: includes/admin/class-noptin-settings.php:296
 msgid "How the sender name appears in outgoing emails"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:313
+#: includes/admin/class-noptin-admin.php:316
 msgid "How to troubleshoot this error."
 msgstr ""
 
@@ -1694,24 +1831,28 @@ msgid ""
 "I consent to receive promotional emails about your products and services."
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-list-providers.php:229
+msgid "ID"
+msgstr ""
+
 #: templates/contact-form-7-settings.php:77
 #: includes/integrations/class-noptin-wpforms.php:92
 msgid "If mapped, only users who consent will join your newsletter."
 msgstr ""
 
-#: includes/subscriber.php:764
+#: includes/subscriber.php:767
 #: templates/default-new-post-notification-body.php:4
 msgid ""
 "If that doesn't work, copy and paste the following link in your browser:"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:234
+#: includes/admin/class-noptin-settings.php:255
 msgid ""
 "If you are migrating from another email plugin, enter the cookie name they "
 "used to identify subscribers."
 msgstr ""
 
-#: includes/subscriber.php:758
+#: includes/subscriber.php:761
 msgid "If you have received this email by mistake, you can safely delete it."
 msgstr ""
 
@@ -1729,15 +1870,15 @@ msgid ""
 "%1$simporting your existing newsletter subscribers into Noptin%2$s"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:478
+#: includes/admin/class-noptin-form-editor.php:516
 msgid "Image"
 msgstr "Immagine"
 
-#: includes/admin/class-noptin-form-editor.php:679
+#: includes/admin/class-noptin-form-editor.php:717
 msgid "Image Position"
 msgstr "Posizione dell'immagine"
 
-#: includes/admin/class-noptin-form-editor.php:667
+#: includes/admin/class-noptin-form-editor.php:705
 msgid "Image URL"
 msgstr "URL dell'immagine"
 
@@ -1745,8 +1886,8 @@ msgstr "URL dell'immagine"
 msgid "Immediately"
 msgstr "Subito"
 
-#: includes/admin/class-noptin-admin.php:305
-#: includes/admin/class-noptin-admin.php:830
+#: includes/admin/class-noptin-admin.php:308
+#: includes/admin/class-noptin-admin.php:846
 msgid "Import"
 msgstr ""
 
@@ -1762,11 +1903,11 @@ msgstr ""
 msgid "Import error: not an array. Skipping."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:303
+#: includes/admin/class-noptin-admin.php:306
 msgid "Import subscribers from any system into Noptin"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:299
+#: includes/admin/class-noptin-admin.php:302
 #: includes/automation-rules/triggers/class-noptin-new-subscriber-trigger.php:144
 msgid "Imported"
 msgstr ""
@@ -1823,31 +1964,21 @@ msgstr ""
 msgid "Install Now"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:399
+#: includes/admin/class-noptin-form-editor.php:392
 #, php-format
-msgid "Install the %s to connect your Campaign Monitor account."
+msgid "Install the %s to add new subscribers to %s."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:415
-#, php-format
-msgid "Install the %s to connect your convertkit account."
-msgstr ""
-
-#: includes/admin/class-noptin-form-editor.php:431
-#, php-format
-msgid "Install the %s to connect your Drip account."
-msgstr ""
-
-#: includes/admin/class-noptin-form-editor.php:383
-#, php-format
-msgid "Install the %s to connect your mailchimp account."
-msgstr ""
-
-#: includes/class-noptin-new-post-notify.php:125
+#: includes/class-noptin-new-post-notify.php:147
 #, php-format
 msgid ""
 "Install the %s to send notifications for products and other post types or "
 "limit notifications to certain categories and tags."
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:496
+#, php-format
+msgid "Install the %s to use it with Noptin."
 msgstr ""
 
 #: includes/libraries/noptin-com/views/html-main.php:125
@@ -1859,7 +1990,7 @@ msgstr ""
 msgid "Integrations"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:208
+#: includes/admin/class-noptin-email-campaigns-admin.php:215
 msgid ""
 "Introduce yourself to new subscribers or set up a series of welcome emails "
 "to act as an email course."
@@ -1869,7 +2000,7 @@ msgstr ""
 msgid "Invalid export file"
 msgstr ""
 
-#: includes/class-noptin-page.php:371
+#: includes/class-noptin-page.php:390
 msgid "Invalid or missing campaign id."
 msgstr ""
 
@@ -1882,11 +2013,11 @@ msgstr ""
 msgid "Invoice status"
 msgstr ""
 
-#: includes/subscriber.php:869 templates/admin-single-subscriber/save.php:87
+#: includes/subscriber.php:872 templates/admin-single-subscriber/save.php:87
 msgid "IP Address"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:454
+#: includes/admin/class-noptin-vue.php:557
 msgid "Is this field required?"
 msgstr ""
 
@@ -1910,8 +2041,8 @@ msgstr ""
 msgid "Large Fields"
 msgstr ""
 
-#: includes/subscriber.php:861 templates/export-subscribers.php:100
-#: includes/admin/class-noptin-vue.php:355
+#: includes/subscriber.php:864 templates/export-subscribers.php:100
+#: includes/admin/class-noptin-vue.php:373
 #: includes/integrations/class-noptin-elementor-forms-integration.php:140
 msgid "Last Name"
 msgstr ""
@@ -1928,24 +2059,25 @@ msgstr ""
 msgid "Learn More"
 msgstr ""
 
-#: includes/class-noptin-new-post-notify.php:79
+#: includes/class-noptin-new-post-notify.php:88
 #, php-format
 msgid "Learn more about %show to set up new post notifications%s."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:656
-#: includes/admin/class-noptin-admin.php:693
-#: includes/admin/class-noptin-admin.php:730
+#: includes/admin/class-noptin-admin.php:672
+#: includes/admin/class-noptin-admin.php:709
+#: includes/admin/class-noptin-admin.php:746
 msgid "Learn more about automation rules"
 msgstr ""
 
+#: includes/class-noptin-new-post-notify.php:106
 #: includes/integrations/class-noptin-wpforms.php:56
 msgid "Learn More!"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:656
-#: includes/admin/class-noptin-form-editor.php:675
-#: includes/admin/class-noptin-form-editor.php:701
+#: includes/admin/class-noptin-form-editor.php:694
+#: includes/admin/class-noptin-form-editor.php:713
+#: includes/admin/class-noptin-form-editor.php:739
 msgid "Left"
 msgstr "Sinistra"
 
@@ -1984,6 +2116,11 @@ msgstr ""
 msgid "Lime"
 msgstr ""
 
+#: includes/class-noptin-new-post-notify.php:104
+msgid ""
+"Limit new post notifications to specific categories, tags and custom terms."
+msgstr ""
+
 #: includes/automation-rules/triggers/class-noptin-link-click-trigger.php:36
 msgid "Link Click"
 msgstr ""
@@ -1996,7 +2133,7 @@ msgstr "Utenti connessi"
 msgid "Logged out users"
 msgstr "Utenti disconnessi"
 
-#: includes/admin/class-noptin-settings.php:311
+#: includes/admin/class-noptin-settings.php:332
 msgid "Logo"
 msgstr ""
 
@@ -2010,7 +2147,7 @@ msgid ""
 "and updates, all from the convenience of your WordPress dashboard"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:387
+#: includes/integrations/class-noptin-abstract-integration.php:383
 msgid "Manual Subscription"
 msgstr ""
 
@@ -2036,7 +2173,7 @@ msgstr ""
 msgid "Membership Key: "
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:323
+#: includes/admin/class-noptin-settings.php:344
 msgid "Merriweather"
 msgstr ""
 
@@ -2052,7 +2189,7 @@ msgstr ""
 msgid "Minimal"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:574
+#: includes/admin/class-noptin-form-editor.php:612
 msgid "Minimum Height"
 msgstr "Altezza minima"
 
@@ -2075,10 +2212,11 @@ msgstr ""
 
 #: includes/admin/class-noptin-email-automations-table.php:248
 #: includes/integrations/class-noptin-gravity-forms.php:279
+#: includes/libraries/connections/class-noptin-list-providers.php:228
 msgid "Name"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:294
+#: includes/admin/class-noptin-settings.php:315
 msgid "Never Delete"
 msgstr ""
 
@@ -2108,11 +2246,11 @@ msgstr ""
 msgid "New Form"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:199
+#: includes/admin/class-noptin-email-campaigns-admin.php:206
 msgid "new post notification"
 msgstr ""
 
-#: includes/class-noptin-new-post-notify.php:376
+#: includes/class-noptin-new-post-notify.php:402
 #, php-format
 msgid "New post notification for \"%s\""
 msgstr ""
@@ -2121,11 +2259,21 @@ msgstr ""
 msgid "New Subscriber"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:291
+#: includes/admin/class-noptin-admin.php:294
 msgid "New subscriber added"
 msgstr ""
 
-#: includes/class-noptin-mailer.php:197
+#: includes/libraries/connections/class-noptin-connection-provider.php:744
+msgid "New subscribers will be added to here"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider.php:688
+#: includes/libraries/connections/class-noptin-connection-provider.php:731
+#, php-format
+msgid "New subscribers will be added to this %s"
+msgstr ""
+
+#: includes/class-noptin-mailer.php:205
 #, php-format
 msgid "Newsletter powered by %s"
 msgstr ""
@@ -2139,7 +2287,7 @@ msgid "Newsletter Subscription Forms"
 msgstr ""
 
 #: templates/email-campaigns.php:8
-#: includes/admin/class-noptin-email-campaigns-admin.php:511
+#: includes/admin/class-noptin-email-campaigns-admin.php:542
 msgid "Newsletters"
 msgstr ""
 
@@ -2151,7 +2299,7 @@ msgstr ""
 msgid "Ninja Forms"
 msgstr ""
 
-#: includes/class-noptin-ajax.php:751
+#: includes/class-noptin-ajax.php:751 includes/functions.php:1860
 msgid "No"
 msgstr ""
 
@@ -2184,7 +2332,7 @@ msgstr ""
 "inoltre possibile trovare lo shortcode del modulo sotto l'anteprima del "
 "modulo"
 
-#: includes/admin/class-noptin-admin.php:454
+#: includes/admin/class-noptin-admin.php:457
 #: includes/libraries/noptin-com/views/html-admin-page-addons.php:29
 #: includes/libraries/noptin-com/views/html-main.php:12
 msgid "Noptin Extensions"
@@ -2199,12 +2347,16 @@ msgstr ""
 msgid "Noptin Newsletter"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:434
+#: includes/functions.php:1623
+msgid "Noptin Subscribers"
+msgstr ""
+
+#: includes/admin/class-noptin-admin.php:437
 msgid "Noptin Tools"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:479
-#: includes/admin/class-noptin-admin.php:480
+#: includes/admin/class-noptin-admin.php:482
+#: includes/admin/class-noptin-admin.php:483
 msgid "Noptin Welcome"
 msgstr "Benvenuto"
 
@@ -2231,16 +2383,24 @@ msgstr ""
 msgid "Not Confirmed"
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-connection-provider.php:452
+msgid "Not Connected"
+msgstr ""
+
+#: includes/admin/class-noptin-settings.php:514
+msgid "Not Installed"
+msgstr ""
+
 #: templates/contact-form-7-settings.php:71
 msgid "Not Mapped"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:518
-#: includes/admin/class-noptin-form-editor.php:856
+#: includes/admin/class-noptin-form-editor.php:556
+#: includes/admin/class-noptin-form-editor.php:894
 msgid "Note"
 msgstr "Nota"
 
-#: includes/admin/class-noptin-form-editor.php:863
+#: includes/admin/class-noptin-form-editor.php:901
 msgid "Note Color"
 msgstr "Nota Colore"
 
@@ -2260,17 +2420,17 @@ msgstr[1] ""
 msgid "Nothing to configure for this rule."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:241
+#: includes/admin/class-noptin-settings.php:262
 msgid "Notification recipient(s)"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:193
+#: includes/admin/class-noptin-settings.php:205
 msgid ""
 "Notify the site admin every time a new subscriber signs up for the "
 "newsletter."
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:201
+#: includes/admin/class-noptin-email-campaigns-admin.php:208
 msgid "Notify your subscribers everytime you publish new content."
 msgstr ""
 
@@ -2288,7 +2448,7 @@ msgstr ""
 msgid "Only add to Noptin if"
 msgstr ""
 
-#: includes/class-noptin-page.php:377
+#: includes/class-noptin-page.php:396
 msgid "Only administrators can preview email campaigns."
 msgstr ""
 
@@ -2317,7 +2477,7 @@ msgstr ""
 msgid "Opt-In Condition"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:470
+#: includes/admin/class-noptin-form-editor.php:508
 msgid "Opt-in Fields"
 msgstr ""
 
@@ -2329,7 +2489,8 @@ msgstr ""
 msgid "Optional. If set, users will only join your newsletter if they consent."
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:603
+#: includes/admin/class-noptin-email-campaigns-admin.php:634
+#: includes/admin/class-noptin-vue.php:476
 msgid "Options"
 msgstr ""
 
@@ -2379,7 +2540,7 @@ msgstr ""
 msgid "Parent Forms:"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:321
+#: includes/admin/class-noptin-settings.php:342
 msgid "Paste"
 msgstr ""
 
@@ -2392,15 +2553,21 @@ msgstr ""
 msgid "Pending"
 msgstr ""
 
+#: includes/admin/class-noptin-form-editor.php:453
+#, php-format
+msgid ""
+"People who subscribe via this form will be added to the %s you select here"
+msgstr ""
+
 #: includes/automation-rules/actions/class-noptin-email-action.php:143
 msgid "Permission Reminder"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:343
+#: includes/admin/class-noptin-settings.php:364
 msgid "Permission reminder"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:445
+#: includes/admin/class-noptin-settings.php:466
 msgid "Permission Text"
 msgstr ""
 
@@ -2412,19 +2579,19 @@ msgstr ""
 msgid "Pink"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:322
+#: includes/admin/class-noptin-settings.php:343
 msgid "Plain"
 msgstr ""
 
 #. %s: URL of the package.
-#: includes/libraries/noptin-com/class-noptin-com-updater.php:245
+#: includes/libraries/noptin-com/class-noptin-com-updater.php:247
 #, php-format
 msgid ""
 "Please <a href=\"%s\" target=\"_blank\">buy a new license key</a> to receive "
 "automatic updates."
 msgstr ""
 
-#: includes/subscriber.php:753 includes/subscriber.php:754
+#: includes/subscriber.php:756 includes/subscriber.php:757
 msgid "Please confirm your subscription"
 msgstr ""
 
@@ -2434,7 +2601,7 @@ msgid ""
 "support:"
 msgstr ""
 
-#: includes/class-noptin-ajax.php:572 includes/subscriber.php:323
+#: includes/class-noptin-ajax.php:572 includes/subscriber.php:324
 msgid "Please provide a valid email address"
 msgstr "Per favore fornisci un indirizzo email valido"
 
@@ -2447,7 +2614,7 @@ msgstr ""
 msgid "Popup Forms"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:200
+#: includes/admin/class-noptin-email-campaigns-admin.php:207
 msgid "Post Notifications"
 msgstr ""
 
@@ -2461,17 +2628,17 @@ msgctxt "Post type singular name"
 msgid "Email Form"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:567
+#: includes/admin/class-noptin-form-editor.php:605
 msgid "Preferred Width"
 msgstr "Larghezza preferita"
 
-#: includes/class-noptin-form.php:229 includes/functions.php:1625
-#: includes/admin/class-noptin-form-editor.php:494
-#: includes/admin/class-noptin-form-editor.php:776
+#: includes/class-noptin-form.php:229 includes/functions.php:1669
+#: includes/admin/class-noptin-form-editor.php:532
+#: includes/admin/class-noptin-form-editor.php:814
 msgid "Prefix"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:890
+#: includes/admin/class-noptin-form-editor.php:928
 msgid ""
 "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will "
 "apply to all opt-in forms on the page"
@@ -2479,12 +2646,12 @@ msgstr ""
 "Prefisso tutti i tuoi stili con '.noptin-optin-form-wrapper' altrimenti si "
 "applicheranno a tutti i moduli di opt-in nella pagina"
 
-#: includes/admin/class-noptin-form-editor.php:783
+#: includes/admin/class-noptin-form-editor.php:821
 msgid "Prefix Color"
 msgstr ""
 
 #: includes/admin/class-noptin-email-newsletters-table.php:108
-#: includes/admin/class-noptin-form-editor.php:943
+#: includes/admin/class-noptin-form-editor.php:981
 msgid "Preview"
 msgstr "Anteprima"
 
@@ -2492,16 +2659,16 @@ msgstr "Anteprima"
 msgid "Preview Text"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:562
-#: includes/admin/class-noptin-email-campaigns-admin.php:615
+#: includes/admin/class-noptin-email-campaigns-admin.php:593
+#: includes/admin/class-noptin-email-campaigns-admin.php:646
 msgid "Preview Text (Optional)"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:220
+#: includes/admin/class-noptin-email-campaigns-admin.php:227
 msgid "Previous Email"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:219
+#: includes/admin/class-noptin-email-campaigns-admin.php:226
 msgid "previous email automation"
 msgstr ""
 
@@ -2522,7 +2689,7 @@ msgstr ""
 msgid "Provide feed name e.g \"Newsletter Subscription\""
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:944
+#: includes/admin/class-noptin-form-editor.php:982
 msgid "Publish"
 msgstr ""
 
@@ -2537,15 +2704,15 @@ msgstr ""
 msgid "Purple"
 msgstr ""
 
-#: includes/class-noptin-page.php:520
+#: includes/class-noptin-page.php:542
 msgid "Re-subscription Message"
 msgstr ""
 
-#: includes/class-noptin-page.php:529
+#: includes/class-noptin-page.php:551
 msgid "Re-subscription Redirect"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:891
+#: includes/admin/class-noptin-form-editor.php:929
 msgid "Read this first."
 msgstr ""
 
@@ -2573,6 +2740,10 @@ msgstr "URL di reindirizzamento"
 msgid "Redirect:"
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-list-providers-table.php:92
+msgid "Refresh Data"
+msgstr ""
+
 #: includes/automation-rules/triggers/class-noptin-getpaid-new-invoice-trigger.php:103
 #: includes/automation-rules/triggers/class-noptin-woocommerce-new-order-trigger.php:108
 msgid "Refunded"
@@ -2594,16 +2765,28 @@ msgstr ""
 msgid "Registration Form"
 msgstr ""
 
-#: includes/class-noptin-ajax.php:974
+#: includes/class-noptin-ajax.php:979
 msgid "Reload the page and try again."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:292
+#: includes/admin/class-noptin-admin.php:295
 msgid "Reloading the page"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:448
+#: includes/admin/class-noptin-settings.php:469
 msgid "Remind the subscriber how they signed up."
+msgstr ""
+
+#. %1$s list type, %2$s list name.
+#: includes/libraries/connections/class-noptin-connection-provider-remove-list-action.php:96
+#, php-format
+msgid "Remove the subscriber from the %1$ %2$s."
+msgstr ""
+
+#. %1$s provider tame, %2$s list type.
+#: includes/libraries/connections/class-noptin-connection-provider-remove-list-action.php:67
+#, php-format
+msgid "Removes the subscriber from a %1$ %2$s."
 msgstr ""
 
 #: includes/libraries/noptin-com/class-noptin-com-helper.php:200
@@ -2614,13 +2797,13 @@ msgstr ""
 msgid "Report a bug or request a feature"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:201
+#: includes/admin/class-noptin-settings.php:213
 msgid "Require new subscribers to confirm their email addresses."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:657
-#: includes/admin/class-noptin-form-editor.php:676
-#: includes/admin/class-noptin-form-editor.php:702
+#: includes/admin/class-noptin-form-editor.php:695
+#: includes/admin/class-noptin-form-editor.php:714
+#: includes/admin/class-noptin-form-editor.php:740
 msgid "Right"
 msgstr "Destra"
 
@@ -2644,17 +2827,17 @@ msgstr ""
 msgid "Sample Value"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:289
-#: includes/admin/class-noptin-email-campaigns-admin.php:591
+#: includes/admin/class-noptin-admin.php:292
+#: includes/admin/class-noptin-email-campaigns-admin.php:622
 msgid "Save"
 msgstr "Salvare"
 
-#: includes/subscriber.php:1063 includes/admin/class-noptin-form-editor.php:945
+#: includes/subscriber.php:1066 includes/admin/class-noptin-form-editor.php:983
 #: templates/automation-rules/edit.php:74 templates/automations/save.php:11
 msgid "Save Changes"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:938
+#: includes/admin/class-noptin-form-editor.php:976
 #, fuzzy
 msgid "Saving"
 msgstr "Salvataggio..."
@@ -2671,7 +2854,7 @@ msgstr ""
 msgid "Search page"
 msgstr "Pagina di ricerca"
 
-#: includes/admin/class-noptin-admin.php:833
+#: includes/admin/class-noptin-admin.php:849
 msgid "Search Subscribers"
 msgstr ""
 
@@ -2679,12 +2862,27 @@ msgstr ""
 msgid "Search Term"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:329
+#: includes/admin/class-noptin-settings.php:350
 msgid "Select \"Default\" if you are using an email templates plugin."
+msgstr ""
+
+#: includes/admin/class-noptin-vue.php:495
+#, php-format
+msgid "Select %s Equivalent"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider.php:689
+#, php-format
+msgid "Select a %s"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-open-email-trigger.php:98
 msgid "Select a campaign above if you want to watch for a specific campaign."
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider.php:349
+#, php-format
+msgid "Select a default %s"
 msgstr ""
 
 #: includes/class-noptin-sidebar.php:135
@@ -2705,7 +2903,7 @@ msgid ""
 "specific subscription method."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:319
+#: includes/admin/class-noptin-settings.php:340
 msgid "Select a template"
 msgstr ""
 
@@ -2721,11 +2919,21 @@ msgstr ""
 msgid "Select an action to take when the above trigger is fired"
 msgstr ""
 
+#: includes/libraries/connections/class-noptin-connection-provider-add-list-action.php:132
+#: includes/libraries/connections/class-noptin-connection-provider-add-secondary-list-action.php:144
+#: includes/libraries/connections/class-noptin-connection-provider-add-secondary-list-action.php:158
+#: includes/libraries/connections/class-noptin-connection-provider-add-tags-action.php:120
+#: includes/libraries/connections/class-noptin-connection-provider-remove-list-action.php:132
+#: includes/libraries/connections/class-noptin-connection-provider-remove-tags-action.php:120
+#: includes/libraries/connections/class-noptin-connection-provider.php:533
+msgid "Select an option"
+msgstr ""
+
 #: templates/new-email-automations-popup.php:2
 msgid "Select Automation Type"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:295
+#: includes/admin/class-noptin-admin.php:298
 msgid "Select file type"
 msgstr ""
 
@@ -2769,39 +2977,43 @@ msgstr ""
 msgid "Select user roles"
 msgstr "Seleziona i ruoli utente"
 
-#: includes/admin/class-noptin-admin.php:302
+#: includes/admin/class-noptin-admin.php:305
 msgid "Select your CSV file"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:304
+#: includes/admin/class-noptin-admin.php:307
 msgid "select your import file"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:310
-#: includes/admin/class-noptin-email-campaigns-admin.php:552
+#: includes/admin/class-noptin-admin.php:313
+#: includes/admin/class-noptin-email-campaigns-admin.php:583
 msgid "Send"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:309
+#: includes/admin/class-noptin-admin.php:312
 msgid "Send a new double opt-in confirmation email to"
 msgstr ""
 
-#: includes/admin/class-noptin-email-newsletters-table.php:401
+#: includes/admin/class-noptin-email-newsletters-table.php:409
 msgid "Send A New Email"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:221
+#: includes/admin/class-noptin-email-campaigns-admin.php:228
 msgid ""
 "Send an email to a subscriber when they open or click on a link in another "
 "email."
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:215
+#: includes/admin/class-noptin-email-campaigns-admin.php:222
 msgid "Send an email to a subscriber when you tag them."
 msgstr ""
 
 #: templates/admin-single-subscriber/double-optin.php:4
 msgid "Send confirmation email"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider.php:336
+msgid "Send contacts an opt-in confirmation email when they sign up"
 msgstr ""
 
 #: includes/automation-rules/actions/class-noptin-email-action.php:81
@@ -2825,11 +3037,20 @@ msgstr ""
 msgid "send them an email with the subject %s"
 msgstr ""
 
+#: templates/newsletters/send.php:55
+msgid "Send To"
+msgstr ""
+
+#: includes/admin/class-noptin-email-campaigns-admin.php:490
+#, php-format
+msgid "Sending the campaign: \"%s\""
+msgstr ""
+
 #: templates/new-email-automations-popup.php:71
 msgid "Sends"
 msgstr ""
 
-#: includes/class-noptin-new-post-notify.php:438
+#: includes/class-noptin-new-post-notify.php:467
 #, php-format
 msgid "Sends %s new content is published"
 msgstr ""
@@ -2851,18 +3072,23 @@ msgstr ""
 msgid "Set up %s"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:426
-#: includes/admin/class-noptin-admin.php:427
+#: includes/class-noptin-new-post-notify.php:101
+#, php-format
+msgid "Set-up different new post notifications for %s."
+msgstr ""
+
+#: includes/admin/class-noptin-admin.php:429
+#: includes/admin/class-noptin-admin.php:430
 #: includes/admin/class-noptin-form-editor.php:64
 msgid "Settings"
 msgstr "impostazioni"
 
-#: includes/admin/class-noptin-settings.php:221
+#: includes/admin/class-noptin-settings.php:242
 msgid "Share stats"
 msgstr ""
 
 #: includes/admin/class-noptin-form-editor.php:140
-#: includes/admin/class-noptin-form-editor.php:951
+#: includes/admin/class-noptin-form-editor.php:989
 msgid "Shortcode"
 msgstr ""
 
@@ -2876,11 +3102,15 @@ msgstr ""
 msgid "Shortcodes and merge tags are allowed."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:612
+#: includes/admin/class-noptin-form-editor.php:650
 msgid "Show all fields in a single line"
 msgstr "Mostra tutti i campi in un'unica riga"
 
-#: includes/admin/class-noptin-form-editor.php:619
+#: includes/admin/class-noptin-settings.php:233
+msgid "Show campaign stats"
+msgstr ""
+
+#: includes/admin/class-noptin-form-editor.php:657
 msgid "Show GDPR checkbox"
 msgstr ""
 
@@ -2902,7 +3132,7 @@ msgstr ""
 msgid "Sign up and we will instantly send you our best exclusive bonuses."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:300
+#: includes/admin/class-noptin-admin.php:303
 msgid "Skipped"
 msgstr ""
 
@@ -2920,7 +3150,7 @@ msgstr ""
 msgid "Some email clients display this text next to the email subject."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:543
+#: includes/admin/class-noptin-form-editor.php:581
 msgid ""
 "Some templates include custom css so remember to check out the Custom CSS "
 "panel after you apply a template"
@@ -2976,12 +3206,12 @@ msgstr ""
 msgid "stop"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:510
-#: includes/admin/class-noptin-form-editor.php:816
+#: includes/admin/class-noptin-form-editor.php:548
+#: includes/admin/class-noptin-form-editor.php:854
 msgid "Sub-heading"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:823
+#: includes/admin/class-noptin-form-editor.php:861
 msgid "Sub-heading Color"
 msgstr ""
 
@@ -3065,7 +3295,7 @@ msgstr ""
 msgid "Subscriber"
 msgstr ""
 
-#: includes/subscriber.php:1043
+#: includes/subscriber.php:1046
 msgid "Subscriber Details"
 msgstr ""
 
@@ -3105,20 +3335,24 @@ msgstr ""
 msgid "Subscriber Status"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:1178
+#: includes/admin/class-noptin-admin.php:1191
 msgid "Subscriber successfully deleted"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:1319
+#: includes/admin/class-noptin-admin.php:1338
 msgid "Subscriber successfully updated"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:214
+#: includes/admin/class-noptin-email-campaigns-admin.php:221
 msgid "Subscriber Tag"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:213
+#: includes/admin/class-noptin-email-campaigns-admin.php:220
 msgid "subscriber tag automation"
+msgstr ""
+
+#: includes/admin/class-noptin-form-editor.php:463
+msgid "Subscriber Tags"
 msgstr ""
 
 #: includes/integrations/class-noptin-wp-comment-form.php:23
@@ -3131,11 +3365,11 @@ msgid ""
 "sync."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:232
+#: includes/admin/class-noptin-settings.php:253
 msgid "Subscription Cookie"
 msgstr ""
 
-#: includes/subscriber.php:867 templates/export-subscribers.php:75
+#: includes/subscriber.php:870 templates/export-subscribers.php:75
 #: templates/export-subscribers.php:102
 #: includes/admin/class-noptin-subscribers-table.php:356
 msgid "Subscription Date"
@@ -3173,7 +3407,7 @@ msgstr ""
 msgid "Subscriptions"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:311
+#: includes/admin/class-noptin-admin.php:314
 msgid "Success"
 msgstr ""
 
@@ -3186,7 +3420,27 @@ msgstr "Messaggio di successo"
 msgid "System Information"
 msgstr ""
 
-#: includes/subscriber.php:757
+#: includes/libraries/connections/class-noptin-connection-provider-add-tags-action.php:62
+msgid "Tag the subscriber"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-add-tags-action.php:66
+#, php-format
+msgid "Tag the subscriber in %s"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-add-tags-action.php:85
+#, php-format
+msgid "Tag the subscriber: \"%s\""
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-add-tags-action.php:127
+#: includes/libraries/connections/class-noptin-connection-provider-remove-tags-action.php:127
+#: includes/libraries/connections/class-noptin-connection-provider.php:542
+msgid "Tags"
+msgstr ""
+
+#: includes/subscriber.php:760
 msgid "Tap the button below to confirm your subscription to our newsletter."
 msgstr ""
 
@@ -3194,11 +3448,11 @@ msgstr ""
 msgid "Teal"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:454
+#: includes/admin/class-noptin-form-editor.php:492
 msgid "Template"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:369
+#: includes/admin/class-noptin-vue.php:387
 msgid "Text"
 msgstr ""
 
@@ -3206,19 +3460,19 @@ msgstr ""
 msgid "Text Color:"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:378
+#: includes/admin/class-noptin-vue.php:396
 msgid "Textarea"
 msgstr ""
 
-#: includes/class-noptin-page.php:562 includes/class-noptin-page.php:586
+#: includes/class-noptin-page.php:584 includes/class-noptin-page.php:608
 msgid "Thank You"
 msgstr ""
 
-#: includes/class-noptin-page.php:574
+#: includes/class-noptin-page.php:596
 msgid "Thank You, Again!"
 msgstr ""
 
-#: includes/functions.php:47 includes/admin/class-noptin-settings.php:372
+#: includes/functions.php:47 includes/admin/class-noptin-settings.php:393
 msgid "Thanks for subscribing to our newsletter"
 msgstr ""
 
@@ -3234,7 +3488,7 @@ msgstr ""
 msgid "The automation rule has been deleted."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:568
+#: includes/admin/class-noptin-form-editor.php:606
 msgid "The element will resize to 100% width on smaller devices"
 msgstr ""
 "L'elemento ridimensionerà al 100% di larghezza su dispositivi più piccoli"
@@ -3267,29 +3521,47 @@ msgstr ""
 msgid "The item is refunded"
 msgstr ""
 
+#: includes/admin/class-noptin-form-editor.php:465
+msgid ""
+"The listed tags will be applied to all new subscribers added by this form. "
+"Separate multiple values with a comma."
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-add-tags-action.php:129
+msgid ""
+"The listed tags will be applied to the subscriber. Separate multiple tags "
+"with a comma."
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-remove-tags-action.php:129
+msgid ""
+"The listed tags will be removed from the subscriber. Separate multiple tags "
+"with a comma."
+msgstr ""
+
 #: templates/optin-templates.php:977
 msgid "The Marketer's Workbook"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:285
+#: includes/admin/class-noptin-settings.php:306
 msgid ""
 "The maximum number of emails to send per hour. Leave empty to send as many "
 "as possible."
 msgstr ""
 
-#: includes/class-noptin-page.php:540
+#: includes/class-noptin-page.php:562
 msgid ""
 "The message to show to subscribers after they confirm their email address. "
 "Only used if you do not provide a redirect url below."
 msgstr ""
 
-#: includes/class-noptin-page.php:523
+#: includes/class-noptin-page.php:545
 msgid ""
 "The message to show to subscribers after they resubscribe. Only used if you "
 "do not provide a redirect url below."
 msgstr ""
 
-#: includes/class-noptin-page.php:506
+#: includes/class-noptin-page.php:528
 msgid ""
 "The message to show to subscribers after they unsubscribe. Only used if you "
 "do not provide a redirect url below."
@@ -3299,7 +3571,7 @@ msgstr ""
 msgid "The Noptin Team."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:295
+#: includes/admin/class-noptin-settings.php:316
 msgid ""
 "The number of days after which to delete a sent campaign. Leave empty to if "
 "you do not want to automatically delete campaigns."
@@ -3325,7 +3597,7 @@ msgstr ""
 msgid "The selected automation rules have been deleted."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:1232
+#: includes/admin/class-noptin-admin.php:1251
 msgid "The selected campaigns have been deleted."
 msgstr ""
 
@@ -3341,7 +3613,7 @@ msgstr ""
 msgid "The selected subscribers have been marked as in-active."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:396
+#: includes/admin/class-noptin-settings.php:417
 msgid "The subject of the subscription confirmation email"
 msgstr ""
 
@@ -3353,11 +3625,11 @@ msgstr ""
 msgid "The subscriber's name"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:428
+#: includes/admin/class-noptin-settings.php:449
 msgid "The text of the call to action button"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:407
+#: includes/admin/class-noptin-settings.php:428
 msgid "The title of the email"
 msgstr ""
 
@@ -3381,19 +3653,25 @@ msgstr ""
 msgid "There was a problem creating your automation rule. Please try again."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:939
+#: includes/admin/class-noptin-form-editor.php:977
 msgid "There was an error saving your form."
 msgstr "Si è verificato un errore durante il salvataggio del modulo."
 
-#: includes/admin/class-noptin-form-editor.php:941
+#: includes/admin/class-noptin-form-editor.php:979
 msgid "There was an error saving your template."
 msgstr "Si è verificato un errore."
+
+#: includes/class-noptin-new-post-notify.php:99
+msgid ""
+"This campaign will only be sent when you publish a <strong>blog post</strong>"
+". The Custom Post Types addon allows you to:-"
+msgstr ""
 
 #: includes/class-noptin-ajax.php:680
 msgid "This form is in-active."
 msgstr ""
 
-#: includes/class-noptin-form.php:154 includes/class-noptin-form.php:597
+#: includes/class-noptin-form.php:154 includes/class-noptin-form.php:610
 msgid "This form is incorrectly configured"
 msgstr ""
 
@@ -3405,11 +3683,11 @@ msgid ""
 "email."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:417
+#: includes/admin/class-noptin-settings.php:438
 msgid "This is the main content of the email"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:373
+#: includes/admin/class-noptin-settings.php:394
 msgid ""
 "This is the message shown to people after they successfully sign up for your "
 "newsletter."
@@ -3426,7 +3704,7 @@ msgid ""
 "This license key is active but the extension is not installed on your site."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:315
+#: includes/admin/class-noptin-admin.php:318
 msgid "This might be a problem with your server or your internet connection"
 msgstr ""
 
@@ -3446,14 +3724,14 @@ msgid ""
 msgstr ""
 
 #. %1$s Opening link tag, %2$s Closing link tag.
-#: includes/admin/class-noptin-settings.php:361
+#: includes/admin/class-noptin-settings.php:382
 #, php-format
 msgid ""
 "This text appears below all emails. If you are a %1$sNoptin affiliate%2$s, "
 "include your affiliate link here and earn commissions for new referrals."
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:438
+#: includes/admin/class-noptin-settings.php:459
 msgid "This text is shown after the call to action button"
 msgstr ""
 
@@ -3461,7 +3739,7 @@ msgstr ""
 msgid "This Week"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:307
+#: includes/admin/class-noptin-admin.php:310
 msgid "This will delete the subscriber and all associated data"
 msgstr ""
 
@@ -3526,7 +3804,7 @@ msgid ""
 msgstr ""
 
 #. %1$s Opening link tag, %2$s Closing link tag.
-#: includes/class-noptin-mailer.php:224
+#: includes/class-noptin-mailer.php:232
 #, php-format
 msgid ""
 "To stop receiving these emails, you can %1$sunsubscribe%2$s at any time."
@@ -3536,12 +3814,12 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:438
+#: includes/admin/class-noptin-admin.php:441
 msgid "Tools"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:655
-#: includes/admin/class-noptin-form-editor.php:674
+#: includes/admin/class-noptin-form-editor.php:693
+#: includes/admin/class-noptin-form-editor.php:712
 msgid "Top"
 msgstr "Superiore"
 
@@ -3585,7 +3863,7 @@ msgstr ""
 msgid "Try Applying the Green Color Theme!"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:335
+#: includes/admin/class-noptin-settings.php:356
 msgid "Try our free email templates plugin."
 msgstr ""
 
@@ -3597,18 +3875,18 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:749
-#: includes/admin/class-noptin-form-editor.php:789
-#: includes/admin/class-noptin-form-editor.php:829
-#: includes/admin/class-noptin-form-editor.php:869
+#: includes/admin/class-noptin-form-editor.php:787
+#: includes/admin/class-noptin-form-editor.php:827
+#: includes/admin/class-noptin-form-editor.php:867
+#: includes/admin/class-noptin-form-editor.php:907
 msgid "Typography"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:314
+#: includes/admin/class-noptin-admin.php:317
 msgid "Unable to connect"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:340
+#: includes/admin/class-noptin-admin.php:343
 msgid "Unable to save your changes."
 msgstr ""
 
@@ -3624,8 +3902,12 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:284
+#: includes/admin/class-noptin-settings.php:305
 msgid "Unlimited"
+msgstr ""
+
+#: includes/class-noptin-new-post-notify.php:98
+msgid "Unlock More Features."
 msgstr ""
 
 #: includes/automation-rules/actions/class-noptin-unsubscribe-action.php:26
@@ -3648,16 +3930,30 @@ msgstr ""
 msgid "Unsubscribed On:"
 msgstr ""
 
-#: includes/class-noptin-page.php:503
+#: includes/class-noptin-page.php:525
 msgid "Unsubscription Message"
 msgstr ""
 
-#: includes/class-noptin-page.php:512
+#: includes/class-noptin-page.php:534
 msgid "Unsubscription Redirect"
 msgstr ""
 
 #: includes/admin/class-noptin-admin-filters.php:244
 msgid "Unsupported server"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-remove-tags-action.php:66
+#, php-format
+msgid "Untag the subscriber in %s"
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-remove-tags-action.php:62
+msgid "Untag the subscriber."
+msgstr ""
+
+#: includes/libraries/connections/class-noptin-connection-provider-remove-tags-action.php:85
+#, php-format
+msgid "Untag the subscriber: \"%s\""
 msgstr ""
 
 #: templates/admin-single-subscriber/save.php:159
@@ -3679,7 +3975,7 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:666
+#: includes/admin/class-noptin-vue.php:794
 msgid "Upload Image"
 msgstr ""
 
@@ -3699,7 +3995,7 @@ msgid ""
 msgstr ""
 
 #. %s Widget name name.
-#: includes/admin/class-noptin-form-editor.php:954
+#: includes/admin/class-noptin-form-editor.php:992
 #, php-format
 msgid "Use the %s widget to add this form to a widget area"
 msgstr ""
@@ -3779,7 +4075,7 @@ msgstr ""
 msgid "Using %1$sWPForms%2$s to create a newsletter subscription form."
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:438
+#: includes/admin/class-noptin-vue.php:466
 msgid "Value"
 msgstr ""
 
@@ -3802,6 +4098,7 @@ msgstr ""
 #: includes/admin/class-noptin-subscribers-table.php:223
 #: includes/admin/class-noptin-tools.php:70
 #: includes/admin/class-noptin-tools.php:76
+#: includes/libraries/connections/class-noptin-list-providers-table.php:91
 msgid "View"
 msgstr ""
 
@@ -3846,7 +4143,7 @@ msgstr ""
 msgid "Visit author homepage"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:301
+#: includes/admin/class-noptin-admin.php:304
 msgid ""
 "Visit Noptin > Tools > Debug Log to see why your subscribers were not "
 "imported"
@@ -3866,11 +4163,11 @@ msgid ""
 "the most to you."
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:207
+#: includes/admin/class-noptin-email-campaigns-admin.php:214
 msgid "Welcome Email"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:206
+#: includes/admin/class-noptin-email-campaigns-admin.php:213
 msgid "welcome email"
 msgstr ""
 
@@ -3882,7 +4179,7 @@ msgstr ""
 msgid "What fields do you want to export?"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:304
+#: includes/admin/class-noptin-settings.php:325
 msgid "What is the name of your company or website?"
 msgstr ""
 
@@ -4014,24 +4311,29 @@ msgstr ""
 msgid "Where do you want to show this subscription form?"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:256
+#: includes/admin/class-noptin-settings.php:277
 msgid ""
 "Where should subscribers reply to in case they need to get in touch with you?"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:336
+#: includes/integrations/class-noptin-abstract-integration.php:332
 msgid "Where should we add a newsletter subscription checkbox?"
 msgstr ""
 
-#: includes/class-noptin-page.php:547
+#: includes/libraries/connections/class-noptin-connection-provider-add-list-action.php:135
+#: includes/libraries/connections/class-noptin-connection-provider-add-secondary-list-action.php:147
+msgid "Where should we add the subscriber?"
+msgstr ""
+
+#: includes/class-noptin-page.php:569
 msgid "Where should we redirect subscribers after they confirm their emails?"
 msgstr ""
 
-#: includes/class-noptin-page.php:531
+#: includes/class-noptin-page.php:553
 msgid "Where should we redirect subscribers after they resubscribe?"
 msgstr ""
 
-#: includes/class-noptin-page.php:514
+#: includes/class-noptin-page.php:536
 msgid "Where should we redirect subscribers after they unsubscribe?"
 msgstr ""
 
@@ -4064,7 +4366,7 @@ msgstr ""
 msgid "WooCommerce Product Purchase"
 msgstr ""
 
-#: includes/subscriber.php:977
+#: includes/subscriber.php:980
 #, php-format
 msgid ""
 "WordPress returned the error: <strong>%s</strong> when syncing subscriber "
@@ -4079,7 +4381,7 @@ msgstr ""
 msgid "Yellow"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:539
+#: includes/functions.php:1864 includes/admin/class-noptin-vue.php:646
 #: templates/admin-single-subscriber/checkbox.php:14
 #: templates/admin-single-subscriber/checkbox.php:15
 msgid "Yes"
@@ -4089,7 +4391,12 @@ msgstr ""
 msgid "Yes Please!"
 msgstr ""
 
-#: includes/subscriber.php:767
+#: includes/admin/class-noptin-form-editor.php:412
+#, php-format
+msgid "You are not connected to %s"
+msgstr ""
+
+#: includes/subscriber.php:770
 msgid ""
 "You are receiving this email because we got your request to subscribe to our "
 "newsletter. If you don't want to join the newsletter, you can safely delete "
@@ -4110,11 +4417,11 @@ msgid ""
 "extensions for free."
 msgstr ""
 
-#: includes/class-noptin-page.php:575
+#: includes/class-noptin-page.php:597
 msgid "You have been resubscribed to our newsletter."
 msgstr ""
 
-#: includes/class-noptin-page.php:563
+#: includes/class-noptin-page.php:585
 msgid ""
 "You have been unsubscribed from this mailing list and won't receive any "
 "emails from us."
@@ -4132,7 +4439,7 @@ msgstr ""
 msgid "You have successfully disconnected your site from noptin.com"
 msgstr ""
 
-#: includes/class-noptin-page.php:587
+#: includes/class-noptin-page.php:609
 msgid "You have successfully subscribed to this newsletter."
 msgstr ""
 
@@ -4144,7 +4451,7 @@ msgstr ""
 msgid "You need to provide a subject for your email."
 msgstr ""
 
-#: includes/class-noptin-mailer.php:217
+#: includes/class-noptin-mailer.php:225
 msgid ""
 "You received this email because you are subscribed to our email newsletter."
 msgstr ""
@@ -4153,27 +4460,27 @@ msgstr ""
 msgid "You will nolonger receive product updates and support for this website"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:428
+#: includes/admin/class-noptin-vue.php:456
 msgid "You will use this as a merge tag in your emails."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:317
+#: includes/admin/class-noptin-admin.php:320
 msgid "You won't be able to revert this!"
 msgstr ""
 
-#: includes/subscriber.php:759
+#: includes/subscriber.php:762
 msgid "You won't be subscribed if you don't click on the button below."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:341
+#: includes/admin/class-noptin-admin.php:344
 msgid "Your automation rule has been saved."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:940
+#: includes/admin/class-noptin-form-editor.php:978
 msgid "Your changes have been saved successfuly"
 msgstr "Le tue modifiche sono state salvate correttamente"
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:317
+#: includes/admin/class-noptin-email-campaigns-admin.php:324
 msgid "Your changes were saved successfully"
 msgstr ""
 
@@ -4181,15 +4488,15 @@ msgstr ""
 msgid "Your Email Address"
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:422
+#: includes/admin/class-noptin-email-campaigns-admin.php:434
 msgid "Your email has been added to the sending qeue and will be sent soon."
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:409
+#: includes/admin/class-noptin-email-campaigns-admin.php:421
 msgid "Your email has been saved."
 msgstr ""
 
-#: includes/admin/class-noptin-email-campaigns-admin.php:417
+#: includes/admin/class-noptin-email-campaigns-admin.php:429
 #, php-format
 msgid "Your email has been scheduled to send on: %s"
 msgstr ""
@@ -4206,19 +4513,19 @@ msgstr ""
 msgid "Your license has been deactivated"
 msgstr ""
 
-#: includes/admin/class-noptin-settings.php:165
+#: includes/admin/class-noptin-settings.php:177
 msgid "Your settings could not be saved."
 msgstr "Le tue impostazioni non possono essere salvate."
 
-#: includes/admin/class-noptin-settings.php:164
+#: includes/admin/class-noptin-settings.php:176
 msgid "Your settings have been saved"
 msgstr "Le tue impostazioni sono state salvate"
 
-#: includes/admin/class-noptin-admin.php:1268
+#: includes/admin/class-noptin-admin.php:1287
 msgid "Your subscribers are now syncing in the background."
 msgstr ""
 
-#: includes/admin/class-noptin-form-editor.php:942
+#: includes/admin/class-noptin-form-editor.php:980
 msgid "Your template has been saved successfuly"
 msgstr "Il tuo modello è stato salvato correttamente"
 
@@ -4234,14 +4541,14 @@ msgstr ""
 msgid "Your website does not support that trigger."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:1263
+#: includes/admin/class-noptin-admin.php:1282
 msgid "Your WordPress subscribers are already syncing."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:1250
+#: includes/admin/class-noptin-admin.php:1269
 msgid "Your WordPress users are already being added to the newsletter."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:1255
+#: includes/admin/class-noptin-admin.php:1274
 msgid "Your WordPress users are now syncing in the background."
 msgstr ""

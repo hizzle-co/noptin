@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.7
 Requires PHP: 5.6
-Version: 1.5.1
+Version: 1.5.2
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -149,5 +149,45 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 * `noptin_hide` now hides newsletter subscription forms for an hour - ADDED
 * Ability to use post meta fields as merge tags - ADDED
 * Ability to add dropdown select field to opt-in forms - ADDED
+
+= 1.5.0 =
+* Ability to connect your site to Noptin.com for faster support and updates - ADDED
+* Ability to set multiple admin notification recipients - ADDED
+* Ability to view stats for sent new post notification newsletters - ADDED
+* Ability to automatically delete sent campaigns after X days - ADDED
+
+= 1.4.6 =
+* WPML Noptin settings translations not loaded - FIXED
+* Confirmation URLs show 404 error when using Polylang - FIXED
+
+= 1.4.5 =
+* Fix automatic "new post notifications" do not work if the new post is a duplicate of an earlier post.
+
+= 1.4.4 =
+* Fix checkbox always shows no (Ville Viljanen).
+* Fix featured image not showing in new post notification newsletter.
+* Add a [[resubscribe_url]] tag usable in emails and unsubscribe message.
+* Add the `[noptin-show-if-subscriber]` and `[noptin-show-if-non-subscriber]` shortcodes.
+* Add the `[noptin-subscriber-count]` shortcode.
+
+= 1.4.3 =
+* Fix undefined variable notice in new hook.
+
+= 1.4.2 =
+* WooCommerce integration displays an error when the Woo Product Feed addon is displayed.
+
+= 1.4.1 =
+- Allow your customers to subscribe to your newsletter when checking out via GetPaid.
+- Add a GetPaid new invoice automation rule.
+- Add a GetPaid lifetime value automation rule.
+- Add a GetPaid item purchased automation rule.
+- Fix Contact Form 7 submissions not added to the newsletter if the acceptance checkbox is not set.
+- The ".noptin-mark-as-existing-subscriber" CSS class can now be used to close sliding newsletter sign-up forms.
+- Ability to limit the maximum number of emails that can be sent per hour.
+
+= 1.4.0 =
+- Add a conditional newsletter subscription checkbox to Contact Form 7.
+- Add a conditional newsletter subscription checkbox to Ninja Forms.
+- Add a conditional newsletter subscription checkbox to WPForms.
 
 [View full Changelog](https://github.com/hizzle-co/noptin/blob/master/changelog.md)
