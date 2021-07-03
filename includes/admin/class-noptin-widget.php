@@ -136,6 +136,7 @@ class Noptin_Widget extends WP_Widget {
 		<form>
 		<?php echo $title . $desc . $redirect; ?>
 		<input class="noptin-widget-email-input noptin_form_input_email" name="email" type="email" placeholder="Email Address" required >
+		<?php do_action( 'before_noptin_quick_widget_submit', $args ); ?>
 		<input class="noptin-widget-submit-input" value="<?php echo $submit; ?>" type="submit">
 		<div class="noptin_feedback_success"></div>
 		<div class="noptin_feedback_error"></div>

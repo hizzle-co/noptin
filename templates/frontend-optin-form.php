@@ -100,11 +100,14 @@
 						if ( ! $singleLine ) {
 							$class = esc_attr( "noptin-form-button-$buttonPosition" );
 						}
+
+						do_action( 'before_print_noptin_submit_button', $singleLine, $id );
 					?>
 					<input value="<?php echo $value; ?>" type="submit"
 						style="background-color: <?php echo $bg_color; ?>; color: <?php echo $color; ?>;"
 						class="noptin-form-submit <?php echo $class; ?>" />
 				</div>
+				<?php do_action( 'after_print_noptin_form_fields', $singleLine, $id ); ?>
 			<?php } ?>
 
 			<?php if ( $gdprCheckbox && ! $hideFields && $singleLine ) { ?>
