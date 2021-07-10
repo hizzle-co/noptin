@@ -78,7 +78,7 @@ class Noptin_Widget extends WP_Widget {
 		echo $args['before_widget'];
 
 		// ID.
-		$id = '#' . $args['widget_id'];
+		$id = '#' . empty( $args['widget_id'] ) ? uniqid( 'noptin-widget-' ) : $args['widget_id'];
 
 		// Title.
 		$title = '';
