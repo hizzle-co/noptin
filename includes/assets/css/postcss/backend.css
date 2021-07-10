@@ -976,6 +976,9 @@ input:focus+.noptin-switch-slider span {
 	}
 }
 
+#noptin-automations-popup .notice:not(.noptin-notice),
+#noptin-automations-popup div.error:not(.noptin-notice),
+#noptin-automations-popup div.updated:not(.noptin-notice),
 .noptin-settings .notice:not(.noptin-notice),
 .noptin-settings div.error:not(.noptin-notice),
 .noptin-settings div.updated:not(.noptin-notice) {

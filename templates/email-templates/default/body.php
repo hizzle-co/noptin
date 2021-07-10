@@ -33,10 +33,22 @@
 
 	// Permission text.
 	if ( ! empty( $permission_text ) ) {
-		echo $permission_text;
+
+		if ( class_exists( 'Email_Customizer_Mailer' ) ) {
+			Email_Customizer_Mailer::$custom_footer_1 = $permission_text;
+		} else {
+			echo $permission_text;
+		}
+
 	}
 
 	// Footer text.
 	if ( ! empty( $footer_text ) ) {
-		echo $footer_text;
+
+		if ( class_exists( 'Email_Customizer_Mailer' ) ) {
+			Email_Customizer_Mailer::$custom_footer_2 = $footer_text;
+		} else {
+			echo $footer_text;
+		}
+
 	}
