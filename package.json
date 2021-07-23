@@ -48,7 +48,7 @@
 		"css-loader": "6.2.0",
 		"fibers": "5.0.0",
 		"mini-css-extract-plugin": "2.1.0",
-		"postcss": "8.3.5",
+		"postcss": "8.3.6",
 		"postcss-csso": "5.0.1",
 		"postcss-import": "14.0.2",
 		"precss": "4.0.0",
