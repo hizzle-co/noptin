@@ -353,7 +353,7 @@ class Noptin_Settings {
 						esc_url(
 							admin_url("plugin-install.php?tab=plugin-information&plugin=email-customizer&TB_iframe=true&width=772&height=560")
 						),
-						__( 'Try our free email templates plugin.', 'newsletter-optin-box' )
+						__( 'Or install our free email templates plugin to design your own templates.', 'newsletter-optin-box' )
 					)
 				),
 			),
