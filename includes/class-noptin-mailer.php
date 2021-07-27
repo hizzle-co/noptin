@@ -13,6 +13,11 @@ class Noptin_Mailer {
 	public $inline_css = true;
 
 	/**
+	 * Strips unavailable merge tags.
+	 */
+	public $strip_tags = true;
+
+	/**
 	 * For backwards compatibility;
 	 */
 	private static $initialized = false;
@@ -143,7 +148,8 @@ class Noptin_Mailer {
 	 */
 	public function get_tracker( $data = array() ) {
 
-		if ( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
 			return '';
 		}
 
@@ -169,6 +175,8 @@ class Noptin_Mailer {
 	public function get_default_merge_tags() {
 
 		$default_merge_tags = array(
+			'date'             => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
+			'year'             => date( 'Y', current_time( 'timestamp' ) ),
 			'blog_name'        => get_bloginfo( 'name' ),
 			'blog_description' => get_bloginfo( 'description' ),
 			'home_url'         => get_home_url(),
@@ -245,17 +253,12 @@ class Noptin_Mailer {
 
 		$tags = wp_parse_args( $this->get_default_merge_tags(), $tags );
 
-		// Replace all available tags with their values.
-		foreach ( $tags as $key => $value ) {
-			if ( ! is_array( $value ) ) {
-				$content = str_ireplace( "[[$key]]", $value, $content );
-			}
+		if ( ! empty( $tags['email'] ) ) {
+			$tags['avatar_url'] = get_avatar_url( $tags['email'] );
 		}
 
-		// Remove unavailable tags.
-		$content = preg_replace( '/\[\[\w+]\]/', '', $content );
-
-		return $content;
+		// Replace all available tags with their values.
+		return add_noptin_merge_tags( $content, $tags, false, $this->strip_tags );
 	}
 
 	/**
@@ -266,7 +269,8 @@ class Noptin_Mailer {
 	 */
 	public function make_links_trackable( $content, $data ) {
 
-		if ( empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
 			return $content;
 		}
 

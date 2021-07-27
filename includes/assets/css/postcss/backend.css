@@ -500,6 +500,7 @@ $noptin_color: #ff6f00;
 }
 
 .noptin-fields input[type="text"],
+.noptin-fields input[type="number"],
 .noptin-fields input[type="email"] {
 	font-size: 13px;
 	padding: 6px 8px;
@@ -517,6 +518,7 @@ $noptin_color: #ff6f00;
 }
 
 .noptin-field-editor input[type="text"],
+.noptin-field-editor input[type="number"],
 .noptin-field-editor select {
 	width: 100%;
 }
@@ -714,6 +716,7 @@ input:focus+.noptin-switch-slider span {
 }
 
 .noptin-fields .noptin-image-wrapper input[type="text"],
+.noptin-fields .noptin-image-wrapper input[type="number"],
 .noptin-fields .noptin-image-wrapper input[type="email"] {
 	padding: 4px 8px;
 }
@@ -973,9 +976,12 @@ input:focus+.noptin-switch-slider span {
 	}
 }
 
-.noptin-settings .notice,
-.noptin-settings div.error,
-.noptin-settings div.updated {
+#noptin-automations-popup .notice:not(.noptin-notice),
+#noptin-automations-popup div.error:not(.noptin-notice),
+#noptin-automations-popup div.updated:not(.noptin-notice),
+.noptin-settings .notice:not(.noptin-notice),
+.noptin-settings div.error:not(.noptin-notice),
+.noptin-settings div.updated:not(.noptin-notice) {
 	display: none !important;
 }
 
@@ -984,7 +990,7 @@ input:focus+.noptin-switch-slider span {
 }
 
 .settings-body.noptin-fields {
-	max-width: 800px;
+	max-width: 920px;
 	margin-top: 32px;
 
 	.field-wrapper {
@@ -1013,11 +1019,13 @@ input:focus+.noptin-switch-slider span {
 
 			.regular-text,
 			input[type="text"],
+			input[type="number"],
 			select,
 			.select2-container,
 			textarea {
 				max-width: 400px;
 			}
+
 		}
 
 		&.noptin-textarea-wrapper textarea {
@@ -1284,6 +1292,27 @@ a.no-campaign-create-new-campaign {
 	height: 32px;
 }
 
+.noptin-section-body .oauth-connect,
+.noptin-section-body .oauth-disconnect {
+	background: #008000;
+    border: none;
+    display: inline-block;
+    padding: 3px 12px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 3px;
+    cursor: pointer;
+    line-height: 37px;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 12px;
+}
+
+.noptin-section-body .oauth-disconnect {
+    background: #F44336;
+}
+
 /** Tools */
 .noptin-admin-table.noptin-admin-tools-table {
 	margin-bottom: 1em;
@@ -1453,6 +1482,104 @@ a.no-campaign-create-new-campaign {
 
 }
 
+.noptin-margin-y {
+	margin-bottom: 20px;
+	margin-top: 16px;
+	display: block;
+}
+
 .noptin-sections-wrapper .subsubsub {
 	float: none;
+}
+
+.post-type-noptin-form .v-slide-group__prev.v-slide-group__prev--disabled,
+.post-type-noptin-form .v-slide-group__next .v-slide-group__next--disabled {
+	display: none !important;
+}
+
+.post-type-noptin-form .v-tab {
+	padding: 0 4px;
+}
+
+.noptin_page_noptin-addons .notice:not(.noptin-notice) {
+	display: none;
+}
+
+.noptin-settings-section {
+
+	margin: 0;
+	margin-bottom: 10px;
+    padding: 0;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+
+	.noptin-section-header {
+		padding: 1em 1.5em;
+		font-weight: 500;
+		position: relative;
+		cursor: pointer;
+    	display: flex;
+		align-items: center;
+    	justify-content: space-between;
+		padding: 1em 3.5em 1em 1.5em;
+		min-height: 46px;
+		position: relative;
+
+		&:hover{
+			background: #f6f7f7;
+		}
+
+		.title {
+			pointer-events: none;
+			font-weight: 600;
+			flex-grow: 1;
+
+			p {
+				margin: 0;
+				font-weight: 400;
+				font-style: italic;
+				color: #716e7c;
+			}
+		}
+
+		.icon {
+			border: solid #50575e;
+			border-width: 0 2px 2px 0;
+			height: .5rem;
+			pointer-events: none;
+			position: absolute;
+			right: 1.5em;
+			top: 50%;
+			transform: translateY(-70%) rotate( 45deg );
+			width: .5rem;
+		}
+
+		.badge {
+			font-size: 13px;
+		}
+	}
+
+	&.open .noptin-section-header {
+		border-bottom: 1px solid #c3c4c7;
+
+		.icon {
+			transform: translateY(-30%) rotate(-135deg);
+		}
+
+	}
+
+	.noptin-section-body {
+		padding: 1em 1.5em;
+		height: auto;;
+	}
+
+	&:not(.open) .noptin-section-body {
+		height: 0;
+		overflow: hidden;
+		padding: 0;
+	}
+
+	&.not-installed .noptin-section-header {
+		opacity: 0.5
+	}
 }

@@ -29,6 +29,7 @@ class Noptin_Integrations {
 			'wpcf7_init'         => 'load_contact_form_7_integration',
 			'elementor_pro/init' => 'load_elementor_forms_integration',
 			'gform_loaded'       => 'load_gravity_forms_integration',
+			'getpaid_actions'    => 'load_getpaid_integration',
 		);
 
 		foreach ( $integrations as $action => $method ) {
@@ -58,6 +59,16 @@ class Noptin_Integrations {
 
 		do_action( 'noptin_integrations_load', $this );
 
+	}
+
+	/**
+	 * Loads the GetPaid and Noptin integration
+	 *
+	 * @access      public
+	 * @since       1.4.1
+	 */
+	public function load_getpaid_integration() {
+		$this->integrations['getpaid'] = new Noptin_GetPaid();
 	}
 
 	/**

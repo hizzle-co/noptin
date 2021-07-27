@@ -12,7 +12,7 @@ class Noptin_Email_Campaigns_Admin {
 	/**
 	 *  Constructor function.
 	 */
-	function __construct() {
+	public function __construct() {
 
 		// Display the newsletters page.
 		add_action( 'noptin_email_campaigns_tab_newsletters', array( $this, 'show_newsletters' ) );
@@ -30,6 +30,13 @@ class Noptin_Email_Campaigns_Admin {
 		// Delete campaign stats.
 		add_action( 'delete_post', array( $this, 'maybe_delete_stats' ) );
 
+	}
+
+	/**
+	 *  Retrieves campaign meta data
+	 */
+	public static function get_meta() {
+		return apply_filters( 'noptin_get_newsletter_campaign_meta', array() );
 	}
 
 	/**
@@ -370,10 +377,15 @@ class Noptin_Email_Campaigns_Admin {
 			'post_title'    => trim( $data['email_subject'] ),
 			'post_content'  => $data['email_body'],
 			'meta_input'    => array(
+				'email_sender'            => empty( $data['email_sender'] ) ? 'noptin' : sanitize_text_field( $data['email_sender'] ),
 				'campaign_type'           => 'newsletter',
 				'preview_text'            => empty( $data['preview_text'] ) ? '' : sanitize_text_field( $data['preview_text'] ),
 			),
 		);
+
+		foreach ( self::get_meta() as $meta_key ) {
+			$post['meta_input'][ $meta_key ] = empty( $data[ $meta_key ] ) ? '' : noptin_clean( $data[ $meta_key ] );
+		}
 
 		// Are we scheduling the campaign?
 		if ( 'publish' === $status && ! empty( $data['schedule-date'] ) ) {
@@ -473,19 +485,47 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	public function send_campaign( $post ) {
 
+		log_noptin_message(
+			sprintf(
+				__( 'Sending the campaign: "%s"', 'newsletter-optin-box' ),
+				sanitize_text_field( $post->post_title )
+			)
+		);
+
 		$noptin = noptin();
 
 		$item = array(
 			'campaign_id'       => $post->ID,
 			'subscribers_query' => array(), // By default, send this to all active subscribers.
+			'custom_merge_tags' => array(),
 			'campaign_data'     => array(
-				'campaign_id'   => $post->ID
+				'campaign_id'   => $post->ID,
+				'email_body'    => $post->post_content,
+				'email_subject' => $post->post_title,
+				'preview_text'  => get_post_meta( $post->ID, 'preview_text', true ),
 			),
 		);
 
+		foreach ( array( 'custom_merge_tags', 'subscribers_query', 'recipients' ) as $key ) {
+
+			$meta_value = get_post_meta( $post->ID, $key, true );
+			if ( ! empty( $meta_value ) ) {
+				$item[ $key ] = map_deep( $meta_value, 'wp_kses_post' );
+			}
+
+		}
+
 		if ( apply_filters( 'noptin_should_send_campaign', true, $item ) ) {
-			$noptin->bg_mailer->push_to_queue( $item );
-			$noptin->bg_mailer->save()->dispatch();
+
+			$sender = get_noptin_email_sender( $post->ID );
+
+			if ( 'noptin' == $sender ) {
+				$noptin->bg_mailer->push_to_queue( $item );
+				$noptin->bg_mailer->save()->dispatch();
+			} else {
+				do_action( "handle_noptin_email_sender_$sender", $item, $post );
+			}
+
 		}
 
 	}
@@ -587,7 +627,7 @@ class Noptin_Email_Campaigns_Admin {
 			'save'
 		);
 
-		if ( 'post_notifications' == $automation_type ) {
+		if ( 'post_notifications' == $automation_type && ! empty( $automations[ $automation_type ]['setup_cb'] ) ) {
 
 			add_meta_box(
 				'noptin_automation_setup_cb',

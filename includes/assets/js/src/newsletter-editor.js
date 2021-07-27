@@ -21,6 +21,16 @@
 			parent.find('.scheduled-date').hide()
 		})
 
+		// Hide/Show sending options.
+		$('.noptin-email_sender').on( 'change', function( e ) {
+			let val = $( this ).val()
+			$('.noptin-sender-options').hide()
+			$(`.noptin-sender-options.sender-${val}`).show()
+		})
+
+		// Hide/Show select 2 options.
+		$('.noptin-newsletter-select_2').select2()
+
 		// Reverts form to original after a data has been saved.
 		let hideScheduleEditor = function( el ) {
 

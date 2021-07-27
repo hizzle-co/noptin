@@ -10,8 +10,12 @@ defined( 'ABSPATH' ) || exit;
 if ( ! class_exists( 'Noptin_Async_Request' ) ) {
 
 	/**
-	 * Abstract Noptin_Async_Request class.
+	 * This is the base class used to fire off non-blocking asynchronous requests.
 	 *
+	 * Async requests are useful for pushing slow one-off tasks such as sending emails to a background process.
+	 * Once the request has been dispatched it will process in the background instantly.
+	 *
+	 * @link https://deliciousbrains.com/background-processing-wordpress/
 	 * @abstract
 	 */
 	abstract class Noptin_Async_Request {
@@ -55,7 +59,9 @@ if ( ! class_exists( 'Noptin_Async_Request' ) ) {
 		protected $data = array();
 
 		/**
-		 * Initiate new async request
+		 * Initiates new non-blocking asynchronous request.
+		 *
+		 * @ignore
 		 */
 		public function __construct() {
 			$this->identifier = $this->prefix . '_' . $this->action;
@@ -66,7 +72,7 @@ if ( ! class_exists( 'Noptin_Async_Request' ) ) {
 		}
 
 		/**
-		 * Set data used during the request
+		 * Sets the data to use when processing a non-blocking asynchronous request.
 		 *
 		 * @param array $data Data.
 		 *
@@ -79,7 +85,7 @@ if ( ! class_exists( 'Noptin_Async_Request' ) ) {
 		}
 
 		/**
-		 * Dispatch the async request
+		 * Dispatches a non-blocking asynchronous request.
 		 *
 		 * @return array|WP_Error
 		 */
@@ -94,54 +100,79 @@ if ( ! class_exists( 'Noptin_Async_Request' ) ) {
 		 * Get query args
 		 *
 		 * @return array
+		 * @ignore
 		 */
 		protected function get_query_args() {
 			if ( property_exists( $this, 'query_args' ) ) {
 				return $this->query_args;
 			}
 
-			return array(
+			$args = array(
 				'action' => $this->identifier,
 				'nonce'  => wp_create_nonce( $this->identifier ),
 			);
+
+			/**
+			 * Filters the post arguments used during an async request.
+			 *
+			 * @param array $url
+			 */
+			return apply_filters( $this->identifier . '_query_args', $args );
 		}
 
 		/**
 		 * Get query URL
 		 *
 		 * @return string
+		 * @ignore
 		 */
 		protected function get_query_url() {
 			if ( property_exists( $this, 'query_url' ) ) {
 				return $this->query_url;
 			}
 
-			return admin_url( 'admin-ajax.php' );
+			$url = admin_url( 'admin-ajax.php' );
+
+			/**
+			 * Filters the post arguments used during an async request.
+			 *
+			 * @param string $url
+			 */
+			return apply_filters( $this->identifier . '_query_url', $url );
 		}
 
 		/**
 		 * Get post args
 		 *
 		 * @return array
+		 * @ignore
 		 */
 		protected function get_post_args() {
 			if ( property_exists( $this, 'post_args' ) ) {
 				return $this->post_args;
 			}
 
-			return array(
+			$args = array(
 				'timeout'   => 0.01,
 				'blocking'  => false,
 				'body'      => $this->data,
 				'cookies'   => $_COOKIE,
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 			);
+
+			/**
+			 * Filters the post arguments used during an async request.
+			 *
+			 * @param array $args
+			 */
+			return apply_filters( $this->identifier . '_post_args', $args );
 		}
 
 		/**
 		 * Maybe handle
 		 *
 		 * Check for correct nonce and pass to handler.
+		 * @ignore
 		 */
 		public function maybe_handle() {
 			// Don't lock up other requests while processing.
@@ -155,10 +186,11 @@ if ( ! class_exists( 'Noptin_Async_Request' ) ) {
 		}
 
 		/**
-		 * Handle
+		 * Processes the async request.
 		 *
 		 * Override this method to perform any actions required
 		 * during the async request.
+		 *
 		 */
 		abstract protected function handle();
 

@@ -11,14 +11,6 @@
 				<span v-else>{{publishText}}</span>
 			</v-btn>
 
-			<v-btn icon @click.stop="activateSidebar('design')" title="Design">
-				<v-icon :color="isActiveSidebar('design') ? 'green darken-2' : 'grey darken-2'">{{icons.pencil}}</v-icon>
-			</v-btn>
-
-			<v-btn icon @click.stop="activateSidebar('settings')" title="Settings">
-				<v-icon :color="isActiveSidebar('settings') ? 'green darken-2' : 'grey darken-2'">{{icons.cog}}</v-icon>
-			</v-btn>
-
 			<v-menu offset-y>
     			<template v-slot:activator="{ on, attrs }">
         			<v-btn icon v-bind="attrs" v-on="on">
@@ -100,9 +92,9 @@
 			</v-container>
 		</v-main>
 
-		<v-navigation-drawer right app absolute clipped v-if="isActiveSidebar('settings')" width="300">
+		<v-navigation-drawer right app absolute clipped width="300">
 			<v-sheet>
-				<v-tabs v-model="currentSidebarSection">
+				<v-tabs v-model="currentSidebarSection" slider-size="2" show-arrows>
 					<v-tab v-for="(content,tab) in settingTabs" :key="tab">
 						<span v-if="content.label">{{content.label}}</span>
 						<span v-else>{{tab | capitalize }}</span>
@@ -130,24 +122,6 @@
 				</v-tabs-items>
 			</v-sheet>
 
-      	</v-navigation-drawer>
-
-		<v-navigation-drawer right app absolute bottom clipped v-if="isActiveSidebar('design')" width="300">
-			<v-sheet style="margin-left: 1px;">
-				<v-expansion-panels accordion focusable hover class="noptin-sidebar-expansion-panels">
-					<v-expansion-panel v-for="(panel) in visiblePanels(sidebarSettings.design)" :key="panel.id">
-						<v-expansion-panel-header>{{panel.title}}</v-expansion-panel-header>
-						<v-expansion-panel-content class="mt-2">
-							<div v-for="(opts,model) in panel.children" :key="model">
-								<div v-if="isVisible(opts)">
-									<sidebar-setting :value="getSetting(model)" @input="updateSetting(model,$event)" :opts="opts" v-bind="opts" v-if="opts.el != 'form_fields'"></sidebar-setting>
-									<field-editor v-else v-bind='$data'></field-editor>
-								</div>
-							</div>
-						</v-expansion-panel-content>
-					</v-expansion-panel>
-				</v-expansion-panels>
-			</v-sheet>
       	</v-navigation-drawer>
 
 		<v-footer app absolute>
@@ -178,7 +152,7 @@
 			settingTabs() {
 
 				return this.filter( this.sidebarSettings, function( val, key ) {
-					return key == 'design'
+					return key == 'sdesign'
 				})
 
 			},

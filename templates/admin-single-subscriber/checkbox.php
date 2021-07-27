@@ -12,7 +12,7 @@
                     name="noptin_custom_field[<?php echo $name; ?>]"
                     id="custom_field_<?php echo $id; ?>"
                     value="1"
-                    <?php checked( ! empty( $value ) ); ?>
+                    <?php checked( ! empty( $value ) && ( $value == 1 || strtolower( $value ) == strtolower( esc_attr__( 'Yes', 'newsletter-optin-box' ) ) ) ); ?>
                 >
                 <span><?php echo $label; ?></span>
             </label>

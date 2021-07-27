@@ -209,4 +209,7 @@
 		display: inline-block !important;
 	}
 
+	.attachment-post-thumbnail {
+		width: 100% !important;
+	}
 </style>

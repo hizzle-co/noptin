@@ -123,6 +123,7 @@ class Noptin_Admin {
 
 		// Admin scripts.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqeue_scripts' ), 0 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'plugin_deactivation_scripts' ) );
 
 		// (maybe) do an action.
 		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
@@ -130,6 +131,7 @@ class Noptin_Admin {
 		// Register new menu pages.
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
 		add_action( 'admin_head', array( $this, 'remove_menus' ) );
+		add_action( 'admin_head', array( $this, 'set_admin_menu_class' ) );
 
 		// Runs when saving a new opt-in form.
 		add_action( 'wp_ajax_noptin_save_optin_form', array( $this, 'save_optin_form' ) );
@@ -156,7 +158,6 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_after_admin_init_hooks', $this );
 	}
-
 
 	/**
 	 * Register admin scripts
@@ -193,6 +194,9 @@ class Noptin_Admin {
 			remove_action( 'admin_enqueue_scripts', array( $aui, 'enqueue_scripts' ), 1 );
 			remove_action( 'admin_enqueue_scripts', array( $aui, 'enqueue_style' ), 1 );
 		}
+
+		// And EDD too.
+		add_filter( 'edd_load_admin_scripts', '__return_false', 1000 );
 
 		// Sweetalert https://sweetalert2.github.io/.
 		wp_enqueue_script( 'promise-polyfill', $this->assets_url . 'vendor/sweetalert/promise-polyfill.min.js', array(), '8.1.3' );
@@ -232,12 +236,14 @@ class Noptin_Admin {
 		// Pass variables to our js file, e.g url etc.
 		$current_user = wp_get_current_user();
 		$params       = array(
-			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
-			'api_url'        => get_home_url( null, 'wp-json/wp/v2/' ),
-			'nonce'          => wp_create_nonce( 'noptin_admin_nonce' ),
-			'icon'           => $this->assets_url . 'images/checkmark.png',
-			'admin_email'    => sanitize_email( $current_user->user_email ),
-			'donwload_forms' => add_query_arg(
+			'ajaxurl'                    => admin_url( 'admin-ajax.php' ),
+			'api_url'                    => get_home_url( null, 'wp-json/wp/v2/' ),
+			'nonce'                      => wp_create_nonce( 'noptin_admin_nonce' ),
+			'icon'                       => $this->assets_url . 'images/checkmark.png',
+			'admin_email'                => sanitize_email( $current_user->user_email ),
+			'close'                      => __( 'Close', 'newsletter-optin-box' ),
+			'cancel'                     => __( 'Cancel', 'newsletter-optin-box' ),
+			'donwload_forms'             => add_query_arg(
 				array(
 					'action'      => 'noptin_download_forms',
 					'admin_nonce' => wp_create_nonce( 'noptin_admin_nonce' ),
@@ -356,6 +362,135 @@ class Noptin_Admin {
 	}
 
 	/**
+	 * Register the plugin deactivation scripts.
+	 *
+	 * @access      public
+	 * @since       1.5.4
+	 * @return      void
+	 */
+	public function plugin_deactivation_scripts() {
+		global $pagenow;
+
+		// Bail if we are not on the plugins page
+		if ( $pagenow != 'plugins.php' ) {
+			return;
+		}
+
+		// Enqueue scripts
+		add_thickbox();
+		$version = filemtime( $this->assets_path . 'js/dist/deactivation.js' );
+		wp_enqueue_script( 'noptin-deactivation-survey', $this->assets_url . 'js/dist/deactivation.js', array( 'jquery' ), $version, true );
+
+		wp_localize_script(
+			'noptin-deactivation-survey',
+			'noptin_deactivation_survey',
+			array(
+				'quick_feedback' => 'Quick Feedback',
+			)
+		);
+
+		add_action( 'admin_footer', array( $this, 'print_deactivation_template' ) );
+	}
+
+	/**
+	 * Prints the plugin deactivation template.
+	 *
+	 * @access      public
+	 * @since       1.5.4
+	 * @return      void
+	 */
+	public function print_deactivation_template() {
+
+		$reasons = array(
+			array(
+				'reason' => 'not-working',
+				'label'  => __( 'The plugin is not working', 'newsletter-optin-box' ),
+				'input'  => __( 'Optional. Provide more information here', 'newsletter-optin-box' ),
+			),
+			array(
+				'reason' => 'broke-site',
+				'label'  => __( 'The plugin broke my site', 'newsletter-optin-box' ),
+				'input'  => __( 'Optional. Provide more information here', 'newsletter-optin-box' ),
+			),
+			array(
+				'reason' => 'setup-difficult',
+				'label'  => __( 'Too difficult to setup', 'newsletter-optin-box' ),
+			),
+			array(
+				'reason' => 'no-longer-needed',
+				'label'  => __( 'I no longer need this plugin', 'newsletter-optin-box' ),
+			),
+			array(
+				'reason' => 'found-better-plugin',
+				'label'  => __( 'I found a better plugin', 'newsletter-optin-box' ),
+				'input'  => __( 'What is the name of the plugin?', 'newsletter-optin-box' ),
+			),
+			array(
+				'reason' => 'temporary-deactivation',
+				'label'  => __( "It's a temporary deactivation", 'newsletter-optin-box' ),
+			)
+		);
+
+		shuffle( $reasons );
+
+		$reasons[] = array(
+			'reason' => 'other',
+			'label'  => __( 'Other', 'newsletter-optin-box' ),
+			'input'  => __( 'Provide more information here', 'newsletter-optin-box' ),
+		);
+
+		?>
+		<div id="tmpl-noptin-deactivation-survey" style='display: none;'>
+			<form class="noptin-deactivation-survey-form">
+				<h2><?php _e( 'Quick Feedback', 'newsletter-optin-box' ); ?> &mdash; Noptin</h2>
+				<p><?php _e( "If you would be kind enough, please let us know why you're deactivating.", 'newsletter-optin-box' ); ?></p>
+				<ul id="noptin-deactivation-survey-list">
+					<?php foreach ( $reasons as $reason ) : ?>
+					<li class="noptin-reason <?php echo ! empty( $reason['input'] ) ? ' noptin-reason-has-input' : '' ; ?>">
+						<label>
+							<span>
+								<input data-placeholder="<?php echo ! empty( $reason['input'] ) ? esc_attr( $reason['input'] ) : '' ; ?>" type="radio" name="deactivation_reason" value="<?php echo esc_attr( $reason['reason'] ); ?>" required />
+							</span>
+							<span><?php echo esc_html( $reason['label'] ); ?></span>
+						</label>
+					</li>
+					<?php endforeach; ?>
+				</ul>
+				<p class="noptin-deactivation-reason2" style="visibility: hidden;">
+					<input type="text" name="deactivation_reason_2" style="width: 100%"/>
+				</p>
+				<div class="alignright">
+					<button  type="submit" class="button button-primary"><?php esc_html_e( 'Submit and Deactivate', 'newsletter-optin-box' ); ?></button>
+					<a href="" class="noptin-deactivation-skip-survey button button-link"><?php _e( 'Skip and Deactivate', 'newsletter-optin-box' ); ?></a>
+				</div>
+				<input type="hidden" name="website" value="<?php echo esc_attr( home_url() ); ?>" />
+				<input type="hidden" name="slug" value="noptin" />
+			</form>
+		</div>
+		<style>
+			#TB_window.noptin-deactivation {
+				overflow-y:auto;
+				border-radius: 4px;
+				height: fit-content !important;
+				width:auto !important;
+				left: 50%;
+				top: 50% !important;
+				margin-left: unset !important;
+				-webkit-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+			}
+			.noptin-deactivation #TB_title{
+				display:none;
+			}
+			.noptin-deactivation #TB_ajaxContent {
+				height: auto !important;
+			}
+		</style>
+
+		<?php
+	}
+
+	/**
 	 * Register admin page
 	 *
 	 * @access      public
@@ -439,15 +574,38 @@ class Noptin_Admin {
 			array( $this, 'render_tools_page' )
 		);
 
-		// Link to documentation.
-		add_submenu_page(
-			'noptin',
-			esc_html__( 'Documentation', 'newsletter-optin-box' ),
-			esc_html__( 'Documentation', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-docs',
-			array( $this, 'render_add_new_page' )
-		);
+		// Extensions page.
+		if ( apply_filters( 'noptin_show_addons_page', true ) ) {
+
+			$count_html = Noptin_COM_Updater::get_updates_count_html();
+
+			/* translators: %s: extensions count */
+			$menu_title = sprintf( __( 'Extensions %s', 'newsletter-optin-box' ), $count_html );
+
+			add_submenu_page(
+				'noptin',
+				esc_html__( 'Noptin Extensions', 'newsletter-optin-box' ),
+				$menu_title,
+				get_noptin_capability(),
+				'noptin-addons',
+				array( 'Noptin_Addons', 'output' )
+			);
+
+		}
+
+		// Documentation page.
+		if ( apply_filters( 'noptin_show_docs_page', true ) ) {
+
+			add_submenu_page(
+				'noptin',
+				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				get_noptin_capability(),
+				'noptin-docs',
+				array( $this, 'render_add_new_page' )
+			);
+
+		}
 
 		// Welcome page.
 		add_dashboard_page(
@@ -469,6 +627,19 @@ class Noptin_Admin {
 	public function remove_menus() {
 		remove_submenu_page( 'index.php', 'noptin-welcome' );
 	}
+
+	/**
+	 * Highlights current sub-menu items
+	 */
+	public function set_admin_menu_class() {
+		global $current_screen, $parent_file, $submenu_file;
+
+        if ( ! empty( $current_screen->id ) && in_array( $current_screen->id , array( 'noptin-form' ) ) ) {
+			$parent_file = 'noptin';
+			$submenu_file = 'edit.php?post_type=' . $current_screen->id;
+        }
+
+    }
 
 	/**
 	 * Display the welcome page
@@ -1074,11 +1245,8 @@ class Noptin_Admin {
 		exit; // This is important.
 	}
 
-
-
-
 	/**
-	 * Retrieves the subscribers list,, limited to 100
+	 * Retrieves the subscribers list, limited to 100
 	 *
 	 * @param       int    $page The page to retrieve.
 	 * @param       string $meta_key Filter subscribers by a meta key.
@@ -1176,8 +1344,14 @@ class Noptin_Admin {
 						'meta_input'    => array(
 							'campaign_type'           => 'newsletter',
 							'preview_text'            => get_post_meta( $campaign->ID, 'preview_text', 'true' ),
+							'email_sender'            => get_post_meta( $campaign->ID, 'email_sender', 'true' ),
 						),
 					);
+
+					foreach ( Noptin_Email_Campaigns_Admin::get_meta() as $meta_key ) {
+						$post['meta_input'][ $meta_key ] = get_post_meta( $campaign->ID, $meta_key, 'true' );
+					}
+					$post['meta_input'] = array_filter( $post['meta_input'] );
 
 					$new_campaign = wp_insert_post( $post, true );
 
@@ -1407,7 +1581,7 @@ class Noptin_Admin {
 				continue;
 			}
 
-			$class = esc_attr( "notice notice-$type is-dismissible" );
+			$class = esc_attr( "notice notice-$type noptin-notice is-dismissible" );
 			foreach ( $messages as $message ) {
 				echo "<div class='$class'><p>$message</p></div>";
 			}

@@ -19,8 +19,8 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
      * @return string
      */
     public function __construct() {
-        add_action( 'noptin_insert_subscriber', array( $this, 'maybe_trigger' ) );
-        add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_trigger' ) );
+        add_action( 'noptin_insert_subscriber', array( $this, 'maybe_trigger' ), 1000 );
+        add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_trigger' ), 1000 );
     }
 
     /**
@@ -165,7 +165,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
     }
 
     /**
-     * Called when a subscriber is activated.
+     * Called when someone subscribes to the newsletter.
      *
      * @param int $subscriber The subscriber in question.
      */
@@ -173,7 +173,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
         $subscriber = new Noptin_Subscriber( $subscriber );
 
         // Only trigger if a subscriber is active.
-        if ( empty( $subscriber->active ) ) {
+        if ( $subscriber->is_active() ) {
             $this->trigger( $subscriber, $subscriber->to_array() );
         }
 

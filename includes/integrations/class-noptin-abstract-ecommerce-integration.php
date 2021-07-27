@@ -46,9 +46,9 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 * Constructor
 	 */
 	public function __construct() {
+		parent::__construct();
 		$this->context     = __( 'customers', 'newsletter-optin-box' );
 		$this->order_label = __( 'Orders', 'newsletter-optin-box' );
-		parent::__construct();
 	}
 
 	/**
@@ -71,15 +71,37 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	}
 
 	/**
+	 * Returns the order id given an order object/id.
+	 * 
+	 * @param int|object $order_id_or_object The order id or object.
+	 * @since 1.4.1
+	 * @return int The order id.
+	 */
+	public function prepare_order_id( $order_id_or_object ) {
+
+		if ( is_numeric( $order_id_or_object ) ) {
+			return (int) $order_id_or_object;
+		}
+
+		if ( is_object( $order_id_or_object ) && is_callable( array( $order_id_or_object, 'get_id' ) ) ) {
+			return $order_id_or_object->get_id();
+		}
+
+		return 0;
+	}
+
+	/**
 	 * Adds/Updates an order subscriber.
 	 * 
-	 * @param int $order_id The order id.
+	 * @param int $order_id The order id or object.
 	 * @since 1.2.6
+	 * @since 1.4.1 $order_id now accepts order object.
 	 * @return int|null The subscriber id.
 	 */
 	public function add_order_subscriber( $order_id ) {
 
 		// Fetch the subscriber id and order customer details.
+		$order_id           = $this->prepare_order_id( $order_id );
 		$subscriber_id      = $this->get_order_subscriber( $order_id );
 		$subscriber_details = $this->get_order_customer_details( $order_id, empty( $subscriber_id ) );
 
@@ -124,11 +146,13 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	/**
 	 * Returns an array of order details.
 	 *
-	 * @param int $order_id The order id.
+	 * @param int $order_id The order id or object.
+	 * @since 1.4.1 $order_id now accepts order object.
 	 * @since 1.2.6
 	 * @return array
 	 */
 	public function get_order_details( $order_id ) {
+		$order_id          = $this->prepare_order_id( $order_id );
 		return array(
 			'id'		   => $order_id,
 			'total'        => 0,
@@ -213,11 +237,14 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	/**
 	 * Fires a specific hook based on an order status.
 	 * 
+	 * @since 1.3.1
+	 * @since 1.4.1 $order_id Now accepts the order object.
 	 * @param string $action The order action.
-	 * @param int $order_id The order id.
+	 * @param int|object $order_id The order id or object.
 	 */
 	public function fire_order_hook( $action, $order_id ) {
 
+		$order_id      = $this->prepare_order_id( $order_id );
 		$subscriber_id = $this->get_order_subscriber( $order_id );
 
 		// Only fired when there is actually a subcsriber.
@@ -456,10 +483,11 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	}
 
 	/**
-	 * Checks the post type of a post.
+	 * Checks the post type of a product.
 	 * 
 	 * @param int $product_id The product id.
 	 * @since 1.3.0
+	 * @return bool
 	 */
 	public function is_product_post_type( $product_id ) {
 
@@ -471,7 +499,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 			return in_array( get_post_type( $product_id ), $this->product_post_type );
 		}
 
-		get_post_type( $product_id ) == $this->product_post_type;
+		return get_post_type( $product_id ) == $this->product_post_type;
 
 	}
 

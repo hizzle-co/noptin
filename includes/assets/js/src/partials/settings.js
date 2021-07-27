@@ -55,6 +55,24 @@ var settingsApp = new Vue({
 			return ''
 		},
 
+		// Toggles an active panel.
+		togglePanel( panel ) {
+
+			var index = this.openSections.indexOf(panel);
+
+			if (index === -1) {
+				this.openSections.push(panel);
+			} else {
+				this.openSections.splice(index, 1);
+			}
+
+		},
+
+		// Checks if the panel is open.
+		isOpenPanel( panel ) {
+			return -1 !== this.openSections.indexOf(panel);
+		},
+
 		// Persists settings to the database.
 		saveSettings() {
 
@@ -87,9 +105,11 @@ var settingsApp = new Vue({
 						.find('.noptin-save-saved')
 						.show()
 						.html(`<p>${saved}</p>`)
+
+						window.location.href = window.location.href.split('#')[0] + "&tab=" + this.currentTab;
 				})
 
-				//Else alert the user about the error
+				//Else alert the user about the error.
 				.fail(() => {
 					$(el)
 						.fadeTo("fast", 1)

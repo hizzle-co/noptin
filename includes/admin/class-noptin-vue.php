@@ -21,6 +21,7 @@ class Noptin_Vue {
 		add_action( 'noptin_render_editor_panel', array( __CLASS__, 'panel' ), 10, 2 );
 		add_action( 'noptin_render_editor_radio', array( __CLASS__, 'radio' ), 10, 2 );
 		add_action( 'noptin_render_editor_radio_button', array( __CLASS__, 'radio_button' ), 10, 2 );
+		add_action( 'noptin_render_editor_button', array( __CLASS__, 'button' ), 10, 2 );
 		add_action( 'noptin_render_editor_paragraph', array( __CLASS__, 'paragraph' ), 10, 2 );
 		add_action( 'noptin_render_editor_hero', array( __CLASS__, 'hero' ), 10, 2 );
 		add_action( 'noptin_render_editor_textarea', array( __CLASS__, 'textarea' ), 10, 2 );
@@ -246,6 +247,23 @@ class Noptin_Vue {
 	}
 
 	/**
+	 * Renders buttons
+	 */
+	public static function button( $id, $field ) {
+
+		printf(
+			'<a %s %s class="button %s" href="%s">%s %s</a>',
+			$field['restrict'],
+			$field['attrs'],
+			$field['_class'],
+			$field['url'],
+			$field['label'],
+			$field['tooltip']
+		);
+
+	}
+
+	/**
 	 * Renders paragraph
 	 */
 	public static function paragraph( $id, $field ) {
@@ -393,6 +411,16 @@ class Noptin_Vue {
 		);
 
 		$field_types[] = array(
+			'label'            => __( 'Dropdown', 'newsletter-optin-box' ),
+			'name'             => 'dropdown',
+			'type'             => 'dropdown',
+			'supports_require' => true,
+			'supports_name'    => true,
+			'supports_label'   => true,
+			'supports_options' => true,
+		);
+
+		$field_types[] = array(
 			'label'            => __( 'Hidden', 'newsletter-optin-box' ),
 			'name'             => 'hidden',
 			'type'             => 'hidden',
@@ -442,6 +470,81 @@ class Noptin_Vue {
 
 		}
 
+		// Field value.
+		if ( ! empty( $field_type['supports_options'] ) ) {
+
+			$label = __( 'Options', 'newsletter-optin-box' );
+			echo "<div class='noptin-textarea-wrapper' $v_if>
+					<label>$label<textarea v-model='field.type.options'/></textarea></label>
+				</div>";
+
+		}
+
+		foreach ( get_noptin_connection_providers() as $key => $connection ) {
+
+			if ( empty( $connection->list_providers ) ) {
+				continue;
+			}
+
+			$label = sprintf(
+				__( '%s Equivalent', 'newsletter-optin-box' ),
+				$connection->name
+			);
+
+			$placeholder = sprintf(
+				__( 'Select %s Equivalent', 'newsletter-optin-box' ),
+				$connection->name
+			);
+
+			if ( $connection->supports( 'universal_fields' ) ) {
+
+				// Field args.
+				$fields = $connection->list_providers->get_fields();
+
+				if ( empty( $fields ) ) {
+					continue;
+				}
+
+				$args   = array(
+					'el'          => 'select',
+					'label'       => $label,
+                    'options'     => $fields,
+					'restrict'    => "field.type.type=='$type'",
+					'placeholder' => $placeholder,
+				);
+
+                $args  = self::sanitize_el( "field.$key", $args );
+				self::select( "field.$key", $args );
+
+				continue;
+			}
+
+			$list_field = "{$key}_list";
+
+			foreach ( $connection->list_providers->get_lists() as $list ) {
+
+				$fields = $list->get_fields();
+				if ( empty( $fields ) ) {
+					continue;
+				}
+
+				// Field args.
+				$_list = $list->get_id();
+				$args  = array(
+					'el'          => 'select',
+					'label'       => $label,
+                    'options'     => $fields,
+					'restrict'    => "field.type.type=='$type' && $list_field=='$_list'",
+					'placeholder' => $placeholder,
+				);
+
+                $args  = self::sanitize_el( "field.$key", $args );
+				self::select( "field.$key", $args );
+
+			}
+
+		}
+
 	}
 
 	/**
@@ -480,6 +583,10 @@ class Noptin_Vue {
 		<input 		v-if="field.type.type=='hidden'" 		  :name='field.type.name' type="hidden" 	v-model="field.type.value"/>
 		<label 		v-if="field.type.type=='checkbox'"><input :name='field.type.name' type="checkbox"   value="1"   class="noptin-checkbox-form-field"  :required="field.require" /><span v-html='field.type.label'></span></label>
 		<textarea   v-if="field.type.type=='textarea'" 		  :name='field.type.name' 					class="noptin-form-field" 			:placeholder="field.type.label" :required="field.require"></textarea>
+		<select     v-if="field.type.type=='dropdown'"          :name='field.type.name' class="noptin-form-field" :required="field.require">
+			<option>{{field.type.label}}</option>
+			<option v-for="(option, index) in field.type.options.split(',')" :key="index">{{option | optionize}}</option>
+		</select>
 		<?php
 	}
 
@@ -536,13 +643,34 @@ class Noptin_Vue {
 
 		// Checkbox.
 		if ( 'checkbox' === $field['type']['type'] ) {
-			$value = __( 'No', 'newsletter-optin-box' );
+			$value = '1'; // Use static value to prevent problems with translated values being saved into the database
 			echo "<label><input name='$name' type='checkbox' value='$value' class='noptin-checkbox-form-field' $required/><span>$label</span></label>";
 		}
 
 		// Textarea.
 		if ( 'textarea' === $field['type']['type'] ) {
 			echo "<textarea name='$name' class='noptin-form-field' placeholder='$label' $required></textarea>";
+		}
+
+		// Select.
+		if ( 'dropdown' === $field['type']['type'] ) {
+			echo "<select name='$name' class='noptin-form-field' $required>";
+			echo "<option selected='selected'>$label</option>";
+
+			foreach ( explode( ',', $field['type']['options'] ) as $option ) {
+
+				if ( empty( $option ) ) {
+					continue;
+				}
+
+				$option = explode( '|', $option );
+				$label  = sanitize_text_field( $option[0] );
+				$value  = isset( $option[1] ) ? sanitize_text_field( $option[1] ) : $label;
+
+				echo "<option value='$value'>$label</option>";
+			}
+
+			echo "</select>";
 		}
 
 	}

@@ -1,0 +1,26 @@
+<wpml-config>
+	<custom-types>
+		<custom-type translate="1" display-as-translated="1">noptin-form</custom-type>
+		<custom-type translate="1" display-as-translated="1">noptin-campaign</custom-type>
+	</custom-types>
+	<admin-texts>
+		<key name="noptin_options">
+			<key name="company" />
+			<key name="permission_text" />
+			<key name="footer_text" />
+			<key name="success_message" />
+			<key name="double_optin_email_subject" />
+			<key name="double_optin_hero_text" />
+			<key name="double_optin_email_body" />
+			<key name="double_optin_cta_text" />
+			<key name="double_optin_after_cta_text" />
+			<key name="double_optin_permission_text" />
+			<key name="pages_unsubscribe_page_message" />
+			<key name="pages_resubscribe_page_message" />
+			<key name="pages_confirm_page_message" />
+			<key name="noptin_*_integration_checkbox_message" />
+			<key name="register_form_msg" />
+			<key name="comment_form_msg" />
+		</key>
+	</admin-texts>
+</wpml-config>

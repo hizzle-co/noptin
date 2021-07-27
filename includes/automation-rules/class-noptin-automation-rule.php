@@ -1,13 +1,16 @@
 <?php
-
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
-
 /**
- * Represents a single automation rule.
+ * Noptin Automation Rule
  *
+ */
+
+defined( 'ABSPATH' ) || exit;
+/**
+ * This class represents a single Noptin automation rule.
+ *
+ * @link https://noptin.com/guide/automation-rules/
+ * @see Noptin_Automation_Rules
+ * @see Noptin_Automation_Rules_Table
  * @since       1.2.8
  */
 class Noptin_Automation_Rule {

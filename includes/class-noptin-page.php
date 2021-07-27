@@ -5,12 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-	/**
-	 * Prints the noptin page
-	 *
-	 * @since       1.0.6
-	 */
-
+/**
+ * Prints the noptin page
+ *
+ * @since       1.0.6
+ */
 class Noptin_Page {
 
 	/**
@@ -24,6 +23,10 @@ class Noptin_Page {
 		// User unsubscribe.
 		add_action( 'noptin_page_unsubscribe', array( $this, 'unsubscribe_user' ) );
 		add_action( 'noptin_pre_page_unsubscribe', array( $this, 'pre_unsubscribe_user' ) );
+
+		// User resubscribe.
+		add_action( 'noptin_page_resubscribe', array( $this, 'resubscribe_user' ) );
+		add_action( 'noptin_pre_page_resubscribe', array( $this, 'pre_resubscribe_user' ) );
 
 		// Email confirmation.
 		add_action( 'noptin_page_confirm', array( $this, 'confirm_subscription' ) );
@@ -187,6 +190,25 @@ class Noptin_Page {
 	}
 
 	/**
+	 * Merges Noptin content.
+	 *
+	 * @access      public
+	 * @since       1.0.6
+	 * @return      array
+	 */
+	public function merge( $content ) {
+
+		$subscriber = get_current_noptin_subscriber_id();
+
+		if ( empty( $subscriber ) ) {
+			return '';
+		}
+
+		return add_noptin_merge_tags(  $content, get_noptin_subscriber_merge_fields( $subscriber ) );
+
+	}
+
+	/**
 	 * Notifies the user that they have successfuly unsubscribed.
 	 *
 	 * @access      public
@@ -200,7 +222,9 @@ class Noptin_Page {
 			$msg = $this->default_unsubscription_confirmation_message();
 		}
 
-		echo $msg;
+		$msg = str_ireplace( '[[resubscribe_url]]', get_noptin_action_url( 'resubscribe', $key ), $msg );
+
+		echo $this->merge( $msg );
 
 	}
 
@@ -240,6 +264,67 @@ class Noptin_Page {
 	}
 
 	/**
+	 * Notifies the user that they have successfuly resubscribed.
+	 *
+	 * @access      public
+	 * @since       1.4.4
+	 * @return      array
+	 */
+	public function resubscribe_user( $key ) {
+		$msg = get_noptin_option( 'pages_resubscribe_page_message' );
+
+		if ( empty( $msg ) ) {
+			$msg = $this->default_resubscription_confirmation_message();
+		}
+
+		$msg = str_ireplace( '[[unsubscribe_url]]', get_noptin_action_url( 'unsubscribe', $key ), $msg );
+
+		echo $this->merge( $msg );
+
+	}
+
+	/**
+	 * Resubscribes a user
+	 *
+	 * @access      public
+	 * @since       1.4.4
+	 * @return      array
+	 */
+	public function pre_resubscribe_user( $page ) {
+		global $wpdb;
+
+		// Make sure that the confirmation key exists.
+		$value = $this->get_request_value();
+
+		if ( empty( $value )  ) {
+			return;
+		}
+
+		// Fetch the subscriber.
+		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $value );
+
+		// Resubscribe them.
+		if ( ! empty( $subscriber ) && ! empty( $subscriber->id ) ) {
+
+			$wpdb->update(
+				get_noptin_subscribers_table_name(),
+				array( 'active' => 0 ),
+				array( 'id' => $subscriber->id ),
+				'%d',
+				'%d'
+			);
+
+		}
+
+		// If we have a redirect, redirect.
+		if ( ! empty( $page ) ) {
+			wp_redirect( $page );
+			exit;
+		}
+
+	}
+
+	/**
 	 * Notifies the user that they have successfully subscribed.
 	 *
 	 * @access      public
@@ -254,7 +339,7 @@ class Noptin_Page {
 			$msg = $this->default_subscription_confirmation_message();
 		}
 
-		echo $msg;
+		echo $this->merge( $msg );
 
 	}
 
@@ -323,6 +408,7 @@ class Noptin_Page {
 		// Fetch current user to use their details as merge tags.
 		$user       = wp_get_current_user();
 		$subscriber = get_noptin_subscriber_by_email( $user->user_email );
+		$sender     = get_noptin_email_sender( $campaign->ID );
 		$data       = array(
 			'campaign_id'   => $campaign->ID,
 			'email_subject' => $campaign->post_title,
@@ -341,6 +427,13 @@ class Noptin_Page {
 		if ( $subscriber->exists() ) {
 			$data['subscriber_id'] = $subscriber->id;
 			$data['merge_tags']    = array_merge( $data['merge_tags'], get_noptin_subscriber_merge_fields( $subscriber ) );
+		}
+
+		$data['merge_tags']    = array_merge( $data['merge_tags'], apply_filters( "noptin_{$sender}_dummy_merge_tags", array() ) );
+
+		$custom_merge_tags = get_post_meta( $campaign->ID, 'custom_merge_tags', true );
+		if ( is_array( $custom_merge_tags ) ) {
+			$data['merge_tags'] = array_merge( $data['merge_tags'], $custom_merge_tags );
 		}
 
 		// Generate and display the email.
@@ -385,7 +478,7 @@ class Noptin_Page {
 				$template = locate_noptin_template( 'actions-page-empty.php' );
 			}
 
-			$template = apply_filters( 'noptin_actions_page_template', $template );
+			$template = apply_filters( 'noptin_actions_page_template', $template, $action );
 
 			include $template;
 			exit;
@@ -443,6 +536,23 @@ class Noptin_Page {
 			'description'     => __( 'Where should we redirect subscribers after they unsubscribe?', 'newsletter-optin-box' ),
 		);
 
+		$options["pages_resubscribe_page_message"] = array(
+			'el'              => 'textarea',
+			'section'		  => 'messages',
+			'label'           => __( 'Re-subscription Message', 'newsletter-optin-box' ),
+			'placeholder'     => $this->default_resubscription_confirmation_message(),
+			'default'		  => $this->default_resubscription_confirmation_message(),
+			'description'     => __( 'The message to show to subscribers after they resubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+		);
+
+		$options["pages_resubscribe_page"] = array(
+			'el'              => 'input',
+			'section'		  => 'messages',
+			'label'           => __( 'Re-subscription Redirect', 'newsletter-optin-box' ),
+			'placeholder'     => 'https://example.com/newsletter-resubscribed',
+			'description'     => __( 'Where should we redirect subscribers after they resubscribe?', 'newsletter-optin-box' ),
+		);
+
 		$options["pages_confirm_page_message"] = array(
 			'el'              => 'textarea',
 			'section'		  => 'messages',
@@ -473,6 +583,18 @@ class Noptin_Page {
 	public function default_unsubscription_confirmation_message() {
 		$heading = __( 'Thank You', 'newsletter-optin-box' );
 		$message = __( "You have been unsubscribed from this mailing list and won't receive any emails from us.", 'newsletter-optin-box' );
+		return "<h1>$heading</h1>\n\n<p>$message</p>";
+	}
+
+	/**
+	 * The default resubscription confirmation message.
+	 *
+	 * @since 1.4.4
+	 * @return string
+	 */
+	public function default_resubscription_confirmation_message() {
+		$heading = __( 'Thank You, Again!', 'newsletter-optin-box' );
+		$message = __( "You have been resubscribed to our newsletter.", 'newsletter-optin-box' );
 		return "<h1>$heading</h1>\n\n<p>$message</p>";
 	}
 

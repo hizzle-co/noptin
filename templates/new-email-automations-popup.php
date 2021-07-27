@@ -7,7 +7,7 @@
 			$counter = 1;
 
 		foreach ( $triggers as $trigger => $args ) {
-			$disabled  = empty( $args['setup_cb'] );
+			$disabled  = 'post_notifications' == $trigger ? false : empty( $args['setup_cb'] );
 			$outer_tag = $disabled ? 'div' : 'a';
 			$class     = $disabled ? 'disabled' : 'enabled';
 			$style     = "--noptin-automation-select-order: $counter;";

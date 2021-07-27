@@ -109,7 +109,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		/**
 		 * Update queue
 		 *
-		 * @param string $key Key.
+		 * @param string $key  Key.
 		 * @param array  $data Data.
 		 *
 		 * @return $this
@@ -197,16 +197,11 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 
 			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
 
-			$count = $wpdb->get_var(
-				$wpdb->prepare(
-					"
-			SELECT COUNT(*)
-			FROM {$table}
-			WHERE {$column} LIKE %s
-		",
-					$key
-				)
-			);
+			$count = $wpdb->get_var( $wpdb->prepare( "
+				SELECT COUNT(*)
+				FROM {$table}
+				WHERE {$column} LIKE %s
+			", $key ) );
 
 			return ( $count > 0 ) ? false : true;
 		}
@@ -277,18 +272,13 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 
 			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
 
-			$query = $wpdb->get_row(
-				$wpdb->prepare(
-					"
-			SELECT *
-			FROM {$table}
-			WHERE {$column} LIKE %s
-			ORDER BY {$key_column} ASC
-			LIMIT 1
-		",
-					$key
-				)
-			);
+			$query = $wpdb->get_row( $wpdb->prepare( "
+				SELECT *
+				FROM {$table}
+				WHERE {$column} LIKE %s
+				ORDER BY {$key_column} ASC
+				LIMIT 1
+			", $key ) );
 
 			$batch       = new stdClass();
 			$batch->key  = $query->$column;
@@ -382,7 +372,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 				$memory_limit = '32000M';
 			}
 
-			return intval( $memory_limit ) * 1024 * 1024;
+			return wp_convert_hr_to_bytes( $memory_limit );
 		}
 
 		/**
@@ -516,4 +506,5 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		abstract protected function task( $item );
 
 	}
+
 }

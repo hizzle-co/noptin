@@ -86,7 +86,7 @@ class Noptin_Task {
 	 * Runs the task in the background as soon as possible.
 	 *
 	 * @since 1.2.7
-	 * @see noptin_do_background_action
+	 * @see do_noptin_background_action
 	 * @return int|bool The action id on success. False otherwise.
 	 */
 	public function do_async() {
@@ -110,7 +110,7 @@ class Noptin_Task {
 	 *
 	 * @param int $timestamp When the first instance of the job will run.
 	 * @param int $interval  How long to wait between runs.
-	 * @see noptin_schedule_recurring_background_action
+	 * @see schedule_noptin_recurring_background_action
 	 * @return int|bool The action id on success. False otherwise.
 	 */
 	public function do_recurring( $timestamp, $interval ) {
@@ -135,7 +135,7 @@ class Noptin_Task {
 	 * @since 1.2.7
 	 *
 	 * @param int $timestamp When the first instance of the job will run.
-	 * @see noptin_schedule_background_action
+	 * @see schedule_noptin_background_action
 	 * @return int|bool The action id on success. False otherwise.
 	 */
 	public function do_once( $timestamp ) {

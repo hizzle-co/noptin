@@ -73,7 +73,7 @@ abstract class Noptin_Abstract_Integration {
 
 		// Integration settings.
 		if ( $this->supports_settings ) {
-			add_filter( 'noptin_get_settings', array( $this, 'add_options' ), $this->priority );
+			add_filter( 'noptin_get_integration_settings', array( $this, 'add_options' ), $this->priority );
 		}
 
 		// Abort if the integration is not enabled.
@@ -136,46 +136,42 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 */
 	public function get_hero_extra() {
-		return '';
+
+		$option   = $this->get_enable_integration_option_name();
+		$enabled  = __( 'Enabled', 'newsletter-optin-box' );
+		$disabled = __( 'Disabled', 'newsletter-optin-box' );
+
+		return "
+			<span style='color: #43a047;' v-if='$option'>$enabled</span>
+			<span style='color: #616161;' v-else>$disabled</span>
+		";
+
 	}
 
 	/**
 	 * Registers integration options.
 	 *
 	 * @since 1.2.6
-	 * @param array $options Current Noptin settings.
+	 * @param array $_options Current Noptin settings.
 	 * @return array
 	 */
-	public function add_options( $options ) {
+	public function add_options( $_options ) {
 
-		$slug = $this->slug;
-
-		// Integration name hero text.
-		if ( ! empty( $this->name ) ) {
-
-			$options["noptin_{$slug}_integration_hero"] = array(
-				'el'              => 'hero',
-				'section'		  => 'integrations',
-				'content'         => $this->name . $this->get_hero_extra(), 
-			);
-
-		}
-
-		// Integration description text.
-		if ( ! empty( $this->description ) ) {
-
-			$options["noptin_{$slug}_integration_description"] = array(
-				'el'              => 'paragraph',
-				'section'		  => 'integrations',
-				'content'         => $this->description, 
-			);
-
-		}
-
-		$options = $this->get_options( $options );
+		$slug    = $this->slug;
+		$options = $this->get_options( array() );
 		$options = apply_filters( "noptin_single_integration_settings", $options, $slug, $this );
 
-		return apply_filters( "noptin_{$slug}_integration_settings", $options, $this );
+		$_options["settings_section_$slug"] = array(
+			'id'          => "settings_section_$slug",
+			'el'          => 'settings_section',
+			'children'    => $options,
+			'section'     => 'integrations',
+			'heading'     => sanitize_text_field( $this->name ),
+			'description' => sanitize_text_field( $this->description ),
+			'badge'       => $this->get_hero_extra(),
+		);
+
+		return apply_filters( "noptin_{$slug}_integration_settings", $_options, $this );
 
 	}
 
@@ -250,7 +246,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @return string
 	 */
 	public function get_checkbox_message_integration_default_value() {
-		return __( 'Add me to your newsletter and keep me updated whenever your publish new blog posts', 'newsletter-optin-box' );
+		return __( 'Add me to your newsletter and keep me updated whenever you publish new blog posts', 'newsletter-optin-box' );
 	}
 
 	/**

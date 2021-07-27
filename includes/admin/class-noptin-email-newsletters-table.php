@@ -119,7 +119,8 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 
 		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
-		$title = esc_html( $item->post_title );
+		$title = esc_html( get_post_meta( $item->ID, 'custom_title', true ) );
+		$title = empty( $title ) ? esc_html( $item->post_title ) : $title;
 
 		$title = "<div><strong><a href='$edit_url'>$title</a></strong></div>";
 
@@ -341,6 +342,14 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 			'date_sent'  => __( 'Sent on', 'newsletter-optin-box' ),
 
 		);
+
+		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
+
+		if ( empty( $track_campaign_stats ) ) {
+			unset( $columns['opens'] );
+			unset( $columns['clicks'] );
+		}
+
 		return apply_filters( 'manage_noptin_newsletters_table_columns', $columns );
 	}
 

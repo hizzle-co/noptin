@@ -68,6 +68,14 @@ function get_noptin_options() {
 	if ( ! is_array( $noptin_options ) || empty( $noptin_options ) ) {
 		$noptin_options = get_default_noptin_options();
 	}
+
+	// Support for WPML.
+	if ( ! did_action( 'init' ) ) {
+		$options = $noptin_options;
+		$noptin_options = null;
+		return $options;
+	}
+
 	return $noptin_options;
 }
 
@@ -151,7 +159,7 @@ function get_noptin_action_page() {
 /**
  * Returns the noptin action url
  *
- * @return  sting
+ * @return  string
  * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
  * @param   string $action The action to execute.
  * @param   string $value  Optional. The value to pass to the action handler.
@@ -178,13 +186,18 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
 	// Pretty permalinks.
 	$path = $wp_rewrite->root . "noptin_newsletter/$action";
+	$url  = get_home_url( null, $path );
+
+	if ( function_exists( 'PLL' ) ) {
+		$url = PLL()->links_model->add_language_to_link( $url, PLL()->curlang );
+	}
 
 	return add_query_arg(
 		array(
 			'nv'  => $value,
 			'nte' => $empty,
 		),
-		get_home_url( null, $path)
+		$url
 	);
 
 }
@@ -373,24 +386,15 @@ function noptin_get_post_types() {
 }
 
 /**
- * Checks whether an optin form should be displayed.
+ * Checks whether subscription forms should be displayed.
  *
  * @since 1.0.7
  * @return bool
  */
 function noptin_should_show_optins() {
 
-	if ( get_noptin_option( 'hide_from_subscribers' ) ) {
-
-		if ( ! empty( $_COOKIE['noptin_email_subscribed'] ) ) {
-			return false;
-		}
-
-		$cookie = get_noptin_option( 'subscribers_cookie' );
-		if ( ! empty( $cookie ) && is_string( $cookie ) && ! empty( $_COOKIE[ $cookie ] ) ) {
-			return false;
-		}
-
+	if ( get_noptin_option( 'hide_from_subscribers' ) && noptin_is_subscriber() ) {
+		return false;
 	}
 
 	if ( ! empty( $_COOKIE['noptin_hide'] ) ) {
@@ -544,7 +548,18 @@ function noptin_get_form_design_props() {
  * @return array
  */
 function noptin_get_form_field_props() {
-	return apply_filters( 'noptin_form_field_props', array( 'fields', 'fieldTypes' ) );
+	$props = array( 'fields', 'fieldTypes' );
+
+	foreach ( get_noptin_connection_providers() as $key => $connection ) {
+
+		if ( ! empty( $connection->list_providers ) ) {
+			$props[] = "{$key}_list";
+		}
+
+		$props = $connection->add_custom_field_props( $props );
+	}
+
+	return apply_filters( 'noptin_form_field_props', $props );
 }
 
 /**
@@ -899,13 +914,13 @@ function noptin_get_user_ip() {
 	if ( isset( $_SERVER['HTTP_X_REAL_IP'] ) ) {
 		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) );
 	}
-	
+
 	if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
 		// Proxy servers can send through this header like this: X-Forwarded-For: client1, proxy1, proxy2
 		// Make sure we always only send through the first IP in the list which should always be the client IP.
 		return (string) rest_is_ip_address( trim( current( preg_split( '/,/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) );
 	}
-	
+
 	if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
 		return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
 	}
@@ -1048,19 +1063,27 @@ function noptin_locate_ip_address_alt( $ip_address ) {
 }
 
 /**
- * Cleans up an array, comma- or space-separated list of scalar values.
+ * Converts a comma- or space-separated list of scalar values into an array.
  *
  * @since 1.2.3
  *
  * @param array|string $list List of values.
+ * @param bool $strict Whether to only split on commas.
  * @return array Sanitized array of values.
  */
-function noptin_parse_list( $list ) {
+function noptin_parse_list( $list, $strict = false ) {
+
 	if ( ! is_array( $list ) ) {
-		return preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+
+		if ( $strict ) {
+			$list = preg_split( '/,+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+		} else {
+			$list = preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+		}
+
 	}
 
-	return $list;
+	return map_deep( $list, 'trim' );
 }
 
 /**
@@ -1084,7 +1107,7 @@ function noptin_parse_int_list( $list, $cb = 'absint' ) {
  * @return array Sanitized array of values.
  */
 function noptin_parse_post_list( $list ) {
-	
+
 	// Convert to array.
 	$list = noptin_parse_list( $list );
 
@@ -1093,7 +1116,7 @@ function noptin_parse_post_list( $list ) {
 
 	// Assume the rest to be urls.
 	$urls = array_diff( $list, $ids );
-	
+
 	// Return an array or ids and urls
 	return array(
 		'ids'  => array_map( 'absint', $ids ), // convert to integers.
@@ -1157,31 +1180,18 @@ function noptin_clean_url( $url = '' ) {
 	// remove forwad slash at the end of the url
 	$clean_url = strtolower( untrailingslashit( $clean_url ) );
 
-	return apply_filters( 'noptin_clean_url', $clean_url, $url ); 
+	return apply_filters( 'noptin_clean_url', $clean_url, $url );
 }
 
 /**
- * Clean variables using sanitize_text_field.
+ * Cleans all non-iterable elements of an array or an object.
  *
- * @param string|array $var Data to sanitize.
+ * @param string|array|object $var Data to sanitize.
  * @since 1.2.3
  * @return string|array
  */
 function noptin_clean( $var ) {
-
-	if ( is_array( $var ) ) {
-		return array_map( 'noptin_clean', $var );
-	}
-
-	if ( is_object( $var ) ) {
-		$object_vars = get_object_vars( $var );
-		foreach ( $object_vars as $property_name => $property_value ) {
-			$var->$property_name = noptin_clean( $property_value );
-		}
-		return $var;
-	}
-
-	return is_string( $var ) ? sanitize_text_field( $var ) : $var;
+	return map_deep( $var, 'sanitize_text_field' );
 }
 
 /**
@@ -1467,7 +1477,7 @@ function schedule_noptin_recurring_background_action() {
  * - `do_noptin_background_action()`
  * - `schedule_noptin_background_action()`
  * - `schedule_noptin_recurring_background_action()`
- * 
+ *
  * Pass `all` as the only argument to cancel all actions scheduled by the above functions.
  *
  * @since 1.2.7
@@ -1509,7 +1519,7 @@ function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
 			log_noptin_message( $e->getMessage() );
 			return false;
 		}
-		
+
 	}
 
 	// Developers can also cancel an action by a hook name.
@@ -1587,6 +1597,44 @@ function get_noptin_automation_rules_table_name() {
  */
 function noptin_verify_subscription_nonces() {
 	return apply_filters( 'noptin_verify_nonce', NOPTIN_VERIFY_NONCE );
+}
+
+/**
+ * Returns an array of connection providers.
+ *
+ * @since 1.5.1
+ * @ignore
+ * @return Noptin_Connection_Provider[]
+ */
+function get_noptin_connection_providers() {
+	return apply_filters( 'noptin_connection_providers', array() );
+}
+
+/**
+ * Returns an array of email senders.
+ *
+ * @since 1.5.2
+ * @return array
+ */
+function get_noptin_email_senders() {
+	return apply_filters(
+		'noptin_email_senders',
+		array(
+			'noptin' => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
+		)
+	);
+}
+
+/**
+ * Returns the sender to use for a specific email.
+ *
+ * @since 1.5.2
+ * @param int $campaign_id
+ * @return array
+ */
+function get_noptin_email_sender( $campaign_id ) {
+	$sender = get_post_meta( $campaign_id, 'email_sender', true );
+	return in_array( $sender, array_keys( get_noptin_email_senders() ) ) ? $sender : 'noptin';
 }
 
 /**
@@ -1699,4 +1747,133 @@ function noptin_convert_classic_template( $template ) {
 
 	$template['data'] = $data;
 	return $template;
+}
+
+/**
+ * Applies Noptin merge tags.
+ *
+ * Noptin uses a fast logic-less templating engine to parse merge tags
+ * and insert them into content.
+ *
+ * @param string $content
+ * @param array $merge_tags
+ * @param bool $strict
+ * @param bool $strip_missing
+ * @since 1.5.1
+ * @return string
+ */
+function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_missing = true ) {
+
+	$merge_tags     = $strict ? noptin_clean( $merge_tags ) : wp_kses_post_deep( $merge_tags );
+	$all_merge_tags = flatten_noptin_array( $merge_tags );
+
+	// Handle conditions.
+	preg_match_all( '/\[\[#(\w*)\]\](.*?)\[\[\/\1\]\]/s', $content, $matches );
+
+	if ( ! empty( $matches ) ) {
+
+		foreach ( $matches[1] as $i => $match ) {
+
+			if ( empty( $all_merge_tags[ $match ] ) ) {
+				$content = str_replace( $matches[0][ $i ], '', $content );
+			} else {
+
+				$array       = array();
+				$multi_array = array();
+
+				foreach ( $all_merge_tags as $key => $value ) {
+
+					if ( false !== strpos( $key, $match ) ) {
+						$key = str_replace( $match . '.', '', $key );
+
+						if ( is_numeric( $key ) ) {
+							$array[] = $value;
+						} else {
+							$multi_array[ $key ] = $value;
+						}
+
+					}
+
+				}
+
+				// Fetched matched.
+				$matched = $matches[2][ $i ];
+
+				// Handle numeric arrays.
+				if ( isset( $array[0] ) && is_scalar( $array[0] ) ) {
+					$array   = '<ul><li>' . implode( '</li><li>', $array ) . '</li></ul>';
+					$matched = str_replace( '[[.]]', $array, $matched );
+				} else {
+					$matched = add_noptin_merge_tags( $matched, $multi_array, $strict, false );
+				}
+
+				$content = str_replace( $matches[0][ $i ], $matched, $content );
+			}
+
+		}
+
+	}
+
+	// Replace all available tags with their values.
+	foreach ( $all_merge_tags as $key => $value ) {
+		if ( is_scalar( $value ) ) {
+			$content = str_ireplace( "[[$key]]", $value, $content );
+		}
+	}
+
+	// Remove unavailable tags.
+	if ( $strip_missing ) {
+		$content = preg_replace( '/\[\[[\w\.]+\]\]/', '', $content );
+	}
+
+	$content = preg_replace( '/ +([,.!])/s', '$1', $content );
+
+	return $content;
+
+}
+
+/**
+ * Flattens a multi-dimensional array containing merge tags.
+ *
+ *
+ * @param array $array
+ * @param string $prefix
+ * @since 1.5.1
+ * @return string[]
+ */
+function flatten_noptin_array( $array, $prefix = '' ) {
+	$result = array();
+
+	foreach ( $array as $key => $value ) {
+
+		$_prefix = '' == $prefix ? "$key" : "$prefix.$key";
+
+		$result[ $_prefix ] = 1;
+
+		if ( is_array( $value ) ) {
+			$result = array_merge( $result, flatten_noptin_array( $value , $_prefix ) );
+		} else if ( is_object( $value ) ) {
+			$result = array_merge( $result, flatten_noptin_array( get_object_vars( $value ), $_prefix ) );
+		} else {
+
+			if ( false === $value ) {
+				$value = __( 'No', 'newsletter-optin-box' );
+			}
+
+			if ( true === $value ) {
+				$value = __( 'Yes', 'newsletter-optin-box' );
+			}
+
+			$result[ $_prefix ] = $value;
+
+			if ( strpos( $_prefix, '.0' ) !== false ) {
+				$result[ str_replace( '.0', '', $_prefix ) ] = $value;
+			}
+
+		}
+
+	}
+
+	return $result;
+
 }

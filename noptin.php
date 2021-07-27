@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         1.4.0
+ * Version:         1.5.4
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -47,7 +47,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.4.0';
+	public $version = '1.5.4';
 
 	/**
 	 * The current database version.
@@ -199,19 +199,24 @@ class Noptin {
 	 */
 	private function load_files() {
 
-		$plugin_path = plugin_dir_path( __FILE__ );
+		if ( empty( $this->mailer ) ) {
 
-		// Non-class files.
-		require_once $plugin_path . 'vendor/autoload.php';
-		require_once $plugin_path . 'includes/functions.php';
-		require_once $plugin_path . 'includes/subscriber.php';
-		require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
+			$plugin_path = plugin_dir_path( __FILE__ );
 
-		// Register autoloader.
-		try {
-			spl_autoload_register( array( $this, 'autoload' ), true );
-		} catch ( Exception $e ) {
-			log_noptin_message( $e->getMessage() );
+			// Non-class files.
+			require_once $plugin_path . 'vendor/autoload.php';
+			require_once $plugin_path . 'includes/functions.php';
+			require_once $plugin_path . 'includes/subscriber.php';
+			require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
+			require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
+
+			// Register autoloader.
+			try {
+				spl_autoload_register( array( $this, 'autoload' ), true );
+			} catch ( Exception $e ) {
+				log_noptin_message( $e->getMessage() );
+			}
+
 		}
 
 	}
@@ -368,6 +373,7 @@ class Noptin {
 			"$plugin_path/includes/automation-rules",
 			"$plugin_path/includes/automation-rules/actions",
 			"$plugin_path/includes/automation-rules/triggers",
+			"$plugin_path/includes/libraries/connections/"
 		);
 
 		foreach ( apply_filters( 'noptin_autoload_locations', $locations ) as $location ) {
@@ -458,7 +464,7 @@ class Noptin {
 	 */
 	public function register_blocks() {
 
-		if ( ! function_exists( 'register_block_type' ) ) {
+		if ( ! function_exists( 'register_block_type' ) || did_action( 'noptin_before_register_blocks' ) ) {
 			// Gutenberg is not active.
 			return;
 		}

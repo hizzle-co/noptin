@@ -370,73 +370,111 @@ class Noptin_Form_Editor {
 	 * Returns integration settings fields
 	 */
 	private function get_integration_fields() {
-		$fields = array(
 
-			'mailchimp'    => array(
-				'el'       => 'panel',
-				'title'    => 'Mailchimp',
-				'id'       => 'mailchimp',
-				'children' => array(
-					'mailchimptext' => array(
-						'el'      => 'paragraph',
-						'content' => sprintf(
-							esc_html__( 'Install the %s to connect your mailchimp account.', 'newsletter-optin-box' ),
-							sprintf( '<a target="_blank" href="https://noptin.com/product/mailchimp/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> MailChimp addon</a>', get_home_url() )
+		$fields                = array();
+		$available_connections = get_noptin_connection_providers();
+		$all_connections       = Noptin_COM::get_integrations();
+
+		if ( empty( $available_connections ) ) {
+			foreach ( $all_connections as $key => $connection ) {
+
+				$key            = sanitize_key( str_replace( '-', '_', $key ) );
+				$name           = sanitize_text_field( $connection->title );
+				$href           = esc_url( $connection->href );
+				$fields[ $key ] = array(
+					'el'       => 'panel',
+					'title'    => $name,
+					'id'       => $key,
+					'children' => array(
+						"{$key}text" => array(
+							'el'      => 'paragraph',
+							'content' => sprintf(
+								esc_html__( 'Install the %s to add new subscribers to %s.', 'newsletter-optin-box' ),
+								'<a target="_blank" href="' . $href . '"> ' . $name . ' addon</a>',
+								$name
+							),
+							'style'   => 'color:#F44336;',
 						),
-						'style'   => 'color:#F44336;',
 					),
-				),
-			),
+				);
 
-			'campaign_monitor' => array(
-				'el'       => 'panel',
-				'title'    => 'Campaign Monitor',
-				'id'       => 'campaign_monitor',
-				'children' => array(
-					'campaign_monitor' => array(
-						'el'      => 'paragraph',
-						'content' => sprintf(
-							esc_html__( 'Install the %s to connect your Campaign Monitor account.', 'newsletter-optin-box' ),
-							sprintf( '<a target="_blank" href="https://noptin.com/product/campaign-monitor/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s">Campaign Monitor addon</a>', get_home_url() )
+			}
+		}
+
+		foreach ( $available_connections as $key => $connection ) {
+
+			// Abort early if we're not connected.
+			if ( ! $connection->is_connected() ) {
+				$error = $connection->last_error;
+
+				if ( empty( $error ) ) {
+					$error = sprintf(
+						__( 'You are not connected to %s', 'newsletter-optin-box' ),
+						$connection->name
+					);
+				}
+
+				$fields[ $key ] = array(
+					'el'        => 'panel',
+					'title'     => $connection->name,
+					'id'        => $key,
+					'open'      => empty( $available_connections ),
+					'children'  => array(
+						"{$key}text"   => array(
+							'el'       => 'paragraph',
+							'content'  => "Error: $error",
+							'style'    => 'color:#F44336;'
 						),
-						'style'   => 'color:#F44336;',
-					),
-				),
-			),
+		
+					)
+				);
 
-			'convertkit' => array(
-				'el'       => 'panel',
-				'title'    => 'ConvertKit',
-				'id'       => 'convertkit',
-				'children' => array(
-					'convertkittext' => array(
-						'el'      => 'paragraph',
-						'content' => sprintf(
-							esc_html__( 'Install the %s to connect your convertkit account.', 'newsletter-optin-box' ),
-							sprintf( '<a target="_blank" href="https://noptin.com/product/convertkit/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s"> ConvertKit addon</a>', get_home_url() )
-						),
-						'style'   => 'color:#F44336;',
-					),
-				),
-			),
+				continue;
+			}
 
-			'drip'         => array(
-				'el'       => 'panel',
-				'title'    => 'Drip',
-				'id'       => 'drip',
-				'children' => array(
-					'drip'        => array(
-						'el'      => 'paragraph',
-						'content' => sprintf(
-							esc_html__( 'Install the %s to connect your Drip account.', 'newsletter-optin-box' ),
-							sprintf( '<a target="_blank" href="https://noptin.com/product/drip/?utm_medium=plugin-dashboard&utm_campaign=editor&utm_source=%s">Drip addon</a>', get_home_url() )
-						),
-						'style'   => 'color:#F44336;',
-					),
-				),
-			),
+			$custom = array();
+			$slug   = $connection->slug;
 
-		);
+			// Lists.
+			if ( ! empty( $connection->list_providers ) ) {
+
+				$custom["{$slug}_list"] = array(
+					'el'                => 'select',
+					'options'           => $connection->list_providers->get_dropdown_lists(),
+					'label'             => sprintf(
+						'%s %s',
+						$connection->name,
+						$connection->list_providers->get_name()
+					),
+					'placeholder'       => sprintf(
+						__( 'Do not add to %s', 'newsletter-optin-box' ),
+						$connection->name
+					),
+					'tooltip'           => sprintf( __( 'People who subscribe via this form will be added to the %s you select here', 'newsletter-optin-box' ), $connection->list_providers->get_name() ),
+				);
+
+			}
+
+			// Tags.
+			if ( $connection->supports( 'tags' ) ) {
+
+				$custom["{$slug}_tags"] = array(
+					'el'                => 'input',
+					'label'             => __( 'Subscriber Tags', 'newsletter-optin-box' ),
+					'placeholder'       => 'tag, another tag',
+					'tooltip'           => __( 'The listed tags will be applied to all new subscribers added by this form. Separate multiple values with a comma.', 'newsletter-optin-box' ),
+				);
+
+			}
+
+			$fields[ $key ] = array(
+				'el'        => 'panel',
+				'title'     => $connection->name,
+				'id'        => $connection->slug,
+				'children'  => $connection->add_custom_options( $custom )
+			);
+
+		}
 
 		ksort( $fields );
 		return $fields;

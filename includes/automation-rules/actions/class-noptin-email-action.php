@@ -168,21 +168,18 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
         $email_subject = $rule->action_settings['email_subject'];
         $email_preview = isset( $rule->action_settings['email_preview'] ) ? $rule->action_settings['email_preview'] : '';
 
-        $merge_tags = get_noptin_subscriber_merge_fields(  $subscriber->id  );
-        
+        if ( $subscriber->is_virtual ) {
+            $merge_tags = $subscriber->to_array();
+        } else {
+            $merge_tags = get_noptin_subscriber_merge_fields(  $subscriber->id  );
+        }
+
         if ( is_array( $args ) ) {
-
-            foreach ( $args as $key => $value ) {
-
-                if ( is_scalar( $value ) ) {
-                    $merge_tags[ $key ] = $value;
-                }
-
-            }
+            $merge_tags = array_merge( $merge_tags, $args );
         }
 
 		$item  = array(
-			'subscriber_id' 	=> $subscriber->id,
+			'subscriber_id' 	=> $subscriber->is_virtual ? 0 : $subscriber->id,
 			'email' 			=> $subscriber->email,
 			'email_body'	    => wp_kses_post( stripslashes_deep( $email_content ) ),
 			'email_subject' 	=> sanitize_text_field( stripslashes_deep( $email_subject ) ),
@@ -194,7 +191,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 
 		$item = apply_filters( 'noptin_email_action_email_details', $item, $subscriber, $rule, $args );
 
-        // Sends the email in the background.
+        // Sends the email.
         return noptin()->mailer->prepare_then_send( $item );
 
     }
@@ -214,7 +211,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
         if ( empty( $rule->action_settings['email_content'] ) || empty( $rule->action_settings['email_subject'] ) ) {
             log_noptin_message(
                 sprintf(
-                    __( 'Email automation rule action not sent to %s because either the subject or the content has not been set' ),
+                    __( 'Email automation rule action not sent to %s because either the subject or the content has not been set', 'newsletter-optin-box' ),
                     $subscriber->email
                 )
             );
@@ -222,10 +219,10 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
         }
 
         // We only want to send an email to active subscribers.
-        if ( ! empty( $subscriber->active ) ) {
+        if ( ! $subscriber->is_active() ) {
             log_noptin_message(
                 sprintf(
-                    __( 'Email automation rule action not sent to %s because the subscriber is not active' ),
+                    __( 'Email automation rule action not sent to %s because the subscriber is not active', 'newsletter-optin-box' ),
                     $subscriber->email
                 )
             );

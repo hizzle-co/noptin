@@ -100,6 +100,8 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 
 		if ( did_action( 'uwp_template_fields' ) ) {
 			echo '<div class="uwp_form_checkbox_row uwp_clear">';
+		} else if ( doing_action( 'woocommerce_register_form' ) ) {
+			echo "<p class='noptin_registration_form_optin_checkbox_wrapper woocommerce-form-row form-row'>";
 		} else {
 			echo "<p class='noptin_registration_form_optin_checkbox_wrapper'>";
 		}

@@ -224,7 +224,7 @@ class Noptin_Ajax {
 			exit;
 		}
 
-		$subscriber = new Noptin_Subscriber( $_POST['email'] );
+		$subscriber = new Noptin_Subscriber( sanitize_email( $_POST['email'] ) );
 		if ( ! $subscriber->exists() ) {
 			wp_send_json_error( __( 'This subscriber no longer exists. They might have been deleted.', 'newsletter-optin-box' ) );
 			exit;
@@ -814,7 +814,10 @@ class Noptin_Ajax {
 				$result['action']   = 'redirect';
 				$result['redirect'] = $form->redirectUrl;
 			}
+	
 		}
+
+		$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) );
 
 		wp_send_json( $result );
 		exit;
@@ -882,6 +885,8 @@ class Noptin_Ajax {
 		unset( $_settings['saved'] );
 		unset( $_settings['error'] );
 		unset( $_settings['currentTab'] );
+		unset( $_settings['currentSection'] );
+		unset( $_settings['openSections'] );
 
 		$settings = array();
 		foreach ( $_settings as $key => $val ) {
@@ -903,6 +908,13 @@ class Noptin_Ajax {
 		 * @param array $settings Noptin settings.
 		 */
 		$settings = apply_filters( 'noptin_sanitize_settings', $settings );
+
+		// Check if we're tracking.
+		$is_tracking = get_noptin_option( 'allow_tracking', false );
+
+		if ( ! $is_tracking && ! empty( $settings['allow_tracking'] ) ) {
+			wp_schedule_single_event( time() + 10, 'noptin_com_tracker_send_event', array( true ) );
+		}
 
 		// Save them.
 		update_noptin_options( $settings );

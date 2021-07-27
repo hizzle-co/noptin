@@ -12,28 +12,28 @@ class Noptin_Settings {
 
 	/**
 	 * Setting sections.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $sections;
 
 	/**
 	 * Settings.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $settings;
 
 	/**
 	 * Current state.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected static $state;
 
 	/**
 	 * Class constructor.
-	 * 
+	 *
 	 * It's protected since we do not want anyone to create a new instance of the class.
 	 * It's here purely for encapsulation.
 	 */
@@ -49,7 +49,7 @@ class Noptin_Settings {
 
 	/**
 	 * Returns all setting sections.
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_sections() {
@@ -114,14 +114,14 @@ class Noptin_Settings {
 
 		// Cache it.
 		self::$sections = $sections;
-		
+
 		return $sections;
 
 	}
 
 	/**
 	 * Returns a section conditional
-	 * 
+	 *
 	 * @return string
 	 */
 	public static function get_section_conditional( $args ) {
@@ -140,7 +140,7 @@ class Noptin_Settings {
 
 	/**
 	 * Returns the current state
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_state() {
@@ -153,19 +153,31 @@ class Noptin_Settings {
 		$state = array();
 
 		foreach ( self::get_settings() as $key => $args ) {
-			$default       = isset( $args['default'] ) ? $args['default'] : '';
-			$state[ $key ] = get_noptin_option( $key, $default );
+
+			if ( ! empty( $args['el'] ) && 'settings_section' === $args['el'] ) {
+
+				foreach ( $args['children'] as $key => $args ) {
+					$default       = isset( $args['default'] ) ? $args['default'] : '';
+					$state[ $key ] = get_noptin_option( $key, $default );
+				}
+
+			} else {
+				$default       = isset( $args['default'] ) ? $args['default'] : '';
+				$state[ $key ] = get_noptin_option( $key, $default );
+			}
+
 		}
 
 		$state = array_merge( get_noptin_options(), $state );
 
-		$state['currentTab']     = 'general';
+		$state['openSections']   = isset( $_GET['integration'] ) ? array( 'settings_section_' . noptin_clean( $_GET['integration'] ) ) : array();
+		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
 		$state['currentSection'] = 'main';
 		$state['saved']          = __( 'Your settings have been saved', 'newsletter-optin-box' );
 		$state['error']          = __( 'Your settings could not be saved.', 'newsletter-optin-box' );
 
 		// Cache this.
-		self::$state = $state;
+		self::$state = apply_filters( 'noptin_settings_state', $state );
 
 		return $state;
 
@@ -173,7 +185,7 @@ class Noptin_Settings {
 
 	/**
 	 * Returns all settings fields
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function get_settings() {
@@ -192,7 +204,7 @@ class Noptin_Settings {
 				'label'       => __( 'Admin Notifications', 'newsletter-optin-box' ),
 				'description' => __( 'Notify the site admin every time a new subscriber signs up for the newsletter.', 'newsletter-optin-box' ),
 			),
-			
+
 			'double_optin'    => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
@@ -217,6 +229,23 @@ class Noptin_Settings {
 				'description' => __( 'Hide opt-in forms and methods from existing subscribers.', 'newsletter-optin-box' ),
 			),
 
+			'track_campaign_stats' => array(
+				'label'       => __( 'Show campaign stats', 'newsletter-optin-box' ),
+				'description' => __( 'Enable this to display opens and clicks on campaigns that you send.', 'newsletter-optin-box' ),
+				'type'        => 'checkbox_alt',
+				'section'     => 'general',
+				'el'          => 'input',
+				'default'     => true,
+			),
+
+			'allow_tracking'        => array(
+				'label'       => __( 'Share stats', 'newsletter-optin-box' ),
+				'description' => __( 'Help improve Noptin by sharing non-sensitive usage stats.', 'newsletter-optin-box' ),
+				'type'        => 'checkbox_alt',
+				'section'     => 'general',
+				'el'          => 'input',
+			),
+
 			'subscribers_cookie' => array(
 				'el'          => 'input',
 				'type'        => 'text',
@@ -224,6 +253,17 @@ class Noptin_Settings {
 				'label'       => __( 'Subscription Cookie', 'newsletter-optin-box' ),
 				'placeholder' => '',
 				'description' => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
+			),
+
+			'admin_email'        => array(
+				'el'          => 'input',
+				'section'     => 'emails',
+				'type'        => 'text',
+				'label'       => __( 'Notification recipient(s)', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'placeholder' => get_option( 'admin_email' ) . ', admin@example.com',
+				'default'     => get_option( 'admin_email' ),
+				'description' => __( 'Enter a comma separated list of email address that should receive new subscriber notifications', 'newsletter-optin-box' ),
 			),
 
 			'reply_to'        => array(
@@ -254,6 +294,26 @@ class Noptin_Settings {
 				'class'       => 'regular-text',
 				'placeholder' => get_option( 'blogname' ),
 				'description' => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
+			),
+
+			'per_hour'        => array(
+				'el'          => 'input',
+				'type'        => 'number',
+				'section'     => 'emails',
+				'label'       => __( 'Emails Per Hour', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'placeholder' => __( 'Unlimited', 'newsletter-optin-box' ),
+				'description' => __( 'The maximum number of emails to send per hour. Leave empty to send as many as possible.', 'newsletter-optin-box' ),
+			),
+
+			'delete_campaigns' => array(
+				'el'           => 'input',
+				'type'         => 'number',
+				'section'      => 'emails',
+				'label'        => __( 'Delete Campaigns', 'newsletter-optin-box' ),
+				'class'        => 'regular-text',
+				'placeholder'  => __( 'Never Delete', 'newsletter-optin-box' ),
+				'description'  => __( 'The number of days after which to delete a sent campaign. Leave empty to if you do not want to automatically delete campaigns.', 'newsletter-optin-box' ),
 			),
 
 			'company'         => array(
@@ -293,7 +353,7 @@ class Noptin_Settings {
 						esc_url(
 							admin_url("plugin-install.php?tab=plugin-information&plugin=email-customizer&TB_iframe=true&width=772&height=560")
 						),
-						__( 'Try our free email templates plugin.', 'newsletter-optin-box' )
+						__( 'Or install our free email templates plugin to design your own templates.', 'newsletter-optin-box' )
 					)
 				),
 			),
@@ -340,7 +400,7 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
 				'placeholder' => '****************************',
-				'description' => sprintf( 
+				'description' => sprintf(
 					__( 'Enter your %s API key if you want to GeoLocate your subscribers using their service.', 'newsletter-optin-box' ),
 					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
 				)
@@ -409,6 +469,57 @@ class Noptin_Settings {
 				'description' => __( 'Remind the subscriber how they signed up.', 'newsletter-optin-box' ),
 			),
 
+		);
+
+		$integration_settings  = apply_filters( 'noptin_get_integration_settings', array() );
+		$available_connections = get_noptin_connection_providers();
+		ksort( $integration_settings );
+
+		if ( empty( $available_connections ) ) {
+			foreach ( Noptin_COM::get_integrations() as $slug => $data ) {
+
+				$slug = sanitize_key( str_replace( '-', '_', $slug ) );
+
+				if ( isset( $integration_settings["settings_section_$slug"] ) ) {
+					continue;
+				}
+
+				$integration_settings["settings_section_$slug"] = array(
+					'id'          => "settings_section_$slug",
+					'el'          => 'settings_section',
+					'class'       => 'not-installed',
+					'children'    => array(
+						"noptin_{$slug}_install" => array(
+							'el'              => 'paragraph',
+							'section'		  => 'integrations',
+							'content'         => '<span class="dashicons dashicons-info" style="margin-right: 10px; color: #03a9f4; "></span>' . sprintf(
+								esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
+								sprintf(
+									'<a target="_blank" href="%s">%s</a>',
+									esc_url( $data->href ),
+									sprintf(
+										__( '%s addon', 'newsletter-optin-box' ),
+										sanitize_text_field( $data->title )
+									)
+								)
+							)
+						),
+					),
+					'section'     => 'integrations',
+					'heading'     => sanitize_text_field( $data->title ),
+					'description' => sprintf(
+						__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
+						sanitize_text_field( $data->title )
+					),
+					'badge'       => __( 'Not Installed', 'newsletter-optin-box' ),
+				);
+
+			}
+		}
+
+		$settings = array_merge(
+			$settings,
+			$integration_settings
 		);
 
 		// Filter the settings.
