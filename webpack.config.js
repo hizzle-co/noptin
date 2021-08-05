@@ -1,5 +1,5 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -92,6 +92,7 @@ module.exports = {
 		new MiniCssExtractPlugin()
 	],
 	externals: {
+		jquery: 'jQuery',
 		vue: 'Vue'
 	}
 };

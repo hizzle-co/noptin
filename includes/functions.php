@@ -1877,3 +1877,23 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 	return $result;
 
 }
+
+/**
+ * Sanitizes booleans.
+ *
+ * @param mixed $var Data to sanitize.
+ * @since 1.5.5
+ * @return mixed
+ */
+function noptin_sanitize_booleans( $var ) {
+
+	if ( 'true' === $var ) {
+		return true;
+	}
+
+	if ( 'false' === $var ) {
+		return false;
+	}
+
+	return $var;
+}

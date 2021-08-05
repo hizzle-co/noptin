@@ -70,6 +70,7 @@ class Noptin_Settings {
 						'double_opt_in' => __( 'Double Opt-In Email', 'newsletter-optin-box' ),
 					)
 				),
+				'fields'                => __( 'Subscriber Fields', 'newsletter-optin-box' ),
 				'integrations'          => __( 'Integrations', 'newsletter-optin-box' ),
 				'messages'              => __( 'Messages', 'newsletter-optin-box' )
 			)
@@ -175,6 +176,7 @@ class Noptin_Settings {
 		$state['currentSection'] = 'main';
 		$state['saved']          = __( 'Your settings have been saved', 'newsletter-optin-box' );
 		$state['error']          = __( 'Your settings could not be saved.', 'newsletter-optin-box' );
+		$state['fieldTypes']     = get_noptin_custom_field_types();
 
 		// Cache this.
 		self::$state = apply_filters( 'noptin_settings_state', $state );
@@ -467,6 +469,46 @@ class Noptin_Settings {
 				'default'     => $double_optin['permission_text'],
 				'placeholder' => $double_optin['permission_text'],
 				'description' => __( 'Remind the subscriber how they signed up.', 'newsletter-optin-box' ),
+			),
+
+			'custom_fields'   => array(
+				'el'          => 'custom_fields',
+				'section'	  => 'fields',
+				'label'       => __( 'Custom Fields', 'newsletter-optin-box' ),
+				'default'     => array(
+					array(
+						'type'       => 'email',
+						'merge_tag'  => 'email',
+						'label'      => __( 'Email Address', 'newsletter-optin-box' ),
+						'visible'    => true,
+						'subs_table' => true,
+						'predefined' => true,
+					),
+					array(
+						'type'       => 'first_name',
+						'merge_tag'  => 'first_name',
+						'label'      => __( 'First Name', 'newsletter-optin-box' ),
+						'visible'    => true,
+						'subs_table' => true,
+						'predefined' => true,
+					),
+					array(
+						'type'       => 'last_name',
+						'merge_tag'  => 'last_name',
+						'label'      => __( 'Last Name', 'newsletter-optin-box' ),
+						'visible'    => true,
+						'subs_table' => true,
+						'predefined' => true,
+					),
+					array(
+						'type'       => 'birthday',
+						'merge_tag'  => 'birthday',
+						'label'      => __( 'Birthday', 'newsletter-optin-box' ),
+						'visible'    => true,
+						'subs_table' => false,
+						'predefined' => true,
+					)
+				),
 			),
 
 		);

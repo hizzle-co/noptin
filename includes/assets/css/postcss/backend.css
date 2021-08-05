@@ -971,9 +971,10 @@ input:focus+.noptin-switch-slider span {
 		padding: 12px;
 	}
 
-	.noptin-field-editor-delete {
-		color: #F44336;
-	}
+}
+
+.noptin-field-editor-delete {
+	color: #F44336;
 }
 
 #noptin-automations-popup .notice:not(.noptin-notice),
@@ -1582,4 +1583,140 @@ a.no-campaign-create-new-campaign {
 	&.not-installed .noptin-section-header {
 		opacity: 0.5
 	}
+}
+
+.noptin-accordion-wrapper {
+    border: 1px solid #c3c4c7
+}
+
+.noptin-accordion-heading {
+    margin: 0;
+    border-top: 1px solid #c3c4c7;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: 600;
+    color: inherit
+}
+
+.noptin-accordion-wrapper span:first-child .noptin-accordion-heading {
+    border-top: none
+}
+
+.noptin-accordion-trigger {
+    background: #fff;
+    border: 0;
+    color: #2c3338;
+    cursor: pointer;
+    display: flex;
+    font-weight: 400;
+    margin: 0;
+    padding: 1em 3.5em 1em 1.5em;
+    min-height: 46px;
+    position: relative;
+    text-align: left;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    -webkit-user-select: auto;
+    user-select: auto
+}
+
+.noptin-accordion-trigger:active,
+.noptin-accordion-trigger:hover{
+    background: #f6f7f7
+}
+
+.noptin-accordion-trigger:focus {
+    color: #1d2327;
+    border: none;
+    box-shadow: none;
+    outline-offset: -1px;
+    outline: 2px solid #2271b1;
+    background-color: #f6f7f7
+}
+
+.noptin-accordion-trigger .title {
+    pointer-events: none;
+    font-weight: 600;
+    flex-grow: 1
+}
+
+.noptin-accordion-trigger .icon {
+    border: solid #50575e;
+    border-width: 0 2px 2px 0;
+    height: .5rem;
+    pointer-events: none;
+    position: absolute;
+    right: 1.5em;
+    top: 50%;
+    transform: translateY(-70%) rotate(45deg);
+    width: .5rem
+}
+
+.noptin-accordion-trigger .badge {
+    padding: .1rem .5rem .15rem;
+    color: #2c3338;
+    font-weight: 600
+}
+
+.noptin-accordion-trigger .badge.blue {
+    border: 1px solid #72aee6
+}
+
+.noptin-accordion-trigger .badge.orange {
+    border: 1px solid #dba617
+}
+
+.noptin-accordion-trigger .badge.red {
+    border: 1px solid #e65054
+}
+
+.noptin-accordion-trigger .badge.green {
+    border: 1px solid #00ba37
+}
+
+.noptin-accordion-trigger .badge.purple {
+    border: 1px solid #2271b1
+}
+
+.noptin-accordion-trigger .badge.gray {
+    border: 1px solid #c3c4c7
+}
+
+.noptin-accordion-trigger[aria-expanded=true] .icon {
+    transform: translateY(-30%) rotate(-135deg)
+}
+
+.noptin-accordion-panel {
+    margin: 0;
+    padding: 1em 1.5em;
+    background: #fff
+}
+
+.noptin-accordion-panel[hidden] {
+    display: none
+}
+
+@media screen and (max-width: 782px) {
+    .noptin-accordion-wrapper .noptin-accordion-trigger {
+        flex-direction:column;
+        align-items: flex-start
+    }
+
+    .noptin-accordion-trigger .badge {
+        margin: 1em 0 0
+    }
+}
+
+.wp-core-ui .button.noptin-button-standout {
+	height: 37px;
+    min-width: 124px;
+    background-color: #ff5722;
+    color: #fff;
+    border-color: #d84315;
+}
+
+.wp-core-ui .button.noptin-button-standout:focus {
+	box-shadow: 0 0 0 1px #fff,0 0 0 3px #d84315;
+	color: #fff;
 }

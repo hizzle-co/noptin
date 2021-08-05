@@ -880,27 +880,16 @@ class Noptin_Ajax {
 		do_action( 'noptin_before_save_options' );
 
 		// Prepare settings.
-		$_settings = stripslashes_deep( $_POST['state'] );
-		unset( $_settings['noptin_admin_nonce'] );
-		unset( $_settings['saved'] );
-		unset( $_settings['error'] );
-		unset( $_settings['currentTab'] );
-		unset( $_settings['currentSection'] );
-		unset( $_settings['openSections'] );
+		$settings = stripslashes_deep( $_POST['state'] );
+		unset( $settings['noptin_admin_nonce'] );
+		unset( $settings['saved'] );
+		unset( $settings['error'] );
+		unset( $settings['currentTab'] );
+		unset( $settings['currentSection'] );
+		unset( $settings['openSections'] );
+		unset( $settings['fieldTypes'] );
 
-		$settings = array();
-		foreach ( $_settings as $key => $val ) {
-
-			if ( 'false' === $val ) {
-				$val = false;
-			}
-
-			if ( 'true' === $val ) {
-				$val = true;
-			}
-
-			$settings[ $key ] = $val;
-		}
+		$settings = map_deep( $settings, 'noptin_sanitize_booleans' );
 
 		/**
 		 * Sanitizes noptin settings.

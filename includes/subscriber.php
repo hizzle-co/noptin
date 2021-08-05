@@ -1251,3 +1251,63 @@ function _noptin_show_subscriber_field( $atts ) {
 
 }
 add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );
+
+/**
+ * Returns an array of available custom field types.
+ *
+ * @since 1.5.5
+ * @return array
+ */
+function get_noptin_custom_field_types() {
+
+	$field_types = array(
+		'email'                => array(
+			'predefined'       => true,
+			'merge_tag'        => 'email',
+			'label'            => __( 'Email Address', 'newsletter-optin-box' ),
+		),
+		'first_name'           => array(
+			'predefined'       => true,
+			'merge_tag'        => 'first_name',
+			'label'            => __( 'First Name', 'newsletter-optin-box' ),
+		),
+		'last_name'            => array(
+			'predefined'       => true,
+			'merge_tag'        => 'last_name',
+			'label'            => __( 'Last Name', 'newsletter-optin-box' ),
+		),
+		'birthday'             => array(
+			'predefined'       => true,
+			'merge_tag'        => 'birthday',
+			'label'            => __( 'Birthday', 'newsletter-optin-box' ),
+		),
+		'text'                 => array(
+			'predefined'       => false,
+			'label'            => __( 'Text Input', 'newsletter-optin-box' ),
+		),
+		'number'               => array(
+			'predefined'       => false,
+			'label'            => __( 'Number Input', 'newsletter-optin-box' ),
+		),
+		'radio'                => array(
+			'predefined'       => false,
+			'supports_options' => true,
+			'label'            => __( 'Radio Buttons', 'newsletter-optin-box' ),
+		),
+		'dropdown'             => array(
+			'predefined'       => false,
+			'supports_options' => true,
+			'label'            => __( 'Dropdown', 'newsletter-optin-box' ),
+		),
+		'date'                 => array(
+			'predefined'       => false,
+			'label'            => __( 'Date', 'newsletter-optin-box' ),
+		),
+		'checkbox'             => array(
+			'predefined'       => false,
+			'label'            => __( 'Checkbox', 'newsletter-optin-box' ),
+		),
+	);
+
+	return apply_filters( 'noptin_custom_field_types', $field_types );
+}

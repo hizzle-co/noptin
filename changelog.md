@@ -1,5 +1,8 @@
 # Changelog
 
+# 1.5.5 - 2021-08-09
+* Better management of custom fields - ADDED
+
 # 1.5.0 - 2021-05-16
 * Ability to connect your site to Noptin.com for faster support and updates - ADDED
 * Ability to set multiple admin notification recipients - ADDED

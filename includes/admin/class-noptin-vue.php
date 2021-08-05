@@ -31,6 +31,7 @@ class Noptin_Vue {
 		add_action( 'noptin_render_editor_multiselect', array( __CLASS__, 'select' ), 10, 2 );
 		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox' ), 10, 2 );
 		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input' ), 10, 2 );
+		add_action( 'noptin_render_editor_custom_fields', array( __CLASS__, 'custom_fields' ), 10, 2  ); 
 
 		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types' ), 5 );
 		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings' ), 5 );
@@ -345,6 +346,11 @@ class Noptin_Vue {
 			$id
 		);
 
+	}
+
+	public static function custom_fields( $id, $field ) {
+		$restrict = $field['restrict'];
+		get_noptin_template( 'subscriber-fields-editor.php', compact( 'id', 'restrict' ) );
 	}
 
 	public static function form_fields( $id, $field ) {
