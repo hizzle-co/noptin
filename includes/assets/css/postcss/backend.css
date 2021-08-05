@@ -1187,27 +1187,50 @@ a.no-campaign-create-new-campaign {
 	}
 }
 
-#noptin-subscribers-table,
 #noptin-automation-campaigns-table,
 #noptin-automation-rules-table,
 #noptin-newsletter-campaigns-table {
-
-	.column-status:not(.manage-column) {
-
-		.status-inactive {
-			color: #d84315;
-		}
-
-		.status-active {
-			color: #2E7D32;
-		}
-	}
-
 	@media screen and (min-width:960px) {
 		.manage-column.column-primary {
 			width: 50%;
 		}
 	}
+}
+
+#noptin-subscribers-table #noptin-subscribers-table-wrap {
+
+	th {
+		padding-left: 13px;
+		padding-right: 13px;
+
+		a {
+			padding-left: 0;
+		}
+	}
+
+	td {
+		padding: 13px;
+    	line-height: 26px;
+		vertical-align: middle;
+	}
+
+	@media screen and (min-width:782px) {
+		overflow-x: scroll;
+    	width: 98%;
+
+		.wp-list-table {
+			table-layout: auto;
+		}
+
+		.column-email {
+			min-width: 320px;
+		}
+
+		th.manage-column:not(.column-email,.column-cb) {
+			min-width: 100px;
+		}
+	}
+
 }
 
 .button.noptin-send-test-email .dashicons-before {
@@ -1719,4 +1742,63 @@ a.no-campaign-create-new-campaign {
 .wp-core-ui .button.noptin-button-standout:focus {
 	box-shadow: 0 0 0 1px #fff,0 0 0 3px #d84315;
 	color: #fff;
+}
+
+.noptin-badge {
+    background-color: #efeeea;
+    color: #241c15;
+    white-space: nowrap;
+    border-radius: 200px;
+    height: 24px;
+    line-height: 24px;
+    padding: 3px 9px;
+    display: inline-block;
+
+	&.info {
+		background-color: #c5dbf2;
+		color: #241c15
+	}
+
+	&.success {
+		background-color: #d8eacc;
+		color: #241c15
+	}
+
+	&.warning {
+		background-color: #fbeeca;
+		color: #241c15
+	}
+
+	&.error {
+		background-color: #fbcfbd;
+		color: #241c15
+	}
+
+	&.new {
+		background-color: #f9e0fa;
+		color: #241c15
+	}
+
+	&.notification {
+		background-color: #f25f25;
+		color: #ffffff
+	}
+
+	&.notification::selection {
+		background-color: rgba(255,255,255,0.8)
+	}
+
+	&.pro {
+		background-color: rgba(36,28,21,0.7);
+		color: #ffffff
+	}
+
+	&.pro::selection {
+		background-color: rgba(255,255,255,0.8)
+	}
+
+	&.dot {
+		font-size: 6px;
+		margin-right: 18px
+	}
 }

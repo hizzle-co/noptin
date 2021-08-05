@@ -1,5 +1,5 @@
 <p <?php echo $restrict; ?> class="description"><?php _e( "Use this section to set the data you would like to collect from your email subscribers.", 'newsletter-optin-box' ); ?>&nbsp;<a href="https://noptin.com/guide/email-subscribers/custom-fields/"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?></a></p>
-<div <?php echo $restrict; ?> id="noptin-subscriber-fields-editor-available-fields" class="noptin-accordion-wrapper">
+<div <?php echo $restrict; ?> id="noptin-subscriber-fields-editor-available-fields" class="noptin-accordion-wrapper" style="max-width: 700px;">
 
 	<span v-for="field in <?php echo esc_attr( $id ); ?>">
 		<h4 class="noptin-accordion-heading">
@@ -39,7 +39,7 @@
 				$args = array(
 					'el'          => 'textarea',
 					'label'       => __( 'Available Options', 'newsletter-optin-box' ),
-					'description' => __( 'Enter each available option on its own line', 'newsletter-optin-box' ),
+					'description' => __( 'Enter one option per line.', 'newsletter-optin-box' ),
 					'restrict'    => 'fieldAllowsOptions(field)',
 					'placeholder' => implode( PHP_EOL, array( 'Option 1', 'Option 2', 'Option 3' ) ),
 				);
