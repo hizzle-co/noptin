@@ -162,21 +162,15 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 
 		);
 
-		foreach ( get_special_noptin_form_fields() as $name => $field ) {
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-			$id    = esc_attr( sanitize_html_class( $name ) );
-			$type  = esc_attr( $field[0] );
-			$label = wp_kses_post( $field[1] );
-
-			if ( $type === 'text' || $type === 'checkbox' || $type === 'textarea' || $type === 'hidden' ) {
-
+            if ( ! $custom_field['predefined'] ) {
 				$map_fields[] = array(
-					'remote_id'    => $id,
-					'remote_label' => $label,
-					'remote_type'  => $type,
+					'remote_id'    => $custom_field['merge_tag'],
+					'remote_label' => $custom_field['label'],
+					'remote_type'  => $custom_field['type'],
 				);
-
-			}
+            }
 
 		}
 

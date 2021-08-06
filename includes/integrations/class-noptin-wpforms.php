@@ -93,29 +93,23 @@ class Noptin_WPForms {
             )
 		);
 
-		foreach ( get_special_noptin_form_fields() as $name => $field ) {
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-            $id    = esc_attr( sanitize_html_class( $name ) );
-            $type  = esc_attr( $field[0] );
-            $label = wp_kses_post( $field[1] );
-
-            if ( $type === 'text' || $type === 'checkbox' || $type === 'textarea' || $type === 'hidden' ) {
-
+            if ( ! $custom_field['predefined'] ) {
 				wpforms_panel_field(
 					'select',
 					'settings',
-					'noptin_field_' . $id,
+					'noptin_field_' . $custom_field['merge_tag'],
 					$instance->form_data,
-					$label,
+					$custom_field['label'],
 					array(
-						'field_map'   => array( $type ),
+						'field_map'   => array( $custom_field['type'] ),
 						'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
 					)
 				);
-
             }
 
-        }
+		}
 
 		do_action( 'noptin_wp_forms_map_fields_section', $instance );
 		echo '</div>';
@@ -180,14 +174,14 @@ class Noptin_WPForms {
 		}
 
 		// And special fields.
-		foreach ( get_special_noptin_form_fields() as $name => $field ) {
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-			$id         = esc_attr( sanitize_html_class( $name ) );
-
-			if ( isset( $form_data['settings']['noptin_field_' . $id] ) ) {
-				$form_field           = $form_data['settings']['noptin_field_' . $id];
-				$noptin_fields[ $id ] = noptin_clean( $fields[ $form_field ]['value'] );
-			}
+            if ( ! $custom_field['predefined'] ) {
+				if ( isset( $form_data['settings']['noptin_field_' . $custom_field['merge_tag']] ) ) {
+					$form_field                                  = $form_data['settings']['noptin_field_' . $custom_field['merge_tag']];
+					$noptin_fields[ $custom_field['merge_tag'] ] = noptin_clean( $fields[ $form_field ]['value'] );
+				}
+            }
 
 		}
 
