@@ -1052,13 +1052,13 @@ function register_default_noptin_subscriber_metaboxes( $subscriber ) {
 	);
 
 	add_meta_box(
-        'noptin_subscriber_fields',
-        __('Custom Fields','newsletter-optin-box'),
+        'noptin_subscriber_activity',
+        __( 'Activity Feed','newsletter-optin-box' ),
         'noptin_subscriber_metabox_callback',
 		'noptin_page_noptin-subscribers',
 		'advanced',
 		'default',
-		'fields'
+		'activity'
 	);
 
 	add_meta_box(
@@ -1360,4 +1360,36 @@ function get_noptin_custom_fields() {
 	);
 
 	return map_deep( apply_filters( 'noptin_custom_fields', $custom_fields ), 'esc_html' );
+}
+
+/**
+ * Retrieves Noptin subscription sources.
+ *
+ * @param string $source Subscrption source.
+ * @since 1.5.5
+ * @return string
+ */
+function noptin_format_subscription_source( $source ) {
+
+	if ( is_numeric( $source ) ) {
+		$title = get_the_title( $source );
+		return empty( $title ) ? __( 'Newsletter Form', 'newsletter-optin-box' ) : $title;
+	}
+
+	$sources = array(
+		'default_user'         => __( 'Default', 'newsletter-optin-box' ),
+		'users_sync'           => __( 'Users Sync', 'newsletter-optin-box' ),
+		'edd_checkout'         => 'EDD',
+		'getpaid_checkout'     => 'GetPaid',
+		'woocommerce_checkout' => 'WooCommerce',
+		'comment'              => __( 'Comment Form', 'newsletter-optin-box' ),
+		'registration'         => __( 'Registration Form', 'newsletter-optin-box' ),
+		'manual'               => __( 'Manually Added', 'newsletter-optin-box' ),
+	);
+
+	if ( isset( $sources[ $source ] ) ) {
+		return $sources[ $source ];
+	}
+
+	return $source;
 }

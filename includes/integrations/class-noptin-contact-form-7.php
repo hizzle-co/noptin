@@ -194,7 +194,7 @@ class Noptin_Contact_Form_7 {
 
 		// Prepare subscriber details.
 		$subscriber = array(
-            '_subscriber_via' => __( 'Contact Form 7', 'newsletter-optin-box' ),
+            '_subscriber_via' => 'Contact Form 7',
         );
 
         // Add the subscriber's IP address.

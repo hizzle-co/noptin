@@ -7,33 +7,6 @@
     );
 
 ?>
-<div class="misc-pub-section curtime misc-pub-curtime">
-	<span id="timestamp">
-        <?php _e( 'Subscribed on:', 'newsletter-optin-box' ); ?>&nbsp;<b><?php echo esc_html( $subscriber->date_created); ?></b>
-    </span>
-</div>
-
-<?php if ( 1 === (int) $subscriber->confirmed && ! empty( $subscriber->confirmed_on ) ) : ?>
-
-    <div class="misc-pub-section misc-pub-noptin-unsubscribed-on">
-        <span id="subscriber-unsubscribed-on">
-            <span class="dashicons dashicons-controls-pause" style="padding-right: 3px; color: #607d8b"></span>
-            <?php _e( 'Confirmed On:', 'newsletter-optin-box' ); ?>&nbsp;<b><?php echo esc_html( $subscriber->confirmed_on ); ?></b>
-        </span>
-    </div>
-
-<?php endif; ?>
-
-<?php if ( 0 !== (int) $subscriber->active && ! empty( $subscriber->unsubscribed_on ) ) : ?>
-
-<div class="misc-pub-section misc-pub-noptin-unsubscribed-on">
-    <span id="subscriber-unsubscribed-on">
-        <span class="dashicons dashicons-controls-pause" style="padding-right: 3px; color: #607d8b"></span>
-        <?php _e( 'Unsubscribed On:', 'newsletter-optin-box' ); ?>&nbsp;<b><?php echo esc_html( $subscriber->unsubscribed_on ); ?></b>
-    </span>
-</div>
-
-<?php endif; ?>
 
 <div class="misc-pub-section misc-pub-noptin-subscriber-id">
 	<span id="subscriber-id">
@@ -93,35 +66,9 @@
     <div class="misc-pub-section misc-pub-noptin-subscriber-subscribed-via">
 	    <span id="subscriber-subscribed-via">
             <span class="dashicons dashicons-art" style="padding-right: 3px;color: #607d8b"></span>
-            <?php _e( 'Subscribed Via', 'newsletter-optin-box' );?>
+            <?php _e( 'Source', 'newsletter-optin-box' );?>:
             <b>
-                <?php
-                    $source = $subscriber->_subscriber_via;
-
-                    if ( is_numeric( $source ) ) {
-						$form  = noptin_get_optin_form( $source );
-                        $url   = get_noptin_edit_form_url( $source );
-                        
-                        if ( empty( $form->id ) ) {
-
-                            $source = absint( $source );
-
-                        } else {
-
-                            $source = sprintf(
-                                '<a href="%s">%s</a>',
-                                esc_url( $url ),
-                                esc_html( $form->optinName )
-                            );
-
-                        }
-						
-                    } else {
-                        $source = esc_html( $source );
-                    }
-
-                    echo $source;
-                ?>
+                <?php echo esc_html( noptin_format_subscription_source( $subscriber->_subscriber_via ) ); ?>
             </b>
         </span>
     </div>

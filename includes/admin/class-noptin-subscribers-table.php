@@ -258,6 +258,16 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Displays the subscriber's subscription source
+	 *
+	 * @param  Noptin_Subscriber $subscriber subscriber.
+	 * @return HTML
+	 */
+	public function column__subscriber_via( $subscriber ) {
+		return esc_html( noptin_format_subscription_source( $subscriber->_subscriber_via ) );
+	}
+
+	/**
 	 * This is how checkbox column renders.
 	 *
 	 * @param  object $item item.
@@ -343,7 +353,8 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			$columns['status'] = __( 'Status', 'newsletter-optin-box' );
 		}
 
-		$columns['date_created'] = __( 'Added', 'newsletter-optin-box' );
+		$columns['_subscriber_via'] = __( 'Source', 'newsletter-optin-box' );
+		$columns['date_created']    = __( 'Added', 'newsletter-optin-box' );
 
 		/**
 		 * Filters the columns shown in a newsletter table.
@@ -360,12 +371,13 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable = array(
-			'id'           => array( 'id', true ),
-			'date_created' => array( 'date_created', true ),
-			'status'       => array( 'active', false ),
-			'email'        => array( 'email', false ),
-			'first_name'   => array( 'first_name', false ),
-			'last_name'    => array( 'second_name', false ),
+			'id'              => array( 'id', true ),
+			'date_created'    => array( 'date_created', true ),
+			'_subscriber_via' => array( '_subscriber_via', false ),
+			'status'          => array( 'active', false ),
+			'email'           => array( 'email', false ),
+			'first_name'      => array( 'first_name', false ),
+			'last_name'       => array( 'second_name', false ),
 		);
 
 		/**
