@@ -123,17 +123,13 @@ class Noptin_Hooks {
 		}
 
 		// Guess core subscriber fields.
-		$data = $this->guess_fields( $submitted );
-
-		// Add prefixed fields.
-		$data = $this->add_prefixed( $data, $submitted );
+		$data = self::guess_fields( $submitted );
 
 		// Add connection data.
 		$data = $this->add_connections( $data, $submitted );
 
-		wpinv_error_log( $data );
 		// Save the subscriber.
-		add_noptin_subscriber( wp_kses_post_deep( $data ) );
+		add_noptin_subscriber( map_deep( $data, 'esc_html' ) );
 	}
 
 	/**
@@ -174,31 +170,15 @@ class Noptin_Hooks {
 	}
 
 	/**
-	 * Adds prefixed fields.
-	 *
-	 * @param array $data
-	 * @param array $submitted
-	 */
-	public function add_prefixed( $data, $submitted ) {
-
-		foreach ( $submitted as $key => $value ) {
-
-			if ( strpos( $key, 'noptin-' ) === 0 ) {
-				$new_key          = substr( $key, 7 );
-				$data[ $new_key ] = $value;
-			}
-
-		}
-
-		return $data;
-	}
-
-	/**
 	 * Guesses subscriber fields.
 	 *
 	 * @param array $fields
 	 */
-	public function guess_fields( $fields ) {
+	public static function guess_fields( $fields ) {
+
+		if ( ! is_array( $fields ) ) {
+			return array();
+		}
 
 		$guessed   = array();
 		$guessable = array(
@@ -209,20 +189,24 @@ class Noptin_Hooks {
 			'lname'            => 'second_name',
 			'name'             => 'name',
 			'fullname'         => 'name',
-			'familyname'       => 'name',
+			'familyname'       => 'second_name',
 			'displayname'      => 'name',
 			'emailaddress'     => 'email',
 			'email'            => 'email',
 			'subscribedvia'    => '_subscriber_via',
 		);
 
-		foreach ( array_keys( get_noptin_subscriber_fields() ) as $label ) {
-			$key               = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $label ) );
-			$guessable[ $key ] = $label;
+		foreach (  get_noptin_custom_fields() as $custom_field ) {
+			$label_key = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $custom_field['label'] ) );
+			$merge_key = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $custom_field['merge_tag'] ) );
+
+			$guessable[ $merge_key ] = $custom_field['merge_tag'];
+			$guessable[ $label_key ] = $custom_field['merge_tag'];
 		}
 
 		foreach( array_keys( $guessable ) as $key ) {
 			$guessable["subscriber$key"] = $guessable[ $key ];
+			$guessable["noptin$key"] = $guessable[ $key ];
 		}
 
 		// Prepare subscriber fields.

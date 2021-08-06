@@ -58,6 +58,8 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 */
 	public function initialize() {
 
+		// Map subscriber fields to customer fields.
+		add_action( 'noptin_custom_field_settings', array( $this, 'map_customer_to_custom_fields' ), $this->priority );
 		if ( empty( $this->product_post_type ) ) {
 			return;
 		}
@@ -104,6 +106,19 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$order_id           = $this->prepare_order_id( $order_id );
 		$subscriber_id      = $this->get_order_subscriber( $order_id );
 		$subscriber_details = $this->get_order_customer_details( $order_id, empty( $subscriber_id ) );
+		$subscriber         = array();
+
+		foreach ( array( 'email', 'name', 'wp_user_id', 'ip_address', 'first_name', 'last_name', '_subscriber_via' ) as $key ) {
+			if ( isset( $subscriber_details[ $key ] ) ) {
+				$subscriber[ $key ] = $subscriber_details[ $key ];
+			}
+		}
+
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+			if ( ! empty( $custom_field[ $this->slug ] ) && isset( $subscriber_details[ $custom_field[ $this->slug ] ] ) ) {
+				$subscriber[ $custom_field['merge_tag'] ] = $subscriber_details[ $custom_field[ $this->slug ] ];
+			}
+		}
 
 		// Either create a new subscriber...
 		if ( empty( $subscriber_id ) ) {
@@ -113,11 +128,11 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 				return null;
 			}
 
-			return $this->add_subscriber( $subscriber_details, $order_id );
+			return $this->add_subscriber( $subscriber, $subscriber_details );
 		}
 
 		// Or update an existing one.
-		return $this->update_subscriber( $subscriber_id, $subscriber_details, $order_id );
+		return $this->update_subscriber( $subscriber_id, $subscriber, $subscriber_details );
 
 	}
 
@@ -549,6 +564,47 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		if ( $this->is_product_post_type( $product_id ) ) {
 			$this->fire_product_hook( 'untrashed', $product_id );
 		}
+	}
+
+	/**
+	 * Returns an array of available customer fields.
+	 * 
+	 * @return array
+	 * @since 1.5.5
+	 */
+	protected function available_customer_fields() {
+		return array();
+	}
+
+	/**
+	 * Maps customer fields to subscriber fields.
+	 *
+	 * @since 1.5.5
+	 */
+	public function map_customer_to_custom_fields() {
+		$customer_fields = $this->available_customer_fields();
+
+		if ( empty( $customer_fields ) ) {
+			return;
+		}
+
+		$customer_fields = array_merge(
+			[ '' => __( 'Select Field', 'newsletter-optin-box' ) ],
+			$customer_fields
+		);
+
+		$args = array(
+			'el'          => 'select',
+			'label'       => sprintf(
+				__( '%s Equivalent', 'newsletter-optin-box' ),
+				$this->name
+			),
+			'restrict'    => '! isFieldPredefined(field)',
+			'options'     => $customer_fields,
+			'normal'      => false,
+		);
+		Noptin_Vue::render_el( sprintf( 'field.%s', $this->slug ), $args );
+
 	}
 
 }

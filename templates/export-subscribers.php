@@ -40,8 +40,8 @@
 								<td>
 									<div>
 										<select name='subscriber_status' class="regular-text" id="subscriber_status">
-											<option value='active'><?php _e( 'Active', 'newsletter-optin-box' ); ?></option>
-											<option value='inactive'><?php _e( 'In-Active', 'newsletter-optin-box' ); ?></option>
+											<option value='active'><?php _e( 'Subscribed', 'newsletter-optin-box' ); ?></option>
+											<option value='inactive'><?php _e( 'Pending', 'newsletter-optin-box' ); ?></option>
 											<option value='all' selected="selected"><?php _e( 'Any', 'newsletter-optin-box' ); ?></option>
 										</select>
 									</div>
@@ -111,22 +111,28 @@
 									<fieldset>
 										<p class="description"><?php _e( 'What fields do you want to export?', 'newsletter-optin-box' ); ?></p>
 										<?php
-											$fields = get_noptin_subscriber_fields();
-											$fields = apply_filters( 'noptin_subscriber_export_fields', $fields );
-											foreach ( $fields as $name => $label ) {
-												$name    = esc_attr( $name );
-												$label   = sanitize_text_field( $label );
-												$checked = checked( 'email', $name, false );
-												echo "<label><input type='checkbox' name='fields[]' value='$name' $checked><span></span>$label</label><br>";
+											$fields = get_noptin_custom_fields();
+											foreach ( $fields as $custom_field ) {
+												$name    = esc_attr( $custom_field['merge_tag'] );
+												$label   = esc_html( $custom_field['label'] );
+												$checked = checked( ! empty( $custom_field['subs_table']), true, false );
+												echo "<label><input type='checkbox' name='fields[]' value='$name' $checked><span>$label</span></label><br>";
 											}
+
 										?>
+										<label><input type='checkbox' name='fields[]' value='active'><span><?php _e( 'Active', 'newsletter-optin-box' ); ?></span></label><br>
+										<label><input type='checkbox' name='fields[]' value='confirm_key'><span><?php _e( 'Confirm Key', 'newsletter-optin-box' ); ?></span></label><br>
+										<label><input type='checkbox' name='fields[]' value='confirmed'><span><?php _e( 'Email Confirmed', 'newsletter-optin-box' ); ?></span></label><br>
+										<label><input type='checkbox' name='fields[]' value='date_created'><span><?php _e( 'Subscription Date', 'newsletter-optin-box' ); ?></span></label><br>
+										<label><input type='checkbox' name='fields[]' value='GDPR_consent'><span><?php _e( 'GDPR Consent', 'newsletter-optin-box' ); ?></span></label><br>
+										<label><input type='checkbox' name='fields[]' value='ip_address'><span><?php _e( 'IP Address', 'newsletter-optin-box' ); ?></span></label><br>
 									</fieldset>
 								</td>
 							</tr>
 
 							<tr class="form-field-row-submit">
 								<th scope="row"><?php submit_button( __( 'Download Subscribers', 'newsletter-optin-box' ) ); ?></th>
-								<td><a href="https://noptin.com/guide/email-subscribers/exporting-subscribers/"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?></a></td>
+								<td><a href="https://noptin.com/guide/email-subscribers/exporting-subscribers/"><?php _e( 'Need Help?', 'newsletter-optin-box' ); ?></a></td>
 							</tr>
 
 						</tbody>

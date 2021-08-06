@@ -95,4 +95,10 @@
 	</tbody>
 </table>
 
-<p class="description"><a target="_blank" href="<?php echo esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ); ?>"><?php _e( 'Manage available subscriber fields', 'newsletter-optin-box' ); ?></a></p>
+<p class="description"><?php
+	printf(
+		__( 'Store more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
+		'<a target="_blank" href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
+		'</a>'
+	)
+?></p>

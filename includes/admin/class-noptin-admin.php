@@ -979,7 +979,13 @@ class Noptin_Admin {
 				<?php $table->search_box( __( 'Search Subscribers', 'newsletter-optin-box' ), 'noptin_search_subscribers'); ?>
 				<?php $table->display(); ?>
 			</form>
-			<p class="description"><a href="<?php echo esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ); ?>"><?php _e( 'Manage available subscriber fields', 'newsletter-optin-box' ); ?></a></p>
+			<p class="description"><?php
+				printf(
+					__( 'Store more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
+					'<a href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
+					'</a>'
+				)
+			?></p>
 			<div id='noptin-subscribers-page-data' <?php echo $data; ?>></div>
 		</div>
 		<?php

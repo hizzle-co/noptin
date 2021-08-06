@@ -855,6 +855,7 @@ function get_noptin_subscribers_meta_table_name() {
  *
  * @since 1.2.4
  * @return array An array of subscriber fields.
+ * @deprecated Use get_noptin_custom_fields()
  */
 function get_noptin_subscriber_fields() {
 

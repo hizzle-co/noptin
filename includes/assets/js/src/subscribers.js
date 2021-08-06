@@ -79,65 +79,6 @@ import regeneratorRuntime from "regenerator-runtime";
 			})
 
 		})
-		// Export subscribers.
-		$(document).on('click', '.noptin-export-subscribers', function (e) {
-
-			e.preventDefault();
-
-			let $el = null,
-				fields = []
-
-			// Select fields.
-			Swal.fire({
-				title: noptinSubscribers.export,
-				html: $('#noptin-subscriber-fields-select-template').html(),
-				allowOutsideClick: () => !Swal.isLoading(),
-				confirmButtonText: noptinSubscribers.exportbtn,
-				showCancelButton: true,
-				cancelButtonText: noptinSubscribers.cancel,
-				confirmButtonColor: '#3085d6',
-				cancelButtonColor: '#424242',
-				showCloseButton: true,
-				width: '40rem',
-				onOpen(el) {
-					$el = el
-					$(el).find('.noptin-subscriber-fields-select').select2({ width: '100%' });
-				},
-				preConfirm() {
-					fields = $($el).find('.noptin-subscriber-fields-select').val();
-				}
-			}).then((result) => {
-				if (result.value) {
-					// Select export type.
-					Swal.fire({
-						title: noptinSubscribers.file,
-						allowOutsideClick: () => !Swal.isLoading(),
-						input: 'radio',
-						inputValue: 'json',
-						inputOptions: {
-							csv: 'CSV',
-							json: 'JSON',
-							xml: 'XML'
-						},
-						confirmButtonText: noptinSubscribers.download,
-						showCancelButton: true,
-						cancelButtonText: noptinSubscribers.cancel,
-						confirmButtonColor: '#3085d6',
-						cancelButtonColor: '#424242',
-						showLoaderOnConfirm: true,
-						showCloseButton: true,
-						preConfirm( type ) {
-							let params = $.param( {
-								file_type: type,
-								fields: fields
-							} );
-							let url = $('.noptin-export-subscribers').attr('href') + '&' + params;
-							window.location.href = url
-						}
-					})
-				}
-			})
-		})
 
 		// Import subscribers.
 		$(document).on('click', '.noptin-import-subscribers', function (e) {

@@ -104,6 +104,7 @@ function get_noptin_option( $key, $default = null ) {
 		$value = true;
 	}
 
+	$value = apply_filters( "get_noptin_option_$key", $value );
 	return apply_filters( 'get_noptin_option', $value, $key );
 
 }
