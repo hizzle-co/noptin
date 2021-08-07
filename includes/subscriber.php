@@ -317,7 +317,7 @@ function add_noptin_subscriber( $fields ) {
 	global $wpdb;
 
 	$table  = get_noptin_subscribers_table_name();
-	$fields = wp_unslash( apply_filters( 'new_noptin_subscriber_fields', $fields ) );
+	$fields = noptin_clean( wp_unslash( apply_filters( 'new_noptin_subscriber_fields', $fields ) ) );
 
 	// Ensure an email address is provided and it doesn't exist already.
 	if ( empty( $fields['email'] ) || ! is_email( $fields['email'] ) ) {
@@ -400,7 +400,7 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 
 	// Prepare main variables.
 	$table     = get_noptin_subscribers_table_name();
-	$fields    = wp_unslash( $details );
+	$fields    = noptin_clean( wp_unslash( $details ) );
 	$to_update = array();
 
 	// Maybe split name into first and last.

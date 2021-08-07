@@ -696,39 +696,35 @@ class Noptin_Ajax {
 			$filtered['GDPR_consent'] = 1;
 		}
 
+		$custom_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
+
 		foreach ( $fields as $field ) {
 
 			$type = $field['type']['type'];
 
-			// Prepare the field name.
-			$name = '';
+			if ( isset( $custom_fields[ $type ] ) ) {
+				$name  = $type;
+				$value = isset( $_POST[ $type ] ) ? $_POST[ $type ] : '';
 
-			if ( 'email' == $type ) {
-				$name = 'email';
-			}
-
-			if ( 'first_name' == $type ) {
-				$name = 'first_name';
-			}
-
-			if ( 'last_name' == $type ) {
-				$name = 'last_name';
-			}
-
-			if ( 'name' == $type ) {
-				$name = 'name';
-			}
-
-			if ( empty( $name ) ) {
-				$name = $field['type']['name'];
-			}
-
-			$key = esc_attr( $field['key'] );
-
-			if ( isset( $_POST[ $key ] ) ) {
-				$value = $_POST[ $key ];
+				if ( 'checkbox' === $custom_fields[ $type ] ) {
+					$value = (int) ! empty( $value );
+				}
 			} else {
-				$value = '';
+
+				// backwards compatibility.
+				$name = 'name' === $type ? 'name' : $field['type']['name'];
+				$key  = esc_attr( $field['key'] );
+
+				if ( isset( $_POST[ $key ] ) ) {
+					$value = $_POST[ $key ];
+				} else {
+					$value = '';
+				}
+
+				if ( 'checkbox' === $type ) {
+					$value = (int) ! empty( $value );
+				}
+
 			}
 
 			// required fields.
@@ -744,20 +740,6 @@ class Noptin_Ajax {
 					die( __( 'That email address is not valid.', 'newsletter-optin-box' ) );
 				}
 
-			}
-
-			// Sanitize checkboxes.
-			if ( 'checkbox' === $type && empty( $value ) ) {
-				$value = __( 'No', 'newsletter-optin-box' );
-			}
-
-			// Sanitize text fields.
-			if ( 'textarea' !== $type && ! is_array( $value ) ) {
-				$value = sanitize_text_field( urldecode( $value ) );
-			} else {
-				if ( ! is_array( $value ) ) {
-					$value = esc_html( urldecode( $value ) );
-				}
 			}
 
 			$filtered[ $name ] = $value;
