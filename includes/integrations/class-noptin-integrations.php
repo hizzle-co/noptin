@@ -57,6 +57,11 @@ class Noptin_Integrations {
 		// WP Comment form integration.
 		$this->integrations['wp_comment_form'] = new Noptin_WP_Comment_Form();
 
+		// Formidable forms.
+		add_action( 'frm_registered_form_actions', array( $this, 'register_formidable_form_action' ) );
+		add_action( 'frm_action_groups', array( $this, 'group_formidable_form_action' ) );
+		add_action( 'frm_trigger_noptin_action', 'Noptin_Formidable_Forms::process_form', 10, 2 );
+
 		do_action( 'noptin_integrations_load', $this );
 
 	}
@@ -134,6 +139,28 @@ class Noptin_Integrations {
 
 		// Register the action with form widget
 		\ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' )->add_form_action( $action->get_name(), $action );
+	}
+
+	/**
+	 * Registers formidable forms action.
+	 *
+	 * @param      array $actions
+	 * @since      1.5.5
+	 */
+	public function register_formidable_form_action( $actions ) {
+		$actions['noptin'] = 'Noptin_Formidable_Forms';
+		return $actions;
+	}
+
+	/**
+	 * Groups the formidable forms action.
+	 *
+	 * @param      array $groups
+	 * @since      1.5.5
+	 */
+	public function group_formidable_form_action( $groups ) {
+		$groups['marketing']['actions'][] = 'noptin';
+		return $groups;
 	}
 
 }
