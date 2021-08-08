@@ -475,40 +475,7 @@ class Noptin_Settings {
 				'el'          => 'custom_fields',
 				'section'	  => 'fields',
 				'label'       => __( 'Custom Fields', 'newsletter-optin-box' ),
-				'default'     => array(
-					array(
-						'type'       => 'email',
-						'merge_tag'  => 'email',
-						'label'      => __( 'Email Address', 'newsletter-optin-box' ),
-						'visible'    => true,
-						'subs_table' => true,
-						'predefined' => true,
-					),
-					array(
-						'type'       => 'first_name',
-						'merge_tag'  => 'first_name',
-						'label'      => __( 'First Name', 'newsletter-optin-box' ),
-						'visible'    => true,
-						'subs_table' => true,
-						'predefined' => true,
-					),
-					array(
-						'type'       => 'last_name',
-						'merge_tag'  => 'last_name',
-						'label'      => __( 'Last Name', 'newsletter-optin-box' ),
-						'visible'    => true,
-						'subs_table' => true,
-						'predefined' => true,
-					),
-					array(
-						'type'       => 'birthday',
-						'merge_tag'  => 'birthday',
-						'label'      => __( 'Birthday', 'newsletter-optin-box' ),
-						'visible'    => true,
-						'subs_table' => false,
-						'predefined' => true,
-					)
-				),
+				'default'     => Noptin_Custom_Fields::default_fields(),
 			),
 
 		);

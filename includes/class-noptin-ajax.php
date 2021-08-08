@@ -873,6 +873,16 @@ class Noptin_Ajax {
 
 		$settings = map_deep( $settings, 'noptin_sanitize_booleans' );
 
+		if ( ! empty( $settings['custom_fields'] ) ) {
+
+			foreach ( $settings['custom_fields'] as $index => $custom_field ) {
+				if ( isset( $custom_field['new'] ) ) {
+					unset( $custom_field['new'] );
+					$settings['custom_fields'][ $index ] = $custom_field;
+				}
+			}
+		}
+
 		/**
 		 * Sanitizes noptin settings.
 		 * 

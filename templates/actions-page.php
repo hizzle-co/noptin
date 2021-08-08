@@ -14,17 +14,20 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                height: 100vh;
+                min-height: 100vh;
                 overflow: auto;
             }
 
             .noptin-actions-page-inner {
-                max-width: 400px;
+                width: 90%;
+                max-width: 500px;
                 background: #fff;
                 padding: 20px;
                 border: 2px solid #616161;
                 border-radius: 4px;
                 font-size: 16px;
+                margin-top: 20px;
+                margin-bottom: 20px;
             }
 
             h1 {

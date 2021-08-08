@@ -98,13 +98,14 @@ var settingsApp = new Vue({
 					label: 'Field' + total,
 					visible: true,
 					subs_table: false,
-					predefined: false
+					predefined: false,
+					new: true,
 				}
 			)
 		},
 
 		maybeUpdateMergeTag( field ) {
-			if ( ! field.predefined ) {
+			if ( ! field.predefined && field.new ) {
 				field.merge_tag = field.label.toString().trim().toLowerCase().replace( /[^a-z0-9]+/g,'_' )
 			}
 		},

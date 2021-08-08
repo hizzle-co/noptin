@@ -85,7 +85,7 @@
                     $url = $subscriber->conversion_page;
                     if( ! empty( $url ) ) {
                         $url = esc_url( $url );
-                        echo "<a style='display: block; max-height: 20px; overflow: hidden; font-weight: 400;' target='_blank' href='$url' title='$url'><small>$url</small></a>";
+                        echo "<a style='display: block; font-weight: 400;' target='_blank' href='$url' title='$url'><small>$url</small></a>";
                     } else {
                         echo __( 'Unknown', 'newsletter-optin-box' );
                     }
@@ -95,6 +95,8 @@
         </span>
     </div>
 <?php }?>
+
+<?php do_action( 'noptin_subscribers_admin_save_changes', $subscriber ); ?>
 
 <div id="major-publishing-actions" style="margin: 10px -12px -12px;">
 
