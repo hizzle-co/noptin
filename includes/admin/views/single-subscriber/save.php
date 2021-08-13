@@ -1,13 +1,3 @@
-<?php
-    $delete_url  = esc_url(
-        wp_nonce_url(
-            add_query_arg( 'delete-subscriber', $subscriber->id, urldecode( $_GET['return'] ) ),
-            'noptin-subscriber'
-        )
-    );
-
-?>
-
 <div class="misc-pub-section misc-pub-noptin-subscriber-id">
 	<span id="subscriber-id">
         <span class="dashicons dashicons-admin-users" style="padding-right: 3px; color: #607d8b"></span>
@@ -101,7 +91,7 @@
 <div id="major-publishing-actions" style="margin: 10px -12px -12px;">
 
 	<div id="delete-action">
-	    <a class='noptin-delete-single-subscriber' data-email='<?php echo esc_attr( $subscriber->email ); ?>' style="color: #a00;" href="<?php echo $delete_url ?>"><?php _e( 'Delete', 'newsletter-optin-box' ); ?></a>
+	    <a class='noptin-delete-single-subscriber' data-email='<?php echo esc_attr( $subscriber->email ); ?>' style="color: #a00;" href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-subscribers' ) ); ?>"><?php _e( 'Delete', 'newsletter-optin-box' ); ?></a>
 	</div>
 
     <div id="publishing-action">

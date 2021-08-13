@@ -980,6 +980,9 @@ input:focus+.noptin-switch-slider span {
 #noptin-automations-popup .notice:not(.noptin-notice),
 #noptin-automations-popup div.error:not(.noptin-notice),
 #noptin-automations-popup div.updated:not(.noptin-notice),
+.noptin_page_noptin-subscribers .notice:not(.noptin-notice),
+.noptin_page_noptin-subscribers div.error:not(.noptin-notice),
+.noptin_page_noptin-subscribers div.updated:not(.noptin-notice),
 .noptin-settings .notice:not(.noptin-notice),
 .noptin-settings div.error:not(.noptin-notice),
 .noptin-settings div.updated:not(.noptin-notice) {
@@ -1801,4 +1804,10 @@ a.no-campaign-create-new-campaign {
 		font-size: 6px;
 		margin-right: 18px
 	}
+}
+
+.noptin-text,
+.noptin-birthday-div {
+	width: 100%;
+    max-width: 25em !important;
 }

@@ -193,8 +193,16 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function column_default( $subscriber, $column_name ) {
 
-		if ( array_key_exists( $column_name, $this->get_custom_fields() ) ) {
-			echo esc_html( $subscriber->get( $column_name ) );
+		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
+
+		if ( isset( $all_fields[ $column_name ] ) ) {
+			echo wp_kses_post(
+					format_noptin_custom_field_value(
+					$subscriber->get( $column_name ),
+					$all_fields[ $column_name ],
+					$subscriber
+				)
+			);
 		}
 
 		/**
@@ -216,15 +224,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		return sprintf(
 			'<div class="row-title"><strong><a href="%s">#%s %s</a></strong></div>',
-			esc_url(
-				add_query_arg(
-					array(
-						'subscriber' => $subscriber->id,
-						'return'     => urlencode( $this->base_url ),
-					),
-					admin_url( 'admin.php?page=noptin-subscribers' )
-				)
-			),
+			esc_url( add_query_arg( 'subscriber', $subscriber->id, admin_url( 'admin.php?page=noptin-subscribers' ) ) ),
 			(int) $subscriber->id,
 			sanitize_email( $subscriber->email )
 		);

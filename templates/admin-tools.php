@@ -17,7 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<p class="description"><?php echo wp_kses_post( $tool['desc'] ); ?></p>
 				</th>
 				<td class="noptin-run-tool">
-					<a href="<?php echo wp_nonce_url( admin_url( 'admin.php?page=noptin-tools&tool=' . $action ), 'noptin_tool' ); ?>" class="button button-large noptin-button-tool-<?php echo esc_attr( $action ); ?>"><?php echo esc_html( $tool['button'] ); ?></a>
+					<a
+						href="<?php echo isset( $tool['url'] ) ? $tool['url'] : wp_nonce_url( admin_url( 'admin.php?page=noptin-tools&tool=' . $action ), 'noptin_tool' ); ?>"
+						class="button button-large noptin-button-tool-<?php echo esc_attr( $action ); ?>"
+						<?php if ( ! empty( $tool['confirm'] ) ) : ?>
+						onclick="return confirm('<?php echo esc_attr( $tool['confirm'] ); ?>')"
+						<?php endif; ?>
+					><?php echo esc_html( $tool['button'] ); ?></a>
 				</td>
 			</tr>
 		<?php endforeach; ?>

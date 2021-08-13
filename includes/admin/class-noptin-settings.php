@@ -70,7 +70,7 @@ class Noptin_Settings {
 						'double_opt_in' => __( 'Double Opt-In Email', 'newsletter-optin-box' ),
 					)
 				),
-				'fields'                => __( 'Subscriber Fields', 'newsletter-optin-box' ),
+				'fields'                => __( 'Custom Fields', 'newsletter-optin-box' ),
 				'integrations'          => __( 'Integrations', 'newsletter-optin-box' ),
 				'messages'              => __( 'Messages', 'newsletter-optin-box' )
 			)

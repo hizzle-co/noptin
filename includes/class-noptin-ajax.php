@@ -53,9 +53,6 @@ class Noptin_Ajax {
 		// Import forms.
 		add_action( 'wp_ajax_noptin_import_forms', array( $this, 'import_forms' ) );
 
-		// Delete subscribers.
-		add_action( 'wp_ajax_noptin_delete_all_subscribers', array( $this, 'delete_all_subscribers' ) );
-
 		// Double opt-in email.
 		add_action( 'wp_ajax_noptin_send_double_optin_email', array( $this, 'send_double_optin_email' ) );
 
@@ -237,81 +234,6 @@ class Noptin_Ajax {
 
 		wp_send_json_success( __( 'A double opt-in confirmation email has been sent to the subscriber.', 'newsletter-optin-box' ) );
 
-	}
-
-	/**
-	 * Deletes all subscribers.
-	 *
-	 * @access      public
-	 * @since       1.2.4
-	 * @return      void
-	 */
-	public function delete_all_subscribers() {
-		global $wpdb;
-
-		// Ensure the nonce is valid...
-		check_ajax_referer( 'noptin_subscribers' );
-
-		// ... and that the user can import subscribers.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Check if we're only deleting a few subscribers.
-		if ( ! empty( $_POST['data'] ) && ( ! empty( $_POST['data']['meta_key'] ) || ! empty( $_POST['data']['_subscriber_via'] ) ) ) {
-
-			$data = $_POST['data'];
-			$delete = array( 'paged', 'orderby', 'order', 'page' );
-
-			foreach ( $delete as $key ) {
-				if ( isset( $data[$key] ) ) {
-					unset( $data[$key] );
-				}
-			}
-
-			if ( empty( $data['meta_query'] ) || ! is_array( $data['meta_query'] ) ) {
-				$data['meta_query'] = array();
-			}
-
-			if ( ! empty( $data['_subscriber_via'] ) ) {
-				$data['meta_query'][] = array(
-					'key'   => '_subscriber_via',
-					'value' => $data['_subscriber_via'],
-				);
-				unset( $data['_subscriber_via'] );
-			}
-
-			if ( ! empty( $data['_subscriber_via'] ) ) {
-				$data['meta_query'][] = array(
-					'key'   => '_subscriber_via',
-					'value' => $data['_subscriber_via'],
-				);
-				unset( $data['_subscriber_via'] );
-			}
-
-			$data['fields'] = array( 'id' );
-			$data['count_total'] = false;
-			$data['number'] = '-1';
-
-			$subscribers = new Noptin_Subscriber_Query( $data );
-
-            foreach ( $subscribers->get_results() as $subscriber ) {
-				delete_noptin_subscriber( $subscriber );
-			}
-
-			exit;
-		}
-
-		$table    = get_noptin_subscribers_table_name();
-		$wpdb->query( "TRUNCATE TABLE $table" );
-
-		$table    = get_noptin_subscribers_meta_table_name();
-		$wpdb->query( "TRUNCATE TABLE $table" );
-
-		$wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'noptin_subscriber_id' ), '%s' );
-
-		do_action( 'noptin_delete_all_subscribers' );
-		exit;
 	}
 
 	/**

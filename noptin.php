@@ -144,6 +144,14 @@ class Noptin {
 	public $admin;
 
 	/**
+	 * The main custom fields class.
+	 * 
+	 * @var Noptin_Custom_Fields
+	 * @since       1.5.5
+	 */
+	public $custom_fields;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -331,6 +339,9 @@ class Noptin {
 
 		// Automation tasks.
 		$this->automation_rules   = new Noptin_Automation_Rules();
+
+		// Custom fields.
+		$this->custom_fields = new Noptin_Custom_Fields();
 
 		/**
 		 * Fires after Noptin inits

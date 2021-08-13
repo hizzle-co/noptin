@@ -8,78 +8,6 @@ import regeneratorRuntime from "regenerator-runtime";
 
 	$(document).ready(function () {
 
-		// Add subscriber.
-		$(document).on('click', '.noptin-add-subscriber', function (e) {
-
-			e.preventDefault();
-			let $el   = null
-
-			Swal.fire({
-				title: noptinSubscribers.add,
-				html: $('#noptin-create-subscriber-template').html(),
-				allowOutsideClick: () => !Swal.isLoading(),
-				confirmButtonText: noptinSubscribers.save,
-				showCancelButton: true,
-				cancelButtonText: noptinSubscribers.cancel,
-				confirmButtonColor: '#3085d6',
-				cancelButtonColor: '#424242',
-				showCloseButton: true,
-				focusConfirm: false,
-				showLoaderOnConfirm: true,
-				onOpen(el) {
-					$el = el
-					$($el).find('.noptin-create-subscriber-name').focus()
-				},
-				preConfirm() {
-
-					let request = {
-						_wpnonce: noptinSubscribers.nonce,
-						action: 'noptin_admin_add_subscriber',
-						name: $($el).find('.noptin-create-subscriber-name').val(),
-						email:$($el).find('.noptin-create-subscriber-email').val(),
-						data: subscribersPageData
-					}
-
-					if ( ! request.email ) {
-						Swal.showValidationMessage( noptinSubscribers.missing_email )
-						Swal.hideLoading()
-						return;
-					}
-
-					jQuery.post(noptinSubscribers.ajaxurl, request)
-	
-						.done(function ( data ) {
-
-							if (typeof data === 'object' && data.success) {
-
-								Swal.fire({
-									icon: 'success',
-									title: noptinSubscribers.add_success,
-									showConfirmButton: false,
-									footer: noptinSubscribers.reloading
-								})
-
-                                window.location = window.location
-                            } else {
-                                Swal.showValidationMessage(data)
-                                Swal.hideLoading()
-							}
-							
-						})
-	
-						.fail(function (jqXHR) {
-							Swal.showValidationMessage(jqXHR.statusText)
-							Swal.hideLoading()
-							console.log(jqXHR)
-						})
-	
-					return jQuery.Deferred()
-
-				}
-			})
-
-		})
-
 		// Import subscribers.
 		$(document).on('click', '.noptin-import-subscribers', function (e) {
 
@@ -258,7 +186,7 @@ import regeneratorRuntime from "regenerator-runtime";
 				confirmButtonText: noptinSubscribers.delete,
 				cancelButtonText: noptinSubscribers.cancel,
 
-				//Fired when the user clicks on the confirm button
+				// Fired when the user clicks on the confirm button.
 				preConfirm() {
 					window.location.href = href
 				}

@@ -1,19 +1,12 @@
 <div class="wrap noptin-export-subscribers-page">
 
-	<?php
-		printf(
-			'<h1 class="title">%s<a class="page-title-action" href="%s">&nbsp;%s</a></h1>',
-			esc_html__( 'Export Subscribers','newsletter-optin-box' ),
-			esc_url( admin_url( 'admin.php?page=noptin-subscribers' ) ),
-			esc_html__( 'Go Back','newsletter-optin-box' )
-		);
+	<h1 class="title"><?php esc_html_e( 'Export Subscribers', 'newsletter-optin-box' ); ?></h1>
 
-		$file_name = 'noptin-subscribers-' . time();
-	?>
+	<?php include plugin_dir_path( __FILE__ ) . 'subscriber-tabs.php' ?>
 
-	<form name="noptin-export-subscribers" method="post">
+	<form name="noptin-export-subscribers" method="POST" action="<?php echo esc_url_raw( add_query_arg( array() ) ); ?>">
 		<input type="hidden" name="noptin_admin_action" value="noptin_export_subscribers">
-		<?php wp_nonce_field( 'noptin-export-subscribers', 'noptin-export-subscribers' ); ?>		
+		<?php wp_nonce_field( 'noptin-export-subscribers', 'noptin-export-subscribers' ); ?>
 
 		<div id="poststuff">
 			<div id="post-body" class="metabox-holder columns-2">
@@ -25,7 +18,7 @@
 								<th scope="row"><label for="file_name"><?php _e( 'Export File', 'newsletter-optin-box' ); ?></label></th>
 								<td>
 									<div>
-										<input style="width: 20em;" name='file_name' id="file_name" type="text" value="<?php echo $file_name ?>" placeholder="<?php echo $file_name ?>"/>
+										<input style="width: 20em;" name='file_name' id="file_name" type="text" value="noptin-subscribers" placeholder="noptin-subscribers"/>
 										<select name='file_type'>
 											<option value='csv'><?php _e( 'CSV', 'newsletter-optin-box' ); ?></option>
 											<option value='json'><?php _e( 'JSON', 'newsletter-optin-box' ); ?></option>

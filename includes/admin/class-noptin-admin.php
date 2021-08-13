@@ -94,6 +94,7 @@ class Noptin_Admin {
 		$this->filters         = new Noptin_Admin_Filters();
 
 		// initialize hooks.
+		Noptin_Subscribers_Admin::init_hooks();
 		$this->init_hooks();
 
 		/**
@@ -142,12 +143,6 @@ class Noptin_Admin {
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 
-		// Admin save subscriber.
-		add_action( 'noptin_update_admin_edited_subscriber', array( $this, 'update_edited_subscriber' ) );
-
-		// Display subscribers per page option.
-		add_action( 'load-noptin_page_noptin-subscribers', array( $this, 'add_subscribers_page_screen_options' ) );
-		add_filter( 'set-screen-option', array( $this, 'save_subscribers_page_screen_options' ), 10, 3 );
 
 		Noptin_Vue::init_hooks();
 
@@ -529,17 +524,6 @@ class Noptin_Admin {
 			array( $this, 'render_email_campaigns_page' )
 		);
 
-		// Add the subscribers page.
-		$subscribers_page_title = apply_filters( 'noptin_admin_subscribers_page_title', __( 'Email Subscribers', 'newsletter-optin-box' ) );
-		add_submenu_page(
-			'noptin',
-			$subscribers_page_title,
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-subscribers',
-			array( $this, 'render_subscribers_page' )
-		);
-
 		do_action( 'noptin_after_register_menus', $this );
 
 		// Automation Rules.
@@ -886,200 +870,6 @@ class Noptin_Admin {
 	}
 
 	/**
-	 * Renders view subscribers page
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function render_subscribers_page() {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the suscribers page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_admin_subscribers_page', $this );
-
-		// Are we viewing a single subscriber or all subscribers?
-		if ( ! empty( $_GET['subscriber'] ) ) {
-			$this->render_single_subscriber_page( $_GET['subscriber'] );
-		} else if ( ! empty( $_GET['export'] ) ) {
-			$this->render_export_subscribers_page();
-		} else {
-			$this->render_subscribers_overview_page();
-		}
-
-		/**
-		 * Runs after displaying the subscribers page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_admin_subscribers_page', $this );
-	}
-
-	/**
-	 * Renders subscribers overview page
-	 *
-	 * @access      public
-	 * @since       1.1.1
-	 * @return      void
-	 */
-	public function render_subscribers_overview_page() {
-
-		/**
-		 * Runs before displaying the suscribers overview page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_subscribers_overview_page', $this );
-
-		// Do actions.
-		if ( ! empty( $_POST['noptin_nonce'] ) && wp_verify_nonce( $_POST['noptin_nonce'], 'noptin' ) ) {
-
-			// Delete.
-			if ( ! empty( $_POST['action'] ) && 'delete' === $_POST['action'] ) {
-				if ( ! empty( $_POST['email'] ) && is_array( $_POST['email'] ) ) {
-
-					foreach ( $_POST['email'] as $email ) {
-						delete_noptin_subscriber( $email );
-					}
-
-				}
-			}
-		}
-
-		$download_url = add_query_arg( 'export', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) );
-		$table        = new Noptin_Subscribers_Table();
-		$table->prepare_items();
-
-
-		$data = '';
-		$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
-		foreach( $data_array as $key => $value ) {
-
-			if ( is_scalar( $value ) ) {
-				$value = esc_attr( $value );
-				$key   = esc_attr( $key );
-				$data .= " data-$key='$value'";
-			}
-
-		}
-
-		?>
-		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="#" class="page-title-action noptin-add-subscriber"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a> <a href="#" class="page-title-action noptin-import-subscribers"><?php _e( 'Import', 'newsletter-optin-box' ); ?></a> <a href="<?php echo $download_url; ?>" class="page-title-action"><?php _e( 'Export', 'newsletter-optin-box' ); ?></a> <a href="#" class="button-secondary noptin-danger-button noptin-delete-subscribers"><?php _e( 'Delete All Subscribers', 'newsletter-optin-box' ); ?></a> </h1>
-			<?php $this->show_notices(); ?>
-			<form id="noptin-subscribers-table" method="POST" action="<?php echo $table->base_url; ?>">
-				<?php $table->search_box( __( 'Search Subscribers', 'newsletter-optin-box' ), 'noptin_search_subscribers'); ?>
-				<?php $table->display(); ?>
-			</form>
-			<p class="description"><?php
-				printf(
-					__( 'Store more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
-					'<a href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
-					'</a>'
-				)
-			?></p>
-			<div id='noptin-subscribers-page-data' <?php echo $data; ?>></div>
-		</div>
-		<?php
-
-		/**
-		 * Runs after displaying the subscribers overview page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_subscribers_overview_page', $this );
-	}
-
-	/**
-	 * Displays a single subscriber.
-	 *
-	 * @param       int $subscriber The subscriber to display.
-	 * @access      public
-	 * @since       1.1.1
-	 * @return      void
-	 */
-	public function render_single_subscriber_page( $subscriber = 0 ) {
-
-		if ( empty( $_GET['return'] ) ) {
-			$_GET['return'] = admin_url( 'admin.php?page=noptin-subscribers' );
-		}
-
-		$data = '';
-		$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
-		foreach( $data_array as $key => $value ) {
-
-			if ( is_scalar( $value ) ) {
-				$value = esc_attr( $value );
-				$key   = esc_attr( $key );
-				$data .= " data-$key='$value'";
-			}
-
-		}
-
-		echo "<div id='noptin-subscribers-page-data' $data></div>";
-		/**
-		 * Runs before displaying the suscribers page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_admin_single_subscriber_page', $subscriber, $this );
-
-		$subscriber = new Noptin_Subscriber( $subscriber );
-
-		if ( $subscriber->exists() ) {
-
-			do_action( 'add_meta_boxes_noptin_subscribers', $subscriber );
-			do_action( 'add_meta_boxes', 'noptin_subscribers', $subscriber );
-			get_noptin_template( 'admin-single-subscriber/single-subscriber.php', array( 'subscriber' => $subscriber ) );
-
-		} else {
-			get_noptin_template( 'admin-single-subscriber/404.php', array() );
-		}
-
-
-		/**
-		 * Runs after displaying the subscribers page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_admin_single_subscriber_page', $subscriber, $this );
-	}
-
-	/**
-	 * Displays the export subscribers.
-	 *
-	 * @access      public
-	 * @since       1.3.1
-	 * @return      void
-	 */
-	public function render_export_subscribers_page() {
-
-		/**
-		 * Runs before displaying the suscribers export page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_subscribers_export_page', $this );
-
-		get_noptin_template( 'export-subscribers.php' );
-
-		/**
-		 * Runs after displaying the subscribers export page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_subscribers_export_page', $this );
-	}
-
-	/**
 	 * Renders the settings page
 	 *
 	 * @access      public
@@ -1253,40 +1043,6 @@ class Noptin_Admin {
 	}
 
 	/**
-	 * Retrieves the subscribers list, limited to 100
-	 *
-	 * @param       int    $page The page to retrieve.
-	 * @param       string $meta_key Filter subscribers by a meta key.
-	 * @param       string $meta_value Filter subscribers by a meta value.
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      array|null
-	 */
-	public function get_subscribers( $page = 1, $meta_key = '_subscriber_via', $meta_value = false ) {
-		global $wpdb;
-
-		$table      = get_noptin_subscribers_table_name();
-		$meta_table = get_noptin_subscribers_meta_table_name();
-		$limit      = 10;
-		$offset     = absint( $page - 1 ) * $limit;
-		$extra_sql  = '';
-
-		if ( false !== $meta_value ) {
-			$extra_sql = "INNER JOIN $meta_table ON ( $table.id = $meta_table.noptin_subscriber_id ) WHERE ( $meta_table.meta_key = '%s' AND $meta_table.meta_value = '%s' )";
-			$extra_sql = $wpdb->prepare( $extra_sql, $meta_key, $meta_value );
-		}
-
-		$sql = "SELECT *
-                    FROM $table
-					$extra_sql
-                    ORDER BY date_created DESC, id DESC
-					LIMIT $offset, $limit";
-
-		return $wpdb->get_results( $sql );
-
-	}
-
-	/**
 	 * Does an action
 	 *
 	 * @access      public
@@ -1430,54 +1186,6 @@ class Noptin_Admin {
 	}
 
 	/**
-	 * Displays a success notice
-	 *
-	 * @param       string $msg The message to qeue.
-	 * @access      public
-	 * @since       1.1.2
-	 */
-	function update_edited_subscriber() {
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-admin-update-subscriber-nonce'] ) ) {
-			return;
-		}
-
-		if ( ! wp_verify_nonce( $_POST['noptin-admin-update-subscriber-nonce'], 'noptin-admin-update-subscriber' ) ) {
-			return;
-		}
-
-		$post = wp_unslash( $_POST );
-		$data = array(
-			'email'      => sanitize_text_field( $post['email'] ),
-			'first_name' => sanitize_text_field( $post['first_name'] ),
-			'last_name'  => sanitize_text_field( $post['last_name'] ),
-			'active'     => intval( $post['status'] ),
-			'confirmed'  => intval( $post['confirmed'] ),
-		);
-
-		$meta       = empty( $post['noptin_custom_field'] ) ? array() : $post['noptin_custom_field'];
-		$data       = wp_parse_args( $meta, $data );
-		$subscriber = (int) $post['subscriber_id'];
-
-		if ( ! empty( $subscriber ) ) {
-
-			// Subscriber activation/deactivation.
-			if ( ! empty( $data['active'] ) ) {
-				deactivate_noptin_subscriber( $subscriber );
-			}
-
-			// Subscriber email confirmation.
-			if ( ! empty( $data['confirmed'] ) ) {
-				confirm_noptin_subscriber_email( $subscriber );
-			}
-
-			update_noptin_subscriber( $subscriber, $data );
-			$this->show_success( __( 'Subscriber successfully updated', 'newsletter-optin-box' ) );
-		}
-
-	}
-
-	/**
 	 * Returns an array of notices.
 	 *
 	 * @access      public
@@ -1588,38 +1296,26 @@ class Noptin_Admin {
 				continue;
 			}
 
-			$class = esc_attr( "notice notice-$type noptin-notice is-dismissible" );
 			foreach ( $messages as $message ) {
-				echo "<div class='$class'><p>$message</p></div>";
+				$this->print_notice( $type, $message );
 			}
 		}
 	}
 
 	/**
-	 * Registers screen options for the subscribers page.
+	 * Prints a single notice.
 	 *
-	 * @access      public
-	 * @since       1.3.4
+	 * @param string $type
+	 * @param string $message
+	 * @since       1.5.5
 	 */
-	public function add_subscribers_page_screen_options() {
- 
-		$args = array(
-			'default' => 10,
-			'option'  => 'noptin_subscribers_per_page'
-		);
-	
-		add_screen_option( 'per_page', $args );
+	public function print_notice( $type, $message ) {
 
-	}
+		$message = wp_kses_post( $message );
+		$type    = sanitize_html_class( $type );
+		$class   = esc_attr( "notice notice-$type noptin-notice is-dismissible" );
+		echo "<div class='$class'><p>$message</p></div>";
 
-	/**
-	 * Saves subscribers page screen options.
-	 *
-	 * @access      public
-	 * @since       1.3.4
-	 */
-	public function save_subscribers_page_screen_options( $skip, $option, $value ) {
-		return 'noptin_subscribers_per_page' === $option ? $value : $skip;
 	}
 
 }

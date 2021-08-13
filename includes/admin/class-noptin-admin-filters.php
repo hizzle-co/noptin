@@ -33,9 +33,6 @@ class Noptin_Admin_Filters {
 		// Filters Noptin subscriber's fields.
 		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ), 1 );
 
-		// Templates.
-		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'create_subscriber_template' ) );
-
 		// Export subscribers.
 		add_action( 'noptin_export_subscribers',  array( $this, 'export_subscribers' ) );
 
@@ -46,10 +43,9 @@ class Noptin_Admin_Filters {
 	 * @since       1.2.4
 	 */
 	public function filter_tools_page_titles( $title ) {
-		
+
 		$titles = array(
-			'debug_log'	   => __( 'Debug Log', 'newsletter-optin-box' ),
-			'system_info'  => __( 'System Information', 'newsletter-optin-box' ),
+			'debug_log'	         => __( 'Debug Log', 'newsletter-optin-box' ),
 		);
 
 		if ( isset( $_GET['tool'] ) && isset( $titles[ $_GET['tool'] ] ) ) {
@@ -467,17 +463,6 @@ class Noptin_Admin_Filters {
 			}
 		}
 
-	}
-
-	/**
-	 * Create new subscriber
-	 * 
-	 */
-	public function create_subscriber_template() {
-		echo '<div id="noptin-create-subscriber-template" style="display:none"';
-		echo '<label><input type="text" name="name" placeholder="Subscriber Name" class="noptin-create-subscriber-name swal2-input" /></label>';
-		echo '<label><input type="email" name="email" placeholder="Email Address" class="noptin-create-subscriber-email swal2-input" /></label>';
-		echo '</div>';
 	}
 
 }

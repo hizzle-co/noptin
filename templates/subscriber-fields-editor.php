@@ -1,4 +1,4 @@
-<p <?php echo $restrict; ?> class="description"><?php _e( "Use this section to set the data you would like to collect from your email subscribers.", 'newsletter-optin-box' ); ?>&nbsp;<a href="https://noptin.com/guide/email-subscribers/custom-fields/"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?></a></p>
+<p <?php echo $restrict; ?> class="description"><?php _e( 'Collect more information from your subscribers by adding custom fields.', 'newsletter-optin-box' ); ?>&nbsp;<a href="https://noptin.com/guide/email-subscribers/custom-fields/"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?></a></p>
 <div <?php echo $restrict; ?> id="noptin-subscriber-fields-editor-available-fields" class="noptin-accordion-wrapper" style="max-width: 700px;">
 
 	<span v-for="field in <?php echo esc_attr( $id ); ?>">
@@ -45,7 +45,6 @@
 				);
 				Noptin_Vue::render_el( 'field.options', $args );
 
-				// Fires before custom field settings.
 				do_action( 'noptin_custom_field_settings' );
 
 				// Change visibility.

@@ -346,6 +346,7 @@ function add_noptin_subscriber( $fields ) {
 		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] :  md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
 		'date_created' => ! empty( $fields['date_created'] ) ? date( 'Y-m-d', strtotime( $fields['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) ),
 		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] :  ( get_noptin_option( 'double_optin' ) ? 1 : 0 ),
+		'confirmed'    => ! empty( $fields['confirmed'] ),
 	);
 
 	if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
@@ -668,6 +669,11 @@ function noptin_split_subscriber_name( $name ) {
  */
 function noptin_email_exists( $email ) {
 	global $wpdb;
+
+	if ( empty( $email ) ) {
+		return false;
+	}
+
 	$table = get_noptin_subscribers_table_name();
 	$id    = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE email =%s LIMIT 1;", $email ) );
 
@@ -1037,86 +1043,6 @@ function noptin_generate_user_name( $prefix = '' ) {
 }
 
 /**
- * Registers default metaboxes.
- *
- * @since 1.2.7
- */
-function register_default_noptin_subscriber_metaboxes( $subscriber ) {
-
-	add_meta_box(
-        'noptin_subscriber_details',
-        __('Subscriber Details','newsletter-optin-box'),
-        'noptin_subscriber_metabox_callback',
-		'noptin_page_noptin-subscribers',
-		'normal',
-		'default',
-		'details'
-	);
-
-	add_meta_box(
-        'noptin_subscriber_activity',
-        __( 'Activity Feed','newsletter-optin-box' ),
-        'noptin_subscriber_metabox_callback',
-		'noptin_page_noptin-subscribers',
-		'advanced',
-		'default',
-		'activity'
-	);
-
-	add_meta_box(
-        'noptin_subscriber_save',
-        __('Save Changes','newsletter-optin-box'),
-        'noptin_subscriber_metabox_callback',
-		'noptin_page_noptin-subscribers',
-		'side',
-		'default',
-		'save'
-	);
-
-	if ( 1 !== (int) $subscriber->confirmed ) {
-
-		add_meta_box(
-			'noptin_subscriber_double_optin',
-			__('Confirmation Email','newsletter-optin-box'),
-			'noptin_subscriber_metabox_callback',
-			'noptin_page_noptin-subscribers',
-			'side',
-			'default',
-			'double-optin'
-		);
-
-	}
-
-	if ( apply_filters( 'noptin_enable_geolocation', true ) ) {
-		$ip_address = $subscriber->ip_address;
-		if ( ! empty( $ip_address ) && noptin_locate_ip_address( $ip_address ) ) {
-
-			add_meta_box(
-				'noptin_subscriber_location',
-				__('GeoLocation','newsletter-optin-box'),
-				'noptin_subscriber_metabox_callback',
-				'noptin_page_noptin-subscribers',
-				'side',
-				'default',
-				'geolocation'
-			);
-
-		}
-	}
-
-}
-add_action( 'add_meta_boxes_noptin_subscribers', 'register_default_noptin_subscriber_metaboxes' );
-
-/**
- * Displays a subscriber metabox.
- *
- * @since 1.2.7
- */
-function noptin_subscriber_metabox_callback( $subscriber, $metabox ) {
-	get_noptin_template( "admin-single-subscriber/{$metabox['args']}.php", array( 'subscriber' => $subscriber ) );
-}
-
-/**
  * Retrieves the current user's Noptin subscriber id.
  *
  * @return  false|int Subscriber id or false on failure.
@@ -1266,60 +1192,127 @@ add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );
  * Returns an array of available custom field types.
  *
  * @since 1.5.5
+ * @see Noptin_Custom_Fields::get_custom_field_types
  * @return array
  */
 function get_noptin_custom_field_types() {
 
-	$field_types = array(
-		'email'                => array(
-			'predefined'       => true,
-			'merge_tag'        => 'email',
-			'label'            => __( 'Email Address', 'newsletter-optin-box' ),
-		),
-		'first_name'           => array(
-			'predefined'       => true,
-			'merge_tag'        => 'first_name',
-			'label'            => __( 'First Name', 'newsletter-optin-box' ),
-		),
-		'last_name'            => array(
-			'predefined'       => true,
-			'merge_tag'        => 'last_name',
-			'label'            => __( 'Last Name', 'newsletter-optin-box' ),
-		),
-		'birthday'             => array(
-			'predefined'       => true,
-			'merge_tag'        => 'birthday',
-			'label'            => __( 'Birthday', 'newsletter-optin-box' ),
-		),
-		'text'                 => array(
-			'predefined'       => false,
-			'label'            => __( 'Text Input', 'newsletter-optin-box' ),
-		),
-		'number'               => array(
-			'predefined'       => false,
-			'label'            => __( 'Number Input', 'newsletter-optin-box' ),
-		),
-		'radio'                => array(
-			'predefined'       => false,
-			'supports_options' => true,
-			'label'            => __( 'Radio Buttons', 'newsletter-optin-box' ),
-		),
-		'dropdown'             => array(
-			'predefined'       => false,
-			'supports_options' => true,
-			'label'            => __( 'Dropdown', 'newsletter-optin-box' ),
-		),
-		'date'                 => array(
-			'predefined'       => false,
-			'label'            => __( 'Date', 'newsletter-optin-box' ),
-		),
-		'checkbox'             => array(
-			'predefined'       => false,
-			'label'            => __( 'Checkbox', 'newsletter-optin-box' ),
-		),
+	return apply_filters(
+		'noptin_custom_field_types',
+		array(
+			'email'                => array(
+				'predefined'       => true,
+				'merge_tag'        => 'email',
+				'label'            => __( 'Email Address', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Email',
+			),
+			'first_name'           => array(
+				'predefined'       => true,
+				'merge_tag'        => 'first_name',
+				'label'            => __( 'First Name', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Text',
+			),
+			'last_name'            => array(
+				'predefined'       => true,
+				'merge_tag'        => 'last_name',
+				'label'            => __( 'Last Name', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Text',
+			),
+			'birthday'             => array(
+				'predefined'       => true,
+				'merge_tag'        => 'birthday',
+				'label'            => __( 'Birthday', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Birthday',
+			),
+			'text'                 => array(
+				'predefined'       => false,
+				'label'            => __( 'Text Input', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Text',
+			),
+			'number'               => array(
+				'predefined'       => false,
+				'label'            => __( 'Number Input', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Number',
+			),
+			'radio'                => array(
+				'predefined'       => false,
+				'supports_options' => true,
+				'label'            => __( 'Radio Buttons', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Radio',
+			),
+			'dropdown'             => array(
+				'predefined'       => false,
+				'supports_options' => true,
+				'label'            => __( 'Dropdown', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Dropdown',
+			),
+			'date'                 => array(
+				'predefined'       => false,
+				'label'            => __( 'Date', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Date',
+			),
+			'checkbox'             => array(
+				'predefined'       => false,
+				'label'            => __( 'Checkbox', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Checkbox',
+			),
+		)
 	);
 
-	return apply_filters( 'noptin_custom_field_types', $field_types );
+}
+
+/**
+ * Displays a custom field input.
+ *
+ * @since 1.5.5
+ * @see Noptin_Custom_Field_Type::output
+ * @param array $custom_field
+ * @param false|Noptin_Subscriber $subscriber
+ */
+function display_noptin_custom_field_input( $custom_field, $subscriber = false ) {
+	$custom_field['name']  = empty( $custom_field['wrap_name'] ) ? $custom_field['merge_tag'] : 'noptin_fields[' . $custom_field['merge_tag'] . ']';
+	$custom_field['id']    = empty( $custom_field['show_id'] ) ? uniqid( sanitize_html_class( $custom_field['merge_tag'] ) ) : 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
+	$custom_field['value'] = empty( $subscriber ) ? '' : $subscriber->get( $custom_field['merge_tag'] );
+
+	if ( ( '' === $custom_field['value'] || array() === $custom_field['value'] ) && ! empty( $_POST ) ) {
+
+		// Below is cleaned on output.
+		if ( isset( $_POST['noptin_fields']['merge_tag'] ) ) {
+			$custom_field['value'] = $_POST['noptin_fields']['merge_tag'];
+		} else if ( isset( $_POST['merge_tag'] ) ) {
+			$custom_field['value'] = $_POST['merge_tag'];
+		}
+
+	}
+
+	do_action( 'noptin_display_custom_field_input', $custom_field, $subscriber );
+	do_action( "noptin_display_{$custom_field['type']}_input", $custom_field, $subscriber );
+}
+
+/**
+ * Sanitize a custom field value.
+ *
+ * @since 1.5.5
+ * @see Noptin_Custom_Field_Type::sanitize_value
+ * @param mixed $value
+ * @param string $type
+ * @param false|Noptin_Subscriber $subscriber
+ */
+function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false ) {
+	return apply_filters( "noptin_sanitize_{$type}_value", $value, $subscriber );
+}
+
+/**
+ * Formats a custom field value for display.
+ *
+ * @since 1.5.5
+ * @see Noptin_Custom_Field_Type::sanitize_value
+ * @param mixed $value
+ * @param string $type
+ * @param Noptin_Subscriber $subscriber
+ */
+function format_noptin_custom_field_value( $value, $type, $subscriber ) {
+	return apply_filters( "noptin_format_{$type}_value", $value, $subscriber );
 }
 
 /**
