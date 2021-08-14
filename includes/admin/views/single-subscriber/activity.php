@@ -7,12 +7,12 @@ $activities = array(
 	__( 'Subscribed', 'newsletter-optin-box' ) => $subscriber->date_created,
 );
 
-if ( 0 === (int) $subscriber->confirmed && ! empty( $subscriber->confirmed_on ) ) {
+if ( $subscriber->confirmed && ! empty( $subscriber->confirmed_on ) ) {
 	$activities[ __( 'Confirmed Email Address', 'newsletter-optin-box' ) ] = $subscriber->confirmed_on;
 }
 
 if ( ! $subscriber->is_active() && ! empty( $subscriber->unsubscribed_on ) ) {
-	$activities[ __( 'Unsubscribed', 'newsletter-optin-box' ) ] = $subscriber->confirmed_on;
+	$activities[ __( 'Unsubscribed', 'newsletter-optin-box' ) ] = $subscriber->unsubscribed_on;
 }
 
 $activities = apply_filters( 'noptin_subscriber_activity_feed', $activities, $subscriber );

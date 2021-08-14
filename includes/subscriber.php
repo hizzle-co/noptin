@@ -424,6 +424,16 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 		unset( $fields['id'] );
 	}
 
+	// Subscriber email confirmation.
+	if ( ! empty( $fields['confirmed'] ) && empty( $subscriber->confirmed ) ) {
+		confirm_noptin_subscriber_email( $subscriber );
+	}
+
+	// Are we deactivating the subscriber?
+	if ( $subscriber->is_active() && ! empty( $fields['active'] ) ) {
+		deactivate_noptin_subscriber( $subscriber );
+	}
+
 	foreach ( noptin_parse_list( 'email first_name second_name confirm_key date_created active confirmed' ) as $field ) {
 		if ( isset( $fields[ $field ] ) ) {
 			$to_update[ $field ] = noptin_clean( $fields[ $field ] );
@@ -442,7 +452,12 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 			continue;
 		}
 
-		update_noptin_subscriber_meta( $subscriber_id, $field, $value );
+		if ( '' === $value ) {
+			delete_noptin_subscriber_meta( $subscriber_id, $field );
+		} else {
+			update_noptin_subscriber_meta( $subscriber_id, $field, $value );
+		}
+
 	}
 
 	// Clean the cache.
