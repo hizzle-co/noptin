@@ -1,6 +1,6 @@
 <?php
 /**
- * Handles dropdowns.
+ * Handles textarea inputs.
  *
  * @since 1.0.0
  *
@@ -10,11 +10,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Handles dropdowns.
+ * Handles textarea inputs.
  *
  * @since 1.5.5
  */
-class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
+class Noptin_Custom_Field_Textarea extends Noptin_Custom_Field_Type {
 
 	/**
 	 * Displays the actual markup for this field.
@@ -25,26 +25,20 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	 */
 	public function output( $args, $subscriber ) {
 
-		if ( empty( $args['options'] ) ) {
-			$args['options'] = '';
-		}
-
 		?>
 
 			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
-
-			<select
+			<textarea
 				name="<?php echo esc_attr( $args['name'] ); ?>"
 				id="<?php echo esc_attr( $args['id'] ); ?>"
 				class="noptin-text noptin-form-field"
-				<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
-			>
-				<option <?php selected( empty( $args['value'] ) ); ?> disabled><?php echo empty( $args['vue'] ) ? strip_tags( $args['label'] ) : '{{field.type.label}}'; ?></option>
-				<?php foreach ( explode( "\n", $args['options'] ) as $option ) : ?>
-					<option value="<?php echo esc_attr( $option ); ?>" <?php selected( esc_attr( $option ), esc_attr( $args['value'] ) ); ?>><?php echo esc_html( $option ); ?></option>
-				<?php endforeach; ?>		
-			</select>
-
+				rows="4"
+				<?php if ( empty( $args['vue'] ) ) : ?>
+					placeholder="<?php echo esc_attr( $args['label'] ); ?>"
+				<?php else: ?>
+					:placeholder="field.type.label"
+				<?php endif;?>
+			><?php echo esc_textarea( $args['value'] ); ?></textarea>
 		<?php
 
 	}
@@ -57,7 +51,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	 * @param false|Noptin_Subscriber $subscriber
 	 */
 	public function sanitize_value( $value, $subscriber ) {
-		return sanitize_text_field( $value );
+		return sanitize_textarea_field( $value );
 	}
 
 }

@@ -14,6 +14,11 @@
 		word-wrap: normal!important;
 	}
 
+	#noptin_subscriber_details .noptin-text,
+	#noptin_subscriber_details .noptin-birthday-div {
+		width: 100%;
+		max-width: 25em !important;
+	}
 </style>
 
 <table class="form-table">

@@ -1229,6 +1229,11 @@ function get_noptin_custom_field_types() {
 				'label'            => __( 'Text Input', 'newsletter-optin-box' ),
 				'class'            => 'Noptin_Custom_Field_Text',
 			),
+			'textarea'             => array(
+				'predefined'       => false,
+				'label'            => __( 'Textarea Input', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Textarea',
+			),
 			'number'               => array(
 				'predefined'       => false,
 				'label'            => __( 'Number Input', 'newsletter-optin-box' ),
@@ -1342,7 +1347,13 @@ function noptin_format_subscription_source( $source ) {
 
 	if ( is_numeric( $source ) ) {
 		$title = get_the_title( $source );
-		return empty( $title ) ? __( 'Newsletter Form', 'newsletter-optin-box' ) : $title;
+
+		if ( empty( $title ) ) {
+			return __( 'Newsletter Form', 'newsletter-optin-box' );
+		}
+
+		$url = get_edit_post_link( (int) $source, 'url' );
+		return empty( $url ) ? $title : "<a href='$url'>$title</a>";
 	}
 
 	$sources = array(

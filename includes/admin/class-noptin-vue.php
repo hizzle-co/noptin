@@ -530,58 +530,6 @@ class Noptin_Vue {
 			<option v-for="(option, index) in field.type.options.split(',')" :key="index">{{option | optionize}}</option>
 		</select>
 
-			<?php foreach ( get_noptin_custom_fields() as $custom_field ) : ?>
-
-				<?php if ( 'checkbox' === $custom_field['type'] ) : ?>
-					<label v-if="field.type.type=='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'">
-						<input type="checkbox" class="noptin-checkbox-form-field" />
-						<span>{{field.type.label}}</span>
-					</label>
-				<?php endif; ?>
-
-				<?php if ( in_array( $custom_field['type'], array( 'date', 'number', 'text', 'email' ) ) ) : ?>
-					<input
-						v-if="field.type.type=='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'"
-						type="<?php echo esc_attr( $custom_field['type'] ); ?>"
-						class="noptin-form-field"
-						:placeholder="field.type.label"
-					/>
-				<?php endif; ?>
-
-				<?php if ( in_array( $custom_field['type'], array( 'first_name', 'last_name', 'birthday' ) ) ) : ?>
-					<input
-						v-if="field.type.type=='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'"
-						type="text"
-						class="noptin-form-field"
-						:placeholder="field.type.label"
-					/>
-				<?php endif; ?>
-
-				<?php if ( 'radio' === $custom_field['type'] ) : ?>
-					<fieldset v-if="field.type.type=='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'">
-						<legend>{{field.type.label}}</legend>
-						<?php foreach ( explode( "\n", $custom_field['options'] ) as $option ) : ?>
-							<label style="display: block; margin-bottom: 6px;">
-								<input type="radio" class="noptin-checkbox-form-field" name='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'>
-								<strong><?php echo esc_html( $option ); ?></strong>
-							</label>
-						<?php endforeach; ?>
-					</fieldset>
-				<?php endif; ?>
-
-				<?php if ( 'dropdown' === $custom_field['type'] ) : ?>
-					<select
-						v-if="field.type.type=='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'"
-						class="noptin-form-field"
-						>
-						<option selected="selected" disabled>{{field.type.label}}</option>
-						<?php foreach ( explode( "\n", $custom_field['options'] ) as $option ) : ?>
-							<option><?php echo esc_html( $option ); ?></option>
-						<?php endforeach; ?>		
-					</select>
-				<?php endif; ?>
-
-			<?php endforeach; ?>
 		<?php
 
 	}
@@ -605,72 +553,6 @@ class Noptin_Vue {
 
 		// Field names.
 		$name = esc_attr( $field['key'] );
-
-		?>
-			<?php foreach ( get_noptin_custom_fields() as $custom_field ) : ?>
-
-				<?php
-					if ( $field['type']['type'] !== $custom_field['merge_tag'] ) {
-						continue;
-					}
-				?>
-
-				<?php if ( 'checkbox' === $custom_field['type'] ) : ?>
-					<label>
-						<input
-							name="<?php echo esc_attr( $custom_field['merge_tag'] ); ?>"
-							type='checkbox'
-							value='1'
-							class='noptin-checkbox-form-field'
-							<?php echo esc_attr( $required ); ?>
-						/><span><?php echo esc_html( $label ); ?></span>
-					</label>
-				<?php endif; ?>
-
-				<?php if ( in_array( $custom_field['type'], array( 'date', 'number', 'text', 'email' ) ) ) : ?>
-					<input
-						name='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'
-						type='<?php echo esc_attr( $custom_field['type'] ); ?>'
-						class='noptin-form-field'
-						placeholder='<?php echo esc_attr( $label ); ?>'
-						<?php echo esc_attr( $required ); ?>
-					/>
-				<?php endif; ?>
-
-				<?php if ( in_array( $custom_field['type'], array( 'first_name', 'last_name', 'birthday' ) ) ) : ?>
-					<input
-						name='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'
-						type='text'
-						class='noptin-form-field'
-						placeholder='<?php echo esc_attr( $label ); ?>'
-						<?php echo esc_attr( $required ); ?>
-					/>
-				<?php endif; ?>
-
-				<?php if ( 'radio' === $custom_field['type'] ) : ?>
-					<fieldset>
-						<legend><?php echo esc_html( $label ); ?></legend>
-						<?php foreach ( explode( "\n", $custom_field['options'] ) as $option ) : ?>
-							<label style="display: block; margin-bottom: 6px;">
-								<input type="radio" value="<?php echo esc_attr( $option ); ?>" class="noptin-checkbox-form-field" name='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'>
-								<strong><?php echo esc_html( $option ); ?></strong>
-							</label>
-						<?php endforeach; ?>
-					</fieldset>
-				<?php endif; ?>
-
-				<?php if ( 'dropdown' === $custom_field['type'] ) : ?>
-					<select class="noptin-form-field" name='<?php echo esc_attr( $custom_field['merge_tag'] ); ?>'>
-						<option selected="selected" disabled><?php echo esc_html( $label ); ?></option>
-						<?php foreach ( explode( "\n", $custom_field['options'] ) as $option ) : ?>
-							<option value="<?php echo esc_attr( $option ); ?>"><?php echo esc_html( $option ); ?></option>
-						<?php endforeach; ?>		
-					</select>
-				<?php endif; ?>
-
-		<?php endforeach; ?>
-
-		<?php
 
 		// Full name.
 		if ( 'name' === $field['type']['type'] ) {

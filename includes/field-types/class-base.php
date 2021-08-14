@@ -75,7 +75,8 @@ abstract class Noptin_Custom_Field_Type {
 	 * @param Noptin_Subscriber $subscriber
 	 */
 	public function format_value( $value, $subscriber ) {
-		return $this->sanitize_value( $value, $subscriber );
+		$value = $this->sanitize_value( $value, $subscriber );
+		return '' === $value ? "&mdash;" : $value;
 	}
 
 }

@@ -37,14 +37,18 @@ class Noptin_Custom_Field_Text extends Noptin_Custom_Field_Type {
 
 		?>
 
-			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo wp_kses_post( $args['label'] ); ?></label>
+			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
 			<input
 				name="<?php echo esc_attr( $args['name'] ); ?>"
 				id="<?php echo esc_attr( $args['id'] ); ?>"
 				type="<?php echo esc_attr( $this->get_input_type() ); ?>"
 				value="<?php echo esc_attr( $args['value'] ); ?>"
-				class="noptin-text"
-				placeholder="<?php echo esc_attr( $args['label'] ); ?>"
+				class="noptin-text noptin-form-field"
+				<?php if ( empty( $args['vue'] ) ) : ?>
+					placeholder="<?php echo esc_attr( $args['label'] ); ?>"
+				<?php else: ?>
+					:placeholder="field.type.label"
+				<?php endif;?>
 				<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 			/>
 

@@ -52,7 +52,7 @@
 					'el'          => 'input',
 					'type'        => 'checkbox_alt',
 					'label'       => __( 'Editable', 'newsletter-optin-box' ),
-					'description' => __( "Can subscriber's edit this field?", 'newsletter-optin-box' ),
+					'description' => __( "Can subscriber's view and edit this field?", 'newsletter-optin-box' ),
 					'restrict'    => '! isFieldPredefined(field)',
 				);
 				Noptin_Vue::render_el( 'field.visible', $args );

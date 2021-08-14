@@ -36,7 +36,7 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 					class='noptin-checkbox-form-field'
 					<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 					<?php checked( ! empty( $args['value'] ) ); ?>
-				/><span><?php echo wp_kses_post( $args['label'] ); ?></span>
+				/><span><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></span>
 			</label>
 
 		<?php

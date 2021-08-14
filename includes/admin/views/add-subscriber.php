@@ -18,6 +18,11 @@
 			word-wrap: normal!important;
 		}
 
+		#noptin-add-subscriber-form .noptin-text,
+		#noptin-add-subscriber-form .noptin-birthday-div {
+			width: 100%;
+			max-width: 25em !important;
+		}
 	</style>
 
 	<form class="noptin-add-subscriber-form" method="POST" action="<?php echo esc_url_raw( add_query_arg( array() ) ); ?>">

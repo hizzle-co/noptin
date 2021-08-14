@@ -1805,9 +1805,3 @@ a.no-campaign-create-new-campaign {
 		margin-right: 18px
 	}
 }
-
-.noptin-text,
-.noptin-birthday-div {
-	width: 100%;
-    max-width: 25em !important;
-}

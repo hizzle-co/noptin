@@ -58,7 +58,7 @@
             <span class="dashicons dashicons-art" style="padding-right: 3px;color: #607d8b"></span>
             <?php _e( 'Source', 'newsletter-optin-box' );?>:
             <b>
-                <?php echo esc_html( noptin_format_subscription_source( $subscriber->_subscriber_via ) ); ?>
+                <?php echo wp_kses_post( noptin_format_subscription_source( $subscriber->_subscriber_via ) ); ?>
             </b>
         </span>
     </div>

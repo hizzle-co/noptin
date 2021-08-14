@@ -27,14 +27,18 @@ class Noptin_Custom_Field_Email extends Noptin_Custom_Field_Type {
 
 		?>
 
-			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo wp_kses_post( $args['label'] ); ?></label>
+			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
 			<input
 				name="<?php echo esc_attr( $args['name'] ); ?>"
 				id="<?php echo esc_attr( $args['id'] ); ?>"
 				type="email"
 				value="<?php echo sanitize_email( $args['value'] ); ?>"
-				placeholder="<?php echo esc_attr( $args['label'] ); ?>"
-				class="noptin-text"
+				<?php if ( empty( $args['vue'] ) ) : ?>
+					placeholder="<?php echo esc_attr( $args['label'] ); ?>"
+				<?php else: ?>
+					:placeholder="field.type.label"
+				<?php endif;?>
+				class="noptin-text noptin-form-field"
 				required >
 
 		<?php

@@ -34,7 +34,7 @@ class Noptin_Custom_Field_Number extends Noptin_Custom_Field_Text {
 	 * @param false|Noptin_Subscriber $subscriber
 	 */
 	public function sanitize_value( $value, $subscriber ) {
-		return floatval( $value );
+		return '' === $value ? '' : floatval( $value );
 	}
 
 }

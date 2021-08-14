@@ -538,6 +538,30 @@ $noptin_color: #ff6f00;
 		display: table;
 	}
 
+	.noptin-field-email,
+	.noptin-field-first_name,
+	.noptin-field-last_name,
+	.noptin-field-birthday,
+	.noptin-field-text,
+	.noptin-field-textarea,
+	.noptin-field-dropdown,
+	.noptin-field-number,
+	.noptin-field-date {
+		.noptin-label {
+			border: 0;
+			clip: rect(1px,1px,1px,1px);
+			-webkit-clip-path: inset(50%);
+			clip-path: inset(50%);
+			height: 1px;
+			margin: -1px;
+			overflow: hidden;
+			padding: 0;
+			position: absolute;
+			width: 1px;
+			word-wrap: normal!important;
+		}
+	}
+
 	.noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) {
 		width: 100%;
 		display: block;
@@ -547,7 +571,7 @@ $noptin_color: #ff6f00;
 		.noptin-form-field {
 			display: block;
 			width: 100%;
-			height: calc(1.6em + .9rem + 2px);
+			max-width: 100%;
 			min-height: calc(1.6em + .9rem + 2px);
 			padding: .45rem 1.2rem;
 			font-size: 1rem;
@@ -710,7 +734,6 @@ $noptin_color: #ff6f00;
 	input.noptin_form_input_email {
 		display: block;
 		width: 100%;
-		height: calc(1.6em + .9rem + 2px);
 		min-height: calc(1.6em + .9rem + 2px);
 		padding: .45rem 1.2rem;
 		font-size: 1rem;

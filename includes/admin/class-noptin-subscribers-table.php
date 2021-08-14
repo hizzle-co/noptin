@@ -264,7 +264,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column__subscriber_via( $subscriber ) {
-		return esc_html( noptin_format_subscription_source( $subscriber->_subscriber_via ) );
+		return wp_kses_post( noptin_format_subscription_source( $subscriber->_subscriber_via ) );
 	}
 
 	/**

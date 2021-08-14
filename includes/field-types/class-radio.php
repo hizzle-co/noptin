@@ -31,7 +31,7 @@ class Noptin_Custom_Field_Radio extends Noptin_Custom_Field_Type {
 
 		?>
 
-			<label class="noptin-label"><?php echo wp_kses_post( $args['label'] ); ?></label>
+			<label class="noptin-label"><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
 
 			<?php foreach ( explode( "\n", $args['options'] ) as $option ) : ?>
 				<label style="display: block; margin-bottom: 6px;">

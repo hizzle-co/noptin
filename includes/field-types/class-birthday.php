@@ -35,7 +35,7 @@ class Noptin_Custom_Field_Birthday extends Noptin_Custom_Field_Type {
 
 		?>
 
-			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo wp_kses_post( $args['label'] ); ?></label>
+			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
 
 			<div class="noptin-birthday-div" style="display: flex;">
 				<label style="flex: 0 0 80px; margin-right: 10px;">
@@ -43,7 +43,7 @@ class Noptin_Custom_Field_Birthday extends Noptin_Custom_Field_Type {
 					<select
 						name="<?php echo esc_attr( $args['name'] ); ?>[day]"
 						id="<?php echo esc_attr( $args['id'] ); ?>"
-						class="noptin-text"
+						class="noptin-text noptin-form-field"
 						<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 					>
 						<option <?php selected( empty( $day ) ); ?> disabled><?php esc_html_e( 'Day', 'newsletter-optin-box' ); ?></option>
@@ -57,7 +57,7 @@ class Noptin_Custom_Field_Birthday extends Noptin_Custom_Field_Type {
 					<select
 						name="<?php echo esc_attr( $args['name'] ); ?>[month]"
 						id="<?php echo esc_attr( $args['id'] ); ?>-month"
-						class="noptin-text"
+						class="noptin-text noptin-form-field"
 						<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 					>
 						<option <?php selected( empty( $month ) ); ?> disabled><?php esc_html_e( 'Month', 'newsletter-optin-box' ); ?></option>
