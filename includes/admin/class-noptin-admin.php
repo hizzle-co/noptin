@@ -1284,7 +1284,7 @@ class Noptin_Admin {
 		$notices = $this->get_notices();
 
 		// Abort if we do not have any notices.
-		if ( empty( $notices ) ) {
+		if ( empty( $notices ) || ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 

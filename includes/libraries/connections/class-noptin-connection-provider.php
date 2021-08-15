@@ -165,6 +165,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				$list = $this->list_providers->get_list( trim( $list_id ) );
 
 				if ( ! empty( $list ) ) {
+					$integration_data['fields'] = $this->prepare_list_fields( $noptin_subscriber, $list->get_id() );
 					$list->add_subscriber( $noptin_subscriber, $integration_data );
 				}
 
@@ -238,25 +239,6 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			return $data;
 		}
 
-		// Merge fields.
-		$fields = array();
-		foreach ( $form->fields  as $field ) {
-
-			if ( empty( $field[ $this->slug ] ) ) {
-				continue;
-			}
-
-			$remote = trim( $field[ $this->slug ] );
-			$name   = trim( $field['type']['name'] );
-
-			if ( ! empty( $remote ) && ! empty( $subscriber->$name ) ) {
-				$fields[ $remote ] = $subscriber->$name;
-			}
-
-		}
-
-		$data[ $this->slug ]['fields'] = $fields;
-
 		// Suscriber tags.
 		$tags = "{$this->slug}_tags";
 		if ( $this->supports( 'tags' ) && ! empty( $form->$tags ) ) {
@@ -279,6 +261,37 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Prepares list fields.
+	 *
+	 * @param Noptin_Subscriber $noptin_subscriber
+	 * @param string $list_id
+	 * @since 1.5.1
+	 * @return array
+	 */
+	public function prepare_list_fields( $noptin_subscriber, $list_id ) {
+
+		$fields = array();
+		$key    = $this->slug;
+		$key    = $this->supports( 'universal_fields' ) ? $key : "{$key}_{$list_id}";
+
+		foreach ( get_noptin_custom_fields() as $field ) {
+
+			if ( empty( $field[ $key ] ) ) {
+				continue;
+			}
+
+			$value = $noptin_subscriber->get( $field['merge_tag'] );
+
+			if ( '' !== $value ) {
+				$fields[ $field[ $key ] ] = $value;
+			}
+		}
+
+		return $fields;
+
 	}
 
 	/**

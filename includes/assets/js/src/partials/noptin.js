@@ -18,7 +18,6 @@ export default {
 	applyTemplate (template, instance) {
 
 		Object.keys(template).forEach( (key) => {
-			console.log(template[key])
 			instance[key] = template[key]
 		})
 
