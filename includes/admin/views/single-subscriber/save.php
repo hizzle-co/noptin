@@ -75,7 +75,7 @@
                     $url = $subscriber->conversion_page;
                     if( ! empty( $url ) ) {
                         $url = esc_url( $url );
-                        echo "<a style='display: block; font-weight: 400;' target='_blank' href='$url' title='$url'><small>$url</small></a>";
+                        echo "<a style='display: block; font-weight: 400; word-break: break-word;' target='_blank' href='$url' title='$url'><small>$url</small></a>";
                     } else {
                         echo __( 'Unknown', 'newsletter-optin-box' );
                     }

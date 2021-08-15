@@ -314,6 +314,10 @@ class Noptin_Email_Campaigns_Admin {
 		unset( $data['email_body'] );
 		$post['meta_input'] = $data;
 
+		foreach ( self::get_meta() as $meta_key ) {
+			$post['meta_input'][ $meta_key ] = empty( $data[ $meta_key ] ) ? '' : noptin_clean( $data[ $meta_key ] );
+		}
+
 		$post = apply_filters( 'noptin_save_automation_campaign_details', $post, $data );
 
 		$post = wp_update_post( $post, true );

@@ -18,8 +18,8 @@
 			word-wrap: normal!important;
 		}
 
-		#noptin-add-subscriber-form .noptin-text,
-		#noptin-add-subscriber-form .noptin-birthday-div {
+		.noptin-add-subscriber-form .noptin-text,
+		.noptin-add-subscriber-form .noptin-birthday-div {
 			width: 100%;
 			max-width: 25em !important;
 		}
