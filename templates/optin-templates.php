@@ -215,8 +215,8 @@
 					array(
 						'type'    => array(
 							'label' => __( 'Enter your name here', 'newsletter-optin-box' ),
-							'name'  => 'name',
-							'type'  => 'name',
+							'name'  => 'first_name',
+							'type'  => 'first_name',
 						),
 
 						'require' => false,
@@ -1000,13 +1000,23 @@
 				'fields'                => array(
 					array(
 						'type'    => array(
-							'label' => __( 'Full Name', 'newsletter-optin-box' ),
-							'name'  => 'name',
-							'type'  => 'name',
+							'label' => __( 'First Name', 'newsletter-optin-box' ),
+							'name'  => 'first_name',
+							'type'  => 'first_name',
 						),
 
 						'require' => false,
-						'key'     => 'noptin_name',
+						'key'     => 'noptin_first_name',
+					),
+					array(
+						'type'    => array(
+							'label' => __( 'Last Name', 'newsletter-optin-box' ),
+							'name'  => 'last_name',
+							'type'  => 'last_name',
+						),
+
+						'require' => false,
+						'key'     => 'noptin_last_name',
 					),
 					array(
 						'type'    => array(
@@ -1017,26 +1027,6 @@
 
 						'require' => true,
 						'key'     => 'noptin_email_key',
-					),
-					array(
-						'type'    => array(
-							'label' => __( 'Country', 'newsletter-optin-box' ),
-							'name'  => 'country',
-							'type'  => 'text',
-						),
-
-						'require' => false,
-						'key'     => 'noptin_country',
-					),
-					array(
-						'type'    => array(
-							'label' => __( 'Phone Number', 'newsletter-optin-box' ),
-							'name'  => 'phone',
-							'type'  => 'text',
-						),
-
-						'require' => false,
-						'key'     => 'noptin_phone',
 					),
 
 				),
