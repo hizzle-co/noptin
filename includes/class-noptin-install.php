@@ -236,6 +236,7 @@ class Noptin_Install {
 		// Add a default subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
+		update_option( 'noptin_created_new_custom_fields', '1' );
 	}
 
 
