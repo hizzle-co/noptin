@@ -124,7 +124,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 
 		$title = "<div><strong><a href='$edit_url'>$title</a></strong></div>";
 
-		return sprintf( '%s %s', $title, $this->row_actions( $row_actions ) );
+		return sprintf( '%s %s', $title, $this->row_actions( apply_filters( 'noptin_campaign_row_actions', $row_actions, $item ) ) );
 	}
 
 	/**
@@ -223,11 +223,9 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 		$failed = (int) get_post_meta( $item->ID, '_noptin_fails', true );
 		$failed = $this->maybe_link( $failed, "_campaign_{$item->ID}", '0' );
 
-		if ( empty( $failed ) ) {
-			return $sent;
-		}
+		$sent   = empty( $failed ) ? $sent : "$sent ($failed failed)";
 
-		return "$sent ($failed failed)";
+		return apply_filters( 'noptin_newsletter_recipients', $sent, $item );
 
 	}
 
@@ -240,7 +238,8 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	public function column_opens( $item ) {
 
 		$opens = (int) get_post_meta( $item->ID, '_noptin_opens', true );
-		return $this->maybe_link( $opens, "_campaign_{$item->ID}_opened", '1' );
+		$opens = $this->maybe_link( $opens, "_campaign_{$item->ID}_opened", '1' );
+		return apply_filters( 'noptin_newsletter_opens', $opens, $item );
 
 	}
 
@@ -253,7 +252,8 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 	public function column_clicks( $item ) {
 
 		$clicks = (int) get_post_meta( $item->ID, '_noptin_clicks', true );
-		return $this->maybe_link( $clicks, "_campaign_{$item->ID}_clicked", '1' );
+		$clicks = $this->maybe_link( $clicks, "_campaign_{$item->ID}_clicked", '1' );
+		return apply_filters( 'noptin_newsletter_clicks', $clicks, $item );
 
 	}
 

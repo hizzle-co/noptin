@@ -131,7 +131,7 @@ function get_noptin_subscriber_opened_campaigns( $subscriber_id ) {
 	if ( empty( $opened_campaigns ) ) {
 		$opened_campaigns = array();
 	}
-	return array_map( 'intval', noptin_parse_list( $opened_campaigns ) );
+	return wp_parse_id_list( $opened_campaigns );
 
 }
 

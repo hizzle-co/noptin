@@ -599,7 +599,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 				__( '%s Equivalent', 'newsletter-optin-box' ),
 				$this->name
 			),
-			'restrict'    => '! isFieldPredefined(field)',
+			'restrict'    => '! isFieldPredefined(field) && ' . $this->get_enable_integration_option_name(),
 			'options'     => $customer_fields,
 			'normal'      => false,
 		);

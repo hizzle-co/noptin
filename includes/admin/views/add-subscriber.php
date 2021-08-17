@@ -74,7 +74,7 @@
 
 					<tr class="form-field-row-submit">
 						<th scope="row"><?php submit_button( __( 'Add Subscriber', 'newsletter-optin-box' ) ); ?></th>
-						<td><a target="_blank" href="https://noptin.com/guide/"><?php _e( 'Need Help?', 'newsletter-optin-box' ); ?></a></td>
+						<td><!--<a target="_blank" href="https://noptin.com/guide/"><?php _e( 'Need Help?', 'newsletter-optin-box' ); ?></a>!--></td>
 					</tr>
 
 				</tbody>

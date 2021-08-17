@@ -149,7 +149,11 @@ class Noptin_Mailer {
 	public function get_tracker( $data = array() ) {
 
 		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
-		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) ) {
+			return '';
+		}
+
+		if ( empty( $data['subscriber_id'] ) && empty( $data['user_id'] ) ) {
 			return '';
 		}
 
@@ -157,7 +161,8 @@ class Noptin_Mailer {
 
 		$url = add_query_arg(
 			array(
-				'sid' => intval( $data['subscriber_id'] ),
+				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
+				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
 				'cid' => intval( $data['campaign_id'] ),
 			),
 			$url
@@ -270,17 +275,21 @@ class Noptin_Mailer {
 	public function make_links_trackable( $content, $data ) {
 
 		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
-		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) ) {
+			return $content;
+		}
+
+		if ( empty( $data['subscriber_id'] ) && empty( $data['user_id'] ) ) {
 			return $content;
 		}
 
 		$url = get_noptin_action_url( 'email_click' );
-
 		$url = add_query_arg(
 			array(
-				'sid'         => intval( $data['subscriber_id'] ),
+				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
+				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
 				'cid'         => intval( $data['campaign_id'] ),
-				'noptin_hide' => 'true'
+				//'noptin_hide' => 'true'
 			),
 			$url
 		);
