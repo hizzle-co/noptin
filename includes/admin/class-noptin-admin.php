@@ -1309,7 +1309,7 @@ class Noptin_Admin {
 
 			$message = sprintf(
 				'%s<br><br><a class="button button-primary" href="%s">%s</a> <a class="button button-secondary" href="%s">%s</a>',
-				__( 'Noptin has changed the way it handles custom fields to give you maximum control. Please set up your custom fields then edit your newsletter subscription forms and add the new custom fields.', 'newsletter-optin-box' ),
+				__( 'Noptin has changed the way it handles custom fields to give you more control.', 'newsletter-optin-box' ),
 				esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ),
 				__( 'Set Up Custom Fields', 'newsletter-optin-box' ),
 				wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_created_new_custom_fields' ), 'noptin_created_new_custom_fields' ),
