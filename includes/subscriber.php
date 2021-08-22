@@ -313,7 +313,7 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
  * @since   1.0.5
  * @return int|string Subscriber id on success, error on failure.
  */
-function add_noptin_subscriber( $fields ) {
+function add_noptin_subscriber( $fields, $silent = false ) {
 	global $wpdb;
 
 	$table  = get_noptin_subscribers_table_name();
@@ -378,7 +378,9 @@ function add_noptin_subscriber( $fields ) {
 		setcookie( $cookie, '1', time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
 	}
 
-	do_action( 'noptin_insert_subscriber', $id, $fields );
+	if ( ! $silent ) {
+		do_action( 'noptin_insert_subscriber', $id, $fields );
+	}
 
 	return $id;
 
@@ -390,7 +392,7 @@ function add_noptin_subscriber( $fields ) {
  * @access  public
  * @since   1.2.3
  */
-function update_noptin_subscriber( $subscriber_id, $details = array() ) {
+function update_noptin_subscriber( $subscriber_id, $details = array(), $silent = false ) {
 	global $wpdb;
 	$subscriber_id = absint( $subscriber_id );
 
@@ -425,12 +427,12 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 	}
 
 	// Subscriber email confirmation.
-	if ( ! empty( $fields['confirmed'] ) && empty( $subscriber->confirmed ) ) {
+	if ( ! empty( $fields['confirmed'] ) && empty( $subscriber->confirmed ) && ! $silent ) {
 		confirm_noptin_subscriber_email( $subscriber );
 	}
 
 	// Are we deactivating the subscriber?
-	if ( $subscriber->is_active() && ! empty( $fields['active'] ) ) {
+	if ( $subscriber->is_active() && ! empty( $fields['active'] ) && ! $silent  ) {
 		deactivate_noptin_subscriber( $subscriber );
 	}
 
@@ -464,7 +466,9 @@ function update_noptin_subscriber( $subscriber_id, $details = array() ) {
 	$old_subscriber = new Noptin_Subscriber( $subscriber_id );
 	$old_subscriber->clear_cache();
 
-	do_action( 'noptin_update_subscriber', $subscriber_id, $details );
+	if ( ! $silent  ) {
+		do_action( 'noptin_update_subscriber', $subscriber_id, $details );
+	}
 
 	return true;
 

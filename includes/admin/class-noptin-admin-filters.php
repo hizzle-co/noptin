@@ -30,9 +30,6 @@ class Noptin_Admin_Filters {
         add_filter( 'manage_users_columns', array( $this, 'modify_users_table' ) );
 		add_filter( 'manage_users_custom_column', array( $this, 'modify_users_table_row' ), 10, 3 );
 
-		// Filters Noptin subscriber's fields.
-		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ), 1 );
-
 		// Export subscribers.
 		add_action( 'noptin_export_subscribers',  array( $this, 'export_subscribers' ) );
 
@@ -111,59 +108,6 @@ class Noptin_Admin_Filters {
             default:
         }
         return $val;
-
-	}
-
-	/**
-	 * Formats imported subscriber fields.
-	 * 
-	 * @param array $subscriber Subscriber fields.
-	 */
-	public function format_imported_subscriber_fields( $subscriber ) {
-
-		$new_subscriber = Noptin_Hooks::guess_fields( $subscriber );
-
-		$mappings = array(
-			'active'           => 'active',
-			'liststatus'       => 'active',
-			'status'           => 'active',
-			'emailconfirmed'   => 'confirmed',
-			'confirmed'        => 'confirmed',
-			'globalstatus'     => 'confirmed',
-			'verified'         => 'confirmed',
-			'is_verified'      => 'confirmed',
-			'datetime'         => 'date_created',
-			'subscribedon'     => 'date_created',
-			'datecreated'      => 'date_created',
-			'subscriptiondate' => 'date_created',
-			'createdon'        => 'date_created',
-			'date'             => 'date_created',
-			'confirmkey'       => 'confirm_key',
-			'conversionpage'   => 'conversion_page',
-			'ip'               => 'ip_address',
-			'ipaddress'        => 'ip_address',
-		);
-
-		foreach( array_keys( $mappings ) as $key ) {
-			$mappings["subscriber$key"] = $mappings[ $key ];
-		}
-
-		// Prepare subscriber fields.
-		foreach ( (array) $subscriber as $key => $value ) {
-			$sanitized = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
-
-			if ( isset( $mappings[ $sanitized ] ) && empty( $new_subscriber[ $mappings[ $sanitized ] ] ) ) {
-				$new_subscriber[ $mappings[ $sanitized ] ] = $value;
-			}
-
-		}
-
-		// Date created.
-		if ( ! empty( $subscriber['date_created'] ) ) {
-			$subscriber['date_created'] = is_string( $subscriber['date_created'] ) ? date( 'Y-m-d', strtotime( $subscriber['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) );
-		}
-
-		return $subscriber;
 
 	}
 

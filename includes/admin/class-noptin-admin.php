@@ -282,7 +282,7 @@ class Noptin_Admin {
 			$version = filemtime( $this->assets_path . 'js/dist/subscribers.js' );
 			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2', 'postbox' ), $version, true );
 
-			$params       = array(
+			$params = array(
 				'ajaxurl'       => admin_url( 'admin-ajax.php' ),
 				'nonce'         => wp_create_nonce( 'noptin_subscribers' ),
 				'add'           => __( 'Add Subscriber', 'newsletter-optin-box' ),
@@ -323,6 +323,10 @@ class Noptin_Admin {
 			// localize and enqueue the script with all of the variable inserted.
 			wp_localize_script( 'noptin-subscribers', 'noptinSubscribers', $params );
 
+			if ( ! empty( $_GET['import'] ) ) {
+				$version = filemtime( $this->assets_path . 'js/dist/subscribers-import.js' );
+				wp_enqueue_script( 'noptin-import-subscribers', $this->assets_url . 'js/dist/subscribers-import.js', array(), $version, true );
+			}
 		}
 
 		// Automation's creation page.

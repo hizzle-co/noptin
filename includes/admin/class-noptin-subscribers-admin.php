@@ -278,6 +278,17 @@ class Noptin_Subscribers_Admin {
 	}
 
 	/**
+	 * Displays the import subscribers.
+	 *
+	 * @since 1.5.5
+	 */
+	public static function render_import_subscribers_page() {
+		do_action( 'noptin_admin_before_subscribers_import_page', noptin()->admin );
+		include plugin_dir_path( __FILE__ ) . 'views/import-subscribers.php';
+		do_action( 'noptin_admin_after_subscribers_import_page', noptin()->admin );
+	}
+
+	/**
 	 * Displays the add subscriber page.
 	 *
 	 * @since 1.5.5

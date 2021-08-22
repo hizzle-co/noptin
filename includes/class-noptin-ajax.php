@@ -49,6 +49,7 @@ class Noptin_Ajax {
 
 		// Import subscribers.
 		add_action( 'wp_ajax_noptin_import_subscribers', array( $this, 'import_subscribers' ) );
+		add_action( 'wp_ajax_noptin_prepare_subscriber_fields', array( $this, 'prepare_subscriber_fields' ) );
 
 		// Import forms.
 		add_action( 'wp_ajax_noptin_import_forms', array( $this, 'import_forms' ) );
@@ -237,6 +238,36 @@ class Noptin_Ajax {
 	}
 
 	/**
+	 * Prepares subscriber fields for import.
+	 *
+	 * @access public
+	 * @since  1.5.6
+	 */
+	public function prepare_subscriber_fields() {
+
+		// Ensure the nonce is valid...
+		check_ajax_referer( 'noptin_subscribers' );
+
+		// ... and that the user can import subscribers.
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			wp_die( -1, 403 );
+		}
+
+		// Maybe abort early.
+		if ( empty( $_POST['headers'] ) ) {
+			wp_send_json_error( __( 'CSV files does not have valid headers', 'newsletter-optin-box' ) );
+		}
+
+		// Prepare headers and try to guess where possible.
+		$headers = noptin_clean( $_POST['headers'] );
+		$fields  = Noptin_Hooks::guess_fields( array_combine( $headers, $headers ) );
+
+		ob_start();
+		require_once plugin_dir_path( __FILE__ ) . 'admin/views/map-imported-subscriber-fields.php';
+		wp_send_json_success( ob_get_clean() );
+	}
+
+	/**
 	 * Imports subscribers
 	 *
 	 * @access      public
@@ -255,170 +286,125 @@ class Noptin_Ajax {
 		}
 
 		// Maybe abort early.
-		if ( ! isset( $_POST['subscribers'] ) ) {
+		if ( ! isset( $_POST['data'] ) ) {
 			wp_die( -1, 400 );
 		}
 
-		// Prepare subscribers.
-		$subscribers = stripslashes_deep( $_POST['subscribers'] );
+		$data = json_decode( wp_unslash( $_POST['data'] ), true );
 
-		// Are there subscribers?
-		if ( empty( $subscribers ) ) {
-			wp_send_json_success( array(
-				'imported'	=> 0,
-				'skipped'	=> 0,
-			) );
-			exit;
+		if ( empty( $data['rows'] ) ) {
+			wp_die( -1, 400 );
 		}
 
 		$table    = get_noptin_subscribers_table_name();
 		$imported = 0;
+		$failed   = 0;
+		$updated  = 0;
 		$skipped  = 0;
 
-		foreach ( $subscribers as $subscriber ) {
-			if( ! is_array( $subscriber ) ) {
-				$skipped ++;
-				log_noptin_message( __( 'Import error: not an array. Skipping.', 'newsletter-optin-box' ) );
-				continue;
-			}
+		foreach ( $data['rows'] as $row ) {
+			$row        = array_combine( wp_unslash( $data['headers'] ), $row );
+			$subscriber = array();
+			$updating   = false;
 
-			$subscriber = apply_filters( 'noptin_format_imported_subscriber_fields', $subscriber );
+			foreach ( $data['mapped'] as $noptin => $_imported ) {
 
-			// Ensure that there is a unique email address.
-			if ( empty( $subscriber['email'] ) ) {
-				log_noptin_message( __( 'Import error: email not found. Skipping.', 'newsletter-optin-box' ) );
-				$skipped ++;
-				continue;
-			}
+				// Manually entered.
+				if ( '-1' == $_imported ) {
 
-			if ( ! is_email( $subscriber['email'] )  ) {
-				log_noptin_message( sprintf(
-					__( 'Import skipping %s: Invalid email' ),
-					esc_html( $subscriber['email'] )
-				));
-				$skipped ++;
-				continue;
-			}
+					if ( isset( $data['custom'][ $noptin ] ) ) {
+						$subscriber[ $noptin ] = $data['custom'][ $noptin ];
+					}
 
-			// Ensure that there is a unique email address.
-			if ( noptin_email_exists( $subscriber['email'] ) ) {
-				log_noptin_message( sprintf(
-					__( 'Import skipping %s: Subscriber already exists' ),
-					esc_html( $subscriber['email'] )
-				));
-				$skipped ++;
-				continue;
-			}
-
-			// Sanitize email status
-			if( ! isset( $subscriber['confirmed'] ) ) {
-				$subscriber['confirmed'] = 0;
-			}
-
-			if( is_string( $subscriber['confirmed'] ) ) {
-				$subscriber['confirmed'] = strtolower( $subscriber['confirmed'] );
-			}
-
-			if ( ( is_numeric( $subscriber['confirmed'] ) && 0 === ( int ) $subscriber['confirmed'] ) || 
-			    false         === $subscriber['confirmed'] || 
-				'false'       === $subscriber['confirmed'] || 
-				'unconfirmed' === $subscriber['confirmed'] || 
-				''            === $subscriber['confirmed'] || 
-				'no'          === $subscriber['confirmed'] ) {
-				$subscriber['confirmed'] = 0;
-			} else {
-				$subscriber['confirmed'] = 1;
-			}
-
-			// Sanitize subscriber status
-
-			if( ! isset( $subscriber['active'] ) ) {
-				$subscriber['active'] = 1;
-			}
-
-			if( is_string( $subscriber['active'] ) ) {
-				$subscriber['active'] = strtolower( $subscriber['active'] );
-			}
-			if ( 
-				( is_numeric( $subscriber['active'] ) && 1 === ( int ) $subscriber['active'] )  || 
-				true         === $subscriber['active'] ||
-				'true'       === $subscriber['active'] ||
-				'subscribed' === $subscriber['active'] ||
-				'active'     === $subscriber['active'] ||
-				'yes'        === $subscriber['active'] ) {
-				$subscriber['active'] = 0;
-			} else {
-				$subscriber['active'] = 1;
-			}
-
-			// Maybe split name into first and last.
-			if ( isset( $subscriber['name'] ) ) {
-				$names = noptin_split_subscriber_name( $subscriber['name'] );
-
-				$subscriber['first_name']   = empty( $subscriber['first_name'] ) ? $names[0] : trim( $subscriber['first_name'] );
-				$subscriber['second_name']  = empty( $subscriber['second_name'] ) ? $names[1] : trim( $subscriber['second_name'] );
-				unset( $subscriber['name'] );
-			}
-
-			// Save the main subscriber fields.
-			$database_fields = array(
-				'email'        => $subscriber['email'],
-				'first_name'   => empty( $subscriber['first_name'] ) ? '' : $subscriber['first_name'],
-				'second_name'  => empty( $subscriber['second_name'] ) ? '' : $subscriber['second_name'],
-				'confirm_key'  => empty( $subscriber['confirm_key'] ) ? md5( $subscriber['email'] . wp_generate_password( 32 ) ) : $subscriber['confirm_key'],
-				'date_created' => empty( $subscriber['date_created'] ) ? date( 'Y-m-d', current_time( 'timestamp' ) ) : $subscriber['date_created'],
-				'confirmed'	   => $subscriber['confirmed'],
-				'active'	   => $subscriber['active'],
-			);
-
-			if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
-				$skipped ++;
-				log_noptin_message( __( 'Import error:', 'newsletter-optin-box' ) . ' ' . $wpdb->last_error );
-				continue;
-			}
-
-			$id = $wpdb->insert_id;
-
-			$meta = $subscriber['meta'];
-			unset( $subscriber['meta'] );
-
-			$extra_meta = array_diff_key( $subscriber, $database_fields );
-			foreach ( $extra_meta as $field => $value ) {
-
-				if ( is_null( $value ) ) {
 					continue;
 				}
-				if ( ! isset( $meta[ $field ] ) ) {
-					$meta[ $field ] = array();
-				}
 
-				$meta[ $field ][] = $value;
+				// Mapped.
+				if ( isset( $row[ $_imported ] ) && '' !== $row[ $_imported ] && null !== $row[ $_imported ] ) {
+					$subscriber[ $noptin ] = $row[ $_imported ];
+
+					if ( 'active' == $noptin && is_numeric( $_imported ) ) {
+						$subscriber[ $noptin ] = (int) $subscriber[ $noptin ] == '1';
+					}
+
+					if ( 'confirmed' == $noptin && is_numeric( $_imported ) ) {
+						$subscriber[ $noptin ] = (int) $subscriber[ $noptin ] == '1';
+					}
+
+					if ( '_subscriber_via' == $noptin && ( empty( $subscriber[ $noptin ] ) || '-1' == $_imported ) ) {
+						$subscriber[ $noptin ] = 'import';
+					}
+				}
 
 			}
 
-			foreach ( $meta as $field => $value ) {
-
-				if ( ! is_array( $value ) ) {
-					$value = array( $value );
-				}
-
-				foreach ( $value as $val ) {
-					update_noptin_subscriber_meta( $id, $field, $val );
-				}
+			if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) ) {
+				$failed ++;
+				continue;
 			}
 
-			update_noptin_subscriber_meta( $id, '_subscriber_via', 'import' );
-			do_action( 'noptin_after_import_subscriber', $id, $subscriber, $meta );
+			if ( isset( $subscriber['confirmed'] ) ) {
 
-			$imported += 1;
+				$subscriber['confirmed'] = strtolower( $subscriber['confirmed'] );
+				if ( ( is_numeric( $subscriber['confirmed'] ) && 0 === ( int ) $subscriber['confirmed'] ) || 
+					false         === $subscriber['confirmed'] || 
+					'false'       === $subscriber['confirmed'] || 
+					'unconfirmed' === $subscriber['confirmed'] || 
+					''            === $subscriber['confirmed'] || 
+					'no'          === $subscriber['confirmed'] ) {
+					$subscriber['confirmed'] = 0;
+				} else {
+					$subscriber['confirmed'] = 1;
+				}
+
+			}
+
+			if ( isset( $subscriber['active'] ) ) {
+
+				$subscriber['active'] = strtolower( $subscriber['active'] );
+				if ( ( is_numeric( $subscriber['active'] ) && 1 === ( int ) $subscriber['active'] ) || 
+					true         === $subscriber['active'] || 
+					'true'       === $subscriber['active'] || 
+					'subscribed' === $subscriber['active'] || 
+					'active'     === $subscriber['active'] || 
+					'yes'        === $subscriber['active'] ) {
+					$subscriber['active'] = 0;
+				} else {
+					$subscriber['active'] = 1;
+				}
+
+			}
+
+			$_subscriber = get_noptin_subscriber( $subscriber['email'] );
+			if ( $_subscriber->exists() ) {
+
+				if ( empty( $data['update'] ) ) {
+					$skipped ++;
+					continue;
+				}
+
+				$result   = update_noptin_subscriber( $_subscriber->id, $subscriber, true );
+				$updating = true;
+			} else {
+				$result = add_noptin_subscriber( $subscriber, true );
+			}
+
+			if ( true === $result || is_numeric( $result ) ) {
+
+				if ( $updating ) {
+					$updated ++;
+				} else {
+					$imported ++;
+				}
+
+				do_action( 'noptin_after_import_subscriber', $updating ? $_subscriber->id : $result, $subscriber, $updating );
+			} else {
+				$failed ++;
+			}
 
 		}
 
-		wp_send_json_success( array(
-			'imported'	=> $imported,
-			'skipped'	=> $skipped,
-		) );
-		exit;
+		wp_send_json_success( compact( 'imported', 'updated', 'failed', 'skipped' ) );
 
 	}
 
