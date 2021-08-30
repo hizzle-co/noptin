@@ -215,6 +215,7 @@ class Noptin {
 			require_once $plugin_path . 'vendor/autoload.php';
 			require_once $plugin_path . 'includes/functions.php';
 			require_once $plugin_path . 'includes/subscriber.php';
+			require_once $plugin_path . 'includes/forms.php';
 			require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
 			require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 

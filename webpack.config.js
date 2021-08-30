@@ -30,6 +30,7 @@ module.exports = {
 		blocks: "./includes/assets/js/src/blocks.js",
 		subscribers: "./includes/assets/js/src/subscribers.js",
 		"subscribers-import": "./includes/assets/js/src/subscribers-import.js",
+		"form-scripts": "./includes/assets/js/src/form-scripts.js",
 	},
 	output: {
 		filename: "[name].js",

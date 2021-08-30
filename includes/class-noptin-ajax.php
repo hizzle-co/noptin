@@ -4,7 +4,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
-
 /**
  * Handles Noptin Ajax Requests
  *
@@ -18,9 +17,10 @@ class Noptin_Ajax {
 	public function __construct() {
 
 		// Register new subscriber.
-		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
-		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) );
-		add_action( 'wp_ajax_noptin_admin_add_subscriber', array( $this, 'admin_add_subscriber' ) );
+		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
+		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
+		add_action( 'wp_ajax_noptin_process_ajax_subscriber', array( $this, 'add_subscriber_new' ) );
+		add_action( 'wp_ajax_nopriv_noptin_process_ajax_subscriber', array( $this, 'add_subscriber_new' ) );
 
 		// Log form impressions.
 		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
@@ -542,6 +542,7 @@ class Noptin_Ajax {
 	 * @access      public
 	 * @since       1.0.5
 	 * @return      void
+	 * @deprecated
 	 */
 	public function add_subscriber() {
 
@@ -713,40 +714,138 @@ class Noptin_Ajax {
 		exit;
 
 	}
-
+	// TODO: Add redirect_url && success message to shortcode, add novalidate to form, use filters to match the functionality of the above method.
 	/**
-	 * Manually add a new subscriber via ajax
+	 * Adds a new subscriber via ajax
 	 *
 	 * @access      public
-	 * @since       1.2.6
+	 * @since       1.6.0
 	 * @return      void
 	 */
-	public function admin_add_subscriber() {
+	public function add_subscriber_new() {
 
-		// Ensure the nonce is valid...
-		check_ajax_referer( 'noptin_subscribers' );
-
-		// ... and that the user can import subscribers.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
+		// Verify nonce.
+		if ( noptin_verify_subscription_nonces() ) {
+			check_ajax_referer( 'noptin_subscription_nonce' );
 		}
 
-		$fields = array(
-			'name'            => $_POST['name'],
-			'email'           => $_POST['email'],
-			'_subscriber_via' => 'manual',
-		);
-
-		$inserted = add_noptin_subscriber( $fields );
-
-		if ( is_string( $inserted ) ) {
-			die( $inserted );
+		// avoid bot submissions.
+		if ( ! empty( $_POST['noptin_ign'] ) ) {
+			return;
 		}
 
-		do_action( 'noptin_after_admin_add_subscriber', $inserted );
+		/**
+		 * Fires before a subscriber is added via ajax.
+		 *
+		 * @since 1.2.4
+		 */
+		do_action( 'noptin_before_add_ajax_subscriber' );
 
-		wp_send_json_success( true );
+		// Prepare form fields.
+		$source     = empty( $_POST['source'] ) ? '' : sanitize_text_field( wp_unslash( $_POST['source'] ) );
+		$fields     = empty( $_POST['noptin_fields'] ) ? array() : wp_unslash( $_POST['noptin_fields'] );
+		$to_process = empty( $_POST['processed_fields'] ) ? 'email' : wp_unslash( $_POST['processed_fields'] );
+		$to_process = apply_filters( 'noptin_custom_fields_to_process', array_map( 'get_noptin_custom_field', noptin_parse_list( $to_process ) ), $source );
+		$subscriber = array();
+
+		foreach ( $to_process as $custom_field ) {
+
+			if ( empty( $custom_field ) ) {
+				continue;
+			}
+
+			$merge_tag = $custom_field['merge_tag'];
+			if ( ! empty( $custom_field['required'] ) && ( ! isset( $fields[ $merge_tag ] ) || '' === $fields[ $merge_tag ] ) ) {
+				wp_send_json_error(
+					sprintf(
+						__( 'The "%s" field is required.', 'newsletter-optin-box' ),
+						sanitize_text_field( $custom_field['label'] )
+					)
+				);
+			}
+
+			$value = isset( $fields[ $merge_tag ] ) ? $fields[ $merge_tag ] : '';
+
+			if ( 'checkbox' === $custom_field['type'] ) {
+				$value = (int) ! empty( $value );
+			}
+
+			$subscriber[ $merge_tag ] = $value;
+	
+		}
+
+		if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) ) {
+			wp_send_json_error( __( 'Missing or invalid email address.', 'newsletter-optin-box' ) );
+		}
+
+		// Add the subscriber's IP address.
+		$address = noptin_get_user_ip();
+		if ( ! empty( $address ) && '::1' !== $address ) {
+			$subscriber['ip_address'] = $address;
+		}
+
+		if ( ! empty( $_POST['conversion_page'] ) ) {
+			$subscriber['conversion_page'] = esc_url_raw( trim( wp_unslash( $_POST['conversion_page'] ) ) );
+		}
+
+		if ( ! empty( $source ) ) {
+			$subscriber['_subscriber_via'] = noptin_clean( $source );
+		}
+
+		/**
+		 * Filters subscriber details when adding a new subscriber via ajax.
+		 *
+		 * @param array $subscriber Subscriber details
+		 * @param string $source Subscriber source
+		 * @since 1.6.0
+		 */
+		$subscriber    = apply_filters( 'noptin_ajax_subscriber_details', $subscriber, $source );
+		$subscriber_id = add_noptin_subscriber( $subscriber );
+
+		// Check if an error occured while registering the subscriber.
+		if ( is_string( $subscriber_id ) ) {
+			wp_send_json_error( $subscriber_id );
+		}
+
+		// Fired after a subscriber is added to the newsletter.
+		do_action( 'noptin_add_ajax_subscriber', $subscriber_id, $source );
+
+		// Either display a success message or redirect to a success URL.
+		if ( ! empty( $_POST['redirect_url'] ) ) {
+
+			$result = array(
+				'action'   => 'redirect',
+				'redirect' => esc_url_raw( trim( wp_unslash( $_POST['redirect_url'] ) ) ),
+			);
+
+		} else {
+
+			// Either fetch the default success msg or use an overidden success message.
+			$result = array(
+				'action' => 'msg',
+				'msg'    => isset( $_POST['success_msg'] ) ? esc_html( trim( wp_unslash( $_POST['success_msg'] ) ) ) : get_noptin_option( 'success_message' ),
+			);
+
+			// Ensure the success message is not empty.
+			if ( empty( $result['msg'] ) ) {
+				$result['msg'] = esc_html__( 'Thanks for subscribing to the newsletter', 'newsletter-optin-box' );
+			}
+
+			// Replace any merge tags in the success message.
+			$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $subscriber_id ) );
+
+		}
+
+		// Update form subscriptions.
+		if ( is_numeric( $source ) ) {
+			$count = (int) get_post_meta( $source, '_noptin_subscribers_count', true );
+			update_post_meta( $source, '_noptin_subscribers_count', $count + 1 );
+		}
+
+		// Send back the result.
+		wp_send_json_success( $result );
 		exit;
+
 	}
 
 	/**

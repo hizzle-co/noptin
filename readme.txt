@@ -140,8 +140,11 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.6.0 =
+* Add Noptin shortcode
+
 = 1.5.6 =
-Import newsletter subscribers page is blank - FIXED
+* Import newsletter subscribers page is blank - FIXED
 
 = 1.5.5 =
 * Better management of newsletter subscriber fields - ADDED

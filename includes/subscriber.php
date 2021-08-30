@@ -1356,6 +1356,17 @@ function get_noptin_custom_fields() {
 }
 
 /**
+ * Returns a single custom field.
+ *
+ * @since 1.5.5
+ * @return array|false Array of field data or false if the field does not exist.
+ */
+function get_noptin_custom_field( $merge_tag ) {
+	$custom_field = wp_list_filter( get_noptin_custom_fields(), array( 'merge_tag' => trim( $merge_tag ) ) );
+	return current( $custom_field );
+}
+
+/**
  * Retrieves Noptin subscription sources.
  *
  * @param string $source Subscrption source.
@@ -1384,6 +1395,7 @@ function noptin_format_subscription_source( $source ) {
 		'comment'              => __( 'Comment Form', 'newsletter-optin-box' ),
 		'registration'         => __( 'Registration Form', 'newsletter-optin-box' ),
 		'manual'               => __( 'Manually Added', 'newsletter-optin-box' ),
+		'shortcode'            => __( 'Subscription Shortcode', 'newsletter-optin-box' ),
 	);
 
 	if ( isset( $sources[ $source ] ) ) {

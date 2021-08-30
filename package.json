@@ -1,12 +1,11 @@
 {
 	"name": "noptin",
-	"version": "1.5.0",
+	"version": "1.6.0",
 	"private": true,
 	"description": "WordPress Newsletter Plugin",
 	"scripts": {
 		"test": "test",
-		"sniff": "phpcs includes",
-		"beautify": "phpcbf includes",
+		"cssform": "postcss includes/assets/css/postcss/form-styles.css -o includes/assets/css/form-styles.css",
 		"cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
 		"cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
 		"csshelper": "postcss includes/assets/css/postcss/noptin-helper.css -o includes/assets/css/noptin-helper.css",
@@ -28,6 +27,7 @@
 	},
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
+		"axios": "0.21.1",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.3.1",

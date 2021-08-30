@@ -26,6 +26,7 @@ class Noptin_Custom_Fields {
 
 		do_action( 'noptin_load_custom_field_files' );
 
+		// Load custom field types.
 		foreach ( get_noptin_custom_field_types() as $type => $data ) {
 
 			if ( ! empty( $data['class'] ) ) {

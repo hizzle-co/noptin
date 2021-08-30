@@ -1,0 +1,240 @@
+.noptin-styles-basic {
+    margin: 1em 0;
+	max-width: 480px;
+
+	.noptin-form-field-wrapper,
+	.noptin-form-description,
+	.noptin-form-title,
+	noptin-form-note {
+		margin-bottom: 1em;
+	}
+
+	input, .noptin-label {
+		width: auto;
+		display: block;
+		box-sizing: border-box;
+		cursor: auto;
+		height: auto;
+		line-height: normal;
+
+		&:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+	}
+
+	.noptin-label {
+		font-weight: 700;
+		margin-bottom: 6px;
+		display: block;
+	}
+
+	.noptin-label>span {
+		font-weight: 400;
+	}
+
+	.noptin-text {
+		min-height: 32px;
+		width: 100%;
+		max-width: 480px;
+
+		&[type=number] {
+			min-width: 40px;
+		}
+	}
+
+	.noptin-birthday-div {
+		max-width: 480px;
+	}
+
+	input[type=checkbox], input[type=radio] {
+		position: relative;
+		margin: 0 6px 0 0;
+		padding: 0;
+		height: 13px;
+		width: 13px;
+		display: inline-block;
+		border: 0
+	}
+
+	.rtl & input[type=checkbox], .rtl & input[type=radio] {
+		margin: 0 0 0 6px
+	}
+
+	input[type=checkbox] {
+		appearance: checkbox;
+	}
+
+	input[type=radio] {
+		appearance: radio
+	}
+
+	.button {
+		cursor: pointer;
+		display: inline-block;
+		appearance: none;
+	}
+
+}
+
+.noptin-form-notice {
+	clear: both;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+
+	&:not(.noptin-form-success,.noptin-form-error) {
+		display: none;
+	}
+
+}
+
+.noptin-form-success {
+	color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.noptin-form-error {
+	color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.noptin-label-hide .noptin-label {
+	border: 0;
+    clip: rect(1px,1px,1px,1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal!important;
+}
+
+p.noptin-form-field-wrapper.noptin-form-field-birthday {
+	margin-bottom: 0;
+}
+
+@media screen and (min-width: 520px) {
+	.noptin-template-condensed {
+
+		.noptin-form-fields {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: flex-end;
+		}
+
+		.noptin-form-field-wrapper:not(.noptin-form-field-submit) {
+			margin-right: 10px;
+			min-width: 230px;
+			flex: 1;
+		}
+
+		&.noptin-label-hide {
+			.noptin-form-fields {
+				.noptin-form-field-wrapper:nth-last-child(2) {
+					margin-right: 0;
+		
+					.noptin-text {
+						border-top-right-radius: 0px;
+						border-bottom-right-radius: 0px;
+						margin-right: 0;
+					}
+				}
+			}
+		
+			.noptin-form-submit {
+				border-top-left-radius: 0px;
+				border-bottom-left-radius: 0px;
+				margin-left: 0;
+			}
+		}
+	}
+}
+
+.noptin-newsletter-form {
+	position: relative !important;
+
+	.noptin-loader {
+		margin: -10px;
+		top: 0;
+		left: 0;
+		bottom: 0;
+    	right: 0;
+		cursor: progress;
+		position: absolute;
+		align-items: center;
+		justify-content: center;
+		display: none;
+		background-color: rgb(255 255 255 / 62%);
+
+		span {
+			display: inline-block;
+			background-color: #23282d;
+			opacity: 0.75;
+			width: 24px;
+			height: 24px;
+			border: none;
+			border-radius: 100%;
+			padding: 0;
+			position: relative;
+		}
+
+		span::before {
+			content: '';
+			position: absolute;
+			background-color: #fbfbfc;
+			top: 4px;
+			left: 4px;
+			width: 6px;
+			height: 6px;
+			border: none;
+			border-radius: 100%;
+			transform-origin: 8px 8px;
+			animation-name: noptin-spin;
+			animation-duration: 1000ms;
+			animation-timing-function: linear;
+			animation-iteration-count: infinite;
+
+			@media (prefers-reduced-motion: reduce) {
+				animation-name: noptin-blink;
+				animation-duration: 2000ms;
+			}
+
+		}
+
+	}
+
+	&.noptin-submitting .noptin-loader {
+		display: flex;
+	}
+}
+
+@keyframes noptin-spin {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes noptin-blink {
+	from {
+		opacity: 0;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
