@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pelago\Emogrifier\Utilities;
 
 /**
@@ -59,9 +61,9 @@ class CssConcatenator
      * @param string[] $selectors Array of selectors for the rule, e.g. ["ul", "ol", "p:first-child"].
      * @param string $declarationsBlock The property declarations, e.g. "margin-top: 0.5em; padding: 0".
      * @param string $media The media query for the rule, e.g. "@media screen and (max-width:639px)",
-     *                      or an empty string if none.
+     *        or an empty string if none.
      */
-    public function append(array $selectors, $declarationsBlock, $media = '')
+    public function append(array $selectors, string $declarationsBlock, string $media = ''): void
     {
         $selectorsAsKeys = \array_flip($selectors);
 
@@ -87,18 +89,18 @@ class CssConcatenator
     /**
      * @return string
      */
-    public function getCss()
+    public function getCss(): string
     {
         return \implode('', \array_map([self::class, 'getMediaRuleCss'], $this->mediaRules));
     }
 
     /**
      * @param string $media The media query for rules to be appended, e.g. "@media screen and (max-width:639px)",
-     *                      or an empty string if none.
+     *        or an empty string if none.
      *
      * @return \stdClass Object with properties as described for elements of `$mediaRules`.
      */
-    private function getOrCreateMediaRuleToAppendTo($media)
+    private function getOrCreateMediaRuleToAppendTo(string $media): \stdClass
     {
         $lastMediaRule = \end($this->mediaRules);
         if ($lastMediaRule !== false && $media === $lastMediaRule->media) {
@@ -117,12 +119,12 @@ class CssConcatenator
      * Tests if two sets of selectors are equivalent (i.e. the same selectors, possibly in a different order).
      *
      * @param mixed[] $selectorsAsKeys1 Array in which the selectors are the keys, and the values are of no
-     *                                  significance.
+     *        significance.
      * @param mixed[] $selectorsAsKeys2 Another such array.
      *
      * @return bool
      */
-    private static function hasEquivalentSelectors(array $selectorsAsKeys1, array $selectorsAsKeys2)
+    private static function hasEquivalentSelectors(array $selectorsAsKeys1, array $selectorsAsKeys2): bool
     {
         return \count($selectorsAsKeys1) === \count($selectorsAsKeys2)
             && \count($selectorsAsKeys1) === \count($selectorsAsKeys1 + $selectorsAsKeys2);
@@ -133,7 +135,7 @@ class CssConcatenator
      *
      * @return string CSS for the media rule.
      */
-    private static function getMediaRuleCss(\stdClass $mediaRule)
+    private static function getMediaRuleCss(\stdClass $mediaRule): string
     {
         $css = \implode('', \array_map([self::class, 'getRuleBlockCss'], $mediaRule->ruleBlocks));
         if ($mediaRule->media !== '') {
@@ -144,11 +146,11 @@ class CssConcatenator
 
     /**
      * @param \stdClass $ruleBlock Object with properties as described for elements of the `ruleBlocks` property of
-     *                            elements of `$mediaRules`.
+     *        elements of `$mediaRules`.
      *
      * @return string CSS for the rule block.
      */
-    private static function getRuleBlockCss(\stdClass $ruleBlock)
+    private static function getRuleBlockCss(\stdClass $ruleBlock): string
     {
         $selectors = \array_keys($ruleBlock->selectorsAsKeys);
         return \implode(',', $selectors) . '{' . $ruleBlock->declarationsBlock . '}';

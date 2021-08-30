@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pelago\Emogrifier\HtmlProcessor;
 
 use Pelago\Emogrifier\CssInliner;
@@ -21,7 +23,7 @@ class HtmlPruner extends AbstractHtmlProcessor
      *
      * @var string
      */
-    const DISPLAY_NONE_MATCHER
+    private const DISPLAY_NONE_MATCHER
         = '//*[@style and contains(translate(translate(@style," ",""),"NOE","noe"),"display:none")'
         . ' and not(@class and contains(concat(" ", normalize-space(@class), " "), " -emogrifier-keep "))]';
 
@@ -30,14 +32,13 @@ class HtmlPruner extends AbstractHtmlProcessor
      *
      * @return self fluent interface
      */
-    public function removeElementsWithDisplayNone()
+    public function removeElementsWithDisplayNone(): self
     {
         $elementsWithStyleDisplayNone = $this->xPath->query(self::DISPLAY_NONE_MATCHER);
         if ($elementsWithStyleDisplayNone->length === 0) {
             return $this;
         }
 
-        /** @var \DOMNode $element */
         foreach ($elementsWithStyleDisplayNone as $element) {
             $parentNode = $element->parentNode;
             if ($parentNode !== null) {
@@ -61,7 +62,7 @@ class HtmlPruner extends AbstractHtmlProcessor
      *
      * @return self fluent interface
      */
-    public function removeRedundantClasses(array $classesToKeep = [])
+    public function removeRedundantClasses(array $classesToKeep = []): self
     {
         $elementsWithClassAttribute = $this->xPath->query('//*[@class]');
 
@@ -81,14 +82,12 @@ class HtmlPruner extends AbstractHtmlProcessor
      *
      * @param \DOMNodeList $elements
      * @param string[] $classesToKeep
-     *
-     * @return void
      */
-    private function removeClassesFromElements(\DOMNodeList $elements, array $classesToKeep)
+    private function removeClassesFromElements(\DOMNodeList $elements, array $classesToKeep): void
     {
         $classesToKeepIntersector = new ArrayIntersector($classesToKeep);
 
-        /** @var \DOMNode $element */
+        /** @var \DOMElement $element */
         foreach ($elements as $element) {
             $elementClasses = \preg_split('/\\s++/', \trim($element->getAttribute('class')));
             $elementClassesToKeep = $classesToKeepIntersector->intersectWith($elementClasses);
@@ -104,12 +103,10 @@ class HtmlPruner extends AbstractHtmlProcessor
      * Removes the `class` attribute from each element in `$elements`.
      *
      * @param \DOMNodeList $elements
-     *
-     * @return void
      */
-    private function removeClassAttributeFromElements(\DOMNodeList $elements)
+    private function removeClassAttributeFromElements(\DOMNodeList $elements): void
     {
-        /** @var \DOMNode $element */
+        /** @var \DOMElement $element */
         foreach ($elements as $element) {
             $element->removeAttribute('class');
         }
@@ -128,7 +125,7 @@ class HtmlPruner extends AbstractHtmlProcessor
      *
      * @throws \BadMethodCallException if `inlineCss` has not first been called on `$cssInliner`
      */
-    public function removeRedundantClassesAfterCssInlined(CssInliner $cssInliner)
+    public function removeRedundantClassesAfterCssInlined(CssInliner $cssInliner): self
     {
         $classesToKeepAsKeys = [];
         foreach ($cssInliner->getMatchingUninlinableSelectors() as $selector) {
