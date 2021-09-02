@@ -12,6 +12,36 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Returns the core `[noptin]` shortcode attributes.
+ *
+ * @since 1.6.0
+ * @ignore
+ * @private
+ * @return array
+ */
+function get_default_noptin_shortcode_atts() {
+
+	return array(
+		'fields'      => 'email', // Comma separated array of fields, or all
+		'source'      => 'shortcode', // Manual source of the subscriber. Can also be a form id.
+		'labels'      => 'hide', // Whether or not to show the field label.
+		'wrap'        => 'p', // Which element to wrap field values in.
+		'styles'      => 'basic', // Set to inherit to inherit theme styles.
+		'title'       => '', // Form title.
+		'description' => '', // Form description.
+		'note'        => '', // Privacy note.
+		'html_id'     => '', // ID of the form.
+		'html_name'   => '', // HTML name of the form.
+		'html_class'  => '', // HTML class of the form.
+		'redirect'    => '', // An optional URL to redirect users after successful subscriptions.
+		'success_msg' => '', // Overide the success message shwon to users after successful subscriptions.
+		'submit'      => __( 'Subscribe', 'noptin-newsletter' ),
+		'template'    => 'normal',
+	);
+
+}
+
+/**
  * Callback for the `[noptin]` shortcode.
  *
  * @param array $atts Shortcode attributes.
@@ -22,28 +52,29 @@ defined( 'ABSPATH' ) || exit;
  */
 function _noptin_shortcode( $atts ) {
 
-	$atts = shortcode_atts(
-		array(
-			'fields'      => 'email', // Comma separated array of fields, or all
-			'source'      => 'shortcode', // Manual source of the subscriber. Can also be a form id.
-			'labels'      => 'hide', // Whether or not to show the field label.
-			'wrap'        => 'p', // Which element to wrap field values in.
-			'styles'      => 'basic', // Set to inherit to inherit theme styles.
-			'title'       => '', // Form title.
-			'description' => '', // Form description.
-			'note'        => '', // Privacy note.
-			'html_id'     => '', // ID of the form.
-			'html_name'   => '', // HTML name of the form.
-			'html_class'  => '', // HTML class of the form.
-			'redirect'    => '', // An optional URL to redirect users after successful subscriptions.
-			'success_msg' => '', // Overide the success message shwon to users after successful subscriptions.
-			'submit'      => __( 'Subscribe', 'noptin-newsletter' ),
-			'template'    => 'normal',
-		),
-		$atts,
-		'noptin'
-	);
+	$default_atts = get_default_noptin_shortcode_atts();
 
+	foreach ( get_noptin_connection_providers() as $key => $connection ) {
+
+		if ( empty( $connection->list_providers ) ) {
+			continue;
+		}
+
+		$default_atts["{$key}_list"] = $connection->get_default_list_id();
+
+		if ( $connection->supports( 'tags' ) ) {
+			$default_atts["{$key}_tags"] = get_noptin_option( "noptin_{$key}_default_tags", '' );
+		}
+
+		// Secondary fields.
+		foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
+			$default_atts["{$key}_$secondary"] = get_noptin_option( "noptin_{$key}_default_{$secondary}", '' );
+		}
+
+	}
+
+	$default_atts = apply_filters( 'default_noptin_shortcode_atts', $default_atts, $atts );
+	$atts         = shortcode_atts( $default_atts, $atts, 'noptin' );
 	return get_noptin_subscription_form_html( $atts );
 }
 add_shortcode( 'noptin', '_noptin_shortcode' );
@@ -335,6 +366,22 @@ function display_noptin_subscription_form( $args ) {
 
 	if ( ! empty( $args['success_msg'] ) ) {
 		printf( '<input type="hidden" name="success_msg" class="noptin_success_msg" value="%s" />', esc_attr( $args['success_msg'] ) );
+	}
+
+	// Extra attributes.
+	$default_keys = array_keys( get_default_noptin_shortcode_atts() );
+	foreach ( $args as $key => $value ) {
+
+		if ( in_array( $key, $default_keys ) || '' === $value ) {
+			continue;
+		}
+
+		printf(
+			'<input type="hidden" name="noptin_misc[%s]" class="noptin_misc_%s" value="%s" />',
+			esc_attr( $key ),
+			sanitize_html_class( $key ),
+			esc_attr( is_scalar( $value ) ? $value : wp_json_encode( $value ) )
+		);
 	}
 
 	// Display form note.

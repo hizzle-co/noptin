@@ -23,7 +23,7 @@ class Noptin_Hooks {
 		// (Maybe) schedule a cron that runs daily.
 		add_action( 'init', array( $this, 'maybe_create_scheduled_event' ) );
 
-		// (Maybe) schedule a cron that runs daily.
+		// (Maybe) subscribe users from custom forms.
 		add_action( 'init', array( $this, 'maybe_subscribe' ), 1000 );
 
 		// (Maybe) delete sent campaigns.
@@ -115,10 +115,10 @@ class Noptin_Hooks {
 	 * Subscribes users from custom integration.
 	 *
 	 */
-	public function maybe_subscribe( $submitted = null ) {
+	public function maybe_subscribe() {
 
-		$submitted = is_array( $submitted ) ? $submitted : wp_unslash( array_merge( (array) $_GET, (array) $_POST ) );
-		$checked   = isset( $data['noptin-custom-subscribe'] ) ? $data['noptin-custom-subscribe'] : '';
+		$submitted = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) );
+		$checked   = isset( $submitted['noptin-custom-subscribe'] ) ? $submitted['noptin-custom-subscribe'] : '';
 
 		// Abort if no subscription was attempted.
 		if ( ! in_array( $checked, array( 1, '1', 'yes', true, 'true', 'y' ), true ) || apply_filters( 'noptin_skip_custom_subscribe', false ) ) {
@@ -129,7 +129,7 @@ class Noptin_Hooks {
 		$data = self::guess_fields( $submitted );
 
 		// Add connection data.
-		$data = $this->add_connections( $data, $submitted );
+		$data = self::add_connections( $data, $submitted );
 
 		// Save the subscriber.
 		add_noptin_subscriber( map_deep( $data, 'esc_html' ) );
@@ -141,7 +141,7 @@ class Noptin_Hooks {
 	 * @param array $data
 	 * @param array $submitted
 	 */
-	public function add_connections( $data, $submitted ) {
+	public static function add_connections( $data, $submitted ) {
 
 		foreach ( get_noptin_connection_providers() as $key => $connection ) {
 
@@ -161,7 +161,7 @@ class Noptin_Hooks {
 			}
 
 			// Secondary fields.
-			foreach ( array_keys( $this->list_providers->get_secondary() ) as $secondary ) {
+			foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
 				if ( isset( $submitted["{$key}_$secondary"] ) ) {
 					$data[ $key ][ $secondary ] = noptin_parse_list( $submitted["{$key}_$secondary"], true );
 				}

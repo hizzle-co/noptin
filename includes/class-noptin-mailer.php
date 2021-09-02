@@ -490,7 +490,12 @@ class Noptin_Mailer {
 		$name       = $this->get_from_name();
 		$reply_to   = $this->get_reply_to();
 		$content    = $this->get_content_type();
-		$headers    = array( "Reply-To:$name <$reply_to>" );
+		$headers    = array();
+
+		if ( ! empty( $reply_to ) && ! empty( $name ) ) {
+			$headers = array( "Reply-To:$name <$reply_to>" );
+		}
+
 		$headers[]  = "Content-Type:$content";
 
 		if ( ! empty( $this->mailer_data['merge_tags']['unsubscribe_url'] ) ) {
@@ -538,7 +543,7 @@ class Noptin_Mailer {
 
 		$reply_to = get_noptin_option( 'reply_to',  get_option( 'admin_email' ) );
 
-		if ( ! is_email( $reply_to ) ) {
+		if ( ! is_email( $reply_to ) && ! empty( $reply_to ) ) {
 			$reply_to =  get_option( 'admin_email' );
 		}
 

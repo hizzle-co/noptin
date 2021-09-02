@@ -741,19 +741,22 @@ class Noptin_Ajax {
 		 */
 		do_action( 'noptin_before_add_ajax_subscriber' );
 
-		// Prepare form fields.
+		// Prepare form data.
 		$source     = empty( $_POST['source'] ) ? '' : sanitize_text_field( wp_unslash( $_POST['source'] ) );
 		$fields     = empty( $_POST['noptin_fields'] ) ? array() : wp_unslash( $_POST['noptin_fields'] );
+		$misc       = empty( $_POST['noptin_misc'] ) ? array() : wp_unslash( $_POST['noptin_misc'] );
 		$to_process = empty( $_POST['processed_fields'] ) ? 'email' : wp_unslash( $_POST['processed_fields'] );
 		$to_process = apply_filters( 'noptin_custom_fields_to_process', array_map( 'get_noptin_custom_field', noptin_parse_list( $to_process ) ), $source );
 		$subscriber = array();
 
+		// Process form fields.
 		foreach ( $to_process as $custom_field ) {
 
 			if ( empty( $custom_field ) ) {
 				continue;
 			}
 
+			// Ensure required fields are filled.
 			$merge_tag = $custom_field['merge_tag'];
 			if ( ! empty( $custom_field['required'] ) && ( ! isset( $fields[ $merge_tag ] ) || '' === $fields[ $merge_tag ] ) ) {
 				wp_send_json_error(
@@ -766,6 +769,7 @@ class Noptin_Ajax {
 
 			$value = isset( $fields[ $merge_tag ] ) ? $fields[ $merge_tag ] : '';
 
+			// Checkboxes should always be 0 or 1.
 			if ( 'checkbox' === $custom_field['type'] ) {
 				$value = (int) ! empty( $value );
 			}
@@ -774,23 +778,29 @@ class Noptin_Ajax {
 	
 		}
 
+		// An email address is required.
 		if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) ) {
 			wp_send_json_error( __( 'Missing or invalid email address.', 'newsletter-optin-box' ) );
 		}
 
-		// Add the subscriber's IP address.
+		// Add the subscriber's IP address...
 		$address = noptin_get_user_ip();
 		if ( ! empty( $address ) && '::1' !== $address ) {
 			$subscriber['ip_address'] = $address;
 		}
 
+		// ... the conversion page...
 		if ( ! empty( $_POST['conversion_page'] ) ) {
 			$subscriber['conversion_page'] = esc_url_raw( trim( wp_unslash( $_POST['conversion_page'] ) ) );
 		}
 
+		// ... and the source.
 		if ( ! empty( $source ) ) {
 			$subscriber['_subscriber_via'] = noptin_clean( $source );
 		}
+
+		// Finally, add connection data.
+		$subscriber = Noptin_Hooks::add_connections( $subscriber, $misc );
 
 		/**
 		 * Filters subscriber details when adding a new subscriber via ajax.

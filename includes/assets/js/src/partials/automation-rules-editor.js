@@ -38,7 +38,7 @@ var rulesApp = new Vue({
 
 			if ( jQuery( '#wp-noptinemailbody-wrap').length ) {
 				if ( tinyMCE.get('noptinemailbody') ) {
-					this.action_settings.email_content = tinyMCE.get('noptinemailbody').getContent(  )
+					this.action_settings.email_content = tinyMCE.get('noptinemailbody').getContent()
 				} else {
 					this.action_settings.email_content = $('#noptinemailbody').val()
 				}
