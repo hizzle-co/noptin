@@ -508,7 +508,7 @@ class Noptin_Page {
 
 		// Generate and display the email.
 		$data = noptin()->mailer->prepare( $data );
-		echo $data['email_body'];
+		echo apply_filters( 'noptin_generate_preview_email', $data['email_body'], $data );
 		exit;
 
 	}

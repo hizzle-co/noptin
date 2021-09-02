@@ -76,9 +76,9 @@ class Noptin_Mailer {
 		$data['logo_url']        = $this->get_logo_url( $data );
 		$data['tracker']         = $this->get_tracker( $data );
 		$data['permission_text'] = ! isset( $data['permission_text'] ) ? $this->get_permission_text( $data ) : $data['permission_text'];
-		$data['permission_text'] = wpautop( $data['permission_text'] );
+		$data['permission_text'] = wpautop( $this->merge( $data['permission_text'], $data['merge_tags'] ) );
 		$data['footer_text']     = ! isset( $data['footer_text'] ) ? $this->get_footer_text( $data ) : $data['footer_text'];
-		$data['footer_text']     = wpautop( $data['footer_text'] );
+		$data['footer_text']     = wpautop( $this->merge( $data['footer_text'], $data['merge_tags'] ) );
 		$data['hero_text']       = empty( $data['hero_text'] ) ? '' : $data['hero_text'];
 		$data['cta_url']         = empty( $data['cta_url'] ) ? '' : $data['cta_url'];
 		$data['cta_text']        = empty( $data['cta_text'] ) ? '' : $data['cta_text'];

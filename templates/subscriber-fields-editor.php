@@ -1,7 +1,7 @@
 <p <?php echo $restrict; ?> class="description"><?php _e( 'Collect more information from your subscribers by adding custom fields.', 'newsletter-optin-box' ); ?>&nbsp;<a href="https://noptin.com/guide/email-subscribers/custom-fields/" target="_blank"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?></a></p>
 <div <?php echo $restrict; ?> id="noptin-subscriber-fields-editor-available-fields" class="noptin-accordion-wrapper" style="max-width: 700px;">
 
-	<span v-for="field in <?php echo esc_attr( $id ); ?>">
+	<span v-for="field in <?php echo esc_attr( $id ); ?>" :key="field.field_key">
 		<h4 class="noptin-accordion-heading">
 			<button aria-expanded="false" class="noptin-accordion-trigger" :aria-controls="'noptin-accordion-block-<?php echo esc_attr( $id ); ?>__' + field.merge_tag" type="button" @click.prevent="toggleAccordion('noptin-accordion-block-<?php echo esc_attr( $id ); ?>__' + field.merge_tag)">
 				<span class="title">{{field.label}}</span>
@@ -130,6 +130,12 @@
 			?>
 
 			<a href="#" v-if="! isFieldPredefined(field)" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php _e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
+			<span v-if="! isFieldFirst(field)">&nbsp;|&nbsp;
+				<a href="#"  @click.prevent="moveUp(field)"><?php _e( 'Move Up', 'newsletter-optin-box' ); ?></a>
+			</span>
+			<span v-if="! isFieldLast(field)">&nbsp;|&nbsp;
+				<a href="#"  @click.prevent="moveDown(field)"><?php _e( 'Move Down', 'newsletter-optin-box' ); ?></a>
+			</span>
 		</div>
 	</span>
 

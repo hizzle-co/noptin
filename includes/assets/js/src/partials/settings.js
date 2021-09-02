@@ -99,6 +99,7 @@ var settingsApp = new Vue({
 					visible: true,
 					subs_table: false,
 					predefined: false,
+					field_key: Math.random().toString(36).replace(/[^a-z]+/g, '') + this.custom_fields.length,
 					new: true,
 				}
 			)
@@ -121,6 +122,26 @@ var settingsApp = new Vue({
 
 		isFieldPredefined(field) {
 			return this.fieldTypes[field.type] && this.fieldTypes[field.type].predefined
+		},
+
+		isFieldFirst(field) {
+			return this.custom_fields.indexOf(field) == 0
+		},
+
+		isFieldLast(field) {
+			return this.custom_fields.indexOf(field) == this.custom_fields.length - 1
+		},
+
+		moveUp(field) {
+			let from = this.custom_fields.indexOf(field)
+			let to = from - 1
+			this.custom_fields.splice(to, 0, this.custom_fields.splice(from, 1)[0]);
+		},
+
+		moveDown(field) {
+			let from = this.custom_fields.indexOf(field)
+			let to = from + 1
+			this.custom_fields.splice(to, 0, this.custom_fields.splice(from, 1)[0]);
 		},
 
 		fieldAllowsOptions(field) {

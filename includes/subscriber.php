@@ -1356,7 +1356,14 @@ function get_noptin_custom_fields() {
 		Noptin_Custom_Fields::default_fields()
 	);
 
-	return map_deep( apply_filters( 'noptin_custom_fields', $custom_fields ), 'esc_html' );
+	$fields = map_deep( apply_filters( 'noptin_custom_fields', $custom_fields ), 'esc_html' );
+
+	foreach ( $fields as $index => $field ) {
+		$field['field_key'] = uniqid( 'noptin_' ) . $index;
+		$fields[ $index ] = $field;
+	}
+
+	return $fields;
 }
 
 /**
