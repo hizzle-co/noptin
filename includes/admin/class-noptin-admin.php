@@ -571,11 +571,11 @@ class Noptin_Admin {
 
 			add_submenu_page(
 				'noptin',
-				esc_html__( 'Documentation', 'newsletter-optin-box' ),
-				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				esc_html__( 'Start Here', 'newsletter-optin-box' ),
+				esc_html__( 'Start Here', 'newsletter-optin-box' ),
 				get_noptin_capability(),
-				'noptin-docs',
-				array( $this, 'render_add_new_page' )
+				sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( get_home_url() ) ),
+				null
 			);
 
 		}
@@ -1132,13 +1132,6 @@ class Noptin_Admin {
 
 				$this->show_success( __( 'The selected campaigns have been deleted.', 'newsletter-optin-box' ) );
 			}
-		}
-
-		// Docs page.
-		if ( isset( $_GET['page'] ) && 'noptin-docs' === trim( $_GET['page'] ) ) {
-			$url = sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( get_home_url() ) );
-			wp_redirect( $url, 301 );
-			exit;
 		}
 
 		// Tools.

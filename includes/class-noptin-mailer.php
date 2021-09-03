@@ -557,15 +557,15 @@ class Noptin_Mailer {
 	 *
 	 * @return string The email from address address.
 	 */
-	public function get_from_address() {
+	public function get_from_address( $email = '' ) {
 
-		$from_address = get_noptin_option( 'from_email',  $this->default_from_address() );
+		$from_address = get_noptin_option( 'from_email' );
 
-		if ( ! is_email( $from_address ) ) {
-			$from_address =  $this->default_from_address();
+		if ( is_email( $from_address ) ) {
+			$email =  $from_address;
 		}
 
-		return apply_filters( 'noptin_mailer_email_from_address', $from_address, $this );
+		return apply_filters( 'noptin_mailer_email_from_address', $email, $this );
 
 	}
 

@@ -98,7 +98,9 @@
 
 	});
 
-	//optin forms editor app
-	window.noptinOptinEditor = require('./partials/optin-editor.js').default
+	// Optin forms editor app.
+	if ( jQuery('#noptin_form_editor').length ) {
+		window.noptinOptinEditor = require('./partials/optin-editor.js').default
+	}
 
 })(jQuery);

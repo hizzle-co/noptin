@@ -704,14 +704,14 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 			if ( $this->supports( 'tags' ) ) {
 
-				$option    = sanitize_text_field( "noptin_{$this->slug}_{$via}_default_tags" );
+				$option = sanitize_text_field( "noptin_{$this->slug}_{$via}_default_tags" );
 
 				$options[ $option ]  = array(
 					'el'          => 'input',
 					'section'     => 'integrations',
 					'label'       => sprintf( __( '%s tags', 'newsletter-optin-box' ), $this->name ),
 					'description' => __( 'Enter a comma separated list of tags to assign new suscribers.', 'newsletter-optin-box' ) ,
-					'placeholder' => 'tag 1, tag 2',
+					'placeholder' => '',
 					'restrict'    => sprintf(
 						'%s && %s',
 						$this->get_enable_integration_option_name(),

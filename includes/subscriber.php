@@ -764,7 +764,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	$to = get_noptin_option( 'admin_email',  get_option( 'admin_email' ) );
 
 	if ( empty( $to ) ) {
-		$to = get_option( 'admin_email' );
+		return;
 	}
 
 	$subject = sprintf( __( '[%s] New Subscriber', 'newsletter-optin-box' ), $blogname );

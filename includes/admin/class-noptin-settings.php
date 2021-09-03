@@ -264,7 +264,6 @@ class Noptin_Settings {
 				'type'        => 'text',
 				'label'       => __( 'Notification recipient(s)', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
-				'placeholder' => get_option( 'admin_email' ) . ', admin@example.com',
 				'default'     => get_option( 'admin_email' ),
 				'description' => __( 'Enter a comma separated list of email address that should receive new subscriber notifications', 'newsletter-optin-box' ),
 			),
@@ -275,7 +274,6 @@ class Noptin_Settings {
 				'type'        => 'email',
 				'label'       => __( '"Reply-to" Email', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
-				'placeholder' => get_option( 'admin_email' ),
 				'default'     => get_option( 'admin_email' ),
 				'description' => __( 'Where should subscribers reply to in case they need to get in touch with you?', 'newsletter-optin-box' ),
 			),
@@ -286,7 +284,6 @@ class Noptin_Settings {
 				'type'        => 'email',
 				'label'       => __( '"From" Email', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
-				'placeholder' => noptin()->mailer->default_from_address(),
 				'description' => __( 'How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails.', 'newsletter-optin-box' ),
 			),
 
@@ -296,6 +293,7 @@ class Noptin_Settings {
 				'label'       => __( '"From" Name', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
 				'placeholder' => get_option( 'blogname' ),
+				'default'     => get_option( 'blogname' ),
 				'description' => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 			),
 
@@ -402,7 +400,7 @@ class Noptin_Settings {
 				'type'        => 'text',
 				'section'     => 'general',
 				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
-				'placeholder' => '****************************',
+				'placeholder' => '',
 				'description' => sprintf(
 					__( 'Enter your %s API key if you want to GeoLocate your subscribers using their service.', 'newsletter-optin-box' ),
 					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
