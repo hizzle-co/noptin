@@ -1,5 +1,5 @@
 <div class="noptin-optin-form-wrapper"  :class="imageMain ? imageMainPos : 'no-image'">
-	<noptin-temp-form class="noptin-optin-form" <?php echo noptin_form_template_form_props(); ?>>
+	<noptin-temp-form class="noptin-optin-form" @submit.prevent :class="singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'">
 		<div class="noptin-form-header" :class="image ? imagePos : 'no-image'">
 			<div class="noptin-form-header-text">
 				<contenteditable v-if="!hidePrefix" :style="'color:' + prefixColor + ';' + prefixTypography.generated + prefixAdvanced.generated" :class="prefixAdvanced.classes" tag="div" class="noptin-form-prefix" contenteditable @input="updateValue( 'prefix', $event )" :value="prefix" :noHTML="false" />

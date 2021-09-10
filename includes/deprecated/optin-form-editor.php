@@ -52,9 +52,9 @@
 </div>
 
 <script type="text/x-template" id="noptinFieldEditorTemplate">
-	<?php include 'fields-editor.php'; ?>
+	<?php include plugin_dir_path( __FILE__ ) . 'fields-editor.php'; ?>
 </script>
 
 <script type="text/x-template" id="noptinOptinFormTemplate">
-	<?php include 'optin-form.php'; ?>
+	<?php include plugin_dir_path( __FILE__ ) . 'optin-form.php'; ?>
 </script>

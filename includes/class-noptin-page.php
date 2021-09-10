@@ -47,9 +47,6 @@ class Noptin_Page {
 		// Admin bar.
 		add_filter( 'show_admin_bar', array( $this, 'maybe_hide_admin_bar' ) );
 
-		// Exclude from sitemap.
-		add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', array( $this, 'hide_from_yoast_sitemap' ) );
-
 		// Pages settings.
 		add_filter( 'noptin_get_settings', array( $this, 'add_options' ), 100 );
 
@@ -565,19 +562,6 @@ class Noptin_Page {
 		}
 		return $status;
 
-	}
-
-	/**
-	 * Removes our pages from Yoast sitemaps.
-	 */
-	public function hide_from_yoast_sitemap( $ids = array() ) {
-		$page = get_noptin_action_page();
-
-		if ( ! empty( $page ) ) {
-			$ids[] = $page;
-		}
-
-		return $ids;
 	}
 
 	/**

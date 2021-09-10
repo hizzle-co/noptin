@@ -484,3 +484,145 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 	return trim( apply_filters( "noptin_{$context}_attributes_output", trim( $output ), $attributes, $args, $context ) );
 
 }
+
+/**
+ * Retrieves the URL to the forms creation page
+ *
+ * @return  string   The forms page url
+ * @access  public
+ * @since   1.0.5
+ */
+function get_noptin_new_form_url() {
+	return admin_url( 'post-new.php?post_type=noptin-form' );
+}
+
+/**
+ * Retrieves the URL to a forms edit url
+ *
+ * @return  string   The form edit page url
+ * @access  public
+ * @since   1.1.1
+ */
+function get_noptin_edit_form_url( $form_id ) {
+	$url = admin_url( 'post.php?action=edit' );
+	return add_query_arg( 'post', $form_id, $url );
+}
+
+/**
+ * Retrieves the URL to the forms overview page
+ *
+ * @return  string   The forms page url
+ * @access  public
+ * @since   1.0.5
+ */
+function get_noptin_forms_overview_url() {
+	$url = admin_url( 'edit.php?post_type=noptin-form' );
+	return $url;
+}
+
+/**
+ * Returns opt-in forms field types
+ *
+ * @return  array
+ * @access  public
+ * @since   1.0.8
+ */
+function get_noptin_optin_field_types() {
+	return apply_filters( 'noptin_field_types', array() );
+}
+
+/**
+ * Retrieves an optin form.
+ *
+ * @param int|Noptin_Form $id The id or Noptin_Form object of the optin to retrieve.
+ * @since 1.0.5
+ * @return Noptin_Form
+ */
+function noptin_get_optin_form( $id ) {
+	return new Noptin_Form( $id );
+}
+
+/**
+ * Retrieves the total opt-in forms count.
+ *
+ * @param string $type Optionally filter by opt-in type.
+ * @since 1.0.6
+ * @return int
+ */
+function noptin_count_optin_forms( $type = '' ) {
+	global $wpdb;
+
+	$sql   = "SELECT COUNT(`ID`) FROM {$wpdb->posts} as forms";
+	$where = "WHERE `post_type`='noptin-form'";
+
+	if ( ! empty( $type ) ) {
+		$sql = "$sql LEFT JOIN {$wpdb->postmeta} as meta
+			ON meta.post_id = forms.ID
+			AND meta.meta_key = '_noptin_optin_type'
+			AND meta.meta_value = %s";
+
+		$sql    = $wpdb->prepare( $sql, $type );
+		$where .= " AND meta.meta_key='_noptin_optin_type'";
+	}
+
+	return $wpdb->get_var( "$sql $where;" );
+}
+
+/**
+ * Creates an optin form.
+ *
+ * @since 1.0.5
+ */
+function noptin_create_optin_form( $data = false ) {
+	$form    = new Noptin_Form( $data );
+	$created = $form->save();
+
+	if ( is_wp_error( $created ) ) {
+		return $created;
+	}
+
+	return $form->id;
+}
+
+/**
+ * Deletes an optin form.
+ *
+ * @since 1.0.5
+ */
+function noptin_delete_optin_form( $id ) {
+	return wp_delete_post( $id, true );
+}
+
+/**
+ * Duplicates an optin form.
+ *
+ * @since 1.0.5
+ * @return int
+ */
+function noptin_duplicate_optin_form( $id ) {
+	$form = noptin_get_optin_form( $id );
+	$form->duplicate();
+	return $form->id;
+}
+
+/**
+ * Returns all optin forms.
+ *
+ * @since 1.2.6
+ * @return Noptin_Form[]
+ */
+function get_noptin_optin_forms( array $args = array() ) {
+	$defaults = array(
+		'numberposts' => -1,
+		'post_status' => array( 'draft', 'publish' ),
+	);
+
+	$args              = wp_parse_args( $args, $defaults );
+	$args['post_type'] = 'noptin-form';
+	$args['fields']    = 'ids';
+	$forms             = get_posts( $args );
+
+	return array_map( 'noptin_get_optin_form', $forms );
+
+}
+

@@ -226,6 +226,7 @@ class Noptin {
 				log_noptin_message( $e->getMessage() );
 			}
 
+			require_once $plugin_path . 'includes/deprecated/index.php';
 		}
 
 	}

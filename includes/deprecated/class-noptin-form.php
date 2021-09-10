@@ -840,7 +840,8 @@ class Noptin_Form {
 		$data = $this->data;
 		$data['data'] = $data;
 		$data['form'] = $this;
-		get_noptin_template( 'frontend-optin-form.php', $data );
+		extract( $data );
+		include plugin_dir_path( __FILE__ ) . 'frontend-optin-form.php';
 		return ob_get_clean();
 	}
 

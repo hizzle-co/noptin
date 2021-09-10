@@ -26,9 +26,6 @@ class Noptin_Post_Types {
 		// And some actions.
 		add_filter( 'post_row_actions', array( $this, 'remove_actions' ), 10, 2 );
 
-		// Register our special meta box.
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
-
 		// Filter form columns.
 		add_filter( 'manage_noptin-form_posts_columns', array( $this, 'manage_form_columns' ) );
 
@@ -197,19 +194,6 @@ class Noptin_Post_Types {
 				'high'
 			);
 		}
-
-	}
-
-	/**
-	 * Renders the form editor.
-	 *
-	 * @param WP_Post $post The post being edited.
-	 */
-	public function render_form_editor( $post ) {
-
-		$form   = $post->ID;
-		$editor = new Noptin_Form_Editor( $form, true );
-		$editor->output();
 
 	}
 
