@@ -27,7 +27,7 @@
 	},
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
-		"axios": "0.21.2",
+		"axios": "0.21.4",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.3.1",
