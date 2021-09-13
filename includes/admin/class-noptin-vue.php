@@ -528,8 +528,8 @@ class Noptin_Vue {
 				}
 
 				$option = explode( '|', $option );
-				$label  = sanitize_text_field( $option[0] );
-				$value  = isset( $option[1] ) ? sanitize_text_field( $option[1] ) : $label;
+				$label  = esc_html( $option[0] );
+				$value  = isset( $option[1] ) ? esc_attr( $option[1] ) : esc_attr( $option[0] );
 
 				echo "<option value='$value'>$label</option>";
 			}
@@ -559,7 +559,7 @@ class Noptin_Vue {
 		$options = '';
 
 		if ( isset( $field['placeholder'] ) ) {
-			$placeholder = sanitize_text_field( $field['placeholder'] );
+			$placeholder = esc_html( $field['placeholder'] );
 			$options .= "<option value='' disabled>$placeholder</option>";
 		}
 

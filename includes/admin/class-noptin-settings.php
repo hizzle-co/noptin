@@ -507,17 +507,17 @@ class Noptin_Settings {
 									esc_url( $data->href ),
 									sprintf(
 										__( '%s addon', 'newsletter-optin-box' ),
-										sanitize_text_field( $data->title )
+										esc_html( $data->title )
 									)
 								)
 							)
 						),
 					),
 					'section'     => 'integrations',
-					'heading'     => sanitize_text_field( $data->title ),
+					'heading'     => esc_html( $data->title ),
 					'description' => sprintf(
 						__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
-						sanitize_text_field( $data->title )
+						esc_html( $data->title )
 					),
 					'badge'       => __( 'Not Installed', 'newsletter-optin-box' ),
 				);

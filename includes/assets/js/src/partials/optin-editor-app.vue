@@ -35,11 +35,6 @@
 							<v-list-item-title v-else>{{publishText}}</v-list-item-title>
       					</v-list-item-content>
     				</v-list-item>
-					<v-list-item ripple link @click.prevent="saveAsTemplate()">
-    					<v-list-item-content>
-        					<v-list-item-title>Save As Template</v-list-item-title>
-      					</v-list-item-content>
-    				</v-list-item>
 					<v-list-item ripple link v-if="darkMode" @click="darkMode=false">
     					<v-list-item-content>
         					<v-list-item-title>Light Mode</v-list-item-title>
@@ -306,39 +301,6 @@
 				// Display an error on failure.
 				.fail(() => {
 					this.showError( this.savingError )
-				})
-
-				// Remove the loader on success/failure.
-				.always(() => {
-					this.isSaving = false
-				})
-
-			},
-
-			// Saves the form as a template.
-			saveAsTemplate() {
-
-				// Display indicators.
-				this.isSaving = true
-
-				// Form state.
-				var data = this.$data
-
-				// Save it as a template.
-				jQuery.post(noptinEditor.ajaxurl, {
-					_ajax_nonce: noptinEditor.nonce,
-					action: "noptin_save_optin_form_as_template",
-					state: data
-				})
-
-				// Show the success message.
-				.done(() => {
-					this.showSuccess(this.savingTemplateSuccess)
-				})
-
-				// Display an error on failure.
-				.fail(() => {
-					this.showError( this.savingTemplateError )
 				})
 
 				// Remove the loader on success/failure.

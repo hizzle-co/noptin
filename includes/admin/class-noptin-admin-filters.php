@@ -65,7 +65,7 @@ class Noptin_Admin_Filters {
 			if ( ! empty( $subscriber->email ) ) {
 				return sprintf(
 							__( 'View Noptin Subscriber (%s)', 'newsletter-optin-box' ),
-							sanitize_text_field( $subscriber->email )
+							sanitize_email( $subscriber->email )
 				);
 			}
 
@@ -137,17 +137,17 @@ class Noptin_Admin_Filters {
 
 		// Prepare variables.
 		$fields    = empty( $_POST['fields'] )    ? array( 'email' ) : $_POST['fields'];
-		$file_type = empty( $_POST['file_type'] ) ? 'csv' : sanitize_text_field( $_POST['file_type'] );
-		$file_name = empty( $_POST['file_name'] ) ? 'noptin-subscribers-' . time() : sanitize_text_field( $_POST['file_name'] );
+		$file_type = empty( $_POST['file_type'] ) ? 'csv' : sanitize_key( $_POST['file_type'] );
+		$file_name = empty( $_POST['file_name'] ) ? 'noptin-subscribers-' . time() : sanitize_key( $_POST['file_name'] );
 
 		header( "Content-Type:application/$file_type" );
 		header( "Content-Disposition:attachment;filename=$file_name.$file_type" );
 
 		$query = array(
-			'subscriber_status' => empty( $_POST['subscriber_status'] ) ? 'all' : sanitize_text_field( $_POST['subscriber_status'] ),
-			'email_status'      => empty( $_POST['email_status'] ) ? 'any' : sanitize_text_field( $_POST['email_status'] ),
-			'order'             => empty( $_POST['order'] ) ? 'DESC' : sanitize_text_field( $_POST['order'] ),
-			'orderby'           => empty( $_POST['orderby'] ) ? 'id' : sanitize_text_field( $_POST['orderby'] ),
+			'subscriber_status' => empty( $_POST['subscriber_status'] ) ? 'all' : sanitize_key( $_POST['subscriber_status'] ),
+			'email_status'      => empty( $_POST['email_status'] ) ? 'any' : sanitize_key( $_POST['email_status'] ),
+			'order'             => empty( $_POST['order'] ) ? 'DESC' : sanitize_key( $_POST['order'] ),
+			'orderby'           => empty( $_POST['orderby'] ) ? 'id' : sanitize_key( $_POST['orderby'] ),
 			'count_total'       => false,
 		);
 

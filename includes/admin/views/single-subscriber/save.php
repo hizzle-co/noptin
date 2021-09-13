@@ -32,7 +32,7 @@
 
             // Yes/No etc.
             if ( ! empty( $consent ) && ! is_numeric( $consent ) ) {
-                $consent = sanitize_text_field( $consent );
+                $consent = esc_html( $consent );
             } else if ( ! empty( $consent ) ) {
                 $consent = "<span style='color: #2e7d32;' class='dashicons dashicons-yes'></span>";
             } else {

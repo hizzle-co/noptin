@@ -12,72 +12,15 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Returns the core `[noptin]` shortcode attributes.
+ * Are we using the new forms?
  *
- * @since 1.6.0
- * @ignore
- * @private
- * @return array
+ * @since 1.6.1
+ * @return bool
  */
-function get_default_noptin_shortcode_atts() {
-
-	return array(
-		'fields'      => 'email', // Comma separated array of fields, or all
-		'source'      => 'shortcode', // Manual source of the subscriber. Can also be a form id.
-		'labels'      => 'hide', // Whether or not to show the field label.
-		'wrap'        => 'p', // Which element to wrap field values in.
-		'styles'      => 'basic', // Set to inherit to inherit theme styles.
-		'title'       => '', // Form title.
-		'description' => '', // Form description.
-		'note'        => '', // Privacy note.
-		'html_id'     => '', // ID of the form.
-		'html_name'   => '', // HTML name of the form.
-		'html_class'  => '', // HTML class of the form.
-		'redirect'    => '', // An optional URL to redirect users after successful subscriptions.
-		'success_msg' => '', // Overide the success message shwon to users after successful subscriptions.
-		'submit'      => __( 'Subscribe', 'noptin-newsletter' ),
-		'template'    => 'normal',
-	);
-
+function is_using_new_noptin_forms() {
+	$new_form = get_option( 'noptin_use_new_forms' );
+	return apply_filters( 'is_using_new_noptin_forms', ! empty( $new_form ) );
 }
-
-/**
- * Callback for the `[noptin]` shortcode.
- *
- * @param array $atts Shortcode attributes.
- * @since 1.6.0
- * @ignore
- * @private
- * @return string
- */
-function _noptin_shortcode( $atts ) {
-
-	$default_atts = get_default_noptin_shortcode_atts();
-
-	foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-		if ( empty( $connection->list_providers ) ) {
-			continue;
-		}
-
-		$default_atts["{$key}_list"] = $connection->get_default_list_id();
-
-		if ( $connection->supports( 'tags' ) ) {
-			$default_atts["{$key}_tags"] = get_noptin_option( "noptin_{$key}_default_tags", '' );
-		}
-
-		// Secondary fields.
-		foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
-			$default_atts["{$key}_$secondary"] = get_noptin_option( "noptin_{$key}_default_{$secondary}", '' );
-		}
-
-	}
-
-	$default_atts = apply_filters( 'default_noptin_shortcode_atts', $default_atts, $atts );
-	$atts         = shortcode_atts( $default_atts, $atts, 'noptin' );
-	return get_noptin_subscription_form_html( $atts );
-}
-add_shortcode( 'noptin', '_noptin_shortcode' );
 
 /**
  * Generates the markup for displaying a subscription form.
@@ -369,7 +312,7 @@ function display_noptin_subscription_form( $args ) {
 	}
 
 	// Extra attributes.
-	$default_keys = array_keys( get_default_noptin_shortcode_atts() );
+	$default_keys = array_keys( noptin()->forms->get_default_shortcode_atts() );
 	foreach ( $args as $key => $value ) {
 
 		if ( in_array( $key, $default_keys ) || '' === $value ) {
@@ -488,36 +431,32 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 /**
  * Retrieves the URL to the forms creation page
  *
- * @return  string   The forms page url
- * @access  public
  * @since   1.0.5
+ * @return  string
  */
 function get_noptin_new_form_url() {
-	return admin_url( 'post-new.php?post_type=noptin-form' );
+	return noptin()->forms->new_form_url();
 }
 
 /**
  * Retrieves the URL to a forms edit url
  *
- * @return  string   The form edit page url
- * @access  public
+ * @param int $form_id
  * @since   1.1.1
+ * @return  string
  */
 function get_noptin_edit_form_url( $form_id ) {
-	$url = admin_url( 'post.php?action=edit' );
-	return add_query_arg( 'post', $form_id, $url );
+	return noptin()->forms->edit_form_url( $form_id );
 }
 
 /**
  * Retrieves the URL to the forms overview page
  *
- * @return  string   The forms page url
- * @access  public
  * @since   1.0.5
+ * @return  string   The forms page url
  */
 function get_noptin_forms_overview_url() {
-	$url = admin_url( 'edit.php?post_type=noptin-form' );
-	return $url;
+	return noptin()->forms->view_forms_url();
 }
 
 /**
@@ -536,10 +475,10 @@ function get_noptin_optin_field_types() {
  *
  * @param int|Noptin_Form $id The id or Noptin_Form object of the optin to retrieve.
  * @since 1.0.5
- * @return Noptin_Form
+ * @return Noptin_Form|Noptin_Form_Legacy
  */
 function noptin_get_optin_form( $id ) {
-	return new Noptin_Form( $id );
+	return noptin()->forms->get_form( $id );
 }
 
 /**
@@ -572,16 +511,10 @@ function noptin_count_optin_forms( $type = '' ) {
  * Creates an optin form.
  *
  * @since 1.0.5
+ * @return WP_Error|int
  */
 function noptin_create_optin_form( $data = false ) {
-	$form    = new Noptin_Form( $data );
-	$created = $form->save();
-
-	if ( is_wp_error( $created ) ) {
-		return $created;
-	}
-
-	return $form->id;
+	return noptin()->forms->create_form( $data );
 }
 
 /**
@@ -609,7 +542,7 @@ function noptin_duplicate_optin_form( $id ) {
  * Returns all optin forms.
  *
  * @since 1.2.6
- * @return Noptin_Form[]
+ * @return Noptin_Form[]|Noptin_Form_Legacy[]
  */
 function get_noptin_optin_forms( array $args = array() ) {
 	$defaults = array(
@@ -625,4 +558,3 @@ function get_noptin_optin_forms( array $args = array() ) {
 	return array_map( 'noptin_get_optin_form', $forms );
 
 }
-

@@ -138,9 +138,6 @@ class Noptin_Admin {
 		// Runs when saving a new opt-in form.
 		add_action( 'wp_ajax_noptin_save_optin_form', array( $this, 'save_optin_form' ) );
 
-		// Runs when saving a form as a template.
-		add_action( 'wp_ajax_noptin_save_optin_form_as_template', array( $this, 'save_optin_form_as_template' ) );
-
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 
@@ -952,81 +949,6 @@ class Noptin_Admin {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_save_form', $this );
-
-		exit; // This is important.
-	}
-
-	/**
-	 * Saves an optin form as a template
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function save_optin_form_as_template() {
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		// Check nonce.
-		check_ajax_referer( 'noptin_admin_nonce' );
-
-		/**
-		 * Runs before saving a form as a template
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_save_form_as_template', $this );
-
-		$templates = get_option( 'noptin_templates' );
-
-		if ( ! is_array( $templates ) ) {
-			$templates = array();
-		}
-
-		$fields = noptin_get_form_design_props();
-		$data   = array();
-
-		foreach ( $fields as $field ) {
-
-			if ( 'optinType' === $field ) {
-				continue;
-			}
-
-			if ( isset( $_POST['state'][ $field ] ) ) {
-
-				$value = stripslashes_deep( $_POST['state'][ $field ] );
-
-				if ( 'false' === $value ) {
-					$data[ $field ] = false;
-					continue;
-				}
-
-				if ( 'true' === $value ) {
-					$data[ $field ] = true;
-					continue;
-				}
-
-				$data[ $field ] = $value;
-			}
-		}
-
-		$title             = sanitize_text_field( $_POST['state']['optinName'] );
-		$key               = wp_generate_password( '4', false ) . time();
-		$templates[ $key ] = array(
-			'title' => $title,
-			'data'  => $data,
-		);
-
-		update_option( 'noptin_templates', $templates );
-
-		/**
-		 * Runs after saving a form as a template
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_save_form_as_template', $this );
 
 		exit; // This is important.
 	}

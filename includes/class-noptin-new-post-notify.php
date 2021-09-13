@@ -389,18 +389,18 @@ class Noptin_New_Post_Notify {
 			'post_date'     => current_time( 'mysql' ),
 			'post_date_gmt' => current_time( 'mysql', true ),
 			'edit_date'     => true,
-			'post_title'    => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
+			'post_title'    => esc_html( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
 			'post_content'  => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
 			'meta_input'    => array(
 				'campaign_type'         => 'newsletter',
-				'preview_text'          => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
+				'preview_text'          => esc_html( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
 				'new_post_notification' => $key,
 				'custom_merge_tags'     => $this->get_post_merge_tags( get_post( $post_id ) ),
 				'campaign_id'           => $campaign_id,
 				'associated_post'       => $post_id,
 				'subscribers_query'     => array(),
 				'email_sender'          => get_post_meta( $campaign_id, 'email_sender', true ),
-				'custom_title'          => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), sanitize_text_field( get_the_title( $post_id ) ) ),
+				'custom_title'          => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
 			),
 		);
 
@@ -415,12 +415,12 @@ class Noptin_New_Post_Notify {
 
 		$subject = get_post_meta( $post_id, 'noptin_post_notify_subject', true );
 		if ( ! empty( $subject ) ) {
-			$post['post_title'] = sanitize_text_field( stripslashes_deep( $subject ) );
+			$post['post_title'] = esc_html( stripslashes_deep( $subject ) );
 		}
 
 		$preview = get_post_meta( $post_id, 'noptin_post_notify_preview_text', true );
 		if ( ! empty( $preview ) ) {
-			$post['meta_input']['preview_text'] = sanitize_text_field( stripslashes_deep( $preview ) );
+			$post['meta_input']['preview_text'] = esc_html( stripslashes_deep( $preview ) );
 		}
 
 		$post['post_title']                 = add_noptin_merge_tags( $post['post_title'], $post['meta_input']['custom_merge_tags'], false, false );
@@ -462,7 +462,7 @@ class Noptin_New_Post_Notify {
 		$delay = 'immeadiately';
 
 		$sends_after      = (int) get_post_meta( $automation->ID, 'noptin_sends_after', true );
-		$sends_after_unit = sanitize_text_field( get_post_meta( $automation->ID, 'noptin_sends_after_unit', true ) );
+		$sends_after_unit = esc_html( get_post_meta( $automation->ID, 'noptin_sends_after_unit', true ) );
 
 		if ( $sends_after ) {
 			$delay = "$sends_after $sends_after_unit after";

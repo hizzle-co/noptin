@@ -762,7 +762,7 @@ class Noptin_Ajax {
 				wp_send_json_error(
 					sprintf(
 						__( 'The "%s" field is required.', 'newsletter-optin-box' ),
-						sanitize_text_field( $custom_field['label'] )
+						esc_html( $custom_field['label'] )
 					)
 				);
 			}

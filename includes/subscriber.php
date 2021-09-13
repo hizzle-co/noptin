@@ -757,7 +757,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	foreach ( $fields as $key => $val ) {
 
 		if ( ! empty( $val ) && is_scalar( $val ) ) {
-			$message .= sprintf( '%s: %s', sanitize_text_field( $key ), esc_html( $val ) ) . "\r\n";
+			$message .= sprintf( '%s: %s', esc_html( $key ), esc_html( $val ) ) . "\r\n";
 		}
 	}
 
@@ -1206,7 +1206,7 @@ function _noptin_show_subscriber_field( $atts ) {
 	}
 
 	$value = $subscriber->get( $atts['field'] );
-	return  is_scalar( $value ) ? sanitize_text_field( $value ) : '';
+	return  is_scalar( $value ) ? esc_html( $value ) : '';
 
 }
 add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );

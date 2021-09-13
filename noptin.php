@@ -152,6 +152,14 @@ class Noptin {
 	public $custom_fields;
 
 	/**
+	 * The main forms class.
+	 * 
+	 * @var Noptin_Forms_Legacy|Noptin_Forms
+	 * @since       1.6.1
+	 */
+	public $forms;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -215,7 +223,7 @@ class Noptin {
 			require_once $plugin_path . 'vendor/autoload.php';
 			require_once $plugin_path . 'includes/functions.php';
 			require_once $plugin_path . 'includes/subscriber.php';
-			require_once $plugin_path . 'includes/forms.php';
+			require_once $plugin_path . 'includes/forms/forms.php';
 			require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
 			require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
@@ -226,7 +234,6 @@ class Noptin {
 				log_noptin_message( $e->getMessage() );
 			}
 
-			require_once $plugin_path . 'includes/deprecated/index.php';
 		}
 
 	}
@@ -266,6 +273,9 @@ class Noptin {
 
 		// Init the plugin after WP inits
 		add_action( 'init', array( $this, 'init' ), 5 );
+
+		// Load forms.
+		add_action( 'plugins_loaded', array( $this, 'load_forms' ), 5 );
 
 		// Init integrations.
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
@@ -413,7 +423,7 @@ class Noptin {
 		wp_register_script(
 			'noptin_blocks',
 			$this->plugin_url . 'includes/assets/js/dist/blocks.js',
-			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'underscore' ),
+			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'underscore' ),
 			filemtime( $this->plugin_path . 'includes/assets/js/dist/blocks.js' )
 		);
 
@@ -593,6 +603,27 @@ class Noptin {
 			false,
 			plugin_basename( dirname( __FILE__ ) ) . '/languages/'
 		);
+
+	}
+
+	/**
+	 * Loads the new forms after all plugins have been loaded.
+	 *
+	 * @since 1.6.1
+	 * @return bool
+	 */
+	public function load_forms() {
+		require_once plugin_dir_path( __FILE__ ) . 'includes/forms/class-noptin-forms-legacy.php';
+
+		// Are we using the new forms?
+		if ( is_using_new_noptin_forms() ) {
+			require_once plugin_dir_path( __FILE__ ) . 'includes/forms/class-noptin-forms.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/forms/class-noptin-form.php';
+			$this->forms = new Noptin_Forms();
+		} else {
+			require_once plugin_dir_path( __FILE__ ) . 'includes/forms/legacy/class-noptin-form-legacy.php';
+			$this->forms = new Noptin_Forms_Legacy();
+		}
 
 	}
 
