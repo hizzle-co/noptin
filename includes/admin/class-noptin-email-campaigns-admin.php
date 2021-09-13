@@ -256,7 +256,7 @@ class Noptin_Email_Campaigns_Admin {
 
 		if ( is_noptin_campaign( $campaign, 'automation' ) ) {
 
-			$automation_type   = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'automation_type', true ) ) );
+			$automation_type   = esc_html( stripslashes_deep( get_post_meta( $campaign_id, 'automation_type', true ) ) );
 			$automations_types = $this->get_automation_triggers();
 			$this->register_automation_metaboxes( $campaign, $automation_type, $automations_types );
 			do_action( 'add_meta_boxes_noptin_automations', $campaign, $automation_type, $automations_types );
@@ -383,9 +383,9 @@ class Noptin_Email_Campaigns_Admin {
 			'post_title'    => trim( $data['email_subject'] ),
 			'post_content'  => $data['email_body'],
 			'meta_input'    => array(
-				'email_sender'            => empty( $data['email_sender'] ) ? 'noptin' : sanitize_text_field( $data['email_sender'] ),
+				'email_sender'            => empty( $data['email_sender'] ) ? 'noptin' : sanitize_key( $data['email_sender'] ),
 				'campaign_type'           => 'newsletter',
-				'preview_text'            => empty( $data['preview_text'] ) ? '' : sanitize_text_field( $data['preview_text'] ),
+				'preview_text'            => empty( $data['preview_text'] ) ? '' : esc_html( $data['preview_text'] ),
 			),
 		);
 
@@ -494,7 +494,7 @@ class Noptin_Email_Campaigns_Admin {
 		log_noptin_message(
 			sprintf(
 				__( 'Sending the campaign: "%s"', 'newsletter-optin-box' ),
-				sanitize_text_field( $post->post_title )
+				esc_html( $post->post_title )
 			)
 		);
 
@@ -550,7 +550,7 @@ class Noptin_Email_Campaigns_Admin {
 		);
 
 		$tabs = apply_filters( 'noptin_email_campaign_tabs', $tabs );
-		$tab  = ! empty( $_GET['section'] ) ? sanitize_text_field( $_GET['section'] ) : 'newsletters';
+		$tab  = ! empty( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : 'newsletters';
 
 		// Default to displaying the list of newsletters if no section is provided.
 		if ( ! $tab || empty( $tabs[ $tab ] ) ) {
