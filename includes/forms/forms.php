@@ -21,6 +21,7 @@ function is_using_new_noptin_forms() {
 	$new_form = get_option( 'noptin_use_new_forms' );
 	return apply_filters( 'is_using_new_noptin_forms', ! empty( $new_form ) );
 }
+add_filter( 'is_using_new_noptin_forms', '__return_true' );
 
 /**
  * Generates the markup for displaying a subscription form.
@@ -184,6 +185,19 @@ function display_noptin_subscription_form( $args ) {
 			// Users can pass the merge tag instead of custom field data.
 			if ( is_string( $custom_field ) ) {
 				$custom_field = get_noptin_custom_field( $custom_field );
+			} else {
+				$_custom_field = get_noptin_custom_field( $custom_field['type'] );
+
+				if ( empty( $_custom_field ) ) {
+					continue;
+				}
+
+				unset( $custom_field['type'] );
+				$custom_field  = array_merge( $_custom_field, $custom_field );
+			}
+
+			if ( empty( $custom_field ) ) {
+				continue;
 			}
 
 			// Wrap the HTML name field into noptin_fields[ $merge_tag ];

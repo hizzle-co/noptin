@@ -977,16 +977,17 @@ input:focus+.noptin-switch-slider span {
 	color: #F44336;
 }
 
-#noptin-automations-popup .notice:not(.noptin-notice),
-#noptin-automations-popup div.error:not(.noptin-notice),
-#noptin-automations-popup div.updated:not(.noptin-notice),
-.noptin_page_noptin-subscribers .notice:not(.noptin-notice),
-.noptin_page_noptin-subscribers div.error:not(.noptin-notice),
-.noptin_page_noptin-subscribers div.updated:not(.noptin-notice),
-.noptin-settings .notice:not(.noptin-notice),
-.noptin-settings div.error:not(.noptin-notice),
-.noptin-settings div.updated:not(.noptin-notice) {
-	display: none !important;
+.post-type-noptin-form,
+#noptin-automations-popup,
+.noptin_page_noptin-subscribers,
+.noptin-settings {
+
+	.notice:not(.noptin-notice),
+	div.error:not(.noptin-notice),
+	div.updated:not(.noptin-notice) {
+		display: none !important;
+	}
+
 }
 
 .field-wrapper {

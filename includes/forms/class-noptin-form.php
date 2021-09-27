@@ -831,18 +831,67 @@ class Noptin_Form {
 	}
 
 	/**
-	 * Generates HTML
+	 * Generates HTML for the form.
 	 *
 	 * @return string
 	 */
 	protected function _get_html() {
-		ob_start();
-		$data = $this->data;
-		$data['data'] = $data;
-		$data['form'] = $this;
-		extract( $data );
-		include plugin_dir_path( __FILE__ ) . 'frontend-optin-form.php';
-		return ob_get_clean();
+
+		$args = array(
+			'fields'      => array(
+				array(
+					'type'     => 'email',
+					'label'    => __( 'Email Address', 'newsletter-optin-box' ),
+					'required' => true,
+				)
+			),
+			'source'      => $this->id,
+			'labels'      => 'hide',
+			'wrap'        => 'p',
+			'styles'      => 'basic',
+			'title'       => '',
+			'description' => '',
+			'note'        => '',
+			'html_id'     => '',
+			'html_name'   => '',
+			'html_class'  => '',
+			'redirect'    => '',
+			'success_msg' => '',
+			'submit'      => __( 'Subscribe', 'noptin-newsletter' ),
+			'template'    => 'normal',
+		);
+
+		$args = array_merge( $args, map_deep( $this->data, 'noptin_sanitize_booleans' ) );
+
+		// Clean fields.
+		$fields = array();
+
+		if ( ! empty( $args['fields'] ) ) {
+
+			foreach ( $args['fields'] as $field ) {
+
+				if ( ! isset( $field['type'] ) ) {
+					continue;
+				}
+
+				// Legacy forms.
+				if ( is_array( $field['type'] ) ) {
+					$fields[] = array(
+						'type'     => $field['type']['type'],
+						'label'    => $field['type']['label'],
+						'required' => ! empty( $field['require'] ),
+					);
+				} else {
+					$fields[] = $field;
+				}
+
+			}
+
+		}
+
+		$args['fields'] = $fields;
+
+		return get_noptin_subscription_form_html( $args );
 	}
 
 	/**
