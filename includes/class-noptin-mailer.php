@@ -76,9 +76,9 @@ class Noptin_Mailer {
 		$data['logo_url']        = $this->get_logo_url( $data );
 		$data['tracker']         = $this->get_tracker( $data );
 		$data['permission_text'] = ! isset( $data['permission_text'] ) ? $this->get_permission_text( $data ) : $data['permission_text'];
-		$data['permission_text'] = wpautop( $data['permission_text'] );
+		$data['permission_text'] = wpautop( $this->merge( $data['permission_text'], $data['merge_tags'] ) );
 		$data['footer_text']     = ! isset( $data['footer_text'] ) ? $this->get_footer_text( $data ) : $data['footer_text'];
-		$data['footer_text']     = wpautop( $data['footer_text'] );
+		$data['footer_text']     = wpautop( $this->merge( $data['footer_text'], $data['merge_tags'] ) );
 		$data['hero_text']       = empty( $data['hero_text'] ) ? '' : $data['hero_text'];
 		$data['cta_url']         = empty( $data['cta_url'] ) ? '' : $data['cta_url'];
 		$data['cta_text']        = empty( $data['cta_text'] ) ? '' : $data['cta_text'];
@@ -149,7 +149,11 @@ class Noptin_Mailer {
 	public function get_tracker( $data = array() ) {
 
 		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
-		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) ) {
+			return '';
+		}
+
+		if ( empty( $data['subscriber_id'] ) && empty( $data['user_id'] ) ) {
 			return '';
 		}
 
@@ -157,7 +161,8 @@ class Noptin_Mailer {
 
 		$url = add_query_arg(
 			array(
-				'sid' => intval( $data['subscriber_id'] ),
+				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
+				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
 				'cid' => intval( $data['campaign_id'] ),
 			),
 			$url
@@ -270,17 +275,21 @@ class Noptin_Mailer {
 	public function make_links_trackable( $content, $data ) {
 
 		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
-		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) || empty( $data['subscriber_id'] ) ) {
+		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) ) {
+			return $content;
+		}
+
+		if ( empty( $data['subscriber_id'] ) && empty( $data['user_id'] ) ) {
 			return $content;
 		}
 
 		$url = get_noptin_action_url( 'email_click' );
-
 		$url = add_query_arg(
 			array(
-				'sid'         => intval( $data['subscriber_id'] ),
+				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
+				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
 				'cid'         => intval( $data['campaign_id'] ),
-				'noptin_hide' => 'true'
+				//'noptin_hide' => 'true'
 			),
 			$url
 		);
@@ -481,7 +490,12 @@ class Noptin_Mailer {
 		$name       = $this->get_from_name();
 		$reply_to   = $this->get_reply_to();
 		$content    = $this->get_content_type();
-		$headers    = array( "Reply-To:$name <$reply_to>" );
+		$headers    = array();
+
+		if ( ! empty( $reply_to ) && ! empty( $name ) ) {
+			$headers = array( "Reply-To:$name <$reply_to>" );
+		}
+
 		$headers[]  = "Content-Type:$content";
 
 		if ( ! empty( $this->mailer_data['merge_tags']['unsubscribe_url'] ) ) {
@@ -529,7 +543,7 @@ class Noptin_Mailer {
 
 		$reply_to = get_noptin_option( 'reply_to',  get_option( 'admin_email' ) );
 
-		if ( ! is_email( $reply_to ) ) {
+		if ( ! is_email( $reply_to ) && ! empty( $reply_to ) ) {
 			$reply_to =  get_option( 'admin_email' );
 		}
 
@@ -543,15 +557,15 @@ class Noptin_Mailer {
 	 *
 	 * @return string The email from address address.
 	 */
-	public function get_from_address() {
+	public function get_from_address( $email = '' ) {
 
-		$from_address = get_noptin_option( 'from_email',  $this->default_from_address() );
+		$from_address = get_noptin_option( 'from_email' );
 
-		if ( ! is_email( $from_address ) ) {
-			$from_address =  $this->default_from_address();
+		if ( is_email( $from_address ) ) {
+			$email =  $from_address;
 		}
 
-		return apply_filters( 'noptin_mailer_email_from_address', $from_address, $this );
+		return apply_filters( 'noptin_mailer_email_from_address', $email, $this );
 
 	}
 

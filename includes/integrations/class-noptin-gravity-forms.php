@@ -122,19 +122,13 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 
         );
 
-        foreach ( get_special_noptin_form_fields() as $name => $field ) {
+        foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-            $id    = esc_attr( sanitize_html_class( $name ) );
-            $type  = esc_attr( $field[0] );
-            $label = wp_kses_post( $field[1] );
-
-            if ( $type === 'text' || $type === 'checkbox' || $type === 'textarea' || $type === 'hidden' ) {
-
+            if ( ! $custom_field['predefined'] ) {
                 $map_fields[] = array(
-                    'name'    => $id,
-                    'label'   => $label,
+                    'name'    => $custom_field['merge_tag'],
+                    'label'   => $custom_field['label'],
                 );
-
             }
 
 		}
@@ -232,7 +226,7 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 
 		// Prepare subscriber details.
 		$subscriber = array(
-			'_subscriber_via' => __( 'Gravity Forms', 'newsletter-optin-box' ),
+			'_subscriber_via' => 'Gravity Forms',
 			'conversion_page' => $entry['source_url'],
         );
 

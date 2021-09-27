@@ -252,6 +252,22 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 	/**
 	 * @inheritdoc
 	 */
+	public function available_customer_fields() {
+		return array(
+			'phone'         => __( 'Billing Phone', 'newsletter-optin-box' ),
+			'company'       => __( 'Billing Company', 'newsletter-optin-box' ),
+			'address_1'     => __( 'Billing Address 1', 'newsletter-optin-box' ),
+			'postcode'      => __( 'Billing Postcode', 'newsletter-optin-box' ),
+			'city'          => __( 'Billing City', 'newsletter-optin-box' ),
+			'state'         => __( 'Billing State', 'newsletter-optin-box' ),
+			'country'       => __( 'Billing Country', 'newsletter-optin-box' ),
+			'country_short' => __( 'Billing Country Code', 'newsletter-optin-box' ),
+		);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_order_details( $invoice_id ) {
 
 		// Fetch the invoice.

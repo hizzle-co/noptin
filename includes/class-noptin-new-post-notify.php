@@ -399,9 +399,14 @@ class Noptin_New_Post_Notify {
 				'campaign_id'           => $campaign_id,
 				'associated_post'       => $post_id,
 				'subscribers_query'     => array(),
+				'email_sender'          => get_post_meta( $campaign_id, 'email_sender', true ),
 				'custom_title'          => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), sanitize_text_field( get_the_title( $post_id ) ) ),
 			),
 		);
+
+		foreach( Noptin_Email_Campaigns_Admin::get_meta() as $meta_key ) {
+			$post['meta_input'][ $meta_key ] = get_post_meta( $campaign_id, $meta_key, true );
+		}
 
 		$content  = get_post_meta( $post_id, 'noptin_post_notify_content', true );
 		if ( ! empty( $content ) ) {

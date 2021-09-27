@@ -100,7 +100,7 @@ abstract class Noptin_List_Providers {
 			$this->cache( 'list_ids', $list_ids );
         }
 
-        return $list_ids;
+        return is_array( $list_ids ) ? $list_ids : array();
     }
 
 	/**

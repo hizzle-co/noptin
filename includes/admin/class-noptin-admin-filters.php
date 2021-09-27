@@ -30,13 +30,6 @@ class Noptin_Admin_Filters {
         add_filter( 'manage_users_columns', array( $this, 'modify_users_table' ) );
 		add_filter( 'manage_users_custom_column', array( $this, 'modify_users_table_row' ), 10, 3 );
 
-		// Filters Noptin subscriber's fields.
-		add_filter( "noptin_format_imported_subscriber_fields", array( $this, 'format_imported_subscriber_fields' ) );
-
-		// Templates.
-		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'subscriber_fields_select' ) );
-		add_action( 'admin_footer-noptin_page_noptin-subscribers', array( $this, 'create_subscriber_template' ) );
-
 		// Export subscribers.
 		add_action( 'noptin_export_subscribers',  array( $this, 'export_subscribers' ) );
 
@@ -47,10 +40,9 @@ class Noptin_Admin_Filters {
 	 * @since       1.2.4
 	 */
 	public function filter_tools_page_titles( $title ) {
-		
+
 		$titles = array(
-			'debug_log'	   => __( 'Debug Log', 'newsletter-optin-box' ),
-			'system_info'  => __( 'System Information', 'newsletter-optin-box' ),
+			'debug_log'	         => __( 'Debug Log', 'newsletter-optin-box' ),
 		);
 
 		if ( isset( $_GET['tool'] ) && isset( $titles[ $_GET['tool'] ] ) ) {
@@ -120,106 +112,6 @@ class Noptin_Admin_Filters {
 	}
 
 	/**
-	 * Formats imported subscriber fields.
-	 * 
-	 * @param array $subscriber Subscriber fields.
-	 */
-	public function format_imported_subscriber_fields( $subscriber ) {
-
-		$mappings = array(
-			'firstname'        => 'first_name',
-			'fname'            => 'first_name',
-			'secondname'       => 'second_name',
-			'lastname'         => 'second_name',
-			'lname'            => 'second_name',
-			'name'             => 'name',
-			'fullname'         => 'name',
-			'familyname'       => 'name',
-			'displayname'      => 'name',
-			'emailaddress'     => 'email',
-			'email'            => 'email',
-			'active'           => 'active',
-			'liststatus'       => 'active',
-			'status'           => 'active',
-			'emailconfirmed'   => 'confirmed',
-			'confirmed'        => 'confirmed',
-			'globalstatus'     => 'confirmed',
-			'verified'         => 'confirmed',
-			'is_verified'      => 'confirmed',
-			'datetime'         => 'date_created',
-			'subscribedon'     => 'date_created',
-			'datecreated'      => 'date_created',
-			'subscriptiondate' => 'date_created',
-			'createdon'        => 'date_created',
-			'date'             => 'date_created',
-			'confirmkey'       => 'confirm_key',
-			'meta'             => 'meta',
-			'fields'           => 'meta',
-			'metafields'       => 'meta',
-			'customfields'     => 'meta',
-			'conversionpage'   => 'conversion_page',
-			'ip'               => 'ip_address',
-			'ipaddress'        => 'ip_address',
-		);
-
-		$extra_mappings = get_noptin_subscriber_fields();
-
-		foreach ( $extra_mappings as $key => $label ) {
-			$label      = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
-			$mappings[ $label ] = $key;
-		}
-
-		foreach( array_keys( $mappings ) as $key ) {
-			$mappings["subscriber$key"] = $mappings[ $key ];
-		}
-
-		// Prepare subscriber fields.
-		foreach ( (array) $subscriber as $key => $value ) {
-			$sanitized = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
-
-			if ( isset( $mappings[ $sanitized ] ) && empty( $subscriber[ $mappings[ $sanitized ] ] ) ) {
-				$subscriber[ $mappings[ $sanitized ] ] = $value;
-				unset( $subscriber[ $key ] );
-			}
-
-		}
-
-		// Meta data.
-		if ( empty( $subscriber['meta'] ) ) {
-			$subscriber['meta'] = array();
-		}
-
-		$subscriber['meta'] = maybe_unserialize( $subscriber['meta'] );
-
-		if ( is_string( $subscriber['meta'] ) ) {
-			$subscriber['meta'] = json_decode( $subscriber['meta'], true );
-		}
-
-		if ( ! is_array( $subscriber['meta'] ) ) {
-			$subscriber['meta'] = array();
-		}
-
-		// Fill in meta fields for missing core fields.
-		foreach ( $subscriber['meta'] as $key => $value ) {
-			$sanitized = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
-			$value     = maybe_unserialize( $value );
-
-			if ( isset( $mappings[ $sanitized ] ) && empty( $subscriber[ $mappings[ $sanitized ] ] ) ) {
-				$subscriber[ $mappings[ $sanitized ] ] = is_array( $value ) ? $value[0] : $value;
-				unset( $subscriber['meta'][ $key ] );
-			}
-		}
-
-		// Date created.
-		if ( ! empty( $subscriber['date_created'] ) ) {
-			$subscriber['date_created'] = is_string( $subscriber['date_created'] ) ? date( 'Y-m-d', strtotime( $subscriber['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) );
-		}
-
-		return $subscriber;
-
-	}
-
-	/**
 	 * Exports subscribers.
 	 * 
 	 * @since 1.3.1
@@ -244,7 +136,7 @@ class Noptin_Admin_Filters {
 		$output  = fopen( 'php://output', 'w' ) or die( __( 'Unsupported server', 'newsletter-optin-box' ) );
 
 		// Prepare variables.
-		$fields    = empty( $_POST['fields'] )    ? array_keys( get_noptin_subscriber_fields() ) : $_POST['fields'];
+		$fields    = empty( $_POST['fields'] )    ? array( 'email' ) : $_POST['fields'];
 		$file_type = empty( $_POST['file_type'] ) ? 'csv' : sanitize_text_field( $_POST['file_type'] );
 		$file_name = empty( $_POST['file_name'] ) ? 'noptin-subscribers-' . time() : sanitize_text_field( $_POST['file_name'] );
 
@@ -336,7 +228,7 @@ class Noptin_Admin_Filters {
 	public function download_subscribers_csv( $subscribers, $output, $fields ) {
 
 		// Retrieve subscribers.
-		$all_fields = get_noptin_subscriber_fields();
+		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'label', 'merge_tag' );
 		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
 		$labels     = array('ID');
 
@@ -391,7 +283,7 @@ class Noptin_Admin_Filters {
 	 */
 	public function download_subscribers_json( $subscribers, $stream, $fields ) {
 		$output     = array();
-		$all_fields = get_noptin_subscriber_fields();
+		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'label', 'merge_tag' );
 		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
 
 		// Loop through 
@@ -443,7 +335,7 @@ class Noptin_Admin_Filters {
 	 */
 	public function download_subscribers_xml( $subscribers, $stream, $fields ) {
 		$output     = array();
-		$all_fields = get_noptin_subscriber_fields();
+		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'label', 'merge_tag' );
 		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
 
 		// Loop through 
@@ -515,38 +407,6 @@ class Noptin_Admin_Filters {
 			}
 		}
 
-	}
-
-	/**
-	 * Select subscriber fields.
-	 * 
-	 */
-	public function subscriber_fields_select() {
-		echo '<div id="noptin-subscriber-fields-select-template" style="display:none"><p>';
-		echo __( 'Select the subscriber fields to export', 'newsletter-optin-box' );
-		echo '<style>.select2-container {z-index: 99999999999999 !important;}</style>';
-		echo '</p><select class="noptin-subscriber-fields-select" name="noptin-subscriber-fields[]" multiple="multiple">';
-
-		$default = array( 'first_name', 'second_name', 'email', 'active', 'confirmed' );
-		$fields  = get_noptin_subscriber_fields();
-
-		foreach( $fields as $field ) {
-			$field    = noptin_clean( $field );
-			$selected = selected( in_array( $field, $default ), true, false );
-			echo "<option value='$field' $selected>$field</option>";
-		}
-		echo '</select></div>';
-	}
-
-	/**
-	 * Create new subscriber
-	 * 
-	 */
-	public function create_subscriber_template() {
-		echo '<div id="noptin-create-subscriber-template" style="display:none"';
-		echo '<label><input type="text" name="name" placeholder="Subscriber Name" class="noptin-create-subscriber-name swal2-input" /></label>';
-		echo '<label><input type="email" name="email" placeholder="Email Address" class="noptin-create-subscriber-email swal2-input" /></label>';
-		echo '</div>';
 	}
 
 }

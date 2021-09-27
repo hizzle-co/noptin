@@ -14,6 +14,7 @@
 							'label'   => 'Type',
 							'options' => wp_list_pluck( $field_types, 'label', 'type' ),
 							'normal'  => true,
+							'@change' => "field.type.label = getDefaultLabel(field.type.type)"
 						);
 						$args = Noptin_Vue::sanitize_el( 'field.type.type', $args );
 						Noptin_Vue::select( 'field.type.type', $args );

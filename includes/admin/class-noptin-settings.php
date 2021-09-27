@@ -70,6 +70,7 @@ class Noptin_Settings {
 						'double_opt_in' => __( 'Double Opt-In Email', 'newsletter-optin-box' ),
 					)
 				),
+				'fields'                => __( 'Custom Fields', 'newsletter-optin-box' ),
 				'integrations'          => __( 'Integrations', 'newsletter-optin-box' ),
 				'messages'              => __( 'Messages', 'newsletter-optin-box' )
 			)
@@ -168,13 +169,15 @@ class Noptin_Settings {
 
 		}
 
-		$state = array_merge( get_noptin_options(), $state );
+		$state                    = array_merge( get_noptin_options(), $state );
+		$state[ 'custom_fields' ] = get_noptin_custom_fields();
 
 		$state['openSections']   = isset( $_GET['integration'] ) ? array( 'settings_section_' . noptin_clean( $_GET['integration'] ) ) : array();
 		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
 		$state['currentSection'] = 'main';
 		$state['saved']          = __( 'Your settings have been saved', 'newsletter-optin-box' );
 		$state['error']          = __( 'Your settings could not be saved.', 'newsletter-optin-box' );
+		$state['fieldTypes']     = get_noptin_custom_field_types();
 
 		// Cache this.
 		self::$state = apply_filters( 'noptin_settings_state', $state );
@@ -261,7 +264,6 @@ class Noptin_Settings {
 				'type'        => 'text',
 				'label'       => __( 'Notification recipient(s)', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
-				'placeholder' => get_option( 'admin_email' ) . ', admin@example.com',
 				'default'     => get_option( 'admin_email' ),
 				'description' => __( 'Enter a comma separated list of email address that should receive new subscriber notifications', 'newsletter-optin-box' ),
 			),
@@ -272,7 +274,6 @@ class Noptin_Settings {
 				'type'        => 'email',
 				'label'       => __( '"Reply-to" Email', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
-				'placeholder' => get_option( 'admin_email' ),
 				'default'     => get_option( 'admin_email' ),
 				'description' => __( 'Where should subscribers reply to in case they need to get in touch with you?', 'newsletter-optin-box' ),
 			),
@@ -283,7 +284,6 @@ class Noptin_Settings {
 				'type'        => 'email',
 				'label'       => __( '"From" Email', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
-				'placeholder' => noptin()->mailer->default_from_address(),
 				'description' => __( 'How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails.', 'newsletter-optin-box' ),
 			),
 
@@ -293,6 +293,7 @@ class Noptin_Settings {
 				'label'       => __( '"From" Name', 'newsletter-optin-box' ),
 				'class'       => 'regular-text',
 				'placeholder' => get_option( 'blogname' ),
+				'default'     => get_option( 'blogname' ),
 				'description' => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 			),
 
@@ -399,7 +400,7 @@ class Noptin_Settings {
 				'type'        => 'text',
 				'section'     => 'general',
 				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
-				'placeholder' => '****************************',
+				'placeholder' => '',
 				'description' => sprintf(
 					__( 'Enter your %s API key if you want to GeoLocate your subscribers using their service.', 'newsletter-optin-box' ),
 					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
@@ -467,6 +468,13 @@ class Noptin_Settings {
 				'default'     => $double_optin['permission_text'],
 				'placeholder' => $double_optin['permission_text'],
 				'description' => __( 'Remind the subscriber how they signed up.', 'newsletter-optin-box' ),
+			),
+
+			'custom_fields'   => array(
+				'el'          => 'custom_fields',
+				'section'	  => 'fields',
+				'label'       => __( 'Custom Fields', 'newsletter-optin-box' ),
+				'default'     => Noptin_Custom_Fields::default_fields(),
 			),
 
 		);

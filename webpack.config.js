@@ -1,5 +1,5 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -28,7 +28,9 @@ module.exports = {
 		frontend: "./includes/assets/js/src/frontend.js",
 		helper: "./includes/assets/js/src/helper.js",
 		blocks: "./includes/assets/js/src/blocks.js",
-		subscribers: "./includes/assets/js/src/subscribers.js"
+		subscribers: "./includes/assets/js/src/subscribers.js",
+		"subscribers-import": "./includes/assets/js/src/subscribers-import.js",
+		"form-scripts": "./includes/assets/js/src/form-scripts.js",
 	},
 	output: {
 		filename: "[name].js",
@@ -92,6 +94,7 @@ module.exports = {
 		new MiniCssExtractPlugin()
 	],
 	externals: {
+		jquery: 'jQuery',
 		vue: 'Vue'
 	}
 };

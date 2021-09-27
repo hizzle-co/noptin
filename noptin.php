@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         1.5.4
+ * Version:         1.6.0
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -47,7 +47,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.5.4';
+	public $version = '1.6.0';
 
 	/**
 	 * The current database version.
@@ -144,6 +144,14 @@ class Noptin {
 	public $admin;
 
 	/**
+	 * The main custom fields class.
+	 * 
+	 * @var Noptin_Custom_Fields
+	 * @since       1.5.5
+	 */
+	public $custom_fields;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -207,6 +215,7 @@ class Noptin {
 			require_once $plugin_path . 'vendor/autoload.php';
 			require_once $plugin_path . 'includes/functions.php';
 			require_once $plugin_path . 'includes/subscriber.php';
+			require_once $plugin_path . 'includes/forms.php';
 			require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
 			require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
@@ -331,6 +340,9 @@ class Noptin {
 
 		// Automation tasks.
 		$this->automation_rules   = new Noptin_Automation_Rules();
+
+		// Custom fields.
+		$this->custom_fields = new Noptin_Custom_Fields();
 
 		/**
 		 * Fires after Noptin inits

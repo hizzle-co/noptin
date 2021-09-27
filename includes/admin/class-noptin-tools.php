@@ -71,10 +71,12 @@ class Noptin_Tools {
 				'desc'    => __( 'View a list of notices and errors logged by Noptin.', 'newsletter-optin-box' ),
 			),
 
-			'system_info' => array(
-				'name'    => __( 'System Information', 'newsletter-optin-box' ),
-				'button'  => __( 'View', 'newsletter-optin-box' ),
-				'desc'    => __( 'View your system information and Noptin configuration.', 'newsletter-optin-box' ),
+			'delete_subscribers' => array(
+				'name'    => __( 'Delete All Subscribers', 'newsletter-optin-box' ),
+				'button'  => __( 'Delete', 'newsletter-optin-box' ),
+				'desc'    => __( 'Delete all your email subscribers.', 'newsletter-optin-box' ),
+				'url'     => wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_admin_delete_all_subscribers' ), 'noptin-delete-subscribers' ),
+				'confirm' => __( 'Are you sure you want to delete all your email subscribers?', 'newsletter-optin-box' ),
 			),
 
 			'sync_users'  => array(
@@ -118,7 +120,7 @@ class Noptin_Tools {
 	 */
 	public function display_closing_wrap() {
 		
-		if ( ! empty( $_GET['tool'] ) && 'sync_users' != $_GET['tool'] && 'sync_subscribers' != $_GET['tool'] ) {
+		if ( ! empty( $_GET['tool'] ) && 'sync_users' != $_GET['tool'] && 'sync_subscribers' != $_GET['tool'] && 'delete_subscribers' != $_GET['tool'] ) {
 			$tools_page = esc_url( admin_url( 'admin.php?page=noptin-tools' ) );
 			$text       = __( 'Go back to tools page', 'noptin' );
 			echo "<p class='description'><a href='$tools_page'>$text</a></p>";
@@ -149,21 +151,6 @@ class Noptin_Tools {
 
 		$debug_log = get_logged_noptin_messages();
 		get_noptin_template( 'debug-log.php', compact( 'debug_log' ) );
-
-	}
-
-	/**
-	 * Displays the system info.
-	 *
-	 * @return void
-	 * @since 1.2.3
-	 */
-	public function display_system_info() {
-
-		$system_info = new Noptin_System_Info();
-		$info 		 = $system_info->info;
-		$text 		 = $system_info->get_info_as_text();
-		get_noptin_template( 'system-info.php', compact( 'info', 'text' ) );
 
 	}
 

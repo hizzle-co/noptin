@@ -2,9 +2,9 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.6
-Version: 1.5.4
+Version: 1.6.0
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -139,6 +139,15 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.6.0 =
+* Add [noptin] newsletter form shortcode
+
+= 1.5.6 =
+* Import newsletter subscribers page is blank - FIXED
+
+= 1.5.5 =
+* Better management of newsletter subscriber fields - ADDED
 
 = 1.5.2 =
 * Ability to add newsletter sign-up checkboxes on any WordPress HTML forms - ADDED

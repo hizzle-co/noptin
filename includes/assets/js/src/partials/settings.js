@@ -68,9 +68,84 @@ var settingsApp = new Vue({
 
 		},
 
+		// Toggles an accordion.
+		toggleAccordion( panel_id ) {
+
+			let panel = jQuery( '#' + panel_id )
+			let button = panel.prev( '.noptin-accordion-heading' ).find('.noptin-accordion-trigger')
+			let isExpanded = ( 'true' === button.attr( 'aria-expanded' ) );
+
+			if ( isExpanded ) {
+				button.attr( 'aria-expanded', 'false' );
+				panel.attr( 'hidden', true );
+			} else {
+				button.attr( 'aria-expanded', 'true' );
+				panel.attr( 'hidden', false );
+			}
+		},
+
 		// Checks if the panel is open.
 		isOpenPanel( panel ) {
 			return -1 !== this.openSections.indexOf(panel);
+		},
+
+		addField() {
+			let total = this.custom_fields.length
+			this.custom_fields.push(
+				{
+					type: 'text',
+					merge_tag: 'field_' + total,
+					label: 'Field' + total,
+					visible: true,
+					subs_table: false,
+					predefined: false,
+					field_key: Math.random().toString(36).replace(/[^a-z]+/g, '') + this.custom_fields.length,
+					new: true,
+				}
+			)
+		},
+
+		maybeUpdateMergeTag( field ) {
+			if ( ! field.predefined && field.new ) {
+				field.merge_tag = field.label.toString().trim().toLowerCase().replace( /[^a-z0-9]+/g,'_' )
+			}
+		},
+
+		removeField(item) {
+
+			var key = this.custom_fields.indexOf(item)
+			if (key > -1) {
+				this.custom_fields.splice(key, 1)
+			}
+
+		},
+
+		isFieldPredefined(field) {
+			return this.fieldTypes[field.type] && this.fieldTypes[field.type].predefined
+		},
+
+		isFieldFirst(field) {
+			return this.custom_fields.indexOf(field) == 0
+		},
+
+		isFieldLast(field) {
+			return this.custom_fields.indexOf(field) == this.custom_fields.length - 1
+		},
+
+		moveUp(field) {
+			let from = this.custom_fields.indexOf(field)
+			let to = from - 1
+			this.custom_fields.splice(to, 0, this.custom_fields.splice(from, 1)[0]);
+		},
+
+		moveDown(field) {
+			let from = this.custom_fields.indexOf(field)
+			let to = from + 1
+			this.custom_fields.splice(to, 0, this.custom_fields.splice(from, 1)[0]);
+		},
+
+		fieldAllowsOptions(field) {
+			return this.fieldTypes[field.type] && this.fieldTypes[field.type].supports_options
 		},
 
 		// Persists settings to the database.

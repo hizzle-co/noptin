@@ -1,12 +1,24 @@
+<?php
+
+	$data       = '';
+	$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
+	foreach( $data_array as $key => $value ) {
+
+		if ( is_scalar( $value ) ) {
+			$value = esc_attr( urldecode( $value ) );
+			$key   = esc_attr( $key );
+			$data .= " data-$key='$value'";
+		}
+
+	}
+
+?>
+
 <div class="wrap noptin-single-subscriber-page">
-	<?php
-		printf(
-			'<h1 class="title">%s<a class="page-title-action" href="%s">&nbsp;%s</a></h1>',
-			esc_html__( 'Subscriber','newsletter-optin-box' ),
-			esc_url( urldecode( $_GET['return'] ) ),
-			esc_html__( 'Go Back','newsletter-optin-box' )
-		);
-	?>
+	<h1 class="title">
+		<?php esc_html_e( 'Subscriber','newsletter-optin-box' ); ?>
+		<a href="<?php echo esc_url( add_query_arg( 'add', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) ) ); ?>" class="page-title-action"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a>
+	</h1>
 
 	<form name="noptin-edit-subscriber" method="post">
 		<input type="hidden" name="noptin_admin_action" value="noptin_update_admin_edited_subscriber">

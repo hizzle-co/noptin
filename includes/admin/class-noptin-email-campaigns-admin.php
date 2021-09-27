@@ -30,6 +30,8 @@ class Noptin_Email_Campaigns_Admin {
 		// Delete campaign stats.
 		add_action( 'delete_post', array( $this, 'maybe_delete_stats' ) );
 
+		// Filter wp users by meta query.
+		add_filter( 'pre_get_users', array( $this, 'filter_users_by_campaign' ) );
 	}
 
 	/**
@@ -313,6 +315,10 @@ class Noptin_Email_Campaigns_Admin {
 
 		unset( $data['email_body'] );
 		$post['meta_input'] = $data;
+
+		foreach ( self::get_meta() as $meta_key ) {
+			$post['meta_input'][ $meta_key ] = empty( $data[ $meta_key ] ) ? '' : noptin_clean( $data[ $meta_key ] );
+		}
 
 		$post = apply_filters( 'noptin_save_automation_campaign_details', $post, $data );
 
@@ -678,6 +684,28 @@ class Noptin_Email_Campaigns_Admin {
 	 */
 	public function render_automation_setup_metabox( $campaign, $cb ) {
 		call_user_func( $cb['args'], $campaign );
+	}
+
+	/**
+	 * Filters the users query.
+	 *
+	 * @param WP_User_Query $query
+	 */
+	public function filter_users_by_campaign( $query ) {
+		global $pagenow;
+
+		if ( is_admin() && 'users.php' == $pagenow && isset( $_GET['noptin_meta_key'] ) ) {
+
+			$meta_query   = $query->get( 'meta_query' );
+			$meta_query   = empty( $meta_query ) ? array() : $meta_query;
+			$meta_query[] = array(
+				'key'   => sanitize_text_field( $_GET['noptin_meta_key'] ),
+				'value' => (int) $_GET['noptin_meta_value']
+			);
+			$query->set( 'meta_query', $meta_query );
+
+		}
+
 	}
 
 }

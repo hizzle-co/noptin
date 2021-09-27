@@ -189,6 +189,20 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function available_customer_fields() {
+		return array(
+			'address_1'     => __( 'Billing Address 1', 'newsletter-optin-box' ),
+			'address_1'     => __( 'Billing Address 2', 'newsletter-optin-box' ),
+			'postcode'      => __( 'Billing Postcode', 'newsletter-optin-box' ),
+			'city'          => __( 'Billing City', 'newsletter-optin-box' ),
+			'state'         => __( 'Billing State', 'newsletter-optin-box' ),
+			'country'       => __( 'Billing Country', 'newsletter-optin-box' ),
+		);
+	}
+
+	/**
 	 * Fired when an order is refunded.
 	 * 
 	 * @param EDD_Payment $payment_id The Payment Object.

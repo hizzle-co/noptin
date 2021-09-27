@@ -1,12 +1,11 @@
 {
 	"name": "noptin",
-	"version": "1.5.0",
+	"version": "1.6.0",
 	"private": true,
 	"description": "WordPress Newsletter Plugin",
 	"scripts": {
 		"test": "test",
-		"sniff": "phpcs includes",
-		"beautify": "phpcbf includes",
+		"cssform": "postcss includes/assets/css/postcss/form-styles.css -o includes/assets/css/form-styles.css",
 		"cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
 		"cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
 		"csshelper": "postcss includes/assets/css/postcss/noptin-helper.css -o includes/assets/css/noptin-helper.css",
@@ -28,6 +27,7 @@
 	},
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
+		"axios": "0.21.1",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.3.1",
@@ -35,30 +35,31 @@
 		"vue-contenteditable": "1.0.2",
 		"vue-popperjs": "2.3.0",
 		"vuedraggable": "2.24.3",
-		"vuetify": "2.5.7"
+		"vuetify": "2.5.8"
 	},
 	"devDependencies": {
-		"@babel/core": "7.14.8",
-		"@babel/plugin-transform-runtime": "7.14.5",
-		"@babel/preset-env": "7.14.8",
+		"@babel/core": "7.15.0",
+		"@babel/plugin-transform-runtime": "7.15.0",
+		"@babel/preset-env": "7.15.0",
 		"@mdi/js": "5.9.55",
-		"@wordpress/babel-preset-default": "6.3.0",
-		"autoprefixer": "10.3.1",
+		"@vue/compiler-sfc": "3.2.4",
+		"@wordpress/babel-preset-default": "6.3.1",
+		"autoprefixer": "10.3.2",
 		"babel-loader": "8.2.2",
 		"css-loader": "6.2.0",
 		"fibers": "5.0.0",
-		"mini-css-extract-plugin": "2.1.0",
+		"mini-css-extract-plugin": "2.2.0",
 		"postcss": "8.3.6",
 		"postcss-csso": "5.0.1",
 		"postcss-import": "14.0.2",
 		"precss": "4.0.0",
-		"sass": "1.36.0",
+		"sass": "1.38.0",
 		"sass-loader": "12.1.0",
 		"style-loader": "3.2.1",
-		"vue-loader": "16.3.3",
+		"vue-loader": "15.9.8",
 		"vue-template-compiler": "2.6.14",
 		"vuetify-loader": "1.7.2",
-		"webpack": "5.46.0",
-		"webpack-cli": "4.7.2"
+		"webpack": "5.51.1",
+		"webpack-cli": "4.8.0"
 	}
 }
