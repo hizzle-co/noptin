@@ -345,7 +345,7 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
 		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] :  md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
 		'date_created' => ! empty( $fields['date_created'] ) ? date( 'Y-m-d', strtotime( $fields['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) ),
-		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] :  ( get_noptin_option( 'double_optin' ) ? 1 : 0 ),
+		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] :  ( get_noptin_option( 'double_optin', false ) ? 1 : 0 ),
 		'confirmed'    => ! empty( $fields['confirmed'] ),
 	);
 
@@ -739,7 +739,7 @@ function noptin_subscribers_meta_table_exists() {
 function noptin_new_subscriber_notify( $id, $fields ) {
 
 	// Are we sending new subscriber notifications?
-	$notify = get_noptin_option( 'notify_admin' );
+	$notify = get_noptin_option( 'notify_admin', false );
 	if ( empty( $notify ) ) {
 		return;
 	}
@@ -812,7 +812,7 @@ function get_default_noptin_subscriber_double_optin_email() {
 function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = false ) {
 
 	// Is double optin enabled?
-	$double_optin = get_noptin_option( 'double_optin' );
+	$double_optin = get_noptin_option( 'double_optin', false );
 	if ( empty( $double_optin ) && ! $force ) {
 		return false;
 	}

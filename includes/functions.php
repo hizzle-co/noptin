@@ -24,34 +24,6 @@ function noptin() {
 }
 
 /**
- * Retrieves all default noptin options
- *
- * @return  array   options
- * @access  public
- * @since   1.0.6
- */
-function get_default_noptin_options() {
-
-	$options = array(
-		'notify_admin'          => false,
-		'double_optin'          => false,
-		'from_email'            => noptin()->mailer->default_from_address(),
-		'reply_to'              => get_option( 'admin_email' ),
-		'from_name'             => get_option( 'blogname' ),
-		'company'               => get_option( 'blogname' ),
-		'comment_form'          => false,
-		'comment_form_msg'      => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
-		'register_form'         => false,
-		'register_form_msg'     => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
-		'hide_from_subscribers' => false,
-		'success_message'       => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
-		'email_template'        => 'plain',
-	);
-	return $options;
-
-}
-
-/**
  * Retrieves all noptin options
  *
  * @return  array   options
@@ -66,7 +38,9 @@ function get_noptin_options() {
 	}
 
 	if ( ! is_array( $noptin_options ) || empty( $noptin_options ) ) {
-		$noptin_options = get_default_noptin_options();
+		$noptin_options = array(
+			'success_message' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
+		);
 	}
 
 	// Support for WPML.
@@ -394,7 +368,7 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
-	if ( get_noptin_option( 'hide_from_subscribers' ) && noptin_is_subscriber() ) {
+	if ( get_noptin_option( 'hide_from_subscribers', false ) && noptin_is_subscriber() ) {
 		return false;
 	}
 

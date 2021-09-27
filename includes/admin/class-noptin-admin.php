@@ -83,11 +83,10 @@ class Noptin_Admin {
 		do_action( 'noptin_before_admin_load', $this );
 
 		// Set global variables.
-		$noptin            = noptin();
 		$this->admin_path  = plugin_dir_path( __FILE__ );
 		$this->admin_url   = plugins_url( '/', __FILE__ );
-		$this->assets_url  = $noptin->plugin_url . 'includes/assets/';
-		$this->assets_path = $noptin->plugin_path . 'includes/assets/';
+		$this->assets_url  = plugin_dir_url( Noptin::$file ) . 'includes/assets/';
+		$this->assets_path = plugin_dir_path( Noptin::$file ) . 'includes/assets/';
 
 		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
 		$this->bg_sync 		   = new Noptin_Background_Sync();

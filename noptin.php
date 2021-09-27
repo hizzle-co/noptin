@@ -174,6 +174,11 @@ class Noptin {
 	 */
 	private function __construct() {
 
+		// Prevent double initialization.
+		if ( function_exists( 'noptin' ) ) {
+			return;
+		}
+
 		// Load files / register the autoloader.
 		$this->load_files();
 
@@ -207,25 +212,21 @@ class Noptin {
 	 */
 	private function load_files() {
 
-		if ( empty( $this->mailer ) ) {
+		$plugin_path = plugin_dir_path( __FILE__ );
 
-			$plugin_path = plugin_dir_path( __FILE__ );
+		// Non-class files.
+		require_once $plugin_path . 'vendor/autoload.php';
+		require_once $plugin_path . 'includes/functions.php';
+		require_once $plugin_path . 'includes/subscriber.php';
+		require_once $plugin_path . 'includes/forms.php';
+		require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
+		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
-			// Non-class files.
-			require_once $plugin_path . 'vendor/autoload.php';
-			require_once $plugin_path . 'includes/functions.php';
-			require_once $plugin_path . 'includes/subscriber.php';
-			require_once $plugin_path . 'includes/forms.php';
-			require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
-			require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
-
-			// Register autoloader.
-			try {
-				spl_autoload_register( array( $this, 'autoload' ), true );
-			} catch ( Exception $e ) {
-				log_noptin_message( $e->getMessage() );
-			}
-
+		// Register autoloader.
+		try {
+			spl_autoload_register( array( $this, 'autoload' ), true );
+		} catch ( Exception $e ) {
+			log_noptin_message( $e->getMessage() );
 		}
 
 	}
