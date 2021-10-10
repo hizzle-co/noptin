@@ -206,6 +206,7 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'label'       => __( 'Admin Notifications', 'newsletter-optin-box' ),
 				'description' => __( 'Notify the site admin every time a new subscriber signs up for the newsletter.', 'newsletter-optin-box' ),
+				'default'     => false,
 			),
 
 			'double_optin'    => array(
@@ -214,6 +215,7 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'label'       => __( 'Double Opt-in', 'newsletter-optin-box' ),
 				'description' => __( 'Require new subscribers to confirm their email addresses.', 'newsletter-optin-box' ),
+				'default'     => false,
 			),
 
 			'delete_on_unsubscribe'    => array(
@@ -221,6 +223,7 @@ class Noptin_Settings {
 				'type'        => 'checkbox_alt',
 				'section'     => 'general',
 				'label'       => __( 'Delete on Unsubscribe', 'newsletter-optin-box' ),
+				'default'     => false,
 				'description' => __( 'Delete subscribers after they unsubscribe instead of marking them as inactive.', 'newsletter-optin-box' ),
 			),
 
@@ -229,6 +232,7 @@ class Noptin_Settings {
 				'type'        => 'checkbox_alt',
 				'section'     => 'general',
 				'label'       => __( 'Hide From Subscribers', 'newsletter-optin-box' ),
+				'default'     => false,
 				'description' => __( 'Hide opt-in forms and methods from existing subscribers.', 'newsletter-optin-box' ),
 			),
 

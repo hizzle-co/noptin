@@ -577,7 +577,7 @@ class Noptin_Mailer {
 	 * @return string The email from name
 	 */
 	public function get_from_name() {
-		$from_name = get_noptin_option( 'from_name',  get_bloginfo( 'name' ) );
+		$from_name = get_noptin_option( 'from_name',  get_option( 'blogname' ) );
 
 		if ( empty( $from_name ) ) {
 			$from_name =  get_bloginfo( 'name' );

@@ -53,8 +53,8 @@
 						<td>
 							<div>
 								<select name="noptin_fields[active]" id="field_status" class="noptin-text">
-									<option <?php selected( ! (bool) get_noptin_option( 'double_optin' ) ) ?> value="0"><?php _e( 'Subscribed', 'newsletter-optin-box' ); ?></option>
-									<option <?php selected( (bool) get_noptin_option( 'double_optin' ) ) ?> value="1"><?php _e( 'Pending', 'newsletter-optin-box' ); ?></option>
+									<option <?php selected( ! (bool) get_noptin_option( 'double_optin', false ) ) ?> value="0"><?php _e( 'Subscribed', 'newsletter-optin-box' ); ?></option>
+									<option <?php selected( (bool) get_noptin_option( 'double_optin', false ) ) ?> value="1"><?php _e( 'Pending', 'newsletter-optin-box' ); ?></option>
 								</select>
 							</div>
 						</td>
