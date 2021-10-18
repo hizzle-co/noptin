@@ -27,7 +27,7 @@
 	},
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
-		"axios": "0.21.4",
+		"axios": "0.21.1",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.3.1",
@@ -38,20 +38,28 @@
 		"vuetify": "2.5.8"
 	},
 	"devDependencies": {
-		"@babel/core": "7.15.5",
+		"@babel/core": "7.15.0",
 		"@babel/plugin-transform-runtime": "7.15.0",
-		"@babel/preset-env": "7.15.6",
+		"@babel/preset-env": "7.15.0",
 		"@mdi/js": "5.9.55",
 		"@vue/compiler-sfc": "3.2.4",
-		"@wordpress/babel-preset-default": "6.3.2",
-		"autoprefixer": "10.3.4",
+		"@wordpress/babel-preset-default": "6.3.1",
+		"autoprefixer": "10.3.2",
 		"babel-loader": "8.2.2",
 		"css-loader": "6.2.0",
+		"fibers": "5.0.0",
+		"mini-css-extract-plugin": "2.2.0",
 		"postcss": "8.3.6",
 		"postcss-csso": "5.0.1",
 		"postcss-import": "14.0.2",
 		"precss": "4.0.0",
-		"webpack": "5.52.1",
+		"sass": "1.38.0",
+		"sass-loader": "12.1.0",
+		"style-loader": "3.2.1",
+		"vue-loader": "15.9.8",
+		"vue-template-compiler": "2.6.14",
+		"vuetify-loader": "1.7.2",
+		"webpack": "5.51.1",
 		"webpack-cli": "4.8.0"
 	}
 }

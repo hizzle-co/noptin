@@ -47,7 +47,7 @@ class Noptin_Post_Types {
 	 */
 	public function register_post_types() {
 
-		if ( ! is_blog_installed() || post_type_exists( 'noptin-form' ) ) {
+		if ( ! is_blog_installed() || post_type_exists( 'noptin-campaign' ) ) {
 			return;
 		}
 
@@ -58,9 +58,6 @@ class Noptin_Post_Types {
 		*/
 		do_action( 'noptin_register_post_type' );
 
-		// Optin forms.
-		register_post_type( 'noptin-form', $this->get_form_post_type_details() );
-
 		// Email campaign.
 		register_post_type( 'noptin-campaign', $this->get_email_campaign_post_type_details() );
 
@@ -70,54 +67,6 @@ class Noptin_Post_Types {
 		 * @since 1.0.0
 		*/
 		do_action( 'noptin_after_register_post_type' );
-
-	}
-
-	/**
-	 * Returns registration details for noptin-form post types
-	 *
-	 * @access      public
-	 * @since       1.1.1
-	 * @return      array
-	 */
-	public function get_form_post_type_details() {
-
-		return apply_filters(
-			'noptin_optin_form_post_type_details',
-			array(
-				'labels'              => array(
-					'name'               => _x( 'Email Forms', 'Post type general name', 'newsletter-optin-box' ),
-					'singular_name'      => _x( 'Email Form', 'Post type singular name', 'newsletter-optin-box' ),
-					'menu_name'          => _x( 'Email Forms', 'Admin Menu text', 'newsletter-optin-box' ),
-					'name_admin_bar'     => _x( 'Email Form', 'Add New on Toolbar', 'newsletter-optin-box' ),
-					'add_new'            => __( 'Add New', 'newsletter-optin-box' ),
-					'add_new_item'       => __( 'Add New Form', 'newsletter-optin-box' ),
-					'new_item'           => __( 'New Form', 'newsletter-optin-box' ),
-					'edit_item'          => __( 'Edit Form', 'newsletter-optin-box' ),
-					'view_item'          => __( 'View Form', 'newsletter-optin-box' ),
-					'search_items'       => __( 'Search Forms', 'newsletter-optin-box' ),
-					'parent_item_colon'  => __( 'Parent Forms:', 'newsletter-optin-box' ),
-					'not_found'          => __( 'No forms found.', 'newsletter-optin-box' ),
-					'not_found_in_trash' => __( 'No forms found in Trash.', 'newsletter-optin-box' ),
-				),
-				'label'               => __( 'Email Forms', 'newsletter-optin-box' ),
-				'description'         => '',
-				'public'              => false,
-				'show_ui'             => true,
-				'map_meta_cap'        => true,
-				'publicly_queryable'  => false,
-				'exclude_from_search' => true,
-				'hierarchical'        => false,
-				'query_var'           => false,
-				'supports'            => array( 'author' ),
-				'has_archive'         => false,
-				'show_in_nav_menus'   => false,
-				'show_in_rest'        => false,
-				'show_in_menu'        => false,
-				'menu_icon'           => '',
-				'can_export'          => false,
-			)
-		);
 
 	}
 

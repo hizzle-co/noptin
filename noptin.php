@@ -153,9 +153,9 @@ class Noptin {
 
 	/**
 	 * The main forms class.
-	 * 
-	 * @var Noptin_Forms_Legacy|Noptin_Forms
-	 * @since       1.6.1
+	 *
+	 * @var Noptin_Form_Manager
+	 * @since       1.6.2
 	 */
 	public $forms;
 
@@ -227,6 +227,7 @@ class Noptin {
 		require_once $plugin_path . 'includes/functions.php';
 		require_once $plugin_path . 'includes/subscriber.php';
 		require_once $plugin_path . 'includes/forms/forms.php';
+		require_once $plugin_path . 'includes/forms/class-form-manager.php';
 		require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
@@ -253,8 +254,11 @@ class Noptin {
 		$this->plugin_path = plugin_dir_path( __FILE__ );
 		$this->plugin_url  = plugins_url( '/', __FILE__ );
 
+		// Form manager.
+		$this->forms = new Noptin_Form_Manager();
+
 		// Mailer.
-		$this->mailer = new Noptin_Mailer(); 
+		$this->mailer = new Noptin_Mailer();
 
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
@@ -276,7 +280,7 @@ class Noptin {
 		add_action( 'init', array( $this, 'init' ), 5 );
 
 		// Load forms.
-		add_action( 'plugins_loaded', array( $this, 'load_forms' ), 5 );
+		add_action( 'plugins_loaded', array( $this->forms, 'add_hooks' ), 5 );
 
 		// Init integrations.
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
@@ -436,30 +440,6 @@ class Noptin {
 			filemtime( $this->plugin_path . 'includes/assets/css/blocks.css' )
 		);
 
-		// The JS used on the frontend
-		wp_register_script(
-			'noptin_front',
-			$this->plugin_url . 'includes/assets/js/dist/frontend.js',
-			array( 'jquery' ),
-			filemtime( $this->plugin_path . 'includes/assets/js/dist/frontend.js' ),
-			true
-		);
-
-		$params = array(
-			'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-			'nonce'       => wp_create_nonce( 'noptin' ),
-			'cookie'      => get_noptin_option( 'subscribers_cookie' ),
-			'cookie_path' => COOKIEPATH,
-		);
-		wp_localize_script( 'noptin_front', 'noptin', $params );
-
-		// The css used to style the frontend
-		wp_register_style(
-			'noptin_front',
-			$this->plugin_url . 'includes/assets/css/frontend.css',
-			array(),
-			filemtime( $this->plugin_path . 'includes/assets/css/frontend.css' )
-		);
 	}
 
 	/**
@@ -525,7 +505,6 @@ class Noptin {
 	 * @return      void
 	 */
 	public function register_widget() {
-		register_widget( 'Noptin_Widget' );
 		register_widget( 'Noptin_Sidebar' );
 	}
 
@@ -604,27 +583,6 @@ class Noptin {
 			false,
 			plugin_basename( dirname( __FILE__ ) ) . '/languages/'
 		);
-
-	}
-
-	/**
-	 * Loads the new forms after all plugins have been loaded.
-	 *
-	 * @since 1.6.1
-	 * @return bool
-	 */
-	public function load_forms() {
-		require_once plugin_dir_path( __FILE__ ) . 'includes/forms/class-noptin-forms-legacy.php';
-
-		// Are we using the new forms?
-		if ( is_using_new_noptin_forms() ) {
-			require_once plugin_dir_path( __FILE__ ) . 'includes/forms/class-noptin-forms.php';
-			require_once plugin_dir_path( __FILE__ ) . 'includes/forms/class-noptin-form.php';
-			$this->forms = new Noptin_Forms();
-		} else {
-			require_once plugin_dir_path( __FILE__ ) . 'includes/forms/legacy/class-noptin-form-legacy.php';
-			$this->forms = new Noptin_Forms_Legacy();
-		}
 
 	}
 

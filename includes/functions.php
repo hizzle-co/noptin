@@ -1365,3 +1365,63 @@ function noptin_sanitize_booleans( $var ) {
 
 	return $var;
 }
+
+/**
+ * Get current URL (full)
+ *
+ * @since 1.6.2
+ * @return string
+ */
+function noptin_get_request_url() {
+	global $wp;
+
+	// Get requested url from global $wp object.
+	$site_request_uri = $wp->request;
+
+	// Fix for IIS servers using index.php in the URL.
+	if ( false !== stripos( $_SERVER['REQUEST_URI'], '/index.php/' . $site_request_uri ) ) {
+		$site_request_uri = 'index.php/' . $site_request_uri;
+	}
+
+	// Concatenate request url to home url.
+	$url = home_url( $site_request_uri );
+	$url = trailingslashit( $url );
+
+	return esc_url_raw( $url );
+}
+
+/**
+ * Get current URL path.
+ *
+ * @since 1.6.2
+ * @return string
+ */
+function noptin_get_request_path() {
+	return $_SERVER['REQUEST_URI'];
+}
+
+/**
+ * Get a specific key of an array without needing to check if that key exists.
+ *
+ * Provide a default value if you want to return a specific value if the key is not set.
+ *
+ * @since  1.6.2
+ *
+ * @param array  $array   Array from which the key's value should be retrieved.
+ * @param string $key    Name of the key to be retrieved.
+ * @param string $default Optional. Value that should be returned if the key is not set or empty. Defaults to null.
+ *
+ * @return null|string|mixed The value
+ */
+function noptin_array_value( $array, $key, $default = '' ) {
+
+	if ( ! is_array( $array ) && ! ( is_object( $array ) && $array instanceof ArrayAccess ) ) {
+		return $default;
+	}
+
+	if ( isset( $array[ $key ] ) ) {
+		return $array[ $key ];
+	}
+
+	return $default;
+}

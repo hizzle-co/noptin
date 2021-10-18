@@ -841,7 +841,7 @@ class Noptin_Form_Legacy {
 		$data['data'] = $data;
 		$data['form'] = $this;
 		extract( $data );
-		include plugin_dir_path( __FILE__ ) . 'frontend-optin-form.php';
+		include plugin_dir_path( __FILE__ ) . 'views/legacy/frontend-optin-form.php';
 		return ob_get_clean();
 	}
 

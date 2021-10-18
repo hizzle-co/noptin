@@ -19,15 +19,6 @@ class Noptin_Ajax {
 		// Register new subscriber.
 		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
-		add_action( 'wp_ajax_noptin_process_ajax_subscriber', array( $this, 'add_subscriber_new' ) );
-		add_action( 'wp_ajax_nopriv_noptin_process_ajax_subscriber', array( $this, 'add_subscriber_new' ) );
-
-		// Log form impressions.
-		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
-		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
-
-		// Download forms.
-		add_action( 'wp_ajax_noptin_download_forms', array( $this, 'download_forms' ) );
 
 		// Save settings.
 		add_action( 'wp_ajax_noptin_save_options', array( $this, 'save_options' ) );
@@ -51,32 +42,8 @@ class Noptin_Ajax {
 		add_action( 'wp_ajax_noptin_import_subscribers', array( $this, 'import_subscribers' ) );
 		add_action( 'wp_ajax_noptin_prepare_subscriber_fields', array( $this, 'prepare_subscriber_fields' ) );
 
-		// Import forms.
-		add_action( 'wp_ajax_noptin_import_forms', array( $this, 'import_forms' ) );
-
 		// Double opt-in email.
 		add_action( 'wp_ajax_noptin_send_double_optin_email', array( $this, 'send_double_optin_email' ) );
-
-	}
-
-	/**
-	 * Logs a form view
-	 *
-	 * @access      public
-	 * @since       1.1.1
-	 * @return      void
-	 */
-	public function log_form_impression() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin' );
-
-		if ( ! empty( $_POST['form_id'] ) ) {
-			$form_id = intval( $_POST['form_id'] );
-			$count   = (int) get_post_meta( $form_id, '_noptin_form_views', true );
-			update_post_meta( $form_id, '_noptin_form_views', $count + 1 );
-		}
-		exit;
 
 	}
 
@@ -409,47 +376,6 @@ class Noptin_Ajax {
 	}
 
 	/**
-	 * Imports forms
-	 *
-	 * @access      public
-	 * @since       1.2.6
-	 * @return      void
-	 */
-	public function import_forms() {
-
-		// Ensure the nonce is valid...
-		check_ajax_referer( 'noptin_admin_nonce' );
-
-		// ... and that the user can import subscribers.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Maybe abort early.
-		if ( ! isset( $_POST['forms'] ) ) {
-			wp_die( -1, 400 );
-		}
-
-		// Prepare forms.
-		$forms = json_decode( stripslashes_deep( $_POST['forms'] ), true );
-
-		if ( ! is_array( $forms ) ) {
-			_e( 'Invalid export file', 'newsletter-optin-box' );
-			exit;
-		}
-
-		foreach ( $forms as $form ) {
-			$form['id'] = null;
-			$form       = new Noptin_Form( $form );
-			$form->create();
-		}
-
-		wp_send_json_success( true );
-		exit;
-
-	}
-
-	/**
 	 * Sends a test email
 	 *
 	 * @access      public
@@ -714,149 +640,6 @@ class Noptin_Ajax {
 		exit;
 
 	}
-	// TODO: Add redirect_url && success message to shortcode, add novalidate to form, use filters to match the functionality of the above method.
-	/**
-	 * Adds a new subscriber via ajax
-	 *
-	 * @access      public
-	 * @since       1.6.0
-	 * @return      void
-	 */
-	public function add_subscriber_new() {
-
-		// Verify nonce.
-		if ( noptin_verify_subscription_nonces() ) {
-			check_ajax_referer( 'noptin_subscription_nonce' );
-		}
-
-		// avoid bot submissions.
-		if ( ! empty( $_POST['noptin_ign'] ) ) {
-			return;
-		}
-
-		/**
-		 * Fires before a subscriber is added via ajax.
-		 *
-		 * @since 1.2.4
-		 */
-		do_action( 'noptin_before_add_ajax_subscriber' );
-
-		// Prepare form data.
-		$source     = empty( $_POST['source'] ) ? '' : sanitize_text_field( wp_unslash( $_POST['source'] ) );
-		$fields     = empty( $_POST['noptin_fields'] ) ? array() : wp_unslash( $_POST['noptin_fields'] );
-		$misc       = empty( $_POST['noptin_misc'] ) ? array() : wp_unslash( $_POST['noptin_misc'] );
-		$to_process = empty( $_POST['processed_fields'] ) ? 'email' : wp_unslash( $_POST['processed_fields'] );
-		$to_process = apply_filters( 'noptin_custom_fields_to_process', array_map( 'get_noptin_custom_field', noptin_parse_list( $to_process ) ), $source );
-		$subscriber = array();
-
-		// Process form fields.
-		foreach ( $to_process as $custom_field ) {
-
-			if ( empty( $custom_field ) ) {
-				continue;
-			}
-
-			// Ensure required fields are filled.
-			$merge_tag = $custom_field['merge_tag'];
-			if ( ! empty( $custom_field['required'] ) && ( ! isset( $fields[ $merge_tag ] ) || '' === $fields[ $merge_tag ] ) ) {
-				wp_send_json_error(
-					sprintf(
-						__( 'The "%s" field is required.', 'newsletter-optin-box' ),
-						esc_html( $custom_field['label'] )
-					)
-				);
-			}
-
-			$value = isset( $fields[ $merge_tag ] ) ? $fields[ $merge_tag ] : '';
-
-			// Checkboxes should always be 0 or 1.
-			if ( 'checkbox' === $custom_field['type'] ) {
-				$value = (int) ! empty( $value );
-			}
-
-			$subscriber[ $merge_tag ] = $value;
-	
-		}
-
-		// An email address is required.
-		if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) ) {
-			wp_send_json_error( __( 'Missing or invalid email address.', 'newsletter-optin-box' ) );
-		}
-
-		// Add the subscriber's IP address...
-		$address = noptin_get_user_ip();
-		if ( ! empty( $address ) && '::1' !== $address ) {
-			$subscriber['ip_address'] = $address;
-		}
-
-		// ... the conversion page...
-		if ( ! empty( $_POST['conversion_page'] ) ) {
-			$subscriber['conversion_page'] = esc_url_raw( trim( wp_unslash( $_POST['conversion_page'] ) ) );
-		}
-
-		// ... and the source.
-		if ( ! empty( $source ) ) {
-			$subscriber['_subscriber_via'] = noptin_clean( $source );
-		}
-
-		// Finally, add connection data.
-		$subscriber = Noptin_Hooks::add_connections( $subscriber, $misc );
-
-		/**
-		 * Filters subscriber details when adding a new subscriber via ajax.
-		 *
-		 * @param array $subscriber Subscriber details
-		 * @param string $source Subscriber source
-		 * @since 1.6.0
-		 */
-		$subscriber    = apply_filters( 'noptin_ajax_subscriber_details', $subscriber, $source );
-		$subscriber_id = add_noptin_subscriber( $subscriber );
-
-		// Check if an error occured while registering the subscriber.
-		if ( is_string( $subscriber_id ) ) {
-			wp_send_json_error( $subscriber_id );
-		}
-
-		// Fired after a subscriber is added to the newsletter.
-		do_action( 'noptin_add_ajax_subscriber', $subscriber_id, $source );
-
-		// Either display a success message or redirect to a success URL.
-		if ( ! empty( $_POST['redirect_url'] ) ) {
-
-			$result = array(
-				'action'   => 'redirect',
-				'redirect' => esc_url_raw( trim( wp_unslash( $_POST['redirect_url'] ) ) ),
-			);
-
-		} else {
-
-			// Either fetch the default success msg or use an overidden success message.
-			$result = array(
-				'action' => 'msg',
-				'msg'    => isset( $_POST['success_msg'] ) ? esc_html( trim( wp_unslash( $_POST['success_msg'] ) ) ) : get_noptin_option( 'success_message' ),
-			);
-
-			// Ensure the success message is not empty.
-			if ( empty( $result['msg'] ) ) {
-				$result['msg'] = esc_html__( 'Thanks for subscribing to the newsletter', 'newsletter-optin-box' );
-			}
-
-			// Replace any merge tags in the success message.
-			$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $subscriber_id ) );
-
-		}
-
-		// Update form subscriptions.
-		if ( is_numeric( $source ) ) {
-			$count = (int) get_post_meta( $source, '_noptin_subscribers_count', true );
-			update_post_meta( $source, '_noptin_subscribers_count', $count + 1 );
-		}
-
-		// Send back the result.
-		wp_send_json_success( $result );
-		exit;
-
-	}
 
 	/**
 	 * Saves settings
@@ -957,57 +740,6 @@ class Noptin_Ajax {
 
 		wp_send_json_success( 1 );
 
-	}
-
-	/**
-	 * Downloads optin forms
-	 *
-	 * @access      public
-	 * @since       1.2.6
-	 */
-	public function download_forms() {
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Check nonce.
-		$nonce = $_GET['admin_nonce'];
-		if ( ! wp_verify_nonce( $nonce, 'noptin_admin_nonce' ) ) {
-			_e ( 'Reload the page and try again.', 'newsletter-optin-box' );
-			exit;
-		}
-
-		/**
-		 * Runs before downloading opt-in forms.
-		 *
-		 */
-		do_action( 'noptin_before_download_forms' );
-
-		$output = fopen( 'php://output', 'w' ) or die( 'Unsupported server' );
-
-		// Let the browser know what content we're streaming and how it should save the content.
-		$time = time();
-		header( "Content-Type:application/json" );
-		header( "Content-Disposition:attachment;filename=noptin-forms-$time.json" );
-
-		$forms = array();
-
-		foreach( get_noptin_optin_forms() as $form ) {
-			$forms[] = $form->get_all_data();
-		}
-
-		echo wp_json_encode( wp_unslash( $forms ) );
-
-		fclose( $output );
-
-		/**
-		 * Runs after after downloading opt-in forms.
-		 *
-		 */
-		do_action( 'noptin_after_download_forms' );
-
-		exit; // This is important.
 	}
 
 }

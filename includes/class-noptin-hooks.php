@@ -29,8 +29,6 @@ class Noptin_Hooks {
 		// (Maybe) delete sent campaigns.
 		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_delete_campaigns' ) );
 
-		// Loads scripts.
-		add_action( 'wp_footer', array( $this, 'enqueue_scripts' ), 2 );
 	}
 
 	/**
@@ -143,6 +141,10 @@ class Noptin_Hooks {
 	 */
 	public static function add_connections( $data, $submitted ) {
 
+		if ( ! is_array( $submitted ) ) {
+			return;
+		}
+
 		foreach ( get_noptin_connection_providers() as $key => $connection ) {
 
 			if ( empty( $connection->list_providers ) ) {
@@ -224,37 +226,6 @@ class Noptin_Hooks {
 		}
 
 		return $guessed;
-
-	}
-
-	/**
-	 * Registers front end scripts
-	 *
-	 * @access      public
-	 * @since       1.6.0
-	 * @return      void
-	 */
-	public function enqueue_scripts() {
-
-		if ( ! empty( $GLOBALS['noptin_load_scripts' ] ) ) {
-
-			wp_enqueue_script(
-				'noptin-form',
-				noptin()->plugin_url . 'includes/assets/js/dist/form-scripts.js',
-				array(),
-				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/form-scripts.js' ),
-				true
-			);
-
-			$params = array(
-				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-				'nonce'       => wp_create_nonce( 'noptin' ),
-				'cookie'      => get_noptin_option( 'subscribers_cookie' ),
-				'cookie_path' => COOKIEPATH,
-			);
-			wp_localize_script( 'noptin-form', 'noptinParams', $params );
-
-		}
 
 	}
 

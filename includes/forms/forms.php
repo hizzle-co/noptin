@@ -24,16 +24,39 @@ function is_using_new_noptin_forms() {
 add_filter( 'is_using_new_noptin_forms', '__return_true' );
 
 /**
+ * Checks whether or not this is a new or legacy form.
+ *
+ * @since 1.6.2
+ * @param int $form_id
+ * @return bool
+ */
+function is_legacy_noptin_form( $form_id ) {
+
+	// Check if it was created by the legacy editor.
+	if ( '' === get_post_meta( $form_id, '_noptin_state', true ) ) {
+		return true;
+	}
+
+	// Or the new editor.
+	if ( '' !== get_post_meta( $form_id, 'form_settings', true ) ) {
+		return false;
+	}
+
+	// This is a new form.
+	return ! is_using_new_noptin_forms();
+}
+
+/**
  * Generates the markup for displaying a subscription form.
  *
  * @param array $args Form args.
  * @since 1.6.0
  * @return string
+ * @deprecated
+ * @see show_noptin_form
  */
 function get_noptin_subscription_form_html( $args ) {
-	ob_start();
-	display_noptin_subscription_form( $args );
-	return ob_get_clean();
+	return show_noptin_form( $args, false );
 }
 
 /**
@@ -41,370 +64,11 @@ function get_noptin_subscription_form_html( $args ) {
  *
  * @param array $args Form args.
  * @since 1.6.0
+ * @deprecated
+ * @see show_noptin_form
  */
 function display_noptin_subscription_form( $args ) {
-	$GLOBALS['noptin_load_scripts' ] = 1;
-
-	/**
-	 * Filters the arguments used to generate a newsletter subscription form.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $args Passed arguments.
-	 */
-	$args = apply_filters( 'noptin_subscription_form_args', $args );
-
-	// Label position.
-	$args['html_class'] .= ' noptin-label-' . $args['labels'];
-	$args['html_class'] .= ' noptin-styles-' . $args['styles'];
-	$args['html_class'] .= ' noptin-template-' . $args['template'];
-
-	// Format form fields.
-	if ( 'all' == $args['fields'] ) {
-		$args['fields'] = wp_list_filter( map_deep( get_noptin_custom_fields(), 'noptin_sanitize_booleans' ), array( 'visible' => true ) );
-	}
-
-	/**
-	 * Runs just before displaying a newsletter subscription form.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $args
-	 */
-	do_action( 'noptin_before_output_form', $args );
-
-	// Display the opening comment.
-	echo '<!-- Noptin Newsletter Plugin v' . esc_html( noptin()->version ) . ' - https://wordpress.org/plugins/newsletter-optin-box/ -->';
-
-	// Display the opening form tag.
-	printf(
-		'<form %s>',
-		noptin_attr(
-			'form',
-			array(
-				'id'         => empty( $args['html_id'] ) ? false : $args['html_id'],
-				'class'      => 'noptin-newsletter-form ' . trim( $args['html_class'] ),
-				'name'       => empty( $args['html_name'] ) ? false : $args['html_name'],
-				'method'     => 'post',
-				'novalidate' => true,
-			),
-			$args
-		)
-	);
-
-	// Display form title.
-	if ( ! empty( $args['title'] ) ) {
-
-		/**
-		 * Fires before displaying the newsletter subscription form title.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( 'noptin_before_output_form_title', $args );
-
-		printf(
-			'<h3 %s>%s</h3>',
-			noptin_attr(
-				'form_title',
-				array(
-					'id'     => empty( $args['html_id'] ) ? false : $args['html_id'] . '_title',
-					'class'  => 'noptin-form-title',
-				),
-				$args
-			),
-			wp_kses_post( $args['title'] )
-		);
-
-		/**
-		 * Fires after displaying the newsletter subscription form title.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( 'noptin_output_form_title', $args );
-
-	}
-
-	// Display form description.
-	if ( ! empty( $args['description'] ) ) {
-
-		/**
-		 * Fires before displaying the newsletter subscription form description.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( 'noptin_before_output_form_description', $args );
-
-		printf(
-			'<%s %s>%s</%s>',
-			$args['wrap'],
-			noptin_attr(
-				'form_description',
-				array(
-					'id'     => empty( $args['html_id'] ) ? false : $args['html_id'] . '_description',
-					'class'  => 'noptin-form-description',
-				),
-				$args
-			),
-			wp_kses_post( $args['description'] ),
-			$args['wrap']
-		);
-
-		/**
-		 * Fires after displaying the newsletter subscription form description.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( 'noptin_output_form_description', $args );
-
-	}
-
-	/**
-	 * Fires before displaying the newsletter subscription form fields.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $args
-	 */
-	do_action( 'noptin_before_output_form_fields', $args );
-
-	// Display form fields.
-	echo '<div class="noptin-form-fields">';
-		$processed_fields = array();
-
-		// For each form field...
-		foreach ( noptin_parse_list( $args['fields'] ) as $custom_field ) {
-
-			// Users can pass the merge tag instead of custom field data.
-			if ( is_string( $custom_field ) ) {
-				$custom_field = get_noptin_custom_field( $custom_field );
-			} else {
-				$_custom_field = get_noptin_custom_field( $custom_field['type'] );
-
-				if ( empty( $_custom_field ) ) {
-					continue;
-				}
-
-				unset( $custom_field['type'] );
-				$custom_field  = array_merge( $_custom_field, $custom_field );
-			}
-
-			if ( empty( $custom_field ) ) {
-				continue;
-			}
-
-			// Wrap the HTML name field into noptin_fields[ $merge_tag ];
-			$custom_field['wrap_name'] = true;
-
-			// Flag this field as processed.
-			$processed_fields[] = $custom_field['merge_tag'];
-
-			/**
-			 * Fires before displaying a single newsletter subscription form field.
-			 *
-			 * @since 1.6.0
-			 *
-			 * @param array $custom_field
-			 * @param array $args
-			 */
-			do_action( "noptin_before_output_form_field", $custom_field, $args );
-
-			// Display the opening wrapper.
-			printf(
-				'<%s %s>',
-				$args['wrap'],
-				noptin_attr(
-					'form_field_wrapper',
-					array(
-						'id'     => empty( $args['html_id'] ) ? false : $args['html_id'] . '_field_' . $custom_field['merge_tag'],
-						'class'  => 'noptin-form-field-wrapper noptin-form-field-' . $custom_field['merge_tag'],
-					),
-					array( $args, $custom_field )
-				)
-			);
-
-			// Display the actual form field.
-			display_noptin_custom_field_input( $custom_field );
-
-			// Display the closing wrapper.
-			echo '</' . $args['wrap'] . '>';
-
-			/**
-			 * Fires after displaying a single newsletter subscription form field.
-			 *
-			 * @since 1.6.0
-			 *
-			 * @param array $custom_field
-			 * @param array $args
-			 */
-			do_action( "noptin_output_form_field", $custom_field, $args );
-
-		}
-
-		/**
-		 * Fires before displaying the newsletter subscription form submit button.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( "noptin_before_output_form_submit_button", $args );
-
-		// Opening wrapper.
-		printf(
-			'<%s %s>',
-			$args['wrap'],
-			noptin_attr(
-				'form_field_wrapper',
-				array(
-					'id'     => empty( $args['html_id'] ) ? false : $args['html_id'] . '_field_submit',
-					'class'  => 'noptin-form-field-wrapper noptin-form-field-submit',
-				),
-				array( $args, array() )
-			)
-		);
-
-		// Print the submit button.
-		printf(
-			'<button %s>%s</button>',
-			noptin_attr(
-				'form_submit',
-				array(
-					'type'   => 'submit',
-					'id'     => empty( $args['html_id'] ) ? false : $args['html_id'] . '_submit',
-					'class'  => 'noptin-form-submit btn button btn-primary button-primary',
-					'name'   => 'noptin-submit',
-				),
-				$args
-			),
-			esc_html( $args['submit'] )
-		);
-
-		echo '</' . $args['wrap'] . '>';
-
-		/**
-		 * Fires after displaying the newsletter subscription form submit button.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( "noptin_output_form_submit_button", $args );
-
-	echo '</div>';
-
-	/**
-	 * Fires after displaying the newsletter subscription form fields.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $args
-	 */
-	do_action( 'noptin_output_form_fields', $args );
-
-	// Display misc data.
-	printf( '<input type="hidden" name="source" value="%s" />', esc_attr( $args['source'] ) );
-	printf( '<input type="hidden" name="_wpnonce" value="%s" />', wp_create_nonce( 'noptin_subscription_nonce' ) );
-	printf( '<input type="hidden" name="conversion_page" value="%s" />', esc_url_raw( add_query_arg( array() ) ) );
-	printf( '<input type="hidden" name="action" value="%s" />', 'noptin_process_ajax_subscriber' );
-	printf( '<input type="hidden" name="processed_fields" value="%s" />', esc_attr( implode( ', ', $processed_fields ) ) );
-	printf( '<label style="display: none !important;">%s <input style="display: none !important;" type="text" name="noptin_ign" value="" tabindex="-1" autocomplete="off" /></label>', __( "Leave this field empty if you're not a bot:", 'newsletter-optin-box' ) );
-
-	if ( ! empty( $args['redirect'] ) ) {
-		printf( '<input type="hidden" name="redirect_url" class="noptin_redirect_url" value="%s" />', esc_url_raw( $args['redirect'] ) );
-	}
-
-	if ( ! empty( $args['success_msg'] ) ) {
-		printf( '<input type="hidden" name="success_msg" class="noptin_success_msg" value="%s" />', esc_attr( $args['success_msg'] ) );
-	}
-
-	// Extra attributes.
-	$default_keys = array_keys( noptin()->forms->get_default_shortcode_atts() );
-	foreach ( $args as $key => $value ) {
-
-		if ( in_array( $key, $default_keys ) || '' === $value ) {
-			continue;
-		}
-
-		printf(
-			'<input type="hidden" name="noptin_misc[%s]" class="noptin_misc_%s" value="%s" />',
-			esc_attr( $key ),
-			sanitize_html_class( $key ),
-			esc_attr( is_scalar( $value ) ? $value : wp_json_encode( $value ) )
-		);
-	}
-
-	// Display form note.
-	if ( ! empty( $args['note'] ) ) {
-
-		/**
-		 * Fires before displaying the newsletter subscription form note.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( 'noptin_before_output_form_note', $args );
-
-		printf(
-			'<%s %s>%s</%s>',
-			$args['wrap'],
-			noptin_attr(
-				'form_note',
-				array(
-					'id'     => empty( $args['html_id'] ) ? false : $args['html_id'] . '_note',
-					'class'  => 'noptin-form-note',
-				),
-				$args
-			),
-			wp_kses_post( $args['note'] ),
-			$args['wrap']
-		);
-
-		/**
-		 * Fires after displaying the newsletter subscription form note.
-		 *
-		 * @since 1.6.0
-		 *
-		 * @param array $args
-		 */
-		do_action( 'noptin_output_form_note', $args );
-
-	}
-
-	printf(
-		'<div %s></div>',
-		noptin_attr(
-			'form_notice',
-			array(
-				'id'     => empty( $args['html_id'] ) ? false : $args['html_id'] . '_notice',
-				'class'  => 'noptin-form-notice',
-				'role'   => 'alert',
-			),
-			$args
-		)
-	);
-
-	echo '<div class="noptin-loader"><span></span></div>';
-
-	echo '</form><!-- / Noptin Newsletter Plugin -->';
-
-	/**
-	 * Runs just after displaying a newsletter subscription form.
-	 *
-	 * @since 1.6.0
-	 *
-	 * @param array $args
-	 */
-	do_action( 'noptin_output_form', $args );
-
+	show_noptin_form( $args );
 }
 
 /**
@@ -449,7 +113,12 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
  * @return  string
  */
 function get_noptin_new_form_url() {
-	return noptin()->forms->new_form_url();
+
+	if ( is_using_new_noptin_forms() ) {
+		return admin_url( 'admin.php?page=noptin-form-editor' );
+	}
+
+	return admin_url( 'post-new.php?post_type=noptin-form' );
 }
 
 /**
@@ -460,7 +129,12 @@ function get_noptin_new_form_url() {
  * @return  string
  */
 function get_noptin_edit_form_url( $form_id ) {
-	return noptin()->forms->edit_form_url( $form_id );
+
+	if ( ! is_legacy_noptin_form( $form_id ) ) {
+		return add_query_arg( 'form_id', $form_id, get_noptin_new_form_url() );
+	}
+
+	return get_edit_post_link( $form_id, 'edit' );
 }
 
 /**
@@ -470,7 +144,7 @@ function get_noptin_edit_form_url( $form_id ) {
  * @return  string   The forms page url
  */
 function get_noptin_forms_overview_url() {
-	return noptin()->forms->view_forms_url();
+	return admin_url( 'edit.php?post_type=noptin-form' );
 }
 
 /**
@@ -492,7 +166,19 @@ function get_noptin_optin_field_types() {
  * @return Noptin_Form|Noptin_Form_Legacy
  */
 function noptin_get_optin_form( $id ) {
-	return noptin()->forms->get_form( $id );
+
+	// Prepare form id.
+	$_form_id = is_object( $id ) ? $id->id : $id;
+
+	// Check if whether to load a new or legacy form.
+	$_is_old     = get_post_meta( $_form_id, '_noptin_state', true );
+	$is_new_form = empty( $_is_old ) && is_using_new_noptin_forms();
+
+	if ( $is_new_form ) {
+		return new Noptin_Form( $id );
+	}
+
+	return new Noptin_Form_Legacy( $id );
 }
 
 /**
@@ -528,7 +214,21 @@ function noptin_count_optin_forms( $type = '' ) {
  * @return WP_Error|int
  */
 function noptin_create_optin_form( $data = false ) {
-	return noptin()->forms->create_form( $data );
+
+	if ( is_using_new_noptin_forms() ) {
+		$form = new Noptin_Form( $data );
+	} else {
+		$form = new Noptin_Form( $data );
+	}
+
+	$created = $form->save();
+
+	if ( is_wp_error( $created ) ) {
+		return $created;
+	}
+
+	return $form->id;
+
 }
 
 /**
@@ -571,4 +271,184 @@ function get_noptin_optin_forms( array $args = array() ) {
 
 	return array_map( 'noptin_get_optin_form', $forms );
 
+}
+
+/**
+ * Displays a subscription form.
+ *
+ * This is the correct way to display a subscription form. Do not call
+ * class members directly.
+ *
+ * @param int|array $form_id_or_configuration An id of a saved form or an array of arguments with which to generate a form on the fly.
+ * @param bool $echo Whether to display the form or return its HTML.
+ * @see Noptin_Form_Manager::shortcode
+ * @return string
+ * @since 1.6.2
+ */
+function show_noptin_form( $form_id_or_configuration = array(), $echo = true ) {
+	return noptin()->forms->show_form( $form_id_or_configuration, $echo );
+}
+
+/**
+ * Increments a form's view count.
+ *
+ * @param int $form_id An id of a saved form.
+ * @param int $by The number of views to add to the form.
+ * @see Noptin_Form_Manager::shortcode
+ * @return string
+ * @since 1.6.2
+ */
+function increment_noptin_form_views( $form_id, $by = 1 ) {
+
+	$form_id = intval( $form_id );
+	$by      = intval( $by );
+	$count   = (int) get_post_meta( $form_id, '_noptin_form_views', true );
+	update_post_meta( $form_id, '_noptin_form_views', $count + $by );
+
+}
+
+/**
+ * Displays a hidden field.
+ *
+ * @param string $name Field name.
+ * @param string $value Field value.
+ * @since 1.6.2
+ */
+function noptin_hidden_field( $name, $value ) {
+	printf(
+		'<input type="hidden" name="%s" value="%s" />',
+		esc_attr( $name ),
+		esc_attr( $value )
+	);
+}
+
+/**
+ * Prepares form fields.
+ *
+ * @param string|array $fields Form fields.
+ * @return array
+ * @since 1.6.2
+ */
+function prepare_noptin_form_fields( $fields ) {
+
+	// Ensure we have form fields.
+	if ( empty( $fields ) ) {
+		$fields = 'email';
+	}
+
+	// Are we returning all fields?
+	if ( 'all' == $fields ) {
+		return wp_list_filter( map_deep( get_noptin_custom_fields(), 'noptin_sanitize_booleans' ), array( 'visible' => true ) );
+	}
+
+	// Prepare selected fields.
+	$prepared = array();
+
+	foreach ( noptin_parse_list( $fields ) as $custom_field ) {
+
+		// Users can pass the merge tag instead of custom field data.
+		if ( is_string( $custom_field ) ) {
+			$custom_field = get_noptin_custom_field( $custom_field );
+		} else {
+			$_custom_field = get_noptin_custom_field( $custom_field['type'] );
+
+			if ( empty( $_custom_field ) ) {
+				continue;
+			}
+
+			unset( $custom_field['type'] );
+			$custom_field  = array_merge( $_custom_field, $custom_field );
+		}
+
+		if ( ! empty( $custom_field ) ) {
+			$prepared[] = $custom_field;
+		}
+
+	}
+
+	return $prepared;
+}
+
+/**
+ * Returns an array of default form messages.
+ *
+ * @return array
+ * @since 1.6.2
+ */
+function get_default_noptin_form_messages() {
+
+	return apply_filters(
+		'default_noptin_form_messages',
+		array(
+			'success'                => array(
+				'label'       => __( 'Successfully subscribed', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when someone successfully fills the form.', 'newsletter-optin-box' ),
+				'default'     => __( 'Thanks for subscribing to the newsletter.', 'newsletter-optin-box' ),
+			),
+			'invalid_email'          => array(
+				'label'       => __( 'Invalid email address', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when someone enters an invalid email address.', 'newsletter-optin-box' ),
+				'default'     => __( 'Please provide a valid email address.', 'newsletter-optin-box' ),
+			),
+			'required_field_missing' => array(
+				'label'       => __( 'Required field missing', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when someone does not fill all required fields.', 'newsletter-optin-box' ),
+				'default'     => __( 'Please fill all the required fields.', 'newsletter-optin-box' ),
+			),
+			'already_subscribed'     => array(
+				'label'       => __( 'Already subscribed', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when an existing subscriber tries to sign-up again.', 'newsletter-optin-box' ),
+				'default'     => __( 'You are already subscribed to the newsletter, thank you!', 'newsletter-optin-box' ),
+			),
+			'error'                  => array(
+				'label'       => __( 'Generic error', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when a generic error occurs.', 'newsletter-optin-box' ),
+				'default'     => __( 'Oops. Something went wrong. Please try again later.', 'newsletter-optin-box' ),
+			),
+			'unsubscribed'           => array(
+				'label'       => __( 'Unsubscribed', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when an existing subscriber unsubscribes via this form.', 'newsletter-optin-box' ),
+				'default'     => __( 'You were successfully unsubscribed.', 'newsletter-optin-box' ),
+			),
+			'not_subscribed'         => array(
+				'label'       => __( 'Not subscribed', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when someone unsubscribes with an email that is not already subscribed.', 'newsletter-optin-box' ),
+				'default'     => __( 'The given email address is not subscribed.', 'newsletter-optin-box' ),
+			),
+			'updated'                => array(
+				'label'       => __( 'Updated', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when an existing subscriber updates their details via this form.', 'newsletter-optin-box' ),
+				'default'     => __( 'Thank you, your details have been updated.', 'newsletter-optin-box' ),
+			),
+		)
+	);
+
+}
+
+/**
+ * Returns a form message.
+ *
+ * @param string $key Message key.
+ * @param string $default The fallback message to use.
+ * @see get_default_noptin_form_messages()
+ * @return array
+ * @since 1.6.2
+ */
+function get_noptin_form_message( $key, $default = '' ) {
+
+	// Retrieve from options.
+	$message = get_noptin_option( $key . '_message' );
+
+	if ( ! empty( $message ) ) {
+		return $message;
+	}
+
+	// Retrieve from get_default_noptin_form_messages()
+	$messages = get_default_noptin_form_messages();
+
+	if ( isset( $messages[ $key ] ) ) {
+		return $messages[ $key ]['default'];
+	}
+
+	return $default;
 }

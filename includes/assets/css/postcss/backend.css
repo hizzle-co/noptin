@@ -1710,7 +1710,7 @@ a.no-campaign-create-new-campaign {
     border: 1px solid #c3c4c7
 }
 
-.noptin-accordion-trigger[aria-expanded=true] .icon {
+.noptin-accordion-trigger[aria-expanded=true] > .icon {
     transform: translateY(-30%) rotate(-135deg)
 }
 
@@ -1805,4 +1805,67 @@ a.no-campaign-create-new-campaign {
 		font-size: 6px;
 		margin-right: 18px
 	}
+}
+
+.noptin-form-tab-content {
+	display: none;
+
+	&.noptin-form-tab-content-active {
+		display: block;
+	}
+
+	h2 {
+		padding-left: 0 !important;
+	}
+}
+
+.noptin-settings {
+
+	&-panel {
+		background: #fff;
+		border: 1px solid #c3c4c7;
+		border-radius: 3px;
+		box-shadow: 0 1px 1px rgb(0 0 0 / 4%);
+		box-sizing: border-box;
+		margin-bottom: 20px;
+
+		&__content {
+			border-top: 1px solid #c3c4c7;
+			padding: 1em 1em 1.25em;
+		}
+
+		&__hidden > &__content {
+			display: none;
+		}
+	}
+
+}
+
+#noptin-form-fields-panel-fields-content {
+
+	display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+	.form-fields,
+	.form-preview {
+		width: 40%;
+    	min-width: 360px;
+	}
+
+	{
+		margin-top: 0;
+	}
+}
+
+.noptin-form-settings-field-type {
+	width: 100%;
+    display: block;
+    margin-top: 20px;
+}
+
+#noptin-form-preview {
+	border: 0;
+    height: 500px;
+    width: 100%;
 }

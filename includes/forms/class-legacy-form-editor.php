@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-class Noptin_Form_Editor {
+class Noptin_Legacy_Form_Editor {
 
 	/**
 	 * Id of the form being edited
