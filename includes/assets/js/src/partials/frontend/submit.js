@@ -1,50 +1,56 @@
-const axios = require('axios').default;
-const serialize = require( './serialize' ).default
+import $ from './myquery';
+import axios from 'axios';
 
-export default function submit( form ) {
+export default function submit( _form ) {
 
-    // Show the loader.
-    form.classList.add( 'noptin-submitting' );
+	let form = $( _form );
 
-    // Handle errors.
-    let _error_div = form.querySelector('.noptin-form-notice');
-    _error_div.classList.remove( 'noptin-form-error', 'noptin-form-success' );
+	// Display the loader.
+	form.addClass( 'noptin-submitting' ).removeClass( 'noptin-form-submitted noptin-has-error noptin-has-success' );
 
-    // Post the form.
-    axios
-        .post( noptinParams.ajaxurl, serialize(form) )
-        .then(function (response) {
+	// Prepare errors div.
+	let _error_div = form.find('.noptin-response').html( '' );
 
-            if ( response.data.success === false ) {
-                _error_div.classList.add( 'noptin-form-error' );
-                _error_div.textContent = response.data.data;
-            }
+	// Post the form.
+	axios
+		.post( noptinParams.resturl, new FormData(_form) )
+		.then(function (response) {
 
-            if ( response.data.success === true ) {
+			// Prepare response data.
+			const res = response.data;
+			if ( ! res ) {
+				_form.submit();
+			}
 
-                if ( response.data.data.action === 'redirect' ) {
-                    window.location.href = response.data.data.redirect
-                }
+			// An error occured.
+			if ( res.success === false ) {
+				form.addClass( 'noptin-has-error' );
+				_error_div.html( res.data );
 
-                if ( response.data.data.action === 'msg' ) {
-                    _error_div.classList.add( 'noptin-form-success' );
-                    _error_div.textContent = response.data.data.msg;
-                }
+			// The request was successful.
+			} else if ( res.success === true ) {
 
-            }
+				// Maybe redirect to success page.
+				if ( res.data.action === 'redirect' ) {
+					window.location.href = res.data.redirect
+				}
 
-        })
-        .catch(function (error) {
-            // handle errors.
-            console.log(error);
+				// Display success message.
+				if ( res.data.msg ) {
+					form.addClass( 'noptin-has-success' );
+					_error_div.html( res.data.msg );
+				}
 
-            _error_div.classList.add( 'noptin-form-error' );
-            _error_div.textContent = 'Could not establish a connection to the server.';
-        })
+			// Invalid response. Submit manually.
+			} else {
+				_form.submit();
+			}
 
-        .then(function () {
-            // Hide the loader.
-            form.classList.remove( 'noptin-submitting' );
-        });
+			// Hide the loader.
+			form.removeClass( 'noptin-submitting' ).addClass( 'noptin-form-submitted' );
+		})
+
+		// Submit manually on HTTP errors.
+		.catch( () => _form.submit() )
 
 };

@@ -11,10 +11,10 @@ defined( 'ABSPATH' ) || exit;
 $all_messages = $form->messages;
 ?>
 
-<h2><?php esc_html_e( 'Form Messages', 'newsletter-optin-box' ); ?></h2>
+<h2 class="screen-reader-text"><?php esc_html_e( 'Form Messages', 'newsletter-optin-box' ); ?></h2>
 
-<p class="description"><?php
-    esc_html_e( 'Edit the messages to display after specific events happen on this form. Smart tags are allowed in the message fields.', 'newsletter-optin-box' );
+<p class="description" style="margin-bottom: 16px;"><?php
+    esc_html_e( 'Edit the messages shown when someone submits this form. Smart tags are allowed in the message fields.', 'newsletter-optin-box' );
 ?></p>
 
 <table class="form-table noptin-form-messages">

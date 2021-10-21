@@ -27,29 +27,31 @@ $GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) );
 		/* hide all other elements */
 		body::before,
 		body::after,
-		body > *:not(#form-preview) { 
+		body > *:not(#noptin-form-preview) { 
 			display:none !important; 
 		}
 
-		#form-preview {
+		#noptin-form-preview {
 			display: block !important;
 			width: 100%;
 			height: 100%;
-			padding: 0;
+			padding: 20px;
 			border: 0;
-			margin: 0; 
+			margin: 0;
+		}
+
+		#noptin-form-preview p.description{
+			font-size: 14px;
+			margin: 2px 0 5px;
+			color: #646970;
 		}
 	</style>
 </head>
 <body class="page-template-default page">
-	<div id="form-preview" class="page type-page status-publish hentry post post-content">
+	<div id="noptin-form-preview" class="page type-page status-publish hentry post post-content">
+		<p class="description"><?php esc_html_e( 'The form may look slightly different than this when shown in a post, page or widget area.', 'newsletter-optin-box' ); ?></p>
 		<?php show_noptin_form( $form_id ); ?>
 	</div>
-	<script>
-		if ( parent && parent.noptinResizePreview ) {
-			parent.noptinResizePreview();
-		}
-	</script>
 	<?php wp_footer(); ?>
 </body>
 </html>

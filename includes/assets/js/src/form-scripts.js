@@ -1,22 +1,36 @@
 "use strict";
-document.addEventListener( 'DOMContentLoaded', event => {
 
-	if ( typeof noptinParams === 'undefined' ) {
-		console.error( "noptinParams is not defined." );
+// Our own version of jQuery document ready.
+let noptinReady = (cb) => {
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', cb);
+	}
+	else {
+		cb();
+	}
+}
+
+// Init the plugin on dom ready.
+noptinReady( () => {
+
+	if (! window.FormData) {
+		console.error("FormData is not supported.");
 		return;
 	}
 
-	if ( typeof noptinParams.ajaxurl === 'undefined' ) {
-		console.error( "noptinParams.ajaxurl is not defined." );
+	if (typeof noptinParams === 'undefined') {
+		console.error("noptinParams is not defined.");
 		return;
 	}
 
-	window.noptinForm = require( './partials/frontend/init' ).default
-	const forms = document.querySelectorAll( '.noptin-newsletter-form' );
-
-	let i;
-	for ( i = 0; i < forms.length; i++ ) {
-		noptinForm( forms[i] );
+	if (typeof noptinParams.resturl === 'undefined') {
+		console.error("noptinParams.resturl is not defined.");
+		return;
 	}
 
-} );
+	let form = require('./partials/frontend/init').default;
+	let $ = require('./partials/frontend/myquery').default;
+
+	$('.noptin-newsletter-form').each( form )
+
+});

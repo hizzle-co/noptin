@@ -42,7 +42,7 @@ class Noptin_Form_Previewer {
 		show_admin_bar( false );
 		add_filter( 'pre_handle_404', '__return_true' );
 		remove_all_actions( 'template_redirect' );
-		add_action( 'template_redirect', array( $this, 'load_preview' ) );
+		add_action( 'template_redirect', array( $this, 'load_preview' ), 1 );
 	}
 
 	public function load_preview() {

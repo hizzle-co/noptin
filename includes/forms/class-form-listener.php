@@ -33,7 +33,7 @@ class Noptin_Form_Listener {
 	/**
 	 * @var int Contains the id of the processed form.
 	 *
-	 * Please note that this is not the form id of the saved form.
+	 * Note that this is not the form id of the saved form.
 	 * It is the id passed to Noptin_Form_Element::__construct().
 	 */
 	public $processed_form;
@@ -46,7 +46,7 @@ class Noptin_Form_Listener {
 	 * - update - The subscriber tried to subscribe but they are already subscribed, so their details were updated instead.
 	 * - unsubscribe - The subscriber used the form to unsubscribe.
 	 *
-	 * Will be empty if the request contains an error.
+	 * Will be empty if the request contains an error or no form was submitted.
 	 */
 	public $last_event;
 
@@ -110,7 +110,7 @@ class Noptin_Form_Listener {
 		$this->processed_form = (int) $this->get_submitted( 'noptin_element_id', 0 );
 
 		// Maybe verify nonce.
-		if ( noptin_verify_subscription_nonces() && false === check_ajax_referer( 'noptin_subscription_nonce', false, false ) ) {
+		if ( noptin_verify_subscription_nonces() && false === check_ajax_referer( 'noptin_subscription_nonce', 'noptin_nonce', false ) ) {
 			return $this->error->add( 'error', get_noptin_form_message( 'error' ) );
 		}
 
@@ -542,7 +542,7 @@ class Noptin_Form_Listener {
 		if ( empty( $this->processed_form ) ) {
 
 			if ( ! $force_response ) {
-				return '<div class="noptin-form-notice" role="alert"></div>';
+				return '<div class="noptin-form-notice noptin-response" role="alert"></div>';
 			}
 
 			if ( ! $this->error->has_errors() ) {
@@ -579,7 +579,7 @@ class Noptin_Form_Listener {
 
 				// Wrap in error tags.
 				$html .= sprintf(
-					'<div class="noptin-alert noptin-error noptin-alert-%s" role="alert"><p>%s</p></div>',
+					'<div class="noptin-alert noptin-error noptin-alert-%s" role="alert">%s</div>',
 					sanitize_html_class( $code ),
 					esc_html( $this->get_cached( $code, $message ) )
 				);
@@ -599,7 +599,7 @@ class Noptin_Form_Listener {
 			}
 
 			$html = sprintf(
-				'<div class="noptin-alert noptin-success noptin-alert-%s" role="alert"><p>%s</p></div>',
+				'<div class="noptin-alert noptin-success noptin-alert-%s" role="alert">%s</div>',
 				sanitize_html_class( $this->last_event ),
 				esc_html( $this->get_cached( $key, $message ) )
 			);

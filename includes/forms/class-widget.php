@@ -1,12 +1,10 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
- * Displays registers sidebar widget
+ * Registers the newsletter widget
  *
  * @since       1.0.5
  */
@@ -17,74 +15,62 @@ class Noptin_Sidebar extends WP_Widget {
 	 */
 	public function __construct() {
 
-		// Prepare widget args.
-		$widget_ops = array(
-			'classname'   => 'noptin_widget_premade',
-			'description' => __( 'Use this widget to add newsletter forms made using the Form Editor', 'newsletter-optin-box' ),
+		// Register widget.
+		parent::__construct(
+			'noptin_widget_premade', // Base ID (forgive the poor naming)
+			__( 'Noptin Newsletter Form', 'newsletter-optin-box' ), // Name
+			array(
+				'description' => __( 'Displays a newsletter sign-up form', 'newsletter-optin-box' ),
+			)
 		);
-
-		// Add it to the list of widgets.
-		parent::__construct( 'noptin_widget_premade', 'Noptin Premade Form', $widget_ops );
 
 	}
 
 	/**
-	 * Outputs the opt in form widget on the front end
+	 * Displays the widget on the front end
 	 *
+	 * @see WP_Widget::widget()
 	 * @access      public
 	 * @since       1.0.5
 	 * @return      void
-	 * @param string $args     The widget args to use.
-	 * @param string $instance The instance args to use.
+	 * @param string $args     Widget arguments.
+	 * @param string $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
 
-		// Abort early if there is no form...
-		if ( empty( $instance['form'] ) ) {
-			return;
+		// Ensure $instance is an array.
+		if ( ! is_array( $instance ) ) {
+			$instance = array();
 		}
 
-		// ...or the form cannot be displayed on this page.
-		$form = noptin_get_optin_form( trim( $instance['form'] ) );
+		// Abort early if the provided form is not visible...
+		if ( ! empty( $instance['form'] ) ) {
 
-		if ( 'sidebar' !== $form->optinType || ! $form->can_show() ) {
-			return;
+			$form = noptin_get_optin_form( absint( $instance['form'] ) );
+			if ( ! $form->can_show() ) {
+				return;
+			}
+
 		}
 
-		// Display the widget.
+		// Display opening wrapper.
 		echo $args['before_widget'];
-		echo $form->get_html();
+
+		// Display title.
+		if ( ! empty( $instance['title'] ) ) {
+			$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
+			echo $args['before_title'] . esc_html( $title ) . $args['after_title'];
+		}
+
+		// Display newsletter form.
+		show_noptin_form( $instance );
+
+		// Display the closing wrapper.
 		echo $args['after_widget'];
 	}
 
 	/**
-	 * Outputs a form select field
-	 *
-	 * @access      public
-	 * @since       1.0.5
-	 * @return      void
-	 * @param       int $selected the currently selected form.
-	 */
-	public function forms_select( $selected ) {
-
-		// Get all widget forms.
-		$forms = $this->get_forms();
-
-		// Create <option> tags for each form.
-		foreach ( $forms as $form ) {
-
-			// Fetch the form title.
-			$name = esc_html( get_the_title( $form ) );
-
-			// Is it selected?
-			$_selected = selected( $form, $selected, true );
-
-			echo "<option value='$form' $_selected>$name</option>";
-		}
-	}
-
-	/**
-	 * Returns a list of all published sidebar forms
+	 * Returns a list of all published forms
 	 *
 	 * @access      public
 	 * @since       1.0.5
@@ -92,21 +78,23 @@ class Noptin_Sidebar extends WP_Widget {
 	 */
 	public function get_forms() {
 
-		$args = array(
-			'numberposts' => -1,
-			'fields'      => 'ids',
-			'post_type'   => 'noptin-form',
-			'post_status' => 'publish',
-			'meta_query'  => array(
-				array(
-					'key'     => '_noptin_optin_type',
-					'value'   => 'sidebar',
-					'compare' => '=',
-				),
-			),
+		$forms = get_posts(
+			array(
+				'numberposts' => -1,
+				'post_status' => array( 'publish' ),
+				'post_type'   => 'noptin-form',
+			)
 		);
+		$data  = array();
 
-		return get_posts( $args );
+		foreach ( $forms as $form ) {
+			$data[] = array(
+				'label' => $form->post_title,
+				'value' => $form->ID,
+			);
+		}
+
+		return $data;
 	}
 
 	/**
@@ -115,27 +103,50 @@ class Noptin_Sidebar extends WP_Widget {
 	 * @access      public
 	 * @since       1.0.5
 	 * @return      void
-	 * @param       array $instance current instance options.
+	 * @param       array $settings Previously saved values from database.
 	 */
-	public function form( $instance ) {
-		$form = ! empty( $instance['form'] ) ? $instance['form'] : '';
+	public function form( $settings ) {
+
+		// ensure $settings is an array
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+
+		$forms = $this->get_forms();
+		$form  = isset( $settings['form'] ) ? $settings['form'] : 0;
+		$title = isset( $settings['title'] ) ? $settings['title'] : __( 'Newsletter', 'newsletter-optin-box' );
+
 		?>
 
-	<p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'newsletter-optin-box' ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		</p>
 
-		<label for="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>">
-			<?php esc_attr_e( 'Form:', 'newsletter-optin-box' ); ?>
-		</label>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>"><?php esc_html_e( 'Form:', 'newsletter-optin-box' ); ?></label>
 
-		<select
-			name="<?php echo esc_attr( $this->get_field_name( 'form' ) ); ?>"
-			class="widefat"
-			id="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>"
-		>
-			<option value="" <?php selected( '', $form ); ?>><?php esc_html_e( 'Select a form', 'newsletter-optin-box' ); ?></option>
-			<?php $this->forms_select( $form ); ?>
-		</select>
-	</p>
+			<select name="<?php echo esc_attr( $this->get_field_name( 'form' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>">
+				<option value="0" <?php selected( empty( $form ) ); ?>><?php esc_html_e( 'Default form', 'newsletter-optin-box' ); ?></option>
+				<?php foreach ( $forms as $_form ) : ?>
+					<option value="<?php echo esc_attr( $_form['value'] ); ?>" <?php selected( $form, $_form['value'] ); ?>><?php echo esc_attr( $_form['label'] ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</p>
+
+		<?php
+			/**
+			 * Runs right after the widget settings form is outputted
+			 *
+			 * @param array $settings Saved settings.
+			 * @param Noptin_Sidebar $widget
+			 */
+			do_action( 'noptin_form_widget_form', $settings, $this );
+		?>
+
+		<p class="description">
+			<?php printf( __( 'You can edit or create new newsletter sign-up forms in the <a href="%s">Noptin forms overview</a> page.', 'newsletter-optin-box' ), admin_url( 'edit.php?post_type=noptin-form' ) ); ?>
+		</p>
 
 		<?php
 	}
@@ -150,10 +161,24 @@ class Noptin_Sidebar extends WP_Widget {
 	 * @param       array $old_instance old instance options.
 	 */
 	public function update( $new_instance, $old_instance ) {
-		return array(
-			'form' => ( ! empty( $new_instance['form'] ) ) ? absint( $new_instance['form'] ) : '',
-		);
 
+		if ( ! empty( $new_instance['title'] ) ) {
+			$new_instance['title'] = sanitize_text_field( $new_instance['title'] );
+		}
+
+		if ( ! empty( $new_instance['form'] ) ) {
+			$new_instance['form'] = absint( $new_instance['form'] );
+		}
+
+		/**
+		 * Filters the widget settings before they are saved.
+		 *
+		 * @param array $new_settings
+		 * @param array $old_settings
+		 * @param Noptin_Sidebar $widget
+		 * @ignore
+		 */
+		return apply_filters( 'noptin_form_widget_update_settings', $new_instance, $old_instance, $this );
 	}
 
 }

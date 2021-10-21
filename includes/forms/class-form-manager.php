@@ -16,8 +16,6 @@ defined( 'ABSPATH' ) || exit;
  *
  * Do not interact with this class directly, use `noptin_get_optin_form` and related functions instead.
  *
- * @internal
- * @ignore
  */
 class Noptin_Form_Manager {
 
@@ -56,30 +54,19 @@ class Noptin_Form_Manager {
 	 */
 	public function __construct() {
 
-		/**
-		 * Fires before the form manager inits.
-		 *
-		 * @since 1.0.0
-		*/
-		do_action( 'before_init_noptin_form_manager', $this );
-
 		// Load files.
 		$this->load_files();
 
 		// Init class properties.
-		$this->output_manager    = new Noptin_Form_Output_Manager();
-		$this->tags              = new Noptin_Form_Tags();
-		$this->listener          = new Noptin_Form_Listener();
-		$this->previewer         = new Noptin_Form_Previewer();
-		$this->assets            = new Noptin_Form_Asset_Manager();
-		$this->admin             = new Noptin_Form_Admin();
+		$this->output_manager = new Noptin_Form_Output_Manager();
+		$this->tags           = new Noptin_Form_Tags();
+		$this->listener       = new Noptin_Form_Listener();
+		$this->previewer      = new Noptin_Form_Previewer();
+		$this->assets         = new Noptin_Form_Asset_Manager();
+		$this->admin          = new Noptin_Form_Admin();
 
-		/**
-		 * Fires after the form manager inits.
-		 *
-		 * @since 1.0.0
-		*/
-		do_action( 'init_noptin_form_manager', $this );
+		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 5 );
+
 	}
 
 	/**
@@ -92,8 +79,8 @@ class Noptin_Form_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-listener.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-previewer.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-admin.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-form.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-form-legacy.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-form.php'; // Container for a single form.
+		require_once plugin_dir_path( __FILE__ ) . 'class-form-legacy.php'; // Container for a single legacy form.
 		require_once plugin_dir_path( __FILE__ ) . 'class-asset-manager.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-output-manager.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-widget.php'; // Opt-in form widget.
@@ -105,6 +92,14 @@ class Noptin_Form_Manager {
 	 */
 	public function add_hooks() {
 
+		/**
+		 * Fires before the form manager inits.
+		 *
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
+		 */
+		do_action( 'before_init_noptin_form_manager', $this );
+
 		add_action( 'init', array( $this, 'register_post_type' ) );
 		add_action( 'init', array( $this, 'register_block_type' ) );
 		add_action( 'widgets_init', array( $this, 'register_widget' ) );
@@ -114,12 +109,21 @@ class Noptin_Form_Manager {
 		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 
+		// Init modules.
 		$this->listener->add_hooks();
 		$this->output_manager->add_hooks();
 		$this->assets->add_hooks();
 		$this->tags->add_hooks();
 		$this->previewer->add_hooks();
 		$this->admin->add_hooks();
+
+		/**
+		 * Fires after the form manager inits.
+		 *
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
+		 */
+		do_action( 'init_noptin_form_manager', $this );
 
 	}
 
@@ -134,23 +138,35 @@ class Noptin_Form_Manager {
 		}
 
 		/**
-		 * Fires before forms block type is registered
+		 * Fires before the newsletter sign-up form block type is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'before_register_noptin_form_block_type', $this );
 
-		register_block_type(
-			'noptin/form',
-			array(
-				'render_callback' => array( $this->output_manager, 'shortcode' ),
-			)
-		);
+		if ( is_using_new_noptin_forms() ) {
+
+			// Displays a normal sign-up form.
+			register_block_type(
+				'noptin/form',
+				array(
+					'render_callback' => array( $this->output_manager, 'shortcode' ),
+				)
+			);
+
+		} else {
+
+			// Allows users to create forms on the fly.
+			register_block_type( 'noptin/email-optin', array() );
+
+		}
 
 		/**
-		 * Fires after forms block type is registered
+		 * Fires after the newsletter sign-up form block type is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'register_noptin_form_block_type', $this );
 
@@ -166,13 +182,14 @@ class Noptin_Form_Manager {
 		}
 
 		/**
-		 * Fires before forms post type is registered
+		 * Fires before the newsletter form post type is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'before_register_noptin_form_post_type', $this );
 
-		// register post type.
+		// Register post type.
 		register_post_type(
 			'noptin-form',
 			apply_filters(
@@ -206,7 +223,7 @@ class Noptin_Form_Manager {
 					'has_archive'         => false,
 					'show_in_nav_menus'   => false,
 					'show_in_rest'        => false,
-					'show_in_menu'        => false,
+					'show_in_menu'        => true,
 					'menu_icon'           => '',
 					'can_export'          => false,
 				)
@@ -214,9 +231,10 @@ class Noptin_Form_Manager {
 		);
 
 		/**
-		 * Fires after forms post type is registered
+		 * Fires after the newsletter form post type is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'register_noptin_form_post_type', $this );
 
@@ -228,18 +246,27 @@ class Noptin_Form_Manager {
 	public function register_widget() {
 
 		/**
-		 * Fires before forms widget is registered
+		 * Fires before the newsletter sign-up widget is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'before_register_noptin_form_widget', $this );
 
+		// Displays a normal sign-up form.
 		register_widget( 'Noptin_Sidebar' );
 
+		// Allows users to create forms on the fly.
+		if ( ! is_using_new_noptin_forms() ) {
+			require_once plugin_dir_path( __FILE__ ) . 'class-widget-legacy.php';
+			register_widget( 'Noptin_Widget' );
+		}
+
 		/**
-		 * Fires after forms widget is registered
+		 * Fires after the newsletter sign-up widget is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'register_noptin_form_widget', $this );
 
@@ -251,9 +278,10 @@ class Noptin_Form_Manager {
 	public function register_endpoint() {
 
 		/**
-		 * Fires before forms rest endpoint is registered
+		 * Fires before the newsletter sign-up REST API endpoint is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'before_register_noptin_form_api_endpoint', $this );
 
@@ -268,9 +296,10 @@ class Noptin_Form_Manager {
 		);
 
 		/**
-		 * Fires after forms rest endpoint is registered
+		 * Fires after the newsletter sign-up REST API endpoint is registered.
 		 *
-		 * @since 1.0.0
+		 * @param Noptin_Form_Manager $manager
+		 * @since 1.6.2
 		 */
 		do_action( 'register_noptin_form_api_endpoint', $this );
 	}

@@ -11,6 +11,7 @@
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
+
 // TODO: Button ->label, position (block/left/right), background color, color -> instead of a color picker, display a dropdown
 $tabs = array(
 	'form'       => __( 'Form', 'newsletter-optin-box' ), // Select fields to display (Optional) specify form width, Add tags & lists to anyone who submits this form(), display/hide labels, preview button.
@@ -30,7 +31,7 @@ $tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? nopt
 		<span><?php echo empty( $form->exists() ) ? __( 'New Form', 'newsletter-optin-box' ) : __( 'Edit Form', 'newsletter-optin-box' ); ?></span>
 	</h1>
 
-	<form method="post" action="<?php echo esc_url( add_query_arg( array() ) ); ?>" id="noptin-form-editor-app">
+	<form method="post" action="<?php echo esc_url( add_query_arg( array() ) ); ?>" id="noptin-form-editor-app" onsubmit="window.tinyMCE ? window.tinyMCE.triggerSave() : ''">
 		<?php wp_nonce_field( 'noptin-save-form' ); ?>
 
 		<?php if ( $form->exists() ) : ?>
@@ -76,31 +77,6 @@ $tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? nopt
 				</div><!-- #post-body-content -->
 
 				<div id="postbox-container-1" class="postbox-container">
-
-					<div id="submitdiv" class="postbox">
-						<div class="inside">
-							<div class="submitbox" id="submitpost">
-
-								<div id="minor-publishing-actions">
-									<div class="hidden">
-										<input type="submit" class="button-primary" name="noptin-save" value="<?php echo esc_attr( __( 'Save', 'newsletter-optin-box' ) ); ?>" />
-									</div>
-								</div><!-- #minor-publishing-actions -->
-
-								<div id="misc-publishing-actions">
-									<?php do_action( 'noptin_form_editor_misc_pub_section', $form ); ?>
-								</div><!-- #misc-publishing-actions -->
-
-								<div id="major-publishing-actions">
-									<div id="publishing-action">
-										<span class="spinner"></span>
-										<?php submit_button( __( 'Save', 'newsletter-optin-box' ) ); ?>
-									</div>
-									<div class="clear"></div>
-								</div><!-- #major-publishing-actions -->
-							</div><!-- #submitpost -->
-						</div>
-					</div><!-- #submitdiv -->
 
 					<div id="informationdiv" class="postbox">
 						<h3><?php esc_html_e( 'Do you need help?', 'newsletter-optin-box' ); ?></h3>
@@ -183,7 +159,10 @@ $tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? nopt
 
 					</div><!-- #noptin-form-editor-container -->
 
-					<p class="submit"><?php submit_button( __( 'Save', 'newsletter-optin-box' ) ); ?></p>
+					<p class="submit">
+						<input type="submit" name="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Form', 'newsletter-optin-box' ); ?>" />&nbsp;
+					</p>
+
 				</div><!-- #postbox-container-2 -->
 
 			</div><!-- #post-body -->

@@ -4,7 +4,7 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-	mode: "development",
+	mode: "production",
 
 	optimization: {
 		splitChunks: {
@@ -28,9 +28,11 @@ module.exports = {
 		frontend: "./includes/assets/js/src/frontend.js",
 		helper: "./includes/assets/js/src/helper.js",
 		blocks: "./includes/assets/js/src/blocks.js",
+		"blocks-new": "./includes/assets/js/src/blocks-new.js",
 		subscribers: "./includes/assets/js/src/subscribers.js",
 		"subscribers-import": "./includes/assets/js/src/subscribers-import.js",
 		"form-scripts": "./includes/assets/js/src/form-scripts.js",
+		"popups": "./includes/assets/js/src/popups.js",
 		"form-editor": "./includes/assets/js/src/form-editor.js",
 	},
 	output: {

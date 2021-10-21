@@ -61,9 +61,7 @@ class Noptin_Form_Element {
 	 * @return string
 	 */
 	public function get_response_html() {
-		if ( $this->was_submitted() ) {
-			return noptin()->forms->listener->get_response_html();
-		}
+		return noptin()->forms->listener->get_response_html();
 	}
 
 	/**
@@ -71,7 +69,6 @@ class Noptin_Form_Element {
 	 */
 	protected function get_response_position() {
 		$position = 'after';
-		$form     = $this->form;
 		$content  = $this->before_fields_content() . $this->after_fields_content();
 
 		// check if content contains {response} tag
@@ -85,10 +82,10 @@ class Noptin_Form_Element {
 		 * Valid values are "before" and "after". Will have no effect if `{response}` is used in the form content.
 		 *
 		 * @param string $position
-		 * @param Noptin_Form_Element $form
+		 * @param Noptin_Form_Element $form_element
 		 * @since 1.6.2
 		 */
-		return (string) apply_filters( 'noptin_form_response_position', $position, $form );
+		return (string) apply_filters( 'noptin_form_response_position', $position, $this );
 
 	}
 
@@ -321,7 +318,7 @@ class Noptin_Form_Element {
 	protected function display_hidden_fields() {
 
 		// Display standard fields.
-		noptin_hidden_field( '_wpnonce', wp_create_nonce( 'noptin_subscription_nonce' ) );
+		noptin_hidden_field( 'noptin_nonce', wp_create_nonce( 'noptin_subscription_nonce' ) );
 		noptin_hidden_field( 'conversion_page', noptin_get_request_url() );
 		noptin_hidden_field( 'action', 'noptin_process_ajax_subscriber' );
 		noptin_hidden_field( 'noptin_process_request', '1' );
@@ -440,9 +437,9 @@ class Noptin_Form_Element {
 			$classes[] = 'noptin-form-submitted';
 
 			if ( ! $this->has_errors() ) {
-				$classes[] = 'noptin-form-success';
+				$classes[] = 'noptin-has-success';
 			} else {
-				$classes[] = 'noptin-form-error';
+				$classes[] = 'noptin-has-error';
 			}
 
 		}

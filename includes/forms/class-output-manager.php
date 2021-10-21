@@ -113,8 +113,13 @@ class Noptin_Form_Output_Manager {
 	 */
 	public function shortcode( $atts = array(), $content = '' ) {
 
+		// Blocks.
+		if ( ! empty( $atts['className'] ) ) {
+			$atts['html_class'] = isset( $atts['html_class'] ) ? $atts['html_class'] . ' ' . $atts['className'] : $atts['className'];
+		}
+
 		// Maybe merge with saved values.
-		if ( isset( $atts['form'] ) ) {
+		if ( isset( $atts['form'] ) && ! empty( $atts['form'] ) ) {
 
 			// Use the form id as the subscriber source.
 			$atts['source'] = $atts['form'];

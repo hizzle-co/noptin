@@ -7,8 +7,9 @@
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
-
+// TODO: Make fields required, before fields content, after fields content.
 $all_settings = $form->settings;
+$subscribe    = empty( $form->settings['submit'] ) ? __( 'Subscribe', 'newsletter-optin-box' ) : $form->settings['submit'];
 $all_fields   = get_noptin_custom_fields();
 $form_fields  = current( wp_list_filter( $all_fields, array( 'merge_tag' => 'email' ) ) );
 
@@ -43,7 +44,7 @@ $form_preview_url = add_query_arg(
 
 ?>
 
-<h2 class="screen-reader-text"><?php esc_html_e( 'Form Fields and Preview', 'newsletter-optin-box' ); ?></h2>
+<h2 class="screen-reader-text"><?php esc_html_e( 'Form Fields', 'newsletter-optin-box' ); ?></h2>
 
 <fieldset id="noptin-form-fields-panel-fields" class="noptin-settings-panel">
 	<button
@@ -51,7 +52,7 @@ $form_preview_url = add_query_arg(
 		aria-controls="noptin-form-fields-panel-fields-content"
 		type="button"
 		class="noptin-accordion-trigger"
-		><span class="title"><?php esc_html_e( 'Form Fields and Preview', 'newsletter-optin-box' ); ?></span>
+		><span class="title"><?php esc_html_e( 'Form Fields', 'newsletter-optin-box' ); ?></span>
 		<span class="icon"></span>
 	</button>
 
@@ -59,10 +60,7 @@ $form_preview_url = add_query_arg(
 
 		<div class="form-fields">
 
-			<h3>
-				<?php esc_html_e( 'Form Fields', 'newsletter-optin-box' ); ?>
-				<span title="<?php esc_attr_e( 'Click on the "Add Field" button to add other fields to your newsletter subscription form the click on the "Save Changes" button to save your changes.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
-			</h3>
+			<p class="description"><?php esc_html_e( 'Which fields would you like to display on this newsletter sign-up form?', 'newsletter-optin-box' ); ?></p>
 
 			<div class="form-fields-inner">
 				<?php foreach ( $form_fields as $field ) : ?>
@@ -74,21 +72,16 @@ $form_preview_url = add_query_arg(
 							type="button"
 							class="noptin-accordion-trigger"
 							><span class="title"><?php echo esc_html( $field['label'] ); ?></span>
+							<code class="badge"><?php echo esc_html( $field['type'] ); ?></code>
 							<span class="icon"></span>
 						</button>
 						<div class="noptin-settings-panel__content" id="noptin-form-fields-panel-fields-<?php echo esc_attr( $field['type'] ); ?>-content">
 
-							<input type="hidden" name="noptin_form[settings][][type]" value="<?php echo esc_attr( $field['type'] ); ?>" />
+							<input type="hidden" name="noptin_form[settings][fields][][type]" value="<?php echo esc_attr( $field['type'] ); ?>" />
 
 							<div class="noptin-text-wrapper">
 								<label><?php esc_html_e( 'Field Label', 'newsletter-optin-box' ); ?>
-									<input type="text" name="noptin_form[settings][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
-								</label>
-							</div>
-
-							<div class="noptin-text-wrapper">
-								<label><?php esc_html_e( 'Field Label', 'newsletter-optin-box' ); ?>
-									<input type="text" name="noptin_form[settings][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
+									<input type="text" name="noptin_form[settings][fields][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
 								</label>
 							</div>
 
@@ -100,17 +93,33 @@ $form_preview_url = add_query_arg(
 				<?php endforeach; ?>
 			</div>
 
+			<fieldset id="noptin-form-fields-panel-fields-subscribe-button" class="noptin-settings-panel noptin-settings-panel__hidden">
+				<button
+					aria-expanded="false"
+					aria-controls="noptin-form-fields-panel-fields-subscribe-button-content"
+					type="button"
+					class="noptin-accordion-trigger"
+				>
+					<span class="title"><?php echo esc_html( $subscribe ); ?></span>
+					<code class="badge"><?php echo esc_html_e( 'Subscribe button', 'newsletter-optin-box' ); ?></code>
+					<span class="icon"></span>
+				</button>
+				<div class="noptin-settings-panel__content" id="noptin-form-fields-panel-fields-subscribe-button-content">
+
+					<div class="noptin-text-wrapper">
+						<label><?php esc_html_e( 'Subscribe Text', 'newsletter-optin-box' ); ?> 
+							<input type="text" name="noptin_form[settings][submit]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $subscribe ); ?>" />
+						</label>
+						<p class="description"><?php esc_html_e( 'Set the text of the subscribe button.', 'newsletter-optin-box' ); ?></p>
+					</div>
+
+				</div>
+			</fieldset>
+
 			<p><button type="button" class="button noptin-button-standout noptin-button-add-field"><?php esc_html_e( 'Add Field', 'newsletter-optin-box' ); ?></button></p>
 
 		</div>
 
-		<div class="form-preview">
-			<h3>
-				<?php esc_html_e( 'Form Preview', 'newsletter-optin-box' ); ?>
-				<span title="<?php esc_attr_e( 'The form may look slightly different than this when shown in a post, page or widget area.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
-			</h3>
-			<iframe id="noptin-form-preview" src="<?php echo esc_attr( $form_preview_url ); ?>"></iframe>
-		</div>
 	</div>
 
 </fieldset>
@@ -121,17 +130,11 @@ $form_preview_url = add_query_arg(
 	<?php foreach ( $all_fields as $field ) : ?>
 
 		<div id="noptin-form-fields-panel-<?php echo esc_attr( $field['merge_tag'] ); ?>-template">
-			<input type="hidden" name="noptin_form[settings][][type]" value="<?php echo esc_attr( $field['merge_tag'] ); ?>" />
+			<input type="hidden" name="noptin_form[settings][fields][][type]" value="<?php echo esc_attr( $field['merge_tag'] ); ?>" />
 
 			<div class="noptin-text-wrapper">
 				<label><?php esc_html_e( 'Field Label', 'newsletter-optin-box' ); ?>
-					<input type="text" name="noptin_form[settings][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
-				</label>
-			</div>
-
-			<div class="noptin-text-wrapper">
-				<label><?php esc_html_e( 'Field Label', 'newsletter-optin-box' ); ?>
-					<input type="text" name="noptin_form[settings][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
+					<input type="text" name="noptin_form[settings][fields][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
 				</label>
 			</div>
 
@@ -154,6 +157,7 @@ $form_preview_url = add_query_arg(
 			type="button"
 			class="noptin-accordion-trigger"
 			><span class="title"><?php esc_html_e( 'New Field', 'newsletter-optin-box' ); ?></span>
+			<code class="badge" style="display: none;"></code>
 			<span class="icon"></span>
 		</button>
 
@@ -164,7 +168,7 @@ $form_preview_url = add_query_arg(
 					<option value="<?php echo esc_attr( $field['merge_tag'] ); ?>"><?php echo esc_html( $field['label'] ); ?></option>
 				<?php endforeach; ?>
 			</select>
-			<a href="#" class="noptin-field-editor-delete"><?php esc_html_e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
+
 			<p class="description"><?php
 				printf(
 					__( 'If the field you want to add does not appear above, consider %1$screating additional fields%2$s.', 'newsletter-optin-box' ),
@@ -172,8 +176,14 @@ $form_preview_url = add_query_arg(
 					'</a>'
 				);
 			?></p>
+
+			<a href="#" class="noptin-field-editor-delete"><?php esc_html_e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
 		</div>
 
 	</fieldset>
 
 </div>
+
+// TODO: Add "Show Advanced Options" that toggles tabs, and before/after field content.
+// Subscribe/Unsubscribe action smart field.
+// GDPR smart field.

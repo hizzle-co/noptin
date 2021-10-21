@@ -97,7 +97,8 @@ class Noptin_Form_Admin {
 
 		// Custom admin scripts.
 		$version = filemtime( plugin_dir_path( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js' );
-		wp_enqueue_script( 'noptin-form-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js', array( 'jquery', 'jquery-ui-sortable' ), $version, true );
+		wp_enqueue_script( 'noptin-form-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js', array( 'jquery', 'wp-color-picker' ), $version, true );
+		wp_enqueue_style( 'wp-color-picker' );
 	}
 
 	/**

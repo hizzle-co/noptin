@@ -1,8 +1,3 @@
-window.noptinResizePreview = () => {
-	let preview = jQuery( '#noptin-form-preview' )
-	preview.height( Math.ceil( preview.contents().find('body').height() ) + 50 )
-}
-
 (function ($) {
 
 	// Switch tabs.
@@ -71,9 +66,12 @@ window.noptinResizePreview = () => {
 			.find( `.noptin-accordion-trigger` )
 			.first()
 			.attr( 'aria-controls', `noptin-form-fields-panel-fields-${val}-content` )
+			.find( '.badge' )
+			.text( val )
+			.show()
 
 		panel_content.find( '.noptin-form-field-label' ).trigger( 'input' )
-			
+
 	})
 
 	// Update field labels.
@@ -92,7 +90,36 @@ window.noptinResizePreview = () => {
 		$( this ).closest( '.noptin-settings-panel' ).fadeOut( 400, () => { $( this ).delete() } );
 	});
 
-	// Resize iframe.
-	$( '#noptin-form-preview' ).on( 'load', noptinResizePreview )
+	// Init color pickers.
+	$( '.noptin-color-picker' ).wpColorPicker();
+
+	// Form border.
+	$( '#noptin-form-border-style' ).on('change', function () {
+		$( '.form-field-row.form-field-row-form-border' ).toggle( $( this ).val() != 'none' );
+	});
+	$( '#noptin-form-border-style' ).trigger( 'change' );
+
+	// Form previews.
+	$( '.noptin-preview-form-button' ).on( 'change', function( e ) {
+		e.preventDefault();
+
+		// Fetch the preview.
+		jQuery.post( $( this ).data( 'url' ), $( '#noptin-form-editor-app' ).serialize() )
+
+		// Show the success message.
+		.done(() => {
+			this.showSuccess(this.savingSuccess)
+		})
+
+		// Display an error on failure.
+		.fail(() => {
+			this.showError( this.savingError )
+		})
+
+		// Remove the loader on success/failure.
+		.always(() => {
+			this.isSaving = false
+		})
+	});
 
 })(jQuery);
