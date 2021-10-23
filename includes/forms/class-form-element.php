@@ -156,7 +156,7 @@ class Noptin_Form_Element {
 			$custom_field['wrap_name'] = true;
 
 			// Set matching id.
-			$custom_field['id'] = sanitize_html_class( $this->args['html_id'] . '_field_' . $custom_field['merge_tag'] );
+			$custom_field['id'] = sanitize_html_class( $this->args['html_id'] . '__field-' . $custom_field['merge_tag'] );
 
 			/**
 			 * Fires before displaying a single newsletter subscription form field.
@@ -340,12 +340,6 @@ class Noptin_Form_Element {
 	 * @return string
 	 */
 	public function generate_html() {
-
-		// Return empty string if form is not published.
-		$source = $this->get_source();
-		if ( ! current_user_can( 'manage_options' ) && is_int( $source ) && 'publish' !== get_post_status( $source ) ) {
-			return '';
-		}
 
 		ob_start();
 		$this->display();

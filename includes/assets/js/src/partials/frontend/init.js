@@ -5,7 +5,12 @@ export default function init( form ) {
 	$( form ).on( 'submit', event => {
 		event.preventDefault();
 
-		submit( form );
+		try {
+			submit( form );
+		} catch(e) {
+			console.log(e)
+			form.submit();
+		}
 
 	});
 }

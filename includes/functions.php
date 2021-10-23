@@ -201,6 +201,10 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
+	if ( noptin_is_preview() ) {
+		return true;
+	}
+
 	if ( get_noptin_option( 'hide_from_subscribers', false ) && noptin_is_subscriber() ) {
 		return false;
 	}
@@ -1424,4 +1428,65 @@ function noptin_array_value( $array, $key, $default = '' ) {
 	}
 
 	return $default;
+}
+
+/**
+ * Checks if this is a preview request.
+ *
+ * @return bool
+ */
+function noptin_is_preview() {
+
+	// Widget preview.
+	if ( ! empty( $_GET['legacy-widget-preview[idBase]'] ) || defined( 'IS_NOPTIN_PREVIEW' ) ) {
+		return true;
+	}
+
+	// Divi preview.
+	if ( isset( $_REQUEST['et_fb'] ) || isset( $_REQUEST['et_pb_preview'] ) ) {
+		return true;
+	}
+
+	// Beaver builder.
+	if ( isset( $_REQUEST['fl_builder'] ) ) {
+		return true;
+	}
+
+	// Elementor builder.
+	if ( isset( $_REQUEST['elementor-preview'] ) || ( is_admin() && isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'elementor' ) || ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'elementor_ajax' ) ) {
+		return true;
+	}
+
+	// Siteorigin preview.
+	if ( ! empty( $_REQUEST['siteorigin_panels_live_editor'] ) ) {
+		return true;
+	}
+
+	// Cornerstone preview.
+	if ( ! empty( $_REQUEST['cornerstone_preview'] ) || basename( $_SERVER['REQUEST_URI'] ) == 'cornerstone-endpoint' ) {
+		return true;
+	}
+
+	// Fusion builder preview.
+	if ( ! empty( $_REQUEST['fb-edit'] ) || ! empty( $_REQUEST['fusion_load_nonce'] ) ) {
+		return true;
+	}
+
+	// Oxygen preview.
+	if ( ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && ( substr( $_REQUEST['action'], 0, 11 ) === "oxy_render_" || substr( $_REQUEST['action'], 0, 10 ) === "ct_render_" ) ) ) {
+		return true;
+	}
+
+	// Ninja forms preview.
+	if ( isset( $_GET['nf_preview_form'] ) || isset( $_GET['nf_iframe'] ) ) {
+		return true;
+	}
+
+	// Customizer preview.
+	if ( is_customize_preview() ) {
+		return true;
+	}
+
+	return false;
+
 }

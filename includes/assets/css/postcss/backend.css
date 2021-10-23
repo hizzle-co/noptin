@@ -979,8 +979,8 @@ input:focus+.noptin-switch-slider span {
 
 .post-type-noptin-form,
 #noptin-automations-popup,
-.noptin_page_noptin-subscribers,
-.noptin-form-editor,
+.noptin-newsletter_page_noptin-subscribers,
+.noptin-newsletter_page_noptin-form-editor,
 .noptin-settings {
 
 	.notice:not(.noptin-notice),
@@ -1715,6 +1715,12 @@ a.no-campaign-create-new-campaign {
     transform: translateY(-30%) rotate(-135deg)
 }
 
+.noptin-accordion-trigger .dashicons-move {
+    margin-right: 4px;
+    cursor: move;
+    margin-left: -10px;
+}
+
 .noptin-accordion-panel {
     margin: 0;
     padding: 1em 1.5em;
@@ -1869,4 +1875,19 @@ a.no-campaign-create-new-campaign {
     padding: 0 .9em;
     border: solid 1px #dfdfdf;
     background-color: #fdfdfd;
+}
+
+@media only screen and (min-width: 1390px) {
+
+	.noptin-form-editor-fields-layout-wrap {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		& > .noptin-settings-panel {
+			width: 49.5%;
+		}
+
+	}
+
 }

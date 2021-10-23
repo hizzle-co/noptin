@@ -59,7 +59,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 		);
 
 		$this->tags['language'] = array(
-			'description' => sprintf( __( 'The site\'s language. Example: %s.', 'newsletter-optin-box' ), '<strong>' . get_locale() . '</strong>' ),
+			'description' => sprintf( __( 'The current language. Example: %s.', 'newsletter-optin-box' ), '<strong>' . get_locale() . '</strong>' ),
 			'callback'    => 'get_locale',
 		);
 
@@ -241,8 +241,12 @@ abstract class Noptin_Dynamic_Content_Tags {
 	protected function get_email() {
 
 		// Trying retrieving from posted email address.
-		if ( ! empty( $_REQUEST['email'] ) ) {
-			return sanitize_email( $_REQUEST['email'] );
+		if ( ! empty( noptin()->forms->listener->submitted['email'] ) ) {
+			return sanitize_email( noptin()->forms->listener->submitted['email'] );
+		}
+
+		if ( ! empty( noptin()->forms->listener->submitted['noptin_fields']['email'] ) ) {
+			return sanitize_email( noptin()->forms->listener->submitted['noptin_fields']['email'] );
 		}
 
 		// then , try logged-in user.

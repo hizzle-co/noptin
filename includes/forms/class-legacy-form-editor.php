@@ -1,16 +1,14 @@
 <?php
 /**
- * Optin Form Editor
+ * Legacy Form Editor
  *
- * Responsible for editing the optin forms
+ * Responsible for editing the legacy optin forms
  *
- * @since             1.0.0
+ * @since 1.0.0
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 class Noptin_Legacy_Form_Editor {
 
@@ -161,7 +159,7 @@ class Noptin_Legacy_Form_Editor {
 	protected function get_templates() {
 
 		$custom_templates  = get_option( 'noptin_templates' );
-		$inbuilt_templates = include plugin_dir_path( __FILE__ ) . 'optin-templates.php';
+		$inbuilt_templates = include plugin_dir_path( __FILE__ ) . 'views/legacy/optin-templates.php';
 
 		if ( ! is_array( $custom_templates ) ) {
 			$custom_templates = array();
@@ -197,7 +195,7 @@ class Noptin_Legacy_Form_Editor {
 	public function output() {
 		$sidebar = $this->sidebar_fields();
 		$state   = $this->get_state();
-		include plugin_dir_path( __FILE__ ) . 'optin-form-editor.php';
+		include plugin_dir_path( __FILE__ ) . 'views/legacy/optin-form-editor.php';
 	}
 
 	/**

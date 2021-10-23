@@ -32,7 +32,7 @@ uasort( $activities , function( $a, $b ) {
 						<?php echo esc_html( $date ); ?>
 					</th>
 					<td>
-						<?php echo esc_html( $activity );?>
+						<?php echo wp_kses_post( $activity );?>
 					</td>
 				</tr>
 			<?php endforeach; ?>

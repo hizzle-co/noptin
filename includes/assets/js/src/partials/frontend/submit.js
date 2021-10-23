@@ -1,5 +1,4 @@
 import $ from './myquery';
-import axios from 'axios';
 
 export default function submit( _form ) {
 
@@ -11,46 +10,71 @@ export default function submit( _form ) {
 	// Prepare errors div.
 	let _error_div = form.find('.noptin-response').html( '' );
 
-	// Post the form.
-	axios
-		.post( noptinParams.resturl, new FormData(_form) )
-		.then(function (response) {
+	window
 
-			// Prepare response data.
-			const res = response.data;
-			if ( ! res ) {
+		// Post the form.
+		.fetch( noptinParams.resturl, {
+			method: 'POST',
+			body: new FormData(_form),
+			credentials: 'same-origin',
+			headers: {
+				'Accept': 'application/json',
+    		}
+		})
+
+		// Check status.
+		.then( ( response ) => {
+
+			if ( response.status >= 200 && response.status < 300 ) {
+				return response;
+			}
+
+			throw response;
+		})
+
+		// Parse JSON.
+		.then(response => response.json())
+
+		// Handle the response.
+		.then(response => {
+
+			// Was the ajax invalid?
+			if ( ! response ) {
 				_form.submit();
+				return;
 			}
 
 			// An error occured.
-			if ( res.success === false ) {
+			if ( response.success === false ) {
 				form.addClass( 'noptin-has-error' );
-				_error_div.html( res.data );
+				_error_div.html( response.data );
 
 			// The request was successful.
-			} else if ( res.success === true ) {
+			} else if ( response.success === true ) {
 
 				// Maybe redirect to success page.
-				if ( res.data.action === 'redirect' ) {
-					window.location.href = res.data.redirect
+				if ( response.data.action === 'redirect' ) {
+					window.location.href = response.data.redirect_url;
 				}
 
 				// Display success message.
-				if ( res.data.msg ) {
+				if ( response.data.msg ) {
 					form.addClass( 'noptin-has-success' );
-					_error_div.html( res.data.msg );
+					_error_div.html( response.data.msg );
 				}
 
 			// Invalid response. Submit manually.
 			} else {
 				_form.submit();
+				return;
 			}
 
 			// Hide the loader.
 			form.removeClass( 'noptin-submitting' ).addClass( 'noptin-form-submitted' );
+
 		})
 
 		// Submit manually on HTTP errors.
-		.catch( () => _form.submit() )
+		.catch( (e) => _form.submit() );
 
 };

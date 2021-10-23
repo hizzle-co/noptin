@@ -196,10 +196,10 @@ class Noptin_Form_Manager {
 				'noptin_optin_form_post_type_details',
 				array(
 					'labels'              => array(
-						'name'               => _x( 'Email Forms', 'Post type general name', 'newsletter-optin-box' ),
-						'singular_name'      => _x( 'Email Form', 'Post type singular name', 'newsletter-optin-box' ),
-						'menu_name'          => _x( 'Email Forms', 'Admin Menu text', 'newsletter-optin-box' ),
-						'name_admin_bar'     => _x( 'Email Form', 'Add New on Toolbar', 'newsletter-optin-box' ),
+						'name'               => _x( 'Subscription Forms', 'Post type general name', 'newsletter-optin-box' ),
+						'singular_name'      => _x( 'Subscription Form', 'Post type singular name', 'newsletter-optin-box' ),
+						'menu_name'          => _x( 'Subscription Forms', 'Admin Menu text', 'newsletter-optin-box' ),
+						'name_admin_bar'     => _x( 'Subscription Form', 'Add New on Toolbar', 'newsletter-optin-box' ),
 						'add_new'            => __( 'Add New', 'newsletter-optin-box' ),
 						'add_new_item'       => __( 'Add New Form', 'newsletter-optin-box' ),
 						'new_item'           => __( 'New Form', 'newsletter-optin-box' ),
@@ -210,7 +210,7 @@ class Noptin_Form_Manager {
 						'not_found'          => __( 'No forms found.', 'newsletter-optin-box' ),
 						'not_found_in_trash' => __( 'No forms found in Trash.', 'newsletter-optin-box' ),
 					),
-					'label'               => __( 'Email Forms', 'newsletter-optin-box' ),
+					'label'               => __( 'Subscription Forms', 'newsletter-optin-box' ),
 					'description'         => '',
 					'public'              => false,
 					'show_ui'             => true,
@@ -223,7 +223,7 @@ class Noptin_Form_Manager {
 					'has_archive'         => false,
 					'show_in_nav_menus'   => false,
 					'show_in_rest'        => false,
-					'show_in_menu'        => true,
+					'show_in_menu'        => false,
 					'menu_icon'           => '',
 					'can_export'          => false,
 				)
@@ -334,6 +334,11 @@ class Noptin_Form_Manager {
 		// If a form id was passed, convert it into arguments.
 		if ( is_numeric( $form_id_or_configuration ) ) {
 			$form_id_or_configuration = array( 'form' => (int) $form_id_or_configuration );
+		}
+
+		// Ensure we have an array.
+		if ( ! is_array( $form_id_or_configuration ) ) {
+			$form_id_or_configuration = array();
 		}
 
 		// Generate the form markup.

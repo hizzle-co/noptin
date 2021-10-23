@@ -335,7 +335,7 @@ class Noptin {
 		// Post types controller.
 		$this->post_types   	  = new Noptin_Post_Types();
 
-		// Form types.
+		// Form types (legacy).
 		$this->popups = new Noptin_Popups();
 		$this->inpost = new Noptin_Inpost();
 

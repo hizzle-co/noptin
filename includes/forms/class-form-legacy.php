@@ -686,8 +686,13 @@ class Noptin_Form_Legacy {
 	 */
 	protected function _can_show() {
 
-		// Abort early if the form is not published...
-		if ( ! $this->exists() || ! $this->is_published() ) {
+		// Abort early if the form does not exist.
+		if ( ! $this->exists() ) {
+			return false;
+		}
+
+		// or not published...
+		if ( ! noptin_is_preview() && ! $this->is_published() ) {
 			return false;
 		}
 

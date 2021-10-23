@@ -25,7 +25,7 @@ class Noptin_Form_Previewer {
 	}
 
 	public function listen() {
-		if ( empty( $_GET['noptin_preview_form'] ) ) {
+		if ( empty( $_GET['noptin_preview_form'] ) || ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
@@ -39,6 +39,7 @@ class Noptin_Form_Previewer {
 
 		}
 
+		define( 'IS_NOPTIN_PREVIEW', 1 );
 		show_admin_bar( false );
 		add_filter( 'pre_handle_404', '__return_true' );
 		remove_all_actions( 'template_redirect' );
@@ -54,7 +55,7 @@ class Noptin_Form_Previewer {
 		$form_id = 'new' === $_GET['noptin_preview_form'] ? array() : (int) $_GET['noptin_preview_form'];
 		status_header( 200 );
 
-		require __DIR__ . '/views/preview.php';
+		require plugin_dir_path( __FILE__ ) . 'views/preview.php';
 		exit;
 	}
 

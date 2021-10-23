@@ -481,20 +481,29 @@ class Noptin_Admin {
 
 		// The main admin page.
 		add_menu_page(
-			'Noptin',
-			'Noptin',
+			esc_html__( 'Noptin Newsletter', 'newsletter-optin-box' ),
+			esc_html__( 'Noptin Newsletter', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin',
-			array( $this, 'render_main_page' ),
+			null,
 			'dashicons-forms',
-			23
+			'23.81204129341231'
+		);
+
+		add_submenu_page(
+			'noptin',
+			__( 'Noptin Dashboard', 'newsletter-optin-box' ),
+			__( 'Dashboard', 'newsletter-optin-box' ),
+			get_noptin_capability(),
+			'noptin',
+			array( $this, 'render_main_page' )
 		);
 
 		// Add the newsletter page.
 		add_submenu_page(
 			'noptin',
-			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
-			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
+			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
+			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'edit.php?post_type=noptin-form'
 		);
@@ -595,6 +604,7 @@ class Noptin_Admin {
 	 */
 	public function remove_menus() {
 		remove_submenu_page( 'index.php', 'noptin-welcome' );
+		remove_submenu_page( 'noptin', 'noptin-form-editor' );
 	}
 
 	/**

@@ -75,14 +75,6 @@ class Noptin_Form {
 	protected $email = array();
 
 	/**
-	 * Appearance settings.
-	 *
-	 * @since 1.6.2
-	 * @var array
-	 */
-	protected $appearance = array();
-
-	/**
 	 * Class constructor. Loads form data.
 	 *
 	 * @param mixed $form Form ID, array, or Noptin_Form instance.
@@ -122,7 +114,7 @@ class Noptin_Form {
 
 		foreach ( $this->get_form_properties() as $prop ) {
 
-			if ( $data[ $prop ] ) {
+			if ( isset( $data[ $prop ] ) ) {
 				$this->$prop = wp_kses_post_deep( $data[ $prop ] );
 			}
 
@@ -164,6 +156,7 @@ class Noptin_Form {
 
 		}
 
+		return $data;
 	}
 
 	/**
@@ -180,7 +173,7 @@ class Noptin_Form {
 			return apply_filters( 'noptin_form_id', $this->id, $this );
 		}
 
-		if ( isset( $this->$key ) ) {
+		if ( isset( $this->$key ) || ! empty( $this->$key ) ) {
 			$value = $this->$key;
 		} else {
 			$value = null;
@@ -238,7 +231,7 @@ class Noptin_Form {
 
 			if ( ! in_array( $prop, array( 'id', 'title', 'status' ) ) ) {
 
-				if ( isset( $this->$prop ) ) {
+				if ( isset( $this->$prop ) || ! empty( $this->$prop ) ) {
 					update_post_meta( $id, "form_$prop", $this->$prop );
 				} else {
 					delete_post_meta( $id, "form_$prop" );
@@ -306,7 +299,7 @@ class Noptin_Form {
 		$data = array(
 			'post_title'   => $this->title,
 			'ID'           => $this->id,
-			'post_content' => 'Noptin newsletter opt-in box ' . microtime(),
+			'post_content' => $this->title . current_time( 'mysql' ),
 			'post_status'  => $this->status,
 			'post_type'    => 'noptin-form',
 		);
@@ -323,9 +316,8 @@ class Noptin_Form {
 	 * @return mixed
 	 */
 	public function duplicate() {
-		$this->title  = $this->title . ' (duplicate)';
-		$this->id     = null;
-		$this->status = 'draft';
+		$this->title = $this->title . ' (duplicate)';
+		$this->id    = null;
 		return $this->save();
 	}
 
@@ -380,99 +372,19 @@ class Noptin_Form {
 	 */
 	protected function _can_show() {
 
-		// Abort early if the form is not published...
-		if ( ! $this->exists() || ! $this->is_published() ) {
+		// Abort early if the form does not exist.
+		if ( ! $this->exists() ) {
 			return false;
 		}
 
-		// Always display click triggered popups.
-		if ( 'popup' === $this->optinType && 'after_click' === $this->triggerPopup ) {
-			return true;
-		}
-
-		// ... or the user wants to hide all forms.
-		if ( ! noptin_should_show_optins() ) {
+		// or not published...
+		if ( ! noptin_is_preview() && ! $this->is_published() ) {
 			return false;
 		}
 
-		// Maybe hide on mobile.
-		if ( $this->hideSmallScreens && wp_is_mobile() ) {
-			return false;
-		}
+		// TODO: Handle conditionals.
+		return true;
 
-		// Maybe hide on desktops.
-		if ( $this->hideLargeScreens && ! wp_is_mobile() ) {
-			return false;
-		}
-
-		// User roles.
-		if ( 'users' == $this->whoCanSee && ! is_user_logged_in() ) {
-			return false;
-		}
-
-		if ( 'guests' == $this->whoCanSee && is_user_logged_in() ) {
-			return false;
-		}
-
-		if ( 'roles' == $this->whoCanSee ) {
-			$role = $this->get_user_role();
-
-			if ( empty( $role ) || ! is_array( $this->userRoles ) || ! in_array( $role, $this->userRoles ) ) {
-				return false;
-			}
-
-		}
-
-		// Has the user restricted this to a few posts?
-		if ( ! empty( $this->onlyShowOn ) ) {
-			return noptin_is_singular( $this->onlyShowOn );
-		}
-
-		// or maybe forbidden it on this post?
-		if ( ! empty( $this->neverShowOn ) && noptin_is_singular( $this->neverShowOn ) ) {
-			return false;
-		}
-
-		// Is this form set to be shown everywhere?
-		if ( $this->showEverywhere ) {
-			return true;
-		}
-
-		$places = is_array( $this->showPlaces ) ? $this->showPlaces : array();
-
-		// frontpage.
-		if ( is_front_page() ) {
-			return ( ! empty( $this->showHome ) || in_array( 'showHome', $places ) );
-		}
-
-		// blog page.
-		if ( is_home() ) {
-			return ( ! empty( $this->showBlog ) || in_array( 'showBlog', $places ) );
-		}
-
-		// search.
-		if ( is_search() ) {
-			return ( ! empty( $this->showSearch ) || in_array( 'showSearch', $places ) );
-		}
-
-		// other archive pages.
-		if ( is_archive() ) {
-			return ( ! empty( $this->showArchives ) || in_array( 'showArchives', $places ) );
-		}
-
-		// Single posts.
-		return is_singular( $places );
-
-	}
-
-	/**
-	 * Returns the current user's role.
-	 *
-	 * @return string
-	 */
-	public function get_user_role() {
-		$user = wp_get_current_user();
-		return empty( $user ) ? '' : current( $user->roles );
 	}
 
 	/**
@@ -495,7 +407,7 @@ class Noptin_Form {
 
 		foreach ( $this->get_form_properties() as $prop ) {
 
-			if ( isset( $this->$prop ) ) {
+			if ( isset( $this->$prop ) || ! empty( $this->$prop ) ) {
 				$data[ $prop ] = $this->$prop;
 			}
 
@@ -511,7 +423,7 @@ class Noptin_Form {
 	 * @return array an array of known form properties.
 	 */
 	public function get_form_properties() {
-		$properties = array( 'id', 'settings', 'messages', 'email', 'appearance', 'title', 'status' );
+		$properties = array( 'id', 'settings', 'messages', 'email', 'title', 'status' );
 
 		/**
 		 * Filters the list of known form properties.

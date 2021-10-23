@@ -1,6 +1,6 @@
 <?php
 
-	$trigger     = esc_attr( $triggerPopup );
+	$trigger     = defined( 'IS_NOPTIN_PREVIEW' ) ? 'immeadiate' : esc_attr( $triggerPopup );
 	$after_click = esc_attr( $cssClassOfClick );
 	$on_scroll   = esc_attr( $scrollDepthPercentage );
 	$delay       = esc_attr( $timeDelayDuration );

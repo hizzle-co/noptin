@@ -120,7 +120,7 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 		// Prepare value.
 		$default = isset( $args['default'] ) ? $args['default'] : '';
 		$key     = $args['key'];
-		$data    = array_merge( $_GET, $_POST );
+		$data    = noptin()->forms->listener->submitted;
 		$value   = isset( $data[ $key ] ) ? wp_unslash( $data[ $key ] ) : $default;
 		$value   = isset( $data['noptin_fields'][ $key ] ) ? wp_unslash( $data['noptin_fields'][ $key ] ) : $value;
 

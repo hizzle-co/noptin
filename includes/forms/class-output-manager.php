@@ -35,7 +35,7 @@ class Noptin_Form_Output_Manager {
 	 * Add hooks
 	 */
 	public function add_hooks() {
-		// enable shortcodes in form content
+		// enable shortcodes in form content.
 		add_filter( 'noptin_before_fields_content', 'do_shortcode', 14 );
 		add_filter( 'noptin_after_fields_content', 'do_shortcode', 14 );
 		add_action( 'init', array( $this, 'register_shortcode' ) );
@@ -46,6 +46,7 @@ class Noptin_Form_Output_Manager {
 	 */
 	public function register_shortcode() {
 		add_shortcode( self::$shortcode, array( $this, 'shortcode' ) );
+		add_shortcode( 'noptin-form', array( $this, 'legacy_shortcode' ) ); // legacy shortcode.
 	}
 
 	/**
@@ -56,11 +57,11 @@ class Noptin_Form_Output_Manager {
 	 */
 	public function get_default_shortcode_atts() {
 
-		return array(
+		$atts = array(
 			'fields'        => 'email', // Comma separated array of fields, or all
-			'source'        => 'shortcode', // Manual source of the subscriber. Can also be a form id.
+			'source'        => 'shortcode', // Source of the subscriber.
 			'labels'        => 'hide', // Whether or not to show the field label.
-			'wrap'          => 'p', // Which element to wrap field values in.
+			'wrap'          => 'div', // Which element to wrap field values in.
 			'styles'        => 'basic', // Set to inherit to inherit theme styles.
 			'before_fields' => '', // Content to display before form fields.
 			'after_fields'  => '', // Content to display after form fields.
@@ -68,11 +69,15 @@ class Noptin_Form_Output_Manager {
 			'html_name'     => '', // HTML name of the form.
 			'html_class'    => '', // HTML class of the form.
 			'redirect'      => '', // An optional URL to redirect users after successful subscriptions.
-			'success_msg'   => '', // Overide the success message shown to users after successful subscriptions.
 			'submit'        => __( 'Subscribe', 'newsletter-optin-box' ),
 			'template'      => 'normal',
 		);
 
+		foreach ( array_keys( get_default_noptin_form_messages() ) as $msg ) {
+			$atts[ $msg ] = '';
+		}
+
+		return $atts;
 	}
 
 	/**
@@ -107,47 +112,67 @@ class Noptin_Form_Output_Manager {
 	}
 
 	/**
+	 * @deprecated
+	 */
+	public function legacy_shortcode( $atts ) {
+
+		// Abort early if no id is specified
+		if ( empty( $atts['id'] ) ) {
+			return '';
+		}
+
+		return $this->shortcode( array( 'form' => $atts['id'] ) );
+	}
+
+	/**
 	 * @param array $attributes
 	 * @param string $content
 	 * @return string
 	 */
 	public function shortcode( $atts = array(), $content = '' ) {
 
+		// Check if we're displaying a form shortcode, that way, no need to cache args.
+		$is_one_att        = count( $atts ) === 1 || ! empty( $atts['className'] ) || ! empty( $atts['title'] );
+		$is_form_shortcode = false;
+
+		// Backwards compatibility.
+		if ( isset( $atts['success_msg'] ) ) {
+			$atts['success'] = $atts['success_msg'];
+		}
+
 		// Blocks.
 		if ( ! empty( $atts['className'] ) ) {
 			$atts['html_class'] = isset( $atts['html_class'] ) ? $atts['html_class'] . ' ' . $atts['className'] : $atts['className'];
 		}
 
-		// Maybe merge with saved values.
+		// Are we trying to display a saved form?
 		if ( isset( $atts['form'] ) && ! empty( $atts['form'] ) ) {
 
-			// Use the form id as the subscriber source.
-			$atts['source'] = $atts['form'];
-
-			// Make sure that the form is published.
-			$form = get_post( $atts['form'] );
-
-			if ( empty( $form ) || ( ! current_user_can( 'manage_options') && 'publish' !== $form->post_status ) ) {
-				return '<p><strong style="color: red;">' . __( 'Form not found', 'newsletter-optin-box' ) . '</strong></p>';
+			// Abort early if trying to render a legacy form.
+			if ( is_legacy_noptin_form( (int) $atts['form'] ) ) {
+				$form = new Noptin_Form_Legacy( (int) $atts['form'] );
+				return $form->can_show() ? $form->get_html() : '';
 			}
 
-			// Check if this is a legacy form.
-			$is_legacy = get_post_meta( $form->ID, '_noptin_state', true );
+			// Use the form id as the subscriber source.
+			$atts['source'] = (int) $atts['form'];
 
-			if ( ! empty( $is_legacy ) ) {
-				$form = new Noptin_Form_Legacy( $form->ID );
-				return $form->get_html();
+			// Make sure that the form is visible.
+			$form = new Noptin_Form( (int) $atts['form'] );
+
+			if ( ! $form->can_show() ) {
+				return '';
 			}
 
 			// Merge form settings with passed attributes.
-			$form_settings = get_post_meta( $form->ID, 'form_settings', true );
-
-			if ( ! empty( $form_settings ) ) {
-				$atts = array_merge( $form_settings, $atts );
-			}
+			$atts = array_merge( $form->settings, $atts );
 
 			// Update view count.
-			increment_noptin_form_views( $form->ID );
+			if ( ! noptin_is_preview() ) {
+				increment_noptin_form_views( $form->id );
+			}
+
+			$is_form_shortcode = $is_one_att;
 		}
 
 		// Prepare default attributes.
@@ -168,17 +193,18 @@ class Noptin_Form_Output_Manager {
 		$default_atts = apply_filters( 'default_noptin_shortcode_atts', $default_atts, $atts );
 		$atts         = shortcode_atts( $default_atts, $atts, self::$shortcode );
 
-		return $this->get_form_html( $atts );
+		return $this->get_form_html( $atts, $is_form_shortcode );
 	}
 
 	/**
 	 * Displays an optin form based on the passed args.
 	 *
 	 * @param array $args The args with which to display the opt-in form.
+	 * @param bool $is_form_shortcode
 	 *
 	 * @return string
 	 */
-	protected function get_form_html( $args = array() ) {
+	protected function get_form_html( $args = array(), $is_form_shortcode ) {
 
 		// Increment count.
 		$this->count++;
@@ -190,9 +216,7 @@ class Noptin_Form_Output_Manager {
 		$args['unique_id'] = 'noptin_frm_' . md5( wp_json_encode( $args ) );
 
 		// (Maybe) cache this instance.
-		$saved = get_option( $args['unique_id'] );
-
-		if ( ! $saved ) {
+		if ( ! $is_form_shortcode && ! get_option( $args['unique_id'] ) ) {
 			update_option( $args['unique_id'], $args, true );
 		}
 
@@ -208,9 +232,7 @@ class Noptin_Form_Output_Manager {
 		 * @param Noptin_Form_Element $form_element Form element.
 		 * @param Noptin_Form_Output_Manager $output_manager Output manager.
 		 */
-		$html = apply_filters( 'noptin_form_html', $element->generate_html(), $element, $this );
-
-		return $html;
+		return apply_filters( 'noptin_form_html', $element->generate_html(), $element, $this );
 
 	}
 

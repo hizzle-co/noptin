@@ -87,39 +87,43 @@
 	// Delete fields.
 	$( '#noptin-form-fields-panel-fields' ).on('click', '.noptin-field-editor-delete', function ( e ) {
 		e.preventDefault();
-		$( this ).closest( '.noptin-settings-panel' ).fadeOut( 400, () => { $( this ).delete() } );
+		$( this ).closest( '.noptin-settings-panel' ).fadeOut( 'fast', () => { $( this ).remove() } );
 	});
 
-	// Init color pickers.
-	$( '.noptin-color-picker' ).wpColorPicker();
+	// Sortable.
+	if ( 'object' == typeof Sortable && Sortable.default ) {
+		new Sortable.default(
+			document.querySelectorAll('#noptin-form-fields-panel-fields-content .form-fields-inner'),
+			{
+				draggable: '.draggable-source',
+				handle: '.dashicons-move',
+			}
+		);
+	}
 
-	// Form border.
-	$( '#noptin-form-border-style' ).on('change', function () {
-		$( '.form-field-row.form-field-row-form-border' ).toggle( $( this ).val() != 'none' );
-	});
-	$( '#noptin-form-border-style' ).trigger( 'change' );
+	// Submit form.
+	$( '#noptin-form-editor-app' ).on( 'submit', () => {
 
-	// Form previews.
-	$( '.noptin-preview-form-button' ).on( 'change', function( e ) {
-		e.preventDefault();
+		// Save editor content.
+		if ( window.tinyMCE ) {
+			window.tinyMCE.triggerSave();
+		}
 
-		// Fetch the preview.
-		jQuery.post( $( this ).data( 'url' ), $( '#noptin-form-editor-app' ).serialize() )
+		// Update field names.
+		$( '#noptin-form-fields-panel-fields-content .form-fields-inner > fieldset' ).each( function( index ) {
 
-		// Show the success message.
-		.done(() => {
-			this.showSuccess(this.savingSuccess)
-		})
+			$( this ).find('[name^="noptin_form[settings][fields][]"]').each ( function() {
+				let _name = $( this ).attr( 'name' );
+				$( this ).attr( 'name', _name.replace( '[]', `[${index}]` ) );
+			})
 
-		// Display an error on failure.
-		.fail(() => {
-			this.showError( this.savingError )
-		})
+		});
 
-		// Remove the loader on success/failure.
-		.always(() => {
-			this.isSaving = false
-		})
+		// Remove template field names.
+		$( '#noptin-form-fields-panel-field-templates [name^="noptin_form[settings][fields][]"]' ).each( function() {
+			$( this ).attr( 'name', '' );
+		});
+
 	});
 
 })(jQuery);

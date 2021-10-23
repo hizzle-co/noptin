@@ -8,7 +8,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-$all_settings = $form->settings;
+$all_settings = $form->settings; //TODO: Form status.
 $places = array_merge(
 	array(
 		'showHome'     => __( 'Front page', 'newsletter-optin-box' ),
@@ -43,20 +43,20 @@ $hide = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 					<label for="noptin-form-redirect-url"><?php esc_html_e( 'Redirect URL', 'newsletter-optin-box' ); ?></label>
 				</th>
 				<td>
-					<input type="text" class="regular-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $all_settings['redirect'] ) ? esc_url( $all_settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
+					<input type="text" class="regular-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $all_settings['redirect'] ) ? esc_attr( $all_settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
 					<p class="description"><?php esc_html_e( 'Optional. Enter a URL to redirect users after they sign-up via this form or leave blank to disable redirects.', 'newsletter-optin-box' ); ?></p>
 				</td>
 			</tr>
 
 			<tr valign="top" class="form-field-row form-field-row-inject">
 				<th scope="row">
-					<label for="noptin-form-inject"><?php esc_html_e( 'Add to post content', 'newsletter-optin-box' ); ?></label>
+					<label for="noptin-form-inject"><?php esc_html_e( 'Append to blog posts', 'newsletter-optin-box' ); ?></label>
 				</th>
 				<td>
 					<?php noptin_hidden_field( 'noptin_form[settings][inject]', 0 ); ?>
 					<label>
 						<input type="checkbox" id="noptin-form-inject" name="noptin_form[settings][inject]" value="after" <?php checked( ! empty( $all_settings['inject'] ) ); ?>/>
-						<span class="description"><?php esc_html_e( 'Automatically display this form after post content.', 'newsletter-optin-box' ); ?></span>
+						<span class="description"><?php esc_html_e( 'Automatically display this form after blog posts.', 'newsletter-optin-box' ); ?></span>
 					</label>
 				</td>
 			</tr>

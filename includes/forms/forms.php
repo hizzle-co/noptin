@@ -33,12 +33,12 @@ add_filter( 'is_using_new_noptin_forms', '__return_true' );
 function is_legacy_noptin_form( $form_id ) {
 
 	// Check if it was created by the legacy editor.
-	if ( '' === get_post_meta( $form_id, '_noptin_state', true ) ) {
+	if ( '' !== get_post_meta( $form_id, '_noptin_state', true ) ) {
 		return true;
 	}
 
 	// Or the new editor.
-	if ( '' !== get_post_meta( $form_id, 'form_settings', true ) ) {
+	if ( '' === get_post_meta( $form_id, 'form_settings', true ) ) {
 		return false;
 	}
 
@@ -138,6 +138,24 @@ function get_noptin_edit_form_url( $form_id ) {
 }
 
 /**
+ * Retrieves the URL to a form's preview page
+ *
+ * @param int $form_id
+ * @since   1.6.2
+ * @return  string
+ */
+function get_noptin_preview_form_url( $form_id ) {
+
+	return add_query_arg(
+		array(
+			'noptin_preview_form' => $form_id,
+		),
+		site_url( '/', 'admin' )
+	);
+
+}
+
+/**
  * Retrieves the URL to the forms overview page
  *
  * @since   1.0.5
@@ -170,15 +188,12 @@ function noptin_get_optin_form( $id ) {
 	// Prepare form id.
 	$_form_id = is_object( $id ) ? $id->id : $id;
 
-	// Check if whether to load a new or legacy form.
-	$_is_old     = get_post_meta( $_form_id, '_noptin_state', true );
-	$is_new_form = empty( $_is_old ) && is_using_new_noptin_forms();
-
-	if ( $is_new_form ) {
-		return new Noptin_Form( $id );
+	// Check whether to load a new or legacy form.
+	if ( is_legacy_noptin_form( $_form_id ) ) {
+		return new Noptin_Form_Legacy( $id );
 	}
 
-	return new Noptin_Form_Legacy( $id );
+	return new Noptin_Form( $id );
 }
 
 /**

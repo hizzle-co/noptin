@@ -1,45 +1,45 @@
 <?php
 /**
- * Forms API: Form editor
+ * Forms API: Displays the newsletter form editor.
  *
- * Displays the form editor
+ * Displays the newsletter form editor
  *
  * @var Noptin_Form $form
- * @since             1.6.0
- * @package           Noptin
+ * @since   1.6.2
+ * @package Noptin
  */
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-// TODO: Button ->label, position (block/left/right), background color, color -> instead of a color picker, display a dropdown
+// Setting tabs.
 $tabs = array(
-	'form'       => __( 'Form', 'newsletter-optin-box' ), // Select fields to display (Optional) specify form width, Add tags & lists to anyone who submits this form(), display/hide labels, preview button.
+	'form'       => __( 'Form', 'newsletter-optin-box' ),
 	'messages'   => __( 'Messages', 'newsletter-optin-box' ),
-	'settings'   => __( 'Settings', 'newsletter-optin-box' ), // Copy MC4WP
-	'appearance' => __( 'Appearance', 'newsletter-optin-box' ),
-	'email'      => __( 'Welcome Email', 'newsletter-optin-box' ), // Set a welcome email to send new subscribers. (Premium allows to schedule && attach files)
+	'settings'   => __( 'Settings', 'newsletter-optin-box' ),
+	'email'      => __( 'Welcome Email', 'newsletter-optin-box' ),
 );
 
 $tabs = apply_filters( 'noptin_form_editor_tabs', $tabs );
-$tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? noptin_clean( $_GET['tab'] ) :'form';
+$tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? noptin_clean( $_GET['tab'] ) : 'form';
+
+add_thickbox();
+
 ?>
 
 <div class="wrap noptin-form-editor">
 
 	<h1 class="wp-heading-inline">
-		<span><?php echo empty( $form->exists() ) ? __( 'New Form', 'newsletter-optin-box' ) : __( 'Edit Form', 'newsletter-optin-box' ); ?></span>
+		<span><?php echo ! $form->exists() ? __( 'New Form', 'newsletter-optin-box' ) : __( 'Edit Form', 'newsletter-optin-box' ); ?></span>
 	</h1>
 
-	<form method="post" action="<?php echo esc_url( add_query_arg( array() ) ); ?>" id="noptin-form-editor-app" onsubmit="window.tinyMCE ? window.tinyMCE.triggerSave() : ''">
-		<?php wp_nonce_field( 'noptin-save-form' ); ?>
+	<form method="post" action="<?php echo esc_url( add_query_arg( array() ) ); ?>" id="noptin-form-editor-app">
+		<?php wp_nonce_field( 'noptin-save-form', 'noptin-save-form-nonce' ); ?>
+		<input type="hidden" name="noptin_admin_action" value="noptin_editor_save_form">
 
 		<?php if ( $form->exists() ) : ?>
 			<input type="hidden" name="noptin_form[id]" value="<?php echo intval( $form->id ); ?>" />
 		<?php endif; ?>
-
-		<input type="hidden" name="noptin-editor-save-form" value="1" />
-		<input type="hidden" name="noptin_admin_action" value="noptin_editor_save_form">
 
 		<div id="poststuff">
 			<div id="post-body" class="metabox-holder columns-2">
@@ -47,13 +47,13 @@ $tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? nopt
 				<div id="post-body-content">
 					<div id="titlediv">
 						<div id="titlewrap">
-							<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo esc_html( __( 'Enter title here', 'newsletter-optin-box' ) ); ?></label>
+							<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo esc_html( __( 'Enter form name', 'newsletter-optin-box' ) ); ?></label>
 							<?php
 								$posttitle_atts = array(
 									'type'         => 'text',
 									'name'         => 'noptin_form[title]',
 									'size'         => 30,
-									'value'        => empty( $form->exists() ) ? __( 'Newsletter Form', 'newsletter-optin-box' ) : $form->title,
+									'value'        => ! $form->exists() ? __( 'Newsletter Form', 'newsletter-optin-box' ) : $form->title,
 									'placeholder'  => __( 'Enter form name', 'newsletter-optin-box' ),
 									'id'           => 'title',
 									'spellcheck'   => 'true',
@@ -68,7 +68,7 @@ $tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? nopt
 							<?php if ( $form->exists() ) : ?>
 								<p class="description">
 									<label for="noptin-shortcode"><?php echo esc_html( __( 'Copy this shortcode and paste it into your post, page, or text widget content:', 'newsletter-optin-box' ) ); ?></label>
-									<span class="shortcode wp-ui-highlight"><input type="text" id="noptin-shortcode" onfocus="this.select();" readonly="readonly" class="large-text code" value="[noptin-form id=<?php echo intval( $form->id ); ?>]" /></span>
+									<span class="shortcode wp-ui-highlight"><input type="text" id="noptin-shortcode" onfocus="this.select();" readonly="readonly" class="large-text code" value="[noptin form=<?php echo intval( $form->id ); ?>]" /></span>
 								</p>
 							<?php endif; ?>
 						</div>
@@ -161,6 +161,10 @@ $tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? nopt
 
 					<p class="submit">
 						<input type="submit" name="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Form', 'newsletter-optin-box' ); ?>" />&nbsp;
+						<a href="#TB_inline?width=0&height=550&inlineId=noptin-form-variables" class="thickbox button-secondary">
+							<span class="dashicons dashicons-info" style="vertical-align: middle;"></span>
+							<?php esc_html_e( 'View available smart tags', 'newsletter-optin-box' ); ?>
+						</a>
 					</p>
 
 				</div><!-- #postbox-container-2 -->
@@ -170,6 +174,11 @@ $tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? nopt
 			<br class="clear" />
 		</div><!-- #poststuff -->
 
-	</form>
+	</form
 
 </div><!-- .wrap -->
+
+<?php // Content for Thickboxes ?>
+<div id="noptin-form-variables" style="display: none;">
+	<?php include plugin_dir_path( __FILE__ ) . 'dynamic-content-tags.php'; ?>
+</div>

@@ -1,14 +1,13 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Displays inpost forms on the front page
  *
- * @since       1.0.5
+ * @since 1.0.5
+ * @deprecated
  */
 class Noptin_Inpost {
 
@@ -19,9 +18,6 @@ class Noptin_Inpost {
 
 		// Prepend/Apend inpost forms to the post content.
 		add_filter( 'the_content', array( $this, 'append_inpost' ) );
-
-		// Register shortcode.
-		add_shortcode( 'noptin-form', array( $this, 'do_shortcode' ) );
 
 		// Hide block content.
 		add_filter( 'pre_render_block', array( $this, 'maybe_hide_block' ), 10, 2 );
@@ -40,26 +36,11 @@ class Noptin_Inpost {
 		global $post;
 
 		// Maybe abort early.
-		if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() || is_noptin_actions_page() || is_preview() ) {
+		if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() || is_noptin_actions_page() || ! noptin_should_show_optins() || noptin_is_preview() || is_preview() ) {
 			return $content;
 		}
 
-		// ...or the user is hiding all opt-in forms.
-		if ( ! empty( $_GET['noptin_hide'] ) ) {
-			return $content;
-		}
-
-		// Do not show on elementor previews.
-		if ( isset( $_GET['elementor-preview'] ) ) {
-			return $content;
-		}
-
-		// Do not show on Ninja Forms previews.
-		if ( isset( $_GET['nf_preview_form'] ) || isset( $_GET['nf_iframe'] ) ) {
-			return $content;
-		}
-
-		// Or elementor pages.
+		// Avoid elementor pages.
 		if ( $post && noptin_is_page_built_with_elementor( $post->ID ) ) {
 			return $content;
 		}
@@ -117,33 +98,6 @@ class Noptin_Inpost {
 		);
 
 		return get_posts( $args );
-	}
-
-	/**
-	 * Converts shortcode to html
-	 *
-	 * @access      public
-	 * @param       array $atts An array containing the form `id` to display.
-	 * @since       1.0.5
-	 * @return      string
-	 */
-	public function do_shortcode( $atts ) {
-
-		// Abort early if no id is specified
-		if ( empty( $atts['id'] ) ) {
-			return '';
-		}
-
-		// Prepare the form.
-		$form = noptin_get_optin_form( trim( $atts['id'] ) );
-
-		// Maybe return its html.
-		if ( $form->can_show() ) {
-			return $form->get_html();
-		}
-
-		return '';
-
 	}
 
 	/**
