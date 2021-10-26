@@ -285,6 +285,3 @@ $default_consent = sprintf(
 	</fieldset>
 
 </div>
-
-// TODO: Subscribe/Unsubscribe action smart field.
-// GDPR smart field.

@@ -90,6 +90,19 @@ $inject = empty( $form->settings['inject'] ) ? '' : $form->settings['inject'];
 				</td>
 			</tr>
 
+			<tr valign="top" class="form-field-row form-field-row-is-unsubscribe">
+				<th scope="row">
+					<label for="noptin-form-is-unsubscribe"><?php esc_html_e( 'Unsubscribe Form', 'newsletter-optin-box' ); ?></label>
+				</th>
+				<td>
+					<?php noptin_hidden_field( 'noptin_form[settings][is_unsubscribe]', 0 ); ?>
+					<label>
+						<input type="checkbox" id="noptin-form-is-unsubscribe" name="noptin_form[settings][is_unsubscribe]" value="1" <?php checked( ! empty( $all_settings['is_unsubscribe'] ) ); ?>/>
+						<span class="description"><?php esc_html_e( 'This is a newsletter unsubscribe form', 'newsletter-optin-box' ); ?></span>
+					</label>
+				</td>
+			</tr>
+
 			<?php do_action( 'noptin_form_settings_editor', $form ); ?>
 		</table>
 	</div>

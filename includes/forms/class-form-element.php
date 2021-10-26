@@ -345,6 +345,7 @@ class Noptin_Form_Element {
 		noptin_hidden_field( 'noptin_element_id', $this->id );
 		noptin_hidden_field( 'noptin_unique_id', $this->args['unique_id'] );
 		noptin_hidden_field( 'source', $this->args['source'] );
+		noptin_hidden_field( 'form_action', empty( $this->args['is_unsubscribe'] ) ? 'subscribe' : 'unsubscribe' );
 
 		// Honeypot.
 		?>
