@@ -24,6 +24,11 @@ $GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) );
 			text-align: left;
 		}
 
+		html, body, #page, #content {
+			padding: 0 !important;
+			margin: 0 !important;
+		}
+
 		/* hide all other elements */
 		body::before,
 		body::after,

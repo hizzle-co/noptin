@@ -11,14 +11,15 @@ defined( 'ABSPATH' ) || exit;
 $all_settings = $form->settings; //TODO: Form status.
 $places = array_merge(
 	array(
-		'showHome'     => __( 'Front page', 'newsletter-optin-box' ),
-		'showBlog'     => __( 'Blog page', 'newsletter-optin-box' ),
-		'showSearch'   => __( 'Search page', 'newsletter-optin-box' ),
-		'showArchives' => __( 'Archive pages', 'newsletter-optin-box' ),
+		'frontpage'  => __( 'Front page', 'newsletter-optin-box' ),
+		'blogpage'   => __( 'Blog page', 'newsletter-optin-box' ),
+		'searchpage' => __( 'Search page', 'newsletter-optin-box' ),
+		'archives'   => __( 'Archive pages', 'newsletter-optin-box' ),
 	),
 	noptin_get_post_types()
 );
-$hide = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
+$hide   = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
+$inject = empty( $form->settings['inject'] ) ? '' : $form->settings['inject'];
 ?>
 
 <h2 class="screen-reader-text"><?php esc_html_e( 'Form Settings', 'newsletter-optin-box' ); ?></h2>
@@ -38,13 +39,16 @@ $hide = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 	<div class="noptin-settings-panel__content" id="noptin-form-settings-panel-basic-content">
 		<table class="form-table noptin-form-settings">
 
-			<tr valign="top" class="form-field-row form-field-row-redirect-url">
+			<tr valign="top" class="form-field-row form-field-row-status">
 				<th scope="row">
-					<label for="noptin-form-redirect-url"><?php esc_html_e( 'Redirect URL', 'newsletter-optin-box' ); ?></label>
+					<label for="noptin-form-status"><?php esc_html_e( 'Form Status', 'newsletter-optin-box' ); ?></label>
 				</th>
 				<td>
-					<input type="text" class="regular-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $all_settings['redirect'] ) ? esc_attr( $all_settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
-					<p class="description"><?php esc_html_e( 'Optional. Enter a URL to redirect users after they sign-up via this form or leave blank to disable redirects.', 'newsletter-optin-box' ); ?></p>
+					<select class="regular-text" id="noptin-form-status" name="noptin_form[status]">
+						<option value="publish" <?php selected( 'draft' != $form->status ); ?>><?php esc_html_e( 'Published', 'newsletter-optin-box' ); ?></option>
+						<option value="draft" <?php selected( 'draft' == $form->status ); ?>><?php esc_html_e( 'Draft', 'newsletter-optin-box' ); ?></option>
+					</select>
+					<p class="description"><?php esc_html_e( 'Set to draft if you want to hide the form from website visitors.', 'newsletter-optin-box' ); ?></p>
 				</td>
 			</tr>
 
@@ -53,11 +57,23 @@ $hide = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 					<label for="noptin-form-inject"><?php esc_html_e( 'Append to blog posts', 'newsletter-optin-box' ); ?></label>
 				</th>
 				<td>
-					<?php noptin_hidden_field( 'noptin_form[settings][inject]', 0 ); ?>
-					<label>
-						<input type="checkbox" id="noptin-form-inject" name="noptin_form[settings][inject]" value="after" <?php checked( ! empty( $all_settings['inject'] ) ); ?>/>
-						<span class="description"><?php esc_html_e( 'Automatically display this form after blog posts.', 'newsletter-optin-box' ); ?></span>
-					</label>
+					<select class="regular-text" id="noptin-form-status" name="noptin_form[settings][inject]">
+						<option value="" <?php selected( $inject, '' ); ?>><?php esc_html_e( 'Do not append', 'newsletter-optin-box' ); ?></option>
+						<option value="before" <?php selected( $inject, 'before' ); ?>><?php esc_html_e( 'Before post content', 'newsletter-optin-box' ); ?></option>
+						<option value="after" <?php selected( $inject, 'after' ); ?>><?php esc_html_e( 'After post content', 'newsletter-optin-box' ); ?></option>
+						<option value="both" <?php selected( $inject, 'both' ); ?>><?php esc_html_e( 'Before and after post content', 'newsletter-optin-box' ); ?></option>
+					</select>
+					<p class="description"><?php esc_html_e( 'Automatically display this form after blog posts and other content.', 'newsletter-optin-box' ); ?></p>
+				</td>
+			</tr>
+
+			<tr valign="top" class="form-field-row form-field-row-redirect-url">
+				<th scope="row">
+					<label for="noptin-form-redirect-url"><?php esc_html_e( 'Redirect URL', 'newsletter-optin-box' ); ?></label>
+				</th>
+				<td>
+					<input type="text" class="regular-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $all_settings['redirect'] ) ? esc_attr( $all_settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
+					<p class="description"><?php esc_html_e( 'Optional. Enter a URL to redirect users after they sign-up via this form or leave blank to disable redirects.', 'newsletter-optin-box' ); ?></p>
 				</td>
 			</tr>
 
@@ -74,22 +90,23 @@ $hide = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 				</td>
 			</tr>
 
+			<?php do_action( 'noptin_form_settings_editor', $form ); ?>
 		</table>
 	</div>
 
 </fieldset>
 
-<fieldset id="noptin-form-settings-panel-advanced" class="noptin-settings-panel noptin-settings-panel__hidden">
+<fieldset id="noptin-form-settings-panel-targeting" class="noptin-settings-panel noptin-settings-panel__hidden">
 	<button
 		aria-expanded="false"
-		aria-controls="noptin-form-settings-panel-advanced-content"
+		aria-controls="noptin-form-settings-panel-targeting-content"
 		type="button"
 		class="noptin-accordion-trigger"
-		><span class="title"><?php esc_html_e( 'Targeting Options', 'newsletter-optin-box' ); ?></span>
+		><span class="title"><?php esc_html_e( 'Conditional Display', 'newsletter-optin-box' ); ?></span>
 		<span class="icon"></span>
 	</button>
 
-	<div class="noptin-settings-panel__content" id="noptin-form-settings-panel-advanced-content">
+	<div class="noptin-settings-panel__content" id="noptin-form-settings-panel-targeting-content">
 		<table class="form-table noptin-form-settings">
 
 			<tr valign="top" class="form-field-row form-field-row-hide-on">
@@ -123,6 +140,7 @@ $hide = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 				</td>
 			</tr>
 
+			<?php do_action( 'noptin_form_conditional_display_editor', $form ); ?>
 		</table>
 	</div>
 

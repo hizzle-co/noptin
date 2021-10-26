@@ -29,6 +29,8 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 		add_filter( 'noptin_form_html', array( $this, 'replace_in_form_content' ) );
 		add_filter( 'noptin_optin_form_html', array( $this, 'replace_in_form_content' ) );
 		add_filter( 'noptin_form_redirect_url', array( $this, 'replace_in_form_redirect_url' ) );
+		add_filter( 'noptin_form_welcome_email_subject', array( $this, 'replace_in_form_content' ) );
+		add_filter( 'noptin_form_welcome_email_body', array( $this, 'replace_in_form_content' ) );
 	}
 
 	/**

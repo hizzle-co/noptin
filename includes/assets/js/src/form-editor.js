@@ -22,6 +22,12 @@
 			document.title = document.title.replace(title[0], tab_title + ' ')
 		}
 
+		// Update address bar.
+		if ( window.history.replaceState ) {
+			window.history.replaceState( id, tab_title, $(this).attr('href') );
+		}
+
+		$(this).closest('form').attr( 'action', $(this).attr('href') );
 	});
 
 	// Toggle accordions.
@@ -87,7 +93,7 @@
 	// Delete fields.
 	$( '#noptin-form-fields-panel-fields' ).on('click', '.noptin-field-editor-delete', function ( e ) {
 		e.preventDefault();
-		$( this ).closest( '.noptin-settings-panel' ).fadeOut( 'fast', () => { $( this ).remove() } );
+		$( this ).closest( '.noptin-settings-panel' ).fadeOut( 'fast', function () { $( this ).remove() } );
 	});
 
 	// Sortable.

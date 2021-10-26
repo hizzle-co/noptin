@@ -109,6 +109,10 @@ class Noptin_Form_Manager {
 		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
 
+		// Sends welcome email.
+		add_action( 'noptin_insert_subscriber', array( $this, 'maybe_send_welcome_email' ), 1000 );
+        add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_send_welcome_email' ), 1000 );
+
 		// Init modules.
 		$this->listener->add_hooks();
 		$this->output_manager->add_hooks();
@@ -382,5 +386,64 @@ class Noptin_Form_Manager {
 		wp_send_json_success();
 
 	}
+
+	/**
+     * Sends new subscribers a welcome email.
+     *
+     * @param int $subscriber The subscriber in question.
+	 * @ignore
+     */
+    public function maybe_send_welcome_email( $subscriber ) {
+        $subscriber = new Noptin_Subscriber( $subscriber );
+
+        // Abort if a subscriber is active.
+        if ( ! $subscriber->is_active() ) {
+			return;
+		}
+
+		// Did they sign-up via a normal subscription form?
+		$form_id = $subscriber->_subscriber_via;
+	
+		if ( empty( $form_id ) || ! is_numeric( $form_id ) ) {
+			return;
+		}
+
+		// Does the form exist.
+		$form = noptin_get_optin_form( $form_id );
+
+		if (
+			// Form does not exist.
+			! $form->exists()
+
+			// It is a legacy form.
+			|| empty( $form->email )
+				
+			// Welcome emails have been disabled temporarily.
+			|| empty( $form->email['enable_email'] )
+				
+			// subject is missing.
+			|| empty( $form->email['subject'] )
+				
+			// Content is missing.
+			|| empty( $form->email['content'] )
+		) {
+			return;
+		}
+
+		$merge_tags = get_noptin_subscriber_merge_fields(  $subscriber->id  );
+
+		$item  = array(
+			'subscriber_id' 	=> $subscriber->id,
+			'email' 			=> $subscriber->email,
+			'email_body'	    => apply_filters( 'noptin_form_welcome_email_body', wp_kses_post( stripslashes_deep( $form->email['content'] ) ) ),
+			'email_subject' 	=> apply_filters( 'noptin_form_welcome_email_subject', esc_html( stripslashes_deep( $form->email['subject'] ) ) ),
+            'merge_tags'		=> $merge_tags,
+		);
+
+		$item = apply_filters( 'noptin_form_welcome_email_details', $item, $subscriber );
+
+		// Sends the email.
+        return noptin()->mailer->prepare_then_send( $item );
+    }
 
 }

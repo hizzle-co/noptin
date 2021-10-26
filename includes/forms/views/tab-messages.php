@@ -35,4 +35,5 @@ $all_messages = $form->messages;
 		</tr>
 	<?php endforeach; ?>
 
+	<?php do_action( 'noptin_form_messages_editor', $form ); ?>
 </table>

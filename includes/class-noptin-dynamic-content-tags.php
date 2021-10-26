@@ -68,6 +68,12 @@ abstract class Noptin_Dynamic_Content_Tags {
 			'callback'    => 'noptin_get_user_ip',
 		);
 
+		$this->tags['subscriber'] = array(
+			'description' => sprintf( __( "A custom field's value of the current subscriber (if known).", 'newsletter-optin-box' ) ),
+			'callback'    => array( $this, 'get_subscriber_field' ),
+			'example'     => "subscriber field='first_name' default='there'",
+		);
+
 		$this->tags['user'] = array(
 			'description' => sprintf( __( 'The property of the currently logged-in user.', 'newsletter-optin-box' ) ),
 			'callback'    => array( $this, 'get_user_property' ),
@@ -192,6 +198,46 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		if ( isset( $_COOKIE[ $name ] ) ) {
 			return esc_html( stripslashes( $_COOKIE[ $name ] ) );
+		}
+
+		return esc_html( $default );
+	}
+
+	/*
+	 * Custom field value of the current subscriber (if known).
+	 *
+	 * @param array $args
+	 *
+	 * @return string
+	 */
+	protected function get_subscriber_field( $args = array() ) {
+		$field      = empty( $args['field'] ) ? 'first_name' : $args['field'];
+		$default    = isset( $args['default'] ) ? $args['default'] : '';
+		$subscriber = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+
+		// Ensure the subscriber and the field exist.
+		if ( ! $subscriber->exists() || ! $subscriber->has_prop( $field ) ) {
+			return esc_html( $default );
+		}
+
+		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
+
+		// Format field value.
+		if ( isset( $all_fields[ $field ] ) ) {
+
+			$value = $subscriber->get( $field );
+			if ( 'checkbox' == $all_fields[ $field ] ) {
+				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
+			}
+
+			return wp_kses_post(
+					format_noptin_custom_field_value(
+					$subscriber->get( $field ),
+					$all_fields[ $field ],
+					$subscriber
+				)
+			);
+
 		}
 
 		return esc_html( $default );

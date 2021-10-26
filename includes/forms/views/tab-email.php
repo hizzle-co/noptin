@@ -35,7 +35,7 @@ $email_settings = $form->email;
 			<label for="noptin-form-welcome-email-subject"><?php esc_html_e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
 		</th>
 		<td>
-			<input type="text" class="widefat" id="noptin-form-welcome-email-subject" name="noptin_form[email][subject]" value="<?php echo isset( $email_settings['subject'] ) ? esc_url( $email_settings['subject'] ) : ''; ?>" placeholder="<?php esc_attr_e( 'Example: Thanks for subscribing', 'newsletter-optin-box' ); ?>" />
+			<input type="text" class="widefat" id="noptin-form-welcome-email-subject" name="noptin_form[email][subject]" value="<?php echo isset( $email_settings['subject'] ) ? esc_attr( $email_settings['subject'] ) : ''; ?>" placeholder="<?php esc_attr_e( 'Example: Thanks for subscribing', 'newsletter-optin-box' ); ?>" />
 		</td>
 	</tr>
 
@@ -64,4 +64,6 @@ $email_settings = $form->email;
 			?>
 		</td>
 	</tr>
+
+	<?php do_action( 'noptin_form_email_settings_editor', $form ); ?>
 </table>

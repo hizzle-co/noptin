@@ -15,13 +15,6 @@ defined( 'ABSPATH' ) || exit;
  * Represents a single opt-in form.
  *
  * @see noptin_get_optin_form()
- * @property array $appearance
- * @property array $email
- * @property array $messages
- * @property array $settings
- * @property string $status
- * @property string $title
- * @property int $id
  * @version  1.0.5
  */
 class Noptin_Form {
@@ -32,7 +25,7 @@ class Noptin_Form {
 	 * @since 1.0.5
 	 * @var int
 	 */
-	protected $id = null;
+	public $id = null;
 
 	/**
 	 * Form title
@@ -40,7 +33,7 @@ class Noptin_Form {
 	 * @since 1.0.5
 	 * @var string
 	 */
-	protected $title = 'untitled';
+	public $title = 'untitled';
 
 	/**
 	 * Form status
@@ -48,7 +41,7 @@ class Noptin_Form {
 	 * @since 1.0.5
 	 * @var string
 	 */
-	protected $status = 'draft';
+	public $status = 'publish';
 
 	/**
 	 * Form settings.
@@ -56,7 +49,7 @@ class Noptin_Form {
 	 * @since 1.6.2
 	 * @var array
 	 */
-	protected $settings = array();
+	public $settings = array();
 
 	/**
 	 * Message settings.
@@ -64,7 +57,7 @@ class Noptin_Form {
 	 * @since 1.6.2
 	 * @var array
 	 */
-	protected $messages = array();
+	public $messages = array();
 
 	/**
 	 * Email settings.
@@ -72,7 +65,7 @@ class Noptin_Form {
 	 * @since 1.6.2
 	 * @var array
 	 */
-	protected $email = array();
+	public $email = array();
 
 	/**
 	 * Class constructor. Loads form data.
@@ -241,6 +234,8 @@ class Noptin_Form {
 
 		}
 
+		delete_transient( 'noptin_forms_to_append' );
+
 		return true;
 	}
 
@@ -377,13 +372,48 @@ class Noptin_Form {
 			return false;
 		}
 
-		// or not published...
-		if ( ! noptin_is_preview() && ! $this->is_published() ) {
+		// Show on preview pages.
+		if ( noptin_is_preview() ) {
+			return true;
+		}
+
+		// Abort if not published or the user wants to hide all forms.
+		if ( ! $this->is_published() || ! noptin_should_show_optins() ) {
 			return false;
 		}
 
-		// TODO: Handle conditionals.
-		return true;
+		// Has the user restricted this to a few posts?
+		if ( ! empty( $this->settings['only_show'] ) ) {
+			return noptin_is_singular( $this->settings['only_show'] );
+		}
+
+		if ( empty( $this->settings['hide'] ) ) {
+			return true;
+		}
+		$hide = $this->settings['hide'];
+
+		// frontpage.
+		if ( is_front_page() ) {
+			return ! in_array( 'frontpage', $hide );
+		}
+
+		// blog page.
+		if ( is_home() ) {
+			return ! in_array( 'blogpage', $hide );
+		}
+
+		// search.
+		if ( is_search() ) {
+			return ! in_array( 'searchpage', $hide );
+		}
+
+		// other archive pages.
+		if ( is_archive() ) {
+			return ! in_array( 'archives', $hide );
+		}
+
+		// Single posts.
+		return ! is_singular( $hide );
 
 	}
 

@@ -1438,7 +1438,7 @@ function noptin_array_value( $array, $key, $default = '' ) {
 function noptin_is_preview() {
 
 	// Widget preview.
-	if ( ! empty( $_GET['legacy-widget-preview[idBase]'] ) || defined( 'IS_NOPTIN_PREVIEW' ) ) {
+	if ( ! empty( $_GET['legacy-widget-preview'] ) || defined( 'IS_NOPTIN_PREVIEW' ) || ( ! empty( $GLOBALS['wp']->query_vars['rest_route'] ) && false !== strpos( $GLOBALS['wp']->query_vars['rest_route'], 'noptin_widget_premade' ) ) ) {
 		return true;
 	}
 

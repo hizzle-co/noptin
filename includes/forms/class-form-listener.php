@@ -36,7 +36,7 @@ class Noptin_Form_Listener {
 	 * Note that this is not the form id of the saved form.
 	 * It is the id passed to Noptin_Form_Element::__construct().
 	 */
-	public $processed_form;
+	public $processed_form = null;
 
 	/**
 	 * @var string Whether the last event was subscribe, already_subscribed, update or unsubscribe.
@@ -103,7 +103,7 @@ class Noptin_Form_Listener {
 	public function process_request() {
 
 		// We want to process this once.
-		if ( ! empty( $this->processed_form ) ) {
+		if ( ! is_null( $this->processed_form ) ) {
 			return;
 		}
 
@@ -135,7 +135,8 @@ class Noptin_Form_Listener {
 
 				$value = $this->get_field_value( $custom_field['merge_tag'] );
 				if ( '' === $value || array() === $value ) {
-					return $this->error->add( 'required_field_missing', get_noptin_form_message( 'required_field_missing' ) );
+					$error = 'GDPR_consent' == $custom_field['merge_tag'] ? 'accept_terms' : 'required_field_missing';
+					return $this->error->add( $error, get_noptin_form_message( $error ) );
 				}
 
 			}
@@ -230,7 +231,7 @@ class Noptin_Form_Listener {
 			$value = $this->get_field_value( $custom_field['merge_tag'] );
 
 			// Checkboxes should always be 0 or 1.
-			if ( 'checkbox' === $custom_field['type'] ) {
+			if ( 'checkbox' === $custom_field['type'] || 'GDPR_consent' === $custom_field['type'] ) {
 				$value = (int) ! empty( $value );
 			}
 
@@ -407,6 +408,7 @@ class Noptin_Form_Listener {
 				 * - noptin_form_error_invalid_email            Invalid email address
 				 * - noptin_form_error_already_subscribed       Email is already subscribed
 				 * - noptin_form_error_required_field_missing   One or more required fields are missing
+				 * - noptin_form_error_accept_terms             Terms were not accepted
 				 * - noptin_form_error_already_subscribed       The email being unsubscribed is not subscribed
 				 *
 				 * @since 1.6.2
@@ -647,7 +649,7 @@ class Noptin_Form_Listener {
 
 		// Prepare the response and an optional redirect URL.
 		$redirect_url = $this->get_redirect_url();
-wpinv_error_log( $redirect_url );
+
 		if ( $this->last_event !== 'unsubscribed' && ! empty( $redirect_url ) ) {
 
 			$response = array(

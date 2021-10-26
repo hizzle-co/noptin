@@ -363,11 +363,7 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 	// Insert additional meta data.
 	foreach ( $fields as $field => $value ) {
 
-		if ( ! is_scalar( $value ) ) {
-			continue;
-		}
-
-		if ( isset( $database_fields[ $field ] ) || 'name' === $field || 'integration_data' === $field ) {
+		if ( isset( $database_fields[ $field ] ) || 'integration_data' === $field ) {
 			continue;
 		}
 
@@ -1381,6 +1377,23 @@ function get_noptin_custom_fields() {
  * @return array|false Array of field data or false if the field does not exist.
  */
 function get_noptin_custom_field( $merge_tag ) {
+
+	// Virtual field.
+	if ( 'GDPR_consent' === $merge_tag ) {
+
+		return array(
+			'type'       => 'GDPR_consent',
+			'merge_tag'  => 'GDPR_consent',
+			'text'       => __( 'I consent to receive promotional emails about your products and services.', 'newsletter-optin-box' ),
+			'label'      => '',
+			'visible'    => false,
+			'subs_table' => false,
+			'predefined' => true,
+			'required'   => true,
+		);
+
+	}
+
 	$custom_field = wp_list_filter( get_noptin_custom_fields(), array( 'merge_tag' => trim( $merge_tag ) ) );
 	return current( $custom_field );
 }

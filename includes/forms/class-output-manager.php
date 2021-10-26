@@ -148,6 +148,9 @@ class Noptin_Form_Output_Manager {
 		// Are we trying to display a saved form?
 		if ( isset( $atts['form'] ) && ! empty( $atts['form'] ) ) {
 
+			// Maybe display a translated version.
+			$atts['form'] = translate_noptin_form_id( (int) $atts['form'] );
+
 			// Abort early if trying to render a legacy form.
 			if ( is_legacy_noptin_form( (int) $atts['form'] ) ) {
 				$form = new Noptin_Form_Legacy( (int) $atts['form'] );

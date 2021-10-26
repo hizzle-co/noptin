@@ -183,7 +183,26 @@ class Noptin_Form_Element {
 			);
 
 			// Display the actual form field.
-			display_noptin_custom_field_input( $custom_field );
+			if ( 'GDPR_consent' === $custom_field['merge_tag'] ) {
+
+				?>
+
+				<label>
+					<input
+						name="noptin_fields[GDPR_consent]"
+						id="<?php echo esc_attr( $custom_field['id'] ); ?>"
+						type='checkbox'
+						value='1'
+						class='noptin-checkbox-form-field'
+						required
+					/><span><?php echo wp_kses_post( $custom_field['text'] ); ?></span>
+				</label>
+
+				<?php
+
+			} else {
+				display_noptin_custom_field_input( $custom_field );
+			}
 
 			// Display the closing wrapper.
 			echo '</' . $wrap . '>';

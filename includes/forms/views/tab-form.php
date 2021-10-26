@@ -34,14 +34,14 @@ if ( $form_fields ) {
 
 }
 
-$form_fields      = isset( $all_settings['fields'] ) ? $all_settings['fields'] : $form_fields;
-$form_preview_url = add_query_arg(
-	array(
-		'noptin_preview_form' => $form->exists() ? $form->id : 'new',
-	),
-	site_url( '/', 'admin' )
+$form_fields     = isset( $all_settings['fields'] ) ? $all_settings['fields'] : $form_fields;
+$privacy_policy  = get_privacy_policy_url();
+$privacy_policy  = empty( $privacy_policy ) ? home_url() : $privacy_policy;
+$default_consent = sprintf(
+	__( 'I have read and agree to the Terms and conditions and the %1$sPrivacy policy%2$s', 'newsletter-optin-box' ),
+	'<a href="' . esc_url( $privacy_policy ) . '" target="_blank">',
+	'</a>'
 );
-
 ?>
 
 <h2 class="screen-reader-text"><?php esc_html_e( 'Form Fields', 'newsletter-optin-box' ); ?></h2>
@@ -82,21 +82,33 @@ $form_preview_url = add_query_arg(
 								<input type="hidden" name="noptin_form[settings][fields][][type]" value="<?php echo esc_attr( $field['type'] ); ?>" />
 								<input type="hidden" name="noptin_form[settings][fields][][merge_tag]" value="<?php echo esc_attr( $field['type'] ); ?>" />
 
-								<p>
-									<label><?php esc_html_e( 'Field Label', 'newsletter-optin-box' ); ?>
-										<input type="text" name="noptin_form[settings][fields][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
-									</label>
-								</p>
-
-								<?php do_action( 'noptin_form_edit_field', $field ); ?>
-
-								<?php if ( 'email' !== $field['type'] ): ?>
+								<?php if ( 'GDPR_consent' !== $field['type'] ): ?>
 									<p>
-										<label>
-											<input type="checkbox" name="noptin_form[settings][fields][][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>/>
-											<span class="description"><?php esc_html_e( 'Is this field required?', 'newsletter-optin-box' ); ?></span>
+										<label><?php esc_html_e( 'Field Label', 'newsletter-optin-box' ); ?>
+											<input type="text" name="noptin_form[settings][fields][][label]" class="widefat noptin-form-field-label" value="<?php echo esc_attr( $field['label'] ); ?>" />
 										</label>
 									</p>
+
+									<?php do_action( 'noptin_form_edit_field', $field ); ?>
+
+									<?php if ( 'email' !== $field['type'] ): ?>
+										<p>
+											<label>
+												<input type="checkbox" name="noptin_form[settings][fields][][required]" value="1" <?php checked( ! empty( $field['required'] ) ); ?>/>
+												<span class="description"><?php esc_html_e( 'Is this field required?', 'newsletter-optin-box' ); ?></span>
+											</label>
+										</p>
+									<?php endif; ?>
+								<?php else: ?>
+									<input type="hidden" class="noptin-form-field-label" name="noptin_form[settings][fields][][label]" value="<?php esc_attr_e( 'Agree to terms', 'newsletter-optin-box' ); ?>" />
+
+									<p>
+										<label><?php esc_html_e( 'Consent Text', 'newsletter-optin-box' ); ?>
+											<textarea rows="5" name="noptin_form[settings][fields][][text]" class="widefat"><?php echo esc_textarea( $field['text'] ); ?></textarea>
+										</label>
+										<p class="description"><?php esc_html_e( 'HTML is allowed', 'newsletter-optin-box' ); ?></p>
+									</p>
+
 								<?php endif; ?>
 
 								<a href="#" class="noptin-field-editor-delete"><?php esc_html_e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
@@ -219,6 +231,19 @@ $form_preview_url = add_query_arg(
 
 	<?php endforeach; ?>
 
+	<div id="noptin-form-fields-panel-GDPR_consent-template">
+		<input type="hidden" name="noptin_form[settings][fields][][type]" value="GDPR_consent" />
+		<input type="hidden" class="noptin-form-field-label" name="noptin_form[settings][fields][][label]" value="<?php esc_attr_e( 'Agree to terms', 'newsletter-optin-box' ); ?>" />
+
+		<p>
+			<label><?php esc_html_e( 'Consent Text', 'newsletter-optin-box' ); ?>
+				<textarea rows="5" name="noptin_form[settings][fields][][text]" class="widefat"><?php echo esc_textarea( $default_consent ); ?></textarea>
+			</label>
+			<p class="description"><?php esc_html_e( 'HTML is allowed', 'newsletter-optin-box' ); ?></p>
+		</p>
+
+		<a href="#" class="noptin-field-editor-delete"><?php esc_html_e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
+	</div>
 </div>
 
 <!-- New field template. -->
@@ -243,6 +268,7 @@ $form_preview_url = add_query_arg(
 				<?php foreach ( $all_fields as $field ) : ?>
 					<option value="<?php echo esc_attr( $field['merge_tag'] ); ?>"><?php echo esc_html( $field['label'] ); ?></option>
 				<?php endforeach; ?>
+				<option value="GDPR_consent"><?php esc_html_e( 'Agree to terms', 'newsletter-optin-box' ); ?></option>
 			</select>
 
 			<p class="description"><?php

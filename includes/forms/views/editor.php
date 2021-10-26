@@ -33,7 +33,7 @@ add_thickbox();
 		<span><?php echo ! $form->exists() ? __( 'New Form', 'newsletter-optin-box' ) : __( 'Edit Form', 'newsletter-optin-box' ); ?></span>
 	</h1>
 
-	<form method="post" action="<?php echo esc_url( add_query_arg( array() ) ); ?>" id="noptin-form-editor-app">
+	<form method="post" id="noptin-form-editor-app">
 		<?php wp_nonce_field( 'noptin-save-form', 'noptin-save-form-nonce' ); ?>
 		<input type="hidden" name="noptin_admin_action" value="noptin_editor_save_form">
 

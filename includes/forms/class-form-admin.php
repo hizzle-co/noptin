@@ -70,7 +70,7 @@ class Noptin_Form_Admin {
 	 */
 	public function add_editor_page() {
 
-		add_submenu_page( 
+		add_submenu_page(
 			'noptin',
 			'Forms Editor - Noptin',
 			'Noptin Forms Editor',
@@ -169,7 +169,7 @@ class Noptin_Form_Admin {
 
 			$admin->show_success(
 				sprintf(
-					__( 'Form created successfully. %sPreview%s .', 'newsletter-optin-box' ),
+					__( 'Form created successfully. %sPreview%s', 'newsletter-optin-box' ),
 					sprintf( '<a href="%s">', esc_url_raw( get_noptin_preview_form_url( $form->id ) ) ),
 					'</a>'
 				)
@@ -179,7 +179,7 @@ class Noptin_Form_Admin {
 
 			$admin->show_success(
 				sprintf(
-					__( 'Form updated successfully. %sPreview%s .', 'newsletter-optin-box' ),
+					__( 'Form updated successfully. %sPreview%s', 'newsletter-optin-box' ),
 					sprintf( '<a href="%s">', esc_url_raw( get_noptin_preview_form_url( $form->id ) ) ),
 					'</a>'
 				)

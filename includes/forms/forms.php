@@ -410,6 +410,11 @@ function get_default_noptin_form_messages() {
 				'description' => __( 'Shown when someone does not fill all required fields.', 'newsletter-optin-box' ),
 				'default'     => __( 'Please fill all the required fields.', 'newsletter-optin-box' ),
 			),
+			'accept_terms' => array(
+				'label'       => __( 'Terms not Accepted', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when someone does not accept the terms and conditions and privacy policy (GDPR).', 'newsletter-optin-box' ),
+				'default'     => __( 'Please accept the terms and conditions first.', 'newsletter-optin-box' ),
+			),
 			'already_subscribed'     => array(
 				'label'       => __( 'Already subscribed', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when an existing subscriber tries to sign-up again.', 'newsletter-optin-box' ),
@@ -467,3 +472,38 @@ function get_noptin_form_message( $key, $default = '' ) {
 
 	return $default;
 }
+
+/**
+ * Translates a form id to match the current site's language.
+ *
+ * @param int $form_id Current form id.
+ * @return int Translated form id.
+ * @since 1.6.2
+ */
+function translate_noptin_form_id( $form_id ) {
+
+	// Do not translate previews.
+	if ( ! empty( $_GET['legacy-widget-preview'] ) || defined( 'IS_NOPTIN_PREVIEW' ) || ( ! empty( $GLOBALS['wp']->query_vars['rest_route'] ) && false !== strpos( $GLOBALS['wp']->query_vars['rest_route'], 'noptin_widget_premade' ) ) ) {
+		return $form_id;
+	}
+
+	// WPML.
+	if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+		/**
+		 * @ignore
+		 */
+		$form_id = apply_filters( 'wpml_object_id', $form_id, 'noptin-form', true );
+	}
+
+	// Polylang.
+	if ( function_exists( 'pll_get_post' ) ) {
+		$translated = pll_get_post( $form_id );
+
+		if ( ! empty( $translated ) ) {
+			$form_id = $translated;
+		}
+	}
+
+	return $form_id;
+}
+
