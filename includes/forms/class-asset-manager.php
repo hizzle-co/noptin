@@ -56,6 +56,7 @@ class Noptin_Form_Asset_Manager {
 			'cookie'      => get_noptin_option( 'subscribers_cookie' ),
 			'cookie_path' => COOKIEPATH,
 		);
+		$params = apply_filters( 'noptin_form_scripts_params', $params );
 
 		// JS for new forms/shortcodes/widgets/blocks.
 		wp_register_script(
@@ -110,7 +111,7 @@ class Noptin_Form_Asset_Manager {
 		}
 
 		// Maybe load legacy form scripts.
-		if ( apply_filters( 'noptin_load_legacy_form_scripts', $this->load_legacy_scripts ) ) {
+		if ( apply_filters( 'noptin_load_legacy_form_scripts', ( $this->load_legacy_scripts || ! is_using_new_noptin_forms() ) ) ) {
 			wp_enqueue_script( 'noptin_front' );
 		}
 

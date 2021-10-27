@@ -230,7 +230,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
 			}
 
-			return wp_kses_post(
+			$value = wp_kses_post(
 					format_noptin_custom_field_value(
 					$subscriber->get( $field ),
 					$all_fields[ $field ],
@@ -238,6 +238,9 @@ abstract class Noptin_Dynamic_Content_Tags {
 				)
 			);
 
+			if ( "&mdash;" !== $value ) {
+				return $value;
+			}
 		}
 
 		return esc_html( $default );

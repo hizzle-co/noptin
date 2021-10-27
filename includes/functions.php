@@ -29,26 +29,15 @@ function noptin() {
  * @since   1.0.6
  */
 function get_noptin_options() {
-	global $noptin_options;
+	$options = get_option( 'noptin_options', array() );
 
-	if ( empty( $noptin_options ) ) {
-		$noptin_options = get_option( 'noptin_options', array() );
-	}
-
-	if ( ! is_array( $noptin_options ) || empty( $noptin_options ) ) {
-		$noptin_options = array(
+	if ( ! is_array( $options ) || empty( $options ) ) {
+		$options = array(
 			'success_message' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
 		);
 	}
 
-	// Support for WPML.
-	if ( ! did_action( 'init' ) ) {
-		$options = $noptin_options;
-		$noptin_options = null;
-		return $options;
-	}
-
-	return $noptin_options;
+	return $options;
 }
 
 /**
@@ -90,11 +79,7 @@ function get_noptin_option( $key, $default = null ) {
  * @since   1.0.5
  */
 function update_noptin_options( $options ) {
-	global $noptin_options;
-
-	$noptin_options = $options;
 	update_option( 'noptin_options', $options );
-
 }
 
 /**
@@ -1489,4 +1474,13 @@ function noptin_is_preview() {
 
 	return false;
 
+}
+
+/**
+ * Checks if the site uses a supported multilingual plugin.
+ *
+ * @return bool
+ */
+function noptin_is_multilingual() {
+	return apply_filters( 'noptin_is_multilingual', false );
 }

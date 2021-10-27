@@ -316,6 +316,10 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
 function add_noptin_subscriber( $fields, $silent = false ) {
 	global $wpdb;
 
+	if ( empty( $fields['locale'] ) && noptin_is_multilingual() ) {
+		$fields['locale'] = sanitize_text_field( get_locale() );
+	}
+
 	$table  = get_noptin_subscribers_table_name();
 	$fields = noptin_clean( wp_unslash( apply_filters( 'new_noptin_subscriber_fields', $fields ) ) );
 

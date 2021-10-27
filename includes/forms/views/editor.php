@@ -109,6 +109,9 @@ add_thickbox();
 							</ol>
 						</div>
 					</div><!-- #informationdiv -->
+
+					<?php do_action( 'noptin_form_editor_side_metabox', $form ); ?>
+
 				</div><!-- #postbox-container-1 -->
 
 				<div id="postbox-container-2" class="postbox-container">
