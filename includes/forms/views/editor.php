@@ -36,9 +36,11 @@ add_thickbox();
 	<form method="post" id="noptin-form-editor-app">
 		<?php wp_nonce_field( 'noptin-save-form', 'noptin-save-form-nonce' ); ?>
 		<input type="hidden" name="noptin_admin_action" value="noptin_editor_save_form">
+		<input type="hidden" name="post_type" id="post_type" value="noptin-form" />
 
 		<?php if ( $form->exists() ) : ?>
 			<input type="hidden" name="noptin_form[id]" value="<?php echo intval( $form->id ); ?>" />
+			<input type="hidden" name="post_ID" id="post_ID" value="<?php echo intval( $form->id ); ?>" />
 		<?php endif; ?>
 
 		<div id="poststuff">

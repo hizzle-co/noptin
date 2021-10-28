@@ -487,23 +487,7 @@ function translate_noptin_form_id( $form_id ) {
 		return $form_id;
 	}
 
-	// WPML.
-	if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
-		/**
-		 * @ignore
-		 */
-		$form_id = apply_filters( 'wpml_object_id', $form_id, 'noptin-form', true );
-	}
+	return apply_filters( 'translate_noptin_form_id', $form_id );
 
-	// Polylang.
-	if ( function_exists( 'pll_get_post' ) ) {
-		$translated = pll_get_post( $form_id );
-
-		if ( ! empty( $translated ) ) {
-			$form_id = $translated;
-		}
-	}
-
-	return $form_id;
 }
 

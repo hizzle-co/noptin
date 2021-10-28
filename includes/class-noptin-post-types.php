@@ -120,7 +120,10 @@ class Noptin_Post_Types {
 	public function remove_actions( $actions, $post ) {
 
 		if ( 'noptin-form' === $post->post_type ) {
-			unset( $actions['inline hide-if-no-js'] );
+
+			if ( ! is_using_new_noptin_forms() ) {
+				unset( $actions['inline hide-if-no-js'] );
+			}
 
 			$actions = array_merge(
 				array(

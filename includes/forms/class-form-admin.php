@@ -44,12 +44,22 @@ class Noptin_Form_Admin {
 			return;
 		}
 
+		$to_keep = array( 'from_post', 'new_lang', 'trid' );
+		$args    = array();
+
+		foreach ( $to_keep as $key ) {
+			if ( isset( $_GET[ $key ] ) ) {
+				$args[ $key ] = $_GET[ $key ];
+			}
+		}
+
 		// Form edits.
 		if ( 'post.php' === $pagenow && ( empty( $_GET['action'] ) || 'edit' === $_GET['action'] ) && isset( $_GET['post'] ) && 'noptin-form' === get_post_type( (int) $_GET['post'] ) ) {
 
 			// Only redirect if we're using the new forms editor.
 			if ( ! is_legacy_noptin_form( (int) $_GET['post'] ) ) {
-				wp_redirect( add_query_arg( 'form_id', (int) $_GET['post'], get_noptin_new_form_url() ) );
+				$args['form_id'] = (int) $_GET['post'];
+				wp_redirect( add_query_arg( $args, get_noptin_new_form_url() ) );
 				exit;
 			}
 
@@ -57,7 +67,7 @@ class Noptin_Form_Admin {
 
 		// Form creates.
 		if ( is_using_new_noptin_forms() && 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && 'noptin-form' === $_GET['post_type'] ) {
-			wp_redirect( get_noptin_new_form_url() );
+			wp_redirect( add_query_arg( $args, get_noptin_new_form_url() ) );
 			exit;
 		}
 
@@ -87,6 +97,7 @@ class Noptin_Form_Admin {
 	 * @since  1.6.2
 	 */
 	public function display_form_editor_page() {
+		global $post, $post_ID;
 
 		if ( ! empty( $_POST['noptin_form'] ) ) {
 			$form = new Noptin_Form( wp_kses_post_deep( wp_unslash( $_POST['noptin_form'] ) ) );
@@ -94,6 +105,11 @@ class Noptin_Form_Admin {
 			$form = new Noptin_Form( (int) $_GET['form_id'] );
 		} else {
 			$form = new Noptin_Form();
+		}
+
+		if ( $form->exists() ) {
+			$post    = get_post( $form->id );
+			$post_ID = $form->id;
 		}
 
 		require_once plugin_dir_path( __FILE__ ) . 'views/editor.php';
@@ -186,6 +202,8 @@ class Noptin_Form_Admin {
 			);
 
 		}
+
+		do_action( 'after_save_edited_noptin_form', $form );
 
 		// Redirect to the form's edit page.
 		wp_redirect( esc_url_raw( get_noptin_edit_form_url( $form->id ) ) );

@@ -31,6 +31,7 @@ class Noptin_Integrations {
 			'gform_loaded'       => 'load_gravity_forms_integration',
 			'getpaid_actions'    => 'load_getpaid_integration',
 			'wpml_loaded'        => 'load_wpml_integration',
+			'pll_init'           => 'load_polylang_integration',
 		);
 
 		foreach ( $integrations as $action => $method ) {
@@ -95,6 +96,16 @@ class Noptin_Integrations {
 	 */
 	public function load_wpml_integration() {
 		new Noptin_WPML();
+	}
+
+	/**
+	 * Loads Polylang integration
+	 *
+	 * @access      public
+	 * @since       1.6.2
+	 */
+	public function load_polylang_integration() {
+		new Noptin_Polylang();
 	}
 
 	/**

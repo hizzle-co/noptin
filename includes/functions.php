@@ -131,7 +131,7 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 	$path = $wp_rewrite->root . "noptin_newsletter/$action";
 	$url  = get_home_url( null, $path );
 
-	if ( function_exists( 'PLL' ) ) {
+	if ( function_exists( 'PLL' ) ) {// TODO: Move to PLL integration class.
 		$url = PLL()->links_model->add_language_to_link( $url, PLL()->curlang );
 	}
 

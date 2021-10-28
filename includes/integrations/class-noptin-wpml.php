@@ -3,8 +3,6 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-use WPML\FP\Obj;
-
 /**
  * Handles integrations with WPML.
  *
@@ -16,7 +14,6 @@ class Noptin_WPML {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_filter( 'get_post_metadata', array( $this, 'get_form_locale' ), 10, 3 );
 		add_filter( 'translate_noptin_form_id', array( $this, 'translate_form_id' ), 10, 1 );
 		add_filter( 'icl_job_elements', array( $this, 'remove_body_from_translation_job' ), 10, 2 );
 		add_filter( 'wpml_document_view_item_link', array( $this, 'document_view_item_link' ), 10, 5 );
@@ -31,28 +28,6 @@ class Noptin_WPML {
 			add_filter( 'wpml_admin_language_switcher_items', array( $this, 'admin_language_switcher_items' ) );
 		}
 
-	}
-
-	/**
-	 * Set the form locale to the current language when displaying on frontend.
-	 *
-	 * @param mixed  $value
-	 * @param int    $post_id
-	 * @param string $meta_key
-	 *
-	 * @return mixed
-	 */
-	public function get_form_locale( $value, $post_id, $meta_key ) {
-
-		if ( '_locale' === $meta_key && 'noptin-form' === get_post_type( $post_id ) ) {
-			return Obj::propOr(
-				$value,
-				'locale',
-				apply_filters( 'wpml_post_language_details', [], $post_id )
-			);
-		}
-
-		return $value;
 	}
 
 	/**

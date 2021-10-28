@@ -629,8 +629,8 @@ class Noptin_Form_Legacy {
 	 *
 	 * @return mixed
 	 */
-	public function duplicate() {
-		$this->optinName = $this->optinName . ' (duplicate)';
+	public function duplicate( $append = '(duplicate)' ) {
+		$this->optinName = trim( $this->optinName . ' ' . $append );
 		$this->id        = null;
 		return $this->save( 'draft' );
 	}

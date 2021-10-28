@@ -310,8 +310,8 @@ class Noptin_Form {
 	 *
 	 * @return mixed
 	 */
-	public function duplicate() {
-		$this->title = $this->title . ' (duplicate)';
+	public function duplicate( $append = '(duplicate)' ) {
+		$this->title = trim( $this->title . ' ' . $append );
 		$this->id    = null;
 		return $this->save();
 	}
