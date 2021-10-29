@@ -14,10 +14,11 @@ defined( 'ABSPATH' ) || exit;
 
 // Setting tabs.
 $tabs = array(
-	'form'       => __( 'Form', 'newsletter-optin-box' ),
-	'messages'   => __( 'Messages', 'newsletter-optin-box' ),
-	'settings'   => __( 'Settings', 'newsletter-optin-box' ),
-	'email'      => __( 'Welcome Email', 'newsletter-optin-box' ),
+	'form'         => __( 'Form', 'newsletter-optin-box' ),
+	'messages'     => __( 'Messages', 'newsletter-optin-box' ),
+	'settings'     => __( 'Settings', 'newsletter-optin-box' ),
+	'email'        => __( 'Welcome Email', 'newsletter-optin-box' ),
+	'integrations' => __( 'Integrations', 'newsletter-optin-box' ),
 );
 
 $tabs = apply_filters( 'noptin_form_editor_tabs', $tabs );

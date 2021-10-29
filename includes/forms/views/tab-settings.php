@@ -8,7 +8,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-$all_settings = $form->settings; //TODO: Form status.
+$all_settings = $form->settings;
 $places = array_merge(
 	array(
 		'frontpage'  => __( 'Front page', 'newsletter-optin-box' ),
