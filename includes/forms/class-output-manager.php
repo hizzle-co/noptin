@@ -185,6 +185,10 @@ class Noptin_Form_Output_Manager {
 			$this->get_connections_shortcode_atts()
 		);
 
+		if ( ! empty( $atts['is_unsubscribe'] ) ) {
+			$default_atts['submit'] = __( 'Unsubscribe', 'newsletter-optin-box' );
+		}
+
 		/**
 		 * Filters the default [noptin] shortcode attributes.
 		 *

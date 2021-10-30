@@ -650,7 +650,7 @@ class Noptin_Form_Listener {
 		// Prepare the response and an optional redirect URL.
 		$redirect_url = $this->get_redirect_url();
 
-		if ( $this->last_event !== 'unsubscribed' && ! empty( $redirect_url ) ) {
+		if ( ! empty( $redirect_url ) ) {
 
 			$response = array(
 				'action'       => 'redirect',

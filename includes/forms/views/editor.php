@@ -56,7 +56,7 @@ add_thickbox();
 									'type'         => 'text',
 									'name'         => 'noptin_form[title]',
 									'size'         => 30,
-									'value'        => ! $form->exists() ? __( 'Newsletter Form', 'newsletter-optin-box' ) : $form->title,
+									'value'        => ! $form->exists() ? __( 'Newsletter Subscription Form', 'newsletter-optin-box' ) : $form->title,
 									'placeholder'  => __( 'Enter form name', 'newsletter-optin-box' ),
 									'id'           => 'title',
 									'spellcheck'   => 'true',

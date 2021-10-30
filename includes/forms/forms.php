@@ -18,10 +18,9 @@ defined( 'ABSPATH' ) || exit;
  * @return bool
  */
 function is_using_new_noptin_forms() {
-	$new_form = get_option( 'noptin_use_new_forms' );
-	return apply_filters( 'is_using_new_noptin_forms', ! empty( $new_form ) );
+	$use_new_forms = get_option( 'noptin_use_new_forms' );
+	return apply_filters( 'is_using_new_noptin_forms', ! empty( $use_new_forms ) );
 }
-add_filter( 'is_using_new_noptin_forms', '__return_true' );
 
 /**
  * Checks whether or not this is a new or legacy form.
@@ -38,7 +37,7 @@ function is_legacy_noptin_form( $form_id ) {
 	}
 
 	// Or the new editor.
-	if ( '' === get_post_meta( $form_id, 'form_settings', true ) ) {
+	if ( '' !== get_post_meta( $form_id, 'form_settings', true ) ) {
 		return false;
 	}
 

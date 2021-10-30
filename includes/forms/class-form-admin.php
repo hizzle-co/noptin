@@ -59,7 +59,7 @@ class Noptin_Form_Admin {
 			// Only redirect if we're using the new forms editor.
 			if ( ! is_legacy_noptin_form( (int) $_GET['post'] ) ) {
 				$args['form_id'] = (int) $_GET['post'];
-				wp_redirect( add_query_arg( $args, get_noptin_new_form_url() ) );
+				wp_redirect( add_query_arg( $args, admin_url( 'admin.php?page=noptin-form-editor' ) ) );
 				exit;
 			}
 
