@@ -42,7 +42,7 @@
 		"@babel/plugin-transform-runtime": "7.15.0",
 		"@babel/preset-env": "7.15.0",
 		"@mdi/js": "5.9.55",
-		"@vue/compiler-sfc": "3.2.4",
+		"@vue/compiler-sfc": "3.2.21",
 		"@wordpress/babel-preset-default": "6.3.1",
 		"autoprefixer": "10.3.2",
 		"babel-loader": "8.2.2",
