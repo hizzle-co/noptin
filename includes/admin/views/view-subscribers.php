@@ -17,7 +17,7 @@
 
 ?>
 
-<div class="wrap noptin-subscribers-page">
+<div class="wrap noptin-subscribers-page" id="noptin-wrapper">
 
 	<h1 class="wp-heading-inline">
 		<span><?php echo esc_html( get_admin_page_title() ); ?></span>

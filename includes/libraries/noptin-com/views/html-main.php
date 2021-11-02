@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) or exit();
 
 ?>
 
-<div class="wrap noptin noptin_addons_wrap noptin-helper">
+<div class="wrap noptin noptin_addons_wrap noptin-helper" id="noptin-wrapper">
 	<?php require Noptin_COM_Helper::get_view_filename( 'html-section-nav.php' ); ?>
 	<h1 class="screen-reader-text"><?php _e( 'Noptin Extensions', 'newsletter-optin-box' ); ?></h1>
 

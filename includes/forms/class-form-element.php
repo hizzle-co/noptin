@@ -183,26 +183,7 @@ class Noptin_Form_Element {
 			);
 
 			// Display the actual form field.
-			if ( 'GDPR_consent' === $custom_field['merge_tag'] ) {
-
-				?>
-
-				<label>
-					<input
-						name="noptin_fields[GDPR_consent]"
-						id="<?php echo esc_attr( $custom_field['id'] ); ?>"
-						type='checkbox'
-						value='1'
-						class='noptin-checkbox-form-field'
-						required
-					/><span><?php echo wp_kses_post( $custom_field['text'] ); ?></span>
-				</label>
-
-				<?php
-
-			} else {
-				display_noptin_custom_field_input( $custom_field );
-			}
+			display_noptin_custom_field_input( $custom_field );
 
 			// Display the closing wrapper.
 			echo '</' . $wrap . '>';
@@ -216,6 +197,40 @@ class Noptin_Form_Element {
 			 * @param Noptin_Form_Element $form_element
 			 */
 			do_action( 'output_noptin_form_field', $custom_field, $this );
+
+		}
+
+		// (Maybe) display an acceptance field.
+		if ( '' !== trim( $this->args['acceptance'] ) ) {
+
+			// Display the opening wrapper.
+			printf(
+				'<%s %s>',
+				$wrap,
+				noptin_attr(
+					'form_field_wrapper',
+					array(
+						'id'     => sanitize_html_class( $this->args['html_id'] . '__field-consent' . '__wrapper' ),
+						'class'  => 'noptin-form-field-wrapper noptin-form-field__consent',
+					),
+					array( $this->args )
+				)
+			);
+			?>
+
+			<label>
+				<input
+					name="GDPR_consent"
+					id="<?php echo esc_attr( $custom_field['id'] ); ?>"
+					type='checkbox'
+					value='1'
+					class='noptin-checkbox-form-field'
+					required
+				/><span><?php echo wp_kses_post( trim( $this->args['acceptance'] ) ); ?></span>
+			</label>
+
+			<?php
+			echo '</' . $wrap . '>';
 
 		}
 

@@ -48,87 +48,29 @@
 
 	})
 
-	// Add new field.
-	$( '#noptin-form-fields-panel-fields .noptin-button-add-field' ).on( 'click', function( e ) {
-		e.preventDefault();
+	// Warn if a user is leaving the page without saving changes.
+	let isSaving = false;
+	let initialState = $( '#noptin-form-editor-app' ).serialize();
 
-		$( '#noptin-form-fields-panel-fields .form-fields-inner' ).append( $( '#noptin-form-fields-panel-new-field-template' ).html() )
+	jQuery(window).on('beforeunload', (e) => {
+		let currentState = $( '#noptin-form-editor-app' ).serialize();
+
+		if ( ! isSaving && initialState != currentState ) {
+			let confirmationMessage = 'Do you wish to save your changes first? Your changes will be discarded if you choose leave without saving them.';
+
+			(e || window.event).returnValue = confirmationMessage; // Gecko + IE.
+        	return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+		}
 	});
 
-	// Change field type.
-	$( '#noptin-form-editor-app' ).on('change', '.noptin-form-settings-field-type', function (e) {
-		e.preventDefault();
-
-		// Get field type.
-		let val = $( this ).val(),
-		    panel_content = $( this ).closest( '.noptin-settings-panel__content' );
-
-		// Update settings template and ids.
-		panel_content
-			.html( $( `#noptin-form-fields-panel-${val}-template` ).html() )
-			.attr( 'id', `noptin-form-fields-panel-fields-${val}-content` )
-			.closest( '.noptin-settings-panel' )
-			.attr( 'id', `noptin-form-fields-panel-fields-${val}` )
-			.find( `.noptin-accordion-trigger` )
-			.first()
-			.attr( 'aria-controls', `noptin-form-fields-panel-fields-${val}-content` )
-			.find( '.badge' )
-			.text( val )
-			.show()
-
-		panel_content.find( '.noptin-form-field-label' ).trigger( 'input' )
-
-	})
-
-	// Update field labels.
-	$( '#noptin-form-fields-panel-fields' ).on('input', '.noptin-form-field-label', function () {
-
-		$( this )
-			.closest( '.noptin-settings-panel' )
-			.find( '.noptin-accordion-trigger .title' )
-			.first()
-			.text( $( this ).val() )
-	})
-
-	// Delete fields.
-	$( '#noptin-form-fields-panel-fields' ).on('click', '.noptin-field-editor-delete', function ( e ) {
-		e.preventDefault();
-		$( this ).closest( '.noptin-settings-panel' ).fadeOut( 'fast', function () { $( this ).remove() } );
-	});
-
-	// Sortable.
-	if ( 'object' == typeof Sortable && Sortable.default ) {
-		new Sortable.default(
-			document.querySelectorAll('#noptin-form-fields-panel-fields-content .form-fields-inner'),
-			{
-				draggable: '.draggable-source',
-				handle: '.dashicons-move',
-			}
-		);
-	}
-
-	// Submit form.
+	// Save tinymce when submitting the form.
 	$( '#noptin-form-editor-app' ).on( 'submit', () => {
+		isSaving = true;
 
 		// Save editor content.
 		if ( window.tinyMCE ) {
 			window.tinyMCE.triggerSave();
 		}
-
-		// Update field names.
-		$( '#noptin-form-fields-panel-fields-content .form-fields-inner > fieldset' ).each( function( index ) {
-
-			$( this ).find('[name^="noptin_form[settings][fields][]"]').each ( function() {
-				let _name = $( this ).attr( 'name' );
-				$( this ).attr( 'name', _name.replace( '[]', `[${index}]` ) );
-			})
-
-		});
-
-		// Remove template field names.
-		$( '#noptin-form-fields-panel-field-templates [name^="noptin_form[settings][fields][]"]' ).each( function() {
-			$( this ).attr( 'name', '' );
-		});
 
 	});
 

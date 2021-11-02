@@ -22,6 +22,7 @@ function is_using_new_noptin_forms() {
 	return apply_filters( 'is_using_new_noptin_forms', ! empty( $use_new_forms ) );
 }
 
+add_filter( 'is_using_new_noptin_forms', '__return_true' );
 /**
  * Checks whether or not this is a new or legacy form.
  *
@@ -411,7 +412,7 @@ function get_default_noptin_form_messages() {
 			),
 			'accept_terms' => array(
 				'label'       => __( 'Terms not Accepted', 'newsletter-optin-box' ),
-				'description' => __( 'Shown when someone does not accept the terms and conditions and privacy policy (GDPR).', 'newsletter-optin-box' ),
+				'description' => __( 'Shown when someone does not check the acceptance checkbox.', 'newsletter-optin-box' ),
 				'default'     => __( 'Please accept the terms and conditions first.', 'newsletter-optin-box' ),
 			),
 			'already_subscribed'     => array(

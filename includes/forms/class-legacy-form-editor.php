@@ -1143,7 +1143,7 @@ class Noptin_Legacy_Form_Editor {
 	}
 
 	/**
-	 * Converts an array of ids to select2 option
+	 * Converts an array of ids to select2 options
 	 */
 	public function post_ids_to_options( $ids ) {
 

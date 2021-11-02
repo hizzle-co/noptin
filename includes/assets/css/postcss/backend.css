@@ -1859,21 +1859,6 @@ a.no-campaign-create-new-campaign {
 
 }
 
-#noptin-form-fields-panel-fields-content .form-fields {
-	max-width: 460px;
-}
-
-.noptin-form-settings-field-type {
-	width: 100%;
-    display: block;
-    margin-top: 20px;
-}
-
-#noptin-form-preview {
-	border: 0;
-    height: 200px;
-    width: 100%;
-}
 
 #noptin-form-welcome-email-content_ifr {
 	min-height: 300px;
@@ -1886,19 +1871,4 @@ a.no-campaign-create-new-campaign {
     padding: 0 .9em;
     border: solid 1px #dfdfdf;
     background-color: #fdfdfd;
-}
-
-@media only screen and (min-width: 1390px) {
-
-	.noptin-form-editor-fields-layout-wrap {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-
-		& > .noptin-settings-panel {
-			width: 49.5%;
-		}
-
-	}
-
 }

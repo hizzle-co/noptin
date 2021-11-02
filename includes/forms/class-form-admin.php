@@ -116,8 +116,8 @@ class Noptin_Form_Admin {
 
 		// Custom admin scripts.
 		$version = filemtime( plugin_dir_path( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js' );
-		wp_enqueue_script( 'shopify-sortable', plugin_dir_url( Noptin::$file ) . 'includes/assets/vendor/shopify-sortable.js', array(), $version, true );
-		wp_enqueue_script( 'noptin-form-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js', array( 'jquery', 'shopify-sortable' ), $version, true );
+		wp_enqueue_script( 'select2', plugin_dir_url( Noptin::$file ) . 'includes/assets/vendor/select2/select2.full.min.js', array( 'jquery' ), '4.0.12', true );
+		wp_enqueue_script( 'noptin-form-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js', array( 'jquery', 'select2' ), $version, true );
 	}
 
 	/**

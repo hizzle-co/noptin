@@ -1,4 +1,4 @@
-<div class="wrap noptin-add-campaign-page">
+<div class="wrap noptin-add-campaign-page" id="noptin-wrapper">
 	<?php
 		printf(
 			'<h1 class="title">%s<a class="page-title-action" href="%s">&nbsp;%s</a></h1>',

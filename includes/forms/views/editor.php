@@ -16,9 +16,9 @@ defined( 'ABSPATH' ) || exit;
 $tabs = array(
 	'form'         => __( 'Form', 'newsletter-optin-box' ),
 	'messages'     => __( 'Messages', 'newsletter-optin-box' ),
-	'settings'     => __( 'Settings', 'newsletter-optin-box' ),
 	'email'        => __( 'Welcome Email', 'newsletter-optin-box' ),
 	'integrations' => __( 'Integrations', 'newsletter-optin-box' ),
+	'settings'     => __( 'Advanced', 'newsletter-optin-box' ),
 );
 
 $tabs = apply_filters( 'noptin_form_editor_tabs', $tabs );
@@ -28,7 +28,7 @@ add_thickbox();
 
 ?>
 
-<div class="wrap noptin-form-editor">
+<div class="wrap noptin-form-editor" id="noptin-wrapper">
 
 	<h1 class="wp-heading-inline">
 		<span><?php echo ! $form->exists() ? __( 'New Form', 'newsletter-optin-box' ) : __( 'Edit Form', 'newsletter-optin-box' ); ?></span>
@@ -167,10 +167,6 @@ add_thickbox();
 
 					<p class="submit">
 						<input type="submit" name="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Form', 'newsletter-optin-box' ); ?>" />&nbsp;
-						<a href="#TB_inline?width=0&height=550&inlineId=noptin-form-variables" class="thickbox button-secondary">
-							<span class="dashicons dashicons-info" style="vertical-align: middle;"></span>
-							<?php esc_html_e( 'View available smart tags', 'newsletter-optin-box' ); ?>
-						</a>
 					</p>
 
 				</div><!-- #postbox-container-2 -->

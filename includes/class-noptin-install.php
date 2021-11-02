@@ -248,6 +248,7 @@ class Noptin_Install {
 				'settings'   => array(
 					'fields' => array( 'email' ),
 					'submit' => __( 'Subscribe', 'newsletter-optin-box' ),
+					'labels' => 'show',
 				)
 			)
 		);

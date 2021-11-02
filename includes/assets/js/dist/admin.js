@@ -1,1 +1,1 @@
-(()=>{var n;n=jQuery,"undefined"==typeof noptinSettings&&(window.noptinSettings={}),window.noptin=window.noptin||{},n(document).ready((function(){n(".noptin-tip").tooltipster()}))})();
+(()=>{var n;n=jQuery,"undefined"==typeof noptinSettings&&(window.noptinSettings={}),window.noptin=window.noptin||{},n(document).ready((function(){n.fn.tooltipster&&n(".noptin-tip").tooltipster(),n.fn.select2&&n(".noptin-select2").select2({dropdownParent:n("#noptin-wrapper"),width:"resolve"})}))})();

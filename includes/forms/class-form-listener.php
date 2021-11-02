@@ -135,12 +135,18 @@ class Noptin_Form_Listener {
 
 				$value = $this->get_field_value( $custom_field['merge_tag'] );
 				if ( '' === $value || array() === $value ) {
-					$error = 'GDPR_consent' == $custom_field['merge_tag'] ? 'accept_terms' : 'required_field_missing';
-					return $this->error->add( $error, get_noptin_form_message( $error ) );
+					return $this->error->add( 'required_field_missing', get_noptin_form_message( 'required_field_missing' ) );
 				}
 
 			}
 
+		}
+
+		// Make sure acceptance checkbox is checked.
+		$acceptance = trim( $this->get_cached( 'acceptance' ) );
+
+		if ( ! empty( $acceptance ) && empty( $this->submitted['GDPR_consent'] ) ) {
+			return $this->error->add( 'accept_terms', get_noptin_form_message( 'accept_terms' ) );
 		}
 
 		/**
@@ -231,12 +237,17 @@ class Noptin_Form_Listener {
 			$value = $this->get_field_value( $custom_field['merge_tag'] );
 
 			// Checkboxes should always be 0 or 1.
-			if ( 'checkbox' === $custom_field['type'] || 'GDPR_consent' === $custom_field['type'] ) {
+			if ( 'checkbox' === $custom_field['type'] ) {
 				$value = (int) ! empty( $value );
 			}
 
 			$subscriber[ $custom_field['merge_tag'] ] = $value;
 
+		}
+
+		// GDPR acceptance text.
+		if ( ! empty( $this->submitted['GDPR_consent'] ) ) {
+			$subscriber['GDPR_consent'] = 1;
 		}
 
 		// Add the subscriber's IP address...

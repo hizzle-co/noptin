@@ -1,6 +1,6 @@
 <?php defined( 'ABSPATH' ) || exit(); ?>
 
-<div class="wrap noptin noptin_addons_wrap noptin-helper">
+<div class="wrap noptin noptin_addons_wrap noptin-helper" id="noptin-wrapper">
 	<?php require Noptin_COM_Helper::get_view_filename( 'html-section-nav.php' ); ?>
 	<h1 class="screen-reader-text"><?php esc_html_e( 'Noptin Addons', 'newsletter-optin-box' ); ?></h1>
 	<?php require Noptin_COM_Helper::get_view_filename( 'html-section-notices.php' ); ?>

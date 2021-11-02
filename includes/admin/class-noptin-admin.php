@@ -772,7 +772,7 @@ class Noptin_Admin {
 		$table->prepare_items();
 
 		?>
-		<div class="wrap">
+		<div class="wrap" id="noptin-wrapper">
 			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="<?php echo esc_url( add_query_arg( 'create', '1' ) ); ?>" class="page-title-action noptin-add-automation-rule"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a></h1>
 			<?php $this->show_notices(); ?>
 			<form id="noptin-automation-rules-table" method="POST">
@@ -812,7 +812,7 @@ class Noptin_Admin {
 		do_action( 'noptin_before_automation_rules_create_page', $this );
 
 		?>
-		<div class="wrap">
+		<div class="wrap" id="noptin-wrapper">
 			<h1 class="wp-heading-inline"><?php _e( 'Create an Automation Rule', 'newsletter-optin-box' ); ?></h1>
 			<?php get_noptin_template( 'automation-rules/create.php' ); ?>
 			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
@@ -849,7 +849,7 @@ class Noptin_Admin {
 		do_action( 'noptin_before_automation_rule_edit_page', $this );
 
 		?>
-		<div class="wrap">
+		<div class="wrap" id="noptin-wrapper">
 			<h1 class="wp-heading-inline"><?php _e( 'Edit Automation Rule', 'newsletter-optin-box' ); ?></h1>
 			<?php get_noptin_template( 'automation-rules/edit.php', compact( 'rule_id' ) ); ?>
 			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>

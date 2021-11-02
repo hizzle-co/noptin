@@ -8,9 +8,22 @@
 	// Global noptin object.
 	window.noptin = window.noptin || {}
 
-	// Attach the tooltips.
+	// Wait for the dom to load...
 	$( document ).ready( function() {
-		$( '.noptin-tip' ).tooltipster();
+
+		// ... then init tooltips...
+		if ( $.fn.tooltipster ) {
+			$( '.noptin-tip' ).tooltipster();
+		}
+
+		// ... and select 2.
+		if ( $.fn.select2 ) {
+			$( '.noptin-select2' ).select2({
+				dropdownParent: $( '#noptin-wrapper' ),
+				width: 'resolve'
+			});
+		}
+
 	});
 
 })(jQuery);

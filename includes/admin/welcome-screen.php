@@ -146,7 +146,7 @@
 		)
 	);
 ?>
-<div class="wrap about-wrap">
+<div class="wrap about-wrap" id="noptin-wrapper">
 	<h1><?php esc_html_e( 'Welcome To Noptin', 'newsletter-optin-box' ); ?></h1>
 	<div class="about-text"><?php esc_html_e( 'Noptin is a fast and lightweight newsletter plugin.', 'newsletter-optin-box' ); ?></div>
 

@@ -60,7 +60,7 @@ class Noptin_Form_Output_Manager {
 		$atts = array(
 			'fields'         => 'email', // Comma separated array of fields, or all
 			'source'         => 'shortcode', // Source of the subscriber.
-			'labels'         => 'hide', // Whether or not to show the field label.
+			'labels'         => 'show', // Whether or not to show the field label.
 			'wrap'           => 'div', // Which element to wrap field values in.
 			'styles'         => 'basic', // Set to inherit to inherit theme styles.
 			'before_fields'  => '', // Content to display before form fields.
@@ -69,6 +69,7 @@ class Noptin_Form_Output_Manager {
 			'html_name'      => '', // HTML name of the form.
 			'html_class'     => '', // HTML class of the form.
 			'redirect'       => '', // An optional URL to redirect users after successful subscriptions.
+			'acceptance'     => '', // Optional terms of service text.
 			'submit'         => __( 'Subscribe', 'newsletter-optin-box' ),
 			'template'       => 'normal',
 			'is_unsubscribe' => '',

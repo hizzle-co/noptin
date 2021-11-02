@@ -1,4 +1,4 @@
-<div class="wrap noptin-add-subscriber-page">
+<div class="wrap noptin-add-subscriber-page" id="noptin-wrapper">
 
 	<h1 class="title"><?php esc_html_e( 'Add Subscriber','newsletter-optin-box' ); ?></h1>
 
