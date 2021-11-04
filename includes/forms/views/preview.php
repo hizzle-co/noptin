@@ -6,10 +6,14 @@ $GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) );
 
 // render simple page with form in it.
 ?><!DOCTYPE html>
-<html>
+<html <?php language_attributes(); ?>>
 <head>
-	<meta charset="utf-8" />
+	<meta charset="<?php bloginfo( 'charset' ); ?>" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<meta name="robots" content="noindex, nofollow" />
 	<link type="text/css" rel="stylesheet" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
+	<title><?php echo __( 'Noptin Newsletter', 'newsletter-optin-box' ); ?></title>
 	<?php
 		wp_enqueue_scripts();
 		wp_print_styles();

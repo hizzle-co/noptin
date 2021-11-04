@@ -22,7 +22,6 @@ function is_using_new_noptin_forms() {
 	return apply_filters( 'is_using_new_noptin_forms', ! empty( $use_new_forms ) );
 }
 
-add_filter( 'is_using_new_noptin_forms', '__return_true' );
 /**
  * Checks whether or not this is a new or legacy form.
  *
@@ -408,7 +407,7 @@ function get_default_noptin_form_messages() {
 			'required_field_missing' => array(
 				'label'       => __( 'Required field missing', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when someone does not fill all required fields.', 'newsletter-optin-box' ),
-				'default'     => __( 'Please fill all the required fields.', 'newsletter-optin-box' ),
+				'default'     => __( 'Please fill in all the required fields.', 'newsletter-optin-box' ),
 			),
 			'accept_terms' => array(
 				'label'       => __( 'Terms not Accepted', 'newsletter-optin-box' ),

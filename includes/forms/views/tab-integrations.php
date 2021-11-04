@@ -12,6 +12,11 @@ $all_settings          = $form->settings;
 $available_connections = get_noptin_connection_providers();
 
 printf(
+	'<h2 class="screen-reader-text">%s</h2>',
+	esc_html__( 'Form Integrations', 'newsletter-optin-box' )
+);
+
+printf(
 	'<p class="description">%s</p>',
 	__( 'Noptin also allows you to add new subscribers to an external email service provider.', 'newsletter-optin-box' )
 );
