@@ -1748,6 +1748,12 @@ a.no-campaign-create-new-campaign {
     background-color: #ff5722;
     color: #fff;
     border-color: #d84315;
+	line-height: 35px;
+    text-align: center;
+
+	.dashicons {
+		vertical-align: middle;
+	}
 }
 
 .wp-core-ui .button.noptin-button-standout:focus {
