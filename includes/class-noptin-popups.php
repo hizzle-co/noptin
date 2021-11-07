@@ -17,7 +17,7 @@ class Noptin_Popups {
 	public function __construct() {
 
 		// Add popups to the footer.
-		add_action( 'wp_footer', array( $this, 'display_popups' ) );
+		add_action( 'wp_footer', array( $this, 'display_popups' ), 5 );
 
 	}
 
@@ -54,6 +54,7 @@ class Noptin_Popups {
 				echo $form->get_html();
 				echo '</div>';
 			}
+
 		}
 
 		/**

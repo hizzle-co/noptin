@@ -120,7 +120,7 @@ $update      = empty( $form->settings['update_existing'] ) ? '' : $form->setting
 			<p>
 				<?php noptin_hidden_field( 'noptin_form[settings][template]', 'normal' ); ?>
 				<label>
-					<input type="checkbox" id="noptin-form-form-template" name="noptin_form[settings][template]" value="condensed" <?php checked( ! empty( $form->settings['template'] ) && 'condensed' === $form->settings['styles'] ); ?>/>
+					<input type="checkbox" id="noptin-form-form-template" name="noptin_form[settings][template]" value="condensed" <?php checked( ! empty( $form->settings['template'] ) && 'condensed' === $form->settings['template'] ); ?>/>
 					<span class="description"><?php esc_html_e( 'Display all fields on a single line.', 'newsletter-optin-box' ); ?></span>
 				</label>
 			</p>

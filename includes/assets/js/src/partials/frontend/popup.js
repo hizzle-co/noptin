@@ -1,14 +1,14 @@
 import get_triggers from './triggers';
 
-export default function init( form ) {
+export default function init( popup ) {
 
 	try {
 
 		// Ensure we have a trigger.
-		if ( form.dataset.trigger && form.dataset.type ) {
+		if ( popup.dataset.trigger && popup.dataset.type ) {
 
-			const triggers = get_triggers( form );
-			const trigger = form.dataset.trigger;
+			const triggers = get_triggers( popup );
+			const trigger = popup.dataset.trigger;
 
 			if ( trigger && triggers[ trigger ] ) {
 				triggers[ trigger ]()

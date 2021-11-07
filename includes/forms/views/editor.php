@@ -176,7 +176,7 @@ add_thickbox();
 			<br class="clear" />
 		</div><!-- #poststuff -->
 
-	</form
+	</form>
 
 </div><!-- .wrap -->
 

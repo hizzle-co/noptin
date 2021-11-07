@@ -102,7 +102,7 @@ class Noptin_WPML {
 	public function document_edit_item_link( $link, $text, $current_document, $prefix, $type ) {
 
 		if ( 'noptin-form' === $type && ! is_legacy_noptin_form( $current_document->ID ) ) {
-			$url  = add_query_arg( 'form_id', (int) $current_document->ID, get_noptin_new_form_url() );
+			$url  = add_query_arg( 'form_id', (int) $current_document->ID, admin_url( 'admin.php?page=noptin-form-editor' ) );
 			$link = sprintf( '<a href="%s">%s</a>', esc_url( $url ), esc_html( $text ) );
 		}
 

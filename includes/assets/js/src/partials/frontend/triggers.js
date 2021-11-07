@@ -8,16 +8,16 @@ const getScrollPercent = () => {
 	return (doc.scrollTop||body.scrollTop) / ((doc.scrollHeight||body.scrollHeight) - doc.clientHeight) * 100;
 }
 
-// Throttle form lodash.
+// Throttle from lodash.
 var throttle = require('lodash.throttle');
 
-export default function trigger( form ) {
+export default function trigger( popup ) {
 
 	return {
 
 		// Displays a popup immeadiately.
 		immeadiate() {
-			display( form )
+			display( popup )
 		},
 
 		// Exit intent.
@@ -38,7 +38,7 @@ export default function trigger( form ) {
 				_delayTimer = setTimeout(() => {
 
 					// Display the popup.
-					display( form );
+					display( popup );
 
 					// Remove watchers.
 					$(document).off('mouseleave', watchLeave);
@@ -66,20 +66,19 @@ export default function trigger( form ) {
 		// After the user starts scrolling.
 		on_scroll() {
 
-			// Abort if scroll % set.
-			if ( ! form.dataset.on_scroll ) {
+			// Maximum scroll percentage.
+			const percent = parseFloat( popup.dataset.value );
+
+			if ( isNaN( percent ) ) {
 				return;
 			}
-
-			// Maximum scroll percentage.
-			const percent = parseInt( form.dataset.on_scroll );
 
 			// Watch no more than once every 500ms
 			let watchScroll = throttle(
 				() => {
 
 					if ( getScrollPercent() > percent ) {
-						display( form );
+						display( popup );
 						$(window).off('scroll', watchScroll)
 					}
 
@@ -93,15 +92,14 @@ export default function trigger( form ) {
 		// after_delay.
 		after_delay() {
 
-			// Abort if delay not set.
-			if ( ! form.dataset.after_delay ) {
+			const delay = parseFloat( popup.dataset.value ) * 1000;
+
+			if ( isNaN( delay ) ) {
 				return;
 			}
 
-			const delay = parseInt( form.dataset.after_delay ) * 1000;
-
 			setTimeout(() => {
-				display( form );
+				display( popup );
 			}, delay)
 		},
 
@@ -109,15 +107,15 @@ export default function trigger( form ) {
 		after_click() {
 
 			// Abort if target not set.
-			if ( ! form.dataset.after_click ) {
+			if ( ! popup.dataset.value ) {
 				return;
 			}
 
-			$( 'body' ).on( 'click', form.dataset.after_click, ( event ) => {
+			$( 'body' ).on( 'click', popup.dataset.value, ( event ) => {
 
 				event.preventDefault();
 
-				display( form );
+				display( popup );
 			});
 
 		}
