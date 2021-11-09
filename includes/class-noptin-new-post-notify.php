@@ -70,7 +70,7 @@ class Noptin_New_Post_Notify {
 				array(
 					'utm_medium'   => 'plugin-dashboard',
 					'utm_campaign' => 'new-post-notifications',
-					'utm_source'   => esc_url( urlencode( get_home_url() ) ),
+					'utm_source'   => urlencode( esc_url( get_home_url() ) ),
 				),
 				'https://noptin.com/guide/email-automations/new-post-notifications/'
 			);
@@ -79,7 +79,7 @@ class Noptin_New_Post_Notify {
 				array(
 					'utm_medium'   => 'plugin-dashboard',
 					'utm_campaign' => 'new-post-notifications',
-					'utm_source'   => esc_url( urlencode( get_home_url() ) ),
+					'utm_source'   => urlencode( esc_url( get_home_url() ) ),
 				),
 				'https://noptin.com/product/custom-post-notifications/'
 			);
@@ -92,19 +92,6 @@ class Noptin_New_Post_Notify {
 
 			echo "<p class='description'>$help_text</p>";
 			echo '<input type="hidden" name="noptin_is_new_post_notification" value="1" />';
-
-			printf(
-				'<div><h3>%s</h3><p>%s</p><ol><li>%s</li><li>%s</li></ol><a href="%s" class="button button-primary" target="blank">%s</a></div>',
-				__( 'Unlock More Features.', 'newsletter-optin-box' ),
-				__( 'This campaign will only be sent when you publish a <strong>blog post</strong>. The Custom Post Types addon allows you to:-', 'newsletter-optin-box' ),
-				sprintf(
-					__( 'Set-up different new post notifications for %s.', 'newsletter-optin-box' ),
-					'<code>' . implode( ', ', noptin_clean( noptin_get_post_types() ) ) . '</code>'
-				),
-				__( 'Limit new post notifications to specific categories, tags and custom terms.', 'newsletter-optin-box' ),
-				$url2,
-				__( 'Learn More!', 'newsletter-optin-box' )
-			);
 
 		}
 
@@ -135,7 +122,7 @@ class Noptin_New_Post_Notify {
 			array(
 				'utm_medium'   => 'plugin-dashboard',
 				'utm_campaign' => 'new-post-notifications',
-				'utm_source'   => esc_url( get_home_url() ),
+				'utm_source'   => urlencode( esc_url( get_home_url() ) ),
 			),
 			'https://noptin.com/product/ultimate-addons-pack'
 		);

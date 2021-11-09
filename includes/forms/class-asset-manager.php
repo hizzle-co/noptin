@@ -154,17 +154,29 @@ class Noptin_Form_Asset_Manager {
 	 *
 	 */
 	public function enqueue_gutenberg_assets() {
+		global $pagenow;
 
 		wp_enqueue_style( 'noptin_front' );
 
-		$block_script = 'includes/assets/js/dist/' . ( is_using_new_noptin_forms() ? 'blocks-new.js' : 'blocks.js' );
+		if ( is_using_new_noptin_forms() ) {
 
-		wp_enqueue_script(
-			'noptin-form-block',
-			noptin()->plugin_url . $block_script,
-			array( 'wp-blocks', 'wp-i18n', 'wp-element', 'underscore', 'wp-components' ),
-			filemtime( noptin()->plugin_path . $block_script )
-		);
+			wp_enqueue_script(
+				'noptin-form-block',
+				noptin()->plugin_url . 'includes/assets/js/dist/blocks-new.js',
+				array( 'wp-blocks', 'wp-i18n', 'wp-element', 'underscore', 'wp-components' ),
+				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks-new.js' )
+			);
+
+		} else if ( $pagenow !== 'widgets.php' ) {
+
+			wp_enqueue_script(
+				'noptin-form-block',
+				noptin()->plugin_url . 'includes/assets/js/dist/blocks.js',
+				array( 'wp-blocks', 'wp-editor', 'wp-i18n', 'wp-element', 'underscore', 'wp-components' ),
+				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks.js' )
+			);
+
+		}
 
 		$forms = get_posts(
 			array(

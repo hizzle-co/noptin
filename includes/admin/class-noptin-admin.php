@@ -579,7 +579,7 @@ class Noptin_Admin {
 				esc_html__( 'Start Here', 'newsletter-optin-box' ),
 				esc_html__( 'Start Here', 'newsletter-optin-box' ),
 				get_noptin_capability(),
-				sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( get_home_url() ) ),
+				sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( esc_url( get_home_url() ) ) ),
 				null
 			);
 
@@ -660,10 +660,14 @@ class Noptin_Admin {
 		$this_week               = date( 'Y-m-d', strtotime( 'last week sunday' ) );
 		$subscribers_week_total  = get_noptin_subscribers_count( "`date_created`>'$this_week'" );
 
-		$popups   = noptin_count_optin_forms( 'popup' );
-		$inpost   = noptin_count_optin_forms( 'inpost' );
-		$widget   = noptin_count_optin_forms( 'sidebar' );
-		$slide_in = noptin_count_optin_forms( 'slide_in' );
+		if ( is_using_new_noptin_forms() ) {
+			$all_forms = noptin_count_optin_forms();
+		} else {
+			$popups   = noptin_count_optin_forms( 'popup' );
+			$inpost   = noptin_count_optin_forms( 'inpost' );
+			$widget   = noptin_count_optin_forms( 'sidebar' );
+			$slide_in = noptin_count_optin_forms( 'slide_in' );
+		}
 
 		include $this->admin_path . 'welcome.php';
 

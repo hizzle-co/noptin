@@ -23,9 +23,18 @@
 
 					$string   = __( 'Install Addon', 'newsletter-optin-box' );
 					$disabled = __( 'Disabled', 'newsletter-optin-box' );
+					$url      = add_query_arg(
+						array(
+							'utm_medium'   => 'automated-emails',
+							'utm_campaign' => urlencode( $trigger ),
+							'utm_source'   => urlencode( esc_url( get_home_url() ) ),
+						),
+						'https://noptin.com/product/ultimate-addons-pack/'
+					);
+
 					echo "<div>
 									<span class='button button-disabled'>$disabled</span>
-									<a class='button button-link' href='https://noptin.com/product/ultimate-addons-pack/'>$string</a>
+									<a class='button button-link' href='$url' target='_blank'>$string</a>
 								</div>";
 
 				} else {

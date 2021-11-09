@@ -37,22 +37,29 @@
 
 	<div class="noptin-cards-container">
 		<ul class="noptin-cards-list">
-				<li class="noptin-card">
-					<span class="noptin-card-label"><?php _e( 'Popup Forms', 'newsletter-optin-box' ); ?></span>
-					<span class="noptin-card-value"><?php echo $popups; ?></span>
-				</li>
-				<li class="noptin-card">
-					<span class="noptin-card-label"><?php _e( 'Shortcode Forms', 'newsletter-optin-box' ); ?></span>
-					<span class="noptin-card-value"><?php echo $inpost; ?></span>
-				</li>
-				<li class="noptin-card">
-					<span class="noptin-card-label"><?php _e( 'Widget Forms', 'newsletter-optin-box' ); ?></span>
-					<span class="noptin-card-value"><?php echo $widget; ?></span>
-				</li>
-				<li class="noptin-card">
-					<span class="noptin-card-label"><?php _e( 'Sliding Forms', 'newsletter-optin-box' ); ?></span>
-					<span class="noptin-card-value"><?php echo $slide_in; ?></span>
-				</li>
+				<?php if ( is_using_new_noptin_forms() ) : ?>
+					<li class="noptin-card">
+						<span class="noptin-card-label"><?php _e( 'All Forms', 'newsletter-optin-box' ); ?></span>
+						<span class="noptin-card-value"><?php echo (int) $all_forms; ?></span>
+					</li>
+				<?php else : ?>
+					<li class="noptin-card">
+						<span class="noptin-card-label"><?php _e( 'Popup Forms', 'newsletter-optin-box' ); ?></span>
+						<span class="noptin-card-value"><?php echo (int) $popups; ?></span>
+					</li>
+					<li class="noptin-card">
+						<span class="noptin-card-label"><?php _e( 'Shortcode Forms', 'newsletter-optin-box' ); ?></span>
+						<span class="noptin-card-value"><?php echo (int) $inpost; ?></span>
+					</li>
+					<li class="noptin-card">
+						<span class="noptin-card-label"><?php _e( 'Widget Forms', 'newsletter-optin-box' ); ?></span>
+						<span class="noptin-card-value"><?php echo (int) $widget; ?></span>
+					</li>
+					<li class="noptin-card">
+						<span class="noptin-card-label"><?php _e( 'Sliding Forms', 'newsletter-optin-box' ); ?></span>
+						<span class="noptin-card-value"><?php echo (int) $slide_in; ?></span>
+					</li>
+				<?php endif; ?>
 		</ul>
 		<div class="noptin-card-footer-links"><a href="<?php echo $forms_url; ?>"><?php _e( 'View all forms', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo $new_form_url; ?>"><?php _e( 'Create a new form', 'newsletter-optin-box' ); ?></a></div>
 	</div>
