@@ -224,7 +224,7 @@ class Noptin_Form_Output_Manager {
 	 *
 	 * @return string
 	 */
-	protected function get_form_html( $args = array(), $is_form_shortcode ) {
+	protected function get_form_html( $args = array(), $is_form_shortcode = false ) {
 
 		// Increment count.
 		$this->count++;

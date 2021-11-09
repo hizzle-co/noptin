@@ -448,7 +448,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_product_purchase_count( $customer_id_or_email = null, $product_id ) {
+	public function get_product_purchase_count( $customer_id_or_email = null, $product_id = 0 ) {
 
 		$orders = wc_get_orders(
 			array(
