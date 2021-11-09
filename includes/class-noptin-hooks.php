@@ -34,9 +34,16 @@ class Noptin_Hooks {
 	/**
 	 * Add our noptin page rewrite tag and rule.
 	 *
+	 * This is only here for backwards compatibility.
+	 *
+	 * @deprecated
 	 * @since 1.2.9
 	 */
 	public function add_rewrite_rule() {
+
+		if ( is_using_new_noptin_forms() ) {
+			return;
+		}
 
 		add_rewrite_endpoint( 'noptin_newsletter', EP_ALL );
 

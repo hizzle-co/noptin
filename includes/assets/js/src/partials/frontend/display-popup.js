@@ -17,6 +17,22 @@ export default function display( popup, force ) {
         return;
     }
 
+    // Do not display a popup that has been closed.
+    if ( ! force ) {
+
+        if ( ! popup.dataset.key ) {
+            return;
+        }
+
+        if ( sessionStorage.getItem( "noptinFormDisplayed" + popup.dataset.key ) ) {
+            return;
+        }
+
+    }
+
+    // Log that we're already displayed the popup in this session.
+	sessionStorage.setItem( "noptinFormDisplayed" + popup.dataset.key, '1' );
+
     // Indicate that we're displaying a popup.
     window.noptinPopups[popup_type].showing = true;
 

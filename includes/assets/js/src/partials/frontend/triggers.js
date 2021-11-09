@@ -115,7 +115,7 @@ export default function trigger( popup ) {
 
 				event.preventDefault();
 
-				display( popup );
+				display( popup, true );
 			});
 
 		}

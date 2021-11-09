@@ -42,10 +42,7 @@ class Noptin_Page {
 		add_action( 'noptin_page_preview_email', array( $this, 'preview_email' ) );
 
 		// Filter template.
-		add_filter( 'template_include', array( $this, 'filter_page_template' ) );
-
-		// Admin bar.
-		add_filter( 'show_admin_bar', array( $this, 'maybe_hide_admin_bar' ) );
+		add_action( 'parse_request', array( $this, 'listen' ), 0 );
 
 		// Pages settings.
 		add_filter( 'noptin_get_settings', array( $this, 'add_options' ), 100 );
@@ -87,13 +84,19 @@ class Noptin_Page {
 	 */
 	public function get_request_action() {
 
+		// New format. example.com?noptin_ns=$action
+		if ( ! empty( $_GET['noptin_ns'] ) ) {
+			return sanitize_title_with_dashes( trim( urldecode( $_GET['noptin_ns'] ) ) );
+		}
+
+		// Backwards compatibility. example.com/noptin_newsletter/$action
 		$matched_var = get_query_var( 'noptin_newsletter' );
 
 		if ( ! empty( $matched_var ) ) {
 			return sanitize_title_with_dashes( trim( urldecode( $matched_var ) ) );
 		}
 
-		// For backwards compatibility.
+		// More backwards compatibility.
 		if ( empty( $_REQUEST['noptin_action'] ) && empty( $_REQUEST['na'] ) ) {
 			return '';
 		}
@@ -309,6 +312,8 @@ class Noptin_Page {
 			if ( $user ) {
 				update_user_meta( $user->ID, 'noptin_unsubscribed', 'unsubscribed' );
 			}
+		} else {
+			$_GET['noptin_key'] = sanitize_text_field( $value );
 		}
 
 		// Fetch the subscriber.
@@ -381,6 +386,7 @@ class Noptin_Page {
 				'%d'
 			);
 
+			$_GET['noptin_key'] = sanitize_text_field( $value );
 		}
 
 		// If we have a redirect, redirect.
@@ -514,53 +520,50 @@ class Noptin_Page {
 		echo "<p class='$class'>$content</p>";
 	}
 
-	public function filter_page_template( $template ) {
+	public function listen() {
 
-		if ( is_noptin_actions_page() ) {
+		if ( empty( $_GET['noptin_ns'] ) && empty( $GLOBALS['wp']->query_vars['noptin_newsletter'] ) ) {
+			return;
+		}
 
-			// No action specified, redirect back home.
-			$action = $this->get_request_action();
-			if ( empty( $action ) ) {
-				wp_redirect( get_home_url() );
-				exit;
-			}
+		define( 'IS_NOPTIN_ACTIONS_PAGE', 1 );
+		show_admin_bar( false );
+		add_filter( 'pre_handle_404', '__return_true' );
+		remove_all_actions( 'template_redirect' );
+		add_action( 'template_redirect', array( $this, 'load_actions_page' ), 1 );
+	}
 
-			/*
-			 * Site admins are allowed to use custom pages
-			 * to render the actions page.
-			 */
-			$custom_page = get_noptin_option( "pages_{$action}_page" );
+	public function load_actions_page() {
 
-			// They can also set the page as a URL param.
-			if ( isset( $_GET['rdt'] ) ) {
-				$custom_page = esc_url( urldecode( $_GET['rdt'] ) );
-			}
-
-			// Provide a way to filter the page.
-			$custom_page = apply_filters( 'noptin_action_page_redirect', $custom_page, $action, $this );
-			do_action( "noptin_pre_page_$action", $custom_page );
-
-			$template = locate_noptin_template( 'actions-page.php' );
-			if ( isset( $_GET['nte'] ) ) {
-				$template = locate_noptin_template( 'actions-page-empty.php' );
-			}
-
-			$template = apply_filters( 'noptin_actions_page_template', $template, $action );
-
-			include $template;
+		// No action specified, redirect back home.
+		$action = $this->get_request_action();
+		if ( empty( $action ) ) {
+			wp_redirect( add_query_arg( 'noptin_action', 'failed', get_home_url() ) );
 			exit;
 		}
 
-		return $template;
+		/*
+		 * Site admins are allowed to use custom pages
+		 * to render the actions page.
+		 */
+		$custom_page = get_noptin_option( "pages_{$action}_page" );
 
-	}
-
-	public function maybe_hide_admin_bar( $status ) {
-
-		if ( is_noptin_actions_page() ) {
-			return false;
+		// They can also set the page as a URL param.
+		if ( isset( $_GET['rdt'] ) ) {
+			$custom_page = esc_url( urldecode( $_GET['rdt'] ) );
 		}
-		return $status;
+
+		// Provide a way to filter the page.
+		$custom_page = apply_filters( 'noptin_action_page_redirect', $custom_page, $action, $this );
+		do_action( "noptin_pre_page_$action", $custom_page );
+
+		$template = locate_noptin_template( 'actions-page.php' );
+		if ( isset( $_GET['nte'] ) ) {
+			$template = locate_noptin_template( 'actions-page-empty.php' );
+		}
+
+		include apply_filters( 'noptin_actions_page_template', $template, $action );
+		exit;
 
 	}
 

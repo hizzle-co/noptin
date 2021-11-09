@@ -104,36 +104,14 @@ function update_noptin_option( $key, $value ) {
  * @since   1.0.6
  */
 function get_noptin_action_url( $action, $value = false, $empty = false ) {
-	global $wp_rewrite;
-
-	$permalink = get_option( 'permalink_structure' );
-
-	// Ugly urls
-	if ( empty( $permalink ) ) {
-		return add_query_arg(
-			array(
-				'noptin_newsletter'  => $action,
-				'nv'  => $value,
-				'nte' => $empty,
-			),
-			get_home_url()
-		);
-	}
-
-	// Pretty permalinks.
-	$path = $wp_rewrite->root . "noptin_newsletter/$action";
-	$url  = get_home_url( null, $path );
-
-	if ( function_exists( 'PLL' ) ) {// TODO: Move to PLL integration class.
-		$url = PLL()->links_model->add_language_to_link( $url, PLL()->curlang );
-	}
 
 	return add_query_arg(
 		array(
-			'nv'  => $value,
-			'nte' => $empty,
+			'noptin_ns' => $action,
+			'nv'        => $value,
+			'nte'       => $empty,
 		),
-		$url
+		get_home_url()
 	);
 
 }
@@ -146,7 +124,7 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
  */
 function is_noptin_actions_page() {
 	$matched_var = get_query_var( 'noptin_newsletter' );
-	return ! empty( $matched_var );
+	return ! empty( $_GET['noptin_ns'] ) || ! empty( $matched_var );
 }
 
 /**
