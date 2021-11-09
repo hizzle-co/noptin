@@ -147,6 +147,17 @@ class Noptin_Form_Output_Manager {
 			$atts['html_class'] = isset( $atts['html_class'] ) ? $atts['html_class'] . ' ' . $atts['className'] : $atts['className'];
 		}
 
+		if ( isset( $atts['form'] ) && -1 == $atts['form'] ) {
+			unset( $atts['form'] );
+			$atts = array_merge(
+				array(
+					'template' => 'condensed',
+					'labels'   => 'hide',
+				),
+				$atts
+			);
+		}
+
 		// Are we trying to display a saved form?
 		if ( isset( $atts['form'] ) && ! empty( $atts['form'] ) ) {
 

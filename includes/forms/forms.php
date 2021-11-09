@@ -352,7 +352,7 @@ function prepare_noptin_form_fields( $fields ) {
 
 	// Are we returning all fields?
 	if ( 'all' == $fields ) {
-		return wp_list_filter( map_deep( get_noptin_custom_fields(), 'noptin_sanitize_booleans' ), array( 'visible' => true ) );
+		return get_noptin_custom_fields( true );
 	}
 
 	// Prepare selected fields.

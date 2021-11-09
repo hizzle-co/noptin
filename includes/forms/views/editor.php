@@ -84,28 +84,41 @@ add_thickbox();
 					<div id="informationdiv" class="postbox">
 						<h3><?php esc_html_e( 'Do you need help?', 'newsletter-optin-box' ); ?></h3>
 						<div class="inside">
-							<p><?php esc_html_e( 'Here are some available options to help solve your problems.', 'newsletter-optin-box' ); ?></p>
+							<p><?php esc_html_e( 'We have tutorials on how to...', 'newsletter-optin-box' ); ?></p>
 							<ol>
 
 								<li><?php
 									printf(
-										/* translators: 1: FAQ, 2: Docs ("FAQ & Docs") */
-										__( '%1$s and %2$s', 'newsletter-optin-box' ),
-										sprintf(
-											'<a href="https://contactform7.com/faq/">%s</a>',
-											__( 'FAQ', 'newsletter-optin-box' )
-										),
-										sprintf(
-											'<a href="https://contactform7.com/docs/">%s</a>',
-											__( 'docs', 'newsletter-optin-box' )
-										)
+										'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-shortcode/" target="_blank">%s</a>',
+										__( 'Use the subscription form shortcode.', 'newsletter-optin-box' )
 									);
 								?></li>
 
 								<li><?php
 									printf(
-										'<a href="https://wordpress.org/support/plugin/newsletter-optin-box/">%s</a>',
-										__( 'Support forums', 'newsletter-optin-box' )
+										'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-widget/" target="_blank">%s</a>',
+										__( 'Display this form in a widget.', 'newsletter-optin-box' )
+									);
+								?></li>
+
+								<li><?php
+									printf(
+										'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-block/" target="_blank">%s</a>',
+										__( 'Use the subscription form block.', 'newsletter-optin-box' )
+									);
+								?></li>
+
+								<li><?php
+									printf(
+										'<a href="https://noptin.com/guide/subscription-forms/preventing-spam-sign-ups/" target="_blank">%s</a>',
+										__( 'Prevent spam sign-ups.', 'newsletter-optin-box' )
+									);
+								?></li>
+
+								<li><?php
+									printf(
+										'<a href="https://noptin.com/guide/subscription-forms/unsubscribe-forms/" target="_blank">%s</a>',
+										__( 'Create unsubscribe forms', 'newsletter-optin-box' )
 									);
 								?></li>
 

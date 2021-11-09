@@ -1349,16 +1349,19 @@ function format_noptin_custom_field_value( $value, $type, $subscriber ) {
 /**
  * Returns an array of available custom fields.
  *
+ * @param bool $public_only
  * @since 1.5.5
  * @return array
  */
-function get_noptin_custom_fields() {
+function get_noptin_custom_fields( $public_only = false ) {
 
+	// Fetch available fields.
 	$custom_fields = get_noptin_option(
 		'custom_fields',
 		Noptin_Custom_Fields::default_fields()
 	);
 
+	// Clean the fields.
 	$fields = map_deep( apply_filters( 'noptin_custom_fields', $custom_fields ), 'esc_html' );
 
 	foreach ( $fields as $index => $field ) {
@@ -1371,6 +1374,11 @@ function get_noptin_custom_fields() {
 		$fields[ $index ] = $field;
 	}
 
+	// Maybe return public fields only.
+	if ( $public_only ) {
+		$fields = wp_list_filter( $fields, array( 'visible' => true ) );
+	}
+
 	return $fields;
 }
 
@@ -1381,23 +1389,6 @@ function get_noptin_custom_fields() {
  * @return array|false Array of field data or false if the field does not exist.
  */
 function get_noptin_custom_field( $merge_tag ) {
-
-	// Virtual field.
-	if ( 'GDPR_consent' === $merge_tag ) {
-
-		return array(
-			'type'       => 'GDPR_consent',
-			'merge_tag'  => 'GDPR_consent',
-			'text'       => __( 'I consent to receive promotional emails about your products and services.', 'newsletter-optin-box' ),
-			'label'      => '',
-			'visible'    => false,
-			'subs_table' => false,
-			'predefined' => true,
-			'required'   => true,
-		);
-
-	}
-
 	$custom_field = wp_list_filter( get_noptin_custom_fields(), array( 'merge_tag' => trim( $merge_tag ) ) );
 	return current( $custom_field );
 }

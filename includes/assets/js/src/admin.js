@@ -36,7 +36,7 @@
 
 				}
 
-				$( '.noptin-select2' ).select2( options );
+				$( this ).select2( options );
 
 			});
 

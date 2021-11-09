@@ -44,7 +44,7 @@ class Noptin_Sidebar extends WP_Widget {
 		}
 
 		// Abort early if the provided form is not visible...
-		if ( ! empty( $instance['form'] ) ) {
+		if ( ! empty( $instance['form'] ) && -1 !== $instance['form'] ) {
 
 			$form = noptin_get_optin_form( absint( $instance['form'] ) );
 			if ( ! $form->can_show() ) {
@@ -128,6 +128,7 @@ class Noptin_Sidebar extends WP_Widget {
 
 			<select name="<?php echo esc_attr( $this->get_field_name( 'form' ) ); ?>" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'form' ) ); ?>">
 				<option value="0" <?php selected( empty( $form ) ); ?>><?php esc_html_e( 'Default form', 'newsletter-optin-box' ); ?></option>
+				<option value="-1" <?php selected( $form, '-1' ); ?>><?php esc_html_e( 'Single-line / Horizontal Form', 'newsletter-optin-box' ); ?></option>
 				<?php foreach ( $forms as $_form ) : ?>
 					<option value="<?php echo esc_attr( $_form['value'] ); ?>" <?php selected( $form, $_form['value'] ); ?>><?php echo esc_attr( $_form['label'] ); ?></option>
 				<?php endforeach; ?>
@@ -167,7 +168,7 @@ class Noptin_Sidebar extends WP_Widget {
 		}
 
 		if ( ! empty( $new_instance['form'] ) ) {
-			$new_instance['form'] = absint( $new_instance['form'] );
+			$new_instance['form'] = intval( $new_instance['form'] );
 		}
 
 		/**

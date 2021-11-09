@@ -230,7 +230,7 @@
 
 		.noptin-form-field-wrapper:not(.noptin-form-field-submit) {
 			margin-right: 10px;
-			min-width: 230px;
+			min-width: 200px;
 			flex: 1;
 		}
 

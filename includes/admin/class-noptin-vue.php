@@ -362,7 +362,7 @@ class Noptin_Vue {
 	 */
 	public static function get_field_types( $field_types = array() ) {
 
-		foreach ( get_noptin_custom_fields() as $custom_field ) {
+		foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
 
 			$field_types[] = array(
 				'label'            => $custom_field['label'],

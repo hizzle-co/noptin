@@ -26,7 +26,7 @@ $update      = empty( $form->settings['update_existing'] ) ? '' : $form->setting
 		</th>
 		<td>
 			<select id="noptin-form-fields" class="noptin-select2" name="noptin_form[settings][fields][]" multiple="multiple" style="width: 25em;">
-				<?php foreach ( get_noptin_custom_fields() as $field ) : ?>
+				<?php foreach ( get_noptin_custom_fields( true ) as $field ) : ?>
 					<option
 						value="<?php echo esc_html( $field['merge_tag'] ); ?>"
 						<?php selected( in_array( $field['merge_tag'], $form_fields ) ); ?>

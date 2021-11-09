@@ -178,6 +178,10 @@ class Noptin_Form_Asset_Manager {
 			array(
 				'label' => __( 'Default Form', 'newsletter-optin-box' ),
 				'value' => 0,
+			),
+			array(
+				'label' => __( 'Single-line / Horizontal Form', 'newsletter-optin-box' ),
+				'value' => -1,
 			)
 		);
 

@@ -57,14 +57,7 @@ function get_noptin_option( $key, $default = null ) {
 		$value = $options[ $key ];
 	}
 
-	if ( 'false' === $value ) {
-		$value = false;
-	}
-
-	if ( 'true' === $value ) {
-		$value = true;
-	}
-
+	$value = map_deep( $value, 'noptin_sanitize_booleans' );
 	$value = apply_filters( "get_noptin_option_$key", $value );
 	return apply_filters( 'get_noptin_option', $value, $key );
 

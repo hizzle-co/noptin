@@ -224,11 +224,11 @@ class Noptin_Email_Campaigns_Admin {
 				'description'    => __( 'Send an email to a subscriber when you tag them.', 'newsletter-optin-box' ),
 				'support_delay'  => __( 'After a subscriber is tagged', 'newsletter-optin-box' ),
 			),
-			'previous_email'     => array(
-				'setup_title'    => __( 'previous email automation', 'newsletter-optin-box' ),
-				'title'         => __( 'Previous Email', 'newsletter-optin-box' ),
-				'description'   => __( 'Send an email to a subscriber when they open or click on a link in another email.', 'newsletter-optin-box' ),
-				'support_delay' => true,
+			'subscriber_list'    => array(
+				'setup_title'    => __( 'subscriber list automation', 'newsletter-optin-box' ),
+				'title'          => __( 'Subscriber List', 'newsletter-optin-box' ),
+				'description'    => __( 'Send an email to a subscriber when they join a given email list.', 'newsletter-optin-box' ),
+				'support_delay'  => __( 'After a subscriber is added to a list', 'newsletter-optin-box' ),
 			),
 		);
 
