@@ -361,7 +361,7 @@ class Noptin_COM_Updater {
 
 			$notice = sprintf(
 				/* translators: %s: updates page URL. */
-				__( 'To update, please <a href="%s">activate your license key</a>.', 'noptin-updates' ),
+				__( 'To update, please <a href="%s">activate your license key</a>.', 'newsletter-optin-box' ),
 				admin_url( 'admin.php?page=noptin-addons&section=helper' )
 			);
 
@@ -384,7 +384,7 @@ class Noptin_COM_Updater {
 
 			$notice = sprintf(
 				/* translators: %s: updates page URL. */
-				__( 'To update, please <a href="%s">activate your license key</a>.', 'noptin-updates' ),
+				__( 'To update, please <a href="%s">activate your license key</a>.', 'newsletter-optin-box' ),
 				admin_url( 'admin.php?page=noptin-addons&section=helper' )
 			);
 
