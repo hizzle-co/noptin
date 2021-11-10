@@ -382,7 +382,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 			'</a>'
 		);
 
-		echo "<p class='description'>Or <a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/sending-emails' target='_blank'>" . __( 'Learn more', 'noptin-lists' ) . "</a></p>";
+		echo "<p class='description'>Or <a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/sending-emails' target='_blank'>" . __( 'Learn more', 'newsletter-optin-box' ) . "</a></p>";
 		echo '</div>';
 
 	}

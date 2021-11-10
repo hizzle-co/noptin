@@ -125,6 +125,7 @@
 					'type'        => 'checkbox_alt',
 					'label'       => __( 'Subscribers table', 'newsletter-optin-box' ),
 					'description' => __( 'Display this field on the subscribers overview table', 'newsletter-optin-box' ),
+					'restrict'    => "field.merge_tag != 'email'",
 				);
 				Noptin_Vue::render_el( 'field.subs_table', $args );
 			?>

@@ -9,9 +9,7 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Returns a reference to the main Noptin instance.
@@ -24,34 +22,6 @@ function noptin() {
 }
 
 /**
- * Retrieves all default noptin options
- *
- * @return  array   options
- * @access  public
- * @since   1.0.6
- */
-function get_default_noptin_options() {
-
-	$options = array(
-		'notify_admin'          => false,
-		'double_optin'          => false,
-		'from_email'            => noptin()->mailer->default_from_address(),
-		'reply_to'              => get_option( 'admin_email' ),
-		'from_name'             => get_option( 'blogname' ),
-		'company'               => get_option( 'blogname' ),
-		'comment_form'          => false,
-		'comment_form_msg'      => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
-		'register_form'         => false,
-		'register_form_msg'     => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
-		'hide_from_subscribers' => false,
-		'success_message'       => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
-		'email_template'        => 'plain',
-	);
-	return $options;
-
-}
-
-/**
  * Retrieves all noptin options
  *
  * @return  array   options
@@ -59,24 +29,15 @@ function get_default_noptin_options() {
  * @since   1.0.6
  */
 function get_noptin_options() {
-	global $noptin_options;
+	$options = get_option( 'noptin_options', array() );
 
-	if ( empty( $noptin_options ) ) {
-		$noptin_options = get_option( 'noptin_options', array() );
+	if ( ! is_array( $options ) || empty( $options ) ) {
+		$options = array(
+			'success_message' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
+		);
 	}
 
-	if ( ! is_array( $noptin_options ) || empty( $noptin_options ) ) {
-		$noptin_options = get_default_noptin_options();
-	}
-
-	// Support for WPML.
-	if ( ! did_action( 'init' ) ) {
-		$options = $noptin_options;
-		$noptin_options = null;
-		return $options;
-	}
-
-	return $noptin_options;
+	return $options;
 }
 
 /**
@@ -96,14 +57,7 @@ function get_noptin_option( $key, $default = null ) {
 		$value = $options[ $key ];
 	}
 
-	if ( 'false' === $value ) {
-		$value = false;
-	}
-
-	if ( 'true' === $value ) {
-		$value = true;
-	}
-
+	$value = map_deep( $value, 'noptin_sanitize_booleans' );
 	$value = apply_filters( "get_noptin_option_$key", $value );
 	return apply_filters( 'get_noptin_option', $value, $key );
 
@@ -118,11 +72,7 @@ function get_noptin_option( $key, $default = null ) {
  * @since   1.0.5
  */
 function update_noptin_options( $options ) {
-	global $noptin_options;
-
-	$noptin_options = $options;
 	update_option( 'noptin_options', $options );
-
 }
 
 /**
@@ -143,21 +93,6 @@ function update_noptin_option( $key, $value ) {
 }
 
 /**
- * Returns the noptin action page.
- *
- * This function will always return 0 for new installs and
- * return the old actions page for existing installs.
- *
- * @return  int
- * @access  public
- * @deprecated 1.2.9 We are now using custom wp query vars.
- * @since   1.2.0
- */
-function get_noptin_action_page() {
-	return (int) get_option( 'noptin_actions_page', 0 );
-}
-
-/**
  * Returns the noptin action url
  *
  * @return  string
@@ -169,36 +104,14 @@ function get_noptin_action_page() {
  * @since   1.0.6
  */
 function get_noptin_action_url( $action, $value = false, $empty = false ) {
-	global $wp_rewrite;
-
-	$permalink = get_option( 'permalink_structure' );
-
-	// Ugly urls
-	if ( empty( $permalink ) ) {
-		return add_query_arg(
-			array(
-				'noptin_newsletter'  => $action,
-				'nv'  => $value,
-				'nte' => $empty,
-			),
-			get_home_url()
-		);
-	}
-
-	// Pretty permalinks.
-	$path = $wp_rewrite->root . "noptin_newsletter/$action";
-	$url  = get_home_url( null, $path );
-
-	if ( function_exists( 'PLL' ) ) {
-		$url = PLL()->links_model->add_language_to_link( $url, PLL()->curlang );
-	}
 
 	return add_query_arg(
 		array(
-			'nv'  => $value,
-			'nte' => $empty,
+			'noptin_ns' => $action,
+			'nv'        => $value,
+			'nte'       => $empty,
 		),
-		$url
+		get_home_url()
 	);
 
 }
@@ -210,158 +123,8 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
  * @since   1.2.0
  */
 function is_noptin_actions_page() {
-
 	$matched_var = get_query_var( 'noptin_newsletter' );
-
-	if ( ! empty( $matched_var ) ) {
-		return true;
-	}
-
-	// Backwards compatibility.
-	$page = get_noptin_action_page();
-	return ! empty( $page ) && is_page( $page );
-}
-
-/**
- * Retrieves the URL to the forms creation page
- *
- * @return  string   The forms page url
- * @access  public
- * @since   1.0.5
- */
-function get_noptin_new_form_url() {
-	return admin_url( 'post-new.php?post_type=noptin-form' );
-}
-
-/**
- * Retrieves the URL to a forms edit url
- *
- * @return  string   The form edit page url
- * @access  public
- * @since   1.1.1
- */
-function get_noptin_edit_form_url( $form_id ) {
-	$url = admin_url( 'post.php?action=edit' );
-	return add_query_arg( 'post', $form_id, $url );
-}
-
-/**
- * Retrieves the URL to the forms overview page
- *
- * @return  string   The forms page url
- * @access  public
- * @since   1.0.5
- */
-function get_noptin_forms_overview_url() {
-	$url = admin_url( 'edit.php?post_type=noptin-form' );
-	return $url;
-}
-
-/**
- * Returns opt-in forms field types
- *
- * @return  array
- * @access  public
- * @since   1.0.8
- */
-function get_noptin_optin_field_types() {
-	return apply_filters( 'noptin_field_types', array() );
-}
-
-/**
- * Retrieves an optin form.
- *
- * @param int|Noptin_Form $id The id or Noptin_Form object of the optin to retrieve.
- * @since 1.0.5
- * @return Noptin_Form
- */
-function noptin_get_optin_form( $id ) {
-	return new Noptin_Form( $id );
-}
-
-/**
- * Retrieves the total opt-in forms count.
- *
- * @param string $type Optionally filter by opt-in type.
- * @since 1.0.6
- * @return int
- */
-function noptin_count_optin_forms( $type = '' ) {
-	global $wpdb;
-
-	$sql   = "SELECT COUNT(`ID`) FROM {$wpdb->posts} as forms";
-	$where = "WHERE `post_type`='noptin-form'";
-
-	if ( ! empty( $type ) ) {
-		$sql = "$sql LEFT JOIN {$wpdb->postmeta} as meta
-			ON meta.post_id = forms.ID
-			AND meta.meta_key = '_noptin_optin_type'
-			AND meta.meta_value = %s";
-
-		$sql    = $wpdb->prepare( $sql, $type );
-		$where .= " AND meta.meta_key='_noptin_optin_type'";
-	}
-
-	return $wpdb->get_var( "$sql $where;" );
-}
-
-/**
- * Creates an optin form.
- *
- * @since 1.0.5
- */
-function noptin_create_optin_form( $data = false ) {
-	$form    = new Noptin_Form( $data );
-	$created = $form->save();
-
-	if ( is_wp_error( $created ) ) {
-		return $created;
-	}
-
-	return $form->id;
-}
-
-
-/**
- * Deletes an optin form.
- *
- * @since 1.0.5
- */
-function noptin_delete_optin_form( $id ) {
-	return wp_delete_post( $id, true );
-}
-
-/**
- * Duplicates an optin form.
- *
- * @since 1.0.5
- * @return int
- */
-function noptin_duplicate_optin_form( $id ) {
-	$form = noptin_get_optin_form( $id );
-	$form->duplicate();
-	return $form->id;
-}
-
-/**
- * Returns all optin forms.
- *
- * @since 1.2.6
- * @return Noptin_Form[]
- */
-function get_noptin_optin_forms( array $args = array() ) {
-	$defaults = array(
-		'numberposts' => -1,
-		'post_status' => array( 'draft', 'publish' ),
-	);
-
-	$args              = wp_parse_args( $args, $defaults );
-	$args['post_type'] = 'noptin-form';
-	$args['fields']    = 'ids';
-	$forms             = get_posts( $args );
-
-	return array_map( 'noptin_get_optin_form', $forms );
-
+	return ! empty( $_GET['noptin_ns'] ) || ! empty( $matched_var );
 }
 
 /**
@@ -394,7 +157,11 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
-	if ( get_noptin_option( 'hide_from_subscribers' ) && noptin_is_subscriber() ) {
+	if ( noptin_is_preview() ) {
+		return true;
+	}
+
+	if ( get_noptin_option( 'hide_from_subscribers', false ) && noptin_is_subscriber() ) {
 		return false;
 	}
 
@@ -424,188 +191,6 @@ function noptin_get_optin_stats() {
 
 	return wp_list_pluck( $stats, 'stats', 'meta_value' );
 
-}
-
-
-/**
- * Returns color themess.
- *
- * @since 1.0.7
- * @return array
- */
-function noptin_get_color_themes() {
-	return apply_filters(
-		'noptin_form_color_themes',
-		array(
-			'#e51c23 #fafafa #c62828' => __( 'Red', 'newsletter-optin-box' ), // Base color, Secondary color, border color.
-			'#e91e63 #fafafa #ad1457' => __( 'Pink', 'newsletter-optin-box' ),
-			'#9c27b0 #fafafa #6a1b9a' => __( 'Purple', 'newsletter-optin-box' ),
-			'#673ab7 #fafafa #4527a0' => __( 'Deep Purple', 'newsletter-optin-box' ),
-			'#9c27b0 #fafafa #4527a0' => __( 'Purple', 'newsletter-optin-box' ),
-			'#3f51b5 #fafafa #283593' => __( 'Indigo', 'newsletter-optin-box' ),
-			'#2196F3 #fafafa #1565c0' => __( 'Blue', 'newsletter-optin-box' ),
-			'#03a9f4 #fafafa #0277bd' => __( 'Light Blue', 'newsletter-optin-box' ),
-			'#00bcd4 #fafafa #00838f' => __( 'Cyan', 'newsletter-optin-box' ),
-			'#009688 #fafafa #00695c' => __( 'Teal', 'newsletter-optin-box' ),
-			'#4CAF50 #fafafa #2e7d32' => __( 'Green', 'newsletter-optin-box' ),
-			'#8bc34a #191919 #558b2f' => __( 'Light Green', 'newsletter-optin-box' ),
-			'#cddc39 #191919 #9e9d24' => __( 'Lime', 'newsletter-optin-box' ),
-			'#ffeb3b #191919 #f9a825' => __( 'Yellow', 'newsletter-optin-box' ),
-			'#ffc107 #191919 #ff6f00' => __( 'Amber', 'newsletter-optin-box' ),
-			'#ff9800 #fafafa #e65100' => __( 'Orange', 'newsletter-optin-box' ),
-			'#ff5722 #fafafa #bf360c' => __( 'Deep Orange', 'newsletter-optin-box' ),
-			'#795548 #fafafa #3e2723' => __( 'Brown', 'newsletter-optin-box' ),
-			'#607d8b #fafafa #263238' => __( 'Blue Grey', 'newsletter-optin-box' ),
-			'#313131 #fafafa #607d8b' => __( 'Black', 'newsletter-optin-box' ),
-			'#ffffff #191919 #191919' => __( 'White', 'newsletter-optin-box' ),
-			'#aaaaaa #191919 #191919' => __( 'Grey', 'newsletter-optin-box' ),
-		)
-	);
-
-}
-
-/**
- * Returns optin templates.
- *
- * @since 1.0.7
- * @return array
- */
-function noptin_get_optin_templates() {
-	$custom_templates  = get_option( 'noptin_templates' );
-	$inbuilt_templates = include locate_noptin_template( 'optin-templates.php' );
-
-	if ( ! is_array( $custom_templates ) ) {
-		$custom_templates = array();
-	}
-
-	$templates = array_merge( $custom_templates, $inbuilt_templates );
-
-	return apply_filters( 'noptin_form_templates', array_map( 'noptin_convert_classic_template', $templates ) );
-
-}
-
-/**
- * Returns opt-in form properties.
- *
- * @since 1.0.5
- * @return array
- */
-function noptin_get_form_design_props() {
-	return apply_filters(
-		'noptin_form_design_props',
-		array(
-			'hideCloseButton',
-			'borderSize',
-			'gdprCheckbox',
-			'gdprConsentText',
-			'titleTypography',
-			'titleAdvanced',
-			'descriptionAdvanced',
-			'descriptionTypography',
-			'prefixTypography',
-			'prefixAdvanced',
-			'noteTypography',
-			'noteAdvanced',
-			'hideFields',
-			'id',
-			'imageMainPos',
-			'closeButtonPos',
-			'singleLine',
-			'formRadius',
-			'formWidth',
-			'formHeight',
-			'fields',
-			'imageMain',
-			'image',
-			'imagePos',
-			'noptinButtonLabel',
-			'buttonPosition',
-			'noptinButtonBg',
-			'noptinButtonColor',
-			'hideTitle',
-			'title',
-			'titleColor',
-			'hidePrefix',
-			'prefix',
-			'prefixColor',
-			'hideDescription',
-			'description',
-			'descriptionColor',
-			'hideNote',
-			'hideOnNoteClick',
-			'note',
-			'noteColor',
-			'CSS',
-			'optinType',
-		)
-	);
-
-}
-
-/**
- * Returns form field props.
- *
- * @since 1.0.5
- * @return array
- */
-function noptin_get_form_field_props() {
-	$props = array( 'fields', 'fieldTypes' );
-
-	foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-		if ( ! empty( $connection->list_providers ) ) {
-			$props[] = "{$key}_list";
-		}
-
-		$props = $connection->add_custom_field_props( $props );
-	}
-
-	return apply_filters( 'noptin_form_field_props', $props );
-}
-
-/**
- * Function noptin editor localize.
- *
- * @param array $state the current editor state.
- * @since 1.0.5
- * @return void
- */
-function noptin_localize_optin_editor( $state ) {
-	$props   = noptin_get_form_design_props();
-	$props[] = 'DisplayOncePerSession';
-	$props[] = 'timeDelayDuration';
-	$props[] = 'scrollDepthPercentage';
-	$props[] = 'cssClassOfClick';
-	$props[] = 'triggerPopup';
-	$props[] = 'slideDirection';
-
-	$params = array(
-		'ajaxurl'      => admin_url( 'admin-ajax.php' ),
-		'api_url'      => get_home_url( null, 'wp-json/wp/v2/' ),
-		'nonce'        => wp_create_nonce( 'noptin_admin_nonce' ),
-		'data'         => $state,
-		'templates'    => noptin_get_optin_templates(),
-		'color_themes' => array_flip( noptin_get_color_themes() ),
-		'design_props' => $props,
-		'field_props'  => noptin_get_form_field_props(),
-	);
-
-	$params = apply_filters( 'noptin_form_editor_params', $params );
-
-	wp_localize_script( 'noptin-optin-editor', 'noptinEditor', $params );
-}
-
-/**
- * Function noptin editor localize.
- *
- * @since 1.0.5
- */
-function noptin_form_template_form_props() {
-
-	$class = "singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'";
-	$style = 'background-color:rgba(0,0,0,0)';
-
-	return " @submit.prevent :class=\"$class\"";
 }
 
 /**
@@ -1593,118 +1178,6 @@ function get_noptin_email_sender( $campaign_id ) {
 }
 
 /**
- *  Converts a classic template to the new editor.
- *
- * @since 1.3.3
- * @return array
- */
-function noptin_convert_classic_template( $template ) {
-
-	$new_fields = array(
-
-		'titleTypography'       => array(
-			'font_size'      => '30',
-			'font_weight'    => '700',
-			'line_height'    => '1.5',
-			'decoration'     => '',
-			'style'          => '',
-			'generated'      => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
-		),
-
-		'titleAdvanced'         => array(
-			'margin' => new stdClass(),
-			'padding' => array(
-				'top' => '4'
-			),
-			'generated' => 'padding-top: 4px;',
-			'classes'     => ''
-		),
-
-		'hidePrefix'           => true,
-		'prefix'                 => __( 'Prefix', 'newsletter-optin-box' ),
-		'prefixColor'            => '#313131',
-		'prefixTypography'       => array(
-			'font_size'      => '20',
-			'font_weight'    => '500',
-			'line_height'    => '1.3',
-			'decoration'     => '',
-			'style'          => '',
-			'generated'      => 'font-size: 20px; font-weight: 500; line-height: 1.3;',
-		),
-
-		'prefixAdvanced'         => array(
-			'margin' => new stdClass(),
-			'padding' => array(
-				'top' => '4'
-			),
-			'generated' => 'padding-top: 4px;',
-			'classes'     => ''
-		),
-
-		'descriptionTypography' => array(
-			'font_size'      => '16',
-			'font_weight'    => '500',
-			'line_height'    => '1.3',
-			'decoration'     => '',
-			'style'          => '',
-			'generated'      => 'font-size: 16px; font-weight: 500; line-height: 1.3;',
-		),
-
-		'descriptionAdvanced'         => array(
-			'padding' => new stdClass(),
-			'margin' => array(
-				'top' => '18'
-			),
-			'generated' => 'margin-top: 18px;',
-			'classes'     => ''
-		),
-
-		'noteTypography'       => array(
-			'font_size'      => '14',
-			'font_weight'    => '400',
-			'line_height'    => '1',
-			'decoration'     => '',
-			'style'          => '',
-			'generated'      => 'font-size: 14px; font-weight: 400; line-height: 1;',
-		),
-
-		'noteAdvanced'       => array(
-			'padding' => new stdClass(),
-			'margin'  => array(
-				'top' => '10'
-			),
-			'generated' => 'margin-top: 10px;',
-			'classes'     => ''
-		),
-
-	);
-
-	$data = $template['data'];
-
-	foreach ( $new_fields as $key => $value ) {
-		if ( ! isset( $data[ $key ] ) ) {
-			$data[ $key ] = $value;
-		}
-	}
-
-	// Convert the borders.
-	if ( empty( $data['formBorder'] ) || ! is_array( $data['formBorder'] ) ) {
-		$data['formBorder'] = array(
-			'style'         => 'solid',
-			'border_radius' => isset( $data['formRadius'] ) ? intval( $data['formRadius'] ) : 0,
-			'border_width'  => isset( $data['borderSize'] ) ? intval( $data['borderSize'] ) : 4,
-			'border_color'  => isset( $data['noptinFormBorderColor'] ) ? $data['noptinFormBorderColor'] : '#ffffff',
-		);
-
-		extract( $data['formBorder'] );
-		$data['formBorder']['generated'] = "border-style: solid; border-radius: {$border_radius}px; border-width: {$border_width}px; border-color: {$border_color};";
-	}
-
-	$template['data'] = $data;
-	return $template;
-}
-
-/**
  * Applies Noptin merge tags.
  *
  * Noptin uses a fast logic-less templating engine to parse merge tags
@@ -1851,4 +1324,134 @@ function noptin_sanitize_booleans( $var ) {
 	}
 
 	return $var;
+}
+
+/**
+ * Get current URL (full)
+ *
+ * @since 1.6.2
+ * @return string
+ */
+function noptin_get_request_url() {
+	global $wp;
+
+	// Get requested url from global $wp object.
+	$site_request_uri = $wp->request;
+
+	// Fix for IIS servers using index.php in the URL.
+	if ( false !== stripos( $_SERVER['REQUEST_URI'], '/index.php/' . $site_request_uri ) ) {
+		$site_request_uri = 'index.php/' . $site_request_uri;
+	}
+
+	// Concatenate request url to home url.
+	$url = home_url( $site_request_uri );
+	$url = trailingslashit( $url );
+
+	return esc_url_raw( $url );
+}
+
+/**
+ * Get current URL path.
+ *
+ * @since 1.6.2
+ * @return string
+ */
+function noptin_get_request_path() {
+	return $_SERVER['REQUEST_URI'];
+}
+
+/**
+ * Get a specific key of an array without needing to check if that key exists.
+ *
+ * Provide a default value if you want to return a specific value if the key is not set.
+ *
+ * @since  1.6.2
+ *
+ * @param array  $array   Array from which the key's value should be retrieved.
+ * @param string $key    Name of the key to be retrieved.
+ * @param string $default Optional. Value that should be returned if the key is not set or empty. Defaults to null.
+ *
+ * @return null|string|mixed The value
+ */
+function noptin_array_value( $array, $key, $default = '' ) {
+
+	if ( ! is_array( $array ) && ! ( is_object( $array ) && $array instanceof ArrayAccess ) ) {
+		return $default;
+	}
+
+	if ( isset( $array[ $key ] ) ) {
+		return $array[ $key ];
+	}
+
+	return $default;
+}
+
+/**
+ * Checks if this is a preview request.
+ *
+ * @return bool
+ */
+function noptin_is_preview() {
+
+	// Widget preview.
+	if ( ! empty( $_GET['legacy-widget-preview'] ) || defined( 'IS_NOPTIN_PREVIEW' ) || ( ! empty( $GLOBALS['wp']->query_vars['rest_route'] ) && false !== strpos( $GLOBALS['wp']->query_vars['rest_route'], 'noptin_widget_premade' ) ) ) {
+		return true;
+	}
+
+	// Divi preview.
+	if ( isset( $_REQUEST['et_fb'] ) || isset( $_REQUEST['et_pb_preview'] ) ) {
+		return true;
+	}
+
+	// Beaver builder.
+	if ( isset( $_REQUEST['fl_builder'] ) ) {
+		return true;
+	}
+
+	// Elementor builder.
+	if ( isset( $_REQUEST['elementor-preview'] ) || ( is_admin() && isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'elementor' ) || ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'elementor_ajax' ) ) {
+		return true;
+	}
+
+	// Siteorigin preview.
+	if ( ! empty( $_REQUEST['siteorigin_panels_live_editor'] ) ) {
+		return true;
+	}
+
+	// Cornerstone preview.
+	if ( ! empty( $_REQUEST['cornerstone_preview'] ) || basename( $_SERVER['REQUEST_URI'] ) == 'cornerstone-endpoint' ) {
+		return true;
+	}
+
+	// Fusion builder preview.
+	if ( ! empty( $_REQUEST['fb-edit'] ) || ! empty( $_REQUEST['fusion_load_nonce'] ) ) {
+		return true;
+	}
+
+	// Oxygen preview.
+	if ( ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && ( substr( $_REQUEST['action'], 0, 11 ) === "oxy_render_" || substr( $_REQUEST['action'], 0, 10 ) === "ct_render_" ) ) ) {
+		return true;
+	}
+
+	// Ninja forms preview.
+	if ( isset( $_GET['nf_preview_form'] ) || isset( $_GET['nf_iframe'] ) ) {
+		return true;
+	}
+
+	// Customizer preview.
+	if ( is_customize_preview() ) {
+		return true;
+	}
+
+	return false;
+
+}
+
+/**
+ * Checks if the site uses a supported multilingual plugin.
+ *
+ * @return bool
+ */
+function noptin_is_multilingual() {
+	return apply_filters( 'noptin_is_multilingual', false );
 }

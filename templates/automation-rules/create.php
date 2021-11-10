@@ -24,7 +24,7 @@ $actions  = noptin()->automation_rules->get_actions();
 
 					foreach( $triggers as $trigger ) {
 						$value       = esc_attr( $trigger->get_id() );
-						$label       = sanitize_text_field( $trigger->get_name() );
+						$label       = esc_html( $trigger->get_name() );
 						$description = esc_attr( $trigger->get_description() );
 						echo "<option value='$value' data-description='$description'>$label</option>";
 					}
@@ -47,7 +47,7 @@ $actions  = noptin()->automation_rules->get_actions();
 
 					foreach( $actions as $action ) {
 						$value       = esc_attr( $action->get_id() );
-						$label       = sanitize_text_field( $action->get_name() );
+						$label       = esc_html( $action->get_name() );
 						$description = esc_attr( $action->get_description() );
 						$image       = esc_url( $action->get_image() );
 						echo "<option value='$value' data-description='$description'>$label</option>";

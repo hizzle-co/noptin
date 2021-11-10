@@ -225,7 +225,6 @@ class Noptin_Install {
 	 * Does a full install of the plugin.
 	 */
 	private function do_full_install() {
-		global $wpdb;
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		// Create database tables.
@@ -236,7 +235,25 @@ class Noptin_Install {
 		// Add a default subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
+		// Do not nudge new installs to create custom fields.
 		update_option( 'noptin_created_new_custom_fields', '1' );
+
+		// Use the new editor for new installs.
+		update_option( 'noptin_use_new_forms', '1' );
+
+		// Create default subscribe form.
+		$new_form = new Noptin_Form(
+			array(
+				'title'      => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
+				'settings'   => array(
+					'fields' => array( 'email' ),
+					'submit' => __( 'Subscribe', 'newsletter-optin-box' ),
+					'labels' => 'show',
+				)
+			)
+		);
+
+		$new_form->save();
 	}
 
 

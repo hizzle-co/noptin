@@ -1,50 +1,80 @@
-const axios = require('axios').default;
-const serialize = require( './serialize' ).default
+import $ from './myquery';
 
-export default function submit( form ) {
+export default function submit( _form ) {
 
-    // Show the loader.
-    form.classList.add( 'noptin-submitting' );
+	let form = $( _form );
 
-    // Handle errors.
-    let _error_div = form.querySelector('.noptin-form-notice');
-    _error_div.classList.remove( 'noptin-form-error', 'noptin-form-success' );
+	// Display the loader.
+	form.addClass( 'noptin-submitting' ).removeClass( 'noptin-form-submitted noptin-has-error noptin-has-success' );
 
-    // Post the form.
-    axios
-        .post( noptinParams.ajaxurl, serialize(form) )
-        .then(function (response) {
+	// Prepare errors div.
+	let _error_div = form.find('.noptin-response').html( '' );
 
-            if ( response.data.success === false ) {
-                _error_div.classList.add( 'noptin-form-error' );
-                _error_div.textContent = response.data.data;
-            }
+	window
 
-            if ( response.data.success === true ) {
+		// Post the form.
+		.fetch( noptinParams.resturl, {
+			method: 'POST',
+			body: new FormData(_form),
+			credentials: 'same-origin',
+			headers: {
+				'Accept': 'application/json',
+    		}
+		})
 
-                if ( response.data.data.action === 'redirect' ) {
-                    window.location.href = response.data.data.redirect
-                }
+		// Check status.
+		.then( ( response ) => {
 
-                if ( response.data.data.action === 'msg' ) {
-                    _error_div.classList.add( 'noptin-form-success' );
-                    _error_div.textContent = response.data.data.msg;
-                }
+			if ( response.status >= 200 && response.status < 300 ) {
+				return response;
+			}
 
-            }
+			throw response;
+		})
 
-        })
-        .catch(function (error) {
-            // handle errors.
-            console.log(error);
+		// Parse JSON.
+		.then(response => response.json())
 
-            _error_div.classList.add( 'noptin-form-error' );
-            _error_div.textContent = 'Could not establish a connection to the server.';
-        })
+		// Handle the response.
+		.then(response => {
 
-        .then(function () {
-            // Hide the loader.
-            form.classList.remove( 'noptin-submitting' );
-        });
+			// Was the ajax invalid?
+			if ( ! response ) {
+				_form.submit();
+				return;
+			}
+
+			// An error occured.
+			if ( response.success === false ) {
+				form.addClass( 'noptin-has-error' );
+				_error_div.html( response.data );
+
+			// The request was successful.
+			} else if ( response.success === true ) {
+
+				// Maybe redirect to success page.
+				if ( response.data.action === 'redirect' ) {
+					window.location.href = response.data.redirect_url;
+				}
+
+				// Display success message.
+				if ( response.data.msg ) {
+					form.addClass( 'noptin-has-success' );
+					_error_div.html( response.data.msg );
+				}
+
+			// Invalid response. Submit manually.
+			} else {
+				_form.submit();
+				return;
+			}
+
+			// Hide the loader.
+			form.removeClass( 'noptin-submitting' ).addClass( 'noptin-form-submitted' );
+
+		})
+
+		// Submit manually on HTTP errors.
+		.catch( (e) => _form.submit() );
 
 };

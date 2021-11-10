@@ -1,162 +1,30 @@
-.noptin-styles-basic {
-    margin: 1em 0;
-	max-width: 480px;
-
-	.noptin-form-field-wrapper,
-	.noptin-form-description,
-	.noptin-form-title,
-	noptin-form-note {
-		margin-bottom: 1em;
-	}
-
-	input, .noptin-label {
-		width: auto;
-		display: block;
-		box-sizing: border-box;
-		cursor: auto;
-		height: auto;
-		line-height: normal;
-
-		&:after {
-			content: "";
-			display: table;
-			clear: both;
-		}
-	}
-
-	.noptin-label {
-		font-weight: 700;
-		margin-bottom: 6px;
-		display: block;
-	}
-
-	.noptin-label>span {
-		font-weight: 400;
-	}
-
-	.noptin-text {
-		min-height: 32px;
-		width: 100%;
-		max-width: 480px;
-
-		&[type=number] {
-			min-width: 40px;
-		}
-	}
-
-	.noptin-birthday-div {
-		max-width: 480px;
-	}
-
-	input[type=checkbox], input[type=radio] {
-		position: relative;
-		margin: 0 6px 0 0;
-		padding: 0;
-		height: 13px;
-		width: 13px;
-		display: inline-block;
-		border: 0
-	}
-
-	.rtl & input[type=checkbox], .rtl & input[type=radio] {
-		margin: 0 0 0 6px
-	}
-
-	input[type=checkbox] {
-		appearance: checkbox;
-	}
-
-	input[type=radio] {
-		appearance: radio
-	}
-
-	.button {
-		cursor: pointer;
-		display: inline-block;
-		appearance: none;
-	}
-
-}
-
-.noptin-form-notice {
+/** feedback messages. */
+.noptin-alert {
 	clear: both;
-    padding: .75rem 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid transparent;
-    border-radius: .25rem;
-
-	&:not(.noptin-form-success,.noptin-form-error) {
-		display: none;
-	}
-
+	padding: .75rem 1.25rem;
+	margin-bottom: 1rem;
+	border: 1px solid transparent;
+	border-radius: .25rem;
+	max-width: 480px;
 }
 
-.noptin-form-success {
-	color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-}
-
-.noptin-form-error {
+.noptin-error {
 	color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
 }
 
-.noptin-label-hide .noptin-label {
-	border: 0;
-    clip: rect(1px,1px,1px,1px);
-    clip-path: inset(50%);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-    word-wrap: normal!important;
+.noptin-success {
+	color: #155724;
+	background-color: #d4edda;
+	border-color: #c3e6cb;
 }
 
-p.noptin-form-field-wrapper.noptin-form-field-birthday {
-	margin-bottom: 0;
+.noptin-newsletter-form:not(.noptin-form-submitted) .noptin-form-notice {
+	display: none;
 }
 
-@media screen and (min-width: 520px) {
-	.noptin-template-condensed {
-
-		.noptin-form-fields {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: flex-end;
-		}
-
-		.noptin-form-field-wrapper:not(.noptin-form-field-submit) {
-			margin-right: 10px;
-			min-width: 230px;
-			flex: 1;
-		}
-
-		&.noptin-label-hide {
-			.noptin-form-fields {
-				.noptin-form-field-wrapper:nth-last-child(2) {
-					margin-right: 0;
-		
-					.noptin-text {
-						border-top-right-radius: 0px;
-						border-bottom-right-radius: 0px;
-						margin-right: 0;
-					}
-				}
-			}
-		
-			.noptin-form-submit {
-				border-top-left-radius: 0px;
-				border-bottom-left-radius: 0px;
-				margin-left: 0;
-			}
-		}
-	}
-}
-
+/*Loading indicator */
 .noptin-newsletter-form {
 	position: relative !important;
 
@@ -165,7 +33,7 @@ p.noptin-form-field-wrapper.noptin-form-field-birthday {
 		top: 0;
 		left: 0;
 		bottom: 0;
-    	right: 0;
+		right: 0;
 		cursor: progress;
 		position: absolute;
 		align-items: center;
@@ -236,5 +104,135 @@ p.noptin-form-field-wrapper.noptin-form-field-birthday {
 
 	to {
 		opacity: 0;
+	}
+}
+
+/*Basic form styles*/
+.noptin-styles-basic {
+	margin: 1em 0;
+
+	&:not(.noptin-template-condensed) {
+		max-width: 480px;
+	}
+
+	input, .noptin-label {
+		display: block;
+		box-sizing: border-box;
+		cursor: auto;
+		height: auto;
+		line-height: normal;
+
+		&:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+	}
+
+	.noptin-label {
+		margin-bottom: 6px;
+		display: block;
+	}
+
+	.noptin-text {
+		min-height: 32px;
+
+		&[type=number] {
+			min-width: 40px;
+		}
+	}
+
+	input[type=checkbox], input[type=radio] {
+		position: relative;
+		margin: 0 6px 0 0;
+		padding: 0;
+		height: 13px;
+		width: 13px;
+		display: inline-block;
+		border: 0
+	}
+
+	.rtl & input[type=checkbox], .rtl & input[type=radio] {
+		margin: 0 0 0 6px
+	}
+
+	input[type=checkbox] {
+		appearance: checkbox;
+	}
+
+	input[type=radio] {
+		appearance: radio
+	}
+
+	.button {
+		cursor: pointer;
+		display: inline-block;
+		appearance: none;
+	}
+
+}
+
+/* Universal form styling*/
+.noptin-newsletter-form {
+
+	.noptin-form-field-wrapper {
+		margin-bottom: 1.75em;
+		max-width: 480px;
+
+		&.noptin-form-field-birthday {
+			margin-bottom: 0;
+		}
+	}
+
+	.noptin-birthday-div,
+	.noptin-text {
+		width: 100%;
+		max-width: 480px;
+	}
+
+	&:not(.noptin-label-hide) {
+
+		input::placeholder {
+			color: transparent;
+		}
+
+		textarea::placeholder {
+			color: transparent;
+		}
+
+	}
+
+}
+
+/* Hidden labels */
+.noptin-label-hide .noptin-label {
+	border: 0;
+	clip: rect(1px,1px,1px,1px);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal!important;
+}
+
+/* All fields on a single line */
+@media screen and (min-width: 520px) {
+	.noptin-template-condensed {
+
+		.noptin-form-fields {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: flex-end;
+		}
+
+		.noptin-form-field-wrapper:not(.noptin-form-field-submit) {
+			margin-right: 10px;
+			min-width: 200px;
+			flex: 1;
+		}
+
 	}
 }

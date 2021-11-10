@@ -1,4 +1,4 @@
-<div class="wrap noptin">
+<div class="wrap noptin" id="noptin-wrapper">
 	<h1 id="noptin_email_campaigns_table"><?php echo __( 'Email Campaigns', 'newsletter-optin-box' ); ?></h1>
 
 	<?php

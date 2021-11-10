@@ -6,7 +6,7 @@
 	var TextControl = components.TextControl;
 
 	blocks.registerBlockType('noptin/email-optin', {
-		title: i18n.__('Newsletter Optin', 'noptin'),
+		title: i18n.__('Newsletter Optin', 'newsletter-optin-box'),
 		icon: 'forms',
 		category: 'layout',
 		attributes: {
@@ -14,12 +14,12 @@
 				type: 'string',
 				source: 'children',
 				selector: 'h2',
-				default: i18n.__('JOIN OUR NEWSLETTER', 'noptin'),
+				default: i18n.__('JOIN OUR NEWSLETTER', 'newsletter-optin-box'),
 			},
 			description: {
 				type: 'string',
 				source: 'children',
-				default: i18n.__('Click the above title to edit it. You can also edit this section by clicking on it.', 'noptin'),
+				default: i18n.__('Click the above title to edit it. You can also edit this section by clicking on it.', 'newsletter-optin-box'),
 				selector: '.noptin_form_description',
 			},
 			button: {
@@ -54,7 +54,7 @@
 				el(InspectorControls, { key: 'controls' },
 
 				el(
-					components.PanelBody, { 'title': i18n.__('Button Text', 'noptin') },
+					components.PanelBody, { 'title': i18n.__('Button Text', 'newsletter-optin-box') },
 					el(TextControl, {
 						value: attributes.button,
 						type: 'text',
@@ -66,16 +66,16 @@
 
 					//Redirect url
 					el(
-						components.PanelBody, { 'title': i18n.__('Redirect Url', 'noptin'), initialOpen: false },
+						components.PanelBody, { 'title': i18n.__('Redirect Url', 'newsletter-optin-box'), initialOpen: false },
 
 						el(
 							'h2', null,
-							i18n.__('Redirect Url', 'noptin')
+							i18n.__('Redirect Url', 'newsletter-optin-box')
 						),
 
 						el(
 							'p', null,
-							i18n.__('Optional. Where should we redirect users after they have successfully signed up?', 'noptin')
+							i18n.__('Optional. Where should we redirect users after they have successfully signed up?', 'newsletter-optin-box')
 						),
 
 						el(TextControl, {
@@ -92,7 +92,7 @@
 
 					//Background color
 					el(
-						components.PanelBody, { 'title': i18n.__('Background Color', 'noptin'), initialOpen: false },
+						components.PanelBody, { 'title': i18n.__('Background Color', 'newsletter-optin-box'), initialOpen: false },
 						el(
 							components.PanelRow, null,
 							el(
@@ -107,7 +107,7 @@
 
 					//Title color
 					el(
-						components.PanelBody, { 'title': i18n.__('Title Color', 'noptin'), initialOpen: false },
+						components.PanelBody, { 'title': i18n.__('Title Color', 'newsletter-optin-box'), initialOpen: false },
 						el(
 							components.PanelRow, null,
 							el(
@@ -122,7 +122,7 @@
 
 					//Text color
 					el(
-						components.PanelBody, { 'title': i18n.__('Description Color', 'noptin'), initialOpen: false },
+						components.PanelBody, { 'title': i18n.__('Description Color', 'newsletter-optin-box'), initialOpen: false },
 						el(
 							components.PanelRow, null,
 							el(
@@ -137,12 +137,12 @@
 
 					//Button
 					el(
-						components.PanelBody, { 'title': i18n.__('Button Color', 'noptin'), initialOpen: false },
+						components.PanelBody, { 'title': i18n.__('Button Color', 'nnewsletter-optin-boxoptin'), initialOpen: false },
 
 						//Color
 						el(
 							'p', null,
-							i18n.__('Text Color', 'noptin')
+							i18n.__('Text Color', 'newsletter-optin-box')
 						),
 
 						el(
@@ -156,7 +156,7 @@
 						//Background color
 						el(
 							'p', null,
-							i18n.__('Background Color', 'noptin')
+							i18n.__('Background Color', 'newsletter-optin-box')
 						),
 						el(
 							ColorPalette, {
@@ -185,7 +185,7 @@
 								color: attributes.title_color,
 								textAlign: 'center',
 							},
-							placeholder: i18n.__('Write Form title…', 'noptin'),
+							placeholder: i18n.__('Write Form title…', 'newsletter-optin-box'),
 							value: attributes.title,
 							className: 'noptin_form_title',
 							onChange (value) {
@@ -198,7 +198,7 @@
 							style: {
 								textAlign: 'center',
 							},
-							placeholder: i18n.__('Write Form Description', 'noptin'),
+							placeholder: i18n.__('Write Form Description', 'newsletter-optin-box'),
 							value: attributes.description,
 							className: 'noptin_form_description',
 							onChange (value) {

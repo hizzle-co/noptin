@@ -26,9 +26,6 @@ class Noptin_Post_Types {
 		// And some actions.
 		add_filter( 'post_row_actions', array( $this, 'remove_actions' ), 10, 2 );
 
-		// Register our special meta box.
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
-
 		// Filter form columns.
 		add_filter( 'manage_noptin-form_posts_columns', array( $this, 'manage_form_columns' ) );
 
@@ -50,7 +47,7 @@ class Noptin_Post_Types {
 	 */
 	public function register_post_types() {
 
-		if ( ! is_blog_installed() || post_type_exists( 'noptin-form' ) ) {
+		if ( ! is_blog_installed() || post_type_exists( 'noptin-campaign' ) ) {
 			return;
 		}
 
@@ -61,9 +58,6 @@ class Noptin_Post_Types {
 		*/
 		do_action( 'noptin_register_post_type' );
 
-		// Optin forms.
-		register_post_type( 'noptin-form', $this->get_form_post_type_details() );
-
 		// Email campaign.
 		register_post_type( 'noptin-campaign', $this->get_email_campaign_post_type_details() );
 
@@ -73,54 +67,6 @@ class Noptin_Post_Types {
 		 * @since 1.0.0
 		*/
 		do_action( 'noptin_after_register_post_type' );
-
-	}
-
-	/**
-	 * Returns registration details for noptin-form post types
-	 *
-	 * @access      public
-	 * @since       1.1.1
-	 * @return      array
-	 */
-	public function get_form_post_type_details() {
-
-		return apply_filters(
-			'noptin_optin_form_post_type_details',
-			array(
-				'labels'              => array(
-					'name'               => _x( 'Email Forms', 'Post type general name', 'newsletter-optin-box' ),
-					'singular_name'      => _x( 'Email Form', 'Post type singular name', 'newsletter-optin-box' ),
-					'menu_name'          => _x( 'Email Forms', 'Admin Menu text', 'newsletter-optin-box' ),
-					'name_admin_bar'     => _x( 'Email Form', 'Add New on Toolbar', 'newsletter-optin-box' ),
-					'add_new'            => __( 'Add New', 'newsletter-optin-box' ),
-					'add_new_item'       => __( 'Add New Form', 'newsletter-optin-box' ),
-					'new_item'           => __( 'New Form', 'newsletter-optin-box' ),
-					'edit_item'          => __( 'Edit Form', 'newsletter-optin-box' ),
-					'view_item'          => __( 'View Form', 'newsletter-optin-box' ),
-					'search_items'       => __( 'Search Forms', 'newsletter-optin-box' ),
-					'parent_item_colon'  => __( 'Parent Forms:', 'newsletter-optin-box' ),
-					'not_found'          => __( 'No forms found.', 'newsletter-optin-box' ),
-					'not_found_in_trash' => __( 'No forms found in Trash.', 'newsletter-optin-box' ),
-				),
-				'label'               => __( 'Email Forms', 'newsletter-optin-box' ),
-				'description'         => '',
-				'public'              => false,
-				'show_ui'             => true,
-				'map_meta_cap'        => true,
-				'publicly_queryable'  => false,
-				'exclude_from_search' => true,
-				'hierarchical'        => false,
-				'query_var'           => false,
-				'supports'            => array( 'author' ),
-				'has_archive'         => false,
-				'show_in_nav_menus'   => false,
-				'show_in_rest'        => false,
-				'show_in_menu'        => false,
-				'menu_icon'           => '',
-				'can_export'          => false,
-			)
-		);
 
 	}
 
@@ -174,42 +120,25 @@ class Noptin_Post_Types {
 	public function remove_actions( $actions, $post ) {
 
 		if ( 'noptin-form' === $post->post_type ) {
-			unset( $actions['inline hide-if-no-js'] );
-		}
-		return $actions;
 
-	}
+			if ( ! is_using_new_noptin_forms() ) {
+				unset( $actions['inline hide-if-no-js'] );
+			}
 
-	/**
-	 * Registers the meta box required to render our form edit screen.
-	 *
-	 * @param string $post_type Post type of the post being edited.
-	 */
-	public function add_meta_boxes( $post_type ) {
-
-		if ( 'noptin-form' === $post_type ) {
-			add_meta_box(
-				'noptin_form_editor',
-				__( 'Form Editor', 'newsletter-optin-box' ),
-				array( $this, 'render_form_editor' ),
-				$post_type,
-				'normal',
-				'high'
+			$actions = array_merge(
+				array(
+					'_preview' => sprintf(
+						'<a href="%s">%s</a>',
+						esc_url( get_noptin_preview_form_url( $post->ID ) ),
+						esc_html__( 'Preview', 'newsletter-optin-box' )
+					)
+				),
+				$actions
 			);
+
 		}
 
-	}
-
-	/**
-	 * Renders the form editor.
-	 *
-	 * @param WP_Post $post The post being edited.
-	 */
-	public function render_form_editor( $post ) {
-
-		$form   = $post->ID;
-		$editor = new Noptin_Form_Editor( $form, true );
-		$editor->output();
+		return $actions;
 
 	}
 
@@ -224,7 +153,7 @@ class Noptin_Post_Types {
 		unset( $columns['author'] );
 		unset( $columns['date'] );
 		$columns['title']         = __( 'Form Name', 'newsletter-optin-box' );
-		$columns['type']          = __( 'Form Type', 'newsletter-optin-box' );
+		$columns['type']          = is_using_new_noptin_forms() ? __( 'Shortcode', 'newsletter-optin-box' ) : __( 'Form Type', 'newsletter-optin-box' );
 		$columns['impressions']   = __( 'Impressions', 'newsletter-optin-box' );
 		$columns['subscriptions'] = __( 'Subscriptions', 'newsletter-optin-box' );
 		$columns['conversion']    = __( 'Conversion Rate', 'newsletter-optin-box' );
@@ -243,10 +172,10 @@ class Noptin_Post_Types {
 
 		switch ( $column ) {
 			case 'subscriptions':
-				$views = (int) get_post_meta( $post_id, '_noptin_subscribers_count', true );
-				if ( empty( $views ) ) {
+				$subs = (int) get_post_meta( $post_id, '_noptin_subscribers_count', true );
+				if ( empty( $subs ) ) {
 
-					// Ensure that there is always a subscriber count for sorting to count.
+					// Ensure that there is always a subscriber count for sorting by count.
 					update_post_meta( $post_id, '_noptin_subscribers_count', 0 );
 
 				} else {
@@ -255,42 +184,49 @@ class Noptin_Post_Types {
 					$url   = get_noptin_subscribers_overview_url();
 					$url   = esc_url( add_query_arg( '_subscriber_via', $post_id, $url ) );
 					$title = esc_attr__( 'View the list of subscribers who signed up using this form.', 'newsletter-optin-box' );
-					$views = "<a href='$url' title='$title'>$views</a>";
+					$subs  = "<a href='$url' title='$title'>$subs</a>";
 
 				}
 
-				echo $views;
+				echo $subs;
 
 				break;
 
 			case 'type':
-				$types = array(
-					'sidebar'  => _x( 'Widget', 'Subscription forms that are meant to appear in a widget area', 'newsletter-optin-box' ),
-					'inpost'   => _x( 'Shortcode', 'Subscription forms that are embedded in posts using shortcodes', 'newsletter-optin-box' ),
-					'popup'    => _x( 'Popup', 'Subscription forms that appear in a popup', 'newsletter-optin-box' ),
-					'slide_in' => _x( 'Sliding', 'Subscription forms that slide into view', 'newsletter-optin-box' ),
-				);
-				$type  = get_post_meta( $post_id, '_noptin_optin_type', true );
 
-				if ( empty( $types[ $type ] ) ) {
-					echo '<strong>' . noptin_clean( $type ) . '</strong>';
+				if ( is_using_new_noptin_forms() ) {
+					echo "<input onClick='this.select();' type='text' value='[noptin form=$post_id]' readonly='readonly' />";
 				} else {
-					echo '<strong>' . esc_html( $types[ $type ] ) . '</strong>';
-				}
 
-				if ( 'inpost' === $type ) {
-					$title = esc_attr__( 'Use this shortcode to display the form on your website', 'newsletter-optin-box' );
-					echo "<br><input title='$title' style='color: #607D8B;' onClick='this.select();' type='text' value='[noptin-form id=$post_id]' disabled />";
+					$types = array(
+						'sidebar'  => _x( 'Widget', 'Subscription forms that are meant to appear in a widget area', 'newsletter-optin-box' ),
+						'inpost'   => _x( 'Shortcode', 'Subscription forms that are embedded in posts using shortcodes', 'newsletter-optin-box' ),
+						'popup'    => _x( 'Popup', 'Subscription forms that appear in a popup', 'newsletter-optin-box' ),
+						'slide_in' => _x( 'Sliding', 'Subscription forms that slide into view', 'newsletter-optin-box' ),
+					);
+					$type  = get_post_meta( $post_id, '_noptin_optin_type', true );
+
+					if ( empty( $types[ $type ] ) ) {
+						echo '<strong>' . noptin_clean( $type ) . '</strong>';
+					} else {
+						echo '<strong>' . esc_html( $types[ $type ] ) . '</strong>';
+					}
+
+					if ( 'inpost' === $type ) {
+						$title = esc_attr__( 'Use this shortcode to display the form on your website', 'newsletter-optin-box' );
+						echo "<br><input title='$title' style='color: #607D8B;' onClick='this.select();' type='text' value='[noptin-form id=$post_id]' readonly='readonly' />";
+					}
+
 				}
 				break;
 
 			case 'impressions':
-				$impressions = (int) get_post_meta( $post_id, '_noptin_form_views', true );
-				if ( empty( $impressions ) ) {
+				$impressions = get_post_meta( $post_id, '_noptin_form_views', true );
+				if ( '' === $impressions ) {
 					update_post_meta( $post_id, '_noptin_form_views', 0 );
 				}
 
-				echo $impressions;
+				echo (int) $impressions;
 
 				break;
 
@@ -298,20 +234,10 @@ class Noptin_Post_Types {
 				$subscriptions = (int) get_post_meta( $post_id, '_noptin_subscribers_count', true );
 				$impressions   = (int) get_post_meta( $post_id, '_noptin_form_views', true );
 				$conversion    = ( $subscriptions && $impressions ) ? ( $subscriptions * 100 / $impressions ) : 0;
-				$conversion    = empty( $conversion ) ? 0 : round( $conversion, 2 ) . '%';
+				$conversion    = empty( $conversion ) ? 0 : round( $conversion, 4 ) . '%';
 				echo $conversion;
 				break;
 
-			case 'shortcode':
-				$form_type = get_post_meta( $post_id, '_noptin_optin_type', true );
-
-				if ( 'inpost' === $form_type ) {
-					echo "[noptin-form id=$post_id]";
-				} else {
-					echo '__';
-				}
-
-				break;
 		}
 
 	}
@@ -325,7 +251,7 @@ class Noptin_Post_Types {
 	public function custom_filters( $post_type ) {
 
 		// Make sure this is our post type.
-		if ( 'noptin-form' !== $post_type ) {
+		if ( 'noptin-form' !== $post_type || is_using_new_noptin_forms() ) {
 			return;
 		}
 

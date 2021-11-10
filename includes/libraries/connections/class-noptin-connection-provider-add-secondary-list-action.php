@@ -99,12 +99,12 @@ class Noptin_Connection_Provider_Add_Secondary_List_Action extends Noptin_Abstra
 			return $this->get_description();
 		}
 
-		$list = sanitize_text_field( $settings[ $this->secondary_list ] );
+		$list = esc_html( $settings[ $this->secondary_list ] );
 
 		return sprintf(
 			/* Translators: %1$s list type, %2$s list name. */
 			__( 'Add the subscriber to the %1$ %2$s.', 'newsletter-optin-box' ),
-			$this->secondary_list,
+			esc_html( $this->secondary_list ),
 			"<code>$list</code> ({$this->provider->name})"
 		);
 

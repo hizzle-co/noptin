@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @class    Noptin_Form
  * @version  1.0.5
  */
-class Noptin_Form {
+class Noptin_Form_Legacy {
 
 	/**
 	 * Form id
@@ -629,8 +629,8 @@ class Noptin_Form {
 	 *
 	 * @return mixed
 	 */
-	public function duplicate() {
-		$this->optinName = $this->optinName . ' (duplicate)';
+	public function duplicate( $append = '(duplicate)' ) {
+		$this->optinName = trim( $this->optinName . ' ' . $append );
 		$this->id        = null;
 		return $this->save( 'draft' );
 	}
@@ -686,8 +686,13 @@ class Noptin_Form {
 	 */
 	protected function _can_show() {
 
-		// Abort early if the form is not published...
-		if ( ! $this->exists() || ! $this->is_published() ) {
+		// Abort early if the form does not exist.
+		if ( ! $this->exists() ) {
+			return false;
+		}
+
+		// or not published...
+		if ( ! noptin_is_preview() && ! $this->is_published() ) {
 			return false;
 		}
 
@@ -840,7 +845,8 @@ class Noptin_Form {
 		$data = $this->data;
 		$data['data'] = $data;
 		$data['form'] = $this;
-		get_noptin_template( 'frontend-optin-form.php', $data );
+		extract( $data );
+		include plugin_dir_path( __FILE__ ) . 'views/legacy/frontend-optin-form.php';
 		return ob_get_clean();
 	}
 

@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 5.8
 Requires PHP: 5.6
-Version: 1.6.0
+Version: 1.6.2
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -47,7 +47,7 @@ Next, start collecting new subscribers by:-
 - [Using **WPForms** to create a newsletter subscription form.](https://noptin.com/guide/getting-email-subscribers/wpforms/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
 - [Using **Contact Form 7** forms to create a newsletter subscription form.](https://noptin.com/guide/getting-email-subscribers/contact-form-7/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
 
-In addition to the integrations above, Noptin also comes with an [advanced newsletter subscription form builder](https://noptin.com/guide/getting-email-subscribers/noptin-forms/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) that you can use to build your newsletter subscription forms.
+In addition to the integrations above, you can also create your own newsletter forms.
 
 https://www.youtube.com/watch?v=Uyah658bPUs
 
@@ -66,12 +66,6 @@ Studies suggest that repeat website visitors are more likely to convert than fir
 This increases your website traffic as your newsletter subscribers login to read your new content.
 
 Let users sign up for your newsletter using any of the following email opt-in form types:-
-
-= Popup Email Opt-in Forms =
-
-These are shown in a popup or lightbox overlay and have a very high conversion rate. You can easily create an email popup form and attach one of our trigger options.
-
-**For example**, you can display the newsletter optin form when the user is about to leave your website or a few seconds after they open a specific page.
 
 = Embedded Email Opt-in Forms =
 
@@ -139,6 +133,12 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.6.2 =
+* Multi-lingual improvements - ADDED
+
+= 1.6.1 =
+* Double subscription fields on new installs - FIXED
 
 = 1.6.0 =
 * Add [noptin] newsletter form shortcode

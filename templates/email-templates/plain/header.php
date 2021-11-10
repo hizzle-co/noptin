@@ -6,7 +6,7 @@
 	<title><?php echo $title; ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex, nofollow" />
-	<?php include plugin_dir_path( __FILE__ ) . '/styles.php'; ?>
+	<?php include plugin_dir_path( __FILE__ ) . 'styles.php'; ?>
 </head>
 <body>
 

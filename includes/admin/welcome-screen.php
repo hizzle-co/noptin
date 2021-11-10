@@ -146,7 +146,7 @@
 		)
 	);
 ?>
-<div class="wrap about-wrap">
+<div class="wrap about-wrap" id="noptin-wrapper">
 	<h1><?php esc_html_e( 'Welcome To Noptin', 'newsletter-optin-box' ); ?></h1>
 	<div class="about-text"><?php esc_html_e( 'Noptin is a fast and lightweight newsletter plugin.', 'newsletter-optin-box' ); ?></div>
 
@@ -204,9 +204,9 @@
 		printf(
 			/* Translators: %1$s and %3$s Opening link tag, %2$s and %4$s Closing link tag. */
 			esc_html__( 'You can send your email subscribers %1$sone time emails%2$s or %3$sautomated emails%4$s.', 'newsletter-optin-box' ),
-			sprintf( '<a target="_blank" href="https://noptin.com/guide/sending-emails/?utm_medium=plugin-dashboard&utm_campaign=welcome&utm_source=%s">', esc_url( get_home_url() ) ),
+			sprintf( '<a target="_blank" href="https://noptin.com/guide/sending-emails/?utm_medium=plugin-dashboard&utm_campaign=welcome&utm_source=%s">', urlencode( esc_url( get_home_url() ) ) ),
 			'</a>',
-			sprintf( '<a target="_blank" href="https://noptin.com/guide/email-automations/?utm_medium=plugin-dashboard&utm_campaign=welcome&utm_source=%s">', esc_url( get_home_url() ) ),
+			sprintf( '<a target="_blank" href="https://noptin.com/guide/email-automations/?utm_medium=plugin-dashboard&utm_campaign=welcome&utm_source=%s">', urlencode( esc_url( get_home_url() ) ) ),
 			'</a>'
 		);
 		?>

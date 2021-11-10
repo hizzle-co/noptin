@@ -152,7 +152,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_about( $item ) {
-		$type  = sanitize_text_field( get_post_meta( $item->ID, 'automation_type', true ) );
+		$type  = esc_html( get_post_meta( $item->ID, 'automation_type', true ) );
 		$about = "Automation Type: $type";
 		return apply_filters( 'noptin_automation_table_about', $about, $type, $item, $this );
 	}
@@ -165,7 +165,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 * @since 1.2.9
 	 */
 	public function column_type( $item ) {
-		echo sanitize_text_field( get_post_meta( $item->ID, 'automation_type', true ) );
+		echo esc_html( get_post_meta( $item->ID, 'automation_type', true ) );
 	}
 
 	/**

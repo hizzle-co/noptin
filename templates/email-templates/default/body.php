@@ -1,7 +1,7 @@
 <?php
 
 	// Load css styles.
-	include plugin_dir_path( __FILE__ ) . '/styles.php';
+	include plugin_dir_path( __FILE__ ) . 'styles.php';
 
 	// Load the tracker.
 	echo $tracker; 
@@ -16,7 +16,7 @@
 
 	// Display the call to action button.
 	if ( ! empty( $cta_url ) ) {
-		include plugin_dir_path( __FILE__ ) . '/button.php';
+		include plugin_dir_path( __FILE__ ) . 'button.php';
 	}
 
 	// After CTA text.

@@ -1,14 +1,13 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Displays popups on the front page
  *
- * @since       1.0.5
+ * @since 1.0.5
+ * @deprecated
  */
 class Noptin_Popups {
 
@@ -18,7 +17,7 @@ class Noptin_Popups {
 	public function __construct() {
 
 		// Add popups to the footer.
-		add_action( 'wp_footer', array( $this, 'display_popups' ) );
+		add_action( 'wp_footer', array( $this, 'display_popups' ), 5 );
 
 	}
 
@@ -31,23 +30,8 @@ class Noptin_Popups {
 	 */
 	public function display_popups() {
 
-		// Abort if this is an admin page...
-		if ( is_admin() || is_noptin_actions_page() || is_customize_preview() ) {
-			return;
-		}
-
-		// ...or the user is hiding all popups.
-		if ( ! empty( $_GET['noptin_hide'] ) ) {
-			return;
-		}
-
-		// Do not show on elementor previews.
-		if ( isset( $_GET['elementor-preview'] ) ) {
-			return;
-		}
-
-		// Do not show on Ninja Forms previews.
-		if ( isset( $_GET['nf_preview_form'] ) || isset( $_GET['nf_iframe'] ) ) {
+		// Maybe abort early.
+		if ( is_admin() || is_noptin_actions_page() || ! noptin_should_show_optins() || noptin_is_preview() ) {
 			return;
 		}
 
@@ -70,6 +54,7 @@ class Noptin_Popups {
 				echo $form->get_html();
 				echo '</div>';
 			}
+
 		}
 
 		/**

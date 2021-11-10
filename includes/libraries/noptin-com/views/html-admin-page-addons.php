@@ -1,6 +1,6 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
 
-<div class="wrap noptin noptin_addons_wrap">
+<div class="wrap noptin noptin_addons_wrap" id="noptin-wrapper">
 
 	<nav class="nav-tab-wrapper noptin-nav-tab-wrapper">
 

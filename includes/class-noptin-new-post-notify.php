@@ -70,7 +70,7 @@ class Noptin_New_Post_Notify {
 				array(
 					'utm_medium'   => 'plugin-dashboard',
 					'utm_campaign' => 'new-post-notifications',
-					'utm_source'   => esc_url( urlencode( get_home_url() ) ),
+					'utm_source'   => urlencode( esc_url( get_home_url() ) ),
 				),
 				'https://noptin.com/guide/email-automations/new-post-notifications/'
 			);
@@ -79,7 +79,7 @@ class Noptin_New_Post_Notify {
 				array(
 					'utm_medium'   => 'plugin-dashboard',
 					'utm_campaign' => 'new-post-notifications',
-					'utm_source'   => esc_url( urlencode( get_home_url() ) ),
+					'utm_source'   => urlencode( esc_url( get_home_url() ) ),
 				),
 				'https://noptin.com/product/custom-post-notifications/'
 			);
@@ -92,19 +92,6 @@ class Noptin_New_Post_Notify {
 
 			echo "<p class='description'>$help_text</p>";
 			echo '<input type="hidden" name="noptin_is_new_post_notification" value="1" />';
-
-			printf(
-				'<div><h3>%s</h3><p>%s</p><ol><li>%s</li><li>%s</li></ol><a href="%s" class="button button-primary" target="blank">%s</a></div>',
-				__( 'Unlock More Features.', 'newsletter-optin-box' ),
-				__( 'This campaign will only be sent when you publish a <strong>blog post</strong>. The Custom Post Types addon allows you to:-', 'newsletter-optin-box' ),
-				sprintf(
-					__( 'Set-up different new post notifications for %s.', 'newsletter-optin-box' ),
-					'<code>' . implode( ', ', noptin_clean( noptin_get_post_types() ) ) . '</code>'
-				),
-				__( 'Limit new post notifications to specific categories, tags and custom terms.', 'newsletter-optin-box' ),
-				$url2,
-				__( 'Learn More!', 'newsletter-optin-box' )
-			);
 
 		}
 
@@ -135,7 +122,7 @@ class Noptin_New_Post_Notify {
 			array(
 				'utm_medium'   => 'plugin-dashboard',
 				'utm_campaign' => 'new-post-notifications',
-				'utm_source'   => esc_url( get_home_url() ),
+				'utm_source'   => urlencode( esc_url( get_home_url() ) ),
 			),
 			'https://noptin.com/product/ultimate-addons-pack'
 		);
@@ -389,18 +376,18 @@ class Noptin_New_Post_Notify {
 			'post_date'     => current_time( 'mysql' ),
 			'post_date_gmt' => current_time( 'mysql', true ),
 			'edit_date'     => true,
-			'post_title'    => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
+			'post_title'    => esc_html( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) ),
 			'post_content'  => wp_kses_post( stripslashes_deep( $campaign->post_content ) ),
 			'meta_input'    => array(
 				'campaign_type'         => 'newsletter',
-				'preview_text'          => sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
+				'preview_text'          => esc_html( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
 				'new_post_notification' => $key,
 				'custom_merge_tags'     => $this->get_post_merge_tags( get_post( $post_id ) ),
 				'campaign_id'           => $campaign_id,
 				'associated_post'       => $post_id,
 				'subscribers_query'     => array(),
 				'email_sender'          => get_post_meta( $campaign_id, 'email_sender', true ),
-				'custom_title'          => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), sanitize_text_field( get_the_title( $post_id ) ) ),
+				'custom_title'          => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
 			),
 		);
 
@@ -415,12 +402,12 @@ class Noptin_New_Post_Notify {
 
 		$subject = get_post_meta( $post_id, 'noptin_post_notify_subject', true );
 		if ( ! empty( $subject ) ) {
-			$post['post_title'] = sanitize_text_field( stripslashes_deep( $subject ) );
+			$post['post_title'] = esc_html( stripslashes_deep( $subject ) );
 		}
 
 		$preview = get_post_meta( $post_id, 'noptin_post_notify_preview_text', true );
 		if ( ! empty( $preview ) ) {
-			$post['meta_input']['preview_text'] = sanitize_text_field( stripslashes_deep( $preview ) );
+			$post['meta_input']['preview_text'] = esc_html( stripslashes_deep( $preview ) );
 		}
 
 		$post['post_title']                 = add_noptin_merge_tags( $post['post_title'], $post['meta_input']['custom_merge_tags'], false, false );
@@ -462,7 +449,7 @@ class Noptin_New_Post_Notify {
 		$delay = 'immeadiately';
 
 		$sends_after      = (int) get_post_meta( $automation->ID, 'noptin_sends_after', true );
-		$sends_after_unit = sanitize_text_field( get_post_meta( $automation->ID, 'noptin_sends_after_unit', true ) );
+		$sends_after_unit = esc_html( get_post_meta( $automation->ID, 'noptin_sends_after_unit', true ) );
 
 		if ( $sends_after ) {
 			$delay = "$sends_after $sends_after_unit after";

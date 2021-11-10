@@ -1,4 +1,4 @@
-<div class="wrap noptin-import-subscribers-page">
+<div class="wrap noptin-import-subscribers-page" id="noptin-wrapper">
 
 	<h1 class="title"><?php esc_html_e( 'Import Subscribers', 'newsletter-optin-box' ); ?></h1>
 

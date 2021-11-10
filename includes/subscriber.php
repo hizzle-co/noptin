@@ -316,6 +316,10 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
 function add_noptin_subscriber( $fields, $silent = false ) {
 	global $wpdb;
 
+	if ( empty( $fields['locale'] ) && noptin_is_multilingual() ) {
+		$fields['locale'] = sanitize_text_field( get_locale() );
+	}
+
 	$table  = get_noptin_subscribers_table_name();
 	$fields = noptin_clean( wp_unslash( apply_filters( 'new_noptin_subscriber_fields', $fields ) ) );
 
@@ -345,7 +349,7 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
 		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] :  md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
 		'date_created' => ! empty( $fields['date_created'] ) ? date( 'Y-m-d', strtotime( $fields['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) ),
-		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] :  ( get_noptin_option( 'double_optin' ) ? 1 : 0 ),
+		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] :  ( get_noptin_option( 'double_optin', false ) ? 1 : 0 ),
 		'confirmed'    => ! empty( $fields['confirmed'] ),
 	);
 
@@ -363,11 +367,7 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 	// Insert additional meta data.
 	foreach ( $fields as $field => $value ) {
 
-		if ( ! is_scalar( $value ) ) {
-			continue;
-		}
-
-		if ( isset( $database_fields[ $field ] ) || 'name' === $field || 'integration_data' === $field ) {
+		if ( isset( $database_fields[ $field ] ) || 'integration_data' === $field ) {
 			continue;
 		}
 
@@ -739,7 +739,7 @@ function noptin_subscribers_meta_table_exists() {
 function noptin_new_subscriber_notify( $id, $fields ) {
 
 	// Are we sending new subscriber notifications?
-	$notify = get_noptin_option( 'notify_admin' );
+	$notify = get_noptin_option( 'notify_admin', false );
 	if ( empty( $notify ) ) {
 		return;
 	}
@@ -757,7 +757,7 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 	foreach ( $fields as $key => $val ) {
 
 		if ( ! empty( $val ) && is_scalar( $val ) ) {
-			$message .= sprintf( '%s: %s', sanitize_text_field( $key ), esc_html( $val ) ) . "\r\n";
+			$message .= sprintf( '%s: %s', esc_html( $key ), esc_html( $val ) ) . "\r\n";
 		}
 	}
 
@@ -812,7 +812,7 @@ function get_default_noptin_subscriber_double_optin_email() {
 function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = false ) {
 
 	// Is double optin enabled?
-	$double_optin = get_noptin_option( 'double_optin' );
+	$double_optin = get_noptin_option( 'double_optin', false );
 	if ( empty( $double_optin ) && ! $force ) {
 		return false;
 	}
@@ -1206,7 +1206,7 @@ function _noptin_show_subscriber_field( $atts ) {
 	}
 
 	$value = $subscriber->get( $atts['field'] );
-	return  is_scalar( $value ) ? sanitize_text_field( $value ) : '';
+	return  is_scalar( $value ) ? esc_html( $value ) : '';
 
 }
 add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );
@@ -1299,8 +1299,11 @@ function get_noptin_custom_field_types() {
  */
 function display_noptin_custom_field_input( $custom_field, $subscriber = false ) {
 	$custom_field['name']  = empty( $custom_field['wrap_name'] ) ? $custom_field['merge_tag'] : 'noptin_fields[' . $custom_field['merge_tag'] . ']';
-	$custom_field['id']    = empty( $custom_field['show_id'] ) ? uniqid( sanitize_html_class( $custom_field['merge_tag'] ) ) : 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
 	$custom_field['value'] = empty( $subscriber ) ? '' : $subscriber->get( $custom_field['merge_tag'] );
+
+	if ( empty( $custom_field['id'] ) ) {
+		$custom_field['id']    = empty( $custom_field['show_id'] ) ? uniqid( sanitize_html_class( $custom_field['merge_tag'] ) . '_' ) : 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
+	}
 
 	if ( ( '' === $custom_field['value'] || array() === $custom_field['value'] ) && ! empty( $_POST ) ) {
 
@@ -1346,21 +1349,34 @@ function format_noptin_custom_field_value( $value, $type, $subscriber ) {
 /**
  * Returns an array of available custom fields.
  *
+ * @param bool $public_only
  * @since 1.5.5
  * @return array
  */
-function get_noptin_custom_fields() {
+function get_noptin_custom_fields( $public_only = false ) {
 
+	// Fetch available fields.
 	$custom_fields = get_noptin_option(
 		'custom_fields',
 		Noptin_Custom_Fields::default_fields()
 	);
 
+	// Clean the fields.
 	$fields = map_deep( apply_filters( 'noptin_custom_fields', $custom_fields ), 'esc_html' );
 
 	foreach ( $fields as $index => $field ) {
 		$field['field_key'] = uniqid( 'noptin_' ) . $index;
+
+		if ( $field['merge_tag'] == 'email' ) {
+			$field['subs_table'] = true;
+		}
+
 		$fields[ $index ] = $field;
+	}
+
+	// Maybe return public fields only.
+	if ( $public_only ) {
+		$fields = wp_list_filter( $fields, array( 'visible' => true ) );
 	}
 
 	return $fields;

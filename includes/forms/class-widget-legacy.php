@@ -8,9 +8,7 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Widget class
@@ -74,6 +72,20 @@ class Noptin_Widget extends WP_Widget {
 		if ( ! noptin_should_show_optins() ) {
 			return;
 		}
+
+		if ( ! is_array( $instance ) ) {
+			$instance = array();
+		}
+
+		$instance = wp_parse_args(
+			$instance,
+			array(
+				'bg_color' => '',
+				'color'    => '',
+				'h2_col'   => '',
+				'btn_col'  => '',
+			)
+		);
 
 		echo $args['before_widget'];
 

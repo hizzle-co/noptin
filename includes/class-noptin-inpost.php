@@ -1,14 +1,13 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Displays inpost forms on the front page
  *
- * @since       1.0.5
+ * @since 1.0.5
+ * @deprecated
  */
 class Noptin_Inpost {
 
@@ -17,14 +16,95 @@ class Noptin_Inpost {
 	 */
 	public function __construct() {
 
-		// Prepend/Apend inpost forms to the post content.
-		add_filter( 'the_content', array( $this, 'append_inpost' ) );
-
-		// Register shortcode.
-		add_shortcode( 'noptin-form', array( $this, 'do_shortcode' ) );
+		// Appends opt-in forms to the post content.
+		if ( is_using_new_noptin_forms() ) {
+			add_filter( 'the_content', array( $this, 'append_forms_to_content' ) );
+		} else {
+			add_filter( 'the_content', array( $this, 'append_legacy_forms_to_content' ) );
+		}
 
 		// Hide block content.
 		add_filter( 'pre_render_block', array( $this, 'maybe_hide_block' ), 10, 2 );
+
+	}
+
+	/**
+	 * Appends opt-in forms to post content
+	 *
+	 * @access      public
+	 * @param       string $content The content to append an opt-in form to.
+	 * @since       1.6.2
+	 * @return      string
+	 */
+	public function append_forms_to_content( $content ) {
+		global $post;
+
+		// Maybe abort early.
+		if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() || is_noptin_actions_page() || ! noptin_should_show_optins() || noptin_is_preview() || is_preview() ) {
+			return $content;
+		}
+
+		// Avoid elementor pages.
+		if ( $post && noptin_is_page_built_with_elementor( $post->ID ) ) {
+			return $content;
+		}
+
+		// Fetch forms.
+		$forms = get_transient( 'noptin_forms_to_append' );
+
+		if ( false === $forms ) {
+
+			$forms = get_posts(
+				array(
+					'numberposts' => -1,
+					'fields'      => 'ids',
+					'post_type'   => 'noptin-form',
+					'post_status' => 'publish',
+					'meta_query'  => array(
+						array(
+							'key'     => 'form_settings',
+							'compare' => 'EXISTS',
+						),
+					),
+				)
+			);
+
+			set_transient( 'noptin_forms_to_append', $forms, HOUR_IN_SECONDS );
+		}
+
+		// Abort if non-exists;
+		if ( empty( $forms ) ) {
+			return $content;
+		}
+
+		// Loop through each form.
+		foreach ( $forms as $form ) {
+
+			// Prepare the form.
+			$form = new Noptin_Form( $form );
+
+			// Can it be displayed?
+			if ( ! $form->can_show() || empty( $form->settings['inject'] ) ) {
+				continue;
+			}
+
+			// Type of injection.
+			$inject = $form->settings['inject'];
+
+			// If we are to prepend.
+			if ( 'both' === $inject || 'before' === $inject ) {
+				$content = $form->get_html() . $content;
+			}
+
+			// If we are to append.
+			if ( 'both' === $inject || 'after' === $inject ) {
+				$content .= $form->get_html();
+			}
+
+			break;
+		}
+
+		return $content;
 
 	}
 
@@ -33,33 +113,18 @@ class Noptin_Inpost {
 	 *
 	 * @access      public
 	 * @param       string $content The content to append an opt-in form to.
-	 * @since       1.0.5
+	 * @since       1.6.2
 	 * @return      string
 	 */
-	public function append_inpost( $content ) {
+	public function append_legacy_forms_to_content( $content ) {
 		global $post;
 
 		// Maybe abort early.
-		if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() || is_noptin_actions_page() || is_preview() ) {
+		if ( is_admin() || ! is_singular() || ! in_the_loop() || ! is_main_query() || is_noptin_actions_page() || ! noptin_should_show_optins() || noptin_is_preview() || is_preview() ) {
 			return $content;
 		}
 
-		// ...or the user is hiding all opt-in forms.
-		if ( ! empty( $_GET['noptin_hide'] ) ) {
-			return $content;
-		}
-
-		// Do not show on elementor previews.
-		if ( isset( $_GET['elementor-preview'] ) ) {
-			return $content;
-		}
-
-		// Do not show on Ninja Forms previews.
-		if ( isset( $_GET['nf_preview_form'] ) || isset( $_GET['nf_iframe'] ) ) {
-			return $content;
-		}
-
-		// Or elementor pages.
+		// Avoid elementor pages.
 		if ( $post && noptin_is_page_built_with_elementor( $post->ID ) ) {
 			return $content;
 		}
@@ -120,34 +185,7 @@ class Noptin_Inpost {
 	}
 
 	/**
-	 * Converts shortcode to html
-	 *
-	 * @access      public
-	 * @param       array $atts An array containing the form `id` to display.
-	 * @since       1.0.5
-	 * @return      string
-	 */
-	public function do_shortcode( $atts ) {
-
-		// Abort early if no id is specified
-		if ( empty( $atts['id'] ) ) {
-			return '';
-		}
-
-		// Prepare the form.
-		$form = noptin_get_optin_form( trim( $atts['id'] ) );
-
-		// Maybe return its html.
-		if ( $form->can_show() ) {
-			return $form->get_html();
-		}
-
-		return '';
-
-	}
-
-	/**
-	 * Hides a block
+	 * Hides legacy blocks if subscription forms are being hidden.
 	 *
 	 * @access      public
 	 * @param       string|null $pre_render The pre-rendered content.

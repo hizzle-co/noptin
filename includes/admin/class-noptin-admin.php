@@ -83,11 +83,10 @@ class Noptin_Admin {
 		do_action( 'noptin_before_admin_load', $this );
 
 		// Set global variables.
-		$noptin            = noptin();
 		$this->admin_path  = plugin_dir_path( __FILE__ );
 		$this->admin_url   = plugins_url( '/', __FILE__ );
-		$this->assets_url  = $noptin->plugin_url . 'includes/assets/';
-		$this->assets_path = $noptin->plugin_path . 'includes/assets/';
+		$this->assets_url  = plugin_dir_url( Noptin::$file ) . 'includes/assets/';
+		$this->assets_path = plugin_dir_path( Noptin::$file ) . 'includes/assets/';
 
 		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
 		$this->bg_sync 		   = new Noptin_Background_Sync();
@@ -137,9 +136,6 @@ class Noptin_Admin {
 
 		// Runs when saving a new opt-in form.
 		add_action( 'wp_ajax_noptin_save_optin_form', array( $this, 'save_optin_form' ) );
-
-		// Runs when saving a form as a template.
-		add_action( 'wp_ajax_noptin_save_optin_form_as_template', array( $this, 'save_optin_form_as_template' ) );
 
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
@@ -485,20 +481,29 @@ class Noptin_Admin {
 
 		// The main admin page.
 		add_menu_page(
-			'Noptin',
-			'Noptin',
+			esc_html__( 'Noptin Newsletter', 'newsletter-optin-box' ),
+			esc_html__( 'Noptin Newsletter', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin',
-			array( $this, 'render_main_page' ),
+			null,
 			'dashicons-forms',
-			23
+			'23.81204129341231'
+		);
+
+		add_submenu_page(
+			'noptin',
+			__( 'Noptin Dashboard', 'newsletter-optin-box' ),
+			__( 'Dashboard', 'newsletter-optin-box' ),
+			get_noptin_capability(),
+			'noptin',
+			array( $this, 'render_main_page' )
 		);
 
 		// Add the newsletter page.
 		add_submenu_page(
 			'noptin',
-			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
-			esc_html__( 'Email Forms', 'newsletter-optin-box' ),
+			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
+			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'edit.php?post_type=noptin-form'
 		);
@@ -574,7 +579,7 @@ class Noptin_Admin {
 				esc_html__( 'Start Here', 'newsletter-optin-box' ),
 				esc_html__( 'Start Here', 'newsletter-optin-box' ),
 				get_noptin_capability(),
-				sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( get_home_url() ) ),
+				sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( esc_url( get_home_url() ) ) ),
 				null
 			);
 
@@ -599,6 +604,7 @@ class Noptin_Admin {
 	 */
 	public function remove_menus() {
 		remove_submenu_page( 'index.php', 'noptin-welcome' );
+		remove_submenu_page( 'noptin', 'noptin-form-editor' );
 	}
 
 	/**
@@ -654,10 +660,14 @@ class Noptin_Admin {
 		$this_week               = date( 'Y-m-d', strtotime( 'last week sunday' ) );
 		$subscribers_week_total  = get_noptin_subscribers_count( "`date_created`>'$this_week'" );
 
-		$popups   = noptin_count_optin_forms( 'popup' );
-		$inpost   = noptin_count_optin_forms( 'inpost' );
-		$widget   = noptin_count_optin_forms( 'sidebar' );
-		$slide_in = noptin_count_optin_forms( 'slide_in' );
+		if ( is_using_new_noptin_forms() ) {
+			$all_forms = noptin_count_optin_forms();
+		} else {
+			$popups   = noptin_count_optin_forms( 'popup' );
+			$inpost   = noptin_count_optin_forms( 'inpost' );
+			$widget   = noptin_count_optin_forms( 'sidebar' );
+			$slide_in = noptin_count_optin_forms( 'slide_in' );
+		}
 
 		include $this->admin_path . 'welcome.php';
 
@@ -766,7 +776,7 @@ class Noptin_Admin {
 		$table->prepare_items();
 
 		?>
-		<div class="wrap">
+		<div class="wrap" id="noptin-wrapper">
 			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="<?php echo esc_url( add_query_arg( 'create', '1' ) ); ?>" class="page-title-action noptin-add-automation-rule"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a></h1>
 			<?php $this->show_notices(); ?>
 			<form id="noptin-automation-rules-table" method="POST">
@@ -806,7 +816,7 @@ class Noptin_Admin {
 		do_action( 'noptin_before_automation_rules_create_page', $this );
 
 		?>
-		<div class="wrap">
+		<div class="wrap" id="noptin-wrapper">
 			<h1 class="wp-heading-inline"><?php _e( 'Create an Automation Rule', 'newsletter-optin-box' ); ?></h1>
 			<?php get_noptin_template( 'automation-rules/create.php' ); ?>
 			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
@@ -843,7 +853,7 @@ class Noptin_Admin {
 		do_action( 'noptin_before_automation_rule_edit_page', $this );
 
 		?>
-		<div class="wrap">
+		<div class="wrap" id="noptin-wrapper">
 			<h1 class="wp-heading-inline"><?php _e( 'Edit Automation Rule', 'newsletter-optin-box' ); ?></h1>
 			<?php get_noptin_template( 'automation-rules/edit.php', compact( 'rule_id' ) ); ?>
 			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
@@ -952,81 +962,6 @@ class Noptin_Admin {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_save_form', $this );
-
-		exit; // This is important.
-	}
-
-	/**
-	 * Saves an optin form as a template
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function save_optin_form_as_template() {
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		// Check nonce.
-		check_ajax_referer( 'noptin_admin_nonce' );
-
-		/**
-		 * Runs before saving a form as a template
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_save_form_as_template', $this );
-
-		$templates = get_option( 'noptin_templates' );
-
-		if ( ! is_array( $templates ) ) {
-			$templates = array();
-		}
-
-		$fields = noptin_get_form_design_props();
-		$data   = array();
-
-		foreach ( $fields as $field ) {
-
-			if ( 'optinType' === $field ) {
-				continue;
-			}
-
-			if ( isset( $_POST['state'][ $field ] ) ) {
-
-				$value = stripslashes_deep( $_POST['state'][ $field ] );
-
-				if ( 'false' === $value ) {
-					$data[ $field ] = false;
-					continue;
-				}
-
-				if ( 'true' === $value ) {
-					$data[ $field ] = true;
-					continue;
-				}
-
-				$data[ $field ] = $value;
-			}
-		}
-
-		$title             = sanitize_text_field( $_POST['state']['optinName'] );
-		$key               = wp_generate_password( '4', false ) . time();
-		$templates[ $key ] = array(
-			'title' => $title,
-			'data'  => $data,
-		);
-
-		update_option( 'noptin_templates', $templates );
-
-		/**
-		 * Runs after saving a form as a template
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_save_form_as_template', $this );
 
 		exit; // This is important.
 	}

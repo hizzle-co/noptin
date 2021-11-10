@@ -32,7 +32,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	 * @var string last error message.
 	 * @since 1.5.1
 	 */
-	protected $last_error = '';
+	public $last_error = '';
 
 	/**
 	 * @var Noptin_List_Providers Main list providers factory.
@@ -192,6 +192,9 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	 */
 	public function prepare_new_subscriber_data( $subscriber, $data ) {
 
+		// This is usually saved with the new forms.
+		delete_noptin_subscriber_meta( $subscriber->id, $this->slug );
+
 		if ( ! is_array( $data ) ) {
 			$data = array();
 		}
@@ -228,6 +231,10 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				}
 			}
 
+			return $data;
+		}
+
+		if ( ! is_legacy_noptin_form( absint( $form ) ) ) {
 			return $data;
 		}
 
@@ -754,7 +761,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 							$this->name,
 							$secondary
 						),
-						'description' => __( 'New subscribers will be added to here', 'newsletter-optin-box' ),
+						'description' => __( 'New subscribers will be added here', 'newsletter-optin-box' ),
 						'restrict'    => sprintf(
 							'%s && %s',
 							$this->get_enable_integration_option_name(),

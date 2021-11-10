@@ -1,4 +1,4 @@
-<div class="wrap noptin-automation-campaign-form">
+<div class="wrap noptin-automation-campaign-form" id="noptin-wrapper">
 	<?php
 
 		$subject = sanitize_text_field( stripslashes_deep( get_post_meta( $campaign_id, 'subject', true ) ) );

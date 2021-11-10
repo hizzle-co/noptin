@@ -122,7 +122,7 @@ class Noptin_Tools {
 		
 		if ( ! empty( $_GET['tool'] ) && 'sync_users' != $_GET['tool'] && 'sync_subscribers' != $_GET['tool'] && 'delete_subscribers' != $_GET['tool'] ) {
 			$tools_page = esc_url( admin_url( 'admin.php?page=noptin-tools' ) );
-			$text       = __( 'Go back to tools page', 'noptin' );
+			$text       = __( 'Go back to tools page', 'newsletter-optin-box' );
 			echo "<p class='description'><a href='$tools_page'>$text</a></p>";
 		}
 		echo '</div>';

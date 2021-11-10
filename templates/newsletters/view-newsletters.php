@@ -1,4 +1,4 @@
-<div class="wrap noptin">
+<div class="wrap noptin" id="noptin-wrapper">
 
     <?php
         get_noptin_template(

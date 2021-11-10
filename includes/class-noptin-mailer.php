@@ -187,7 +187,7 @@ class Noptin_Mailer {
 			'home_url'         => get_home_url(),
 			'noptin'   		   => sprintf(
 				'<a target="_blank" href="https://noptin.com/?utm_medium=powered-by&utm_campaign=email-campaign&utm_source=%s">Noptin</a>',
-				esc_url( get_home_url() )
+				urlencode( esc_url( get_home_url() ) )
 			),
 			'noptin_company'   => get_noptin_option( 'company', '' ),
 		);
@@ -440,7 +440,7 @@ class Noptin_Mailer {
 
 		foreach ( apply_filters( 'noptin_mailer_email_sections', $sections, $data, $template, $this ) as $section ) {
 
-			$section = sanitize_text_field( $section );
+			$section = sanitize_key( $section );
 
 			// Fires before the section is printed.
 			do_action( "noptin_mailer_before_{$section}_section", $data, $this );
@@ -577,13 +577,13 @@ class Noptin_Mailer {
 	 * @return string The email from name
 	 */
 	public function get_from_name() {
-		$from_name = get_noptin_option( 'from_name',  get_bloginfo( 'name' ) );
+		$from_name = get_noptin_option( 'from_name',  get_option( 'blogname' ) );
 
 		if ( empty( $from_name ) ) {
 			$from_name =  get_bloginfo( 'name' );
 		}
 
-		return apply_filters( 'noptin_mailer_email_from_name', sanitize_text_field( $from_name ), $this );
+		return apply_filters( 'noptin_mailer_email_from_name', esc_html( $from_name ), $this );
 	}
 
 	/**
