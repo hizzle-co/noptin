@@ -1069,7 +1069,7 @@ a.no-campaign-create-new-campaign {
 	font-size: 16px;
 }
 
-.noptin_page_noptin-email-campaigns .swal2-container {
+.noptin-newsletter_page_noptin-email-campaigns .swal2-container {
 	z-index: 1000060;
 }
 
@@ -1530,7 +1530,7 @@ a.no-campaign-create-new-campaign {
 	padding: 0 4px;
 }
 
-.noptin_page_noptin-addons .notice:not(.noptin-notice) {
+.noptin-newsletter_page_noptin-addons .notice:not(.noptin-notice) {
 	display: none;
 }
 
