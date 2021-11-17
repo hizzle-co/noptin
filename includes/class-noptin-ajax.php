@@ -277,7 +277,7 @@ class Noptin_Ajax {
 			foreach ( $data['mapped'] as $noptin => $_imported ) {
 
 				// Manually entered.
-				if ( '-1' == $_imported ) {
+				if ( '-1' == $_imported && '_subscriber_via' != $noptin ) {
 
 					if ( isset( $data['custom'][ $noptin ] ) ) {
 						$subscriber[ $noptin ] = $data['custom'][ $noptin ];
@@ -286,21 +286,27 @@ class Noptin_Ajax {
 					continue;
 				}
 
+				// Active.
+				if ( 'active' == $noptin && is_numeric( $_imported ) ) {
+					$subscriber[ $noptin ] = (int) $_imported == '1';
+					continue;
+				}
+
+				// Confirmed.
+				if ( 'confirmed' == $noptin && is_numeric( $_imported ) ) {
+					$subscriber[ $noptin ] = (int) $_imported == '1';
+					continue;
+				}
+
+				// Source.
+				if ( '_subscriber_via' == $noptin && ( empty( $_imported ) || '-1' == $_imported ) ) {
+					$subscriber[ $noptin ] = 'import';
+					continue;
+				}
+
 				// Mapped.
 				if ( isset( $row[ $_imported ] ) && '' !== $row[ $_imported ] && null !== $row[ $_imported ] ) {
 					$subscriber[ $noptin ] = $row[ $_imported ];
-
-					if ( 'active' == $noptin && is_numeric( $_imported ) ) {
-						$subscriber[ $noptin ] = (int) $subscriber[ $noptin ] == '1';
-					}
-
-					if ( 'confirmed' == $noptin && is_numeric( $_imported ) ) {
-						$subscriber[ $noptin ] = (int) $subscriber[ $noptin ] == '1';
-					}
-
-					if ( '_subscriber_via' == $noptin && ( empty( $subscriber[ $noptin ] ) || '-1' == $_imported ) ) {
-						$subscriber[ $noptin ] = 'import';
-					}
 				}
 
 			}
