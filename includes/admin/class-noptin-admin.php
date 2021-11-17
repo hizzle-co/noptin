@@ -571,28 +571,6 @@ class Noptin_Admin {
 
 		}
 
-		// Documentation page.
-		if ( apply_filters( 'noptin_show_docs_page', true ) ) {
-
-			add_submenu_page(
-				'noptin',
-				esc_html__( 'Start Here', 'newsletter-optin-box' ),
-				esc_html__( 'Start Here', 'newsletter-optin-box' ),
-				get_noptin_capability(),
-				sprintf( 'https://noptin.com/guide/introduction/?utm_medium=plugin-dashboard&utm_campaign=documentation-link&utm_source=%s', urlencode( esc_url( get_home_url() ) ) ),
-				null
-			);
-
-		}
-
-		// Welcome page.
-		add_dashboard_page(
-			esc_html__( 'Noptin Welcome', 'newsletter-optin-box' ),
-			esc_html__( 'Noptin Welcome', 'newsletter-optin-box' ),
-			'read',
-			'noptin-welcome',
-			array( $this, 'welcome_screen_content' )
-		);
 	}
 
 	/**
@@ -603,7 +581,6 @@ class Noptin_Admin {
 	 * @return      void
 	 */
 	public function remove_menus() {
-		remove_submenu_page( 'index.php', 'noptin-welcome' );
 		remove_submenu_page( 'noptin', 'noptin-form-editor' );
 	}
 
@@ -619,17 +596,6 @@ class Noptin_Admin {
         }
 
     }
-
-	/**
-	 * Display the welcome page
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function welcome_screen_content() {
-		include $this->admin_path . 'welcome-screen.php';
-	}
 
 	/**
 	 * Renders main admin page
@@ -993,7 +959,7 @@ class Noptin_Admin {
 				update_option( '_noptin_has_welcomed', '1' );
 
 				// Redirect to the welcome page.
-				wp_safe_redirect( add_query_arg( array( 'page' => 'noptin-welcome' ), admin_url( 'index.php' ) ) );
+				wp_safe_redirect( add_query_arg( array( 'page' => 'noptin-settings' ), admin_url( 'admin.php' ) ) );
 				exit;
 
 			}
