@@ -10,7 +10,7 @@
 		"cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
 		"csshelper": "postcss includes/assets/css/postcss/noptin-helper.css -o includes/assets/css/noptin-helper.css",
 		"cssaddons": "postcss includes/assets/css/postcss/addons-page.css -o includes/assets/css/addons-page.css",
-		"css": "npm run cssa && npm run cssf && npm run csshelper && npm run cssaddons",
+		"css": "npm run cssa && npm run cssf && npm run cssform && npm run csshelper && npm run cssaddons",
 		"js": "npx webpack --watch"
 	},
 	"repository": {

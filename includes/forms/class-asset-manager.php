@@ -69,6 +69,13 @@ class Noptin_Form_Asset_Manager {
 
 		wp_localize_script( 'noptin-form', 'noptinParams', $params );
 
+		wp_register_style(
+			'noptin_form_styles',
+			noptin()->plugin_url . 'includes/assets/css/form-styles.css',
+			array(),
+			filemtime( noptin()->plugin_path . 'includes/assets/css/form-styles.css' )
+		);
+
 		// JS for legacy forms/shortcodes/widgets/blocks.
 		wp_register_script(
 			'noptin_front',
@@ -96,7 +103,11 @@ class Noptin_Form_Asset_Manager {
 	public function load_stylesheets() {
 
 		// The css used to style the frontend
-		wp_enqueue_style( 'noptin_front' );
+		if ( is_using_new_noptin_forms() ) {
+			wp_enqueue_style( 'noptin_form_styles' );
+		} else {
+			wp_enqueue_style( 'noptin_front' );
+		}
 
 	}
 
@@ -113,6 +124,11 @@ class Noptin_Form_Asset_Manager {
 		// Maybe load legacy form scripts.
 		if ( apply_filters( 'noptin_load_legacy_form_scripts', ( $this->load_legacy_scripts || ! is_using_new_noptin_forms() ) ) ) {
 			wp_enqueue_script( 'noptin_front' );
+
+			if ( is_using_new_noptin_forms() ) {
+				wp_enqueue_style( 'noptin_front' );
+			}
+
 		}
 
 		do_action( 'noptin_load_form_scripts', $this );

@@ -124,7 +124,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 				}
 
 				// call function
-				$replacement = call_user_func( $config['callback'], $attributes );
+				$replacement = call_user_func( $config['callback'], $attributes, $tag );
 			}
 
 			if ( is_callable( $this->escape_function ) ) {
