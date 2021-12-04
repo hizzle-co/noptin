@@ -28,168 +28,56 @@ add_thickbox();
 
 ?>
 
-<div class="wrap noptin-form-editor" id="noptin-wrapper">
+<div class="noptin-form-editor" id="noptin-wrapper">
 
-	<h1 class="wp-heading-inline">
-		<span><?php echo ! $form->exists() ? __( 'New Form', 'newsletter-optin-box' ) : __( 'Edit Form', 'newsletter-optin-box' ); ?></span>
-	</h1>
-
-	<form method="post" id="noptin-form-editor-app">
+	<div id="noptin-form-editor-app">
 		<?php wp_nonce_field( 'noptin-save-form', 'noptin-save-form-nonce' ); ?>
-		<input type="hidden" name="noptin_admin_action" value="noptin_editor_save_form">
-		<input type="hidden" name="post_type" id="post_type" value="noptin-form" />
 
-		<?php if ( $form->exists() ) : ?>
-			<input type="hidden" name="noptin_form[id]" value="<?php echo intval( $form->id ); ?>" />
-			<input type="hidden" name="post_ID" id="post_ID" value="<?php echo intval( $form->id ); ?>" />
-		<?php endif; ?>
+		<div id="noptin-form-editor-container">
 
-		<div id="poststuff">
-			<div id="post-body" class="metabox-holder columns-2">
+			<ul class="noptin-tab-list">
+				<?php
 
-				<div id="post-body-content">
-					<div id="titlediv">
-						<div id="titlewrap">
-							<label class="screen-reader-text" id="title-prompt-text" for="title"><?php echo esc_html( __( 'Enter form name', 'newsletter-optin-box' ) ); ?></label>
-							<?php
-								$posttitle_atts = array(
-									'type'         => 'text',
-									'name'         => 'noptin_form[title]',
-									'size'         => 30,
-									'value'        => ! $form->exists() ? __( 'Newsletter Subscription Form', 'newsletter-optin-box' ) : $form->title,
-									'placeholder'  => __( 'Enter form name', 'newsletter-optin-box' ),
-									'id'           => 'title',
-									'spellcheck'   => 'true',
-									'autocomplete' => 'off',
-								);
+					foreach ( $tabs as $id => $label ) :
 
-								echo sprintf( '<input %s />', noptin_attr( 'form-editor-title', $posttitle_atts ) );
-							?>
-						</div><!-- #titlewrap -->
+						printf(
+							'<li class="noptin-form-tab-%s"><a href="%s" data-id="%s" class="noptin-tab-button">%s</a></li>',
+							esc_attr( $id ) . ( $tab == $id ? ' active' : '' ),
+							esc_url( add_query_arg( 'tab', $id ) ),
+							esc_attr( $id ),
+							esc_html( $label )
+						);
 
-						<div class="inside">
-							<?php if ( $form->exists() ) : ?>
-								<p class="description">
-									<label for="noptin-shortcode"><?php echo esc_html( __( 'Copy this shortcode and paste it into your post, page, or text widget content:', 'newsletter-optin-box' ) ); ?></label>
-									<span class="shortcode wp-ui-highlight"><input type="text" id="noptin-shortcode" onfocus="this.select();" readonly="readonly" class="large-text code" value="[noptin form=<?php echo intval( $form->id ); ?>]" /></span>
-								</p>
-							<?php endif; ?>
-						</div>
+					endforeach;
 
-					</div><!-- #titlediv -->
-				</div><!-- #post-body-content -->
+				?>
+			</ul>
 
-				<div id="postbox-container-1" class="postbox-container">
+			<?php
 
-					<div id="informationdiv" class="postbox">
-						<h3><?php esc_html_e( 'Do you need help?', 'newsletter-optin-box' ); ?></h3>
-						<div class="inside">
-							<p><?php esc_html_e( 'We have tutorials on how to...', 'newsletter-optin-box' ); ?></p>
-							<ol>
+				foreach ( array_keys( $tabs ) as $id ) :
 
-								<li><?php
-									printf(
-										'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-shortcode/" target="_blank">%s</a>',
-										__( 'Use the subscription form shortcode.', 'newsletter-optin-box' )
-									);
-								?></li>
+					printf(
+						'<div data-id="%s" class="noptin-form-tab-content noptin-form-tab-content-%s %s">',
+						esc_attr( $id ),
+						esc_attr( $id ),
+						$tab == $id ? 'noptin-form-tab-content-active' : ''
+					);
 
-								<li><?php
-									printf(
-										'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-widget/" target="_blank">%s</a>',
-										__( 'Display this form in a widget.', 'newsletter-optin-box' )
-									);
-								?></li>
+					if ( file_exists( plugin_dir_path( __FILE__ ) . "tab-$id.php" ) ) {
+						include plugin_dir_path( __FILE__ ) . "tab-$id.php";
+					}
 
-								<li><?php
-									printf(
-										'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-block/" target="_blank">%s</a>',
-										__( 'Use the subscription form block.', 'newsletter-optin-box' )
-									);
-								?></li>
+					do_action( "noptin_form_editor_tab_$id", $form );
 
-								<li><?php
-									printf(
-										'<a href="https://noptin.com/guide/subscription-forms/preventing-spam-sign-ups/" target="_blank">%s</a>',
-										__( 'Prevent spam sign-ups.', 'newsletter-optin-box' )
-									);
-								?></li>
+					echo '</div>';
+				endforeach;
 
-								<li><?php
-									printf(
-										'<a href="https://noptin.com/guide/subscription-forms/unsubscribe-forms/" target="_blank">%s</a>',
-										__( 'Create unsubscribe forms', 'newsletter-optin-box' )
-									);
-								?></li>
+			?>
 
-							</ol>
-						</div>
-					</div><!-- #informationdiv -->
+		</div><!-- #noptin-form-editor-container -->
 
-					<?php do_action( 'noptin_form_editor_side_metabox', $form ); ?>
-
-				</div><!-- #postbox-container-1 -->
-
-				<div id="postbox-container-2" class="postbox-container">
-					<div id="noptin-form-editor-container">
-
-						<nav class="nav-tab-wrapper" id="noptin-form-editor-nav-tab-wrapper" style="margin-bottom: 20px; margin-top: 20px; ">
-
-							<?php
-
-								foreach ( $tabs as $id => $label ) :
-
-									printf(
-										'<a href="%s" data-id="%s" class="nav-tab %s noptin-form-tab-%s">%s</a>',
-										esc_url( add_query_arg( 'tab', $id ) ),
-										esc_attr( $id ),
-										$tab == $id ? 'nav-tab-active' : '',
-										esc_attr( $id ),
-										esc_html( $label )
-									);
-
-								endforeach;
-
-							?>
-
-						</nav>
-
-						<?php
-
-							foreach ( array_keys( $tabs ) as $id ) :
-
-								printf(
-									'<div data-id="%s" class="noptin-form-tab-content noptin-form-tab-content-%s %s">',
-									esc_attr( $id ),
-									esc_attr( $id ),
-									$tab == $id ? 'noptin-form-tab-content-active' : ''
-								);
-
-								if ( file_exists( plugin_dir_path( __FILE__ ) . "tab-$id.php" ) ) {
-									include plugin_dir_path( __FILE__ ) . "tab-$id.php";
-								}
-
-								do_action( "noptin_form_editor_tab_$id", $form );
-
-								echo '</div>';
-							endforeach;
-
-						?>
-
-					</div><!-- #noptin-form-editor-container -->
-
-					<p class="submit">
-						<input type="submit" name="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Form', 'newsletter-optin-box' ); ?>" />&nbsp;
-					</p>
-
-				</div><!-- #postbox-container-2 -->
-
-			</div><!-- #post-body -->
-
-			<br class="clear" />
-		</div><!-- #poststuff -->
-
-	</form>
+	</div>
 
 </div><!-- .wrap -->
 

@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.6.1
  * @return bool
  */
-function is_using_new_noptin_forms() {
+function is_using_new_noptin_forms() {return true;
 	$use_new_forms = get_option( 'noptin_use_new_forms' );
 	return apply_filters( 'is_using_new_noptin_forms', ! empty( $use_new_forms ) );
 }

@@ -257,12 +257,9 @@ class Noptin_Admin {
 		}
 
 		// Optin forms editor.
-		if ( 'noptin-form' === $page ) {
+		if ( 'noptin-form' === $page && ( ! is_using_new_noptin_forms() || ( isset( $_GET['post'] ) && is_legacy_noptin_form( (int) $_GET['post'] ) ) ) ) {
 			$version = filemtime( $this->assets_path . 'js/dist/modules.css' );
 			wp_enqueue_style( 'noptin-modules', $this->assets_url . 'js/dist/modules.css', array(), $version );
-			wp_enqueue_script( 'noptin-modules', $this->assets_url . 'js/dist/modules.js', array(), $version, true );
-			$version = filemtime( $this->assets_path . 'js/dist/optin-editor.js' );
-			wp_enqueue_script( 'noptin-optin-editor', $this->assets_url . 'js/dist/optin-editor.js', array( 'vue', 'select2', 'sweetalert2', 'noptin-modules' ), $version, true );
 		}
 
 		// Email campaigns page.

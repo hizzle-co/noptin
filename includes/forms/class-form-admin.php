@@ -21,56 +21,23 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Form_Admin {
 
 	/**
+	 * Ensure we save metaboxes once.
+	 *
+	 * @var bool
+	 */
+	protected $saved_meta_box = false;
+
+	/**
 	 * Add hooks
 	 *
 	 * @since  1.6.2
 	 */
 	public function add_hooks() {
-		add_action( 'admin_init', array( $this, 'maybe_redirect_form_url' ) );
 		add_action( 'noptin_after_register_menus', array( $this, 'add_editor_page' ) );
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+		add_action( 'add_meta_boxes_noptin-form', array( $this, 'add_meta_boxes' ) );
 		add_action( 'noptin_editor_save_form', array( $this, 'save_edited_form' ) );
-	}
-
-	/**
-	 * Filters post row actions.
-	 *
-	 * @since  1.6.2
-	 */
-	public function maybe_redirect_form_url() {
-		global $pagenow;
-
-		if ( ! is_admin() || empty( $pagenow ) ) {
-			return;
-		}
-
-		$to_keep = array( 'from_post', 'new_lang', 'trid' );
-		$args    = array();
-
-		foreach ( $to_keep as $key ) {
-			if ( isset( $_GET[ $key ] ) ) {
-				$args[ $key ] = $_GET[ $key ];
-			}
-		}
-
-		// Form edits.
-		if ( 'post.php' === $pagenow && ( empty( $_GET['action'] ) || 'edit' === $_GET['action'] ) && isset( $_GET['post'] ) && 'noptin-form' === get_post_type( (int) $_GET['post'] ) ) {
-
-			// Only redirect if we're using the new forms editor.
-			if ( ! is_legacy_noptin_form( (int) $_GET['post'] ) ) {
-				$args['form_id'] = (int) $_GET['post'];
-				wp_redirect( add_query_arg( $args, admin_url( 'admin.php?page=noptin-form-editor' ) ) );
-				exit;
-			}
-
-		}
-
-		// Form creates.
-		if ( is_using_new_noptin_forms() && 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && 'noptin-form' === $_GET['post_type'] ) {
-			wp_redirect( add_query_arg( $args, get_noptin_new_form_url() ) );
-			exit;
-		}
-
+		add_action( 'save_post', array( $this, 'save_edited_form' ), 10, 2 );
+		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
 	}
 
 	/**
@@ -121,93 +88,184 @@ class Noptin_Form_Admin {
 	}
 
 	/**
-	 * Registers the legacy form editing metabox.
+	 * Registers the form editing metabox.
 	 *
 	 * @since       1.6.2
-	 * @param string $post_type
+	 * @param WP_Post $post
 	 */
-	public function add_meta_boxes( $post_type ) {
+	public function add_meta_boxes( $post ) {
 
-		if ( 'noptin-form' === $post_type ) {
+		if ( is_legacy_noptin_form( $post->ID ) ) {
+
 			add_meta_box(
 				'noptin_form_editor',
 				__( 'Form Editor', 'newsletter-optin-box' ),
 				array( $this, 'display_legacy_form_editor' ),
-				$post_type,
+				null,
 				'normal',
 				'high'
 			);
+
+		} else {
+
+			add_meta_box(
+				'noptin-form-editor-new',
+				__( 'Form Editor', 'newsletter-optin-box' ),
+				array( $this, 'display_new_form_editor' ),
+				null,
+				'normal',
+				'high'
+			);
+
+			add_meta_box(
+				'noptin-form-editor-tips',
+				__( 'Do you need help?', 'newsletter-optin-box' ),
+				array( $this, 'display_editor_tips' ),
+				null,
+				'side',
+				'low'
+			);
+
 		}
 
 	}
 
 	/**
-	 * Displays form editing metabox.
+	 * Displays the legacy form editing metabox.
 	 *
 	 * @param WP_Post $post
 	 * @since  1.6.2
 	 */
 	public function display_legacy_form_editor( $post ) {
+
+		$version = filemtime( plugin_dir_path( Noptin::$file ) . 'includes/assets/js/dist/optin-editor.js' );
+		wp_enqueue_script( 'noptin-modules', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/modules.js', array(), $version, true );
+		wp_enqueue_script( 'noptin-optin-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/optin-editor.js', array( 'vue', 'select2', 'sweetalert2', 'noptin-modules' ), $version, true );
+
 		require_once plugin_dir_path( __FILE__ ) . 'class-legacy-form-editor.php';
 		$editor = new Noptin_Legacy_Form_Editor( $post->ID, true );
 		$editor->output();
 	}
 
 	/**
+	 * Displays new form editing metabox.
+	 *
+	 * @param WP_Post $post
+	 * @since  1.6.4
+	 */
+	public function display_new_form_editor( $post ) {
+		$form = new Noptin_Form( $post->ID );
+
+		require_once plugin_dir_path( __FILE__ ) . 'views/editor.php';
+
+		// Custom admin scripts.
+		$version = filemtime( plugin_dir_path( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js' );
+		wp_enqueue_script( 'select2', plugin_dir_url( Noptin::$file ) . 'includes/assets/vendor/select2/select2.full.min.js', array( 'jquery' ), '4.0.12', true );
+		wp_enqueue_script( 'noptin-form-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js', array( 'jquery', 'select2' ), $version, true );
+	}
+
+	/**
+	 * Displays editor tips.
+	 *
+	 * @param WP_Post $post
+	 * @since  1.6.4
+	 */
+	public function display_editor_tips( $post ) {
+		include plugin_dir_path( __FILE__ ) . 'views/tips.php';
+	}
+
+	/**
 	 * Saves a submitted form (only handles forms created by the new editor).
 	 *
-	 * @param Noptin_Admin $admin
+	 * @param  int    $post_id Post ID.
+	 * @param  WP_Post $post Post object.
 	 * @since  1.6.2
 	 */
-	public function save_edited_form( $admin ) {
+	public function save_edited_form( $post_id, $post ) {
 
-		// Security checks.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( 'Access Denied' );
+		// Do not save for ajax requests.
+		if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
+			return;
 		}
 
+		// $post_id and $post are required
+		if ( empty( $post_id ) || empty( $post ) || $this->saved_meta_box ) {
+			return;
+		}
+
+		// Dont' save meta boxes for revisions or autosaves.
+		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || is_int( wp_is_post_revision( $post ) ) || is_int( wp_is_post_autosave( $post ) ) ) {
+			return;
+		}
+
+		// Check the nonce.
 		if ( empty( $_POST['noptin-save-form-nonce'] ) || ! wp_verify_nonce( $_POST['noptin-save-form-nonce'], 'noptin-save-form' ) ) {
-			wp_die( 'Invalid Nonce' );
+			return;
 		}
 
-		// Removes slashes from submitted data and loads the form.
-		$form   = new Noptin_Form( wp_kses_post_deep( wp_unslash( $_POST['noptin_form'] ) ) );
-		$is_new = ! $form->exists();
+		// Check the post being saved == the $post_id to prevent triggering this call for other save_post events.
+		if ( empty( $_POST['noptin_form'] ) || empty( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== $post_id ) {
+			return;
+		}
 
-		// Create/update the form.
-		$form->save();
+		// Check user has permission to edit.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
 
+		// Prepare the form.
+		$form = new Noptin_Form( $post_id );
+
+		// Abort if it does not exist.
 		if ( ! $form->exists() ) {
-			return $admin->show_error( __( 'An error ocurred while saving your changes. Please try again later.', 'newsletter-optin-box' ) );
+			return;;
 		}
 
-		if ( $is_new ) {
+		// Prepare data being saved.
+		$data = wp_kses_post_deep( wp_unslash( $_POST['noptin_form'] ) );
 
-			$admin->show_success(
-				sprintf(
-					__( 'Form created successfully. %sPreview%s', 'newsletter-optin-box' ),
-					sprintf( '<a href="%s">', esc_url_raw( get_noptin_preview_form_url( $form->id ) ) ),
-					'</a>'
-				)
-			);
+		foreach ( $form->get_form_properties() as $prop ) {
 
-		} else {
+			if ( ! in_array( $prop, array( 'id', 'title', 'status' ) ) ) {
 
-			$admin->show_success(
-				sprintf(
-					__( 'Form updated successfully. %sPreview%s', 'newsletter-optin-box' ),
-					sprintf( '<a href="%s">', esc_url_raw( get_noptin_preview_form_url( $form->id ) ) ),
-					'</a>'
-				)
-			);
+				if ( isset( $data[ $prop ] ) && ( ! empty( $data[ $prop ] ) || '0' == $data[ $prop ] ) ) {
+					update_post_meta( $post_id, "form_$prop", $data[ $prop ] );
+				} else {
+					delete_post_meta( $post_id, "form_$prop" );
+				}
+
+			}
 
 		}
 
 		do_action( 'after_save_edited_noptin_form', $form );
+	}
 
-		// Redirect to the form's edit page.
-		wp_redirect( esc_url_raw( get_noptin_edit_form_url( $form->id ) ) );
-		exit;
+	/**
+	 * Filter our updated/trashed post messages
+	 *
+	 * @access public
+	 * @since 1.6.2
+	 * @return array $messages
+	 */
+	public function post_updated_messages( $messages ) {
+		global $post_ID;
+
+		$messages['noptin-form'] = array(
+			0  => '', // Unused. Messages start at index 1.
+			1  => sprintf( __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			2  => __( 'Custom field updated.', 'newsletter-optin-box' ),
+			3  => __( 'Custom field deleted.', 'newsletter-optin-box' ),
+			4  => sprintf( __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			5  => __( 'Form restored.', 'newsletter-optin-box' ),
+			6  => sprintf( __( 'Form published. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			7  => sprintf( __( 'Form saved. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			8  => sprintf( __( 'Form submitted. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			9  => sprintf( __( 'Form scheduled. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			10 => sprintf( __( 'Form draft updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+		);
+
+		return $messages;
 	}
 
 }

@@ -193,15 +193,19 @@ class Noptin_Page {
 	 */
 	public function email_click( $filter ) {
 
+		// Ensure this is our action.
 		if ( 'email_click' != $this->get_request_action() ) {
 			return $filter;
 		}
 
-		$to = get_home_url();
-
-		if ( isset( $_GET['to'] ) ) {
-			$to = urldecode( $_GET['to'] );
+		// Check if we have a redirect URL or campaign ID.
+		if ( empty( $_GET['to'] ) || empty( $_GET['cid'] ) ) {
+			wp_redirect( get_home_url() );
+			exit;
 		}
+
+		// Prepare the redirect URL.
+		$to = esc_url_raw( urldecode( $_GET['to'] ) );
 
 		if ( isset( $_GET['sid'] ) && isset( $_GET['cid'] ) ) {
 			$subscriber_id = intval( $_GET['sid'] );
