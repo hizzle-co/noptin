@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <style id="formCustomCSS"></style>
 <style id="generatedCustomCSS"></style>
 <div class="noptin-form-designer-loader">

@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="noptin-optin-form-wrapper"  :class="imageMain ? imageMainPos : 'no-image'">
 	<noptin-temp-form class="noptin-optin-form" @submit.prevent :class="singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'">
 		<div class="noptin-form-header" :class="image ? imagePos : 'no-image'">

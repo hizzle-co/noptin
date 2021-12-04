@@ -69,6 +69,15 @@ class Noptin_Form_Admin {
 			);
 
 			add_meta_box(
+				'noptin-form-editor-embed',
+				__( 'Embed', 'newsletter-optin-box' ),
+				array( $this, 'display_editor_embed' ),
+				null,
+				'side',
+				'low'
+			);
+
+			add_meta_box(
 				'noptin-form-editor-tips',
 				__( 'Do you need help?', 'newsletter-optin-box' ),
 				array( $this, 'display_editor_tips' ),
@@ -116,13 +125,23 @@ class Noptin_Form_Admin {
 	}
 
 	/**
+	 * Displays editor embed metabox.
+	 *
+	 * @param WP_Post $post
+	 * @since  1.6.4
+	 */
+	public function display_editor_embed( $post ) {
+		include plugin_dir_path( __FILE__ ) . 'views/metabox-embed.php';
+	}
+
+	/**
 	 * Displays editor tips.
 	 *
 	 * @param WP_Post $post
 	 * @since  1.6.4
 	 */
 	public function display_editor_tips( $post ) {
-		include plugin_dir_path( __FILE__ ) . 'views/tips.php';
+		include plugin_dir_path( __FILE__ ) . 'views/metabox-tips.php';
 	}
 
 	/**

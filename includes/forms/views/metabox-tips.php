@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <p><?php esc_html_e( 'We have tutorials on how to...', 'newsletter-optin-box' ); ?></p>
 <ol>
 
