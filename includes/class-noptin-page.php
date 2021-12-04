@@ -204,22 +204,34 @@ class Noptin_Page {
 			exit;
 		}
 
-		// Prepare the redirect URL.
-		$to = esc_url_raw( urldecode( $_GET['to'] ) );
+		// Confirm that the provided key matches the expected key.
+		$to = urldecode( $_GET['to'] );
 
-		if ( isset( $_GET['sid'] ) && isset( $_GET['cid'] ) ) {
+		// Backwards compat.
+		if ( empty( $_GET['link_key'] ) ) {
+
+			$campaign = get_post( (int) $_GET['cid'] );
+
+			if ( empty( $campaign ) || strtotime( $campaign->post_date ) > strtotime( '2021-12-06' ) ) {
+				wp_redirect( get_home_url() );
+				exit;
+			}
+
+		// Confirm that keys match.
+		} else if ( md5( AUTH_KEY . $to ) != sanitize_text_field( urldecode( $_GET['link_key'] ) ) ) {
+			wp_redirect( get_home_url() );
+			exit;
+		}
+
+		// Log subscriber's campaign click.
+		if ( isset( $_GET['sid'] ) ) {
 			$subscriber_id = intval( $_GET['sid'] );
 			$campaign_id   = intval( $_GET['cid'] );
 			log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $to );
 		}
 
-		if ( ! empty( $_GET['cid'] ) && is_numeric( $_GET['cid'] ) ) {
+		if ( is_numeric( $_GET['cid'] ) ) {
 			$campaign_id   = intval( $_GET['cid'] );
-
-			if ( ! empty( $_GET['sid'] ) ) {
-				$subscriber_id = intval( $_GET['sid'] );
-				log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $to );
-			}
 
 			if ( ! empty( $_GET['uid'] ) ) {
 				$user_id           = intval( $_GET['user_id'] );

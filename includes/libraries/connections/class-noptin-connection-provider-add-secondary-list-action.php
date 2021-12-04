@@ -67,7 +67,7 @@ class Noptin_Connection_Provider_Add_Secondary_List_Action extends Noptin_Abstra
 
 		return sprintf(
 			/* Translators: %1$s provider tame, %2$s list type. */
-			__( '%1$ %2$s Add.', 'newsletter-optin-box' ),
+			__( '%1$s %2$s Add.', 'newsletter-optin-box' ),
 			$this->provider->name,
 			ucwords( $this->secondary_list )
 		);
@@ -81,7 +81,7 @@ class Noptin_Connection_Provider_Add_Secondary_List_Action extends Noptin_Abstra
 
 		return sprintf(
 			/* Translators: %1$s provider tame, %2$s list type. */
-			__( 'Add the subscriber to a %1$ %2$s.', 'newsletter-optin-box' ),
+			__( 'Add the subscriber to a %1$s %2$s.', 'newsletter-optin-box' ),
 			$this->provider->name,
 			$this->secondary_list
 		);
@@ -103,7 +103,7 @@ class Noptin_Connection_Provider_Add_Secondary_List_Action extends Noptin_Abstra
 
 		return sprintf(
 			/* Translators: %1$s list type, %2$s list name. */
-			__( 'Add the subscriber to the %1$ %2$s.', 'newsletter-optin-box' ),
+			__( 'Add the subscriber to the %1$s %2$s.', 'newsletter-optin-box' ),
 			esc_html( $this->secondary_list ),
 			"<code>$list</code> ({$this->provider->name})"
 		);

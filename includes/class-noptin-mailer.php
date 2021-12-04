@@ -297,11 +297,16 @@ class Noptin_Mailer {
 		$_content = preg_replace_callback(
 			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
 			function ( $matches ) use ( $url ) {
+
+				// Prepare URL.
 				$_url = add_query_arg(
-					'to',
-					urlencode( $matches[2] ),
+					array(
+						'to'       => urlencode( $matches[2] ),
+						'link_key' => urlencode( md5( AUTH_KEY . $matches[2] ) ),
+					),
 					$url
 				);
+
 				$pre  = $matches[1];
 				$post = $matches[3];
 				return "<a $pre href='$_url' $post >";

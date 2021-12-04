@@ -136,6 +136,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.6.5 =
 * Now uses normal WordPress new-post pages to for the newsletter form editor - FIXED
+* Now adds and verifies a key before redirecting newsletter links - CHANGED
 
 = 1.6.4 =
 * All imported newsletter subscribers marked as unconfirmed - FIXED
