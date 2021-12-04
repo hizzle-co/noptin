@@ -131,7 +131,6 @@ class Noptin_Admin {
 
 		// Register new menu pages.
 		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
-		add_action( 'admin_head', array( $this, 'remove_menus' ) );
 		add_action( 'admin_head', array( $this, 'set_admin_menu_class' ) );
 
 		// Runs when saving a new opt-in form.
@@ -568,17 +567,6 @@ class Noptin_Admin {
 
 		}
 
-	}
-
-	/**
-	 * Renders main admin page
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function remove_menus() {
-		remove_submenu_page( 'noptin', 'noptin-form-editor' );
 	}
 
 	/**

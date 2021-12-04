@@ -33,58 +33,9 @@ class Noptin_Form_Admin {
 	 * @since  1.6.2
 	 */
 	public function add_hooks() {
-		add_action( 'noptin_after_register_menus', array( $this, 'add_editor_page' ) );
 		add_action( 'add_meta_boxes_noptin-form', array( $this, 'add_meta_boxes' ) );
-		add_action( 'noptin_editor_save_form', array( $this, 'save_edited_form' ) );
 		add_action( 'save_post', array( $this, 'save_edited_form' ), 10, 2 );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
-	}
-
-	/**
-	 * Registers the editor page.
-	 *
-	 * @since  1.6.2
-	 */
-	public function add_editor_page() {
-
-		add_submenu_page(
-			'noptin',
-			'Forms Editor - Noptin',
-			'Noptin Forms Editor',
-			'manage_options',
-			'noptin-form-editor',
-			array( $this, 'display_form_editor_page' )
-		);
-
-	}
-
-	/**
-	 * Displays form editing page.
-	 *
-	 * @since  1.6.2
-	 */
-	public function display_form_editor_page() {
-		global $post, $post_ID;
-
-		if ( ! empty( $_POST['noptin_form'] ) ) {
-			$form = new Noptin_Form( wp_kses_post_deep( wp_unslash( $_POST['noptin_form'] ) ) );
-		} elseif ( isset( $_GET['form_id'] ) ) {
-			$form = new Noptin_Form( (int) $_GET['form_id'] );
-		} else {
-			$form = new Noptin_Form();
-		}
-
-		if ( $form->exists() ) {
-			$post    = get_post( $form->id );
-			$post_ID = $form->id;
-		}
-
-		require_once plugin_dir_path( __FILE__ ) . 'views/editor.php';
-
-		// Custom admin scripts.
-		$version = filemtime( plugin_dir_path( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js' );
-		wp_enqueue_script( 'select2', plugin_dir_url( Noptin::$file ) . 'includes/assets/vendor/select2/select2.full.min.js', array( 'jquery' ), '4.0.12', true );
-		wp_enqueue_script( 'noptin-form-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/form-editor.js', array( 'jquery', 'select2' ), $version, true );
 	}
 
 	/**
