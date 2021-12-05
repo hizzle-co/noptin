@@ -41,7 +41,7 @@ class Noptin_Task {
 	 *
 	 * @param string $action (required) The action to fire when running this task.
 	 */
-	public function __construct( string $action ) {
+	public function __construct( $action ) {
 		$this->action = sanitize_key( $action );
 	}
 
@@ -91,8 +91,9 @@ class Noptin_Task {
 	 */
 	public function do_async() {
 
+		// Fallback to normal cron jobs if action scheduler is not installed.
 		if ( ! $this->is_usable() || ! function_exists( 'as_enqueue_async_action' ) ) {
-			return false;
+			return wp_schedule_single_event( current_time( 'timestamp', true ), $this->action, $this->params );
 		}
 
 		return as_enqueue_async_action(
@@ -116,6 +117,7 @@ class Noptin_Task {
 	public function do_recurring( $timestamp, $interval ) {
 
 		if ( ! $this->is_usable() || ! function_exists( 'as_schedule_recurring_action' ) ) {
+			_doing_it_wrong( 'schedule_noptin_recurring_background_action', 'You need to load the action scheduler library or install the action scheduler plugin to use schedule_noptin_recurring_background_action', '1.7.0' );
 			return false;
 		}
 
@@ -140,8 +142,9 @@ class Noptin_Task {
 	 */
 	public function do_once( $timestamp ) {
 
+		// Fallback to normal cron jobs if action scheduler is not installed.
 		if ( ! $this->is_usable() || ! function_exists( 'as_schedule_single_action' ) ) {
-			return false;
+			return wp_schedule_single_event( $timestamp, $this->action, $this->params );
 		}
 
 		return as_schedule_single_action(

@@ -237,7 +237,6 @@ class Noptin {
 		require_once $plugin_path . 'includes/forms/forms.php';
 		require_once $plugin_path . 'includes/forms/class-form-manager.php';
 		require_once $plugin_path . 'includes/emails/class-emails-manager.php';
-		require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
 		// Register autoloader.
