@@ -150,6 +150,12 @@ class Noptin_Automated_Emails_Admin {
 	 *
 	 */
 	public function render_metabox( $campaign, $metabox ) {
+		
+		if ( is_array( $metabox['args'] ) ) {
+			call_user_func( $metabox['args'], $campaign );
+			return;
+		}
+
 		include plugin_dir_path( __FILE__ ) . "views/automations/{$metabox['args']}.php";
 	}
 
