@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="wrap noptin-add-campaign-page" id="noptin-wrapper">
 	<?php
 		printf(
@@ -45,25 +46,10 @@
 				<div id="postbox-container-2" class="postbox-container">
 
 					<?php
-						/**
-						 * Fires before printing the first row in the newsletter campaign editor
-						 *
-						 * @param object $campaign current campaign object
-						 */
-						do_action( 'noptin_before_newsletter_editor_fields', $campaign );
-					?>
 
-					<?php do_meta_boxes( 'noptin_page_noptin-newsletter', 'normal', $campaign ); ?>
+						do_meta_boxes( 'noptin_page_noptin-newsletter', 'normal', $campaign );
+						do_meta_boxes( 'noptin_page_noptin-newsletter', 'advanced', $campaign );
 
-					<?php do_meta_boxes( 'noptin_page_noptin-newsletter', 'advanced', $campaign ); ?>
-
-					<?php
-						/**
-						 * Fires after printing the first row in the newsletter campaign editor
-						 *
-						 * @param object $campaign current campaign object
-						 */
-						do_action( 'noptin_after_newsletter_editor_fields', $campaign );
 					?>
 
 				</div>

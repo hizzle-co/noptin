@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="nav-tab-wrapper noptin-nav-tab-wrapper">
 
 <?php
@@ -10,7 +11,7 @@
 			add_query_arg(
 				array(
 					'page'    => 'noptin-email-campaigns',
-					'section' => $key,
+					'section' => urlencode( $key ),
 				),
 				admin_url( '/admin.php' )
 			)

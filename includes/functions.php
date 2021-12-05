@@ -1455,3 +1455,12 @@ function noptin_is_preview() {
 function noptin_is_multilingual() {
 	return apply_filters( 'noptin_is_multilingual', false );
 }
+
+/**
+ * Retrieves an array of newsletter meta
+ *
+ * @return array
+ */
+function noptin_get_newsletter_meta() {
+	return apply_filters( 'noptin_get_newsletter_campaign_meta', array() );
+}

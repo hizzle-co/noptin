@@ -114,7 +114,7 @@ class Noptin_Email_Newsletters_Table extends WP_List_Table {
 			$edit_url = $preview_url;
 		}
 
-		$duplication_url = esc_url( add_query_arg( 'duplicate_campaign', $item->ID ) );
+		$duplication_url = wp_nonce_url( add_query_arg( 'duplicate_campaign', $item->ID ), 'noptin_duplicate_campaign', 'noptin_nonce' );
 		$row_actions['duplicate'] = '<a class="noptin-duplicate-campaign" href="' . $duplication_url . '" data-id="' . $item->ID . '">' . __( 'Duplicate', 'newsletter-optin-box' ) . '</a>';
 
 		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';

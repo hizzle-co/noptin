@@ -160,6 +160,14 @@ class Noptin {
 	public $forms;
 
 	/**
+	 * The main emails class.
+	 *
+	 * @var Noptin_Emails_Manager
+	 * @since       1.7.0
+	 */
+	public $emails;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -228,6 +236,7 @@ class Noptin {
 		require_once $plugin_path . 'includes/subscriber.php';
 		require_once $plugin_path . 'includes/forms/forms.php';
 		require_once $plugin_path . 'includes/forms/class-form-manager.php';
+		require_once $plugin_path . 'includes/emails/class-emails-manager.php';
 		require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
@@ -256,6 +265,9 @@ class Noptin {
 
 		// Form manager.
 		$this->forms = new Noptin_Form_Manager();
+
+		// Email manager.
+		$this->emails = new Noptin_Emails_Manager();
 
 		// Mailer.
 		$this->mailer = new Noptin_Mailer();

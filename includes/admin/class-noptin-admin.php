@@ -31,9 +31,9 @@ class Noptin_Admin {
 	/**
 	 * Web path to this plugins admin directory
 	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @var         string|null
+	 * @access public
+	 * @since  1.0.0
+	 * @var    string|null
 	 */
 	public $admin_url = null;
 
@@ -88,7 +88,6 @@ class Noptin_Admin {
 		$this->assets_url  = plugin_dir_url( Noptin::$file ) . 'includes/assets/';
 		$this->assets_path = plugin_dir_path( Noptin::$file ) . 'includes/assets/';
 
-		$this->email_campaigns = new Noptin_Email_Campaigns_Admin();
 		$this->bg_sync 		   = new Noptin_Background_Sync();
 		$this->filters         = new Noptin_Admin_Filters();
 
@@ -504,16 +503,6 @@ class Noptin_Admin {
 			'edit.php?post_type=noptin-form'
 		);
 
-		// Add the email campaigns page.
-		add_submenu_page(
-			'noptin',
-			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-email-campaigns',
-			array( $this, 'render_email_campaigns_page' )
-		);
-
 		do_action( 'noptin_after_register_menus', $this );
 
 		// Automation Rules.
@@ -628,37 +617,6 @@ class Noptin_Admin {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_admin_main_page', $this );
-	}
-
-	/**
-	 * Renders view subscribers page
-	 *
-	 * @access      public
-	 * @since       1.1.2
-	 * @return      void
-	 */
-	public function render_email_campaigns_page() {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the email campaigns page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_email_campaigns_page', $this );
-
-		$this->email_campaigns->render_campaigns_page();
-
-		/**
-		 * Runs after displaying the email campaigns page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_email_campaigns_page', $this );
 	}
 
 	/**
@@ -959,65 +917,6 @@ class Noptin_Admin {
 				$this->show_success( __( 'Subscriber successfully deleted', 'newsletter-optin-box' ) );
 			}
 
-		}
-
-		// Campaign actions.
-		if ( isset( $_GET['page'] ) && 'noptin-email-campaigns' === $_GET['page'] ) {
-
-			// Duplicate campaign.
-			if ( ! empty( $_GET['duplicate_campaign'] ) ) {
-
-				$campaign = get_post( $_GET['duplicate_campaign'] );
-
-				if ( ! empty( $campaign ) ) {
-
-					$post = array(
-						'post_status'   => 'draft',
-						'post_type'     => 'noptin-campaign',
-						'post_date'     => current_time( 'mysql' ),
-						'post_date_gmt' => current_time( 'mysql', true ),
-						'edit_date'     => true,
-						'post_title'    => trim( $campaign->post_title ),
-						'post_content'  => $campaign->post_content,
-						'meta_input'    => array(
-							'campaign_type'           => 'newsletter',
-							'preview_text'            => get_post_meta( $campaign->ID, 'preview_text', 'true' ),
-							'email_sender'            => get_post_meta( $campaign->ID, 'email_sender', 'true' ),
-						),
-					);
-
-					foreach ( Noptin_Email_Campaigns_Admin::get_meta() as $meta_key ) {
-						$post['meta_input'][ $meta_key ] = get_post_meta( $campaign->ID, $meta_key, 'true' );
-					}
-					$post['meta_input'] = array_filter( $post['meta_input'] );
-
-					$new_campaign = wp_insert_post( $post, true );
-
-					if ( is_wp_error( $new_campaign ) ) {
-						$this->show_error( $new_campaign->get_error_message() );
-					} else {
-						wp_redirect( get_noptin_newsletter_campaign_url( $new_campaign ) );
-						exit;
-					}
-
-				}
-				
-			}
-
-			// Delete multiple campaigns.
-			if ( ! empty( $_GET['action'] ) && 'delete' === $_GET['action'] && wp_verify_nonce( $_GET['_wpnonce'], 'bulk-ids' ) ) {
-				$ids = array();
-
-				if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
-					$ids = array_map( 'intval', $_REQUEST['id'] );
-				}
-
-				foreach ( $ids as $id ) {
-					wp_delete_post( $id, true );
-				}
-
-				$this->show_success( __( 'The selected campaigns have been deleted.', 'newsletter-optin-box' ) );
-			}
 		}
 
 		// Tools.

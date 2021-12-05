@@ -1,14 +1,7 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="wrap noptin" id="noptin-wrapper">
 
-    <?php
-        get_noptin_template(
-            'newsletters/tabs.php',
-            array(
-                'tabs' => $tabs,
-                'tab'  => 'newsletters',
-            )
-        );
-    ?>
+    <?php include plugin_dir_path( dirname( __FILE__ ) ) . 'tabs.php'; ?>
 
     <form id="noptin-automation-campaigns-table" method="GET" style="margin-top: 30px;">
 		<input type="hidden" name="page" value="noptin-email-campaigns"/>
@@ -18,6 +11,6 @@
     </form>
     
     <div id="noptin-create-automation" style="display:none;">
-		<?php get_noptin_template( 'new-email-automations-popup.php', compact( 'triggers' ) ); ?>
+		<?php include plugin_dir_path( __FILE__ ) . 'new-email-automations-popup.php'; ?>
 	</div>
 </div>

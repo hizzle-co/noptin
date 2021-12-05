@@ -391,7 +391,7 @@ class Noptin_New_Post_Notify {
 			),
 		);
 
-		foreach( Noptin_Email_Campaigns_Admin::get_meta() as $meta_key ) {
+		foreach( noptin_get_newsletter_meta() as $meta_key ) {
 			$post['meta_input'][ $meta_key ] = get_post_meta( $campaign_id, $meta_key, true );
 		}
 
