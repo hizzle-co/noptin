@@ -205,7 +205,8 @@ class Noptin_Page {
 		}
 
 		// Confirm that the provided key matches the expected key.
-		$to = urldecode( $_GET['to'] );
+		$_to = urldecode( $_GET['to'] );
+		$to  = str_replace( '&amp;', '&', $_to );
 
 		// Backwards compat.
 		if ( empty( $_GET['link_key'] ) ) {
@@ -218,7 +219,7 @@ class Noptin_Page {
 			}
 
 		// Confirm that keys match.
-		} else if ( md5( AUTH_KEY . $to ) != sanitize_text_field( urldecode( $_GET['link_key'] ) ) ) {
+		} else if ( ! in_array( urldecode( $_GET['link_key'] ), array( md5( AUTH_KEY . $to ), md5( AUTH_KEY . $_to ) ) ) ) {
 			wp_redirect( get_home_url() );
 			exit;
 		}

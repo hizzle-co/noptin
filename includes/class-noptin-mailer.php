@@ -161,8 +161,8 @@ class Noptin_Mailer {
 
 		$url = add_query_arg(
 			array(
-				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
-				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
+				'uid' => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
+				'sid' => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
 				'cid' => intval( $data['campaign_id'] ),
 			),
 			$url
@@ -306,6 +306,11 @@ class Noptin_Mailer {
 					),
 					$url
 				);
+
+				// Skip action page URLs.
+				if ( false !== strpos( $url, 'noptin_ns' ) ) {
+					$_url = $matches[2];
+				}
 
 				$pre  = $matches[1];
 				$post = $matches[3];
@@ -504,7 +509,7 @@ class Noptin_Mailer {
 		$headers[]  = "Content-Type:$content";
 
 		if ( ! empty( $this->mailer_data['merge_tags']['unsubscribe_url'] ) ) {
-			$url       = esc_url( $this->mailer_data['merge_tags']['unsubscribe_url'] );
+			$url       = $this->mailer_data['merge_tags']['unsubscribe_url'];
 			$headers[] = "List-Unsubscribe:<$url>";
 		}
 
