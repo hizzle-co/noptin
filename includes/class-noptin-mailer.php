@@ -298,6 +298,8 @@ class Noptin_Mailer {
 			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
 			function ( $matches ) use ( $url ) {
 
+				$matches[2]  = str_replace( '&amp;', '&', $matches[2] );
+
 				// Prepare URL.
 				$_url = add_query_arg(
 					array(
@@ -308,7 +310,7 @@ class Noptin_Mailer {
 				);
 
 				// Skip action page URLs.
-				if ( false !== strpos( $url, 'noptin_ns' ) ) {
+				if ( false !== strpos( $matches[2], 'noptin_ns' ) ) {
 					$_url = $matches[2];
 				}
 
