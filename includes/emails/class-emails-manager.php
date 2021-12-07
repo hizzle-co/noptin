@@ -23,6 +23,9 @@ class Noptin_Emails_Manager {
 	/** @var Noptin_Emails_Admin */
 	public $admin;
 
+	/** @var Noptin_Email_Tags */
+	public $tags;
+
 	/**
 	 * Class constructor.
 	 *
@@ -30,10 +33,13 @@ class Noptin_Emails_Manager {
 	public function __construct() {
 
 		// Load files.
+		include plugin_dir_path( __FILE__ ) . 'emails.php';
 		include plugin_dir_path( __FILE__ ) . 'class-emails-admin.php';
+		include plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
 
 		// Init props.
 		$this->admin = new Noptin_Emails_Admin();
+		$this->tags  = new Noptin_Email_Tags();
 
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 7 );
 
@@ -49,6 +55,7 @@ class Noptin_Emails_Manager {
 		add_action( 'transition_post_status', array( $this, 'maybe_send_campaign' ), 100, 3 );
 
 		$this->admin->add_hooks();
+		$this->tags->add_hooks();
 	}
 
 	/**

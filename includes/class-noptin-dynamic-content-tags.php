@@ -28,7 +28,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		// Global tags can go here
 		$this->tags['cookie'] = array(
-			'description' => sprintf( __( 'Data from a cookie.', 'newsletter-optin-box' ) ),
+			'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_cookie' ),
 			'example'     => "cookie name='my_cookie' default='Default Value'",
 		);
@@ -69,19 +69,19 @@ abstract class Noptin_Dynamic_Content_Tags {
 		);
 
 		$this->tags['subscriber'] = array(
-			'description' => sprintf( __( "A custom field's value of the current subscriber (if known).", 'newsletter-optin-box' ) ),
+			'description' => __( "A custom field's value of the current subscriber (if known).", 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_subscriber_field' ),
 			'example'     => "subscriber field='first_name' default='there'",
 		);
 
 		$this->tags['user'] = array(
-			'description' => sprintf( __( 'The property of the currently logged-in user.', 'newsletter-optin-box' ) ),
+			'description' => __( 'The property of the currently logged-in user.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_user_property' ),
 			'example'     => "user property='user_email'",
 		);
 
 		$this->tags['post'] = array(
-			'description' => sprintf( __( 'Property of the current page or post.', 'newsletter-optin-box' ) ),
+			'description' => __( 'Property of the current page or post.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_post_property' ),
 			'example'     => "post property='ID'",
 		);
