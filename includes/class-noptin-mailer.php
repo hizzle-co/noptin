@@ -71,6 +71,7 @@ class Noptin_Mailer {
 		}
 
 		// Ensure that a few variables are set.
+		$data['subscriber']      = empty( $data['subscriber'] ) ? null : $data['subscriber'];;
 		$data['email_subject']   = $this->get_subject( $data );
 		$data['title']           = $data['email_subject'];
 		$data['logo_url']        = $this->get_logo_url( $data );
@@ -111,16 +112,18 @@ class Noptin_Mailer {
 	 */
 	public function get_subject( $data = array() ) {
 
+		// Abort if no subject.
 		if ( empty( $data['email_subject'] ) ) {
 			return '';
 		}
 
+		// Clean the subject.
 		$subject = trim( $data['email_subject'] );
 
-		if ( empty( $data['merge_tags'] ) ) {
-			$data['merge_tags'] = array();
-		}
+		// Process merge tags.
+		$subject = noptin_handle_email_tags( $subject, $data['subscriber'], 'subject' );
 
+		// Backwards compatibility.
 		$subject = $this->merge( $subject, $data['merge_tags'] );
 
 		return $subject;
@@ -365,6 +368,9 @@ class Noptin_Mailer {
 	public function post_process( $content, $data ) {
 
 		// Parse merge tags.
+		$content = noptin_handle_email_tags( $content, $data['subscriber'] );
+
+		// Backwards compatibility.
 		$content = $this->merge( $content, $data['merge_tags'] );
 
 		// Make links clickable.

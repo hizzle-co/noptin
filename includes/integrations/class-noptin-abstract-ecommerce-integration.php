@@ -49,6 +49,9 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		parent::__construct();
 		$this->context     = __( 'customers', 'newsletter-optin-box' );
 		$this->order_label = __( 'Orders', 'newsletter-optin-box' );
+
+		// Map subscriber fields to customer fields.
+		add_action( 'noptin_custom_field_settings', array( $this, 'map_customer_to_custom_fields' ), $this->priority );
 	}
 
 	/**
@@ -58,8 +61,6 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 */
 	public function initialize() {
 
-		// Map subscriber fields to customer fields.
-		add_action( 'noptin_custom_field_settings', array( $this, 'map_customer_to_custom_fields' ), $this->priority );
 		if ( empty( $this->product_post_type ) ) {
 			return;
 		}
@@ -589,7 +590,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		}
 
 		$customer_fields = array_merge(
-			[ '' => __( 'Select Field', 'newsletter-optin-box' ) ],
+			[ '' => __( 'Not Mapped', 'newsletter-optin-box' ) ],
 			$customer_fields
 		);
 

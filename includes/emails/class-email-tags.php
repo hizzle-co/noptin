@@ -127,8 +127,26 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'example'     => "post property='ID'",
 		);
 
+		$this->tags['rule'] = array(
+			'description' => __( 'Displays a horizontal rule', 'newsletter-optin-box' ),
+			'callback'    => array( $this, 'get_horizontal_rule' ),
+			'example'     => "rule height='3px' color='black' width='100%' margin='50px'",
+		);
+
+		$this->tags['spacer'] = array(
+			'description' => __( 'Adds a blank vertical space', 'newsletter-optin-box' ),
+			'callback'    => array( $this, 'get_spacer' ),
+			'example'     => "rule height='50px'",
+		);
+
+		$this->tags['button'] = array(
+			'description' => __( 'Displays a button', 'newsletter-optin-box' ),
+			'callback'    => array( $this, 'get_button' ),
+			'example'     => "button text='Click Here' url='" . home_url() . "' background='blue' color='white' rounding='4px'",
+		);
+
 	}
-  
+
 	/**
 	 * Returns the number of subscribers.
 	 *
@@ -195,7 +213,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @param string $field
 	 * @return string
 	 */
-	protected function get_custom_field( $args = array(), $field ) {
+	protected function get_custom_field( $args = array(), $field = 'first_name' ) {
 		$default = isset( $args['default'] ) ? $args['default'] : '';
 
 		// Abort if no subscriber.
@@ -247,6 +265,90 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		}
 
 		return esc_html( $default );
+	}
+
+	/**
+	 * Returns a horizontal rule
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	public function get_horizontal_rule( $args = array() ) {
+		$height = isset( $args['height'] ) ? $args['height'] : '3px';
+		$color  = isset( $args['color'] ) ? $args['color'] : '#454545';
+		$width  = isset( $args['width'] ) ? $args['width'] : '100%';
+		$margin = isset( $args['margin'] ) ? $args['margin'] : '50px';
+
+		return sprintf(
+			'<hr style="border-width: 0; background: %s; color: %s; height:%s; width:%s; margin:%s 0;">',
+			esc_attr( $color ),
+			esc_attr( $color ),
+			esc_attr( $height ),
+			esc_attr( $width ),
+			esc_attr( $margin )
+		);
+
+	}
+
+	/**
+	 * Returns a spacer
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	public function get_spacer( $args = array() ) {
+		$spacer = isset( $args['height'] ) ? $args['height'] : '50px';
+		return sprintf( "<div style='line-height:%s;height:%s;'>&#8202;</div>", esc_attr( $spacer ), esc_attr( $spacer ) );
+	}
+
+	/**
+	 * Returns a button
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	public function get_button( $args = array() ) {
+		$url        = isset( $args['url'] ) ? $args['url'] : home_url();
+		$background = isset( $args['background'] ) ? $args['background'] : 'blue';
+		$color      = isset( $args['color'] ) ? $args['color'] : 'white';
+		$rounding   = isset( $args['rounding'] ) ? $args['rounding'] : '4px';
+		$text       = isset( $args['text'] ) ? $args['text'] : 'Click Here';
+
+		// Generate button.
+		$button = sprintf(
+			'<a href="%s" style="background: %s; border: none; text-decoration: none; padding: 15px 25px; color: %s; border-radius: %s; display:inline-block; mso-padding-alt:0;text-underline-color:%s"><span style="mso-text-raise:15pt;">%s</span></a>',
+			esc_url( $url ),
+			esc_attr( $background ),
+			esc_attr( $color ),
+			esc_attr( $rounding ),
+			esc_attr( $background ),
+			esc_html( $text )
+		);
+
+		return $this->center( $button );
+	}
+
+	/**
+	 * Centers content.
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	public function center( $content ) {
+
+		ob_start();
+		?>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td align="center" style="padding: 12px;">
+					<div style='text-align: center; padding: 20px;' align='center'>
+						<?php echo wp_kses_post( $content ); ?>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<?php
+			return ob_get_clean();
 	}
 
 }
