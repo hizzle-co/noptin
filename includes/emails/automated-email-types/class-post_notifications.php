@@ -23,7 +23,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	/**
 	 * @var string
 	 */
-	public $type = 'new_post_notification';
+	public $type = 'post_notifications';
 
 	/**
 	 * Retrieves the automated email type name.
@@ -118,6 +118,27 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				"<a href='$url' target='_blank'>Ultimate Addons Pack</a>"
 			)
 		);
+
+	}
+
+	/**
+	 * Filters automation summary.
+	 *
+	 * @param string $about
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function about_automation( $about, $campaign ) {
+
+		if ( ! $campaign->sends_immediately() ) {
+
+			return sprintf(
+				__( 'Sends %s after new content is published', 'newsletter-opti-box' ),
+				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
+			);
+
+		}
+
+		return __( 'Sends immediately new content is published', 'newsletter-opti-box' );
 
 	}
 

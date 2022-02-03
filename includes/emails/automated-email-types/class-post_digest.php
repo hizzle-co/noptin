@@ -100,7 +100,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 *
 	 */
 	public function default_day() {
-		return 'sunday';
+		return '0';
 	}
 
 	/**
@@ -108,38 +108,29 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 *
 	 */
 	public function default_date() {
-		return 1;
+		return '1';
 	}
 
 	/**
-	 * Displays a metabox.
+	 * Returns an array of weekdays.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @global WP_Locale $wp_locale WordPress date and time locale object.
+	 * @return array
 	 */
-	public function render_metabox( $campaign ) {
+	public function get_weekdays() {
+		global $wp_locale;
 
-		$frequencies = array(
-			'daily'   => __( 'Once a day', 'newsletter-optin-box' ),
-			'weekly'  => __( 'Weekly on...', 'newsletter-optin-box' ),
-			'monthly' => __( 'Monthly on the...', 'newsletter-optin-box' ),
-		);
+		return $wp_locale->weekday;
+	}
 
-		$frequency = $campaign->get( 'frequency' );
+	/**
+	 * Returns an array of dates.
+	 *
+	 * @return array
+	 */
+	public function get_month_days() {
 
-		$days = array(
-			'sunday'    => __( 'Sunday', 'newsletter-optin-box' ),
-			'monday'    => __( 'Monday', 'newsletter-optin-box' ),
-			'tuesday'   => __( 'Tuesday', 'newsletter-optin-box' ),
-			'wednesday' => __( 'Wednesday', 'newsletter-optin-box' ),
-			'thursday'  => __( 'Thursday', 'newsletter-optin-box' ),
-			'friday'    => __( 'Friday', 'newsletter-optin-box' ),
-			'saturday'  => __( 'Saturday', 'newsletter-optin-box' ),
-		);
-
-		$day = $campaign->get( 'day' );
-
-		$dates = array();
-		$date  = (int) $campaign->get( 'date' );
+		$dates     = array();
 
 		for( $i = 1; $i < 29; $i++ ) {
 
@@ -165,8 +156,30 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					break;
 			}
 
-			$dates[ $i ] = $label;
+			$dates["$i"] = $label;
 		}
+	
+		return $dates;
+	}
+
+	/**
+	 * Displays a metabox.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function render_metabox( $campaign ) {
+
+		$frequencies = array(
+			'daily'   => __( 'Daily', 'newsletter-optin-box' ),
+			'weekly'  => __( 'Weekly on...', 'newsletter-optin-box' ),
+			'monthly' => __( 'Monthly on the...', 'newsletter-optin-box' ),
+		);
+
+		$frequency = $campaign->get( 'frequency' );
+		$day       = (string) $campaign->get( 'day' );
+		$dates     = $this->get_month_days();
+		$date      = (string) $campaign->get( 'date' );
+
 		?>
 
 		<p>
@@ -178,8 +191,8 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					<?php endforeach; ?>
 				</select>
 				<select name="noptin_automation[day]" class="noptin-post-digest-day" style="display: <?php echo $frequency == 'weekly' ? 'block' : 'none' ; ?>">
-					<?php foreach ( $days as $key => $label ) : ?>
-						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $day ); ?>><?php echo esc_html( $label ); ?></option>
+					<?php foreach ( $this->get_weekdays() as $key => $label ) : ?>
+						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( (string) $key, $day ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
 				<select name="noptin_automation[date]" class="noptin-post-digest-date" style="display: <?php echo $frequency == 'monthly' ? 'block' : 'none' ; ?>">
@@ -213,6 +226,45 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				"<a href='$url' target='_blank'>Ultimate Addons Pack</a>"
 			)
 		);
+
+	}
+
+	/**
+	 * Filters automation summary.
+	 *
+	 * @param string $about
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function about_automation( $about, $campaign ) {
+
+		switch ( $campaign->get( 'frequency' ) ) {
+
+			case 'daily':
+				return __( 'Sends a daily digest of your latest content.', 'newsletter-optin-box' );
+				break;
+
+			case 'weekly':
+
+				return sprintf(
+					__( 'Sends a weekly digest of your latest content every %1$s', 'newsletter-optin-box' ),
+					$GLOBALS['wp_locale']->get_weekday( (int) $campaign->get( 'day' ) )
+				);
+				break;
+
+			case 'monthly':
+
+				$dates = $this->get_month_days();
+				$date  = (string) $campaign->get( 'date' );
+				return sprintf(
+					__( 'Sends a digest of your latest content on the %1$s of every month', 'newsletter-optin-box' ),
+					isset( $dates[ $date ] ) ? $dates[ $date ] : $dates['1']
+				);
+				break;
+
+			default:
+				return $about;
+				break;
+		}
 
 	}
 

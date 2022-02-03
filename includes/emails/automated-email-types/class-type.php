@@ -70,6 +70,10 @@ abstract class Noptin_Automated_Email_Type {
 			add_filter( "noptin_automated_email_{$this->type}_options", array( $this, 'render_metabox' ) );
 		}
 
+		if ( is_callable( array( $this, 'about_automation' ) ) ) {
+			add_filter( "noptin_automation_table_about_{$this->type}", array( $this, 'about_automation' ), 10, 2 );
+		}
+
 	}
 
 	/**
@@ -131,6 +135,43 @@ abstract class Noptin_Automated_Email_Type {
 	 */
 	public function new_campaign_url() {
 		return add_query_arg( 'campaign', urlencode( $this->type ), admin_url( 'admin.php?page=noptin-email-campaigns&section=automations&sub_section=edit_campaign' ) );
+	}
+
+	/**
+	 * Returns an array of all published automated emails.
+	 *
+	 * @return Noptin_Automated_Email[]
+	 */
+	public function get_automations() {
+
+		$emails = array();
+		$args   = array(
+			'numberposts'            => -1,
+			'post_type'              => 'noptin-campaign',
+			'orderby'                => 'menu_order',
+			'order'                  => 'ASC',
+			'suppress_filters'       => true, // DO NOT allow WPML to modify the query
+			'cache_results'          => true,
+			'update_post_term_cache' => false,
+			'post_status'            => array( 'publish' ),
+			'meta_query'             => array(
+				array(
+					'key'   => 'campaign_type',
+					'value' => 'automation',
+				),
+				array(
+					'key'   => 'automation_type',
+					'value' => $this->type,
+				),
+			),
+		);
+
+		foreach ( get_posts( $args ) as $post ) {noptin_dump( $post );
+			$emails[] = new Noptin_Automated_Email( $post->ID );
+		}
+
+		return $emails;
+
 	}
 
 }

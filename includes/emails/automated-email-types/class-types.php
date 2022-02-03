@@ -78,7 +78,7 @@ class Noptin_Automated_Email_Types {
 
 		// Prepare an array of key and class.
 		$known_types = array(
-			'new_post_notification'        => 'Noptin_New_Post_Notification',
+			'post_notifications'           => 'Noptin_New_Post_Notification',
 			'post_digest'                  => 'Noptin_Post_Digest',
 			'woocommerce_new_order'        => 'Noptin_WooCommerce_New_Order_Email',
 			'woocommerce_product_purchase' => 'Noptin_WooCommerce_Product_Purchase_Email',

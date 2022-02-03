@@ -128,7 +128,8 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	public function column_about( $item ) {
 		$type  = esc_html( get_post_meta( $item->ID, 'automation_type', true ) );
 		$about = "Automation Type: $type";
-		return apply_filters( 'noptin_automation_table_about', $about, $type, $item, $this );
+		$about = apply_filters( 'noptin_automation_table_about', $about, $type, $item, $this );
+		return wp_kses_post( apply_filters( 'noptin_automation_table_about_' . $type, $about, new Noptin_Automated_Email( $item->ID ), $this ) );
 	}
 
 	/**
@@ -139,7 +140,13 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 * @since 1.2.9
 	 */
 	public function column_type( $item ) {
-		echo esc_html( get_post_meta( $item->ID, 'automation_type', true ) );
+		$type = get_post_meta( $item->ID, 'automation_type', true );
+
+		if ( isset( noptin()->emails->automated_email_types->types[ $type ] ) ) {
+			$type = noptin()->emails->automated_email_types->types[ $type ]->get_name();
+		}
+
+		echo '<span class="noptin-badge">' . esc_html( $type ) . '</span>';
 	}
 
 	/**

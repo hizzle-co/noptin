@@ -150,7 +150,7 @@ class Noptin_Automated_Email {
 	 */
 	public function is_mass_mail() {
 
-		$is_mass_mail = in_array( $this->type, array( 'post_digest', 'new_post_notification' ) );
+		$is_mass_mail = in_array( $this->type, array( 'post_digest', 'post_notifications' ) );
 		return apply_filters( 'noptin_automation_is_mass_mail', $is_mass_mail, $this->type, $this );
 	}
 
@@ -294,9 +294,12 @@ class Noptin_Automated_Email {
 	/**
 	 * Returns the delay unit for this automated email.
 	 *
+	 * @param bool $label
 	 * @return string
 	 */
-	public function get_sends_after_unit() {
+	public function get_sends_after_unit( $label = false ) {
+
+		$units = get_noptin_email_delay_units();
 
 		if ( $this->is_legacy ) {
 			$unit = get_post_meta( $this->id, 'noptin_sends_after_unit', true );
@@ -304,11 +307,11 @@ class Noptin_Automated_Email {
 			$unit = $this->get( 'sends_after_unit' );
 		}
 
-		if ( empty( $unit ) ) {
+		if ( empty( $unit ) || ! isset( $units[ $unit ] ) ) {
 			$unit = 'hours';
 		}
 
-		return $unit;
+		return $label ? $units[ $unit ] : $unit;
 	}
 
 	/**

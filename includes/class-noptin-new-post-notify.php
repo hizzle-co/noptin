@@ -25,9 +25,6 @@ class Noptin_New_Post_Notify {
 		add_action( 'noptin_new_post_notification', array( $this, 'maybe_send_notification' ), 10, 2 );
 		add_action( 'publish_noptin-campaign', array( $this, 'maybe_send_old_notification' ) );
 
-		// Automation details.
-		add_filter( 'noptin_automation_table_about', array( $this, 'about_automation' ), 10, 3 );
-
 		// Display a help text below the email body.
 		add_action( 'noptin_automation_campaign_after_email_body', array( $this, 'show_help_text' ), 10, 2 );
 
@@ -372,30 +369,6 @@ class Noptin_New_Post_Notify {
 	 */
 	public function excerpt_more() {
 		return '';
-	}
-
-	/**
-	 * Filters an automation's details
-	 */
-	public function about_automation( $about, $type, $automation ) {
-
-		if ( 'post_notifications' !== $type ) {
-			return $about;
-		}
-
-		$delay = 'immeadiately';
-
-		$sends_after      = (int) get_post_meta( $automation->ID, 'noptin_sends_after', true );
-		$sends_after_unit = esc_html( get_post_meta( $automation->ID, 'noptin_sends_after_unit', true ) );
-
-		if ( $sends_after ) {
-			$delay = "$sends_after $sends_after_unit after";
-		}
-
-		return sprintf(
-				__( "Sends %s new content is published", 'newsletter-optin-box' ),
-				"<em style='color: #607D8B;'>$delay</em>"
-	 	);
 	}
 
 }

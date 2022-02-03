@@ -106,14 +106,13 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Displays a metabox.
+	 * Retrieves allowed order statuses.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @return array
 	 */
-	public function render_metabox( $campaign ) {
+	public function get_allowed_statuses() {
 
-		// Fetch order statuses.
-		$statuses = array(
+		return array(
             'created'    => __( 'Created', 'newsletter-optin-box' ),
             'pending'    => __( 'Pending', 'newsletter-optin-box' ),
             'processing' => __( 'Processing', 'newsletter-optin-box' ),
@@ -126,6 +125,19 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
             'deleted'    => __( 'Deleted', 'newsletter-optin-box' ),
         );
 
+	}
+
+	/**
+	 * Retrieves the set order status for a campaign
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 * @param bool $label
+	 */
+	public function get_campaign_order_status( $campaign, $label = false ) {
+
+		// Fetch order statuses.
+		$statuses = $this->get_allowed_statuses();
+
 		// Prepare selected status.
 		$status = $campaign->get( 'order_status' );
 
@@ -133,6 +145,23 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 			$status = 'paid';
 		}
 
+		return $label ? $statuses[ $status ] : $status;
+	}
+
+	/**
+	 * Displays a metabox.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function render_metabox( $campaign ) {
+
+		// Fetch order statuses.
+		$statuses = $this->get_allowed_statuses();
+
+		// Prepare selected status.
+		$status = $this->get_campaign_order_status( $campaign );
+
+		// Are we sending to new customers.
 		$new_customer = $campaign->get( 'new_customer' );
 
 		?>
@@ -156,6 +185,42 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 				</label>
 			</p>
 		<?php
+
+	}
+
+	/**
+	 * Filters automation summary.
+	 *
+	 * @param string $about
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function about_automation( $about, $campaign ) {
+
+		if ( ! $campaign->sends_immediately() ) {
+
+			$about = sprintf(
+				__( 'Sends %s after', 'newsletter-opti-box' ),
+				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
+			);
+
+		} else {
+
+			$about = __( 'Sends immediately', 'newsletter-opti-box' );
+		}
+
+		// Are we sending to new customers.
+		$new_customer = $campaign->get( 'new_customer' );
+
+		if ( ! empty( $new_customer ) ) {
+			$about .= ' ' . __( "a first-time customer's order is", 'newsletter-opti-box' );
+		} else {
+			$about .= ' ' . __( "a customer's order is", 'newsletter-opti-box' );
+		}
+
+		// Prepare selected status.
+		$about .= ' ' . '<em style="color: #607D8B;">' . strtolower( $this->get_campaign_order_status( $campaign, true ) ) . '</em>';
+
+		return $about;
 
 	}
 

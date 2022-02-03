@@ -117,4 +117,31 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_Automated_Email_Typ
 
 	}
 
+	/**
+	 * Filters automation summary.
+	 *
+	 * @param string $about
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function about_automation( $about, $campaign ) {
+
+		$lifetime_value = floatval( $campaign->get( 'lifetime_value' ) );
+
+		if ( ! $campaign->sends_immediately() ) {
+
+			return sprintf(
+				__( 'Sends %s after a customer reaches a lifetime value of %s', 'newsletter-opti-box' ),
+				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) ),
+				wc_price( $lifetime_value )
+			);
+
+		}
+
+		return sprintf(
+			__( 'Sends immediately a customer reaches a lifetime value of %s', 'newsletter-opti-box' ),
+			wc_price( $lifetime_value )
+		);
+
+	}
+
 }

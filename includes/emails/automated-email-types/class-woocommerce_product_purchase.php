@@ -170,12 +170,61 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_Automated_Email_T
 
 			<p>
 				<label>
-					<input type="checkbox" name="noptin_automation[new_customer]" <?php echo selected( ! empty( $new_customer ) ); ?>" min="0" step="any">
+					<input type="checkbox" name="noptin_automation[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
 					<strong><?php _e( 'Only send the first time someone buys this product?', 'newsletter-optin-box' ); ?></strong>
 				</label>
 			</p>
 
 		<?php
+
+	}
+
+	/**
+	 * Filters automation summary.
+	 *
+	 * @param string $about
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function about_automation( $about, $campaign ) {
+
+		$selected_product = $campaign->get( 'product' );
+		$new_customer     = $campaign->get( 'new_customer' );
+		$action           = $campaign->get( 'product_action' );
+
+		if ( empty( $selected_product ) ) {
+			return $about;
+		}
+
+		if ( empty( $action ) ) {
+			$action = 'buy';
+		}
+
+		if ( ! $campaign->sends_immediately() ) {
+
+			$about = sprintf(
+				__( 'Sends %s after', 'newsletter-opti-box' ),
+				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
+			);
+
+		} else {
+
+			$about = __( 'Sends immediately', 'newsletter-opti-box' );
+		}
+
+		// Are we sending to new customers.
+		$new_customer = $campaign->get( 'new_customer' );
+
+		if ( ! empty( $new_customer ) ) {
+			$about .= ' ' . __( 'a first-time customer buys', 'newsletter-opti-box' );
+		} else {
+			$about .= ' ' . __( "a customer buys", 'newsletter-opti-box' );
+		}
+
+		// Prepare selected status.
+		$product = get_the_title( $selected_product );
+		$about  .= ' ' . '<em style="color: #607D8B;">' . esc_html( $product ) . '</em>';
+
+		return $about;
 
 	}
 
