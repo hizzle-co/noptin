@@ -18,13 +18,19 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
-class Noptin_Emails_Manager {
+class Noptin_Email_Manager {
+
+	/** @var Noptin_Email_Sender */
+	public $sender;
 
 	/** @var Noptin_Emails_Admin */
 	public $admin;
 
 	/** @var Noptin_Email_Tags */
 	public $tags;
+
+	/** @var Noptin_Automated_Email_Types */
+	public $automated_email_types;
 
 	/**
 	 * Class constructor.
@@ -33,15 +39,31 @@ class Noptin_Emails_Manager {
 	public function __construct() {
 
 		// Load files.
-		include plugin_dir_path( __FILE__ ) . 'emails.php';
-		include plugin_dir_path( __FILE__ ) . 'class-emails-admin.php';
-		include plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
+		$this->load_files();
 
-		// Init props.
-		$this->admin = new Noptin_Emails_Admin();
-		$this->tags  = new Noptin_Email_Tags();
+		// Init class properties.
+		$this->sender                = new Noptin_Email_Sender();
+		$this->admin                 = new Noptin_Emails_Admin();
+		$this->tags                  = new Noptin_Email_Tags();
+		$this->automated_email_types = new Noptin_Automated_Email_Types();
 
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 7 );
+
+	}
+
+	/**
+	 * Loads required files.
+	 */
+	public function load_files() {
+
+		require_once plugin_dir_path( __FILE__ ) . 'emails.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-sender.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-generator.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-html-to-text.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-emails-admin.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-automated-email.php';
+		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
 
 	}
 
@@ -54,8 +76,10 @@ class Noptin_Emails_Manager {
 		add_action( 'delete_post', array( $this, 'delete_stats' ) );
 		add_action( 'transition_post_status', array( $this, 'maybe_send_campaign' ), 100, 3 );
 
+		$this->sender->add_hooks();
 		$this->admin->add_hooks();
 		$this->tags->add_hooks();
+		$this->automated_email_types->add_hooks();
 	}
 
 	/**

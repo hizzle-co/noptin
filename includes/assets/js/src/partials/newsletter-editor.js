@@ -7,14 +7,12 @@ export default {
 	init() {
 
 		var $ = jQuery
-		//Create a new automation
-		$('.noptin-create-new-automation-campaign').on('click', this.create_automation)
-		$(document).on('click', '.noptin-automation-type-select.enabled', this.select_automation)
 
 		//Send test email
-		$('#wp-noptinemailbody-media-buttons').append('&nbsp;<a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span>Send a test email</a>')
+		$('#wp-noptinemailbody-media-buttons, #wp-noptin-automation-email-content-media-buttons')
+			.append('&nbsp;<a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span>Send a test email</a>')
 
-		//Are we sending a test email?
+		// Are we sending a test email?
 		$('.noptin-send-test-email').on('click', this.send_test_email)
 
 		//Upsells
@@ -27,76 +25,6 @@ export default {
 
 		// Stop sending a campaign.
 		$('.noptin-stop-campaign').on('click', this.stop_campaign)
-
-	},
-
-	//Creates a new automation
-	create_automation(e) {
-
-		e.preventDefault();
-
-		//Init sweetalert
-		Swal.fire({
-			html: jQuery('#noptin-create-automation').html(),
-			showConfirmButton: false,
-			showCloseButton: true,
-			width: 600,
-		})
-
-	},
-
-	//Select an automation
-	select_automation(e) {
-
-		e.preventDefault();
-
-		let parent = jQuery(this).find('.noptin-automation-type-setup-form').clone().find('form').attr('id', 'noptinCurrentForm').parent()
-		let form = parent.html()
-		parent.remove()
-
-		//Init sweetalert
-		Swal.fire({
-			html: form,
-			showCloseButton: true,
-			width: 800,
-			showCancelButton: true,
-			confirmButtonText: 'Continue',
-			showLoaderOnConfirm: true,
-			showCloseButton: true,
-			focusConfirm: false,
-			allowOutsideClick: () => !Swal.isLoading(),
-
-			//Fired when the user clicks on the confirm button
-			preConfirm() {
-
-				let data = noptin.getFormData(jQuery('#noptinCurrentForm'))
-				data.action = "noptin_setup_automation";
-
-				jQuery.post(noptin_params.ajaxurl, data)
-
-					.done(function (url) {
-						window.location = url;
-					})
-
-					.fail(function (jqXHR) {
-
-						Swal.fire({
-							type: 'error',
-							title: 'Error',
-							text: 'There was an error creating your automation',
-							showCloseButton: true,
-							confirmButtonText: 'Close',
-							confirmButtonColor: '#9e9e9e',
-							footer: `<code>Status: ${jqXHR.status} &nbsp; Status text: ${jqXHR.statusText}</code>`
-						})
-
-					})
-
-				//Return a promise that never resolves
-				return jQuery.Deferred()
-
-			},
-		})
 
 	},
 

@@ -107,8 +107,8 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
 	return add_query_arg(
 		array(
-			'noptin_ns' => $action,
-			'nv'        => $value,
+			'noptin_ns' => urlencode( $action ),
+			'nv'        => empty( $value ) ? false : urlencode( $value ),
 			'nte'       => $empty,
 		),
 		get_home_url()
@@ -1151,33 +1151,6 @@ function get_noptin_connection_providers() {
 }
 
 /**
- * Returns an array of email senders.
- *
- * @since 1.5.2
- * @return array
- */
-function get_noptin_email_senders() {
-	return apply_filters(
-		'noptin_email_senders',
-		array(
-			'noptin' => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
-		)
-	);
-}
-
-/**
- * Returns the sender to use for a specific email.
- *
- * @since 1.5.2
- * @param int $campaign_id
- * @return array
- */
-function get_noptin_email_sender( $campaign_id ) {
-	$sender = get_post_meta( $campaign_id, 'email_sender', true );
-	return in_array( $sender, array_keys( get_noptin_email_senders() ) ) ? $sender : 'noptin';
-}
-
-/**
  * Applies Noptin merge tags.
  *
  * Noptin uses a fast logic-less templating engine to parse merge tags
@@ -1463,4 +1436,79 @@ function noptin_is_multilingual() {
  */
 function noptin_get_newsletter_meta() {
 	return apply_filters( 'noptin_get_newsletter_campaign_meta', array() );
+}
+
+/**
+ * Formats a date for display.
+ *
+ * @param string $date_time.
+ * @return string
+ */
+function noptin_format_date( $date_time ) {
+
+	$timestamp = strtotime( $date_time );
+	$time_diff = current_time( 'timestamp' ) - $timestamp;
+
+	if ( $timestamp && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
+
+		$relative = sprintf(
+			/* translators: %s: Human-readable time difference. */
+			__( '%s ago', 'newsletter-optin-box' ),
+			human_time_diff( $timestamp, current_time( 'timestamp' ) )
+		);
+
+	} else {
+		$relative = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $timestamp );
+	}
+
+	$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $timestamp ) );
+	return "<abbr title='$date'>$relative<abbr>";
+
+}
+
+/**
+ * Encrypts a text string.
+ *
+ * @param string $plaintext
+ * @return string
+ */
+function noptin_encrypt( $plaintext ) {
+
+	$ivlen          = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$iv             = openssl_random_pseudo_bytes( $ivlen );
+	$ciphertext_raw = openssl_encrypt( $plaintext, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
+	$hmac           = hash_hmac( 'sha256', $ciphertext_raw, AUTH_KEY, true);
+
+	return base64_encode( $iv . $hmac . $ciphertext_raw );
+}
+
+/**
+ * Decrypts a text string.
+ *
+ * @param string $plaintext
+ * @return string
+ */
+function noptin_decrypt( $ciphertext ) {
+
+	// Decode.
+	$decoded = base64_decode( $ciphertext );
+
+	if ( empty( $decoded ) ) {
+		return '';
+	}
+
+	// Prepare args.
+	$ivlen          = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$iv             = substr( $decoded, 0, $ivlen );
+	$hmac           = substr( $decoded, $ivlen, 32 );
+	$ciphertext_raw = substr( $decoded, $ivlen + 32 );
+	$plaintext      = openssl_decrypt( $ciphertext_raw, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
+	$calcmac        = hash_hmac( 'sha256', $ciphertext_raw, AUTH_KEY, true );
+
+	// Timing attack safe comparison.
+	if ( hash_equals( $hmac, $calcmac ) ) {
+    	return $plaintext;
+	}
+
+	return '';
 }

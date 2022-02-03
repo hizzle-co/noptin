@@ -209,10 +209,6 @@ class Noptin_Mailer {
 		$address = get_noptin_option( 'address', '31 North San Juan Ave.' );
 		$city    = get_noptin_option( 'city', 'Santa Clara' );
 		$state   = get_noptin_option( 'state', 'San Francisco' );
-		$powered = sprintf(
-			__( 'Newsletter powered by %s', 'newsletter-optin-box' ),
-			'[[noptin]]'
-		);
 		return trim( "$address \n\n$city, $state, $country \n\n$company" );
 
 	}
@@ -221,8 +217,7 @@ class Noptin_Mailer {
 	 * Returns the footer text.
 	 */
 	public function get_footer_text( $data ) {
-		$footer_text = get_noptin_option( 'footer_text', $this->default_footer_text() );
-		return apply_filters( 'noptin_mailer_email_footer_text', $footer_text, $data, $this );
+		return apply_filters( 'noptin_mailer_email_footer_text', get_noptin_footer_text(), $data, $this );
 	}
 
 	/**

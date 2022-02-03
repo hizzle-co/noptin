@@ -41,6 +41,19 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Orders.
 		add_action( 'woocommerce_new_order', array( $this, 'add_order_subscriber' ), 1 );
+
+	}
+
+	/**
+	 * This method is called before an integration is initialized.
+	 *
+	 * Useful for setting integration variables.
+	 *
+	 * @since 1.2.6
+	 */
+	public function before_initialize() {
+
+		// Orders.
 		add_action( 'woocommerce_checkout_order_processed', array( $this, 'checkout_processed' ), $this->priority );
 		add_action( 'woocommerce_order_status_completed', array( $this, 'order_completed' ), $this->priority );
 		add_action( 'woocommerce_payment_complete', array( $this, 'order_paid' ), $this->priority );
@@ -60,9 +73,97 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'woocommerce_new_product', array( $this, 'product_updated' ), $this->priority );
 		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
 
-		// Automation rules.
+		// Misc.
+		add_filter( 'noptin_email_templates', array( $this, 'register_email_template' ), $this->priority );
+		add_action( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
+		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority, 2 );
 		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
+	}
 
+	/**
+	 * Registers the email template.
+	 *
+	 * @since 1.7.0
+	 * @param array $templates Available templates.
+	 * @return array
+	 */
+	public function register_email_template( $templates ) {
+		$templates['woocommerce'] = 'WooCommerce';
+		return $templates;
+	}
+
+	/**
+	 * Processes WC email templates.
+	 *
+	 * @since 1.7.0
+	 * @param string $email.
+	 * @param Noptin_Email_Generator $generator
+	 * @return string
+	 */
+	public function maybe_process_template( $email, $generator ) {
+		$GLOBALS['noptin_woocommerce_email_template_footer_text'] = $generator->footer_text;
+
+		if ( $generator->template === 'woocommerce' ) {
+
+			ob_start();
+
+			// Heading.
+			wc_get_template( 'emails/email-header.php', array( 'email_heading' => $generator->heading ) );
+
+			// Content.
+			echo wp_kses_post( trim( $generator->content ) );
+
+			// Footer.
+			add_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
+			wc_get_template( 'emails/email-footer.php' );
+			remove_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
+
+			$email = ob_get_clean();
+
+		}
+
+		return $email;
+	}
+
+	/**
+	 * Retrieves the email's footer text.
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	public function email_template_add_extra_footer_text( $text ) {
+
+		if ( empty( $GLOBALS['noptin_woocommerce_email_template_footer_text'] ) ) {
+			return $text;
+		}
+
+		// add separator if there is footer text
+		if ( trim( $text ) ) {
+			$text .= apply_filters( 'noptin_email_footer_separator',  ' | ' );
+		}
+
+		return $text . $GLOBALS['noptin_woocommerce_email_template_footer_text'];
+
+	}
+
+	/**
+	 * Applies WooCommerce email styles to Noptin templates.
+	 *
+	 * @param string $styles.
+	 * @param Noptin_Email_Generator $generator
+	 * @return string
+	 */
+	public function email_styles( $styles, $generator ) {
+
+		if ( $generator->type === 'normal' && $generator->template === 'woocommerce' ) {
+
+			ob_start();
+			wc_get_template( 'emails/email-styles.php' );
+			$styles .= apply_filters( 'woocommerce_email_styles', ob_get_clean(), $this );
+
+		}
+
+		return $styles;
 	}
 
 	/**
@@ -465,7 +566,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 			// Fetch the items.
 			$items = $order->get_items();
-			  
+
 			// Compare each product to our product.
       		foreach ( $items as $item ) {
 				$item = $this->get_order_item_details( $item );

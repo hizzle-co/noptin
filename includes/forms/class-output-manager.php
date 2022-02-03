@@ -133,6 +133,10 @@ class Noptin_Form_Output_Manager {
 	 */
 	public function shortcode( $atts = array(), $content = '' ) {
 
+		if ( ! is_array( $atts ) ) {
+			$atts = array();
+		}
+
 		// Check if we're displaying a form shortcode, that way, no need to cache args.
 		$is_one_att        = count( $atts ) === 1 || ! empty( $atts['className'] ) || ! empty( $atts['title'] );
 		$is_form_shortcode = false;

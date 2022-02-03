@@ -1,39 +1,77 @@
 <?php
 
-    $senders = get_noptin_email_senders();
-    $sender  = get_noptin_email_sender( $campaign->ID );
+defined( 'ABSPATH' ) || exit;
+
+$senders = get_noptin_email_senders();
+
+/**
+ * @var Noptin_Automated_Email $campaign
+ */
 
 ?>
 <div class="submitbox" id="submitpost">
-    <div id="misc-pub-section curtime misc-pub-curtime" style="margin: 20px 0;">
 
-        <label for="automation_status"><strong><?php _e( 'Automation Status', 'newsletter-optin-box' ); ?></strong></label>
-        <select id="automation_status" name="status" style="width: 320px; max-width: 100%;">
-            <option <?php selected( 'publish' === $campaign->post_status ) ?> value='publish'><?php _e( 'Active', 'newsletter-optin-box' ); ?></option>
-            <option <?php selected('publish' !== $campaign->post_status ) ?> value='draft'><?php _e( 'In-Active', 'newsletter-optin-box' ); ?></option>
-        </select>
+	<div class="noptin-publishing-actions">
 
-        <?php if ( 'post_notifications' === get_post_meta( $campaign->ID, 'automation_type', true ) ) : ?>
+		<p>
+			<label>
+				<strong class="noptin-label-span"><?php esc_html_e( 'Status', 'newsletter-optin-box' ); ?></strong>
+				<select name="noptin_automation[status]" style="width: 100%;">
+					<option <?php selected( $campaign->is_published() ); ?> value='publish'><?php _e( 'Active', 'newsletter-optin-box' ); ?></option>
+					<option <?php selected( ! $campaign->is_published() ); ?> value='draft'><?php _e( 'Disabled', 'newsletter-optin-box' ); ?></option>
+				</select>
+			</label>
+		</p>
+
+		<?php if ( $campaign->is_mass_mail() ) : ?>
             <div class="noptin-select-email-sender senders-<?php echo count( $senders ); ?>">
                 <label style="display:<?php echo 1 < count( $senders ) ? 'block' : 'none'; ?>; width:100%;" class="noptin-margin-y noptin-email-senders-label">
-                    <strong><?php _e( 'Send To', 'newsletter-optin-box' ); ?></strong>
+                    <strong><?php _e( 'Sends to', 'newsletter-optin-box' ); ?></strong>
                     <select name="email_sender" class="noptin-email_sender" style="display:block; width:100%;">
                         <?php foreach ( $senders as $key => $label ) : ?>
-                            <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $sender ); ?>><?php echo esc_html( $label ); ?></option>
+                            <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $campaign->get_sender() ); ?>><?php echo esc_html( $label ); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </label>
                 <?php foreach ( array_keys( $senders ) as $_sender ) : ?>
-                <div class="noptin-sender-options noptin-margin-y sender-<?php echo esc_attr( $_sender ); ?>" style="display:<?php echo $_sender == $sender ? 'block' : 'none'; ?>;">
+                <div class="noptin-sender-options noptin-margin-y sender-<?php echo esc_attr( $_sender ); ?>" style="display:<?php echo $_sender == $campaign->get_sender() ? 'block' : 'none'; ?>;">
                     <?php echo do_action( "noptin_sender_options_$_sender", $campaign ); ?>
                 </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
 
-        <div style="margin-top: 20px;">
-        <input type="submit" name="save" class="button-primary" value="<?php _e( 'Save Changes', 'newsletter-optin-box' ); ?>"/>
-        </div>
+		<?php do_action( 'noptin_automation_publishing_actions', $campaign ); ?>
 
-    </div>
+		<?php if ( $campaign->exists() ) : ?>
+			<p>
+				<?php
+					printf(
+						'%1$s <b>%2$s</b>',
+						esc_html__( 'Created:', 'newsletter-optin-box' ),
+						esc_html( noptin_format_date( $campaign->created ) )
+					);
+				?>
+			</p>
+		<?php endif; ?>
+
+	</div>
+
+	<div id="major-publishing-actions">
+		<?php if ( $campaign->exists() && current_user_can( 'delete_post', $campaign->id ) ) : ?>
+			<div id="delete-action">
+				<a class="submitdelete deletion" href="<?php echo esc_url( get_delete_post_link( $campaign->id ) ); ?>">
+					<?php echo _e( 'Delete Permanently', 'newsletter-optin-box' ); ?>
+				</a>
+			</div>
+		<?php endif; ?>
+
+		<?php do_action( 'noptin_automation_major_publishing_actions', $campaign ); ?>
+
+		<div id="publishing-action">
+			<span class="spinner"></span>
+			<?php submit_button( __( 'Save', 'newsletter-optin-box' ), 'primary', 'submit', false ); ?>
+		</div>
+		<div class="clear"></div>
+	</div>
 </div>

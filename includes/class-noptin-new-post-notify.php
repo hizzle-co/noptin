@@ -20,12 +20,6 @@ class Noptin_New_Post_Notify {
 	 */
 	function init() {
 
-		// Default automation data.
-		add_filter( 'noptin_email_automation_setup_data', array( $this, 'default_automation_data' ) );
-
-		// Set up cb.
-		add_filter( 'noptin_email_automation_triggers', array( $this, 'register_automation_settings' ) );
-
 		// Notify subscribers.
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule_notification' ), 10, 3 );
 		add_action( 'noptin_new_post_notification', array( $this, 'maybe_send_notification' ), 10, 2 );
@@ -39,22 +33,6 @@ class Noptin_New_Post_Notify {
 
 		// Allow sending a test email for new post notifications.
 		add_filter( 'noptin_test_email_data', array( $this, 'filter_test_email_data' ), 10, 2 );
-	}
-
-	/**
-	 * Filters default automation data.
-	 *
-	 * @param array $data The automation data.
-	 */
-	public function default_automation_data( $data ) {
-
-		if ( 'post_notifications' === $data['automation_type'] ) {
-			$data['email_body']   = noptin_ob_get_clean( locate_noptin_template( 'default-new-post-notification-body.php' ) );
-			$data['subject']      = '[[post_title]]';
-			$data['preview_text'] = __( 'New article published on [[blog_name]]', 'newsletter-optin-box' );
-		}
-		return $data;
-
 	}
 
 	/**
@@ -94,47 +72,6 @@ class Noptin_New_Post_Notify {
 			echo '<input type="hidden" name="noptin_is_new_post_notification" value="1" />';
 
 		}
-
-	}
-
-	/**
-	 * Filters default automation data.
-	 *
-	 * @param $array $triggers Registered triggers.
-	 */
-	public function register_automation_settings( array $triggers ) {
-
-		if ( isset( $triggers['post_notifications'] ) ) {
-			$cb = array( $this, 'render_automation_settings' );
-			$cb = apply_filters( 'noptin_post_notifications_setup_cb', $cb );
-			$triggers['post_notifications']['setup_cb'] = $cb;
-		}
-
-		return $triggers;
-	}
-
-	/**
-	 * Filters default automation data
-	 */
-	public function render_automation_settings( $campaign ) {
-
-		$url = add_query_arg(
-			array(
-				'utm_medium'   => 'plugin-dashboard',
-				'utm_campaign' => 'new-post-notifications',
-				'utm_source'   => urlencode( esc_url( get_home_url() ) ),
-			),
-			'https://noptin.com/product/ultimate-addons-pack'
-		);
-
-		echo '<p class="description">' . __( 'By default, this notification will be sent every time a new blog post is published.', 'newsletter-optin-box' ) . '</p>';
-
-		echo "<div style='margin-top: 16px; font-size: 15px;'>";
-		printf(
-			__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
-			"<a href='$url' target='_blank'>Ultimate Addons Pack</a>"
-		);
-		echo '</div>';
 
 	}
 

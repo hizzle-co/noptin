@@ -42,6 +42,24 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Invoice.
 		add_action( 'getpaid_checkout_invoice_updated', array( $this, 'add_order_subscriber' ), $this->priority );
+
+		// Items.
+		// add_action( 'getpaid_update_item', array( $this, 'product_updated' ), $this->priority );
+		// add_action( 'getpaid_new_item', array( $this, 'product_updated' ), $this->priority );
+		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
+
+	}
+
+	/**
+	 * This method is called before an integration is initialized.
+	 *
+	 * Useful for setting integration variables.
+	 *
+	 * @since 1.2.6
+	 */
+	public function before_initialize() {
+
+		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 		add_action( 'getpaid_checkout_invoice_updated', array( $this, 'checkout_processed' ), $this->priority );
 		add_action( 'getpaid_invoice_status_publish', array( $this, 'order_completed' ), $this->priority );
 		add_action( 'getpaid_invoice_status_publish', array( $this, 'order_paid' ), $this->priority );
@@ -53,14 +71,6 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'getpaid_invoice_status_wpi-onhold', array( $this, 'order_held' ), $this->priority );
 		add_action( 'getpaid_invoice_status_wpi-cancelled', array( $this, 'order_cancelled' ), $this->priority );
 		add_action( 'getpaid_invoice_status_wpi-failed', array( $this, 'order_failed' ), $this->priority );
-
-		// Items.
-		// add_action( 'getpaid_update_item', array( $this, 'product_updated' ), $this->priority );
-		// add_action( 'getpaid_new_item', array( $this, 'product_updated' ), $this->priority );
-		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
-
-		// Automation rules.
-		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 
 	}
 

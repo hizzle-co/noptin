@@ -261,6 +261,12 @@ class Noptin_Emails_Admin {
 
 		$data['email'] = sanitize_email( $data['email'] );
 
+		// Is this an automated email?
+		if ( ! empty( $data['noptin_automation'] ) ) {
+			noptin()->emails->automated_email_types->send_test_email( $data['noptin_automation'], $data['email'] );
+			exit;
+		}
+
 		// Subject, body and preview text.
 		if ( empty( $data['email_subject'] ) && empty( $data['subject'] ) ) {
 			wp_send_json_error( __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );

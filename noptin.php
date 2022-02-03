@@ -162,10 +162,18 @@ class Noptin {
 	/**
 	 * The main emails class.
 	 *
-	 * @var Noptin_Emails_Manager
+	 * @var Noptin_Email_Manager
 	 * @since       1.7.0
 	 */
 	public $emails;
+
+	/**
+	 * The main integrations class.
+	 *
+	 * @var Noptin_Integrations
+	 * @since       1.7.0
+	 */
+	public $integrations;
 
 	/**
 	 * Get active instance
@@ -236,7 +244,7 @@ class Noptin {
 		require_once $plugin_path . 'includes/subscriber.php';
 		require_once $plugin_path . 'includes/forms/forms.php';
 		require_once $plugin_path . 'includes/forms/class-form-manager.php';
-		require_once $plugin_path . 'includes/emails/class-emails-manager.php';
+		require_once $plugin_path . 'includes/emails/class-manager.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
 		// Register autoloader.
@@ -266,7 +274,7 @@ class Noptin {
 		$this->forms = new Noptin_Form_Manager();
 
 		// Email manager.
-		$this->emails = new Noptin_Emails_Manager();
+		$this->emails = new Noptin_Email_Manager();
 
 		// Mailer.
 		$this->mailer = new Noptin_Mailer();

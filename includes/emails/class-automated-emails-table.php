@@ -23,7 +23,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	/**
 	 * Query
 	 *
-	 * @var   string
+	 * @var   WP_Query
 	 * @since 1.1.2
 	 */
 	public $query;
@@ -117,32 +117,6 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 		$title = "<div><strong><a href='$edit_url'>$title</a> $extra</strong></div>";
 
 		return sprintf( '%s %s', $title, $this->row_actions( $row_actions ) );
-	}
-
-	/**
-	 * Links to the subscribers overview page
-	 *
-	 * @param  object $item item.
-	 * @return HTML
-	 */
-	public function maybe_link( $count, $meta, $value ) {
-
-		if ( empty( $count ) ) {
-			return 0;
-		}
-
-		$url = esc_url(
-			add_query_arg(
-				array(
-					'meta_key'   => $meta,
-					'meta_value' => $value,
-				),
-				get_noptin_subscribers_overview_url()
-			)
-		);
-
-		return "<a href='$url' title='View Subscribers'>$count</a>";
-
 	}
 
 	/**
@@ -284,6 +258,8 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 */
 	protected function display_tablenav( $which ) {
 
+		$add_new_url = noptin_get_new_automation_url();
+
 		if ( 'top' === $which ) {
 			wp_nonce_field( 'bulk-' . $this->_args['plural'] );
 		}
@@ -295,7 +271,7 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 			<?php $this->bulk_actions( $which ); ?>
 		</div>
 
-		<a href="#" class="button button-primary noptin-create-new-automation-campaign"><?php _e( 'Create New Automation', 'newsletter-optin-box' ); ?></a>
+		<a href="<?php echo esc_url( $add_new_url ); ?>" class="button button-primary"><?php _e( 'Create New Automation', 'newsletter-optin-box' ); ?></a>
 			<?php
 		endif;
 

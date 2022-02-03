@@ -207,17 +207,21 @@ class Noptin_Admin {
 		wp_enqueue_media();
 
 		// Codemirror for editor css.
-		wp_enqueue_code_editor(
-			array(
-				'type'       => 'css',
-				'codemirror' => array(
-					'indentUnit'     => 1,
-					'tabSize'        => 4,
-					'indentWithTabs' => true,
-					'lineNumbers'    => false,
-				),
-			)
-		);
+		if( 'noptin-form' === $page ) {
+
+			wp_enqueue_code_editor(
+				array(
+					'type'       => 'css',
+					'codemirror' => array(
+						'indentUnit'     => 1,
+						'tabSize'        => 4,
+						'indentWithTabs' => true,
+						'lineNumbers'    => false,
+					),
+				)
+			);
+
+		}
 
 		// Custom admin scripts.
 		$version = filemtime( $this->assets_path . 'js/dist/admin.js' );
