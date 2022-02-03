@@ -65,8 +65,8 @@ class Noptin_Automated_Email {
 			}
 
 			// Prepare campaign data.
-			$data = wp_unslash( json_decode( $post->content, true ) );
-
+			$data = json_decode( $post->post_content, true );
+			//noptin_dump( wp_unslash( $post->post_content ) ); exit;
 			// Check if we're dealing with a legacy campaign.
 			if ( ! is_array( $data ) ) {
 				$this->is_legacy = true;
@@ -374,22 +374,53 @@ class Noptin_Automated_Email {
 	 */
 	public function save() {
 
+		// Prepare post args.
 		$args = array(
+			'post_type'    => 'noptin-campaign',
 			'post_title'   => $this->name,
 			'post_status'  => $this->status,
 			'post_content' => wp_json_encode( $this->options ),
 			'meta_input'   => array(
 				'automation_type' => $this->type,
+				'campaign_type'   => 'automation',
 			)
 		);
 
+		// Slash data.
+		// WP expects all data to be slashed and will unslash it (fixes '\' character issues).
+		$args = wp_slash( $args );
+
+		// Only remove taggeted link rel if it was hooked.
+		$has_filter = false !== has_filter( 'content_save_pre', 'wp_targeted_link_rel' );
+
+		if ( $has_filter ) {
+			wp_remove_targeted_link_rel_filters();
+		}
+
+		// Update the email if it exists.
 		if ( $this->exists() ) {
 			$args['ID'] = $this->id;
 			return wp_update_post( $args, true );
+
+			if ( $has_filter ) {
+				wp_init_targeted_link_rel_filters();
+			}
+
 		}
 
-		return wp_insert_post( $args, true );
+		// Create a new automated email.
+		$result = wp_insert_post( $args, true );
 
+		if ( $has_filter ) {
+			wp_init_targeted_link_rel_filters();
+		}
+
+		if ( is_int( $result ) ) {
+			$this->id = $result;
+			return true;
+		}
+
+		return $result;
 	}
 
 }

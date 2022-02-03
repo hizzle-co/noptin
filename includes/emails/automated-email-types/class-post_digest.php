@@ -80,6 +80,14 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Returns the default plain text content.
+	 *
+	 */
+	public function default_content_plain_text() {
+		return noptin_convert_html_to_text( $this->default_content_normal() );
+	}
+
+	/**
 	 * Returns the default frequency.
 	 *
 	 */

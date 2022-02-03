@@ -83,6 +83,14 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Returns the default plain text content.
+	 *
+	 */
+	public function default_content_plain_text() {
+		return noptin_convert_html_to_text( $this->default_content_normal() );
+	}
+
+	/**
 	 * Displays a metabox.
 	 *
 	 * @param Noptin_Automated_Email $campaign

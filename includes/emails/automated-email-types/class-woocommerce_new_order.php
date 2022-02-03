@@ -81,12 +81,20 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 		ob_start();
 		?>
 		<p><?php _e( 'Hi [[first_name]],', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'We value your opinion. We want to make your shopping experience perfect - so your feedback is important to us!', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Please reply to this email address with any suggestions that might help us improve.', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'We value your opinion and want to make your shopping experience perfect - so your feedback is important to us!', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Please reply to this email with any suggestions that might help us improve.', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Thanks for your help!', 'newsletter-optin-box' ); ?></p>
 		<p>[[company]]</p>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Returns the default plain text content.
+	 *
+	 */
+	public function default_content_plain_text() {
+		return noptin_convert_html_to_text( $this->default_content_normal() );
 	}
 
 	/**
@@ -121,8 +129,8 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 		// Prepare selected status.
 		$status = $campaign->get( 'order_status' );
 
-		if ( empty( $status ) ) {
-			$status = 'created';
+		if ( empty( $status ) || ! isset( $statuses[ $status ] ) ) {
+			$status = 'paid';
 		}
 
 		$new_customer = $campaign->get( 'new_customer' );
@@ -143,7 +151,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 
 			<p>
 				<label>
-					<input type="checkbox" name="noptin_automation[new_customer]" <?php echo selected( ! empty( $new_customer ) ); ?>" min="0" step="any">
+					<input type="checkbox" name="noptin_automation[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
 					<strong><?php _e( 'Only send to new customers?', 'newsletter-optin-box' ); ?></strong>
 				</label>
 			</p>

@@ -90,7 +90,8 @@ export default {
 
 		e.preventDefault();
 
-		let row = jQuery(this).closest('tr')
+		let row = jQuery(this).closest('tr');
+		let redirect = jQuery(this).data('redirect');
 		let data = {
 			id: jQuery(this).data('id'),
 			_wpnonce: noptin_params.nonce,
@@ -123,6 +124,10 @@ export default {
 							'Your campaign was deleted',
 							'success'
 						)
+
+						if ( redirect ) {
+							window.location.href = redirect;
+						}
 
 					})
 					.fail(function () {

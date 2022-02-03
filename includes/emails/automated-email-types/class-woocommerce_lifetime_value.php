@@ -81,6 +81,14 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_Automated_Email_Typ
 	}
 
 	/**
+	 * Returns the default plain text content.
+	 *
+	 */
+	public function default_content_plain_text() {
+		return noptin_convert_html_to_text( $this->default_content_normal() );
+	}
+
+	/**
 	 * Returns the default recipient.
 	 *
 	 */

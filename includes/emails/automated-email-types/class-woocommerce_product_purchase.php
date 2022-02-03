@@ -89,6 +89,14 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_Automated_Email_T
 	}
 
 	/**
+	 * Returns the default plain text content.
+	 *
+	 */
+	public function default_content_plain_text() {
+		return noptin_convert_html_to_text( $this->default_content_normal() );
+	}
+
+	/**
 	 * Returns the default recipient.
 	 *
 	 */

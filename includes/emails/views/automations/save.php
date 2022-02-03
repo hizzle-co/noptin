@@ -49,7 +49,7 @@ $senders = get_noptin_email_senders();
 					printf(
 						'%1$s <b>%2$s</b>',
 						esc_html__( 'Created:', 'newsletter-optin-box' ),
-						esc_html( noptin_format_date( $campaign->created ) )
+						wp_kses_post( noptin_format_date( $campaign->created ) )
 					);
 				?>
 			</p>
@@ -60,7 +60,7 @@ $senders = get_noptin_email_senders();
 	<div id="major-publishing-actions">
 		<?php if ( $campaign->exists() && current_user_can( 'delete_post', $campaign->id ) ) : ?>
 			<div id="delete-action">
-				<a class="submitdelete deletion" href="<?php echo esc_url( get_delete_post_link( $campaign->id ) ); ?>">
+				<a class="noptin-delete-campaign submitdelete deletion" data-redirect="<?php echo esc_url( remove_query_arg( array( 'sub_section', 'campaign' ) ) ); ?>" data-id="<?php echo (int) $campaign->id; ?>" href="#">
 					<?php echo _e( 'Delete Permanently', 'newsletter-optin-box' ); ?>
 				</a>
 			</div>

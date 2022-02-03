@@ -65,7 +65,7 @@ class Noptin_Automated_Emails_Admin {
 		} else {
 			$title = __( 'Edit Automation', 'newsletter-optin-box' );
 
-			if ( ! is_noptin_campaign( $campaign, 'automation' ) ) {
+			if ( ! is_noptin_campaign( (int) $_GET['campaign'], 'automation' ) ) {
 				include plugin_dir_path( __FILE__ ) . 'views/404.php';
 				return;
 			}

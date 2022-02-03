@@ -281,7 +281,7 @@ function get_noptin_automation_campaign_url( $id ) {
 		'page'        => 'noptin-email-campaigns',
 		'section'     => 'automations',
 		'sub_section' => 'edit_campaign',
-		'id'          => $id,
+		'campaign'    => $id,
 	);
 	return add_query_arg( $param, admin_url( '/admin.php' ) );
 
