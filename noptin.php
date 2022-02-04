@@ -341,8 +341,6 @@ class Noptin {
 
 		// Bg processes.
 		$this->bg_mailer          = new Noptin_Background_Mailer();
-		$this->post_notifications = new Noptin_New_Post_Notify();
-		$this->post_notifications->init();
 
 		// Init the admin.
 		$this->admin 			  = Noptin_Admin::instance();

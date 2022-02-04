@@ -144,6 +144,17 @@ class Noptin_Automated_Email {
 	}
 
 	/**
+	 * Checks if the automated email is active.
+	 *
+	 * @return bool
+	 */
+	public function can_send() {
+
+		$can_send = $this->is_published() && $this->exists();
+		return apply_filters( 'noptin_automation_can_send', $can_send, $this );
+	}
+
+	/**
 	 * Checks if this is a mass mail.
 	 *
 	 * @return bool

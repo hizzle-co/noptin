@@ -88,6 +88,8 @@ class Noptin_Automated_Email_Types {
 		// Ensure WooCommerce exists.
 		if ( ! class_exists( 'WooCommerce' ) ) {
 			unset( $known_types['woocommerce_new_order'], $known_types['woocommerce_product_purchase'], $known_types['woocommerce_lifetime_value'] );
+		} else {
+			require_once plugin_dir_path( __FILE__ ) . 'class-type-woocommerce.php';
 		}
 
 		// Filter and return.

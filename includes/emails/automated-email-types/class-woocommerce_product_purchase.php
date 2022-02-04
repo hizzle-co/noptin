@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
-class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_Automated_Email_Type {
+class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Automated_Email_Type {
 
 	/**
 	 * @var string
@@ -225,6 +225,21 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_Automated_Email_T
 		$about  .= ' ' . '<em style="color: #607D8B;">' . esc_html( $product ) . '</em>';
 
 		return $about;
+
+	}
+
+	/**
+	 * Retrieves an array of supported merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_merge_tags() {
+
+		return array(
+			__( 'Order', 'noptin' )    => $this->get_order_merge_tags(),
+			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags(),
+			__( 'Product', 'noptin' ) => $this->get_product_merge_tags(),
+		);
 
 	}
 

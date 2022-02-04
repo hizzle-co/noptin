@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
-class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_Automated_Email_Type {
+class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automated_Email_Type {
 
 	/**
 	 * @var string
@@ -140,6 +140,20 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_Automated_Email_Typ
 		return sprintf(
 			__( 'Sends immediately a customer reaches a lifetime value of %s', 'newsletter-opti-box' ),
 			wc_price( $lifetime_value )
+		);
+
+	}
+
+	/**
+	 * Retrieves an array of supported merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_merge_tags() {
+
+		return array(
+			__( 'Order', 'noptin' )    => $this->get_order_merge_tags(),
+			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags(),
 		);
 
 	}

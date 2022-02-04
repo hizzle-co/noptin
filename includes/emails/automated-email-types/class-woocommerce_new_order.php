@@ -18,12 +18,28 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
-class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
+class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Email_Type {
 
 	/**
 	 * @var string
 	 */
 	public $type = 'woocommerce_new_order';
+
+	/**
+	 * @var string
+	 */
+	public $notification_hook = 'noptin_woocommerce_new_order_notify';
+
+	/**
+	 * Registers hooks.
+	 *
+	 */
+	public function add_hooks() {
+		parent::add_hooks();
+
+		// Notify customers.
+		add_action( 'noptin_woocommerce_order', array( $this, 'maybe_schedule_notification' ), 100, 3 );
+	}
 
 	/**
 	 * Retrieves the automated email type name.
@@ -39,22 +55,6 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 	 */
 	public function get_description() {
 		return __( 'Send an email to your customers when they make a new order. Optionally limit the email to first-time customers.', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * Retrieves the automated email type image.
-	 *
-	 */
-	public function the_image() {
-		echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 503.81 299.89"><path fill="#7f54b3" d="M46.75,0H456.84a46.94,46.94,0,0,1,47,47V203.5a46.94,46.94,0,0,1-47,47H309.78L330,299.89l-88.78-49.43H47a46.94,46.94,0,0,1-47-47V47A46.77,46.77,0,0,1,46.76,0Z"/><path fill="#fff" d="M28.69,42.8c2.86-3.89,7.16-5.94,12.9-6.35Q57.25,35.24,59.41,51.2,68.94,115.4,80.09,160l44.85-85.4q6.15-11.67,15.36-12.29c9-.61,14.54,5.12,16.8,17.2,5.12,27.24,11.67,50.38,19.45,70q8-78,27-112.64c3.07-5.73,7.57-8.6,13.51-9A17.8,17.8,0,0,1,230,32a16,16,0,0,1,6.35,11.67,17.79,17.79,0,0,1-2,9.83c-8,14.75-14.55,39.53-19.87,73.93-5.12,33.39-7,59.4-5.73,78a24.29,24.29,0,0,1-2.46,13.52c-2.46,4.51-6.15,7-10.86,7.37-5.32.41-10.85-2.05-16.17-7.57Q150.64,189.54,134,131.48q-20,39.32-29.49,59c-12.09,23.14-22.33,35-30.93,35.64C68,226.51,63.3,221.8,59.2,212Q43.54,171.72,25.41,56.52A17.44,17.44,0,0,1,28.69,42.8ZM468.81,75C461.43,62.05,450.58,54.27,436,51.2A53.72,53.72,0,0,0,425,50c-19.66,0-35.63,10.24-48.13,30.72a108.52,108.52,0,0,0-16,57.75q0,23.66,9.83,40.55c7.37,12.91,18.23,20.69,32.77,23.76A53.64,53.64,0,0,0,414.54,204c19.86,0,35.83-10.24,48.12-30.72a109.73,109.73,0,0,0,16-58C478.84,99.33,475.36,86,468.81,75ZM443,131.69c-2.86,13.51-8,23.55-15.56,30.31-5.94,5.32-11.47,7.57-16.59,6.55-4.92-1-9-5.32-12.08-13.31a52,52,0,0,1-3.69-18.64,71.48,71.48,0,0,1,1.43-14.95,66.29,66.29,0,0,1,10.86-24.37c6.76-10,13.92-14.13,21.3-12.7,4.91,1,9,5.33,12.08,13.31a52,52,0,0,1,3.69,18.64A71.47,71.47,0,0,1,443,131.69ZM340.6,75c-7.37-12.91-18.43-20.69-32.76-23.76A53.79,53.79,0,0,0,296.78,50c-19.66,0-35.64,10.24-48.13,30.72a108.52,108.52,0,0,0-16,57.75q0,23.66,9.83,40.55c7.37,12.91,18.22,20.69,32.76,23.76A53.72,53.72,0,0,0,286.33,204c19.87,0,35.84-10.24,48.13-30.72a109.72,109.72,0,0,0,16-58C350.43,99.33,347.16,86,340.6,75Zm-26,56.73c-2.86,13.51-8,23.55-15.56,30.31-5.94,5.32-11.47,7.57-16.59,6.55-4.91-1-9-5.32-12.08-13.31a52,52,0,0,1-3.69-18.64,71.48,71.48,0,0,1,1.43-14.95A66.29,66.29,0,0,1,279,97.28c6.76-10,13.92-14.13,21.3-12.7,4.91,1,9,5.33,12.08,13.31A52,52,0,0,1,316,116.53a60.45,60.45,0,0,1-1.44,15.16Z"/></svg>';
-	}
-
-	/**
-	 * Returns the default template.
-	 *
-	 */
-	public function default_template() {
-		return 'woocommerce';
 	}
 
 	/**
@@ -95,14 +95,6 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 	 */
 	public function default_content_plain_text() {
 		return noptin_convert_html_to_text( $this->default_content_normal() );
-	}
-
-	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function get_default_recipient() {
-		return '[[customer.email]]';
 	}
 
 	/**
@@ -222,6 +214,186 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_Automated_Email_Type {
 
 		return $about;
 
+	}
+
+	/**
+	 * Notify customers when they make a new order.
+	 *
+	 * @param string $action The order action.
+     * @param int $order_id The order being acted on.
+     * @param int $subscriber_id The subscriber for the order.
+     * @param Noptin_WooCommerce $bridge The Noptin and WC integration bridge.
+	 */
+	public function maybe_schedule_notification( $action, $order_id, $woocommerce ) {
+
+		$order = wc_get_order( $order_id );
+
+		// Ensure the order exists.
+		if ( empty( $order ) ) {
+			return;
+		}
+
+		// Are there any new post automations.
+		$automations = $this->get_automations();
+		if ( empty( $automations ) ) {
+			return;
+		}
+
+		foreach ( $automations as $automation ) {
+
+			// Check if the automation applies here.
+			if ( $this->is_automation_valid_for( $automation, $order, $action, $woocommerce ) ) {
+				$this->schedule_notification( $order_id, $automation );
+			}
+
+		}
+
+	}
+
+	/**
+	 * Checks if a given notification is valid for a given order
+	 *
+	 * @param Noptin_Automated_Email $automation
+	 * @param WC_Order $order
+	 * @param string $action
+	 * @param Noptin_WooCommerce
+	 */
+	public function is_automation_valid_for( $automation, $order, $action, $woocommerce ) {
+
+		$is_valid = true;
+
+		// Prepare selected status.
+		$status = $this->get_campaign_order_status( $automation );
+
+		if ( $action !== $status ) {
+			$is_valid = false;
+		}
+
+		// Are we sending to new customers.
+		$new_customer = $automation->get( 'new_customer' );
+
+		if ( ! empty( $new_customer ) && $is_valid ) {
+
+			// Fetch the user associated with the order.
+			$user = $woocommerce->get_order_customer_user_id( $order->get_id() );
+			if ( empty( $user ) ) {
+				$user = $woocommerce->get_order_customer_email( $order->get_id() );
+			}
+ 
+			$is_valid = $woocommerce->get_order_count( $user ) === 1;
+
+		}
+
+		return apply_filters( 'noptin_woocommerce_new_order_notification_is_valid', $is_valid, $automation, $order, $action );
+
+	}
+
+	/**
+	 * (Maybe) Send out a new order notification
+	 *
+	 * @param int $order_id
+	 * @param int $campaign_id
+	 * @param string $key
+	 */
+	public function maybe_send_notification( $order_id, $campaign_id ) {
+
+		$order    = wc_get_order( $order_id );
+		$campaign = new Noptin_Automated_Email( $campaign_id );
+
+		// Ensure the order exists and the campaign is active.
+		if ( empty( $order ) || ! $campaign->can_send() ) {
+			return;
+		}
+
+		if ( empty( $key ) ) {
+			$key = $order_id . '_' . $campaign_id;
+		}
+
+		// Send the email.
+		$this->order   = $order;
+		$this->sending = true;
+
+		$this->register_merge_tags();
+
+		foreach ( $this->get_recipients( $campaign, array() ) as $recipient => $track ) {
+
+			$content = noptin_generate_automated_email_content( $campaign, $recipient, $track  );
+			noptin_send_email(
+				array(
+					'recipients' => $recipient,
+					'message'    => noptin_generate_automated_email_content( $campaign, $recipient, $track  ),
+					
+				)
+			);
+
+			// $disable_template_plugins = true;
+			// $subject = '';
+			// $headers = array();
+			// $attachments = array();
+			// $reply_to = '';
+			// $from_email = '';
+			// $from_name = '';
+			// $content_type = '';
+			// $unsubscribe_url = '';
+
+		}
+
+		$this->unregister_merge_tags();
+	}
+
+	/**
+	 * Retrieves an array of supported merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_merge_tags() {
+
+		return array(
+			__( 'Order', 'noptin' )    => $this->get_order_merge_tags(),
+			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags()
+		);
+
+	}
+
+	/**
+	 * Order field value of the current order.
+	 *
+	 * @param array $args
+	 * @param string $field
+	 * @return string
+	 */
+	public function get_order_field( $args = array(), $field = 'first_name' ) {
+		$default = isset( $args['default'] ) ? $args['default'] : '';
+
+		// Abort if no subscriber.
+		if ( empty( $this->subscriber ) || ! $this->subscriber->has_prop( $field ) ) {
+			return esc_html( $default );
+		}
+
+		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
+
+		// Format field value.
+		if ( isset( $all_fields[ $field ] ) ) {
+
+			$value = $this->subscriber->get( $field );
+			if ( 'checkbox' == $all_fields[ $field ] ) {
+				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
+			}
+
+			$value = wp_kses_post(
+				format_noptin_custom_field_value(
+					$this->subscriber->get( $field ),
+					$all_fields[ $field ],
+					$this->subscriber
+				)
+			);
+
+			if ( "&mdash;" !== $value ) {
+				return $value;
+			}
+		}
+
+		return esc_html( $default );
 	}
 
 }

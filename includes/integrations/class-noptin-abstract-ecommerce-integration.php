@@ -273,6 +273,9 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 			do_action( "noptin_{$this->slug}_integration_order", $action, $order_id, $subscriber_id, $this );
 		}
 
+		do_action( "noptin_{$this->slug}_order", $action, $order_id, $this );
+		do_action( "noptin_{$this->slug}_order_$action", $order_id, $this );
+
 	}
 
 	/**

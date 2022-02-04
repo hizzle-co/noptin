@@ -22,6 +22,20 @@ abstract class Noptin_Dynamic_Content_Tags {
 	protected $tags = array();
 
 	/**
+	 * Registers a new tag
+	 */
+	public function add_tag( $tag, $details ) {
+		$this->tags[ $tag ] = $details;
+	}
+
+	/**
+	 * Removes a tag
+	 */
+	public function remove_tag( $tag ) {
+		unset( $this->tags[ $tag ] );
+	}
+
+	/**
 	 * Register template tags
 	 */
 	protected function register() {
