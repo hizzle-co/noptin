@@ -26,6 +26,17 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public $type = 'woocommerce_lifetime_value';
 
 	/**
+	 * Registers hooks.
+	 *
+	 */
+	public function add_hooks() {
+		parent::add_hooks();
+
+		// Notify customers.
+		add_action( 'noptin_woocommerce_order_paid', array( $this, 'maybe_schedule_notification' ), 100, 2 );
+	}
+
+	/**
 	 * Retrieves the automated email type name.
 	 *
 	 */
@@ -156,6 +167,132 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags(),
 		);
 
+	}
+
+	/**
+	 * Notify customers when they make a new order.
+	 *
+     * @param int $order_id The order being acted on.
+     * @param Noptin_WooCommerce $bridge The Noptin and WC integration bridge.
+	 */
+	public function maybe_schedule_notification( $order_id, $woocommerce ) {
+
+		$order = wc_get_order( $order_id );
+
+		// Ensure the order exists.
+		if ( empty( $order ) ) {
+			return;
+		}
+
+		// Are there any automations.
+		$automations = $this->get_automations();
+		if ( empty( $automations ) ) {
+			return;
+		}
+
+		// Fetch the user associated with the order.
+		$user = $woocommerce->get_order_customer_user_id( $order->get_id() );
+		if ( empty( $user ) ) {
+			$user = $woocommerce->get_order_customer_email( $order->get_id() );
+		}
+
+		// Calculate their lifetime value.
+		$lifetime_value = $woocommerce->get_total_spent( $user );
+
+		foreach ( $automations as $automation ) {
+
+			// Check if the automation applies here.
+			if ( $this->is_automation_valid_for( $automation, $order, $lifetime_value ) ) {
+				$this->schedule_notification( $order_id, $automation );
+			}
+
+		}
+
+	}
+
+	/**
+	 * Checks if a given notification is valid for a given order
+	 *
+	 * @param Noptin_Automated_Email $automation
+	 * @param WC_Order $order
+	 * @param float $lifetime_value
+	 */
+	public function is_automation_valid_for( $automation, $order, $lifetime_value ) {
+
+		// Compare lifetime values.
+        $is_valid = ! ( floatval( $automation->get( 'lifetime_value' ) ) < $lifetime_value );
+
+		if ( $is_valid ) {
+
+			// Ensure that the user reached this milestone in this specific order.
+			$previous_total = $lifetime_value - (float) $order->get_total();
+
+			$is_valid = $previous_total < floatval( $automation->get( 'lifetime_value' ) );
+
+		}
+
+		// Filter and return.
+		return apply_filters( 'noptin_woocommerce_lifetime_value_notification_is_valid', $is_valid, $automation, $lifetime_value, $order );
+
+    }
+
+	/**
+	 * (Maybe) Send out a new order notification
+	 *
+	 * @param int $order_id
+	 * @param int $campaign_id
+	 * @param string $key
+	 */
+	public function maybe_send_notification( $order_id, $campaign_id ) {
+
+		$order    = wc_get_order( $order_id );
+		$campaign = new Noptin_Automated_Email( $campaign_id );
+
+		// Ensure the order exists and the campaign is active.
+		if ( empty( $order ) || ! $campaign->can_send() ) {
+			return;
+		}
+
+		if ( empty( $key ) ) {
+			$key = $order_id . '_' . $campaign_id;
+		}
+
+		// Send the email.
+		$this->order   = $order;
+		$this->sending = true;
+
+		// Set current customer.
+		$customer_id = $order->get_customer_id();
+
+		if ( $customer_id > 0 ) {
+			$this->customer = new WC_Customer( $customer_id );
+		}
+
+		$this->register_merge_tags();
+
+		foreach ( $this->get_recipients( $campaign, array() ) as $recipient => $track ) {
+
+			$content = noptin_generate_automated_email_content( $campaign, $recipient, $track  );
+			noptin_send_email(
+				array(
+					'recipients' => $recipient,
+					'message'    => noptin_generate_automated_email_content( $campaign, $recipient, $track  ),
+				)
+			);
+
+			// $disable_template_plugins = true;
+			// $subject = '';
+			// $headers = array();
+			// $attachments = array();
+			// $reply_to = '';
+			// $from_email = '';
+			// $from_name = '';
+			// $content_type = '';
+			// $unsubscribe_url = '';
+
+		}
+
+		$this->unregister_merge_tags();
 	}
 
 }

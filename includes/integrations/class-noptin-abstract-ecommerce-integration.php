@@ -482,6 +482,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 			do_action( "noptin_{$this->slug}_integration_product_buy", $product_id, $item, $order_id, $subscriber_id, $this );
 		}
 
+		do_action( "noptin_{$this->slug}_product_buy", $product_id, $item, $order_id, $this );
 	}
 
 	/**
@@ -499,6 +500,8 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 			do_action( "noptin_ecommerce_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
 		}
+
+		do_action( "noptin_{$this->slug}_product_refund", $product_id, $item, $order_id, $this );
 	}
 
 	/**

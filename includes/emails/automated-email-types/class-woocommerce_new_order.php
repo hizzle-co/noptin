@@ -221,7 +221,6 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	 *
 	 * @param string $action The order action.
      * @param int $order_id The order being acted on.
-     * @param int $subscriber_id The subscriber for the order.
      * @param Noptin_WooCommerce $bridge The Noptin and WC integration bridge.
 	 */
 	public function maybe_schedule_notification( $action, $order_id, $woocommerce ) {
@@ -313,6 +312,13 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		$this->order   = $order;
 		$this->sending = true;
 
+		// Set current customer.
+		$customer_id = $order->get_customer_id();
+
+		if ( $customer_id > 0 ) {
+			$this->customer = new WC_Customer( $customer_id );
+		}
+
 		$this->register_merge_tags();
 
 		foreach ( $this->get_recipients( $campaign, array() ) as $recipient => $track ) {
@@ -353,47 +359,6 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags()
 		);
 
-	}
-
-	/**
-	 * Order field value of the current order.
-	 *
-	 * @param array $args
-	 * @param string $field
-	 * @return string
-	 */
-	public function get_order_field( $args = array(), $field = 'first_name' ) {
-		$default = isset( $args['default'] ) ? $args['default'] : '';
-
-		// Abort if no subscriber.
-		if ( empty( $this->subscriber ) || ! $this->subscriber->has_prop( $field ) ) {
-			return esc_html( $default );
-		}
-
-		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
-
-		// Format field value.
-		if ( isset( $all_fields[ $field ] ) ) {
-
-			$value = $this->subscriber->get( $field );
-			if ( 'checkbox' == $all_fields[ $field ] ) {
-				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
-			}
-
-			$value = wp_kses_post(
-				format_noptin_custom_field_value(
-					$this->subscriber->get( $field ),
-					$all_fields[ $field ],
-					$this->subscriber
-				)
-			);
-
-			if ( "&mdash;" !== $value ) {
-				return $value;
-			}
-		}
-
-		return esc_html( $default );
 	}
 
 }
