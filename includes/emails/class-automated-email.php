@@ -20,22 +20,22 @@ defined( 'ABSPATH' ) || exit;
  */
 class Noptin_Automated_Email {
 
-	/** @param bool */
+	/** @var bool */
 	public $is_legacy = false;
 
-	/** @param int */
+	/** @var int */
 	public $id = 0;
 
-	/** @param string */
+	/** @var string */
 	public $status = 'draft'; // Or publish.
 
-	/** @param string */
+	/** @var string */
 	public $created;
 
-	/** @param string */
+	/** @var string */
 	public $name = ''; // Name of this automation.
 
-	/** @param string */
+	/** @var string */
 	public $type; // Type of this automation.
 
 	/** @var array */

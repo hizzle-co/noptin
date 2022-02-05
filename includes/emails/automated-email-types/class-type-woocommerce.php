@@ -1031,4 +1031,50 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 	}
 
+	/**
+	 * Sends a notification.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 * @param string $key
+	 */
+	protected function prepare_and_send( $campaign, $key ) {
+
+		// Generate customer email.
+		$email = '';
+
+		if ( ! empty( $this->order ) ) {
+			$email = $this->order->get_billing_email();
+		}
+
+		// If we have a customer, set-up their info.
+		if ( ! empty( $this->customer ) ) {
+			$email = $this->customer->get_email();
+
+			if ( $this->customer->get_id() ) {
+				$this->user = get_user_by( 'id', $this->customer->get_id() );
+			}
+
+		}
+
+		// Maybe set related subscriber.
+		if ( ! empty( $email ) ) {
+
+			$subscriber = get_noptin_subscriber( $email );
+
+			if ( $subscriber->exists() ) {
+				$this->subscriber = $subscriber;
+			}
+
+		}
+
+		$this->send( $campaign, $key, $this->get_recipients( $campaign, array( '[[customer.email]]' => $email ) ) );
+
+		// Remove temp variables.
+		$this->customer   = null;
+		$this->order      = null;
+		$this->order_item = null;
+		$this->product    = null;
+
+	}
+
 }

@@ -298,14 +298,11 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 
 		$order    = wc_get_order( $order_id );
 		$campaign = new Noptin_Automated_Email( $campaign_id );
+		$key      = $order_id . '_' . $campaign_id;
 
 		// Ensure the order exists and the campaign is active.
 		if ( empty( $order ) || ! $campaign->can_send() ) {
 			return;
-		}
-
-		if ( empty( $key ) ) {
-			$key = $order_id . '_' . $campaign_id;
 		}
 
 		// Send the email.
@@ -319,32 +316,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			$this->customer = new WC_Customer( $customer_id );
 		}
 
-		$this->register_merge_tags();
-
-		foreach ( $this->get_recipients( $campaign, array() ) as $recipient => $track ) {
-
-			$content = noptin_generate_automated_email_content( $campaign, $recipient, $track  );
-			noptin_send_email(
-				array(
-					'recipients' => $recipient,
-					'message'    => noptin_generate_automated_email_content( $campaign, $recipient, $track  ),
-					
-				)
-			);
-
-			// $disable_template_plugins = true;
-			// $subject = '';
-			// $headers = array();
-			// $attachments = array();
-			// $reply_to = '';
-			// $from_email = '';
-			// $from_name = '';
-			// $content_type = '';
-			// $unsubscribe_url = '';
-
-		}
-
-		$this->unregister_merge_tags();
+		$this->prepare_and_send( $campaign, $key );
 	}
 
 	/**

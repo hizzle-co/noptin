@@ -130,6 +130,17 @@ function noptin_handle_email_tags( $content, $subscriber, $context = 'body' ) {
 }
 
 /**
+ * Processes email subject tags.
+ *
+ * @since 1.7.0
+ * @param string $subject
+ * @return string
+ */
+function noptin_parse_email_subject_tags( $subject ) {
+	return apply_filters( 'noptin_parse_email_subject_tags', $subject );
+}
+
+/**
  * Returns the URL to create a new automated email.
  *
  * @since 1.7.0

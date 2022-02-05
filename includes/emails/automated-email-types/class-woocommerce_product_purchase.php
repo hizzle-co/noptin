@@ -401,31 +401,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 			$this->customer = new WC_Customer( $customer_id );
 		}
 
-		$this->register_merge_tags();
-
-		foreach ( $this->get_recipients( $campaign, array() ) as $recipient => $track ) {
-
-			$content = noptin_generate_automated_email_content( $campaign, $recipient, $track  );
-			noptin_send_email(
-				array(
-					'recipients' => $recipient,
-					'message'    => noptin_generate_automated_email_content( $campaign, $recipient, $track  ),
-				)
-			);
-
-			// $disable_template_plugins = true;
-			// $subject = '';
-			// $headers = array();
-			// $attachments = array();
-			// $reply_to = '';
-			// $from_email = '';
-			// $from_name = '';
-			// $content_type = '';
-			// $unsubscribe_url = '';
-
-		}
-
-		$this->unregister_merge_tags();
+		$this->prepare_and_send( $campaign, $key );
 	}
 
 }

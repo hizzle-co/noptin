@@ -98,33 +98,9 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'replacement' => date_i18n( get_option( 'time_format' ), current_time( 'timestamp' ) ),
 		);
 
-		foreach ( get_noptin_custom_fields() as $field ) {
-
-			$merge_tag = sanitize_key( $field['merge_tag'] );
-
-			$this->tags[ $merge_tag ] = array(
-				'description' => strip_tags( $field['label'] ),
-				'callback'    => array( $this, 'get_custom_field' ),
-				'example'     => $merge_tag . " default=''",
-			);
-
-		}
-
 		$this->tags['subscriber_count'] = array(
 			'description' => __( 'Replaced with the total number of subscribers', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_subscriber_count' ),
-		);
-
-		$this->tags['user'] = array(
-			'description' => __( "A custom field's value of the WordPress user (if known).", 'newsletter-optin-box' ),
-			'callback'    => array( $this, 'get_user_property' ),
-			'example'     => "user property='user_email'",
-		);
-
-		$this->tags['post'] = array(
-			'description' => __( 'Property of the page or post.', 'newsletter-optin-box' ),
-			'callback'    => array( $this, 'get_post_property' ),
-			'example'     => "post property='ID'",
 		);
 
 		$this->tags['rule'] = array(
@@ -171,100 +147,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		// Either unsubscribe the user or the subscriber.
 		$subscriber = $this->subscriber->is_virtual ? $this->subscriber->email : $this->subscriber->confirm_key;
 		return get_noptin_action_url( 'unsubscribe', $subscriber );
-	}
-
-	/*
-	 * Get property of related user.
-	 *
-	 * @param array $args
-	 *
-	 * @return string
-	 */
-	protected function get_user_property( $args = array() ) {
-		$property = empty( $args['property'] ) ? 'user_email' : $args['property'];
-		$default  = isset( $args['default'] ) ? $args['default'] : '';
-
-		// Abort if we have no subscriber.
-		if ( empty( $this->subscriber ) ) {
-			return esc_html( $default );
-		}
-
-		// Fetch the user id.
-		$user = $this->subscriber->get_wp_user();
-
-		if ( empty( $user ) ) {
-			return esc_html( $default );
-		}
-
-		// Fetch user object.
-		$user = new WP_User( $user );
-
-		if ( $user instanceof WP_User && isset( $user->{$property} ) ) {
-			return esc_html( $user->{$property} );
-		}
-
-		return esc_html( $default );
-	}
-
-	/**
-	 * Custom field value of the current subscriber (if known).
-	 *
-	 * @param array $args
-	 * @param string $field
-	 * @return string
-	 */
-	protected function get_custom_field( $args = array(), $field = 'first_name' ) {
-		$default = isset( $args['default'] ) ? $args['default'] : '';
-
-		// Abort if no subscriber.
-		if ( empty( $this->subscriber ) || ! $this->subscriber->has_prop( $field ) ) {
-			return esc_html( $default );
-		}
-
-		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
-
-		// Format field value.
-		if ( isset( $all_fields[ $field ] ) ) {
-
-			$value = $this->subscriber->get( $field );
-			if ( 'checkbox' == $all_fields[ $field ] ) {
-				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
-			}
-
-			$value = wp_kses_post(
-				format_noptin_custom_field_value(
-					$this->subscriber->get( $field ),
-					$all_fields[ $field ],
-					$this->subscriber
-				)
-			);
-
-			if ( "&mdash;" !== $value ) {
-				return $value;
-			}
-		}
-
-		return esc_html( $default );
-	}
-
-	/*
-	 * Get property of current post
-	 *
-	 * @param array $args
-	 *
-	 * @return string
-	 */
-	protected function get_post_property( $args = array() ) {
-
-		$post     = empty( $this->post ) ? false: $this->post;
-		$property = empty( $args['property'] ) ? 'ID' : $args['property'];
-		$default  = isset( $args['default'] ) ? $args['default'] : '';
-
-		if ( $post instanceof WP_Post && isset( $post->{$property} ) ) {
-			return 'post_content' === $property ? wp_kses_post( $post->{$property} ) : esc_html( $post->{$property} );
-		}
-
-		return esc_html( $default );
 	}
 
 	/**

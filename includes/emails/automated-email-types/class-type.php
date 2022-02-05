@@ -26,13 +26,6 @@ abstract class Noptin_Automated_Email_Type {
 	public $type;
 
 	/**
-	 * Object this email is for, for example a customer, product, or subscriber.
-	 *
-	 * @var object|bool
-	 */
-	public $object;
-
-	/**
 	 * True when email is being sent.
 	 *
 	 * @var bool
@@ -43,6 +36,21 @@ abstract class Noptin_Automated_Email_Type {
 	 * @var string
 	 */
 	public $notification_hook = '';
+
+	/**
+	 * @var string
+	 */
+	public $unsubscribe_url = '';
+
+	/**
+	 * @var Noptin_Subscriber
+	 */
+	public $subscriber;
+
+	/**
+	 * @var WP_User
+	 */
+	public $user;
 
 	/**
 	 * Retrieves the automated email type name.
@@ -210,7 +218,7 @@ abstract class Noptin_Automated_Email_Type {
 	 * @param array $merge_tags
 	 * @return array
 	 */
-	public function get_recipients( $automation, $merge_tags ) {
+	public function get_recipients( $automation, $merge_tags = array() ) {
 
 		$recipients = array();
 
@@ -225,6 +233,71 @@ abstract class Noptin_Automated_Email_Type {
 		}
 
 		return $recipients;
+	}
+
+	/**
+	 * Retrieves an array of subscriber merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_subscriber_merge_tags() {
+
+		$tags = array();
+		foreach ( get_noptin_custom_fields() as $field ) {
+
+			$merge_tag = sanitize_key( $field['merge_tag'] );
+
+			$tags[ $merge_tag ] = array(
+				'description' => strip_tags( $field['label'] ),
+				'callback'    => array( $this, 'get_subscriber_field' ),
+				'example'     => $merge_tag . " default=''",
+			);
+
+		}
+
+		return $tags;
+
+	}
+
+	/**
+	 * Custom field value of the current subscriber.
+	 *
+	 * @param array $args
+	 * @param string $field
+	 * @return string
+	 */
+	public function get_subscriber_field( $args = array(), $field = 'first_name' ) {
+		$default = isset( $args['default'] ) ? $args['default'] : '';
+
+		// Abort if no subscriber.
+		if ( empty( $this->subscriber ) || ! $this->subscriber->has_prop( $field ) ) {
+			return esc_html( $default );
+		}
+
+		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
+
+		// Format field value.
+		if ( isset( $all_fields[ $field ] ) ) {
+
+			$value = $this->subscriber->get( $field );
+			if ( 'checkbox' == $all_fields[ $field ] ) {
+				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
+			}
+
+			$value = wp_kses_post(
+				format_noptin_custom_field_value(
+					$this->subscriber->get( $field ),
+					$all_fields[ $field ],
+					$this->subscriber
+				)
+			);
+
+			if ( "&mdash;" !== $value ) {
+				return $value;
+			}
+		}
+
+		return esc_html( $default );
 	}
 
 	/**
@@ -271,6 +344,63 @@ abstract class Noptin_Automated_Email_Type {
 		foreach ( array_keys( $this->get_flattened_merge_tags() ) as $tag ) {
 			noptin()->emails->tags->remove_tag( $tag );
 		}
+	}
+
+	/**
+	 * Sends a notification.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 * @param string $key
+	 * @param array $recipients
+	 */
+	protected function send( $campaign, $key, $recipients ) {
+
+		// Prepare recipient.
+		$recipient = array_filter(
+			array(
+				'cid' => $campaign->id,
+				'uid' => empty( $this->user ) ? false : $this->user->ID,
+				'sid' => empty( $this->subscriber ) ? false : $this->subscriber->id,
+			)
+		);
+
+		// Generate unsubscribe url.
+		$this->unsubscribe_url = get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( $recipient ) ) );
+
+		// Register merge tags.
+		$this->register_merge_tags();
+
+		foreach ( $recipients as $email => $track ) {
+
+			// Send the email.
+			noptin_send_email(
+				array(
+					'recipients'               => $email,
+					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
+					'message'                  => noptin_generate_automated_email_content( $campaign, $recipient, $track  ),
+					'headers'                  => array(),
+					'attachments'              => array(),
+					'reply_to'                 => '',
+					'from_email'               => '',
+					'from_name'                => '',
+					'content_type'             => '',
+					'unsubscribe_url'          => $this->unsubscribe_url,
+					'disable_template_plugins' => true,
+				)
+			);
+
+		}
+
+		// Uregister merge tags.
+		$this->unregister_merge_tags();
+
+		$this->user       = null;
+		$this->subscriber = null;
+
+		// TODO: Email generator (new recipients format), email sender, register user and subscriber merge tags if the two are set
+		// noptin_parse_email_content_tags( $content )
+		// For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
+		// Work on post digests and new post notifications.
 	}
 
 }
