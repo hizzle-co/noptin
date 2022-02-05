@@ -492,17 +492,36 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				break;
 
 			case 'order.cross_sells':
-				$template = isset( $args['style'] ) ? $args['style'] : 'grid';
-				$products = array();
+				$template    = isset( $args['style'] ) ? $args['style'] : 'grid';
+				$limit       = isset( $args['limit'] ) ? absint( $args['limit'] ) : 6;
+				$cross_sells = $this->get_order_cross_sells( $this->order );
 
-				foreach ( $this->order->get_items() as $item ) {
-					$products[] = $item->get_product();
+				if ( empty( $cross_sells ) ) {
+					return $default;
 				}
+
+				$products = wc_get_products(
+					array(
+						'include'    => $cross_sells,
+						'limit'      => $limit,
+						'status'     => 'publish',
+						'visibility' => 'catalog',
+					)
+				);
 
 				return $this->get_products_html( $products, $template );
 				break;
 
 			case 'order.items':
+				$template = isset( $args['style'] ) ? $args['style'] : 'grid';
+				$products = array();
+
+				foreach ( $this->order->get_items() as $item ) {
+					/** @var WC_Order_Item_Product $item */
+					$products[] = $item->get_product();
+				}
+
+				return $this->get_products_html( $products, $template );
 				break;
 
 			case 'order.meta':
