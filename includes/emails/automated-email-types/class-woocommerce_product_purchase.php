@@ -26,11 +26,6 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public $type = 'woocommerce_product_purchase';
 
 	/**
-	 * @var WC_Order_Item_Product
-	 */
-	public $order_item;
-
-	/**
 	 * Registers hooks.
 	 *
 	 */
@@ -246,9 +241,10 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Order', 'noptin' )    => $this->get_order_merge_tags(),
-			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags(),
-			__( 'Product', 'noptin' ) => $this->get_product_merge_tags(),
+			__( 'Order', 'noptin' )      => $this->get_order_merge_tags(),
+			__( 'Customer', 'noptin' )   => $this->get_customer_merge_tags(),
+			__( 'Product', 'noptin' )    => $this->get_product_merge_tags(),
+			__( 'Order Item', 'noptin' ) => $this->get_order_item_merge_tags(),
 		);
 
 	}

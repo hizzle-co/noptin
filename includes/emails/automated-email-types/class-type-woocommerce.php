@@ -34,6 +34,11 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	public $product;
 
 	/**
+	 * @var WC_Order_Item_Product
+	 */
+	public $order_item;
+
+	/**
 	 * Retrieves the automated email type image.
 	 *
 	 */
@@ -270,6 +275,12 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'description' => __( 'The billing phone number for the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.billing_phone",
+			),
+
+			'order.shipping_method' => array(
+				'description' => __( 'The formatted shipping method for the order', 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_field' ),
+				'example'     => "order.shipping_method",
 			),
 
 			'order.shipping_address' => array(
@@ -802,6 +813,102 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	}
 
 	/**
+	 * Retrieves an array of order item merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_order_item_merge_tags() {
+
+		return array(
+
+			'order_item.id' => array(
+				'description' => __( 'Ordered Item ID', 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_item_field' ),
+				'example'     => "order_item.id",
+			),
+
+			'order_item.name' => array(
+				'description' => __( 'Ordered Item Name', 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_item_field' ),
+				'example'     => "order_item.name",
+			),
+
+			'order_item.quantity' => array(
+				'description' => __( 'Ordered Item Quantity', 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_item_field' ),
+				'example'     => "order_item.quantity",
+			),
+
+			'order_item.attribute' => array(
+				'description' => __( 'Displays a given attribute for the product.', 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_item_field' ),
+				'example'     => "order_item.attribute key=xyz",
+			),
+
+			'order_item.meta' => array(
+				'description' => __( 'Displays the value of an order item meta field', 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_item_field' ),
+				'example'     => "order_item.meta key=xyz",
+			),
+
+		);
+
+	}
+
+	/**
+	 * Custom field value of the current order item.
+	 *
+	 * @param array $args
+	 * @param string $field
+	 * @return string
+	 */
+	public function get_order_item_field( $args = array(), $field = 'order_item.id' ) {
+		$default = isset( $args['default'] ) ? $args['default'] : '';
+
+		// Abort if no order item.
+		if ( empty( $this->order_item ) ) {
+			return esc_html( $default );
+		}
+
+		// Process product's order items.
+		switch( $field ) {
+
+			case 'order_item.attribute':
+
+				// Abort if no key provided.
+				if ( empty( $args['key'] ) ) {
+					return esc_html( $default );
+				}
+
+				$product   = $this->order_item->get_product();
+				$attribute = empty( $product ) ? $default : $product->get_attribute( trim( $args['key'] ) );
+
+				return esc_html( $attribute );
+				break;
+
+			case 'order_item.meta':
+
+				// Abort if no key provided.
+				if ( empty( $args['key'] ) ) {
+					return esc_html( $default );
+				}
+	
+				return wp_kses_post( (string) wc_get_order_item_meta( $this->order_item, trim( $args['key'] ) ) );
+				break;
+
+
+			default:
+				$method = 'get_' . str_replace( 'order_item.', '', $field );
+
+				if ( is_callable( array( $this->order_item, $method ) ) ) {
+					return wp_kses_post( (string) $this->order_item->$method() );
+				}
+		}
+
+		return esc_html( $default );
+	}
+
+	/**
 	 * Get order cross sells.
 	 *
 	 * @param WC_Order $order
@@ -814,6 +921,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		$items = $order->get_items();
 
 		foreach ( $items as $item ) {
+			/** @var WC_Order_Item_Product $item */
 			$product = $item->get_product();
 
 			if ( $product ) {
