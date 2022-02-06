@@ -903,7 +903,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				if ( empty( $args['key'] ) ) {
 					return esc_html( $default );
 				}
-	
+
 				return wp_kses_post( (string) wc_get_order_item_meta( $this->order_item, trim( $args['key'] ) ) );
 				break;
 
@@ -1089,6 +1089,107 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		$this->order      = null;
 		$this->order_item = null;
 		$this->product    = null;
+
+	}
+
+	/**
+	 * Sends a test email.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 * @param string $recipient
+	 * @return bool Whether or not the test email was sent
+	 */
+	public function send_test( $email, $recipient ) {
+
+		$this->prepare_test_data( $email );
+
+		// Generate customer email.
+		$email = $this->customer->get_email();
+
+		// Maybe set related subscriber.
+		if ( ! empty( $email ) ) {
+
+			$subscriber = get_noptin_subscriber( $email );
+
+			if ( $subscriber->exists() ) {
+				$this->subscriber = $subscriber;
+			}
+
+		}
+
+		$result = $this->send( $email, 'test', array( sanitize_email( $recipient ) => false ) );
+
+		// Remove temp variables.
+		$this->customer   = null;
+		$this->order      = null;
+		$this->order_item = null;
+		$this->product    = null;
+
+		return $result;
+	}
+
+	/**
+	 * Prepares test data.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 */
+	public function prepare_test_data( $email ) {
+
+		// Prepare user and subscriber.
+		parent::prepare_test_data( $email );
+
+		// Prepare WC data.
+		$this->_prepare_test_data();
+
+	}
+
+	/**
+	 * Prepares test data.
+	 *
+	 * @param int $offset
+	 */
+	protected function _prepare_test_data( $offset = 0 ) {
+
+		// Do not run more than 10 times.
+		if ( $offset > 10 ) {
+			throw new Exception( __( 'Could not find an order for this preview.', 'newsletter-optin-box' ) );
+		}
+
+		// Get the next order.
+		$orders = wc_get_orders(
+			array(
+				'type'   => 'shop_order',
+				'limit'  => 1,
+				'offset' => $offset,
+				'return' => 'ids',
+			)
+		);
+
+		// If no order found, abort.
+		if ( ! $orders ) {
+			throw new Exception( __( 'Could not find an order for this preview.', 'newsletter-optin-box' ) );
+		}
+
+		// Retrieve the order object.
+		$order = wc_get_order( $orders[0] );
+
+		// Continue if this is not a guest order and has products.
+		if ( $order && $order->get_customer_id() && $order->get_item_count() > 0 ) {
+			$this->order    = $order;
+			$this->user     = $order->get_user();
+			$this->customer = new WC_Customer( $order->get_customer_id() );
+
+			/**@var WC_Order_Item_Product $item */
+			foreach ( $order->get_items() as $item ) {
+				$this->order_item = $item;
+				$this->product    = $item->get_product();
+				break;
+			}
+
+			return;
+		}
+
+		return $this->_prepare_test_data( $offset + 1 );
 
 	}
 

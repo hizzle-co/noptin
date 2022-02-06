@@ -404,4 +404,20 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		$this->prepare_and_send( $campaign, $key );
 	}
 
+	/**
+	 * Prepares test data.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 */
+	public function prepare_test_data( $email ) {
+		parent::prepare_test_data( $email );
+
+		// Maybe use selected product.
+		$product = wc_get_product( (int) $email->get( 'product' ) );
+		if ( $product ) {
+			$this->product = $product;
+		}
+
+	}
+
 }

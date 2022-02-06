@@ -19,7 +19,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	/**
 	 * @var array Array of registered dynamic content tags
 	 */
-	protected $tags = array();
+	public $tags = array();
 
 	/**
 	 * Registers a new tag
@@ -32,7 +32,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 * Removes a tag
 	 */
 	public function remove_tag( $tag ) {
-		unset( $this->tags[ $tag ] );
+
+		if ( isset( $this->tags[ $tag ] ) ) {
+			unset( $this->tags[ $tag ] );
+		}
+
 	}
 
 	/**

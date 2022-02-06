@@ -70,6 +70,11 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function register() {
 
+		$this->tags['unsubscribe_url'] = array(
+			'description' => __( 'The unsubscribe URL.', 'newsletter-optin-box' ),
+			'replacement' => '',
+		);
+
 		$this->tags['date'] = array(
 			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ) . '</strong>' ),
 			'replacement' => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),

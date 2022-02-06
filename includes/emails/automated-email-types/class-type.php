@@ -71,6 +71,15 @@ abstract class Noptin_Automated_Email_Type {
 	abstract public function the_image();
 
 	/**
+	 * Sends a test email.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 * @param string $recipients
+	 * @return bool Whether or not the preview was sent
+	 */
+	abstract public function send_test( $email, $recipients );
+
+	/**
 	 * Registers relevant hooks.
 	 *
 	 */
@@ -330,9 +339,24 @@ abstract class Noptin_Automated_Email_Type {
 	 * @return array
 	 */
 	public function register_merge_tags() {
+
+		// Register general merge tags.
 		foreach ( $this->get_flattened_merge_tags() as $tag => $details ) {
 			noptin()->emails->tags->add_tag( $tag, $details );
 		}
+
+		// Register subsriber merge tags.
+		if ( ! empty( $this->subscriber ) ) {
+			foreach ( $this->get_subscriber_merge_tags() as $tag => $details ) {
+				noptin()->emails->tags->add_tag( $tag, $details );
+			}
+		}
+
+		// Unsubscribe URL.
+		if ( ! empty( $this->unsubscribe_url ) ) {
+			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = $this->unsubscribe_url;
+		}
+
 	}
 
 	/**
@@ -341,9 +365,24 @@ abstract class Noptin_Automated_Email_Type {
 	 * @return array
 	 */
 	public function unregister_merge_tags() {
+
+		// Unregister general merge tags.
 		foreach ( array_keys( $this->get_flattened_merge_tags() ) as $tag ) {
 			noptin()->emails->tags->remove_tag( $tag );
 		}
+
+		// Unregister subsriber merge tags.
+		if ( ! empty( $this->subscriber ) ) {
+			foreach ( array_keys( $this->get_subscriber_merge_tags() ) as $tag ) {
+				noptin()->emails->tags->remove_tag( $tag );
+			}
+		}
+
+		// Unsubscribe URL.
+		if ( ! empty( $this->unsubscribe_url ) ) {
+			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = '';
+		}
+
 	}
 
 	/**
@@ -370,6 +409,9 @@ abstract class Noptin_Automated_Email_Type {
 		// Register merge tags.
 		$this->register_merge_tags();
 
+		// Indicate that we're sending an email.
+		$this->sending = true;
+
 		foreach ( $recipients as $email => $track ) {
 
 			// Send the email.
@@ -391,6 +433,9 @@ abstract class Noptin_Automated_Email_Type {
 
 		}
 
+		// Indicate that we're nolonger sending an email.
+		$this->sending = false;
+
 		// Uregister merge tags.
 		$this->unregister_merge_tags();
 
@@ -398,11 +443,24 @@ abstract class Noptin_Automated_Email_Type {
 		$this->subscriber = null;
 
 		// TODO:Register user and subscriber merge tags if the two are set
-		// Update merge tags
 		// Make sure automated email class uses new generate automated email content format.
-		// noptin_parse_email_content_tags( $content )
 		// For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
 		// Work on post digests and new post notifications.
+	}
+
+	/**
+	 * Prepares test data.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 */
+	public function prepare_test_data( $email ) {
+		$this->user = wp_get_current_user();
+		$subscriber = get_current_noptin_subscriber_id();
+
+		if ( $subscriber ) {
+			$this->subscriber = new Noptin_Subscriber( $subscriber );
+		}
+
 	}
 
 }
