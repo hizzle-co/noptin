@@ -277,6 +277,7 @@ abstract class Noptin_Automated_Email_Type {
 	 */
 	public function get_subscriber_field( $args = array(), $field = 'first_name' ) {
 		$default = isset( $args['default'] ) ? $args['default'] : '';
+		$field   = strtolower( $field );
 
 		// Abort if no subscriber.
 		if ( empty( $this->subscriber ) || ! $this->subscriber->has_prop( $field ) ) {
@@ -307,6 +308,119 @@ abstract class Noptin_Automated_Email_Type {
 		}
 
 		return esc_html( $default );
+	}
+
+	/**
+	 * Retrieves an array of user merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_user_merge_tags() {
+
+		return array(
+
+			'user.id' => array(
+				'description' => __( "The user's ID", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.id",
+			),
+
+			'user.email' => array(
+				'description' => __( "The user's email address", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.email",
+			),
+
+			'user.login' => array(
+				'description' => __( "The user's login name", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.login",
+			),
+
+			'user.first_name' => array(
+				'description' => __( "The user's first name", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.first_name default='Jane'",
+			),
+
+			'user.last_name' => array(
+				'description' => __( "The user's last name", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.last_name default='Doe'",
+			),
+
+			'user.display_name' => array(
+				'description' => __( "The user's display name", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.display_name default='there'",
+			),
+
+			'user.description' => array(
+				'description' => __( "The user's description", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.description",
+			),
+
+			'user.url' => array(
+				'description' => __( "The user's website, if available", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.url",
+			),
+
+			'user.registered' => array(
+				'description' => __( "The user's registration date", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.registered",
+			),
+
+			'user.meta' => array(
+				'description' => __( "The user's meta field value", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_user_field' ),
+				'example'     => "user.meta key='xyz' default='123'",
+			),
+
+		);
+
+	}
+
+	/**
+	 * Custom field value of the current User.
+	 *
+	 * @param array $args
+	 * @param string $field
+	 * @return string
+	 */
+	public function get_user_field( $args = array(), $field = 'user.first_name' ) {
+
+		// Prepare vars.
+		$default = isset( $args['default'] ) ? $args['default'] : '';
+		$field   = str_replace( 'user.', 'user_', strtolower( $field ) );
+
+		// Standardize some fields.
+		if ( $field == 'user_id' ) {
+			$field = 'ID';
+		}
+
+		if ( in_array( $field, array( 'user_display_name' ) ) ) {
+			$field = str_replace( 'user_', '', $field );
+		}
+
+		if ( $field == 'user_meta' ) {
+
+			if ( empty( $args['key'] ) ) {
+				return esc_html( $default );
+			}
+
+			$field = trim( strtolower( $args['key'] ) );
+		}
+
+		// Abort if no user.
+		if ( empty( $this->user ) || ! $this->user->has_prop( $field ) ) {
+			return esc_html( $default );
+		}
+
+		return esc_html( (string) $this->user->get( $field ) );
+
 	}
 
 	/**
@@ -352,6 +466,13 @@ abstract class Noptin_Automated_Email_Type {
 			}
 		}
 
+		// Register user merge tags.
+		if ( ! empty( $this->user ) ) {
+			foreach ( $this->get_user_merge_tags() as $tag => $details ) {
+				noptin()->emails->tags->add_tag( $tag, $details );
+			}
+		}
+
 		// Unsubscribe URL.
 		if ( ! empty( $this->unsubscribe_url ) ) {
 			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = $this->unsubscribe_url;
@@ -374,6 +495,13 @@ abstract class Noptin_Automated_Email_Type {
 		// Unregister subsriber merge tags.
 		if ( ! empty( $this->subscriber ) ) {
 			foreach ( array_keys( $this->get_subscriber_merge_tags() ) as $tag ) {
+				noptin()->emails->tags->remove_tag( $tag );
+			}
+		}
+
+		// Unregister user merge tags.
+		if ( ! empty( $this->user ) ) {
+			foreach ( array_keys( $this->get_user_merge_tags() ) as $tag ) {
 				noptin()->emails->tags->remove_tag( $tag );
 			}
 		}
@@ -442,8 +570,7 @@ abstract class Noptin_Automated_Email_Type {
 		$this->user       = null;
 		$this->subscriber = null;
 
-		// TODO:Register user and subscriber merge tags if the two are set
-		// For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
+		// TODO: For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
 		// Work on post digests and new post notifications.
 	}
 
