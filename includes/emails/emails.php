@@ -65,23 +65,22 @@ function noptin_generate_email_content( $args ) {
  *
  * @since 1.7.0
  * @param Noptin_Automated_Email $email
- * @param mixed $recipient
+ * @param array $recipient
  * @param bool $track
  * @return string
  */
 function noptin_generate_automated_email_content( $email, $recipient, $track = true ) {
 
 	$args = array(
-		'type'         => $email->get_email_type(),
+		'type'         => $email->get_email_type(), // normal, raw_html, plain_text
 		'content'      => $email->get_content( $email->get_email_type() ),
 		'template'     => $email->get( 'template' ),
 		'heading'      => $email->get( 'heading' ),
 		'footer_text'  => $email->get( 'footer_text' ),
 		'preview_text' => $email->get( 'preview_text' ),
 		'campaign_id'  => $email->id,
-		'user_id'      => apply_filters( 'noptin_automated_email_recipient_user_id', false, $recipient, $email ),
-		'subscriber'   => apply_filters( 'noptin_automated_email_recipient_subscriber', is_a( $recipient, 'Noptin_Subscriber' ) ? $recipient : false, $recipient, $email ),
 		'track'        => $track,
+		'recipient'    => $recipient,
 	);
 
 	return noptin_generate_email_content( $args );
@@ -138,6 +137,17 @@ function noptin_handle_email_tags( $content, $subscriber, $context = 'body' ) {
  */
 function noptin_parse_email_subject_tags( $subject ) {
 	return apply_filters( 'noptin_parse_email_subject_tags', $subject );
+}
+
+/**
+ * Processes email content tags.
+ *
+ * @since 1.7.0
+ * @param string $content
+ * @return string
+ */
+function noptin_parse_email_content_tags( $content ) {
+	return apply_filters( 'noptin_parse_email_content_tags', $content );
 }
 
 /**

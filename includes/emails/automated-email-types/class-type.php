@@ -397,7 +397,9 @@ abstract class Noptin_Automated_Email_Type {
 		$this->user       = null;
 		$this->subscriber = null;
 
-		// TODO: Email generator (new recipients format), email sender, register user and subscriber merge tags if the two are set
+		// TODO: Email sender, register user and subscriber merge tags if the two are set
+		// Update merge tags
+		// Make sure automated email class uses new generate automated email content format.
 		// noptin_parse_email_content_tags( $content )
 		// For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
 		// Work on post digests and new post notifications.

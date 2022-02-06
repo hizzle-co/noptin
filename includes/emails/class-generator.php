@@ -67,18 +67,11 @@ class Noptin_Email_Generator {
 	public $preview_text = '';
 
 	/**
-	 * The subscriber who will receive this email.
+	 * The recipient for this email.
 	 *
-	 * @var Noptin_Subscriber|false
+	 * @var array
 	 */
-	public $subscriber = false;
-
-	/**
-	 * The user/customer who will receive this email.
-	 *
-	 * @var int|false
-	 */
-	public $user_id = false;
+	public $recipient = array();
 
 	/**
 	 * The campaign for this email.
@@ -147,7 +140,7 @@ class Noptin_Email_Generator {
 	 *
 	 * @return string
 	 */
-	protected function generate_plain_text_email() {
+	public function generate_plain_text_email() {
 
 		// Prepare content.
 		$content = trim( $this->content );
@@ -158,7 +151,7 @@ class Noptin_Email_Generator {
 		}
 
 		// Render merge tags.
-		$content = noptin_handle_email_tags( $content, $this->subscriber );
+		$content = noptin_parse_email_content_tags( $content );
 
 		// Ensure that shortcodes are not wrapped in paragraphs.
 		$content = shortcode_unautop( $content );
@@ -185,7 +178,8 @@ class Noptin_Email_Generator {
 	 *
 	 * @return string
 	 */
-	protected function generate_raw_html_email() {
+	public function generate_raw_html_email() {
+		$this->preview_text = '';
 		return $this->post_process( trim( $this->content ) );
 	}
 
@@ -194,10 +188,10 @@ class Noptin_Email_Generator {
 	 *
 	 * @return string
 	 */
-	protected function generate_normal_email() {
+	public function generate_normal_email() {
 
 		// Prepare vars.
-		$content  = trim( $this->content );
+		$content  = wpautop( trim( $this->content ) );
 		$template = $this->template;
 		$email    = $content;
 
@@ -214,9 +208,9 @@ class Noptin_Email_Generator {
 		if ( ! empty( $is_local_template ) ) {
 
 			ob_start();
-			get_noptin_template( "email-templates/$template/email-header.php", array( 'email_heading' => $this->heading ) );
+			get_noptin_template( "email-templates/$template/email-header.php", array( 'email_heading' => wpautop( $this->heading ) ) );
 			get_noptin_template( "email-templates/$template/email-body.php", array( 'content' => $content ) );
-			get_noptin_template( "email-templates/$template/email-footer.php", array( 'footer' => $this->footer_text ) );
+			get_noptin_template( "email-templates/$template/email-footer.php", array( 'footer' => wpautop( $this->footer_text ) ) );
 			$email = ob_get_clean();
 
 		}
@@ -237,7 +231,7 @@ class Noptin_Email_Generator {
 	public function post_process( $content ) {
 
 		// Do merge tags.
-		$content = noptin_handle_email_tags( $content, $this->subscriber );
+		$content = noptin_parse_email_content_tags( $content );
 
 		// Inject preheader.
 		$content = $this->inject_preheader( $content );
@@ -291,22 +285,12 @@ class Noptin_Email_Generator {
 	 */
 	public function can_track() {
 
-		// Abort if we have no campaign id...
-		if ( empty( $this->campaign_id ) ) {
+		// Abort if we have no recipient or tracking is disabled for this campaign...
+		if ( empty( $this->recipient ) || empty( $this->track ) ) {
 			return false;
 		}
 
-		// ... or tracking is disabled.
-		if ( empty( $this->track ) ) {
-			return false;
-		}
-
-		// ... or subscriber/user...
-		if ( empty( $this->subscriber ) && empty( $this->user_id ) ) {
-			return false;
-		}
-
-		// ... or tracking is disabled.
+		// ... or store wide.
 		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
 		if ( empty( $track_campaign_stats ) ) {
 			return false;
@@ -357,11 +341,9 @@ class Noptin_Email_Generator {
 		// Skip action page URLs.
 		if ( false === strpos( $url, 'noptin_ns' ) ) {
 
-			$args = array(
-				'uid' => ! empty( $this->user_id ) ? intval( $this->user_id ) : false,
-				'sid' => ! empty( $this->subscriber ) ? intval( $this->subscriber->id ) : false,
-				'cid' => intval( $this->campaign_id ),
-				'to'  => urlencode( $url ),
+			$args = array_merge(
+				$this->recipient,
+				array( 'to'  => $url )
 			);
 
 			$url = get_noptin_action_url( 'email_click', noptin_encrypt( wp_json_encode( $args ) ) );
@@ -443,17 +425,7 @@ class Noptin_Email_Generator {
 	 * @since 1.7.0
 	 */
 	protected function get_tracker() {
-
-		$url = get_noptin_action_url( 'email_open' );
-
-		$args = array(
-			'uid' => ! empty( $this->user_id ) ? intval( $this->user_id ) : false,
-			'sid' => ! empty( $this->subscriber ) ? intval( $this->subscriber->id ) : false,
-			'cid' => intval( $this->campaign_id ),
-		);
-
-		$url = get_noptin_action_url( 'email_open', noptin_encrypt( wp_json_encode( $args ) ) );
-
+		$url = get_noptin_action_url( 'email_open', noptin_encrypt( wp_json_encode( $this->recipient ) ) );
 		return '<img src="' . esc_url( $url ) . '" height="1" width="1" alt="" style="border:0;display:inline">';
 	}
 

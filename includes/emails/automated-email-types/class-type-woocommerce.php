@@ -39,6 +39,17 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	public $order_item;
 
 	/**
+	 * Registers hooks.
+	 *
+	 */
+	public function add_hooks() {
+		parent::add_hooks();
+
+		// Notify customers.
+		add_action( 'noptin_email_styles', array( $this, 'maybe_append_custom_css' ), 100, 2 );
+	}
+
+	/**
 	 * Retrieves the automated email type image.
 	 *
 	 */
@@ -974,9 +985,13 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 *
 	 * @return string
 	 */
-	public static function get_custom_css() {
+	public function maybe_append_custom_css( $styles ) {
 
-		return '
+		if ( ! $this->sending ) {
+			return $styles;
+		}
+
+		return $styles . '
 			table.noptin-wc-product-grid {
 				width: 100%;
 			}
