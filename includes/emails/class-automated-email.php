@@ -353,27 +353,6 @@ class Noptin_Automated_Email {
 	}
 
 	/**
-	 * Prepares the email content.
-	 *
-	 * @param Noptin_Subscriber|WP_User|WC_Customer|false $recipient
-	 * @param bool $track
-	 * @return array
-	 */
-	public function prepare_email( $recipient = false, $track = false ) {
-
-		// Allow automated email types to prepare merge tags.
-		do_action( 'noptin_before_prepare_automated_email', $this, $recipient );
-
-		$subject = noptin_parse_email_subject_tags( $this->get_subject() );
-		$content = noptin_generate_automated_email_content( $this, $recipient, $track );
-
-		// Allow automated email types to clean merge tags.
-		do_action( 'noptin_after_prepare_automated_email', $this, $recipient );
-
-		return array( $subject, $content );
-	}
-
-	/**
 	 * Sends a test email
 	 *
 	 * @param string $recipient
@@ -392,20 +371,18 @@ class Noptin_Automated_Email {
 			return new WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
 		}
 
-		// Is there a subscriber with that email?
-		$subscriber = new Noptin_Subscriber( $recipient );
-
-		if ( ! $subscriber->exists() ) {
-			$subscriber = false;
+		// Is the email type supported?
+		if ( ! isset( noptin()->emails->automated_email_types->types[ $this->type ] ) ) {
+			return new WP_Error( 'unsupported_automation_type', __( 'Invalid or unsupported automation type.', 'newsletter-optin-box' ) );
 		}
 
-		$subscriber = apply_filters( 'noptin_automated_email_test_recipient_subscriber', $subscriber, $recipient );
+		// Try sending the test email.
+		try {
+			return noptin()->emails->automated_email_types->types[ $this->type ]->send_test( $this, $recipient );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', $e->getMessage() );
+		}
 
-		// Generate email content.
-		$email = $this->prepare_email( $subscriber, false );
-
-		// Send the email.
-		noptin_send_email( $email[0], $email[1], $recipient );
 	}
 
 	/**
