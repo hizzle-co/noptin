@@ -25,8 +25,14 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * Register core hooks.
 	 */
 	public function add_hooks() {
+
+		// Register known tags.
+		$this->register();
+
+		// Add hooks.
 		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ) );
 		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ) );
+
 	}
 
 	/**
@@ -75,6 +81,21 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'replacement' => '',
 		);
 
+		$this->tags['blog_name'] = array(
+			'description' => __( 'The website name.', 'newsletter-optin-box' ),
+			'replacement' => get_bloginfo( 'name' ),
+		);
+
+		$this->tags['blog_description'] = array(
+			'description' => __( 'The website description.', 'newsletter-optin-box' ),
+			'replacement' => get_bloginfo( 'description' ),
+		);
+
+		$this->tags['home_url'] = array(
+			'description' => __( 'The website URL.', 'newsletter-optin-box' ),
+			'callback'    => 'get_home_url',
+		);
+
 		$this->tags['date'] = array(
 			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ) . '</strong>' ),
 			'replacement' => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
@@ -83,6 +104,21 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$this->tags['time'] = array(
 			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ), current_time( 'timestamp' ) ) . '</strong>' ),
 			'replacement' => date_i18n( get_option( 'time_format' ), current_time( 'timestamp' ) ),
+		);
+
+		$this->tags['year'] = array(
+			'description' => sprintf( __( 'The current year. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date( 'Y', current_time( 'timestamp' ) ) . '</strong>' ),
+			'replacement' => date( 'Y', current_time( 'timestamp' ) ),
+		);
+
+		$this->tags['noptin'] = array(
+			'description' => __( 'Displays a personalized link to the Noptin website.', 'newsletter-optin-box' ),
+			'callback'    => array( $this, 'noptin_url' ),
+		);
+
+		$this->tags['noptin_company'] = array(
+			'description' => __( 'The company name that you set in Noptin > Settings > Emails.', 'newsletter-optin-box' ),
+			'callback'    => array( $this, 'noptin_company' ),
 		);
 
 		$this->tags['subscriber_count'] = array(
@@ -201,6 +237,29 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		</table>
 		<?php
 			return ob_get_clean();
+	}
+
+	/**
+	 * Noptin URL
+	 *
+	 * @return string
+	 */
+	public function noptin_url() {
+
+		return sprintf(
+			'<a target="_blank" href="https://noptin.com/?utm_medium=powered-by&utm_campaign=email-campaign&utm_source=%s">Noptin</a>',
+			urlencode( esc_url( get_home_url() ) )
+		);
+
+	}
+
+	/**
+	 * Noptin company
+	 *
+	 * @return string
+	 */
+	public function noptin_company() {
+		return get_noptin_option( 'company', '' );
 	}
 
 }

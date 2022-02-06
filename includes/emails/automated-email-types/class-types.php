@@ -74,21 +74,17 @@ class Noptin_Automated_Email_Types {
 	 */
 	protected function get_automated_email_types() {
 
-		require_once plugin_dir_path( __FILE__ ) . 'class-type.php';
-
 		// Prepare an array of key and class.
 		$known_types = array(
-			'post_notifications'           => 'Noptin_New_Post_Notification',
-			'post_digest'                  => 'Noptin_Post_Digest',
-			'woocommerce_new_order'        => 'Noptin_WooCommerce_New_Order_Email',
-			'woocommerce_product_purchase' => 'Noptin_WooCommerce_Product_Purchase_Email',
-			'woocommerce_lifetime_value'   => 'Noptin_WooCommerce_Lifetime_Value_Email',
+			'post_notifications' => 'Noptin_New_Post_Notification',
+			'post_digest'        => 'Noptin_Post_Digest',
 		);
 
-		// Ensure WooCommerce exists.
-		if ( ! class_exists( 'WooCommerce' ) ) {
-			unset( $known_types['woocommerce_new_order'], $known_types['woocommerce_product_purchase'], $known_types['woocommerce_lifetime_value'] );
-		} else {
+		// Check if WC exists.
+		if ( class_exists( 'WooCommerce' ) ) {
+			$known_types['woocommerce_new_order']        = 'Noptin_WooCommerce_New_Order_Email';
+			$known_types['woocommerce_product_purchase'] = 'Noptin_WooCommerce_Product_Purchase_Email';
+			$known_types['woocommerce_lifetime_value']   = 'Noptin_WooCommerce_Lifetime_Value_Email';
 			require_once plugin_dir_path( __FILE__ ) . 'class-type-woocommerce.php';
 		}
 

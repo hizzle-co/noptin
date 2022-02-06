@@ -42,12 +42,10 @@ class Noptin_Email_Manager {
 		$this->load_files();
 
 		// Init class properties.
-		$this->sender                = new Noptin_Email_Sender();
-		$this->admin                 = new Noptin_Emails_Admin();
-		$this->tags                  = new Noptin_Email_Tags();
-		$this->automated_email_types = new Noptin_Automated_Email_Types();
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
 
-		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 7 );
+		// Add hooks.
+		add_action( 'plugins_loaded', array( $this, 'add_hooks' ) );
 
 	}
 
@@ -63,8 +61,19 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-emails-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-automated-email.php';
+		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
 
+	}
+
+	/**
+	 * Init class properties.
+	 */
+	public function init() {
+		$this->sender                = new Noptin_Email_Sender();
+		$this->admin                 = new Noptin_Emails_Admin();
+		$this->tags                  = new Noptin_Email_Tags();
+		$this->automated_email_types = new Noptin_Automated_Email_Types();
 	}
 
 	/**
@@ -90,9 +99,8 @@ class Noptin_Email_Manager {
 	public function delete_stats( $post_id ) {
 		global $wpdb;
 
-		$table = get_noptin_subscribers_meta_table_name();
 		$wpdb->delete(
-			$table,
+			get_noptin_subscribers_meta_table_name(),
 			array(
 				'meta_key' => "_campaign_$post_id",
 			)
