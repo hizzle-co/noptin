@@ -109,26 +109,6 @@ function noptin_convert_html_to_text( $html ) {
 }
 
 /**
- * Processes email tags.
- *
- * @since 1.7.0
- * @param string $content
- * @param Noptin_Subscriber $subscriber
- * @param string $context Either body or subject.
- * @param Noptin_Automated_Email $email
- * @return bool
- */
-function noptin_handle_email_tags( $content, $subscriber, $context = 'body' ) {
-
-	if ( $context === 'body' ) {
-		return apply_filters( 'noptin_merge_email_body', $content, $subscriber );
-	}
-
-	return apply_filters( 'noptin_merge_email_subject', $content, $subscriber );
-
-}
-
-/**
  * Processes email subject tags.
  *
  * @since 1.7.0

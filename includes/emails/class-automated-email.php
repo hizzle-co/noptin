@@ -364,7 +364,7 @@ class Noptin_Automated_Email {
 		// Allow automated email types to prepare merge tags.
 		do_action( 'noptin_before_prepare_automated_email', $this, $recipient );
 
-		$subject = noptin_handle_email_tags( $this->get_subject(), $recipient, 'subject' );
+		$subject = noptin_parse_email_subject_tags( $this->get_subject() );
 		$content = noptin_generate_automated_email_content( $this, $recipient, $track );
 
 		// Allow automated email types to clean merge tags.

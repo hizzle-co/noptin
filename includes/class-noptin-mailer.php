@@ -121,7 +121,7 @@ class Noptin_Mailer {
 		$subject = trim( $data['email_subject'] );
 
 		// Process merge tags.
-		$subject = noptin_handle_email_tags( $subject, $data['subscriber'], 'subject' );
+		$subject = noptin_parse_email_subject_tags( $subject );
 
 		// Backwards compatibility.
 		$subject = $this->merge( $subject, $data['merge_tags'] );
@@ -363,7 +363,7 @@ class Noptin_Mailer {
 	public function post_process( $content, $data ) {
 
 		// Parse merge tags.
-		$content = noptin_handle_email_tags( $content, $data['subscriber'] );
+		$content = noptin_parse_email_content_tags( $content );
 
 		// Backwards compatibility.
 		$content = $this->merge( $content, $data['merge_tags'] );

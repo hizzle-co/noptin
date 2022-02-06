@@ -22,21 +22,11 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 	/**
-	 * @var Noptin_Subscriber
-	 */
-	public $subscriber;
-
-	/**
-	 * @var WP_Post
-	 */
-	public $post;
-
-	/**
 	 * Register core hooks.
 	 */
 	public function add_hooks() {
-		add_filter( 'noptin_merge_email_subject', array( $this, 'replace_in_subject' ), 10, 2 );
-		add_filter( 'noptin_merge_email_body', array( $this, 'replace_in_body' ), 10, 2 );
+		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ) );
+		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ) );
 	}
 
 	/**
@@ -59,13 +49,9 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * Replaces in subject
 	 *
 	 * @param string $string
-	 * @param Noptin_Subscriber $subscriber
 	 * @return string
 	 */
-	public function replace_in_subject( $string, $subscriber ) {
-
-		$this->subscriber = $subscriber;
-
+	public function replace_in_subject( $string ) {
 		return $this->replace( $string, 'strip_tags' );
 	}
 
@@ -73,13 +59,9 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * Replaces in the email body
 	 *
 	 * @param string $string
-	 * @param Noptin_Subscriber $subscriber
 	 * @return string
 	 */
-	public function replace_in_body( $string, $subscriber ) {
-
-		$this->subscriber = $subscriber;
-
+	public function replace_in_body( $string ) {
 		return $this->replace( $string, 'wp_kses_post' );
 	}
 
@@ -130,23 +112,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function get_subscriber_count() {
 		return get_noptin_subscribers_count();
-	}
-
-	/**
-	 * Returns the unsubscribe URL
-	 *
-	 * @return string
-	 */
-	public function get_unsubscribe_url() {
-
-		// Abort if no subscriber specified.
-		if ( empty( $this->subscriber ) || ! $this->subscriber->exists() ) {
-			return home_url();
-		}
-
-		// Either unsubscribe the user or the subscriber.
-		$subscriber = $this->subscriber->is_virtual ? $this->subscriber->email : $this->subscriber->confirm_key;
-		return get_noptin_action_url( 'unsubscribe', $subscriber );
 	}
 
 	/**
