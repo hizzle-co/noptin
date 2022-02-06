@@ -205,6 +205,33 @@ class Noptin_Automated_Email {
 	}
 
 	/**
+	 * Returns the email template for this automated email.
+	 *
+	 * @return bool
+	 */
+	public function get_template() {
+
+		// Read from campaign options.
+		if ( ! $this->is_legacy ) {
+			$template = $this->get( 'template' );
+		}
+
+		// Read from settings.
+		if ( empty( $template ) ) {
+			$template = get_noptin_option( 'email_template',  'plain' );
+		}
+
+		// Default to the plain template.
+		if ( empty( $template ) ) {
+			$template = 'plain';
+		}
+
+		// Filter and return.
+		return apply_filters( 'noptin_automated_email_template', $template, $this );
+
+	}
+
+	/**
 	 * Returns the subject for this automation.
 	 *
 	 * @return string

@@ -383,9 +383,9 @@ abstract class Noptin_Automated_Email_Type {
 					'reply_to'                 => '',
 					'from_email'               => '',
 					'from_name'                => '',
-					'content_type'             => '',
+					'content_type'             => $campaign->get_email_type() === 'plain_text' ? 'text' : 'html',
 					'unsubscribe_url'          => $this->unsubscribe_url,
-					'disable_template_plugins' => true,
+					'disable_template_plugins' => ! ( $campaign->get_email_type() === 'normal' && $campaign->get_template() === 'default' ),
 				)
 			);
 
@@ -397,7 +397,7 @@ abstract class Noptin_Automated_Email_Type {
 		$this->user       = null;
 		$this->subscriber = null;
 
-		// TODO: Email sender, register user and subscriber merge tags if the two are set
+		// TODO:Register user and subscriber merge tags if the two are set
 		// Update merge tags
 		// Make sure automated email class uses new generate automated email content format.
 		// noptin_parse_email_content_tags( $content )
