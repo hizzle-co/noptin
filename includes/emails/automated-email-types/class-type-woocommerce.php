@@ -949,7 +949,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 * Get product html to display.
 	 *
 	 * @param string $template
-	 * @param array  $args
+	 * @param WC_Product[] $products
 	 *
 	 * @return string
 	 */
@@ -1095,13 +1095,13 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	/**
 	 * Sends a test email.
 	 *
-	 * @param Noptin_Automated_Email $email
+	 * @param Noptin_Automated_Email $campaign
 	 * @param string $recipient
 	 * @return bool Whether or not the test email was sent
 	 */
-	public function send_test( $email, $recipient ) {
+	public function send_test( $campaign, $recipient ) {
 
-		$this->prepare_test_data( $email );
+		$this->prepare_test_data( $campaign );
 
 		// Generate customer email.
 		$email = $this->customer->get_email();
@@ -1117,7 +1117,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		}
 
-		$result = $this->send( $email, 'test', array( sanitize_email( $recipient ) => false ) );
+		$result = $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
 
 		// Remove temp variables.
 		$this->customer   = null;
@@ -1131,12 +1131,12 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email $email
+	 * @param Noptin_Automated_Email $campaign
 	 */
-	public function prepare_test_data( $email ) {
+	public function prepare_test_data( $campaign ) {
 
 		// Prepare user and subscriber.
-		parent::prepare_test_data( $email );
+		parent::prepare_test_data( $campaign );
 
 		// Prepare WC data.
 		$this->_prepare_test_data();

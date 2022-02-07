@@ -2,7 +2,7 @@
 /**
  * Displays products in a list.
  *
- * Override this template by copying it to yourtheme/noptin/woocommerce/products-grid.php
+ * Override this template by copying it to yourtheme/noptin/woocommerce/email-products-grid.php
  *
  * @var WC_Product[] $products
  */

@@ -26,6 +26,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	public $type = 'post_digest';
 
 	/**
+	 * @var WP_Post[]
+	 */
+	public $posts;
+
+	/**
 	 * Retrieves the automated email type name.
 	 *
 	 */
@@ -265,6 +270,101 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				return $about;
 				break;
 		}
+
+	}
+
+	/**
+	 * Retrieves an array of order item merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_order_item_merge_tags() {
+
+		return array(
+
+			__( 'Posts', 'noptin' )    => array(
+
+				'posts' => array(
+					'description' => __( 'Posts published since last send', 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'handle_posts_merge_tags' ),
+					'example'     => 'posts template="list" limit="8"',
+				),
+
+			),
+
+		);
+
+	}
+
+	/**
+	 * Get posts html to display.
+	 *
+	 * @param string $template
+	 * @param WP_Post[] $posts
+	 *
+	 * @return string
+	 */
+	public function get_posts_html( $template = 'grid', $posts = array() ) {
+
+		// Allow overwriting this.
+		$posts = apply_filters( 'noptin_post_digest_html', null, $template, $posts );
+
+		if ( null !== $posts ) {
+			return $posts;
+		}
+
+		ob_start();
+		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', compact( 'posts' ) );
+		return ob_get_clean();
+	}
+
+	/**
+	 * Sends a test email.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 * @param string $recipient
+	 * @return bool Whether or not the test email was sent
+	 */
+	public function send_test( $campaign, $recipient ) {
+
+		$this->prepare_test_data( $campaign );
+
+		// Maybe set related subscriber.
+		$subscriber = get_noptin_subscriber( sanitize_email( $recipient ) );
+
+		if ( $subscriber->exists() ) {
+			$this->subscriber = $subscriber;
+		}
+
+		$result = $this->send( $recipient, 'test', array( sanitize_email( $recipient ) => false ) );
+
+		// Remove temp variables.
+		$this->posts = null;
+
+		return $result;
+	}
+
+	/**
+	 * Prepares test data.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 */
+	public function prepare_test_data( $email ) {
+
+		// Prepare user and subscriber.
+		parent::prepare_test_data( $email );
+
+		// Fetch test posts.
+		$this->posts = get_posts(
+			array(
+				'numberposts'      => 6,
+				'category'         => 0,
+				'orderby'          => 'date',
+				'order'            => 'DESC',
+				'post_type'        => 'post',
+				'suppress_filters' => true,
+			)
+		);
 
 	}
 

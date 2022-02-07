@@ -2,7 +2,7 @@
 /**
  * Displays products in a list.
  *
- * Override this template by copying it to yourtheme/noptin/woocommerce/products-list.php
+ * Override this template by copying it to yourtheme/noptin/woocommerce/email-products-list.php
  *
  * @var WC_Product[] $products
  */
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				</td>
 
 				<td align="right" class="last" width="35%">
-					<p class="price"><?php echo $product->get_price_html(); ?></p>
+					<p class="price" style="color: #000; font-size: 20px;"><?php echo $product->get_price_html(); ?></p>
 				</td>
 
 			</tr>
