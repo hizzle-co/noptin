@@ -142,4 +142,26 @@ class Noptin_Automated_Email_Types {
 
 	}
 
+	/**
+	 * Generates a preview email.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 * @return string
+	 */
+	public function generate_preview( $email ) {
+
+		// Abort if there is no email type.
+		if ( empty( $email->type ) || empty( $this->types[ $email->type ] ) ) {
+			return __( 'Unsupported automation type.', 'newsletter-optin-box' );
+		}
+
+		// Try generating the preview email.
+		try {
+			return $this->types[ $email->type ]->generate_preview( $email );
+		} catch ( Exception $e ) {
+			return $e->getMessage();
+		}
+
+	}
+
 }

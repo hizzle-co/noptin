@@ -288,6 +288,17 @@ function get_noptin_automation_campaign_url( $id ) {
 }
 
 /**
+ * Returns the URL to preview an automated email.
+ *
+ * @since 1.7.0
+ * @param int $id The campaign's id.
+ * @return string.
+ */
+function get_noptin_automation_campaign_preview_url( $id ) {
+	return get_noptin_action_url( 'preview_automated_email', $id, true );
+}
+
+/**
  * Checks if a given post is a noptin campaign.
  *
  * @param int|WP_Post $post The post to check for.

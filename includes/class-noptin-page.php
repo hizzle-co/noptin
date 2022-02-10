@@ -40,6 +40,7 @@ class Noptin_Page {
 
 		// Preview email.
 		add_action( 'noptin_page_preview_email', array( $this, 'preview_email' ) );
+		add_action( 'noptin_page_preview_automated_email', array( $this, 'preview_automated_email' ) );
 
 		// Filter template.
 		add_action( 'parse_request', array( $this, 'listen' ), 0 );
@@ -467,7 +468,7 @@ class Noptin_Page {
 	}
 
 	/**
-	 * Unsubscribes a user
+	 * Previews an email.
 	 *
 	 * @access      public
 	 * @since       1.2.2
@@ -529,6 +530,40 @@ class Noptin_Page {
 		// Generate and display the email.
 		$data = noptin()->mailer->prepare( $data );
 		echo apply_filters( 'noptin_generate_preview_email', $data['email_body'], $data );
+		exit;
+
+	}
+
+	/**
+	 * Previews an automated email email.
+	 *
+	 * @access      public
+	 * @since       1.7.0
+	 * @return      array
+	 */
+	public function preview_automated_email( $campaign_id ) {
+
+		// Ensure an email campaign is specified.
+		if ( empty( $campaign_id ) ) {
+			$this->print_paragraph( __( 'Invalid or missing campaign id.', 'newsletter-optin-box' ) );
+			return;
+		}
+
+		// and that the current user is an administrator
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			$this->print_paragraph( __( 'Only administrators can preview email campaigns.', 'newsletter-optin-box' ) );
+			return;
+		}
+
+		$campaign = new Noptin_Automated_Email( $campaign_id );
+
+		// Ensure this is a newsletter campaign.
+		if ( ! $campaign->exists() ) {
+			$this->print_paragraph( __( 'Cannot preview this campaign type.', 'newsletter-optin-box' ) );
+			return;
+		}
+
+		echo noptin()->emails->automated_email_types->generate_preview( $campaign );
 		exit;
 
 	}

@@ -424,12 +424,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			$this->subscriber = $subscriber;
 		}
 
-		$result = $this->send( $recipient, 'test', array( sanitize_email( $recipient ) => false ) );
-
-		// Remove temp variables.
-		$this->posts = null;
-
-		return $result;
+		return $this->send( $recipient, 'test', array( sanitize_email( $recipient ) => false ) );
 	}
 
 	/**
@@ -463,6 +458,19 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			throw new Exception( __( 'Could not find a post for this preview.', 'newsletter-optin-box' ) );
 		}
 
+	}
+
+	/**
+	 * Fired after sending a campaign.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	protected function after_send( $campaign ) {
+
+		// Remove temp variables.
+		$this->post = null;
+
+		parent::after_send( $campaign );
 	}
 
 }

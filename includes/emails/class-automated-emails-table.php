@@ -102,11 +102,12 @@ class Noptin_Email_Automations_Table extends WP_List_Table {
 	 */
 	public function column_title( $item ) {
 
-		$row_actions         = array();
-		$edit_url            = esc_url( get_noptin_automation_campaign_url( $item->ID ) );
-		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
-
-		$row_actions['delete'] = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
+		$row_actions             = array();
+		$edit_url                = esc_url( get_noptin_automation_campaign_url( $item->ID ) );
+		$preview_url             = esc_url( get_noptin_automation_campaign_preview_url( $item->ID ) );
+		$row_actions['edit']     = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
+		$row_actions['_preview'] = '<a href="' . $preview_url . '" target="_blank">' . __( 'Preview', 'newsletter-optin-box' ) . '</a>';
+		$row_actions['delete']   = '<a class="noptin-delete-campaign" href="#" data-id="' . $item->ID . '">' . __( 'Delete', 'newsletter-optin-box' ) . '</a>';
 
 		$title = esc_html( $item->post_title );
 		$extra = '';

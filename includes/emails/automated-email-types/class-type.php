@@ -53,6 +53,11 @@ abstract class Noptin_Automated_Email_Type {
 	public $user;
 
 	/**
+	 * @var array Current recipient.
+	 */
+	public $recipient = array(); // Array containing campaign id, user id and subscriber id.
+
+	/**
 	 * Retrieves the automated email type name.
 	 *
 	 */
@@ -514,16 +519,39 @@ abstract class Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Sends a notification.
+	 * Generates a preview email.
 	 *
 	 * @param Noptin_Automated_Email $campaign
-	 * @param string $key
-	 * @param array $recipients
+	 * @return string
 	 */
-	protected function send( $campaign, $key, $recipients ) {
+	public function generate_preview( $campaign ) {
+
+		// Set-up test data for the preview.
+		$this->prepare_test_data( $campaign );
+
+		// Prepare enviroment.
+		$this->before_send( $campaign );
+
+		// Generate content.
+		$content = noptin_generate_automated_email_content( $campaign, $this->recipient, false );
+
+		// Clean environment.
+		$this->after_send( $campaign );
+
+		// Filter and return.
+		return apply_filters( 'noptin_generate_automated_email_preview', $content, $campaign, $this );
+
+	}
+
+	/**
+	 * Fired before sending a campaign.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	protected function before_send( $campaign ) {
 
 		// Prepare recipient.
-		$recipient = array_filter(
+		$this->recipient = array_filter(
 			array(
 				'cid' => $campaign->id,
 				'uid' => empty( $this->user ) ? false : $this->user->ID,
@@ -532,13 +560,28 @@ abstract class Noptin_Automated_Email_Type {
 		);
 
 		// Generate unsubscribe url.
-		$this->unsubscribe_url = get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( $recipient ) ) );
+		$this->unsubscribe_url = get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( $this->recipient ) ) );
 
 		// Register merge tags.
 		$this->register_merge_tags();
 
 		// Indicate that we're sending an email.
 		$this->sending = true;
+
+		do_action( 'noptin_before_send_automated_email', $campaign, $this );
+	}
+
+	/**
+	 * Sends a notification.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 * @param string $key
+	 * @param array $recipients
+	 */
+	protected function send( $campaign, $key, $recipients ) {
+
+		// Prepare environment.
+		$this->before_send( $campaign );
 
 		foreach ( $recipients as $email => $track ) {
 
@@ -547,7 +590,7 @@ abstract class Noptin_Automated_Email_Type {
 				array(
 					'recipients'               => $email,
 					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
-					'message'                  => noptin_generate_automated_email_content( $campaign, $recipient, $track  ),
+					'message'                  => noptin_generate_automated_email_content( $campaign, $this->recipient, $track  ),
 					'headers'                  => array(),
 					'attachments'              => array(),
 					'reply_to'                 => '',
@@ -561,17 +604,33 @@ abstract class Noptin_Automated_Email_Type {
 
 		}
 
+		$this->after_send( $campaign );
+
+		// TODO: For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
+		// Work on post digests and new post notifications.
+	}
+
+	/**
+	 * Fired after sending a campaign.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	protected function after_send( $campaign ) {
+
+		// Revert recipient.
+		$this->recipient = array();
+
 		// Indicate that we're nolonger sending an email.
 		$this->sending = false;
 
 		// Uregister merge tags.
 		$this->unregister_merge_tags();
 
-		$this->user       = null;
-		$this->subscriber = null;
+		$this->user            = null;
+		$this->subscriber      = null;
+		$this->unsubscribe_url = '';
 
-		// TODO: For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
-		// Work on post digests and new post notifications.
+		do_action( 'noptin_after_sending_automated_email', $campaign, $this );
 	}
 
 	/**

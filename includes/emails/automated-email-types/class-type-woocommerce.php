@@ -1084,12 +1084,22 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		$this->send( $campaign, $key, $this->get_recipients( $campaign, array( '[[customer.email]]' => $email ) ) );
 
+	}
+
+	/**
+	 * Fired after sending a campaign.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	protected function after_send( $campaign ) {
+
 		// Remove temp variables.
 		$this->customer   = null;
 		$this->order      = null;
 		$this->order_item = null;
 		$this->product    = null;
 
+		parent::after_send( $campaign );
 	}
 
 	/**
@@ -1117,15 +1127,8 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		}
 
-		$result = $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
+		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
 
-		// Remove temp variables.
-		$this->customer   = null;
-		$this->order      = null;
-		$this->order_item = null;
-		$this->product    = null;
-
-		return $result;
 	}
 
 	/**
