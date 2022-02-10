@@ -101,7 +101,7 @@ class Noptin_Automated_Email_Types {
 	 */
 	public function send_test_email( $data, $recipient ) {
 
-		// Abort if there is not email type.
+		// Abort if there is no email type.
 		if ( empty( $data['automation_type'] ) || empty( $this->types[ $data['automation_type'] ] ) ) {
 			wp_send_json_error( __( 'Unsupported automation type.', 'newsletter-optin-box' ) );
 		}
@@ -109,8 +109,24 @@ class Noptin_Automated_Email_Types {
 		// Prepare automated email.
 		$email = new Noptin_Automated_Email( $data );
 
-		// Send test email.
-		$result = $email->send_test( $recipient );
+		// Ensure we have a subject.
+		$subject = $email->get_subject();
+		if ( empty( $subject ) ) {
+			wp_send_json_error( __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
+		}
+
+		// Ensure we have content.
+		$content = $email->get_content( $email->get_email_type() );
+		if ( empty( $content ) ) {
+			wp_send_json_error( __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
+		}
+
+		// Try sending the test email.
+		try {
+			$result = $this->types[ $email->type ]->send_test( $email, $recipient );
+		} catch ( Exception $e ) {
+			$result = new WP_Error( 'exception', $e->getMessage() );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( $result->get_error_message() );

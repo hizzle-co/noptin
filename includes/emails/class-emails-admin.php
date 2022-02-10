@@ -237,27 +237,35 @@ class Noptin_Emails_Admin {
 	public function send_test_email() {
 
 		// Verify nonce.
-		check_ajax_referer( 'noptin-edit-newsletter', 'noptin-edit-newsletter-nonce' );
+		check_ajax_referer( 'noptin-admin-nonce', 'noptin-admin-nonce' );
 
+		// Check capability.
 		if ( ! current_user_can( get_noptin_capability() ) ) {
 			wp_die( -1, 403 );
 		}
 
 		// Prepare data.
-		$data = $_POST;
+		$data = wp_unslash( $_POST );
 
+		// Check if we have a recipient for the test email.
+		if ( empty( $data['email'] ) || ! is_email( $data['email'] ) ) {
+			wp_send_json_error( __( 'Please provide a valid email address', 'newsletter-optin-box' ) );
+		}
+
+		// Handle automated emails?
+		if ( ! empty( $data['noptin_automation'] ) ) {
+			noptin()->emails->automated_email_types->send_test_email( $data['noptin_automation'], sanitize_email( $data['email'] ) );
+		}
+
+		// TODO: // Handles normal newsletter emails.
+		$data = $_POST;
+ 
 		unset( $data['_wpnonce'] );
 		unset( $data['_wp_http_referer'] );
 		unset( $data['action'] );
 
 		// Remove slashes.
 		$data = stripslashes_deep( $data );
-
-		// Ensure a valid test email has been provided.
-		if ( empty( $data['email'] ) || ! is_email( $data['email'] ) ) {
-			wp_send_json_error( __( 'Please provide a valid email address', 'newsletter-optin-box' ) );
-			exit;
-		}
 
 		$data['email'] = sanitize_email( $data['email'] );
 
@@ -283,28 +291,6 @@ class Noptin_Emails_Admin {
 			wp_send_json_error( __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
 			exit;
 		}
-
-		// Is there a subscriber with that email?
-		$subscriber = new Noptin_Subscriber( $data['email'] );
-		$merge_tags = array();
-
-		if ( $subscriber->exists() ) {
-			$merge_tags = $subscriber->to_array();
-
-			$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
-
-			$meta = $subscriber->get_meta();
-			foreach ( $meta as $key => $values ) {
-
-				if ( isset( $values[0] ) && is_string( $values[0] ) ) {
-					$merge_tags[ $key ] = esc_html( $values[0] );
-				}
-
-			}
-		}
-
-		$data['merge_tags'] = $merge_tags;
-		$data['subscriber'] = $subscriber;
 
 		/**
 		 * Filters the newsletter test email data.

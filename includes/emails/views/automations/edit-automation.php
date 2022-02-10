@@ -36,6 +36,7 @@
 
 		<?php
 			wp_nonce_field( 'noptin-edit-automation', 'noptin-edit-automation-nonce' );
+			wp_nonce_field( 'noptin-admin-nonce', 'noptin-admin-nonce' );
 			wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce' );
 			wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce' );
 		?>

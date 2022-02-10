@@ -366,6 +366,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			)
 		);
 
+		// If no posts found, abort.
+		if ( ! empty( $this->posts ) ) {
+			throw new Exception( __( 'Could not find posts for this preview.', 'newsletter-optin-box' ) );
+		}
+
 	}
 
 }

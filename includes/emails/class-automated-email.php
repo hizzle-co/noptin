@@ -108,12 +108,26 @@ class Noptin_Automated_Email {
 	}
 
 	/**
+	 * Magic getter
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+		return $this->get( $key );
+	}
+
+	/**
 	 * Retrieves a given setting
 	 *
 	 * @param string $key
 	 * @return mixed
 	 */
 	public function get( $key ) {
+
+		if ( 'ID' === $key ) {
+			$key = 'id';
+		}
 
 		// Fetch value.
 		if ( 'name' === $key ) {
@@ -350,39 +364,6 @@ class Noptin_Automated_Email {
 		}
 
 		return $label ? $units[ $unit ] : $unit;
-	}
-
-	/**
-	 * Sends a test email
-	 *
-	 * @param string $recipient
-	 * @return bool|WP_Error
-	 */
-	public function send_test( $recipient ) {
-
-		// Ensure we have a subject.
-		if ( empty( $this->options['subject'] ) ) {
-			return new WP_Error( 'missing_subject', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
-		}
-
-		// Ensure we have content.
-		$content = $this->get_content( $this->get_email_type() );
-		if ( empty( $content ) ) {
-			return new WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
-		}
-
-		// Is the email type supported?
-		if ( ! isset( noptin()->emails->automated_email_types->types[ $this->type ] ) ) {
-			return new WP_Error( 'unsupported_automation_type', __( 'Invalid or unsupported automation type.', 'newsletter-optin-box' ) );
-		}
-
-		// Try sending the test email.
-		try {
-			return noptin()->emails->automated_email_types->types[ $this->type ]->send_test( $this, $recipient );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', $e->getMessage() );
-		}
-
 	}
 
 	/**

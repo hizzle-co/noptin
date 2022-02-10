@@ -45,9 +45,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		// Notify subscribers.
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule_notification' ), 10, 3 );
 
-		// Allow sending a test email for new post notifications.
-		add_filter( 'noptin_test_email_data', array( $this, 'filter_test_email_data' ), 10, 2 );
-
 	}
 
 	/**
@@ -410,24 +407,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Add post data to new post notification test email.
-	 */
-	public function filter_test_email_data( $data ) {
-
-		if ( ! empty( $data['noptin_is_new_post_notification'] ) ) {
-			$post_type = empty( $data['noptin-ap-post-type'] ) ? 'post' : sanitize_text_field( $data['noptin-ap-post-type'] );
-			$posts     = get_posts('numberposts=1&post_type=' . $post_type);
-
-			if ( ! empty( $posts ) ) {
-				$data['merge_tags'] = array_merge( $data['merge_tags'], $this->get_post_merge_tags( $posts[0] ) );
-			}
-		}
-
-		return $data;
-
-	}
-
-	/**
 	 * Sends a test email.
 	 *
 	 * @param Noptin_Automated_Email $campaign
@@ -463,19 +442,26 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		// Prepare user and subscriber.
 		parent::prepare_test_data( $email );
 
+		$post_type = $email->get( 'post_type' );
+		$post_type = empty( $post_type ) ? 'post' : $post_type;
+
 		// Fetch test posts.
 		$this->post = current(
 			get_posts(
 				array(
 					'numberposts'      => 1,
-					'category'         => 0,
 					'orderby'          => 'date',
 					'order'            => 'DESC',
-					'post_type'        => 'post',
+					'post_type'        => $post_type,
 					'suppress_filters' => true,
 				)
 			)
 		);
+
+		// If no post found, abort.
+		if ( ! $this->post ) {
+			throw new Exception( __( 'Could not find a post for this preview.', 'newsletter-optin-box' ) );
+		}
 
 	}
 
