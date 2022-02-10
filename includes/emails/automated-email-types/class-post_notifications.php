@@ -31,6 +31,11 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	public $notification_hook = 'noptin_new_post_notification';
 
 	/**
+	 * @var WP_Post
+	 */
+	public $posts;
+
+	/**
 	 * Registers hooks.
 	 *
 	 */
@@ -419,6 +424,58 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		}
 
 		return $data;
+
+	}
+
+	/**
+	 * Sends a test email.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 * @param string $recipient
+	 * @return bool Whether or not the test email was sent
+	 */
+	public function send_test( $campaign, $recipient ) {
+
+		$this->prepare_test_data( $campaign );
+
+		// Maybe set related subscriber.
+		$subscriber = get_noptin_subscriber( sanitize_email( $recipient ) );
+
+		if ( $subscriber->exists() ) {
+			$this->subscriber = $subscriber;
+		}
+
+		$result = $this->send( $recipient, 'test', array( sanitize_email( $recipient ) => false ) );
+
+		// Remove temp variables.
+		$this->posts = null;
+
+		return $result;
+	}
+
+	/**
+	 * Prepares test data.
+	 *
+	 * @param Noptin_Automated_Email $email
+	 */
+	public function prepare_test_data( $email ) {
+
+		// Prepare user and subscriber.
+		parent::prepare_test_data( $email );
+
+		// Fetch test posts.
+		$this->post = current(
+			get_posts(
+				array(
+					'numberposts'      => 1,
+					'category'         => 0,
+					'orderby'          => 'date',
+					'order'            => 'DESC',
+					'post_type'        => 'post',
+					'suppress_filters' => true,
+				)
+			)
+		);
 
 	}
 
