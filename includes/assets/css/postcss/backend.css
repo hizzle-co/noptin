@@ -981,6 +981,7 @@ input:focus+.noptin-switch-slider span {
 #noptin-automations-popup,
 .noptin-newsletter_page_noptin-subscribers,
 .noptin-newsletter_page_noptin-form-editor,
+.noptin-newsletter_page_noptin-email-campaigns,
 .noptin-settings {
 
 	.notice:not(.noptin-notice),
@@ -1947,16 +1948,15 @@ a.no-campaign-create-new-campaign {
 
 #noptin-wrapper .noptin-admin-field-big {
 	padding: 6px 8px;
-	width: 100%;
-	max-width: 100%;
+    width: 100%;
+    max-width: 400px;
+    font-size: 13px;
 }
 
 #noptin-wrapper #post-body-content .form-table {
-	margin-top: 0;
 
-	tr:first-child {
-		th, td {
-			padding-top: 0;
-		}
+	th, td {
+		font-size: 13px;
 	}
+
 }

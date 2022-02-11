@@ -67,7 +67,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	 *
 	 */
 	public function default_subject() {
-		return __( '[[customer.name]], how would you rate the products!', 'newsletter-optin-box' );
+		return __( '[[customer.display_name]], how would you rate the products!', 'newsletter-optin-box' );
 	}
 
 	/**

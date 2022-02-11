@@ -62,7 +62,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	 *
 	 */
 	public function default_subject() {
-		return __( '[[customer.name]], help us make your next order perfect!', 'newsletter-optin-box' );
+		return __( '[[customer.display_name]], help us make your next order perfect!', 'newsletter-optin-box' );
 	}
 
 	/**

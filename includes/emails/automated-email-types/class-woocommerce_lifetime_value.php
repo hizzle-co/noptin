@@ -73,7 +73,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	 *
 	 */
 	public function default_subject() {
-		return __( '[[customer.name]], thanks for being a loyal customer!', 'newsletter-optin-box' );
+		return __( '[[customer.display_name]], thanks for being a loyal customer!', 'newsletter-optin-box' );
 	}
 
 	/**

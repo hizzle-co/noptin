@@ -45,30 +45,19 @@
 			<div id="post-body" class="metabox-holder columns-<?php echo ( 1 === get_current_screen()->get_columns() ) ? '1' : '2'; ?>">
 				<div id="post-body-content">
 
+					<div id="post-body-content">
+
+						<div id="titlediv">
+							<div id="titlewrap">
+								<label class="screen-reader-text" id="title-prompt-text" for="title"><?php _e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
+								<input type="text" name="noptin_automation[title]" size="30" value="<?php echo esc_attr( $campaign->get( 'name' ) ); ?>" placeholder="<?php esc_attr_e( 'Enter automation name', 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
+							</div>
+						</div>
+
+					</div>
+
 					<table class="form-table" role="presentation">
 						<tbody>
-
-							<tr>
-								<th scope="row">
-									<label for="noptin-automated-email-name"><?php _e( 'Automation Name', 'newsletter-optin-box' ); ?></label>
-								</th>
-								<td>
-									<input type="text" name="noptin_automation[title]" class="noptin-admin-field-big" value="<?php echo esc_attr( $campaign->get( 'name' ) ); ?>" placeholder="<?php esc_attr_e( 'Enter automation name', 'newsletter-optin-box' ); ?>" id="noptin-automated-email-name">
-									<p class="description"><?php _e( "Enter a short name for this automated email. Your subscribers won't see it.", 'newsletter-optin-box' ); ?></p>
-								</td>
-							</tr>
-
-							<?php if( ! $campaign->is_mass_mail() ) : ?>
-								<tr>
-									<th scope="row">
-										<label for="noptin-automated-email-recipients"><?php _e( 'Recipient(s)', 'newsletter-optin-box' ); ?></label>
-									</th>
-									<td>
-										<input type="text" id="noptin-automated-email-recipients" name="noptin_automation[recipients]" value="<?php echo esc_attr( $campaign->get_recipients() ); ?>" placeholder="<?php echo esc_attr( $campaign->get_placeholder_recipient() ); ?>" class="noptin-admin-field-big" required>
-										<p class="description"><?php _e( "Enter recipients (comma-separated) for this email. Add <b>--notracking</b> after an email to disable open and click tracking for that recipient.", 'newsletter-optin-box' ); ?></p>
-									</td>
-								</tr>
-							<?php endif; ?>
 
 							<tr>
 								<th scope="row">
@@ -121,6 +110,16 @@
 
 							<tr class="noptin-is-conditional noptin-show-if-automation-is-normal">
 								<th scope="row">
+									<label for="noptin-automated-email-permission-text"><?php _e( 'Footer Text', 'newsletter-optin-box' ); ?></label>
+								</th>
+								<td>
+									<textarea id="noptin-automated-email-permission-text" name="noptin_automation[footer_text]" class="noptin-admin-field-big" placeholder="<?php echo esc_attr( get_noptin_footer_text() ); ?>" rows="2"><?php echo esc_textarea( $campaign->get( 'footer_text' ) ); ?></textarea>
+									<p class="description"><?php _e( 'This text appears below the main email content.', 'newsletter-optin-box' ); ?></p>
+								</td>
+							</tr>
+
+							<tr class="noptin-is-conditional noptin-show-if-automation-is-normal">
+								<th scope="row">
 									<label for="noptin-automated-email-content"><?php _e( 'Email Content', 'newsletter-optin-box' ); ?></label>
 								</th>
 								<td>
@@ -167,16 +166,6 @@
 								</td>
 							</tr>
 
-							<tr class="noptin-is-conditional noptin-show-if-automation-is-normal">
-								<th scope="row">
-									<label for="noptin-automated-email-permission-text"><?php _e( 'Footer Text', 'newsletter-optin-box' ); ?></label>
-								</th>
-								<td>
-									<textarea id="noptin-automated-email-permission-text" name="noptin_automation[footer_text]" class="noptin-admin-field-big" placeholder="<?php echo esc_attr( get_noptin_footer_text() ); ?>" rows="1"><?php echo esc_textarea( $campaign->get( 'footer_text' ) ); ?></textarea>
-									<p class="description"><?php _e( 'This text appears below the main email content.', 'newsletter-optin-box' ); ?></p>
-								</td>
-							</tr>
-
 						</tbody>
 					</table>
 
@@ -187,7 +176,6 @@
 				</div>
 
 				<div id="postbox-container-2" class="postbox-container">
-
 
 					<?php
 						/**
