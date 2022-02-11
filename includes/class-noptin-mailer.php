@@ -204,12 +204,17 @@ class Noptin_Mailer {
 	 */
 	public function default_footer_text() {
 
-		$country = get_noptin_option( 'country', 'United States' );
-		$company = get_noptin_option( 'company', get_option( 'blogname' ) );
-		$address = get_noptin_option( 'address', '31 North San Juan Ave.' );
-		$city    = get_noptin_option( 'city', 'Santa Clara' );
-		$state   = get_noptin_option( 'state', 'San Francisco' );
-		return trim( "$address \n\n$city, $state, $country \n\n$company" );
+		return apply_filters(
+			'default_noptin_footer_text',
+	
+			sprintf(
+				/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+				__( '[[blog_name]] &mdash; Powered by [[noptin]] | %1$sUnsubscribe%2$s', 'newsletter-optin-box' ),
+				'<a href="[[unsubscribe_url]]" rel="nofollow" target="_blank">',
+				'</a>'
+			)
+	
+		);
 
 	}
 

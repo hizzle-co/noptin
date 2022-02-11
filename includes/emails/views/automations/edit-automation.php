@@ -172,7 +172,7 @@
 									<label for="noptin-automated-email-permission-text"><?php _e( 'Footer Text', 'newsletter-optin-box' ); ?></label>
 								</th>
 								<td>
-									<textarea id="noptin-automated-email-permission-text" name="noptin_automation[permission_text]" class="noptin-admin-field-big" rows="4"><?php echo esc_textarea( $campaign->get( 'permission_text' ) ); ?></textarea>
+									<textarea id="noptin-automated-email-permission-text" name="noptin_automation[footer_text]" class="noptin-admin-field-big" placeholder="<?php echo esc_attr( get_noptin_footer_text() ); ?>" rows="1"><?php echo esc_textarea( $campaign->get( 'footer_text' ) ); ?></textarea>
 									<p class="description"><?php _e( 'This text appears below the main email content.', 'newsletter-optin-box' ); ?></p>
 								</td>
 							</tr>

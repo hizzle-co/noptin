@@ -253,15 +253,7 @@ function get_noptin_email_delay_units() {
  * @return string
  */
 function get_noptin_footer_text() {
-
-	$country = get_noptin_option( 'country', 'United States' );
-	$company = get_noptin_option( 'company', get_option( 'blogname' ) );
-	$address = get_noptin_option( 'address', '31 North San Juan Ave.' );
-	$city    = get_noptin_option( 'city', 'Santa Clara' );
-	$state   = get_noptin_option( 'state', 'San Francisco' );
-	$text    = trim( "$address \n\n$city, $state, $country \n\n$company" );
-
-	return get_noptin_option( 'footer_text', $text );
+	return get_noptin_option( 'footer_texts', noptin()->mailer->default_footer_text() );
 }
 
 /**
@@ -271,19 +263,5 @@ function get_noptin_footer_text() {
  * @return string
  */
 function get_noptin_permission_text() {
-
-	$permission_text  = __(
-		'You received this email because you are subscribed to our email newsletter.',
-		'newsletter-optin-box'
-	);
-
-	$permission_text2 = sprintf(
-		/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-		__( 'To stop receiving these emails, you can %1$sunsubscribe%2$s at any time.', 'newsletter-optin-box' ),
-		'<a href="[[unsubscribe_url]]" rel="nofollow" target="_blank">',
-		'</a>'
-	);
-	$text    = $permission_text . ' ' . $permission_text2;
-
-	return get_noptin_option( 'permission_text', $text );
+	return get_noptin_option( 'permission_text', noptin()->mailer->default_permission_text() );
 }

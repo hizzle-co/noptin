@@ -121,7 +121,7 @@ abstract class Noptin_Automated_Email_Type {
 			return $value;
 		}
 
-		// Set default template, permission and footer texts.
+		// Set default name, template, and footer texts.
 		switch ( $prop ) {
 
 			case 'name':
@@ -130,10 +130,6 @@ abstract class Noptin_Automated_Email_Type {
 
 			case 'footer_text':
 				$value = get_noptin_footer_text();
-				break;
-
-			case 'permission_text':
-				$value = get_noptin_permission_text();
 				break;
 
 			case 'template':

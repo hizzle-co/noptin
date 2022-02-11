@@ -137,12 +137,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			return $text;
 		}
 
-		// add separator if there is footer text
-		if ( trim( $text ) ) {
-			$text .= apply_filters( 'noptin_email_footer_separator',  ' | ' );
-		}
-
-		return $text . $GLOBALS['noptin_woocommerce_email_template_footer_text'];
+		return wp_kses_post( $GLOBALS['noptin_woocommerce_email_template_footer_text'] );
 
 	}
 
