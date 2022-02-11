@@ -98,17 +98,6 @@ class Noptin_Automated_Emails_Admin {
 	 */
 	public function register_metaboxes( $campaign ) {
 
-		// Campaign options.
-		add_meta_box(
-			'noptin_automation_options',
-			__( 'Options','newsletter-optin-box' ),
-			array( $this, 'render_metabox' ),
-			'noptin_page_noptin-automation',
-			'side',
-			'high',
-			'options'
-		);
-
 		// Email recipients.
 		add_meta_box(
 			'noptin_automation_recipients',
@@ -144,6 +133,17 @@ class Noptin_Automated_Emails_Admin {
 			'side',
 			'default',
 			'save'
+		);
+
+		// Email Details.
+		add_meta_box(
+			'noptin_automation_details',
+			__( 'Details','newsletter-optin-box' ),
+			array( $this, 'render_metabox' ),
+			'noptin_page_noptin-automation',
+			'normal',
+			'default',
+			'details'
 		);
 
 		// Email content.

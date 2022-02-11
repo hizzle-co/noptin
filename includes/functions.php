@@ -323,44 +323,6 @@ function is_noptin_campaign( $post, $campaign_type = false ) {
 }
 
 /**
- * Returns the default newsletter subject.
- *
- * @since 1.2.0
- * @return string
- */
-function get_noptin_default_newsletter_subject() {
-
-	$subject = '';
-
-	/**
-	 * Filters the default newsletter subject
-	 *
-	 * @param string $subject The default newsletter subject
-	 */
-	return apply_filters( 'noptin_default_newsletter_subject', $subject );
-
-}
-
-/**
- * Returns the default newsletter preview text.
- *
- * @since 1.2.0
- * @return string
- */
-function get_noptin_default_newsletter_preview_text() {
-
-	$preview_text = '';
-
-	/**
-	 * Filters the default newsletter preview text
-	 *
-	 * @param string $preview_text The default newsletter preview text
-	 */
-	return apply_filters( 'noptin_default_newsletter_preview_text', $preview_text );
-
-}
-
-/**
  * Returns the default newsletter body.
  *
  * @since 1.2.0

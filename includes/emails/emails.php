@@ -217,6 +217,7 @@ function get_noptin_email_types() {
 function get_noptin_email_templates() {
 
 	$templates = array(
+		'none'         => __( 'No template', 'newsletter-optin-box' ),
 		'paste'        => __( 'Paste', 'newsletter-optin-box' ),
 		'plain'        => __( 'Plain', 'newsletter-optin-box' ),
 		'merriweather' => __( 'Merriweather', 'newsletter-optin-box' ),

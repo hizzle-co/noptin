@@ -1947,15 +1947,14 @@ a.no-campaign-create-new-campaign {
 }
 
 #noptin-wrapper .noptin-admin-field-big {
-	padding: 6px 8px;
     width: 100%;
     max-width: 400px;
     font-size: 13px;
 }
 
-#noptin-wrapper #post-body-content .form-table {
+#noptin_automation_details {
 
-	th, td {
+	.form-table, .form-table td, .form-table th, .form-table td p {
 		font-size: 13px;
 	}
 
