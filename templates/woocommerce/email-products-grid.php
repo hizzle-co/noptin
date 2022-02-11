@@ -38,9 +38,9 @@ $n = 1;
 
 					<div class="noptin-wc-product-grid-item-col" style="<?php echo ( $n % 3 ? '' : 'margin-right: 0;' ) ?>">
 
-						<a href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo Noptin_WooCommerce_Automated_Email_Type::get_product_image( $product ) ?></a>
-						<h3><a href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a></h3>
-						<p class="price"><strong><?php echo $product->get_price_html(); ?></strong></p>
+						<a href="<?php echo esc_url( $product->get_permalink() ); ?>" style="display: block;"><?php echo Noptin_WooCommerce_Automated_Email_Type::get_product_image( $product ) ?></a>
+						<h3 style="text-align: center;"><a href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a></h3>
+						<p class="price" style="text-align: center;"><strong><?php echo $product->get_price_html(); ?></strong></p>
 
 					</div>
 

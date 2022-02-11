@@ -432,6 +432,12 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'example'     => "order.upsells limit='6' style='grid'",
 			),
 
+			'order.details' => array(
+				'description' => __( "Displays important details about the order.", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_field' ),
+				'example'     => "order.details",
+			),
+
 		);
 
 	}
@@ -610,6 +616,13 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				return wp_kses_post( (string) $meta );
 				break;
 
+			case 'order.details':
+				WC()->mailer();
+				ob_start();
+				do_action( 'woocommerce_email_order_details', $this->order, false, false, '' );
+				return ob_get_clean();
+				break;
+
 			default:
 				$method = 'get_' . str_replace( 'order.', '', $field );
 
@@ -706,7 +719,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		$default = isset( $args['default'] ) ? $args['default'] : '';
 
 		// Abort if no customer.
-		if ( empty( $this->customer ) ) {
+		if ( empty( $this->customer ) || empty( $this->order ) ) {
 			return esc_html( $default );
 		}
 
@@ -790,7 +803,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			'product.image' => array(
 				'description' => __( 'Product image', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.image format='shop_catalog'",
+				'example'     => "product.image format='woocommerce_thumbnail'",
 			),
 
 			'product.add_to_cart_url' => array(
@@ -837,7 +850,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				break;
 
 			case 'product.image':
-				$size = isset( $args['size'] ) ? $args['size'] : 'shop_catalog';
+				$size = isset( $args['size'] ) ? $args['size'] : 'woocommerce_thumbnail';
 				return $this->product->get_image( $size );
 				break;
 
@@ -1035,7 +1048,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 * @param string $size
 	 * @return string
 	 */
-	public static function get_product_image( $product, $size = 'shop_catalog' ) {
+	public static function get_product_image( $product, $size = 'woocommerce_thumbnail' ) {
 
 		if ( $image_id = $product->get_image_id() ) {
 			$image_url = wp_get_attachment_image_url( $image_id, $size );
@@ -1073,7 +1086,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			.noptin-wc-product-grid-item-col {
 				width: 30.5%;
 				display: inline-block;
-				text-align:left;
+				text-align:center;
 				padding: 0 0 30px;
 				vertical-align:top;
 				word-wrap:break-word;
