@@ -118,54 +118,6 @@
 								</td>
 							</tr>
 
-							<tr class="noptin-is-conditional noptin-show-if-automation-is-normal">
-								<th scope="row">
-									<label for="noptin-automated-email-content"><?php _e( 'Email Content', 'newsletter-optin-box' ); ?></label>
-								</th>
-								<td>
-									<?php
-										$content = wp_kses_post( $campaign->get_content() );
-
-										wp_editor(
-											$content,
-											'noptin-automation-email-content',
-											array(
-												'media_buttons'    => true,
-												'drag_drop_upload' => true,
-												'textarea_rows'    => 15,
-												'textarea_name'    => 'noptin_automation[content_normal]',
-												'tabindex'         => 4,
-												'tinymce'          => array(
-													'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',
-												),
-											)
-										);
-									?>
-								</td>
-							</tr>
-
-							<tr class="noptin-is-conditional noptin-show-if-automation-is-plain_text">
-								<th scope="row">
-									<label for="noptin-automated-email-content-plain-text"><?php _e( 'Email Content', 'newsletter-optin-box' ); ?></label>
-								</th>
-								<td>
-									<p><a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span><?php _e( 'Send a test email', 'newsletter-optin-box' ); ?></a></p>
-									<p><textarea name="noptin_automation[content_plain_text]" id="noptin-automation-email-content-plain-text" rows="15" class="noptin-admin-field-big"><?php echo esc_textarea( $campaign->get_content( 'plain_text' ) ); ?></textarea></p>
-									<p class="description"><?php _e( 'Any HTML will be stripped from your email.', 'newsletter-optin-box' ); ?></p>
-								</td>
-							</tr>
-
-							<tr class="noptin-is-conditional noptin-show-if-automation-is-raw_html">
-								<th scope="row">
-									<label for="noptin-automated-email-content-raw-html"><?php _e( 'Email Content', 'newsletter-optin-box' ); ?></label>
-								</th>
-								<td>
-									<p><a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span><?php _e( 'Send a test email', 'newsletter-optin-box' ); ?></a></p>
-									<p><textarea name="noptin_automation[content_raw_html]" id="noptin-automation-email-content-raw-html" rows="15" class="noptin-admin-field-big"><?php echo esc_textarea( $campaign->get_content( 'raw_html' ) ); ?></textarea></p>
-									<p class="description"><?php _e( 'Paste your HTML email above.', 'newsletter-optin-box' ); ?></p>
-								</td>
-							</tr>
-
 						</tbody>
 					</table>
 

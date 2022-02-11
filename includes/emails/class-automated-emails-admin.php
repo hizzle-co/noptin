@@ -146,6 +146,17 @@ class Noptin_Automated_Emails_Admin {
 			'save'
 		);
 
+		// Email content.
+		add_meta_box(
+			'noptin_automation_content',
+			__( 'Email Content','newsletter-optin-box' ) . '<a class="button noptin-send-test-email"><span class="dashicons-before dashicons-email-alt"></span>Send a test email</a>',
+			array( $this, 'render_metabox' ),
+			'noptin_page_noptin-automation',
+			'normal',
+			'default',
+			'content'
+		);
+
 	}
 
 	/**

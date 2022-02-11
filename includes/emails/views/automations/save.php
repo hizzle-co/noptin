@@ -11,6 +11,8 @@ defined( 'ABSPATH' ) || exit;
 
 	<div class="noptin-publishing-actions">
 
+		<p><a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span><?php _e( 'Send a test email', 'newsletter-optin-box' ); ?></a></p>
+
 		<p>
 			<label>
 				<strong class="noptin-label-span"><?php esc_html_e( 'Status', 'newsletter-optin-box' ); ?></strong>
