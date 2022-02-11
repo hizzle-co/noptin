@@ -426,6 +426,12 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'example'     => "order.cross_sells limit='6' style='grid'",
 			),
 
+			'order.upsells' => array(
+				'description' => __( "Displays upsells based on the order items. Style can be grid or list.", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_order_field' ),
+				'example'     => "order.upsells limit='6' style='grid'",
+			),
+
 		);
 
 	}
@@ -517,6 +523,27 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				$template    = isset( $args['style'] ) ? $args['style'] : 'grid';
 				$limit       = isset( $args['limit'] ) ? absint( $args['limit'] ) : 6;
 				$cross_sells = $this->get_order_cross_sells( $this->order );
+
+				if ( empty( $cross_sells ) ) {
+					return $default;
+				}
+
+				$products = wc_get_products(
+					array(
+						'include'    => $cross_sells,
+						'limit'      => $limit,
+						'status'     => 'publish',
+						'visibility' => 'catalog',
+					)
+				);
+
+				return $this->get_products_html( $template, $products );
+				break;
+
+			case 'order.upsells':
+				$template    = isset( $args['style'] ) ? $args['style'] : 'grid';
+				$limit       = isset( $args['limit'] ) ? absint( $args['limit'] ) : 6;
+				$cross_sells = $this->get_order_upsells( $this->order );
 
 				if ( empty( $cross_sells ) ) {
 					return $default;
@@ -772,6 +799,12 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'example'     => "product.add_to_cart_url",
 			),
 
+			'product.related' => array(
+				'description' => __( "Displays related products. Style can be grid or list.", 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_product_field' ),
+				'example'     => "product.related limit='6' style='grid'",
+			),
+
 		);
 
 	}
@@ -810,6 +843,18 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 			case 'product.add_to_cart_url':
 				return $this->product->add_to_cart_url();
+				break;
+
+			case 'product.related':
+				$template = isset( $args['style'] ) ? $args['style'] : 'grid';
+				$limit    = isset( $args['limit'] ) ? absint( $args['limit'] ) : 6;
+				$related  = array_filter( array_map( 'wc_get_product', wc_get_related_products( $this->product->get_id(), $limit, $this->product->get_upsell_ids() ) ), 'wc_products_array_filter_visible' );
+
+				if ( empty( $related ) ) {
+					return $default;
+				}
+
+				return $this->get_products_html( $template, $related );
 				break;
 
 			default:
@@ -943,6 +988,30 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		}
 
 		return array_diff( $cross_sells, $in_order );
+	}
+
+	/**
+	 * Get order upsells.
+	 *
+	 * @param WC_Order $order
+	 * @return int[]
+	 */
+	protected function get_order_upsells( $order ) {
+		$upsells  = array();
+		$in_order = array();
+
+		foreach ( $order->get_items() as $item ) {
+			/** @var WC_Order_Item_Product $item */
+			$product = $item->get_product();
+
+			if ( $product ) {
+				$in_order[] = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+				$upsells    = array_merge( $product->get_upsell_ids(), $upsells );
+			}
+
+		}
+
+		return array_diff( $upsells, $in_order );
 	}
 
 	/**
