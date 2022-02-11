@@ -197,7 +197,7 @@ abstract class Noptin_Automated_Email_Type {
 			),
 		);
 
-		foreach ( get_posts( $args ) as $post ) {noptin_dump( $post );
+		foreach ( get_posts( $args ) as $post ) {
 			$emails[] = new Noptin_Automated_Email( $post->ID );
 		}
 
@@ -446,7 +446,7 @@ abstract class Noptin_Automated_Email_Type {
 		$merge_tags = array();
 
 		foreach ( $this->get_merge_tags() as $_merge_tags ) {
-			array_merge( $merge_tags, $_merge_tags );
+			$merge_tags = array_merge( $merge_tags, $_merge_tags );
 		}
 
 		return $merge_tags;

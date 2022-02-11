@@ -40,10 +40,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			height: auto !important;
 		}
 
-		@media only screen and (max-width: 480px){
+		@media (max-width: 480px) {
 			.noptin-posts-grid-item {
             	width:100% !important;
 				margin-right: 0 !important;
+				display: block !important;
+    			text-align: left !important;
         	}
 		}
 

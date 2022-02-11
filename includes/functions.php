@@ -1485,12 +1485,10 @@ function noptin_format_date( $date_time ) {
  */
 function noptin_encrypt( $plaintext ) {
 
-	$ivlen          = openssl_cipher_iv_length( 'AES-128-CBC' );
-	$iv             = openssl_random_pseudo_bytes( $ivlen );
-	$ciphertext_raw = openssl_encrypt( $plaintext, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
-	$hmac           = hash_hmac( 'sha256', $ciphertext_raw, AUTH_KEY, true);
+	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$iv    = substr( AUTH_SALT, 0, $ivlen );
 
-	return base64_encode( $iv . $hmac . $ciphertext_raw );
+	return base64_encode( openssl_encrypt( $plaintext, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv ) );
 }
 
 /**
@@ -1509,17 +1507,8 @@ function noptin_decrypt( $ciphertext ) {
 	}
 
 	// Prepare args.
-	$ivlen          = openssl_cipher_iv_length( 'AES-128-CBC' );
-	$iv             = substr( $decoded, 0, $ivlen );
-	$hmac           = substr( $decoded, $ivlen, 32 );
-	$ciphertext_raw = substr( $decoded, $ivlen + 32 );
-	$plaintext      = openssl_decrypt( $ciphertext_raw, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
-	$calcmac        = hash_hmac( 'sha256', $ciphertext_raw, AUTH_KEY, true );
+	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$iv    = substr( AUTH_SALT, 0, $ivlen );
 
-	// Timing attack safe comparison.
-	if ( hash_equals( $hmac, $calcmac ) ) {
-    	return $plaintext;
-	}
-
-	return '';
+	return openssl_decrypt( $decoded, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
 }

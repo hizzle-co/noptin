@@ -44,10 +44,10 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$this->escape_function = $escape_function;
 
 		// Replace strings like this: [[tagname attr="value"]].
-		$string = preg_replace_callback( '/\[\[(\w+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
+		$string = preg_replace_callback( '/\[\[([\w\.]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
 
 		// Call again to take care of nested variables.
-		$string = preg_replace_callback( '/\[\[(\w+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
+		$string = preg_replace_callback( '/\[\[([\w\.]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
 		return $string;
 	}
 
@@ -68,7 +68,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function replace_in_body( $string ) {
-		return $this->replace( $string, 'wp_kses_post' );
+		return $this->replace( $string, '' );
 	}
 
 	/**
@@ -135,7 +135,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$this->tags['spacer'] = array(
 			'description' => __( 'Adds a blank vertical space', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_spacer' ),
-			'example'     => "rule height='50px'",
+			'example'     => "spacer height='50px'",
 		);
 
 		$this->tags['button'] = array(

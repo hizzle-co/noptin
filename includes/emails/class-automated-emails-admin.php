@@ -162,13 +162,9 @@ class Noptin_Automated_Emails_Admin {
 
 		if ( is_wp_error( $result ) ) {
 			noptin()->admin->show_error( $result );
-		}
-
-		if ( false === $result ) {
+		} else if ( false === $result ) {
 			noptin()->admin->show_error( __( 'Could not save your changes.', 'newsletter-optin-box' ) );
-		}
-
-		if ( true === $result ) {
+		} else {
 			noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );
 		}
 

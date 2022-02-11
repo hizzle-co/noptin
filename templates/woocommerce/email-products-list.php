@@ -24,7 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				<td>
 					<h3><a href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a></h3>
-					<p><?php echo wp_kses_post( $product->get_short_description() ); ?></p>
 				</td>
 
 				<td align="right" class="last" width="35%">

@@ -191,9 +191,10 @@ class Noptin_Email_Generator {
 	public function generate_normal_email() {
 
 		// Prepare vars.
-		$content  = wpautop( trim( $this->content ) );
-		$template = $this->template;
-		$email    = $content;
+		$this->content = wpautop( trim( $this->content ) );
+		$content       = $this->content;
+		$template      = $this->template;
+		$email         = $content;
 
 		// Ensure the chosen template is supported.
 		if ( ! array_key_exists( $template, get_noptin_email_templates() ) ) {
@@ -230,11 +231,14 @@ class Noptin_Email_Generator {
 	 */
 	public function post_process( $content ) {
 
-		// Do merge tags.
-		$content = noptin_parse_email_content_tags( $content );
-
 		// Inject preheader.
 		$content = $this->inject_preheader( $content );
+
+		// Ensure that merge tags are not wrapped in paragraphs.
+		$content = $this->merge_tags_unautop( $content );
+
+		// Do merge tags.
+		$content = noptin_parse_email_content_tags( $content );
 
 		// Make links clickable.
 		$content = make_clickable( $content );
@@ -454,6 +458,38 @@ class Noptin_Email_Generator {
 
 		return $content;
 
+	}
+
+	/**
+	 * Don't auto-p wrap merge tags that stand alone
+	 *
+	 * Ensures that merge tags are not wrapped in `<p>...</p>`.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @global array $shortcode_tags
+	 *
+	 * @param string $content The content.
+	 * @return string The filtered content.
+	 */
+	public function merge_tags_unautop( $content ) {
+
+		$spaces    = wp_spaces_regexp();
+
+		// phpcs:disable Squiz.Strings.ConcatenationSpacing.PaddingFound,WordPress.WhiteSpace.PrecisionAlignment.Found -- don't remove regex indentation
+		$pattern =
+			'/'
+			. '<p>'                              // Opening paragraph.
+			. '(?:' . $spaces . ')*+'            // Optional leading whitespace.
+			. '('                                // 1: The shortcode.
+			.     '\\[\\[([\\w\\.]+)(\\ +(?:(?!\\[)[^\\]\n])+)*\\]\\]'
+			. ')'
+			. '(?:' . $spaces . ')*+'            // Optional trailing whitespace.
+			. '<\\/p>'                           // Closing paragraph.
+			. '/';
+		// phpcs:enable
+
+		return preg_replace( $pattern, '$1', $content );
 	}
 
 }

@@ -531,7 +531,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 					)
 				);
 
-				return $this->get_products_html( $products, $template );
+				return $this->get_products_html( $template, $products );
 				break;
 
 			case 'order.items':
@@ -543,7 +543,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 					$products[] = $item->get_product();
 				}
 
-				return $this->get_products_html( $products, $template );
+				return $this->get_products_html( $template, $products );
 				break;
 
 			case 'order.meta':
@@ -554,7 +554,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				}
 
 				// Retrieve the value.
-				$meta = $this->order->get_meta( $args['key'] );
+				$meta = $this->order->get_meta( trim( $args['key'] ) );
 
 				if ( '' === $meta ) {
 					return $default;

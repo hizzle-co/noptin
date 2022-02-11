@@ -66,7 +66,7 @@ class Noptin_Automated_Email {
 
 			// Prepare campaign data.
 			$data = json_decode( $post->post_content, true );
-			//noptin_dump( wp_unslash( $post->post_content ) ); exit;
+
 			// Check if we're dealing with a legacy campaign.
 			if ( ! is_array( $data ) ) {
 				$this->is_legacy = true;
