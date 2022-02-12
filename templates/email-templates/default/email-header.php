@@ -2,7 +2,7 @@
 /**
  * Displays the header for the fallback email template.
  *
- * Override this template by copying it to yourtheme/noptin/email-templates/none/email-header.php
+ * Override this template by copying it to yourtheme/noptin/email-templates/default/email-header.php
  *
  * @var string $email_heading
  */

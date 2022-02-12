@@ -1,0 +1,25 @@
+		<!-- start copy block -->
+		<tr>
+			<td align="center" bgcolor="#e9ecef">
+				<!--[if (gte mso 9)|(IE)]>
+					<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+						<tr>
+							<td align="center" valign="top" width="600">
+				<![endif]-->
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+					<!-- start copy -->
+						<tr>
+							<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
+								<?php echo wp_kses_post( $content ); ?>
+							</td>
+						</tr>
+					<!-- end copy -->
+				</table>
+				<!--[if (gte mso 9)|(IE)]>
+							</td>
+						</tr>
+					</table>
+				<![endif]-->
+			</td>
+		</tr>
+		<!-- end copy block -->

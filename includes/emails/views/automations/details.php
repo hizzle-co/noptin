@@ -65,6 +65,15 @@ $template = $campaign->get_template();
 
 		<tr class="noptin-is-conditional noptin-show-if-automation-is-normal">
 			<th scope="row">
+				<label for="noptin-automated-email-preview-text"><?php _e( 'Preview Text', 'newsletter-optin-box' ); ?></label>
+			</th>
+			<td>
+				<input type="text" id="noptin-automated-email-preview-text" name="noptin_automation[preview_text]" value="<?php echo esc_attr( $campaign->get( 'preview_text' ) ); ?>" class="noptin-admin-field-big">
+			</td>
+		</tr>
+
+		<tr class="noptin-is-conditional noptin-show-if-automation-is-normal">
+			<th scope="row">
 				<label for="noptin-automated-email-permission-text"><?php _e( 'Footer Text', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>

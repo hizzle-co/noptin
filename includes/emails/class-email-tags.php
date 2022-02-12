@@ -205,7 +205,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		// Generate button.
 		$button = sprintf(
 			'<a href="%s" style="background: %s; border: none; text-decoration: none; padding: 15px 25px; color: %s; border-radius: %s; display:inline-block; mso-padding-alt:0;text-underline-color:%s"><span style="mso-text-raise:15pt;">%s</span></a>',
-			esc_url( $url ),
+			esc_attr( $url ), // Use esc_attr instead of esc_url to allow for merge tags.
 			esc_attr( $background ),
 			esc_attr( $color ),
 			esc_attr( $rounding ),

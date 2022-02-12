@@ -33,7 +33,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	/**
 	 * @var WP_Post
 	 */
-	public $posts;
+	public $post;
 
 	/**
 	 * Registers hooks.
@@ -88,6 +88,14 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Returns the default preview text.
+	 *
+	 */
+	public function default_preview_text() {
+		return __( 'New post published on [[blog_name]]', 'newsletter-optin-box' );
+	}
+
+	/**
 	 * Returns the default content.
 	 *
 	 */
@@ -95,7 +103,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		ob_start();
 		?>
 		<p>[[post_excerpt]]</p>
-		<p>[[button url="post_url" text="<?php esc_attr_e( 'Continue Reading', 'newsletter-optin-box' ); ?>"]]</p>
+		<p>[[button url="[[post_url]]" text="<?php esc_attr_e( 'Continue Reading', 'newsletter-optin-box' ); ?>"]]</p>
 		<p><?php _e( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box' ); ?></p>
 		<p>[[post_url]]</p>
 		<p><?php _e( 'Cheers', 'newsletter-optin-box' ); ?></p>
@@ -254,7 +262,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			return;
 		}
 
-		// Ensure that both the campaign and post are published.
+		// Ensure that both the campaign and post are still published.
 		if ( 'publish' !== get_post_status( $post_id ) || 'publish' !== get_post_status( $campaign_id ) ) {
 			return;
 		}
@@ -276,6 +284,12 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		// Create normal campaign.
 		$campaign = new Noptin_Automated_Email( $campaign_id );
+		$content  = $campaign->get_content( $campaign->get_email_type() );
+
+		// Legacy merge tags.
+		$content  = str_ireplace( '[[read_more_button]]', $this->read_more_button( get_permalink( $post_id ) ), $content );
+		$content  = str_ireplace( '[[/read_more_button]]', '</a></div>', $content );
+
 		$post     = array(
 			'post_status'   => 'publish',
 			'post_parent'   => $campaign->id,
@@ -284,12 +298,12 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			'post_date_gmt' => current_time( 'mysql', true ),
 			'edit_date'     => true,
 			'post_title'    => sanitize_text_field( $campaign->get_subject() ),
-			'post_content'  => $campaign->get_content(),
+			'post_content'  => $content,
 			'meta_input'    => array(
 				'campaign_type'         => 'newsletter',
 				'preview_text'          => esc_html( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
 				'new_post_notification' => $key,
-				'custom_merge_tags'     => $this->get_post_merge_tags( get_post( $post_id ) ),
+				'custom_merge_tags'     => array(),
 				'campaign_id'           => $campaign_id,
 				'associated_post'       => $post_id,
 				'subscribers_query'     => array(),
@@ -330,68 +344,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Retrieves merge tags for a given post.
-	 *
-	 * @param WP_Post $post
-	 */
-	protected function get_post_merge_tags( $post ) {
-
-		if ( empty( $post ) ) {
-			return array();
-		}
-
-		$tags = $post->filter( 'display' )->to_array();
-
-		// Prevent wp_rss_aggregator from appending the feed name to excerpts.
-		$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
-
-		if ( false !== $wp_rss_aggregator_fix ) {
-			remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
-		}
-
-		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
-		$tags['post_excerpt'] = get_the_excerpt( $post->ID );
-		remove_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 100000 );
-
-		if ( false !== $wp_rss_aggregator_fix ) {
-			add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
-		}
-
-		$tags['excerpt']        = $tags['post_excerpt'];
-		$tags['post_content']   = apply_filters( 'the_content', $post->post_content );
-		$tags['content']        = $tags['post_content'];
-		$tags['post_title']     = get_the_title( $post->ID);
-		$tags['title']          = $tags['post_title'];
-		$tags['featured_image'] = get_the_post_thumbnail( $post );
-
-		$author = get_userdata( $tags['post_author'] );
-
-		// Author details.
-		$tags['post_author']       = $author->display_name;
-		$tags['post_author_email'] = $author->user_email;
-		$tags['post_author_login'] = $author->user_login;
-		$tags['post_author_id']    = $author->ID;
-
-		// Date.
-		$tags['post_date'] = get_the_date( '', $post->ID );
-
-		// Link.
-		$tags['post_url'] = get_the_permalink( $post->ID );
-
-		unset( $tags['ID'] );
-		$tags['post_id'] = $post->ID;
-
-		// Read more button.
-		$tags['read_more_button']  = $this->read_more_button( $tags['post_url'] );
-		$tags['/read_more_button'] = '</a></div>';
-
-		// Metadata.
-		$tags['post_meta'] = map_deep( get_post_meta( $post->ID ), 'maybe_unserialize' );
-
-		return $tags;
-	}
-
-	/**
 	 * Generates read more button markup
 	 */
 	public function read_more_button( $url ) {
@@ -400,10 +352,199 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Removes the read more link in an excerpt
+	 * Retrieves an array of supported merge tags.
+	 *
+	 * @return array
 	 */
-	public function excerpt_more() {
-		return '';
+	public function get_merge_tags() {
+
+		return array(
+			__( 'Post', 'noptin' )    => array(
+
+				'post_id' => array(
+					'description' => __( "The post's ID", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_id",
+				),
+
+				'post_date' => array(
+					'description' => __( "The post's published date", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_date",
+				),
+
+				'post_url' => array(
+					'description' => __( "The post's URL", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_url",
+				),
+
+				'featured_image' => array(
+					'description' => __( "The post's featured image.", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "featured_image",
+				),
+
+				'post_title' => array(
+					'description' => __( "The post's title.", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_title",
+				),
+
+				'title' => array(
+					'description' => __( "Alias for [[post_title]].", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "title",
+				),
+
+				'post_excerpt' => array(
+					'description' => __( "The post's excerpt.", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_excerpt",
+				),
+
+				'excerpt' => array(
+					'description' => __( "Alias for [[post_excerpt]].", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "excerpt",
+				),
+
+				'post_content' => array(
+					'description' => __( "The post's content.", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_content",
+				),
+
+				'content' => array(
+					'description' => __( "Alias for [[post_content]].", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "content",
+				),
+
+				'post_meta' => array(
+					'description' => __( "Displays the value of a give meta key.", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "content",
+				),
+
+			),
+
+		);
+
+	}
+
+	/**
+	 * Post field value of the current post.
+	 *
+	 * @param array $args
+	 * @param string $field
+	 * @return string
+	 */
+	public function get_post_field( $args = array(), $field = 'post_id' ) {
+		$default = isset( $args['default'] ) ? $args['default'] : '';
+
+		// Abort if no post.
+		if ( empty( $this->post ) ) {
+			return esc_html( $default );
+		}
+
+		// Process author fields.
+		if ( in_array( $field, array( 'post_author', 'post_author_email', 'post_author_login', 'post_author_id' ) ) ) {
+
+			$author = get_userdata( $this->post->post_author );
+
+			if ( empty( $author ) ) {
+				return esc_html( $default );
+			}
+
+			switch( $field ) {
+
+				case 'post_author':
+					return esc_html( $author->display_name );
+					break;
+
+				case 'post_author_email':
+					return sanitize_email( $author->user_email );
+					break;
+
+				case 'post_author_login':
+					return sanitize_user( $author->user_login );
+					break;
+
+				case 'post_author_id':
+					return absint( $author->ID );
+					break;
+			}
+
+		}
+
+		// Process post fields.
+		switch( $field ) {
+
+			case 'post_id':
+				return $this->post->ID;
+				break;
+
+			case 'post_date':
+				return get_the_date( '', $this->post );
+				break;
+
+			case 'post_url':
+				return get_the_permalink( $this->post );
+				break;
+
+			case 'featured_image':
+				return get_the_post_thumbnail( $this->post, 'medium_large' );
+				break;
+
+			case 'post_excerpt':
+			case 'excerpt':
+
+				// Remove read_more string.
+				add_filter( 'excerpt_more', '__return_empty_string', 100000 );
+
+				// Prevent wp_rss_aggregator from appending the feed name to excerpts.
+				$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
+
+				if ( false !== $wp_rss_aggregator_fix ) {
+					remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+				}
+
+				// Generate excerpt.
+				$post_excerpt = get_the_excerpt( $this->post );
+
+				if ( false !== $wp_rss_aggregator_fix ) {
+					add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+				}
+
+				remove_filter( 'excerpt_more', '__return_empty_string', 100000 );
+
+				return $post_excerpt;
+				break;
+
+			case 'post_content':
+			case 'content':
+				return apply_filters( 'the_content', $this->post->post_content );
+				break;
+
+			case 'post_title':
+			case 'title':
+				return get_the_title( $this->post );
+				break;
+
+			case 'post_meta':
+
+				// Abort if no key provided.
+				if ( empty( $args['key'] ) ) {
+					return esc_html( $default );
+				}
+
+				return wp_kses_post( (string) get_post_meta( $this->post->ID, trim( $args['key'] ), true ) );
+				break;
+
+		}
+
+		return esc_html( $default );
 	}
 
 	/**
