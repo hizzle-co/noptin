@@ -15,27 +15,8 @@
 		-ms-text-size-adjust: 100%;
 	}
 
-	/* Prevent Webkit and Windows Mobile platforms from changing default font sizes.*/
-	.ExternalClass {
-		width: 100%;
-	}
-
-	/* Force Hotmail to display emails at full width */
-	.ExternalClass,
-	.ExternalClass p,
-	.ExternalClass span,
-	.ExternalClass font,
-	.ExternalClass td,
-	.ExternalClass div {
-		line-height: 100%;
-	}
-
-	/* Forces Hotmail to display normal line spacing.  More on that: http://www.emailonacid.com/forum/viewthread/43/ */
-	#backgroundTable {
-		margin: 0;
-		padding: 0;
-		width: 100% !important;
-		line-height: 100% !important;
+	a {
+		color: #348eda;
 	}
 
 	img {
@@ -116,11 +97,13 @@
 		color: #348eda;
 	  }
 
-	  h1, h2, h3, h4, h5,
+	  h1, h2, h3, h4, h5, h6,
+	  body, div,
 	  p, ul, ol {
 		/* This fixes Gmail's terrible text rendering  */
 		font-family: Arial, Helvetica, sans-serif;
 		font-weight: 400;
+		margin-bottom: 16px;
 	  }
 
 	  .container {

@@ -1,4 +1,4 @@
-<?php $logo_url = apply_filters( 'noptin_email_logo_url', get_noptin_option( 'logo_url', '' ), $data ); ?>
+<?php $logo_url = apply_filters( 'noptin_email_logo_url', get_noptin_option( 'logo_url', '' ) ); ?>
 
 <?php if ( ! empty( $logo_url ) ) { ?>
 	<!-- start logo -->

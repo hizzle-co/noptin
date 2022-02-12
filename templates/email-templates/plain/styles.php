@@ -113,20 +113,19 @@
 		line-height: 1.6;
 	  }
 
-	  /* Styling your links has become much simpler with the new Yahoo.  In fact, it falls in line with the main credo of styling in email and make sure to bring your styles inline.  Your link colors will be uniform across clients when brought inline.
-		  Bring inline: Yes. */
 	  a {
 		color: #348eda;
 	  }
 
-	  h1, h2, h3, h4, h5,
+	  h1, h2, h3, h4, h5, h6,
+	  body, div,
 	  p, ul, ol {
 		/* This fixes Gmail's terrible text rendering  */
 		font-family: Arial, Helvetica, sans-serif;
 		font-weight: 400;
 	  }
 
-	  h1, h2, h3, h4, h5 {
+	  h1, h2, h3, h4, h5, h6 {
 		margin: 20px 0 10px;
 		color: #000;
 		line-height: 1.2;

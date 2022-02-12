@@ -168,7 +168,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$margin = isset( $args['margin'] ) ? $args['margin'] : '50px';
 
 		return sprintf(
-			'<hr style="border-width: 0; background: %s; color: %s; height:%s; width:%s; margin:%s 0;">',
+			'<hr style="border-width: 0; background: %s; color: %s; height:%s; width:%s; margin:%s auto;">',
 			esc_attr( $color ),
 			esc_attr( $color ),
 			esc_attr( $height ),

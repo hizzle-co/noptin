@@ -83,10 +83,10 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[first_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Hi [[customer.display_name]],', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'To show you that we appreciate your loyalty, here is a coupon code for 20% off your next order.', 'newsletter-optin-box' ); ?></p>
 		<p><h2 style="text-align: center;">20OFF</h2></p>
-		<p><?php _e( 'Thanks for choosing [[company]]!', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Thanks for choosing [[blog_name]]!', 'newsletter-optin-box' ); ?></p>
 		<?php
 		return ob_get_clean();
 	}

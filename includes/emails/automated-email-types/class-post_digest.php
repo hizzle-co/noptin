@@ -75,13 +75,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 *
 	 */
 	public function default_content_normal() {
-		ob_start();
-		?>
-		<p><?php _e( 'Hi [[first_name]],', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'How are you doing? Here are our latest posts.', 'newsletter-optin-box' ); ?></p>
-		<div>[[latest_posts]]</div>
-		<?php
-		return ob_get_clean();
+		return '<div>[[post_digest style=list]]</div>';
 	}
 
 	/**
@@ -89,7 +83,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 *
 	 */
 	public function default_content_plain_text() {
-		return noptin_convert_html_to_text( $this->default_content_normal() );
+		return '[[post_digest style=list]]';
 	}
 
 	/**
@@ -274,26 +268,44 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Retrieves an array of order item merge tags.
+	 * Retrieves an array of supported merge tags.
 	 *
 	 * @return array
 	 */
-	public function get_order_item_merge_tags() {
+	public function get_merge_tags() {
 
 		return array(
+			__( 'Digest', 'noptin' )    => array(
 
-			__( 'Posts', 'noptin' )    => array(
-
-				'posts' => array(
-					'description' => __( 'Posts published since last send', 'newsletter-optin-box' ),
-					'callback'    => array( $this, 'handle_posts_merge_tags' ),
-					'example'     => 'posts template="list" limit="8"',
+				'post_digest' => array(
+					'description' => __( 'Displays your latest content.', 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'process_merge_tag' ),
+					'example'     => 'post_digest template="list" limit="8"',
 				),
 
 			),
 
 		);
 
+	}
+
+	/**
+	 * Processes the post digest merge tag.
+	 *
+	 * @param array $args
+	 * @param string $field
+	 * @return string
+	 */
+	public function process_merge_tag( $args = array() ) {
+
+		$template = isset( $args['style'] ) ? $args['style'] : 'list';
+		$limit    = isset( $args['limit'] ) ? absint( $args['limit'] ) : 6;
+
+		if ( empty( $this->posts ) ) {
+			return '';
+		}
+
+		return $this->get_posts_html( $template, array_slice( $this->posts, 0, $limit ) );
 	}
 
 	/**
@@ -307,10 +319,10 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	public function get_posts_html( $template = 'grid', $posts = array() ) {
 
 		// Allow overwriting this.
-		$posts = apply_filters( 'noptin_post_digest_html', null, $template, $posts );
+		$html = apply_filters( 'noptin_post_digest_html', null, $template, $posts );
 
-		if ( null !== $posts ) {
-			return $posts;
+		if ( null !== $html ) {
+			return $html;
 		}
 
 		ob_start();
@@ -363,7 +375,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		);
 
 		// If no posts found, abort.
-		if ( ! empty( $this->posts ) ) {
+		if ( empty( $this->posts ) ) {
 			throw new Exception( __( 'Could not find posts for this preview.', 'newsletter-optin-box' ) );
 		}
 

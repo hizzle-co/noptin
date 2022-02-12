@@ -85,10 +85,10 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[first_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Hi [[customer.display_name]],', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Thanks for purchasing [[product_name]]. Please reply to this email and let us know what you think of the product.', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Cheers!', 'newsletter-optin-box' ); ?></p>
-		<p>[[company]]</p>
+		<p>[[blog_name]]</p>
 		<?php
 		return ob_get_clean();
 	}

@@ -499,27 +499,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 			case 'post_excerpt':
 			case 'excerpt':
-
-				// Remove read_more string.
-				add_filter( 'excerpt_more', '__return_empty_string', 100000 );
-
-				// Prevent wp_rss_aggregator from appending the feed name to excerpts.
-				$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
-
-				if ( false !== $wp_rss_aggregator_fix ) {
-					remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
-				}
-
-				// Generate excerpt.
-				$post_excerpt = get_the_excerpt( $this->post );
-
-				if ( false !== $wp_rss_aggregator_fix ) {
-					add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
-				}
-
-				remove_filter( 'excerpt_more', '__return_empty_string', 100000 );
-
-				return $post_excerpt;
+				return noptin_get_post_excerpt( $this->post );
 				break;
 
 			case 'post_content':

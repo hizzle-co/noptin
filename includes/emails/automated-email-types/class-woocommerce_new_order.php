@@ -80,11 +80,11 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[first_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Hi [[customer.display_name]],', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'We value your opinion and want to make your shopping experience perfect - so your feedback is important to us!', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Please reply to this email with any suggestions that might help us improve.', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Thanks for your help!', 'newsletter-optin-box' ); ?></p>
-		<p>[[company]]</p>
+		<p>[[blog_name]]</p>
 		<?php
 		return ob_get_clean();
 	}
