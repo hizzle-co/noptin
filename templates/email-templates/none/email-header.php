@@ -20,4 +20,5 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<?php include plugin_dir_path( __FILE__ ) . 'styles.php'; ?>
 	</head>
 	<body <?php echo is_rtl() ? 'rightmargin' : 'leftmargin'; ?>="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
-		<h1><?php echo wp_kses_post( $email_heading ); ?></h1>
+		<div class="container">	
+			<h1><?php echo wp_kses_post( $email_heading ); ?></h1>

@@ -209,7 +209,7 @@ class Noptin_Email_Generator {
 		if ( ! empty( $is_local_template ) ) {
 
 			ob_start();
-			get_noptin_template( "email-templates/$template/email-header.php", array( 'email_heading' => wpautop( $this->heading ) ) );
+			get_noptin_template( "email-templates/$template/email-header.php", array( 'email_heading' => $this->heading ) );
 			get_noptin_template( "email-templates/$template/email-body.php", array( 'content' => $content ) );
 			get_noptin_template( "email-templates/$template/email-footer.php", array( 'footer' => wpautop( $this->footer_text ) ) );
 			$email = ob_get_clean();

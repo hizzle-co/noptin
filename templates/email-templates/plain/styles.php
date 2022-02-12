@@ -55,13 +55,13 @@
 	  }
 
 	  /* Yahoo paragraph fix
-		  Bring inline: Yes. */
+		Bring inline: Yes. */
 	  p {
 		margin: 1em 0;
 	  }
 
 	  /* Hotmail header color reset
-		  Bring inline: Yes. */
+		Bring inline: Yes. */
 	  h1, h2, h3, h4, h5, h6 {
 		color: black !important;
 	  }

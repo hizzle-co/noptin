@@ -16,5 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <?php echo wp_kses_post( $footer ); ?>
         </div>
 
+        </div>
     </body>
 </html>

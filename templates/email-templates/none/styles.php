@@ -1,5 +1,43 @@
 <style type="text/css">
 
+	/* Based on The MailChimp Reset INLINE: Yes. */
+	/* Client-specific Styles */
+	#outlook a {
+		padding: 0;
+	}
+
+	/* Force Outlook to provide a "view in browser" menu link. */
+	body {
+		width: 100% !important;
+		margin: 0;
+		padding: 0;
+		-webkit-text-size-adjust: 100%;
+		-ms-text-size-adjust: 100%;
+	}
+
+	/* Prevent Webkit and Windows Mobile platforms from changing default font sizes.*/
+	.ExternalClass {
+		width: 100%;
+	}
+
+	/* Force Hotmail to display emails at full width */
+	.ExternalClass,
+	.ExternalClass p,
+	.ExternalClass span,
+	.ExternalClass font,
+	.ExternalClass td,
+	.ExternalClass div {
+		line-height: 100%;
+	}
+
+	/* Forces Hotmail to display normal line spacing.  More on that: http://www.emailonacid.com/forum/viewthread/43/ */
+	#backgroundTable {
+		margin: 0;
+		padding: 0;
+		width: 100% !important;
+		line-height: 100% !important;
+	}
+
 	img {
 		outline: none;
 		text-decoration: none;
@@ -15,8 +53,7 @@
 	}
 
 	p, ul, ol {
-		margin-bottom: 10px;
-		margin-top: 10px;
+		margin: 1em 0;
 		font-weight: normal;
 		line-height: 1.4;
 	}
@@ -34,6 +71,64 @@
 		border: 0;
 		outline: none;
 	}
+
+	/* Hotmail header color reset
+		Bring inline: Yes. */
+		h1, h2, h3, h4, h5, h6 {
+		color: black !important;
+	  }
+
+	  h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+		color: blue !important;
+	  }
+
+	  h1 a:active, h2 a:active, h3 a:active, h4 a:active, h5 a:active, h6 a:active {
+		color: red !important;
+		/* Preferably not the same color as the normal header link color.  There is limited support for psuedo classes in email clients, this was added just for good measure. */
+	  }
+
+	  h1 a:visited, h2 a:visited, h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
+		color: #000;
+		color: purple !important;
+		/* Preferably not the same color as the normal header link color. There is limited support for psuedo classes in email clients, this was added just for good measure. */
+	  }
+
+	  /* Global */
+	  * {
+		margin: 0;
+		padding: 0;
+	  }
+
+	  body {
+		-webkit-text-size-adjust: 100%;
+		-ms-text-size-adjust: 100%;
+		width: 100%!important;
+		height: 100%;
+		font-family: Arial, Helvetica, sans-serif;
+		font-weight: 400;
+		font-size: 100%;
+		line-height: 1.6;
+	  }
+
+	  /* Styling your links has become much simpler with the new Yahoo.  In fact, it falls in line with the main credo of styling in email and make sure to bring your styles inline.  Your link colors will be uniform across clients when brought inline.
+		  Bring inline: Yes. */
+		  a {
+		color: #348eda;
+	  }
+
+	  h1, h2, h3, h4, h5,
+	  p, ul, ol {
+		/* This fixes Gmail's terrible text rendering  */
+		font-family: Arial, Helvetica, sans-serif;
+		font-weight: 400;
+	  }
+
+	  .container {
+		display: block!important;
+		max-width: 600px!important;
+		clear: both!important;
+		padding: 30px;
+	  }
 
 	.wp-caption {
 		margin-bottom: 1.5em;
