@@ -133,7 +133,7 @@ abstract class Noptin_Automated_Email_Type {
 				break;
 
 			case 'template':
-				$value = get_noptin_option( 'email_template',  'plain' );
+				$value = get_noptin_option( 'email_template',  'paste' );
 				break;
 		}
 

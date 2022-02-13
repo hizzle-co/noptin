@@ -26,9 +26,6 @@ class Noptin_Ajax {
 		// Save rule.
 		add_action( 'wp_ajax_noptin_save_automation_rule', array( $this, 'save_rule' ) );
 
-		// Create a new automation.
-		add_action( 'wp_ajax_noptin_setup_automation', array( $this, 'setup_automation' ) );
-
 		// Delete campaign.
 		add_action( 'wp_ajax_noptin_delete_campaign', array( $this, 'delete_campaign' ) );
 
@@ -95,73 +92,6 @@ class Noptin_Ajax {
 		}
 
 		wp_die( -1, 500 );
-	}
-
-	/**
-	 * Sets up a new automation
-	 *
-	 * @access      public
-	 * @since       1.1.2
-	 * @return      void
-	 */
-	public function setup_automation() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin_campaign' );
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 401 );
-		}
-
-		$data = stripslashes_deep( $_POST );
-		unset( $data['_wpnonce'] );
-		unset( $data['_wp_http_referer'] );
-		unset( $data['action'] );
-
-		if ( empty( $data['automation_name'] ) ) {
-			$data['automation_name'] = __( 'No Name', 'newsletter-optin-box' );
-		}
-
-		if ( empty( $data['automation_type'] ) ) {
-			wp_die( -1, 400 );
-		}
-
-		/**
-		 * Filters email automation setup data.
-		 * 
-		 * @param array $data The automation setup data.
-		 */
-		$data = apply_filters( 'noptin_email_automation_setup_data', $data );
-
-		// Create a new automation.
-		$args = array(
-			'post_title'   => $data['automation_name'],
-			'post_content' => empty( $data['email_body'] ) ? '' : $data['email_body'],
-			'post_status'  => 'draft',
-			'post_type'    => 'noptin-campaign',
-		);
-
-		unset( $data['automation_name'] );
-		unset( $data['email_body'] );
-
-		$data['campaign_type'] = 'automation';
-		$args['meta_input']    = $data;
-
-		$id = wp_insert_post( $args, true );
-
-		// If an error occured, return it.
-		if ( is_wp_error( $id ) ) {
-			wp_die( $id, 400 );
-		}
-
-		/**
-		 * Runs before displaying automation settings
-		 */
-		do_action( 'noptin_setup_automation', $id, $data );
-
-		echo get_noptin_automation_campaign_url( $id );
-		exit;
-
 	}
 
 	/**

@@ -490,11 +490,11 @@ class Noptin_Mailer {
 	 *
 	 */
 	public function get_template( $data ) {
-		$template = get_noptin_option( 'email_template',  'plain' );
+		$template = get_noptin_option( 'email_template',  'paste' );
 		$template = apply_filters( 'noptin_mailer_email_template', $template, $data, $this );
 
 		if ( empty( $template ) ) {
-			$template = 'plain';
+			$template = 'paste';
 		}
 
 		return $template;

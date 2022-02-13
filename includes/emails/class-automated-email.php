@@ -130,8 +130,8 @@ class Noptin_Automated_Email {
 		}
 
 		// Fetch value.
-		if ( 'name' === $key ) {
-			$value = $this->name;
+		if ( isset( $this->$key ) ) {
+			$value = $this->$key;
 		} else if ( $this->is_legacy ) {
 			$value = $this->exists() ? '' : get_post_meta( $this->id, $key, true );
 		} else {
@@ -232,12 +232,12 @@ class Noptin_Automated_Email {
 
 		// Read from settings.
 		if ( empty( $template ) ) {
-			$template = get_noptin_option( 'email_template',  'plain' );
+			$template = get_noptin_option( 'email_template',  'paste' );
 		}
 
-		// Default to the plain template.
+		// Default to the paste template.
 		if ( empty( $template ) ) {
-			$template = 'plain';
+			$template = 'paste';
 		}
 
 		// Filter and return.
@@ -399,12 +399,13 @@ class Noptin_Automated_Email {
 		// Update the email if it exists.
 		if ( $this->exists() ) {
 			$args['ID'] = $this->id;
-			return wp_update_post( $args, true );
+			$result     = wp_update_post( $args, true );
 
 			if ( $has_filter ) {
 				wp_init_targeted_link_rel_filters();
 			}
 
+			return $result;
 		}
 
 		// Create a new automated email.

@@ -43,7 +43,7 @@ class Noptin_Email_Generator {
 	 * @see get_noptin_email_templates()
 	 * @var string
 	 */
-	public $template = 'plain';
+	public $template = 'paste';
 
 	/**
 	 * The heading text to pass onto the template.
