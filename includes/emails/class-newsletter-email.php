@@ -102,7 +102,7 @@ class Noptin_Newsletter_Email {
 				unset( $args['created'] );
 			}
 
-			unset( $args['status'], $args['title'] );
+			unset( $args['status'], $args['subject'] );
 			$this->options = $args;
 		}
 
@@ -278,6 +278,7 @@ class Noptin_Newsletter_Email {
 		// Prepare post args.
 		$args = array(
 			'post_type'     => 'noptin-campaign',
+			'post_parent'   => $this->parent_id,
 			'post_title'    => $this->subject,
 			'edit_date'     => true,
 			'post_date'     => current_time( 'mysql' ),

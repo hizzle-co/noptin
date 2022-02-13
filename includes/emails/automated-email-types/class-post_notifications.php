@@ -284,61 +284,41 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		// Create normal campaign.
 		$campaign = new Noptin_Automated_Email( $campaign_id );
-		$content  = $campaign->get_content( $campaign->get_email_type() );
+		$type     = $campaign->get_email_type();
+		$content  = $campaign->get_content( $type );
 
 		// Legacy merge tags.
-		$content  = str_ireplace( '[[read_more_button]]', $this->read_more_button( get_permalink( $post_id ) ), $content );
-		$content  = str_ireplace( '[[/read_more_button]]', '</a></div>', $content );
+		$content = str_ireplace( '[[read_more_button]]', $this->read_more_button( get_permalink( $post_id ) ), $content );
+		$content = str_ireplace( '[[/read_more_button]]', '</a></div>', $content );
 
-		$post     = array(
-			'post_status'   => 'publish',
-			'post_parent'   => $campaign->id,
-			'post_type'     => 'noptin-campaign',
-			'post_date'     => current_time( 'mysql' ),
-			'post_date_gmt' => current_time( 'mysql', true ),
-			'edit_date'     => true,
-			'post_title'    => sanitize_text_field( $campaign->get_subject() ),
-			'post_content'  => $content,
-			'meta_input'    => array(
-				'campaign_type'         => 'newsletter',
-				'preview_text'          => esc_html( stripslashes_deep( get_post_meta( $campaign_id, 'preview_text', true ) ) ),
-				'new_post_notification' => $key,
-				'custom_merge_tags'     => array(),
-				'campaign_id'           => $campaign_id,
-				'associated_post'       => $post_id,
-				'subscribers_query'     => array(),
-				'email_sender'          => $campaign->get( 'email_sender' ),
-				'custom_title'          => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
-			),
+		// Prepare campaign args.
+		$args = array_merge(
+			$campaign->options,
+			array(
+				'parent_id'         => $campaign->id,
+				'status'            => 'publish',
+				'subject'           => noptin_parse_email_subject_tags( $campaign->get_subject(), true ),
+				'content_' . $type  => noptin_parse_email_content_tags( $content, true ),
+				'associated_post'   => $post_id,
+				'subscribers_query' => array(),
+				'preview_text'      => noptin_parse_email_subject_tags( $campaign->get( 'preview_text' ), true ),
+				'custom_title'      => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
+			)
 		);
 
-		foreach( noptin_get_newsletter_meta() as $meta_key ) {
-			$post['meta_input'][ $meta_key ] = get_post_meta( $campaign_id, $meta_key, true );
+		// Remove unrelated content.
+		foreach ( array( 'content_normal', 'content_plain_text', 'content_raw_html' ) as $content_type ) {
+			if ( $content_type !== 'content_' . $type ) {
+				unset( $args[ $content_type ] );
+			}
 		}
 
-		$content  = get_post_meta( $post_id, 'noptin_post_notify_content', true );
-		if ( ! empty( $content ) ) {
-			$post['post_content'] = wp_kses_post( stripslashes_deep( $content ) );
-		}
-
-		$subject = get_post_meta( $post_id, 'noptin_post_notify_subject', true );
-		if ( ! empty( $subject ) ) {
-			$post['post_title'] = esc_html( stripslashes_deep( $subject ) );
-		}
-
-		$preview = get_post_meta( $post_id, 'noptin_post_notify_preview_text', true );
-		if ( ! empty( $preview ) ) {
-			$post['meta_input']['preview_text'] = esc_html( stripslashes_deep( $preview ) );
-		}
-
-		$post['post_title']                 = add_noptin_merge_tags( $post['post_title'], $post['meta_input']['custom_merge_tags'], false, false );
-		$post['post_content']               = add_noptin_merge_tags( $post['post_content'], $post['meta_input']['custom_merge_tags'], false, false );
-		$post['meta_input']['preview_text'] = add_noptin_merge_tags( $post['meta_input']['preview_text'], $post['meta_input']['custom_merge_tags'], false, false );
-		$post = apply_filters( 'noptin_mailer_new_post_automation_campaign_details', $post );
+		// Prepare the newsletter.
+		$newsletter = new Noptin_Newsletter_Email( $args );
 
 		// Send normal campaign.
-		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $post ) ) {
-			wp_insert_post( $post );
+		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $newsletter, $campaign ) ) {
+			$newsletter->save();
 		}
 
 	}
@@ -365,66 +345,77 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 					'description' => __( "The post's ID", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "post_id",
+					'partial'     => true,
 				),
 
 				'post_date' => array(
 					'description' => __( "The post's published date", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "post_date",
+					'partial'     => true,
 				),
 
 				'post_url' => array(
 					'description' => __( "The post's URL", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "post_url",
+					'partial'     => true,
 				),
 
 				'featured_image' => array(
 					'description' => __( "The post's featured image.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "featured_image",
+					'partial'     => true,
 				),
 
 				'post_title' => array(
 					'description' => __( "The post's title.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "post_title",
+					'partial'     => true,
 				),
 
 				'title' => array(
 					'description' => __( "Alias for [[post_title]].", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "title",
+					'partial'     => true,
 				),
 
 				'post_excerpt' => array(
 					'description' => __( "The post's excerpt.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "post_excerpt",
+					'partial'     => true,
 				),
 
 				'excerpt' => array(
 					'description' => __( "Alias for [[post_excerpt]].", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "excerpt",
+					'partial'     => true,
 				),
 
 				'post_content' => array(
 					'description' => __( "The post's content.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "post_content",
+					'partial'     => true,
 				),
 
 				'content' => array(
 					'description' => __( "Alias for [[post_content]].", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "content",
+					'partial'     => true,
 				),
 
 				'post_meta' => array(
 					'description' => __( "Displays the value of a give meta key.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "content",
+					'partial'     => true,
 				),
 
 			),

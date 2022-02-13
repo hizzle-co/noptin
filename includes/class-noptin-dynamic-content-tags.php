@@ -22,6 +22,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 	public $tags = array();
 
 	/**
+	 * Whether we're only replacing partial merge tags.
+	 */
+	public $is_partial = false;
+
+	/**
 	 * Registers a new tag
 	 */
 	public function add_tag( $tag, $details ) {
@@ -126,34 +131,40 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$tags = $this->all();
 		$tag  = $matches[1];
 
-		if ( isset( $tags[ $tag ] ) ) {
-			$config      = $tags[ $tag ];
-			$replacement = '';
-
-			if ( isset( $config['replacement'] ) ) {
-				$replacement = $config['replacement'];
-			} else if ( isset( $config['callback'] ) ) {
-
-				// Parse attributes.
-				$attributes = array();
-				if ( isset( $matches[2] ) ) {
-					$attribute_string = $matches[2];
-					$attributes       = shortcode_parse_atts( $attribute_string );
-				}
-
-				// call function
-				$replacement = call_user_func( $config['callback'], $attributes, $tag );
-			}
-
-			if ( is_callable( $this->escape_function ) ) {
-				$replacement = call_user_func( $this->escape_function, $replacement );
-			}
-
-			return $replacement;
+		// Abort if tag is not supported.
+		if ( ! isset( $tags[ $tag ] ) ) {
+			return $matches[0];
 		}
 
-		// default to not replacing it
-		return $matches[0];
+		// (Maybe) Skip non-partial tags.
+		if ( $this->is_partial && empty( $tags[ $tag ]['partial'] ) ) {
+			return $matches[0];
+		}
+
+		// Generate replacement.
+		$config      = $tags[ $tag ];
+		$replacement = '';
+
+		if ( isset( $config['replacement'] ) ) {
+			$replacement = $config['replacement'];
+		} else if ( isset( $config['callback'] ) ) {
+
+			// Parse attributes.
+			$attributes = array();
+			if ( isset( $matches[2] ) ) {
+				$attribute_string = $matches[2];
+				$attributes       = shortcode_parse_atts( $attribute_string );
+			}
+
+			// call function
+			$replacement = call_user_func( $config['callback'], $attributes, $tag );
+		}
+
+		if ( is_callable( $this->escape_function ) ) {
+			$replacement = call_user_func( $this->escape_function, $replacement );
+		}
+
+		return $replacement;
 	}
 
 	/**

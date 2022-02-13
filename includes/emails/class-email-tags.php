@@ -30,8 +30,8 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$this->register();
 
 		// Add hooks.
-		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ) );
-		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ) );
+		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ), 10, 2 );
+		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ), 10, 2 );
 
 	}
 
@@ -55,20 +55,26 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * Replaces in subject
 	 *
 	 * @param string $string
+	 * @param bool $is_partial
 	 * @return string
 	 */
-	public function replace_in_subject( $string ) {
+	public function replace_in_subject( $string, $is_partial = false ) {
+		$this->is_partial = $is_partial;
 		return $this->replace( $string, 'strip_tags' );
+		$this->is_partial = false;
 	}
 
 	/**
 	 * Replaces in the email body
 	 *
 	 * @param string $string
+	 * @param bool $is_partial
 	 * @return string
 	 */
-	public function replace_in_body( $string ) {
+	public function replace_in_body( $string, $is_partial = false ) {
+		$this->is_partial = $is_partial;
 		return $this->replace( $string, '' );
+		$this->is_partial = false;
 	}
 
 	/**

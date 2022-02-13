@@ -115,8 +115,8 @@ function noptin_convert_html_to_text( $html ) {
  * @param string $subject
  * @return string
  */
-function noptin_parse_email_subject_tags( $subject ) {
-	return apply_filters( 'noptin_parse_email_subject_tags', $subject );
+function noptin_parse_email_subject_tags( $subject, $partial = false ) {
+	return apply_filters( 'noptin_parse_email_subject_tags', $subject, $partial );
 }
 
 /**
@@ -126,8 +126,8 @@ function noptin_parse_email_subject_tags( $subject ) {
  * @param string $content
  * @return string
  */
-function noptin_parse_email_content_tags( $content ) {
-	return apply_filters( 'noptin_parse_email_content_tags', $content );
+function noptin_parse_email_content_tags( $content, $partial = false ) {
+	return apply_filters( 'noptin_parse_email_content_tags', $content, $partial );
 }
 
 /**
