@@ -1,5 +1,30 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
-<div class="wrap noptin-edit-campaign-page" id="noptin-wrapper">
+<?php
+
+	defined( 'ABSPATH' ) || exit;
+
+	/**
+	 * @var Noptin_Newsletter_Email $campaign
+	 */
+
+	$email_type = $campaign->get_email_type();
+?>
+
+<style>
+	<?php
+		foreach ( array_keys( get_noptin_email_types() ) as $key ) {
+			echo '.noptin-newsletter-email:not([data-type="' . sanitize_html_class( $key ) . '"]) .noptin-show-if-newsletter-is-' . sanitize_html_class( $key ) . ' { display: none !important; }';
+		}
+	?>
+</style>
+
+<div class="wrap noptin-newsletter-campaign-form" id="noptin-wrapper">
+
+	<?php if ( $campaign->exists() ) : ?>
+		<a href="<?php echo esc_url( noptin_get_new_automation_url() ); ?>" class="page-title-action"><?php echo _e( 'Add New', 'newsletter-optin-box' ); ?></a>
+	<?php else: ?>
+
+	<?php endinf; ?>
+
 	<?php
 		printf(
 			'<h1 class="title">%s<a class="page-title-action" href="%s">&nbsp;%s</a></h1>',

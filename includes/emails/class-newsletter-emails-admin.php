@@ -43,11 +43,7 @@ class Noptin_Newsletter_Emails_Admin {
 	 */
 	public function render_main_admin_page( $tabs ) {
 		include plugin_dir_path( __FILE__ ) . 'class-newsletters-table.php';
-
-		$table = new Noptin_Email_Newsletters_Table();
-		$table->prepare_items();
-
-		include plugin_dir_path( __FILE__ ) . 'views/view-newsletters.php';
+		include plugin_dir_path( __FILE__ ) . 'views/newsletters/view-newsletters.php';
 
 	}
 

@@ -1,4 +1,11 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
+<?php
+	defined( 'ABSPATH' ) || exit;
+
+	$table = new Noptin_Email_Newsletters_Table();
+	$table->prepare_items();
+
+?>
+
 <div class="wrap noptin" id="noptin-wrapper">
 
     <?php include plugin_dir_path( __FILE__ ) . 'tabs.php'; ?>
