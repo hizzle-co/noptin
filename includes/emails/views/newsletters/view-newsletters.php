@@ -1,14 +1,8 @@
-<?php
-	defined( 'ABSPATH' ) || exit;
-
-	$table = new Noptin_Email_Newsletters_Table();
-	$table->prepare_items();
-
-?>
+<?php defined( 'ABSPATH' ) || exit; ?>
 
 <div class="wrap noptin" id="noptin-wrapper">
 
-    <?php include plugin_dir_path( __FILE__ ) . 'tabs.php'; ?>
+	<?php include plugin_dir_path( dirname( __FILE__ ) ) . 'tabs.php'; ?>
 
     <form id="noptin-newsletter-campaigns-table" method="GET" style="margin-top: 30px;">
 		<input type="hidden" name="page" value="noptin-email-campaigns"/>

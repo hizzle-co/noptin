@@ -135,7 +135,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 == Changelog ==
 
 = 1.7.0 =
-* Ability to preview automated email campaigns - ADDED
+* Ability to duplicate and preview automated email campaigns - ADDED
 * Ability to send a test email for any automated email campaign - ADDED
 
 = 1.6.6 =

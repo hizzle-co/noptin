@@ -39,8 +39,8 @@ class Noptin_Page {
 		add_filter( 'noptin_actions_page_template', array( $this, 'email_click' ) );
 
 		// Preview email.
-		add_action( 'noptin_page_preview_email', array( $this, 'preview_email' ) );
-		add_action( 'noptin_page_preview_automated_email', array( $this, 'preview_automated_email' ) );
+		add_action( 'noptin_page_preview_newsletter', array( $this, 'preview_email' ) );
+		add_action( 'noptin_page_preview_automation', array( $this, 'preview_automated_email' ) );
 
 		// Filter template.
 		add_action( 'parse_request', array( $this, 'listen' ), 0 );

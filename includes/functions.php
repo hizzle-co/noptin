@@ -269,25 +269,6 @@ function get_noptin_newsletter_campaign_url( $id ) {
 }
 
 /**
- * Returns a link to edit an automation campaign.
- *
- * @since 1.2.0
- * @param int $id The campaign's id.
- * @return string.
- */
-function get_noptin_automation_campaign_url( $id ) {
-
-	$param = array(
-		'page'        => 'noptin-email-campaigns',
-		'section'     => 'automations',
-		'sub_section' => 'edit_campaign',
-		'campaign'    => $id,
-	);
-	return add_query_arg( $param, admin_url( '/admin.php' ) );
-
-}
-
-/**
  * Returns the URL to preview an automated email.
  *
  * @since 1.7.0

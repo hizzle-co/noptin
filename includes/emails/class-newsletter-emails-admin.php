@@ -42,14 +42,27 @@ class Noptin_Newsletter_Emails_Admin {
 	 * @param array An array of supported tabs.
 	 */
 	public function render_main_admin_page( $tabs ) {
-		include plugin_dir_path( __FILE__ ) . 'class-newsletters-table.php';
-		include plugin_dir_path( __FILE__ ) . 'views/newsletters/view-newsletters.php';
 
+		// Inlcude the list table.
+		include plugin_dir_path( __FILE__ ) . 'class-list-table.php';
+
+		// Prepare items.
+		$table = new Noptin_Email_List_Table();
+		$table->prepare_items();
+
+		// Do we have any campaigns?
+		if ( ! $table->has_items() ) {
+			include plugin_dir_path( __FILE__ ) . 'views/newsletters/view-no-campaigns.php';
+			return;
+		}
+
+		// Include the view.
+		include plugin_dir_path( __FILE__ ) . 'views/newsletters/view-newsletters.php';
 	}
 
 	/**
 	 * Displays the edit campaign form.
-	 * 
+	 *
 	 * @param array An array of supported tabs.
 	 */
 	public function render_edit_form( $tabs ) {

@@ -12,7 +12,7 @@ $senders = get_noptin_email_senders();
 <?php if ( $campaign->is_mass_mail() ) : ?>
 	<div class="noptin-select-email-sender senders-<?php echo count( $senders ); ?>">
 
-		<label style="display:<?php echo 1 < count( $senders ) ? 'block' : 'none'; ?>; width:100%;" class="noptin-margin-y noptin-email-senders-label">
+		<label style="width:100%;" class="noptin-margin-y noptin-email-senders-label">
 			<strong><?php _e( 'Sends to', 'newsletter-optin-box' ); ?></strong>
 			<select name="noptin_automation[email_sender]" class="noptin-email_sender" style="display:block; width:100%;">
 				<?php foreach ( $senders as $key => $label ) : ?>

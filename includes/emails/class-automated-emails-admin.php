@@ -37,12 +37,26 @@ class Noptin_Automated_Emails_Admin {
 	}
 
 	/**
-	 * Render the main newsletters admin page.
+	 * Render the main automations admin page.
 	 *
 	 * @param array An array of supported tabs.
 	 */
 	public function render_main_admin_page( $tabs ) {
-		include plugin_dir_path( __FILE__ ) . 'class-automated-emails-table.php';
+
+		// Inlcude the list table.
+		include plugin_dir_path( __FILE__ ) . 'class-list-table.php';
+
+		// Prepare items.
+		$table = new Noptin_Email_List_Table();
+		$table->prepare_items();
+
+		// Do we have any campaigns?
+		if ( ! $table->has_items() ) {
+			include plugin_dir_path( __FILE__ ) . 'views/automations/view-no-campaigns.php';
+			return;
+		}
+
+		// Include the view.
 		include plugin_dir_path( __FILE__ ) . 'views/automations/view-automations.php';
 	}
 
@@ -207,7 +221,7 @@ class Noptin_Automated_Emails_Admin {
 
 		// Redirect to automation edit page.
 		if ( $automation->exists() ) {
-			wp_safe_redirect( get_noptin_automation_campaign_url( $automation->id ) );
+			wp_safe_redirect( $automation->get_edit_url() );
 			exit;
 		}
 
