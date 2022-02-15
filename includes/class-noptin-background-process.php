@@ -406,7 +406,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * @return bool
 		 */
 		protected function time_exceeded() {
-			$finish = $this->start_time + apply_filters( $this->identifier . '_default_time_limit', 20 ); // 20 seconds.
+			$finish = $this->start_time + (int) apply_filters( $this->identifier . '_default_time_limit', 20 ); // 20 seconds.
 			$return = false;
 
 			if ( time() >= $finish ) {
@@ -435,14 +435,14 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * @return mixed
 		 */
 		public function schedule_cron_healthcheck( $schedules ) {
-			$interval = apply_filters( $this->identifier . '_cron_interval', 5 );
+			$interval = apply_filters( $this->cron_interval_identifier, 5 );
 
 			if ( property_exists( $this, 'cron_interval' ) ) {
-				$interval = apply_filters( $this->identifier . '_cron_interval', $this->cron_interval );
+				$interval = apply_filters( $this->cron_interval_identifier, $this->cron_interval );
 			}
 
 			// Adds every 5 minutes to the existing schedules.
-			$schedules[ $this->identifier . '_cron_interval' ] = array(
+			$schedules[ $this->cron_interval_identifier ] = array(
 				'interval' => MINUTE_IN_SECONDS * $interval,
 				'display'  => sprintf( 
 					/* Translators: %d Number of minutes. */

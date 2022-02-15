@@ -641,6 +641,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		$extra = empty( $options['extra'][ $list->get_id() ] ) ? array() : $options['extra'][ $list->get_id() ];
 
 		$campaign['custom_merge_tags']['unsubscribe_url'] = 'http://temporaryunsubscribe.com';
+		// TODO: Make use of partial merge tags.
 
 		$campaign_data               = $campaign['campaign_data'];
 		$campaign_data['merge_tags'] = $campaign['custom_merge_tags'];

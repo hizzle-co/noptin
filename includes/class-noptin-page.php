@@ -522,11 +522,6 @@ class Noptin_Page {
 
 		$data['merge_tags']    = array_merge( $data['merge_tags'], apply_filters( "noptin_{$sender}_dummy_merge_tags", array() ) );
 
-		$custom_merge_tags = get_post_meta( $campaign->ID, 'custom_merge_tags', true );
-		if ( is_array( $custom_merge_tags ) ) {
-			$data['merge_tags'] = array_merge( $data['merge_tags'], $custom_merge_tags );
-		}
-
 		// Generate and display the email.
 		$data = noptin()->mailer->prepare( $data );
 		echo apply_filters( 'noptin_generate_preview_email', $data['email_body'], $data );

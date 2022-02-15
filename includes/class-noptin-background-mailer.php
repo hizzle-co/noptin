@@ -192,10 +192,6 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 			$item['next_recipient_data']['merge_tags'] = array();
 		}
 
-		if ( isset( $item['custom_merge_tags'] ) ) {
-			$item['next_recipient_data']['merge_tags'] = array_merge( $item['next_recipient_data']['merge_tags'], $item['custom_merge_tags'] );
-		}
-
 		// Add the subscriber details as merge tags.
 		if ( $subscriber->exists() ) {
 
