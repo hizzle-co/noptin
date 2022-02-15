@@ -183,6 +183,15 @@ class Noptin_Newsletter_Email {
 	}
 
 	/**
+	 * Checks if this is a mass mail.
+	 *
+	 * @return bool
+	 */
+	public function is_mass_mail() {
+		return true;
+	}
+
+	/**
 	 * Returns the sender for this email.
 	 *
 	 * @return bool

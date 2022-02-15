@@ -6,7 +6,8 @@
 	 * @var Noptin_Newsletter_Email $campaign
 	 */
 
-	$email_type = $campaign->get_email_type();
+	$noptin_screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-newsletter';
+	$email_type       = $campaign->get_email_type();
 ?>
 
 <style>
@@ -20,35 +21,29 @@
 <div class="wrap noptin-newsletter-campaign-form" id="noptin-wrapper">
 
 	<?php if ( $campaign->exists() ) : ?>
-		<a href="<?php echo esc_url( noptin_get_new_automation_url() ); ?>" class="page-title-action"><?php echo _e( 'Add New', 'newsletter-optin-box' ); ?></a>
+		<h1 class="wp-heading-inline"><?php echo esc_html_e( 'Edit Email', 'newsletter-optin-box' ); ?></h1>
 	<?php else: ?>
+		<h1 class="wp-heading-inline"><?php echo esc_html_e( 'Send Email', 'newsletter-optin-box' ); ?></h1>
+	<?php endif; ?>
 
-	<?php endinf; ?>
+	<a href="<?php echo esc_url( remove_query_arg( array( 'sub_section', 'campaign' ) ) ); ?>" class="page-title-action"><?php echo _e( 'Go Back', 'newsletter-optin-box' ); ?></a>
+	<hr class="wp-header-end">
 
-	<?php
-		printf(
-			'<h1 class="title">%s<a class="page-title-action" href="%s">&nbsp;%s</a></h1>',
-			esc_html__( 'Edit Newsletter','newsletter-optin-box' ),
-			esc_url(
-				add_query_arg(
-					array(
-						'sub_section' => false,
-						'id' => false,
-					)
-				)
-			),
-			esc_html__( 'Go Back','newsletter-optin-box' )
-		);
-	?>
+	<form name="noptin-edit-newsletter" class="noptin-newsletter-email noptin-edit-email" data-type="<?php echo esc_attr( $email_type ); ?>" method="post">
 
-	<form name="noptin-edit-newsletter" method="post">
-		<input type="hidden" name="noptin_admin_action" value="noptin_edit_newsletter">
-		<input type="hidden" name="campaign_id" value="<?php echo esc_attr( $campaign->ID ); ?>">
+		<input type="hidden" name="noptin_admin_action" value="noptin_save_edited_newsletter">
+
+		<?php if ( $campaign->exists() ) : ?>
+			<input type="hidden" name="noptin_email[id]" value="<?php echo esc_attr( $campaign->id ); ?>">
+			<input type="hidden" name="noptin_email[parent_id]" value="<?php echo esc_attr( $campaign->parent_id ); ?>">
+		<?php endif; ?>
+
 		<?php
 			wp_nonce_field( 'noptin-edit-newsletter', 'noptin-edit-newsletter-nonce' );
+			wp_nonce_field( 'noptin-admin-nonce', 'noptin-admin-nonce' );
 			wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce' );
 			wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce' );
-		?>		
+		?>
 
 		<div id="poststuff" style="margin-top: 24px;">
 			<div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
@@ -58,23 +53,36 @@
 					<div id="titlediv">
 						<div id="titlewrap">
 							<label class="screen-reader-text" id="title-prompt-text" for="title"><?php _e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
-							<input type="text" name="email_subject" size="30" value="<?php echo esc_attr( $campaign->post_title ); ?>" placeholder="<?php esc_attr_e( "Enter your Email's Subject", 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
+							<input type="text" name="noptin_email[subject]" size="30" value="<?php echo esc_attr( $campaign->subject ); ?>" placeholder="<?php esc_attr_e( "Enter your Email's Subject", 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
 						</div>
 					</div>
 
 				</div>
 
 				<div id="postbox-container-1" class="postbox-container">
-    				<?php do_meta_boxes( 'noptin_page_noptin-newsletter', 'side', $campaign ); ?>
+					<?php do_meta_boxes( $noptin_screen_id, 'side', $campaign ); ?>
 				</div>
 
 				<div id="postbox-container-2" class="postbox-container">
 
 					<?php
+						/**
+						 * Fires before printing the first metabox in the email campaign editor
+						 *
+						 */
+						do_action( 'noptin_before_email_editor_fields', $campaign );
 
-						do_meta_boxes( 'noptin_page_noptin-newsletter', 'normal', $campaign );
-						do_meta_boxes( 'noptin_page_noptin-newsletter', 'advanced', $campaign );
+						// Print normal metaboxes.
+						do_meta_boxes( $noptin_screen_id, 'normal', $campaign );
 
+						// Print advanced metaboxes.
+						do_meta_boxes( $noptin_screen_id, 'advanced', $campaign );
+
+						/**
+						 * Fires after printing the last metabox in the email campaign editor
+						 *
+						 */
+						do_action( 'noptin_after_email_editor_fields', $campaign );
 					?>
 
 				</div>
@@ -82,5 +90,5 @@
 		</div>
 	</form>
 </div>
-<script>jQuery(document).ready(function(){ postboxes.add_postbox_toggles('noptin_newsletters'); });</script>
+<script>jQuery(document).ready(function(){ postboxes.add_postbox_toggles('noptin_newsletter'); });</script>
 <?php

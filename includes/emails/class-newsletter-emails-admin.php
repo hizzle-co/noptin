@@ -67,20 +67,16 @@ class Noptin_Newsletter_Emails_Admin {
 	 */
 	public function render_edit_form( $tabs ) {
 
-		$id       = empty( $_GET['id'] ) ? 0 : $_GET['id'];
-		$campaign = false;
+		$id       = empty( $_GET['campaign'] ) ? 0 : $_GET['campaign'];
+		$campaign = new Noptin_Newsletter_Email( intval( $_GET['campaign'] ) );
 
-		if ( $id ) {
-			$campaign = get_post( $id );
-		}
-
-		if ( ! empty( $campaign ) ) {
+		if ( $campaign->exists() || empty( $id ) ) {
 
 			do_action( 'add_meta_boxes_noptin_newsletters', $campaign );
-			include plugin_dir_path( __FILE__ ) . 'views/edit-newsletter.php';
+			include plugin_dir_path( __FILE__ ) . 'views/newsletters/edit-newsletter.php';
 
 		} else {
-			get_noptin_template( 'newsletters/404.php', array() );
+			include plugin_dir_path( __FILE__ ) . 'views/404.php';
 		}
 
 	}
@@ -105,6 +101,8 @@ class Noptin_Newsletter_Emails_Admin {
 	 *
 	 */
 	public function register_metaboxes() {
+
+		$screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-automation';
 
 		add_meta_box(
 			'noptin_newsletter_body',

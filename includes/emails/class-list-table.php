@@ -185,17 +185,21 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_status( $item ) {
 		$status = __( 'Draft', 'newsletter-optin-box' );
+		$class  = 'noptin-badge';
 
 		if ( 'future' === $item->status ) {
 			$status = __( 'Scheduled', 'newsletter-optin-box' );
+			$class  = 'noptin-badge notification';
 		}
 
 		if ( 'publish' === $item->status ) {
 
 			if ( get_post_meta( $item->id, 'completed', true ) ) {
 				$status = __( 'Sent', 'newsletter-optin-box' );
+				$class  = 'noptin-badge info';
 			} else {
-				$status = '<strong style="color: #00796b;">' . __( 'Sending', 'newsletter-optin-box' ) . '</strong>';
+				$status = __( 'Sending', 'newsletter-optin-box' );
+				$class  = 'noptin-badge success';
 
 				if ( 'newsletter' === $this->collection_type ) {
 					$status .= '&mdash;<a class="noptin-stop-campaign" href="#" data-id="' . $item->id . '">' . __( 'stop', 'newsletter-optin-box' ) . '</a>';
@@ -206,7 +210,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		}
 
 		$status = apply_filters( 'noptin_admin_table_email_status', $status, $item );
-		echo "<span>$status</span>";
+		echo "<span class='$class'>$status</span>";
 	}
 
 	/**
@@ -250,11 +254,6 @@ class Noptin_Email_List_Table extends WP_List_Table {
 
 		$sent = (int) get_post_meta( $item->id, '_noptin_sends', true );
 		$sent = $this->maybe_link( $sent, "_campaign_{$item->id}", '1' );
-
-		$failed = (int) get_post_meta( $item->id, '_noptin_fails', true );
-		$failed = $this->maybe_link( $failed, "_campaign_{$item->id}", '0' );
-
-		$sent   = empty( $failed ) ? $sent : "$sent ($failed failed)";
 
 		return apply_filters( 'noptin_email_recipients', $sent, $item );
 

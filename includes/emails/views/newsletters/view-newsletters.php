@@ -4,7 +4,7 @@
 
 	<?php include plugin_dir_path( dirname( __FILE__ ) ) . 'tabs.php'; ?>
 
-    <form id="noptin-newsletter-campaigns-table" method="GET" style="margin-top: 30px;">
+    <form id="noptin-email-campaigns-table" method="GET" style="margin-top: 30px;">
 		<input type="hidden" name="page" value="noptin-email-campaigns"/>
 		<input type="hidden" name="section" value="newsletters"/>
 		<?php $table->display(); ?>

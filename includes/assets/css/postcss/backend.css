@@ -1128,9 +1128,7 @@ a.no-campaign-create-new-campaign {
 	}
 }
 
-#noptin-automation-campaigns-table,
-#noptin-automation-rules-table,
-#noptin-newsletter-campaigns-table {
+#noptin-automation-rules-table {
 	@media screen and (min-width:960px) {
 		.manage-column.column-primary {
 			width: 50%;
@@ -1138,14 +1136,21 @@ a.no-campaign-create-new-campaign {
 	}
 }
 
-#noptin-automation-campaigns-table {
+#noptin-email-campaigns-table {
+
 	.column-opens,
 	.column-recipients,
 	.column-status,
+	.column-date_sent
 	.column-clicks {
 		width: 70px;
 		text-align: center;
 	}
+
+	.column-type {
+		width: 180px;
+	}
+
 }
 
 #noptin-subscribers-table #noptin-subscribers-table-wrap {

@@ -2,7 +2,8 @@
 
 	defined( 'ABSPATH' ) || exit;
 
-	$email_type = $campaign->get_email_type();
+	$noptin_screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-automation';
+	$email_type       = $campaign->get_email_type();
 	/**
 	 * @var Noptin_Automated_Email $campaign
 	 */
@@ -25,7 +26,7 @@
 	<a href="<?php echo esc_url( remove_query_arg( 'sub_section', noptin_get_new_automation_url() ) ); ?>" class="page-title-action"><?php echo _e( 'Go Back', 'newsletter-optin-box' ); ?></a>
 	<hr class="wp-header-end">
 
-	<form name="noptin-edit-automation"  class="noptin-automated-email" data-type="<?php echo esc_attr( $email_type ); ?>" method="post">
+	<form name="noptin-edit-automation" class="noptin-automated-email noptin-edit-email" data-type="<?php echo esc_attr( $email_type ); ?>" method="post">
 
 		<input type="hidden" name="noptin_admin_action" value="noptin_save_edited_automation">
 		<input type="hidden" name="noptin_automation[automation_type]" value="<?php echo esc_attr( $campaign->type ); ?>">
@@ -41,7 +42,7 @@
 			wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce' );
 		?>
 
-		<div id="poststuff">
+		<div id="poststuff" style="margin-top: 24px;">
 			<div id="post-body" class="metabox-holder columns-<?php echo ( 1 === get_current_screen()->get_columns() ) ? '1' : '2'; ?>">
 				<div id="post-body-content">
 
@@ -49,7 +50,7 @@
 
 						<div id="titlediv">
 							<div id="titlewrap">
-								<label class="screen-reader-text" id="title-prompt-text" for="title"><?php _e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
+								<label class="screen-reader-text" id="title-prompt-text" for="title"><?php _e( 'Automation Name', 'newsletter-optin-box' ); ?></label>
 								<input type="text" name="noptin_automation[title]" size="30" value="<?php echo esc_attr( $campaign->get( 'name' ) ); ?>" placeholder="<?php esc_attr_e( 'Enter automation name', 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
 							</div>
 						</div>
@@ -59,7 +60,7 @@
 				</div>
 
 				<div id="postbox-container-1" class="postbox-container">
-    				<?php do_meta_boxes( 'noptin_page_noptin-automation', 'side', $campaign ); ?>
+    				<?php do_meta_boxes( $noptin_screen_id, 'side', $campaign ); ?>
 				</div>
 
 				<div id="postbox-container-2" class="postbox-container">
@@ -73,10 +74,10 @@
 						do_action( 'noptin_before_automation_editor_fields', $campaign, $automation_type );
 
 						// Print normal metaboxes.
-						do_meta_boxes( 'noptin_page_noptin-automation', 'normal', $campaign );
+						do_meta_boxes( $noptin_screen_id, 'normal', $campaign );
 
 						// Print advanced metaboxes.
-						do_meta_boxes( 'noptin_page_noptin-automation', 'advanced', $campaign );
+						do_meta_boxes( $noptin_screen_id, 'advanced', $campaign );
 
 						/**
 						 * Fires after printing the last metabox in the automation campaign editor
@@ -91,5 +92,5 @@
 		</div>
 	</form>
 </div>
-<script>jQuery(document).ready(function(){ postboxes.add_postbox_toggles('noptin_newsletters'); });</script>
+<script>jQuery(document).ready(function(){ postboxes.add_postbox_toggles('noptin_automated_email'); });</script>
 <?php

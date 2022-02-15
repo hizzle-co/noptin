@@ -52,6 +52,8 @@ class Noptin_Emails_Admin {
 		add_action( 'noptin_after_register_menus', array( $this, 'register_menu' ), 5 );
 		add_filter( 'pre_get_users', array( $this, 'filter_users_by_campaign' ) );
 		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
+		add_action( 'add_meta_boxes_noptin_automations', array( $this, 'register_metaboxes' ) );
+		add_action( 'add_meta_boxes_noptin_newsletters', array( $this, 'register_metaboxes' ) );
 
 		$this->newsletters_admin->add_hooks();
 		$this->automations_admin->add_hooks();
@@ -305,6 +307,47 @@ class Noptin_Emails_Admin {
 
 		wp_send_json_error( __( 'Could not send the test email', 'newsletter-optin-box' ) );
 
+	}
+
+	/**
+	 * Registers newsletter | email metaboxes.
+	 *
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
+	 */
+	public function register_metaboxes( $campaign ) {
+
+		$screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-automation';
+
+		// Email recipients.
+		add_meta_box(
+			'noptin_email_recipients',
+			__( 'Recipients','newsletter-optin-box' ),
+			array( $this, 'render_metabox' ),
+			$screen_id,
+			'side',
+			'high',
+			'recipients'
+		);
+
+		// Email Details.
+		add_meta_box(
+			'noptin_email_details',
+			__( 'Details','newsletter-optin-box' ),
+			array( $this, 'render_metabox' ),
+			$screen_id,
+			'normal',
+			'default',
+			'details'
+		);
+
+	}
+
+	/**
+	 * Displays a metabox.
+	 *
+	 */
+	public function render_metabox( $campaign, $metabox ) {
+		include plugin_dir_path( __FILE__ ) . "views/metabox-{$metabox['args']}.php";
 	}
 
 }
