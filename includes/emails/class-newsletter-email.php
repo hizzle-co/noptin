@@ -41,6 +41,9 @@ class Noptin_Newsletter_Email {
 	/** @var array */
 	public $options = array();
 
+	/** @var string */
+	public $type = 'newsletter';
+
 	/**
 	 * Class constructor.
 	 *

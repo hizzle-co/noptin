@@ -139,10 +139,10 @@ class Noptin_Automated_Email {
 		}
 
 		// General filter.
-		$value = apply_filters( 'noptin_get_automated_email_prop', $value, $key, $this );
+		$value = apply_filters( 'noptin_get_email_prop', $value, $key, $this );
 
 		// Prop specific filtter.
-		return apply_filters( "noptin_get_automated_email_$key", $value, $this );
+		return apply_filters( "noptin_get_email_$key", $value, $this );
 
 	}
 

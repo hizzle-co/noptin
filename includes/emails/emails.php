@@ -48,28 +48,13 @@ function noptin_send_email( $args, $background = false ) {
 /**
  * Generates the content of an email.
  *
- * @param array $args An array of arguments.
- * @see Noptin_Email_Generator
- * @see get_noptin_email_types()
- * @return string|WP_Error
- */
-function noptin_generate_email_content( $args ) {
-
-	$generator = new Noptin_Email_Generator();
-	return $generator->generate( $args );
-
-}
-
-/**
- * Generates the content of an automated email.
- *
  * @since 1.7.0
- * @param Noptin_Automated_Email $email
+ * @param Noptin_Automated_Email|Noptin_Newsletter_Email $email
  * @param array $recipient
  * @param bool $track
- * @return string
+ * @return string|WP_Error
  */
-function noptin_generate_automated_email_content( $email, $recipient, $track = true ) {
+function noptin_generate_email_content( $email, $recipient, $track = true ) {
 
 	$args = array(
 		'type'         => $email->get_email_type(), // normal, raw_html, plain_text
@@ -83,7 +68,8 @@ function noptin_generate_automated_email_content( $email, $recipient, $track = t
 		'recipient'    => $recipient,
 	);
 
-	return noptin_generate_email_content( $args );
+	$generator = new Noptin_Email_Generator();
+	return $generator->generate( $args );
 }
 
 /**

@@ -23,7 +23,7 @@ abstract class Noptin_Email_Type {
 	/**
 	 * @var string
 	 */
-	public $type;
+	public $type; // newsletter, woocommerce_new_order, etc.
 
 	/**
 	 * True when email is being sent.
@@ -33,12 +33,7 @@ abstract class Noptin_Email_Type {
 	public $sending = false;
 
 	/**
-	 * @var string
-	 */
-	public $notification_hook = '';
-
-	/**
-	 * @var string
+	 * @var string Current unsubscribe URL.
 	 */
 	public $unsubscribe_url = '';
 
@@ -58,24 +53,6 @@ abstract class Noptin_Email_Type {
 	public $recipient = array(); // Array containing campaign id, user id and subscriber id.
 
 	/**
-	 * Retrieves the automated email type name.
-	 *
-	 */
-	abstract public function get_name();
-
-	/**
-	 * Retrieves the automated email type description.
-	 *
-	 */
-	abstract public function get_description();
-
-	/**
-	 * Retrieves the automated email type image.
-	 *
-	 */
-	abstract public function the_image();
-
-	/**
 	 * Sends a test email.
 	 *
 	 * @param Noptin_Automated_Email $email
@@ -89,22 +66,7 @@ abstract class Noptin_Email_Type {
 	 *
 	 */
 	public function add_hooks() {
-
-		add_filter( 'noptin_get_automated_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
-		add_filter( "noptin_default_automated_email_{$this->type}_recipient", array( $this, 'get_default_recipient' ) );
-
-		if ( is_callable( array( $this, 'render_metabox' ) ) ) {
-			add_filter( "noptin_automated_email_{$this->type}_options", array( $this, 'render_metabox' ) );
-		}
-
-		if ( is_callable( array( $this, 'about_automation' ) ) ) {
-			add_filter( "noptin_automation_table_about_{$this->type}", array( $this, 'about_automation' ), 10, 2 );
-		}
-
-		if ( ! empty( $this->notification_hook ) && is_callable( array( $this, 'maybe_send_notification' ) ) ) {
-			add_action( $this->notification_hook, array( $this, 'maybe_send_notification' ), 10, 2 );
-		}
-
+		add_filter( 'noptin_get_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
 	}
 
 	/**
@@ -124,10 +86,6 @@ abstract class Noptin_Email_Type {
 		// Set default name, template, and footer texts.
 		switch ( $prop ) {
 
-			case 'name':
-				$value = $this->get_name();
-				break;
-
 			case 'footer_text':
 				$value = get_noptin_footer_text();
 				break;
@@ -146,103 +104,6 @@ abstract class Noptin_Email_Type {
 		// Apply email type specific filter then return.
 		return apply_filters( "noptin_{$this->type}_default_$prop", $value );
 
-	}
-
-	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function get_default_recipient() {
-		return '';
-	}
-
-	/**
-	 * Returns the URL to create a new campaign.
-	 *
-	 */
-	public function new_campaign_url() {
-		return add_query_arg( 'campaign', urlencode( $this->type ), admin_url( 'admin.php?page=noptin-email-campaigns&section=automations&sub_section=edit_campaign' ) );
-	}
-
-	/**
-	 * Returns an array of all published automated emails.
-	 *
-	 * @return Noptin_Automated_Email[]
-	 */
-	public function get_automations() {
-
-		$emails = array();
-		$args   = array(
-			'numberposts'            => -1,
-			'post_type'              => 'noptin-campaign',
-			'orderby'                => 'menu_order',
-			'order'                  => 'ASC',
-			'suppress_filters'       => true, // DO NOT allow WPML to modify the query
-			'cache_results'          => true,
-			'update_post_term_cache' => false,
-			'post_status'            => array( 'publish' ),
-			'meta_query'             => array(
-				array(
-					'key'   => 'campaign_type',
-					'value' => 'automation',
-				),
-				array(
-					'key'   => 'automation_type',
-					'value' => $this->type,
-				),
-			),
-		);
-
-		foreach ( get_posts( $args ) as $post ) {
-			$emails[] = new Noptin_Automated_Email( $post->ID );
-		}
-
-		return $emails;
-
-	}
-
-	/**
-	 * Schedules an automated email.
-	 *
-	 * @param int|string $object_id
-	 * @param Noptin_Automated_Email $automation
-	 */
-	public function schedule_notification( $object_id, $automation ) {
-
-		if ( ! $automation->supports_timing() || $automation->sends_immediately() ) {
-			return do_noptin_background_action( $this->notification_hook, $object_id, $automation->id );
-		}
-
-		$sends_after      = (int) $automation->get_sends_after();
-		$sends_after_unit = $automation->get_sends_after_unit();
-
-		$timestamp        = strtotime( "+ $sends_after $sends_after_unit", current_time( 'timestamp', true ) );
-		return schedule_noptin_background_action( $timestamp, $this->notification_hook, $object_id, $automation->id );
-
-	}
-
-	/**
-	 * Returns an array of email recipients.
-	 *
-	 * @param Noptin_Automated_Email $automation
-	 * @param array $merge_tags
-	 * @return array
-	 */
-	public function get_recipients( $automation, $merge_tags = array() ) {
-
-		$recipients = array();
-
-		$merge_tags['--notracking'] = '';
-		foreach ( explode( ',', $automation->get_recipients() ) as $recipient ) {
-
-			$no_tracking = false !== strpos( $recipient, '--notracking' );
-			$recipient   = trim( str_replace( array_keys( $merge_tags ), array_values( $merge_tags ), $recipient ) );
-
-			$recipients[ $recipient ] = $no_tracking;
-
-		}
-
-		return $recipients;
 	}
 
 	/**
@@ -517,7 +378,7 @@ abstract class Noptin_Email_Type {
 	/**
 	 * Generates a preview email.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
 	 * @return string
 	 */
 	public function generate_preview( $campaign ) {
@@ -529,20 +390,20 @@ abstract class Noptin_Email_Type {
 		$this->before_send( $campaign );
 
 		// Generate content.
-		$content = noptin_generate_automated_email_content( $campaign, $this->recipient, false );
+		$content = noptin_generate_email_content( $campaign, $this->recipient, false );
 
 		// Clean environment.
 		$this->after_send( $campaign );
 
 		// Filter and return.
-		return apply_filters( 'noptin_generate_automated_email_preview', $content, $campaign, $this );
+		return apply_filters( 'noptin_generate_email_preview', $content, $campaign, $this );
 
 	}
 
 	/**
 	 * Fired before sending a campaign.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
 	 */
 	protected function before_send( $campaign ) {
 
@@ -564,21 +425,27 @@ abstract class Noptin_Email_Type {
 		// Indicate that we're sending an email.
 		$this->sending = true;
 
-		do_action( 'noptin_before_send_automated_email', $campaign, $this );
+		do_action( 'noptin_before_send_email', $campaign, $this );
 	}
 
 	/**
 	 * Sends a notification.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
 	 * @param string $key
 	 * @param array $recipients
 	 */
-	protected function send( $campaign, $key, $recipients ) {
+	public function send( $campaign, $key, $recipients ) {
 
 		// Prepare environment.
 		$this->before_send( $campaign );
 
+		// Prepare recipients.
+		if ( is_string( $recipients ) ) {
+			$recipients = array( $recipients => true );
+		}
+
+		// Send to each recipient.
 		foreach ( $recipients as $email => $track ) {
 
 			// Send the email.
@@ -586,7 +453,7 @@ abstract class Noptin_Email_Type {
 				array(
 					'recipients'               => $email,
 					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
-					'message'                  => noptin_generate_automated_email_content( $campaign, $this->recipient, $track  ),
+					'message'                  => noptin_generate_email_content( $campaign, $this->recipient, $track  ),
 					'headers'                  => array(),
 					'attachments'              => array(),
 					'reply_to'                 => '',
@@ -600,16 +467,16 @@ abstract class Noptin_Email_Type {
 
 		}
 
+		// Clear environment.
 		$this->after_send( $campaign );
 
-		// TODO: For post digests and new post notifications, generate email content with merge tags then set for future sending. Only subscriber / user merge tags will be applied at the time of sending.
-		// Work on post digests and new post notifications.
+		// TODO: For mass mail, call this method directly from the mass mailer.
 	}
 
 	/**
 	 * Fired after sending a campaign.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
 	 */
 	protected function after_send( $campaign ) {
 
@@ -626,13 +493,13 @@ abstract class Noptin_Email_Type {
 		$this->subscriber      = null;
 		$this->unsubscribe_url = '';
 
-		do_action( 'noptin_after_sending_automated_email', $campaign, $this );
+		do_action( 'noptin_after_sending_email', $campaign, $this );
 	}
 
 	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email $email
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $email
 	 */
 	public function prepare_test_data( $email ) {
 		$this->user = wp_get_current_user();
