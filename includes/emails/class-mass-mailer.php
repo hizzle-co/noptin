@@ -27,14 +27,16 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	 * @ignore
 	 */
 	public function __construct() {
-		$this->action                   = $this->sender . '_mass_mailer';
+		$this->action                   = 'noptin' === $this->sender ? 'mass_mailer' : $this->sender . '_mass_mailer';
 		$this->identifier               = $this->prefix . '_' . $this->action;
 		$this->cron_hook_identifier     = $this->identifier . '_cron';
 		$this->cron_interval_identifier = $this->identifier . '_cron_interval';
 
+		// Checks cron to ensure all scheduled emails are sent.
 		add_action( $this->cron_hook_identifier, array( $this, 'handle_cron_healthcheck' ) );
 		add_filter( 'cron_schedules', array( $this, 'schedule_cron_healthcheck' ) );
 
+		// Handle cron on action scheduler cron.
 		add_action( $this->identifier, array( $this, 'maybe_handle' ) );
 	}
 

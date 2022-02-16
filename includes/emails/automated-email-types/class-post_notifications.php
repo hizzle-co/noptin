@@ -536,7 +536,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			$this->subscriber = $subscriber;
 		}
 
-		return $this->send( $recipient, 'test', array( sanitize_email( $recipient ) => false ) );
+		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
 	}
 
 	/**

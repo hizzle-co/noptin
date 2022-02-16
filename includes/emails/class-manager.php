@@ -32,6 +32,12 @@ class Noptin_Email_Manager {
 	/** @var Noptin_Automated_Email_Types */
 	public $automated_email_types;
 
+	/** @var Noptin_Newsletter_Email_Type */
+	public $newsletter;
+
+	/** @var Noptin_Mass_Mailer_Subscribers */
+	public $subscribers_mailer;
+
 	/**
 	 * Class constructor.
 	 *
@@ -63,8 +69,11 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-automated-email.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-newsletter-email.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-type.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-newsletter-email-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer-subscribers.php';
 
 	}
 
@@ -76,6 +85,8 @@ class Noptin_Email_Manager {
 		$this->admin                 = new Noptin_Emails_Admin();
 		$this->tags                  = new Noptin_Email_Tags();
 		$this->automated_email_types = new Noptin_Automated_Email_Types();
+		$this->newsletter            = new Noptin_Newsletter_Email_Type();
+		$this->subscribers_mailer    = new Noptin_Mass_Mailer_Subscribers();
 	}
 
 	/**
@@ -89,6 +100,7 @@ class Noptin_Email_Manager {
 		$this->sender->add_hooks();
 		$this->admin->add_hooks();
 		$this->tags->add_hooks();
+		$this->newsletter->add_hooks();
 		$this->automated_email_types->add_hooks();
 	}
 
@@ -102,6 +114,13 @@ class Noptin_Email_Manager {
 
 		$wpdb->delete(
 			get_noptin_subscribers_meta_table_name(),
+			array(
+				'meta_key' => "_campaign_$post_id",
+			)
+		);
+
+		$wpdb->delete(
+			$wpdb->usermeta,
 			array(
 				'meta_key' => "_campaign_$post_id",
 			)

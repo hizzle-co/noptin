@@ -509,6 +509,7 @@ abstract class Noptin_Email_Type {
 			$this->subscriber = new Noptin_Subscriber( $subscriber );
 		}
 
+		do_action( 'noptin_prepare_test_data', $this, $email );
 	}
 
 }

@@ -1141,7 +1141,7 @@ a.no-campaign-create-new-campaign {
 	.column-opens,
 	.column-recipients,
 	.column-status,
-	.column-date_sent
+	.column-date_sent,
 	.column-clicks {
 		width: 70px;
 		text-align: center;
