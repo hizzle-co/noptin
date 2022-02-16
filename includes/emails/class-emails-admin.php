@@ -304,6 +304,17 @@ class Noptin_Emails_Admin {
 
 		$screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-automation';
 
+		// Email Details.
+		add_meta_box(
+			'noptin_email_details',
+			__( 'Details','newsletter-optin-box' ),
+			array( $this, 'render_metabox' ),
+			$screen_id,
+			'side',
+			'high',
+			'details'
+		);
+
 		// Email recipients.
 		add_meta_box(
 			'noptin_email_recipients',
@@ -315,25 +326,14 @@ class Noptin_Emails_Admin {
 			'recipients'
 		);
 
-		// Email Details.
-		add_meta_box(
-			'noptin_email_details',
-			__( 'Details','newsletter-optin-box' ),
-			array( $this, 'render_metabox' ),
-			$screen_id,
-			'normal',
-			'default',
-			'details'
-		);
-
 		// Email content.
 		add_meta_box(
 			'noptin_email_content',
-			__( 'Email Content','newsletter-optin-box' ) . '<a class="button noptin-send-test-email"><span class="dashicons-before dashicons-email-alt"></span>Send a test email</a>',
+			__( 'Email','newsletter-optin-box' ) . '<a class="button noptin-send-test-email"><span class="dashicons-before dashicons-email-alt"></span>Send a test email</a>',
 			array( $this, 'render_metabox' ),
 			$screen_id,
 			'normal',
-			'default',
+			'high',
 			'content'
 		);
 

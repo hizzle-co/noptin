@@ -1,10 +1,8 @@
 <?php
     /**
-     * @var WP_Post $campaign
+     * @var Noptin_Newsletter_Email $campaign
      */
 
-    $senders     = get_noptin_email_senders();
-    $sender      = 'noptin';
     $status      = 'draft';
     $date_time   = '';
     $date        = date( 'Y-m-d', current_time( 'timestamp' ) );
@@ -12,15 +10,11 @@
     $date_format = esc_attr( get_option( 'date_format' ) );
     $time_format = esc_attr( get_option( 'time_format' ) );
 
-    if ( is_object( $campaign ) ) {
-        $sender = get_noptin_email_sender( $campaign->ID );
-    }
-
-    if ( is_object( $campaign ) && 'future' === $campaign->post_status ) {
+    if ( is_object( $campaign ) && 'future' === $campaign->status ) {
         $status    = 'scheduled';
-        $date_time = date( 'Y-m-d H:i', strtotime( $campaign->post_date ) );
-        $date      = date( 'Y-m-d', strtotime( $campaign->post_date ) );
-        $time      = date( 'H:i', strtotime( $campaign->post_date ) );
+        $date_time = date( 'Y-m-d H:i', strtotime( $campaign->created ) );
+        $date      = date( 'Y-m-d', strtotime( $campaign->created ) );
+        $time      = date( 'H:i', strtotime( $campaign->created ) );
     }
 
 ?>
@@ -47,23 +41,7 @@
                 </p>
             </div>
 
-            <input type="hidden" value="<?php echo $date_time; ?>" name="schedule-date" class="noptin-schedule-selected-date">
-        </div>
-
-        <div class="noptin-select-email-sender senders-<?php echo count( $senders ); ?>">
-            <label style="display:<?php echo 1 < count( $senders ) ? 'block' : 'none'; ?>; width:100%;" class="noptin-margin-y noptin-email-senders-label">
-                <strong><?php _e( 'Send To', 'newsletter-optin-box' ); ?></strong>
-                <select name="email_sender" class="noptin-email_sender" style="display:block; width:100%;">
-                    <?php foreach ( $senders as $key => $label ) : ?>
-                        <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $sender ); ?>><?php echo esc_html( $label ); ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-            <?php foreach ( array_keys( $senders ) as $_sender ) : ?>
-            <div class="noptin-sender-options noptin-margin-y sender-<?php echo esc_attr( $_sender ); ?>" style="display:<?php echo $_sender == $sender ? 'block' : 'none'; ?>;">
-                <?php echo do_action( "noptin_sender_options_$_sender", $campaign ); ?>
-            </div>
-            <?php endforeach; ?>
+            <input type="hidden" value="<?php echo esc_attr( $date_time ); ?>" name="schedule-date" class="noptin-schedule-selected-date">
         </div>
 
         <input type="submit" name="publish" id="noptin_save_campaign" data-scheduled="Schedule" data-not-scheduled="Send" class="button button-primary button-large" value="Send">

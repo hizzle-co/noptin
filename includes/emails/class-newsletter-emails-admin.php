@@ -102,36 +102,16 @@ class Noptin_Newsletter_Emails_Admin {
 	 */
 	public function register_metaboxes() {
 
-		$screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-automation';
-
-		add_meta_box(
-			'noptin_newsletter_body',
-			__('Email Content','newsletter-optin-box'),
-			array( $this, 'render_metabox' ),
-			'noptin_page_noptin-newsletter',
-			'normal',
-			'default',
-			'body'
-		);
+		$screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-newsletter';
 
 		add_meta_box(
 			'noptin_newsletter_send',
 			__('Send','newsletter-optin-box'),
 			array( $this, 'render_metabox' ),
-			'noptin_page_noptin-newsletter',
+			$screen_id,
 			'side',
 			'high',
 			'send'
-		);
-
-		add_meta_box(
-			'noptin_newsletter_preview_text',
-			__('Preview Text (Optional)','newsletter-optin-box'),
-			array( $this, 'render_metabox' ),
-			'noptin_page_noptin-newsletter',
-			'side',
-			'low',
-			'preview-text'
 		);
 
 	}
@@ -141,7 +121,7 @@ class Noptin_Newsletter_Emails_Admin {
 	 *
 	 */
 	public function render_metabox( $campaign, $metabox ) {
-		include plugin_dir_path( __FILE__ ) . "views/{$metabox['args']}.php";
+		include plugin_dir_path( __FILE__ ) . "views/newsletters/{$metabox['args']}.php";
 	}
 
 	/**
