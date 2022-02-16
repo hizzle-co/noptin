@@ -32,9 +32,10 @@
 		$('.noptin-newsletter-select_2').select2()
 
 		// Change email type.
-		$('#noptin-automated-email-type').on( 'change', function() {
-			$('.noptin-automated-email').attr( 'data-type', $( this ).val() );
-			$('#noptin_automation_advanced').toggle( $( this ).val() == 'normal' );
+		$('#noptin-email-type').on( 'change', function() {
+			$( this )
+				.closest( 'form' )
+				.attr( 'data-type', $( this ).val() )
 		})
 
 		// Change timing.

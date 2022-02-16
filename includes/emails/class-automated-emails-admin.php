@@ -138,17 +138,6 @@ class Noptin_Automated_Emails_Admin {
 			'save'
 		);
 
-		// Email content.
-		add_meta_box(
-			'noptin_automation_content',
-			__( 'Email Content','newsletter-optin-box' ) . '<a class="button noptin-send-test-email"><span class="dashicons-before dashicons-email-alt"></span>Send a test email</a>',
-			array( $this, 'render_metabox' ),
-			'noptin_page_noptin-automation',
-			'normal',
-			'default',
-			'content'
-		);
-
 	}
 
 	/**
@@ -186,7 +175,7 @@ class Noptin_Automated_Emails_Admin {
 		}
 
 		// Save automation.
-		$automation = new Noptin_Automated_Email( wp_unslash( $_POST['noptin_automation'] ) );
+		$automation = new Noptin_Automated_Email( wp_unslash( $_POST['noptin_email'] ) );
 		$result     = $automation->save();
 
 		if ( is_wp_error( $result ) ) {

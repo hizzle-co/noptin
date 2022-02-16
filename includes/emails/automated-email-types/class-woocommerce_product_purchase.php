@@ -141,7 +141,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 					<strong class="noptin-label-span">
 						<?php _e( 'Send this email when a product...', 'newsletter-optin-box' ); ?>
 					</strong>
-					<select name="noptin_automation[product_action]" class="widefat">
+					<select name="noptin_email[product_action]" class="widefat">
 						<option <?php selected( $action, 'buy' ); ?> value="buy"><?php esc_html_e( 'is bought', 'newsletter-optin-box' ) ?></option>
 						<option <?php selected( $action, 'refund' ); ?> value="refund"><?php esc_html_e( 'is refunded', 'newsletter-optin-box' ) ?></option>
 					</select>
@@ -153,7 +153,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 					<strong class="noptin-label-span">
 						<?php _e( 'Product', 'newsletter-optin-box' ); ?>
 					</strong>
-					<select name="noptin_automation[product]" class="widefat">
+					<select name="noptin_email[product]" class="widefat">
 						<option <?php selected( empty( $selected_product ) ); ?> value="" disabled><?php esc_html_e( 'Select a WooCommerce product', 'newsletter-optin-box' ) ?></option>
 
 						<?php foreach ( $products as $product ) : ?>
@@ -175,7 +175,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 
 			<p>
 				<label>
-					<input type="checkbox" name="noptin_automation[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
+					<input type="checkbox" name="noptin_email[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
 					<strong><?php _e( 'Only send the first time someone buys this product?', 'newsletter-optin-box' ); ?></strong>
 				</label>
 			</p>

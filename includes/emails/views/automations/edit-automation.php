@@ -13,7 +13,7 @@
 <style>
 	<?php
 		foreach ( array_keys( get_noptin_email_types() ) as $key ) {
-			echo '.noptin-automated-email:not([data-type="' . sanitize_html_class( $key ) . '"]) .noptin-show-if-automation-is-' . sanitize_html_class( $key ) . ' { display: none !important; }';
+			echo '.noptin-edit-email:not([data-type="' . sanitize_html_class( $key ) . '"]) .noptin-show-if-email-is-' . sanitize_html_class( $key ) . ' { display: none !important; }';
 		}
 	?>
 </style>
@@ -29,10 +29,11 @@
 	<form name="noptin-edit-automation" class="noptin-automated-email noptin-edit-email" data-type="<?php echo esc_attr( $email_type ); ?>" method="post">
 
 		<input type="hidden" name="noptin_admin_action" value="noptin_save_edited_automation">
-		<input type="hidden" name="noptin_automation[automation_type]" value="<?php echo esc_attr( $campaign->type ); ?>">
+		<input type="hidden" name="noptin_is_automation" value="1">
+		<input type="hidden" name="noptin_email[automation_type]" value="<?php echo esc_attr( $campaign->type ); ?>">
 
 		<?php if ( $campaign->exists() ) : ?>
-			<input type="hidden" name="noptin_automation[id]" value="<?php echo esc_attr( $campaign->id ); ?>">
+			<input type="hidden" name="noptin_email[id]" value="<?php echo esc_attr( $campaign->id ); ?>">
 		<?php endif; ?>
 
 		<?php
@@ -51,7 +52,7 @@
 						<div id="titlediv">
 							<div id="titlewrap">
 								<label class="screen-reader-text" id="title-prompt-text" for="title"><?php _e( 'Automation Name', 'newsletter-optin-box' ); ?></label>
-								<input type="text" name="noptin_automation[title]" size="30" value="<?php echo esc_attr( $campaign->get( 'name' ) ); ?>" placeholder="<?php esc_attr_e( 'Enter automation name', 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
+								<input type="text" name="noptin_email[title]" size="30" value="<?php echo esc_attr( $campaign->get( 'name' ) ); ?>" placeholder="<?php esc_attr_e( 'Enter automation name', 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
 							</div>
 						</div>
 

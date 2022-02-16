@@ -8,10 +8,6 @@ export default {
 
 		var $ = jQuery
 
-		//Send test email
-		$('#wp-noptinemailbody-media-buttons, #wp-noptin-automation-email-content-media-buttons')
-			.append('&nbsp;<a class="button noptin-send-test-email"><span class="wp-menu-image dashicons-before dashicons-email-alt"></span>Send a test email</a>')
-
 		// Are we sending a test email?
 		$('.noptin-send-test-email').on('click', this.send_test_email)
 

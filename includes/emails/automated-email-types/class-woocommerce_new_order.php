@@ -162,7 +162,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 					<strong class="noptin-label-span">
 						<?php _e( 'Send this email whenever an order is:-', 'newsletter-optin-box' ); ?>
 					</strong>
-					<select name="noptin_automation[order_status]" id="noptin-automated-email-order-status" class="widefat">
+					<select name="noptin_email[order_status]" id="noptin-automated-email-order-status" class="widefat">
 						<?php foreach ( $statuses as $key => $label ) : ?>
 							<option <?php selected( $status, $key ); ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></option>
 						<?php endforeach; ?>
@@ -172,7 +172,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 
 			<p>
 				<label>
-					<input type="checkbox" name="noptin_automation[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
+					<input type="checkbox" name="noptin_email[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
 					<strong><?php _e( 'Only send to new customers?', 'newsletter-optin-box' ); ?></strong>
 				</label>
 			</p>

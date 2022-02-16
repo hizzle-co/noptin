@@ -488,43 +488,15 @@ class Noptin_Page {
 			return;
 		}
 
-		$campaign = get_post( $campaign_id );
+		$campaign = new Noptin_Newsletter_Email( $campaign_id );
 
 		// Ensure this is a newsletter campaign.
-		if ( empty( $campaign ) || 'noptin-campaign' !== $campaign->post_type || 'newsletter' !== get_post_meta( $campaign->ID, 'campaign_type', true ) ) {
-			$this->print_paragraph( __( 'Cannot preview this campaign type.', 'newsletter-optin-box' ) );
+		if ( ! $campaign->exists() ) {
+			$this->print_paragraph( __( 'Cannot preview this email.', 'newsletter-optin-box' ) );
 			return;
 		}
 
-		// Fetch current user to use their details as merge tags.
-		$user       = wp_get_current_user();
-		$subscriber = get_noptin_subscriber_by_email( $user->user_email );
-		$sender     = get_noptin_email_sender( $campaign->ID );
-		$data       = array(
-			'campaign_id'   => $campaign->ID,
-			'email_subject' => $campaign->post_title,
-			'email_body'    => $campaign->post_content,
-			'preview_text'  => get_post_meta( $campaign->ID, 'preview_text', true ),
-			'email'         => $user->user_email,
-			'merge_tags'    => array(
-				'email'       => $user->user_email,
-				'first_name'  => $user->user_firstname,
-				'second_name' => $user->user_lastname,
-				'last_name'   => $user->user_lastname,
-			),
-		);
-
-		// If the current user is a subscriber, use their subscriber data as merge tags.
-		if ( $subscriber->exists() ) {
-			$data['subscriber_id'] = $subscriber->id;
-			$data['merge_tags']    = array_merge( $data['merge_tags'], get_noptin_subscriber_merge_fields( $subscriber ) );
-		}
-
-		$data['merge_tags']    = array_merge( $data['merge_tags'], apply_filters( "noptin_{$sender}_dummy_merge_tags", array() ) );
-
-		// Generate and display the email.
-		$data = noptin()->mailer->prepare( $data );
-		echo apply_filters( 'noptin_generate_preview_email', $data['email_body'], $data );
+		echo noptin()->emails->newsletter->generate_preview( $campaign );
 		exit;
 
 	}

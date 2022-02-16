@@ -121,7 +121,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 						<?php _e( 'Lifetime Value', 'newsletter-optin-box' ); ?>
 						<span title="<?php esc_attr_e( "This email is automatically sent whenever a customer's lifetime value surpases the specified amount", 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 					</strong>
-					<input class="widefat" type="number" name="noptin_automation[lifetime_value]" value="<?php echo floatval( $campaign->get( 'lifetime_value' ) ); ?>" min="0" step="any">
+					<input class="widefat" type="number" name="noptin_email[lifetime_value]" value="<?php echo floatval( $campaign->get( 'lifetime_value' ) ); ?>" min="0" step="any">
 				</label>
 			</p>
 		<?php

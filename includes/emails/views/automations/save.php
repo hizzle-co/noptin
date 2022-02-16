@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 		<p>
 			<label>
 				<strong class="noptin-label-span"><?php esc_html_e( 'Status', 'newsletter-optin-box' ); ?></strong>
-				<select name="noptin_automation[status]" style="width: 100%;">
+				<select name="noptin_email[status]" style="width: 100%;">
 					<option <?php selected( $campaign->is_published() ); ?> value='publish'><?php _e( 'Active', 'newsletter-optin-box' ); ?></option>
 					<option <?php selected( ! $campaign->is_published() ); ?> value='draft'><?php _e( 'Disabled', 'newsletter-optin-box' ); ?></option>
 				</select>

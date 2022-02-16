@@ -184,17 +184,17 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		<p>
 			<label>
 				<strong class="noptin-label-span"><?php _e( 'Send this email...', 'newsletter-optin-box' ); ?></strong>
-				<select name="noptin_automation[frequency]" id="noptin-post-digest-frequency">
+				<select name="noptin_email[frequency]" id="noptin-post-digest-frequency">
 					<?php foreach ( $frequencies as $key => $label ) : ?>
 						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $frequency ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<select name="noptin_automation[day]" class="noptin-post-digest-day" style="display: <?php echo $frequency == 'weekly' ? 'block' : 'none' ; ?>">
+				<select name="noptin_email[day]" class="noptin-post-digest-day" style="display: <?php echo $frequency == 'weekly' ? 'block' : 'none' ; ?>">
 					<?php foreach ( $this->get_weekdays() as $key => $label ) : ?>
 						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( (string) $key, $day ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<select name="noptin_automation[date]" class="noptin-post-digest-date" style="display: <?php echo $frequency == 'monthly' ? 'block' : 'none' ; ?>">
+				<select name="noptin_email[date]" class="noptin-post-digest-date" style="display: <?php echo $frequency == 'monthly' ? 'block' : 'none' ; ?>">
 					<?php foreach ( $dates as $key => $label ) : ?>
 						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $date ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>

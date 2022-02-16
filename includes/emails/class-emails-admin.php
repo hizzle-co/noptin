@@ -255,56 +255,42 @@ class Noptin_Emails_Admin {
 		}
 
 		// Handle automated emails?
-		if ( ! empty( $data['noptin_automation'] ) ) {
-			noptin()->emails->automated_email_types->send_test_email( $data['noptin_automation'], sanitize_email( $data['email'] ) );
+		if ( ! empty( $data['noptin_is_automation'] ) ) {
+			noptin()->emails->automated_email_types->send_test_email( $data['noptin_email'], sanitize_email( $data['email'] ) );
 		}
 
-		// TODO: // Handles normal newsletter emails.
-		$data = $_POST;
- 
-		unset( $data['_wpnonce'] );
-		unset( $data['_wp_http_referer'] );
-		unset( $data['action'] );
+		// Handle newsletter email.
+		$email = new Noptin_Newsletter_Email( $data );
 
-		// Remove slashes.
-		$data = stripslashes_deep( $data );
-
-		$data['email'] = sanitize_email( $data['email'] );
-
-		// Is this an automated email?
-		if ( ! empty( $data['noptin_automation'] ) ) {
-			noptin()->emails->automated_email_types->send_test_email( $data['noptin_automation'], $data['email'] );
-			exit;
-		}
-
-		// Subject, body and preview text.
-		if ( empty( $data['email_subject'] ) && empty( $data['subject'] ) ) {
+		// Ensure we have a subject.
+		$subject = $email->get_subject();
+		if ( empty( $subject ) ) {
 			wp_send_json_error( __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
-			exit;
 		}
 
-		if ( empty( $data['email_subject'] ) ) {
-			$data['email_subject'] = $data['subject'];
-		}
-
-		$data['email_subject'] = '[TEST] ' . $data['email_subject'];
-
-		if ( empty( $data['email_body'] ) ) {
+		// Ensure we have content.
+		$content = $email->get_content( $email->get_email_type() );
+		if ( empty( $content ) ) {
 			wp_send_json_error( __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
-			exit;
 		}
 
-		/**
-		 * Filters the newsletter test email data.
-		 * 
-		 * @param array $data The test email data.
-		 */
-		$data = apply_filters( 'noptin_test_email_data', $data );
+		// Try sending the test email.
+		try {
+			$result = noptin()->emails->newsletter->send_test( $email, sanitize_email( $data['email'] ) );
+		} catch ( Exception $e ) {
+			$result = new WP_Error( 'exception', $e->getMessage() );
+		}
 
-		if ( noptin()->mailer->prepare_then_send( $data ) ) {
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( $result->get_error_message() );
+		}
+
+		// Successfuly sent the email.
+		if ( $result ) {
 			wp_send_json_success( __( 'Your test email has been sent', 'newsletter-optin-box' ) );
 		}
 
+		// Failed sending the email.
 		wp_send_json_error( __( 'Could not send the test email', 'newsletter-optin-box' ) );
 
 	}
@@ -338,6 +324,17 @@ class Noptin_Emails_Admin {
 			'normal',
 			'default',
 			'details'
+		);
+
+		// Email content.
+		add_meta_box(
+			'noptin_email_content',
+			__( 'Email Content','newsletter-optin-box' ) . '<a class="button noptin-send-test-email"><span class="dashicons-before dashicons-email-alt"></span>Send a test email</a>',
+			array( $this, 'render_metabox' ),
+			$screen_id,
+			'normal',
+			'default',
+			'content'
 		);
 
 	}

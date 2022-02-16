@@ -13,7 +13,7 @@
 <style>
 	<?php
 		foreach ( array_keys( get_noptin_email_types() ) as $key ) {
-			echo '.noptin-newsletter-email:not([data-type="' . sanitize_html_class( $key ) . '"]) .noptin-show-if-newsletter-is-' . sanitize_html_class( $key ) . ' { display: none !important; }';
+			echo '.noptin-edit-email:not([data-type="' . sanitize_html_class( $key ) . '"]) .noptin-show-if-email-is-' . sanitize_html_class( $key ) . ' { display: none !important; }';
 		}
 	?>
 </style>
@@ -32,6 +32,7 @@
 	<form name="noptin-edit-newsletter" class="noptin-newsletter-email noptin-edit-email" data-type="<?php echo esc_attr( $email_type ); ?>" method="post">
 
 		<input type="hidden" name="noptin_admin_action" value="noptin_save_edited_newsletter">
+		<input type="hidden" name="noptin_is_newsletter" value="1">
 
 		<?php if ( $campaign->exists() ) : ?>
 			<input type="hidden" name="noptin_email[id]" value="<?php echo esc_attr( $campaign->id ); ?>">

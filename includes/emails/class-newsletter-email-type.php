@@ -53,6 +53,29 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 	}
 
 	/**
+	 * Returns the default content.
+	 *
+	 */
+	public function default_content_normal() {
+		$body = include locate_noptin_template( 'default-email-body.php' );
+
+		/**
+		 * Filters the default newsletter body
+		 *
+		 * @param string $body The default newsletter body
+		 */
+		return apply_filters( 'noptin_default_newsletter_body', $body );
+	}
+
+	/**
+	 * Returns the default plain text content.
+	 *
+	 */
+	public function default_content_plain_text() {
+		return noptin_convert_html_to_text( $this->default_content_normal() );
+	}
+
+	/**
 	 * Returns the URL to create a new campaign.
 	 *
 	 */
@@ -112,7 +135,7 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 	/**
 	 * Sends a test email.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Noptin_Newsletter_Email $campaign
 	 * @param string $recipient
 	 * @return bool Whether or not the test email was sent
 	 */

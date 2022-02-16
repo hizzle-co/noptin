@@ -304,25 +304,6 @@ function is_noptin_campaign( $post, $campaign_type = false ) {
 }
 
 /**
- * Returns the default newsletter body.
- *
- * @since 1.2.0
- * @return string.
- */
-function get_noptin_default_newsletter_body() {
-
-	$body = include locate_noptin_template( 'default-email-body.php' );
-
-	/**
-	 * Filters the default newsletter body
-	 *
-	 * @param string $body The default newsletter body
-	 */
-	return apply_filters( 'noptin_default_newsletter_body', $body );
-
-}
-
-/**
  * Returns a path to the includes dir.
  *
  * @param string $append The path to append to the include dir path.
