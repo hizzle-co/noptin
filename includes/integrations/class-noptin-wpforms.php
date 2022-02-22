@@ -155,7 +155,7 @@ class Noptin_WPForms {
 		$address = noptin_get_user_ip();
 		if ( ! empty( $address ) && '::1' !== $address ) {
 			$subscriber['ip_address'] = $address;
-		}
+		}// TODO: Send confirmation links for existing unconfirmed subscribers.
 
 		// Referral page.
 		if ( ! empty( $_REQUEST['referrer'] ) ) {

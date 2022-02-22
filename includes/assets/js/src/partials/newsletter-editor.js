@@ -16,9 +16,6 @@ export default {
 		$('.noptin-filter-post-notifications-post-types').on('click', this.new_post_notifications_filter_post_types)
 		$('.noptin-filter-post-notifications-taxonomies').on('click', this.new_post_notifications_filter_taxonomies)
 
-		//Delete campaign
-		$('.noptin-delete-campaign').on('click', this.delete_campaign)
-
 		// Stop sending a campaign.
 		$('.noptin-stop-campaign').on('click', this.stop_campaign)
 
@@ -68,69 +65,6 @@ export default {
 						Swal.fire(
 							'Error',
 							'Unable to stop your campaign. Try again.',
-							'error'
-						)
-
-					})
-
-				//Return a promise that never resolves
-				return jQuery.Deferred()
-
-			},
-		})
-
-	},
-
-	//Deletes a campagin
-	delete_campaign(e) {
-
-		e.preventDefault();
-
-		let row = jQuery(this).closest('tr');
-		let redirect = jQuery(this).data('redirect');
-		let data = {
-			id: jQuery(this).data('id'),
-			_wpnonce: noptin_params.nonce,
-			action: 'noptin_delete_campaign'
-		}
-
-		//Init sweetalert
-		Swal.fire({
-			titleText: `Are you sure?`,
-			text: "You are about to permanently delete this campaign.",
-			type: 'warning',
-			showCancelButton: true,
-			confirmButtonColor: '#d33',
-			cancelButtonColor: '#9e9e9e',
-			confirmButtonText: 'Yes, delete it!',
-			showLoaderOnConfirm: true,
-			showCloseButton: true,
-			focusConfirm: false,
-			allowOutsideClick: () => !Swal.isLoading(),
-
-			//Fired when the user clicks on the confirm button
-			preConfirm() {
-
-				jQuery.get(noptin_params.ajaxurl, data)
-					.done(function () {
-
-						jQuery(row).remove()
-						Swal.fire(
-							'Success',
-							'Your campaign was deleted',
-							'success'
-						)
-
-						if ( redirect ) {
-							window.location.href = redirect;
-						}
-
-					})
-					.fail(function () {
-
-						Swal.fire(
-							'Error',
-							'Unable to delete your campaign. Try again.',
 							'error'
 						)
 

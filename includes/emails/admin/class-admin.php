@@ -27,10 +27,10 @@ class Noptin_Emails_Admin {
 	public $automations_admin;
 
 	/**
-	 * Inits the admin module.
+	 * Class constructor.
 	 *
 	 */
-	public function init() {
+	public function __construct() {
 
 		// Load files.
 		include plugin_dir_path( __FILE__ ) . 'class-newsletter-emails-admin.php';
@@ -46,9 +46,9 @@ class Noptin_Emails_Admin {
 	 *
 	 */
 	public function add_hooks() {
-		$this->init();
 
-		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
+		add_action( 'noptin_duplicate_email_campaign', array( $this, 'duplicate_email_campaign' ) );
+		add_action( 'noptin_delete_email_campaign', array( $this, 'delete_email_campaign' ) );
 		add_action( 'noptin_after_register_menus', array( $this, 'register_menu' ), 5 );
 		add_filter( 'pre_get_users', array( $this, 'filter_users_by_campaign' ) );
 		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
@@ -60,76 +60,86 @@ class Noptin_Emails_Admin {
 	}
 
 	/**
-	 * Handles email related admin actions.
+	 * Duplicates an email campaign.
 	 *
+	 * @since 1.7.0
 	 */
-	public function maybe_do_action() {
+	public function duplicate_email_campaign() {
 
-		// Check capability.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
+		// Only admins should be able to duplicate campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
 			return;
 		}
 
-		// Prepare vars.
-		$admin = noptin()->admin;
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_duplicate_campaign' ) ) {
+			return;
+		}
 
-		// Campaign actions.
-		if ( isset( $_GET['page'] ) && 'noptin-email-campaigns' === $_GET['page'] ) {
+		// Retrieve campaign object.
+		if ( empty( $_GET['section'] ) || 'newsletters' === $_GET['section'] ) {
+			$campaign = new Noptin_Newsletter_Email( intval( $_GET['campaign'] ) );
+		} else {
+			$campaign = new Noptin_Automated_Email( intval( $_GET['campaign'] ) );
+		}
 
-			// Duplicate campaign.
-			if ( ! empty( $_GET['duplicate_campaign'] ) && wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_duplicate_campaign' ) ) {
+		// Check if the campaign exists.
+		if ( $campaign->exists() ) {
+			$campaign->id     = null;
+			$campaign->status = 'draft';
+			$result           = $campaign->save();
 
-				$campaign = get_post( $_GET['duplicate_campaign'] );
-
-				if ( ! empty( $campaign ) ) {
-
-					$post = array(
-						'post_status'   => 'draft',
-						'post_type'     => 'noptin-campaign',
-						'post_date'     => current_time( 'mysql' ),
-						'post_date_gmt' => current_time( 'mysql', true ),
-						'edit_date'     => true,
-						'post_title'    => trim( $campaign->post_title ),
-						'post_content'  => $campaign->post_content,
-						'meta_input'    => array(
-							'campaign_type'           => 'newsletter',
-							'preview_text'            => get_post_meta( $campaign->ID, 'preview_text', 'true' ),
-							'email_sender'            => get_post_meta( $campaign->ID, 'email_sender', 'true' ),
-						),
-					);
-
-					foreach ( noptin_get_newsletter_meta() as $meta_key ) {
-						$post['meta_input'][ $meta_key ] = get_post_meta( $campaign->ID, $meta_key, 'true' );
-					}
-					$post['meta_input'] = array_filter( $post['meta_input'] );
-
-					$new_campaign = wp_insert_post( $post, true );
-
-					if ( is_wp_error( $new_campaign ) ) {
-						$admin->show_error( $new_campaign->get_error_message() );
-					} else {
-						wp_redirect( get_noptin_newsletter_campaign_url( $new_campaign ) );
-						exit;
-					}
-
-				}
-				
+			if ( $campaign->exists() ) {
+				noptin()->admin->show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
+				wp_safe_redirect( $campaign->get_edit_url() );
+				exit;
+			} else if ( is_wp_error( $result ) ) {
+				noptin()->admin->show_error( $result->get_error_message() );
+			} else {
+				noptin()->admin->show_error( __( 'Unable to duplicate the campaign.', 'newsletter-optin-box' ) );
 			}
 
-			// Delete multiple campaigns.
-			if ( ! empty( $_GET['action'] ) && 'delete' === $_GET['action'] && wp_verify_nonce( $_GET['_wpnonce'], 'bulk-ids' ) ) {
-				$ids = array();
+		} else {
+			noptin()->admin->show_error( __( 'Campaign not found.', 'newsletter-optin-box' ) );
+		}
 
-				if ( isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ) {
-					$ids = array_map( 'intval', $_REQUEST['id'] );
-				}
+		// Redirect.
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
+		exit;
 
-				foreach ( $ids as $id ) {
-					wp_delete_post( $id, true );
-				}
+	}
 
-				$admin->show_success( __( 'The selected campaigns have been deleted.', 'newsletter-optin-box' ) );
-			}
+	/**
+	 * Deletes an email campaign.
+	 *
+	 * @since 1.7.0
+	 */
+	public function delete_email_campaign() {
+
+		// Only admins should be able to delete campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_delete_campaign' ) ) {
+			return;
+		}
+
+		$campaign = get_post( intval( $_GET['campaign'] ) );
+
+		// Ensure this is a noptin campaign.
+		if ( $campaign && 'noptin-campaign' === $campaign->post_type ) {
+
+			// Delete the campaign.
+			wp_delete_post( $campaign->ID, true );
+
+			// Show success info.
+			noptin()->admin->show_info( __( 'The campaign has been deleted.', 'newsletter-optin-box' ) );
+
+			// Redirect to success page.
+			wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
+			exit;
 		}
 
 	}
@@ -143,13 +153,46 @@ class Noptin_Emails_Admin {
 
 		add_submenu_page(
 			'noptin',
-			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
+			$this->get_current_admin_page_title(),
 			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin-email-campaigns',
 			array( $this, 'render_admin_page' )
 		);
 
+	}
+
+	/**
+	 * Renders the admin page
+	 *
+	 * @return void
+	 */
+	public function render_admin_page() {
+
+		// Only admins can access this page.
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
+
+		// Prepare vars.
+		$tabs    = $this->get_admin_page_tabs();
+		$tab     = $this->get_current_tab();
+		$section = $this->get_current_section();
+
+		// Runs before displaying the email campaigns page.
+		do_action( 'noptin_before_email_campaigns_page' );
+
+		// Runs when displaying a specific tab's content.
+		do_action( "noptin_before_email_campaigns_tab_$tab", $tabs );
+
+		// Runs when displaying a specific tab's sub-section content.
+		do_action( "noptin_email_campaigns_tab_{$tab}_{$section}", $tabs );
+
+		// Runs after displaying a specific tab's content.
+		do_action( "noptin_email_campaigns_tab_$tab", $tabs );
+
+		// Runs after displaying the email campaigns page.
+		do_action( 'noptin_after_email_campaigns_page' );
 	}
 
 	/**
@@ -170,41 +213,85 @@ class Noptin_Emails_Admin {
 	}
 
 	/**
-	 * Renders the admin page
+	 * Returns the current admin page tab.
 	 *
-	 * @return void
+	 * @return array
 	 */
-	public function render_admin_page() {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		// Runs before displaying the email campaigns page.
-		do_action( 'noptin_before_email_campaigns_page' );
+	public function get_current_tab() {
 
 		// Prepare vars.
-		$tabs        = $this->get_admin_page_tabs();
-		$tab         = ! empty( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : 'newsletters';
-		$sub_section = ! empty( $_GET['sub_section'] ) ? sanitize_key( $_GET['sub_section'] ) : 'main';
+		$tabs = $this->get_admin_page_tabs();
+		$tab  = ! empty( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : 'newsletters';
 
 		// Ensure the tab is supported.
 		if ( ! isset( $tabs[ $tab ] ) ) {
-			$tab = 'newsletters';
+			return 'newsletters';
 		}
 
-		// Runs when displaying a specific tab's content.
-		do_action( "noptin_before_email_campaigns_tab_$tab", $tabs );
+		return $tab;
+	}
 
-		// Runs when displaying a specific tab's sub-section content.
-		do_action( "noptin_email_campaigns_tab_{$tab}_{$sub_section}", $tabs );
+	/**
+	 * Returns the current admin page section.
+	 *
+	 * @return array
+	 */
+	public function get_current_section() {
+		return ! empty( $_GET['sub_section'] ) ? sanitize_key( $_GET['sub_section'] ) : 'main';
+	}
 
-		// Runs after displaying a specific tab's content.
-		do_action( "noptin_email_campaigns_tab_$tab", $tabs );
+	/**
+	 * Returns the current admin page title.
+	 *
+	 * @return array
+	 */
+	public function get_current_admin_page_title() {
 
-		// Runs after displaying the email campaigns page.
-		do_action( 'noptin_after_email_campaigns_page' );
+		$page_title = esc_html__( 'Email Campaigns', 'newsletter-optin-box' );
+		$section    = $this->get_current_section();
+
+		switch ( $this->get_current_tab() ) {
+
+			case 'newsletters':
+
+				switch ( $section ) {
+
+					case 'main':
+						$page_title = esc_html__( 'Newsletters', 'newsletter-optin-box' );
+						break;
+
+					case 'edit_campaign':
+						$page_title = esc_html__( 'Edit Email', 'newsletter-optin-box' );
+						break;
+
+					case 'new_campaign':
+						$page_title = esc_html__( 'Send Email', 'newsletter-optin-box' );
+						break;
+
+				}
+				break;
+
+			case 'automations':
+
+				switch ( $section ) {
+
+					case 'main':
+						$page_title = esc_html__( 'Automated Emails', 'newsletter-optin-box' );
+						break;
+
+					case 'edit_campaign':
+						$page_title = esc_html__( 'Edit Email', 'newsletter-optin-box' );
+						break;
+
+					case 'new_campaign':
+						$page_title = esc_html__( 'Add Automated Email', 'newsletter-optin-box' );
+						break;
+
+				}
+				break;
+		}
+
+		return apply_filters( 'noptin_emails_admin_page_title', $page_title );
 	}
 
 	/**

@@ -405,11 +405,11 @@ class Noptin_Automated_Email {
 		$param = array(
 			'page'                => 'noptin-email-campaigns',
 			'section'             => 'automations',
-			'sub_section'         => 'edit_campaign',
-			'noptin_admin_action' => 'duplicate_automation',
+			'sub_section'         => false,
+			'noptin_admin_action' => 'noptin_duplicate_email_campaign',
 			'campaign'            => $this->id,
 		);
-		wp_nonce_url( add_query_arg( $param, admin_url( '/admin.php' ) ), 'noptin_duplicate_campaign', 'noptin_nonce' );
+		return wp_nonce_url( add_query_arg( $param, admin_url( '/admin.php' ) ), 'noptin_duplicate_campaign', 'noptin_nonce' );
 
 	}
 
@@ -424,11 +424,11 @@ class Noptin_Automated_Email {
 		$param = array(
 			'page'                => 'noptin-email-campaigns',
 			'section'             => 'automations',
-			'sub_section'         => 'edit_campaign',
-			'noptin_admin_action' => 'delete_automation',
+			'sub_section'         => false,
+			'noptin_admin_action' => 'noptin_delete_email_campaign',
 			'campaign'            => $this->id,
 		);
-		wp_nonce_url( add_query_arg( $param, admin_url( '/admin.php' ) ), 'noptin_delete_campaign', 'noptin_nonce' );
+		return wp_nonce_url( add_query_arg( $param, admin_url( '/admin.php' ) ), 'noptin_delete_campaign', 'noptin_nonce' );
 
 	}
 

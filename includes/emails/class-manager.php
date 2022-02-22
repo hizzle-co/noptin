@@ -64,12 +64,12 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-sender.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-generator.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-html-to-text.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-emails-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-automated-email.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-newsletter-email.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-newsletter-email-type.php';
+		require_once plugin_dir_path( __FILE__ ) . 'admin/class-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer.php';
@@ -95,7 +95,11 @@ class Noptin_Email_Manager {
 	 */
 	public function add_hooks() {
 
+		// Delete related meta whenever a campaign is deleted.
 		add_action( 'delete_post', array( $this, 'delete_stats' ) );
+
+		// Periodically delete sent campaigns.
+		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_delete_campaigns' ) );
 
 		$this->sender->add_hooks();
 		$this->admin->add_hooks();
@@ -125,6 +129,42 @@ class Noptin_Email_Manager {
 				'meta_key' => "_campaign_$post_id",
 			)
 		);
+
+	}
+
+	/**
+	 * Deletes sent campaigns.
+	 *
+	 */
+	public function maybe_delete_campaigns() {
+
+		$save_days = (int) get_noptin_option( 'delete_campaigns', 0 );
+		if ( empty( $save_days ) ) {
+			return;
+		}
+
+		$args = array(
+			'posts_per_page' => -1,
+			'post_type'      => 'noptin-campaign',
+			'fields'         => 'ids',
+			'date_query'     => array(
+				'before' => "-$save_days days", 
+			),
+			'meta_query'  => array(
+				array(
+					'key'     => 'completed',
+					'value'   => '1',
+				),
+				array(
+					'key'   => 'campaign_type',
+					'value' => 'newsletter',
+				)
+			),
+		);
+
+		foreach( get_posts( $args ) as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
 
 	}
 

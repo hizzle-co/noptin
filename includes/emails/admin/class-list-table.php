@@ -128,7 +128,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 
 			'delete' => sprintf(
 				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
-				$item->get_duplication_url(), // This is alread escaped via wp_nonce_url.
+				$item->get_delete_url(), // This is alread escaped via wp_nonce_url.
 				esc_attr__( 'Are you sure you want to delete this campaign?', 'newsletter-optin-box' ),
 				esc_html__( 'Delete', 'newsletter-optin-box' )
 			),
@@ -394,6 +394,35 @@ class Noptin_Email_List_Table extends WP_List_Table {
 				'total_pages' => $this->query->max_num_pages,
 			)
 		);
+
+	}
+
+	/**
+	 *  Processes a bulk action.
+	 */
+	public function process_bulk_action() {
+
+		$action = 'bulk-' . $this->_args['plural'];
+
+		if ( empty( $_POST['id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
+
+		$action = $this->current_action();
+
+		if ( 'delete' === $action ) {
+
+			foreach ( $_POST['id'] as $id ) {
+				wp_delete_post( intval( $id ), true );
+			}
+
+			noptin()->admin->show_info( __( 'The selected campaigns have been deleted.', 'newsletter-optin-box' ) );
+
+		}
 
 	}
 
