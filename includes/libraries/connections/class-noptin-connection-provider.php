@@ -529,7 +529,23 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	 *
 	 */
 	public function register_sender( $senders ) {
-		$senders[ $this->slug ] = $this->name;
+
+		$senders[ $this->slug ] = array(
+			'label'        => $this->name,
+			'description'  => sprintf(
+				__( 'Send an email to your %s.', 'newsletter-optin-box' ),
+				sprintf(
+					'%s %s',
+					$this->name,
+					$this->list_providers->get_name()
+				)
+			),
+			'image'        => '<svg xmlns="http://www.w3.org/2000/svg" fill="#008000" viewBox="0 0 122.88 122.88"><path d="M61.44,0A61.46,61.46,0,1,1,18,18,61.21,61.21,0,0,1,61.44,0ZM32.22,79.39,52.1,59.46,32.22,43.25V79.39ZM54.29,61.24,33.79,81.79H88.91L69.33,61.24l-6.46,5.51h0a1.42,1.42,0,0,1-1.8,0l-6.78-5.53Zm17.18-1.82L90.66,79.55V43.07L71.47,59.42ZM34,41.09l27.9,22.76L88.65,41.09Zm65.4-17.64a53.72,53.72,0,1,0,15.74,38,53.56,53.56,0,0,0-15.74-38Z"/></svg>',
+			'is_active'    => true,
+			'is_installed' => true,
+		);
+
+		// TODO Manually overide this method in each connection and set custom images and descriptions.
 		return $senders;
 	}
 

@@ -1495,3 +1495,40 @@ function noptin_get_post_excerpt( $post, $limit = 0 ) {
 
 	return noptin_limit_length( $post_excerpt, $limit );
 }
+
+/**
+ * Escapes content with support for svg
+ *
+ * @param  string $content
+ * @since  1.7.0
+ */
+function noptin_kses_post_e( $content ) {
+
+	echo wp_kses(
+		$content,
+		array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'   => array(
+					'class'           => true,
+					'aria-hidden'     => true,
+					'aria-labelledby' => true,
+					'role'            => true,
+					'xmlns'           => true,
+					'xmlns:xlink'     => true,
+					'xml:space'       => true,
+					'y'               => true,
+					'x'               => true,
+					'width'           => true,
+					'height'          => true,
+					'viewbox'         => true,
+					'version'         => true,
+					'fill'            => true
+				),
+				'g'     => array( 'fill' => true ),
+				'title' => array( 'title' => true ),
+				'path'  => array( 'd' => true, 'fill' => true,  ),
+			)
+		)
+	);
+}

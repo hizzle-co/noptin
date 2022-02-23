@@ -26,38 +26,10 @@ class Noptin_Newsletter_Emails_Admin {
 	 */
 	public function add_hooks() {
 
-		add_action( 'noptin_email_campaigns_tab_newsletters_main', array( $this, 'render_main_admin_page' ) );
 		add_action( 'noptin_email_campaigns_tab_newsletters_edit_campaign', array( $this, 'render_edit_form' ) );
-		add_action( 'noptin_email_campaigns_tab_newsletters_new_campaign', array( $this, 'render_new_campaign_form' ) );
 		add_action( 'add_meta_boxes_noptin_newsletters', array( $this, 'register_metaboxes' ) );
 		add_action( 'noptin_edit_newsletter', array( $this, 'maybe_save_campaign' ) );
 
-		// Backwards compat.
-		add_action( 'noptin_email_campaigns_tab_newsletters_view_campaigns', array( $this, 'render_main_admin_page' ) );
-	}
-
-	/**
-	 * Render the main newsletters admin page.
-	 *
-	 * @param array An array of supported tabs.
-	 */
-	public function render_main_admin_page( $tabs ) {
-
-		// Inlcude the list table.
-		include plugin_dir_path( __FILE__ ) . 'class-list-table.php';
-
-		// Prepare items.
-		$table = new Noptin_Email_List_Table();
-		$table->prepare_items();
-
-		// Do we have any campaigns?
-		if ( ! $table->has_items() ) {
-			include plugin_dir_path( __FILE__ ) . 'views/newsletters/view-no-campaigns.php';
-			return;
-		}
-
-		// Include the view.
-		include plugin_dir_path( __FILE__ ) . 'views/newsletters/view-newsletters.php';
 	}
 
 	/**
@@ -67,32 +39,27 @@ class Noptin_Newsletter_Emails_Admin {
 	 */
 	public function render_edit_form( $tabs ) {
 
-		$id       = empty( $_GET['campaign'] ) ? 0 : $_GET['campaign'];
-		$campaign = new Noptin_Newsletter_Email( intval( $_GET['campaign'] ) );
+		// Prepare campaign id.
+		$id = empty( $_GET['campaign'] ) ? 0 : $_GET['campaign'];
+
+		// Check if we're sending a new email.
+		if ( is_numeric( $id ) ) {
+			$campaign = new Noptin_Newsletter_Email( intval( $id ) );
+		} else {
+			$campaign = new Noptin_Newsletter_Email( 0 );
+			$id       = 0;
+
+			$campaign->options['email_sender'] = sanitize_key( $id );
+		}
 
 		if ( $campaign->exists() || empty( $id ) ) {
 
 			do_action( 'add_meta_boxes_noptin_newsletters', $campaign );
-			include plugin_dir_path( __FILE__ ) . 'views/newsletters/edit-newsletter.php';
+			include plugin_dir_path( __FILE__ ) . 'views/newsletters/view-edit-newsletter.php';
 
 		} else {
 			include plugin_dir_path( __FILE__ ) . 'views/404.php';
 		}
-
-	}
-
-	/**
-	 * Displays the new campaign form.
-	 *
-	 * @param array An array of supported tabs.
-	 */
-	public function render_new_campaign_form( $tabs ) {
-
-		$id       = 0;
-		$campaign = false;
-
-		do_action( 'add_meta_boxes_noptin_newsletters', $campaign );
-		include plugin_dir_path( __FILE__ ) . 'views/add-newsletter.php';
 
 	}
 
@@ -102,13 +69,11 @@ class Noptin_Newsletter_Emails_Admin {
 	 */
 	public function register_metaboxes() {
 
-		$screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-newsletter';
-
 		add_meta_box(
 			'noptin_newsletter_send',
-			__('Send','newsletter-optin-box'),
+			__( 'Send', 'newsletter-optin-box' ),
 			array( $this, 'render_metabox' ),
-			$screen_id,
+			get_current_screen()->id,
 			'side',
 			'high',
 			'send'
@@ -121,7 +86,7 @@ class Noptin_Newsletter_Emails_Admin {
 	 *
 	 */
 	public function render_metabox( $campaign, $metabox ) {
-		include plugin_dir_path( __FILE__ ) . "views/newsletters/{$metabox['args']}.php";
+		include plugin_dir_path( __FILE__ ) . "views/newsletters/metabox-{$metabox['args']}.php";
 	}
 
 	/**

@@ -26,38 +26,10 @@ class Noptin_Automated_Emails_Admin {
 	 */
 	public function add_hooks() {
 
-		add_action( 'noptin_email_campaigns_tab_automations_main', array( $this, 'render_main_admin_page' ) );
 		add_action( 'noptin_email_campaigns_tab_automations_edit_campaign', array( $this, 'render_edit_form' ) );
-		add_action( 'noptin_email_campaigns_tab_automations_new_campaign', array( $this, 'render_new_campaign_form' ) );
 		add_action( 'add_meta_boxes_noptin_automations', array( $this, 'register_metaboxes' ) );
 		add_action( 'noptin_save_edited_automation', array( $this, 'maybe_save_automation' ) );
 
-		// Backwards compat.
-		add_action( 'noptin_email_campaigns_tab_automations_view_campaigns', array( $this, 'render_main_admin_page' ) );
-	}
-
-	/**
-	 * Render the main automations admin page.
-	 *
-	 * @param array An array of supported tabs.
-	 */
-	public function render_main_admin_page( $tabs ) {
-
-		// Inlcude the list table.
-		include plugin_dir_path( __FILE__ ) . 'class-list-table.php';
-
-		// Prepare items.
-		$table = new Noptin_Email_List_Table();
-		$table->prepare_items();
-
-		// Do we have any campaigns?
-		if ( ! $table->has_items() ) {
-			include plugin_dir_path( __FILE__ ) . 'views/automations/view-no-campaigns.php';
-			return;
-		}
-
-		// Include the view.
-		include plugin_dir_path( __FILE__ ) . 'views/automations/view-automations.php';
 	}
 
 	/**
@@ -74,16 +46,9 @@ class Noptin_Automated_Emails_Admin {
 		}
 
 		// Creating a new campaign.
-		if ( ! is_numeric( $_GET['campaign'] ) ) {
-			$title = __( 'Add New Automation', 'newsletter-optin-box' );
-		} else {
-			$title = __( 'Edit Automation', 'newsletter-optin-box' );
-
-			if ( ! is_noptin_campaign( (int) $_GET['campaign'], 'automation' ) ) {
-				include plugin_dir_path( __FILE__ ) . 'views/404.php';
-				return;
-			}
-
+		if ( is_numeric( $_GET['campaign'] ) && ! is_noptin_campaign( (int) $_GET['campaign'], 'automation' ) ) {
+			include plugin_dir_path( __FILE__ ) . 'views/404.php';
+			return;
 		}
 
 		// Prepare automated email object.
@@ -92,17 +57,8 @@ class Noptin_Automated_Emails_Admin {
 		$automation_type = $campaign->type;
 		do_action( 'add_meta_boxes_noptin_automations', $campaign, $automation_type, array() );
 		do_action( "add_meta_boxes_noptin_automations_$automation_type", $campaign, array() );
-		include plugin_dir_path( __FILE__ ) . 'views/automations/edit-automation.php';
+		include plugin_dir_path( __FILE__ ) . 'views/automations/view-edit-automation.php';
 
-	}
-
-	/**
-	 * Displays the new campaign form.
-	 *
-	 * @param array An array of supported tabs.
-	 */
-	public function render_new_campaign_form( $tabs ) {
-		include plugin_dir_path( __FILE__ ) . 'views/automations/new-automation.php';
 	}
 
 	/**
@@ -119,7 +75,7 @@ class Noptin_Automated_Emails_Admin {
 				'noptin_automation_timing',
 				__( 'Timing','newsletter-optin-box' ),
 				array( $this, 'render_metabox' ),
-				'noptin_page_noptin-automation',
+				get_current_screen()->id,
 				'side',
 				'high',
 				'timing'
@@ -132,7 +88,7 @@ class Noptin_Automated_Emails_Admin {
 			'noptin_automation_save',
 			__( 'Save','newsletter-optin-box' ),
 			array( $this, 'render_metabox' ),
-			'noptin_page_noptin-automation',
+			get_current_screen()->id,
 			'side',
 			'default',
 			'save'
@@ -145,13 +101,7 @@ class Noptin_Automated_Emails_Admin {
 	 *
 	 */
 	public function render_metabox( $campaign, $metabox ) {
-
-		if ( is_array( $metabox['args'] ) ) {
-			call_user_func( $metabox['args'], $campaign );
-			return;
-		}
-
-		include plugin_dir_path( __FILE__ ) . "views/automations/{$metabox['args']}.php";
+		include plugin_dir_path( __FILE__ ) . "views/automations/metabox-{$metabox['args']}.php";
 	}
 
 	/**

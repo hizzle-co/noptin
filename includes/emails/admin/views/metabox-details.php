@@ -20,10 +20,6 @@ $template = $campaign->get_template();
 		color: #767676;
 	}
 </style>
-<p>
-	<label for="noptin-automated-email-subject"><?php _e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
-	<input type="text" id="noptin-automated-email-subject" name="noptin_email[subject]" value="<?php echo esc_attr( $campaign->get_subject() ); ?>" class="widefat" required>
-</p>
 
 <p class="noptin-is-conditional noptin-show-if-email-is-normal">
 	<label for="noptin-automated-email-template"><?php _e( 'Email Template', 'newsletter-optin-box' ); ?></label>

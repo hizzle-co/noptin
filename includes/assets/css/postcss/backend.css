@@ -1906,11 +1906,11 @@ a.no-campaign-create-new-campaign {
 
 }
 
-.noptin-automation-types {
+.noptin-email-types {
 	display: flex;
 	flex-wrap: wrap;
 
-	.noptin-automation-type {
+	.noptin-email-type {
 		display: flex;
     	margin-right: 20px;
 		align-items: center;
@@ -1919,7 +1919,7 @@ a.no-campaign-create-new-campaign {
 		max-width: 400px;
 	}
 
-	.noptin-automation-type-image {
+	.noptin-email-type-image {
 		flex-shrink: 0;
 		margin-right: 32px;
 		width: 64px;
@@ -1929,7 +1929,7 @@ a.no-campaign-create-new-campaign {
 		overflow: hidden;
 	}
 
-	.noptin-automation-type-action {
+	.noptin-email-type-action {
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;

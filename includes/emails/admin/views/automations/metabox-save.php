@@ -15,6 +15,13 @@ defined( 'ABSPATH' ) || exit;
 
 		<p>
 			<label>
+				<strong class="noptin-label-span"><?php esc_html_e( 'Campaign Name', 'newsletter-optin-box' ); ?></strong>
+				<input type="text" name="noptin_email[title]" class="widefat" value="<?php echo esc_attr( $campaign->get( 'name' ) ); ?>" placeholder="<?php esc_attr_e( 'Enter automation name', 'newsletter-optin-box' ); ?>">
+			</label>
+		</p>
+
+		<p>
+			<label>
 				<strong class="noptin-label-span"><?php esc_html_e( 'Status', 'newsletter-optin-box' ); ?></strong>
 				<select name="noptin_email[status]" style="width: 100%;">
 					<option <?php selected( $campaign->is_published() ); ?> value='publish'><?php _e( 'Active', 'newsletter-optin-box' ); ?></option>
@@ -42,7 +49,7 @@ defined( 'ABSPATH' ) || exit;
 	<div id="major-publishing-actions">
 		<?php if ( $campaign->exists() && current_user_can( 'delete_post', $campaign->id ) ) : ?>
 			<div id="delete-action">
-				<a class="submitdelete deletion" href="<?php echo esc_url( $item->get_delete_url() ); ?>" onclick="return confirm('<?php esc_attr__( 'Are you sure you want to delete this campaign?', 'newsletter-optin-box' ); ?>');">
+				<a class="submitdelete deletion" href="<?php echo esc_url( $campaign->get_delete_url() ); ?>" onclick="return confirm('<?php esc_attr__( 'Are you sure you want to delete this campaign?', 'newsletter-optin-box' ); ?>');">
 					<?php echo _e( 'Delete Permanently', 'newsletter-optin-box' ); ?>
 				</a>
 			</div>

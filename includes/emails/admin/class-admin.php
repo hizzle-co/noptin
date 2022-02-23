@@ -179,20 +179,7 @@ class Noptin_Emails_Admin {
 		$tab     = $this->get_current_tab();
 		$section = $this->get_current_section();
 
-		// Runs before displaying the email campaigns page.
-		do_action( 'noptin_before_email_campaigns_page' );
-
-		// Runs when displaying a specific tab's content.
-		do_action( "noptin_before_email_campaigns_tab_$tab", $tabs );
-
-		// Runs when displaying a specific tab's sub-section content.
-		do_action( "noptin_email_campaigns_tab_{$tab}_{$section}", $tabs );
-
-		// Runs after displaying a specific tab's content.
-		do_action( "noptin_email_campaigns_tab_$tab", $tabs );
-
-		// Runs after displaying the email campaigns page.
-		do_action( 'noptin_after_email_campaigns_page' );
+		require_once plugin_dir_path( __FILE__ ) . 'views/main-page.php';
 	}
 
 	/**
@@ -261,11 +248,11 @@ class Noptin_Emails_Admin {
 						break;
 
 					case 'edit_campaign':
-						$page_title = esc_html__( 'Edit Email', 'newsletter-optin-box' );
+						$page_title = esc_html__( 'Edit Campaign', 'newsletter-optin-box' );
 						break;
 
 					case 'new_campaign':
-						$page_title = esc_html__( 'Send Email', 'newsletter-optin-box' );
+						$page_title = esc_html__( 'Send Campaign', 'newsletter-optin-box' );
 						break;
 
 				}
@@ -280,11 +267,11 @@ class Noptin_Emails_Admin {
 						break;
 
 					case 'edit_campaign':
-						$page_title = esc_html__( 'Edit Email', 'newsletter-optin-box' );
+						$page_title = esc_html__( 'Edit Campaign', 'newsletter-optin-box' );
 						break;
 
 					case 'new_campaign':
-						$page_title = esc_html__( 'Add Automated Email', 'newsletter-optin-box' );
+						$page_title = esc_html__( 'Add Campaign', 'newsletter-optin-box' );
 						break;
 
 				}
