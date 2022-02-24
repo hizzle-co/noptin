@@ -373,9 +373,9 @@ class Noptin_Newsletter_Email {
 		);
 
 		// Are we scheduling the campaign?
-		if ( 'publish' === $this->status && ! empty( $this->options['schedule-date'] ) ) {
+		if ( 'publish' === $this->status && ! empty( $_POST['schedule-date'] ) ) {
 
-			$datetime = date_create( $this->options['schedule-date'], wp_timezone() );
+			$datetime = date_create( sanitize_text_field( $_POST['schedule-date'] ), wp_timezone() );
 
 			if ( false !== $datetime ) {
 

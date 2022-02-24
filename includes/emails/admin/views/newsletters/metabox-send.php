@@ -19,6 +19,14 @@
 
 ?>
 <div class="submitbox" id="submitpost">
+
+    <div id="minor-publishing-actions">
+		<div id="preview-action">
+			<a class="preview button noptin-send-test-email"><span class="dashicons-before dashicons-email-alt"></span><?php _e( 'Send a test email', 'newsletter-optin-box' ); ?></a>
+		</div>
+		<div class="clear"></div>
+	</div>
+
     <div id="misc-pub-section curtime misc-pub-curtime">
 
         <div class="noptin-newsletter-schedule-control" data-time-format="<?php echo $time_format; ?>" data-date-format="<?php echo $date_format; ?>" data-schedules="noptin_save_campaign" data-status="<?php echo $status; ?>">

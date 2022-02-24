@@ -75,7 +75,7 @@ class Noptin_Newsletter_Emails_Admin {
 			array( $this, 'render_metabox' ),
 			get_current_screen()->id,
 			'side',
-			'high',
+			'low',
 			'send'
 		);
 
@@ -109,96 +109,46 @@ class Noptin_Newsletter_Emails_Admin {
 			return;
 		}
 
-		// Prepare data.
-		$data  = wp_kses_post_deep( wp_unslash( $_POST ) );
+		// Save newsletter.
+		$newsletter = new Noptin_Newsletter_Email( wp_unslash( $_POST['noptin_email'] ) );
 
-		// For new campaigns, default the post status to draft.
-		$id     = false;
-		$status = 'draft';
-
-		// For existing campaigns, default to the saved status.
-		if ( ! empty( $data['campaign_id'] ) ) {
-			$id     = (int) $data['campaign_id'];
-			$status = ( 'draft' === get_post_status( $id ) ) ? 'draft' : 'publish';
+		if ( ! empty( $_POST['publish'] ) ) {
+			$newsletter->status = 'publish';
+		} else {
+			$newsletter->status = 'draft';
 		}
 
-		if ( ! empty( $data['draft'] ) ) {
-			$status = 'draft';
-		}
+		$result = $newsletter->save();
 
-		if ( ! empty( $data['publish'] ) ) {
-			$status = 'publish';
-		}
+		if ( is_wp_error( $result ) ) {
+			noptin()->admin->show_error( $result );
+		} else if ( false === $result ) {
+			noptin()->admin->show_error( __( 'Could not save your changes.', 'newsletter-optin-box' ) );
+		} else {
 
-		// Prepare post args.
-		$post = array(
-			'post_status'   => $status,
-			'post_type'     => 'noptin-campaign',
-			'post_date'     => current_time( 'mysql' ),
-			'post_date_gmt' => current_time( 'mysql', true ),
-			'edit_date'     => true,
-			'post_title'    => trim( $data['email_subject'] ),
-			'post_content'  => $data['email_body'],
-			'meta_input'    => array(
-				'email_sender'            => empty( $data['email_sender'] ) ? 'noptin' : sanitize_key( $data['email_sender'] ),
-				'campaign_type'           => 'newsletter',
-				'preview_text'            => empty( $data['preview_text'] ) ? '' : esc_html( $data['preview_text'] ),
-			),
-		);
-
-		foreach ( noptin_get_newsletter_meta() as $meta_key ) {
-			$post['meta_input'][ $meta_key ] = empty( $data[ $meta_key ] ) ? '' : noptin_clean( $data[ $meta_key ] );
-		}
-
-		// Are we scheduling the campaign?
-		if ( 'publish' === $status && ! empty( $data['schedule-date'] ) ) {
-
-			$datetime = date_create( $data['schedule-date'], wp_timezone() );
-
-			if ( false !== $datetime ) {
-
-				$post['post_status']   = 'future';
-				$post['post_date']     = $datetime->format( 'Y-m-d H:i:s' );
-				$post['post_date_gmt'] = get_gmt_from_date( $datetime->format( 'Y-m-d H:i:s' ) );
-
+			if ( 'draft' === $newsletter->status ) {
+				noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );
+				wp_safe_redirect( get_noptin_newsletter_campaign_url( $newsletter->id ) );
+				exit;
 			}
 
-		}
+			if ( 'future' === $newsletter->status ) {
 
-		$post = apply_filters( 'noptin_save_newsletter_campaign_details', $post, $data );
+				$post = get_post( $newsletter->id );
+				noptin()->admin->show_success(
+					sprintf(
+						__( 'Your email has been scheduled to send on: %s', 'newsletter-optin-box' ),
+						"<strong>" . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $post->post_date ) ) . "</strong>"
+					)
+				);
 
-		if ( empty( $id ) ) {
-			$post = wp_insert_post( $post, true );
-		} else {
-			$post['ID'] = $id;
-			$post       = wp_update_post( $post, true );
-		}
+			} else {
+				noptin()->admin->show_success( __( 'Your email has been added to the sending qeue and will be sent soon.', 'newsletter-optin-box' ) );
+			}
 
-		if ( is_wp_error( $post ) ) {
-			return noptin()->admin->show_error( $post->get_error_message() );
-		}
-
-		$post = get_post( $post );
-
-		if ( 'draft' === $post->post_status ) {
-			noptin()->admin->show_success( __( 'Your email has been saved.', 'newsletter-optin-box' ) );
-			wp_safe_redirect( get_noptin_newsletter_campaign_url( $post->ID ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=noptin-email-campaigns' ) );
 			exit;
 		}
-
-		if ( 'future' === $post->post_status ) {
-			noptin()->admin->show_success(
-				sprintf(
-					__( 'Your email has been scheduled to send on: %s', 'newsletter-optin-box' ),
-					"<strong>{$post->post_date}</strong>"
-				)
-			);
-		} else {
-			noptin()->admin->show_success( __( 'Your email has been added to the sending qeue and will be sent soon.', 'newsletter-optin-box' ) );
-		}
-
-		wp_safe_redirect( admin_url( 'admin.php?page=noptin-email-campaigns' ) );
-		exit;
 
 	}
 

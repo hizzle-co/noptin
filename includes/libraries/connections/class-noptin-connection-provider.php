@@ -552,10 +552,11 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	/**
 	 * Displays the sender options.
 	 *
-	 * @param null|WP_Post $campaign
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
 	 */
 	public function show_sender_options( $campaign ) {
-		$options = empty( $campaign ) ? array() : get_post_meta( $campaign->ID, $this->slug, true );
+		$options = $campaign->get( $this->slug );
+		$options = is_array( $options ) ? $options : array();
 		$list    = empty( $options['list'] ) ? '0' : esc_attr( $options['list'] );
 		$tags    = empty( $options['tags'] ) ? '' : esc_attr( $options['tags'] );
 		$extra   = empty( $options['extra'] ) ? array() : esc_attr( $options['extra'] );
@@ -565,7 +566,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 				<label class="noptin-margin-y">
 					<strong><?php echo esc_html( ucwords( $this->list_providers->get_name() ) ); ?></strong>
-					<select name="<?php echo esc_attr( $this->slug ); ?>[list]" style="width: 100%;" class="list-select">
+					<select name="noptin_email[<?php echo esc_attr( $this->slug ); ?>][list]" style="width: 100%;" class="list-select">
 						<option value="0" <?php selected( empty( $list ) ) ?>><?php _e( 'Select an option', 'newsletter-optin-box' );?></option>
 						<?php foreach ( $this->list_providers->get_dropdown_lists() as $id => $name ) :?>
 							<option value="<?php echo esc_attr( $id ) ?>" <?php selected( $id, $list ) ?>><?php echo esc_html( $name );?></option>
@@ -576,7 +577,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				<?php if ( $this->supports( 'tags' ) ) : ?>
 					<label class="noptin-margin-y">
 						<strong><?php _e( 'Tags', 'newsletter-optin-box' ); ?></strong>
-						<input style="width: 100%;" type="text" value="<?php echo esc_attr( $tags ) ?>" name="<?php echo esc_attr( $this->slug ); ?>[tags]" />
+						<input style="width: 100%;" type="text" value="<?php echo esc_attr( $tags ) ?>" name="noptin_email[<?php echo esc_attr( $this->slug ); ?>][tags]" />
 					</label>
 				<?php endif; ?>
 
@@ -585,7 +586,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 					<?php foreach ( $_list->get_children() as $child_id => $child ) : ?>
 						<?php $value = isset( $extra[ $_list->get_id() ][ $child_id ] ) ? $extra[ $_list->get_id() ][ $child_id ] : '' ?>
 						<label class="noptin-margin-y"><strong><?php echo esc_html( $child['label'] ); ?></strong>
-							<select name="<?php echo esc_attr( $this->slug ); ?>[extra][<?php echo esc_attr( $_list->get_id() ); ?>][<?php echo esc_attr( $child_id ); ?>]" style="width: 100%;">
+							<select name="noptin_email[<?php echo esc_attr( $this->slug ); ?>][extra][<?php echo esc_attr( $_list->get_id() ); ?>][<?php echo esc_attr( $child_id ); ?>]" style="width: 100%;">
 								<option <?php selected( empty( $value ) ) ?> value='0'>
 									<?php _e( 'All', 'newsletter-optin-box' ); ?>
 								</option>
