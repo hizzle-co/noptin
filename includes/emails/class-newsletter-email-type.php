@@ -40,31 +40,17 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 	}
 
 	/**
-	 * Returns the default email sender.
-	 *
-	 */
-	public function default_email_sender() {
-
-        if ( ! empty( $_GET['email_sender'] ) ) {
-            return sanitize_text_field( $_GET['email_sender'] );
-        }
-
-		return 'noptin';
-	}
-
-	/**
 	 * Returns the default content.
 	 *
 	 */
 	public function default_content_normal() {
-		$body = include locate_noptin_template( 'default-email-body.php' );
 
 		/**
 		 * Filters the default newsletter body
 		 *
 		 * @param string $body The default newsletter body
 		 */
-		return apply_filters( 'noptin_default_newsletter_body', $body );
+		return apply_filters( 'noptin_default_newsletter_body', '' );
 	}
 
 	/**

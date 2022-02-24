@@ -334,7 +334,7 @@ class Noptin_Emails_Admin {
 		}
 
 		// Handle newsletter email.
-		$email = new Noptin_Newsletter_Email( $data );
+		$email = new Noptin_Newsletter_Email( $data['noptin_email'] );
 
 		// Ensure we have a subject.
 		$subject = $email->get_subject();

@@ -34,7 +34,16 @@ $email_type = $campaign->get_email_type();
 			</th>
 			<td>
 				<p><textarea name="noptin_email[content_plain_text]" id="noptin-email-content-plain_text" rows="15" class="widefat"><?php echo esc_textarea( $campaign->get_content( 'plain_text' ) ); ?></textarea></p>
-				<p class="description"><?php _e( 'Any HTML will be stripped from your email.', 'newsletter-optin-box' ); ?></p>
+				<p class="description">
+					<?php
+						printf(
+							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+							__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
+							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
+							'</a>'
+						);
+					?>
+				</p>
 			</td>
 		</tr>
 
@@ -44,7 +53,16 @@ $email_type = $campaign->get_email_type();
 			</th>
 			<td>
 				<p><textarea name="noptin_email[content_raw_html]" id="noptin-email-content-raw_html" rows="15" class="widefat"><?php echo esc_textarea( $campaign->get_content( 'raw_html' ) ); ?></textarea></p>
-				<p class="description"><?php _e( 'Paste your HTML email above.', 'newsletter-optin-box' ); ?></p>
+				<p class="description">
+					<?php
+						printf(
+							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+							__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
+							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
+							'</a>'
+						);
+					?>
+				</p>
 			</td>
 		</tr>
 
@@ -69,6 +87,16 @@ $email_type = $campaign->get_email_type();
 						)
 					);
 				?>
+				<p class="description">
+					<?php
+						printf(
+							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+							__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
+							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
+							'</a>'
+						);
+					?>
+				</p>
 			</td>
 		</tr>
 

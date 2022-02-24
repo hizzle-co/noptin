@@ -49,7 +49,7 @@ class Noptin_Newsletter_Emails_Admin {
 			$campaign = new Noptin_Newsletter_Email( 0 );
 			$id       = 0;
 
-			$campaign->options['email_sender'] = sanitize_key( $id );
+			$campaign->options['email_sender'] = sanitize_key( $_GET['campaign'] );
 		}
 
 		if ( $campaign->exists() || empty( $id ) ) {
@@ -71,7 +71,7 @@ class Noptin_Newsletter_Emails_Admin {
 
 		add_meta_box(
 			'noptin_newsletter_send',
-			__( 'Send', 'newsletter-optin-box' ),
+			__( 'Send', 'newsletter-optin-box' ) . '<a class="noptin-send-test-email" style="cursor: pointer;">' . __( 'Send a test email', 'newsletter-optin-box' ) . '</a>',
 			array( $this, 'render_metabox' ),
 			get_current_screen()->id,
 			'side',

@@ -86,7 +86,7 @@ class Noptin_Automated_Emails_Admin {
 		// Saves the campaign.
 		add_meta_box(
 			'noptin_automation_save',
-			__( 'Save','newsletter-optin-box' ),
+			__( 'Save','newsletter-optin-box' ) . '<a class="noptin-send-test-email" style="cursor: pointer;">' . __( 'Send a test email', 'newsletter-optin-box' ) . '</a>',
 			array( $this, 'render_metabox' ),
 			get_current_screen()->id,
 			'side',

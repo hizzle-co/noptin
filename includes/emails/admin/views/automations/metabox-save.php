@@ -9,13 +9,6 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <div class="submitbox" id="submitpost">
 
-	<div id="minor-publishing-actions">
-		<div id="preview-action">
-			<a class="preview button noptin-send-test-email"><span class="dashicons-before dashicons-email-alt"></span><?php _e( 'Send a test email', 'newsletter-optin-box' ); ?></a>
-		</div>
-		<div class="clear"></div>
-	</div>
-
 	<div class="noptin-publishing-actions">
 
 		<?php do_action( "noptin_automated_email_{$campaign->type}_options", $campaign ); ?>

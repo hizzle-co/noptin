@@ -188,18 +188,6 @@ function get_noptin_email_senders( $full = false ) {
 }
 
 /**
- * Returns the sender to use for a specific email.
- *
- * @since 1.5.2
- * @param int $campaign_id
- * @return array
- */
-function get_noptin_email_sender( $campaign_id ) {
-	$sender = get_post_meta( $campaign_id, 'email_sender', true );
-	return in_array( $sender, array_keys( get_noptin_email_senders() ) ) ? $sender : 'noptin';
-}
-
-/**
  * Returns an array of email types.
  *
  * @since 1.7.0
