@@ -11,10 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 ?>
 
-        <div class="noptin-no-template-email-footer" style="color: #757575; font-size: 12px;">
-            <br><span>&ndash;</span><br>
-            <?php echo wp_kses_post( $footer ); ?>
-        </div>
-
-    </body>
-</html>
+<?php if ( ! class_exists( 'Email_Customizer_Mailer' ) ) : ?>
+	<div class="noptin-no-template-email-footer" style="color: #757575; font-size: 12px;">
+		<br><span>&ndash;</span><br>
+		<?php echo wp_kses_post( $footer ); ?>
+	</div>
+<?php endif; ?>

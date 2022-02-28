@@ -28,7 +28,7 @@ class Noptin_Newsletter_Emails_Admin {
 
 		add_action( 'noptin_email_campaigns_tab_newsletters_edit_campaign', array( $this, 'render_edit_form' ) );
 		add_action( 'add_meta_boxes_noptin_newsletters', array( $this, 'register_metaboxes' ) );
-		add_action( 'noptin_edit_newsletter', array( $this, 'maybe_save_campaign' ) );
+		add_action( 'noptin_save_edited_newsletter', array( $this, 'maybe_save_campaign' ) );
 
 	}
 
@@ -71,7 +71,7 @@ class Noptin_Newsletter_Emails_Admin {
 
 		add_meta_box(
 			'noptin_newsletter_send',
-			__( 'Send', 'newsletter-optin-box' ) . '<a class="noptin-send-test-email" style="cursor: pointer;">' . __( 'Send a test email', 'newsletter-optin-box' ) . '</a>',
+			__( 'Send', 'newsletter-optin-box' ) . '<a class="noptin-send-test-email" style="cursor: pointer;color: red;">' . __( 'Send a test email', 'newsletter-optin-box' ) . '</a>',
 			array( $this, 'render_metabox' ),
 			get_current_screen()->id,
 			'side',
@@ -112,9 +112,10 @@ class Noptin_Newsletter_Emails_Admin {
 		// Save newsletter.
 		$newsletter = new Noptin_Newsletter_Email( wp_unslash( $_POST['noptin_email'] ) );
 
+		// Check if a "Send" or "Save draft button was clicked". Otherwise maintain the initial status.
 		if ( ! empty( $_POST['publish'] ) ) {
 			$newsletter->status = 'publish';
-		} else {
+		} else if ( ! empty( $_POST['draft'] ) ) {
 			$newsletter->status = 'draft';
 		}
 

@@ -29,7 +29,7 @@ $template = $campaign->get_template();
 
 		<tr>
 			<th scope="row">
-				<label for="noptin-automated-email-template"><?php _e( 'Email Template', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-automated-email-template"><?php _e( 'Template', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<select name="noptin_email[template]" id="noptin-automated-email-template" class="widefat">
@@ -42,31 +42,31 @@ $template = $campaign->get_template();
 
 		<tr>
 			<th scope="row">
-				<label for="noptin-automated-email-heading"><?php _e( 'Email Heading', 'newsletter-optin-box' ); ?></label>
-				<span title="<?php esc_attr_e( 'This is shown at the top of the email', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info-outline"></span>
+				<label for="noptin-automated-email-heading"><?php _e( 'Heading', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<input type="text" id="noptin-automated-email-heading" name="noptin_email[heading]" value="<?php echo esc_attr( $campaign->get( 'heading' ) ); ?>" class="widefat">
+				<p class="description"><?php esc_attr_e( 'This is shown at the top of the email', 'newsletter-optin-box' ); ?></p>
 			</td>
 		</tr>
 
 		<tr>
 			<th scope="row">
 				<label for="noptin-email-preview-text"><?php _e( 'Preview Text', 'newsletter-optin-box' ); ?></label>
-				<span title="<?php esc_attr_e( 'Some email clients display this text next to the email subject.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info-outline"></span>
 			</th>
 			<td>
 				<input type="text" id="noptin-email-preview-text" name="noptin_email[preview_text]" value="<?php echo esc_attr( $campaign->get( 'preview_text' ) ); ?>" class="widefat">
+				<p class="description"><?php esc_attr_e( 'Some email clients display this text next to the email subject.', 'newsletter-optin-box' ); ?></p>
 			</td>
 		</tr>
 
 		<tr>
 			<th scope="row">
 				<label for="noptin-automated-email-permission-text"><?php _e( 'Footer Text', 'newsletter-optin-box' ); ?></label>
-				<span title="<?php esc_attr_e( 'Appears at the bottom of your email template', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info-outline"></span>
 			</th>
 			<td>
 				<textarea id="noptin-automated-email-permission-text" name="noptin_email[footer_text]" class="widefat" placeholder="<?php echo esc_attr( get_noptin_footer_text() ); ?>" rows="4"><?php echo esc_textarea( $campaign->get( 'footer_text' ) ); ?></textarea>
+				<p class="description"><?php esc_attr_e( 'Appears at the bottom of your email template', 'newsletter-optin-box' ); ?></p>
 			</td>
 		</tr>
 

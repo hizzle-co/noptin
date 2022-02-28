@@ -1,4 +1,6 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
-
-<h1 style='font-size: 2.5em; font-weight: bold; margin-top: 20px; margin-bottom: 20px;'><?php _e( 'Send your first email', 'newsletter-optin-box' ); ?> 🙂</h1>
-<?php include plugin_dir_path( __FILE__ ) . 'new-campaign-inner.php'; ?>
+<form id="noptin-email-campaigns-table" method="post" style="margin-top: 30px;">
+	<input type="hidden" name="page" value="noptin-email-campaigns"/>
+	<input type="hidden" name="section" value="newsletters"/>
+	<?php $table->display(); ?>
+</form>

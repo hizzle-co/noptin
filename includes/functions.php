@@ -262,7 +262,7 @@ function get_noptin_newsletter_campaign_url( $id ) {
 		'page'        => 'noptin-email-campaigns',
 		'section'     => 'newsletters',
 		'sub_section' => 'edit_campaign',
-		'id'          => $id,
+		'campaign'    => $id,
 	);
 	return add_query_arg( $param, admin_url( '/admin.php' ) );
 

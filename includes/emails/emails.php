@@ -235,10 +235,6 @@ function get_noptin_email_templates() {
 		'default'      => __( 'Default', 'newsletter-optin-box' ),
 	);
 
-	if ( 'default' !== get_noptin_option( 'email_template' ) ) {
-		unset( $templates['default'] );
-	}
-
 	return apply_filters( 'noptin_email_templates', $templates );
 }
 
