@@ -31,7 +31,9 @@
 	a {
 		-ms-text-size-adjust: 100%; /* 1 */
 		-webkit-text-size-adjust: 100%; /* 2 */
-		font-family: 'Merriweather', sans-serif;
+		font-family: 'Merriweather', Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-weight: 400;
+		font-size: 15px;
 	}
 
 	h1,
@@ -40,7 +42,38 @@
 	h4,
 	h5,
 	h6 {
-		font-family: 'Merriweather Bold', serif;
+		font-family: 'Merriweather Bold', Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-weight: 700;
+	}
+
+	h1 {
+		font-size: 32px;
+		line-height: 48px;
+	}
+
+	h2{
+		font-size: 28px;
+		line-height: 36px;
+	}
+
+	h3 {
+		font-size: 24px;
+		line-height: 30px;
+	}
+
+	h4 {
+		font-size: 20px;
+		line-height: 26px;
+	}
+
+	h5 {
+		font-size: 18px;
+		line-height: 22px;
+	}
+
+	h6 {
+		font-size: 16px;
+		line-height: 20px;
 	}
 
 	/**
@@ -96,12 +129,13 @@
 		color: #CC7953;
 	}
 
-	img {
+	img, figure {
 		height: auto;
 		line-height: 100%;
 		text-decoration: none;
 		border: 0;
 		outline: none;
+		max-width: 100%;
 	}
 
 	p{

@@ -345,7 +345,17 @@ class Noptin_Settings {
 				'placeholder' => __( 'Select a template', 'newsletter-optin-box' ),
 				'options'     => get_noptin_email_templates(),
 				'default'     => 'paste',
-				'description' => '',
+				'description' => sprintf(
+					"%s %s",
+					__( 'Select "No Template" if you are using an email templates plugin.', 'newsletter-optin-box' ),
+					sprintf(
+						'<br /><a href="%s" class="thickbox open-plugin-details-modal">%s</a>',
+						esc_url(
+							admin_url("plugin-install.php?tab=plugin-information&plugin=email-customizer&TB_iframe=true&width=772&height=560")
+						),
+						__( 'Or install our free email templates plugin to design your own templates.', 'newsletter-optin-box' )
+					)
+				),
 			),
 
 			'permission_text' => array(

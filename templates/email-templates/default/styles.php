@@ -1,7 +1,9 @@
 <style type="text/css">
 
-	img {
+	img, figure {
 		outline: none;
+		max-width: 100%;
+		height: auto;
 		text-decoration: none;
 		-ms-interpolation-mode: bicubic;
 	}

@@ -31,7 +31,7 @@
 														<?php if ( ! empty( $email_heading ) ) : ?>
 
 															<!-- start hero -->
-																<h1><?php echo $email_heading; ?></h1>
+																<h1 style="margin-bottom: 20px;"><?php echo $email_heading; ?></h1>
 															<!-- end hero -->
 
 														<?php endif; ?>
