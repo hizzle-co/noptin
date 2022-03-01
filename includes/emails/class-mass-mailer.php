@@ -32,6 +32,9 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		$this->cron_hook_identifier     = $this->identifier . '_cron';
 		$this->cron_interval_identifier = $this->identifier . '_cron_interval';
 
+		// Adds a new email to the qeue.
+		add_action( 'noptin_send_email_via_' . $this->sender, array( $this, 'send' ), 10, 2 );
+
 		// Checks cron to ensure all scheduled emails are sent.
 		add_action( $this->cron_hook_identifier, array( $this, 'handle_cron_healthcheck' ) );
 		add_filter( 'cron_schedules', array( $this, 'schedule_cron_healthcheck' ) );

@@ -380,9 +380,9 @@ class Noptin_Newsletter_Email {
 			if ( false !== $datetime ) {
 
 				$this->status          = 'future';
-				$post['post_status']   = 'future';
-				$post['post_date']     = $datetime->format( 'Y-m-d H:i:s' );
-				$post['post_date_gmt'] = get_gmt_from_date( $datetime->format( 'Y-m-d H:i:s' ) );
+				$args['post_status']   = 'future';
+				$args['post_date']     = $datetime->format( 'Y-m-d H:i:s' );
+				$args['post_date_gmt'] = get_gmt_from_date( $datetime->format( 'Y-m-d H:i:s' ) );
 
 			}
 
