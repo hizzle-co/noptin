@@ -70,11 +70,30 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		);
 
-		// TODO: Add support for custom fields.
+		// Handle custom fields.
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+			// Limit to checkboxes, dropdowns and radio buttons.
+			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ) ) ) {
+
+				// Fetch the appropriate filter.
+				$filter = $campaign->get( 'noptin_custom_field_' . $custom_field['merge_tag'] );
+	
+				// Filter.
+				if ( '' !== $filter ) {
+					$args['meta_query'][] = array(
+						'key'     => $custom_field['merge_tag'],
+						'value'   => $filter,
+					);
+				}
+
+			}
+
+		}
 
 		// Allow other plugins to filter the query.
 		$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $campaign );
-
+wpinv_error_log( $args );
 		// Run the query...
 		$query = new Noptin_Subscriber_Query( $args );
 

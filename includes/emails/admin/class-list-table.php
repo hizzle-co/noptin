@@ -220,24 +220,15 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function column_date_sent( $item ) {
-		$date = '&mdash;';
+		$date = date_i18n( get_option( 'date_format' ), strtotime( $item->created ) );
 
-		if ( 'future' === $item->post_status ) {
-
-			$date = sprintf(
-				__( 'Scheduled to send in %s', 'newsletter-optin-box' ),
-				'<br /><strong>' . human_time_diff( strtotime( $item->created ), current_time( 'timestamp' ) ) . '</strong>'
-			);
+		if ( 'future' === $item->status ) {
 
 			// In case CRON is not working.
 			if ( strtotime( $item->created ) < current_time( 'timestamp' ) ) {
 				wp_publish_post( $item );
 			}
 
-		}
-
-		if ( 'publish' === $item->post_status ) {
-			$date = date_i18n( get_option( 'date_format' ), strtotime( $item->created ) );
 		}
 
 		$title = esc_attr( $item->created );
@@ -251,12 +242,8 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_recipients( $item ) {
-
-		$sent = (int) get_post_meta( $item->id, '_noptin_sends', true );
-		$sent = $this->maybe_link( $sent, "_campaign_{$item->id}", '1' );
-
-		return apply_filters( 'noptin_email_recipients', $sent, $item );
-
+		$total = (int) get_post_meta( $item->id, '_noptin_sends', true ) + (int) get_post_meta( $item->id, '_noptin_fails', true );
+		return apply_filters( 'noptin_email_recipients', $total, $item );
 	}
 
 	/**
@@ -301,6 +288,20 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		$clicks = $this->maybe_link( $clicks, "_campaign_{$item->id}_clicked", '1' );
 		return apply_filters( 'noptin_email_clicks', $clicks, $item );
 
+	}
+
+	/**
+	 * Displays the campaign unsubscribes
+	 *
+	 * @param  Noptin_Newsletter_Email|Noptin_Automated_Email $item item.
+	 * @return HTML
+	 */
+	public function column_unsubscribed( $item ) {
+
+		$unsubscribed = (int) get_post_meta( $item->id, '_noptin_unsubscribed', true );
+		$unsubscribed = $this->maybe_link( $unsubscribed, "_campaign_{$item->id}_unsubscribed", '1' );
+		return apply_filters( 'noptin_email_unsubscribed', $unsubscribed, $item );
+// TODO: Log unsubscribes.
 	}
 
 	/**
@@ -435,14 +436,15 @@ class Noptin_Email_List_Table extends WP_List_Table {
 
 		// Prepare columns.
 		$columns = array(
-			'cb'         => '<input type="checkbox" />',
-			'title'      => 'newsletter' == $this->collection_type ? __( 'Email Subject', 'newsletter-optin-box' ) : __( 'Name', 'newsletter-optin-box' ),
-			'type'       => __( 'Type', 'newsletter-optin-box' ),
-			'status'     => __( 'Status', 'newsletter-optin-box' ),
-			'recipients' => 'newsletter' == $this->collection_type ? __( 'Recipients', 'newsletter-optin-box' ) : __( 'Sent', 'newsletter-optin-box' ),
-			'opens'      => __( 'Opens', 'newsletter-optin-box' ),
-			'clicks'     => __( 'Clicks', 'newsletter-optin-box' ),
-			'date_sent'  => __( 'Sent on', 'newsletter-optin-box' ),
+			'cb'           => '<input type="checkbox" />',
+			'title'        => 'newsletter' == $this->collection_type ? __( 'Email Subject', 'newsletter-optin-box' ) : __( 'Name', 'newsletter-optin-box' ),
+			'type'         => __( 'Type', 'newsletter-optin-box' ),
+			'status'       => __( 'Status', 'newsletter-optin-box' ),
+			'recipients'   => __( 'Sent', 'newsletter-optin-box' ),
+			'opens'        => __( 'Opened', 'newsletter-optin-box' ),
+			'clicks'       => __( 'Clicked', 'newsletter-optin-box' ),
+			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
+			'date_sent'    => __( 'Date', 'newsletter-optin-box' ),
 		);
 
 		// Remove tracking stats.

@@ -42,7 +42,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 				<option <?php selected( empty( $args['value'] ) ); ?> disabled><?php echo empty( $args['vue'] ) ? strip_tags( $args['label'] ) : '{{field.type.label}}'; ?></option>
 				<?php foreach ( explode( "\n", $args['options'] ) as $option ) : ?>
 					<option value="<?php echo esc_attr( $option ); ?>" <?php selected( esc_attr( $option ), esc_attr( $args['value'] ) ); ?>><?php echo esc_html( $option ); ?></option>
-				<?php endforeach; ?>		
+				<?php endforeach; ?>
 			</select>
 
 		<?php

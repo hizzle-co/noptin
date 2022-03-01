@@ -1147,6 +1147,11 @@ a.no-campaign-create-new-campaign {
 		text-align: center;
 	}
 
+	.column-unsubscribed {
+		width: 90px;
+		text-align: center;
+	}
+
 	.column-type {
 		width: 180px;
 	}
