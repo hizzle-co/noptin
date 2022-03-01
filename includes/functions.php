@@ -1365,15 +1365,6 @@ function noptin_is_multilingual() {
 }
 
 /**
- * Retrieves an array of newsletter meta
- *
- * @return array
- */
-function noptin_get_newsletter_meta() {
-	return apply_filters( 'noptin_get_newsletter_campaign_meta', array() );
-}
-
-/**
  * Formats a date for display.
  *
  * @param string $date_time.

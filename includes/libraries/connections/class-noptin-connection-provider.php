@@ -88,8 +88,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		if ( $this->supports( 'campaigns' ) ) {
 			add_filter( 'noptin_email_senders', array( $this, 'register_sender' ), $this->priority );
 			add_action( 'noptin_sender_options_' . $this->slug, array( $this, 'show_sender_options' ), $this->priority );
-			add_filter( 'noptin_get_newsletter_campaign_meta', array( $this, 'register_meta' ), $this->priority );
-			add_action( 'handle_noptin_email_sender_' . $this->slug, array( $this, 'send_campaign' ), $this->priority, 2 );			
+			add_action( 'handle_noptin_email_sender_' . $this->slug, array( $this, 'send_campaign' ), $this->priority );
 		}
 
 	}
@@ -623,26 +622,15 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Registers meta data.
+	 * Sends a campaign.
 	 *
-	 * @param array $meta
+	 * @param Noptin_Newsletter_Email $campaign
 	 */
-	public function register_meta( $meta ) {
-		$meta[] = $this->slug;
-		return $meta;
-	}
+	public function send_campaign( $campaign ) {
 
-	/**
-	 * Send campaign.
-	 *
-	 * @param array $campaign
-	 * @param WP_Post $post
-	 */
-	public function send_campaign( $campaign, $post ) {
+		update_post_meta( $campaign->id, 'completed', 1 );
 
-		update_post_meta( $post->ID, 'completed', 1 );
-
-		$options = get_post_meta( $post->ID, $this->slug, true );
+		$options = $campaign->get( $this->slug );
 
 		if ( empty( $options['list'] ) ) {
 			return;
@@ -654,33 +642,26 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			return;
 		}
 
-		$tags  = empty( $options['tags'] ) ? array() : noptin_parse_list( $options['tags'] );
-		$extra = empty( $options['extra'][ $list->get_id() ] ) ? array() : $options['extra'][ $list->get_id() ];
-
-		$campaign['custom_merge_tags']['unsubscribe_url'] = 'http://temporaryunsubscribe.com';
-		// TODO: Make use of partial merge tags.
-
-		$campaign_data               = $campaign['campaign_data'];
-		$campaign_data['merge_tags'] = $campaign['custom_merge_tags'];
-
 		if ( $this->supports( 'overide_footers' ) ) {
-			$campaign_data['permission_text'] = '';
-			$campaign_data['footer_text']     = '';
+			$campaign->options['footer_text'] = '';
 		}
 
-		$strip_tags = noptin()->mailer->strip_tags;
+		// TODO: Make use of partial merge tags.
+		$args = array(
+			'tags'                     => empty( $options['tags'] ) ? array() : noptin_parse_list( $options['tags'] ),
+			'extra'                    => empty( $options['extra'][ $list->get_id() ] ) ? array() : $options['extra'][ $list->get_id() ],
+			'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
+			'message'                  => noptin_generate_email_content( $campaign, false, false ),
+			'attachments'              => array(),
+			'reply_to'                 => '',
+			'from_email'               => '',
+			'from_name'                => '',
+			'content_type'             => $campaign->get_email_type() === 'plain_text' ? 'text' : 'html',
+			'unsubscribe_url'          => $this->get_unsubscribe_tag(),
+			'disable_template_plugins' => false,
+		);
 
-		noptin()->mailer->strip_tags = true;
-
-		$campaign          = noptin()->mailer->prepare( $campaign_data );
-		$campaign['tags']  = $tags;
-		$campaign['extra'] = $extra;
-
-		$campaign['email_body'] = str_replace( 'http://temporaryunsubscribe.com', $this->get_unsubscribe_tag(), $campaign['email_body'] );
-
-		noptin()->mailer->strip_tags = $strip_tags;
-
-		$list->send_campaign( $campaign );
+		$list->send_campaign( $args );
 	}
 
 	/**
