@@ -93,7 +93,7 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		// Allow other plugins to filter the query.
 		$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $campaign );
-wpinv_error_log( $args );
+
 		// Run the query...
 		$query = new Noptin_Subscriber_Query( $args );
 

@@ -420,6 +420,14 @@ class Noptin_Newsletter_Email {
 
 		if ( is_int( $result ) ) {
 			$this->id = $result;
+
+			$post = get_post( $this->id );
+
+			if ( 'future' === $post->post_status ) {
+				wp_clear_scheduled_hook( 'publish_future_post', array( $post->ID ) );
+				wp_schedule_single_event( strtotime( get_gmt_from_date( $post->post_date ) . ' GMT' ), 'publish_future_post', array( $post->ID ) );
+			}
+
 			return true;
 		}
 
