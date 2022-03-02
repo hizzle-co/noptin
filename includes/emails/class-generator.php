@@ -235,7 +235,7 @@ class Noptin_Email_Generator {
 		$content = $this->inject_preheader( $content );
 
 		// Ensure that merge tags are not wrapped in paragraphs.
-		$content = $this->merge_tags_unautop( $content );
+		//$content = $this->merge_tags_unautop( $content );
 
 		// Do merge tags.
 		$content = noptin_parse_email_content_tags( $content );

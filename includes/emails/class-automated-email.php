@@ -93,7 +93,7 @@ class Noptin_Automated_Email {
 			}
 
 			unset( $args['automation_type'], $args['status'], $args['title'] );
-			$this->options = $args;
+			$this->options = wp_unslash( $args );
 		}
 
 	}

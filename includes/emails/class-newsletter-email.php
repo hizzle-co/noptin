@@ -106,7 +106,7 @@ class Noptin_Newsletter_Email {
 			}
 
 			unset( $args['status'], $args['subject'] );
-			$this->options = $args;
+			$this->options = wp_unslash( $args );
 		}
 
 	}

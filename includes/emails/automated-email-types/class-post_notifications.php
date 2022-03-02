@@ -102,6 +102,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	public function default_content_normal() {
 		ob_start();
 		?>
+		<p>[[featured_image]]</p>
 		<p>[[post_excerpt]]</p>
 		<p>[[button url="[[post_url]]" text="<?php esc_attr_e( 'Continue Reading', 'newsletter-optin-box' ); ?>"]]</p>
 		<p><?php _e( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box' ); ?></p>
@@ -134,7 +135,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		$url = add_query_arg(
 			array(
 				'utm_medium'   => 'plugin-dashboard',
-				'utm_campaign' => 'post-digests',
+				'utm_campaign' => 'post-notifications',
 				'utm_source'   => 'email-editor',
 			),
 			'https://noptin.com/product/ultimate-addons-pack'
@@ -221,7 +222,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 			// Check if the automation applies here.
 			if ( $this->is_automation_valid_for( $automation, $post ) ) {
-				$this->schedule_notification( $post, $automation );
+				$this->schedule_notification( $post->ID, $automation );
 			}
 
 		}
@@ -287,6 +288,10 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		$type     = $campaign->get_email_type();
 		$content  = $campaign->get_content( $type );
 
+		// Prepare environment.
+		$this->post = get_post( $post_id );
+		$this->before_send( $campaign );
+
 		// Legacy merge tags.
 		$content = str_ireplace( '[[read_more_button]]', $this->read_more_button( get_permalink( $post_id ) ), $content );
 		$content = str_ireplace( '[[/read_more_button]]', '</a></div>', $content );
@@ -321,6 +326,11 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			$newsletter->save();
 		}
 
+		// Clear environment.
+		$this->post = null;
+		$this->after_send( $campaign );
+
+		// TODO: Everything is unslashed.
 	}
 
 	/**
@@ -408,6 +418,34 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 					'description' => __( "Alias for [[post_content]].", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => "content",
+					'partial'     => true,
+				),
+
+				'post_author' => array(
+					'description' => __( "The post's author", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_author",
+					'partial'     => true,
+				),
+
+				'post_author_email' => array(
+					'description' => __( "The post author's email", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_author_email",
+					'partial'     => true,
+				),
+
+				'post_author_login' => array(
+					'description' => __( "The post author's login name", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_author_login",
+					'partial'     => true,
+				),
+
+				'post_author_id' => array(
+					'description' => __( "The post author's user ID", 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "post_author_id",
 					'partial'     => true,
 				),
 
