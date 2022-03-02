@@ -276,3 +276,25 @@ function get_noptin_footer_text() {
 function get_noptin_permission_text() {
 	return get_noptin_option( 'permission_text', noptin()->mailer->default_permission_text() );
 }
+
+/**
+ * Increments a campaign stat.
+ *
+ * @since 1.7.0
+ * @param int $campaign_id
+ * @param string $stat
+ */
+function increment_noptin_campaign_stat( $campaign_id, $stat ) {
+
+	// Increment stat.
+	$current = (int) get_post_meta( $campaign_id, $stat, true );
+	update_post_meta( $campaign_id, $stat, $current + 1 );
+
+	// Increment parent stat.
+	$parent = get_post_parent( $campaign_id );
+
+	if ( $parent ) {
+		increment_noptin_campaign_stat( $parent->ID, $stat );
+	}
+
+}

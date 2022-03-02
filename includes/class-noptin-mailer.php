@@ -270,68 +270,6 @@ class Noptin_Mailer {
 	}
 
 	/**
-	 * Makes campaign links trackable.
-	 *
-	 * @param string $content The email content.
-	 * @param array  $data The new campaign data.
-	 */
-	public function make_links_trackable( $content, $data ) {
-
-		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
-		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) ) {
-			return $content;
-		}
-
-		if ( empty( $data['subscriber_id'] ) && empty( $data['user_id'] ) ) {
-			return $content;
-		}
-
-		$url = get_noptin_action_url( 'email_click' );
-		$url = add_query_arg(
-			array(
-				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
-				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
-				'cid'         => intval( $data['campaign_id'] ),
-				//'noptin_hide' => 'true'
-			),
-			$url
-		);
-
-		$_content = preg_replace_callback(
-			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
-			function ( $matches ) use ( $url ) {
-
-				$matches[2]  = str_replace( '&amp;', '&', $matches[2] );
-
-				// Prepare URL.
-				$_url = add_query_arg(
-					array(
-						'to'       => urlencode( $matches[2] ),
-						'link_key' => urlencode( md5( AUTH_KEY . $matches[2] ) ),
-					),
-					$url
-				);
-
-				// Skip action page URLs.
-				if ( false !== strpos( $matches[2], 'noptin_ns' ) ) {
-					$_url = $matches[2];
-				}
-
-				$pre  = $matches[1];
-				$post = $matches[3];
-				return "<a $pre href='$_url' $post >";
-			},
-			$content
-		);
-
-		if ( empty( $_content ) ) {
-			return $content;
-		}
-		return $_content;
-
-	}
-
-	/**
 	 * Inlines CSS into the email to make it compatible with more clients.
 	 *
 	 * @param string $content The email content.
@@ -384,9 +322,6 @@ class Noptin_Mailer {
 
 		// Balance tags.
 		$content = force_balance_tags( $content );
-
-		// Make links trackable.
-		$content = $this->make_links_trackable( $content, $data );
 
 		if ( 'empty' === $data['template'] ) {
 			return $content;

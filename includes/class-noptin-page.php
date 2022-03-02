@@ -187,36 +187,8 @@ class Noptin_Page {
 			return $filter;
 		}
 
-		if ( ! empty( $_GET['cid'] ) && is_numeric( $_GET['cid'] ) ) {
-			$campaign_id   = intval( $_GET['cid'] );
-
-			if ( ! empty( $_GET['sid'] ) ) {
-				$subscriber_id = intval( $_GET['sid'] );
-				log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id );
-			}
-
-			if ( ! empty( $_GET['uid'] ) ) {
-				$user_id          = intval( $_GET['user_id'] );
-				$opened_campaigns = wp_parse_id_list( get_user_meta( $user_id, '_opened_noptin_campaigns', true ) );
-
-				if ( ! in_array( (int) $campaign_id, $opened_campaigns, true ) ) {
-					$opened_campaigns[] = $campaign_id;
-					update_user_meta( $user_id, '_opened_noptin_campaigns', $opened_campaigns );
-					update_user_meta( $user_id, "_noptin_campaign_{$campaign_id}_opened", 1 );
-
-					// We want to log this once.
-					if ( empty( $_GET['sid'] ) ) {
-						$open_counts = (int) get_post_meta( $campaign_id, '_noptin_opens', true );
-						update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );
-					}
-
-					do_action( 'log_noptin_user_campaign_open', $user_id, $campaign_id );
-
-				}
-
-			}
-
-		}
+		// Log the action.
+		$this->_log_open();
 
 		// Display 1x1 pixel transparent gif.
 		nocache_headers();
@@ -224,6 +196,46 @@ class Noptin_Page {
 		header( 'Content-Length: 42' );
 		echo base64_decode( 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEA' );
 		exit;
+
+	}
+
+	protected function _log_open() {
+
+		// Fetch recipient.
+		$recipient = $this->get_request_recipient();
+
+		// Ensure we have a campaign.
+		if ( ! empty( $recipient['cid'] ) ) {
+
+			// Process subscribers.
+			if ( ! empty( $recipient['sid'] ) ) {
+				$subscriber_logged = log_noptin_subscriber_campaign_open( $recipient['sid'], $recipient['cid'] );
+			}
+
+			// Process users.
+			if ( ! empty( $recipient['uid'] ) ) {
+				$opened_campaigns = wp_parse_id_list( get_user_meta( $recipient['uid'], '_opened_noptin_campaigns', true ) );
+
+				if ( ! in_array( (int) $recipient['cid'], $opened_campaigns, true ) ) {
+
+					// Log the campaign open.
+					$opened_campaigns[] = $recipient['cid'];
+					update_user_meta( $recipient['uid'], '_opened_noptin_campaigns', $opened_campaigns );
+
+					// Fire action.
+					do_action( 'log_noptin_user_campaign_open', $recipient['uid'], $recipient['cid'] );
+
+					$user_logged = true;
+				}
+
+			}
+
+			// Increment stats.
+			if ( ! empty( $subscriber_logged ) || ! empty( $user_logged ) ) {
+				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_opens' );
+			}
+
+		};
 
 	}
 
@@ -241,72 +253,55 @@ class Noptin_Page {
 			return $filter;
 		}
 
-		// Check if we have a redirect URL or campaign ID.
-		if ( empty( $_GET['to'] ) || empty( $_GET['cid'] ) ) {
+		// Log the open.
+		$this->_log_open();
+
+		// Fetch recipient.
+		$recipient = $this->get_request_recipient();
+
+		// Abort if no destination.
+		if ( empty( $recipient['to'] ) ) {
 			wp_redirect( get_home_url() );
 			exit;
 		}
 
-		// Confirm that the provided key matches the expected key.
-		$_to = urldecode( $_GET['to'] );
-		$to  = str_replace( '&amp;', '&', $_to );
+		$destination = str_replace( '&amp;', '&', $recipient['to'] );
 
-		// Backwards compat.
-		if ( empty( $_GET['link_key'] ) ) {
+		// Ensure we have a campaign.
+		if ( ! empty( $recipient['cid'] ) ) {
 
-			$campaign = get_post( (int) $_GET['cid'] );
-
-			if ( empty( $campaign ) || strtotime( $campaign->post_date ) > strtotime( '2021-12-06' ) ) {
-				wp_redirect( get_home_url() );
-				exit;
+			// Process subscribers.
+			if ( ! empty( $recipient['sid'] ) ) {
+				$subscriber_logged = log_noptin_subscriber_campaign_click( $recipient['sid'], $recipient['cid'], $destination );
 			}
 
-		// Confirm that keys match.
-		} else if ( ! in_array( urldecode( $_GET['link_key'] ), array( md5( AUTH_KEY . $to ), md5( AUTH_KEY . $_to ) ) ) ) {
-			wp_redirect( get_home_url() );
-			exit;
-		}
+			// Process users.
+			if ( ! empty( $recipient['uid'] ) ) {
 
-		// Log subscriber's campaign click.
-		if ( isset( $_GET['sid'] ) ) {
-			$subscriber_id = intval( $_GET['sid'] );
-			$campaign_id   = intval( $_GET['cid'] );
-			log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $to );
-		}
+				$clicked_campaigns = noptin_parse_list( get_user_meta( $recipient['uid'], '_clicked_noptin_campaigns', true ) );
 
-		if ( is_numeric( $_GET['cid'] ) ) {
-			$campaign_id   = intval( $_GET['cid'] );
+				if ( ! in_array( $destination, $clicked_campaigns[ $recipient['cid'] ], true ) ) {
 
-			if ( ! empty( $_GET['uid'] ) ) {
-				$user_id           = intval( $_GET['user_id'] );
-				$clicked_campaigns = noptin_parse_list( get_user_meta( $user_id, '_clicked_noptin_campaigns', true ) );
+					// Log the campaign click.
+					$clicked_campaigns[ $recipient['cid'] ][] = noptin_clean( $destination );
+					update_user_meta( $recipient['uid'], '_clicked_campaigns', $clicked_campaigns );
 
-				// We want to log this once.
-				if ( empty( $_GET['sid'] ) ) {
-					$open_counts = (int) get_post_meta( $campaign_id, '_noptin_opens', true );
-					update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );
-				}
+					// Fire action.
+					do_action( 'log_noptin_user_campaign_click', $recipient['uid'], $recipient['cid'], $destination );
 
-				if ( ! isset( $clicked_campaigns[ $campaign_id ] ) ) {
-					$clicked_campaigns[ $campaign_id ] = array();
-				}
-
-				if ( ! in_array( $to, $clicked_campaigns[ $campaign_id ], true ) ) {
-					$clicked_campaigns[ $campaign_id ][] = noptin_clean( $to );
-					update_user_meta( $user_id, '_clicked_noptin_campaigns', $clicked_campaigns );
-					update_user_meta( $user_id, "_noptin_campaign_{$campaign_id}_clicked", 1 );
-
-					$click_counts = (int) get_post_meta( $campaign_id, '_noptin_clicks', true );
-					update_post_meta( $campaign_id, '_noptin_clicks', $click_counts + 1 );
-
-					do_action( 'log_noptin_user_campaign_click', $user_id, $campaign_id, $to );
+					$user_logged = true;
 				}
 
 			}
 
-		}
+			// Increment stats.
+			if ( ! empty( $subscriber_logged ) || ! empty( $user_logged ) ) {
+				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_clicks' );
+			}
 
-		wp_redirect( $to );
+		};
+
+		wp_redirect( $destination );
 		exit;
 
 	}
@@ -359,14 +354,7 @@ class Noptin_Page {
 	 */
 	public function pre_unsubscribe_user( $page ) {
 
-		// Make sure that the confirmation key exists.
-		$value = $this->get_request_value();
-
-		if ( empty( $value )  ) {
-			return;
-		}
-
-		// New recipient format.
+		// Fetch recipient.
 		$recipient = $this->get_request_recipient();
 
 		// Process subscribers.
@@ -382,8 +370,7 @@ class Noptin_Page {
 
 		// Process campaigns.
 		if ( ! empty( $recipient['cid'] ) ) {
-			$unsubscribed = (int) get_post_meta( $recipient['cid'], '_noptin_unsubscribed', true );
-			update_post_meta( $recipient['cid'], '_noptin_unsubscribed', $unsubscribed + 1 );
+			increment_noptin_campaign_stat( $recipient['cid'], '_noptin_unsubscribed' );
 		}
 
 		// If we are redirecting by page id, fetch the page's permalink.

@@ -101,20 +101,18 @@ function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
 
 	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
 	if ( ! in_array( (int) $campaign_id, $opened_campaigns, true ) ) {
+
+		// Log the campaign open.
 		$opened_campaigns[] = $campaign_id;
 		update_noptin_subscriber_meta( $subscriber_id, '_opened_campaigns', $opened_campaigns );
-		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_opened", 1 );
 
-		if ( is_int( $campaign_id ) ) {
-			$open_counts = (int) get_post_meta( $campaign_id, '_noptin_opens', true );
-			update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );
-
-		}
-
+		// Fire action.
 		do_action( 'log_noptin_subscriber_campaign_open', $subscriber_id, $campaign_id );
 
+		return true;
 	}
 
+	return false;
 }
 
 /**
@@ -161,24 +159,26 @@ function did_noptin_subscriber_open_campaign( $subscriber_id, $campaign_id ) {
  */
 function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $link ) {
 
-	log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id );
-
 	$clicked_campaigns = get_noptin_subscriber_clicked_campaigns( $subscriber_id );
 
+	// Ensure we have an array.
 	if ( ! isset( $clicked_campaigns[ $campaign_id ] ) ) {
 		$clicked_campaigns[ $campaign_id ] = array();
 	}
 
 	if ( ! in_array( $link, $clicked_campaigns[ $campaign_id ], true ) ) {
+
+		// Log the campaign click.
 		$clicked_campaigns[ $campaign_id ][] = noptin_clean( $link );
 		update_noptin_subscriber_meta( $subscriber_id, '_clicked_campaigns', $clicked_campaigns );
-		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_clicked", 1 );
 
-		$click_counts = (int) get_post_meta( $campaign_id, '_noptin_clicks', true );
-		update_post_meta( $campaign_id, '_noptin_clicks', $click_counts + 1 );
-
+		// Fire action.
 		do_action( 'log_noptin_subscriber_campaign_click', $subscriber_id, $campaign_id, $link );
+
+		return true;
 	}
+
+	return false;
 
 }
 

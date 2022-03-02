@@ -271,7 +271,6 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	public function column_opens( $item ) {
 
 		$opens = (int) get_post_meta( $item->id, '_noptin_opens', true );
-		$opens = $this->maybe_link( $opens, "_campaign_{$item->id}_opened", '1' );
 		return apply_filters( 'noptin_email_opens', $opens, $item );
 
 	}
@@ -285,7 +284,6 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	public function column_clicks( $item ) {
 
 		$clicks = (int) get_post_meta( $item->id, '_noptin_clicks', true );
-		$clicks = $this->maybe_link( $clicks, "_campaign_{$item->id}_clicked", '1' );
 		return apply_filters( 'noptin_email_clicks', $clicks, $item );
 
 	}
@@ -299,36 +297,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	public function column_unsubscribed( $item ) {
 
 		$unsubscribed = (int) get_post_meta( $item->id, '_noptin_unsubscribed', true );
-		$unsubscribed = $this->maybe_link( $unsubscribed, "_campaign_{$item->id}_unsubscribed", '1' );
 		return apply_filters( 'noptin_email_unsubscribed', $unsubscribed, $item );
-// TODO: Log unsubscribes.
-	}
-
-	/**
-	 * Links to the subscribers overview page.
-	 *
-	 * @param  int    $count The number to link.
-	 * @param  string $meta The subscriber meta key to filter by.
-	 * @param  string $value The subscriber meta value to filter by.
-	 * @return HTML
-	 */
-	public function maybe_link( $count, $meta, $value ) {
-
-		if ( empty( $count ) ) {
-			return 0;
-		}
-
-		$url = esc_url(
-			add_query_arg(
-				array(
-					'meta_key'   => $meta,
-					'meta_value' => $value,
-				),
-				get_noptin_subscribers_overview_url()
-			)
-		);
-
-		return "<a href='$url' title='View Subscribers'>$count</a>";
 
 	}
 
