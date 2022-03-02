@@ -63,6 +63,14 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	abstract public function _send( $campaign, $recipient );
 
 	/**
+	 * Fired after a campaign is done sending.
+	 *
+	 * @param @param Noptin_Newsletter_Email $campaign
+	 *
+	 */
+	abstract public function done_sending( $campaign );
+
+	/**
 	 * Pushes the qeue forward to be handled in the future.
 	 *
 	 */
@@ -207,11 +215,18 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		// Bail if the campaign is not valid or we're out of recipients.
 		if ( ! $campaign->can_send() || empty( $recipients ) ) {
 
-			if ( ! empty( $campaign->id ) ) {
-				update_post_meta( $campaign->id, 'completed', 1 );
-			}
+			// Check whether the campaign is done sending or it was paused.
+			if ( $campaign->can_send() ) {
 
-			do_action( 'noptin_background_mailer_complete', $item, $campaign );
+				// Update status.
+				update_post_meta( $campaign->id, 'completed', 1 );
+
+				// Clean up.
+				$this->done_sending( $campaign );
+
+				// Fire action.
+				do_action( 'noptin_mass_mailer_complete', $item, $campaign );
+			}
 
 			return false;
 
@@ -229,11 +244,9 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 
 		// Send the email & log success or failure.
 		if ( $this->_send( $campaign, $recipient ) ) {
-			$sents = (int) get_post_meta( $campaign->id, '_noptin_sends', true );
-			update_post_meta( $campaign->id, '_noptin_sends', $sents + 1 );
+			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
 		} else {
-			$fails = (int) get_post_meta( $campaign->id, '_noptin_fails', true );
-			update_post_meta( $campaign->id, '_noptin_fails', $fails + 1 );
+			increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
 		}
 
 		// Log number of emails sent.

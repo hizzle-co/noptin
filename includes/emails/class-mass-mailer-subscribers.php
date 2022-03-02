@@ -34,14 +34,41 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 		// Fetch the subscriber.
 		$subscriber = get_noptin_subscriber( $recipient );
 
-		// Bail if the subscriber is not found.
-		if ( ! $subscriber->exists() ) {
+		// Bail if the subscriber is not found or is unsubscribed...
+		if ( ! $subscriber->exists() || ! $subscriber->is_active() ) {
 			return false;
 		}
 
-		// TODO: Generate and send the actual email.
-		update_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, '1' ); // Success
-		update_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, '0' ); // Failure
+		// ... or was already sent the email.
+		if ( '' !== get_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, true ) ) {
+			return false;
+		}
+
+		// Generate and send the actual email.
+		noptin()->emails->newsletter->subscriber = $subscriber;
+		$result = noptin()->emails->newsletter->send( $campaign, $campaign->ID, $subscriber->email );
+
+		// Log the send.
+		update_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, (int) $result );
+
+		return $result;
+	}
+
+	/**
+	 * Fired after a campaign is done sending.
+	 *
+	 * @param @param Noptin_Newsletter_Email $campaign
+	 *
+	 */
+	public function done_sending( $campaign ) {
+		global $wpdb;
+
+		$wpdb->delete(
+			get_noptin_subscribers_meta_table_name(),
+			array(
+				'meta_key' => '_campaign_' . $campaign->id,
+			)
+		);
 
 	}
 

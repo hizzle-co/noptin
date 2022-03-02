@@ -433,9 +433,10 @@ abstract class Noptin_Email_Type {
 	 *
 	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
 	 * @param string $key
-	 * @param array $recipients
+	 * @param array|string $recipients
 	 */
 	public function send( $campaign, $key, $recipients ) {
+		$result = false;
 
 		// Prepare environment.
 		$this->before_send( $campaign );
@@ -449,7 +450,7 @@ abstract class Noptin_Email_Type {
 		foreach ( $recipients as $email => $track ) {
 
 			// Send the email.
-			noptin_send_email(
+			$result = noptin_send_email(
 				array(
 					'recipients'               => $email,
 					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
@@ -470,7 +471,7 @@ abstract class Noptin_Email_Type {
 		// Clear environment.
 		$this->after_send( $campaign );
 
-		// TODO: For mass mail, call this method directly from the mass mailer.
+		return $result;
 	}
 
 	/**
