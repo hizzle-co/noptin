@@ -116,21 +116,63 @@ class Noptin_Page {
 	 * @return      string
 	 */
 	public function get_request_value() {
-
-		$value = '';
-
-		if ( isset( $_REQUEST['noptin_value'] ) ) {
-			$value = sanitize_title_with_dashes( urldecode( $_REQUEST['noptin_value'] ) );
-		}
-
-		if ( isset( $_REQUEST['nv'] ) ) {
-			$value = sanitize_title_with_dashes( urldecode( $_REQUEST['nv'] ) );
-		}
-
-		return $value;
-
+		return isset( $_GET['nv'] ) ? sanitize_text_field( urldecode( $_REQUEST['nv'] ) ) : '';
 	}
 
+	/**
+	 * Retrieves the request recipient
+	 *
+	 * @access      public
+	 * @since       1.7.0
+	 * @return      array
+	 */
+	public function get_request_recipient() {
+
+		// Prepare default recipient.
+		$default = array_filter(
+			array(
+				'sid' => get_current_noptin_subscriber_id(),
+				'uid' => get_current_user_id(),
+			)
+		);
+
+		// Fetch recipient.
+		$recipient = $this->get_request_value();
+
+		// Fallback to current user / subscriber.
+		if ( empty( $recipient ) ) {
+			return $default;
+		}
+
+		// Try to decode the recipient.
+		// New recipient format.
+		$decoded = json_decode( noptin_decrypt( $recipient ), true );
+
+		if ( ! empty( $decoded ) ) {
+			return $decoded;
+		}
+
+		// Old format (Users).
+		if ( is_email( $recipient ) ) {
+			$user = get_user_by( 'email', $recipient );
+
+			if ( $user ) {
+				$default['uid'] = $user->ID;
+			}
+
+			return $default;
+		}
+
+		// Old format (subscribers).
+		// Fetch the subscriber.
+		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $recipient );
+
+		if ( $subscriber ) {
+			$default['sid'] = $subscriber;
+		}
+
+		return $subscriber;
+	}
 
 	/**
 	 * Logs email opens
@@ -324,21 +366,25 @@ class Noptin_Page {
 			return;
 		}
 
-		if ( is_email( $value ) ) {
-			$user = get_user_by( 'email', $value );
+		// New recipient format.
+		$recipient = $this->get_request_recipient();
 
-			if ( $user ) {
-				update_user_meta( $user->ID, 'noptin_unsubscribed', 'unsubscribed' );
-			}
-		} else {
-			$_GET['noptin_key'] = sanitize_text_field( $value );
+		// Process subscribers.
+		if ( ! empty( $recipient['sid'] ) ) {
+			unsubscribe_noptin_subscriber( $recipient['sid'] );
 		}
 
-		// Fetch the subscriber.
-		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $value );
+		// Process users.
+		if ( ! empty( $recipient['uid'] ) ) {
+			update_user_meta( $recipient['uid'], 'noptin_unsubscribed', 'unsubscribed' );
+			do_action( 'noptin_unsubscribe_user', $recipient['uid'] );
+		}
 
-		// Unsubscribe them.
-		unsubscribe_noptin_subscriber( $subscriber );
+		// Process campaigns.
+		if ( ! empty( $recipient['cid'] ) ) {
+			$unsubscribed = (int) get_post_meta( $recipient['cid'], '_noptin_unsubscribed', true );
+			update_post_meta( $recipient['cid'], '_noptin_unsubscribed', $unsubscribed + 1 );
+		}
 
 		// If we are redirecting by page id, fetch the page's permalink.
 		if ( is_numeric( $page ) ) {
@@ -380,7 +426,7 @@ class Noptin_Page {
 	 * @since       1.4.4
 	 * @return      array
 	 */
-	public function pre_resubscribe_user( $page ) {
+	public function pre_resubscribe_user( $page ) { // TODO: Use new recipient format.
 		global $wpdb;
 
 		// Make sure that the confirmation key exists.

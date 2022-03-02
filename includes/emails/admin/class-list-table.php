@@ -480,50 +480,27 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Message to be displayed when there are no items
-	 */
-	public function no_items() {
-		$add_new_campaign_url = get_noptin_new_newsletter_campaign_url();
+     * Extra controls to be displayed between bulk actions and pagination
+     *
+     * @since 3.1.0
+     * @access protected
+     */
+    public function extra_tablenav( $which ) {
 
-		echo "<div style='min-height: 320px; display: flex; align-items: center; justify-content: center; flex-flow: column;'>";
-		echo "<span class='dashicons dashicons-email' style='font-size: 100px; height: 100px; width: 100px; color: #00acc1; line-height: 100px;'></span>";
-		
 		printf(
-			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-			__( '%1$sSend your subscribers a new email%2$s', 'newsletter-optin-box' ),
-			"<a class='no-campaign-create-new-campaign' href='$add_new_campaign_url'>",
-			'</a>'
+			'<a class="button button-primary" href="%s">%s</a>',
+			esc_url(
+				add_query_arg(
+					array(
+						'page'        => 'noptin-email-campaigns',
+						'section'     => $this->collection_type . 's',
+						'sub_section' => 'new_campaign',
+					),
+					admin_url( '/admin.php' )
+				)
+			),
+			__( 'New Campaign', 'newsletter-optin-box' )
 		);
-
-		echo "<p class='description'>Or <a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/sending-emails' target='_blank'>" . __( 'Learn more', 'newsletter-optin-box' ) . "</a></p>";
-		echo '</div>';
-
-	}
-
-	/**
-	 * Message to be displayed when there are no items (newsletters)
-	 */
-	public function no_items_newsletter() {
-
-		$params               = array(
-			'page'        => 'noptin-email-campaigns',
-			'section'     => 'newsletters',
-			'sub_section' => 'new_campaign',
-		);
-		$add_new_campaign_url = add_query_arg( $params, admin_url( '/admin.php' ) );;
-
-		echo "<div style='min-height: 320px; display: flex; align-items: center; justify-content: center; flex-flow: column;'>";
-		echo "<span class='dashicons dashicons-email' style='font-size: 100px; height: 100px; width: 100px; color: #00acc1; line-height: 100px;'></span>";
-		
-		printf(
-			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-			__( '%1$sSend your subscribers a new email%2$s', 'newsletter-optin-box' ),
-			"<a class='no-campaign-create-new-campaign' href='$add_new_campaign_url'>",
-			'</a>'
-		);
-
-		echo "<p class='description'>Or <a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/sending-emails' target='_blank'>" . __( 'Learn more', 'newsletter-optin-box' ) . "</a></p>";
-		echo '</div>';
 
 	}
 

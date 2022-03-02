@@ -237,6 +237,14 @@ class Noptin_Emails_Admin {
 		$page_title = esc_html__( 'Email Campaigns', 'newsletter-optin-box' );
 		$section    = $this->get_current_section();
 
+		if ( 'new_campaign' === $section ) {
+			$page_title = esc_html__( 'New Campaign', 'newsletter-optin-box' );
+		}
+
+		if ( 'edit_campaign' === $section ) {
+			$page_title = esc_html__( 'Edit Campaign', 'newsletter-optin-box' );
+		}
+
 		switch ( $this->get_current_tab() ) {
 
 			case 'newsletters':
@@ -245,14 +253,6 @@ class Noptin_Emails_Admin {
 
 					case 'main':
 						$page_title = esc_html__( 'Newsletters', 'newsletter-optin-box' );
-						break;
-
-					case 'edit_campaign':
-						$page_title = esc_html__( 'Edit Campaign', 'newsletter-optin-box' );
-						break;
-
-					case 'new_campaign':
-						$page_title = esc_html__( 'Send Campaign', 'newsletter-optin-box' );
 						break;
 
 				}
@@ -264,14 +264,6 @@ class Noptin_Emails_Admin {
 
 					case 'main':
 						$page_title = esc_html__( 'Automated Emails', 'newsletter-optin-box' );
-						break;
-
-					case 'edit_campaign':
-						$page_title = esc_html__( 'Edit Campaign', 'newsletter-optin-box' );
-						break;
-
-					case 'new_campaign':
-						$page_title = esc_html__( 'Add Campaign', 'newsletter-optin-box' );
 						break;
 
 				}

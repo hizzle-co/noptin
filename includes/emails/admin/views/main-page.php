@@ -29,11 +29,8 @@
 		<h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 		<!-- Action buttons -->
-		<?php if ( 'new_campaign' === $section ) : ?>
-			<a href="<?php echo esc_url( remove_query_arg( array( 'sub_section', 'campaign' ) ) ); ?>" class="page-title-action"><?php echo _e( 'Go Back', 'newsletter-optin-box' ); ?></a>
-		<?php elseif ( 'edit_campaign' === $section ): ?>
+		<?php if ( 'edit_campaign' === $section ): ?>
 			<a href="<?php echo esc_url( add_query_arg( array( 'sub_section' => 'new_campaign', 'campaign' => false ) ) ); ?>" class="page-title-action"><?php echo _e( 'Add New', 'newsletter-optin-box' ); ?></a>
-			<a href="<?php echo esc_url( remove_query_arg( array( 'sub_section', 'campaign' ) ) ); ?>" class="page-title-action"><?php echo _e( 'Go Back', 'newsletter-optin-box' ); ?></a>
 		<?php endif; ?>
 
 		<!-- Title area end -->

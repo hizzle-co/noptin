@@ -269,17 +269,6 @@ function get_noptin_newsletter_campaign_url( $id ) {
 }
 
 /**
- * Returns the URL to preview an automated email.
- *
- * @since 1.7.0
- * @param int $id The campaign's id.
- * @return string.
- */
-function get_noptin_automation_campaign_preview_url( $id ) {
-	return get_noptin_action_url( 'preview_automated_email', $id, true );
-}
-
-/**
  * Checks if a given post is a noptin campaign.
  *
  * @param int|WP_Post $post The post to check for.
@@ -1403,7 +1392,11 @@ function noptin_encrypt( $plaintext ) {
 	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
 	$iv    = substr( AUTH_SALT, 0, $ivlen );
 
-	return base64_encode( openssl_encrypt( $plaintext, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv ) );
+	// Encrypt then encode.
+	$encoded = base64_encode( openssl_encrypt( $plaintext, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv ) );
+
+	// Make URL safe.
+	return strtr( $encoded, '+/=', '._-' );
 }
 
 /**
@@ -1412,10 +1405,11 @@ function noptin_encrypt( $plaintext ) {
  * @param string $plaintext
  * @return string
  */
-function noptin_decrypt( $ciphertext ) {
+function noptin_decrypt( $encoded ) {
 
 	// Decode.
-	$decoded = base64_decode( $ciphertext );
+	// @see noptin_encrypt()
+	$decoded = base64_decode( strtr( $encoded, '._-', '+/=' ) );
 
 	if ( empty( $decoded ) ) {
 		return '';
