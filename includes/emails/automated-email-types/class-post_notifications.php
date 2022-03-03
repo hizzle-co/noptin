@@ -102,7 +102,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p>[[featured_image]]</p>
+		<p>[[featured_image size="medium_large"]]</p>
 		<p>[[post_excerpt]]</p>
 		<p>[[button url="[[post_url]]" text="<?php esc_attr_e( 'Continue Reading', 'newsletter-optin-box' ); ?>"]]</p>
 		<p><?php _e( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box' ); ?></p>
@@ -375,7 +375,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				'featured_image' => array(
 					'description' => __( "The post's featured image.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "featured_image",
+					'example'     => 'featured_image size="medium_large"',
 					'partial'     => true,
 				),
 
@@ -523,7 +523,8 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				break;
 
 			case 'featured_image':
-				return get_the_post_thumbnail( $this->post, 'medium_large' );
+				$size = empty( $args['size'] ) ? 'medium_large' : $args['size'];
+				return get_the_post_thumbnail( $this->post, $size );
 				break;
 
 			case 'post_excerpt':
