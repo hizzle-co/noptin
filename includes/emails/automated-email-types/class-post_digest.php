@@ -274,9 +274,14 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * @param Noptin_Automated_Email $campaign
 	 */
 	public function schedule_campaign( $campaign ) {
-
 		// Clear any existing scheduled events.
 		wp_clear_scheduled_hook( 'noptin_send_post_digest', array( $campaign->id ) );
+
+		// Abort if the campaign is not active.
+		if ( ! $campaign->can_send() ) {
+			delete_post_meta( $campaign->id, '_noptin_next_send' );
+			return;
+		}
 
 		// Get the frequency.
 		$frequency = $campaign->get( 'frequency' );
@@ -292,8 +297,8 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		switch( $frequency ) {
 
 			case 'daily':
-				$today    = strtotime( "today at $time" );
-				$tomorrow = strtotime( "tomorrow at $time" );
+				$today    = strtotime( "today $time" );
+				$tomorrow = strtotime( "tomorrow $time" );
 
 				// Schedule earliest possible send.
 				if ( $today > time() ) {
@@ -327,7 +332,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				}
 
 				$day       = $days[ (int) $day ];
-				$next_send = strtotime( "$day at $time" );
+				$next_send = strtotime( "$day $time" );
 				break;
 
 			case 'monthly':
@@ -342,8 +347,8 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				$month_2 = $month_1 < 12 ? $month_1 + 1 : 1;
 				$year_2  = $month_1 < 12 ? $year_1 : $year_1 + 1;
 
-				$date_1 = strtotime( "$year_1-$month_1-$date at $time" );
-				$date_2 = strtotime( "$year_2-$month_2-$date at $time" );
+				$date_1 = strtotime( "$year_1-$month_1-$date $time" );
+				$date_2 = strtotime( "$year_2-$month_2-$date $time" );
 
 				// Schedule earliest possible send.
 				if ( $date_1 > time() ) {
@@ -357,9 +362,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		}
 
 		if ( ! empty( $next_send ) ) {
-			$next_send = $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$next_send = $next_send - ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 			wp_schedule_single_event( $next_send, 'noptin_send_post_digest', array( $campaign->id ) );
 			update_post_meta( $campaign->id, '_noptin_next_send', $next_send );
+		} else {
+			delete_post_meta( $campaign->id, '_noptin_next_send' );
 		}
 
 	}
@@ -450,8 +457,68 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * @return WP_Post[]
 	 */
 	public function get_posts( $campaign ) {
-		
-		// TODO: Implement get_posts() method.
+
+		$time = $campaign->get( 'time' );
+
+		if ( empty( $time ) ) {
+			$time = '07:00';
+		}
+
+		switch ( $campaign->get( 'frequency' ) ) {
+
+			case 'daily':
+
+				// Get posts published in the last 1 day.
+				return get_posts(
+					array(
+						'post_type'      => $campaign->get( 'post_type' ),
+						'post_status'    => 'publish',
+						'posts_per_page' => -1,
+						'orderby'        => 'date',
+						'order'          => 'DESC',
+						'date_query'     => array(
+							'after' => date( 'Y-m-d', strtotime( '-1 day' ) ),
+						),
+					)
+				);
+				break;
+
+			case 'weekly':
+
+				// Get posts published in the last 7 days.
+				return get_posts(
+					array(
+						'post_type'      => $campaign->get( 'post_type' ),
+						'post_status'    => 'publish',
+						'posts_per_page' => -1,
+						'orderby'        => 'date',
+						'order'          => 'DESC',
+						'date_query'     => array(
+							'after' => date( 'Y-m-d', strtotime( '-7 days' ) ),
+						),
+					)
+				);
+				break;
+
+			case 'monthly':
+
+				// Get posts published in the last 30 days.
+				return get_posts(
+					array(
+						'post_type'      => $campaign->get( 'post_type' ),
+						'post_status'    => 'publish',
+						'posts_per_page' => -1,
+						'orderby'        => 'date',
+						'order'          => 'DESC',
+						'date_query'     => array(
+							'after' => date( 'Y-m-d', strtotime( '-30 days' ) ),
+						),
+					)
+				);
+
+		}
+
+		return array();
 	}
 
 	/**
@@ -462,19 +529,42 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function about_automation( $about, $campaign ) {
 
-		$time      = $campaign->get( 'time' );
+		// Prepare time.
+		$time = $campaign->get( 'time' );
 
 		if ( empty( $time ) ) {
 			$time = '07:00';
+		}
+
+		// Convert time to a readable format.
+		$time = date_i18n( get_option( 'time_format' ), strtotime( $time ) );
+
+		// Prepare next send time.
+		$next_send = get_post_meta( $campaign->id, '_noptin_next_send', true );
+
+		if ( $next_send ) {
+			$next_send = $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$next_send = '<p class="noptin-list-table-misc noptin-tip" title="' . esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send ) ) . '">' . esc_html(
+				sprintf(
+					// Translators: human friendly diff time.
+					__( 'Next send in %s', 'newsletter-optin-box' ),
+					human_time_diff( current_time( 'timestamp' ), $next_send )
+				)
+			) . '</p>';
+		}
+
+		// Do not display the next send time if the campaign is paused.
+		if ( ! $campaign->can_send() ) {
+			$next_send = '';
 		}
 
 		switch ( $campaign->get( 'frequency' ) ) {
 
 			case 'daily':
 				return sprintf(
-					__( 'Sends a daily digest of your latest content at %s', 'newsletter-optin-box' ),
+					__( 'Sends a digest of your latest content every day at %s', 'newsletter-optin-box' ),
 					esc_html( $time )
-				);
+				) . $next_send;
 				break;
 
 			case 'weekly':
@@ -483,7 +573,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					__( 'Sends a weekly digest of your latest content every %1$s at %2$s', 'newsletter-optin-box' ),
 					$GLOBALS['wp_locale']->get_weekday( (int) $campaign->get( 'day' ) ),
 					esc_html( $time )
-				);
+				) . $next_send;
 				break;
 
 			case 'monthly':
@@ -494,7 +584,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					__( 'Sends a digest of your latest content on the %1$s of every month at %2$s', 'newsletter-optin-box' ),
 					isset( $dates[ $date ] ) ? $dates[ $date ] : $dates['1'],
 					esc_html( $time )
-				);
+				) . $next_send;
 				break;
 
 			default:

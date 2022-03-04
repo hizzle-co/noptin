@@ -1988,3 +1988,9 @@ a.no-campaign-create-new-campaign {
 .noptin-inline-block {
 	display: inline-block;
 }
+
+#noptin-wrapper .noptin-list-table-misc {
+	color: green;
+    font-weight: bold;
+    margin-bottom: 0;
+}

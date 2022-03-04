@@ -474,9 +474,9 @@ class Noptin_Automated_Email {
 			wp_init_targeted_link_rel_filters();
 		}
 
-		if ( is_int( $result ) & $result ) {
+		if ( is_int( $result ) && $result ) {
 			$this->id = $result;
-			do_action( 'noptin_' . $this->type . '_campaign_saved' );
+			do_action( 'noptin_' . $this->type . '_campaign_saved', $this );
 			return true;
 		}
 

@@ -411,7 +411,7 @@ class Noptin_Newsletter_Email {
 			wp_init_targeted_link_rel_filters();
 		}
 
-		if ( is_int( $result ) & $result ) {
+		if ( is_int( $result ) && $result ) {
 			$this->id = $result;
 
 			$post = get_post( $this->id );
@@ -421,7 +421,7 @@ class Noptin_Newsletter_Email {
 				wp_schedule_single_event( strtotime( get_gmt_from_date( $post->post_date ) . ' GMT' ), 'publish_future_post', array( $post->ID ) );
 			}
 
-			do_action( 'noptin_' . $this->type . '_campaign_saved' );
+			do_action( 'noptin_' . $this->type . '_campaign_saved', $this );
 			return true;
 		}
 
