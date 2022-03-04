@@ -462,27 +462,21 @@ class Noptin_Automated_Email {
 			wp_remove_targeted_link_rel_filters();
 		}
 
-		// Update the email if it exists.
+		// Create or update the email.
 		if ( $this->exists() ) {
 			$args['ID'] = $this->id;
 			$result     = wp_update_post( $args, true );
-
-			if ( $has_filter ) {
-				wp_init_targeted_link_rel_filters();
-			}
-
-			return $result;
+		} else {
+			$result = wp_insert_post( $args, true );
 		}
-
-		// Create a new automated email.
-		$result = wp_insert_post( $args, true );
 
 		if ( $has_filter ) {
 			wp_init_targeted_link_rel_filters();
 		}
 
-		if ( is_int( $result ) ) {
+		if ( is_int( $result ) & $result ) {
 			$this->id = $result;
+			do_action( 'noptin_' . $this->type . '_campaign_saved' );
 			return true;
 		}
 

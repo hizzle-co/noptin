@@ -65,6 +65,10 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 			add_action( $this->notification_hook, array( $this, 'maybe_send_notification' ), 10, 2 );
 		}
 
+		if ( is_callable( array( $this, 'on_save_campaign' ) ) ) {
+			add_filter( "noptin_{$this->type}_campaign_saved", array( $this, 'on_save_campaign' ) );
+		}
+
 	}
 
 	/**
