@@ -29,14 +29,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		font-size:18px;
 		line-height:1.22;
 		font-weight:700;
-		margin: 4px 0 10px !important;
+		margin: 0 0 10px !important;
 		word-break: break-word;
+		padding-top: 0 !important;
 	}
 
 	.digest-list-post-excerpt {
-		line-height:1.33;
-		font-size:15px;
-		margin: 10px 0 10px !important;
+		line-height: 1.33;
+		font-size: 15px;
+		margin: 0 0 10px !important;
+		padding-top: 0 !important;
 		word-break: break-word;
 	}
 

@@ -1519,3 +1519,14 @@ function noptin_kses_post_e( $content ) {
 		)
 	);
 }
+
+/**
+ * Checks if a given WP User is unsubscribed.
+ *
+ * @since 1.7.0
+ * @param int $user_id
+ * @return bool
+ */
+function noptin_is_wp_user_unsubscribed( $user_id ) {
+	return 'unsubscribed' === get_user_meta( $user_id, 'noptin_unsubscribed', true );
+}

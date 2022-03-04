@@ -141,7 +141,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		if ( ! $campaign->sends_immediately() ) {
 
 			return sprintf(
-				__( 'Sends %s after a customer reaches a lifetime value of %s', 'newsletter-opti-box' ),
+				__( 'Sends %s after a customer reaches a lifetime value of %s', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) ),
 				wc_price( $lifetime_value )
 			);
@@ -149,7 +149,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		}
 
 		return sprintf(
-			__( 'Sends immediately a customer reaches a lifetime value of %s', 'newsletter-opti-box' ),
+			__( 'Sends immediately a customer reaches a lifetime value of %s', 'newsletter-optin-box' ),
 			wc_price( $lifetime_value )
 		);
 
@@ -202,7 +202,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if ( $this->is_automation_valid_for( $automation, $order, $lifetime_value ) ) {
+			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $lifetime_value ) ) {
 				$this->schedule_notification( $order_id, $automation );
 			}
 

@@ -163,13 +163,13 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		if ( ! $campaign->sends_immediately() ) {
 
 			return sprintf(
-				__( 'Sends %s after new content is published', 'newsletter-opti-box' ),
+				__( 'Sends %s after new content is published', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
 
 		}
 
-		return __( 'Sends immediately new content is published', 'newsletter-opti-box' );
+		return __( 'Sends immediately new content is published', 'newsletter-optin-box' );
 
 	}
 
@@ -221,7 +221,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if ( $this->is_automation_valid_for( $automation, $post ) ) {
+			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $post ) ) {
 				$this->schedule_notification( $post->ID, $automation );
 			}
 

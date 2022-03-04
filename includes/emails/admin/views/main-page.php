@@ -26,7 +26,7 @@
 	<?php if ( 'main' !== $section ) : ?>
 
 		<!-- Page Title -->
-		<h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?></h1>
+		<h1 class="wp-heading-inline" style="font-size: 29px; font-weight: 500"><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 		<!-- Action buttons -->
 		<?php if ( 'edit_campaign' === $section ): ?>

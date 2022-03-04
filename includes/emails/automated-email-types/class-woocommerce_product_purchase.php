@@ -51,7 +51,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	 *
 	 */
 	public function get_description() {
-		return __( 'Send an email to your customers when they make a new order. Optionally limit the email to first-time customers.', 'newsletter-optin-box' );
+		return __( 'Send an email to your customers when they purchase a specific product. Optionally limit the email to first-time customers.', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -207,22 +207,22 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		if ( ! $campaign->sends_immediately() ) {
 
 			$about = sprintf(
-				__( 'Sends %s after', 'newsletter-opti-box' ),
+				__( 'Sends %s after', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
 
 		} else {
 
-			$about = __( 'Sends immediately', 'newsletter-opti-box' );
+			$about = __( 'Sends immediately', 'newsletter-optin-box' );
 		}
 
 		// Are we sending to new customers.
 		$new_customer = $campaign->get( 'new_customer' );
 
 		if ( ! empty( $new_customer ) ) {
-			$about .= ' ' . __( 'a first-time customer buys', 'newsletter-opti-box' );
+			$about .= ' ' . __( 'a first-time customer buys', 'newsletter-optin-box' );
 		} else {
-			$about .= ' ' . __( "a customer buys", 'newsletter-opti-box' );
+			$about .= ' ' . __( "a customer buys", 'newsletter-optin-box' );
 		}
 
 		// Prepare selected status.
@@ -275,7 +275,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if ( $this->is_automation_valid_for( $automation, $order, $product_id, 'buy', $woocommerce ) ) {
+			if (  $automation->can_send() &&  $this->is_automation_valid_for( $automation, $order, $product_id, 'buy', $woocommerce ) ) {
 				$this->schedule_notification( $item['item_id'], $automation );
 			}
 
@@ -309,7 +309,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if ( $this->is_automation_valid_for( $automation, $order, $product_id, 'refund', $woocommerce ) ) {
+			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $product_id, 'refund', $woocommerce ) ) {
 				$this->schedule_notification( $item['item_id'], $automation );
 			}
 

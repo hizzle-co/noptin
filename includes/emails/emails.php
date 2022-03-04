@@ -298,3 +298,77 @@ function increment_noptin_campaign_stat( $campaign_id, $stat ) {
 	}
 
 }
+
+/**
+ * Increments a campaign stat.
+ *
+ * @since 1.7.0
+ * @param Noptin_Newsletter_Email|Noptin_Automated_Email $campaign
+ */
+function display_noptin_campaign_subscriber_filter( $campaign ) {
+
+	// TODO: Subscription source.
+	foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+		if ( empty( $custom_field['options'] ) ) {
+			$custom_field['options'] = '';
+		}
+	
+		// Checkbox
+		if ( 'checkbox' === $custom_field['type'] ) {
+	
+			$options = array(
+				''  => __( 'Any', 'newsletter-optin-box' ),
+				'1' => __( 'Yes', 'newsletter-optin-box' ),
+				'0' => __( 'No', 'newsletter-optin-box' ),
+			);
+	
+		}
+	
+		// Select.
+		else if ( 'dropdown' === $custom_field['type'] ) {
+	
+			$options = array(
+				'' => __( 'Any', 'newsletter-optin-box' ),
+			);
+	
+			foreach ( explode( "\n", $custom_field['options'] ) as $option ) {
+				$options[ $option ] = $option;
+			}
+	
+		}
+	
+		// Radio.
+		else if ( 'radio' === $custom_field['type'] ) {
+	
+			$options = array(
+				'' => __( 'Any', 'newsletter-optin-box' ),
+			);
+	
+			foreach ( explode( "\n", $custom_field['options'] ) as $option ) {
+				$options[ $option ] = $option;
+			}
+	
+		}
+	
+		// Abort.
+		else {
+			continue;
+		}
+	
+		?>
+	
+			<label style="width:100%;" class="noptin-margin-y">
+				<strong><?php echo wp_kses_post( $custom_field['label'] ); ?></strong>
+				<select name="noptin_email[noptin_custom_field_<?php echo esc_attr( $custom_field['merge_tag'] ); ?>]" style="display:block; width:100%;">
+					<?php foreach ( $options as $key => $label ) : ?>
+						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $campaign->get( 'noptin_custom_field_' . $custom_field['merge_tag'] ) ); ?>><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
+	
+		<?php
+	}
+
+}
+add_action( 'noptin_sender_options_noptin', 'display_noptin_campaign_subscriber_filter' );

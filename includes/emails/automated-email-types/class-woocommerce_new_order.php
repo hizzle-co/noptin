@@ -191,22 +191,22 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		if ( ! $campaign->sends_immediately() ) {
 
 			$about = sprintf(
-				__( 'Sends %s after', 'newsletter-opti-box' ),
+				__( 'Sends %s after', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
 
 		} else {
 
-			$about = __( 'Sends immediately', 'newsletter-opti-box' );
+			$about = __( 'Sends immediately', 'newsletter-optin-box' );
 		}
 
 		// Are we sending to new customers.
 		$new_customer = $campaign->get( 'new_customer' );
 
 		if ( ! empty( $new_customer ) ) {
-			$about .= ' ' . __( "a first-time customer's order is", 'newsletter-opti-box' );
+			$about .= ' ' . __( "a first-time customer's order is", 'newsletter-optin-box' );
 		} else {
-			$about .= ' ' . __( "a customer's order is", 'newsletter-opti-box' );
+			$about .= ' ' . __( "a customer's order is", 'newsletter-optin-box' );
 		}
 
 		// Prepare selected status.
@@ -241,7 +241,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if ( $this->is_automation_valid_for( $automation, $order, $action, $woocommerce ) ) {
+			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $action, $woocommerce ) ) {
 				$this->schedule_notification( $order_id, $automation );
 			}
 
