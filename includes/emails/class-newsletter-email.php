@@ -85,7 +85,7 @@ class Noptin_Newsletter_Email {
 		// Data array.
 		if ( is_array( $args ) ) {
 			$this->status  = $args['status'];
-			$this->subject = $args['subject'];
+			$this->subject = wp_unslash( $args['subject'] );
 
 			// Optional email ID.
 			if ( ! empty( $args['id'] ) ) {

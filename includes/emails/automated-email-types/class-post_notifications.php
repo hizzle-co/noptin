@@ -298,7 +298,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		// Prepare campaign args.
 		$args = array_merge(
-			$campaign->options,
+			wp_unslash( $campaign->options ),
 			array(
 				'parent_id'         => $campaign->id,
 				'status'            => 'publish',
@@ -307,6 +307,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				'associated_post'   => $post_id,
 				'subscribers_query' => array(),
 				'preview_text'      => noptin_parse_email_subject_tags( $campaign->get( 'preview_text' ), true ),
+				'footer_text'       => noptin_parse_email_subject_tags( $campaign->get( 'footer_text' ), true ),
 				'custom_title'      => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
 			)
 		);
@@ -319,7 +320,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		}
 
 		// Prepare the newsletter.
-		$newsletter = new Noptin_Newsletter_Email( $args );
+		$newsletter = new Noptin_Newsletter_Email( wp_slash( $args ) );
 
 		// Send normal campaign.
 		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $newsletter, $campaign ) ) {
