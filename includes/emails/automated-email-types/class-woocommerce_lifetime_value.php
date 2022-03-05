@@ -275,6 +275,10 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	 */
 	public function prepare_customer( $customer ) {
 
+		if ( empty( $customer ) ) {
+			return;
+		}
+
 		// Set variables.
 		$this->customer = $customer;
 		$this->user     = get_user_by( 'id', $customer->get_id() );
@@ -301,7 +305,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		// Set variables.
 		$this->customer    = null;
 		$this->user        = null;
-		$$this->subscriber = null;
+		$this->subscriber = null;
 
 		// Prepare merge tags.
 		foreach ( array_keys( $this->get_customer_merge_tags() ) as $tag ) {

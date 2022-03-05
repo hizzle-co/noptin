@@ -118,6 +118,16 @@ abstract class Noptin_Email_Type {
 
 			$merge_tag = sanitize_key( $field['merge_tag'] );
 
+			if ( 'first_name' === $merge_tag ) {
+
+				$tags['name'] = array(
+					'description' => __( 'Full Name', 'newsletter-optin-box' ),
+					'callback'    => array( $this, 'get_subscriber_field' ),
+					'example'     => "name default='there'",
+				);
+
+			}
+
 			$tags[ $merge_tag ] = array(
 				'description' => strip_tags( $field['label'] ),
 				'callback'    => array( $this, 'get_subscriber_field' ),
@@ -142,7 +152,23 @@ abstract class Noptin_Email_Type {
 		$field   = strtolower( $field );
 
 		// Abort if no subscriber.
-		if ( empty( $this->subscriber ) || ! $this->subscriber->has_prop( $field ) ) {
+		if ( empty( $this->subscriber ) ) {
+			return esc_html( $default );
+		}
+
+		if ( 'last_name' === $field || 'second_name' === $field ) {
+			$value = $this->subscriber->second_name;
+			return $value ? esc_html( $value ) : esc_html( $default );
+		}
+
+		// Full name.
+		if ( 'name' === $field ) {
+			$value = $this->subscriber->first_name . ' ' . $this->subscriber->second_name;
+			return $value ? esc_html( $value ) : esc_html( $default );
+		}
+
+		// Abort if no value.
+		if ( ! $this->subscriber->has_prop( $field ) ) {
 			return esc_html( $default );
 		}
 

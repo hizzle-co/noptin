@@ -641,7 +641,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 * @return array
 	 */
 	public function get_customer_merge_tags() {
-
+		// TODO: On subject change, if heading is empty, fill it up.
 		return array(
 
 			'customer.id' => array(
@@ -719,7 +719,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		$default = isset( $args['default'] ) ? $args['default'] : '';
 
 		// Abort if no customer.
-		if ( empty( $this->customer ) || empty( $this->order ) ) {
+		if ( empty( $this->customer ) ) {
 			return esc_html( $default );
 		}
 
@@ -727,11 +727,16 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		switch( $field ) {
 
 			case 'customer.details':
-				WC()->mailer();
-				ob_start();
-				do_action( 'woocommerce_email_customer_details', $this->order, false, false, '' );
-				return ob_get_clean();
-				break;
+
+				if ( ! empty( $this->order ) ) {
+
+					WC()->mailer();
+					ob_start();
+					do_action( 'woocommerce_email_customer_details', $this->order, false, false, '' );
+					return ob_get_clean();
+					break;
+
+				}
 
 			case 'customer.total_spent':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
@@ -1233,7 +1238,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 *
 	 * @param int $offset
 	 */
-	protected function _prepare_test_data( $offset = 0 ) {
+	public function _prepare_test_data( $offset = 0 ) {
 
 		// Do not run more than 10 times.
 		if ( $offset > 10 ) {
