@@ -268,4 +268,46 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		$this->prepare_and_send( $campaign, $key );
 	}
 
+	/**
+	 * Prepares a customer.
+	 *
+	 * @param WC_Customer $customer
+	 */
+	public function prepare_customer( $customer ) {
+
+		// Set variables.
+		$this->customer = $customer;
+		$this->user     = get_user_by( 'id', $customer->get_id() );
+
+		$subscriber = new Noptin_Subscriber( $customer->get_email() );
+
+		if ( $subscriber->exists() ) {
+			$this->subscriber = $subscriber;
+		}
+
+		// Prepare merge tags.
+		foreach ( $this->get_customer_merge_tags() as $tag => $details ) {
+			noptin()->emails->tags->add_tag( $tag, $details );
+		}
+
+	}
+
+	/**
+	 * Cleans the class.
+	 *
+	 */
+	public function clean_customer() {
+
+		// Set variables.
+		$this->customer    = null;
+		$this->user        = null;
+		$$this->subscriber = null;
+
+		// Prepare merge tags.
+		foreach ( array_keys( $this->get_customer_merge_tags() ) as $tag ) {
+			noptin()->emails->tags->remove_tag( $tag );
+		}
+
+	}
+
 }

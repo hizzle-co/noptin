@@ -148,7 +148,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 			'noptin_mass_mailer_data',
 			array(
 				'campaign_id' => $campaign->id,
-				'recipients'  => $recipients,
+				'recipients'  => array_unique( $recipients ), // Ensure no duplicates.
 			),
 			$campaign
 		);
@@ -255,9 +255,10 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		}
 
 		// Send the email & log success or failure.
-		if ( $this->_send( $campaign, $recipient ) ) {
+		$result = $this->_send( $campaign, $recipient );
+		if ( true === $result ) {
 			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
-		} else {
+		} else if ( false === $result ) {
 			increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
 		}
 

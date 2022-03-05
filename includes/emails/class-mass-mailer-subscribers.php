@@ -47,12 +47,12 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		// Bail if the subscriber is not found or is unsubscribed...
 		if ( ! $subscriber->exists() || ! $subscriber->is_active() ) {
-			return false;
+			return null;
 		}
 
 		// ... or was already sent the email.
 		if ( '' !== get_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, true ) ) {
-			return false;
+			return null;
 		}
 
 		// Generate and send the actual email.

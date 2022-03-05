@@ -182,6 +182,12 @@ class Noptin_Newsletter_Email {
 	public function can_send() {
 
 		$can_send = $this->is_published() && $this->exists();
+
+		// Check if the campaign is already sent.
+		if ( $can_send && '' !== get_post_meta( $this->id, 'completed', true ) ) {
+			$can_send = false;
+		}
+
 		return apply_filters( 'noptin_email_can_send', $can_send, $this );
 	}
 
