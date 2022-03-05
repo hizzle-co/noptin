@@ -32,6 +32,9 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		$this->cron_hook_identifier     = $this->identifier . '_cron';
 		$this->cron_interval_identifier = $this->identifier . '_cron_interval';
 
+		// Displays sender options.
+		add_action( 'noptin_sender_options_' . $this->sender, array( $this, 'display_sending_options' ) );
+
 		// Adds a new email to the qeue.
 		add_action( 'noptin_send_email_via_' . $this->sender, array( $this, 'send' ), 10, 2 );
 
@@ -42,6 +45,15 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		// Handle cron on action scheduler cron.
 		add_action( $this->identifier, array( $this, 'maybe_handle' ) );
 	}
+
+	/**
+	 * Displays newsletter sending options.
+	 *
+	 * @param Noptin_Newsletter_Email|Noptin_automated_Email $campaign
+	 *
+	 * @return bool
+	 */
+	abstract public function display_sending_options( $campaign );
 
 	/**
 	 * Fetches relevant subscribers for the campaign.

@@ -22,6 +22,17 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 	protected $sender = 'noptin';
 
 	/**
+	 * Displays newsletter sending options.
+	 *
+	 * @param Noptin_Newsletter_Email|Noptin_automated_Email $campaign
+	 *
+	 * @return bool
+	 */
+	public function display_sending_options( $campaign ) {
+		display_noptin_campaign_subscriber_filter( $campaign );
+	}
+
+	/**
 	 * Sends a single email to a subscriber.
 	 *
 	 * @param Noptin_Newsletter_Email $campaign
@@ -46,7 +57,7 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		// Generate and send the actual email.
 		noptin()->emails->newsletter->subscriber = $subscriber;
-		$result = noptin()->emails->newsletter->send( $campaign, $campaign->ID, $subscriber->email );
+		$result = noptin()->emails->newsletter->send( $campaign, $campaign->id, $subscriber->email );
 
 		// Log the send.
 		update_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, (int) $result );

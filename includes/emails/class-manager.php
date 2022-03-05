@@ -87,6 +87,8 @@ class Noptin_Email_Manager {
 		$this->automated_email_types = new Noptin_Automated_Email_Types();
 		$this->newsletter            = new Noptin_Newsletter_Email_Type();
 		$this->subscribers_mailer    = new Noptin_Mass_Mailer_Subscribers();
+
+		do_action( 'noptin_email_manager_init', $this );
 	}
 
 	/**

@@ -371,4 +371,3 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
 	}
 
 }
-add_action( 'noptin_sender_options_noptin', 'display_noptin_campaign_subscriber_filter' );
