@@ -71,7 +71,7 @@ class Noptin_Automated_Email {
 			if ( ! is_array( $data ) ) {
 				$this->is_legacy = true;
 			} else {
-				$this->options = wp_unslash( $data );
+				$this->options = $data;
 			}
 
 			$this->id      = $post->ID;
@@ -93,7 +93,7 @@ class Noptin_Automated_Email {
 			}
 
 			unset( $args['automation_type'], $args['status'], $args['title'] );
-			$this->options = wp_unslash( $args );
+			$this->options = $args;
 		}
 
 	}
@@ -308,7 +308,7 @@ class Noptin_Automated_Email {
 			}
 
 			$post = get_post( $this->id );
-			return empty( $post ) ? '' : wp_unslash( $post->post_content );
+			return empty( $post ) ? '' : $post->post_content;
 
 		}
 

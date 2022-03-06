@@ -72,7 +72,7 @@ class Noptin_Newsletter_Email {
 			if ( ! is_array( $data ) ) {
 				$this->is_legacy = true;
 			} else {
-				$this->options = wp_unslash( $data );
+				$this->options = $data;
 			}
 
 			$this->id        = $post->ID;
@@ -85,7 +85,7 @@ class Noptin_Newsletter_Email {
 		// Data array.
 		if ( is_array( $args ) ) {
 			$this->status  = $args['status'];
-			$this->subject = wp_unslash( $args['subject'] );
+			$this->subject = $args['subject'];
 
 			// Optional email ID.
 			if ( ! empty( $args['id'] ) ) {
@@ -106,7 +106,7 @@ class Noptin_Newsletter_Email {
 			}
 
 			unset( $args['status'], $args['subject'] );
-			$this->options = wp_unslash( $args );
+			$this->options = $args;
 		}
 
 	}
@@ -283,7 +283,7 @@ class Noptin_Newsletter_Email {
 			}
 
 			$post = get_post( $this->id );
-			return empty( $post ) ? '' : wp_unslash( $post->post_content );
+			return empty( $post ) ? '' : $post->post_content;
 
 		}
 

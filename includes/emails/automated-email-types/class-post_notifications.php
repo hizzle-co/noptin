@@ -298,7 +298,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		// Prepare campaign args.
 		$args = array_merge(
-			wp_unslash( $campaign->options ),
+			$campaign->options,
 			array(
 				'parent_id'         => $campaign->id,
 				'status'            => 'publish',
@@ -320,7 +320,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		}
 
 		// Prepare the newsletter.
-		$newsletter = new Noptin_Newsletter_Email( wp_slash( $args ) );
+		$newsletter = new Noptin_Newsletter_Email( $args );
 
 		// Send normal campaign.
 		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $newsletter, $campaign ) ) {
