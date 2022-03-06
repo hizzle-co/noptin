@@ -497,6 +497,17 @@ abstract class Noptin_Email_Type {
 		// Clear environment.
 		$this->after_send( $campaign );
 
+		// Log.
+		if ( 'test' !== $result && ! $campaign->is_mass_mail() ) {
+
+			if ( true === $result ) {
+				increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
+			} else if ( false === $result ) {
+				increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
+			}
+
+		}
+
 		return $result;
 	}
 

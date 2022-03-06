@@ -371,3 +371,53 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
 	}
 
 }
+
+/**
+ * Logs a debugging message.
+ * 
+ * @param string $log The message to log.
+ * @param string|bool $title The title of the message, or pass false to disable the backtrace.
+ * @param string $file The file from which the error was logged.
+ * @param string $line The line that contains the error.
+ * @param bool $exit Whether or not to exit function execution.
+ */
+function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = false ) {
+    
+    if ( true === apply_filters( 'noptin_error_log', true ) ) {
+
+        // Ensure the log is a scalar.
+        if ( ! is_scalar( $log ) ) {
+            $log = print_r( $log, true );
+        }
+
+        // Add title.
+        if ( ! empty( $title ) ) {
+            $log  = $title . ' ' . trim( $log );
+        }
+
+        // Add the file to the label.
+        if ( ! empty( $file ) ) {
+            $log .= ' in ' . $file;
+        }
+
+        // Add the line number to the label.
+        if ( ! empty( $line ) ) {
+            $log .= ' on line ' . $line;
+        }
+
+        // Log the message.
+        error_log( trim ( $log ) );
+
+        // ... and a backtrace.
+        if ( false !== $title && false !== $file ) {
+            error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
+        }
+
+    }
+
+    // Maybe exit.
+    if ( $exit ) {
+        exit;
+    }
+
+}

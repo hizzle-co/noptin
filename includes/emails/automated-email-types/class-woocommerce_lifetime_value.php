@@ -41,7 +41,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	 *
 	 */
 	public function get_name() {
-		return __( 'WooCommerce Lifetime Value', 'newsletter-optin-box' );
+		return __( 'Lifetime Value', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -73,7 +73,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	 *
 	 */
 	public function default_subject() {
-		return __( '[[customer.display_name]], thanks for being a loyal customer!', 'newsletter-optin-box' );
+		return __( '[[customer.first_name]], thanks for being a loyal customer!', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[customer.display_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'To show you that we appreciate your loyalty, here is a coupon code for 20% off your next order.', 'newsletter-optin-box' ); ?></p>
 		<p><h2 style="text-align: center;">20OFF</h2></p>
 		<p><?php _e( 'Thanks for choosing [[blog_name]]!', 'newsletter-optin-box' ); ?></p>

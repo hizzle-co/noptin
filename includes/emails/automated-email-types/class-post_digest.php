@@ -275,7 +275,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function schedule_campaign( $campaign ) {
 		// Clear any existing scheduled events.
-		wp_clear_scheduled_hook( 'noptin_send_post_digest', array( $campaign->id ) );
+		wp_clear_scheduled_hook( $this->notification_hook, array( $campaign->id ) );
 
 		// Abort if the campaign is not active.
 		if ( ! $campaign->can_send() ) {
@@ -301,11 +301,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				$tomorrow = strtotime( "tomorrow $time" );
 
 				// Schedule earliest possible send.
-				if ( $today > time() ) {
+				if ( ( $today + HOUR_IN_SECONDS ) > current_time( 'timestamp' ) ) {
 					$next_send = $today;
 				} else {
 					$next_send = $tomorrow;
-				}
+				} 
 
 				break;
 
@@ -351,7 +351,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				$date_2 = strtotime( "$year_2-$month_2-$date $time" );
 
 				// Schedule earliest possible send.
-				if ( $date_1 > time() ) {
+				if ( ( $date_1 + HOUR_IN_SECONDS ) > current_time( 'timestamp' ) ) {
 					$next_send = $date_1;
 				} else {
 					$next_send = $date_2;
@@ -363,7 +363,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		if ( ! empty( $next_send ) ) {
 			$next_send = $next_send - ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-			wp_schedule_single_event( $next_send, 'noptin_send_post_digest', array( $campaign->id ) );
+			wp_schedule_single_event( $next_send, $this->notification_hook, array( $campaign->id ) );
 			update_post_meta( $campaign->id, '_noptin_next_send', $next_send );
 		} else {
 			delete_post_meta( $campaign->id, '_noptin_next_send' );

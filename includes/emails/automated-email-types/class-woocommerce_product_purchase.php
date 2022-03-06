@@ -43,7 +43,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	 *
 	 */
 	public function get_name() {
-		return __( 'WooCommerce Product Purchase', 'newsletter-optin-box' );
+		return __( 'Product Purchase', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	 *
 	 */
 	public function default_subject() {
-		return __( '[[customer.display_name]], how would you rate the products!', 'newsletter-optin-box' );
+		return __( '[[customer.first_name]], how would you rate the products!', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -85,7 +85,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[customer.display_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Thanks for purchasing [[product_name]]. Please reply to this email and let us know what you think of the product.', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Cheers!', 'newsletter-optin-box' ); ?></p>
 		<p>[[blog_name]]</p>
@@ -200,10 +200,6 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 			return $about;
 		}
 
-		if ( empty( $action ) ) {
-			$action = 'buy';
-		}
-
 		if ( ! $campaign->sends_immediately() ) {
 
 			$about = sprintf(
@@ -220,10 +216,13 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		$new_customer = $campaign->get( 'new_customer' );
 
 		if ( ! empty( $new_customer ) ) {
-			$about .= ' ' . __( 'a first-time customer buys', 'newsletter-optin-box' );
+			$about .= ' ' . __( 'a first-time customer', 'newsletter-optin-box' );
 		} else {
-			$about .= ' ' . __( "a customer buys", 'newsletter-optin-box' );
+			$about .= ' ' . __( "a customer", 'newsletter-optin-box' );
 		}
+
+		$about .= ' ';
+		$about .= 'refund' === $action ? __( 'is refunded', 'newsletter-optin-box' ) : __( 'buys', 'newsletter-optin-box' );
 
 		// Prepare selected status.
 		$product = get_the_title( $selected_product );

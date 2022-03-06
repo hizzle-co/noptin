@@ -166,10 +166,10 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		$merge_tags['--notracking'] = '';
 		foreach ( explode( ',', $automation->get_recipients() ) as $recipient ) {
 
-			$no_tracking = false !== strpos( $recipient, '--notracking' );
-			$recipient   = trim( str_replace( array_keys( $merge_tags ), array_values( $merge_tags ), $recipient ) );
+			$track     = false === strpos( $recipient, '--notracking' );
+			$recipient = trim( str_replace( array_keys( $merge_tags ), array_values( $merge_tags ), $recipient ) );
 
-			$recipients[ $recipient ] = $no_tracking;
+			$recipients[ $recipient ] = $track;
 
 		}
 
