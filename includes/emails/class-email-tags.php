@@ -253,7 +253,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	public function noptin_url() {
 
 		return sprintf(
-			'<a target="_blank" href="https://noptin.com/?utm_medium=powered-by&utm_campaign=email-campaign&utm_source=%s">Noptin</a>',
+			'<a target="_blank" href="https://noptin.com/?utm_medium=plugin-dashboard&utm_campaign=powered-by&utm_source=%s">Noptin</a>',
 			urlencode( esc_url( get_home_url() ) )
 		);
 

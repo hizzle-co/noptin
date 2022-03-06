@@ -46,7 +46,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	 *
 	 */
 	public function get_name() {
-		return __( 'New Order', 'newsletter-optin-box' );
+		return __( 'Order Action', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	 *
 	 */
 	public function get_description() {
-		return __( 'Send an email to your customers when they make a new order. Optionally limit the email to first-time customers.', 'newsletter-optin-box' );
+		return __( 'Send an email to your customers (or first time customers) when they make a new order or their order status changes.', 'newsletter-optin-box' );
 	}
 
 	/**

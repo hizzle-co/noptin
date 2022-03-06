@@ -280,11 +280,15 @@ class Noptin_Page {
 
 				$clicked_campaigns = noptin_parse_list( get_user_meta( $recipient['uid'], '_clicked_noptin_campaigns', true ) );
 
+				if ( empty( $clicked_campaigns[ $recipient['cid'] ] ) ) {
+					$clicked_campaigns[ $recipient['cid'] ] = array();
+				}
+
 				if ( ! in_array( $destination, $clicked_campaigns[ $recipient['cid'] ], true ) ) {
 
 					// Log the campaign click.
 					$clicked_campaigns[ $recipient['cid'] ][] = noptin_clean( $destination );
-					update_user_meta( $recipient['uid'], '_clicked_campaigns', $clicked_campaigns );
+					update_user_meta( $recipient['uid'], '_clicked_noptin_campaigns', $clicked_campaigns );
 
 					// Fire action.
 					do_action( 'log_noptin_user_campaign_click', $recipient['uid'], $recipient['cid'], $destination );

@@ -26,6 +26,11 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public $type = 'woocommerce_lifetime_value';
 
 	/**
+	 * @var string
+	 */
+	public $notification_hook = 'noptin_woocommerce_lifetime_value_notify';
+
+	/**
 	 * Registers hooks.
 	 *
 	 */
@@ -119,10 +124,12 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 				<label>
 					<strong class="noptin-label-span">
 						<?php _e( 'Lifetime Value', 'newsletter-optin-box' ); ?>
-						<span title="<?php esc_attr_e( "This email is automatically sent whenever a customer's lifetime value surpases the specified amount", 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 					</strong>
 					<input class="widefat" type="number" name="noptin_email[lifetime_value]" value="<?php echo floatval( $campaign->get( 'lifetime_value' ) ); ?>" min="0" step="any">
 				</label>
+				<span class="noptin-help-text">
+					<?php _e( "This email is automatically sent whenever a customer's lifetime value surpases the specified amount.", 'newsletter-optin-box' ); ?>
+				</span>
 			</p>
 		<?php
 
@@ -215,24 +222,25 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	 *
 	 * @param Noptin_Automated_Email $automation
 	 * @param WC_Order $order
-	 * @param float $lifetime_value
+	 * @param float $customer_lifetime_value The customers lifetime value.
 	 */
-	public function is_automation_valid_for( $automation, $order, $lifetime_value ) {
+	public function is_automation_valid_for( $automation, $order, $customer_lifetime_value ) {
 
 		// Compare lifetime values.
-        $is_valid = ! ( floatval( $automation->get( 'lifetime_value' ) ) < $lifetime_value );
+		$automation_lifetime_value = floatval( $automation->get( 'lifetime_value' ) );
+		$is_valid                  = $automation_lifetime_value <= $customer_lifetime_value;
 
 		if ( $is_valid ) {
 
 			// Ensure that the user reached this milestone in this specific order.
-			$previous_total = $lifetime_value - (float) $order->get_total();
+			$previous_total = $customer_lifetime_value - (float) $order->get_total();
 
-			$is_valid = $previous_total < floatval( $automation->get( 'lifetime_value' ) );
+			$is_valid = $previous_total < $automation_lifetime_value;
 
 		}
 
 		// Filter and return.
-		return apply_filters( 'noptin_woocommerce_lifetime_value_notification_is_valid', $is_valid, $automation, $lifetime_value, $order );
+		return apply_filters( 'noptin_woocommerce_lifetime_value_notification_is_valid', $is_valid, $automation, $customer_lifetime_value, $order );
 
     }
 

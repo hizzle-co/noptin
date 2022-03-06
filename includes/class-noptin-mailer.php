@@ -189,7 +189,7 @@ class Noptin_Mailer {
 			'blog_description' => get_bloginfo( 'description' ),
 			'home_url'         => get_home_url(),
 			'noptin'   		   => sprintf(
-				'<a target="_blank" href="https://noptin.com/?utm_medium=powered-by&utm_campaign=email-campaign&utm_source=%s">Noptin</a>',
+				'<a target="_blank" href="https://noptin.com/?utm_medium=plugin-dashboard&utm_campaign=powered-by&utm_source=%s">Noptin</a>',
 				urlencode( esc_url( get_home_url() ) )
 			),
 			'noptin_company'   => get_noptin_option( 'company', '' ),

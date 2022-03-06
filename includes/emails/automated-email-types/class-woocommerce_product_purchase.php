@@ -26,6 +26,11 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public $type = 'woocommerce_product_purchase';
 
 	/**
+	 * @var string
+	 */
+	public $notification_hook = 'noptin_woocommerce_product_purchase_notify';
+
+	/**
 	 * Registers hooks.
 	 *
 	 */
@@ -86,7 +91,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		ob_start();
 		?>
 		<p><?php _e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Thanks for purchasing [[product_name]]. Please reply to this email and let us know what you think of the product.', 'newsletter-optin-box' ); ?></p>
+		<p><?php _e( 'Thanks for purchasing [[product.name]]. Please reply to this email and let us know what you think of the product.', 'newsletter-optin-box' ); ?></p>
 		<p><?php _e( 'Cheers!', 'newsletter-optin-box' ); ?></p>
 		<p>[[blog_name]]</p>
 		<?php
