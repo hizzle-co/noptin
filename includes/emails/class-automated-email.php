@@ -64,8 +64,8 @@ class Noptin_Automated_Email {
 				return;
 			}
 
-			// Prepare campaign data.
-			$data = json_decode( $post->post_content, true );
+			// Fetch campaign data.
+			$data = get_post_meta( $post->ID, 'campaign_data', true );
 
 			// Check if we're dealing with a legacy campaign.
 			if ( ! is_array( $data ) ) {
@@ -444,10 +444,11 @@ class Noptin_Automated_Email {
 			'post_type'    => 'noptin-campaign',
 			'post_title'   => $this->name,
 			'post_status'  => $this->status,
-			'post_content' => wp_json_encode( $this->options ),
+			'post_content' => $this->get_content( $this->get_email_type() ),
 			'meta_input'   => array(
 				'automation_type' => $this->type,
 				'campaign_type'   => 'automation',
+				'campaign_data'   => $this->options,
 			)
 		);
 

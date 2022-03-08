@@ -65,8 +65,8 @@ class Noptin_Newsletter_Email {
 				return;
 			}
 
-			// Prepare campaign data.
-			$data = json_decode( $post->post_content, true );
+			// Fetch campaign data.
+			$data = get_post_meta( $post->ID, 'campaign_data', true );
 
 			// Check if we're dealing with a legacy campaign.
 			if ( ! is_array( $data ) ) {
@@ -372,9 +372,10 @@ class Noptin_Newsletter_Email {
 			'post_date'     => current_time( 'mysql' ),
 			'post_date_gmt' => current_time( 'mysql', true ),
 			'post_status'   => $this->status,
-			'post_content'  => wp_json_encode( $this->options ),
+			'post_content'  => $this->get_content( $this->get_email_type() ),
 			'meta_input'    => array(
 				'campaign_type'   => 'newsletter',
+				'campaign_data'   => $this->options,
 			)
 		);
 
