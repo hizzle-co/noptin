@@ -56,9 +56,15 @@ function noptin_send_email( $args, $background = false ) {
  */
 function noptin_generate_email_content( $email, $recipient, $track = true ) {
 
+	$content = $email->get_content( $email->get_email_type() );
+
+	if ( 'normal' === $email->get_email_type() && ! $email->parent_id ) {
+		$content = wpautop( trim( $content ) );
+	}
+
 	$args = array(
 		'type'         => $email->get_email_type(), // normal, raw_html, plain_text
-		'content'      => $email->get_content( $email->get_email_type() ),
+		'content'      => $content,
 		'template'     => $email->get_template(),
 		'heading'      => $email->get( 'heading' ),
 		'footer_text'  => $email->get( 'footer_text' ),

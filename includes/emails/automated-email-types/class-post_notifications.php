@@ -303,11 +303,12 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				'parent_id'         => $campaign->id,
 				'status'            => 'publish',
 				'subject'           => noptin_parse_email_subject_tags( $campaign->get_subject(), true ),
+				'heading'           => noptin_parse_email_content_tags( $campaign->get( 'heading' ), true ),
 				'content_' . $type  => noptin_parse_email_content_tags( $content, true ),
 				'associated_post'   => $post_id,
 				'subscribers_query' => array(),
-				'preview_text'      => noptin_parse_email_subject_tags( $campaign->get( 'preview_text' ), true ),
-				'footer_text'       => noptin_parse_email_subject_tags( $campaign->get( 'footer_text' ), true ),
+				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
+				'footer_text'       => noptin_parse_email_content_tags( $campaign->get( 'footer_text' ), true ),
 				'custom_title'      => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
 			)
 		);

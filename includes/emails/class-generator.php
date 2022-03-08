@@ -191,7 +191,6 @@ class Noptin_Email_Generator {
 	public function generate_normal_email() {
 
 		// Prepare vars.
-		$this->content = wpautop( trim( $this->content ) );
 		$content       = $this->content;
 		$template      = $this->template;
 		$email         = $content;

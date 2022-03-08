@@ -419,10 +419,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				'parent_id'         => $campaign->id,
 				'status'            => 'publish',
 				'subject'           => noptin_parse_email_subject_tags( $campaign->get_subject(), true ),
+				'heading'           => noptin_parse_email_content_tags( $campaign->get( 'heading' ), true ),
 				'content_' . $type  => noptin_parse_email_content_tags( $content, true ),
 				'subscribers_query' => array(),
-				'preview_text'      => noptin_parse_email_subject_tags( $campaign->get( 'preview_text' ), true ),
-				'footer_text'       => noptin_parse_email_subject_tags( $campaign->get( 'footer_text' ), true ),
+				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
+				'footer_text'       => noptin_parse_email_content_tags( $campaign->get( 'footer_text' ), true ),
 				'custom_title'      => sprintf( __( '%s [%s]', 'newsletter-optin-box' ), esc_html( $campaign->name ), date_i18n( get_option( 'date_format' ) ) ),
 			)
 		);
@@ -608,6 +609,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					'description' => __( 'Displays your latest content.', 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'process_merge_tag' ),
 					'example'     => 'post_digest template="list" limit="8"',
+					'partial'     => true,
 				),
 
 			),
