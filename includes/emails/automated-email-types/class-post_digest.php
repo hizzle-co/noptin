@@ -410,6 +410,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$type    = $campaign->get_email_type();
 		$content = $campaign->get_content( $type );
 
+		// Parse paragraphs.
+		if ( 'normal' === $type ) {
+			$content = wpautop( trim( $content ) );
+		}
+
 		$this->before_send( $campaign );
 
 		// Prepare campaign args.
@@ -420,7 +425,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				'status'            => 'publish',
 				'subject'           => noptin_parse_email_subject_tags( $campaign->get_subject(), true ),
 				'heading'           => noptin_parse_email_content_tags( $campaign->get( 'heading' ), true ),
-				'content_' . $type  => noptin_parse_email_content_tags( $content, true ),
+				'content_' . $type  => trim( noptin_parse_email_content_tags( $content, true ) ),
 				'subscribers_query' => array(),
 				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
 				'footer_text'       => noptin_parse_email_content_tags( $campaign->get( 'footer_text' ), true ),

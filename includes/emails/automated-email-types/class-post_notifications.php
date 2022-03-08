@@ -296,6 +296,11 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		$content = str_ireplace( '[[read_more_button]]', $this->read_more_button( get_permalink( $post_id ) ), $content );
 		$content = str_ireplace( '[[/read_more_button]]', '</a></div>', $content );
 
+		// Parse paragraphs.
+		if ( 'normal' === $type ) {
+			$content = wpautop( trim( $content ) );
+		}
+
 		// Prepare campaign args.
 		$args = array_merge(
 			$campaign->options,
@@ -304,7 +309,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				'status'            => 'publish',
 				'subject'           => noptin_parse_email_subject_tags( $campaign->get_subject(), true ),
 				'heading'           => noptin_parse_email_content_tags( $campaign->get( 'heading' ), true ),
-				'content_' . $type  => noptin_parse_email_content_tags( $content, true ),
+				'content_' . $type  => trim( noptin_parse_email_content_tags( $content, true ) ),
 				'associated_post'   => $post_id,
 				'subscribers_query' => array(),
 				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
