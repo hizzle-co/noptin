@@ -292,10 +292,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		$this->post = get_post( $post_id );
 		$this->before_send( $campaign );
 
-		// Legacy merge tags.
-		$content = str_ireplace( '[[read_more_button]]', $this->read_more_button( get_permalink( $post_id ) ), $content );
-		$content = str_ireplace( '[[/read_more_button]]', '</a></div>', $content );
-
 		// Parse paragraphs.
 		if ( 'normal' === $type ) {
 			$content = wpautop( trim( $content ) );
@@ -345,7 +341,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	 */
 	public function read_more_button( $url ) {
 		$url = esc_url( $url );
-		return "<div style='text-align: left; padding: 20px;' align='left'> <a href='$url' class='noptin-round' style='background: #1a82e2; display: inline-block; padding: 16px 36px; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;'>";
+		return "<div style='text-align: center; padding: 20px;' align='center'> <a href='$url' class='noptin-round' style='background: #1a82e2; display: inline-block; padding: 16px 36px; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;'>";
 	}
 
 	/**
@@ -463,6 +459,22 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 					'partial'     => true,
 				),
 
+				'read_more_button' => array(
+					'description' => '',
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "content",
+					'partial'     => true,
+					'hidden'      => true,
+				),
+
+				'/read_more_button' => array(
+					'description' => '',
+					'callback'    => array( $this, 'get_post_field' ),
+					'example'     => "content",
+					'partial'     => true,
+					'hidden'      => true,
+				),
+
 			),
 
 		);
@@ -547,6 +559,14 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			case 'post_title':
 			case 'title':
 				return get_the_title( $this->post );
+				break;
+
+			case 'read_more_button':
+				return $this->read_more_button( get_permalink( $this->post->ID ) );
+				break;
+
+			case '/read_more_button':
+				return '</a></div>';
 				break;
 
 			case 'post_meta':
