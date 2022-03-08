@@ -139,6 +139,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 * Ability to send a test email for any automated email campaign - ADDED
 * Filter newsletter recipients by custom fields.
 * View unsubscribes for each email newsletter and automated email.
+* Ability to order newsletter subscribers by custom field.
 
 = 1.6.6 =
 * Action page links not working - FIXED

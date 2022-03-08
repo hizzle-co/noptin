@@ -253,7 +253,7 @@ class Noptin_Subscriber_Query {
 
 		// Parse and sanitize 'include', for use by 'orderby' as well as 'include' below.
 		if ( ! empty( $qv['include'] ) ) {
-			$include = noptin_parse_int_list( $qv['include'] );
+			$include = wp_parse_id_list( $qv['include'] );
 		} else {
 			$include = false;
 		}
@@ -562,6 +562,8 @@ class Noptin_Subscriber_Query {
 			$_orderby = $orderby;
 		} elseif ( 'id' === strtolower( $orderby ) ) {
 			$_orderby = 'id';
+		} elseif ( 'last_name' === strtolower( $orderby ) ) {
+			$_orderby = 'second_name';
 		} elseif ( 'meta_value' === $orderby || $this->get( 'meta_key' ) == $orderby ) {
 			$_orderby = "$wpdb->noptin_subscribermeta.meta_value";
 		} elseif ( 'meta_value_num' == $orderby ) {
