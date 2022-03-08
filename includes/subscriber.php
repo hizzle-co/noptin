@@ -1344,7 +1344,7 @@ function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false 
  */
 function format_noptin_custom_field_value( $value, $type, $subscriber ) {
 	return apply_filters( "noptin_format_{$type}_value", $value, $subscriber );
-}
+}//TODO: Move custom fields, source, activity and IP address to the subscribers table.
 
 /**
  * Returns an array of available custom fields.
@@ -1430,4 +1430,28 @@ function noptin_format_subscription_source( $source ) {
 	}
 
 	return $source;
+}
+
+/**
+ * Returns a URL to delete a subscriber.
+ *
+ * @param int $subscriber_id
+ * @since 1.7.0
+ * @return string
+ */
+function noptin_subscriber_delete_url( $subscriber_id ) {
+
+	return wp_nonce_url(
+		add_query_arg(
+			array(
+				'subscriber_id'       => $subscriber_id,
+				'page'                => 'noptin-subscribers',
+				'noptin_admin_action' => 'noptin_delete_email_subscriber',
+			),
+			admin_url( 'admin.php' )
+		),
+		'noptin_delete_subscriber',
+		'noptin_nonce'
+	);
+
 }

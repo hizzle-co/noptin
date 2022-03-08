@@ -25,8 +25,9 @@ class Noptin_Subscribers_Admin {
 		add_action( 'noptin_admin_delete_all_subscribers', 'Noptin_Subscribers_Admin::delete_all_subscribers' );
 		add_action( 'noptin_admin_add_subscriber', 'Noptin_Subscribers_Admin::add_subscriber' );
 		add_action( 'noptin_update_admin_edited_subscriber', 'Noptin_Subscribers_Admin::update_edited_subscriber' );
-		add_action( 'load-noptin_page_noptin-subscribers', 'Noptin_Subscribers_Admin::add_subscribers_page_screen_options' );
+		add_action( 'load-noptin-newsletter_page_noptin-subscribers', 'Noptin_Subscribers_Admin::add_subscribers_page_screen_options' );
 		add_filter( 'set-screen-option', 'Noptin_Subscribers_Admin::save_subscribers_page_screen_options', 10, 3 );
+		add_action( 'noptin_delete_email_subscriber', 'Noptin_Subscribers_Admin::delete_subscriber' );
 	}
 
 	/**
@@ -474,6 +475,32 @@ class Noptin_Subscribers_Admin {
 
 		noptin()->admin->show_info( __( 'Successfully deleted all subscribers.', 'newsletter-optin-box' ) );
 		wp_redirect( remove_query_arg( array( 'noptin_admin_action', '_wpnonce' ) ) );
+		exit;
+	}
+
+	/**
+	 * Deletes a single subscriber.
+	 *
+	 * @since       1.7.0
+	 */
+	public static function delete_subscriber() {
+
+		// Only admins should be able to add subscribers.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks. 
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_delete_subscriber' ) ) {
+			return;
+		}
+
+		// Delete the subscriber.
+		delete_noptin_subscriber( (int) $_GET['subscriber_id'] );
+
+		// Show success then redirect the user.
+		noptin()->admin->show_info( __( 'Successfully deleted the subscriber.', 'newsletter-optin-box' ) );
+		wp_redirect( remove_query_arg( array( 'noptin_admin_action', '_wpnonce', 'subscriber_id' ) ) );
 		exit;
 	}
 
