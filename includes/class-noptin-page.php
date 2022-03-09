@@ -488,7 +488,12 @@ class Noptin_Page {
 		// Fetch the subscriber.
 		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $value );
 
-		// And de-activate them.
+		$ip_address = noptin_get_user_ip();
+		if ( ! empty( $subscriber->id ) && ! empty( $ip_address ) && '::1' !== $ip_address ) {
+			update_noptin_subscriber_meta( $subscriber->id, 'ip_address', sanitize_text_field( $ip_address ) );
+		}
+
+		// Confirm them.
 		confirm_noptin_subscriber_email( $subscriber );
 
 		// If we are redirecting by page id, fetch the page's permalink.
