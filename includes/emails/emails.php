@@ -306,7 +306,29 @@ function increment_noptin_campaign_stat( $campaign_id, $stat ) {
 }
 
 /**
- * Increments a campaign stat.
+ * Decreaments a campaign stat.
+ *
+ * @since 1.7.0
+ * @param int $campaign_id
+ * @param string $stat
+ */
+function decrease_noptin_campaign_stat( $campaign_id, $stat ) {
+
+	// Increment stat.
+	$current = (int) get_post_meta( $campaign_id, $stat, true );
+	update_post_meta( $campaign_id, $stat, max( $current - 1, 0 ) );
+
+	// Increment parent stat.
+	$parent = get_post_parent( $campaign_id );
+
+	if ( $parent ) {
+		decrease_noptin_campaign_stat( $parent->ID, $stat );
+	}
+
+}
+
+/**
+ * Displays subscribers filter.
  *
  * @since 1.7.0
  * @param Noptin_Newsletter_Email|Noptin_Automated_Email $campaign
@@ -375,6 +397,20 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
 	
 		<?php
 	}
+
+	?>
+	
+		<label style="width:100%;" class="noptin-margin-y">
+			<strong><?php esc_html_e( 'Subscribed Via', 'newsletter-optin-box'); ?></strong>
+				<select name="noptin_email[_subscriber_via]" style="display:block; width:100%;">
+					<option value="" <?php selected( '', $campaign->get( '_subscriber_via' ) ); ?>><?php esc_html_e( 'Any', 'newsletter-optin-box'); ?></option>
+					<?php foreach ( noptin_get_subscription_sources() as $key => $label ) : ?>
+						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $campaign->get( '_subscriber_via' ) ); ?>><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+		</label>
+	
+	<?php
 
 }
 

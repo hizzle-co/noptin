@@ -54,7 +54,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		add_filter( "noptin_default_automated_email_{$this->type}_recipient", array( $this, 'get_default_recipient' ) );
 
 		if ( is_callable( array( $this, 'render_metabox' ) ) ) {
-			add_filter( "noptin_automated_email_{$this->type}_options", array( $this, 'render_metabox' ) );
+			add_action( "noptin_automated_email_{$this->type}_options", array( $this, 'render_metabox' ) );
 		}
 
 		if ( is_callable( array( $this, 'about_automation' ) ) ) {
@@ -66,7 +66,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		}
 
 		if ( is_callable( array( $this, 'on_save_campaign' ) ) ) {
-			add_filter( "noptin_{$this->type}_campaign_saved", array( $this, 'on_save_campaign' ) );
+			add_action( "noptin_{$this->type}_campaign_saved", array( $this, 'on_save_campaign' ) );
 		}
 
 	}

@@ -1994,3 +1994,12 @@ a.no-campaign-create-new-campaign {
     font-weight: bold;
     margin-bottom: 0;
 }
+
+.noptin-checkbox-zone {
+	overflow: auto;
+	min-height: 42px;
+	max-height: 200px;
+	padding: 0 .9em;
+	border: solid 1px #dfdfdf;
+	background-color: #fdfdfd;
+}

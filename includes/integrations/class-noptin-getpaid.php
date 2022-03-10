@@ -20,6 +20,12 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 	public $slug = 'getpaid';
 
 	/**
+	 * @var string source of subscriber.
+	 * @since 1.7.0
+	 */
+	public $subscriber_via = 'getpaid_checkout';
+
+	/**
 	 * @var string The product's post type in case this integration saves products as custom post types.
 	 * @since 1.4.1
 	 */

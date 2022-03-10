@@ -64,6 +64,9 @@ class Noptin_Integrations {
 		add_action( 'frm_action_groups', array( $this, 'group_formidable_form_action' ) );
 		add_action( 'frm_trigger_noptin_action', 'Noptin_Formidable_Forms::process_form', 10, 2 );
 
+		// Filter subscription sources.
+		add_filter( 'noptin_subscription_sources', array( $this, 'register_subscription_source' ) );
+
 		do_action( 'noptin_integrations_load', $this );
 
 	}
@@ -183,6 +186,38 @@ class Noptin_Integrations {
 	public function group_formidable_form_action( $groups ) {
 		$groups['marketing']['actions'][] = 'noptin';
 		return $groups;
+	}
+
+	/**
+	 * Filters subscription sources.
+	 *
+	 * @since 1.7.0
+	 * @param array $sources
+	 * @return array
+	 */
+	public function register_subscription_source( $sources ) {
+
+		if ( did_action( 'wpforms_loaded' ) ) {
+			$sources['WPForms'] = 'WPForms';
+		}
+		
+		if ( did_action( 'nf_init' ) ) {
+			$sources['Ninja Forms'] = 'Ninja Forms';
+		}
+
+		if ( did_action( 'gform_loaded' ) ) {
+			$sources['Gravity Forms'] = 'Gravity Forms';
+		}
+
+		if ( did_action( 'wpcf7_init' ) ) {
+			$sources['Contact Form 7'] = 'Contact Form 7';
+		}
+
+		if ( class_exists( '\ElementorPro\Plugin' ) ) {
+			$sources['Elementor'] = 'Elementor';
+		}
+
+		return $sources;
 	}
 
 }

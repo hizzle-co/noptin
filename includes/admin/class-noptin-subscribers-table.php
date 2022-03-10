@@ -130,9 +130,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'meta_query',
 			'email_status',
 			'date_query',
-			'meta_key',
-			'meta_value',
-			'meta_compare',
 			'orderby',
 			'order',
 			'paged'
@@ -140,8 +137,17 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		foreach ( $fields as $field ) {
 			if ( ! empty( $_GET[ $field ] ) ) {
-				$query[ $field ] = map_deep( $_GET[ $field ], 'urldecode' );
+				$query[ $field ] = noptin_clean( urldecode_deep( $_GET[ $field ] ) );
 			}
+		}
+
+		// Clean order_by.
+		$custom_fields                   = $this->get_custom_fields();
+		$custom_fields['_subscriber_via']= '';
+
+		if ( isset( $query['orderby'] ) && isset( $custom_fields[ $query['orderby'] ] ) && ! in_array( $query['orderby'], array( 'first_name', 'second_name', 'last_name', 'email', 'date_created', 'active' ) ) ) {
+			$query['meta_key'] = $query['orderby'];
+			$query['orderby']  = 'meta_value';
 		}
 
 		if ( empty( $query['meta_query'] ) || ! is_array( $query['meta_query'] ) ) {
@@ -155,13 +161,32 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		if ( ! empty( $_GET['_subscriber_via'] ) ) {
 			$query['meta_query'][] = array(
 				'key'   => '_subscriber_via',
-				'value' => $_GET['_subscriber_via'],
+				'value' => sanitize_text_field( urldecode( $_GET['_subscriber_via'] ) ),
 			);
+		}
+
+		// Meta key.
+		if ( ! empty( $_GET['meta_key'] ) ) {
+
+			$mq = array(
+				'key'   => sanitize_text_field( urldecode( $_GET['meta_key'] ) ),
+			);
+
+			if ( isset( $_GET['meta_value'] ) ) {
+				$mq['value'] = sanitize_text_field( urldecode( $_GET['meta_value'] ) );
+			}
+
+			if ( isset( $_GET['meta_compare'] ) ) {
+				$mq['compare'] = sanitize_text_field( urldecode( $_GET['meta_compare'] ) );
+			}
+
+			$query['meta_query'][] = $mq;
+
 		}
 
 		// Search.
 		if ( ! empty( $_POST['s'] ) ) {
-			$query['search'] = urldecode( $_POST['s'] );
+			$query['search'] = sanitize_text_field( urldecode( $_POST['s'] ) );
 		}
 
 		$subscribers = new Noptin_Subscriber_Query( $query );
@@ -196,13 +221,14 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
 
 		if ( isset( $all_fields[ $column_name ] ) ) {
-			echo wp_kses_post(
-					format_noptin_custom_field_value(
-					$subscriber->get( $column_name ),
-					$all_fields[ $column_name ],
-					$subscriber
-				)
+
+			$value = format_noptin_custom_field_value(
+				$subscriber->get( $column_name ),
+				$all_fields[ $column_name ],
+				$subscriber
 			);
+
+			echo is_scalar( $value ) ? wp_kses_post( $value ) : '';
 		}
 
 		/**
@@ -379,6 +405,10 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'first_name'      => array( 'first_name', false ),
 			'last_name'       => array( 'second_name', false ),
 		);
+
+		foreach ( array_keys( $this->get_custom_fields() ) as $custom_field ) {
+			$sortable[ $custom_field ] = array( $custom_field, false );
+		}
 
 		/**
 		 * Filters the sortable columns in the newsletter overview table.

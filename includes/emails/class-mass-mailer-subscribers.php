@@ -129,6 +129,16 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		}
 
+		// Subscription source.
+		$source = $campaign->get( '_subscriber_via' );
+
+		if ( '' !== $source ) {
+			$args['meta_query'][] = array(
+				'key'     => '_subscriber_via',
+				'value'   => $source,
+			);
+		}
+
 		// Allow other plugins to filter the query.
 		$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $campaign );
 

@@ -19,6 +19,12 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	public $slug = 'woocommerce';
 
 	/**
+	 * @var string source of subscriber.
+	 * @since 1.7.0
+	 */
+	public $subscriber_via = 'woocommerce_checkout';
+
+	/**
 	 * @var string The product's post type in case this integration saves products as custom post types.
 	 * @since 1.3.0
 	 */
