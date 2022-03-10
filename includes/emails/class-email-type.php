@@ -136,6 +136,12 @@ abstract class Noptin_Email_Type {
 
 		}
 
+		$tags['avatar_url'] = array(
+			'description' => __( 'Avatar URL', 'newsletter-optin-box' ),
+			'callback'    => array( $this, 'get_subscriber_field' ),
+			'example'     => 'avatar_url',
+		);
+
 		return $tags;
 
 	}
@@ -165,6 +171,11 @@ abstract class Noptin_Email_Type {
 		if ( 'name' === $field ) {
 			$value = $this->subscriber->first_name . ' ' . $this->subscriber->second_name;
 			return $value ? esc_html( $value ) : esc_html( $default );
+		}
+
+		// Avatar URL.
+		if ( 'avatar_url' === $field ) {
+			return get_avatar_url( $this->subscriber->email );
 		}
 
 		// Abort if no value.
@@ -442,6 +453,10 @@ abstract class Noptin_Email_Type {
 			)
 		);
 
+		if ( ! empty( $this->subscriber ) ) {
+			$GLOBALS['noptin_subscriber'] = $this->subscriber;
+		}
+
 		// Generate unsubscribe url.
 		$this->unsubscribe_url = get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( $this->recipient ) ) );
 
@@ -517,6 +532,10 @@ abstract class Noptin_Email_Type {
 	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
 	 */
 	protected function after_send( $campaign ) {
+
+		if ( ! empty( $this->subscriber ) ) {
+			$GLOBALS['noptin_subscriber'] = false;
+		}
 
 		// Revert recipient.
 		$this->recipient = array();
