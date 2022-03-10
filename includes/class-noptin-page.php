@@ -417,31 +417,36 @@ class Noptin_Page {
 	 * @since       1.4.4
 	 * @return      array
 	 */
-	public function pre_resubscribe_user( $page ) { // TODO: Use new recipient format.
+	public function pre_resubscribe_user( $page ) {
 		global $wpdb;
 
-		// Make sure that the confirmation key exists.
-		$value = $this->get_request_value();
+		// Fetch recipient.
+		$recipient = $this->get_request_recipient();
 
-		if ( empty( $value )  ) {
-			return;
-		}
-
-		// Fetch the subscriber.
-		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $value );
-
-		// Resubscribe them.
-		if ( ! empty( $subscriber ) && ! empty( $subscriber->id ) ) {
+		// Process subscribers.
+		if ( ! empty( $recipient['sid'] ) ) {
 
 			$wpdb->update(
 				get_noptin_subscribers_table_name(),
 				array( 'active' => 0 ),
-				array( 'id' => $subscriber->id ),
+				array( 'id' => $recipient['sid'] ),
 				'%d',
 				'%d'
 			);
 
-			$_GET['noptin_key'] = sanitize_text_field( $value );
+			do_action( 'noptin_resubscribe_subscriber', $recipient['uid'] );
+
+		}
+
+		// Process users.
+		if ( ! empty( $recipient['uid'] ) ) {
+			delete_user_meta( $recipient['uid'], 'noptin_unsubscribed' );
+			do_action( 'noptin_resubscribe_user', $recipient['uid'] );
+		}
+
+		// Process campaigns.
+		if ( ! empty( $recipient['cid'] ) ) {
+			decrease_noptin_campaign_stat( $recipient['cid'], '_noptin_unsubscribed' );
 		}
 
 		// If we have a redirect, redirect.

@@ -1413,23 +1413,62 @@ function noptin_format_subscription_source( $source ) {
 		return empty( $url ) ? $title : "<a href='$url'>$title</a>";
 	}
 
-	$sources = array(
-		'default_user'         => __( 'Default', 'newsletter-optin-box' ),
-		'users_sync'           => __( 'Users Sync', 'newsletter-optin-box' ),
-		'edd_checkout'         => 'EDD',
-		'getpaid_checkout'     => 'GetPaid',
-		'woocommerce_checkout' => 'WooCommerce',
-		'comment'              => __( 'Comment Form', 'newsletter-optin-box' ),
-		'registration'         => __( 'Registration Form', 'newsletter-optin-box' ),
-		'manual'               => __( 'Manually Added', 'newsletter-optin-box' ),
-		'shortcode'            => __( 'Subscription Shortcode', 'newsletter-optin-box' ),
-	);
+	if ( 'default_user' === $source ) {
+		return __( 'Default', 'newsletter-optin-box' );
+	}
+
+	$sources = noptin_get_subscription_sources();
 
 	if ( isset( $sources[ $source ] ) ) {
 		return $sources[ $source ];
 	}
 
 	return $source;
+}
+
+/**
+ * Retrieves a list of known subscription sources.
+ *
+ * @since 1.7.0
+ * @return array
+ */
+function noptin_get_subscription_sources() {
+	global $wpdb;
+
+	// Fetch from cache.
+	$sources = get_transient( 'noptin_subscription_sources' );
+
+	if ( $sources ) {
+		return apply_filters( 'noptin_subscription_sources', $sources );
+	}
+
+	// Fetch saved sources.
+	$table    = get_noptin_subscribers_meta_table_name();
+	$existing = $wpdb->get_col( "SELECT DISTINCT `meta_value` FROM $table WHERE `meta_key`='_subscriber_via'" );
+
+	$sources = array_combine( $existing, $existing );
+
+	// Add subscription forms.
+	$forms = get_posts(
+		array(
+			'numberposts' => -1,
+			'post_type'   => 'noptin-form',
+			'post_status' => 'publish',
+		)
+	);
+
+	foreach ( $forms as $form ) {
+		$sources["{$form->ID}"] = sanitize_text_field( $form->post_title );
+	}
+
+	// Add other known sources.
+	$sources['manual']    = __( 'Manually Added', 'newsletter-optin-box' );
+	$sources['shortcode'] = __( 'Subscription Shortcode', 'newsletter-optin-box' );
+
+	// Cache. TODO: Clear cache when subscriber or form is added/updated.
+	set_transient( 'noptin_subscription_sources', $sources, DAY_IN_SECONDS );
+
+	return apply_filters( 'noptin_subscription_sources', $sources );
 }
 
 /**
