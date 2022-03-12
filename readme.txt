@@ -141,6 +141,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 * View unsubscribes for each email newsletter and automated email.
 * Ability to order newsletter subscribers by custom field.
 * Subscriber delete button not working - FIXED.
+* Fix conflict with WPForms pro
 
 = 1.6.6 =
 * Action page links not working - FIXED
