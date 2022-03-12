@@ -77,7 +77,7 @@
 				</div>
 				<div class="noptin-email-type-content">
 					<h3><?php _e( 'Subscriber List', 'newsletter-optin-box' ); ?></h3>
-					<p><?php _e( 'Send an email to a subscriber when they join or leave a list..', 'newsletter-optin-box' ); ?></p>
+					<p><?php _e( 'Send an email to a subscriber when they join or leave a list.', 'newsletter-optin-box' ); ?></p>
 					<p style="color: #a00;"><em><?php _e( 'Not available in your plan', 'newsletter-optin-box' ); ?></em></p>
 					<div class="noptin-email-type-action">
 						<a href="https://noptin.com/product/ultimate-addons-pack?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=subscriber_list" class="button" target="_blank"><?php _e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
