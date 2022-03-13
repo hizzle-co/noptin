@@ -168,6 +168,7 @@ abstract class Noptin_Abstract_Integration {
 	 */
 	public function register_subscription_source( $sources ) {
 		$sources[ $this->subscriber_via ] = $this->name;
+		return $sources;
 	}
 
 	/**

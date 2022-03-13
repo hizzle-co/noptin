@@ -650,8 +650,8 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		$args = array(
 			'tags'                     => empty( $options['tags'] ) ? array() : noptin_parse_list( $options['tags'] ),
 			'extra'                    => empty( $options['extra'][ $list->get_id() ] ) ? array() : $options['extra'][ $list->get_id() ],
-			'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
-			'message'                  => noptin_generate_email_content( $campaign, false, false ),
+			'email_subject'            => noptin_parse_email_subject_tags( $campaign->get_subject() ),
+			'email_body'               => noptin_generate_email_content( $campaign, false, false ),
 			'attachments'              => array(),
 			'reply_to'                 => '',
 			'from_email'               => '',

@@ -335,7 +335,6 @@ function decrease_noptin_campaign_stat( $campaign_id, $stat ) {
  */
 function display_noptin_campaign_subscriber_filter( $campaign ) {
 
-	// TODO: Subscription source.
 	foreach ( get_noptin_custom_fields() as $custom_field ) {
 
 		if ( empty( $custom_field['options'] ) ) {
