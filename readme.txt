@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.7.1 =
+* Double opt-in confirmation links displays empty box on some sites - FIXED
+
 = 1.7.0 =
 * Ability to duplicate and preview automated email campaigns - ADDED
 * Ability to send a test email for any automated email campaign - ADDED

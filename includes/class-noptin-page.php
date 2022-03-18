@@ -148,7 +148,7 @@ class Noptin_Page {
 		// New recipient format.
 		$decoded = json_decode( noptin_decrypt( $recipient ), true );
 
-		if ( ! empty( $decoded ) ) {
+		if ( ! empty( $decoded ) && is_array( $decoded ) ) {
 			return $decoded;
 		}
 
@@ -168,10 +168,10 @@ class Noptin_Page {
 		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $recipient );
 
 		if ( $subscriber ) {
-			$default['sid'] = $subscriber;
+			$default['sid'] = $subscriber->id;
 		}
 
-		return $subscriber;
+		return $default;
 	}
 
 	/**
@@ -319,13 +319,13 @@ class Noptin_Page {
 	 */
 	public function merge( $content ) {
 
-		$subscriber = get_current_noptin_subscriber_id();
+		$recipient = $this->get_request_recipient();
 
-		if ( empty( $subscriber ) ) {
-			return '';
+		if ( empty( $recipient['sid'] ) ) {
+			return $content;
 		}
 
-		return add_noptin_merge_tags(  $content, get_noptin_subscriber_merge_fields( $subscriber ) );
+		return add_noptin_merge_tags(  $content, get_noptin_subscriber_merge_fields( $recipient['sid'] ) );
 
 	}
 
@@ -484,22 +484,22 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function pre_confirm_subscription( $page ) {
-		$value = $this->get_request_value();
 
-		if ( empty( $value ) ) {
+		// Fetch recipient.
+		$recipient = $this->get_request_recipient();
+
+		// Abort if no subscriber.
+		if ( empty( $recipient['sid'] ) ) {
 			return;
 		}
 
-		// Fetch the subscriber.
-		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $value );
-
 		$ip_address = noptin_get_user_ip();
-		if ( ! empty( $subscriber->id ) && ! empty( $ip_address ) && '::1' !== $ip_address ) {
-			update_noptin_subscriber_meta( $subscriber->id, 'ip_address', sanitize_text_field( $ip_address ) );
+		if ( ! empty( $ip_address ) && '::1' !== $ip_address ) {
+			update_noptin_subscriber_meta( $recipient['sid'], 'ip_address', sanitize_text_field( $ip_address ) );
 		}
 
 		// Confirm them.
-		confirm_noptin_subscriber_email( $subscriber );
+		confirm_noptin_subscriber_email( $recipient['sid'] );
 
 		// If we are redirecting by page id, fetch the page's permalink.
 		if ( is_numeric( $page ) ) {
