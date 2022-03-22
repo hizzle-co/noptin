@@ -46,7 +46,7 @@
 		"babel-loader": "8.2.3",
 		"postcss": "8.4.8",
 		"postcss-csso": "6.0.0",
-		"postcss-import": "14.0.2",
+		"postcss-import": "14.1.0",
 		"precss": "4.0.0",
 		"vue-loader": "15.9.8",
 		"vue-template-compiler": "2.6.14",
