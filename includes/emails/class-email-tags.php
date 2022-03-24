@@ -99,7 +99,8 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		$this->tags['home_url'] = array(
 			'description' => __( 'The website URL.', 'newsletter-optin-box' ),
-			'callback'    => 'get_home_url',
+			'callback'    => 'home_url',
+			'no_args'     => true,
 		);
 
 		$this->tags['date'] = array(

@@ -64,6 +64,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$this->tags['current_url'] = array(
 			'description' => __( 'The URL of the page.', 'newsletter-optin-box' ),
 			'callback'    => 'noptin_get_request_url',
+			'no_args'     => true,
 		);
 
 		$this->tags['current_path'] = array(
@@ -84,11 +85,13 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$this->tags['language'] = array(
 			'description' => sprintf( __( 'The current language. Example: %s.', 'newsletter-optin-box' ), '<strong>' . get_locale() . '</strong>' ),
 			'callback'    => 'get_locale',
+			'no_args'     => true,
 		);
 
 		$this->tags['ip'] = array(
 			'description' => sprintf( __( 'The visitor\'s IP address. Example: %s.', 'newsletter-optin-box' ), '<strong>' . noptin_get_user_ip() . '</strong>' ),
 			'callback'    => 'noptin_get_user_ip',
+			'no_args'     => true,
 		);
 
 		$this->tags['subscriber'] = array(
@@ -157,7 +160,12 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 
 			// call function
-			$replacement = call_user_func( $config['callback'], $attributes, $tag );
+			if ( empty( $config['no_args'] ) ) {
+				$replacement = call_user_func( $config['callback'], $attributes, $tag );
+			} else {
+				$replacement = call_user_func( $config['callback'] );
+			}
+
 		}
 
 		if ( is_callable( $this->escape_function ) ) {
