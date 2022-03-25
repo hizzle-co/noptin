@@ -42,7 +42,7 @@
 		"@mdi/js": "5.9.55",
 		"@vue/compiler-sfc": "3.2.31",
 		"@wordpress/babel-preset-default": "6.5.1",
-		"autoprefixer": "10.4.2",
+		"autoprefixer": "10.4.4",
 		"babel-loader": "8.2.3",
 		"postcss": "8.4.8",
 		"postcss-csso": "6.0.0",
