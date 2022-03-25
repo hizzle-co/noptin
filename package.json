@@ -44,7 +44,7 @@
 		"@wordpress/babel-preset-default": "6.7.0",
 		"autoprefixer": "10.4.4",
 		"babel-loader": "8.2.4",
-		"postcss": "8.4.8",
+		"postcss": "8.4.12",
 		"postcss-csso": "6.0.0",
 		"postcss-import": "14.1.0",
 		"precss": "4.0.0",
