@@ -1,10 +1,10 @@
-=== WordPress Newsletter Plugin - Noptin ===
+=== Simple Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
 Tested up to: 5.9
 Requires PHP: 5.6
-Version: 1.7.2
+Version: 1.7.3
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -133,6 +133,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.7.3 =
+* Update plugin name
 
 = 1.7.2 =
 * Fix incorrect logo link in email newsletters
