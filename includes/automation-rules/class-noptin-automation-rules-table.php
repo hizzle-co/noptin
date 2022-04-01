@@ -188,23 +188,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_updated_at( $item ) {
-		
-		$updated   = strtotime( $item->updated_at );
-		$time_diff = current_time( 'timestamp' ) - $updated;
-
-		if ( $updated && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
-			$relative = sprintf(
-				/* translators: %s: Human-readable time difference. */
-				__( '%s ago', 'newsletter-optin-box' ),
-				human_time_diff( $updated, current_time( 'timestamp' ) )
-			);
-		} else {
-			$relative = date_i18n( get_option( 'date_format' ), $updated );
-		}
-
-		$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $updated ) );
-		return "<abbr title='$date'>$relative<abbr>";
-
+		return noptin_format_date( $item->updated_at );
 	}
 	
 	/**
@@ -214,23 +198,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 * @return HTML
 	 */
 	public function column_created_at( $item ) {
-
-		$created   = strtotime( $item->created_at );
-		$time_diff = current_time( 'timestamp' ) - $created;
-
-		if ( $created && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
-			$relative = sprintf(
-				/* translators: %s: Human-readable time difference. */
-				__( '%s ago', 'newsletter-optin-box' ),
-				human_time_diff( $created, current_time( 'timestamp' ) )
-			);
-		} else {
-			$relative = date_i18n( get_option( 'date_format' ), $created );
-		}
-
-		$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $created ) );
-		return "<abbr title='$date'>$relative<abbr>";
-
+		return noptin_format_date( $item->created_at );
 	}
 
 	/**

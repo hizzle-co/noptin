@@ -109,13 +109,14 @@
 
 /*Basic form styles*/
 .noptin-styles-basic {
-	margin: 1em 0;
+	margin: 1em auto;
 
 	&:not(.noptin-template-condensed) {
 		max-width: 480px;
 	}
 
 	input, .noptin-label {
+		width: auto;
 		display: block;
 		box-sizing: border-box;
 		cursor: auto;
@@ -130,12 +131,15 @@
 	}
 
 	.noptin-label {
+		font-weight: 700;
 		margin-bottom: 6px;
 		display: block;
 	}
 
 	.noptin-text {
 		min-height: 32px;
+		width: 100%;
+		max-width: 480px;
 
 		&[type=number] {
 			min-width: 40px;
@@ -149,7 +153,7 @@
 		height: 13px;
 		width: 13px;
 		display: inline-block;
-		border: 0
+		border: 0;
 	}
 
 	.rtl & input[type=checkbox], .rtl & input[type=radio] {
@@ -161,7 +165,7 @@
 	}
 
 	input[type=radio] {
-		appearance: radio
+		appearance: radio;
 	}
 
 	.button {
@@ -174,6 +178,10 @@
 
 /* Universal form styling*/
 .noptin-newsletter-form {
+
+	input[name^="noptin_ign"] {
+		display: none !important;
+	}
 
 	.noptin-form-field-wrapper {
 		margin-bottom: 1.75em;
@@ -190,18 +198,12 @@
 		max-width: 480px;
 	}
 
-	&:not(.noptin-label-hide) {
+}
 
-		input::placeholder {
-			color: transparent;
-		}
-
-		textarea::placeholder {
-			color: transparent;
-		}
-
-	}
-
+/* Hide placeholders when showing labels */
+.noptin-newsletter-form:not(.noptin-label-hide) input::placeholder,
+.noptin-newsletter-form:not(.noptin-label-hide) textarea::placeholder {
+	color: transparent;
 }
 
 /* Hidden labels */

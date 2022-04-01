@@ -1,10 +1,10 @@
-=== WordPress Newsletter Plugin - Noptin ===
+=== Simple Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
 Requires at least: 4.9
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.6
-Version: 1.6.2
+Version: 1.7.3
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -134,11 +134,42 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.7.3 =
+* Update plugin name
+
+= 1.7.2 =
+* Fix incorrect logo link in email newsletters
+
+= 1.7.1 =
+* Double opt-in confirmation links displays empty box on some sites - FIXED
+
+= 1.7.0 =
+* Ability to duplicate and preview automated email campaigns - ADDED
+* Ability to send a test email for any automated email campaign - ADDED
+* Filter newsletter recipients by custom fields.
+* View unsubscribes for each email newsletter and automated email.
+* Ability to order newsletter subscribers by custom field.
+* Subscriber delete button not working - FIXED.
+* Fix conflict with WPForms pro
+
+= 1.6.6 =
+* Action page links not working - FIXED
+
+= 1.6.5 =
+* Now uses normal WordPress new-post pages to for the newsletter form editor - FIXED
+* Now adds and verifies a key before redirecting newsletter links - CHANGED
+
+= 1.6.4 =
+* All imported newsletter subscribers marked as unconfirmed - FIXED
+
+= 1.6.3 =
+* Update newsletter form editor JS - CHANGED
+
 = 1.6.2 =
-* Multi-lingual improvements - ADDED
+* Multi-lingual newsletter improvements - ADDED
 
 = 1.6.1 =
-* Double subscription fields on new installs - FIXED
+* Double newsletter subscription fields on new installs - FIXED
 
 = 1.6.0 =
 * Add [noptin] newsletter form shortcode
@@ -156,8 +187,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 1.5.1 =
 * Ability to use merge tags in newsletter subscription success messages and pages - ADDED
 * `noptin_hide` now hides newsletter subscription forms for an hour - ADDED
-* Ability to use post meta fields as merge tags - ADDED
-* Ability to add dropdown select field to opt-in forms - ADDED
+* Ability to use post meta fields as newsletter merge tags - ADDED
+* Ability to add dropdown select field to newsletter sign-up forms - ADDED
 
 = 1.5.0 =
 * Ability to connect your site to Noptin.com for faster support and updates - ADDED

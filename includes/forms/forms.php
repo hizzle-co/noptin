@@ -112,11 +112,6 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
  * @return  string
  */
 function get_noptin_new_form_url() {
-
-	if ( is_using_new_noptin_forms() ) {
-		return admin_url( 'admin.php?page=noptin-form-editor' );
-	}
-
 	return admin_url( 'post-new.php?post_type=noptin-form' );
 }
 
@@ -128,11 +123,6 @@ function get_noptin_new_form_url() {
  * @return  string
  */
 function get_noptin_edit_form_url( $form_id ) {
-
-	if ( ! is_legacy_noptin_form( $form_id ) ) {
-		return add_query_arg( 'form_id', $form_id, admin_url( 'admin.php?page=noptin-form-editor' ) );
-	}
-
 	return get_edit_post_link( $form_id, 'edit' );
 }
 

@@ -43,6 +43,12 @@ abstract class Noptin_Abstract_Integration {
 	public $context = 'users';
 
 	/**
+	 * @var string source of subscriber.
+	 * @since 1.7.0
+	 */
+	public $subscriber_via = null;
+
+	/**
 	 * @var string type of integration.
 	 * @since 1.2.6
 	 */
@@ -67,6 +73,11 @@ abstract class Noptin_Abstract_Integration {
 		// Each integration needs a unique slug.
 		if ( empty( $this->slug ) ) {
 			return;
+		}
+
+		// Optionally filter subscription sources.
+		if ( ! empty( $this->subscriber_via ) ) {
+			add_filter( 'noptin_subscription_sources', array( $this, 'register_subscription_source' ) );
 		}
 
 		do_action( "noptin_{$this->slug}_integration_before_initialize", $this );
@@ -146,6 +157,18 @@ abstract class Noptin_Abstract_Integration {
 			<span style='color: #616161;' v-else>$disabled</span>
 		";
 
+	}
+
+	/**
+	 * Filters subscription sources.
+	 *
+	 * @since 1.7.0
+	 * @param array $sources
+	 * @return array
+	 */
+	public function register_subscription_source( $sources ) {
+		$sources[ $this->subscriber_via ] = $this->name;
+		return $sources;
 	}
 
 	/**

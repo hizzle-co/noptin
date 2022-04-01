@@ -13,7 +13,6 @@
 
 	<form @submit.prevent="saveSettings" class="noptin-settings-tab-main-form" novalidate>
 
-
 		<nav class="nav-tab-wrapper">
 			<?php
 

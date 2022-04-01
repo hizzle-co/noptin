@@ -16,7 +16,7 @@
 		font-family: Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	}
 
-	p {
+	p, figure {
 		margin: 1em 0;
 		padding: 5px 0px 5px 0px;
 	}
@@ -39,8 +39,16 @@
 	/**
 	 * Better fluid images in Internet Explorer.
 	 */
-	img {
+	img, figure {
+		outline: none;
+		text-decoration: none;
+		max-width: 100%;
+		height: auto;
 		-ms-interpolation-mode: bicubic;
+	}
+
+	a img {
+		border: none;
 	}
 
 	/**
@@ -76,16 +84,51 @@
 		border-collapse: collapse !important;
 	}
 
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: 700;
+	}
+
+	h1 {
+		font-size: 32px;
+		line-height: 48px;
+	}
+
+	h2{
+		font-size: 28px;
+		line-height: 36px;
+	}
+
+	h3 {
+		font-size: 24px;
+		line-height: 30px;
+	}
+
+	h4 {
+		font-size: 20px;
+		line-height: 26px;
+	}
+
+	h5 {
+		font-size: 18px;
+		line-height: 22px;
+	}
+
+	h6 {
+		font-size: 16px;
+		line-height: 20px;
+	}
+
 	a {
 		color: #1a82e2;
 	}
 
-	img {
+	img, figure {
 		height: auto;
 		line-height: 100%;
 		text-decoration: none;
 		border: 0;
 		outline: none;
+		max-width: 100%;
 	}
 
 	.wp-caption {

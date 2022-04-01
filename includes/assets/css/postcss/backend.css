@@ -521,6 +521,7 @@ $noptin_color: #ff6f00;
 .noptin-field-editor input[type="number"],
 .noptin-field-editor select {
 	width: 100%;
+	max-width: 100%;
 }
 
 .noptin-fields select {
@@ -613,7 +614,7 @@ $noptin_color: #ff6f00;
 
 .noptin-text-wrapper {
 	margin-top: 16px;
-	margin-bottom: 32px;
+	margin-bottom: 16px;
 	display: block;
 }
 
@@ -977,10 +978,10 @@ input:focus+.noptin-switch-slider span {
 	color: #F44336;
 }
 
-.post-type-noptin-form,
 #noptin-automations-popup,
 .noptin-newsletter_page_noptin-subscribers,
 .noptin-newsletter_page_noptin-form-editor,
+.noptin-newsletter_page_noptin-email-campaigns,
 .noptin-settings {
 
 	.notice:not(.noptin-notice),
@@ -1069,77 +1070,12 @@ a.no-campaign-create-new-campaign {
 	font-size: 16px;
 }
 
-.noptin_page_noptin-email-campaigns .swal2-container {
+.noptin-newsletter_page_noptin-email-campaigns .swal2-container {
 	z-index: 1000060;
 }
 
 .noptin-automation-setup-form.noptin-fields {
 	text-align: left;
-}
-
-#noptin-automations-popup {
-	position: relative;
-
-	h2 {
-		margin-bottom: 24px;
-		font-size: 24px;
-	}
-
-	ul {
-		display: flex;
-		flex-wrap: wrap;
-		font-size: 14px;
-		text-align: left;
-
-		li {
-			flex: 0 0 270px;
-			padding: 10px;
-			box-sizing: border-box;
-			margin-bottom: 0;
-			animation-name: noptinAnimateIn;
-			animation-duration: 250ms;
-			animation-delay: 0;
-			animation-delay: calc(var(--noptin-automation-select-order) * 100ms);
-			animation-fill-mode: both;
-			animation-timing-function: ease-in-out;
-
-			.noptin-automation-type-select {
-				display: block;
-				padding: 10px;
-				border: 1px solid #f5f5f5;
-				color: #757575;
-				text-decoration: none;
-				min-height: 170px;
-				display: flex;
-				flex-direction: column;
-
-				&:hover,
-				&ctive,
-				&:focus {
-					color: #757575;
-					border-color: #37474F;
-				}
-
-				&.disabled {
-					background: #fcfcfc;
-					border-color: #bdbdbd !important;
-
-					&> :last-child {
-						color: #ff5722;
-
-						a {
-							margin-left: 4px;
-							text-decoration: none;
-						}
-					}
-				}
-			}
-
-
-		}
-
-	}
-
 }
 
 .noptin-full-screen {
@@ -1192,14 +1128,34 @@ a.no-campaign-create-new-campaign {
 	}
 }
 
-#noptin-automation-campaigns-table,
-#noptin-automation-rules-table,
-#noptin-newsletter-campaigns-table {
+#noptin-automation-rules-table {
 	@media screen and (min-width:960px) {
 		.manage-column.column-primary {
 			width: 50%;
 		}
 	}
+}
+
+#noptin-email-campaigns-table {
+
+	.column-opens,
+	.column-recipients,
+	.column-status,
+	.column-date_sent,
+	.column-clicks {
+		width: 70px;
+		text-align: center;
+	}
+
+	.column-unsubscribed {
+		width: 90px;
+		text-align: center;
+	}
+
+	.column-type {
+		width: 180px;
+	}
+
 }
 
 #noptin-subscribers-table #noptin-subscribers-table-wrap {
@@ -1530,7 +1486,7 @@ a.no-campaign-create-new-campaign {
 	padding: 0 4px;
 }
 
-.noptin_page_noptin-addons .notice:not(.noptin-notice) {
+.noptin-newsletter_page_noptin-addons .notice:not(.noptin-notice) {
 	display: none;
 }
 
@@ -1877,4 +1833,173 @@ a.no-campaign-create-new-campaign {
     padding: 0 .9em;
     border: solid 1px #dfdfdf;
     background-color: #fdfdfd;
+}
+
+#noptin-form-editor-new {
+
+	.inside {
+		margin: 0;
+    	padding: 0;
+	}
+
+	#noptin-form-editor-container {
+		overflow: hidden;
+    	background: #fff;
+		display: flex;
+    	flex-wrap: wrap;
+	}
+
+	.noptin-tab-list {
+		margin: 0;
+		flex: 0 0 200px;
+		line-height: 1em;
+		padding: 0 0 10px;
+		position: relative;
+		background-color: #fafafa;
+		border-right: 1px solid #eee;
+		box-sizing: border-box;
+
+		li {
+			margin: 0;
+			padding: 0;
+			display: block;
+			position: relative;
+
+			a {
+				margin: 0;
+				padding: 10px;
+				display: block;
+				box-shadow: none;
+				text-decoration: none;
+				line-height: 20px!important;
+				border-bottom: 1px solid #eee;
+			}
+
+			&.active a {
+				color: #555;
+				position: relative;
+				background-color: #eee;
+			}
+
+		}
+	}
+
+	.noptin-form-tab-content {
+		flex: 1;
+    	box-sizing: border-box;
+		padding: 1em 1.5em;
+		color: #555;
+
+		.noptin-field-label {
+			line-height: 1.3;
+    		font-weight: 600;
+			font-size: 14px;
+			margin-bottom: 6px;
+    		display: block;
+		}
+
+		.noptin-tip {
+			color: #8d8d8d;
+		}
+
+		.noptin-text {
+			width: 100%;
+			max-width: 30em;
+		}
+
+	}
+
+}
+
+.noptin-email-types {
+	display: flex;
+	flex-wrap: wrap;
+
+	.noptin-email-type {
+		display: flex;
+    	margin-right: 20px;
+		align-items: center;
+    	min-height: 200px;
+		width: 100%;
+		max-width: 400px;
+	}
+
+	.noptin-email-type-image {
+		flex-shrink: 0;
+		margin-right: 32px;
+		width: 64px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+	}
+
+	.noptin-email-type-action {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+
+}
+
+#noptin_automation_save {
+
+	.inside {
+		padding: 0;
+    	margin: 0;
+	}
+
+	.noptin-publishing-actions {
+		padding: 10px;
+		clear: both;
+	}
+
+}
+
+.noptin-label-span {
+	margin-bottom: 4px;
+    display: block;
+}
+
+.noptin-help-text {
+	color: #8e8e8e;
+	display: block;
+    font-size: 13px;
+}
+
+#noptin-wrapper .noptin-admin-field-big {
+    width: 100%;
+    max-width: 400px;
+    font-size: 13px;
+}
+
+#noptin_automation_details {
+
+	.form-table, .form-table td, .form-table th, .form-table td p {
+		font-size: 13px;
+	}
+
+}
+
+#noptin_automation_content .inside {
+	padding-top: 20px;
+}
+
+.noptin-inline-block {
+	display: inline-block;
+}
+
+#noptin-wrapper .noptin-list-table-misc {
+	color: green;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.noptin-checkbox-zone {
+	overflow: auto;
+	min-height: 42px;
+	max-height: 200px;
+	padding: 0 .9em;
+	border: solid 1px #dfdfdf;
+	background-color: #fdfdfd;
 }

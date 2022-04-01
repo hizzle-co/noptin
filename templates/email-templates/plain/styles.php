@@ -1,149 +1,148 @@
 <style type="text/css">
-	  /* Based on The MailChimp Reset INLINE: Yes. */
-	  /* Client-specific Styles */
-	  #outlook a {
+	/* Based on The MailChimp Reset INLINE: Yes. */
+	/* Client-specific Styles */
+	#outlook a {
 		padding: 0;
-	  }
+	}
 
-	  /* Force Outlook to provide a "view in browser" menu link. */
-	  body {
+	/* Force Outlook to provide a "view in browser" menu link. */
+	body {
 		width: 100% !important;
 		margin: 0;
 		padding: 0;
+		font-size: 15px;
 		-webkit-text-size-adjust: 100%;
 		-ms-text-size-adjust: 100%;
-	  }
+	}
 
-	  /* Prevent Webkit and Windows Mobile platforms from changing default font sizes.*/
-	  .ExternalClass {
-		width: 100%;
-	  }
-
-	  /* Force Hotmail to display emails at full width */
-	  .ExternalClass,
-	  .ExternalClass p,
-	  .ExternalClass span,
-	  .ExternalClass font,
-	  .ExternalClass td,
-	  .ExternalClass div {
-		line-height: 100%;
-	  }
-
-	  /* Forces Hotmail to display normal line spacing.  More on that: http://www.emailonacid.com/forum/viewthread/43/ */
-	  #backgroundTable {
+	/* Forces Hotmail to display normal line spacing.  More on that: http://www.emailonacid.com/forum/viewthread/43/ */
+	#backgroundTable {
 		margin: 0;
 		padding: 0;
 		width: 100% !important;
 		line-height: 100% !important;
-	  }
-	  /* End reset */
-	  /* Some sensible defaults for images
-		  Bring inline: Yes. */
+	}
+	/* End reset */
 
-	  img {
+	/* Some sensible defaults for images */
+
+	img {
 		outline: none;
 		text-decoration: none;
 		-ms-interpolation-mode: bicubic;
-	  }
+	}
 
-	  a img {
+	a img {
 		border: none;
-	  }
+	}
 
-	  .image_fix {
+	.image_fix {
 		display: block;
-	  }
+	}
 
-	  /* Yahoo paragraph fix
-		  Bring inline: Yes. */
-	  p {
+	/* Yahoo paragraph fix */
+	p {
 		margin: 1em 0;
-	  }
+	}
 
-	  /* Hotmail header color reset
-		  Bring inline: Yes. */
-	  h1, h2, h3, h4, h5, h6 {
-		color: black !important;
-	  }
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: 700;
+		color: #cecece;
+	}
 
-	  h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-		color: blue !important;
-	  }
+	h1 {
+		font-size: 32px;
+		line-height: 48px;
+	}
 
-	  h1 a:active, h2 a:active, h3 a:active, h4 a:active, h5 a:active, h6 a:active {
-		color: red !important;
-		/* Preferably not the same color as the normal header link color.  There is limited support for psuedo classes in email clients, this was added just for good measure. */
-	  }
+	h2{
+		font-size: 28px;
+		line-height: 36px;
+	}
 
-	  h1 a:visited, h2 a:visited, h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
-		color: #000;
-		color: purple !important;
-		/* Preferably not the same color as the normal header link color. There is limited support for psuedo classes in email clients, this was added just for good measure. */
-	  }
+	h3 {
+		font-size: 24px;
+		line-height: 30px;
+	}
 
-	  /* Outlook 07, 10 Padding issue fix
-		  Bring inline: No.*/
-	  table td {
+	h4 {
+		font-size: 20px;
+		line-height: 26px;
+	}
+
+	h5 {
+		font-size: 18px;
+		line-height: 22px;
+	}
+
+	h6 {
+		font-size: 16px;
+		line-height: 20px;
+	}
+
+	/* Outlook 07, 10 Padding issue fix */
+	table td {
 		border-collapse: collapse;
-	  }
+	}
 
-	  /* Remove spacing around Outlook 07, 10 tables
-		  Bring inline: Yes */
-	  table {
+	/* Remove spacing around Outlook 07, 10 tables */
+	table {
 		border-collapse: collapse;
 		mso-table-lspace: 0pt;
 		mso-table-rspace: 0pt;
-	  }
+	}
 
 
-	  /* Global */
-	  * {
+	/* Global */
+	* {
 		margin: 0;
 		padding: 0;
-	  }
+	}
 
-	  body {
+	/**
+	 * Avoid browser level font resizing.
+	 * 1. Windows Mobile
+	 * 2. iOS / OSX
+	 */
+	body,
+	table,
+	td,
+	div,
+	ol,
+	ul,
+	p,
+	a {
+		-ms-text-size-adjust: 100%; /* 1 */
+		-webkit-text-size-adjust: 100%; /* 2 */
+		font-family: Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		color: #454545;
+	}
+
+	a {
+		color: blue;
+	}
+
+	body {
 		-webkit-text-size-adjust: 100%;
 		-ms-text-size-adjust: 100%;
 		width: 100%!important;
 		height: 100%;
-		font-family: Arial, Helvetica, sans-serif;
 		font-weight: 400;
 		font-size: 100%;
 		line-height: 1.6;
-	  }
+	}
 
-	  /* Styling your links has become much simpler with the new Yahoo.  In fact, it falls in line with the main credo of styling in email and make sure to bring your styles inline.  Your link colors will be uniform across clients when brought inline.
-		  Bring inline: Yes. */
-	  a {
-		color: #348eda;
-	  }
-
-	  h1, h2, h3, h4, h5,
-	  p, ul, ol {
-		/* This fixes Gmail's terrible text rendering  */
-		font-family: Arial, Helvetica, sans-serif;
-		font-weight: 400;
-	  }
-
-	  h1, h2, h3, h4, h5 {
+	h1, h2, h3, h4, h5, h6 {
 		margin: 20px 0 10px;
 		color: #000;
 		line-height: 1.2;
-	  }
+	}
 
-	  h1 { font-size: 32px; }
-	  h2 { font-size: 26px; }
-	  h3 { font-size: 22px; }
-	  h4 { font-size: 18px; }
-	  h5 { font-size: 16px; }
-
-	  p, ul, ol {
+	div, p, ul, ol {
 		margin-bottom: 10px;
 		font-weight: normal;
-		font-size: 16px;
 		line-height: 1.4;
-	  }
+	}
 
 	  ul li,
 	  ol li {
@@ -199,12 +198,12 @@
 		width: 100%;
 	  }
 
-	  img {
-		height: auto;
-		line-height: 100%;
-		text-decoration: none;
-		border: 0;
+	img, figure {
 		outline: none;
+		max-width: 100%;
+		height: auto;
+		text-decoration: none;
+		-ms-interpolation-mode: bicubic;
 	}
 
 	.wp-caption {

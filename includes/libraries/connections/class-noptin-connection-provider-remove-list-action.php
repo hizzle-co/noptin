@@ -50,7 +50,7 @@ class Noptin_Connection_Provider_Remove_List_Action extends Noptin_Abstract_Acti
 
 		return sprintf(
 			/* Translators: %1$s provider tame, %2$s list type. */
-			__( '%1$ %2$s Remove.', 'newsletter-optin-box' ),
+			__( '%1$s %2$s Remove.', 'newsletter-optin-box' ),
 			$this->provider->name,
 			ucwords( $this->provider->list_providers->get_name() )
 		);
@@ -64,7 +64,7 @@ class Noptin_Connection_Provider_Remove_List_Action extends Noptin_Abstract_Acti
 
 		return sprintf(
 			/* Translators: %1$s provider tame, %2$s list type. */
-			__( 'Removes the subscriber from a %1$ %2$s.', 'newsletter-optin-box' ),
+			__( 'Removes the subscriber from a %1$s %2$s.', 'newsletter-optin-box' ),
 			$this->provider->name,
 			$this->provider->list_providers->get_name()
 		);
@@ -93,7 +93,7 @@ class Noptin_Connection_Provider_Remove_List_Action extends Noptin_Abstract_Acti
 
 		return sprintf(
 			/* Translators: %1$s list type, %2$s list name. */
-			__( 'Remove the subscriber from the %1$ %2$s.', 'newsletter-optin-box' ),
+			__( 'Remove the subscriber from the %1$s %2$s.', 'newsletter-optin-box' ),
 			$this->provider->list_providers->get_name(),
 			"<code>$list</code> ({$this->provider->name})"
 		);

@@ -26,17 +26,11 @@ class Noptin_Ajax {
 		// Save rule.
 		add_action( 'wp_ajax_noptin_save_automation_rule', array( $this, 'save_rule' ) );
 
-		// Create a new automation.
-		add_action( 'wp_ajax_noptin_setup_automation', array( $this, 'setup_automation' ) );
-
 		// Delete campaign.
 		add_action( 'wp_ajax_noptin_delete_campaign', array( $this, 'delete_campaign' ) );
 
 		// Stop campaigns.
 		add_action( 'wp_ajax_noptin_stop_campaign', array( $this, 'stop_campaign' ) );
-
-		// Send a test email.
-		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
 
 		// Import subscribers.
 		add_action( 'wp_ajax_noptin_import_subscribers', array( $this, 'import_subscribers' ) );
@@ -98,73 +92,6 @@ class Noptin_Ajax {
 		}
 
 		wp_die( -1, 500 );
-	}
-
-	/**
-	 * Sets up a new automation
-	 *
-	 * @access      public
-	 * @since       1.1.2
-	 * @return      void
-	 */
-	public function setup_automation() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin_campaign' );
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 401 );
-		}
-
-		$data = stripslashes_deep( $_POST );
-		unset( $data['_wpnonce'] );
-		unset( $data['_wp_http_referer'] );
-		unset( $data['action'] );
-
-		if ( empty( $data['automation_name'] ) ) {
-			$data['automation_name'] = __( 'No Name', 'newsletter-optin-box' );
-		}
-
-		if ( empty( $data['automation_type'] ) ) {
-			wp_die( -1, 400 );
-		}
-
-		/**
-		 * Filters email automation setup data.
-		 * 
-		 * @param array $data The automation setup data.
-		 */
-		$data = apply_filters( 'noptin_email_automation_setup_data', $data );
-
-		// Create a new automation.
-		$args = array(
-			'post_title'   => $data['automation_name'],
-			'post_content' => empty( $data['email_body'] ) ? '' : $data['email_body'],
-			'post_status'  => 'draft',
-			'post_type'    => 'noptin-campaign',
-		);
-
-		unset( $data['automation_name'] );
-		unset( $data['email_body'] );
-
-		$data['campaign_type'] = 'automation';
-		$args['meta_input']    = $data;
-
-		$id = wp_insert_post( $args, true );
-
-		// If an error occured, return it.
-		if ( is_wp_error( $id ) ) {
-			wp_die( $id, 400 );
-		}
-
-		/**
-		 * Runs before displaying automation settings
-		 */
-		do_action( 'noptin_setup_automation', $id, $data );
-
-		echo get_noptin_automation_campaign_url( $id );
-		exit;
-
 	}
 
 	/**
@@ -277,7 +204,7 @@ class Noptin_Ajax {
 			foreach ( $data['mapped'] as $noptin => $_imported ) {
 
 				// Manually entered.
-				if ( '-1' == $_imported ) {
+				if ( '-1' == $_imported && '_subscriber_via' != $noptin ) {
 
 					if ( isset( $data['custom'][ $noptin ] ) ) {
 						$subscriber[ $noptin ] = $data['custom'][ $noptin ];
@@ -286,21 +213,27 @@ class Noptin_Ajax {
 					continue;
 				}
 
+				// Active.
+				if ( 'active' == $noptin && is_numeric( $_imported ) ) {
+					$subscriber[ $noptin ] = (int) $_imported == '1';
+					continue;
+				}
+
+				// Confirmed.
+				if ( 'confirmed' == $noptin && is_numeric( $_imported ) ) {
+					$subscriber[ $noptin ] = (int) $_imported == '1';
+					continue;
+				}
+
+				// Source.
+				if ( '_subscriber_via' == $noptin && ( empty( $_imported ) || '-1' == $_imported ) ) {
+					$subscriber[ $noptin ] = 'import';
+					continue;
+				}
+
 				// Mapped.
 				if ( isset( $row[ $_imported ] ) && '' !== $row[ $_imported ] && null !== $row[ $_imported ] ) {
 					$subscriber[ $noptin ] = $row[ $_imported ];
-
-					if ( 'active' == $noptin && is_numeric( $_imported ) ) {
-						$subscriber[ $noptin ] = (int) $subscriber[ $noptin ] == '1';
-					}
-
-					if ( 'confirmed' == $noptin && is_numeric( $_imported ) ) {
-						$subscriber[ $noptin ] = (int) $subscriber[ $noptin ] == '1';
-					}
-
-					if ( '_subscriber_via' == $noptin && ( empty( $subscriber[ $noptin ] ) || '-1' == $_imported ) ) {
-						$subscriber[ $noptin ] = 'import';
-					}
 				}
 
 			}
@@ -372,93 +305,6 @@ class Noptin_Ajax {
 		}
 
 		wp_send_json_success( compact( 'imported', 'updated', 'failed', 'skipped' ) );
-
-	}
-
-	/**
-	 * Sends a test email
-	 *
-	 * @access      public
-	 * @since       1.1.2
-	 * @return      void
-	 */
-	public function send_test_email() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin-edit-newsletter', 'noptin-edit-newsletter-nonce' );
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Prepare data.
-		$data = $_POST;
-
-		unset( $data['_wpnonce'] );
-		unset( $data['_wp_http_referer'] );
-		unset( $data['action'] );
-
-		// Remove slashes.
-		$data = stripslashes_deep( $data );
-
-		// Ensure a valid test email has been provided.
-		if ( empty( $data['email'] ) || ! is_email( $data['email'] ) ) {
-			wp_send_json_error( __( 'Please provide a valid email address', 'newsletter-optin-box' ) );
-			exit;
-		}
-
-		$data['email'] = sanitize_email( $data['email'] );
-
-		// Subject, body and preview text.
-		if ( empty( $data['email_subject'] ) && empty( $data['subject'] ) ) {
-			wp_send_json_error( __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
-			exit;
-		}
-
-		if ( empty( $data['email_subject'] ) ) {
-			$data['email_subject'] = $data['subject'];
-		}
-
-		$data['email_subject'] = '[TEST] ' . $data['email_subject'];
-
-		if ( empty( $data['email_body'] ) ) {
-			wp_send_json_error( __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
-			exit;
-		}
-
-		// Is there a subscriber with that email?
-		$subscriber = new Noptin_Subscriber( $data['email'] );
-		$merge_tags = array();
-
-		if ( $subscriber->exists() ) {
-			$merge_tags = $subscriber->to_array();
-
-			$merge_tags['unsubscribe_url'] = get_noptin_action_url( 'unsubscribe', $subscriber->confirm_key );
-
-			$meta = $subscriber->get_meta();
-			foreach ( $meta as $key => $values ) {
-
-				if ( isset( $values[0] ) && is_string( $values[0] ) ) {
-					$merge_tags[ $key ] = esc_html( $values[0] );
-				}
-
-			}
-		}
-
-		$data['merge_tags'] = $merge_tags;
-
-		/**
-		 * Filters the newsletter test email data.
-		 * 
-		 * @param array $data The test email data.
-		 */
-		$data = apply_filters( 'noptin_test_email_data', $data );
-
-		if ( noptin()->mailer->prepare_then_send( $data ) ) {
-			wp_send_json_success( __( 'Your test email has been sent', 'newsletter-optin-box' ) );
-		}
-
-		wp_send_json_error( __( 'Could not send the test email', 'newsletter-optin-box' ) );
 
 	}
 

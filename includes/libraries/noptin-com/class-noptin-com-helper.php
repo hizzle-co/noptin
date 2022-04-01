@@ -303,18 +303,18 @@ class Noptin_COM_Helper {
 		$screen_id    = $screen ? $screen->id : '';
 		$is_helper    = false;
 
-		if ( 'noptin_page_noptin-addons' === $screen_id && isset( $_GET['section'] ) && 'helper' === $_GET['section'] ) {
+		if ( 'noptin-newsletter_page_noptin-addons' === $screen_id && isset( $_GET['section'] ) && 'helper' === $_GET['section'] ) {
 			$is_helper = true;
 			$version   = filemtime( noptin()->plugin_path . 'includes/assets/css/noptin-helper.css' );
 			wp_enqueue_style( 'noptin-helper', noptin()->plugin_url . 'includes/assets/css/noptin-helper.css', array(), $version );
 		}
 
-		if ( 'noptin_page_noptin-addons' === $screen_id & ! $is_helper ) {
+		if ( 'noptin-newsletter_page_noptin-addons' === $screen_id & ! $is_helper ) {
 			$version = filemtime( noptin()->plugin_path . 'includes/assets/css/addons-page.css' );
 			wp_enqueue_style( 'noptin-addons-page', noptin()->plugin_url . 'includes/assets/css/addons-page.css', array(), $version );
 		}
 
-		if ( 'noptin_page_noptin-addons' === $screen_id ) {
+		if ( 'noptin-newsletter_page_noptin-addons' === $screen_id ) {
 			$version = filemtime( noptin()->plugin_path . 'includes/assets/js/dist/helper.js' );
 			wp_enqueue_script( 'noptin-helper', noptin()->plugin_url . 'includes/assets/js/dist/helper.js', array( 'jquery' ), $version, true );
 
@@ -420,7 +420,7 @@ class Noptin_COM_Helper {
 	 */
 	public static function current_screen( $screen ) {
 
-		if ( 'noptin_page_noptin-addons' !== $screen->id || ! current_user_can( 'manage_options' ) ) {
+		if ( 'noptin-newsletter_page_noptin-addons' !== $screen->id || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

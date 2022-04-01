@@ -13,6 +13,12 @@ if ( ! defined( 'ABSPATH' )  ) {
 class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 
 	/**
+	 * @var string source of subscriber.
+	 * @since 1.7.0
+	 */
+	public $subscriber_via = 'comment';
+
+	/**
 	 * Init variables.
 	 *
 	 * @since       1.2.6
@@ -38,7 +44,7 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 */
 	public function hook_checkbox_code() {
-		add_filter( 'comment_form_submit_field', array( $this, 'append_checkbox' ), $this->priority );
+		add_filter( 'comment_form_submit_field', array( $this, 'prepend_checkbox' ), $this->priority );
 	}
 
 	/**

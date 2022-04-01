@@ -13,6 +13,12 @@ if ( ! defined( 'ABSPATH' )  ) {
 class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 
 	/**
+	 * @var string source of subscriber.
+	 * @since 1.7.0
+	 */
+	public $subscriber_via = 'registration';
+
+	/**
 	 * Init variables.
 	 *
 	 * @since       1.2.6

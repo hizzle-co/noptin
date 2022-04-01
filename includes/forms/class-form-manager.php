@@ -219,7 +219,7 @@ class Noptin_Form_Manager {
 					'exclude_from_search' => true,
 					'hierarchical'        => false,
 					'query_var'           => false,
-					'supports'            => array( 'author' ),
+					'supports'            => array( 'title' ),
 					'has_archive'         => false,
 					'show_in_nav_menus'   => false,
 					'show_in_rest'        => false,

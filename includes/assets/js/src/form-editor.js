@@ -1,17 +1,24 @@
 (function ($) {
 
 	// Switch tabs.
-	$('#noptin-form-editor-nav-tab-wrapper .nav-tab').on('click', function (e) {
+	$('#noptin-form-editor-new .noptin-tab-button').on('click', function (e) {
 		e.preventDefault();
 
-		const id = $(this).data('id');
+		const id  = $(this).data('id');
+		const list = $(this).closest('.noptin-tab-list');
+		const tab  = $(this).parent();
+
+		// Abort if the tab is active.
+		if ( tab.hasClass('active') ) {
+			return;
+		}
 
 		// Change active/inactive tab classes.
-		$(`#noptin-form-editor-nav-tab-wrapper .nav-tab-active:not(.noptin-form-tab-${id})`).removeClass('nav-tab-active')
-		$(this).addClass('nav-tab-active').blur()
+		list.find(`.active`).removeClass('active');
+		tab.addClass('active');
 
 		// Hide/show tab content.
-		$(`.noptin-form-tab-content-active:not(.noptin-form-tab-content-${id})`).removeClass('noptin-form-tab-content-active');
+		$(`.noptin-form-tab-content-active`).removeClass('noptin-form-tab-content-active');
 		$(`.noptin-form-tab-content-${id}`).addClass('noptin-form-tab-content-active');
 
 		// Update document title.
@@ -50,10 +57,10 @@
 
 	// Warn if a user is leaving the page without saving changes.
 	let isSaving = false;
-	let initialState = $( '#noptin-form-editor-app' ).serialize();
+	let initialState = $( '.post-type-noptin-form #post' ).serialize();
 
 	jQuery(window).on('beforeunload', (e) => {
-		let currentState = $( '#noptin-form-editor-app' ).serialize();
+		let currentState = $( '.post-type-noptin-form #post' ).serialize();
 
 		if ( ! isSaving && initialState != currentState ) {
 			let confirmationMessage = 'Do you wish to save your changes first? Your changes will be discarded if you choose leave without saving them.';
@@ -64,7 +71,7 @@
 	});
 
 	// Save tinymce when submitting the form.
-	$( '#noptin-form-editor-app' ).on( 'submit', () => {
+	$( '.post-type-noptin-form #post' ).on( 'submit', () => {
 		isSaving = true;
 
 		// Save editor content.

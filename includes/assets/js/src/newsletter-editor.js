@@ -31,6 +31,24 @@
 		// Hide/Show select 2 options.
 		$('.noptin-newsletter-select_2').select2()
 
+		// Change email type.
+		$('#noptin-email-type').on( 'change', function() {
+			$( this )
+				.closest( 'form' )
+				.attr( 'data-type', $( this ).val() )
+		})
+
+		// Change timing.
+		$('#noptin-automated-email-when-to-run').on( 'change', function() {
+			$('.noptin-automation-delay-wrapper').toggle( $( this ).val() == 'delayed' );
+		})
+
+		// Post digest timing.
+		$('#noptin-post-digest-frequency').on( 'change', function() {
+			$('.noptin-post-digest-day').toggle( $( this ).val() == 'weekly' );
+			$('.noptin-post-digest-date').toggle( $( this ).val() == 'monthly' );
+		})
+
 		// Reverts form to original after a data has been saved.
 		let hideScheduleEditor = function( el ) {
 

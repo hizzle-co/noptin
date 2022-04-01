@@ -20,9 +20,6 @@ class Noptin_Post_Types {
 		// Register post types.
 		$this->register_post_types();
 
-		// Remove some meta boxes.
-		add_action( 'admin_menu', array( $this, 'remove_metaboxes' ) );
-
 		// And some actions.
 		add_filter( 'post_row_actions', array( $this, 'remove_actions' ), 10, 2 );
 
@@ -102,13 +99,6 @@ class Noptin_Post_Types {
 			)
 		);
 
-	}
-
-	/**
-	 * Removes unnecessary meta boxes from the post edit screen
-	 */
-	public function remove_metaboxes() {
-		remove_meta_box( 'submitdiv', 'noptin-form', 'core' );
 	}
 
 	/**

@@ -197,13 +197,9 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 
 			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
 
-			$count = $wpdb->get_var( $wpdb->prepare( "
-				SELECT COUNT(*)
-				FROM {$table}
-				WHERE {$column} LIKE %s
-			", $key ) );
+			$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE {$column} LIKE %s", $key ) ); // @codingStandardsIgnoreLine.
 
-			return ( $count > 0 ) ? false : true;
+			return ! ( $count > 0 );
 		}
 
 		/**
@@ -272,19 +268,45 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 
 			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
 
-			$query = $wpdb->get_row( $wpdb->prepare( "
-				SELECT *
-				FROM {$table}
-				WHERE {$column} LIKE %s
-				ORDER BY {$key_column} ASC
-				LIMIT 1
-			", $key ) );
+			$query = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE {$column} LIKE %s ORDER BY {$key_column} ASC LIMIT 1", $key ) ); // @codingStandardsIgnoreLine.
 
 			$batch       = new stdClass();
 			$batch->key  = $query->$column;
-			$batch->data = maybe_unserialize( $query->$value_column );
+			$batch->data = array_filter( (array) maybe_unserialize( $query->$value_column ) );
 
 			return $batch;
+		}
+
+		/**
+		 * See if the batch limit has been exceeded.
+		 *
+		 * @return bool
+		 */
+		protected function batch_limit_exceeded() {
+			return $this->time_exceeded() || $this->memory_exceeded();
+		}
+
+		/**
+		 * Delete all batches.
+		 *
+		 * @return Noptin_Background_Process
+		 */
+		public function delete_all_batches() {
+			global $wpdb;
+
+			$table  = $wpdb->options;
+			$column = 'option_name';
+
+			if ( is_multisite() ) {
+				$table  = $wpdb->sitemeta;
+				$column = 'meta_key';
+			}
+
+			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
+
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE {$column} LIKE %s", $key ) );
+
+			return $this;
 		}
 
 		/**
@@ -308,7 +330,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 						unset( $batch->data[ $key ] );
 					}
 
-					if ( $this->time_exceeded() || $this->memory_exceeded() ) {
+					if ( $this->batch_limit_exceeded() ) {
 						// Batch limits reached.
 						break;
 					}
@@ -320,7 +342,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 				} else {
 					$this->delete( $batch->key );
 				}
-			} while ( ! $this->time_exceeded() && ! $this->memory_exceeded() && ! $this->is_queue_empty() );
+			} while ( ! $this->batch_limit_exceeded() && ! $this->is_queue_empty() );
 
 			$this->unlock_process();
 
@@ -369,7 +391,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 
 			if ( ! $memory_limit || -1 === intval( $memory_limit ) ) {
 				// Unlimited, set to 32GB.
-				$memory_limit = '32000M';
+				$memory_limit = '32G';
 			}
 
 			return wp_convert_hr_to_bytes( $memory_limit );
@@ -384,7 +406,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * @return bool
 		 */
 		protected function time_exceeded() {
-			$finish = $this->start_time + apply_filters( $this->identifier . '_default_time_limit', 20 ); // 20 seconds.
+			$finish = $this->start_time + (int) apply_filters( $this->identifier . '_default_time_limit', 20 ); // 20 seconds.
 			$return = false;
 
 			if ( time() >= $finish ) {
@@ -413,14 +435,14 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * @return mixed
 		 */
 		public function schedule_cron_healthcheck( $schedules ) {
-			$interval = apply_filters( $this->identifier . '_cron_interval', 5 );
+			$interval = apply_filters( $this->cron_interval_identifier, 5 );
 
 			if ( property_exists( $this, 'cron_interval' ) ) {
-				$interval = apply_filters( $this->identifier . '_cron_interval', $this->cron_interval );
+				$interval = apply_filters( $this->cron_interval_identifier, $this->cron_interval );
 			}
 
 			// Adds every 5 minutes to the existing schedules.
-			$schedules[ $this->identifier . '_cron_interval' ] = array(
+			$schedules[ $this->cron_interval_identifier ] = array(
 				'interval' => MINUTE_IN_SECONDS * $interval,
 				'display'  => sprintf( 
 					/* Translators: %d Number of minutes. */
@@ -489,6 +511,18 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 				wp_clear_scheduled_hook( $this->cron_hook_identifier );
 			}
 
+		}
+
+		/**
+		 * Kill process.
+		 *
+		 * Stop processing queue items, clear cronjob and delete all batches.
+		 */
+		public function kill_process() {
+			if ( ! $this->is_queue_empty() ) {
+				$this->delete_all_batches();
+				wp_clear_scheduled_hook( $this->cron_hook_identifier );
+			}
 		}
 
 		/**

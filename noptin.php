@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         1.6.2
+ * Version:         1.7.3
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -47,7 +47,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.6.2';
+	public $version = '1.7.3';
 
 	/**
 	 * The current database version.
@@ -160,6 +160,22 @@ class Noptin {
 	public $forms;
 
 	/**
+	 * The main emails class.
+	 *
+	 * @var Noptin_Email_Manager
+	 * @since       1.7.0
+	 */
+	public $emails;
+
+	/**
+	 * The main integrations class.
+	 *
+	 * @var Noptin_Integrations
+	 * @since       1.7.0
+	 */
+	public $integrations;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -228,7 +244,7 @@ class Noptin {
 		require_once $plugin_path . 'includes/subscriber.php';
 		require_once $plugin_path . 'includes/forms/forms.php';
 		require_once $plugin_path . 'includes/forms/class-form-manager.php';
-		require_once $plugin_path . 'includes/libraries/action-scheduler/action-scheduler.php';
+		require_once $plugin_path . 'includes/emails/class-manager.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
 		// Register autoloader.
@@ -256,6 +272,9 @@ class Noptin {
 
 		// Form manager.
 		$this->forms = new Noptin_Form_Manager();
+
+		// Email manager.
+		$this->emails = new Noptin_Email_Manager();
 
 		// Mailer.
 		$this->mailer = new Noptin_Mailer();
@@ -322,8 +341,6 @@ class Noptin {
 
 		// Bg processes.
 		$this->bg_mailer          = new Noptin_Background_Mailer();
-		$this->post_notifications = new Noptin_New_Post_Notify();
-		$this->post_notifications->init();
 
 		// Init the admin.
 		$this->admin 			  = Noptin_Admin::instance();

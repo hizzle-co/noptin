@@ -343,16 +343,11 @@ class Noptin_Settings {
 				'section'     => 'emails',
 				'label'       => __( 'Email Template', 'newsletter-optin-box' ),
 				'placeholder' => __( 'Select a template', 'newsletter-optin-box' ),
-				'options'     => array(
-					'paste'        => __( 'Paste', 'newsletter-optin-box' ),
-					'plain'        => __( 'Plain', 'newsletter-optin-box' ),
-					'merriweather' => __( 'Merriweather', 'newsletter-optin-box' ),
-					'default'      => __( 'Default', 'newsletter-optin-box' ),
-				),
-				'default'     => 'plain',
+				'options'     => get_noptin_email_templates(),
+				'default'     => 'paste',
 				'description' => sprintf(
 					"%s %s",
-					__( 'Select "Default" if you are using an email templates plugin.', 'newsletter-optin-box' ),
+					__( 'Select "No Template" if you are using an email templates plugin.', 'newsletter-optin-box' ),
 					sprintf(
 						'<br /><a href="%s" class="thickbox open-plugin-details-modal">%s</a>',
 						esc_url(

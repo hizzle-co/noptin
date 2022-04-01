@@ -107,8 +107,8 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
 	return add_query_arg(
 		array(
-			'noptin_ns' => $action,
-			'nv'        => $value,
+			'noptin_ns' => urlencode( $action ),
+			'nv'        => empty( $value ) ? false : urlencode( $value ),
 			'nte'       => $empty,
 		),
 		get_home_url()
@@ -262,26 +262,7 @@ function get_noptin_newsletter_campaign_url( $id ) {
 		'page'        => 'noptin-email-campaigns',
 		'section'     => 'newsletters',
 		'sub_section' => 'edit_campaign',
-		'id'          => $id,
-	);
-	return add_query_arg( $param, admin_url( '/admin.php' ) );
-
-}
-
-/**
- * Returns a link to edit an automation campaign.
- *
- * @since 1.2.0
- * @param int $id The campaign's id.
- * @return string.
- */
-function get_noptin_automation_campaign_url( $id ) {
-
-	$param = array(
-		'page'        => 'noptin-email-campaigns',
-		'section'     => 'automations',
-		'sub_section' => 'edit_campaign',
-		'id'          => $id,
+		'campaign'    => $id,
 	);
 	return add_query_arg( $param, admin_url( '/admin.php' ) );
 
@@ -308,63 +289,6 @@ function is_noptin_campaign( $post, $campaign_type = false ) {
 	}
 
 	return trim( $campaign_type ) === get_post_meta( $campaign->ID, 'campaign_type', true );
-
-}
-
-/**
- * Returns the default newsletter subject.
- *
- * @since 1.2.0
- * @return string
- */
-function get_noptin_default_newsletter_subject() {
-
-	$subject = '';
-
-	/**
-	 * Filters the default newsletter subject
-	 *
-	 * @param string $subject The default newsletter subject
-	 */
-	return apply_filters( 'noptin_default_newsletter_subject', $subject );
-
-}
-
-/**
- * Returns the default newsletter preview text.
- *
- * @since 1.2.0
- * @return string
- */
-function get_noptin_default_newsletter_preview_text() {
-
-	$preview_text = '';
-
-	/**
-	 * Filters the default newsletter preview text
-	 *
-	 * @param string $preview_text The default newsletter preview text
-	 */
-	return apply_filters( 'noptin_default_newsletter_preview_text', $preview_text );
-
-}
-
-/**
- * Returns the default newsletter body.
- *
- * @since 1.2.0
- * @return string.
- */
-function get_noptin_default_newsletter_body() {
-
-	$body = include locate_noptin_template( 'default-email-body.php' );
-
-	/**
-	 * Filters the default newsletter body
-	 *
-	 * @param string $body The default newsletter body
-	 */
-	return apply_filters( 'noptin_default_newsletter_body', $body );
 
 }
 
@@ -1151,33 +1075,6 @@ function get_noptin_connection_providers() {
 }
 
 /**
- * Returns an array of email senders.
- *
- * @since 1.5.2
- * @return array
- */
-function get_noptin_email_senders() {
-	return apply_filters(
-		'noptin_email_senders',
-		array(
-			'noptin' => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
-		)
-	);
-}
-
-/**
- * Returns the sender to use for a specific email.
- *
- * @since 1.5.2
- * @param int $campaign_id
- * @return array
- */
-function get_noptin_email_sender( $campaign_id ) {
-	$sender = get_post_meta( $campaign_id, 'email_sender', true );
-	return in_array( $sender, array_keys( get_noptin_email_senders() ) ) ? $sender : 'noptin';
-}
-
-/**
  * Applies Noptin merge tags.
  *
  * Noptin uses a fast logic-less templating engine to parse merge tags
@@ -1454,4 +1351,197 @@ function noptin_is_preview() {
  */
 function noptin_is_multilingual() {
 	return apply_filters( 'noptin_is_multilingual', false );
+}
+
+/**
+ * Formats a date for display.
+ *
+ * @param string $date_time.
+ * @return string
+ */
+function noptin_format_date( $date_time ) {
+
+	$timestamp = strtotime( $date_time );
+	$time_diff = current_time( 'timestamp' ) - $timestamp;
+
+	if ( $timestamp && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
+
+		$relative = sprintf(
+			/* translators: %s: Human-readable time difference. */
+			__( '%s ago', 'newsletter-optin-box' ),
+			human_time_diff( $timestamp, current_time( 'timestamp' ) )
+		);
+
+	} else {
+		$relative = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $timestamp );
+	}
+
+	$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $timestamp ) );
+	return "<abbr title='$date'>$relative<abbr>";
+
+}
+
+/**
+ * Encrypts a text string.
+ *
+ * @param string $plaintext
+ * @return string
+ */
+function noptin_encrypt( $plaintext ) {
+
+	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$iv    = substr( AUTH_SALT, 0, $ivlen );
+
+	// Encrypt then encode.
+	$encoded = base64_encode( openssl_encrypt( $plaintext, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv ) );
+
+	// Make URL safe.
+	return strtr( $encoded, '+/=', '._-' );
+}
+
+/**
+ * Decrypts a text string.
+ *
+ * @param string $plaintext
+ * @return string
+ */
+function noptin_decrypt( $encoded ) {
+
+	// Decode.
+	// @see noptin_encrypt()
+	$decoded = base64_decode( strtr( $encoded, '._-', '+/=' ) );
+
+	if ( empty( $decoded ) ) {
+		return '';
+	}
+
+	// Prepare args.
+	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$iv    = substr( AUTH_SALT, 0, $ivlen );
+
+	return openssl_decrypt( $decoded, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
+}
+// TODO: Show alert when a user clicks on the send button.
+// TODO: Display %ges below stats.
+
+/**
+ * Limit length of a string.
+ *
+ * @param  string  $string string to limit.
+ * @param  integer $limit Limit size in characters.
+ * @return string
+ */
+function noptin_limit_length( $string, $limit ) {
+
+	if ( empty( $limit ) || empty( $string ) ) {
+		return $string;
+	}
+
+    $str_limit = $limit - 3;
+
+	if ( function_exists( 'mb_strimwidth' ) ) {
+		if ( mb_strlen( $string ) > $limit ) {
+			$string = mb_strimwidth( $string, 0, $str_limit ) . '...';
+		}
+	} else {
+		if ( strlen( $string ) > $limit ) {
+			$string = substr( $string, 0, $str_limit ) . '...';
+		}
+	}
+    return $string;
+
+}
+
+/**
+ * Retrieves a post's excerpt.
+ *
+ * @param  WP_Post $post
+ * @param  integer $limit Optional character limit.
+ * @return string
+ */
+function noptin_get_post_excerpt( $post, $limit = 0 ) {
+
+	// Remove read_more string.
+	add_filter( 'excerpt_more', '__return_empty_string', 100000 );
+
+	// Prevent wp_rss_aggregator from appending the feed name to excerpts.
+	$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
+
+	if ( false !== $wp_rss_aggregator_fix ) {
+		remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+	}
+
+	// Generate excerpt.
+	$post_excerpt = get_the_excerpt( $post );
+
+	if ( false !== $wp_rss_aggregator_fix ) {
+		add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+	}
+
+	remove_filter( 'excerpt_more', '__return_empty_string', 100000 );
+
+	return noptin_limit_length( $post_excerpt, $limit );
+}
+
+/**
+ * Escapes content with support for svg
+ *
+ * @param  string $content
+ * @since  1.7.0
+ */
+function noptin_kses_post_e( $content ) {
+
+	echo wp_kses(
+		$content,
+		array_merge(
+			wp_kses_allowed_html( 'post' ),
+			array(
+				'svg'   => array(
+					'class'           => true,
+					'aria-hidden'     => true,
+					'aria-labelledby' => true,
+					'role'            => true,
+					'xmlns'           => true,
+					'xmlns:xlink'     => true,
+					'xml:space'       => true,
+					'y'               => true,
+					'x'               => true,
+					'width'           => true,
+					'height'          => true,
+					'viewbox'         => true,
+					'version'         => true,
+					'fill'            => true
+				),
+				'g'     => array( 'fill' => true ),
+				'title' => array( 'title' => true ),
+				'path'  => array( 'd' => true, 'fill' => true,  ),
+			)
+		)
+	);
+}
+
+/**
+ * Checks if a given WP User is unsubscribed.
+ *
+ * @since 1.7.0
+ * @param int $user_id
+ * @return bool
+ */
+function noptin_is_wp_user_unsubscribed( $user_id ) {
+
+	// If the user is also a subscriber, ensure they are not unsubscribed.
+	// TODO: Resubscribe users when subscribers resubscribe.
+	$user = get_user_by( 'ID', $user_id );
+
+	if ( $user ) {
+
+		$subscriber = get_noptin_subscriber( $user->user_email );
+
+		if ( $subscriber->exists() && ! $subscriber->is_active() ) {
+			return false;
+		}
+
+	}
+
+	return 'unsubscribed' === get_user_meta( $user_id, 'noptin_unsubscribed', true );
 }

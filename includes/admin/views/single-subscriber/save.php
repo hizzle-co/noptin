@@ -90,8 +90,10 @@
 
 <div id="major-publishing-actions" style="margin: 10px -12px -12px;">
 
-	<div id="delete-action">
-	    <a class='noptin-delete-single-subscriber' data-email='<?php echo esc_attr( $subscriber->email ); ?>' style="color: #a00;" href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-subscribers' ) ); ?>"><?php _e( 'Delete', 'newsletter-optin-box' ); ?></a>
+    <div id="delete-action">
+		<a class="submitdelete deletion" style="color: #a00;" href="<?php echo esc_attr( noptin_subscriber_delete_url( $subscriber->id ) ); ?>" onclick="return confirm('<?php esc_attr_e( 'Are you sure you want to delete this subscriber?', 'newsletter-optin-box' ); ?>');">
+			<?php echo _e( 'Delete', 'newsletter-optin-box' ); ?>
+		</a>
 	</div>
 
     <div id="publishing-action">

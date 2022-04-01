@@ -49,6 +49,9 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		parent::__construct();
 		$this->context     = __( 'customers', 'newsletter-optin-box' );
 		$this->order_label = __( 'Orders', 'newsletter-optin-box' );
+
+		// Map subscriber fields to customer fields.
+		add_action( 'noptin_custom_field_settings', array( $this, 'map_customer_to_custom_fields' ), $this->priority );
 	}
 
 	/**
@@ -58,8 +61,6 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 */
 	public function initialize() {
 
-		// Map subscriber fields to customer fields.
-		add_action( 'noptin_custom_field_settings', array( $this, 'map_customer_to_custom_fields' ), $this->priority );
 		if ( empty( $this->product_post_type ) ) {
 			return;
 		}
@@ -272,6 +273,9 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 			do_action( "noptin_{$this->slug}_integration_order", $action, $order_id, $subscriber_id, $this );
 		}
 
+		do_action( "noptin_{$this->slug}_order", $action, $order_id, $this );
+		do_action( "noptin_{$this->slug}_order_$action", $order_id, $this );
+
 	}
 
 	/**
@@ -478,6 +482,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 			do_action( "noptin_{$this->slug}_integration_product_buy", $product_id, $item, $order_id, $subscriber_id, $this );
 		}
 
+		do_action( "noptin_{$this->slug}_product_buy", $product_id, $item, $order_id, $this );
 	}
 
 	/**
@@ -495,6 +500,8 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 			do_action( "noptin_ecommerce_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
 		}
+
+		do_action( "noptin_{$this->slug}_product_refund", $product_id, $item, $order_id, $this );
 	}
 
 	/**
@@ -589,7 +596,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		}
 
 		$customer_fields = array_merge(
-			[ '' => __( 'Select Field', 'newsletter-optin-box' ) ],
+			[ '' => __( 'Not Mapped', 'newsletter-optin-box' ) ],
 			$customer_fields
 		);
 

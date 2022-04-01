@@ -19,7 +19,30 @@ abstract class Noptin_Dynamic_Content_Tags {
 	/**
 	 * @var array Array of registered dynamic content tags
 	 */
-	protected $tags = array();
+	public $tags = array();
+
+	/**
+	 * Whether we're only replacing partial merge tags.
+	 */
+	public $is_partial = false;
+
+	/**
+	 * Registers a new tag
+	 */
+	public function add_tag( $tag, $details ) {
+		$this->tags[ $tag ] = $details;
+	}
+
+	/**
+	 * Removes a tag
+	 */
+	public function remove_tag( $tag ) {
+
+		if ( isset( $this->tags[ $tag ] ) ) {
+			unset( $this->tags[ $tag ] );
+		}
+
+	}
 
 	/**
 	 * Register template tags
@@ -28,7 +51,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		// Global tags can go here
 		$this->tags['cookie'] = array(
-			'description' => sprintf( __( 'Data from a cookie.', 'newsletter-optin-box' ) ),
+			'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_cookie' ),
 			'example'     => "cookie name='my_cookie' default='Default Value'",
 		);
@@ -41,6 +64,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$this->tags['current_url'] = array(
 			'description' => __( 'The URL of the page.', 'newsletter-optin-box' ),
 			'callback'    => 'noptin_get_request_url',
+			'no_args'     => true,
 		);
 
 		$this->tags['current_path'] = array(
@@ -61,27 +85,29 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$this->tags['language'] = array(
 			'description' => sprintf( __( 'The current language. Example: %s.', 'newsletter-optin-box' ), '<strong>' . get_locale() . '</strong>' ),
 			'callback'    => 'get_locale',
+			'no_args'     => true,
 		);
 
 		$this->tags['ip'] = array(
 			'description' => sprintf( __( 'The visitor\'s IP address. Example: %s.', 'newsletter-optin-box' ), '<strong>' . noptin_get_user_ip() . '</strong>' ),
 			'callback'    => 'noptin_get_user_ip',
+			'no_args'     => true,
 		);
 
 		$this->tags['subscriber'] = array(
-			'description' => sprintf( __( "A custom field's value of the current subscriber (if known).", 'newsletter-optin-box' ) ),
+			'description' => __( "A custom field's value of the current subscriber (if known).", 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_subscriber_field' ),
 			'example'     => "subscriber field='first_name' default='there'",
 		);
 
 		$this->tags['user'] = array(
-			'description' => sprintf( __( 'The property of the currently logged-in user.', 'newsletter-optin-box' ) ),
+			'description' => __( 'The property of the currently logged-in user.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_user_property' ),
 			'example'     => "user property='user_email'",
 		);
 
 		$this->tags['post'] = array(
-			'description' => sprintf( __( 'Property of the current page or post.', 'newsletter-optin-box' ) ),
+			'description' => __( 'Property of the current page or post.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_post_property' ),
 			'example'     => "post property='ID'",
 		);
@@ -108,34 +134,45 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$tags = $this->all();
 		$tag  = $matches[1];
 
-		if ( isset( $tags[ $tag ] ) ) {
-			$config      = $tags[ $tag ];
-			$replacement = '';
-
-			if ( isset( $config['replacement'] ) ) {
-				$replacement = $config['replacement'];
-			} else if ( isset( $config['callback'] ) ) {
-
-				// Parse attributes.
-				$attributes = array();
-				if ( isset( $matches[2] ) ) {
-					$attribute_string = $matches[2];
-					$attributes       = shortcode_parse_atts( $attribute_string );
-				}
-
-				// call function
-				$replacement = call_user_func( $config['callback'], $attributes );
-			}
-
-			if ( is_callable( $this->escape_function ) ) {
-				$replacement = call_user_func( $this->escape_function, $replacement );
-			}
-
-			return $replacement;
+		// Abort if tag is not supported.
+		if ( ! isset( $tags[ $tag ] ) ) {
+			return $matches[0];
 		}
 
-		// default to not replacing it
-		return $matches[0];
+		// (Maybe) Skip non-partial tags.
+		if ( $this->is_partial && empty( $tags[ $tag ]['partial'] ) ) {
+			return $matches[0];
+		}
+
+		// Generate replacement.
+		$config      = $tags[ $tag ];
+		$replacement = '';
+
+		if ( isset( $config['replacement'] ) ) {
+			$replacement = $config['replacement'];
+		} else if ( isset( $config['callback'] ) ) {
+
+			// Parse attributes.
+			$attributes = array();
+			if ( isset( $matches[2] ) ) {
+				$attribute_string = $matches[2];
+				$attributes       = shortcode_parse_atts( $attribute_string );
+			}
+
+			// call function
+			if ( empty( $config['no_args'] ) ) {
+				$replacement = call_user_func( $config['callback'], $attributes, $tag );
+			} else {
+				$replacement = call_user_func( $config['callback'] );
+			}
+
+		}
+
+		if ( is_callable( $this->escape_function ) ) {
+			$replacement = call_user_func( $this->escape_function, $replacement );
+		}
+
+		return $replacement;
 	}
 
 	/**

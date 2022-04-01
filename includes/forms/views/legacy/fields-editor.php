@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <v-card flat class="noptin-field-editor">
 		<draggable :list="fields" :component-data="{accordion:true, focusable:true, hover: true}" tag="v-expansion-panels" ghost-class="noptin-sortable-ghost" class="mb-4 pl-0">
 			<v-expansion-panel v-for="field in fields" :key="field.key" :id="field.key" class="mb-1">

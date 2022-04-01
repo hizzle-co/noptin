@@ -71,6 +71,7 @@ class Noptin_Mailer {
 		}
 
 		// Ensure that a few variables are set.
+		$data['subscriber']      = empty( $data['subscriber'] ) ? null : $data['subscriber'];;
 		$data['email_subject']   = $this->get_subject( $data );
 		$data['title']           = $data['email_subject'];
 		$data['logo_url']        = $this->get_logo_url( $data );
@@ -111,16 +112,18 @@ class Noptin_Mailer {
 	 */
 	public function get_subject( $data = array() ) {
 
+		// Abort if no subject.
 		if ( empty( $data['email_subject'] ) ) {
 			return '';
 		}
 
+		// Clean the subject.
 		$subject = trim( $data['email_subject'] );
 
-		if ( empty( $data['merge_tags'] ) ) {
-			$data['merge_tags'] = array();
-		}
+		// Process merge tags.
+		$subject = noptin_parse_email_subject_tags( $subject );
 
+		// Backwards compatibility.
 		$subject = $this->merge( $subject, $data['merge_tags'] );
 
 		return $subject;
@@ -161,8 +164,8 @@ class Noptin_Mailer {
 
 		$url = add_query_arg(
 			array(
-				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
-				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
+				'uid' => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
+				'sid' => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
 				'cid' => intval( $data['campaign_id'] ),
 			),
 			$url
@@ -186,7 +189,7 @@ class Noptin_Mailer {
 			'blog_description' => get_bloginfo( 'description' ),
 			'home_url'         => get_home_url(),
 			'noptin'   		   => sprintf(
-				'<a target="_blank" href="https://noptin.com/?utm_medium=powered-by&utm_campaign=email-campaign&utm_source=%s">Noptin</a>',
+				'<a target="_blank" href="https://noptin.com/?utm_medium=plugin-dashboard&utm_campaign=powered-by&utm_source=%s">Noptin</a>',
 				urlencode( esc_url( get_home_url() ) )
 			),
 			'noptin_company'   => get_noptin_option( 'company', '' ),
@@ -201,16 +204,17 @@ class Noptin_Mailer {
 	 */
 	public function default_footer_text() {
 
-		$country = get_noptin_option( 'country', 'United States' );
-		$company = get_noptin_option( 'company', get_option( 'blogname' ) );
-		$address = get_noptin_option( 'address', '31 North San Juan Ave.' );
-		$city    = get_noptin_option( 'city', 'Santa Clara' );
-		$state   = get_noptin_option( 'state', 'San Francisco' );
-		$powered = sprintf(
-			__( 'Newsletter powered by %s', 'newsletter-optin-box' ),
-			'[[noptin]]'
+		return apply_filters(
+			'default_noptin_footer_text',
+	
+			sprintf(
+				/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+				__( '[[blog_name]] &mdash; Powered by [[noptin]] | %1$sUnsubscribe%2$s', 'newsletter-optin-box' ),
+				'<a href="[[unsubscribe_url]]" rel="nofollow" target="_blank">',
+				'</a>'
+			)
+	
 		);
-		return trim( "$address \n\n$city, $state, $country \n\n$company" );
 
 	}
 
@@ -218,8 +222,7 @@ class Noptin_Mailer {
 	 * Returns the footer text.
 	 */
 	public function get_footer_text( $data ) {
-		$footer_text = get_noptin_option( 'footer_text', $this->default_footer_text() );
-		return apply_filters( 'noptin_mailer_email_footer_text', $footer_text, $data, $this );
+		return apply_filters( 'noptin_mailer_email_footer_text', get_noptin_footer_text(), $data, $this );
 	}
 
 	/**
@@ -267,56 +270,6 @@ class Noptin_Mailer {
 	}
 
 	/**
-	 * Makes campaign links trackable.
-	 *
-	 * @param string $content The email content.
-	 * @param array  $data The new campaign data.
-	 */
-	public function make_links_trackable( $content, $data ) {
-
-		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
-		if ( empty( $track_campaign_stats ) || empty( $data['campaign_id'] ) ) {
-			return $content;
-		}
-
-		if ( empty( $data['subscriber_id'] ) && empty( $data['user_id'] ) ) {
-			return $content;
-		}
-
-		$url = get_noptin_action_url( 'email_click' );
-		$url = add_query_arg(
-			array(
-				'uid'         => isset( $data['user_id'] ) ? intval( $data['user_id'] ) : false,
-				'sid'         => isset( $data['subscriber_id'] ) ? intval( $data['subscriber_id'] ) : false,
-				'cid'         => intval( $data['campaign_id'] ),
-				//'noptin_hide' => 'true'
-			),
-			$url
-		);
-
-		$_content = preg_replace_callback(
-			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
-			function ( $matches ) use ( $url ) {
-				$_url = add_query_arg(
-					'to',
-					urlencode( $matches[2] ),
-					$url
-				);
-				$pre  = $matches[1];
-				$post = $matches[3];
-				return "<a $pre href='$_url' $post >";
-			},
-			$content
-		);
-
-		if ( empty( $_content ) ) {
-			return $content;
-		}
-		return $_content;
-
-	}
-
-	/**
 	 * Inlines CSS into the email to make it compatible with more clients.
 	 *
 	 * @param string $content The email content.
@@ -353,6 +306,9 @@ class Noptin_Mailer {
 	public function post_process( $content, $data ) {
 
 		// Parse merge tags.
+		$content = noptin_parse_email_content_tags( $content );
+
+		// Backwards compatibility.
 		$content = $this->merge( $content, $data['merge_tags'] );
 
 		// Make links clickable.
@@ -366,9 +322,6 @@ class Noptin_Mailer {
 
 		// Balance tags.
 		$content = force_balance_tags( $content );
-
-		// Make links trackable.
-		$content = $this->make_links_trackable( $content, $data );
 
 		if ( 'empty' === $data['template'] ) {
 			return $content;
@@ -472,11 +425,11 @@ class Noptin_Mailer {
 	 *
 	 */
 	public function get_template( $data ) {
-		$template = get_noptin_option( 'email_template',  'plain' );
+		$template = get_noptin_option( 'email_template',  'paste' );
 		$template = apply_filters( 'noptin_mailer_email_template', $template, $data, $this );
 
 		if ( empty( $template ) ) {
-			$template = 'plain';
+			$template = 'paste';
 		}
 
 		return $template;
@@ -499,7 +452,7 @@ class Noptin_Mailer {
 		$headers[]  = "Content-Type:$content";
 
 		if ( ! empty( $this->mailer_data['merge_tags']['unsubscribe_url'] ) ) {
-			$url       = esc_url( $this->mailer_data['merge_tags']['unsubscribe_url'] );
+			$url       = $this->mailer_data['merge_tags']['unsubscribe_url'];
 			$headers[] = "List-Unsubscribe:<$url>";
 		}
 

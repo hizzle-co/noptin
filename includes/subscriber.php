@@ -101,20 +101,18 @@ function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
 
 	$opened_campaigns = get_noptin_subscriber_opened_campaigns( $subscriber_id );
 	if ( ! in_array( (int) $campaign_id, $opened_campaigns, true ) ) {
+
+		// Log the campaign open.
 		$opened_campaigns[] = $campaign_id;
 		update_noptin_subscriber_meta( $subscriber_id, '_opened_campaigns', $opened_campaigns );
-		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_opened", 1 );
 
-		if ( is_int( $campaign_id ) ) {
-			$open_counts = (int) get_post_meta( $campaign_id, '_noptin_opens', true );
-			update_post_meta( $campaign_id, '_noptin_opens', $open_counts + 1 );
-
-		}
-
+		// Fire action.
 		do_action( 'log_noptin_subscriber_campaign_open', $subscriber_id, $campaign_id );
 
+		return true;
 	}
 
+	return false;
 }
 
 /**
@@ -161,24 +159,26 @@ function did_noptin_subscriber_open_campaign( $subscriber_id, $campaign_id ) {
  */
 function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $link ) {
 
-	log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id );
-
 	$clicked_campaigns = get_noptin_subscriber_clicked_campaigns( $subscriber_id );
 
+	// Ensure we have an array.
 	if ( ! isset( $clicked_campaigns[ $campaign_id ] ) ) {
 		$clicked_campaigns[ $campaign_id ] = array();
 	}
 
 	if ( ! in_array( $link, $clicked_campaigns[ $campaign_id ], true ) ) {
+
+		// Log the campaign click.
 		$clicked_campaigns[ $campaign_id ][] = noptin_clean( $link );
 		update_noptin_subscriber_meta( $subscriber_id, '_clicked_campaigns', $clicked_campaigns );
-		update_noptin_subscriber_meta( $subscriber_id, "_campaign_{$campaign_id}_clicked", 1 );
 
-		$click_counts = (int) get_post_meta( $campaign_id, '_noptin_clicks', true );
-		update_post_meta( $campaign_id, '_noptin_clicks', $click_counts + 1 );
-
+		// Fire action.
 		do_action( 'log_noptin_subscriber_campaign_click', $subscriber_id, $campaign_id, $link );
+
+		return true;
 	}
+
+	return false;
 
 }
 
@@ -811,51 +811,83 @@ function get_default_noptin_subscriber_double_optin_email() {
  */
 function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = false ) {
 
-	// Is double optin enabled?
+	// Abort if double opt-in is disabled.
 	$double_optin = get_noptin_option( 'double_optin', false );
 	if ( empty( $double_optin ) && ! $force ) {
 		return false;
 	}
 
+	// Retrieve subscriber.
+	$subscriber = get_noptin_subscriber( $id );
+
+	// Abort if the subscriber is missing or confirmed.
+	if ( ! $subscriber->exists() || $subscriber->confirmed ) {
+		return false;
+	}
+
+	// TODO: Edit double opt-in email similar to how normal emails are edited.
+	$defaults = get_default_noptin_subscriber_double_optin_email();
+	$content  = get_noptin_option( 'double_optin_email_body', $defaults['email_body'] );
+	$content .= '<p>[[button url="[[confirmation_url]]" text="[[confirmation_text]]"]]</p>';
+	$content .= get_noptin_option( 'double_optin_after_cta_text', $defaults['after_cta_text'] );
+
+	// Handle custom merge tags.
 	$url      = esc_url_raw( get_noptin_action_url( 'confirm', $fields['confirm_key'] ) );
 	$link     = "<a href='$url' target='_blank'>$url</a>";
-	$defaults = get_default_noptin_subscriber_double_optin_email();
 
-	$data = array (
-		'email_subject'   => get_noptin_option( 'double_optin_email_subject', $defaults['email_subject'] ),
-		'merge_tags'      => array(
-			'confirmation_link' => $link,
-			'confirmation_url'  => $url,
-		),
-		'hero_text'       => get_noptin_option( 'double_optin_hero_text', $defaults['hero_text'] ),
-		'email_body'      => get_noptin_option( 'double_optin_email_body', $defaults['email_body'] ),
-		'cta_url'         => $url,
-		'cta_text'        => get_noptin_option( 'double_optin_cta_text', $defaults['cta_text'] ),
-		'after_cta_text'  => get_noptin_option( 'double_optin_after_cta_text', $defaults['after_cta_text'] ),
-		'permission_text' => get_noptin_option( 'double_optin_permission_text', $defaults['permission_text'] ),
-		'email'			  => $fields['email'],
-		'email_type'      => 'double_optin',
+	$merge_tags = array (
+		'confirmation_link' => $link,
+		'confirmation_url'  => $url,
+		'confirmation_text' => get_noptin_option( 'double_optin_cta_text', $defaults['cta_text'] ),
 	);
 
-	foreach ( $fields as $key => $value ) {
+	foreach ( $merge_tags as $key => $value ) {
 
 		if ( is_scalar( $key ) ) {
-			$data['merge_tags'][ $key ] = $value;
+			$content = str_replace( "[[$key]]", wp_kses_post( $value ), $content );
 		}
 
 	}
 
-	$data['merge_tags'] = array_merge( get_noptin_subscriber_merge_fields( $id ), $data['merge_tags'] );
+	$args = array(
+		'type'         => 'normal',
+		'content'      => wpautop( trim( $content ) ),
+		'template'     => get_noptin_option( 'email_template', 'paste' ),
+		'heading'      => get_noptin_option( 'double_optin_hero_text', $defaults['hero_text'] ),
+		'footer_text'  => get_noptin_option( 'double_optin_permission_text', $defaults['permission_text'] ),
+	);
 
-	// Allow users to filter the double opt-in email.
-	foreach ( $data as $key => $value ) {
-		$data[ $key ] = apply_filters( "noptin_double_optin_$key", $value );
+	noptin()->emails->newsletter->subscriber = $subscriber;
+	noptin()->emails->newsletter->register_merge_tags();
+
+	foreach ( noptin()->emails->newsletter->get_subscriber_merge_tags() as $tag => $details ) {
+		noptin()->emails->tags->add_tag( $tag, $details );
 	}
 
-	$data = apply_filters( 'noptin_double_optin_data', $data );
+	$generator     = new Noptin_Email_Generator();
+	$email_body    = $generator->generate( $args );
+	$email_subject = noptin_parse_email_subject_tags( get_noptin_option( 'double_optin_email_subject', $defaults['email_subject'] ) );
+
+	foreach ( array_keys( noptin()->emails->newsletter->get_subscriber_merge_tags() ) as $tag ) {
+		noptin()->emails->tags->remove_tag( $tag );
+	}
 
 	// Send the email.
-	return noptin()->mailer->prepare_then_send( $data );
+	return noptin_send_email(
+		array(
+			'recipients'               => $subscriber->email,
+			'subject'                  => $email_subject,
+			'message'                  => $email_body,
+			'headers'                  => array(),
+			'attachments'              => array(),
+			'reply_to'                 => '',
+			'from_email'               => '',
+			'from_name'                => '',
+			'content_type'             => 'html',
+			'unsubscribe_url'          => '',
+			'disable_template_plugins' => ! ( $args['template'] === 'default' ),
+		)
+	);
 
 }
 add_action( 'noptin_insert_subscriber', 'send_new_noptin_subscriber_double_optin_email', 10, 2 );
@@ -1344,7 +1376,7 @@ function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false 
  */
 function format_noptin_custom_field_value( $value, $type, $subscriber ) {
 	return apply_filters( "noptin_format_{$type}_value", $value, $subscriber );
-}
+}//TODO: Move custom fields, source, activity and IP address to the subscribers table.
 
 /**
  * Returns an array of available custom fields.
@@ -1413,21 +1445,84 @@ function noptin_format_subscription_source( $source ) {
 		return empty( $url ) ? $title : "<a href='$url'>$title</a>";
 	}
 
-	$sources = array(
-		'default_user'         => __( 'Default', 'newsletter-optin-box' ),
-		'users_sync'           => __( 'Users Sync', 'newsletter-optin-box' ),
-		'edd_checkout'         => 'EDD',
-		'getpaid_checkout'     => 'GetPaid',
-		'woocommerce_checkout' => 'WooCommerce',
-		'comment'              => __( 'Comment Form', 'newsletter-optin-box' ),
-		'registration'         => __( 'Registration Form', 'newsletter-optin-box' ),
-		'manual'               => __( 'Manually Added', 'newsletter-optin-box' ),
-		'shortcode'            => __( 'Subscription Shortcode', 'newsletter-optin-box' ),
-	);
+	if ( 'default_user' === $source ) {
+		return __( 'Default', 'newsletter-optin-box' );
+	}
+
+	$sources = noptin_get_subscription_sources();
 
 	if ( isset( $sources[ $source ] ) ) {
 		return $sources[ $source ];
 	}
 
 	return $source;
+}
+
+/**
+ * Retrieves a list of known subscription sources.
+ *
+ * @since 1.7.0
+ * @return array
+ */
+function noptin_get_subscription_sources() {
+	global $wpdb;
+
+	// Fetch from cache.
+	$sources = get_transient( 'noptin_subscription_sources' );
+
+	if ( $sources ) {
+		return apply_filters( 'noptin_subscription_sources', $sources );
+	}
+
+	// Fetch saved sources.
+	$table    = get_noptin_subscribers_meta_table_name();
+	$existing = $wpdb->get_col( "SELECT DISTINCT `meta_value` FROM $table WHERE `meta_key`='_subscriber_via'" );
+
+	$sources = array_combine( $existing, $existing );
+
+	// Add subscription forms.
+	$forms = get_posts(
+		array(
+			'numberposts' => -1,
+			'post_type'   => 'noptin-form',
+			'post_status' => 'publish',
+		)
+	);
+
+	foreach ( $forms as $form ) {
+		$sources["{$form->ID}"] = sanitize_text_field( $form->post_title );
+	}
+
+	// Add other known sources.
+	$sources['manual']    = __( 'Manually Added', 'newsletter-optin-box' );
+	$sources['shortcode'] = __( 'Subscription Shortcode', 'newsletter-optin-box' );
+
+	// Cache. TODO: Clear cache when subscriber or form is added/updated.
+	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );
+
+	return apply_filters( 'noptin_subscription_sources', $sources );
+}
+
+/**
+ * Returns a URL to delete a subscriber.
+ *
+ * @param int $subscriber_id
+ * @since 1.7.0
+ * @return string
+ */
+function noptin_subscriber_delete_url( $subscriber_id ) {
+
+	return wp_nonce_url(
+		add_query_arg(
+			array(
+				'subscriber_id'       => $subscriber_id,
+				'page'                => 'noptin-subscribers',
+				'noptin_admin_action' => 'noptin_delete_email_subscriber',
+			),
+			admin_url( 'admin.php' )
+		),
+		'noptin_delete_subscriber',
+		'noptin_nonce'
+	);
+
 }

@@ -25,7 +25,7 @@ $url = add_query_arg(
 
 <?php if ( ! defined( 'NOPTIN_WELCOME_EMAILS_VERSION' ) ) : ?>
 	<div class="card">
-		<h2><?php _e( 'This is a premium feature', 'newsletter-optin-box' );?></h2>
+		<h3><?php _e( 'This is a premium feature', 'newsletter-optin-box' );?></h3>
 		<p><?php _e( "We're sorry, Welcome Emails are not available on your plan. Please buy the ultimate addons pack to send welcome emails and get access to more awesome features.", 'newsletter-optin-box' ); ?></p>
 		<p><a href="<?php echo esc_url( $url );?>" class="button noptin-button-standout" target="_blank"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
 	</div>

@@ -190,7 +190,7 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
     /**
      * Calls the trigger when a product is refunded.
      *
-     * @param string $product_id The product being refunded.
+     * @param int $product_id The product being refunded.
      * @param array $item The order item being refunded.
      * @param int $order_id The order being acted on.
      * @param int $subscriber_id The subscriber for the order.
@@ -208,7 +208,7 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_Abstract_Trigge
     /**
      * Calls the trigger when a product is bought.
      *
-     * @param string $product_id The product being bought.
+     * @param int $product_id The product being bought.
      * @param array $item The order item being bought.
      * @param int $order_id The order being acted on.
      * @param int $subscriber_id The subscriber for the order.

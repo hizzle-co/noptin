@@ -13,6 +13,12 @@ if ( ! defined( 'ABSPATH' )  ) {
 class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 
 	/**
+	 * @var string source of subscriber.
+	 * @since 1.7.0
+	 */
+	public $subscriber_via = 'edd_checkout';
+
+	/**
 	 * Init variables.
 	 *
 	 * @since       1.2.6

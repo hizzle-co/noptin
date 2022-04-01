@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <?php
 
 	$trigger     = defined( 'IS_NOPTIN_PREVIEW' ) ? 'immeadiate' : esc_attr( $triggerPopup );
