@@ -4,6 +4,7 @@
 
 	<rule ref="WordPress-Core" />
 	<rule ref="WordPress-Docs" />
+	<rule ref="WordPress-Extra" />
 
 	<!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
@@ -65,5 +66,14 @@
 			<property name="text_domain" type="array" value="newsletter-optin-box" />
 		</properties>
 	</rule>
+
+	<!--
+	#############################################################################
+	USE THE PHPCompatibility RULESET
+	#############################################################################
+	-->
+
+	<config name="testVersion" value="4.9-"/>
+	<rule ref="PHPCompatibilityWP"/>
 
 </ruleset>
