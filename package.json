@@ -30,7 +30,7 @@
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.3.2",
-		"vue": "3.2.31",
+		"vue": "3.2.33",
 		"vue-contenteditable": "1.0.2",
 		"vue-popperjs": "2.3.0",
 		"vuedraggable": "2.24.3"
@@ -40,8 +40,6 @@
 		"@babel/plugin-transform-runtime": "7.17.0",
 		"@babel/preset-env": "7.16.11",
 		"@mdi/js": "5.9.55",
-		"@vue/compiler-sfc": "3.2.31",
-		"@woocommerce/dependency-extraction-webpack-plugin": "2.0.0",
 		"@wordpress/babel-preset-default": "6.7.0",
 		"autoprefixer": "10.4.4",
 		"babel-loader": "8.2.4",
