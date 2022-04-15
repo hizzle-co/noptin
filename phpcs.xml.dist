@@ -25,7 +25,7 @@
 
 	<config name="minimum_supported_wp_version" value="4.7" />
 
-	<rule ref="Squiz.Commenting.FileComment">
+	<rule ref="Generic.WhiteSpace">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
@@ -33,15 +33,15 @@
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
-	<rule ref="Squiz.Commenting.FileComment.MissingPackageTag">
+	<rule ref="Generic.Commenting">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
 	<rule ref="Internal.NoCodeFound">
-		<exclude-pattern>*</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.Commenting.InlineComment.InvalidEndChar">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
@@ -73,7 +73,7 @@
 	#############################################################################
 	-->
 
-	<config name="testVersion" value="4.9-"/>
+	<config name="testVersion" value="5.6-"/>
 	<rule ref="PHPCompatibilityWP"/>
 
 </ruleset>

@@ -12,13 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Noptin_Install {
 
+	/**
+	 * The current db charset.
+	 *
+	 * @var string
+	 */
 	public $charset_collate;
-
-	public $table_prefix;
 
 	/**
 	 * Install Noptin
-	 * 
+	 *
 	 * @param int|string $upgrade_from The name of a table to create or the database version to upgrade from.
 	 */
 	public function __construct( $upgrade_from ) {
@@ -29,8 +32,11 @@ class Noptin_Install {
 			return;
 		}
 
-		$this->charset_collate = $wpdb->get_charset_collate();
-		$this->table_prefix    = $wpdb->prefix;
+		$this->charset_collate = '';
+
+		if ( $wpdb->has_cap( 'collation' ) ) {
+			$this->charset_collate = $wpdb->get_charset_collate();
+		}
 
 		// We're creating a table.
 		if ( is_string( $upgrade_from ) ) {
@@ -68,7 +74,7 @@ class Noptin_Install {
 	 * Force create the subscribers table
 	 */
 	public function create_subscribers_table() {
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( array( $this->get_subscribers_table_schema() ) );
 	}
 
@@ -76,7 +82,7 @@ class Noptin_Install {
 	 * Force create the subscribers meta table
 	 */
 	public function create_subscribers_meta_table() {
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
 	}
 
@@ -84,7 +90,7 @@ class Noptin_Install {
 	 * Force create the subscribers automation rules table
 	 */
 	public function create_automation_rules_table() {
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 	}
 
@@ -92,8 +98,9 @@ class Noptin_Install {
 	 * Returns the subscribers table schema
 	 */
 	private function get_subscribers_table_schema() {
+		global $wpdb;
 
-		$table           = $this->table_prefix . 'noptin_subscribers';
+		$table           = $wpdb->prefix . 'noptin_subscribers';
 		$charset_collate = $this->charset_collate;
 
 		return "CREATE TABLE $table (
@@ -107,7 +114,7 @@ class Noptin_Install {
             date_created date NOT NULL DEFAULT '0000-00-00',
 			PRIMARY KEY  (id),
 			KEY email (email)
-) $charset_collate;";
+		) $charset_collate;";
 
 	}
 
@@ -115,8 +122,9 @@ class Noptin_Install {
 	 * Returns the subscriber meta table schema
 	 */
 	private function get_subscriber_meta_table_schema() {
+		global $wpdb;
 
-		$table           = $this->table_prefix . 'noptin_subscriber_meta';
+		$table           = $wpdb->prefix . 'noptin_subscriber_meta';
 		$charset_collate = $this->charset_collate;
 
 		return "CREATE TABLE $table (
@@ -127,7 +135,7 @@ class Noptin_Install {
 			PRIMARY KEY  (meta_id),
 			KEY noptin_subscriber_id (noptin_subscriber_id),
 			KEY meta_key (meta_key(191))
-) $charset_collate;";
+		) $charset_collate;";
 
 	}
 
@@ -137,8 +145,9 @@ class Noptin_Install {
 	 * @since 1.2.8
 	 */
 	private function get_automation_rules_table_schema() {
+		global $wpdb;
 
-		$table           = $this->table_prefix . 'noptin_automation_rules';
+		$table           = $wpdb->prefix . 'noptin_automation_rules';
 		$charset_collate = $this->charset_collate;
 
 		return "CREATE TABLE $table (
@@ -154,7 +163,7 @@ class Noptin_Install {
 			PRIMARY KEY  (id),
 			KEY trigger_id (trigger_id),
 			KEY action_id (action_id)
-) $charset_collate;";
+		) $charset_collate;";
 
 	}
 
@@ -164,9 +173,9 @@ class Noptin_Install {
 	private function upgrade_from_1() {
 		global $wpdb;
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		$table = $this->table_prefix . 'noptin_subscribers';
+		$table = $wpdb->prefix . 'noptin_subscribers';
 
 		$wpdb->query( "ALTER TABLE $table ADD active tinyint(2)  NOT NULL DEFAULT '0'" );
 		$wpdb->query( "ALTER TABLE $table ADD date_created  DATE" );
@@ -197,7 +206,7 @@ class Noptin_Install {
 	 * Upgrades the db from version 3 to 4
 	 */
 	private function upgrade_from_3() {
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 	}
@@ -205,15 +214,16 @@ class Noptin_Install {
 	/**
 	 * Returns initial subscriber args
 	 */
-	function get_initial_subscriber_args() {
+	public function get_initial_subscriber_args() {
 
 		$admin_email = sanitize_email( get_bloginfo( 'admin_email' ) );
+		$admin       = get_user_by( 'email', $admin_email );
 		$args        = array(
 			'email'           => $admin_email,
-			'_subscriber_via' =>'default_user'
+			'_subscriber_via' => 'default_user',
 		);
 
-		if ( $admin = get_user_by( 'email', $admin_email ) ) {
+		if ( $admin ) {
 			$args['name'] = $admin->display_name;
 		}
 
@@ -225,7 +235,7 @@ class Noptin_Install {
 	 * Does a full install of the plugin.
 	 */
 	private function do_full_install() {
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// Create database tables.
 		dbDelta( array( $this->get_subscribers_table_schema() ) );
@@ -235,25 +245,30 @@ class Noptin_Install {
 		// Add a default subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
+		// Create default subscribe form.
+		if ( ! get_option( 'noptin_created_initial_form' ) ) {
+
+			$new_form = new Noptin_Form(
+				array(
+					'title'    => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
+					'settings' => array(
+						'fields' => array( 'email' ),
+						'submit' => __( 'Subscribe', 'newsletter-optin-box' ),
+						'labels' => 'show',
+					),
+				)
+			);
+
+			$new_form->save();
+			update_option( 'noptin_created_initial_form', '1' );
+		}
+
 		// Do not nudge new installs to create custom fields.
 		update_option( 'noptin_created_new_custom_fields', '1' );
 
 		// Use the new editor for new installs.
 		update_option( 'noptin_use_new_forms', '1' );
 
-		// Create default subscribe form.
-		$new_form = new Noptin_Form(
-			array(
-				'title'      => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
-				'settings'   => array(
-					'fields' => array( 'email' ),
-					'submit' => __( 'Subscribe', 'newsletter-optin-box' ),
-					'labels' => 'show',
-				)
-			)
-		);
-
-		$new_form->save();
 	}
 
 
