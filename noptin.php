@@ -113,7 +113,7 @@ class Noptin {
 
 	/**
 	 * A state of the art email sender.
-	 * 
+	 *
 	 * @var Noptin_Mailer
 	 * @since 1.2.8
 	 */
@@ -121,15 +121,15 @@ class Noptin {
 
 	/**
 	 * Automation Rules.
-	 * 
+	 *
 	 * @var Noptin_Automation_Rules
 	 * @since       1.2.8
 	 */
 	public $automation_rules;
-	
+
 	/**
 	 * The class responsible for registering various hooks and filters.
-	 * 
+	 *
 	 * @var Noptin_Hooks
 	 * @since       1.2.9
 	 */
@@ -137,7 +137,7 @@ class Noptin {
 
 	/**
 	 * The main admin class..
-	 * 
+	 *
 	 * @var Noptin_Admin
 	 * @since       1.2.9
 	 */
@@ -145,7 +145,7 @@ class Noptin {
 
 	/**
 	 * The main custom fields class.
-	 * 
+	 *
 	 * @var Noptin_Custom_Fields
 	 * @since       1.5.5
 	 */
@@ -314,11 +314,11 @@ class Noptin {
 
 	/**
 	 * Load integrations after plugins are loaded.
-	 * 
+	 *
 	 * @access      public
 	 * @since       1.3.3
 	 */
-	public function plugins_loaded () {
+	public function plugins_loaded() {
 		$this->integrations = new Noptin_Integrations();
 	}
 
@@ -406,7 +406,7 @@ class Noptin {
 			"$plugin_path/includes/automation-rules",
 			"$plugin_path/includes/automation-rules/actions",
 			"$plugin_path/includes/automation-rules/triggers",
-			"$plugin_path/includes/libraries/connections/"
+			"$plugin_path/includes/libraries/connections/",
 		);
 
 		foreach ( apply_filters( 'noptin_autoload_locations', $locations ) as $location ) {
@@ -415,7 +415,6 @@ class Noptin {
 				include trailingslashit( $location ) . $file_name;
 				break;
 			}
-
 		}
 
 	}
@@ -484,7 +483,7 @@ class Noptin {
 	 * Locales found in:
 	 *      - WP_LANG_DIR/plugins/newsletter-optin-box-LOCALE.mo
 	 *      - WP_PLUGIN_DIR/newsletter-optin-box/languages/newsletter-optin-box-LOCALE.mo
-	 * 
+	 *
 	 * @since 1.1.9
 	 */
 	public function load_plugin_textdomain() {

@@ -84,6 +84,9 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
 		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority, 2 );
 		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
+		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
+		add_action( 'woocommerce_blocks_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
+
 	}
 
 	/**
@@ -195,6 +198,30 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
 		add_filter( 'noptin_woocommerce_integration_subscription_checkbox_attributes', array( $this, 'add_woocommerce_class_to_checkbox' ) );
+
+	}
+
+	/**
+	 * Registers a WooCommerce checkout block registry integration.
+	 *
+	 * @param Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry $integration_registry The integration registry.
+	 * @since 1.7.4
+	 */
+	public function register_checkout_block_integration_registry( $integration_registry ) {
+		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-woocommerce-checkout-block-integration.php';
+		$integration_registry->register( new Noptin_WooCommerce_Checkout_Block_Integration( $this ) );
+	}
+
+	/**
+	 * Updates checkout blocks order.
+	 *
+	 * @param WC_Order $order Order object.
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @since 1.7.4
+	 */
+	public function checkout_update_order_from_request( $order, $request ) {
+		$optin = $request['extensions']['noptin']['optin'];
+		$order->update_meta_data( 'noptin_opted_in', (int) $optin );
 	}
 
 	/**

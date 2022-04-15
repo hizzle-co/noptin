@@ -391,7 +391,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				if ( $is_universal ) {
 
 					$options["noptin_{$slug}_default_{$secondary}"] = array(
-						'el'          => 'multiselect',
+						'el'          => 'select',
 						'label'       => sprintf( __( 'Default %s', 'newsletter-optin-box' ), $secondary ),
 						'options'     => $this->list_providers->get_dropdown( $secondary ),
 					);
@@ -734,7 +734,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				if ( $is_universal ) {
 
 					$options[ $option ]  = array(
-						'el'          => 'multiselect',
+						'el'          => 'select',
 						'section'     => 'integrations',
 						'label'       => sprintf(
 							'%s %s',

@@ -107,8 +107,8 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
 	return add_query_arg(
 		array(
-			'noptin_ns' => urlencode( $action ),
-			'nv'        => empty( $value ) ? false : urlencode( $value ),
+			'noptin_ns' => rawurlencode( $action ),
+			'nv'        => empty( $value ) ? false : rawurlencode( $value ),
 			'nte'       => $empty,
 		),
 		get_home_url()
@@ -1384,7 +1384,7 @@ function noptin_format_date( $date_time ) {
 /**
  * Encrypts a text string.
  *
- * @param string $plaintext
+ * @param string $plaintext The plain text string to encrypt.
  * @return string
  */
 function noptin_encrypt( $plaintext ) {
@@ -1402,7 +1402,7 @@ function noptin_encrypt( $plaintext ) {
 /**
  * Decrypts a text string.
  *
- * @param string $plaintext
+ * @param string $encoded The string to decode.
  * @return string
  */
 function noptin_decrypt( $encoded ) {

@@ -1,0 +1,35 @@
+{
+	"apiVersion": 2,
+	"name": "noptin/checkout-newsletter-subscription",
+	"version": "1.0.0",
+	"title": "Noptin Newsletter Subscription",
+	"category": "woocommerce",
+	"description": "Adds a newsletter subscription checkbox to the checkout.",
+	"icon": "forms",
+	"textdomain": "newsletter-optin-box",
+	"supports": {
+		"align": false,
+		"html": false,
+		"multiple": false,
+		"reusable": false,
+		"inserter": false
+	},
+	"attributes": {
+		"lock": {
+			"type": "object",
+			"default": {
+				"remove": true,
+				"move": true
+			}
+		},
+		"text": {
+			"type": "string",
+			"source": "html",
+			"selector": ".wp-block-woocommerce-checkout-noptin-newsletter-subscription",
+			"default": ""
+		}
+	},
+	"parent": [
+		"woocommerce/checkout-contact-information-block"
+	]
+}

@@ -175,16 +175,14 @@ class Noptin_Install {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		$table = $wpdb->prefix . 'noptin_subscribers';
-
-		$wpdb->query( "ALTER TABLE $table ADD active tinyint(2)  NOT NULL DEFAULT '0'" );
-		$wpdb->query( "ALTER TABLE $table ADD date_created  DATE" );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers ADD active tinyint(2)  NOT NULL DEFAULT '0'" );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers ADD date_created  DATE" );
 
 		// Had not been implemented.
-		$wpdb->query( "ALTER TABLE $table DROP COLUMN source" );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers DROP COLUMN source" );
 
 		// Not really helpful.
-		$wpdb->query( "ALTER TABLE $table DROP COLUMN time" );
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers DROP COLUMN time" );
 
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
 
@@ -210,6 +208,8 @@ class Noptin_Install {
 
 		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 	}
+
+	// TODO: Move source and IP Address to main subscribers table.
 
 	/**
 	 * Returns initial subscriber args

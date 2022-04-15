@@ -98,7 +98,6 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 		} else {
 			$output .= sprintf( '%s="%s" ', esc_html( $name ), trim( esc_attr( $value ) ) );
 		}
-
 	}
 
 	return trim( apply_filters( "noptin_{$context}_attributes_output", trim( $output ), $attributes, $args, $context ) );
@@ -341,7 +340,7 @@ function prepare_noptin_form_fields( $fields ) {
 	}
 
 	// Are we returning all fields?
-	if ( 'all' == $fields ) {
+	if ( 'all' === $fields ) {
 		return get_noptin_custom_fields( true );
 	}
 
@@ -367,8 +366,11 @@ function prepare_noptin_form_fields( $fields ) {
 		if ( ! empty( $custom_field ) ) {
 			$prepared[] = $custom_field;
 		}
-
 	}
+	// TODO: Add support for required fields.
+	// TODO: Send post notification if a private post is made public.
+	// TODO: Document how to center email content. Test emails on mobile.
+	// TODO: Make subscribe to newsletter checked by default.
 
 	return $prepared;
 }

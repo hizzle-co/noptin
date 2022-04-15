@@ -28,7 +28,6 @@ class Noptin_Vue {
 		add_action( 'noptin_render_editor_editor', array( __CLASS__, 'editor' ), 10, 2 );
 		add_action( 'noptin_render_editor_form_fields', array( __CLASS__, 'form_fields' ), 10, 2 );
 		add_action( 'noptin_render_editor_select', array( __CLASS__, 'select' ), 10, 2 );
-		add_action( 'noptin_render_editor_multiselect', array( __CLASS__, 'select' ), 10, 2 );
 		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox' ), 10, 2 );
 		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input' ), 10, 2 );
 		add_action( 'noptin_render_editor_custom_fields', array( __CLASS__, 'custom_fields' ), 10, 2  );
@@ -544,10 +543,6 @@ class Noptin_Vue {
 	 */
 	public static function select( $id, $field ) {
 
-		if ( 'multiselect' == $field['el'] ) {
-			$field['attrs'] .= ' multiple="multiple"';
-		}
-
 		if ( empty( $field['tags'] ) ) {
 			$field['attrs'] .= ' tags="no"';
 		}
@@ -569,22 +564,18 @@ class Noptin_Vue {
 			$options .= "<option value='$val'>$name</option>";
 		}
 
-		$el = empty( $field['normal'] ) ? 'noptin-select' : 'select';
-
 		printf(
 			'<div %s class="noptin-select-wrapper %s field-wrapper">
 				<label class="noptin-select-label">%s %s</label>
-				<div class="noptin-content"><%s v-model="%s" %s>%s</%s>%s</div>
+				<div class="noptin-content"><select v-model="%s" %s>%s</select>%s</div>
 			</div>',
 			$field['restrict'],
 			$field['_class'],
 			$field['label'],
 			$field['tooltip'],
-			$el,
 			$id,
 			$field['attrs'],
 			$options,
-			$el,
 			$field['description']
 		);
 
