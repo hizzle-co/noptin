@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.7.4 =
+* Add ability to set newsletter subscription checkboxes as checked by default
+
 = 1.7.3 =
 * Update plugin name
 

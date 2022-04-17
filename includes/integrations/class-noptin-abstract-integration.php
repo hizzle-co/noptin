@@ -394,6 +394,53 @@ abstract class Noptin_Abstract_Integration {
 	}
 
 	/**
+	 * Adds an option to tick the checkbox by default.
+	 *
+	 * @since 1.7.4
+	 * @param array  $options An array of Noptin options.
+	 * @param string $title The option title.
+	 * @param string $description The option description.
+	 * @return array an updated array of Noptin options.
+	 */
+	public function add_autotick_checkbox_integration_option( $options, $title = null, $description = null ) {
+
+		if ( is_null( $title ) ) {
+			$title = __( 'Checked by default', 'newsletter-optin-box' );
+		}
+
+		if ( is_null( $description ) ) {
+			$description = __( 'Set the checkbox as checked by default.', 'newsletter-optin-box' );
+		}
+
+		$option_name = $this->get_autotick_checkbox_option_name();
+
+		$options[ $option_name ] = array(
+			'type'        => 'checkbox_alt',
+			'el'          => 'input',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
+			'restrict'    => sprintf(
+				'%s && %s',
+				$this->get_enable_integration_option_name(),
+				$this->get_autosubscribe_integration_option_name()
+			),
+		);
+
+		return $options;
+
+	}
+
+	/**
+	 * Returns the auto-check checkbox option name.
+	 *
+	 * @since 1.7.4
+	 */
+	public function get_autotick_checkbox_option_name() {
+		return sprintf( 'noptin_%s_integration_checkbox_autochecked', $this->slug );
+	}
+
+	/**
 	 * Adds an autosubscribe checkbox
 	 *
 	 * @since 1.2.6
@@ -454,6 +501,7 @@ abstract class Noptin_Abstract_Integration {
 	public function get_options( $options ) {
 		$options = $this->add_enable_integration_option( $options );
 		$options = $this->add_autosubscribe_integration_option( $options );
+		$options = $this->add_autotick_checkbox_integration_option( $options );
 		$options = $this->add_checkbox_position_option( $options );
 		$options = $this->add_checkbox_message_integration_option( $options );
 		return $options;
@@ -584,7 +632,7 @@ abstract class Noptin_Abstract_Integration {
 
 		echo "<label $html_attr_str>";
 		echo sprintf( '<input %s />', $this->get_checkbox_attributes() );
-		echo sprintf( '<span>%s</span>', $this->get_label_text() );
+		echo sprintf( '<span>%s</span>', wp_kses_post( $this->get_label_text() ) );
 		echo '</label>';
 
 		// usefull when wrapping the checkbox in an element.
@@ -612,6 +660,11 @@ abstract class Noptin_Abstract_Integration {
 			'name'  => 'noptin-subscribe',
 			'value' => '1',
 		);
+
+		if ( (bool) get_noptin_option( $this->get_autotick_checkbox_option_name() ) ) {
+			$attributes['checked'] = 'checked';
+		}
+
 		$attributes = (array) apply_filters( 'noptin_integration_subscription_checkbox_attributes', $attributes, $this );
 
 		$attributes = (array) apply_filters( "noptin_{$this->slug}_integration_subscription_checkbox_attributes", $attributes, $this );

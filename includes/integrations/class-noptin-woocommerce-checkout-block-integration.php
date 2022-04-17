@@ -130,10 +130,11 @@ class Noptin_WooCommerce_Checkout_Block_Integration implements IntegrationInterf
 	public function get_script_data() {
 
 		return array(
-			'defaultText'  => $this->wc->get_label_text(),
-			'position'     => $this->get_checkbox_position(),
-			'optinEnabled' => $this->wc->is_enabled() && ! $this->wc->auto_subscribe(),
-			'adminUrl'     => admin_url(),
+			'defaultText'   => $this->wc->get_label_text(),
+			'position'      => $this->get_checkbox_position(),
+			'defaultStatus' => (bool) get_noptin_option( $this->wc->get_autotick_checkbox_option_name() ),
+			'optinEnabled'  => $this->wc->is_enabled() && ! $this->wc->auto_subscribe(),
+			'adminUrl'      => admin_url(),
 		);
 
 	}
