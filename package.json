@@ -5,12 +5,8 @@
 	"description": "WordPress Newsletter Plugin",
 	"scripts": {
 		"test": "test",
-		"cssform": "postcss includes/assets/css/postcss/form-styles.css -o includes/assets/css/form-styles.css",
-		"cssa": "postcss includes/assets/css/postcss/admin.css -o includes/assets/css/admin.css",
-		"cssf": "postcss includes/assets/css/postcss/frontend.css -o includes/assets/css/frontend.css",
-		"csshelper": "postcss includes/assets/css/postcss/noptin-helper.css -o includes/assets/css/noptin-helper.css",
-		"cssaddons": "postcss includes/assets/css/postcss/addons-page.css -o includes/assets/css/addons-page.css",
-		"css": "npm run cssa && npm run cssf && npm run cssform && npm run csshelper && npm run cssaddons",
+		"csswatch": "sass --no-source-map  --watch includes/assets/sass:includes/assets/css",
+		"compile:css": "sass --no-source-map includes/assets/sass:includes/assets/css && postcss includes/assets/css/*.css -r --no-map",	
 		"js": "npx webpack --watch"
 	},
 	"repository": {
@@ -45,8 +41,7 @@
 		"babel-loader": "8.2.4",
 		"postcss": "8.4.12",
 		"postcss-csso": "6.0.0",
-		"postcss-import": "14.1.0",
-		"precss": "4.0.0",
+		"sass": "1.50.0",
 		"webpack": "5.72.0",
 		"webpack-cli": "4.9.2"
 	}
