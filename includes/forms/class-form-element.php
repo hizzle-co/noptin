@@ -175,8 +175,8 @@ class Noptin_Form_Element {
 				noptin_attr(
 					'form_field_wrapper',
 					array(
-						'id'     => $custom_field['id'] . '__wrapper',
-						'class'  => 'noptin-form-field-wrapper noptin-form-field__' . $custom_field['merge_tag'],
+						'id'    => $custom_field['id'] . '__wrapper',
+						'class' => 'noptin-form-field-wrapper noptin-form-field__' . $custom_field['merge_tag'],
 					),
 					array( $this->args, $custom_field )
 				)

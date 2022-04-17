@@ -53,6 +53,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'Email Address', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => true,
+				'required'   => true,
 				'predefined' => true,
 			),
 			array(
@@ -61,6 +62,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'First Name', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => true,
+				'required'   => false,
 				'predefined' => true,
 			),
 			array(
@@ -69,6 +71,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'Last Name', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => true,
+				'required'   => false,
 				'predefined' => true,
 			),
 			array(
@@ -77,6 +80,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'Birthday', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => false,
+				'required'   => false,
 				'predefined' => true,
 			),
 		);

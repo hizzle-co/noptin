@@ -128,14 +128,26 @@
 					'restrict'    => "field.merge_tag != 'email'",
 				);
 				Noptin_Vue::render_el( 'field.subs_table', $args );
+
+				// Change required status.
+				$args = array(
+					'el'          => 'input',
+					'type'        => 'checkbox_alt',
+					'label'       => __( 'Required', 'newsletter-optin-box' ),
+					'description' => __( 'Subscribers MUST fill this field whenever it is added to a subscription form.', 'newsletter-optin-box' ),
+					'restrict'    => "field.merge_tag != 'email'",
+				);
+				Noptin_Vue::render_el( 'field.required', $args );
+
 			?>
 
 			<a href="#" v-if="! isFieldPredefined(field)" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php _e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
-			<span v-if="! isFieldFirst(field)">&nbsp;|&nbsp;
-				<a href="#"  @click.prevent="moveUp(field)"><?php _e( 'Move Up', 'newsletter-optin-box' ); ?></a>
+			<span v-if="! isFieldFirst(field)">
+				<span v-if="! isFieldPredefined(field)">&nbsp;|&nbsp;</span>
+				<a href="#"  @click.prevent="moveUp(field)"><?php esc_html_e( 'Move Up', 'newsletter-optin-box' ); ?></a>
 			</span>
 			<span v-if="! isFieldLast(field)">&nbsp;|&nbsp;
-				<a href="#"  @click.prevent="moveDown(field)"><?php _e( 'Move Down', 'newsletter-optin-box' ); ?></a>
+				<a href="#"  @click.prevent="moveDown(field)"><?php esc_html_e( 'Move Down', 'newsletter-optin-box' ); ?></a>
 			</span>
 		</div>
 	</span>

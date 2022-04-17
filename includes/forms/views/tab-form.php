@@ -14,6 +14,7 @@ $form_fields = noptin_parse_list( $form_fields );
 $inject      = empty( $form->settings['inject'] ) ? '' : $form->settings['inject'];
 $update      = empty( $form->settings['update_existing'] ) ? '' : $form->settings['update_existing'];
 
+// TODO: Replace form fields select box with a sortable list of checkboxes.
 ?>
 
 <h2 class="screen-reader-text"><?php esc_html_e( 'Form Fields', 'newsletter-optin-box' ); ?></h2>

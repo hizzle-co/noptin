@@ -1399,7 +1399,7 @@ function get_noptin_custom_fields( $public_only = false ) {
 	foreach ( $fields as $index => $field ) {
 		$field['field_key'] = uniqid( 'noptin_' ) . $index;
 
-		if ( $field['merge_tag'] == 'email' ) {
+		if ( 'email' === $field['merge_tag'] ) {
 			$field['subs_table'] = true;
 		}
 

@@ -367,7 +367,6 @@ function prepare_noptin_form_fields( $fields ) {
 			$prepared[] = $custom_field;
 		}
 	}
-	// TODO: Add support for required fields.
 	// TODO: Send post notification if a private post is made public.
 	// TODO: Document how to center email content. Test emails on mobile.
 
