@@ -125,8 +125,45 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function prepare_query() {
 
-		$query  = array();
-		$fields = array(
+		$query  = array( 'meta_query' => array() );
+
+		$filters = $this->get_selected_subscriber_filters();
+
+		// Handle custom fields.
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+			// Limit to checkboxes, dropdowns and radio buttons.
+			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ), true ) ) {
+
+				// Fetch the appropriate filter.
+				$filter = isset( $filters[ $custom_field['merge_tag'] ] ) ? $filters[ $custom_field['merge_tag'] ] : '';
+
+				// Filter.
+				if ( '' !== $filter ) {
+					$query['meta_query'][] = array(
+						'key'   => $custom_field['merge_tag'],
+						'value' => $filter,
+					);
+				}
+			}
+		}
+
+		// Subscription source.
+		if ( ! empty( $filters['subscription_source'] ) ) {
+
+			$query['meta_query'][] = array(
+				'key'   => '_subscriber_via',
+				'value' => sanitize_text_field( $filters['subscription_source'] ),
+			);
+
+		}
+
+		// Subscriber status.
+		if ( ! empty( $filters['subscription_status'] ) ) {
+			$query['subscriber_status'] = sanitize_text_field( $filters['subscription_status'] );
+		}
+
+		$query_fields = array(
 			'subscriber_status',
 			'meta_query',
 			'email_status',
@@ -135,8 +172,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'order',
 			'paged',
 		);
-
-		foreach ( $fields as $field ) {
+		foreach ( $query_fields as $field ) {
 			if ( ! empty( $_GET[ $field ] ) ) {
 				$query[ $field ] = noptin_clean( urldecode_deep( $_GET[ $field ] ) );
 			}
@@ -485,12 +521,17 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		// TODO: Add new status for unsubscribed.
 		// Currently, unsubscribed subscribers are treated as pending.
 		$filters = array(
-			'status' => array(
+			'subscription_status' => array(
 				'label'   => __( 'Status', 'newsletter-optin-box' ),
 				'options' => array(
 					'active'   => __( 'Subscribed', 'newsletter-optin-box' ),
 					'inactive' => __( 'Pending', 'newsletter-optin-box' ),
 				),
+			),
+
+			'subscription_source' => array(
+				'label'   => __( 'Subscribed Via', 'newsletter-optin-box' ),
+				'options' => noptin_get_subscription_sources(),
 			),
 		);
 

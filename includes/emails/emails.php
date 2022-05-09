@@ -374,7 +374,7 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
 					<?php endforeach; ?>
 				</select>
 			</label>
-	
+
 		<?php
 	}
 
