@@ -271,5 +271,5 @@ class Noptin_Install {
 
 	}
 
-
+// TODO: Use dbDelta properly to manage table updates.
 }

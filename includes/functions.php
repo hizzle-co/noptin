@@ -1545,3 +1545,20 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 
 	return 'unsubscribed' === get_user_meta( $user_id, 'noptin_unsubscribed', true );
 }
+
+/**
+ * Converts newlines to an array of options.
+ *
+ * @since 1.7.4
+ * @param string $text
+ * @return array
+ */
+function noptin_newslines_to_array( $text ) {
+
+	$options = array();
+	foreach ( preg_split( "/\r\n|\n|\r/", $text ) as $option ) {
+		$options[ trim( $option ) ] = wp_strip_all_tags( trim( $option ) );
+	}
+
+	return $options;
+}

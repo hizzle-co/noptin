@@ -2,8 +2,6 @@ import regeneratorRuntime from "regenerator-runtime";
 
 (function ($) {
 
-	let subscribersPageData = $('#noptin-subscribers-page-data').data()
-
 	$(document).ready(function () {
 
 		// Resend a double opt-in email
@@ -30,8 +28,7 @@ import regeneratorRuntime from "regenerator-runtime";
 					let request = {
 						_wpnonce: noptinSubscribers.nonce,
 						action: 'noptin_send_double_optin_email',
-						email: email,
-						data: subscribersPageData
+						email: email
 					}
 
 					jQuery.post(noptinSubscribers.ajaxurl, request)

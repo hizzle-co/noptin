@@ -1,9 +1,6 @@
 <?php
 
 use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
-use Automattic\WooCommerce\Blocks\Package;
-use Automattic\WooCommerce\Blocks\Domain\Services\ExtendRestApi;
-use Automattic\WooCommerce\Blocks\StoreApi\Schemas\CheckoutSchema;
 
 /**
  * Class for integrating with WooCommerce Blocks
@@ -44,7 +41,6 @@ class Noptin_WooCommerce_Checkout_Block_Integration implements IntegrationInterf
 		$this->register_editor_scripts();
 		$this->register_editor_blocks();
 		$this->extend_store_api();
-		add_filter( '__experimental_woocommerce_blocks_add_data_attributes_to_block', array( $this, 'add_attributes_to_frontend_blocks' ) );
 
 	}
 
@@ -161,41 +157,31 @@ class Noptin_WooCommerce_Checkout_Block_Integration implements IntegrationInterf
 	}
 
 	/**
-	 * This allows dynamic (JS) blocks to access attributes in the frontend.
-	 *
-	 * @param string[] $allowed_blocks List of allowed blocks.
-	 */
-	public function add_attributes_to_frontend_blocks( $allowed_blocks ) {
-		$allowed_blocks[] = 'noptin/checkout-newsletter-subscription';
-		return $allowed_blocks;
-	}
-
-	/**
 	 * Add schema Store API to support posted data.
 	 */
 	public function extend_store_api() {
-		$extend = Package::container()->get(
-			ExtendRestApi::class
-		);
 
-		$extend->register_endpoint_data(
-			array(
-				'endpoint'        => CheckoutSchema::IDENTIFIER,
-				'namespace'       => $this->get_name(),
-				'schema_callback' => function() {
-					return array(
-						'optin' => array(
-							'description' => __( 'Subscribe to marketing opt-in.', 'newsletter-optin-box' ),
-							'type'        => 'boolean',
-							'context'     => array(),
-							'arg_options' => array(
-								'validate_callback' => '__return_true',
+		if ( function_exists( 'woocommerce_store_api_register_endpoint_data' ) ) {
+			woocommerce_store_api_register_endpoint_data(
+				array(
+					'endpoint'        => 'checkout',
+					'namespace'       => $this->get_name(),
+					'schema_callback' => function() {
+						return array(
+							'optin' => array(
+								'description' => __( 'Subscribe to marketing opt-in.', 'newsletter-optin-box' ),
+								'type'        => 'boolean',
+								'context'     => array(),
+								'arg_options' => array(
+									'validate_callback' => '__return_true',
+								),
 							),
-						),
-					);
-				},
-			)
-		);
+						);
+					},
+				)
+			);
+		}
+
 	}
 
 }

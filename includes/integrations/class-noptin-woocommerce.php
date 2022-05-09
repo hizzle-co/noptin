@@ -1,7 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
@@ -47,6 +47,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Orders.
 		add_action( 'woocommerce_new_order', array( $this, 'add_order_subscriber' ), 1 );
+		add_action( 'woocommerce_store_api_checkout_order_processed', array( $this, 'add_order_subscriber' ), 1 );
 
 	}
 
@@ -85,7 +86,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority, 2 );
 		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
-		add_action( 'woocommerce_blocks_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
+		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
 
 	}
 
@@ -112,7 +113,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	public function maybe_process_template( $email, $generator ) {
 		$GLOBALS['noptin_woocommerce_email_template_footer_text'] = $generator->footer_text;
 
-		if ( $generator->template === 'woocommerce' ) {
+		if ( 'woocommerce' === $generator->template ) {
 
 			ob_start();
 
@@ -159,7 +160,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function email_styles( $styles, $generator ) {
 
-		if ( $generator->type === 'normal' && $generator->template === 'woocommerce' ) {
+		if ( 'normal' === $generator->type && 'woocommerce' === $generator->template ) {
 
 			ob_start();
 			wc_get_template( 'emails/email-styles.php' );
@@ -219,8 +220,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @since 1.7.4
 	 */
-	public function checkout_update_order_from_request( $order, $request ) {
-		$optin = $request['extensions']['noptin']['optin'];
+	public function checkout_update_order_from_request( $order, $request = array() ) {
+		$optin = ! empty( $request['extensions']['noptin']['optin'] );
 		$order->update_meta_data( 'noptin_opted_in', (int) $optin );
 	}
 
@@ -260,6 +261,12 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * @return bool
 	 */
 	public function triggered( $order_id = null ) {
+
+		// This is processed later.
+		if ( 'checkout-draft' === get_post_status( $order_id ) && ! doing_action( 'woocommerce_store_api_checkout_order_processed' ) ) {
+			return false;
+		}
+
 		$checked = get_post_meta( $order_id, 'noptin_opted_in', true );
 		return $this->auto_subscribe() || ! empty( $checked );
 	}
@@ -270,7 +277,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * @return bool
 	 */
 	public function add_checkbox_after_email_field( $field, $key ) {
-		if ( $key !== 'billing_email' ) {
+		if ( 'billing_email' !== $key ) {
 			return $field;
 		}
 
@@ -394,11 +401,10 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			$noptin_fields['formatted_address'] = $order->get_formatted_billing_address();
 
 			if ( ! empty( $noptin_fields['country'] ) ) {
-				$countries = WC()->countries->get_countries();
+				$countries                      = WC()->countries->get_countries();
 				$noptin_fields['country_short'] = $noptin_fields['country'];
 				$noptin_fields['country']       = isset( $countries[ $noptin_fields['country'] ] ) ? $countries[ $noptin_fields['country'] ] : $noptin_fields['country'];
 			}
-
 		} else {
 			$noptin_fields['email']      = $order->billing_email;
 			$noptin_fields['name']       = trim( "{$order->billing_first_name} {$order->billing_last_name}" );
@@ -461,15 +467,15 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			'status'   => str_replace( 'wc-', '', $order->get_status() ),
 
 			'title'    => sprintf(
-				esc_html__( 'Order #%d from %s', 'newsletter-optin-box' ),
+				// translators: %1$s is the order id, %2$s is the customer email.
+				esc_html__( 'Order #%1$d from %2$s', 'newsletter-optin-box' ),
 				$order->get_id(),
 				$order->get_billing_email()
 			),
-
 			'items'    => array_map(
 				array( $this, 'get_order_item_details' ),
 				$order->get_items()
-			)
+			),
 		);
 
 		// Date the order was created.
@@ -566,7 +572,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		$total = 0;
 
 		// Get the sum of order totals.
-		foreach( $orders as $order ) {
+		foreach ( $orders as $order ) {
 			$total += $order->get_total();
 		}
 
@@ -590,6 +596,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		$count = 0;
 
 		// Loop through each order.
+		$product_id = (int) $product_id;
    		foreach ( $orders as $order ) {
 
 			// Fetch the items.
@@ -599,10 +606,10 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
       		foreach ( $items as $item ) {
 				$item = $this->get_order_item_details( $item );
 
-        		if ( $product_id == $item['product_id'] ) {
-            		$count += 1;
-         		} else if( $product_id == $item['variation_id'] ) {
-					$count += 1;
+        		if ( $product_id === (int) $item['product_id'] ) {
+            		++ $count;
+         		} elseif ( $product_id === (int) $item['variation_id'] ) {
+					++ $count;
 				}
     		}
    		}

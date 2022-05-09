@@ -75,7 +75,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Returns the order id given an order object/id.
-	 * 
+	 *
 	 * @param int|object $order_id_or_object The order id or object.
 	 * @since 1.4.1
 	 * @return int The order id.
@@ -95,7 +95,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Adds/Updates an order subscriber.
-	 * 
+	 *
 	 * @param int $order_id The order id or object.
 	 * @since 1.2.6
 	 * @since 1.4.1 $order_id now accepts order object.
@@ -107,7 +107,9 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$order_id           = $this->prepare_order_id( $order_id );
 		$subscriber_id      = $this->get_order_subscriber( $order_id );
 		$subscriber_details = $this->get_order_customer_details( $order_id, empty( $subscriber_id ) );
-		$subscriber         = array();
+		$subscriber         = array(
+			'_subscriber_via' => $this->subscriber_via,
+		);
 
 		foreach ( array( 'email', 'name', 'wp_user_id', 'ip_address', 'first_name', 'last_name', '_subscriber_via' ) as $key ) {
 			if ( isset( $subscriber_details[ $key ] ) ) {
@@ -233,7 +235,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Returns a subcriber id responsible for a payment.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 * @return int|null The subscriber id.
@@ -252,7 +254,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fires a specific hook based on an order status.
-	 * 
+	 *
 	 * @since 1.3.1
 	 * @since 1.4.1 $order_id Now accepts the order object.
 	 * @param string $action The order action.
@@ -265,10 +267,10 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 		// Only fired when there is actually a subcsriber.
 		if ( $subscriber_id ) {
-			do_action( "noptin_integration_order", $action, $order_id, $subscriber_id, $this );
+			do_action( 'noptin_integration_order', $action, $order_id, $subscriber_id, $this );
 			do_action( "noptin_integration_order_$action", $order_id, $subscriber_id, $this );
 			do_action( "noptin_ecommerce_integration_order_$action", $order_id, $subscriber_id, $this );
-			do_action( "noptin_ecommerce_integration_order", $action, $order_id, $subscriber_id, $this );
+			do_action( 'noptin_ecommerce_integration_order', $action, $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_order_$action", $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_order", $action, $order_id, $subscriber_id, $this );
 		}
@@ -280,7 +282,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is processed.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 */
@@ -290,7 +292,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is created.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 */
@@ -300,7 +302,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is updated.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 */
@@ -310,7 +312,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is deleted.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 */
@@ -320,7 +322,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is completed.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 */
@@ -336,7 +338,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is refunded.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 */
@@ -352,7 +354,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is paid for.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.2.6
 	 */
@@ -362,7 +364,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is fails payment.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.3.0
 	 */
@@ -372,7 +374,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is cancelled.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.3.0
 	 */
@@ -382,7 +384,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is held.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.3.0
 	 */
@@ -392,7 +394,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is marked as processing.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.3.0
 	 */
@@ -402,7 +404,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when an order is marked as pending.
-	 * 
+	 *
 	 * @param int $order_id The order id.
 	 * @since 1.3.0
 	 */
@@ -445,7 +447,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fires a specific hook based on a product event.
-	 * 
+	 *
 	 * @param string $action The product action.
 	 * @param int $product_id The product id.
 	 * @since 1.2.6
@@ -456,10 +458,10 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 		// Only fired when there is actually a product.
 		if ( ! empty( $product['id'] ) ) {
-			do_action( "noptin_integration_product", $action, $product_id, $product, $this );
+			do_action( 'noptin_integration_product', $action, $product_id, $product, $this );
 			do_action( "noptin_integration_product_$action", $product_id, $product, $this );
 			do_action( "noptin_ecommerce_integration_product_$action", $product_id, $product, $this );
-			do_action( "noptin_ecommerce_integration_product", $action, $product_id, $product, $this );
+			do_action( 'noptin_ecommerce_integration_product', $action, $product_id, $product, $this );
 			do_action( "noptin_{$this->slug}_integration_product_$action", $product_id, $product, $this );
 			do_action( "noptin_{$this->slug}_integration_product", $action, $product_id, $product, $this );
 		}
@@ -468,7 +470,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when a product is bought.
-	 * 
+	 *
 	 * @param int $product_id The product id.
 	 * @param array $item the item details
 	 * @param int $order_id the purchase order id
@@ -478,7 +480,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$subscriber_id = $this->get_order_subscriber( $order_id );
 
 		if ( $subscriber_id ) {
-			do_action( "noptin_ecommerce_integration_product_buy", $product_id, $item, $order_id, $subscriber_id, $this );
+			do_action( 'noptin_ecommerce_integration_product_buy', $product_id, $item, $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_product_buy", $product_id, $item, $order_id, $subscriber_id, $this );
 		}
 
@@ -487,7 +489,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when a product is refunded.
-	 * 
+	 *
 	 * @param int $product_id The product id.
 	 * @param array $item the item details
 	 * @param int $order_id the purchase order id
@@ -497,7 +499,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$subscriber_id = $this->get_order_subscriber( $order_id );
 
 		if ( $subscriber_id ) {
-			do_action( "noptin_ecommerce_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
+			do_action( 'noptin_ecommerce_integration_product_refund', $product_id, $item, $order_id, $subscriber_id, $this );
 			do_action( "noptin_{$this->slug}_integration_product_refund", $product_id, $item, $order_id, $subscriber_id, $this );
 		}
 
@@ -506,7 +508,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Checks the post type of a product.
-	 * 
+	 *
 	 * @param int $product_id The product id.
 	 * @since 1.3.0
 	 * @return bool
@@ -527,7 +529,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when a product is updated.
-	 * 
+	 *
 	 * @param int $product_id The product id.
 	 * @since 1.2.6
 	 */
@@ -539,7 +541,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when a product is deleted.
-	 * 
+	 *
 	 * @param int $product_id The product id.
 	 * @since 1.2.6
 	 */
@@ -551,7 +553,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when a product is added to the trash.
-	 * 
+	 *
 	 * @param int $product_id The product id.
 	 * @since 1.3.0
 	 */
@@ -563,7 +565,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Fired when a product is added removed from the trash.
-	 * 
+	 *
 	 * @param int $product_id The product id.
 	 * @since 1.3.0
 	 */
@@ -575,7 +577,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 
 	/**
 	 * Returns an array of available customer fields.
-	 * 
+	 *
 	 * @return array
 	 * @since 1.5.5
 	 */
@@ -603,6 +605,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$args = array(
 			'el'          => 'select',
 			'label'       => sprintf(
+				// translators: %s is the integration name.
 				__( '%s Equivalent', 'newsletter-optin-box' ),
 				$this->name
 			),

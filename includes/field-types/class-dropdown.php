@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Handles dropdowns.
  *
@@ -39,9 +40,9 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 				class="noptin-text noptin-form-field"
 				<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 			>
-				<option <?php selected( empty( $args['value'] ) ); ?> disabled><?php echo empty( $args['vue'] ) ? strip_tags( $args['label'] ) : '{{field.type.label}}'; ?></option>
-				<?php foreach ( explode( "\n", $args['options'] ) as $option ) : ?>
-					<option value="<?php echo esc_attr( $option ); ?>" <?php selected( esc_attr( $option ), esc_attr( $args['value'] ) ); ?>><?php echo esc_html( $option ); ?></option>
+				<option <?php selected( empty( $args['value'] ) ); ?> disabled><?php echo empty( $args['vue'] ) ? esc_html( wp_strip_all_tags( $args['label'] ) ) : '{{field.type.label}}'; ?></option>
+				<?php foreach ( noptin_newslines_to_array( $args['options'] ) as $value => $label ) : ?>
+					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( esc_attr( $value ), esc_attr( $args['value'] ) ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
 

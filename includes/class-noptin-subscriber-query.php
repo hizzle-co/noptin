@@ -455,7 +455,7 @@ class Noptin_Subscriber_Query {
 			}
 
 			$this->results = $r;
-		} elseif ( 'all' == $qv['fields'] ) {
+		} elseif ( 'all' === $qv['fields'] ) {
 			foreach ( $this->results as $key => $subscriber ) {
 				$this->results[ $key ] = new Noptin_Subscriber( $subscriber );
 			}

@@ -235,20 +235,6 @@ class Noptin_Subscribers_Admin {
 	 */
 	public static function render_single_subscriber_page() {
 
-		$data = '';
-		$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
-		foreach( $data_array as $key => $value ) {
-
-			if ( is_scalar( $value ) ) {
-				$value = esc_attr( $value );
-				$key   = esc_attr( $key );
-				$data .= " data-$key='$value'";
-			}
-
-		}
-
-		echo "<div id='noptin-subscribers-page-data' $data></div>";
-
 		$subscriber = isset( $_GET['subscriber'] ) ? (int) $_GET['subscriber'] : 0;
 		$subscriber = new Noptin_Subscriber( $subscriber );
 
