@@ -1,7 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) || ! class_exists( 'FrmFormAction' )  ) {
+if ( ! defined( 'ABSPATH' ) || ! class_exists( 'FrmFormAction' ) ) {
 	die;
 }
 
@@ -76,7 +76,7 @@ class Noptin_Formidable_Forms extends FrmFormAction {
 
 	/**
 	 * Processes the newsletter optin action.
-	 * 
+	 *
 	 * @param WP_Post $action
 	 */
     public static function process_form( $action, $entry ) {
@@ -85,11 +85,11 @@ class Noptin_Formidable_Forms extends FrmFormAction {
         $subscriber = self::get_custom_field_values( $entry, $action->post_content );
 
 		// Set source.
-		$subscriber[ '_subscriber_via' ] = 'Formidable Forms';
+		$subscriber['_subscriber_via'] = 'Formidable Forms';
 
 		// And maybe the conversion page.
-		if ( isset( $_REQUEST['referrer'] ) ) {
-            $subscriber[ 'conversion_page' ] = esc_url_raw( $_REQUEST['referrer'] );
+		if ( isset( $_REQUEST['referrer'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $subscriber['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         }
 
 		// Add the subscriber's IP address.
@@ -139,12 +139,11 @@ class Noptin_Formidable_Forms extends FrmFormAction {
 			// Retrieve value from the processed entry.
 			if ( ! empty( $entry ) && isset( $entry->metas[ $field_id ] ) ) {
 				$vars[ $field_tag ] = $entry->metas[ $field_id ];
-			} else if ( isset( $_POST['item_meta'][ $field_id ] ) ) {
+			} elseif ( isset( $_POST['item_meta'][ $field_id ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 				// Or the posted data.
-				$vars[ $field_tag ] = $_POST['item_meta'][ $field_id ];
+				$vars[ $field_tag ] = $_POST['item_meta'][ $field_id ]; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			}
-
 		}
 
         return $vars;

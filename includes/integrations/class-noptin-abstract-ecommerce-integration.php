@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Base E-Commerce integration
@@ -193,8 +191,8 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 					'name'         => '',
 					'price'        => '',
 					'quantity'     => '',
-				)
-			)
+				),
+			),
 
 		);
 	}
@@ -419,7 +417,6 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 * @return array
 	 */
 	public function get_products() {
-		// Return self::get_product_details[]
 		return array();
 	}
 
@@ -520,10 +517,10 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		}
 
 		if ( is_array( $this->product_post_type ) ) {
-			return in_array( get_post_type( $product_id ), $this->product_post_type );
+			return in_array( get_post_type( $product_id ), $this->product_post_type, true );
 		}
 
-		return get_post_type( $product_id ) == $this->product_post_type;
+		return get_post_type( $product_id ) === $this->product_post_type;
 
 	}
 
@@ -598,20 +595,20 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		}
 
 		$customer_fields = array_merge(
-			[ '' => __( 'Not Mapped', 'newsletter-optin-box' ) ],
+			array( '' => __( 'Not Mapped', 'newsletter-optin-box' ) ),
 			$customer_fields
 		);
 
 		$args = array(
-			'el'          => 'select',
-			'label'       => sprintf(
+			'el'       => 'select',
+			'label'    => sprintf(
 				// translators: %s is the integration name.
 				__( '%s Equivalent', 'newsletter-optin-box' ),
 				$this->name
 			),
-			'restrict'    => '! isFieldPredefined(field) && ' . $this->get_enable_integration_option_name(),
-			'options'     => $customer_fields,
-			'normal'      => false,
+			'restrict' => '! isFieldPredefined(field) && ' . $this->get_enable_integration_option_name(),
+			'options'  => $customer_fields,
+			'normal'   => false,
 		);
 		Noptin_Vue::render_el( sprintf( 'field.%s', $this->slug ), $args );
 

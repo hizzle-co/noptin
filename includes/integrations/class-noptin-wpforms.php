@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with WPForms
@@ -27,7 +25,7 @@ class Noptin_WPForms {
 	 * @param array $sections The current settings sections.
 	 * @return array
 	 */
-	function settings_section( $sections ) {
+	public function settings_section( $sections ) {
 		$sections['noptin'] = 'Noptin';
 		return $sections;
 	}
@@ -38,7 +36,7 @@ class Noptin_WPForms {
 	 * @param stdClass $instance The form instance.
 	 * @return void
 	 */
-	function settings_section_content( $instance ) {
+	public function settings_section_content( $instance ) {
 
 		?>
 		<div class="wpforms-panel-content-section wpforms-panel-content-section-noptin">
@@ -116,7 +114,6 @@ class Noptin_WPForms {
 										)
 									);
 								}
-
 							}
 						?>
 					</div>
@@ -138,10 +135,10 @@ class Noptin_WPForms {
 	 * @param array  $form_data Form data and settings.
 	 * @param int    $entry_id  Saved entry id.
 	 */
-	function add_subscriber( $fields, $entry, $form_data, $entry_id ) {
+	public function add_subscriber( $fields, $entry, $form_data, $entry_id ) {
 
 		// Check that the form was configured for email subscriptions.
-		if ( empty( $form_data['settings']['enable_noptin'] ) || '1' != $form_data['settings']['enable_noptin'] ) {
+		if ( empty( $form_data['settings']['enable_noptin'] ) || '1' !== $form_data['settings']['enable_noptin'] ) {
 			return;
 		}
 
@@ -170,8 +167,8 @@ class Noptin_WPForms {
 		}// TODO: Send confirmation links for existing unconfirmed subscribers.
 
 		// Referral page.
-		if ( ! empty( $_REQUEST['referrer'] ) ) {
-			$noptin_fields['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] );
+		if ( ! empty( $_REQUEST['referrer'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$noptin_fields['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		// Maybe include the subscriber name...
@@ -189,12 +186,11 @@ class Noptin_WPForms {
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
 			if ( ! $custom_field['predefined'] ) {
-				if ( isset( $form_data['settings']['noptin_field_' . $custom_field['merge_tag']] ) ) {
-					$form_field                                  = $form_data['settings']['noptin_field_' . $custom_field['merge_tag']];
+				if ( isset( $form_data['settings'][ 'noptin_field_' . $custom_field['merge_tag'] ] ) ) {
+					$form_field                                  = $form_data['settings'][ 'noptin_field_' . $custom_field['merge_tag'] ];
 					$noptin_fields[ $custom_field['merge_tag'] ] = noptin_clean( $fields[ $form_field ]['value'] );
 				}
 			}
-
 		}
 
 		$noptin_fields['integration_data'] = compact( 'fields', 'entry', 'form_data', 'entry_id' );

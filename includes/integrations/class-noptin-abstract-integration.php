@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Base integration class.
@@ -299,11 +297,11 @@ abstract class Noptin_Abstract_Integration {
 		$this->maybe_save_default_value( $option_name, $this->get_enable_integration_default_value() );
 
 		$options[ $this->get_enable_integration_option_name() ] = array(
-			'type'                  => 'checkbox_alt',
-			'el'                    => 'input',
-			'section'		        => 'integrations',
-			'label'                 => $title,
-			'description'           => $description,
+			'type'        => 'checkbox_alt',
+			'el'          => 'input',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
 		);
 
 		return $options;
@@ -367,17 +365,17 @@ abstract class Noptin_Abstract_Integration {
 		$option_name = $this->get_checkbox_position_option_name();
 
 		$options[ $option_name ] = array(
-			'el'                    => 'select',
-			'section'		        => 'integrations',
-			'label'                 => $title,
-			'description'           => $description,
-			'restrict'              => sprintf(
+			'el'          => 'select',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
+			'restrict'    => sprintf(
 				'%s && %s',
 				$this->get_enable_integration_option_name(),
 				$this->get_autosubscribe_integration_option_name()
 			),
-			'options'               => $checkbox_positions,
-			'placeholder'           => $placeholder,
+			'options'     => $checkbox_positions,
+			'placeholder' => $placeholder,
 		);
 
 		return $options;
@@ -468,12 +466,12 @@ abstract class Noptin_Abstract_Integration {
 		$this->maybe_save_default_value( $option_name, true );
 
 		$options[ $option_name ] = array(
-			'type'                  => 'checkbox_alt',
-			'el'                    => 'input',
-			'section'		        => 'integrations',
-			'label'                 => $title,
-			'description'           => $description,
-			'restrict'              => $this->get_enable_integration_option_name(),
+			'type'        => 'checkbox_alt',
+			'el'          => 'input',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
+			'restrict'    => $this->get_enable_integration_option_name(),
 		);
 
 		return $options;
@@ -568,15 +566,6 @@ abstract class Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Displays a subscription checkbox.
-	 *
-	 * @since 1.2.6
-	 */
-	public function output_checkbox() {
-		echo $this->get_checkbox_markup();
-	}
-
-	/**
 	 * Appends a checkbox to a string
 	 *
 	 * @since 1.2.6
@@ -603,7 +592,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 * @return string
 	 */
-	public function get_checkbox_markup( array $html_attrs = array() ) {
+	public function get_checkbox_markup( $html_attrs = array() ) {
 
 		// Abort if we're not displaying a checkbox.
 		if ( ! $this->can_show_checkbox() ) {
@@ -611,6 +600,23 @@ abstract class Noptin_Abstract_Integration {
 		}
 
 		ob_start();
+		$this->output_checkbox( $html_attrs );
+		return ob_get_clean();
+
+	}
+
+	/**
+	 * Displays a subscription checkbox.
+	 *
+	 * @param array $html_attrs An array of HTML attributes.
+	 * @since 1.2.6
+	 */
+	public function output_checkbox( $html_attrs = array() ) {
+
+		// Abort if we're not displaying a checkbox.
+		if ( ! $this->can_show_checkbox() ) {
+			return;
+		}
 
 		// Checkbox opening wrapper.
 		echo '<!-- Noptin Newsletters - https://noptin.com/ -->';
@@ -621,19 +627,15 @@ abstract class Noptin_Abstract_Integration {
 		$html_attrs['class'] = empty( $html_attrs['class'] ) ? '' : $html_attrs['class'];
 		$html_attrs['class'] = $html_attrs['class'] . sprintf( ' noptin-integration-subscription-checkbox noptin-integration-subscription-checkbox-%s', $this->slug );
 
-		// Convert them to strings.
-		$html_attr_str = '';
-		foreach ( $html_attrs as $key => $value ) {
-			$html_attr_str .= sprintf( '%s="%s" ', $key, esc_attr( $value ) );
-		}
-
 		// usefull when wrapping the checkbox in an element.
 		$this->before_checkbox_wrapper();
 
-		echo "<label $html_attr_str>";
-		echo sprintf( '<input %s />', $this->get_checkbox_attributes() );
-		echo sprintf( '<span>%s</span>', wp_kses_post( $this->get_label_text() ) );
-		echo '</label>';
+		?>
+			<label <?php noptin_attr( 'integration_checkbox_label', $html_attrs, $this ); ?>>
+				<input <?php noptin_attr( 'integration_checkbox_input', $this->get_checkbox_attributes(), $this ); ?>/>
+				<span><?php wp_kses_post( $this->get_label_text() ); ?></span>
+			</label>
+		<?php
 
 		// usefull when wrapping the checkbox in an element.
 		$this->after_checkbox_wrapper();
@@ -642,15 +644,12 @@ abstract class Noptin_Abstract_Integration {
 		do_action( 'noptin_integration_after_subscription_checkbox_wrapper', $this );
 		do_action( 'noptin_integration_' . $this->slug . '_after_subscription_checkbox_wrapper', $this );
 		echo '<!-- / Noptin Newsletters -->';
-
-		return ob_get_clean();
-
 	}
 
 	/**
 	 * Get a string of attributes for the checkbox element.
 	 *
-	 * @return string
+	 * @return array
 	 * @since 1.2.6
 	 */
 	protected function get_checkbox_attributes() {
@@ -667,14 +666,7 @@ abstract class Noptin_Abstract_Integration {
 
 		$attributes = (array) apply_filters( 'noptin_integration_subscription_checkbox_attributes', $attributes, $this );
 
-		$attributes = (array) apply_filters( "noptin_{$this->slug}_integration_subscription_checkbox_attributes", $attributes, $this );
-
-		$string = '';
-		foreach ( $attributes as $key => $value ) {
-			$string .= sprintf( '%s="%s"', $key, esc_attr( $value ) );
-		}
-
-		return $string;
+		return (array) apply_filters( "noptin_{$this->slug}_integration_subscription_checkbox_attributes", $attributes, $this );
 	}
 
 	/**
@@ -718,7 +710,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 */
 	public function checkbox_was_checked() {
-		return isset( $_REQUEST['noptin-subscribe'] );
+		return isset( $_REQUEST['noptin-subscribe'] );   // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**

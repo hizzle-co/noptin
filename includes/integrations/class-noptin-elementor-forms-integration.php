@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with Elementor Forms
@@ -82,12 +80,12 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		$fields = $record->get( 'fields' );
 
 		$subscriber = array(
-			'_subscriber_via' => 'Elementor'
+			'_subscriber_via' => 'Elementor',
 		);
 
 		// Referral page.
-		if ( ! empty( $_REQUEST['referrer'] ) ) {
-			$subscriber['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] );
+		if ( ! empty( $_REQUEST['referrer'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$subscriber['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		// Add the subscriber's IP address.
@@ -123,28 +121,28 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 				'label'     => $this->get_label(),
 				'condition' => array(
 					'submit_actions' => $this->get_name(),
-				)
+				),
 			)
 		);
 
 		$map_fields = array(
 
 			array(
-				'remote_id'       => 'first_name',
-				'remote_label'    => __( 'First Name', 'newsletter-optin-box' ),
-				'remote_type'     => 'text',
+				'remote_id'    => 'first_name',
+				'remote_label' => __( 'First Name', 'newsletter-optin-box' ),
+				'remote_type'  => 'text',
 			),
 
 			array(
-				'remote_id'       => 'last_name',
-				'remote_label'    => __( 'Last Name', 'newsletter-optin-box' ),
-				'remote_type'     => 'text',
+				'remote_id'    => 'last_name',
+				'remote_label' => __( 'Last Name', 'newsletter-optin-box' ),
+				'remote_type'  => 'text',
 			),
 
 			array(
-				'remote_id'       => 'name',
-				'remote_label'    => __( 'Full Name', 'newsletter-optin-box' ),
-				'remote_type'     => 'text',
+				'remote_id'    => 'name',
+				'remote_label' => __( 'Full Name', 'newsletter-optin-box' ),
+				'remote_type'  => 'text',
 			),
 
 			array(
@@ -155,9 +153,9 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 			),
 
 			array(
-				'remote_id'       => 'GDPR_consent',
-				'remote_label'    => __( 'GDPR Consent', 'newsletter-optin-box' ),
-				'remote_type'     => 'acceptance',
+				'remote_id'    => 'GDPR_consent',
+				'remote_label' => __( 'GDPR Consent', 'newsletter-optin-box' ),
+				'remote_type'  => 'acceptance',
 			),
 
 		);
@@ -171,7 +169,6 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 					'remote_type'  => $custom_field['type'],
 				);
             }
-
 		}
 
 		// Map Fields.
@@ -195,7 +192,7 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 
 				),
 
-				'default' => apply_filters( 'noptin_elementor_map_fields', $map_fields ),
+				'default'   => apply_filters( 'noptin_elementor_map_fields', $map_fields ),
 			)
 		);
 

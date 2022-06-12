@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Fires when a customer reaches a lifetime value.

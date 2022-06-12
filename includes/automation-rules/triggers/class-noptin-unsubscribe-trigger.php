@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Fired when there is a a subscriber is deactivated.

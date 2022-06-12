@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Prints the noptin page
@@ -686,14 +684,14 @@ class Noptin_Page {
 		);
 
 		$options["pages_confirm_page"] = array(
-			'el'              => 'input',
-			'section'		  => 'messages',
-			'label'           => __( 'Confirmation Redirect', 'newsletter-optin-box' ),
-			'description'     => __( 'Where should we redirect subscribers after they confirm their emails?', 'newsletter-optin-box' ),
-			'placeholder'     => 'https://example.com/newsletter-confirmed',
+			'el'          => 'input',
+			'section'     => 'messages',
+			'label'       => __( 'Confirmation Redirect', 'newsletter-optin-box' ),
+			'description' => __( 'Where should we redirect subscribers after they confirm their emails?', 'newsletter-optin-box' ),
+			'placeholder' => 'https://example.com/newsletter-confirmed',
 		);
 
-		return apply_filters( "noptin_page_settings", $options );
+		return apply_filters( 'noptin_page_settings', $options );
 
 	}
 

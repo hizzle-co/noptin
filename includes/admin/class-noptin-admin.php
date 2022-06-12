@@ -8,9 +8,7 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Admin main class
@@ -230,14 +228,14 @@ class Noptin_Admin {
 		// Pass variables to our js file, e.g url etc.
 		$current_user = wp_get_current_user();
 		$params       = array(
-			'ajaxurl'                    => admin_url( 'admin-ajax.php' ),
-			'api_url'                    => get_home_url( null, 'wp-json/wp/v2/' ),
-			'nonce'                      => wp_create_nonce( 'noptin_admin_nonce' ),
-			'icon'                       => $this->assets_url . 'images/checkmark.png',
-			'admin_email'                => sanitize_email( $current_user->user_email ),
-			'close'                      => __( 'Close', 'newsletter-optin-box' ),
-			'cancel'                     => __( 'Cancel', 'newsletter-optin-box' ),
-			'donwload_forms'             => add_query_arg(
+			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+			'api_url'        => get_home_url( null, 'wp-json/wp/v2/' ),
+			'nonce'          => wp_create_nonce( 'noptin_admin_nonce' ),
+			'icon'           => $this->assets_url . 'images/checkmark.png',
+			'admin_email'    => sanitize_email( $current_user->user_email ),
+			'close'          => __( 'Close', 'newsletter-optin-box' ),
+			'cancel'         => __( 'Cancel', 'newsletter-optin-box' ),
+			'donwload_forms' => add_query_arg(
 				array(
 					'action'      => 'noptin_download_forms',
 					'admin_nonce' => wp_create_nonce( 'noptin_admin_nonce' ),
@@ -278,10 +276,10 @@ class Noptin_Admin {
 			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2', 'postbox' ), $version, true );
 
 			$params = array(
-				'ajaxurl'       => admin_url( 'admin-ajax.php' ),
-				'nonce'         => wp_create_nonce( 'noptin_subscribers' ),
-				'reloading'     => __( 'Reloading the page', 'newsletter-optin-box' ),
-				'close'         => __( 'Close', 'newsletter-optin-box' ),
+				'ajaxurl'           => admin_url( 'admin-ajax.php' ),
+				'nonce'             => wp_create_nonce( 'noptin_subscribers' ),
+				'reloading'         => __( 'Reloading the page', 'newsletter-optin-box' ),
+				'close'             => __( 'Close', 'newsletter-optin-box' ),
 				'delete_subscriber' => __( 'Delete subscriber', 'newsletter-optin-box' ),
 				'delete_footer'     => __( 'This will delete the subscriber and all associated data', 'newsletter-optin-box' ),
 				'delete'            => __( 'Delete', 'newsletter-optin-box' ),

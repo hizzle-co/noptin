@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with EDD
@@ -111,24 +109,19 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	 * Prints the checkbox wrapper.
 	 *
 	 */
-	function before_checkbox_wrapper() {
+	public function before_checkbox_wrapper() {
 
-		$style = '';
 		$checkbox_position = $this->get_checkbox_position();
+		$style             = 'edd_purchase_form_after_email' !== $checkbox_position && 'edd_purchase_form_user_info_fields' !== $checkbox_position;
 
-		if ( 'edd_purchase_form_after_email' !== $checkbox_position && 'edd_purchase_form_user_info_fields' !== $checkbox_position ) {
-			$style = 'style="padding-left: 0;"';
-		}
-
-		echo "<p id='noptin_edd_optin_checkbox' $style>";
+		echo '<p id="noptin_edd_optin_checkbox"' . ( $style ? ' style="padding-left: 0;"' : '' ) . '>';
 	}
 
-	
 	/**
 	 * Prints the checkbox closing wrapper.
 	 *
 	 */
-	function after_checkbox_wrapper() {
+	public function after_checkbox_wrapper() {
 		echo '</p>';
 	}
 
@@ -199,19 +192,19 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function available_customer_fields() {
 		return array(
-			'address_1'     => __( 'Billing Address 1', 'newsletter-optin-box' ),
-			'address_1'     => __( 'Billing Address 2', 'newsletter-optin-box' ),
-			'postcode'      => __( 'Billing Postcode', 'newsletter-optin-box' ),
-			'city'          => __( 'Billing City', 'newsletter-optin-box' ),
-			'state'         => __( 'Billing State', 'newsletter-optin-box' ),
-			'country'       => __( 'Billing Country', 'newsletter-optin-box' ),
+			'address_1' => __( 'Billing Address 1', 'newsletter-optin-box' ),
+			'address_1' => __( 'Billing Address 2', 'newsletter-optin-box' ),
+			'postcode'  => __( 'Billing Postcode', 'newsletter-optin-box' ),
+			'city'      => __( 'Billing City', 'newsletter-optin-box' ),
+			'state'     => __( 'Billing State', 'newsletter-optin-box' ),
+			'country'   => __( 'Billing Country', 'newsletter-optin-box' ),
 		);
 	}
 
 	/**
 	 * Fired when an order is refunded.
-	 * 
-	 * @param EDD_Payment $payment_id The Payment Object.
+	 *
+	 * @param EDD_Payment $payment The Payment Object.
 	 * @since 1.2.6
 	 */
 	public function order_refunded( $payment ) {
@@ -245,9 +238,9 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function get_product_details( $download_id ) {
 		return array(
-			'id'       => '',
-			'name'     => '',
-			'price'    => '',
+			'id'    => '',
+			'name'  => '',
+			'price' => '',
 		);
 	}
 

@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Updates a subscriber's custom field.

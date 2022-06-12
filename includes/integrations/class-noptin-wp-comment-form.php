@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with the WP comment form.
@@ -51,7 +49,7 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 	 * Prints the checkbox wrapper.
 	 *
 	 */
-	function before_checkbox_wrapper() {
+	public function before_checkbox_wrapper() {
 		echo "<p class='noptin_comment_form_optin_checkbox_wrapper'>";
 	}
 
@@ -59,7 +57,7 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 	 * Prints the checkbox closing wrapper.
 	 *
 	 */
-	function after_checkbox_wrapper() {
+	public function after_checkbox_wrapper() {
 		echo '</p>';
 	}
 
@@ -93,7 +91,7 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 	public function subscribe_from_comment( $comment_id, $comment_approved = '' ) {
 
 		// is this a spam comment?
-		if ( $comment_approved === 'spam' ) {
+		if ( 'spam' === $comment_approved ) {
 			return false;
 		}
 
@@ -103,7 +101,6 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 		if ( 'Anonymous' === $author ) {
 			$author = '';
 		}
-
 
 		// Prepare subscriber fields.
 		$noptin_fields = array(
@@ -122,7 +119,7 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 		if ( empty( $subscriber_id ) ) {
 
 			// Ensure the subscription checkbox was triggered.
-			if( $this->triggered() ) {
+			if ( $this->triggered() ) {
 				return $this->add_subscriber( $noptin_fields, $comment_id );
 			}
 			return null;

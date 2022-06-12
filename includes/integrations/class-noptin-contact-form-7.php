@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with Contact Form 7
@@ -38,7 +36,7 @@ class Noptin_Contact_Form_7 {
 
         $panels['noptin'] = array(
             'title'    => 'Noptin',
-            'callback' => array( $this, 'render_panel_content' )
+            'callback' => array( $this, 'render_panel_content' ),
         );
 
         return $panels;
@@ -89,7 +87,7 @@ class Noptin_Contact_Form_7 {
                 'name'  => 'GDPR_consent',
 				'label' => __( 'GDPR Consent', 'newsletter-optin-box' ),
 				'type'  => 'acceptance',
-			)
+			),
 
         );
 
@@ -97,11 +95,10 @@ class Noptin_Contact_Form_7 {
 
             if ( ! $custom_field['predefined'] ) {
                 $map_fields[] = array(
-                    'name'    => $custom_field['merge_tag'],
-                    'label'   => $custom_field['label'],
+                    'name'  => $custom_field['merge_tag'],
+                    'label' => $custom_field['label'],
                 );
             }
-
 		}
 
 		return apply_filters( 'noptin_contact_form_7_map_fields', $map_fields );
@@ -115,13 +112,13 @@ class Noptin_Contact_Form_7 {
      */
     public function save_settings( $contact_form ) {
 
-        if ( empty( $_POST ) ) {
+        if ( empty( $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			return;
 		}
 
         $post_id = $contact_form->id();
 
-        update_post_meta( $post_id, 'noptin_settings', noptin_clean( wp_unslash( $_POST['noptin_settings'] ) ) );
+        update_post_meta( $post_id, 'noptin_settings', noptin_clean( wp_unslash( $_POST['noptin_settings'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -145,8 +142,8 @@ class Noptin_Contact_Form_7 {
         $posted_data = $submission->get_posted_data();
 
         // Get our settings for the form.
-		$settings    = get_post_meta( $contact_form->id(), 'noptin_settings', true );
-		$settings    = is_array( $settings ) ? $settings : array();
+		$settings = get_post_meta( $contact_form->id(), 'noptin_settings', true );
+		$settings = is_array( $settings ) ? $settings : array();
 
 		// Retrieve field maps.
 		$mapped_fields = isset( $settings['custom_fields'] ) ? $settings['custom_fields'] : array();
@@ -156,10 +153,10 @@ class Noptin_Contact_Form_7 {
 
 		// Abort if newsletter checkbox was not checked.
 		$conditional = isset( $mapped_fields['GDPR_consent'] ) ? $mapped_fields['GDPR_consent'] : '';
-		if ( ! empty( $conditional ) && empty( $noptin_fields[ 'GDPR_consent' ] ) ) {
+		if ( ! empty( $conditional ) && empty( $noptin_fields['GDPR_consent'] ) ) {
 			return;
 		}
-	
+
 		// We need an email.
 		if ( empty( $noptin_fields['email'] ) ) {
 			return;
@@ -198,8 +195,8 @@ class Noptin_Contact_Form_7 {
 		}
 
 		// Referral page.
-		if ( ! empty( $_REQUEST['referrer'] ) ) {
-            $subscriber['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] );
+		if ( ! empty( $_REQUEST['referrer'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $subscriber['conversion_page'] = esc_url_raw( $_REQUEST['referrer'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		if ( ! empty( $posted_data['_wpcf7_container_post'] ) ) {

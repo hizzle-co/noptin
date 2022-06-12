@@ -25,9 +25,7 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
 	define( 'NOPTIN_VERIFY_NONCE', false );
