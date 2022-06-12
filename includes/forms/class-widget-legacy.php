@@ -87,35 +87,13 @@ class Noptin_Widget extends WP_Widget {
 			)
 		);
 
-		echo $args['before_widget'];
+		echo $args['before_widget']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 
 		// ID.
 		$id = '#' . empty( $args['widget_id'] ) ? uniqid( 'noptin-widget-' ) : $args['widget_id'];
 
-		// Title.
-		$title = '';
-		if ( ! empty( $instance['title'] ) ) {
-			// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-			/** @ignore */
-			$_title = apply_filters( 'widget_title', $instance['title'] );
-			$title  = $args['before_title'] . $_title . $args['after_title'];
-		}
-
-		// Description.
-		$desc = '';
-		if ( ! empty( $instance['desc'] ) ) {
-			$desc = '<p class="noptin-widget-desc">' . $instance['desc'] . '</p>';
-		}
-
-		// Redirect.
-		$redirect = '';
-		if ( ! empty( $instance['redirect'] ) ) {
-			$_redirect = esc_url( $instance['redirect'] );
-			$redirect  = '<input class="noptin_form_redirect" name="noptin-redirect" type="hidden" value="' . $_redirect . '"/>';
-		}
-
 		// Submit button.
-		$submit = empty( $instance['submit'] ) ? esc_attr( 'Submit' ) : esc_attr( $instance['submit'] );
+		$submit = empty( $instance['submit'] ) ? __( 'Submit', 'newsletter-optin-box' ) : $instance['submit'];
 
 		// Colors.
 		$bg_color = sanitize_hex_color( $instance['bg_color'] );
@@ -128,35 +106,50 @@ class Noptin_Widget extends WP_Widget {
 
 		<?php
 		if ( $bg_color ) {
-			echo "$id .noptin-email-optin-widget { background-color: $bg_color  !important; }";
+			echo esc_html( $id ) . ' .noptin-email-optin-widget { background-color: ' . esc_html( $bg_color ) . ' !important; }';
 		}
 
 		if ( $color ) {
-			echo "$id .noptin-email-optin-widget { color: $color  !important; }";
+			echo esc_html( $id ) . ' .noptin-email-optin-widget { color: ' . esc_html( $color ) . ' !important; }';
 		}
 
 		if ( $h2_col ) {
-			echo "$id .noptin-email-optin-widget .widget-title { color: $h2_col  !important; }";
+			echo esc_html( $id ) . ' .noptin-email-optin-widget .widget-title { color: ' . esc_html( $h2_col ) . ' !important; }';
 		}
 
 		if ( $btn_col ) {
-			echo "$id .noptin-email-optin-widget .noptin-widget-submit-input { background-color: $btn_col  !important; }";
+			echo esc_html( $id ) . ' .noptin-email-optin-widget .noptin-widget-submit-input { background-color: ' . esc_html( $btn_col ) . ' !important; }';
 		}
 		?>
 	</style>
-	<div class="noptin-email-optin-widget <?php echo $class; ?>">
+	<div class="noptin-email-optin-widget <?php echo esc_attr( $class ); ?>">
 		<form>
-		<?php echo $title . $desc . $redirect; ?>
-		<input class="noptin-widget-email-input noptin_form_input_email" name="email" type="email" placeholder="Email Address" required >
+
+		<?php
+			if ( ! empty( $instance['title'] ) ) {
+				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
+				echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+			}
+		?>
+
+		<?php if ( ! empty( $instance['desc'] ) ) : ?>
+			<p class="noptin-widget-desc"><?php echo esc_html( $instance['desc'] ); ?></p>
+		<?php endif; ?>
+
+		<?php if ( ! empty( $instance['redirect'] ) ) : ?>
+			<input class="noptin_form_redirect" name="noptin-redirect" type="hidden" value="<?php echo esc_url( $instance['redirect'] ); ?>"/>
+		<?php endif; ?>
+
+		<input class="noptin-widget-email-input noptin_form_input_email" name="email" type="email" placeholder="<?php esc_attr_e( 'Email Address', 'newsletter-optin-box' ); ?>" required >
 		<?php do_action( 'before_noptin_quick_widget_submit', $args ); ?>
-		<input class="noptin-widget-submit-input" value="<?php echo $submit; ?>" type="submit">
+		<input class="noptin-widget-submit-input" value="<?php echo esc_attr( $submit ); ?>" type="submit">
 		<div class="noptin_feedback_success"></div>
 		<div class="noptin_feedback_error"></div>
 		</form>
 	</div>
 
 		<?php
-		echo $args['after_widget'];
+		echo $args['after_widget']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -167,14 +160,13 @@ class Noptin_Widget extends WP_Widget {
 	public function noptin_color_select( $color ) {
 		foreach ( $this->colors as $hex => $name ) {
 
-			$hex  = esc_attr( $hex );
-			$name = esc_html( $name );
-			echo "<option value='$hex' ";
+			printf(
+				'<option value="%s" %s>%s</option>',
+				esc_attr( $hex ),
+				selected( $color, $hex, false ),
+				esc_html( $name )
+			);
 
-			// Check if the current field is being shown.
-			selected( $color, $hex );
-
-			echo ">$name</option>";
 		}
 	}
 
@@ -311,9 +303,9 @@ class Noptin_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 		return array(
-			'title'    => ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '',
-			'submit'   => ( ! empty( $new_instance['submit'] ) ) ? strip_tags( $new_instance['submit'] ) : '',
-			'desc'     => ( ! empty( $new_instance['desc'] ) ) ? strip_tags( $new_instance['desc'] ) : '',
+			'title'    => ( ! empty( $new_instance['title'] ) ) ? sanitize_text_field( $new_instance['title'] ) : '',
+			'submit'   => ( ! empty( $new_instance['submit'] ) ) ? sanitize_text_field( $new_instance['submit'] ) : '',
+			'desc'     => ( ! empty( $new_instance['desc'] ) ) ? sanitize_text_field( $new_instance['desc'] ) : '',
 			'bg_color' => ( ! empty( $new_instance['bg_color'] ) ) ? $new_instance['bg_color'] : 'transparent',
 			'color'    => ( ! empty( $new_instance['color'] ) ) ? $new_instance['color'] : 'transparent',
 			'h2_col'   => ( ! empty( $new_instance['h2_col'] ) ) ? $new_instance['h2_col'] : 'transparent',

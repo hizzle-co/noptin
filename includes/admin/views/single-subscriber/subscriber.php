@@ -17,7 +17,7 @@
 <div class="wrap noptin-single-subscriber-page" id="noptin-wrapper">
 	<h1 class="title">
 		<?php esc_html_e( 'Subscriber','newsletter-optin-box' ); ?>
-		<a href="<?php echo esc_url( add_query_arg( 'add', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) ) ); ?>" class="page-title-action"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a>
+		<a href="<?php echo esc_url( add_query_arg( 'add', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
 	</h1>
 
 	<form name="noptin-edit-subscriber" method="post">

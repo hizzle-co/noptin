@@ -13,7 +13,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Setting tabs.
-$tabs = array(
+$form_tabs = array(
 	'form'         => __( 'Form', 'newsletter-optin-box' ),
 	'messages'     => __( 'Messages', 'newsletter-optin-box' ),
 	'email'        => __( 'Welcome Email', 'newsletter-optin-box' ),
@@ -21,8 +21,8 @@ $tabs = array(
 	'settings'     => __( 'Advanced', 'newsletter-optin-box' ),
 );
 
-$tabs = apply_filters( 'noptin_form_editor_tabs', $tabs );
-$tab  = isset( $_GET['tab'] )  && array_key_exists( $_GET['tab'], $tabs ) ? noptin_clean( $_GET['tab'] ) : 'form';
+$form_tabs   = apply_filters( 'noptin_form_editor_tabs', $form_tabs );
+$current_tab = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $form_tabs ) ? noptin_clean( $_GET['tab'] ) : 'form'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 add_thickbox();
 
@@ -38,13 +38,13 @@ add_thickbox();
 			<ul class="noptin-tab-list">
 				<?php
 
-					foreach ( $tabs as $id => $label ) :
+					foreach ( $form_tabs as $form_tab => $label ) :
 
 						printf(
 							'<li class="noptin-form-tab-%s"><a href="%s" data-id="%s" class="noptin-tab-button">%s</a></li>',
-							esc_attr( $id ) . ( $tab == $id ? ' active' : '' ),
-							esc_url( add_query_arg( 'tab', $id ) ),
-							esc_attr( $id ),
+							esc_attr( $form_tab ) . ( $current_tab === $form_tab ? ' active' : '' ),
+							esc_url( add_query_arg( 'tab', $form_tab ) ),
+							esc_attr( $form_tab ),
 							esc_html( $label )
 						);
 
@@ -55,20 +55,20 @@ add_thickbox();
 
 			<?php
 
-				foreach ( array_keys( $tabs ) as $id ) :
+				foreach ( array_keys( $form_tabs ) as $form_tab ) :
 
 					printf(
 						'<div data-id="%s" class="noptin-form-tab-content noptin-form-tab-content-%s %s">',
-						esc_attr( $id ),
-						esc_attr( $id ),
-						$tab == $id ? 'noptin-form-tab-content-active' : ''
+						esc_attr( $form_tab ),
+						esc_attr( $form_tab ),
+						$current_tab === $form_tab ? 'noptin-form-tab-content-active' : ''
 					);
 
-					if ( file_exists( plugin_dir_path( __FILE__ ) . "tab-$id.php" ) ) {
-						include plugin_dir_path( __FILE__ ) . "tab-$id.php";
+					if ( file_exists( plugin_dir_path( __FILE__ ) . "tab-$form_tab.php" ) ) {
+						include plugin_dir_path( __FILE__ ) . "tab-$form_tab.php";
 					}
 
-					do_action( "noptin_form_editor_tab_$id", $form );
+					do_action( "noptin_form_editor_tab_$form_tab", $form );
 
 					echo '</div>';
 				endforeach;
@@ -83,5 +83,5 @@ add_thickbox();
 
 <?php // Content for Thickboxes ?>
 <div id="noptin-form-variables" style="display: none;">
-	<?php include plugin_dir_path( __FILE__ ) . 'dynamic-content-tags.php'; ?>
+	<?php require plugin_dir_path( __FILE__ ) . 'dynamic-content-tags.php'; ?>
 </div>

@@ -51,7 +51,7 @@ if ( empty( $trigger_settings ) && empty( $action_settings ) ) {
 		<?php if ( ! empty( $trigger_settings ) ) { ?>
 			<div class="noptin-automation-rule-editor-section">
 				<hr>
-				<h2 style="margin-bottom: 0.2em;"><?php _e( 'Trigger Settings', 'newsletter-optin-box' ); ?></h2>
+				<h2 style="margin-bottom: 0.2em;"><?php esc_html_e( 'Trigger Settings', 'newsletter-optin-box' ); ?></h2>
 				<p class="description" style="margin-bottom: 16px;"><?php echo $trigger->get_description(); ?></p>
 				<?php foreach ( $trigger_settings as $id => $args ) { ?>
 					<?php Noptin_Vue::render_el( "trigger_settings['$id']", $args ); ?>
@@ -62,7 +62,7 @@ if ( empty( $trigger_settings ) && empty( $action_settings ) ) {
 		<?php if ( ! empty( $action_settings ) ) { ?>
 			<div class="noptin-automation-rule-editor-section">
 				<hr>
-				<h2 style="margin-bottom: 0.2em;"><?php _e( 'Action Settings', 'newsletter-optin-box' ); ?></h2>
+				<h2 style="margin-bottom: 0.2em;"><?php esc_html_e( 'Action Settings', 'newsletter-optin-box' ); ?></h2>
 				<p class="description" style="margin-bottom: 16px;"><?php echo $action->get_description(); ?></p>
 				<?php foreach ( $action_settings as $id => $args ) { ?>
 					<?php Noptin_Vue::render_el( "action_settings['$id']", $args ); ?>
@@ -71,7 +71,7 @@ if ( empty( $trigger_settings ) && empty( $action_settings ) ) {
 		<?php } ?>
 
 		<div>
-			<input @click.prevent="saveRule" type="submit" class="button button-primary noptin-automation-rule-edit" value="<?php _e( 'Save Changes', 'newsletter-optin-box' ); ?>">
+			<input @click.prevent="saveRule" type="submit" class="button button-primary noptin-automation-rule-edit" value="<?php esc_html_e( 'Save Changes', 'newsletter-optin-box' ); ?>">
 			<span class="spinner save-automation-rule"></span>
 		</div>
 

@@ -128,7 +128,6 @@ class Noptin_Form_Asset_Manager {
 			if ( is_using_new_noptin_forms() ) {
 				wp_enqueue_style( 'noptin_front' );
 			}
-
 		}
 
 		do_action( 'noptin_load_form_scripts', $this );
@@ -180,16 +179,18 @@ class Noptin_Form_Asset_Manager {
 				'noptin-form-block',
 				noptin()->plugin_url . 'includes/assets/js/dist/blocks-new.js',
 				array( 'wp-blocks', 'wp-i18n', 'wp-element', 'underscore', 'wp-components' ),
-				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks-new.js' )
+				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks-new.js' ),
+				true
 			);
 
-		} else if ( $pagenow !== 'widgets.php' ) {
+		} elseif ( 'widgets.php' !== $pagenow ) {
 
 			wp_enqueue_script(
 				'noptin-form-block',
 				noptin()->plugin_url . 'includes/assets/js/dist/blocks.js',
 				array( 'wp-blocks', 'wp-editor', 'wp-i18n', 'wp-element', 'underscore', 'wp-components' ),
-				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks.js' )
+				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks.js' ),
+				true
 			);
 
 		}
@@ -210,7 +211,7 @@ class Noptin_Form_Asset_Manager {
 			array(
 				'label' => __( 'Single-line / Horizontal Form', 'newsletter-optin-box' ),
 				'value' => -1,
-			)
+			),
 		);
 
 		foreach ( $forms as $form ) {

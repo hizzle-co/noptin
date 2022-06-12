@@ -346,7 +346,7 @@ class Noptin_Form_Manager {
 
 		// Maybe display the form.
 		if ( $echo ) {
-			echo $html_form;
+			echo $html_form; // phpcs ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		return $html_form;

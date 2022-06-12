@@ -47,26 +47,26 @@ class Noptin_Sidebar extends WP_Widget {
 		if ( ! empty( $instance['form'] ) && -1 !== $instance['form'] ) {
 
 			$form = noptin_get_optin_form( absint( $instance['form'] ) );
+
 			if ( ! $form->can_show() ) {
 				return;
 			}
-
 		}
 
 		// Display opening wrapper.
-		echo $args['before_widget'];
+		echo $args['before_widget']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 
 		// Display title.
 		if ( ! empty( $instance['title'] ) ) {
 			$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
-			echo $args['before_title'] . esc_html( $title ) . $args['after_title'];
+			echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 		}
 
 		// Display newsletter form.
 		show_noptin_form( $instance );
 
 		// Display the closing wrapper.
-		echo $args['after_widget'];
+		echo $args['after_widget']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -146,7 +146,13 @@ class Noptin_Sidebar extends WP_Widget {
 		?>
 
 		<p class="description">
-			<?php printf( __( 'You can edit or create new newsletter sign-up forms in the <a href="%s">Noptin forms overview</a> page.', 'newsletter-optin-box' ), admin_url( 'edit.php?post_type=noptin-form' ) ); ?>
+			<?php
+				printf(
+					// translators: %1$s is a link to the newsletter form editor.
+					wp_kses_post( __( 'You can edit or create new newsletter sign-up forms in the <a href="%s">Noptin forms overview</a> page.', 'newsletter-optin-box' ) ),
+					esc_url( admin_url( 'edit.php?post_type=noptin-form' ) )
+				);
+			?>
 		</p>
 
 		<?php

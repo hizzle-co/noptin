@@ -3,7 +3,7 @@
  * Displays a list of all automation rules
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';

@@ -154,7 +154,7 @@ class Noptin_Form_Admin {
 	public function save_edited_form( $post_id, $post ) {
 
 		// Do not save for ajax requests.
-		if ( ( defined( 'DOING_AJAX') && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
 			return;
 		}
 
@@ -188,7 +188,7 @@ class Noptin_Form_Admin {
 
 		// Abort if it does not exist.
 		if ( ! $form->exists() ) {
-			return;;
+			return;
 		}
 
 		// Prepare data being saved.
@@ -196,16 +196,14 @@ class Noptin_Form_Admin {
 
 		foreach ( $form->get_form_properties() as $prop ) {
 
-			if ( ! in_array( $prop, array( 'id', 'title', 'status' ) ) ) {
+			if ( ! in_array( $prop, array( 'id', 'title', 'status' ), true ) ) {
 
-				if ( isset( $data[ $prop ] ) && ( ! empty( $data[ $prop ] ) || '0' == $data[ $prop ] ) ) {
+				if ( isset( $data[ $prop ] ) && ( ! empty( $data[ $prop ] ) || '0' === $data[ $prop ] ) ) {
 					update_post_meta( $post_id, "form_$prop", $data[ $prop ] );
 				} else {
 					delete_post_meta( $post_id, "form_$prop" );
 				}
-
 			}
-
 		}
 
 		do_action( 'after_save_edited_noptin_form', $form );
@@ -223,16 +221,16 @@ class Noptin_Form_Admin {
 
 		$messages['noptin-form'] = array(
 			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf( __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			1  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
 			2  => __( 'Custom field updated.', 'newsletter-optin-box' ),
 			3  => __( 'Custom field deleted.', 'newsletter-optin-box' ),
-			4  => sprintf( __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			4  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
 			5  => __( 'Form restored.', 'newsletter-optin-box' ),
-			6  => sprintf( __( 'Form published. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			7  => sprintf( __( 'Form saved. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			8  => sprintf( __( 'Form submitted. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			9  => sprintf( __( 'Form scheduled. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			10 => sprintf( __( 'Form draft updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			6  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form published. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			7  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form saved. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			8  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form submitted. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			9  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form scheduled. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			10 => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form draft updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
 		);
 
 		return $messages;

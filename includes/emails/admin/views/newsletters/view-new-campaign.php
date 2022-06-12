@@ -25,15 +25,15 @@
 				<p><?php echo wp_kses_post( $type['description'] ); ?></p>
 
 				<?php if ( ! $type['is_installed'] ) : ?>
-					<p style="color: #a00;"><em><?php _e( 'Not available in your plan', 'newsletter-optin-box' ); ?></em></p>
+					<p style="color: #a00;"><em><?php esc_html_e( 'Not available in your plan', 'newsletter-optin-box' ); ?></em></p>
 				<?php endif; ?>
 
 				<div class="noptin-email-type-action">
 
 					<?php if ( ! $type['is_installed'] ) : ?>
-						<a href="https://noptin.com/product/ultimate-addons-pack?utm_medium=plugin-dashboard&utm_campaign=newsletter-emails&utm_source=<?php echo sanitize_key( $key ); ?>" class="button" target="_blank"><?php _e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
+						<a href="https://noptin.com/product/ultimate-addons-pack?utm_medium=plugin-dashboard&utm_campaign=newsletter-emails&utm_source=<?php echo sanitize_key( $key ); ?>" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
 					<?php else: ?>
-						<a href="<?php echo esc_url( add_query_arg( 'campaign', $key, $add_new_campaign_url ) ); ?>" class="button button-primary"><?php _e( 'Send email', 'newsletter-optin-box' ); ?></a>
+						<a href="<?php echo esc_url( add_query_arg( 'campaign', $key, $add_new_campaign_url ) ); ?>" class="button button-primary"><?php esc_html_e( 'Send email', 'newsletter-optin-box' ); ?></a>
 					<?php endif; ?>
 
 				</div>

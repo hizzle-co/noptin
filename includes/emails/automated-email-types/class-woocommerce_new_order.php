@@ -80,10 +80,10 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'We value your opinion and want to make your shopping experience perfect - so your feedback is important to us!', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Please reply to this email with any suggestions that might help us improve.', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Thanks for your help!', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'We value your opinion and want to make your shopping experience perfect - so your feedback is important to us!', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Please reply to this email with any suggestions that might help us improve.', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Thanks for your help!', 'newsletter-optin-box' ); ?></p>
 		<p>[[blog_name]]</p>
 		<?php
 		return ob_get_clean();
@@ -160,7 +160,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			<p>
 				<label>
 					<strong class="noptin-label-span">
-						<?php _e( 'Send this email whenever an order is:-', 'newsletter-optin-box' ); ?>
+						<?php esc_html_e( 'Send this email whenever an order is:-', 'newsletter-optin-box' ); ?>
 					</strong>
 					<select name="noptin_email[order_status]" id="noptin-automated-email-order-status" class="widefat">
 						<?php foreach ( $statuses as $key => $label ) : ?>
@@ -173,7 +173,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			<p>
 				<label>
 					<input type="checkbox" name="noptin_email[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
-					<strong><?php _e( 'Only send to new customers?', 'newsletter-optin-box' ); ?></strong>
+					<strong><?php esc_html_e( 'Only send to new customers?', 'newsletter-optin-box' ); ?></strong>
 				</label>
 			</p>
 		<?php

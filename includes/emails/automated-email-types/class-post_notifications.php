@@ -105,9 +105,9 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		<p>[[featured_image size="medium_large"]]</p>
 		<p>[[post_excerpt]]</p>
 		<p>[[button url="[[post_url]]" text="<?php esc_attr_e( 'Continue Reading', 'newsletter-optin-box' ); ?>"]]</p>
-		<p><?php _e( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( "If that doesn't work, copy and paste the following link in your browser:", 'newsletter-optin-box' ); ?></p>
 		<p>[[post_url]]</p>
-		<p><?php _e( 'Cheers', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Cheers', 'newsletter-optin-box' ); ?></p>
 		<p>[[post_author]]</p>
 		<?php
 		return ob_get_clean();

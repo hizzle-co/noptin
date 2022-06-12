@@ -6,9 +6,7 @@
  * @version  1.5.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Noptin_Addons Class.

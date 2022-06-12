@@ -23,15 +23,15 @@
 				<tbody>
 					<tr>
 						<th scope="row">
-							<label for="noptin-upload"><?php _e( 'Choose a CSV file from your computer:', 'newsletter-optin-box' ); ?></label>
+							<label for="noptin-upload"><?php esc_html_e( 'Choose a CSV file from your computer:', 'newsletter-optin-box' ); ?></label>
 						</th>
 						<td><input type="file" id="noptin-upload" accept=".csv" onchange="jQuery('.noptin-import-continue').removeAttr('disabled')"></td>
 					</tr>
 					<tr>
-						<th><label for="noptin-importer-update-existing"><?php _e( 'Update existing subscribers', 'newsletter-optin-box' ); ?></label></th>
+						<th><label for="noptin-importer-update-existing"><?php esc_html_e( 'Update existing subscribers', 'newsletter-optin-box' ); ?></label></th>
 						<td>
 							<input type="checkbox" id="noptin-importer-update-existing" checked="checked" value="1">
-							<label for="noptin-importer-update-existing"><?php _e( 'Existing subscribers that match by email address will be updated.', 'newsletter-optin-box' ); ?></label>
+							<label for="noptin-importer-update-existing"><?php esc_html_e( 'Existing subscribers that match by email address will be updated.', 'newsletter-optin-box' ); ?></label>
 						</td>
 					</tr>
 			</table>

@@ -59,7 +59,7 @@ class Noptin_Formidable_Forms extends FrmFormAction {
                         		<option value=""><?php esc_html_e( 'Map Field', 'newsletter-optin-box' ); ?></option>
 								<?php foreach ( $form_fields as $form_field ) : ?>
 									<option
-										value="<?php echo esc_attr( $form_field->id ) ?>"
+										value="<?php echo esc_attr( $form_field->id ); ?>"
 										<?php selected( isset( $post_content['noptin_custom_fields'][ $key ] ) && $post_content['noptin_custom_fields'][ $key ] === $form_field->id ); ?>
 										><?php echo esc_html( FrmAppHelper::truncate( $form_field->name, 40 ) ); ?></option>
 								<?php endforeach; ?>

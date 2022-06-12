@@ -14,7 +14,7 @@ $email_type = $campaign->get_email_type();
 
 		<tr>
 			<th scope="row">
-				<label for="noptin-email-type"><?php _e( 'Email Type', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-email-type"><?php esc_html_e( 'Email Type', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<select name="noptin_email[email_type]" id="noptin-email-type" class="widefat">
@@ -30,7 +30,7 @@ $email_type = $campaign->get_email_type();
 
 		<tr class="noptin-is-conditional noptin-show-if-email-is-plain_text">
 			<th scope="row">
-				<label for="noptin-email-content-plain_text"><?php _e( 'Email Content', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-email-content-plain_text"><?php esc_html_e( 'Email Content', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<p><textarea name="noptin_email[content_plain_text]" id="noptin-email-content-plain_text" rows="15" class="widefat"><?php echo esc_textarea( $campaign->get_content( 'plain_text' ) ); ?></textarea></p>
@@ -49,7 +49,7 @@ $email_type = $campaign->get_email_type();
 
 		<tr class="noptin-is-conditional noptin-show-if-email-is-raw_html">
 			<th scope="row">
-				<label for="noptin-email-content-raw_html"><?php _e( 'Email Content', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-email-content-raw_html"><?php esc_html_e( 'Email Content', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<p><textarea name="noptin_email[content_raw_html]" id="noptin-email-content-raw_html" rows="15" class="widefat"><?php echo esc_textarea( $campaign->get_content( 'raw_html' ) ); ?></textarea></p>
@@ -68,7 +68,7 @@ $email_type = $campaign->get_email_type();
 
 		<tr class="noptin-is-conditional noptin-show-if-email-is-normal">
 			<th scope="row">
-				<label for="noptin-email-content"><?php _e( 'Email Content', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-email-content"><?php esc_html_e( 'Email Content', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<?php

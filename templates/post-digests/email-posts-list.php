@@ -7,7 +7,7 @@
  * @var WP_Post[] $posts
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 ?>
 

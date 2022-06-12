@@ -566,31 +566,31 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 				<label class="noptin-margin-y">
 					<strong><?php echo esc_html( ucwords( $this->list_providers->get_name() ) ); ?></strong>
 					<select name="noptin_email[<?php echo esc_attr( $this->slug ); ?>][list]" style="width: 100%;" class="list-select">
-						<option value="0" <?php selected( empty( $list ) ) ?>><?php _e( 'Select an option', 'newsletter-optin-box' );?></option>
+						<option value="0" <?php selected( empty( $list ) ); ?>><?php esc_html_e( 'Select an option', 'newsletter-optin-box' );?></option>
 						<?php foreach ( $this->list_providers->get_dropdown_lists() as $id => $name ) :?>
-							<option value="<?php echo esc_attr( $id ) ?>" <?php selected( $id, $list ) ?>><?php echo esc_html( $name );?></option>
+							<option value="<?php echo esc_attr( $id ); ?>" <?php selected( $id, $list ); ?>><?php echo esc_html( $name );?></option>
 						<?php endforeach; ?>
 					</select>
 				</label>
 
 				<?php if ( $this->supports( 'tags' ) ) : ?>
 					<label class="noptin-margin-y">
-						<strong><?php _e( 'Tags', 'newsletter-optin-box' ); ?></strong>
-						<input style="width: 100%;" type="text" value="<?php echo esc_attr( $tags ) ?>" name="noptin_email[<?php echo esc_attr( $this->slug ); ?>][tags]" />
+						<strong><?php esc_html_e( 'Tags', 'newsletter-optin-box' ); ?></strong>
+						<input style="width: 100%;" type="text" value="<?php echo esc_attr( $tags ); ?>" name="noptin_email[<?php echo esc_attr( $this->slug ); ?>][tags]" />
 					</label>
 				<?php endif; ?>
 
 				<?php foreach ( $this->list_providers->get_lists() as $_list ) : ?>
-					<div class="noptin-filter-list noptin-<?php echo esc_attr( $this->slug );?>-filter-list noptin-list-<?php echo esc_attr( $_list->get_id() ) ?>">
+					<div class="noptin-filter-list noptin-<?php echo esc_attr( $this->slug );?>-filter-list noptin-list-<?php echo esc_attr( $_list->get_id() ); ?>">
 					<?php foreach ( $_list->get_children() as $child_id => $child ) : ?>
 						<?php $value = isset( $extra[ $_list->get_id() ][ $child_id ] ) ? $extra[ $_list->get_id() ][ $child_id ] : '' ?>
 						<label class="noptin-margin-y"><strong><?php echo esc_html( $child['label'] ); ?></strong>
 							<select name="noptin_email[<?php echo esc_attr( $this->slug ); ?>][extra][<?php echo esc_attr( $_list->get_id() ); ?>][<?php echo esc_attr( $child_id ); ?>]" style="width: 100%;">
-								<option <?php selected( empty( $value ) ) ?> value='0'>
-									<?php _e( 'All', 'newsletter-optin-box' ); ?>
+								<option <?php selected( empty( $value ) ); ?> value='0'>
+									<?php esc_html_e( 'All', 'newsletter-optin-box' ); ?>
 								</option>
 								<?php foreach ( $child['options'] as $id => $name ) : ?>
-									<option <?php selected( $value, $id ) ?> value='<?php echo esc_attr( $id );?>'>
+									<option <?php selected( $value, $id ); ?> value='<?php echo esc_attr( $id );?>'>
 										<?php echo sanitize_text_field( $name ); ?>
 									</option>
 								<?php endforeach; ?>

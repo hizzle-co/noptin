@@ -88,10 +88,10 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'To show you that we appreciate your loyalty, here is a coupon code for 20% off your next order.', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'To show you that we appreciate your loyalty, here is a coupon code for 20% off your next order.', 'newsletter-optin-box' ); ?></p>
 		<p><h2 style="text-align: center;">20OFF</h2></p>
-		<p><?php _e( 'Thanks for choosing [[blog_name]]!', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Thanks for choosing [[blog_name]]!', 'newsletter-optin-box' ); ?></p>
 		<?php
 		return ob_get_clean();
 	}
@@ -123,12 +123,12 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 			<p>
 				<label>
 					<strong class="noptin-label-span">
-						<?php _e( 'Lifetime Value', 'newsletter-optin-box' ); ?>
+						<?php esc_html_e( 'Lifetime Value', 'newsletter-optin-box' ); ?>
 					</strong>
 					<input class="widefat" type="number" name="noptin_email[lifetime_value]" value="<?php echo floatval( $campaign->get( 'lifetime_value' ) ); ?>" min="0" step="any">
 				</label>
 				<span class="noptin-help-text">
-					<?php _e( "This email is automatically sent whenever a customer's lifetime value surpases the specified amount.", 'newsletter-optin-box' ); ?>
+					<?php esc_html_e( "This email is automatically sent whenever a customer's lifetime value surpases the specified amount.", 'newsletter-optin-box' ); ?>
 				</span>
 			</p>
 		<?php

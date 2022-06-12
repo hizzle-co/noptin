@@ -421,8 +421,8 @@ class Noptin_Admin {
 		?>
 		<div id="tmpl-noptin-deactivation-survey" style='display: none;'>
 			<form class="noptin-deactivation-survey-form">
-				<h2><?php _e( 'Quick Feedback', 'newsletter-optin-box' ); ?> &mdash; Noptin</h2>
-				<p><?php _e( "If you would be kind enough, please let us know why you're deactivating.", 'newsletter-optin-box' ); ?></p>
+				<h2><?php esc_html_e( 'Quick Feedback', 'newsletter-optin-box' ); ?> &mdash; Noptin</h2>
+				<p><?php esc_html_e( "If you would be kind enough, please let us know why you're deactivating.", 'newsletter-optin-box' ); ?></p>
 				<ul id="noptin-deactivation-survey-list">
 					<?php foreach ( $reasons as $reason ) : ?>
 					<li class="noptin-reason <?php echo ! empty( $reason['input'] ) ? ' noptin-reason-has-input' : '' ; ?>">
@@ -440,7 +440,7 @@ class Noptin_Admin {
 				</p>
 				<div class="alignright">
 					<button  type="submit" class="button button-primary"><?php esc_html_e( 'Submit and Deactivate', 'newsletter-optin-box' ); ?></button>
-					<a href="" class="noptin-deactivation-skip-survey button button-link"><?php _e( 'Skip and Deactivate', 'newsletter-optin-box' ); ?></a>
+					<a href="" class="noptin-deactivation-skip-survey button button-link"><?php esc_html_e( 'Skip and Deactivate', 'newsletter-optin-box' ); ?></a>
 				</div>
 				<input type="hidden" name="website" value="<?php echo esc_attr( home_url() ); ?>" />
 				<input type="hidden" name="slug" value="noptin" />
@@ -690,12 +690,12 @@ class Noptin_Admin {
 
 		?>
 		<div class="wrap" id="noptin-wrapper">
-			<h1 class="wp-heading-inline"><?php echo get_admin_page_title(); ?> <a href="<?php echo esc_url( add_query_arg( 'create', '1' ) ); ?>" class="page-title-action noptin-add-automation-rule"><?php _e( 'Add New', 'newsletter-optin-box' ); ?></a></h1>
+			<h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?> <a href="<?php echo esc_url( add_query_arg( 'create', '1' ) ); ?>" class="page-title-action noptin-add-automation-rule"><?php esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a></h1>
 			<?php $this->show_notices(); ?>
 			<form id="noptin-automation-rules-table" method="POST">
 				<?php $table->display(); ?>
 			</form>
-			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
+			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
 		</div>
 		<?php
 
@@ -730,9 +730,9 @@ class Noptin_Admin {
 
 		?>
 		<div class="wrap" id="noptin-wrapper">
-			<h1 class="wp-heading-inline"><?php _e( 'Create an Automation Rule', 'newsletter-optin-box' ); ?></h1>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Create an Automation Rule', 'newsletter-optin-box' ); ?></h1>
 			<?php get_noptin_template( 'automation-rules/create.php' ); ?>
-			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
+			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
 		</div>
 		<?php
 
@@ -767,9 +767,9 @@ class Noptin_Admin {
 
 		?>
 		<div class="wrap" id="noptin-wrapper">
-			<h1 class="wp-heading-inline"><?php _e( 'Edit Automation Rule', 'newsletter-optin-box' ); ?></h1>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Edit Automation Rule', 'newsletter-optin-box' ); ?></h1>
 			<?php get_noptin_template( 'automation-rules/edit.php', compact( 'rule_id' ) ); ?>
-			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php _e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
+			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
 		</div>
 		<?php
 

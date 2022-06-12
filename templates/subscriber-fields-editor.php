@@ -1,4 +1,5 @@
-<p <?php echo $restrict; ?> class="description"><?php _e( 'Collect more information from your subscribers by adding custom fields.', 'newsletter-optin-box' ); ?>&nbsp;<a href="https://noptin.com/guide/email-subscribers/custom-fields/" target="_blank"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?></a></p>
+<?php defined( 'ABSPATH' ) || exit; ?>
+<p <?php echo $restrict; ?> class="description"><?php esc_html_e( 'Collect more information from your subscribers by adding custom fields.', 'newsletter-optin-box' ); ?>&nbsp;<a href="https://noptin.com/guide/email-subscribers/custom-fields/" target="_blank"><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?></a></p>
 <div <?php echo $restrict; ?> id="noptin-subscriber-fields-editor-available-fields" class="noptin-accordion-wrapper" style="max-width: 700px;">
 
 	<span v-for="field in <?php echo esc_attr( $id ); ?>" :key="field.field_key">
@@ -52,11 +53,13 @@
 					}
 
 					$label = sprintf(
+						// Translators: %s is the connection name.
 						__( '%s Equivalent', 'newsletter-optin-box' ),
 						$connection->name
 					);
 
 					$placeholder = sprintf(
+						// Translators: %s is the connection name.
 						__( 'Select %s Equivalent', 'newsletter-optin-box' ),
 						$connection->name
 					);
@@ -104,7 +107,6 @@
 						Noptin_Vue::render_el( "field.$list_field", $args );
 
 					}
-
 				}
 
 				do_action( 'noptin_custom_field_settings' );
@@ -141,7 +143,7 @@
 
 			?>
 
-			<a href="#" v-if="! isFieldPredefined(field)" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php _e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
+			<a href="#" v-if="! isFieldPredefined(field)" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php esc_html_e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
 			<span v-if="! isFieldFirst(field)">
 				<span v-if="! isFieldPredefined(field)">&nbsp;|&nbsp;</span>
 				<a href="#"  @click.prevent="moveUp(field)"><?php esc_html_e( 'Move Up', 'newsletter-optin-box' ); ?></a>
@@ -154,5 +156,5 @@
 
 </div>
 <p>
-	<button class="button noptin-button-standout" type="button" @click.prevent="addField()"><?php _e( 'Add Field', 'newsletter-optin-box' ); ?></button>
+	<button class="button noptin-button-standout" type="button" @click.prevent="addField()"><?php esc_html_e( 'Add Field', 'newsletter-optin-box' ); ?></button>
 </p>

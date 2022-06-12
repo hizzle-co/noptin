@@ -30,7 +30,7 @@
 
 		<!-- Action buttons -->
 		<?php if ( 'edit_campaign' === $section ): ?>
-			<a href="<?php echo esc_url( add_query_arg( array( 'sub_section' => 'new_campaign', 'campaign' => false ) ) ); ?>" class="page-title-action"><?php echo _e( 'Add New', 'newsletter-optin-box' ); ?></a>
+			<a href="<?php echo esc_url( add_query_arg( array( 'sub_section' => 'new_campaign', 'campaign' => false ) ) ); ?>" class="page-title-action"><?php echo esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
 		<?php endif; ?>
 
 		<!-- Title area end -->

@@ -61,6 +61,10 @@
 		<exclude-pattern>*</exclude-pattern>
 	</rule>	
 
+	<rule ref="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>	
+
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array" value="newsletter-optin-box" />

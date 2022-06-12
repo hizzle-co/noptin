@@ -15,7 +15,7 @@
 							'label'   => 'Type',
 							'options' => wp_list_pluck( $field_types, 'label', 'type' ),
 							'normal'  => true,
-							'@change' => "field.type.label = getDefaultLabel(field.type.type)"
+							'@change' => 'field.type.label = getDefaultLabel(field.type.type)',
 						);
 						$args = Noptin_Vue::sanitize_el( 'field.type.type', $args );
 						Noptin_Vue::select( 'field.type.type', $args );
@@ -26,11 +26,11 @@
 						}
 
 						?>
-						<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php _e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
+						<a href="#" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php esc_html_e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
 				</v-expansion-panel-content>
 			</v-expansion-panel>
 		</draggable>
 
-	<v-btn outlined color="primary" @click.prevent="addField"><?php _e( 'Add Field', 'newsletter-optin-box' ); ?></v-btn>
+	<v-btn outlined color="primary" @click.prevent="addField"><?php esc_html_e( 'Add Field', 'newsletter-optin-box' ); ?></v-btn>
 
 </v-card>

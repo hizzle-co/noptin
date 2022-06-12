@@ -3,8 +3,7 @@
 	<?php
 
 		// Display the title.
-		$title = noptin_clean( get_admin_page_title() );
-		echo "<h1>$title</h1>";
+		echo '<h1>' . esc_html( get_admin_page_title() ) . '</h1>';
 
 		// Fire a hook before printing the settings page.
 		do_action( 'noptin_settings_page_top' );
@@ -16,17 +15,19 @@
 		<nav class="nav-tab-wrapper">
 			<?php
 
-				foreach ( Noptin_Settings::get_sections() as $id => $title ) :
+				foreach ( Noptin_Settings::get_sections() as $section_id => $section_title ) :
 
 					// For those sections that have sub-sections.
-					if ( is_array( $title ) ) {
-						$title = $title['label'];
+					if ( is_array( $section_title ) ) {
+						$section_title = $section_title['label'];
 					}
 
-					$title = noptin_clean( $title );
-					$id    = esc_attr( $id );
-
-					echo "<a href='' :class=\"tabClass('$id')\" @click.prevent=\"switchTab('$id')\">$title</a>\n\t\t\t";
+					printf(
+						'<a href="#" :class="tabClass(\'%s\')" @click.prevent="switchTab(\'%s\')">%s</a>\n\t\t\t',
+						esc_attr( $section_id ),
+						esc_attr( $section_id ),
+						esc_html( $section_title )
+					);
 
 				endforeach;
 			?>

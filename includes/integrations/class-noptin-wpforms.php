@@ -59,7 +59,7 @@ class Noptin_WPForms {
 
 				<div class="wpforms-map-noptin-fields wpforms-builder-settings-block">
 					<div class="wpforms-builder-settings-block-header">
-						<span><?php _e( 'Map Fields', 'newsletter-optin-box' ); ?> <a href="https://noptin.com/guide/integrations/wpforms" target="_blank"><?php _e( 'Learn More!', 'newsletter-optin-box' ); ?></a></span>
+						<span><?php esc_html_e( 'Map Fields', 'newsletter-optin-box' ); ?> <a href="https://noptin.com/guide/integrations/wpforms" target="_blank"><?php esc_html_e( 'Learn More!', 'newsletter-optin-box' ); ?></a></span>
 					</div>
 					<div class="wpforms-builder-settings-block-content">
 						<?php

@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="profile" href="http://gmpg.org/xfn/11">
         <meta name="robots" content="noindex, nofollow" />
-        <title><?php echo __( 'Noptin Newsletter', 'newsletter-optin-box' ); ?></title>
+        <title><?php esc_html_e( 'Noptin Newsletter', 'newsletter-optin-box' ); ?></title>
         <style>
             .noptin-actions-page {
                 background: #f5f5f5;

@@ -3,9 +3,7 @@
  * Upgrades the db
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Noptin_Install Class.

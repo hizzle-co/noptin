@@ -5,9 +5,7 @@
  * @package Noptin\noptin.com
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Noptin_COM_Helper Class

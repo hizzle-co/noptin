@@ -41,31 +41,31 @@
 		<?php endforeach; ?>
 
 		<tr class="form-field-row-status">
-			<th scope="row"><label for="field_status"><?php _e( 'Subscription Status', 'newsletter-optin-box' ); ?></label></th>
+			<th scope="row"><label for="field_status"><?php esc_html_e( 'Subscription Status', 'newsletter-optin-box' ); ?></label></th>
 			<td>
 				<div>
 					<select name="noptin_fields[active]" id="field_status" class="noptin-text">
-						<option <?php selected( 0 === (int) $subscriber->active ) ?> value="0"><?php _e( 'Subscribed', 'newsletter-optin-box' ); ?></option>
-						<option <?php selected( 0 !== (int) $subscriber->active ) ?> value="1"><?php _e( 'Pending', 'newsletter-optin-box' ); ?></option>
+						<option <?php selected( 0 === (int) $subscriber->active ); ?> value="0"><?php esc_html_e( 'Subscribed', 'newsletter-optin-box' ); ?></option>
+						<option <?php selected( 0 !== (int) $subscriber->active ); ?> value="1"><?php esc_html_e( 'Pending', 'newsletter-optin-box' ); ?></option>
 					</select>
 				</div>
 			</td>
 		</tr>
 
 		<tr class="form-field-row-email-status">
-			<th scope="row"><label for="field_email_status"><?php _e( 'Email Status', 'newsletter-optin-box' ); ?></label></th>
+			<th scope="row"><label for="field_email_status"><?php esc_html_e( 'Email Status', 'newsletter-optin-box' ); ?></label></th>
 			<td>
 				<div>
 					<select name="noptin_fields[confirmed]" id="field_email_status" class="noptin-text">
-						<option <?php selected( 1 === (int) $subscriber->confirmed ) ?> value="1"><?php _e( 'Confirmed', 'newsletter-optin-box' ); ?></option>
-						<option <?php selected( 1 !== (int) $subscriber->confirmed ) ?> value="0"><?php _e( 'Not Confirmed', 'newsletter-optin-box' ); ?></option>
+						<option <?php selected( 1 === (int) $subscriber->confirmed ); ?> value="1"><?php esc_html_e( 'Confirmed', 'newsletter-optin-box' ); ?></option>
+						<option <?php selected( 1 !== (int) $subscriber->confirmed ); ?> value="0"><?php esc_html_e( 'Not Confirmed', 'newsletter-optin-box' ); ?></option>
 					</select>
 				</div>
 			</td>
 		</tr>
 
 		<tr class="form-field-row-key">
-			<th scope="row"><label for="field_confirm_key"><?php _e( 'Confirmation Key', 'newsletter-optin-box' ); ?></label></th>
+			<th scope="row"><label for="field_confirm_key"><?php esc_html_e( 'Confirmation Key', 'newsletter-optin-box' ); ?></label></th>
 			<td>
 				<div>
 					<input type="text" class="regular-text" id="field_confirm_key" value="<?php echo esc_attr( $subscriber->confirm_key ); ?>" readonly>

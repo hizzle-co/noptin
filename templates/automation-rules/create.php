@@ -9,7 +9,7 @@ $actions  = noptin()->automation_rules->get_actions();
 ?>
 
 <div id="noptin-automation-rule-editor">
-	<p><?php _e( 'Start by selecting a trigger and an action for your rule below.', 'newsletter-optin-box' ); ?></p>
+	<p><?php esc_html_e( 'Start by selecting a trigger and an action for your rule below.', 'newsletter-optin-box' ); ?></p>
 	<form method="POST">
 
 		<div class="noptin-automation-rule-editor-section">
@@ -59,7 +59,7 @@ $actions  = noptin()->automation_rules->get_actions();
 			<input type="hidden" value="" name="action" class="noptin-automation-rule-action-hidden">
 		</div>
 
-		<input type="submit" class="button button-primary noptin-automation-rule-create" value="<?php _e( 'Continue', 'newsletter-optin-box' ); ?>">
+		<input type="submit" class="button button-primary noptin-automation-rule-create" value="<?php esc_html_e( 'Continue', 'newsletter-optin-box' ); ?>">
 		<?php wp_nonce_field( 'noptin-admin-create-automation-rule', 'noptin-admin-create-automation-rule' ); ?>
 		<input type="hidden" name="noptin_admin_action" value="noptin_create_automation_rule">
 	</form>

@@ -197,7 +197,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		<p>
 			<label>
-				<strong class="noptin-label-span"><?php _e( 'Send this email...', 'newsletter-optin-box' ); ?></strong>
+				<strong class="noptin-label-span"><?php esc_html_e( 'Send this email...', 'newsletter-optin-box' ); ?></strong>
 
 				<span class="noptin-post-digest-frequency noptin-inline-block" style="margin-bottom: 10px;">
 					<select name="noptin_email[frequency]" id="noptin-post-digest-frequency">
@@ -208,7 +208,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				</span>
 
 				<span  class="noptin-post-digest-day noptin-inline-block" style="margin-bottom: 10px; display: <?php echo $frequency == 'weekly' ? 'inline-block' : 'none' ; ?>">
-					<?php _e( 'on', 'newsletter-optin-box' ); ?>
+					<?php esc_html_e( 'on', 'newsletter-optin-box' ); ?>
 					<select name="noptin_email[day]">
 						<?php foreach ( $this->get_weekdays() as $key => $label ) : ?>
 							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( (string) $key, $day ); ?>><?php echo esc_html( $label ); ?></option>
@@ -217,7 +217,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				</span>
 
 				<span class="noptin-post-digest-date noptin-inline-block" style="margin-bottom: 10px; display: <?php echo $frequency == 'monthly' ? 'inline-block' : 'none' ; ?>">
-					<?php _e( 'on the', 'newsletter-optin-box' ); ?>
+					<?php esc_html_e( 'on the', 'newsletter-optin-box' ); ?>
 					<select name="noptin_email[date]">
 						<?php foreach ( $dates as $key => $label ) : ?>
 							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $date ); ?>><?php echo esc_html( $label ); ?></option>
@@ -226,7 +226,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				</span>
 
 				<span class="noptin-post-digest-time noptin-inline-block" style="margin-bottom: 10px;">
-					<?php _e( 'at', 'newsletter-optin-box' ); ?>
+					<?php esc_html_e( 'at', 'newsletter-optin-box' ); ?>
 					<input name="noptin_email[time]" class="noptin-schedule-input-time" style="width: 60px;" type="time" value="<?php echo esc_attr( $time ); ?>" placeholder="H:i">
 				</span>
 

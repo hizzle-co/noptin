@@ -97,17 +97,16 @@ class Noptin_Form_Output_Manager {
 				continue;
 			}
 
-			$atts["{$key}_list"] = $connection->get_default_list_id();
+			$atts[ "{$key}_list" ] = $connection->get_default_list_id();
 
 			if ( $connection->supports( 'tags' ) ) {
-				$atts["{$key}_tags"] = get_noptin_option( "noptin_{$key}_default_tags", '' );
+				$atts[ "{$key}_tags" ] = get_noptin_option( "noptin_{$key}_default_tags", '' );
 			}
 
 			// Secondary fields.
 			foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
-				$atts["{$key}_$secondary"] = get_noptin_option( "noptin_{$key}_default_{$secondary}", '' );
+				$atts[ "{$key}_$secondary" ] = get_noptin_option( "noptin_{$key}_default_{$secondary}", '' );
 			}
-
 		}
 
 		return $atts;
@@ -151,7 +150,7 @@ class Noptin_Form_Output_Manager {
 			$atts['html_class'] = isset( $atts['html_class'] ) ? $atts['html_class'] . ' ' . $atts['className'] : $atts['className'];
 		}
 
-		if ( isset( $atts['form'] ) && -1 == $atts['form'] ) {
+		if ( isset( $atts['form'] ) && -1 === (int) $atts['form'] ) {
 			unset( $atts['form'] );
 			$atts = array_merge(
 				array(

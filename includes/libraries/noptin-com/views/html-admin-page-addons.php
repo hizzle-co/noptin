@@ -67,20 +67,20 @@
 
 		<?php if ( Noptin_COM::has_active_membership() ) : ?>
 			<div class="membership-alert">
-				<div><?php _e( 'You have an active membership that allows you to install any of our extensions for free.', 'newsletter-optin-box' ); ?></div>
+				<div><?php esc_html_e( 'You have an active membership that allows you to install any of our extensions for free.', 'newsletter-optin-box' ); ?></div>
 				<a
 					class="addons-button addons-button-installed noptin-helper-deactivate-license-modal"
 					href="#"
 					data-license_key="<?php echo esc_attr( Noptin_COM::get( 'membership_key' ) ); ?>"
 				>
-					<?php _e( 'Deactivate', 'newsletter-optin-box' ); ?>
+					<?php esc_html_e( 'Deactivate', 'newsletter-optin-box' ); ?>
 				</a>
 			</div>
 		<?php else: ?>
 			<div class="membership-alert membership-alert-dark">
-				<div><?php _e( 'A Noptin.com membership allows you to install any of our extensions or integrations for free.', 'newsletter-optin-box' ); ?></div>
+				<div><?php esc_html_e( 'A Noptin.com membership allows you to install any of our extensions or integrations for free.', 'newsletter-optin-box' ); ?></div>
 				<a class="addons-button addons-button-installed" href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=noptinaddons">
-					<?php _e( 'View Pricing', 'newsletter-optin-box' ); ?>
+					<?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>
 				</a>
 			</div>
 		<?php endif; ?>
@@ -101,7 +101,7 @@
 										href="#"
 										data-license_key="<?php echo esc_attr( Noptin_COM::get_active_license( $addon->id )->get_license_key() ); ?>"
 									>
-										<?php _e( 'De-activate license', 'newsletter-optin-box' ); ?>
+										<?php esc_html_e( 'De-activate license', 'newsletter-optin-box' ); ?>
 									</a>
 								<?php endif; ?>
 
@@ -114,7 +114,7 @@
 										class="addons-button addons-button-solid"
 										href="<?php echo wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=noptin-product-with-id-' . $addon->id ), 'install-plugin_noptin-product-with-id-' . $addon->id ); ?>"
 									>
-										<?php _e( 'Install Now', 'newsletter-optin-box' ); ?>
+										<?php esc_html_e( 'Install Now', 'newsletter-optin-box' ); ?>
 									</a>
 
 								<?php else: ?>
@@ -128,7 +128,7 @@
 											href="<?php echo esc_attr( $addon->href ); ?>"
 											target="_blank"
 										>
-											<?php _e( 'Active', 'newsletter-optin-box' ); ?>
+											<?php esc_html_e( 'Active', 'newsletter-optin-box' ); ?>
 										</a>
 
 									<?php else: ?>
@@ -138,7 +138,7 @@
 											class="addons-button-outline-green"
 											href="<?php echo wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin='.$plugin ), 'activate-plugin_'.$plugin ); ?>"
 										>
-											<?php _e( 'Activate', 'newsletter-optin-box' ); ?>
+											<?php esc_html_e( 'Activate', 'newsletter-optin-box' ); ?>
 										</a>
 
 									<?php endif; ?>
@@ -151,9 +151,9 @@
 									href="#"
 									data-id="<?php echo esc_attr( $addon->id ); ?>"
 									data-activating="<?php echo esc_attr( sprintf( __( 'Activating %s', 'newsletter-optin-box' ), $addon->title ) ); ?>">
-									<?php _e( 'Activate license', 'newsletter-optin-box' ); ?>
+									<?php esc_html_e( 'Activate license', 'newsletter-optin-box' ); ?>
 								</a>
-								<a class="addons-button addons-button-solid" href="<?php echo esc_attr( Noptin_Addons::add_in_app_purchase_url_params( $addon->href ) ); ?>" target="_blank"><?php _e( 'Get it', 'newsletter-optin-box' ); ?></a>
+								<a class="addons-button addons-button-solid" href="<?php echo esc_attr( Noptin_Addons::add_in_app_purchase_url_params( $addon->href ) ); ?>" target="_blank"><?php esc_html_e( 'Get it', 'newsletter-optin-box' ); ?></a>
 							<?php endif; ?>
 
 						</div>

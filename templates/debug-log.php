@@ -3,17 +3,15 @@
  * Admin View: Page - Admin Tools > Debug Log
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 ?>
 
 <table class="noptin-admin-table noptin-admin-tools-table widefat" cellspacing="0">
 	<thead>
 		<tr class="noptin-tool-row>">
-			<th style="padding-left: 1.5em;padding-right: 1.5em;"><strong><?php _e( 'Time', 'newsletter-optin-box' ); ?></strong></th>
-			<td style="padding-left: 1.5em;padding-right: 1.5em;"><strong><?php _e( 'Message', 'newsletter-optin-box' ); ?></td>
+			<th style="padding-left: 1.5em;padding-right: 1.5em;"><strong><?php esc_html_e( 'Time', 'newsletter-optin-box' ); ?></strong></th>
+			<td style="padding-left: 1.5em;padding-right: 1.5em;"><strong><?php esc_html_e( 'Message', 'newsletter-optin-box' ); ?></td>
 		</tr>
 	</thead>
 	<tbody class="noptin-tools">

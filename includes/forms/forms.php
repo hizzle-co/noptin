@@ -73,7 +73,7 @@ function display_noptin_subscription_form( $args ) {
 /**
  * Build list of attributes into a string and apply contextual filter on string.
  *
- * The contextual filter is of the form `noptin_{context}_attributes` && `noptin_{$context}_attributes_output`.
+ * The contextual filter is of the form `noptin_{context}_attributes.
  *
  * @since 1.6.0
  *
@@ -86,7 +86,6 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 
 	$attributes = apply_filters( "noptin_{$context}_attributes", $attributes, $args, $context );
 
-	$output = '';
 	foreach ( $attributes as $name => $value ) {
 
 		if ( ! $value ) {
@@ -94,13 +93,11 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 		}
 
 		if ( true === $value ) {
-			$output .= esc_html( $name ) . ' ';
+			echo esc_html( $name ) . ' ';
 		} else {
-			$output .= sprintf( '%s="%s" ', esc_html( $name ), trim( esc_attr( $value ) ) );
+			printf( '%s="%s" ', esc_html( $name ), esc_attr( trim( $value ) ) );
 		}
 	}
-
-	return trim( apply_filters( "noptin_{$context}_attributes_output", trim( $output ), $attributes, $args, $context ) );
 
 }
 
@@ -203,11 +200,11 @@ function noptin_count_optin_forms( $type = '' ) {
 			AND meta.meta_key = '_noptin_optin_type'
 			AND meta.meta_value = %s";
 
-		$sql    = $wpdb->prepare( $sql, $type );
+		$sql    = $wpdb->prepare( $sql, $type ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$where .= " AND meta.meta_key='_noptin_optin_type'";
 	}
 
-	return $wpdb->get_var( "$sql $where;" );
+	return $wpdb->get_var( "$sql $where;" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 }
 
 /**
@@ -399,7 +396,7 @@ function get_default_noptin_form_messages() {
 				'description' => __( 'Shown when someone does not fill all required fields.', 'newsletter-optin-box' ),
 				'default'     => __( 'Please fill in all the required fields.', 'newsletter-optin-box' ),
 			),
-			'accept_terms' => array(
+			'accept_terms'           => array(
 				'label'       => __( 'Terms not Accepted', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when someone does not check the acceptance checkbox.', 'newsletter-optin-box' ),
 				'default'     => __( 'Please accept the terms and conditions first.', 'newsletter-optin-box' ),
@@ -472,7 +469,7 @@ function get_noptin_form_message( $key, $default = '' ) {
 function translate_noptin_form_id( $form_id ) {
 
 	// Do not translate previews.
-	if ( ! empty( $_GET['legacy-widget-preview'] ) || defined( 'IS_NOPTIN_PREVIEW' ) || ( ! empty( $GLOBALS['wp']->query_vars['rest_route'] ) && false !== strpos( $GLOBALS['wp']->query_vars['rest_route'], 'noptin_widget_premade' ) ) ) {
+	if ( ! empty( $_GET['legacy-widget-preview'] ) || defined( 'IS_NOPTIN_PREVIEW' ) || ( ! empty( $GLOBALS['wp']->query_vars['rest_route'] ) && false !== strpos( $GLOBALS['wp']->query_vars['rest_route'], 'noptin_widget_premade' ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return $form_id;
 	}
 

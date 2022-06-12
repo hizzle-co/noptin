@@ -49,24 +49,24 @@
 					<?php endforeach; ?>
 
 					<tr class="form-field-row-status">
-						<th scope="row"><label for="field_status"><?php _e( 'Subscription Status', 'newsletter-optin-box' ); ?></label></th>
+						<th scope="row"><label for="field_status"><?php esc_html_e( 'Subscription Status', 'newsletter-optin-box' ); ?></label></th>
 						<td>
 							<div>
 								<select name="noptin_fields[active]" id="field_status" class="noptin-text">
-									<option <?php selected( ! (bool) get_noptin_option( 'double_optin', false ) ) ?> value="0"><?php _e( 'Subscribed', 'newsletter-optin-box' ); ?></option>
-									<option <?php selected( (bool) get_noptin_option( 'double_optin', false ) ) ?> value="1"><?php _e( 'Pending', 'newsletter-optin-box' ); ?></option>
+									<option <?php selected( ! (bool) get_noptin_option( 'double_optin', false ) ); ?> value="0"><?php esc_html_e( 'Subscribed', 'newsletter-optin-box' ); ?></option>
+									<option <?php selected( (bool) get_noptin_option( 'double_optin', false ) ); ?> value="1"><?php esc_html_e( 'Pending', 'newsletter-optin-box' ); ?></option>
 								</select>
 							</div>
 						</td>
 					</tr>
 
 					<tr class="form-field-row-email-status">
-						<th scope="row"><label for="field_email_status"><?php _e( 'Email Status', 'newsletter-optin-box' ); ?></label></th>
+						<th scope="row"><label for="field_email_status"><?php esc_html_e( 'Email Status', 'newsletter-optin-box' ); ?></label></th>
 						<td>
 							<div>
 								<select name="noptin_fields[confirmed]" id="field_email_status" class="noptin-text">
-									<option value="1"><?php _e( 'Confirmed', 'newsletter-optin-box' ); ?></option>
-									<option selected="selected" value="0"><?php _e( 'Not Confirmed', 'newsletter-optin-box' ); ?></option>
+									<option value="1"><?php esc_html_e( 'Confirmed', 'newsletter-optin-box' ); ?></option>
+									<option selected="selected" value="0"><?php esc_html_e( 'Not Confirmed', 'newsletter-optin-box' ); ?></option>
 								</select>
 							</div>
 						</td>
@@ -74,7 +74,7 @@
 
 					<tr class="form-field-row-submit">
 						<th scope="row"><?php submit_button( __( 'Add Subscriber', 'newsletter-optin-box' ) ); ?></th>
-						<td><!--<a target="_blank" href="https://noptin.com/guide/"><?php _e( 'Need Help?', 'newsletter-optin-box' ); ?></a>!--></td>
+						<td><!--<a target="_blank" href="https://noptin.com/guide/"><?php esc_html_e( 'Need Help?', 'newsletter-optin-box' ); ?></a>!--></td>
 					</tr>
 
 				</tbody>
