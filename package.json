@@ -41,7 +41,7 @@
 		"babel-loader": "8.2.5",
 		"postcss": "8.4.14",
 		"postcss-csso": "6.0.0",
-		"sass": "1.51.0",
+		"sass": "1.52.3",
 		"webpack": "5.72.1",
 		"webpack-cli": "4.9.2"
 	}
