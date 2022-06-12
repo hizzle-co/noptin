@@ -462,17 +462,13 @@ class Noptin {
 				// Check if the table was created.
 				if ( call_user_func( $function ) ) {
 					update_option( $option, 1 );
-				}
 
-				// If not, create the table.
-				else {
+					// If not, create the table.
+				} else {
 					new Noptin_Install( $table );
 				}
-
 			}
-
 		}
-
 	}
 
 	/**
