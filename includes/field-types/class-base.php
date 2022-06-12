@@ -21,7 +21,7 @@ abstract class Noptin_Custom_Field_Type {
 
 	/**
 	 * Custom field type.
-	 * 
+	 *
 	 * @var string
 	 */
 	public $type;
@@ -76,7 +76,7 @@ abstract class Noptin_Custom_Field_Type {
 	 */
 	public function format_value( $value, $subscriber ) {
 		$value = $this->sanitize_value( $value, $subscriber );
-		return '' === $value ? "&mdash;" : $value;
+		return '' === $value ? '&mdash;' : $value;
 	}
 
 }

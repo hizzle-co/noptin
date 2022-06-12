@@ -72,7 +72,7 @@ class Noptin_List_Providers_Table extends WP_List_Table {
 			return esc_html( call_user_func( array( $item, "get_$column_name" ) ) );
 		}
 
-		return "&mdash;";
+		return '&mdash;';
 	}
 
 	/**

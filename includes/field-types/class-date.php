@@ -34,7 +34,7 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 	 * @param false|Noptin_Subscriber $subscriber
 	 */
 	public function sanitize_value( $value, $subscriber ) {
-		return empty( $value ) ? '' : date( 'Y-m-d', strtotime( $value ) );
+		return empty( $value ) ? '' : gmdate( 'Y-m-d', strtotime( $value ) );
 	}
 
 	/**
@@ -49,7 +49,7 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 		$value = $this->sanitize_value( $value, $subscriber );
 
 		if ( empty( $value ) ) {
-			return "&mdash;";
+			return '&mdash;';
 		}
 
 		return date_i18n( get_option( 'date_format' ), strtotime( $value ) );

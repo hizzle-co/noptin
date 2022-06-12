@@ -275,7 +275,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 				)
 			);
 
-			if ( "&mdash;" !== $value ) {
+			if ( '&mdash;' !== $value ) {
 				return $value;
 			}
 		}

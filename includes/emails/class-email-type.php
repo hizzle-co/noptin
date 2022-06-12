@@ -201,7 +201,7 @@ abstract class Noptin_Email_Type {
 				)
 			);
 
-			if ( "&mdash;" !== $value ) {
+			if ( '&mdash;' !== $value ) {
 				return $value;
 			}
 		}
