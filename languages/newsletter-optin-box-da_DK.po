@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-03-13 06:26+0000\n"
+"PO-Revision-Date: 2022-06-12 04:15+0000\n"
 "Last-Translator: Brian Mutende\n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -116,8 +116,9 @@ msgstr ""
 msgid "%s ago"
 msgstr "%s siden"
 
+#. %s is the integration name.
 #: templates/subscriber-fields-editor.php:55
-#: includes/integrations/class-noptin-abstract-ecommerce-integration.php:606
+#: includes/integrations/class-noptin-abstract-ecommerce-integration.php:609
 #, php-format
 msgid "%s Equivalent"
 msgstr ""
@@ -208,7 +209,7 @@ msgstr ""
 msgid "[[customer.first_name]], thanks for being a loyal customer!"
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:95
+#: includes/class-noptin-dynamic-content-tags.php:98
 msgid "A custom field's value of the current subscriber (if known)."
 msgstr ""
 
@@ -242,7 +243,7 @@ msgstr ""
 msgid "A subscriber can either be active or inactive"
 msgstr ""
 
-#: includes/admin/class-noptin-subscribers-admin.php:338
+#: includes/admin/class-noptin-subscribers-admin.php:324
 msgid "A subscriber with that email address exists."
 msgstr ""
 
@@ -302,11 +303,11 @@ msgstr "Aktive formularer skabt med editor til valgfrie formularer."
 msgid "Activity Feed"
 msgstr ""
 
-#: includes/forms/views/tab-form.php:107
+#: includes/forms/views/tab-form.php:108
 msgid "Add basic CSS styles to the form (Recommended)."
 msgstr ""
 
-#: templates/subscriber-fields-editor.php:145
+#: templates/subscriber-fields-editor.php:157
 #: includes/forms/views/legacy/fields-editor.php:34
 msgid "Add Field"
 msgstr "Tilføj felt"
@@ -336,7 +337,7 @@ msgstr ""
 "downloads"
 
 #: includes/integrations/class-noptin-getpaid.php:197
-#: includes/integrations/class-noptin-woocommerce.php:294
+#: includes/integrations/class-noptin-woocommerce.php:328
 #, fuzzy
 #| msgid ""
 #| "Add me to your newsletter and keep me updated whenever your publish new "
@@ -350,7 +351,7 @@ msgstr ""
 
 #: includes/admin/class-noptin-admin.php:693
 #: includes/forms/class-form-manager.php:203
-#: includes/admin/views/view-subscribers.php:24
+#: includes/admin/views/view-subscribers.php:12
 #: includes/admin/views/single-subscriber/subscriber.php:20
 #: includes/emails/admin/views/main-page.php:33
 msgid "Add New"
@@ -398,15 +399,15 @@ msgstr ""
 msgid "Add/Update the subscriber's custom field"
 msgstr "Tilføj/Opdatér abonnentens brugerdefinerede felt"
 
-#: includes/admin/class-noptin-subscribers-table.php:383
+#: includes/admin/class-noptin-subscribers-table.php:419
 msgid "Added"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:142
+#: includes/emails/class-email-tags.php:143
 msgid "Adds a blank vertical space"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:400
+#: includes/admin/class-noptin-vue.php:399
 msgid "Admin Label"
 msgstr ""
 
@@ -435,7 +436,7 @@ msgstr ""
 msgid "After a time delay"
 msgstr "Med forsinkelse"
 
-#: includes/integrations/class-noptin-woocommerce.php:209
+#: includes/integrations/class-noptin-woocommerce.php:237
 msgid "After billing details"
 msgstr "Efter betalingsdetaljer"
 
@@ -452,13 +453,13 @@ msgid "After clicking on something"
 msgstr "Når der klikkes på noget"
 
 #: includes/integrations/class-noptin-edd.php:63
-#: includes/integrations/class-noptin-woocommerce.php:211
+#: includes/integrations/class-noptin-woocommerce.php:239
 msgid "After customer details"
 msgstr "Efter kundedetaljer"
 
 #: includes/integrations/class-noptin-edd.php:62
 #: includes/integrations/class-noptin-getpaid.php:114
-#: includes/integrations/class-noptin-woocommerce.php:208
+#: includes/integrations/class-noptin-woocommerce.php:236
 msgid "After email field"
 msgstr "Efter e-mail-felt"
 
@@ -466,11 +467,11 @@ msgstr "Efter e-mail-felt"
 msgid "After gateways"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:214
+#: includes/integrations/class-noptin-woocommerce.php:242
 msgid "After order notes"
 msgstr "Efter bemærkninger til ordre"
 
-#: includes/integrations/class-noptin-woocommerce.php:212
+#: includes/integrations/class-noptin-woocommerce.php:240
 msgid "After order review"
 msgstr ""
 
@@ -486,7 +487,7 @@ msgstr "Efter betalingsdetaljer"
 msgid "After post content"
 msgstr "Efter indlægets indhold."
 
-#: includes/integrations/class-noptin-woocommerce.php:210
+#: includes/integrations/class-noptin-woocommerce.php:238
 msgid "After shipping details"
 msgstr "Efter information om forsendelse."
 
@@ -541,8 +542,8 @@ msgstr "Der opstod en fejl under afsendelse af tilmeldingse-mail."
 msgid "And get notified everytime we publish a new blog post."
 msgstr "og få besked hver gang der er et nyt blogindlæg."
 
-#: includes/emails/emails.php:348 includes/emails/emails.php:359
-#: includes/emails/emails.php:372 includes/emails/emails.php:405
+#: includes/emails/emails.php:348 includes/emails/emails.php:358
+#: includes/emails/emails.php:386
 #: includes/admin/views/export-subscribers.php:38
 #: includes/admin/views/export-subscribers.php:51
 msgid "Any"
@@ -605,7 +606,7 @@ msgstr ""
 msgid "Automated Emails"
 msgstr "Automatisk nyhedsbrev"
 
-#: includes/forms/views/tab-form.php:75
+#: includes/forms/views/tab-form.php:76
 msgid "Automatically display this form after blog posts and other content."
 msgstr ""
 
@@ -673,7 +674,7 @@ msgstr "Før betalingsdetaljer"
 msgid "Before post content"
 msgstr "Før indlægets indhold."
 
-#: includes/integrations/class-noptin-woocommerce.php:213
+#: includes/integrations/class-noptin-woocommerce.php:241
 msgid "Before submit button"
 msgstr "Før send-knappen"
 
@@ -698,55 +699,55 @@ msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:202
 #: includes/integrations/class-noptin-getpaid.php:275
-#: includes/integrations/class-noptin-woocommerce.php:401
+#: includes/integrations/class-noptin-woocommerce.php:434
 msgid "Billing Address 1"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:203
-#: includes/integrations/class-noptin-woocommerce.php:402
+#: includes/integrations/class-noptin-woocommerce.php:435
 msgid "Billing Address 2"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:205
 #: includes/integrations/class-noptin-getpaid.php:277
-#: includes/integrations/class-noptin-woocommerce.php:404
+#: includes/integrations/class-noptin-woocommerce.php:437
 msgid "Billing City"
 msgstr ""
 
 #: includes/integrations/class-noptin-getpaid.php:274
-#: includes/integrations/class-noptin-woocommerce.php:400
+#: includes/integrations/class-noptin-woocommerce.php:433
 msgid "Billing Company"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:207
 #: includes/integrations/class-noptin-getpaid.php:279
-#: includes/integrations/class-noptin-woocommerce.php:406
+#: includes/integrations/class-noptin-woocommerce.php:439
 msgid "Billing Country"
 msgstr ""
 
 #: includes/integrations/class-noptin-getpaid.php:280
-#: includes/integrations/class-noptin-woocommerce.php:407
+#: includes/integrations/class-noptin-woocommerce.php:440
 msgid "Billing Country Code"
 msgstr ""
 
 #: includes/integrations/class-noptin-getpaid.php:273
-#: includes/integrations/class-noptin-woocommerce.php:399
+#: includes/integrations/class-noptin-woocommerce.php:432
 msgid "Billing Phone"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:204
 #: includes/integrations/class-noptin-getpaid.php:276
-#: includes/integrations/class-noptin-woocommerce.php:403
+#: includes/integrations/class-noptin-woocommerce.php:436
 msgid "Billing Postcode"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:206
 #: includes/integrations/class-noptin-getpaid.php:278
-#: includes/integrations/class-noptin-woocommerce.php:405
+#: includes/integrations/class-noptin-woocommerce.php:438
 msgid "Billing State"
 msgstr ""
 
-#: includes/class-noptin-custom-fields.php:77 includes/subscriber.php:1279
+#: includes/class-noptin-custom-fields.php:80 includes/subscriber.php:1279
 msgid "Birthday"
 msgstr ""
 
@@ -844,7 +845,7 @@ msgstr "Knaplabel"
 msgid "Button Position"
 msgstr "Knapposition"
 
-#: includes/forms/views/tab-form.php:44
+#: includes/forms/views/tab-form.php:45
 msgid "Button Text"
 msgstr ""
 
@@ -929,7 +930,8 @@ msgstr ""
 msgid "Check out our latest blog posts"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:411
+#. %s is the context, e.g users, customers
+#: includes/integrations/class-noptin-abstract-integration.php:461
 #, php-format
 msgid ""
 "Check to display a subscription checkbox instead of automatically "
@@ -946,9 +948,13 @@ msgstr "Afkrydsningsfelt"
 msgid "Checkbox Message"
 msgstr "Tekst til afkrydsningsfelt"
 
-#: includes/integrations/class-noptin-abstract-integration.php:351
+#: includes/integrations/class-noptin-abstract-integration.php:352
 msgid "Checkbox position"
 msgstr "Position for afkrydsningsfelt"
+
+#: includes/integrations/class-noptin-abstract-integration.php:408
+msgid "Checked by default"
+msgstr ""
 
 #: includes/emails/automated-email-types/class-post_notifications.php:110
 msgid "Cheers"
@@ -1305,7 +1311,7 @@ msgid "Default tags"
 msgstr ""
 
 #: includes/admin/class-noptin-admin.php:287
-#: includes/admin/class-noptin-subscribers-table.php:314
+#: includes/admin/class-noptin-subscribers-table.php:351
 #: includes/admin/class-noptin-tools.php:76
 #: includes/automation-rules/class-noptin-automation-rules-table.php:228
 #: includes/automation-rules/class-noptin-automation-rules-table.php:283
@@ -1327,7 +1333,7 @@ msgstr ""
 msgid "Delete Campaigns"
 msgstr ""
 
-#: templates/subscriber-fields-editor.php:133
+#: templates/subscriber-fields-editor.php:144
 #: includes/forms/views/legacy/fields-editor.php:29
 msgid "Delete Field"
 msgstr "Slet felt"
@@ -1411,11 +1417,11 @@ msgstr ""
 msgid "Display a success message"
 msgstr "Vis en besked, når handlingen er gennemført"
 
-#: includes/forms/views/tab-form.php:99
+#: includes/forms/views/tab-form.php:100
 msgid "Display all fields on a single line."
 msgstr ""
 
-#: includes/forms/views/tab-form.php:91
+#: includes/forms/views/tab-form.php:92
 msgid "Display field labels outside the fields."
 msgstr ""
 
@@ -1431,7 +1437,7 @@ msgstr ""
 msgid "Display this form once per week"
 msgstr "Vis dette skema en gang om ugen"
 
-#: includes/emails/class-email-tags.php:148
+#: includes/emails/class-email-tags.php:149
 msgid "Displays a button"
 msgstr ""
 
@@ -1439,7 +1445,7 @@ msgstr ""
 msgid "Displays a given attribute for the product."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:136
+#: includes/emails/class-email-tags.php:137
 msgid "Displays a horizontal rule"
 msgstr ""
 
@@ -1447,7 +1453,7 @@ msgstr ""
 msgid "Displays a newsletter sign-up form"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:121
+#: includes/emails/class-email-tags.php:122
 msgid "Displays a personalized link to the Noptin website."
 msgstr ""
 
@@ -1490,7 +1496,8 @@ msgstr ""
 msgid "Do not add to %s"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:360
+#. %s is the context, e.g users, customers
+#: includes/integrations/class-noptin-abstract-integration.php:362
 #, php-format
 msgid "Do not subscribe new %s"
 msgstr "Tilføj ikke nye %s"
@@ -1701,7 +1708,8 @@ msgstr ""
 msgid "Enable Noptin Subscriptions"
 msgstr "Aktivér Noption-abonnementer"
 
-#: includes/integrations/class-noptin-abstract-integration.php:292
+#. %s is the integration name
+#: includes/integrations/class-noptin-abstract-integration.php:293
 #, php-format
 msgid "Enable the %s Integration"
 msgstr "Aktivér %s integration"
@@ -1902,7 +1910,7 @@ msgstr "Alle"
 msgid "Everywhere"
 msgstr "Overalt"
 
-#: includes/forms/views/tab-form.php:63
+#: includes/forms/views/tab-form.php:64
 #: includes/forms/views/tab-settings.php:85
 #, php-format
 msgid "Example: %s"
@@ -1914,7 +1922,7 @@ msgid ""
 "<p>Join {subscriber_count} other subscribers already on our newsletter</p>"
 msgstr ""
 
-#: includes/forms/views/tab-form.php:55
+#: includes/forms/views/tab-form.php:56
 msgid "Example: I have read and agree to the terms and conditions."
 msgstr ""
 
@@ -2003,8 +2011,12 @@ msgstr "Feltværdi"
 msgid "Fields"
 msgstr "Felter"
 
-#: includes/forms/views/tab-form.php:23
+#: includes/forms/views/tab-form.php:24
 msgid "Fields to display"
+msgstr ""
+
+#: includes/admin/class-noptin-subscribers-table.php:583
+msgid "Filter"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-open-email-trigger.php:96
@@ -2052,7 +2064,7 @@ msgstr "Sendes afsted, når en ny abonnent har tilmeldt sig."
 msgid "Fired when there is a new WooCommerce order"
 msgstr "Sendes afsted, når en ny ordre er modtaget"
 
-#: includes/class-noptin-custom-fields.php:61 includes/subscriber.php:926
+#: includes/class-noptin-custom-fields.php:62 includes/subscriber.php:926
 #: includes/subscriber.php:1267
 #: includes/integrations/class-noptin-elementor-forms-integration.php:134
 #: includes/admin/views/export-subscribers.php:92
@@ -2097,7 +2109,7 @@ msgstr ""
 msgid "Form Editor"
 msgstr "Formulareditor"
 
-#: includes/forms/views/tab-form.php:19
+#: includes/forms/views/tab-form.php:20
 msgid "Form Fields"
 msgstr ""
 
@@ -2155,7 +2167,7 @@ msgstr ""
 msgid "Form:"
 msgstr "Formular:"
 
-#: includes/integrations/class-noptin-woocommerce.php:408
+#: includes/integrations/class-noptin-woocommerce.php:441
 msgid "Formatted Billing Address"
 msgstr ""
 
@@ -2172,7 +2184,7 @@ msgstr "Gratis opdateringer"
 msgid "Front page"
 msgstr "Forside"
 
-#: includes/admin/class-noptin-vue.php:390
+#: includes/admin/class-noptin-vue.php:389
 msgid "Frontend Label"
 msgstr ""
 
@@ -2421,7 +2433,7 @@ msgstr ""
 "Hvis det ikke fungerer, kan du kopiere adressen ind i din browsers "
 "adressefelt"
 
-#: includes/forms/views/tab-form.php:35
+#: includes/forms/views/tab-form.php:36
 #, php-format
 msgid ""
 "If the field you want to add does not appear above then start by "
@@ -2613,7 +2625,7 @@ msgstr ""
 msgid "is refunded"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:437
+#: includes/admin/class-noptin-vue.php:436
 msgid "Is this field required?"
 msgstr "Er dette felt obligatorisk?"
 
@@ -2641,7 +2653,7 @@ msgstr "JSON"
 msgid "Large Fields"
 msgstr ""
 
-#: includes/class-noptin-custom-fields.php:69 includes/subscriber.php:927
+#: includes/class-noptin-custom-fields.php:71 includes/subscriber.php:927
 #: includes/subscriber.php:1273
 #: includes/integrations/class-noptin-elementor-forms-integration.php:140
 #: includes/admin/views/export-subscribers.php:93
@@ -2668,12 +2680,12 @@ msgstr "Lær mere om automatiseringsregler"
 msgid "Learn More!"
 msgstr "Lær mere!"
 
-#: includes/forms/views/tab-form.php:53
+#: includes/forms/views/tab-form.php:54
 msgid ""
 "Leave blank if you do not want to display an acceptance checkbox on the form."
 msgstr ""
 
-#: includes/forms/views/tab-form.php:61
+#: includes/forms/views/tab-form.php:62
 msgid ""
 "Leave blank if you do not want to redirect users after they sign-up via this "
 "form."
@@ -2742,6 +2754,9 @@ msgid "Logged out users"
 msgstr "Brugere som er logget ud"
 
 #: includes/admin/class-noptin-settings.php:337
+#: templates/email-templates/merriweather/logo.php:16
+#: templates/email-templates/paste/logo.php:17
+#: templates/email-templates/plain/logo.php:15
 msgid "Logo"
 msgstr "Logo"
 
@@ -2755,7 +2770,7 @@ msgid ""
 "and updates, all from the convenience of your WordPress dashboard"
 msgstr ""
 
-#: includes/integrations/class-noptin-abstract-integration.php:406
+#: includes/integrations/class-noptin-abstract-integration.php:455
 msgid "Manual Subscription"
 msgstr "Tilføj abonnenter manuelt"
 
@@ -2816,11 +2831,11 @@ msgstr ""
 msgid "Mark all as unconfirmed"
 msgstr ""
 
-#: includes/admin/class-noptin-subscribers-table.php:315
+#: includes/admin/class-noptin-subscribers-table.php:352
 msgid "Mark as active"
 msgstr "Markér som aktiv"
 
-#: includes/admin/class-noptin-subscribers-table.php:316
+#: includes/admin/class-noptin-subscribers-table.php:353
 msgid "Mark as in-active"
 msgstr "Markér som passiv"
 
@@ -2875,11 +2890,11 @@ msgstr ""
 msgid "Monthly"
 msgstr ""
 
-#: templates/subscriber-fields-editor.php:138
+#: templates/subscriber-fields-editor.php:150
 msgid "Move Down"
 msgstr ""
 
-#: templates/subscriber-fields-editor.php:135
+#: templates/subscriber-fields-editor.php:147
 msgid "Move Up"
 msgstr ""
 
@@ -2968,7 +2983,7 @@ msgstr ""
 msgid "Newsletter Subscribers"
 msgstr "Abonnenter"
 
-#: includes/class-noptin-install.php:247
+#: includes/class-noptin-install.php:253
 msgid "Newsletter Subscription Form"
 msgstr ""
 
@@ -2991,9 +3006,10 @@ msgstr ""
 msgid "Next, map imported fields to Noptin fields."
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:259
-#: includes/functions.php:1185 includes/emails/class-email-type.php:193
-#: includes/emails/emails.php:350
+#: includes/class-noptin-dynamic-content-tags.php:267
+#: includes/functions.php:1185
+#: includes/admin/class-noptin-subscribers-table.php:548
+#: includes/emails/class-email-type.php:193 includes/emails/emails.php:350
 msgid "No"
 msgstr "Nej"
 
@@ -3057,7 +3073,6 @@ msgstr ""
 #. Author of the plugin
 #: templates/actions-page.php:9 includes/admin/class-noptin-admin.php:483
 #: includes/admin/class-noptin-admin.php:484
-#: includes/forms/views/preview.php:16
 msgid "Noptin Newsletter"
 msgstr "Noptin nyhedsbrev"
 
@@ -3115,7 +3130,7 @@ msgid "Not Installed"
 msgstr ""
 
 #: templates/contact-form-7-settings.php:71
-#: includes/integrations/class-noptin-abstract-ecommerce-integration.php:599
+#: includes/integrations/class-noptin-abstract-ecommerce-integration.php:601
 msgid "Not Mapped"
 msgstr ""
 
@@ -3258,7 +3273,7 @@ msgstr ""
 msgid "Optional. Select the places where this form should be hidden."
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:421
+#: includes/admin/class-noptin-vue.php:420
 msgid "Options"
 msgstr "Indstillinger"
 
@@ -3280,9 +3295,11 @@ msgstr "Orange"
 msgid "Order"
 msgstr "Rækkefølge"
 
-#: includes/integrations/class-noptin-woocommerce.php:437
-#, php-format
-msgid "Order #%d from %s"
+#. %1$s is the order id, %2$s is the customer email.
+#: includes/integrations/class-noptin-woocommerce.php:471
+#, fuzzy, php-format
+#| msgid "Order #%d from %s"
+msgid "Order #%1$d from %2$s"
 msgstr "Bestil #%d fra %s"
 
 #: includes/emails/automated-email-types/class-woocommerce_new_order.php:49
@@ -3321,7 +3338,7 @@ msgstr "Ordrer"
 msgid "Other"
 msgstr ""
 
-#: includes/forms/views/tab-form.php:69
+#: includes/forms/views/tab-form.php:70
 msgid "Other Options"
 msgstr ""
 
@@ -3355,7 +3372,8 @@ msgstr "Indsæt"
 msgid "Payments"
 msgstr "Betaling"
 
-#: includes/admin/class-noptin-subscribers-table.php:271
+#: includes/admin/class-noptin-subscribers-table.php:308
+#: includes/admin/class-noptin-subscribers-table.php:528
 #: includes/admin/views/add-subscriber.php:57
 #: includes/admin/views/export-subscribers.php:37
 #: includes/automation-rules/triggers/class-noptin-getpaid-new-invoice-trigger.php:98
@@ -3552,7 +3570,7 @@ msgstr ""
 msgid "Professional"
 msgstr "Professionel"
 
-#: includes/class-noptin-dynamic-content-tags.php:107
+#: includes/class-noptin-dynamic-content-tags.php:110
 msgid "Property of the current page or post."
 msgstr ""
 
@@ -3629,7 +3647,7 @@ msgstr "Viderestil til en anden side"
 msgid "Redirect url"
 msgstr "Url for viderestilling"
 
-#: includes/forms/views/tab-form.php:60
+#: includes/forms/views/tab-form.php:61
 msgid "Redirect URL (Optional)"
 msgstr ""
 
@@ -3691,7 +3709,7 @@ msgstr ""
 msgid "Replaced with the form response (error or success messages)."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:131
+#: includes/emails/class-email-tags.php:132
 #: includes/forms/class-form-tags.php:87
 msgid "Replaced with the total number of subscribers"
 msgstr ""
@@ -3703,6 +3721,10 @@ msgstr "Rapporter en fejl eller foreslå en funktion"
 #: includes/admin/class-noptin-settings.php:217
 msgid "Require new subscribers to confirm their email addresses."
 msgstr "Bed nye abonnenter om at bekræfte deres e-mail"
+
+#: templates/subscriber-fields-editor.php:136
+msgid "Required"
+msgstr ""
 
 #: includes/forms/forms.php:398
 msgid "Required field missing"
@@ -3775,7 +3797,7 @@ msgstr "Søg i formularer"
 msgid "Search page"
 msgstr "Søgeside"
 
-#: includes/admin/views/view-subscribers.php:32
+#: includes/admin/views/view-subscribers.php:20
 msgid "Search Subscribers"
 msgstr "Søg abonnenter"
 
@@ -4087,7 +4109,11 @@ msgstr "Send abonnenten en e-mail"
 msgid "Sent"
 msgstr "Sender"
 
-#: includes/forms/views/tab-form.php:45
+#: includes/integrations/class-noptin-abstract-integration.php:412
+msgid "Set the checkbox as checked by default."
+msgstr ""
+
+#: includes/forms/views/tab-form.php:46
 msgid "Set the text of the subscribe button."
 msgstr ""
 
@@ -4255,7 +4281,7 @@ msgstr ""
 msgid "Sorry to see you go."
 msgstr ""
 
-#: includes/admin/class-noptin-subscribers-table.php:382
+#: includes/admin/class-noptin-subscribers-table.php:418
 #: includes/admin/views/single-subscriber/save.php:59
 msgid "Source"
 msgstr ""
@@ -4292,8 +4318,9 @@ msgstr "Start med at vælge trigger og handling for nedenstående regel."
 msgid "State"
 msgstr "Status"
 
-#: includes/admin/class-noptin-subscribers-table.php:373
-#: includes/admin/class-noptin-subscribers-table.php:379
+#: includes/admin/class-noptin-subscribers-table.php:410
+#: includes/admin/class-noptin-subscribers-table.php:415
+#: includes/admin/class-noptin-subscribers-table.php:525
 #: includes/automation-rules/class-noptin-automation-rules-table.php:338
 #: includes/emails/admin/class-list-table.php:411
 #: includes/emails/admin/views/automations/metabox-save.php:25
@@ -4304,8 +4331,9 @@ msgstr "Status"
 msgid "stop"
 msgstr ""
 
+#. %1$s Opening link tag, %2$s Closing link tag.
 #: includes/admin/views/add-subscriber.php:87
-#: includes/admin/views/view-subscribers.php:38
+#: includes/admin/views/view-subscribers.php:28
 #: includes/admin/views/single-subscriber/details.php:80
 #, php-format
 msgid ""
@@ -4334,7 +4362,7 @@ msgstr ""
 msgid "Submit Button Text:"
 msgstr "Tekst på send-knappen."
 
-#: includes/class-noptin-install.php:250
+#: includes/class-noptin-install.php:256
 #: includes/admin/class-noptin-tools.php:84
 #: includes/forms/class-form-element.php:286
 #: includes/forms/class-output-manager.php:73
@@ -4362,6 +4390,10 @@ msgstr "ABONNÉR NU"
 #: includes/forms/views/legacy/optin-templates.php:1045
 msgid "Subscribe Now"
 msgstr "Abonnér nu"
+
+#: includes/integrations/class-noptin-woocommerce-checkout-block-integration.php:172
+msgid "Subscribe to marketing opt-in."
+msgstr ""
 
 #: includes/integrations/class-noptin-gravity-forms.php:92
 msgid "Subscribe to Noptin only when payment is received."
@@ -4392,7 +4424,8 @@ msgstr ""
 msgid "Subscribe your WordPress users to the newsletter."
 msgstr ""
 
-#: includes/admin/class-noptin-subscribers-table.php:271
+#: includes/admin/class-noptin-subscribers-table.php:308
+#: includes/admin/class-noptin-subscribers-table.php:527
 #: includes/admin/views/add-subscriber.php:56
 #: includes/admin/views/export-subscribers.php:36
 #: includes/admin/views/single-subscriber/activity.php:7
@@ -4412,7 +4445,8 @@ msgstr "Tilmeldt før"
 msgid "Subscribed On"
 msgstr "Tilmeldt"
 
-#: includes/emails/emails.php:403
+#: includes/admin/class-noptin-subscribers-table.php:533
+#: includes/emails/emails.php:384
 #: includes/admin/views/map-imported-subscriber-fields.php:72
 msgid "Subscribed Via"
 msgstr "Tilmeldt via"
@@ -4469,7 +4503,7 @@ msgstr "Abonnentstatus"
 msgid "Subscriber successfully deleted"
 msgstr "Abonnent er slettet med succés"
 
-#: includes/admin/class-noptin-subscribers-admin.php:410
+#: includes/admin/class-noptin-subscribers-admin.php:396
 msgid "Subscriber successfully updated"
 msgstr "Abonnenten blev opdateret"
 
@@ -4483,6 +4517,11 @@ msgstr ""
 
 #: includes/admin/views/subscriber-tabs.php:6
 msgid "Subscribers"
+msgstr ""
+
+#: templates/subscriber-fields-editor.php:137
+msgid ""
+"Subscribers MUST fill this field whenever it is added to a subscription form."
 msgstr ""
 
 #: templates/subscriber-fields-editor.php:126
@@ -4561,11 +4600,11 @@ msgstr "Succes"
 msgid "Success message"
 msgstr "Besked som vises når handlingen er udført"
 
-#: includes/admin/class-noptin-subscribers-admin.php:476
+#: includes/admin/class-noptin-subscribers-admin.php:462
 msgid "Successfully deleted all subscribers."
 msgstr ""
 
-#: includes/admin/class-noptin-subscribers-admin.php:502
+#: includes/admin/class-noptin-subscribers-admin.php:488
 msgid "Successfully deleted the subscriber."
 msgstr ""
 
@@ -4573,7 +4612,7 @@ msgstr ""
 msgid "Successfully subscribed"
 msgstr ""
 
-#: includes/admin/class-noptin-subscribers-admin.php:351
+#: includes/admin/class-noptin-subscribers-admin.php:337
 msgid "Suscriber added successfully."
 msgstr ""
 
@@ -4613,7 +4652,7 @@ msgstr "Blågrøn"
 msgid "Template"
 msgstr ""
 
-#: includes/forms/views/tab-form.php:52
+#: includes/forms/views/tab-form.php:53
 msgid "Terms / Acceptance Text (Optional)"
 msgstr ""
 
@@ -4739,28 +4778,28 @@ msgstr ""
 msgid "The campaign has been duplicated."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:126
+#: includes/emails/class-email-tags.php:127
 msgid "The company name that you set in Noptin > Settings > Emails."
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:75
-#: includes/emails/class-email-tags.php:106
+#: includes/class-noptin-dynamic-content-tags.php:76
+#: includes/emails/class-email-tags.php:107
 #, php-format
 msgid "The current date. Example: %s."
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:85
+#: includes/class-noptin-dynamic-content-tags.php:86
 #, php-format
 msgid "The current language. Example: %s."
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:80
-#: includes/emails/class-email-tags.php:111
+#: includes/class-noptin-dynamic-content-tags.php:81
+#: includes/emails/class-email-tags.php:112
 #, php-format
 msgid "The current time. Example: %s."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:116
+#: includes/emails/class-email-tags.php:117
 #, php-format
 msgid "The current year. Example: %s."
 msgstr ""
@@ -4829,7 +4868,7 @@ msgstr "dette felt må ikke tomt."
 msgid "The first time a subscriber buys %s"
 msgstr "Første gang abonnenten køber"
 
-#: includes/forms/views/preview.php:61
+#: includes/forms/views/preview.php:62
 msgid ""
 "The form may look slightly different than this when shown in a post, page or "
 "widget area."
@@ -4935,7 +4974,7 @@ msgstr ""
 msgid "The order status."
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:70
+#: includes/class-noptin-dynamic-content-tags.php:71
 msgid "The path of the page."
 msgstr ""
 
@@ -5007,7 +5046,7 @@ msgstr "Produktet er købt"
 msgid "The product is refunded"
 msgstr "Produktet er refunderet"
 
-#: includes/class-noptin-dynamic-content-tags.php:101
+#: includes/class-noptin-dynamic-content-tags.php:104
 msgid "The property of the currently logged-in user."
 msgstr ""
 
@@ -5027,15 +5066,15 @@ msgstr "De valgte automatiseringsregler er blevet slettet."
 msgid "The selected campaigns have been deleted."
 msgstr "Det valgte nyhedsbrev er slettet."
 
-#: includes/admin/class-noptin-subscribers-table.php:106
+#: includes/admin/class-noptin-subscribers-table.php:107
 msgid "The selected subscribers have been activated."
 msgstr "De valgte abonnenter er aktiveret."
 
-#: includes/admin/class-noptin-subscribers-table.php:96
+#: includes/admin/class-noptin-subscribers-table.php:97
 msgid "The selected subscribers have been deleted."
 msgstr "Den valgte abonnent er blevet slettet."
 
-#: includes/admin/class-noptin-subscribers-table.php:116
+#: includes/admin/class-noptin-subscribers-table.php:117
 msgid "The selected subscribers have been marked as in-active."
 msgstr "De valgte abonnenter er markeret som inaktive."
 
@@ -5179,7 +5218,7 @@ msgstr ""
 msgid "The value of an order custom field. Format is optional."
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:90
+#: includes/class-noptin-dynamic-content-tags.php:92
 #, php-format
 msgid "The visitor's IP address. Example: %s."
 msgstr ""
@@ -5505,7 +5544,7 @@ msgstr ""
 msgid "Unable to save your changes."
 msgstr "Ænringer kunne ikke gemmes"
 
-#: includes/admin/class-noptin-subscribers-admin.php:412
+#: includes/admin/class-noptin-subscribers-admin.php:398
 msgid "Unable to update the subscriber"
 msgstr ""
 
@@ -5592,7 +5631,7 @@ msgstr "Opdater et brugerdefineret felt"
 msgid "Update existing subscribers"
 msgstr ""
 
-#: includes/forms/views/tab-form.php:83
+#: includes/forms/views/tab-form.php:84
 msgid "Update existing subscribers if they match the submitted email address."
 msgstr ""
 
@@ -5614,7 +5653,7 @@ msgstr "Opdateret"
 msgid "Upgrade"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:658
+#: includes/admin/class-noptin-vue.php:649
 msgid "Upload Image"
 msgstr "Upload et billede"
 
@@ -5689,7 +5728,7 @@ msgstr "brugere"
 msgid "Using %1$d of %2$d sites available"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:411
+#: includes/admin/class-noptin-vue.php:410
 msgid "Value"
 msgstr "Værdi"
 
@@ -5949,7 +5988,7 @@ msgid ""
 "Where should subscribers reply to in case they need to get in touch with you?"
 msgstr "Hvor skal abonnenterne henvende sig, hvis de vil i kontakt med dig?"
 
-#: includes/integrations/class-noptin-abstract-integration.php:355
+#: includes/integrations/class-noptin-abstract-integration.php:356
 msgid "Where should we add a newsletter subscription checkbox?"
 msgstr "Hvor skal afkrydsningsfeltet placeres?"
 
@@ -6034,9 +6073,10 @@ msgstr ""
 msgid "Yellow"
 msgstr "Gul"
 
-#: includes/class-noptin-dynamic-content-tags.php:259
-#: includes/functions.php:1189 includes/emails/class-email-type.php:193
-#: includes/emails/emails.php:349
+#: includes/class-noptin-dynamic-content-tags.php:267
+#: includes/functions.php:1189
+#: includes/admin/class-noptin-subscribers-table.php:547
+#: includes/emails/class-email-type.php:193 includes/emails/emails.php:349
 msgid "Yes"
 msgstr ""
 
@@ -6135,7 +6175,7 @@ msgstr ""
 msgid "You will nolonger receive product updates and support for this website"
 msgstr ""
 
-#: includes/admin/class-noptin-vue.php:401
+#: includes/admin/class-noptin-vue.php:400
 msgid "You will use this as a merge tag in your emails."
 msgstr ""
 
