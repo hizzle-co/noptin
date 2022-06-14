@@ -91,7 +91,7 @@ abstract class Noptin_Email_Type {
 				break;
 
 			case 'template':
-				$value = get_noptin_option( 'email_template',  'paste' );
+				$value = get_noptin_option( 'email_template', 'paste' );
 				break;
 		}
 
@@ -129,7 +129,7 @@ abstract class Noptin_Email_Type {
 			}
 
 			$tags[ $merge_tag ] = array(
-				'description' => strip_tags( $field['label'] ),
+				'description' => wp_strip_all_tags( $field['label'] ),
 				'callback'    => array( $this, 'get_subscriber_field' ),
 				'example'     => $merge_tag . " default=''",
 			);
@@ -189,7 +189,7 @@ abstract class Noptin_Email_Type {
 		if ( isset( $all_fields[ $field ] ) ) {
 
 			$value = $this->subscriber->get( $field );
-			if ( 'checkbox' == $all_fields[ $field ] ) {
+			if ( 'checkbox' === $all_fields[ $field ] ) {
 				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
 			}
 
@@ -218,31 +218,31 @@ abstract class Noptin_Email_Type {
 
 		return array(
 
-			'user.id' => array(
+			'user.id'           => array(
 				'description' => __( "The user's ID", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.id",
+				'example'     => 'user.id',
 			),
 
-			'user.email' => array(
+			'user.email'        => array(
 				'description' => __( "The user's email address", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.email",
+				'example'     => 'user.email',
 			),
 
-			'user.login' => array(
+			'user.login'        => array(
 				'description' => __( "The user's login name", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.login",
+				'example'     => 'user.login',
 			),
 
-			'user.first_name' => array(
+			'user.first_name'   => array(
 				'description' => __( "The user's first name", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
 				'example'     => "user.first_name default='Jane'",
 			),
 
-			'user.last_name' => array(
+			'user.last_name'    => array(
 				'description' => __( "The user's last name", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
 				'example'     => "user.last_name default='Doe'",
@@ -254,25 +254,25 @@ abstract class Noptin_Email_Type {
 				'example'     => "user.display_name default='there'",
 			),
 
-			'user.description' => array(
+			'user.description'  => array(
 				'description' => __( "The user's description", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.description",
+				'example'     => 'user.description',
 			),
 
-			'user.url' => array(
+			'user.url'          => array(
 				'description' => __( "The user's website, if available", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.url",
+				'example'     => 'user.url',
 			),
 
-			'user.registered' => array(
+			'user.registered'   => array(
 				'description' => __( "The user's registration date", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.registered",
+				'example'     => 'user.registered',
 			),
 
-			'user.meta' => array(
+			'user.meta'         => array(
 				'description' => __( "The user's meta field value", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_user_field' ),
 				'example'     => "user.meta key='xyz' default='123'",
@@ -296,15 +296,15 @@ abstract class Noptin_Email_Type {
 		$field   = str_replace( 'user.', 'user_', strtolower( $field ) );
 
 		// Standardize some fields.
-		if ( $field == 'user_id' ) {
+		if ( 'user_id' === $field ) {
 			$field = 'ID';
 		}
 
-		if ( in_array( $field, array( 'user_display_name' ) ) ) {
+		if ( in_array( $field, array( 'user_display_name' ), true ) ) {
 			$field = str_replace( 'user_', '', $field );
 		}
 
-		if ( $field == 'user_meta' ) {
+		if ( 'user_meta' === $field ) {
 
 			if ( empty( $args['key'] ) ) {
 				return esc_html( $default );
@@ -495,7 +495,7 @@ abstract class Noptin_Email_Type {
 				array(
 					'recipients'               => $email,
 					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
-					'message'                  => noptin_generate_email_content( $campaign, $this->recipient, $track  ),
+					'message'                  => noptin_generate_email_content( $campaign, $this->recipient, $track ),
 					'headers'                  => array(),
 					'attachments'              => array(),
 					'reply_to'                 => '',
@@ -517,10 +517,9 @@ abstract class Noptin_Email_Type {
 
 			if ( true === $result ) {
 				increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
-			} else if ( false === $result ) {
+			} elseif ( false === $result ) {
 				increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
 			}
-
 		}
 
 		return $result;

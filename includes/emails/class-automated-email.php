@@ -132,7 +132,7 @@ class Noptin_Automated_Email {
 		// Fetch value.
 		if ( isset( $this->$key ) ) {
 			$value = $this->$key;
-		} else if ( $this->is_legacy ) {
+		} elseif ( $this->is_legacy ) {
 			$value = $this->exists() ? '' : get_post_meta( $this->id, $key, true );
 		} else {
 			$value = isset( $this->options[ $key ] ) ? $this->options[ $key ] : '';
@@ -175,7 +175,7 @@ class Noptin_Automated_Email {
 	 */
 	public function is_mass_mail() {
 
-		$is_mass_mail = in_array( $this->type, array( 'post_digest', 'post_notifications' ) );
+		$is_mass_mail = in_array( $this->type, array( 'post_digest', 'post_notifications' ), true );
 		return apply_filters( 'noptin_automation_is_mass_mail', $is_mass_mail, $this->type, $this );
 	}
 
@@ -186,7 +186,7 @@ class Noptin_Automated_Email {
 	 */
 	public function supports_timing() {
 
-		$supports_timing = ! in_array( $this->type, array( 'post_digest' ) );
+		$supports_timing = ! in_array( $this->type, array( 'post_digest' ), true );
 		return apply_filters( 'noptin_automated_email_supports_timing', $supports_timing, $this->type, $this );
 	}
 
@@ -198,7 +198,7 @@ class Noptin_Automated_Email {
 	public function get_sender() {
 
 		$sender = $this->get( 'email_sender' );
-		$sender = in_array( $sender, array_keys( get_noptin_email_senders() ) ) ? $sender : 'noptin';
+		$sender = in_array( $sender, array_keys( get_noptin_email_senders() ), true ) ? $sender : 'noptin';
 		return apply_filters( 'noptin_automated_email_sender', $sender, $this );
 	}
 
@@ -215,7 +215,7 @@ class Noptin_Automated_Email {
 		}
 
 		$email_type = $this->get( 'email_type' );
-		return in_array( $email_type, array_keys( get_noptin_email_types() ) ) ? $email_type : 'normal';
+		return in_array( $email_type, array_keys( get_noptin_email_types() ), true ) ? $email_type : 'normal';
 	}
 
 	/**
@@ -232,7 +232,7 @@ class Noptin_Automated_Email {
 
 		// Read from settings.
 		if ( empty( $template ) ) {
-			$template = get_noptin_option( 'email_template',  'paste' );
+			$template = get_noptin_option( 'email_template', 'paste' );
 		}
 
 		// Default to the paste template.
@@ -290,6 +290,7 @@ class Noptin_Automated_Email {
 			return '';
 		}
 
+		// translators: %s: Placeholder for email recipients.
 		return sprintf( __( 'For example, %s', 'newsletter-optin-box' ), $emails );
 	}
 
@@ -303,7 +304,7 @@ class Noptin_Automated_Email {
 		// Abort if this is a legacy email type.
 		if ( $this->is_legacy ) {
 
-			if ( ! $this->exists() || $email_type !== 'normal' ) {
+			if ( ! $this->exists() || 'normal' !== $email_type ) {
 				return '';
 			}
 
@@ -449,7 +450,7 @@ class Noptin_Automated_Email {
 				'automation_type' => $this->type,
 				'campaign_type'   => 'automation',
 				'campaign_data'   => $this->options,
-			)
+			),
 		);
 
 		// Slash data.

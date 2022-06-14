@@ -60,8 +60,9 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function replace_in_subject( $string, $is_partial = false ) {
 		$this->is_partial = $is_partial;
-		return $this->replace( $string, 'strip_tags' );
+		$result           = $this->replace( $string, 'strip_tags' );
 		$this->is_partial = false;
+		return $result;
 	}
 
 	/**
@@ -73,8 +74,9 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function replace_in_body( $string, $is_partial = false ) {
 		$this->is_partial = $is_partial;
-		return $this->replace( $string, '' );
+		$result           = $this->replace( $string, '' );
 		$this->is_partial = false;
+		return $result;
 	}
 
 	/**
@@ -104,18 +106,21 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		);
 
 		$this->tags['date'] = array(
-			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ) . '</strong>' ),
-			'replacement' => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
+			// translators: Example date.
+			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
+			'replacement' => date_i18n( get_option( 'date_format' ) ),
 		);
 
 		$this->tags['time'] = array(
-			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ), current_time( 'timestamp' ) ) . '</strong>' ),
-			'replacement' => date_i18n( get_option( 'time_format' ), current_time( 'timestamp' ) ),
+			// translators: Example time.
+			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ) ) . '</strong>' ),
+			'replacement' => date_i18n( get_option( 'time_format' ) ),
 		);
 
 		$this->tags['year'] = array(
-			'description' => sprintf( __( 'The current year. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date( 'Y', current_time( 'timestamp' ) ) . '</strong>' ),
-			'replacement' => date( 'Y', current_time( 'timestamp' ) ),
+			// translators: Example year.
+			'description' => sprintf( __( 'The current year. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( 'Y' ) . '</strong>' ),
+			'replacement' => date_i18n( 'Y' ),
 		);
 
 		$this->tags['noptin'] = array(
@@ -255,7 +260,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		return sprintf(
 			'<a target="_blank" href="https://noptin.com/?utm_medium=plugin-dashboard&utm_campaign=powered-by&utm_source=%s">Noptin</a>',
-			urlencode( esc_url( get_home_url() ) )
+			rawurlencode( esc_url( get_home_url() ) )
 		);
 
 	}

@@ -20,7 +20,7 @@ $unit    = $campaign->get_sends_after_unit();
 	</label>
 </p>
 
-<p class="noptin-automation-delay-wrapper" style="display: <?php echo $campaign->sends_immediately() ? 'none' : 'block' ?>;">
+<p class="noptin-automation-delay-wrapper" style="display: <?php echo $campaign->sends_immediately() ? 'none' : 'block'; ?>;">
 	<label>
 		<strong class="noptin-label-span"><?php esc_html_e( 'Length of the delay', 'newsletter-optin-box' ); ?></strong>
 		<input type="number" style="width: 80px;" name="noptin_email[sends_after]" value="<?php echo esc_attr( $campaign->get_sends_after() ); ?>" min="0">

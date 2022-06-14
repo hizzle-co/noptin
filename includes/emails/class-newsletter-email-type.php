@@ -84,7 +84,7 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 		}
 
 		// Ensure this is a newsletter campaign.
-		if ( 'noptin-campaign' === $post->post_type && $this->type === get_post_meta( $post->ID, 'campaign_type', true ) ) {
+		if ( 'noptin-campaign' === $post->post_type && get_post_meta( $post->ID, 'campaign_type', true ) === $this->type ) {
 			$this->send_campaign( $post );
 		}
 
@@ -108,6 +108,7 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 		// Log the campaign.
 		log_noptin_message(
 			sprintf(
+				// Translators: %s is the campaign title.
 				__( 'Sending the campaign: "%s"', 'newsletter-optin-box' ),
 				esc_html( $post->post_title )
 			)

@@ -18,12 +18,12 @@ $email_type = $campaign->get_email_type();
 			</th>
 			<td>
 				<select name="noptin_email[email_type]" id="noptin-email-type" class="widefat">
-					<?php foreach ( get_noptin_email_types() as $key => $type ) : ?>
-						<option <?php selected( $key, $email_type ); ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $type['label'] ); ?></option>
+					<?php foreach ( get_noptin_email_types() as $key => $_email_type ) : ?>
+						<option <?php selected( $key, $email_type ); ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $_email_type['label'] ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<?php foreach ( get_noptin_email_types() as $key => $type ) : ?>
-					<p class="description noptin-is-conditional noptin-show-if-email-is-<?php echo esc_attr( $key ); ?>"><strong><?php echo esc_html( $type['label'] ); ?>:</strong> <?php echo wp_kses_post( $type['description'] ); ?></p>
+				<?php foreach ( get_noptin_email_types() as $key => $_email_type ) : ?>
+					<p class="description noptin-is-conditional noptin-show-if-email-is-<?php echo esc_attr( $key ); ?>"><strong><?php echo esc_html( $_email_type['label'] ); ?>:</strong> <?php echo wp_kses_post( $_email_type['description'] ); ?></p>
 				<?php endforeach; ?>
 			</td>
 		</tr>
@@ -38,7 +38,7 @@ $email_type = $campaign->get_email_type();
 					<?php
 						printf(
 							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-							__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
+							esc_html__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
 							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
 							'</a>'
 						);
@@ -57,7 +57,7 @@ $email_type = $campaign->get_email_type();
 					<?php
 						printf(
 							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-							__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
+							esc_html__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
 							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
 							'</a>'
 						);
@@ -91,7 +91,7 @@ $email_type = $campaign->get_email_type();
 					<?php
 						printf(
 							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-							__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
+							esc_html__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
 							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
 							'</a>'
 						);

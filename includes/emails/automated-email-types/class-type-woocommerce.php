@@ -138,304 +138,304 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		return array(
 
-			'order.id' => array(
+			'order.id'                   => array(
 				'description' => __( 'Order ID', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.id",
+				'example'     => 'order.id',
 			),
 
-			'order.number' => array(
+			'order.number'               => array(
 				'description' => __( 'Order Number', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.number",
+				'example'     => 'order.number',
 			),
 
-			'order.transaction_id' => array(
+			'order.transaction_id'       => array(
 				'description' => __( 'Transaction id', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.transaction_id",
+				'example'     => 'order.transaction_id',
 			),
 
-			'order.status' => array(
+			'order.status'               => array(
 				'description' => __( 'The order status.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.status format='price'",
 			),
 
-			'order.date_created' => array(
+			'order.date_created'         => array(
 				'description' => __( 'The date the order was created.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.date_created",
+				'example'     => 'order.date_created',
 			),
 
-			'order.date_paid' => array(
+			'order.date_paid'            => array(
 				'description' => __( 'The date the order was paid.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.date_paid",
+				'example'     => 'order.date_paid',
 			),
 
-			'order.date_completed' => array(
+			'order.date_completed'       => array(
 				'description' => __( 'The date the order was completed.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.date_completed",
+				'example'     => 'order.date_completed',
 			),
 
-			'order.subtotal' => array(
+			'order.subtotal'             => array(
 				'description' => __( 'The subtotal for the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.subtotal format='price'",
 			),
 
-			'order.total_tax' => array(
+			'order.total_tax'            => array(
 				'description' => __( 'The total tax for the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.total_tax format='price'",
 			),
 
-			'order.shipping_total' => array(
+			'order.shipping_total'       => array(
 				'description' => __( 'The shipping cost for the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.shipping_total format='price'",
 			),
 
-			'order.discount_total' => array(
+			'order.discount_total'       => array(
 				'description' => __( 'The total discount for the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.discount_total format='price'",
 			),
 
-			'order.total' => array(
+			'order.total'                => array(
 				'description' => __( 'The total cost of the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.total format='price'",
 			),
 
-			'order.item_count' => array(
+			'order.item_count'           => array(
 				'description' => __( 'The number of items in the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.item_count",
+				'example'     => 'order.item_count',
 			),
 
-			'order.billing_address' => array(
+			'order.billing_address'      => array(
 				'description' => __( 'The formatted billing address for the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_address",
+				'example'     => 'order.billing_address',
 			),
 
-			'order.billing_first_name' => array(
+			'order.billing_first_name'   => array(
 				'description' => __( 'The billing first name', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_first_name",
+				'example'     => 'order.billing_first_name',
 			),
 
-			'order.billing_last_name' => array(
+			'order.billing_last_name'    => array(
 				'description' => __( 'The billing last name', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_last_name",
+				'example'     => 'order.billing_last_name',
 			),
 
-			'order.billing_company' => array(
+			'order.billing_company'      => array(
 				'description' => __( 'The billing company', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_company",
+				'example'     => 'order.billing_company',
 			),
 
-			'order.billing_address_1' => array(
+			'order.billing_address_1'    => array(
 				'description' => __( 'The billing address 1', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_address_1",
+				'example'     => 'order.billing_address_1',
 			),
 
-			'order.billing_address_2' => array(
+			'order.billing_address_2'    => array(
 				'description' => __( 'The billing address 2', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_address_2",
+				'example'     => 'order.billing_address_2',
 			),
 
-			'order.billing_city' => array(
+			'order.billing_city'         => array(
 				'description' => __( 'The billing city', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_city",
+				'example'     => 'order.billing_city',
 			),
 
-			'order.billing_state' => array(
+			'order.billing_state'        => array(
 				'description' => __( 'The billing state', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_state",
+				'example'     => 'order.billing_state',
 			),
 
-			'order.billing_postcode' => array(
+			'order.billing_postcode'     => array(
 				'description' => __( 'The billing post code', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_postcode",
+				'example'     => 'order.billing_postcode',
 			),
 
-			'order.billing_country' => array(
+			'order.billing_country'      => array(
 				'description' => __( 'The billing country', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_country",
+				'example'     => 'order.billing_country',
 			),
 
-			'order.billing_email' => array(
+			'order.billing_email'        => array(
 				'description' => __( 'The billing email', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_email",
+				'example'     => 'order.billing_email',
 			),
 
-			'order.billing_phone' => array(
+			'order.billing_phone'        => array(
 				'description' => __( 'The billing phone number for the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.billing_phone",
+				'example'     => 'order.billing_phone',
 			),
 
-			'order.shipping_method' => array(
+			'order.shipping_method'      => array(
 				'description' => __( 'The formatted shipping method for the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_method",
+				'example'     => 'order.shipping_method',
 			),
 
-			'order.shipping_address' => array(
+			'order.shipping_address'     => array(
 				'description' => __( 'The formatted shipping address for the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_address",
+				'example'     => 'order.shipping_address',
 			),
 
-			'order.shipping_first_name' => array(
+			'order.shipping_first_name'  => array(
 				'description' => __( 'The shipping first name', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_first_name",
+				'example'     => 'order.shipping_first_name',
 			),
 
-			'order.shipping_last_name' => array(
+			'order.shipping_last_name'   => array(
 				'description' => __( 'The shipping last name', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_last_name",
+				'example'     => 'order.shipping_last_name',
 			),
 
-			'order.shipping_company' => array(
+			'order.shipping_company'     => array(
 				'description' => __( 'The shipping company', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_company",
+				'example'     => 'order.shipping_company',
 			),
 
-			'order.shipping_address_1' => array(
+			'order.shipping_address_1'   => array(
 				'description' => __( 'The shipping address 1', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_address_1",
+				'example'     => 'order.shipping_address_1',
 			),
 
-			'order.shipping_address_2' => array(
+			'order.shipping_address_2'   => array(
 				'description' => __( 'The shipping address 2', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_address_2",
+				'example'     => 'order.shipping_address_2',
 			),
 
-			'order.shipping_city' => array(
+			'order.shipping_city'        => array(
 				'description' => __( 'The shipping city', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_city",
+				'example'     => 'order.shipping_city',
 			),
 
-			'order.shipping_state' => array(
+			'order.shipping_state'       => array(
 				'description' => __( 'The shipping state', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_state",
+				'example'     => 'order.shipping_state',
 			),
 
-			'order.shipping_postcode' => array(
+			'order.shipping_postcode'    => array(
 				'description' => __( 'The shipping postcode', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_postcode",
+				'example'     => 'order.shipping_postcode',
 			),
 
-			'order.shipping_country' => array(
+			'order.shipping_country'     => array(
 				'description' => __( 'The shipping country', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_country",
+				'example'     => 'order.shipping_country',
 			),
 
-			'order.shipping_phone' => array(
+			'order.shipping_phone'       => array(
 				'description' => __( 'The shipping phone number for the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_phone",
+				'example'     => 'order.shipping_phone',
 			),
 
-			'order.payment_method' => array(
+			'order.payment_method'       => array(
 				'description' => __( 'The payment method', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.payment_method",
+				'example'     => 'order.payment_method',
 			),
 
 			'order.payment_method_title' => array(
 				'description' => __( 'The payment method title', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.payment_method_title",
+				'example'     => 'order.payment_method_title',
 			),
 
-			'order.payment_url' => array(
+			'order.payment_url'          => array(
 				'description' => __( 'The URL to pay for the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.payment_url",
+				'example'     => 'order.payment_url',
 			),
 
-			'order.view_url' => array(
+			'order.view_url'             => array(
 				'description' => __( 'The URL to view the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.view_url",
+				'example'     => 'order.view_url',
 			),
 
-			'order.admin_url' => array(
+			'order.admin_url'            => array(
 				'description' => __( 'The admin URL of the order', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.admin_url",
+				'example'     => 'order.admin_url',
 			),
 
-			'order.customer_note' => array(
+			'order.customer_note'        => array(
 				'description' => __( 'The customer provided note for the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.customer_note",
+				'example'     => 'order.customer_note',
 			),
 
-			'order.meta' => array(
+			'order.meta'                 => array(
 				'description' => __( 'The value of an order custom field. Format is optional.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.meta key='xyz' format='date'",
 			),
 
-			'order.customer_ip_address' => array(
+			'order.customer_ip_address'  => array(
 				'description' => __( "The customer's IP address.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.customer_ip_address",
+				'example'     => 'order.customer_ip_address',
 			),
 
-			'order.customer_user_agent' => array(
+			'order.customer_user_agent'  => array(
 				'description' => __( "The customer's user agent.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.customer_user_agent",
+				'example'     => 'order.customer_user_agent',
 			),
 
-			'order.items' => array(
-				'description' => __( "Displays the order items. Style can be grid or list.", 'newsletter-optin-box' ),
+			'order.items'                => array(
+				'description' => __( 'Displays the order items. Style can be grid or list.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.items style='grid'",
 			),
 
-			'order.cross_sells' => array(
-				'description' => __( "Displays cross sells based on the order items. Style can be grid or list.", 'newsletter-optin-box' ),
+			'order.cross_sells'          => array(
+				'description' => __( 'Displays cross sells based on the order items. Style can be grid or list.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.cross_sells limit='6' style='grid'",
 			),
 
-			'order.upsells' => array(
-				'description' => __( "Displays upsells based on the order items. Style can be grid or list.", 'newsletter-optin-box' ),
+			'order.upsells'              => array(
+				'description' => __( 'Displays upsells based on the order items. Style can be grid or list.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => "order.upsells limit='6' style='grid'",
 			),
 
-			'order.details' => array(
-				'description' => __( "Displays important details about the order.", 'newsletter-optin-box' ),
+			'order.details'              => array(
+				'description' => __( 'Displays important details about the order.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.details",
+				'example'     => 'order.details',
 			),
 
 		);
@@ -458,72 +458,57 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		}
 
 		// Process order fields.
-		switch( $field ) {
+		switch ( $field ) {
 
 			case 'order.number':
 				return $this->order->get_order_number();
-				break;
 
 			case 'order.admin_url':
 				return $this->order->get_edit_order_url();
-				break;
 
 			case 'order.billing_address':
 				return $this->order->get_formatted_billing_address();
-				break;
 
 			case 'order.shipping_address':
 				return $this->order->get_formatted_shipping_address();
-				break;
 
 			case 'order.subtotal':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->order->get_subtotal(), $this->order->get_currency(), $format );
-				break;
 
 			case 'order.discount_total':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->order->get_total_discount(), $this->order->get_currency(), $format );
-				break;
 
 			case 'order.shipping_total':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->order->get_shipping_total(), $this->order->get_currency(), $format );
-				break;
 
 			case 'order.total_tax':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->order->get_total_tax(), $this->order->get_currency(), $format );
-				break;
 
 			case 'order.total':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->order->get_total(), $this->order->get_currency(), $format );
-				break;
 
 			case 'order.date_completed':
 				return $this->format_datetime( $this->order->get_date_completed(), $default );
-				break;
 
 			case 'order.date_paid':
 				return $this->format_datetime( $this->order->get_date_paid(), $default );
-				break;
 
 			case 'order.date_created':
 				return $this->format_datetime( $this->order->get_date_created(), $default );
-				break;
 
 			case 'order.item_count':
 				return $this->order->get_item_count();
-				break;
 
 			case 'order.view_url':
 				return $this->order->get_view_order_url();
-				break;
 
 			case 'order.payment_url':
 				return $this->order->get_checkout_payment_url();
-				break;
 
 			case 'order.cross_sells':
 				$template    = isset( $args['style'] ) ? $args['style'] : 'grid';
@@ -544,7 +529,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				);
 
 				return $this->get_products_html( $template, $products );
-				break;
 
 			case 'order.upsells':
 				$template    = isset( $args['style'] ) ? $args['style'] : 'grid';
@@ -565,7 +549,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				);
 
 				return $this->get_products_html( $template, $products );
-				break;
 
 			case 'order.items':
 				$template = isset( $args['style'] ) ? $args['style'] : 'grid';
@@ -577,10 +560,8 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				}
 
 				return $this->get_products_html( $template, $products );
-				break;
 
 			case 'order.meta':
-
 				// Abort if no meta key.
 				if ( empty( $args['key'] ) ) {
 					return esc_html( $default );
@@ -599,29 +580,27 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				}
 
 				// Format as date.
-				if ( 'date' == $args['format'] ) {
+				if ( 'date' === $args['format'] ) {
 					return $this->format_datetime( $meta, $default );
 				}
 
 				// Format as price.
-				if ( 'price' == $args['format'] ) {
+				if ( 'price' === $args['format'] ) {
 					return $this->format_amount( $meta, $this->order->get_currency() );
 				}
 
-				if ( 'price_decimal' == $args['format'] ) {
+				if ( 'price_decimal' === $args['format'] ) {
 					return $this->format_amount( $meta, $this->order->get_currency(), 'decimal' );
 				}
 
 				// Unsupported format.
 				return wp_kses_post( (string) $meta );
-				break;
 
 			case 'order.details':
 				WC()->mailer();
 				ob_start();
 				do_action( 'woocommerce_email_order_details', $this->order, false, false, '' );
 				return ob_get_clean();
-				break;
 
 			default:
 				$method = 'get_' . str_replace( 'order.', '', $field );
@@ -629,7 +608,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				if ( is_callable( array( $this->order, $method ) ) ) {
 					return wp_kses_post( (string) $this->order->$method() );
 				}
-
 		}
 
 		return esc_html( $default );
@@ -644,64 +622,64 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		// TODO: On subject change, if heading is empty, fill it up.
 		return array(
 
-			'customer.id' => array(
+			'customer.id'           => array(
 				'description' => __( 'Customer ID', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.id",
+				'example'     => 'customer.id',
 			),
 
-			'customer.details' => array(
+			'customer.details'      => array(
 				'description' => __( "Return the customer's details.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.details",
+				'example'     => 'customer.details',
 			),
 
-			'customer.avatar_url' => array(
+			'customer.avatar_url'   => array(
 				'description' => __( "Return the customer's avatar.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.avatar_url",
+				'example'     => 'customer.avatar_url',
 			),
 
-			'customer.order_count' => array(
+			'customer.order_count'  => array(
 				'description' => __( 'The number of orders the customer has', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.order_count",
+				'example'     => 'customer.order_count',
 			),
 
-			'customer.total_spent' => array(
+			'customer.total_spent'  => array(
 				'description' => __( 'How much money this customer has spent', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
 				'example'     => "customer.total_spent format='price'",
 			),
 
-			'customer.username' => array(
+			'customer.username'     => array(
 				'description' => __( "The customer's username", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.username",
+				'example'     => 'customer.username',
 			),
 
-			'customer.email' => array(
+			'customer.email'        => array(
 				'description' => __( "The customer's email", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.email",
+				'example'     => 'customer.email',
 			),
 
-			'customer.first_name' => array(
+			'customer.first_name'   => array(
 				'description' => __( "The customer's first name", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.first_name",
+				'example'     => 'customer.first_name',
 			),
 
-			'customer.last_name' => array(
+			'customer.last_name'    => array(
 				'description' => __( "The customer's last name", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.last_name",
+				'example'     => 'customer.last_name',
 			),
 
 			'customer.display_name' => array(
 				'description' => __( "The customer's display name", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.display_name",
+				'example'     => 'customer.display_name',
 			),
 
 		);
@@ -724,24 +702,22 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		}
 
 		// Process customer fields.
-		switch( $field ) {
+		switch ( $field ) {
 
 			case 'customer.details':
-
 				if ( ! empty( $this->order ) ) {
 
 					WC()->mailer();
 					ob_start();
 					do_action( 'woocommerce_email_customer_details', $this->order, false, false, '' );
 					return ob_get_clean();
-					break;
 
 				}
+				break;
 
 			case 'customer.total_spent':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->customer->get_total_spent(), null, $format );
-				break;
 
 			default:
 				$method = 'get_' . str_replace( 'customer.', '', $field );
@@ -763,62 +739,62 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		return array(
 
-			'product.id' => array(
+			'product.id'                => array(
 				'description' => __( 'Product ID', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.id",
+				'example'     => 'product.id',
 			),
 
-			'product.name' => array(
+			'product.name'              => array(
 				'description' => __( 'Product name', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.name",
+				'example'     => 'product.name',
 			),
 
-			'product.sku' => array(
+			'product.sku'               => array(
 				'description' => __( 'Product sku', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.sku",
+				'example'     => 'product.sku',
 			),
 
 			'product.short_description' => array(
 				'description' => __( 'Product short description', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.short_description",
+				'example'     => 'product.short_description',
 			),
 
-			'product.description' => array(
+			'product.description'       => array(
 				'description' => __( 'Product description', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.description",
+				'example'     => 'product.description',
 			),
 
-			'product.url' => array(
+			'product.url'               => array(
 				'description' => __( 'Product URL', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.url",
+				'example'     => 'product.url',
 			),
 
-			'product.price' => array(
+			'product.price'             => array(
 				'description' => __( 'Product price', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
 				'example'     => "product.price format='price'",
 			),
 
-			'product.image' => array(
+			'product.image'             => array(
 				'description' => __( 'Product image', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
 				'example'     => "product.image format='woocommerce_thumbnail'",
 			),
 
-			'product.add_to_cart_url' => array(
+			'product.add_to_cart_url'   => array(
 				'description' => __( 'Add to cart URL', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.add_to_cart_url",
+				'example'     => 'product.add_to_cart_url',
 			),
 
-			'product.related' => array(
-				'description' => __( "Displays related products. Style can be grid or list.", 'newsletter-optin-box' ),
+			'product.related'           => array(
+				'description' => __( 'Displays related products. Style can be grid or list.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),
 				'example'     => "product.related limit='6' style='grid'",
 			),
@@ -843,25 +819,21 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		}
 
 		// Process product fields.
-		switch( $field ) {
+		switch ( $field ) {
 
 			case 'product.url':
 				return $this->product->get_permalink();
-				break;
 
 			case 'product.price':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->product->get_price(), null, $format );
-				break;
 
 			case 'product.image':
 				$size = isset( $args['size'] ) ? $args['size'] : 'woocommerce_thumbnail';
 				return $this->product->get_image( $size );
-				break;
 
 			case 'product.add_to_cart_url':
 				return $this->product->add_to_cart_url();
-				break;
 
 			case 'product.related':
 				$template = isset( $args['style'] ) ? $args['style'] : 'grid';
@@ -873,7 +845,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				}
 
 				return $this->get_products_html( $template, $related );
-				break;
 
 			default:
 				$method = 'get_' . str_replace( 'product.', '', $field );
@@ -895,34 +866,34 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		return array(
 
-			'order_item.id' => array(
+			'order_item.id'        => array(
 				'description' => __( 'Ordered Item ID', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => "order_item.id",
+				'example'     => 'order_item.id',
 			),
 
-			'order_item.name' => array(
+			'order_item.name'      => array(
 				'description' => __( 'Ordered Item Name', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => "order_item.name",
+				'example'     => 'order_item.name',
 			),
 
-			'order_item.quantity' => array(
+			'order_item.quantity'  => array(
 				'description' => __( 'Ordered Item Quantity', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => "order_item.quantity",
+				'example'     => 'order_item.quantity',
 			),
 
 			'order_item.attribute' => array(
 				'description' => __( 'Displays a given attribute for the product.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => "order_item.attribute key=xyz",
+				'example'     => "order_item.attribute key='xyz'",
 			),
 
-			'order_item.meta' => array(
+			'order_item.meta'      => array(
 				'description' => __( 'Displays the value of an order item meta field', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => "order_item.meta key=xyz",
+				'example'     => "order_item.meta key='xyz'",
 			),
 
 		);
@@ -945,10 +916,9 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		}
 
 		// Process product's order items.
-		switch( $field ) {
+		switch ( $field ) {
 
 			case 'order_item.attribute':
-
 				// Abort if no key provided.
 				if ( empty( $args['key'] ) ) {
 					return esc_html( $default );
@@ -958,18 +928,14 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				$attribute = empty( $product ) ? $default : $product->get_attribute( trim( $args['key'] ) );
 
 				return esc_html( $attribute );
-				break;
 
 			case 'order_item.meta':
-
 				// Abort if no key provided.
 				if ( empty( $args['key'] ) ) {
 					return esc_html( $default );
 				}
 
 				return wp_kses_post( (string) wc_get_order_item_meta( $this->order_item, trim( $args['key'] ) ) );
-				break;
-
 
 			default:
 				$method = 'get_' . str_replace( 'order_item.', '', $field );
@@ -999,10 +965,9 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			$product = $item->get_product();
 
 			if ( $product ) {
-				$in_order[] = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+				$in_order[]  = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
 				$cross_sells = array_merge( $product->get_cross_sell_ids(), $cross_sells );
 			}
-
 		}
 
 		return array_diff( $cross_sells, $in_order );
@@ -1026,7 +991,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				$in_order[] = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
 				$upsells    = array_merge( $product->get_upsell_ids(), $upsells );
 			}
-
 		}
 
 		return array_diff( $upsells, $in_order );
@@ -1055,10 +1019,11 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 */
 	public static function get_product_image( $product, $size = 'woocommerce_thumbnail' ) {
 
-		if ( $image_id = $product->get_image_id() ) {
+		$image_id = $product->get_image_id();
+		if ( ! empty( $image_id ) ) {
 			$image_url = wp_get_attachment_image_url( $image_id, $size );
 
-			$image = '<img src="' . esc_url( $image_url ) . '" class="noptin-wc-product-image" alt="'. esc_attr( $product->get_name() ) .'">';
+			$image = '<img src="' . esc_url( $image_url ) . '" class="noptin-wc-product-image" alt="' . esc_attr( $product->get_name() ) . '">';
 
 			return apply_filters( 'noptin_woocommere_email_product_image', $image, $size, $product );
 		} else {
@@ -1155,7 +1120,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			if ( $this->customer->get_id() ) {
 				$this->user = get_user_by( 'id', $this->customer->get_id() );
 			}
-
 		}
 
 		// Maybe set related subscriber.
@@ -1166,7 +1130,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			if ( $subscriber->exists() ) {
 				$this->subscriber = $subscriber;
 			}
-
 		}
 
 		$this->send( $campaign, $key, $this->get_recipients( $campaign, array( '[[customer.email]]' => $email ) ) );
@@ -1211,7 +1174,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			if ( $subscriber->exists() ) {
 				$this->subscriber = $subscriber;
 			}
-
 		}
 
 		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
@@ -1238,7 +1200,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 *
 	 * @param int $offset
 	 */
-	public function _prepare_test_data( $offset = 0 ) {
+	protected function _prepare_test_data( $offset = 0 ) {
 
 		// Do not run more than 10 times.
 		if ( $offset > 10 ) {

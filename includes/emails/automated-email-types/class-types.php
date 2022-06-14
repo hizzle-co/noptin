@@ -58,11 +58,10 @@ class Noptin_Automated_Email_Types {
 				} else {
 					continue;
 				}
-
 			}
 
 			// Register the automated email type.
-			$this->types[ $type ] = new $class;
+			$this->types[ $type ] = new $class();
 		}
 
 	}

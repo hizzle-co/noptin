@@ -122,7 +122,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function render_metabox( $campaign ) {
 
 		// Fetch all products.
-		$integrations =  noptin()->integrations->integrations;
+		$integrations = noptin()->integrations->integrations;
 
 		if ( empty( $integrations['woocommerce'] ) ) {
 			return;
@@ -208,6 +208,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		if ( ! $campaign->sends_immediately() ) {
 
 			$about = sprintf(
+				// translators: %s is the sending delay.
 				__( 'Sends %s after', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
@@ -223,7 +224,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		if ( ! empty( $new_customer ) ) {
 			$about .= ' ' . __( 'a first-time customer', 'newsletter-optin-box' );
 		} else {
-			$about .= ' ' . __( "a customer", 'newsletter-optin-box' );
+			$about .= ' ' . __( 'a customer', 'newsletter-optin-box' );
 		}
 
 		$about .= ' ';
@@ -231,7 +232,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 
 		// Prepare selected status.
 		$product = get_the_title( $selected_product );
-		$about  .= ' ' . '<em style="color: #607D8B;">' . esc_html( $product ) . '</em>';
+		$about  .= ' <em style="color: #607D8B;">' . esc_html( $product ) . '</em>';
 
 		return $about;
 
@@ -245,10 +246,10 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Order', 'noptin' )      => $this->get_order_merge_tags(),
-			__( 'Customer', 'noptin' )   => $this->get_customer_merge_tags(),
-			__( 'Product', 'noptin' )    => $this->get_product_merge_tags(),
-			__( 'Order Item', 'noptin' ) => $this->get_order_item_merge_tags(),
+			__( 'Order', 'newsletter-optin-box' )      => $this->get_order_merge_tags(),
+			__( 'Customer', 'newsletter-optin-box' )   => $this->get_customer_merge_tags(),
+			__( 'Product', 'newsletter-optin-box' )    => $this->get_product_merge_tags(),
+			__( 'Order Item', 'newsletter-optin-box' ) => $this->get_order_item_merge_tags(),
 		);
 
 	}
@@ -279,10 +280,9 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() &&  $this->is_automation_valid_for( $automation, $order, $product_id, 'buy', $woocommerce ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $product_id, 'buy', $woocommerce ) ) {
 				$this->schedule_notification( $item['item_id'], $automation );
 			}
-
 		}
 
 	}
@@ -313,10 +313,9 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $product_id, 'refund', $woocommerce ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $product_id, 'refund', $woocommerce ) ) {
 				$this->schedule_notification( $item['item_id'], $automation );
 			}
-
 		}
 
 	}
@@ -333,7 +332,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function is_automation_valid_for( $automation, $order, $product_id, $action, $woocommerce ) {
 
 		// Abort if no product selected ...
-		if ( (int) $automation->get( 'product' ) != $product_id ) {
+		if ( (int) $automation->get( 'product' ) !== $product_id ) {
 			return false;
 		}
 

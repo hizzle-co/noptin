@@ -191,6 +191,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		if ( ! $campaign->sends_immediately() ) {
 
 			$about = sprintf(
+				// Translators: %s is the sending delay.
 				__( 'Sends %s after', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
@@ -210,7 +211,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		}
 
 		// Prepare selected status.
-		$about .= ' ' . '<em style="color: #607D8B;">' . strtolower( $this->get_campaign_order_status( $campaign, true ) ) . '</em>';
+		$about .= ' <em style="color: #607D8B;">' . strtolower( $this->get_campaign_order_status( $campaign, true ) ) . '</em>';
 
 		return $about;
 
@@ -241,10 +242,9 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $action, $woocommerce ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $action, $woocommerce ) ) {
 				$this->schedule_notification( $order_id, $automation );
 			}
-
 		}
 
 	}
@@ -278,7 +278,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			if ( empty( $user ) ) {
 				$user = $woocommerce->get_order_customer_email( $order->get_id() );
 			}
- 
+
 			$is_valid = $woocommerce->get_order_count( $user ) === 1;
 
 		}
@@ -327,8 +327,8 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Order', 'noptin' )    => $this->get_order_merge_tags(),
-			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags()
+			__( 'Order', 'newsletter-optin-box' )    => $this->get_order_merge_tags(),
+			__( 'Customer', 'newsletter-optin-box' ) => $this->get_customer_merge_tags(),
 		);
 
 	}

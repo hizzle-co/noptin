@@ -3,27 +3,25 @@
 
 <?php
 
-	$tab = empty( $_GET['section'] ) ? 'newsletters' : $_GET['section'];
+	$email_tab = empty( $_GET['section'] ) ? 'newsletters' : $_GET['section'];  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 	foreach ( $tabs as $key => $label ) {
 
-		$url = esc_url(
-			add_query_arg(
-				array(
-					'page'    => 'noptin-email-campaigns',
-					'section' => urlencode( $key ),
-				),
-				admin_url( '/admin.php' )
-			)
+		printf(
+			'<a href="%s" class="%s">%s</a>',
+			esc_url(
+				add_query_arg(
+					array(
+						'page'    => 'noptin-email-campaigns',
+						'section' => rawurlencode( $key ),
+					),
+					admin_url( '/admin.php' )
+				)
+			),
+			$email_tab === $key ? 'nav-tab nav-tab-active' : 'nav-tab',
+			esc_html( $label )
 		);
 
-		$class = 'nav-tab';
-
-		if ( $tab === $key ) {
-			$class = 'nav-tab nav-tab-active';
-		}
-
-		echo "<a href='$url' class='$class'>$label</a>";
 	}
 
 	echo '</div>';

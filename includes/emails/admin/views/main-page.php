@@ -8,7 +8,7 @@
 	 * @var array $tabs
 	 */
 
-	 // If we're displaying a list of campaigns, prepare them.
+	// If we're displaying a list of campaigns, prepare them.
 	if ( 'main' === $section ) {
 
 		// Inlcude the list table.
@@ -29,8 +29,8 @@
 		<h1 class="wp-heading-inline" style="font-size: 29px; font-weight: 500"><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 		<!-- Action buttons -->
-		<?php if ( 'edit_campaign' === $section ): ?>
-			<a href="<?php echo esc_url( add_query_arg( array( 'sub_section' => 'new_campaign', 'campaign' => false ) ) ); ?>" class="page-title-action"><?php echo esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
+		<?php if ( 'edit_campaign' === $section ) : ?>
+			<a href="<?php echo esc_url( remove_query_arg( 'campaign', add_query_arg( 'sub_section', 'new_campaign' ) ) ); ?>" class="page-title-action"><?php echo esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
 		<?php endif; ?>
 
 		<!-- Title area end -->
@@ -54,7 +54,7 @@
 							add_query_arg(
 								array(
 									'page'    => 'noptin-email-campaigns',
-									'section' => urlencode( $key ),
+									'section' => rawurlencode( $key ),
 								),
 								admin_url( '/admin.php' )
 							)
@@ -90,7 +90,6 @@
 				} else {
 					include plugin_dir_path( __FILE__ ) . $tab . '/view-campaigns.php';
 				}
-
 			}
 
 			// New campaign page.

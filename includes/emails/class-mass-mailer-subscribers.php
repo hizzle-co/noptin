@@ -57,6 +57,7 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		// Generate and send the actual email.
 		noptin()->emails->newsletter->subscriber = $subscriber;
+
 		$result = noptin()->emails->newsletter->send( $campaign, $campaign->id, $subscriber->email );
 
 		// Log the send.
@@ -98,7 +99,7 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 			'count_total'       => false,
 			'meta_query'        => array(
 
-				'relation'      => 'AND',
+				'relation' => 'AND',
 				array(
 					'key'     => '_campaign_' . $campaign->id,
 					'compare' => 'NOT EXISTS',
@@ -132,8 +133,8 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		if ( '' !== $source ) {
 			$args['meta_query'][] = array(
-				'key'     => '_subscriber_via',
-				'value'   => $source,
+				'key'   => '_subscriber_via',
+				'value' => $source,
 			);
 		}
 

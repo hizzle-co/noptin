@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  */
 
 $email_type = $campaign->get_email_type();
-$template = $campaign->get_template();
+$template   = $campaign->get_template();
 
 ?>
 

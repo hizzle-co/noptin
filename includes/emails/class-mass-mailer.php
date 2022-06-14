@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * The mass mailing class. 
+ * The mass mailing class.
  */
 abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 
@@ -97,7 +97,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	 * @return string
 	 */
 	public function current_hour() {
-		return date( 'YmdH' );
+		return gmdate( 'YmdH' );
 	}
 
 	/**
@@ -258,7 +258,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		$result = $this->_send( $campaign, $recipient );
 		if ( true === $result ) {
 			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
-		} else if ( false === $result ) {
+		} elseif ( false === $result ) {
 			increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
 		}
 

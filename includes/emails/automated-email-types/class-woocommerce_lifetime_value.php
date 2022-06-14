@@ -148,7 +148,8 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		if ( ! $campaign->sends_immediately() ) {
 
 			return sprintf(
-				__( 'Sends %s after a customer reaches a lifetime value of %s', 'newsletter-optin-box' ),
+				// Translators: %1$s is the sending delay, %2$s is the lifetime value.
+				__( 'Sends %1$s after a customer reaches a lifetime value of %2$s', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) ),
 				wc_price( $lifetime_value )
 			);
@@ -156,6 +157,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		}
 
 		return sprintf(
+			// Translators: %s is the lifetime value.
 			__( 'Sends immediately a customer reaches a lifetime value of %s', 'newsletter-optin-box' ),
 			wc_price( $lifetime_value )
 		);
@@ -170,8 +172,8 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Order', 'noptin' )    => $this->get_order_merge_tags(),
-			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags(),
+			__( 'Order', 'newsletter-optin-box' )    => $this->get_order_merge_tags(),
+			__( 'Customer', 'newsletter-optin-box' ) => $this->get_customer_merge_tags(),
 		);
 
 	}
@@ -209,10 +211,9 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $lifetime_value ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $lifetime_value ) ) {
 				$this->schedule_notification( $order_id, $automation );
 			}
-
 		}
 
 	}
@@ -311,8 +312,8 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public function clean_customer() {
 
 		// Set variables.
-		$this->customer    = null;
-		$this->user        = null;
+		$this->customer   = null;
+		$this->user       = null;
 		$this->subscriber = null;
 
 		// Prepare merge tags.
