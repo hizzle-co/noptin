@@ -1,21 +1,26 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
+
 <div class="wrap noptin-import-subscribers-page" id="noptin-wrapper">
 
 	<h1 class="title"><?php esc_html_e( 'Import Subscribers', 'newsletter-optin-box' ); ?></h1>
 
-	<?php include plugin_dir_path( __FILE__ ) . 'subscriber-tabs.php' ?>
+	<?php require plugin_dir_path( __FILE__ ) . 'subscriber-tabs.php'; ?>
 
 	<form class="noptin-import-subscribers-form" method="POST">
 
 		<header>
-			<p class="description"><?php
-				_e( 'This tool allows you to import newsletter subscribers from a CSV file into Noptin.', 'newsletter-optin-box' );
+			<p class="description">
+				<?php
+					esc_html_e( 'This tool allows you to import newsletter subscribers from a CSV file into Noptin.', 'newsletter-optin-box' );
 
-				printf(
-					' ' . __( 'If your file is in another format such as XML or JSON, %sstart by converting it to CSV%s.', 'newsletter-optin-box' ),
-					'<a href="https://convertio.co/csv-converter/">',
-					'</a>'
-				);
-			?></p>
+					printf(
+						// Translators: %1 opening link tag, %2 closing link tag.
+						' ' . esc_html__( 'If your file is in another format such as XML or JSON, %1$sstart by converting it to CSV%2$s.', 'newsletter-optin-box' ),
+						'<a href="https://convertio.co/csv-converter/">',
+						'</a>'
+					);
+				?>
+			</p>
 		</header>
 
 		<section>
@@ -39,7 +44,7 @@
 
 		<footer>
 			<span style="display: inline-block;">
-				<button type="submit" class="button button-primary noptin-import-continue" value="<?php esc_attr_e( 'Continue', 'newsletter-optin-box'); ?>" disabled><?php esc_html_e( 'Continue', 'newsletter-optin-box'); ?></button>
+				<button type="submit" class="button button-primary noptin-import-continue" value="<?php esc_attr_e( 'Continue', 'newsletter-optin-box' ); ?>" disabled><?php esc_html_e( 'Continue', 'newsletter-optin-box' ); ?></button>
 				<span class="spinner"></span>
 			</span>
 		</footer>

@@ -1,22 +1,8 @@
-<?php
-
-	$data       = '';
-	$data_array = apply_filters( 'noptin_subscribers_page_extra_ajax_data', $_GET );
-	foreach( $data_array as $key => $value ) {
-
-		if ( is_scalar( $value ) ) {
-			$value = esc_attr( urldecode( $value ) );
-			$key   = esc_attr( $key );
-			$data .= " data-$key='$value'";
-		}
-
-	}
-
-?>
+<?php defined( 'ABSPATH' ) || exit; ?>
 
 <div class="wrap noptin-single-subscriber-page" id="noptin-wrapper">
 	<h1 class="title">
-		<?php esc_html_e( 'Subscriber','newsletter-optin-box' ); ?>
+		<?php esc_html_e( 'Subscriber', 'newsletter-optin-box' ); ?>
 		<a href="<?php echo esc_url( add_query_arg( 'add', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
 	</h1>
 
@@ -27,10 +13,10 @@
 			wp_nonce_field( 'noptin-admin-update-subscriber', 'noptin-admin-update-subscriber-nonce' );
 			wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
         	wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
-		?>		
+		?>
 
 		<div id="poststuff">
-			<div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
+			<div id="post-body" class="metabox-holder columns-<?php echo 1 === get_current_screen()->get_columns() ? '1' : '2'; ?>">
 
 				<div id="postbox-container-1" class="postbox-container">
     				<?php do_meta_boxes( 'noptin_page_noptin-subscribers', 'side', $subscriber ); ?>

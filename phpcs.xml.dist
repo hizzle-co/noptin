@@ -23,6 +23,7 @@
 	<exclude-pattern>*/includes/class-noptin-background-sync.php</exclude-pattern>
 	<exclude-pattern>*/includes/class-noptin-background-mailer.php</exclude-pattern>
 	<exclude-pattern>*/includes/emails/class-html-to-text.php</exclude-pattern>
+	<exclude-pattern>*/includes/assets/*</exclude-pattern>
 
 	<config name="minimum_supported_wp_version" value="4.7" />
 
@@ -59,6 +60,10 @@
 	</rule>
 
 	<rule ref="WordPress.NamingConventions">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>	
+
+	<rule ref="WordPress.Security.NonceVerification.Recommended">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>	
 

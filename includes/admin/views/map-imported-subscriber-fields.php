@@ -1,3 +1,5 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
+
 <form class="noptin-import-subscribers-form-map-fields" method="POST">
 
 	<header>
@@ -28,7 +30,7 @@
 								<?php endforeach; ?>
 							</select>
 							<p class="noptin-custom-field-value hidden">
-								<input class="regular-text" type="text" placeholder="<?php esc_attr_e( 'Enter field value'); ?>" />
+								<input class="regular-text" type="text" placeholder="<?php esc_attr_e( 'Enter field value', 'newsletter-optin-box' ); ?>" />
 								<br>
 								<span><?php esc_html_e( 'This value will be assigned to all imported subscribers', 'newsletter-optin-box' ); ?></span>
 							</p>
@@ -105,7 +107,7 @@
 								<option value="<?php echo esc_attr( $header ); ?>"><?php echo esc_html( $header ); ?></option>
 							<?php endforeach; ?>
 						</select>
-						<p class="description"><?php esc_html_e( "Which URL did the subscriber convert on?", 'newsletter-optin-box' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Which URL did the subscriber convert on?', 'newsletter-optin-box' ); ?></p>
 					</td>
 				</tr>
 
@@ -113,23 +115,26 @@
 		</section>
 
 		<footer>
-			<button type="submit" class="button button-primary noptin-import-finish"><?php esc_html_e( 'Import', 'newsletter-optin-box'); ?></button>
-			<button type="submit" class="button button-link" style="color: grey;" onclick="jQuery('.noptin-advanced').toggleClass('hidden'); return false;"><?php esc_html_e( 'Toggle Advanced Options', 'newsletter-optin-box'); ?></button>
+			<button type="submit" class="button button-primary noptin-import-finish"><?php esc_html_e( 'Import', 'newsletter-optin-box' ); ?></button>
+			<button type="submit" class="button button-link" style="color: grey;" onclick="jQuery('.noptin-advanced').toggleClass('hidden'); return false;"><?php esc_html_e( 'Toggle Advanced Options', 'newsletter-optin-box' ); ?></button>
 		</footer>
-		<p class="description"><?php
-			printf(
-				__( 'Import more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
-				'<a target="_blank" href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
-				'</a>'
-			);
-		?></p>
+		<p class="description">
+			<?php
+				printf(
+					// translators: %1$s is the opening link tag, %2$s is the closing link tag.
+					esc_html__( 'Import more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
+					'<a target="_blank" href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
+					'</a>'
+				);
+			?>
+		</p>
 	</form>
 
 <div class="noptin-import-progress hidden">
-	<h3 class="hidden noptin-import-complete" style="color: green;"><?php esc_html_e( 'Import Complete', 'newsletter-optin-box' );?></h3>
-	<h3 class="noptin-importing"><?php esc_html_e( 'Importing Subscribers', 'newsletter-optin-box' );?><span class="spinner" style="float: none; visibility: visible;"></span></h3>
-	<h4><?php printf( __( '%s Subscribers Imported', 'newsletter-optin-box' ), '<span class="noptin-imported">0</span>' ); ?></h4>
-	<h4><?php printf( __( '%s Subscribers Updated', 'newsletter-optin-box' ), '<span class="noptin-updated">0</span>' ); ?></h4>
-	<h4><?php printf( __( '%s Subscribers Skipped', 'newsletter-optin-box' ), '<span class="noptin-skipped">0</span>' ); ?></h4>
-	<h4><?php printf( __( '%s Subscribers Failed', 'newsletter-optin-box' ), '<span class="noptin-failed">0</span>' ); ?></h4>
+	<h3 class="hidden noptin-import-complete" style="color: green;"><?php esc_html_e( 'Import Complete', 'newsletter-optin-box' ); ?></h3>
+	<h3 class="noptin-importing"><?php esc_html_e( 'Importing Subscribers', 'newsletter-optin-box' ); ?><span class="spinner" style="float: none; visibility: visible;"></span></h3>
+	<h4><?php printf( /* translators: %s subscriber count */ esc_html__( '%s Subscribers Imported', 'newsletter-optin-box' ), '<span class="noptin-imported">0</span>' ); ?></h4>
+	<h4><?php printf( /* translators: %s subscriber count */ esc_html__( '%s Subscribers Updated', 'newsletter-optin-box' ), '<span class="noptin-updated">0</span>' ); ?></h4>
+	<h4><?php printf( /* translators: %s subscriber count */ esc_html__( '%s Subscribers Skipped', 'newsletter-optin-box' ), '<span class="noptin-skipped">0</span>' ); ?></h4>
+	<h4><?php printf( /* translators: %s subscriber count */ esc_html__( '%s Subscribers Failed', 'newsletter-optin-box' ), '<span class="noptin-failed">0</span>' ); ?></h4>
 </div>

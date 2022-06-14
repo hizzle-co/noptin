@@ -69,7 +69,7 @@ class Noptin_Subscribers_Admin {
 
 		add_meta_box(
 			'noptin_subscriber_activity',
-			__( 'Activity Feed','newsletter-optin-box' ),
+			__( 'Activity Feed', 'newsletter-optin-box' ),
 			'Noptin_Subscribers_Admin::metabox_callback',
 			'noptin_page_noptin-subscribers',
 			'advanced',
@@ -162,7 +162,6 @@ class Noptin_Subscribers_Admin {
 				$is_component_page = true;
 				break;
 			}
-
 		}
 
 		// Or the subscriber's overview page.
@@ -183,27 +182,27 @@ class Noptin_Subscribers_Admin {
 		return apply_filters(
 			'noptin_admin_subscribers_page_components',
 			array(
-				'subscriber'       => array(
+				'subscriber'    => array(
 					'callback'     => 'Noptin_Subscribers_Admin::render_single_subscriber_page',
 					'show_on_tabs' => false,
 					'label'        => __( 'Edit Subscriber', 'newsletter-optin-box' ),
 				),
-				'add'              => array(
+				'add'           => array(
 					'callback'     => 'Noptin_Subscribers_Admin::render_add_subscriber_page',
 					'show_on_tabs' => false,
 					'label'        => __( 'Add Subscriber', 'newsletter-optin-box' ),
 				),
-				'custom_fields'    => array(
+				'custom_fields' => array(
 					'callback'     => 'Noptin_Subscribers_Admin::render_custom_fields_page',
 					'show_on_tabs' => true,
 					'label'        => __( 'Custom Fields', 'newsletter-optin-box' ),
 				),
-				'import'           => array(
+				'import'        => array(
 					'callback'     => 'Noptin_Subscribers_Admin::render_import_subscribers_page',
 					'show_on_tabs' => true,
 					'label'        => __( 'Import', 'newsletter-optin-box' ),
 				),
-				'export'           => array(
+				'export'        => array(
 					'callback'     => 'Noptin_Subscribers_Admin::render_export_subscribers_page',
 					'show_on_tabs' => true,
 					'label'        => __( 'Export', 'newsletter-optin-box' ),
@@ -298,7 +297,7 @@ class Noptin_Subscribers_Admin {
 			return;
 		}
 
-		// Verify nonces to prevent CSRF attacks. 
+		// Verify nonces to prevent CSRF attacks.
 		if ( ! wp_verify_nonce( $_POST['noptin-admin-add-subscriber'], 'noptin-admin-add-subscriber' ) ) {
 			return;
 		}
@@ -314,7 +313,7 @@ class Noptin_Subscribers_Admin {
 
 			$name  = $custom_field['merge_tag'];
 			$value = isset( $_POST['noptin_fields'][ $name ] ) ? $_POST['noptin_fields'][ $name ] : '';
- 
+
 			$subscriber_fields[ $name ] = sanitize_noptin_custom_field_value( $value, $custom_field['type'], false );
 
 		}
@@ -336,7 +335,7 @@ class Noptin_Subscribers_Admin {
 			// Else, show a success message and redirect to the added subscriber.
 			noptin()->admin->show_success( __( 'Suscriber added successfully.', 'newsletter-optin-box' ) );
 
-			wp_redirect(
+			wp_safe_redirect(
 				add_query_arg( 'subscriber', (int) $result, admin_url( 'admin.php?page=noptin-subscribers' ) )
 			);
 			exit;
@@ -357,7 +356,7 @@ class Noptin_Subscribers_Admin {
 			return;
 		}
 
-		// Verify nonces to prevent CSRF attacks. 
+		// Verify nonces to prevent CSRF attacks.
 		if ( ! wp_verify_nonce( $_POST['noptin-admin-update-subscriber-nonce'], 'noptin-admin-update-subscriber' ) ) {
 			return;
 		}
@@ -384,7 +383,7 @@ class Noptin_Subscribers_Admin {
 
 			$name  = $custom_field['merge_tag'];
 			$value = isset( $_POST['noptin_fields'][ $name ] ) ? $_POST['noptin_fields'][ $name ] : '';
- 
+
 			$subscriber_fields[ $name ] = sanitize_noptin_custom_field_value( $value, $custom_field['type'], $subscriber );
 
 		}
@@ -408,13 +407,13 @@ class Noptin_Subscribers_Admin {
 	 */
 	public static function add_subscribers_page_screen_options() {
 
-		if ( 0 !== count( array_intersect_key( Noptin_Subscribers_Admin::get_components(), $_GET ) ) ) {
+		if ( 0 !== count( array_intersect_key( self::get_components(), $_GET ) ) ) {
 			return;
 		}
 
 		$args = array(
 			'default' => 10,
-			'option'  => 'noptin_subscribers_per_page'
+			'option'  => 'noptin_subscribers_per_page',
 		);
 
 		add_screen_option( 'per_page', $args );
@@ -444,7 +443,7 @@ class Noptin_Subscribers_Admin {
 			return;
 		}
 
-		// Verify nonces to prevent CSRF attacks. 
+		// Verify nonces to prevent CSRF attacks.
 		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'noptin-delete-subscribers' ) ) {
 			return;
 		}
@@ -460,7 +459,7 @@ class Noptin_Subscribers_Admin {
 		do_action( 'noptin_delete_all_subscribers' );
 
 		noptin()->admin->show_info( __( 'Successfully deleted all subscribers.', 'newsletter-optin-box' ) );
-		wp_redirect( remove_query_arg( array( 'noptin_admin_action', '_wpnonce' ) ) );
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', '_wpnonce' ) ) );
 		exit;
 	}
 
@@ -476,7 +475,7 @@ class Noptin_Subscribers_Admin {
 			return;
 		}
 
-		// Verify nonces to prevent CSRF attacks. 
+		// Verify nonces to prevent CSRF attacks.
 		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_delete_subscriber' ) ) {
 			return;
 		}
@@ -486,7 +485,7 @@ class Noptin_Subscribers_Admin {
 
 		// Show success then redirect the user.
 		noptin()->admin->show_info( __( 'Successfully deleted the subscriber.', 'newsletter-optin-box' ) );
-		wp_redirect( remove_query_arg( array( 'noptin_admin_action', '_wpnonce', 'subscriber_id' ) ) );
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', '_wpnonce', 'subscriber_id' ) ) );
 		exit;
 	}
 

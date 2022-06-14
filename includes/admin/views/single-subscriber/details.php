@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <style>
 
 	#noptin_subscriber_details .noptin-label {
@@ -27,7 +28,7 @@
 		<?php foreach ( get_noptin_custom_fields() as $custom_field ) : ?>
 			<tr class="form-field-row form-field-row-<?php echo sanitize_html_class( $custom_field['merge_tag'] ); ?>">
 				<th scope="row">
-					<label for="noptin_field_<?php echo sanitize_html_class( $custom_field['merge_tag'] ); ?>"><?php echo 'checkbox' === $custom_field['type'] ? "&nbsp;" : esc_html( $custom_field['label'] ); ?></label>
+					<label for="noptin_field_<?php echo sanitize_html_class( $custom_field['merge_tag'] ); ?>"><?php echo 'checkbox' === $custom_field['type'] ? '&nbsp;' : esc_html( $custom_field['label'] ); ?></label>
 				</th>
 				<td>
 					<?php
@@ -75,10 +76,13 @@
 	</tbody>
 </table>
 
-<p class="description"><?php
-	printf(
-		__( 'Store more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
-		'<a target="_blank" href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
-		'</a>'
-	)
-?></p>
+<p class="description">
+	<?php
+		printf(
+			// translators: %1$s is the opening link tag, %2$s is the closing link tag.
+			esc_html__( 'Store more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
+			'<a target="_blank" href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
+			'</a>'
+		);
+	?>
+</p>

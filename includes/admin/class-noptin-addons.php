@@ -36,9 +36,9 @@ class Noptin_Addons {
 			$_sections = wp_list_pluck( $sections, 'label', 'slug' );
 
 			if ( ! array_key_exists( $current_section, $_sections ) ) {
-				$current_section = $section = key( $_sections );
+				$current_section = key( $_sections );
+				$section         = $current_section;
 			}
-
 		}
 
 		if ( '_featured' !== $current_section ) {
@@ -80,7 +80,7 @@ class Noptin_Addons {
 		$parameters     = self::build_parameter_string( $category, $term );
 		$raw_extensions = Noptin_COM_API_Client::get( 'nopcom/1/extensions/search' . $parameters );
 
-		if ( ! is_wp_error( $raw_extensions ) && 300 > Noptin_COM_API_Client::$last_response_code  ) {
+		if ( ! is_wp_error( $raw_extensions ) && 300 > Noptin_COM_API_Client::$last_response_code ) {
 			return $raw_extensions->products;
 		}
 
@@ -103,7 +103,6 @@ class Noptin_Addons {
 				$addon_sections = $raw_sections;
 				set_transient( 'noptin_addons_sections', $addon_sections, DAY_IN_SECONDS );
 			}
-
 		}
 
 		return apply_filters( 'noptin_addons_sections', $addon_sections );
@@ -128,7 +127,6 @@ class Noptin_Addons {
 			if ( $section->slug === $section_id ) {
 				return $section;
 			}
-
 		}
 
 		return false;

@@ -182,7 +182,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$custom_fields                    = $this->get_custom_fields();
 		$custom_fields['_subscriber_via'] = '';
 
-		if ( isset( $query['orderby'] ) && isset( $custom_fields[ $query['orderby'] ] ) && ! in_array( $query['orderby'], array( 'first_name', 'second_name', 'last_name', 'email', 'date_created', 'active' ) ) ) {
+		if ( isset( $query['orderby'] ) && isset( $custom_fields[ $query['orderby'] ] ) && ! in_array( $query['orderby'], array( 'first_name', 'second_name', 'last_name', 'email', 'date_created', 'active' ), true ) ) {
 			$query['meta_key'] = $query['orderby'];
 			$query['orderby']  = 'meta_value';
 		}

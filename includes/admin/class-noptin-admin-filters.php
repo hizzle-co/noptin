@@ -29,7 +29,7 @@ class Noptin_Admin_Filters {
 		add_filter( 'manage_users_custom_column', array( $this, 'modify_users_table_row' ), 10, 3 );
 
 		// Export subscribers.
-		add_action( 'noptin_export_subscribers',  array( $this, 'export_subscribers' ) );
+		add_action( 'noptin_export_subscribers', array( $this, 'export_subscribers' ) );
 
 	}
 
@@ -40,7 +40,7 @@ class Noptin_Admin_Filters {
 	public function filter_tools_page_titles( $title ) {
 
 		$titles = array(
-			'debug_log'	         => __( 'Debug Log', 'newsletter-optin-box' ),
+			'debug_log' => __( 'Debug Log', 'newsletter-optin-box' ),
 		);
 
 		if ( isset( $_GET['tool'] ) && isset( $titles[ $_GET['tool'] ] ) ) {
@@ -56,17 +56,17 @@ class Noptin_Admin_Filters {
 	 * @since       1.2.7
 	 */
 	public function filter_subscribers_page_titles( $title ) {
-		
+
 		if ( ! empty( $_GET['subscriber'] ) ) {
 			$subscriber = new Noptin_Subscriber( $_GET['subscriber'] );
 
 			if ( ! empty( $subscriber->email ) ) {
 				return sprintf(
-							__( 'View Noptin Subscriber (%s)', 'newsletter-optin-box' ),
-							sanitize_email( $subscriber->email )
+					// Translators: %s is the subscriber's email.
+					esc_html__( 'View Noptin Subscriber (%s)', 'newsletter-optin-box' ),
+					sanitize_email( $subscriber->email )
 				);
 			}
-
 		}
 
 		return $title;
@@ -81,7 +81,7 @@ class Noptin_Admin_Filters {
         $columns['noptin_subscriber'] = __( 'Email Subscriber', 'newsletter-optin-box' );
         return $columns;
 	}
-	
+
 	/**
 	 * Displays a user's subscription status
 	 * @since       1.2.4
@@ -92,9 +92,9 @@ class Noptin_Admin_Filters {
 	public function modify_users_table_row( $val, $column_name, $user_id ) {
 
         switch ( $column_name ) {
-			case 'noptin_subscriber' :
+			case 'noptin_subscriber':
 				$user = get_userdata( $user_id );
-				$id   = get_noptin_subscriber_id_by_email ( $user->user_email );
+				$id   = get_noptin_subscriber_id_by_email( $user->user_email );
 
 				if ( $id ) {
 					$subscriber_id = (int) $id;
@@ -111,7 +111,7 @@ class Noptin_Admin_Filters {
 
 	/**
 	 * Exports subscribers.
-	 * 
+	 *
 	 * @since 1.3.1
 	 */
 	public function export_subscribers() {
@@ -131,10 +131,10 @@ class Noptin_Admin_Filters {
 		 */
 		do_action( 'noptin_before_download_subscribers' );
 
-		$output  = fopen( 'php://output', 'w' ) or die( __( 'Unsupported server', 'newsletter-optin-box' ) );
+		$output  = fopen( 'php://output', 'w' ) || wp_die( 'Unsupported server' );
 
 		// Prepare variables.
-		$fields    = empty( $_POST['fields'] )    ? array( 'email' ) : $_POST['fields'];
+		$fields    = empty( $_POST['fields'] ) ? array( 'email' ) : $_POST['fields'];
 		$file_type = empty( $_POST['file_type'] ) ? 'csv' : sanitize_key( $_POST['file_type'] );
 		$file_name = empty( $_POST['file_name'] ) ? 'noptin-subscribers-' . time() : sanitize_key( $_POST['file_name'] );
 
@@ -156,22 +156,22 @@ class Noptin_Admin_Filters {
 		if ( ! empty( $_POST['date'] ) ) {
 			$date       = sanitize_text_field( $_POST['date'] );
 			$date_query = array(
-				'relation' => 'OR'
+				'relation' => 'OR',
 			);
 
 			$date_type = 'on';
 			if ( ! empty( $_POST['date_type'] ) ) {
 				$date_type = $_POST['date_type'];
 			}
-		
+
 			if ( 'on' === $date_type ) {
 				$date_query[] = array(
-					'year'          => date( 'Y', strtotime( $date ) ),
-					'month'         => date( 'm', strtotime( $date ) ),
-					'day'           => date( 'j', strtotime( $date ) ),
+					'year'  => gmdate( 'Y', strtotime( $date ) ),
+					'month' => gmdate( 'm', strtotime( $date ) ),
+					'day'   => gmdate( 'j', strtotime( $date ) ),
 				);
 			}
-				
+
 			if ( 'before' === $date_type ) {
 				$date_query[] = array(
 					'before'    => $date,
@@ -181,7 +181,7 @@ class Noptin_Admin_Filters {
 
 			if ( 'after' === $date_type ) {
 				$date_query[] = array(
-					'after'    => $date,
+					'after'     => $date,
 					'inclusive' => true,
 				);
 			}
@@ -194,9 +194,9 @@ class Noptin_Admin_Filters {
 		$query = new Noptin_Subscriber_Query( $query );
 		$query->get_results();
 
-		if ( 'csv' == $file_type ) {
+		if ( 'csv' === $file_type ) {
 			$this->download_subscribers_csv( $query->get_results(), $output, $fields );
-		} else if( 'xml' == $file_type ) {
+		} elseif ( 'xml' === $file_type ) {
 			$this->download_subscribers_xml( $query->get_results(), $output, $fields );
 		} else {
 			$this->download_subscribers_json( $query->get_results(), $output, $fields );
@@ -228,7 +228,7 @@ class Noptin_Admin_Filters {
 		// Retrieve subscribers.
 		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'label', 'merge_tag' );
 		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
-		$labels     = array('ID');
+		$labels     = array( 'ID' );
 
 		foreach ( $fields as $field ) {
 			if ( isset( $all_fields[ $field ] ) ) {
@@ -241,23 +241,23 @@ class Noptin_Admin_Filters {
 		// Output the csv column headers.
 		fputcsv( $output, $labels );
 
-		// Loop through 
+		// Loop through
 		foreach ( $subscribers as $subscriber ) {
 			$row  = array( $subscriber->id );
 
 			foreach ( $fields as $field ) {
 
-				if ( $field === 'confirmed' ) {
+				if ( 'confirmed' === $field ) {
 					$row[] = intval( $subscriber->confirmed );
 					continue;
 				}
 
-				if ( $field === 'active' ) {
+				if ( 'active' === $field ) {
 					$row[] = empty( $subscriber->active ) ? 1 : 0;
 					continue;
 				}
 
-				if ( $field === 'full_name' ) {
+				if ( 'full_name' === $field ) {
 					$row[] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
 					continue;
 				}
@@ -284,7 +284,7 @@ class Noptin_Admin_Filters {
 		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'label', 'merge_tag' );
 		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
 
-		// Loop through 
+		// Loop through
 		foreach ( $subscribers as $subscriber ) {
 			$row  = array();
 
@@ -296,17 +296,17 @@ class Noptin_Admin_Filters {
 					$label = noptin_sanitize_title_slug( $field );
 				}
 
-				if ( $field === 'active' ) {
+				if ( 'active' === $field ) {
 					$row[ $label ] = empty( $subscriber->active ) ? 1 : 0;
 					continue;
 				}
 
-				if ( $field === 'confirmed' ) {
+				if ( 'confirmed' === $field ) {
 					$row[ $label ] = intval( $subscriber->confirmed );
 					continue;
 				}
 
-				if ( $field === 'full_name' ) {
+				if ( 'full_name' === $field ) {
 					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
 					continue;
 				}
@@ -336,7 +336,7 @@ class Noptin_Admin_Filters {
 		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'label', 'merge_tag' );
 		$all_fields = apply_filters( 'noptin_subscriber_export_fields', $all_fields );
 
-		// Loop through 
+		// Loop through
 		foreach ( $subscribers as $subscriber ) {
 			$row  = array();
 
@@ -348,23 +348,23 @@ class Noptin_Admin_Filters {
 					$label = $field;
 				}
 
-				$label = preg_replace("/[^A-Za-z0-9_\-]/", '', $label);
+				$label = preg_replace( '/[^A-Za-z0-9_\-]/', '', $label );
 
-				if ( $field === 'active' ) {
+				if ( 'active' === $field ) {
 					$row[ $label ] = empty( $subscriber->active ) ? 1 : 0;
 					continue;
 				}
 
-				if ( $field === 'confirmed' ) {
+				if ( 'confirmed' === $field ) {
 					$row[ $label ] = intval( $subscriber->confirmed );
 					continue;
 				}
 
-				if ( $field === 'full_name' ) {
+				if ( 'full_name' === $field ) {
 					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
 					continue;
 				}
-				
+
 				$row[ $label ] = apply_filters( 'noptin_subscriber_export_field_value', $subscriber->get( $field ), $field, $subscriber );
 
 			}
@@ -372,8 +372,8 @@ class Noptin_Admin_Filters {
 			$output[] = $row;
 
 		}
-		
-		$xml = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
+
+		$xml = new SimpleXMLElement( '<?xml version="1.0"?><data></data>' );
 		$this->convert_array_xml( $output, $xml );
 
 		fwrite( $stream, $xml->asXML() );
@@ -388,13 +388,13 @@ class Noptin_Admin_Filters {
 	 */
 	public function convert_array_xml( $data, $xml ) {
 
-		// Loop through 
+		// Loop through
 		foreach ( $data as $key => $value ) {
 
 			if ( is_array( $value ) ) {
 
-				if( is_numeric( $key ) ){
-					$key = 'item'.$key; //dealing with <0/>..<n/> issues
+				if ( is_numeric( $key ) ) {
+					$key = 'item' . $key; // dealing with <0/>..<n/> issues
 				}
 
 				$subnode = $xml->addChild( $key );

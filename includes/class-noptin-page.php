@@ -259,7 +259,7 @@ class Noptin_Page {
 
 		// Abort if no destination.
 		if ( empty( $recipient['to'] ) ) {
-			wp_redirect( get_home_url() );
+			wp_safe_redirect( get_home_url() );
 			exit;
 		}
 
@@ -602,7 +602,7 @@ class Noptin_Page {
 		// No action specified, redirect back home.
 		$action = $this->get_request_action();
 		if ( empty( $action ) ) {
-			wp_redirect( add_query_arg( 'noptin_action', 'failed', get_home_url() ) );
+			wp_safe_redirect( add_query_arg( 'noptin_action', 'failed', get_home_url() ) );
 			exit;
 		}
 

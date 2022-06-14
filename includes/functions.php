@@ -182,8 +182,7 @@ function noptin_should_show_optins() {
 function noptin_get_optin_stats() {
 	global $wpdb;
 	$table = get_noptin_subscribers_meta_table_name();
-	$sql   = "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `$table` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`";
-	$stats = $wpdb->get_results( $sql );
+	$stats = $wpdb->get_results( "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `$table` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`" );
 
 	if ( ! $stats ) {
 		$stats = array();
@@ -453,7 +452,7 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 	}
 
 	// Ensure that it is valid.
-	if (  empty( $ip_address ) || ! rest_is_ip_address( $ip_address ) ) {
+	if ( empty( $ip_address ) || ! rest_is_ip_address( $ip_address ) ) {
 		return false;
 	}
 
@@ -590,7 +589,6 @@ function noptin_parse_list( $list, $strict = false ) {
 		} else {
 			$list = preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
 		}
-
 	}
 
 	return map_deep( $list, 'trim' );
@@ -682,10 +680,10 @@ function noptin_clean_url( $url = '' ) {
 	$clean_url = strtok( $url, '?' );
 
 	// Remove the scheme and www parts.
-	$clean_url = preg_replace('#^(http(s)?://)?(www\.)?(.+\.)#i', '$4', $clean_url );
+	$clean_url = preg_replace( '#^(http(s)?://)?(www\.)?(.+\.)#i', '$4', $clean_url );
 
 	// Take care of edge cases
-	$clean_url = preg_replace('#^http(s)?://#i', '', $clean_url );
+	$clean_url = preg_replace( '#^http(s)?://#i', '', $clean_url );
 
 	// remove forwad slash at the end of the url
 	$clean_url = strtolower( untrailingslashit( $clean_url ) );
@@ -800,7 +798,6 @@ function get_special_noptin_form_fields() {
 		if ( empty( $custom_field['predefined'] ) ) {
 			$fields[ $custom_field['merge_tag'] ] = $custom_field['label'];
 		}
-
 	}
 
 	return $fields;
@@ -977,13 +974,12 @@ function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
 	if ( is_numeric( $action_name_id_or_array ) ) {
 
 		try {
-			ActionScheduler_DBStore::instance()->cancel_action( ( int ) $action_name_id_or_array );
+			ActionScheduler_DBStore::instance()->cancel_action( (int) $action_name_id_or_array );
 			return true;
 		} catch ( InvalidArgumentException $e ) {
 			log_noptin_message( $e->getMessage() );
 			return false;
 		}
-
 	}
 
 	// Developers can also cancel an action by a hook name.
@@ -1116,9 +1112,7 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 						} else {
 							$multi_array[ $key ] = $value;
 						}
-
 					}
-
 				}
 
 				// Fetched matched.
@@ -1134,9 +1128,7 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 
 				$content = str_replace( $matches[0][ $i ], $matched, $content );
 			}
-
 		}
-
 	}
 
 	// Replace all available tags with their values.
@@ -1171,13 +1163,13 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 
 	foreach ( $array as $key => $value ) {
 
-		$_prefix = '' == $prefix ? "$key" : "$prefix.$key";
+		$_prefix = '' === $prefix ? "$key" : "$prefix.$key";
 
 		$result[ $_prefix ] = 1;
 
 		if ( is_array( $value ) ) {
-			$result = array_merge( $result, flatten_noptin_array( $value , $_prefix ) );
-		} else if ( is_object( $value ) ) {
+			$result = array_merge( $result, flatten_noptin_array( $value, $_prefix ) );
+		} elseif ( is_object( $value ) ) {
 			$result = array_merge( $result, flatten_noptin_array( get_object_vars( $value ), $_prefix ) );
 		} else {
 
@@ -1194,9 +1186,7 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 			if ( strpos( $_prefix, '.0' ) !== false ) {
 				$result[ str_replace( '.0', '', $_prefix ) ] = $value;
 			}
-
 		}
-
 	}
 
 	return $result;
@@ -1230,6 +1220,7 @@ function noptin_sanitize_booleans( $var ) {
  * @return string
  */
 function noptin_get_request_url() {
+	/**@var wp $wp */
 	global $wp;
 
 	// Get requested url from global $wp object.
@@ -1306,7 +1297,7 @@ function noptin_is_preview() {
 	}
 
 	// Elementor builder.
-	if ( isset( $_REQUEST['elementor-preview'] ) || ( is_admin() && isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'elementor' ) || ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'elementor_ajax' ) ) {
+	if ( isset( $_REQUEST['elementor-preview'] ) || ( is_admin() && isset( $_REQUEST['action'] ) && 'elementor' === $_REQUEST['action'] ) || ( isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action'] ) ) {
 		return true;
 	}
 
@@ -1316,7 +1307,7 @@ function noptin_is_preview() {
 	}
 
 	// Cornerstone preview.
-	if ( ! empty( $_REQUEST['cornerstone_preview'] ) || basename( $_SERVER['REQUEST_URI'] ) == 'cornerstone-endpoint' ) {
+	if ( ! empty( $_REQUEST['cornerstone_preview'] ) || 'cornerstone-endpoint' === basename( $_SERVER['REQUEST_URI'] ) ) {
 		return true;
 	}
 
@@ -1326,7 +1317,7 @@ function noptin_is_preview() {
 	}
 
 	// Oxygen preview.
-	if ( ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && ( substr( $_REQUEST['action'], 0, 11 ) === "oxy_render_" || substr( $_REQUEST['action'], 0, 10 ) === "ct_render_" ) ) ) {
+	if ( ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && ( 'oxy_render_' === substr( $_REQUEST['action'], 0, 11 ) || 'ct_render_' === substr( $_REQUEST['action'], 0, 10 ) ) ) ) {
 		return true;
 	}
 
@@ -1510,11 +1501,14 @@ function noptin_kses_post_e( $content ) {
 					'height'          => true,
 					'viewbox'         => true,
 					'version'         => true,
-					'fill'            => true
+					'fill'            => true,
 				),
 				'g'     => array( 'fill' => true ),
 				'title' => array( 'title' => true ),
-				'path'  => array( 'd' => true, 'fill' => true,  ),
+				'path'  => array(
+					'd' => true,
+					'fill' => true,
+				),
 			)
 		)
 	);
@@ -1540,7 +1534,6 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 		if ( $subscriber->exists() && ! $subscriber->is_active() ) {
 			return false;
 		}
-
 	}
 
 	return 'unsubscribed' === get_user_meta( $user_id, 'noptin_unsubscribed', true );

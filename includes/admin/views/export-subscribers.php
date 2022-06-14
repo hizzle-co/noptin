@@ -1,8 +1,10 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
+
 <div class="wrap noptin-export-subscribers-page" id="noptin-wrapper">
 
 	<h1 class="title"><?php esc_html_e( 'Export Subscribers', 'newsletter-optin-box' ); ?></h1>
 
-	<?php include plugin_dir_path( __FILE__ ) . 'subscriber-tabs.php' ?>
+	<?php require plugin_dir_path( __FILE__ ) . 'subscriber-tabs.php'; ?>
 
 	<form name="noptin-export-subscribers" method="POST" action="<?php echo esc_url_raw( add_query_arg( array() ) ); ?>">
 		<input type="hidden" name="noptin_admin_action" value="noptin_export_subscribers">
@@ -104,12 +106,14 @@
 									<fieldset>
 										<p class="description"><?php esc_html_e( 'What fields do you want to export?', 'newsletter-optin-box' ); ?></p>
 										<?php
-											$fields = get_noptin_custom_fields();
-											foreach ( $fields as $custom_field ) {
-												$name    = esc_attr( $custom_field['merge_tag'] );
-												$label   = esc_html( $custom_field['label'] );
-												$checked = checked( ! empty( $custom_field['subs_table']), true, false );
-												echo "<label><input type='checkbox' name='fields[]' value='$name' $checked><span>$label</span></label><br>";
+
+											foreach ( get_noptin_custom_fields() as $custom_field ) {
+												printf(
+													'<label><input type="checkbox" name="fields[]" value="%s" %s><span>%s</span></label><br>',
+													esc_attr( $custom_field['merge_tag'] ),
+													checked( ! empty( $custom_field['subs_table'] ), true, false ),
+													esc_html( $custom_field['label'] )
+												);
 											}
 
 										?>

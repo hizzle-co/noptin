@@ -516,7 +516,7 @@ class Noptin_COM_Helper {
 			apply_filters( 'noptin_com_helper_connection_url', 'https://noptin.com/connect/')
 		);
 
-		wp_redirect( esc_url_raw( $connect_url ) );
+		wp_safe_redirect( esc_url_raw( $connect_url ) );
 		die();
 	}
 
@@ -603,7 +603,7 @@ class Noptin_COM_Helper {
 		// If connecting through in-app purchase, redirects back to noptin.com
 		// for product installation.
 		if ( ! empty( $_GET['nopcom-install-url'] ) ) {
-			wp_redirect( wp_unslash( $_GET['nopcom-install-url'] ) );
+			wp_safe_redirect( wp_unslash( $_GET['nopcom-install-url'] ) );
 			exit;
 		}
 

@@ -40,8 +40,8 @@ class Noptin_Automation_Rules {
 		$this->add_trigger( new Noptin_Unsubscribe_Trigger() );
 
 		// Handle admin rule CRUD requests.
-		add_action( 'noptin_create_automation_rule',  array( $this, 'admin_create_automation_rule' ) );
-		add_action( 'noptin_delete_automation_rule',  array( $this, 'admin_delete_automation_rule' ) );
+		add_action( 'noptin_create_automation_rule', array( $this, 'admin_create_automation_rule' ) );
+		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );
 		do_action( 'noptin_automation_rules_load', $this );
 	}
 
@@ -157,8 +157,8 @@ class Noptin_Automation_Rules {
 
 		// Our database fields with defaults set.
 		$fields = array(
-			'action_id'       => '',
-			'action_settings' => array(),
+			'action_id'        => '',
+			'action_settings'  => array(),
 			'trigger_id'       => '',
 			'trigger_settings' => array(),
 			'status'           => 1, // Active, 0 inactive, 2 automated email.
@@ -224,7 +224,6 @@ class Noptin_Automation_Rules {
 			} else {
 				unset( $fields[ $key ] );
 			}
-
 		}
 
 		$fields['updated_at'] = current_time( 'mysql' );
@@ -288,12 +287,12 @@ class Noptin_Automation_Rules {
 		}
 
 		$post       = wp_unslash( $_POST );
-		$action_id  = noptin_clean( $post[ 'action' ] );
-		$trigger_id = noptin_clean( $post[ 'trigger' ] );
+		$action_id  = noptin_clean( $post['action'] );
+		$trigger_id = noptin_clean( $post['trigger'] );
 		$rule       = $this->create_rule( compact( 'action_id', 'trigger_id' ) );
 
 		if ( ! empty( $rule ) ) {
-			wp_redirect(
+			wp_safe_redirect(
 				add_query_arg(
 					'edit',
 					$rule->id,
@@ -328,7 +327,7 @@ class Noptin_Automation_Rules {
 
 		noptin()->admin->show_info( __( 'The automation rule has been deleted.', 'newsletter-optin-box' ) );
 
-		wp_redirect(
+		wp_safe_redirect(
 			add_query_arg(
 				array(
 					'_wpnonce'            => false,
