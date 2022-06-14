@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="wrap noptin-settings" id="noptin-settings-app">
 
 	<?php
@@ -47,16 +48,15 @@
 					$key         = esc_attr( $key );
 					$subsections = array();
 
-					foreach ( $section['children'] as $id => $title ) {
-						$title         = noptin_clean( $title );
-						$id            = esc_attr( $id );
-						$subsections[] = "<a href='' :class=\"sectionClass('$id')\" @click.prevent=\"switchSection('$id')\">$title</a>";
+					foreach ( $section['children'] as $subsection_id => $subsection_title ) {
+						$subsection_title = esc_html( $subsection_title );
+						$subsection_id    = esc_attr( $subsection_id );
+						$subsections[]    = "<a href='#' :class=\"sectionClass('$subsection_id')\" @click.prevent=\"switchSection('$subsection_id')\">$subsection_title</a>";
 					}
 
-					$html  = "<ul class='subsubsub' v-show=\"currentTab=='$key'\">\n\t<li>";
-					$html .= join( " | </li>\n\t<li>", $subsections );
-					$html .= "</li>\n</ul>\n";
-					echo $html;
+					echo "<ul class='subsubsub' v-show=\"currentTab=='" . esc_attr( $key ) . "'\">\n\t<li>";
+					echo join( " | </li>\n\t<li>", $subsections );
+					echo "</li>\n</ul>\n";
 
 				endforeach;
 

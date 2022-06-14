@@ -565,10 +565,12 @@ class Noptin_Admin {
 	public function set_admin_menu_class() {
 		global $current_screen, $parent_file, $submenu_file;
 
+		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
         if ( ! empty( $current_screen->id ) && in_array( $current_screen->id, array( 'noptin-form' ), true ) ) {
 			$parent_file  = 'noptin';
 			$submenu_file = 'edit.php?post_type=' . $current_screen->id . 'noptin';
         }
+		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
     }
 

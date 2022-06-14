@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <style type="text/css">
 	/* Based on The MailChimp Reset INLINE: Yes. */
 	/* Client-specific Styles */
@@ -144,59 +145,59 @@
 		line-height: 1.4;
 	}
 
-	  ul li,
-	  ol li {
+	ul li,
+	ol li {
 		margin-left: 5px;
 		list-style-position: inside;
-	  }
+	}
 
-	  /* Body */
-	  table.body-wrap {
+	/* Body */
+	table.body-wrap {
 		width: 100%;
 		padding: 30px;
-	  }
+	}
 
 
-	  /* Footer */
-	  table.footer-wrap {
+	/* Footer */
+	table.footer-wrap {
 		width: 100%;
 		clear: both!important;
-	  }
+	}
 
-	  .footer-wrap .container p {
+	.footer-wrap .container p {
 		font-size: 12px;
 		color: #666;
-	  }
+	}
 
-	  table.footer-wrap a {
+	table.footer-wrap a {
 		color: #999;
-	  }
+	}
 
 
-	  /* Give it some responsive love */
-	  .container {
+	/* Give it some responsive love */
+	.container {
 		display: block!important;
 		max-width: 600px!important;
 		margin: 0 auto!important; /* makes it centered */
 		clear: both!important;
-	  }
+	}
 
-	  /* Set the padding on the td rather than the div for Outlook compatibility */
-	  .body-wrap .container {
+	/* Set the padding on the td rather than the div for Outlook compatibility */
+	.body-wrap .container {
 		padding: 30px;
-	  }
+	}
 
-	  /* This should also be a block element, so that it will fill 100% of the .container */
-	  .content {
+	/* This should also be a block element, so that it will fill 100% of the .container */
+	.content {
 		max-width: 600px;
 		margin: 0 auto;
 		display: block;
-	  }
+	}
 
-	  /* Let's make sure tables in the content area are 100% wide */
-	  .content table {
+	/* Let's make sure tables in the content area are 100% wide */
+	.content table {
 		width: 100%;
-	  }
+	}
 
 	img, figure {
 		outline: none;
@@ -309,5 +310,3 @@
 			}
 	</style>
 <![endif]-->
-
-	

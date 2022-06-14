@@ -73,22 +73,26 @@ abstract class Noptin_Dynamic_Content_Tags {
 		);
 
 		$this->tags['date'] = array(
-			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ) . '</strong>' ),
-			'replacement' => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
+			// translators: %s is the current date.
+			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
+			'replacement' => date_i18n( get_option( 'date_format' ) ),
 		);
 
 		$this->tags['time'] = array(
-			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ), current_time( 'timestamp' ) ) . '</strong>' ),
-			'replacement' => date_i18n( get_option( 'time_format' ), current_time( 'timestamp' ) ),
+			// translators: %s is the current time.
+			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ) ) . '</strong>' ),
+			'replacement' => date_i18n( get_option( 'time_format' ) ),
 		);
 
 		$this->tags['language'] = array(
+			// translators: %s is the current language.
 			'description' => sprintf( __( 'The current language. Example: %s.', 'newsletter-optin-box' ), '<strong>' . get_locale() . '</strong>' ),
 			'callback'    => 'get_locale',
 			'no_args'     => true,
 		);
 
 		$this->tags['ip'] = array(
+			// translators: %s is the current IP address.
 			'description' => sprintf( __( 'The visitor\'s IP address. Example: %s.', 'newsletter-optin-box' ), '<strong>' . noptin_get_user_ip() . '</strong>' ),
 			'callback'    => 'noptin_get_user_ip',
 			'no_args'     => true,
@@ -118,7 +122,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 * @return array
 	 */
 	public function all() {
-		if ( $this->tags === array() ) {
+		if ( array() === $this->tags ) {
 			$this->register();
 		}
 
@@ -150,7 +154,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		if ( isset( $config['replacement'] ) ) {
 			$replacement = $config['replacement'];
-		} else if ( isset( $config['callback'] ) ) {
+		} elseif ( isset( $config['callback'] ) ) {
 
 			// Parse attributes.
 			$attributes = array();
@@ -165,7 +169,6 @@ abstract class Noptin_Dynamic_Content_Tags {
 			} else {
 				$replacement = call_user_func( $config['callback'] );
 			}
-
 		}
 
 		if ( is_callable( $this->escape_function ) ) {
@@ -263,12 +266,12 @@ abstract class Noptin_Dynamic_Content_Tags {
 		if ( isset( $all_fields[ $field ] ) ) {
 
 			$value = $subscriber->get( $field );
-			if ( 'checkbox' == $all_fields[ $field ] ) {
+			if ( 'checkbox' === $all_fields[ $field ] ) {
 				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
 			}
 
 			$value = wp_kses_post(
-					format_noptin_custom_field_value(
+				format_noptin_custom_field_value(
 					$subscriber->get( $field ),
 					$all_fields[ $field ],
 					$subscriber

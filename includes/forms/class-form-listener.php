@@ -77,7 +77,7 @@ class Noptin_Form_Listener {
 		$this->error = new WP_Error();
 
 		// Prepare submitted data.
-		$submitted  = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$submitted  = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
 
 		// Abort if this is not a subscription request.
 		if ( empty( $submitted['noptin_process_request'] ) ) {

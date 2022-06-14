@@ -7,6 +7,9 @@
  * @since 1.2.7
  */
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Main class used for querying subscribers.
  *
@@ -260,13 +263,13 @@ class Noptin_Subscriber_Query {
 
 		// Status.
 		if ( 'all' !== $qv['subscriber_status'] ) {
-			$active = trim( $qv['subscriber_status'] ) === 'active' ? 0 : 1;
+			$active             = trim( $qv['subscriber_status'] ) === 'active' ? 0 : 1;
 			$this->query_where .= $wpdb->prepare( ' AND active = %d', $active );
 		}
 
 		// Double optin.
 		if ( 'any' !== $qv['email_status'] ) {
-			$confirmed = trim( $qv['email_status'] ) === 'confirmed' ? 1 : 0;
+			$confirmed          = trim( $qv['email_status'] ) === 'confirmed' ? 1 : 0;
 			$this->query_where .= $wpdb->prepare( ' AND confirmed = %d', $confirmed );
 		}
 
@@ -295,7 +298,7 @@ class Noptin_Subscriber_Query {
 			$ordersby = $qv['orderby'];
 		} else {
 			// 'orderby' values may be a comma- or space-separated list.
-			$ordersby = noptin_parse_list(  $qv['orderby'] );
+			$ordersby = noptin_parse_list( $qv['orderby'] );
 		}
 
 		$orderby_array = array();
@@ -420,10 +423,10 @@ class Noptin_Subscriber_Query {
 		if ( null === $this->results ) {
 			$this->request = "SELECT $this->query_fields $this->query_from $this->query_where $this->query_orderby $this->query_limit";
 
-			if ( ( is_array( $qv['fields'] ) && 1 != count( $qv['fields'] ) ) || 'all' == $qv['fields'] ) {
-				$this->results = $wpdb->get_results( $this->request );
+			if ( ( is_array( $qv['fields'] ) && 1 !== count( $qv['fields'] ) ) || 'all' === $qv['fields'] ) {
+				$this->results = $wpdb->get_results( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			} else {
-				$this->results = $wpdb->get_col( $this->request );
+				$this->results = $wpdb->get_col( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
 
 			if ( isset( $qv['count_total'] ) && $qv['count_total'] ) {
@@ -439,7 +442,7 @@ class Noptin_Subscriber_Query {
 				 */
 				$found_subscribers_query = apply_filters( 'noptin_found_subscribers_query', 'SELECT FOUND_ROWS()', $this );
 
-				$this->total_subscribers = (int) $wpdb->get_var( $found_subscribers_query );
+				$this->total_subscribers = (int) $wpdb->get_var( $found_subscribers_query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
 		}
 
@@ -510,9 +513,9 @@ class Noptin_Subscriber_Query {
 
 		foreach ( $cols as $col ) {
 			if ( 'id' === $col ) {
-				$searches[] = $wpdb->prepare( "$col = %s", $string );
+				$searches[] = $wpdb->prepare( "$col = %s", $string );  // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			} else {
-				$searches[] = $wpdb->prepare( "$col LIKE %s", $like );
+				$searches[] = $wpdb->prepare( "$col LIKE %s", $like );  // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			}
 		}
 
@@ -558,15 +561,15 @@ class Noptin_Subscriber_Query {
 		$table              = get_noptin_subscribers_table_name();
 
 		$_orderby = '';
-		if ( in_array( $orderby, array( 'first_name', 'second_name', 'email', 'date_created', 'active' ) ) ) {
+		if ( in_array( $orderby, array( 'first_name', 'second_name', 'email', 'date_created', 'active' ), true ) ) {
 			$_orderby = $orderby;
 		} elseif ( 'id' === strtolower( $orderby ) ) {
 			$_orderby = 'id';
 		} elseif ( 'last_name' === strtolower( $orderby ) ) {
 			$_orderby = 'second_name';
-		} elseif ( 'meta_value' === $orderby || $this->get( 'meta_key' ) == $orderby ) {
+		} elseif ( 'meta_value' === $orderby || $this->get( 'meta_key' ) === $orderby ) {
 			$_orderby = "$wpdb->noptin_subscribermeta.meta_value";
-		} elseif ( 'meta_value_num' == $orderby ) {
+		} elseif ( 'meta_value_num' === $orderby ) {
 			$_orderby = "$wpdb->noptin_subscribermeta.meta_value+0";
 		} elseif ( 'include' === $orderby && ! empty( $this->query_vars['include'] ) ) {
 			$include     = noptin_parse_int_list( $this->query_vars['include'] );

@@ -222,8 +222,8 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		}
 
 		// Search.
-		if ( ! empty( $_POST['s'] ) ) {
-			$query['search'] = sanitize_text_field( urldecode( $_POST['s'] ) );
+		if ( ! empty( $_POST['s'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$query['search'] = sanitize_text_field( urldecode( $_POST['s'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$subscribers = new Noptin_Subscriber_Query( $query );

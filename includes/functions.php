@@ -181,8 +181,7 @@ function noptin_should_show_optins() {
  */
 function noptin_get_optin_stats() {
 	global $wpdb;
-	$table = get_noptin_subscribers_meta_table_name();
-	$stats = $wpdb->get_results( "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `$table` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`" );
+	$stats = $wpdb->get_results( "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `{$wpdb->prefix}noptin_subscriber_meta` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`" );
 
 	if ( ! $stats ) {
 		$stats = array();
@@ -1034,9 +1033,8 @@ function noptin_dump( $data ) {
  */
 function noptin_automation_rules_table_exists() {
 	global $wpdb;
-	$table = get_noptin_automation_rules_table_name();
 
-	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
+	return get_noptin_automation_rules_table_name() === $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_automation_rules'" );
 }
 
 /**
@@ -1506,7 +1504,7 @@ function noptin_kses_post_e( $content ) {
 				'g'     => array( 'fill' => true ),
 				'title' => array( 'title' => true ),
 				'path'  => array(
-					'd' => true,
+					'd'    => true,
 					'fill' => true,
 				),
 			)

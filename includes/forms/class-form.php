@@ -110,7 +110,6 @@ class Noptin_Form {
 			if ( isset( $data[ $prop ] ) ) {
 				$this->$prop = wp_kses_post_deep( $data[ $prop ] );
 			}
-
 		}
 
 	}
@@ -131,22 +130,21 @@ class Noptin_Form {
 
 		// Prepare form data.
 		$data = array(
-			'id'         => $post->ID,
-			'title'      => $post->post_title,
-			'status'     => $post->post_status,
+			'id'     => $post->ID,
+			'title'  => $post->post_title,
+			'status' => $post->post_status,
 		);
 
 		// Add meta properties.
 		foreach ( $this->get_form_properties() as $prop ) {
 
-			if ( ! in_array( $prop, array( 'id', 'title', 'status' ) ) ) {
+			if ( ! in_array( $prop, array( 'id', 'title', 'status' ), true ) ) {
 				$value = get_post_meta( $post->ID, "form_$prop", true );
 
 				if ( '' !== $value ) {
 					$data[ $prop ] = $value;
 				}
 			}
-
 		}
 
 		return $data;
@@ -222,16 +220,14 @@ class Noptin_Form {
 		// Save meta properties.
 		foreach ( $this->get_form_properties() as $prop ) {
 
-			if ( ! in_array( $prop, array( 'id', 'title', 'status' ) ) ) {
+			if ( ! in_array( $prop, array( 'id', 'title', 'status' ), true ) ) {
 
 				if ( isset( $this->$prop ) || ! empty( $this->$prop ) ) {
 					update_post_meta( $id, "form_$prop", $this->$prop );
 				} else {
 					delete_post_meta( $id, "form_$prop" );
 				}
-
 			}
-
 		}
 
 		delete_transient( 'noptin_forms_to_append' );
@@ -394,22 +390,22 @@ class Noptin_Form {
 
 		// frontpage.
 		if ( is_front_page() ) {
-			return ! in_array( 'frontpage', $hide );
+			return ! in_array( 'frontpage', $hide, true );
 		}
 
 		// blog page.
 		if ( is_home() ) {
-			return ! in_array( 'blogpage', $hide );
+			return ! in_array( 'blogpage', $hide, true );
 		}
 
 		// search.
 		if ( is_search() ) {
-			return ! in_array( 'searchpage', $hide );
+			return ! in_array( 'searchpage', $hide, true );
 		}
 
 		// other archive pages.
 		if ( is_archive() ) {
-			return ! in_array( 'archives', $hide );
+			return ! in_array( 'archives', $hide, true );
 		}
 
 		// Single posts.
@@ -440,7 +436,6 @@ class Noptin_Form {
 			if ( isset( $this->$prop ) || ! empty( $this->$prop ) ) {
 				$data[ $prop ] = $this->$prop;
 			}
-
 		}
 
 		return $data;

@@ -54,7 +54,6 @@ class Noptin_Popups {
 				echo $form->get_html();
 				echo '</div>';
 			}
-
 		}
 
 		/**

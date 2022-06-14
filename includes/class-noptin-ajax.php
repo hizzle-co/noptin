@@ -202,7 +202,7 @@ class Noptin_Ajax {
 			foreach ( $data['mapped'] as $noptin => $_imported ) {
 
 				// Manually entered.
-				if ( '-1' == $_imported && '_subscriber_via' != $noptin ) {
+				if ( '-1' === $_imported && '_subscriber_via' !== $noptin ) {
 
 					if ( isset( $data['custom'][ $noptin ] ) ) {
 						$subscriber[ $noptin ] = $data['custom'][ $noptin ];
@@ -212,19 +212,19 @@ class Noptin_Ajax {
 				}
 
 				// Active.
-				if ( 'active' == $noptin && is_numeric( $_imported ) ) {
-					$subscriber[ $noptin ] = (int) $_imported == '1';
+				if ( 'active' === $noptin && is_numeric( $_imported ) ) {
+					$subscriber[ $noptin ] = 1 === (int) $_imported;
 					continue;
 				}
 
 				// Confirmed.
-				if ( 'confirmed' == $noptin && is_numeric( $_imported ) ) {
-					$subscriber[ $noptin ] = (int) $_imported == '1';
+				if ( 'confirmed' === $noptin && is_numeric( $_imported ) ) {
+					$subscriber[ $noptin ] = 1 === (int) $_imported;
 					continue;
 				}
 
 				// Source.
-				if ( '_subscriber_via' == $noptin && ( empty( $_imported ) || '-1' == $_imported ) ) {
+				if ( '_subscriber_via' === $noptin && ( empty( $_imported ) || '-1' === $_imported ) ) {
 					$subscriber[ $noptin ] = 'import';
 					continue;
 				}
@@ -233,7 +233,6 @@ class Noptin_Ajax {
 				if ( isset( $row[ $_imported ] ) && '' !== $row[ $_imported ] && null !== $row[ $_imported ] ) {
 					$subscriber[ $noptin ] = $row[ $_imported ];
 				}
-
 			}
 
 			if ( empty( $subscriber['email'] ) || ! is_email( $subscriber['email'] ) ) {
@@ -244,33 +243,31 @@ class Noptin_Ajax {
 			if ( isset( $subscriber['confirmed'] ) ) {
 
 				$subscriber['confirmed'] = strtolower( $subscriber['confirmed'] );
-				if ( ( is_numeric( $subscriber['confirmed'] ) && 0 === ( int ) $subscriber['confirmed'] ) || 
-					false         === $subscriber['confirmed'] || 
-					'false'       === $subscriber['confirmed'] || 
-					'unconfirmed' === $subscriber['confirmed'] || 
-					''            === $subscriber['confirmed'] || 
-					'no'          === $subscriber['confirmed'] ) {
+				if ( ( is_numeric( $subscriber['confirmed'] ) && 0 === (int) $subscriber['confirmed'] ) ||
+					false === $subscriber['confirmed'] ||
+					'false' === $subscriber['confirmed'] ||
+					'unconfirmed' === $subscriber['confirmed'] ||
+					'' === $subscriber['confirmed'] ||
+					'no' === $subscriber['confirmed'] ) {
 					$subscriber['confirmed'] = 0;
 				} else {
 					$subscriber['confirmed'] = 1;
 				}
-
 			}
 
 			if ( isset( $subscriber['active'] ) ) {
 
 				$subscriber['active'] = strtolower( $subscriber['active'] );
-				if ( ( is_numeric( $subscriber['active'] ) && 1 === ( int ) $subscriber['active'] ) || 
-					true         === $subscriber['active'] || 
-					'true'       === $subscriber['active'] || 
-					'subscribed' === $subscriber['active'] || 
-					'active'     === $subscriber['active'] || 
-					'yes'        === $subscriber['active'] ) {
+				if ( ( is_numeric( $subscriber['active'] ) && 1 === (int) $subscriber['active'] ) ||
+					true === $subscriber['active'] ||
+					'true' === $subscriber['active'] ||
+					'subscribed' === $subscriber['active'] ||
+					'active' === $subscriber['active'] ||
+					'yes' === $subscriber['active'] ) {
 					$subscriber['active'] = 0;
 				} else {
 					$subscriber['active'] = 1;
 				}
-
 			}
 
 			$_subscriber = get_noptin_subscriber( $subscriber['email'] );
@@ -299,7 +296,6 @@ class Noptin_Ajax {
 			} else {
 				$failed ++;
 			}
-
 		}
 
 		wp_send_json_success( compact( 'imported', 'updated', 'failed', 'skipped' ) );
@@ -328,7 +324,7 @@ class Noptin_Ajax {
 
 		/**
 		 * Fires before a subscriber is added via ajax.
-		 * 
+		 *
 		 * @since 1.2.4
 		 */
 		do_action( 'noptin_before_add_ajax_subscriber' );
@@ -340,7 +336,7 @@ class Noptin_Ajax {
 
 			$fields = array(
 				array(
-					'type'      => array(
+					'type'    => array(
 						'label' => __( 'Email Address', 'newsletter-optin-box' ),
 						'name'  => 'email',
 						'type'  => 'email',
@@ -356,7 +352,7 @@ class Noptin_Ajax {
 			$form = noptin_get_optin_form( $_POST['noptin_form_id'] );
 
 			if ( empty( $form ) || ! $form->is_published() ) {
-				echo __( 'This form is in-active.', 'newsletter-optin-box' );
+				esc_html_e( 'This form is in-active.', 'newsletter-optin-box' );
 				exit;
 			}
 
@@ -367,7 +363,7 @@ class Noptin_Ajax {
 
 		// Check gdpr.
 		if ( is_object( $form ) && $form->gdprCheckbox && empty( $_POST['noptin_gdpr_checkbox'] ) ) {
-			echo __( 'You must consent to receive promotional emails.', 'newsletter-optin-box' );
+			esc_html_e( 'You must consent to receive promotional emails.', 'newsletter-optin-box' );
 			exit;
 		}
 
@@ -403,12 +399,11 @@ class Noptin_Ajax {
 				if ( 'checkbox' === $type ) {
 					$value = (int) ! empty( $value );
 				}
-
 			}
 
 			// required fields.
 			if ( ! empty( $field['require'] ) && 'false' !== $field['require'] && empty( $value ) ) {
-				die( __( 'Ensure that you fill all required fields.', 'newsletter-optin-box' ) );
+				die( esc_html__( 'Ensure that you fill all required fields.', 'newsletter-optin-box' ) );
 			}
 
 			// Sanitize email fields.
@@ -416,9 +411,8 @@ class Noptin_Ajax {
 
 				$value = sanitize_email( $value );
 				if ( empty( $value ) ) {
-					die( __( 'That email address is not valid.', 'newsletter-optin-box' ) );
+					die( esc_html__( 'That email address is not valid.', 'newsletter-optin-box' ) );
 				}
-
 			}
 
 			$filtered[ $name ] = $value;
@@ -441,14 +435,14 @@ class Noptin_Ajax {
 
 		/**
 		 * Filters subscriber details when adding a new subscriber via ajax.
-		 * 
+		 *
 		 * @since 1.2.4
 		 */
 		$filtered = apply_filters( 'noptin_add_ajax_subscriber_filter_details', wp_unslash( $filtered ), $form );
 		$inserted = add_noptin_subscriber( $filtered );
 
 		if ( is_string( $inserted ) ) {
-			die( $inserted );
+			die( esc_html( $inserted ) );
 		}
 
 		do_action( 'noptin_add_ajax_subscriber', $inserted, $form );
@@ -468,14 +462,13 @@ class Noptin_Ajax {
 			update_post_meta( $form->ID, '_noptin_subscribers_count', $count + 1 );
 
 			// msg.
-			if ( $form->subscribeAction === 'message' ) {
+			if ( 'message' === $form->subscribeAction ) {
 				$result['msg'] = $form->successMessage;
 			} else {
 				// redirects.
 				$result['action']   = 'redirect';
 				$result['redirect'] = $form->redirectUrl;
 			}
-	
 		}
 
 		$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) );
@@ -529,7 +522,7 @@ class Noptin_Ajax {
 
 		/**
 		 * Sanitizes noptin settings.
-		 * 
+		 *
 		 * @param array $settings Noptin settings.
 		 */
 		$settings = apply_filters( 'noptin_sanitize_settings', $settings );

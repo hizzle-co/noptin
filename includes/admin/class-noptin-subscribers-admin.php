@@ -448,11 +448,9 @@ class Noptin_Subscribers_Admin {
 			return;
 		}
 
-		$table    = get_noptin_subscribers_table_name();
-		$wpdb->query( "TRUNCATE TABLE $table" );
-
-		$table    = get_noptin_subscribers_meta_table_name();
-		$wpdb->query( "TRUNCATE TABLE $table" );
+		// Truncate subscriber tables.
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}noptin_subscribers" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}noptin_subscriber_meta" );
 
 		$wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'noptin_subscriber_id' ), '%s' );
 

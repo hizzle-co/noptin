@@ -45,8 +45,8 @@ class Noptin_Legacy_Form_Editor {
 	 */
 	public function localize_scripts() {
 
-		$state   = $this->get_state();
-		$props   = apply_filters(
+		$state = $this->get_state();
+		$props = apply_filters(
 			'noptin_form_design_props',
 			array(
 				'hideCloseButton',
@@ -97,7 +97,7 @@ class Noptin_Legacy_Form_Editor {
 				'scrollDepthPercentage',
 				'cssClassOfClick',
 				'triggerPopup',
-				'slideDirection'
+				'slideDirection',
 			)
 		);
 
@@ -253,11 +253,11 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// User targeting.
-			'userTargeting' => array(
-				'el'        => 'panel',
-				'title'     => 'User Targeting',
-				'id'        => 'userTargetingSettings',
-				'children'  => $this->get_user_settings()
+			'userTargeting'   => array(
+				'el'       => 'panel',
+				'title'    => 'User Targeting',
+				'id'       => 'userTargetingSettings',
+				'children' => $this->get_user_settings(),
 			),
 
 			// Device targeting.
@@ -349,19 +349,19 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Sliding direction.
-			'slideDirection'       => array(
+			'slideDirection'        => array(
 				'el'       => 'select',
 				'label'    => __( 'The form will slide from...', 'newsletter-optin-box' ),
 				'restrict' => "this.optinType=='slide_in'",
 				'options'  => array(
-					'top_left'      => __( 'Top Left', 'newsletter-optin-box' ),
-					'left_top'      => __( 'Top Left Alt', 'newsletter-optin-box' ),
-					'top_right'     => __( 'Top Right', 'newsletter-optin-box' ),
-					'right_top'     => __( 'Top Right Alt', 'newsletter-optin-box' ),
-					'bottom_left'   => __( 'Bottom Left', 'newsletter-optin-box' ),
-					'left_bottom'   => __( 'Bottom Left Alt', 'newsletter-optin-box' ),
-					'bottom_right'  => __( 'Bottom right', 'newsletter-optin-box' ),
-					'right_bottom'  => __( 'Bottom right Alt', 'newsletter-optin-box' ),
+					'top_left'     => __( 'Top Left', 'newsletter-optin-box' ),
+					'left_top'     => __( 'Top Left Alt', 'newsletter-optin-box' ),
+					'top_right'    => __( 'Top Right', 'newsletter-optin-box' ),
+					'right_top'    => __( 'Top Right Alt', 'newsletter-optin-box' ),
+					'bottom_left'  => __( 'Bottom Left', 'newsletter-optin-box' ),
+					'left_bottom'  => __( 'Bottom Left Alt', 'newsletter-optin-box' ),
+					'bottom_right' => __( 'Bottom right', 'newsletter-optin-box' ),
+					'right_bottom' => __( 'Bottom right Alt', 'newsletter-optin-box' ),
 				),
 			),
 
@@ -437,10 +437,10 @@ class Noptin_Legacy_Form_Editor {
 		);
 
 		$return['showPlaces'] = array(
-			'el'          => 'multi_radio_button',
-			'label'       => '',
-			'restrict'    => '!this.showEverywhere && !this._onlyShowOn',
-			'options'     => $places
+			'el'       => 'multi_radio_button',
+			'label'    => '',
+			'restrict' => '!this.showEverywhere && !this._onlyShowOn',
+			'options'  => $places,
 		);
 
 		$return['neverShowOn'] = array(
@@ -480,7 +480,7 @@ class Noptin_Legacy_Form_Editor {
 				'label'   => __( 'Who can see this form?', 'newsletter-optin-box' ),
 			),
 
-			'userRoles'    => array(
+			'userRoles' => array(
 				'el'       => 'multi_radio_button',
 				'label'    => __( 'Select user roles', 'newsletter-optin-box' ),
 				'restrict' => "this.whoCanSee=='roles'",
@@ -536,7 +536,8 @@ class Noptin_Legacy_Form_Editor {
 						"{$key}text" => array(
 							'el'      => 'paragraph',
 							'content' => sprintf(
-								esc_html__( 'Install the %s to add new subscribers to %s.', 'newsletter-optin-box' ),
+								// translators: %1$s is the name of the integration, %2$s is the link to the integration's website.
+								esc_html__( 'Install the %1$s to add new subscribers to %2$s.', 'newsletter-optin-box' ),
 								'<a target="_blank" href="' . $href . '"> ' . $name . ' addon</a>',
 								$name
 							),
@@ -556,24 +557,24 @@ class Noptin_Legacy_Form_Editor {
 
 				if ( empty( $error ) ) {
 					$error = sprintf(
+						// translators: %s is the name of the integration.
 						__( 'You are not connected to %s', 'newsletter-optin-box' ),
 						$connection->name
 					);
 				}
 
 				$fields[ $key ] = array(
-					'el'        => 'panel',
-					'title'     => $connection->name,
-					'id'        => $key,
-					'open'      => empty( $available_connections ),
-					'children'  => array(
-						"{$key}text"   => array(
-							'el'       => 'paragraph',
-							'content'  => "Error: $error",
-							'style'    => 'color:#F44336;'
+					'el'       => 'panel',
+					'title'    => $connection->name,
+					'id'       => $key,
+					'open'     => empty( $available_connections ),
+					'children' => array(
+						"{$key}text" => array(
+							'el'      => 'paragraph',
+							'content' => "Error: $error",
+							'style'   => 'color:#F44336;',
 						),
-		
-					)
+					),
 				);
 
 				continue;
@@ -585,19 +586,21 @@ class Noptin_Legacy_Form_Editor {
 			// Lists.
 			if ( ! empty( $connection->list_providers ) ) {
 
-				$custom["{$slug}_list"] = array(
-					'el'                => 'select',
-					'options'           => $connection->list_providers->get_dropdown_lists(),
-					'label'             => sprintf(
+				$custom[ "{$slug}_list" ] = array(
+					'el'          => 'select',
+					'options'     => $connection->list_providers->get_dropdown_lists(),
+					'label'       => sprintf(
 						'%s %s',
 						$connection->name,
 						$connection->list_providers->get_name()
 					),
-					'placeholder'       => sprintf(
+					'placeholder' => sprintf(
+						// translators: %s is the name of the integration.
 						__( 'Do not add to %s', 'newsletter-optin-box' ),
 						$connection->name
 					),
-					'tooltip'           => sprintf( __( 'People who subscribe via this form will be added to the %s you select here', 'newsletter-optin-box' ), $connection->list_providers->get_name() ),
+					// translators: %s can be list, group etc.
+					'tooltip'     => sprintf( __( 'People who subscribe via this form will be added to the %s you select here', 'newsletter-optin-box' ), $connection->list_providers->get_name() ),
 				);
 
 			}
@@ -605,20 +608,20 @@ class Noptin_Legacy_Form_Editor {
 			// Tags.
 			if ( $connection->supports( 'tags' ) ) {
 
-				$custom["{$slug}_tags"] = array(
-					'el'                => 'input',
-					'label'             => __( 'Subscriber Tags', 'newsletter-optin-box' ),
-					'placeholder'       => 'tag, another tag',
-					'tooltip'           => __( 'The listed tags will be applied to all new subscribers added by this form. Separate multiple values with a comma.', 'newsletter-optin-box' ),
+				$custom[ "{$slug}_tags" ] = array(
+					'el'          => 'input',
+					'label'       => __( 'Subscriber Tags', 'newsletter-optin-box' ),
+					'placeholder' => 'tag, another tag',
+					'tooltip'     => __( 'The listed tags will be applied to all new subscribers added by this form. Separate multiple values with a comma.', 'newsletter-optin-box' ),
 				);
 
 			}
 
 			$fields[ $key ] = array(
-				'el'        => 'panel',
-				'title'     => $connection->name,
-				'id'        => $connection->slug,
-				'children'  => $connection->add_custom_options( $custom )
+				'el'       => 'panel',
+				'title'    => $connection->name,
+				'id'       => $connection->slug,
+				'children' => $connection->add_custom_options( $custom ),
 			);
 
 		}
@@ -642,7 +645,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Form Design.
-			'form'        => array(
+			'form'         => array(
 				'el'       => 'panel',
 				'title'    => __( 'Form Appearance', 'newsletter-optin-box' ),
 				'id'       => 'formDesign',
@@ -650,7 +653,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Fields Design.
-			'fields'      => array(
+			'fields'       => array(
 				'el'       => 'panel',
 				'title'    => __( 'Opt-in Fields', 'newsletter-optin-box' ),
 				'id'       => 'fieldDesign',
@@ -658,7 +661,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Image Design.
-			'image'       => array(
+			'image'        => array(
 				'el'       => 'panel',
 				'title'    => __( 'Image', 'newsletter-optin-box' ),
 				'id'       => 'imageDesign',
@@ -666,7 +669,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Button Design.
-			'button'      => array(
+			'button'       => array(
 				'el'       => 'panel',
 				'title'    => __( 'Button', 'newsletter-optin-box' ),
 				'id'       => 'buttonDesign',
@@ -674,7 +677,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Prefix Design.
-			'prefix' => array(
+			'prefix'       => array(
 				'el'       => 'panel',
 				'title'    => __( 'Prefix', 'newsletter-optin-box' ),
 				'id'       => 'prefixDesign',
@@ -682,7 +685,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Title Design.
-			'title'       => array(
+			'title'        => array(
 				'el'       => 'panel',
 				'title'    => __( 'Heading', 'newsletter-optin-box' ),
 				'id'       => 'titleDesign',
@@ -690,7 +693,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Description Design.
-			'description' => array(
+			'description'  => array(
 				'el'       => 'panel',
 				'title'    => __( 'Sub-heading', 'newsletter-optin-box' ),
 				'id'       => 'descriptionDesign',
@@ -698,7 +701,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Note Design.
-			'note'        => array(
+			'note'         => array(
 				'el'       => 'panel',
 				'title'    => __( 'Note', 'newsletter-optin-box' ),
 				'id'       => 'noteDesign',
@@ -706,7 +709,7 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			// Css Design.
-			'css'         => array(
+			'css'          => array(
 				'el'       => 'panel',
 				'title'    => __( 'Custom CSS', 'newsletter-optin-box' ),
 				'id'       => 'customCSS',
@@ -722,14 +725,14 @@ class Noptin_Legacy_Form_Editor {
 
 		return array(
 
-			'Template'    => array(
+			'Template'   => array(
 				'el'      => 'select',
 				'label'   => __( 'Apply a template', 'newsletter-optin-box' ),
 				'tooltip' => __( 'Some templates include custom css so remember to check out the Custom CSS panel after you apply a template', 'newsletter-optin-box' ),
 				'options' => wp_list_pluck( $this->get_templates(), 'title' ),
 			),
 
-			'colorTheme'  => array(
+			'colorTheme' => array(
 				'el'      => 'select',
 				'label'   => __( 'Apply a color theme', 'newsletter-optin-box' ),
 				'options' => $this->get_color_themes(),
@@ -745,7 +748,7 @@ class Noptin_Legacy_Form_Editor {
 	private function get_form_settings() {
 		return array(
 
-			'formWidth'             => array(
+			'formWidth'       => array(
 				'type'     => 'text',
 				'el'       => 'input',
 				'restrict' => "this.optinType =='popup' || this.optinType =='slide_in'",
@@ -753,24 +756,24 @@ class Noptin_Legacy_Form_Editor {
 				'tooltip'  => __( 'The element will resize to 100% width on smaller devices', 'newsletter-optin-box' ),
 			),
 
-			'formHeight'            => array(
+			'formHeight'      => array(
 				'type'  => 'text',
 				'el'    => 'input',
 				'label' => __( 'Minimum Height', 'newsletter-optin-box' ),
 			),
 
-			'formBorder' => array(
-				'el'      => 'border',
-				'label'   => __( 'Border', 'newsletter-optin-box' ),
+			'formBorder'      => array(
+				'el'    => 'border',
+				'label' => __( 'Border', 'newsletter-optin-box' ),
 			),
 
-			'noptinFormBg'          => array(
+			'noptinFormBg'    => array(
 				'type'  => 'color',
 				'el'    => 'input',
 				'label' => __( 'Background Color', 'newsletter-optin-box' ),
 			),
 
-			'noptinFormBgImg'       => array(
+			'noptinFormBgImg' => array(
 				'type'  => 'image',
 				'el'    => 'input',
 				'size'  => 'full',
@@ -786,36 +789,36 @@ class Noptin_Legacy_Form_Editor {
 	private function get_field_settings() {
 		return array(
 
-			'fields'       => array(
+			'fields'          => array(
 				'el'       => 'form_fields',
-				'restrict' => "!this.hideFields",
+				'restrict' => '!this.hideFields',
 			),
 
-			'singleLine'   => array(
+			'singleLine'      => array(
 				'type'     => 'switch',
 				'el'       => 'input',
 				'label'    => __( 'Show all fields in a single line', 'newsletter-optin-box' ),
-				'restrict' => "!this.hideFields",
+				'restrict' => '!this.hideFields',
 			),
 
-			'gdprCheckbox' => array(
+			'gdprCheckbox'    => array(
 				'type'     => 'switch',
 				'el'       => 'input',
 				'label'    => __( 'Show GDPR checkbox', 'newsletter-optin-box' ),
-				'restrict' => "!this.hideFields",
+				'restrict' => '!this.hideFields',
 			),
 
 			'gdprConsentText' => array(
-				'type'        => 'text',
-				'el'          => 'input',
-				'label'       => __( 'Consent Text', 'newsletter-optin-box' ),
-				'restrict'    => "this.gdprCheckbox && !this.hideFields",
+				'type'     => 'text',
+				'el'       => 'input',
+				'label'    => __( 'Consent Text', 'newsletter-optin-box' ),
+				'restrict' => 'this.gdprCheckbox && !this.hideFields',
 			),
 
-			'hideFields'   => array(
-				'type'     => 'switch',
-				'el'       => 'input',
-				'label'    => __( 'Hide opt-in fields', 'newsletter-optin-box' ),
+			'hideFields'      => array(
+				'type'  => 'switch',
+				'el'    => 'input',
+				'label' => __( 'Hide opt-in fields', 'newsletter-optin-box' ),
 			),
 
 		);
@@ -828,13 +831,13 @@ class Noptin_Legacy_Form_Editor {
 	private function get_image_settings() {
 		return array(
 
-			'image'    => array(
+			'image'        => array(
 				'type'  => 'image',
 				'el'    => 'input',
 				'label' => __( 'Avatar URL', 'newsletter-optin-box' ),
 			),
 
-			'imagePos' => array(
+			'imagePos'     => array(
 				'el'       => 'radio_button',
 				'options'  => array(
 					'top'    => __( 'Top', 'newsletter-optin-box' ),
@@ -850,7 +853,7 @@ class Noptin_Legacy_Form_Editor {
 				'type'  => 'image',
 				'el'    => 'input',
 				'label' => __( 'Image URL', 'newsletter-optin-box' ),
-				'size'  => 'full'
+				'size'  => 'full',
 			),
 
 			'imageMainPos' => array(
@@ -910,19 +913,19 @@ class Noptin_Legacy_Form_Editor {
 	private function get_title_settings() {
 		return array(
 
-			'hideTitle'  => array(
+			'hideTitle'       => array(
 				'type'  => 'checkbox',
 				'el'    => 'input',
 				'label' => __( 'Hide heading', 'newsletter-optin-box' ),
 			),
 
-			'title'      => array(
+			'title'           => array(
 				'el'       => 'textarea',
 				'label'    => __( 'Heading', 'newsletter-optin-box' ),
 				'restrict' => '!this.hideTitle',
 			),
 
-			'titleColor' => array(
+			'titleColor'      => array(
 				'type'     => 'color',
 				'el'       => 'input',
 				'label'    => __( 'Heading Color', 'newsletter-optin-box' ),
@@ -930,15 +933,15 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			'titleTypography' => array(
-				'el'          => 'typography',
-				'label'       => __( 'Typography', 'newsletter-optin-box' ),
-				'restrict'    => '!this.hideTitle',
+				'el'       => 'typography',
+				'label'    => __( 'Typography', 'newsletter-optin-box' ),
+				'restrict' => '!this.hideTitle',
 			),
 
 			'titleAdvanced'   => array(
-				'el'          => 'advanced-typography',
-				'label'       => __( 'Advanced', 'newsletter-optin-box' ),
-				'restrict'    => '!this.hideTitle',
+				'el'       => 'advanced-typography',
+				'label'    => __( 'Advanced', 'newsletter-optin-box' ),
+				'restrict' => '!this.hideTitle',
 			),
 
 		);
@@ -950,19 +953,19 @@ class Noptin_Legacy_Form_Editor {
 	private function get_prefix_settings() {
 		return array(
 
-			'hidePrefix'   => array(
-				'type'     => 'checkbox',
-				'el'       => 'input',
-				'label'    => __( 'Hide prefix', 'newsletter-optin-box' ),
+			'hidePrefix'       => array(
+				'type'  => 'checkbox',
+				'el'    => 'input',
+				'label' => __( 'Hide prefix', 'newsletter-optin-box' ),
 			),
 
-			'prefix'       => array(
+			'prefix'           => array(
 				'el'       => 'textarea',
 				'label'    => __( 'Prefix', 'newsletter-optin-box' ),
 				'restrict' => '!this.hidePrefix',
 			),
 
-			'prefixColor'  => array(
+			'prefixColor'      => array(
 				'type'     => 'color',
 				'el'       => 'input',
 				'label'    => __( 'Prefix Color', 'newsletter-optin-box' ),
@@ -970,15 +973,15 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			'prefixTypography' => array(
-				'el'           => 'typography',
-				'label'        => __( 'Typography', 'newsletter-optin-box' ),
-				'restrict'     => '!this.hidePrefix',
+				'el'       => 'typography',
+				'label'    => __( 'Typography', 'newsletter-optin-box' ),
+				'restrict' => '!this.hidePrefix',
 			),
 
-			'prefixAdvanced'  => array(
-				'el'          => 'advanced-typography',
-				'label'       => __( 'Advanced', 'newsletter-optin-box' ),
-				'restrict'    => '!this.hidePrefix',
+			'prefixAdvanced'   => array(
+				'el'       => 'advanced-typography',
+				'label'    => __( 'Advanced', 'newsletter-optin-box' ),
+				'restrict' => '!this.hidePrefix',
 			),
 
 		);
@@ -990,19 +993,19 @@ class Noptin_Legacy_Form_Editor {
 	private function get_description_settings() {
 		return array(
 
-			'hideDescription'  => array(
+			'hideDescription'       => array(
 				'type'  => 'checkbox',
 				'el'    => 'input',
 				'label' => __( 'Hide sub-heading', 'newsletter-optin-box' ),
 			),
 
-			'description'      => array(
+			'description'           => array(
 				'el'       => 'textarea',
 				'label'    => __( 'Sub-heading', 'newsletter-optin-box' ),
 				'restrict' => '!this.hideDescription',
 			),
 
-			'descriptionColor' => array(
+			'descriptionColor'      => array(
 				'type'     => 'color',
 				'el'       => 'input',
 				'label'    => __( 'Sub-heading Color', 'newsletter-optin-box' ),
@@ -1010,15 +1013,15 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			'descriptionTypography' => array(
-				'el'          => 'typography',
-				'label'       => __( 'Typography', 'newsletter-optin-box' ),
-				'restrict'    => '!this.hideDescription',
+				'el'       => 'typography',
+				'label'    => __( 'Typography', 'newsletter-optin-box' ),
+				'restrict' => '!this.hideDescription',
 			),
 
 			'descriptionAdvanced'   => array(
-				'el'          => 'advanced-typography',
-				'label'       => __( 'Advanced', 'newsletter-optin-box' ),
-				'restrict'    => '!this.hideDescription',
+				'el'       => 'advanced-typography',
+				'label'    => __( 'Advanced', 'newsletter-optin-box' ),
+				'restrict' => '!this.hideDescription',
 			),
 
 		);
@@ -1030,19 +1033,19 @@ class Noptin_Legacy_Form_Editor {
 	private function get_note_settings() {
 		return array(
 
-			'hideNote'  => array(
+			'hideNote'       => array(
 				'type'  => 'checkbox',
 				'el'    => 'input',
 				'label' => __( 'Hide note', 'newsletter-optin-box' ),
 			),
 
-			'note'      => array(
+			'note'           => array(
 				'el'       => 'textarea',
 				'label'    => __( 'Note', 'newsletter-optin-box' ),
 				'restrict' => '!this.hideNote',
 			),
 
-			'noteColor' => array(
+			'noteColor'      => array(
 				'type'     => 'color',
 				'el'       => 'input',
 				'label'    => __( 'Note Color', 'newsletter-optin-box' ),
@@ -1050,15 +1053,15 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 			'noteTypography' => array(
-				'el'          => 'typography',
-				'label'       => __( 'Typography', 'newsletter-optin-box' ),
-				'restrict'    => '!this.hideNote',
+				'el'       => 'typography',
+				'label'    => __( 'Typography', 'newsletter-optin-box' ),
+				'restrict' => '!this.hideNote',
 			),
 
 			'noteAdvanced'   => array(
-				'el'          => 'advanced-typography',
-				'label'       => __( 'Advanced', 'newsletter-optin-box' ),
-				'restrict'    => '!this.hideNote',
+				'el'       => 'advanced-typography',
+				'label'    => __( 'Advanced', 'newsletter-optin-box' ),
+				'restrict' => '!this.hideNote',
 			),
 
 		);
@@ -1096,6 +1099,7 @@ class Noptin_Legacy_Form_Editor {
 
 		$misc                      = $this->get_misc_state();
 		$misc['skip_state_fields'] = array_merge( array_keys( $misc ), array( 'activeSidebar', 'darkMode', 'unsaved', 'icons' ) );
+
 		$state = array_merge( $saved_state, $misc );
 
 		/**
@@ -1133,7 +1137,7 @@ class Noptin_Legacy_Form_Editor {
 			'Template'              => '',
 			'fieldTypes'            => get_noptin_optin_field_types(),
 			'sidebarSettings'       => $this->sidebar_fields(),
-			'shortcode'             =>  __( 'Shortcode', 'newsletter-optin-box' ),
+			'shortcode'             => __( 'Shortcode', 'newsletter-optin-box' ),
 			'sidebarUsage'          => sprintf(
 				/* Translators: %s Widget name name. */
 				__( 'Use the %s widget to add this form to a widget area', 'newsletter-optin-box' ),

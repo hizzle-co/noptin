@@ -143,10 +143,11 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		printf(
 			'<p>%s</p><p>%s</p>',
-			__( 'By default, this email will only send for new blog posts.', 'newsletter-optin-box' ),
+			esc_html__( 'By default, this email will only send for new blog posts.', 'newsletter-optin-box' ),
 			sprintf(
-				__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
-				"<a href='$url' target='_blank'>Ultimate Addons Pack</a>"
+				// translators: %s is the link to the Noptin addons pack.
+				esc_html__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
+				"<a href='" . esc_url( $url ) . "' target='_blank'>Ultimate Addons Pack</a>"
 			)
 		);
 
@@ -163,6 +164,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		if ( ! $campaign->sends_immediately() ) {
 
 			return sprintf(
+				// Translators: %s is the delay.
 				__( 'Sends %s after new content is published', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
@@ -182,7 +184,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			array(
 				'utm_medium'   => 'plugin-dashboard',
 				'utm_campaign' => 'new-post-notifications',
-				'utm_source'   => urlencode( esc_url( get_home_url() ) ),
+				'utm_source'   => rawurlencode( esc_url( get_home_url() ) ),
 			),
 			'https://noptin.com/guide/email-automations/new-post-notifications/'
 		);
@@ -194,7 +196,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	 */
 	public function was_notification_sent( $post_id ) {
 		$sent_notification = get_post_meta( $post_id, 'noptin_sent_notification_campaign', true );
-		return is_array( $sent_notification ) && $post_id == $sent_notification[0];
+		return is_array( $sent_notification ) && $post_id === (int) $sent_notification[0];
 	}
 
 	/**
@@ -221,10 +223,9 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $post ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $post ) ) {
 				$this->schedule_notification( $post->ID, $automation );
 			}
-
 		}
 
 	}
@@ -310,13 +311,13 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				'subscribers_query' => array(),
 				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
 				'footer_text'       => noptin_parse_email_content_tags( $campaign->get( 'footer_text' ), true ),
-				'custom_title'      => sprintf( __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
+				'custom_title'      => sprintf( /* translators: Post title */ __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
 			)
 		);
 
 		// Remove unrelated content.
 		foreach ( array( 'content_normal', 'content_plain_text', 'content_raw_html' ) as $content_type ) {
-			if ( $content_type !== 'content_' . $type ) {
+			if ( 'content_' . $type !== $content_type ) {
 				unset( $args[ $content_type ] );
 			}
 		}
@@ -352,117 +353,117 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Post', 'noptin' )    => array(
+			__( 'Post', 'newsletter-optin-box' ) => array(
 
-				'post_id' => array(
+				'post_id'           => array(
 					'description' => __( "The post's ID", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_id",
+					'example'     => 'post_id',
 					'partial'     => true,
 				),
 
-				'post_date' => array(
+				'post_date'         => array(
 					'description' => __( "The post's published date", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_date",
+					'example'     => 'post_date',
 					'partial'     => true,
 				),
 
-				'post_url' => array(
+				'post_url'          => array(
 					'description' => __( "The post's URL", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_url",
+					'example'     => 'post_url',
 					'partial'     => true,
 				),
 
-				'featured_image' => array(
+				'featured_image'    => array(
 					'description' => __( "The post's featured image.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => 'featured_image size="medium_large"',
 					'partial'     => true,
 				),
 
-				'post_title' => array(
+				'post_title'        => array(
 					'description' => __( "The post's title.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_title",
+					'example'     => 'post_title',
 					'partial'     => true,
 				),
 
-				'title' => array(
-					'description' => __( "Alias for [[post_title]].", 'newsletter-optin-box' ),
+				'title'             => array(
+					'description' => __( 'Alias for [[post_title]].', 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "title",
+					'example'     => 'title',
 					'partial'     => true,
 				),
 
-				'post_excerpt' => array(
+				'post_excerpt'      => array(
 					'description' => __( "The post's excerpt.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_excerpt",
+					'example'     => 'post_excerpt',
 					'partial'     => true,
 				),
 
-				'excerpt' => array(
-					'description' => __( "Alias for [[post_excerpt]].", 'newsletter-optin-box' ),
+				'excerpt'           => array(
+					'description' => __( 'Alias for [[post_excerpt]].', 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "excerpt",
+					'example'     => 'excerpt',
 					'partial'     => true,
 				),
 
-				'post_content' => array(
+				'post_content'      => array(
 					'description' => __( "The post's content.", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_content",
+					'example'     => 'post_content',
 					'partial'     => true,
 				),
 
-				'content' => array(
-					'description' => __( "Alias for [[post_content]].", 'newsletter-optin-box' ),
+				'content'           => array(
+					'description' => __( 'Alias for [[post_content]].', 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "content",
+					'example'     => 'content',
 					'partial'     => true,
 				),
 
-				'post_author' => array(
+				'post_author'       => array(
 					'description' => __( "The post's author", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_author",
+					'example'     => 'post_author',
 					'partial'     => true,
 				),
 
 				'post_author_email' => array(
 					'description' => __( "The post author's email", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_author_email",
+					'example'     => 'post_author_email',
 					'partial'     => true,
 				),
 
 				'post_author_login' => array(
 					'description' => __( "The post author's login name", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_author_login",
+					'example'     => 'post_author_login',
 					'partial'     => true,
 				),
 
-				'post_author_id' => array(
+				'post_author_id'    => array(
 					'description' => __( "The post author's user ID", 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "post_author_id",
+					'example'     => 'post_author_id',
 					'partial'     => true,
 				),
 
-				'post_meta' => array(
-					'description' => __( "Displays the value of a give meta key.", 'newsletter-optin-box' ),
+				'post_meta'         => array(
+					'description' => __( 'Displays the value of a give meta key.', 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "content",
+					'example'     => 'post_meta',
 					'partial'     => true,
 				),
 
-				'read_more_button' => array(
+				'read_more_button'  => array(
 					'description' => '',
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "content",
+					'example'     => 'read_more_button',
 					'partial'     => true,
 					'hidden'      => true,
 				),
@@ -470,7 +471,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				'/read_more_button' => array(
 					'description' => '',
 					'callback'    => array( $this, 'get_post_field' ),
-					'example'     => "content",
+					'example'     => '/read_more_button',
 					'partial'     => true,
 					'hidden'      => true,
 				),
@@ -497,7 +498,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		}
 
 		// Process author fields.
-		if ( in_array( $field, array( 'post_author', 'post_author_email', 'post_author_login', 'post_author_id' ) ) ) {
+		if ( in_array( $field, array( 'post_author', 'post_author_email', 'post_author_login', 'post_author_id' ), true ) ) {
 
 			$author = get_userdata( $this->post->post_author );
 
@@ -505,79 +506,63 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				return esc_html( $default );
 			}
 
-			switch( $field ) {
+			switch ( $field ) {
 
 				case 'post_author':
 					return esc_html( $author->display_name );
-					break;
 
 				case 'post_author_email':
 					return sanitize_email( $author->user_email );
-					break;
 
 				case 'post_author_login':
 					return sanitize_user( $author->user_login );
-					break;
 
 				case 'post_author_id':
 					return absint( $author->ID );
-					break;
 			}
-
 		}
 
 		// Process post fields.
-		switch( $field ) {
+		switch ( $field ) {
 
 			case 'post_id':
 				return $this->post->ID;
-				break;
 
 			case 'post_date':
 				return get_the_date( '', $this->post );
-				break;
 
 			case 'post_url':
 				return get_the_permalink( $this->post );
-				break;
 
 			case 'featured_image':
 				$size = empty( $args['size'] ) ? 'medium_large' : $args['size'];
 				return get_the_post_thumbnail( $this->post, $size );
-				break;
 
 			case 'post_excerpt':
 			case 'excerpt':
 				return noptin_get_post_excerpt( $this->post );
-				break;
 
 			case 'post_content':
 			case 'content':
 				return apply_filters( 'the_content', $this->post->post_content );
-				break;
 
 			case 'post_title':
 			case 'title':
 				return get_the_title( $this->post );
-				break;
 
 			case 'read_more_button':
 				return $this->read_more_button( get_permalink( $this->post->ID ) );
-				break;
 
 			case '/read_more_button':
 				return '</a></div>';
-				break;
 
 			case 'post_meta':
-
 				// Abort if no key provided.
 				if ( empty( $args['key'] ) ) {
 					return esc_html( $default );
 				}
 
 				return wp_kses_post( (string) get_post_meta( $this->post->ID, trim( $args['key'] ), true ) );
-				break;
 
 		}
 

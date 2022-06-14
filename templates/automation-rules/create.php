@@ -4,6 +4,8 @@
  * Create an automation
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $triggers = noptin()->automation_rules->get_triggers();
 $actions  = noptin()->automation_rules->get_actions();
 ?>
@@ -16,17 +18,20 @@ $actions  = noptin()->automation_rules->get_actions();
 
 			<select name="trigger" class="noptin-automation-rule-trigger">
 				<?php
-		
-					$value       = '';
-					$label       = esc_attr__( 'Trigger', 'newsletter-optin-box' );
-					$description = esc_attr__( 'Select a trigger for this rule', 'newsletter-optin-box' );
-					echo "<option value='$value' data-description='$description'>$label</option>";
 
-					foreach( $triggers as $trigger ) {
-						$value       = esc_attr( $trigger->get_id() );
-						$label       = esc_html( $trigger->get_name() );
-						$description = esc_attr( $trigger->get_description() );
-						echo "<option value='$value' data-description='$description'>$label</option>";
+					printf(
+						'<option value="" data-description="%s">%s</option>',
+						esc_attr__( 'Select a trigger for this rule', 'newsletter-optin-box' ),
+						esc_attr__( 'Trigger', 'newsletter-optin-box' )
+					);
+
+					foreach ( $triggers as $trigger ) {
+						printf(
+							'<option value="%s" data-description="%s">%s</option>',
+							esc_attr( $trigger->get_id() ),
+							esc_attr( $trigger->get_description() ),
+							esc_html( $trigger->get_name() )
+						);
 					}
 				?>
 			</select>
@@ -40,19 +45,20 @@ $actions  = noptin()->automation_rules->get_actions();
 
 				<?php
 
-					$value       = '';
-					$label       = esc_attr__( 'Action', 'newsletter-optin-box' );
-					$description = esc_attr__( 'Select an action to take when the above trigger is fired', 'newsletter-optin-box' );
-					echo "<option value='$value' data-description='$description'>$label</option>";
+					printf(
+						'<option value="" data-description="%s">%s</option>',
+						esc_attr__( 'Select an action to take when the above trigger is fired', 'newsletter-optin-box' ),
+						esc_attr__( 'Action', 'newsletter-optin-box' )
+					);
 
-					foreach( $actions as $action ) {
-						$value       = esc_attr( $action->get_id() );
-						$label       = esc_html( $action->get_name() );
-						$description = esc_attr( $action->get_description() );
-						$image       = esc_url( $action->get_image() );
-						echo "<option value='$value' data-description='$description'>$label</option>";
+					foreach ( $actions as $rule_action ) {
+						printf(
+							'<option value="%s" data-description="%s">%s</option>',
+							esc_attr( $rule_action->get_id() ),
+							esc_attr( $rule_action->get_description() ),
+							esc_html( $rule_action->get_name() )
+						);
 					}
-
 				?>
 
 			</select>

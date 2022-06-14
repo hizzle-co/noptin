@@ -1,5 +1,7 @@
 <?php
 
+	defined( 'ABSPATH' ) || exit;
+
 	/**
 	 * Returns an array of form tags.
 	 *
@@ -14,7 +16,7 @@
 			function ( $carry, $item ) use ( $field_type ) {
 
 				if ( ! empty( $item->name ) ) {
-					if ( ! empty( $field_type ) && $item->basetype != $field_type ) {
+					if ( ! empty( $field_type ) && $item->basetype !== $field_type ) {
 						return $carry;
 					}
 
@@ -44,21 +46,21 @@
 	</tbody>
 </table>
 
-<h3><?php esc_html_e('Map Fields', 'newsletter-optin-box'); ?></h3>
+<h3><?php esc_html_e( 'Map Fields', 'newsletter-optin-box' ); ?></h3>
 
 <table class="form-table">
 	<tbody>
 
 		<?php
-			foreach( $custom_fields as $field ) :
+			foreach ( $custom_fields as $field ) :
 
 				// Retrieve form tags.
-				$type = null;
+				$field_type = null;
 				if ( ! empty( $field['type'] ) ) {
-					$type = $field['type'];
+					$field_type = $field['type'];
 				}
 
-				$cf7_form_tags = noptin_get_contact_form_7_form_tags( $contact_form, $type );
+				$cf7_form_tags = noptin_get_contact_form_7_form_tags( $contact_form, $field_type );
 				$cf7_form_tags = is_array( $cf7_form_tags ) ? $cf7_form_tags : array();
 				$mapped_field  = isset( $mapped_fields[ $field['name'] ] ) ? $mapped_fields[ $field['name'] ] : '';
 
@@ -72,7 +74,7 @@
 				<td>
 					<select name="noptin_settings[custom_fields][<?php echo esc_attr( $field['name'] ); ?>]" id="noptin_map_field_<?php echo esc_attr( $field['name'] ); ?>" style="width: 25em;">
 						<option value="" <?php selected( $mapped_field, '' ); ?> ><?php esc_html_e( 'Not Mapped', 'newsletter-optin-box' ); ?></option>
-						<?php foreach ( $cf7_form_tags as $key => $value): ?>
+						<?php foreach ( $cf7_form_tags as $key => $value ) : ?>
 							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $mapped_field, $value ); ?>><?php echo esc_html( $value ); ?></option>
 						<?php endforeach; ?>
 					</select>

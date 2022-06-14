@@ -119,7 +119,7 @@ class Noptin_Post_Types {
 						'<a href="%s">%s</a>',
 						esc_url( get_noptin_preview_form_url( $post->ID ) ),
 						esc_html__( 'Preview', 'newsletter-optin-box' )
-					)
+					),
 				),
 				$actions
 			);
@@ -176,14 +176,18 @@ class Noptin_Post_Types {
 
 				}
 
-				echo $subs;
+				echo wp_kses_post( $subs );
 
 				break;
 
 			case 'type':
-
 				if ( is_using_new_noptin_forms() ) {
-					echo "<input onClick='this.select();' type='text' value='[noptin form=$post_id]' readonly='readonly' />";
+
+					printf(
+						'<input onClick="this.select();" type="text" value="[noptin form=%d]" readonly="readonly" />',
+						(int) $post_id
+					);
+
 				} else {
 
 					$types = array(
@@ -195,16 +199,20 @@ class Noptin_Post_Types {
 					$type  = get_post_meta( $post_id, '_noptin_optin_type', true );
 
 					if ( empty( $types[ $type ] ) ) {
-						echo '<strong>' . noptin_clean( $type ) . '</strong>';
+						echo '<strong>' . esc_html( $type ) . '</strong>';
 					} else {
 						echo '<strong>' . esc_html( $types[ $type ] ) . '</strong>';
 					}
 
 					if ( 'inpost' === $type ) {
-						$title = esc_attr__( 'Use this shortcode to display the form on your website', 'newsletter-optin-box' );
-						echo "<br><input title='$title' style='color: #607D8B;' onClick='this.select();' type='text' value='[noptin-form id=$post_id]' readonly='readonly' />";
-					}
 
+						printf(
+							'<br><input title="%s" style="color: #607D8B;" onClick="this.select();" type="text" value="[noptin-form id=%d]" readonly="readonly" />',
+							esc_attr__( 'Use this shortcode to display the form on your website', 'newsletter-optin-box' ),
+							(int) $post_id
+						);
+
+					}
 				}
 				break;
 
@@ -223,7 +231,7 @@ class Noptin_Post_Types {
 				$impressions   = (int) get_post_meta( $post_id, '_noptin_form_views', true );
 				$conversion    = ( $subscriptions && $impressions ) ? ( $subscriptions * 100 / $impressions ) : 0;
 				$conversion    = empty( $conversion ) ? 0 : round( $conversion, 4 ) . '%';
-				echo $conversion;
+				echo esc_html( $conversion );
 				break;
 
 		}
@@ -259,13 +267,17 @@ class Noptin_Post_Types {
 
 		// build a custom dropdown list of values to filter by.
 		echo '<select id="noptin-form-type" name="form_type">';
-		echo '<option value="all">' . __( 'All Forms', 'newsletter-optin-box' ) . ' </option>';
+		echo '<option value="all">' . esc_html__( 'All Forms', 'newsletter-optin-box' ) . ' </option>';
 
 		foreach ( $form_types as $key => $title ) {
-			$key      = esc_attr( $key );
-			$title    = esc_html( $title );
-			$selected = selected( $key, $form_type, false );
-			echo "<option value='$key' $selected>$title</option>";
+
+			printf(
+				'<option value="%s" %s>%s</option>',
+				esc_attr( $key ),
+				selected( $key, $form_type, false ),
+				esc_html( $title )
+			);
+
 		}
 
 		echo '</select>';

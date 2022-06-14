@@ -56,10 +56,33 @@ class Noptin_Vue {
 
 		// Maybe print the tooltip.
 		if ( $echo ) {
-			echo $tooltip;
+			echo wp_kses( $tooltip, self::tooltip_tags() );
 		}
 
 		return $tooltip;
+	}
+
+	/**
+	 * Returns the HTML allowed in a tooltip.
+	 *
+	 * @access      public
+	 * @since       1.0.8
+	 * @return      void
+	 */
+	public static function tooltip_tags() {
+		return array(
+			'noptin-tooltip' => array(
+				'trigger'  => array(),
+				':options' => array(),
+			),
+			'div' => array(
+				'class' => array(),
+			),
+			'span' => array(
+				'class' => array(),
+				'slot'  => array(),
+			),
+		);
 	}
 
 	/**
@@ -108,7 +131,7 @@ class Noptin_Vue {
 		// Attributes.
 		$attrs = '';
 		foreach ( $el as $attr => $val ) {
-			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default' ) ) ) {
+			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default' ), true ) ) {
 				$val   = esc_attr( $val );
 				$attrs = "$attrs $attr='$val'";
 			}
@@ -178,13 +201,13 @@ class Noptin_Vue {
                 </div>
 				<div class="noptin-popup-editor-panel-body" style="%s">',
 			$panel['restrict'],
-			$panel['css_id'],
-			$panel['css_id'],
-			$style1,
-			$style2,
+			esc_attr( $panel['css_id'] ),
+			esc_attr( $panel['css_id'] ),
+			esc_attr( $style1 ),
+			esc_attr( $style2 ),
 			$panel['title'],
-			$panel['tooltip'],
-			$style1
+			wp_kses( $panel['tooltip'], self::tooltip_tags() ),
+			esc_attr( $style1 )
 		);
 
 		// Display all the children.
@@ -213,8 +236,8 @@ class Noptin_Vue {
 		printf(
 			'<div class="noptin-radio-wrapper field-wrapper" %s><span>%s %s</span>%s</div>',
 			$field['restrict'],
-			$field['label'],
-			$field['tooltip'],
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
 			$options
 		);
 
@@ -237,8 +260,8 @@ class Noptin_Vue {
 				<legend>%s %s</legend>
 				<div class="noptin-buttons">%s</div></fieldset>',
 			$field['restrict'],
-			$field['label'],
-			$field['tooltip'],
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
 			$options
 		);
 
@@ -253,10 +276,10 @@ class Noptin_Vue {
 			'<a %s %s class="button %s" href="%s">%s %s</a>',
 			$field['restrict'],
 			$field['attrs'],
-			$field['_class'],
-			$field['url'],
-			$field['label'],
-			$field['tooltip']
+			esc_attr( $field['_class'] ),
+			esc_attr( $field['url'] ),
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
 		);
 
 	}
@@ -275,9 +298,9 @@ class Noptin_Vue {
 			'<p %s %s class="noptin-padded %s">%s %s</p>',
 			$field['restrict'],
 			$field['attrs'],
-			$field['_class'],
+			esc_attr( $field['_class'] ),
 			$field['content'],
-			$field['tooltip']
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
 		);
 
 	}
@@ -296,9 +319,9 @@ class Noptin_Vue {
 			'<h2 %s %s class="noptin-hero %s">%s %s</h2>',
 			$field['restrict'],
 			$field['attrs'],
-			$field['_class'],
+			esc_attr( $field['_class'] ),
 			$field['content'],
-			$field['tooltip']
+			wp_kses( $field['tooltip'], self::tooltip_tags() )
 		);
 
 	}
@@ -314,11 +337,11 @@ class Noptin_Vue {
 				<div class="noptin-content"><textarea %s v-model="%s"></textarea>%s</div>
 			</div>',
 			$field['restrict'],
-			$field['_class'],
-			$field['label'],
-			$field['tooltip'],
+			esc_attr( $field['_class'] ),
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
 			$field['attrs'],
-			$id,
+			esc_attr( $id ),
 			$field['description']
 		);
 
@@ -335,12 +358,12 @@ class Noptin_Vue {
 				<noptineditor %s id="%s" v-model="%s"></noptineditor>
 			</div>',
 			$field['restrict'],
-			$field['_class'],
-			$field['label'],
-			$field['tooltip'],
+			esc_attr( $field['_class'] ),
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
 			$field['attrs'],
-			$id,
-			$id
+			esc_attr( $id ),
+			esc_attr( $id )
 		);
 
 	}
@@ -429,18 +452,14 @@ class Noptin_Vue {
 	 */
 	public static function print_field_type_required_settings( $field_type = array() ) {
 
-		$type  = $field_type['type'];
-		$v_if  = "v-if=\"field.type.type=='$type'\"";
-		$label = __( 'Is this field required?', 'newsletter-optin-box' );
-
 		// Required.
 		if ( ! empty( $field_type['supports_require'] ) ) {
 
 			echo '
-				<label class="noptin-checkbox-wrapper" ' . $v_if . '>
+				<label class="noptin-checkbox-wrapper" v-if="field.type.type==\'' . esc_attr( $field_type['type'] ) . '\'">
 					<input type="checkbox" class="screen-reader-text" v-model="field.require"/>
 					<span class="noptin-checkmark"></span>
-					<span class="noptin-label">'. $label . '</span>
+					<span class="noptin-label">' . esc_html__( 'Is this field required?', 'newsletter-optin-box' ) . '</span>
 				</label>';
 
 		}
@@ -483,40 +502,59 @@ class Noptin_Vue {
 			$required = 'required';
 		}
 
-		// Field names.
-		$name = esc_attr( $field['key'] );
-
-		// Full name.
-		if ( 'name' === $field['type']['type'] ) {
-			echo "<input name='$name' type='text' class='noptin-form-field' placeholder='$label'  $required />";
-		}
-
-		// Text.
-		if ( 'text' === $field['type']['type'] ) {
-			echo "<input name='$name' type='text' class='noptin-form-field' placeholder='$label'  $required />";
+		// Text fields.
+		if ( in_array( $field['type']['type'], array( 'name', 'text' ), true ) ) {
+			printf(
+				'<input name="%s" type="text" class="noptin-form-field" placeholder="%s" %s/>',
+				esc_attr( $field['key'] ),
+				esc_attr( $label ),
+				esc_attr( $required )
+			);
 		}
 
 		// Hidden.
 		if ( 'hidden' === $field['type']['type'] ) {
-			$value = esc_attr( $field['type']['value'] );
-			echo "<input name='$name' type='hidden' value='$value' />";
+			printf(
+				'<input name="%s" type="hidden" value="%s"/>',
+				esc_attr( $field['key'] ),
+				esc_attr( $field['type']['value'] )
+			);
 		}
 
 		// Checkbox.
 		if ( 'checkbox' === $field['type']['type'] ) {
-			$value = '1'; // Use static value to prevent problems with translated values being saved into the database
-			echo "<label><input name='$name' type='checkbox' value='$value' class='noptin-checkbox-form-field' $required/><span>$label</span></label>";
+			printf(
+				'<label><input name="%s" type="checkbox" value="1" class="noptin-checkbox-form-field" %s/><span>%s</span></label>',
+				esc_attr( $field['key'] ),
+				esc_attr( $field['type']['value'] ),
+				esc_attr( $required ),
+				wp_kses_post( $label )
+			);
 		}
 
 		// Textarea.
 		if ( 'textarea' === $field['type']['type'] ) {
-			echo "<textarea name='$name' class='noptin-form-field' placeholder='$label' $required></textarea>";
+			printf(
+				'<textarea name="%s" class="noptin-checkbox-form-field" placeholder="%s" %s></textarea>',
+				esc_attr( $field['key'] ),
+				esc_attr( $label ),
+				esc_attr( $required )
+			);
 		}
 
 		// Select.
 		if ( 'dropdown' === $field['type']['type'] ) {
-			echo "<select name='$name' class='noptin-form-field' $required>";
-			echo "<option selected='selected'>$label</option>";
+
+			printf(
+				'<select name="%s" class="noptin-form-field" %s>',
+				esc_attr( $field['key'] ),
+				esc_attr( $required )
+			);
+
+			printf(
+				'<option value="" selected="selected">%s</option>',
+				esc_html( $label )
+			);
 
 			foreach ( explode( ',', $field['type']['options'] ) as $option ) {
 
@@ -525,13 +563,15 @@ class Noptin_Vue {
 				}
 
 				$option = explode( '|', $option );
-				$label  = esc_html( $option[0] );
-				$value  = isset( $option[1] ) ? esc_attr( $option[1] ) : esc_attr( $option[0] );
 
-				echo "<option value='$value'>$label</option>";
+				printf(
+					'<option value="%s">%s</option>',
+					esc_attr( isset( $option[1] ) ? $option[1] : $option[0] ),
+					esc_html( $option[0] )
+				);
 			}
 
-			echo "</select>";
+			echo '</select>';
 		}
 
 	}
@@ -568,10 +608,10 @@ class Noptin_Vue {
 				<div class="noptin-content"><select v-model="%s" %s>%s</select>%s</div>
 			</div>',
 			$field['restrict'],
-			$field['_class'],
-			$field['label'],
-			$field['tooltip'],
-			$id,
+			esc_attr( $field['_class'] ),
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
+			esc_attr( $id ),
 			$field['attrs'],
 			$options,
 			$field['description']
@@ -591,12 +631,12 @@ class Noptin_Vue {
 					<span class="noptin-checkmark"></span> <span class="noptin-label">%s %s</span>
 				</label>',
 				$field['restrict'],
-				$field['_class'],
+				esc_attr( $field['_class'] ),
 				$name,
-				$id,
+				esc_attr( $id ),
 				$field['attrs'],
-				$label,
-				$field['tooltip']
+				wp_kses_post( $label ),
+				wp_kses( $field['tooltip'], self::tooltip_tags() )
 			);
 		}
 
@@ -629,8 +669,6 @@ class Noptin_Vue {
 				break;
 
 			case 'switch':
-				$on  = empty( $field['on'] ) ? '' : '<span class="on">' . $field['on'] . '</span>';
-				$off = empty( $field['off'] ) ? '' : '<span class="off">' . $field['off'] . '</span>';
 				echo "<label class='$class $_class' $restrict><input type='checkbox' v-model='$id' class='screen-reader-text'> <span class='noptin-switch-slider'><span> </span></span><span class='noptin-label'> $label $tooltip</span>$description</label>";
 				break;
 

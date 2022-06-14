@@ -1,7 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) || ! class_exists( 'NF_Abstracts_Action' )  ) {
+if ( ! defined( 'ABSPATH' ) || ! class_exists( 'NF_Abstracts_Action' ) ) {
 	die;
 }
 
@@ -63,11 +63,10 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 
             if ( ! $custom_field['predefined'] ) {
                 $map_fields[] = array(
-                    'name'    => $custom_field['merge_tag'],
-                    'label'   => $custom_field['label'],
+                    'name'  => $custom_field['merge_tag'],
+                    'label' => $custom_field['label'],
                 );
             }
-
 		}
 
 		return apply_filters( 'noptin_ninja_forms_map_fields', $map_fields );
@@ -88,6 +87,7 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 
 		foreach ( $map_fields as $field ) {
 			$name = 'noptin_' . $field['name'];
+
 			$this->_settings[ $name ] = array(
 
 				'name'	         => $name,
@@ -98,7 +98,7 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 				'value'	         => isset( $field['value'] ) ? $field['value'] : '',
 				'placeholder'    => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
 				'help'           => isset( $field['help'] ) ? $field['help'] : '',
-				'use_merge_tags' => isset( $field['use_merge_tags'] ) ? $field['use_merge_tags'] : true
+				'use_merge_tags' => isset( $field['use_merge_tags'] ) ? $field['use_merge_tags'] : true,
 
 			);
 		}
@@ -119,15 +119,15 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 	public function process( $action_settings, $form_id, $data ) {
 
 		// All subscribers need an email address.
-		if ( ! is_email( $action_settings['noptin_email'] ) )  {
+		if ( ! is_email( $action_settings['noptin_email'] ) ) {
 			return $data;
 		}
 
 		// Abort if marketing consent was not given.
-		if ( ! empty( $action_settings['noptin_GDPR_consent'] ) && __( 'Unchecked', 'newsletter-optin-box' ) === $action_settings['noptin_GDPR_consent'] )  {
+		if ( ! empty( $action_settings['noptin_GDPR_consent'] ) && __( 'Unchecked', 'newsletter-optin-box' ) === $action_settings['noptin_GDPR_consent'] ) {
 			return $data;
 		}
-		
+
 		// Prepare Noptin Fields.
 		$noptin_fields = $this->map_fields( $action_settings );
 

@@ -5,6 +5,9 @@
  * @since 1.2.7
  */
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Main class used to implement a single subscriber's object.
  *
@@ -73,7 +76,7 @@ class Noptin_Subscriber {
 		}
 
 		if ( empty( $subscriber ) ) {
-			$this->data = new stdClass;
+			$this->data = new stdClass();
 			return;
 		}
 
@@ -83,19 +86,19 @@ class Noptin_Subscriber {
 			$data = self::get_data_by( 'id', $subscriber );
 
 			// ... the subscriber's email...
-		} elseif( is_email( $subscriber ) ) {
+		} elseif ( is_email( $subscriber ) ) {
 
 			$data = self::get_data_by( 'email', $subscriber );
 
 			// ... or the subscriber's confirm key.
-		} elseif( is_string( $subscriber ) ) {
+		} elseif ( is_string( $subscriber ) ) {
 
 			$data = self::get_data_by( 'confirm_key', $subscriber );
 
 		}
 
 		if ( empty( $data ) ) {
-			$this->data = new stdClass;
+			$this->data = new stdClass();
 		} else {
 			$this->init( $data );
 		}
@@ -141,7 +144,6 @@ class Noptin_Subscriber {
 			if ( $value < 1 ) {
 				return false;
 			}
-
 		} else {
 			$value = trim( $value );
 		}
@@ -152,16 +154,16 @@ class Noptin_Subscriber {
 
 		switch ( $field ) {
 			case 'id':
-				$subscriber_id  = $value;
-				$db_field       = 'id';
+				$subscriber_id = $value;
+				$db_field      = 'id';
 				break;
 			case 'email':
-				$subscriber_id  = wp_cache_get( $value, 'noptin_subscriber_emails' );
-				$db_field       = 'email';
+				$subscriber_id = wp_cache_get( $value, 'noptin_subscriber_emails' );
+				$db_field      = 'email';
 				break;
 			case 'confirm_key':
-				$subscriber_id  = wp_cache_get( $value, 'noptin_subscriber_keys' );
-				$db_field       = 'confirm_key';
+				$subscriber_id = wp_cache_get( $value, 'noptin_subscriber_keys' );
+				$db_field      = 'confirm_key';
 				break;
 			default:
 				return false;
@@ -176,10 +178,9 @@ class Noptin_Subscriber {
 		}
 
 		// If that fails, retrieve from the db...
-		$table       = get_noptin_subscribers_table_name();
-		$subscriber  = $wpdb->get_row(
+		$subscriber = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM $table WHERE $db_field = %s LIMIT 1",
+				"SELECT * FROM {$wpdb->prefix}noptin_subscribers WHERE $db_field = %s LIMIT 1", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$value
 			)
 		);
@@ -249,7 +250,7 @@ class Noptin_Subscriber {
 	 */
 	public function __set( $key, $value ) {
 		if ( 'id' === strtolower( $key ) ) {
-			$this->id = $value;
+			$this->id       = $value;
 			$this->data->id = $value;
 			return;
 		}
@@ -310,7 +311,7 @@ class Noptin_Subscriber {
 
 		if ( isset( $this->data->$key ) ) {
 			$value = $this->data->$key;
-		} else if ( ! $this->is_virtual ) {
+		} elseif ( ! $this->is_virtual ) {
 			$value = get_noptin_subscriber_meta( $this->id, $key, $single );
 		}
 

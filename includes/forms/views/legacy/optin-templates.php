@@ -1092,7 +1092,7 @@
 	line-height: 2;
 	font-size: 20px;
 }',
-				
+
 			),
 
 		),

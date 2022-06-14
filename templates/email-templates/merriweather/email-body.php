@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 	<!-- start copy block -->
 	<tr>
 	  	<td align="center" bgcolor="#D2C7BA">
@@ -13,7 +14,7 @@
 					<td align="left" bgcolor="#ffffff" class="margin-none" style="padding: 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px;">
 						<?php echo $content; ?>
 					</td>
-		 		 </tr>
+		 		</tr>
 		  		<!-- end copy -->
 
 			</table>

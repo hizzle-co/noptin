@@ -51,42 +51,42 @@
 <div style='<?php echo esc_attr( $wrapper_styles ); ?>' data-trigger='<?php echo esc_attr( $trigger ); ?>' data-after-click='<?php echo esc_attr( $after_click ); ?>' data-on-scroll='<?php echo esc_attr( $on_scroll ); ?>' data-after-delay='<?php echo esc_attr( $delay ); ?>' data-once-per-session='<?php echo esc_attr( $session ); ?>' class='noptin-optin-form-wrapper <?php echo esc_attr( $class ); ?>'>
 	<form class="noptin-optin-form <?php echo $singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'; ?>" <?php do_action( 'noptin_frontend_optin_form_attrs', $form ); ?>>
 
-		<div class="noptin-form-header <?php echo ! empty( $image ) ? esc_attr( $imagePos ) : 'no-image' ?>">
+		<div class="noptin-form-header <?php echo ! empty( $image ) ? esc_attr( $imagePos ) : 'no-image'; ?>">
 
 			<div class="noptin-form-header-text">
 
 				<?php if ( ! $hidePrefix ) : ?>
-					<div style="color:<?php echo esc_attr( $prefixColor ); ?>;<?php echo esc_attr( $prefixTypography['generated'] ); ?><?php echo esc_attr( $prefixAdvanced['generated'] ); ?>" class="noptin-form-prefix"><?php echo $prefix; ?></div>
+					<div style="color:<?php echo esc_attr( $prefixColor ); ?>;<?php echo esc_attr( $prefixTypography['generated'] ); ?><?php echo esc_attr( $prefixAdvanced['generated'] ); ?>" class="noptin-form-prefix"><?php echo wp_kses_post( $prefix ); ?></div>
 				<?php endif; ?>
 
 				<?php if ( ! $hideTitle ) : ?>
-					<div style="color:<?php echo esc_attr( $titleColor ); ?>;<?php echo esc_attr( $titleTypography['generated'] ); ?><?php echo esc_attr( $titleAdvanced['generated'] ); ?>" class="noptin-form-heading"><?php echo $title; ?></div>
+					<div style="color:<?php echo esc_attr( $titleColor ); ?>;<?php echo esc_attr( $titleTypography['generated'] ); ?><?php echo esc_attr( $titleAdvanced['generated'] ); ?>" class="noptin-form-heading"><?php echo wp_kses_post( $title ); ?></div>
 				<?php endif; ?>
 
 				<?php if ( ! $hideDescription ) : ?>
-					<div style="color:<?php echo esc_attr( $descriptionColor ); ?>;<?php echo esc_attr( $descriptionTypography['generated'] ); ?><?php echo esc_attr( $descriptionAdvanced['generated'] ); ?>" class="noptin-form-description"><?php echo $description; ?></div>
+					<div style="color:<?php echo esc_attr( $descriptionColor ); ?>;<?php echo esc_attr( $descriptionTypography['generated'] ); ?><?php echo esc_attr( $descriptionAdvanced['generated'] ); ?>" class="noptin-form-description"><?php echo wp_kses_post( $description ); ?></div>
 				<?php endif; ?>
 
 			</div>
 
-			<?php if ( ! empty( $image ) ) { ?>
+			<?php if ( ! empty( $image ) ) : ?>
 				<div class="noptin-form-header-image">
-					<img src="<?php echo $image; ?>" />
+					<img src="<?php echo esc_url( $image ); ?>" />
 				</div>
-			<?php } ?>
+			<?php endif; ?>
 
 		</div>
 
 		<div class="noptin-form-footer">
 
-			<?php if ( ! $hideFields ) { ?>
+			<?php if ( ! $hideFields ) : ?>
 				<div class="noptin-form-fields">
 
 					<?php foreach ( $fields as $field ) : ?>
 						<div class="noptin-optin-field-wrapper noptin-optin-field-wrapper-<?php echo esc_attr( $field['type']['type'] ); ?>">
 							<?php do_action( 'noptin_field_type_frontend_optin_markup', $field, $data ); ?>
 						</div>
-					<?php endif; ?>
+					<?php endforeach; ?>
 
 					<?php if ( $gdprCheckbox && ! $singleLine ) : ?>
 						<div class="noptin-gdpr-checkbox-wrapper" style="margin-bottom: 10px;">
@@ -104,7 +104,7 @@
 						class="noptin-form-submit <?php echo $singleLine ? '' : esc_attr( 'noptin-form-button-' . $buttonPosition ); ?>" />
 				</div>
 				<?php do_action( 'after_print_noptin_form_fields', $singleLine, $id ); ?>
-			<?php } ?>
+			<?php endif; ?>
 
 			<?php if ( $gdprCheckbox && ! $hideFields && $singleLine ) : ?>
 				<div class="noptin-gdpr-checkbox-wrapper" style="margin-bottom: 10px;">
@@ -120,7 +120,7 @@
 			<div style="border:1px solid rgba(227, 6, 37, 0.8);display:none;padding:10px;margin-top:10px" class="noptin_feedback_error"></div>
 		</div>
 
-		<?php if ( 'popup' === $optinType || 'slide_in' === $optinType ) { ?>
+		<?php if ( 'popup' === $optinType || 'slide_in' === $optinType ) : ?>
 			<span class="noptin-popup-close"
 				title="close"><svg enable-background="new 0 0 24 24" id="Layer_1" version="1.0" viewBox="0 0 24 24"
 					xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -131,13 +131,13 @@
 					</g>
 				</svg>
 			</span>
-		<?php } ?>
+		<?php endif; ?>
 	</form>
 
-	<?php if ( $imageMain ) { ?>
+	<?php if ( $imageMain ) : ?>
 		<div v-if="imageMain" class="noptin-form-main-image">
-			<img src="<?php echo $imageMain; ?>" />
+			<img src="<?php echo esc_url( $imageMain ); ?>" />
 		</div>
-	<?php } ?>
+	<?php endif; ?>
 
 </div>

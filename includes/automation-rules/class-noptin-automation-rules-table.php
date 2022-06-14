@@ -113,13 +113,13 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	public function prepare_query() {
 		global $wpdb;
 
-		$table       = noptin()->automation_rules->get_table();
-		$paged       = empty( $_GET['paged'] ) ? 1 : (int) $_GET['paged'];
-		$offset      = ( $paged - 1 ) * 10;
+		$paged  = empty( $_GET['paged'] ) ? 1 : (int) $_GET['paged'];
+		$offset = ( $paged - 1 ) * 10;
+
         $this->items = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM $table ORDER BY created_at DESC LIMIT %d,10", $offset )
+			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}noptin_automation_rules ORDER BY created_at DESC LIMIT %d,10", $offset )
 		);
-		$this->total = $wpdb->get_var( "SELECT COUNT(`id`) FROM $table" );
+		$this->total = $wpdb->get_var( "SELECT COUNT(`id`) FROM {$wpdb->prefix}noptin_automation_rules" );
 
 	}
 
@@ -132,9 +132,8 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 */
 	public function single_row( $item ) {
 		$item = new Noptin_Automation_Rule( $item );
-		$id   = esc_attr( $item->id );
 
-		echo "<tr class='noptin_automation_rule_$id'>";
+		echo '<tr class="noptin_automation_rule_' . esc_attr( $item->id ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 
@@ -190,7 +189,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	public function column_updated_at( $item ) {
 		return noptin_format_date( $item->updated_at );
 	}
-	
+
 	/**
 	 * Displays the rule's creation date
 	 *
@@ -215,12 +214,12 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
-		$delete_url  = esc_url( 
+		$delete_url  = esc_url(
 			add_query_arg(
 				array(
 					'noptin_admin_action' => 'noptin_delete_automation_rule',
 					'delete'			  => $item->id,
-					'_wpnonce'            => wp_create_nonce( 'noptin-automation-rule' )
+					'_wpnonce'            => wp_create_nonce( 'noptin-automation-rule' ),
 				),
 				$this->base_url
 			)
@@ -268,7 +267,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 * @param  Noptin_Automation_Rule $item item.
 	 * @return HTML
 	 */
-	function column_cb( $item ) {
+	public function column_cb( $item ) {
 		return sprintf( '<input type="checkbox" name="id[]" value="%s" />', esc_html( $item->id ) );
 	}
 
@@ -277,7 +276,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_bulk_actions() {
+	public function get_bulk_actions() {
 
 		$actions = array(
 			'delete'     => __( 'Delete', 'newsletter-optin-box' ),
@@ -306,7 +305,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	/**
 	 * Fetch data from the database to render on view.
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 
 		$per_page = 10;
 
@@ -331,7 +330,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_columns() {
+	public function get_columns() {
 		$columns = array(
 			'cb'         => '<input type="checkbox" />',
 			'rule'       => __( 'Rule', 'newsletter-optin-box' ),
@@ -371,22 +370,21 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 * Message to be displayed when there are no items
 	 */
 	public function no_items() {
-		$add_new_rule = add_query_arg( 'create', '1' );
 
 		echo "<div style='min-height: 320px; display: flex; align-items: center; justify-content: center; flex-flow: column;'>";
 		echo '<svg width="100" height="100" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd"><path style="fill: #039be5;" d="M6.72 20.492c1.532.956 3.342 1.508 5.28 1.508 1.934 0 3.741-.55 5.272-1.503l1.24 1.582c-1.876 1.215-4.112 1.921-6.512 1.921-2.403 0-4.642-.708-6.52-1.926l1.24-1.582zm17.28-1.492h-6c0-1.105.895-2 2-2h2c.53 0 1.039.211 1.414.586s.586.883.586 1.414zm-18 0h-6c0-1.105.895-2 2-2h2c.53 0 1.039.211 1.414.586s.586.883.586 1.414zm6-11c-3.037 0-5.5 2.462-5.5 5.5 0 3.037 2.463 5.5 5.5 5.5s5.5-2.463 5.5-5.5c0-3.038-2.463-5.5-5.5-5.5zm.306 1.833h-.612v.652c-1.188.164-1.823.909-1.823 1.742 0 1.49 1.74 1.717 2.309 1.982.776.347.632 1.069-.07 1.229-.609.137-1.387-.103-1.971-.33l-.278 1.005c.546.282 1.201.433 1.833.444v.61h.612v-.644c1.012-.142 1.834-.7 1.833-1.75 0-1.311-1.364-1.676-2.41-2.167-.635-.33-.555-1.118.355-1.171.505-.031 1.024.119 1.493.284l.221-1.007c-.554-.168-1.05-.245-1.492-.257v-.622zm8.694 2.167c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm-18 0c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25zm5-11.316v2.149c-2.938 1.285-5.141 3.942-5.798 7.158l-2.034-.003c.732-4.328 3.785-7.872 7.832-9.304zm8 0c4.047 1.432 7.1 4.976 7.832 9.304l-2.034.003c-.657-3.216-2.86-5.873-5.798-7.158v-2.149zm-1 6.316h-6c0-1.105.895-2 2-2h2c.53 0 1.039.211 1.414.586s.586.883.586 1.414zm-3-7c1.242 0 2.25 1.008 2.25 2.25s-1.008 2.25-2.25 2.25-2.25-1.008-2.25-2.25 1.008-2.25 2.25-2.25z"/></svg>';
-		
+
 		printf(
 			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-			__( '%1$sCreate your first automation rule%2$s', 'newsletter-optin-box' ),
-			"<div style='margin-top: 40px;'><a style='font-size: 16px;' class='no-rule-create-new-automation-rule' href='$add_new_rule'>",
+			esc_html__( '%1$sCreate your first automation rule%2$s', 'newsletter-optin-box' ),
+			"<div style='margin-top: 40px;'><a style='font-size: 16px;' class='no-rule-create-new-automation-rule' href='" . esc_url( add_query_arg( 'create', '1' ) ) . "'>",
 			'</a></div>'
 		);
 
-		echo "<p class='description'><a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/automation-rules' target='_blank'>" . __( 'Or Learn more', 'newsletter-optin-box' ) . "</a></p>";
+		echo "<p class='description'><a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/automation-rules' target='_blank'>" . esc_html__( 'Or Learn more', 'newsletter-optin-box' ) . '</a></p>';
 		echo '</div>';
 	}
-	
+
 
 }
 

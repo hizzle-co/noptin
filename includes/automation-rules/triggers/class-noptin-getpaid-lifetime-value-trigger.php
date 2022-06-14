@@ -62,6 +62,7 @@ class Noptin_GetPaid_Lifetime_Value_Trigger extends Noptin_Abstract_Trigger {
 
         $value = wpinv_price( $settings['lifetime_value'] );
         return sprintf(
+			// translators: %s is the lifetime value.
             __( 'When a subscriber reaches a GetPaid lifetime value of %s', 'newsletter-optin-box' ),
             $value
         );
@@ -76,7 +77,7 @@ class Noptin_GetPaid_Lifetime_Value_Trigger extends Noptin_Abstract_Trigger {
             'getpaid',
             'lifetime value',
             'ecommerce',
-            'invoicing'
+            'invoicing',
         );
     }
 
@@ -84,10 +85,10 @@ class Noptin_GetPaid_Lifetime_Value_Trigger extends Noptin_Abstract_Trigger {
      * @inheritdoc
      */
     public function get_settings() {
-    
+
         return array(
 
-            'lifetime_value'  => array(
+            'lifetime_value' => array(
                 'el'          => 'input',
                 'label'       => __( 'Lifetime Value', 'newsletter-optin-box' ),
                 'description' => __( 'Enter the lifetime value without the currency symbol', 'newsletter-optin-box' ),

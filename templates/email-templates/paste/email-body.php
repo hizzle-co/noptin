@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 		<!-- start copy block -->
 		<tr>
 			<td align="center" bgcolor="#e9ecef">
