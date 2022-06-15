@@ -9,7 +9,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$n = 1;
 ?>
 
 <style type="text/css">
@@ -23,6 +22,11 @@ $n = 1;
 		border-spacing:0;
 		border: 1px solid #e0dede;
 		border-radius: 4px;
+	}
+
+	.digest-grid-post-image-container {
+		margin-top: 0;
+		padding-top: 0;
 	}
 
 	.digest-grid-post img {
@@ -86,8 +90,16 @@ $n = 1;
 	<div class="post-digest-grid-one" style="display:table-cell;width:50%;padding-right: 20px;">
 	<!--<![endif]-->
 		<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
-			<?php if ( ! ( $i + 1 ) % 2 ) : ?>
-			<div class="digest-grid-post digest-grid-post-type-<?php echo sanitize_html_class( $campaign_post->post_type ); ?>">
+			<?php if ( noptin_is_even( $i ) ) : ?>
+			<div class="digest-grid-post digest-grid-post-type-<?php echo esc_attr( sanitize_html_class( $campaign_post->post_type ) ); ?>">
+
+				<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
+					<p class="digest-grid-post-image-container">
+						<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" style="display: block;" target="_blank">
+							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $campaign_post, 'medium' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $campaign_post ) ); ?>" style="width: 100%; max-width: 100%; height: auto; margin: auto; display: block;">
+						</a>
+					</p>
+				<?php endif; ?>
 
 				<p class="digest-grid-post-title">
 					<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" target="_blank">
@@ -115,7 +127,7 @@ $n = 1;
 
 						if ( $categories_list ) {
 							/* translators: 1: list of categories. */
-							printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), esc_html( current( explode( ',', $categories_list ) ) ) );
+							printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), wp_kses_post( current( explode( ',', $categories_list ) ) ) );
 						}
 
 					?>
@@ -137,7 +149,7 @@ $n = 1;
     <div class="post-digest-grid-two" style="display:table-cell;width:50%">
 	<!--<![endif]-->
 	<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
-		<?php if ( ( ( $i + 1 ) % 2 ) ) : ?>
+		<?php if ( ! noptin_is_even( $i ) ) : ?>
 		<div class="digest-grid-post digest-grid-post-type-<?php echo sanitize_html_class( $campaign_post->post_type ); ?>">
 
 			<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
@@ -174,7 +186,7 @@ $n = 1;
 
 					if ( $categories_list ) {
 						/* translators: 1: list of categories. */
-						printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), esc_html( current( explode( ',', $categories_list ) ) ) );
+						printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), wp_kses_post( current( explode( ',', $categories_list ) ) ) );
 					}
 
 				?>

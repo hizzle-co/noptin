@@ -1479,8 +1479,9 @@ function noptin_get_subscription_sources() {
 	}
 
 	// Add other known sources.
-	$sources['manual']    = __( 'Manually Added', 'newsletter-optin-box' );
-	$sources['shortcode'] = __( 'Subscription Shortcode', 'newsletter-optin-box' );
+	$sources['manual']     = __( 'Manually Added', 'newsletter-optin-box' );
+	$sources['shortcode']  = __( 'Subscription Shortcode', 'newsletter-optin-box' );
+	$sources['users_sync'] = __( 'Users Sync', 'newsletter-optin-box' );
 
 	// Cache. TODO: Clear cache when subscriber or form is added/updated.
 	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );

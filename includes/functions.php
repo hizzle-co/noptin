@@ -1513,6 +1513,31 @@ function noptin_kses_post_e( $content ) {
 }
 
 /**
+ * Returns the HTML allowed for VUE templates.
+ */
+function noptin_kses_post_vue() {
+
+	$allowed_html = array();
+
+	foreach ( wp_kses_allowed_html( 'post' ) as $tag => $attributes ) {
+		$attributes['v-if']      = true;
+		$attributes['v-bind']    = true;
+		$attributes[':class']    = true;
+		$attributes['class']     = true;
+		$attributes['style']     = true;
+		$attributes[':style']    = true;
+		$attributes['v-show']    = true;
+		$attributes['v-else']    = true;
+		$attributes['v-else-if'] = true;
+		$attributes['v-for']     = true;
+
+		$allowed_html[ $tag ] = $attributes;
+	}
+
+	return $allowed_html;
+}
+
+/**
  * Checks if a given WP User is unsubscribed.
  *
  * @since 1.7.0
@@ -1552,4 +1577,15 @@ function noptin_newslines_to_array( $text ) {
 	}
 
 	return $options;
+}
+
+/**
+ * Checks if a number is even.
+ *
+ * @since 1.7.5
+ * @param int $number
+ * @return bool
+ */
+function noptin_is_even( $number ) {
+	return 0 === $number || 0 === $number % 2;
 }

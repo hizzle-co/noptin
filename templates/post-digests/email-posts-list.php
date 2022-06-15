@@ -69,7 +69,7 @@ defined( 'ABSPATH' ) || exit;
 
 <?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 
-	<table cellspacing="0" cellpadding="0" class="digest-list-post digest-list-post-type-<?php echo sanitize_html_class( $campaign_post->post_type ); ?>">
+	<table cellspacing="0" cellpadding="0" class="digest-list-post digest-list-post-type-<?php echo esc_attr( sanitize_html_class( $campaign_post->post_type ) ); ?>">
 		<tbody>
 			<tr style="vertical-align:top">
 
@@ -109,7 +109,7 @@ defined( 'ABSPATH' ) || exit;
 
 						if ( $categories_list ) {
 							/* translators: 1: list of categories. */
-							printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), esc_html( current( explode( ',', $categories_list ) ) ) );
+							printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), wp_kses_post( current( explode( ',', $categories_list ) ) ) );
 						}
 
 						?>

@@ -646,21 +646,21 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * Get posts html to display.
 	 *
 	 * @param string $template
-	 * @param WP_Post[] $posts
+	 * @param WP_Post[] $campaign_posts
 	 *
 	 * @return string
 	 */
-	public function get_posts_html( $template = 'grid', $posts = array() ) {
+	public function get_posts_html( $template = 'grid', $campaign_posts = array() ) {
 
 		// Allow overwriting this.
-		$html = apply_filters( 'noptin_post_digest_html', null, $template, $posts );
+		$html = apply_filters( 'noptin_post_digest_html', null, $template, $campaign_posts );
 
 		if ( null !== $html ) {
 			return $html;
 		}
 
 		ob_start();
-		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', compact( 'posts' ) );
+		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', compact( 'campaign_posts' ) );
 		return ob_get_clean();
 	}
 

@@ -145,7 +145,7 @@ class Noptin_Settings {
 	public static function section_conditional( $args ) {
 
 		// Ensure there is a section.
-		if ( empty( $args['section'] ) ) {
+		if ( ! empty( $args['section'] ) ) {
 			printf(
 				'v-show="currentTab==\'%s\' && currentSection==\'%s\' "',
 				esc_attr( $args['section'] ),

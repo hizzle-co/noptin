@@ -39,6 +39,10 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 
 		// Notify customers.
 		add_action( 'noptin_woocommerce_order', array( $this, 'maybe_schedule_notification' ), 100, 3 );
+
+		// Filters the products template.
+		add_filter( 'noptin_post_digest_html', array( $this, 'maybe_filter_products_digest_template' ), 10, 3 );
+
 	}
 
 	/**
@@ -331,6 +335,25 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			__( 'Customer', 'newsletter-optin-box' ) => $this->get_customer_merge_tags(),
 		);
 
+	}
+
+	/**
+	 * Get posts html to display.
+	 *
+	 * @param string $template
+	 * @param WP_Post[] $campaign_posts
+	 *
+	 * @return string
+	 */
+	public function maybe_filter_products_digest_template( $content, $template, $campaign_posts ) {
+
+		if ( null !== $content || empty( $campaign_posts ) || ! in_array( $campaign_posts[0]->post_type, array( 'product', 'product_variation' ), true ) || ! in_array( $template, array( 'grid', 'list' ), true ) ) {
+			return $content;
+		}
+
+		$products = array_filter( array_map( 'wc_get_product', $campaign_posts ), 'wc_products_array_filter_visible' );
+
+		return $this->get_products_html( $template, $products );
 	}
 
 }
