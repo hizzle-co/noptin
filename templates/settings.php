@@ -36,31 +36,16 @@
 
 		<div class="noptin-sections-wrapper">
 
-			<?php
-
-				foreach ( Noptin_Settings::get_sections() as $key => $section ) :
-
-					// Abort if it doesn't have sub-sections.
-					if ( ! is_array( $section ) ) {
-						continue;
-					}
-
-					$key         = esc_attr( $key );
-					$subsections = array();
-
-					foreach ( $section['children'] as $subsection_id => $subsection_title ) {
-						$subsection_title = esc_html( $subsection_title );
-						$subsection_id    = esc_attr( $subsection_id );
-						$subsections[]    = "<a href='#' :class=\"sectionClass('$subsection_id')\" @click.prevent=\"switchSection('$subsection_id')\">$subsection_title</a>";
-					}
-
-					echo "<ul class='subsubsub' v-show=\"currentTab=='" . esc_attr( $key ) . "'\">\n\t<li>";
-					echo join( " | </li>\n\t<li>", $subsections );
-					echo "</li>\n</ul>\n";
-
-				endforeach;
-
-			?>
+			<?php foreach ( array_filter( Noptin_Settings::get_sections(), 'is_array' ) as $section_id => $section ) : ?>
+				<ul class="subsubsub" v-show="currentTab=='<?php echo esc_attr( $section_id ); ?>'">
+					<?php foreach ( $section['children'] as $subsection_id => $subsection_title ) : ?>
+						<li>
+							<a href='#' :class="sectionClass('<?php echo esc_attr( $subsection_id ); ?>')" @click.prevent="switchSection('<?php echo esc_attr( $subsection_id ); ?>')"><?php echo esc_html( $subsection_title ); ?></a>
+							<span class="subsubsub_sep"> | </span>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endforeach; ?>
 
 		</div>
 
@@ -69,48 +54,41 @@
 			<div class="noptin-save-saved" style="display:none"></div>
 			<div class="noptin-save-error" style="display:none"></div>
 
-			<?php
+			<?php foreach ( Noptin_Settings::get_settings() as $setting_id => $args ) : ?>
+				<div <?php Noptin_Settings::section_conditional( $args ); ?>>
 
-				foreach ( Noptin_Settings::get_settings() as $id => $args ) :
-					$condition = Noptin_Settings::get_section_conditional( $args );
+					<?php if ( ! empty( $args['el'] ) && 'settings_section' === $args['el'] ) : ?>
 
-					echo "<div $condition>";
+						<div id="noptin-settings-section-<?php echo esc_attr( $setting_id ); ?>" class="noptin-settings-section <?php echo esc_attr( empty( $args['class'] ) ? '' : $args['class'] ); ?>" :class="{ open: isOpenPanel('<?php echo esc_attr( $setting_id ); ?>') }">
+							<div class="noptin-section-header" @click="togglePanel('<?php echo esc_attr( $setting_id ); ?>')">
+								<div class='title'>
+									<span><?php echo esc_html( $args['heading'] ); ?></span>
+									<p><?php echo wp_kses_post( $args['description'] ); ?></p>
+								</div>
+								<span class='badge'><?php echo esc_html( $args['badge'] ); ?></span>
+								<span class='icon'></span>
+							</div>
 
-					if ( ! empty( $args['el'] ) && 'settings_section' === $args['el'] ) {
-						$class = empty( $args['class'] ) ? '' : esc_attr( $args['class'] );
-						echo "<div id='noptin-settings-section-$id' class='noptin-settings-section $class' :class=\"{ open: isOpenPanel('$id') }\">";
-						echo    "<div class='noptin-section-header' @click=\"togglePanel('$id')\">
-									<div class='title'>
-										<span>{$args['heading']}</span>
-										<p>{$args['description']}</p>
+							<div class="noptin-section-body">
+								<?php foreach ( $args['children'] as $child_id => $child_args ) : ?>
+									<div <?php Noptin_Settings::section_conditional( $child_args ); ?>>
+										<?php Noptin_Vue::render_el( $child_id, $child_args ); ?>
 									</div>
-									<span class='badge'>{$args['badge']}</span>
-									<span class='icon'></span>
-								</div>";
-						echo "<div class='noptin-section-body'>";
-						foreach ( $args['children'] as $id => $args ) :
-							$condition = Noptin_Settings::get_section_conditional( $args );
+								<?php endforeach; ?>
+							</div>
+						</div>
 
-							echo "<div $condition>";
-							Noptin_Vue::render_el( $id, $args );
-							echo '</div>';
+					<?php else : ?>
+						<?php Noptin_Vue::render_el( $setting_id, $args ); ?>
+					<?php endif; ?>
 
-						endforeach;
-						echo '</div>';
-						echo '</div>';
+				</div>
+			<?php endforeach; ?>
 
-					} else {
-						Noptin_Vue::render_el( $id, $args );
-					}
+			<?php do_action( 'noptin_settings_page_before_submit_button' ); ?>
+			<?php submit_button(); ?>
 
-					echo '</div>';
-
-				endforeach;
-				submit_button();
-
-			?>
 		</div>
-
 
 	</form>
 	<?php do_action( 'noptin_settings_page_bottom' ); ?>
