@@ -75,7 +75,7 @@
 					$url = $subscriber->conversion_page;
 					if ( ! empty( $url ) ) {
 						printf(
-							'<a href="%1$s" style="display: block; font-weight: 400; word-break: break-word;" title="%1$s" target="_blank"><small>%1$s<small></a>',
+							'<a href="%1$s" style="display: block; font-weight: 400; word-break: break-word;" title="%1$s" target="_blank"><small>%1$s</small></a>',
 							esc_url( $url )
 						);
 					} else {

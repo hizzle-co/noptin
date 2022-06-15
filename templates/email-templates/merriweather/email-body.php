@@ -12,7 +12,7 @@
 		 		<!-- start copy -->
 		  		<tr>
 					<td align="left" bgcolor="#ffffff" class="margin-none" style="padding: 24px; font-family: 'Merriweather', serif; font-size: 16px; line-height: 24px;">
-						<?php echo $content; ?>
+						<?php echo wp_kses_post( $content ); ?>
 					</td>
 		 		</tr>
 		  		<!-- end copy -->

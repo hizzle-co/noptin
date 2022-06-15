@@ -56,15 +56,15 @@
 			<div class="noptin-form-header-text">
 
 				<?php if ( ! $hidePrefix ) : ?>
-					<div style="color:<?php echo esc_attr( $prefixColor ); ?>;<?php echo esc_attr( $prefixTypography['generated'] ); ?><?php echo esc_attr( $prefixAdvanced['generated'] ); ?>" class="noptin-form-prefix"><?php echo wp_kses_post( $prefix ); ?></div>
+					<div style="color:<?php echo esc_attr( $prefixColor ); ?>;<?php echo esc_attr( $prefixTypography['generated'] ); ?><?php echo esc_attr( $prefixAdvanced['generated'] ); ?>" class="noptin-form-prefix"><?php echo wp_kses_post( do_shortcode( $prefix ) ); ?></div>
 				<?php endif; ?>
 
 				<?php if ( ! $hideTitle ) : ?>
-					<div style="color:<?php echo esc_attr( $titleColor ); ?>;<?php echo esc_attr( $titleTypography['generated'] ); ?><?php echo esc_attr( $titleAdvanced['generated'] ); ?>" class="noptin-form-heading"><?php echo wp_kses_post( $title ); ?></div>
+					<div style="color:<?php echo esc_attr( $titleColor ); ?>;<?php echo esc_attr( $titleTypography['generated'] ); ?><?php echo esc_attr( $titleAdvanced['generated'] ); ?>" class="noptin-form-heading"><?php echo wp_kses_post( do_shortcode( $title ) ); ?></div>
 				<?php endif; ?>
 
 				<?php if ( ! $hideDescription ) : ?>
-					<div style="color:<?php echo esc_attr( $descriptionColor ); ?>;<?php echo esc_attr( $descriptionTypography['generated'] ); ?><?php echo esc_attr( $descriptionAdvanced['generated'] ); ?>" class="noptin-form-description"><?php echo wp_kses_post( $description ); ?></div>
+					<div style="color:<?php echo esc_attr( $descriptionColor ); ?>;<?php echo esc_attr( $descriptionTypography['generated'] ); ?><?php echo esc_attr( $descriptionAdvanced['generated'] ); ?>" class="noptin-form-description"><?php echo wp_kses_post( do_shortcode( $description ) ); ?></div>
 				<?php endif; ?>
 
 			</div>
@@ -113,7 +113,7 @@
 			<?php endif; ?>
 
 			<?php if ( ! $hideNote ) : ?>
-				<div style="color:<?php echo esc_attr( $noteColor ); ?>;<?php echo esc_attr( $noteTypography['generated'] ); ?><?php echo esc_attr( $noteAdvanced['generated'] ); ?>" class="noptin-form-note"><?php echo wp_kses_post( $note ); ?></div>
+				<div style="color:<?php echo esc_attr( $noteColor ); ?>;<?php echo esc_attr( $noteTypography['generated'] ); ?><?php echo esc_attr( $noteAdvanced['generated'] ); ?>" class="noptin-form-note"><?php echo wp_kses_post( do_shortcode( $note ) ); ?></div>
 			<?php endif; ?>
 
 			<div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px" class="noptin_feedback_success"></div>

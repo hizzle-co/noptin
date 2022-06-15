@@ -423,6 +423,14 @@ class Noptin_Form {
 	}
 
 	/**
+	 * Displays the form.
+	 *
+	 */
+	public function display() {
+		return show_noptin_form( $this->id, true );
+	}
+
+	/**
 	 * Returns all form data
 	 *
 	 * @return array an array of form data

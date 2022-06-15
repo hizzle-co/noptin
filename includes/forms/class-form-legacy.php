@@ -789,6 +789,17 @@ class Noptin_Form_Legacy {
 	 * @return string html
 	 */
 	public function get_html() {
+		ob_start();
+		$this->display();
+		return ob_get_clean();
+	}
+
+	/**
+	 * Returns the html required to display the form
+	 *
+	 * @return string html
+	 */
+	public function display() {
 		$type       = esc_attr( $this->optinType );
 		$id         = $this->id;
 		$id_class   = "noptin-form-id-$id";
@@ -801,35 +812,26 @@ class Noptin_Form_Legacy {
 
 		}
 
-		$html = "<div class='$type_class $id_class noptin-optin-main-wrapper'>";
+		?>
+			<div class="<?php echo esc_attr( "$type_class $id_class" ); ?> noptin-optin-main-wrapper">
 
-		if ( 'popup' === $type ) {
-			$html .= "<div class='noptin-popup-optin-inner-wrapper'>";
-		}
+				<?php if ( 'popup' === $type ) : ?>
+					<div class="noptin-popup-optin-inner-wrapper"></div>
+				<?php endif; ?>
 
-		// Maybe print custom css.
-		if ( ! empty( $this->CSS ) ) {
+				<?php if ( ! empty( $this->CSS ) ) : ?>
+					<style><?php echo esc_html( str_ireplace( '.noptin-optin-form-wrapper', ".$id_class .noptin-optin-form-wrapper", str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS ) ) ); ?></style>
+				<?php endif; ?>
 
-			// Our best attempt at scoping styles.
-			$wrapper = '.noptin-optin-form-wrapper';
-			$css     = str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS );
-			$css     = str_ireplace( $wrapper, ".$id_class $wrapper", $css );
-			$html   .= "<style>$css</style>";
-		}
+				<?php $this->render_form(); ?>
 
-		$html .= $this->generate_html();
+				<?php if ( 'popup' === $type ) : ?>
+					</div>
+				<?php endif; ?>
 
-		if ( 'popup' === $type ) {
-			$html .= '</div>';
-		}
+			</div>
+		<?php
 
-		// print main form html.
-		$html = do_shortcode( $html . '</div>' );
-
-		// Remove comments.
-		$html = preg_replace( '/<!--(.*)-->/Uis', '', $html );
-
-		return apply_filters( 'noptin_optin_form_html', $html, $this );
 	}
 
 	/**
@@ -837,14 +839,12 @@ class Noptin_Form_Legacy {
 	 *
 	 * @return string
 	 */
-	protected function generate_html() {
-		ob_start();
+	protected function render_form() {
 		$data         = $this->data;
 		$data['data'] = $data;
 		$data['form'] = $this;
 		extract( $data ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 		include plugin_dir_path( __FILE__ ) . 'views/legacy/frontend-optin-form.php';
-		return ob_get_clean();
 	}
 
 	/**

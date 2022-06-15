@@ -119,7 +119,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			wc_get_template( 'emails/email-header.php', array( 'email_heading' => $generator->heading ) );
 
 			// Content.
-			echo $generator->content;
+			echo wp_kses_post( $generator->content );
 
 			// Footer.
 			add_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );

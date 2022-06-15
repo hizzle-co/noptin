@@ -342,14 +342,11 @@ class Noptin_Form_Manager {
 		}
 
 		// Generate the form markup.
-		$html_form = $this->output_manager->shortcode( $form_id_or_configuration );
-
-		// Maybe display the form.
-		if ( $echo ) {
-			echo $html_form; // phpcs ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		if ( ! $echo ) {
+			return $this->output_manager->shortcode( $form_id_or_configuration );
 		}
 
-		return $html_form;
+		$this->output_manager->display_form( $form_id_or_configuration );
 	}
 
 	/**

@@ -9,4 +9,4 @@
 
 defined( 'ABSPATH' ) || exit;
 
-echo $content;
+echo wp_kses_post( $content );
