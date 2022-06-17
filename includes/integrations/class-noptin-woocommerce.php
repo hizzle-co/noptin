@@ -80,7 +80,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Misc.
 		add_filter( 'noptin_email_templates', array( $this, 'register_email_template' ), $this->priority );
-		add_action( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
+		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
 		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority, 2 );
 		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );

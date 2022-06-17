@@ -84,10 +84,10 @@ defined( 'ABSPATH' ) || exit;
 <!--[if false]></td></tr></table><![endif]-->
 <div style="display:table;width:100%;max-width:100%;">
 	<!--[if true]>
-	<td width="50%">
+	<td width="50%" valign="top">
 	<![endif]-->
 	<!--[if !true]><!-->
-	<div class="post-digest-grid-one" style="display:table-cell;width:50%;padding-right: 20px;">
+	<div class="post-digest-grid-one" style="display:table-cell;vertical-align: top;width:50%;padding-right: 20px;">
 	<!--<![endif]-->
 		<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 			<?php if ( noptin_is_even( $i ) ) : ?>
@@ -143,10 +143,10 @@ defined( 'ABSPATH' ) || exit;
     </td>
 	<![endif]-->
 	<!--[if true]>
-	<td width="50%">
+	<td width="50%" valign="top">
 	<![endif]-->
 	<!--[if !true]><!-->
-    <div class="post-digest-grid-two" style="display:table-cell;width:50%">
+    <div class="post-digest-grid-two" style="display:table-cell;vertical-align: top;width:50%">
 	<!--<![endif]-->
 	<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 		<?php if ( ! noptin_is_even( $i ) ) : ?>
