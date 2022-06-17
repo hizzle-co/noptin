@@ -37,7 +37,7 @@
 		"@babel/preset-env": "7.18.2",
 		"@mdi/js": "5.9.55",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.0.0",
-		"@wordpress/babel-preset-default": "6.12.0",
+		"@wordpress/babel-preset-default": "6.13.0",
 		"autoprefixer": "10.4.7",
 		"babel-loader": "8.2.5",
 		"postcss": "8.4.14",
