@@ -36,6 +36,7 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 		add_action( 'um_user_register', array( $this, 'subscribe_from_registration' ), $this->priority );
 		add_action( 'user_register', array( $this, 'subscribe_from_registration' ), $this->priority );
 		add_action( 'profile_update', array( $this, 'subscribe_from_registration' ), $this->priority );
+		add_action( 'bp_core_signup_user', array( $this, 'subscribe_from_registration' ), $this->priority );
 	}
 
 	/**
@@ -48,6 +49,7 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 		add_action( 'um_after_register_fields', array( $this, 'um_output_checkbox' ), $this->priority );
 		add_action( 'woocommerce_register_form', array( $this, 'output_checkbox' ), $this->priority );
 		add_action( 'uwp_template_fields', array( $this, 'uwp_output_checkbox' ), $this->priority );
+		add_action( 'bp_account_details_fields', array( $this, 'output_checkbox' ), 1000 );
 	}
 
 	/**

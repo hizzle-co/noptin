@@ -4,7 +4,7 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 6.0
 Requires PHP: 5.6
-Version: 1.7.4
+Version: 1.7.5
 Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -133,6 +133,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.7.5 =
+* Subscription checkbox breaks the registration form.
+* Add BuddyPress registration form compatibility.
 
 = 1.7.4 =
 * Add ability to set newsletter subscription checkboxes as checked by default
