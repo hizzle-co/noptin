@@ -13,7 +13,7 @@
 <style>
 	<?php
 		foreach ( array_keys( get_noptin_email_types() ) as $key ) {
-			echo '.noptin-edit-email:not([data-type="' . sanitize_html_class( $key ) . '"]) .noptin-show-if-email-is-' . sanitize_html_class( $key ) . ' { display: none !important; }';
+			echo '.noptin-edit-email:not([data-type="' . esc_html( sanitize_html_class( $key ) ) . '"]) .noptin-show-if-email-is-' . esc_html( sanitize_html_class( $key ) ) . ' { display: none !important; }';
 		}
 	?>
 </style>
@@ -37,13 +37,13 @@
 	?>
 
 	<div id="poststuff">
-		<div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
+		<div id="post-body" class="metabox-holder columns-<?php echo 1 === get_current_screen()->get_columns() ? '1' : '2'; ?>">
 
 			<div id="post-body-content">
 
 				<div id="titlediv">
 					<div id="titlewrap">
-						<label class="screen-reader-text" id="title-prompt-text" for="title"><?php _e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
+						<label class="screen-reader-text" id="title-prompt-text" for="title"><?php esc_html_e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
 						<input type="text" name="noptin_email[subject]" size="30" value="<?php echo esc_attr( $campaign->subject ); ?>" placeholder="<?php esc_attr_e( 'Email Subject', 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
 					</div>
 				</div>

@@ -25,18 +25,17 @@ class Noptin_Form_Previewer {
 	}
 
 	public function listen() {
-		if ( empty( $_GET['noptin_preview_form'] ) || ! current_user_can( get_noptin_capability() ) ) {
+		if ( empty( $_GET['noptin_preview_form'] ) || ! current_user_can( get_noptin_capability() ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
-		if ( 'new' !== $_GET['noptin_preview_form'] ) {
+		if ( 'new' !== $_GET['noptin_preview_form'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-			$form = noptin_get_optin_form( absint( $_GET['noptin_preview_form'] ) );
+			$form = noptin_get_optin_form( absint( $_GET['noptin_preview_form'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			if ( ! $form->exists() ) {
 				return;
 			}
-
 		}
 
 		define( 'IS_NOPTIN_PREVIEW', 1 );
@@ -52,7 +51,7 @@ class Noptin_Form_Previewer {
 			ob_end_clean();
 		}
 
-		$form_id = 'new' === $_GET['noptin_preview_form'] ? array() : (int) $_GET['noptin_preview_form'];
+		$form_id = 'new' === $_GET['noptin_preview_form'] ? array() : (int) $_GET['noptin_preview_form']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		status_header( 200 );
 
 		require plugin_dir_path( __FILE__ ) . 'views/preview.php';

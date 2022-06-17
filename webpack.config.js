@@ -1,5 +1,5 @@
 const path = require('path');
-const { VueLoaderPlugin } = require('vue-loader');
+const WooCommerceDependencyExtractionWebpackPlugin = require( '@woocommerce/dependency-extraction-webpack-plugin' );
 
 module.exports = {
 	mode: "production",
@@ -13,6 +13,8 @@ module.exports = {
 		helper: "./includes/assets/js/src/helper.js",
 		blocks: "./includes/assets/js/src/blocks.js",
 		"blocks-new": "./includes/assets/js/src/blocks-new.js",
+		"blocks-woocommerce-backend": "./includes/assets/js/src/wc/index.js",
+		"blocks-woocommerce-frontend": "./includes/assets/js/src/wc/frontend.js",
 		subscribers: "./includes/assets/js/src/subscribers.js",
 		"subscribers-import": "./includes/assets/js/src/subscribers-import.js",
 		"form-scripts": "./includes/assets/js/src/form-scripts.js",
@@ -25,11 +27,6 @@ module.exports = {
 	},
 	module: {
 		rules: [
-			{
-				test: /\.vue$/,
-				loader: 'vue-loader'
-			},
-
 			{
 				test: /\.js$/,
 				exclude: /(node_modules|bower_components)/,
@@ -44,10 +41,9 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new VueLoaderPlugin()
+		new WooCommerceDependencyExtractionWebpackPlugin()
 	],
 	externals: {
-		jquery: 'jQuery',
-		vue: 'Vue'
+		jquery: 'jQuery'
 	}
 };

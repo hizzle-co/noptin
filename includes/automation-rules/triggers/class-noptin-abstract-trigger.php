@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Base triggers class.
@@ -25,7 +23,7 @@ abstract class Noptin_Abstract_Trigger {
      * @since 1.2.8
      * @return string
      */
-    public abstract function get_id();
+    abstract public function get_id();
 
     /**
      * Retrieve the trigger's name.
@@ -33,7 +31,7 @@ abstract class Noptin_Abstract_Trigger {
      * @since 1.2.8
      * @return string
      */
-    public abstract function get_name();
+    abstract public function get_name();
 
     /**
      * Retrieve the trigger's description.
@@ -41,7 +39,7 @@ abstract class Noptin_Abstract_Trigger {
      * @since 1.2.8
      * @return string
      */
-    public abstract function get_description();
+    abstract public function get_description();
 
     /**
      * Retrieve the trigger's image.
@@ -80,7 +78,7 @@ abstract class Noptin_Abstract_Trigger {
      * @since 1.2.8
      * @return array
      */
-    public abstract function get_settings();
+    abstract public function get_settings();
 
     /**
      * Returns all active rules attached to this trigger.
@@ -95,10 +93,9 @@ abstract class Noptin_Abstract_Trigger {
             return $this->rules;
         }
 
-        $table = noptin()->automation_rules->get_table();
         $this->rules = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM $table WHERE `trigger_id`=%s AND `status`='1'",
+                "SELECT * FROM {$wpdb->prefix}noptin_automation_rules WHERE `trigger_id`=%s AND `status`='1'",
                 $this->get_id()
             )
         );
@@ -168,7 +165,6 @@ abstract class Noptin_Abstract_Trigger {
             if ( $this->is_rule_valid_for_args( $rule, $args, $subscriber, $action ) ) {
                 $action->maybe_run( $subscriber, $rule, $args );
             }
-
         }
 
     }

@@ -20,18 +20,18 @@ class Noptin_Tools {
 
 		/**
 		 * Runs before displaying the tools page.
-		 * 
+		 *
 		 * @since 1.2.3
 		 */
 		do_action( 'noptin_before_admin_tools' );
 
 		$tool = empty( $_GET['tool'] ) ? '' : noptin_clean( $_GET['tool'] );
 
-		if( ! empty( $tool ) && has_action( "noptin_admin_tool_$tool" ) ) {
+		if ( ! empty( $tool ) && has_action( "noptin_admin_tool_$tool" ) ) {
 
 			/**
 			 * Runs when displaying a specific tool's page.
-			 * 
+			 *
 			 * @since 1.2.3
 			 */
 			do_action( "noptin_admin_tool_$tool" );
@@ -40,7 +40,7 @@ class Noptin_Tools {
 
 			/**
 			 * Runs when displaying a list of all available tools.
-			 * 
+			 *
 			 * @since 1.2.3
 			 */
 			do_action( 'noptin_admin_tools' );
@@ -65,10 +65,10 @@ class Noptin_Tools {
 
 		$tools = array(
 
-			'debug_log'   => array(
-				'name'    => __( 'Debug Log', 'newsletter-optin-box' ),
-				'button'  => __( 'View', 'newsletter-optin-box' ),
-				'desc'    => __( 'View a list of notices and errors logged by Noptin.', 'newsletter-optin-box' ),
+			'debug_log'          => array(
+				'name'   => __( 'Debug Log', 'newsletter-optin-box' ),
+				'button' => __( 'View', 'newsletter-optin-box' ),
+				'desc'   => __( 'View a list of notices and errors logged by Noptin.', 'newsletter-optin-box' ),
 			),
 
 			'delete_subscribers' => array(
@@ -79,23 +79,23 @@ class Noptin_Tools {
 				'confirm' => __( 'Are you sure you want to delete all your email subscribers?', 'newsletter-optin-box' ),
 			),
 
-			'sync_users'  => array(
-				'name'    => __( 'Subscribe Users', 'newsletter-optin-box' ),
-				'button'  => __( 'Subscribe', 'newsletter-optin-box' ),
-				'desc'    => __( 'Subscribe your WordPress users to the newsletter.', 'newsletter-optin-box' ),
+			'sync_users'         => array(
+				'name'   => __( 'Subscribe Users', 'newsletter-optin-box' ),
+				'button' => __( 'Subscribe', 'newsletter-optin-box' ),
+				'desc'   => __( 'Subscribe your WordPress users to the newsletter.', 'newsletter-optin-box' ),
 			),
 
-			'sync_subscribers'  => array(
-				'name'    => __( 'Register Subscribers', 'newsletter-optin-box' ),
-				'button'  => __( 'Register', 'newsletter-optin-box' ),
-				'desc'    => __( 'Register your newsletter subscribers as WordPress users.', 'newsletter-optin-box' ),
+			'sync_subscribers'   => array(
+				'name'   => __( 'Register Subscribers', 'newsletter-optin-box' ),
+				'button' => __( 'Register', 'newsletter-optin-box' ),
+				'desc'   => __( 'Register your newsletter subscribers as WordPress users.', 'newsletter-optin-box' ),
 			),
 
 		);
 
 		/**
 		 * Filters Noptin admin tools.
-		 * 
+		 *
 		 * @param array $tools An array of admin tools.
 		 * @since 1.2.3
 		 */
@@ -119,12 +119,17 @@ class Noptin_Tools {
 	 * @since 1.2.3
 	 */
 	public function display_closing_wrap() {
-		
-		if ( ! empty( $_GET['tool'] ) && 'sync_users' != $_GET['tool'] && 'sync_subscribers' != $_GET['tool'] && 'delete_subscribers' != $_GET['tool'] ) {
-			$tools_page = esc_url( admin_url( 'admin.php?page=noptin-tools' ) );
-			$text       = __( 'Go back to tools page', 'newsletter-optin-box' );
-			echo "<p class='description'><a href='$tools_page'>$text</a></p>";
+
+		if ( ! empty( $_GET['tool'] ) && 'sync_users' !== $_GET['tool'] && 'sync_subscribers' !== $_GET['tool'] && 'delete_subscribers' !== $_GET['tool'] ) {
+
+			printf(
+				'<p class="description"><a href="%s">%s</a></p>',
+				esc_url( admin_url( 'admin.php?page=noptin-tools' ) ),
+				esc_html__( 'Go back to tools page', 'newsletter-optin-box' )
+			);
+
 		}
+
 		echo '</div>';
 	}
 

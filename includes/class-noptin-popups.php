@@ -51,10 +51,9 @@ class Noptin_Popups {
 			// Can it be displayed?
 			if ( $form->can_show() ) {
 				echo '<div class="noptin-popup-template-holder">';
-				echo $form->get_html();
+				$form->display();
 				echo '</div>';
 			}
-
 		}
 
 		/**

@@ -92,7 +92,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	 *
 	 */
 	public function new_campaign_url() {
-		return add_query_arg( 'campaign', urlencode( $this->type ), admin_url( 'admin.php?page=noptin-email-campaigns&section=automations&sub_section=edit_campaign' ) );
+		return add_query_arg( 'campaign', rawurlencode( $this->type ), admin_url( 'admin.php?page=noptin-email-campaigns&section=automations&sub_section=edit_campaign' ) );
 	}
 
 	/**
@@ -147,7 +147,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		$sends_after      = (int) $automation->get_sends_after();
 		$sends_after_unit = $automation->get_sends_after_unit();
 
-		$timestamp        = strtotime( "+ $sends_after $sends_after_unit", current_time( 'timestamp', true ) );
+		$timestamp        = strtotime( "+ $sends_after $sends_after_unit", time() );
 		return schedule_noptin_background_action( $timestamp, $this->notification_hook, $object_id, $automation->id );
 
 	}

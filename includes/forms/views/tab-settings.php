@@ -9,7 +9,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $all_settings = $form->settings;
-$places = array_merge(
+$places       = array_merge(
 	array(
 		'frontpage'  => __( 'Front page', 'newsletter-optin-box' ),
 		'blogpage'   => __( 'Blog page', 'newsletter-optin-box' ),
@@ -18,7 +18,7 @@ $places = array_merge(
 	),
 	noptin_get_post_types()
 );
-$hide   = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
+$hide         = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 ?>
 
 <h2 class="screen-reader-text"><?php esc_html_e( 'Advanced Settings', 'newsletter-optin-box' ); ?></h2>
@@ -34,13 +34,16 @@ $hide   = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 		id="noptin-form-header-text"
 		placeholder="<?php esc_attr_e( "Example: <h2>Free Newsletter</h2>\n<p>Join {subscriber_count} other subscribers already on our newsletter</p>", 'newsletter-optin-box' ); ?>"
 	><?php echo empty( $form->settings['before_fields'] ) ? '' : esc_textarea( $form->settings['before_fields'] ); ?></textarea>
-	<p class="description"><?php
-		printf(
-			esc_html__( 'Shown above the form fields. HTML and %sSmart tags%s are allowed.', 'newsletter-optin-box' ),
-			'<a href="#TB_inline?width=0&height=550&inlineId=noptin-form-variables" class="thickbox">',
-			'</a>'
-		);
-	?></p>
+	<p class="description">
+		<?php
+			printf(
+				// translators: %1 & 2, opening and closing link.
+				esc_html__( 'Shown above the form fields. HTML and %1$sSmart tags%2$s are allowed.', 'newsletter-optin-box' ),
+				'<a href="#TB_inline?width=0&height=550&inlineId=noptin-form-variables" class="thickbox">',
+				'</a>'
+			);
+		?>
+	</p>
 </div>
 
 <div class="noptin-text-wrapper form-settings-footer-text">
@@ -54,13 +57,16 @@ $hide   = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 		rows="4"
 		placeholder="<?php esc_attr_e( 'Example: We do not spam!', 'newsletter-optin-box' ); ?>"
 		><?php echo empty( $form->settings['after_fields'] ) ? '' : esc_textarea( $form->settings['after_fields'] ); ?></textarea>
-	<p class="description"><?php
-		printf(
-			esc_html__( 'Shown below the form fields. HTML and %sSmart tags%s are allowed.', 'newsletter-optin-box' ),
-			'<a href="#TB_inline?width=0&height=550&inlineId=noptin-form-variables" class="thickbox">',
-			'</a>'
-		);
-	?></p>
+	<p class="description">
+		<?php
+			printf(
+				// translators: %1 & 2, opening and closing link.
+				esc_html__( 'Shown below the form fields. HTML and %1$sSmart tags%2$s are allowed.', 'newsletter-optin-box' ),
+				'<a href="#TB_inline?width=0&height=550&inlineId=noptin-form-variables" class="thickbox">',
+				'</a>'
+			);
+		?>
+	</p>
 </div>
 
 <div class="noptin-text-wrapper form-settings-hide-on">
@@ -71,7 +77,7 @@ $hide   = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 		<?php foreach ( $places as $key => $place ) : ?>
 			<option
 				value="<?php echo esc_attr( $key ); ?>"
-				<?php selected( in_array( $key, $hide ) ); ?>
+				<?php selected( in_array( $key, $hide, true ) ); ?>
 			><?php echo esc_html( $place ); ?></option>
 		<?php endforeach; ?>
 	</select>
@@ -82,7 +88,7 @@ $hide   = empty( $form->settings['hide'] ) ? array() : $form->settings['hide'];
 	<label for="noptin-form-show-on" class="noptin-field-label">
 		<?php esc_html_e( 'Only show on: (Optional)', 'newsletter-optin-box' ); ?>
 	</label>
-	<input type="text" class="regular-text" id="noptin-form-show-on" name="noptin_form[settings][only_show]" value="<?php echo isset( $all_settings['only_show'] ) ? esc_attr( $all_settings['only_show'] ) : ''; ?>" placeholder="<?php echo sprintf( esc_attr__( 'Example: %s', 'newsletter-optin-box' ), '3,14,5,' . esc_attr( noptin_clean_url( home_url( 'newsletter' ) ) ) ); ?>" />
+	<input type="text" class="regular-text" id="noptin-form-show-on" name="noptin_form[settings][only_show]" value="<?php echo isset( $all_settings['only_show'] ) ? esc_attr( $all_settings['only_show'] ) : ''; ?>" placeholder="<?php echo sprintf( /* translators: %s examples*/ esc_attr__( 'Example: %s', 'newsletter-optin-box' ), '3,14,5,' . esc_attr( noptin_clean_url( home_url( 'newsletter' ) ) ) ); ?>" />
 	<p class="description"><?php esc_html_e( 'Optional. Enter a comma separated list of URLs or post ids. If set, the form will only show if a user is viewing those pages.', 'newsletter-optin-box' ); ?></p>
 </div>
 

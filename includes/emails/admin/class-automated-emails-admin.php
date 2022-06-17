@@ -40,19 +40,19 @@ class Noptin_Automated_Emails_Admin {
 	public function render_edit_form( $tabs ) {
 
 		// Check if there is a campaign.
-		if ( empty( $_GET['campaign'] ) ) {
+		if ( empty( $_GET['campaign'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			include plugin_dir_path( __FILE__ ) . 'views/404.php';
 			return;
 		}
 
 		// Creating a new campaign.
-		if ( is_numeric( $_GET['campaign'] ) && ! is_noptin_campaign( (int) $_GET['campaign'], 'automation' ) ) {
+		if ( is_numeric( $_GET['campaign'] ) && ! is_noptin_campaign( (int) $_GET['campaign'], 'automation' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			include plugin_dir_path( __FILE__ ) . 'views/404.php';
 			return;
 		}
 
 		// Prepare automated email object.
-		$campaign = new Noptin_Automated_Email( $_GET['campaign'] );
+		$campaign = new Noptin_Automated_Email( $_GET['campaign'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$automation_type = $campaign->type;
 		do_action( 'add_meta_boxes_noptin_automations', $campaign, $automation_type, array() );
@@ -73,7 +73,7 @@ class Noptin_Automated_Emails_Admin {
 
 			add_meta_box(
 				'noptin_automation_timing',
-				__( 'Timing','newsletter-optin-box' ),
+				__( 'Timing', 'newsletter-optin-box' ),
 				array( $this, 'render_metabox' ),
 				get_current_screen()->id,
 				'side',
@@ -86,7 +86,7 @@ class Noptin_Automated_Emails_Admin {
 		// Saves the campaign.
 		add_meta_box(
 			'noptin_automation_save',
-			__( 'Save','newsletter-optin-box' ) . '<a class="noptin-send-test-email" style="cursor: pointer;color: red;">' . __( 'Send a test email', 'newsletter-optin-box' ) . '</a>',
+			__( 'Save', 'newsletter-optin-box' ) . '<a class="noptin-send-test-email" style="cursor: pointer;color: red;">' . __( 'Send a test email', 'newsletter-optin-box' ) . '</a>',
 			array( $this, 'render_metabox' ),
 			get_current_screen()->id,
 			'side',
@@ -130,7 +130,7 @@ class Noptin_Automated_Emails_Admin {
 
 		if ( is_wp_error( $result ) ) {
 			noptin()->admin->show_error( $result );
-		} else if ( false === $result ) {
+		} elseif ( false === $result ) {
 			noptin()->admin->show_error( __( 'Could not save your changes.', 'newsletter-optin-box' ) );
 		} else {
 			noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );

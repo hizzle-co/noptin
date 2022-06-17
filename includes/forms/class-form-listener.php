@@ -77,7 +77,7 @@ class Noptin_Form_Listener {
 		$this->error = new WP_Error();
 
 		// Prepare submitted data.
-		$submitted  = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) );
+		$submitted  = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
 
 		// Abort if this is not a subscription request.
 		if ( empty( $submitted['noptin_process_request'] ) ) {
@@ -134,12 +134,11 @@ class Noptin_Form_Listener {
 			if ( ! empty( $custom_field['required'] ) ) {
 
 				$value = $this->get_field_value( $custom_field['merge_tag'] );
+
 				if ( '' === $value || array() === $value ) {
 					return $this->error->add( 'required_field_missing', get_noptin_form_message( 'required_field_missing' ) );
 				}
-
 			}
-
 		}
 
 		// Make sure acceptance checkbox is checked.
@@ -429,7 +428,6 @@ class Noptin_Form_Listener {
 				do_action( "noptin_form_error_$error", $this );
 
 			}
-
 		}
 
 		/**
@@ -444,7 +442,7 @@ class Noptin_Form_Listener {
 		// Do stuff on success (if form was submitted over plain HTTP, not for AJAX or REST requests).
 		$redirect_url = $this->get_redirect_url();
 		if ( $success && ! empty( $redirect_url ) && ! $this->is_json_request() ) {
-			wp_redirect( esc_url_raw( $redirect_url ) );
+			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
 
@@ -561,7 +559,6 @@ class Noptin_Form_Listener {
 			if ( ! $this->error->has_errors() ) {
 				$this->error->add( 'error', get_noptin_form_message( 'error' ) );
 			}
-
 		}
 
 		// Prepare response args.
@@ -598,10 +595,9 @@ class Noptin_Form_Listener {
 				);
 
 			}
-
 		} else {
 
-			$key = $this->last_event == 'subscribed' ? 'success' : $this->last_event;
+			$key = 'subscribed' === $this->last_event ? 'success' : $this->last_event;
 
 			// Prepare success message.
 			$message = get_noptin_form_message( $key, __( 'Thanks!', 'newsletter-optin-box' ) );

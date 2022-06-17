@@ -33,16 +33,16 @@ class Noptin_Custom_Field_Radio extends Noptin_Custom_Field_Type {
 
 			<label class="noptin-label"><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
 
-			<?php foreach ( explode( "\n", $args['options'] ) as $option ) : ?>
+			<?php foreach ( noptin_newslines_to_array( $args['options'] ) as $value => $label ) : ?>
 				<label style="display: block; margin-bottom: 6px;">
 					<input
 						type="radio"
-						value="<?php echo esc_attr( $option ); ?>"
+						value="<?php echo esc_attr( $value ); ?>"
 						name="<?php echo esc_attr( $args['name'] ); ?>"
-						<?php checked( esc_attr( $option ), esc_attr( $args['value'] ) ); ?>
+						<?php checked( esc_attr( $value ), esc_attr( $args['value'] ) ); ?>
 						<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 					/>
-					<strong><?php echo esc_html( $option ); ?></strong>
+					<strong><?php echo esc_html( $label ); ?></strong>
 				</label>
 			<?php endforeach; ?>
 

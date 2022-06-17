@@ -106,13 +106,13 @@ class Noptin_Email_Sender {
 	 * Register relevant hooks.
 	 */
 	public function add_hooks() {
-		add_action( 'noptin_send_bg_email', array( $this, '_handle_background_send' ) );
+		add_action( 'noptin_send_bg_email', array( $this, 'handle_background_send' ) );
 	}
 
 	/**
 	 * Sends a background email.
 	 */
-	public function _handle_background_send( $key ) {
+	public function handle_background_send( $key ) {
 		$data = get_transient( $key );
 		delete_transient( $key );
 
@@ -229,7 +229,7 @@ class Noptin_Email_Sender {
 		}
 
 		$headers = implode( "\r\n", $headers );
-		return apply_filters( 'noptin_sender_email_headers',  $headers, $this );
+		return apply_filters( 'noptin_sender_email_headers', $headers, $this );
 
 	}
 
@@ -261,10 +261,10 @@ class Noptin_Email_Sender {
 			return $this->reply_to;
 		}
 
-		$reply_to = get_noptin_option( 'reply_to',  get_option( 'admin_email' ) );
+		$reply_to = get_noptin_option( 'reply_to', get_option( 'admin_email' ) );
 
 		if ( ! is_email( $reply_to ) ) {
-			$reply_to =  get_option( 'admin_email' );
+			$reply_to = get_option( 'admin_email' );
 		}
 
 		return apply_filters( 'noptin_sender_reply_to', $reply_to, $this );
@@ -290,7 +290,6 @@ class Noptin_Email_Sender {
 			if ( is_email( $from_email ) ) {
 				$email = $from_email;
 			}
-
 		}
 
 		// Fix for wordpress@localhost
@@ -322,7 +321,6 @@ class Noptin_Email_Sender {
 			if ( empty( $from_name ) ) {
 				$from_name = get_option( 'blogname' );
 			}
-
 		}
 
 		$from_name = wp_specialchars_decode( esc_html( $from_name ), ENT_QUOTES );
@@ -347,11 +345,9 @@ class Noptin_Email_Sender {
 
 			case 'html':
 				return 'text/html';
-				break;
 
 			case 'multipart':
 				return 'multipart/alternative';
-				break;
 
 			default:
 				return 'text/plain';

@@ -62,17 +62,17 @@ class Noptin_Settings {
 		$sections = apply_filters(
 			'noptin_get_setting_sections',
 			array(
-				'general'               => __( 'General', 'newsletter-optin-box' ),
-				'emails'                => array(
-					'label'             => __( 'Emails', 'newsletter-optin-box' ),
-					'children'          => array(
+				'general'      => __( 'General', 'newsletter-optin-box' ),
+				'emails'       => array(
+					'label'    => __( 'Emails', 'newsletter-optin-box' ),
+					'children' => array(
 						'main'          => __( 'Emails', 'newsletter-optin-box' ),
 						'double_opt_in' => __( 'Double Opt-In Email', 'newsletter-optin-box' ),
-					)
+					),
 				),
-				'fields'                => __( 'Custom Fields', 'newsletter-optin-box' ),
-				'integrations'          => __( 'Integrations', 'newsletter-optin-box' ),
-				'messages'              => __( 'Messages', 'newsletter-optin-box' )
+				'fields'       => __( 'Custom Fields', 'newsletter-optin-box' ),
+				'integrations' => __( 'Integrations', 'newsletter-optin-box' ),
+				'messages'     => __( 'Messages', 'newsletter-optin-box' ),
 			)
 		);
 
@@ -98,19 +98,17 @@ class Noptin_Settings {
 				// Sections that have subsections are usually arrays.
 				if ( ! is_array( $sections[ $section ] ) ) {
 					$sections[ $section ]   = array(
-						'label'             => $sections[ $section ],
-						'children'          => array(
-							'main'          => $sections[ $section ],
-						)
+						'label'    => $sections[ $section ],
+						'children' => array(
+							'main' => $sections[ $section ],
+						),
 					);
 				}
 
-				if ( empty( $sections[ $section ]['children'][$sub_section] ) ) {
-					$sections[ $section ]['children'][$sub_section] = ucwords( str_replace( '-', ' ', $sub_section ) );
+				if ( empty( $sections[ $section ]['children'][ $sub_section ] ) ) {
+					$sections[ $section ]['children'][ $sub_section ] = ucwords( str_replace( '-', ' ', $sub_section ) );
 				}
-
 			}
-
 		}
 
 		// Cache it.
@@ -140,6 +138,24 @@ class Noptin_Settings {
 	}
 
 	/**
+	 * Returns a section conditional
+	 *
+	 * @return string
+	 */
+	public static function section_conditional( $args ) {
+
+		// Ensure there is a section.
+		if ( ! empty( $args['section'] ) ) {
+			printf(
+				'v-show="currentTab==\'%s\' && currentSection==\'%s\' "',
+				esc_attr( $args['section'] ),
+				empty( $args['sub_section'] ) ? 'main' : esc_attr( $args['sub_section'] )
+			);
+		}
+
+	}
+
+	/**
 	 * Returns the current state
 	 *
 	 * @return array
@@ -161,16 +177,14 @@ class Noptin_Settings {
 					$default       = isset( $args['default'] ) ? $args['default'] : '';
 					$state[ $key ] = get_noptin_option( $key, $default );
 				}
-
 			} else {
 				$default       = isset( $args['default'] ) ? $args['default'] : '';
 				$state[ $key ] = get_noptin_option( $key, $default );
 			}
-
 		}
 
-		$state                    = array_merge( get_noptin_options(), $state );
-		$state[ 'custom_fields' ] = get_noptin_custom_fields();
+		$state                  = array_merge( get_noptin_options(), $state );
+		$state['custom_fields'] = get_noptin_custom_fields();
 
 		$state['openSections']   = isset( $_GET['integration'] ) ? array( 'settings_section_' . noptin_clean( $_GET['integration'] ) ) : array();
 		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
@@ -200,7 +214,7 @@ class Noptin_Settings {
 		$double_optin = get_default_noptin_subscriber_double_optin_email();
 		$settings     = array(
 
-			'notify_admin'          => array(
+			'notify_admin'                 => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
 				'section'     => 'general',
@@ -209,7 +223,7 @@ class Noptin_Settings {
 				'default'     => false,
 			),
 
-			'double_optin'    => array(
+			'double_optin'                 => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
 				'section'     => 'general',
@@ -218,7 +232,7 @@ class Noptin_Settings {
 				'default'     => false,
 			),
 
-			'delete_on_unsubscribe'    => array(
+			'delete_on_unsubscribe'        => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
 				'section'     => 'general',
@@ -227,7 +241,7 @@ class Noptin_Settings {
 				'description' => __( 'Delete subscribers after they unsubscribe instead of marking them as inactive.', 'newsletter-optin-box' ),
 			),
 
-			'hide_from_subscribers' => array(
+			'hide_from_subscribers'        => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
 				'section'     => 'general',
@@ -236,7 +250,7 @@ class Noptin_Settings {
 				'description' => __( 'Hide opt-in forms and methods from existing subscribers.', 'newsletter-optin-box' ),
 			),
 
-			'track_campaign_stats' => array(
+			'track_campaign_stats'         => array(
 				'label'       => __( 'Show campaign stats', 'newsletter-optin-box' ),
 				'description' => __( 'Enable this to display opens and clicks on campaigns that you send.', 'newsletter-optin-box' ),
 				'type'        => 'checkbox_alt',
@@ -245,7 +259,7 @@ class Noptin_Settings {
 				'default'     => true,
 			),
 
-			'allow_tracking'        => array(
+			'allow_tracking'               => array(
 				'label'       => __( 'Share stats', 'newsletter-optin-box' ),
 				'description' => __( 'Help improve Noptin by sharing non-sensitive usage stats.', 'newsletter-optin-box' ),
 				'type'        => 'checkbox_alt',
@@ -253,7 +267,7 @@ class Noptin_Settings {
 				'el'          => 'input',
 			),
 
-			'subscribers_cookie' => array(
+			'subscribers_cookie'           => array(
 				'el'          => 'input',
 				'type'        => 'text',
 				'section'     => 'general',
@@ -262,7 +276,7 @@ class Noptin_Settings {
 				'description' => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
 			),
 
-			'admin_email'        => array(
+			'admin_email'                  => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'type'        => 'text',
@@ -272,7 +286,7 @@ class Noptin_Settings {
 				'description' => __( 'Enter a comma separated list of email address that should receive new subscriber notifications', 'newsletter-optin-box' ),
 			),
 
-			'reply_to'        => array(
+			'reply_to'                     => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'type'        => 'email',
@@ -282,7 +296,7 @@ class Noptin_Settings {
 				'description' => __( 'Where should subscribers reply to in case they need to get in touch with you?', 'newsletter-optin-box' ),
 			),
 
-			'from_email'            => array(
+			'from_email'                   => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'type'        => 'email',
@@ -291,7 +305,7 @@ class Noptin_Settings {
 				'description' => __( 'How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails.', 'newsletter-optin-box' ),
 			),
 
-			'from_name'             => array(
+			'from_name'                    => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'label'       => __( '"From" Name', 'newsletter-optin-box' ),
@@ -301,7 +315,7 @@ class Noptin_Settings {
 				'description' => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 			),
 
-			'per_hour'        => array(
+			'per_hour'                     => array(
 				'el'          => 'input',
 				'type'        => 'number',
 				'section'     => 'emails',
@@ -311,17 +325,17 @@ class Noptin_Settings {
 				'description' => __( 'The maximum number of emails to send per hour. Leave empty to send as many as possible.', 'newsletter-optin-box' ),
 			),
 
-			'delete_campaigns' => array(
-				'el'           => 'input',
-				'type'         => 'number',
-				'section'      => 'emails',
-				'label'        => __( 'Delete Campaigns', 'newsletter-optin-box' ),
-				'class'        => 'regular-text',
-				'placeholder'  => __( 'Never Delete', 'newsletter-optin-box' ),
-				'description'  => __( 'The number of days after which to delete a sent campaign. Leave empty to if you do not want to automatically delete campaigns.', 'newsletter-optin-box' ),
+			'delete_campaigns'             => array(
+				'el'          => 'input',
+				'type'        => 'number',
+				'section'     => 'emails',
+				'label'       => __( 'Delete Campaigns', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'placeholder' => __( 'Never Delete', 'newsletter-optin-box' ),
+				'description' => __( 'The number of days after which to delete a sent campaign. Leave empty to if you do not want to automatically delete campaigns.', 'newsletter-optin-box' ),
 			),
 
-			'company'         => array(
+			'company'                      => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'label'       => __( 'Company', 'newsletter-optin-box' ),
@@ -330,7 +344,7 @@ class Noptin_Settings {
 				'description' => __( 'What is the name of your company or website?', 'newsletter-optin-box' ),
 			),
 
-			'logo_url'        => array(
+			'logo_url'                     => array(
 				'el'          => 'input',
 				'type'        => 'image',
 				'section'     => 'emails',
@@ -338,7 +352,7 @@ class Noptin_Settings {
 				'description' => __( 'Enter a full url to your logo. Works best with rectangular images.', 'newsletter-optin-box' ),
 			),
 
-			'email_template'  => array(
+			'email_template'               => array(
 				'el'          => 'select',
 				'section'     => 'emails',
 				'label'       => __( 'Email Template', 'newsletter-optin-box' ),
@@ -346,19 +360,19 @@ class Noptin_Settings {
 				'options'     => get_noptin_email_templates(),
 				'default'     => 'paste',
 				'description' => sprintf(
-					"%s %s",
+					'%s %s',
 					__( 'Select "No Template" if you are using an email templates plugin.', 'newsletter-optin-box' ),
 					sprintf(
 						'<br /><a href="%s" class="thickbox open-plugin-details-modal">%s</a>',
 						esc_url(
-							admin_url("plugin-install.php?tab=plugin-information&plugin=email-customizer&TB_iframe=true&width=772&height=560")
+							admin_url( 'plugin-install.php?tab=plugin-information&plugin=email-customizer&TB_iframe=true&width=772&height=560' )
 						),
-						__( 'Or install our free email templates plugin to design your own templates.', 'newsletter-optin-box' )
+						esc_html__( 'Or install our free email templates plugin to design your own templates.', 'newsletter-optin-box' )
 					)
 				),
 			),
 
-			'permission_text' => array(
+			'permission_text'              => array(
 				'el'          => 'textarea',
 				'section'     => 'emails',
 				'label'       => __( 'Permission reminder', 'newsletter-optin-box' ),
@@ -371,7 +385,7 @@ class Noptin_Settings {
 				'default'     => noptin()->mailer->default_permission_text(),
 			),
 
-			'footer_text'     => array(
+			'footer_text'                  => array(
 				'el'          => 'textarea',
 				'section'     => 'emails',
 				'label'       => __( 'Footer text', 'newsletter-optin-box' ),
@@ -385,7 +399,7 @@ class Noptin_Settings {
 				),
 			),
 
-			'success_message'       => array(
+			'success_message'              => array(
 				'el'          => 'input',
 				'type'        => 'text',
 				'section'     => 'general',
@@ -394,19 +408,20 @@ class Noptin_Settings {
 				'description' => __( 'This is the message shown to people after they successfully sign up for your newsletter.', 'newsletter-optin-box' ),
 			),
 
-			'ipgeolocation_io_api_key'       => array(
+			'ipgeolocation_io_api_key'     => array(
 				'el'          => 'input',
 				'type'        => 'text',
 				'section'     => 'general',
 				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
 				'placeholder' => '',
 				'description' => sprintf(
+					// Translators: %s Link to the IP location provider.
 					__( 'Enter your %s API key if you want to GeoLocate your subscribers using their service.', 'newsletter-optin-box' ),
 					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
-				)
+				),
 			),
 
-			'double_optin_email_subject' => array(
+			'double_optin_email_subject'   => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'sub_section' => 'double_opt_in',
@@ -417,7 +432,7 @@ class Noptin_Settings {
 				'description' => __( 'The subject of the subscription confirmation email', 'newsletter-optin-box' ),
 			),
 
-			'double_optin_hero_text' => array(
+			'double_optin_hero_text'       => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'sub_section' => 'double_opt_in',
@@ -428,7 +443,7 @@ class Noptin_Settings {
 				'description' => __( 'The title of the email', 'newsletter-optin-box' ),
 			),
 
-			'double_optin_email_body'     => array(
+			'double_optin_email_body'      => array(
 				'el'          => 'textarea',
 				'section'     => 'emails',
 				'sub_section' => 'double_opt_in',
@@ -438,7 +453,7 @@ class Noptin_Settings {
 				'description' => __( 'This is the main content of the email', 'newsletter-optin-box' ),
 			),
 
-			'double_optin_cta_text' => array(
+			'double_optin_cta_text'        => array(
 				'el'          => 'input',
 				'section'     => 'emails',
 				'sub_section' => 'double_opt_in',
@@ -449,7 +464,7 @@ class Noptin_Settings {
 				'description' => __( 'The text of the call to action button', 'newsletter-optin-box' ),
 			),
 
-			'double_optin_after_cta_text' => array(
+			'double_optin_after_cta_text'  => array(
 				'el'          => 'textarea',
 				'section'     => 'emails',
 				'sub_section' => 'double_opt_in',
@@ -469,11 +484,11 @@ class Noptin_Settings {
 				'description' => __( 'Remind the subscriber how they signed up.', 'newsletter-optin-box' ),
 			),
 
-			'custom_fields'   => array(
-				'el'          => 'custom_fields',
-				'section'	  => 'fields',
-				'label'       => __( 'Custom Fields', 'newsletter-optin-box' ),
-				'default'     => Noptin_Custom_Fields::default_fields(),
+			'custom_fields'                => array(
+				'el'      => 'custom_fields',
+				'section' => 'fields',
+				'label'   => __( 'Custom Fields', 'newsletter-optin-box' ),
+				'default' => Noptin_Custom_Fields::default_fields(),
 			),
 
 		);
@@ -487,34 +502,37 @@ class Noptin_Settings {
 
 				$slug = sanitize_key( str_replace( '-', '_', $slug ) );
 
-				if ( isset( $integration_settings["settings_section_$slug"] ) ) {
+				if ( isset( $integration_settings[ "settings_section_$slug" ] ) ) {
 					continue;
 				}
 
-				$integration_settings["settings_section_$slug"] = array(
+				$integration_settings[ "settings_section_$slug" ] = array(
 					'id'          => "settings_section_$slug",
 					'el'          => 'settings_section',
 					'class'       => 'not-installed',
 					'children'    => array(
 						"noptin_{$slug}_install" => array(
-							'el'              => 'paragraph',
-							'section'		  => 'integrations',
-							'content'         => '<span class="dashicons dashicons-info" style="margin-right: 10px; color: #03a9f4; "></span>' . sprintf(
+							'el'      => 'paragraph',
+							'section' => 'integrations',
+							'content' => '<span class="dashicons dashicons-info" style="margin-right: 10px; color: #03a9f4; "></span>' . sprintf(
+								// translators: %s is the name of the integration.
 								esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
 								sprintf(
 									'<a target="_blank" href="%s">%s</a>',
 									esc_url( $data->href ),
 									sprintf(
+										// translators: %s is the name of the integration.
 										__( '%s addon', 'newsletter-optin-box' ),
 										esc_html( $data->title )
 									)
 								)
-							)
+							),
 						),
 					),
 					'section'     => 'integrations',
 					'heading'     => esc_html( $data->title ),
 					'description' => sprintf(
+						// translators: %s is the name of the integration.
 						__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
 						esc_html( $data->title )
 					),

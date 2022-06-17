@@ -4,6 +4,7 @@
 
 	<rule ref="WordPress-Core" />
 	<rule ref="WordPress-Docs" />
+	<rule ref="WordPress-Extra" />
 
 	<!-- Check all PHP files in directory tree by default. -->
 	<arg name="extensions" value="php"/>
@@ -21,10 +22,12 @@
 	<exclude-pattern>*/includes/class-noptin-emogrifier.php</exclude-pattern>
 	<exclude-pattern>*/includes/class-noptin-background-sync.php</exclude-pattern>
 	<exclude-pattern>*/includes/class-noptin-background-mailer.php</exclude-pattern>
+	<exclude-pattern>*/includes/emails/class-html-to-text.php</exclude-pattern>
+	<exclude-pattern>*/includes/assets/*</exclude-pattern>
 
 	<config name="minimum_supported_wp_version" value="4.7" />
 
-	<rule ref="Squiz.Commenting.FileComment">
+	<rule ref="Generic.WhiteSpace">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
@@ -32,15 +35,15 @@
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
-	<rule ref="Squiz.Commenting.FileComment.MissingPackageTag">
+	<rule ref="Generic.Commenting">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
 	<rule ref="Internal.NoCodeFound">
-		<exclude-pattern>*</exclude-pattern>
-	</rule>
-
-	<rule ref="Squiz.Commenting.InlineComment.InvalidEndChar">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
@@ -52,11 +55,15 @@
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
-	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
-		<exclude-pattern>*/noptin.php</exclude-pattern>
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>*</exclude-pattern>
 	</rule>
 
-	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+	<rule ref="WordPress.NamingConventions">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>	
+
+	<rule ref="WordPress.Security.NonceVerification.Recommended">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>	
 
@@ -65,5 +72,14 @@
 			<property name="text_domain" type="array" value="newsletter-optin-box" />
 		</properties>
 	</rule>
+
+	<!--
+	#############################################################################
+	USE THE PHPCompatibility RULESET
+	#############################################################################
+	-->
+
+	<config name="testVersion" value="5.6-"/>
+	<rule ref="PHPCompatibilityWP"/>
 
 </ruleset>

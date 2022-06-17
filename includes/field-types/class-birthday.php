@@ -47,8 +47,8 @@ class Noptin_Custom_Field_Birthday extends Noptin_Custom_Field_Type {
 						<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 					>
 						<option <?php selected( empty( $day ) ); ?> disabled><?php esc_html_e( 'Day', 'newsletter-optin-box' ); ?></option>
-						<?php for( $i =1; $i < 32; $i++ ) : ?>
-							<option value="<?php echo $i; ?>" <?php selected( (int) $day, $i ); ?>><?php echo $i; ?></option>
+						<?php for ( $i = 1; $i < 32; $i++ ) : ?>
+							<option value="<?php echo intval( $i ); ?>" <?php selected( (int) $day, $i ); ?>><?php echo intval( $i ); ?></option>
 						<?php endfor; ?>		
 					</select>
 				</label>
@@ -61,8 +61,8 @@ class Noptin_Custom_Field_Birthday extends Noptin_Custom_Field_Type {
 						<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 					>
 						<option <?php selected( empty( $month ) ); ?> disabled><?php esc_html_e( 'Month', 'newsletter-optin-box' ); ?></option>
-						<?php for( $i =1; $i < 13; $i++ ) : ?>
-							<option value="<?php echo $i; ?>" <?php selected( (int) $month, $i ); ?>><?php echo date_i18n( 'F', strtotime( "2020-$i-15" ) ); ?></option>
+						<?php for ( $i = 1; $i < 13; $i++ ) : ?>
+							<option value="<?php echo intval( $i ); ?>" <?php selected( (int) $month, $i ); ?>><?php echo esc_html( date_i18n( 'F', strtotime( "2020-$i-15" ) ) ); ?></option>
 						<?php endfor; ?>		
 					</select>
 				</label>
@@ -110,7 +110,7 @@ class Noptin_Custom_Field_Birthday extends Noptin_Custom_Field_Type {
 		$value = $this->sanitize_value( $value, $subscriber );
 
 		if ( empty( $value['day'] ) || empty( $value['month'] ) ) {
-			return "&mdash;";
+			return '&mdash;';
 		}
 
 		$day   = (int) $value['day'];

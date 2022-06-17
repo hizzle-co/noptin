@@ -7,7 +7,7 @@
  * @var string $footer
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 ?>
 

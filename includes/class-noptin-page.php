@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Prints the noptin page
@@ -183,7 +181,7 @@ class Noptin_Page {
 	 */
 	public function email_open( $filter ) {
 
-		if ( 'email_open' != $this->get_request_action() ) {
+		if ( 'email_open' !== $this->get_request_action() ) {
 			return $filter;
 		}
 
@@ -194,7 +192,7 @@ class Noptin_Page {
 		nocache_headers();
 		header( 'Content-type: image/gif' );
 		header( 'Content-Length: 42' );
-		echo base64_decode( 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEA' );
+		echo esc_html( base64_decode( 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEA' ) );
 		exit;
 
 	}
@@ -227,15 +225,13 @@ class Noptin_Page {
 
 					$user_logged = true;
 				}
-
 			}
 
 			// Increment stats.
 			if ( ! empty( $subscriber_logged ) || ! empty( $user_logged ) ) {
 				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_opens' );
 			}
-
-		};
+		}
 
 	}
 
@@ -249,7 +245,7 @@ class Noptin_Page {
 	public function email_click( $filter ) {
 
 		// Ensure this is our action.
-		if ( 'email_click' != $this->get_request_action() ) {
+		if ( 'email_click' !== $this->get_request_action() ) {
 			return $filter;
 		}
 
@@ -261,7 +257,7 @@ class Noptin_Page {
 
 		// Abort if no destination.
 		if ( empty( $recipient['to'] ) ) {
-			wp_redirect( get_home_url() );
+			wp_safe_redirect( get_home_url() );
 			exit;
 		}
 
@@ -295,15 +291,13 @@ class Noptin_Page {
 
 					$user_logged = true;
 				}
-
 			}
 
 			// Increment stats.
 			if ( ! empty( $subscriber_logged ) || ! empty( $user_logged ) ) {
 				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_clicks' );
 			}
-
-		};
+		}
 
 		wp_redirect( $destination );
 		exit;
@@ -325,7 +319,7 @@ class Noptin_Page {
 			return $content;
 		}
 
-		return add_noptin_merge_tags(  $content, get_noptin_subscriber_merge_fields( $recipient['sid'] ) );
+		return add_noptin_merge_tags( $content, get_noptin_subscriber_merge_fields( $recipient['sid'] ) );
 
 	}
 
@@ -345,7 +339,7 @@ class Noptin_Page {
 
 		$msg = str_ireplace( '[[resubscribe_url]]', get_noptin_action_url( 'resubscribe', $key ), $msg );
 
-		echo $this->merge( $msg );
+		echo wp_kses_post( $this->merge( $msg ) );
 
 	}
 
@@ -384,7 +378,7 @@ class Noptin_Page {
 
 		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
-			wp_redirect( $page );
+			wp_safe_redirect( $page );
 			exit;
 		}
 
@@ -406,7 +400,7 @@ class Noptin_Page {
 
 		$msg = str_ireplace( '[[unsubscribe_url]]', get_noptin_action_url( 'unsubscribe', $key ), $msg );
 
-		echo $this->merge( $msg );
+		echo wp_kses_post( $this->merge( $msg ) );
 
 	}
 
@@ -451,7 +445,7 @@ class Noptin_Page {
 
 		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
-			wp_redirect( $page );
+			wp_safe_redirect( $page );
 			exit;
 		}
 
@@ -472,7 +466,7 @@ class Noptin_Page {
 			$msg = $this->default_subscription_confirmation_message();
 		}
 
-		echo $this->merge( $msg );
+		echo wp_kses_post( $this->merge( $msg ) );
 
 	}
 
@@ -508,7 +502,7 @@ class Noptin_Page {
 
 		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
-			wp_redirect( $page );
+			wp_safe_redirect( $page );
 			exit;
 		}
 
@@ -543,7 +537,7 @@ class Noptin_Page {
 			return;
 		}
 
-		echo noptin()->emails->newsletter->generate_preview( $campaign );
+		echo noptin()->emails->newsletter->generate_preview( $campaign ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		exit;
 
 	}
@@ -577,13 +571,17 @@ class Noptin_Page {
 			return;
 		}
 
-		echo noptin()->emails->automated_email_types->generate_preview( $campaign );
+		echo noptin()->emails->automated_email_types->generate_preview( $campaign ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		exit;
 
 	}
 
 	public function print_paragraph( $content, $class = 'noptin-padded' ) {
-		echo "<p class='$class'>$content</p>";
+		printf(
+			'<p class="%s">%s</p>',
+			esc_attr( $class ),
+			wp_kses_post( $content )
+		);
 	}
 
 	public function listen() {
@@ -604,7 +602,7 @@ class Noptin_Page {
 		// No action specified, redirect back home.
 		$action = $this->get_request_action();
 		if ( empty( $action ) ) {
-			wp_redirect( add_query_arg( 'noptin_action', 'failed', get_home_url() ) );
+			wp_safe_redirect( add_query_arg( 'noptin_action', 'failed', get_home_url() ) );
 			exit;
 		}
 
@@ -642,58 +640,58 @@ class Noptin_Page {
 	 */
 	public function add_options( $options ) {
 
-		$options["pages_unsubscribe_page_message"] = array(
-			'el'              => 'textarea',
-			'section'		  => 'messages',
-			'label'           => __( 'Unsubscription Message', 'newsletter-optin-box' ),
-			'placeholder'     => $this->default_unsubscription_confirmation_message(),
-			'default'		  => $this->default_unsubscription_confirmation_message(),
-			'description'     => __( 'The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+		$options['pages_unsubscribe_page_message'] = array(
+			'el'          => 'textarea',
+			'section'	  => 'messages',
+			'label'       => __( 'Unsubscription Message', 'newsletter-optin-box' ),
+			'placeholder' => $this->default_unsubscription_confirmation_message(),
+			'default'	  => $this->default_unsubscription_confirmation_message(),
+			'description' => __( 'The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
 		);
 
-		$options["pages_unsubscribe_page"] = array(
-			'el'              => 'input',
-			'section'		  => 'messages',
-			'label'           => __( 'Unsubscription Redirect', 'newsletter-optin-box' ),
-			'placeholder'     => 'https://example.com/newsletter-unsubscribed',
-			'description'     => __( 'Where should we redirect subscribers after they unsubscribe?', 'newsletter-optin-box' ),
+		$options['pages_unsubscribe_page'] = array(
+			'el'          => 'input',
+			'section'	  => 'messages',
+			'label'       => __( 'Unsubscription Redirect', 'newsletter-optin-box' ),
+			'placeholder' => 'https://example.com/newsletter-unsubscribed',
+			'description' => __( 'Where should we redirect subscribers after they unsubscribe?', 'newsletter-optin-box' ),
 		);
 
-		$options["pages_resubscribe_page_message"] = array(
-			'el'              => 'textarea',
-			'section'		  => 'messages',
-			'label'           => __( 'Re-subscription Message', 'newsletter-optin-box' ),
-			'placeholder'     => $this->default_resubscription_confirmation_message(),
-			'default'		  => $this->default_resubscription_confirmation_message(),
-			'description'     => __( 'The message to show to subscribers after they resubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+		$options['pages_resubscribe_page_message'] = array(
+			'el'          => 'textarea',
+			'section'	  => 'messages',
+			'label'       => __( 'Re-subscription Message', 'newsletter-optin-box' ),
+			'placeholder' => $this->default_resubscription_confirmation_message(),
+			'default'	  => $this->default_resubscription_confirmation_message(),
+			'description' => __( 'The message to show to subscribers after they resubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
 		);
 
-		$options["pages_resubscribe_page"] = array(
-			'el'              => 'input',
-			'section'		  => 'messages',
-			'label'           => __( 'Re-subscription Redirect', 'newsletter-optin-box' ),
-			'placeholder'     => 'https://example.com/newsletter-resubscribed',
-			'description'     => __( 'Where should we redirect subscribers after they resubscribe?', 'newsletter-optin-box' ),
+		$options['pages_resubscribe_page'] = array(
+			'el'          => 'input',
+			'section'	  => 'messages',
+			'label'       => __( 'Re-subscription Redirect', 'newsletter-optin-box' ),
+			'placeholder' => 'https://example.com/newsletter-resubscribed',
+			'description' => __( 'Where should we redirect subscribers after they resubscribe?', 'newsletter-optin-box' ),
 		);
 
-		$options["pages_confirm_page_message"] = array(
-			'el'              => 'textarea',
-			'section'		  => 'messages',
-			'label'           => __( 'Confirmation Message', 'newsletter-optin-box' ),
-			'placeholder'     => $this->default_subscription_confirmation_message(),
-			'default'		  => $this->default_subscription_confirmation_message(),
-			'description'     => __( 'The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+		$options['pages_confirm_page_message'] = array(
+			'el'          => 'textarea',
+			'section'	  => 'messages',
+			'label'       => __( 'Confirmation Message', 'newsletter-optin-box' ),
+			'placeholder' => $this->default_subscription_confirmation_message(),
+			'default'	  => $this->default_subscription_confirmation_message(),
+			'description' => __( 'The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
 		);
 
-		$options["pages_confirm_page"] = array(
-			'el'              => 'input',
-			'section'		  => 'messages',
-			'label'           => __( 'Confirmation Redirect', 'newsletter-optin-box' ),
-			'description'     => __( 'Where should we redirect subscribers after they confirm their emails?', 'newsletter-optin-box' ),
-			'placeholder'     => 'https://example.com/newsletter-confirmed',
+		$options['pages_confirm_page'] = array(
+			'el'          => 'input',
+			'section'     => 'messages',
+			'label'       => __( 'Confirmation Redirect', 'newsletter-optin-box' ),
+			'description' => __( 'Where should we redirect subscribers after they confirm their emails?', 'newsletter-optin-box' ),
+			'placeholder' => 'https://example.com/newsletter-confirmed',
 		);
 
-		return apply_filters( "noptin_page_settings", $options );
+		return apply_filters( 'noptin_page_settings', $options );
 
 	}
 
@@ -716,8 +714,8 @@ class Noptin_Page {
 	 * @return string
 	 */
 	public function default_resubscription_confirmation_message() {
-		$heading = __( 'Thank You, Again!', 'newsletter-optin-box' );
-		$message = __( "You have been resubscribed to our newsletter.", 'newsletter-optin-box' );
+		$heading = esc_html__( 'Thank You, Again!', 'newsletter-optin-box' );
+		$message = esc_html__( 'You have been resubscribed to our newsletter.', 'newsletter-optin-box' );
 		return "<h1>$heading</h1>\n\n<p>$message</p>";
 	}
 
@@ -728,8 +726,8 @@ class Noptin_Page {
 	 * @return string
 	 */
 	public function default_subscription_confirmation_message() {
-		$heading = __( 'Thank You', 'newsletter-optin-box' );
-		$message = __( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' );
+		$heading = esc_html__( 'Thank You', 'newsletter-optin-box' );
+		$message = esc_html__( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' );
 		return "<h1>$heading</h1>\n\n<p>$message</p>";
 	}
 

@@ -14,6 +14,7 @@ $form_fields = noptin_parse_list( $form_fields );
 $inject      = empty( $form->settings['inject'] ) ? '' : $form->settings['inject'];
 $update      = empty( $form->settings['update_existing'] ) ? '' : $form->settings['update_existing'];
 
+// TODO: Replace form fields select box with a sortable list of checkboxes.
 ?>
 
 <h2 class="screen-reader-text"><?php esc_html_e( 'Form Fields', 'newsletter-optin-box' ); ?></h2>
@@ -26,17 +27,20 @@ $update      = empty( $form->settings['update_existing'] ) ? '' : $form->setting
 		<?php foreach ( get_noptin_custom_fields( true ) as $field ) : ?>
 			<option
 				value="<?php echo esc_html( $field['merge_tag'] ); ?>"
-				<?php selected( in_array( $field['merge_tag'], $form_fields ) ); ?>
+				<?php selected( in_array( $field['merge_tag'], $form_fields, true ) ); ?>
 			><?php echo esc_html( $field['label'] ); ?></option>
 		<?php endforeach; ?>
 	</select>
-	<p class="description"><?php
-		printf(
-			__( 'If the field you want to add does not appear above then start by %1$screating additional fields%2$s.', 'newsletter-optin-box' ),
-			'<a target="_blank" href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
-			'</a>'
-		);
-	?></p>
+	<p class="description">
+		<?php
+			printf(
+				// translators: %1 & 2, opening and closing link.
+				esc_html__( 'If the field you want to add does not appear above then start by %1$screating additional fields%2$s.', 'newsletter-optin-box' ),
+				'<a target="_blank" href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
+				'</a>'
+			);
+		?>
+	</p>
 </div>
 
 <div class="noptin-text-wrapper form-settings-subscribe-button">
@@ -60,7 +64,7 @@ $update      = empty( $form->settings['update_existing'] ) ? '' : $form->setting
 		<?php esc_html_e( 'Redirect URL (Optional)', 'newsletter-optin-box' ); ?>
 		<span title="<?php esc_attr_e( 'Leave blank if you do not want to redirect users after they sign-up via this form.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 	</label>
-	<input type="text" class="noptin-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $form->settings['redirect'] ) ? esc_attr( $form->settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
+	<input type="text" class="noptin-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $form->settings['redirect'] ) ? esc_attr( $form->settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( /* translators: Example URL */ esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
 </div>
 
 <?php do_action( 'noptin_form_settings_editor', $form ); ?>

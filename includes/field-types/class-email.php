@@ -32,12 +32,12 @@ class Noptin_Custom_Field_Email extends Noptin_Custom_Field_Type {
 				name="<?php echo esc_attr( $args['name'] ); ?>"
 				id="<?php echo esc_attr( $args['id'] ); ?>"
 				type="email"
-				value="<?php echo sanitize_email( $args['value'] ); ?>"
+				value="<?php echo esc_html( sanitize_email( $args['value'] ) ); ?>"
 				<?php if ( empty( $args['vue'] ) ) : ?>
 					placeholder="<?php echo esc_attr( $args['label'] ); ?>"
-				<?php else: ?>
+				<?php else : ?>
 					:placeholder="field.type.label"
-				<?php endif;?>
+				<?php endif; ?>
 				class="noptin-text noptin-form-field"
 				required >
 

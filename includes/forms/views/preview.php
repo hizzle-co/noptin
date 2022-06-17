@@ -2,7 +2,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // fake post to prevent notices in wp_enqueue_scripts call
-$GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) );
+$GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 // render simple page with form in it.
 ?><!DOCTYPE html>
@@ -12,13 +12,13 @@ $GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) );
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="profile" href="http://gmpg.org/xfn/11">
 	<meta name="robots" content="noindex, nofollow" />
-	<link type="text/css" rel="stylesheet" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
-	<title><?php echo __( 'Noptin Newsletter', 'newsletter-optin-box' ); ?></title>
+	<title><?php echo esc_html( get_bloginfo( 'name' ) ); ?></title>
 	<?php
 		wp_enqueue_scripts();
 		wp_print_styles();
 		wp_print_head_scripts();
 		wp_custom_css_cb();
+		wp_site_icon();
 	?>
 	<style type="text/css">
 		body{ 

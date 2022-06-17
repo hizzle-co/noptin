@@ -20,7 +20,7 @@ class Noptin_Custom_Fields {
 	public function __construct() {
 
 		// Load dependancies.
-		foreach( array( 'base', 'text', 'textarea', 'birthday', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio' ) as $file ) {
+		foreach ( array( 'base', 'text', 'textarea', 'birthday', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio' ) as $file ) {
 			require_once plugin_dir_path( __FILE__ ) . "field-types/class-$file.php";
 		}
 
@@ -32,7 +32,6 @@ class Noptin_Custom_Fields {
 			if ( ! empty( $data['class'] ) ) {
 				$this->custom_field_types[ $type ] = new $data['class']( $type );
 			}
-
 		}
 
 		// Deprecated functionality.
@@ -53,6 +52,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'Email Address', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => true,
+				'required'   => true,
 				'predefined' => true,
 			),
 			array(
@@ -61,6 +61,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'First Name', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => true,
+				'required'   => false,
 				'predefined' => true,
 			),
 			array(
@@ -69,6 +70,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'Last Name', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => true,
+				'required'   => false,
 				'predefined' => true,
 			),
 			array(
@@ -77,6 +79,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'Birthday', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'subs_table' => false,
+				'required'   => false,
 				'predefined' => true,
 			),
 		);
@@ -104,14 +107,17 @@ class Noptin_Custom_Fields {
 			$custom_field['vue']   = true;
 
 			/**@var Noptin_Custom_Field_Type */
-			$field      = $this->custom_field_types[ $custom_field['type'] ];
-			$merge_tag  = esc_attr( $custom_field['merge_tag'] );
-			$type       = esc_attr( $custom_field['type'] );
+			$field = $this->custom_field_types[ $custom_field['type'] ];
 
+			printf(
+				'<div v-if="field.type.type==\'%s\'" class="noptin-field-%s">',
+				esc_attr( $custom_field['merge_tag'] ),
+				esc_attr( $custom_field['type'] )
+			);
 
-			echo "<div v-if=\"field.type.type=='$merge_tag'\" class='noptin-field-$type'>";
 			$field->output( $custom_field, false );
-			echo "</div>";
+
+			echo '</div>';
 
 		}
 
@@ -146,15 +152,15 @@ class Noptin_Custom_Fields {
 			}
 
 			/**@var Noptin_Custom_Field_Type */
-			$_field     = $this->custom_field_types[ $custom_field['type'] ];
-			$type       = esc_attr( $custom_field['type'] );
+			$_field = $this->custom_field_types[ $custom_field['type'] ];
 
-			echo "<div class='noptin-field-$type'>";
+			printf( '<div class="noptin-field-%s">', esc_attr( $custom_field['type'] ) );
+
 			$_field->output( $custom_field, false );
-			echo "</div>";
+
+			echo '</div>';
 
 		}
-
 	}
 
 }

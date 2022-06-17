@@ -9,9 +9,7 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Retrieve subscriber meta field for a subscriber.
@@ -248,7 +246,6 @@ function get_noptin_subscriber_merge_fields( $subscriber_id ) {
 		if ( isset( $values[0] ) && is_scalar( maybe_unserialize( $values[0] ) ) ) {
 			$merge_tags[ $key ] = esc_html( maybe_unserialize( $values[0] ) );
 		}
-
 	}
 
 	$merge_tags['name']      = trim( $merge_tags['first_name'] . ' ' . $merge_tags['second_name'] );
@@ -280,13 +277,14 @@ function get_noptin_subscribers_overview_url( $page = 1 ) {
 function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value = false ) {
 	global $wpdb;
 
-	$table      = get_noptin_subscribers_table_name();
-	$meta_table = get_noptin_subscribers_meta_table_name();
 	$extra_sql  = '';
 
 	if ( false !== $meta_value ) {
-		$extra_sql = "INNER JOIN $meta_table ON ( $table.id = $meta_table.noptin_subscriber_id ) WHERE ( $meta_table.meta_key = '%s' AND $meta_table.meta_value = '%s' )";
-		$extra_sql = $wpdb->prepare( $extra_sql, $meta_key, $meta_value );
+		$extra_sql = $wpdb->prepare(
+			"INNER JOIN {$wpdb->prefix}noptin_subscriber_meta ON ( {$wpdb->prefix}noptin_subscribers.id = {$wpdb->prefix}noptin_subscriber_meta.noptin_subscriber_id ) WHERE ( {$wpdb->prefix}noptin_subscriber_meta.meta_key = %s AND {$wpdb->prefix}noptin_subscriber_meta.meta_value = %s )",
+			$meta_key,
+			$meta_value
+		);
 	}
 
 	if ( ! empty( $where ) ) {
@@ -300,7 +298,7 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
 		$where = "$extra_sql";
 	}
 
-	return $wpdb->get_var( "SELECT COUNT(`id`) FROM $table $where;" );
+	return $wpdb->get_var( "SELECT COUNT(`id`) FROM {$wpdb->prefix}noptin_subscribers $where;" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 }
 
 /**
@@ -347,9 +345,9 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 		'email'        => $fields['email'],
 		'first_name'   => empty( $fields['first_name'] ) ? '' : $fields['first_name'],
 		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
-		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] :  md5( $fields['email']  . wp_generate_password( 32, true, true ) ),
-		'date_created' => ! empty( $fields['date_created'] ) ? date( 'Y-m-d', strtotime( $fields['date_created'] ) ) : date( 'Y-m-d', current_time( 'timestamp' ) ),
-		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] :  ( get_noptin_option( 'double_optin', false ) ? 1 : 0 ),
+		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] : md5( $fields['email'] . wp_generate_password( 32, true, true ) ),
+		'date_created' => ! empty( $fields['date_created'] ) ? gmdate( 'Y-m-d', strtotime( $fields['date_created'] ) ) : current_time( 'Y-m-d' ),
+		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] : ( get_noptin_option( 'double_optin', false ) ? 1 : 0 ),
 		'confirmed'    => ! empty( $fields['confirmed'] ),
 	);
 
@@ -436,7 +434,7 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 	}
 
 	// Are we deactivating the subscriber?
-	if ( $subscriber->is_active() && ! empty( $fields['active'] ) && ! $silent  ) {
+	if ( $subscriber->is_active() && ! empty( $fields['active'] ) && ! $silent ) {
 		deactivate_noptin_subscriber( $subscriber );
 	}
 
@@ -463,14 +461,13 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 		} else {
 			update_noptin_subscriber_meta( $subscriber_id, $field, $value );
 		}
-
 	}
 
 	// Clean the cache.
 	$old_subscriber = new Noptin_Subscriber( $subscriber_id );
 	$old_subscriber->clear_cache();
 
-	if ( ! $silent  ) {
+	if ( ! $silent ) {
 		do_action( 'noptin_update_subscriber', $subscriber_id, $details );
 	}
 
@@ -566,7 +563,6 @@ function unsubscribe_noptin_subscriber( $subscriber ) {
 		if ( get_noptin_option( 'delete_on_unsubscribe' ) ) {
 			delete_noptin_subscriber( $subscriber->id );
 		}
-
 	}
 
 }
@@ -644,9 +640,9 @@ function delete_noptin_subscriber( $subscriber ) {
 	do_action( 'delete_noptin_subscriber', $subscriber );
 
 	// Maybe delete WP User connection.
-	$user_id = get_noptin_subscriber_meta ( (int) $subscriber, 'wp_user_id', true );
+	$user_id = get_noptin_subscriber_meta( (int) $subscriber, 'wp_user_id', true );
 	if ( ! empty( $user_id ) ) {
-		delete_user_meta ( $user_id, 'noptin_subscriber_id' );
+		delete_user_meta( $user_id, 'noptin_subscriber_id' );
 	}
 
 	clear_noptin_subscriber_cache( $subscriber );
@@ -697,8 +693,7 @@ function noptin_email_exists( $email ) {
 		return false;
 	}
 
-	$table = get_noptin_subscribers_table_name();
-	$id    = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE email =%s LIMIT 1;", $email ) );
+	$id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}noptin_subscribers WHERE email =%s LIMIT 1;", $email ) );
 
 	return ! empty( $id );
 }
@@ -711,9 +706,7 @@ function noptin_email_exists( $email ) {
  */
 function noptin_subscribers_table_exists() {
 	global $wpdb;
-	$table = get_noptin_subscribers_table_name();
-
-	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
+	return get_noptin_subscribers_table_name() === $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_subscribers'" );
 }
 
 /**
@@ -724,9 +717,7 @@ function noptin_subscribers_table_exists() {
  */
 function noptin_subscribers_meta_table_exists() {
 	global $wpdb;
-	$table = get_noptin_subscribers_meta_table_name();
-
-	return $table === $wpdb->get_var( "SHOW TABLES LIKE '$table'" );
+	return get_noptin_subscribers_meta_table_name() === $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_subscriber_meta'" );
 }
 
 /**
@@ -761,12 +752,13 @@ function noptin_new_subscriber_notify( $id, $fields ) {
 		}
 	}
 
-	$to = get_noptin_option( 'admin_email',  get_option( 'admin_email' ) );
+	$to = get_noptin_option( 'admin_email', get_option( 'admin_email' ) );
 
 	if ( empty( $to ) ) {
 		return;
 	}
 
+	// translators: %s: site title
 	$subject = sprintf( __( '[%s] New Subscriber', 'newsletter-optin-box' ), $blogname );
 
 	@wp_mail( noptin_parse_list( $to ), wp_specialchars_decode( $subject ), $message );
@@ -832,10 +824,10 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = f
 	$content .= get_noptin_option( 'double_optin_after_cta_text', $defaults['after_cta_text'] );
 
 	// Handle custom merge tags.
-	$url      = esc_url_raw( get_noptin_action_url( 'confirm', $fields['confirm_key'] ) );
-	$link     = "<a href='$url' target='_blank'>$url</a>";
+	$url  = esc_url_raw( get_noptin_action_url( 'confirm', $fields['confirm_key'] ) );
+	$link = "<a href='$url' target='_blank'>$url</a>";
 
-	$merge_tags = array (
+	$merge_tags = array(
 		'confirmation_link' => $link,
 		'confirmation_url'  => $url,
 		'confirmation_text' => get_noptin_option( 'double_optin_cta_text', $defaults['cta_text'] ),
@@ -846,15 +838,14 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = f
 		if ( is_scalar( $key ) ) {
 			$content = str_replace( "[[$key]]", wp_kses_post( $value ), $content );
 		}
-
 	}
 
 	$args = array(
-		'type'         => 'normal',
-		'content'      => wpautop( trim( $content ) ),
-		'template'     => get_noptin_option( 'email_template', 'paste' ),
-		'heading'      => get_noptin_option( 'double_optin_hero_text', $defaults['hero_text'] ),
-		'footer_text'  => get_noptin_option( 'double_optin_permission_text', $defaults['permission_text'] ),
+		'type'        => 'normal',
+		'content'     => wpautop( trim( $content ) ),
+		'template'    => get_noptin_option( 'email_template', 'paste' ),
+		'heading'     => get_noptin_option( 'double_optin_hero_text', $defaults['hero_text'] ),
+		'footer_text' => get_noptin_option( 'double_optin_permission_text', $defaults['permission_text'] ),
 	);
 
 	noptin()->emails->newsletter->subscriber = $subscriber;
@@ -885,7 +876,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = f
 			'from_name'                => '',
 			'content_type'             => 'html',
 			'unsubscribe_url'          => '',
-			'disable_template_plugins' => ! ( $args['template'] === 'default' ),
+			'disable_template_plugins' => ! ( 'default' === $args['template'] ),
 		)
 	);
 
@@ -944,7 +935,6 @@ function get_noptin_subscriber_fields() {
 		if ( empty( $fields[ $name ] ) ) {
 			$fields[ $name ] = $label;
 		}
-
 	}
 
 	return apply_filters( 'get_noptin_subscriber_fields', $fields );
@@ -987,7 +977,6 @@ function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
 			update_user_meta( $user_id, 'noptin_subscriber_id', $subscriber_id );
 			update_noptin_subscriber_meta( $subscriber_id, 'wp_user_id', $user_id );
 		}
-
 	}
 
 }
@@ -1040,7 +1029,7 @@ function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
 		if ( is_wp_error( $user_id ) ) {
 			log_noptin_message(
 				sprintf(
-					__( 'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>', 'newsletter-optin-box' ),
+					'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>',
 					$user_id->get_error_message(),
 					sanitize_email( $subscriber->email )
 				)
@@ -1110,7 +1099,7 @@ function get_current_noptin_subscriber_id() {
 	$subscriber_key = '';
 	if ( ! empty( $_GET['noptin_key'] ) ) {
 		$subscriber_key = sanitize_text_field( urldecode( $_GET['noptin_key'] ) );
-	} else if ( ! empty( $_COOKIE['noptin_email_subscribed'] ) ) {
+	} elseif ( ! empty( $_COOKIE['noptin_email_subscribed'] ) ) {
 		$subscriber_key = sanitize_text_field( $_COOKIE['noptin_email_subscribed'] );
 	}
 
@@ -1118,10 +1107,9 @@ function get_current_noptin_subscriber_id() {
 	if ( ! empty( $subscriber_key ) ) {
 		$subscriber = new Noptin_Subscriber( $subscriber_key );
 
-		if ( $subscriber->exists() && $subscriber_key == $subscriber->confirm_key ) {
+		if ( $subscriber->exists() && $subscriber_key === $subscriber->confirm_key ) {
 			return $subscriber->id;
 		}
-
 	}
 
 	// If the user is logged in, check with their email address.
@@ -1132,7 +1120,6 @@ function get_current_noptin_subscriber_id() {
 		if ( $subscriber->exists() ) {
 			return $subscriber->id;
 		}
-
 	}
 
 	return false;
@@ -1154,7 +1141,6 @@ function noptin_is_subscriber() {
 		if ( $subscriber->exists() ) {
 			return empty( $subscriber->active );
 		}
-
 	}
 
 	// Check from the login cookies.
@@ -1238,7 +1224,7 @@ function _noptin_show_subscriber_field( $atts ) {
 	}
 
 	$value = $subscriber->get( $atts['field'] );
-	return  is_scalar( $value ) ? esc_html( $value ) : '';
+	return is_scalar( $value ) ? esc_html( $value ) : '';
 
 }
 add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );
@@ -1255,66 +1241,66 @@ function get_noptin_custom_field_types() {
 	return apply_filters(
 		'noptin_custom_field_types',
 		array(
-			'email'                => array(
-				'predefined'       => true,
-				'merge_tag'        => 'email',
-				'label'            => __( 'Email Address', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Email',
+			'email'      => array(
+				'predefined' => true,
+				'merge_tag'  => 'email',
+				'label'      => __( 'Email Address', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Email',
 			),
-			'first_name'           => array(
-				'predefined'       => true,
-				'merge_tag'        => 'first_name',
-				'label'            => __( 'First Name', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Text',
+			'first_name' => array(
+				'predefined' => true,
+				'merge_tag'  => 'first_name',
+				'label'      => __( 'First Name', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Text',
 			),
-			'last_name'            => array(
-				'predefined'       => true,
-				'merge_tag'        => 'last_name',
-				'label'            => __( 'Last Name', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Text',
+			'last_name'  => array(
+				'predefined' => true,
+				'merge_tag'  => 'last_name',
+				'label'      => __( 'Last Name', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Text',
 			),
-			'birthday'             => array(
-				'predefined'       => true,
-				'merge_tag'        => 'birthday',
-				'label'            => __( 'Birthday', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Birthday',
+			'birthday'   => array(
+				'predefined' => true,
+				'merge_tag'  => 'birthday',
+				'label'      => __( 'Birthday', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Birthday',
 			),
-			'text'                 => array(
-				'predefined'       => false,
-				'label'            => __( 'Text Input', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Text',
+			'text'       => array(
+				'predefined' => false,
+				'label'      => __( 'Text Input', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Text',
 			),
-			'textarea'             => array(
-				'predefined'       => false,
-				'label'            => __( 'Textarea Input', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Textarea',
+			'textarea'   => array(
+				'predefined' => false,
+				'label'      => __( 'Textarea Input', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Textarea',
 			),
-			'number'               => array(
-				'predefined'       => false,
-				'label'            => __( 'Number Input', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Number',
+			'number'     => array(
+				'predefined' => false,
+				'label'      => __( 'Number Input', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Number',
 			),
-			'radio'                => array(
+			'radio'      => array(
 				'predefined'       => false,
 				'supports_options' => true,
 				'label'            => __( 'Radio Buttons', 'newsletter-optin-box' ),
 				'class'            => 'Noptin_Custom_Field_Radio',
 			),
-			'dropdown'             => array(
+			'dropdown'   => array(
 				'predefined'       => false,
 				'supports_options' => true,
 				'label'            => __( 'Dropdown', 'newsletter-optin-box' ),
 				'class'            => 'Noptin_Custom_Field_Dropdown',
 			),
-			'date'                 => array(
-				'predefined'       => false,
-				'label'            => __( 'Date', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Date',
+			'date'       => array(
+				'predefined' => false,
+				'label'      => __( 'Date', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Date',
 			),
-			'checkbox'             => array(
-				'predefined'       => false,
-				'label'            => __( 'Checkbox', 'newsletter-optin-box' ),
-				'class'            => 'Noptin_Custom_Field_Checkbox',
+			'checkbox'   => array(
+				'predefined' => false,
+				'label'      => __( 'Checkbox', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Checkbox',
 			),
 		)
 	);
@@ -1337,16 +1323,17 @@ function display_noptin_custom_field_input( $custom_field, $subscriber = false )
 		$custom_field['id']    = empty( $custom_field['show_id'] ) ? uniqid( sanitize_html_class( $custom_field['merge_tag'] ) . '_' ) : 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
 	}
 
+	// phpcs:disable WordPress.Security.NonceVerification.Missing
 	if ( ( '' === $custom_field['value'] || array() === $custom_field['value'] ) && ! empty( $_POST ) ) {
 
 		// Below is cleaned on output.
-		if ( isset( $_POST['noptin_fields']['merge_tag'] ) ) {
-			$custom_field['value'] = $_POST['noptin_fields']['merge_tag'];
-		} else if ( isset( $_POST['merge_tag'] ) ) {
-			$custom_field['value'] = $_POST['merge_tag'];
+		if ( isset( $_POST['noptin_fields'][ $custom_field['merge_tag'] ] ) ) {
+			$custom_field['value'] = $_POST['noptin_fields'][ $custom_field['merge_tag'] ];
+		} elseif ( isset( $_POST[ $custom_field['merge_tag'] ] ) ) {
+			$custom_field['value'] = $_POST[ $custom_field['merge_tag'] ];
 		}
-
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 	do_action( 'noptin_display_custom_field_input', $custom_field, $subscriber );
 	do_action( "noptin_display_{$custom_field['type']}_input", $custom_field, $subscriber );
@@ -1399,7 +1386,7 @@ function get_noptin_custom_fields( $public_only = false ) {
 	foreach ( $fields as $index => $field ) {
 		$field['field_key'] = uniqid( 'noptin_' ) . $index;
 
-		if ( $field['merge_tag'] == 'email' ) {
+		if ( 'email' === $field['merge_tag'] ) {
 			$field['subs_table'] = true;
 		}
 
@@ -1475,10 +1462,8 @@ function noptin_get_subscription_sources() {
 	}
 
 	// Fetch saved sources.
-	$table    = get_noptin_subscribers_meta_table_name();
-	$existing = $wpdb->get_col( "SELECT DISTINCT `meta_value` FROM $table WHERE `meta_key`='_subscriber_via'" );
-
-	$sources = array_combine( $existing, $existing );
+	$existing = $wpdb->get_col( "SELECT DISTINCT `meta_value` FROM {$wpdb->prefix}noptin_subscriber_meta WHERE `meta_key`='_subscriber_via'" );
+	$sources  = array_combine( $existing, $existing );
 
 	// Add subscription forms.
 	$forms = get_posts(
@@ -1490,12 +1475,13 @@ function noptin_get_subscription_sources() {
 	);
 
 	foreach ( $forms as $form ) {
-		$sources["{$form->ID}"] = sanitize_text_field( $form->post_title );
+		$sources[ "{$form->ID}" ] = sanitize_text_field( $form->post_title );
 	}
 
 	// Add other known sources.
-	$sources['manual']    = __( 'Manually Added', 'newsletter-optin-box' );
-	$sources['shortcode'] = __( 'Subscription Shortcode', 'newsletter-optin-box' );
+	$sources['manual']     = __( 'Manually Added', 'newsletter-optin-box' );
+	$sources['shortcode']  = __( 'Subscription Shortcode', 'newsletter-optin-box' );
+	$sources['users_sync'] = __( 'Users Sync', 'newsletter-optin-box' );
 
 	// Cache. TODO: Clear cache when subscriber or form is added/updated.
 	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );

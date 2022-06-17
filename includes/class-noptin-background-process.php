@@ -146,7 +146,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 * @return string
 		 */
 		protected function generate_key( $length = 64 ) {
-			$unique  = md5( microtime() . rand() );
+			$unique  = md5( microtime() . wp_rand() );
 			$prepend = $this->identifier . '_batch_';
 
 			return substr( $prepend . $unique, 0, $length );
@@ -304,7 +304,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 
 			$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
 
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE {$column} LIKE %s", $key ) );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE {$column} LIKE %s", $key ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 			return $this;
 		}
@@ -444,9 +444,9 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 			// Adds every 5 minutes to the existing schedules.
 			$schedules[ $this->cron_interval_identifier ] = array(
 				'interval' => MINUTE_IN_SECONDS * $interval,
-				'display'  => sprintf( 
+				'display'  => sprintf(
 					/* Translators: %d Number of minutes. */
-					__( 'Every %d Minutes', 'newsletter-optin-box' ), 
+					__( 'Every %d Minutes', 'newsletter-optin-box' ),
 					$interval
 				),
 			);

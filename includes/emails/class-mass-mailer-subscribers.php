@@ -57,6 +57,7 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		// Generate and send the actual email.
 		noptin()->emails->newsletter->subscriber = $subscriber;
+
 		$result = noptin()->emails->newsletter->send( $campaign, $campaign->id, $subscriber->email );
 
 		// Log the send.
@@ -98,7 +99,7 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 			'count_total'       => false,
 			'meta_query'        => array(
 
-				'relation'      => 'AND',
+				'relation' => 'AND',
 				array(
 					'key'     => '_campaign_' . $campaign->id,
 					'compare' => 'NOT EXISTS',
@@ -112,21 +113,19 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
 			// Limit to checkboxes, dropdowns and radio buttons.
-			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ) ) ) {
+			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ), true ) ) {
 
 				// Fetch the appropriate filter.
 				$filter = $campaign->get( 'noptin_custom_field_' . $custom_field['merge_tag'] );
-	
+
 				// Filter.
 				if ( '' !== $filter ) {
 					$args['meta_query'][] = array(
-						'key'     => $custom_field['merge_tag'],
-						'value'   => $filter,
+						'key'   => $custom_field['merge_tag'],
+						'value' => $filter,
 					);
 				}
-
 			}
-
 		}
 
 		// Subscription source.
@@ -134,8 +133,8 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 		if ( '' !== $source ) {
 			$args['meta_query'][] = array(
-				'key'     => '_subscriber_via',
-				'value'   => $source,
+				'key'   => '_subscriber_via',
+				'value' => $source,
 			);
 		}
 

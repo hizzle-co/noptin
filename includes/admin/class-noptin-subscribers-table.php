@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Displays a list of all email subscribers
  */
@@ -49,7 +50,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 
-		$per_page = absint( get_user_meta( get_current_user_id(), 'noptin_subscribers_per_page', true) );
+		$per_page = absint( get_user_meta( get_current_user_id(), 'noptin_subscribers_per_page', true ) );
 
 		if ( ! empty( $per_page ) ) {
 			$this->per_page = $per_page;
@@ -124,28 +125,64 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 */
 	public function prepare_query() {
 
-		$query  = array();
-		$fields = array(
+		$query  = array( 'meta_query' => array() );
+
+		$filters = $this->get_selected_subscriber_filters();
+
+		// Handle custom fields.
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+			// Limit to checkboxes, dropdowns and radio buttons.
+			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ), true ) ) {
+
+				// Fetch the appropriate filter.
+				$filter = isset( $filters[ $custom_field['merge_tag'] ] ) ? $filters[ $custom_field['merge_tag'] ] : '';
+
+				// Filter.
+				if ( '' !== $filter ) {
+					$query['meta_query'][] = array(
+						'key'   => $custom_field['merge_tag'],
+						'value' => $filter,
+					);
+				}
+			}
+		}
+
+		// Subscription source.
+		if ( ! empty( $filters['subscription_source'] ) ) {
+
+			$query['meta_query'][] = array(
+				'key'   => '_subscriber_via',
+				'value' => sanitize_text_field( $filters['subscription_source'] ),
+			);
+
+		}
+
+		// Subscriber status.
+		if ( ! empty( $filters['subscription_status'] ) ) {
+			$query['subscriber_status'] = sanitize_text_field( $filters['subscription_status'] );
+		}
+
+		$query_fields = array(
 			'subscriber_status',
 			'meta_query',
 			'email_status',
 			'date_query',
 			'orderby',
 			'order',
-			'paged'
+			'paged',
 		);
-
-		foreach ( $fields as $field ) {
+		foreach ( $query_fields as $field ) {
 			if ( ! empty( $_GET[ $field ] ) ) {
 				$query[ $field ] = noptin_clean( urldecode_deep( $_GET[ $field ] ) );
 			}
 		}
 
 		// Clean order_by.
-		$custom_fields                   = $this->get_custom_fields();
-		$custom_fields['_subscriber_via']= '';
+		$custom_fields                    = $this->get_custom_fields();
+		$custom_fields['_subscriber_via'] = '';
 
-		if ( isset( $query['orderby'] ) && isset( $custom_fields[ $query['orderby'] ] ) && ! in_array( $query['orderby'], array( 'first_name', 'second_name', 'last_name', 'email', 'date_created', 'active' ) ) ) {
+		if ( isset( $query['orderby'] ) && isset( $custom_fields[ $query['orderby'] ] ) && ! in_array( $query['orderby'], array( 'first_name', 'second_name', 'last_name', 'email', 'date_created', 'active' ), true ) ) {
 			$query['meta_key'] = $query['orderby'];
 			$query['orderby']  = 'meta_value';
 		}
@@ -169,7 +206,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		if ( ! empty( $_GET['meta_key'] ) ) {
 
 			$mq = array(
-				'key'   => sanitize_text_field( urldecode( $_GET['meta_key'] ) ),
+				'key' => sanitize_text_field( urldecode( $_GET['meta_key'] ) ),
 			);
 
 			if ( isset( $_GET['meta_value'] ) ) {
@@ -185,8 +222,8 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		}
 
 		// Search.
-		if ( ! empty( $_POST['s'] ) ) {
-			$query['search'] = sanitize_text_field( urldecode( $_POST['s'] ) );
+		if ( ! empty( $_POST['s'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$query['search'] = sanitize_text_field( urldecode( $_POST['s'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$subscribers = new Noptin_Subscriber_Query( $query );
@@ -299,7 +336,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 * @param  object $item item.
 	 * @return HTML
 	 */
-	function column_cb( $item ) {
+	protected function column_cb( $item ) {
 		return sprintf( '<input type="checkbox" name="id[]" value="%s" />', esc_html( $item->id ) );
 	}
 
@@ -308,7 +345,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_bulk_actions() {
+	protected function get_bulk_actions() {
 
 		$actions = array(
 			'delete'     => __( 'Delete', 'newsletter-optin-box' ),
@@ -337,7 +374,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	/**
 	 * Fetch data from the database to render on view.
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 
 		$columns  = $this->get_columns();
 		$hidden   = array();
@@ -372,7 +409,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			if ( 'email' === $key ) {
 				$columns['status'] = __( 'Status', 'newsletter-optin-box' );
 			}
-
 		}
 
 		if ( ! isset( $columns['status'] ) ) {
@@ -431,7 +467,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			if ( ! empty( $field['subs_table'] ) ) {
 				$fields[ $field['merge_tag'] ] = $field['label'];
 			}
-
 		}
 
 		return $fields;
@@ -451,6 +486,106 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			echo '</div>';
 			parent::display_tablenav( $which );
 		}
+	}
+
+	/**
+	 * Returns an array of selected subscriber filters.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @return array $array
+	 */
+	public function get_selected_subscriber_filters() {
+
+		$action = 'bulk-' . $this->_args['plural'];
+
+		if ( ! empty( $_POST['noptin-filters'] ) && ! empty( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
+			return noptin_clean( $_POST['noptin-filters'] );
+		}
+
+		return array();
+	}
+
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string $which
+	 */
+	public function extra_tablenav( $which ) {
+
+		// Prepare selected filters.
+		$selected_filters = $this->get_selected_subscriber_filters();
+
+		// TODO: Add new status for unsubscribed.
+		// Currently, unsubscribed subscribers are treated as pending.
+		$filters = array(
+			'subscription_status' => array(
+				'label'   => __( 'Status', 'newsletter-optin-box' ),
+				'options' => array(
+					'active'   => __( 'Subscribed', 'newsletter-optin-box' ),
+					'inactive' => __( 'Pending', 'newsletter-optin-box' ),
+				),
+			),
+
+			'subscription_source' => array(
+				'label'   => __( 'Subscribed Via', 'newsletter-optin-box' ),
+				'options' => noptin_get_subscription_sources(),
+			),
+		);
+
+		// Use radio, select and checkboxes as filters.
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+			// Checkbox
+			if ( 'checkbox' === $custom_field['type'] ) {
+
+				$filters[ $custom_field['merge_tag'] ] = array(
+					'label'   => $custom_field['label'],
+					'options' => array(
+						'1' => __( 'Yes', 'newsletter-optin-box' ),
+						'0' => __( 'No', 'newsletter-optin-box' ),
+					),
+				);
+
+				// Select && Radio
+			} elseif ( 'dropdown' === $custom_field['type'] || 'radio' === $custom_field['type'] ) {
+
+				if ( ! empty( $custom_field['options'] ) ) {
+					$filters[ $custom_field['merge_tag'] ] = array(
+						'label'   => $custom_field['label'],
+						'options' => noptin_newslines_to_array( $custom_field['options'] ),
+					);
+				}
+			}
+		}
+
+		?>
+		<div class="alignleft actions">
+			<?php
+
+				if ( 'top' === $which ) {
+					?>
+
+					<?php foreach ( $filters as $filter => $data ) : ?>
+						<select name="noptin-filters[<?php echo esc_attr( $filter ); ?>]" id="noptin_filter_<?php echo esc_attr( $filter ); ?>">
+							<option value="" <?php selected( ! isset( $selected_filters[ $filter ] ) || '' === $selected_filters[ $filter ] ); ?>><?php echo esc_html( wp_strip_all_tags( $data['label'] ) ); ?></option>
+							<?php foreach ( $data['options'] as $value => $label ) : ?>
+								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $selected_filters[ $filter ] ) && $value === $selected_filters[ $filter ] ); ?>><?php echo esc_html( $label ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					<?php endforeach; ?>
+
+					<?php
+					do_action( 'noptin_restrict_manage_subscribers', $this, $which );
+
+					submit_button( __( 'Filter', 'newsletter-optin-box' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+				}
+			?>
+		</div>
+		<?php
+
 	}
 
 }

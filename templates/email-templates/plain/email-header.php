@@ -1,12 +1,13 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo( 'charset' ); ?>" />
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title><?php echo esc_html( $email_heading  ); ?></title>
+	<title><?php echo esc_html( $email_heading ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex, nofollow" />
-	<?php include plugin_dir_path( __FILE__ ) . 'styles.php'; ?>
+	<?php require plugin_dir_path( __FILE__ ) . 'styles.php'; ?>
 </head>
 <body>
 
@@ -14,7 +15,7 @@
     	<tbody>
 			<tr>
         		<td>
-					<?php include plugin_dir_path( __FILE__ ) . 'logo.php'; ?>
+					<?php require plugin_dir_path( __FILE__ ) . 'logo.php'; ?>
 
 					<table class="body-wrap">
 						<tbody>
@@ -31,7 +32,7 @@
 														<?php if ( ! empty( $email_heading ) ) : ?>
 
 															<!-- start hero -->
-																<h1 style="margin-bottom: 20px;"><?php echo $email_heading; ?></h1>
+																<h1 style="margin-bottom: 20px;"><?php echo esc_html( $email_heading ); ?></h1>
 															<!-- end hero -->
 
 														<?php endif; ?>

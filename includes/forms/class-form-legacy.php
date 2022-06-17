@@ -1,8 +1,6 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Optin Class.
@@ -208,41 +206,41 @@ class Noptin_Form_Legacy {
 			'title'                 => __( 'JOIN OUR NEWSLETTER', 'newsletter-optin-box' ),
 			'titleColor'            => '#313131',
 			'titleTypography'       => array(
-				'font_size'      => '30',
-				'font_weight'    => '700',
-				'line_height'    => '1.5',
-				'decoration'     => '',
-				'style'          => '',
-				'generated'      => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
+				'font_size'   => '30',
+				'font_weight' => '700',
+				'line_height' => '1.5',
+				'decoration'  => '',
+				'style'       => '',
+				'generated'   => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
 			),
 			'titleAdvanced'         => array(
-				'margin' => new stdClass(),
-				'padding' => array(
-					'top' => '4'
+				'margin'    => new stdClass(),
+				'padding'   => array(
+					'top' => '4',
 				),
 				'generated' => 'padding-top: 4px;',
-				'classes'     => ''
+				'classes'   => '',
 			),
 
 			// Title design.
-			'hidePrefix'           => true,
-			'prefix'                 => __( 'Prefix', 'newsletter-optin-box' ),
-			'prefixColor'            => '#313131',
-			'prefixTypography'       => array(
-				'font_size'      => '20',
-				'font_weight'    => '500',
-				'line_height'    => '1.3',
-				'decoration'     => '',
-				'style'          => '',
-				'generated'      => 'font-size: 20px; font-weight: 500; line-height: 1.3;',
+			'hidePrefix'            => true,
+			'prefix'                => __( 'Prefix', 'newsletter-optin-box' ),
+			'prefixColor'           => '#313131',
+			'prefixTypography'      => array(
+				'font_size'   => '20',
+				'font_weight' => '500',
+				'line_height' => '1.3',
+				'decoration'  => '',
+				'style'       => '',
+				'generated'   => 'font-size: 20px; font-weight: 500; line-height: 1.3;',
 			),
-			'prefixAdvanced'         => array(
-				'margin' => new stdClass(),
-				'padding' => array(
-					'top' => '4'
+			'prefixAdvanced'        => array(
+				'margin'    => new stdClass(),
+				'padding'   => array(
+					'top' => '4',
 				),
 				'generated' => 'padding-top: 4px;',
-				'classes'     => ''
+				'classes'   => '',
 			),
 
 			// Description design.
@@ -250,20 +248,20 @@ class Noptin_Form_Legacy {
 			'description'           => __( 'And get notified everytime we publish a new blog post.', 'newsletter-optin-box' ),
 			'descriptionColor'      => '#32373c',
 			'descriptionTypography' => array(
-				'font_size'      => '16',
-				'font_weight'    => '500',
-				'line_height'    => '1.3',
-				'decoration'     => '',
-				'style'          => '',
-				'generated'      => 'font-size: 16px; font-weight: 500; line-height: 1.3;',
+				'font_size'   => '16',
+				'font_weight' => '500',
+				'line_height' => '1.3',
+				'decoration'  => '',
+				'style'       => '',
+				'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.3;',
 			),
-			'descriptionAdvanced'         => array(
-				'padding' => new stdClass(),
-				'margin' => array(
-					'top' => '18'
+			'descriptionAdvanced'   => array(
+				'padding'   => new stdClass(),
+				'margin'    => array(
+					'top' => '18',
 				),
 				'generated' => 'margin-top: 18px;',
-				'classes'     => ''
+				'classes'   => '',
 			),
 
 			// Note design.
@@ -271,21 +269,21 @@ class Noptin_Form_Legacy {
 			'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 			'noteColor'             => '#607D8B',
 			'hideOnNoteClick'       => false,
-			'noteTypography'       => array(
-				'font_size'      => '14',
-				'font_weight'    => '400',
-				'line_height'    => '1',
-				'decoration'     => '',
-				'style'          => '',
-				'generated'      => 'font-size: 14px; font-weight: 400; line-height: 1;',
+			'noteTypography'        => array(
+				'font_size'   => '14',
+				'font_weight' => '400',
+				'line_height' => '1',
+				'decoration'  => '',
+				'style'       => '',
+				'generated'   => 'font-size: 14px; font-weight: 400; line-height: 1;',
 			),
-			'noteAdvanced'       => array(
-				'padding' => new stdClass(),
-				'margin'  => array(
-					'top' => '10'
+			'noteAdvanced'          => array(
+				'padding'   => new stdClass(),
+				'margin'    => array(
+					'top' => '10',
 				),
 				'generated' => 'margin-top: 10px;',
-				'classes'     => ''
+				'classes'   => '',
 			),
 
 			// Trigger Options.
@@ -323,11 +321,11 @@ class Noptin_Form_Legacy {
 		foreach ( get_noptin_connection_providers() as $key => $connection ) {
 
 			if ( ! empty( $connection->list_providers ) ) {
-				$defaults["{$key}_list"] = $connection->get_default_list_id();
+				$defaults[ "{$key}_list" ] = $connection->get_default_list_id();
 			}
 
 			if ( $connection->supports( 'tags' ) ) {
-				$defaults["{$key}_tags"]     = '';
+				$defaults[ "{$key}_tags" ] = '';
 			}
 
 			$defaults = $connection->add_custom_default_form_state( $defaults );
@@ -351,7 +349,7 @@ class Noptin_Form_Legacy {
 				'border_color'  => $data['noptinFormBorderColor'],
 			);
 
-			extract( $data['formBorder'] );
+			extract( $data['formBorder'] ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 			$data['formBorder']['generated'] = "border-style: solid; border-radius: {$border_radius}px; border-width: {$border_width}px; border-color: {$border_color};";
 		}
 
@@ -412,7 +410,7 @@ class Noptin_Form_Legacy {
 			}
 
 			// Ensure props that expect array always receive arrays.
-			if( is_scalar( $data[ $key ] ) ) {
+			if ( is_scalar( $data[ $key ] ) ) {
 				$return[ $key ] = noptin_parse_list( $data[ $key ] );
 				continue;
 			}
@@ -675,7 +673,7 @@ class Noptin_Form_Legacy {
 	 * @return bool
 	 */
 	public function can_show() {
-		return apply_filters( 'noptin_can_show_form', $this->_can_show(), $this );
+		return apply_filters( 'noptin_can_show_form', $this->check_can_show(), $this );
 	}
 
 	/**
@@ -684,7 +682,7 @@ class Noptin_Form_Legacy {
 	 * @internal
 	 * @return bool
 	 */
-	protected function _can_show() {
+	protected function check_can_show() {
 
 		// Abort early if the form does not exist.
 		if ( ! $this->exists() ) {
@@ -717,21 +715,20 @@ class Noptin_Form_Legacy {
 		}
 
 		// User roles.
-		if ( 'users' == $this->whoCanSee && ! is_user_logged_in() ) {
+		if ( 'users' === $this->whoCanSee && ! is_user_logged_in() ) {
 			return false;
 		}
 
-		if ( 'guests' == $this->whoCanSee && is_user_logged_in() ) {
+		if ( 'guests' === $this->whoCanSee && is_user_logged_in() ) {
 			return false;
 		}
 
-		if ( 'roles' == $this->whoCanSee ) {
+		if ( 'roles' === $this->whoCanSee ) {
 			$role = $this->get_user_role();
 
-			if ( empty( $role ) || ! is_array( $this->userRoles ) || ! in_array( $role, $this->userRoles ) ) {
+			if ( empty( $role ) || ! is_array( $this->userRoles ) || ! in_array( $role, $this->userRoles, true ) ) {
 				return false;
 			}
-
 		}
 
 		// Has the user restricted this to a few posts?
@@ -753,22 +750,22 @@ class Noptin_Form_Legacy {
 
 		// frontpage.
 		if ( is_front_page() ) {
-			return ( ! empty( $this->showHome ) || in_array( 'showHome', $places ) );
+			return ( ! empty( $this->showHome ) || in_array( 'showHome', $places, true ) );
 		}
 
 		// blog page.
 		if ( is_home() ) {
-			return ( ! empty( $this->showBlog ) || in_array( 'showBlog', $places ) );
+			return ( ! empty( $this->showBlog ) || in_array( 'showBlog', $places, true ) );
 		}
 
 		// search.
 		if ( is_search() ) {
-			return ( ! empty( $this->showSearch ) || in_array( 'showSearch', $places ) );
+			return ( ! empty( $this->showSearch ) || in_array( 'showSearch', $places, true ) );
 		}
 
 		// other archive pages.
 		if ( is_archive() ) {
-			return ( ! empty( $this->showArchives ) || in_array( 'showArchives', $places ) );
+			return ( ! empty( $this->showArchives ) || in_array( 'showArchives', $places, true ) );
 		}
 
 		// Single posts.
@@ -792,6 +789,17 @@ class Noptin_Form_Legacy {
 	 * @return string html
 	 */
 	public function get_html() {
+		ob_start();
+		$this->display();
+		return ob_get_clean();
+	}
+
+	/**
+	 * Returns the html required to display the form
+	 *
+	 * @return string html
+	 */
+	public function display() {
 		$type       = esc_attr( $this->optinType );
 		$id         = $this->id;
 		$id_class   = "noptin-form-id-$id";
@@ -804,35 +812,26 @@ class Noptin_Form_Legacy {
 
 		}
 
-		$html = "<div class='$type_class $id_class noptin-optin-main-wrapper'>";
+		?>
+			<div class="<?php echo esc_attr( "$type_class $id_class" ); ?> noptin-optin-main-wrapper">
 
-		if ( 'popup' === $type ) {
-			$html .= "<div class='noptin-popup-optin-inner-wrapper'>";
-		}
+				<?php if ( 'popup' === $type ) : ?>
+					<div class="noptin-popup-optin-inner-wrapper"></div>
+				<?php endif; ?>
 
-		// Maybe print custom css.
-		if ( ! empty( $this->CSS ) ) {
+				<?php if ( ! empty( $this->CSS ) ) : ?>
+					<style><?php echo esc_html( str_ireplace( '.noptin-optin-form-wrapper', ".$id_class .noptin-optin-form-wrapper", str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS ) ) ); ?></style>
+				<?php endif; ?>
 
-			// Our best attempt at scoping styles.
-			$wrapper = '.noptin-optin-form-wrapper';
-			$css     = str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS );
-			$css     = str_ireplace( $wrapper, ".$id_class $wrapper", $css );
-			$html   .= "<style>$css</style>";
-		}
+				<?php $this->render_form(); ?>
 
-		$html .= $this->_get_html();
+				<?php if ( 'popup' === $type ) : ?>
+					</div>
+				<?php endif; ?>
 
-		if ( 'popup' === $type ) {
-			$html .= '</div>';
-		}
+			</div>
+		<?php
 
-		// print main form html.
-		$html = do_shortcode( $html . '</div>' );
-
-		// Remove comments.
-		$html = preg_replace( '/<!--(.*)-->/Uis', '', $html );
-
-		return apply_filters( 'noptin_optin_form_html', $html, $this );
 	}
 
 	/**
@@ -840,14 +839,12 @@ class Noptin_Form_Legacy {
 	 *
 	 * @return string
 	 */
-	protected function _get_html() {
-		ob_start();
-		$data = $this->data;
+	protected function render_form() {
+		$data         = $this->data;
 		$data['data'] = $data;
 		$data['form'] = $this;
-		extract( $data );
+		extract( $data ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 		include plugin_dir_path( __FILE__ ) . 'views/legacy/frontend-optin-form.php';
-		return ob_get_clean();
 	}
 
 	/**

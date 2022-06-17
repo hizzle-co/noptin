@@ -3,6 +3,8 @@
  * @var Noptin_Subscriber $subscriber
  */
 
+defined( 'ABSPATH' ) || exit;
+
 $activities = array(
 	__( 'Subscribed', 'newsletter-optin-box' ) => $subscriber->date_created,
 );
@@ -17,9 +19,12 @@ if ( ! $subscriber->is_active() && ! empty( $subscriber->unsubscribed_on ) ) {
 
 $activities = apply_filters( 'noptin_subscriber_activity_feed', $activities, $subscriber );
 
-uasort( $activities , function( $a, $b ) {
-	return strtotime( $a ) - strtotime( $b );
-} );
+uasort(
+	$activities,
+	function( $a, $b ) {
+		return strtotime( $a ) - strtotime( $b );
+	}
+);
 
 ?>
 
@@ -32,7 +37,7 @@ uasort( $activities , function( $a, $b ) {
 						<?php echo esc_html( $date ); ?>
 					</th>
 					<td>
-						<?php echo wp_kses_post( $activity );?>
+						<?php echo wp_kses_post( $activity ); ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>

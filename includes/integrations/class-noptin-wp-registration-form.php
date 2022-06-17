@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with the user registration form.
@@ -57,13 +55,13 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 	 *
 	 * @since 1.2.6
 	 */
-	function um_output_checkbox( $action ) {
+	public function um_output_checkbox( $action ) {
 
 		if ( $this->can_show_checkbox() ) {
 			echo '<div class="um-field-area um-noptin-checkbox-field-area"> <label class="um-field-checkbox">';
 			echo '<input type="checkbox" name="noptin-subscribe" value="1">';
 			echo '<span class="um-field-checkbox-state"><i class="um-icon-android-checkbox-outline-blank"></i></span>';
-			echo '<span class="um-field-checkbox-option">' . $this->get_label_text() . '</span>';
+			echo '<span class="um-field-checkbox-option">' . wp_kses_post( $this->get_label_text() ) . '</span>';
 			echo '</label><div class="um-clear"></div></div>';
 
 		}
@@ -75,24 +73,27 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 	 *
 	 * @since 1.2.6
 	 */
-	function uwp_output_checkbox( $action ) {
+	public function uwp_output_checkbox( $action ) {
 
 		if ( 'register' === $action && $this->can_show_checkbox() ) {
-			
-			if( function_exists( 'aui' ) && uwp_get_option( 'design_style', 'bootstrap' ) ) {
 
-				echo aui()->input( array(
-					'type'            =>  'checkbox',
-					'id'              =>  wp_doing_ajax() ? 'noptin-subscribe_ajax' : 'noptin-subscribe',
-					'name'            =>  'noptin-subscribe',
-					'value'           =>  1,
-					'label'  => $this->get_label_text(),
-				));
+			if ( function_exists( 'aui' ) && uwp_get_option( 'design_style', 'bootstrap' ) ) {
+
+				aui()->input(
+					array(
+						'type'  => 'checkbox',
+						'id'    => wp_doing_ajax() ? 'noptin-subscribe_ajax' : 'noptin-subscribe',
+						'name'  => 'noptin-subscribe',
+						'value' => 1,
+						'label' => $this->get_label_text(),
+					),
+					true
+				);
 				return;
 
 			}
 
-			echo $this->get_checkbox_markup();
+			$this->output_checkbox();
 
 		}
 
@@ -102,23 +103,23 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 	 * Prints the checkbox wrapper.
 	 *
 	 */
-	function before_checkbox_wrapper() {
+	public function before_checkbox_wrapper() {
 
 		if ( did_action( 'uwp_template_fields' ) ) {
 			echo '<div class="uwp_form_checkbox_row uwp_clear">';
-		} else if ( doing_action( 'woocommerce_register_form' ) ) {
+		} elseif ( doing_action( 'woocommerce_register_form' ) ) {
 			echo "<p class='noptin_registration_form_optin_checkbox_wrapper woocommerce-form-row form-row'>";
 		} else {
 			echo "<p class='noptin_registration_form_optin_checkbox_wrapper'>";
 		}
-		
+
 	}
-	
+
 	/**
 	 * Prints the checkbox closing wrapper.
 	 *
 	 */
-	function after_checkbox_wrapper() {
+	public function after_checkbox_wrapper() {
 
 		// UWP.
 		if ( did_action( 'uwp_template_fields' ) ) {
@@ -182,7 +183,7 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 		if ( empty( $subscriber_id ) ) {
 
 			// Ensure the subscription checkbox was triggered.
-			if( $this->triggered() ) {
+			if ( $this->triggered() ) {
 				return $this->add_subscriber( $noptin_fields, $user_id );
 			}
 			return null;

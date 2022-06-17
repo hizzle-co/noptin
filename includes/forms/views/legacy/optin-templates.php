@@ -6,14 +6,14 @@
 		'PRO20200311'     => array(
 			'title' => __( 'Professional', 'newsletter-optin-box' ),
 			'data'  => array(
-				'singleLine'            => true,
-				'formRadius'            => '0px',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
-				'noptinFormBg'          => '#f8f9fa',
-				'noptinFormBgImg'       => '',
-				'noptinFormBgVideo'     => '',
-				'fields'                => array(
+				'singleLine'        => true,
+				'formRadius'        => '0px',
+				'formWidth'         => '520px',
+				'formHeight'        => '280px',
+				'noptinFormBg'      => '#f8f9fa',
+				'noptinFormBgImg'   => '',
+				'noptinFormBgVideo' => '',
+				'fields'            => array(
 					array(
 						'type'    => array(
 							'label' => __( 'Email Address', 'newsletter-optin-box' ),
@@ -27,31 +27,48 @@
 
 				),
 
-				'imageMain'             => false,
-				'formBorder'            => array(
+				'imageMain'         => false,
+				'formBorder'        => array(
 					'style'         => 'none',
 					'border_radius' => 0,
 					'border_width'  => 0,
 					'border_color'  => '#f8f9fa',
-					'generated'     => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #f8f9fa;",
+					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #f8f9fa;',
 				),
-				'image'                 => 'https://cdn.noptin.com/templates/images/avatar.png',
-				'imagePos'              => 'left',
-				'noptinButtonLabel'     => __( 'Sign Up', 'newsletter-optin-box' ),
-				'buttonPosition'        => 'block',
-				'noptinButtonBg'        => '#00d07e',
-				'noptinButtonColor'     => '#ffffff',
-				'hideTitle'             => false,
-				'title'                 => __( 'Get Exclusive SEO Tips', 'newsletter-optin-box' ),
-				'titleColor'            => '#010101',
-				'hideDescription'       => false,
-				'description'           => __( 'Receive the same tips I used to double my traffic in just two weeks!', 'newsletter-optin-box' ),
-				'descriptionColor'      => '#010101',
-				'hideNote'              => true,
-				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
-				'noteColor'             => '#010101',
-				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
+				'image'             => 'https://cdn.noptin.com/templates/images/avatar.png',
+				'imagePos'          => 'left',
+				'noptinButtonLabel' => __( 'Sign Up', 'newsletter-optin-box' ),
+				'buttonPosition'    => 'block',
+				'noptinButtonBg'    => '#00d07e',
+				'noptinButtonColor' => '#ffffff',
+				'prefix'            => '',
+				'hideTitle'         => false,
+				'title'             => __( 'Get Exclusive SEO Tips', 'newsletter-optin-box' ),
+				'titleColor'        => '#010101',
+				'hideDescription'   => false,
+				'description'       => __( 'Receive the same tips I used to double my traffic in just two weeks!', 'newsletter-optin-box' ),
+				'descriptionColor'  => '#010101',
+				'hideNote'          => true,
+				'hideOnNoteClick'   => false,
+				'note'              => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'         => '#010101',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
+				'CSS'               => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
 	position: absolute;
 	right: 10px;
 	top: 6px;
@@ -112,7 +129,7 @@
 					'border_radius' => 0,
 					'border_width'  => 0,
 					'border_color'  => '#ffffff',
-					'generated'    => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #ffffff;",
+					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #ffffff;',
 				),
 				'image'                 => '',
 				'imagePos'              => 'right',
@@ -120,6 +137,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#F44336',
 				'noptinButtonColor'     => '#fefefe',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Subscribe For Latest Updates', 'newsletter-optin-box' ),
 				'titleColor'            => '#191919',
@@ -131,12 +149,20 @@
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
 				'titleTypography'       => array(
-					'font_size'      => '32',
-					'font_weight'    => '700',
-					'line_height'    => '1.5',
-					'decoration'     => '',
-					'style'          => 'italic',
-					'generated'      => 'font-size: 32px; font-weight: 700; line-height: 1.5;',
+					'font_size'   => '32',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => 'italic',
+					'generated'   => 'font-size: 32px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-field{
 	text-align: center;
@@ -182,6 +208,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#009688',
 				'noptinButtonColor'     => '#fefefe',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
 				'titleColor'            => '#191919',
@@ -197,6 +224,22 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper *{}',
 			),
 
@@ -245,6 +288,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#009688',
 				'noptinButtonColor'     => '#fefefe',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( "DON'T MISS OUT!", 'newsletter-optin-box' ),
 				'titleColor'            => '#009688',
@@ -255,15 +299,23 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
-				'descriptionTypography' => array(
-					'font_size'      => '30',
-					'font_weight'    => '700',
-					'line_height'    => '1.5',
-					'decoration'     => '',
-					'style'          => '',
-					'generated'      => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
 				),
-				'CSS'                => '',
+				'descriptionTypography' => array(
+					'font_size'   => '30',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 30px; font-weight: 700; line-height: 1.5;',
+				),
+				'CSS'                   => '',
 
 			),
 
@@ -301,6 +353,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#795548',
 				'noptinButtonColor'     => '#fefefe',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Join Our Newsletter', 'newsletter-optin-box' ),
 				'titleColor'            => '#191919',
@@ -311,12 +364,28 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'formBorder'            => array(
 					'style'        => 'solid',
 					'formRadius'   => 0,
 					'border_width' => 4,
 					'border_color' => '#795548',
-					'generated'    => "border-style: solid; border-radius: 0px; border-width: 4px; border-color: #795548;",
+					'generated'    => 'border-style: solid; border-radius: 0px; border-width: 4px; border-color: #795548;',
 				),
 				'CSS'                   => '.noptin-optin-form-wrapper {
 	border-top-style: solid !important;
@@ -335,17 +404,17 @@
 
 		),
 
-		'BLyQ1565701700'  => array(
+		'BLyQ1565701700'         => array(
 			'title' => 'smartpassiveincome.com',
 			'data'  => array(
-				'singleLine'            => true,
-				'formRadius'            => '0px',
-				'formWidth'             => '720px',
-				'formHeight'            => '280px',
-				'noptinFormBg'          => '#4CAF50',
-				'noptinFormBgVideo'     => '',
-				'noptinFormBgImg'       => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg',
-				'fields'                => array(
+				'singleLine'        => true,
+				'formRadius'        => '0px',
+				'formWidth'         => '720px',
+				'formHeight'        => '280px',
+				'noptinFormBg'      => '#4CAF50',
+				'noptinFormBgVideo' => '',
+				'noptinFormBgImg'   => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg',
+				'fields'            => array(
 					array(
 						'type'    => array(
 							'label' => __( 'First Name', 'newsletter-optin-box' ),
@@ -370,31 +439,48 @@
 
 				),
 
-				'imageMain'             => '',
-				'formBorder'            => array(
+				'imageMain'         => '',
+				'formBorder'        => array(
 					'style'         => 'none',
 					'border_radius' => 0,
 					'border_width'  => 0,
 					'border_color'  => '#000000',
-					'generated'     => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #000000;",
+					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #000000;',
 				),
-				'image'                 => '',
-				'imagePos'              => 'right',
-				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
-				'buttonPosition'        => 'block',
-				'noptinButtonBg'        => 'rgba(0,0,0,0)',
-				'noptinButtonColor'     => '#fefefe',
-				'hideTitle'             => false,
-				'title'                 => 'WANT THE INSIDE SCOOP?',
-				'titleColor'            => '#f1f1f1',
-				'hideDescription'       => false,
-				'description'           => __( 'Use the custom CSS panel to change the background colors', 'newsletter-optin-box' ),
-				'descriptionColor'      => '#f2f2f2',
-				'hideNote'              => true,
-				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
-				'noteColor'             => '#607D8B',
-				'CSS'                   => '.noptin-optin-form-wrapper{}
+				'image'             => '',
+				'imagePos'          => 'right',
+				'noptinButtonLabel' => __( 'Subscribe Now', 'newsletter-optin-box' ),
+				'buttonPosition'    => 'block',
+				'noptinButtonBg'    => 'rgba(0,0,0,0)',
+				'noptinButtonColor' => '#fefefe',
+				'prefix'            => '',
+				'hideTitle'         => false,
+				'title'             => 'WANT THE INSIDE SCOOP?',
+				'titleColor'        => '#f1f1f1',
+				'hideDescription'   => false,
+				'description'       => __( 'Use the custom CSS panel to change the background colors', 'newsletter-optin-box' ),
+				'descriptionColor'  => '#f2f2f2',
+				'hideNote'          => true,
+				'hideOnNoteClick'   => false,
+				'note'              => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'         => '#607D8B',
+				'titleTypography'   => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
+				'CSS'               => '.noptin-optin-form-wrapper{}
 
 .noptin-optin-form-wrapper form .noptin-form-footer .noptin-form-submit {
 	border:2px solid hsla(0,0%,100%,.3) !important;
@@ -443,6 +529,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#607D8B',
 				'noptinButtonColor'     => '#fafafa',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Subscribe To Our Newsletter', 'newsletter-optin-box' ),
 				'titleColor'            => '#fafafa',
@@ -453,6 +540,22 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#fafafa',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'CSS'                   => '/*Custom css*/
 
 .noptin-optin-form-wrapper .noptin-form-single-line .noptin-form-fields{
@@ -514,6 +617,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#ee4a03',
 				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Try Applying the Green Color Theme!', 'newsletter-optin-box' ),
 				'titleColor'            => '#fafafa',
@@ -524,6 +628,22 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#fafafa',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'CSS'                   => '@media only screen and (min-width: 768px) {
 	.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
 		position: absolute;
@@ -593,22 +713,39 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#2779bd',
 				'noptinButtonColor'     => '#fefefe',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Get my FREE book on VueJS', 'newsletter-optin-box' ),
 				'titleColor'            => '#313131',
 				'hideDescription'       => false,
-				'description'           => __( '<ul><li><strong>144 pages</strong> of content</li><li>Solve common, <strong>frustrating</strong> problems</li><li>Understand confusing errors</li><li>And so much more!</li></ul>', 'newsletter-optin-box' ),
+				'description'           => '<ul><li><strong>144 pages</strong> of content</li><li>Solve common, <strong>frustrating</strong> problems</li><li>Understand confusing errors</li><li>And so much more!</li></ul>',
 				'descriptionColor'      => '#313131',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#313131',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'formBorder'            => array(
 					'style'         => 'solid',
 					'border_radius' => 8,
 					'border_width'  => 1,
 					'border_color'  => '#6cb2eb',
-					'generated'     => "border-style: solid; border-radius: 8px; border-width: 0px; border-color: #6cb2eb;",
+					'generated'     => 'border-style: solid; border-radius: 8px; border-width: 0px; border-color: #6cb2eb;',
 				),
 				'CSS'                   => '',
 			),
@@ -646,6 +783,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#191919',
 				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Get some love!', 'newsletter-optin-box' ),
 				'titleColor'            => '#ffffff',
@@ -656,6 +794,22 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#ffffff',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'CSS'                   => '/*Custom css*/
 .noptin-optin-form-wrapper form {
 	padding: 10px;
@@ -696,6 +850,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#ffffff',
 				'noptinButtonColor'     => '#fb6970',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Optimize your opt-ins.', 'newsletter-optin-box' ),
 				'titleColor'            => '#212f4f',
@@ -706,6 +861,22 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#fafafa',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'CSS'                   => '/*Custom css*/
 .noptin-optin-form-wrapper .noptin-form-submit{
 	border-radius: 5px !important;
@@ -726,7 +897,7 @@
 
 		),
 
-		'discount21565701726' => array(
+		'discount21565701726'    => array(
 			'title' => __( 'Discount', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => false,
@@ -771,12 +942,20 @@
 				'note'                  => __( 'Entering your email also makes you eligible to receive future promotional emails.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607d8b',
 				'titleTypography'       => array(
-					'font_size'      => '85',
-					'font_weight'    => '700',
-					'line_height'    => '1.5',
-					'decoration'     => '',
-					'style'          => '',
-					'generated'      => 'font-size: 85px; font-weight: 700; line-height: 1.5;',
+					'font_size'   => '85',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 85px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
 				'CSS'                   => '',
 			),
@@ -814,6 +993,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#313131',
 				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => 'GET 10% OFF',
 				'titleColor'            => '#313131',
@@ -825,12 +1005,20 @@
 				'note'                  => __( '* $50 MINIMUM PURCHASE', 'newsletter-optin-box' ),
 				'noteColor'             => '#9E9E9E',
 				'titleTypography'       => array(
-					'font_size'      => '66',
-					'font_weight'    => '700',
-					'line_height'    => '1.5',
-					'decoration'     => '',
-					'style'          => '',
-					'generated'      => 'font-size: 66px; font-weight: 700; line-height: 1.5;',
+					'font_size'   => '66',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 66px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-header .noptin-form-description {
 	border-top: 1px solid #E0E0E0;
@@ -872,6 +1060,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#313131',
 				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => 'GET FREE UPDATES',
 				'titleColor'            => '#ffffff',
@@ -883,12 +1072,20 @@
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#9E9E9E',
 				'titleTypography'       => array(
-					'font_size'      => '46',
-					'font_weight'    => '700',
-					'line_height'    => '1.5',
-					'decoration'     => '',
-					'style'          => '',
-					'generated'      => 'font-size: 46px; font-weight: 700; line-height: 1.5;',
+					'font_size'   => '46',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 46px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-optin-form .noptin-form-footer {
 	background-color: aliceblue;
@@ -897,7 +1094,7 @@
 
 		),
 
-		'minimal21565701726' => array(
+		'minimal21565701726'     => array(
 			'title' => __( 'Minimal', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => true,
@@ -928,6 +1125,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#607d8b',
 				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
 				'hideTitle'             => true,
 				'title'                 => __( 'Free Updates', 'newsletter-optin-box' ),
 				'titleColor'            => '#607d8b',
@@ -938,12 +1136,28 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607d8b',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper *{}',
 			),
 
 		),
 
-		'upgrade21565701726' => array(
+		'upgrade21565701726'     => array(
 			'title' => __( 'Content Upgrades', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => true,
@@ -974,6 +1188,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#4caf50',
 				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( "The Marketer's Workbook", 'newsletter-optin-box' ),
 				'titleColor'            => '#191919',
@@ -984,12 +1199,28 @@
 				'hideOnNoteClick'       => false,
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#607D8B',
+				'titleTypography'       => array(
+					'font_size'   => '20',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
+				),
+				'descriptionTypography' => array(
+					'font_size'   => '16',
+					'font_weight' => '500',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper *{}',
 			),
 
 		),
 
-		'spinvilla21565701726' => array(
+		'spinvilla21565701726'   => array(
 			'title' => __( 'Large Fields', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => false,
@@ -1038,7 +1269,7 @@
 					'border_radius' => 0,
 					'border_width'  => 0,
 					'border_color'  => '#F9F7C9',
-					'generated'     => "border-style: none; border-radius: 0px; border-width: 0px; border-color: #F9F7C9;",
+					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #F9F7C9;',
 				),
 				'image'                 => '',
 				'imagePos'              => 'right',
@@ -1046,6 +1277,7 @@
 				'buttonPosition'        => 'block',
 				'noptinButtonBg'        => '#313131',
 				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
 				'hideTitle'             => false,
 				'title'                 => __( 'Email Exclusive Offers!', 'newsletter-optin-box' ),
 				'titleColor'            => '#576673',
@@ -1057,31 +1289,31 @@
 				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
 				'noteColor'             => '#576673',
 				'titleTypography'       => array(
-					'font_size'      => '40',
-					'font_weight'    => '700',
-					'line_height'    => '1.5',
-					'decoration'     => '',
-					'style'          => '',
-					'generated'      => 'font-size: 40px; font-weight: 700; line-height: 1.5;',
+					'font_size'   => '40',
+					'font_weight' => '700',
+					'line_height' => '1.5',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 40px; font-weight: 700; line-height: 1.5;',
 				),
 				'descriptionTypography' => array(
-					'font_size'      => '19',
-					'font_weight'    => '500',
-					'line_height'    => '1.3',
-					'decoration'     => '',
-					'style'          => '',
-					'generated'      => 'font-size: 19px; font-weight: 500; line-height: 1.3;',
+					'font_size'   => '19',
+					'font_weight' => '500',
+					'line_height' => '1.3',
+					'decoration'  => '',
+					'style'       => '',
+					'generated'   => 'font-size: 19px; font-weight: 500; line-height: 1.3;',
 				),
-				'descriptionAdvanced'         => array(
-					'padding' => array(
+				'descriptionAdvanced'   => array(
+					'padding'   => array(
 						'left'  => '50',
-						'right' => '50'
+						'right' => '50',
 					),
-					'margin' => array(
-						'top' => '18'
+					'margin'    => array(
+						'top' => '18',
 					),
 					'generated' => 'margin-top: 18px;padding-right: 50px;padding-left: 50px;',
-					'classes'     => ''
+					'classes'   => '',
 				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-footer .noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) .noptin-form-field {
 	height: 55px !important;
@@ -1092,7 +1324,7 @@
 	line-height: 2;
 	font-size: 20px;
 }',
-				
+
 			),
 
 		),

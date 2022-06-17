@@ -7,7 +7,7 @@
  * @var string $email_heading
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 ?>
 <h1><?php echo wp_kses_post( $email_heading ); ?></h1>

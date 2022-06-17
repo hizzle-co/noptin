@@ -9,12 +9,12 @@ defined( 'ABSPATH' ) or exit();
 
 <div class="wrap noptin noptin_addons_wrap noptin-helper" id="noptin-wrapper">
 	<?php require Noptin_COM_Helper::get_view_filename( 'html-section-nav.php' ); ?>
-	<h1 class="screen-reader-text"><?php _e( 'Noptin Extensions', 'newsletter-optin-box' ); ?></h1>
+	<h1 class="screen-reader-text"><?php esc_html_e( 'Noptin Extensions', 'newsletter-optin-box' ); ?></h1>
 
 	<?php require Noptin_COM_Helper::get_view_filename( 'html-section-notices.php' ); ?>
 
 	<div class="subscriptions-header">
-		<h2><?php _e( 'Licenses', 'newsletter-optin-box' ); ?></h2>
+		<h2><?php esc_html_e( 'Licenses', 'newsletter-optin-box' ); ?></h2>
 		<?php require Noptin_COM_Helper::get_view_filename( 'html-section-account.php' ); ?>
 		<p><?php printf( __( 'Below is a list of licenses available on your noptin.com account. To receive extension updates, please make sure the extension is installed, and its license activated and connected to your noptin.com account. Extensions can be activated from the <a href="%s">Plugins</a> screen.', 'newsletter-optin-box' ), admin_url( 'plugins.php' ) ); ?></p>
 	</div>
@@ -29,21 +29,21 @@ defined( 'ABSPATH' ) or exit();
 								<a href="<?php echo esc_url( $license->get_product_url() ); ?>" target="_blank">
 									<?php echo esc_html( $license->get_product_name() ); ?>
 								</a>
-								<p class="description"><?php $license->is_membership() ? _e( 'Membership Key: ', 'newsletter-optin-box' ) : _e( 'License Key: ', 'newsletter-optin-box' ); ?><?php echo esc_html( $license->get_license_key() ); ?></p>
+								<p class="description"><?php $license->is_membership() ? esc_html_e( 'Membership Key: ', 'newsletter-optin-box' ) : esc_html_e( 'License Key: ', 'newsletter-optin-box' ); ?><?php echo esc_html( $license->get_license_key() ); ?></p>
 							</div>
 
 							<div class="wp-list-table__ext-description">
 								<?php if ( ! $license->is_active() ) : ?>
 									<span class="renews" style="color: red;">
-										<strong><?php _e( 'Expired :(', 'newsletter-optin-box' ); ?></strong>
+										<strong><?php esc_html_e( 'Expired :(', 'newsletter-optin-box' ); ?></strong>
 									</span>
 								<?php elseif ( $license->is_lifetime() ) : ?>
 									<span class="renews" style="color: green;">
-										<strong><?php _e( 'Lifetime License', 'newsletter-optin-box' ); ?></strong>
+										<strong><?php esc_html_e( 'Lifetime License', 'newsletter-optin-box' ); ?></strong>
 									</span>
 								<?php else : ?>
 									<span class="renews" style="color: green;">
-										<strong><?php _e( 'Expires on:', 'newsletter-optin-box' ); ?></strong>
+										<strong><?php esc_html_e( 'Expires on:', 'newsletter-optin-box' ); ?></strong>
 										<strong><?php echo date_i18n( 'F jS, Y', strtotime( $license->get_expiration() ) ); ?></strong>
 									</span>
 								<?php endif; ?>
@@ -87,11 +87,11 @@ defined( 'ABSPATH' ) or exit();
 						</td>
 						<td class="wp-list-table__ext-actions">
 							<?php if ( ! $license->is_active() || ( ! $license->is_activated_on_site() && $license->is_maxed() ) ) : ?>
-								<a class="button" href="<?php echo esc_url( $license->get_product_url() ); ?>" target="_blank"><?php _e( 'Buy New', 'newsletter-optin-box' ); ?></a>
+								<a class="button" href="<?php echo esc_url( $license->get_product_url() ); ?>" target="_blank"><?php esc_html_e( 'Buy New', 'newsletter-optin-box' ); ?></a>
 							<?php elseif ( ! $license->is_activated_on_site() ) : ?>
-								<a class="button button-activate" href="<?php echo esc_url( $license->get_activation_url() ); ?>"><?php _e( 'Activate', 'newsletter-optin-box' ); ?></a>
+								<a class="button button-activate" href="<?php echo esc_url( $license->get_activation_url() ); ?>"><?php esc_html_e( 'Activate', 'newsletter-optin-box' ); ?></a>
 							<?php else : ?>
-								<a class="button button-secondary" href="<?php echo esc_url( $license->get_deactivation_url() ); ?>"><?php _e( 'Deactivate', 'newsletter-optin-box' ); ?></a>
+								<a class="button button-secondary" href="<?php echo esc_url( $license->get_deactivation_url() ); ?>"><?php esc_html_e( 'Deactivate', 'newsletter-optin-box' ); ?></a>
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -115,15 +115,15 @@ defined( 'ABSPATH' ) or exit();
 			<?php endforeach; ?>
 		<?php else : ?>
 			<tr>
-				<td colspan="3"><em><?php _e( 'Could not find any licenses on your noptin.com account', 'newsletter-optin-box' ); ?></td>
+				<td colspan="3"><em><?php esc_html_e( 'Could not find any licenses on your noptin.com account', 'newsletter-optin-box' ); ?></td>
 			</tr>
 		<?php endif; ?>
 		</tbody>
 	</table>
 
 	<?php if ( ! empty( $no_licenses ) ) : ?>
-		<h2><?php _e( 'Installed Extensions without an active license key', 'newsletter-optin-box' ); ?></h2>
-		<p><?php _e( 'Below is a list of Noptin.com products available on your site - but their license keys are either out-dated or missing.', 'newsletter-optin-box' ); ?></p>
+		<h2><?php esc_html_e( 'Installed Extensions without an active license key', 'newsletter-optin-box' ); ?></h2>
+		<p><?php esc_html_e( 'Below is a list of Noptin.com products available on your site - but their license keys are either out-dated or missing.', 'newsletter-optin-box' ); ?></p>
 
 		<table class="wp-list-table widefat fixed striped">
 			<?php /* Extensions without a license key. */ ?>
@@ -138,7 +138,7 @@ defined( 'ABSPATH' ) or exit();
 							</div>
 						</td>
 						<td class="wp-list-table__ext-actions">
-							<span class="button button-secondary"><?php _e( 'INACTIVE', 'newsletter-optin-box' ); ?></span>
+							<span class="button button-secondary"><?php esc_html_e( 'INACTIVE', 'newsletter-optin-box' ); ?></span>
 						</td>
 					</tr>
 

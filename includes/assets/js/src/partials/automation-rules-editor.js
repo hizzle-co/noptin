@@ -1,13 +1,4 @@
-import noptinSelectComponent from './noptin-select.vue'
-
 var rulesApp = new Vue({
-
-	components: {
-
-		// Select2.
-		'noptin-select': noptinSelectComponent,
-
-	},
 
 	el: '#noptin-automation-rule-editor',
 

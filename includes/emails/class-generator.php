@@ -146,7 +146,7 @@ class Noptin_Email_Generator {
 		$content = trim( $this->content );
 
 		// Maybe add an unsubscribe url.
-		if ( false === stripos( $content, '[[unsubscribe_url]]')) {
+		if ( false === stripos( $content, '[[unsubscribe_url]]' ) ) {
 			$content .= "\n\n[" . __( 'Unsubscribe', 'newsletter-optin-box' ) . ']([[unsubscribe_url]])';
 		}
 
@@ -191,9 +191,9 @@ class Noptin_Email_Generator {
 	public function generate_normal_email() {
 
 		// Prepare vars.
-		$content       = $this->content;
-		$template      = $this->template;
-		$email         = $content;
+		$content  = $this->content;
+		$template = $this->template;
+		$email    = $content;
 
 		// Ensure the chosen template is supported.
 		if ( ! array_key_exists( $template, get_noptin_email_templates() ) ) {
@@ -317,7 +317,7 @@ class Noptin_Email_Generator {
 		// Replace URLs with new trackable ones.
 		$_content = preg_replace_callback(
 			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
-			array( $this, '_make_links_trackable_callback' ),
+			array( $this, 'make_links_trackable_callback' ),
 			$content
 		);
 
@@ -336,7 +336,7 @@ class Noptin_Email_Generator {
 	 *
 	 * @param array $matches
 	 */
-	public function _make_links_trackable_callback( $matches ) {
+	public function make_links_trackable_callback( $matches ) {
 
 		// Prepare base tracking url && args.
 		$url = str_replace( '&amp;', '&', $matches[2] );
@@ -346,7 +346,7 @@ class Noptin_Email_Generator {
 
 			$args = array_merge(
 				$this->recipient,
-				array( 'to'  => $url )
+				array( 'to' => $url )
 			);
 
 			$url = get_noptin_action_url( 'email_click', noptin_encrypt( wp_json_encode( $args ) ) );
@@ -409,9 +409,9 @@ class Noptin_Email_Generator {
 		if ( $this->can_track() ) {
 
 			return preg_replace_callback(
-				"/<\/body[^>]*>/",
+				'/<\/body[^>]*>/',
 				function( $matches ) {
-					return $this->get_tracker() . $matches[0] ;
+					return $this->get_tracker() . $matches[0];
 				},
 				$content,
 				1
@@ -445,7 +445,7 @@ class Noptin_Email_Generator {
 		if ( ! empty( $this->preview_text ) ) {
 
 			return preg_replace_callback(
-				"/<body[^>]*>/",
+				'/<body[^>]*>/',
 				function( $matches ) {
 					return $matches[0] . '<div class="preheader" style="display: none !important; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">' . esc_html( $this->preview_text ) . '</div>';
 				},

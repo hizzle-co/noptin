@@ -150,21 +150,21 @@ class Noptin_Email_Manager {
 			'post_type'      => 'noptin-campaign',
 			'fields'         => 'ids',
 			'date_query'     => array(
-				'before' => "-$save_days days", 
+				'before' => "-$save_days days",
 			),
-			'meta_query'  => array(
+			'meta_query'     => array(
 				array(
-					'key'     => 'completed',
-					'value'   => '1',
+					'key'   => 'completed',
+					'value' => '1',
 				),
 				array(
 					'key'   => 'campaign_type',
 					'value' => 'newsletter',
-				)
+				),
 			),
 		);
 
-		foreach( get_posts( $args ) as $post_id ) {
+		foreach ( get_posts( $args ) as $post_id ) {
 			wp_delete_post( $post_id, true );
 		}
 

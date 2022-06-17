@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
  */
 
 $email_type = $campaign->get_email_type();
-$template = $campaign->get_template();
+$template   = $campaign->get_template();
 
 ?>
 
@@ -29,7 +29,7 @@ $template = $campaign->get_template();
 
 		<tr>
 			<th scope="row">
-				<label for="noptin-automated-email-template"><?php _e( 'Template', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-automated-email-template"><?php esc_html_e( 'Template', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<select name="noptin_email[template]" id="noptin-automated-email-template" class="widefat">
@@ -42,7 +42,7 @@ $template = $campaign->get_template();
 
 		<tr>
 			<th scope="row">
-				<label for="noptin-automated-email-heading"><?php _e( 'Heading', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-automated-email-heading"><?php esc_html_e( 'Heading', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<input type="text" id="noptin-automated-email-heading" name="noptin_email[heading]" value="<?php echo esc_attr( $campaign->get( 'heading' ) ); ?>" class="widefat">
@@ -52,7 +52,7 @@ $template = $campaign->get_template();
 
 		<tr>
 			<th scope="row">
-				<label for="noptin-email-preview-text"><?php _e( 'Preview Text', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-email-preview-text"><?php esc_html_e( 'Preview Text', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<input type="text" id="noptin-email-preview-text" name="noptin_email[preview_text]" value="<?php echo esc_attr( $campaign->get( 'preview_text' ) ); ?>" class="widefat">
@@ -62,7 +62,7 @@ $template = $campaign->get_template();
 
 		<tr>
 			<th scope="row">
-				<label for="noptin-automated-email-permission-text"><?php _e( 'Footer Text', 'newsletter-optin-box' ); ?></label>
+				<label for="noptin-automated-email-permission-text"><?php esc_html_e( 'Footer Text', 'newsletter-optin-box' ); ?></label>
 			</th>
 			<td>
 				<textarea id="noptin-automated-email-permission-text" name="noptin_email[footer_text]" class="widefat" placeholder="<?php echo esc_attr( get_noptin_footer_text() ); ?>" rows="4"><?php echo esc_textarea( $campaign->get( 'footer_text' ) ); ?></textarea>

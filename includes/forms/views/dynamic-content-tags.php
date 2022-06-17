@@ -1,8 +1,5 @@
-<?php
-defined( 'ABSPATH' ) or exit;
+<?php defined( 'ABSPATH' ) || exit; ?>
 
-$tags = noptin()->forms->get_tags();
-?>
 <h2><?php echo esc_html__( 'Smart Tags', 'newsletter-optin-box' ); ?></h2>
 
 <p>
@@ -11,13 +8,13 @@ $tags = noptin()->forms->get_tags();
 
 <table class="widefat striped">
 	<?php
-	foreach ( $tags as $tag => $config ) {
-		$tag = ! empty( $config['example'] ) ? $config['example'] : $tag;
+	foreach ( noptin()->forms->get_tags() as $form_tag => $config ) {
+		$form_tag = ! empty( $config['example'] ) ? $config['example'] : $form_tag;
 		?>
 		<tr>
 			<td>
-				<input type="text" class="widefat" value="<?php echo esc_attr( sprintf( '{%s}', $tag ) ); ?>" readonly="readonly" onfocus="this.select();" />
-				<p class="description" style="margin-bottom:0;"><?php echo strip_tags( $config['description'], '<strong><b><em><i><a><code>' ); ?></p>
+				<input type="text" class="widefat" value="<?php echo esc_attr( sprintf( '{%s}', $form_tag ) ); ?>" readonly="readonly" onfocus="this.select();" />
+				<p class="description" style="margin-bottom:0;"><?php echo wp_kses_post( $config['description'] ); ?></p>
 			</td>
 		</tr>
 		<?php

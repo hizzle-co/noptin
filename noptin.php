@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         1.7.3
+ * Version:         1.7.4
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -25,9 +25,7 @@
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
 	define( 'NOPTIN_VERIFY_NONCE', false );
@@ -47,7 +45,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.7.3';
+	public $version = '1.7.4';
 
 	/**
 	 * The current database version.
@@ -113,7 +111,7 @@ class Noptin {
 
 	/**
 	 * A state of the art email sender.
-	 * 
+	 *
 	 * @var Noptin_Mailer
 	 * @since 1.2.8
 	 */
@@ -121,15 +119,15 @@ class Noptin {
 
 	/**
 	 * Automation Rules.
-	 * 
+	 *
 	 * @var Noptin_Automation_Rules
 	 * @since       1.2.8
 	 */
 	public $automation_rules;
-	
+
 	/**
 	 * The class responsible for registering various hooks and filters.
-	 * 
+	 *
 	 * @var Noptin_Hooks
 	 * @since       1.2.9
 	 */
@@ -137,7 +135,7 @@ class Noptin {
 
 	/**
 	 * The main admin class..
-	 * 
+	 *
 	 * @var Noptin_Admin
 	 * @since       1.2.9
 	 */
@@ -145,7 +143,7 @@ class Noptin {
 
 	/**
 	 * The main custom fields class.
-	 * 
+	 *
 	 * @var Noptin_Custom_Fields
 	 * @since       1.5.5
 	 */
@@ -314,11 +312,11 @@ class Noptin {
 
 	/**
 	 * Load integrations after plugins are loaded.
-	 * 
+	 *
 	 * @access      public
 	 * @since       1.3.3
 	 */
-	public function plugins_loaded () {
+	public function plugins_loaded() {
 		$this->integrations = new Noptin_Integrations();
 	}
 
@@ -406,7 +404,7 @@ class Noptin {
 			"$plugin_path/includes/automation-rules",
 			"$plugin_path/includes/automation-rules/actions",
 			"$plugin_path/includes/automation-rules/triggers",
-			"$plugin_path/includes/libraries/connections/"
+			"$plugin_path/includes/libraries/connections/",
 		);
 
 		foreach ( apply_filters( 'noptin_autoload_locations', $locations ) as $location ) {
@@ -415,7 +413,6 @@ class Noptin {
 				include trailingslashit( $location ) . $file_name;
 				break;
 			}
-
 		}
 
 	}
@@ -463,17 +460,13 @@ class Noptin {
 				// Check if the table was created.
 				if ( call_user_func( $function ) ) {
 					update_option( $option, 1 );
-				}
 
-				// If not, create the table.
-				else {
+					// If not, create the table.
+				} else {
 					new Noptin_Install( $table );
 				}
-
 			}
-
 		}
-
 	}
 
 	/**
@@ -484,7 +477,7 @@ class Noptin {
 	 * Locales found in:
 	 *      - WP_LANG_DIR/plugins/newsletter-optin-box-LOCALE.mo
 	 *      - WP_PLUGIN_DIR/newsletter-optin-box/languages/newsletter-optin-box-LOCALE.mo
-	 * 
+	 *
 	 * @since 1.1.9
 	 */
 	public function load_plugin_textdomain() {

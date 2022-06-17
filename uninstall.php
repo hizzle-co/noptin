@@ -4,27 +4,17 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
+/**@var wpdb $wpdb */
 global $wpdb;
 
-// Delete the actions page.
-$page = get_option( 'noptin_actions_page' );
-if ( is_numeric( $page ) ) {
-	wp_delete_post( $page, true );
-}
 
 // Delete options.
 $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'noptin\_%';" );
 
 // Delete tables.
-$tables = array(
-	"{$wpdb->prefix}noptin_subscribers",
-	"{$wpdb->prefix}noptin_subscriber_meta",
-	"{$wpdb->prefix}noptin_automation_rules",
-);
-
-foreach ( $tables as $table ) {
-	$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-}
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_subscribers" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_subscriber_meta" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_automation_rules" );
 
 // Delete newsletters.
 $wpdb->query(

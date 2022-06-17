@@ -49,7 +49,7 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		// Invoice.
 		add_action( 'getpaid_checkout_invoice_updated', array( $this, 'add_order_subscriber' ), $this->priority );
 
-		// Items.
+		// Invoice Items.
 		// add_action( 'getpaid_update_item', array( $this, 'product_updated' ), $this->priority );
 		// add_action( 'getpaid_new_item', array( $this, 'product_updated' ), $this->priority );
 		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
@@ -153,7 +153,7 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 	 * @since 1.4.1
 	 * @return string
 	 */
-	public function get_checkbox_markup( array $html_attrs = array() ) {
+	public function get_checkbox_markup( $html_attrs = array() ) {
 
 		// Abort if we're not displaying a checkbox.
 		if ( ! $this->can_show_checkbox() ) {
@@ -167,16 +167,17 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		do_action( 'noptin_integration_before_subscription_checkbox_wrapper', $this );
 		do_action( 'noptin_integration_' . $this->slug . '_before_subscription_checkbox_wrapper', $this );
 
-		echo aui()->input(
+		aui()->input(
 			array(
-				'type'       => 'checkbox',
-				'name'       => 'noptin-subscribe',
-				'id'         => esc_attr( 'noptin' ) . uniqid( '_' ),
-				'class'      => sprintf( ' noptin-integration-subscription-checkbox noptin-integration-subscription-checkbox-%s', $this->slug ),
-				'required'   => false,
-				'label'      => $this->get_label_text(),
-				'value'      => 1,
-			)
+				'type'     => 'checkbox',
+				'name'     => 'noptin-subscribe',
+				'id'       => esc_attr( 'noptin' ) . uniqid( '_' ),
+				'class'    => sprintf( ' noptin-integration-subscription-checkbox noptin-integration-subscription-checkbox-%s', $this->slug ),
+				'required' => false,
+				'label'    => $this->get_label_text(),
+				'value'    => 1,
+			),
+			true
 		);
 
 		// Checkbox closing wrapper.
@@ -245,17 +246,17 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 			);
 		}
 
-		$noptin_fields['email']             = $invoice->get_email();
-		$noptin_fields['name']              = $invoice->get_full_name();
-		$noptin_fields['phone']             = $invoice->get_phone();
-		$noptin_fields['company']           = $invoice->get_company();
-		$noptin_fields['address_1']         = $invoice->get_address();
-		$noptin_fields['postcode']          = $invoice->get_zip();
-		$noptin_fields['city']              = $invoice->get_city();
-		$noptin_fields['state']             = $invoice->get_state();
-		$noptin_fields['country']           = $invoice->get_country();
-		$noptin_fields['wp_user_id']        = $invoice->get_customer_id();
-		$noptin_fields['ip_address']        = $invoice->get_user_ip();
+		$noptin_fields['email']      = $invoice->get_email();
+		$noptin_fields['name']       = $invoice->get_full_name();
+		$noptin_fields['phone']      = $invoice->get_phone();
+		$noptin_fields['company']    = $invoice->get_company();
+		$noptin_fields['address_1']  = $invoice->get_address();
+		$noptin_fields['postcode']   = $invoice->get_zip();
+		$noptin_fields['city']       = $invoice->get_city();
+		$noptin_fields['state']      = $invoice->get_state();
+		$noptin_fields['country']    = $invoice->get_country();
+		$noptin_fields['wp_user_id'] = $invoice->get_customer_id();
+		$noptin_fields['ip_address'] = $invoice->get_user_ip();
 
 		if ( ! empty( $noptin_fields['country'] ) ) {
 			$noptin_fields['country_short'] = $noptin_fields['country'];
@@ -293,25 +294,26 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return array(
-			'id'       => $invoice->get_id(),
-			'order_id' => $invoice->get_id(),
-			'total'    => $invoice->get_total(),
-			'tax'      => $invoice->get_total_tax(),
-			'fees'     => $invoice->get_total_fees(),
-			'currency' => $invoice->get_currency(),
-			'discount' => $invoice->get_total_discount(),
-			'edit_url' => get_edit_post_link( $invoice->get_id() ),
-			'view_url' => $invoice->get_view_url(),
-			'pay_url'  => $invoice->get_checkout_payment_url(),
-			'status'   => str_replace( 'wpi-', '', $invoice->get_status() ),
+			'id'           => $invoice->get_id(),
+			'order_id'     => $invoice->get_id(),
+			'total'        => $invoice->get_total(),
+			'tax'          => $invoice->get_total_tax(),
+			'fees'         => $invoice->get_total_fees(),
+			'currency'     => $invoice->get_currency(),
+			'discount'     => $invoice->get_total_discount(),
+			'edit_url'     => get_edit_post_link( $invoice->get_id() ),
+			'view_url'     => $invoice->get_view_url(),
+			'pay_url'      => $invoice->get_checkout_payment_url(),
+			'status'       => str_replace( 'wpi-', '', $invoice->get_status() ),
 
-			'title'    => sprintf(
-				esc_html__( 'Invoice #%s from %s', 'newsletter-optin-box' ),
+			'title'        => sprintf(
+				// translators: %1 is the invoice number, %2 is the customer email.
+				esc_html__( 'Invoice #%1$s from %2$s', 'newsletter-optin-box' ),
 				$invoice->get_number(),
 				$invoice->get_email()
 			),
 
-			'items'    => array_map(
+			'items'        => array_map(
 				array( $this, 'get_order_item_details' ),
 				$invoice->get_items()
 			),
@@ -352,9 +354,9 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		$args = array(
-			'data'             => array(
+			'data'           => array(
 
-				'ID'           => array(
+				'ID' => array(
 					'type'     => 'post_data',
 					'function' => 'COUNT',
 					'name'     => 'count',
@@ -362,9 +364,9 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 				),
 
 			),
-			'where'            => array(
+			'where'          => array(
 
-				'author'       => array(
+				'author' => array(
 					'type'     => 'post_data',
 					'value'    => absint( $customer_id ),
 					'key'      => 'posts.post_author',
@@ -391,18 +393,18 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		$args = array(
-			'data'             => array(
+			'data'           => array(
 
-				'total'        => array(
+				'total' => array(
 					'type'     => 'invoice_data',
 					'function' => 'SUM',
 					'name'     => 'total_sales',
-				)
+				),
 
 			),
-			'where'            => array(
+			'where'          => array(
 
-				'author'       => array(
+				'author' => array(
 					'type'     => 'post_data',
 					'value'    => absint( $customer_id ),
 					'key'      => 'posts.post_author',
@@ -429,16 +431,16 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		$args = array(
-			'data'             => array(
-				'quantity'     => array(
+			'data'           => array(
+				'quantity' => array(
 					'type'     => 'invoice_item',
 					'function' => 'SUM',
 					'name'     => 'invoice_item_count',
 				),
 			),
-			'where'         => array(
+			'where'          => array(
 
-				'item_id'      => array(
+				'item_id' => array(
 					'type'     => 'invoice_item',
 					'value'    => absint( $product_id ),
 					'key'      => 'invoice_items.item_id',
@@ -496,7 +498,7 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 				'numberposts' => -1,
 				'fields'      => 'ids',
 				'status'      => 'publish',
-				'post_type'   => 'wpi_item'
+				'post_type'   => 'wpi_item',
 			)
 		);
 
@@ -517,14 +519,14 @@ class Noptin_GetPaid extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		$details = array(
-			'id'                 => $item->get_id(),
-			'name'               => $item->get_name(),
-			'description'        => $item->get_description(),
-			'url'                => get_permalink( $item->get_id() ),
-			'price'              => $item->get_price(),
-			'type'               => $item->get_type(),
-			'sku'                => $item->get_id(),
-			'images'             => array( get_the_post_thumbnail_url( $item->get_id() ) ),
+			'id'          => $item->get_id(),
+			'name'        => $item->get_name(),
+			'description' => $item->get_description(),
+			'url'         => get_permalink( $item->get_id() ),
+			'price'       => $item->get_price(),
+			'type'        => $item->get_type(),
+			'sku'         => $item->get_id(),
+			'images'      => array( get_the_post_thumbnail_url( $item->get_id() ) ),
 		);
 
 		$quantity = get_post_meta( $item->get_id(), '_stock', true );

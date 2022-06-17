@@ -46,9 +46,9 @@ class Noptin_Custom_Field_Text extends Noptin_Custom_Field_Type {
 				class="noptin-text noptin-form-field"
 				<?php if ( empty( $args['vue'] ) ) : ?>
 					placeholder="<?php echo esc_attr( $args['label'] ); ?>"
-				<?php else: ?>
+				<?php else : ?>
 					:placeholder="field.type.label"
-				<?php endif;?>
+				<?php endif; ?>
 				<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 			/>
 

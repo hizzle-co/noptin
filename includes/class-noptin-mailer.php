@@ -71,7 +71,7 @@ class Noptin_Mailer {
 		}
 
 		// Ensure that a few variables are set.
-		$data['subscriber']      = empty( $data['subscriber'] ) ? null : $data['subscriber'];;
+		$data['subscriber']      = empty( $data['subscriber'] ) ? null : $data['subscriber'];
 		$data['email_subject']   = $this->get_subject( $data );
 		$data['title']           = $data['email_subject'];
 		$data['logo_url']        = $this->get_logo_url( $data );
@@ -183,14 +183,14 @@ class Noptin_Mailer {
 	public function get_default_merge_tags() {
 
 		$default_merge_tags = array(
-			'date'             => date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ),
-			'year'             => date( 'Y', current_time( 'timestamp' ) ),
+			'date'             => date_i18n( get_option( 'date_format' ) ),
+			'year'             => current_time( 'Y' ),
 			'blog_name'        => get_bloginfo( 'name' ),
 			'blog_description' => get_bloginfo( 'description' ),
 			'home_url'         => get_home_url(),
 			'noptin'   		   => sprintf(
 				'<a target="_blank" href="https://noptin.com/?utm_medium=plugin-dashboard&utm_campaign=powered-by&utm_source=%s">Noptin</a>',
-				urlencode( esc_url( get_home_url() ) )
+				rawurlencode( esc_url( get_home_url() ) )
 			),
 			'noptin_company'   => get_noptin_option( 'company', '' ),
 		);
@@ -206,14 +206,12 @@ class Noptin_Mailer {
 
 		return apply_filters(
 			'default_noptin_footer_text',
-	
 			sprintf(
 				/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 				__( '[[blog_name]] &mdash; Powered by [[noptin]] | %1$sUnsubscribe%2$s', 'newsletter-optin-box' ),
 				'<a href="[[unsubscribe_url]]" rel="nofollow" target="_blank">',
 				'</a>'
 			)
-	
 		);
 
 	}
@@ -333,12 +331,11 @@ class Noptin_Mailer {
 		// inline css adds a body tag, which doesn't play nice if we are using a template plugin.
 		if ( ! $this->disable_template_plugins ) {
 			$matches = array();
-			preg_match( "/<body[^>]*>(.*?)<\/body>/is", $content, $matches );
+			preg_match( '/<body[^>]*>(.*?)<\/body>/is', $content, $matches );
 
 			if ( isset( $matches[1] ) ) {
 				$content = trim( $matches[1] );
 			}
-
 		}
 
 		// Filters a post processed email.
@@ -388,7 +385,7 @@ class Noptin_Mailer {
 			'preview-text',
 			'logo',
 			'body',
-			'footer'
+			'footer',
 		);
 
 		foreach ( apply_filters( 'noptin_mailer_email_sections', $sections, $data, $template, $this ) as $section ) {
@@ -425,7 +422,7 @@ class Noptin_Mailer {
 	 *
 	 */
 	public function get_template( $data ) {
-		$template = get_noptin_option( 'email_template',  'paste' );
+		$template = get_noptin_option( 'email_template', 'paste' );
 		$template = apply_filters( 'noptin_mailer_email_template', $template, $data, $this );
 
 		if ( empty( $template ) ) {
@@ -440,10 +437,10 @@ class Noptin_Mailer {
 	 */
 	public function get_headers() {
 
-		$name       = $this->get_from_name();
-		$reply_to   = $this->get_reply_to();
-		$content    = $this->get_content_type();
-		$headers    = array();
+		$name     = $this->get_from_name();
+		$reply_to = $this->get_reply_to();
+		$content  = $this->get_content_type();
+		$headers  = array();
 
 		if ( ! empty( $reply_to ) && ! empty( $name ) ) {
 			$headers = array( "Reply-To:$name <$reply_to>" );
@@ -457,13 +454,13 @@ class Noptin_Mailer {
 		}
 
 		$headers = implode( "\r\n", $headers );
-		return apply_filters( 'noptin_mailer_email_headers',  $headers, $this );
+		return apply_filters( 'noptin_mailer_email_headers', $headers, $this );
 
 	}
 
 	/**
 	 * The default emails from address.
-	 * 
+	 *
 	 * Defaults to noptin@$sitename
 	 * Some hosts will block outgoing mail from this address if it doesn't exist,
 	 * but there's no easy alternative. Defaulting to admin_email might appear to be
@@ -475,7 +472,7 @@ class Noptin_Mailer {
 
 		// Get the site domain and get rid of www.
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
-		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
+		if ( substr( $sitename, 0, 4 ) === 'www.' ) {
 			$sitename = substr( $sitename, 4 );
 		}
 
@@ -494,10 +491,10 @@ class Noptin_Mailer {
 	 */
 	public function get_reply_to() {
 
-		$reply_to = get_noptin_option( 'reply_to',  get_option( 'admin_email' ) );
+		$reply_to = get_noptin_option( 'reply_to', get_option( 'admin_email' ) );
 
 		if ( ! is_email( $reply_to ) && ! empty( $reply_to ) ) {
-			$reply_to =  get_option( 'admin_email' );
+			$reply_to = get_option( 'admin_email' );
 		}
 
 		return apply_filters( 'noptin_mailer_email_reply_to', $reply_to, $this );
@@ -515,7 +512,7 @@ class Noptin_Mailer {
 		$from_address = get_noptin_option( 'from_email' );
 
 		if ( is_email( $from_address ) ) {
-			$email =  $from_address;
+			$email = $from_address;
 		}
 
 		return apply_filters( 'noptin_mailer_email_from_address', $email, $this );
@@ -530,10 +527,10 @@ class Noptin_Mailer {
 	 * @return string The email from name
 	 */
 	public function get_from_name() {
-		$from_name = get_noptin_option( 'from_name',  get_option( 'blogname' ) );
+		$from_name = get_noptin_option( 'from_name', get_option( 'blogname' ) );
 
 		if ( empty( $from_name ) ) {
-			$from_name =  get_bloginfo( 'name' );
+			$from_name = get_bloginfo( 'name' );
 		}
 
 		return apply_filters( 'noptin_mailer_email_from_name', esc_html( $from_name ), $this );
@@ -649,7 +646,7 @@ class Noptin_Mailer {
 					/* Translators: %1$s Email address, %2$s Email subject. */
 					__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
 					sanitize_email( $data['to'] ),
-					wp_specialchars_decode ( $data['subject'] )
+					wp_specialchars_decode( $data['subject'] )
 				)
 			);
 		}

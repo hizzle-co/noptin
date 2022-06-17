@@ -90,9 +90,9 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Thanks for purchasing [[product.name]]. Please reply to this email and let us know what you think of the product.', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Cheers!', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Thanks for purchasing [[product.name]]. Please reply to this email and let us know what you think of the product.', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Cheers!', 'newsletter-optin-box' ); ?></p>
 		<p>[[blog_name]]</p>
 		<?php
 		return ob_get_clean();
@@ -122,7 +122,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function render_metabox( $campaign ) {
 
 		// Fetch all products.
-		$integrations =  noptin()->integrations->integrations;
+		$integrations = noptin()->integrations->integrations;
 
 		if ( empty( $integrations['woocommerce'] ) ) {
 			return;
@@ -144,11 +144,11 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 			<p>
 				<label>
 					<strong class="noptin-label-span">
-						<?php _e( 'Send this email when a product...', 'newsletter-optin-box' ); ?>
+						<?php esc_html_e( 'Send this email when a product...', 'newsletter-optin-box' ); ?>
 					</strong>
 					<select name="noptin_email[product_action]" class="widefat">
-						<option <?php selected( $action, 'buy' ); ?> value="buy"><?php esc_html_e( 'is bought', 'newsletter-optin-box' ) ?></option>
-						<option <?php selected( $action, 'refund' ); ?> value="refund"><?php esc_html_e( 'is refunded', 'newsletter-optin-box' ) ?></option>
+						<option <?php selected( $action, 'buy' ); ?> value="buy"><?php esc_html_e( 'is bought', 'newsletter-optin-box' ); ?></option>
+						<option <?php selected( $action, 'refund' ); ?> value="refund"><?php esc_html_e( 'is refunded', 'newsletter-optin-box' ); ?></option>
 					</select>
 				</label>
 			</p>
@@ -156,10 +156,10 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 			<p>
 				<label>
 					<strong class="noptin-label-span">
-						<?php _e( 'Product', 'newsletter-optin-box' ); ?>
+						<?php esc_html_e( 'Product', 'newsletter-optin-box' ); ?>
 					</strong>
 					<select name="noptin_email[product]" class="widefat">
-						<option <?php selected( empty( $selected_product ) ); ?> value="" disabled><?php esc_html_e( 'Select a WooCommerce product', 'newsletter-optin-box' ) ?></option>
+						<option <?php selected( empty( $selected_product ) ); ?> value="" disabled><?php esc_html_e( 'Select a WooCommerce product', 'newsletter-optin-box' ); ?></option>
 
 						<?php foreach ( $products as $product ) : ?>
 
@@ -181,7 +181,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 			<p>
 				<label>
 					<input type="checkbox" name="noptin_email[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
-					<strong><?php _e( 'Only send the first time someone buys this product?', 'newsletter-optin-box' ); ?></strong>
+					<strong><?php esc_html_e( 'Only send the first time someone buys this product?', 'newsletter-optin-box' ); ?></strong>
 				</label>
 			</p>
 
@@ -208,6 +208,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		if ( ! $campaign->sends_immediately() ) {
 
 			$about = sprintf(
+				// translators: %s is the sending delay.
 				__( 'Sends %s after', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
@@ -223,7 +224,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		if ( ! empty( $new_customer ) ) {
 			$about .= ' ' . __( 'a first-time customer', 'newsletter-optin-box' );
 		} else {
-			$about .= ' ' . __( "a customer", 'newsletter-optin-box' );
+			$about .= ' ' . __( 'a customer', 'newsletter-optin-box' );
 		}
 
 		$about .= ' ';
@@ -231,7 +232,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 
 		// Prepare selected status.
 		$product = get_the_title( $selected_product );
-		$about  .= ' ' . '<em style="color: #607D8B;">' . esc_html( $product ) . '</em>';
+		$about  .= ' <em style="color: #607D8B;">' . esc_html( $product ) . '</em>';
 
 		return $about;
 
@@ -245,10 +246,10 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Order', 'noptin' )      => $this->get_order_merge_tags(),
-			__( 'Customer', 'noptin' )   => $this->get_customer_merge_tags(),
-			__( 'Product', 'noptin' )    => $this->get_product_merge_tags(),
-			__( 'Order Item', 'noptin' ) => $this->get_order_item_merge_tags(),
+			__( 'Order', 'newsletter-optin-box' )      => $this->get_order_merge_tags(),
+			__( 'Customer', 'newsletter-optin-box' )   => $this->get_customer_merge_tags(),
+			__( 'Product', 'newsletter-optin-box' )    => $this->get_product_merge_tags(),
+			__( 'Order Item', 'newsletter-optin-box' ) => $this->get_order_item_merge_tags(),
 		);
 
 	}
@@ -279,10 +280,9 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() &&  $this->is_automation_valid_for( $automation, $order, $product_id, 'buy', $woocommerce ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $product_id, 'buy', $woocommerce ) ) {
 				$this->schedule_notification( $item['item_id'], $automation );
 			}
-
 		}
 
 	}
@@ -313,10 +313,9 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $product_id, 'refund', $woocommerce ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $product_id, 'refund', $woocommerce ) ) {
 				$this->schedule_notification( $item['item_id'], $automation );
 			}
-
 		}
 
 	}
@@ -333,7 +332,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function is_automation_valid_for( $automation, $order, $product_id, $action, $woocommerce ) {
 
 		// Abort if no product selected ...
-		if ( (int) $automation->get( 'product' ) != $product_id ) {
+		if ( (int) $automation->get( 'product' ) !== $product_id ) {
 			return false;
 		}
 

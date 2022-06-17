@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 GFForms::include_feed_addon_framework();
 
@@ -74,7 +72,7 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 	 */
     public static function get_instance() {
 
-        if ( self::$_instance === null ) {
+        if ( null === self::$_instance ) {
             self::$_instance = new self();
         }
 
@@ -110,15 +108,15 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 			),
 
             array(
-                'name'       => 'name',
-				'label'      => __( 'Subscriber Name', 'newsletter-optin-box' ),
+                'name'  => 'name',
+				'label' => __( 'Subscriber Name', 'newsletter-optin-box' ),
             ),
 
             array(
                 'name'       => 'GDPR_consent',
 				'label'      => __( 'GDPR Consent', 'newsletter-optin-box' ),
 				'field_type' => array( 'consent' ),
-			)
+			),
 
         );
 
@@ -126,11 +124,10 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 
             if ( ! $custom_field['predefined'] ) {
                 $map_fields[] = array(
-                    'name'    => $custom_field['merge_tag'],
-                    'label'   => $custom_field['label'],
+                    'name'  => $custom_field['merge_tag'],
+                    'label' => $custom_field['label'],
                 );
             }
-
 		}
 
 		return apply_filters( 'noptin_gravity_forms_map_fields', $map_fields );
@@ -143,7 +140,7 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
      * @return string Form Settings Title
      */
     public function feed_settings_title() {
-        return esc_html__('Feed Settings', 'newsletter-optin-box');
+        return esc_html__( 'Feed Settings', 'newsletter-optin-box' );
     }
 
     /**
@@ -171,16 +168,16 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 				'type'    => 'text',
 				'name'    => 'feedName',
 				'tooltip' => __( 'Provide feed name e.g "Newsletter Subscription"', 'newsletter-optin-box' ),
-				'class'   => 'medium'
+				'class'   => 'medium',
 			),
 
-			array (
+			array(
 				'name'           => 'optinCondition',
 				'label'          => esc_html__( 'Opt-In Condition', 'newsletter-optin-box' ),
 				'checkbox_label' => __( 'Enable Condition', 'newsletter-optin-box' ),
 				'type'           => 'feed_condition',
-				'instructions'   => __( 'Only add to Noptin if', 'newsletter-optin-box' )
-			)
+				'instructions'   => __( 'Only add to Noptin if', 'newsletter-optin-box' ),
+            ),
 
 		);
 
@@ -190,8 +187,8 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 				'name'      => 'noptinFields',
             	'label'     => esc_html__( 'Map Fields', 'newsletter-optin-box' ),
             	'type'      => 'field_map',
-            	'field_map' => $this->get_map_fields()
-			)
+            	'field_map' => $this->get_map_fields(),
+            ),
 
 		);
 
@@ -204,7 +201,7 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 
 				array(
 					'fields' => apply_filters( 'noptin_gravity_forms_map_settings_fields', $map_settings ),
-				)
+                ),
 			)
 		);
 

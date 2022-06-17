@@ -97,17 +97,16 @@ class Noptin_Form_Output_Manager {
 				continue;
 			}
 
-			$atts["{$key}_list"] = $connection->get_default_list_id();
+			$atts[ "{$key}_list" ] = $connection->get_default_list_id();
 
 			if ( $connection->supports( 'tags' ) ) {
-				$atts["{$key}_tags"] = get_noptin_option( "noptin_{$key}_default_tags", '' );
+				$atts[ "{$key}_tags" ] = get_noptin_option( "noptin_{$key}_default_tags", '' );
 			}
 
 			// Secondary fields.
 			foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
-				$atts["{$key}_$secondary"] = get_noptin_option( "noptin_{$key}_default_{$secondary}", '' );
+				$atts[ "{$key}_$secondary" ] = get_noptin_option( "noptin_{$key}_default_{$secondary}", '' );
 			}
-
 		}
 
 		return $atts;
@@ -132,6 +131,17 @@ class Noptin_Form_Output_Manager {
 	 * @return string
 	 */
 	public function shortcode( $atts = array(), $content = '' ) {
+		ob_start();
+		$this->display_form( $atts );
+		return ob_get_clean();
+	}
+
+	/**
+	 * Displays an optin form based on the passed args.
+	 *
+	 * @param array $atts The atts with which to display the opt-in form.
+	 */
+	public function display_form( $atts = array() ) {
 
 		if ( ! is_array( $atts ) ) {
 			$atts = array();
@@ -151,7 +161,7 @@ class Noptin_Form_Output_Manager {
 			$atts['html_class'] = isset( $atts['html_class'] ) ? $atts['html_class'] . ' ' . $atts['className'] : $atts['className'];
 		}
 
-		if ( isset( $atts['form'] ) && -1 == $atts['form'] ) {
+		if ( isset( $atts['form'] ) && -1 === (int) $atts['form'] ) {
 			unset( $atts['form'] );
 			$atts = array_merge(
 				array(
@@ -171,7 +181,12 @@ class Noptin_Form_Output_Manager {
 			// Abort early if trying to render a legacy form.
 			if ( is_legacy_noptin_form( (int) $atts['form'] ) ) {
 				$form = new Noptin_Form_Legacy( (int) $atts['form'] );
-				return $form->can_show() ? $form->get_html() : '';
+
+				if ( $form->can_show() ) {
+					$form->display();
+				}
+
+				return;
 			}
 
 			// Use the form id as the subscriber source.
@@ -181,7 +196,7 @@ class Noptin_Form_Output_Manager {
 			$form = new Noptin_Form( (int) $atts['form'] );
 
 			if ( ! $form->can_show() ) {
-				return '';
+				return;
 			}
 
 			// Merge form settings with passed attributes.
@@ -217,7 +232,7 @@ class Noptin_Form_Output_Manager {
 		$default_atts = apply_filters( 'default_noptin_shortcode_atts', $default_atts, $atts );
 		$atts         = shortcode_atts( $default_atts, $atts, self::$shortcode );
 
-		return $this->get_form_html( $atts, $is_form_shortcode );
+		return $this->render_form( $atts, $is_form_shortcode );
 	}
 
 	/**
@@ -228,7 +243,7 @@ class Noptin_Form_Output_Manager {
 	 *
 	 * @return string
 	 */
-	protected function get_form_html( $args = array(), $is_form_shortcode = false ) {
+	protected function render_form( $args = array(), $is_form_shortcode = false ) {
 
 		// Increment count.
 		$this->count++;
@@ -247,16 +262,8 @@ class Noptin_Form_Output_Manager {
 		// Generate the form HTML.
 		$element = new Noptin_Form_Element( $this->count, $args );
 
-		/**
-		 * Filters the generated HTML markup of a newsletter subscription form.
-		 *
-		 * @since 1.6.2
-		 *
-		 * @param string $form_html The HTML markup.
-		 * @param Noptin_Form_Element $form_element Form element.
-		 * @param Noptin_Form_Output_Manager $output_manager Output manager.
-		 */
-		return apply_filters( 'noptin_form_html', $element->generate_html(), $element, $this );
+		// Display the form.
+		$element->display();
 
 	}
 

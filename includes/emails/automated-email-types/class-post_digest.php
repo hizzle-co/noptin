@@ -144,31 +144,35 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		$dates     = array();
 
-		for( $i = 1; $i < 29; $i++ ) {
+		for ( $i = 1; $i < 29; $i++ ) {
 
 			switch ( $i ) {
 
 				case 1:
 				case 21:
+					// translators: %d is the day number.
 					$label = sprintf( __( '%1$dst day', 'newsletter-optin-box' ), $i );
 					break;
 
 				case 2:
 				case 22:
+					// translators: %d is the day number.
 					$label = sprintf( __( '%1$dnd day', 'newsletter-optin-box' ), $i );
 					break;
 
 				case 3:
 				case 23:
+					// translators: %d is the day number.
 					$label = sprintf( __( '%1$drd day', 'newsletter-optin-box' ), $i );
 					break;
 
 				default:
+					// translators: %d is the day number.
 					$label = sprintf( __( '%1$dth day', 'newsletter-optin-box' ), $i );
 					break;
 			}
 
-			$dates["$i"] = $label;
+			$dates[ "$i" ] = $label;
 		}
 
 		return $dates;
@@ -197,7 +201,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		<p>
 			<label>
-				<strong class="noptin-label-span"><?php _e( 'Send this email...', 'newsletter-optin-box' ); ?></strong>
+				<strong class="noptin-label-span"><?php esc_html_e( 'Send this email...', 'newsletter-optin-box' ); ?></strong>
 
 				<span class="noptin-post-digest-frequency noptin-inline-block" style="margin-bottom: 10px;">
 					<select name="noptin_email[frequency]" id="noptin-post-digest-frequency">
@@ -207,8 +211,8 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					</select>
 				</span>
 
-				<span  class="noptin-post-digest-day noptin-inline-block" style="margin-bottom: 10px; display: <?php echo $frequency == 'weekly' ? 'inline-block' : 'none' ; ?>">
-					<?php _e( 'on', 'newsletter-optin-box' ); ?>
+				<span  class="noptin-post-digest-day noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'weekly' === $frequency ? 'inline-block' : 'none'; ?>">
+					<?php esc_html_e( 'on', 'newsletter-optin-box' ); ?>
 					<select name="noptin_email[day]">
 						<?php foreach ( $this->get_weekdays() as $key => $label ) : ?>
 							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( (string) $key, $day ); ?>><?php echo esc_html( $label ); ?></option>
@@ -216,8 +220,8 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					</select>
 				</span>
 
-				<span class="noptin-post-digest-date noptin-inline-block" style="margin-bottom: 10px; display: <?php echo $frequency == 'monthly' ? 'inline-block' : 'none' ; ?>">
-					<?php _e( 'on the', 'newsletter-optin-box' ); ?>
+				<span class="noptin-post-digest-date noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'monthly' === $frequency ? 'inline-block' : 'none'; ?>">
+					<?php esc_html_e( 'on the', 'newsletter-optin-box' ); ?>
 					<select name="noptin_email[date]">
 						<?php foreach ( $dates as $key => $label ) : ?>
 							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $date ); ?>><?php echo esc_html( $label ); ?></option>
@@ -226,7 +230,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				</span>
 
 				<span class="noptin-post-digest-time noptin-inline-block" style="margin-bottom: 10px;">
-					<?php _e( 'at', 'newsletter-optin-box' ); ?>
+					<?php esc_html_e( 'at', 'newsletter-optin-box' ); ?>
 					<input name="noptin_email[time]" class="noptin-schedule-input-time" style="width: 60px;" type="time" value="<?php echo esc_attr( $time ); ?>" placeholder="H:i">
 				</span>
 
@@ -250,10 +254,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		printf(
 			'<p>%s</p><p>%s</p>',
-			__( 'By default, this email will only send for new blog posts.', 'newsletter-optin-box' ),
+			esc_html__( 'By default, this email will only send for new blog posts.', 'newsletter-optin-box' ),
 			sprintf(
-				__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
-				"<a href='$url' target='_blank'>Ultimate Addons Pack</a>"
+				// translators: %s is the link to the Noptin addons pack.
+				esc_html__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
+				"<a href='" . esc_url( $url ) . "' target='_blank'>Ultimate Addons Pack</a>"
 			)
 		);
 
@@ -294,23 +299,22 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		}
 
 		// Get the next send date.
-		switch( $frequency ) {
+		switch ( $frequency ) {
 
 			case 'daily':
 				$today    = strtotime( "today $time" );
 				$tomorrow = strtotime( "tomorrow $time" );
 
 				// Schedule earliest possible send.
-				if ( ( $today + HOUR_IN_SECONDS ) > current_time( 'timestamp' ) ) {
+				if ( ( $today + HOUR_IN_SECONDS ) > time() ) {
 					$next_send = $today;
 				} else {
 					$next_send = $tomorrow;
-				} 
+				}
 
 				break;
 
 			case 'weekly':
-
 				if ( empty( $day ) ) {
 					$day = '0';
 				}
@@ -323,7 +327,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					'wednesday',
 					'thursday',
 					'friday',
-					'saturday'
+					'saturday',
 				);
 
 				// Abort if the day is invalid.
@@ -336,13 +340,12 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				break;
 
 			case 'monthly':
-
 				if ( empty( $date ) ) {
 					$date = '1';
 				}
 
-				$month_1 = (int) date( 'n' );
-				$year_1  = (int) date( 'Y' );
+				$month_1 = (int) current_time( 'n' );
+				$year_1  = (int) current_time( 'Y' );
 
 				$month_2 = $month_1 < 12 ? $month_1 + 1 : 1;
 				$year_2  = $month_1 < 12 ? $year_1 : $year_1 + 1;
@@ -351,7 +354,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				$date_2 = strtotime( "$year_2-$month_2-$date $time" );
 
 				// Schedule earliest possible send.
-				if ( ( $date_1 + HOUR_IN_SECONDS ) > current_time( 'timestamp' ) ) {
+				if ( ( $date_1 + HOUR_IN_SECONDS ) > time() ) {
 					$next_send = $date_1;
 				} else {
 					$next_send = $date_2;
@@ -394,7 +397,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$last_send = get_post_meta( $campaign_id, '_noptin_last_send', true );
 
 		// Don't send if we already sent today.
-		if ( ! empty( $last_send ) && date( 'Ymd', $last_send ) == current_time( 'Ymd', true ) ) {
+		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === current_time( 'Ymd', true ) ) {
 			return;
 		}
 
@@ -429,13 +432,13 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				'subscribers_query' => array(),
 				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
 				'footer_text'       => noptin_parse_email_content_tags( $campaign->get( 'footer_text' ), true ),
-				'custom_title'      => sprintf( __( '%s [%s]', 'newsletter-optin-box' ), esc_html( $campaign->name ), date_i18n( get_option( 'date_format' ) ) ),
+				'custom_title'      => sprintf( /* translators: %1 campaign name, %2 campaign date */ __( '%1$s [%2$s]', 'newsletter-optin-box' ), esc_html( $campaign->name ), date_i18n( get_option( 'date_format' ) ) ),
 			)
 		);
 
 		// Remove unrelated content.
 		foreach ( array( 'content_normal', 'content_plain_text', 'content_raw_html' ) as $content_type ) {
-			if ( $content_type !== 'content_' . $type ) {
+			if ( 'content_' . $type !== $content_type ) {
 				unset( $args[ $content_type ] );
 			}
 		}
@@ -476,7 +479,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		switch ( $campaign->get( 'frequency' ) ) {
 
 			case 'daily':
-
 				// Get posts published in the last 1 day.
 				return $this->get_posts(
 					$campaign,
@@ -487,14 +489,12 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 						'orderby'        => 'date',
 						'order'          => 'DESC',
 						'date_query'     => array(
-							'after' => date( 'Y-m-d', strtotime( '-1 day' ) ),
+							'after' => gmdate( 'Y-m-d', strtotime( '-1 day' ) ),
 						),
 					)
 				);
-				break;
 
 			case 'weekly':
-
 				// Get posts published in the last 7 days.
 				return $this->get_posts(
 					$campaign,
@@ -505,14 +505,12 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 						'orderby'        => 'date',
 						'order'          => 'DESC',
 						'date_query'     => array(
-							'after' => date( 'Y-m-d', strtotime( '-7 days' ) ),
+							'after' => gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
 						),
 					)
 				);
-				break;
 
 			case 'monthly':
-
 				// Get posts published in the last 30 days.
 				return $this->get_posts(
 					$campaign,
@@ -523,7 +521,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 						'orderby'        => 'date',
 						'order'          => 'DESC',
 						'date_query'     => array(
-							'after' => date( 'Y-m-d', strtotime( '-30 days' ) ),
+							'after' => gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
 						),
 					)
 				);
@@ -555,12 +553,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$next_send = get_post_meta( $campaign->id, '_noptin_next_send', true );
 
 		if ( $next_send ) {
-			$next_send = $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-			$next_send = '<p class="noptin-list-table-misc noptin-tip" title="' . esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send ) ) . '">' . esc_html(
+			$next_send = '<p class="noptin-list-table-misc noptin-tip" title="' . esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ) . '">' . esc_html(
 				sprintf(
 					// Translators: human friendly diff time.
 					__( 'Next send in %s', 'newsletter-optin-box' ),
-					human_time_diff( current_time( 'timestamp' ), $next_send )
+					human_time_diff( $next_send )
 				)
 			) . '</p>';
 		}
@@ -574,34 +571,31 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 			case 'daily':
 				return sprintf(
+					// translators: %1 is the time.
 					__( 'Sends a digest of your latest content every day at %s', 'newsletter-optin-box' ),
 					esc_html( $time )
 				) . $next_send;
-				break;
 
 			case 'weekly':
-
 				return sprintf(
+					// translators: %1 is the day, %2 is the time.
 					__( 'Sends a weekly digest of your latest content every %1$s at %2$s', 'newsletter-optin-box' ),
 					$GLOBALS['wp_locale']->get_weekday( (int) $campaign->get( 'day' ) ),
 					esc_html( $time )
 				) . $next_send;
-				break;
 
 			case 'monthly':
-
 				$dates = $this->get_month_days();
 				$date  = (string) $campaign->get( 'date' );
 				return sprintf(
+					// translators: %1 is the day, %2 is the time.
 					__( 'Sends a digest of your latest content on the %1$s of every month at %2$s', 'newsletter-optin-box' ),
 					isset( $dates[ $date ] ) ? $dates[ $date ] : $dates['1'],
 					esc_html( $time )
 				) . $next_send;
-				break;
 
 			default:
 				return $about;
-				break;
 		}
 
 	}
@@ -614,7 +608,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Digest', 'noptin' )    => array(
+			__( 'Digest', 'newsletter-optin-box' ) => array(
 
 				'post_digest' => array(
 					'description' => __( 'Displays your latest content.', 'newsletter-optin-box' ),
@@ -652,21 +646,21 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * Get posts html to display.
 	 *
 	 * @param string $template
-	 * @param WP_Post[] $posts
+	 * @param WP_Post[] $campaign_posts
 	 *
 	 * @return string
 	 */
-	public function get_posts_html( $template = 'grid', $posts = array() ) {
+	public function get_posts_html( $template = 'grid', $campaign_posts = array() ) {
 
 		// Allow overwriting this.
-		$html = apply_filters( 'noptin_post_digest_html', null, $template, $posts );
+		$html = apply_filters( 'noptin_post_digest_html', null, $template, $campaign_posts );
 
 		if ( null !== $html ) {
 			return $html;
 		}
 
 		ob_start();
-		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', compact( 'posts' ) );
+		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', compact( 'campaign_posts' ) );
 		return ob_get_clean();
 	}
 

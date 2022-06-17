@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with other products and services
@@ -40,7 +38,6 @@ class Noptin_Integrations {
 			if ( did_action( $action ) ) {
 				call_user_func( array( $this, $method ) );
 			}
-
 		}
 
 		// WooCommerce integration.
@@ -200,7 +197,7 @@ class Noptin_Integrations {
 		if ( did_action( 'wpforms_loaded' ) ) {
 			$sources['WPForms'] = 'WPForms';
 		}
-		
+
 		if ( did_action( 'nf_init' ) ) {
 			$sources['Ninja Forms'] = 'Ninja Forms';
 		}

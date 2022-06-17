@@ -101,7 +101,7 @@ class Noptin_Newsletter_Email {
 
 			// Optional created date.
 			if ( ! empty( $args['created'] ) ) {
-				$this->created = date( 'Y-m-d H:i:s', strtotime( $args['created'] ) );
+				$this->created = gmdate( 'Y-m-d H:i:s', strtotime( $args['created'] ) );
 				unset( $args['created'] );
 			}
 
@@ -149,7 +149,7 @@ class Noptin_Newsletter_Email {
 		// Fetch value.
 		if ( isset( $this->$key ) ) {
 			$value = $this->$key;
-		} else if ( $this->is_legacy ) {
+		} elseif ( $this->is_legacy ) {
 			$value = $this->exists() ? '' : get_post_meta( $this->id, $key, true );
 		} else {
 			$value = isset( $this->options[ $key ] ) ? $this->options[ $key ] : '';
@@ -208,7 +208,7 @@ class Noptin_Newsletter_Email {
 	public function get_sender() {
 
 		$sender = $this->get( 'email_sender' );
-		$sender = in_array( $sender, array_keys( get_noptin_email_senders() ) ) ? $sender : 'noptin';
+		$sender = in_array( $sender, array_keys( get_noptin_email_senders() ), true ) ? $sender : 'noptin';
 		return apply_filters( 'noptin_email_sender', $sender, $this );
 	}
 
@@ -225,7 +225,7 @@ class Noptin_Newsletter_Email {
 		}
 
 		$email_type = $this->get( 'email_type' );
-		return in_array( $email_type, array_keys( get_noptin_email_types() ) ) ? $email_type : 'normal';
+		return in_array( $email_type, array_keys( get_noptin_email_types() ), true ) ? $email_type : 'normal';
 	}
 
 	/**
@@ -242,7 +242,7 @@ class Noptin_Newsletter_Email {
 
 		// Read from settings.
 		if ( empty( $template ) ) {
-			$template = get_noptin_option( 'email_template',  'paste' );
+			$template = get_noptin_option( 'email_template', 'paste' );
 		}
 
 		// Default to the paste template.
@@ -278,7 +278,7 @@ class Noptin_Newsletter_Email {
 		// Abort if this is a legacy email type.
 		if ( $this->is_legacy ) {
 
-			if ( ! $this->exists() || $email_type !== 'normal' ) {
+			if ( ! $this->exists() || 'normal' !== $email_type ) {
 				return '';
 			}
 
@@ -374,15 +374,15 @@ class Noptin_Newsletter_Email {
 			'post_status'   => $this->status,
 			'post_content'  => $this->get_content( $this->get_email_type() ),
 			'meta_input'    => array(
-				'campaign_type'   => 'newsletter',
-				'campaign_data'   => $this->options,
-			)
+				'campaign_type' => 'newsletter',
+				'campaign_data' => $this->options,
+			),
 		);
 
 		// Are we scheduling the campaign?
-		if ( 'publish' === $this->status && ! empty( $_POST['schedule-date'] ) ) {
+		if ( 'publish' === $this->status && ! empty( $_POST['schedule-date'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-			$datetime = date_create( sanitize_text_field( $_POST['schedule-date'] ), wp_timezone() );
+			$datetime = date_create( sanitize_text_field( $_POST['schedule-date'] ), wp_timezone() ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 			if ( false !== $datetime ) {
 
@@ -392,7 +392,6 @@ class Noptin_Newsletter_Email {
 				$args['post_date_gmt'] = get_gmt_from_date( $datetime->format( 'Y-m-d H:i:s' ) );
 
 			}
-
 		}
 
 		// Slash data.

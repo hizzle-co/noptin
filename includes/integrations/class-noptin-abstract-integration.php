@@ -1,9 +1,7 @@
 <?php
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' )  ) {
-	die;
-}
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Base integration class.
@@ -163,7 +161,7 @@ abstract class Noptin_Abstract_Integration {
 	 * Filters subscription sources.
 	 *
 	 * @since 1.7.0
-	 * @param array $sources
+	 * @param array $sources The subscription sources.
 	 * @return array
 	 */
 	public function register_subscription_source( $sources ) {
@@ -182,9 +180,9 @@ abstract class Noptin_Abstract_Integration {
 
 		$slug    = $this->slug;
 		$options = $this->get_options( array() );
-		$options = apply_filters( "noptin_single_integration_settings", $options, $slug, $this );
+		$options = apply_filters( 'noptin_single_integration_settings', $options, $slug, $this );
 
-		$_options["settings_section_$slug"] = array(
+		$_options[ "settings_section_$slug" ] = array(
 			'id'          => "settings_section_$slug",
 			'el'          => 'settings_section',
 			'children'    => $options,
@@ -203,7 +201,7 @@ abstract class Noptin_Abstract_Integration {
 	 *
 	 * @since 1.2.6
 	 * @param string $option_name The unique option name.
-	 * @param mixed $value The option value.
+	 * @param mixed  $value The option value.
 	 */
 	public function maybe_save_default_value( $option_name, $value ) {
 		$saved = get_noptin_option( $option_name );
@@ -217,7 +215,7 @@ abstract class Noptin_Abstract_Integration {
 	 *
 	 * @since 1.2.6
 	 * @param array  $options An array of Noptin options.
-	 * @param string $title The option title
+	 * @param string $title The option title.
 	 * @param string $description The option description.
 	 * @return array an updated array of Noptin options.
 	 */
@@ -232,18 +230,18 @@ abstract class Noptin_Abstract_Integration {
 
 		$this->maybe_save_default_value( $option_name, $default );
 
-		$checkbox_positions    = $this->checkbox_positions();
-		$options[$option_name] = array(
-            'el'          => 'input',
+		$checkbox_positions      = $this->checkbox_positions();
+		$options[ $option_name ] = array(
+			'el'          => 'input',
 			'type'        => 'text',
-			'restrict'    => sprintf( 
+			'restrict'    => sprintf(
 				'%s && %s && %s',
 				$this->get_enable_integration_option_name(),
 				$this->get_autosubscribe_integration_option_name(),
 				empty( $checkbox_positions ) ? 1 : $this->get_checkbox_position_option_name()
 			),
-            'section'     => 'integrations',
-            'label'       => $title,
+			'section'     => 'integrations',
+			'label'       => $title,
 			'description' => $description,
 			'placeholder' => $default,
 		);
@@ -259,7 +257,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @return string
 	 */
 	public function get_checkbox_message_integration_option_name() {
-		return sprintf( 'noptin_%s_integration_checkbox_message', $this->slug);
+		return sprintf( 'noptin_%s_integration_checkbox_message', $this->slug );
 	}
 
 	/**
@@ -277,7 +275,7 @@ abstract class Noptin_Abstract_Integration {
 	 *
 	 * @since 1.2.6
 	 * @param array  $options An array of Noptin options.
-	 * @param string $title The option title
+	 * @param string $title The option title.
 	 * @param string $description The option description.
 	 * @return array an updated array of Noptin options.
 	 */
@@ -289,6 +287,7 @@ abstract class Noptin_Abstract_Integration {
 
 		if ( is_null( $description ) ) {
 			$description = sprintf(
+				/* translators: %s is the integration name */
 				__( 'Enable the %s Integration', 'newsletter-optin-box' ),
 				$this->name
 			);
@@ -297,12 +296,12 @@ abstract class Noptin_Abstract_Integration {
 		$option_name = $this->get_enable_integration_option_name();
 		$this->maybe_save_default_value( $option_name, $this->get_enable_integration_default_value() );
 
-		$options[$this->get_enable_integration_option_name()] = array(
-            'type'                  => 'checkbox_alt',
-            'el'                    => 'input',
-            'section'		        => 'integrations',
-            'label'                 => $title,
-            'description'           => $description,
+		$options[ $this->get_enable_integration_option_name() ] = array(
+			'type'        => 'checkbox_alt',
+			'el'          => 'input',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
 		);
 
 		return $options;
@@ -316,7 +315,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @return string
 	 */
 	public function get_enable_integration_option_name() {
-		return sprintf( 'noptin_enable_%s_integration', $this->slug);
+		return sprintf( 'noptin_enable_%s_integration', $this->slug );
 	}
 
 	/**
@@ -334,7 +333,7 @@ abstract class Noptin_Abstract_Integration {
 	 *
 	 * @since 1.2.6
 	 * @param array  $options An array of Noptin options.
-	 * @param string $title The option title
+	 * @param string $title The option title.
 	 * @param string $description The option description.
 	 * @param string $placeholder The select box placeholder.
 	 * @return array an updated array of Noptin options.
@@ -357,6 +356,7 @@ abstract class Noptin_Abstract_Integration {
 
 		if ( is_null( $placeholder ) ) {
 			$placeholder = sprintf(
+				/* translators: %s is the context, e.g users, customers */
 				__( 'Do not subscribe new %s', 'newsletter-optin-box' ),
 				$this->context
 			);
@@ -365,17 +365,17 @@ abstract class Noptin_Abstract_Integration {
 		$option_name = $this->get_checkbox_position_option_name();
 
 		$options[ $option_name ] = array(
-            'el'                    => 'select',
-            'section'		        => 'integrations',
-            'label'                 => $title,
-			'description'           => $description,
-			'restrict'              => sprintf( 
+			'el'          => 'select',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
+			'restrict'    => sprintf(
 				'%s && %s',
 				$this->get_enable_integration_option_name(),
 				$this->get_autosubscribe_integration_option_name()
 			),
-			'options'               => $checkbox_positions,
-			'placeholder'           => $placeholder,
+			'options'     => $checkbox_positions,
+			'placeholder' => $placeholder,
 		);
 
 		return $options;
@@ -392,11 +392,58 @@ abstract class Noptin_Abstract_Integration {
 	}
 
 	/**
+	 * Adds an option to tick the checkbox by default.
+	 *
+	 * @since 1.7.4
+	 * @param array  $options An array of Noptin options.
+	 * @param string $title The option title.
+	 * @param string $description The option description.
+	 * @return array an updated array of Noptin options.
+	 */
+	public function add_autotick_checkbox_integration_option( $options, $title = null, $description = null ) {
+
+		if ( is_null( $title ) ) {
+			$title = __( 'Checked by default', 'newsletter-optin-box' );
+		}
+
+		if ( is_null( $description ) ) {
+			$description = __( 'Set the checkbox as checked by default.', 'newsletter-optin-box' );
+		}
+
+		$option_name = $this->get_autotick_checkbox_option_name();
+
+		$options[ $option_name ] = array(
+			'type'        => 'checkbox_alt',
+			'el'          => 'input',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
+			'restrict'    => sprintf(
+				'%s && %s',
+				$this->get_enable_integration_option_name(),
+				$this->get_autosubscribe_integration_option_name()
+			),
+		);
+
+		return $options;
+
+	}
+
+	/**
+	 * Returns the auto-check checkbox option name.
+	 *
+	 * @since 1.7.4
+	 */
+	public function get_autotick_checkbox_option_name() {
+		return sprintf( 'noptin_%s_integration_checkbox_autochecked', $this->slug );
+	}
+
+	/**
 	 * Adds an autosubscribe checkbox
 	 *
 	 * @since 1.2.6
 	 * @param array  $options An array of Noptin options.
-	 * @param string $title The option title
+	 * @param string $title The option title.
 	 * @param string $description The option description.
 	 * @return array an updated array of Noptin options.
 	 */
@@ -408,6 +455,7 @@ abstract class Noptin_Abstract_Integration {
 
 		if ( is_null( $description ) ) {
 			$description = sprintf(
+				/* translators: %s is the context, e.g users, customers */
 				__( 'Check to display a subscription checkbox instead of automatically subscribing new %s', 'newsletter-optin-box' ),
 				$this->context
 			);
@@ -418,12 +466,12 @@ abstract class Noptin_Abstract_Integration {
 		$this->maybe_save_default_value( $option_name, true );
 
 		$options[ $option_name ] = array(
-            'type'                  => 'checkbox_alt',
-            'el'                    => 'input',
-            'section'		        => 'integrations',
-            'label'                 => $title,
-			'description'           => $description,
-			'restrict'              => $this->get_enable_integration_option_name(),
+			'type'        => 'checkbox_alt',
+			'el'          => 'input',
+			'section'     => 'integrations',
+			'label'       => $title,
+			'description' => $description,
+			'restrict'    => $this->get_enable_integration_option_name(),
 		);
 
 		return $options;
@@ -436,7 +484,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 */
 	public function get_autosubscribe_integration_option_name() {
-		return sprintf( 'noptin_%s_integration_manual_subscription', $this->slug);
+		return sprintf( 'noptin_%s_integration_manual_subscription', $this->slug );
 	}
 
 	/**
@@ -451,12 +499,13 @@ abstract class Noptin_Abstract_Integration {
 	public function get_options( $options ) {
 		$options = $this->add_enable_integration_option( $options );
 		$options = $this->add_autosubscribe_integration_option( $options );
+		$options = $this->add_autotick_checkbox_integration_option( $options );
 		$options = $this->add_checkbox_position_option( $options );
 		$options = $this->add_checkbox_message_integration_option( $options );
 		return $options;
 	}
 
-	//-------------------- Subscription Checkboxes ----------------//
+	// -------------------- Subscription Checkboxes ---------------- //
 
 	/**
 	 * Displays a checkbox if the integration uses checkbox positions.
@@ -476,6 +525,7 @@ abstract class Noptin_Abstract_Integration {
 	/**
 	 * Hooks the display checkbox code.
 	 *
+	 * @param string $checkbox_position The checkbox position.
 	 * @since 1.2.6
 	 */
 	public function hook_show_checkbox_code( $checkbox_position ) {
@@ -516,21 +566,12 @@ abstract class Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Displays a subscription checkbox.
-	 *
-	 * @since 1.2.6
-	 */
-	function output_checkbox() {
-		echo $this->get_checkbox_markup();
-	}
-
-	/**
 	 * Appends a checkbox to a string
 	 *
 	 * @since 1.2.6
-	 * @param string $text The original text
+	 * @param string $text The original text.
 	 */
-	function prepend_checkbox( $text ) {
+	public function prepend_checkbox( $text ) {
 		return $this->get_checkbox_markup() . PHP_EOL . $text;
 	}
 
@@ -538,9 +579,9 @@ abstract class Noptin_Abstract_Integration {
 	 * Prepends a checkbox to a string
 	 *
 	 * @since 1.2.6
-	 * @param string $text The original text
+	 * @param string $text The original text.
 	 */
-	function append_checkbox( $text ) {
+	public function append_checkbox( $text ) {
 		return $text . PHP_EOL . $this->get_checkbox_markup();
 	}
 
@@ -551,7 +592,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 * @return string
 	 */
-	function get_checkbox_markup( array $html_attrs = array() ) {
+	public function get_checkbox_markup( $html_attrs = array() ) {
 
 		// Abort if we're not displaying a checkbox.
 		if ( ! $this->can_show_checkbox() ) {
@@ -559,6 +600,23 @@ abstract class Noptin_Abstract_Integration {
 		}
 
 		ob_start();
+		$this->output_checkbox( $html_attrs );
+		return ob_get_clean();
+
+	}
+
+	/**
+	 * Displays a subscription checkbox.
+	 *
+	 * @param array $html_attrs An array of HTML attributes.
+	 * @since 1.2.6
+	 */
+	public function output_checkbox( $html_attrs = array() ) {
+
+		// Abort if we're not displaying a checkbox.
+		if ( ! $this->can_show_checkbox() ) {
+			return;
+		}
 
 		// Checkbox opening wrapper.
 		echo '<!-- Noptin Newsletters - https://noptin.com/ -->';
@@ -569,20 +627,15 @@ abstract class Noptin_Abstract_Integration {
 		$html_attrs['class'] = empty( $html_attrs['class'] ) ? '' : $html_attrs['class'];
 		$html_attrs['class'] = $html_attrs['class'] . sprintf( ' noptin-integration-subscription-checkbox noptin-integration-subscription-checkbox-%s', $this->slug );
 
-
-		// Convert them to strings.
-		$html_attr_str = '';
-		foreach ( $html_attrs as $key => $value ) {
-			$html_attr_str .= sprintf( '%s="%s" ', $key, esc_attr( $value ) );
-		}
-
 		// usefull when wrapping the checkbox in an element.
 		$this->before_checkbox_wrapper();
 
-		echo "<label $html_attr_str>";
-		echo sprintf( '<input %s />', $this->get_checkbox_attributes() );
-		echo sprintf( '<span>%s</span>', $this->get_label_text() );
-		echo '</label>';
+		?>
+			<label <?php noptin_attr( 'integration_checkbox_label', $html_attrs, $this ); ?>>
+				<input <?php noptin_attr( 'integration_checkbox_input', $this->get_checkbox_attributes(), $this ); ?>/>
+				<span><?php wp_kses_post( $this->get_label_text() ); ?></span>
+			</label>
+		<?php
 
 		// usefull when wrapping the checkbox in an element.
 		$this->after_checkbox_wrapper();
@@ -591,15 +644,12 @@ abstract class Noptin_Abstract_Integration {
 		do_action( 'noptin_integration_after_subscription_checkbox_wrapper', $this );
 		do_action( 'noptin_integration_' . $this->slug . '_after_subscription_checkbox_wrapper', $this );
 		echo '<!-- / Noptin Newsletters -->';
-
-		return ob_get_clean();
-
 	}
 
 	/**
 	 * Get a string of attributes for the checkbox element.
 	 *
-	 * @return string
+	 * @return array
 	 * @since 1.2.6
 	 */
 	protected function get_checkbox_attributes() {
@@ -609,16 +659,14 @@ abstract class Noptin_Abstract_Integration {
 			'name'  => 'noptin-subscribe',
 			'value' => '1',
 		);
-		$attributes = (array) apply_filters( 'noptin_integration_subscription_checkbox_attributes', $attributes, $this );
 
-		$attributes = (array) apply_filters( "noptin_{$this->slug}_integration_subscription_checkbox_attributes", $attributes, $this );
-
-		$string = '';
-		foreach ( $attributes as $key => $value ) {
-			$string .= sprintf( '%s="%s"', $key, esc_attr( $value ) );
+		if ( (bool) get_noptin_option( $this->get_autotick_checkbox_option_name() ) ) {
+			$attributes['checked'] = 'checked';
 		}
 
-		return $string;
+		$attributes = (array) apply_filters( 'noptin_integration_subscription_checkbox_attributes', $attributes, $this );
+
+		return (array) apply_filters( "noptin_{$this->slug}_integration_subscription_checkbox_attributes", $attributes, $this );
 	}
 
 	/**
@@ -626,14 +674,14 @@ abstract class Noptin_Abstract_Integration {
 	 *
 	 * @since 1.2.6
 	 */
-	function after_checkbox_wrapper() {}
+	public function after_checkbox_wrapper() {}
 
 	/**
 	 * Runs before the checkbox label closing wrapper is printed.
 	 *
 	 * @since 1.2.6
 	 */
-	function before_checkbox_wrapper() {}
+	public function before_checkbox_wrapper() {}
 
 	/**
 	 * Returns whether or not to display a checkbox.
@@ -641,7 +689,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @return bool
 	 * @since 1.2.6
 	 */
-	function can_show_checkbox() {
+	public function can_show_checkbox() {
 
 		$show_checkbox = noptin_should_show_optins() && ! $this->auto_subscribe();
 
@@ -662,7 +710,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @since 1.2.6
 	 */
 	public function checkbox_was_checked() {
-		return isset( $_REQUEST['noptin-subscribe'] );
+		return isset( $_REQUEST['noptin-subscribe'] );   // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -670,7 +718,7 @@ abstract class Noptin_Abstract_Integration {
 	 *
 	 * Will always return true when integration is set to auto_subscribe. Otherwise, will check value of checkbox.
 	 *
-	 * @param int $object_id Useful when overriding method. (optional)
+	 * @param int $object_id (optional). Useful when overriding method.
 	 * @since 1.2.6
 	 * @return bool
 	 */
@@ -694,7 +742,7 @@ abstract class Noptin_Abstract_Integration {
 		$subscriber_details = apply_filters( "noptin_{$this->slug}_integration_new_subscriber_fields", $subscriber_details, $integration_details, $this );
 
 		// Filter the subscriber details for all integrations.
-		$subscriber_details = apply_filters( "noptin_integration_new_subscriber_fields", $subscriber_details, $this->slug, $integration_details, $this );
+		$subscriber_details = apply_filters( 'noptin_integration_new_subscriber_fields', $subscriber_details, $this->slug, $integration_details, $this );
 
 		// Subscribe the new user.
 		add_noptin_subscriber( $subscriber_details );
@@ -703,7 +751,7 @@ abstract class Noptin_Abstract_Integration {
 	/**
 	 * Updates an existing subscriber.
 	 *
-	 * @param int $subscriber_id Subscriber id.
+	 * @param int   $subscriber_id Subscriber id.
 	 * @param array $subscriber_details An array of subscriber details.
 	 * @param mixed $integration_details Subscriber Integration details.
 	 * @since 1.2.6
@@ -717,7 +765,7 @@ abstract class Noptin_Abstract_Integration {
 		$subscriber_details = apply_filters( "noptin_{$this->slug}_integration_update_subscriber_fields", $subscriber_details, $integration_details, $this, $subscriber_id );
 
 		// Filter the subscriber details for all integrations.
-		$subscriber_details = apply_filters( "noptin_integration_update_subscriber_fields", $subscriber_details, $this->slug, $integration_details, $this, $subscriber_id );
+		$subscriber_details = apply_filters( 'noptin_integration_update_subscriber_fields', $subscriber_details, $this->slug, $integration_details, $this, $subscriber_id );
 
 		// Update the subscriber.
 		update_noptin_subscriber( $subscriber_id, $subscriber_details );

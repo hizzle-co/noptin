@@ -15,7 +15,7 @@ $url = add_query_arg(
 	array(
 		'utm_medium'   => 'plugin-dashboard',
 		'utm_campaign' => 'form-builder',
-		'utm_source'   => urlencode( esc_url( get_home_url() ) ),
+		'utm_source'   => rawurlencode( esc_url( get_home_url() ) ),
 	),
 	'https://noptin.com/product-tag/integrations/'
 );
@@ -28,9 +28,9 @@ $url = add_query_arg(
 
 <?php if ( empty( $available_connections ) ) : ?>
 	<div class="card">
-		<h3><?php _e( 'No integration installed', 'newsletter-optin-box' );?></h3>
-		<p><?php _e( "Please install the appropriate integration to automatically add new subscribers to an external email provider such as <strong>ConvertKit</strong> or <strong>Mailchimp</strong>.", 'newsletter-optin-box' ); ?></p>
-		<p><a href="<?php echo esc_url( $url );?>" class="button noptin-button-standout" target="_blank"><?php _e( 'View Integrations', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+		<h3><?php esc_html_e( 'No integration installed', 'newsletter-optin-box' ); ?></h3>
+		<p><?php esc_html_e( 'Please install the appropriate integration to automatically add new subscribers to an external email provider such as ConvertKit or Mailchimp.', 'newsletter-optin-box' ); ?></p>
+		<p><a href="<?php echo esc_url( $url ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Integrations', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
 	</div>
 <?php endif; ?>
 
@@ -55,13 +55,15 @@ $url = add_query_arg(
 				<div class="noptin-settings-panel__content" id="noptin-form-integrations-panel-<?php echo esc_attr( $key ); ?>-content">
 
 					<?php if ( ! $connection->is_connected() ) : ?>
-						<p style="color:#F44336;"><?php
-							printf(
-								'Error: %s',
-								! empty( $connection->last_error ) ? esc_html( $connection->last_error ) : sprintf( __( 'You are not connected to %s', 'newsletter-optin-box' ), $connection->name )
-							);
-						?></p>
-					<?php elseif ( ! empty( $connection->list_providers ) ): ?>
+						<p style="color:#F44336;">
+							<?php
+								printf(
+									'Error: %s',
+									! empty( $connection->last_error ) ? esc_html( $connection->last_error ) : sprintf( /* translators: %s integration name */ esc_html__( 'You are not connected to %s', 'newsletter-optin-box' ), esc_html( $connection->name ) )
+								);
+							?>
+						</p>
+					<?php elseif ( ! empty( $connection->list_providers ) ) : ?>
 
 						<table class="form-table noptin-form-settings noptin-integration-settings">
 
@@ -72,19 +74,19 @@ $url = add_query_arg(
 								<td>
 									<?php $list_id = isset( $all_settings[ $key . '_list' ] ) ? $all_settings[ $key . '_list' ] : $connection->get_default_list_id(); ?>
 									<select class="regular-text" id="noptin-form-<?php echo esc_attr( $key ); ?>-list" name="noptin_form[settings][<?php echo esc_attr( $key ); ?>_list]">
-										<option value="-1" <?php selected( '-1', $list_id ); ?>><?php printf ( __( 'Do not add to %s', 'newsletter-optin-box' ), esc_html( $connection->name ) ); ?></option>
+										<option value="-1" <?php selected( '-1', $list_id ); ?>><?php printf( /* translators: %s integration name */ esc_html__( 'Do not add to %s', 'newsletter-optin-box' ), esc_html( $connection->name ) ); ?></option>
 										<?php foreach ( $connection->list_providers->get_dropdown_lists() as $list_key => $list_label ) : ?>
 											<option value="<?php echo esc_attr( $list_key ); ?>" <?php selected( $list_key, $list_id ); ?>><?php echo esc_attr( $list_label ); ?></option>
 										<?php endforeach; ?>
 									</select>
-									<p class="description"><?php printf( __( 'People who subscribe via this form will be added to the %s you select here', 'newsletter-optin-box' ), esc_html( $connection->list_providers->get_name() ) ); ?></p>
+									<p class="description"><?php printf( /* translators: %s type of list */ esc_html__( 'People who subscribe via this form will be added to the %s you select here', 'newsletter-optin-box' ), esc_html( $connection->list_providers->get_name() ) ); ?></p>
 								</td>
 							</tr>
 
 							<?php if ( $connection->supports( 'tags' ) ) : ?>
 								<tr valign="top" class="form-field-row form-field-row-tags">
 									<th scope="row">
-										<label for="noptin-form-<?php echo esc_attr( $key ); ?>-tags"><?php printf( __( '%s tags', 'newsletter-optin-box' ), esc_html( $connection->name ) ); ?></label>
+										<label for="noptin-form-<?php echo esc_attr( $key ); ?>-tags"><?php printf( /* translators: %s integration name */ esc_html__( '%s tags', 'newsletter-optin-box' ), esc_html( $connection->name ) ); ?></label>
 									</th>
 									<td>
 										<?php $tags = isset( $all_settings[ $key . '_tags' ] ) ? $all_settings[ $key . '_tags' ] : get_noptin_option( "noptin_{$key}_default_tags", '' ); ?>
@@ -94,7 +96,7 @@ $url = add_query_arg(
 											name="noptin_form[settings][<?php echo esc_attr( $key ); ?>_tags]"
 											value="<?php echo esc_attr( $tags ); ?>"
 										/>
-										<p class="description"><?php _e( 'Enter a comma separated list of tags to assign new suscribers.', 'newsletter-optin-box' ); ?></p>
+										<p class="description"><?php esc_html_e( 'Enter a comma separated list of tags to assign new suscribers.', 'newsletter-optin-box' ); ?></p>
 									</td>
 								</tr>
 							<?php endif; ?>
@@ -109,5 +111,4 @@ $url = add_query_arg(
 
 			<?php
 		}
-
 	}

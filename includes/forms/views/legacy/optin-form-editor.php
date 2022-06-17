@@ -53,9 +53,9 @@
 </div>
 
 <script type="text/x-template" id="noptinFieldEditorTemplate">
-	<?php include plugin_dir_path( __FILE__ ) . 'fields-editor.php'; ?>
+	<?php require plugin_dir_path( __FILE__ ) . 'fields-editor.php'; ?>
 </script>
 
 <script type="text/x-template" id="noptinOptinFormTemplate">
-	<?php include plugin_dir_path( __FILE__ ) . 'optin-form.php'; ?>
+	<?php require plugin_dir_path( __FILE__ ) . 'optin-form.php'; ?>
 </script>

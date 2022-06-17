@@ -4,12 +4,11 @@
  *
  * Override this template by copying it to yourtheme/noptin/post-digests/email-posts-grid.php
  *
- * @var WP_Post[] $posts
+ * @var WP_Post[] $campaign_posts
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
-$n = 1;
 ?>
 
 <style type="text/css">
@@ -23,6 +22,11 @@ $n = 1;
 		border-spacing:0;
 		border: 1px solid #e0dede;
 		border-radius: 4px;
+	}
+
+	.digest-grid-post-image-container {
+		margin-top: 0;
+		padding-top: 0;
 	}
 
 	.digest-grid-post img {
@@ -85,25 +89,33 @@ $n = 1;
 	<!--[if !true]><!-->
 	<div class="post-digest-grid-one" style="display:table-cell;width:50%;padding-right: 20px;">
 	<!--<![endif]-->
-		<?php foreach ( $posts as $i => $post ): ?>
-			<?php if (  ( $i + 1 ) % 2 ) { continue; } ?>
-			<div class="digest-grid-post digest-grid-post-type-<?php echo sanitize_html_class( $post->post_type ); ?>">
+		<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
+			<?php if ( noptin_is_even( $i ) ) : ?>
+			<div class="digest-grid-post digest-grid-post-type-<?php echo esc_attr( sanitize_html_class( $campaign_post->post_type ) ); ?>">
+
+				<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
+					<p class="digest-grid-post-image-container">
+						<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" style="display: block;" target="_blank">
+							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $campaign_post, 'medium' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $campaign_post ) ); ?>" style="width: 100%; max-width: 100%; height: auto; margin: auto; display: block;">
+						</a>
+					</p>
+				<?php endif; ?>
 
 				<p class="digest-grid-post-title">
-					<a href="<?php echo esc_url( get_permalink( $post ) ); ?>" target="_blank">
-						<?php echo wp_kses_post( get_the_title( $post ) ); ?>
+					<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" target="_blank">
+						<?php echo wp_kses_post( get_the_title( $campaign_post ) ); ?>
 					</a>
 				</p>
 
 				<p class="digest-grid-post-excerpt">
-					<?php echo wp_kses_post( noptin_get_post_excerpt( $post, 100 ) ); ?>
+					<?php echo wp_kses_post( noptin_get_post_excerpt( $campaign_post, 100 ) ); ?>
 				</p>
 
 				<p class="digest-grid-post-meta">
 
-					<a href="<?php echo esc_url( get_author_posts_url( $post->post_author ) ); ?>" target="_blank">
+					<a href="<?php echo esc_url( get_author_posts_url( $campaign_post->post_author ) ); ?>" target="_blank">
 						<?php
-							$user = get_userdata( $post->post_author );
+							$user = get_userdata( $campaign_post->post_author );
 							if ( $user && ! empty( $user->display_name ) ) {
 								echo esc_html( $user->display_name );
 							}
@@ -111,16 +123,17 @@ $n = 1;
 					</a>
 					<?php
 
-						$categories_list = get_the_category_list( ',', '', $post->ID );
+						$categories_list = get_the_category_list( ',', '', $campaign_post->ID );
 
 						if ( $categories_list ) {
 							/* translators: 1: list of categories. */
-							printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), current( explode( ',', $categories_list ) ) );
+							printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), wp_kses_post( current( explode( ',', $categories_list ) ) ) );
 						}
 
 					?>
 				</p>
 			</div>
+			<?php endif; ?>
 		<?php endforeach; ?>
 	<!--[if !true]><!-->
 	</div>
@@ -135,33 +148,33 @@ $n = 1;
 	<!--[if !true]><!-->
     <div class="post-digest-grid-two" style="display:table-cell;width:50%">
 	<!--<![endif]-->
-	<?php foreach ( $posts as $i => $post ): ?>
-		<?php if ( ! ( ( $i + 1 ) % 2 ) ) { continue; } ?>
-		<div class="digest-grid-post digest-grid-post-type-<?php echo sanitize_html_class( $post->post_type ); ?>">
+	<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
+		<?php if ( ! noptin_is_even( $i ) ) : ?>
+		<div class="digest-grid-post digest-grid-post-type-<?php echo sanitize_html_class( $campaign_post->post_type ); ?>">
 
-			<?php if ( has_post_thumbnail( $post ) ) : ?>
+			<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
 				<p class="digest-grid-post-image-container">
-					<a href="<?php echo esc_url( get_permalink( $post ) ); ?>" style="display: block;" target="_blank">
-						<img src="<?php echo esc_url( get_the_post_thumbnail_url( $post, 'medium' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $post ) ); ?>" style="width: 100%; max-width: 100%; height: auto; margin: auto; display: block;">
+					<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" style="display: block;" target="_blank">
+						<img src="<?php echo esc_url( get_the_post_thumbnail_url( $campaign_post, 'medium' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $campaign_post ) ); ?>" style="width: 100%; max-width: 100%; height: auto; margin: auto; display: block;">
 					</a>
 				</p>
 			<?php endif; ?>
 
 			<p class="digest-grid-post-title">
-				<a href="<?php echo esc_url( get_permalink( $post ) ); ?>" target="_blank">
-					<?php echo wp_kses_post( get_the_title( $post ) ); ?>
+				<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" target="_blank">
+					<?php echo wp_kses_post( get_the_title( $campaign_post ) ); ?>
 				</a>
 			</p>
 
 			<p class="digest-grid-post-excerpt">
-				<?php echo wp_kses_post( noptin_get_post_excerpt( $post, 100 ) ); ?>
+				<?php echo wp_kses_post( noptin_get_post_excerpt( $campaign_post, 100 ) ); ?>
 			</p>
 
 			<p class="digest-grid-post-meta">
 
-				<a href="<?php echo esc_url( get_author_posts_url( $post->post_author ) ); ?>" target="_blank">
+				<a href="<?php echo esc_url( get_author_posts_url( $campaign_post->post_author ) ); ?>" target="_blank">
 					<?php
-						$user = get_userdata( $post->post_author );
+						$user = get_userdata( $campaign_post->post_author );
 						if ( $user && ! empty( $user->display_name ) ) {
 							echo esc_html( $user->display_name );
 						}
@@ -169,16 +182,17 @@ $n = 1;
 				</a>
 				<?php
 
-					$categories_list = get_the_category_list( ',', '', $post->ID );
+					$categories_list = get_the_category_list( ',', '', $campaign_post->ID );
 
 					if ( $categories_list ) {
 						/* translators: 1: list of categories. */
-						printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), current( explode( ',', $categories_list ) ) );
+						printf( esc_html__( 'in %1$s', 'newsletter-optin-box' ), wp_kses_post( current( explode( ',', $categories_list ) ) ) );
 					}
 
 				?>
 			</p>
 		</div>
+		<?php endif; ?>
 	<?php endforeach; ?>
 	<!--[if !true]><!-->
 	</div>

@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 										</td>
 									</tr>
 								</tbody>
@@ -41,7 +42,7 @@
 		<!-- end footer -->
 
 		</td>
-      </tr>
+    	</tr>
     </tbody></table>
 
 </body>

@@ -33,8 +33,8 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function __construct() {
 
-		if ( isset( $_GET['section'] ) ) {
-			$this->collection_type = rtrim( sanitize_key( $_GET['section'] ), 's' );
+		if ( isset( $_GET['section'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$this->collection_type = rtrim( sanitize_key( $_GET['section'] ), 's' );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		$this->prepare_query();
@@ -58,9 +58,9 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		$per_page = 10;
 
 		// Prepare query params.
-		$paged   = empty( $_GET['paged'] ) ? 1 : (int) $_GET['paged'];
-		$orderby = empty( $_GET['orderby'] ) ? 'id' : sanitize_text_field( $_GET['orderby'] );
-		$order   = empty( $_GET['order'] ) ? 'desc' : sanitize_text_field( $_GET['order'] );
+		$paged   = empty( $_GET['paged'] ) ? 1 : (int) $_GET['paged']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$orderby = empty( $_GET['orderby'] ) ? 'id' : sanitize_text_field( $_GET['orderby'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$order   = empty( $_GET['order'] ) ? 'desc' : sanitize_text_field( $_GET['order'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$query_args = array(
 			'post_type'      => 'noptin-campaign',
@@ -107,7 +107,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		// Prepare row actions.
 		$row_actions = array(
 
-			'edit'   => sprintf(
+			'edit'      => sprintf(
 				'<a href="%s">%s</a>',
 				esc_url( $item->get_edit_url() ),
 				esc_html__( 'Edit', 'newsletter-optin-box' )
@@ -120,13 +120,13 @@ class Noptin_Email_List_Table extends WP_List_Table {
 				esc_html__( 'Duplicate', 'newsletter-optin-box' )
 			),
 
-			'_preview' => sprintf(
+			'_preview'  => sprintf(
 				'<a href="%s" target="_blank">%s</a>',
 				esc_url( $item->get_preview_url() ),
 				esc_html__( 'Preview', 'newsletter-optin-box' )
 			),
 
-			'delete' => sprintf(
+			'delete'    => sprintf(
 				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
 				$item->get_delete_url(), // This is alread escaped via wp_nonce_url.
 				esc_attr__( 'Are you sure you want to delete this campaign?', 'newsletter-optin-box' ),
@@ -155,7 +155,6 @@ class Noptin_Email_List_Table extends WP_List_Table {
 			if ( ! empty( $description ) ) {
 				$title .= "<p class='description'>$description</div>";
 			}
-
 		}
 
 		// Row actions.
@@ -204,13 +203,16 @@ class Noptin_Email_List_Table extends WP_List_Table {
 				if ( 'newsletter' === $this->collection_type ) {
 					$status .= '&mdash;<a class="noptin-stop-campaign" href="#" data-id="' . $item->id . '">' . __( 'stop', 'newsletter-optin-box' ) . '</a>';
 				}
-
 			}
-
 		}
 
 		$status = apply_filters( 'noptin_admin_table_email_status', $status, $item );
-		echo "<span class='$class'>$status</span>";
+
+		printf(
+			'<span class="%s">%s</span>',
+			esc_attr( $class ),
+			esc_html( $status )
+		);
 	}
 
 	/**
@@ -220,7 +222,6 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function column_date_sent( $item ) {
-		$date = date_i18n( get_option( 'date_format' ), strtotime( $item->created ) );
 
 		if ( 'future' === $item->status ) {
 
@@ -228,11 +229,14 @@ class Noptin_Email_List_Table extends WP_List_Table {
 			if ( strtotime( $item->created ) < current_time( 'timestamp' ) ) {
 				wp_publish_post( $item );
 			}
-
 		}
 
-		$title = esc_attr( $item->created );
-		echo "<abbr title='$title'>$date</abbr>";
+		printf(
+			'<abbr title="%s" class="noptin-email-date-sent">%s</abbr>',
+			esc_attr( $item->created ),
+			esc_html( date_i18n( get_option( 'date_format' ), strtotime( $item->created ) ) )
+		);
+
 	}
 
 	/**
@@ -345,7 +349,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	/**
 	 * Fetch data from the database to render on view.
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 
 		$per_page = 10;
 
@@ -406,7 +410,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		// Prepare columns.
 		$columns = array(
 			'cb'           => '<input type="checkbox" />',
-			'title'        => 'newsletter' == $this->collection_type ? __( 'Email Subject', 'newsletter-optin-box' ) : __( 'Name', 'newsletter-optin-box' ),
+			'title'        => 'newsletter' === $this->collection_type ? __( 'Email Subject', 'newsletter-optin-box' ) : __( 'Name', 'newsletter-optin-box' ),
 			'type'         => __( 'Type', 'newsletter-optin-box' ),
 			'status'       => __( 'Status', 'newsletter-optin-box' ),
 			'recipients'   => __( 'Sent', 'newsletter-optin-box' ),
@@ -425,7 +429,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		}
 
 		// Remove automation details for newsletters.
-		if ( 'automation' != $this->collection_type ) {
+		if ( 'automation' !== $this->collection_type ) {
 			unset( $columns['type'] );
 		} else {
 			unset( $columns['date_sent'] );
@@ -468,7 +472,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 					admin_url( '/admin.php' )
 				)
 			),
-			__( 'New Campaign', 'newsletter-optin-box' )
+			esc_html__( 'New Campaign', 'newsletter-optin-box' )
 		);
 
 	}

@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 		<!-- start footer -->
 		<tr>
 			<td align="center" bgcolor="#e9ecef" style="padding: 24px;" class="footer">

@@ -93,7 +93,7 @@ class Noptin_Task {
 
 		// Fallback to normal cron jobs if action scheduler is not installed.
 		if ( ! $this->is_usable() || ! function_exists( 'as_enqueue_async_action' ) ) {
-			return wp_schedule_single_event( current_time( 'timestamp', true ), $this->action, $this->params );
+			return wp_schedule_single_event( time(), $this->action, $this->params );
 		}
 
 		return as_enqueue_async_action(

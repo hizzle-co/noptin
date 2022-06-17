@@ -93,12 +93,11 @@ class Noptin_Emails_Admin {
 				noptin()->admin->show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
 				wp_safe_redirect( $campaign->get_edit_url() );
 				exit;
-			} else if ( is_wp_error( $result ) ) {
+			} elseif ( is_wp_error( $result ) ) {
 				noptin()->admin->show_error( $result->get_error_message() );
 			} else {
 				noptin()->admin->show_error( __( 'Unable to duplicate the campaign.', 'newsletter-optin-box' ) );
 			}
-
 		} else {
 			noptin()->admin->show_error( __( 'Campaign not found.', 'newsletter-optin-box' ) );
 		}
@@ -208,7 +207,7 @@ class Noptin_Emails_Admin {
 
 		// Prepare vars.
 		$tabs = $this->get_admin_page_tabs();
-		$tab  = ! empty( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : 'newsletters';
+		$tab  = ! empty( $_GET['section'] ) ? sanitize_key( $_GET['section'] ) : 'newsletters';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Ensure the tab is supported.
 		if ( ! isset( $tabs[ $tab ] ) ) {
@@ -224,7 +223,7 @@ class Noptin_Emails_Admin {
 	 * @return array
 	 */
 	public function get_current_section() {
-		return ! empty( $_GET['sub_section'] ) ? sanitize_key( $_GET['sub_section'] ) : 'main';
+		return ! empty( $_GET['sub_section'] ) ? sanitize_key( $_GET['sub_section'] ) : 'main';  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -248,7 +247,6 @@ class Noptin_Emails_Admin {
 		switch ( $this->get_current_tab() ) {
 
 			case 'newsletters':
-
 				switch ( $section ) {
 
 					case 'main':
@@ -259,7 +257,6 @@ class Noptin_Emails_Admin {
 				break;
 
 			case 'automations':
-
 				switch ( $section ) {
 
 					case 'main':
@@ -281,13 +278,13 @@ class Noptin_Emails_Admin {
 	public function filter_users_by_campaign( $query ) {
 		global $pagenow;
 
-		if ( is_admin() && 'users.php' == $pagenow && isset( $_GET['noptin_meta_key'] ) ) {
+		if ( is_admin() && 'users.php' === $pagenow && isset( $_GET['noptin_meta_key'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			$meta_query   = $query->get( 'meta_query' );
 			$meta_query   = empty( $meta_query ) ? array() : $meta_query;
 			$meta_query[] = array(
-				'key'   => sanitize_text_field( $_GET['noptin_meta_key'] ),
-				'value' => (int) $_GET['noptin_meta_value']
+				'key'   => sanitize_text_field( $_GET['noptin_meta_key'] ),  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'value' => (int) $_GET['noptin_meta_value'],  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			);
 			$query->set( 'meta_query', $meta_query );
 
@@ -373,7 +370,7 @@ class Noptin_Emails_Admin {
 		// Email recipients.
 		add_meta_box(
 			'noptin_email_recipients',
-			__( 'Recipients','newsletter-optin-box' ),
+			__( 'Recipients', 'newsletter-optin-box' ),
 			array( $this, 'render_metabox' ),
 			$screen_id,
 			'side',
@@ -384,7 +381,7 @@ class Noptin_Emails_Admin {
 		// Email content.
 		add_meta_box(
 			'noptin_email_content',
-			__( 'Email Content','newsletter-optin-box' ),
+			__( 'Email Content', 'newsletter-optin-box' ),
 			array( $this, 'render_metabox' ),
 			$screen_id,
 			'normal',
@@ -395,7 +392,7 @@ class Noptin_Emails_Admin {
 		// Template Details.
 		add_meta_box(
 			'noptin_email_details',
-			__( 'Template','newsletter-optin-box' ),
+			__( 'Template', 'newsletter-optin-box' ),
 			array( $this, 'render_metabox' ),
 			$screen_id,
 			'normal',

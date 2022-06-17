@@ -35,9 +35,9 @@ class Noptin_Custom_Field_Textarea extends Noptin_Custom_Field_Type {
 				rows="4"
 				<?php if ( empty( $args['vue'] ) ) : ?>
 					placeholder="<?php echo esc_attr( $args['label'] ); ?>"
-				<?php else: ?>
+				<?php else : ?>
 					:placeholder="field.type.label"
-				<?php endif;?>
+				<?php endif; ?>
 			><?php echo esc_textarea( $args['value'] ); ?></textarea>
 		<?php
 

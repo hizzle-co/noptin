@@ -39,6 +39,10 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 
 		// Notify customers.
 		add_action( 'noptin_woocommerce_order', array( $this, 'maybe_schedule_notification' ), 100, 3 );
+
+		// Filters the products template.
+		add_filter( 'noptin_post_digest_html', array( $this, 'maybe_filter_products_digest_template' ), 10, 3 );
+
 	}
 
 	/**
@@ -80,10 +84,10 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	public function default_content_normal() {
 		ob_start();
 		?>
-		<p><?php _e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'We value your opinion and want to make your shopping experience perfect - so your feedback is important to us!', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Please reply to this email with any suggestions that might help us improve.', 'newsletter-optin-box' ); ?></p>
-		<p><?php _e( 'Thanks for your help!', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Hi [[customer.first_name]],', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'We value your opinion and want to make your shopping experience perfect - so your feedback is important to us!', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Please reply to this email with any suggestions that might help us improve.', 'newsletter-optin-box' ); ?></p>
+		<p><?php esc_html_e( 'Thanks for your help!', 'newsletter-optin-box' ); ?></p>
 		<p>[[blog_name]]</p>
 		<?php
 		return ob_get_clean();
@@ -160,7 +164,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			<p>
 				<label>
 					<strong class="noptin-label-span">
-						<?php _e( 'Send this email whenever an order is:-', 'newsletter-optin-box' ); ?>
+						<?php esc_html_e( 'Send this email whenever an order is:-', 'newsletter-optin-box' ); ?>
 					</strong>
 					<select name="noptin_email[order_status]" id="noptin-automated-email-order-status" class="widefat">
 						<?php foreach ( $statuses as $key => $label ) : ?>
@@ -173,7 +177,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			<p>
 				<label>
 					<input type="checkbox" name="noptin_email[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
-					<strong><?php _e( 'Only send to new customers?', 'newsletter-optin-box' ); ?></strong>
+					<strong><?php esc_html_e( 'Only send to new customers?', 'newsletter-optin-box' ); ?></strong>
 				</label>
 			</p>
 		<?php
@@ -191,6 +195,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		if ( ! $campaign->sends_immediately() ) {
 
 			$about = sprintf(
+				// Translators: %s is the sending delay.
 				__( 'Sends %s after', 'newsletter-optin-box' ),
 				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
 			);
@@ -210,7 +215,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		}
 
 		// Prepare selected status.
-		$about .= ' ' . '<em style="color: #607D8B;">' . strtolower( $this->get_campaign_order_status( $campaign, true ) ) . '</em>';
+		$about .= ' <em style="color: #607D8B;">' . strtolower( $this->get_campaign_order_status( $campaign, true ) ) . '</em>';
 
 		return $about;
 
@@ -241,10 +246,9 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
-			if (  $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $action, $woocommerce ) ) {
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $order, $action, $woocommerce ) ) {
 				$this->schedule_notification( $order_id, $automation );
 			}
-
 		}
 
 	}
@@ -278,7 +282,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 			if ( empty( $user ) ) {
 				$user = $woocommerce->get_order_customer_email( $order->get_id() );
 			}
- 
+
 			$is_valid = $woocommerce->get_order_count( $user ) === 1;
 
 		}
@@ -327,10 +331,29 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	public function get_merge_tags() {
 
 		return array(
-			__( 'Order', 'noptin' )    => $this->get_order_merge_tags(),
-			__( 'Customer', 'noptin' ) => $this->get_customer_merge_tags()
+			__( 'Order', 'newsletter-optin-box' )    => $this->get_order_merge_tags(),
+			__( 'Customer', 'newsletter-optin-box' ) => $this->get_customer_merge_tags(),
 		);
 
+	}
+
+	/**
+	 * Get posts html to display.
+	 *
+	 * @param string $template
+	 * @param WP_Post[] $campaign_posts
+	 *
+	 * @return string
+	 */
+	public function maybe_filter_products_digest_template( $content, $template, $campaign_posts ) {
+
+		if ( null !== $content || empty( $campaign_posts ) || ! in_array( $campaign_posts[0]->post_type, array( 'product', 'product_variation' ), true ) || ! in_array( $template, array( 'grid', 'list' ), true ) ) {
+			return $content;
+		}
+
+		$products = array_filter( array_map( 'wc_get_product', $campaign_posts ), 'wc_products_array_filter_visible' );
+
+		return $this->get_products_html( $template, $products );
 	}
 
 }

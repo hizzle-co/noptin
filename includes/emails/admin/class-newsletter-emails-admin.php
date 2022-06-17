@@ -40,7 +40,7 @@ class Noptin_Newsletter_Emails_Admin {
 	public function render_edit_form( $tabs ) {
 
 		// Prepare campaign id.
-		$id = empty( $_GET['campaign'] ) ? 0 : $_GET['campaign'];
+		$id = empty( $_GET['campaign'] ) ? 0 : $_GET['campaign']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		// Check if we're sending a new email.
 		if ( is_numeric( $id ) ) {
@@ -49,7 +49,7 @@ class Noptin_Newsletter_Emails_Admin {
 			$campaign = new Noptin_Newsletter_Email( 0 );
 			$id       = 0;
 
-			$campaign->options['email_sender'] = sanitize_key( $_GET['campaign'] );
+			$campaign->options['email_sender'] = sanitize_key( $_GET['campaign'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		if ( $campaign->exists() || empty( $id ) ) {
@@ -115,7 +115,7 @@ class Noptin_Newsletter_Emails_Admin {
 		// Check if a "Send" or "Save draft button was clicked". Otherwise maintain the initial status.
 		if ( ! empty( $_POST['publish'] ) ) {
 			$newsletter->status = 'publish';
-		} else if ( ! empty( $_POST['draft'] ) ) {
+		} elseif ( ! empty( $_POST['draft'] ) ) {
 			$newsletter->status = 'draft';
 		}
 
@@ -123,7 +123,7 @@ class Noptin_Newsletter_Emails_Admin {
 
 		if ( is_wp_error( $result ) ) {
 			noptin()->admin->show_error( $result );
-		} else if ( false === $result ) {
+		} elseif ( false === $result ) {
 			noptin()->admin->show_error( __( 'Could not save your changes.', 'newsletter-optin-box' ) );
 		} else {
 
@@ -138,8 +138,9 @@ class Noptin_Newsletter_Emails_Admin {
 				$post = get_post( $newsletter->id );
 				noptin()->admin->show_success(
 					sprintf(
+						// translators: %s is the date.
 						__( 'Your email has been scheduled to send on: %s', 'newsletter-optin-box' ),
-						"<strong>" . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $post->post_date ) ) . "</strong>"
+						'<strong>' . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $post->post_date ) ) . '</strong>'
 					)
 				);
 

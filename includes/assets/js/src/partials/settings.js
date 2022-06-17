@@ -1,6 +1,5 @@
 import popover from 'vue-popperjs'
 import noptin from './noptin.js'
-import noptinSelectComponent from './noptin-select.vue'
 
 var settingsApp = new Vue({
 
@@ -8,9 +7,6 @@ var settingsApp = new Vue({
 
 		// Tooltips
 		'noptin-tooltip': popover,
-
-		// Select2
-		'noptin-select': noptinSelectComponent,
 
 	},
 

@@ -12,7 +12,7 @@ $url = add_query_arg(
 	array(
 		'utm_medium'   => 'plugin-dashboard',
 		'utm_campaign' => 'form-builder',
-		'utm_source'   => urlencode( esc_url( get_home_url() ) ),
+		'utm_source'   => rawurlencode( esc_url( get_home_url() ) ),
 	),
 	'https://noptin.com/product/ultimate-addons-pack'
 );
@@ -25,8 +25,8 @@ $url = add_query_arg(
 
 <?php if ( ! defined( 'NOPTIN_WELCOME_EMAILS_VERSION' ) ) : ?>
 	<div class="card">
-		<h3><?php _e( 'This is a premium feature', 'newsletter-optin-box' );?></h3>
-		<p><?php _e( "We're sorry, Welcome Emails are not available on your plan. Please buy the ultimate addons pack to send welcome emails and get access to more awesome features.", 'newsletter-optin-box' ); ?></p>
-		<p><a href="<?php echo esc_url( $url );?>" class="button noptin-button-standout" target="_blank"><?php _e( 'Learn More', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+		<h3><?php esc_html_e( 'This is a premium feature', 'newsletter-optin-box' ); ?></h3>
+		<p><?php esc_html_e( "We're sorry, Welcome Emails are not available on your plan. Please buy the ultimate addons pack to send welcome emails and get access to more awesome features.", 'newsletter-optin-box' ); ?></p>
+		<p><a href="<?php echo esc_url( $url ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
 	</div>
 <?php endif; ?>

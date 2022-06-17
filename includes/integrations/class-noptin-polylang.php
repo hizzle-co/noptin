@@ -50,7 +50,7 @@ class Noptin_Polylang {
 
 		if ( function_exists( 'pll_get_post' ) ) {
 			$translated = pll_get_post( $form_id );
-	
+
 			if ( ! empty( $translated ) ) {
 				$form_id = $translated;
 			}

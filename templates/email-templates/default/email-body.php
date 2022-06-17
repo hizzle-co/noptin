@@ -7,6 +7,6 @@
  * @var string $content
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
-echo $content;
+echo wp_kses_post( $content );

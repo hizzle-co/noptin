@@ -83,7 +83,7 @@ class Noptin_Hooks {
 	 */
 	public function maybe_subscribe() {
 
-		$submitted = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) );
+		$submitted = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$checked   = isset( $submitted['noptin-custom-subscribe'] ) ? $submitted['noptin-custom-subscribe'] : '';
 
 		// Abort if no subscription was attempted.
@@ -122,21 +122,20 @@ class Noptin_Hooks {
 			$key          = $connection->slug;
 			$data[ $key ] = array();
 
-			if ( isset( $submitted["{$key}_list"] ) ) {
-				$data[ $key ]['lists'] = noptin_parse_list( $submitted["{$key}_list"], true );
+			if ( isset( $submitted[ "{$key}_list" ] ) ) {
+				$data[ $key ]['lists'] = noptin_parse_list( $submitted[ "{$key}_list" ], true );
 			}
 
-			if ( $connection->supports( 'tags' ) && isset( $submitted["{$key}_tags"] ) ) {
-				$data[ $key ]['tags'] = noptin_parse_list( $submitted["{$key}_tags"], true );
+			if ( $connection->supports( 'tags' ) && isset( $submitted[ "{$key}_tags" ] ) ) {
+				$data[ $key ]['tags'] = noptin_parse_list( $submitted[ "{$key}_tags" ], true );
 			}
 
 			// Secondary fields.
 			foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
-				if ( isset( $submitted["{$key}_$secondary"] ) ) {
-					$data[ $key ][ $secondary ] = noptin_parse_list( $submitted["{$key}_$secondary"], true );
+				if ( isset( $submitted[ "{$key}_$secondary" ] ) ) {
+					$data[ $key ][ $secondary ] = noptin_parse_list( $submitted[ "{$key}_$secondary" ], true );
 				}
 			}
-
 		}
 
 		return $data;
@@ -155,42 +154,41 @@ class Noptin_Hooks {
 
 		$guessed   = array();
 		$guessable = array(
-			'firstname'        => 'first_name',
-			'fname'            => 'first_name',
-			'secondname'       => 'second_name',
-			'lastname'         => 'second_name',
-			'lname'            => 'second_name',
-			'name'             => 'name',
-			'fullname'         => 'name',
-			'familyname'       => 'second_name',
-			'displayname'      => 'name',
-			'emailaddress'     => 'email',
-			'email'            => 'email',
-			'subscribedvia'    => '_subscriber_via',
-			'source'           => '_subscriber_via',
+			'firstname'     => 'first_name',
+			'fname'         => 'first_name',
+			'secondname'    => 'second_name',
+			'lastname'      => 'second_name',
+			'lname'         => 'second_name',
+			'name'          => 'name',
+			'fullname'      => 'name',
+			'familyname'    => 'second_name',
+			'displayname'   => 'name',
+			'emailaddress'  => 'email',
+			'email'         => 'email',
+			'subscribedvia' => '_subscriber_via',
+			'source'        => '_subscriber_via',
 		);
 
-		foreach (  get_noptin_custom_fields() as $custom_field ) {
-			$label_key = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $custom_field['label'] ) );
-			$merge_key = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $custom_field['merge_tag'] ) );
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+			$label_key = strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $custom_field['label'] ) );
+			$merge_key = strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $custom_field['merge_tag'] ) );
 
 			$guessable[ $merge_key ] = $custom_field['merge_tag'];
 			$guessable[ $label_key ] = $custom_field['merge_tag'];
 		}
 
-		foreach( array_keys( $guessable ) as $key ) {
-			$guessable["subscriber$key"] = $guessable[ $key ];
-			$guessable["noptin$key"] = $guessable[ $key ];
+		foreach ( array_keys( $guessable ) as $key ) {
+			$guessable[ "subscriber$key" ] = $guessable[ $key ];
+			$guessable[ "noptin$key" ]     = $guessable[ $key ];
 		}
 
 		// Prepare subscriber fields.
 		foreach ( $fields as $key => $value ) {
-			$sanitized = strtolower( preg_replace( "/[^A-Za-z0-9]/", '', $key ) );
+			$sanitized = strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $key ) );
 
 			if ( isset( $guessable[ $sanitized ] ) && ! isset( $guessed[ $guessable[ $sanitized ] ] ) ) {
 				$guessed[ $guessable[ $sanitized ] ] = $value;
 			}
-
 		}
 
 		return $guessed;

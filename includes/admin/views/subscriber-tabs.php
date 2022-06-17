@@ -1,3 +1,5 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
+
 <nav class="nav-tab-wrapper" style="margin-bottom: 20px; margin-top: 20px; ">
 
 	<a
@@ -7,22 +9,20 @@
 
 	<?php
 
-		foreach ( Noptin_Subscribers_Admin::get_components() as $id => $component ) :
+		foreach ( Noptin_Subscribers_Admin::get_components() as $component_id => $component ) :
 
 			if ( empty( $component['show_on_tabs'] ) ) {
 				continue;
 			}
 
-			$id    = esc_attr( $id );
-			$label = esc_html( $component['label'] );
-			$url   = 'custom_fields' === $id ? admin_url( 'admin.php?page=noptin-settings&tab=fields' ) : add_query_arg( $id, 'true', admin_url( 'admin.php?page=noptin-subscribers' ) );
+			$url = 'custom_fields' === $component_id ? admin_url( 'admin.php?page=noptin-settings&tab=fields' ) : add_query_arg( $component_id, 'true', admin_url( 'admin.php?page=noptin-subscribers' ) );
 
 			printf(
 				'<a href="%s" class="nav-tab %s noptin-subscriber-tab-%s">%s</a>',
 				esc_url( $url ),
-				( ! empty( $_GET[ $id ] ) ) ? 'nav-tab-active' : '',
-				esc_attr( $id ),
-				$label
+				( ! empty( $_GET[ $component_id ] ) ) ? 'nav-tab-active' : '',
+				esc_attr( $component_id ),
+				esc_html( $component['label'] )
 			);
 
 		endforeach;

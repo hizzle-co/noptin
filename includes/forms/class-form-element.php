@@ -121,7 +121,7 @@ class Noptin_Form_Element {
 
 		// Maybe display submission response.
 		if ( $this->get_response_position() === 'before' ) {
-			echo $this->get_response_html();
+			echo wp_kses_post( $this->get_response_html() );
 		}
 
 		/**
@@ -169,24 +169,13 @@ class Noptin_Form_Element {
 			do_action( 'before_output_noptin_form_field', $custom_field, $this );
 
 			// Display the opening wrapper.
-			printf(
-				'<%s %s>',
-				$wrap,
-				noptin_attr(
-					'form_field_wrapper',
-					array(
-						'id'     => $custom_field['id'] . '__wrapper',
-						'class'  => 'noptin-form-field-wrapper noptin-form-field__' . $custom_field['merge_tag'],
-					),
-					array( $this->args, $custom_field )
-				)
-			);
+			$this->display_opening_wrapper( $custom_field['merge_tag'], $custom_field );
 
 			// Display the actual form field.
 			display_noptin_custom_field_input( $custom_field );
 
 			// Display the closing wrapper.
-			echo '</' . $wrap . '>';
+			$this->display_closing_wrapper( $custom_field, $custom_field );
 
 			/**
 			 * Fires after displaying a single newsletter subscription form field.
@@ -204,18 +193,8 @@ class Noptin_Form_Element {
 		if ( '' !== trim( $this->args['acceptance'] ) ) {
 
 			// Display the opening wrapper.
-			printf(
-				'<%s %s>',
-				$wrap,
-				noptin_attr(
-					'form_field_wrapper',
-					array(
-						'id'     => sanitize_html_class( $this->args['html_id'] . '__field-consent' . '__wrapper' ),
-						'class'  => 'noptin-form-field-wrapper noptin-form-field__consent',
-					),
-					array( $this->args )
-				)
-			);
+			$this->display_opening_wrapper( 'consent' );
+
 			?>
 
 			<label>
@@ -230,7 +209,8 @@ class Noptin_Form_Element {
 			</label>
 
 			<?php
-			echo '</' . $wrap . '>';
+			// Display the closing wrapper.
+			$this->display_closing_wrapper( 'consent' );
 
 		}
 
@@ -243,9 +223,8 @@ class Noptin_Form_Element {
 	/**
 	 * Displays the submit button.
 	 *
-	 * @param string $wrap Field wrap
 	 */
-	protected function display_submit_button( $wrap = 'p' ) {
+	protected function display_submit_button() {
 
 		/**
 		 * Fires before displaying the newsletter subscription form submit button.
@@ -257,37 +236,26 @@ class Noptin_Form_Element {
 		do_action( 'before_output_noptin_form_submit_button', $this );
 
 		// Opening wrapper.
-		printf(
-			'<%s %s>',
-			sanitize_html_class( $wrap ),
-			noptin_attr(
-				'form_field_wrapper',
-				array(
-					'id'     => $this->args['html_id'] . '__submit_button_wrapper',
-					'class'  => 'noptin-form-field-wrapper noptin-form-field-submit',
-				),
-				array( $this->args, array() )
-			)
-		);
+		$this->display_opening_wrapper( 'submit' );
 
 		// Print the submit button.
-		printf(
-			'<button %s>%s</button>',
-			noptin_attr(
-				'form_submit',
-				array(
-					'type'   => 'submit',
-					'id'     => $this->args['html_id'] . '__submit',
-					'class'  => 'noptin-form-submit btn button btn-primary button-primary',
-					'name'   => 'noptin-submit',
-				),
-				$this->args
-			),
-			esc_html( empty( $this->args['submit'] ) ? __( 'Subscribe', 'newsletter-optin-box' ) : $this->args['submit'] )
+		$button_atts = array(
+			'type'  => 'submit',
+			'id'    => sanitize_html_class( $this->args['html_id'] . '__submit' ),
+			'class' => 'noptin-form-submit btn button btn-primary button-primary',
+			'name'  => 'noptin-submit',
 		);
 
+		$button_text = empty( $this->args['submit'] ) ? __( 'Subscribe', 'newsletter-optin-box' ) : $this->args['submit'];
+
+		?>
+
+			<button <?php noptin_attr( 'form_submit', $button_atts, $this->args ); ?>><?php echo esc_html( $button_text ); ?></button>
+
+		<?php
+
 		// Closing wrapper.
-		echo '</' . sanitize_html_class( $wrap ) . '>';
+		$this->display_closing_wrapper( 'submit' );
 
 		/**
 		 * Fires after displaying the newsletter subscription form submit button.
@@ -298,6 +266,44 @@ class Noptin_Form_Element {
 		 */
 		do_action( 'output_noptin_form_submit_button', $this );
 
+	}
+
+	/**
+	 * Prints the opening wrapper.
+	 *
+	 * @param string $field_key Field key
+	 * @param array $extra_args Extra args parsed to hooks.
+	 */
+	protected function display_opening_wrapper( $field_key, $extra_args = array() ) {
+
+		$args = array(
+			'id'    => sanitize_html_class( $this->args['html_id'] . '__' . $field_key . '--wrapper' ),
+			'class' => 'noptin-form-field-wrapper noptin-form-field-' . sanitize_html_class( $field_key ),
+		);
+
+		$wrap = empty( $this->args['wrap'] ) ? 'p' : sanitize_html_class( $this->args['wrap'] );
+
+		do_action( 'before_output_opening_noptin_form_field_wrapper', $field_key, $extra_args, $this );
+
+		?>
+			<<?php echo esc_html( $wrap ); ?> <?php noptin_attr( 'form_field_wrapper', $args, array( $this->args, $extra_args ) ); ?>>
+		<?php
+
+		do_action( 'after_output_opening_noptin_form_field_wrapper', $field_key, $extra_args, $this );
+	}
+
+	/**
+	 * Prints the closing wrapper.
+	 *
+	 * @param string $field_key Field key
+	 * @param array $extra_args Extra args parsed to hooks.
+	 */
+	protected function display_closing_wrapper( $field_key, $extra_args = array() ) {
+		do_action( 'before_output_closing_noptin_form_field_wrapper', $field_key, $extra_args, $this );
+
+		echo '</' . esc_html( empty( $this->args['wrap'] ) ? 'p' : sanitize_html_class( $this->args['wrap'] ) ) . '>';
+
+		do_action( 'after_output_closing_noptin_form_field_wrapper', $field_key, $extra_args, $this );
 	}
 
 	/**
@@ -332,7 +338,7 @@ class Noptin_Form_Element {
 
 		// Maybe display submission response.
 		if ( $this->get_response_position() === 'after' ) {
-			echo $this->get_response_html();
+			echo wp_kses_post( $this->get_response_html() );
 		}
 
 		/**
@@ -387,7 +393,7 @@ class Noptin_Form_Element {
 	 *
 	 * @return string
 	 */
-	protected function display() {
+	public function display() {
 
 		/**
 		 * Runs just before displaying a newsletter subscription form.
@@ -402,21 +408,22 @@ class Noptin_Form_Element {
 		echo '<!-- Noptin Newsletter Plugin v' . esc_html( noptin()->version ) . ' - https://wordpress.org/plugins/newsletter-optin-box/ -->';
 
 		// Display the opening form tag.
-		printf(
-			'<form %s>',
-			noptin_attr(
-				'form',
-				array(
-					'id'         => $this->args['html_id'],
-					'class'      => $this->get_css_classes(),
-					'name'       => empty( $this->args['html_name'] ) ? false : $this->args['html_name'],
-					'method'     => 'post',
-					'novalidate' => true,
-					'data-id'    => absint( $this->id ),
-				),
-				$this
-			)
+		echo '<form ';
+
+		noptin_attr(
+			'form',
+			array(
+				'id'         => $this->args['html_id'],
+				'class'      => $this->get_css_classes(),
+				'name'       => empty( $this->args['html_name'] ) ? false : $this->args['html_name'],
+				'method'     => 'post',
+				'novalidate' => true,
+				'data-id'    => absint( $this->id ),
+			),
+			$this
 		);
+
+		echo '>';
 
 		// Display additional content before form fields.
 		$this->before_fields();
@@ -470,7 +477,6 @@ class Noptin_Form_Element {
 			} else {
 				$classes[] = 'noptin-has-error';
 			}
-
 		}
 
 		// Labels ( hidden / top / side ).

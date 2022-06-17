@@ -3,7 +3,7 @@
 /.wordpress-org/ export-ignore
 /bin export-ignore
 /node_modules export-ignore
-/includes/assets/css/postcss/ export-ignore
+/includes/assets/sass/ export-ignore
 /includes/assets/js/src/ export-ignore
 .gitattributes export-ignore  
 .gitignore export-ignore

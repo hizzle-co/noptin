@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 		<!-- start copy block -->
 		<tr>
 			<td align="center" bgcolor="#e9ecef">
@@ -10,7 +11,7 @@
 					<!-- start copy -->
 						<tr>
 							<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-								<?php echo $content; ?>
+								<?php echo wp_kses_post( $content ); ?>
 							</td>
 						</tr>
 					<!-- end copy -->
