@@ -244,7 +244,7 @@ class Noptin_Install {
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
 		// Create default subscribe form.
-		if ( ! get_option( 'noptin_created_initial_form' ) ) {
+		if ( class_exists( 'WooCommerce' ) && ! get_option( 'noptin_created_initial_form' ) ) {
 
 			$new_form = new Noptin_Form(
 				array(
@@ -265,7 +265,9 @@ class Noptin_Install {
 		update_option( 'noptin_created_new_custom_fields', '1' );
 
 		// Use the new editor for new installs.
-		update_option( 'noptin_use_new_forms', '1' );
+		if ( class_exists( 'WooCommerce' ) ) {
+			update_option( 'noptin_use_new_forms', '1' );
+		}
 
 	}
 

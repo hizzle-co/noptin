@@ -110,7 +110,7 @@ class Noptin_Custom_Fields {
 			$field = $this->custom_field_types[ $custom_field['type'] ];
 
 			printf(
-				'<div v-if="field.type.type==\'$merge_tag\'" class="noptin-field-%s">',
+				'<div v-if="field.type.type==\'%s\'" class="noptin-field-%s">',
 				esc_attr( $custom_field['merge_tag'] ),
 				esc_attr( $custom_field['type'] )
 			);

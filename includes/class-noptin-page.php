@@ -378,7 +378,7 @@ class Noptin_Page {
 
 		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
-			wp_redirect( $page );
+			wp_safe_redirect( $page );
 			exit;
 		}
 
@@ -445,7 +445,7 @@ class Noptin_Page {
 
 		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
-			wp_redirect( $page );
+			wp_safe_redirect( $page );
 			exit;
 		}
 
@@ -502,7 +502,7 @@ class Noptin_Page {
 
 		// If we have a redirect, redirect.
 		if ( ! empty( $page ) ) {
-			wp_redirect( $page );
+			wp_safe_redirect( $page );
 			exit;
 		}
 
