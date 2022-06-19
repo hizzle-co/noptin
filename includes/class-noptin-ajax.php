@@ -537,6 +537,14 @@ class Noptin_Ajax {
 		// Save them.
 		update_noptin_options( $settings );
 
+		// Clear connection caches.
+		foreach ( get_noptin_connection_providers() as $connection ) {
+
+			if ( ! empty( $connection->list_providers ) && is_callable( array( $connection->list_providers, 'empty_cache' ) ) ) {
+				$connection->list_providers->empty_cache();
+			}
+		}
+
 		wp_send_json_success( 1 );
 
 	}
