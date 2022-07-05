@@ -131,7 +131,11 @@ class Noptin_Admin_Filters {
 		 */
 		do_action( 'noptin_before_download_subscribers' );
 
-		$output  = fopen( 'php://output', 'w' ) || wp_die( 'Unsupported server' );
+		$output  = fopen( 'php://output', 'w' );
+
+		if ( empty( $output ) ) {
+			wp_die( 'Unsupported server' );
+		}
 
 		// Prepare variables.
 		$fields    = empty( $_POST['fields'] ) ? array( 'email' ) : $_POST['fields'];

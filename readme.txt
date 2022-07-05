@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.7.6 =
+* Newsletter subscribers export file is empty.
+
 = 1.7.5 =
 * Subscription checkbox breaks the registration form.
 * Add BuddyPress registration form compatibility.
