@@ -35,7 +35,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		// Displays sender options.
 		add_action( 'noptin_sender_options_' . $this->sender, array( $this, 'display_sending_options' ) );
 
-		// Adds a new email to the qeue.
+		// Adds a new email to the queue.
 		add_action( 'noptin_send_email_via_' . $this->sender, array( $this, 'send' ), 10, 2 );
 
 		// Checks cron to ensure all scheduled emails are sent.
@@ -83,7 +83,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	abstract public function done_sending( $campaign );
 
 	/**
-	 * Pushes the qeue forward to be handled in the future.
+	 * Pushes the queue forward to be handled in the future.
 	 *
 	 */
 	protected function push_forwards() {

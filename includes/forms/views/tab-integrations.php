@@ -96,7 +96,7 @@ $url = add_query_arg(
 											name="noptin_form[settings][<?php echo esc_attr( $key ); ?>_tags]"
 											value="<?php echo esc_attr( $tags ); ?>"
 										/>
-										<p class="description"><?php esc_html_e( 'Enter a comma separated list of tags to assign new suscribers.', 'newsletter-optin-box' ); ?></p>
+										<p class="description"><?php esc_html_e( 'Enter a comma separated list of tags to assign new subscribers.', 'newsletter-optin-box' ); ?></p>
 									</td>
 								</tr>
 							<?php endif; ?>

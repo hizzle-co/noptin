@@ -333,7 +333,7 @@ class Noptin_Subscribers_Admin {
 		} else {
 
 			// Else, show a success message and redirect to the added subscriber.
-			noptin()->admin->show_success( __( 'Suscriber added successfully.', 'newsletter-optin-box' ) );
+			noptin()->admin->show_success( __( 'Subscriber added successfully.', 'newsletter-optin-box' ) );
 
 			wp_safe_redirect(
 				add_query_arg( 'subscriber', (int) $result, admin_url( 'admin.php?page=noptin-subscribers' ) )

@@ -119,7 +119,7 @@ class Noptin_Admin {
 		do_action( 'noptin_before_admin_init_hooks', $this );
 
 		// Admin scripts.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqeue_scripts' ), 0 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 0 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'plugin_deactivation_scripts' ) );
 
 		// (maybe) do an action.
@@ -153,7 +153,7 @@ class Noptin_Admin {
 	 * @since       1.0.0
 	 * @return      void
 	 */
-	public function enqeue_scripts() {
+	public function enqueue_scripts() {
 		global $pagenow, $current_screen;
 
 		// Load our CSS styles on all pages.
@@ -1000,7 +1000,7 @@ class Noptin_Admin {
 	/**
 	 * Displays a success notice
 	 *
-	 * @param       string $msg The message to qeue.
+	 * @param       string $msg The message to queue.
 	 * @access      public
 	 * @since       1.1.2
 	 */
@@ -1012,7 +1012,7 @@ class Noptin_Admin {
 	 * Displays a error notice
 	 *
 	 * @access      public
-	 * @param       string $msg The message to qeue.
+	 * @param       string $msg The message to queue.
 	 * @since       1.1.2
 	 */
 	public function show_error( $msg ) {
@@ -1023,7 +1023,7 @@ class Noptin_Admin {
 	 * Displays a warning notice
 	 *
 	 * @access      public
-	 * @param       string $msg The message to qeue.
+	 * @param       string $msg The message to queue.
 	 * @since       1.1.2
 	 */
 	public function show_warning( $msg ) {
@@ -1034,7 +1034,7 @@ class Noptin_Admin {
 	 * Displays a info notice
 	 *
 	 * @access      public
-	 * @param       string $msg The message to qeue.
+	 * @param       string $msg The message to queue.
 	 * @since       1.1.2
 	 */
 	public function show_info( $msg ) {
