@@ -3,17 +3,17 @@
 
 	return array(
 
-		'PRO20200311'     => array(
+		'PRO20200311'            => array(
 			'title' => __( 'Professional', 'newsletter-optin-box' ),
 			'data'  => array(
-				'singleLine'        => true,
-				'formRadius'        => '0px',
-				'formWidth'         => '520px',
-				'formHeight'        => '280px',
-				'noptinFormBg'      => '#f8f9fa',
-				'noptinFormBgImg'   => '',
-				'noptinFormBgVideo' => '',
-				'fields'            => array(
+				'singleLine'            => true,
+				'formRadius'            => '0px',
+				'formWidth'             => '520px',
+				'formHeight'            => '280px',
+				'noptinFormBg'          => '#f8f9fa',
+				'noptinFormBgImg'       => '',
+				'noptinFormBgVideo'     => '',
+				'fields'                => array(
 					array(
 						'type'    => array(
 							'label' => __( 'Email Address', 'newsletter-optin-box' ),
@@ -27,31 +27,31 @@
 
 				),
 
-				'imageMain'         => false,
-				'formBorder'        => array(
+				'imageMain'             => false,
+				'formBorder'            => array(
 					'style'         => 'none',
 					'border_radius' => 0,
 					'border_width'  => 0,
 					'border_color'  => '#f8f9fa',
 					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #f8f9fa;',
 				),
-				'image'             => 'https://cdn.noptin.com/templates/images/avatar.png',
-				'imagePos'          => 'left',
-				'noptinButtonLabel' => __( 'Sign Up', 'newsletter-optin-box' ),
-				'buttonPosition'    => 'block',
-				'noptinButtonBg'    => '#00d07e',
-				'noptinButtonColor' => '#ffffff',
-				'prefix'            => '',
-				'hideTitle'         => false,
-				'title'             => __( 'Get Exclusive SEO Tips', 'newsletter-optin-box' ),
-				'titleColor'        => '#010101',
-				'hideDescription'   => false,
-				'description'       => __( 'Receive the same tips I used to double my traffic in just two weeks!', 'newsletter-optin-box' ),
-				'descriptionColor'  => '#010101',
-				'hideNote'          => true,
-				'hideOnNoteClick'   => false,
-				'note'              => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
-				'noteColor'         => '#010101',
+				'image'                 => 'https://cdn.noptin.com/templates/images/avatar.png',
+				'imagePos'              => 'left',
+				'noptinButtonLabel'     => __( 'Sign Up', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => '#00d07e',
+				'noptinButtonColor'     => '#ffffff',
+				'prefix'                => '',
+				'hideTitle'             => false,
+				'title'                 => __( 'Get Exclusive SEO Tips', 'newsletter-optin-box' ),
+				'titleColor'            => '#010101',
+				'hideDescription'       => false,
+				'description'           => __( 'Receive the same tips I used to double my traffic in just two weeks!', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#010101',
+				'hideNote'              => true,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#010101',
 				'titleTypography'       => array(
 					'font_size'   => '20',
 					'font_weight' => '700',
@@ -68,7 +68,7 @@
 					'style'       => '',
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
-				'CSS'               => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
+				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
 	position: absolute;
 	right: 10px;
 	top: 6px;
@@ -98,7 +98,7 @@
 		),
 
 
-		'owvP1565701640'  => array(
+		'owvP1565701640'         => array(
 			'title' => __( 'Borderless', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => true,
@@ -176,7 +176,7 @@
 
 		),
 
-		'IEiH1565701672'  => array(
+		'IEiH1565701672'         => array(
 			'title' => __( 'Classic', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => true,
@@ -245,7 +245,7 @@
 
 		),
 
-		'qQOv1565701677'  => array(
+		'qQOv1565701677'         => array(
 			'title' => __( 'Subheading', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => false,
@@ -321,7 +321,7 @@
 
 		),
 
-		'ICkq1565701695'  => array(
+		'ICkq1565701695'         => array(
 			'title' => __( 'Border Top', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => true,
@@ -407,14 +407,14 @@
 		'BLyQ1565701700'         => array(
 			'title' => 'smartpassiveincome.com',
 			'data'  => array(
-				'singleLine'        => true,
-				'formRadius'        => '0px',
-				'formWidth'         => '720px',
-				'formHeight'        => '280px',
-				'noptinFormBg'      => '#4CAF50',
-				'noptinFormBgVideo' => '',
-				'noptinFormBgImg'   => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg',
-				'fields'            => array(
+				'singleLine'            => true,
+				'formRadius'            => '0px',
+				'formWidth'             => '720px',
+				'formHeight'            => '280px',
+				'noptinFormBg'          => '#4CAF50',
+				'noptinFormBgVideo'     => '',
+				'noptinFormBgImg'       => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg',
+				'fields'                => array(
 					array(
 						'type'    => array(
 							'label' => __( 'First Name', 'newsletter-optin-box' ),
@@ -439,32 +439,32 @@
 
 				),
 
-				'imageMain'         => '',
-				'formBorder'        => array(
+				'imageMain'             => '',
+				'formBorder'            => array(
 					'style'         => 'none',
 					'border_radius' => 0,
 					'border_width'  => 0,
 					'border_color'  => '#000000',
 					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #000000;',
 				),
-				'image'             => '',
-				'imagePos'          => 'right',
-				'noptinButtonLabel' => __( 'Subscribe Now', 'newsletter-optin-box' ),
-				'buttonPosition'    => 'block',
-				'noptinButtonBg'    => 'rgba(0,0,0,0)',
-				'noptinButtonColor' => '#fefefe',
-				'prefix'            => '',
-				'hideTitle'         => false,
-				'title'             => 'WANT THE INSIDE SCOOP?',
-				'titleColor'        => '#f1f1f1',
-				'hideDescription'   => false,
-				'description'       => __( 'Use the custom CSS panel to change the background colors', 'newsletter-optin-box' ),
-				'descriptionColor'  => '#f2f2f2',
-				'hideNote'          => true,
-				'hideOnNoteClick'   => false,
-				'note'              => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
-				'noteColor'         => '#607D8B',
-				'titleTypography'   => array(
+				'image'                 => '',
+				'imagePos'              => 'right',
+				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
+				'buttonPosition'        => 'block',
+				'noptinButtonBg'        => 'rgba(0,0,0,0)',
+				'noptinButtonColor'     => '#fefefe',
+				'prefix'                => '',
+				'hideTitle'             => false,
+				'title'                 => 'WANT THE INSIDE SCOOP?',
+				'titleColor'            => '#f1f1f1',
+				'hideDescription'       => false,
+				'description'           => __( 'Use the custom CSS panel to change the background colors', 'newsletter-optin-box' ),
+				'descriptionColor'      => '#f2f2f2',
+				'hideNote'              => true,
+				'hideOnNoteClick'       => false,
+				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'             => '#607D8B',
+				'titleTypography'       => array(
 					'font_size'   => '20',
 					'font_weight' => '700',
 					'line_height' => '1.5',
@@ -480,7 +480,7 @@
 					'style'       => '',
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
-				'CSS'               => '.noptin-optin-form-wrapper{}
+				'CSS'                   => '.noptin-optin-form-wrapper{}
 
 .noptin-optin-form-wrapper form .noptin-form-footer .noptin-form-submit {
 	border:2px solid hsla(0,0%,100%,.3) !important;
@@ -497,7 +497,7 @@
 
 		),
 
-		'yXJo1565701704'  => array(
+		'yXJo1565701704'         => array(
 			'title' => __( 'Rounded Fields', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => true,
@@ -585,7 +585,7 @@
 
 		),
 
-		'BMDQ1565701721'  => array(
+		'BMDQ1565701721'         => array(
 			'title' => 'Backlinko',
 			'data'  => array(
 				'singleLine'            => true,
@@ -681,7 +681,7 @@
 
 		),
 
-		'89zl1570214684'  => array(
+		'89zl1570214684'         => array(
 			'title' => 'Michael Thiessen',
 			'data'  => array(
 				'singleLine'            => false,
@@ -752,7 +752,7 @@
 
 		),
 
-		'r5g21565701726'  => array(
+		'r5g21565701726'         => array(
 			'title' => __( 'Hearts', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => true,
@@ -819,7 +819,7 @@
 
 		),
 
-		'conv21565701726' => array(
+		'conv21565701726'        => array(
 			'title' => 'Convertkit',
 			'data'  => array(
 				'singleLine'            => true,
@@ -1029,7 +1029,7 @@
 
 		),
 
-		'twobg21565701726' => array(
+		'twobg21565701726'       => array(
 			'title' => __( 'Two Backgrounds', 'newsletter-optin-box' ),
 			'data'  => array(
 				'singleLine'            => false,

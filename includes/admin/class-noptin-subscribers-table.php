@@ -563,26 +563,23 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 
 		?>
 		<div class="alignleft actions">
-			<?php
+			<?php if ( 'top' === $which ) : ?>
 
-				if ( 'top' === $which ) {
-					?>
+				<?php foreach ( $filters as $filter => $data ) : ?>
+					<select name="noptin-filters[<?php echo esc_attr( $filter ); ?>]" id="noptin_filter_<?php echo esc_attr( $filter ); ?>">
+						<option value="" <?php selected( ! isset( $selected_filters[ $filter ] ) || '' === $selected_filters[ $filter ] ); ?>><?php echo esc_html( wp_strip_all_tags( $data['label'] ) ); ?></option>
+						<?php foreach ( $data['options'] as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $selected_filters[ $filter ] ) && $value === $selected_filters[ $filter ] ); ?>><?php echo esc_html( $label ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				<?php endforeach; ?>
 
-					<?php foreach ( $filters as $filter => $data ) : ?>
-						<select name="noptin-filters[<?php echo esc_attr( $filter ); ?>]" id="noptin_filter_<?php echo esc_attr( $filter ); ?>">
-							<option value="" <?php selected( ! isset( $selected_filters[ $filter ] ) || '' === $selected_filters[ $filter ] ); ?>><?php echo esc_html( wp_strip_all_tags( $data['label'] ) ); ?></option>
-							<?php foreach ( $data['options'] as $value => $label ) : ?>
-								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $selected_filters[ $filter ] ) && $value === $selected_filters[ $filter ] ); ?>><?php echo esc_html( $label ); ?></option>
-							<?php endforeach; ?>
-						</select>
-					<?php endforeach; ?>
-
-					<?php
+				<?php
 					do_action( 'noptin_restrict_manage_subscribers', $this, $which );
 
 					submit_button( __( 'Filter', 'newsletter-optin-box' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
-				}
-			?>
+				?>
+			<?php endif; ?>
 		</div>
 		<?php
 
