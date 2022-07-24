@@ -279,7 +279,7 @@ class Noptin_Vue {
 			esc_attr( $field['_class'] ),
 			esc_attr( $field['url'] ),
 			wp_kses_post( $field['label'] ),
-			wp_kses( $field['tooltip'], self::tooltip_tags() ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() )
 		);
 
 	}
@@ -300,7 +300,7 @@ class Noptin_Vue {
 			$field['attrs'],
 			esc_attr( $field['_class'] ),
 			$field['content'],
-			wp_kses( $field['tooltip'], self::tooltip_tags() ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() )
 		);
 
 	}
