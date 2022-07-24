@@ -477,12 +477,12 @@ class Noptin_Admin {
 
 		// The main admin page.
 		add_menu_page(
-			esc_html__( 'Noptin Newsletter', 'newsletter-optin-box' ),
-			esc_html__( 'Noptin Newsletter', 'newsletter-optin-box' ),
+			noptin()->white_label->name,
+			noptin()->white_label->name,
 			get_noptin_capability(),
 			'noptin',
 			null,
-			'dashicons-forms',
+			noptin()->white_label->icon,
 			'23.81204129341231'
 		);
 

@@ -101,6 +101,15 @@ class Noptin {
 	public $bg_mailer = null;
 
 	/**
+	 * White Label
+	 *
+	 * @var Noptin_White_Label
+	 * @access      public
+	 * @since       1.7.7
+	 */
+	public $white_label = null;
+
+	/**
 	 * New post notifications.
 	 *
 	 * @var Noptin_New_Post_Notify
@@ -318,6 +327,11 @@ class Noptin {
 	 */
 	public function plugins_loaded() {
 		$this->integrations = new Noptin_Integrations();
+
+		if ( empty( $this->white_label ) ) {
+			$this->white_label = new Noptin_White_Label();
+		}
+
 	}
 
 	/**
