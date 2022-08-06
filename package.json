@@ -40,7 +40,7 @@
 		"@wordpress/babel-preset-default": "6.16.0",
 		"autoprefixer": "10.4.8",
 		"babel-loader": "8.2.5",
-		"postcss": "8.4.14",
+		"postcss": "8.4.16",
 		"postcss-csso": "6.0.0",
 		"sass": "1.54.3",
 		"webpack": "5.74.0",
