@@ -131,22 +131,34 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 				'label'       => __( 'Preview Text', 'newsletter-optin-box' ),
 				'description' => __( 'Enter an optional text that should be displayed next to the subject.', 'newsletter-optin-box' ),
 			),
+			'email_heading'       => array(
+				'el'          => 'input',
+				'label'       => __( 'Email Heading', 'newsletter-optin-box' ),
+				'description' => __( 'Appears above the email content.', 'newsletter-optin-box' ),
+			),
 			'email_content'       => array(
 				'el'          => 'email_action_content',
 				'label'       => __( 'Email Content', 'newsletter-optin-box' ),
 				'description' => __( 'Enter the email content. Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
 			),
-			'permission_reminder' => array(
-				'el'          => 'textarea',
-				'label'       => __( 'Permission Reminder', 'newsletter-optin-box' ),
-				'description' => __( 'Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
-				'default'     => noptin()->mailer->get_permission_text( array() ),
-			),
 			'email_footer'        => array(
 				'el'          => 'textarea',
 				'label'       => __( 'Footer Text', 'newsletter-optin-box' ),
 				'description' => __( 'Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
-				'default'     => noptin()->mailer->get_footer_text( array() ),
+				'default'     => get_noptin_footer_text(),
+			),
+			'email_template'      => array(
+				'el'          => 'select',
+				'label'       => __( 'Email Template', 'newsletter-optin-box' ),
+				'description' => __( 'Select the email template to use.', 'newsletter-optin-box' ),
+				'default'     => get_noptin_option( 'email_template', 'paste' ),
+				'options'     => get_noptin_email_templates(),
+			),
+			'install_addons_pack' => array(
+				'el' 		  => 'upsell',
+				'label' 	  => __( 'Delay this email', 'newsletter-optin-box' ),
+				'description' => __( 'The add-ons pack allows you to delay this email for a given number of minutes, hours, or days.', 'newsletter-optin-box' ),
+				'url' 		  => 'https://noptin.com/pricing/?utm_source=plugin&utm_medium=upsell&utm_campaign=automation-rules',
 			),
 		);
 	}
@@ -157,41 +169,35 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	 * @since 1.3.0
 	 * @param Noptin_Subscriber $subscriber The subscriber.
 	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
+	 * @param array $_args Extra arguments passed to the action.
 	 * @return void
 	 */
-	public function run( $subscriber, $rule, $args ) {
+	public function run( $subscriber, $rule, $_args ) {
 
-		$email_content = $rule->action_settings['email_content'];
-		$email_subject = $rule->action_settings['email_subject'];
-		$email_preview = isset( $rule->action_settings['email_preview'] ) ? $rule->action_settings['email_preview'] : '';
-
-		if ( $subscriber->is_virtual ) {
-			$merge_tags = $subscriber->to_array();
-		} else {
-			$merge_tags = get_noptin_subscriber_merge_fields( $subscriber->id );
-		}
-
-		if ( is_array( $args ) ) {
-			$merge_tags = array_merge( $merge_tags, $args );
-		}
-
-		$item  = array(
-			'subscriber_id'   => $subscriber->is_virtual ? 0 : $subscriber->id,
-			'email' 		  => $subscriber->email,
-			'email_body'	  => wp_kses_post( stripslashes_deep( $email_content ) ),
-			'email_subject'   => esc_html( stripslashes_deep( $email_subject ) ),
-			'preview_text'    => esc_html( stripslashes_deep( $email_preview ) ),
-			'merge_tags'	  => $merge_tags,
-			'permission_text' => isset( $rule->action_settings['permission_reminder'] ) ? $rule->action_settings['permission_reminder'] : '',
-			'footer_text'     => isset( $rule->action_settings['email_footer'] ) ? $rule->action_settings['email_footer'] : '',
+		$args = array(
+			'footer_text'    => isset( $rule->action_settings['email_footer'] ) ? wp_unslash( $rule->action_settings['email_footer'] ) : '',
+			'heading'        => isset( $rule->action_settings['email_heading'] ) ? wp_unslash( $rule->action_settings['email_heading'] ) : '',
+			'preview_text'   => isset( $rule->action_settings['email_preview'] ) ? wp_unslash( $rule->action_settings['email_preview'] ) : '',
+			'subject'        => wp_unslash( $rule->action_settings['email_subject'] ),
+			'content_normal' => wp_unslash( $rule->action_settings['email_content'] ),
+			'recepient'      => $subscriber->email,
+			'email_type'     => 'normal',
+			'template'       => isset( $rule->action_settings['email_template'] ) ? sanitize_text_field( $rule->action_settings['email_template'] ) : '',
+			'merge_tags'     => array(),
 		);
 
-		$item = apply_filters( 'noptin_email_action_email_details', $item, $subscriber, $rule, $args );
+		if ( is_array( $_args ) ) {
 
-		// Sends the email.
-		return noptin()->mailer->prepare_then_send( $item );
+			foreach ( $_args as $key => $value ) {
+				if ( is_scalar( $value ) ) {
+					$args['merge_tags'][ $key ] = $value;
+				}
+			}
+		}
 
+		$email = new Noptin_One_Time_Email( $args );
+
+		noptin()->emails->one_time->maybe_send_campaign( $email );
 	}
 
 	/**

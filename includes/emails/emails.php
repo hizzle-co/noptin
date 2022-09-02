@@ -270,7 +270,7 @@ function get_noptin_email_delay_units() {
  * @return string
  */
 function get_noptin_footer_text() {
-	return get_noptin_option( 'footer_texts', noptin()->mailer->default_footer_text() );
+	return get_noptin_option( 'footer_text', noptin()->mailer->default_footer_text() );
 }
 
 /**

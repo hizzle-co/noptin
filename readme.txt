@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.7.8 =
+* Fix automation rules send empty email body.
+
 = 1.7.7 =
 * Ensure PHP < 7.3 compatibility
 

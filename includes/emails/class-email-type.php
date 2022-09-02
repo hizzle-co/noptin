@@ -513,7 +513,7 @@ abstract class Noptin_Email_Type {
 		$this->after_send( $campaign );
 
 		// Log.
-		if ( 'test' !== $result && ! $campaign->is_mass_mail() ) {
+		if ( 'test' !== $key && ! $campaign->is_mass_mail() && ! empty( $campaign->id ) ) {
 
 			if ( true === $result ) {
 				increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );

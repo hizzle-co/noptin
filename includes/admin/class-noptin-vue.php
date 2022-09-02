@@ -29,6 +29,7 @@ class Noptin_Vue {
 		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox' ), 10, 2 );
 		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input' ), 10, 2 );
 		add_action( 'noptin_render_editor_custom_fields', array( __CLASS__, 'custom_fields' ), 10, 2 );
+		add_action( 'noptin_render_editor_upsell', array( __CLASS__, 'upsell' ), 10, 2 );
 
 		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types' ), 5 );
 		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings' ), 5 );
@@ -615,6 +616,30 @@ class Noptin_Vue {
 			$field['attrs'],
 			$options,
 			$field['description']
+		);
+
+	}
+
+	/**
+	 * Renders a select field
+	 */
+	public static function upsell( $id, $field ) {
+
+		printf(
+			'<div %s class="field-wrapper %s">
+				<label class="noptin-label">%s %s</label>
+				<div class="noptin-content noptin-upsell-wrapper">
+					<p class="noptin-upsell-wrapper__content">%s</p>
+					<a href="%s" class="button button-secondary">%s</a>
+				</div>
+			</div>',
+			$field['restrict'],
+			esc_attr( $field['_class'] ),
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
+			wp_kses_post( $field['description'] ),
+			esc_url( $field['url'] ),
+			esc_html__( 'Learn More', 'newsletter-optin-box' )
 		);
 
 	}
