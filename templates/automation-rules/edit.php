@@ -34,10 +34,10 @@ if ( empty( $rule_action ) ) {
 	return;
 }
 
-$trigger_settings     = $trigger->get_settings();
-$rule_action_settings = $rule_action->get_settings();
+$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
+$action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $rule_action->get_id(), $rule_action->get_settings(), $rule, $rule_action );
 
-if ( empty( $trigger_settings ) && empty( $rule_action_settings ) ) {
+if ( empty( $trigger_settings ) && empty( $action_settings ) ) {
 	printf(
 		'<div class="notice notice-info"><p>%s</p></div>',
 		esc_html__( 'Nothing to configure for this rule.', 'newsletter-optin-box' )
@@ -61,12 +61,12 @@ if ( empty( $trigger_settings ) && empty( $rule_action_settings ) ) {
 			</div>
 		<?php endif; ?>
 
-		<?php if ( ! empty( $rule_action_settings ) ) : ?>
+		<?php if ( ! empty( $action_settings ) ) : ?>
 			<div class="noptin-automation-rule-editor-section">
 				<hr>
 				<h2 style="margin-bottom: 0.2em;"><?php esc_html_e( 'Action Settings', 'newsletter-optin-box' ); ?></h2>
 				<p class="description" style="margin-bottom: 16px;"><?php echo wp_kses_post( $rule_action->get_description() ); ?></p>
-				<?php foreach ( $rule_action_settings as $setting_id => $args ) : ?>
+				<?php foreach ( $action_settings as $setting_id => $args ) : ?>
 					<?php Noptin_Vue::render_el( "action_settings['$setting_id']", $args ); ?>
 					<?php endforeach; ?>
 			</div>

@@ -93,15 +93,17 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		$settings = $rule->action_settings;
 
 		if ( empty( $settings['email_subject'] ) ) {
-			return esc_html__( 'send them an email', 'newsletter-optin-box' );
+			$rule_description = esc_html__( 'send them an email', 'newsletter-optin-box' );
+		} else {
+			$email_subject    = esc_html( $settings['email_subject'] );
+			$rule_description = sprintf(
+				// translators: %s is the email subject
+				esc_html__( 'send them an email with the subject %s', 'newsletter-optin-box' ),
+				"<code>$email_subject</code>"
+			);
 		}
 
-		$email_subject = esc_html( $settings['email_subject'] );
-		return sprintf(
-			// translators: %s is the email subject
-			esc_html__( 'send them an email with the subject %s', 'newsletter-optin-box' ),
-			"<code>$email_subject</code>"
-		);
+		return apply_filters( 'noptin_email_action_rule_description', $rule_description, $rule );
 
 	}
 
@@ -173,6 +175,10 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	 * @return void
 	 */
 	public function run( $subscriber, $rule, $_args ) {
+
+		if ( ! apply_filters( 'noptin_should_send_automation_rule_email', true, $subscriber, $rule, $_args ) ) {
+			return;
+		}
 
 		$args = array(
 			'footer_text'    => isset( $rule->action_settings['email_footer'] ) ? wp_unslash( $rule->action_settings['email_footer'] ) : '',

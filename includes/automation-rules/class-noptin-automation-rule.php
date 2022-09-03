@@ -118,8 +118,9 @@ class Noptin_Automation_Rule {
 		$trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
 
 		if ( ! empty( $trigger ) && is_array( $trigger->get_settings() ) ) {
+			$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $this, $trigger );
 
-			foreach ( $trigger->get_settings() as $key => $args ) {
+			foreach ( $trigger_settings as $key => $args ) {
 				if ( ! isset( $this->trigger_settings[ $key ] ) && isset( $args['default'] ) ) {
 					$this->trigger_settings[ $key ] = $args['default'];
 				}
@@ -129,8 +130,9 @@ class Noptin_Automation_Rule {
 		$action = noptin()->automation_rules->get_action( $this->action_id );
 
 		if ( ! empty( $action ) && is_array( $action->get_settings() ) ) {
+			$action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
 
-			foreach ( $action->get_settings() as $key => $args ) {
+			foreach ( $action_settings as $key => $args ) {
 				if ( ! isset( $this->action_settings[ $key ] ) && isset( $args['default'] ) ) {
 					$this->action_settings[ $key ] = $args['default'];
 				}
