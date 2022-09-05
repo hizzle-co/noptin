@@ -32,9 +32,9 @@
 		"vuedraggable": "2.24.3"
 	},
 	"devDependencies": {
-		"@babel/core": "7.18.13",
+		"@babel/core": "7.19.0",
 		"@babel/plugin-transform-runtime": "7.18.10",
-		"@babel/preset-env": "7.18.10",
+		"@babel/preset-env": "7.19.0",
 		"@mdi/js": "7.0.96",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
 		"@wordpress/babel-preset-default": "7.0.0",
