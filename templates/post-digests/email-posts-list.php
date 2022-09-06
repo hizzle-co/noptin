@@ -9,6 +9,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+global $post;
+
 ?>
 
 <style type="text/css">
@@ -69,6 +71,11 @@ defined( 'ABSPATH' ) || exit;
 
 <?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 
+	<?php
+		$GLOBALS['post'] = $campaign_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		setup_postdata( $campaign_post );
+	?>
+
 	<table cellspacing="0" cellpadding="0" class="digest-list-post digest-list-post-type-<?php echo esc_attr( sanitize_html_class( $campaign_post->post_type ) ); ?>">
 		<tbody>
 			<tr style="vertical-align:top">
@@ -120,3 +127,6 @@ defined( 'ABSPATH' ) || exit;
 	</table>
 
 <?php endforeach; ?>
+
+<?php
+	wp_reset_postdata();

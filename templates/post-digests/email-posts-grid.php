@@ -92,6 +92,11 @@ defined( 'ABSPATH' ) || exit;
 	<!--<![endif]-->
 		<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 			<?php if ( noptin_is_even( $i ) ) : ?>
+
+			<?php
+				$GLOBALS['post'] = $campaign_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				setup_postdata( $campaign_post );
+			?>
 			<div class="digest-grid-post digest-grid-post-type-<?php echo esc_attr( sanitize_html_class( $campaign_post->post_type ) ); ?>">
 
 				<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
@@ -151,6 +156,12 @@ defined( 'ABSPATH' ) || exit;
 	<!--<![endif]-->
 	<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 		<?php if ( ! noptin_is_even( $i ) ) : ?>
+
+		<?php
+			$GLOBALS['post'] = $campaign_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			setup_postdata( $campaign_post );
+		?>
+
 		<div class="digest-grid-post digest-grid-post-type-<?php echo sanitize_html_class( $campaign_post->post_type ); ?>">
 
 			<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
@@ -206,3 +217,6 @@ defined( 'ABSPATH' ) || exit;
 	</tr>
 </table>
 <![endif]-->
+
+<?php
+	wp_reset_postdata();
