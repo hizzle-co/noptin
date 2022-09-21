@@ -1572,6 +1572,10 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
  */
 function noptin_newslines_to_array( $text ) {
 
+	if ( is_array( $text ) ) {
+		return $text;
+	}
+
 	$options = array();
 	foreach ( preg_split( "/\r\n|\n|\r/", $text ) as $option ) {
 		$options[ trim( $option ) ] = wp_strip_all_tags( trim( $option ) );

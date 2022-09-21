@@ -314,8 +314,8 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
 function add_noptin_subscriber( $fields, $silent = false ) {
 	global $wpdb;
 
-	if ( empty( $fields['locale'] ) && noptin_is_multilingual() ) {
-		$fields['locale'] = sanitize_text_field( get_locale() );
+	if ( empty( $fields['language'] ) && noptin_is_multilingual() ) {
+		$fields['language'] = sanitize_text_field( get_locale() );
 	}
 
 	$table  = get_noptin_subscribers_table_name();
@@ -1238,7 +1238,7 @@ add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );
  */
 function get_noptin_custom_field_types() {
 
-	return apply_filters(
+	$field_types = apply_filters(
 		'noptin_custom_field_types',
 		array(
 			'email'      => array(
@@ -1264,6 +1264,12 @@ function get_noptin_custom_field_types() {
 				'merge_tag'  => 'birthday',
 				'label'      => __( 'Birthday', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Birthday',
+			),
+			'language'   => array(
+				'predefined' => true,
+				'merge_tag'  => 'language',
+				'label'      => __( 'Language', 'newsletter-optin-box' ),
+				'class'      => 'Noptin_Custom_Field_Language',
 			),
 			'text'       => array(
 				'predefined' => false,
@@ -1305,6 +1311,11 @@ function get_noptin_custom_field_types() {
 		)
 	);
 
+	if ( ! noptin_is_multilingual() && isset( $field_types['language'] ) ) {
+		unset( $field_types['language'] );
+	}
+
+	return $field_types;
 }
 
 /**
@@ -1379,6 +1390,24 @@ function get_noptin_custom_fields( $public_only = false ) {
 		'custom_fields',
 		Noptin_Custom_Fields::default_fields()
 	);
+
+	// Maybe add the localse field.
+	$has_language_field = current( wp_list_filter( $custom_fields, array( 'type' => 'language' ) ) );
+
+	if ( noptin_is_multilingual() && ! $has_language_field ) {
+
+		$custom_fields[] = array(
+			'type'       => 'language',
+			'merge_tag'  => 'language',
+			'label'      => __( 'Language', 'newsletter-optin-box' ),
+			'visible'    => false,
+			'subs_table' => false,
+			'required'   => false,
+			'predefined' => true,
+		);
+	} elseif ( ! noptin_is_multilingual() && $has_language_field ) {
+		$custom_fields = wp_list_filter( $custom_fields, array( 'type' => 'language' ), 'NOT' );
+	}
 
 	// Clean the fields.
 	$fields = map_deep( apply_filters( 'noptin_custom_fields', $custom_fields ), 'esc_html' );

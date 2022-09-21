@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.7.9 =
+* Add language custom field.
+
 = 1.7.8 =
 * Fix automation rules send empty email body.
 
