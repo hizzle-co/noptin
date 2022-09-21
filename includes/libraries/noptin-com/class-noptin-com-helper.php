@@ -109,6 +109,8 @@ class Noptin_COM_Helper {
 		// Save the license key.
 		Noptin_COM::update( 'license_key', $license_key );
 
+		Noptin_COM_Updater::flush_updates_cache();
+
 		noptin()->admin->show_success( __( 'Your license key has been activated successfully. You will now receive updates and support for this website.', 'newsletter-optin-box' ) );
 	}
 
@@ -152,6 +154,8 @@ class Noptin_COM_Helper {
 
 		// Save the license key.
 		Noptin_COM::update( 'license_key', '' );
+
+		Noptin_COM_Updater::flush_updates_cache();
 
 		noptin()->admin->show_success( __( 'License key deactivated successfully. You will no longer receive product updates and support for this site.', 'newsletter-optin-box' ) );
 	}

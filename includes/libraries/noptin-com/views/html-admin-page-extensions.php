@@ -311,6 +311,11 @@
 						<?php endif; ?>
 
 					</div>
+
+					<?php if ( Noptin_COM_Updater::has_extension_update( 'noptin-' . $connection->slug ) ) : ?>
+						<div class="noptin-extension__update"><?php esc_html_e( 'Update Available', 'newsletter-optin-box' ); ?></div>
+					<?php endif; ?>
+
 				</li>
 			<?php endforeach; ?>
 

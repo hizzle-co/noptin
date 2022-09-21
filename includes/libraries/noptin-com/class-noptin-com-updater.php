@@ -56,7 +56,7 @@ class Noptin_COM_Updater {
 				'plugin'         => $filename,
 				'new_version'    => $data['version'],
 				'url'            => 'https://noptin.com/pricing/',
-				'package'        => empty( $data['download_link'] ) ? 'noptin-com-expired-' . $data['url'] : $data['download_link'],
+				'package'        => empty( $data['download_link'] ) ? 'noptin-com-expired-' . $data['product_id'] : $data['download_link'],
 				'upgrade_notice' => '',
 			);
 
@@ -107,7 +107,7 @@ class Noptin_COM_Updater {
 
 		sort( $payload );
 
-		$hash      = md5( wp_json_encode( $payload ) );
+		$hash      = md5( wp_json_encode( $payload ) . Noptin_COM::get_active_license_key() );
 		$cache_key = '_noptin_update_check';
 		$data      = get_transient( $cache_key );
 		if ( false !== $data ) {
@@ -126,7 +126,7 @@ class Noptin_COM_Updater {
 		$git_urls = array();
 
 		foreach ( $payload as $slug ) {
-			$git_urls[ $slug ] = 'https://github.com/hizzle-co/' . $slug;
+			$git_urls[ $slug ] = 'https://github.com/hizzle-co/' . sanitize_key( $slug );
 		}
 
 		$endpoint = add_query_arg(
@@ -157,6 +157,7 @@ class Noptin_COM_Updater {
 			}
 		}
 
+		delete_transient( '_noptin_helper_updates_count' );
 		set_transient( $cache_key, $data, 12 * HOUR_IN_SECONDS );
 		return $data['downloads'];
 	}
@@ -173,7 +174,7 @@ class Noptin_COM_Updater {
 			return $count;
 		}
 
-		if ( ! get_transient( '_noptin_helper_updates' ) ) {
+		if ( ! get_transient( '_noptin_update_check' ) ) {
 			return 0;
 		}
 
@@ -216,10 +217,35 @@ class Noptin_COM_Updater {
 	}
 
 	/**
+	 * Checks if a given extension has an update.
+	 *
+	 * @param string $slug The extension slug.
+	 * @return bool
+	 */
+	public static function has_extension_update( $slug ) {
+
+		if ( ! get_transient( '_noptin_update_check' ) ) {
+			return false;
+		}
+
+		$update_data = self::get_update_data();
+
+		if ( empty( $update_data ) || empty( $update_data[ $slug ] ) ) {
+			return false;
+		}
+
+		// Fetch local plugin.
+		$local_plugin = current( wp_list_filter( Noptin_COM::get_installed_addons(), array( 'slug' => $slug ) ) );
+
+		return ! empty( $local_plugin ) && version_compare( $local_plugin['Version'], $update_data[ $slug ]['version'], '<' );
+
+	}
+
+	/**
 	 * Flushes cached update data.
 	 */
 	public static function flush_updates_cache() {
-		delete_transient( '_noptin_helper_updates' );
+		delete_transient( '_noptin_update_check' );
 		delete_transient( '_noptin_helper_updates_count' );
 		delete_site_transient( 'update_plugins' );
 	}
