@@ -527,13 +527,6 @@ class Noptin_Ajax {
 		 */
 		$settings = apply_filters( 'noptin_sanitize_settings', $settings );
 
-		// Check if we're tracking.
-		$is_tracking = get_noptin_option( 'allow_tracking', false );
-
-		if ( ! $is_tracking && ! empty( $settings['allow_tracking'] ) ) {
-			wp_schedule_single_event( time() + 10, 'noptin_com_tracker_send_event', array( true ) );
-		}
-
 		// Save them.
 		update_noptin_options( $settings );
 
