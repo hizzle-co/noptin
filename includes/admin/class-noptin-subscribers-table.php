@@ -132,8 +132,8 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		// Handle custom fields.
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-			// Limit to checkboxes, dropdowns and radio buttons.
-			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ), true ) ) {
+			// Limit to checkboxes, dropdowns, language and radio buttons.
+			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio', 'language' ), true ) ) {
 
 				// Fetch the appropriate filter.
 				$filter = isset( $filters[ $custom_field['merge_tag'] ] ) ? $filters[ $custom_field['merge_tag'] ] : '';
@@ -558,6 +558,12 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 						'options' => noptin_newslines_to_array( $custom_field['options'] ),
 					);
 				}
+			} elseif ( 'language' === $custom_field['type'] ) {
+
+				$filters[ $custom_field['merge_tag'] ] = array(
+					'label'   => $custom_field['label'],
+					'options' => apply_filters( 'noptin_multilingual_active_languages', array() ),
+				);
 			}
 		}
 

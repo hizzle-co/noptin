@@ -360,6 +360,15 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
 				noptin_newslines_to_array( $custom_field['options'] )
 			);
 
+		} elseif ( 'language' === $custom_field['type'] ) {
+
+			$options = array_merge(
+				array(
+					'' => __( 'Any', 'newsletter-optin-box' ),
+				),
+				apply_filters( 'noptin_multilingual_active_languages', array() )
+			);
+
 		} else {
 			continue;
 		}
