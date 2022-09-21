@@ -26,7 +26,6 @@ class Noptin_COM_Updater {
 		add_action( 'pre_set_site_transient_update_plugins', array( __CLASS__, 'transient_update_plugins' ), 21, 1 );
 		add_action( 'upgrader_process_complete', array( __CLASS__, 'upgrader_process_complete' ) );
 		add_action( 'upgrader_pre_download', array( __CLASS__, 'block_expired_updates' ), 10, 2 );
-		add_filter( 'extra_plugin_headers', array( __CLASS__, 'add_extra_package_headers' ) );
 		add_filter( 'plugins_api', array( __CLASS__, 'plugins_api' ), 20, 3 );
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
@@ -43,20 +42,20 @@ class Noptin_COM_Updater {
 	public static function transient_update_plugins( $transient ) {
 		$update_data = self::get_update_data();
 
-		foreach ( Noptin_COM_Helper::get_local_noptin_plugins() as $plugin ) {
-			if ( empty( $update_data[ $plugin['_product_id'] ] ) ) {
+		foreach ( Noptin_COM::get_installed_addons() as $plugin ) {
+			if ( empty( $update_data[ $plugin['slug'] ] ) || empty( $update_data[ $plugin['slug'] ]['version'] ) ) {
 				continue;
 			}
 
-			$data     = $update_data[ $plugin['_product_id'] ];
+			$data     = $update_data[ $plugin['slug'] ];
 			$filename = $plugin['_filename'];
 
 			$item = array(
-				'id'             => 'noptin-com-' . $plugin['_product_id'],
+				'id'             => 'noptin-com-' . $plugin['slug'],
 				'slug'           => $plugin['slug'],
 				'plugin'         => $filename,
 				'new_version'    => $data['version'],
-				'url'            => $data['url'],
+				'url'            => 'https://noptin.com/pricing/',
 				'package'        => empty( $data['download_link'] ) ? 'noptin-com-expired-' . $data['url'] : $data['download_link'],
 				'upgrade_notice' => '',
 			);
@@ -72,7 +71,6 @@ class Noptin_COM_Updater {
 				$transient->no_update[ $filename ] = (object) $item;
 				unset( $transient->response[ $filename ] );
 			}
-
 		}
 
 		return $transient;
@@ -84,25 +82,25 @@ class Noptin_COM_Updater {
 	 * Scans through all extensions and obtains update
 	 * data for each product.
 	 *
-	 * @return array Update data {product_id => data}
+	 * @return array Update data {slug => data}
 	 */
 	public static function get_update_data() {
-		$payload = wp_list_pluck( Noptin_COM_Helper::get_local_noptin_plugins(), '_product_id' );
-		return self::_update_check( array_filter( array_unique( array_values( $payload ) ) ) );
+		$payload = wp_list_pluck( Noptin_COM::get_installed_addons(), 'slug' );
+		return self::update_check( array_filter( array_unique( array_values( $payload ) ) ) );
 	}
 
 	/**
 	 * Run an update check API call.
 	 *
-	 * The call is cached based on the payload (product ids). If
+	 * The call is cached based on the payload (download slugs). If
 	 * the payload changes, the cache is going to miss.
 	 *
 	 * @param array $payload Information about the plugin to update.
 	 * @return array Update data for each requested product.
 	 */
-	private static function _update_check( $payload ) {
+	private static function update_check( $payload ) {
 
-		// Abort if no products installed.
+		// Abort if no downloads installed.
 		if ( empty( $payload ) ) {
 			return array();
 		}
@@ -110,40 +108,57 @@ class Noptin_COM_Updater {
 		sort( $payload );
 
 		$hash      = md5( wp_json_encode( $payload ) );
-		$cache_key = '_noptin_helper_updates';
+		$cache_key = '_noptin_update_check';
 		$data      = get_transient( $cache_key );
 		if ( false !== $data ) {
 			if ( hash_equals( $hash, $data['hash'] ) ) {
-				return $data['products'];
+				return $data['downloads'];
 			}
 		}
 
 		$data = array(
-			'hash'     => $hash,
-			'updated'  => time(),
-			'products' => array(),
-			'errors'   => array(),
+			'hash'      => $hash,
+			'updated'   => time(),
+			'downloads' => array(),
+			'errors'    => array(),
 		);
 
-		$request = Noptin_COM_API_Client::post(
-			'nopcom/1/plugin-details/update-check',
+		$git_urls = array();
+
+		foreach ( $payload as $slug ) {
+			$git_urls[ $slug ] = 'https://github.com/hizzle-co/' . $slug;
+		}
+
+		$endpoint = add_query_arg(
 			array(
-				'body'                => array(
-					'products'        => $payload,
-					'active_licenses' => Noptin_COM::get_active_licenses(),
-					'home_url'        => home_url(),
-				)
-			)
+				'hizzle_license_url' => rawurlencode( home_url() ),
+				'hizzle_license'     => rawurlencode( Noptin_COM::get_active_license_key() ),
+				'downloads'          => rawurlencode( implode( ',', $git_urls ) ),
+			),
+			'https://noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
-		if ( is_wp_error( $request ) ) {
-			$data['errors'][] = $request->get_error_message();
+		$response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
+
+		if ( is_wp_error( $response ) ) {
+			$data['errors'][]  = $response->get_error_message();
 		} else {
-			$data['products'] = json_decode( wp_json_encode( $request ), true );
+
+			foreach ( $git_urls as $slug => $git_url ) {
+
+				$response = json_decode( wp_json_encode( $response ), true );
+				if ( ! empty( $response[ $git_url ]['error'] ) ) {
+					$data['errors'][] = $response[ $git_url ]['error'];
+					continue;
+				}
+
+				$data['downloads'][ $slug ]         = $response[ $git_url ];
+				$data['downloads'][ $slug ]['slug'] = $slug;
+			}
 		}
 
 		set_transient( $cache_key, $data, 12 * HOUR_IN_SECONDS );
-		return $data['products'];
+		return $data['downloads'];
 	}
 
 	/**
@@ -171,15 +186,14 @@ class Noptin_COM_Updater {
 		}
 
 		// Scan local plugins.
-		foreach ( Noptin_COM_Helper::get_local_noptin_plugins() as $plugin ) {
-			if ( empty( $update_data[ $plugin['_product_id'] ] ) ) {
+		foreach ( Noptin_COM::get_installed_addons() as $plugin ) {
+			if ( empty( $update_data[ $plugin['slug'] ] ) ) {
 				continue;
 			}
 
-			if ( version_compare( $plugin['Version'], $update_data[ $plugin['_product_id'] ]['version'], '<' ) ) {
+			if ( version_compare( $plugin['Version'], $update_data[ $plugin['slug'] ]['version'], '<' ) ) {
 				$count++;
 			}
-
 		}
 
 		set_transient( $cache_key, $count, 12 * HOUR_IN_SECONDS );
@@ -237,7 +251,7 @@ class Noptin_COM_Updater {
 			return false;
 		}
 
-		$plugin_url = str_replace( 'noptin-com-expired-', '', $package );
+		$product_id = str_replace( 'noptin-com-expired-', '', $package );
 		return new WP_Error(
 			'noptin_subscription_expired',
 			sprintf(
@@ -245,29 +259,14 @@ class Noptin_COM_Updater {
 				__( 'Please <a href="%s" target="_blank">buy a new license key</a> to receive automatic updates.', 'newsletter-optin-box' ),
 				esc_url(
 					add_query_arg(
-						array(
-							'utm_medium'   => 'plugin-dashboard',
-							'utm_campaign' => 'plugin-updates',
-							'utm_source'   => urlencode( esc_url( get_home_url() ) ),
-						),
-						$plugin_url
+						'product_id',
+						(int) $product_id,
+						'https://noptin.com/pricing/?hizzle_license_action=wc_renew_license&utm_source=extensionsscreen&utm_medium=product&utm_campaign=expired'
 					)
 				)
 			)
 		);
 
-	}
-
-	/**
-	 * Adds our own parameters to the plugin header DocBlock info.
-	 *
-	 * @since 1.0.0
-	 * @param array $headers The plugin header info array.
-	 * @return array The plugin header array info.
-	 */
-	public static function add_extra_package_headers( $headers ) {
-		$headers[] = 'Noptin ID';
-		return $headers;
 	}
 
 	/**
@@ -289,45 +288,47 @@ class Noptin_COM_Updater {
 			return $response;
 		}
 
-		// Get product id.
-		$product_id  = 0 === strpos( $args->slug, 'noptin-product-with-id-' ) ? (int) str_replace( 'noptin-product-with-id-', '', $args->slug ) : 0;
+		// Get download slug.
+		$download_slug = str_replace( 'noptin-plugin-with-slug-', '', sanitize_key( $args->slug ) );
+		$git_url       = 'https://github.com/hizzle-co/' . $download_slug;
 
-		if ( empty( $product_id ) ) {
-
-			foreach ( Noptin_COM_Helper::get_local_noptin_plugins() as $plugin ) {
-
-				if ( $plugin['slug'] == $args->slug ) {
-					$product_id  = (int) $plugin['_product_id'];
-					break;
-				}
-
-			}
-
-		}
-
-		// Abort if cannot get product id.
-		if ( empty( $product_id ) ) {
+		// Abort if cannot get download slug.
+		if ( empty( $download_slug ) ) {
 			return $response;
 		}
 
 		$endpoint = add_query_arg(
 			array(
-				'home_url'    => home_url(),
-				'license_key' => Noptin_COM::has_active_license( $product_id ) ? Noptin_COM::get_active_license( $product_id )->get_license_key() : false,
+				'hizzle_license_url' => rawurlencode( home_url() ),
+				'hizzle_license'     => rawurlencode( Noptin_COM::get_active_license_key() ),
+				'downloads'          => rawurlencode( $git_url ),
 			),
-			"nopcom/1/plugin-details/$product_id"
+			'https://noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
-		$response = Noptin_COM_API_Client::get( $endpoint );
+		$response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
 
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error( 'plugins_api_failed', $response->get_error_message() );
 		}
 
-		$response->slug = $args->slug;
-		$response       = (object) json_decode( wp_json_encode( $response ), true );
+		$response = json_decode( wp_json_encode( $response ), true );
+		if ( empty( $response[ $git_url ] ) ) {
+			return new WP_Error( 'plugins_api_failed', __( 'Error fetching downloadable file', 'newsletter-optin-box' ) );
+		}
 
-		return $response;
+		if ( ! empty( $response[ $git_url ]['error'] ) ) {
+
+			if ( ! empty( $response[ $git_url ]['error']['error_code'] ) && 'download_file_not_found' === $response[ $git_url ]['error']['error_code'] ) {
+				return $response;
+			}
+
+			return new WP_Error( 'plugins_api_failed', $response[ $git_url ]['error'] );
+		}
+
+		$response[ $git_url ]['slug'] = $args->slug;
+
+		return (object) $response[ $git_url ];
 
 	}
 
@@ -340,7 +341,7 @@ class Noptin_COM_Updater {
 	 */
 	public static function add_notice_unlicensed_product() {
 		if ( is_admin() && function_exists( 'get_plugins' ) ) {
-			foreach ( array_keys( Noptin_COM_Helper::get_local_noptin_plugins() ) as $key ) {
+			foreach ( array_keys( Noptin_COM::get_installed_addons() ) as $key ) {
 				add_action( 'in_plugin_update_message-' . $key, array( __CLASS__, 'need_license_message' ), 10, 2 );
 			}
 		}
@@ -357,13 +358,14 @@ class Noptin_COM_Updater {
 
 		if ( empty( $r->package ) || 0 === strpos( $r->package, 'noptin-com-expired-' ) ) {
 
-			$notice = sprintf(
-				/* translators: %s: updates page URL. */
-				__( 'To update, please <a href="%s">activate your license key</a>.', 'newsletter-optin-box' ),
-				admin_url( 'admin.php?page=noptin-addons&section=helper' )
+			printf(
+				'<span style="display: block;margin-top: 10px;font-weight: 600;">%s</span>',
+				sprintf(
+					/* translators: %s: updates page URL. */
+					wp_kses_post( __( 'To update, please <a href="%s">activate your license key</a>.', 'newsletter-optin-box' ) ),
+					esc_url( admin_url( 'admin.php?page=noptin-addons' ) )
+				)
 			);
-
-			echo "<span style='display: block;margin-top: 10px;font-weight: 600;'>$notice</span>";
 		}
 
 	}
@@ -383,15 +385,14 @@ class Noptin_COM_Updater {
 			$notice = sprintf(
 				/* translators: %s: updates page URL. */
 				__( 'To update, please <a href="%s">activate your license key</a>.', 'newsletter-optin-box' ),
-				admin_url( 'admin.php?page=noptin-addons&section=helper' )
+				admin_url( 'admin.php?page=noptin-addons' )
 			);
 
-			foreach ( array_keys( Noptin_COM_Helper::get_local_noptin_plugins() ) as $key ) {
+			foreach ( array_keys( Noptin_COM::get_installed_addons() ) as $key ) {
 				if ( isset( $transient->response[ $key ] ) && ( empty( $transient->response[ $key ]->package ) || 0 === strpos( $transient->response[ $key ]->package, 'noptin-com-expired-' )  ) ) {
 					$transient->response[ $key ]->upgrade_notice = $notice;
 				}
 			}
-
 		}
 
 		return $transient;

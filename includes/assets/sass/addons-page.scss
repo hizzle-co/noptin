@@ -1,14 +1,8 @@
-.noptin_addons_wrap {
-	max-width: 1200px;
+#noptin-wrapper.noptin-extensions-wrapper {
 
-	h1.search-form-title {
-		clear: left;
-		padding: 0;
-	}
-
-	form.search-form {
+	form.noptin-license-form {
 		clear: both;
-		display: block;
+		display: flex;
 		position: relative;
 		margin-top: 1em;
 		margin-bottom: 1em;
@@ -20,19 +14,29 @@
 			padding-left: 50px;
 			width: 100%;
 			margin: 0;
+			margin-right: 10px;
+			flex: 1;
 		}
 
 		button {
-			background: none;
-			border: none;
-			cursor: pointer;
-			height: 53px;
-			position: absolute;
-			width: 53px;
+			background-color: #4caf50;
+			border-width: 0;
+			box-shadow: none;
+			border-radius: 3px;
+			color: #fff;
+			height: auto;
+			text-align: center;
+			white-space: normal !important;
+			min-width: 124px;
+    		font-size: 15px;
+
+			&:hover {
+				opacity: 0.8;
+			}
 		}
 	}
 
-	.membership-alert {
+	.noptin-extensions-alert {
 		color: #fff;
 		background-color: #455A64;
 		padding: 12px 20px;
@@ -43,19 +47,180 @@
 		justify-content: space-between;
 		align-items: center;
 		flex-wrap: wrap;
+		margin: 1em 0;
 
-		&.membership-alert-error {
+		&.noptin-extensions-alert-success {
+			background-color: #4caf50;
+		}
+
+		&.noptin-extensions-alert-error {
 			background-color: #dc3545;
 		}
 
-		&.membership-alert-info {
+		&.noptin-extensions-alert-info {
 			background-color: #17a2b8;
 		}
 
-		&.membership-alert-dark {
+		&.noptin-extensions-alert-dark {
 			background-color: #343a40;
 		}
 
+	}
+
+	.noptin-license-info {
+		margin: 1em 0;
+		background-color: #fff;
+		padding: 0;
+		border: 1px solid #e1e1e1;
+	}
+
+	.noptin-license-info__header {
+		padding: 12px 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+    	box-sizing: border-box;
+
+		&__main {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			flex: 1;
+			max-width: 700px;
+
+			&-title {
+				margin-right: 10px;
+				flex: 1;
+
+				.description {
+					font-weight: 400;
+					font-size: 13px;
+				}
+			}
+		}
+	}
+
+	.noptin-license-info__action {
+		border-top: 1px solid #e1e1e1;
+		padding: 12px 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+    	box-sizing: border-box;
+
+		&.expired {
+			margin-left: -1px;
+			border-left: 4px solid #b81c23;
+
+			.dashicons-info {
+				color: #b81c23;
+			}
+		}
+	}
+
+	.noptin-extension-group {
+		margin: 1.5em 0;
+
+		&__title {
+			font-size: 20px;
+			line-height: 24px;
+			margin: 0 0 4px;
+		}
+
+		&__description {
+			font-size: 15px;
+			line-height: 24px;
+			margin: 0 0 12px;
+		}
+
+		&__items {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			margin: 0;
+			overflow: hidden;
+		}
+	}
+
+	.noptin-extension {
+		background: #fff;
+		border: 1px solid #dcdcde;
+		border-radius: 2px;
+		box-sizing: border-box;
+		display: flex;
+		flex: 1 0 auto;
+		flex-direction: column;
+		justify-content: space-between;
+		margin: 12px 0;
+		min-width: 280px;
+		max-width: 100%;
+		min-height: 220px;
+		overflow: hidden;
+		padding: 0;
+		vertical-align: top;
+
+		@media screen and (min-width: 768px) {
+			max-width: calc(50% - 12px);
+			width: calc(50% - 12px);
+		}
+
+		@media screen and (min-width: 1024px) {
+			max-width: calc(33.333% - 12px);
+			width: calc(33.333% - 12px);
+		}
+
+		&__details {
+			padding: 24px;
+			position: relative;
+		}
+
+		&__img {
+			display: block;
+			margin-left: 24px;
+			position: absolute;
+			right: 24px;
+			top: 24px;
+
+			&.noptin-extension__img-lg {
+				top: 12px;
+			}
+
+			.dashicons {
+				font-size: 48px;
+				width: 48px;
+				height: 48px;
+				color: #2a94f3;
+			}
+
+			img {
+				border-radius: 8px;
+				height: 64px;
+				width: 64px;
+				-o-object-fit: contain;
+				object-fit: contain;
+			}
+		}
+
+		&__wordpress-users .noptin-extension__img .dashicons {
+			color: #585c60;
+		}
+
+		&__coupon-codes .noptin-extension__img .dashicons,
+		&__woocommerce-customers .noptin-extension__img .dashicons {
+			color: #a46497;
+		}
+
+		&__footer {
+			align-items: center;
+			border-top: 1px solid #dcdcde;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			padding: 24px;
+		}
 	}
 
 	.update-plugins .update-count {

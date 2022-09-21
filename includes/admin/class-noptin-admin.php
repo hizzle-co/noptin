@@ -552,7 +552,7 @@ class Noptin_Admin {
 				$menu_title,
 				get_noptin_capability(),
 				'noptin-addons',
-				array( 'Noptin_Addons', 'output' )
+				array( 'Noptin_COM_Helper', 'output_extensions_page' )
 			);
 
 		}

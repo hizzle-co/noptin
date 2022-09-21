@@ -498,9 +498,9 @@ class Noptin_Settings {
 		ksort( $integration_settings );
 
 		if ( empty( $available_connections ) ) {
-			foreach ( Noptin_COM::get_integrations() as $slug => $data ) {
+			foreach ( Noptin_COM::get_connections() as $data ) {
 
-				$slug = sanitize_key( str_replace( '-', '_', $slug ) );
+				$slug = sanitize_key( str_replace( '-', '_', $data->slug ) );
 
 				if ( isset( $integration_settings[ "settings_section_$slug" ] ) ) {
 					continue;
@@ -519,22 +519,22 @@ class Noptin_Settings {
 								esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
 								sprintf(
 									'<a target="_blank" href="%s">%s</a>',
-									esc_url( $data->href ),
+									esc_url( $data->connect_url ),
 									sprintf(
 										// translators: %s is the name of the integration.
 										__( '%s addon', 'newsletter-optin-box' ),
-										esc_html( $data->title )
+										esc_html( $data->name )
 									)
 								)
 							),
 						),
 					),
 					'section'     => 'integrations',
-					'heading'     => esc_html( $data->title ),
+					'heading'     => esc_html( $data->name ),
 					'description' => sprintf(
 						// translators: %s is the name of the integration.
 						__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
-						esc_html( $data->title )
+						esc_html( $data->name )
 					),
 					'badge'       => __( 'Not Installed', 'newsletter-optin-box' ),
 				);

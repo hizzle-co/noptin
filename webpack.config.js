@@ -10,7 +10,6 @@ module.exports = {
 		"newsletter-editor": "./includes/assets/js/src/newsletter-editor.js",
 		"automation-rules": "./includes/assets/js/src/automation-rules.js",
 		frontend: "./includes/assets/js/src/frontend.js",
-		helper: "./includes/assets/js/src/helper.js",
 		blocks: "./includes/assets/js/src/blocks.js",
 		"blocks-new": "./includes/assets/js/src/blocks-new.js",
 		"blocks-woocommerce-backend": "./includes/assets/js/src/wc/index.js",

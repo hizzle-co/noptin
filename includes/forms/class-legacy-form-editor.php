@@ -520,14 +520,14 @@ class Noptin_Legacy_Form_Editor {
 
 		$fields                = array();
 		$available_connections = get_noptin_connection_providers();
-		$all_connections       = Noptin_COM::get_integrations();
+		$all_connections       = Noptin_COM::get_connections();
 
 		if ( empty( $available_connections ) ) {
-			foreach ( $all_connections as $key => $connection ) {
+			foreach ( $all_connections as $connection ) {
 
-				$key            = sanitize_key( str_replace( '-', '_', $key ) );
-				$name           = esc_html( $connection->title );
-				$href           = esc_url( $connection->href );
+				$key            = sanitize_key( str_replace( '-', '_', $connection->slug ) );
+				$name           = esc_html( $connection->name );
+				$href           = esc_url( $connection->connect_url );
 				$fields[ $key ] = array(
 					'el'       => 'panel',
 					'title'    => $name,

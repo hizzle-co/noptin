@@ -9,8 +9,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-global $post;
-
 ?>
 
 <style type="text/css">
