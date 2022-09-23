@@ -25,7 +25,6 @@ class Noptin_COM_Updater {
 	public static function load() {
 		add_action( 'pre_set_site_transient_update_plugins', array( __CLASS__, 'transient_update_plugins' ), 21, 1 );
 		add_action( 'upgrader_process_complete', array( __CLASS__, 'upgrader_process_complete' ) );
-		add_action( 'upgrader_pre_download', array( __CLASS__, 'block_expired_updates' ), 10, 2 );
 		add_filter( 'plugins_api', array( __CLASS__, 'plugins_api' ), 20, 3 );
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
@@ -56,7 +55,7 @@ class Noptin_COM_Updater {
 				'plugin'         => $filename,
 				'new_version'    => $data['version'],
 				'url'            => 'https://noptin.com/pricing/',
-				'package'        => empty( $data['download_link'] ) ? 'noptin-com-expired-' . $data['product_id'] : $data['download_link'],
+				'package'        => empty( $data['download_link'] ) ? '' : $data['download_link'],
 				'upgrade_notice' => '',
 			);
 
@@ -126,7 +125,7 @@ class Noptin_COM_Updater {
 		$git_urls = array();
 
 		foreach ( $payload as $slug ) {
-			$git_urls[ $slug ] = 'https://github.com/hizzle-co/' . sanitize_key( $slug );
+			$git_urls[ $slug ] = 'hizzle-co/' . sanitize_key( $slug );
 		}
 
 		$endpoint = add_query_arg(
@@ -158,7 +157,8 @@ class Noptin_COM_Updater {
 		}
 
 		delete_transient( '_noptin_helper_updates_count' );
-		set_transient( $cache_key, $data, 12 * HOUR_IN_SECONDS );
+		$seconds = empty( $data['errors'] ) ? 12 * HOUR_IN_SECONDS : MINUTE_IN_SECONDS;
+		set_transient( $cache_key, $data, $seconds );
 		return $data['downloads'];
 	}
 
@@ -258,44 +258,6 @@ class Noptin_COM_Updater {
 	}
 
 	/**
-	 * Hooked into the upgrader_pre_download filter in order to better handle error messaging around expired
-	 * plugin updates.
-	 *
-	 * @since 1.5.0
-	 * @param bool   $reply Holds the current filtered response.
-	 * @param string $package The path to the package file for the update.
-	 * @return false|WP_Error False to proceed with the update as normal, anything else to be returned instead of updating.
-	 */
-	public static function block_expired_updates( $reply, $package ) {
-		// Don't override a reply that was set already.
-		if ( false !== $reply ) {
-			return $reply;
-		}
-
-		// Only for packages with expired licenses.
-		if ( 0 !== strpos( $package, 'noptin-com-expired-' ) ) {
-			return false;
-		}
-
-		$product_id = str_replace( 'noptin-com-expired-', '', $package );
-		return new WP_Error(
-			'noptin_subscription_expired',
-			sprintf(
-				// translators: %s: URL of the package.
-				__( 'Please <a href="%s" target="_blank">buy a new license key</a> to receive automatic updates.', 'newsletter-optin-box' ),
-				esc_url(
-					add_query_arg(
-						'product_id',
-						(int) $product_id,
-						'https://noptin.com/pricing/?hizzle_license_action=wc_renew_license&utm_source=extensionsscreen&utm_medium=product&utm_campaign=expired'
-					)
-				)
-			)
-		);
-
-	}
-
-	/**
 	 * Plugin information callback for Noptin extensions.
 	 *
 	 * @param object $response The response core needs to display the modal.
@@ -382,10 +344,10 @@ class Noptin_COM_Updater {
 	 */
 	public static function need_license_message( $plugin_data, $r ) {
 
-		if ( empty( $r->package ) || 0 === strpos( $r->package, 'noptin-com-expired-' ) ) {
+		if ( empty( $r->package ) ) {
 
 			printf(
-				'<span style="display: block;margin-top: 10px;font-weight: 600;">%s</span>',
+				'<span style="display: block;margin-top: 10px;font-weight: 600; color: #a00;">%s</span>',
 				sprintf(
 					/* translators: %s: updates page URL. */
 					wp_kses_post( __( 'To update, please <a href="%s">activate your license key</a>.', 'newsletter-optin-box' ) ),
@@ -415,7 +377,7 @@ class Noptin_COM_Updater {
 			);
 
 			foreach ( array_keys( Noptin_COM::get_installed_addons() ) as $key ) {
-				if ( isset( $transient->response[ $key ] ) && ( empty( $transient->response[ $key ]->package ) || 0 === strpos( $transient->response[ $key ]->package, 'noptin-com-expired-' )  ) ) {
+				if ( isset( $transient->response[ $key ] ) && ( empty( $transient->response[ $key ]->package ) ) ) {
 					$transient->response[ $key ]->upgrade_notice = $notice;
 				}
 			}
