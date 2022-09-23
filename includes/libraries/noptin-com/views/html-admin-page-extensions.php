@@ -210,7 +210,7 @@
 
 	<!-- Noptin Addons Pack -->
 	<div class="noptin-extension-group noptin-extension-group__addons-pack">
-		<h2 class="noptin-extension-group__title"><?php esc_html_e( 'Ultimate Addons Pack', 'newsletter-optin-box' ); ?></h2>
+		<h2 class="noptin-extension-group__title"><?php esc_html_e( 'Ultimate Addons Pack', 'newsletter-optin-box' ); ?>&nbsp;<?php Noptin_COM_Helper::display_main_action_button( $license, 'noptin-addons-pack', $installed_addons, false ); ?></h2>
 		<p class="noptin-extension-group__description description"><?php esc_html_e( 'The ultimate addons pack is a single extension that helps your increase your revenue, get more traffic, and deliver more value to your users.', 'newsletter-optin-box' ); ?></p>
 
 		<ul class="noptin-extension-group__items">
@@ -264,51 +264,7 @@
 							href="<?php echo esc_url( $connection->connect_url ); ?>?utm_source=extensionsscreen&utm_medium=product&utm_campaign=connections"
 							><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?></a>
 
-						<?php if ( $license && ! is_wp_error( $license ) && $license->is_active && ! $license->has_expired ) : ?>
-
-							<?php if ( isset( $installed_addons[ "noptin-{$connection->slug}" ] ) ) : ?>
-
-								<!-- Installed -->
-								<?php $installed_plugin = $installed_addons[ "noptin-{$connection->slug}" ]; ?>
-
-								<?php if ( is_plugin_active( $installed_plugin ) ) : ?>
-
-									<!-- Installed and Active -->
-									<a
-										class="addons-button addons-button-installed"
-										href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-settings&tab=integrations#noptin-settings-section-settings_section_' . $connection->slug ) ); ?>"
-									>
-										<?php esc_html_e( 'Settings', 'newsletter-optin-box' ); ?>
-									</a>
-
-								<?php else : ?>
-
-									<!-- Installed but Not Active -->
-									<a
-										class="addons-button addons-button-outline-green"
-										href="<?php echo esc_url( wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $installed_plugin ), 'activate-plugin_' . $installed_plugin ) ); ?>"
-									>
-										<?php esc_html_e( 'Activate', 'newsletter-optin-box' ); ?>
-									</a>
-
-								<?php endif; ?>
-
-							<?php else : ?>
-
-								<!-- Not Installed -->
-								<a
-									class="addons-button addons-button-solid"
-									href="<?php echo esc_url( wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=noptin-plugin-with-slug-noptin-' . $connection->slug ), 'install-plugin_noptin-plugin-with-slug-noptin-' . $connection->slug ) ); ?>"
-								>
-									<?php esc_html_e( 'Install Now', 'newsletter-optin-box' ); ?>
-								</a>
-							<?php endif; ?>
-
-						<?php else : ?>
-							<a class="addons-button addons-button-installed" href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=noptinaddons">
-								<?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>
-							</a>
-						<?php endif; ?>
+						<?php Noptin_COM_Helper::display_main_action_button( $license, "noptin-{$connection->slug}", $installed_addons, true ); ?>
 
 					</div>
 
