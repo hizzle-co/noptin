@@ -39,9 +39,11 @@ class Noptin_COM_Updater {
 	 * @return object The same or a modified version of the transient.
 	 */
 	public static function transient_update_plugins( $transient ) {
-		$update_data = self::get_update_data();
+		$update_data = self::get_update_data( true );
 
 		foreach ( Noptin_COM::get_installed_addons() as $plugin ) {
+
+			// Skip if the plugin is not from noptin.com.
 			if ( empty( $update_data[ $plugin['slug'] ] ) || empty( $update_data[ $plugin['slug'] ]['version'] ) ) {
 				continue;
 			}
@@ -56,12 +58,9 @@ class Noptin_COM_Updater {
 				'new_version'    => $data['version'],
 				'url'            => 'https://noptin.com/pricing/',
 				'package'        => empty( $data['download_link'] ) ? '' : $data['download_link'],
+				'requires_php'   => empty( $data['requires_php'] ) ? '5.6' : $data['requires_php'],
 				'upgrade_notice' => '',
 			);
-
-			if ( isset( $data['requires_php'] ) ) {
-				$item['requires_php'] = $data['requires_php'];
-			}
 
 			if ( version_compare( $plugin['Version'], $data['version'], '<' ) ) {
 				$transient->response[ $filename ] = (object) $item;
@@ -81,11 +80,12 @@ class Noptin_COM_Updater {
 	 * Scans through all extensions and obtains update
 	 * data for each product.
 	 *
+	 * @param bool $force Whether to force a remote request.
 	 * @return array Update data {slug => data}
 	 */
-	public static function get_update_data() {
+	public static function get_update_data( $force = false ) {
 		$payload = wp_list_pluck( Noptin_COM::get_installed_addons(), 'slug' );
-		return self::update_check( array_filter( array_unique( array_values( $payload ) ) ) );
+		return self::update_check( array_filter( array_unique( array_values( $payload ) ) ), $force );
 	}
 
 	/**
@@ -95,9 +95,10 @@ class Noptin_COM_Updater {
 	 * the payload changes, the cache is going to miss.
 	 *
 	 * @param array $payload Information about the plugin to update.
+	 * @param bool  $force   Whether to force a remote request.
 	 * @return array Update data for each requested product.
 	 */
-	private static function update_check( $payload ) {
+	private static function update_check( $payload, $force = false ) {
 
 		// Abort if no downloads installed.
 		if ( empty( $payload ) ) {
@@ -109,10 +110,8 @@ class Noptin_COM_Updater {
 		$hash      = md5( wp_json_encode( $payload ) . Noptin_COM::get_active_license_key() );
 		$cache_key = '_noptin_update_check';
 		$data      = get_transient( $cache_key );
-		if ( false !== $data ) {
-			if ( hash_equals( $hash, $data['hash'] ) ) {
-				return $data['downloads'];
-			}
+		if ( false !== $data && ! $force && hash_equals( $hash, $data['hash'] ) ) {
+			return $data['downloads'];
 		}
 
 		$data = array(
@@ -278,7 +277,7 @@ class Noptin_COM_Updater {
 
 		// Get download slug.
 		$download_slug = str_replace( 'noptin-plugin-with-slug-', '', sanitize_key( $args->slug ) );
-		$git_url       = 'https://github.com/hizzle-co/' . $download_slug;
+		$git_url       = 'hizzle-co/' . $download_slug;
 
 		// Abort if cannot get download slug.
 		if ( empty( $download_slug ) ) {
@@ -294,29 +293,29 @@ class Noptin_COM_Updater {
 			'https://noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
-		$response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
+		$new_response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
 
-		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'plugins_api_failed', $response->get_error_message() );
+		if ( is_wp_error( $new_response ) ) {
+			return new WP_Error( 'plugins_api_failed', $new_response->get_error_message() );
 		}
 
-		$response = json_decode( wp_json_encode( $response ), true );
-		if ( empty( $response[ $git_url ] ) ) {
+		$new_response = json_decode( wp_json_encode( $new_response ), true );
+		if ( empty( $new_response[ $git_url ] ) ) {
 			return new WP_Error( 'plugins_api_failed', __( 'Error fetching downloadable file', 'newsletter-optin-box' ) );
 		}
 
-		if ( ! empty( $response[ $git_url ]['error'] ) ) {
+		if ( ! empty( $new_response[ $git_url ]['error'] ) ) {
 
-			if ( ! empty( $response[ $git_url ]['error']['error_code'] ) && 'download_file_not_found' === $response[ $git_url ]['error']['error_code'] ) {
+			if ( ! empty( $new_response[ $git_url ]['error']['error_code'] ) && 'download_file_not_found' === $new_response[ $git_url ]['error']['error_code'] ) {
 				return $response;
 			}
 
-			return new WP_Error( 'plugins_api_failed', $response[ $git_url ]['error'] );
+			return new WP_Error( 'plugins_api_failed', $new_response[ $git_url ]['error'] );
 		}
 
-		$response[ $git_url ]['slug'] = $args->slug;
+		$new_response[ $git_url ]['slug'] = $args->slug;
 
-		return (object) $response[ $git_url ];
+		return (object) $new_response[ $git_url ];
 
 	}
 
