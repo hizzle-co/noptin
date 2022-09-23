@@ -1361,6 +1361,26 @@ a.no-campaign-create-new-campaign {
 		width: 100%;
 	}
 
+	.noptin-conditional-logic-wrapper {
+		max-width: 100%;
+
+		select {
+			padding: 0 24px 0 8px;
+			width: auto;
+			margin-bottom: 6px;
+		}
+
+		.noptin-remove-conditional-rule {
+			color: #454545;
+			text-decoration: none;
+
+			.dashicons {
+				vertical-align: middle;
+				font-size: 16px;
+			}
+		}
+	}
+
 	.select2-container .select2-selection--single {
 		min-height: 32px;
 		padding: 6px 8px;

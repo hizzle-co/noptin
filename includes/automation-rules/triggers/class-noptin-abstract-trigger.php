@@ -16,6 +16,13 @@ abstract class Noptin_Abstract_Trigger {
     protected $rules = null;
 
     /**
+     * Whether or not this trigger deals with a subscriber.
+     *
+     * @var bool
+     */
+    public $is_subscriber_based = false;
+
+    /**
      * Retrieve the trigger's unique id.
      *
      * Only alphanumerics, dashes and underscrores are allowed.
@@ -78,7 +85,42 @@ abstract class Noptin_Abstract_Trigger {
      * @since 1.2.8
      * @return array
      */
-    abstract public function get_settings();
+	public function get_settings() {
+        return array();
+    }
+
+    /**
+     * Retrieves conditional logic filters.
+     *
+     * @since 1.7.9
+     * @return array
+     */
+    public function get_conditional_logic_filters() {
+        $filters = array();
+
+        if ( $this->is_subscriber_based ) {
+            $filters = get_noptin_subscriber_filters();
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Prepares the conditional logic for display.
+     *
+     * @since 1.7.9
+     * @param Noptin_Automation_Rule $rule The rule to check for.
+     * @return string
+     */
+    public function prepare_conditional_logic( $rule ) {
+
+        $filters = $this->get_conditional_logic_filters();
+        if ( ! empty( $filters ) ) {
+            return noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $filters );
+        }
+
+        return '';
+    }
 
     /**
      * Returns all active rules attached to this trigger.
@@ -135,6 +177,22 @@ abstract class Noptin_Abstract_Trigger {
      * @return bool
      */
     public function is_rule_valid_for_args( $rule, $args, $subscriber, $action ) {
+        return $this->is_conditional_logic_met( $rule, $subscriber );
+    }
+
+    /**
+     * Checks if conditional logic is met.
+     *
+     * @since 1.7.9
+     * @param Noptin_Automation_Rule $rule The rule to check for.
+     * @param Noptin_Subscriber $subscriber The subscriber that this rule was triggered for.
+     * @return bool
+     */
+    public function is_conditional_logic_met( $rule, $subscriber ) {
+        if ( $this->is_subscriber_based ) {
+            return noptin_subscriber_meets_conditional_logic( $rule->conditional_logic, $subscriber );
+        }
+
         return true;
     }
 

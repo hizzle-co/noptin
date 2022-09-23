@@ -1,5 +1,6 @@
 const path = require('path');
-const WooCommerceDependencyExtractionWebpackPlugin = require( '@woocommerce/dependency-extraction-webpack-plugin' );
+const webpack = require('webpack');
+const WooCommerceDependencyExtractionWebpackPlugin = require('@woocommerce/dependency-extraction-webpack-plugin');
 
 module.exports = {
 	mode: "production",
@@ -40,9 +41,18 @@ module.exports = {
 		]
 	},
 	plugins: [
+		new webpack.DefinePlugin({
+			__VUE_OPTIONS_API__: true,
+			__VUE_PROD_DEVTOOLS__: false,
+		}),
 		new WooCommerceDependencyExtractionWebpackPlugin()
 	],
 	externals: {
 		jquery: 'jQuery'
-	}
+	},
+	resolve: {
+		alias: {
+			vue: "vue/dist/vue.esm-bundler.js"
+		},
+	},
 };

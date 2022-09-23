@@ -1427,7 +1427,7 @@ function noptin_limit_length( $string, $limit ) {
 		return $string;
 	}
 
-    $str_limit = $limit - 3;
+	$str_limit = $limit - 3;
 
 	if ( function_exists( 'mb_strimwidth' ) ) {
 		if ( mb_strlen( $string ) > $limit ) {
@@ -1438,7 +1438,7 @@ function noptin_limit_length( $string, $limit ) {
 			$string = substr( $string, 0, $str_limit ) . '...';
 		}
 	}
-    return $string;
+	return $string;
 
 }
 
@@ -1593,4 +1593,74 @@ function noptin_newslines_to_array( $text ) {
  */
 function noptin_is_even( $number ) {
 	return 0 === $number || 0 === $number % 2;
+}
+
+/**
+ * Returns the default conditional logic.
+ *
+ * @since 1.7.9
+ * @return array
+ */
+function noptin_get_default_conditional_logic() {
+	return array(
+		'enabled' => false,
+		'action'  => 'allow',
+		'type'    => 'all',
+		'rules'   => array(),
+	);
+}
+
+/**
+ * Formats conditional logic for display.
+ *
+ * @param array $conditional_logic
+ * @param array $conditions
+ * @since 1.7.9
+ * @return string
+ */
+function noptin_prepare_conditional_logic_for_display( $conditional_logic, $conditions ) {
+
+	// Abort if no conditional logic is set.
+	if ( empty( $conditional_logic['enabled'] ) ) {
+		return '';
+	}
+
+	// Retrieve the conditional logic.
+	$rules = array();
+
+	// Loop through each rule.
+	foreach ( $conditional_logic['rules'] as $rule ) {
+
+		if ( isset( $conditions[ $rule['type'] ] ) ) {
+			$condition = $conditions[ $rule['type'] ];
+			$label     = $condition['label'];
+			$value     = isset( $rule['value'] ) ? $rule['value'] : '';
+			$value     = isset( $condition['options'][ $value ] ) ? $condition['options'][ $value ] : $value;
+
+			if ( 'is' === $rule['condition'] ) {
+				$rules[] = sprintf( '%s = %s', sanitize_text_field( $label ), sanitize_text_field( $value ) );
+			} else {
+				$rules[] = sprintf( '%s != %s', sanitize_text_field( $label ), sanitize_text_field( $value ) );
+			}
+		}
+	}
+
+	if ( 'any' === $conditional_logic['type'] ) {
+		$rules = implode( ' ' . __( 'OR', 'newsletter-optin-box' ) . ' ', $rules );
+	} else {
+		$rules = implode( ' ' . __( 'AND', 'newsletter-optin-box' ) . ' ', $rules );
+	}
+
+	if ( empty( $rules ) ) {
+		return '';
+	}
+
+	if ( 'allow' === $conditional_logic['action'] ) {
+		// translators: %s is a list of conditions.
+		return sprintf( __( 'Only run if %s', 'newsletter-optin-box' ), $rules );
+	}
+
+	// Return the result.
+	// translators: %s is a list of conditions.
+	return sprintf( __( 'Ignore if %s', 'newsletter-optin-box' ), $rules );
 }

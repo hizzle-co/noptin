@@ -46,7 +46,8 @@
 	)
 
 	if ( $( '#noptin-automation-rule-editor.edit-automation-rule' ).length ) {
-		require ( './partials/automation-rules-editor.js' ).default
+		let app = require ( './partials/automation-rules-editor.js' ).default;
+		app.mount( '#noptin-automation-rule-editor' );
 	}
 
 })(jQuery);

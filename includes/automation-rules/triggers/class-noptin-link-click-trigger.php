@@ -11,6 +11,13 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 
 	/**
+     * Whether or not this trigger deals with a subscriber.
+     *
+     * @var bool
+     */
+    public $is_subscriber_based = true;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.0
@@ -162,7 +169,7 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 			return false;
 		}
 
-		return true;
+		return parent::is_rule_valid_for_args( $rule, $args, $subscriber, $action );
 	}
 
 	/**

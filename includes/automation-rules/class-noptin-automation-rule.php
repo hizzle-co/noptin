@@ -51,6 +51,13 @@ class Noptin_Automation_Rule {
 	public $trigger_settings = array();
 
 	/**
+	 * The automation rule's conditional logic.
+	 * @var array
+	 * @since 1.7.9
+	 */
+	public $conditional_logic = array();
+
+	/**
 	 * The automation rule's status
 	 * @var int
 	 * @since 1.2.8
@@ -137,6 +144,43 @@ class Noptin_Automation_Rule {
 					$this->action_settings[ $key ] = $args['default'];
 				}
 			}
+		}
+
+		// Set conditional logic.
+		$this->conditional_logic = noptin_get_default_conditional_logic();
+		if ( isset( $this->trigger_settings['conditional_logic'] ) ) {
+			$this->conditional_logic = wp_parse_args( (array) $this->trigger_settings['conditional_logic'], $this->conditional_logic );
+
+			$this->conditional_logic['enabled'] = (bool) $this->conditional_logic['enabled'];
+
+			unset( $this->trigger_settings['conditional_logic'] );
+		}
+
+		// Backwards compatibility.
+		if ( isset( $this->trigger_settings['subscribed_via'] ) ) {
+			$subscription_method = -1 === absint( $this->trigger_settings['subscribed_via'] ) ? '' : $this->trigger_settings['subscribed_via'];
+
+			if ( '' !== $subscription_method ) {
+				$this->conditional_logic['enabled'] = true;
+				$this->conditional_logic['rules'][] = array(
+					'type'      => '_subscriber_via',
+					'condition' => 'is',
+					'value'     => $subscription_method,
+				);
+			}
+
+			unset( $this->trigger_settings['subscribed_via'] );
+
+			// Save them.
+			noptin()->automation_rules->update_rule(
+				$this,
+				array(
+					'trigger_settings' => array_merge(
+						$this->trigger_settings,
+						array( 'conditional_logic' => $this->conditional_logic )
+					),
+				)
+			);
 		}
 
 	}

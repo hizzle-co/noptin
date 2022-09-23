@@ -251,11 +251,13 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 				__( 'Trigger:', 'newsletter-optin-box' )
 			);
 		} else {
-			$trigger_text = $trigger->get_rule_description( $item );
+			$trigger_text        = $trigger->get_rule_description( $item );
+			$trigger_description = $trigger->prepare_conditional_logic( $item );
 		}
 
-		$text = ucfirst( "$trigger_text, $action_text" );
-		$text = "<div class='row-title' style='font-weight: 500;'><a href='$edit_url'>$text</a></div>";
+		$text        = ucfirst( "$trigger_text, $action_text" );
+		$description = empty( $trigger_description ) ? '' : wp_kses_post( "<p class='description'>$trigger_description</p>" );
+		$text        = "<div class='row-title'><a href='$edit_url'>$text</a></div>$description";
 
 		return "<div>$text $row_actions</div>";
 

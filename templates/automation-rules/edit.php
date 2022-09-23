@@ -34,10 +34,12 @@ if ( empty( $rule_action ) ) {
 	return;
 }
 
+$conditional_logic = 0 < count( $trigger->get_conditional_logic_filters() );
+
 $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
 $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $rule_action->get_id(), $rule_action->get_settings(), $rule, $rule_action );
 
-if ( empty( $trigger_settings ) && empty( $action_settings ) ) {
+if ( empty( $trigger_settings ) && empty( $action_settings ) && empty( $conditional_logic ) ) {
 	printf(
 		'<div class="notice notice-info"><p>%s</p></div>',
 		esc_html__( 'Nothing to configure for this rule.', 'newsletter-optin-box' )
@@ -50,7 +52,7 @@ if ( empty( $trigger_settings ) && empty( $action_settings ) ) {
 <div id="noptin-automation-rule-editor" class="edit-automation-rule noptin-fields">
 	<form method="POST">
 
-		<?php if ( ! empty( $trigger_settings ) ) : ?>
+		<?php if ( ! empty( $trigger_settings ) || ! empty( $conditional_logic ) ) : ?>
 			<div class="noptin-automation-rule-editor-section">
 				<hr>
 				<h2 style="margin-bottom: 0.2em;"><?php esc_html_e( 'Trigger Settings', 'newsletter-optin-box' ); ?></h2>
@@ -58,6 +60,71 @@ if ( empty( $trigger_settings ) && empty( $action_settings ) ) {
 				<?php foreach ( $trigger_settings as $setting_id => $args ) : ?>
 					<?php Noptin_Vue::render_el( "trigger_settings['$setting_id']", $args ); ?>
 				<?php endforeach; ?>
+				<!-- Conditional logic -->
+				<div v-if="condition_rules" class="noptin-text-wrapper field-wrapper">
+					<label for="noptin-enable-conditional-logic" class="noptin-label"><?php esc_html_e( 'Conditional Logic', 'newsletter-optin-box' ); ?></label>
+					<div class="noptin-content">
+
+						<p class="description">
+							<label>
+								<input type="checkbox" id="noptin-enable-conditional-logic" v-model="conditional_logic.enabled" />
+								<span style="font-weight: 400;"><?php esc_html_e( 'Optionally enable/disable this trigger depending on specific conditions.', 'newsletter-optin-box' ); ?></span>
+							</label>
+						</p>
+
+						<div class="noptin-conditional-logic-wrapper card" v-show="conditional_logic.enabled">
+
+							<p>
+								<select v-model="conditional_logic.action">
+									<option value="allow"><?php esc_html_e( 'Only run if', 'newsletter-optin-box' ); ?></option>
+									<option value="prevent"><?php esc_html_e( 'Do not run if', 'newsletter-optin-box' ); ?></option>
+								</select>
+
+								<select v-model="conditional_logic.type">
+									<option value="all"><?php esc_html_e( 'all', 'newsletter-optin-box' ); ?></option>
+									<option value="any"><?php esc_html_e( 'any', 'newsletter-optin-box' ); ?></option>
+								</select>
+
+								<span>&nbsp;<?php esc_html_e( 'of the following rules are true:', 'newsletter-optin-box' ); ?>&nbsp;</span>
+							</p>
+
+							<p v-for="(rule, index) in conditional_logic.rules" class="noptin-conditional-logic-rule">
+
+								<select v-model="rule.type" @change="rule.value=''">
+									<option v-for="(rule_type, rule_key) in condition_rules" :value="rule_key">{{ rule_type.label }}</option>
+								</select>
+
+								<select v-model="rule.condition">
+									<option value="is"><?php esc_html_e( 'is', 'newsletter-optin-box' ); ?></option>
+									<option value="is_not"><?php esc_html_e( 'is not', 'newsletter-optin-box' ); ?></option>
+								</select>
+
+								<select v-model="rule.value" v-if="hasConditionalLogicRuleOptions(rule.type)" style="min-width: 220px;">
+									<option v-for="(option_label, option_value) in getConditionalLogicRuleOptions(rule.type)" :value="option_value">{{ option_label }}</option>
+								</select>
+
+								<input type="text" v-model="rule.value" v-else />
+
+								<a href="#" @click.prevent="removeConditionalLogicRule(rule)" class="noptin-remove-conditional-rule">
+									<span class="dashicons dashicons-remove"></span>&nbsp;
+								</a>
+
+								<span v-if="! isLastConditionalLogicRule(index) && 'all' == conditional_logic.type">&nbsp;<?php esc_html_e( 'and', 'newsletter-optin-box' ); ?></span>
+								<span v-if="! isLastConditionalLogicRule(index) && 'any' == conditional_logic.type">&nbsp;<?php esc_html_e( 'or', 'newsletter-optin-box' ); ?></span>
+
+							</p>
+
+							<p>
+								<button class="button" @click.prevent="addConditionalLogicRule">
+									<span class="dashicons dashicons-plus" style="vertical-align: middle;"></span>
+									<span v-if="conditional_logic.rules && conditional_logic.rules.length"><?php esc_html_e( 'Add another rule', 'newsletter-optin-box' ); ?></span>
+									<span v-else><?php esc_html_e( 'Add rule', 'newsletter-optin-box' ); ?></span>
+								</button>
+							</p>
+
+						</div>
+					</div>
+				</div>
 			</div>
 		<?php endif; ?>
 

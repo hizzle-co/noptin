@@ -573,6 +573,11 @@ class Noptin_Ajax {
 			$action_settings = stripslashes_deep( $_POST['action_settings'] );
 		}
 
+		$trigger_settings['conditional_logic'] = noptin_get_default_conditional_logic();
+		if ( ! empty( $_POST['conditional_logic'] ) ) {
+			$trigger_settings['conditional_logic'] = stripslashes_deep( $_POST['conditional_logic'] );
+		}
+
 		// Save them.
 		noptin()->automation_rules->update_rule( $_POST['id'], compact( 'action_settings', 'trigger_settings' ) );
 

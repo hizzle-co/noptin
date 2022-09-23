@@ -631,12 +631,12 @@ function delete_noptin_subscriber( $subscriber ) {
 	global $wpdb;
 
 	/**
-     * Fires immediately before a subscriber is deleted from the database.
-     *
-     * @since 1.2.4
-     *
-     * @param int      $subscriber       ID of the subscriber to delete.
-     */
+	 * Fires immediately before a subscriber is deleted from the database.
+	 *
+	 * @since 1.2.4
+	 *
+	 * @param int      $subscriber       ID of the subscriber to delete.
+	 */
 	do_action( 'delete_noptin_subscriber', $subscriber );
 
 	// Maybe delete WP User connection.
@@ -927,7 +927,7 @@ function get_noptin_subscriber_fields() {
 	);
 
 	// Subscription fields.
-    $extra_fields = get_special_noptin_form_fields();
+	$extra_fields = get_special_noptin_form_fields();
 
 	foreach ( $extra_fields as $name => $field ) {
 		$label = wp_kses_post( $field[1] );
@@ -1442,6 +1442,113 @@ function get_noptin_custom_field( $merge_tag ) {
 }
 
 /**
+ * Returns available subscriber filters.
+ *
+ * @since 1.7.9
+ * @return array
+ */
+function get_noptin_subscriber_filters() {
+
+	$filters = array(
+		'_subscriber_via' => array(
+			'label'       => __( 'Subscription Method', 'newsletter-optin-box' ),
+			'options'     => noptin_get_subscription_sources(),
+			'description' => __( 'Filter subscribers by how they subscribed.', 'newsletter-optin-box' ),
+		),
+	);
+
+	foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+		// Checkbox
+		if ( 'checkbox' === $custom_field['type'] ) {
+
+			$options = array(
+				'1' => __( 'Yes', 'newsletter-optin-box' ),
+				'0' => __( 'No', 'newsletter-optin-box' ),
+			);
+
+			// Select | Radio.
+		} elseif ( 'dropdown' === $custom_field['type'] || 'radio' === $custom_field['type'] ) {
+
+			if ( ! empty( $custom_field['options'] ) ) {
+				$options = noptin_newslines_to_array( $custom_field['options'] );
+			}
+		} elseif ( 'language' === $custom_field['type'] && noptin_is_multilingual() ) {
+
+			$options = apply_filters( 'noptin_multilingual_active_languages', array() );
+
+		}
+
+		if ( empty( $options ) ) {
+			continue;
+		}
+
+		$filters[ $custom_field['merge_tag'] ] = array(
+			'label'       => sanitize_text_field( $custom_field['label'] ),
+			'options'     => $options,
+			'description' => sprintf(
+				// translators: %s is the field label.
+				__( 'Filter subscribers by %s', 'newsletter-optin-box' ),
+				sanitize_text_field( $custom_field['label'] )
+			),
+		);
+
+	}
+
+	return apply_filters( 'noptin_subscriber_filters', $filters );
+}
+
+/**
+ * Checks if a subscriber meets the specified filters.
+ *
+ * @param array $conditional_logic
+ * @param Noptin_Subscriber $subscriber
+ * @since 1.7.9
+ * @return array
+ */
+function noptin_subscriber_meets_conditional_logic( $conditional_logic, $subscriber ) {
+
+	// Abort if no conditional logic is set.
+	if ( empty( $conditional_logic['enabled'] ) ) {
+		return true;
+	}
+
+	// Retrieve the conditional logic.
+	$action      = $conditional_logic['action']; // allow or prevent.
+	$type        = $conditional_logic['type']; // all or any.
+	$rules_met   = 0;
+	$rules_total = count( $conditional_logic['rules'] );
+
+	// Loop through each rule.
+	foreach ( $conditional_logic['rules'] as $rule ) {
+		$is_rule_met = $rule['value'] === $subscriber->get( $rule['type'] );
+		$should_meet = 'is' === $rule['condition'];
+
+		// If the rule is met.
+		if ( $is_rule_met === $should_meet ) {
+
+			// Increment the number of rules met.
+			$rules_met ++;
+
+			// If we're using the "any" condition, we can stop here.
+			if ( 'any' === $type ) {
+				break;
+			}
+		}
+	}
+
+	// Check if the conditions are met.
+	if ( 'all' === $type ) {
+		$is_condition_met = $rules_met === $rules_total;
+	} else {
+		$is_condition_met = $rules_met > 0;
+	}
+
+	// Return the result.
+	return 'allow' === $action ? $is_condition_met : ! $is_condition_met;
+}
+
+/**
  * Retrieves Noptin subscription sources.
  *
  * @param string $source Subscrption source.
@@ -1511,6 +1618,7 @@ function noptin_get_subscription_sources() {
 	$sources['manual']     = __( 'Manually Added', 'newsletter-optin-box' );
 	$sources['shortcode']  = __( 'Subscription Shortcode', 'newsletter-optin-box' );
 	$sources['users_sync'] = __( 'Users Sync', 'newsletter-optin-box' );
+	$sources['import']     = __( 'Imported', 'newsletter-optin-box' );
 
 	// Cache. TODO: Clear cache when subscriber or form is added/updated.
 	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );

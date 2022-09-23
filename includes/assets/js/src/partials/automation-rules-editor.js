@@ -1,8 +1,10 @@
-var rulesApp = new Vue({
+import { createApp } from 'vue';
 
-	el: '#noptin-automation-rule-editor',
+export default createApp({
 
-	data: jQuery.extend( true, {}, noptinRules ),
+	data() {
+		return jQuery.extend( true, {}, noptinRules )
+	},
 
 	methods: {
 
@@ -23,6 +25,7 @@ var rulesApp = new Vue({
 				'id' : this.rule_id,
 				'action_settings' : this.action_settings,
 				'trigger_settings' : this.trigger_settings,
+				'conditional_logic' : this.conditional_logic,
 				'action' : 'noptin_save_automation_rule',
 				'_ajax_nonce' : noptinRules.nonce
 			}
@@ -75,11 +78,39 @@ var rulesApp = new Vue({
 
 		},
 
+		// Checks if there are rule options.
+		hasConditionalLogicRuleOptions( rule_type ) {
+			return this.condition_rules[ rule_type ] !== undefined && this.condition_rules[ rule_type ].options !== undefined;
+		},
+
+		// Retrieves the rule options.
+		getConditionalLogicRuleOptions( rule_type ) {
+			return this.condition_rules[ rule_type ].options;
+		},
+
+		// Adds a conditional logic rule.
+		addConditionalLogicRule() {
+
+			// Fetch first value in this.condition_rules object.
+			let type = Object.keys(this.condition_rules)[0]
+			let value = this.condition_rules[type].options ? Object.keys(this.condition_rules[type].options)[0] : ''
+
+			this.conditional_logic.rules.push({
+				type,
+				condition: 'is',
+				value
+			});
+		},
+
+		// Removes an existing rule.
+		removeConditionalLogicRule( rule ) {
+			this.conditional_logic.rules.splice( this.conditional_logic.rules.indexOf( rule ), 1 );
+		},
+
+		// Checks if a rule is the last one.
+		isLastConditionalLogicRule( index ) {
+			return index === this.conditional_logic.rules.length - 1;
+		}
 	},
 
-	mounted () {
-
-	},
 })
-
-export default rulesApp

@@ -308,26 +308,35 @@ class Noptin_Admin {
 		// Automation's creation page.
 		if ( 'noptin-automation-rules' === $page ) {
 			$version = filemtime( $this->assets_path . 'js/dist/automation-rules.js' );
-			wp_enqueue_script( 'noptin-automation-rules', $this->assets_url . 'js/dist/automation-rules.js', array( 'vue', 'ddslick' ), $version, true );
+			wp_enqueue_script( 'noptin-automation-rules', $this->assets_url . 'js/dist/automation-rules.js', array( 'ddslick' ), $version, true );
 			wp_enqueue_script( 'ddslick', $this->assets_url . 'vendor/ddslick/ddslick.js', array( 'vue' ), $version, true );
 
 			$params = array(
-				'ajaxurl'          => admin_url( 'admin-ajax.php' ),
-				'nonce'            => wp_create_nonce( 'noptin_automation_rules' ),
-				'trigger_settings' => new stdClass(),
-				'action_settings'  => new stdClass(),
-				'rule_id'          => 0,
-				'error'            => __( 'Unable to save your changes.', 'newsletter-optin-box' ),
-				'saved'            => __( 'Your automation rule has been saved.', 'newsletter-optin-box' ),
+				'ajaxurl'           => admin_url( 'admin-ajax.php' ),
+				'nonce'             => wp_create_nonce( 'noptin_automation_rules' ),
+				'trigger_settings'  => new stdClass(),
+				'action_settings'   => new stdClass(),
+				'condition_rules'   => false,
+				'conditional_logic' => noptin_get_default_conditional_logic(),
+				'rule_id'           => 0,
+				'error'             => __( 'Unable to save your changes.', 'newsletter-optin-box' ),
+				'saved'             => __( 'Your automation rule has been saved.', 'newsletter-optin-box' ),
 			);
 
 			if ( ! empty( $_GET['edit'] ) && is_numeric( $_GET['edit'] ) ) {
 				$rule = new Noptin_Automation_Rule( $_GET['edit'] );
 
-				$params['rule_id']          = $rule->id;
-				$params['trigger_settings'] = (object) $rule->trigger_settings;
-				$params['action_settings']  = (object) $rule->action_settings;
+				$params['rule_id']           = $rule->id;
+				$params['trigger_settings']  = (object) $rule->trigger_settings;
+				$params['action_settings']   = (object) $rule->action_settings;
+				$params['conditional_logic'] = (object) $rule->conditional_logic;
 
+				$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
+
+				if ( $trigger ) {
+					$params['condition_rules'] = $trigger->get_conditional_logic_filters();
+					$params['condition_rules'] = empty( $params['condition_rules'] ) ? false : $params['condition_rules'];
+				}
 			}
 
 			// localize and enqueue the script with all of the variable inserted.
