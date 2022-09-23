@@ -189,14 +189,13 @@
 
 					<p>
 						<span class="dashicons dashicons-info"></span>
-						<?php echo wp_kses_post( __( 'This license key has expired. Please <strong>renew</strong> to receive updates and support.', 'newsletter-optin-box' ) ); ?>
+						<?php echo wp_kses_post( __( 'This license key has expired. Please <strong>purchase a new license key</strong> to receive updates and support.', 'newsletter-optin-box' ) ); ?>
 					</p>
 
 					<a
 						class="button button-primary"
-						href="https://noptin.com/pricing/?product_id=<?php echo esc_attr( $license->product_id ); ?>&hizzle_license_action=wc_renew_license&utm_source=extensionsscreen&utm_medium=product&utm_campaign=expired"
-						$product_url = add_query_arg(
-					><?php esc_html_e( 'Renew', 'newsletter-optin-box' ); ?></a>
+						href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=expired"
+					><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
 
 				</div>
 
