@@ -25,15 +25,21 @@
 		<!-- Installed -->
 		<?php $installed_plugin = $installed_addons[ $slug ]; ?>
 
-		<?php if ( is_plugin_active( $installed_plugin ) && $is_connection ) : ?>
+		<?php if ( is_plugin_active( $installed_plugin ) ) : ?>
 
 			<!-- Installed and Active -->
-			<a
-				class="addons-button addons-button-installed"
-				href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-settings&tab=integrations#noptin-settings-section-settings_section_' . $slug ) ); ?>"
-			>
-				<?php esc_html_e( 'Settings', 'newsletter-optin-box' ); ?>
-			</a>
+			<?php if ( $is_connection ) : ?>
+				<a
+					class="addons-button addons-button-installed"
+					href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-settings&tab=integrations#noptin-settings-section-settings_section_' . $slug ) ); ?>"
+				>
+					<?php esc_html_e( 'Settings', 'newsletter-optin-box' ); ?>
+				</a>
+			<?php else : ?>
+				<small class="addons-button addons-button-outline-green">
+					<?php esc_html_e( 'Active', 'newsletter-optin-box' ); ?>
+				</small>
+			<?php endif; ?>
 
 		<?php elseif ( ! is_plugin_active( $installed_plugin ) ) : ?>
 

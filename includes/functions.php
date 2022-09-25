@@ -1598,7 +1598,7 @@ function noptin_is_even( $number ) {
 /**
  * Returns the default conditional logic.
  *
- * @since 1.7.9
+ * @since 1.8.0
  * @return array
  */
 function noptin_get_default_conditional_logic() {
@@ -1615,7 +1615,7 @@ function noptin_get_default_conditional_logic() {
  *
  * @param array $conditional_logic
  * @param array $conditions
- * @since 1.7.9
+ * @since 1.8.0
  * @return string
  */
 function noptin_prepare_conditional_logic_for_display( $conditional_logic, $conditions ) {

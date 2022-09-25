@@ -82,7 +82,7 @@ class Noptin_COM {
 	 *
 	 * @param bool $include_details
 	 * @return object|WP_Error|string|false
-	 * @since 1.7.9
+	 * @since 1.8.0
 	 */
 	public static function get_active_license_key( $include_details = false ) {
 

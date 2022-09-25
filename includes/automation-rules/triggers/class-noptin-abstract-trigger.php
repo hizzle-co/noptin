@@ -92,7 +92,7 @@ abstract class Noptin_Abstract_Trigger {
     /**
      * Retrieves conditional logic filters.
      *
-     * @since 1.7.9
+     * @since 1.8.0
      * @return array
      */
     public function get_conditional_logic_filters() {
@@ -108,7 +108,7 @@ abstract class Noptin_Abstract_Trigger {
     /**
      * Prepares the conditional logic for display.
      *
-     * @since 1.7.9
+     * @since 1.8.0
      * @param Noptin_Automation_Rule $rule The rule to check for.
      * @return string
      */
@@ -183,7 +183,7 @@ abstract class Noptin_Abstract_Trigger {
     /**
      * Checks if conditional logic is met.
      *
-     * @since 1.7.9
+     * @since 1.8.0
      * @param Noptin_Automation_Rule $rule The rule to check for.
      * @param Noptin_Subscriber $subscriber The subscriber that this rule was triggered for.
      * @return bool

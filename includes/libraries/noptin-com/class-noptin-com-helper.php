@@ -55,15 +55,18 @@ class Noptin_COM_Helper {
 	 */
 	public static function admin_init() {
 
+		// Handle license deactivation.
+		if ( isset( $_GET['noptin-deactivate-license-nonce'] ) && wp_verify_nonce( rawurldecode( $_GET['noptin-deactivate-license-nonce'] ), 'noptin-deactivate-license' ) ) {
+			self::handle_license_deactivation();
+			wp_safe_redirect( remove_query_arg( 'noptin-deactivate-license-nonce' ) );
+			exit;
+		}
+
 		// Handle license activation.
 		if ( isset( $_POST['noptin-license'] ) && isset( $_POST['noptin_save_license_key_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['noptin_save_license_key_nonce'] ), 'noptin_save_license_key' ) ) {
 			self::handle_license_save( $_POST['noptin-license'] );
 		}
 
-		// Handle license deactivation.
-		if ( isset( $_GET['noptin-deactivate-license-nonce'] ) && wp_verify_nonce( rawurldecode( $_GET['noptin-deactivate-license-nonce'] ), 'noptin-deactivate-license' ) ) {
-			self::handle_license_deactivation();
-		}
 	}
 
 	/**

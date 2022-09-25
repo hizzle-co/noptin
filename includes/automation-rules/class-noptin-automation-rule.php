@@ -53,7 +53,7 @@ class Noptin_Automation_Rule {
 	/**
 	 * The automation rule's conditional logic.
 	 * @var array
-	 * @since 1.7.9
+	 * @since 1.8.0
 	 */
 	public $conditional_logic = array();
 

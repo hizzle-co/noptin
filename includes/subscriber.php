@@ -1444,7 +1444,7 @@ function get_noptin_custom_field( $merge_tag ) {
 /**
  * Returns available subscriber filters.
  *
- * @since 1.7.9
+ * @since 1.8.0
  * @return array
  */
 function get_noptin_subscriber_filters() {
@@ -1503,7 +1503,7 @@ function get_noptin_subscriber_filters() {
  *
  * @param array $conditional_logic
  * @param Noptin_Subscriber $subscriber
- * @since 1.7.9
+ * @since 1.8.0
  * @return array
  */
 function noptin_subscriber_meets_conditional_logic( $conditional_logic, $subscriber ) {

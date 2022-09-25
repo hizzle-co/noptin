@@ -212,6 +212,20 @@
 		<h2 class="noptin-extension-group__title"><?php esc_html_e( 'Ultimate Addons Pack', 'newsletter-optin-box' ); ?>&nbsp;<?php Noptin_COM_Helper::display_main_action_button( $license, 'noptin-addons-pack', $installed_addons, false ); ?></h2>
 		<p class="noptin-extension-group__description description"><?php esc_html_e( 'The ultimate addons pack is a single extension that helps your increase your revenue, get more traffic, and deliver more value to your users.', 'newsletter-optin-box' ); ?></p>
 
+		<?php if ( ! empty( $license_key ) && 'noptin-connections' === $license->product_sku ) : ?>
+			<!-- Display notice that the license key can not be used for this extension -->
+			<div class="noptin-extensions-alert noptin-extensions-alert-dark">
+				<div>
+					<?php echo wp_kses_post( __( 'Your active license key can not be used to install the ultimate add-ons pack. Please <strong>purchase a personal plan or higher</strong> to receive updates and support.', 'newsletter-optin-box' ) ); ?>
+				</div>
+
+				<a
+					class="addons-button addons-button-installed"
+					href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=upgrade"
+				><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
+			</div>
+		<?php endif; ?>
+
 		<ul class="noptin-extension-group__items">
 
 			<?php foreach ( $addons_pack_features as $key => $feature ) : ?>

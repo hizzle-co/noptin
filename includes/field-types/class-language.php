@@ -13,14 +13,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Handles language dropdowns.
  *
- * @since 1.7.9
+ * @since 1.8.0
  */
 class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 
 	/**
 	 * Retrieves the list of available languages.
 	 *
-	 * @since 1.7.9
+	 * @since 1.8.0
 	 * @return array
 	 */
 	public function get_languages() {
@@ -30,7 +30,7 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	/**
 	 * Displays the actual markup for this field.
 	 *
-	 * @since 1.7.9
+	 * @since 1.8.0
 	 * @param array $args Field args
 	 * @param false|Noptin_Subscriber $subscriber
 	 */
@@ -42,7 +42,7 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	/**
 	 * Sanitizes the submitted value.
 	 *
-	 * @since 1.7.9
+	 * @since 1.8.0
 	 * @param mixed $value Submitted value
 	 * @param false|Noptin_Subscriber $subscriber
 	 */
@@ -53,7 +53,7 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	/**
 	 * Formats a value for display.
 	 *
-	 * @since 1.7.9
+	 * @since 1.8.0
 	 * @param mixed $value Sanitized value
 	 * @param Noptin_Subscriber $subscriber
 	 */
