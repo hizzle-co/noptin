@@ -5,7 +5,7 @@ Requires at least: 4.9
 Tested up to: 6.0
 Requires PHP: 5.6
 Version: 1.8.0
-Stable tag: trunk
+Stable tag: 1.8.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
