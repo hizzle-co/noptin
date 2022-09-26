@@ -15,9 +15,9 @@ $url = add_query_arg(
 	array(
 		'utm_medium'   => 'plugin-dashboard',
 		'utm_campaign' => 'form-builder',
-		'utm_source'   => rawurlencode( esc_url( get_home_url() ) ),
+		'utm_source'   => 'connections',
 	),
-	'https://noptin.com/product-tag/integrations/'
+	'https://noptin.com/integrations/#connections'
 );
 
 ?>

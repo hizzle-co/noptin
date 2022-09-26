@@ -622,6 +622,10 @@ abstract class Noptin_Abstract_Integration {
 			$html_attrs = array( 'class' => $html_attrs );
 		}
 
+		if ( ! is_array( $html_attrs ) ) {
+			$html_attrs = array();
+		}
+
 		// Checkbox opening wrapper.
 		echo '<!-- Noptin Newsletters - https://noptin.com/ -->';
 		do_action( 'noptin_integration_before_subscription_checkbox_wrapper', $this );
