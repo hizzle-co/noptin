@@ -275,7 +275,7 @@ abstract class Noptin_Abstract_Trigger {
 
         $args = apply_filters( 'noptin_automation_trigger_args', $args, $this );
 
-        $smart_tags = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
+        $args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
 
         foreach ( $this->get_rules() as $rule ) {
 
@@ -290,7 +290,7 @@ abstract class Noptin_Abstract_Trigger {
 
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $subject, $action ) ) {
-                $action->maybe_run( $subject, $rule, $args, $smart_tags );
+                $action->maybe_run( $subject, $rule, $args );
             }
         }
 

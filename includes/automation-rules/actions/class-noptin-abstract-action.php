@@ -135,11 +135,8 @@ abstract class Noptin_Abstract_Action {
 	 * @param mixed $subject The subject.
 	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
 	 * @param array $args Extra arguments passed to the action.
-	 * @param Noptin_Automation_Rules_Smart_Tags $smart_tags The smart tags.
 	 */
-	public function maybe_run( $subject, $rule, $args, $smart_tags ) {
-
-		$args['smart_tags'] = $smart_tags;
+	public function maybe_run( $subject, $rule, $args ) {
 
 		// Ensure that we can run the action.
 		if ( ! $this->can_run( $subject, $rule, $args ) ) {

@@ -250,35 +250,6 @@ class Noptin_Automation_Rule {
 	}
 
 	/**
-	 * Retrieves the smart tags handler.
-	 *
-	 * @since 1.8.1
-	 * @param mixed $subject
-	 * @return Noptin_Automation_Rules_Smart_Tags|null
-	 */
-	public function get_smart_tags_handler( $subject ) {
-
-		$trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
-
-		if ( empty( $trigger ) ) {
-			return null;
-		}
-
-		$handler = new Noptin_Automation_Rules_Smart_Tags( $trigger, $subject );
-
-		/**
-		 * Filters the smart tags handler.
-		 *
-		 * @since 1.8.1
-		 * @param Noptin_Automation_Rules_Smart_Tags $handler
-		 * @param Noptin_Abstract_Trigger $trigger
-		 * @param mixed $subject
-		 */
-		return apply_filters( 'noptin_automation_rules_trigger_smart_tags_handler', $handler, $trigger, $subject );
-
-	}
-
-	/**
 	 * Determine whether the rule exists in the database.
 	 *
 	 * @since 1.2.8

@@ -26,14 +26,15 @@ class Noptin_Automation_Rules_Smart_Tags extends Noptin_Dynamic_Content_Tags {
 	 *
 	 * @param Noptin_Abstract_Trigger $trigger
 	 * @param mixed $subject
+	 * @param array $extra_args
 	 */
-	public function __construct( $trigger, $subject ) {
+	public function __construct( $trigger, $subject, $extra_args = array() ) {
 
 		if ( empty( $trigger ) ) {
 			return;
 		}
 
-		$values = $trigger->prepare_known_smart_tags( $subject );
+		$values = array_merge( $extra_args, $trigger->prepare_known_smart_tags( $subject ) );
 
 		foreach ( $trigger->get_known_smart_tags() as $merge_tag => $tag ) {
 
