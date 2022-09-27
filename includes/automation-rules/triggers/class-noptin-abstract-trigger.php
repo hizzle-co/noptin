@@ -123,6 +123,77 @@ abstract class Noptin_Abstract_Trigger {
     }
 
     /**
+     * Returns an array of known smart tags.
+     *
+     * @since 1.8.1
+     * @return array
+     */
+    public function get_known_smart_tags() {
+        $smart_tags = array(
+
+            'cookie' => array(
+                'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
+                'callback'    => 'Noptin_Dynamic_Content_Tags::get_cookie',
+                'example'     => "cookie name='my_cookie' default='Default Value'",
+            ),
+
+            'date'   => array(
+                // translators: %s is the current date.
+                'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
+                'replacement' => date_i18n( get_option( 'date_format' ) ),
+                'example'     => 'date',
+            ),
+
+            'time'   => array(
+                // translators: %s is the current time.
+                'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ) ) . '</strong>' ),
+                'replacement' => date_i18n( get_option( 'time_format' ) ),
+                'example'     => 'time',
+            ),
+
+        );
+
+        if ( $this->is_subscriber_based ) {
+            $smart_tags = get_noptin_subscriber_smart_tags();
+        }
+
+        return apply_filters( 'noptin_automation_trigger_known_smart_tags', $smart_tags, $this );
+    }
+
+    /**
+     * Prepare smart tags.
+     *
+     * @param Noptin_Subscriber|WP_User|WC_Customer $subject
+     * @since 1.8.1
+     * @return array
+     */
+    public function prepare_known_smart_tags( $subject ) {
+        $smart_tags = array();
+
+        if ( $this->is_subscriber_based && $subject instanceof Noptin_Subscriber ) {
+
+            foreach ( get_noptin_subscriber_smart_tags() as $merge_tag => $data ) {
+
+                if ( ! isset( $data['type'] ) ) {
+                    $smart_tags[ $merge_tag ] = $subject->get( $merge_tag );
+                } else {
+                    $value = sanitize_noptin_custom_field_value( $subject->get( $merge_tag ), $data['type'], $subject );
+
+                    if ( is_array( $value ) ) {
+                        $value = format_noptin_custom_field_value( $subject->get( $merge_tag ), $data['type'], $subject );
+                    }
+
+                    if ( is_scalar( $value ) ) {
+                        $smart_tags[ $merge_tag ] = $value;
+                    }
+                }
+            }
+        }
+
+        return $smart_tags;
+    }
+
+    /**
      * Returns all active rules attached to this trigger.
      *
      * @since 1.2.8
@@ -154,16 +225,6 @@ abstract class Noptin_Abstract_Trigger {
     public function has_rules() {
         $rules = $this->get_rules;
         return ! empty( $rules );
-    }
-
-    /**
-     * Returns whether or not the action can run (dependancies are installed).
-     *
-     * @since 1.2.8
-     * @return bool
-     */
-    public function can_run() {
-        return true;
     }
 
     /**
@@ -200,13 +261,21 @@ abstract class Noptin_Abstract_Trigger {
      * Triggers action callbacks.
      *
      * @since 1.2.8
-     * @param int|object|array|Noptin_Subscriber $subscriber The subscriber.
+     * @param mixed $subject The subject.
      * @param array $args Extra arguments passed to the action.
      * @return void
      */
-    public function trigger( $subscriber, $args ) {
+    public function trigger( $subject, $args ) {
 
-        $subscriber = new Noptin_Subscriber( $subscriber );
+        if ( ! is_array( $args ) ) {
+            $args = array();
+        }
+
+        $args['subject'] = $subject;
+
+        $args = apply_filters( 'noptin_automation_trigger_args', $args, $this );
+
+        $smart_tags = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
 
         foreach ( $this->get_rules() as $rule ) {
 
@@ -220,8 +289,8 @@ abstract class Noptin_Abstract_Trigger {
             $rule = noptin()->automation_rules->prepare_rule( $rule );
 
             // Ensure that the rule is valid for the provided args.
-            if ( $this->is_rule_valid_for_args( $rule, $args, $subscriber, $action ) ) {
-                $action->maybe_run( $subscriber, $rule, $args );
+            if ( $this->is_rule_valid_for_args( $rule, $args, $subject, $action ) ) {
+                $action->maybe_run( $subject, $rule, $args, $smart_tags );
             }
         }
 

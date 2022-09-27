@@ -54,6 +54,15 @@ class Noptin_Admin {
 	public $bg_sync = null;
 
 	/**
+	 * Admin menus.
+	 *
+	 * @var Noptin_Admin_Menus
+	 * @access public
+	 * @since  1.8.1
+	 */
+	public $admin_menus;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -85,6 +94,8 @@ class Noptin_Admin {
 		$this->admin_url   = plugins_url( '/', __FILE__ );
 		$this->assets_url  = plugin_dir_url( Noptin::$file ) . 'includes/assets/';
 		$this->assets_path = plugin_dir_path( Noptin::$file ) . 'includes/assets/';
+
+		$this->admin_menus = new Noptin_Admin_Menus();
 
 		$this->bg_sync = new Noptin_Background_Sync();
 		$this->filters = new Noptin_Admin_Filters();
@@ -125,10 +136,6 @@ class Noptin_Admin {
 		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
 		add_action( 'noptin_created_new_custom_fields', array( $this, 'noptin_created_new_custom_fields' ) );
 
-		// Register new menu pages.
-		add_action( 'admin_menu', array( $this, 'add_menu_page' ) );
-		add_action( 'admin_head', array( $this, 'set_admin_menu_class' ) );
-
 		// Runs when saving a new opt-in form.
 		add_action( 'wp_ajax_noptin_save_optin_form', array( $this, 'save_optin_form' ) );
 
@@ -153,11 +160,7 @@ class Noptin_Admin {
 	 * @return      void
 	 */
 	public function enqueue_scripts() {
-		global $pagenow, $current_screen;
-
-		// Load our CSS styles on all pages.
-		$version = filemtime( $this->assets_path . 'css/admin.css' );
-		wp_enqueue_style( 'noptin', $this->assets_url . 'css/admin.css', array(), $version );
+		global $current_screen;
 
 		// Only enque on our pages.
 		$page = '';
@@ -174,34 +177,6 @@ class Noptin_Admin {
 			return;
 		}
 
-		// Remove AUI scripts as they break our pages.
-		if ( class_exists( 'AyeCode_UI_Settings' ) && is_callable( 'AyeCode_UI_Settings::instance' ) ) {
-			$aui = AyeCode_UI_Settings::instance();
-			remove_action( 'admin_enqueue_scripts', array( $aui, 'enqueue_scripts' ), 1 );
-			remove_action( 'admin_enqueue_scripts', array( $aui, 'enqueue_style' ), 1 );
-		}
-
-		// And EDD too.
-		add_filter( 'edd_load_admin_scripts', '__return_false', 1000 );
-
-		// Sweetalert https://sweetalert2.github.io/.
-		wp_enqueue_script( 'promise-polyfill', $this->assets_url . 'vendor/sweetalert/promise-polyfill.min.js', array(), '8.1.3', true );
-		wp_enqueue_script( 'sweetalert2', $this->assets_url . 'vendor/sweetalert/sweetalert2.all.min.js', array( 'promise-polyfill' ), '9.6.0', true );
-
-		// Tooltips https://iamceege.github.io/tooltipster/.
-		wp_enqueue_script( 'tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.7', true );
-		wp_enqueue_style( 'tooltipster', $this->assets_url . 'vendor/tooltipster/tooltipster.bundle.min.css', array(), '4.2.7' );
-
-		// Select 2 https://select2.org/.
-		wp_enqueue_script( 'select2', $this->assets_url . 'vendor/select2/select2.full.min.js', array( 'jquery' ), '4.0.12', true );
-		wp_enqueue_style( 'select2', $this->assets_url . 'vendor/select2/select2.min.css', array(), '4.0.12' );
-
-		// Vue js.
-		wp_register_script( 'vue', $this->assets_url . 'vendor/vue/vue.min.js', array(), '2.6.11', true );
-
-		// Enque media for image uploads.
-		wp_enqueue_media();
-
 		// Codemirror for editor css.
 		if ( 'noptin-form' === $page ) {
 
@@ -217,41 +192,6 @@ class Noptin_Admin {
 				)
 			);
 
-		}
-
-		// Custom admin scripts.
-		$version = filemtime( $this->assets_path . 'js/dist/admin.js' );
-		wp_register_script( 'noptin', $this->assets_url . 'js/dist/admin.js', array( 'tooltipster' ), $version, true );
-
-		// Pass variables to our js file, e.g url etc.
-		$current_user = wp_get_current_user();
-		$params       = array(
-			'ajaxurl'        => admin_url( 'admin-ajax.php' ),
-			'api_url'        => get_home_url( null, 'wp-json/wp/v2/' ),
-			'nonce'          => wp_create_nonce( 'noptin_admin_nonce' ),
-			'icon'           => $this->assets_url . 'images/checkmark.png',
-			'admin_email'    => sanitize_email( $current_user->user_email ),
-			'close'          => __( 'Close', 'newsletter-optin-box' ),
-			'cancel'         => __( 'Cancel', 'newsletter-optin-box' ),
-			'donwload_forms' => add_query_arg(
-				array(
-					'action'      => 'noptin_download_forms',
-					'admin_nonce' => wp_create_nonce( 'noptin_admin_nonce' ),
-				),
-				admin_url( 'admin-ajax.php' )
-			),
-		);
-
-		// localize and enqueue the script with all of the variable inserted.
-		wp_localize_script( 'noptin', 'noptin_params', $params );
-
-		wp_enqueue_script( 'noptin' );
-
-		// Settings page.
-		if ( 'noptin-settings' === $page ) {
-			$version = filemtime( $this->assets_path . 'js/dist/settings.js' );
-			wp_enqueue_script( 'noptin-settings', $this->assets_url . 'js/dist/settings.js', array( 'vue', 'select2', 'sweetalert2', 'noptin' ), $version, true );
-			wp_localize_script( 'noptin-settings', 'noptinSettings', Noptin_Settings::get_state() );
 		}
 
 		// Optin forms editor.
@@ -304,382 +244,6 @@ class Noptin_Admin {
 			}
 		}
 
-		// Automation's creation page.
-		if ( 'noptin-automation-rules' === $page ) {
-			$version = filemtime( $this->assets_path . 'js/dist/automation-rules.js' );
-			wp_enqueue_script( 'noptin-automation-rules', $this->assets_url . 'js/dist/automation-rules.js', array( 'ddslick' ), $version, true );
-			wp_enqueue_script( 'ddslick', $this->assets_url . 'vendor/ddslick/ddslick.js', array( 'vue' ), $version, true );
-
-			$params = array(
-				'ajaxurl'           => admin_url( 'admin-ajax.php' ),
-				'nonce'             => wp_create_nonce( 'noptin_automation_rules' ),
-				'trigger_settings'  => new stdClass(),
-				'action_settings'   => new stdClass(),
-				'condition_rules'   => false,
-				'conditional_logic' => noptin_get_default_conditional_logic(),
-				'rule_id'           => 0,
-				'error'             => __( 'Unable to save your changes.', 'newsletter-optin-box' ),
-				'saved'             => __( 'Your automation rule has been saved.', 'newsletter-optin-box' ),
-			);
-
-			if ( ! empty( $_GET['edit'] ) && is_numeric( $_GET['edit'] ) ) {
-				$rule = new Noptin_Automation_Rule( $_GET['edit'] );
-
-				$params['rule_id']           = $rule->id;
-				$params['trigger_settings']  = (object) $rule->trigger_settings;
-				$params['action_settings']   = (object) $rule->action_settings;
-				$params['conditional_logic'] = (object) $rule->conditional_logic;
-
-				$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
-
-				if ( $trigger ) {
-					$params['condition_rules'] = $trigger->get_conditional_logic_filters();
-					$params['condition_rules'] = empty( $params['condition_rules'] ) ? false : $params['condition_rules'];
-				}
-			}
-
-			// localize and enqueue the script with all of the variable inserted.
-			wp_localize_script( 'noptin-automation-rules', 'noptinRules', $params );
-
-		}
-
-	}
-
-	/**
-	 * Register admin page
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function add_menu_page() {
-
-		// The main admin page.
-		add_menu_page(
-			noptin()->white_label->name,
-			noptin()->white_label->name,
-			get_noptin_capability(),
-			'noptin',
-			null,
-			noptin()->white_label->icon,
-			'23.81204129341231'
-		);
-
-		add_submenu_page(
-			'noptin',
-			__( 'Noptin Dashboard', 'newsletter-optin-box' ),
-			__( 'Dashboard', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin',
-			array( $this, 'render_main_page' )
-		);
-
-		// Add the newsletter page.
-		add_submenu_page(
-			'noptin',
-			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
-			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'edit.php?post_type=noptin-form'
-		);
-
-		do_action( 'noptin_after_register_menus', $this );
-
-		// Automation Rules.
-		$automations_page_title = apply_filters( 'noptin_admin_automation_rules_page_title', __( 'Automation Rules', 'newsletter-optin-box' ) );
-		add_submenu_page(
-			'noptin',
-			$automations_page_title,
-			esc_html__( 'Automation Rules', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-automation-rules',
-			array( $this, 'render_automation_rules_page' )
-		);
-
-		// Settings.
-		add_submenu_page(
-			'noptin',
-			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-settings',
-			array( $this, 'render_settings_page' )
-		);
-
-		// Tools.
-		$tools_page_title = apply_filters( 'noptin_admin_tools_page_title', __( 'Noptin Tools', 'newsletter-optin-box' ) );
-		add_submenu_page(
-			'noptin',
-			esc_html( $tools_page_title ),
-			esc_html__( 'Tools', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-tools',
-			array( $this, 'render_tools_page' )
-		);
-
-		// Extensions page.
-		if ( apply_filters( 'noptin_show_addons_page', true ) ) {
-
-			$count_html = Noptin_COM_Updater::get_updates_count_html();
-
-			/* translators: %s: extensions count */
-			$menu_title = sprintf( __( 'Extensions %s', 'newsletter-optin-box' ), $count_html );
-
-			add_submenu_page(
-				'noptin',
-				esc_html__( 'Noptin Extensions', 'newsletter-optin-box' ),
-				$menu_title,
-				get_noptin_capability(),
-				'noptin-addons',
-				array( 'Noptin_COM_Helper', 'output_extensions_page' )
-			);
-
-		}
-
-	}
-
-	/**
-	 * Highlights current sub-menu items
-	 */
-	public function set_admin_menu_class() {
-		global $current_screen, $parent_file, $submenu_file;
-
-		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
-        if ( ! empty( $current_screen->id ) && in_array( $current_screen->id, array( 'noptin-form' ), true ) ) {
-			$parent_file  = 'noptin';
-			$submenu_file = 'edit.php?post_type=' . $current_screen->id . 'noptin';
-        }
-		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
-
-    }
-
-	/**
-	 * Renders main admin page
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function render_main_page() {
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the main menu page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_admin_main_page', $this );
-
-		$today_date              = current_time( 'Y-m-d' );
-		$forms_url               = esc_url( get_noptin_forms_overview_url() );
-		$new_form_url            = esc_url( get_noptin_new_form_url() );
-		$subscribers_url         = esc_url( get_noptin_subscribers_overview_url() );
-		$subscribers_total       = get_noptin_subscribers_count();
-		$subscribers_today_total = get_noptin_subscribers_count( "`date_created`='$today_date'" );
-		$this_week               = gmdate( 'Y-m-d', strtotime( 'last week sunday' ) );
-		$subscribers_week_total  = get_noptin_subscribers_count( "`date_created`>'$this_week'" );
-
-		if ( is_using_new_noptin_forms() ) {
-			$all_forms = noptin_count_optin_forms();
-		} else {
-			$popups   = noptin_count_optin_forms( 'popup' );
-			$inpost   = noptin_count_optin_forms( 'inpost' );
-			$widget   = noptin_count_optin_forms( 'sidebar' );
-			$slide_in = noptin_count_optin_forms( 'slide_in' );
-		}
-
-		include $this->admin_path . 'welcome.php';
-
-		/**
-		 * Runs after displaying the main menu page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_admin_main_page', $this );
-	}
-
-	/**
-	 * Renders the automation rules page
-	 *
-	 * @access      public
-	 * @since       1.2.8
-	 * @return      void
-	 */
-	public function render_automation_rules_page() {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the automation rules page.
-		 *
-		 */
-		do_action( 'noptin_before_automation_rules_page' );
-
-		// Render the automation creation page.
-		if ( ! empty( $_GET['create'] ) ) {
-			$this->render_create_automation_rule_page();
-
-		// Render the automation edit page.
-		} elseif ( ! empty( $_GET['edit'] ) && is_numeric( $_GET['edit'] ) ) {
-			$this->render_edit_automation_rule_page( $_GET['edit'] );
-
-		// Render the automation overview page.
-		} else {
-			$this->render_automation_rules_overview_page();
-		}
-
-		/**
-		 * Runs after displaying the automation rules page.
-		 *
-		 */
-		do_action( 'noptin_after_automation_rules_page' );
-
-	}
-
-	/**
-	 * Renders the automation rules overview page
-	 *
-	 * @access      public
-	 * @since       1.2.8
-	 * @return      void
-	 */
-	public function render_automation_rules_overview_page() {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the automation rules overview page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_automation_rules_overview_page', $this );
-
-		$table = new Noptin_Automation_Rules_Table();
-		$table->prepare_items();
-
-		?>
-		<div class="wrap" id="noptin-wrapper">
-			<h1 class="wp-heading-inline"><?php echo esc_html( get_admin_page_title() ); ?> <a href="<?php echo esc_url( add_query_arg( 'create', '1' ) ); ?>" class="page-title-action noptin-add-automation-rule"><?php esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a></h1>
-			<?php $this->show_notices(); ?>
-			<form id="noptin-automation-rules-table" method="POST">
-				<?php $table->display(); ?>
-			</form>
-			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
-		</div>
-		<?php
-
-		/**
-		 * Runs after displaying the automation rules overview page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_automation_rules_overview_page', $this );
-	}
-
-	/**
-	 * Renders the automation rule creation page.
-	 *
-	 * @access      public
-	 * @since       1.2.8
-	 * @return      void
-	 */
-	public function render_create_automation_rule_page() {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the automation creation page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_automation_rules_create_page', $this );
-
-		?>
-		<div class="wrap" id="noptin-wrapper">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Create an Automation Rule', 'newsletter-optin-box' ); ?></h1>
-			<?php get_noptin_template( 'automation-rules/create.php' ); ?>
-			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
-		</div>
-		<?php
-
-		/**
-		 * Runs after displaying the automation creation page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_automation_rules_create_page', $this );
-	}
-
-	/**
-	 * Renders the automation rule creation page.
-	 *
-	 * @access      public
-	 * @since       1.2.8
-	 * @return      void
-	 */
-	public function render_edit_automation_rule_page( $rule_id ) {
-
-		// Only admins can access this page.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the automation edit page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_automation_rule_edit_page', $this );
-
-		?>
-		<div class="wrap" id="noptin-wrapper">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Edit Automation Rule', 'newsletter-optin-box' ); ?></h1>
-			<?php get_noptin_template( 'automation-rules/edit.php', compact( 'rule_id' ) ); ?>
-			<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
-		</div>
-		<?php
-
-		/**
-		 * Runs after displaying the automation edit page.
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_automation_rule_edit_page', $this );
-	}
-
-	/**
-	 * Renders the settings page
-	 *
-	 * @access      public
-	 * @since       1.0.6
-	 * @return      void
-	 */
-	public function render_settings_page() {
-		Noptin_Settings::output();
-	}
-
-	/**
-	 * Renders the tools page
-	 *
-	 * @access      public
-	 * @since       1.2.3
-	 * @return      void
-	 */
-	public function render_tools_page() {
-		$this->tools = new Noptin_Tools();
-		Noptin_Tools::output();
 	}
 
 	/**

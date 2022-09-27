@@ -1564,6 +1564,34 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 }
 
 /**
+ * Checks if a given email is unsubscribed.
+ *
+ * @since 1.8.1
+ * @param string $email
+ * @return bool
+ */
+function noptin_is_email_unsubscribed( $email ) {
+
+	// Fetch user by email.
+	$user = get_user_by( 'email', $email );
+
+	// If the user is unsubscribed, abort.
+	if ( $user && 'unsubscribed' === get_user_meta( $user->ID, 'noptin_unsubscribed', true ) ) {
+		return true;
+	}
+
+	// Fetch subscriber by email.
+	$subscriber = get_noptin_subscriber( $email );
+
+	// If the subscriber is unsubscribed, abort.
+	if ( $subscriber->exists() && ! $subscriber->is_active() ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Converts newlines to an array of options.
  *
  * @since 1.7.4

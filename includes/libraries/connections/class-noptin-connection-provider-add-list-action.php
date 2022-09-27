@@ -115,7 +115,7 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 			'noptin',
 			$this->provider->slug,
 			'add',
-			$this->provider->list_providers->get_name()
+			$this->provider->list_providers->get_name(),
 		);
 	}
 
@@ -133,7 +133,7 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 				'options'     => $this->provider->list_providers->get_dropdown_lists(),
 				'default'     => $this->provider->get_default_list_id(),
 				'description' => __( 'Where should we add the subscriber?', 'newsletter-optin-box' ),
-			)
+			),
 
 		);
 
@@ -173,3 +173,4 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 	}
 
 }
+// TODO: Switch to new automation rules format.

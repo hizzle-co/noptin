@@ -1442,22 +1442,34 @@ function get_noptin_custom_field( $merge_tag ) {
 }
 
 /**
- * Returns available subscriber filters.
+ * Returns available subscriber smart tags.
  *
- * @since 1.8.0
+ * @since 1.8.1
  * @return array
  */
-function get_noptin_subscriber_filters() {
+function get_noptin_subscriber_smart_tags() {
 
-	$filters = array(
+	$smart_tags = array(
 		'_subscriber_via' => array(
 			'label'       => __( 'Subscription Method', 'newsletter-optin-box' ),
 			'options'     => noptin_get_subscription_sources(),
 			'description' => __( 'Filter subscribers by how they subscribed.', 'newsletter-optin-box' ),
 		),
+		'ip_address'      => array(
+			'label'       => __( 'IP Address', 'newsletter-optin-box' ),
+			'options'     => false,
+			'description' => __( 'Filter subscribers by their IP address.', 'newsletter-optin-box' ),
+		),
+		'conversion_page' => array(
+			'label'       => __( 'Conversion Page', 'newsletter-optin-box' ),
+			'options'     => false,
+			'description' => __( 'Filter subscribers by the page they converted on.', 'newsletter-optin-box' ),
+		),
 	);
 
 	foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+		$options = false;
 
 		// Checkbox
 		if ( 'checkbox' === $custom_field['type'] ) {
@@ -1479,11 +1491,7 @@ function get_noptin_subscriber_filters() {
 
 		}
 
-		if ( empty( $options ) ) {
-			continue;
-		}
-
-		$filters[ $custom_field['merge_tag'] ] = array(
+		$smart_tags[ $custom_field['merge_tag'] ] = array(
 			'label'       => sanitize_text_field( $custom_field['label'] ),
 			'options'     => $options,
 			'description' => sprintf(
@@ -1491,11 +1499,30 @@ function get_noptin_subscriber_filters() {
 				__( 'Filter subscribers by %s', 'newsletter-optin-box' ),
 				sanitize_text_field( $custom_field['label'] )
 			),
+			'type'        => $custom_field['type'],
 		);
 
 	}
 
-	return apply_filters( 'noptin_subscriber_filters', $filters );
+	return apply_filters( 'noptin_known_subscriber_smart_tags', $smart_tags );
+}
+
+/**
+ * Returns available subscriber filters.
+ *
+ * @since 1.8.0
+ * @return array
+ */
+function get_noptin_subscriber_filters() {
+
+	return apply_filters(
+		'noptin_subscriber_filters',
+		wp_list_filter(
+			get_noptin_subscriber_smart_tags(),
+			array( 'options' => false ),
+			'NOT'
+		)
+	);
 }
 
 /**

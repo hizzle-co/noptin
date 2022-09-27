@@ -287,14 +287,19 @@ class Noptin_Automation_Rules {
 		}
 
 		$post       = wp_unslash( $_POST );
-		$action_id  = noptin_clean( $post['action'] );
-		$trigger_id = noptin_clean( $post['trigger'] );
-		$rule       = $this->create_rule( compact( 'action_id', 'trigger_id' ) );
+		$action_id  = noptin_clean( $post['noptin-automation-rule-action'] );
+		$trigger_id = noptin_clean( $post['noptin-automation-rule-trigger'] );
+
+		if ( empty( $action_id ) || empty( $trigger_id ) ) {
+			noptin()->admin->show_error( __( 'Select a trigger and action for your rule.', 'newsletter-optin-box' ) );
+		}
+
+		$rule = $this->create_rule( compact( 'action_id', 'trigger_id' ) );
 
 		if ( ! empty( $rule ) ) {
 			wp_safe_redirect(
 				add_query_arg(
-					'edit',
+					'noptin_edit_automation_rule',
 					$rule->id,
 					admin_url( 'admin.php?page=noptin-automation-rules' )
 				)

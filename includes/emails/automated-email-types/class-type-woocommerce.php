@@ -21,22 +21,22 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	/**
 	 * @var WC_Order
 	 */
-	public $order;
+	public $order = null;
 
 	/**
 	 * @var WC_Customer
 	 */
-	public $customer;
+	public $customer = null;
 
 	/**
 	 * @var WC_Product
 	 */
-	public $product;
+	public $product = null;
 
 	/**
 	 * @var WC_Order_Item_Product
 	 */
-	public $order_item;
+	public $order_item = null;
 
 	/**
 	 * Registers hooks.
@@ -159,7 +159,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			'order.status'               => array(
 				'description' => __( 'The order status.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.status format='price'",
+				'example'     => "order.status",
 			),
 
 			'order.date_created'         => array(

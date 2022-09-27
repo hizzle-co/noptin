@@ -5469,7 +5469,7 @@ msgstr ""
 msgid ""
 "To stop receiving these emails, you can %1$sunsubscribe%2$s at any time."
 msgstr ""
-"Ønsker du ikke længere at modtage nyhedsbrevet, kan du %1$afmelde her%2$s "
+"Ønsker du ikke længere at modtage nyhedsbrevet, kan du %1$safmelde her%2$s "
 
 #. %s: updates page URL.
 #: includes/libraries/noptin-com/class-noptin-com-updater.php:352

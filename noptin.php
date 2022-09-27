@@ -332,6 +332,8 @@ class Noptin {
 			$this->white_label = new Noptin_White_Label();
 		}
 
+		// Init scripts.
+		Noptin_Scripts::init();
 	}
 
 	/**

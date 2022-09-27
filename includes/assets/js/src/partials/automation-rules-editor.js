@@ -1,9 +1,61 @@
-import { createApp } from 'vue';
-
-export default createApp({
+export default {
 
 	data() {
-		return jQuery.extend( true, {}, noptinRules )
+		return JSON.parse( JSON.stringify( noptinRules ) );
+	},
+
+	computed: {
+
+		// Returns an array of available smart tags.
+		availableSmartTags() {
+			let tags = [];
+
+			if ( ! this.smart_tags ) {
+				return tags;
+			}
+
+			Object.keys( this.smart_tags ).forEach( key => {
+
+				// Check if conditions have been met.
+				if ( this.smart_tags[ key ].conditions ) {
+
+					// Check if all conditions have been met.
+					const condition_matched = this.smart_tags[ key ].conditions.every( condition => {
+
+						if ( Array.isArray( condition.value ) ) {
+							var matched = condition.value.some( val => val === this[ condition.key ] );
+						} else {
+							var matched = condition.value === this[ condition.key ];
+						}
+
+						const should_match = condition.operator === 'is';
+
+						return matched === should_match;
+					});
+
+					if ( ! condition_matched ) {
+						return;
+					}
+				}
+
+				let label = key;
+
+				if ( this.smart_tags[ key ].label ) {
+					label = this.smart_tags[ key ].label;
+				} else if ( this.smart_tags[ key ].description ) {
+					label = this.smart_tags[ key ].description;
+				}
+
+				tags.push( {
+					smart_tag: key,
+					label,
+					example: this.smart_tags[ key ].example ? this.smart_tags[ key ].example : '',
+					description: this.smart_tags[ key ].description ? this.smart_tags[ key ].description : '',
+				})
+			});
+
+			return tags;
+		}
 	},
 
 	methods: {
@@ -13,8 +65,8 @@ export default createApp({
 			var $ = jQuery
 
 			// Provide visual feedback by fading the form.
-			$(this.$el).fadeTo('fast', 0.33);
-			$(this.$el)
+			$('#noptin-automation-rule-editor').fadeTo('fast', 0.33);
+			$('#noptin-automation-rule-editor')
 				.find('.save-automation-rule')
 				.css(
 					{ 'visibility': 'visible' }
@@ -40,18 +92,17 @@ export default createApp({
 
 			let error = this.error
 			let saved = this.saved
-			let el    = this.$el
 
 			// Hide form notices.
-			$(this.$el).find('.noptin-save-saved').hide()
-			$(this.$el).find('.noptin-save-error').hide()
+			$('#noptin-automation-rule-editor').find('.noptin-save-saved').hide()
+			$('#noptin-automation-rule-editor').find('.noptin-save-error').hide()
 
 			// Post the state data to the server.
 			jQuery.post(noptinRules.ajaxurl, data)
 
 				// Show a success msg after we are done.
 				.done( () => {
-					$(el)
+					$('#noptin-automation-rule-editor')
 						.find('.noptin-save-saved')
 						.show()
 						.html(`<p>${saved}</p>`)
@@ -59,7 +110,7 @@ export default createApp({
 
 				// Else alert the user about the error.
 				.fail( () => {
-					$(el)
+					$('#noptin-automation-rule-editor')
 						.find('.noptin-save-error')
 						.show()
 						.html(`<p>${error}</p>`)
@@ -67,7 +118,7 @@ export default createApp({
 
 				.always( () => {
 
-					$(el)
+					$('#noptin-automation-rule-editor')
 						.fadeTo('fast', 1)
 						.find('.save-automation-rule')
 						.css(
@@ -110,7 +161,13 @@ export default createApp({
 		// Checks if a rule is the last one.
 		isLastConditionalLogicRule( index ) {
 			return index === this.conditional_logic.rules.length - 1;
+		},
+
+		// Fetch a smart tags example.
+		fetchSmartTagExample( config ) {
+			const example = config.example ? config.example : `${config.smart_tag} default="default value"`;
+			return `[[${example}]]`;
 		}
 	},
 
-})
+}

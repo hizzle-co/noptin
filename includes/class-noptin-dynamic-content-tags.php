@@ -152,16 +152,16 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$config      = $tags[ $tag ];
 		$replacement = '';
 
+		// Parse attributes.
+		$attributes = array();
+		if ( isset( $matches[2] ) ) {
+			$attribute_string = $matches[2];
+			$attributes       = shortcode_parse_atts( $attribute_string );
+		}
+
 		if ( isset( $config['replacement'] ) ) {
 			$replacement = $config['replacement'];
 		} elseif ( isset( $config['callback'] ) ) {
-
-			// Parse attributes.
-			$attributes = array();
-			if ( isset( $matches[2] ) ) {
-				$attribute_string = $matches[2];
-				$attributes       = shortcode_parse_atts( $attribute_string );
-			}
 
 			// call function
 			if ( empty( $config['no_args'] ) ) {
@@ -169,6 +169,10 @@ abstract class Noptin_Dynamic_Content_Tags {
 			} else {
 				$replacement = call_user_func( $config['callback'] );
 			}
+		}
+
+		if ( ( '' === $replacement || null === $replacement ) && isset( $attributes['default'] ) ) {
+			$replacement = trim( $attributes['default'] );
 		}
 
 		if ( is_callable( $this->escape_function ) ) {
@@ -199,7 +203,16 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 *
 	 * @return string
 	 */
-	protected function replace_in_html( $string ) {
+	public function replace_in_content( $string ) {
+		return $this->replace( $string, 'wp_kses_post' );
+	}
+
+	/**
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public function replace_in_html( $string ) {
 		return $this->replace( $string, 'esc_html' );
 	}
 
@@ -208,7 +221,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 *
 	 * @return string
 	 */
-	protected function replace_in_attributes( $string ) {
+	public function replace_in_attributes( $string ) {
 		return $this->replace( $string, 'esc_attr' );
 	}
 
@@ -217,8 +230,26 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 *
 	 * @return string
 	 */
-	protected function replace_in_url( $string ) {
+	public function replace_in_url( $string ) {
 		return $this->replace( $string, 'urlencode' );
+	}
+
+	/**
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public function replace_in_text_field( $string ) {
+		return $this->replace( $string, 'noptin_clean' );
+	}
+
+	/**
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public function replace_in_email( $string ) {
+		return $this->replace( $string, 'sanitize_email' );
 	}
 
 	/**
@@ -228,7 +259,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 *
 	 * @return string
 	 */
-	protected function get_cookie( $args = array() ) {
+	public static function get_cookie( $args = array() ) {
 		if ( empty( $args['name'] ) ) {
 			return '';
 		}

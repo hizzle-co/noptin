@@ -4,7 +4,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Sends a an email to subscribers.
+ * Sends a an email to subjects.
  *
  * @since       1.3.0
  */
@@ -36,14 +36,18 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		echo '<div class="noptin-content">';
 
 		$content = '';
-		if ( ! empty( $_GET['edit'] ) && is_numeric( $_GET['edit'] ) ) {
-			$rule     = new Noptin_Automation_Rule( $_GET['edit'] );
+		if ( ! empty( $_GET['noptin_edit_automation_rule'] ) && is_numeric( $_GET['noptin_edit_automation_rule'] ) ) {
+			$rule     = new Noptin_Automation_Rule( $_GET['noptin_edit_automation_rule'] );
 			$settings = $rule->action_settings;
 
 			if ( ! empty( $settings['email_content'] ) ) {
 				$content = wp_unslash( $settings['email_content'] );
 			}
 		}
+
+		// Vue does not work well with actions that insert <script> and <style> tags.
+		remove_all_actions( 'media_buttons' );
+		add_action( 'media_buttons', 'media_buttons' );
 
 		wp_editor(
 			$content,
@@ -57,6 +61,16 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 				'tinymce'          => array(
 					'theme_advanced_buttons1' => 'bold,italic,underline,|,bullist,numlist,blockquote,|,link,unlink,|,spellchecker,fullscreen,|,formatselect,styleselect',
 				),
+			)
+		);
+
+		printf(
+			'<p class="description" v-show="availableSmartTags">%s</p>',
+			sprintf(
+				/* translators: %1: Opening link, %2 closing link tag. */
+				esc_html__( 'You can use shortcodes and %1$s smart tags %2$s to personalize this email.', 'newsletter-optin-box' ),
+				'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
+				'</a>'
 			)
 		);
 
@@ -82,7 +96,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Sends the subscriber an email', 'newsletter-optin-box' );
+		return __( 'Send an email', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -126,17 +140,41 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			'email_subject'       => array(
 				'el'          => 'input',
 				'label'       => __( 'Email Subject', 'newsletter-optin-box' ),
-				'description' => __( 'What is the subject of the email?', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					'<p class="description" v-show="availableSmartTags">%s</p>',
+					sprintf(
+						/* translators: %1: Opening link, %2 closing link tag. */
+						esc_html__( 'You can use %1$s smart tags %2$s to personalize this field.', 'newsletter-optin-box' ),
+						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
+						'</a>'
+					)
+				),
 			),
 			'email_preview'       => array(
 				'el'          => 'input',
 				'label'       => __( 'Preview Text', 'newsletter-optin-box' ),
-				'description' => __( 'Enter an optional text that should be displayed next to the subject.', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					'<p class="description" v-show="availableSmartTags">%s</p>',
+					sprintf(
+						/* translators: %1: Opening link, %2 closing link tag. */
+						esc_html__( 'You can use %1$s smart tags %2$s to personalize this field.', 'newsletter-optin-box' ),
+						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
+						'</a>'
+					)
+				),
 			),
 			'email_heading'       => array(
 				'el'          => 'input',
 				'label'       => __( 'Email Heading', 'newsletter-optin-box' ),
-				'description' => __( 'Appears above the email content.', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					'<p class="description" v-show="availableSmartTags">%s</p>',
+					sprintf(
+						/* translators: %1: Opening link, %2 closing link tag. */
+						esc_html__( 'You can use %1$s smart tags %2$s to personalize this field.', 'newsletter-optin-box' ),
+						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
+						'</a>'
+					)
+				),
 			),
 			'email_content'       => array(
 				'el'          => 'email_action_content',
@@ -146,7 +184,15 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			'email_footer'        => array(
 				'el'          => 'textarea',
 				'label'       => __( 'Footer Text', 'newsletter-optin-box' ),
-				'description' => __( 'Shortcodes and merge tags are allowed.', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					'<p class="description" v-show="availableSmartTags">%s</p>',
+					sprintf(
+						/* translators: %1: Opening link, %2 closing link tag. */
+						esc_html__( 'You can use shortcodes and %1$s smart tags %2$s to personalize the email footer.', 'newsletter-optin-box' ),
+						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
+						'</a>'
+					)
+				),
 				'default'     => get_noptin_footer_text(),
 			),
 			'email_template'      => array(
@@ -166,40 +212,39 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Sends an email to the subscriber.
+	 * Sends an email to the subject.
 	 *
 	 * @since 1.3.0
-	 * @param Noptin_Subscriber $subscriber The subscriber.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $_args Extra arguments passed to the action.
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
+	 * @param array $args Extra arguments passed to the action.
 	 * @return void
 	 */
-	public function run( $subscriber, $rule, $_args ) {
+	public function run( $subject, $rule, $_args ) {
 
-		if ( ! apply_filters( 'noptin_should_send_automation_rule_email', true, $subscriber, $rule, $_args ) ) {
+		// Fetch the email recipient.
+		$recipient = $this->get_recipient( $subject, $rule, $_args );
+
+		if ( ! apply_filters( 'noptin_should_send_automation_rule_email', true, $recipient, $subject, $rule, $_args ) ) {
 			return;
 		}
 
+		$settings = wp_unslash( $rule->action_settings );
+
+		/** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
+		$smart_tags = $_args['smart_tags'];
+
 		$args = array(
-			'footer_text'    => isset( $rule->action_settings['email_footer'] ) ? wp_unslash( $rule->action_settings['email_footer'] ) : '',
-			'heading'        => isset( $rule->action_settings['email_heading'] ) ? wp_unslash( $rule->action_settings['email_heading'] ) : '',
-			'preview_text'   => isset( $rule->action_settings['email_preview'] ) ? wp_unslash( $rule->action_settings['email_preview'] ) : '',
-			'subject'        => wp_unslash( $rule->action_settings['email_subject'] ),
-			'content_normal' => wp_unslash( $rule->action_settings['email_content'] ),
-			'recepient'      => $subscriber->email,
+			'footer_text'    => isset( $settings['email_footer'] ) ? $smart_tags->replace_in_content( $settings['email_footer'] ) : '',
+			'heading'        => isset( $settings['email_heading'] ) ? $smart_tags->replace_in_text_field( $settings['email_heading'] ) : '',
+			'preview_text'   => isset( $settings['email_preview'] ) ? $smart_tags->replace_in_text_field( $settings['email_preview'] ) : '',
+			'subject'        => $smart_tags->replace_in_text_field( $settings['email_subject'] ),
+			'content_normal' => $smart_tags->replace_in_content( $settings['email_content'] ),
+			'recepient'      => $recipient,
 			'email_type'     => 'normal',
-			'template'       => isset( $rule->action_settings['email_template'] ) ? sanitize_text_field( $rule->action_settings['email_template'] ) : '',
+			'template'       => isset( $settings['email_template'] ) ? sanitize_text_field( $settings['email_template'] ) : '',
 			'merge_tags'     => array(),
 		);
-
-		if ( is_array( $_args ) ) {
-
-			foreach ( $_args as $key => $value ) {
-				if ( is_scalar( $value ) ) {
-					$args['merge_tags'][ $key ] = $value;
-				}
-			}
-		}
 
 		$email = new Noptin_One_Time_Email( $args );
 
@@ -210,38 +255,56 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	 * Returns whether or not the action can run (dependancies are installed).
 	 *
 	 * @since 1.3.3
-	 * @param Noptin_Subscriber $subscriber The subscriber.
+	 * @param mixed $subject The subject.
 	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return bool
 	 */
-	public function can_run( $subscriber, $rule, $args ) {
+	public function can_run( $subject, $rule, $args ) {
 
 		// Abort if we do not have a subject or an email.
 		if ( empty( $rule->action_settings['email_content'] ) || empty( $rule->action_settings['email_subject'] ) ) {
-			log_noptin_message(
-				sprintf(
-					// translators: %s is the recipient email
-					__( 'Email automation rule action not sent to %s because either the subject or the content has not been set', 'newsletter-optin-box' ),
-					$subscriber->email
-				)
-			);
 			return false;
 		}
 
-		// We only want to send an email to active subscribers.
-		if ( ! $subscriber->is_active() ) {
-			log_noptin_message(
-				sprintf(
-					// translators: %s is the recipient email
-					__( 'Email automation rule action not sent to %s because the subscriber is not active', 'newsletter-optin-box' ),
-					$subscriber->email
-				)
-			);
-			return false;
+		// We only want to send an email to active recipients.
+		$recipient = $this->get_recipient( $subject, $rule, $args );
+
+		return is_email( $recipient ) && ! noptin_is_email_unsubscribed( $recipient );
+	}
+
+	/**
+	 * Returns the recipient's email address.
+	 *
+	 * @since 1.8.1
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return false|string
+	 */
+	public function get_recipient( $subject, $rule, $args ) {
+
+		// Provided via the email settings.
+		if ( ! empty( $rule->action_settings['send_to'] ) ) {
+			return $args['smart_tags']->replace_in_email( $rule->action_settings['send_to'] );
 		}
 
-		return true;
+		// Maybe fetch from the subscriber.
+		if ( $subject instanceof Noptin_Subscriber ) {
+			return $subject->email;
+		}
+
+		// ... or users.
+		if ( $subject instanceof WP_User ) {
+			return $subject->user_email;
+		}
+
+		// ... or the email argument.
+		if ( ! empty( $args['email'] ) ) {
+			return $args['email'];
+		}
+
+		return false;
 	}
 
 }
