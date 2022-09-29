@@ -55,6 +55,30 @@ export default {
 			});
 
 			return tags;
+		},
+
+		// Returns an array of available conditions.
+		availableConditions() {
+			let conditions = {};
+
+			this.availableSmartTags.forEach( ( tag ) => {
+
+				if ( this.smart_tags[ tag.smart_tag ].conditional_logic ) {
+					conditions[ tag.smart_tag ] = {
+						key: tag.smart_tag,
+						label: tag.label,
+						options: this.smart_tags[ tag.smart_tag ].options ? this.smart_tags[ tag.smart_tag ].options : false,
+						type: this.smart_tags[ tag.smart_tag ].conditional_logic,
+					}
+				}
+			})
+
+			return conditions;
+		},
+
+		// Checks if there are any conditions.
+		hasConditions() {
+			return Object.keys(this.availableConditions).length > 0;
 		}
 	},
 
@@ -129,22 +153,33 @@ export default {
 
 		},
 
+		// Fetches rule data type.
+		getConditionDataType( condition ) {
+			let config = this.availableConditions[ condition ]
+
+			if ( config ) {
+				return config.type;
+			}
+
+			return 'string';
+		},
+
 		// Checks if there are rule options.
-		hasConditionalLogicRuleOptions( rule_type ) {
-			return this.condition_rules[ rule_type ] !== undefined && this.condition_rules[ rule_type ].options !== undefined;
+		hasConditionOptions( rule_type ) {
+			return this.availableConditions[ rule_type ] !== undefined && this.availableConditions[ rule_type ].options !== false;
 		},
 
 		// Retrieves the rule options.
-		getConditionalLogicRuleOptions( rule_type ) {
-			return this.condition_rules[ rule_type ].options;
+		getConditionOptions( rule_type ) {
+			return this.availableConditions[ rule_type ].options;
 		},
 
 		// Adds a conditional logic rule.
 		addConditionalLogicRule() {
 
-			// Fetch first value in this.condition_rules object.
-			let type = Object.keys(this.condition_rules)[0]
-			let value = this.condition_rules[type].options ? Object.keys(this.condition_rules[type].options)[0] : ''
+			// Fetch first value in this.availableConditions object.
+			let type = Object.keys(this.availableConditions)[0]
+			let value = this.availableConditions[type].options ? Object.keys(this.availableConditions[type].options)[0] : ''
 
 			this.conditional_logic.rules.push({
 				type,

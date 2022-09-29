@@ -1,7 +1,11 @@
 import popover from 'vue-popperjs'
 import noptin from './noptin.js'
 
-var settingsApp = new Vue({
+export default {
+
+	data() {
+		return noptinSettings.app;
+	},
 
 	components: {
 
@@ -9,14 +13,6 @@ var settingsApp = new Vue({
 		'noptin-tooltip': popover,
 
 	},
-
-	el: '#noptin-settings-app',
-
-	data: jQuery.extend(
-		true,
-		{},
-		noptinSettings
-	),
 
 	methods: {
 
@@ -222,6 +218,4 @@ var settingsApp = new Vue({
 	mounted() {
 		//Runs after mounting
 	},
-})
-
-export default settingsApp
+}

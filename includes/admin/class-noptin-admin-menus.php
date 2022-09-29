@@ -93,7 +93,7 @@ class Noptin_Admin_Menus {
 			$slide_in = noptin_count_optin_forms( 'slide_in' );
 		}
 
-		include $this->admin_path . 'welcome.php';
+		include plugin_dir_path( __FILE__ ) . 'welcome.php';
 
 		/**
 		 * Runs after displaying the main menu page.

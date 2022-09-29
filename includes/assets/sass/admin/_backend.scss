@@ -1364,10 +1364,12 @@ a.no-campaign-create-new-campaign {
 	.noptin-conditional-logic-wrapper {
 		max-width: 100%;
 
-		select {
+		select,
+		.noptin-condition-value {
 			padding: 0 24px 0 8px;
 			width: auto;
 			margin-bottom: 6px;
+			max-width: 200px;
 		}
 
 		.noptin-remove-conditional-rule {

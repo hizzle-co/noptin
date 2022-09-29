@@ -1,12 +1,9 @@
-(function ($) {
+import domReady from '@wordpress/dom-ready';
+import { createApp } from 'vue';
+import App from './partials/settings.js';
 
-	//Settings app
-	if ('undefined' == typeof noptinSettings) {
-		window.noptinSettings = {}
-	}
+domReady( function () {
+	window.noptin = window.noptin || {};
 
-	//The settings app
-	window.noptinSettingsApp = require ( './partials/settings.js' ).default
-
-
-})(jQuery);
+	window.noptin.settingsApp = createApp( App ).mount( '#noptin-settings-app' );
+} );

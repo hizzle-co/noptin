@@ -80,7 +80,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rules' ), $this->priority );
 
 		// New subscribers.
-		add_action( 'noptin_insert_subscriber', array( $this, 'add_subscriber'), $this->priority, 2 );
+		add_action( 'noptin_insert_subscriber', array( $this, 'add_subscriber' ), $this->priority, 2 );
 
 		add_filter( 'noptin_single_integration_settings', array( $this, 'add_list_options' ), $this->priority, 3 );
 

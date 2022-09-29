@@ -79,7 +79,9 @@ abstract class Noptin_Abstract_Action {
 	 * @since 1.2.8
 	 * @return array
 	 */
-	abstract public function get_settings();
+	public function get_settings() {
+		return array();
+	}
 
 	/**
 	 * Returns all active rules attached to this action.

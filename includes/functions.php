@@ -1201,11 +1201,11 @@ function flatten_noptin_array( $array, $prefix = '' ) {
  */
 function noptin_sanitize_booleans( $var ) {
 
-	if ( 'true' === $var ) {
+	if ( 'true' === $var || '1' === $var ) {
 		return true;
 	}
 
-	if ( 'false' === $var ) {
+	if ( 'false' === $var || '0' === $var ) {
 		return false;
 	}
 

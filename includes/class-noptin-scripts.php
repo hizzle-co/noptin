@@ -187,7 +187,7 @@ class Noptin_Scripts {
 		}
 
 		if ( 'noptin-settings' === $handle ) {
-			wp_localize_script( $handle, 'noptinSettings', Noptin_Settings::get_state() );
+			wp_localize_script( $handle, 'noptinSettings', array( 'app' => Noptin_Settings::get_state() ) );
 		}
 
 		if ( 'noptin-edit-automation-rule' === $handle ) {

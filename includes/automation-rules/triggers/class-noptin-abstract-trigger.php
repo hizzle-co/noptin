@@ -132,16 +132,18 @@ abstract class Noptin_Abstract_Trigger {
         $smart_tags = array(
 
             'cookie' => array(
-                'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
-                'callback'    => 'Noptin_Dynamic_Content_Tags::get_cookie',
-                'example'     => "cookie name='my_cookie' default='Default Value'",
+                'description'       => __( 'Data from a cookie.', 'newsletter-optin-box' ),
+                'callback'          => 'Noptin_Dynamic_Content_Tags::get_cookie',
+                'example'           => "cookie name='my_cookie' default='Default Value'",
+                'conditional_logic' => 'string',
             ),
 
             'date'   => array(
                 // translators: %s is the current date.
-                'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
-                'replacement' => date_i18n( get_option( 'date_format' ) ),
-                'example'     => 'date',
+                'description'       => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
+                'replacement'       => date_i18n( get_option( 'date_format' ) ),
+                'example'           => 'date',
+                'conditional_logic' => 'date',
             ),
 
             'time'   => array(
@@ -233,12 +235,12 @@ abstract class Noptin_Abstract_Trigger {
      * @since 1.2.8
      * @param Noptin_Automation_Rule $rule The rule to check for.
      * @param mixed $args Extra args for the action.
-     * @param Noptin_Subscriber $subscriber The subscriber that this rule was triggered for.
+     * @param mixed $subject The subject.
      * @param Noptin_Abstract_Action $action The action to run.
      * @return bool
      */
-    public function is_rule_valid_for_args( $rule, $args, $subscriber, $action ) {
-        return $this->is_conditional_logic_met( $rule, $subscriber );
+    public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
+        return $this->is_conditional_logic_met( $rule, $subject );
     }
 
     /**
