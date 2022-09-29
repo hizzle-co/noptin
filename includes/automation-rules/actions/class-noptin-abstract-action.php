@@ -118,6 +118,40 @@ abstract class Noptin_Abstract_Action {
 	}
 
 	/**
+	 * Returns the subject's email address.
+	 *
+	 * @since 1.8.1
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return false|string
+	 */
+	public function get_subject_email( $subject, $rule, $args ) {
+
+		// Provided via the email settings.
+		if ( ! empty( $rule->action_settings['email'] ) ) {
+			return $args['smart_tags']->replace_in_email( $rule->action_settings['email'] );
+		}
+
+		// Maybe fetch from the subscriber.
+		if ( $subject instanceof Noptin_Subscriber ) {
+			return $subject->email;
+		}
+
+		// ... or users.
+		if ( $subject instanceof WP_User ) {
+			return $subject->user_email;
+		}
+
+		// ... or the email argument.
+		if ( ! empty( $args['email'] ) ) {
+			return $args['email'];
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns whether or not the action can run (dependancies are installed).
 	 *
 	 * @since 1.2.8

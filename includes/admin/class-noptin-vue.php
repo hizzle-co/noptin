@@ -27,6 +27,7 @@ class Noptin_Vue {
 		add_action( 'noptin_render_editor_form_fields', array( __CLASS__, 'form_fields' ), 10, 2 );
 		add_action( 'noptin_render_editor_select', array( __CLASS__, 'select' ), 10, 2 );
 		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox' ), 10, 2 );
+		add_action( 'noptin_render_editor_multi_checkbox_alt', array( __CLASS__, 'multi_checkbox_alt' ), 10, 2 );
 		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input' ), 10, 2 );
 		add_action( 'noptin_render_editor_custom_fields', array( __CLASS__, 'custom_fields' ), 10, 2 );
 		add_action( 'noptin_render_editor_upsell', array( __CLASS__, 'upsell' ), 10, 2 );
@@ -664,6 +665,34 @@ class Noptin_Vue {
 				wp_kses( $field['tooltip'], self::tooltip_tags() )
 			);
 		}
+
+	}
+
+	/**
+	 * Renders multi_checkbox input
+	 */
+	public static function multi_checkbox_alt( $id, $field ) {
+
+		$count = 0;
+		?>
+		<div class="noptin-text-wrapper field-wrapper" <?php echo $field['restrict']; ?>>
+			<label for="<?php echo esc_attr( $id . $count ); ?>" class="noptin-label">
+				<?php echo wp_kses_post( wp_kses_post( $field['label'] ) ); ?></label>&nbsp;
+				<?php echo wp_kses( $field['tooltip'], self::tooltip_tags() ); ?>
+			</label>
+			<div class="noptin-content">
+				<?php foreach ( $field['options'] as $name => $label ) : ?>
+					<p class="description">
+						<label>
+							<input type="checkbox" value="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id . $count ); ?>" v-model="<?php echo esc_attr( $id ); ?>">
+							<span style="font-weight: 400;"><?php echo wp_kses_post( $label ); ?></span>
+						</label>
+					</p>
+					<?php $count++; ?>
+				<?php endforeach; ?>
+			</div>
+		</div>
+		<?php
 
 	}
 

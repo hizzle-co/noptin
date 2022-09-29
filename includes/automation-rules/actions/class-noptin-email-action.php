@@ -223,7 +223,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	public function run( $subject, $rule, $_args ) {
 
 		// Fetch the email recipient.
-		$recipient = $this->get_recipient( $subject, $rule, $_args );
+		$recipient = $this->get_subject_email( $subject, $rule, $_args );
 
 		if ( ! apply_filters( 'noptin_should_send_automation_rule_email', true, $recipient, $subject, $rule, $_args ) ) {
 			return;
@@ -268,43 +268,9 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		}
 
 		// We only want to send an email to active recipients.
-		$recipient = $this->get_recipient( $subject, $rule, $args );
+		$recipient = $this->get_subject_email( $subject, $rule, $args );
 
 		return is_email( $recipient ) && ! noptin_is_email_unsubscribed( $recipient );
-	}
-
-	/**
-	 * Returns the recipient's email address.
-	 *
-	 * @since 1.8.1
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return false|string
-	 */
-	public function get_recipient( $subject, $rule, $args ) {
-
-		// Provided via the email settings.
-		if ( ! empty( $rule->action_settings['send_to'] ) ) {
-			return $args['smart_tags']->replace_in_email( $rule->action_settings['send_to'] );
-		}
-
-		// Maybe fetch from the subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			return $subject->email;
-		}
-
-		// ... or users.
-		if ( $subject instanceof WP_User ) {
-			return $subject->user_email;
-		}
-
-		// ... or the email argument.
-		if ( ! empty( $args['email'] ) ) {
-			return $args['email'];
-		}
-
-		return false;
 	}
 
 }
