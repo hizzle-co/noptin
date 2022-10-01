@@ -143,20 +143,19 @@ export default {
 		// Persists settings to the database.
 		saveSettings() {
 
-			var $ = jQuery
+			const container = jQuery( '#noptin-settings-app' );
 
 			//Provide visual feedback by fading the form
-			$(this.$el).fadeTo("fast", 0.33);
+			container.fadeTo("fast", 0.33);
 
 			//Prepare state data
 			var data = this.$data
 			var error = this.error
 			var saved = this.saved
-			var el = this.$el
 
 			//Hide form notices
-			$(this.$el).find('.noptin-save-saved').hide()
-			$(this.$el).find('.noptin-save-error').hide()
+			container.find('.noptin-save-saved').hide()
+			container.find('.noptin-save-error').hide()
 
 			//Post the state data to the server
 			jQuery.post(noptin_params.ajaxurl, {
@@ -167,7 +166,7 @@ export default {
 
 				//Show a success msg after we are done
 				.done(() => {
-					$(el)
+					container
 						.fadeTo("fast", 1)
 						.find('.noptin-save-saved')
 						.show()
@@ -178,7 +177,7 @@ export default {
 
 				//Else alert the user about the error.
 				.fail(() => {
-					$(el)
+					container
 						.fadeTo("fast", 1)
 						.find('.noptin-save-error')
 						.show()

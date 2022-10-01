@@ -103,7 +103,7 @@ class Noptin_Subscribers_Admin {
 
 		if ( apply_filters( 'noptin_enable_geolocation', true ) ) {
 			$ip_address = $subscriber->ip_address;
-			if ( ! empty( $ip_address ) && noptin_locate_ip_address( $ip_address ) ) {
+			if ( ! empty( $ip_address ) && '::1' !== $ip_address && noptin_locate_ip_address( $ip_address ) ) {
 
 				add_meta_box(
 					'noptin_subscriber_location',

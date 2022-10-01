@@ -530,6 +530,9 @@ class Noptin_Ajax {
 		// Save them.
 		update_noptin_options( $settings );
 
+		// Fire an action.
+		do_action( 'noptin_admin_save_options', $settings );
+
 		// Clear connection caches.
 		foreach ( get_noptin_connection_providers() as $connection ) {
 
@@ -550,7 +553,7 @@ class Noptin_Ajax {
 	 */
 	public function save_rule() {
 
-		if ( ! current_user_can( get_noptin_capability() ) ) {
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['id'] ) ) {
 			wp_die( -1, 403 );
 		}
 
@@ -562,24 +565,26 @@ class Noptin_Ajax {
 		 */
 		do_action( 'noptin_before_save_automation_rule' );
 
-		// Prepare the rule.
-		$trigger_settings = array();
-		if ( ! empty( $_POST['trigger_settings'] ) ) {
-			$trigger_settings = stripslashes_deep( $_POST['trigger_settings'] );
+		// Fetch the automation rule.
+		$rule = new Noptin_Automation_Rule( absint( $_POST['id'] ) );
+
+		// Abort if the rule does not exist.
+		if ( ! $rule->exists() ) {
+			wp_die( -1, 404 );
 		}
 
-		$action_settings = array();
-		if ( ! empty( $_POST['action_settings'] ) ) {
-			$action_settings = stripslashes_deep( $_POST['action_settings'] );
-		}
+		// Prepare settings.
+		$trigger_settings = $rule->sanitize_trigger_settings( isset( $_POST['trigger_settings'] ) ? stripslashes_deep( $_POST['trigger_settings'] ) : array() );
+		$action_settings  = $rule->sanitize_action_settings( isset( $_POST['action_settings'] ) ? stripslashes_deep( $_POST['action_settings'] ) : array() );
 
+		// Prepare the conditional logic.
 		$trigger_settings['conditional_logic'] = noptin_get_default_conditional_logic();
 		if ( ! empty( $_POST['conditional_logic'] ) ) {
 			$trigger_settings['conditional_logic'] = stripslashes_deep( $_POST['conditional_logic'] );
 		}
 
 		// Save them.
-		noptin()->automation_rules->update_rule( $_POST['id'], compact( 'action_settings', 'trigger_settings' ) );
+		noptin()->automation_rules->update_rule( $rule->id, compact( 'action_settings', 'trigger_settings' ) );
 
 		wp_send_json_success( 1 );
 

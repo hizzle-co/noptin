@@ -121,31 +121,6 @@ class Noptin_Automation_Rule {
 			}
 		}
 
-		// Fill defaults.
-		$trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
-
-		if ( ! empty( $trigger ) && is_array( $trigger->get_settings() ) ) {
-			$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $this, $trigger );
-
-			foreach ( $trigger_settings as $key => $args ) {
-				if ( ! isset( $this->trigger_settings[ $key ] ) && isset( $args['default'] ) ) {
-					$this->trigger_settings[ $key ] = $args['default'];
-				}
-			}
-		}
-
-		$action = noptin()->automation_rules->get_action( $this->action_id );
-
-		if ( ! empty( $action ) && is_array( $action->get_settings() ) ) {
-			$action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
-
-			foreach ( $action_settings as $key => $args ) {
-				if ( ! isset( $this->action_settings[ $key ] ) && isset( $args['default'] ) ) {
-					$this->action_settings[ $key ] = $args['default'];
-				}
-			}
-		}
-
 		// Set conditional logic.
 		$this->conditional_logic = noptin_get_default_conditional_logic();
 		if ( isset( $this->trigger_settings['conditional_logic'] ) ) {
@@ -183,6 +158,89 @@ class Noptin_Automation_Rule {
 			);
 		}
 
+		// Sanitize trigger and action settings.
+		$this->trigger_settings = $this->sanitize_trigger_settings( $this->trigger_settings );
+		$this->action_settings  = $this->sanitize_action_settings( $this->action_settings );
+
+	}
+
+	/**
+	 * Sanitize the trigger settings.
+	 *
+	 * @param array $settings The trigger settings.
+	 * @return array
+	 */
+	public function sanitize_trigger_settings( $settings ) {
+
+		// Fetch the trigger.
+		$trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
+
+		if ( empty( $trigger ) ) {
+			return $settings;
+		}
+
+		$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $this, $trigger );
+
+		return $this->prepare_settings( $settings, $trigger_settings );
+	}
+
+	/**
+	 * Sanitize the action settings.
+	 *
+	 * @param array $settings The action settings.
+	 * @return array
+	 */
+	public function sanitize_action_settings( $settings ) {
+
+		// Fetch the trigger.
+		$action = noptin()->automation_rules->get_action( $this->action_id );
+
+		if ( empty( $action ) ) {
+			return $settings;
+		}
+
+		$action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
+
+		return $this->prepare_settings( $settings, $action_settings );
+	}
+
+	/**
+	 * Prepares settings.
+	 *
+	 * @param array $options  The saved options.
+	 * @param array $settings The known settings.
+	 * @return array
+	 */
+	private function prepare_settings( $options, $settings ) {
+
+		// Prepare the options.
+		$prepared_options = array();
+
+		foreach ( $settings as $key => $args ) {
+
+			$default  = isset( $args['default'] ) ? $args['default'] : '';
+			$is_array = is_array( $default );
+			$value    = isset( $options[ $key ] ) ? $options[ $key ] : $default;
+
+			if ( $is_array && ! is_array( $value ) ) {
+				$value = (array) $value;
+			}
+
+			// If there are options, make sure the value is one of them.
+			if ( isset( $args['options'] ) ) {
+				$choices = array_keys( $args['options'] );
+
+				if ( is_array( $value ) ) {
+					$value = array_values( array_intersect( $value, $choices ) );
+				} else {
+					$value = in_array( $value, $choices, true ) ? $value : $default;
+				}
+			}
+
+			$prepared_options[ $key ] = $value;
+		}
+
+		return $prepared_options;
 	}
 
 	/**
