@@ -484,11 +484,10 @@ class Noptin_Settings {
 
 		);
 
-		$integration_settings  = apply_filters( 'noptin_get_integration_settings', array() );
-		$available_connections = get_noptin_connection_providers();
+		$integration_settings = apply_filters( 'noptin_get_integration_settings', array() );
 		ksort( $integration_settings );
 
-		if ( empty( $available_connections ) ) {
+		if ( noptin_upsell_integrations() ) {
 			foreach ( Noptin_COM::get_connections() as $data ) {
 
 				$slug = sanitize_key( str_replace( '-', '_', $data->slug ) );

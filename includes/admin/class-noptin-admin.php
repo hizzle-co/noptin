@@ -195,9 +195,13 @@ class Noptin_Admin {
 		}
 
 		// Optin forms editor.
-		if ( 'noptin-form' === $page && ( ! is_using_new_noptin_forms() || ( isset( $_GET['post'] ) && is_legacy_noptin_form( (int) $_GET['post'] ) ) ) ) {
-			$version = filemtime( $this->assets_path . 'js/dist/modules.css' );
-			wp_enqueue_style( 'noptin-modules', $this->assets_url . 'js/dist/modules.css', array(), $version );
+		$editing_new_form    = isset( $_GET['post'] ) && ! is_legacy_noptin_form( (int) $_GET['post'] );
+		$editing_legacy_form = isset( $_GET['post'] ) && is_legacy_noptin_form( (int) $_GET['post'] );
+		if ( 'noptin-form' === $page ) {
+
+			if ( ! $editing_new_form && ( ! is_using_new_noptin_forms() || $editing_legacy_form ) ) {
+				wp_enqueue_style( 'noptin-modules', $this->assets_url . 'js/dist/modules.css', array(), noptin()->version );
+			}
 		}
 
 		// Email campaigns page.

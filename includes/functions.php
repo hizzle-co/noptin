@@ -1070,6 +1070,39 @@ function get_noptin_connection_providers() {
 }
 
 /**
+ * Checks whether or not to upsell integrations.
+ *
+ * @since 1.8.2
+ * @ignore
+ * @return bool
+ */
+function noptin_upsell_integrations() {
+	return apply_filters( 'noptin_upsell_integrations', 0 === count( get_noptin_connection_providers() ) );
+}
+
+/**
+ * Retrieves an upsell URL.
+ *
+ * @since 1.8.2
+ * @param string $url The URL to redirect to.
+ * @param string $utm_source The utm source.
+ * @param string $utm_medium The utm medium.
+ * @param string $utm_campaign The utm campaign.
+ * @ignore
+ * @return bool
+ */
+function noptin_get_upsell_url( $url, $utm_source, $utm_campaign, $utm_medium = 'plugin-dashboard' ) {
+	return add_query_arg(
+		array(
+			'utm_medium'   => $utm_medium,
+			'utm_campaign' => $utm_campaign,
+			'utm_source'   => $utm_source,
+		),
+		$url
+	);
+}
+
+/**
  * Applies Noptin merge tags.
  *
  * Noptin uses a fast logic-less templating engine to parse merge tags

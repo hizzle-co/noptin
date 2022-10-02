@@ -66,6 +66,7 @@ class Noptin_Scripts {
 	 * Loads default admin scripts.
 	 */
 	public static function maybe_load_default_scripts( $hook ) {
+		global $current_screen;
 
 		// Load our CSS styles on all pages.
 		$assets_url = plugin_dir_url( __FILE__ ) . 'assets';
@@ -73,7 +74,7 @@ class Noptin_Scripts {
 		wp_enqueue_style( 'noptin', $assets_url . '/css/admin.css', array(), $version );
 
 		// Check if the hook suffix contains noptin.
-		if ( false === strpos( $hook, 'noptin' ) && false === strpos( $hook, noptin()->white_label->admin_screen_id() ) ) {
+		if ( false === strpos( $hook, 'noptin' ) && false === strpos( $hook, noptin()->white_label->admin_screen_id() ) && ( empty( $current_screen ) || false === strpos( $current_screen->id, 'noptin' ) ) ) {
 			return;
 		}
 
