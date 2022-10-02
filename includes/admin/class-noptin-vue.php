@@ -133,7 +133,7 @@ class Noptin_Vue {
 		// Attributes.
 		$attrs = '';
 		foreach ( $el as $attr => $val ) {
-			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default' ), true ) ) {
+			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default', 'append' ), true ) ) {
 				$val   = esc_attr( $val );
 				$attrs = "$attrs $attr='$val'";
 			}
@@ -714,6 +714,7 @@ class Noptin_Vue {
 		$label       = $field['label'];
 		$tooltip     = $field['tooltip'];
 		$description = empty( $field['description'] ) ? '' : $field['description'];
+		$append      = isset( $field['append'] ) ? '<span class="noptin-input-append">' . $field['append'] . '</span>' : '';
 
 		switch ( $type ) {
 
@@ -741,7 +742,7 @@ class Noptin_Vue {
 				break;
 
 			default:
-				echo "<label class='$class' $restrict><span class='noptin-label'>$label $tooltip</span> <div class='noptin-content'><input class='$_class' v-model='$id' type='$type' $attrs />$description</div></label>";
+				echo "<label class='$class' $restrict><span class='noptin-label'>$label $tooltip</span> <div class='noptin-content'><div class='noptin-input-inner'><input class='$_class' v-model='$id' type='$type' $attrs />$append</div>$description</div></label>";
 				break;
 		}
 

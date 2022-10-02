@@ -100,6 +100,7 @@ class Noptin_Custom_Fields {
 			);
 		}
 
+		return apply_filters( 'noptin_default_custom_fields', $fields );
 	}
 
 	/**

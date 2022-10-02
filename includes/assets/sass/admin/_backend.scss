@@ -1440,19 +1440,6 @@ a.no-campaign-create-new-campaign {
 
 	}
 
-	.dd-select {
-		background: #fff !important;
-
-		a {
-			text-decoration: none;
-    		color: inherit;
-		}
-	}
-
-	.dd-selected {
-		font-weight: 400 !important;
-	}
-
 	.save-automation-rule {
 		float: none;
 	}
@@ -1471,6 +1458,27 @@ a.no-campaign-create-new-campaign {
 		border-left-color: #dc3232;
 	}
 
+}
+
+.noptin-input-inner {
+	position: relative;
+
+	.noptin-input-append {
+		position: absolute;
+		right: 0;
+		top: 0;
+		color: gray;
+		height: 100%;
+		min-width: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		a {
+			text-decoration: none;
+			color: grey;
+		}
+	}
 }
 
 .noptin-newsletter-schedule-control {
