@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 6.0
 Requires PHP: 5.6
-Version: 1.8.0
-Stable tag: 1.8.0
+Version: 1.8.2
+Stable tag: 1.8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -133,6 +133,12 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.8.2 =
+* Fixed: A CRON conflict causing post digests to create multiple newsletter campaigns.
+
+= 1.8.1 =
+* Fix unsaved custom newsletter fields disappearing
 
 = 1.8.0 =
 * Add language custom field.

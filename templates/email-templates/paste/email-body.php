@@ -11,7 +11,7 @@
 					<!-- start copy -->
 						<tr>
 							<td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-								<?php echo wp_kses_post( $content ); ?>
+								<?php echo $content; ?>
 							</td>
 						</tr>
 					<!-- end copy -->

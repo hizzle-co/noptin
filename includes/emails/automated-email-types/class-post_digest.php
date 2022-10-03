@@ -302,16 +302,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		switch ( $frequency ) {
 
 			case 'daily':
-				$today    = strtotime( "today $time" );
-				$tomorrow = strtotime( "tomorrow $time" );
-
-				// Schedule earliest possible send.
-				if ( ( $today + HOUR_IN_SECONDS ) > time() ) {
-					$next_send = $today;
-				} else {
-					$next_send = $tomorrow;
-				}
-
+				$next_send = strtotime( "tomorrow $time" );
 				break;
 
 			case 'weekly':
@@ -344,24 +335,14 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					$date = '1';
 				}
 
-				$month_1 = (int) current_time( 'n' );
-				$year_1  = (int) current_time( 'Y' );
+				$this_month = (int) gmdate( 'n' );
+				$this_year  = (int) gmdate( 'Y' );
 
-				$month_2 = $month_1 < 12 ? $month_1 + 1 : 1;
-				$year_2  = $month_1 < 12 ? $year_1 : $year_1 + 1;
-
-				$date_1 = strtotime( "$year_1-$month_1-$date $time" );
-				$date_2 = strtotime( "$year_2-$month_2-$date $time" );
-
-				// Schedule earliest possible send.
-				if ( ( $date_1 + HOUR_IN_SECONDS ) > time() ) {
-					$next_send = $date_1;
-				} else {
-					$next_send = $date_2;
-				}
+				$send_month = $this_month < 12 ? $this_month + 1 : 1;
+				$send_year  = $this_month < 12 ? $this_year : $this_year + 1;
+				$next_send  = strtotime( "$send_year-$send_month-$date $time" );
 
 				break;
-
 		}
 
 		if ( ! empty( $next_send ) ) {
@@ -397,9 +378,12 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$last_send = get_post_meta( $campaign_id, '_noptin_last_send', true );
 
 		// Don't send if we already sent today.
-		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === current_time( 'Ymd', true ) ) {
+		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === gmdate( 'Ymd' ) ) {
 			return;
 		}
+
+		// Set the last send date.
+		update_post_meta( $campaign_id, '_noptin_last_send', time() );
 
 		// Retrieve matching posts.
 		$this->posts = $this->get_campaign_posts( $campaign );
