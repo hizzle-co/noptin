@@ -225,7 +225,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		// Fetch the email recipient.
 		$recipient = $this->get_subject_email( $subject, $rule, $_args );
 
-		if ( ! apply_filters( 'noptin_should_send_automation_rule_email', true, $recipient, $subject, $rule, $_args ) ) {
+		if ( ! apply_filters( 'noptin_should_send_automation_rule_email', true, $recipient, $rule, $_args ) ) {
 			return;
 		}
 

@@ -39,6 +39,12 @@ class Noptin_Automation_Rules {
 		$this->add_trigger( new Noptin_Link_Click_Trigger() );
 		$this->add_trigger( new Noptin_Unsubscribe_Trigger() );
 
+		if ( function_exists( 'geodir_get_posttypes' ) ) {
+			foreach ( geodir_get_posttypes() as $post_type ) {
+				$this->add_trigger( new Noptin_GeoDirectory_Listing_Saved_Trigger( $post_type ) );
+			}
+		}
+
 		// Handle admin rule CRUD requests.
 		add_action( 'noptin_create_automation_rule', array( $this, 'admin_create_automation_rule' ) );
 		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );

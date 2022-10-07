@@ -681,15 +681,18 @@ class Noptin_Vue {
 				<?php echo wp_kses( $field['tooltip'], self::tooltip_tags() ); ?>
 			</label>
 			<div class="noptin-content">
-				<?php foreach ( $field['options'] as $name => $label ) : ?>
-					<p class="description">
-						<label>
-							<input type="checkbox" value="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id . $count ); ?>" v-model="<?php echo esc_attr( $id ); ?>">
-							<span style="font-weight: 400;"><?php echo wp_kses_post( $label ); ?></span>
-						</label>
-					</p>
-					<?php $count++; ?>
-				<?php endforeach; ?>
+				<div class="card noptin-multicheckbox-card">
+					<?php foreach ( $field['options'] as $name => $label ) : ?>
+						<p class="description">
+							<label>
+								<input type="checkbox" value="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id . $count ); ?>" v-model="<?php echo esc_attr( $id ); ?>">
+								<span style="font-weight: 400;"><?php echo wp_kses_post( $label ); ?></span>
+							</label>
+						</p>
+						<?php $count++; ?>
+					<?php endforeach; ?>
+				</div>
+				<?php echo wp_kses_post( $field['description'] ); ?>
 			</div>
 		</div>
 		<?php

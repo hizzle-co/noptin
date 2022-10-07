@@ -21,7 +21,13 @@
 							esc_attr__( 'Select Trigger', 'newsletter-optin-box' )
 						);
 
-						foreach ( noptin()->automation_rules->get_triggers() as $trigger ) {
+						// Fetch triggers.
+						$triggers = noptin()->automation_rules->get_triggers();
+
+						// Sort.
+						uasort( $triggers, 'noptin_sort_by_name' );
+
+						foreach ( $triggers as $trigger ) {
 							printf(
 								'<option value="%s" data-description="%s">%s</option>',
 								esc_attr( $trigger->get_id() ),
@@ -47,7 +53,13 @@
 							esc_attr__( 'Select Action', 'newsletter-optin-box' )
 						);
 
-						foreach ( noptin()->automation_rules->get_actions() as $rule_action ) {
+						// Fetch actions.
+						$actions = noptin()->automation_rules->get_actions();
+
+						// Sort.
+						uasort( $actions, 'noptin_sort_by_name' );
+
+						foreach ( $actions as $rule_action ) {
 							printf(
 								'<option value="%s" data-description="%s">%s</option>',
 								esc_attr( $rule_action->get_id() ),

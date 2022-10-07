@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.8.3 =
+* GeoDirectory newsletter integration.
+* Add conditional logic to all automation rule triggers.
+
 = 1.8.2 =
 * Fixed: A CRON conflict causing post digests to create multiple newsletter campaigns.
 

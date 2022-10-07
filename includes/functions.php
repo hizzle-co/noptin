@@ -1234,11 +1234,11 @@ function flatten_noptin_array( $array, $prefix = '' ) {
  */
 function noptin_sanitize_booleans( $var ) {
 
-	if ( 'true' === $var || '1' === $var ) {
+	if ( 'true' === $var ) {
 		return true;
 	}
 
-	if ( 'false' === $var || '0' === $var ) {
+	if ( 'false' === $var ) {
 		return false;
 	}
 
@@ -1724,4 +1724,16 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $cond
 	// Return the result.
 	// translators: %s is a list of conditions.
 	return sprintf( __( 'Ignore if %s', 'newsletter-optin-box' ), $rules );
+}
+
+/**
+ * Callback to sort arrays by name.
+ *
+ * @since 1.8.3
+ * @param object $a
+ * @param object $b
+ * @return int
+ */
+function noptin_sort_by_name( $a, $b ) {
+	return strcmp( $a->get_name(), $b->get_name() );
 }

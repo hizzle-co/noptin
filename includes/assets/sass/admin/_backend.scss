@@ -1423,6 +1423,12 @@ a.no-campaign-create-new-campaign {
 				flex: 1 0 0;
 			}
 
+			.noptin-multicheckbox-card {
+				max-width: 100%;
+				max-height: 200px;
+				overflow: auto;
+				margin-top: 0;
+			}
 		}
 
 		.noptin-textarea-wrapper {
