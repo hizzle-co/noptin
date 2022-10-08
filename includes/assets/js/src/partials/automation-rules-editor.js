@@ -212,6 +212,10 @@ export default {
 			Object.keys( this.comparisons ).forEach( key => {
 				let comparison_type = this.comparisons[ key ].type;
 
+				if ( this.hasConditionOptions( type ) && 'is' != key  && 'is_not' != key ) {
+					return;
+				}
+
 				if ( 'any' == comparison_type || comparison_type == data_type ) {
 					comparisons[ key ] = this.comparisons[ key ].name;
 				}

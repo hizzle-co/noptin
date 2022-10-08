@@ -1369,7 +1369,21 @@ a.no-campaign-create-new-campaign {
 			padding: 0 24px 0 8px;
 			width: auto;
 			margin-bottom: 6px;
-			max-width: 200px;
+		}
+
+		.noptin-condition-field {
+			max-width: 180px;
+			width: 180px;
+		}
+
+		.noptin-condition-comparison {
+			max-width: 120px;
+			width: 120px;
+		}
+
+		.noptin-condition-value {
+			max-width: 180px;
+			width: 180px;
 		}
 
 		.noptin-remove-conditional-rule {

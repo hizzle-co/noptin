@@ -90,18 +90,19 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 
 							<p v-for="(rule, index) in conditional_logic.rules" class="noptin-conditional-logic-rule">
 
-								<select v-model="rule.type" @change="rule.value=''; rule.condition='is'">
+								<select class="noptin-condition-field" v-model="rule.type" @change="rule.value=''; rule.condition='is'">
 									<option v-for="condition_type in availableConditions" :value="condition_type.key">{{ condition_type.label }}</option>
 								</select>
 
-								<select v-model="rule.condition">
+								<select class="noptin-condition-comparison" v-model="rule.condition">
 									<option
-											v-for="(comparison_label, comparison_key) in getConditionalComparisonOptions( rule.type )"
-											:value="comparison_key"
-										>{{ comparison_label }}</option>
+										v-for="(comparison_label, comparison_key) in getConditionalComparisonOptions( rule.type )"
+										:value="comparison_key"
+									>{{ comparison_label }}</option>
 								</select>
 
-								<select v-model="rule.value" v-if="hasConditionOptions(rule.type)" style="min-width: 220px;">
+								<select class="noptin-condition-value" v-model="rule.value" v-if="hasConditionOptions(rule.type)">
+									<option value="" disabled><?php esc_html_e( 'Select a value', 'newsletter-optin-box' ); ?></option>
 									<option v-for="(option_label, option_value) in getConditionOptions(rule.type)" :value="option_value">{{ option_label }}</option>
 								</select>
 

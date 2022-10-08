@@ -69,15 +69,6 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 					),
 					'conditional_logic' => 'string',
 				),
-				'post_id'           => array(
-					'description'       => __( 'Listing ID', 'newsletter-optin-box' ),
-					'conditional_logic' => 'number',
-				),
-				'post_status'       => array(
-					'description'       => __( 'Listing Status', 'newsletter-optin-box' ),
-					'conditional_logic' => 'string',
-					'options'           => get_post_statuses(),
-				),
 				'author_id'         => array(
 					'description'       => __( 'User ID (Post Author)', 'newsletter-optin-box' ),
 					'conditional_logic' => 'number',
@@ -101,6 +92,47 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 				'author_login'      => array(
 					'description'       => __( 'Login Name (Post Author)', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
+				),
+				'post_id'           => array(
+					'description'       => __( 'Listing ID', 'newsletter-optin-box' ),
+					'conditional_logic' => 'number',
+				),
+				'post_url'           => array(
+					'description'       => __( 'Listing URL', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+				),
+				'post_status'       => array(
+					'description'       => __( 'Listing Status', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+					'options'           => get_post_statuses(),
+				),
+				'post_date'         => array(
+					'description'       => __( 'Listing Date', 'newsletter-optin-box' ),
+					'conditional_logic' => 'date',
+				),
+				'featured'          => array(
+					'description'       => __( 'Is Featured', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+					'options'           => array(
+						'1' => __( 'True', 'newsletter-optin-box' ),
+						'0' => __( 'False', 'newsletter-optin-box' ),
+					),
+				),
+				'featured_image'    => array(
+					'description'       => __( 'Featured Image', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+				),
+				'submit_ip'         => array(
+					'description'       => __( 'Submit IP', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+				),
+				'overall_rating'    => array(
+					'description'       => __( 'Overall Rating', 'newsletter-optin-box' ),
+					'conditional_logic' => 'number',
+				),
+				'rating_count'      => array(
+					'description'       => __( 'Rating Count', 'newsletter-optin-box' ),
+					'conditional_logic' => 'number',
 				),
 			)
 		);
@@ -228,6 +260,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 		}
 
 		$postarr['saving_type'] = $update ? 'update' : 'new';
+		$postarr['post_url']    = get_permalink( $post->ID );
 
 		// Add listing author info.
 		$listing_owner = get_userdata( $post->post_author );
@@ -241,6 +274,14 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 			$postarr['author_last_name']  = $listing_owner->user_lastname;
 			$postarr['author_login']      = $listing_owner->user_login;
 		}
+
+		// Featured image.
+		if ( isset( $gd_post->featured_image ) && $gd_post->featured_image ) {
+			$upload_dir                = wp_upload_dir( null, false );
+			$postarr['featured_image'] = $upload_dir['baseurl'] . $gd_post->featured_image;
+		}
+
+		$postarr = array_replace( (array) $gd_post, $postarr );
 
 		$this->trigger( $listing_owner, $postarr );
 	}
