@@ -28,7 +28,7 @@
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.3.2",
 		"vue": "3.2.40",
-		"vue-contenteditable": "4.0.4",
+		"vue-contenteditable": "4.1.0",
 		"vue-popperjs": "2.3.0",
 		"vuedraggable": "2.24.3"
 	},
