@@ -143,12 +143,12 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 	 * Add the subscriber to a list.
 	 *
 	 * @since 1.5.1
-	 * @param Noptin_Subscriber $subscriber The subscriber.
+	 * @param mixed $subject The subject.
 	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return void
 	 */
-	public function run( $subscriber, $rule, $args ) {
+	public function run( $subject, $rule, $args ) {
 
 		$settings = $rule->action_settings;
 
@@ -162,6 +162,24 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 
 		if ( empty( $list ) ) {
 			return;
+		}
+
+		// Fetch the subscriber.
+		if ( $subject instanceof Noptin_Subscriber ) {
+			$subscriber = $subject;
+		} else {
+			$subscriber_email = $this->get_subject_email( $subject, $rule, $args );
+
+			if ( empty( $subscriber_email ) ) {
+				return;
+			}
+
+			$subscriber = new Noptin_Subscriber( $subscriber_email );
+
+			if ( ! $subscriber->exists() ) {
+				$subscriber->email      = $subscriber_email;
+				$subscriber->is_virtual = true;
+			}
 		}
 
 		try {
