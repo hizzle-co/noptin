@@ -107,12 +107,12 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		$settings = $rule->action_settings;
 
 		if ( empty( $settings['email_subject'] ) ) {
-			$rule_description = esc_html__( 'send them an email', 'newsletter-optin-box' );
+			$rule_description = esc_html__( 'send an email', 'newsletter-optin-box' );
 		} else {
 			$email_subject    = esc_html( $settings['email_subject'] );
 			$rule_description = sprintf(
 				// translators: %s is the email subject
-				esc_html__( 'send them an email with the subject %s', 'newsletter-optin-box' ),
+				esc_html__( 'send an email with the subject %s', 'newsletter-optin-box' ),
 				"<code>$email_subject</code>"
 			);
 		}

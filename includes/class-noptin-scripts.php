@@ -209,8 +209,6 @@ class Noptin_Scripts {
 				return wp_dequeue_script( $handle );
 			}
 
-			$condition_rules = $trigger->get_conditional_logic_filters();
-
 			wp_localize_script(
 				$handle,
 				'noptinRules',
@@ -219,7 +217,7 @@ class Noptin_Scripts {
 					'nonce'             => wp_create_nonce( 'noptin_automation_rules' ),
 					'trigger_settings'  => (object) $rule->trigger_settings,
 					'action_settings'   => (object) $rule->action_settings,
-					'condition_rules'   => empty( $condition_rules ) ? false : $condition_rules,
+					'comparisons'       => noptin_get_conditional_logic_comparisons(),
 					'smart_tags'        => $trigger->get_known_smart_tags(),
 					'conditional_logic' => (object) $rule->conditional_logic,
 					'rule_id'           => $rule->id,

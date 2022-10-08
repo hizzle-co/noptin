@@ -202,7 +202,23 @@ export default {
 		fetchSmartTagExample( config ) {
 			const example = config.example ? config.example : `${config.smart_tag} default="default value"`;
 			return `[[${example}]]`;
-		}
+		},
+
+		// Fetch conditional comparison options.
+		getConditionalComparisonOptions( type ) {
+			let data_type = this.getConditionDataType( type );
+			let comparisons = {};
+
+			Object.keys( this.comparisons ).forEach( key => {
+				let comparison_type = this.comparisons[ key ].type;
+
+				if ( 'any' == comparison_type || comparison_type == data_type ) {
+					comparisons[ key ] = this.comparisons[ key ].name;
+				}
+			});
+
+			return comparisons;
+		},
 	},
 
 }

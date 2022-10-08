@@ -1672,14 +1672,77 @@ function noptin_get_default_conditional_logic() {
 }
 
 /**
+ * Returns the comparisons available for conditional logic.
+ *
+ * @since 1.8.3
+ * @return array
+ */
+function noptin_get_conditional_logic_comparisons() {
+	return array(
+		'is'               => array(
+			'type' => 'any',
+			'name' => __( 'is', 'newsletter-optin-box' ),
+		),
+		'is_not'           => array(
+			'type' => 'any',
+			'name' => __( 'is not', 'newsletter-optin-box' ),
+		),
+		'contains'         => array(
+			'type' => 'string',
+			'name' => __( 'contains', 'newsletter-optin-box' ),
+		),
+		'does_not_contain' => array(
+			'type' => 'string',
+			'name' => __( 'does not contain', 'newsletter-optin-box' ),
+		),
+		'begins_with'      => array(
+			'type' => 'string',
+			'name' => __( 'begins with', 'newsletter-optin-box' ),
+		),
+		'ends_with'        => array(
+			'type' => 'string',
+			'name' => __( 'ends with', 'newsletter-optin-box' ),
+		),
+		'is_empty'         => array(
+			'type' => 'any',
+			'name' => __( 'is empty', 'newsletter-optin-box' ),
+		),
+		'is_not_empty'     => array(
+			'type' => 'any',
+			'name' => __( 'is not empty', 'newsletter-optin-box' ),
+		),
+		'is_greater_than'  => array(
+			'type' => 'number',
+			'name' => __( 'is greater than', 'newsletter-optin-box' ),
+		),
+		'is_less_than'     => array(
+			'type' => 'number',
+			'name' => __( 'is less than', 'newsletter-optin-box' ),
+		),
+		'is_between'       => array(
+			'type' => 'number',
+			'name' => __( 'is between', 'newsletter-optin-box' ),
+		),
+		'is_before'        => array(
+			'type' => 'date',
+			'name' => __( 'is before', 'newsletter-optin-box' ),
+		),
+		'is_after'         => array(
+			'type' => 'date',
+			'name' => __( 'is after', 'newsletter-optin-box' ),
+		),
+	);
+}
+
+/**
  * Formats conditional logic for display.
  *
  * @param array $conditional_logic
- * @param array $conditions
+ * @param array $smart_tags
  * @since 1.8.0
  * @return string
  */
-function noptin_prepare_conditional_logic_for_display( $conditional_logic, $conditions ) {
+function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array() ) {
 
 	// Abort if no conditional logic is set.
 	if ( empty( $conditional_logic['enabled'] ) ) {
@@ -1687,21 +1750,44 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $cond
 	}
 
 	// Retrieve the conditional logic.
-	$rules = array();
+	$rules       = array();
+	$comparisons = wp_list_pluck( noptin_get_conditional_logic_comparisons(), 'name' );
 
 	// Loop through each rule.
 	foreach ( $conditional_logic['rules'] as $rule ) {
 
-		if ( isset( $conditions[ $rule['type'] ] ) ) {
-			$condition = $conditions[ $rule['type'] ];
-			$label     = $condition['label'];
+		if ( isset( $smart_tags[ $rule['type'] ] ) ) {
+			$condition = $smart_tags[ $rule['type'] ];
+			$label     = isset( $condition['label'] ) ? $condition['label'] : $condition['description'];
 			$value     = isset( $rule['value'] ) ? $rule['value'] : '';
-			$value     = isset( $condition['options'][ $value ] ) ? $condition['options'][ $value ] : $value;
+			$data_type = isset( $condition['conditional_logic'] ) ? $condition['conditional_logic'] : false;
 
-			if ( 'is' === $rule['condition'] ) {
-				$rules[] = sprintf( '%s = %s', sanitize_text_field( $label ), sanitize_text_field( $value ) );
-			} else {
-				$rules[] = sprintf( '%s != %s', sanitize_text_field( $label ), sanitize_text_field( $value ) );
+			if ( 'number' === $data_type ) {
+
+				if ( 'is_between' === $rule['condition'] ) {
+					$value = noptin_parse_list( $value );
+					$value = sprintf(
+						// translators: %s is a number.
+						__( '%1$s and %2$s', 'newsletter-optin-box' ),
+						floatval( $value[0] ),
+						isset( $value[1] ) ? floatval( $value[1] ) : floatval( $value[0] )
+					);
+				} else {
+					$value = floatval( $value );
+				}
+			} elseif ( 'date' === $data_type ) {
+				$value = gmdate( 'Y-m-d', strtotime( $value ) );
+			} elseif ( isset( $condition['options'] ) && isset( $condition['options'][ $value ] ) ) {
+				$value = $condition['options'][ $value ];
+			}
+
+			if ( isset( $comparisons[ $rule['condition'] ] ) ) {
+				$rules[] = sprintf(
+					'%s %s <code>%s</code>',
+					strtolower( sanitize_text_field( $label ) ),
+					sanitize_text_field( $comparisons[ $rule['condition'] ] ),
+					sanitize_text_field( $value )
+				);
 			}
 		}
 	}
@@ -1721,7 +1807,6 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $cond
 		return sprintf( __( 'Only run if %s', 'newsletter-optin-box' ), $rules );
 	}
 
-	// Return the result.
 	// translators: %s is a list of conditions.
 	return sprintf( __( 'Ignore if %s', 'newsletter-optin-box' ), $rules );
 }

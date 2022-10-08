@@ -95,12 +95,10 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 								</select>
 
 								<select v-model="rule.condition">
-									<option value="is"><?php esc_html_e( 'is', 'newsletter-optin-box' ); ?></option>
-									<option value="is_not"><?php esc_html_e( 'is not', 'newsletter-optin-box' ); ?></option>
-									<option value="is_less_than" v-if="'number' == getConditionDataType( rule.type )"><?php esc_html_e( 'is less than', 'newsletter-optin-box' ); ?></option>
-									<option value="is_greater_than" v-if="'number' == getConditionDataType( rule.type )"><?php esc_html_e( 'is greater than', 'newsletter-optin-box' ); ?></option>
-									<option value="is_before" v-if="'date' == getConditionDataType( rule.type )"><?php esc_html_e( 'is before', 'newsletter-optin-box' ); ?></option>
-									<option value="is_after" v-if="'date' == getConditionDataType( rule.type )"><?php esc_html_e( 'is after', 'newsletter-optin-box' ); ?></option>
+									<option
+											v-for="(comparison_label, comparison_key) in getConditionalComparisonOptions( rule.type )"
+											:value="comparison_key"
+										>{{ comparison_label }}</option>
 								</select>
 
 								<select v-model="rule.value" v-if="hasConditionOptions(rule.type)" style="min-width: 220px;">

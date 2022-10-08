@@ -90,22 +90,6 @@ abstract class Noptin_Abstract_Trigger {
     }
 
     /**
-     * Retrieves conditional logic filters.
-     *
-     * @since 1.8.0
-     * @return array
-     */
-    public function get_conditional_logic_filters() {
-        $filters = array();
-
-        if ( $this->is_subscriber_based ) {
-            $filters = get_noptin_subscriber_filters();
-        }
-
-        return $filters;
-    }
-
-    /**
      * Prepares the conditional logic for display.
      *
      * @since 1.8.0
@@ -113,13 +97,7 @@ abstract class Noptin_Abstract_Trigger {
      * @return string
      */
     public function prepare_conditional_logic( $rule ) {
-
-        $filters = $this->get_conditional_logic_filters();
-        if ( ! empty( $filters ) ) {
-            return noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $filters );
-        }
-
-        return '';
+        return noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $this->get_known_smart_tags() );
     }
 
     /**
@@ -132,24 +110,47 @@ abstract class Noptin_Abstract_Trigger {
         $smart_tags = array(
 
             'cookie' => array(
-                'description'       => __( 'Data from a cookie.', 'newsletter-optin-box' ),
-                'callback'          => 'Noptin_Dynamic_Content_Tags::get_cookie',
-                'example'           => "cookie name='my_cookie' default='Default Value'",
-                'conditional_logic' => 'string',
+                'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
+                'callback'    => 'Noptin_Dynamic_Content_Tags::get_cookie',
+                'example'     => "cookie name='my_cookie' default='Default Value'",
             ),
 
             'date'   => array(
-                // translators: %s is the current date.
-                'description'       => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
-                'replacement'       => date_i18n( get_option( 'date_format' ) ),
+                'description'       => __( 'The current date', 'newsletter-optin-box' ),
+                'replacement'       => current_time( 'Y-m-d' ),
                 'example'           => 'date',
                 'conditional_logic' => 'date',
+                'placeholder'       => current_time( 'Y-m-d' ),
+            ),
+
+            'year'   => array(
+                'description'       => __( 'The current year', 'newsletter-optin-box' ),
+                'replacement'       => current_time( 'Y' ),
+                'example'           => 'year',
+                'conditional_logic' => 'number',
+                'placeholder'       => current_time( 'Y' ),
+            ),
+
+            'month'  => array(
+                'description'       => __( 'The current month', 'newsletter-optin-box' ),
+                'replacement'       => current_time( 'm' ),
+                'example'           => 'month',
+                'conditional_logic' => 'number',
+                'placeholder'       => current_time( 'm' ),
+            ),
+
+            'day'    => array(
+                'description'       => __( 'The current day', 'newsletter-optin-box' ),
+                'replacement'       => current_time( 'd' ),
+                'example'           => 'day',
+                'conditional_logic' => 'number',
+                'placeholder'       => current_time( 'd' ),
             ),
 
             'time'   => array(
                 // translators: %s is the current time.
-                'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ) ) . '</strong>' ),
-                'replacement' => date_i18n( get_option( 'time_format' ) ),
+                'description' => __( 'The current time', 'newsletter-optin-box' ),
+                'replacement' => gmdate( 'H:i:s' ),
                 'example'     => 'time',
             ),
 
