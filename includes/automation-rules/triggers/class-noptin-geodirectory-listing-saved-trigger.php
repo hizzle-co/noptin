@@ -97,7 +97,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 					'description'       => __( 'Listing ID', 'newsletter-optin-box' ),
 					'conditional_logic' => 'number',
 				),
-				'post_url'           => array(
+				'post_url'          => array(
 					'description'       => __( 'Listing URL', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
 				),

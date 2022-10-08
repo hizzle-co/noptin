@@ -3,7 +3,7 @@
 /**
  * Handles the loading of scripts.
  *
- * @since 1.8.1
+ * @since 1.8.3
  */
 class Noptin_Scripts {
 

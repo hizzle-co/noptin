@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Fires when an order's status changes.
  *
- * @since 1.8.1
+ * @since 1.8.3
  */
 class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 
@@ -23,7 +23,7 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.8.1
+	 * @since 1.8.3
 	 * @param string $order_action The trigger's order status.
 	 * @param string $order_action_label The trigger's order action label.
 	 */
@@ -88,7 +88,7 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 	/**
      * Returns an array of known smart tags.
      *
-     * @since 1.8.1
+     * @since 1.8.3
      * @return array
      */
     public function get_known_smart_tags() {
@@ -104,7 +104,7 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 	 * Inits the trigger.
 	 *
 	 * @param int|WC_Order $order_id The order being acted on.
-	 * @since 1.8.1
+	 * @since 1.8.3
 	 */
 	public function init_trigger( $order_id ) {
 

@@ -4,7 +4,7 @@
  *
  * Allows users to use smart tags in automation rule actions.
  *
- * @since   1.8.1
+ * @since   1.8.3
  * @package Noptin
  */
 
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @internal
  * @access private
- * @since 1.8.1
+ * @since 1.8.3
  * @ignore
  */
 class Noptin_Automation_Rules_Smart_Tags extends Noptin_Dynamic_Content_Tags {

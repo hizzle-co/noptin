@@ -1072,7 +1072,7 @@ function get_noptin_connection_providers() {
 /**
  * Checks whether or not to upsell integrations.
  *
- * @since 1.8.2
+ * @since 1.8.3
  * @ignore
  * @return bool
  */
@@ -1083,7 +1083,7 @@ function noptin_upsell_integrations() {
 /**
  * Retrieves an upsell URL.
  *
- * @since 1.8.2
+ * @since 1.8.3
  * @param string $url The URL to redirect to.
  * @param string $utm_source The utm source.
  * @param string $utm_medium The utm medium.
@@ -1599,7 +1599,7 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 /**
  * Checks if a given email is unsubscribed.
  *
- * @since 1.8.1
+ * @since 1.8.3
  * @param string $email
  * @return bool
  */
