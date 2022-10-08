@@ -252,7 +252,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			);
 		} else {
 			$trigger_text        = $trigger->get_rule_description( $item );
-			$trigger_description = $trigger->prepare_conditional_logic( $item );
+			$trigger_description = noptin_prepare_conditional_logic_for_display( $item->conditional_logic, $trigger->get_known_smart_tags() );
 		}
 
 		$text        = ucfirst( "$trigger_text, $action_text" );

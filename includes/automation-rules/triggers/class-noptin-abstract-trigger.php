@@ -90,17 +90,6 @@ abstract class Noptin_Abstract_Trigger {
     }
 
     /**
-     * Prepares the conditional logic for display.
-     *
-     * @since 1.8.0
-     * @param Noptin_Automation_Rule $rule The rule to check for.
-     * @return string
-     */
-    public function prepare_conditional_logic( $rule ) {
-        return noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $this->get_known_smart_tags() );
-    }
-
-    /**
      * Returns an array of known smart tags.
      *
      * @since 1.8.1
@@ -231,7 +220,7 @@ abstract class Noptin_Abstract_Trigger {
     }
 
     /**
-     * Checks if this rule is valid for the above parameters.
+     * Checks if conditional logic if met.
      *
      * @since 1.2.8
      * @param Noptin_Automation_Rule $rule The rule to check for.
@@ -241,23 +230,54 @@ abstract class Noptin_Abstract_Trigger {
      * @return bool
      */
     public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
-        return $this->is_conditional_logic_met( $rule, $subject );
-    }
 
-    /**
-     * Checks if conditional logic is met.
-     *
-     * @since 1.8.0
-     * @param Noptin_Automation_Rule $rule The rule to check for.
-     * @param Noptin_Subscriber $subscriber The subscriber that this rule was triggered for.
-     * @return bool
-     */
-    public function is_conditional_logic_met( $rule, $subscriber ) {
-        if ( $this->is_subscriber_based ) {
-            return noptin_subscriber_meets_conditional_logic( $rule->conditional_logic, $subscriber );
+        // Abort if conditional logic is not set.
+        if ( empty( $rule->conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) ) {
+            return true;
         }
 
-        return true;
+        // Retrieve the conditional logic.
+        $action      = $rule->conditional_logic['action']; // allow or prevent.
+        $type        = $rule->conditional_logic['type']; // all or any.
+        $rules_met   = 0;
+        $rules_total = count( $rule->conditional_logic['rules'] );
+
+        /** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
+        $smart_tags = $args['smart_tags'];
+
+        // Loop through each rule.
+        foreach ( $rule->conditional_logic['rules'] as $rule ) {
+
+            $current_value = $smart_tags->replace_in_text_field( '[[' . $rule['type'] . ']]' );
+            $compare_value = $rule['value'];
+            $comparison    = $rule['condition'];
+
+            // If the rule is met.
+            if ( noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
+
+                // Increment the number of rules met.
+                $rules_met ++;
+
+                // If we're using the "any" condition, we can stop here.
+                if ( 'any' === $type ) {
+                    break;
+                }
+            } elseif ( 'all' === $type ) {
+
+                // If we're using the "all" condition, we can stop here.
+                break;
+            }
+        }
+
+        // Check if the conditions are met.
+        if ( 'all' === $type ) {
+            $is_condition_met = $rules_met === $rules_total;
+        } else {
+            $is_condition_met = $rules_met > 0;
+        }
+
+        // Return the result.
+	    return 'allow' === $action ? $is_condition_met : ! $is_condition_met;
     }
 
     /**

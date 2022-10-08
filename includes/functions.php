@@ -1731,7 +1731,85 @@ function noptin_get_conditional_logic_comparisons() {
 			'type' => 'date',
 			'name' => __( 'is after', 'newsletter-optin-box' ),
 		),
+		'is_date_between'  => array(
+			'type' => 'date',
+			'name' => __( 'is between', 'newsletter-optin-box' ),
+		),
 	);
+}
+
+/**
+ * Checks if a given condition is valid.
+ *
+ * @param string $current_value The current value.
+ * @param string $condition_value The condition value.
+ * @param string $comparison The comparison to use.
+ * @since 1.8.3
+ * @return bool
+ */
+function noptin_is_conditional_logic_met( $current_value, $condition_value, $comparison ) {
+
+	// Convert to strings.
+	$current_value   = (string) $current_value;
+	$condition_value = (string) $condition_value;
+
+	switch ( $comparison ) {
+
+		case 'is':
+			return $current_value === $condition_value;
+
+		case 'is_not':
+			return $current_value !== $condition_value;
+
+		case 'contains':
+			return false !== strpos( $current_value, $condition_value );
+
+		case 'does_not_contain':
+			return false === strpos( $current_value, $condition_value );
+
+		case 'begins_with':
+			return 0 === strpos( $current_value, $condition_value );
+
+		case 'ends_with':
+			return substr( $current_value, - strlen( $condition_value ) ) === $condition_value;
+
+		case 'is_empty':
+			return empty( $current_value );
+
+		case 'is_not_empty':
+			return ! empty( $current_value );
+
+		case 'is_greater_than':
+			return floatval( $current_value ) > floatval( $condition_value );
+
+		case 'is_less_than':
+			return floatval( $current_value ) < floatval( $condition_value );
+
+		case 'is_between':
+			$condition_value = noptin_parse_list( $condition_value );
+			$first_value     = floatval( $condition_value[0] );
+			$second_value    = isset( $condition_value[1] ) ? floatval( $condition_value[1] ) : $first_value;
+
+			return floatval( $current_value ) >= $first_value && floatval( $current_value ) <= $second_value;
+
+		case 'is_before':
+			$current_value   = strtotime( $current_value );
+			$condition_value = strtotime( $condition_value );
+			return $current_value < $condition_value;
+
+		case 'is_after':
+			$current_value   = strtotime( $current_value );
+			$condition_value = strtotime( $condition_value );
+			return $current_value > $condition_value;
+
+		case 'is_date_between':
+			$condition_value = noptin_parse_list( $condition_value );
+			$first_value     = strtotime( $condition_value[0] );
+			$second_value    = isset( $condition_value[1] ) ? strtotime( $condition_value[1] ) : $first_value;
+
+			$current_value = strtotime( $current_value );
+			return $current_value >= $first_value && $current_value <= $second_value;
+	}
 }
 
 /**
@@ -1776,7 +1854,18 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 					$value = floatval( $value );
 				}
 			} elseif ( 'date' === $data_type ) {
-				$value = gmdate( 'Y-m-d', strtotime( $value ) );
+
+				if ( 'is_date_between' === $rule['condition'] ) {
+					$value = noptin_parse_list( $value );
+					$value = sprintf(
+						// translators: %s is a date.
+						__( '%1$s and %2$s', 'newsletter-optin-box' ),
+						gmdate( 'Y-m-d', strtotime( $value[0] ) ),
+						isset( $value[1] ) ? gmdate( 'Y-m-d', strtotime( $value[1] ) ) : gmdate( 'Y-m-d', strtotime( $value[0] ) )
+					);
+				} else {
+					$value = gmdate( 'Y-m-d', strtotime( $value ) );
+				}
 			} elseif ( isset( $condition['options'] ) && isset( $condition['options'][ $value ] ) ) {
 				$value = $condition['options'][ $value ];
 			}
