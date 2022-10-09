@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Fires when a GeoDirectory listing is saved.
  *
- * @since 1.8.3
+ * @since 1.9.0
  */
 class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger {
 
@@ -18,7 +18,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.8.3
+	 * @since 1.9.0
 	 * @param string $post_type The trigger's post type.
 	 */
 	public function __construct( $post_type ) {
@@ -53,7 +53,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	/**
      * Returns an array of known smart tags.
      *
-     * @since 1.8.3
+     * @since 1.9.0
      * @return array
      */
     public function get_known_smart_tags() {
@@ -250,7 +250,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	 * @param object $gd_post The gd post data.
 	 * @param WP_Post $post The post object.
 	 * @param bool $update Whether this is an existing post being updated or not.
-	 * @since 1.8.3
+	 * @since 1.9.0
 	 */
 	public function init_trigger( $postarr, $gd_post, $post, $update ) {
 
@@ -289,7 +289,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	/**
      * Triggers action callbacks.
      *
-     * @since 1.8.3
+     * @since 1.9.0
      * @param mixed $subject The subject.
      * @param array $args Extra arguments passed to the action.
      * @return void

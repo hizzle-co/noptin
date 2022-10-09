@@ -1,6 +1,16 @@
 # Changelog
 
-= 1.7.9 =
+= 1.9.0 =
+* GeoDirectory newsletter integration.
+* Add conditional logic to all automation rule triggers.
+
+= 1.8.2 =
+* Fixed: A CRON conflict causing post digests to create multiple newsletter campaigns.
+
+= 1.8.1 =
+* Fix unsaved custom newsletter fields disappearing
+
+= 1.8.0 =
 * Add language custom field.
 * Add ability to send multi-lingual newsletters.
 * Add newsletter-subscriber based conditional logic to automation rule triggers.

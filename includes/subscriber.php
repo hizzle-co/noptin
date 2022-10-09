@@ -1444,7 +1444,7 @@ function get_noptin_custom_field( $merge_tag ) {
 /**
  * Returns available subscriber smart tags.
  *
- * @since 1.8.3
+ * @since 1.9.0
  * @return array
  */
 function get_noptin_subscriber_smart_tags() {

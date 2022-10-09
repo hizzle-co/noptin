@@ -58,7 +58,7 @@ class Noptin_Admin {
 	 *
 	 * @var Noptin_Admin_Menus
 	 * @access public
-	 * @since  1.8.3
+	 * @since  1.9.0
 	 */
 	public $admin_menus;
 

@@ -1072,7 +1072,7 @@ function get_noptin_connection_providers() {
 /**
  * Checks whether or not to upsell integrations.
  *
- * @since 1.8.3
+ * @since 1.9.0
  * @ignore
  * @return bool
  */
@@ -1083,7 +1083,7 @@ function noptin_upsell_integrations() {
 /**
  * Retrieves an upsell URL.
  *
- * @since 1.8.3
+ * @since 1.9.0
  * @param string $url The URL to redirect to.
  * @param string $utm_source The utm source.
  * @param string $utm_medium The utm medium.
@@ -1599,7 +1599,7 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 /**
  * Checks if a given email is unsubscribed.
  *
- * @since 1.8.3
+ * @since 1.9.0
  * @param string $email
  * @return bool
  */
@@ -1674,7 +1674,7 @@ function noptin_get_default_conditional_logic() {
 /**
  * Returns the comparisons available for conditional logic.
  *
- * @since 1.8.3
+ * @since 1.9.0
  * @return array
  */
 function noptin_get_conditional_logic_comparisons() {
@@ -1744,7 +1744,7 @@ function noptin_get_conditional_logic_comparisons() {
  * @param string $current_value The current value.
  * @param string $condition_value The condition value.
  * @param string $comparison The comparison to use.
- * @since 1.8.3
+ * @since 1.9.0
  * @return bool
  */
 function noptin_is_conditional_logic_met( $current_value, $condition_value, $comparison ) {
@@ -1903,7 +1903,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 /**
  * Callback to sort arrays by name.
  *
- * @since 1.8.3
+ * @since 1.9.0
  * @param object $a
  * @param object $b
  * @return int

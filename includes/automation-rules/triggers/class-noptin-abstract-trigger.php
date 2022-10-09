@@ -92,7 +92,7 @@ abstract class Noptin_Abstract_Trigger {
     /**
      * Returns an array of known smart tags.
      *
-     * @since 1.8.3
+     * @since 1.9.0
      * @return array
      */
     public function get_known_smart_tags() {
@@ -156,7 +156,7 @@ abstract class Noptin_Abstract_Trigger {
      * Prepare smart tags.
      *
      * @param Noptin_Subscriber|WP_User|WC_Customer $subject
-     * @since 1.8.3
+     * @since 1.9.0
      * @return array
      */
     public function prepare_known_smart_tags( $subject ) {

@@ -120,7 +120,7 @@ abstract class Noptin_Abstract_Action {
 	/**
 	 * Returns the subject's email address.
 	 *
-	 * @since 1.8.3
+	 * @since 1.9.0
 	 * @param mixed $subject The subject.
 	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.

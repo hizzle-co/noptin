@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Helper class for WooCommerce triggers.
  *
- * @since 1.8.3
+ * @since 1.9.0
  */
 abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 

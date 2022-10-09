@@ -1985,6 +1985,10 @@ a.no-campaign-create-new-campaign {
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
+
+		img {
+			max-width: 100%;
+		}
 	}
 
 	.noptin-email-type-action {
