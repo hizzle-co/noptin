@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.9.1 =
+* Added more WooCommerce conditional logic filters.
+
 = 1.9.0 =
 * GeoDirectory newsletter integration.
 * Add conditional logic to all automation rule triggers.

@@ -139,33 +139,37 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		return array(
 
 			'order.id'                   => array(
-				'description' => __( 'Order ID', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.id',
+				'description'       => __( 'Order ID', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.id',
+				'conditional_logic' => 'number',
 			),
 
 			'order.number'               => array(
-				'description' => __( 'Order Number', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.number',
+				'description'       => __( 'Order Number', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.number',
+				'conditional_logic' => 'string',
 			),
 
 			'order.transaction_id'       => array(
-				'description' => __( 'Transaction id', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.transaction_id',
+				'description'       => __( 'Transaction id', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.transaction_id',
+				'conditional_logic' => 'string',
 			),
 
 			'order.status'               => array(
 				'description' => __( 'The order status.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.status",
+				'example'     => 'order.status',
 			),
 
 			'order.date_created'         => array(
-				'description' => __( 'The date the order was created.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.date_created',
+				'description'       => __( 'The date the order was created.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.date_created',
+				'conditional_logic' => 'date',
 			),
 
 			'order.date_paid'            => array(
@@ -181,39 +185,45 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'order.subtotal'             => array(
-				'description' => __( 'The subtotal for the order.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.subtotal format='price'",
+				'description'       => __( 'The subtotal for the order.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => "order.subtotal format='price'",
+				'conditional_logic' => 'number',
 			),
 
 			'order.total_tax'            => array(
-				'description' => __( 'The total tax for the order.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.total_tax format='price'",
+				'description'       => __( 'The total tax for the order.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => "order.total_tax format='price'",
+				'conditional_logic' => 'number',
 			),
 
 			'order.shipping_total'       => array(
-				'description' => __( 'The shipping cost for the order.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.shipping_total format='price'",
+				'description'       => __( 'The shipping cost for the order.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => "order.shipping_total format='price'",
+				'conditional_logic' => 'number',
 			),
 
 			'order.discount_total'       => array(
-				'description' => __( 'The total discount for the order.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.discount_total format='price'",
+				'description'       => __( 'The total discount for the order.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => "order.discount_total format='price'",
+				'conditional_logic' => 'number',
 			),
 
 			'order.total'                => array(
-				'description' => __( 'The total cost of the order.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.total format='price'",
+				'description'       => __( 'The total cost of the order.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => "order.total format='price'",
+				'conditional_logic' => 'number',
 			),
 
 			'order.item_count'           => array(
-				'description' => __( 'The number of items in the order.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.item_count',
+				'description'       => __( 'The number of items in the order.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.item_count',
+				'conditional_logic' => 'number',
 			),
 
 			'order.billing_address'      => array(
@@ -223,69 +233,81 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'order.billing_first_name'   => array(
-				'description' => __( 'The billing first name', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_first_name',
+				'description'       => __( 'The billing first name', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_first_name',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_last_name'    => array(
-				'description' => __( 'The billing last name', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_last_name',
+				'description'       => __( 'The billing last name', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_last_name',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_company'      => array(
-				'description' => __( 'The billing company', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_company',
+				'description'       => __( 'The billing company', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_company',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_address_1'    => array(
-				'description' => __( 'The billing address 1', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_address_1',
+				'description'       => __( 'The billing address 1', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_address_1',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_address_2'    => array(
-				'description' => __( 'The billing address 2', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_address_2',
+				'description'       => __( 'The billing address 2', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_address_2',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_city'         => array(
-				'description' => __( 'The billing city', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_city',
+				'description'       => __( 'The billing city', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_city',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_state'        => array(
-				'description' => __( 'The billing state', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_state',
+				'description'       => __( 'The billing state', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_state',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_postcode'     => array(
-				'description' => __( 'The billing post code', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_postcode',
+				'description'       => __( 'The billing post code', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_postcode',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_country'      => array(
-				'description' => __( 'The billing country', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_country',
+				'description'       => __( 'The billing country', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_country',
+				'conditional_logic' => 'string',
+				'options'           => WC()->countries->get_countries(),
 			),
 
 			'order.billing_email'        => array(
-				'description' => __( 'The billing email', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_email',
+				'description'       => __( 'The billing email', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_email',
+				'conditional_logic' => 'string',
 			),
 
 			'order.billing_phone'        => array(
-				'description' => __( 'The billing phone number for the order', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.billing_phone',
+				'description'       => __( 'The billing phone number for the order', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.billing_phone',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_method'      => array(
@@ -301,69 +323,82 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'order.shipping_first_name'  => array(
-				'description' => __( 'The shipping first name', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_first_name',
+				'description'       => __( 'The shipping first name', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_first_name',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_last_name'   => array(
-				'description' => __( 'The shipping last name', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_last_name',
+				'description'       => __( 'The shipping last name', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_last_name',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_company'     => array(
-				'description' => __( 'The shipping company', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_company',
+				'description'       => __( 'The shipping company', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_company',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_address_1'   => array(
-				'description' => __( 'The shipping address 1', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_address_1',
+				'description'       => __( 'The shipping address 1', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_address_1',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_address_2'   => array(
-				'description' => __( 'The shipping address 2', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_address_2',
+				'description'       => __( 'The shipping address 2', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_address_2',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_city'        => array(
-				'description' => __( 'The shipping city', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_city',
+				'description'       => __( 'The shipping city', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_city',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_state'       => array(
-				'description' => __( 'The shipping state', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_state',
+				'description'       => __( 'The shipping state', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_state',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_postcode'    => array(
-				'description' => __( 'The shipping postcode', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_postcode',
+				'description'       => __( 'The shipping postcode', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_postcode',
+				'conditional_logic' => 'string',
 			),
 
 			'order.shipping_country'     => array(
-				'description' => __( 'The shipping country', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_country',
+				'description'       => __( 'The shipping country', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_country',
+				'conditional_logic' => 'string',
+				'options'           => WC()->countries->get_countries(),
 			),
 
 			'order.shipping_phone'       => array(
-				'description' => __( 'The shipping phone number for the order', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.shipping_phone',
+				'description'       => __( 'The shipping phone number for the order', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.shipping_phone',
+				'conditional_logic' => 'string',
 			),
 
 			'order.payment_method'       => array(
-				'description' => __( 'The payment method', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.payment_method',
+				'description'       => __( 'The payment method', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.payment_method',
+				'conditional_logic' => 'string',
+				'options'           => wp_list_pluck( WC_Payment_Gateways::instance()->payment_gateways(), 'title', 'id' ),
 			),
 
 			'order.payment_method_title' => array(
@@ -403,15 +438,17 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'order.customer_ip_address'  => array(
-				'description' => __( "The customer's IP address.", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.customer_ip_address',
+				'description'       => __( "The customer's IP address.", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.customer_ip_address',
+				'conditional_logic' => 'string',
 			),
 
 			'order.customer_user_agent'  => array(
-				'description' => __( "The customer's user agent.", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.customer_user_agent',
+				'description'       => __( "The customer's user agent.", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.customer_user_agent',
+				'conditional_logic' => 'string',
 			),
 
 			'order.items'                => array(
@@ -623,9 +660,10 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		return array(
 
 			'customer.id'           => array(
-				'description' => __( 'Customer ID', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => 'customer.id',
+				'description'       => __( 'Customer ID', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.id',
+				'conditional_logic' => 'number',
 			),
 
 			'customer.details'      => array(
@@ -641,45 +679,52 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'customer.order_count'  => array(
-				'description' => __( 'The number of orders the customer has', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => 'customer.order_count',
+				'description'       => __( 'The number of orders the customer has', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.order_count',
+				'conditional_logic' => 'number',
 			),
 
 			'customer.total_spent'  => array(
-				'description' => __( 'How much money this customer has spent', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => "customer.total_spent format='price'",
+				'description'       => __( 'How much money this customer has spent', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => "customer.total_spent format='price'",
+				'conditional_logic' => 'number',
 			),
 
 			'customer.username'     => array(
-				'description' => __( "The customer's username", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => 'customer.username',
+				'description'       => __( "The customer's username", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.username',
+				'conditional_logic' => 'string',
 			),
 
 			'customer.email'        => array(
-				'description' => __( "The customer's email", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => 'customer.email',
+				'description'       => __( "The customer's email", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.email',
+				'conditional_logic' => 'string',
 			),
 
 			'customer.first_name'   => array(
-				'description' => __( "The customer's first name", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => 'customer.first_name',
+				'description'       => __( "The customer's first name", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.first_name',
+				'conditional_logic' => 'string',
 			),
 
 			'customer.last_name'    => array(
-				'description' => __( "The customer's last name", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => 'customer.last_name',
+				'description'       => __( "The customer's last name", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.last_name',
+				'conditional_logic' => 'string',
 			),
 
 			'customer.display_name' => array(
-				'description' => __( "The customer's display name", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_customer_field' ),
-				'example'     => 'customer.display_name',
+				'description'       => __( "The customer's display name", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.display_name',
+				'conditional_logic' => 'string',
 			),
 
 		);
@@ -740,21 +785,24 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		return array(
 
 			'product.id'                => array(
-				'description' => __( 'Product ID', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => 'product.id',
+				'description'       => __( 'Product ID', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_product_field' ),
+				'example'           => 'product.id',
+				'conditional_logic' => 'number',
 			),
 
 			'product.name'              => array(
-				'description' => __( 'Product name', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => 'product.name',
+				'description'       => __( 'Product name', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_product_field' ),
+				'example'           => 'product.name',
+				'conditional_logic' => 'string',
 			),
 
 			'product.sku'               => array(
-				'description' => __( 'Product sku', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => 'product.sku',
+				'description'       => __( 'Product sku', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_product_field' ),
+				'example'           => 'product.sku',
+				'conditional_logic' => 'string',
 			),
 
 			'product.short_description' => array(
@@ -776,9 +824,10 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'product.price'             => array(
-				'description' => __( 'Product price', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_product_field' ),
-				'example'     => "product.price format='price'",
+				'description'       => __( 'Product price', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_product_field' ),
+				'example'           => "product.price format='price'",
+				'conditional_logic' => 'number',
 			),
 
 			'product.image'             => array(
@@ -867,21 +916,24 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		return array(
 
 			'order_item.id'        => array(
-				'description' => __( 'Ordered Item ID', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => 'order_item.id',
+				'description'       => __( 'Ordered Item ID', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_item_field' ),
+				'example'           => 'order_item.id',
+				'conditional_logic' => 'number',
 			),
 
 			'order_item.name'      => array(
-				'description' => __( 'Ordered Item Name', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => 'order_item.name',
+				'description'       => __( 'Ordered Item Name', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_item_field' ),
+				'example'           => 'order_item.name',
+				'conditional_logic' => 'string',
 			),
 
 			'order_item.quantity'  => array(
-				'description' => __( 'Ordered Item Quantity', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_item_field' ),
-				'example'     => 'order_item.quantity',
+				'description'       => __( 'Ordered Item Quantity', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_item_field' ),
+				'example'           => 'order_item.quantity',
+				'conditional_logic' => 'number',
 			),
 
 			'order_item.attribute' => array(
