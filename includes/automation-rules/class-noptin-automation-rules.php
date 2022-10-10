@@ -35,7 +35,6 @@ class Noptin_Automation_Rules {
 
 		// Register core triggers.
 		$this->add_trigger( new Noptin_New_Subscriber_Trigger() );
-		$this->add_trigger( new Noptin_New_User_Trigger() );
 		$this->add_trigger( new Noptin_Open_Email_Trigger() );
 		$this->add_trigger( new Noptin_Link_Click_Trigger() );
 		$this->add_trigger( new Noptin_Unsubscribe_Trigger() );
