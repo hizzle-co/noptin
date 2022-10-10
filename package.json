@@ -35,7 +35,7 @@
 	"devDependencies": {
 		"@babel/core": "7.19.3",
 		"@babel/plugin-transform-runtime": "7.19.1",
-		"@babel/preset-env": "7.19.3",
+		"@babel/preset-env": "7.19.4",
 		"@mdi/js": "7.0.96",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
 		"@wordpress/babel-preset-default": "7.3.0",
