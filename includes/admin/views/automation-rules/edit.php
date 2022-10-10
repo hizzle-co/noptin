@@ -90,7 +90,7 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 
 							<p v-for="(rule, index) in conditional_logic.rules" class="noptin-conditional-logic-rule">
 
-								<select class="noptin-condition-field" v-model="rule.type" @change="rule.value=''; rule.condition='is'">
+								<select class="noptin-condition-field" v-model="rule.type" @change="rule.value=getConditionPlaceholder(rule.type); rule.condition='is'">
 									<option v-for="condition_type in availableConditions" :value="condition_type.key">{{ condition_type.label }}</option>
 								</select>
 
@@ -106,7 +106,7 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 									<option v-for="(option_label, option_value) in getConditionOptions(rule.type)" :value="option_value">{{ option_label }}</option>
 								</select>
 
-								<input type="text" class="noptin-condition-value" v-model="rule.value" v-else />
+								<input :type="getConditionInputType(rule.type)" class="noptin-condition-value" v-model="rule.value" :placeholder="getConditionPlaceholder(rule.type)" v-else />
 
 								<a href="#" @click.prevent="removeConditionalLogicRule(rule)" class="noptin-remove-conditional-rule">
 									<span class="dashicons dashicons-remove"></span>&nbsp;

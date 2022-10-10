@@ -69,6 +69,7 @@ export default {
 						label: tag.label,
 						options: this.smart_tags[ tag.smart_tag ].options ? this.smart_tags[ tag.smart_tag ].options : false,
 						type: this.smart_tags[ tag.smart_tag ].conditional_logic,
+						placeholder: this.smart_tags[ tag.smart_tag ].placeholder ? this.smart_tags[ tag.smart_tag ].placeholder : '',
 					}
 				}
 			})
@@ -174,6 +175,32 @@ export default {
 			return this.availableConditions[ rule_type ].options;
 		},
 
+		/**
+		 * Retrieves the condition placeholder.
+		 */
+		getConditionPlaceholder( rule_type ) {
+			let config = this.availableConditions[ rule_type ];
+
+			if ( config ) {
+				return config.placeholder ? config.placeholder : '';
+			}
+
+			return '';
+		},
+
+		/**
+		 * Retrieves the input type.
+		 */
+		getConditionInputType( rule_type ) {
+			let config = this.availableConditions[ rule_type ];
+
+			if ( config && 'number' === config.type ) {
+				return 'number';
+			}
+
+			return 'text';
+		},
+
 		// Adds a conditional logic rule.
 		addConditionalLogicRule() {
 
@@ -212,8 +239,15 @@ export default {
 			Object.keys( this.comparisons ).forEach( key => {
 				let comparison_type = this.comparisons[ key ].type;
 
-				if ( this.hasConditionOptions( type ) && 'is' != key  && 'is_not' != key ) {
-					return;
+				if ( this.hasConditionOptions( type ) ) {
+
+					if ( 'string' === data_type && 'is' != key  && 'is_not' != key ) {
+						return;
+					}
+
+					if ( 'is_empty' === key || 'is_not_empty' === key || 'is_between' === key ) {
+						return;
+					}
 				}
 
 				if ( 'any' == comparison_type || comparison_type == data_type ) {

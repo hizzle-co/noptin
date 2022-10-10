@@ -96,15 +96,18 @@ abstract class Noptin_Abstract_Trigger {
      * @return array
      */
     public function get_known_smart_tags() {
+        /** @var WP_Locale $wp_locale */
+        global $wp_locale;
+
         $smart_tags = array(
 
-            'cookie' => array(
+            'cookie'  => array(
                 'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
                 'callback'    => 'Noptin_Dynamic_Content_Tags::get_cookie',
                 'example'     => "cookie name='my_cookie' default='Default Value'",
             ),
 
-            'date'   => array(
+            'date'    => array(
                 'description'       => __( 'The current date', 'newsletter-optin-box' ),
                 'replacement'       => current_time( 'Y-m-d' ),
                 'example'           => 'date',
@@ -112,7 +115,7 @@ abstract class Noptin_Abstract_Trigger {
                 'placeholder'       => current_time( 'Y-m-d' ),
             ),
 
-            'year'   => array(
+            'year'    => array(
                 'description'       => __( 'The current year', 'newsletter-optin-box' ),
                 'replacement'       => current_time( 'Y' ),
                 'example'           => 'year',
@@ -120,23 +123,34 @@ abstract class Noptin_Abstract_Trigger {
                 'placeholder'       => current_time( 'Y' ),
             ),
 
-            'month'  => array(
+            'month'   => array(
                 'description'       => __( 'The current month', 'newsletter-optin-box' ),
                 'replacement'       => current_time( 'm' ),
                 'example'           => 'month',
                 'conditional_logic' => 'number',
                 'placeholder'       => current_time( 'm' ),
+                'options'           => $wp_locale->month,
             ),
 
-            'day'    => array(
-                'description'       => __( 'The current day', 'newsletter-optin-box' ),
-                'replacement'       => current_time( 'd' ),
+            'day'     => array(
+                'description'       => __( 'The day of the week', 'newsletter-optin-box' ),
+                'replacement'       => current_time( 'j' ),
                 'example'           => 'day',
                 'conditional_logic' => 'number',
-                'placeholder'       => current_time( 'd' ),
+                'placeholder'       => current_time( 'j' ),
+                'options'           => array_combine( range( 1, 31 ), range( 1, 31 ) ),
             ),
 
-            'time'   => array(
+            'weekday' => array(
+                'description'       => __( 'The day of the week', 'newsletter-optin-box' ),
+                'replacement'       => (int) current_time( 'w' ),
+                'placeholder'       => (int) current_time( 'w' ),
+                'example'           => 'weekday',
+                'conditional_logic' => 'number',
+                'options'           => $wp_locale->weekday,
+            ),
+
+            'time'    => array(
                 // translators: %s is the current time.
                 'description' => __( 'The current time', 'newsletter-optin-box' ),
                 'replacement' => gmdate( 'H:i:s' ),
