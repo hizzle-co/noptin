@@ -136,6 +136,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.9.0 =
 * GeoDirectory newsletter integration.
+* Add automation rules for user registrations.
 * Add conditional logic to all automation rule triggers.
 
 = 1.8.2 =

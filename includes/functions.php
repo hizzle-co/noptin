@@ -1750,8 +1750,8 @@ function noptin_get_conditional_logic_comparisons() {
 function noptin_is_conditional_logic_met( $current_value, $condition_value, $comparison ) {
 
 	// Convert to strings.
-	$current_value   = (string) $current_value;
-	$condition_value = (string) $condition_value;
+	$current_value   = strtolower( (string) $current_value );
+	$condition_value = strtolower( (string) $condition_value );
 
 	switch ( $comparison ) {
 
