@@ -379,7 +379,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 		printf(
 			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 			esc_html__( '%1$sCreate your first automation rule%2$s', 'newsletter-optin-box' ),
-			"<div style='margin-top: 40px;'><a style='font-size: 16px;' class='no-rule-create-new-automation-rule' href='" . esc_url( add_query_arg( 'create', '1' ) ) . "'>",
+			"<div style='margin-top: 40px;'><a style='font-size: 16px;' class='no-rule-create-new-automation-rule' href='" . esc_url( add_query_arg( 'noptin_create_automation_rule', '1' ) ) . "'>",
 			'</a></div>'
 		);
 

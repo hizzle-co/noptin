@@ -1451,25 +1451,29 @@ function get_noptin_subscriber_smart_tags() {
 
 	$smart_tags = array(
 		'_subscriber_via' => array(
-			'label'       => __( 'Subscription Method', 'newsletter-optin-box' ),
-			'options'     => noptin_get_subscription_sources(),
-			'description' => __( 'Filter subscribers by how they subscribed.', 'newsletter-optin-box' ),
+			'label'             => __( 'Subscription Method', 'newsletter-optin-box' ),
+			'options'           => noptin_get_subscription_sources(),
+			'description'       => __( 'Filter subscribers by how they subscribed.', 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
 		),
 		'ip_address'      => array(
-			'label'       => __( 'IP Address', 'newsletter-optin-box' ),
-			'options'     => false,
-			'description' => __( 'Filter subscribers by their IP address.', 'newsletter-optin-box' ),
+			'label'             => __( 'IP Address', 'newsletter-optin-box' ),
+			'options'           => false,
+			'description'       => __( 'Filter subscribers by their IP address.', 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
 		),
 		'conversion_page' => array(
-			'label'       => __( 'Conversion Page', 'newsletter-optin-box' ),
-			'options'     => false,
-			'description' => __( 'Filter subscribers by the page they converted on.', 'newsletter-optin-box' ),
+			'label'             => __( 'Conversion Page', 'newsletter-optin-box' ),
+			'options'           => false,
+			'description'       => __( 'Filter subscribers by the page they converted on.', 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
 		),
 	);
 
 	foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-		$options = false;
+		$options           = false;
+		$conditional_logic = false;
 
 		// Checkbox
 		if ( 'checkbox' === $custom_field['type'] ) {
@@ -1479,27 +1483,46 @@ function get_noptin_subscriber_smart_tags() {
 				'0' => __( 'No', 'newsletter-optin-box' ),
 			);
 
+			$conditional_logic = 'string';
+
 			// Select | Radio.
 		} elseif ( 'dropdown' === $custom_field['type'] || 'radio' === $custom_field['type'] ) {
 
 			if ( ! empty( $custom_field['options'] ) ) {
 				$options = noptin_newslines_to_array( $custom_field['options'] );
 			}
+
+			$conditional_logic = 'string';
+
 		} elseif ( 'language' === $custom_field['type'] && noptin_is_multilingual() ) {
 
-			$options = apply_filters( 'noptin_multilingual_active_languages', array() );
+			$options           = apply_filters( 'noptin_multilingual_active_languages', array() );
+			$conditional_logic = 'string';
+
+		} elseif ( 'date' === $custom_field['type'] ) {
+
+			$conditional_logic = 'date';
+
+		} elseif ( 'number' === $custom_field['type'] ) {
+
+			$conditional_logic = 'number';
+
+		} elseif ( 'text' === $custom_field['type'] || 'textarea' === $custom_field['type'] || 'email' === $custom_field['type'] ) {
+
+			$conditional_logic = 'string';
 
 		}
 
 		$smart_tags[ $custom_field['merge_tag'] ] = array(
-			'label'       => sanitize_text_field( $custom_field['label'] ),
-			'options'     => $options,
-			'description' => sprintf(
+			'label'             => sanitize_text_field( $custom_field['label'] ),
+			'options'           => $options,
+			'description'       => sprintf(
 				// translators: %s is the field label.
 				__( 'Filter subscribers by %s', 'newsletter-optin-box' ),
 				sanitize_text_field( $custom_field['label'] )
 			),
-			'type'        => $custom_field['type'],
+			'type'              => $custom_field['type'],
+			'conditional_logic' => $conditional_logic,
 		);
 
 	}
