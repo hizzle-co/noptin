@@ -132,8 +132,8 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		// Handle custom fields.
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-			// Limit to checkboxes, dropdowns and radio buttons.
-			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ), true ) ) {
+			// Limit to checkboxes, dropdowns, language and radio buttons.
+			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio', 'language' ), true ) ) {
 
 				// Fetch the appropriate filter.
 				$filter = isset( $filters[ $custom_field['merge_tag'] ] ) ? $filters[ $custom_field['merge_tag'] ] : '';
@@ -558,31 +558,34 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 						'options' => noptin_newslines_to_array( $custom_field['options'] ),
 					);
 				}
+			} elseif ( 'language' === $custom_field['type'] ) {
+
+				$filters[ $custom_field['merge_tag'] ] = array(
+					'label'   => $custom_field['label'],
+					'options' => apply_filters( 'noptin_multilingual_active_languages', array() ),
+				);
 			}
 		}
 
 		?>
 		<div class="alignleft actions">
-			<?php
+			<?php if ( 'top' === $which ) : ?>
 
-				if ( 'top' === $which ) {
-					?>
+				<?php foreach ( $filters as $filter => $data ) : ?>
+					<select name="noptin-filters[<?php echo esc_attr( $filter ); ?>]" id="noptin_filter_<?php echo esc_attr( $filter ); ?>">
+						<option value="" <?php selected( ! isset( $selected_filters[ $filter ] ) || '' === $selected_filters[ $filter ] ); ?>><?php echo esc_html( wp_strip_all_tags( $data['label'] ) ); ?></option>
+						<?php foreach ( $data['options'] as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $selected_filters[ $filter ] ) && $value === $selected_filters[ $filter ] ); ?>><?php echo esc_html( $label ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				<?php endforeach; ?>
 
-					<?php foreach ( $filters as $filter => $data ) : ?>
-						<select name="noptin-filters[<?php echo esc_attr( $filter ); ?>]" id="noptin_filter_<?php echo esc_attr( $filter ); ?>">
-							<option value="" <?php selected( ! isset( $selected_filters[ $filter ] ) || '' === $selected_filters[ $filter ] ); ?>><?php echo esc_html( wp_strip_all_tags( $data['label'] ) ); ?></option>
-							<?php foreach ( $data['options'] as $value => $label ) : ?>
-								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $selected_filters[ $filter ] ) && $value === $selected_filters[ $filter ] ); ?>><?php echo esc_html( $label ); ?></option>
-							<?php endforeach; ?>
-						</select>
-					<?php endforeach; ?>
-
-					<?php
+				<?php
 					do_action( 'noptin_restrict_manage_subscribers', $this, $which );
 
 					submit_button( __( 'Filter', 'newsletter-optin-box' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
-				}
-			?>
+				?>
+			<?php endif; ?>
 		</div>
 		<?php
 

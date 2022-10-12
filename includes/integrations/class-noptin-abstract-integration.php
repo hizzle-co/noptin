@@ -618,6 +618,14 @@ abstract class Noptin_Abstract_Integration {
 			return;
 		}
 
+		if ( is_string( $html_attrs ) ) {
+			$html_attrs = array( 'class' => $html_attrs );
+		}
+
+		if ( ! is_array( $html_attrs ) ) {
+			$html_attrs = array();
+		}
+
 		// Checkbox opening wrapper.
 		echo '<!-- Noptin Newsletters - https://noptin.com/ -->';
 		do_action( 'noptin_integration_before_subscription_checkbox_wrapper', $this );
@@ -633,7 +641,7 @@ abstract class Noptin_Abstract_Integration {
 		?>
 			<label <?php noptin_attr( 'integration_checkbox_label', $html_attrs, $this ); ?>>
 				<input <?php noptin_attr( 'integration_checkbox_input', $this->get_checkbox_attributes(), $this ); ?>/>
-				<span><?php wp_kses_post( $this->get_label_text() ); ?></span>
+				<span><?php echo wp_kses_post( $this->get_label_text() ); ?></span>
 			</label>
 		<?php
 

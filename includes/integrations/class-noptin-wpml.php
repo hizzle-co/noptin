@@ -19,6 +19,7 @@ class Noptin_WPML {
 		add_filter( 'wpml_document_view_item_link', array( $this, 'document_view_item_link' ), 10, 5 );
 		add_filter( 'noptin_is_multilingual', '__return_true', 5 );
 		add_filter( 'noptin_form_scripts_params', array( $this, 'filter_ajax_params' ), 5 );
+		add_filter( 'noptin_multilingual_active_languages', array( $this, 'filter_active_languages' ) );
 	}
 
 	/**
@@ -87,6 +88,22 @@ class Noptin_WPML {
 	public function filter_ajax_params( $params ) {
 		$params['resturl'] = apply_filters( 'wpml_permalink', $params['resturl'], null );
 		return $params;
+	}
+
+	/**
+	 * Returns an array of active languages.
+	 *
+	 * @param array $languages
+	 * @return array $languages
+	 */
+	public function filter_active_languages( $languages ) {
+		$new_languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0' );
+
+		if ( ! empty( $new_languages ) ) {
+			$languages = wp_list_pluck( $new_languages, 'native_name', 'default_locale' );
+		}
+
+		return $languages;
 	}
 
 }

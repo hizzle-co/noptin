@@ -9,6 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// TODO: Update post digest guide and show how to modify the posts list and grid.
 ?>
 
 <style type="text/css">
@@ -84,13 +85,18 @@ defined( 'ABSPATH' ) || exit;
 <!--[if false]></td></tr></table><![endif]-->
 <div style="display:table;width:100%;max-width:100%;">
 	<!--[if true]>
-	<td width="50%">
+	<td width="50%" valign="top">
 	<![endif]-->
 	<!--[if !true]><!-->
-	<div class="post-digest-grid-one" style="display:table-cell;width:50%;padding-right: 20px;">
+	<div class="post-digest-grid-one" style="display:table-cell;vertical-align: top;width:50%;padding-right: 20px;">
 	<!--<![endif]-->
 		<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 			<?php if ( noptin_is_even( $i ) ) : ?>
+
+			<?php
+				$GLOBALS['post'] = $campaign_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				setup_postdata( $campaign_post );
+			?>
 			<div class="digest-grid-post digest-grid-post-type-<?php echo esc_attr( sanitize_html_class( $campaign_post->post_type ) ); ?>">
 
 				<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
@@ -143,13 +149,19 @@ defined( 'ABSPATH' ) || exit;
     </td>
 	<![endif]-->
 	<!--[if true]>
-	<td width="50%">
+	<td width="50%" valign="top">
 	<![endif]-->
 	<!--[if !true]><!-->
-    <div class="post-digest-grid-two" style="display:table-cell;width:50%">
+    <div class="post-digest-grid-two" style="display:table-cell;vertical-align: top;width:50%">
 	<!--<![endif]-->
 	<?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 		<?php if ( ! noptin_is_even( $i ) ) : ?>
+
+		<?php
+			$GLOBALS['post'] = $campaign_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			setup_postdata( $campaign_post );
+		?>
+
 		<div class="digest-grid-post digest-grid-post-type-<?php echo sanitize_html_class( $campaign_post->post_type ); ?>">
 
 			<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
@@ -205,3 +217,6 @@ defined( 'ABSPATH' ) || exit;
 	</tr>
 </table>
 <![endif]-->
+
+<?php
+	wp_reset_postdata();

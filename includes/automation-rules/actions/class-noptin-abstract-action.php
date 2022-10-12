@@ -79,7 +79,9 @@ abstract class Noptin_Abstract_Action {
 	 * @since 1.2.8
 	 * @return array
 	 */
-	abstract public function get_settings();
+	public function get_settings() {
+		return array();
+	}
 
 	/**
 	 * Returns all active rules attached to this action.
@@ -116,15 +118,49 @@ abstract class Noptin_Abstract_Action {
 	}
 
 	/**
+	 * Returns the subject's email address.
+	 *
+	 * @since 1.9.0
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return false|string
+	 */
+	public function get_subject_email( $subject, $rule, $args ) {
+
+		// Provided via the email settings.
+		if ( ! empty( $rule->action_settings['email'] ) ) {
+			return $args['smart_tags']->replace_in_email( $rule->action_settings['email'] );
+		}
+
+		// Maybe fetch from the subscriber.
+		if ( $subject instanceof Noptin_Subscriber ) {
+			return $subject->email;
+		}
+
+		// ... or users.
+		if ( $subject instanceof WP_User ) {
+			return $subject->user_email;
+		}
+
+		// ... or the email argument.
+		if ( ! empty( $args['email'] ) ) {
+			return $args['email'];
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns whether or not the action can run (dependancies are installed).
 	 *
 	 * @since 1.2.8
-	 * @param Noptin_Subscriber $subscriber The subscriber.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return bool
 	 */
-	public function can_run( $subscriber, $rule, $args ) {
+	public function can_run( $subject, $rule, $args ) {
 		return true;
 	}
 
@@ -132,19 +168,19 @@ abstract class Noptin_Abstract_Action {
 	 * (Maybe) run the action.
 	 *
 	 * @since 1.3.0
-	 * @param Noptin_Subscriber $subscriber The subscriber.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
 	 * @param array $args Extra arguments passed to the action.
 	 */
-	public function maybe_run( $subscriber, $rule, $args ) {
+	public function maybe_run( $subject, $rule, $args ) {
 
 		// Ensure that we can run the action.
-		if ( ! $this->can_run( $subscriber, $rule, $args ) ) {
+		if ( ! $this->can_run( $subject, $rule, $args ) ) {
 			return;
 		}
 
 		// Run the action.
-		$this->run( $subscriber, $rule, $args );
+		$this->run( $subject, $rule, $args );
 
 		// Update the run counts.
 		$times_run = (int) $rule->times_run + 1;
@@ -156,11 +192,11 @@ abstract class Noptin_Abstract_Action {
 	 * Runs the action.
 	 *
 	 * @since 1.2.8
-	 * @param Noptin_Subscriber $subscriber The subscriber.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return void
 	 */
-	abstract public function run( $subscriber, $rule, $args );
+	abstract public function run( $subject, $rule, $args );
 
 }

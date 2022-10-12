@@ -51,6 +51,13 @@ class Noptin_Automation_Rule {
 	public $trigger_settings = array();
 
 	/**
+	 * The automation rule's conditional logic.
+	 * @var array
+	 * @since 1.8.0
+	 */
+	public $conditional_logic = array();
+
+	/**
 	 * The automation rule's status
 	 * @var int
 	 * @since 1.2.8
@@ -114,29 +121,126 @@ class Noptin_Automation_Rule {
 			}
 		}
 
-		// Fill defaults.
+		// Set conditional logic.
+		$this->conditional_logic = noptin_get_default_conditional_logic();
+		if ( isset( $this->trigger_settings['conditional_logic'] ) ) {
+			$this->conditional_logic = wp_parse_args( (array) $this->trigger_settings['conditional_logic'], $this->conditional_logic );
+
+			$this->conditional_logic['enabled'] = (bool) $this->conditional_logic['enabled'];
+
+			unset( $this->trigger_settings['conditional_logic'] );
+		}
+
+		// Backwards compatibility.
+		if ( isset( $this->trigger_settings['subscribed_via'] ) ) {
+			$subscription_method = -1 === absint( $this->trigger_settings['subscribed_via'] ) ? '' : $this->trigger_settings['subscribed_via'];
+
+			if ( '' !== $subscription_method ) {
+				$this->conditional_logic['enabled'] = true;
+				$this->conditional_logic['rules'][] = array(
+					'type'      => '_subscriber_via',
+					'condition' => 'is',
+					'value'     => $subscription_method,
+				);
+			}
+
+			unset( $this->trigger_settings['subscribed_via'] );
+
+			// Save them.
+			noptin()->automation_rules->update_rule(
+				$this,
+				array(
+					'trigger_settings' => array_merge(
+						$this->trigger_settings,
+						array( 'conditional_logic' => $this->conditional_logic )
+					),
+				)
+			);
+		}
+
+		// Sanitize trigger and action settings.
+		$this->trigger_settings = $this->sanitize_trigger_settings( $this->trigger_settings );
+		$this->action_settings  = $this->sanitize_action_settings( $this->action_settings );
+
+	}
+
+	/**
+	 * Sanitize the trigger settings.
+	 *
+	 * @param array $settings The trigger settings.
+	 * @return array
+	 */
+	public function sanitize_trigger_settings( $settings ) {
+
+		// Fetch the trigger.
 		$trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
 
-		if ( ! empty( $trigger ) && is_array( $trigger->get_settings() ) ) {
-
-			foreach ( $trigger->get_settings() as $key => $args ) {
-				if ( ! isset( $this->trigger_settings[ $key ] ) && isset( $args['default'] ) ) {
-					$this->trigger_settings[ $key ] = $args['default'];
-				}
-			}
+		if ( empty( $trigger ) ) {
+			return $settings;
 		}
 
+		$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $this, $trigger );
+
+		return $this->prepare_settings( $settings, $trigger_settings );
+	}
+
+	/**
+	 * Sanitize the action settings.
+	 *
+	 * @param array $settings The action settings.
+	 * @return array
+	 */
+	public function sanitize_action_settings( $settings ) {
+
+		// Fetch the trigger.
 		$action = noptin()->automation_rules->get_action( $this->action_id );
 
-		if ( ! empty( $action ) && is_array( $action->get_settings() ) ) {
-
-			foreach ( $action->get_settings() as $key => $args ) {
-				if ( ! isset( $this->action_settings[ $key ] ) && isset( $args['default'] ) ) {
-					$this->action_settings[ $key ] = $args['default'];
-				}
-			}
+		if ( empty( $action ) ) {
+			return $settings;
 		}
 
+		$action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
+
+		return $this->prepare_settings( $settings, $action_settings );
+	}
+
+	/**
+	 * Prepares settings.
+	 *
+	 * @param array $options  The saved options.
+	 * @param array $settings The known settings.
+	 * @return array
+	 */
+	private function prepare_settings( $options, $settings ) {
+
+		// Prepare the options.
+		$prepared_options = array();
+
+		foreach ( $settings as $key => $args ) {
+
+			$default  = isset( $args['default'] ) ? $args['default'] : '';
+			$is_array = is_array( $default );
+			$value    = isset( $options[ $key ] ) ? $options[ $key ] : $default;
+
+			if ( $is_array && ! is_array( $value ) ) {
+				$value = (array) $value;
+			}
+
+			// If there are options, make sure the value is one of them.
+			if ( isset( $args['options'] ) ) {
+				$choices = array_keys( $args['options'] );
+
+				if ( is_array( $value ) ) {
+					$value = array_values( array_intersect( $value, $choices ) );
+				} else {
+					$value = in_array( $value, $choices, true ) ? $value : $default;
+				}
+			}
+
+			$prepared_options[ $key ] = $value;
+		}
+
+		return $prepared_options;
 	}
 
 	/**

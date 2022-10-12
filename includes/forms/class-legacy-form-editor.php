@@ -175,18 +175,7 @@ class Noptin_Legacy_Form_Editor {
 	 * @return array
 	 */
 	protected function get_form_field_props() {
-		$props = array( 'fields', 'fieldTypes' );
-
-		foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-			if ( ! empty( $connection->list_providers ) ) {
-				$props[] = "{$key}_list";
-			}
-
-			$props = $connection->add_custom_field_props( $props );
-		}
-
-		return apply_filters( 'noptin_form_field_props', $props );
+		return apply_filters( 'noptin_form_field_props', array( 'fields', 'fieldTypes' ) );
 	}
 
 	/**
@@ -520,14 +509,13 @@ class Noptin_Legacy_Form_Editor {
 
 		$fields                = array();
 		$available_connections = get_noptin_connection_providers();
-		$all_connections       = Noptin_COM::get_integrations();
 
-		if ( empty( $available_connections ) ) {
-			foreach ( $all_connections as $key => $connection ) {
+		if ( noptin_upsell_integrations() ) {
+			foreach ( Noptin_COM::get_connections() as $connection ) {
 
-				$key            = sanitize_key( str_replace( '-', '_', $key ) );
-				$name           = esc_html( $connection->title );
-				$href           = esc_url( $connection->href );
+				$key            = sanitize_key( str_replace( '-', '_', $connection->slug ) );
+				$name           = esc_html( $connection->name );
+				$href           = esc_url( $connection->connect_url );
 				$fields[ $key ] = array(
 					'el'       => 'panel',
 					'title'    => $name,

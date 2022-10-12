@@ -210,7 +210,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 
 		// Row actions.
 		$row_actions = array();
-		$edit_url    = esc_url( add_query_arg( 'edit', $item->id, $this->base_url ) );
+		$edit_url    = esc_url( add_query_arg( 'noptin_edit_automation_rule', $item->id, $this->base_url ) );
 
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
@@ -251,11 +251,13 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 				__( 'Trigger:', 'newsletter-optin-box' )
 			);
 		} else {
-			$trigger_text = $trigger->get_rule_description( $item );
+			$trigger_text        = $trigger->get_rule_description( $item );
+			$trigger_description = noptin_prepare_conditional_logic_for_display( $item->conditional_logic, $trigger->get_known_smart_tags() );
 		}
 
-		$text = ucfirst( "$trigger_text, $action_text" );
-		$text = "<div class='row-title' style='font-weight: 500;'><a href='$edit_url'>$text</a></div>";
+		$text        = ucfirst( "$trigger_text, $action_text" );
+		$description = empty( $trigger_description ) ? '' : wp_kses_post( "<p class='description'>$trigger_description</p>" );
+		$text        = "<div class='row-title'><a href='$edit_url'>$text</a></div>$description";
 
 		return "<div>$text $row_actions</div>";
 
@@ -377,7 +379,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 		printf(
 			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 			esc_html__( '%1$sCreate your first automation rule%2$s', 'newsletter-optin-box' ),
-			"<div style='margin-top: 40px;'><a style='font-size: 16px;' class='no-rule-create-new-automation-rule' href='" . esc_url( add_query_arg( 'create', '1' ) ) . "'>",
+			"<div style='margin-top: 40px;'><a style='font-size: 16px;' class='no-rule-create-new-automation-rule' href='" . esc_url( add_query_arg( 'noptin_create_automation_rule', '1' ) ) . "'>",
 			'</a></div>'
 		);
 

@@ -1,7 +1,11 @@
 import popover from 'vue-popperjs'
 import noptin from './noptin.js'
 
-var settingsApp = new Vue({
+export default {
+
+	data() {
+		return noptinSettings.app;
+	},
 
 	components: {
 
@@ -9,14 +13,6 @@ var settingsApp = new Vue({
 		'noptin-tooltip': popover,
 
 	},
-
-	el: '#noptin-settings-app',
-
-	data: jQuery.extend(
-		true,
-		{},
-		noptinSettings
-	),
 
 	methods: {
 
@@ -147,20 +143,19 @@ var settingsApp = new Vue({
 		// Persists settings to the database.
 		saveSettings() {
 
-			var $ = jQuery
+			const container = jQuery( '#noptin-settings-app' );
 
 			//Provide visual feedback by fading the form
-			$(this.$el).fadeTo("fast", 0.33);
+			container.fadeTo("fast", 0.33);
 
 			//Prepare state data
 			var data = this.$data
 			var error = this.error
 			var saved = this.saved
-			var el = this.$el
 
 			//Hide form notices
-			$(this.$el).find('.noptin-save-saved').hide()
-			$(this.$el).find('.noptin-save-error').hide()
+			container.find('.noptin-save-saved').hide()
+			container.find('.noptin-save-error').hide()
 
 			//Post the state data to the server
 			jQuery.post(noptin_params.ajaxurl, {
@@ -171,7 +166,7 @@ var settingsApp = new Vue({
 
 				//Show a success msg after we are done
 				.done(() => {
-					$(el)
+					container
 						.fadeTo("fast", 1)
 						.find('.noptin-save-saved')
 						.show()
@@ -182,7 +177,7 @@ var settingsApp = new Vue({
 
 				//Else alert the user about the error.
 				.fail(() => {
-					$(el)
+					container
 						.fadeTo("fast", 1)
 						.find('.noptin-save-error')
 						.show()
@@ -222,6 +217,4 @@ var settingsApp = new Vue({
 	mounted() {
 		//Runs after mounting
 	},
-})
-
-export default settingsApp
+}

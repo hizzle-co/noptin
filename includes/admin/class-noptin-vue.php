@@ -27,8 +27,10 @@ class Noptin_Vue {
 		add_action( 'noptin_render_editor_form_fields', array( __CLASS__, 'form_fields' ), 10, 2 );
 		add_action( 'noptin_render_editor_select', array( __CLASS__, 'select' ), 10, 2 );
 		add_action( 'noptin_render_editor_multi_checkbox', array( __CLASS__, 'multi_checkbox' ), 10, 2 );
+		add_action( 'noptin_render_editor_multi_checkbox_alt', array( __CLASS__, 'multi_checkbox_alt' ), 10, 2 );
 		add_action( 'noptin_render_editor_input', array( __CLASS__, 'input' ), 10, 2 );
-		add_action( 'noptin_render_editor_custom_fields', array( __CLASS__, 'custom_fields' ), 10, 2  );
+		add_action( 'noptin_render_editor_custom_fields', array( __CLASS__, 'custom_fields' ), 10, 2 );
+		add_action( 'noptin_render_editor_upsell', array( __CLASS__, 'upsell' ), 10, 2 );
 
 		add_filter( 'noptin_field_types', array( __CLASS__, 'get_field_types' ), 5 );
 		add_action( 'noptin_field_type_settings', array( __CLASS__, 'print_field_type_settings' ), 5 );
@@ -75,10 +77,10 @@ class Noptin_Vue {
 				'trigger'  => array(),
 				':options' => array(),
 			),
-			'div' => array(
+			'div'            => array(
 				'class' => array(),
 			),
-			'span' => array(
+			'span'           => array(
 				'class' => array(),
 				'slot'  => array(),
 			),
@@ -131,7 +133,7 @@ class Noptin_Vue {
 		// Attributes.
 		$attrs = '';
 		foreach ( $el as $attr => $val ) {
-			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default' ), true ) ) {
+			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default', 'append' ), true ) ) {
 				$val   = esc_attr( $val );
 				$attrs = "$attrs $attr='$val'";
 			}
@@ -279,7 +281,7 @@ class Noptin_Vue {
 			esc_attr( $field['_class'] ),
 			esc_attr( $field['url'] ),
 			wp_kses_post( $field['label'] ),
-			wp_kses( $field['tooltip'], self::tooltip_tags() ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() )
 		);
 
 	}
@@ -300,7 +302,7 @@ class Noptin_Vue {
 			$field['attrs'],
 			esc_attr( $field['_class'] ),
 			$field['content'],
-			wp_kses( $field['tooltip'], self::tooltip_tags() ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() )
 		);
 
 	}
@@ -593,7 +595,7 @@ class Noptin_Vue {
 
 		if ( isset( $field['placeholder'] ) ) {
 			$placeholder = esc_html( $field['placeholder'] );
-			$options .= "<option value='' disabled>$placeholder</option>";
+			$options    .= "<option value='' disabled>$placeholder</option>";
 		}
 
 		foreach ( $field['options'] as $val => $name ) {
@@ -615,6 +617,30 @@ class Noptin_Vue {
 			$field['attrs'],
 			$options,
 			$field['description']
+		);
+
+	}
+
+	/**
+	 * Renders a select field
+	 */
+	public static function upsell( $id, $field ) {
+
+		printf(
+			'<div %s class="field-wrapper %s">
+				<label class="noptin-label">%s %s</label>
+				<div class="noptin-content noptin-upsell-wrapper">
+					<p class="noptin-upsell-wrapper__content">%s</p>
+					<a href="%s" class="button button-secondary">%s</a>
+				</div>
+			</div>',
+			$field['restrict'],
+			esc_attr( $field['_class'] ),
+			wp_kses_post( $field['label'] ),
+			wp_kses( $field['tooltip'], self::tooltip_tags() ),
+			wp_kses_post( $field['description'] ),
+			esc_url( $field['url'] ),
+			esc_html__( 'Learn More', 'newsletter-optin-box' )
 		);
 
 	}
@@ -643,6 +669,37 @@ class Noptin_Vue {
 	}
 
 	/**
+	 * Renders multi_checkbox input
+	 */
+	public static function multi_checkbox_alt( $id, $field ) {
+
+		$count = 0;
+		?>
+		<div class="noptin-text-wrapper field-wrapper" <?php echo $field['restrict']; ?>>
+			<label for="<?php echo esc_attr( $id . $count ); ?>" class="noptin-label">
+				<?php echo wp_kses_post( wp_kses_post( $field['label'] ) ); ?></label>&nbsp;
+				<?php echo wp_kses( $field['tooltip'], self::tooltip_tags() ); ?>
+			</label>
+			<div class="noptin-content">
+				<div class="card noptin-multicheckbox-card">
+					<?php foreach ( $field['options'] as $name => $label ) : ?>
+						<p class="description">
+							<label>
+								<input type="checkbox" value="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id . $count ); ?>" v-model="<?php echo esc_attr( $id ); ?>">
+								<span style="font-weight: 400;"><?php echo wp_kses_post( $label ); ?></span>
+							</label>
+						</p>
+						<?php $count++; ?>
+					<?php endforeach; ?>
+				</div>
+				<?php echo wp_kses_post( $field['description'] ); ?>
+			</div>
+		</div>
+		<?php
+
+	}
+
+	/**
 	 * Renders input field
 	 */
 	public static function input( $id, $field ) {
@@ -660,6 +717,7 @@ class Noptin_Vue {
 		$label       = $field['label'];
 		$tooltip     = $field['tooltip'];
 		$description = empty( $field['description'] ) ? '' : $field['description'];
+		$append      = isset( $field['append'] ) ? '<span class="noptin-input-append">' . $field['append'] . '</span>' : '';
 
 		switch ( $type ) {
 
@@ -681,13 +739,13 @@ class Noptin_Vue {
 				break;
 
 			case 'image':
-				$size = empty( $field['size'] ) ? 'thumbnail' : trim( $field['size'] );
+				$size        = empty( $field['size'] ) ? 'thumbnail' : trim( $field['size'] );
 				$submit_text = esc_attr__( 'Upload Image', 'newsletter-optin-box' );
 				echo "<div class='$class $_class' $restrict><span class='noptin-label'>$label $tooltip</span> <div><div class='image-uploader'><input v-model='$id' placeholder='http://' type='text' $attrs /> <input @click=\"upload_image('$id', '$size')\" type='button' class='button button-secondary' value='$submit_text' /></div>$description</div></div>";
 				break;
 
 			default:
-				echo "<label class='$class' $restrict><span class='noptin-label'>$label $tooltip</span> <div class='noptin-content'><input class='$_class' v-model='$id' type='$type' $attrs />$description</div></label>";
+				echo "<label class='$class' $restrict><span class='noptin-label'>$label $tooltip</span> <div class='noptin-content'><div class='noptin-input-inner'><input class='$_class' v-model='$id' type='$type' $attrs />$append</div>$description</div></label>";
 				break;
 		}
 

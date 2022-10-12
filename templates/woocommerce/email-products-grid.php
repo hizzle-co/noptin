@@ -90,10 +90,10 @@ if ( ! is_array( $products ) ) {
 <!--[if false]></td></tr></table><![endif]-->
 <div style="display:table;width:100%;max-width:100%;">
 	<!--[if true]>
-	<td width="50%">
+	<td width="50%" v-align="top">
 	<![endif]-->
 	<!--[if !true]><!-->
-	<div class="product-digest-grid-one" style="display:table-cell;width:50%;padding-right: 20px;">
+	<div class="product-digest-grid-one" style="display:table-cell;vertical-align: top;width:50%;padding-right: 20px;">
 	<!--<![endif]-->
 		<?php foreach ( $products as $i => $product ) : ?>
 			<?php if ( noptin_is_even( $i ) ) : ?>
@@ -129,10 +129,10 @@ if ( ! is_array( $products ) ) {
     </td>
 	<![endif]-->
 	<!--[if true]>
-	<td width="50%">
+	<td width="50%" v-align="top">
 	<![endif]-->
 	<!--[if !true]><!-->
-    <div class="product-digest-grid-two" style="display:table-cell;width:50%">
+    <div class="product-digest-grid-two" style="display:table-cell;vertical-align: top;width:50%">
 	<!--<![endif]-->
 	<?php foreach ( $products as $i => $product ) : ?>
 		<?php if ( ! noptin_is_even( $i ) ) : ?>

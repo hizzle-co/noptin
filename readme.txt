@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 6.0
 Requires PHP: 5.6
-Version: 1.7.4
-Stable tag: trunk
+Version: 1.9.0
+Stable tag: 1.9.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -133,6 +133,37 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.9.1 =
+* Added more WooCommerce conditional logic filters.
+
+= 1.9.0 =
+* GeoDirectory newsletter integration.
+* Add conditional logic to all automation rule triggers.
+
+= 1.8.2 =
+* Fixed: A CRON conflict causing post digests to create multiple newsletter campaigns.
+
+= 1.8.1 =
+* Fix unsaved custom newsletter fields disappearing
+
+= 1.8.0 =
+* Add language custom field.
+* Add ability to send multi-lingual newsletters.
+* Add newsletter-subscriber based conditional logic to automation rule triggers.
+
+= 1.7.8 =
+* Fix automation rules send empty email body.
+
+= 1.7.7 =
+* Ensure PHP < 7.3 compatibility
+
+= 1.7.6 =
+* Newsletter subscribers export file is empty.
+
+= 1.7.5 =
+* Subscription checkbox breaks the registration form.
+* Add BuddyPress registration form compatibility.
 
 = 1.7.4 =
 * Add ability to set newsletter subscription checkboxes as checked by default

@@ -1,5 +1,6 @@
 const path = require('path');
-const WooCommerceDependencyExtractionWebpackPlugin = require( '@woocommerce/dependency-extraction-webpack-plugin' );
+const webpack = require('webpack');
+const WooCommerceDependencyExtractionWebpackPlugin = require('@woocommerce/dependency-extraction-webpack-plugin');
 
 module.exports = {
 	mode: "production",
@@ -8,9 +9,9 @@ module.exports = {
 		admin: "./includes/assets/js/src/admin.js",
 		settings: "./includes/assets/js/src/settings.js",
 		"newsletter-editor": "./includes/assets/js/src/newsletter-editor.js",
-		"automation-rules": "./includes/assets/js/src/automation-rules.js",
+		"edit-automation-rule": "./includes/assets/js/src/edit-automation-rule.js",
+		"create-automation-rule": "./includes/assets/js/src/create-automation-rule.js",
 		frontend: "./includes/assets/js/src/frontend.js",
-		helper: "./includes/assets/js/src/helper.js",
 		blocks: "./includes/assets/js/src/blocks.js",
 		"blocks-new": "./includes/assets/js/src/blocks-new.js",
 		"blocks-woocommerce-backend": "./includes/assets/js/src/wc/index.js",
@@ -41,9 +42,18 @@ module.exports = {
 		]
 	},
 	plugins: [
+		new webpack.DefinePlugin({
+			__VUE_OPTIONS_API__: true,
+			__VUE_PROD_DEVTOOLS__: false,
+		}),
 		new WooCommerceDependencyExtractionWebpackPlugin()
 	],
 	externals: {
 		jquery: 'jQuery'
-	}
+	},
+	resolve: {
+		alias: {
+			vue: "vue/dist/vue.esm-bundler.js"
+		},
+	},
 };

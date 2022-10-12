@@ -185,7 +185,6 @@ class Noptin_Settings {
 
 		$state                  = array_merge( get_noptin_options(), $state );
 		$state['custom_fields'] = get_noptin_custom_fields();
-
 		$state['openSections']   = isset( $_GET['integration'] ) ? array( 'settings_section_' . noptin_clean( $_GET['integration'] ) ) : array();
 		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
 		$state['currentSection'] = 'main';
@@ -196,7 +195,7 @@ class Noptin_Settings {
 		// Cache this.
 		self::$state = apply_filters( 'noptin_settings_state', $state );
 
-		return $state;
+		return self::$state;
 
 	}
 
@@ -257,14 +256,6 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'el'          => 'input',
 				'default'     => true,
-			),
-
-			'allow_tracking'               => array(
-				'label'       => __( 'Share stats', 'newsletter-optin-box' ),
-				'description' => __( 'Help improve Noptin by sharing non-sensitive usage stats.', 'newsletter-optin-box' ),
-				'type'        => 'checkbox_alt',
-				'section'     => 'general',
-				'el'          => 'input',
 			),
 
 			'subscribers_cookie'           => array(
@@ -493,14 +484,13 @@ class Noptin_Settings {
 
 		);
 
-		$integration_settings  = apply_filters( 'noptin_get_integration_settings', array() );
-		$available_connections = get_noptin_connection_providers();
+		$integration_settings = apply_filters( 'noptin_get_integration_settings', array() );
 		ksort( $integration_settings );
 
-		if ( empty( $available_connections ) ) {
-			foreach ( Noptin_COM::get_integrations() as $slug => $data ) {
+		if ( noptin_upsell_integrations() ) {
+			foreach ( Noptin_COM::get_connections() as $data ) {
 
-				$slug = sanitize_key( str_replace( '-', '_', $slug ) );
+				$slug = sanitize_key( str_replace( '-', '_', $data->slug ) );
 
 				if ( isset( $integration_settings[ "settings_section_$slug" ] ) ) {
 					continue;
@@ -519,22 +509,22 @@ class Noptin_Settings {
 								esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
 								sprintf(
 									'<a target="_blank" href="%s">%s</a>',
-									esc_url( $data->href ),
+									esc_url( $data->connect_url ),
 									sprintf(
 										// translators: %s is the name of the integration.
 										__( '%s addon', 'newsletter-optin-box' ),
-										esc_html( $data->title )
+										esc_html( $data->name )
 									)
 								)
 							),
 						),
 					),
 					'section'     => 'integrations',
-					'heading'     => esc_html( $data->title ),
+					'heading'     => esc_html( $data->name ),
 					'description' => sprintf(
 						// translators: %s is the name of the integration.
 						__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
-						esc_html( $data->title )
+						esc_html( $data->name )
 					),
 					'badge'       => __( 'Not Installed', 'newsletter-optin-box' ),
 				);

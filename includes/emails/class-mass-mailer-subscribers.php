@@ -112,8 +112,8 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 		// Handle custom fields.
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-			// Limit to checkboxes, dropdowns and radio buttons.
-			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio' ), true ) ) {
+			// Limit to checkboxes, dropdowns, language and radio buttons.
+			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio', 'language' ), true ) ) {
 
 				// Fetch the appropriate filter.
 				$filter = $campaign->get( 'noptin_custom_field_' . $custom_field['merge_tag'] );

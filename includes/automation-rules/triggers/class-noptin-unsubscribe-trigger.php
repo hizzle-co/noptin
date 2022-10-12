@@ -11,6 +11,13 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 
 	/**
+     * Whether or not this trigger deals with a subscriber.
+     *
+     * @var bool
+     */
+    public $is_subscriber_based = true;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.1
@@ -64,13 +71,6 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 			'subscriber',
 			'unsubscribe',
 		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_settings() {
-		return array();
 	}
 
 	/**

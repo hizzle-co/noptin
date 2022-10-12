@@ -115,7 +115,7 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 			'noptin',
 			$this->provider->slug,
 			'add',
-			$this->provider->list_providers->get_name()
+			$this->provider->list_providers->get_name(),
 		);
 	}
 
@@ -133,7 +133,7 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 				'options'     => $this->provider->list_providers->get_dropdown_lists(),
 				'default'     => $this->provider->get_default_list_id(),
 				'description' => __( 'Where should we add the subscriber?', 'newsletter-optin-box' ),
-			)
+			),
 
 		);
 
@@ -143,12 +143,12 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 	 * Add the subscriber to a list.
 	 *
 	 * @since 1.5.1
-	 * @param Noptin_Subscriber $subscriber The subscriber.
+	 * @param mixed $subject The subject.
 	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return void
 	 */
-	public function run( $subscriber, $rule, $args ) {
+	public function run( $subject, $rule, $args ) {
 
 		$settings = $rule->action_settings;
 
@@ -164,6 +164,24 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 			return;
 		}
 
+		// Fetch the subscriber.
+		if ( $subject instanceof Noptin_Subscriber ) {
+			$subscriber = $subject;
+		} else {
+			$subscriber_email = $this->get_subject_email( $subject, $rule, $args );
+
+			if ( empty( $subscriber_email ) ) {
+				return;
+			}
+
+			$subscriber = new Noptin_Subscriber( $subscriber_email );
+
+			if ( ! $subscriber->exists() ) {
+				$subscriber->email      = $subscriber_email;
+				$subscriber->is_virtual = true;
+			}
+		}
+
 		try {
 			$list->add_subscriber( $subscriber );
 		} catch ( Exception $ex ) {
@@ -173,3 +191,4 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 	}
 
 }
+// TODO: Switch to new automation rules format.

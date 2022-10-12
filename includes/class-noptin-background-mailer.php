@@ -19,7 +19,7 @@ class Noptin_Background_Mailer extends Noptin_Background_Process {
 	protected $action = 'noptin_bg_mailer';
 
 	/**
-	 * Pushes the qeue forward to be handled in the future.
+	 * Pushes the queue forward to be handled in the future.
 	 *
 	 */
 	protected function push_forwards() {

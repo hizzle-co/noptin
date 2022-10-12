@@ -103,7 +103,7 @@ class Noptin_Subscribers_Admin {
 
 		if ( apply_filters( 'noptin_enable_geolocation', true ) ) {
 			$ip_address = $subscriber->ip_address;
-			if ( ! empty( $ip_address ) && noptin_locate_ip_address( $ip_address ) ) {
+			if ( ! empty( $ip_address ) && '::1' !== $ip_address && noptin_locate_ip_address( $ip_address ) ) {
 
 				add_meta_box(
 					'noptin_subscriber_location',
@@ -333,7 +333,7 @@ class Noptin_Subscribers_Admin {
 		} else {
 
 			// Else, show a success message and redirect to the added subscriber.
-			noptin()->admin->show_success( __( 'Suscriber added successfully.', 'newsletter-optin-box' ) );
+			noptin()->admin->show_success( __( 'Subscriber added successfully.', 'newsletter-optin-box' ) );
 
 			wp_safe_redirect(
 				add_query_arg( 'subscriber', (int) $result, admin_url( 'admin.php?page=noptin-subscribers' ) )

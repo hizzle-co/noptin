@@ -145,7 +145,7 @@ class Noptin_Newsletter_Emails_Admin {
 				);
 
 			} else {
-				noptin()->admin->show_success( __( 'Your email has been added to the sending qeue and will be sent soon.', 'newsletter-optin-box' ) );
+				noptin()->admin->show_success( __( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ) );
 			}
 
 			wp_safe_redirect( admin_url( 'admin.php?page=noptin-email-campaigns' ) );

@@ -11,36 +11,21 @@ defined( 'ABSPATH' ) || exit;
 $all_settings          = $form->settings;
 $available_connections = get_noptin_connection_providers();
 
-$url = add_query_arg(
-	array(
-		'utm_medium'   => 'plugin-dashboard',
-		'utm_campaign' => 'form-builder',
-		'utm_source'   => rawurlencode( esc_url( get_home_url() ) ),
-	),
-	'https://noptin.com/product-tag/integrations/'
-);
-
 ?>
 
 <h2 class="screen-reader-text"><?php esc_html_e( 'Form Integrations', 'newsletter-optin-box' ); ?></h2>
 
 <p class="description" style="margin-bottom: 16px;"><?php esc_html_e( 'Noptin also allows you to add new subscribers to an external email service provider.', 'newsletter-optin-box' ); ?></p>
 
-<?php if ( empty( $available_connections ) ) : ?>
+<?php if ( noptin_upsell_integrations() ) : ?>
 	<div class="card">
 		<h3><?php esc_html_e( 'No integration installed', 'newsletter-optin-box' ); ?></h3>
 		<p><?php esc_html_e( 'Please install the appropriate integration to automatically add new subscribers to an external email provider such as ConvertKit or Mailchimp.', 'newsletter-optin-box' ); ?></p>
-		<p><a href="<?php echo esc_url( $url ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Integrations', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+		<p><a href="<?php echo esc_url( noptin_get_upsell_url( 'https://noptin.com/integrations/#connections', 'connections', 'form-builder' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Integrations', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
 	</div>
-<?php endif; ?>
+<?php else : ?>
 
-<?php
-	if ( ! empty( $available_connections ) ) {
-
-		// Display connections.
-		foreach ( $available_connections as $key => $connection ) {
-
-			?>
+	<?php foreach ( $available_connections as $key => $connection ) : ?>
 
 			<fieldset id="noptin-form-integrations-panel-<?php echo esc_attr( $key ); ?>" class="noptin-settings-panel">
 				<button
@@ -96,7 +81,7 @@ $url = add_query_arg(
 											name="noptin_form[settings][<?php echo esc_attr( $key ); ?>_tags]"
 											value="<?php echo esc_attr( $tags ); ?>"
 										/>
-										<p class="description"><?php esc_html_e( 'Enter a comma separated list of tags to assign new suscribers.', 'newsletter-optin-box' ); ?></p>
+										<p class="description"><?php esc_html_e( 'Enter a comma separated list of tags to assign new subscribers.', 'newsletter-optin-box' ); ?></p>
 									</td>
 								</tr>
 							<?php endif; ?>
@@ -109,6 +94,7 @@ $url = add_query_arg(
 
 			</fieldset>
 
-			<?php
-		}
-	}
+	<?php endforeach; ?>
+
+	<?php do_action( 'noptin_form_available_integration_settings', $form ); ?>
+<?php endif; ?>

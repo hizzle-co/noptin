@@ -979,9 +979,7 @@ input:focus+.noptin-switch-slider span {
 }
 
 #noptin-automations-popup,
-.noptin-newsletter_page_noptin-subscribers,
-.noptin-newsletter_page_noptin-form-editor,
-.noptin-newsletter_page_noptin-email-campaigns,
+#noptin-wrapper,
 .noptin-settings {
 
 	.notice:not(.noptin-notice),
@@ -1358,6 +1356,47 @@ a.no-campaign-create-new-campaign {
 		max-width: 820px;
 	}
 
+	select {
+		padding: 6px 8px;
+		width: 100%;
+	}
+
+	.noptin-conditional-logic-wrapper {
+		max-width: 100%;
+
+		select,
+		.noptin-condition-value {
+			padding: 0 24px 0 8px;
+			width: auto;
+			margin-bottom: 6px;
+		}
+
+		.noptin-condition-field {
+			max-width: 180px;
+			width: 180px;
+		}
+
+		.noptin-condition-comparison {
+			max-width: 120px;
+			width: 120px;
+		}
+
+		.noptin-condition-value {
+			max-width: 180px;
+			width: 180px;
+		}
+
+		.noptin-remove-conditional-rule {
+			color: #454545;
+			text-decoration: none;
+
+			.dashicons {
+				vertical-align: middle;
+				font-size: 16px;
+			}
+		}
+	}
+
 	.select2-container .select2-selection--single {
 		min-height: 32px;
 		padding: 6px 8px;
@@ -1369,7 +1408,7 @@ a.no-campaign-create-new-campaign {
 	}
 
 	.noptin-automation-rule-editor-section {
-		margin-bottom: 10px;
+		margin-bottom: 1.5rem;
 
 		label:not(.field-wrapper) {
 			font-weight: 500;
@@ -1398,6 +1437,12 @@ a.no-campaign-create-new-campaign {
 				flex: 1 0 0;
 			}
 
+			.noptin-multicheckbox-card {
+				max-width: 100%;
+				max-height: 200px;
+				overflow: auto;
+				margin-top: 0;
+			}
 		}
 
 		.noptin-textarea-wrapper {
@@ -1413,19 +1458,6 @@ a.no-campaign-create-new-campaign {
 			display: inline-block;
 		}
 
-	}
-
-	.dd-select {
-		background: #fff !important;
-
-		a {
-			text-decoration: none;
-    		color: inherit;
-		}
-	}
-
-	.dd-selected {
-		font-weight: 400 !important;
 	}
 
 	.save-automation-rule {
@@ -1446,6 +1478,27 @@ a.no-campaign-create-new-campaign {
 		border-left-color: #dc3232;
 	}
 
+}
+
+.noptin-input-inner {
+	position: relative;
+
+	.noptin-input-append {
+		position: absolute;
+		right: 0;
+		top: 0;
+		color: gray;
+		height: 100%;
+		min-width: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		a {
+			text-decoration: none;
+			color: grey;
+		}
+	}
 }
 
 .noptin-newsletter-schedule-control {
@@ -1932,6 +1985,10 @@ a.no-campaign-create-new-campaign {
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
+
+		img {
+			max-width: 100%;
+		}
 	}
 
 	.noptin-email-type-action {
@@ -2006,4 +2063,19 @@ a.no-campaign-create-new-campaign {
 
 .noptin-sections-wrapper .subsubsub li:last-child .subsubsub_sep {
 	display: none;
+}
+
+.noptin-upsell-wrapper {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	box-shadow: 0 1px 1px rgb(0 0 0 / 4%);
+	box-sizing: border-box;
+	margin-bottom: 20px;
+	padding: 1em 1em 1.25em;
+
+	&__button {
+		margin-top: 1em;
+	}
+
 }

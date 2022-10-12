@@ -1,4 +1,4 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
 	<!-- start copy -->
-		<?php echo wp_kses_post( $content ); ?>
+		<?php echo $content; ?>
 	<!-- end copy -->

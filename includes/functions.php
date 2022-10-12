@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Core functions
  *
@@ -1069,6 +1070,39 @@ function get_noptin_connection_providers() {
 }
 
 /**
+ * Checks whether or not to upsell integrations.
+ *
+ * @since 1.9.0
+ * @ignore
+ * @return bool
+ */
+function noptin_upsell_integrations() {
+	return apply_filters( 'noptin_upsell_integrations', 0 === count( get_noptin_connection_providers() ) );
+}
+
+/**
+ * Retrieves an upsell URL.
+ *
+ * @since 1.9.0
+ * @param string $url The URL to redirect to.
+ * @param string $utm_source The utm source.
+ * @param string $utm_medium The utm medium.
+ * @param string $utm_campaign The utm campaign.
+ * @ignore
+ * @return bool
+ */
+function noptin_get_upsell_url( $url, $utm_source, $utm_campaign, $utm_medium = 'plugin-dashboard' ) {
+	return add_query_arg(
+		array(
+			'utm_medium'   => $utm_medium,
+			'utm_campaign' => $utm_campaign,
+			'utm_source'   => $utm_source,
+		),
+		$url
+	);
+}
+
+/**
  * Applies Noptin merge tags.
  *
  * Noptin uses a fast logic-less templating engine to parse merge tags
@@ -1426,7 +1460,7 @@ function noptin_limit_length( $string, $limit ) {
 		return $string;
 	}
 
-    $str_limit = $limit - 3;
+	$str_limit = $limit - 3;
 
 	if ( function_exists( 'mb_strimwidth' ) ) {
 		if ( mb_strlen( $string ) > $limit ) {
@@ -1437,7 +1471,7 @@ function noptin_limit_length( $string, $limit ) {
 			$string = substr( $string, 0, $str_limit ) . '...';
 		}
 	}
-    return $string;
+	return $string;
 
 }
 
@@ -1563,6 +1597,34 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 }
 
 /**
+ * Checks if a given email is unsubscribed.
+ *
+ * @since 1.9.0
+ * @param string $email
+ * @return bool
+ */
+function noptin_is_email_unsubscribed( $email ) {
+
+	// Fetch user by email.
+	$user = get_user_by( 'email', $email );
+
+	// If the user is unsubscribed, abort.
+	if ( $user && 'unsubscribed' === get_user_meta( $user->ID, 'noptin_unsubscribed', true ) ) {
+		return true;
+	}
+
+	// Fetch subscriber by email.
+	$subscriber = get_noptin_subscriber( $email );
+
+	// If the subscriber is unsubscribed, abort.
+	if ( $subscriber->exists() && ! $subscriber->is_active() ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Converts newlines to an array of options.
  *
  * @since 1.7.4
@@ -1570,6 +1632,10 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
  * @return array
  */
 function noptin_newslines_to_array( $text ) {
+
+	if ( is_array( $text ) ) {
+		return $text;
+	}
 
 	$options = array();
 	foreach ( preg_split( "/\r\n|\n|\r/", $text ) as $option ) {
@@ -1588,4 +1654,260 @@ function noptin_newslines_to_array( $text ) {
  */
 function noptin_is_even( $number ) {
 	return 0 === $number || 0 === $number % 2;
+}
+
+/**
+ * Returns the default conditional logic.
+ *
+ * @since 1.8.0
+ * @return array
+ */
+function noptin_get_default_conditional_logic() {
+	return array(
+		'enabled' => false,
+		'action'  => 'allow',
+		'type'    => 'all',
+		'rules'   => array(),
+	);
+}
+
+/**
+ * Returns the comparisons available for conditional logic.
+ *
+ * @since 1.9.0
+ * @return array
+ */
+function noptin_get_conditional_logic_comparisons() {
+	return array(
+		'is'               => array(
+			'type' => 'any',
+			'name' => __( 'is', 'newsletter-optin-box' ),
+		),
+		'is_not'           => array(
+			'type' => 'any',
+			'name' => __( 'is not', 'newsletter-optin-box' ),
+		),
+		'contains'         => array(
+			'type' => 'string',
+			'name' => __( 'contains', 'newsletter-optin-box' ),
+		),
+		'does_not_contain' => array(
+			'type' => 'string',
+			'name' => __( 'does not contain', 'newsletter-optin-box' ),
+		),
+		'begins_with'      => array(
+			'type' => 'string',
+			'name' => __( 'begins with', 'newsletter-optin-box' ),
+		),
+		'ends_with'        => array(
+			'type' => 'string',
+			'name' => __( 'ends with', 'newsletter-optin-box' ),
+		),
+		'is_empty'         => array(
+			'type' => 'any',
+			'name' => __( 'is empty', 'newsletter-optin-box' ),
+		),
+		'is_not_empty'     => array(
+			'type' => 'any',
+			'name' => __( 'is not empty', 'newsletter-optin-box' ),
+		),
+		'is_greater_than'  => array(
+			'type' => 'number',
+			'name' => __( 'is greater than', 'newsletter-optin-box' ),
+		),
+		'is_less_than'     => array(
+			'type' => 'number',
+			'name' => __( 'is less than', 'newsletter-optin-box' ),
+		),
+		'is_between'       => array(
+			'type' => 'number',
+			'name' => __( 'is between', 'newsletter-optin-box' ),
+		),
+		'is_before'        => array(
+			'type' => 'date',
+			'name' => __( 'is before', 'newsletter-optin-box' ),
+		),
+		'is_after'         => array(
+			'type' => 'date',
+			'name' => __( 'is after', 'newsletter-optin-box' ),
+		),
+		'is_date_between'  => array(
+			'type' => 'date',
+			'name' => __( 'is between', 'newsletter-optin-box' ),
+		),
+	);
+}
+
+/**
+ * Checks if a given condition is valid.
+ *
+ * @param string $current_value The current value.
+ * @param string $condition_value The condition value.
+ * @param string $comparison The comparison to use.
+ * @since 1.9.0
+ * @return bool
+ */
+function noptin_is_conditional_logic_met( $current_value, $condition_value, $comparison ) {
+
+	// Convert to strings.
+	$current_value   = strtolower( (string) $current_value );
+	$condition_value = strtolower( (string) $condition_value );
+
+	switch ( $comparison ) {
+
+		case 'is':
+			return $current_value === $condition_value;
+
+		case 'is_not':
+			return $current_value !== $condition_value;
+
+		case 'contains':
+			return false !== strpos( $current_value, $condition_value );
+
+		case 'does_not_contain':
+			return false === strpos( $current_value, $condition_value );
+
+		case 'begins_with':
+			return 0 === strpos( $current_value, $condition_value );
+
+		case 'ends_with':
+			return substr( $current_value, - strlen( $condition_value ) ) === $condition_value;
+
+		case 'is_empty':
+			return empty( $current_value );
+
+		case 'is_not_empty':
+			return ! empty( $current_value );
+
+		case 'is_greater_than':
+			return floatval( $current_value ) > floatval( $condition_value );
+
+		case 'is_less_than':
+			return floatval( $current_value ) < floatval( $condition_value );
+
+		case 'is_between':
+			$condition_value = noptin_parse_list( $condition_value );
+			$first_value     = floatval( $condition_value[0] );
+			$second_value    = isset( $condition_value[1] ) ? floatval( $condition_value[1] ) : $first_value;
+
+			return floatval( $current_value ) >= $first_value && floatval( $current_value ) <= $second_value;
+
+		case 'is_before':
+			$current_value   = strtotime( $current_value );
+			$condition_value = strtotime( $condition_value );
+			return $current_value < $condition_value;
+
+		case 'is_after':
+			$current_value   = strtotime( $current_value );
+			$condition_value = strtotime( $condition_value );
+			return $current_value > $condition_value;
+
+		case 'is_date_between':
+			$condition_value = noptin_parse_list( $condition_value );
+			$first_value     = strtotime( $condition_value[0] );
+			$second_value    = isset( $condition_value[1] ) ? strtotime( $condition_value[1] ) : $first_value;
+
+			$current_value = strtotime( $current_value );
+			return $current_value >= $first_value && $current_value <= $second_value;
+	}
+}
+
+/**
+ * Formats conditional logic for display.
+ *
+ * @param array $conditional_logic
+ * @param array $smart_tags
+ * @since 1.8.0
+ * @return string
+ */
+function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array() ) {
+
+	// Abort if no conditional logic is set.
+	if ( empty( $conditional_logic['enabled'] ) ) {
+		return '';
+	}
+
+	// Retrieve the conditional logic.
+	$rules       = array();
+	$comparisons = wp_list_pluck( noptin_get_conditional_logic_comparisons(), 'name' );
+
+	// Loop through each rule.
+	foreach ( $conditional_logic['rules'] as $rule ) {
+
+		if ( isset( $smart_tags[ $rule['type'] ] ) ) {
+			$condition = $smart_tags[ $rule['type'] ];
+			$label     = isset( $condition['label'] ) ? $condition['label'] : $condition['description'];
+			$value     = isset( $rule['value'] ) ? $rule['value'] : '';
+			$data_type = isset( $condition['conditional_logic'] ) ? $condition['conditional_logic'] : false;
+
+			if ( 'number' === $data_type ) {
+
+				if ( 'is_between' === $rule['condition'] ) {
+					$value = noptin_parse_list( $value );
+					$value = sprintf(
+						// translators: %s is a number.
+						__( '%1$s and %2$s', 'newsletter-optin-box' ),
+						floatval( $value[0] ),
+						isset( $value[1] ) ? floatval( $value[1] ) : floatval( $value[0] )
+					);
+				} else {
+					$value = floatval( $value );
+				}
+			} elseif ( 'date' === $data_type ) {
+
+				if ( 'is_date_between' === $rule['condition'] ) {
+					$value = noptin_parse_list( $value );
+					$value = sprintf(
+						// translators: %s is a date.
+						__( '%1$s and %2$s', 'newsletter-optin-box' ),
+						gmdate( 'Y-m-d', strtotime( $value[0] ) ),
+						isset( $value[1] ) ? gmdate( 'Y-m-d', strtotime( $value[1] ) ) : gmdate( 'Y-m-d', strtotime( $value[0] ) )
+					);
+				} else {
+					$value = gmdate( 'Y-m-d', strtotime( $value ) );
+				}
+			} elseif ( isset( $condition['options'] ) && isset( $condition['options'][ $value ] ) ) {
+				$value = $condition['options'][ $value ];
+			}
+
+			if ( isset( $comparisons[ $rule['condition'] ] ) ) {
+				$rules[] = sprintf(
+					'%s %s <code>%s</code>',
+					strtolower( sanitize_text_field( $label ) ),
+					sanitize_text_field( $comparisons[ $rule['condition'] ] ),
+					sanitize_text_field( $value )
+				);
+			}
+		}
+	}
+
+	if ( 'any' === $conditional_logic['type'] ) {
+		$rules = implode( ' ' . __( 'OR', 'newsletter-optin-box' ) . ' ', $rules );
+	} else {
+		$rules = implode( ' ' . __( 'AND', 'newsletter-optin-box' ) . ' ', $rules );
+	}
+
+	if ( empty( $rules ) ) {
+		return '';
+	}
+
+	if ( 'allow' === $conditional_logic['action'] ) {
+		// translators: %s is a list of conditions.
+		return sprintf( __( 'Only run if %s', 'newsletter-optin-box' ), $rules );
+	}
+
+	// translators: %s is a list of conditions.
+	return sprintf( __( 'Ignore if %s', 'newsletter-optin-box' ), $rules );
+}
+
+/**
+ * Callback to sort arrays by name.
+ *
+ * @since 1.9.0
+ * @param object $a
+ * @param object $b
+ * @return int
+ */
+function noptin_sort_by_name( $a, $b ) {
+	return strcmp( $a->get_name(), $b->get_name() );
 }

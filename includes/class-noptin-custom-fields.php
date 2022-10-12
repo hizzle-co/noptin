@@ -24,6 +24,10 @@ class Noptin_Custom_Fields {
 			require_once plugin_dir_path( __FILE__ ) . "field-types/class-$file.php";
 		}
 
+		if ( noptin_is_multilingual() ) {
+			require_once plugin_dir_path( __FILE__ ) . 'field-types/class-language.php';
+		}
+
 		do_action( 'noptin_load_custom_field_files' );
 
 		// Load custom field types.
@@ -45,7 +49,7 @@ class Noptin_Custom_Fields {
 	 */
 	public static function default_fields() {
 
-		return array(
+		$fields = array(
 			array(
 				'type'       => 'email',
 				'merge_tag'  => 'email',
@@ -84,6 +88,19 @@ class Noptin_Custom_Fields {
 			),
 		);
 
+		if ( noptin_is_multilingual() ) {
+			$fields[] = array(
+				'type'       => 'language',
+				'merge_tag'  => 'language',
+				'label'      => __( 'Language', 'newsletter-optin-box' ),
+				'visible'    => false,
+				'subs_table' => false,
+				'required'   => false,
+				'predefined' => true,
+			);
+		}
+
+		return apply_filters( 'noptin_default_custom_fields', $fields );
 	}
 
 	/**

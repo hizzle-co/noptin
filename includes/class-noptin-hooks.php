@@ -138,7 +138,7 @@ class Noptin_Hooks {
 			}
 		}
 
-		return $data;
+		return apply_filters( 'noptin_submitted_data_add_connections', $data, $submitted );
 	}
 
 	/**

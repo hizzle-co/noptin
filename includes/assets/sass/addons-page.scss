@@ -1,14 +1,8 @@
-.noptin_addons_wrap {
-	max-width: 1200px;
+#noptin-wrapper.noptin-extensions-wrapper {
 
-	h1.search-form-title {
-		clear: left;
-		padding: 0;
-	}
-
-	form.search-form {
+	form.noptin-license-form {
 		clear: both;
-		display: block;
+		display: flex;
 		position: relative;
 		margin-top: 1em;
 		margin-bottom: 1em;
@@ -20,19 +14,29 @@
 			padding-left: 50px;
 			width: 100%;
 			margin: 0;
+			margin-right: 10px;
+			flex: 1;
 		}
 
 		button {
-			background: none;
-			border: none;
-			cursor: pointer;
-			height: 53px;
-			position: absolute;
-			width: 53px;
+			background-color: #4caf50;
+			border-width: 0;
+			box-shadow: none;
+			border-radius: 3px;
+			color: #fff;
+			height: auto;
+			text-align: center;
+			white-space: normal !important;
+			min-width: 124px;
+    		font-size: 15px;
+
+			&:hover {
+				opacity: 0.8;
+			}
 		}
 	}
 
-	.membership-alert {
+	.noptin-extensions-alert {
 		color: #fff;
 		background-color: #455A64;
 		padding: 12px 20px;
@@ -43,44 +47,186 @@
 		justify-content: space-between;
 		align-items: center;
 		flex-wrap: wrap;
+		margin: 1em 0;
 
-		&.membership-alert-error {
+		&.noptin-extensions-alert-success {
+			background-color: #4caf50;
+		}
+
+		&.noptin-extensions-alert-error {
 			background-color: #dc3545;
 		}
 
-		&.membership-alert-info {
+		&.noptin-extensions-alert-info {
 			background-color: #17a2b8;
 		}
 
-		&.membership-alert-dark {
+		&.noptin-extensions-alert-dark {
 			background-color: #343a40;
 		}
 
 	}
 
-	.update-plugins .update-count {
-		background-color: #d54e21;
-		border-radius: 10px;
-		color: #fff;
-		display: inline-block;
-		font-size: 9px;
-		font-weight: 600;
-		line-height: 17px;
-		margin: 1px 0 0 2px;
-		padding: 0 6px;
-		vertical-align: text-top;
+	.noptin-license-info {
+		margin: 1em 0;
+		background-color: #fff;
+		padding: 0;
+		border: 1px solid #e1e1e1;
 	}
 
-	ul.subsubsub.subsubsub {
-		margin: 8px 0 12px;
+	.noptin-license-info__header {
+		padding: 12px 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+    	box-sizing: border-box;
+
+		&__main {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			flex: 1;
+			max-width: 700px;
+
+			&-title {
+				margin-right: 10px;
+				flex: 1;
+
+				.description {
+					font-weight: 400;
+					font-size: 13px;
+				}
+			}
+		}
 	}
 
-	.subsubsub li::after {
-		content: "|";
+	.noptin-license-info__action {
+		border-top: 1px solid #e1e1e1;
+		padding: 12px 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+    	box-sizing: border-box;
+
+		&.expired {
+			margin-left: -1px;
+			border-left: 4px solid #b81c23;
+
+			.dashicons-info {
+				color: #b81c23;
+			}
+		}
 	}
 
-	.subsubsub li:last-child::after {
-		content: "";
+	.noptin-extension-group {
+		margin: 1.5em 0;
+
+		&__title {
+			font-size: 20px;
+			line-height: 24px;
+			margin: 0 0 4px;
+		}
+
+		&__description {
+			font-size: 15px;
+			line-height: 24px;
+			margin: 0 0 12px;
+		}
+
+		&__items {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			margin: 0;
+			overflow: hidden;
+		}
+	}
+
+	.noptin-extension {
+		background: #fff;
+		border: 1px solid #dcdcde;
+		border-radius: 2px;
+		box-sizing: border-box;
+		display: flex;
+		flex: 1 0 auto;
+		flex-direction: column;
+		justify-content: space-between;
+		margin: 12px 0;
+		min-width: 280px;
+		max-width: 100%;
+		min-height: 220px;
+		overflow: hidden;
+		padding: 0;
+		vertical-align: top;
+
+		@media screen and (min-width: 768px) {
+			max-width: calc(50% - 12px);
+			width: calc(50% - 12px);
+		}
+
+		@media screen and (min-width: 1024px) {
+			max-width: calc(33.333% - 12px);
+			width: calc(33.333% - 12px);
+		}
+
+		&__details {
+			padding: 24px;
+			position: relative;
+		}
+
+		&__img {
+			display: block;
+			margin-left: 24px;
+			position: absolute;
+			right: 24px;
+			top: 24px;
+
+			&.noptin-extension__img-lg {
+				top: 12px;
+			}
+
+			.dashicons {
+				font-size: 48px;
+				width: 48px;
+				height: 48px;
+				color: #2a94f3;
+			}
+
+			img {
+				border-radius: 8px;
+				height: 64px;
+				width: 64px;
+				-o-object-fit: contain;
+				object-fit: contain;
+			}
+		}
+
+		&__wordpress-users .noptin-extension__img .dashicons {
+			color: #585c60;
+		}
+
+		&__coupon-codes .noptin-extension__img .dashicons,
+		&__woocommerce-customers .noptin-extension__img .dashicons {
+			color: #a46497;
+		}
+
+		&__footer {
+			align-items: center;
+			border-top: 1px solid #dcdcde;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			padding: 24px;
+		}
+
+		&__update {
+			padding: 4px 24px;
+    		color: #a00;
+    		background-color: #fcf9e8;
+		}
 	}
 
 	.addons-button {
@@ -142,87 +288,6 @@
 	.addons-button-installed:hover {
 		color: #3c3c3c;
 		opacity: 0.8;
-	}
-
-	.products {
-		background: #fff;
-		border: 1px solid #ddd;
-		margin: 0 0 1em 0;
-		padding: 2em 2em 1em;
-		display: flex;
-		flex-flow: row;
-		flex-wrap: wrap;
-		overflow: hidden;
-		justify-content: space-between;
-
-		li {
-			background: #fff;
-			border: 1px solid #ddd;
-			box-shadow: 0 1px 1px rgb(0 0 0 / 4%);
-			box-sizing: border-box;
-			display: flex;
-			flex: 1 0 360px;
-			flex-direction: column;
-			margin: 0 .5em 1em!important;
-			max-width: 360px;
-			min-height: 220px;
-			overflow: hidden;
-			padding: 0;
-			position: relative;
-
-			&:hover {
-				border:1px solid #c5c2c2;
-			}
-
-			img {
-				max-width: 258px;
-				max-height: 24px;
-				padding: 17px 20px;
-				display: block;
-				margin: 0;
-				background: #fff;
-				border-right: 260px solid #fff;
-			}
-
-			h2,
-			h3 {
-				margin: 0!important;
-				padding: 27px 32px!important;
-				color: #424242;
-				font-size: 24px;
-			}
-
-			h2:hover,
-			h3:hover {
-				background: #f9f9f9;
-			}
-
-			a {
-				text-decoration: none;
-			}
-
-			.product-description {
-				padding: 0 27px 32px!important;
-				margin: 0 !important;
-				border-bottom: 1px solid #ddd;
-				flex: 1;
-			}
-
-			.footer {
-				padding: 1em 2em !important;
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: space-between;
-
-				&.has-membership {
-					justify-content: flex-end;
-				}
-			}
-
-			.noptin-helper-deactivate-license-modal {
-				color: #b32d2e;
-			}
-		}
 	}
 
 }

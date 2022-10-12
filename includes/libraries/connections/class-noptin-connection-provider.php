@@ -80,7 +80,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 		add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rules' ), $this->priority );
 
 		// New subscribers.
-		add_action( 'noptin_insert_subscriber', array( $this, 'add_subscriber'), $this->priority, 2 );
+		add_action( 'noptin_insert_subscriber', array( $this, 'add_subscriber' ), $this->priority, 2 );
 
 		add_filter( 'noptin_single_integration_settings', array( $this, 'add_list_options' ), $this->priority, 3 );
 
@@ -212,12 +212,12 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			$list = get_noptin_option( sanitize_text_field( "noptin_{$this->slug}_{$form}_default_list" ) );
 			$tags = get_noptin_option( sanitize_text_field( "noptin_{$this->slug}_{$form}_default_tags" ) );
 
-			// Suscriber tags.
+			// Subscriber tags.
 			if ( $this->supports( 'tags' ) && ! isset( $data[ $this->slug ]['tags'] ) && ! empty( $tags ) ) {
 				$data[ $this->slug ]['tags'] = noptin_parse_list( $tags, true );
 			}
 
-			// Suscriber list.
+			// Subscriber list.
 			if ( ! isset( $data[ $this->slug ]['lists'] ) && ! empty( $list ) ) {
 				$data[ $this->slug ]['lists'] = array_map( 'trim', explode( ',', $list ) );
 			}
@@ -245,13 +245,13 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			return $data;
 		}
 
-		// Suscriber tags.
+		// Subscriber tags.
 		$tags = "{$this->slug}_tags";
 		if ( $this->supports( 'tags' ) && ! empty( $form->$tags ) ) {
 			$data[ $this->slug ]['tags'] = array_map( 'trim', explode( ',', $form->$tags ) );
 		}
 
-		// Suscriber list.
+		// Subscriber list.
 		$list = "{$this->slug}_list";
 		if ( ! empty( $form->$list ) ) {
 			$data[ $this->slug ]['lists'] = array_map( 'trim', explode( ',', $form->$list ) );
@@ -379,7 +379,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 					'el'                    => 'input',
 					'section'		        => 'integrations',
 					'label'                 => __( 'Default tags', 'newsletter-optin-box' ),
-					'description'           => __( 'Enter a comma separated list of default tags to assign new suscribers.', 'newsletter-optin-box' ),
+					'description'           => __( 'Enter a comma separated list of default tags to assign new subscribers.', 'newsletter-optin-box' ),
 					'restrict'              => $this->get_enable_integration_option_name(),
 					'placeholder' => 'tag 1, tag 2',
 				);
@@ -716,7 +716,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 					'el'          => 'input',
 					'section'     => 'integrations',
 					'label'       => sprintf( __( '%s tags', 'newsletter-optin-box' ), $this->name ),
-					'description' => __( 'Enter a comma separated list of tags to assign new suscribers.', 'newsletter-optin-box' ) ,
+					'description' => __( 'Enter a comma separated list of tags to assign new subscribers.', 'newsletter-optin-box' ) ,
 					'placeholder' => '',
 					'restrict'    => sprintf(
 						'%s && %s',

@@ -270,7 +270,7 @@ function get_noptin_email_delay_units() {
  * @return string
  */
 function get_noptin_footer_text() {
-	return get_noptin_option( 'footer_texts', noptin()->mailer->default_footer_text() );
+	return get_noptin_option( 'footer_text', noptin()->mailer->default_footer_text() );
 }
 
 /**
@@ -335,60 +335,22 @@ function decrease_noptin_campaign_stat( $campaign_id, $stat ) {
  */
 function display_noptin_campaign_subscriber_filter( $campaign ) {
 
-	foreach ( get_noptin_custom_fields() as $custom_field ) {
-
-		if ( empty( $custom_field['options'] ) ) {
-			$custom_field['options'] = '';
-		}
-
-		// Checkbox
-		if ( 'checkbox' === $custom_field['type'] ) {
-
-			$options = array(
-				''  => __( 'Any', 'newsletter-optin-box' ),
-				'1' => __( 'Yes', 'newsletter-optin-box' ),
-				'0' => __( 'No', 'newsletter-optin-box' ),
-			);
-
-			// Select | Radio.
-		} elseif ( 'dropdown' === $custom_field['type'] || 'radio' === $custom_field['type'] ) {
-
-			$options = array_merge(
-				array(
-					'' => __( 'Any', 'newsletter-optin-box' ),
-				),
-				noptin_newslines_to_array( $custom_field['options'] )
-			);
-
-		} else {
-			continue;
-		}
-
-		?>
-
-			<label style="width:100%;" class="noptin-margin-y">
-				<strong><?php echo wp_kses_post( $custom_field['label'] ); ?></strong>
-				<select name="noptin_email[noptin_custom_field_<?php echo esc_attr( $custom_field['merge_tag'] ); ?>]" style="display:block; width:100%;">
-					<?php foreach ( $options as $key => $label ) : ?>
-						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $campaign->get( 'noptin_custom_field_' . $custom_field['merge_tag'] ) ); ?>><?php echo esc_html( $label ); ?></option>
-					<?php endforeach; ?>
-				</select>
-			</label>
-
-		<?php
-	}
-
 	?>
 
-		<label style="width:100%;" class="noptin-margin-y">
-			<strong><?php esc_html_e( 'Subscribed Via', 'newsletter-optin-box' ); ?></strong>
-				<select name="noptin_email[_subscriber_via]" style="display:block; width:100%;">
-					<option value="" <?php selected( '', $campaign->get( '_subscriber_via' ) ); ?>><?php esc_html_e( 'Any', 'newsletter-optin-box' ); ?></option>
-					<?php foreach ( noptin_get_subscription_sources() as $key => $label ) : ?>
-						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $campaign->get( '_subscriber_via' ) ); ?>><?php echo esc_html( $label ); ?></option>
+		<?php foreach ( get_noptin_subscriber_filters() as $key => $filter ) : ?>
+			<label style="width:100%; display: block;" class="noptin-margin-y noptin-subscribers-filter-<?php echo esc_attr( $key ); ?>">
+				<strong><?php echo esc_html( $filter['label'] ); ?></strong>
+				<select name="noptin_email[<?php echo esc_attr( $key ); ?>]" style="display:block; width:100%;">
+					<option value="" <?php selected( '', (string) $campaign->get( $key ) ); ?>><?php esc_html_e( 'Any', 'newsletter-optin-box' ); ?></option>
+					<?php foreach ( $filter['options'] as $option_name => $label ) : ?>
+						<option value="<?php echo esc_attr( $option_name ); ?>" <?php selected( (string) $option_name, (string) $campaign->get( $key ) ); ?>><?php echo esc_html( $label ); ?></option>
 					<?php endforeach; ?>
 				</select>
-		</label>
+				<?php if ( ! empty( $filter['description'] ) ) : ?>
+					<p class="description"><?php echo wp_kses_post( $filter['description'] ); ?></p>
+				<?php endif; ?>
+			</label>
+		<?php endforeach; ?>
 
 	<?php
 
@@ -405,40 +367,40 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
  */
 function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = false ) {
 
-    if ( true === apply_filters( 'noptin_error_log', true ) ) {
+	if ( true === apply_filters( 'noptin_error_log', true ) ) {
 
-        // Ensure the log is a scalar.
-        if ( ! is_scalar( $log ) ) {
-            $log = print_r( $log, true );
-        }
+		// Ensure the log is a scalar.
+		if ( ! is_scalar( $log ) ) {
+			$log = print_r( $log, true );
+		}
 
-        // Add title.
-        if ( ! empty( $title ) ) {
-            $log  = $title . ' ' . trim( $log );
-        }
+		// Add title.
+		if ( ! empty( $title ) ) {
+			$log  = $title . ' ' . trim( $log );
+		}
 
-        // Add the file to the label.
-        if ( ! empty( $file ) ) {
-            $log .= ' in ' . $file;
-        }
+		// Add the file to the label.
+		if ( ! empty( $file ) ) {
+			$log .= ' in ' . $file;
+		}
 
-        // Add the line number to the label.
-        if ( ! empty( $line ) ) {
-            $log .= ' on line ' . $line;
-        }
+		// Add the line number to the label.
+		if ( ! empty( $line ) ) {
+			$log .= ' on line ' . $line;
+		}
 
-        // Log the message.
-        error_log( trim( $log ) );
+		// Log the message.
+		error_log( trim( $log ) );
 
-        // ... and a backtrace.
-        if ( false !== $title && false !== $file ) {
-            error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
-        }
-    }
+		// ... and a backtrace.
+		if ( false !== $title && false !== $file ) {
+			error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
+		}
+	}
 
-    // Maybe exit.
-    if ( $exit ) {
-        exit;
-    }
+	// Maybe exit.
+	if ( $exit ) {
+		exit;
+	}
 
 }

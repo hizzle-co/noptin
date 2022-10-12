@@ -116,7 +116,7 @@ class Noptin_Integrations {
 	 */
 	public function load_ninja_forms_integration() {
 		if ( class_exists( 'Ninja_Forms' ) ) {
-			$ninja_forms = Ninja_Forms::instance();
+			$ninja_forms                    = Ninja_Forms::instance();
 			$ninja_forms->actions['noptin'] = new Noptin_Ninja_Forms();
 		}
 	}

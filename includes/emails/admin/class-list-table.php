@@ -211,7 +211,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		printf(
 			'<span class="%s">%s</span>',
 			esc_attr( $class ),
-			esc_html( $status )
+			wp_kses_post( $status )
 		);
 	}
 

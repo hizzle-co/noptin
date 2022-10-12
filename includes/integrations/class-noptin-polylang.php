@@ -19,6 +19,7 @@ class Noptin_Polylang {
 		add_filter( 'translate_noptin_form_id', array( $this, 'translate_form_id' ) );
 		add_filter( 'noptin_is_multilingual', '__return_true', 5 );
 		add_filter( 'noptin_form_scripts_params', array( $this, 'filter_ajax_params' ), 5 );
+		add_filter( 'noptin_multilingual_active_languages', array( $this, 'filter_active_languages' ) );
 
 	}
 
@@ -68,6 +69,21 @@ class Noptin_Polylang {
 	public function filter_ajax_params( $params ) {
 		$params['resturl'] = $params['ajaxurl'];
 		return $params;
+	}
+
+	/**
+	 * Returns an array of active languages.
+	 *
+	 * @param array $languages
+	 * @return array $languages
+	 */
+	public function filter_active_languages( $languages ) {
+
+		if ( function_exists( 'pll_languages_list' ) ) {
+			$languages = wp_list_pluck( pll_languages_list( array( 'fields' => array() ) ), 'name', 'locale' );
+		}
+
+		return $languages;
 	}
 
 }

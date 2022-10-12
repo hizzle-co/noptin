@@ -476,4 +476,3 @@ function translate_noptin_form_id( $form_id ) {
 	return apply_filters( 'translate_noptin_form_id', $form_id );
 
 }
-
