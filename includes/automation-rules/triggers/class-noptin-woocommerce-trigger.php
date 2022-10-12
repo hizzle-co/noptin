@@ -190,3 +190,5 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 }
+// TODO: Add a conditional rule for number of previous purchases.
+// TODO: Add a conditional rule for customers who checked the marketing checkbox.
