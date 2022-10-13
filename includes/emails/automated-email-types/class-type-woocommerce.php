@@ -727,6 +727,16 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'conditional_logic' => 'string',
 			),
 
+			'customer.newsletter'   => array(
+				'description'       => __( "The customer's newsletter subscription status", 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => 'customer.newsletter',
+				'conditional_logic' => 'string',
+				'options'           => array(
+					'yes' => __( 'subscribed', 'newsletter-optin-box' ),
+					'no'  => __( 'unsubscribed', 'newsletter-optin-box' ),
+				),
+			),
 		);
 
 	}
@@ -749,6 +759,16 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		// Process customer fields.
 		switch ( $field ) {
 
+			case 'custom.newsletter':
+				$email      = $this->customer->get_email();
+				$subscriber = new Noptin_Subscriber( $email );
+
+				if ( $subscriber->is_active() && ! noptin_is_email_unsubscribed( $email ) ) {
+					return 'yes';
+				}
+
+				return 'no';
+
 			case 'customer.details':
 				if ( ! empty( $this->order ) ) {
 
@@ -761,7 +781,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				break;
 
 			case 'customer.total_spent':
-				$format = isset( $args['format'] ) ? $args['format'] : 'price';
+				$format = isset( $args['format'] ) ? $args['format'] : 'decimal';
 				return $this->format_amount( $this->customer->get_total_spent(), null, $format );
 
 			default:

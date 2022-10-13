@@ -320,7 +320,6 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		foreach ( array_keys( $this->get_customer_merge_tags() ) as $tag ) {
 			noptin()->emails->tags->remove_tag( $tag );
 		}
-
 	}
 
 }
