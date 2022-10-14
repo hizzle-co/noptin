@@ -39,6 +39,8 @@ uasort(
 	}
 );
 
+// Only fetch the last 20 activities.
+$activities = array_slice( $activities, -20, 20, true );
 ?>
 
 <div style="overflow-x: auto;">

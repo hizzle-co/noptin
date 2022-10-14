@@ -130,18 +130,19 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 		$args['customer'] = $customer;
 
 		// Record activity.
-		if ( ! empty( $args['email'] ) ) {
+		if ( ! empty( $args['email'] ) && 'update_order' !== $this->order_action ) {
 			noptin_record_subscriber_activity(
 				$args['email'],
 				sprintf(
 					// translators: %1 is the order number, %2 is the order action label, e.g. "Created" or "Refunded".
-					__( 'WooCommerce order #%1$s %#$s', 'newsletter-optin-box' ),
-					wc_strtolower( $this->order_action_label ),
+					__( 'WooCommerce order #%1$s %2$s', 'newsletter-optin-box' ),
 					sprintf(
-						'<a href="%s">%s</a>',
+						'<a href="%s">%s</a> (%s)',
 						esc_url( $order->get_edit_order_url() ),
-						$order->get_order_number()
-					)
+						$order->get_order_number(),
+						$order->get_formatted_order_total()
+					),
+					wc_strtolower( $this->order_action_label )
 				)
 			);
 		}

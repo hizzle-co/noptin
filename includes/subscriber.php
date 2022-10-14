@@ -1708,10 +1708,21 @@ function noptin_subscriber_delete_url( $subscriber_id ) {
  */
 function noptin_record_subscriber_activity( $email_address, $activity ) {
 
-	do_action( 'noptin_record_subscriber_activity', $email_address, $activity );
-
 	// Get the subscriber.
-	$subscriber = get_noptin_subscriber( $email_address );
+	if ( is_numeric( $email_address ) ) {
+		$subscriber = get_noptin_subscriber( $email_address );
+
+		if ( ! $subscriber->exists() ) {
+			return;
+		}
+
+		$email_address = $subscriber->email;
+	} else {
+
+		$subscriber = get_noptin_subscriber( $email_address );
+	}
+
+	do_action( 'noptin_record_subscriber_activity', $email_address, $activity );
 
 	// Abort if the subscriber doesn't exist.
 	if ( ! $subscriber->exists() ) {
@@ -1719,16 +1730,21 @@ function noptin_record_subscriber_activity( $email_address, $activity ) {
 	}
 
 	// Record the activity.
-	$activity = get_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', true );
+	$saved_activity = get_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', true );
 
-	if ( ! is_array( $activity ) ) {
-		$activity = array();
+	if ( ! is_array( $saved_activity ) ) {
+		$saved_activity = array();
 	}
 
-	$activity[] = array(
+	$saved_activity[] = array(
 		'time'    => time(),
 		'content' => $activity,
 	);
 
-	update_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', $activity );
+	// Only save the last 30 activities.
+	if ( count( $saved_activity ) > 30 ) {
+		$saved_activity = array_slice( $saved_activity, -30 );
+	}
+
+	update_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', $saved_activity );
 }
