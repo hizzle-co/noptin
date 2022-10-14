@@ -1699,3 +1699,36 @@ function noptin_subscriber_delete_url( $subscriber_id ) {
 	);
 
 }
+
+/**
+ * Records a subscriber's activity.
+ *
+ * @param string $email_address
+ * @param string $activity The activity to record.
+ */
+function noptin_record_subscriber_activity( $email_address, $activity ) {
+
+	do_action( 'noptin_record_subscriber_activity', $email_address, $activity );
+
+	// Get the subscriber.
+	$subscriber = get_noptin_subscriber( $email_address );
+
+	// Abort if the subscriber doesn't exist.
+	if ( ! $subscriber->exists() ) {
+		return;
+	}
+
+	// Record the activity.
+	$activity = get_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', true );
+
+	if ( ! is_array( $activity ) ) {
+		$activity = array();
+	}
+
+	$activity[] = array(
+		'time'    => time(),
+		'content' => $activity,
+	);
+
+	update_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', $activity );
+}

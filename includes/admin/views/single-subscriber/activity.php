@@ -17,6 +17,19 @@ if ( ! $subscriber->is_active() && ! empty( $subscriber->unsubscribed_on ) ) {
 	$activities[ __( 'Unsubscribed', 'newsletter-optin-box' ) ] = $subscriber->unsubscribed_on;
 }
 
+// Record the activity.
+$extra_activity = get_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', true );
+
+if ( is_array( $extra_activity ) && function_exists( 'wp_date' ) ) {
+
+	foreach ( $extra_activity as $activity ) {
+
+		if ( ! empty( $activity['time'] ) ) {
+			$activities[ $activity['content'] ] = wp_date( 'Y-m-d H:i:s', $activity['time'] );
+		}
+	}
+}
+
 $activities = apply_filters( 'noptin_subscriber_activity_feed', $activities, $subscriber );
 
 uasort(
