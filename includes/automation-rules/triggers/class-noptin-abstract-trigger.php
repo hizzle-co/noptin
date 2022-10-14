@@ -133,7 +133,7 @@ abstract class Noptin_Abstract_Trigger {
             ),
 
             'day'     => array(
-                'description'       => __( 'The day of the week', 'newsletter-optin-box' ),
+                'description'       => __( 'The day of the month', 'newsletter-optin-box' ),
                 'replacement'       => current_time( 'j' ),
                 'example'           => 'day',
                 'conditional_logic' => 'number',

@@ -54,7 +54,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	 *
 	 */
 	public function get_description() {
-		return __( 'Send an email to your customers when they reach a specific lifetime value.', 'newsletter-optin-box' );
+		return __( 'Send an email to your customers when they reach a given lifetime value.', 'newsletter-optin-box' );
 	}
 
 	/**
