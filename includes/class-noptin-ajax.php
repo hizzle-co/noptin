@@ -319,7 +319,7 @@ class Noptin_Ajax {
 
 		// avoid bot submissions.
 		if ( ! empty( $_POST['noptin_confirm_submit'] ) ) {
-			return;
+			exit;
 		}
 
 		/**
@@ -473,7 +473,7 @@ class Noptin_Ajax {
 
 		$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) );
 
-		wp_send_json( $result );
+		wp_send_json_success( $result );
 		exit;
 
 	}

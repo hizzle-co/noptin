@@ -1,14 +1,15 @@
+import domReady from './partials/dom-ready';
+import randomString from './partials/random-string';
+import subscribe from './partials/frontend/subscribe';
+import throttle from 'lodash.throttle';
+
+// Init when the DOM is ready.
+domReady( function() {
+	// TODO: Move everything here/
+});
+
 (function ($) {
 	"use strict"
-
-	//throttle form lodash
-	var throttle = require('lodash.throttle');
-
-	//Quickly generates a random string
-	var randomString = () => {
-		var rand = Math.random()
-		return 'key' + rand.toString(36).replace(/[^a-z]+/g, '')
-	}
 
 	// Our little library for displaying popup forms.
 	let popups = require('./partials/popups')
@@ -238,115 +239,17 @@
 		});
 	});
 
-	// Submits forms via ajax.
-	function subscribe_user(form) {
-
-		$(form).prepend('<label style="display: none;"><input type="checkbox" name="noptin_confirm_submit"/>Are you sure?</label>')
-
-		//select the form
-		$('body') .on('submit', form, function (e) {
-
-			//Prevent the form from submitting
-			e.preventDefault();
-
-			//Modify form state
-			$(this)
-				.fadeTo(600, 0.5)
-				.find('.noptin_feedback_success, .noptin_feedback_error')
-				.empty()
-				.hide()
-
-				//Prep all form data
-				var data = {},
-					fields = $(this).serializeArray()
-
-				jQuery.each(fields, (i, field) => {
-					data[field.name] = field.value
-				});
-
-				//Add nonce and action
-				data.action = "noptin_new_subscriber"
-				data._wpnonce = noptin.nonce
-				data.conversion_page = window.location.href
-
-				//Post it to the server
-				$.post(noptin.ajaxurl, data)
-
-					//Update the user of success
-					.done((data, status, xhr) => {
-
-						if ('string' == typeof data) {
-							$(this)
-								.find('.noptin_feedback_error')
-								.text(data)
-								.show();
-							return;
-						}
-
-						// Google Analytics
-						try {
-
-							if (typeof gtag === 'function') {
-								gtag('event', 'subscribe', { 'method': 'Noptin Form' });
-							} else if (typeof ga === 'function') {
-								ga('send', 'event', 'Noptin Form', 'Subscribe', 'Noptin');
-							}
-
-						} catch (err) {
-							console.error(err.message);
-						}
-
-						noptin_popups.subscribed = true
-
-						if (data.action == 'redirect') {
-							window.location = data.redirect;
-							return;
-						}
-
-						// Gutenberg
-						var url = $(this).find('.noptin_form_redirect').val();
-
-						if (url) {
-							window.location = url;
-							return;
-						}
-
-						if (data.action == 'msg') {
-							$(this).html('<div class="noptin-big noptin-padded">' + data.msg + '</div>');
-							$(this).css({
-								display: 'flex',
-								justifyContent: 'center'
-							})
-							setTimeout(() => {
-								$(this).closest('.noptin-showing').removeClass('noptin-showing')
-							}, 2000)
-
-						}
-
-
-					})
-					.fail(() => {
-						var msg = 'Could not establish a connection to the server.'
-						$(this)
-							.find('.noptin_feedback_error')
-							.text(msg)
-							.show();
-					})
-					.always(() => {
-						$(this).fadeTo(600, 1)
-					})
-			})
-	}
-
 	// Normal forms.
-	subscribe_user('.noptin-optin-form-wrapper form');
+	document.querySelectorAll( '.noptin-optin-form-wrapper form, .wp-block-noptin-email-optin form, .noptin-email-optin-widget form' ).forEach((form) => {
+		subscribe( form );
+	})
 
 	// Gutenberg forms.
-	$('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form')
-		.find('input[type=email]')
-		.attr('name', 'email')
+	document.querySelectorAll( '.wp-block-noptin-email-optin form input[type=email], .noptin-email-optin-widget form input[type=email]' ).forEach((input) => {
 
-	subscribe_user('.wp-block-noptin-email-optin form, .noptin-email-optin-widget form');
+		// Add name attribute.
+		input.setAttribute( 'name', 'email' );
+	})
 
 	// Existing subscribers.
 	$(document).on('click', '.noptin-mark-as-existing-subscriber', function (e) {

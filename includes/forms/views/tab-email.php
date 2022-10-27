@@ -14,7 +14,7 @@ $url = add_query_arg(
 		'utm_campaign' => 'form-builder',
 		'utm_source'   => rawurlencode( esc_url( get_home_url() ) ),
 	),
-	'https://noptin.com/product/ultimate-addons-pack'
+	'https://noptin.com/ultimate-addons-pack/'
 );
 
 ?>

@@ -45,6 +45,7 @@
 						<div id="titlewrap">
 							<label class="screen-reader-text" id="title-prompt-text" for="title"><?php esc_html_e( 'Email Subject', 'newsletter-optin-box' ); ?></label>
 							<input type="text" name="noptin_email[subject]" size="30" value="<?php echo esc_attr( $campaign->get_subject() ); ?>" placeholder="<?php esc_attr_e( 'Email Subject', 'newsletter-optin-box' ); ?>" id="title" spellcheck="true" autocomplete="off">
+							<p class="description"><?php esc_html_e( 'The subject of the email.', 'newsletter-optin-box' ); ?></p>
 						</div>
 					</div>
 

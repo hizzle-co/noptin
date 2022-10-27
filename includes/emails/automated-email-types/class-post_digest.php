@@ -249,7 +249,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				'utm_campaign' => 'post-digests',
 				'utm_source'   => 'email-editor',
 			),
-			'https://noptin.com/product/ultimate-addons-pack'
+			'https://noptin.com/ultimate-addons-pack/'
 		);
 
 		printf(
