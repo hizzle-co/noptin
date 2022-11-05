@@ -39,7 +39,7 @@
 		"@mdi/js": "7.0.96",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
 		"@wordpress/babel-preset-default": "7.5.0",
-		"autoprefixer": "10.4.12",
+		"autoprefixer": "10.4.13",
 		"babel-loader": "8.3.0",
 		"postcss": "8.4.18",
 		"postcss-csso": "6.0.1",
