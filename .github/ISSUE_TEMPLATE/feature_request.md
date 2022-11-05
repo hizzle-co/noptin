@@ -7,8 +7,4 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+Do not post feature requests here. You can do so by creating a new discussion here https://github.com/hizzle-co/noptin/discussions

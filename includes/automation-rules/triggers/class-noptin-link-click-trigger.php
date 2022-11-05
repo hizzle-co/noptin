@@ -180,6 +180,17 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 	 * @param $link The link that was clicked.
 	 */
 	public function maybe_trigger( $subscriber_id, $campaign_id, $link ) {
+
+		noptin_record_subscriber_activity(
+			$subscriber_id,
+			sprintf(
+				// translators: %2 is the campaign name, #1 is the link.
+				__( 'Clicked on link %1$s from campaign %2$s', 'newsletter-optin-box' ),
+				esc_url( $link ),
+				get_the_title( $campaign_id )
+			)
+		);
+
 		$this->trigger( $subscriber_id, compact( 'campaign_id', 'link' ) );
 	}
 

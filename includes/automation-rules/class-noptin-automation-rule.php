@@ -180,7 +180,7 @@ class Noptin_Automation_Rule {
 		}
 
 		$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $this, $trigger );
-
+		$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings', $trigger_settings, $this, $trigger );
 		return $this->prepare_settings( $settings, $trigger_settings );
 	}
 
@@ -199,8 +199,8 @@ class Noptin_Automation_Rule {
 			return $settings;
 		}
 
-		$action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
-
+		$action_settings = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
+		$action_settings = apply_filters( 'noptin_automation_rule_action_settings', $action_settings, $this, $action );
 		return $this->prepare_settings( $settings, $action_settings );
 	}
 

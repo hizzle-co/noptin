@@ -42,7 +42,8 @@ class Noptin_Popups {
 		 */
 		do_action( 'before_noptin_popup_display', $this );
 
-		$popups = $this->get_popups();
+		$popups    = $this->get_popups();
+		$displayed = false;
 		foreach ( $popups as $popup ) {
 
 			// Prepare the form.
@@ -53,7 +54,12 @@ class Noptin_Popups {
 				echo '<div class="noptin-popup-template-holder">';
 				$form->display();
 				echo '</div>';
+				$displayed = true;
 			}
+		}
+
+		if ( $displayed ) {
+			wp_enqueue_script( 'noptin-legacy-popups' );
 		}
 
 		/**

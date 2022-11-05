@@ -38,7 +38,7 @@
 					<p><?php esc_html_e( 'Introduce yourself to new subscribers or set up a series of welcome emails to act as an email course.', 'newsletter-optin-box' ); ?></p>
 					<p style="color: #a00;"><em><?php esc_html_e( 'Not available in your plan', 'newsletter-optin-box' ); ?></em></p>
 					<div class="noptin-email-type-action">
-						<a href="https://noptin.com/product/ultimate-addons-pack?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=welcome_email" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
+						<a href="https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=welcome_email" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
 					</div>
 				</div>
 			</div>
@@ -52,7 +52,7 @@
 					<p><?php esc_html_e( 'Welcome new users to your website, introduce yourself, etc', 'newsletter-optin-box' ); ?></p>
 					<p style="color: #a00;"><em><?php esc_html_e( 'Not available in your plan', 'newsletter-optin-box' ); ?></em></p>
 					<div class="noptin-email-type-action">
-						<a href="https://noptin.com/product/ultimate-addons-pack?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=welcome_users_email" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
+						<a href="https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=welcome_users_email" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
 					</div>
 				</div>
 			</div>
@@ -66,7 +66,7 @@
 					<p><?php esc_html_e( 'Send an email to a subscriber when they are tagged or untagged.', 'newsletter-optin-box' ); ?></p>
 					<p style="color: #a00;"><em><?php esc_html_e( 'Not available in your plan', 'newsletter-optin-box' ); ?></em></p>
 					<div class="noptin-email-type-action">
-						<a href="https://noptin.com/product/ultimate-addons-pack?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=subscriber_tag" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
+						<a href="https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=subscriber_tag" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
 					</div>
 				</div>
 			</div>
@@ -80,7 +80,7 @@
 					<p><?php esc_html_e( 'Send an email to a subscriber when they join or leave a list.', 'newsletter-optin-box' ); ?></p>
 					<p style="color: #a00;"><em><?php esc_html_e( 'Not available in your plan', 'newsletter-optin-box' ); ?></em></p>
 					<div class="noptin-email-type-action">
-						<a href="https://noptin.com/product/ultimate-addons-pack?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=subscriber_list" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
+						<a href="https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=subscriber_list" class="button" target="_blank"><?php esc_html_e( 'Upgrade', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt" style="vertical-align: middle;"></i></a>
 					</div>
 				</div>
 			</div>

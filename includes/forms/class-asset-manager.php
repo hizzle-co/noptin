@@ -79,9 +79,17 @@ class Noptin_Form_Asset_Manager {
 		// JS for legacy forms/shortcodes/widgets/blocks.
 		wp_register_script(
 			'noptin_front',
-			noptin()->plugin_url . 'includes/assets/js/dist/frontend.js',
-			array( 'jquery' ),
-			filemtime( noptin()->plugin_path . 'includes/assets/js/dist/frontend.js' ),
+			noptin()->plugin_url . 'includes/assets/js/dist/legacy-forms.js',
+			array(),
+			filemtime( noptin()->plugin_path . 'includes/assets/js/dist/legacy-forms.js' ),
+			true
+		);
+
+		wp_register_script(
+			'noptin-legacy-popups',
+			noptin()->plugin_url . 'includes/assets/js/dist/legacy-popups.js',
+			array( 'jquery', 'noptin_front' ),
+			filemtime( noptin()->plugin_path . 'includes/assets/js/dist/legacy-popups.js' ),
 			true
 		);
 

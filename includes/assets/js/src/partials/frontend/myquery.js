@@ -410,6 +410,23 @@ class myQuery {
 		return result;
 	}
 
+	/**
+	 * jQuery append method.
+	 *
+	 * @param {String} element
+	 * @return {myQuery}
+	 */
+	append ( el ) {
+		this.each( function( item ) {
+			item.insertAdjacentHTML( 'beforeend', el );
+		});
+		return this;
+	}
 };
 
+/**
+ * Dom selector.
+ *
+ * @return {myQuery}
+ */
 export default (...args) => new myQuery(...args);

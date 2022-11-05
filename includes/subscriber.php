@@ -1699,3 +1699,52 @@ function noptin_subscriber_delete_url( $subscriber_id ) {
 	);
 
 }
+
+/**
+ * Records a subscriber's activity.
+ *
+ * @param string $email_address
+ * @param string $activity The activity to record.
+ */
+function noptin_record_subscriber_activity( $email_address, $activity ) {
+
+	// Get the subscriber.
+	if ( is_numeric( $email_address ) ) {
+		$subscriber = get_noptin_subscriber( $email_address );
+
+		if ( ! $subscriber->exists() ) {
+			return;
+		}
+
+		$email_address = $subscriber->email;
+	} else {
+
+		$subscriber = get_noptin_subscriber( $email_address );
+	}
+
+	do_action( 'noptin_record_subscriber_activity', $email_address, $activity );
+
+	// Abort if the subscriber doesn't exist.
+	if ( ! $subscriber->exists() ) {
+		return;
+	}
+
+	// Record the activity.
+	$saved_activity = get_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', true );
+
+	if ( ! is_array( $saved_activity ) ) {
+		$saved_activity = array();
+	}
+
+	$saved_activity[] = array(
+		'time'    => time(),
+		'content' => $activity,
+	);
+
+	// Only save the last 30 activities.
+	if ( count( $saved_activity ) > 30 ) {
+		$saved_activity = array_slice( $saved_activity, -30 );
+	}
+
+	update_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', $saved_activity );
+}

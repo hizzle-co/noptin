@@ -1572,6 +1572,20 @@ function noptin_kses_post_vue() {
 }
 
 /**
+ * Returns the current user's logged in status.
+ *
+ * @return string
+ */
+function noptin_get_user_logged_in_status() {
+
+	if ( get_current_user_id() > 0 ) {
+		return 'yes';
+	}
+
+	return 'no';
+}
+
+/**
  * Checks if a given WP User is unsubscribed.
  *
  * @since 1.7.0

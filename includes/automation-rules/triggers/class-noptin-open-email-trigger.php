@@ -130,6 +130,15 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	 * @param $campaign_id The campaign that was clicked.
 	 */
 	public function maybe_trigger( $subscriber_id, $campaign_id ) {
+		noptin_record_subscriber_activity(
+			$subscriber_id,
+			sprintf(
+				// translators: %s is the campaign name.
+				__( 'Opened email campaign %s', 'newsletter-optin-box' ),
+				get_the_title( $campaign_id )
+			)
+		);
+
 		$this->trigger( $subscriber_id, compact( 'campaign_id' ) );
 	}
 

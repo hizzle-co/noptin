@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 6.1
 Requires PHP: 5.6
-Version: 1.9.0
-Stable tag: 1.9.0
+Version: 1.9.1
+Stable tag: 1.9.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.9.1 =
 * Added more WooCommerce conditional logic filters.
+* Newsletter perfomance improvements.
 
 = 1.9.0 =
 * GeoDirectory newsletter integration.
