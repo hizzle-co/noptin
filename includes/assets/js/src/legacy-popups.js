@@ -1,12 +1,5 @@
-import domReady from './partials/dom-ready';
-import randomString from './partials/random-string';
-import subscribe from './partials/frontend/subscribe';
 import throttle from 'lodash.throttle';
-
-// Init when the DOM is ready.
-domReady( function() {
-	// TODO: Move everything here/
-});
+import randomString from './partials/random-string';
 
 (function ($) {
 	"use strict"
@@ -231,44 +224,5 @@ domReady( function() {
 			cb.call(this)
 		}
 	})
-
-	// Hide slide in form.
-	$(document).ready(function () {
-		$(document).on('click', '.noptin-showing .noptin-popup-close', function (e) {
-			$(this).closest('.noptin-showing').removeClass('noptin-showing')
-		});
-	});
-
-	// Normal forms.
-	document.querySelectorAll( '.noptin-optin-form-wrapper form, .wp-block-noptin-email-optin form, .noptin-email-optin-widget form' ).forEach((form) => {
-		subscribe( form );
-	})
-
-	// Gutenberg forms.
-	document.querySelectorAll( '.wp-block-noptin-email-optin form input[type=email], .noptin-email-optin-widget form input[type=email]' ).forEach((input) => {
-
-		// Add name attribute.
-		input.setAttribute( 'name', 'email' );
-	})
-
-	// Existing subscribers.
-	$(document).on('click', '.noptin-mark-as-existing-subscriber', function (e) {
-
-		let setCookie = cname => {
-			let d = new Date();
-			d.setTime(d.getTime() + (30*24*60*60*1000)); // 30 days from now in milliseconds
-			let expires = "expires="+ d.toUTCString();
-			document.cookie = `${cname}=1;${expires};path=${noptin.cookie_path}`;
-		}
-
-		if ( noptin.cookie ) {
-			setCookie(noptin.cookie)
-		}
-		setCookie('noptin_email_subscribed')
-
-		$(this).closest('.noptin-showing').removeClass('noptin-showing')
-		popups.close()
-		noptin_popups.subscribed = true
-	});
 
 })(jQuery);

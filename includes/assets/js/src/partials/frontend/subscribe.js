@@ -113,7 +113,7 @@ export default function subscribe( form ) {
 						form.style.justifyContent = 'center';
 
 						setTimeout(() => {
-							document.querySelector( '.noptin-showing' ).classList.remove( 'noptin-showing' );
+							document.querySelector( '.noptin-showing' ) && document.querySelector( '.noptin-showing' ).classList.remove( 'noptin-showing' );
 						}, 2000)
 					}
 				} else {
