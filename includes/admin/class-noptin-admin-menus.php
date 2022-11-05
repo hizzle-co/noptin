@@ -25,6 +25,7 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'settings_menu' ), 50 );
 		add_action( 'admin_menu', array( $this, 'tools_menu' ), 60 );
 		add_action( 'admin_menu', array( $this, 'extensions_menu' ), 70 );
+		add_action( 'admin_menu', array( $this, 'documentation_menu' ), 80 );
 
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 
@@ -225,6 +226,24 @@ class Noptin_Admin_Menus {
 				get_noptin_capability(),
 				'noptin-addons',
 				array( 'Noptin_COM_Helper', 'output_extensions_page' )
+			);
+
+		}
+	}
+
+	/**
+	 * Add help menu item.
+	 */
+	public function documentation_menu() {
+		if ( apply_filters( 'noptin_show_documentation_link', true ) ) {
+
+			add_submenu_page(
+				'noptin',
+				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				get_noptin_capability(),
+				'https://noptin.com/guide/?utm_source=plugin&utm_medium=help&utm_campaign=documentation',
+				''
 			);
 
 		}
