@@ -16,6 +16,11 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 	private $bridge = null;
 
 	/**
+	 * Deprecated.
+	 */
+	public $depricated = true;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.0
