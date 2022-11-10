@@ -146,47 +146,7 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_settings() {
-
-		return array(
-
-			'new_customer' => array(
-				'type'        => 'checkbox_alt',
-				'el'          => 'input',
-				'label'       => __( 'New customers', 'newsletter-optin-box' ),
-				'description' => __( 'Only fire for first time buyers?', 'newsletter-optin-box' ),
-			),
-
-		);
-
-	}
-
-	/**
-     * Checks if this rule is valid for the above parameters.
-     *
-     * @since 1.2.8
-     * @param Noptin_Automation_Rule $rule The rule to check for.
-     * @param mixed $args Extra args for the action.
-     * @param mixed $subject The subject that this rule was triggered for.
-     * @param Noptin_Abstract_Action $action The action to run.
-     * @return bool
-     */
-	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
-		$settings = $rule->trigger_settings;
-
-		// Are we firering for new customers only?
-		if ( ! empty( $settings['new_customer'] ) ) {
-
-			// Fetch the user associated with the order.
-			$user = $args['bridge']->get_order_customer_user_id( $args['order_id'] );
-			if ( empty( $user ) ) {
-				$user = $args['bridge']->get_order_customer_email( $args['order_id'] );
-			}
-
-			return $args['bridge']->get_order_count( $user ) === 1;
-		}
-
-		return true;
-
+		return array();
 	}
 
 }
