@@ -135,7 +135,7 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 			sprintf(
 				// translators: %s is the campaign name.
 				__( 'Opened email campaign %s', 'newsletter-optin-box' ),
-				get_the_title( $campaign_id )
+				'<code>' . get_the_title( $campaign_id ) . '</code>'
 			)
 		);
 

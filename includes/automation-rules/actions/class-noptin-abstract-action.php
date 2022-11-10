@@ -186,6 +186,23 @@ abstract class Noptin_Abstract_Action {
 		$times_run = (int) $rule->times_run + 1;
 		noptin()->automation_rules->update_rule( $rule, compact( 'times_run' ) );
 
+		// Record activity.
+		$subject_email = $this->get_subject_email( $subject, $rule, $args );
+		if ( is_email( $subject_email ) ) {
+			$action  = $this->get_name();
+			$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
+			$trigger = $trigger ? $trigger->get_name() : $rule->trigger_id;
+
+			noptin_record_subscriber_activity(
+				$subject_email,
+				sprintf(
+					// translators: %1 is the trigger, %2 is the action.
+					__( 'Excecuted automation rule, Trigger: %1$s, Action: %2$s.', 'newsletter-optin-box' ),
+					'<code>' . esc_html( $trigger ) . '</code>',
+					'<code>' . esc_html( $action ) . '</code>'
+				)
+			);
+		}
 	}
 
 	/**
