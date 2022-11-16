@@ -118,10 +118,6 @@
 		line-height: 20px;
 	}
 
-	a {
-		color: #1a82e2;
-	}
-
 	img, figure {
 		height: auto;
 		line-height: 100%;

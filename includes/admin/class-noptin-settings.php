@@ -343,6 +343,16 @@ class Noptin_Settings {
 				'description' => __( 'Enter a full url to your logo. Works best with rectangular images.', 'newsletter-optin-box' ),
 			),
 
+			'brand_color'                  => array(
+				'el'          => 'input',
+				'type'        => 'text',
+				'section'     => 'emails',
+				'label'       => __( 'Brand Color', 'newsletter-optin-box' ),
+				'placeholder' => '#1a82e2',
+				'default'     => '#1a82e2',
+				'description' => __( 'Used as the link color and button background.', 'newsletter-optin-box' ),
+			),
+
 			'email_template'               => array(
 				'el'          => 'select',
 				'section'     => 'emails',
@@ -361,19 +371,6 @@ class Noptin_Settings {
 						esc_html__( 'Or install our free email templates plugin to design your own templates.', 'newsletter-optin-box' )
 					)
 				),
-			),
-
-			'permission_text'              => array(
-				'el'          => 'textarea',
-				'section'     => 'emails',
-				'label'       => __( 'Permission reminder', 'newsletter-optin-box' ),
-				'description' => sprintf(
-					/* Translators: %s . [[unsubscribe_url]] */
-					__( '%s will be replaced by a url to the unsubscription page.', 'newsletter-optin-box' ),
-					'[[unsubscribe_url]]'
-				),
-				'placeholder' => noptin()->mailer->default_permission_text(),
-				'default'     => noptin()->mailer->default_permission_text(),
 			),
 
 			'footer_text'                  => array(

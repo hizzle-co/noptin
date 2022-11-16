@@ -153,7 +153,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$this->tags['button'] = array(
 			'description' => __( 'Displays a button', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_button' ),
-			'example'     => "button text='Click Here' url='" . home_url() . "' background='blue' color='white' rounding='4px'",
+			'example'     => "button text='Click Here' url='" . home_url() . "' background='brand' color='white' rounding='4px'",
 		);
 
 	}
@@ -209,10 +209,15 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function get_button( $args = array() ) {
 		$url        = isset( $args['url'] ) ? $args['url'] : home_url();
-		$background = isset( $args['background'] ) ? $args['background'] : 'blue';
+		$background = isset( $args['background'] ) ? $args['background'] : 'brand';
 		$color      = isset( $args['color'] ) ? $args['color'] : 'white';
 		$rounding   = isset( $args['rounding'] ) ? $args['rounding'] : '4px';
 		$text       = isset( $args['text'] ) ? $args['text'] : 'Click Here';
+
+		if ( 'brand' === $background ) {
+			$brand_color = get_noptin_option( 'brand_color' );
+			$background = empty( $brand_color ) ? '#1a82e2' : $brand_color;
+		}
 
 		// Generate button.
 		$button = sprintf(

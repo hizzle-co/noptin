@@ -378,7 +378,9 @@ class Noptin_Email_Generator {
 		}
 
 		// Base styles.
-		$styles = apply_filters( 'noptin_email_styles', '', $this );
+		$brand_color = get_noptin_option( 'brand_color' );
+		$brand_color = empty( $brand_color ) ? '#1a82e2' : $brand_color;
+		$styles      = apply_filters( 'noptin_email_styles', "a { color: $brand_color; } .bg-brand { background-color: $brand_color; }", $this );
 
 		try {
 
