@@ -574,8 +574,8 @@ class Noptin_Ajax {
 		}
 
 		// Prepare settings.
-		$trigger_settings = $rule->sanitize_trigger_settings( isset( $_POST['trigger_settings'] ) ? stripslashes_deep( $_POST['trigger_settings'] ) : array() );
-		$action_settings  = $rule->sanitize_action_settings( isset( $_POST['action_settings'] ) ? stripslashes_deep( $_POST['action_settings'] ) : array() );
+		$trigger_settings = isset( $_POST['trigger_settings'] ) ? $rule->sanitize_trigger_settings( stripslashes_deep( $_POST['trigger_settings'] ) ) : array();
+		$action_settings  = isset( $_POST['action_settings'] ) ? $rule->sanitize_action_settings( stripslashes_deep( $_POST['action_settings'] ) ) : array();
 
 		// Prepare the conditional logic.
 		$trigger_settings['conditional_logic'] = noptin_get_default_conditional_logic();

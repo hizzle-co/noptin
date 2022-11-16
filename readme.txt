@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.9.3 =
+* Fix: WooCommerce product purchase automation trigger reverts to intially selected values when saved.
+
 = 1.9.2 =
 * Add subscribe to newsletter automation rule action.
 * Improve WooCommerce product purchased automation rule trigger.

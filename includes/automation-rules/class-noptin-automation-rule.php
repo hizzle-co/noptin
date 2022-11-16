@@ -233,7 +233,7 @@ class Noptin_Automation_Rule {
 				if ( is_array( $value ) ) {
 					$value = array_values( array_intersect( $value, $choices ) );
 				} else {
-					$value = in_array( $value, $choices, true ) ? $value : $default;
+					$value = in_array( $value, $choices ) ? $value : $default; // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 				}
 			}
 
