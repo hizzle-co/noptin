@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.9.4 =
+* Fix: Noptin subscriber overview page blank when certain plugins are active. [https://github.com/lasssim](@lasssim)
+
 = 1.9.3 =
 * Fix: WooCommerce product purchase automation trigger reverts to intially selected values when saved.
 
