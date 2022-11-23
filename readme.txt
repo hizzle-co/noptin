@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 6.1
 Requires PHP: 5.6
-Version: 1.9.3
-Stable tag: 1.9.3
+Version: 1.9.4
+Stable tag: 1.9.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -135,7 +135,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 == Changelog ==
 
 = 1.9.4 =
-* Fix: Noptin subscriber overview page blank when certain plugins are active. [https://github.com/lasssim](@lasssim)
+* Fix: Noptin newsletter subscribers overview page blank when certain plugins are active. [https://github.com/lasssim](@lasssim)
 
 = 1.9.3 =
 * Fix: WooCommerce product purchase automation trigger reverts to intially selected values when saved.
