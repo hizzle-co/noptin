@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.9.5 =
+* Daily post digests now send content published in the previous day instead of the previous 24 hours.
+
 = 1.9.4 =
 * Fix: Noptin newsletter subscribers overview page blank when certain plugins are active. [https://github.com/lasssim](@lasssim)
 
