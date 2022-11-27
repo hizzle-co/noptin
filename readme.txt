@@ -136,6 +136,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.9.5 =
 * Daily post digests now send content published in the previous day instead of the previous 24 hours.
+* Add [[order.coupon_code]] WooCommerce newsletter merge tag.
 
 = 1.9.4 =
 * Fix: Noptin newsletter subscribers overview page blank when certain plugins are active. [https://github.com/lasssim](@lasssim)
