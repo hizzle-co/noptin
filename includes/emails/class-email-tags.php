@@ -59,6 +59,11 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function replace_in_subject( $string, $is_partial = false ) {
+
+		if ( ! $is_partial ) {
+			$this->set_current_email();
+		}
+
 		$this->is_partial = $is_partial;
 		$result           = $this->replace( $string, 'strip_tags' );
 		$this->is_partial = false;
@@ -73,10 +78,42 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function replace_in_body( $string, $is_partial = false ) {
+
+		if ( ! $is_partial ) {
+			$this->set_current_email();
+		}
+
 		$this->is_partial = $is_partial;
 		$result           = $this->replace( $string, '' );
 		$this->is_partial = false;
 		return $result;
+	}
+
+	/**
+	 * Sets the current email.
+	 */
+	protected function set_current_email() {
+		global $current_noptin_email;
+
+		// Customers.
+		if ( isset( $this->tags['customer.email'] ) ) {
+			$current_noptin_email = $this->replace( '[[customer.email]]', 'sanitize_email' );
+			return;
+		}
+
+		// Users.
+		if ( isset( $this->tags['user.email'] ) ) {
+			$current_noptin_email = $this->replace( '[[user.email]]', 'sanitize_email' );
+			return;
+		}
+
+		// Email.
+		if ( isset( $this->tags['email'] ) ) {
+			$current_noptin_email = $this->replace( '[[email]]', 'sanitize_email' );
+			return;
+		}
+
+		do_action( 'noptin_set_current_email' );
 	}
 
 	/**
