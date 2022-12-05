@@ -14,7 +14,7 @@
 	$has_license = $license && ! is_wp_error( $license ) && $license->is_active && ! $license->has_expired;
 
 	if ( $has_license && ! $is_connection ) {
-		$has_license = 'noptin-connections' !== $license->product_sku;
+		$has_license = false === strpos( $license->product_sku, 'connect' );
 	}
 ?>
 

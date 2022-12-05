@@ -212,7 +212,7 @@
 		<h2 class="noptin-extension-group__title"><?php esc_html_e( 'Ultimate Addons Pack', 'newsletter-optin-box' ); ?>&nbsp;<?php Noptin_COM_Helper::display_main_action_button( $license, 'noptin-addons-pack', $installed_addons, false ); ?></h2>
 		<p class="noptin-extension-group__description description"><?php esc_html_e( 'The ultimate addons pack is a single extension that helps your increase your revenue, get more traffic, and deliver more value to your users.', 'newsletter-optin-box' ); ?></p>
 
-		<?php if ( ! empty( $license_key ) && 'noptin-connections' === $license->product_sku ) : ?>
+		<?php if ( ! empty( $license_key ) && false !== strpos( $license->product_sku, 'connect' ) ) : ?>
 			<!-- Display notice that the license key can not be used for this extension -->
 			<div class="noptin-extensions-alert noptin-extensions-alert-dark">
 				<div>
