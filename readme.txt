@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.10.0 =
+* Paid Memberships Pro - Membership level changed automation trigger.
+* Paid Memberships Pro - Change membership level changed automation action.
+
 = 1.9.5 =
 * Daily post digests now send content published in the previous day instead of the previous 24 hours.
 * Add [[order.coupon_code]] WooCommerce newsletter merge tag.

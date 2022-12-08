@@ -46,6 +46,11 @@ class Noptin_Automation_Rules {
 			}
 		}
 
+		if ( defined( 'PMPRO_VERSION' ) ) {
+			$this->add_trigger( new Noptin_PMPro_Membership_Level_Change_Trigger() );
+			$this->add_action( new Noptin_PMPro_Change_Level_Action() );
+		}
+
 		// Handle admin rule CRUD requests.
 		add_action( 'noptin_create_automation_rule', array( $this, 'admin_create_automation_rule' ) );
 		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );

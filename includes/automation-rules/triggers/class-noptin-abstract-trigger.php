@@ -187,7 +187,7 @@ abstract class Noptin_Abstract_Trigger {
 						'conditional_logic' => 'number',
 					),
 
-					'user_role' => array(
+					'user_role'  => array(
 						'description'       => __( 'User Role', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 						'options'           => wp_roles()->get_names(),
