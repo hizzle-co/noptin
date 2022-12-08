@@ -137,6 +137,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 1.10.0 =
 * Paid Memberships Pro - Membership level changed automation trigger.
 * Paid Memberships Pro - Change membership level changed automation action.
+* Escape formulas in CSV exports.
 
 = 1.9.5 =
 * Daily post digests now send content published in the previous day instead of the previous 24 hours.
