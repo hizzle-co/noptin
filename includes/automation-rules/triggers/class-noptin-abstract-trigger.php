@@ -177,6 +177,58 @@ abstract class Noptin_Abstract_Trigger {
 					'no'  => __( 'Logged out', 'newsletter-optin-box' ),
 				),
 			);
+		} else {
+			$smart_tags = array_replace(
+				$smart_tags,
+				array(
+
+					'user_id'    => array(
+						'description'       => __( 'User ID', 'newsletter-optin-box' ),
+						'conditional_logic' => 'number',
+					),
+
+					'user_role' => array(
+						'description'       => __( 'User Role', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+						'options'           => wp_roles()->get_names(),
+					),
+
+					'email'      => array(
+						'description'       => __( 'Email Address', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+					),
+
+					'name'       => array(
+						'description'       => __( 'Display Name', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+					),
+
+					'first_name' => array(
+						'description'       => __( 'First Name', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+					),
+
+					'last_name'  => array(
+						'description'       => __( 'Last Name', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+					),
+
+					'user_login' => array(
+						'description'       => __( 'Login Name', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+					),
+
+					'user_url'   => array(
+						'description'       => __( 'User URL', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+					),
+
+					'user_bio'   => array(
+						'description'       => __( 'User Bio', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+					),
+				)
+			);
 		}
 
 		if ( $this->is_subscriber_based ) {
@@ -315,6 +367,33 @@ abstract class Noptin_Abstract_Trigger {
 	}
 
 	/**
+	 * Prepares user args for user based triggers.
+	 *
+	 * @since 1.10.0
+	 * @param WP_User $user The user.
+	 * @return array
+	 */
+	public function prepare_user_args( $user ) {
+
+		// Abort if not a user object.
+		if ( ! $user instanceof WP_User ) {
+			return array();
+		}
+
+		return array(
+			'user_id'    => $user->ID,
+			'email'      => $user->user_email,
+			'name'       => $user->display_name,
+			'first_name' => $user->first_name,
+			'last_name'  => $user->last_name,
+			'user_bio'   => $user->description,
+			'user_url'   => $user->user_url,
+			'user_login' => $user->user_login,
+			'user_role'  => current( $user->roles ),
+		);
+	}
+
+	/**
 	 * Triggers action callbacks.
 	 *
 	 * @since 1.2.8
@@ -326,6 +405,11 @@ abstract class Noptin_Abstract_Trigger {
 
 		if ( ! is_array( $args ) ) {
 			$args = array();
+		}
+
+		// Add user args.
+		if ( $subject instanceof WP_User ) {
+			$args = array_replace( $args, $this->prepare_user_args( $subject ) );
 		}
 
 		$args['subject'] = $subject;
