@@ -513,6 +513,10 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->order->get_subtotal(), $this->order->get_currency(), $format );
 
+			case 'order.coupon_code':
+				$coupon_code = current( $this->order->get_coupon_codes() );
+				return $coupon_code ? $coupon_code : $default;
+
 			case 'order.discount_total':
 				$format = isset( $args['format'] ) ? $args['format'] : 'price';
 				return $this->format_amount( $this->order->get_total_discount(), $this->order->get_currency(), $format );

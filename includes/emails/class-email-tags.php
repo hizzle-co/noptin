@@ -59,6 +59,11 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function replace_in_subject( $string, $is_partial = false ) {
+
+		if ( ! $is_partial ) {
+			$this->set_current_email();
+		}
+
 		$this->is_partial = $is_partial;
 		$result           = $this->replace( $string, 'strip_tags' );
 		$this->is_partial = false;
@@ -73,10 +78,42 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function replace_in_body( $string, $is_partial = false ) {
+
+		if ( ! $is_partial ) {
+			$this->set_current_email();
+		}
+
 		$this->is_partial = $is_partial;
 		$result           = $this->replace( $string, '' );
 		$this->is_partial = false;
 		return $result;
+	}
+
+	/**
+	 * Sets the current email.
+	 */
+	protected function set_current_email() {
+		global $current_noptin_email;
+
+		// Customers.
+		if ( isset( $this->tags['customer.email'] ) ) {
+			$current_noptin_email = $this->replace( '[[customer.email]]', 'sanitize_email' );
+			return;
+		}
+
+		// Users.
+		if ( isset( $this->tags['user.email'] ) ) {
+			$current_noptin_email = $this->replace( '[[user.email]]', 'sanitize_email' );
+			return;
+		}
+
+		// Email.
+		if ( isset( $this->tags['email'] ) ) {
+			$current_noptin_email = $this->replace( '[[email]]', 'sanitize_email' );
+			return;
+		}
+
+		do_action( 'noptin_set_current_email' );
 	}
 
 	/**
@@ -153,7 +190,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$this->tags['button'] = array(
 			'description' => __( 'Displays a button', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_button' ),
-			'example'     => "button text='Click Here' url='" . home_url() . "' background='blue' color='white' rounding='4px'",
+			'example'     => "button text='Click Here' url='" . home_url() . "' background='brand' color='white' rounding='4px'",
 		);
 
 	}
@@ -209,10 +246,15 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function get_button( $args = array() ) {
 		$url        = isset( $args['url'] ) ? $args['url'] : home_url();
-		$background = isset( $args['background'] ) ? $args['background'] : 'blue';
+		$background = isset( $args['background'] ) ? $args['background'] : 'brand';
 		$color      = isset( $args['color'] ) ? $args['color'] : 'white';
 		$rounding   = isset( $args['rounding'] ) ? $args['rounding'] : '4px';
 		$text       = isset( $args['text'] ) ? $args['text'] : 'Click Here';
+
+		if ( 'brand' === $background ) {
+			$brand_color = get_noptin_option( 'brand_color' );
+			$background = empty( $brand_color ) ? '#1a82e2' : $brand_color;
+		}
 
 		// Generate button.
 		$button = sprintf(

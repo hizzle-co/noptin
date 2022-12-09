@@ -236,7 +236,15 @@ class Noptin_Admin_Filters {
 
 		foreach ( $fields as $field ) {
 			if ( isset( $all_fields[ $field ] ) ) {
-				$labels[] = $all_fields[ $field ];
+
+				$label = $all_fields[ $field ];
+
+				// If the label starts with an =, -, ", @, or +, add a space to the beginning and remove any tab characters (0x09) in the label.
+				if ( in_array( substr( $label, 0, 1 ), array( '=', '-', '"', '@', '+' ), true ) ) {
+					$label = ' ' . str_replace( "\t", '', $label );
+				}
+
+				$labels[] = $label;
 				continue;
 			}
 			$labels[] = noptin_sanitize_title_slug( $field );
@@ -262,11 +270,17 @@ class Noptin_Admin_Filters {
 				}
 
 				if ( 'full_name' === $field ) {
-					$row[] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
-					continue;
+					$value = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+				} else {
+					$value = maybe_serialize( apply_filters( 'noptin_subscriber_export_field_value', $subscriber->get( $field ), $field, $subscriber ) );
 				}
 
-				$row[] = maybe_serialize( apply_filters( 'noptin_subscriber_export_field_value', $subscriber->get( $field ), $field, $subscriber ) );
+				// If the value starts with an =, -, ", @, or +, add a space to the beginning and remove any tab characters (0x09) in the value.
+				if ( in_array( substr( $value, 0, 1 ), array( '=', '-', '"', '@', '+' ), true ) ) {
+					$value = ' ' . str_replace( "\t", '', $value );
+				}
+
+				$row[] = $value;
 
 			}
 

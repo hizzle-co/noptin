@@ -242,7 +242,6 @@ class Noptin_Subscribers_Admin {
 		if ( $subscriber->exists() ) {
 
 			do_action( 'add_meta_boxes_noptin_subscribers', $subscriber );
-			do_action( 'add_meta_boxes', 'noptin_subscribers', $subscriber );
 			include plugin_dir_path( __FILE__ ) . 'views/single-subscriber/subscriber.php';
 
 		} else {

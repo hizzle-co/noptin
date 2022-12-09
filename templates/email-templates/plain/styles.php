@@ -119,10 +119,6 @@
 		color: #454545;
 	}
 
-	a {
-		color: blue;
-	}
-
 	body {
 		-webkit-text-size-adjust: 100%;
 		-ms-text-size-adjust: 100%;

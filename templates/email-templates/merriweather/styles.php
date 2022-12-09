@@ -125,10 +125,6 @@
 		border-collapse: collapse !important;
 	}
 
-	a {
-		color: #CC7953;
-	}
-
 	img, figure {
 		height: auto;
 		line-height: 100%;

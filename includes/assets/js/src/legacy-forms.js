@@ -3,8 +3,6 @@ import subscribe from './partials/frontend/subscribe';
 
 // Init when the DOM is ready.
 domReady( function() {
-	// Check if there is an element with a .noptin-showing class.
-	const showing = document.querySelector( '.noptin-showing' );
 
 	// Listen to newsletter form submissions.
 	document.querySelectorAll( '.noptin-optin-form-wrapper form, .wp-block-noptin-email-optin form, .noptin-email-optin-widget form' ).forEach((form) => {
@@ -18,14 +16,20 @@ domReady( function() {
 		input.setAttribute( 'name', 'email' );
 	})
 
-	document.addEventListener( 'click', function( e ) {
+	// Check if jQuery is available.
+	if ( typeof jQuery !== 'undefined' ) {
 
 		// Hide slide in forms.
-		if ( e.target.matches( '.noptin-showing .noptin-popup-close' ) ) {
+		jQuery( '.noptin-popup-close' ).on( 'click', function(e) {
 			e.preventDefault();
-			e.target.closest( '.noptin-showing' ).classList.remove( 'noptin-showing' );
-			return;
-		}
+			jQuery( this ).closest( '.noptin-showing' ).removeClass( 'noptin-showing' );
+		})
+	}
+
+	document.addEventListener( 'click', function( e ) {
+
+		// Check if there is an element with a .noptin-showing class.
+		const showing = document.querySelector( '.noptin-showing' );
 
 		// Check if the user clicked on a mark as existing subscriber button.
 		if ( e.target.matches( '.noptin-mark-as-existing-subscriber' ) ) {
@@ -48,7 +52,6 @@ domReady( function() {
 			}
 
 			// popups.close()
-
 			if ( window.noptin_popups ) {
 				window.noptin_popups.subscribed = true;
 			}

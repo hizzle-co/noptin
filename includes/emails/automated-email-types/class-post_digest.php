@@ -196,7 +196,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$dates     = $this->get_month_days();
 		$date      = (string) $campaign->get( 'date' );
 		$time      = $campaign->get( 'time' );
-// TODO: Make it possible to filter recipients by source and sign-up time.
+
 		?>
 
 		<p>
@@ -463,7 +463,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		switch ( $campaign->get( 'frequency' ) ) {
 
 			case 'daily':
-				// Get posts published in the last 1 day.
+				// Get posts published yesterday.
 				return $this->get_posts(
 					$campaign,
 					array(
@@ -473,7 +473,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 						'orderby'        => 'date',
 						'order'          => 'DESC',
 						'date_query'     => array(
-							'after' => gmdate( 'Y-m-d', strtotime( '-1 day' ) ),
+							array(
+								'after'     => 'yesterday midnight',
+								'before'    => 'today midnight',
+								'inclusive' => true,
+							),
 						),
 					)
 				);
@@ -556,7 +560,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			case 'daily':
 				return sprintf(
 					// translators: %1 is the time.
-					__( 'Sends a digest of your latest content every day at %s', 'newsletter-optin-box' ),
+					__( 'Sends a digest of the content published in the previous day, every day at %s', 'newsletter-optin-box' ),
 					esc_html( $time )
 				) . $next_send;
 

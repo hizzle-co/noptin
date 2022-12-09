@@ -186,8 +186,8 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 			sprintf(
 				// translators: %2 is the campaign name, #1 is the link.
 				__( 'Clicked on link %1$s from campaign %2$s', 'newsletter-optin-box' ),
-				esc_url( $link ),
-				get_the_title( $campaign_id )
+				'<code>' . esc_url( $link ) . '</code>',
+				'<code>' . get_the_title( $campaign_id ) . '</code>'
 			)
 		);
 

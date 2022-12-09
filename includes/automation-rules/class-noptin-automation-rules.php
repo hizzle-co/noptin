@@ -31,6 +31,7 @@ class Noptin_Automation_Rules {
 		// Register core actions.
 		$this->add_action( new Noptin_Custom_Field_Action() );
 		$this->add_action( new Noptin_Email_Action() );
+		$this->add_action( new Noptin_Subscribe_Action() );
 		$this->add_action( new Noptin_Unsubscribe_Action() );
 
 		// Register core triggers.
@@ -43,6 +44,11 @@ class Noptin_Automation_Rules {
 			foreach ( geodir_get_posttypes() as $post_type ) {
 				$this->add_trigger( new Noptin_GeoDirectory_Listing_Saved_Trigger( $post_type ) );
 			}
+		}
+
+		if ( defined( 'PMPRO_VERSION' ) ) {
+			$this->add_trigger( new Noptin_PMPro_Membership_Level_Change_Trigger() );
+			$this->add_action( new Noptin_PMPro_Change_Level_Action() );
 		}
 
 		// Handle admin rule CRUD requests.

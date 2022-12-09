@@ -28,6 +28,11 @@
 						uasort( $triggers, 'noptin_sort_by_name' );
 
 						foreach ( $triggers as $trigger ) {
+
+							if ( ! empty( $trigger->depricated ) ) {
+								continue;
+							}
+
 							printf(
 								'<option value="%s" data-description="%s">%s</option>',
 								esc_attr( $trigger->get_id() ),
