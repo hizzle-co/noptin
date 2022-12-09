@@ -83,29 +83,32 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 			'conditional_logic' => 'string',
 		);
 
-		// Add forms as a smart tag.
-		$smart_tags['form'] = array(
-			'description'       => __( 'Form', 'newsletter-optin-box' ),
-			'conditional_logic' => 'string',
-			'options'           => wp_list_pluck( $known_forms, 'name' ),
-		);
-
 		// Loop through each form and add its fields.
 		foreach ( $known_forms as $form_id => $form ) {
 
 			// Add the form fields.
 			foreach ( $form['fields'] as $key => $field ) {
 
+				// Sanitize the key.
+				$key = sanitize_key( $key );
+
+				$field['example']    = $key;
 				$field['conditions'] = array(
 					array(
-						'key'      => 'form',
+						'key'      => 'trigger_form',
 						'operator' => 'is',
-						'value'    => $form_id,
+						'value'    => array( $form_id ),
 					),
 				);
 
 				// Add the field as a smart tag.
-				$smart_tags[ "field_{$form_id}_{$key}" ] = $field;
+				if ( ! isset( $smart_tags[ $key ] ) ) {
+					$smart_tags[ $key ] = $field;
+					continue;
+				}
+
+				// Merge the conditions.
+				$smart_tags[ $key ]['conditions'][0]['value'][] = $form_id;
 			}
 		}
 
@@ -117,7 +120,18 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function get_settings() {
 
+		$known_forms = apply_filters( "noptin_{$this->form_provider_slug}_forms", array() );
+
 		return array(
+
+			'trigger_form'    => array(
+				'type'        => 'select',
+				'el'          => 'select',
+				'label'       => __( 'Form', 'newsletter-optin-box' ),
+				'description' => __( 'Select the form that you want to trigger this automation rule for.', 'newsletter-optin-box' ),
+				'options'     => wp_list_pluck( $known_forms, 'name' ),
+				'default'     => current( array_keys( $known_forms ) ),
+			),
 
 			'trigger_subject' => array(
 				'type'        => 'text',
@@ -157,6 +171,12 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		$posted['current_user_email'] = $current_user->user_email;
 		$posted['current_user_name']  = $current_user->display_name;
 
+		// Sanitize the array keys.
+		$posted = array_combine(
+			array_map( 'sanitize_key', array_keys( $posted ) ),
+			array_values( $posted )
+		);
+
 		$this->trigger( $current_user, $posted );
 	}
 
@@ -186,6 +206,11 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 
             // Prepare the rule.
             $rule = noptin()->automation_rules->prepare_rule( $rule );
+
+			// Abort if the forms don't match.
+			if ( empty( $rule->trigger_settings['trigger_form'] ) || absint( $rule->trigger_settings['trigger_form'] ) !== absint( $args['form'] ) ) {
+				continue;
+			}
 
 			// Abort if no valid trigger subject.
 			if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {

@@ -171,6 +171,16 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 		}
 
+		if ( is_array( $replacement ) ) {
+			$replacement = implode( ', ', $replacement );
+		}
+
+		if ( ! is_scalar( $replacement ) ) {
+			$replacement = wp_json_encode( $replacement );
+		}
+
+		$replacement = (string) $replacement;
+
 		if ( ( '' === $replacement || null === $replacement ) && isset( $attributes['default'] ) ) {
 			$replacement = trim( $attributes['default'] );
 		}

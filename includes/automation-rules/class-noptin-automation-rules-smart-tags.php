@@ -56,10 +56,10 @@ class Noptin_Automation_Rules_Smart_Tags extends Noptin_Dynamic_Content_Tags {
 		$this->escape_function = $escape_function;
 
 		// Replace strings like this: [[tagname attr="value"]].
-		$string = preg_replace_callback( '/\[\[([\w\.\/]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
+		$string = preg_replace_callback( '/\[\[([\w\.\/-]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
 
 		// Call again to take care of nested variables.
-		$string = preg_replace_callback( '/\[\[([\w\.\/]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
+		$string = preg_replace_callback( '/\[\[([\w\.\/-]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
 		return $string;
 	}
 }
