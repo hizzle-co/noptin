@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -91,6 +92,209 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
             )
 		);
 
+        // Load automation rule.
+		if ( did_action( 'noptin_automation_rules_load' ) ) {
+			$this->load_automation_rule( noptin()->automation_rules );
+		} else {
+			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rule' ) );
+		}
+		add_filter( 'noptin_gravity_forms_forms', array( $this, 'filter_forms' ) );
+    }
+
+    /**
+	 * Loads our automation rule.
+	 *
+	 * @param Noptin_Automation_Rules $rules The automation rules instance.
+	 */
+	public function load_automation_rule( $rules ) {
+		$rules->add_trigger( new Noptin_Form_Submit_Trigger( 'gravity_forms', 'Gravity Forms' ) );
+	}
+
+    /**
+     * Prepares form fields.
+     *
+     * @param GF_Field[] $fields The form fields.
+     * @param string $return Either array or id.
+     * @return array
+     */
+    public function prepare_noptin_automation_rule_fields( $fields, $return = 'array' ) {
+
+        $prepared_fields = array();
+
+        $static_fields = array(
+            'source_url' => array(
+                'description'       => __( 'Source URL', 'newsletter-optin-box' ),
+                'conditional_logic' => 'string',
+            ),
+            'ip'         => array(
+                'description'       => __( 'IP Address', 'newsletter-optin-box' ),
+                'conditional_logic' => 'string',
+            ),
+            'currency'   => array(
+                'description'       => __( 'Currency', 'newsletter-optin-box' ),
+                'conditional_logic' => 'string',
+            ),
+            'user_agent' => array(
+                'description'       => __( 'User Agent', 'newsletter-optin-box' ),
+                'conditional_logic' => 'string',
+            ),
+        );
+
+        foreach ( $static_fields as $key => $field ) {
+            if ( 'id' === $return ) {
+                $prepared_fields[ $key ] = $key;
+            } else {
+                $prepared_fields[ $key ] = $field;
+            }
+        }
+
+        // Loop through all fields.
+        foreach ( $fields as $gravity_field ) {
+
+            // Skip fields with no name.
+            if ( empty( $gravity_field->label ) ) {
+                continue;
+            }
+
+            $key = sanitize_title( $gravity_field->label );
+
+            if ( 'id' === $return ) {
+                $prepared_fields[ $key ] = $gravity_field->id;
+            } else {
+                $field = array(
+                    'description'       => $gravity_field->label,
+                    'conditional_logic' => 'number' === $gravity_field->type ? 'number' : 'string',
+                );
+
+                if ( ! empty( $gravity_field->choices ) && is_array( $gravity_field->choices ) ) {
+                    $field['options'] = array_combine( wp_list_pluck( $gravity_field->choices, 'value' ), wp_list_pluck( $gravity_field->choices, 'text' ) );
+                }
+
+                $prepared_fields[ $key ] = $field;
+            }
+
+            // Fields with multiple inputs.
+            if ( is_array( $gravity_field->inputs ) ) {
+
+                foreach ( $gravity_field->inputs as $input ) {
+
+                    $input_key = $key . '_' . sanitize_title( $input['label'] );
+
+                    if ( 'id' === $return ) {
+                        $prepared_fields[ $input_key ] = $input['id'];
+                        continue;
+                    }
+
+                    $field = array(
+                        'description'       => $gravity_field->label . ' - ' . $input['label'],
+                        'conditional_logic' => 'string',
+                    );
+
+                    if ( ! empty( $input['choices'] ) && is_array( $input['choices'] ) ) {
+                        $field['options'] = array_combine( wp_list_pluck( $gravity_field->choices, 'value' ), wp_list_pluck( $gravity_field->choices, 'text' ) );
+                    }
+
+                    $prepared_fields[ $input_key ] = $field;
+                }
+            }
+        }
+
+        return $prepared_fields;
+    }
+
+    /**
+	 * Filters forms.
+	 *
+	 * @param array $forms An array of forms.
+	 * @return array
+	 */
+	public function filter_forms( $forms ) {
+		global $noptin_gravity_forms_forms;
+
+		// Return cached forms.
+		if ( ! empty( $noptin_gravity_forms_forms ) ) {
+			return array_replace( $forms, $noptin_gravity_forms_forms );
+		}
+
+		$noptin_gravity_forms_forms = array();
+
+		$all_forms = array_filter( GFAPI::get_forms() );
+
+		// Loop through all forms.
+		foreach ( $all_forms as $form ) {
+			$fields = array();
+
+            // Loop through all fields.
+            foreach ( $form['fields'] as $gravity_field ) {
+
+                /** @var GF_Field $gravity_field */
+
+                // Skip fields with no name.
+                if ( empty( $gravity_field->label ) ) {
+                    continue;
+                }
+
+                // Fields with multiple inputs.
+                if ( is_array( $gravity_field->inputs ) ) {
+
+                    foreach ( $gravity_field->inputs as $input ) {
+                        $field = array(
+                            'description'       => $input['label'] . ' (' . $gravity_field->label . ')',
+                            'conditional_logic' => 'string',
+                        );
+
+                        if ( ! empty( $input['choices'] ) && is_array( $input['choices'] ) ) {
+                            $field['options'] = array_combine( wp_list_pluck( $gravity_field->choices, 'value' ), wp_list_pluck( $gravity_field->choices, 'text' ) );
+                        }
+
+                        $fields[ $input['id'] ] = $field;
+                    }
+
+                    continue;
+                }
+
+                $field = array(
+                    'description'       => $gravity_field->label,
+                    'conditional_logic' => 'number' === $gravity_field->type ? 'number' : 'string',
+                );
+
+                if ( ! empty( $gravity_field->choices ) && is_array( $gravity_field->choices ) ) {
+                    $field['options'] = array_combine( wp_list_pluck( $gravity_field->choices, 'value' ), wp_list_pluck( $gravity_field->choices, 'text' ) );
+                }
+
+                $fields[ $gravity_field->id ] = $field;
+            }
+
+			$noptin_gravity_forms_forms[ $form['id'] ] = array(
+				'name'   => $form['title'],
+				'fields' => $this->prepare_noptin_automation_rule_fields( $form['fields'] ),
+			);
+		}
+
+		return array_replace( $forms, $noptin_gravity_forms_forms );
+	}
+
+    /**
+	 * Determines what feeds need to be processed for the provided entry.
+	 *
+	 * @access public
+	 * @param array $entry The Entry Object currently being processed.
+	 * @param array $form The Form Object currently being processed.
+	 *
+	 * @return array $entry
+	 */
+	public function maybe_process_feed( $entry, $form ) {
+
+        $form_fields = $this->prepare_noptin_automation_rule_fields( $form['fields'], 'id' );
+        $posted      = array();
+
+        foreach ( $form_fields as $key => $field_id ) {
+            $posted[ $key ] = $this->get_field_value( $form, $entry, $field_id );
+        }
+
+        do_action( 'noptin_gravity_forms_form_submitted', $form['id'], $posted );
+
+		return parent::maybe_process_feed( $entry, $form );
     }
 
 	/**

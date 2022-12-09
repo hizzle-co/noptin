@@ -1925,3 +1925,17 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 function noptin_sort_by_name( $a, $b ) {
 	return strcmp( $a->get_name(), $b->get_name() );
 }
+
+/**
+ * Sanitize a merge tag.
+ *
+ * Strips all non-alphanumeric characters except underscores, hyphens, and dots.
+ *
+ * @since 1.10.1
+ * @param string $tag
+ * @return string
+ */
+function noptin_sanitize_merge_tag( $tag ) {
+	$sanitized_key = strtolower( $tag );
+	return preg_replace( '/[^a-z0-9_\-\.]/', '', $sanitized_key );
+}
