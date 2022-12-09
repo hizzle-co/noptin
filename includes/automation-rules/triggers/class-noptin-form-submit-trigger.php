@@ -1,0 +1,212 @@
+<?php
+
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Fires when a form is submitted.
+ *
+ * @since 1.10.1
+ */
+class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
+
+	/**
+	 * @var string The form provider slug.
+	 */
+	protected $form_provider_slug;
+
+	/**
+	 * @var string The form provider name.
+	 */
+	protected $form_provider_name;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.10.1
+	 * @param string $form_provider_slug The form provider slug.
+	 * @param string $form_provider_name The form provider name.
+	 */
+	public function __construct( $form_provider_slug, $form_provider_name ) {
+		$this->form_provider_slug = $form_provider_slug;
+		$this->form_provider_name = $form_provider_name;
+
+		add_action( "noptin_{$form_provider_slug}_form_submitted", array( $this, 'init_trigger' ), 10, 2 );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_id() {
+		return sanitize_key( "{$this->form_provider_slug}_form_submitted" );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_name() {
+		return sprintf(
+			// translators: %s is the form provider.
+			__( '%s > Form Submitted', 'newsletter-optin-box' ),
+			$this->form_provider_name
+		);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_description() {
+		// translators: %s is the form provider.
+		return sprintf( __( 'When a %s form is submitted', 'newsletter-optin-box' ), $this->form_provider_name );
+	}
+
+	/**
+     * Returns an array of known smart tags.
+     *
+     * @since 1.10.1
+     * @return array
+     */
+    public function get_known_smart_tags() {
+
+		// Forms consist of form name and fields.
+		$known_forms = apply_filters( "noptin_{$this->form_provider_slug}_forms", array() );
+		$smart_tags  = parent::get_known_smart_tags();
+
+		// Add logged in user info.
+		$smart_tags['current_user_email'] = array(
+			'description'       => __( "Logged in user's email", 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
+		);
+
+		$smart_tags['current_user_name'] = array(
+			'description'       => __( "Logged in user's name", 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
+		);
+
+		// Add forms as a smart tag.
+		$smart_tags['form'] = array(
+			'description'       => __( 'Form', 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
+			'options'           => wp_list_pluck( $known_forms, 'name' ),
+		);
+
+		// Loop through each form and add its fields.
+		foreach ( $known_forms as $form_id => $form ) {
+
+			// Add the form fields.
+			foreach ( $form['fields'] as $key => $field ) {
+
+				$field['conditions'] = array(
+					array(
+						'key'      => 'form',
+						'operator' => 'is',
+						'value'    => $form_id,
+					),
+				);
+
+				// Add the field as a smart tag.
+				$smart_tags[ "field_{$form_id}_{$key}" ] = $field;
+			}
+		}
+
+		return $smart_tags;
+    }
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_settings() {
+
+		return array(
+
+			'trigger_subject' => array(
+				'type'        => 'text',
+				'el'          => 'input',
+				'label'       => __( 'Trigger Subject', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					'%s %s',
+					__( 'This trigger will fire for the email address that you specify here. ', 'newsletter-optin-box' ),
+					sprintf(
+						/* translators: %1: Opening link, %2 closing link tag. */
+						esc_html__( 'You can use %1$s smart tags %2$s to provide a dynamic value.', 'newsletter-optin-box' ),
+						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
+						'</a>'
+					)
+				),
+				'default'     => '[[current_user_email]]',
+			),
+
+		);
+
+	}
+
+	/**
+	 * Inits the trigger.
+	 *
+	 * @param int $form_id The form id.
+	 * @param array $posted The posted data.
+	 * @since 1.10.1
+	 */
+	public function init_trigger( $form_id, $posted ) {
+
+		$posted         = is_array( $posted ) ? $posted : array();
+		$posted['form'] = $form_id;
+
+		// Adds the current user info.
+		$current_user                 = wp_get_current_user();
+		$posted['current_user_email'] = $current_user->user_email;
+		$posted['current_user_name']  = $current_user->display_name;
+
+		$this->trigger( $current_user, $posted );
+	}
+
+	/**
+     * Triggers action callbacks.
+     *
+     * @since 1.10.1
+     * @param mixed $subject The subject.
+     * @param array $args Extra arguments passed to the action.
+     * @return void
+     */
+    public function trigger( $subject, $args ) {
+
+        $args['subject'] = $subject;
+
+        $args = apply_filters( 'noptin_automation_trigger_args', $args, $this );
+
+        $args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
+
+        foreach ( $this->get_rules() as $rule ) {
+
+            // Retrieve the action.
+            $action = noptin()->automation_rules->get_action( $rule->action_id );
+            if ( empty( $action ) ) {
+                continue;
+            }
+
+            // Prepare the rule.
+            $rule = noptin()->automation_rules->prepare_rule( $rule );
+
+			// Abort if no valid trigger subject.
+			if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
+				continue;
+			}
+
+			// Maybe process merge tags.
+			$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
+
+			// Abort if not an email.
+			if ( ! is_email( $trigger_subject ) ) {
+				continue;
+			}
+
+			$args['email'] = $trigger_subject;
+
+            // Ensure that the rule is valid for the provided args.
+            if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
+                $action->maybe_run( $args['email'], $rule, $args );
+            }
+        }
+
+    }
+}
