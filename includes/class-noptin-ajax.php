@@ -352,8 +352,7 @@ class Noptin_Ajax {
 			$form = noptin_get_optin_form( $_POST['noptin_form_id'] );
 
 			if ( empty( $form ) || ! $form->is_published() ) {
-				esc_html_e( 'This form is in-active.', 'newsletter-optin-box' );
-				exit;
+				wp_send_json_error( __( 'This form is in-active.', 'newsletter-optin-box' ) );
 			}
 
 			$fields = $form->fields;
@@ -363,8 +362,7 @@ class Noptin_Ajax {
 
 		// Check gdpr.
 		if ( is_object( $form ) && $form->gdprCheckbox && empty( $_POST['noptin_gdpr_checkbox'] ) ) {
-			esc_html_e( 'You must consent to receive promotional emails.', 'newsletter-optin-box' );
-			exit;
+			wp_send_json_error( __( 'You must consent to receive promotional emails.', 'newsletter-optin-box' ) );
 		}
 
 		if ( ! empty( $_POST['noptin_gdpr_checkbox'] ) ) {
@@ -403,7 +401,7 @@ class Noptin_Ajax {
 
 			// required fields.
 			if ( ! empty( $field['require'] ) && 'false' !== $field['require'] && empty( $value ) ) {
-				die( esc_html__( 'Ensure that you fill all required fields.', 'newsletter-optin-box' ) );
+				wp_send_json_error( esc_html__( 'Ensure that you fill all required fields.', 'newsletter-optin-box' ) );
 			}
 
 			// Sanitize email fields.
@@ -411,7 +409,7 @@ class Noptin_Ajax {
 
 				$value = sanitize_email( $value );
 				if ( empty( $value ) ) {
-					die( esc_html__( 'That email address is not valid.', 'newsletter-optin-box' ) );
+					wp_send_json_error( esc_html__( 'Please provide a valid email address', 'newsletter-optin-box' ) );
 				}
 			}
 
@@ -442,7 +440,7 @@ class Noptin_Ajax {
 		$inserted = add_noptin_subscriber( $filtered );
 
 		if ( is_string( $inserted ) ) {
-			die( esc_html( $inserted ) );
+			wp_send_json_error( $inserted );
 		}
 
 		do_action( 'noptin_add_ajax_subscriber', $inserted, $form );
@@ -474,8 +472,6 @@ class Noptin_Ajax {
 		$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) );
 
 		wp_send_json_success( $result );
-		exit;
-
 	}
 
 	/**
