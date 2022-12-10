@@ -28,6 +28,7 @@ class Noptin_Subscribers_Admin {
 		add_action( 'load-noptin-newsletter_page_noptin-subscribers', 'Noptin_Subscribers_Admin::add_subscribers_page_screen_options' );
 		add_filter( 'set-screen-option', 'Noptin_Subscribers_Admin::save_subscribers_page_screen_options', 10, 3 );
 		add_action( 'noptin_delete_email_subscriber', 'Noptin_Subscribers_Admin::delete_subscriber' );
+		add_action( 'admin_init', 'Noptin_Subscribers_Admin::maybe_redirect_to_newsletter' );
 	}
 
 	/**
@@ -486,4 +487,26 @@ class Noptin_Subscribers_Admin {
 		exit;
 	}
 
+	/**
+	 * Redirect to the newsletter page when user selects the send email bulk action.
+	 *
+	 * @since 1.10.1
+	 */
+	public static function maybe_redirect_to_newsletter() {
+
+		// Ensure we're on the correct screen.
+		if ( ! ( is_admin() && isset( $_GET['page'] ) && 'noptin-subscribers' === $_GET['page'] ) ) {
+			return;
+		}
+
+		// Check nonce.
+		if ( empty( $_POST['id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'bulk-ids' ) ) {
+			return;
+		}
+
+		if ( empty( $_POST['filter_action'] ) && isset( $_POST['action'] ) && 'send_email' === $_POST['action'] ) {
+			wp_safe_redirect( get_noptin_email_recipients_url( $_POST['id'], 'noptin' ) );
+			exit;
+		}
+	}
 }
