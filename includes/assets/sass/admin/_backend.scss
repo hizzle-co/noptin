@@ -2079,3 +2079,50 @@ a.no-campaign-create-new-campaign {
 	}
 
 }
+
+.noptin-manual-email-recipients {
+	padding: 1rem 0;
+}
+
+.noptin-manual-email-recipient {
+
+	display: flex;
+	align-items: center;
+
+	&:not(:last-child) {
+    	margin-bottom: 1rem;
+		border-bottom: 1px solid #f0f0f1;
+    	padding-bottom: 1rem;
+	}
+
+	.avatar {
+		border-radius: 50%;
+		margin-right: 5px;
+	}
+
+	.noptin-manual-email-recipient-name-email {
+		flex: 1;
+		overflow: hidden;
+		margin-right: 5px;
+
+		> * {
+			overflow: hidden;
+			text-overflow: ellipsis;
+    		white-space: nowrap;
+		}
+
+		.noptin-manual-email-recipient-name {
+			font-weight: 600;
+		}
+	}
+
+	.noptin-manual-email-recipient-view {
+		color: gray;
+    	font-size: 16px;
+	}
+
+	.noptin-manual-email-recipient-remove {
+		color: #a00;
+    	font-size: 16px;
+	}
+}

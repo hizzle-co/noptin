@@ -255,6 +255,16 @@ class Noptin_Automated_Email {
 	}
 
 	/**
+	 * Returns the recipient ids for mass mail that are manually sent to selected recipients.
+	 *
+	 * @return array
+	 */
+	public function get_manual_recipients_ids() {
+		$ids = $this->get( 'manual_recipients_ids' );
+		return empty( $ids ) ? array() : array_unique( noptin_parse_int_list( $ids ) );
+	}
+
+	/**
 	 * Returns the recipients for this automation.
 	 *
 	 * @return string

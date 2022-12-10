@@ -131,6 +131,11 @@
 			}
 		)
 
+		// Remove newsletter recipient.
+		$('.noptin-manual-email-recipients').on( 'click', '.noptin-manual-email-recipient-remove', function( e ) {
+			e.preventDefault()
+			$( this ).closest( '.noptin-manual-email-recipient' ).remove()
+		})
 	});
 
 })(jQuery);

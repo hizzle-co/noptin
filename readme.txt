@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.10.1 =
+* Ability to send an email to individual newsletter subscribers.
+
 = 1.10.0 =
 * Paid Memberships Pro - Membership level changed automation trigger.
 * Paid Memberships Pro - Change membership level changed automation action.

@@ -357,6 +357,41 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
 }
 
 /**
+ * Retrieves an email recipient by id and sender.
+ *
+ * @since 1.10.1
+ * @param int $id The recipient id.
+ * @param string $sender The sender.
+ * @return array|false An array containing the recipient email and name, or false if none found.
+ */
+function get_noptin_email_recipient( $id, $sender ) {
+
+	return apply_filters( "noptin_{$sender}_email_recipient", false, $id );
+}
+
+/**
+ * Retrieves a URL to send emails to specified reciepients.
+ *
+ * @since 1.10.1
+ * @param array $recipients An array of recipient ids.
+ * @param string $sender The sender.
+ * @return string A URL to send emails to specified reciepients.
+ */
+function get_noptin_email_recipients_url( $recipients, $sender ) {
+	$recipients = implode( ',', noptin_parse_int_list( $recipients ) );
+
+	return add_query_arg(
+		array(
+			'noptin_recipients' => rawurlencode( $recipients ),
+			'section'           => 'newsletters',
+			'sub_section'       => 'edit_campaign',
+			'campaign'          => rawurlencode( $sender ),
+		),
+		admin_url( 'admin.php?page=noptin-email-campaigns' )
+	);
+}
+
+/**
  * Logs a debugging message.
  *
  * @param string $log The message to log.

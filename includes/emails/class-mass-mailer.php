@@ -38,6 +38,9 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		// Adds a new email to the queue.
 		add_action( 'noptin_send_email_via_' . $this->sender, array( $this, 'send' ), 10, 2 );
 
+		// Prepares a recipient.
+		add_filter( "noptin_{$this->sender}_email_recipient", array( $this, 'filter_recipient' ), 10, 2 );
+
 		// Checks cron to ensure all scheduled emails are sent.
 		add_action( $this->cron_hook_identifier, array( $this, 'handle_cron_healthcheck' ) );
 		add_filter( 'cron_schedules', array( $this, 'schedule_cron_healthcheck' ) );
@@ -126,6 +129,23 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	public function exceeded_hourly_limit() {
 		$limited = get_noptin_option( 'per_hour', 0 );
 		return ! empty( $limited ) && $this->emails_sent_this_hour() > (int) $limited;
+	}
+
+	/**
+	 * Filters a recipient.
+	 *
+	 * @param false|array $recipient
+	 * @param int $recipient_id
+	 *
+	 * @return array
+	 */
+	public function filter_recipient( $recipient, $recipient_id ) {
+
+		if ( ! is_array( $recipient ) ) {
+			$recipient = array();
+		}
+
+		return $recipient;
 	}
 
 	/**

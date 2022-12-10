@@ -89,7 +89,7 @@ export default function subscribe( form ) {
 
 				// Was the ajax invalid?
 				if ( ! response ) {
-					throw 'Invalid response';
+					throw noptin.connect_err;
 				}
 
 				// An error occured.
@@ -145,7 +145,7 @@ export default function subscribe( form ) {
 				if ( typeof e === 'string' ) {
 					showError( e );
 				} else {
-					showError( 'Could not establish a connection to the server.' );
+					showError( noptin.connect_err );
 				}
 
 				form.style.opacity = 1;

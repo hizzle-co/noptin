@@ -91,6 +91,12 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 	 */
 	public function _fetch_recipients( $campaign ) {
 
+		$manual_recipients = $campaign->get_manual_recipients_ids();
+
+		if ( ! empty( $manual_recipients ) ) {
+			return $manual_recipients;
+		}
+
 		// Prepare arguments.
 		$args = array(
 			'subscriber_status' => 'active',
@@ -149,4 +155,25 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 	}
 
+	/**
+	 * Filters a recipient.
+	 *
+	 * @param false|array $recipient
+	 * @param int $recipient_id
+	 *
+	 * @return array
+	 */
+	public function filter_recipient( $recipient, $recipient_id ) {
+		$subscriber = get_noptin_subscriber( $recipient_id );
+
+		if ( ! $subscriber->exists() ) {
+			return $recipient;
+		}
+
+		return array(
+			'name'  => trim( $subscriber->first_name . ' ' . $subscriber->second_name ),
+			'email' => $subscriber->email,
+			'url'   => add_query_arg( 'subscriber', $subscriber->id, admin_url( 'admin.php?page=noptin-subscribers' ) ),
+		);
+	}
 }

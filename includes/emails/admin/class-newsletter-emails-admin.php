@@ -49,6 +49,11 @@ class Noptin_Newsletter_Emails_Admin {
 			$campaign = new Noptin_Newsletter_Email( 0 );
 			$id       = 0;
 
+			// Check if we have manual recipients.
+			if ( ! empty( $_GET['noptin_recipients'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$campaign->options['manual_recipients_ids'] = noptin_parse_int_list( $_GET['noptin_recipients'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			}
+
 			$campaign->options['email_sender'] = sanitize_key( $_GET['campaign'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
@@ -75,7 +80,7 @@ class Noptin_Newsletter_Emails_Admin {
 			array( $this, 'render_metabox' ),
 			get_current_screen()->id,
 			'side',
-			'low',
+			'default',
 			'send'
 		);
 
