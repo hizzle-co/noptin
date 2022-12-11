@@ -368,14 +368,13 @@ class Noptin_Emails_Admin {
 		$screen_id = get_current_screen() ? get_current_screen()->id : 'noptin_page_noptin-automation';
 
 		// Email recipients.
-		$recipients_priority = 0 < count( $campaign->get_manual_recipients_ids() ) ? 'low' : 'high';
 		add_meta_box(
 			'noptin_email_recipients',
 			__( 'Recipients', 'newsletter-optin-box' ),
 			array( $this, 'render_metabox' ),
 			$screen_id,
 			'side',
-			$recipients_priority,
+			'high',
 			'recipients'
 		);
 

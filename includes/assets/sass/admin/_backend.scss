@@ -2082,6 +2082,8 @@ a.no-campaign-create-new-campaign {
 
 .noptin-manual-email-recipients {
 	padding: 1rem 0;
+	max-height: 400px;
+    overflow-y: auto;
 }
 
 .noptin-manual-email-recipient {

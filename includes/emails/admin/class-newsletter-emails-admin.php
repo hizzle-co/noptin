@@ -80,7 +80,7 @@ class Noptin_Newsletter_Emails_Admin {
 			array( $this, 'render_metabox' ),
 			get_current_screen()->id,
 			'side',
-			'default',
+			'low',
 			'send'
 		);
 
