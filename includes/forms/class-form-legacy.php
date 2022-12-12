@@ -289,7 +289,6 @@ class Noptin_Form_Legacy {
 			// Trigger Options.
 			'timeDelayDuration'     => 4,
 			'scrollDepthPercentage' => 25,
-			'DisplayOncePerSession' => true,
 			'cssClassOfClick'       => '#id .class',
 			'triggerPopup'          => 'immeadiate',
 			'slideDirection'        => 'bottom_right',

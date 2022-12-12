@@ -92,7 +92,6 @@ class Noptin_Legacy_Form_Editor {
 				'noteColor',
 				'CSS',
 				'optinType',
-				'DisplayOncePerSession',
 				'timeDelayDuration',
 				'scrollDepthPercentage',
 				'cssClassOfClick',
@@ -327,15 +326,6 @@ class Noptin_Legacy_Form_Editor {
 	 */
 	private function get_trigger_settings() {
 		return array(
-
-			// Once per session.
-			'DisplayOncePerSession' => array(
-				'type'     => 'checkbox',
-				'el'       => 'input',
-				'tooltip'  => __( 'Uncheck to display the form once per session instead of once per week', 'newsletter-optin-box' ),
-				'label'    => __( 'Display this form once per week', 'newsletter-optin-box' ),
-				'restrict' => "this.triggerPopup!='after_click' && this.optinType=='popup'",
-			),
 
 			// Sliding direction.
 			'slideDirection'        => array(
