@@ -6,24 +6,22 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Fires when a customer reaches a lifetime value.
  *
- * @since       1.3.3
+ * @since 1.3.3
  */
-class Noptin_WooCommerce_Lifetime_Value_Trigger extends Noptin_Abstract_Trigger {
+class Noptin_WooCommerce_Lifetime_Value_Trigger extends Noptin_WooCommerce_Trigger {
 
 	/**
-	 * @var Noptin_WooCommerce The Noptin and WooCommerce integration bridge.
+	 * Deprecated.
 	 */
-	private $bridge = null;
+	public $depricated = true;
 
 	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.3
-	 * @var Noptin_WooCommerce $bridge The Noptin and WooCommerce integration bridge.
 	 */
-	public function __construct( $bridge ) {
-		$this->bridge = $bridge;
-		add_action( 'noptin_woocommerce_integration_order_paid', array( $this, 'init_trigger' ), 10000, 2 );
+	public function __construct() {
+		add_action( 'woocommerce_order_status_completed', array( $this, 'init_trigger' ) );
 	}
 
 	/**
@@ -44,33 +42,22 @@ class Noptin_WooCommerce_Lifetime_Value_Trigger extends Noptin_Abstract_Trigger 
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Fired when a customer reaches a given lifetime value', 'newsletter-optin-box' );
+		return __( 'When a customer reaches a given lifetime value', 'newsletter-optin-box' );
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_rule_description( $rule ) {
-		$settings = $rule->trigger_settings;
+     * Returns an array of known smart tags.
+     *
+     * @since 1.10.1
+     * @return array
+     */
+    public function get_known_smart_tags() {
 
-		if ( empty( $settings['lifetime_value'] ) ) {
-			return __( 'When a subscriber reaches a WooCommerce lifetime value', 'newsletter-optin-box' );
-		}
-
-		$value = wc_price( $settings['lifetime_value'] );
-		return sprintf(
-			// translators: %s is the lifetime value.
-			__( 'When a subscriber reaches a WooCommerce lifetime value of %s', 'newsletter-optin-box' ),
-			$value
+		return array_merge(
+			parent::get_known_smart_tags(),
+			$this->get_customer_smart_tags()
 		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		return 'https://cdn.noptin.com/templates/images/woocommerce-icon.png';
-	}
+    }
 
 	/**
 	 * @inheritdoc
@@ -79,70 +66,70 @@ class Noptin_WooCommerce_Lifetime_Value_Trigger extends Noptin_Abstract_Trigger 
 		return array(
 			'woocommerce',
 			'lifetime value',
-			'ecommerce',
+			'customer',
 		);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function get_settings() {
+	public function settings_to_conditional_logic( $settings ) {
+
+		// We have no conditional logic here.
+		if ( ! is_array( $settings ) || ! isset( $settings['lifetime_value'] ) ) {
+			return false;
+		}
+
+		$conditions = array();
+
+		// Lifetime value.
+		if ( ! empty( $settings['lifetime_value'] ) ) {
+			$conditions[] = array(
+				'type'      => 'customer.total_spent',
+				'condition' => 'is',
+				'value'     => (int) $settings['lifetime_value'],
+			);
+		}
+
+		unset( $settings['lifetime_value'] );
 
 		return array(
-
-			'lifetime_value' => array(
-				'el'          => 'input',
-				'label'       => __( 'Lifetime Value', 'newsletter-optin-box' ),
-				'description' => __( 'Enter the lifetime value without the currency symbol', 'newsletter-optin-box' ),
-				'placeholder' => '100',
-			),
-
+			'conditional_logic' => $conditions,
+			'settings'          => $settings,
 		);
-
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function is_rule_valid_for_args( $rule, $args, $subscriber, $action ) {
-		$settings = $rule->trigger_settings;
-
-		// Ensure that we have a value.
-		if ( empty( $settings['lifetime_value'] ) ) {
-			return false;
-		}
-
-		// Fetch the user associated with the order.
-		$user = $this->bridge->get_order_customer_user_id( $args['order_id'] );
-		if ( empty( $user ) ) {
-			$user = $this->bridge->get_order_customer_email( $args['order_id'] );
-		}
-
-		// Get the user's lifetime value.
-		$user_value   = $this->bridge->get_total_spent( $user );
-		$needed_value = (float) $settings['lifetime_value'];
-
-		// Does the user meet the required lifetime value.
-		if ( $user_value < $needed_value ) {
-			return false;
-		}
-
-		// Ensure that the user reached this milestone in this specific order.
-		$previous_total = $user_value - (float) $args['total'];
-
-		return $previous_total < $needed_value;
-
-	}
-
-	/**
-	 * Calls the trigger when an order state changes.
+	 * Inits the trigger.
 	 *
-	 * @param int $order_id The order being acted on.
-	 * @param int $subscriber_id The subscriber for the order.
-	 * @since 1.3.3
+	 * @param int|WC_Order $order_id The order being acted on.
+	 * @since 1.10.1
 	 */
-	public function init_trigger( $order_id, $subscriber_id ) {
-		$this->trigger( $subscriber_id, $this->bridge->get_order_details( $order_id ) );
+	public function init_trigger( $order_id ) {
+
+		if ( is_numeric( $order_id ) ) {
+			$order = wc_get_order( $order_id );
+		} else {
+			$order = $order_id;
+		}
+
+		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
+			return;
+		}
+
+		if ( $order->get_customer_id() ) {
+			$customer = new WC_Customer( $order->get_customer_id() );
+		} else {
+			$customer = WC()->customer;
+		}
+
+		$args = $this->before_trigger_wc( false, $customer );
+
+		$args['customer'] = $customer;
+
+		$this->trigger( $customer, $args );
+
+		$this->after_trigger_wc( $args );
 	}
 
 }

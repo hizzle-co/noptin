@@ -690,7 +690,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'customer.total_spent'  => array(
-				'description'       => __( 'How much money this customer has spent', 'newsletter-optin-box' ),
+				'description'       => __( 'Lifetime Value', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => "customer.total_spent format='price'",
 				'conditional_logic' => 'number',
