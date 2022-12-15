@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Base triggers class.
  *
- * @since       1.2.8
+ * @since 1.2.8
  */
 abstract class Noptin_Abstract_Trigger {
 
@@ -94,6 +94,19 @@ abstract class Noptin_Abstract_Trigger {
 	 */
 	public function get_settings() {
 		return array();
+	}
+
+	/**
+	 * Converts settings to conditional logic.
+	 *
+	 * Useful to migrate the legacy settings to the new conditional logic.
+	 *
+	 * @since 1.10.1
+	 * @param array $settings
+	 * @return false Return false if no conditional logic, or array containing conditional logic and new settings.
+	 */
+	public function settings_to_conditional_logic( $settings ) {
+		return false;
 	}
 
 	/**
