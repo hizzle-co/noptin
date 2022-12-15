@@ -142,11 +142,4 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 		return false;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function get_settings() {
-		return array();
-	}
-
 }
