@@ -45,13 +45,6 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Fired when a subscriber opens an email campaign', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_rule_description( $rule ) {
 		return __( 'When a subscriber opens an email campaign', 'newsletter-optin-box' );
 	}
 
@@ -74,53 +67,58 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns an array of known smart tags.
+	 *
+	 * @since 1.10.1
+	 * @return array
 	 */
-	public function get_settings() {
+	public function get_known_smart_tags() {
 
-		$args = array(
-			'numberposts' => -1,
-			'post_type'	  => 'noptin-campaign',
-			'post_status' => array( 'publish', 'draft', 'pending' ),
-			'meta_query'  => array(
-				array(
-					'key'   	   => 'campaign_type',
-					'value' 	   => array( 'automation', 'newsletter' ),
-					'meta_compare' => 'IN',
+		return array_merge(
+			array(
+				'campaign_id'    => array(
+					'description'       => __( 'Campaign ID', 'newsletter-optin-box' ),
+					'conditional_logic' => 'number',
+				),
+				'campaign_title' => array(
+					'description'       => __( 'Campaign Title', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
 				),
 			),
+			parent::get_known_smart_tags()
 		);
-
-		$posts     = get_posts( $args );
-		$campaigns = wp_list_pluck( $posts, 'post_title', 'ID' );
-
-		return array(
-
-			'campaign_id' => array(
-				'el'          => 'select',
-				'label'       => __( 'Campaign', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Fire for all campaigns', 'newsletter-optin-box' ),
-				'options'     => $campaigns,
-				'description' => __( 'Select a campaign above if you want to watch for a specific campaign.', 'newsletter-optin-box' ),
-			),
-
-		);
-
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	public function is_rule_valid_for_args( $rule, $args, $subscriber, $action ) {
-		$settings = $rule->trigger_settings;
+	public function settings_to_conditional_logic( $settings ) {
 
-		// Are we filtering by campaign id?
-		$campaign_id = (int) $args['campaign_id'];
-		if ( ! empty( $settings['campaign_id'] ) && (int) $settings['campaign_id'] !== $campaign_id ) {
+		// We have no conditional logic here.
+		if ( ! is_array( $settings ) || ! isset( $settings['campaign_id'] ) ) {
 			return false;
 		}
 
-		return parent::is_rule_valid_for_args( $rule, $args, $subscriber, $action );
+		$conditions = array();
+
+		// Campaign ID.
+		if ( isset( $settings['campaign_id'] ) ) {
+
+			if ( ! empty( $settings['campaign_id'] ) ) {
+				$conditions[] = array(
+					'type'      => 'campaign_id',
+					'condition' => 'is',
+					'value'     => (int) $settings['campaign_id'],
+				);
+			}
+
+			unset( $settings['campaign_id'] );
+		}
+
+		return array(
+			'conditional_logic' => $conditions,
+			'settings'          => $settings,
+		);
 	}
 
 	/**
@@ -130,6 +128,17 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	 * @param $campaign_id The campaign that was clicked.
 	 */
 	public function maybe_trigger( $subscriber_id, $campaign_id ) {
+
+		$subscriber = new Noptin_Subscriber( $subscriber_id );
+
+		$args = array_merge(
+			$subscriber->to_array(),
+			array(
+				'campaign_id'    => $campaign_id,
+				'campaign_title' => get_the_title( $campaign_id ),
+			)
+		);
+
 		noptin_record_subscriber_activity(
 			$subscriber_id,
 			sprintf(
@@ -139,7 +148,7 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 			)
 		);
 
-		$this->trigger( $subscriber_id, compact( 'campaign_id' ) );
+		$this->trigger( $subscriber, $args );
 	}
 
 }

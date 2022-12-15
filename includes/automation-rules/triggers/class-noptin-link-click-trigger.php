@@ -99,7 +99,7 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 	public function settings_to_conditional_logic( $settings ) {
 
 		// We have no conditional logic here.
-		if ( ! is_array( $settings ) || ( empty( $settings['campaign_id'] ) && empty( $settings['url'] ) ) ) {
+		if ( ! is_array( $settings ) || ( ! isset( $settings['campaign_id'] ) && ! isset( $settings['url'] ) ) ) {
 			return false;
 		}
 
