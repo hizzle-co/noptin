@@ -31,6 +31,27 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	public $posts;
 
 	/**
+	 * The current date query.
+	 *
+	 * @var array
+	 */
+	public $date_query;
+
+	/**
+	 * The current post digest.
+	 *
+	 * @var Noptin_Automated_Email
+	 */
+	public $post_digest;
+
+	/**
+	 * Whether or not posts were found.
+	 *
+	 * @var bool
+	 */
+	public $posts_found = false;
+
+	/**
 	 * @var string
 	 */
 	public $notification_hook = 'noptin_send_post_digest';
@@ -385,15 +406,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		// Set the last send date.
 		update_post_meta( $campaign_id, '_noptin_last_send', time() );
 
-		// Retrieve matching posts.
-		$this->posts = $this->get_campaign_posts( $campaign );
-
-		// Abort if there are no posts.
-		if ( empty( $this->posts ) ) {
-			return;
-		}
-
 		// Prepare environment.
+		$this->post_digest = $campaign;
+		$this->posts_found = false;
+		$this->date_query  = $this->get_date_query( $campaign );
+
 		$type    = $campaign->get_email_type();
 		$content = $campaign->get_content( $type );
 
@@ -420,6 +437,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			)
 		);
 
+		// Skip if there are no posts.
+		if ( ! $this->posts_found ) {
+			return;
+		}
+
 		// Remove unrelated content.
 		foreach ( array( 'content_normal', 'content_plain_text', 'content_raw_html' ) as $content_type ) {
 			if ( 'content_' . $type !== $content_type ) {
@@ -436,7 +458,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		}
 
 		// Clear environment.
-		$this->posts = null;
 		$this->after_send( $campaign );
 
 		// TODO: Everything is unslashed.
@@ -447,9 +468,9 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * Retrieve matching posts since last send.
 	 *
 	 * @param Noptin_Automated_Email $campaign
-	 * @return WP_Post[]
+	 * @return array
 	 */
-	public function get_campaign_posts( $campaign ) {
+	public function get_date_query( $campaign ) {
 
 		$time = $campaign->get( 'time' );
 
@@ -457,61 +478,28 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			$time = '07:00';
 		}
 
-		$post_type = $campaign->get( 'post_type' );
-		$post_type = empty( $post_type ) ? 'post' : $post_type;
-
 		switch ( $campaign->get( 'frequency' ) ) {
 
+			// Get posts published yesterday.
 			case 'daily':
-				// Get posts published yesterday.
-				return $this->get_posts(
-					$campaign,
+				return array(
 					array(
-						'post_type'      => $post_type,
-						'post_status'    => 'publish',
-						'posts_per_page' => -1,
-						'orderby'        => 'date',
-						'order'          => 'DESC',
-						'date_query'     => array(
-							array(
-								'after'     => 'yesterday midnight',
-								'before'    => 'today midnight',
-								'inclusive' => true,
-							),
-						),
-					)
+						'after'     => 'yesterday midnight',
+						'before'    => 'today midnight',
+						'inclusive' => true,
+					),
 				);
 
+			// Get posts published in the last 7 days.
 			case 'weekly':
-				// Get posts published in the last 7 days.
-				return $this->get_posts(
-					$campaign,
-					array(
-						'post_type'      => $post_type,
-						'post_status'    => 'publish',
-						'posts_per_page' => -1,
-						'orderby'        => 'date',
-						'order'          => 'DESC',
-						'date_query'     => array(
-							'after' => gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
-						),
-					)
+				return array(
+					'after' => gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
 				);
 
+			// Get posts published in the last 30 days.
 			case 'monthly':
-				// Get posts published in the last 30 days.
-				return $this->get_posts(
-					$campaign,
-					array(
-						'post_type'      => $post_type,
-						'post_status'    => 'publish',
-						'posts_per_page' => -1,
-						'orderby'        => 'date',
-						'order'          => 'DESC',
-						'date_query'     => array(
-							'after' => gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
-						),
-					)
+				return array(
+					'after' => gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
 				);
 
 		}
@@ -601,7 +589,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				'post_digest' => array(
 					'description' => __( 'Displays your latest content.', 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'process_merge_tag' ),
-					'example'     => 'post_digest template="list" limit="8"',
+					'example'     => 'post_digest style="list" limit="10"',
 					'partial'     => true,
 				),
 
@@ -620,25 +608,53 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function process_merge_tag( $args = array() ) {
 
-		$template = isset( $args['style'] ) ? $args['style'] : 'list';
-		$limit    = isset( $args['limit'] ) ? absint( $args['limit'] ) : 6;
+		// Fetch the posts.
+		$posts = $this->get_merge_tag_posts( $args );
 
-		if ( empty( $this->posts ) ) {
+		// Abort if we have no posts.
+		if ( empty( $posts ) ) {
 			return '';
 		}
 
-		return $this->get_posts_html( $template, array_slice( $this->posts, 0, $limit ) );
+		// We have posts.
+		$this->posts_found = true;
+
+		return $this->get_posts_html( $args, $posts );
+	}
+
+	/**
+	 * Retrieves the content for the posts merge tag.
+	 *
+	 * @param array $args
+	 * @return WP_Post[]
+	 */
+	public function get_merge_tag_posts( $args = array() ) {
+
+		$query = array(
+			'numberposts'      => isset( $args['limit'] ) ? intval( $args['limit'] ) : 10,
+			'orderby'          => 'date',
+			'order'            => 'DESC',
+			'suppress_filters' => true,
+		);
+
+		if ( ! empty( $this->date_query ) ) {
+			$query['date_query'] = $this->date_query;
+		}
+
+		return get_posts( apply_filters( 'noptin_post_digest_merge_tag_query', $query, $args ) );
 	}
 
 	/**
 	 * Get posts html to display.
 	 *
-	 * @param string $template
+	 * @param array $args
 	 * @param WP_Post[] $campaign_posts
 	 *
 	 * @return string
 	 */
-	public function get_posts_html( $template = 'grid', $campaign_posts = array() ) {
+	public function get_posts_html( $args = array(), $campaign_posts = array() ) {
+
+		$template = isset( $args['style'] ) ? $args['style'] : 'list';
 
 		// Allow overwriting this.
 		$html = apply_filters( 'noptin_post_digest_html', null, $template, $campaign_posts );
@@ -647,8 +663,10 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			return $html;
 		}
 
+		$args['campaign_posts'] = $campaign_posts;
+
 		ob_start();
-		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', compact( 'campaign_posts' ) );
+		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', $args );
 		return ob_get_clean();
 	}
 
@@ -684,43 +702,8 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		// Prepare user and subscriber.
 		parent::prepare_test_data( $email );
 
-		$post_type = $email->get( 'post_type' );
-		$post_type = empty( $post_type ) ? 'post' : $post_type;
+		$this->post_digest = $email;
 
-		// Fetch test posts.
-		$this->posts = $this->get_posts(
-			$email,
-			array(
-				'numberposts'      => 6,
-				'category'         => 0,
-				'orderby'          => 'date',
-				'order'            => 'DESC',
-				'post_type'        => $post_type,
-				'suppress_filters' => true,
-			)
-		);
-
-		// If no posts found, abort.
-		if ( empty( $this->posts ) ) {
-			throw new Exception( __( 'Could not find posts for this preview.', 'newsletter-optin-box' ) );
-		}
-
-	}
-
-	/**
-	 * Retrieves matching posts.
-	 *
-	 * @param Noptin_Automated_Email $email
-	 * @param array $args
-	 */
-	public function get_posts( $email, $args = array() ) {
-		$args = apply_filters( 'noptin_post_digest_posts_query', $args, $email );
-
-		if ( isset( $args['include'] ) && empty( $args['include'] ) ) {
-			return array();
-		}
-
-		return get_posts( $args );
 	}
 
 	/**
@@ -731,7 +714,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	protected function after_send( $campaign ) {
 
 		// Remove temp variables.
-		$this->posts = null;
+		$this->post_digest = null;
 
 		parent::after_send( $campaign );
 	}

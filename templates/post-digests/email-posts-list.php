@@ -5,6 +5,8 @@
  * Override this template by copying it to yourtheme/noptin/post-digests/email-posts-list.php
  *
  * @var WP_Post[] $campaign_posts
+ * @var string $title
+ * @var string $description
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -12,6 +14,23 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <style type="text/css">
+
+	.digest-list-title {
+		font-size: 24px;
+		line-height: 1.25;
+		font-weight: 700;
+		margin: 0 0 10px !important;
+		padding-top: 0 !important;
+		word-break: break-word;
+	}
+
+	.digest-list-description {
+		font-size: 15px;
+		line-height: 1.33;
+		margin: 0 0 30px !important;
+		padding-top: 0 !important;
+		word-break: break-word;
+	}
 
 	.digest-list-post {
 		min-width:100%;
@@ -66,6 +85,14 @@ defined( 'ABSPATH' ) || exit;
 
     }
 </style>
+
+<?php if ( ! empty( $title ) ) : ?>
+	<h2 class="digest-list-title"><?php echo wp_kses_post( $title ); ?></h2>
+<?php endif; ?>
+
+<?php if ( ! empty( $description ) ) : ?>
+	<p class="digest-list-description"><?php echo wp_kses_post( $description ); ?></p>
+<?php endif; ?>
 
 <?php foreach ( $campaign_posts as $i => $campaign_post ) : ?>
 
