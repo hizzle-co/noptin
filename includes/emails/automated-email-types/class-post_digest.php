@@ -641,7 +641,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			$query['date_query'] = $this->date_query;
 		}
 
-		return get_posts( apply_filters( 'noptin_post_digest_merge_tag_query', $query, $args ) );
+		return get_posts( apply_filters( 'noptin_post_digest_merge_tag_query', $query, $args, $this ) );
 	}
 
 	/**

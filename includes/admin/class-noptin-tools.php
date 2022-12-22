@@ -11,6 +11,7 @@ class Noptin_Tools {
 		add_action( 'noptin_after_admin_tools', array( __CLASS__, 'display_closing_wrap' ) );
 		add_action( 'noptin_admin_tools', array( __CLASS__, 'list_tools' ) );
 		add_action( 'noptin_admin_tool_debug_log', array( __CLASS__, 'display_debug_log' ) );
+		add_action( 'noptin_admin_tool_custom_content', array( __CLASS__, 'display_custom_content' ) );
 		add_action( 'noptin_admin_tool_system_info', array( __CLASS__, 'display_system_info' ) );
 
 	}
@@ -71,6 +72,12 @@ class Noptin_Tools {
 				'name'   => __( 'Debug Log', 'newsletter-optin-box' ),
 				'button' => __( 'View', 'newsletter-optin-box' ),
 				'desc'   => __( 'View a list of notices and errors logged by Noptin.', 'newsletter-optin-box' ),
+			),
+
+			'custom_content'     => array(
+				'name'   => __( 'Custom Content', 'newsletter-optin-box' ),
+				'button' => __( 'View', 'newsletter-optin-box' ),
+				'desc'   => __( 'View a list of available post types and taxonomies.', 'newsletter-optin-box' ),
 			),
 
 			'delete_subscribers' => array(
@@ -161,4 +168,13 @@ class Noptin_Tools {
 
 	}
 
+	/**
+	 * Displays available custom content.
+	 *
+	 * @return void
+	 * @since 1.10.1
+	 */
+	public static function display_custom_content() {
+		include plugin_dir_path( __FILE__ ) . 'views/custom-content.php';
+	}
 }
