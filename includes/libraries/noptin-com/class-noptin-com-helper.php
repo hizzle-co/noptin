@@ -168,9 +168,7 @@ class Noptin_COM_Helper {
 	 */
 	public static function admin_notices() {
 
-		if ( apply_filters( 'noptin_com_helper_suppress_admin_notices', false ) ) {
-			return;
-		}
+		self::maybe_print_expired_license_key_notice();
 
 		$screen    = get_current_screen();
 		$screen_id = $screen ? $screen->id : '';
@@ -190,6 +188,66 @@ class Noptin_COM_Helper {
 			printf(
 				'<div class="updated noptin-message"><p>%s</p></div>',
 				wp_kses_post( $notice )
+			);
+		}
+
+	}
+
+	/**
+	 * Checks if we should print an expired license key notice.
+	 *
+	 */
+	public static function maybe_print_expired_license_key_notice() {
+
+		// Fetch premium add-ons.
+		$premium_addons = array();
+
+		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
+			$premium_addons[] = 'Noptin Addons Pack';
+		}
+
+		$premium_addons = apply_filters( 'noptin_com_helper_premium_addons', $premium_addons );
+
+		// Abort if none exists.
+		if ( empty( $premium_addons ) ) {
+			return;
+		}
+
+		// Check if we have an active license key.
+		$license = Noptin_COM::get_active_license_key( true );
+		$notice  = __( 'You need an active license key to keep using premium Noptin Addons.', 'newsletter-optin-box' );
+
+		// Add WordPress error message if any.
+		if ( is_wp_error( $license ) ) {
+			$notice .= ' ' . sprintf(
+				/* translators: %s: Error message. */
+				__( 'There was an error checking your license key: %s', 'newsletter-optin-box' ),
+				'<code>' . $license->get_error_message() . '</code>'
+			);
+		}
+
+		// Add active addons.
+		if ( 1 === count( $premium_addons ) ) {
+			$notice .= "\n\n" . sprintf(
+				/* translators: %s: Addon name. */
+				__( 'The following addon is currently active: %s', 'newsletter-optin-box' ),
+				'<code>' . $premium_addons[0] . '</code>'
+			);
+		} else {
+			$notice .= "\n\n" . sprintf(
+				/* translators: %s: Addon names. */
+				__( 'The following addons are currently active: %s.', 'newsletter-optin-box' ),
+				'<code>' . implode( '</code>, <code>', $premium_addons ) . '</code>'
+			);
+		}
+
+		// Add a link to the license page.
+		$notice .= "\n\n" . '<a href="' . esc_url( admin_url( 'admin.php?page=noptin-addons' ) ) . '" class="button button-primary">' . __( 'Manage your license key', 'newsletter-optin-box' ) . '</a>';
+
+		if ( empty( $license ) || is_wp_error( $license ) || empty( $license->is_active_on_site ) ) {
+			printf(
+				'<div class="error noptin-message">%s</div>',
+				wp_kses_post( wpautop( $notice ) )
 			);
 		}
 

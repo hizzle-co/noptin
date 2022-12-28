@@ -71,6 +71,7 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 
 		// Register this provider.
 		add_filter( 'noptin_connection_providers', array( $this, 'register_provider' ), $this->priority );
+		add_filter( 'noptin_com_helper_premium_addons', array( $this, 'register_premium_addon' ), $this->priority );
 
 		if ( ! $this->is_connected() || empty( $this->list_providers ) ) {
 			return;
@@ -320,6 +321,17 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 	public function register_provider( $providers ) {
 		$providers[ $this->slug ] = $this;
 		return $providers;
+	}
+
+	/**
+	 * Registers premium addons.
+	 *
+	 * @since 1.10.2
+	 * @param string[] $addons
+	 */
+	public function register_premium_addon( $addons ) {
+		$addons[] = $this->name;
+		return $addons;
 	}
 
 	/**
