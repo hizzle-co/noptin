@@ -464,8 +464,7 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 	}
 
 	// Clean the cache.
-	$old_subscriber = new Noptin_Subscriber( $subscriber_id );
-	$old_subscriber->clear_cache();
+	$subscriber->clear_cache();
 
 	if ( ! $silent ) {
 		do_action( 'noptin_update_subscriber', $subscriber_id, $details );

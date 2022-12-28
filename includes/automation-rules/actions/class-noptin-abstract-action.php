@@ -103,6 +103,10 @@ abstract class Noptin_Abstract_Action {
 			)
 		);
 
+		foreach ( $this->rules as $rule ) {
+			wp_cache_set( $rule->id, $rule, 'noptin_automation_rules', 10 );
+		}
+
 		return $this->rules;
 	}
 

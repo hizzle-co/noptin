@@ -266,6 +266,8 @@ class Noptin_Automation_Rules {
 			return false;
 		}
 
+		wp_cache_delete( $rule->id, 'noptin_automation_rules' );
+
 		return $wpdb->delete( $this->get_table(), array( 'id' => $rule->id ), '%d' );
 
 	}

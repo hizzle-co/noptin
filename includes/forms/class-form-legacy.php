@@ -104,12 +104,6 @@ class Noptin_Form_Legacy {
 			return false;
 		}
 
-		// Maybe fetch from cache.
-		$form = wp_cache_get( $value, 'noptin_forms' );
-		if ( $form ) {
-			return $form;
-		}
-
 		// Fetch the post object from the db.
 		$post = get_post( $value );
 		if ( ! $post || 'noptin-form' !== $post->post_type ) {
@@ -131,9 +125,6 @@ class Noptin_Form_Legacy {
 		}
 
 		$form = array_merge( $state, $form );
-
-		// Update the cache with out data.
-		wp_cache_add( $post->ID, $form, 'noptin_forms' );
 
 		return $this->sanitize_form_data( $form );
 	}
@@ -513,9 +504,6 @@ class Noptin_Form_Legacy {
 			return $id;
 		}
 
-		// Update the cache with our new data.
-		wp_cache_delete( $id, 'noptin_forms' );
-		wp_cache_add( $id, $this->data, 'noptin_forms' );
 		return true;
 	}
 
