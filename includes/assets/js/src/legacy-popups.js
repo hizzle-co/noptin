@@ -1,5 +1,6 @@
 import throttle from 'lodash.throttle';
 import randomString from './partials/random-string';
+import subscribe from './partials/frontend/subscribe';
 
 (function ($) {
 	"use strict"
@@ -48,9 +49,9 @@ import randomString from './partials/random-string';
 
 				// Replace the content if a popup is already showing.
 				if ( popups.is_showing ) {
-					popups.replaceContent( $( popup ).closest('.noptin-popup-main-wrapper') )
+					popups.replaceContent( $( popup ).closest('.noptin-popup-main-wrapper'), subscribe )
 				} else {
-					popups.open( $( popup ).closest('.noptin-popup-main-wrapper') )
+					popups.open( $( popup ).closest('.noptin-popup-main-wrapper'), subscribe )
 				}
 
 				// Some forms are only set to be displayed once per session.

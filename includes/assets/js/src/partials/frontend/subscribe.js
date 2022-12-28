@@ -9,6 +9,10 @@
  */
 export default function subscribe( form ) {
 
+	if ( ! form ) {
+		return;
+	}
+
 	// Displays an error message.
 	function showError( message ) {
 		form.querySelector( '.noptin_feedback_error' ).innerHTML = message;

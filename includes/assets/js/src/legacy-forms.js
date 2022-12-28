@@ -4,8 +4,8 @@ import subscribe from './partials/frontend/subscribe';
 // Init when the DOM is ready.
 domReady( function() {
 
-	// Listen to newsletter form submissions.
-	document.querySelectorAll( '.noptin-optin-form-wrapper form, .wp-block-noptin-email-optin form, .noptin-email-optin-widget form' ).forEach((form) => {
+	// Add the subscribe handler to all forms.
+	document.querySelectorAll( '.noptin-optin-form-wrapper form, .wp-block-noptin-email-optin form, .noptin-email-optin-widget form, .noptin-optin-form' ).forEach((form) => {
 		subscribe( form );
 	})
 

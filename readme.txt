@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.10.2 =
+* Fix popup newsletter subscription forms not working.
+
 = 1.10.1 =
 * Ability to send an email to individual newsletter subscribers.
 

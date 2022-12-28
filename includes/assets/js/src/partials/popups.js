@@ -18,7 +18,7 @@ let noptinPopup = {
 
     content: '',
 
-    open(content) {
+    open(content, subscribe) {
 
         // Set state
         this.is_showing = true
@@ -56,9 +56,13 @@ let noptinPopup = {
         // Remove classes.
         this.el.removeClass( this.classes.opening ).addClass( this.classes.opened )
 
+        // Attach handlers.
+        if ( subscribe ) {
+            subscribe(this.content.find( 'form' )[0]);
+        }
     },
 
-    replaceContent(content) {
+    replaceContent(content, subscribe) {
 
         // Check state
         if ( ! this.is_showing ) {
@@ -68,6 +72,10 @@ let noptinPopup = {
         // Replace Content.
         this.content.html(jQuery(content).prop('outerHTML'))
 
+        // Attach handlers.
+        if ( subscribe ) {
+            subscribe(this.content.find( 'form' )[0]);
+        }
     },
 
     // Closes the first popup
