@@ -137,6 +137,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 1.10.3 =
 * Add EDD newsletter automation rule triggers.
 * Add support for EDD newsletter template.
+* Add support for WS Form.
 
 = 1.10.2 =
 * Fix popup newsletter subscription forms not working.

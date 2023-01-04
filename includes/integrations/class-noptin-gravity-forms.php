@@ -212,7 +212,7 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 		global $noptin_gravity_forms_forms;
 
 		// Return cached forms.
-		if ( ! empty( $noptin_gravity_forms_forms ) ) {
+		if ( is_array( $noptin_gravity_forms_forms ) ) {
 			return array_replace( $forms, $noptin_gravity_forms_forms );
 		}
 
@@ -222,49 +222,6 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 
 		// Loop through all forms.
 		foreach ( $all_forms as $form ) {
-			$fields = array();
-
-            // Loop through all fields.
-            foreach ( $form['fields'] as $gravity_field ) {
-
-                /** @var GF_Field $gravity_field */
-
-                // Skip fields with no name.
-                if ( empty( $gravity_field->label ) ) {
-                    continue;
-                }
-
-                // Fields with multiple inputs.
-                if ( is_array( $gravity_field->inputs ) ) {
-
-                    foreach ( $gravity_field->inputs as $input ) {
-                        $field = array(
-                            'description'       => $input['label'] . ' (' . $gravity_field->label . ')',
-                            'conditional_logic' => 'string',
-                        );
-
-                        if ( ! empty( $input['choices'] ) && is_array( $input['choices'] ) ) {
-                            $field['options'] = array_combine( wp_list_pluck( $gravity_field->choices, 'value' ), wp_list_pluck( $gravity_field->choices, 'text' ) );
-                        }
-
-                        $fields[ $input['id'] ] = $field;
-                    }
-
-                    continue;
-                }
-
-                $field = array(
-                    'description'       => $gravity_field->label,
-                    'conditional_logic' => 'number' === $gravity_field->type ? 'number' : 'string',
-                );
-
-                if ( ! empty( $gravity_field->choices ) && is_array( $gravity_field->choices ) ) {
-                    $field['options'] = array_combine( wp_list_pluck( $gravity_field->choices, 'value' ), wp_list_pluck( $gravity_field->choices, 'text' ) );
-                }
-
-                $fields[ $gravity_field->id ] = $field;
-            }
-
 			$noptin_gravity_forms_forms[ $form['id'] ] = array(
 				'name'   => $form['title'],
 				'fields' => $this->prepare_noptin_automation_rule_fields( $form['fields'] ),

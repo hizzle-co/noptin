@@ -52,7 +52,7 @@ class Noptin_Contact_Form_7 {
 		global $noptin_contact_form_7_forms;
 
 		// Return cached forms.
-		if ( ! empty( $noptin_contact_form_7_forms ) ) {
+		if ( is_array( $noptin_contact_form_7_forms ) ) {
 			return array_replace( $forms, $noptin_contact_form_7_forms );
 		}
 
