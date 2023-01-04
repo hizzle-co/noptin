@@ -36,6 +36,7 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'edd_payment_saved', array( $this, 'add_order_subscriber' ), 50 );
 		add_action( 'edd_complete_purchase', array( $this, 'order_completed' ), 100 );
 		add_action( 'edd_post_refund_payment', array( $this, 'order_refunded' ), 100 );
+		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 	}
 
 	/**
@@ -244,4 +245,18 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 		);
 	}
 
+	/**
+	 * Registers automation rules.
+	 *
+	 * @since 1.10.3
+	 * @param Noptin_Automation_Rules $rules The automation rules class.
+	 */
+	public function register_automation_rules( $rules ) {
+		$rules->add_trigger( new Noptin_EDD_Download_Purchase_Trigger( $this ) );
+
+		// Add a new trigger for each payment status.
+		foreach ( edd_get_payment_statuses() as $status => $label ) {
+			$rules->add_trigger( new Noptin_EDD_Payment_Trigger( $status, $label ) );
+		}
+	}
 }
