@@ -79,7 +79,7 @@ class Noptin_WS_Form {
 			$value          = wsf_submit_get_value( $submission, WS_FORM_FIELD_PREFIX . $field_id );
             $posted[ $key ] = is_array( $value ) ? implode( ', ', $value ) : $value;
         }
-wpinv_error_log( $posted );
+
         do_action( 'noptin_ws_form_form_submitted', $submission->form_id, $posted );
 	}
 
