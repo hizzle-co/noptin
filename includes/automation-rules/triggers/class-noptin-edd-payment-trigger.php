@@ -115,7 +115,7 @@ class Noptin_Edd_Payment_Trigger extends Noptin_EDD_Trigger {
 					'<a href="%s">%s</a> (%s)',
 					esc_url( admin_url( 'edit.php?post_type=download&page=edd-payment-history&view=view-order-details&id=' . $payment->ID ) ),
 					$payment->number,
-					edd_format_amount( $payment->total, true, $payment->currency )
+					edd_currency_filter( edd_format_amount( $payment->total, true, $payment->currency ), $payment->currency )
 				),
 				strtolower( $this->payment_action_label )
 			)

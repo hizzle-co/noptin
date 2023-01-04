@@ -2,8 +2,6 @@
 
 // Exit if accessed directly.
 
-use function MailOptin\Core\is_boolean;
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -224,7 +222,7 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 			'order.download_list'     => array(
 				'description' => __( 'A list of download links for each download purchased.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => "order.items style='grid'",
+				'example'     => 'order.download_list',
 			),
 
 		);
@@ -250,16 +248,16 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 		// Process order fields.
 		switch ( $field ) {
 
-			case 'order.admin_url':
+			case 'admin_url':
 				return admin_url( 'edit.php?post_type=download&page=edd-payment-history&view=view-order-details&id=' . $this->payment->ID );
 
-			case 'order.recovery_url':
+			case 'recovery_url':
 				return $this->payment->get_recovery_url();
 
-			case 'order.download_list':
+			case 'download_list':
 				return edd_email_tag_download_list( $this->payment->ID );
 
-			case 'order.billing_address':
+			case 'billing_address':
 				return edd_email_tag_billing_address( $this->payment->ID );
 
 			default:
@@ -273,7 +271,7 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 					$value = implode( ', ', $value );
 				}
 
-				if ( is_boolean( $value ) ) {
+				if ( is_bool( $value ) ) {
 
 					if ( isset( $args['format'] ) && 'label' === $args['format'] ) {
 						$value = $value ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
@@ -291,7 +289,7 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 
 				// Format amounts.
 				if ( 'price' === $args['format'] ) {
-					return edd_format_amount( floatval( $value ), true, $this->payment->currency );
+					return edd_currency_filter( edd_format_amount( floatval( $value ), true, $this->payment->currency ), $this->payment->currency );
 				}
 
 				// Format dates.
@@ -455,7 +453,7 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 					$value = implode( ', ', $value );
 				}
 
-				if ( is_boolean( $value ) ) {
+				if ( is_bool( $value ) ) {
 
 					if ( isset( $args['format'] ) && 'label' === $args['format'] ) {
 						$value = $value ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
@@ -473,7 +471,7 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 
 				// Format amounts.
 				if ( 'price' === $args['format'] ) {
-					return edd_format_amount( floatval( $value ) );
+					return edd_currency_filter( edd_format_amount( floatval( $value ) ) );
 				}
 
 				// Format dates.

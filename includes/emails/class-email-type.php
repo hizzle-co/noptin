@@ -504,7 +504,8 @@ abstract class Noptin_Email_Type {
 					'content_type'             => $campaign->get_email_type() === 'plain_text' ? 'text' : 'html',
 					'unsubscribe_url'          => $this->unsubscribe_url,
 					'disable_template_plugins' => ! ( $campaign->get_email_type() === 'normal' && $campaign->get_template() === 'default' ),
-				)
+				),
+				'test' !== $key
 			);
 
 		}
@@ -514,12 +515,7 @@ abstract class Noptin_Email_Type {
 
 		// Log.
 		if ( 'test' !== $key && ! $campaign->is_mass_mail() && ! empty( $campaign->id ) ) {
-
-			if ( true === $result ) {
-				increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
-			} elseif ( false === $result ) {
-				increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
-			}
+			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
 		}
 
 		return $result;

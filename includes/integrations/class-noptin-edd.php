@@ -25,6 +25,7 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 		$this->order_label = __( 'Payments', 'newsletter-optin-box' );
 		$this->slug        = 'edd';
 		$this->name        = 'Easy Digital Downloads';
+		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 	}
 
 	/**
@@ -36,7 +37,6 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 		add_action( 'edd_payment_saved', array( $this, 'add_order_subscriber' ), 50 );
 		add_action( 'edd_complete_purchase', array( $this, 'order_completed' ), 100 );
 		add_action( 'edd_post_refund_payment', array( $this, 'order_refunded' ), 100 );
-		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 	}
 
 	/**
