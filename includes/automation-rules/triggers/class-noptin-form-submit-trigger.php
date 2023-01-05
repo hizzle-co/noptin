@@ -216,7 +216,12 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		foreach ( $posted as $key => $value ) {
 
 			if ( is_array( $value ) ) {
-				$value = implode( ', ', $value );
+
+				if ( ! is_scalar( current( $value ) ) ) {
+					$value = wp_json_encode( $value );
+				} else {
+					$value = implode( ', ', $value );
+				}
 			}
 
 			$prepared[ $key ] = $value;

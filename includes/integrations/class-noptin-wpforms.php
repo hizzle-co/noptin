@@ -99,25 +99,25 @@ class Noptin_WPForms {
         // Loop through all fields.
         foreach ( $fields as $wpforms_field ) {
 
-            if ( in_array( $wpforms_field[ 'type' ], $form_fields_disallow, true ) ) {
+            if ( in_array( $wpforms_field['type'], $form_fields_disallow, true ) ) {
 				continue;
 			}
 
-            $key = sanitize_title( $wpforms_field[ 'label' ] );
+            $key = sanitize_title( $wpforms_field['label'] );
 
 			$prepared_fields[ $key ] = array(
-				'description'       => $wpforms_field[ 'label' ],
-				'conditional_logic' => 'number' === $wpforms_field[ 'type' ] ? 'number' : 'string',
+				'description'       => $wpforms_field['label'],
+				'conditional_logic' => 'number' === $wpforms_field['type'] ? 'number' : 'string',
 			);
 
 			// Child fields.
-			if ( 'name' === $wpforms_field[ 'type' ] ) {
+			if ( 'name' === $wpforms_field['type'] ) {
 				$child_fields = array(
 					'first'  => __( 'First', 'newsletter-optin-box' ),
 					'middle' => __( 'Middle', 'newsletter-optin-box' ),
 					'last'   => __( 'Last', 'newsletter-optin-box' ),
 				);
-			} elseif ( 'address' === $wpforms_field[ 'type' ] ) {
+			} elseif ( 'address' === $wpforms_field['type'] ) {
 				$child_fields = array(
 					'address' => __( 'Address', 'newsletter-optin-box' ),
 					'city'    => __( 'City', 'newsletter-optin-box' ),
@@ -133,7 +133,7 @@ class Noptin_WPForms {
 				$child_key = $key . '.' . $child_key;
 
 				$prepared_fields[ $child_key ] = array(
-					'description'       => $wpforms_field[ 'label' ] . ' (' . $child_label . ')',
+					'description'       => $wpforms_field['label'] . ' (' . $child_label . ')',
 					'conditional_logic' => 'string',
 				);
 			}
@@ -263,7 +263,7 @@ class Noptin_WPForms {
 		$posted = array();
 
 		foreach ( $fields as $field ) {
-			$key            = sanitize_title( $field[ 'name' ] );
+			$key            = sanitize_title( $field['name'] );
 			$posted[ $key ] = $field['value'];
 
 			foreach ( $field as $child_key => $value ) {

@@ -65,6 +65,11 @@ class Noptin_Integrations {
 		add_action( 'frm_action_groups', array( $this, 'group_formidable_form_action' ) );
 		add_action( 'frm_trigger_noptin_action', 'Noptin_Formidable_Forms::process_form', 10, 2 );
 
+		// Ninja forms.
+		add_action( 'noptin_automation_rules_load', array( $this, 'load_ninja_forms_automation_rule' ) );
+		add_filter( 'noptin_ninja_forms_forms', array( $this, 'filter_ninja_forms_forms' ) );
+		add_action( 'ninja_forms_after_submission', array( $this, 'fire_ninja_forms_submission' ) );
+
 		// Filter subscription sources.
 		add_filter( 'noptin_subscription_sources', array( $this, 'register_subscription_source' ) );
 
@@ -113,6 +118,83 @@ class Noptin_Integrations {
 			$ninja_forms                    = Ninja_Forms::instance();
 			$ninja_forms->actions['noptin'] = new Noptin_Ninja_Forms();
 		}
+	}
+
+	/**
+	 * Loads Ninja Forms automation rule
+	 *
+	 * @access public
+	 * @since  1.10.3
+	 * @param  Noptin_Automation_Rules $rules The automation rules instance.
+	 */
+	public function load_ninja_forms_automation_rule( $rules ) {
+		if ( class_exists( 'Ninja_Forms' ) ) {
+			$rules->add_trigger( new Noptin_Form_Submit_Trigger( 'ninja_forms', 'Ninja Forms' ) );
+		}
+	}
+
+	/**
+	 * Filters forms.
+	 *
+	 * @param array $forms An array of forms.
+	 * @return array
+	 */
+	public function filter_ninja_forms_forms( $forms ) {
+		global $noptin_ninja_forms_forms;
+
+		// Return cached forms.
+		if ( is_array( $noptin_ninja_forms_forms ) ) {
+			return array_replace( $forms, $noptin_ninja_forms_forms );
+		}
+
+		$noptin_ninja_forms_forms = array();
+
+		// Get all forms.
+		$all_forms = Ninja_Forms()->form()->get_forms();
+		$all_forms = is_array( $all_forms ) ? $all_forms : array();
+
+		/** @var NF_Database_Models_Form[] $all_forms */
+		foreach ( $all_forms as $form ) {
+
+			$fields = array();
+
+			foreach ( Ninja_Forms()->form( $form->get_id() )->get_fields() as $ninja_field ) {
+
+				/** @var NF_Database_Models_Field $ninja_field */
+				if ( in_array( $ninja_field->get_setting( 'type' ), array( 'submit', 'spam', 'html', 'hr', 'listselect', 'listcheckbox', 'listradio' ), true ) ) {
+					continue;
+				}
+
+				$logic = 'string';
+
+				if ( in_array( $ninja_field->get_setting( 'type' ), array( 'number', 'calc', 'starrating' ), true ) ) {
+					$logic = 'number';
+				}
+
+				$fields[ $ninja_field->get_setting( 'key' ) ] = array(
+					'description'       => $ninja_field->get_setting( 'label' ),
+					'conditional_logic' => $logic,
+				);
+			}
+
+			$noptin_ninja_forms_forms[ $form->get_id() ] = array(
+				'name'   => $form->get_setting( 'title' ),
+				'fields' => $fields,
+			);
+		}
+
+		return array_replace( $forms, $noptin_ninja_forms_forms );
+	}
+
+	/**
+	 * Fires when a Ninja Forms form is submitted.
+	 *
+	 * @param array $data The form data.
+	 */
+	public function fire_ninja_forms_submission( $data ) {
+		$form_id = $data['form_id'];
+		$posted  = wp_list_pluck( $data['fields'], 'value', 'key' );
+		do_action( 'noptin_ninja_forms_form_submitted', $form_id, $posted );
 	}
 
 	/**

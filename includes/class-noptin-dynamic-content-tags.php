@@ -172,7 +172,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 		}
 
 		if ( is_array( $replacement ) ) {
-			$replacement = implode( ', ', $replacement );
+			if ( ! is_scalar( current( $replacement ) ) ) {
+				$replacement = wp_json_encode( $replacement );
+			} else {
+				$replacement = implode( ', ', $replacement );
+			}
 		}
 
 		if ( ! is_scalar( $replacement ) ) {
