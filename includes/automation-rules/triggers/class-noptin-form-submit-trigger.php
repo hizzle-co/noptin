@@ -211,6 +211,17 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 			array_values( $posted )
 		);
 
+		$prepared = array();
+
+		foreach ( $posted as $key => $value ) {
+
+			if ( is_array( $value ) ) {
+				$value = implode( ', ', $value );
+			}
+
+			$prepared[ $key ] = $value;
+		}
+
 		$this->trigger( $current_user, $posted );
 	}
 

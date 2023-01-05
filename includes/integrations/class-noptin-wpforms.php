@@ -17,7 +17,130 @@ class Noptin_WPForms {
 		add_filter( 'wpforms_builder_settings_sections', array( $this, 'settings_section' ), 20, 2 );
 		add_action( 'wpforms_form_settings_panel_content', array( $this, 'settings_section_content' ), 20 );
 		add_action( 'wpforms_process_complete', array( $this, 'add_subscriber' ), 10, 4 );
+
+		// Load automation rule.
+		if ( did_action( 'noptin_automation_rules_load' ) ) {
+			$this->load_automation_rule( noptin()->automation_rules );
+		} else {
+			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rule' ) );
+		}
+		add_filter( 'noptin_wpforms_forms', array( $this, 'filter_forms' ) );
 	}
+
+	/**
+	 * Loads our automation rule.
+	 *
+	 * @param Noptin_Automation_Rules $rules The automation rules instance.
+	 */
+	public function load_automation_rule( $rules ) {
+		$rules->add_trigger( new Noptin_Form_Submit_Trigger( 'wpforms', 'WPForms' ) );
+	}
+
+	/**
+	 * Filters forms.
+	 *
+	 * @param array $forms An array of forms.
+	 * @return array
+	 */
+	public function filter_forms( $forms ) {
+		global $noptin_wpforms_forms;
+
+		// Return cached forms.
+		if ( is_array( $noptin_wpforms_forms ) ) {
+			return array_replace( $forms, $noptin_wpforms_forms );
+		}
+
+		$noptin_wpforms_forms = array();
+
+		/** @var WP_Post[] $all_forms */
+		$all_forms = wpforms()->form->get(
+			'',
+			array(
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+				'posts_per_page' => -1,
+				'post_status'    => 'any',
+			)
+		);
+
+		/** @var WP_Post[] $all_forms */
+		$all_forms = is_array( $all_forms ) ? $all_forms : array();
+
+		// Loop through all forms.
+		foreach ( $all_forms as $form ) {
+
+			// Pull and format the form data out of the form object.
+			$form_data = ! empty( $form->post_content ) ? wpforms_decode( $form->post_content ) : '';
+
+			if ( empty( $form_data ) ) {
+				continue;
+			}
+
+			$noptin_wpforms_forms[ $form->ID ] = array(
+				'name'   => $form->post_title,
+				'fields' => $this->prepare_noptin_automation_rule_fields( $form_data[ 'fields' ] ),
+			);
+		}
+
+		return array_replace( $forms, $noptin_wpforms_forms );
+	}
+
+	/**
+     * Prepares form fields.
+     *
+     * @param array[] $fields The form fields.
+     * @return array
+     */
+    public function prepare_noptin_automation_rule_fields( $fields ) {
+
+        $prepared_fields      = array();
+		$form_fields_disallow = array( 'divider', 'html', 'pagebreak', 'captcha' );
+
+        // Loop through all fields.
+        foreach ( $fields as $wpforms_field ) {
+
+            if ( in_array( $wpforms_field[ 'type' ], $form_fields_disallow, true ) ) {
+				continue;
+			}
+
+            $key = sanitize_title( $wpforms_field[ 'label' ] );
+
+			$prepared_fields[ $key ] = array(
+				'description'       => $wpforms_field[ 'label' ],
+				'conditional_logic' => 'number' === $wpforms_field[ 'type' ] ? 'number' : 'string',
+			);
+
+			// Child fields.
+			if ( 'name' === $wpforms_field[ 'type' ] ) {
+				$child_fields = array(
+					'first'  => __( 'First', 'newsletter-optin-box' ),
+					'middle' => __( 'Middle', 'newsletter-optin-box' ),
+					'last'   => __( 'Last', 'newsletter-optin-box' ),
+				);
+			} elseif ( 'address' === $wpforms_field[ 'type' ] ) {
+				$child_fields = array(
+					'address' => __( 'Address', 'newsletter-optin-box' ),
+					'city'    => __( 'City', 'newsletter-optin-box' ),
+					'state'   => __( 'State', 'newsletter-optin-box' ),
+					'zip'     => __( 'Zip', 'newsletter-optin-box' ),
+					'country' => __( 'Country', 'newsletter-optin-box' ),
+				);
+			} else {
+				$child_fields = array();
+			}
+
+			foreach ( $child_fields as $child_key => $child_label ) {
+				$child_key = $key . '.' . $child_key;
+
+				$prepared_fields[ $child_key ] = array(
+					'description'       => $wpforms_field[ 'label' ] . ' (' . $child_label . ')',
+					'conditional_logic' => 'string',
+				);
+			}
+        }
+
+        return $prepared_fields;
+    }
 
 	/**
 	 * Add Settings Section
@@ -136,6 +259,21 @@ class Noptin_WPForms {
 	 * @param int    $entry_id  Saved entry id.
 	 */
 	public function add_subscriber( $fields, $entry, $form_data, $entry_id ) {
+
+		$posted = array();
+
+		foreach ( $fields as $field ) {
+			$key            = sanitize_title( $field[ 'name' ] );
+			$posted[ $key ] = $field['value'];
+
+			foreach ( $field as $child_key => $value ) {
+				$child_key            = $key . '.' . $child_key;
+				$posted[ $child_key ] = $value;
+			}
+		}
+
+		// Fire an action before we process the form.
+		do_action( 'noptin_wpforms_form_submitted', $form_data['id'], $posted );
 
 		// Check that the form was configured for email subscriptions.
 		if ( empty( $form_data['settings']['enable_noptin'] ) || '1' !== $form_data['settings']['enable_noptin'] ) {
