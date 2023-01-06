@@ -16,6 +16,11 @@ abstract class Noptin_Abstract_Action {
 	protected $rules = null;
 
 	/**
+	 * @var bool
+	 */
+	public $depricated = false;
+
+	/**
 	 * Retrieve the action's unique id.
 	 *
 	 * Only alphanumerics, dashes and underscrores are allowed.
@@ -117,7 +122,7 @@ abstract class Noptin_Abstract_Action {
 	 * @return array
 	 */
 	public function has_rules() {
-		$rules = $this->get_rules;
+		$rules = $this->get_rules();
 		return ! empty( $rules );
 	}
 

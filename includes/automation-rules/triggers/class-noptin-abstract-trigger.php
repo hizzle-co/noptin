@@ -16,6 +16,11 @@ abstract class Noptin_Abstract_Trigger {
 	protected $rules = null;
 
 	/**
+	 * @var bool
+	 */
+	public $depricated = false;
+
+	/**
 	 * Whether or not this trigger deals with a subscriber.
 	 *
 	 * @var bool
@@ -318,7 +323,7 @@ abstract class Noptin_Abstract_Trigger {
 	 * @return array
 	 */
 	public function has_rules() {
-		$rules = $this->get_rules;
+		$rules = $this->get_rules();
 		return ! empty( $rules );
 	}
 

@@ -58,7 +58,7 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 			'noptin_map_custom_fields_heading' => array(
 				'el'      => 'hero',
 				'content' => __( 'Map custom fields', 'newsletter-optin-box' ),
-			)
+			),
 		);
 
 		foreach ( get_noptin_custom_fields() as $field ) {

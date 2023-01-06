@@ -504,8 +504,7 @@ abstract class Noptin_Email_Type {
 					'content_type'             => $campaign->get_email_type() === 'plain_text' ? 'text' : 'html',
 					'unsubscribe_url'          => $this->unsubscribe_url,
 					'disable_template_plugins' => ! ( $campaign->get_email_type() === 'normal' && $campaign->get_template() === 'default' ),
-				),
-				'test' !== $key
+				)
 			);
 
 		}

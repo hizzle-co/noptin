@@ -56,9 +56,11 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 		$product = $product ? $product->get_name() : __( 'Unknown Product', 'newsletter-optin-box' );
 
 		if ( 'buy' === $settings['action'] ) {
+			// translators: %s is the product name.
 			return sprintf( __( 'When someone buys %s', 'newsletter-optin-box' ), $product );
 		}
 
+		// translators: %s is the product name.
 		return sprintf( __( 'When someone is refunded for %s', 'newsletter-optin-box' ), $product );
 
 	}

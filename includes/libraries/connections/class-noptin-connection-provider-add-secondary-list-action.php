@@ -125,7 +125,7 @@ class Noptin_Connection_Provider_Add_Secondary_List_Action extends Noptin_Abstra
 			'noptin',
 			$this->provider->slug,
 			'add',
-			$this->secondary_list
+			$this->secondary_list,
 		);
 	}
 
@@ -145,14 +145,14 @@ class Noptin_Connection_Provider_Add_Secondary_List_Action extends Noptin_Abstra
 					'options'     => $options,
 					'default'     => key( $options ),
 					'description' => __( 'Where should we add the subscriber?', 'newsletter-optin-box' ),
-				)
+				),
 			);
 
 		}
 
 		return array(
 
-			'list'     => array(
+			'list'                => array(
 				'el'          => 'select',
 				'label'       => $this->provider->list_providers->get_name(),
 				'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),
@@ -164,8 +164,7 @@ class Noptin_Connection_Provider_Add_Secondary_List_Action extends Noptin_Abstra
 				'el'          => 'input',
 				'label'       => $this->secondary_list,
 				'placeholder' => __( 'Enter a value', 'newsletter-optin-box' ),
-			)
-
+			),
 		);
 
 	}

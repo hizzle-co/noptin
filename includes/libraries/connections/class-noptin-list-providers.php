@@ -123,7 +123,7 @@ abstract class Noptin_List_Providers {
 		$lists = array();
 
 		foreach ( $this->get_lists( $force ) as $list_id => $list ) {
-			$lists["$list_id"] = sanitize_text_field( $list->get_name() );
+			$lists[ "$list_id" ] = sanitize_text_field( $list->get_name() );
 		}
 
 		return $lists;
@@ -171,7 +171,7 @@ abstract class Noptin_List_Providers {
 		$lists = array();
 
 		foreach ( $this->get_list_ids( $force ) as $list_id ) {
-			$lists["$list_id"] = $this->get_list( $list_id );
+			$lists[ "$list_id" ] = $this->get_list( $list_id );
 		}
 
 		return $lists;

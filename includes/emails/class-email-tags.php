@@ -253,7 +253,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		if ( 'brand' === $background ) {
 			$brand_color = get_noptin_option( 'brand_color' );
-			$background = empty( $brand_color ) ? '#1a82e2' : $brand_color;
+			$background  = empty( $brand_color ) ? '#1a82e2' : $brand_color;
 		}
 
 		// Generate button.

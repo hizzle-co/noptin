@@ -115,7 +115,7 @@ class Noptin_Connection_Provider_Remove_List_Action extends Noptin_Abstract_Acti
 			'noptin',
 			$this->provider->slug,
 			'remove',
-			$this->provider->list_providers->get_name()
+			$this->provider->list_providers->get_name(),
 		);
 	}
 
@@ -126,14 +126,13 @@ class Noptin_Connection_Provider_Remove_List_Action extends Noptin_Abstract_Acti
 
 		return array(
 
-			'list'     => array(
+			'list' => array(
 				'el'          => 'select',
 				'label'       => $this->provider->list_providers->get_name(),
 				'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),
 				'options'     => $this->provider->list_providers->get_dropdown_lists(),
 				'default'     => $this->provider->get_default_list_id(),
-			)
-
+			),
 		);
 
 	}

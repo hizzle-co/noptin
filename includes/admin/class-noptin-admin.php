@@ -63,6 +63,27 @@ class Noptin_Admin {
 	public $admin_menus;
 
 	/**
+	 * Assets URL.
+	 *
+	 * @var string
+	 */
+	public $assets_url;
+
+	/**
+	 * Assets path.
+	 *
+	 * @var string
+	 */
+	public $assets_path;
+
+	/**
+	 * Admin filters.
+	 *
+	 * @var Noptin_Admin_Filters
+	 */
+	public $filters;
+
+	/**
 	 * Get active instance
 	 *
 	 * @access      public

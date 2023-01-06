@@ -48,6 +48,7 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 	 */
 	public function get_name() {
 		return sprintf(
+			// translators: %s is the name of the connection provider.
 			esc_html__( '%s > Tag Subscriber', 'newsletter-optin-box' ),
 			$this->provider->name
 		);
@@ -63,6 +64,7 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 		}
 
 		return sprintf(
+			// translators: %s is the name of the connection provider.
 			__( 'Tag the subscriber in %s', 'newsletter-optin-box' ),
 			$this->provider->name
 		);
@@ -82,6 +84,7 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 		$tags = sanitize_text_field( $settings['tags'] );
 
 		return sprintf(
+			// translators: %s is the name of the connection provider.
 			__( 'Tag the subscriber: "%s"', 'newsletter-optin-box' ),
 			"<code>$tags</code> ({$this->provider->name})"
 		);
@@ -103,7 +106,7 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 			'noptin',
 			$this->provider->slug,
 			'add',
-			'tags'
+			'tags',
 		);
 	}
 
@@ -114,7 +117,7 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 
 		$settings = array(
 
-			'list'     => array(
+			'list' => array(
 				'el'          => 'select',
 				'label'       => $this->provider->list_providers->get_name(),
 				'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),
@@ -123,12 +126,11 @@ class Noptin_Connection_Provider_Add_Tags_Action extends Noptin_Abstract_Action 
 			),
 
 			'tags' => array(
-				'el'                => 'input',
-				'label'             => __( 'Tags', 'newsletter-optin-box' ),
-				'placeholder'       => 'tag, another tag',
-				'description'       => __( 'The listed tags will be applied to the subscriber. Separate multiple tags with a comma.', 'newsletter-optin-box' ),
-			)
-
+				'el'          => 'input',
+				'label'       => __( 'Tags', 'newsletter-optin-box' ),
+				'placeholder' => 'tag, another tag',
+				'description' => __( 'The listed tags will be applied to the subscriber. Separate multiple tags with a comma.', 'newsletter-optin-box' ),
+			),
 		);
 
 		if ( $this->provider->supports( 'universal_tags' ) ) {

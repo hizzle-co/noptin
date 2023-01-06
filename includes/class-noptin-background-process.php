@@ -227,8 +227,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		protected function lock_process() {
 			$this->start_time = time(); // Set start time of current process.
 
-			$lock_duration = ( property_exists( $this, 'queue_lock_time' ) ) ? $this->queue_lock_time : 60; // 1 minute.
-			$lock_duration = apply_filters( $this->identifier . '_queue_lock_time', $lock_duration );
+			$lock_duration = apply_filters( $this->identifier . '_queue_lock_time', 60 ); // 1 minute.
 
 			set_site_transient( $this->identifier . '_process_lock', microtime(), $lock_duration );
 		}
@@ -436,10 +435,6 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 		 */
 		public function schedule_cron_healthcheck( $schedules ) {
 			$interval = apply_filters( $this->cron_interval_identifier, 5 );
-
-			if ( property_exists( $this, 'cron_interval' ) ) {
-				$interval = apply_filters( $this->cron_interval_identifier, $this->cron_interval );
-			}
 
 			// Adds every 5 minutes to the existing schedules.
 			$schedules[ $this->cron_interval_identifier ] = array(

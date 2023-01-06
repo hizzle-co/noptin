@@ -126,7 +126,7 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 
 		return array(
 
-			'list'     => array(
+			'list' => array(
 				'el'          => 'select',
 				'label'       => $this->provider->list_providers->get_name(),
 				'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),

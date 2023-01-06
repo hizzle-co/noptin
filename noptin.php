@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         1.10.2
+ * Version:         1.10.3
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -45,7 +45,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '1.10.2';
+	public $version = '1.10.3';
 
 	/**
 	 * The current database version.
@@ -181,6 +181,42 @@ class Noptin {
 	 * @since       1.7.0
 	 */
 	public $integrations;
+
+	/**
+	 * Actions page.
+	 *
+	 * @var Noptin_Actions_Page
+	 * @since       1.7.0
+	 */
+	public $actions_page;
+
+	/**
+	 * Post types.
+	 *
+	 * @var Noptin_Post_Types
+	 */
+	public $post_types;
+
+	/**
+	 * Popups class.
+	 *
+	 * @var Noptin_Popups
+	 */
+	public $popups;
+
+	/**
+	 * Inpost class.
+	 *
+	 * @var Noptin_Inpost
+	 */
+	public $inpost;
+
+	/**
+	 * The main ajax class.
+	 *
+	 * @var Noptin_Ajax
+	 */
+	public $ajax;
 
 	/**
 	 * Get active instance

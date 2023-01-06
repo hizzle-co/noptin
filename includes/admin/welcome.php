@@ -121,17 +121,17 @@
 	<div class="noptin-cards-container">
 		<ul class="noptin-dashboard-recommended-plugins">
 
-			<?php foreach ( $recommended_plugins as $plugin ) : ?>
+			<?php foreach ( $recommended_plugins as $recommended_plugin ) : ?>
 				<li class="noptin-dashboard-recommended-plugin">
 					<div class="noptin-card-content">
 						<span class="noptin-card-image">
-							<img src="<?php echo esc_url( $plugin['img'] ); ?>" alt="<?php echo esc_attr( $plugin['name'] ); ?>" />
+							<img src="<?php echo esc_url( $recommended_plugin['img'] ); ?>" alt="<?php echo esc_attr( $recommended_plugin['name'] ); ?>" />
 						</span>
-						<h3><?php echo esc_html( $plugin['name'] ); ?></h3>
-						<p class="description"><?php echo esc_html( $plugin['desc'] ); ?></p>
+						<h3><?php echo esc_html( $recommended_plugin['name'] ); ?></h3>
+						<p class="description"><?php echo esc_html( $recommended_plugin['desc'] ); ?></p>
 					</div>
 					<div class="noptin-card-footer">
-						<a class="thickbox button" href="<?php echo esc_url( $plugin['url'] ); ?>"><?php esc_html_e( 'View Details', 'newsletter-optin-box' ); ?></a>
+						<a class="thickbox button" href="<?php echo esc_url( $recommended_plugin['url'] ); ?>"><?php esc_html_e( 'View Details', 'newsletter-optin-box' ); ?></a>
 					</div>
 				</li>
 			<?php endforeach; ?>

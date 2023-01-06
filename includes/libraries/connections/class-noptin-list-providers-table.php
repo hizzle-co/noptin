@@ -121,7 +121,7 @@ class Noptin_List_Providers_Table extends WP_List_Table {
 	/**
 	 * Fetch data from the database to render on view.
 	 */
-	function prepare_items() {
+	public function prepare_items() {
 
 		$per_page = 1000;
 
@@ -146,7 +146,7 @@ class Noptin_List_Providers_Table extends WP_List_Table {
 	 *
 	 * @return array
 	 */
-	function get_columns() {
+	public function get_columns() {
 		return $this->providers->get_list_columns();
 	}
 
@@ -171,14 +171,12 @@ class Noptin_List_Providers_Table extends WP_List_Table {
 			return;
 		}
 
-		$url = esc_url( $url );
-
 		echo "<div style='min-height: 320px; display: flex; align-items: center; justify-content: center; flex-flow: column;'>";
-		echo "<span class='dashicons dashicons-email' style='font-size: 100px; height: 100px; width: 100px; color: #00acc1; line-height: 100px;'></span>";		
+		echo "<span class='dashicons dashicons-email' style='font-size: 100px; height: 100px; width: 100px; color: #00acc1; line-height: 100px;'></span>";
 		printf(
 			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-			__( '%1$sCreate your first list%2$s', 'newsletter-optin-box' ),
-			"<div style='margin-top: 10px;'><a style='font-size: 16px;' href='$url'>",
+			esc_html__( '%1$sCreate your first list%2$s', 'newsletter-optin-box' ),
+			"<div style='margin-top: 10px;'><a style='font-size: 16px;' href='" . esc_url( $url ) . "'>",
 			'</a></div>'
 		);
 

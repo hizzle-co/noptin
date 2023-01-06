@@ -406,7 +406,7 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 
 		// Ensure the log is a scalar.
 		if ( ! is_scalar( $log ) ) {
-			$log = print_r( $log, true );
+			$log = print_r( $log, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		}
 
 		// Add title.
@@ -425,11 +425,11 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 		}
 
 		// Log the message.
-		error_log( trim( $log ) );
+		error_log( trim( $log ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 		// ... and a backtrace.
 		if ( false !== $title && false !== $file ) {
-			error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
+			error_log( 'Backtrace ' . wp_debug_backtrace_summary() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_wp_debug_backtrace_summary
 		}
 	}
 

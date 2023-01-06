@@ -78,7 +78,7 @@ class Noptin_WPForms {
 
 			$noptin_wpforms_forms[ $form->ID ] = array(
 				'name'   => $form->post_title,
-				'fields' => $this->prepare_noptin_automation_rule_fields( $form_data[ 'fields' ] ),
+				'fields' => $this->prepare_noptin_automation_rule_fields( $form_data['fields'] ),
 			);
 		}
 
