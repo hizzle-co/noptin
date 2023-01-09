@@ -71,7 +71,7 @@
 
 			<?php if ( ! empty( $image ) ) : ?>
 				<div class="noptin-form-header-image">
-					<img src="<?php echo esc_url( $image ); ?>" />
+					<img alt="icon" src="<?php echo esc_url( $image ); ?>" />
 				</div>
 			<?php endif; ?>
 
@@ -136,7 +136,7 @@
 
 	<?php if ( $imageMain ) : ?>
 		<div v-if="imageMain" class="noptin-form-main-image">
-			<img src="<?php echo esc_url( $imageMain ); ?>" />
+			<img alt="opt-in image" src="<?php echo esc_url( $imageMain ); ?>" />
 		</div>
 	<?php endif; ?>
 

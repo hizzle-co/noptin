@@ -29,7 +29,7 @@
 
         if ( 'country' === $field && isset( $geolocation['country_flag'] ) ) {
             $url   = esc_url( $geolocation['country_flag'] );
-            $value = "<img src='$url' width='20px' height='auto'>&nbsp;$value";
+            $value = "<img src='$url' alt='flag' width='20px' height='auto'>&nbsp;$value";
         }
 
         if ( 'country' === $field && isset( $geolocation['calling_code'] ) ) {
