@@ -184,6 +184,9 @@ class Noptin_Automation_Rule {
 			);
 		}
 
+		// Backwards compatibility (use email editor to edit emails).
+		$this->maybe_convert_email_editor();
+
 		// Sanitize trigger and action settings.
 		$this->trigger_settings = $this->sanitize_trigger_settings( $this->trigger_settings );
 		$this->action_settings  = $this->sanitize_action_settings( $this->action_settings );
@@ -266,6 +269,7 @@ class Noptin_Automation_Rule {
 			$prepared_options[ $key ] = $value;
 		}
 
+		$prepared_options = wp_parse_args( $prepared_options, $options );
 		return $prepared_options;
 	}
 
@@ -342,6 +346,77 @@ class Noptin_Automation_Rule {
 	 */
 	public function exists() {
 		return ! empty( $this->id );
+	}
+
+	/**
+	 * Fetches the rule's edit url.
+	 *
+	 * @return string
+	 */
+	public function get_edit_url() {
+
+		$edit_url = add_query_arg(
+			array(
+				'page'                        => 'noptin-automation-rules',
+				'noptin_edit_automation_rule' => $this->id,
+			),
+			admin_url( 'admin.php' )
+		);
+
+		if ( 'email' === $this->action_id && ! empty( $this->action_settings['automated_email_id'] ) ) {
+			$edit_url = add_query_arg(
+				array(
+					'page'        => 'noptin-email-campaigns',
+					'section'     => 'automations',
+					'sub_section' => 'edit_campaign',
+					'campaign'    => $this->action_settings['automated_email_id'],
+				),
+				admin_url( 'admin.php' )
+			);
+		}
+
+		return apply_filters( 'noptin_automation_rule_edit_url', $edit_url, $this );
+	}
+
+	/**
+	 * Converts action settings for use in the email editor.
+	 */
+	public function maybe_convert_email_editor() {
+
+		if ( 'email' !== $this->action_id || ! empty( $this->action_settings['automated_email_id'] ) ) {
+			return;
+		}
+
+		$trigger    = noptin()->automation_rules->get_trigger( $this->trigger_id );
+		$settings   = $this->action_settings;
+		$automation = new Noptin_Automated_Email(
+			array(
+				'automation_type' => $this->trigger_id,
+				'status'          => 'publish',
+				'title'           => empty( $trigger ) ? '' : $trigger->get_name(),
+				'automation_rule' => $this->id,
+				'template'        => isset( $settings['email_template'] ) ? sanitize_text_field( $settings['email_template'] ) : '',
+				'subject'         => isset( $settings['email_subject'] ) ? $settings['email_subject'] : '',
+				'content_normal'  => isset( $settings['email_content'] ) ? $settings['email_content'] : '',
+				'email_type'      => 'normal',
+				'recepient'       => '[[email]]',
+				'footer_text'     => isset( $settings['email_footer'] ) ? $settings['email_footer'] : '',
+				'heading'         => isset( $settings['email_heading'] ) ? $settings['email_heading'] : '',
+				'preview_text'    => isset( $settings['email_preview'] ) ? $settings['email_preview'] : '',
+			)
+		);
+		$automation->save();
+
+		if ( $automation->exists() ) {
+			$this->action_settings['automated_email_id'] = $automation->id;
+
+			noptin()->automation_rules->update_rule(
+				$this,
+				array(
+					'action_settings' => $this->action_settings,
+				)
+			);
+		}
 	}
 
 }

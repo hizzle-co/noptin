@@ -68,8 +68,21 @@ class Noptin_Automated_Emails_Admin {
 	 */
 	public function register_metaboxes( $campaign ) {
 
-		// Email timing.
-		if ( $campaign->supports_timing() ) {
+		$automation_rule = $campaign->get( 'automation_rule' );
+
+		if ( ! empty( $automation_rule ) ) {
+
+			add_meta_box(
+				'noptin_automation_trigger_settings',
+				__( 'Trigger', 'newsletter-optin-box' ),
+				array( $this, 'render_metabox' ),
+				get_current_screen()->id,
+				'normal',
+				'high',
+				'trigger-settings'
+			);
+
+		} elseif ( $campaign->supports_timing() ) {
 
 			add_meta_box(
 				'noptin_automation_timing',

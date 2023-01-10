@@ -210,7 +210,9 @@ class Noptin_Automation_Rules {
 	public function update_rule( $rule, $to_update ) {
 		global $wpdb;
 
-		$rule = new Noptin_Automation_Rule( $rule );
+		if ( ! is_a( $rule, 'Noptin_Automation_Rule' ) ) {
+			$rule = new Noptin_Automation_Rule( $rule );
+		}
 
 		// Does the rule exist?
 		if ( ! $rule->exists() ) {

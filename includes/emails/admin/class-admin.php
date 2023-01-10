@@ -385,7 +385,7 @@ class Noptin_Emails_Admin {
 			array( $this, 'render_metabox' ),
 			$screen_id,
 			'normal',
-			'high',
+			'default',
 			'content'
 		);
 

@@ -210,7 +210,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 
 		// Row actions.
 		$row_actions = array();
-		$edit_url    = esc_url( add_query_arg( 'noptin_edit_automation_rule', $item->id, $this->base_url ) );
+		$edit_url    = esc_url( $item->get_edit_url() );
 
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
