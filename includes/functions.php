@@ -1092,11 +1092,19 @@ function noptin_upsell_integrations() {
  * @return bool
  */
 function noptin_get_upsell_url( $url, $utm_source, $utm_campaign, $utm_medium = 'plugin-dashboard' ) {
+
+	// Check the URL begins with http.
+	if ( 0 !== strpos( $url, 'http' ) ) {
+		$url = 'https://noptin.com/' . ltrim( $url, '/' );
+	}
+
 	return add_query_arg(
-		array(
-			'utm_medium'   => $utm_medium,
-			'utm_campaign' => $utm_campaign,
-			'utm_source'   => $utm_source,
+		rawurlencode_deep(
+			array(
+				'utm_medium'   => $utm_medium,
+				'utm_campaign' => $utm_campaign,
+				'utm_source'   => empty( $utm_source ) ? get_home_url() : $utm_source,
+			)
 		),
 		$url
 	);

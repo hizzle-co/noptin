@@ -439,3 +439,35 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 	}
 
 }
+
+/**
+ * Displays the available merge tags text.
+ *
+ * @param string $text The text to display.
+ * @since 1.10.3
+ */
+function noptin_email_display_merge_tags_text( $text = '' ) {
+
+	if ( apply_filters( 'noptin_email_has_listed_available_merge_tags', false ) ) {
+		add_thickbox();
+		$atts = array(
+			'href'  => '#TB_inline?width=0&height=550&inlineId=noptin-available-smart-tags',
+			'class' => 'thickbox',
+		);
+	} else {
+		$atts = array(
+			'href'   => noptin_get_upsell_url( '/guide/sending-emails/email-tags/#available-merge-tags', 'email-campaigns', 'email-tags' ),
+			'target' => '_blank',
+		);
+	}
+
+	?>
+	<p class="description">
+		<?php echo wp_kses_post( $text ); ?>
+		<?php esc_html_e( 'You can use email tags to provide dynamic values.', 'newsletter-optin-box' ); ?>
+		<a <?php noptin_attr( 'available_email_tags', $atts ); ?>>
+			<?php esc_html_e( 'View available tags', 'newsletter-optin-box' ); ?>
+		</a>
+	</p>
+	<?php
+}

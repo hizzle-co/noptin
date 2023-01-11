@@ -29,7 +29,8 @@ if ( empty( $trigger ) ) {
 
 $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
 
-// Display merge tags in the trigger settings.
+add_filter( 'noptin_email_has_listed_available_merge_tags', '__return_true' );
+
 // Do not display the trigger subject field. Instead, use the recipient value as the trigger subject.
 // Adding the timing metabox to the Ultimate Addons Pack.
 ?>
@@ -123,5 +124,9 @@ $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . 
 
 		<textarea name="noptin_trigger_settings" :value="JSON.stringify(trigger_settings)" style="display: none;"></textarea>
 		<textarea name="noptin_conditional_logic" :value="JSON.stringify(conditional_logic)" style="display: none;"></textarea>
+
+		<div id="noptin-available-smart-tags" style="display: none;">
+			<?php require noptin()->plugin_path . 'includes/admin/views/automation-rules/dynamic-content-tags.php'; ?>
+		</div>
 	</div>
 </div>

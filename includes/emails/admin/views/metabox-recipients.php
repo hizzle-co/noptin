@@ -76,6 +76,6 @@ $sender        = $campaign->get_sender();
 		<strong><?php esc_html_e( 'Recipient(s)', 'newsletter-optin-box' ); ?></strong>
 		<input type="text" id="noptin-automated-email-recipients" name="noptin_email[recipients]" value="<?php echo esc_attr( $campaign->get_recipients() ); ?>" placeholder="<?php echo esc_attr( $campaign->get_placeholder_recipient() ); ?>" class="noptin-admin-field-big" required>
 	</label>
-	<p class="description"><?php echo wp_kses_post( __( 'Enter recipients (comma-separated) for this email. <br> Add <b>--notracking</b> after an email to disable open and click tracking for that recipient.', 'newsletter-optin-box' ) ); ?></p>
+	<?php noptin_email_display_merge_tags_text( __( 'Enter recipients (comma-separated) for this email. <br> Add <b>--notracking</b> after an email to disable open and click tracking for that recipient.', 'newsletter-optin-box' ) . '<br>' ); ?>
 
 <?php endif; ?>
