@@ -149,6 +149,31 @@ class Noptin_Automated_Emails_Admin {
 			noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );
 		}
 
+		// Automation rule.
+		$automation_rule = new Noptin_Automation_Rule( $automation->get( 'automation_rule' ) );
+
+		if ( $automation_rule->exists() ) {
+
+			$automation_rule->trigger_settings  = isset( $_POST['noptin_trigger_settings'] ) ? json_decode( wp_unslash( $_POST['noptin_trigger_settings'] ), true ) : array();
+			$automation_rule->conditional_logic = isset( $_POST['noptin_conditional_logic'] ) ? json_decode( wp_unslash( $_POST['noptin_conditional_logic'] ), true ) : array();
+
+			$automation_rule->action_settings['email_subject'] = $automation->get_subject();
+
+			noptin()->automation_rules->update_rule(
+				$automation_rule,
+				apply_filters(
+					'noptin_automated_email_save_automation_rule_settings',
+					array(
+						'trigger_settings' => array_merge(
+							$automation_rule->trigger_settings,
+							array( 'conditional_logic' => $automation_rule->conditional_logic )
+						),
+						'action_settings'  => $automation_rule->action_settings,
+					)
+				)
+			);
+		}
+
 		// Redirect to automation edit page.
 		if ( $automation->exists() ) {
 			wp_safe_redirect( $automation->get_edit_url() );

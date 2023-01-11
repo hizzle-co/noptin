@@ -8,6 +8,8 @@ defined( 'ABSPATH' ) || exit;
 
 $rule = new Noptin_Automation_Rule( absint( $campaign->get( 'automation_rule' ) ) );
 
+noptin_hidden_field( 'noptin_email[automation_rule]', $campaign->get( 'automation_rule' ) );
+
 if ( ! $rule->exists() ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
@@ -27,6 +29,9 @@ if ( empty( $trigger ) ) {
 
 $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
 
+// Display merge tags in the trigger settings.
+// Do not display the trigger subject field. Instead, use the recipient value as the trigger subject.
+// Adding the timing metabox to the Ultimate Addons Pack.
 ?>
 
 <div id="noptin-automation-rule-editor" class="edit-automation-rule noptin-email-editor-fields noptin-fields" style="margin-top: 1.5em;">
@@ -36,7 +41,7 @@ $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . 
 		<div class="noptin-select-wrapper field-wrapper">
 			<label class="noptin-select-label"><?php esc_html_e( 'Trigger', 'newsletter-optin-box' ); ?></label>
 			<div class="noptin-content">
-				<select readonly="readonly">
+				<select disabled>
 					<option selected="selected" value="<?php echo esc_attr( $trigger->get_id() ); ?>"><?php echo esc_html( $trigger->get_name() ); ?></option>
 				</select>
 				<p class="description"><?php echo esc_html( $trigger->get_description() ); ?></p>
@@ -116,5 +121,7 @@ $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . 
 			</div>
 		</div>
 
+		<textarea name="noptin_trigger_settings" :value="JSON.stringify(trigger_settings)" style="display: none;"></textarea>
+		<textarea name="noptin_conditional_logic" :value="JSON.stringify(conditional_logic)" style="display: none;"></textarea>
 	</div>
 </div>

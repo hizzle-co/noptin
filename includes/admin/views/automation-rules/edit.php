@@ -6,7 +6,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$rule = new Noptin_Automation_Rule( absint( $_GET['noptin_edit_automation_rule'] ) );
+$rule = noptin_get_current_automation_rule();
 
 if ( ! $rule->exists() ) {
 	printf(

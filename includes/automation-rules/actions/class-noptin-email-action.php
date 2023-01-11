@@ -35,14 +35,12 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		);
 		echo '<div class="noptin-content">';
 
-		$content = '';
-		if ( ! empty( $_GET['noptin_edit_automation_rule'] ) && is_numeric( $_GET['noptin_edit_automation_rule'] ) ) {
-			$rule     = new Noptin_Automation_Rule( $_GET['noptin_edit_automation_rule'] );
-			$settings = $rule->action_settings;
+		$content  = '';
+		$rule     = noptin_get_current_automation_rule();
+		$settings = $rule->action_settings;
 
-			if ( ! empty( $settings['email_content'] ) ) {
-				$content = wp_unslash( $settings['email_content'] );
-			}
+		if ( ! empty( $settings['email_content'] ) ) {
+			$content = wp_unslash( $settings['email_content'] );
 		}
 
 		// Vue does not work well with actions that insert <script> and <style> tags.

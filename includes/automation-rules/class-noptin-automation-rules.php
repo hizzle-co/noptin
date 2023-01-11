@@ -313,13 +313,7 @@ class Noptin_Automation_Rules {
 		$rule = $this->create_rule( compact( 'action_id', 'trigger_id' ) );
 
 		if ( ! empty( $rule ) ) {
-			wp_safe_redirect(
-				add_query_arg(
-					'noptin_edit_automation_rule',
-					$rule->id,
-					admin_url( 'admin.php?page=noptin-automation-rules' )
-				)
-			);
+			wp_safe_redirect( $rule->get_edit_url() );
 			exit;
 		}
 

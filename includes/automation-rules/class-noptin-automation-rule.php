@@ -94,6 +94,10 @@ class Noptin_Automation_Rule {
 	 */
 	public function __construct( $rule ) {
 
+		if ( empty( $rule ) ) {
+			return;
+		}
+
 		if ( is_numeric( $rule ) ) {
 			$this->init( self::get_rule( $rule ) );
 			return;
@@ -399,7 +403,7 @@ class Noptin_Automation_Rule {
 				'subject'         => isset( $settings['email_subject'] ) ? $settings['email_subject'] : '',
 				'content_normal'  => isset( $settings['email_content'] ) ? $settings['email_content'] : '',
 				'email_type'      => 'normal',
-				'recepient'       => '[[email]]',
+				'recipients'      => '[[email]]',
 				'footer_text'     => isset( $settings['email_footer'] ) ? $settings['email_footer'] : '',
 				'heading'         => isset( $settings['email_heading'] ) ? $settings['email_heading'] : '',
 				'preview_text'    => isset( $settings['email_preview'] ) ? $settings['email_preview'] : '',
