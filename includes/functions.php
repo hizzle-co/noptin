@@ -1839,10 +1839,11 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
  *
  * @param array $conditional_logic
  * @param array $smart_tags
+ * @param string $action_id
  * @since 1.8.0
  * @return string
  */
-function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array() ) {
+function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array(), $action_id = '' ) {
 
 	// Abort if no conditional logic is set.
 	if ( empty( $conditional_logic['enabled'] ) ) {
@@ -1914,12 +1915,22 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 	}
 
 	if ( 'allow' === $conditional_logic['action'] ) {
-		// translators: %s is a list of conditions.
-		return sprintf( __( 'Only run if %s', 'newsletter-optin-box' ), $rules );
+
+		if ( 'email' === $action_id ) {
+			// translators: %s is a list of conditions.
+			return sprintf( __( 'Sends if %s', 'newsletter-optin-box' ), $rules );
+		} else {
+			// translators: %s is a list of conditions.
+			return sprintf( __( 'Runs if %s', 'newsletter-optin-box' ), $rules );
+		}
 	}
 
-	// translators: %s is a list of conditions.
-	return sprintf( __( 'Ignore if %s', 'newsletter-optin-box' ), $rules );
+	if ( 'email' === $action_id ) {
+		// translators: %s is a list of conditions.
+		return sprintf( __( 'Does not send if %s', 'newsletter-optin-box' ), $rules );
+	}
+
+	return sprintf( __( 'Does not run if %s', 'newsletter-optin-box' ), $rules );
 }
 
 /**

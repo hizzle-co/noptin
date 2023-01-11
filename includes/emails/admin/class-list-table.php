@@ -152,6 +152,16 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		if ( 'automation' === $this->collection_type ) {
 			$description = wp_kses_post( apply_filters( 'noptin_automation_table_about_' . $item->type, '', $item, $this ) );
 
+			$rule = new Noptin_Automation_Rule( absint( $item->get( 'automation_rule' ) ) );
+
+			if ( $rule->exists() ) {
+				$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
+
+				if ( $trigger ) {
+					$description .= noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $trigger->get_known_smart_tags(), $rule->action_id );
+				}
+			}
+
 			if ( ! empty( $description ) ) {
 				$title .= "<p class='description'>$description</div>";
 			}
@@ -258,8 +268,11 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_type( $item ) {
 
+		$trigger = noptin()->automation_rules->get_trigger( $item->type );
 		if ( isset( noptin()->emails->automated_email_types->types[ $item->type ] ) ) {
 			return noptin()->emails->automated_email_types->types[ $item->type ]->get_name();
+		} elseif ( $trigger ) {
+			return $trigger->get_name();
 		} else {
 			return __( 'Unknown', 'newsletter-optin-box' );
 		}
