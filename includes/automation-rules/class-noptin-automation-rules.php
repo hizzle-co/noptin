@@ -55,6 +55,7 @@ class Noptin_Automation_Rules {
 		add_action( 'noptin_create_automation_rule', array( $this, 'admin_create_automation_rule' ) );
 		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );
 		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
+		add_action( 'noptin_deleted_automation_rule', array( $this, 'delete_campaign_on_automation_rule_delete' ) );
 		do_action( 'noptin_automation_rules_load', $this );
 	}
 
@@ -271,7 +272,11 @@ class Noptin_Automation_Rules {
 
 		wp_cache_delete( $rule->id, 'noptin_automation_rules' );
 
-		return $wpdb->delete( $this->get_table(), array( 'id' => $rule->id ), '%d' );
+		$result = $wpdb->delete( $this->get_table(), array( 'id' => $rule->id ), '%d' );
+
+		do_action( 'noptin_deleted_automation_rule', $rule );
+
+		return $result;
 
 	}
 
@@ -342,6 +347,20 @@ class Noptin_Automation_Rules {
 
 		$this->delete_rule( intval( $campaign->get( 'automation_rule' ) ) );
 
+	}
+
+	/**
+	 * Deletes a campaign when a rule is deleted.
+	 *
+	 * @var Noptin_Automation_Rule $rule The rule.
+	 */
+	public function delete_campaign_on_automation_rule_delete( $rule ) {
+
+		if ( 'email' !== $rule->action_id || empty( $rule->action_settings['automated_email_id'] ) ) {
+			return;
+		}
+
+		wp_delete_post( $rule->action_settings['automated_email_id'], true );
 	}
 
 	/**

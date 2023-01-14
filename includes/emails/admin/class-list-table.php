@@ -268,15 +268,11 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_type( $item ) {
 
-		$trigger = noptin()->automation_rules->get_trigger( $item->type );
 		if ( isset( noptin()->emails->automated_email_types->types[ $item->type ] ) ) {
 			return noptin()->emails->automated_email_types->types[ $item->type ]->get_name();
-		} elseif ( $trigger ) {
-			return $trigger->get_name();
-		} else {
-			return __( 'Unknown', 'newsletter-optin-box' );
 		}
 
+		return __( 'Unknown', 'newsletter-optin-box' );
 	}
 
 	/**

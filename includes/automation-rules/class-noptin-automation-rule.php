@@ -397,7 +397,7 @@ class Noptin_Automation_Rule {
 			array(
 				'automation_type'  => 'automation_rule_' . $this->trigger_id,
 				'status'           => 'publish',
-				'title'            => empty( $trigger ) ? '' : $trigger->get_name(),
+				'title'            => empty( $trigger ) ? 'Rule ID #' . $this->id : $trigger->get_name() . '(Rule ID #' . $this->id . ')',
 				'automation_rule'  => $this->id,
 				'template'         => isset( $settings['email_template'] ) ? sanitize_text_field( $settings['email_template'] ) : get_noptin_option( 'email_template', 'paste' ),
 				'subject'          => isset( $settings['email_subject'] ) ? $settings['email_subject'] : '',

@@ -243,7 +243,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 
 			// Send the email.
 			$key = $recipient . '_' . $campaign->id;
-			$this->send( $campaign, $key, array( $recipient, $track ) );
+			$this->send( $campaign, $key, array( $recipient => $track ) );
 
 			// Record the activity.
 			noptin_record_subscriber_activity(
