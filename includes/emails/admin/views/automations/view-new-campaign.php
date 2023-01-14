@@ -7,6 +7,10 @@
 		<?php
 			foreach ( noptin()->emails->automated_email_types->types as $automated_email_type ) :
 
+				if ( 0 === strpos( $automated_email_type->type, 'automation_rule_' ) ) {
+					continue;
+				}
+
 				if ( 0 === strpos( $automated_email_type->type, 'woocommerce' ) ) {
 					$woocommerce_automations[] = $automated_email_type;
 					continue;

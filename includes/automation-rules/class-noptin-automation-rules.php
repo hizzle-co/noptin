@@ -54,6 +54,7 @@ class Noptin_Automation_Rules {
 		// Handle admin rule CRUD requests.
 		add_action( 'noptin_create_automation_rule', array( $this, 'admin_create_automation_rule' ) );
 		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );
+		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
 		do_action( 'noptin_automation_rules_load', $this );
 	}
 
@@ -318,6 +319,28 @@ class Noptin_Automation_Rules {
 		}
 
 		noptin()->admin->show_error( __( 'There was a problem creating your automation rule. Please try again.', 'newsletter-optin-box' ) );
+
+	}
+
+	/**
+	 * Deletes a rule when a campaign is deleted.
+	 *
+	 * @var int $campaign_id The campaign id.
+	 * @param WP_Post $post   Post object.
+	 */
+	public function delete_automation_rule_on_campaign_delete( $campaign_id, $post ) {
+
+		if ( 'noptin-campaign' !== $post->post_type || 'automation' !== get_post_meta( $post->ID, 'campaign_type', true ) ) {
+			return;
+		}
+
+		$campaign = new Noptin_Automated_Email( (int) $campaign_id );
+
+		if ( ! $campaign->exists() || ! $campaign->is_automation_rule() || ! $campaign->get( 'automation_rule' ) ) {
+			return;
+		}
+
+		$this->delete_rule( intval( $campaign->get( 'automation_rule' ) ) );
 
 	}
 

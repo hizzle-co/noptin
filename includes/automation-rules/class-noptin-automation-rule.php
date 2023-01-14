@@ -395,20 +395,24 @@ class Noptin_Automation_Rule {
 		$settings   = $this->action_settings;
 		$automation = new Noptin_Automated_Email(
 			array(
-				'automation_type' => $this->trigger_id,
-				'status'          => 'publish',
-				'title'           => empty( $trigger ) ? '' : $trigger->get_name(),
-				'automation_rule' => $this->id,
-				'template'        => isset( $settings['email_template'] ) ? sanitize_text_field( $settings['email_template'] ) : get_noptin_option( 'email_template', 'paste' ),
-				'subject'         => isset( $settings['email_subject'] ) ? $settings['email_subject'] : '',
-				'content_normal'  => isset( $settings['email_content'] ) ? $settings['email_content'] : '',
-				'email_type'      => 'normal',
-				'recipients'      => '[[email]]',
-				'footer_text'     => isset( $settings['email_footer'] ) ? $settings['email_footer'] : get_noptin_footer_text(),
-				'heading'         => isset( $settings['email_heading'] ) ? $settings['email_heading'] : '',
-				'preview_text'    => isset( $settings['email_preview'] ) ? $settings['email_preview'] : '',
+				'automation_type'  => 'automation_rule_' . $this->trigger_id,
+				'status'           => 'publish',
+				'title'            => empty( $trigger ) ? '' : $trigger->get_name(),
+				'automation_rule'  => $this->id,
+				'template'         => isset( $settings['email_template'] ) ? sanitize_text_field( $settings['email_template'] ) : get_noptin_option( 'email_template', 'paste' ),
+				'subject'          => isset( $settings['email_subject'] ) ? $settings['email_subject'] : '',
+				'content_normal'   => isset( $settings['email_content'] ) ? $settings['email_content'] : '',
+				'email_type'       => 'normal',
+				'recipients'       => '[[email]]',
+				'footer_text'      => isset( $settings['email_footer'] ) ? $settings['email_footer'] : get_noptin_footer_text(),
+				'heading'          => isset( $settings['email_heading'] ) ? $settings['email_heading'] : '',
+				'preview_text'     => isset( $settings['email_preview'] ) ? $settings['email_preview'] : '',
+				'when_to_run'      => empty( $settings['wait_for']['interval'] ) ? 'immediately' : 'delayed',
+				'sends_after'      => empty( $settings['wait_for']['interval'] ) ? 0 : absint( $settings['wait_for']['interval'] ),
+				'sends_after_unit' => empty( $settings['wait_for']['period'] ) ? 'minutes' : sanitize_text_field( $settings['wait_for']['period'] ),
 			)
 		);
+
 		$automation->save();
 
 		if ( $automation->exists() ) {

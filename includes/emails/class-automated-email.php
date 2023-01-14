@@ -169,6 +169,15 @@ class Noptin_Automated_Email {
 	}
 
 	/**
+	 * Checks if this is an automation rule email.
+	 *
+	 * @return bool
+	 */
+	public function is_automation_rule() {
+		return 0 === strpos( $this->type, 'automation_rule_' );
+	}
+
+	/**
 	 * Checks if this is a mass mail.
 	 *
 	 * @return bool
