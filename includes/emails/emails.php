@@ -456,7 +456,7 @@ function noptin_email_display_merge_tags_text( $text = '' ) {
 		);
 	} else {
 		$atts = array(
-			'href'   => noptin_get_upsell_url( '/guide/sending-emails/email-tags/#available-merge-tags', 'email-campaigns', 'email-tags' ),
+			'href'   => noptin_get_upsell_url( '/guide/sending-emails/email-tags/#available-merge-tags', 'email-tags', 'email-campaigns' ),
 			'target' => '_blank',
 		);
 	}

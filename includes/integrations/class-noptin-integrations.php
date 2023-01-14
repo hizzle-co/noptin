@@ -236,7 +236,9 @@ class Noptin_Integrations {
 		$action = new Noptin_Elementor_Forms_Integration();
 
 		// Register the action with form widget
-		\ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' )->add_form_action( $action->get_name(), $action );
+		/** @var \ElementorPro\Modules\Forms\Module $forms */
+		$forms = \ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' );
+		$forms->actions_registrar->register( $action, $action->get_name() );
 	}
 
 	/**

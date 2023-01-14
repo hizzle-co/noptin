@@ -82,6 +82,16 @@ class Noptin_Automated_Emails_Admin {
 				'trigger-settings'
 			);
 
+			add_meta_box(
+				'noptin_automation_timing',
+				__( 'Timing', 'newsletter-optin-box' ),
+				array( $this, 'render_metabox' ),
+				get_current_screen()->id,
+				'side',
+				'high',
+				'trigger-timing'
+			);
+
 		} elseif ( $campaign->supports_timing() ) {
 
 			add_meta_box(
@@ -169,7 +179,9 @@ class Noptin_Automated_Emails_Admin {
 							array( 'conditional_logic' => $automation_rule->conditional_logic )
 						),
 						'action_settings'  => $automation_rule->action_settings,
-					)
+					),
+					$automation,
+					$automation_rule
 				)
 			);
 		}
