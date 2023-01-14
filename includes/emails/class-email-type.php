@@ -496,6 +496,7 @@ abstract class Noptin_Email_Type {
 					'recipients'               => $email,
 					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
 					'message'                  => noptin_generate_email_content( $campaign, $this->recipient, $track ),
+					'campaign_id'              => ! empty( $campaign->id ) ? $campaign->id : 0,
 					'headers'                  => array(),
 					'attachments'              => array(),
 					'reply_to'                 => '',

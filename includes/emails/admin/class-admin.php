@@ -309,6 +309,8 @@ class Noptin_Emails_Admin {
 			wp_die( -1, 403 );
 		}
 
+		define( 'NOPTIN_SENDING_TEST_EMAIL', true );
+
 		// Prepare data.
 		$data = wp_unslash( $_POST );
 

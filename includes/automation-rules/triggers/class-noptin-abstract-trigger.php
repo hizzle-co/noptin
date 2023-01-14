@@ -61,6 +61,67 @@ abstract class Noptin_Abstract_Trigger {
 	abstract public function get_description();
 
 	/**
+	 * Retrieve the trigger's email description.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_email_description() {
+		return $this->get_description();
+	}
+
+	/**
+	 * Retrieve the trigger's default email subject.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_default_email_subject() {
+		return '';
+	}
+
+	/**
+	 * Retrieve the trigger's default email heading.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_default_email_heading() {
+		return '';
+	}
+
+	/**
+	 * Retrieve the trigger's default email content.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_default_email_content() {
+		return '';
+	}
+
+	/**
+	 * Retrieve the trigger's about email.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_about_email() {
+		return '';
+	}
+
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags() {
+		return array();
+	}
+
+	/**
 	 * Retrieve the trigger's image.
 	 *
 	 * @since 1.2.8

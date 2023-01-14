@@ -38,6 +38,13 @@ defined( 'ABSPATH' ) || exit;
  */
 function noptin_send_email( $args, $background = false ) {
 
+	if ( empty( $args['message'] ) || is_wp_error( $args['message'] ) ) {
+		return false;
+	}
+
+	$args       = apply_filters( 'noptin_send_email_args', $args );
+	$background = isset( $args['background'] ) ? $args['background'] : $background;
+
 	if ( ! $background ) {
 		return noptin()->emails->sender->send( $args );
 	}
