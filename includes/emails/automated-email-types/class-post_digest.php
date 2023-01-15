@@ -264,22 +264,13 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			return;
 		}
 
-		$url = add_query_arg(
-			array(
-				'utm_medium'   => 'plugin-dashboard',
-				'utm_campaign' => 'post-digests',
-				'utm_source'   => 'email-editor',
-			),
-			'https://noptin.com/ultimate-addons-pack/'
-		);
-
 		printf(
 			'<p>%s</p><p>%s</p>',
 			esc_html__( 'By default, this email will only send for new blog posts.', 'newsletter-optin-box' ),
 			sprintf(
 				// translators: %s is the link to the Noptin addons pack.
-				esc_html__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
-				"<a href='" . esc_url( $url ) . "' target='_blank'>Ultimate Addons Pack</a>"
+				esc_html__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories, tags, and authors.', 'newsletter-optin-box' ),
+				"<a href='" . esc_url( noptin_get_upsell_url( '/ultimate-addons-pack/', 'post-digests', 'email-campaigns' ) ) . "' target='_blank'>Ultimate Addons Pack</a>"
 			)
 		);
 

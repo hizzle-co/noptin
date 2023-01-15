@@ -382,7 +382,7 @@ class Noptin_Settings {
 				'description' => sprintf(
 					/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 					__( 'This text appears below all emails. If you are a %1$sNoptin affiliate%2$s, include your affiliate link here and earn commissions for new referrals.', 'newsletter-optin-box' ),
-					'<a href="https://noptin.com/become-an-affiliate/">',
+					'<a href="' . esc_url( noptin_get_upsell_url( 'become-an-affiliate/', 'settings', 'link' ) ) . '">',
 					'</a>'
 				),
 			),

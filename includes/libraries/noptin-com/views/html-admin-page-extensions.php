@@ -105,7 +105,7 @@
 
 			<div class="noptin-extensions-alert noptin-extensions-alert-success">
 				<div><?php esc_html_e( 'Activate your license to get priority support and premium features.', 'newsletter-optin-box' ); ?></div>
-				<a class="addons-button addons-button-installed" href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=noptinaddons">
+				<a class="addons-button addons-button-installed" href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'license', 'extensionsscreen' ) ); ?>">
 					<?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>
 				</a>
 			</div>
@@ -194,7 +194,7 @@
 
 					<a
 						class="button button-primary"
-						href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=expired"
+						href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'expired', 'extensionsscreen' ) ); ?>"
 					><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
 
 				</div>
@@ -221,7 +221,7 @@
 
 				<a
 					class="addons-button addons-button-installed"
-					href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=upgrade"
+					href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'upgrade', 'extensionsscreen' ) ); ?>"
 				><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
 			</div>
 		<?php endif; ?>
@@ -242,7 +242,7 @@
 					<div class="noptin-extension__footer">
 						<a
 							class="button"
-							href="<?php echo esc_url( $feature['guide'] ); ?>?utm_source=extensionsscreen&utm_medium=product&utm_campaign=addonspack"
+							href="<?php echo esc_url( noptin_get_upsell_url( $feature['guide'], $key, 'extensionsscreen' ) ); ?>"
 							><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?></a>
 					</div>
 				</li>
@@ -274,7 +274,7 @@
 					<div class="noptin-extension__footer">
 						<a
 							class="button"
-							href="<?php echo esc_url( $connection->connect_url ); ?>?utm_source=extensionsscreen&utm_medium=product&utm_campaign=connections"
+							href="<?php echo esc_url( noptin_get_upsell_url( $connection->connect_url, $connection->slug, 'extensionsscreen' ) ); ?>"
 							><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?></a>
 
 						<?php Noptin_COM_Helper::display_main_action_button( $license, "noptin-{$connection->slug}", $installed_addons, true ); ?>

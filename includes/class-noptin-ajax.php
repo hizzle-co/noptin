@@ -2,6 +2,7 @@
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
+
 /**
  * Handles Noptin Ajax Requests
  *

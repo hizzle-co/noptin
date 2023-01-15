@@ -387,7 +387,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			'</a></p>'
 		);
 
-		echo "<p class='description'><a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/automation-rules' target='_blank'>" . esc_html__( 'Or Learn more', 'newsletter-optin-box' ) . '</a></p>';
+		echo "<p class='description'><a style='color: #616161; text-decoration: underline;' href='" . esc_html( noptin_get_upsell_url( '/guide/automation-rules/', 'learn-more', 'automation-rules' ) ) . "' target='_blank'>" . esc_html__( 'Or Learn more', 'newsletter-optin-box' ) . '</a></p>';
 		echo '</div></div>';
 	}
 

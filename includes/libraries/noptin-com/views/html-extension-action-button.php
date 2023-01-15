@@ -65,7 +65,7 @@
 	<?php endif; ?>
 
 <?php elseif ( $is_connection ) : ?>
-	<a class="addons-button addons-button-installed" href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=noptinaddons">
+	<a class="addons-button addons-button-installed" href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', str_replace( 'noptin-', '', $slug ), 'extensionsscreen' ) ); ?>">
 		<?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>
 	</a>
 <?php endif; ?>

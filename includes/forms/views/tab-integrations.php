@@ -21,7 +21,7 @@ $available_connections = get_noptin_connection_providers();
 	<div class="card">
 		<h3><?php esc_html_e( 'No integration installed', 'newsletter-optin-box' ); ?></h3>
 		<p><?php esc_html_e( 'Please install the appropriate integration to automatically add new subscribers to an external email provider such as ConvertKit or Mailchimp.', 'newsletter-optin-box' ); ?></p>
-		<p><a href="<?php echo esc_url( noptin_get_upsell_url( 'https://noptin.com/integrations/#connections', 'connections', 'form-builder' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Integrations', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+		<p><a href="<?php echo esc_url( noptin_get_upsell_url( '/integrations/#connections', 'connections', 'subscription-forms' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Integrations', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
 	</div>
 <?php else : ?>
 

@@ -242,7 +242,7 @@ class Noptin_Admin_Menus {
 				esc_html__( 'Documentation', 'newsletter-optin-box' ),
 				esc_html__( 'Documentation', 'newsletter-optin-box' ),
 				get_noptin_capability(),
-				'https://noptin.com/guide/?utm_source=plugin&utm_medium=help&utm_campaign=documentation',
+				noptin_get_upsell_url( 'guide/', 'documentation', 'link' ),
 				''
 			);
 

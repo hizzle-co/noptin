@@ -156,6 +156,6 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 
 	<?php do_action( 'noptin_after_automation_rule_edit_page' ); ?>
 
-	<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
+	<p class="description"><a href="<?php echo esc_attr( noptin_get_upsell_url( '/guide/automation-rules/', 'learn-more', 'automation-rules' ) ); ?>" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
 
 </div>

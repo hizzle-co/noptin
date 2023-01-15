@@ -1054,7 +1054,7 @@ class Noptin_Legacy_Form_Editor {
 			'CSS' => array(
 				'el'      => 'editor',
 				'tooltip' => __( "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page", 'newsletter-optin-box' ),
-				'label'   => __( 'Enter Your Custom CSS.', 'newsletter-optin-box' ) . ' <a href="https://noptin.com/guide/email-forms/opt-in-forms-editor/custom-css/" target="_blank">' . __( 'Read this first.', 'newsletter-optin-box' ) . '</a>',
+				'label'   => __( 'Enter Your Custom CSS.', 'newsletter-optin-box' ),
 			),
 
 		);
