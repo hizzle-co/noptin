@@ -29,8 +29,6 @@ if ( empty( $trigger ) ) {
 
 $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
 
-add_filter( 'noptin_email_has_listed_available_merge_tags', '__return_true' );
-
 // Do not display the trigger subject field. Instead, use the recipient value as the trigger subject.
 // Adding the timing metabox to the Ultimate Addons Pack.
 ?>
@@ -45,7 +43,15 @@ add_filter( 'noptin_email_has_listed_available_merge_tags', '__return_true' );
 				<select disabled>
 					<option selected="selected" value="<?php echo esc_attr( $trigger->get_id() ); ?>"><?php echo esc_html( $trigger->get_name() ); ?></option>
 				</select>
-				<p class="description"><?php echo esc_html( $trigger->get_description() ); ?></p>
+				<p class="description">
+					<?php
+						printf(
+							/* translators: %s: Trigger description */
+							esc_html__( 'Send this email %s.', 'newsletter-optin-box' ),
+							esc_html( strtolower( $trigger->get_description() ) )
+						);
+					?>
+				</p>
 			</div>
 		</div>
 
@@ -61,7 +67,7 @@ add_filter( 'noptin_email_has_listed_available_merge_tags', '__return_true' );
 				<p class="description">
 					<label>
 						<input type="checkbox" id="noptin-enable-conditional-logic" v-model="conditional_logic.enabled" />
-						<span style="font-weight: 400;"><?php esc_html_e( 'Optionally enable/disable this trigger depending on specific conditions.', 'newsletter-optin-box' ); ?></span>
+						<span style="font-weight: 400;"><?php esc_html_e( 'Optional. Only send (or prevent sending) this email depending on specific conditions.', 'newsletter-optin-box' ); ?></span>
 					</label>
 				</p>
 

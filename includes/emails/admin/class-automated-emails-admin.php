@@ -54,6 +54,10 @@ class Noptin_Automated_Emails_Admin {
 		// Prepare automated email object.
 		$campaign = new Noptin_Automated_Email( $_GET['campaign'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
+		if ( $campaign->is_automation_rule() ) {
+			add_filter( 'noptin_email_has_listed_available_merge_tags', '__return_true' );
+		}
+
 		$automation_type = $campaign->type;
 		do_action( 'add_meta_boxes_noptin_automations', $campaign, $automation_type, array() );
 		do_action( "add_meta_boxes_noptin_automations_$automation_type", $campaign, array() );
