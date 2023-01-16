@@ -191,4 +191,3 @@ class Noptin_Connection_Provider_Add_List_Action extends Noptin_Abstract_Action 
 	}
 
 }
-// TODO: Switch to new automation rules format.

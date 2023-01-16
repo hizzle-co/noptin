@@ -660,7 +660,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 * @return array
 	 */
 	public function get_customer_merge_tags() {
-		// TODO: On subject change, if heading is empty, fill it up.
+
 		return array(
 
 			'customer.id'           => array(

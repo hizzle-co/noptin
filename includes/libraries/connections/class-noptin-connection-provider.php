@@ -550,7 +550,6 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			'is_installed' => true,
 		);
 
-		// TODO Manually overide this method in each connection and set custom images and descriptions.
 		return $senders;
 	}
 
@@ -652,7 +651,6 @@ abstract class Noptin_Connection_Provider extends Noptin_Abstract_Integration {
 			$campaign->options['footer_text'] = '';
 		}
 
-		// TODO: Make use of partial merge tags.
 		$args = array(
 			'tags'                     => empty( $options['tags'] ) ? array() : noptin_parse_list( $options['tags'] ),
 			'extra'                    => empty( $options['extra'][ $list->get_id() ] ) ? array() : $options['extra'][ $list->get_id() ],

@@ -317,7 +317,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		$this->post = null;
 		$this->after_send( $campaign );
 
-		// TODO: Everything is unslashed.
 	}
 
 	/**

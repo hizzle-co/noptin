@@ -451,8 +451,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		// Clear environment.
 		$this->after_send( $campaign );
 
-		// TODO: Everything is unslashed.
-
 	}
 
 	/**
