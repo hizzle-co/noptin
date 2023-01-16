@@ -384,6 +384,8 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 		do_action( 'noptin_insert_subscriber', $id, $fields );
 	}
 
+	delete_transient( 'noptin_subscription_sources' );
+
 	return $id;
 
 }
@@ -469,6 +471,8 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 	if ( ! $silent ) {
 		do_action( 'noptin_update_subscriber', $subscriber_id, $details );
 	}
+
+	delete_transient( 'noptin_subscription_sources' );
 
 	return true;
 
@@ -1669,7 +1673,7 @@ function noptin_get_subscription_sources() {
 	$sources['users_sync'] = __( 'Users Sync', 'newsletter-optin-box' );
 	$sources['import']     = __( 'Imported', 'newsletter-optin-box' );
 
-	// Cache. TODO: Clear cache when subscriber or form is added/updated.
+	// Cache.
 	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );
 
 	return apply_filters( 'noptin_subscription_sources', $sources );

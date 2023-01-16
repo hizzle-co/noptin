@@ -206,6 +206,7 @@ class Noptin_Form_Admin {
 			}
 		}
 
+		delete_transient( 'noptin_subscription_sources' );
 		do_action( 'after_save_edited_noptin_form', $form );
 	}
 

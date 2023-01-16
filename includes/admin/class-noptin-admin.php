@@ -348,6 +348,8 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_after_save_form', $this );
 
+		delete_transient( 'noptin_subscription_sources' );
+
 		exit; // This is important.
 	}
 
