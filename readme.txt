@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.11.0 =
+* Include percentages in Newsletter campaign stats.
+
 = 1.10.3 =
 * Add EDD newsletter automation rule triggers.
 * Add support for EDD newsletter template.

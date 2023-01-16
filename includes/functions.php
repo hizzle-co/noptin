@@ -1453,7 +1453,6 @@ function noptin_decrypt( $encoded ) {
 	return openssl_decrypt( $decoded, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
 }
 // TODO: Show alert when a user clicks on the send button.
-// TODO: Display %ges below stats.
 
 /**
  * Limit length of a string.

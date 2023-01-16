@@ -253,7 +253,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 * Displays the campaign recipients
 	 *
 	 * @param  Noptin_Newsletter_Email|Noptin_Automated_Email $item item.
-	 * @return HTML
+	 * @return int
 	 */
 	public function column_recipients( $item ) {
 		$total = (int) get_post_meta( $item->id, '_noptin_sends', true ) + (int) get_post_meta( $item->id, '_noptin_fails', true );
@@ -283,9 +283,14 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_opens( $item ) {
 
-		$opens = (int) get_post_meta( $item->id, '_noptin_opens', true );
-		return apply_filters( 'noptin_email_opens', $opens, $item );
+		$sends   = $this->column_recipients( $item );
+		$opens   = (int) get_post_meta( $item->id, '_noptin_opens', true );
+		$percent = ( $sends && $opens ) ? round( ( $opens / $sends ) * 100, 2 ) : 0;
 
+		return $this->display_stat(
+			apply_filters( 'noptin_email_opens', $opens, $item ),
+			$percent
+		);
 	}
 
 	/**
@@ -296,9 +301,14 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_clicks( $item ) {
 
-		$clicks = (int) get_post_meta( $item->id, '_noptin_clicks', true );
-		return apply_filters( 'noptin_email_clicks', $clicks, $item );
+		$sends   = $this->column_recipients( $item );
+		$clicks  = (int) get_post_meta( $item->id, '_noptin_clicks', true );
+		$percent = ( $sends && $clicks ) ? round( ( $clicks / $sends ) * 100, 2 ) : 0;
 
+		return $this->display_stat(
+			apply_filters( 'noptin_email_clicks', $clicks, $item ),
+			$percent
+		);
 	}
 
 	/**
@@ -309,9 +319,35 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_unsubscribed( $item ) {
 
+		$sends        = $this->column_recipients( $item );
 		$unsubscribed = (int) get_post_meta( $item->id, '_noptin_unsubscribed', true );
-		return apply_filters( 'noptin_email_unsubscribed', $unsubscribed, $item );
+		$percent      = ( $sends && $unsubscribed ) ? round( ( $unsubscribed / $sends ) * 100, 2 ) : 0;
 
+		return $this->display_stat(
+			apply_filters( 'noptin_email_unsubscribed', $unsubscribed, $item ),
+			$percent
+		);
+
+	}
+
+	/**
+	 * Displays a stat with percentage
+	 *
+	 * @param  int $value value.
+	 * @param  float $percent total.
+	 * return HTML
+	 */
+	public function display_stat( $value, $percent ) {
+
+		if ( $percent > 0 && $percent < 100 ) {
+			return sprintf(
+				'<div class="noptin-stat">%s</div><p class="noptin-stat-percent">%s%%</p>',
+				$value,
+				$percent
+			);
+		}
+
+		return $value;
 	}
 
 	/**
