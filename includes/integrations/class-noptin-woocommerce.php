@@ -83,6 +83,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
 		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority, 2 );
 		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
+		add_filter( 'noptin_automation_trigger_known_smart_tags', array( $this, 'register_automation_smart_tags' ), $this->priority, 2 );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
 
@@ -167,6 +168,44 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return $styles;
+	}
+
+	/**
+	 * Filters known smart tags.
+	 *
+	 * @since 1.11.0
+	 * @param array $smart_tags
+	 * @param Noptin_Abstract_Trigger $trigger
+	 * @return array
+	 */
+	public function register_automation_smart_tags( $smart_tags, $trigger ) {
+
+		// Add orders count on non-woocommerce triggers.
+		if ( false === strpos( $trigger->get_id(), 'woocommerce' ) ) {
+			$smart_tags['woocommerce_orders'] = array(
+				'description'       => __( 'WooCommerce orders', 'newsletter-optin-box' ),
+				'example'           => 'woocommerce_orders',
+				'conditional_logic' => 'number',
+				'callback'          => array( $this, 'get_current_subscriber_woocommerce_orders_count' ),
+			);
+		}
+
+		return $smart_tags;
+	}
+
+	/**
+	 * Retrieves the current subscriber's WooCommerce orders count.
+	 *
+	 * @since 1.11.0
+	 * @return int
+	 */
+	public function get_current_subscriber_woocommerce_orders_count() {
+
+		if ( empty( $GLOBALS['current_noptin_email'] ) || ! is_email( $GLOBALS['current_noptin_email'] ) ) {
+			return 0;
+		}
+
+		return $this->get_order_count( $GLOBALS['current_noptin_email'] );
 	}
 
 	/**
@@ -547,6 +586,10 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		if ( empty( $customer_id_or_email ) ) {
 			return 0;
+		}
+
+		if ( is_email( $customer_id_or_email ) && email_exists( $customer_id_or_email ) ) {
+			$customer_id_or_email = email_exists( $customer_id_or_email );
 		}
 
 		if ( is_numeric( $customer_id_or_email ) ) {

@@ -295,6 +295,9 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 				$args['email'] = $trigger_subject;
 			}
 
+			// Set the current email.
+			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
+
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
                 $action->maybe_run( $args['email'], $rule, $args );

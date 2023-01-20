@@ -183,8 +183,6 @@ abstract class Noptin_Abstract_Action {
 	 */
 	public function maybe_run( $subject, $rule, $args ) {
 
-		$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
-
 		// Ensure that we can run the action.
 		if ( ! $this->can_run( $subject, $rule, $args ) ) {
 			return;
