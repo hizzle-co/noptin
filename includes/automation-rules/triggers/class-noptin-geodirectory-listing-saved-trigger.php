@@ -220,6 +220,10 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	 */
 	public function get_settings() {
 
+		if ( did_action( 'add_meta_boxes_noptin_automations' ) ) {
+			return array();
+		}
+
 		return array(
 
 			'trigger_subject' => array(
@@ -273,6 +277,10 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 			$postarr['author_first_name'] = $listing_owner->user_firstname;
 			$postarr['author_last_name']  = $listing_owner->user_lastname;
 			$postarr['author_login']      = $listing_owner->user_login;
+
+			if ( empty( $postarr['email'] ) ) {
+				$postarr['email'] = $listing_owner->user_email;
+			}
 		}
 
 		// Featured image.
@@ -283,7 +291,27 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 
 		$postarr = array_replace( (array) $gd_post, $postarr );
 
-		$this->trigger( $listing_owner, $postarr );
+		$prepared = array();
+
+		foreach ( $postarr as $key => $value ) {
+
+			if ( is_array( $value ) ) {
+
+				if ( ! is_scalar( current( $value ) ) ) {
+					$value = wp_json_encode( $value );
+				} else {
+					$value = implode( ', ', $value );
+				}
+			}
+
+			if ( is_email( $value ) && empty( $prepared['email'] ) ) {
+				$prepared['email'] = sanitize_email( $value );
+			}
+
+			$prepared[ $key ] = $value;
+		}
+
+		$this->trigger( $listing_owner, $prepared );
 	}
 
 	/**
@@ -313,20 +341,24 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
             // Prepare the rule.
             $rule = noptin()->automation_rules->prepare_rule( $rule );
 
-			// Abort if no valid trigger subject.
-			if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
-				continue;
+			// If we're not sending an email...
+			if ( 'email' !== $rule->action_id ) {
+
+				// Abort if no valid trigger subject.
+				if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
+					continue;
+				}
+
+				// Maybe process merge tags.
+				$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
+
+				// Abort if not an email.
+				if ( ! is_email( $trigger_subject ) ) {
+					continue;
+				}
+
+				$args['email'] = $trigger_subject;
 			}
-
-			// Maybe process merge tags.
-			$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
-
-			// Abort if not an email.
-			if ( ! is_email( $trigger_subject ) ) {
-				continue;
-			}
-
-			$args['email'] = $trigger_subject;
 
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
