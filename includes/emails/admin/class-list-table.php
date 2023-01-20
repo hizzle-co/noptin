@@ -158,7 +158,11 @@ class Noptin_Email_List_Table extends WP_List_Table {
 				$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
 
 				if ( $trigger ) {
-					$description .= noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $trigger->get_known_smart_tags(), $rule->action_id );
+					$conditional_description = noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $trigger->get_known_smart_tags(), $rule->action_id );
+
+					if ( ! empty( $conditional_description ) ) {
+						$description .= '<br />' . $conditional_description;
+					}
 				}
 			}
 
