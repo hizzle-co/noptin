@@ -156,7 +156,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 
 		$known_forms = $this->get_forms();
 
-		return array(
+		$settings = array(
 
 			'trigger_form'    => array(
 				'type'        => 'select',
@@ -181,11 +181,16 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 						'</a>'
 					)
 				),
-				'default'     => '[[current_user_email]]',
+				'default'     => '',
 			),
 
 		);
 
+		if ( did_action( 'add_meta_boxes_noptin_automations' ) ) {
+			unset( $settings['trigger_subject'] );
+		}
+
+		return $settings;
 	}
 
 	/**
@@ -224,10 +229,19 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 				}
 			}
 
+			if ( is_email( $value ) && empty( $prepared['email'] ) ) {
+				$prepared['email'] = sanitize_email( $value );
+			}
+
 			$prepared[ $key ] = $value;
 		}
 
-		$this->trigger( $current_user, $posted );
+		// Maybe set an email.
+		if ( empty( $prepared['email'] ) ) {
+			$prepared['email'] = $current_user->user_email;
+		}
+
+		$this->trigger( $current_user, $prepared );
 	}
 
 	/**
@@ -262,20 +276,24 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 				continue;
 			}
 
-			// Abort if no valid trigger subject.
-			if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
-				continue;
+			// If we're not sending an email...
+			if ( 'email' !== $rule->action_id ) {
+
+				// Abort if no valid trigger subject.
+				if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
+					continue;
+				}
+
+				// Maybe process merge tags.
+				$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
+
+				// Abort if not an email.
+				if ( ! is_email( $trigger_subject ) ) {
+					continue;
+				}
+
+				$args['email'] = $trigger_subject;
 			}
-
-			// Maybe process merge tags.
-			$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
-
-			// Abort if not an email.
-			if ( ! is_email( $trigger_subject ) ) {
-				continue;
-			}
-
-			$args['email'] = $trigger_subject;
 
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
