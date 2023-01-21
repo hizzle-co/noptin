@@ -227,4 +227,28 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 		}
 	}
 
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+
+		/** @var Noptin_WooCommerce_Automated_Email_Type[] $email_types */
+		$email_types = noptin()->emails->automated_email_types->types;
+
+		$email_types['woocommerce_product_purchase']->_prepare_test_data();
+
+		$args = array(
+			'email'  => $email_types['woocommerce_product_purchase']->order->get_billing_email(),
+			'action' => 'buy',
+		);
+
+		$args = $this->prepare_trigger_args( $email_types['woocommerce_product_purchase']->customer, $args );
+
+		return $args['smart_tags'];
+	}
 }

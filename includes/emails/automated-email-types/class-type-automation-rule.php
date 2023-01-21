@@ -305,7 +305,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			$this->smart_tags = $trigger->get_test_smart_tags( $rule );
 		}
 
-
 		// Maybe set related subscriber.
 		$subscriber = get_noptin_subscriber( sanitize_email( $recipient ) );
 

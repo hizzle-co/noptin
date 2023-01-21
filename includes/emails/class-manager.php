@@ -18,6 +18,7 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
+#[AllowDynamicProperties]
 class Noptin_Email_Manager {
 
 	/** @var Noptin_Email_Sender */

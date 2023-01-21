@@ -1276,7 +1276,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 *
 	 * @param int $offset
 	 */
-	protected function _prepare_test_data( $offset = 0 ) {
+	public function _prepare_test_data( $offset = 0 ) {
 
 		// Do not run more than 10 times.
 		if ( $offset > 10 ) {
