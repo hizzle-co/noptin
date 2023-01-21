@@ -114,11 +114,12 @@ abstract class Noptin_Abstract_Trigger {
 	 * Prepares email test data.
 	 *
 	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
 	 * @return Noptin_Automation_Rules_Smart_Tags
 	 * @throws Exception
 	 */
-	public function get_test_smart_tags() {
-		return array();
+	public function get_test_smart_tags( $rule ) {
+		throw new Exception( __( 'No test data available for this trigger.', 'newsletter-optin-box' ) );
 	}
 
 	/**
@@ -511,14 +512,14 @@ abstract class Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Triggers action callbacks.
+	 * Prepares trigger args.
 	 *
-	 * @since 1.2.8
+	 * @since 1.11.0
 	 * @param mixed $subject The subject.
 	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @return array
 	 */
-	public function trigger( $subject, $args ) {
+	public function prepare_trigger_args( $subject, $args ) {
 
 		if ( ! is_array( $args ) ) {
 			$args = array();
@@ -529,11 +530,25 @@ abstract class Noptin_Abstract_Trigger {
 			$args = array_replace( $args, $this->prepare_user_args( $subject ) );
 		}
 
-		$args['subject'] = $subject;
-
-		$args = apply_filters( 'noptin_automation_trigger_args', $args, $this );
-
+		$args['subject']    = $subject;
+		$args               = apply_filters( 'noptin_automation_trigger_args', $args, $this );
 		$args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
+
+		return $args;
+
+	}
+
+	/**
+	 * Triggers action callbacks.
+	 *
+	 * @since 1.2.8
+	 * @param mixed $subject The subject.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return void
+	 */
+	public function trigger( $subject, $args ) {
+
+		$args = $this->prepare_trigger_args( $subject, $args );
 
 		foreach ( $this->get_rules() as $rule ) {
 

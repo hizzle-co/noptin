@@ -262,6 +262,30 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Prepares test data.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function prepare_test_data( $campaign ) {
+
+		// Prepare user and subscriber.
+		parent::prepare_test_data( $campaign );
+
+		// Prepare automation rule test data.
+		$trigger = $this->get_trigger();
+		$rule    = new Noptin_Automation_Rule( (int) $campaign->get( 'automation_rule' ) );
+
+		if ( $trigger ) {
+			try {
+				$this->smart_tags = $trigger->get_test_smart_tags( $rule );
+			} catch ( Exception $e ) {
+				$this->smart_tags = null;
+			}
+		}
+
+	}
+
+	/**
 	 * Sends a test email.
 	 *
 	 * @param Noptin_Automated_Email $campaign
@@ -273,18 +297,14 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		// Prepare the test data.
 		$this->prepare_test_data( $campaign );
 
+		// Prepare automation rule test data.
 		$trigger = $this->get_trigger();
+		$rule    = new Noptin_Automation_Rule( (int) $campaign->get( 'automation_rule' ) );
 
 		if ( $trigger ) {
-			$test_smart_tags = $trigger->get_test_smart_tags();
+			$this->smart_tags = $trigger->get_test_smart_tags( $rule );
 		}
 
-		// If no test found, abort.
-		if ( empty( $test_smart_tags ) ) {
-			throw new Exception( __( 'Could not find test data for this preview.', 'newsletter-optin-box' ) );
-		}
-
-		$this->smart_tags = $test_smart_tags;
 
 		// Maybe set related subscriber.
 		$subscriber = get_noptin_subscriber( sanitize_email( $recipient ) );

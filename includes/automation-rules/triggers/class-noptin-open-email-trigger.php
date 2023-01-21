@@ -151,4 +151,23 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 		$this->trigger( $subscriber, $args );
 	}
 
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+		$args = array(
+			'campaign_id'    => 1,
+			'campaign_title' => 'Test Campaign',
+		);
+
+		$subject = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+		$args    = $this->prepare_trigger_args( $subject, $args );
+
+		return $args['smart_tags'];
+	}
 }

@@ -248,7 +248,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	}
 
 	/**
-	 * Inits the trigger.
+	 * Retrieves trigger args.
 	 *
 	 * @param array $postarr The post info.
 	 * @param object $gd_post The gd post data.
@@ -256,12 +256,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	 * @param bool $update Whether this is an existing post being updated or not.
 	 * @since 1.9.0
 	 */
-	public function init_trigger( $postarr, $gd_post, $post, $update ) {
-
-		// Abort if this is a post revision.
-		if ( wp_is_post_revision( $post->ID ) ) {
-			return;
-		}
+	public function prepare_gd_args( $postarr, $gd_post, $post, $update ) {
 
 		$postarr['saving_type'] = $update ? 'update' : 'new';
 		$postarr['post_url']    = get_permalink( $post->ID );
@@ -311,7 +306,26 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 			$prepared[ $key ] = $value;
 		}
 
-		$this->trigger( $listing_owner, $prepared );
+		return $prepared;
+	}
+
+	/**
+	 * Inits the trigger.
+	 *
+	 * @param array $postarr The post info.
+	 * @param object $gd_post The gd post data.
+	 * @param WP_Post $post The post object.
+	 * @param bool $update Whether this is an existing post being updated or not.
+	 * @since 1.9.0
+	 */
+	public function init_trigger( $postarr, $gd_post, $post, $update ) {
+
+		// Abort if this is a post revision.
+		if ( wp_is_post_revision( $post->ID ) ) {
+			return;
+		}
+
+		$this->trigger( get_userdata( $post->post_author ), $this->prepare_gd_args( $postarr, $gd_post, $post, $update ) );
 	}
 
 	/**
@@ -370,4 +384,42 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
         }
 
     }
+
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+
+		// Fetch post from the post type.
+		$post = get_posts(
+			array(
+				'post_type'      => $this->post_type,
+				'posts_per_page' => 1,
+				'orderby'        => 'rand',
+			)
+		);
+
+		if ( empty( $post ) ) {
+			throw new Exception( __( 'No test data available for this trigger.', 'newsletter-optin-box' ) );
+		}
+
+		$post    = array_shift( $post );
+		$gd_post = geodir_get_post_info( $post->ID );
+
+		if ( empty( $gd_post ) ) {
+			throw new Exception( __( 'No test data available for this trigger.', 'newsletter-optin-box' ) );
+		}
+
+		$args = $this->prepare_trigger_args(
+			get_userdata( $post->post_author ),
+			$this->prepare_gd_args( $post->to_array(), $gd_post, $post, true )
+		);
+
+		return $args['smart_tags'];
+	}
 }
