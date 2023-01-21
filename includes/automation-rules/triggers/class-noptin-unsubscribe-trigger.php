@@ -45,7 +45,7 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Fired when someone unsubscribes', 'newsletter-optin-box' );
+		return __( 'When someone unsubscribes', 'newsletter-optin-box' );
 	}
 
 	/**

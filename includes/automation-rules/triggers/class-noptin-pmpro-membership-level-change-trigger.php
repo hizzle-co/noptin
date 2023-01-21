@@ -46,7 +46,7 @@ class Noptin_PMPro_Membership_Level_Change_Trigger extends Noptin_Abstract_Trigg
 	 * @inheritdoc
 	 */
 	public function get_description() {
-        return __( "Fires when a user's membership level changes", 'newsletter-optin-box' );
+        return __( "When a user's membership level changes", 'newsletter-optin-box' );
     }
 
     /**

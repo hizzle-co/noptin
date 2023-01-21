@@ -61,16 +61,6 @@ abstract class Noptin_Abstract_Trigger {
 	abstract public function get_description();
 
 	/**
-	 * Retrieve the trigger's email description.
-	 *
-	 * @since 1.11.0
-	 * @return string
-	 */
-	public function get_email_description() {
-		return $this->get_description();
-	}
-
-	/**
 	 * Retrieve the trigger's default email subject.
 	 *
 	 * @since 1.11.0

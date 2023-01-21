@@ -87,7 +87,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$trigger = $this->get_trigger();
 
 		if ( $trigger ) {
-			return $trigger->get_email_description();
+			return $trigger->get_description();
 		}
 
 		return '';
