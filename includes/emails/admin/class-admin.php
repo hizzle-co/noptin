@@ -380,6 +380,17 @@ class Noptin_Emails_Admin {
 			'recipients'
 		);
 
+		// Email attachment.
+		add_meta_box(
+			'noptin_email_attachment',
+			__( 'Email Attachments', 'newsletter-optin-box' ),
+			array( $this, 'render_metabox' ),
+			$screen_id,
+			'side',
+			'default',
+			'attachments'
+		);
+
 		// Email content.
 		add_meta_box(
 			'noptin_email_content',
