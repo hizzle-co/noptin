@@ -149,6 +149,10 @@ class Noptin_Automation_Rule {
 				$this->conditional_logic['rules']   = array_merge( $this->conditional_logic['rules'], $converted_conditions['conditional_logic'] );
 				$this->trigger_settings             = $converted_conditions['settings'];
 
+				if ( ! empty( $converted_conditions['condition'] ) ) {
+					$this->conditional_logic['type'] = $converted_conditions['condition'];
+				}
+
 				// Save the new settings.
 				noptin()->automation_rules->update_rule(
 					$this,
