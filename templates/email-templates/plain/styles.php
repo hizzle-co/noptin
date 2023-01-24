@@ -81,19 +81,6 @@
 		line-height: 20px;
 	}
 
-	/* Outlook 07, 10 Padding issue fix */
-	table td {
-		border-collapse: collapse;
-	}
-
-	/* Remove spacing around Outlook 07, 10 tables */
-	table {
-		border-collapse: collapse;
-		mso-table-lspace: 0pt;
-		mso-table-rspace: 0pt;
-	}
-
-
 	/* Global */
 	* {
 		margin: 0;

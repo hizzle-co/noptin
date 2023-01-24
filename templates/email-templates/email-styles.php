@@ -30,6 +30,11 @@
 		mso-table-lspace: 0pt;
 	}
 
+	/* Outlook 07, 10 Padding issue fix */
+	table td {
+		border-collapse: collapse;
+	}
+
 	/**
 	 * Better fluid images in Internet Explorer.
 	 */

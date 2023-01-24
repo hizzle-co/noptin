@@ -26,16 +26,6 @@
 		padding: 0;
 	}
 
-
-	/**
-	 * Remove extra space added to tables and cells in Outlook.
-	 */
-	table,
-	td {
-		mso-table-rspace: 0pt;
-		mso-table-lspace: 0pt;
-	}
-
 	body {
 		width: 100% !important;
 		height: 100% !important;
