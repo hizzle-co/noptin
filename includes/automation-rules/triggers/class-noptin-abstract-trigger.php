@@ -35,6 +35,11 @@ abstract class Noptin_Abstract_Trigger {
 	public $is_user_based = false;
 
 	/**
+	 * The trigger's category.
+	 */
+	public $category = 'General';
+
+	/**
 	 * Retrieve the trigger's unique id.
 	 *
 	 * Only alphanumerics, dashes and underscrores are allowed.

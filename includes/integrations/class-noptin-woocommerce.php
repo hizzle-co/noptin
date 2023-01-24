@@ -81,7 +81,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		// Misc.
 		add_filter( 'noptin_email_templates', array( $this, 'register_email_template' ), $this->priority );
 		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
-		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority, 2 );
+		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority );
 		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 		add_filter( 'noptin_automation_trigger_known_smart_tags', array( $this, 'register_automation_smart_tags' ), $this->priority, 2 );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
@@ -153,21 +153,13 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	/**
 	 * Applies WooCommerce email styles to Noptin templates.
 	 *
-	 * @param string $styles.
 	 * @param Noptin_Email_Generator $generator
-	 * @return string
 	 */
-	public function email_styles( $styles, $generator ) {
+	public function email_styles( $generator ) {
 
 		if ( 'normal' === $generator->type && 'woocommerce' === $generator->template ) {
-
-			ob_start();
 			wc_get_template( 'emails/email-styles.php' );
-			$styles .= apply_filters( 'woocommerce_email_styles', ob_get_clean(), $this );
-
 		}
-
-		return $styles;
 	}
 
 	/**

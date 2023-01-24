@@ -13,6 +13,11 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 	/**
 	 * @inheritdoc
 	 */
+	public $category = 'WooCommerce';
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_image() {
 		return 'https://cdn.noptin.com/templates/images/woocommerce-icon.png';
 	}

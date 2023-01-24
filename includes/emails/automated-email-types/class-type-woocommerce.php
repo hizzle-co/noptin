@@ -39,17 +39,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	public $order_item = null;
 
 	/**
-	 * Registers hooks.
-	 *
-	 */
-	public function add_hooks() {
-		parent::add_hooks();
-
-		// Notify customers.
-		add_action( 'noptin_email_styles', array( $this, 'maybe_append_custom_css' ), 100, 2 );
-	}
-
-	/**
 	 * Retrieves the automated email type image.
 	 *
 	 */
@@ -1105,72 +1094,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		} else {
 			return apply_filters( 'noptin_woocommere_email_placeholder_image', wc_placeholder_img( $size ), $size, $product );
 		}
-
-	}
-
-	/**
-	 * Retrieves WC related styles.
-	 *
-	 * @return string
-	 */
-	public function maybe_append_custom_css( $styles ) {
-
-		if ( ! $this->sending ) {
-			return $styles;
-		}
-
-		return $styles . '
-			table.noptin-wc-product-grid {
-				width: 100%;
-			}
-
-			.noptin-wc-product-grid-container {
-				font-size: 0px;
-				margin: 10px 0 10px;
-			}
-
-			.noptin-wc-product-grid-item-col {
-				width: 30.5%;
-				display: inline-block;
-				text-align:center;
-				padding: 0 0 30px;
-				vertical-align:top;
-				word-wrap:break-word;
-				margin-right: 4%;
-				font-size: 14px;
-			}
-
-			table.noptin-wc-product-list  {
-				margin: 10px 0;
-				border-top: 1px solid #dddddd;
-			}
-
-			table.noptin-wc-product-list td {
-				padding: 13px;
-				border-bottom: 1px solid #dddddd;
-			}
-
-			table.noptin-wc-product-list td.image {
-				padding-left: 0 !important;
-			}
-
-			table.noptin-wc-product-list td.last {
-				padding-right: 0 !important;
-			}
-
-			table.noptin-wc-order-table img,
-			table.noptin-wc-product-grid img,
-			table.noptin-wc-product-list td img {
-				max-width: 100%;
-				height: auto !important;
-			}
-
-			table.noptin-wc-product-list h3,
-			table.noptin-wc-product-list p {
-				margin: 5px 0 !important;
-			}
-
-		';
 
 	}
 
