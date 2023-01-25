@@ -183,20 +183,6 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	}
 
 	/**
-	 * Dispatch
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function dispatch() {
-		// Schedule the cron healthcheck.
-		$this->schedule_event();
-
-		// Perform remote post.
-		do_noptin_background_action( $this->identifier );
-	}
-
-	/**
 	 * Maybe process queue
 	 *
 	 * Checks whether data exists within the queue and that
