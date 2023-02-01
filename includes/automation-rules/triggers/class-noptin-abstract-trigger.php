@@ -347,6 +347,125 @@ abstract class Noptin_Abstract_Trigger {
 	}
 
 	/**
+	 * Returns an array of post smart tags.
+	 *
+	 * @since 1.11.0
+	 * @return array
+	 */
+	public function get_post_smart_tags() {
+
+		return array(
+			'post_id'            => array(
+				'description'       => __( 'The post ID', 'newsletter-optin-box' ),
+				'example'           => 'post_id',
+				'conditional_logic' => 'number',
+			),
+			'post_author_id'     => array(
+				'description'       => __( 'The post author ID', 'newsletter-optin-box' ),
+				'example'           => 'post_author_id',
+				'conditional_logic' => 'number',
+			),
+			'post_author_name'   => array(
+				'description'       => __( 'The post author name', 'newsletter-optin-box' ),
+				'example'           => 'post_author_name',
+				'conditional_logic' => 'string',
+			),
+			'post_author_email'  => array(
+				'description'       => __( 'The post author email', 'newsletter-optin-box' ),
+				'example'           => 'post_author_email',
+				'conditional_logic' => 'string',
+			),
+			'post_date'          => array(
+				'description'       => __( 'The post date', 'newsletter-optin-box' ),
+				'example'           => 'post_date',
+				'conditional_logic' => 'date',
+			),
+			'post_title'         => array(
+				'description'       => __( 'The post title', 'newsletter-optin-box' ),
+				'example'           => 'post_title',
+				'conditional_logic' => 'string',
+			),
+			'post_url'           => array(
+				'description'       => __( 'The post URL', 'newsletter-optin-box' ),
+				'example'           => 'post_url',
+				'conditional_logic' => 'string',
+			),
+			'post_excerpt'       => array(
+				'description'       => __( 'The post excerpt', 'newsletter-optin-box' ),
+				'example'           => 'post_excerpt',
+				'conditional_logic' => 'string',
+			),
+			'post_content'       => array(
+				'description'       => __( 'The post content', 'newsletter-optin-box' ),
+				'example'           => 'post_content',
+				'conditional_logic' => 'string',
+			),
+			'post_status'        => array(
+				'description'       => __( 'The post status', 'newsletter-optin-box' ),
+				'example'           => 'post_status',
+				'conditional_logic' => 'string',
+				'options'           => get_post_stati(),
+			),
+			'post_password'      => array(
+				'description'       => __( 'The post password', 'newsletter-optin-box' ),
+				'example'           => 'post_password',
+				'conditional_logic' => 'string',
+			),
+			'post_name'          => array(
+				'description'       => __( 'The post slug', 'newsletter-optin-box' ),
+				'example'           => 'post_name',
+				'conditional_logic' => 'string',
+			),
+			'post_modified'      => array(
+				'description'       => __( 'The post modified date', 'newsletter-optin-box' ),
+				'example'           => 'post_modified',
+				'conditional_logic' => 'date',
+			),
+			'post_type'          => array(
+				'description'       => __( 'The post type', 'newsletter-optin-box' ),
+				'example'           => 'post_type',
+				'conditional_logic' => 'string',
+				'options'           => get_post_types(),
+			),
+			'post_comment_count' => array(
+				'description'       => __( 'The post comment count', 'newsletter-optin-box' ),
+				'example'           => 'post_comment_count',
+				'conditional_logic' => 'number',
+			),
+		);
+
+	}
+
+	/**
+	 * Prepare post smart tags.
+	 *
+	 * @param WP_Post $post The post object.
+	 * @since 1.11.1
+	 * @return array
+	 */
+	public function prepare_post_smart_tags( $post ) {
+		$post_author = get_user_by( 'id', $post->post_author );
+
+		return array(
+			'post_id'            => $post->ID,
+			'post_author_id'     => $post->post_author,
+			'post_author_name'   => empty( $post_author->display_name ) ? '' : $post_author->display_name,
+			'post_author_email'  => empty( $post_author->user_email ) ? '' : $post_author->user_email,
+			'post_date'          => $post->post_date,
+			'post_title'         => $post->post_title,
+			'post_url'           => get_permalink( $post->ID ),
+			'post_excerpt'       => get_the_excerpt( $post ),
+			'post_content'       => $post->post_content,
+			'post_status'        => $post->post_status,
+			'post_password'      => $post->post_password,
+			'post_name'          => $post->post_name,
+			'post_modified'      => $post->post_modified,
+			'post_type'          => $post->post_type,
+			'post_comment_count' => $post->comment_count,
+		);
+	}
+
+	/**
 	 * Returns all active rules attached to this trigger.
 	 *
 	 * @since 1.2.8
@@ -523,6 +642,10 @@ abstract class Noptin_Abstract_Trigger {
 		// Add user args.
 		if ( $subject instanceof WP_User ) {
 			$args = array_replace( $args, $this->prepare_user_args( $subject ) );
+		}
+
+		if ( is_string( $subject ) && is_email( $subject ) && empty( $args['email'] ) ) {
+			$args['email'] = $subject;
 		}
 
 		$args['subject']    = $subject;

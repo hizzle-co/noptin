@@ -39,6 +39,8 @@ class Noptin_Automation_Rules {
 		$this->add_trigger( new Noptin_Open_Email_Trigger() );
 		$this->add_trigger( new Noptin_Link_Click_Trigger() );
 		$this->add_trigger( new Noptin_Unsubscribe_Trigger() );
+		$this->add_trigger( new Noptin_New_Comment_Trigger() );
+		$this->add_trigger( new Noptin_Comment_Reply_Trigger() );
 
 		if ( function_exists( 'geodir_get_posttypes' ) ) {
 			foreach ( geodir_get_posttypes() as $post_type ) {
