@@ -13,6 +13,7 @@ if ( ! class_exists( 'Noptin_Background_Process' ) ) {
 	 * @abstract
 	 * @extends Noptin_Async_Request
 	 */
+	#[AllowDynamicProperties]
 	abstract class Noptin_Background_Process extends Noptin_Async_Request {
 
 		/**

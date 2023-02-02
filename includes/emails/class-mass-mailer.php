@@ -167,6 +167,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 		$this->data[] = apply_filters(
 			'noptin_mass_mailer_data',
 			array(
+				'blog_id'     => get_current_blog_id(),
 				'campaign_id' => $campaign->id,
 				'recipients'  => array_unique( $recipients ), // Ensure no duplicates.
 			),
@@ -226,6 +227,11 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 			$this->push_forwards();
 		}
 
+		// Maybe switch to the correct blog.
+		if ( is_multisite() && isset( $item['blog_id'] ) && get_current_blog_id() !== $item['blog_id'] ) {
+			switch_to_blog( $item['blog_id'] );
+		}
+
 		// Prepare args.
 		$campaign   = new Noptin_Newsletter_Email( $item['campaign_id'] );
 		$recipients = $item['recipients'];
@@ -246,6 +252,11 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 				do_action( 'noptin_mass_mailer_complete', $item, $campaign );
 			}
 
+			// Switch back to the original blog.
+			if ( ! empty( $switched ) ) {
+				restore_current_blog();
+			}
+
 			return false;
 
 		}
@@ -255,6 +266,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 
 		if ( empty( $recipient ) ) {
 			return array(
+				'blog_id'     => isset( $item['blog_id'] ) ? $item['blog_id'] : get_current_blog_id(),
 				'campaign_id' => $campaign->id,
 				'recipients'  => $recipients,
 			);
@@ -273,6 +285,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 
 		// Return the remaining recipients.
 		return array(
+			'blog_id'     => isset( $item['blog_id'] ) ? $item['blog_id'] : get_current_blog_id(),
 			'campaign_id' => $campaign->id,
 			'recipients'  => $recipients,
 		);
