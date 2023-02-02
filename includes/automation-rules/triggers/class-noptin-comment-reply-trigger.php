@@ -117,9 +117,27 @@ class Noptin_Comment_Reply_Trigger extends Noptin_New_Comment_Trigger {
 	 */
 	public function trigger_for_parent( $comment, $parent_comment ) {
 
+		$args = $this->prepare_comment_trigger_args( $comment, $parent_comment );
+
+		if ( empty( $args ) ) {
+			return;
+		}
+
+		$this->trigger( $args['subject'], $args['args'] );
+	}
+
+	/**
+	 * Prepares trigger data.
+	 *
+	 * @param WP_Comment $comment Comment object.
+	 * @param WP_Comment $parent_comment Parent comment object.
+	 * @return array|false
+	 */
+	protected function prepare_comment_trigger_args( $comment, $parent_comment ) {
+
 		// Bail if the commentor is the same as the parent commentor.
 		if ( $comment->comment_author_email === $parent_comment->comment_author_email ) {
-			return;
+			return false;
 		}
 
 		$args = get_object_vars( $parent_comment );
@@ -140,6 +158,51 @@ class Noptin_Comment_Reply_Trigger extends Noptin_New_Comment_Trigger {
 		// Convert all keys to lowercase.
 		$args = array_change_key_case( $args, CASE_LOWER );
 
-		$this->trigger( $comment->comment_author_email, $args );
+		return array(
+			'subject' => $comment->comment_author_email,
+			'args'    => $args,
+		);
+	}
+
+	/**
+	 * Serializes a trigger.
+	 *
+	 * @since 1.11.1
+	 * @param string $email The comment author email.
+	 * @param array $args Extra arguments passed to the action.
+	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @return false|array
+	 */
+	public function serialize_trigger( $email, $args, $rule ) {
+		return array(
+			'comment_id' => $args['comment_id'],
+			'reply_id'   => $args['reply_id'],
+			'rule_id'    => $rule->id,
+		);
+	}
+
+	/**
+	 * Unserializes a trigger.
+	 *
+	 * @since 1.11.1
+	 * @param array $trigger The serialized trigger.
+	 * @return array|false
+	 */
+	public function unserialize_trigger( $trigger ) {
+		$comment = get_comment( $trigger['comment_id'] );
+		$reply   = get_comment( $trigger['reply_id'] );
+		$rule    = new Noptin_Automation_Rule( $trigger['rule_id'] );
+
+		if ( empty( $comment ) || empty( $reply ) || ! $rule->exists() ) {
+			return false;
+		}
+
+		$args = $this->prepare_comment_trigger_args( $reply, $comment );
+
+		if ( empty( $args ) ) {
+			return false;
+		}
+
+		$args['rule'] = $rule;
 	}
 }

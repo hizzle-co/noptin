@@ -690,4 +690,28 @@ abstract class Noptin_Abstract_Trigger {
 
 	}
 
+	/**
+	 * Serializes a trigger.
+	 *
+	 * @since 1.11.1
+	 * @param mixed $subject The subject.
+	 * @param array $args Extra arguments passed to the action.
+	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @return false|array
+	 */
+	public function serialize_trigger( $subject, $args, $rule ) {
+		return false;
+	}
+
+	/**
+	 * Unserializes a trigger.
+	 *
+	 * @since 1.11.1
+	 * @param array $trigger The serialized trigger.
+	 * @return array|false
+	 */
+	public function unserialize_trigger( $trigger ) {
+		return false;
+	}
+
 }
