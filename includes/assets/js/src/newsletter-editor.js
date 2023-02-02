@@ -48,6 +48,7 @@
 			$('.noptin-post-digest-day').toggle( $( this ).val() == 'weekly' );
 			$('.noptin-post-digest-date').toggle( $( this ).val() == 'monthly' );
 			$('.noptin-post-digest-year-day').toggle( $( this ).val() == 'yearly' );
+			$('.noptin-post-digest-x-days').toggle( $( this ).val() == 'x_days' );
 		})
 
 		// Reverts form to original after a data has been saved.

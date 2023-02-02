@@ -136,6 +136,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 1.11.1 =
 * Fix: Concurrent newsletter campaigns from different sites not sent on a multisite network.
+* Allow setting custom dates for sending post digest newsletters.
 
 = 1.11.0 =
 * Include percentages in Newsletter campaign stats.

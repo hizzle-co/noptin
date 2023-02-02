@@ -145,6 +145,13 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Returns the default x days.
+	 */
+	public function default_x_days() {
+		return '14';
+	}
+
+	/**
 	 * Returns the default time.
 	 *
 	 */
@@ -219,6 +226,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			'weekly'  => __( 'Weekly', 'newsletter-optin-box' ),
 			'monthly' => __( 'Monthly', 'newsletter-optin-box' ),
 			'yearly'  => __( 'Yearly', 'newsletter-optin-box' ),
+			'x_days'  => __( 'Every', 'newsletter-optin-box' ),
 		);
 
 		$frequency = $campaign->get( 'frequency' );
@@ -226,6 +234,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$dates     = $this->get_month_days();
 		$date      = (string) $campaign->get( 'date' );
 		$year_day  = (string) $campaign->get( 'year_day' );
+		$x_days    = (string) $campaign->get( 'x_days' );
 		$time      = $campaign->get( 'time' );
 
 		?>
@@ -263,6 +272,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				<span class="noptin-post-digest-year-day noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'yearly' === $frequency ? 'inline-block' : 'none'; ?>">
 					<?php esc_html_e( 'on day', 'newsletter-optin-box' ); ?>
 					<input name="noptin_email[year_day]" class="noptin-schedule-input-year-day" style="width: 60px;" type="number" value="<?php echo esc_attr( $year_day ); ?>" placeholder="1" min="1" max="365" step="1">
+				</span>
+
+				<span class="noptin-post-digest-x-days noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'x_days' === $frequency ? 'inline-block' : 'none'; ?>">
+					<input name="noptin_email[x_days]" class="noptin-schedule-input-x-days" style="width: 60px;" type="number" value="<?php echo esc_attr( $x_days ); ?>" placeholder="14" min="1" max="365" step="1">
+					<?php esc_html_e( 'days', 'newsletter-optin-box' ); ?>
 				</span>
 
 				<span class="noptin-post-digest-time noptin-inline-block" style="margin-bottom: 10px;">
@@ -320,6 +334,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$day       = (string) $campaign->get( 'day' );
 		$date      = (string) $campaign->get( 'date' );
 		$year_day  = (int) $campaign->get( 'year_day' );
+		$x_days    = (int) $campaign->get( 'x_days' );
 		$time      = $campaign->get( 'time' );
 
 		if ( empty( $time ) ) {
@@ -385,6 +400,22 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				}
 
 				$next_send = strtotime( "$send_year-01-01 $time" ) + ( $year_day - 1 ) * DAY_IN_SECONDS;
+				break;
+
+			case 'x_days':
+				if ( empty( $x_days ) ) {
+					$x_days = 14;
+				}
+
+				$current_time = time();
+				$last_send    = get_post_meta( $campaign->id, '_noptin_last_send', true );
+				$seconds	  = $x_days * DAY_IN_SECONDS;
+
+				if ( ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
+					$current_time = $last_send;
+				}
+
+				$next_send = strtotime( "+$x_days days $time", $current_time );
 				break;
 		}
 
@@ -527,6 +558,17 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				return array(
 					'after' => gmdate( 'Y-m-d', strtotime( '-365 days' ) ),
 				);
+
+			// Get posts published last x days.
+			case 'x_days':
+				$days = $campaign->get( 'x_days' );
+				if ( empty( $days ) ) {
+					$days = 14;
+				}
+
+				return array(
+					'after' => gmdate( 'Y-m-d', strtotime( "-$days days" ) ),
+				);
 		}
 
 		return array();
@@ -603,6 +645,15 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					date_i18n( 'F jS', strtotime( "January 1 + {$day_of_year} days" ) ),
 					esc_html( $time )
 				) . $next_send;
+
+			case 'x_days':
+				return sprintf(
+					// translators: %1 is the number of days, %2 is the time.
+					__( 'Sends a digest of your latest content every %1$s days at %2$s', 'newsletter-optin-box' ),
+					(int) $campaign->get( 'x_days' ),
+					esc_html( $time )
+				) . $next_send;
+
 			default:
 				return $about;
 		}
