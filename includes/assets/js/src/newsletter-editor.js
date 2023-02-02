@@ -47,6 +47,7 @@
 		$('#noptin-post-digest-frequency').on( 'change', function() {
 			$('.noptin-post-digest-day').toggle( $( this ).val() == 'weekly' );
 			$('.noptin-post-digest-date').toggle( $( this ).val() == 'monthly' );
+			$('.noptin-post-digest-year-day').toggle( $( this ).val() == 'yearly' );
 		})
 
 		// Reverts form to original after a data has been saved.
