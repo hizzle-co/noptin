@@ -652,75 +652,82 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		return array(
 
-			'customer.id'           => array(
+			'customer.id'               => array(
 				'description'       => __( 'Customer ID', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.id',
 				'conditional_logic' => 'number',
 			),
 
-			'customer.details'      => array(
+			'customer.details'          => array(
 				'description' => __( "Return the customer's details.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
 				'example'     => 'customer.details',
 			),
 
-			'customer.avatar_url'   => array(
+			'customer.avatar_url'       => array(
 				'description' => __( "Return the customer's avatar.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
 				'example'     => 'customer.avatar_url',
 			),
 
-			'customer.order_count'  => array(
+			'customer.order_count'      => array(
 				'description'       => __( 'The number of orders the customer has', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.order_count',
 				'conditional_logic' => 'number',
 			),
 
-			'customer.total_spent'  => array(
+			'customer.first_order_date' => array(
+				'description'       => __( 'The date of the customer\'s first order', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => "customer.first_order_date format='date'",
+				'conditional_logic' => 'date',
+			),
+
+			'customer.total_spent'      => array(
 				'description'       => __( 'Lifetime Value', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => "customer.total_spent format='price'",
 				'conditional_logic' => 'number',
 			),
 
-			'customer.username'     => array(
+			'customer.username'         => array(
 				'description'       => __( "The customer's username", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.username',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.email'        => array(
+			'customer.email'            => array(
 				'description'       => __( "The customer's email", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.email',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.first_name'   => array(
+			'customer.first_name'       => array(
 				'description'       => __( "The customer's first name", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.first_name',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.last_name'    => array(
+			'customer.last_name'        => array(
 				'description'       => __( "The customer's last name", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.last_name',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.display_name' => array(
+			'customer.display_name'     => array(
 				'description'       => __( "The customer's display name", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.display_name',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.newsletter'   => array(
+			'customer.newsletter'       => array(
 				'description'       => __( "The customer's newsletter subscription status", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.newsletter',
@@ -776,6 +783,28 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			case 'customer.total_spent':
 				$format = isset( $args['format'] ) ? $args['format'] : 'decimal';
 				return $this->format_amount( $this->customer->get_total_spent(), null, $format );
+
+			case 'customer.first_order_date':
+				$format      = isset( $args['format'] ) ? $args['format'] : 'date';
+				$first_order = wc_get_orders(
+					array(
+						'customer' => $this->customer->get_id(),
+						'limit'    => 1,
+						'orderby'  => 'date',
+						'order'    => 'ASC',
+					)
+				);
+
+				if ( empty( $first_order ) ) {
+					return esc_html( $default );
+				}
+
+				$date = $first_order[0]->get_date_created();
+				if ( 'date' === $format ) {
+					return $date->date_i18n( wc_date_format() );
+				}
+
+				return $date->date( 'Y-m-d' );
 
 			default:
 				$method = 'get_' . str_replace( 'customer.', '', $field );
