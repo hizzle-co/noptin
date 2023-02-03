@@ -311,15 +311,16 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * @param Noptin_Automated_Email $campaign
 	 */
 	public function on_save_campaign( $campaign ) {
-		$this->schedule_campaign( $campaign );
+		$this->schedule_campaign( $campaign, true );
 	}
 
 	/**
 	 * Schedules the next send for a given campain.
 	 *
 	 * @param Noptin_Automated_Email $campaign
+	 * @param int $is_saving
 	 */
-	public function schedule_campaign( $campaign ) {
+	public function schedule_campaign( $campaign, $is_saving = false ) {
 		// Clear any existing scheduled events.
 		wp_clear_scheduled_hook( $this->notification_hook, array( $campaign->id ) );
 
@@ -330,6 +331,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		}
 
 		// Get the frequency.
+		$last_send = get_post_meta( $campaign->id, '_noptin_last_send', true );
 		$frequency = $campaign->get( 'frequency' );
 		$day       = (string) $campaign->get( 'day' );
 		$date      = (string) $campaign->get( 'date' );
@@ -383,7 +385,16 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 				$send_month = $this_month < 12 ? $this_month + 1 : 1;
 				$send_year  = $this_month < 12 ? $this_year : $this_year + 1;
-				$next_send  = strtotime( "$send_year-$send_month-$date $time" );
+
+				if ( $is_saving ) {
+					$next_send = strtotime( "$this_year-$this_month-$date $time" );
+
+					if ( $next_send < time() ) {
+						$next_send = strtotime( "$send_year-$send_month-$date $time" );
+					}
+				} else {
+					$next_send = strtotime( "$send_year-$send_month-$date $time" );
+				}
 
 				break;
 
@@ -408,10 +419,9 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				}
 
 				$current_time = time();
-				$last_send    = get_post_meta( $campaign->id, '_noptin_last_send', true );
 				$seconds	  = $x_days * DAY_IN_SECONDS;
 
-				if ( ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
+				if ( $is_saving && ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
 					$current_time = $last_send;
 				}
 
