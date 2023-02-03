@@ -1,49 +1,92 @@
 # Changelog
 
-= 1.9.0 =
+# 1.11.1
+* Fix: Concurrent newsletter campaigns from different sites not sent on a multisite network.
+* Allow setting custom dates for sending post digest newsletters.
+* Fix: Monthly digest newsletter always reschedule to the following month when edited.
+
+# 1.11.0
+* Include percentages in Newsletter campaign stats.
+* Edit email based automation rules using the newsletter editor.
+
+# 1.10.3
+* Add EDD newsletter automation rule triggers.
+* Add support for EDD newsletter template.
+* Add support for WS Form.
+
+# 1.10.2
+* Fix popup newsletter subscription forms not working.
+
+# 1.10.1
+* Ability to send an email to individual newsletter subscribers.
+
+# 1.10.0
+* Paid Memberships Pro - Membership level changed automation trigger.
+* Paid Memberships Pro - Change membership level changed automation action.
+* Escape formulas in CSV exports.
+
+# 1.9.5
+* Daily post digests now send content published in the previous day instead of the previous 24 hours.
+* Add [[order.coupon_code]] WooCommerce newsletter merge tag.
+
+# 1.9.4
+* Fix: Noptin newsletter subscribers overview page blank when certain plugins are active. [https://github.com/lasssim](@lasssim)
+
+# 1.9.3
+* Fix: WooCommerce product purchase automation trigger reverts to intially selected values when saved.
+
+# 1.9.2
+* Add subscribe to newsletter automation rule action.
+* Improve WooCommerce product purchased automation rule trigger.
+
+# 1.9.1
+* Added more WooCommerce conditional logic filters.
+* Newsletter perfomance improvements.
+
+# 1.9.0
 * GeoDirectory newsletter integration.
 * Add conditional logic to all automation rule triggers.
 
-= 1.8.2 =
+# 1.8.2
 * Fixed: A CRON conflict causing post digests to create multiple newsletter campaigns.
 
-= 1.8.1 =
+# 1.8.1
 * Fix unsaved custom newsletter fields disappearing
 
-= 1.8.0 =
+# 1.8.0
 * Add language custom field.
 * Add ability to send multi-lingual newsletters.
 * Add newsletter-subscriber based conditional logic to automation rule triggers.
 
-= 1.7.8 =
+# 1.7.8
 * Fix automation rules send empty email body.
 
-= 1.7.7 =
+# 1.7.7
 * Ensure PHP < 7.3 compatibility
 
-= 1.7.6 =
+# 1.7.6
 * Newsletter subscribers export file is empty.
 
-= 1.7.5 =
+# 1.7.5
 * Subscription checkbox breaks the registration form.
 * Add BuddyPress registration form compatibility.
 
-= 1.7.4 =
+# 1.7.4 =
 * Add ability to set newsletter subscription checkboxes as checked by default
 * Add ability to set a field as required
 * Add support for WooCommerce checkout block
 * Default to the classic editor for non-woocommerce sites
 
-= 1.7.3 =
+# 1.7.3
 * Update plugin name
 
-= 1.7.2 =
+# 1.7.2
 * Fix incorrect logo link in email newsletters
 
-= 1.7.1 =
+# 1.7.1
 * Double opt-in confirmation links displays empty box on some sites - FIXED
 
-= 1.7.0 =
+# 1.7.0
 * Ability to duplicate and preview automated email campaigns - ADDED
 * Ability to send a test email for any automated email campaign - ADDED
 * Filter newsletter recipients by custom fields.
@@ -52,29 +95,29 @@
 * Subscriber delete button not working - FIXED.
 * Fix conflict with WPForms pro
 
-= 1.6.6 =
+# 1.6.6
 * Action page links not working - FIXED
 
-= 1.6.5 =
+# 1.6.5
 * Now uses normal WordPress new-post pages to for the newsletter form editor - FIXED
 * Now adds and verifies a key before redirecting newsletter links - CHANGED
 
-= 1.6.4 =
+# 1.6.4
 * All imported newsletter subscribers marked as unconfirmed - FIXED
 
-= 1.6.3 =
+# 1.6.3
 * Update newsletter form editor JS - CHANGED
 
-= 1.6.2 =
+# 1.6.2
 * Multi-lingual newsletter improvements - ADDED
 
-= 1.6.1 =
+# 1.6.1
 * Double newsletter subscription fields on new installs - FIXED
 
-= 1.6.0 =
+# 1.6.0
 * Add [noptin] newsletter form shortcode
 
-= 1.5.6 =
+# 1.5.6
 * Import newsletter subscribers page is blank - FIXED
 
 # 1.5.5 - 2021-08-09
