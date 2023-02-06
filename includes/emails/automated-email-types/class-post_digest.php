@@ -462,7 +462,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$last_send = get_post_meta( $campaign_id, '_noptin_last_send', true );
 
 		// Don't send if we already sent today.
-		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === gmdate( 'Ymd' ) ) {
+		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === gmdate( 'Ymd' ) && ( ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) || ! NOPTIN_RESENDING_CAMPAIGN ) ) {
 			return;
 		}
 

@@ -126,6 +126,21 @@ class Noptin_Email_List_Table extends WP_List_Table {
 				esc_html__( 'Preview', 'newsletter-optin-box' )
 			),
 
+			'send'      => sprintf(
+				'<a href="%s" style="color: green;" onclick="return confirm(\'%s\');">%s</a>',
+				esc_url(
+					add_query_arg(
+						array(
+							'noptin_admin_action' => 'noptin_force_send_campaign',
+							'noptin_nonce'        => wp_create_nonce( 'noptin_force_send_campaign' ),
+						),
+						$item->get_edit_url()
+					)
+				),
+				esc_attr__( 'Are you sure you want to send this campaign?', 'newsletter-optin-box' ),
+				esc_html__( 'Send Now', 'newsletter-optin-box' )
+			),
+
 			'delete'    => sprintf(
 				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
 				$item->get_delete_url(), // This is alread escaped via wp_nonce_url.
@@ -138,9 +153,17 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		// Sent newsletters are not editable.
 		if ( 'newsletter' === $this->collection_type && $item->is_published() ) {
 			unset( $row_actions['edit'] );
+			unset( $row_actions['send'] );
 			$edit_url = $item->get_preview_url();
 		} else {
 			$edit_url = $item->get_edit_url();
+
+			if ( 'automation' === $this->collection_type ) {
+
+				if ( ! $item->is_published() || 'post_digest' !== $item->type ) {
+					unset( $row_actions['send'] );
+				}
+			}
 		}
 
 		$title = $item->get( 'custom_title' );

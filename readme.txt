@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.11.2 =
+* Fix: Post digests show raw CSS in certain WooCommerce templates.
+* Add ability to manually send post digests.
+
 = 1.11.1 =
 * Fix: Concurrent newsletter campaigns from different sites not sent on a multisite network.
 * Allow setting custom dates for sending post digest newsletters.
