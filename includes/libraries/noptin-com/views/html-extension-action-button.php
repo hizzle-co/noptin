@@ -12,13 +12,14 @@
 	defined( 'ABSPATH' ) || exit;
 
 	$has_license = $license && ! is_wp_error( $license ) && $license->is_active && ! $license->has_expired;
+	$can_install = $has_license;
 
 	if ( $has_license && ! $is_connection ) {
-		$has_license = false === strpos( $license->product_sku, 'connect' );
+		$can_install = false === strpos( $license->product_sku, 'connect' );
 	}
 ?>
 
-<?php if ( $has_license ) : ?>
+<?php if ( $can_install ) : ?>
 
 	<?php if ( isset( $installed_addons[ $slug ] ) ) : ?>
 
@@ -64,8 +65,8 @@
 		</a>
 	<?php endif; ?>
 
-<?php elseif ( $is_connection ) : ?>
-	<a class="addons-button addons-button-installed" href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', str_replace( 'noptin-', '', $slug ), 'extensionsscreen' ) ); ?>">
+<?php elseif ( ! $has_license ) : ?>
+	<a class="addons-button addons-button-solid" href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', str_replace( 'noptin-', '', $slug ), 'extensionsscreen' ) ); ?>">
 		<?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>
 	</a>
 <?php endif; ?>

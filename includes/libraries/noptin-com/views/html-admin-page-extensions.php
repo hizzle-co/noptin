@@ -207,6 +207,30 @@
 
 	<hr style="margin: 2em 0;" />
 
+	<!-- WooCommerce Addon -->
+	<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+		<div class="noptin-extension-group noptin-extension-group__woocommerce">
+			<h2 class="noptin-extension-group__title"><?php esc_html_e( 'WooCommerce Addon', 'newsletter-optin-box' ); ?></h2>
+			<p class="noptin-extension-group__description"><?php esc_html_e( 'The WooCommerce addon provides better integration with WooCommerce and its extensions.', 'newsletter-optin-box' ); ?></p>
+
+			<?php Noptin_COM_Helper::display_main_action_button( $license, 'noptin-woocommerce', $installed_addons, false ); ?>
+
+			<?php if ( ! empty( $license_key ) && false !== strpos( $license->product_sku, 'connect' ) ) : ?>
+				<!-- Display notice that the license key can not be used for this extension -->
+				<div class="noptin-extensions-alert noptin-extensions-alert-dark">
+					<div>
+						<?php echo wp_kses_post( __( 'Your active license key can not be used to install the WooCommerce Addon. Please <strong>purchase a personal plan or higher</strong> to receive updates and support.', 'newsletter-optin-box' ) ); ?>
+					</div>
+
+					<a
+						class="addons-button addons-button-installed"
+						href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'upgrade', 'extensionsscreen' ) ); ?>"
+					><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
+				</div>
+			<?php endif; ?>
+		</div>
+	<?php endif; ?>
+
 	<!-- Noptin Addons Pack -->
 	<div class="noptin-extension-group noptin-extension-group__addons-pack">
 		<h2 class="noptin-extension-group__title"><?php esc_html_e( 'Ultimate Addons Pack', 'newsletter-optin-box' ); ?>&nbsp;<?php Noptin_COM_Helper::display_main_action_button( $license, 'noptin-addons-pack', $installed_addons, false ); ?></h2>

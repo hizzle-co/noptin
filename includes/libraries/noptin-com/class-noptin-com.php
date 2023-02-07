@@ -213,19 +213,13 @@ class Noptin_COM {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$slugs = array( 'noptin-addons-pack' );
-
-		foreach ( self::get_connections() as $connection ) {
-			$slugs[] = 'noptin-' . $connection->slug;
-		}
-
 		$noptin_plugins = array();
 
 		foreach ( get_plugins() as $filename => $data ) {
 
 			$slug = basename( dirname( $filename ) );
 
-			if ( in_array( $slug, $slugs, true ) ) {
+			if ( 0 === strpos( $slug, 'noptin-' ) ) {
 				$data['_filename']           = $filename;
 				$data['slug']                = $slug;
 				$data['_type']               = 'plugin';

@@ -143,6 +143,60 @@
 			margin: 0;
 			overflow: hidden;
 		}
+
+		&.noptin-extension-group__woocommerce {
+			padding: 2em;
+			box-sizing: border-box;
+			color: #fff;
+			background-color: #7f54b3;
+			background-image: url(../images/marketplace-header-bg@2x.png);
+    		background-position: right;
+    		background-size: cover;
+    		box-sizing: border-box;
+    		display: flex;
+    		flex-direction: column;
+    		justify-content: center;
+    		min-height: 216px;
+    		padding: 24px 16px;
+    		width: 100%;
+			margin: 2.5rem 0;
+
+			h2 {
+				color: #fff;
+				font-size: 32px;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 1.15;
+				margin-bottom: 8px;
+				padding: 0;
+			}
+
+			.noptin-extension-group__description {
+				color: #fff;
+				font-size: 16px;
+				line-height: 24px;
+				margin-bottom: 24px;
+				margin-top: 0;
+			}
+
+			.addons-button-solid {
+				background-color: #fff;
+				color: #2271b1;
+			}
+		
+			.addons-button-solid:hover {
+				color: #2271b1;
+			}
+
+			.addons-button-outline-green {
+				background-color: #fff;
+				color: #73ae39;
+			}
+		
+			.addons-button-outline-green:hover {
+				color: #73ae39;
+			}
+		}
 	}
 
 	.noptin-extension {
