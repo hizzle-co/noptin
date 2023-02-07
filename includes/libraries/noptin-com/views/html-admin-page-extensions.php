@@ -55,6 +55,12 @@
 			'guide'       => 'https://noptin.com/guide/email-subscribers/manage-preferences/',
 			'icon'        => 'dashicons-admin-settings',
 		),
+		'attachments'           => array(
+			'title'       => __( 'Attachments', 'newsletter-optin-box' ),
+			'description' => __( 'Include attachments in your newsletters and automated email campaigns.', 'newsletter-optin-box' ),
+			'guide'       => 'https://noptin.com/guide/sending-emails/attachments/',
+			'icon'        => 'dashicons-paperclip',
+		),
 		'cpts'                  => array(
 			'title'       => __( 'Custom Post Types', 'newsletter-optin-box' ),
 			'description' => __( 'Automatically send emails to subscribers whenever a new post of a specific post type is published.', 'newsletter-optin-box' ),
