@@ -1751,3 +1751,12 @@ function noptin_record_subscriber_activity( $email_address, $activity ) {
 
 	update_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', $saved_activity );
 }
+
+/**
+ * Returns the maximum number of allowed subscribers.
+ *
+ * @return int Zero if unlimited.
+ */
+function noptin_max_allowed_subscribers() {
+	return apply_filters( 'noptin_max_allowed_subscribers', 0 );
+}

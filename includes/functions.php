@@ -1070,6 +1070,17 @@ function get_noptin_connection_providers() {
 }
 
 /**
+ * Returns an array of premium addons.
+ *
+ * @since 1.11.2
+ * @ignore
+ * @return array
+ */
+function noptin_premium_addons() {
+	return apply_filters( 'noptin_premium_addons', array() );
+}
+
+/**
  * Checks whether or not to upsell integrations.
  *
  * @since 1.9.0
@@ -1077,7 +1088,7 @@ function get_noptin_connection_providers() {
  * @return bool
  */
 function noptin_upsell_integrations() {
-	return apply_filters( 'noptin_upsell_integrations', 0 === count( get_noptin_connection_providers() ) );
+	return apply_filters( 'noptin_upsell_integrations', 0 === count( noptin_premium_addons() ) );
 }
 
 /**
