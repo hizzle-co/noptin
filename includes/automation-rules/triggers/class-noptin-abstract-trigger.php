@@ -639,6 +639,10 @@ abstract class Noptin_Abstract_Trigger {
 			$args = array();
 		}
 
+		if ( isset( $args['subject'] ) ) {
+			$args['subject_orig'] = $args['subject'];
+		}
+
 		// Add user args.
 		if ( $subject instanceof WP_User ) {
 			$args = array_replace( $args, $this->prepare_user_args( $subject ) );

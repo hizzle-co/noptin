@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.11.3 =
+* Add Elementor forms automation rule trigger.
+* Add Fluent form automation rule tirgger.
+
 = 1.11.2 =
 * Fix: Post digests show raw CSS in certain WooCommerce templates.
 * Add ability to manually send post digests.

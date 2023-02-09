@@ -254,6 +254,10 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
      */
     public function trigger( $subject, $args ) {
 
+		if ( isset( $args['subject'] ) ) {
+			$args['subject_orig'] = $args['subject'];
+		}
+
         $args['subject'] = $subject;
 
         $args = apply_filters( 'noptin_automation_trigger_args', $args, $this );

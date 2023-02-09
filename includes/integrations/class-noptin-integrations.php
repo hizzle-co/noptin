@@ -54,6 +54,11 @@ class Noptin_Integrations {
 			$this->integrations['ws_form'] = new Noptin_WS_Form();
 		}
 
+		// Fluent Forms integration.
+		if ( class_exists( '\FluentForm\App\Modules\Form\FormHandler' ) ) {
+			$this->integrations['fluentform'] = new Noptin_Fluent_Forms();
+		}
+
 		// WP Registration form integration.
 		$this->integrations['wp_registration_form'] = new Noptin_WP_Registration_Form();
 
@@ -231,6 +236,9 @@ class Noptin_Integrations {
 		if ( ! class_exists( '\ElementorPro\Plugin' ) ) {
 			return;
 		}
+
+		// Register the automation rule.
+		$this->integrations['elementor'] = new Noptin_Elementor_Forms();
 
 		// Instantiate the action class
 		$action = new Noptin_Elementor_Forms_Integration();

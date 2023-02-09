@@ -38,8 +38,12 @@ class Noptin_Automation_Rules_Smart_Tags extends Noptin_Dynamic_Content_Tags {
 
 		foreach ( $trigger->get_known_smart_tags() as $merge_tag => $tag ) {
 
-			if ( isset( $values[ $merge_tag ] ) ) {
+			if ( isset( $values[ $merge_tag ] ) && 'subject' !== $merge_tag ) {
 				$tag['replacement'] = $values[ $merge_tag ];
+			}
+
+			if ( 'subject' === $merge_tag && isset( $values['subject_orig'] ) ) {
+				$tag['replacement'] = $values['subject_orig'];
 			}
 
 			$this->tags[ $merge_tag ] = $tag;
