@@ -34,7 +34,6 @@ if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
 /**
  * Plugin main class
  *
- * @property Noptin_Background_Sync bg_sync
  * @since       1.0.0
  */
 class Noptin {

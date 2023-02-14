@@ -88,18 +88,6 @@ class Noptin_Tools {
 				'confirm' => __( 'Are you sure you want to delete all your email subscribers?', 'newsletter-optin-box' ),
 			),
 
-			'sync_users'         => array(
-				'name'   => __( 'Subscribe Users', 'newsletter-optin-box' ),
-				'button' => __( 'Subscribe', 'newsletter-optin-box' ),
-				'desc'   => __( 'Subscribe your WordPress users to the newsletter.', 'newsletter-optin-box' ),
-			),
-
-			'sync_subscribers'   => array(
-				'name'   => __( 'Register Subscribers', 'newsletter-optin-box' ),
-				'button' => __( 'Register', 'newsletter-optin-box' ),
-				'desc'   => __( 'Register your newsletter subscribers as WordPress users.', 'newsletter-optin-box' ),
-			),
-
 		);
 
 		/**
@@ -129,7 +117,7 @@ class Noptin_Tools {
 	 */
 	public static function display_closing_wrap() {
 
-		if ( ! empty( $_GET['tool'] ) && 'sync_users' !== $_GET['tool'] && 'sync_subscribers' !== $_GET['tool'] && 'delete_subscribers' !== $_GET['tool'] ) {
+		if ( ! empty( $_GET['tool'] ) && 'delete_subscribers' !== $_GET['tool'] ) {
 
 			printf(
 				'<p class="description"><a href="%s">%s</a></p>',
