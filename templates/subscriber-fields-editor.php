@@ -27,7 +27,7 @@
 				);
 				Noptin_Vue::render_el( 'field.type', $args );
 
-				// Change field type.
+				// Change field name.
 				$args = array(
 					'el'          => 'input',
 					'label'       => __( 'Field Name', 'newsletter-optin-box' ),
@@ -35,6 +35,15 @@
 					'@input'      => 'maybeUpdateMergeTag(field)',
 				);
 				Noptin_Vue::render_el( 'field.label', $args );
+
+				// Placeholder.
+				$args = array(
+					'el'          => 'input',
+					'label'       => __( 'Placeholder', 'newsletter-optin-box' ),
+					'description' => __( 'Optional. Enter the default placeholder for this field', 'newsletter-optin-box' ),
+					'restrict'    => "field.type == 'text' || field.type == 'textarea' || field.type == 'number' || field.type == 'email' || field.type == 'first_name' || field.type == 'last_name'",
+				);
+				Noptin_Vue::render_el( 'field.placeholder', $args );
 
 				// Options.
 				$args = array(
