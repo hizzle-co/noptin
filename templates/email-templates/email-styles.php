@@ -244,5 +244,9 @@
 		border-radius: 6px;
 	}
 
-	<?php do_action( 'noptin_email_styles', $generator ); ?>
+	<?php
+		// Note that esc_html() cannot be used because `div &gt; span` is not interpreted properly.
+		echo strip_tags( get_noptin_option( 'custom_css', '' ) ); // phpcs:ignore
+		do_action( 'noptin_email_styles', $generator );
+	?>
 </style>

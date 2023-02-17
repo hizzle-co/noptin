@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.11.4 =
+* Add ability to set custom newsletter subscription form field placeholders.
+* Add option to set custom CSS for newsletter emails.
+
 = 1.11.3 =
 * Add Elementor forms automation rule trigger.
 * Add Fluent form automation rule tirgger.

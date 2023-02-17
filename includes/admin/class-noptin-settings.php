@@ -387,6 +387,13 @@ class Noptin_Settings {
 				),
 			),
 
+			'custom_css'                   => array(
+				'el'          => 'textarea',
+				'section'     => 'emails',
+				'label'       => __( 'Custom CSS', 'newsletter-optin-box' ),
+				'description' => __( 'Optional. Add any custom CSS to style your emails.', 'newsletter-optin-box' ),
+			),
+
 			'success_message'              => array(
 				'el'          => 'input',
 				'type'        => 'text',
