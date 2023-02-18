@@ -63,10 +63,6 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 
 		foreach ( get_noptin_custom_fields() as $field ) {
 
-			if ( 'email' === $field['merge_tag'] ) {
-				continue;
-			}
-
 			$settings[ $field['merge_tag'] ] = array(
 				'type'        => 'text',
 				'el'          => 'input',
