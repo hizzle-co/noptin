@@ -497,8 +497,7 @@ class Noptin_Legacy_Form_Editor {
 	 */
 	private function get_integration_fields() {
 
-		$fields                = array();
-		$available_connections = get_noptin_connection_providers();
+		$fields = array();
 
 		if ( noptin_upsell_integrations() ) {
 			foreach ( Noptin_COM::get_connections() as $connection ) {
@@ -525,83 +524,6 @@ class Noptin_Legacy_Form_Editor {
 				);
 
 			}
-		}
-
-		foreach ( $available_connections as $key => $connection ) {
-
-			// Abort early if we're not connected.
-			if ( ! $connection->is_connected() ) {
-				$error = $connection->last_error;
-
-				if ( empty( $error ) ) {
-					$error = sprintf(
-						// translators: %s is the name of the integration.
-						__( 'You are not connected to %s', 'newsletter-optin-box' ),
-						$connection->name
-					);
-				}
-
-				$fields[ $key ] = array(
-					'el'       => 'panel',
-					'title'    => $connection->name,
-					'id'       => $key,
-					'open'     => empty( $available_connections ),
-					'children' => array(
-						"{$key}text" => array(
-							'el'      => 'paragraph',
-							'content' => "Error: $error",
-							'style'   => 'color:#F44336;',
-						),
-					),
-				);
-
-				continue;
-			}
-
-			$custom = array();
-			$slug   = $connection->slug;
-
-			// Lists.
-			if ( ! empty( $connection->list_providers ) ) {
-
-				$custom[ "{$slug}_list" ] = array(
-					'el'          => 'select',
-					'options'     => $connection->list_providers->get_dropdown_lists(),
-					'label'       => sprintf(
-						'%s %s',
-						$connection->name,
-						$connection->list_providers->get_name()
-					),
-					'placeholder' => sprintf(
-						// translators: %s is the name of the integration.
-						__( 'Do not add to %s', 'newsletter-optin-box' ),
-						$connection->name
-					),
-					// translators: %s can be list, group etc.
-					'tooltip'     => sprintf( __( 'People who subscribe via this form will be added to the %s you select here', 'newsletter-optin-box' ), $connection->list_providers->get_name() ),
-				);
-
-			}
-
-			// Tags.
-			if ( $connection->supports( 'tags' ) ) {
-
-				$custom[ "{$slug}_tags" ] = array(
-					'el'          => 'input',
-					'label'       => __( 'Subscriber Tags', 'newsletter-optin-box' ),
-					'placeholder' => 'tag, another tag',
-					'tooltip'     => __( 'The listed tags will be applied to all new subscribers added by this form. Separate multiple values with a comma.', 'newsletter-optin-box' ),
-				);
-
-			}
-
-			$fields[ $key ] = array(
-				'el'       => 'panel',
-				'title'    => $connection->name,
-				'id'       => $connection->slug,
-				'children' => $connection->add_custom_options( $custom ),
-			);
-
 		}
 
 		ksort( $fields );

@@ -113,31 +113,6 @@ class Noptin_Hooks {
 			return;
 		}
 
-		foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-			if ( empty( $connection->list_providers ) ) {
-				continue;
-			}
-
-			$key          = $connection->slug;
-			$data[ $key ] = array();
-
-			if ( isset( $submitted[ "{$key}_list" ] ) ) {
-				$data[ $key ]['lists'] = noptin_parse_list( $submitted[ "{$key}_list" ], true );
-			}
-
-			if ( $connection->supports( 'tags' ) && isset( $submitted[ "{$key}_tags" ] ) ) {
-				$data[ $key ]['tags'] = noptin_parse_list( $submitted[ "{$key}_tags" ], true );
-			}
-
-			// Secondary fields.
-			foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
-				if ( isset( $submitted[ "{$key}_$secondary" ] ) ) {
-					$data[ $key ][ $secondary ] = noptin_parse_list( $submitted[ "{$key}_$secondary" ], true );
-				}
-			}
-		}
-
 		return apply_filters( 'noptin_submitted_data_add_connections', $data, $submitted );
 	}
 

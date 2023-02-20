@@ -55,69 +55,6 @@
 				);
 				Noptin_Vue::render_el( 'field.options', $args );
 
-				foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-					if ( empty( $connection->list_providers ) ) {
-						continue;
-					}
-
-					$label = sprintf(
-						// Translators: %s is the connection name.
-						__( '%s Equivalent', 'newsletter-optin-box' ),
-						$connection->name
-					);
-
-					$placeholder = sprintf(
-						// Translators: %s is the connection name.
-						__( 'Select %s Equivalent', 'newsletter-optin-box' ),
-						$connection->name
-					);
-
-					if ( $connection->supports( 'universal_fields' ) ) {
-
-						// Field args.
-						$fields = $connection->list_providers->get_fields();
-
-						if ( empty( $fields ) ) {
-							continue;
-						}
-
-						$args = array(
-							'el'          => 'select',
-							'label'       => $label,
-							'options'     => $fields,
-							'restrict'    => '! isFieldPredefined(field) && ' . $connection->get_enable_integration_option_name(),
-							'placeholder' => $placeholder,
-						);
-						Noptin_Vue::render_el( "field.$key", $args );
-
-						continue;
-					}
-
-					foreach ( $connection->list_providers->get_lists() as $list ) {
-
-						$fields = $list->get_fields();
-						if ( empty( $fields ) ) {
-							continue;
-						}
-
-						// Field args.
-						$_list      = esc_attr( $list->get_id() );
-						$_name      = esc_html( $list->get_name() );
-						$list_field = "{$key}_{$_list}";
-						$args       = array(
-							'el'          => 'select',
-							'label'       => $label . " ($_name)",
-							'options'     => $fields,
-							'restrict'    => '! isFieldPredefined(field) && ' . $connection->get_enable_integration_option_name(),
-							'placeholder' => $placeholder,
-						);
-
-						Noptin_Vue::render_el( "field.$list_field", $args );
-
-					}
-				}
-
 				do_action( 'noptin_custom_field_settings' );
 
 				// Change visibility.

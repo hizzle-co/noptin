@@ -1063,6 +1063,7 @@ function noptin_verify_subscription_nonces() {
  *
  * @since 1.5.1
  * @ignore
+ * @deprecated 1.11.2
  * @return Noptin_Connection_Provider[]
  */
 function get_noptin_connection_providers() {
