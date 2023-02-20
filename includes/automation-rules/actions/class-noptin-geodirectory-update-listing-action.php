@@ -72,19 +72,14 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 			'noptin_author_name'   => __( 'Name (Post Author)', 'newsletter-optin-box' ),
 			'noptin_post_id'       => __( 'Listing ID', 'newsletter-optin-box' ),
 			'noptin_post_status'   => __( 'Listing Status', 'newsletter-optin-box' ),
-			'noptin_post_title'    => __( 'Listing Title', 'newsletter-optin-box' ),
-			'noptin_post_content'  => __( 'Listing Content', 'newsletter-optin-box' ),
-			'noptin_post_tags'     => __( 'Listing Tags', 'newsletter-optin-box' ),
-			'noptin_post_category' => __( 'Listing Category', 'newsletter-optin-box' ),
+			'noptin_post_category' => __( 'Listing Categories', 'newsletter-optin-box' ),
 			'default_category'     => __( 'Default Category', 'newsletter-optin-box' ),
-			'featured'             => __( 'Is Featured?', 'newsletter-optin-box' ) . '(1/0)',
-			'post_images'          => __( 'Listing Images', 'newsletter-optin-box' ),
 		);
 
 		foreach ( GeoDir_Settings_Cpt_Cf::get_cpt_custom_fields( $this->post_type ) as $custom_field ) {
 
 			// Skip post content.
-			if ( 'post_content' === $custom_field->htmlvar_name ) {
+			if ( 'post_category' === $custom_field->htmlvar_name || 'fieldset' === $custom_field->field_type ) {
 				continue;
 			}
 
@@ -111,12 +106,12 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 
 			// Checkboxes.
 			if ( isset( $custom_field->field_type ) && 'checkbox' === $custom_field->field_type ) {
-				$smart_tags[ sanitize_key( $custom_field->htmlvar_name ) ] = sprintf(
+				$fields[ sanitize_key( $custom_field->htmlvar_name ) ] = sprintf(
 					'%s (1/0)',
 					esc_html( $custom_field->admin_title )
 				);
 			} else {
-				$smart_tags[ sanitize_key( $custom_field->htmlvar_name ) ] = esc_html( $custom_field->admin_title );
+				$fields[ sanitize_key( $custom_field->htmlvar_name ) ] = esc_html( $custom_field->admin_title );
 			}
 		}
 
@@ -231,16 +226,13 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 					$prepared['ID'] = (int) $value;
 					break;
 				case 'noptin_post_status':
-				case 'noptin_post_title':
-				case 'noptin_post_content':
-				case 'noptin_post_category':
 					$key              = str_replace( 'noptin_', '', $key );
 					$prepared[ $key ] = $value;
 					break;
-				case 'noptin_post_tags':
+				case 'post_tags':
 					$prepared['tax_input'] = isset( $prepared['tax_input'] ) ? $prepared['tax_input'] : array();
 
-					$prepared['tax_input'][ $this->post_type . '_tags' ] = $value;
+					$prepared['tax_input'][ $this->post_type . '_tags' ] = noptin_parse_list( $value, true );
 					break;
 				case 'noptin_post_category':
 					// WordPress expects IDs.
