@@ -137,6 +137,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 1.11.4 =
 * Add ability to set custom newsletter subscription form field placeholders.
 * Add option to set custom CSS for newsletter emails.
+* Add automation rule action to create/update a GeoDirectory listing.
 
 = 1.11.3 =
 * Add Elementor forms automation rule trigger.
