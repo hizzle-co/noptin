@@ -504,7 +504,7 @@ class Noptin_Legacy_Form_Editor {
 
 				$key            = sanitize_key( str_replace( '-', '_', $connection->slug ) );
 				$name           = esc_html( $connection->name );
-				$href           = esc_url( $connection->connect_url );
+				$href           = esc_url( noptin_get_upsell_url( $connection->connect_url, $key, 'subscription-forms' ) );
 				$fields[ $key ] = array(
 					'el'       => 'panel',
 					'title'    => $name,

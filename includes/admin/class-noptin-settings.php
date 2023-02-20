@@ -513,7 +513,7 @@ class Noptin_Settings {
 								esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
 								sprintf(
 									'<a target="_blank" href="%s">%s</a>',
-									esc_url( $data->connect_url ),
+									esc_url( noptin_get_upsell_url( $data->connect_url, $slug, 'settings' ) ),
 									sprintf(
 										// translators: %s is the name of the integration.
 										__( '%s addon', 'newsletter-optin-box' ),
