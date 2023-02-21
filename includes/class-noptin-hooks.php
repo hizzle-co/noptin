@@ -87,7 +87,7 @@ class Noptin_Hooks {
 		$checked   = isset( $submitted['noptin-custom-subscribe'] ) ? $submitted['noptin-custom-subscribe'] : '';
 
 		// Abort if no subscription was attempted.
-		if ( ! in_array( $checked, array( 1, '1', 'yes', true, 'true', 'y' ), true ) || apply_filters( 'noptin_skip_custom_subscribe', false ) ) {
+		if ( ! in_array( $checked, array( 1, '1', 'yes', true, 'true', 'y', 'on' ), true ) || apply_filters( 'noptin_skip_custom_subscribe', false ) ) {
 			return;
 		}
 

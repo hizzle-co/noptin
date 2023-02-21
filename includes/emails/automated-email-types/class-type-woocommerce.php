@@ -154,6 +154,13 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'example'     => 'order.status',
 			),
 
+			'order.coupon_code'          => array(
+				'description'       => __( 'Coupon code', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.coupon_code',
+				'conditional_logic' => 'string',
+			),
+
 			'order.date_created'         => array(
 				'description'       => __( 'The date the order was created.', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_order_field' ),
