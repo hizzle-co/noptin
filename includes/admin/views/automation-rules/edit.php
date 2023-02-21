@@ -101,12 +101,12 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 									>{{ comparison_label }}</option>
 								</select>
 
-								<select class="noptin-condition-value" v-model="rule.value" v-if="hasConditionOptions(rule.type)">
+								<select class="noptin-condition-value" v-model="rule.value" v-if="hasConditionOptions(rule.type) && 'is_empty' !== rule.condition && 'is_not_empty' !== rule.condition">
 									<option value="" disabled><?php esc_html_e( 'Select a value', 'newsletter-optin-box' ); ?></option>
 									<option v-for="(option_label, option_value) in getConditionOptions(rule.type)" :value="option_value">{{ option_label }}</option>
 								</select>
 
-								<input :type="getConditionInputType(rule.type)" class="noptin-condition-value" v-model="rule.value" :placeholder="getConditionPlaceholder(rule.type)" v-else />
+								<input :type="getConditionInputType(rule.type)" class="noptin-condition-value" v-model="rule.value" :placeholder="getConditionPlaceholder(rule.type)" v-if="! hasConditionOptions(rule.type) && 'is_empty' !== rule.condition && 'is_not_empty' !== rule.condition"/>
 
 								<a href="#" @click.prevent="removeConditionalLogicRule(rule)" class="noptin-remove-conditional-rule">
 									<span class="dashicons dashicons-remove"></span>&nbsp;
