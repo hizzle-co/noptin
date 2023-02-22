@@ -431,4 +431,14 @@ class Noptin_Automation_Rule {
 		}
 	}
 
+	/**
+	 * Retrieves the delay (in seconds) before the rule is executed.
+	 *
+	 * @return int
+	 * @since 1.11.5
+	 */
+	public function get_delay() {
+		return apply_filters( 'noptin_automation_rule_delay', 0, $this );
+	}
+
 }

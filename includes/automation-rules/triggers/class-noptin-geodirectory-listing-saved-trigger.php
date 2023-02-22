@@ -378,6 +378,14 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 			// Set the current email.
 			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
 
+			// Are we delaying the action?
+			$delay = $rule->get_delay();
+
+			if ( $delay > 0 ) {
+				do_action( 'noptin_delay_automation_rule_execution', $rule, $args, $delay );
+				continue;
+			}
+
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
                 $action->maybe_run( $args['email'], $rule, $args );
