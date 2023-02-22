@@ -128,6 +128,7 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 
 		$args['order']    = $order;
 		$args['customer'] = $customer;
+		$args['order_id'] = $order->get_id();
 
 		// Record activity.
 		if ( ! empty( $args['email'] ) && 'update_order' !== $this->order_action ) {
@@ -152,4 +153,48 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 		$this->after_trigger_wc( $args );
 	}
 
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+			'order_id' => $args['order_id'],
+		);
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+
+		$order = wc_get_order( $args['order_id'] );
+
+		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
+			throw new Exception( 'The order no longer exists' );
+		}
+
+		$customer = new WC_Customer( $order->get_customer_id() );
+
+		if ( ! $customer->get_id() ) {
+			$customer->set_email( $order->get_billing_email() );
+			$customer->set_billing_email( $order->get_billing_email() );
+		}
+
+		$args = $this->before_trigger_wc( $order, $customer );
+
+		$args['order']    = $order;
+		$args['customer'] = $customer;
+		$args['order_id'] = $order->get_id();
+
+		// Prepare the trigger args.
+		return $this->prepare_trigger_args( $customer, $args );
+	}
 }

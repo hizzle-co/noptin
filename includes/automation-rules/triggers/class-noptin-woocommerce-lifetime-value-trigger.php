@@ -117,19 +117,60 @@ class Noptin_WooCommerce_Lifetime_Value_Trigger extends Noptin_WooCommerce_Trigg
 			return;
 		}
 
-		if ( $order->get_customer_id() ) {
-			$customer = new WC_Customer( $order->get_customer_id() );
-		} else {
-			$customer = WC()->customer;
+		$customer = new WC_Customer( $order->get_customer_id() );
+
+		if ( ! $customer->get_id() ) {
+			return;
 		}
 
 		$args = $this->before_trigger_wc( false, $customer );
 
 		$args['customer'] = $customer;
+		$args['order_id'] = $order->get_id();
 
 		$this->trigger( $customer, $args );
 
 		$this->after_trigger_wc( $args );
 	}
 
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+			'order_id' => $args['order_id'],
+		);
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+		$order = wc_get_order( $args['order_id'] );
+
+		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
+			throw new Exception( 'The order no longer exists' );
+		}
+
+		$customer = new WC_Customer( $order->get_customer_id() );
+
+		if ( ! $customer->get_id() ) {
+			throw new Exception( 'Customer not found' );
+		}
+
+		$args = $this->before_trigger_wc( false, $customer );
+
+		$args['customer'] = $customer;
+		$args['order_id'] = $order->get_id();
+
+		return $this->prepare_trigger_args( $customer, $args );
+	}
 }

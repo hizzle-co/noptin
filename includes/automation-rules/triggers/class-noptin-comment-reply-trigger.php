@@ -165,44 +165,45 @@ class Noptin_Comment_Reply_Trigger extends Noptin_New_Comment_Trigger {
 	}
 
 	/**
-	 * Serializes a trigger.
+	 * Serializes the trigger args.
 	 *
 	 * @since 1.11.1
-	 * @param string $email The comment author email.
-	 * @param array $args Extra arguments passed to the action.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param array $args The args.
 	 * @return false|array
 	 */
-	public function serialize_trigger( $email, $args, $rule ) {
+	public function serialize_trigger_args( $args ) {
 		return array(
 			'comment_id' => $args['comment_id'],
 			'reply_id'   => $args['reply_id'],
-			'rule_id'    => $rule->id,
 		);
 	}
 
 	/**
-	 * Unserializes a trigger.
+	 * Unserializes the trigger args.
 	 *
 	 * @since 1.11.1
-	 * @param array $trigger The serialized trigger.
+	 * @param array $args The args.
 	 * @return array|false
 	 */
-	public function unserialize_trigger( $trigger ) {
-		$comment = get_comment( $trigger['comment_id'] );
-		$reply   = get_comment( $trigger['reply_id'] );
-		$rule    = new Noptin_Automation_Rule( $trigger['rule_id'] );
+	public function unserialize_trigger_args( $args ) {
+		$comment = get_comment( $args['comment_id'] );
+		$reply   = get_comment( $args['reply_id'] );
 
-		if ( empty( $comment ) || empty( $reply ) || ! $rule->exists() ) {
-			return false;
+		if ( empty( $comment ) ) {
+			throw new Exception( 'The comment no longer exists' );
+		}
+
+		if ( empty( $reply ) ) {
+			throw new Exception( 'The reply no longer exists' );
 		}
 
 		$args = $this->prepare_comment_trigger_args( $reply, $comment );
 
 		if ( empty( $args ) ) {
-			return false;
+			throw new Exception( 'Error preparing trigger args' );
 		}
 
-		$args['rule'] = $rule;
+		return $this->prepare_trigger_args( $args['subject'], $args['args'] );
 	}
+
 }

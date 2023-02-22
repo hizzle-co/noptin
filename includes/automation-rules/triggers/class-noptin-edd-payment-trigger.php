@@ -133,4 +133,51 @@ class Noptin_Edd_Payment_Trigger extends Noptin_EDD_Trigger {
 		$this->customer = false;
 	}
 
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		unset( $args['subject'] );
+		unset( $args['smart_tags'] );
+		return $args;
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+
+		// Fetch the payment.
+		$payment = edd_get_payment( $args['payment_id'] );
+
+		if ( empty( $payment ) || ! is_a( $payment, 'EDD_Payment' ) ) {
+			throw new Exception( 'The payment no longer exists' );
+		}
+
+		// Check the status.
+		if ( $payment->status !== $this->payment_action ) {
+			throw new Exception( 'The payment status is not valid' );
+		}
+
+		// Fetch the customer.
+		$customer = edd_get_customer( $payment->customer_id );
+
+		if ( empty( $customer ) ) {
+			throw new Exception( 'The customer no longer exists' );
+		}
+
+		$this->payment  = $payment;
+		$this->customer = $customer;
+
+		// Prepare the trigger args.
+		return $this->prepare_trigger_args( $this->customer, $args );
+	}
 }

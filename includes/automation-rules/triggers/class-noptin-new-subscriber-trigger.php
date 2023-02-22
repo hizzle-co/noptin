@@ -77,7 +77,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 
 		// Only trigger if a subscriber is active.
 		if ( $subscriber->is_active() ) {
-			$this->trigger( $subscriber, $subscriber->to_array() );
+			$this->trigger( $subscriber, array() );
 		}
 
 	}

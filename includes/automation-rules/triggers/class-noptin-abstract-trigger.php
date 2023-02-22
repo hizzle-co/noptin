@@ -607,6 +607,11 @@ abstract class Noptin_Abstract_Trigger {
 			return $args['smart_tags']->replace_in_email( $rule->action_settings['email'] );
 		}
 
+		// Subject is an email.
+		if ( is_email( $subject ) ) {
+			return $subject;
+		}
+
 		// Maybe fetch from the subscriber.
 		if ( $subject instanceof Noptin_Subscriber ) {
 			return $subject->email;
@@ -695,27 +700,63 @@ abstract class Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Serializes a trigger.
+	 * Serializes the trigger args.
 	 *
 	 * @since 1.11.1
-	 * @param mixed $subject The subject.
-	 * @param array $args Extra arguments passed to the action.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param array $args The args.
 	 * @return false|array
 	 */
-	public function serialize_trigger( $subject, $args, $rule ) {
-		return false;
+	public function serialize_trigger_args( $args ) {
+		unset( $args['smart_tags'] );
+
+		// In case the subject is a subscriber, we need to store the email address.
+		if ( $args['subject'] instanceof Noptin_Subscriber ) {
+			$args['noptin_subject_subscriber'] = $args['subject']->email;
+			unset( $args['subject'] );
+		}
+
+		// In case the subject is a user, we need to store the user id.
+		if ( $args['subject'] instanceof WP_User ) {
+			$args['noptin_subject_user'] = $args['subject']->ID;
+			unset( $args['subject'] );
+		}
+
+		return $args;
 	}
 
 	/**
-	 * Unserializes a trigger.
+	 * Unserializes the trigger args.
 	 *
 	 * @since 1.11.1
-	 * @param array $trigger The serialized trigger.
+	 * @param array $args The args.
 	 * @return array|false
 	 */
-	public function unserialize_trigger( $trigger ) {
-		return false;
+	public function unserialize_trigger_args( $args ) {
+		$subject = isset( $args['subject'] ) ? $args['subject'] : false;
+
+		// Maybe fetch the subscriber.
+		if ( empty( $subject ) && ! empty( $args['noptin_subject_subscriber'] ) ) {
+			$subject = get_noptin_subscriber( $args['noptin_subject_subscriber'] );
+
+			if ( $subject->exists() ) {
+				$args['subject'] = $subject;
+			} else {
+				throw new Exception( 'Subscriber not found' );
+			}
+		}
+
+		// Maybe fetch the user.
+		if ( empty( $subject ) && ! empty( $args['noptin_subject_user'] ) ) {
+			$subject = get_user_by( 'id', $args['noptin_subject_user'] );
+
+			if ( $subject instanceof WP_User ) {
+				$args['subject'] = $subject;
+			} else {
+				throw new Exception( 'User not found' );
+			}
+		}
+
+		return $this->prepare_trigger_args( $subject, $args );
 	}
 
 }

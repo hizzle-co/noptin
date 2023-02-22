@@ -258,6 +258,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	 */
 	public function prepare_gd_args( $postarr, $gd_post, $post, $update ) {
 
+		$postarr['post_id']     = $post->ID;
 		$postarr['saving_type'] = $update ? 'update' : 'new';
 		$postarr['post_url']    = get_permalink( $post->ID );
 
@@ -421,5 +422,52 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 		);
 
 		return $args['smart_tags'];
+	}
+
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+            'post_id'     => $args['post_id'],
+            'saving_type' => $args['saving_type'],
+        );
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+
+        $post        = get_post( $args['user_id'] );
+		$saving_type = $args['saving_type'];
+
+		if ( empty( $post ) ) {
+			throw new Exception( 'The post no longer exists' );
+		}
+
+		$gd_post = geodir_get_post_info( $post->ID );
+
+		if ( empty( $gd_post ) ) {
+			throw new Exception( 'The GD post info no longer exists' );
+		}
+
+        // Check if the user is still a member of the level.
+        if ( ! pmpro_hasMembershipLevel( $args['level_id'], $args['user_id'] ) ) {
+            throw new Exception( 'The user is no longer a member of the level' );
+        }
+
+		$this->prepare_trigger_args(
+			get_userdata( $post->post_author ),
+			$this->prepare_gd_args( $post->to_array(), $gd_post, $post, 'update' === $saving_type )
+		);
 	}
 }

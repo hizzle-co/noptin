@@ -163,4 +163,48 @@ class Noptin_New_Comment_Trigger extends Noptin_Abstract_Trigger {
 
 		$this->trigger( $comment->comment_author_email, $args );
 	}
+
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+			'comment_id' => $args['comment_id'],
+		);
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+		$comment = get_comment( $args['comment_id'] );
+
+		if ( empty( $comment ) ) {
+			throw new Exception( 'The comment no longer exists' );
+		}
+
+		$args = get_object_vars( $comment );
+
+		// Add post data.
+		if ( ! empty( $comment->comment_post_ID ) ) {
+			$post = get_post( $comment->comment_post_ID );
+
+			if ( $post ) {
+				$args = array_merge( $args, $this->prepare_post_smart_tags( $post ) );
+			}
+		}
+
+		// Convert all keys to lowercase.
+		$args = array_change_key_case( $args, CASE_LOWER );
+
+		return $this->prepare_trigger_args( $comment->comment_author_email, $args );
+	}
 }

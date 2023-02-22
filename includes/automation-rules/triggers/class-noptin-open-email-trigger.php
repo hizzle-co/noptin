@@ -131,12 +131,9 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 
 		$subscriber = new Noptin_Subscriber( $subscriber_id );
 
-		$args = array_merge(
-			$subscriber->to_array(),
-			array(
-				'campaign_id'    => $campaign_id,
-				'campaign_title' => get_the_title( $campaign_id ),
-			)
+		$args = array(
+			'campaign_id'    => $campaign_id,
+			'campaign_title' => get_the_title( $campaign_id ),
 		);
 
 		noptin_record_subscriber_activity(

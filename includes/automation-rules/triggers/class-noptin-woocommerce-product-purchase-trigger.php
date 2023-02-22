@@ -251,4 +251,88 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 
 		return $args['smart_tags'];
 	}
+
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+			'order_id'   => $args['order_id'],
+			'product_id' => $args['product_id'],
+		);
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+
+		$order = wc_get_order( $args['order_id'] );
+
+		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
+			throw new Exception( 'The order no longer exists' );
+		}
+
+		$customer = new WC_Customer( $order->get_customer_id() );
+
+		if ( ! $customer->get_id() ) {
+			$customer->set_email( $order->get_billing_email() );
+			$customer->set_billing_email( $order->get_billing_email() );
+		}
+
+		// Check the status.
+		if ( $order->is_paid() ) {
+			$action = 'buy';
+		} elseif ( $order->has_status( 'refunded' ) ) {
+			$action = 'refund';
+		} else {
+			throw new Exception( 'The order status is not valid' );
+		}
+
+		// Loop through the order items.
+		foreach ( $order->get_items() as $item ) {
+
+			// Ensure we have a product.
+			/** @var WC_Order_Item_Product $item */
+			$product = $item->get_product();
+			if ( empty( $product ) ) {
+				continue;
+			}
+
+			// Ensure we have a product id.
+			$product_id = $product->get_id();
+			if ( empty( $product_id ) ) {
+				continue;
+			}
+
+			if ( absint( $product_id ) !== absint( $args['product_id'] ) ) {
+				continue;
+			}
+
+			// Attach WC hooks.
+			$args = array_merge(
+				$this->before_trigger_wc( $order, $customer, $product ),
+				array(
+					'order_id'    => $order->get_id(),
+					'product_id'  => $product_id,
+					'product_sku' => $product->get_sku(),
+					'product_qty' => $item->get_quantity(),
+					'action'      => $action,
+				)
+			);
+
+			// Prepare the trigger args.
+			return $this->prepare_trigger_args( $customer, $args );
+		}
+
+		throw new Exception( 'The order item no longer exists' );
+	}
 }
