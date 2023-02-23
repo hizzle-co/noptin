@@ -594,7 +594,7 @@ abstract class Noptin_Abstract_Trigger {
 		$meta_data = get_user_meta( $user->ID );
 		foreach ( $meta_data as $key => $value ) {
 			if ( ! isset( $args[ $key ] ) ) {
-				$args[ $key ] = $value[0];
+				$args[ 'user_cf_' . $key ] = $value[0];
 			}
 		}
 
