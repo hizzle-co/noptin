@@ -578,7 +578,7 @@ abstract class Noptin_Abstract_Trigger {
 			return array();
 		}
 
-		return array(
+		$args = array(
 			'user_id'    => $user->ID,
 			'email'      => $user->user_email,
 			'name'       => $user->display_name,
@@ -589,6 +589,16 @@ abstract class Noptin_Abstract_Trigger {
 			'user_login' => $user->user_login,
 			'user_role'  => current( $user->roles ),
 		);
+
+		// Add meta data.
+		$meta_data = get_user_meta( $user->ID );
+		foreach ( $meta_data as $key => $value ) {
+			if ( ! isset( $args[ $key ] ) ) {
+				$args[ $key ] = $value[0];
+			}
+		}
+
+		return $args;
 	}
 
 	/**
@@ -608,7 +618,7 @@ abstract class Noptin_Abstract_Trigger {
 		}
 
 		// Subject is an email.
-		if ( is_email( $subject ) ) {
+		if ( is_string( $subject ) && is_email( $subject ) ) {
 			return $subject;
 		}
 
@@ -719,12 +729,9 @@ abstract class Noptin_Abstract_Trigger {
 
 		// In case the subject is a subscriber, we need to store the email address.
 		if ( $args['subject'] instanceof Noptin_Subscriber ) {
-			$args['noptin_subject_subscriber'] = $args['subject']->email;
+			$args['noptin_subject_subscriber'] = $args['subject']->id;
 			unset( $args['subject'] );
-		}
-
-		// In case the subject is a user, we need to store the user id.
-		if ( $args['subject'] instanceof WP_User ) {
+		} elseif ( $args['subject'] instanceof WP_User ) { // In case the subject is a user, we need to store the user id.
 			$args['noptin_subject_user'] = $args['subject']->ID;
 			unset( $args['subject'] );
 		}
