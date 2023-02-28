@@ -371,6 +371,8 @@ class Noptin_Emails_Admin {
 			wp_send_json_error( __( 'Please provide a valid email address', 'newsletter-optin-box' ) );
 		}
 
+		$GLOBALS['current_noptin_email'] = $data['email'];
+
 		// Handle automated emails?
 		if ( ! empty( $data['noptin_is_automation'] ) ) {
 			noptin()->emails->automated_email_types->send_test_email( $data['noptin_email'], sanitize_email( $data['email'] ) );
