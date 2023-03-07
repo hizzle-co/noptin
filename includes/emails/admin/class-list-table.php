@@ -202,7 +202,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 				$item->get_edit_url()
 			);
 
-			$title .= '<p class="description">' . sprintf( __( 'This campaign is currently being sent. If it has been stuck for more than 30 minutes, you can <a href="%s">repair it</a>.', 'newsletter-optin-box' ), $repair_url ) . '</p>';
+			//$title .= '<p class="description">' . sprintf( __( 'This campaign is currently being sent. If it has been stuck for more than 30 minutes, you can <a href="%s">repair it</a>.', 'newsletter-optin-box' ), $repair_url ) . '</p>';
 		}
 
 		// Row actions.
