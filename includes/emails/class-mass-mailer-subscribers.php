@@ -30,6 +30,16 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 	 */
 	public function display_sending_options( $campaign ) {
 
+		$current = $campaign->get( 'noptin_subscriber_options' );
+
+		if ( empty( $current ) && ! defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
+			?>
+			<p><?php esc_html_e( 'The add-ons pack allows you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ); ?></p>
+			<p><a href="<?php echo esc_url( noptin_get_upsell_url( '/pricing/', 'filter-subscribers', 'email-campaigns' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+			<?php
+			return;
+		}
+
 		// Render sender options.
 		$fields  = array();
 

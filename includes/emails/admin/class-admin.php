@@ -47,6 +47,7 @@ class Noptin_Emails_Admin {
 	 */
 	public function add_hooks() {
 
+		add_action( 'noptin_repair_stuck_campaign', array( $this, 'repair_stuck_campaign' ) );
 		add_action( 'noptin_force_send_campaign', array( $this, 'force_send_campaign' ) );
 		add_action( 'noptin_duplicate_email_campaign', array( $this, 'duplicate_email_campaign' ) );
 		add_action( 'noptin_delete_email_campaign', array( $this, 'delete_email_campaign' ) );
@@ -58,6 +59,25 @@ class Noptin_Emails_Admin {
 
 		$this->newsletters_admin->add_hooks();
 		$this->automations_admin->add_hooks();
+	}
+
+	/**
+	 * Repairs a stuck campaign.
+	 *
+	 * @since 1.11.5
+	 */
+	public function repair_stuck_campaign() {
+
+		// Only admins should be able to force send campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_repair_stuck_campaign' ) ) {
+			return;
+		}
+
 	}
 
 	/**

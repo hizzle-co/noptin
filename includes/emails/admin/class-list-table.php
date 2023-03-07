@@ -192,6 +192,17 @@ class Noptin_Email_List_Table extends WP_List_Table {
 			if ( ! empty( $description ) ) {
 				$title .= "<p class='description'>$description</div>";
 			}
+		} elseif ( $item->is_published() && ! get_post_meta( $item->id, 'completed', true ) ) {
+
+			$repair_url = add_query_arg(
+				array(
+					'noptin_admin_action' => 'noptin_repair_stuck_campaign',
+					'noptin_nonce'        => wp_create_nonce( 'noptin_repair_stuck_campaign' ),
+				),
+				$item->get_edit_url()
+			);
+
+			$title .= '<p class="description">' . sprintf( __( 'This campaign is currently being sent. If it has been stuck for more than 30 minutes, you can <a href="%s">repair it</a>.', 'newsletter-optin-box' ), $repair_url ) . '</p>';
 		}
 
 		// Row actions.
