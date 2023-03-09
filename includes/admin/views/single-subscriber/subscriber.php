@@ -4,6 +4,7 @@
 	<h1 class="title">
 		<?php esc_html_e( 'Subscriber', 'newsletter-optin-box' ); ?>
 		<a href="<?php echo esc_url( add_query_arg( 'add', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
+		<a href="<?php echo esc_url( get_noptin_email_recipients_url( $subscriber->id, 'noptin' ) ); ?>" class="page-title-action button-primary"><?php esc_html_e( 'Send Email', 'newsletter-optin-box' ); ?></a>
 	</h1>
 
 	<form name="noptin-edit-subscriber" method="post">

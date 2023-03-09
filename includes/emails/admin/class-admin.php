@@ -47,6 +47,8 @@ class Noptin_Emails_Admin {
 	 */
 	public function add_hooks() {
 
+		add_action( 'noptin_repair_stuck_campaign', array( $this, 'repair_stuck_campaign' ) );
+		add_action( 'noptin_force_send_campaign', array( $this, 'force_send_campaign' ) );
 		add_action( 'noptin_duplicate_email_campaign', array( $this, 'duplicate_email_campaign' ) );
 		add_action( 'noptin_delete_email_campaign', array( $this, 'delete_email_campaign' ) );
 		add_action( 'noptin_after_register_menus', array( $this, 'register_menu' ), 5 );
@@ -57,6 +59,76 @@ class Noptin_Emails_Admin {
 
 		$this->newsletters_admin->add_hooks();
 		$this->automations_admin->add_hooks();
+	}
+
+	/**
+	 * Repairs a stuck campaign.
+	 *
+	 * @since 1.11.5
+	 */
+	public function repair_stuck_campaign() {
+
+		// Only admins should be able to force send campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_repair_stuck_campaign' ) ) {
+			return;
+		}
+
+	}
+
+	/**
+	 * Manually sends a campaign.
+	 *
+	 * @since 1.11.2
+	 */
+	public function force_send_campaign() {
+
+		// Only admins should be able to force send campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_force_send_campaign' ) ) {
+			return;
+		}
+
+		define( 'NOPTIN_RESENDING_CAMPAIGN', true );
+
+		// Retrieve campaign object.
+		if ( empty( $_GET['section'] ) || 'newsletters' === $_GET['section'] ) {
+			$campaign = new Noptin_Newsletter_Email( intval( $_GET['campaign'] ) );
+
+			// Abort if already sent.
+			if ( $campaign->is_published() ) {
+				return;
+			}
+
+			// Send.
+			$campaign->status = 'publish';
+			$campaign->save();
+		} else {
+			$campaign = new Noptin_Automated_Email( intval( $_GET['campaign'] ) );
+
+			// Abort if cannot be sent.
+			if ( ! $campaign->is_published() || 'post_digest' !== $campaign->type ) {
+				return;
+			}
+
+			// Send.
+			do_action( 'noptin_send_post_digest', $campaign->id );
+		}
+
+		// Check if the campaign exists.
+		noptin()->admin->show_info( __( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ) );
+
+		// Redirect.
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign', 'sub_section' ) ) );
+		exit;
 	}
 
 	/**
@@ -309,6 +381,8 @@ class Noptin_Emails_Admin {
 			wp_die( -1, 403 );
 		}
 
+		define( 'NOPTIN_SENDING_TEST_EMAIL', true );
+
 		// Prepare data.
 		$data = wp_unslash( $_POST );
 
@@ -316,6 +390,8 @@ class Noptin_Emails_Admin {
 		if ( empty( $data['email'] ) || ! is_email( $data['email'] ) ) {
 			wp_send_json_error( __( 'Please provide a valid email address', 'newsletter-optin-box' ) );
 		}
+
+		$GLOBALS['current_noptin_email'] = $data['email'];
 
 		// Handle automated emails?
 		if ( ! empty( $data['noptin_is_automation'] ) ) {
@@ -378,6 +454,17 @@ class Noptin_Emails_Admin {
 			'recipients'
 		);
 
+		// Email attachment.
+		add_meta_box(
+			'noptin_email_attachment',
+			__( 'Email Attachments', 'newsletter-optin-box' ),
+			array( $this, 'render_metabox' ),
+			$screen_id,
+			'side',
+			'default',
+			'attachments'
+		);
+
 		// Email content.
 		add_meta_box(
 			'noptin_email_content',
@@ -385,7 +472,7 @@ class Noptin_Emails_Admin {
 			array( $this, 'render_metabox' ),
 			$screen_id,
 			'normal',
-			'high',
+			'default',
 			'content'
 		);
 

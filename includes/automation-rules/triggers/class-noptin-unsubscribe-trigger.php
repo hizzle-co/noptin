@@ -45,7 +45,7 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Fired when someone unsubscribes', 'newsletter-optin-box' );
+		return __( 'When someone unsubscribes', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -83,9 +83,24 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 
 		// Only trigger if a subscriber is active.
 		if ( $subscriber->is_active() ) {
-			$this->trigger( $subscriber, $subscriber->to_array() );
+			$this->trigger( $subscriber, array() );
 		}
 
 	}
 
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+
+		$subject = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+		$args    = $this->prepare_trigger_args( $subject, array() );
+
+		return $args['smart_tags'];
+	}
 }

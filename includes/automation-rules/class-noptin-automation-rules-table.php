@@ -210,7 +210,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 
 		// Row actions.
 		$row_actions = array();
-		$edit_url    = esc_url( add_query_arg( 'noptin_edit_automation_rule', $item->id, $this->base_url ) );
+		$edit_url    = esc_url( $item->get_edit_url() );
 
 		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
 
@@ -252,7 +252,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			);
 		} else {
 			$trigger_text        = $trigger->get_rule_description( $item );
-			$trigger_description = noptin_prepare_conditional_logic_for_display( $item->conditional_logic, $trigger->get_known_smart_tags() );
+			$trigger_description = noptin_prepare_conditional_logic_for_display( $item->conditional_logic, $trigger->get_known_smart_tags(), $item->action_id );
 		}
 
 		$text        = ucfirst( "$trigger_text, $action_text" );
@@ -387,7 +387,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			'</a></p>'
 		);
 
-		echo "<p class='description'><a style='color: #616161; text-decoration: underline;' href='https://noptin.com/guide/automation-rules' target='_blank'>" . esc_html__( 'Or Learn more', 'newsletter-optin-box' ) . '</a></p>';
+		echo "<p class='description'><a style='color: #616161; text-decoration: underline;' href='" . esc_html( noptin_get_upsell_url( '/guide/automation-rules/', 'learn-more', 'automation-rules' ) ) . "' target='_blank'>" . esc_html__( 'Or Learn more', 'newsletter-optin-box' ) . '</a></p>';
 		echo '</div></div>';
 	}
 

@@ -54,6 +54,7 @@ class Noptin_Form_Asset_Manager {
 			'resturl'     => esc_url_raw( rest_url( 'noptin/v1/form' ) ),
 			'nonce'       => wp_create_nonce( 'noptin' ),
 			'cookie'      => get_noptin_option( 'subscribers_cookie' ),
+			'connect_err' => __( 'Could not establish a connection to the server.', 'newsletter-optin-box' ),
 			'cookie_path' => COOKIEPATH,
 		);
 		$params = apply_filters( 'noptin_form_scripts_params', $params );

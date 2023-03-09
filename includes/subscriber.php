@@ -384,6 +384,8 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 		do_action( 'noptin_insert_subscriber', $id, $fields );
 	}
 
+	delete_transient( 'noptin_subscription_sources' );
+
 	return $id;
 
 }
@@ -464,12 +466,13 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 	}
 
 	// Clean the cache.
-	$old_subscriber = new Noptin_Subscriber( $subscriber_id );
-	$old_subscriber->clear_cache();
+	$subscriber->clear_cache();
 
 	if ( ! $silent ) {
 		do_action( 'noptin_update_subscriber', $subscriber_id, $details );
 	}
+
+	delete_transient( 'noptin_subscription_sources' );
 
 	return true;
 
@@ -938,112 +941,6 @@ function get_noptin_subscriber_fields() {
 	}
 
 	return apply_filters( 'get_noptin_subscriber_fields', $fields );
-}
-
-/**
- * Synces users to existing subscribers.
- *
- * @since 1.2.3
- * @param string|array $users_to_sync The WordPress users to sync to Noptin.
- * @see sync_noptin_subscribers_to_users
- * @return void.
- */
-function sync_users_to_noptin_subscribers( $users_to_sync = array() ) {
-
-	// Arrays only please.
-	$users_to_sync = array_filter( noptin_parse_int_list( $users_to_sync ) );
-
-	foreach ( array_unique( $users_to_sync ) as $user_id ) {
-
-		// Get the user data...
-		$user_info = get_userdata( $user_id );
-
-		// ... and abort if it is missing.
-		if ( empty( $user_info ) ) {
-			continue;
-		}
-
-		// If the user is not yet subscribed, subscribe them.
-		$subscriber_id = add_noptin_subscriber(
-			array(
-				'email'           => $user_info->user_email,
-				'name'            => $user_info->display_name,
-				'active'          => 0,
-				'_subscriber_via' => 'users_sync',
-			)
-		);
-
-		if ( is_numeric( $subscriber_id ) ) {
-			update_user_meta( $user_id, 'noptin_subscriber_id', $subscriber_id );
-			update_noptin_subscriber_meta( $subscriber_id, 'wp_user_id', $user_id );
-		}
-	}
-
-}
-
-/**
- * Synces existing subscribers to WordPress users.
- *
- * @since 1.2.3
- * @param string|array $subscribers_to_sync The Noptin subscribers to sync to WordPress Users.
- * @see sync_noptin_subscribers_to_users
- * @return void.
- */
-function sync_noptin_subscribers_to_users( $subscribers_to_sync = array() ) {
-
-	// Arrays only please.
-	$subscribers_to_sync = array_filter( noptin_parse_int_list( $subscribers_to_sync ) );
-
-	foreach ( array_unique( $subscribers_to_sync ) as $subscriber_id ) {
-
-		// Get the subscriber data...
-		$subscriber = get_noptin_subscriber( $subscriber_id );
-
-		// ... and abort if it is missing.
-		if ( ! $subscriber->exists() ) {
-			continue;
-		}
-
-		// If the subscriber is a WordPress user, continue.
-		$user = get_user_by( 'email', $subscriber->email );
-		if ( $user ) {
-			update_noptin_subscriber_meta( $subscriber->id, 'wp_user_id', $user->ID );
-			continue;
-		}
-
-		$username = trim( $subscriber->first_name . $subscriber->second_name );
-
-		if ( empty( $username ) ) {
-			$username = $subscriber->email;
-		}
-
-		// Prepare user values.
-		$args = array(
-			'user_login' => noptin_generate_user_name( $username ),
-			'user_pass'  => wp_generate_password(),
-			'user_email' => $subscriber->email,
-			'role'       => 'subscriber',
-		);
-
-		$user_id = wp_insert_user( $args );
-		if ( is_wp_error( $user_id ) ) {
-			log_noptin_message(
-				sprintf(
-					'WordPress returned the error: <strong>%s</strong> when syncing subscriber <em>%s</em>',
-					$user_id->get_error_message(),
-					sanitize_email( $subscriber->email )
-				)
-			);
-			continue;
-		}
-
-		update_user_option( $user_id, 'default_password_nag', true, true ); // Set up the Password change nag.
-		update_user_meta( $user_id, 'noptin_subscriber_id', $subscriber->id );
-		update_noptin_subscriber_meta( $subscriber->id, 'wp_user_id', $user_id );
-		wp_send_new_user_notifications( $user_id, 'user' );
-
-	}
-
 }
 
 /**
@@ -1670,7 +1567,7 @@ function noptin_get_subscription_sources() {
 	$sources['users_sync'] = __( 'Users Sync', 'newsletter-optin-box' );
 	$sources['import']     = __( 'Imported', 'newsletter-optin-box' );
 
-	// Cache. TODO: Clear cache when subscriber or form is added/updated.
+	// Cache.
 	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );
 
 	return apply_filters( 'noptin_subscription_sources', $sources );
@@ -1747,4 +1644,13 @@ function noptin_record_subscriber_activity( $email_address, $activity ) {
 	}
 
 	update_noptin_subscriber_meta( $subscriber->id, '_subscriber_activity', $saved_activity );
+}
+
+/**
+ * Returns the maximum number of allowed subscribers.
+ *
+ * @return int Zero if unlimited.
+ */
+function noptin_max_allowed_subscribers() {
+	return apply_filters( 'noptin_max_allowed_subscribers', 0 );
 }

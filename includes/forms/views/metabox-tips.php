@@ -5,7 +5,8 @@
 	<li>
 		<?php
 			printf(
-				'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-shortcode/" target="_blank">%s</a>',
+				'<a href="%s" target="_blank">%s</a>',
+				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/newsletter-subscription-shortcode/', 'shortcode', 'subscription-forms' ) ),
 				esc_html__( 'Use the subscription form shortcode.', 'newsletter-optin-box' )
 			);
 		?>
@@ -14,7 +15,8 @@
 	<li>
 		<?php
 			printf(
-				'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-widget/" target="_blank">%s</a>',
+				'<a href="%s" target="_blank">%s</a>',
+				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/newsletter-subscription-widget/', 'widget', 'subscription-forms' ) ),
 				esc_html__( 'Display this form in a widget.', 'newsletter-optin-box' )
 			);
 		?>
@@ -23,7 +25,8 @@
 	<li>
 		<?php
 			printf(
-				'<a href="https://noptin.com/guide/subscription-forms/newsletter-subscription-block/" target="_blank">%s</a>',
+				'<a href="%s" target="_blank">%s</a>',
+				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/newsletter-subscription-widget/', 'block', 'subscription-forms' ) ),
 				esc_html__( 'Use the subscription form block.', 'newsletter-optin-box' )
 			);
 		?>
@@ -32,7 +35,8 @@
 	<li>
 		<?php
 			printf(
-				'<a href="https://noptin.com/guide/subscription-forms/preventing-spam-sign-ups/" target="_blank">%s</a>',
+				'<a href="%s" target="_blank">%s</a>',
+				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/preventing-spam-sign-ups/', 'spam', 'subscription-forms' ) ),
 				esc_html__( 'Prevent spam sign-ups.', 'newsletter-optin-box' )
 			);
 		?>
@@ -41,7 +45,8 @@
 	<li>
 		<?php
 			printf(
-				'<a href="https://noptin.com/guide/subscription-forms/unsubscribe-forms/" target="_blank">%s</a>',
+				'<a href="%s" target="_blank">%s</a>',
+				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/preventing-spam-sign-ups/', 'unsubscribe-forms', 'subscription-forms' ) ),
 				esc_html__( 'Create unsubscribe forms', 'newsletter-optin-box' )
 			);
 		?>

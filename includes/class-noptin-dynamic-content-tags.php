@@ -171,6 +171,20 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 		}
 
+		if ( is_array( $replacement ) ) {
+			if ( ! is_scalar( current( $replacement ) ) ) {
+				$replacement = wp_json_encode( $replacement );
+			} else {
+				$replacement = implode( ', ', $replacement );
+			}
+		}
+
+		if ( ! is_scalar( $replacement ) ) {
+			$replacement = wp_json_encode( $replacement );
+		}
+
+		$replacement = (string) $replacement;
+
 		if ( ( '' === $replacement || null === $replacement ) && isset( $attributes['default'] ) ) {
 			$replacement = trim( $attributes['default'] );
 		}
@@ -196,6 +210,15 @@ abstract class Noptin_Dynamic_Content_Tags {
 		// Call again to take care of nested variables.
 		$string = preg_replace_callback( '/\{(\w+)(\ +(?:(?!\{)[^}\n])+)*\}/', array( $this, 'replace_tag' ), $string );
 		return $string;
+	}
+
+	/**
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public function replace_in_body( $string ) {
+		return $this->replace( $string, '' );
 	}
 
 	/**

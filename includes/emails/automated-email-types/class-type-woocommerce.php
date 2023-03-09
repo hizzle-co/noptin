@@ -39,17 +39,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	public $order_item = null;
 
 	/**
-	 * Registers hooks.
-	 *
-	 */
-	public function add_hooks() {
-		parent::add_hooks();
-
-		// Notify customers.
-		add_action( 'noptin_email_styles', array( $this, 'maybe_append_custom_css' ), 100, 2 );
-	}
-
-	/**
 	 * Retrieves the automated email type image.
 	 *
 	 */
@@ -163,6 +152,13 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'description' => __( 'The order status.', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_order_field' ),
 				'example'     => 'order.status',
+			),
+
+			'order.coupon_code'          => array(
+				'description'       => __( 'Coupon code', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.coupon_code',
+				'conditional_logic' => 'string',
 			),
 
 			'order.date_created'         => array(
@@ -660,78 +656,85 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 * @return array
 	 */
 	public function get_customer_merge_tags() {
-		// TODO: On subject change, if heading is empty, fill it up.
+
 		return array(
 
-			'customer.id'           => array(
+			'customer.id'               => array(
 				'description'       => __( 'Customer ID', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.id',
 				'conditional_logic' => 'number',
 			),
 
-			'customer.details'      => array(
+			'customer.details'          => array(
 				'description' => __( "Return the customer's details.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
 				'example'     => 'customer.details',
 			),
 
-			'customer.avatar_url'   => array(
+			'customer.avatar_url'       => array(
 				'description' => __( "Return the customer's avatar.", 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_customer_field' ),
 				'example'     => 'customer.avatar_url',
 			),
 
-			'customer.order_count'  => array(
+			'customer.order_count'      => array(
 				'description'       => __( 'The number of orders the customer has', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.order_count',
 				'conditional_logic' => 'number',
 			),
 
-			'customer.total_spent'  => array(
-				'description'       => __( 'How much money this customer has spent', 'newsletter-optin-box' ),
+			'customer.first_order_date' => array(
+				'description'       => __( 'The date of the customer\'s first order', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_customer_field' ),
+				'example'           => "customer.first_order_date format='date'",
+				'conditional_logic' => 'date',
+			),
+
+			'customer.total_spent'      => array(
+				'description'       => __( 'Lifetime Value', 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => "customer.total_spent format='price'",
 				'conditional_logic' => 'number',
 			),
 
-			'customer.username'     => array(
+			'customer.username'         => array(
 				'description'       => __( "The customer's username", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.username',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.email'        => array(
+			'customer.email'            => array(
 				'description'       => __( "The customer's email", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.email',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.first_name'   => array(
+			'customer.first_name'       => array(
 				'description'       => __( "The customer's first name", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.first_name',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.last_name'    => array(
+			'customer.last_name'        => array(
 				'description'       => __( "The customer's last name", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.last_name',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.display_name' => array(
+			'customer.display_name'     => array(
 				'description'       => __( "The customer's display name", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.display_name',
 				'conditional_logic' => 'string',
 			),
 
-			'customer.newsletter'   => array(
+			'customer.newsletter'       => array(
 				'description'       => __( "The customer's newsletter subscription status", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
 				'example'           => 'customer.newsletter',
@@ -787,6 +790,28 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			case 'customer.total_spent':
 				$format = isset( $args['format'] ) ? $args['format'] : 'decimal';
 				return $this->format_amount( $this->customer->get_total_spent(), null, $format );
+
+			case 'customer.first_order_date':
+				$format      = isset( $args['format'] ) ? $args['format'] : 'date';
+				$first_order = wc_get_orders(
+					array(
+						'customer' => $this->customer->get_id(),
+						'limit'    => 1,
+						'orderby'  => 'date',
+						'order'    => 'ASC',
+					)
+				);
+
+				if ( empty( $first_order ) ) {
+					return esc_html( $default );
+				}
+
+				$date = $first_order[0]->get_date_created();
+				if ( 'date' === $format ) {
+					return $date->date_i18n( wc_date_format() );
+				}
+
+				return $date->date( 'Y-m-d' );
 
 			default:
 				$method = 'get_' . str_replace( 'customer.', '', $field );
@@ -1109,72 +1134,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	}
 
 	/**
-	 * Retrieves WC related styles.
-	 *
-	 * @return string
-	 */
-	public function maybe_append_custom_css( $styles ) {
-
-		if ( ! $this->sending ) {
-			return $styles;
-		}
-
-		return $styles . '
-			table.noptin-wc-product-grid {
-				width: 100%;
-			}
-
-			.noptin-wc-product-grid-container {
-				font-size: 0px;
-				margin: 10px 0 10px;
-			}
-
-			.noptin-wc-product-grid-item-col {
-				width: 30.5%;
-				display: inline-block;
-				text-align:center;
-				padding: 0 0 30px;
-				vertical-align:top;
-				word-wrap:break-word;
-				margin-right: 4%;
-				font-size: 14px;
-			}
-
-			table.noptin-wc-product-list  {
-				margin: 10px 0;
-				border-top: 1px solid #dddddd;
-			}
-
-			table.noptin-wc-product-list td {
-				padding: 13px;
-				border-bottom: 1px solid #dddddd;
-			}
-
-			table.noptin-wc-product-list td.image {
-				padding-left: 0 !important;
-			}
-
-			table.noptin-wc-product-list td.last {
-				padding-right: 0 !important;
-			}
-
-			table.noptin-wc-order-table img,
-			table.noptin-wc-product-grid img,
-			table.noptin-wc-product-list td img {
-				max-width: 100%;
-				height: auto !important;
-			}
-
-			table.noptin-wc-product-list h3,
-			table.noptin-wc-product-list p {
-				margin: 5px 0 !important;
-			}
-
-		';
-
-	}
-
-	/**
 	 * Sends a notification.
 	 *
 	 * @param Noptin_Automated_Email $campaign
@@ -1276,7 +1235,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 *
 	 * @param int $offset
 	 */
-	protected function _prepare_test_data( $offset = 0 ) {
+	public function _prepare_test_data( $offset = 0 ) {
 
 		// Do not run more than 10 times.
 		if ( $offset > 10 ) {

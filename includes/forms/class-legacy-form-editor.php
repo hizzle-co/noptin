@@ -92,7 +92,6 @@ class Noptin_Legacy_Form_Editor {
 				'noteColor',
 				'CSS',
 				'optinType',
-				'DisplayOncePerSession',
 				'timeDelayDuration',
 				'scrollDepthPercentage',
 				'cssClassOfClick',
@@ -328,15 +327,6 @@ class Noptin_Legacy_Form_Editor {
 	private function get_trigger_settings() {
 		return array(
 
-			// Once per session.
-			'DisplayOncePerSession' => array(
-				'type'     => 'checkbox',
-				'el'       => 'input',
-				'tooltip'  => __( 'Uncheck to display the form once per session instead of once per week', 'newsletter-optin-box' ),
-				'label'    => __( 'Display this form once per week', 'newsletter-optin-box' ),
-				'restrict' => "this.triggerPopup!='after_click' && this.optinType=='popup'",
-			),
-
 			// Sliding direction.
 			'slideDirection'        => array(
 				'el'       => 'select',
@@ -507,15 +497,14 @@ class Noptin_Legacy_Form_Editor {
 	 */
 	private function get_integration_fields() {
 
-		$fields                = array();
-		$available_connections = get_noptin_connection_providers();
+		$fields = array();
 
 		if ( noptin_upsell_integrations() ) {
 			foreach ( Noptin_COM::get_connections() as $connection ) {
 
 				$key            = sanitize_key( str_replace( '-', '_', $connection->slug ) );
 				$name           = esc_html( $connection->name );
-				$href           = esc_url( $connection->connect_url );
+				$href           = esc_url( noptin_get_upsell_url( $connection->connect_url, $key, 'subscription-forms' ) );
 				$fields[ $key ] = array(
 					'el'       => 'panel',
 					'title'    => $name,
@@ -535,83 +524,6 @@ class Noptin_Legacy_Form_Editor {
 				);
 
 			}
-		}
-
-		foreach ( $available_connections as $key => $connection ) {
-
-			// Abort early if we're not connected.
-			if ( ! $connection->is_connected() ) {
-				$error = $connection->last_error;
-
-				if ( empty( $error ) ) {
-					$error = sprintf(
-						// translators: %s is the name of the integration.
-						__( 'You are not connected to %s', 'newsletter-optin-box' ),
-						$connection->name
-					);
-				}
-
-				$fields[ $key ] = array(
-					'el'       => 'panel',
-					'title'    => $connection->name,
-					'id'       => $key,
-					'open'     => empty( $available_connections ),
-					'children' => array(
-						"{$key}text" => array(
-							'el'      => 'paragraph',
-							'content' => "Error: $error",
-							'style'   => 'color:#F44336;',
-						),
-					),
-				);
-
-				continue;
-			}
-
-			$custom = array();
-			$slug   = $connection->slug;
-
-			// Lists.
-			if ( ! empty( $connection->list_providers ) ) {
-
-				$custom[ "{$slug}_list" ] = array(
-					'el'          => 'select',
-					'options'     => $connection->list_providers->get_dropdown_lists(),
-					'label'       => sprintf(
-						'%s %s',
-						$connection->name,
-						$connection->list_providers->get_name()
-					),
-					'placeholder' => sprintf(
-						// translators: %s is the name of the integration.
-						__( 'Do not add to %s', 'newsletter-optin-box' ),
-						$connection->name
-					),
-					// translators: %s can be list, group etc.
-					'tooltip'     => sprintf( __( 'People who subscribe via this form will be added to the %s you select here', 'newsletter-optin-box' ), $connection->list_providers->get_name() ),
-				);
-
-			}
-
-			// Tags.
-			if ( $connection->supports( 'tags' ) ) {
-
-				$custom[ "{$slug}_tags" ] = array(
-					'el'          => 'input',
-					'label'       => __( 'Subscriber Tags', 'newsletter-optin-box' ),
-					'placeholder' => 'tag, another tag',
-					'tooltip'     => __( 'The listed tags will be applied to all new subscribers added by this form. Separate multiple values with a comma.', 'newsletter-optin-box' ),
-				);
-
-			}
-
-			$fields[ $key ] = array(
-				'el'       => 'panel',
-				'title'    => $connection->name,
-				'id'       => $connection->slug,
-				'children' => $connection->add_custom_options( $custom ),
-			);
-
 		}
 
 		ksort( $fields );
@@ -1064,7 +976,7 @@ class Noptin_Legacy_Form_Editor {
 			'CSS' => array(
 				'el'      => 'editor',
 				'tooltip' => __( "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page", 'newsletter-optin-box' ),
-				'label'   => __( 'Enter Your Custom CSS.', 'newsletter-optin-box' ) . ' <a href="https://noptin.com/guide/email-forms/opt-in-forms-editor/custom-css/" target="_blank">' . __( 'Read this first.', 'newsletter-optin-box' ) . '</a>',
+				'label'   => __( 'Enter Your Custom CSS.', 'newsletter-optin-box' ),
 			),
 
 		);

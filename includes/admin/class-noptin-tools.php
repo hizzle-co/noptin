@@ -11,6 +11,7 @@ class Noptin_Tools {
 		add_action( 'noptin_after_admin_tools', array( __CLASS__, 'display_closing_wrap' ) );
 		add_action( 'noptin_admin_tools', array( __CLASS__, 'list_tools' ) );
 		add_action( 'noptin_admin_tool_debug_log', array( __CLASS__, 'display_debug_log' ) );
+		add_action( 'noptin_admin_tool_custom_content', array( __CLASS__, 'display_custom_content' ) );
 		add_action( 'noptin_admin_tool_system_info', array( __CLASS__, 'display_system_info' ) );
 
 	}
@@ -73,24 +74,18 @@ class Noptin_Tools {
 				'desc'   => __( 'View a list of notices and errors logged by Noptin.', 'newsletter-optin-box' ),
 			),
 
+			'custom_content'     => array(
+				'name'   => __( 'Custom Content', 'newsletter-optin-box' ),
+				'button' => __( 'View', 'newsletter-optin-box' ),
+				'desc'   => __( 'View a list of available post types and taxonomies.', 'newsletter-optin-box' ),
+			),
+
 			'delete_subscribers' => array(
 				'name'    => __( 'Delete All Subscribers', 'newsletter-optin-box' ),
 				'button'  => __( 'Delete', 'newsletter-optin-box' ),
 				'desc'    => __( 'Delete all your email subscribers.', 'newsletter-optin-box' ),
 				'url'     => wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_admin_delete_all_subscribers' ), 'noptin-delete-subscribers' ),
 				'confirm' => __( 'Are you sure you want to delete all your email subscribers?', 'newsletter-optin-box' ),
-			),
-
-			'sync_users'         => array(
-				'name'   => __( 'Subscribe Users', 'newsletter-optin-box' ),
-				'button' => __( 'Subscribe', 'newsletter-optin-box' ),
-				'desc'   => __( 'Subscribe your WordPress users to the newsletter.', 'newsletter-optin-box' ),
-			),
-
-			'sync_subscribers'   => array(
-				'name'   => __( 'Register Subscribers', 'newsletter-optin-box' ),
-				'button' => __( 'Register', 'newsletter-optin-box' ),
-				'desc'   => __( 'Register your newsletter subscribers as WordPress users.', 'newsletter-optin-box' ),
 			),
 
 		);
@@ -122,7 +117,7 @@ class Noptin_Tools {
 	 */
 	public static function display_closing_wrap() {
 
-		if ( ! empty( $_GET['tool'] ) && 'sync_users' !== $_GET['tool'] && 'sync_subscribers' !== $_GET['tool'] && 'delete_subscribers' !== $_GET['tool'] ) {
+		if ( ! empty( $_GET['tool'] ) && 'delete_subscribers' !== $_GET['tool'] ) {
 
 			printf(
 				'<p class="description"><a href="%s">%s</a></p>',
@@ -161,4 +156,13 @@ class Noptin_Tools {
 
 	}
 
+	/**
+	 * Displays available custom content.
+	 *
+	 * @return void
+	 * @since 1.10.1
+	 */
+	public static function display_custom_content() {
+		include plugin_dir_path( __FILE__ ) . 'views/custom-content.php';
+	}
 }

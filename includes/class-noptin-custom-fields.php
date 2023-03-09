@@ -165,7 +165,8 @@ class Noptin_Custom_Fields {
 			$custom_field['required'] = ! empty( $field['require'] ) && 'false' !== $field['require'];
 
 			if ( ! empty( $field['type']['label'] ) ) {
-				$custom_field['label']  = $field['type']['label'];
+				$custom_field['label']       = $field['type']['label'];
+				$custom_field['placeholder'] = $field['type']['label'];
 			}
 
 			/**@var Noptin_Custom_Field_Type */

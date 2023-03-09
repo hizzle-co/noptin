@@ -56,9 +56,11 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 		$product = $product ? $product->get_name() : __( 'Unknown Product', 'newsletter-optin-box' );
 
 		if ( 'buy' === $settings['action'] ) {
+			// translators: %s is the product name.
 			return sprintf( __( 'When someone buys %s', 'newsletter-optin-box' ), $product );
 		}
 
+		// translators: %s is the product name.
 		return sprintf( __( 'When someone is refunded for %s', 'newsletter-optin-box' ), $product );
 
 	}
@@ -225,4 +227,112 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 		}
 	}
 
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+
+		/** @var Noptin_WooCommerce_Automated_Email_Type[] $email_types */
+		$email_types = noptin()->emails->automated_email_types->types;
+
+		$email_types['woocommerce_product_purchase']->_prepare_test_data();
+
+		$args = array(
+			'email'  => $email_types['woocommerce_product_purchase']->order->get_billing_email(),
+			'action' => 'buy',
+		);
+
+		$args = $this->prepare_trigger_args( $email_types['woocommerce_product_purchase']->customer, $args );
+
+		return $args['smart_tags'];
+	}
+
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+			'order_id'   => $args['order_id'],
+			'product_id' => $args['product_id'],
+		);
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+
+		$order = wc_get_order( $args['order_id'] );
+
+		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
+			throw new Exception( 'The order no longer exists' );
+		}
+
+		$customer = new WC_Customer( $order->get_customer_id() );
+
+		if ( ! $customer->get_id() ) {
+			$customer->set_email( $order->get_billing_email() );
+			$customer->set_billing_email( $order->get_billing_email() );
+		}
+
+		// Check the status.
+		if ( $order->is_paid() ) {
+			$action = 'buy';
+		} elseif ( $order->has_status( 'refunded' ) ) {
+			$action = 'refund';
+		} else {
+			throw new Exception( 'The order status is not valid' );
+		}
+
+		// Loop through the order items.
+		foreach ( $order->get_items() as $item ) {
+
+			// Ensure we have a product.
+			/** @var WC_Order_Item_Product $item */
+			$product = $item->get_product();
+			if ( empty( $product ) ) {
+				continue;
+			}
+
+			// Ensure we have a product id.
+			$product_id = $product->get_id();
+			if ( empty( $product_id ) ) {
+				continue;
+			}
+
+			if ( absint( $product_id ) !== absint( $args['product_id'] ) ) {
+				continue;
+			}
+
+			// Attach WC hooks.
+			$args = array_merge(
+				$this->before_trigger_wc( $order, $customer, $product ),
+				array(
+					'order_id'    => $order->get_id(),
+					'product_id'  => $product_id,
+					'product_sku' => $product->get_sku(),
+					'product_qty' => $item->get_quantity(),
+					'action'      => $action,
+				)
+			);
+
+			// Prepare the trigger args.
+			return $this->prepare_trigger_args( $customer, $args );
+		}
+
+		throw new Exception( 'The order item no longer exists' );
+	}
 }

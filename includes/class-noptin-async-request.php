@@ -18,6 +18,7 @@ if ( ! class_exists( 'Noptin_Async_Request' ) ) {
 	 * @link https://deliciousbrains.com/background-processing-wordpress/
 	 * @abstract
 	 */
+	#[AllowDynamicProperties]
 	abstract class Noptin_Async_Request {
 
 		/**

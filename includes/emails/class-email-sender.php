@@ -134,7 +134,12 @@ class Noptin_Email_Sender {
 
 		$key  = 'noptin_send_' . md5( wp_json_encode( $args ) );
 		set_transient( $key, $args );
-		do_noptin_background_action( 'noptin_send_bg_email', $key );
+
+		if ( ! empty( $args['delay'] ) ) {
+			schedule_noptin_background_action( strtotime( $args['delay'] ), 'noptin_send_bg_email', $key );
+		} else {
+			do_noptin_background_action( 'noptin_send_bg_email', $key );
+		}
 
 	}
 

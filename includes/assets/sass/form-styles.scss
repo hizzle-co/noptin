@@ -186,10 +186,6 @@
 	.noptin-form-field-wrapper {
 		margin-bottom: 1.75em;
 		max-width: 480px;
-
-		&.noptin-form-field-birthday {
-			margin-bottom: 0;
-		}
 	}
 
 	.noptin-birthday-div,
@@ -201,8 +197,8 @@
 }
 
 /* Hide placeholders when showing labels */
-.noptin-newsletter-form:not(.noptin-label-hide) input::placeholder,
-.noptin-newsletter-form:not(.noptin-label-hide) textarea::placeholder {
+.noptin-newsletter-form:not(.noptin-label-hide) input:not(.noptin-form-field__has-placeholder)::placeholder,
+.noptin-newsletter-form:not(.noptin-label-hide) textarea:not(.noptin-form-field__has-placeholder)::placeholder {
 	color: transparent;
 }
 

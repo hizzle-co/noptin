@@ -61,7 +61,7 @@ class Noptin_Automated_Email_Types {
 			}
 
 			// Register the automated email type.
-			$this->types[ $type ] = new $class();
+			$this->types[ $type ] = new $class( $type );
 		}
 
 	}
@@ -85,6 +85,10 @@ class Noptin_Automated_Email_Types {
 			$known_types['woocommerce_product_purchase'] = 'Noptin_WooCommerce_Product_Purchase_Email';
 			$known_types['woocommerce_lifetime_value']   = 'Noptin_WooCommerce_Lifetime_Value_Email';
 			require_once plugin_dir_path( __FILE__ ) . 'class-type-woocommerce.php';
+		}
+
+		foreach ( noptin()->automation_rules->get_triggers() as $trigger ) {
+			$known_types[ 'automation_rule_' . $trigger->get_id() ] = 'Noptin_Automation_Rule_Email';
 		}
 
 		// Filter and return.

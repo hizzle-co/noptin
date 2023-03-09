@@ -53,7 +53,7 @@ import regeneratorRuntime from "regenerator-runtime";
 									cancelButtonText: noptinSubscribers.cancel,
 									confirmButtonText: noptinSubscribers.close,
 									confirmButtonColor: '#9e9e9e',
-									footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/">${noptinSubscribers.troubleshoot}</a>`
+									footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/?utm_medium=plugin-dashboard&utm_campaign=subscribers&utm_source=troubleshooting">${noptinSubscribers.troubleshoot}</a>`
 								})
 
 							}

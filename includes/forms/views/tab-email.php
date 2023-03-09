@@ -8,15 +8,6 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-$url = add_query_arg(
-	array(
-		'utm_medium'   => 'plugin-dashboard',
-		'utm_campaign' => 'form-builder',
-		'utm_source'   => rawurlencode( esc_url( get_home_url() ) ),
-	),
-	'https://noptin.com/ultimate-addons-pack/'
-);
-
 ?>
 
 <h2 class="screen-reader-text"><?php esc_html_e( 'Welcome Email', 'newsletter-optin-box' ); ?></h2>
@@ -27,6 +18,6 @@ $url = add_query_arg(
 	<div class="card">
 		<h3><?php esc_html_e( 'This is a premium feature', 'newsletter-optin-box' ); ?></h3>
 		<p><?php esc_html_e( "We're sorry, Welcome Emails are not available on your plan. Please buy the ultimate addons pack to send welcome emails and get access to more awesome features.", 'newsletter-optin-box' ); ?></p>
-		<p><a href="<?php echo esc_url( $url ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+		<p><a href="<?php echo esc_url( noptin_get_upsell_url( '/ultimate-addons-pack/', 'welcome-emails', 'subscription-forms' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
 	</div>
 <?php endif; ?>

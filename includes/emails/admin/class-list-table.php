@@ -126,6 +126,21 @@ class Noptin_Email_List_Table extends WP_List_Table {
 				esc_html__( 'Preview', 'newsletter-optin-box' )
 			),
 
+			'send'      => sprintf(
+				'<a href="%s" style="color: green;" onclick="return confirm(\'%s\');">%s</a>',
+				esc_url(
+					add_query_arg(
+						array(
+							'noptin_admin_action' => 'noptin_force_send_campaign',
+							'noptin_nonce'        => wp_create_nonce( 'noptin_force_send_campaign' ),
+						),
+						$item->get_edit_url()
+					)
+				),
+				esc_attr__( 'Are you sure you want to send this campaign?', 'newsletter-optin-box' ),
+				esc_html__( 'Send Now', 'newsletter-optin-box' )
+			),
+
 			'delete'    => sprintf(
 				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
 				$item->get_delete_url(), // This is alread escaped via wp_nonce_url.
@@ -138,9 +153,17 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		// Sent newsletters are not editable.
 		if ( 'newsletter' === $this->collection_type && $item->is_published() ) {
 			unset( $row_actions['edit'] );
+			unset( $row_actions['send'] );
 			$edit_url = $item->get_preview_url();
 		} else {
 			$edit_url = $item->get_edit_url();
+
+			if ( 'automation' === $this->collection_type ) {
+
+				if ( ! $item->is_published() || 'post_digest' !== $item->type ) {
+					unset( $row_actions['send'] );
+				}
+			}
 		}
 
 		$title = $item->get( 'custom_title' );
@@ -152,9 +175,34 @@ class Noptin_Email_List_Table extends WP_List_Table {
 		if ( 'automation' === $this->collection_type ) {
 			$description = wp_kses_post( apply_filters( 'noptin_automation_table_about_' . $item->type, '', $item, $this ) );
 
+			$rule = new Noptin_Automation_Rule( absint( $item->get( 'automation_rule' ) ) );
+
+			if ( $rule->exists() ) {
+				$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
+
+				if ( $trigger ) {
+					$conditional_description = noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $trigger->get_known_smart_tags(), $rule->action_id );
+
+					if ( ! empty( $conditional_description ) ) {
+						$description .= '<br />' . $conditional_description;
+					}
+				}
+			}
+
 			if ( ! empty( $description ) ) {
 				$title .= "<p class='description'>$description</div>";
 			}
+		} elseif ( $item->is_published() && ! get_post_meta( $item->id, 'completed', true ) ) {
+
+			$repair_url = add_query_arg(
+				array(
+					'noptin_admin_action' => 'noptin_repair_stuck_campaign',
+					'noptin_nonce'        => wp_create_nonce( 'noptin_repair_stuck_campaign' ),
+				),
+				$item->get_edit_url()
+			);
+
+			//$title .= '<p class="description">' . sprintf( __( 'This campaign is currently being sent. If it has been stuck for more than 30 minutes, you can <a href="%s">repair it</a>.', 'newsletter-optin-box' ), $repair_url ) . '</p>';
 		}
 
 		// Row actions.
@@ -243,7 +291,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 * Displays the campaign recipients
 	 *
 	 * @param  Noptin_Newsletter_Email|Noptin_Automated_Email $item item.
-	 * @return HTML
+	 * @return int
 	 */
 	public function column_recipients( $item ) {
 		$total = (int) get_post_meta( $item->id, '_noptin_sends', true ) + (int) get_post_meta( $item->id, '_noptin_fails', true );
@@ -260,10 +308,9 @@ class Noptin_Email_List_Table extends WP_List_Table {
 
 		if ( isset( noptin()->emails->automated_email_types->types[ $item->type ] ) ) {
 			return noptin()->emails->automated_email_types->types[ $item->type ]->get_name();
-		} else {
-			return __( 'Unknown', 'newsletter-optin-box' );
 		}
 
+		return __( 'Unknown', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -274,9 +321,14 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_opens( $item ) {
 
-		$opens = (int) get_post_meta( $item->id, '_noptin_opens', true );
-		return apply_filters( 'noptin_email_opens', $opens, $item );
+		$sends   = $this->column_recipients( $item );
+		$opens   = (int) get_post_meta( $item->id, '_noptin_opens', true );
+		$percent = ( $sends && $opens ) ? round( ( $opens / $sends ) * 100, 2 ) : 0;
 
+		return $this->display_stat(
+			apply_filters( 'noptin_email_opens', $opens, $item ),
+			$percent
+		);
 	}
 
 	/**
@@ -287,9 +339,14 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_clicks( $item ) {
 
-		$clicks = (int) get_post_meta( $item->id, '_noptin_clicks', true );
-		return apply_filters( 'noptin_email_clicks', $clicks, $item );
+		$sends   = $this->column_recipients( $item );
+		$clicks  = (int) get_post_meta( $item->id, '_noptin_clicks', true );
+		$percent = ( $sends && $clicks ) ? round( ( $clicks / $sends ) * 100, 2 ) : 0;
 
+		return $this->display_stat(
+			apply_filters( 'noptin_email_clicks', $clicks, $item ),
+			$percent
+		);
 	}
 
 	/**
@@ -300,9 +357,35 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function column_unsubscribed( $item ) {
 
+		$sends        = $this->column_recipients( $item );
 		$unsubscribed = (int) get_post_meta( $item->id, '_noptin_unsubscribed', true );
-		return apply_filters( 'noptin_email_unsubscribed', $unsubscribed, $item );
+		$percent      = ( $sends && $unsubscribed ) ? round( ( $unsubscribed / $sends ) * 100, 2 ) : 0;
 
+		return $this->display_stat(
+			apply_filters( 'noptin_email_unsubscribed', $unsubscribed, $item ),
+			$percent
+		);
+
+	}
+
+	/**
+	 * Displays a stat with percentage
+	 *
+	 * @param  int $value value.
+	 * @param  float $percent total.
+	 * return HTML
+	 */
+	public function display_stat( $value, $percent ) {
+
+		if ( $percent > 0 && $percent < 100 ) {
+			return sprintf(
+				'<div class="noptin-stat">%s</div><p class="noptin-stat-percent">%s%%</p>',
+				$value,
+				$percent
+			);
+		}
+
+		return $value;
 	}
 
 	/**

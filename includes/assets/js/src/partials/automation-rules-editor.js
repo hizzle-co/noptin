@@ -23,9 +23,9 @@ export default {
 					const condition_matched = this.smart_tags[ key ].conditions.every( condition => {
 
 						if ( Array.isArray( condition.value ) ) {
-							var matched = condition.value.some( val => val === this[ condition.key ] );
+							var matched = condition.value.some( val => val == this.trigger_settings[ condition.key ] );
 						} else {
-							var matched = condition.value === this[ condition.key ];
+							var matched = condition.value == this.trigger_settings[ condition.key ];
 						}
 
 						const should_match = condition.operator === 'is';
@@ -107,12 +107,13 @@ export default {
 				'_ajax_nonce' : noptinRules.nonce
 			}
 
+			// Save editor content.
+			if ( window.tinyMCE ) {
+				window.tinyMCE.triggerSave();
+			}
+
 			if ( jQuery( '#wp-noptinemailbody-wrap').length ) {
-				if ( tinyMCE.get('noptinemailbody') ) {
-					this.action_settings.email_content = tinyMCE.get('noptinemailbody').getContent()
-				} else {
-					this.action_settings.email_content = $('#noptinemailbody').val()
-				}
+				this.action_settings.email_content = $('#noptinemailbody').val();
 			}
 
 			let error = this.error

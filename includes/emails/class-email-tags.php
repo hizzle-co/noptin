@@ -253,7 +253,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		if ( 'brand' === $background ) {
 			$brand_color = get_noptin_option( 'brand_color' );
-			$background = empty( $brand_color ) ? '#1a82e2' : $brand_color;
+			$background  = empty( $brand_color ) ? '#1a82e2' : $brand_color;
 		}
 
 		// Generate button.
@@ -301,8 +301,8 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	public function noptin_url() {
 
 		return sprintf(
-			'<a target="_blank" href="https://noptin.com/?utm_medium=plugin-dashboard&utm_campaign=powered-by&utm_source=%s">Noptin</a>',
-			rawurlencode( esc_url( get_home_url() ) )
+			'<a target="_blank" href="%s">Noptin</a>',
+			noptin_get_upsell_url( 'https://noptin.com/', 'powered-by', 'email-campaigns' )
 		);
 
 	}

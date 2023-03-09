@@ -1,6 +1,6 @@
 {
 	"name": "noptin",
-	"version": "1.6.0",
+	"version": "1.11.5",
 	"private": true,
 	"description": "WordPress Newsletter Plugin",
 	"scripts": {
@@ -23,27 +23,27 @@
 	},
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
-		"@wordpress/dom-ready": "3.22.0",
+		"@wordpress/dom-ready": "3.28.0",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
-		"papaparse": "5.3.2",
-		"vue": "3.2.45",
+		"papaparse": "5.4.0",
+		"vue": "3.2.47",
 		"vue-contenteditable": "4.1.0",
 		"vue-popperjs": "2.3.0",
 		"vuedraggable": "2.24.3"
 	},
 	"devDependencies": {
-		"@babel/core": "7.20.5",
-		"@babel/plugin-transform-runtime": "7.19.6",
+		"@babel/core": "7.21.0",
+		"@babel/plugin-transform-runtime": "7.21.0",
 		"@babel/preset-env": "7.20.2",
-		"@mdi/js": "7.0.96",
+		"@mdi/js": "7.1.96",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
-		"@wordpress/babel-preset-default": "7.6.0",
+		"@wordpress/babel-preset-default": "7.12.0",
 		"autoprefixer": "10.4.13",
-		"babel-loader": "9.1.0",
-		"postcss": "8.4.19",
+		"babel-loader": "9.1.2",
+		"postcss": "8.4.21",
 		"postcss-csso": "6.0.1",
-		"sass": "1.56.2",
+		"sass": "1.58.3",
 		"webpack": "5.75.0",
 		"webpack-cli": "5.0.1"
 	}

@@ -348,6 +348,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	protected function get_bulk_actions() {
 
 		$actions = array(
+			'send_email' => __( 'Send Email', 'newsletter-optin-box' ),
 			'delete'     => __( 'Delete', 'newsletter-optin-box' ),
 			'activate'   => __( 'Mark as active', 'newsletter-optin-box' ),
 			'deactivate' => __( 'Mark as in-active', 'newsletter-optin-box' ),

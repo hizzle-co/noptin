@@ -6,7 +6,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$rule = new Noptin_Automation_Rule( absint( $_GET['noptin_edit_automation_rule'] ) );
+$rule = noptin_get_current_automation_rule();
 
 if ( ! $rule->exists() ) {
 	printf(
@@ -101,12 +101,12 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 									>{{ comparison_label }}</option>
 								</select>
 
-								<select class="noptin-condition-value" v-model="rule.value" v-if="hasConditionOptions(rule.type)">
+								<select class="noptin-condition-value" v-model="rule.value" v-if="hasConditionOptions(rule.type) && 'is_empty' !== rule.condition && 'is_not_empty' !== rule.condition">
 									<option value="" disabled><?php esc_html_e( 'Select a value', 'newsletter-optin-box' ); ?></option>
 									<option v-for="(option_label, option_value) in getConditionOptions(rule.type)" :value="option_value">{{ option_label }}</option>
 								</select>
 
-								<input :type="getConditionInputType(rule.type)" class="noptin-condition-value" v-model="rule.value" :placeholder="getConditionPlaceholder(rule.type)" v-else />
+								<input :type="getConditionInputType(rule.type)" class="noptin-condition-value" v-model="rule.value" :placeholder="getConditionPlaceholder(rule.type)" v-if="! hasConditionOptions(rule.type) && 'is_empty' !== rule.condition && 'is_not_empty' !== rule.condition"/>
 
 								<a href="#" @click.prevent="removeConditionalLogicRule(rule)" class="noptin-remove-conditional-rule">
 									<span class="dashicons dashicons-remove"></span>&nbsp;
@@ -156,6 +156,6 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 
 	<?php do_action( 'noptin_after_automation_rule_edit_page' ); ?>
 
-	<p class="description"><a href="https://noptin.com/guide/automation-rules" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
+	<p class="description"><a href="<?php echo esc_attr( noptin_get_upsell_url( '/guide/automation-rules/', 'learn-more', 'automation-rules' ) ); ?>" target="_blank"><?php esc_html_e( 'Learn more about automation rules', 'newsletter-optin-box' ); ?></a></p>
 
 </div>

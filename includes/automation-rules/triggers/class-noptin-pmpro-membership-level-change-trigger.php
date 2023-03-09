@@ -46,7 +46,7 @@ class Noptin_PMPro_Membership_Level_Change_Trigger extends Noptin_Abstract_Trigg
 	 * @inheritdoc
 	 */
 	public function get_description() {
-        return __( "Fires when a user's membership level changes", 'newsletter-optin-box' );
+        return __( "When a user's membership level changes", 'newsletter-optin-box' );
     }
 
     /**
@@ -168,6 +168,8 @@ class Noptin_PMPro_Membership_Level_Change_Trigger extends Noptin_Abstract_Trigg
         $subject = get_userdata( $user_id );
         $args    = array(
             'cancel_level' => (int) $cancel_level_id,
+            'user_id'      => (int) $user_id,
+            'level_id'     => (int) $level_id,
         );
 
         if ( is_object( $level ) ) {
@@ -188,4 +190,60 @@ class Noptin_PMPro_Membership_Level_Change_Trigger extends Noptin_Abstract_Trigg
 
         $this->trigger( $subject, $args );
     }
+
+    /**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+            'cancel_level' => $args['cancel_level'],
+            'user_id'      => $args['user_id'],
+            'level_id'     => $args['level_id'],
+        );
+	}
+
+    /**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+
+        $level = pmpro_getLevel( $args['level_id'] );
+        $user  = get_userdata( $args['user_id'] );
+
+		if ( empty( $level ) ) {
+			throw new Exception( 'The membership level no longer exists' );
+		}
+
+		if ( empty( $user ) ) {
+			throw new Exception( 'The user no longer exists' );
+		}
+
+        // Check if the user is still a member of the level.
+        if ( ! pmpro_hasMembershipLevel( $args['level_id'], $args['user_id'] ) ) {
+            throw new Exception( 'The user is no longer a member of the level' );
+        }
+
+		foreach ( (array) $level as $key => $value ) {
+
+            if ( 'id' === $key ) {
+                $value = absint( $value );
+            }
+
+            if ( 'allow_signups' === $key ) {
+                $value = empty( $value ) ? 'no' : 'yes';
+            }
+
+            $args[ 'level_' . $key ] = $value;
+        }
+
+		return $this->prepare_trigger_args( $user, $args );
+	}
 }

@@ -83,36 +83,6 @@ class Noptin_Form_Output_Manager {
 	}
 
 	/**
-	 * Returns the connections `[noptin]` shortcode attributes.
-	 *
-	 * @since 1.6.2
-	 * @return array
-	 */
-	public function get_connections_shortcode_atts() {
-		$atts = array();
-
-		foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-			if ( empty( $connection->list_providers ) ) {
-				continue;
-			}
-
-			$atts[ "{$key}_list" ] = $connection->get_default_list_id();
-
-			if ( $connection->supports( 'tags' ) ) {
-				$atts[ "{$key}_tags" ] = get_noptin_option( "noptin_{$key}_default_tags", '' );
-			}
-
-			// Secondary fields.
-			foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
-				$atts[ "{$key}_$secondary" ] = get_noptin_option( "noptin_{$key}_default_{$secondary}", '' );
-			}
-		}
-
-		return $atts;
-	}
-
-	/**
 	 * @deprecated
 	 */
 	public function legacy_shortcode( $atts ) {
@@ -211,10 +181,7 @@ class Noptin_Form_Output_Manager {
 		}
 
 		// Prepare default attributes.
-		$default_atts = array_merge(
-			$this->get_default_shortcode_atts(),
-			$this->get_connections_shortcode_atts()
-		);
+		$default_atts = $this->get_default_shortcode_atts();
 
 		if ( ! empty( $atts['is_unsubscribe'] ) ) {
 			$default_atts['submit'] = __( 'Unsubscribe', 'newsletter-optin-box' );

@@ -1063,10 +1063,22 @@ function noptin_verify_subscription_nonces() {
  *
  * @since 1.5.1
  * @ignore
+ * @deprecated 1.11.2
  * @return Noptin_Connection_Provider[]
  */
 function get_noptin_connection_providers() {
 	return apply_filters( 'noptin_connection_providers', array() );
+}
+
+/**
+ * Returns an array of premium addons.
+ *
+ * @since 1.11.2
+ * @ignore
+ * @return array
+ */
+function noptin_premium_addons() {
+	return apply_filters( 'noptin_premium_addons', array() );
 }
 
 /**
@@ -1077,7 +1089,7 @@ function get_noptin_connection_providers() {
  * @return bool
  */
 function noptin_upsell_integrations() {
-	return apply_filters( 'noptin_upsell_integrations', 0 === count( get_noptin_connection_providers() ) );
+	return apply_filters( 'noptin_upsell_integrations', 0 === count( noptin_premium_addons() ) );
 }
 
 /**
@@ -1092,11 +1104,19 @@ function noptin_upsell_integrations() {
  * @return bool
  */
 function noptin_get_upsell_url( $url, $utm_source, $utm_campaign, $utm_medium = 'plugin-dashboard' ) {
+
+	// Check the URL begins with http.
+	if ( 0 !== strpos( $url, 'http' ) ) {
+		$url = 'https://noptin.com/' . ltrim( $url, '/' );
+	}
+
 	return add_query_arg(
-		array(
-			'utm_medium'   => $utm_medium,
-			'utm_campaign' => $utm_campaign,
-			'utm_source'   => $utm_source,
+		rawurlencode_deep(
+			array(
+				'utm_medium'   => $utm_medium,
+				'utm_campaign' => $utm_campaign,
+				'utm_source'   => empty( $utm_source ) ? get_home_url() : $utm_source,
+			)
 		),
 		$url
 	);
@@ -1445,7 +1465,6 @@ function noptin_decrypt( $encoded ) {
 	return openssl_decrypt( $decoded, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
 }
 // TODO: Show alert when a user clicks on the send button.
-// TODO: Display %ges below stats.
 
 /**
  * Limit length of a string.
@@ -1831,10 +1850,11 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
  *
  * @param array $conditional_logic
  * @param array $smart_tags
+ * @param string $action_id
  * @since 1.8.0
  * @return string
  */
-function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array() ) {
+function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array(), $action_id = '' ) {
 
 	// Abort if no conditional logic is set.
 	if ( empty( $conditional_logic['enabled'] ) ) {
@@ -1906,12 +1926,22 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 	}
 
 	if ( 'allow' === $conditional_logic['action'] ) {
-		// translators: %s is a list of conditions.
-		return sprintf( __( 'Only run if %s', 'newsletter-optin-box' ), $rules );
+
+		if ( 'email' === $action_id ) {
+			// translators: %s is a list of conditions.
+			return sprintf( __( 'Sends if %s', 'newsletter-optin-box' ), $rules );
+		} else {
+			// translators: %s is a list of conditions.
+			return sprintf( __( 'Runs if %s', 'newsletter-optin-box' ), $rules );
+		}
 	}
 
-	// translators: %s is a list of conditions.
-	return sprintf( __( 'Ignore if %s', 'newsletter-optin-box' ), $rules );
+	if ( 'email' === $action_id ) {
+		// translators: %s is a list of conditions.
+		return sprintf( __( 'Does not send if %s', 'newsletter-optin-box' ), $rules );
+	}
+
+	return sprintf( __( 'Does not run if %s', 'newsletter-optin-box' ), $rules );
 }
 
 /**
@@ -1924,4 +1954,43 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
  */
 function noptin_sort_by_name( $a, $b ) {
 	return strcmp( $a->get_name(), $b->get_name() );
+}
+
+/**
+ * Sanitize a merge tag.
+ *
+ * Strips all non-alphanumeric characters except underscores, hyphens, and dots.
+ *
+ * @since 1.10.1
+ * @param string $tag
+ * @return string
+ */
+function noptin_sanitize_merge_tag( $tag ) {
+	$sanitized_key = strtolower( $tag );
+	return preg_replace( '/[^a-z0-9_\-\.]/', '', $sanitized_key );
+}
+
+/**
+ * Returns the automation rule being edited.
+ *
+ * @since 1.10.1
+ * @return Noptin_Automation_Rule
+ */
+function noptin_get_current_automation_rule() {
+
+	// Automation rule edit page.
+	if ( isset( $_GET['noptin_edit_automation_rule'] ) ) {
+		return new Noptin_Automation_Rule( absint( $_GET['noptin_edit_automation_rule'] ) );
+	}
+
+	// Automated email edit page.
+	$screen_id   = get_current_screen() ? get_current_screen()->id : false;
+	$edit_screen = noptin()->white_label->admin_screen_id() . '_page_noptin-email-campaigns';
+
+	if ( $edit_screen === $screen_id && isset( $_GET['campaign'] ) && is_numeric( $_GET['campaign'] ) ) {
+		$campaign = new Noptin_Automated_Email( (int) $_GET['campaign'] );
+		return new Noptin_Automation_Rule( absint( $campaign->get( 'automation_rule' ) ) );
+	}
+
+	return new Noptin_Automation_Rule( 0 );
 }

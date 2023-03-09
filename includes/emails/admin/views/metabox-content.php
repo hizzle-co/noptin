@@ -34,16 +34,7 @@ $email_type = $campaign->get_email_type();
 			</th>
 			<td>
 				<p><textarea name="noptin_email[content_plain_text]" id="noptin-email-content-plain_text" rows="15" class="widefat"><?php echo esc_textarea( $campaign->get_content( 'plain_text' ) ); ?></textarea></p>
-				<p class="description">
-					<?php
-						printf(
-							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-							esc_html__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
-							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
-							'</a>'
-						);
-					?>
-				</p>
+				<?php noptin_email_display_merge_tags_text( __( 'Required.', 'newsletter-optin-box' ) ); ?>
 			</td>
 		</tr>
 
@@ -53,16 +44,7 @@ $email_type = $campaign->get_email_type();
 			</th>
 			<td>
 				<p><textarea name="noptin_email[content_raw_html]" id="noptin-email-content-raw_html" rows="15" class="widefat"><?php echo esc_textarea( $campaign->get_content( 'raw_html' ) ); ?></textarea></p>
-				<p class="description">
-					<?php
-						printf(
-							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-							esc_html__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
-							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
-							'</a>'
-						);
-					?>
-				</p>
+				<?php noptin_email_display_merge_tags_text( __( 'Required.', 'newsletter-optin-box' ) ); ?>
 			</td>
 		</tr>
 
@@ -87,16 +69,7 @@ $email_type = $campaign->get_email_type();
 						)
 					);
 				?>
-				<p class="description">
-					<?php
-						printf(
-							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-							esc_html__( 'You can use %1$semail tags%2$s to personalize your email.', 'newsletter-optin-box' ),
-							'<a href="https://noptin.com/guide/sending-emails/email-tags/">',
-							'</a>'
-						);
-					?>
-				</p>
+				<?php noptin_email_display_merge_tags_text( __( 'Required.', 'newsletter-optin-box' ) ); ?>
 			</td>
 		</tr>
 

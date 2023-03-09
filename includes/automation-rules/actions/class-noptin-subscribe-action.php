@@ -58,14 +58,10 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 			'noptin_map_custom_fields_heading' => array(
 				'el'      => 'hero',
 				'content' => __( 'Map custom fields', 'newsletter-optin-box' ),
-			)
+			),
 		);
 
 		foreach ( get_noptin_custom_fields() as $field ) {
-
-			if ( 'email' === $field['merge_tag'] ) {
-				continue;
-			}
 
 			$settings[ $field['merge_tag'] ] = array(
 				'type'        => 'text',
@@ -135,7 +131,11 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 			$details[ $field['merge_tag'] ] = $smart_tags->replace_in_text_field( $settings[ $field['merge_tag'] ] );
 		}
 
-		$subscriber_id = get_noptin_subscriber_id_by_email( $details['email'] );
+		if ( $subject instanceof Noptin_Subscriber ) {
+			$subscriber_id = $subject->id;
+		} else {
+			$subscriber_id = get_noptin_subscriber_id_by_email( $details['email'] );
+		}
 
 		if ( $subscriber_id ) {
 			update_noptin_subscriber( $subscriber_id, $details );

@@ -87,7 +87,7 @@ class Noptin_Hooks {
 		$checked   = isset( $submitted['noptin-custom-subscribe'] ) ? $submitted['noptin-custom-subscribe'] : '';
 
 		// Abort if no subscription was attempted.
-		if ( ! in_array( $checked, array( 1, '1', 'yes', true, 'true', 'y' ), true ) || apply_filters( 'noptin_skip_custom_subscribe', false ) ) {
+		if ( ! in_array( $checked, array( 1, '1', 'yes', true, 'true', 'y', 'on' ), true ) || apply_filters( 'noptin_skip_custom_subscribe', false ) ) {
 			return;
 		}
 
@@ -111,31 +111,6 @@ class Noptin_Hooks {
 
 		if ( ! is_array( $submitted ) ) {
 			return;
-		}
-
-		foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-			if ( empty( $connection->list_providers ) ) {
-				continue;
-			}
-
-			$key          = $connection->slug;
-			$data[ $key ] = array();
-
-			if ( isset( $submitted[ "{$key}_list" ] ) ) {
-				$data[ $key ]['lists'] = noptin_parse_list( $submitted[ "{$key}_list" ], true );
-			}
-
-			if ( $connection->supports( 'tags' ) && isset( $submitted[ "{$key}_tags" ] ) ) {
-				$data[ $key ]['tags'] = noptin_parse_list( $submitted[ "{$key}_tags" ], true );
-			}
-
-			// Secondary fields.
-			foreach ( array_keys( $connection->list_providers->get_secondary() ) as $secondary ) {
-				if ( isset( $submitted[ "{$key}_$secondary" ] ) ) {
-					$data[ $key ][ $secondary ] = noptin_parse_list( $submitted[ "{$key}_$secondary" ], true );
-				}
-			}
 		}
 
 		return apply_filters( 'noptin_submitted_data_add_connections', $data, $submitted );

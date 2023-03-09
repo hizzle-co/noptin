@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Base triggers class.
  *
- * @since       1.2.8
+ * @since 1.2.8
  */
 abstract class Noptin_Abstract_Trigger {
 
@@ -14,6 +14,11 @@ abstract class Noptin_Abstract_Trigger {
 	 * @var array
 	 */
 	protected $rules = null;
+
+	/**
+	 * @var bool
+	 */
+	public $depricated = false;
 
 	/**
 	 * Whether or not this trigger deals with a subscriber.
@@ -28,6 +33,11 @@ abstract class Noptin_Abstract_Trigger {
 	 * @var bool
 	 */
 	public $is_user_based = false;
+
+	/**
+	 * The trigger's category.
+	 */
+	public $category = 'General';
 
 	/**
 	 * Retrieve the trigger's unique id.
@@ -54,6 +64,58 @@ abstract class Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	abstract public function get_description();
+
+	/**
+	 * Retrieve the trigger's default email subject.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_default_email_subject() {
+		return '';
+	}
+
+	/**
+	 * Retrieve the trigger's default email heading.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_default_email_heading() {
+		return '';
+	}
+
+	/**
+	 * Retrieve the trigger's default email content.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_default_email_content() {
+		return '';
+	}
+
+	/**
+	 * Retrieve the trigger's about email.
+	 *
+	 * @since 1.11.0
+	 * @return string
+	 */
+	public function get_about_email() {
+		return '';
+	}
+
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+		throw new Exception( __( 'No test data available for this trigger.', 'newsletter-optin-box' ) );
+	}
 
 	/**
 	 * Retrieve the trigger's image.
@@ -94,6 +156,19 @@ abstract class Noptin_Abstract_Trigger {
 	 */
 	public function get_settings() {
 		return array();
+	}
+
+	/**
+	 * Converts settings to conditional logic.
+	 *
+	 * Useful to migrate the legacy settings to the new conditional logic.
+	 *
+	 * @since 1.10.1
+	 * @param array $settings
+	 * @return false Return false if no conditional logic, or array containing conditional logic and new settings.
+	 */
+	public function settings_to_conditional_logic( $settings ) {
+		return false;
 	}
 
 	/**
@@ -272,6 +347,125 @@ abstract class Noptin_Abstract_Trigger {
 	}
 
 	/**
+	 * Returns an array of post smart tags.
+	 *
+	 * @since 1.11.0
+	 * @return array
+	 */
+	public function get_post_smart_tags() {
+
+		return array(
+			'post_id'            => array(
+				'description'       => __( 'The post ID', 'newsletter-optin-box' ),
+				'example'           => 'post_id',
+				'conditional_logic' => 'number',
+			),
+			'post_author_id'     => array(
+				'description'       => __( 'The post author ID', 'newsletter-optin-box' ),
+				'example'           => 'post_author_id',
+				'conditional_logic' => 'number',
+			),
+			'post_author_name'   => array(
+				'description'       => __( 'The post author name', 'newsletter-optin-box' ),
+				'example'           => 'post_author_name',
+				'conditional_logic' => 'string',
+			),
+			'post_author_email'  => array(
+				'description'       => __( 'The post author email', 'newsletter-optin-box' ),
+				'example'           => 'post_author_email',
+				'conditional_logic' => 'string',
+			),
+			'post_date'          => array(
+				'description'       => __( 'The post date', 'newsletter-optin-box' ),
+				'example'           => 'post_date',
+				'conditional_logic' => 'date',
+			),
+			'post_title'         => array(
+				'description'       => __( 'The post title', 'newsletter-optin-box' ),
+				'example'           => 'post_title',
+				'conditional_logic' => 'string',
+			),
+			'post_url'           => array(
+				'description'       => __( 'The post URL', 'newsletter-optin-box' ),
+				'example'           => 'post_url',
+				'conditional_logic' => 'string',
+			),
+			'post_excerpt'       => array(
+				'description'       => __( 'The post excerpt', 'newsletter-optin-box' ),
+				'example'           => 'post_excerpt',
+				'conditional_logic' => 'string',
+			),
+			'post_content'       => array(
+				'description'       => __( 'The post content', 'newsletter-optin-box' ),
+				'example'           => 'post_content',
+				'conditional_logic' => 'string',
+			),
+			'post_status'        => array(
+				'description'       => __( 'The post status', 'newsletter-optin-box' ),
+				'example'           => 'post_status',
+				'conditional_logic' => 'string',
+				'options'           => get_post_stati(),
+			),
+			'post_password'      => array(
+				'description'       => __( 'The post password', 'newsletter-optin-box' ),
+				'example'           => 'post_password',
+				'conditional_logic' => 'string',
+			),
+			'post_name'          => array(
+				'description'       => __( 'The post slug', 'newsletter-optin-box' ),
+				'example'           => 'post_name',
+				'conditional_logic' => 'string',
+			),
+			'post_modified'      => array(
+				'description'       => __( 'The post modified date', 'newsletter-optin-box' ),
+				'example'           => 'post_modified',
+				'conditional_logic' => 'date',
+			),
+			'post_type'          => array(
+				'description'       => __( 'The post type', 'newsletter-optin-box' ),
+				'example'           => 'post_type',
+				'conditional_logic' => 'string',
+				'options'           => get_post_types(),
+			),
+			'post_comment_count' => array(
+				'description'       => __( 'The post comment count', 'newsletter-optin-box' ),
+				'example'           => 'post_comment_count',
+				'conditional_logic' => 'number',
+			),
+		);
+
+	}
+
+	/**
+	 * Prepare post smart tags.
+	 *
+	 * @param WP_Post $post The post object.
+	 * @since 1.11.1
+	 * @return array
+	 */
+	public function prepare_post_smart_tags( $post ) {
+		$post_author = get_user_by( 'id', $post->post_author );
+
+		return array(
+			'post_id'            => $post->ID,
+			'post_author_id'     => $post->post_author,
+			'post_author_name'   => empty( $post_author->display_name ) ? '' : $post_author->display_name,
+			'post_author_email'  => empty( $post_author->user_email ) ? '' : $post_author->user_email,
+			'post_date'          => $post->post_date,
+			'post_title'         => $post->post_title,
+			'post_url'           => get_permalink( $post->ID ),
+			'post_excerpt'       => get_the_excerpt( $post ),
+			'post_content'       => $post->post_content,
+			'post_status'        => $post->post_status,
+			'post_password'      => $post->post_password,
+			'post_name'          => $post->post_name,
+			'post_modified'      => $post->post_modified,
+			'post_type'          => $post->post_type,
+			'post_comment_count' => $post->comment_count,
+		);
+	}
+
+	/**
 	 * Returns all active rules attached to this trigger.
 	 *
 	 * @since 1.2.8
@@ -291,6 +485,10 @@ abstract class Noptin_Abstract_Trigger {
 			)
 		);
 
+		foreach ( $this->rules as $rule ) {
+			wp_cache_set( $rule->id, $rule, 'noptin_automation_rules', 10 );
+		}
+
 		return $this->rules;
 	}
 
@@ -301,7 +499,7 @@ abstract class Noptin_Abstract_Trigger {
 	 * @return array
 	 */
 	public function has_rules() {
-		$rules = $this->get_rules;
+		$rules = $this->get_rules();
 		return ! empty( $rules );
 	}
 
@@ -380,7 +578,7 @@ abstract class Noptin_Abstract_Trigger {
 			return array();
 		}
 
-		return array(
+		$args = array(
 			'user_id'    => $user->ID,
 			'email'      => $user->user_email,
 			'name'       => $user->display_name,
@@ -391,6 +589,90 @@ abstract class Noptin_Abstract_Trigger {
 			'user_login' => $user->user_login,
 			'user_role'  => current( $user->roles ),
 		);
+
+		// Add meta data.
+		$meta_data = get_user_meta( $user->ID );
+		foreach ( $meta_data as $key => $value ) {
+			if ( ! isset( $args[ $key ] ) ) {
+				$args[ 'user_cf_' . $key ] = $value[0];
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Returns the subject's email address.
+	 *
+	 * @since 1.11.0
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return false|string
+	 */
+	public function get_subject_email( $subject, $rule, $args ) {
+
+		// Provided via the email settings.
+		if ( ! empty( $rule->action_settings['email'] ) ) {
+			return $args['smart_tags']->replace_in_email( $rule->action_settings['email'] );
+		}
+
+		// Subject is an email.
+		if ( is_string( $subject ) && is_email( $subject ) ) {
+			return $subject;
+		}
+
+		// Maybe fetch from the subscriber.
+		if ( $subject instanceof Noptin_Subscriber ) {
+			return $subject->email;
+		}
+
+		// ... or users.
+		if ( $subject instanceof WP_User ) {
+			return $subject->user_email;
+		}
+
+		// ... or the email argument.
+		if ( ! empty( $args['email'] ) ) {
+			return $args['email'];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Prepares trigger args.
+	 *
+	 * @since 1.11.0
+	 * @param mixed $subject The subject.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return array
+	 */
+	public function prepare_trigger_args( $subject, $args ) {
+
+		if ( ! is_array( $args ) ) {
+			$args = array();
+		}
+
+		if ( isset( $args['subject'] ) ) {
+			$args['subject_orig'] = $args['subject'];
+		}
+
+		// Add user args.
+		if ( $subject instanceof WP_User ) {
+			$args = array_replace( $args, $this->prepare_user_args( $subject ) );
+		}
+
+		if ( is_string( $subject ) && is_email( $subject ) && empty( $args['email'] ) ) {
+			$args['email'] = $subject;
+		}
+
+		$args['subject']    = $subject;
+		$args               = apply_filters( 'noptin_automation_trigger_args', $args, $this );
+		$args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
+
+		return $args;
+
 	}
 
 	/**
@@ -403,20 +685,7 @@ abstract class Noptin_Abstract_Trigger {
 	 */
 	public function trigger( $subject, $args ) {
 
-		if ( ! is_array( $args ) ) {
-			$args = array();
-		}
-
-		// Add user args.
-		if ( $subject instanceof WP_User ) {
-			$args = array_replace( $args, $this->prepare_user_args( $subject ) );
-		}
-
-		$args['subject'] = $subject;
-
-		$args = apply_filters( 'noptin_automation_trigger_args', $args, $this );
-
-		$args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
+		$args = $this->prepare_trigger_args( $subject, $args );
 
 		foreach ( $this->get_rules() as $rule ) {
 
@@ -429,12 +698,80 @@ abstract class Noptin_Abstract_Trigger {
 			// Prepare the rule.
 			$rule = noptin()->automation_rules->prepare_rule( $rule );
 
+			// Set the current email.
+			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
+
+			// Are we delaying the action?
+			$delay = $rule->get_delay();
+
+			if ( $delay > 0 ) {
+				do_action( 'noptin_delay_automation_rule_execution', $rule, $args, $delay );
+				continue;
+			}
+
 			// Ensure that the rule is valid for the provided args.
 			if ( $this->is_rule_valid_for_args( $rule, $args, $subject, $action ) ) {
 				$action->maybe_run( $subject, $rule, $args );
 			}
 		}
 
+	}
+
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		unset( $args['smart_tags'] );
+
+		// In case the subject is a subscriber, we need to store the email address.
+		if ( $args['subject'] instanceof Noptin_Subscriber ) {
+			$args['noptin_subject_subscriber'] = $args['subject']->id;
+			unset( $args['subject'] );
+		} elseif ( $args['subject'] instanceof WP_User ) { // In case the subject is a user, we need to store the user id.
+			$args['noptin_subject_user'] = $args['subject']->ID;
+			unset( $args['subject'] );
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+		$subject = isset( $args['subject'] ) ? $args['subject'] : false;
+
+		// Maybe fetch the subscriber.
+		if ( empty( $subject ) && ! empty( $args['noptin_subject_subscriber'] ) ) {
+			$subject = get_noptin_subscriber( $args['noptin_subject_subscriber'] );
+
+			if ( $subject->exists() ) {
+				$args['subject'] = $subject;
+			} else {
+				throw new Exception( 'Subscriber not found' );
+			}
+		}
+
+		// Maybe fetch the user.
+		if ( empty( $subject ) && ! empty( $args['noptin_subject_user'] ) ) {
+			$subject = get_user_by( 'id', $args['noptin_subject_user'] );
+
+			if ( $subject instanceof WP_User ) {
+				$args['subject'] = $subject;
+			} else {
+				throw new Exception( 'User not found' );
+			}
+		}
+
+		return $this->prepare_trigger_args( $subject, $args );
 	}
 
 }

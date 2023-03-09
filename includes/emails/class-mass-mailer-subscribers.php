@@ -29,7 +29,37 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 	 * @return bool
 	 */
 	public function display_sending_options( $campaign ) {
-		display_noptin_campaign_subscriber_filter( $campaign );
+
+		$current = $campaign->get( 'noptin_subscriber_options' );
+
+		if ( empty( $current ) && ! defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
+			?>
+			<p><?php esc_html_e( 'The add-ons pack allows you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ); ?></p>
+			<p><a href="<?php echo esc_url( noptin_get_upsell_url( '/pricing/', 'filter-subscribers', 'email-campaigns' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+			<?php
+			return;
+		}
+
+		// Render sender options.
+		$fields  = array();
+
+		foreach ( get_noptin_subscriber_filters() as $key => $filter ) {
+			$fields[ $key ] = array(
+				'label'       => $filter['label'],
+				'type'        => 'select',
+				'options'     => array_replace(
+					array(
+						'' => __( 'Any', 'newsletter-optin-box' ),
+					),
+					$filter['options']
+				),
+				'description' => empty( $filter['description'] ) ? '' : $filter['description'],
+			);
+		}
+
+		$fields = apply_filters( 'noptin_subscriber_sending_options', $fields, $campaign );
+
+		$this->display_sending_fields( $campaign, 'noptin_subscriber_options', $fields );
 	}
 
 	/**
@@ -51,7 +81,7 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 		}
 
 		// ... or was already sent the email.
-		if ( '' !== get_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, true ) ) {
+		if ( ! $this->can_email_subscriber( $campaign, $subscriber ) ) {
 			return null;
 		}
 
@@ -64,6 +94,27 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 		update_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, (int) $result );
 
 		return $result;
+	}
+
+	/**
+	 * Checks if a subscriber is valid for a given task.
+	 *
+	 * @param Noptin_Newsletter_Email $campaign The current campaign.
+	 * @param Noptin_Subscriber $subscriber The subscriber to check.
+	 * @return bool
+	 */
+	public function can_email_subscriber( $campaign, $subscriber ) {
+
+		// Do not send twice.
+		if ( '' !== get_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, true ) ) {
+			return null;
+		}
+
+		// Prepare sender options.
+		$options = $campaign->get( 'noptin_subscriber_options' );
+		$options = is_array( $options ) ? $options : array();
+
+		return apply_filters( 'noptin_subscribers_can_email_subscriber_for_campaign', true, $options, $subscriber, $campaign );
 	}
 
 	/**
@@ -91,6 +142,12 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 	 */
 	public function _fetch_recipients( $campaign ) {
 
+		$manual_recipients = $campaign->get_manual_recipients_ids();
+
+		if ( ! empty( $manual_recipients ) ) {
+			return $manual_recipients;
+		}
+
 		// Prepare arguments.
 		$args = array(
 			'subscriber_status' => 'active',
@@ -110,25 +167,45 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 		);
 
 		// Handle custom fields.
-		foreach ( get_noptin_custom_fields() as $custom_field ) {
+		$options = $campaign->get( 'noptin_subscriber_options' );
 
-			// Limit to checkboxes, dropdowns, language and radio buttons.
-			if ( in_array( $custom_field['type'], array( 'checkbox', 'dropdown', 'radio', 'language' ), true ) ) {
+		if ( ! empty( $options ) ) {
+			foreach ( get_noptin_subscriber_filters() as $key => $filter ) {
 
-				// Fetch the appropriate filter.
-				$filter = $campaign->get( 'noptin_custom_field_' . $custom_field['merge_tag'] );
-
-				// Filter.
-				if ( '' !== $filter ) {
-					$args['meta_query'][] = array(
-						'key'   => $custom_field['merge_tag'],
-						'value' => $filter,
-					);
+				// Abort if the filter is not set.
+				if ( ! isset( $options[ $key ] ) || '' === $options[ $key ] ) {
+					continue;
 				}
+
+				// If the filter is a checkbox.
+				if ( isset( $filter['type'] ) && 'checkbox' === $filter['type'] && '1' !== $options[ $key ] ) {
+
+					// Fetch subscribers where key is either zero or not set.
+					$args['meta_query'][] = array(
+						'relation' => 'OR',
+						array(
+							'key'     => $key,
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'   => $key,
+							'value' => '0',
+						),
+					);
+
+					continue;
+
+				}
+
+				// Filter by the selected option.
+				$args['meta_query'][] = array(
+					'key'   => $key,
+					'value' => $options[ $key ],
+				);
 			}
 		}
 
-		// Subscription source.
+		// (Backwards compatibility) Subscription source.
 		$source = $campaign->get( '_subscriber_via' );
 
 		if ( '' !== $source ) {
@@ -149,4 +226,25 @@ class Noptin_Mass_Mailer_Subscribers extends Noptin_Mass_Mailer {
 
 	}
 
+	/**
+	 * Filters a recipient.
+	 *
+	 * @param false|array $recipient
+	 * @param int $recipient_id
+	 *
+	 * @return array
+	 */
+	public function filter_recipient( $recipient, $recipient_id ) {
+		$subscriber = get_noptin_subscriber( $recipient_id );
+
+		if ( ! $subscriber->exists() ) {
+			return $recipient;
+		}
+
+		return array(
+			'name'  => trim( $subscriber->first_name . ' ' . $subscriber->second_name ),
+			'email' => $subscriber->email,
+			'url'   => add_query_arg( 'subscriber', $subscriber->id, admin_url( 'admin.php?page=noptin-subscribers' ) ),
+		);
+	}
 }

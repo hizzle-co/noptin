@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 4.9
 Tested up to: 6.1
 Requires PHP: 5.6
-Version: 1.10.0
-Stable tag: 1.10.0
+Version: 1.11.4
+Stable tag: 1.11.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -133,6 +133,40 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.11.4 =
+* Add ability to set custom newsletter subscription form field placeholders.
+* Add option to set custom CSS for newsletter emails.
+* Add automation rule action to create/update a GeoDirectory listing.
+
+= 1.11.3 =
+* Add Elementor forms automation rule trigger.
+* Add Fluent form automation rule tirgger.
+* Fix: Some subscriber customer field types not working when used to filter newsletter recipients.
+
+= 1.11.2 =
+* Fix: Post digests show raw CSS in certain WooCommerce templates.
+* Add ability to manually send post digests.
+
+= 1.11.1 =
+* Fix: Concurrent newsletter campaigns from different sites not sent on a multisite network.
+* Allow setting custom dates for sending post digest newsletters.
+* Fix: Monthly digest newsletter always reschedule to the following month when edited.
+
+= 1.11.0 =
+* Include percentages in Newsletter campaign stats.
+* Edit email based automation rules using the newsletter editor.
+
+= 1.10.3 =
+* Add EDD newsletter automation rule triggers.
+* Add support for EDD newsletter template.
+* Add support for WS Form.
+
+= 1.10.2 =
+* Fix popup newsletter subscription forms not working.
+
+= 1.10.1 =
+* Ability to send an email to individual newsletter subscribers.
 
 = 1.10.0 =
 * Paid Memberships Pro - Membership level changed automation trigger.

@@ -49,4 +49,12 @@ class Noptin_White_Label {
         return sanitize_title( $this->name );
     }
 
+    /**
+     * Checks if the plugin is network activated.
+     *
+     * @return bool
+     */
+    public function is_network_activated() {
+        return is_plugin_active_for_network( plugin_basename( noptin()->file ) );
+    }
 }

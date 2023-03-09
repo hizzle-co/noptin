@@ -54,6 +54,10 @@ class Noptin_Automated_Emails_Admin {
 		// Prepare automated email object.
 		$campaign = new Noptin_Automated_Email( $_GET['campaign'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
+		if ( $campaign->is_automation_rule() ) {
+			add_filter( 'noptin_email_has_listed_available_merge_tags', '__return_true' );
+		}
+
 		$automation_type = $campaign->type;
 		do_action( 'add_meta_boxes_noptin_automations', $campaign, $automation_type, array() );
 		do_action( "add_meta_boxes_noptin_automations_$automation_type", $campaign, array() );
@@ -68,8 +72,31 @@ class Noptin_Automated_Emails_Admin {
 	 */
 	public function register_metaboxes( $campaign ) {
 
-		// Email timing.
-		if ( $campaign->supports_timing() ) {
+		$automation_rule = $campaign->get( 'automation_rule' );
+
+		if ( ! empty( $automation_rule ) ) {
+
+			add_meta_box(
+				'noptin_automation_trigger_settings',
+				__( 'Trigger', 'newsletter-optin-box' ),
+				array( $this, 'render_metabox' ),
+				get_current_screen()->id,
+				'normal',
+				'high',
+				'trigger-settings'
+			);
+
+			add_meta_box(
+				'noptin_automation_timing',
+				__( 'Timing', 'newsletter-optin-box' ),
+				array( $this, 'render_metabox' ),
+				get_current_screen()->id,
+				'side',
+				'high',
+				'trigger-timing'
+			);
+
+		} elseif ( $campaign->supports_timing() ) {
 
 			add_meta_box(
 				'noptin_automation_timing',
@@ -134,6 +161,33 @@ class Noptin_Automated_Emails_Admin {
 			noptin()->admin->show_error( __( 'Could not save your changes.', 'newsletter-optin-box' ) );
 		} else {
 			noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );
+		}
+
+		// Automation rule.
+		$automation_rule = new Noptin_Automation_Rule( $automation->get( 'automation_rule' ) );
+
+		if ( $automation_rule->exists() ) {
+
+			$automation_rule->trigger_settings  = isset( $_POST['noptin_trigger_settings'] ) ? json_decode( wp_unslash( $_POST['noptin_trigger_settings'] ), true ) : array();
+			$automation_rule->conditional_logic = isset( $_POST['noptin_conditional_logic'] ) ? json_decode( wp_unslash( $_POST['noptin_conditional_logic'] ), true ) : array();
+
+			$automation_rule->action_settings['email_subject'] = $automation->get_subject();
+
+			noptin()->automation_rules->update_rule(
+				$automation_rule,
+				apply_filters(
+					'noptin_automated_email_save_automation_rule_settings',
+					array(
+						'trigger_settings' => array_merge(
+							$automation_rule->trigger_settings,
+							array( 'conditional_logic' => $automation_rule->conditional_logic )
+						),
+						'action_settings'  => $automation_rule->action_settings,
+					),
+					$automation,
+					$automation_rule
+				)
+			);
 		}
 
 		// Redirect to automation edit page.

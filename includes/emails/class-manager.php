@@ -18,6 +18,7 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
+#[AllowDynamicProperties]
 class Noptin_Email_Manager {
 
 	/** @var Noptin_Email_Sender */
@@ -76,6 +77,7 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-one-time-email-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'admin/class-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type.php';
+		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type-automation-rule.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer-subscribers.php';
@@ -109,11 +111,13 @@ class Noptin_Email_Manager {
 		// Periodically delete sent campaigns.
 		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_delete_campaigns' ) );
 
+		// Automated emails.
+		add_action( 'init', array( $this->automated_email_types, 'add_hooks' ) );
+
 		$this->sender->add_hooks();
 		$this->admin->add_hooks();
 		$this->tags->add_hooks();
 		$this->newsletter->add_hooks();
-		$this->automated_email_types->add_hooks();
 	}
 
 	/**

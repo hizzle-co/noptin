@@ -94,6 +94,10 @@ class Noptin_Automation_Rule {
 	 */
 	public function __construct( $rule ) {
 
+		if ( empty( $rule ) ) {
+			return;
+		}
+
 		if ( is_numeric( $rule ) ) {
 			$this->init( self::get_rule( $rule ) );
 			return;
@@ -131,7 +135,37 @@ class Noptin_Automation_Rule {
 			unset( $this->trigger_settings['conditional_logic'] );
 		}
 
-		// Backwards compatibility.
+		// Backwards compatibility (convert settings to conditional logic).
+		// Fetch the trigger.
+		$trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
+
+		if ( ! empty( $trigger ) && ! empty( $this->trigger_settings ) ) {
+
+			$converted_conditions = $trigger->settings_to_conditional_logic( $this->trigger_settings );
+
+			// Convert the trigger settings to conditional logic.
+			if ( ! empty( $converted_conditions ) ) {
+				$this->conditional_logic['enabled'] = true;
+				$this->conditional_logic['rules']   = array_merge( $this->conditional_logic['rules'], $converted_conditions['conditional_logic'] );
+				$this->trigger_settings             = $converted_conditions['settings'];
+
+				if ( ! empty( $converted_conditions['condition'] ) ) {
+					$this->conditional_logic['type'] = $converted_conditions['condition'];
+				}
+
+				// Save the new settings.
+				noptin()->automation_rules->update_rule(
+					$this,
+					array(
+						'trigger_settings' => array_merge(
+							$converted_conditions['settings'],
+							array( 'conditional_logic' => $this->conditional_logic )
+						),
+					)
+				);
+			}
+		}
+
 		if ( isset( $this->trigger_settings['subscribed_via'] ) ) {
 			$subscription_method = -1 === absint( $this->trigger_settings['subscribed_via'] ) ? '' : $this->trigger_settings['subscribed_via'];
 
@@ -157,6 +191,9 @@ class Noptin_Automation_Rule {
 				)
 			);
 		}
+
+		// Backwards compatibility (use email editor to edit emails).
+		$this->maybe_convert_email_editor();
 
 		// Sanitize trigger and action settings.
 		$this->trigger_settings = $this->sanitize_trigger_settings( $this->trigger_settings );
@@ -240,6 +277,7 @@ class Noptin_Automation_Rule {
 			$prepared_options[ $key ] = $value;
 		}
 
+		$prepared_options = wp_parse_args( $prepared_options, $options );
 		return $prepared_options;
 	}
 
@@ -316,6 +354,91 @@ class Noptin_Automation_Rule {
 	 */
 	public function exists() {
 		return ! empty( $this->id );
+	}
+
+	/**
+	 * Fetches the rule's edit url.
+	 *
+	 * @return string
+	 */
+	public function get_edit_url() {
+
+		$edit_url = add_query_arg(
+			array(
+				'page'                        => 'noptin-automation-rules',
+				'noptin_edit_automation_rule' => $this->id,
+			),
+			admin_url( 'admin.php' )
+		);
+
+		if ( 'email' === $this->action_id && ! empty( $this->action_settings['automated_email_id'] ) ) {
+			$edit_url = add_query_arg(
+				array(
+					'page'        => 'noptin-email-campaigns',
+					'section'     => 'automations',
+					'sub_section' => 'edit_campaign',
+					'campaign'    => $this->action_settings['automated_email_id'],
+				),
+				admin_url( 'admin.php' )
+			);
+		}
+
+		return apply_filters( 'noptin_automation_rule_edit_url', $edit_url, $this );
+	}
+
+	/**
+	 * Converts action settings for use in the email editor.
+	 */
+	public function maybe_convert_email_editor() {
+
+		if ( 'email' !== $this->action_id || ! empty( $this->action_settings['automated_email_id'] ) ) {
+			return;
+		}
+
+		$trigger    = noptin()->automation_rules->get_trigger( $this->trigger_id );
+		$settings   = $this->action_settings;
+		$automation = new Noptin_Automated_Email(
+			array(
+				'automation_type'  => 'automation_rule_' . $this->trigger_id,
+				'status'           => 'publish',
+				'title'            => empty( $trigger ) ? 'Rule ID #' . $this->id : $trigger->get_name() . '(Rule ID #' . $this->id . ')',
+				'automation_rule'  => $this->id,
+				'template'         => isset( $settings['email_template'] ) ? sanitize_text_field( $settings['email_template'] ) : get_noptin_option( 'email_template', 'paste' ),
+				'subject'          => isset( $settings['email_subject'] ) ? $settings['email_subject'] : '',
+				'content_normal'   => isset( $settings['email_content'] ) ? $settings['email_content'] : '',
+				'email_type'       => 'normal',
+				'recipients'       => '[[email]]',
+				'footer_text'      => isset( $settings['email_footer'] ) ? $settings['email_footer'] : get_noptin_footer_text(),
+				'heading'          => isset( $settings['email_heading'] ) ? $settings['email_heading'] : '',
+				'preview_text'     => isset( $settings['email_preview'] ) ? $settings['email_preview'] : '',
+				'when_to_run'      => empty( $settings['wait_for']['interval'] ) ? 'immediately' : 'delayed',
+				'sends_after'      => empty( $settings['wait_for']['interval'] ) ? 0 : absint( $settings['wait_for']['interval'] ),
+				'sends_after_unit' => empty( $settings['wait_for']['period'] ) ? 'minutes' : sanitize_text_field( $settings['wait_for']['period'] ),
+			)
+		);
+
+		$automation->save();
+
+		if ( $automation->exists() ) {
+			$this->action_settings['automated_email_id'] = $automation->id;
+
+			noptin()->automation_rules->update_rule(
+				$this,
+				array(
+					'action_settings' => $this->action_settings,
+				)
+			);
+		}
+	}
+
+	/**
+	 * Retrieves the delay (in seconds) before the rule is executed.
+	 *
+	 * @return int
+	 * @since 1.11.5
+	 */
+	public function get_delay() {
+		return apply_filters( 'noptin_automation_rule_delay', 0, $this );
 	}
 
 }

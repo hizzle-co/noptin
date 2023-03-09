@@ -129,7 +129,7 @@
 
 							<tr class="form-field-row-submit">
 								<th scope="row"><?php submit_button( __( 'Download Subscribers', 'newsletter-optin-box' ) ); ?></th>
-								<td><a href="https://noptin.com/guide/email-subscribers/exporting-subscribers/"><?php esc_html_e( 'Need Help?', 'newsletter-optin-box' ); ?></a></td>
+								<td><a href="<?php echo esc_attr( noptin_get_upsell_url( 'guide/email-subscribers/exporting-subscribers/', 'export', 'subscribers' ) ); ?>"><?php esc_html_e( 'Need Help?', 'newsletter-optin-box' ); ?></a></td>
 							</tr>
 
 						</tbody>

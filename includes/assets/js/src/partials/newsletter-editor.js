@@ -1,5 +1,3 @@
-import noptin from './noptin.js'
-
 export default {
 
 	initial_form: null,
@@ -87,7 +85,7 @@ export default {
 		tinyMCE.triggerSave();
 
 		//Form data
-		let data = noptin.getFormData(jQuery(this).closest('form'))
+		let data = jQuery(this).closest('form').serialize();
 
 		//Init sweetalert
 		Swal.fire({
@@ -107,10 +105,10 @@ export default {
 			preConfirm(email) {
 
 				//Add the test email
-				data.email = email
+				data += "&email=" + email
 
 				//Add action
-				data.action = "noptin_send_test_email"
+				data += "&action=noptin_send_test_email"
 
 				jQuery.post(noptin_params.ajaxurl, data)
 					.done(function (data) {
@@ -132,7 +130,7 @@ export default {
 								showCloseButton: true,
 								confirmButtonText: 'Close',
 								confirmButtonColor: '#9e9e9e',
-								footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/">How to troubleshoot this error.</a>`
+								footer: `<a href="https://noptin.com/guide/sending-emails/troubleshooting/?utm_medium=plugin-dashboard&utm_campaign=email-campaigns&utm_source=troubleshooting">How to troubleshoot this error.</a>`
 							})
 
 						}

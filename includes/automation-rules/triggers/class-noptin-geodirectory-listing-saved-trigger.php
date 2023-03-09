@@ -220,6 +220,10 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	 */
 	public function get_settings() {
 
+		if ( did_action( 'add_meta_boxes_noptin_automations' ) ) {
+			return array();
+		}
+
 		return array(
 
 			'trigger_subject' => array(
@@ -244,6 +248,69 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	}
 
 	/**
+	 * Retrieves trigger args.
+	 *
+	 * @param array $postarr The post info.
+	 * @param object $gd_post The gd post data.
+	 * @param WP_Post $post The post object.
+	 * @param bool $update Whether this is an existing post being updated or not.
+	 * @since 1.9.0
+	 */
+	public function prepare_gd_args( $postarr, $gd_post, $post, $update ) {
+
+		$postarr['post_id']     = $post->ID;
+		$postarr['saving_type'] = $update ? 'update' : 'new';
+		$postarr['post_url']    = get_permalink( $post->ID );
+
+		// Add listing author info.
+		$listing_owner = get_userdata( $post->post_author );
+
+		// Add listing owner details.
+		if ( ! empty( $listing_owner ) ) {
+			$postarr['author_id']         = $listing_owner->ID;
+			$postarr['author_email']      = $listing_owner->user_email;
+			$postarr['author_name']       = $listing_owner->display_name;
+			$postarr['author_first_name'] = $listing_owner->user_firstname;
+			$postarr['author_last_name']  = $listing_owner->user_lastname;
+			$postarr['author_login']      = $listing_owner->user_login;
+
+			if ( empty( $postarr['email'] ) ) {
+				$postarr['email'] = $listing_owner->user_email;
+			}
+		}
+
+		// Featured image.
+		if ( isset( $gd_post->featured_image ) && $gd_post->featured_image ) {
+			$upload_dir                = wp_upload_dir( null, false );
+			$postarr['featured_image'] = $upload_dir['baseurl'] . $gd_post->featured_image;
+		}
+
+		$postarr = array_replace( (array) $gd_post, $postarr );
+
+		$prepared = array();
+
+		foreach ( $postarr as $key => $value ) {
+
+			if ( is_array( $value ) ) {
+
+				if ( ! is_scalar( current( $value ) ) ) {
+					$value = wp_json_encode( $value );
+				} else {
+					$value = implode( ', ', $value );
+				}
+			}
+
+			if ( is_email( $value ) && empty( $prepared['email'] ) ) {
+				$prepared['email'] = sanitize_email( $value );
+			}
+
+			$prepared[ $key ] = $value;
+		}
+
+		return $prepared;
+	}
+
+	/**
 	 * Inits the trigger.
 	 *
 	 * @param array $postarr The post info.
@@ -259,31 +326,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 			return;
 		}
 
-		$postarr['saving_type'] = $update ? 'update' : 'new';
-		$postarr['post_url']    = get_permalink( $post->ID );
-
-		// Add listing author info.
-		$listing_owner = get_userdata( $post->post_author );
-
-		// Add listing owner details.
-		if ( ! empty( $listing_owner ) ) {
-			$postarr['author_id']         = $listing_owner->ID;
-			$postarr['author_email']      = $listing_owner->user_email;
-			$postarr['author_name']       = $listing_owner->display_name;
-			$postarr['author_first_name'] = $listing_owner->user_firstname;
-			$postarr['author_last_name']  = $listing_owner->user_lastname;
-			$postarr['author_login']      = $listing_owner->user_login;
-		}
-
-		// Featured image.
-		if ( isset( $gd_post->featured_image ) && $gd_post->featured_image ) {
-			$upload_dir                = wp_upload_dir( null, false );
-			$postarr['featured_image'] = $upload_dir['baseurl'] . $gd_post->featured_image;
-		}
-
-		$postarr = array_replace( (array) $gd_post, $postarr );
-
-		$this->trigger( $listing_owner, $postarr );
+		$this->trigger( get_userdata( $post->post_author ), $this->prepare_gd_args( $postarr, $gd_post, $post, $update ) );
 	}
 
 	/**
@@ -313,20 +356,35 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
             // Prepare the rule.
             $rule = noptin()->automation_rules->prepare_rule( $rule );
 
-			// Abort if no valid trigger subject.
-			if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
-				continue;
+			// If we're not sending an email...
+			if ( 'email' !== $rule->action_id ) {
+
+				// Abort if no valid trigger subject.
+				if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
+					continue;
+				}
+
+				// Maybe process merge tags.
+				$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
+
+				// Abort if not an email.
+				if ( ! is_email( $trigger_subject ) ) {
+					continue;
+				}
+
+				$args['email'] = $trigger_subject;
 			}
 
-			// Maybe process merge tags.
-			$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
+			// Set the current email.
+			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
 
-			// Abort if not an email.
-			if ( ! is_email( $trigger_subject ) ) {
+			// Are we delaying the action?
+			$delay = $rule->get_delay();
+
+			if ( $delay > 0 ) {
+				do_action( 'noptin_delay_automation_rule_execution', $rule, $args, $delay );
 				continue;
 			}
-
-			$args['email'] = $trigger_subject;
 
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
@@ -335,4 +393,89 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
         }
 
     }
+
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+
+		// Fetch post from the post type.
+		$post = get_posts(
+			array(
+				'post_type'      => $this->post_type,
+				'posts_per_page' => 1,
+				'orderby'        => 'rand',
+			)
+		);
+
+		if ( empty( $post ) ) {
+			throw new Exception( __( 'No test data available for this trigger.', 'newsletter-optin-box' ) );
+		}
+
+		$post    = array_shift( $post );
+		$gd_post = geodir_get_post_info( $post->ID );
+
+		if ( empty( $gd_post ) ) {
+			throw new Exception( __( 'No test data available for this trigger.', 'newsletter-optin-box' ) );
+		}
+
+		$args = $this->prepare_trigger_args(
+			get_userdata( $post->post_author ),
+			$this->prepare_gd_args( $post->to_array(), $gd_post, $post, true )
+		);
+
+		return $args['smart_tags'];
+	}
+
+	/**
+	 * Serializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return false|array
+	 */
+	public function serialize_trigger_args( $args ) {
+		return array(
+            'post_id'     => $args['post_id'],
+            'saving_type' => $args['saving_type'],
+        );
+	}
+
+	/**
+	 * Unserializes the trigger args.
+	 *
+	 * @since 1.11.1
+	 * @param array $args The args.
+	 * @return array|false
+	 */
+	public function unserialize_trigger_args( $args ) {
+
+        $post        = get_post( $args['user_id'] );
+		$saving_type = $args['saving_type'];
+
+		if ( empty( $post ) ) {
+			throw new Exception( 'The post no longer exists' );
+		}
+
+		$gd_post = geodir_get_post_info( $post->ID );
+
+		if ( empty( $gd_post ) ) {
+			throw new Exception( 'The GD post info no longer exists' );
+		}
+
+        // Check if the user is still a member of the level.
+        if ( ! pmpro_hasMembershipLevel( $args['level_id'], $args['user_id'] ) ) {
+            throw new Exception( 'The user is no longer a member of the level' );
+        }
+
+		$this->prepare_trigger_args(
+			get_userdata( $post->post_author ),
+			$this->prepare_gd_args( $post->to_array(), $gd_post, $post, 'update' === $saving_type )
+		);
+	}
 }

@@ -24,6 +24,75 @@ class Noptin_Contact_Form_7 {
 		// Save subscriber.
         add_action( 'wpcf7_submit', array( $this, 'process_form' ), 10, 2 );
 
+		// Load automation rule.
+		if ( did_action( 'noptin_automation_rules_load' ) ) {
+			$this->load_automation_rule( noptin()->automation_rules );
+		} else {
+			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rule' ) );
+		}
+		add_filter( 'noptin_contact_form_7_forms', array( $this, 'filter_forms' ) );
+	}
+
+	/**
+	 * Loads our automation rule.
+	 *
+	 * @param Noptin_Automation_Rules $rules The automation rules instance.
+	 */
+	public function load_automation_rule( $rules ) {
+		$rules->add_trigger( new Noptin_Form_Submit_Trigger( 'contact_form_7', 'Contact Form 7' ) );
+	}
+
+	/**
+	 * Filters forms.
+	 *
+	 * @param array $forms An array of forms.
+	 * @return array
+	 */
+	public function filter_forms( $forms ) {
+		global $noptin_contact_form_7_forms;
+
+		// Return cached forms.
+		if ( is_array( $noptin_contact_form_7_forms ) ) {
+			return array_replace( $forms, $noptin_contact_form_7_forms );
+		}
+
+		$noptin_contact_form_7_forms = array();
+
+		/** @var WPCF7_ContactForm[] $all_forms */
+		$all_forms = WPCF7_ContactForm::find();
+
+		// Loop through all forms.
+		foreach ( $all_forms as $form ) {
+			$fields = array();
+
+			foreach ( $form->scan_form_tags() as $tag ) {
+
+				/** @var WPCF7_FormTag $tag */
+
+				// Abort if no name.
+				if ( empty( $tag->name ) || 'submit' === $tag->basetype ) {
+					continue;
+				}
+
+				$field = array(
+					'description'       => $tag->name,
+					'conditional_logic' => 'number' === $tag->basetype ? 'number' : 'string',
+				);
+
+				if ( is_array( $tag->raw_values ) && 1 < count( $tag->raw_values ) ) {
+					$field['options'] = array_combine( $tag->raw_values, $tag->raw_values );
+				}
+
+				$fields[ $tag->name ] = $field;
+			}
+
+			$noptin_contact_form_7_forms[ $form->id() ] = array(
+				'name'   => $form->title(),
+				'fields' => $fields,
+			);
+		}
+
+		return array_replace( $forms, $noptin_contact_form_7_forms );
 	}
 
 	/**
@@ -141,7 +210,10 @@ class Noptin_Contact_Form_7 {
         $submission  = WPCF7_Submission::get_instance();
         $posted_data = $submission->get_posted_data();
 
-        // Get our settings for the form.
+		// Fire an action before we process the form.
+		do_action( 'noptin_contact_form_7_form_submitted', $contact_form->id(), $posted_data );
+
+		// Get our settings for the form.
 		$settings = get_post_meta( $contact_form->id(), 'noptin_settings', true );
 		$settings = is_array( $settings ) ? $settings : array();
 

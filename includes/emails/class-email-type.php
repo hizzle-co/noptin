@@ -496,6 +496,7 @@ abstract class Noptin_Email_Type {
 					'recipients'               => $email,
 					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
 					'message'                  => noptin_generate_email_content( $campaign, $this->recipient, $track ),
+					'campaign_id'              => ! empty( $campaign->id ) ? $campaign->id : 0,
 					'headers'                  => array(),
 					'attachments'              => array(),
 					'reply_to'                 => '',
@@ -514,12 +515,7 @@ abstract class Noptin_Email_Type {
 
 		// Log.
 		if ( 'test' !== $key && ! $campaign->is_mass_mail() && ! empty( $campaign->id ) ) {
-
-			if ( true === $result ) {
-				increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
-			} elseif ( false === $result ) {
-				increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
-			}
+			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
 		}
 
 		return $result;

@@ -39,10 +39,13 @@ class Noptin_Automation_Rules {
 		$this->add_trigger( new Noptin_Open_Email_Trigger() );
 		$this->add_trigger( new Noptin_Link_Click_Trigger() );
 		$this->add_trigger( new Noptin_Unsubscribe_Trigger() );
+		$this->add_trigger( new Noptin_New_Comment_Trigger() );
+		$this->add_trigger( new Noptin_Comment_Reply_Trigger() );
 
 		if ( function_exists( 'geodir_get_posttypes' ) ) {
 			foreach ( geodir_get_posttypes() as $post_type ) {
 				$this->add_trigger( new Noptin_GeoDirectory_Listing_Saved_Trigger( $post_type ) );
+				$this->add_action( new Noptin_GeoDirectory_Update_Listing_Action( $post_type ) );
 			}
 		}
 
@@ -54,6 +57,8 @@ class Noptin_Automation_Rules {
 		// Handle admin rule CRUD requests.
 		add_action( 'noptin_create_automation_rule', array( $this, 'admin_create_automation_rule' ) );
 		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );
+		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
+		add_action( 'noptin_deleted_automation_rule', array( $this, 'delete_campaign_on_automation_rule_delete' ) );
 		do_action( 'noptin_automation_rules_load', $this );
 	}
 
@@ -210,7 +215,9 @@ class Noptin_Automation_Rules {
 	public function update_rule( $rule, $to_update ) {
 		global $wpdb;
 
-		$rule = new Noptin_Automation_Rule( $rule );
+		if ( ! is_a( $rule, 'Noptin_Automation_Rule' ) ) {
+			$rule = new Noptin_Automation_Rule( $rule );
+		}
 
 		// Does the rule exist?
 		if ( ! $rule->exists() ) {
@@ -266,7 +273,13 @@ class Noptin_Automation_Rules {
 			return false;
 		}
 
-		return $wpdb->delete( $this->get_table(), array( 'id' => $rule->id ), '%d' );
+		wp_cache_delete( $rule->id, 'noptin_automation_rules' );
+
+		$result = $wpdb->delete( $this->get_table(), array( 'id' => $rule->id ), '%d' );
+
+		do_action( 'noptin_deleted_automation_rule', $rule );
+
+		return $result;
 
 	}
 
@@ -309,18 +322,48 @@ class Noptin_Automation_Rules {
 		$rule = $this->create_rule( compact( 'action_id', 'trigger_id' ) );
 
 		if ( ! empty( $rule ) ) {
-			wp_safe_redirect(
-				add_query_arg(
-					'noptin_edit_automation_rule',
-					$rule->id,
-					admin_url( 'admin.php?page=noptin-automation-rules' )
-				)
-			);
+			wp_safe_redirect( $rule->get_edit_url() );
 			exit;
 		}
 
 		noptin()->admin->show_error( __( 'There was a problem creating your automation rule. Please try again.', 'newsletter-optin-box' ) );
 
+	}
+
+	/**
+	 * Deletes a rule when a campaign is deleted.
+	 *
+	 * @var int $campaign_id The campaign id.
+	 * @param WP_Post $post   Post object.
+	 */
+	public function delete_automation_rule_on_campaign_delete( $campaign_id, $post ) {
+
+		if ( 'noptin-campaign' !== $post->post_type || 'automation' !== get_post_meta( $post->ID, 'campaign_type', true ) ) {
+			return;
+		}
+
+		$campaign = new Noptin_Automated_Email( (int) $campaign_id );
+
+		if ( ! $campaign->exists() || ! $campaign->is_automation_rule() || ! $campaign->get( 'automation_rule' ) ) {
+			return;
+		}
+
+		$this->delete_rule( intval( $campaign->get( 'automation_rule' ) ) );
+
+	}
+
+	/**
+	 * Deletes a campaign when a rule is deleted.
+	 *
+	 * @var Noptin_Automation_Rule $rule The rule.
+	 */
+	public function delete_campaign_on_automation_rule_delete( $rule ) {
+
+		if ( 'email' !== $rule->action_id || empty( $rule->action_settings['automated_email_id'] ) ) {
+			return;
+		}
+
+		wp_delete_post( $rule->action_settings['automated_email_id'], true );
 	}
 
 	/**

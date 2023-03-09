@@ -101,6 +101,7 @@ class Noptin_Scripts {
 		wp_enqueue_style( 'select2', $assets_url . '/vendor/select2/select2.min.css', array(), '4.0.12' );
 
 		// Vue js.
+		wp_deregister_script( 'vue' );
 		wp_register_script( 'vue', $assets_url . '/vendor/vue/vue.min.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
@@ -128,7 +129,7 @@ class Noptin_Scripts {
 	/**
 	 * Enqueues a script.
 	 */
-	protected static function enqueue_script( $script ) {
+	public static function enqueue_script( $script ) {
 
 		if ( is_string( $script ) ) {
 			$data   = include plugin_dir_path( __FILE__ ) . "assets/js/dist/$script.asset.php";
@@ -196,7 +197,7 @@ class Noptin_Scripts {
 			add_thickbox();
 
 			// Fetch the rule.
-			$rule = new Noptin_Automation_Rule( absint( $_GET['noptin_edit_automation_rule'] ) );
+			$rule = noptin_get_current_automation_rule();
 
 			if ( ! $rule->exists() ) {
 				return wp_dequeue_script( $handle );

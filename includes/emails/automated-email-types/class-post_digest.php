@@ -31,6 +31,27 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	public $posts;
 
 	/**
+	 * The current date query.
+	 *
+	 * @var array
+	 */
+	public $date_query;
+
+	/**
+	 * The current post digest.
+	 *
+	 * @var Noptin_Automated_Email
+	 */
+	public $post_digest;
+
+	/**
+	 * Whether or not posts were found.
+	 *
+	 * @var bool
+	 */
+	public $posts_found = false;
+
+	/**
 	 * @var string
 	 */
 	public $notification_hook = 'noptin_send_post_digest';
@@ -48,7 +69,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 *
 	 */
 	public function get_description() {
-		return __( 'Automatically send your subscribers a daily, weekly or monthly email highlighting your latest content.', 'newsletter-optin-box' );
+		return __( 'Automatically send your subscribers a daily, weekly, monthly or yearly email highlighting your latest content.', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -113,6 +134,21 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function default_date() {
 		return '1';
+	}
+
+	/**
+	 * Returns the default year day.
+	 *
+	 */
+	public function default_year_day() {
+		return '1';
+	}
+
+	/**
+	 * Returns the default x days.
+	 */
+	public function default_x_days() {
+		return '14';
 	}
 
 	/**
@@ -189,12 +225,16 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			'daily'   => __( 'Daily', 'newsletter-optin-box' ),
 			'weekly'  => __( 'Weekly', 'newsletter-optin-box' ),
 			'monthly' => __( 'Monthly', 'newsletter-optin-box' ),
+			'yearly'  => __( 'Yearly', 'newsletter-optin-box' ),
+			'x_days'  => __( 'Every', 'newsletter-optin-box' ),
 		);
 
 		$frequency = $campaign->get( 'frequency' );
 		$day       = (string) $campaign->get( 'day' );
 		$dates     = $this->get_month_days();
 		$date      = (string) $campaign->get( 'date' );
+		$year_day  = (string) $campaign->get( 'year_day' );
+		$x_days    = (string) $campaign->get( 'x_days' );
 		$time      = $campaign->get( 'time' );
 
 		?>
@@ -229,6 +269,16 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					</select>
 				</span>
 
+				<span class="noptin-post-digest-year-day noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'yearly' === $frequency ? 'inline-block' : 'none'; ?>">
+					<?php esc_html_e( 'on day', 'newsletter-optin-box' ); ?>
+					<input name="noptin_email[year_day]" class="noptin-schedule-input-year-day" style="width: 60px;" type="number" value="<?php echo esc_attr( $year_day ); ?>" placeholder="1" min="1" max="365" step="1">
+				</span>
+
+				<span class="noptin-post-digest-x-days noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'x_days' === $frequency ? 'inline-block' : 'none'; ?>">
+					<input name="noptin_email[x_days]" class="noptin-schedule-input-x-days" style="width: 60px;" type="number" value="<?php echo esc_attr( $x_days ); ?>" placeholder="14" min="1" max="365" step="1">
+					<?php esc_html_e( 'days', 'newsletter-optin-box' ); ?>
+				</span>
+
 				<span class="noptin-post-digest-time noptin-inline-block" style="margin-bottom: 10px;">
 					<?php esc_html_e( 'at', 'newsletter-optin-box' ); ?>
 					<input name="noptin_email[time]" class="noptin-schedule-input-time" style="width: 60px;" type="time" value="<?php echo esc_attr( $time ); ?>" placeholder="H:i">
@@ -243,22 +293,13 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			return;
 		}
 
-		$url = add_query_arg(
-			array(
-				'utm_medium'   => 'plugin-dashboard',
-				'utm_campaign' => 'post-digests',
-				'utm_source'   => 'email-editor',
-			),
-			'https://noptin.com/ultimate-addons-pack/'
-		);
-
 		printf(
 			'<p>%s</p><p>%s</p>',
 			esc_html__( 'By default, this email will only send for new blog posts.', 'newsletter-optin-box' ),
 			sprintf(
 				// translators: %s is the link to the Noptin addons pack.
-				esc_html__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories and tags.', 'newsletter-optin-box' ),
-				"<a href='" . esc_url( $url ) . "' target='_blank'>Ultimate Addons Pack</a>"
+				esc_html__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories, tags, and authors.', 'newsletter-optin-box' ),
+				"<a href='" . esc_url( noptin_get_upsell_url( '/ultimate-addons-pack/', 'post-digests', 'email-campaigns' ) ) . "' target='_blank'>Ultimate Addons Pack</a>"
 			)
 		);
 
@@ -270,15 +311,16 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * @param Noptin_Automated_Email $campaign
 	 */
 	public function on_save_campaign( $campaign ) {
-		$this->schedule_campaign( $campaign );
+		$this->schedule_campaign( $campaign, true );
 	}
 
 	/**
 	 * Schedules the next send for a given campain.
 	 *
 	 * @param Noptin_Automated_Email $campaign
+	 * @param int $is_saving
 	 */
-	public function schedule_campaign( $campaign ) {
+	public function schedule_campaign( $campaign, $is_saving = false ) {
 		// Clear any existing scheduled events.
 		wp_clear_scheduled_hook( $this->notification_hook, array( $campaign->id ) );
 
@@ -289,9 +331,12 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		}
 
 		// Get the frequency.
+		$last_send = get_post_meta( $campaign->id, '_noptin_last_send', true );
 		$frequency = $campaign->get( 'frequency' );
 		$day       = (string) $campaign->get( 'day' );
 		$date      = (string) $campaign->get( 'date' );
+		$year_day  = (int) $campaign->get( 'year_day' );
+		$x_days    = (int) $campaign->get( 'x_days' );
 		$time      = $campaign->get( 'time' );
 
 		if ( empty( $time ) ) {
@@ -340,8 +385,47 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 				$send_month = $this_month < 12 ? $this_month + 1 : 1;
 				$send_year  = $this_month < 12 ? $this_year : $this_year + 1;
-				$next_send  = strtotime( "$send_year-$send_month-$date $time" );
 
+				if ( $is_saving ) {
+					$next_send = strtotime( "$this_year-$this_month-$date $time" );
+
+					if ( $next_send < time() ) {
+						$next_send = strtotime( "$send_year-$send_month-$date $time" );
+					}
+				} else {
+					$next_send = strtotime( "$send_year-$send_month-$date $time" );
+				}
+
+				break;
+
+			case 'yearly':
+				if ( empty( $year_day ) ) {
+					$year_day = 1;
+				}
+
+				$send_year        = (int) gmdate( 'Y' );
+				$current_year_day = (int) gmdate( 'z' ) + 1;
+
+				if ( $year_day < $current_year_day ) {
+					$send_year++;
+				}
+
+				$next_send = strtotime( "$send_year-01-01 $time" ) + ( $year_day - 1 ) * DAY_IN_SECONDS;
+				break;
+
+			case 'x_days':
+				if ( empty( $x_days ) ) {
+					$x_days = 14;
+				}
+
+				$current_time = time();
+				$seconds	  = $x_days * DAY_IN_SECONDS;
+
+				if ( $is_saving && ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
+					$current_time = $last_send;
+				}
+
+				$next_send = strtotime( "+$x_days days $time", $current_time );
 				break;
 		}
 
@@ -378,22 +462,18 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$last_send = get_post_meta( $campaign_id, '_noptin_last_send', true );
 
 		// Don't send if we already sent today.
-		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === gmdate( 'Ymd' ) ) {
+		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === gmdate( 'Ymd' ) && ( ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) || ! NOPTIN_RESENDING_CAMPAIGN ) ) {
 			return;
 		}
 
 		// Set the last send date.
 		update_post_meta( $campaign_id, '_noptin_last_send', time() );
 
-		// Retrieve matching posts.
-		$this->posts = $this->get_campaign_posts( $campaign );
-
-		// Abort if there are no posts.
-		if ( empty( $this->posts ) ) {
-			return;
-		}
-
 		// Prepare environment.
+		$this->post_digest = $campaign;
+		$this->posts_found = false;
+		$this->date_query  = $this->get_date_query( $campaign );
+
 		$type    = $campaign->get_email_type();
 		$content = $campaign->get_content( $type );
 
@@ -420,6 +500,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			)
 		);
 
+		// Skip if there are no posts.
+		if ( ! $this->posts_found ) {
+			return;
+		}
+
 		// Remove unrelated content.
 		foreach ( array( 'content_normal', 'content_plain_text', 'content_raw_html' ) as $content_type ) {
 			if ( 'content_' . $type !== $content_type ) {
@@ -436,10 +521,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		}
 
 		// Clear environment.
-		$this->posts = null;
 		$this->after_send( $campaign );
-
-		// TODO: Everything is unslashed.
 
 	}
 
@@ -447,9 +529,9 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * Retrieve matching posts since last send.
 	 *
 	 * @param Noptin_Automated_Email $campaign
-	 * @return WP_Post[]
+	 * @return array
 	 */
-	public function get_campaign_posts( $campaign ) {
+	public function get_date_query( $campaign ) {
 
 		$time = $campaign->get( 'time' );
 
@@ -457,63 +539,46 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			$time = '07:00';
 		}
 
-		$post_type = $campaign->get( 'post_type' );
-		$post_type = empty( $post_type ) ? 'post' : $post_type;
-
 		switch ( $campaign->get( 'frequency' ) ) {
 
+			// Get posts published yesterday.
 			case 'daily':
-				// Get posts published yesterday.
-				return $this->get_posts(
-					$campaign,
+				return array(
 					array(
-						'post_type'      => $post_type,
-						'post_status'    => 'publish',
-						'posts_per_page' => -1,
-						'orderby'        => 'date',
-						'order'          => 'DESC',
-						'date_query'     => array(
-							array(
-								'after'     => 'yesterday midnight',
-								'before'    => 'today midnight',
-								'inclusive' => true,
-							),
-						),
-					)
+						'after'     => 'yesterday midnight',
+						'before'    => 'today midnight',
+						'inclusive' => true,
+					),
 				);
 
+			// Get posts published in the last 7 days.
 			case 'weekly':
-				// Get posts published in the last 7 days.
-				return $this->get_posts(
-					$campaign,
-					array(
-						'post_type'      => $post_type,
-						'post_status'    => 'publish',
-						'posts_per_page' => -1,
-						'orderby'        => 'date',
-						'order'          => 'DESC',
-						'date_query'     => array(
-							'after' => gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
-						),
-					)
+				return array(
+					'after' => gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
 				);
 
+			// Get posts published in the last 30 days.
 			case 'monthly':
-				// Get posts published in the last 30 days.
-				return $this->get_posts(
-					$campaign,
-					array(
-						'post_type'      => $post_type,
-						'post_status'    => 'publish',
-						'posts_per_page' => -1,
-						'orderby'        => 'date',
-						'order'          => 'DESC',
-						'date_query'     => array(
-							'after' => gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
-						),
-					)
+				return array(
+					'after' => gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
 				);
 
+			// Get posts published in the last 365 days.
+			case 'yearly':
+				return array(
+					'after' => gmdate( 'Y-m-d', strtotime( '-365 days' ) ),
+				);
+
+			// Get posts published last x days.
+			case 'x_days':
+				$days = $campaign->get( 'x_days' );
+				if ( empty( $days ) ) {
+					$days = 14;
+				}
+
+				return array(
+					'after' => gmdate( 'Y-m-d', strtotime( "-$days days" ) ),
+				);
 		}
 
 		return array();
@@ -582,6 +647,23 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 					esc_html( $time )
 				) . $next_send;
 
+			case 'yearly':
+				$day_of_year = (int) $campaign->get( 'year_day' ) - 1;
+				return sprintf(
+					// translators: %1 is the day, %2 is the time.
+					__( 'Sends a digest of your latest content every year on %1$s at %2$s', 'newsletter-optin-box' ),
+					date_i18n( 'F jS', strtotime( "January 1 + {$day_of_year} days" ) ),
+					esc_html( $time )
+				) . $next_send;
+
+			case 'x_days':
+				return sprintf(
+					// translators: %1 is the number of days, %2 is the time.
+					__( 'Sends a digest of your latest content every %1$s days at %2$s', 'newsletter-optin-box' ),
+					(int) $campaign->get( 'x_days' ),
+					esc_html( $time )
+				) . $next_send;
+
 			default:
 				return $about;
 		}
@@ -601,7 +683,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				'post_digest' => array(
 					'description' => __( 'Displays your latest content.', 'newsletter-optin-box' ),
 					'callback'    => array( $this, 'process_merge_tag' ),
-					'example'     => 'post_digest template="list" limit="8"',
+					'example'     => 'post_digest style="list" limit="10"',
 					'partial'     => true,
 				),
 
@@ -620,25 +702,53 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function process_merge_tag( $args = array() ) {
 
-		$template = isset( $args['style'] ) ? $args['style'] : 'list';
-		$limit    = isset( $args['limit'] ) ? absint( $args['limit'] ) : 6;
+		// Fetch the posts.
+		$posts = $this->get_merge_tag_posts( $args );
 
-		if ( empty( $this->posts ) ) {
+		// Abort if we have no posts.
+		if ( empty( $posts ) ) {
 			return '';
 		}
 
-		return $this->get_posts_html( $template, array_slice( $this->posts, 0, $limit ) );
+		// We have posts.
+		$this->posts_found = true;
+
+		return $this->get_posts_html( $args, $posts );
+	}
+
+	/**
+	 * Retrieves the content for the posts merge tag.
+	 *
+	 * @param array $args
+	 * @return WP_Post[]
+	 */
+	public function get_merge_tag_posts( $args = array() ) {
+
+		$query = array(
+			'numberposts'      => isset( $args['limit'] ) ? intval( $args['limit'] ) : 10,
+			'orderby'          => 'date',
+			'order'            => 'DESC',
+			'suppress_filters' => true,
+		);
+
+		if ( ! empty( $this->date_query ) ) {
+			$query['date_query'] = $this->date_query;
+		}
+
+		return get_posts( apply_filters( 'noptin_post_digest_merge_tag_query', $query, $args, $this ) );
 	}
 
 	/**
 	 * Get posts html to display.
 	 *
-	 * @param string $template
+	 * @param array $args
 	 * @param WP_Post[] $campaign_posts
 	 *
 	 * @return string
 	 */
-	public function get_posts_html( $template = 'grid', $campaign_posts = array() ) {
+	public function get_posts_html( $args = array(), $campaign_posts = array() ) {
+
+		$template = isset( $args['style'] ) ? $args['style'] : 'list';
 
 		// Allow overwriting this.
 		$html = apply_filters( 'noptin_post_digest_html', null, $template, $campaign_posts );
@@ -647,8 +757,10 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			return $html;
 		}
 
+		$args['campaign_posts'] = $campaign_posts;
+
 		ob_start();
-		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', compact( 'campaign_posts' ) );
+		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', $args );
 		return ob_get_clean();
 	}
 
@@ -684,43 +796,8 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		// Prepare user and subscriber.
 		parent::prepare_test_data( $email );
 
-		$post_type = $email->get( 'post_type' );
-		$post_type = empty( $post_type ) ? 'post' : $post_type;
+		$this->post_digest = $email;
 
-		// Fetch test posts.
-		$this->posts = $this->get_posts(
-			$email,
-			array(
-				'numberposts'      => 6,
-				'category'         => 0,
-				'orderby'          => 'date',
-				'order'            => 'DESC',
-				'post_type'        => $post_type,
-				'suppress_filters' => true,
-			)
-		);
-
-		// If no posts found, abort.
-		if ( empty( $this->posts ) ) {
-			throw new Exception( __( 'Could not find posts for this preview.', 'newsletter-optin-box' ) );
-		}
-
-	}
-
-	/**
-	 * Retrieves matching posts.
-	 *
-	 * @param Noptin_Automated_Email $email
-	 * @param array $args
-	 */
-	public function get_posts( $email, $args = array() ) {
-		$args = apply_filters( 'noptin_post_digest_posts_query', $args, $email );
-
-		if ( isset( $args['include'] ) && empty( $args['include'] ) ) {
-			return array();
-		}
-
-		return get_posts( $args );
 	}
 
 	/**
@@ -731,7 +808,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	protected function after_send( $campaign ) {
 
 		// Remove temp variables.
-		$this->posts = null;
+		$this->post_digest = null;
 
 		parent::after_send( $campaign );
 	}

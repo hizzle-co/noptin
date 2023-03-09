@@ -6,16 +6,16 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Fires when a subscriber clicks on link.
  *
- * @since       1.2.8
+ * @since 1.2.8
  */
 class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 
 	/**
-     * Whether or not this trigger deals with a subscriber.
-     *
-     * @var bool
-     */
-    public $is_subscriber_based = true;
+	 * Whether or not this trigger deals with a subscriber.
+	 *
+	 * @var bool
+	 */
+	public $is_subscriber_based = true;
 
 	/**
 	 * Constructor.
@@ -45,51 +45,34 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Fired when a subscriber clicks on a link in an email', 'newsletter-optin-box' );
+		return __( 'When a subscriber clicks on a link in an email', 'newsletter-optin-box' );
 	}
 
 	/**
-	 * @inheritdoc
+	 * Returns an array of known smart tags.
+	 *
+	 * @since 1.10.1
+	 * @return array
 	 */
-	public function get_rule_description( $rule ) {
-		$settings = $rule->trigger_settings;
+	public function get_known_smart_tags() {
 
-		$campaign_id = empty( $settings['campaign_id'] ) ? 0 : (int) $settings['campaign_id'];
-		$url         = empty( $settings['url'] ) ? '' : noptin_clean_url( $settings['url'] );
-
-		if ( empty( $campaign_id ) && empty( $url ) ) {
-			return __( 'When a subscriber clicks on any link from any email campaign', 'newsletter-optin-box' );
-		}
-
-		if ( empty( $campaign_id ) ) {
-			return sprintf(
-				// Translators: %s is the URL.
-				__( 'When a subscriber clicks on the link %s from any email campaign', 'newsletter-optin-box' ),
-				"<code>$url</code>"
-			);
-		}
-
-		$campaign_title = esc_html( get_the_title( $campaign_id ) );
-
-		if ( empty( $campaign_title ) ) {
-			$campaign_title = __( 'Deleted campaign', 'newsletter-optin-box' );
-		}
-
-		if ( empty( $url ) ) {
-			return sprintf(
-				// Translators: %s is the campaign.
-				__( 'When a subscriber clicks on any link from the email campaign %s', 'newsletter-optin-box' ),
-				"<code>$campaign_title</code>"
-			);
-		}
-
-		return sprintf(
-			// Translators: %1 is the URL, %2 is the campaign.
-			__( 'When a subscriber clicks on the link %1$s from the email campaign %2$s', 'newsletter-optin-box' ),
-			"<code>$url</code>",
-			"<code>$campaign_title</code>"
+		return array_merge(
+			array(
+				'campaign_id'    => array(
+					'description'       => __( 'Campaign ID', 'newsletter-optin-box' ),
+					'conditional_logic' => 'number',
+				),
+				'campaign_title' => array(
+					'description'       => __( 'Campaign Title', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+				),
+				'url'            => array(
+					'description'       => __( 'Clicked URL', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+				),
+			),
+			parent::get_known_smart_tags()
 		);
-
 	}
 
 	/**
@@ -113,85 +96,96 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_settings() {
+	public function settings_to_conditional_logic( $settings ) {
 
-		$args = array(
-			'numberposts' => -1,
-			'post_type'	  => 'noptin-campaign',
-			'post_status' => array( 'publish', 'draft', 'pending' ),
-			'meta_query'  => array(
-				array(
-					'key'   	   => 'campaign_type',
-					'value' 	   => array( 'automation', 'newsletter' ),
-					'meta_compare' => 'IN',
-				),
-			),
-		);
+		// We have no conditional logic here.
+		if ( ! is_array( $settings ) || ( ! isset( $settings['campaign_id'] ) && ! isset( $settings['url'] ) ) ) {
+			return false;
+		}
 
-		$posts     = get_posts( $args );
-		$campaigns = wp_list_pluck( $posts, 'post_title', 'ID' );
+		$conditions = array();
+
+		// Campaign ID.
+		if ( isset( $settings['campaign_id'] ) ) {
+
+			if ( ! empty( $settings['campaign_id'] ) ) {
+				$conditions[] = array(
+					'type'      => 'campaign_id',
+					'condition' => 'is',
+					'value'     => (int) $settings['campaign_id'],
+				);
+			}
+
+			unset( $settings['campaign_id'] );
+		}
+
+		// URL.
+		if ( isset( $settings['url'] ) ) {
+
+			if ( ! empty( $settings['url'] ) ) {
+				$conditions[] = array(
+					'type'      => 'url',
+					'condition' => 'is',
+					'value'     => trim( $settings['url'] ),
+				);
+			}
+
+			unset( $settings['url'] );
+		}
 
 		return array(
-
-			'campaign_id' => array(
-				'el'          => 'select',
-				'label'       => __( 'Campaign', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Watch for clicks on all campaigns', 'newsletter-optin-box' ),
-				'options'     => $campaigns,
-				'description' => __( 'Select the campaign that you would like to watch for clicks.', 'newsletter-optin-box' ),
-			),
-
-			'url'         => array(
-				'el'          => 'input',
-				'label'       => __( 'URL', 'newsletter-optin-box' ),
-				'description' => __( 'Enter the URL to watch for clicks or leave empty to watch for all URLs.', 'newsletter-optin-box' ),
-			),
-
+			'conditional_logic' => $conditions,
+			'settings'          => $settings,
 		);
-
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function is_rule_valid_for_args( $rule, $args, $subscriber, $action ) {
-		$settings = $rule->trigger_settings;
-
-		// Are we filtering by campaign id?
-		$campaign_id = (int) $args['campaign_id'];
-		if ( ! empty( $settings['campaign_id'] ) && (int) $settings['campaign_id'] !== $campaign_id ) {
-			return false;
-		}
-
-		// Are we filtering by link?
-		$link = noptin_clean_url( $args['link'] );
-		if ( ! empty( $settings['url'] ) && noptin_clean_url( $settings['url'] ) !== $link ) {
-			return false;
-		}
-
-		return parent::is_rule_valid_for_args( $rule, $args, $subscriber, $action );
-	}
-
-	/**
-	 * Called when a subscriber clicks on a link.
+	 * Called when a subscriber clicks on a url.
 	 *
 	 * @param int $subscriber_id The subscriber in question.
 	 * @param $campaign_id The campaign that was clicked.
-	 * @param $link The link that was clicked.
+	 * @param $url The url that was clicked.
 	 */
-	public function maybe_trigger( $subscriber_id, $campaign_id, $link ) {
+	public function maybe_trigger( $subscriber_id, $campaign_id, $url ) {
+
+		$subscriber = new Noptin_Subscriber( $subscriber_id );
+		$args       = array(
+			'campaign_id'    => $campaign_id,
+			'campaign_title' => get_the_title( $campaign_id ),
+			'url'            => $url,
+		);
 
 		noptin_record_subscriber_activity(
 			$subscriber_id,
 			sprintf(
 				// translators: %2 is the campaign name, #1 is the link.
 				__( 'Clicked on link %1$s from campaign %2$s', 'newsletter-optin-box' ),
-				'<code>' . esc_url( $link ) . '</code>',
+				'<code>' . esc_url( $url ) . '</code>',
 				'<code>' . get_the_title( $campaign_id ) . '</code>'
 			)
 		);
 
-		$this->trigger( $subscriber_id, compact( 'campaign_id', 'link' ) );
+		$this->trigger( $subscriber, $args );
 	}
 
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 1.11.0
+	 * @param Noptin_Automation_Rule $rule
+	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @throws Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+		$args = array(
+			'campaign_id'    => 1,
+			'campaign_title' => 'Test Campaign',
+			'url'            => 'https://noptin.com',
+		);
+
+		$subject = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+		$args    = $this->prepare_trigger_args( $subject, $args );
+
+		return $args['smart_tags'];
+	}
 }

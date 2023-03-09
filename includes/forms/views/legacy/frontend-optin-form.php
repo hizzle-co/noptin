@@ -6,7 +6,7 @@
 	$on_scroll   = esc_attr( $scrollDepthPercentage );
 	$delay       = esc_attr( $timeDelayDuration );
 	$class       = esc_attr( "noptin-slide-from-$slideDirection" );
-	$session     = (bool) $DisplayOncePerSession;
+	$seconds     = apply_filters( 'noptin_display_form_every_x_seconds', WEEK_IN_SECONDS, $form );
 	$styles      = array(
 		'background-color' => $noptinFormBg,
 		'background-image' => "url('$noptinFormBgImg')",
@@ -48,7 +48,7 @@
 
 ?>
 <?php do_action( 'before_output_legacy_noptin_form', $form ); ?>
-<div style='<?php echo esc_attr( $wrapper_styles ); ?>' data-trigger='<?php echo esc_attr( $trigger ); ?>' data-after-click='<?php echo esc_attr( $after_click ); ?>' data-on-scroll='<?php echo esc_attr( $on_scroll ); ?>' data-after-delay='<?php echo esc_attr( $delay ); ?>' data-once-per-session='<?php echo esc_attr( $session ); ?>' class='noptin-optin-form-wrapper <?php echo esc_attr( $class ); ?>'>
+<div style='<?php echo esc_attr( $wrapper_styles ); ?>' data-trigger='<?php echo esc_attr( $trigger ); ?>' data-after-click='<?php echo esc_attr( $after_click ); ?>' data-on-scroll='<?php echo esc_attr( $on_scroll ); ?>' data-after-delay='<?php echo esc_attr( $delay ); ?>' data-hide-seconds='<?php echo esc_attr( $seconds * 1000 ); ?>' class='noptin-optin-form-wrapper <?php echo esc_attr( $class ); ?>'>
 	<form class="noptin-optin-form <?php echo $singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line'; ?>" <?php do_action( 'noptin_frontend_optin_form_attrs', $form ); ?>>
 
 		<div class="noptin-form-header <?php echo ! empty( $image ) ? esc_attr( $imagePos ) : 'no-image'; ?>">
@@ -71,7 +71,7 @@
 
 			<?php if ( ! empty( $image ) ) : ?>
 				<div class="noptin-form-header-image">
-					<img src="<?php echo esc_url( $image ); ?>" />
+					<img alt="icon" src="<?php echo esc_url( $image ); ?>" />
 				</div>
 			<?php endif; ?>
 
@@ -136,7 +136,7 @@
 
 	<?php if ( $imageMain ) : ?>
 		<div v-if="imageMain" class="noptin-form-main-image">
-			<img src="<?php echo esc_url( $imageMain ); ?>" />
+			<img alt="opt-in image" src="<?php echo esc_url( $imageMain ); ?>" />
 		</div>
 	<?php endif; ?>
 

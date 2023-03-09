@@ -183,8 +183,8 @@ class Noptin_Settings {
 			}
 		}
 
-		$state                  = array_merge( get_noptin_options(), $state );
-		$state['custom_fields'] = get_noptin_custom_fields();
+		$state                   = array_merge( get_noptin_options(), $state );
+		$state['custom_fields']  = get_noptin_custom_fields();
 		$state['openSections']   = isset( $_GET['integration'] ) ? array( 'settings_section_' . noptin_clean( $_GET['integration'] ) ) : array();
 		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
 		$state['currentSection'] = 'main';
@@ -382,9 +382,16 @@ class Noptin_Settings {
 				'description' => sprintf(
 					/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
 					__( 'This text appears below all emails. If you are a %1$sNoptin affiliate%2$s, include your affiliate link here and earn commissions for new referrals.', 'newsletter-optin-box' ),
-					'<a href="https://noptin.com/become-an-affiliate/">',
+					'<a href="' . esc_url( noptin_get_upsell_url( 'become-an-affiliate/', 'settings', 'link' ) ) . '">',
 					'</a>'
 				),
+			),
+
+			'custom_css'                   => array(
+				'el'          => 'textarea',
+				'section'     => 'emails',
+				'label'       => __( 'Custom CSS', 'newsletter-optin-box' ),
+				'description' => __( 'Optional. Add any custom CSS to style your emails.', 'newsletter-optin-box' ),
 			),
 
 			'success_message'              => array(
@@ -506,7 +513,7 @@ class Noptin_Settings {
 								esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
 								sprintf(
 									'<a target="_blank" href="%s">%s</a>',
-									esc_url( $data->connect_url ),
+									esc_url( noptin_get_upsell_url( $data->connect_url, $slug, 'settings' ) ),
 									sprintf(
 										// translators: %s is the name of the integration.
 										__( '%s addon', 'newsletter-optin-box' ),

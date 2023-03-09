@@ -104,12 +104,6 @@ class Noptin_Form_Legacy {
 			return false;
 		}
 
-		// Maybe fetch from cache.
-		$form = wp_cache_get( $value, 'noptin_forms' );
-		if ( $form ) {
-			return $form;
-		}
-
 		// Fetch the post object from the db.
 		$post = get_post( $value );
 		if ( ! $post || 'noptin-form' !== $post->post_type ) {
@@ -131,9 +125,6 @@ class Noptin_Form_Legacy {
 		}
 
 		$form = array_merge( $state, $form );
-
-		// Update the cache with out data.
-		wp_cache_add( $post->ID, $form, 'noptin_forms' );
 
 		return $this->sanitize_form_data( $form );
 	}
@@ -289,7 +280,6 @@ class Noptin_Form_Legacy {
 			// Trigger Options.
 			'timeDelayDuration'     => 4,
 			'scrollDepthPercentage' => 25,
-			'DisplayOncePerSession' => true,
 			'cssClassOfClick'       => '#id .class',
 			'triggerPopup'          => 'immeadiate',
 			'slideDirection'        => 'bottom_right',
@@ -316,19 +306,6 @@ class Noptin_Form_Legacy {
 
 		if ( empty( $defaults['successMessage'] ) ) {
 			$defaults['successMessage'] = esc_html__( 'Thanks for subscribing to the newsletter', 'newsletter-optin-box' );
-		}
-
-		foreach ( get_noptin_connection_providers() as $key => $connection ) {
-
-			if ( ! empty( $connection->list_providers ) ) {
-				$defaults[ "{$key}_list" ] = $connection->get_default_list_id();
-			}
-
-			if ( $connection->supports( 'tags' ) ) {
-				$defaults[ "{$key}_tags" ] = '';
-			}
-
-			$defaults = $connection->add_custom_default_form_state( $defaults );
 		}
 
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
@@ -514,9 +491,6 @@ class Noptin_Form_Legacy {
 			return $id;
 		}
 
-		// Update the cache with our new data.
-		wp_cache_delete( $id, 'noptin_forms' );
-		wp_cache_add( $id, $this->data, 'noptin_forms' );
 		return true;
 	}
 

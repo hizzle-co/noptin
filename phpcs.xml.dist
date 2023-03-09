@@ -19,7 +19,6 @@
 
 	<!-- Skip for third-party classes -->
 	<exclude-pattern>*/includes/class-noptin-emogrifier.php</exclude-pattern>
-	<exclude-pattern>*/includes/class-noptin-background-sync.php</exclude-pattern>
 	<exclude-pattern>*/includes/class-noptin-background-mailer.php</exclude-pattern>
 	<exclude-pattern>*/includes/emails/class-html-to-text.php</exclude-pattern>
 	<exclude-pattern>*/includes/assets/*</exclude-pattern>
@@ -31,6 +30,14 @@
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="PSR2.Classes.PropertyDeclaration">
+		<exclude-pattern>*</exclude-pattern>
+	</rule>
+
+	<rule ref="PSR2.Methods.MethodDeclaration">
 		<exclude-pattern>*</exclude-pattern>
 	</rule>
 

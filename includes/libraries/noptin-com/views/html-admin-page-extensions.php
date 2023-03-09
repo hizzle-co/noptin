@@ -55,6 +55,12 @@
 			'guide'       => 'https://noptin.com/guide/email-subscribers/manage-preferences/',
 			'icon'        => 'dashicons-admin-settings',
 		),
+		'attachments'           => array(
+			'title'       => __( 'Attachments', 'newsletter-optin-box' ),
+			'description' => __( 'Include attachments in your newsletters and automated email campaigns.', 'newsletter-optin-box' ),
+			'guide'       => 'https://noptin.com/guide/sending-emails/attachments/',
+			'icon'        => 'dashicons-paperclip',
+		),
 		'cpts'                  => array(
 			'title'       => __( 'Custom Post Types', 'newsletter-optin-box' ),
 			'description' => __( 'Automatically send emails to subscribers whenever a new post of a specific post type is published.', 'newsletter-optin-box' ),
@@ -105,7 +111,7 @@
 
 			<div class="noptin-extensions-alert noptin-extensions-alert-success">
 				<div><?php esc_html_e( 'Activate your license to get priority support and premium features.', 'newsletter-optin-box' ); ?></div>
-				<a class="addons-button addons-button-installed" href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=noptinaddons">
+				<a class="addons-button addons-button-installed" href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'license', 'extensionsscreen' ) ); ?>">
 					<?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>
 				</a>
 			</div>
@@ -194,7 +200,7 @@
 
 					<a
 						class="button button-primary"
-						href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=expired"
+						href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'expired', 'extensionsscreen' ) ); ?>"
 					><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
 
 				</div>
@@ -206,6 +212,30 @@
 	<?php endif; ?>
 
 	<hr style="margin: 2em 0;" />
+
+	<!-- WooCommerce Addon -->
+	<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+		<div class="noptin-extension-group noptin-extension-group__woocommerce">
+			<h2 class="noptin-extension-group__title"><?php esc_html_e( 'WooCommerce Addon', 'newsletter-optin-box' ); ?></h2>
+			<p class="noptin-extension-group__description"><?php esc_html_e( 'The WooCommerce addon provides better integration with WooCommerce and its extensions.', 'newsletter-optin-box' ); ?></p>
+
+			<?php Noptin_COM_Helper::display_main_action_button( $license, 'noptin-woocommerce', $installed_addons, false ); ?>
+
+			<?php if ( ! empty( $license_key ) && false !== strpos( $license->product_sku, 'connect' ) ) : ?>
+				<!-- Display notice that the license key can not be used for this extension -->
+				<div class="noptin-extensions-alert noptin-extensions-alert-dark">
+					<div>
+						<?php echo wp_kses_post( __( 'Your active license key can not be used to install the WooCommerce Addon. Please <strong>purchase a personal plan or higher</strong> to receive updates and support.', 'newsletter-optin-box' ) ); ?>
+					</div>
+
+					<a
+						class="addons-button addons-button-installed"
+						href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'upgrade', 'extensionsscreen' ) ); ?>"
+					><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
+				</div>
+			<?php endif; ?>
+		</div>
+	<?php endif; ?>
 
 	<!-- Noptin Addons Pack -->
 	<div class="noptin-extension-group noptin-extension-group__addons-pack">
@@ -221,7 +251,7 @@
 
 				<a
 					class="addons-button addons-button-installed"
-					href="https://noptin.com/pricing/?utm_source=extensionsscreen&utm_medium=product&utm_campaign=upgrade"
+					href="<?php echo esc_url( noptin_get_upsell_url( 'pricing', 'upgrade', 'extensionsscreen' ) ); ?>"
 				><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?></a>
 			</div>
 		<?php endif; ?>
@@ -242,7 +272,7 @@
 					<div class="noptin-extension__footer">
 						<a
 							class="button"
-							href="<?php echo esc_url( $feature['guide'] ); ?>?utm_source=extensionsscreen&utm_medium=product&utm_campaign=addonspack"
+							href="<?php echo esc_url( noptin_get_upsell_url( $feature['guide'], $key, 'extensionsscreen' ) ); ?>"
 							><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?></a>
 					</div>
 				</li>
@@ -274,7 +304,7 @@
 					<div class="noptin-extension__footer">
 						<a
 							class="button"
-							href="<?php echo esc_url( $connection->connect_url ); ?>?utm_source=extensionsscreen&utm_medium=product&utm_campaign=connections"
+							href="<?php echo esc_url( noptin_get_upsell_url( $connection->connect_url, $connection->slug, 'extensionsscreen' ) ); ?>"
 							><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?></a>
 
 						<?php Noptin_COM_Helper::display_main_action_button( $license, "noptin-{$connection->slug}", $installed_addons, true ); ?>

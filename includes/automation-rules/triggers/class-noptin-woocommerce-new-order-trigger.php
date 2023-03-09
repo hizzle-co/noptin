@@ -49,7 +49,7 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Fired when there is a new WooCommerce order', 'newsletter-optin-box' );
+		return __( 'When there is a new WooCommerce order', 'newsletter-optin-box' );
 	}
 
 	/**

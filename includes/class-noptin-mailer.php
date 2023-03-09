@@ -189,8 +189,8 @@ class Noptin_Mailer {
 			'blog_description' => get_bloginfo( 'description' ),
 			'home_url'         => get_home_url(),
 			'noptin'   		   => sprintf(
-				'<a target="_blank" href="https://noptin.com/?utm_medium=plugin-dashboard&utm_campaign=powered-by&utm_source=%s">Noptin</a>',
-				rawurlencode( esc_url( get_home_url() ) )
+				'<a target="_blank" href="%s">Noptin</a>',
+				noptin_get_upsell_url( 'https://noptin.com/', 'powered-by', 'email-campaigns' )
 			),
 			'noptin_company'   => get_noptin_option( 'company', '' ),
 		);

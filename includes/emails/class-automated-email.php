@@ -169,6 +169,15 @@ class Noptin_Automated_Email {
 	}
 
 	/**
+	 * Checks if this is an automation rule email.
+	 *
+	 * @return bool
+	 */
+	public function is_automation_rule() {
+		return 0 === strpos( $this->type, 'automation_rule_' );
+	}
+
+	/**
 	 * Checks if this is a mass mail.
 	 *
 	 * @return bool
@@ -252,6 +261,16 @@ class Noptin_Automated_Email {
 	 */
 	public function get_subject() {
 		return $this->get( 'subject' );
+	}
+
+	/**
+	 * Returns the recipient ids for mass mail that are manually sent to selected recipients.
+	 *
+	 * @return array
+	 */
+	public function get_manual_recipients_ids() {
+		$ids = $this->get( 'manual_recipients_ids' );
+		return empty( $ids ) ? array() : array_unique( noptin_parse_int_list( $ids ) );
 	}
 
 	/**
@@ -476,7 +495,7 @@ class Noptin_Automated_Email {
 			wp_init_targeted_link_rel_filters();
 		}
 
-		if ( is_int( $result ) && $result ) {
+		if ( is_numeric( $result ) && $result ) {
 			$this->id = $result;
 			do_action( 'noptin_' . $this->type . '_campaign_saved', $this );
 			return true;

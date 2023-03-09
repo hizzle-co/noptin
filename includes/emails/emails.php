@@ -38,6 +38,13 @@ defined( 'ABSPATH' ) || exit;
  */
 function noptin_send_email( $args, $background = false ) {
 
+	if ( empty( $args['message'] ) || is_wp_error( $args['message'] ) ) {
+		return false;
+	}
+
+	$args       = apply_filters( 'noptin_send_email_args', $args );
+	$background = isset( $args['background'] ) ? $args['background'] : $background;
+
 	if ( ! $background ) {
 		return noptin()->emails->sender->send( $args );
 	}
@@ -357,6 +364,41 @@ function display_noptin_campaign_subscriber_filter( $campaign ) {
 }
 
 /**
+ * Retrieves an email recipient by id and sender.
+ *
+ * @since 1.10.1
+ * @param int $id The recipient id.
+ * @param string $sender The sender.
+ * @return array|false An array containing the recipient email and name, or false if none found.
+ */
+function get_noptin_email_recipient( $id, $sender ) {
+
+	return apply_filters( "noptin_{$sender}_email_recipient", false, $id );
+}
+
+/**
+ * Retrieves a URL to send emails to specified reciepients.
+ *
+ * @since 1.10.1
+ * @param array $recipients An array of recipient ids.
+ * @param string $sender The sender.
+ * @return string A URL to send emails to specified reciepients.
+ */
+function get_noptin_email_recipients_url( $recipients, $sender ) {
+	$recipients = implode( ',', noptin_parse_int_list( $recipients ) );
+
+	return add_query_arg(
+		array(
+			'noptin_recipients' => rawurlencode( $recipients ),
+			'section'           => 'newsletters',
+			'sub_section'       => 'edit_campaign',
+			'campaign'          => rawurlencode( $sender ),
+		),
+		admin_url( 'admin.php?page=noptin-email-campaigns' )
+	);
+}
+
+/**
  * Logs a debugging message.
  *
  * @param string $log The message to log.
@@ -371,7 +413,7 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 
 		// Ensure the log is a scalar.
 		if ( ! is_scalar( $log ) ) {
-			$log = print_r( $log, true );
+			$log = print_r( $log, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		}
 
 		// Add title.
@@ -390,11 +432,11 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 		}
 
 		// Log the message.
-		error_log( trim( $log ) );
+		error_log( trim( $log ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 		// ... and a backtrace.
 		if ( false !== $title && false !== $file ) {
-			error_log( 'Backtrace ' . wp_debug_backtrace_summary() );
+			error_log( 'Backtrace ' . wp_debug_backtrace_summary() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_wp_debug_backtrace_summary
 		}
 	}
 
@@ -403,4 +445,36 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 		exit;
 	}
 
+}
+
+/**
+ * Displays the available merge tags text.
+ *
+ * @param string $text The text to display.
+ * @since 1.10.3
+ */
+function noptin_email_display_merge_tags_text( $text = '' ) {
+
+	if ( apply_filters( 'noptin_email_has_listed_available_merge_tags', false ) ) {
+		add_thickbox();
+		$atts = array(
+			'href'  => '#TB_inline?width=0&height=550&inlineId=noptin-available-smart-tags',
+			'class' => 'thickbox',
+		);
+	} else {
+		$atts = array(
+			'href'   => noptin_get_upsell_url( '/guide/sending-emails/email-tags/#available-merge-tags', 'email-tags', 'email-campaigns' ),
+			'target' => '_blank',
+		);
+	}
+
+	?>
+	<p class="description">
+		<?php echo wp_kses_post( $text ); ?>
+		<?php esc_html_e( 'You can use email tags to provide dynamic values.', 'newsletter-optin-box' ); ?>
+		<a <?php noptin_attr( 'available_email_tags', $atts ); ?>>
+			<?php esc_html_e( 'View available tags', 'newsletter-optin-box' ); ?>
+		</a>
+	</p>
+	<?php
 }
