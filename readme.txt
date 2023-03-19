@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.11.6 =
+* Fix multicheckbox newsletter form field type only sending a single value.
+
 = 1.11.4 =
 * Add ability to set custom newsletter subscription form field placeholders.
 * Add option to set custom CSS for newsletter emails.

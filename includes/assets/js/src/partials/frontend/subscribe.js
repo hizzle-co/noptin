@@ -50,16 +50,12 @@ export default function subscribe( form ) {
 		form.querySelector( '.noptin_feedback_error' ).style.display = 'none';
 
 		// Prep all form data
-		const data = {};
+		const data = new URLSearchParams( `action=noptin_new_subscriber&nonce=${noptin.nonce}&conversion_page=${window.location.href}` );
 		const fields = new FormData( form );
 
 		fields.forEach( ( value, key ) => {
-			data[ key ] = value;
+			data.append( key, value );
 		});
-
-		data.action = 'noptin_new_subscriber';
-		data.nonce = noptin.nonce;
-		data.conversion_page = window.location.href;
 
 		// Send the data to the server
 		window
@@ -67,7 +63,7 @@ export default function subscribe( form ) {
 			// Post the form.
 			.fetch( noptin.ajaxurl, {
 				method: 'POST',
-				body: new URLSearchParams( data ),
+				body: data,
 				credentials: 'same-origin',
 				headers: {
 					'Accept': 'application/json',
