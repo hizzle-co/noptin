@@ -160,7 +160,15 @@ class Noptin_Automated_Emails_Admin {
 		} elseif ( false === $result ) {
 			noptin()->admin->show_error( __( 'Could not save your changes.', 'newsletter-optin-box' ) );
 		} else {
-			noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );
+			// Show success message and a preview link.
+			noptin()->admin->show_success(
+				sprintf(
+					'%s. <a href="%s" target="_blank">%s</a>',
+					esc_html__( 'Your changes were saved successfully', 'newsletter-optin-box' ),
+					esc_url( $automation->get_preview_url() ),
+					esc_html__( 'Preview', 'newsletter-optin-box' )
+				)
+			);
 		}
 
 		// Automation rule.

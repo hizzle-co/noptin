@@ -432,6 +432,10 @@ abstract class Noptin_Email_Type {
 		// Clean environment.
 		$this->after_send( $campaign );
 
+		if ( is_wp_error( $content ) ) {
+			return $content->get_error_message();
+		}
+
 		// Filter and return.
 		return apply_filters( 'noptin_generate_email_preview', $content, $campaign, $this );
 

@@ -132,8 +132,14 @@ class Noptin_Newsletter_Emails_Admin {
 			noptin()->admin->show_error( __( 'Could not save your changes.', 'newsletter-optin-box' ) );
 		} else {
 
+			$preview_link = sprintf(
+				' <a href="%s" target="_blank">%s</a>',
+				esc_url( $newsletter->get_preview_url() ),
+				esc_html__( 'Preview', 'newsletter-optin-box' )
+			);
+
 			if ( 'draft' === $newsletter->status ) {
-				noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) );
+				noptin()->admin->show_success( __( 'Your changes were saved successfully', 'newsletter-optin-box' ) . $preview_link );
 				wp_safe_redirect( get_noptin_newsletter_campaign_url( $newsletter->id ) );
 				exit;
 			}
@@ -145,12 +151,12 @@ class Noptin_Newsletter_Emails_Admin {
 					sprintf(
 						// translators: %s is the date.
 						__( 'Your email has been scheduled to send on: %s', 'newsletter-optin-box' ),
-						'<strong>' . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $post->post_date ) ) . '</strong>'
-					)
+						'<strong>' . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $post->post_date ) ) . '</strong>.'
+					) . $preview_link
 				);
 
 			} else {
-				noptin()->admin->show_success( __( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ) );
+				noptin()->admin->show_success( __( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ) . $preview_link );
 			}
 
 			wp_safe_redirect( admin_url( 'admin.php?page=noptin-email-campaigns' ) );
