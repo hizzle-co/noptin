@@ -47,6 +47,7 @@ $GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) ); // phpcs:
 			padding: 20px;
 			border: 0;
 			margin: 0;
+			box-sizing: border-box;
 		}
 
 		#noptin-form-preview p.description{
