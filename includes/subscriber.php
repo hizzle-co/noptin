@@ -755,10 +755,9 @@ function get_default_noptin_subscriber_double_optin_email() {
  * Sends double optin emails.
  *
  * @param int   $id The id of the new subscriber.
- * @param array $fields The subscription field values.
  * @since 1.2.4
  */
-function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = false ) {
+function send_new_noptin_subscriber_double_optin_email( $id, $deprecated = false, $force = false ) {
 
 	// Abort if double opt-in is disabled.
 	$double_optin = get_noptin_option( 'double_optin', false );
@@ -781,7 +780,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $fields, $force = f
 	$content .= get_noptin_option( 'double_optin_after_cta_text', $defaults['after_cta_text'] );
 
 	// Handle custom merge tags.
-	$url  = esc_url_raw( get_noptin_action_url( 'confirm', $fields['confirm_key'] ) );
+	$url  = esc_url_raw( get_noptin_action_url( 'confirm', $subscriber->confirm_key ) );
 	$link = "<a href='$url' target='_blank'>$url</a>";
 
 	$merge_tags = array(
