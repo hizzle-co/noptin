@@ -111,13 +111,11 @@ class Noptin_Email_Manager {
 		// Periodically delete sent campaigns.
 		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_delete_campaigns' ) );
 
-		// Automated emails.
-		add_action( 'init', array( $this->automated_email_types, 'add_hooks' ) );
-
 		$this->sender->add_hooks();
 		$this->admin->add_hooks();
 		$this->tags->add_hooks();
 		$this->newsletter->add_hooks();
+		$this->automated_email_types->add_hooks();
 	}
 
 	/**

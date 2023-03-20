@@ -724,52 +724,6 @@ function noptin_subscribers_meta_table_exists() {
 }
 
 /**
- * Notifies the site admin when there is a new subscriber.
- *
- * @param int   $id The id of the new subscriber.
- * @param array $fields The subscription field values.
- * @since 1.2.0
- */
-function noptin_new_subscriber_notify( $id, $fields ) {
-
-	// Are we sending new subscriber notifications?
-	$notify = get_noptin_option( 'notify_admin', false );
-	if ( empty( $notify ) ) {
-		return;
-	}
-
-	// The blogname option is escaped with esc_html on the way into the database in sanitize_option.
-	// we want to reverse this for the plain text arena of emails.
-	$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-
-	/* translators: %s: site title */
-	$message = sprintf( __( '%s has a new email subscriber', 'newsletter-optin-box' ), $blogname ) . "\r\n\r\n";
-
-	unset( $fields['Email'] );
-	unset( $fields['name'] );
-
-	foreach ( $fields as $key => $val ) {
-
-		if ( ! empty( $val ) && is_scalar( $val ) ) {
-			$message .= sprintf( '%s: %s', esc_html( $key ), esc_html( $val ) ) . "\r\n";
-		}
-	}
-
-	$to = get_noptin_option( 'admin_email', get_option( 'admin_email' ) );
-
-	if ( empty( $to ) ) {
-		return;
-	}
-
-	// translators: %s: site title
-	$subject = sprintf( __( '[%s] New Subscriber', 'newsletter-optin-box' ), $blogname );
-
-	@wp_mail( noptin_parse_list( $to ), wp_specialchars_decode( $subject ), $message );
-
-}
-add_action( 'noptin_insert_subscriber', 'noptin_new_subscriber_notify', 10, 2 );
-
-/**
  * Retrieves the default double opt-in email details.
  *
  * @since 1.3.3

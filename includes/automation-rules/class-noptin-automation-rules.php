@@ -60,6 +60,16 @@ class Noptin_Automation_Rules {
 		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
 		add_action( 'noptin_deleted_automation_rule', array( $this, 'delete_campaign_on_automation_rule_delete' ) );
 		do_action( 'noptin_automation_rules_load', $this );
+
+		// Register automated email types.
+		foreach ( $this->get_triggers() as $trigger ) {
+			$email_type = 'automation_rule_' . $trigger->get_id();
+
+			noptin()->emails->automated_email_types->register_automated_email_type(
+				$email_type,
+				new Noptin_Automation_Rule_Email( $email_type )
+			);
+		}
 	}
 
 	/**

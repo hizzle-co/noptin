@@ -213,15 +213,6 @@ class Noptin_Settings {
 		$double_optin = get_default_noptin_subscriber_double_optin_email();
 		$settings     = array(
 
-			'notify_admin'                 => array(
-				'el'          => 'input',
-				'type'        => 'checkbox_alt',
-				'section'     => 'general',
-				'label'       => __( 'Admin Notifications', 'newsletter-optin-box' ),
-				'description' => __( 'Notify the site admin every time a new subscriber signs up for the newsletter.', 'newsletter-optin-box' ),
-				'default'     => false,
-			),
-
 			'double_optin'                 => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
