@@ -1260,16 +1260,28 @@ function get_noptin_custom_fields( $public_only = false ) {
 	}
 
 	// Clean the fields.
-	$fields = map_deep( apply_filters( 'noptin_custom_fields', $custom_fields ), 'esc_html' );
+	$custom_fields = apply_filters( 'noptin_custom_fields', $custom_fields );
+	$fields        = array();
 
-	foreach ( $fields as $index => $field ) {
-		$field['field_key'] = uniqid( 'noptin_' ) . $index;
+	foreach ( $custom_fields as $index => $field ) {
+		$prepared_field = array(
+			'field_key' => uniqid( 'noptin_' ) . $index,
+		);
 
-		if ( 'email' === $field['merge_tag'] ) {
-			$field['subs_table'] = true;
+		foreach ( $field as $key => $value ) {
+
+			if ( in_array( $key, array( 'visible', 'subs_table', 'predefined', 'required' ), true ) ) {
+				$prepared_field[ $key ] = ! empty( $value );
+			} else {
+				$prepared_field[ $key ] = noptin_clean( $value );
+			}
 		}
 
-		$fields[ $index ] = $field;
+		if ( 'email' === $field['merge_tag'] ) {
+			$prepared_field['subs_table'] = true;
+		}
+
+		$fields[ $index ] = $prepared_field;
 	}
 
 	// Maybe return public fields only.

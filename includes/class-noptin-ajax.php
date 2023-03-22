@@ -496,7 +496,7 @@ class Noptin_Ajax {
 		do_action( 'noptin_before_save_options' );
 
 		// Prepare settings.
-		$settings = stripslashes_deep( $_POST['state'] );
+		$settings = json_decode( wp_unslash( $_POST['state'] ), true );
 		unset( $settings['noptin_admin_nonce'] );
 		unset( $settings['saved'] );
 		unset( $settings['error'] );
@@ -504,8 +504,6 @@ class Noptin_Ajax {
 		unset( $settings['currentSection'] );
 		unset( $settings['openSections'] );
 		unset( $settings['fieldTypes'] );
-
-		$settings = map_deep( $settings, 'noptin_sanitize_booleans' );
 
 		if ( ! empty( $settings['custom_fields'] ) ) {
 
