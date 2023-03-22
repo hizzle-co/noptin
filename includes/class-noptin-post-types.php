@@ -20,6 +20,7 @@ class Noptin_Post_Types {
 
 		// And some actions.
 		add_filter( 'post_row_actions', array( $this, 'remove_actions' ), 10, 2 );
+		add_action( 'noptin_reset_form_stats', array( $this, 'reset_form_stats' ), 10, 2 );
 
 		// Filter form columns.
 		add_filter( 'manage_noptin-form_posts_columns', array( $this, 'manage_form_columns' ) );
@@ -121,6 +122,24 @@ class Noptin_Post_Types {
 						esc_html__( 'Preview', 'newsletter-optin-box' )
 					),
 				),
+				array(
+					'reset' => sprintf(
+						'<a href="%s">%s</a>',
+						esc_url(
+							wp_nonce_url(
+								add_query_arg(
+									array(
+										'noptin_admin_action' => 'noptin_reset_form_stats',
+										'form_id'             => $post->ID,
+									)
+								),
+								'noptin-reset-nonce',
+								'noptin-reset-nonce'
+							)
+						),
+						esc_html( __( 'Reset Stats', 'newsletter-optin-box' ) )
+					),
+				),
 				$actions
 			);
 
@@ -128,6 +147,25 @@ class Noptin_Post_Types {
 
 		return $actions;
 
+	}
+
+	/**
+     * Resets form stats.
+	 *
+     */
+    public function reset_form_stats() {
+
+		if ( empty( $_GET['form_id'] ) || empty( $_GET['noptin-reset-nonce'] ) || ! wp_verify_nonce( $_GET['noptin-reset-nonce'], 'noptin-reset-nonce' ) ) {
+			return;
+		}
+
+		update_post_meta( $_GET['form_id'], '_noptin_form_views', 0 );
+		update_post_meta( $_GET['form_id'], '_noptin_subscribers_count', 0 );
+
+		noptin()->admin->show_success( __( 'Form stats reset successfully', 'newsletter-optin-box' ) );
+
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'form_id', 'noptin-reset-nonce' ) ) );
+		exit;
 	}
 
 	/**
