@@ -291,7 +291,7 @@ class Noptin_Admin {
 
 		// Prepare the args.
 		$id     = trim( $_POST['state']['id'] );
-		$state  = $_POST['state'];
+		$state  = map_deep( wp_unslash( $_POST['state'] ), 'noptin_sanitize_booleans' );
 		$status = 'draft';
 
 		if ( true === $state['optinStatus'] || 'true' === $state['optinStatus'] ) {
@@ -311,12 +311,12 @@ class Noptin_Admin {
 			wp_die( esc_html( $post->get_error_message() ) );
 		}
 
-		if ( empty( $_POST['state']['showPostTypes'] ) ) {
-			$_POST['state']['showPostTypes'] = array();
+		if ( empty( $state['showPostTypes'] ) ) {
+			$state['showPostTypes'] = array();
 		}
 
-		update_post_meta( $id, '_noptin_state', $_POST['state'] );
-		update_post_meta( $id, '_noptin_optin_type', $_POST['state']['optinType'] );
+		update_post_meta( $id, '_noptin_state', $state );
+		update_post_meta( $id, '_noptin_optin_type', $state['optinType'] );
 
 		// Ensure impressions and subscriptions are set.
 		// to prevent the form from being hidden when the user sorts by those fields.

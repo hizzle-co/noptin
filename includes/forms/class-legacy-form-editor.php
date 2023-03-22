@@ -112,6 +112,7 @@ class Noptin_Legacy_Form_Editor {
 		);
 
 		$params = apply_filters( 'noptin_form_editor_params', $params );
+		$params = map_deep( $params, 'noptin_sanitize_booleans' );
 
 		wp_localize_script( 'noptin-optin-editor', 'noptinEditor', $params );
 
