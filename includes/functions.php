@@ -106,13 +106,14 @@ function update_noptin_option( $key, $value ) {
  */
 function get_noptin_action_url( $action, $value = false, $empty = false ) {
 
+	$home_url = apply_filters( 'noptin_action_url_home_url', get_home_url() );
 	return add_query_arg(
 		array(
 			'noptin_ns' => rawurlencode( $action ),
 			'nv'        => empty( $value ) ? false : rawurlencode( $value ),
 			'nte'       => $empty,
 		),
-		get_home_url()
+		$home_url
 	);
 
 }

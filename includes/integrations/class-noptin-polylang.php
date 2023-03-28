@@ -20,6 +20,7 @@ class Noptin_Polylang {
 		add_filter( 'noptin_is_multilingual', '__return_true', 5 );
 		add_filter( 'noptin_form_scripts_params', array( $this, 'filter_ajax_params' ), 5 );
 		add_filter( 'noptin_multilingual_active_languages', array( $this, 'filter_active_languages' ) );
+		add_filter( 'noptin_action_url_home_url', array( $this, 'filter_home_url' ) );
 
 	}
 
@@ -86,4 +87,20 @@ class Noptin_Polylang {
 		return $languages;
 	}
 
+	/**
+	 * Filters the home URL to add the language code.
+	 *
+	 * @param string $url
+	 * @return string $url
+	 */
+	public function filter_home_url( $url ) {
+
+		if ( function_exists( 'pll_home_url' ) ) {
+			$subscriber = get_current_noptin_subscriber_id();
+			$language   = empty( $subscriber ) ? '' : get_noptin_subscriber_meta( $subscriber, 'language', true );
+			$url        = pll_home_url( $language );
+		}
+
+		return $url;
+	}
 }

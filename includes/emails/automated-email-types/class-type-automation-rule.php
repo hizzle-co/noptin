@@ -200,8 +200,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 */
 	public function maybe_send_notification( $trigger_args, $campaign ) {
 
-		noptin_error_log( 'In maybe_send_notification_' . $this->trigger_id );
-
 		// Abort if not our email.
 		if ( $this->trigger_id !== $trigger_args['trigger_id'] ) {
 			return;

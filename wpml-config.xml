@@ -18,6 +18,12 @@
 			<key name="noptin_*_integration_checkbox_message" />
 			<key name="register_form_msg" />
 			<key name="comment_form_msg" />
+			<key name="custom_fields">
+				<key name="label" />
+				<key name="placeholder" />
+				<key name="description" />
+				<key name="options" />
+			</key>
 		</key>
 	</admin-texts>
 
