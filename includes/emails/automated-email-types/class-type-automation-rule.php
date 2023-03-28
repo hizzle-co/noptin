@@ -43,6 +43,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	public function __construct( $trigger_id ) {
 		$this->type       = $trigger_id;
 		$this->trigger_id = str_replace( 'automation_rule_', '', $this->type );
+		$this->add_hooks();
 	}
 
 	/**
@@ -198,6 +199,8 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * @param Noptin_Automated_Email $campaign
 	 */
 	public function maybe_send_notification( $trigger_args, $campaign ) {
+
+		noptin_error_log( 'In maybe_send_notification_' . $this->trigger_id );
 
 		// Abort if not our email.
 		if ( $this->trigger_id !== $trigger_args['trigger_id'] ) {

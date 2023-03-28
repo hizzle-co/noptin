@@ -454,7 +454,7 @@ class Noptin {
 			"$plugin_path/includes/integrations",
 			"$plugin_path/includes/automation-rules",
 			"$plugin_path/includes/automation-rules/actions",
-			"$plugin_path/includes/automation-rules/triggers"
+			"$plugin_path/includes/automation-rules/triggers",
 		);
 
 		foreach ( apply_filters( 'noptin_autoload_locations', $locations ) as $location ) {
