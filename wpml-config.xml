@@ -4,25 +4,34 @@
 		<key name="noptin_options">
 			<key name="address" />
 			<key name="from_name" />
+			<key name="from_email" />
 			<key name="company" />
 			<key name="permission_text" />
 			<key name="footer_text" />
 			<key name="success_message" />
 			<key name="double_optin_email_subject" />
-			<key name="double_optin_hero_text" />
-			<key name="double_optin_email_body" />
-			<key name="double_optin_cta_text" />
-			<key name="double_optin_after_cta_text" />
-			<key name="double_optin_permission_text" />
+            <key name="double_optin_hero_text" />
+            <key name="double_optin_email_body" />
+            <key name="double_optin_cta_text" />
+            <key name="double_optin_after_cta_text" />
+            <key name="double_optin_permission_text" />
+			<key name="pages_unsubscribe_page_message" />
+            <key name="pages_unsubscribe_page" />
+            <key name="pages_resubscribe_page_message" />
+            <key name="pages_resubscribe_page" />
+            <key name="pages_confirm_page_message" />
+            <key name="pages_confirm_page" />
 			<key name="pages_*" />
 			<key name="noptin_*_integration_checkbox_message" />
 			<key name="register_form_msg" />
 			<key name="comment_form_msg" />
 			<key name="custom_fields">
-				<key name="label" />
-				<key name="placeholder" />
-				<key name="description" />
-				<key name="options" />
+                <key name="*">
+                    <key name="label" />
+                    <key name="placeholder" />
+                    <key name="description" />
+                    <key name="options" />
+                </key>
 			</key>
 		</key>
 	</admin-texts>
