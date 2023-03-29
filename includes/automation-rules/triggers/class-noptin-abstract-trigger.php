@@ -272,7 +272,7 @@ abstract class Noptin_Abstract_Trigger {
 						'description'       => __( 'User Locale', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 						'example'           => 'customer.locale default="en_US"',
-						'options'           => get_available_languages(),
+						'options'           => noptin_get_available_languages(),
 					),
 
 					'email'       => array(

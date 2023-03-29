@@ -1398,6 +1398,20 @@ function noptin_is_multilingual() {
 }
 
 /**
+ * Returns an array of available languages.
+ *
+ * @return array|null
+ */
+function noptin_get_available_languages() {
+
+	if ( ! noptin_is_multilingual() ) {
+		return null;
+	}
+
+	return apply_filters( 'noptin_multilingual_active_languages', array() );
+}
+
+/**
  * Formats a date for display.
  *
  * @param string $date_time.

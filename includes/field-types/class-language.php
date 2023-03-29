@@ -24,7 +24,8 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	 * @return array
 	 */
 	public function get_languages() {
-		return apply_filters( 'noptin_multilingual_active_languages', array() );
+		$languages = noptin_get_available_languages();
+		return is_array( $languages ) ? $languages : array();
 	}
 
 	/**

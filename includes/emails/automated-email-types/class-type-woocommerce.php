@@ -738,7 +738,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'description'       => __( "The customer's preferred locale", 'newsletter-optin-box' ),
 				'conditional_logic' => 'string',
 				'example'           => 'customer.locale default="en_US"',
-				'options'           => get_available_languages(),
+				'options'           => noptin_get_available_languages(),
 			),
 
 			'customer.newsletter'       => array(
