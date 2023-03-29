@@ -257,48 +257,55 @@ abstract class Noptin_Abstract_Trigger {
 				$smart_tags,
 				array(
 
-					'user_id'    => array(
+					'user_id'     => array(
 						'description'       => __( 'User ID', 'newsletter-optin-box' ),
 						'conditional_logic' => 'number',
 					),
 
-					'user_role'  => array(
+					'user_role'   => array(
 						'description'       => __( 'User Role', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 						'options'           => wp_roles()->get_names(),
 					),
 
-					'email'      => array(
+					'user_locale' => array(
+						'description'       => __( 'User Locale', 'newsletter-optin-box' ),
+						'conditional_logic' => 'string',
+						'example'           => 'customer.locale default="en_US"',
+						'options'           => get_available_languages(),
+					),
+
+					'email'       => array(
 						'description'       => __( 'Email Address', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 					),
 
-					'name'       => array(
+					'name'        => array(
 						'description'       => __( 'Display Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 					),
 
-					'first_name' => array(
+					'first_name'  => array(
 						'description'       => __( 'First Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 					),
 
-					'last_name'  => array(
+					'last_name'   => array(
 						'description'       => __( 'Last Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 					),
 
-					'user_login' => array(
+					'user_login'  => array(
 						'description'       => __( 'Login Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 					),
 
-					'user_url'   => array(
+					'user_url'    => array(
 						'description'       => __( 'User URL', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 					),
 
-					'user_bio'   => array(
+					'user_bio'    => array(
 						'description'       => __( 'User Bio', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 					),
@@ -579,15 +586,16 @@ abstract class Noptin_Abstract_Trigger {
 		}
 
 		$args = array(
-			'user_id'    => $user->ID,
-			'email'      => $user->user_email,
-			'name'       => $user->display_name,
-			'first_name' => $user->first_name,
-			'last_name'  => $user->last_name,
-			'user_bio'   => $user->description,
-			'user_url'   => $user->user_url,
-			'user_login' => $user->user_login,
-			'user_role'  => current( $user->roles ),
+			'user_id'     => $user->ID,
+			'email'       => $user->user_email,
+			'name'        => $user->display_name,
+			'first_name'  => $user->first_name,
+			'last_name'   => $user->last_name,
+			'user_bio'    => $user->description,
+			'user_url'    => $user->user_url,
+			'user_login'  => $user->user_login,
+			'user_role'   => current( $user->roles ),
+			'user_locale' => get_user_locale( $user ),
 		);
 
 		// Add meta data.

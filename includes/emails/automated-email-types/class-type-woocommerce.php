@@ -734,6 +734,13 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'conditional_logic' => 'string',
 			),
 
+			'customer.locale'           => array(
+				'description'       => __( "The customer's preferred locale", 'newsletter-optin-box' ),
+				'conditional_logic' => 'string',
+				'example'           => 'customer.locale default="en_US"',
+				'options'           => get_available_languages(),
+			),
+
 			'customer.newsletter'       => array(
 				'description'       => __( "The customer's newsletter subscription status", 'newsletter-optin-box' ),
 				'callback'          => array( $this, 'get_customer_field' ),
@@ -775,6 +782,24 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				}
 
 				return 'no';
+
+			case 'customer.locale':
+				$locale = $this->customer->get_meta( 'locale' );
+
+				if ( empty( $locale ) ) {
+
+					if ( $this->customer->get_id() ) {
+						$locale = get_user_locale( $this->customer->get_id() );
+					} else {
+						$locale = $default;
+					}
+				}
+
+				if ( empty( $locale ) ) {
+					$locale = get_locale();
+				}
+
+				return $locale;
 
 			case 'customer.details':
 				if ( ! empty( $this->order ) ) {
