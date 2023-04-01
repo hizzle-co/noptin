@@ -50,7 +50,6 @@
 
 	<custom-types>
 		<custom-type translate="1" display-as-translated="1">noptin-form</custom-type>
-		<custom-type translate="1" display-as-translated="1">noptin-campaign</custom-type>
 	</custom-types>
 
 	<custom-fields>
