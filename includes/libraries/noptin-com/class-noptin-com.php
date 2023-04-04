@@ -170,6 +170,11 @@ class Noptin_COM {
 		}
 
 		$res = json_decode( wp_remote_retrieve_body( $response ) );
+
+		if ( empty( $res ) ) {
+			return new WP_Error( 'invalid_response', __( 'Invalid response from the server.', 'newsletter-optin-box' ) );
+		}
+
 		if ( isset( $res->code ) && isset( $res->message ) ) {
 			return new WP_Error( $res->code, $res->message, (array) $res->data );
 		}
@@ -191,9 +196,11 @@ class Noptin_COM {
 		}
 
 		// Fetch the connections.
-		$result = self::process_api_response( wp_remote_get( 'https://noptin.com/wp-json/nop-con/v1/connections?order=asc&orderby=name' ) );
+		$result = self::process_api_response( wp_remote_get( 'https://cdn.noptin.com/api/connections.json' ) );
 
 		if ( ! is_array( $result ) ) {
+			$connections = json_decode( file_get_contents( plugin_dir_path( __FILE__ ) . 'connections.json' ) );
+			set_transient( 'noptin_com_connections', $connections, 12 * HOUR_IN_SECONDS );
 			return array();
 		}
 
