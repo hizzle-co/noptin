@@ -196,12 +196,10 @@ class Noptin_COM {
 		}
 
 		// Fetch the connections.
-		$result = self::process_api_response( wp_remote_get( 'https://cdn.noptin.com/api/connections.json' ) );
+		$result = self::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/connections.json' ) );
 
 		if ( ! is_array( $result ) ) {
-			$connections = json_decode( file_get_contents( plugin_dir_path( __FILE__ ) . 'connections.json' ) );
-			set_transient( 'noptin_com_connections', $connections, 12 * HOUR_IN_SECONDS );
-			return array();
+			$result = json_decode( file_get_contents( plugin_dir_path( __FILE__ ) . 'connections.json' ) );
 		}
 
 		// Cache the connections.

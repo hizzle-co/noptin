@@ -39,7 +39,7 @@ class Noptin_COM_Updater {
 	 * @return object The same or a modified version of the transient.
 	 */
 	public static function transient_update_plugins( $transient ) {
-		$update_data = self::get_update_data( true );
+		$update_data = self::get_update_data();
 
 		foreach ( Noptin_COM::get_installed_addons() as $plugin ) {
 
@@ -80,12 +80,11 @@ class Noptin_COM_Updater {
 	 * Scans through all extensions and obtains update
 	 * data for each product.
 	 *
-	 * @param bool $force Whether to force a remote request.
 	 * @return array Update data {slug => data}
 	 */
-	public static function get_update_data( $force = false ) {
+	public static function get_update_data() {
 		$payload = wp_list_pluck( Noptin_COM::get_installed_addons(), 'slug' );
-		return self::update_check( array_filter( array_unique( array_values( $payload ) ) ), $force );
+		return self::update_check( array_filter( array_unique( array_values( $payload ) ) ) );
 	}
 
 	/**
@@ -95,10 +94,9 @@ class Noptin_COM_Updater {
 	 * the payload changes, the cache is going to miss.
 	 *
 	 * @param array $payload Information about the plugin to update.
-	 * @param bool  $force   Whether to force a remote request.
 	 * @return array Update data for each requested product.
 	 */
-	private static function update_check( $payload, $force = false ) {
+	private static function update_check( $payload ) {
 
 		// Abort if no downloads installed.
 		if ( empty( $payload ) ) {
@@ -110,7 +108,7 @@ class Noptin_COM_Updater {
 		$hash      = md5( wp_json_encode( $payload ) . Noptin_COM::get_active_license_key() );
 		$cache_key = '_noptin_update_check';
 		$data      = get_transient( $cache_key );
-		if ( false !== $data && ! $force && hash_equals( $hash, $data['hash'] ) ) {
+		if ( false !== $data && hash_equals( $hash, $data['hash'] ) ) {
 			return $data['downloads'];
 		}
 
@@ -132,6 +130,7 @@ class Noptin_COM_Updater {
 				'hizzle_license_url' => rawurlencode( home_url() ),
 				'hizzle_license'     => rawurlencode( Noptin_COM::get_active_license_key() ),
 				'downloads'          => rawurlencode( implode( ',', $git_urls ) ),
+				'hash'               => $hash,
 			),
 			'https://noptin.com/wp-json/hizzle_download/v1/versions'
 		);
@@ -156,7 +155,7 @@ class Noptin_COM_Updater {
 		}
 
 		delete_transient( '_noptin_helper_updates_count' );
-		$seconds = empty( $data['errors'] ) ? 12 * HOUR_IN_SECONDS : MINUTE_IN_SECONDS;
+		$seconds = empty( $data['errors'] ) ? DAY_IN_SECONDS : 30 * MINUTE_IN_SECONDS;
 		set_transient( $cache_key, $data, $seconds );
 		return $data['downloads'];
 	}
@@ -293,7 +292,16 @@ class Noptin_COM_Updater {
 			'https://noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
-		$new_response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
+		$key          = 'noptin_version_' . md5( $endpoint );
+		$new_response = get_transient( $key );
+
+		if ( false === $new_response ) {
+			$new_response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
+
+			if ( ! is_wp_error( $new_response ) ) {
+				set_transient( $key, $new_response, HOUR_IN_SECONDS );
+			}
+		}
 
 		if ( is_wp_error( $new_response ) ) {
 			return new WP_Error( 'plugins_api_failed', $new_response->get_error_message() );
