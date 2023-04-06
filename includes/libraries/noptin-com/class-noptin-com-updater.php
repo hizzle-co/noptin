@@ -125,17 +125,29 @@ class Noptin_COM_Updater {
 			$git_urls[ $slug ] = 'hizzle-co/' . sanitize_key( $slug );
 		}
 
-		$endpoint = add_query_arg(
+		$license_key = Noptin_COM::get_active_license_key();
+		$endpoint    = add_query_arg(
 			array(
-				'hizzle_license_url' => rawurlencode( home_url() ),
-				'hizzle_license'     => rawurlencode( Noptin_COM::get_active_license_key() ),
+				'hizzle_license_url' => empty( $license_key ) ? false : rawurlencode( home_url() ),
+				'hizzle_license'     => empty( $license_key ) ? false : rawurlencode( Noptin_COM::get_active_license_key() ),
 				'downloads'          => rawurlencode( implode( ',', $git_urls ) ),
 				'hash'               => $hash,
 			),
 			'https://noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
-		$response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
+		$response = Noptin_COM::process_api_response(
+			wp_remote_get(
+				$endpoint,
+				array(
+					'timeout' => 15,
+					'headers' => array(
+						'Accept'           => 'application/json',
+						'X-Requested-With' => 'Noptin',
+					),
+				)
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			$data['errors'][]  = $response->get_error_message();
@@ -296,7 +308,18 @@ class Noptin_COM_Updater {
 		$new_response = get_transient( $key );
 
 		if ( false === $new_response ) {
-			$new_response = Noptin_COM::process_api_response( wp_remote_get( $endpoint ) );
+			$new_response = Noptin_COM::process_api_response(
+				wp_remote_get(
+					$endpoint,
+					array(
+						'timeout' => 15,
+						'headers' => array(
+							'Accept'           => 'application/json',
+							'X-Requested-With' => 'Noptin',
+						),
+					)
+				)
+			);
 
 			if ( ! is_wp_error( $new_response ) ) {
 				set_transient( $key, $new_response, HOUR_IN_SECONDS );

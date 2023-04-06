@@ -94,6 +94,10 @@ class Noptin_COM_Helper {
 					'body' => array(
 						'website' => home_url(),
 					),
+					'headers' => array(
+						'Accept'           => 'application/json',
+						'X-Requested-With' => 'Noptin',
+					),
 				)
 			)
 		);
@@ -139,6 +143,10 @@ class Noptin_COM_Helper {
 				array(
 					'body' => array(
 						'website' => home_url(),
+					),
+					'headers' => array(
+						'Accept'           => 'application/json',
+						'X-Requested-With' => 'Noptin',
 					),
 				)
 			)

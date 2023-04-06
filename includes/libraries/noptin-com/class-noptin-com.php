@@ -139,7 +139,18 @@ class Noptin_COM {
 		}
 
 		// Fetch details remotely.
-		$license = self::process_api_response( wp_remote_get( "https://noptin.com/wp-json/hizzle/v1/licenses/$license_key/?website=" . rawurlencode( home_url() ) ) );
+		$license = self::process_api_response(
+			wp_remote_get(
+				"https://noptin.com/wp-json/hizzle/v1/licenses/$license_key/?website=" . rawurlencode( home_url() ),
+				array(
+					'timeout' => 15,
+					'headers' => array(
+						'Accept'           => 'application/json',
+						'X-Requested-With' => 'Noptin',
+					),
+				)
+			)
+		);
 
 		if ( is_wp_error( $license ) ) {
 			return $license;
