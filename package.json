@@ -26,7 +26,7 @@
 		"@wordpress/dom-ready": "3.30.0",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
-		"papaparse": "5.4.0",
+		"papaparse": "5.4.1",
 		"vue": "3.2.47",
 		"vue-contenteditable": "4.1.0",
 		"vue-popperjs": "2.3.0",
