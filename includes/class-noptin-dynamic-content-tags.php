@@ -75,7 +75,8 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$this->tags['date'] = array(
 			// translators: %s is the current date.
 			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
-			'replacement' => date_i18n( get_option( 'date_format' ) ),
+			'callback'    => 'Noptin_Dynamic_Content_Tags::get_date',
+			'example'     => 'date format="j, F Y" localized=1',
 		);
 
 		$this->tags['time'] = array(
@@ -295,6 +296,45 @@ abstract class Noptin_Dynamic_Content_Tags {
 		}
 
 		return esc_html( $default );
+	}
+
+	/**
+	 * Gets a formatted date.
+	 *
+	 * @param array $args
+	 *
+	 * @return string
+	 */
+	public static function get_date( $args = array() ) {
+		$time      = ! empty( $args['relative'] ) ? strtotime( $args['relative'] ) : time();
+		$time      = $time + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		$format    = ! empty( $args['format'] ) ? $args['format'] : 'Y-m-d';
+		$localized = ! empty( $args['localized'] );
+
+		if ( $localized ) {
+			return date_i18n( $format, $time );
+		}
+
+		return gmdate( $format, $time );
+	}
+
+	/**
+	 * Gets a formatted time.
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	public static function get_time( $args = array() ) {
+		$time      = ! empty( $args['relative'] ) ? strtotime( $args['relative'] ) : time();
+		$time      = $time + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		$format    = ! empty( $args['format'] ) ? $args['format'] : 'H:i:s';
+		$localized = ! empty( $args['localized'] );
+
+		if ( $localized ) {
+			return date_i18n( $format, $time );
+		}
+
+		return gmdate( $format, $time );
 	}
 
 	/*
