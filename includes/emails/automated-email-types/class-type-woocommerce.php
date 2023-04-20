@@ -879,6 +879,14 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				'conditional_logic' => 'string',
 			),
 
+			'product.type'              => array(
+				'description'       => __( 'Product type', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_product_field' ),
+				'example'           => 'product.type',
+				'conditional_logic' => 'string',
+				'options'           => wc_get_product_types(),
+			),
+
 			'product.short_description' => array(
 				'description' => __( 'Product short description', 'newsletter-optin-box' ),
 				'callback'    => array( $this, 'get_product_field' ),

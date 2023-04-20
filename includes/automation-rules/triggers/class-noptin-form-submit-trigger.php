@@ -55,35 +55,56 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	/**
 	 * @inheritdoc
 	 */
+	public function get_image() {
+		$slug = str_replace( '_', '-', $this->form_provider_slug );
+
+		if ( 'fluentform' === $slug ) {
+			$slug = 'fluent-forms';
+		}
+
+		return "https://cdn.noptin.com/integrations/{$slug}-badge.png";
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_description() {
 		// translators: %s is the form provider.
 		return sprintf( __( 'When a %s form is submitted', 'newsletter-optin-box' ), $this->form_provider_name );
 	}
 
 	/**
-	 * @inheritdoc
+	 * Retrieve the trigger's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
 	 */
-	public function get_rule_description( $rule ) {
+	public function get_rule_table_description( $rule ) {
 		$settings = $rule->trigger_settings;
 
+		// Ensure we have a form.
 		if ( empty( $settings['trigger_form'] ) ) {
-			return $this->get_description();
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Form not found', 'newsletter-optin-box' )
+			);
 		}
 
 		$forms = $this->get_forms();
 
 		if ( ! isset( $forms[ $settings['trigger_form'] ] ) ) {
-			return $this->get_description();
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Form not found', 'newsletter-optin-box' )
+			);
 		}
 
-		$form_title = $forms[ $settings['trigger_form'] ]['name'];
-
-		return sprintf(
-			// Translators: %1 is the form provider, %2 is the title.
-			__( 'When the %1$s form %2$s is submitted', 'newsletter-optin-box' ),
-			$this->form_provider_name,
-			'<code>' . esc_html( $form_title ) . '</code>'
+		$meta  = array(
+			esc_html__( 'Form', 'newsletter-optin-box' ) => $forms[ $settings['trigger_form'] ]['name'],
 		);
+
+		return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
 	}
 
 	/**

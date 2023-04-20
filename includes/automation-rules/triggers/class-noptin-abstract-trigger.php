@@ -124,7 +124,7 @@ abstract class Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	public function get_image() {
-		return '';
+		return plugin_dir_url( Noptin::$file ) . 'includes/assets/images/logo.png';
 	}
 
 	/**
@@ -146,6 +146,45 @@ abstract class Noptin_Abstract_Trigger {
 	 */
 	public function get_rule_description( $rule ) {
 		return $this->get_description();
+	}
+
+	/**
+	 * Retrieve the triggers's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
+	 */
+	public function get_rule_table_description( $rule ) {
+		$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
+		return noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $trigger->get_known_smart_tags(), $rule->action_id );
+	}
+
+	/**
+	 * Groups rule triggers into a single string.
+	 *
+	 * @since 1.11.9
+	 * @param array $meta
+	 * @param Noptin_Automation_Rule $rule
+	 * @return string
+	 */
+	public function rule_trigger_meta( $meta, $rule ) {
+		$prepared = array();
+
+		$meta = apply_filters( 'noptin_rule_trigger_meta_' . $this->get_id(), $meta, $rule, $this );
+		$meta = apply_filters( 'noptin_rule_trigger_meta', $meta, $rule, $this );
+
+		foreach ( $meta as $key => $value ) {
+			if ( '' !== $value && false !== $value ) {
+				$prepared[] = sprintf(
+					'<span class="noptin-rule-action-meta"><span class="noptin-rule-action-meta-key">%s</span>: <span class="noptin-rule-action-meta-value">%s</span></span>',
+					$key,
+					$value
+				);
+			}
+		}
+
+		return wp_kses_post( implode( '', $prepared ) );
 	}
 
 	/**

@@ -11,6 +11,11 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Trigger {
 
 	/**
+	 * @var bool
+	 */
+	public $depricated = true;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.0
@@ -42,27 +47,38 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 	}
 
 	/**
-	 * @inheritdoc
+	 * Retrieve the trigger's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
 	 */
-	public function get_rule_description( $rule ) {
-
+	public function get_rule_table_description( $rule ) {
 		$settings = $rule->trigger_settings;
 
-		if ( empty( $settings['product_id'] ) || empty( $settings['action'] ) ) {
-			return $this->get_description();
+		// Ensure we have a product.
+		if ( empty( $settings['product_id'] ) ) {
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Product not specified', 'newsletter-optin-box' )
+			);
 		}
 
 		$product = wc_get_product( $settings['product_id'] );
-		$product = $product ? $product->get_name() : __( 'Unknown Product', 'newsletter-optin-box' );
 
-		if ( 'buy' === $settings['action'] ) {
-			// translators: %s is the product name.
-			return sprintf( __( 'When someone buys %s', 'newsletter-optin-box' ), $product );
+		if ( ! $product ) {
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Product not found', 'newsletter-optin-box' )
+			);
 		}
 
-		// translators: %s is the product name.
-		return sprintf( __( 'When someone is refunded for %s', 'newsletter-optin-box' ), $product );
+		$meta  = array(
+			esc_html__( 'Product', 'newsletter-optin-box' ) => $product->get_name(),
+			esc_html__( 'Action', 'newsletter-optin-box' )  => 'buy' === $settings['action'] ? esc_html__( 'Buy', 'newsletter-optin-box' ) : esc_html__( 'Refund', 'newsletter-optin-box' ),
+		);
 
+		return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
 	}
 
 	/**

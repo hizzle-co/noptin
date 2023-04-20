@@ -1686,7 +1686,8 @@ a.no-campaign-create-new-campaign {
     width: 100px;
   }
 }
-#noptin-automation-rules-table .noptin-rule-action {
+#noptin-automation-rules-table .noptin-rule-action,
+#noptin-automation-rules-table .noptin-rule-trigger {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -1700,7 +1701,7 @@ a.no-campaign-create-new-campaign {
   margin-top: 0.5rem;
   color: #646970;
 }
-#noptin-automation-rules-table .noptin-rule-action-image {
+#noptin-automation-rules-table .noptin-rule-image {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -1709,7 +1710,7 @@ a.no-campaign-create-new-campaign {
   align-items: center;
   justify-content: center;
 }
-#noptin-automation-rules-table .noptin-rule-action-image img {
+#noptin-automation-rules-table .noptin-rule-image img {
   width: 100%;
   height: auto;
   max-height: 100%;
@@ -1720,7 +1721,7 @@ a.no-campaign-create-new-campaign {
   display: block;
   margin-bottom: 0.4rem;
 }
-#noptin-automation-rules-table .noptin-rule-action-meta:last-of-type {
+#noptin-automation-rules-table .noptin-rule-action-meta:last-child {
   margin-bottom: 0;
 }
 #noptin-automation-rules-table .noptin-rule-action-meta-key {

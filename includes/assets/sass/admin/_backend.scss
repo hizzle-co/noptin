@@ -1142,7 +1142,8 @@ a.no-campaign-create-new-campaign {
 		}
 	}
 
-	.noptin-rule-action {
+	.noptin-rule-action,
+	.noptin-rule-trigger {
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
@@ -1159,7 +1160,7 @@ a.no-campaign-create-new-campaign {
 		}
 	}
 
-	.noptin-rule-action-image {
+	.noptin-rule-image {
 		width: 40px;
 		height: 40px;
 		border-radius: 50%;
@@ -1181,7 +1182,7 @@ a.no-campaign-create-new-campaign {
 		display: block;
 		margin-bottom: 0.4rem;
 
-		&:last-of-type {
+		&:last-child {
 			margin-bottom: 0;
 		}
 	}

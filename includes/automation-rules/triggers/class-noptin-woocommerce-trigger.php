@@ -19,7 +19,7 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_image() {
-		return 'https://cdn.noptin.com/templates/images/woocommerce-icon.png';
+		return 'https://cdn.noptin.com/integrations/woocommerce-badge.png';
 	}
 
 	/**
@@ -40,9 +40,10 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 	 * @param WC_Order $order The WooCommerce order.
 	 * @param WC_Customer $customer The WooCommerce customer.
 	 * @param WC_Product $product The WooCommerce product.
+	 * @param WC_Order_Item_Product $order_item The WooCommerce order item.
 	 * @return array An array of args to pass to the action.
 	 */
-	public function before_trigger_wc( $order, $customer = false, $product = false ) {
+	public function before_trigger_wc( $order, $customer = false, $product = false, $order_item = false ) {
 
 		/** @var Noptin_WooCommerce_Automated_Email_Type[] $email_types */
 		$email_types = noptin()->emails->automated_email_types->types;
@@ -67,6 +68,12 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 		if ( ! empty( $product ) && isset( $email_types['woocommerce_product_purchase'] ) ) {
 			$args['previous_product']                             = $email_types['woocommerce_product_purchase']->product;
 			$email_types['woocommerce_product_purchase']->product = $product;
+		}
+
+		// Set order item.
+		if ( ! empty( $order_item ) && isset( $email_types['woocommerce_product_purchase'] ) ) {
+			$args['previous_order_item']                             = $email_types['woocommerce_product_purchase']->order_item;
+			$email_types['woocommerce_product_purchase']->order_item = $order_item;
 		}
 
 		return $args;
@@ -94,6 +101,9 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 			$email_types['woocommerce_product_purchase']->product = $args['previous_product'];
 		}
 
+		if ( isset( $args['previous_order_item'] ) && isset( $email_types['woocommerce_product_purchase'] ) ) {
+			$email_types['woocommerce_product_purchase']->order_item = $args['previous_order_item'];
+		}
 	}
 
 	/**
@@ -145,6 +155,43 @@ abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns order item smart tags.
+	 *
+	 * @return array
+	 */
+	public function get_order_item_smart_tags() {
+
+		$email_types = noptin()->emails->automated_email_types->types;
+
+		if ( isset( $email_types['woocommerce_product_purchase'] ) ) {
+			/** @var Noptin_WooCommerce_Product_Purchase_Email[] $email_types */
+			return $email_types['woocommerce_product_purchase']->get_order_item_merge_tags();
+		}
+
+		return false;
+	}
+
+	/**
+	 * Retrieves order customer.
+	 *
+	 * @param WC_Order $order The order.
+	 * @return WC_Customer
+	 */
+	public function get_order_customer( $order ) {
+		$customer = new WC_Customer( $order->get_customer_id() );
+
+		// Set customer data from order if customer is not found.
+		if ( ! $customer->get_id() ) {
+			$customer->set_email( $order->get_billing_email() );
+			$customer->set_billing_email( $order->get_billing_email() );
+			$customer->set_first_name( $order->get_billing_first_name() );
+			$customer->set_last_name( $order->get_billing_last_name() );
+		}
+
+		return $customer;
 	}
 
 	/**

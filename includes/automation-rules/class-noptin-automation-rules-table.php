@@ -214,65 +214,70 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Displays the automation rule
+	 * Displays the trigger column.
 	 *
 	 * @param  Noptin_Automation_Rule $item item.
-	 * @return HTML
+	 * @return string
 	 */
-	public function column_rule( $item ) {
+	public function column_trigger( $item ) {
+
+		// Fetch trigger.
+		$trigger = noptin()->automation_rules->get_trigger( $item->trigger_id );
+
+		// Abort if the trigger is invalid.
+		if ( empty( $trigger ) ) {
+			return sprintf(
+				'%s<div class="noptin-rule-error">%s</div>',
+				esc_html( $item->trigger_id ),
+				__( 'Your site does not support this trigger.', 'newsletter-optin-box' )
+			);
+		}
 
 		// Row actions.
-		$row_actions = array();
-		$edit_url    = esc_url( $item->get_edit_url() );
-
-		$row_actions['edit'] = '<a href="' . $edit_url . '">' . __( 'Edit', 'newsletter-optin-box' ) . '</a>';
-
-		$delete_url  = esc_url(
-			add_query_arg(
-				array(
-					'noptin_admin_action' => 'noptin_delete_automation_rule',
-					'delete'			  => $item->id,
-					'_wpnonce'            => wp_create_nonce( 'noptin-automation-rule' ),
+		$row_actions = array(
+			'edit'   => sprintf(
+				'<a href="%s">%s</a>',
+				esc_url( $item->get_edit_url() ),
+				__( 'Edit', 'newsletter-optin-box' )
+			),
+			'delete' => sprintf(
+				'<a href="%s" class="noptin-delete-single-automation-rule">%s</a>',
+				esc_url(
+					add_query_arg(
+						array(
+							'noptin_admin_action' => 'noptin_delete_automation_rule',
+							'delete'			  => $item->id,
+							'_wpnonce'            => wp_create_nonce( 'noptin-automation-rule' ),
+						),
+						$this->base_url
+					)
 				),
-				$this->base_url
-			)
+				__( 'Delete', 'newsletter-optin-box' )
+			),
 		);
-		$delete_text = __( 'Delete', 'newsletter-optin-box' );
 
-		$row_actions['delete'] = "<a class='noptin-delete-single-automation-rule' href='$delete_url'>$delete_text</a>";
+		// Prepare the texts.
+		$title       = $trigger->get_rule_description( $item );
+		$description = $trigger->get_rule_table_description( $item );
+		$image       = $trigger->get_image();
+		$actions     = $this->row_actions( $row_actions );
 
-		$row_actions = $this->row_actions( $row_actions );
-
-		// Row text.
-		$action_id  = noptin_clean( $item->action_id );
-		$action     = noptin()->automation_rules->get_action( $action_id );
-		$trigger_id = noptin_clean( $item->trigger_id );
-		$trigger    = noptin()->automation_rules->get_trigger( $trigger_id );
-
-		if ( empty( $action ) ) {
-			$action_text = sprintf(
-				"%s: $action_id",
-				__( 'Action:', 'newsletter-optin-box' )
-			);
-		} else {
-			$action_text = $action->get_rule_description( $item );
-		}
-
-		if ( empty( $trigger ) ) {
-			$trigger_text = sprintf(
-				"%s: $trigger_id",
-				__( 'Trigger:', 'newsletter-optin-box' )
-			);
-		} else {
-			$trigger_text        = $trigger->get_rule_description( $item );
-			$trigger_description = noptin_prepare_conditional_logic_for_display( $item->conditional_logic, $trigger->get_known_smart_tags(), $item->action_id );
-		}
-
-		$text        = ucfirst( "$trigger_text, $action_text" );
-		$description = empty( $trigger_description ) ? '' : wp_kses_post( "<p class='description'>$trigger_description</p>" );
-		$text        = "<div class='row-title'><a href='$edit_url'>$text</a></div>$description";
-
-		return "<div>$text $row_actions</div>";
+		return sprintf(
+			'<div class="noptin-rule-trigger">
+				%s
+				<div class="noptin-rule-name">
+					<div class="row-title">
+						<a href="%s">%s</a>
+					</div>
+					%s
+				</div>
+			</div>%s',
+			empty( $image ) ? '' : "<div class='noptin-rule-image'><img src='$image' /></div>",
+			esc_url( $item->get_edit_url() ),
+			esc_html( $title ),
+			empty( $description ) ? '' : "<div class='noptin-rule-description'>$description</div>",
+			$actions
+		);
 
 	}
 
@@ -304,7 +309,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 
 		return sprintf(
 			'<div class="noptin-rule-action">%s<div class="noptin-rule-name">%s%s</div></div>',
-			empty( $image ) ? '' : "<div class='noptin-rule-action-image'><img src='$image' /></div>",
+			empty( $image ) ? '' : "<div class='noptin-rule-image'><img src='$image' /></div>",
 			esc_html( $title ),
 			empty( $description ) ? '' : "<div class='noptin-rule-description'>$description</div>"
 		);
