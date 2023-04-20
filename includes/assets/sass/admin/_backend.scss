@@ -1134,9 +1134,66 @@ a.no-campaign-create-new-campaign {
 
 #noptin-automation-rules-table {
 	@media screen and (min-width:960px) {
-		.manage-column.column-primary {
-			width: 50%;
+		.column-status,
+		.column-times_run,
+		.column-created_at,
+		.column-updated_at {
+			width: 100px;
 		}
+	}
+
+	.noptin-rule-action {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.noptin-rule-name {
+		flex: 1;
+
+		.noptin-rule-description {
+			font-weight: 400;
+			margin-top: 0.5rem;
+			color: #646970;
+		}
+	}
+
+	.noptin-rule-action-image {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: #f1f1f1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		img {
+			width: 100%;
+			height: auto;
+			max-height: 100%;
+			object-fit: cover;
+			border-radius: 50%;
+		}
+	}
+
+	.noptin-rule-action-meta {
+		display: block;
+		margin-bottom: 0.4rem;
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	.noptin-rule-action-meta-key {
+		font-weight: 600;
+	}
+
+	.noptin-rule-error {
+		color: #e91e63;
+		display: block;
+		margin-top: 0.8rem;
 	}
 }
 

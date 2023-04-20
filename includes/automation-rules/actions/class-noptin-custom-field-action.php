@@ -28,7 +28,36 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( "Add/Update the subscriber's custom field", 'newsletter-optin-box' );
+		return __( 'Add/Update subscriber field', 'newsletter-optin-box' );
+	}
+
+	/**
+	 * Retrieve the actions's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
+	 */
+	public function get_rule_table_description( $rule ) {
+		$settings = $rule->action_settings;
+
+		// Ensure we have a field name.
+		if ( empty( $settings['field_name'] ) ) {
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: No field name specified', 'newsletter-optin-box' )
+			);
+		}
+
+		$field = get_noptin_custom_field( $settings['field_name'] );
+		$label = $field ? $field['label'] : $settings['field_name'];
+		$label = $label ? $label : $settings['field_name'];
+		$meta  = array(
+			esc_html__( 'Field', 'newsletter-optin-box' ) => esc_html( $label ),
+			esc_html__( 'Value', 'newsletter-optin-box' ) => isset( $settings['field_value'] ) ? esc_html( $settings['field_value'] ) : '',
+		);
+
+		return $this->rule_action_meta( $meta, $rule );
 	}
 
 	/**
@@ -38,35 +67,12 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 
 		$settings = $rule->action_settings;
 
-		if ( empty( $settings['field_name'] ) ) {
-			return __( 'update a custom field', 'newsletter-optin-box' );
-		}
-
-		$field_name  = esc_html( $settings['field_name'] );
 		if ( empty( $settings['field_value'] ) ) {
-			return sprintf(
-				// translators: %s is the field name
-				__( "delete the subscriber's field %s", 'newsletter-optin-box' ),
-				"<code>$field_name</code>"
-			);
+			return __( 'Delete subscriber field', 'newsletter-optin-box' );
 		}
 
-		$field_value = esc_html( $settings['field_value'] );
+		return __( 'Add/Update subscriber field', 'newsletter-optin-box' );
 
-		return sprintf(
-			// translators: %1 is the field name, %2 is the field value
-			__( "update the subscriber's field %1\$s to %2\$s", 'newsletter-optin-box' ),
-			"<code>$field_name</code>",
-			"<code>$field_value</code>"
-		);
-
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		return '';
 	}
 
 	/**

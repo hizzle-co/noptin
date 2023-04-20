@@ -59,13 +59,51 @@ abstract class Noptin_Abstract_Action {
 	}
 
 	/**
+	 * Retrieve the actions's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
+	 */
+	public function get_rule_table_description( $rule ) {
+		return '';
+	}
+
+	/**
+	 * Groups rule action into a single string.
+	 *
+	 * @since 1.11.9
+	 * @param array $meta
+	 * @param Noptin_Automation_Rule $rule
+	 * @return string
+	 */
+	public function rule_action_meta( $meta, $rule ) {
+		$prepared = array();
+
+		$meta = apply_filters( 'noptin_rule_action_meta_' . $this->get_id(), $meta, $rule, $this );
+		$meta = apply_filters( 'noptin_rule_action_meta', $meta, $rule, $this );
+
+		foreach ( $meta as $key => $value ) {
+			if ( '' !== $value && false !== $value ) {
+				$prepared[] = sprintf(
+					'<span class="noptin-rule-action-meta"><span class="noptin-rule-action-meta-key">%s</span>: <span class="noptin-rule-action-meta-value">%s</span></span>',
+					$key,
+					$value
+				);
+			}
+		}
+
+		return wp_kses_post( implode( '', $prepared ) );
+	}
+
+	/**
 	 * Retrieve the action's image.
 	 *
 	 * @since 1.2.8
 	 * @return string
 	 */
 	public function get_image() {
-		return '';
+		return plugin_dir_url( Noptin::$file ) . 'includes/assets/images/logo.png';
 	}
 
 	/**

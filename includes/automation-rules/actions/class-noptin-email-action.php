@@ -32,25 +32,59 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Retrieve the actions's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
 	 */
-	public function get_rule_description( $rule ) {
-
+	public function get_rule_table_description( $rule ) {
 		$settings = $rule->action_settings;
 
+		// Abort if we have no email id.
 		if ( empty( $settings['automated_email_id'] ) ) {
-			$rule_description = esc_html__( 'send an email', 'newsletter-optin-box' );
-		} else {
-			$email_subject    = esc_html( get_the_title( $settings['automated_email_id'] ) );
-			$rule_description = sprintf(
-				// translators: %s is the email subject
-				esc_html__( 'send an email with the subject %s', 'newsletter-optin-box' ),
-				"<code>$email_subject</code>"
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Email not found', 'newsletter-optin-box' )
 			);
 		}
 
-		return apply_filters( 'noptin_email_action_rule_description', $rule_description, $rule );
+		$email_campaign = new Noptin_Automated_Email( $settings['automated_email_id'] );
 
+		// Abort if it doesn't exist.
+		if ( ! $email_campaign->exists() ) {
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Email not found', 'newsletter-optin-box' )
+			);
+		}
+
+		$email_subject = $email_campaign->get_subject();
+
+		// Abort if subject is empty.
+		if ( empty( $email_subject ) ) {
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Email subject is empty', 'newsletter-optin-box' )
+			);
+		}
+
+		$recipients = $email_campaign->get_recipients();
+
+		// Abort if recipients is empty.
+		if ( empty( $recipients ) ) {
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( "Error: You've not specified the email recipients", 'newsletter-optin-box' )
+			);
+		}
+
+		$meta = array(
+			esc_html__( 'Subject', 'newsletter-optin-box' )      => esc_html( $email_subject ),
+			esc_html__( 'Recipient(s)', 'newsletter-optin-box' ) => esc_html( $recipients ),
+		);
+
+		return $this->rule_action_meta( $meta, $rule );
 	}
 
 	/**

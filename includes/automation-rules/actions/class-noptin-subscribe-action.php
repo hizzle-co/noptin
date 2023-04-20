@@ -32,10 +32,30 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * @inheritdoc
+	 * Retrieve the actions's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
 	 */
-	public function get_rule_description( $rule ) {
-		return $this->get_description();
+	public function get_rule_table_description( $rule ) {
+		$settings = $rule->action_settings;
+
+		// Abort if we have no email address.
+		if ( empty( $settings['email'] ) ) {
+			return sprintf(
+				'<span class="noptin-rule-error">%s</span>',
+				esc_html__( 'Error: Email address not specified', 'newsletter-optin-box' )
+			);
+		}
+
+		$meta = array();
+
+		foreach ( get_noptin_custom_fields() as $field ) {
+			$meta[ esc_html( $field['label'] ) ] = isset( $settings[ $field['merge_tag'] ] ) ? esc_html( $settings[ $field['merge_tag'] ] ) : '';
+		}
+
+		return $this->rule_action_meta( $meta, $rule );
 	}
 
 	/**

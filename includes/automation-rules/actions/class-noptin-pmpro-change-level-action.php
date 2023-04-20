@@ -21,14 +21,14 @@ class Noptin_PMPro_Change_Level_Action extends Noptin_Abstract_Action {
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return __( 'Change Membership Level (PMPro)', 'newsletter-optin-box' );
+		return __( 'Update Membership Level (PMPro)', 'newsletter-optin-box' );
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( "Change a user's membership level", 'newsletter-optin-box' );
+		return $this->get_name();
 	}
 
 	/**
