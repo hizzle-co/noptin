@@ -167,28 +167,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 				'default'     => current( array_keys( $known_forms ) ),
 			),
 
-			'trigger_subject' => array(
-				'type'        => 'text',
-				'el'          => 'input',
-				'label'       => __( 'Trigger Subject', 'newsletter-optin-box' ),
-				'description' => sprintf(
-					'%s %s',
-					__( 'This trigger will fire for the email address that you specify here. ', 'newsletter-optin-box' ),
-					sprintf(
-						/* translators: %1: Opening link, %2 closing link tag. */
-						esc_html__( 'You can use %1$s smart tags %2$s to provide a dynamic value.', 'newsletter-optin-box' ),
-						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
-						'</a>'
-					)
-				),
-				'default'     => '',
-			),
-
 		);
-
-		if ( did_action( 'add_meta_boxes_noptin_automations' ) ) {
-			unset( $settings['trigger_subject'] );
-		}
 
 		return $settings;
 	}
@@ -241,6 +220,11 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 			$prepared['email'] = $current_user->user_email;
 		}
 
+		// Abort if we don't have an email.
+		if ( empty( $prepared['email'] ) ) {
+			return;
+		}
+
 		$this->trigger( $current_user, $prepared );
 	}
 
@@ -278,25 +262,6 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 			// Abort if the forms don't match.
 			if ( empty( $rule->trigger_settings['trigger_form'] ) || absint( $rule->trigger_settings['trigger_form'] ) !== absint( $args['form'] ) ) {
 				continue;
-			}
-
-			// If we're not sending an email...
-			if ( 'email' !== $rule->action_id ) {
-
-				// Abort if no valid trigger subject.
-				if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
-					continue;
-				}
-
-				// Maybe process merge tags.
-				$trigger_subject = $args['smart_tags']->replace_in_email( $rule->trigger_settings['trigger_subject'] );
-
-				// Abort if not an email.
-				if ( ! is_email( $trigger_subject ) ) {
-					continue;
-				}
-
-				$args['email'] = $trigger_subject;
 			}
 
 			// Set the current email.

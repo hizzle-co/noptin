@@ -232,7 +232,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 				'label'       => __( 'Trigger Subject', 'newsletter-optin-box' ),
 				'description' => sprintf(
 					'%s %s',
-					__( 'This trigger will fire for the email address that you specify here. ', 'newsletter-optin-box' ),
+					__( 'This trigger will fire for the email address that you specify here. Leave blank to use default.', 'newsletter-optin-box' ),
 					sprintf(
 						/* translators: %1: Opening link, %2 closing link tag. */
 						esc_html__( 'You can use %1$s smart tags %2$s to provide a dynamic value.', 'newsletter-optin-box' ),
@@ -240,6 +240,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 						'</a>'
 					)
 				),
+				'placeholder' => __( 'Use default', 'newsletter-optin-box' ),
 				'default'     => '[[author_email]]',
 			),
 
@@ -358,6 +359,11 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 
 			// If we're not sending an email...
 			if ( 'email' !== $rule->action_id ) {
+
+				// Maybe use default trigger subject.
+				if ( empty( $rule->trigger_settings['trigger_subject'] ) && ! empty( $args['email'] ) ) {
+					$rule->trigger_settings['trigger_subject'] = $args['email'];
+				}
 
 				// Abort if no valid trigger subject.
 				if ( empty( $rule->trigger_settings['trigger_subject'] ) ) {
