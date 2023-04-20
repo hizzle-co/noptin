@@ -30,7 +30,7 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_image() {
-		return 'https://cdn.noptin.com/templates/images/edd-icon.png';
+		return 'https://cdn.noptin.com/integrations/edd-badge.png';
 	}
 
 	/**

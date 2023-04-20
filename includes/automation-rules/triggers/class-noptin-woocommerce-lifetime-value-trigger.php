@@ -71,35 +71,6 @@ class Noptin_WooCommerce_Lifetime_Value_Trigger extends Noptin_WooCommerce_Trigg
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function settings_to_conditional_logic( $settings ) {
-
-		// We have no conditional logic here.
-		if ( ! is_array( $settings ) || ! isset( $settings['lifetime_value'] ) ) {
-			return false;
-		}
-
-		$conditions = array();
-
-		// Lifetime value.
-		if ( ! empty( $settings['lifetime_value'] ) ) {
-			$conditions[] = array(
-				'type'      => 'customer.total_spent',
-				'condition' => 'is',
-				'value'     => (int) $settings['lifetime_value'],
-			);
-		}
-
-		unset( $settings['lifetime_value'] );
-
-		return array(
-			'conditional_logic' => $conditions,
-			'settings'          => $settings,
-		);
-	}
-
-	/**
 	 * Inits the trigger.
 	 *
 	 * @param int|WC_Order $order_id The order being acted on.

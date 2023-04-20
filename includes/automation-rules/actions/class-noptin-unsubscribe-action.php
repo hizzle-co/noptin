@@ -34,13 +34,6 @@ class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_rule_description( $rule ) {
-		return __( 'unsubscribe them', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_keywords() {
 		return array(
 			'noptin',

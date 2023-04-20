@@ -51,13 +51,6 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_rule_description( $rule ) {
-		return __( 'When someone unsubscribes from the newsletter', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_image() {
 		return '';
 	}

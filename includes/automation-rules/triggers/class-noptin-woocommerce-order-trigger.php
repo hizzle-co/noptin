@@ -71,21 +71,6 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_rule_description( $rule ) {
-		$settings = $rule->trigger_settings;
-
-		if ( ! empty( $settings['new_customer'] ) ) {
-			// translators: %s is the order action label, e.g. "Created" or "Refunded".
-			return sprintf( __( "When a first-time customer's WooCommerce order is %s", 'newsletter-optin-box' ), wc_strtolower( $this->order_action_label ) );
-		}
-
-		return $this->get_description();
-
-	}
-
-	/**
      * Returns an array of known smart tags.
      *
      * @since 1.9.0

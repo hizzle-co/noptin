@@ -248,6 +248,29 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 
 	}
 
+	/* Retrieve the trigger's rule table description.
+	*
+	* @since 1.11.9
+	* @param Noptin_Automation_Rule $rule
+	* @return array
+	*/
+    public function get_rule_table_description( $rule ) {
+		$settings = $rule->trigger_settings;
+
+		// Ensure we have a form.
+		if ( empty( $settings['trigger_subject'] ) ) {
+			$subject = '[[author_email]]';
+		} else {
+			$subject = $settings['trigger_subject'];
+		}
+
+		$meta  = array(
+			esc_html__( 'Trigger for', 'newsletter-optin-box' ) => esc_html( $subject ),
+		);
+
+	   	return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
+   	}
+
 	/**
 	 * Retrieves trigger args.
 	 *
