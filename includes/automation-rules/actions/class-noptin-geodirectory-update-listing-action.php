@@ -130,7 +130,7 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 		);
 
 		foreach ( $this->get_listing_fields() as $field => $label ) {
-			$description = 'post_id' === $field ? __( 'Leave blank to create a new listing.', 'newsletter-optin-box' ) : __( 'Leave blank to ignore.', 'newsletter-optin-box' );
+			$description = 'noptin_post_id' === $field ? __( 'Leave blank to create a new listing.', 'newsletter-optin-box' ) : __( 'Leave blank to ignore.', 'newsletter-optin-box' );
 
 			$settings[ $field ] = array(
 				'el'          => 'input',

@@ -247,62 +247,6 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
     }
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_settings() {
-
-		if ( did_action( 'add_meta_boxes_noptin_automations' ) ) {
-			return array();
-		}
-
-		return array(
-
-			'trigger_subject' => array(
-				'type'        => 'text',
-				'el'          => 'input',
-				'label'       => __( 'Trigger Subject', 'newsletter-optin-box' ),
-				'description' => sprintf(
-					'%s %s',
-					__( 'This trigger will fire for the email address that you specify here. Leave blank to use default.', 'newsletter-optin-box' ),
-					sprintf(
-						/* translators: %1: Opening link, %2 closing link tag. */
-						esc_html__( 'You can use %1$s smart tags %2$s to provide a dynamic value.', 'newsletter-optin-box' ),
-						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
-						'</a>'
-					)
-				),
-				'placeholder' => __( 'Use default', 'newsletter-optin-box' ),
-				'default'     => '[[author_email]]',
-			),
-
-		);
-
-	}
-
-	/* Retrieve the trigger's rule table description.
-	*
-	* @since 1.11.9
-	* @param Noptin_Automation_Rule $rule
-	* @return array
-	*/
-    public function get_rule_table_description( $rule ) {
-		$settings = $rule->trigger_settings;
-
-		// Ensure we have a form.
-		if ( empty( $settings['trigger_subject'] ) ) {
-			$subject = '[[author_email]]';
-		} else {
-			$subject = $settings['trigger_subject'];
-		}
-
-		$meta  = array(
-			esc_html__( 'Trigger for', 'newsletter-optin-box' ) => esc_html( $subject ),
-		);
-
-	   	return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
-   	}
-
-	/**
 	 * Retrieves trigger args.
 	 *
 	 * @param array $postarr The post info.
