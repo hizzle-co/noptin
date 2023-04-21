@@ -78,18 +78,22 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 						'update' => __( 'Update Listing', 'newsletter-optin-box' ),
 					),
 					'conditional_logic' => 'string',
+					'example'           => 'saving_type',
 				),
 				'author_id'         => array(
 					'description'       => __( 'User ID (Post Author)', 'newsletter-optin-box' ),
 					'conditional_logic' => 'number',
+					'example'           => 'author_id',
 				),
 				'author_email'      => array(
 					'description'       => __( 'Email Address (Post Author)', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
+					'example'           => 'author_email',
 				),
 				'author_name'       => array(
 					'description'       => __( 'Name (Post Author)', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
+					'example'           => 'author_name',
 				),
 				'author_first_name' => array(
 					'description'       => __( 'First Name (Post Author)', 'newsletter-optin-box' ),
@@ -102,23 +106,28 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 				'author_login'      => array(
 					'description'       => __( 'Login Name (Post Author)', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
+					'example'           => 'author_login',
 				),
 				'post_id'           => array(
 					'description'       => __( 'Listing ID', 'newsletter-optin-box' ),
 					'conditional_logic' => 'number',
+					'example'           => 'post_id',
 				),
 				'post_url'          => array(
 					'description'       => __( 'Listing URL', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
+					'example'           => 'post_url',
 				),
 				'post_status'       => array(
 					'description'       => __( 'Listing Status', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
 					'options'           => get_post_statuses(),
+					'example'           => 'post_status',
 				),
 				'post_date'         => array(
 					'description'       => __( 'Listing Date', 'newsletter-optin-box' ),
 					'conditional_logic' => 'date',
+					'example'           => 'post_date',
 				),
 				'featured'          => array(
 					'description'       => __( 'Is Featured', 'newsletter-optin-box' ),
@@ -127,22 +136,27 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 						'1' => __( 'True', 'newsletter-optin-box' ),
 						'0' => __( 'False', 'newsletter-optin-box' ),
 					),
+					'example'           => 'featured',
 				),
 				'featured_image'    => array(
 					'description'       => __( 'Featured Image', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
+					'example'           => 'featured_image',
 				),
 				'submit_ip'         => array(
 					'description'       => __( 'Submit IP', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
+					'example'           => 'submit_ip',
 				),
 				'overall_rating'    => array(
 					'description'       => __( 'Overall Rating', 'newsletter-optin-box' ),
 					'conditional_logic' => 'number',
+					'example'           => 'overall_rating',
 				),
 				'rating_count'      => array(
 					'description'       => __( 'Rating Count', 'newsletter-optin-box' ),
 					'conditional_logic' => 'number',
+					'example'           => 'rating_count',
 				),
 			)
 		);
@@ -397,7 +411,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 
             // Ensure that the rule is valid for the provided args.
             if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
-                $action->maybe_run( $args['email'], $rule, $args );
+            	$action->maybe_run( $args['email'], $rule, $args );
             }
         }
 
