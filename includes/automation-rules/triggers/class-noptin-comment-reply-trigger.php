@@ -11,6 +11,16 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Comment_Reply_Trigger extends Noptin_New_Comment_Trigger {
 
 	/**
+	 * @var string
+	 */
+	public $category = 'WordPress';
+
+	/**
+	 * @var string
+	 */
+	public $integration = 'registration-form';
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_id() {

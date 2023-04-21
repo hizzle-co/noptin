@@ -29,7 +29,14 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function __construct( $form_provider_slug, $form_provider_name ) {
 		$this->form_provider_slug = $form_provider_slug;
-		$this->form_provider_name = $form_provider_name;
+		$this->category           = $form_provider_name;
+
+		// Set integration.
+		$this->integration = str_replace( '_', '-', $this->form_provider_slug );
+
+		if ( 'fluentform' === $this->integration ) {
+			$this->integration = 'fluent-forms';
+		}
 
 		add_action( "noptin_{$form_provider_slug}_form_submitted", array( $this, 'init_trigger' ), 10, 2 );
 	}
@@ -48,21 +55,8 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		return sprintf(
 			// translators: %s is the form provider.
 			__( '%s > Form Submitted', 'newsletter-optin-box' ),
-			$this->form_provider_name
+			$this->category
 		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		$slug = str_replace( '_', '-', $this->form_provider_slug );
-
-		if ( 'fluentform' === $slug ) {
-			$slug = 'fluent-forms';
-		}
-
-		return "https://cdn.noptin.com/integrations/{$slug}-badge.png";
 	}
 
 	/**
@@ -70,7 +64,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function get_description() {
 		// translators: %s is the form provider.
-		return sprintf( __( 'When a %s form is submitted', 'newsletter-optin-box' ), $this->form_provider_name );
+		return sprintf( __( 'When a %s form is submitted', 'newsletter-optin-box' ), $this->category );
 	}
 
 	/**

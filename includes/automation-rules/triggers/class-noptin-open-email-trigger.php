@@ -24,7 +24,7 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	public function __construct() {
-		add_action( 'log_noptin_subscriber_campaign_open', array( $this, 'maybe_trigger' ), 10, 2 );
+		add_action( 'log_noptin_subscriber_campaign_open', array( $this, 'maybe_trigger_on_open' ), 10, 2 );
 	}
 
 	/**
@@ -52,18 +52,7 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_image() {
-		return '';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'open',
-			'email',
-		);
+		return plugin_dir_url( Noptin::$file ) . 'includes/assets/images/email-icon.png';
 	}
 
 	/**
@@ -90,44 +79,12 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function settings_to_conditional_logic( $settings ) {
-
-		// We have no conditional logic here.
-		if ( ! is_array( $settings ) || ! isset( $settings['campaign_id'] ) ) {
-			return false;
-		}
-
-		$conditions = array();
-
-		// Campaign ID.
-		if ( isset( $settings['campaign_id'] ) ) {
-
-			if ( ! empty( $settings['campaign_id'] ) ) {
-				$conditions[] = array(
-					'type'      => 'campaign_id',
-					'condition' => 'is',
-					'value'     => (int) $settings['campaign_id'],
-				);
-			}
-
-			unset( $settings['campaign_id'] );
-		}
-
-		return array(
-			'conditional_logic' => $conditions,
-			'settings'          => $settings,
-		);
-	}
-
-	/**
 	 * Called when a subscriber opens an email.
 	 *
 	 * @param int $subscriber_id The subscriber in question.
 	 * @param $campaign_id The campaign that was clicked.
 	 */
-	public function maybe_trigger( $subscriber_id, $campaign_id ) {
+	public function maybe_trigger_on_open( $subscriber_id, $campaign_id ) {
 
 		$subscriber = new Noptin_Subscriber( $subscriber_id );
 

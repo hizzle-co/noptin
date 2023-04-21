@@ -78,18 +78,6 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'custom',
-			'field',
-			'custom field',
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_settings() {
 		return array(
 

@@ -34,17 +34,6 @@ class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'deactivate',
-			'subscriber',
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_settings() {
 		return array();
 	}

@@ -60,17 +60,6 @@ class Noptin_WooCommerce_Lifetime_Value_Trigger extends Noptin_WooCommerce_Trigg
     }
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'woocommerce',
-			'lifetime value',
-			'customer',
-		);
-	}
-
-	/**
 	 * Inits the trigger.
 	 *
 	 * @param int|WC_Order $order_id The order being acted on.

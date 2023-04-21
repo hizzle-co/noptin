@@ -27,23 +27,14 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 	protected $download;
 
 	/**
-	 * @inheritdoc
+	 * @var string
 	 */
-	public function get_image() {
-		return 'https://cdn.noptin.com/integrations/edd-badge.png';
-	}
+	public $category = 'EDD';
 
 	/**
-	 * @inheritdoc
+	 * @var string
 	 */
-	public function get_keywords() {
-		return array(
-			'EDD',
-			'payment',
-			'ecommerce',
-			'download',
-		);
-	}
+	public $integration = 'edd';
 
 	/**
 	 * Returns payment smart tags.

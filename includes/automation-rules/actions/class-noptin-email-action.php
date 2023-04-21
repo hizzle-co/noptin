@@ -32,6 +32,13 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function get_image() {
+		return plugin_dir_url( Noptin::$file ) . 'includes/assets/images/email-icon.png';
+	}
+
+	/**
 	 * Retrieve the actions's rule table description.
 	 *
 	 * @since 1.11.9
@@ -85,17 +92,6 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		);
 
 		return $this->rule_action_meta( $meta, $rule );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'email',
-			'send email',
-		);
 	}
 
 	/**

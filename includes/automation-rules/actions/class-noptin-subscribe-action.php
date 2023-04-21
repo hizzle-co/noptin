@@ -61,17 +61,6 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'add',
-			'subscribe',
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_settings() {
 
 		$settings = array(

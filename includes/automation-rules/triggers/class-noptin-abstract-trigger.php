@@ -8,17 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.2.8
  */
-abstract class Noptin_Abstract_Trigger {
-
-	/**
-	 * @var array
-	 */
-	protected $rules = null;
-
-	/**
-	 * @var bool
-	 */
-	public $depricated = false;
+abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 	/**
 	 * Whether or not this trigger deals with a subscriber.
@@ -33,37 +23,6 @@ abstract class Noptin_Abstract_Trigger {
 	 * @var bool
 	 */
 	public $is_user_based = false;
-
-	/**
-	 * The trigger's category.
-	 */
-	public $category = 'General';
-
-	/**
-	 * Retrieve the trigger's unique id.
-	 *
-	 * Only alphanumerics, dashes and underscrores are allowed.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	abstract public function get_id();
-
-	/**
-	 * Retrieve the trigger's name.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	abstract public function get_name();
-
-	/**
-	 * Retrieve the trigger's description.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	abstract public function get_description();
 
 	/**
 	 * Retrieve the trigger's default email subject.
@@ -118,37 +77,6 @@ abstract class Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Retrieve the trigger's image.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	public function get_image() {
-		return plugin_dir_url( Noptin::$file ) . 'includes/assets/images/logo.png';
-	}
-
-	/**
-	 * Retrieve the trigger's keywords.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function get_keywords() {
-		return array();
-	}
-
-	/**
-	 * Retrieve the trigger's rule description.
-	 *
-	 * @since 1.3.0
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
-	 */
-	public function get_rule_description( $rule ) {
-		return $this->get_description();
-	}
-
-	/**
 	 * Retrieve the triggers's rule table description.
 	 *
 	 * @since 1.11.9
@@ -169,32 +97,11 @@ abstract class Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	public function rule_trigger_meta( $meta, $rule ) {
-		$prepared = array();
 
 		$meta = apply_filters( 'noptin_rule_trigger_meta_' . $this->get_id(), $meta, $rule, $this );
 		$meta = apply_filters( 'noptin_rule_trigger_meta', $meta, $rule, $this );
 
-		foreach ( $meta as $key => $value ) {
-			if ( '' !== $value && false !== $value ) {
-				$prepared[] = sprintf(
-					'<span class="noptin-rule-action-meta"><span class="noptin-rule-action-meta-key">%s</span>: <span class="noptin-rule-action-meta-value">%s</span></span>',
-					$key,
-					$value
-				);
-			}
-		}
-
-		return wp_kses_post( implode( '', $prepared ) );
-	}
-
-	/**
-	 * Retrieve the trigger's settings.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function get_settings() {
-		return array();
+		return $this->prepare_rule_meta( $meta, $rule );
 	}
 
 	/**
@@ -538,17 +445,6 @@ abstract class Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Checks if there are rules for this trigger.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function has_rules() {
-		$rules = $this->get_rules();
-		return ! empty( $rules );
-	}
-
-	/**
 	 * Checks if conditional logic if met.
 	 *
 	 * @since 1.2.8
@@ -645,45 +541,6 @@ abstract class Noptin_Abstract_Trigger {
 		}
 
 		return $args;
-	}
-
-	/**
-	 * Returns the subject's email address.
-	 *
-	 * @since 1.11.0
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return false|string
-	 */
-	public function get_subject_email( $subject, $rule, $args ) {
-
-		// Provided via the email settings.
-		if ( ! empty( $rule->action_settings['email'] ) ) {
-			return $args['smart_tags']->replace_in_email( $rule->action_settings['email'] );
-		}
-
-		// Subject is an email.
-		if ( is_string( $subject ) && is_email( $subject ) ) {
-			return $subject;
-		}
-
-		// Maybe fetch from the subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			return $subject->email;
-		}
-
-		// ... or users.
-		if ( $subject instanceof WP_User ) {
-			return $subject->user_email;
-		}
-
-		// ... or the email argument.
-		if ( ! empty( $args['email'] ) ) {
-			return $args['email'];
-		}
-
-		return false;
 	}
 
 	/**

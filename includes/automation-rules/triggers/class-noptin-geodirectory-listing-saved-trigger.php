@@ -16,6 +16,16 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	protected $post_type;
 
 	/**
+	 * @var string
+	 */
+	public $category = 'GeoDirectory';
+
+	/**
+	 * @var string
+	 */
+	public $integration = 'geodirectory';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.9.0

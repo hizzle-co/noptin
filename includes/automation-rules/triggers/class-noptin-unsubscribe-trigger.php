@@ -49,24 +49,6 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		return '';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'subscriber',
-			'unsubscribe',
-		);
-	}
-
-	/**
 	 * Called when someone unsubscribes from the newsletter.
 	 *
 	 * @param int $subscriber The subscriber in question.

@@ -21,6 +21,16 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 	public $depricated = true;
 
 	/**
+	 * @var string
+	 */
+	public $category = 'WooCommerce';
+
+	/**
+	 * @var string
+	 */
+	public $integration = 'woocommerce';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.0
@@ -77,24 +87,6 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 			$actions[ $settings['action'] ]
 		);
 
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		return 'https://cdn.noptin.com/templates/images/woocommerce-icon.png';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'woocommerce',
-			'coupon',
-			'ecommerce',
-		);
 	}
 
 	/**

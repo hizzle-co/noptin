@@ -50,24 +50,6 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		return '';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'subscriber',
-			'new',
-		);
-	}
-
-	/**
 	 * Called when someone subscribes to the newsletter.
 	 *
 	 * @param int $subscriber The subscriber in question.

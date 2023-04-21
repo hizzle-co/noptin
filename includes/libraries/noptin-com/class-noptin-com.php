@@ -194,6 +194,38 @@ class Noptin_COM {
 	}
 
 	/**
+	 * Get by slug.
+	 *
+	 * @param string $slug
+	 * @param array $items
+	 * @return object|false
+	 */
+	private static function get_by_slug( $slug, $items ) {
+
+		if ( ! is_array( $items ) ) {
+			return false;
+		}
+
+		foreach ( $items as $item ) {
+			if ( $item->slug === $slug ) {
+				return $item;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Retrieves a single connection.
+	 *
+	 * @param string $slug
+	 * @return object|false
+	 */
+	public static function get_connection( $slug ) {
+		return self::get_by_slug( $slug, self::get_connections() );
+	}
+
+	/**
 	 * Retrieves all connections.
 	 *
 	 */
@@ -215,6 +247,41 @@ class Noptin_COM {
 
 		// Cache the connections.
 		set_transient( 'noptin_com_connections', $result, 12 * HOUR_IN_SECONDS );
+		return $result;
+	}
+
+	/**
+	 * Retrieves a single integration.
+	 *
+	 * @param string $slug
+	 * @return object|false
+	 */
+	public static function get_integration( $slug ) {
+		return self::get_by_slug( $slug, self::get_integrations() );
+	}
+
+	/**
+	 * Retrieves all integrations.
+	 *
+	 */
+	public static function get_integrations() {
+
+		// Read from cache.
+		$cached = get_transient( 'noptin_com_integrations' );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		// Fetch the integrations.
+		$result = self::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/integrations.json' ) );
+
+		if ( ! is_array( $result ) ) {
+			$result = json_decode( file_get_contents( plugin_dir_path( __FILE__ ) . 'integrations.json' ) );
+		}
+
+		// Cache the integrations.
+		set_transient( 'noptin_com_integrations', $result, 12 * HOUR_IN_SECONDS );
 		return $result;
 	}
 

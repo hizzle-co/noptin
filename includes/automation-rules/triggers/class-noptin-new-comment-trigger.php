@@ -11,6 +11,16 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_New_Comment_Trigger extends Noptin_Abstract_Trigger {
 
 	/**
+	 * @var string
+	 */
+	public $category = 'WordPress';
+
+	/**
+	 * @var string
+	 */
+	public $integration = 'registration-form';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.11.1
@@ -40,24 +50,6 @@ class Noptin_New_Comment_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function get_description() {
 		return __( 'When someone leaves a comment', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		return '';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'comment',
-			'new',
-		);
 	}
 
 	/**

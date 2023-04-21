@@ -11,6 +11,16 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_PMPro_Change_Level_Action extends Noptin_Abstract_Action {
 
 	/**
+	 * @var string
+	 */
+	public $category = 'Paid Memberships Pro';
+
+	/**
+	 * @var string
+	 */
+	public $integration = 'paid-memberships-pro';
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_id() {
@@ -29,17 +39,6 @@ class Noptin_PMPro_Change_Level_Action extends Noptin_Abstract_Action {
 	 */
 	public function get_description() {
 		return $this->get_name();
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'pmpro',
-			'membership',
-		);
 	}
 
 	/**

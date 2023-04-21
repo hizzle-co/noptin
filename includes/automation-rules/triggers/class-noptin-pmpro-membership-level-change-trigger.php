@@ -18,6 +18,16 @@ class Noptin_PMPro_Membership_Level_Change_Trigger extends Noptin_Abstract_Trigg
 	public $is_user_based = true;
 
     /**
+	 * @var string
+	 */
+	public $category = 'Paid Memberships Pro';
+
+	/**
+	 * @var string
+	 */
+	public $integration = 'paid-memberships-pro';
+
+    /**
 	 * Constructor.
 	 *
 	 * @since 1.10.0

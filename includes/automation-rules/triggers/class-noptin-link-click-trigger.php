@@ -8,14 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.2.8
  */
-class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
-
-	/**
-	 * Whether or not this trigger deals with a subscriber.
-	 *
-	 * @var bool
-	 */
-	public $is_subscriber_based = true;
+class Noptin_Link_Click_Trigger extends Noptin_Open_Email_Trigger {
 
 	/**
 	 * Constructor.
@@ -24,7 +17,7 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	public function __construct() {
-		add_action( 'log_noptin_subscriber_campaign_click', array( $this, 'maybe_trigger' ), 10, 3 );
+		add_action( 'log_noptin_subscriber_campaign_click', array( $this, 'maybe_trigger_on_click' ), 10, 3 );
 	}
 
 	/**
@@ -58,14 +51,6 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 
 		return array_merge(
 			array(
-				'campaign_id'    => array(
-					'description'       => __( 'Campaign ID', 'newsletter-optin-box' ),
-					'conditional_logic' => 'number',
-				),
-				'campaign_title' => array(
-					'description'       => __( 'Campaign Title', 'newsletter-optin-box' ),
-					'conditional_logic' => 'string',
-				),
 				'url'            => array(
 					'description'       => __( 'Clicked URL', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
@@ -76,77 +61,13 @@ class Noptin_Link_Click_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_image() {
-		return '';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'click',
-			'link',
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function settings_to_conditional_logic( $settings ) {
-
-		// We have no conditional logic here.
-		if ( ! is_array( $settings ) || ( ! isset( $settings['campaign_id'] ) && ! isset( $settings['url'] ) ) ) {
-			return false;
-		}
-
-		$conditions = array();
-
-		// Campaign ID.
-		if ( isset( $settings['campaign_id'] ) ) {
-
-			if ( ! empty( $settings['campaign_id'] ) ) {
-				$conditions[] = array(
-					'type'      => 'campaign_id',
-					'condition' => 'is',
-					'value'     => (int) $settings['campaign_id'],
-				);
-			}
-
-			unset( $settings['campaign_id'] );
-		}
-
-		// URL.
-		if ( isset( $settings['url'] ) ) {
-
-			if ( ! empty( $settings['url'] ) ) {
-				$conditions[] = array(
-					'type'      => 'url',
-					'condition' => 'is',
-					'value'     => trim( $settings['url'] ),
-				);
-			}
-
-			unset( $settings['url'] );
-		}
-
-		return array(
-			'conditional_logic' => $conditions,
-			'settings'          => $settings,
-		);
-	}
-
-	/**
 	 * Called when a subscriber clicks on a url.
 	 *
 	 * @param int $subscriber_id The subscriber in question.
 	 * @param $campaign_id The campaign that was clicked.
 	 * @param $url The url that was clicked.
 	 */
-	public function maybe_trigger( $subscriber_id, $campaign_id, $url ) {
+	public function maybe_trigger_on_click( $subscriber_id, $campaign_id, $url ) {
 
 		$subscriber = new Noptin_Subscriber( $subscriber_id );
 		$args       = array(

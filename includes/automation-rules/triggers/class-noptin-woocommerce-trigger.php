@@ -11,28 +11,14 @@ defined( 'ABSPATH' ) || exit;
 abstract class Noptin_WooCommerce_Trigger extends Noptin_Abstract_Trigger {
 
 	/**
-	 * @inheritdoc
+	 * @var string
 	 */
 	public $category = 'WooCommerce';
 
 	/**
-	 * @inheritdoc
+	 * @var string
 	 */
-	public function get_image() {
-		return 'https://cdn.noptin.com/integrations/woocommerce-badge.png';
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'woocommerce',
-			'order',
-			'ecommerce',
-			'product',
-		);
-	}
+	public $integration = 'woocommerce';
 
 	/**
 	 * Fired before triggering WC events.

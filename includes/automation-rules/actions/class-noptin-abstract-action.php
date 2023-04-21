@@ -8,66 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since       1.2.8
  */
-abstract class Noptin_Abstract_Action {
-
-	/**
-	 * @var array
-	 */
-	protected $rules = null;
-
-	/**
-	 * @var bool
-	 */
-	public $depricated = false;
-
-	/**
-	 * Retrieve the action's unique id.
-	 *
-	 * Only alphanumerics, dashes and underscrores are allowed.
-	 * Maximum 255 characters.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	abstract public function get_id();
-
-	/**
-	 * Retrieve the action's name.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	abstract public function get_name();
-
-	/**
-	 * Retrieve the action's description.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	abstract public function get_description();
-
-	/**
-	 * Retrieve the actions's rule description.
-	 *
-	 * @since 1.3.0
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
-	 */
-	public function get_rule_description( $rule ) {
-		return $this->get_description();
-	}
-
-	/**
-	 * Retrieve the actions's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
-	 */
-	public function get_rule_table_description( $rule ) {
-		return '';
-	}
+abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 
 	/**
 	 * Groups rule action into a single string.
@@ -78,52 +19,10 @@ abstract class Noptin_Abstract_Action {
 	 * @return string
 	 */
 	public function rule_action_meta( $meta, $rule ) {
-		$prepared = array();
-
 		$meta = apply_filters( 'noptin_rule_action_meta_' . $this->get_id(), $meta, $rule, $this );
 		$meta = apply_filters( 'noptin_rule_action_meta', $meta, $rule, $this );
 
-		foreach ( $meta as $key => $value ) {
-			if ( '' !== $value && false !== $value ) {
-				$prepared[] = sprintf(
-					'<span class="noptin-rule-action-meta"><span class="noptin-rule-action-meta-key">%s</span>: <span class="noptin-rule-action-meta-value">%s</span></span>',
-					$key,
-					$value
-				);
-			}
-		}
-
-		return wp_kses_post( implode( '', $prepared ) );
-	}
-
-	/**
-	 * Retrieve the action's image.
-	 *
-	 * @since 1.2.8
-	 * @return string
-	 */
-	public function get_image() {
-		return plugin_dir_url( Noptin::$file ) . 'includes/assets/images/logo.png';
-	}
-
-	/**
-	 * Retrieve the action's keywords.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function get_keywords() {
-		return array();
-	}
-
-	/**
-	 * Retrieve the action's settings.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function get_settings() {
-		return array();
+		return $this->prepare_rule_meta( $meta, $rule );
 	}
 
 	/**
@@ -151,51 +50,6 @@ abstract class Noptin_Abstract_Action {
 		}
 
 		return $this->rules;
-	}
-
-	/**
-	 * Checks if there are rules for this trigger.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function has_rules() {
-		$rules = $this->get_rules();
-		return ! empty( $rules );
-	}
-
-	/**
-	 * Returns the subject's email address.
-	 *
-	 * @since 1.9.0
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return false|string
-	 */
-	public function get_subject_email( $subject, $rule, $args ) {
-
-		// Provided via the email settings.
-		if ( ! empty( $rule->action_settings['email'] ) ) {
-			return $args['smart_tags']->replace_in_email( $rule->action_settings['email'] );
-		}
-
-		// Maybe fetch from the subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			return $subject->email;
-		}
-
-		// ... or users.
-		if ( $subject instanceof WP_User ) {
-			return $subject->user_email;
-		}
-
-		// ... or the email argument.
-		if ( ! empty( $args['email'] ) ) {
-			return $args['email'];
-		}
-
-		return false;
 	}
 
 	/**

@@ -16,6 +16,16 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 	protected $post_type;
 
 	/**
+	 * @var string
+	 */
+	public $category = 'GeoDirectory';
+
+	/**
+	 * @var string
+	 */
+	public $integration = 'geodirectory';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.9.0
@@ -46,17 +56,6 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 	public function get_description() {
 		// translators: %s is the post type label.
 		return sprintf( __( 'Create or update %s', 'newsletter-optin-box' ), geodir_strtolower( geodir_post_type_singular_name( $this->post_type, true ) ) );
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_keywords() {
-		return array(
-			'noptin',
-			'listing',
-			'geodirectory',
-		);
 	}
 
 	/**
