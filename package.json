@@ -44,7 +44,7 @@
 		"postcss": "8.4.23",
 		"postcss-csso": "6.0.1",
 		"sass": "1.62.0",
-		"webpack": "5.78.0",
+		"webpack": "5.80.0",
 		"webpack-cli": "5.0.1"
 	}
 }
