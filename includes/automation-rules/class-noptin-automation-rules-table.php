@@ -270,8 +270,9 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 						<a href="%s">%s</a>
 					</div>
 					%s
+					%s
 				</div>
-			</div>%s',
+			</div>',
 			empty( $image ) ? '' : "<div class='noptin-rule-image'><img src='$image' /></div>",
 			esc_url( $item->get_edit_url() ),
 			esc_html( $title ),

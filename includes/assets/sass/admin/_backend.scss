@@ -1152,11 +1152,16 @@ a.no-campaign-create-new-campaign {
 
 	.noptin-rule-name {
 		flex: 1;
+		font-weight: 600;
 
 		.noptin-rule-description {
 			font-weight: 400;
 			margin-top: 0.5rem;
 			color: #646970;
+		}
+
+		.row-actions {
+			font-weight: 400;
 		}
 	}
 
@@ -1178,7 +1183,7 @@ a.no-campaign-create-new-campaign {
 		}
 	}
 
-	.noptin-rule-action-meta {
+	.noptin-rule-meta {
 		display: block;
 		margin-bottom: 0.4rem;
 
@@ -1187,7 +1192,7 @@ a.no-campaign-create-new-campaign {
 		}
 	}
 
-	.noptin-rule-action-meta-key {
+	.noptin-rule-meta-key {
 		font-weight: 600;
 	}
 

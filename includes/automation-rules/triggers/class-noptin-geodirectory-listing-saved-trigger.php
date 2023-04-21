@@ -210,6 +210,27 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 				'conditional_logic' => 'string',
 			);
 
+			// Packages.
+			if ( 'package_id' === $custom_field->htmlvar_name && function_exists( 'geodir_pricing_get_packages' ) ) {
+				$smart_tags[ sanitize_key( $custom_field->htmlvar_name ) ]['options'] = wp_list_pluck(
+					geodir_pricing_get_packages(
+						array(
+							'status'    => 'all',
+							'post_type' => $this->post_type,
+						)
+					),
+					'name',
+					'id'
+				);
+
+				$smart_tags['package_name'] = array(
+					'description'       => __( 'Package Name', 'newsletter-optin-box' ),
+					'conditional_logic' => 'string',
+				);
+
+				continue;
+			}
+
 			if ( isset( $custom_field->data_type ) && ( 'DECIMAL' === $custom_field->data_type || 'INT' === $custom_field->data_type ) ) {
 				$smart_tags[ sanitize_key( $custom_field->htmlvar_name ) ]['conditional_logic'] = 'number';
 			}
@@ -341,6 +362,11 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 			$prepared[ $key ] = $value;
 		}
 
+		// Packages.
+		if ( isset( $prepared['package_id'] ) && function_exists( 'geodir_pricing_package_name' ) ) {
+			$prepared['package_name'] = geodir_pricing_package_name( $postarr['package_id'] );
+		}
+
 		return $prepared;
 	}
 
@@ -356,7 +382,7 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 	public function init_trigger( $postarr, $gd_post, $post, $update ) {
 
 		// Abort if this is a post revision.
-		if ( wp_is_post_revision( $post->ID ) ) {
+		if ( wp_is_post_revision( $post->ID ) || $post->post_type !== $this->post_type ) {
 			return;
 		}
 
@@ -506,11 +532,6 @@ class Noptin_GeoDirectory_Listing_Saved_Trigger extends Noptin_Abstract_Trigger 
 		if ( empty( $gd_post ) ) {
 			throw new Exception( 'The GD post info no longer exists' );
 		}
-
-        // Check if the user is still a member of the level.
-        if ( ! pmpro_hasMembershipLevel( $args['level_id'], $args['user_id'] ) ) {
-            throw new Exception( 'The user is no longer a member of the level' );
-        }
 
 		$this->prepare_trigger_args(
 			get_userdata( $post->post_author ),
