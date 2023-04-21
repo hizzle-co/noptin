@@ -1272,6 +1272,8 @@ function get_noptin_custom_fields( $public_only = false ) {
 
 			if ( in_array( $key, array( 'visible', 'subs_table', 'predefined', 'required' ), true ) ) {
 				$prepared_field[ $key ] = ! empty( $value );
+			} elseif ( in_array( $key, array( 'options' ), true ) ) {
+				$prepared_field[ $key ] = sanitize_textarea_field( $value );
 			} else {
 				$prepared_field[ $key ] = noptin_clean( $value );
 			}
