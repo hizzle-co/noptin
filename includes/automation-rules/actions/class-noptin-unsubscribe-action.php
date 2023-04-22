@@ -32,13 +32,6 @@ class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	public function get_settings() {
-		return array();
-	}
-
-	/**
 	 * Deactivates the subscriber.
 	 *
 	 * @since 1.3.1
@@ -50,16 +43,10 @@ class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
 	public function run( $subject, $rule, $args ) {
 
 		// Fetch the subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			$subscriber = $subject;
-		} else {
-			$subscriber = get_noptin_subscriber( $args['email'] );
-		}
+		$subscriber = get_noptin_subscriber( $this->get_subject_email( $subject, $rule, $args ) );
 
 		// Unsubscribe the subscriber.
-		if ( ! empty( $subscriber->id ) ) {
-			unsubscribe_noptin_subscriber( $subscriber );
-		}
+		unsubscribe_noptin_subscriber( $subscriber );
 
 	}
 
@@ -74,16 +61,8 @@ class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
 	 */
 	public function can_run( $subject, $rule, $args ) {
 
-		// Check if we have a valid subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			return true;
-		}
-
-		if ( empty( $args['email'] ) ) {
-			return false;
-		}
-
-		$subscriber = get_noptin_subscriber( $args['email'] );
+		// Fetch the subscriber.
+		$subscriber = get_noptin_subscriber( $this->get_subject_email( $subject, $rule, $args ) );
 
 		return $subscriber->exists();
 	}
