@@ -1431,7 +1431,7 @@ function noptin_format_date( $date_time ) {
 		);
 
 	} else {
-		$relative = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $timestamp );
+		$relative = date_i18n( get_option( 'date_format' ), $timestamp );
 	}
 
 	$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $timestamp ) );

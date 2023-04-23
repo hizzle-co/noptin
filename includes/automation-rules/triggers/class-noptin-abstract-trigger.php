@@ -216,7 +216,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 					'user_locale' => array(
 						'description'       => __( 'User Locale', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
-						'example'           => 'customer.locale default="en_US"',
+						'example'           => 'user_locale default="en_US"',
 						'options'           => noptin_get_available_languages(),
 					),
 

@@ -227,6 +227,19 @@ class Noptin_Scripts {
 				)
 			);
 		}
+
+		if ( 'noptin-view-automation-rules' === $handle ) {
+
+			wp_localize_script(
+				$handle,
+				'noptinViewRules',
+				array(
+					'ajaxurl'       => admin_url( 'admin-ajax.php' ),
+					'nonce'         => wp_create_nonce( 'noptin_automation_rules' ),
+					'confirmDelete' => __( 'Are you sure you want to delete this automation rule?', 'newsletter-optin-box' ),
+				)
+			);
+		}
 	}
 
 }

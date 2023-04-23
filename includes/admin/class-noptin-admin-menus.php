@@ -133,8 +133,9 @@ class Noptin_Admin_Menus {
 			$script = 'edit-automation-rule';
 			$cb     = array( $this, 'render_edit_automation_rule_page' );
 		} else {
-			$title = __( 'Automation Rules', 'newsletter-optin-box' );
-			$cb    = array( $this, 'render_automation_rules_page' );
+			$title  = __( 'Automation Rules', 'newsletter-optin-box' );
+			$script = 'view-automation-rules';
+			$cb     = array( $this, 'render_automation_rules_page' );
 		}
 
 		$hook_suffix = add_submenu_page(

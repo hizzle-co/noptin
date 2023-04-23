@@ -50,60 +50,9 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			)
 		);
 
-		$this->process_bulk_action();
-
 		$this->prepare_query();
 
 		$this->base_url = admin_url( 'admin.php?page=noptin-automation-rules' );
-
-	}
-
-	/**
-	 *  Processes a bulk action.
-	 */
-	public function process_bulk_action() {
-
-		$action = 'bulk-' . $this->_args['plural'];
-
-		if ( empty( $_POST['id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
-			return;
-		}
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		$action = $this->current_action();
-
-		if ( 'delete' === $action ) {
-
-			foreach ( $_POST['id'] as $id ) {
-				noptin()->automation_rules->delete_rule( intval( $id ) );
-			}
-
-			noptin()->admin->show_info( __( 'The selected automation rules have been deleted.', 'newsletter-optin-box' ) );
-
-		}
-
-		if ( 'activate' === $action ) {
-
-			foreach ( $_POST['id'] as $id ) {
-				noptin()->automation_rules->update_rule( intval( $id ), array( 'status' => 1 ) );
-			}
-
-			noptin()->admin->show_info( __( 'The selected automation rules have been activated.', 'newsletter-optin-box' ) );
-
-		}
-
-		if ( 'deactivate' === $action ) {
-
-			foreach ( $_POST['id'] as $id ) {
-				noptin()->automation_rules->update_rule( intval( $id ), array( 'status' => 0 ) );
-			}
-
-			noptin()->admin->show_info( __( 'The selected automation rules have been de-activated.', 'newsletter-optin-box' ) );
-
-		}
 
 	}
 
@@ -119,7 +68,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 		$orderby = empty( $_GET['orderby'] ) ? 'created_at' : $_GET['orderby'];
 
 		// Ensure orderby is valid.
-		if ( ! in_array( $orderby, array( 'id', 'trigger_id', 'action_id', 'status', 'times_run', 'created_at', 'updated_at' ), true ) ) {
+		if ( ! in_array( $orderby, array( 'id', 'trigger_id', 'action_id', 'times_run', 'created_at', 'updated_at' ), true ) ) {
 			$orderby = 'created_at';
 		}
 
@@ -146,7 +95,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	public function single_row( $item ) {
 		$item = new Noptin_Automation_Rule( $item );
 
-		echo '<tr class="noptin_automation_rule_' . esc_attr( $item->id ) . '">';
+		echo '<tr class="noptin_automation_rule_' . esc_attr( $item->id ) . '" data-id="' . esc_attr( $item->id ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 
@@ -170,17 +119,54 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Displays the rules's status
+	 * Displays available actions.
 	 *
 	 * @param  Noptin_Automation_Rule $item item.
 	 * @return HTML
 	 */
-	public function column_status( $item ) {
+	public function column_actions( $item ) {
 
-		$status = ! empty( $item->status ) ? __( 'Active', 'newsletter-optin-box' ) : __( 'Inactive', 'newsletter-optin-box' );
-		$class  = ! empty( $item->status ) ? 'status-active' : 'status-inactive';
+		$actions = array(
+			'edit'   => array(
+				'url'   => $item->get_edit_url(),
+				'label' => __( 'Edit', 'newsletter-optin-box' ),
+				'icon'  => 'dashicons dashicons-edit',
+			),
+			'delete' => array(
+				'label' => __( 'Delete', 'newsletter-optin-box' ),
+				'icon'  => 'dashicons dashicons-trash',
+			),
+		);
 
-		return "<span class='$class'>$status</span>";
+		$html = '';
+
+		foreach ( $actions as $action => $data ) {
+
+			$html .= sprintf(
+				'<a href="%s" title="%s" class="noptin-tip noptin-automation-rule-action noptin-automation-rule-action__%s">%s</a>',
+				empty( $data['url'] ) ? '#' : esc_url( $data['url'] ),
+				empty( $data['label'] ) ? '' : $data['label'],
+				esc_attr( $action ),
+				sprintf(
+					'<span class="%s" aria-label="%s"></span>',
+					empty( $data['icon'] ) ? 'dashicons dashicons-admin-generic' : esc_attr( $data['icon'] ),
+					empty( $data['label'] ) ? '' : $data['label']
+				)
+			);
+
+		}
+
+		$status = sprintf(
+			'<label class="noptin-automation-rule-action__switch-wrapper noptin-tip" title="%s">
+				<input type="checkbox" class="noptin-toggle-automation-rule" %s>
+				<span class="noptin-automation-rule-action__switch"></span>
+			</label>',
+			esc_attr( __( 'Enable or disable this automation rule', 'newsletter-optin-box' ) ),
+			checked( ! empty( $item->status ), true, false )
+		);
+
+		return '<div class="noptin-automation-rule-actions">' . $status . $html . '</div>';
+
 	}
 
 	/**
@@ -233,34 +219,10 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			);
 		}
 
-		// Row actions.
-		$row_actions = array(
-			'edit'   => sprintf(
-				'<a href="%s">%s</a>',
-				esc_url( $item->get_edit_url() ),
-				__( 'Edit', 'newsletter-optin-box' )
-			),
-			'delete' => sprintf(
-				'<a href="%s" class="noptin-delete-single-automation-rule">%s</a>',
-				esc_url(
-					add_query_arg(
-						array(
-							'noptin_admin_action' => 'noptin_delete_automation_rule',
-							'delete'			  => $item->id,
-							'_wpnonce'            => wp_create_nonce( 'noptin-automation-rule' ),
-						),
-						$this->base_url
-					)
-				),
-				__( 'Delete', 'newsletter-optin-box' )
-			),
-		);
-
 		// Prepare the texts.
 		$title       = $trigger->get_rule_description( $item );
 		$description = $trigger->get_rule_table_description( $item );
 		$image       = $trigger->get_image();
-		$actions     = $this->row_actions( $row_actions );
 
 		return sprintf(
 			'<div class="noptin-rule-trigger">
@@ -270,14 +232,12 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 						<a href="%s">%s</a>
 					</div>
 					%s
-					%s
 				</div>
 			</div>',
 			empty( $image ) ? '' : "<div class='noptin-rule-image'><img src='$image' /></div>",
 			esc_url( $item->get_edit_url() ),
 			esc_html( $title ),
-			empty( $description ) ? '' : "<div class='noptin-rule-description'>$description</div>",
-			$actions
+			empty( $description ) ? '' : "<div class='noptin-rule-description'>$description</div>"
 		);
 
 	}
@@ -318,35 +278,12 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	}
 
 	/**
-	 * This is how checkbox column renders.
-	 *
-	 * @param  Noptin_Automation_Rule $item item.
-	 * @return HTML
-	 */
-	public function column_cb( $item ) {
-		return sprintf( '<input type="checkbox" name="id[]" value="%s" />', esc_html( $item->id ) );
-	}
-
-	/**
 	 * [OPTIONAL] Return array of bulk actions if has any
 	 *
 	 * @return array
 	 */
 	public function get_bulk_actions() {
-
-		$actions = array(
-			'delete'     => __( 'Delete', 'newsletter-optin-box' ),
-			'activate'   => __( 'Activate', 'newsletter-optin-box' ),
-			'deactivate' => __( 'Deactivate', 'newsletter-optin-box' ),
-		);
-
-		/**
-		 * Filters the bulk table actions shown on automation rules tables.
-		 *
-		 * @param array $actions An array of bulk actions.
-		 */
-		return apply_filters( 'manage_noptin_automation_rules_table_bulk_actions', $actions );
-
+		return array();
 	}
 
 	/**
@@ -388,13 +325,12 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'         => '<input type="checkbox" />',
 			'trigger'    => __( 'Trigger', 'newsletter-optin-box' ),
 			'action'     => __( 'Action', 'newsletter-optin-box' ),
-			'status'     => __( 'Status', 'newsletter-optin-box' ),
 			'times_run'  => __( 'Times Run', 'newsletter-optin-box' ),
 			'created_at' => __( 'Created', 'newsletter-optin-box' ),
 			'updated_at' => __( 'Updated', 'newsletter-optin-box' ),
+			'actions'    => __( 'Actions', 'newsletter-optin-box' ),
 		);
 
 		/**
@@ -415,7 +351,6 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 			'id'         => array( 'id', true ),
 			'trigger'    => array( 'trigger_id', true ),
 			'action'     => array( 'action_id', true ),
-			'status'     => array( 'status', true ),
 			'times_run'  => array( 'times_run', true ),
 			'created_at' => array( 'created_at', true ),
 			'updated_at' => array( 'updated_at', true ),

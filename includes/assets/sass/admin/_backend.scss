@@ -1133,12 +1133,21 @@ a.no-campaign-create-new-campaign {
 }
 
 #noptin-automation-rules-table {
+
+	td {
+		vertical-align: middle;
+	}
+
 	@media screen and (min-width:960px) {
-		.column-status,
 		.column-times_run,
 		.column-created_at,
 		.column-updated_at {
 			width: 100px;
+		}
+
+		.column-actions {
+			width: 160px;
+			text-align: right;
 		}
 	}
 
@@ -1179,7 +1188,7 @@ a.no-campaign-create-new-campaign {
 			height: auto;
 			max-height: 100%;
 			object-fit: cover;
-			border-radius: 50%;
+			border-radius: 4px;
 		}
 	}
 
@@ -1197,9 +1206,93 @@ a.no-campaign-create-new-campaign {
 	}
 
 	.noptin-rule-error {
-		color: #e91e63;
+		color: #b32d2e;
 		display: block;
 		margin-top: 0.8rem;
+	}
+
+	.noptin-automation-rule-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+
+		// Each action is a grey button containing a dashicon.
+		.noptin-automation-rule-action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			background: #f1f1f1;
+			color: #646970;
+			font-size: 16px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			&:hover {
+				background: #e1e1e1;
+			}
+		}
+
+		// Delete action should be red.
+		.noptin-automation-rule-action__delete {
+			color: #b32d2e;
+		}
+
+		// Switch action contain a checkbox. Convert it to a toggle switch which changes depending on the state.
+		.noptin-automation-rule-action__switch-wrapper {
+			display: inline-block;
+
+			input {
+				width: 1px;
+				height: 1px;
+				visibility: hidden;
+				opacity: 0;
+			}
+		}
+
+		.noptin-automation-rule-action__switch {
+			display: inline-block;
+			position: relative;
+			width: 50px;
+			height: 30px;
+			border-radius: 15px;
+			background: #e1e1e1;
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			input {
+				display: none;
+			}
+
+			&:hover {
+				background: #d1d1d1;
+			}
+
+			&:before {
+				content: '';
+				position: absolute;
+				top: 2px;
+				left: 2px;
+				width: 26px;
+				height: 26px;
+				border-radius: 50%;
+				background: #fff;
+				transition: all 0.2s ease;
+			}
+		}
+
+		input:checked + .noptin-automation-rule-action__switch {
+			background: #43a047;
+
+			&:before {
+				left: calc(100% - 2px);
+				transform: translateX(-100%);
+			}
+		}
 	}
 }
 
@@ -2211,5 +2304,71 @@ a.no-campaign-create-new-campaign {
 	.noptin-manual-email-recipient-remove {
 		color: #a00;
     	font-size: 16px;
+	}
+}
+
+.noptin-switch-label {
+	display: inline-block;
+
+	input {
+		width: 1px;
+		height: 1px;
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+
+.noptin-switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+
+	&:before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #ccc;
+		-webkit-transition: .4s;
+		transition: .4s;
+		border-radius: 34px;
+	}
+
+	&:after {
+		content: "";
+		position: absolute;
+		height: 26px;
+		width: 26px;
+		left: 4px;
+		bottom: 4px;
+		background-color: white;
+		-webkit-transition: .4s;
+		transition: .4s;
+		border-radius: 50%;
+	}
+
+	input:checked + & {
+		background-color: #2196F3;
+
+		&:before {
+			background-color: #2196F3;
+		}
+
+		&:after {
+			-webkit-transform: translateX(26px);
+			-ms-transform: translateX(26px);
+			transform: translateX(26px);
+		}
+	}
+
+	input:focus + & {
+		box-shadow: 0 0 1px #2196F3;
+	}
+
+	input:disabled + & {
+		opacity: .65;
 	}
 }

@@ -9,6 +9,7 @@ module.exports = {
 		admin: "./includes/assets/js/src/admin.js",
 		settings: "./includes/assets/js/src/settings.js",
 		"newsletter-editor": "./includes/assets/js/src/newsletter-editor.js",
+		"view-automation-rules": "./includes/assets/js/src/view-automation-rules.js",
 		"edit-automation-rule": "./includes/assets/js/src/edit-automation-rule.js",
 		"create-automation-rule": "./includes/assets/js/src/create-automation-rule.js",
 		"legacy-forms": "./includes/assets/js/src/legacy-forms.js",
