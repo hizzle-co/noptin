@@ -99,12 +99,15 @@ export default {
 
 			// Prepare rule data.
 			let data  = {
-				'id' : this.rule_id,
-				'action_settings' : this.action_settings,
-				'trigger_settings' : this.trigger_settings,
-				'conditional_logic' : this.conditional_logic,
-				'action' : 'noptin_save_automation_rule',
-				'_ajax_nonce' : noptinRules.nonce
+				id : this.rule_id,
+				action_settings: this.action_settings,
+				trigger_settings: this.trigger_settings,
+				trigger_id: this.trigger_id,
+				action_id: this.action_id,
+				is_creating: this.is_creating,
+				conditional_logic : this.conditional_logic,
+				action : 'noptin_save_automation_rule',
+				_ajax_nonce : noptinRules.nonce
 			}
 
 			// Save editor content.
@@ -127,7 +130,16 @@ export default {
 			jQuery.post(noptinRules.ajaxurl, data)
 
 				// Show a success msg after we are done.
-				.done( () => {
+				.done( ( res ) => {
+
+					if ( this.is_creating && res && res.data && res.data.edit_url ) {
+						this.rule_id = res.data.rule_id;
+						this.is_creating = false;
+
+						// Update the url.
+						window.history.pushState( {}, '', res.data.edit_url );
+					}
+
 					$('#noptin-automation-rule-editor')
 						.find('.noptin-save-saved')
 						.show()

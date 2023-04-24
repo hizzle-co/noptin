@@ -23,6 +23,13 @@ class Noptin_Automation_Rule {
 	public $id = 0;
 
 	/**
+	 * Are we creating a new rule?
+	 * @var bool
+	 * @since 1.12.0
+	 */
+	public $is_creating = false;
+
+	/**
 	 * The automation rule's action id
 	 * @var string
 	 * @since 1.2.8
@@ -95,6 +102,18 @@ class Noptin_Automation_Rule {
 	public function __construct( $rule ) {
 
 		if ( empty( $rule ) ) {
+
+			// Check if we are creating a new rule.
+			if ( ! empty( $_GET['noptin-trigger'] ) && ! empty( $_GET['noptin-action'] ) ) {
+				$this->is_creating = true;
+				$this->trigger_id  = sanitize_text_field( $_GET['noptin-trigger'] );
+				$this->action_id   = sanitize_text_field( $_GET['noptin-action'] );
+
+				// Sanitize trigger and action settings.
+				$this->trigger_settings  = $this->sanitize_trigger_settings( $this->trigger_settings );
+				$this->action_settings   = $this->sanitize_action_settings( $this->action_settings );
+				$this->conditional_logic = noptin_get_default_conditional_logic();
+			}
 			return;
 		}
 

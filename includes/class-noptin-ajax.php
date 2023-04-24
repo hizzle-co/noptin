@@ -555,27 +555,43 @@ class Noptin_Ajax {
 		do_action( 'noptin_before_save_automation_rule' );
 
 		// Fetch the automation rule.
-		$rule = new Noptin_Automation_Rule( absint( $_POST['id'] ) );
+		$data = wp_unslash( $_POST );
+		$rule = new Noptin_Automation_Rule( absint( $data['id'] ) );
+
+		if ( ! empty( $data['is_creating'] ) && ! empty( $data['trigger_id'] ) && ! empty( $data['action_id'] ) ) {
+			$rule->trigger_id  = $data['trigger_id'];
+			$rule->action_id   = $data['action_id'];
+			$rule->is_creating = true;
+		}
 
 		// Abort if the rule does not exist.
-		if ( ! $rule->exists() ) {
+		if ( ! $rule->exists() && ! $rule->is_creating ) {
 			wp_die( -1, 404 );
 		}
 
 		// Prepare settings.
-		$trigger_settings = isset( $_POST['trigger_settings'] ) ? $rule->sanitize_trigger_settings( stripslashes_deep( $_POST['trigger_settings'] ) ) : array();
-		$action_settings  = isset( $_POST['action_settings'] ) ? $rule->sanitize_action_settings( stripslashes_deep( $_POST['action_settings'] ) ) : array();
+		$trigger_settings = isset( $data['trigger_settings'] ) ? $rule->sanitize_trigger_settings( $data['trigger_settings'] ) : array();
+		$action_settings  = isset( $data['action_settings'] ) ? $rule->sanitize_action_settings( $data['action_settings'] ) : array();
 
 		// Prepare the conditional logic.
 		$trigger_settings['conditional_logic'] = noptin_get_default_conditional_logic();
-		if ( ! empty( $_POST['conditional_logic'] ) ) {
-			$trigger_settings['conditional_logic'] = stripslashes_deep( $_POST['conditional_logic'] );
+		if ( ! empty( $data['conditional_logic'] ) ) {
+			$trigger_settings['conditional_logic'] = $data['conditional_logic'];
 		}
 
 		// Save them.
-		noptin()->automation_rules->update_rule( $rule->id, compact( 'action_settings', 'trigger_settings' ) );
+		if ( $rule->is_creating ) {
+			$rule = noptin()->automation_rules->create_rule( $rule );
+		} else {
+			noptin()->automation_rules->update_rule( $rule->id, compact( 'action_settings', 'trigger_settings' ) );
+		}
 
-		wp_send_json_success( 1 );
+		wp_send_json_success(
+			array(
+				'rule_id'  => empty( $rule ) ? 0 : $rule->id,
+				'edit_url' => empty( $rule ) ? '' : $rule->get_edit_url(),
+			)
+		);
 
 	}
 

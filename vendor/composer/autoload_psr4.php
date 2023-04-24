@@ -8,4 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'Symfony\\Component\\CssSelector\\' => array($vendorDir . '/symfony/css-selector'),
     'Pelago\\' => array($vendorDir . '/pelago/emogrifier/src'),
+    'Hizzle\\Store\\' => array($vendorDir . '/hizzle/store/src'),
+    'Hizzle\\Noptin\\' => array($baseDir . '/src'),
 );

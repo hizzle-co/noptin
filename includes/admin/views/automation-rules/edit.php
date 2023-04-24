@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 
 $rule = noptin_get_current_automation_rule();
 
-if ( ! $rule->exists() ) {
+if ( ! $rule->exists() && ! $rule->is_creating ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
 		esc_html__( 'Rule not found. It might have been deleted.', 'newsletter-optin-box' )
@@ -134,9 +134,17 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 				<hr>
 				<h2 style="margin-bottom: 0.2em;"><?php esc_html_e( 'Action', 'newsletter-optin-box' ); ?></h2>
 				<p class="description" style="margin-bottom: 16px;"><?php echo wp_kses_post( $rule_action->get_description() ); ?></p>
-					<?php foreach ( $action_settings as $setting_id => $args ) : ?>
-						<?php Noptin_Vue::render_el( "action_settings['$setting_id']", $args ); ?>
-					<?php endforeach; ?>
+					<?php
+
+						foreach ( $action_settings as $setting_id => $args ) {
+
+							if ( isset( $args['el'] ) && 'input' === $args['el'] ) {
+								$args['append'] = '<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox"><span class="dashicons dashicons-shortcode"></span></a>';
+							}
+
+							Noptin_Vue::render_el( "action_settings['$setting_id']", $args );
+						}
+					?>
 			</div>
 
 			<div>

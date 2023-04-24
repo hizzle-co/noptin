@@ -177,11 +177,21 @@ class Noptin_Automation_Rules {
 	 * Creates a new rule.
 	 *
 	 * @since 1.2.8
-	 * @param array $rule The rule arguments.
+	 * @param array|Noptin_Automation_Rule $rule The rule arguments.
 	 * @return bool|Noptin_Automation_Rule
 	 */
 	public function create_rule( $rule ) {
 		global $wpdb;
+
+		if ( is_a( $rule, 'Noptin_Automation_Rule' ) ) {
+			$rule = array(
+				'action_id'        => $rule->action_id,
+				'action_settings'  => $rule->action_settings,
+				'trigger_id'       => $rule->trigger_id,
+				'trigger_settings' => $rule->trigger_settings,
+				'status'           => $rule->status,
+			);
+		}
 
 		// Ensure that we have an array.
 		if ( ! is_array( $rule ) ) {

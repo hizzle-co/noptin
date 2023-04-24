@@ -6,16 +6,21 @@ defined( 'ABSPATH' ) || exit;
  * @var Noptin_Automated_Email $campaign
  */
 
-$rule = new Noptin_Automation_Rule( absint( $campaign->get( 'automation_rule' ) ) );
+$rule = noptin_get_current_automation_rule();
 
 noptin_hidden_field( 'noptin_email[automation_rule]', $campaign->get( 'automation_rule' ) );
 
-if ( ! $rule->exists() ) {
+if ( ! $rule->exists() && ! $rule->is_creating ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
 		esc_html__( 'Rule not found. It might have been deleted.', 'newsletter-optin-box' )
 	);
 	return;
+}
+
+if ( $rule->is_creating ) {
+	noptin_hidden_field( 'noptin_trigger_id', $rule->trigger_id );
+	noptin_hidden_field( 'noptin_action_id', $rule->action_id );
 }
 
 $trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
@@ -29,8 +34,6 @@ if ( empty( $trigger ) ) {
 
 $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
 
-// Do not display the trigger subject field. Instead, use the recipient value as the trigger subject.
-// Adding the timing metabox to the Ultimate Addons Pack.
 ?>
 
 <div id="noptin-automation-rule-editor" class="edit-automation-rule noptin-email-editor-fields noptin-fields" style="margin-top: 1.5em;">

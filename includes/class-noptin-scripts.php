@@ -199,7 +199,7 @@ class Noptin_Scripts {
 			// Fetch the rule.
 			$rule = noptin_get_current_automation_rule();
 
-			if ( ! $rule->exists() ) {
+			if ( ! $rule->exists() && ! $rule->is_creating ) {
 				return wp_dequeue_script( $handle );
 			}
 
@@ -222,6 +222,9 @@ class Noptin_Scripts {
 					'smart_tags'        => $trigger->get_known_smart_tags(),
 					'conditional_logic' => (object) $rule->conditional_logic,
 					'rule_id'           => $rule->id,
+					'trigger_id'        => $rule->trigger_id,
+					'action_id'         => $rule->action_id,
+					'is_creating'       => $rule->is_creating,
 					'error'             => __( 'Unable to save your changes.', 'newsletter-optin-box' ),
 					'saved'             => __( 'Your automation rule has been saved.', 'newsletter-optin-box' ),
 				)

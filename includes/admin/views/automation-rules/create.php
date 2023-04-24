@@ -1,4 +1,33 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
+<?php
+
+/**
+ * Create an automation rule.
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+// Edit URLs.
+$edit_urls = array(
+	'default' => add_query_arg(
+		array(
+			'page'                        => 'noptin-automation-rules',
+			'noptin_edit_automation_rule' => 0,
+		),
+		admin_url( 'admin.php' )
+	),
+	'email'   => add_query_arg(
+		array(
+			'page'        => 'noptin-email-campaigns',
+			'section'     => 'automations',
+			'sub_section' => 'edit_campaign',
+			'campaign'    => 0,
+		),
+		admin_url( 'admin.php' )
+	),
+);
+
+$edit_urls = apply_filters( 'noptin_create_automation_rule_edit_urls', $edit_urls );
+?>
 
 <div class="wrap noptin-add-automation-rule-page" id="noptin-wrapper">
 
@@ -8,7 +37,6 @@
 
 	<div id="noptin-automation-rule-editor">
 		<p><?php esc_html_e( 'Start by selecting a trigger and an action for your rule below.', 'newsletter-optin-box' ); ?></p>
-		<form method="POST">
 
 			<div class="noptin-automation-rule-editor-section">
 
@@ -79,9 +107,15 @@
 				<p class="noptin-automation-rule-editor-section-description description"><?php esc_html_e( 'Select an action to take when the above trigger is fired', 'newsletter-optin-box' ); ?></p>
 			</div>
 
-			<input type="submit" class="button button-primary noptin-automation-rule-create" value="<?php esc_html_e( 'Continue', 'newsletter-optin-box' ); ?>">
-			<?php wp_nonce_field( 'noptin-admin-create-automation-rule', 'noptin-admin-create-automation-rule' ); ?>
-			<input type="hidden" name="noptin_admin_action" value="noptin_create_automation_rule">
+			<a
+				href="#"
+				class="button button-primary noptin-automation-rule-create"
+				<?php
+					foreach ( $edit_urls as $key => $url ) {
+						printf( 'data-%s-url="%s" ', esc_attr( $key ), esc_url( $url ) );
+					}
+				?>
+			><?php esc_html_e( 'Continue', 'newsletter-optin-box' ); ?></a>
 		</form>
 	</div>
 

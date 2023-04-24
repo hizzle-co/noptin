@@ -151,8 +151,10 @@ class Noptin_Automated_Emails_Admin {
 			return;
 		}
 
+		$data = wp_unslash( $_POST );
+
 		// Save automation.
-		$automation = new Noptin_Automated_Email( wp_unslash( $_POST['noptin_email'] ) );
+		$automation = new Noptin_Automated_Email( $data['noptin_email'] );
 		$result     = $automation->save();
 
 		if ( is_wp_error( $result ) ) {
@@ -172,12 +174,37 @@ class Noptin_Automated_Emails_Admin {
 		}
 
 		// Automation rule.
-		$automation_rule = new Noptin_Automation_Rule( $automation->get( 'automation_rule' ) );
+		$rule_id         = absint( $automation->get( 'automation_rule' ) );
+		$automation_rule = new Noptin_Automation_Rule( $rule_id );
+
+		// Check if we are creating a new rule.
+		if ( empty( $rule_id ) && isset( $data['noptin_trigger_id'] ) && isset( $data['noptin_action_id'] ) ) {
+
+			$automation_rule->trigger_id       = sanitize_text_field( $data['noptin_trigger_id'] );
+			$automation_rule->action_id        = sanitize_text_field( $data['noptin_action_id'] );
+			$automation_rule->trigger_settings = $automation_rule->sanitize_trigger_settings( array() );
+			$automation_rule->action_settings  = $automation_rule->sanitize_action_settings( array() );
+
+			$automation_rule = noptin()->automation_rules->create_rule( $automation_rule );
+
+			if ( empty( $automation_rule ) ) {
+				// Redirect to automation edit page.
+				if ( $automation->exists() ) {
+					wp_safe_redirect( $automation->get_edit_url() );
+					exit;
+				}
+
+				return;
+			}
+
+			$automation->options['automation_rule'] = $automation_rule->id;
+			$automation->save();
+		}
 
 		if ( $automation_rule->exists() ) {
 
-			$automation_rule->trigger_settings  = isset( $_POST['noptin_trigger_settings'] ) ? json_decode( wp_unslash( $_POST['noptin_trigger_settings'] ), true ) : array();
-			$automation_rule->conditional_logic = isset( $_POST['noptin_conditional_logic'] ) ? json_decode( wp_unslash( $_POST['noptin_conditional_logic'] ), true ) : array();
+			$automation_rule->trigger_settings  = isset( $data['noptin_trigger_settings'] ) ? json_decode( $data['noptin_trigger_settings'], true ) : array();
+			$automation_rule->conditional_logic = isset( $data['noptin_conditional_logic'] ) ? json_decode( $data['noptin_conditional_logic'], true ) : array();
 
 			$automation_rule->action_settings['email_subject'] = $automation->get_subject();
 

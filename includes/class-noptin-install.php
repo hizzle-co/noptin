@@ -61,11 +61,6 @@ class Noptin_Install {
 			return $this->upgrade_from_2();
 		}
 
-		// Upgrading from version 3.
-		if ( 3 === $upgrade_from ) {
-			return $this->upgrade_from_3();
-		}
-
 	}
 
 	/**
@@ -82,14 +77,6 @@ class Noptin_Install {
 	public function create_subscribers_meta_table() {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
-	}
-
-	/**
-	 * Force create the subscribers automation rules table
-	 */
-	public function create_automation_rules_table() {
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 	}
 
 	/**
@@ -138,34 +125,6 @@ class Noptin_Install {
 	}
 
 	/**
-	 * Returns the automation rules table schema
-	 *
-	 * @since 1.2.8
-	 */
-	private function get_automation_rules_table_schema() {
-		global $wpdb;
-
-		$table           = $wpdb->prefix . 'noptin_automation_rules';
-		$charset_collate = $this->charset_collate;
-
-		return "CREATE TABLE $table (
-			id bigint(20) unsigned NOT NULL auto_increment,
-			action_id varchar(255) NOT NULL default '',
-			action_settings longtext DEFAULT NULL,
-			trigger_id varchar(255) NOT NULL default '',
-			trigger_settings longtext DEFAULT NULL,
-			status tinyint(2) NOT NULL default '1',
-			times_run int(11) NOT NULL default '0',
-			created_at datetime NOT NULL default '0000-00-00 00:00:00',
-			updated_at datetime NOT NULL default '0000-00-00 00:00:00',
-			PRIMARY KEY  (id),
-			KEY trigger_id (trigger_id),
-			KEY action_id (action_id)
-		) $charset_collate;";
-
-	}
-
-	/**
 	 * Upgrades the db from version 1 to 2
 	 */
 	private function upgrade_from_1() {
@@ -195,16 +154,6 @@ class Noptin_Install {
 		// Create initial subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
-		$this->upgrade_from_3();
-	}
-
-	/**
-	 * Upgrades the db from version 3 to 4
-	 */
-	private function upgrade_from_3() {
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 	}
 
 	// TODO: Move source and IP Address to main subscribers table.
@@ -238,7 +187,6 @@ class Noptin_Install {
 		// Create database tables.
 		dbDelta( array( $this->get_subscribers_table_schema() ) );
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
-		dbDelta( array( $this->get_automation_rules_table_schema() ) );
 
 		// Add a default subscriber.
 		add_noptin_subscriber( $this->get_initial_subscriber_args() );

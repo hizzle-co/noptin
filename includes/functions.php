@@ -1030,6 +1030,7 @@ function noptin_dump( $data ) {
 /**
  * Checks whether the automation rules table exists
  *
+ * @deprecated 1.12.0
  * @since 1.3.3
  * @return bool
  */
@@ -1042,6 +1043,7 @@ function noptin_automation_rules_table_exists() {
 /**
  *  Returns the name of the automation rules table
  *
+ * @deprecated 1.12.0
  * @since 1.3.3
  * @return string The name of our subscribers meta table
  */

@@ -15,6 +15,11 @@ class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
         array (
             'Pelago\\' => 7,
         ),
+        'H' => 
+        array (
+            'Hizzle\\Store\\' => 13,
+            'Hizzle\\Noptin\\' => 14,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -26,6 +31,18 @@ class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
         array (
             0 => __DIR__ . '/..' . '/pelago/emogrifier/src',
         ),
+        'Hizzle\\Store\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hizzle/store/src',
+        ),
+        'Hizzle\\Noptin\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -33,6 +50,7 @@ class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitd4095a2753c173a59c96834ab522bdaa::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitd4095a2753c173a59c96834ab522bdaa::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitd4095a2753c173a59c96834ab522bdaa::$classMap;
 
         }, null, ClassLoader::class);
     }

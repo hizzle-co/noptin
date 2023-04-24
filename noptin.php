@@ -259,6 +259,9 @@ class Noptin {
 		// Set up hooks.
 		$this->register_hooks();
 
+		// DB.
+		$this->db();
+
 		/**
 		 * Fires after Noptin loads.
 		 *
@@ -497,7 +500,7 @@ class Noptin {
 		}
 
 		// Ensure all tables we successfully created.
-		$tables = array( 'automation_rules', 'subscribers_meta', 'subscribers' );
+		$tables = array( 'subscribers_meta', 'subscribers' );
 
 		foreach ( $tables as $table ) {
 
@@ -517,6 +520,15 @@ class Noptin {
 				}
 			}
 		}
+	}
+
+	/**
+     * Returns the new DB manager.
+     *
+     * @return \Hizzle\Noptin\DB\Main
+     */
+	public function db() {
+		return \Hizzle\Noptin\DB\Main::instance();
 	}
 
 	/**
