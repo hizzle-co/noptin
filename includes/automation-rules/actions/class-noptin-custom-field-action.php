@@ -94,15 +94,7 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 				'label'       => __( 'Field Value', 'newsletter-optin-box' ),
 				'description' => __( 'Enter a value to assign the field', 'newsletter-optin-box' ),
 				'placeholder' => __( 'Sample Value', 'newsletter-optin-box' ),
-				'description' => sprintf(
-					'<p class="description" v-show="availableSmartTags">%s</p>',
-					sprintf(
-						/* translators: %1: Opening link, %2 closing link tag. */
-						esc_html__( 'You can use %1$s smart tags %2$s to assign dynamic values.', 'newsletter-optin-box' ),
-						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
-						'</a>'
-					)
-				),
+				'description' => __( 'Leave blank to delete', 'newsletter-optin-box' ),
 			),
 
 		);

@@ -118,6 +118,26 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
+	 * Returns an array of known smart tags with callbacks removed.
+	 *
+	 * @since 1.12.0
+	 * @return array
+	 */
+	public function get_known_smart_tags_for_js() {
+		$smart_tags = $this->get_known_smart_tags();
+		$prepared   = array();
+
+		foreach ( $smart_tags as $key => $value ) {
+			$prepared[ $key ] = $value;
+
+			// Remove callback.
+			unset( $prepared[ $key ]['callback'] );
+		}
+
+		return $prepared;
+	}
+
+	/**
 	 * Returns an array of known smart tags.
 	 *
 	 * @since 1.9.0

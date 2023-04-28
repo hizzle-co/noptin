@@ -1,9 +1,29 @@
 import domReady from '@wordpress/dom-ready';
-import { createApp } from 'vue';
-import App from './partials/automation-rules-editor.js';
+import AutomationRuleEditor from './components/automation-rules/editor';
+import {render, createRoot, StrictMode} from "@wordpress/element";
 
-domReady( function () {
-	window.noptin = window.noptin || {};
+domReady( () => {
 
-	window.noptin.AutomationRulesEditor = createApp( App ).mount( '#noptin-automation-rule-editor' );
+	// Fetch rule ID and action and trigger editor div.
+	const app = document.getElementById( 'noptin-automation-rule__editor-app' );
+
+	if ( app ) {
+		const data = {...app.dataset}
+		data.id = parseInt( data.id );
+		data.settings = JSON.parse( data.settings );
+		data.smartTags = JSON.parse( data.smartTags );
+
+		const Editor = (
+			<StrictMode>
+				<AutomationRuleEditor {...data} />
+			</StrictMode>
+		)
+
+		// React 18.
+		if ( createRoot ) {
+			createRoot( app ).render( Editor );
+		} else {
+			render( Editor, app );
+		}
+	}
 } );

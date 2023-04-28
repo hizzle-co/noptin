@@ -63,12 +63,7 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 	 */
 	public function get_settings() {
 
-		$settings = array(
-			'noptin_map_custom_fields_heading' => array(
-				'el'      => 'hero',
-				'content' => __( 'Map custom fields', 'newsletter-optin-box' ),
-			),
-		);
+		$settings = array();
 
 		foreach ( get_noptin_custom_fields() as $field ) {
 
@@ -76,21 +71,12 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 				'type'        => 'text',
 				'el'          => 'input',
 				'label'       => $field['label'],
+				'map_field'   => true,
 				'placeholder' => sprintf(
 					/* translators: %s: The field name. */
 					__( 'Enter %s', 'newsletter-optin-box' ),
 					$field['label']
 				),
-				'description' => sprintf(
-					'<p class="description" v-show="availableSmartTags">%s</p>',
-					sprintf(
-						/* translators: %1: Opening link, %2 closing link tag. */
-						esc_html__( 'Enter a value or %1$suse smart tags%2$s to map a dynamic value.', 'newsletter-optin-box' ),
-						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
-						'</a>'
-					)
-				),
-				'append'      => '<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox"><span class="dashicons dashicons-shortcode"></span></a>',
 			);
 		}
 

@@ -130,17 +130,11 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 		);
 
 		foreach ( $this->get_listing_fields() as $field => $label ) {
-			$description = 'noptin_post_id' === $field ? __( 'Leave blank to create a new listing.', 'newsletter-optin-box' ) : __( 'Leave blank to ignore.', 'newsletter-optin-box' );
 
 			$settings[ $field ] = array(
 				'el'          => 'input',
 				'label'       => $label,
-				'description' => $description . ' ' . sprintf(
-					/* translators: %1: Opening link, %2 closing link tag. */
-					esc_html__( 'You can use %1$s smart tags %2$s to assign dynamic values.', 'newsletter-optin-box' ),
-					'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
-					'</a>'
-				),
+				'placeholder' => 'noptin_post_id' === $field ? __( 'Leave blank to create a new listing.', 'newsletter-optin-box' ) : __( 'Leave blank to ignore.', 'newsletter-optin-box' ),
 			);
 		}
 

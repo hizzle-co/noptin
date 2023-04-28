@@ -48,17 +48,8 @@ class Noptin_PMPro_Change_Level_Action extends Noptin_Abstract_Action {
 
 		return array(
 			'level' => array(
-				'el'          => 'input',
-				'label'       => __( 'Membership Level', 'newsletter-optin-box' ),
-				'description' => sprintf(
-					'<p class="description" v-show="availableSmartTags">%s</p>',
-					sprintf(
-						/* translators: %1: Opening link, %2 closing link tag. */
-						esc_html__( 'Enter the new level name or id. You can use %1$ssmart tags%2$s to provide a dynamic value.', 'newsletter-optin-box' ),
-						'<a href="#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags" class="thickbox">',
-						'</a>'
-					)
-				),
+				'el'    => 'input',
+				'label' => __( 'Membership Level', 'newsletter-optin-box' ),
 			),
 		);
 	}

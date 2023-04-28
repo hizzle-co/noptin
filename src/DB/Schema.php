@@ -77,8 +77,11 @@ class Schema {
 						),
 
 						'action_settings'  => array(
-							'type'        => 'TEXT',
-							'description' => __( 'Action settings JSON', 'newsletter-optin-box' ),
+							'type'              => 'TEXT',
+							'description'       => __( 'Action settings JSON', 'newsletter-optin-box' ),
+							'extra_rest_schema' => array(
+								'type' => array( 'object', 'array', 'null', 'string' ),
+							),
 						),
 
 						'trigger_id'       => array(
@@ -89,8 +92,11 @@ class Schema {
 						),
 
 						'trigger_settings' => array(
-							'type'        => 'TEXT',
-							'description' => __( 'Trigger settings JSON', 'newsletter-optin-box' ),
+							'type'              => 'TEXT',
+							'description'       => __( 'Trigger settings JSON', 'newsletter-optin-box' ),
+							'extra_rest_schema' => array(
+								'type' => array( 'object', 'array', 'null', 'string' ),
+							),
 						),
 
 						'status'           => array(
@@ -106,24 +112,28 @@ class Schema {
 							'length'      => 20,
 							'nullable'    => false,
 							'default'     => 0,
+							'readonly'    => true,
 							'description' => __( 'The number of times this rule has run.', 'newsletter-optin-box' ),
 						),
 
 						'delay'            => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
+							'default'     => 0,
 							'description' => __( 'The number of seconds to wait before firing the action.', 'newsletter-optin-box' ),
 						),
 
 						'created_at'       => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
+							'readonly'    => true,
 							'description' => __( 'The date this rule was created.', 'newsletter-optin-box' ),
 						),
 
 						'updated_at'       => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
+							'readonly'    => true,
 							'description' => __( 'The date this rule was last modified.', 'newsletter-optin-box' ),
 						),
 

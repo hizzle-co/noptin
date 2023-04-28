@@ -139,6 +139,11 @@ class Noptin_Scripts {
 				'version'      => $data['version'],
 				'src'          => plugin_dir_url( __FILE__ ) . "assets/js/dist/$script.js",
 			);
+
+			// If wp components is a dependency, enqueue style.
+			if ( in_array( 'wp-components', $script['dependencies'], true ) ) {
+				wp_enqueue_style( 'wp-components' );
+			}
 		}
 
 		// Enqueue the script.

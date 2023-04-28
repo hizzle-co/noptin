@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Automation Rule.
  */
-class Payment_Item extends \Hizzle\Store\Record {
+class Automation_Rule extends \Hizzle\Store\Record {
 
 	/**
 	 * Are we creating a new rule?
@@ -162,6 +162,26 @@ class Payment_Item extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns the number of times this rule has been run.
+	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return int
+	 */
+	public function get_times_run( $context = 'view' ) {
+		return $this->get_prop( 'times_run', $context );
+	}
+
+	/**
+	 * Sets the number of times this rule has been run.
+	 *
+	 * @param int $value Delay in seconds.
+	 */
+	public function set_times_run( $value ) {
+		$value = empty( $value ) ? 0 : absint( $value );
+		$this->set_prop( 'times_run', $value );
+	}
+
+	/**
 	 * Get the date this rule was created.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -197,6 +217,21 @@ class Payment_Item extends \Hizzle\Store\Record {
 	 */
 	public function set_updated_at( $updated_at ) {
 		$this->set_date_prop( 'updated_at', $updated_at );
+	}
+
+	/**
+	 * Saves the rule.
+	 *
+	 * @return int|\WP_Error
+	 */
+	public function save() {
+		$this->set_updated_at( time() );
+
+		if ( ! $this->get_id() ) {
+			$this->set_created_at( time() );
+		}
+
+		return parent::save();
 	}
 
 	/**
