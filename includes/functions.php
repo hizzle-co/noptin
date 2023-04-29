@@ -1958,6 +1958,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 		return sprintf( __( 'Does not send if %s', 'newsletter-optin-box' ), $rules );
 	}
 
+	// translators: %s is a list of conditions.
 	return sprintf( __( 'Does not run if %s', 'newsletter-optin-box' ), $rules );
 }
 
@@ -2010,4 +2011,41 @@ function noptin_get_current_automation_rule() {
 	}
 
 	return new Noptin_Automation_Rule( 0 );
+}
+
+/**
+ * Queries the automation rules database.
+ *
+ * @param array $args Query arguments.
+ * @param string $return See Hizzle\Noptin\DB\Main::query for allowed values.
+ * @return int|array|\Hizzle\Noptin\DB\Automation_Rule[]|\Hizzle\Store\Query|WP_Error
+ */
+function noptin_get_automation_rules( $args = array(), $return = 'results' ) {
+	return noptin()->db()->query( 'automation_rules', $args, $return );
+}
+
+/**
+ * Fetch an automation rule by rule ID.
+ *
+ * @param int|\Hizzle\Noptin\DB\Automation_Rule $automation_rule_id Automation Rule ID, or object.
+ * @return \Hizzle\Noptin\DB\Automation_Rule|WP_Error Automation Rule object if found, error object if not found.
+ */
+function noptin_get_automation_rule( $automation_rule_id = 0 ) {
+	return noptin()->db()->get( $automation_rule_id, 'automation_rules' );
+}
+
+/**
+ * Deletes an automation rule.
+ *
+ * @param int|\Hizzle\Noptin\DB\Automation_Rule $automation_rule_id Automation Rule ID, or object.
+ * @return bool|WP_Error True on success, error object on failure.
+ */
+function noptin_delete_automation_rule( $automation_rule_id ) {
+	$automation_rule = noptin_get_automation_rule( $automation_rule_id );
+
+	if ( ! is_wp_error( $automation_rule ) ) {
+		return $automation_rule->delete();
+	}
+
+	return $automation_rule;
 }

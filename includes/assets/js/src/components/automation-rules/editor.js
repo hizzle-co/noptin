@@ -47,7 +47,7 @@ function EditorHeading({id, createNewUrl}) {
  * @param {Object} trigger_settings
  * @return {Array}
  */
-function getAvailableSmartTags( smartTags, trigger_settings ) {
+export function getAvailableSmartTags( smartTags, trigger_settings ) {
 	const tags = [];
 
 	if ( ! smartTags ) {

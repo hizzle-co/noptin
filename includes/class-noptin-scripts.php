@@ -198,42 +198,7 @@ class Noptin_Scripts {
 		}
 
 		if ( 'noptin-edit-automation-rule' === $handle ) {
-
 			add_thickbox();
-
-			// Fetch the rule.
-			$rule = noptin_get_current_automation_rule();
-
-			if ( ! $rule->exists() && ! $rule->is_creating ) {
-				return wp_dequeue_script( $handle );
-			}
-
-			// Fetch the trigger.
-			$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
-
-			if ( ! $trigger ) {
-				return wp_dequeue_script( $handle );
-			}
-
-			wp_localize_script(
-				$handle,
-				'noptinRules',
-				array(
-					'ajaxurl'           => admin_url( 'admin-ajax.php' ),
-					'nonce'             => wp_create_nonce( 'noptin_automation_rules' ),
-					'trigger_settings'  => (object) $rule->trigger_settings,
-					'action_settings'   => (object) $rule->action_settings,
-					'comparisons'       => noptin_get_conditional_logic_comparisons(),
-					'smart_tags'        => $trigger->get_known_smart_tags(),
-					'conditional_logic' => (object) $rule->conditional_logic,
-					'rule_id'           => $rule->id,
-					'trigger_id'        => $rule->trigger_id,
-					'action_id'         => $rule->action_id,
-					'is_creating'       => $rule->is_creating,
-					'error'             => __( 'Unable to save your changes.', 'newsletter-optin-box' ),
-					'saved'             => __( 'Your automation rule has been saved.', 'newsletter-optin-box' ),
-				)
-			);
 		}
 
 		if ( 'noptin-view-automation-rules' === $handle ) {

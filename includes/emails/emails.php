@@ -458,7 +458,7 @@ function noptin_email_display_merge_tags_text( $text = '' ) {
 	if ( apply_filters( 'noptin_email_has_listed_available_merge_tags', false ) ) {
 		add_thickbox();
 		$atts = array(
-			'href'  => '#TB_inline?width=0&height=550&inlineId=noptin-available-smart-tags',
+			'href'  => '#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags',
 			'class' => 'thickbox',
 		);
 	} else {

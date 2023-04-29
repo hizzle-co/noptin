@@ -1540,42 +1540,6 @@ a.no-campaign-create-new-campaign {
 		}
 	}
 
-	.noptin-conditional-logic-wrapper {
-		max-width: 100%;
-
-		select,
-		.noptin-condition-value {
-			padding: 0 24px 0 8px;
-			width: auto;
-			margin-bottom: 6px;
-		}
-
-		.noptin-condition-field {
-			max-width: 180px;
-			width: 180px;
-		}
-
-		.noptin-condition-comparison {
-			max-width: 120px;
-			width: 120px;
-		}
-
-		.noptin-condition-value {
-			max-width: 180px;
-			width: 180px;
-		}
-
-		.noptin-remove-conditional-rule {
-			color: #454545;
-			text-decoration: none;
-
-			.dashicons {
-				vertical-align: middle;
-				font-size: 16px;
-			}
-		}
-	}
-
 	.noptin-automation-rule-editor-section {
 		margin-bottom: 1.5rem;
 
@@ -2413,6 +2377,10 @@ a.no-campaign-create-new-campaign {
 .noptin-component__field-lg {
 	margin-bottom: 1.6rem;
 	max-width: 600px;
+
+	.noptin-conditional-logic-rules & {
+		max-width: 100%;
+	}
 }
 
 // Displays a list of key value pairs

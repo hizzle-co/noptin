@@ -18,11 +18,6 @@ if ( ! $rule->exists() && ! $rule->is_creating ) {
 	return;
 }
 
-if ( $rule->is_creating ) {
-	noptin_hidden_field( 'noptin_trigger_id', $rule->trigger_id );
-	noptin_hidden_field( 'noptin_action_id', $rule->action_id );
-}
-
 $trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
 if ( empty( $trigger ) ) {
 	printf(
@@ -32,110 +27,59 @@ if ( empty( $trigger ) ) {
 	return;
 }
 
+// Normal settings.
 $trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
+
+// Conditional logic.
+$trigger_settings['conditional_logic'] = array(
+	'label'       => __( 'Conditional Logic', 'newsletter-optin-box' ),
+	'el'          => 'conditional_logic',
+	'comparisons' => noptin_get_conditional_logic_comparisons(),
+	'toggle_text' => __( 'Optional. Send this email only if certain conditions are met.', 'newsletter-optin-box' ),
+	'default'     => array(
+		'enabled' => false,
+		'action'  => 'allow',
+		'type'    => 'all',
+		'rules'   => array(
+			array(
+				'condition' => 'is',
+				'type'      => 'date',
+				'value'     => gmdate( 'Y-m-d' ),
+			),
+		),
+	),
+);
+
+// Heading.
+$trigger_settings = array_merge(
+	array(
+		'heading' => array(
+			'content' => sprintf(
+				/* translators: %s: Trigger description. */
+				__( 'Noptin will send this email %s', 'newsletter-optin-box' ),
+				$trigger->get_description()
+			),
+			'el'      => 'paragraph',
+		),
+	),
+	$trigger_settings
+);
 
 ?>
 
-<div id="noptin-automation-rule-editor" class="edit-automation-rule noptin-email-editor-fields noptin-fields" style="margin-top: 1.5em;">
+<div id="noptin-emails-conditional-logic-editor" style="margin-top: 1.5em;">
 
-	<div class="noptin-automation-rule-editor-section">
-
-		<div class="noptin-select-wrapper field-wrapper">
-			<label class="noptin-select-label"><?php esc_html_e( 'Trigger', 'newsletter-optin-box' ); ?></label>
-			<div class="noptin-content">
-				<select disabled>
-					<option selected="selected" value="<?php echo esc_attr( $trigger->get_id() ); ?>"><?php echo esc_html( $trigger->get_name() ); ?></option>
-				</select>
-				<p class="description">
-					<?php
-						printf(
-							/* translators: %s: Trigger description */
-							esc_html__( 'Send this email %s.', 'newsletter-optin-box' ),
-							esc_html( strtolower( $trigger->get_description() ) )
-						);
-					?>
-				</p>
-			</div>
-		</div>
-
-		<?php foreach ( $trigger_settings as $setting_id => $args ) : ?>
-			<?php Noptin_Vue::render_el( "trigger_settings['$setting_id']", $args ); ?>
-		<?php endforeach; ?>
-
-		<!-- Conditional logic -->
-		<div v-if="hasConditions" class="noptin-text-wrapper field-wrapper">
-			<label for="noptin-enable-conditional-logic" class="noptin-label"><?php esc_html_e( 'Conditional Logic', 'newsletter-optin-box' ); ?></label>
-			<div class="noptin-content">
-
-				<p class="description">
-					<label>
-						<input type="checkbox" id="noptin-enable-conditional-logic" v-model="conditional_logic.enabled" />
-						<span style="font-weight: 400;"><?php esc_html_e( 'Optional. Only send (or prevent sending) this email depending on specific conditions.', 'newsletter-optin-box' ); ?></span>
-					</label>
-				</p>
-
-				<div class="noptin-conditional-logic-wrapper card" v-show="conditional_logic.enabled">
-
-					<p>
-						<select v-model="conditional_logic.action">
-							<option value="allow"><?php esc_html_e( 'Only run if', 'newsletter-optin-box' ); ?></option>
-							<option value="prevent"><?php esc_html_e( 'Do not run if', 'newsletter-optin-box' ); ?></option>
-						</select>
-
-						<select v-model="conditional_logic.type">
-							<option value="all"><?php esc_html_e( 'all', 'newsletter-optin-box' ); ?></option>
-							<option value="any"><?php esc_html_e( 'any', 'newsletter-optin-box' ); ?></option>
-						</select>
-
-						<span>&nbsp;<?php esc_html_e( 'of the following rules are true:', 'newsletter-optin-box' ); ?>&nbsp;</span>
-					</p>
-
-					<p v-for="(rule, index) in conditional_logic.rules" class="noptin-conditional-logic-rule">
-
-						<select class="noptin-condition-field" v-model="rule.type" @change="rule.value=getConditionPlaceholder(rule.type); rule.condition='is'">
-							<option v-for="condition_type in availableConditions" :value="condition_type.key">{{ condition_type.label }}</option>
-						</select>
-
-						<select class="noptin-condition-comparison" v-model="rule.condition">
-							<option
-								v-for="(comparison_label, comparison_key) in getConditionalComparisonOptions( rule.type )"
-								:value="comparison_key"
-							>{{ comparison_label }}</option>
-						</select>
-
-						<select class="noptin-condition-value" v-model="rule.value" v-if="hasConditionOptions(rule.type)">
-							<option value="" disabled><?php esc_html_e( 'Select a value', 'newsletter-optin-box' ); ?></option>
-							<option v-for="(option_label, option_value) in getConditionOptions(rule.type)" :value="option_value">{{ option_label }}</option>
-						</select>
-
-						<input :type="getConditionInputType(rule.type)" class="noptin-condition-value" v-model="rule.value" :placeholder="getConditionPlaceholder(rule.type)" v-else />
-
-						<a href="#" @click.prevent="removeConditionalLogicRule(rule)" class="noptin-remove-conditional-rule">
-							<span class="dashicons dashicons-remove"></span>&nbsp;
-						</a>
-
-						<span v-if="! isLastConditionalLogicRule(index) && 'all' == conditional_logic.type">&nbsp;<?php esc_html_e( 'and', 'newsletter-optin-box' ); ?></span>
-						<span v-if="! isLastConditionalLogicRule(index) && 'any' == conditional_logic.type">&nbsp;<?php esc_html_e( 'or', 'newsletter-optin-box' ); ?></span>
-
-					</p>
-
-					<p>
-						<button class="button" @click.prevent="addConditionalLogicRule">
-							<span class="dashicons dashicons-plus" style="vertical-align: middle;"></span>
-							<span v-if="conditional_logic.rules && conditional_logic.rules.length"><?php esc_html_e( 'Add another rule', 'newsletter-optin-box' ); ?></span>
-							<span v-else><?php esc_html_e( 'Add rule', 'newsletter-optin-box' ); ?></span>
-						</button>
-					</p>
-
-				</div>
-			</div>
-		</div>
-
-		<textarea name="noptin_trigger_settings" :value="JSON.stringify(trigger_settings)" style="display: none;"></textarea>
-		<textarea name="noptin_conditional_logic" :value="JSON.stringify(conditional_logic)" style="display: none;"></textarea>
-
-		<div id="noptin-available-smart-tags" style="display: none;">
-			<?php require noptin()->plugin_path . 'includes/admin/views/automation-rules/dynamic-content-tags.php'; ?>
-		</div>
+	<div
+		id="noptin-emails-conditional-logic__editor-app"
+		class="noptin-es6-app"
+		data-id="<?php echo esc_attr( $rule->id ); ?>"
+		data-action="<?php echo esc_attr( $rule->action_id ); ?>"
+		data-trigger="<?php echo esc_attr( $rule->trigger_id ); ?>"
+		data-saved="<?php echo esc_attr( wp_json_encode( (object) $rule->trigger_settings ) ); ?>"
+		data-settings="<?php echo esc_attr( wp_json_encode( $trigger_settings ) ); ?>"
+		data-smart-tags="<?php echo esc_attr( wp_json_encode( $trigger->get_known_smart_tags_for_js() ) ); ?>"
+	>
+		<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>
+		<span class="spinner"></span>
 	</div>
 </div>

@@ -20,7 +20,7 @@ $edit_urls = array(
 			'page'        => 'noptin-email-campaigns',
 			'section'     => 'automations',
 			'sub_section' => 'edit_campaign',
-			'campaign'    => 0,
+			'campaign'    => 'new_automation_rule',
 		),
 		admin_url( 'admin.php' )
 	),

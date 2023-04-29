@@ -51,7 +51,6 @@ class Noptin_Emails_Admin {
 		add_action( 'noptin_force_send_campaign', array( $this, 'force_send_campaign' ) );
 		add_action( 'noptin_duplicate_email_campaign', array( $this, 'duplicate_email_campaign' ) );
 		add_action( 'noptin_delete_email_campaign', array( $this, 'delete_email_campaign' ) );
-		add_action( 'noptin_after_register_menus', array( $this, 'register_menu' ), 5 );
 		add_filter( 'pre_get_users', array( $this, 'filter_users_by_campaign' ) );
 		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
 		add_action( 'add_meta_boxes_noptin_automations', array( $this, 'register_metaboxes' ) );

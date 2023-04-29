@@ -65,7 +65,7 @@ $settings['conditional_logic'] = array(
 						'condition' => 'is',
 						'type'      => 'date',
 						'value'     => gmdate( 'Y-m-d' ),
-					)
+					),
 				),
 			),
 		),

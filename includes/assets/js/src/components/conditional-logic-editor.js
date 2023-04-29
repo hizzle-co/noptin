@@ -415,15 +415,17 @@ export function ConditionalLogicRules({ rules, conditionType, comparisons, avail
  * Displays the conditional logic editor.
  *
  * @param {Object} props
- * @param {String} props.className
- * @param {String} props.label
- * @param {String} props.prop
- * @param {Array} props.availableSmartTags
- * @param {Object} props.comparisons
+ * @param {String} props.className The class name.
+ * @param {String} props.label The label.
+ * @param {String} props.prop The prop to update.
+ * @param {Array} props.availableSmartTags The available smart tags.
+ * @param {Object} props.comparisons The available comparisons.
+ * @param {Object} props.value The current value.
+ * @param {String} props.toggleText The toggle text.
  * @param {Function} props.onChange
  * @return {JSX.Element}
  */
-export default function ConditionalLogicEditor({ onChange, value, comparisons, availableSmartTags, className }) {
+export default function ConditionalLogicEditor({ onChange, value, comparisons, toggleText, availableSmartTags, className }) {
 
 	// If value is not an Object, set it to the default.
 	if ( typeof value !== 'object' ) {
@@ -449,7 +451,7 @@ export default function ConditionalLogicEditor({ onChange, value, comparisons, a
 				checked={ value.enabled ? true : false }
 				onChange={ ( val ) => setConditionalLogicAttribute( 'enabled', val ) }
 				className="noptin-component__field"
-				label={ __( 'Optionally enable/disable this trigger depending on specific conditions.', 'newsletter-optin-box' ) }
+				label={ toggleText ? toggleText : __( 'Optionally enable/disable this trigger depending on specific conditions.', 'newsletter-optin-box' ) }
 				__nextHasNoMarginBottom
 			/>
 

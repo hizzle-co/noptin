@@ -360,7 +360,12 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 	// Conditional logic editor.
 	if ( setting.el === 'conditional_logic' ) {
 		return (
-			<ConditionalLogicEditor {...defaultAttributes} availableSmartTags={availableSmartTags} comparisons={setting.comparisons} />
+			<ConditionalLogicEditor
+				{...defaultAttributes}
+				availableSmartTags={availableSmartTags}
+				comparisons={setting.comparisons}
+				toggleText={setting.toggle_text}
+			/>
 		);
 	}
 

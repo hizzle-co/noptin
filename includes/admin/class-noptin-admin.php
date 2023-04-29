@@ -221,11 +221,6 @@ class Noptin_Admin {
 			wp_enqueue_script( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.js', array(), '4.6.3', true );
 			wp_enqueue_style( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.min.css', array(), '4.6.3' );
 			wp_enqueue_script( 'noptin-email-campaigns', $this->assets_url . 'js/dist/newsletter-editor.js', array( 'select2', 'sweetalert2', 'postbox' ), $version, true );
-
-			$rule = noptin_get_current_automation_rule();
-			if ( $rule->exists() ) {
-				Noptin_Scripts::enqueue_script( 'edit-automation-rule' );
-			}
 		}
 
 		// Subscribers page.

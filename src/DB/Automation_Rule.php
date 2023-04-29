@@ -68,6 +68,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 */
 	public function set_action_settings( $value ) {
 		$value = empty( $value ) ? array() : maybe_unserialize( $value );
+		$value = is_array( $value ) ? $value : array();
 		$this->set_prop( 'action_settings', $value );
 		$this->sanitize_action_settings();
 	}
@@ -118,6 +119,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 */
 	public function set_trigger_settings( $value ) {
 		$value = empty( $value ) ? array() : maybe_unserialize( $value );
+		$value = is_array( $value ) ? $value : array();
 		$this->set_prop( 'trigger_settings', $value );
 		$this->sanitize_trigger_settings();
 	}
