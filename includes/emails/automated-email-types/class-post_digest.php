@@ -23,6 +23,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * @var string
 	 */
+	public $category = 'WordPress';
+
+	/**
+	 * @var string
+	 */
 	public $type = 'post_digest';
 
 	/**

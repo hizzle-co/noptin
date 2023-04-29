@@ -8,6 +8,7 @@ module.exports = {
 	entry: {
 		admin: "./includes/assets/js/src/admin.js",
 		settings: "./includes/assets/js/src/settings.js",
+		"create-automated-email": "./includes/assets/js/src/create-automated-email.js",
 		"edit-email-campaign": "./includes/assets/js/src/edit-email-campaign.js",
 		"newsletter-editor": "./includes/assets/js/src/newsletter-editor.js",
 		"view-automation-rules": "./includes/assets/js/src/view-automation-rules.js",

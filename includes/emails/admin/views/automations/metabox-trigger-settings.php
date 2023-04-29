@@ -6,11 +6,9 @@ defined( 'ABSPATH' ) || exit;
  * @var Noptin_Automated_Email $campaign
  */
 
-$rule = noptin_get_current_automation_rule();
+$rule = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
 
-noptin_hidden_field( 'noptin_email[automation_rule]', $campaign->get( 'automation_rule' ) );
-
-if ( ! $rule->exists() && ! $rule->is_creating ) {
+if ( is_wp_error( $rule ) ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
 		esc_html__( 'Rule not found. It might have been deleted.', 'newsletter-optin-box' )
@@ -18,7 +16,17 @@ if ( ! $rule->exists() && ! $rule->is_creating ) {
 	return;
 }
 
-$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
+noptin_hidden_field( 'noptin_email[automation_rule]', $rule->get_id() );
+
+if ( ! $rule->exists() ) {
+	$rule->set_action_id( 'email' );
+	$rule->set_trigger_id( $campaign->get_trigger() );
+	$rule->set_action_settings( array() );
+	$rule->set_trigger_settings( array() );
+}
+
+// Fetch the trigger.
+$trigger = $rule->get_trigger();
 if ( empty( $trigger ) ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
@@ -28,7 +36,7 @@ if ( empty( $trigger ) ) {
 }
 
 // Normal settings.
-$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $rule, $trigger );
+$trigger_settings = $trigger->get_settings();
 
 // Conditional logic.
 $trigger_settings['conditional_logic'] = array(
@@ -72,10 +80,10 @@ $trigger_settings = array_merge(
 	<div
 		id="noptin-emails-conditional-logic__editor-app"
 		class="noptin-es6-app"
-		data-id="<?php echo esc_attr( $rule->id ); ?>"
-		data-action="<?php echo esc_attr( $rule->action_id ); ?>"
-		data-trigger="<?php echo esc_attr( $rule->trigger_id ); ?>"
-		data-saved="<?php echo esc_attr( wp_json_encode( (object) $rule->trigger_settings ) ); ?>"
+		data-id="<?php echo esc_attr( $rule->get_id() ); ?>"
+		data-action="<?php echo esc_attr( $rule->get_action_id() ); ?>"
+		data-trigger="<?php echo esc_attr( $rule->get_trigger_id() ); ?>"
+		data-saved="<?php echo esc_attr( wp_json_encode( (object) $rule->get_trigger_settings() ) ); ?>"
 		data-settings="<?php echo esc_attr( wp_json_encode( $trigger_settings ) ); ?>"
 		data-smart-tags="<?php echo esc_attr( wp_json_encode( $trigger->get_known_smart_tags_for_js() ) ); ?>"
 	>

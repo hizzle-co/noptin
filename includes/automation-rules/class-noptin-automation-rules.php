@@ -73,7 +73,7 @@ class Noptin_Automation_Rules {
 
 			noptin()->emails->automated_email_types->register_automated_email_type(
 				$email_type,
-				new Noptin_Automation_Rule_Email( $email_type )
+				new Noptin_Automation_Rule_Email( $email_type, $trigger )
 			);
 		}
 	}

@@ -159,6 +159,7 @@ class Noptin_Admin_Menus {
 	public function email_campaigns_menu() {
 
 		$section     = noptin()->emails->admin->get_current_section();
+		$tab         = noptin()->emails->admin->get_current_tab();
 		$hook_suffix = add_submenu_page(
 			'noptin',
 			noptin()->emails->admin->get_current_admin_page_title(),
@@ -170,6 +171,10 @@ class Noptin_Admin_Menus {
 
 		if ( 'edit_campaign' === $section ) {
 			Noptin_Scripts::add_admin_script( $hook_suffix, 'edit-email-campaign' );
+		}
+
+		if ( 'edit_campaign' !== $section && 'automations' === $tab ) {
+			Noptin_Scripts::add_admin_script( $hook_suffix, 'create-automated-email' );
 		}
 	}
 

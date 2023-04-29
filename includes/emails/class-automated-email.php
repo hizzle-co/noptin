@@ -185,7 +185,7 @@ class Noptin_Automated_Email {
 	/**
 	 * Returns the trigger.
 	 *
-	 * @return bool
+	 * @return bool|string
 	 */
 	public function get_trigger() {
 		return $this->is_automation_rule() ? substr( $this->type, 16 ) : false;

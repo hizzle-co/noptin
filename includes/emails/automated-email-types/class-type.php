@@ -23,6 +23,11 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	/**
 	 * @var string
 	 */
+	public $category = 'General';
+
+	/**
+	 * @var string
+	 */
 	public $notification_hook = '';
 
 	/**
@@ -40,8 +45,18 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	/**
 	 * Retrieves the automated email type image.
 	 *
+	 * @deprecated 1.11.0
 	 */
-	abstract public function the_image();
+	public function the_image(){}
+
+	/**
+	 * Returns the image URL or dashicon for the automated email type.
+	 *
+	 * @return string|array
+	 */
+	public function get_image() {
+		return 'email-alt';
+	}
 
 	/**
 	 * Registers relevant hooks.

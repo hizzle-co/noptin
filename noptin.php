@@ -262,6 +262,9 @@ class Noptin {
 		// DB.
 		$this->db();
 
+		// REST.
+		$this->api();
+
 		/**
 		 * Fires after Noptin loads.
 		 *
@@ -529,6 +532,15 @@ class Noptin {
      */
 	public function db() {
 		return \Hizzle\Noptin\DB\Main::instance();
+	}
+
+	/**
+     * Returns the new REST API manager.
+     *
+     * @return \Hizzle\Noptin\REST\Main
+     */
+	public function api() {
+		return \Hizzle\Noptin\REST\Main::instance();
 	}
 
 	/**

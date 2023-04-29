@@ -39,10 +39,19 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * Class constructor.
 	 *
 	 * @param string $trigger_id
+	 * @param \Noptin_Abstract_Trigger $trigger
 	 */
-	public function __construct( $trigger_id ) {
+	public function __construct( $trigger_id, $trigger ) {
 		$this->type       = $trigger_id;
 		$this->trigger_id = str_replace( 'automation_rule_', '', $this->type );
+
+		// Set the category.
+		if ( $trigger->depricated ) {
+			$this->category = '';
+		} else {
+			$this->category = $trigger->category;
+		}
+
 		$this->add_hooks();
 	}
 
@@ -88,31 +97,26 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$trigger = $this->get_trigger();
 
 		if ( $trigger ) {
-			return $trigger->get_description();
+			return $trigger->get_about_email();
 		}
 
 		return '';
 	}
 
 	/**
-	 * Retrieves the automated email type image.
+	 * Returns the image URL or dashicon for the automated email type.
 	 *
+	 * @return string|array
 	 */
-	public function the_image() {
+	public function get_image() {
 
 		$trigger = $this->get_trigger();
 
 		if ( $trigger && $trigger->get_image() ) {
-			printf(
-				'<img src="%s" alt="%s" width="100" height="100" />',
-				esc_url( $trigger->get_image() ),
-				esc_attr( $this->get_name() )
-			);
-
-			return;
+			return $trigger->get_image();
 		}
 
-		echo '<svg xmlns="http://www.w3.org/2000/svg" fill="#008000" viewBox="0 0 122.88 122.88"><path d="M61.44,0A61.46,61.46,0,1,1,18,18,61.21,61.21,0,0,1,61.44,0ZM32.22,79.39,52.1,59.46,32.22,43.25V79.39ZM54.29,61.24,33.79,81.79H88.91L69.33,61.24l-6.46,5.51h0a1.42,1.42,0,0,1-1.8,0l-6.78-5.53Zm17.18-1.82L90.66,79.55V43.07L71.47,59.42ZM34,41.09l27.9,22.76L88.65,41.09Zm65.4-17.64a53.72,53.72,0,1,0,15.74,38,53.56,53.56,0,0,0-15.74-38Z"/></svg>';
+		return parent::get_image();
 	}
 
 	/**

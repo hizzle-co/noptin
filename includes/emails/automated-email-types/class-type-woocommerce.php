@@ -19,6 +19,11 @@ defined( 'ABSPATH' ) || exit;
 abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_Email_Type {
 
 	/**
+	 * @var string
+	 */
+	public $category = '';
+
+	/**
 	 * @var WC_Order
 	 */
 	public $order = null;

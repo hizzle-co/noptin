@@ -7,15 +7,17 @@ import { useState } from '@wordpress/element';
  * @param {Object} props
  * @param {String} props.title
  * @param {JSX.Element} props.children
+ * @param {String} props.className
+ * @param {Boolean} props.isSecodary
  * @return {JSX.Element}
  */
-export default function Section( { title, className, children } ) {
+export default function Section( { title, isSecodary, className, children } ) {
 
     const [ isOpen, setIsOpen ] = useState( true );
     className = className || '';
 
     return (
-        <Card className={`noptin-component__section ${className}`}>
+        <Card variant={ isSecodary ? 'secondary' : 'primary' } className={`noptin-component__section ${className}`}>
 
             <CardHeader>
                 <Flex>

@@ -61,7 +61,16 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @return string
 	 */
 	public function get_about_email() {
-		return '';
+		$description = $this->get_description();
+
+		// Lowercase the first letter.
+		$description = strtolower( $description[0] ) . substr( $description, 1 );
+
+		return sprintf(
+			// translators: %s: Trigger description.
+			__( 'This email is sent %s.', 'newsletter-optin-box' ),
+			$description
+		);
 	}
 
 	/**

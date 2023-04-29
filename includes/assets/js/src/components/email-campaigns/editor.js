@@ -1,8 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { Flex, FlexBlock, FlexItem, Notice, Spinner, SlotFillProvider } from '@wordpress/components';
-import { useState, useEffect, useMemo, useCallback } from '@wordpress/element';
+import { SlotFillProvider } from '@wordpress/components';
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -19,13 +19,9 @@ import { getAvailableSmartTags } from '../automation-rules/editor';
  * @param {Object} props.settings The trigger settings.
  * @param {Object} props.smartTags The smart tags.
  * @param {Object} props.saved The saved settings.
- * @param {string} props.action The automation rule action.
- * @param {string} props.trigger The automation rule trigger.
- * @param {string} props.triggerDescription The trigger description.
- * @param {string} props.triggerName The trigger name.
  * @returns {JSX.Element}
  */
-export default function EmailCampaignEditor({ action, trigger, saved, settings, smartTags, triggerDescription, triggerName}) {
+export default function EmailCampaignEditor({ saved, settings, smartTags }) {
 
 	// Prepare the app.
 	const availableSmartTags      = useMemo(() => getAvailableSmartTags(smartTags, saved), [smartTags, saved]);
