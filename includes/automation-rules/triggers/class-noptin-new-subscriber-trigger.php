@@ -50,17 +50,74 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
+	 * Retrieve the trigger's rule table description.
+	 *
+	 * @since 1.11.9
+	 * @param Noptin_Automation_Rule $rule
+	 * @return array
+	 */
+	public function get_rule_table_description( $rule ) {
+		$settings = $rule->trigger_settings;
+
+		// Check if we're sending before confirmation.
+		if ( noptin_has_enabled_double_optin() && empty( $settings['fire_after_confirmation'] ) ) {
+			return sprintf(
+				'%s<br>%s',
+				esc_html__( 'Fires before a subscriber confirms their email', 'newsletter-optin-box' ),
+				parent::get_rule_table_description( $rule )
+			);
+		}
+
+		return parent::get_rule_table_description( $rule );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_settings() {
+
+		$settings = array();
+
+		// Allow option to send to users who've not confirmed their subscription.
+		if ( noptin_has_enabled_double_optin() ) {
+
+			$settings['fire_after_confirmation'] = array(
+				'el'      => 'input',
+				'type'    => 'checkbox',
+				'label'   => __( 'Fire after someone confirms their subscription via double opt-in', 'newsletter-optin-box' ),
+				'default' => true,
+			);
+		}
+
+		return array_merge( $settings, parent::get_settings() );
+	}
+
+	/**
+	 * Checks if settings are met.
+	 *
+	 * @since 1.2.8
+	 * @param Noptin_Automation_Rule $rule The rule to check for.
+	 * @param mixed $args Extra args for the action.
+	 * @param Noptin_Subscriber $subject The subject.
+	 * @param Noptin_Abstract_Action $action The action to run.
+	 * @return bool
+	 */
+	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
+
+		if ( noptin_has_enabled_double_optin() && ! empty( $rule->trigger_settings['fire_after_confirmation'] ) && ! $subject->is_active() ) {
+			return false;
+		}
+
+		return parent::is_rule_valid_for_args( $rule, $args, $subject, $action );
+	}
+
+	/**
 	 * Called when someone subscribes to the newsletter.
 	 *
 	 * @param int $subscriber The subscriber in question.
 	 */
 	public function maybe_trigger( $subscriber ) {
-		$subscriber = new Noptin_Subscriber( $subscriber );
-		// Only trigger if a subscriber is active.
-		if ( $subscriber->is_active() ) {
-			$this->trigger( $subscriber, array() );
-		}
-
+		$this->trigger( new Noptin_Subscriber( $subscriber ), array() );
 	}
 
 	/**

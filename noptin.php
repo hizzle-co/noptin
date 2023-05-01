@@ -259,12 +259,6 @@ class Noptin {
 		// Set up hooks.
 		$this->register_hooks();
 
-		// DB.
-		$this->db();
-
-		// REST.
-		$this->api();
-
 		/**
 		 * Fires after Noptin loads.
 		 *
@@ -367,7 +361,18 @@ class Noptin {
 	 * @since       1.3.3
 	 */
 	public function plugins_loaded() {
+
+		// Integrations.
 		$this->integrations = new Noptin_Integrations();
+
+		// DB.
+		$this->db();
+
+		// REST.
+		$this->api();
+
+		// Bulk email sender.
+		$this->bulk_emails();
 
 		if ( empty( $this->white_label ) ) {
 			$this->white_label = new Noptin_White_Label();
@@ -541,6 +546,15 @@ class Noptin {
      */
 	public function api() {
 		return \Hizzle\Noptin\REST\Main::instance();
+	}
+
+	/**
+	 * Bulk email sender.
+	 *
+	 * @return \Hizzle\Noptin\Bulk_Emails\Main
+	 */
+	public function bulk_emails() {
+		return \Hizzle\Noptin\Bulk_Emails\Main::instance();
 	}
 
 	/**

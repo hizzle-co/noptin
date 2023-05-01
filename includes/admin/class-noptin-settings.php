@@ -222,13 +222,14 @@ class Noptin_Settings {
 				'default'     => false,
 			),
 
-			'delete_on_unsubscribe'        => array(
+			'disable_double_optin_email'   => array(
 				'el'          => 'input',
 				'type'        => 'checkbox_alt',
 				'section'     => 'general',
-				'label'       => __( 'Delete on Unsubscribe', 'newsletter-optin-box' ),
+				'label'       => __( 'Disable default double opt-in email', 'newsletter-optin-box' ),
 				'default'     => false,
-				'description' => __( 'Delete subscribers after they unsubscribe instead of marking them as inactive.', 'newsletter-optin-box' ),
+				'description' => __( 'You can disable the default double opt-in email if you wish to use a custom email or set-up different emails', 'newsletter-optin-box' ),
+				'restrict'    => 'double_optin',
 			),
 
 			'hide_from_subscribers'        => array(

@@ -364,6 +364,10 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'deactivate'          => __( 'Mark as in-active', 'newsletter-optin-box' ),
 		);
 
+		if ( use_custom_noptin_double_optin_email() ) {
+			unset( $actions['resend_confirmation'] );
+		}
+
 		/**
 		 * Filters the bulk table actions shown on Newsletter tables.
 		 *

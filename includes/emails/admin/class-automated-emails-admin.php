@@ -184,7 +184,7 @@ class Noptin_Automated_Emails_Admin {
 
 				// Action settings.
 				$old_settings = $automation_rule->get_action_settings();
-				if ( isset( $old_settings['automated_email_id'] ) && $old_settings['automated_email_id'] !== $automation->id ) {
+				if ( ! isset( $old_settings['automated_email_id'] ) || $old_settings['automated_email_id'] !== $automation->id ) {
 					$automation_rule->set_action_settings(
 						array_merge(
 							$old_settings,

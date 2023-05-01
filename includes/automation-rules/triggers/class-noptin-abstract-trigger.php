@@ -288,7 +288,17 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		}
 
 		if ( $this->is_subscriber_based ) {
-			$smart_tags = array_replace( $smart_tags, get_noptin_subscriber_smart_tags() );
+			$smart_tags = array_replace(
+				$smart_tags,
+				array(
+					'confirm_subscription_url' => array(
+						'label'       => __( 'Confirm subscription URL', 'newsletter-optin-box' ),
+						'options'     => false,
+						'description' => __( 'Displays a URL to confirm subscripiton to the newsletter', 'newsletter-optin-box' ),
+					),
+				),
+				get_noptin_subscriber_smart_tags()
+			);
 		}
 
 		return apply_filters( 'noptin_automation_trigger_known_smart_tags', $smart_tags, $this );
@@ -305,6 +315,8 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		$smart_tags = array();
 
 		if ( $this->is_subscriber_based && $subject instanceof Noptin_Subscriber ) {
+
+			$smart_tags['confirm_subscription_url'] = esc_url( get_noptin_action_url( 'confirm', $subject->confirm_key ) );
 
 			foreach ( get_noptin_subscriber_smart_tags() as $merge_tag => $data ) {
 

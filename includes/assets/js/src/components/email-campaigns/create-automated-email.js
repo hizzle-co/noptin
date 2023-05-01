@@ -74,7 +74,7 @@ function EmailType( {name, title, description, image, is_available, create_url, 
 
 	const buttonVariant = is_available ? 'primary' : 'secondary';
 	const buttonIcon    = is_available ? 'plus' : 'lock';
-	const buttonLabel   = is_available ? __( 'Create', 'newsletter-optin-box' ) : __( 'Upgrade', 'newsletter-optin-box' );
+	const buttonLabel   = is_available ? __( 'Set-up', 'newsletter-optin-box' ) : __( 'Upgrade', 'newsletter-optin-box' );
 	const buttonUrl     = is_available ? create_url : upgrade_url;
 
 	return (

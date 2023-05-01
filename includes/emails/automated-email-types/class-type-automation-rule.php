@@ -214,6 +214,15 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			return;
 		}
 
+		// Allow sending custom double opt-in emails.
+		$confirm_active = true;
+		if ( 'new_subscriber' === $this->trigger_id && noptin_has_enabled_double_optin() && isset( $trigger_args['rule_id'] ) ) {
+
+			$rule           = noptin_get_automation_rule( $trigger_args['rule_id'] );
+			$settings       = is_wp_error( $rule ) ? array() : $rule->get_action_settings();
+			$confirm_active = ! empty( $settings['fire_after_confirmation'] );
+		}
+
 		/** @var Noptin_Automation_Rules_Smart_Tags */
 		$this->smart_tags = isset( $trigger_args['smart_tags'] ) ? $trigger_args['smart_tags'] : null;
 
@@ -228,7 +237,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			}
 
 			// Abort if not a valid email or is unsubscribed.
-			if ( ! is_email( $recipient ) || noptin_is_email_unsubscribed( $recipient ) ) {
+			if ( ! is_email( $recipient ) || ( $confirm_active && noptin_is_email_unsubscribed( $recipient ) ) ) {
 				continue;
 			}
 

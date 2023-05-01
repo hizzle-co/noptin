@@ -284,7 +284,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	 */
 	public function exceeded_hourly_limit() {
 		$limited = get_noptin_option( 'per_hour', 0 );
-		return ! empty( $limited ) && $this->emails_sent_this_hour() > (int) $limited;
+		return ! empty( $limited ) && $this->emails_sent_this_hour() >= (int) $limited;
 	}
 
 	/**

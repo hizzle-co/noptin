@@ -84,7 +84,7 @@ class Noptin_Custom_Fields {
 				'visible'    => true,
 				'subs_table' => false,
 				'required'   => false,
-				'predefined' => true,
+				'predefined' => false,
 			),
 		);
 

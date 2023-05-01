@@ -88,7 +88,8 @@ class Noptin_Subscribers_Admin {
 			'save'
 		);
 
-		if ( 1 !== (int) $subscriber->confirmed ) {
+		// TODO: Fetch new subscriber automation rule emails then display those.
+		if ( 1 !== (int) $subscriber->confirmed && ! use_custom_noptin_double_optin_email() ) {
 
 			add_meta_box(
 				'noptin_subscriber_double_optin',

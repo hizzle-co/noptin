@@ -215,24 +215,6 @@ class Noptin_Emails_Admin {
 	}
 
 	/**
-	 * Register admin page
-	 *
-	 * @return void
-	 */
-	public function register_menu() {
-
-		add_submenu_page(
-			'noptin',
-			$this->get_current_admin_page_title(),
-			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-email-campaigns',
-			array( $this, 'render_admin_page' )
-		);
-
-	}
-
-	/**
 	 * Renders the admin page
 	 *
 	 * @return void

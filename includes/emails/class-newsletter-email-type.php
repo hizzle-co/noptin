@@ -115,7 +115,13 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 		);
 
 		// Send the campaign.
-		do_action( 'noptin_send_email_via_' . $campaign->get_sender(), $campaign, null );
+		$sender = $campaign->get_sender();
+
+		if ( noptin()->bulk_emails()->has_sender( $sender ) ) {
+			noptin()->bulk_emails()->send_pending();
+		} else {
+			do_action( 'noptin_send_email_via_' . $campaign->get_sender(), $campaign, null );
+		}
 
 	}
 

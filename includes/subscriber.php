@@ -562,10 +562,6 @@ function unsubscribe_noptin_subscriber( $subscriber ) {
 		// Deactivate the subscriber.
 		deactivate_noptin_subscriber( $subscriber );
 
-		// (maybe) delete the subscriber.
-		if ( get_noptin_option( 'delete_on_unsubscribe' ) ) {
-			delete_noptin_subscriber( $subscriber->id );
-		}
 	}
 
 }
@@ -752,6 +748,28 @@ function get_default_noptin_subscriber_double_optin_email() {
 }
 
 /**
+ * Whether to use custom double opt-in email.
+ *
+ * @return bool
+ * @since 1.12.0
+ */
+function use_custom_noptin_double_optin_email() {
+	$use_custom_email = (bool) get_noptin_option( 'disable_double_optin_email' );
+	return apply_filters( 'use_custom_noptin_double_optin_email', $use_custom_email );
+}
+
+/**
+ * Whether double opt-in is enabled.
+ *
+ * @return bool
+ * @since 1.12.0
+ */
+function noptin_has_enabled_double_optin() {
+	$has_enabled = (bool) get_noptin_option( 'double_optin', false );
+	return apply_filters( 'noptin_has_enabled_double_optin', $has_enabled );
+}
+
+/**
  * Sends double optin emails.
  *
  * @param int   $id The id of the new subscriber.
@@ -760,7 +778,7 @@ function get_default_noptin_subscriber_double_optin_email() {
 function send_new_noptin_subscriber_double_optin_email( $id, $deprecated = false, $force = false ) {
 
 	// Abort if double opt-in is disabled.
-	$double_optin = get_noptin_option( 'double_optin', false );
+	$double_optin = noptin_has_enabled_double_optin() && ! use_custom_noptin_double_optin_email();
 	if ( empty( $double_optin ) && ! $force ) {
 		return false;
 	}

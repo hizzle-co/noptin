@@ -177,15 +177,11 @@ class Noptin_Email_List_Table extends WP_List_Table {
 
 			$rule = new Noptin_Automation_Rule( absint( $item->get( 'automation_rule' ) ) );
 
-			if ( $rule->exists() ) {
+			if ( $item->is_automation_rule() && $rule->exists() ) {
 				$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
 
 				if ( $trigger ) {
-					$conditional_description = noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $trigger->get_known_smart_tags(), $rule->action_id );
-
-					if ( ! empty( $conditional_description ) ) {
-						$description .= '<br />' . $conditional_description;
-					}
+					$description .= '<br />' . $trigger->get_rule_table_description( $rule );
 				}
 			}
 
@@ -194,15 +190,26 @@ class Noptin_Email_List_Table extends WP_List_Table {
 			}
 		} elseif ( $item->is_published() && ! get_post_meta( $item->id, 'completed', true ) ) {
 
-			$repair_url = add_query_arg(
-				array(
-					'noptin_admin_action' => 'noptin_repair_stuck_campaign',
-					'noptin_nonce'        => wp_create_nonce( 'noptin_repair_stuck_campaign' ),
-				),
-				$item->get_edit_url()
-			);
+			$error = get_post_meta( $item->id, '_bulk_email_last_error', true ); // "type", "message", "file" and "line"
 
-			//$title .= '<p class="description">' . sprintf( __( 'This campaign is currently being sent. If it has been stuck for more than 30 minutes, you can <a href="%s">repair it</a>.', 'newsletter-optin-box' ), $repair_url ) . '</p>';
+			if ( is_array( $error ) ) {
+				$title .= sprintf(
+					'<p class="description" style="color: red;">%s</p>',
+					sprintf(
+						// translators: %s is the error message.
+						__( 'An error occurred while sending this campaign. The last error was: %s', 'newsletter-optin-box' ),
+						sprintf(
+							// translators: %1$s is the error type, %2$s is the error message, %3$s is the error file and %4$s is the error line.
+							__( '%1$s: %2$s in %3$s on line %4$s', 'newsletter-optin-box' ),
+							'<strong>Error</strong>',
+							esc_html( $error['message'] ),
+							isset( $error['file'] ) ? esc_html( $error['file'] ) : 'Uknown',
+							isset( $error['line'] ) ? esc_html( $error['line'] ) : 'Uknown'
+						)
+					)
+				);
+				delete_post_meta( $item->id, '_bulk_email_last_error' );
+			}
 		}
 
 		// Row actions.

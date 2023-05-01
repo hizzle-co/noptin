@@ -11,6 +11,9 @@
 	// If we're displaying a list of campaigns, prepare them.
 	if ( 'main' === $section ) {
 
+		// Send pending emails.
+		noptin()->bulk_emails()->send_pending();
+
 		// Inlcude the list table.
 		include plugin_dir_path( dirname( __FILE__ ) ) . 'class-list-table.php';
 
@@ -38,8 +41,28 @@
 
 	<?php endif; ?>
 
-	<!-- Print pending notices -->
-	<?php noptin()->admin->show_notices(); ?>
+	<?php
+
+		// Print pending notices.
+		noptin()->admin->show_notices();
+
+		// Check if sending has been paused due to limits.
+		$emails_sent_this_hour = (int) get_transient( 'noptin_emails_sent_' . gmdate( 'YmdH' ) );
+		$email_sending_limit   = get_noptin_option( 'per_hour', 0 );
+
+		if ( ! empty( $email_sending_limit ) && $emails_sent_this_hour >= $email_sending_limit ) {
+
+			$message = sprintf(
+				/* translators: %1$s: number of emails sent this hour, %2$s: number of emails allowed to be sent per hour */
+				esc_html__( 'Sending has been paused due to sending limits. %1$s emails have been sent this hour. You can send %2$s emails per hour.', 'newsletter-optin-box' ),
+				'<strong>' . esc_html( $emails_sent_this_hour ) . '</strong>',
+				'<strong>' . esc_html( $email_sending_limit ) . '</strong>'
+			);
+
+			noptin()->admin->print_notice( 'error', $message );
+
+		}
+	?>
 
 	<?php if ( 'main' === $section ) : ?>
 		<!-- Display tabs -->
