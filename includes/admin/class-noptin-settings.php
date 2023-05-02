@@ -228,7 +228,12 @@ class Noptin_Settings {
 				'section'     => 'general',
 				'label'       => __( 'Disable default double opt-in email', 'newsletter-optin-box' ),
 				'default'     => false,
-				'description' => __( 'You can disable the default double opt-in email if you wish to use a custom email or set-up different emails', 'newsletter-optin-box' ),
+				'description' => sprintf(
+					'%s <a href="%s" target="_blank">%s</a>',
+					__( 'You can disable the default double opt-in email if you wish to use a custom email or set-up different emails.', 'newsletter-optin-box' ),
+					noptin_get_upsell_url( '/guide/email-subscribers/double-opt-in/#how-to-customize-the-email-or-set-up-multiple-double-opt-in-emails', 'double-opt', 'settings' ),
+					__( 'Learn more', 'newsletter-optin-box' )
+				),
 				'restrict'    => 'double_optin',
 			),
 
