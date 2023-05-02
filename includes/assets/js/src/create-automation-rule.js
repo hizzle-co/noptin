@@ -26,16 +26,24 @@ jQuery(function ( $ ) {
 
 				// Update the button href.
 				const urlTemplate = button.data( `${action}-url` );
-				const url = new URL( urlTemplate ||button.data( 'default-url' ) );
+				let url;
 
-				// Add the trigger.
-				url.searchParams.set( 'noptin-trigger', trigger );
+				if ( urlTemplate ) {
+					url = urlTemplate.replace( 'NOPTIN_TRIGGER_ID', trigger );
+				} else {
+					const theURL = new URL( button.data( 'default-url' ) );
 
-				// Add the action.
-				url.searchParams.set( 'noptin-action', action );
+					// Add the trigger.
+					theURL.searchParams.set( 'noptin-trigger', trigger );
+
+					// Add the action.
+					theURL.searchParams.set( 'noptin-action', action );
+
+					url = theURL.toString();
+				}
 
 				// Update the button href.
-				button.attr( 'href', url.toString() );
+				button.attr( 'href', url );
 			} else {
 				$('.noptin-automation-rule-create')
 					.removeClass('button-primary')

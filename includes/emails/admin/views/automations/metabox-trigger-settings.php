@@ -44,6 +44,7 @@ $trigger_settings['conditional_logic'] = array(
 	'el'          => 'conditional_logic',
 	'comparisons' => noptin_get_conditional_logic_comparisons(),
 	'toggle_text' => __( 'Optional. Send this email only if certain conditions are met.', 'newsletter-optin-box' ),
+	'fullWidth'   => true,
 	'default'     => array(
 		'enabled' => false,
 		'action'  => 'allow',

@@ -48,11 +48,6 @@ class Noptin_Automated_Email {
 	 */
 	public function __construct( $args ) {
 
-		// Automation rules.
-		if ( 'new_automation_rule' === $args && isset( $_GET['noptin-trigger'] ) ) {
-			$args = 'automation_rule_' . sanitize_text_field( rawurldecode( $_GET['noptin-trigger'] ) );
-		}
-
 		// Creating a new campaign.
 		if ( is_string( $args ) && ! is_numeric( $args ) ) {
 			$this->type   = $args;

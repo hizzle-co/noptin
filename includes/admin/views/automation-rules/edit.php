@@ -56,6 +56,7 @@ $settings['conditional_logic'] = array(
 			'label'       => __( 'Conditional Logic', 'newsletter-optin-box' ),
 			'el'          => 'conditional_logic',
 			'comparisons' => noptin_get_conditional_logic_comparisons(),
+			'fullWidth'   => true,
 			'default'     => array(
 				'enabled' => false,
 				'action'  => 'allow',
