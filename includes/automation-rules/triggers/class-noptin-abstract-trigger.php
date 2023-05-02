@@ -68,7 +68,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		return sprintf(
 			// translators: %s: Trigger description.
-			__( 'This email is sent %s.', 'newsletter-optin-box' ),
+			__( 'Sends an email %s.', 'newsletter-optin-box' ),
 			$description
 		);
 	}

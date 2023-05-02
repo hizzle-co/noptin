@@ -85,6 +85,62 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 	}
 
 	/**
+	 * Returns the icon image.
+	 *
+	 * @param  string|array $image image.
+	 * @param string       $title title.
+	 * @return string
+	 */
+	public function get_icon_image( $image, $title ) {
+
+		// URLs.
+		if ( is_string( $image ) && 0 === strpos( $image, 'http' ) ) {
+			return sprintf(
+				'<img src="%s" alt="%s" />',
+				esc_url( $image ),
+				esc_attr( $title )
+			);
+		}
+
+		// Dashicons.
+		if ( empty( $image ) ) {
+			$image = 'email';
+		}
+
+		if ( is_string( $image ) ) {
+			return sprintf(
+				'<span class="dashicons dashicons-%s"></span>',
+				esc_attr( $image )
+			);
+		}
+
+		// SVG or Dashicons with fill color.
+		if ( is_array( $image ) ) {
+			$fill    = isset( $image['fill'] ) ? $image['fill'] : '#008000';
+			$path    = isset( $image['path'] ) ? $image['path'] : '';
+			$viewbox = isset( $image['viewBox'] ) ? $image['viewBox'] : '0 0 64 64';
+			$icon    = isset( $image['icon'] ) ? $image['icon'] : 'email';
+
+			if ( ! empty( $path ) ) {
+				return sprintf(
+					'<svg viewbox="%s" xmlns="http://www.w3.org/2000/svg"><path fill="%s" d="%s"></path></svg>',
+					esc_attr( $viewbox ),
+					esc_attr( $fill ),
+					esc_attr( $path )
+				);
+			}
+
+			return sprintf(
+				'<span class="dashicons dashicons-%s" style="color: %s"></span>',
+				esc_attr( $icon ),
+				esc_attr( $fill )
+			);
+		}
+
+		return '<span class="dashicons dashicons-email"></span>';
+	}
+
+	/**
 	 * Displays the trigger column.
 	 *
 	 * @param  \Hizzle\Noptin\DB\Automation_Rule $item item.
@@ -111,7 +167,7 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 
 		return sprintf(
 			'<div class="noptin-rule-trigger">
-				%s
+				<div class="noptin-rule-image">%s</div>
 				<div class="noptin-rule-name">
 					<div class="row-title">
 						<a href="%s">%s</a>
@@ -119,7 +175,7 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 					%s
 				</div>
 			</div>',
-			empty( $image ) ? '' : "<div class='noptin-rule-image'><img src='$image' /></div>",
+			$this->get_icon_image( $image, $title ),
 			esc_url( $item->get_edit_url() ),
 			esc_html( $title ),
 			empty( $description ) ? '' : "<div class='noptin-rule-description'>$description</div>"
@@ -153,8 +209,11 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 		$image       = $action->get_image();
 
 		return sprintf(
-			'<div class="noptin-rule-action">%s<div class="noptin-rule-name">%s%s</div></div>',
-			empty( $image ) ? '' : "<div class='noptin-rule-image'><img src='$image' /></div>",
+			'<div class="noptin-rule-action">
+				<div class="noptin-rule-image">%s</div>
+				<div class="noptin-rule-name">%s%s</div>
+			</div>',
+			$this->get_icon_image( $image, $title ),
 			esc_html( $title ),
 			empty( $description ) ? '' : "<div class='noptin-rule-description'>$description</div>"
 		);
