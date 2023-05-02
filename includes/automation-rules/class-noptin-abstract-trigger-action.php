@@ -137,7 +137,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.3.0
 	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @return string
 	 */
 	public function get_rule_description( $rule ) {
 		return $this->get_description();
@@ -148,7 +148,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.11.9
 	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @return string
 	 */
 	public function get_rule_table_description( $rule ) {
 		return '';

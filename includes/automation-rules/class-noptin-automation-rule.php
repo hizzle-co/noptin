@@ -355,7 +355,7 @@ class Noptin_Automation_Rule {
 		);
 
 		if ( ! empty( $rule ) ) {
-			wp_cache_set( $rule->id, $rule, 'noptin_automation_rules', 10 );
+			wp_cache_set( $rule['id'], $rule, 'noptin_automation_rules', 10 );
 		}
 
 		return empty( $rule ) ? false : (object) $rule;

@@ -25,7 +25,10 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function __construct() {
 		add_action( 'noptin_insert_subscriber', array( $this, 'maybe_trigger' ), 1000 );
-		add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_trigger' ), 1000 );
+
+		if ( noptin_has_enabled_double_optin() ) {
+			add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_trigger' ), 1000 );
+		}
 	}
 
 	/**
@@ -60,10 +63,19 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 		$settings = $rule->trigger_settings;
 
 		// Check if we're sending before confirmation.
-		if ( noptin_has_enabled_double_optin() && empty( $settings['fire_after_confirmation'] ) ) {
+		if ( noptin_has_enabled_double_optin() ) {
+
+			if ( empty( $settings['fire_after_confirmation'] ) ) {
+				return sprintf(
+					'%s<br>%s',
+					esc_html__( 'Fires before a subscriber confirms their email', 'newsletter-optin-box' ),
+					parent::get_rule_table_description( $rule )
+				);
+			}
+
 			return sprintf(
 				'%s<br>%s',
-				esc_html__( 'Fires before a subscriber confirms their email', 'newsletter-optin-box' ),
+				esc_html__( 'Fires after a subscriber confirms their email', 'newsletter-optin-box' ),
 				parent::get_rule_table_description( $rule )
 			);
 		}
@@ -104,8 +116,20 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
 
-		if ( noptin_has_enabled_double_optin() && ! empty( $rule->trigger_settings['fire_after_confirmation'] ) && ! $subject->is_active() ) {
-			return false;
+		if ( noptin_has_enabled_double_optin() ) {
+
+			// Sends before confirmation.
+			$sends_before_double_optin = empty( $rule->trigger_settings['fire_after_confirmation'] );
+
+			// If we're sending before confirmation, ensure the subscriber is not active.
+			if ( $sends_before_double_optin && $subject->is_active() ) {
+				return false;
+			}
+
+			// If we're sending after confirmation, ensure the subscriber is active.
+			if ( ! $sends_before_double_optin && ! $subject->is_active() ) {
+				return false;
+			}
 		}
 
 		return parent::is_rule_valid_for_args( $rule, $args, $subject, $action );
@@ -118,6 +142,65 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function maybe_trigger( $subscriber ) {
 		$this->trigger( new Noptin_Subscriber( $subscriber ), array() );
+	}
+
+	/**
+	 * Triggers action callbacks.
+	 *
+	 * @since 1.12.0
+	 * @param Noptin_Subscriber $subject The subject.
+	 * @param array $args Extra args for the action.
+	 * @return void
+	 */
+	public function trigger( $subject, $args ) {
+
+		$args = $this->prepare_trigger_args( $subject, $args );
+
+		foreach ( $this->get_rules() as $rule ) {
+
+			// Retrieve the action.
+			$action = noptin()->automation_rules->get_action( $rule->action_id );
+			if ( empty( $action ) ) {
+				continue;
+			}
+
+			// Prepare the rule.
+			$rule = noptin()->automation_rules->prepare_rule( $rule );
+
+			// Check if we're sending before confirmation or after confirmation.
+			if ( noptin_has_enabled_double_optin() ) {
+
+				// Sends before confirmation.
+				$sends_before_double_optin = empty( $rule->trigger_settings['fire_after_confirmation'] );
+
+				// If we're sending before confirmation, ensure the subscriber is not active.
+				if ( $sends_before_double_optin && $subject->is_active() ) {
+					continue;
+				}
+
+				// If we're sending after confirmation, ensure the subscriber is active.
+				if ( ! $sends_before_double_optin && ! $subject->is_active() ) {
+					continue;
+				}
+			}
+
+			// Set the current email.
+			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
+
+			// Are we delaying the action?
+			$delay = $rule->get_delay();
+
+			if ( $delay > 0 ) {
+				do_action( 'noptin_delay_automation_rule_execution', $rule, $args, $delay );
+				continue;
+			}
+
+			// Ensure that the rule is valid for the provided args.
+			if ( $this->is_rule_valid_for_args( $rule, $args, $subject, $action ) ) {
+				$action->maybe_run( $subject, $rule, $args );
+			}
+		}
+
 	}
 
 	/**

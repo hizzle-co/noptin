@@ -23,6 +23,15 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	public $is_creating = false;
 
 	/**
+	 * Returns the deprecated rule object.
+	 *
+	 * @return \Noptin_Automation_Rule
+	 */
+	public function get_deprecated_rule() {
+		return new \Noptin_Automation_Rule( $this->get_id() );
+	}
+
+	/**
 	 * Gets the action id.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.

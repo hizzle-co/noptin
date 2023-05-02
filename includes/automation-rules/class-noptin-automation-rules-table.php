@@ -5,84 +5,17 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'WP_List_Table' ) ) {
-	include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
-
 /**
  * Automation rules table class.
  */
-class Noptin_Automation_Rules_Table extends WP_List_Table {
+class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 
 	/**
-	 * URL of this page
+	 * Constructor function.
 	 *
-	 * @var   string
-	 * @since 1.2.8
-	 */
-	public $base_url;
-
-	/**
-	 * Query
-	 *
-	 * @var   string
-	 * @since 1.2.8
-	 */
-	public $query;
-
-	/**
-	 * Total Automations
-	 *
-	 * @var   string
-	 * @since 1.2.8
-	 */
-	public $total;
-
-	/**
-	 *  Constructor function.
 	 */
 	public function __construct() {
-
-		parent::__construct(
-			array(
-				'singular' => 'id',
-				'plural'   => 'ids',
-			)
-		);
-
-		$this->prepare_query();
-
-		$this->base_url = admin_url( 'admin.php?page=noptin-automation-rules' );
-
-	}
-
-	/**
-	 *  Prepares the display query
-	 */
-	public function prepare_query() {
-		global $wpdb;
-
-		$paged   = empty( $_GET['paged'] ) ? 1 : (int) $_GET['paged'];
-		$offset  = ( $paged - 1 ) * 10;
-		$order   = empty( $_GET['order'] ) ? 'DESC' : strtoupper( $_GET['order'] );
-		$orderby = empty( $_GET['orderby'] ) ? 'created_at' : $_GET['orderby'];
-
-		// Ensure orderby is valid.
-		if ( ! in_array( $orderby, array( 'id', 'trigger_id', 'action_id', 'times_run', 'created_at', 'updated_at' ), true ) ) {
-			$orderby = 'created_at';
-		}
-
-		// Ensure order is valid.
-		if ( ! in_array( $order, array( 'ASC', 'DESC' ), true ) ) {
-			$order = 'DESC';
-		}
-
-		$this->items = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}noptin_automation_rules ORDER BY $orderby $order LIMIT %d,10", $offset ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		);
-
-		$this->total = $wpdb->get_var( "SELECT COUNT(`id`) FROM {$wpdb->prefix}noptin_automation_rules" );
-
+		parent::__construct( \Hizzle\Store\Collection::instance( 'noptin_automation_rules' ) );
 	}
 
 	/**
@@ -90,39 +23,21 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 *
 	 * @since 1.2.8
 	 *
-	 * @param object $item The current item.
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $item The current item.
 	 */
 	public function single_row( $item ) {
-		$item = new Noptin_Automation_Rule( $item );
 
-		echo '<tr class="noptin_automation_rule_' . esc_attr( $item->id ) . '" data-id="' . esc_attr( $item->id ) . '">';
+		echo '<tr class="noptin_automation_rule_' . esc_attr( $item->get_id() ) . '" data-id="' . esc_attr( $item->get_id() ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 
 	}
 
 	/**
-	 * Default columns.
-	 *
-	 * @param object $item        item.
-	 * @param string $column_name column name.
-	 */
-	public function column_default( $item, $column_name ) {
-
-		/**
-		 * Runs when displaying an automation rule's table.
-		 *
-		 * @param array $item The current rule.
-		 */
-		do_action( "noptin_display_automation_rule_table_$column_name", $item );
-
-	}
-
-	/**
 	 * Displays available actions.
 	 *
-	 * @param  Noptin_Automation_Rule $item item.
-	 * @return HTML
+	 * @param  \Hizzle\Noptin\DB\Automation_Rule $item item.
+	 * @return string
 	 */
 	public function column_actions( $item ) {
 
@@ -162,7 +77,7 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 				<span class="noptin-automation-rule-action__switch"></span>
 			</label>',
 			esc_attr( __( 'Enable or disable this automation rule', 'newsletter-optin-box' ) ),
-			checked( ! empty( $item->status ), true, false )
+			checked( ! empty( $item->get_status() ), true, false )
 		);
 
 		return '<div class="noptin-automation-rule-actions">' . $status . $html . '</div>';
@@ -170,58 +85,28 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Displays the number of run times.
-	 *
-	 * @param  Noptin_Automation_Rule $item item.
-	 * @return HTML
-	 */
-	public function column_times_run( $item ) {
-		return (int) $item->times_run;
-	}
-
-	/**
-	 * Displays the rule's modification date
-	 *
-	 * @param  Noptin_Automation_Rule $item item.
-	 * @return HTML
-	 */
-	public function column_updated_at( $item ) {
-		return noptin_format_date( $item->updated_at );
-	}
-
-	/**
-	 * Displays the rule's creation date
-	 *
-	 * @param  Noptin_Automation_Rule $item item.
-	 * @return HTML
-	 */
-	public function column_created_at( $item ) {
-		return noptin_format_date( $item->created_at );
-	}
-
-	/**
 	 * Displays the trigger column.
 	 *
-	 * @param  Noptin_Automation_Rule $item item.
+	 * @param  \Hizzle\Noptin\DB\Automation_Rule $item item.
 	 * @return string
 	 */
 	public function column_trigger( $item ) {
 
 		// Fetch trigger.
-		$trigger = noptin()->automation_rules->get_trigger( $item->trigger_id );
+		$trigger = $item->get_trigger();
 
 		// Abort if the trigger is invalid.
 		if ( empty( $trigger ) ) {
 			return sprintf(
 				'%s<div class="noptin-rule-error">%s</div>',
-				esc_html( $item->trigger_id ),
+				esc_html( $item->get_trigger_id() ),
 				__( 'Your site does not support this trigger.', 'newsletter-optin-box' )
 			);
 		}
 
 		// Prepare the texts.
-		$title       = $trigger->get_rule_description( $item );
-		$description = $trigger->get_rule_table_description( $item );
+		$title       = $trigger->get_rule_description( $item->get_deprecated_rule() );
+		$description = $trigger->get_rule_table_description( $item->get_deprecated_rule() );
 		$image       = $trigger->get_image();
 
 		return sprintf(
@@ -245,27 +130,26 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	/**
 	 * Displays the action column.
 	 *
-	 * @param  Noptin_Automation_Rule $item item.
+	 * @param  \Hizzle\Noptin\DB\Automation_Rule $item item.
 	 * @return string
 	 */
 	public function column_action( $item ) {
 
-		// Row text.
-		$action_id = sanitize_text_field( $item->action_id );
-		$action    = noptin()->automation_rules->get_action( $action_id );
+		// Fetch action.
+		$action = $item->get_action();
 
 		// Abort if the action is invalid.
 		if ( empty( $action ) ) {
 			return sprintf(
 				'%s<div class="noptin-rule-error">%s</div>',
-				esc_html( $action_id ),
+				esc_html( $item->get_action_id() ),
 				__( 'Your site does not support this action.', 'newsletter-optin-box' )
 			);
 		}
 
 		// Prepare the text.
-		$title       = $action->get_rule_description( $item );
-		$description = $action->get_rule_table_description( $item );
+		$title       = $action->get_rule_description( $item->get_deprecated_rule() );
+		$description = $action->get_rule_table_description( $item->get_deprecated_rule() );
 		$image       = $action->get_image();
 
 		return sprintf(
@@ -284,38 +168,6 @@ class Noptin_Automation_Rules_Table extends WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 		return array();
-	}
-
-	/**
-	 * Whether the table has items to display or not
-	 *
-	 * @return bool
-	 */
-	public function has_items() {
-		return ! empty( $this->total );
-	}
-
-	/**
-	 * Fetch data from the database to render on view.
-	 */
-	public function prepare_items() {
-
-		$per_page = 10;
-
-		$columns  = $this->get_columns();
-		$hidden   = array();
-		$sortable = $this->get_sortable_columns();
-
-		$this->_column_headers = array( $columns, $hidden, $sortable );
-
-		$this->set_pagination_args(
-			array(
-				'total_items' => $this->total,
-				'per_page'    => $per_page,
-				'total_pages' => ceil( $this->total / $per_page ),
-			)
-		);
-
 	}
 
 	/**

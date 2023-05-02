@@ -190,7 +190,7 @@ class Noptin_Email_List_Table extends WP_List_Table {
 			}
 		} elseif ( $item->is_published() && ! get_post_meta( $item->id, 'completed', true ) ) {
 
-			$error = get_post_meta( $item->id, '_bulk_email_last_error', true ); // "type", "message", "file" and "line"
+			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );
 
 			if ( is_array( $error ) ) {
 				$title .= sprintf(
