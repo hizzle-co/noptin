@@ -43,11 +43,9 @@ function formatDate( date ) {
  * @param {Function} props.setAutomationRule
  * @param {Boolean} props.isSaving
  * @param {Function} props.setIsSaving
- * @param {String} props.triggerDescription
- * @param {String} props.actionDescription
  * @return {JSX.Element}
  */
-export default function Save({automationRule, setError, setSuccess, setAutomationRule, isSaving, setIsSaving, triggerDescription, actionDescription }) {
+export default function Save({automationRule, setError, setSuccess, setAutomationRule, isSaving, setIsSaving }) {
 
 	const api_route = automationRule.id > 0 ? `/noptin/v1/automation_rules/${automationRule.id}` : '/noptin/v1/automation_rules/';
 
@@ -129,14 +127,6 @@ export default function Save({automationRule, setError, setSuccess, setAutomatio
 					__nextHasNoMarginBottom
 				/>
 			),
-		},
-		{
-			label: __( 'Trigger', 'newsletter-optin-box' ),
-			value: triggerDescription,
-		},
-		{
-			label: __( 'Action', 'newsletter-optin-box' ),
-			value: actionDescription,
 		},
 	]
 

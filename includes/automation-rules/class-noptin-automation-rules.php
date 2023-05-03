@@ -28,11 +28,17 @@ class Noptin_Automation_Rules {
 	 */
 	public function __construct() {
 
+		// Handle admin rule CRUD requests.
+		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );
+		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
+		add_action( 'noptin_deleted_automation_rule', array( $this, 'delete_campaign_on_automation_rule_delete' ) );
+
 		// Register core actions.
 		$this->add_action( new Noptin_Custom_Field_Action() );
 		$this->add_action( new Noptin_Email_Action() );
 		$this->add_action( new Noptin_Subscribe_Action() );
 		$this->add_action( new Noptin_Unsubscribe_Action() );
+		$this->add_action( new Noptin_Delete_Subscriber_Action() );
 
 		// Register core triggers.
 		$this->add_trigger( new Noptin_New_Subscriber_Trigger() );
@@ -41,6 +47,9 @@ class Noptin_Automation_Rules {
 		$this->add_trigger( new Noptin_Unsubscribe_Trigger() );
 		$this->add_trigger( new Noptin_New_Comment_Trigger() );
 		$this->add_trigger( new Noptin_Comment_Reply_Trigger() );
+
+		// Handle admin rule CRUD requests.
+		do_action( 'noptin_automation_rules_load', $this );
 
 		if ( function_exists( 'geodir_get_posttypes' ) ) {
 			foreach ( geodir_get_posttypes() as $post_type ) {
@@ -59,13 +68,6 @@ class Noptin_Automation_Rules {
 			$this->add_trigger( new Noptin_PMPro_Membership_Level_Change_Trigger() );
 			$this->add_action( new Noptin_PMPro_Change_Level_Action() );
 		}
-
-		// Handle admin rule CRUD requests.
-		add_action( 'noptin_create_automation_rule', array( $this, 'admin_create_automation_rule' ) );
-		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );
-		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
-		add_action( 'noptin_deleted_automation_rule', array( $this, 'delete_campaign_on_automation_rule_delete' ) );
-		do_action( 'noptin_automation_rules_load', $this );
 
 		// Register automated email types.
 		foreach ( $this->get_triggers() as $trigger ) {
@@ -318,42 +320,6 @@ class Noptin_Automation_Rules {
 	public function get_table() {
 		global $wpdb;
 		return $wpdb->prefix . 'noptin_automation_rules';
-	}
-
-	/**
-	 * Saves a created rule
-	 *
-	 * @access      public
-	 * @since       1.3.0
-	 * @return      void
-	 */
-	public function admin_create_automation_rule() {
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-admin-create-automation-rule'] ) ) {
-			return;
-		}
-
-		if ( ! wp_verify_nonce( $_POST['noptin-admin-create-automation-rule'], 'noptin-admin-create-automation-rule' ) ) {
-			return;
-		}
-
-		$post       = wp_unslash( $_POST );
-		$action_id  = noptin_clean( $post['noptin-automation-rule-action'] );
-		$trigger_id = noptin_clean( $post['noptin-automation-rule-trigger'] );
-
-		if ( empty( $action_id ) || empty( $trigger_id ) ) {
-			noptin()->admin->show_error( __( 'Select a trigger and action for your rule.', 'newsletter-optin-box' ) );
-		}
-
-		$rule = $this->create_rule( compact( 'action_id', 'trigger_id' ) );
-
-		if ( ! empty( $rule ) ) {
-			wp_safe_redirect( $rule->get_edit_url() );
-			exit;
-		}
-
-		noptin()->admin->show_error( __( 'There was a problem creating your automation rule. Please try again.', 'newsletter-optin-box' ) );
-
 	}
 
 	/**

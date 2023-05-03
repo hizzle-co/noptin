@@ -4,37 +4,37 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * De-activates a subscriber's custom field.
+ * Deletes a subscriber.
  *
- * @since       1.3.1
+ * @since 1.12.0
  */
-class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
+class Noptin_Delete_Subscriber_Action extends Noptin_Abstract_Action {
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_id() {
-		return 'unsubscribe';
+		return 'delete_subscriber';
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return __( 'Subscriber > Unsubscribe', 'newsletter-optin-box' );
+		return __( 'Subscriber > Delete', 'newsletter-optin-box' );
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Unsubscribe from the newsletter', 'newsletter-optin-box' );
+		return __( 'Delete the subscriber', 'newsletter-optin-box' );
 	}
 
 	/**
-	 * Deactivates the subscriber.
+	 * Delete the subscriber.
 	 *
-	 * @since 1.3.1
+	 * @since 1.12.0
 	 * @param mixed $subject The subject.
 	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.
@@ -43,11 +43,12 @@ class Noptin_Unsubscribe_Action extends Noptin_Abstract_Action {
 	public function run( $subject, $rule, $args ) {
 
 		// Fetch the subscriber.
-		$subscriber = get_noptin_subscriber( $this->get_subject_email( $subject, $rule, $args ) );
+		$subscriber_id = get_noptin_subscriber_id_by_email( $this->get_subject_email( $subject, $rule, $args ) );
 
-		// Unsubscribe the subscriber.
-		unsubscribe_noptin_subscriber( $subscriber );
-
+		// Delete the subscriber.
+		if ( $subscriber_id ) {
+			delete_noptin_subscriber( $subscriber_id );
+		}
 	}
 
 	/**

@@ -38,7 +38,7 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return __( 'Unsubscribed', 'newsletter-optin-box' );
+		return __( 'Subscriber > Unsubscribed', 'newsletter-optin-box' );
 	}
 
 	/**

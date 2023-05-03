@@ -21,7 +21,7 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return __( 'Subscribe', 'newsletter-optin-box' );
+		return __( 'Subscriber > Create / Update', 'newsletter-optin-box' );
 	}
 
 	/**

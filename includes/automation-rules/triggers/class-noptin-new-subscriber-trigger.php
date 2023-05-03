@@ -42,7 +42,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return __( 'New Subscriber', 'newsletter-optin-box' );
+		return __( 'Subscriber > Created', 'newsletter-optin-box' );
 	}
 
 	/**

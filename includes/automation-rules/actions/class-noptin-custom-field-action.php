@@ -21,7 +21,7 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return __( 'Update Subscriber Field', 'newsletter-optin-box' );
+		return __( 'Subscriber > Update Custom Field', 'newsletter-optin-box' );
 	}
 
 	/**

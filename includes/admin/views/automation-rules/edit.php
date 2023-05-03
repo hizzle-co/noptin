@@ -39,13 +39,19 @@ $action_settings  = apply_filters( 'noptin_automation_rule_action_settings_' . $
 $settings         = array();
 
 // Trigger settings.
-if ( ! empty( $trigger_settings ) ) {
-	$settings['trigger'] = array(
-		'label'    => __( 'Trigger Settings', 'newsletter-optin-box' ),
-		'prop'     => 'trigger_settings',
-		'settings' => $trigger_settings,
-	);
-}
+$settings['trigger'] = array(
+	'label'    => __( 'Trigger', 'newsletter-optin-box' ),
+	'prop'     => 'trigger_settings',
+	'settings' => array_merge(
+		array(
+			'action_id_info' => array(
+				'el'      => 'paragraph',
+				'content' => $trigger->get_description(),
+			),
+		),
+		$trigger_settings
+	),
+);
 
 // Conditional logic.
 $settings['conditional_logic'] = array(
@@ -85,13 +91,20 @@ foreach ( $action_settings as $key => $data ) {
 }
 
 // Action settings.
-if ( ! empty( $action_settings ) ) {
-	$settings['action'] = array(
-		'label'    => __( 'Action Settings', 'newsletter-optin-box' ),
-		'prop'     => 'action_settings',
-		'settings' => $action_settings,
-	);
-}
+$settings['action'] = array(
+	'label'    => __( 'Action', 'newsletter-optin-box' ),
+	'prop'     => 'action_settings',
+	'settings' => array_merge(
+		array(
+			'action_id_info' => array(
+				'el'      => 'paragraph',
+				'content' => $rule_action->get_description(),
+			),
+		),
+		$action_settings
+	),
+);
+
 
 if ( ! empty( $map_fields ) ) {
 	$settings['map_fields'] = array(
@@ -120,8 +133,6 @@ $settings = apply_filters( 'noptin_automation_rule_settings', $settings, $rule, 
 		data-trigger="<?php echo esc_attr( $rule->trigger_id ); ?>"
 		data-create-new-url="<?php echo esc_url( add_query_arg( 'noptin_create_automation_rule', '1', admin_url( 'admin.php?page=noptin-automation-rules' ) ) ); ?>"
 		data-settings="<?php echo esc_attr( wp_json_encode( $settings ) ); ?>"
-		data-trigger-description="<?php echo esc_attr( $trigger->get_description() ); ?>"
-		data-action-description="<?php echo esc_attr( $rule_action->get_description() ); ?>"
 		data-smart-tags="<?php echo esc_attr( wp_json_encode( $trigger->get_known_smart_tags_for_js() ) ); ?>"
 	>
 		<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>

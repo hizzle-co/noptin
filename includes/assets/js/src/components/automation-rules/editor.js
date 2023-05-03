@@ -110,11 +110,9 @@ export function getAvailableSmartTags( smartTags, trigger_settings ) {
  * @param {string} props.action The automation rule action.
  * @param {string} props.trigger The automation rule trigger.
  * @param {string} props.createNewUrl The create new url.
- * @param {string} props.triggerDescription The trigger description.
- * @param {string} props.actionDescription The action description.
  * @returns {JSX.Element}
  */
-export default function AutomationRuleEditor({id, action, trigger, settings, smartTags, createNewUrl, triggerDescription, actionDescription}) {
+export default function AutomationRuleEditor({id, action, trigger, settings, smartTags, createNewUrl}) {
 
 	// Prepare the app.
 	const [automationRule, setAutomationRule] = useState({});
@@ -206,8 +204,6 @@ export default function AutomationRuleEditor({id, action, trigger, settings, sma
 							setSuccess={setSuccess}
 							isSaving={saving}
 							setIsSaving={setSaving}
-							triggerDescription={triggerDescription}
-							actionDescription={actionDescription}
 						/>
 					</FlexItem>
 

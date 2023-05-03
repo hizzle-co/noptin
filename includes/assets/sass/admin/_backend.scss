@@ -2379,6 +2379,10 @@ a.no-campaign-create-new-campaign {
 	margin-bottom: 1.6rem;
 	max-width: 600px;
 
+	&:last-child {
+		margin-bottom: 0;
+	}
+
 	.noptin-conditional-logic-rules & {
 		max-width: 100%;
 	}
