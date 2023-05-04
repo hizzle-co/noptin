@@ -54,7 +54,7 @@ export default function EditSection({ sectionKey, label, prop, availableSmartTag
 						key={settingKey}
 						settingKey={settingKey}
 						prop={prop}
-						availableSmartTags={availableSmartTags}
+						availableSmartTags={ 'trigger_settings' === prop ? [] : availableSmartTags}
 						saved={automationRule}
 						setAttributes={setAttributes}
 						setting={settings[ settingKey]}

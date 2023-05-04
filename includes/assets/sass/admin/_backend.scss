@@ -1179,7 +1179,6 @@ a.no-campaign-create-new-campaign {
 		width: 40px;
 		height: 40px;
 		border-radius: 50%;
-		background: #f1f1f1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -1190,6 +1189,12 @@ a.no-campaign-create-new-campaign {
 			max-height: 100%;
 			object-fit: cover;
 			border-radius: 4px;
+		}
+
+		.dashicons {
+			font-size: 40px;
+			width: 40px;
+			height: 40px;
 		}
 	}
 
