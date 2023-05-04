@@ -4,11 +4,11 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Fires when a product is purchase.
+ * Fires when a product is refunded.
  *
  * @since 1.11.9
  */
-class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Product_Purchased_Trigger {
+class Noptin_WooCommerce_Product_Refunded_Trigger extends Noptin_WooCommerce_Product_Purchased_Trigger {
 
 	/**
 	 * Constructor.

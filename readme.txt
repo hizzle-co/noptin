@@ -1,11 +1,11 @@
 === Simple Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
-Requires at least: 4.9
+Requires at least: 6.0
 Tested up to: 6.2
-Requires PHP: 5.6
-Version: 1.11.8
-Stable tag: 1.11.8
+Requires PHP: 7.0
+Version: 1.12.0
+Stable tag: 1.12.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme

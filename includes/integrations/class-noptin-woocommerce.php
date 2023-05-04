@@ -208,6 +208,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function register_automation_rules( $rules ) {
 		$rules->add_trigger( new Noptin_WooCommerce_New_Order_Trigger( $this ) );
+		$rules->add_trigger( new Noptin_WooCommerce_Product_Purchased_Trigger( $this ) );
+		$rules->add_trigger( new Noptin_WooCommerce_Product_Refunded_Trigger( $this ) );
 		$rules->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger( $this ) );
 		$rules->add_trigger( new Noptin_WooCommerce_Lifetime_Value_Trigger( $this ) );
 

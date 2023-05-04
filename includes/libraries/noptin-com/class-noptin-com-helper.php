@@ -91,7 +91,7 @@ class Noptin_COM_Helper {
 			wp_remote_post(
 				'https://noptin.com/wp-json/hizzle/v1/licenses/' . $license_key . '/activate',
 				array(
-					'body' => array(
+					'body'    => array(
 						'website' => home_url(),
 					),
 					'headers' => array(
@@ -141,7 +141,7 @@ class Noptin_COM_Helper {
 			wp_remote_post(
 				'https://noptin.com/wp-json/hizzle/v1/licenses/' . $license_key . '/deactivate',
 				array(
-					'body' => array(
+					'body'    => array(
 						'website' => home_url(),
 					),
 					'headers' => array(

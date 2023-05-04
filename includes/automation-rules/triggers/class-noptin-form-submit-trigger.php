@@ -173,7 +173,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 
 		$settings = array(
 
-			'trigger_form'    => array(
+			'trigger_form' => array(
 				'type'        => 'select',
 				'el'          => 'select',
 				'label'       => __( 'Form', 'newsletter-optin-box' ),

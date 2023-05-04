@@ -51,7 +51,7 @@ class Noptin_Link_Click_Trigger extends Noptin_Open_Email_Trigger {
 
 		return array_merge(
 			array(
-				'url'            => array(
+				'url' => array(
 					'description'       => __( 'Clicked URL', 'newsletter-optin-box' ),
 					'conditional_logic' => 'string',
 				),

@@ -75,7 +75,7 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 
 		$meta  = array(
 			esc_html__( 'Product', 'newsletter-optin-box' ) => $product->get_name(),
-			esc_html__( 'Action', 'newsletter-optin-box' )  => 'buy' === $settings['action'] ? esc_html__( 'Buy', 'newsletter-optin-box' ) : esc_html__( 'Refund', 'newsletter-optin-box' ),
+			esc_html__( 'Action', 'newsletter-optin-box' ) => 'buy' === $settings['action'] ? esc_html__( 'Buy', 'newsletter-optin-box' ) : esc_html__( 'Refund', 'newsletter-optin-box' ),
 		);
 
 		return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );

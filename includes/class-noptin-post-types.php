@@ -130,7 +130,7 @@ class Noptin_Post_Types {
 								add_query_arg(
 									array(
 										'noptin_admin_action' => 'noptin_reset_form_stats',
-										'form_id'             => $post->ID,
+										'form_id' => $post->ID,
 									)
 								),
 								'noptin-reset-nonce',
