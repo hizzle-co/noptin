@@ -36,7 +36,7 @@
 		"vuedraggable": "2.24.3"
 	},
 	"devDependencies": {
-		"@babel/core": "7.21.5",
+		"@babel/core": "7.21.8",
 		"@babel/plugin-transform-runtime": "7.21.4",
 		"@babel/preset-env": "7.21.5",
 		"@mdi/js": "7.2.96",
