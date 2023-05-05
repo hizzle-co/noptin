@@ -169,7 +169,7 @@ import regeneratorRuntime from "regenerator-runtime";
 					},
 	
 					skipEmptyLines: 'greedy',
-					dynamicTyping: true,
+					// dynamicTyping: true,
 				}
 			);
 		},

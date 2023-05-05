@@ -138,6 +138,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 * Use alternative method to send bulk newsletter emails.
 * Add an automation rule action to delete newsletter subscribers.
 * Make it possible to fully customize the double opt-in email or set up multiple emails.
+* Fix: Subscriber imports strips out leading zeros.
 
 = 1.11.8 =
 * Speed improvements.
