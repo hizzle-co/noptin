@@ -51,36 +51,65 @@ class Automated_Email_Campaign_Types extends Controller {
 		$prepared = array();
 
 		if ( ! defined( 'NOPTIN_WELCOME_EMAILS_FILE' ) ) {
+
+			$prepared[] = array(
+				'name'         => 'periodic',
+				'title'        => __( 'Periodic', 'newsletter-optin-box' ),
+				'category'     => 'Mass Mail',
+				'description'  => __( 'Automatically send your subscribers, users, or customers an email every X days.', 'newsletter-optin-box' ),
+				'image'        => array(
+					'icon' => 'calendar',
+					'fill' => '#3f9ef4',
+				),
+				'create_url'   => '',
+				'upgrade_url'  => 'https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=periodic',
+				'is_available' => false,
+			);
+
+			$prepared[] = array(
+				'name'         => 'automation_rule_new_subscriber',
+				'title'        => __( 'Subscriber > Created', 'newsletter-optin-box' ),
+				'category'     => 'Subscribers',
+				'description'  => __( 'Sends an email when someone subscribes to the newsletter.', 'newsletter-optin-box' ),
+				'image'        => plugin_dir_url( \Noptin::$file ) . 'includes/assets/images/logo.png',
+				'create_url'   => '',
+				'upgrade_url'  => 'https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=welcome_emails',
+				'is_available' => false,
+			);
+
 			$prepared[] = array(
 				'name'         => 'welcome_users_email',
 				'title'        => __( 'Welcome New Users', 'newsletter-optin-box' ),
 				'category'     => 'WordPress',
 				'description'  => __( 'Welcome new users to your website, introduce yourself, etc.', 'newsletter-optin-box' ),
-				'image'        => 'wordpress',
+				'image'        => array(
+					'icon' => 'admin-users',
+					'fill' => '#404040',
+				),
 				'create_url'   => '',
 				'upgrade_url'  => 'https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=welcome_users_email',
 				'is_available' => false,
 			);
 
 			$prepared[] = array(
-				'name'         => 'periodic',
-				'title'        => __( 'Periodic', 'newsletter-optin-box' ),
-				'category'     => 'General',
-				'description'  => __( 'Automatically send your subscribers, users, or customers an email every X days.', 'newsletter-optin-box' ),
+				'name'         => 'set_user_role',
+				'title'        => __( 'User Role Changes', 'newsletter-optin-box' ),
+				'category'     => 'WordPress',
+				'description'  => __( 'Send an email whenever a user role is added, removed, or updated.', 'newsletter-optin-box' ),
 				'image'        => array(
-					'fill'    => '#3f9ef4',
-					'path'    => 'M61.44,0A61.46,61.46,0,1,1,18,18,61.21,61.21,0,0,1,61.44,0ZM32.22,79.39,52.1,59.46,32.22,43.25V79.39ZM54.29,61.24,33.79,81.79H88.91L69.33,61.24l-6.46,5.51h0a1.42,1.42,0,0,1-1.8,0l-6.78-5.53Zm17.18-1.82L90.66,79.55V43.07L71.47,59.42ZM34,41.09l27.9,22.76L88.65,41.09Zm65.4-17.64a53.72,53.72,0,1,0,15.74,38,53.56,53.56,0,0,0-15.74-38Z',
-					'viewBox' => '0 0 122.88 122.88',
+					'icon' => 'admin-users',
+					'fill' => '#404040',
 				),
 				'create_url'   => '',
-				'upgrade_url'  => 'https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=periodic',
+				'upgrade_url'  => 'https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=set_user_role',
 				'is_available' => false,
 			);
+
 		}
 
 		foreach ( noptin()->emails->automated_email_types->types as $automated_email_type ) {
 
-			if ( empty( $automated_email_type->category ) ) {
+			if ( empty( $automated_email_type->category ) || ( ! defined( 'NOPTIN_WELCOME_EMAILS_FILE' ) && 'automation_rule_new_subscriber' === $automated_email_type->type ) ) {
 				continue;
 			}
 

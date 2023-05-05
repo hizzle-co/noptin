@@ -23,14 +23,14 @@ import { MergeTagsThickboxModal } from '../merge-tags';
  */
 function EditorHeading({id, createNewUrl}) {
 
-	const isSaved = id > 0;
+	const isSaved = !!( id && parseInt(id) > 0 );
 
 	return (
 		<h1 className="wp-heading-inline">
 			{isSaved && (
 				<>
 					<span>{__( 'Edit Automation Rule', 'newsletter-optin-box' )}</span>
-					<a href={createNewUrl} class="page-title-action">{__( 'Add New', 'newsletter-optin-box' )}</a>
+					<a href={createNewUrl} className="page-title-action">{__( 'Add New', 'newsletter-optin-box' )}</a>
 				</>
 			)}
 			{!isSaved && (
@@ -173,7 +173,7 @@ export default function AutomationRuleEditor({id, action, trigger, settings, sma
 	return (
 		<div className="noptin-automation-rule__editor" style={style}>
 			<SlotFillProvider>
-				<EditorHeading id={id} createNewUrl={createNewUrl} />
+				<EditorHeading id={automationRule.id} createNewUrl={createNewUrl} />
 				<Flex wrap align="top">
 
 					<FlexBlock className="noptin-es6-editor__main">

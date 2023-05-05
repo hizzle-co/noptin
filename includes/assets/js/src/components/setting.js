@@ -331,7 +331,7 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 	const className = setting.fullWidth ? `noptin-component__field noptin-component__field-${settingKey}` : `noptin-component__field-lg noptin-component__field-${settingKey}`;
 
 	// Help text.
-	const help = setting.description ? <div dangerouslySetInnerHTML={ { __html: setting.description } } /> : '';
+	const help = setting.description ? <span dangerouslySetInnerHTML={ { __html: setting.description } } /> : '';
 
 	// Default attributes.
 	const defaultAttributes = {
@@ -389,7 +389,7 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 			<InputSetting
 				{...defaultAttributes}
 				setting={setting}
-				availableSmartTags={availableSmartTags}
+				availableSmartTags={'trigger_settings' === prop ? [] : availableSmartTags}
 			/>
 		);
 	}
@@ -432,7 +432,7 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 			<KeyValueRepeater
 				{...defaultAttributes}
 				setting={setting}
-				availableSmartTags={availableSmartTags}
+				availableSmartTags={'trigger_settings' === prop ? [] : availableSmartTags}
 			/>
 		);
 	}

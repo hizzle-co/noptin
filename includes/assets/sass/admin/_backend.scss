@@ -2374,6 +2374,14 @@ a.no-campaign-create-new-campaign {
 	.components-notice {
 		margin: 10px 0;
 	}
+
+	.components-base-control:not(.noptin-component__field-lg):not(.noptin-component__field) {
+		margin-bottom: 1.6rem;
+	}
+
+	.noptin-component__field-conditional_logic .components-base-control:not(.noptin-component__field-lg):not(.noptin-component__field) {
+		margin-bottom: 0;
+	}
 }
 
 .noptin-component__field {

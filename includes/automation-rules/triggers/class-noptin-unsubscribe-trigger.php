@@ -11,6 +11,11 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 
 	/**
+	 * @var string
+	 */
+	public $category = 'Subscribers';
+
+	/**
      * Whether or not this trigger deals with a subscriber.
      *
      * @var bool
