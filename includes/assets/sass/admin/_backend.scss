@@ -2355,7 +2355,7 @@ a.no-campaign-create-new-campaign {
 	}
 
 	.noptin-mb0 {
-		margin-bottom: 0;
+		margin-bottom: 0 !important;
 	}
 
 }
@@ -2423,6 +2423,7 @@ a.no-campaign-create-new-campaign {
 	.noptin-list-item__value {
 		flex: 1;
 		color: #808080;
+		word-break: break-word;
 	}
 }
 
