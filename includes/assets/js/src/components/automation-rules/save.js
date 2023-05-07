@@ -118,6 +118,7 @@ export default function Save({automationRule, setError, setSuccess, setAutomatio
 				<ToggleControl
 					label={automationRule.status ? __( 'Active', 'newsletter-optin-box' ) : __( 'Inactive', 'newsletter-optin-box' )}
 					checked={automationRule.status ? true : false}
+					className="noptin-mb0"
 					onChange={(value) => {
 						setAutomationRule({
 							...automationRule,
@@ -145,24 +146,22 @@ export default function Save({automationRule, setError, setSuccess, setAutomatio
 				value: formatDate( automationRule.updated_at ),
 			},
 		);
-	}
 
-	if ( Array.isArray( automationRule.metadata ) ) {
+		if ( ! Array.isArray( automationRule.metadata ) ) {
+			Object.keys( automationRule.metadata ).forEach( ( key ) => {
 
-		// Loop through the metadata.
-		automationRule.metadata.forEach( ( item ) => {
+				// Skip if value is not scalar.
+				if ( typeof automationRule.metadata[key] !== 'string' && typeof automationRule.metadata[key] !== 'number' ) {
+					return;
+				}
 
-			// Skip if value is not scalar.
-			if ( typeof item.value !== 'string' && typeof item.value !== 'number' ) {
-				return;
-			}
-
-			// Add the item to the details.
-			details.push( {
-				label: item.key,
-				value: item.value,
+				// Add the item to the details.
+				details.push( {
+					label: key,
+					value: automationRule.metadata[key],
+				} );
 			} );
-		} );
+		}
 	}
 
 	return (

@@ -117,7 +117,7 @@ export default function AutomationRuleEditor({id, action, trigger, settings, sma
 	// Prepare the app.
 	const [automationRule, setAutomationRule] = useState({});
 	const [saving, setSaving] = useState(false);
-	const [loading, setLoading] = useState(0);
+	const [loading, setLoading] = useState(1);
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(null);
 	const availableSmartTags = useMemo(() => getAvailableSmartTags(smartTags, automationRule.trigger_settings), [smartTags, automationRule.trigger_settings]);
@@ -161,7 +161,8 @@ export default function AutomationRuleEditor({id, action, trigger, settings, sma
 				setLoading(loading - 1);
 			});
 		} else {
-			setAutomationRule( defaultAutomationRule )
+			setAutomationRule( defaultAutomationRule );
+			setLoading(loading - 1);
 		}
 	}, [id]);
 
