@@ -31,6 +31,36 @@ if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
 	define( 'NOPTIN_VERIFY_NONCE', false );
 }
 
+
+/**
+ * Enqueue welcome wizard script
+ */
+function noptin_enqueue_welcome_wizard() {
+	wp_enqueue_script(
+		'noptin-welcome-wizard',
+		plugins_url( '/js/welcome-wizard.js', __FILE__ ),
+		array( 'wp-i18n', 'wp-element', 'wp-components', 'wp-api' ),
+		filemtime( plugin_dir_path( __FILE__ ) . './includes/assets/js/src/welcome-wizard.js' )
+	);
+
+	wp_set_script_translations( 'noptin-welcome-wizard', 'noptin', plugin_dir_path( __FILE__ ) . '/languages' );
+}
+add_action( 'admin_enqueue_scripts', 'noptin_enqueue_welcome_wizard' );
+
+/**
+ * Display welcome wizard on first activation
+ */
+function noptin_display_welcome_wizard() {
+	if ( get_option( 'noptin_welcome_wizard_displayed' ) ) {
+		return;
+	}
+
+	update_option( 'noptin_welcome_wizard_displayed', true );
+
+	echo '<div id="noptin-welcome-wizard"></div>';
+}
+add_action( 'admin_footer', 'noptin_display_welcome_wizard' );
+
 /**
  * Plugin main class
  *
