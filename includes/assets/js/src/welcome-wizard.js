@@ -52,7 +52,7 @@ domReady(() => {
   const root = createRoot(document.querySelector('#noptin-welcome-wizard'));
   root.render(
     <StrictMode>
-      <WelcomeWizard />
+      <NoptinWelcomeWizard />
     </StrictMode>
   );
 });
