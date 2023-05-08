@@ -38,7 +38,7 @@ if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
 function noptin_enqueue_welcome_wizard() {
 	wp_enqueue_script(
 		'noptin-welcome-wizard',
-		plugins_url( '/js/welcome-wizard.js', __FILE__ ),
+		plugins_url( './includes/assets/js/src/welcome-wizard.js', __FILE__ ),
 		array( 'wp-i18n', 'wp-element', 'wp-components', 'wp-api' ),
 		filemtime( plugin_dir_path( __FILE__ ) . './includes/assets/js/src/welcome-wizard.js' )
 	);
