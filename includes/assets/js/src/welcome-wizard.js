@@ -1,7 +1,11 @@
-import domReady from '@wordpress/dom-ready';
-import { render, createRoot, StrictMode } from '@wordpress/element';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import WelcomeWizard from './components/WelcomeWizard';
+import domReady from '@wordpress/dom-ready';
+import SignupFormStep from './components/SignupFormStep';
+import NewsletterStep from './components/NewsletterStep';
+import GrowthStep from './components/GrowthStep';
 
 domReady(() => {
   const wizardSteps = [
@@ -49,10 +53,13 @@ domReady(() => {
   }
 
   // Render the welcome wizard component
-  const root = createRoot(document.querySelector('#noptin-welcome-wizard'));
-  root.render(
-    <StrictMode>
-      <NoptinWelcomeWizard />
-    </StrictMode>
-  );
+  const rootElement = document.querySelector('#noptin-welcome-wizard');
+  if (rootElement) {
+    const root = createRoot(rootElement);
+    root.render(
+      <StrictMode>
+        <NoptinWelcomeWizard />
+      </StrictMode>
+    );
+  }
 });

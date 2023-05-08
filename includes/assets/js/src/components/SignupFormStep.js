@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
-function SignupFormStep(props) {
+const SignupFormStep = (props) => {
   return (
     <div className="noptin-welcome-wizard-signup-form">
       <h2>{__('Step 1: Configure Your Signup Form', 'noptin')}</h2>
@@ -16,6 +16,6 @@ function SignupFormStep(props) {
       </div>
     </div>
   );
-}
+};
 
 export default SignupFormStep;
