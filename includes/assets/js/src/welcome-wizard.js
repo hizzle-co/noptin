@@ -30,28 +30,41 @@ domReady(() => {
   function NoptinWelcomeWizard() {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const currentStep = wizardSteps[currentStepIndex];
-
+    const totalSteps = wizardSteps.length;
+    const progress = ((currentStepIndex + 1) / totalSteps) * 100;
+  
     function handleNextStep() {
       setCurrentStepIndex(currentStepIndex + 1);
     }
-
+  
     function handlePreviousStep() {
       setCurrentStepIndex(currentStepIndex - 1);
     }
-
-    // Return the welcome wizard component, including the current step
+  
+    // Return the welcome wizard component, including the current step and progress bar
     return (
       <div className="noptin-welcome-wizard">
         <h2>{currentStep.title}</h2>
         <p>{currentStep.description}</p>
+        <div className="noptin-welcome-wizard-progress">
+          <div className="noptin-welcome-wizard-progress-bar" style={{ width: `${progress}%` }}></div>
+        </div>
         <currentStep.component
           onNextStep={handleNextStep}
           onPreviousStep={handlePreviousStep}
         />
+        <div className="noptin-welcome-wizard-buttons">
+          <button className="noptin-welcome-wizard-button" onClick={handlePreviousStep} disabled={currentStepIndex === 0}>
+            {__('Back', 'noptin')}
+          </button>
+          <button className="noptin-welcome-wizard-button noptin-welcome-wizard-button-primary" onClick={handleNextStep} disabled={currentStepIndex === totalSteps - 1}>
+            {currentStepIndex === totalSteps - 1 ? __('Finish', 'noptin') : __('Next', 'noptin')}
+          </button>
+        </div>
       </div>
     );
   }
-
+  
   // Render the welcome wizard component
   const rootElement = document.querySelector('#noptin-welcome-wizard');
   if (rootElement) {

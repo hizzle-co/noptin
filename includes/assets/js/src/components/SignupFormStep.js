@@ -5,7 +5,7 @@ const SignupFormStep = (props) => {
     <div className="noptin-welcome-wizard-signup-form">
       <h2>{__('Step 1: Configure Your Signup Form', 'noptin')}</h2>
       <p>{__('Use the form below to create and customize your signup form.', 'noptin')}</p>
-      {/* Adding signup form code here */}
+      {/* Add signup form code here */}
       <div className="noptin-welcome-wizard-buttons">
         <button className="noptin-welcome-wizard-button" onClick={props.onPreviousStep}>
           {__('Back', 'noptin')}
