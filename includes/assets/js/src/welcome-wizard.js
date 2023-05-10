@@ -28,72 +28,72 @@ domReady(() => {
             },
           ];
 
-      // Define the welcome wizard component
-      function NoptinWelcomeWizard() {
-      const [currentStepIndex, setCurrentStepIndex] = useState(0);
-      const currentStep = wizardSteps[currentStepIndex];
-      const totalSteps = wizardSteps.length;
-      const progress = ((currentStepIndex + 1) / totalSteps) * 100;
-    
-      function handleNextStep() {
-        setCurrentStepIndex(currentStepIndex + 1);
-      
-        // Prepare progress data
-        const progressData = {
-          step: currentStepIndex + 1,
-        };
-      
-        // Make AJAX call to save progress data
-        fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/progress', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': noptinApiSettings.nonce,
-          },
-          body: JSON.stringify(progressData),
-        })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log('Progress data saved:', data);
-        })
-        .catch((error) => {
-          console.error('Error saving progress:', error);
-        });
-      }
+          // Define the welcome wizard component
+          function NoptinWelcomeWizard() {
+          const [currentStepIndex, setCurrentStepIndex] = useState(0);
+          const currentStep = wizardSteps[currentStepIndex];
+          const totalSteps = wizardSteps.length;
+          const progress = ((currentStepIndex + 1) / totalSteps) * 100;
+        
+          function handleNextStep() {
+            setCurrentStepIndex(currentStepIndex + 1);
           
-      function handlePreviousStep() {
-        setCurrentStepIndex(currentStepIndex - 1);
-      }
-    
-      // Return the welcome wizard component, including the current step and progress bar
-      return (
-        <div className="noptin-welcome-wizard">
-          <h2>{currentStep.title}</h2>
-          <p>{currentStep.description}</p>
-          <div className="noptin-welcome-wizard-progress">
-            <div className="noptin-welcome-wizard-progress-bar" style={{ width: `${progress}%` }}></div>
-          </div>
-          <currentStep.component
-            onNextStep={handleNextStep}
-            onPreviousStep={handlePreviousStep}
-          />
-          <div className="noptin-welcome-wizard-buttons">
-            <button className="noptin-welcome-wizard-button" onClick={handlePreviousStep} disabled={currentStepIndex === 0}>
-              {__('Back', 'noptin')}
-            </button>
-            <button className="noptin-welcome-wizard-button noptin-welcome-wizard-button-primary" onClick={ currentStepIndex === totalSteps - 1 ? handleFinishButtonClick : handleNextStep } disabled={currentStepIndex === totalSteps - 1} >
-                {currentStepIndex === totalSteps - 1 ? __('Finish', 'noptin') : __('Next', 'noptin')}
-            </button>
-          </div>
-        </div>
-      );
-    }
+            // Prepare progress data
+            const progressData = {
+              step: currentStepIndex + 1,
+            };
+          
+            // Make AJAX call to save progress data
+            fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/progress', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': noptinApiSettings.nonce,
+              },
+              body: JSON.stringify(progressData),
+            })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log('Progress data saved:', data);
+            })
+            .catch((error) => {
+              console.error('Error saving progress:', error);
+            });
+          }
+              
+          function handlePreviousStep() {
+            setCurrentStepIndex(currentStepIndex - 1);
+          }
+        
+          // Return the welcome wizard component, including the current step and progress bar
+          return (
+            <div className="noptin-welcome-wizard">
+              <h2>{currentStep.title}</h2>
+              <p>{currentStep.description}</p>
+              <div className="noptin-welcome-wizard-progress">
+                <div className="noptin-welcome-wizard-progress-bar" style={{ width: `${progress}%` }}></div>
+              </div>
+              <currentStep.component
+                onNextStep={handleNextStep}
+                onPreviousStep={handlePreviousStep}
+              />
+              <div className="noptin-welcome-wizard-buttons">
+                <button className="noptin-welcome-wizard-button" onClick={handlePreviousStep} disabled={currentStepIndex === 0}>
+                  {__('Back', 'noptin')}
+                </button>
+                <button className="noptin-welcome-wizard-button noptin-welcome-wizard-button-primary" onClick={ currentStepIndex === totalSteps - 1 ? handleFinishButtonClick : handleNextStep } disabled={currentStepIndex === totalSteps - 1} >
+                    {currentStepIndex === totalSteps - 1 ? __('Finish', 'noptin') : __('Next', 'noptin')}
+                </button>
+              </div>
+            </div>
+          );
+        }
   
       function noptin_welcome_wizard_init() {
         // Get the "noptin_welcome_wizard_completed" option value from the Wp db
@@ -118,16 +118,7 @@ domReady(() => {
         noptin_welcome_wizard_init();
       });
   
-      // After the user completes the welcome wizard, set the "noptin_welcome_wizard_completed" option in the WordPress database to true
       function mark_welcome_wizard_as_completed() {
-        localStorage.setItem('noptin_welcome_wizard_completed', 'true');
-      }
-  
-      function handleFinishButtonClick() {
-        const progressData = {
-          step: wizardSteps.length,
-        };
-        
         // Make AJAX call to save progress data
         fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/progress', {
           method: 'POST',
@@ -145,38 +136,41 @@ domReady(() => {
           return response.json();
         })
         .then((data) => {
-          console.log('Progress data saved:', data);
-          
+          console.log('Progress data saved:', data);          
           // After the AJAX call completes successfully, mark the welcome wizard as completed
-          mark_welcome_wizard_as_completed();
+          // Make AJAX call to mark welcome wizard as completed
+          fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/completed', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-WP-Nonce': noptinApiSettings.nonce,
+            },
+          })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log('Welcome wizard marked as completed:', data);
+          })
+          .catch((error) => {
+            console.error('Error marking welcome wizard as completed:', error);
+          });
         })
         .catch((error) => {
           console.error('Error saving progress:', error);
         });
       }
       
-      function mark_welcome_wizard_as_completed() {
-        // Make AJAX call to mark welcome wizard as completed
-        fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/completed', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': noptinApiSettings.nonce,
-          },
-        })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log('Welcome wizard marked as completed:', data);
-        })
-        .catch((error) => {
-          console.error('Error marking welcome wizard as completed:', error);
-        });
+      function handleFinishButtonClick() {
+        const progressData = {
+          step: wizardSteps.length,
+        };
+        
+        mark_welcome_wizard_as_completed();
       }
       
     }
