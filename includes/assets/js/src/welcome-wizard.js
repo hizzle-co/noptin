@@ -10,7 +10,7 @@ import GrowthStep from './components/Wizard/GrowthStep';
 domReady(() => {
     // Check if we're on the WordPress admin dashboard
     if (document.body.classList.contains('wp-admin')) {
-        const wizardSteps = [
+          const wizardSteps = [
             {
               title: __('Step 1: Configure Your Signup Form', 'noptin'),
               description: __('Add and customize a signup form to start collecting email addresses.', 'noptin'),
@@ -94,85 +94,84 @@ domReady(() => {
             </div>
           );
         }
-  
-      function noptin_welcome_wizard_init() {
-        // Get the "noptin_welcome_wizard_completed" option value from the Wp db
-        const completed = localStorage.getItem('noptin_welcome_wizard_completed') === 'true';
-  
-        // If the user !completed welcome wizard, render wizard component
-        if (!completed) {
-          const rootElement = document.querySelector('#noptin-welcome-wizard');
-          if (rootElement) {
-            const root = createRoot(rootElement);
-            root.render(
-              <StrictMode>
-                <NoptinWelcomeWizard />
-              </StrictMode>
-            );
+
+        function noptin_welcome_wizard_init() {
+          // Get the "noptin_welcome_wizard_completed" option value from the WP database
+          const completed = localStorage.getItem('noptin_welcome_wizard_completed') === 'true';
+
+          // If the user hasn't completed the welcome wizard, render the wizard component
+          if (!completed) {
+              const rootElement = document.querySelector('#noptin-welcome-wizard');
+              if (rootElement) {
+                  const root = createRoot(rootElement);
+                  root.render(
+                      <StrictMode>
+                          <NoptinWelcomeWizard />
+                      </StrictMode>
+                  );
+              }
           }
-        }
       }
-  
+
       // When the DOM is ready, initialize the welcome wizard if it hasn't been completed
       domReady(() => {
-        noptin_welcome_wizard_init();
+          noptin_welcome_wizard_init();
       });
-  
+
       function mark_welcome_wizard_as_completed() {
-        // Make AJAX call to save progress data
-        fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/progress', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': noptinApiSettings.nonce,
-          },
-          body: JSON.stringify(progressData),
-        })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log('Progress data saved:', data);          
-          // After the AJAX call completes successfully, mark the welcome wizard as completed
-          // Make AJAX call to mark welcome wizard as completed
-          fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/completed', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-WP-Nonce': noptinApiSettings.nonce,
-            },
+          // Make AJAX call to save progress data
+          fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/progress', {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-WP-Nonce': noptinApiSettings.nonce,
+              },
+              body: JSON.stringify(progressData),
           })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log('Welcome wizard marked as completed:', data);
-          })
-          .catch((error) => {
-            console.error('Error marking welcome wizard as completed:', error);
-          });
-        })
-        .catch((error) => {
-          console.error('Error saving progress:', error);
-        });
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+              })
+              .then((data) => {
+                  console.log('Progress data saved:', data);
+                  // Make AJAX call to mark welcome wizard as completed
+                  fetch(noptinApiSettings.root + 'noptin/v1/welcome-wizard/completed', {
+                      method: 'POST',
+                      credentials: 'same-origin',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-WP-Nonce': noptinApiSettings.nonce,
+                      },
+                  })
+                      .then((response) => {
+                          if (!response.ok) {
+                              throw new Error('Network response was not ok');
+                          }
+                          return response.json();
+                      })
+                      .then((data) => {
+                          console.log('Welcome wizard marked as completed:', data);
+                      })
+                      .catch((error) => {
+                          console.error('Error marking welcome wizard as completed:', error);
+                      });
+              })
+              .catch((error) => {
+                  console.error('Error saving progress:', error);
+              });
       }
-      
+
       function handleFinishButtonClick() {
-        const progressData = {
-          step: wizardSteps.length,
-        };
-        
-        mark_welcome_wizard_as_completed();
+          const progressData = {
+              step: wizardSteps.length,
+          };
+
+          mark_welcome_wizard_as_completed();
       }
-      
-    }
-  });
-  
+  }
+});
+
+
