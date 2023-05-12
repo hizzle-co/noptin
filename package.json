@@ -24,7 +24,7 @@
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
 		"@wordpress/api-fetch": "^6.28.0",
-		"@wordpress/components": "^23.8.0",
+		"@wordpress/components": "^24.0.0",
 		"@wordpress/dom-ready": "3.33.0",
 		"@wordpress/icons": "^9.23.0",
 		"lodash.find": "4.6.0",
