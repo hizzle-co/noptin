@@ -45,7 +45,7 @@ class Noptin_WooCommerce_Product_Refunded_Trigger extends Noptin_WooCommerce_Pro
 	 *
 	 * @param \WC_Order $order The order.
 	 */
-	protected function validate_order_status( $order ) {
+	public function validate_order_status( $order ) {
 		if ( ! $order->has_status( 'refunded' ) ) {
 			throw new Exception( 'The order status is not valid' );
 		}

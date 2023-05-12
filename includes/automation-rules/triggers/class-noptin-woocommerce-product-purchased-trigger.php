@@ -63,7 +63,7 @@ class Noptin_WooCommerce_Product_Purchased_Trigger extends Noptin_WooCommerce_Tr
 	 * @param int|WC_Order $order_id The order being acted on.
 	 * @since 1.9.0
 	 */
-	protected function maybe_trigger( $order_id ) {
+	public function maybe_trigger( $order_id ) {
 
 		if ( is_numeric( $order_id ) ) {
 			$order = wc_get_order( $order_id );
@@ -205,7 +205,7 @@ class Noptin_WooCommerce_Product_Purchased_Trigger extends Noptin_WooCommerce_Tr
 	 *
 	 * @param \WC_Order $order The order.
 	 */
-	protected function validate_order_status( $order ) {
+	public function validate_order_status( $order ) {
 		if ( ! $order->is_paid() ) {
 			throw new Exception( 'The order status is not valid' );
 		}
