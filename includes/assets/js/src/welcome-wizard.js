@@ -29,6 +29,13 @@ domReady(() => {
       },
     ];
 
+    // Define the values for noptinApiSettings
+    const noptinApiSettings = {
+      root: 'https://your-api-url.com/', // Replace with API URL
+      nonce: 'your-nonce-value', // Replace with appropriate nonce value
+    };
+
+
     // Define the welcome wizard component
     function NoptinWelcomeWizard() {
       const [currentStepIndex, setCurrentStepIndex] = useState(0);
