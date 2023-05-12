@@ -1,0 +1,29 @@
+name: 🐛 Bug
+description: Report a bug and we'll fix it in the next release.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A brief description of the question or issue, also include what you tried and what didn't work
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Please add screenshots if applicable
+    validations:
+      required: false
+  - type: textarea
+    id: extrainfo
+    attributes:
+      label: Additional information
+      description: Is there anything else we should know about this bug?
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        Feel free to check out other awesome repositories by **Hizzle** [here](https://github.com/orgs/hizzle-co/repositories).
