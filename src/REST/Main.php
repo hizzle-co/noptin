@@ -21,6 +21,11 @@ class Main {
 	public $automated_email_campaign_types;
 
 	/**
+	 * @var Settings The settings controller.
+	 */
+	public $settings;
+
+	/**
 	 * Stores the main db instance.
 	 *
 	 * @access private
@@ -61,6 +66,7 @@ class Main {
 	public function init() {
 
 		$this->automated_email_campaign_types = new Automated_Email_Campaign_Types( 'automated-email-campaign-types' );
+		$this->settings                       = new Settings( 'settings' );
 
 		// Fire action hook.
 		do_action( 'noptin_rest_api_init', $this );
