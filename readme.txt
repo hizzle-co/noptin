@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 6.0
 Tested up to: 6.2
 Requires PHP: 7.0
-Version: 1.12.0
-Stable tag: 1.12.0
+Version: 1.12.1
+Stable tag: 1.12.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -133,6 +133,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 1.12.1 =
+* Fix: Cannot access protected method Noptin_WooCommerce_Product_Purchased_Trigger::maybe_trigger() error.
 
 = 1.12.0 =
 * Use alternative method to send bulk newsletter emails.

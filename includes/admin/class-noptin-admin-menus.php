@@ -28,6 +28,10 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'extensions_menu' ), 70 );
 		add_action( 'admin_menu', array( $this, 'documentation_menu' ), 80 );
 
+		// Welcome wizzard.
+		add_action( 'admin_menu', array( $this, 'welcome_wizard_menu' ), 5 );
+		add_action( 'admin_head', array( $this, 'hide_welcome_wizard_menu' ), 10 );
+
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 
 	}
@@ -285,6 +289,35 @@ class Noptin_Admin_Menus {
 		if ( 'noptin-form' === $post_type ) {
 			$parent_file  = 'noptin'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
+	}
+
+	/**
+	 * Add welcome wizzard menu item.
+	 */
+	public function welcome_wizard_menu() {
+		$hook_suffix = add_dashboard_page(
+			esc_html__( 'Noptin Settings Welcome Wizzard', 'newsletter-optin-box' ),
+			esc_html__( 'Welcome Wizzard', 'newsletter-optin-box' ),
+			get_noptin_capability(),
+			'noptin-welcome-wizzard',
+			array( $this, 'display_welcome_wizard_page' )
+		);
+
+		Noptin_Scripts::add_admin_script( $hook_suffix, 'welcome-wizard' );
+	}
+
+	/**
+	 * Displays the welcome wizzard page.
+	 */
+	public function display_welcome_wizard_page() {
+		include plugin_dir_path( __FILE__ ) . 'views/welcome-wizard.php';
+	}
+
+	/**
+	 * Hide the welcome wizzard menu item.
+	 */
+	public function hide_welcome_wizard_menu() {
+		remove_submenu_page( 'index.php', 'noptin-welcome-wizzard' );
 	}
 
 	/**

@@ -187,7 +187,7 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 	 * @param string       $action   The action being performed.
 	 * @since 1.9.0
 	 */
-	protected function maybe_trigger( $order_id, $action ) {
+	public function maybe_trigger( $order_id, $action ) {
 
 		if ( is_numeric( $order_id ) ) {
 			$order = wc_get_order( $order_id );
