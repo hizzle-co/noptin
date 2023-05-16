@@ -63,7 +63,7 @@
 					'type'        => 'checkbox_alt',
 					'label'       => __( 'Editable', 'newsletter-optin-box' ),
 					'description' => __( "Can subscriber's view and edit this field?", 'newsletter-optin-box' ),
-					'restrict'    => '! isFieldPredefined(field)',
+					'restrict'    => "field.merge_tag != 'email'",
 				);
 				Noptin_Vue::render_el( 'field.visible', $args );
 
@@ -91,7 +91,7 @@
 
 			<a href="#" v-if="! isFieldPredefined(field)" class="noptin-field-editor-delete" @click.prevent="removeField(field)"><?php esc_html_e( 'Delete Field', 'newsletter-optin-box' ); ?></a>
 			<span v-if="! isFieldFirst(field)">
-				<span v-if="! isFieldPredefined(field)">&nbsp;|&nbsp;</span>
+				<span v-if="field.merge_tag != 'email'">&nbsp;|&nbsp;</span>
 				<a href="#"  @click.prevent="moveUp(field)"><?php esc_html_e( 'Move Up', 'newsletter-optin-box' ); ?></a>
 			</span>
 			<span v-if="! isFieldLast(field)">&nbsp;|&nbsp;

@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 1.12.2 =
+* Make it possible to hide first name, last name, and birthday fields from the manage newsletter preferences form.
+
 = 1.12.1 =
 * Fix: Cannot access protected method Noptin_WooCommerce_Product_Purchased_Trigger::maybe_trigger() error.
 
