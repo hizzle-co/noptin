@@ -144,6 +144,9 @@ class Noptin_Scripts {
 			if ( in_array( 'wp-components', $script['dependencies'], true ) ) {
 				wp_enqueue_style( 'wp-components' );
 			}
+
+			// Load script translations.
+			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', plugin_dir_path( __FILE__ ) . 'languages' );
 		}
 
 		// Enqueue the script.
