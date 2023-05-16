@@ -26,6 +26,11 @@ class Main {
 	public $settings;
 
 	/**
+	 * @var Subscribers The subscribers controller.
+	 */
+	public $subscribers;
+
+	/**
 	 * Stores the main db instance.
 	 *
 	 * @access private
@@ -67,6 +72,7 @@ class Main {
 
 		$this->automated_email_campaign_types = new Automated_Email_Campaign_Types( 'automated-email-campaign-types' );
 		$this->settings                       = new Settings( 'settings' );
+		$this->subscribers                    = new Subscribers( 'subscribers' );
 
 		// Fire action hook.
 		do_action( 'noptin_rest_api_init', $this );
