@@ -300,6 +300,16 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 		setAttributes( newValue );
 	}, [ settingKey, prop, saved, setAttributes ] );
 
+	// Simple condition.
+	if ( setting.if && ! saved[ setting.if ] ) {
+		return null;
+	}
+
+	// Abort early if condition is not met.
+	if ( setting.condition && ! setting.condition( saved ) ) {
+		return null;
+	}
+
 	// Prepare the current value.
 	let value = saved[ settingKey ];
 

@@ -144,9 +144,6 @@ class Noptin_Scripts {
 			if ( in_array( 'wp-components', $script['dependencies'], true ) ) {
 				wp_enqueue_style( 'wp-components' );
 			}
-
-			// Load script translations.
-			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', plugin_dir_path( __FILE__ ) . 'languages' );
 		}
 
 		// Enqueue the script.
@@ -157,6 +154,11 @@ class Noptin_Scripts {
 			$script['version'],
 			true
 		);
+
+		// Load script translations.
+		if ( is_array( $script['dependencies'] ) && in_array( 'wp-i18n', $script['dependencies'], true ) ) {
+			wp_set_script_translations( $script['handle'], 'newsletter-optin-box', plugin_dir_path( __FILE__ ) . 'languages' );
+		}
 
 		// Localize the script.
 		if ( ! empty( $script['localize'] ) ) {
