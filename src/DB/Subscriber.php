@@ -256,4 +256,131 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function set_date_modified( $date = null ) {
 		$this->set_date_prop( 'date_modified', $date );
 	}
+
+	/**
+	 * Fetches the subscriber's activity.
+	 *
+	 * @return array
+	 */
+	public function get_activity() {
+		$activity = $this->get_meta( 'activity' );
+		return is_array( $activity ) ? $activity : array();
+	}
+
+	/**
+	 * Sets the subscriber's activity.
+	 */
+	public function set_activity( $activity ) {
+		$this->update_meta( 'activity', $activity );
+	}
+
+	/**
+	 * Records a subscriber's activity.
+	 *
+	 * @param string $activity Activity.
+	 */
+	public function record_activity( $activity ) {
+		$activity   = $this->get_activity();
+		$activity[] = array(
+			'time'    => time(),
+			'content' => $activity,
+		);
+
+		// Only save the last 30 activities.
+		if ( count( $activity ) > 30 ) {
+			$activity = array_slice( $activity, -30 );
+		}
+
+		$this->set_activity( $activity );
+	}
+
+	/**
+	 * Fetches the subscriber's sent email campaigns.
+	 *
+	 * @return array
+	 */
+	public function get_sent_campaigns() {
+		$sent_campaigns = $this->get_meta( 'sent_campaigns' );
+		return is_array( $sent_campaigns ) ? $sent_campaigns : array();
+	}
+
+	/**
+	 * Sets the subscriber's sent email campaigns.
+	 */
+	public function set_sent_campaigns( $sent_campaigns ) {
+		$this->update_meta( 'sent_campaigns', $sent_campaigns );
+	}
+
+	/**
+	 * Records a subscriber's sent email campaign.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 */
+	public function record_sent_campaign( $campaign_id ) {
+		$sent_campaigns = $this->get_sent_campaigns();
+
+		if ( ! isset( $sent_campaigns[ $campaign_id ] ) ) {
+			$sent_campaigns[ $campaign_id ] = array(
+				'time'         => array( time() ),
+				'opens'        => array(),
+				'clicks'       => array(),
+				'unsubscribed' => false,
+			);
+		} else {
+			$sent_campaigns[ $campaign_id ]['time'][] = time();
+		}
+
+		$this->set_sent_campaigns( $sent_campaigns );
+		$this->save();
+	}
+
+	/**
+	 * Records an opened email campaign.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 */
+	public function record_opened_campaign( $campaign_id ) {
+		$sent_campaigns = $this->get_sent_campaigns();
+
+		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
+			$sent_campaigns[ $campaign_id ]['opens'][] = time();
+			$this->set_sent_campaigns( $sent_campaigns );
+			$this->save();
+		}
+	}
+
+	/**
+	 * Records a clicked link in an email campaign.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 * @param string $url URL.
+	 */
+	public function record_clicked_link( $campaign_id, $url ) {
+		$sent_campaigns = $this->get_sent_campaigns();
+
+		if ( ! isset( $sent_campaigns[ $campaign_id ] ) ) {
+			$sent_campaigns[ $campaign_id ]['clicks'][] = array(
+				'time' => time(),
+				'url'  => $url,
+			);
+
+			$this->set_sent_campaigns( $sent_campaigns );
+			$this->save();
+		}
+	}
+
+	/**
+	 * Records an unsubscribed email campaign.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 */
+	public function record_unsubscribed_campaign( $campaign_id ) {
+		$sent_campaigns = $this->get_sent_campaigns();
+
+		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
+			$sent_campaigns[ $campaign_id ]['unsubscribed'] = true;
+			$this->set_sent_campaigns( $sent_campaigns );
+			$this->save();
+		}
+	}
 }

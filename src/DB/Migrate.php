@@ -74,10 +74,10 @@ class Migrate {
 
 		// Default meta.
 		$meta = array(
-			'_subscriber_via' => 'source',
-			'ip_address'      => 'ip_address',
-			'conversion_page' => 'conversion_page',
-			'activity'        => 'activity',
+			'_subscriber_via'      => 'source',
+			'ip_address'           => 'ip_address',
+			'conversion_page'      => 'conversion_page',
+			'_subscriber_activity' => 'activity',
 		);
 
 		// Custom fields.

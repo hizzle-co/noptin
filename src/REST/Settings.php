@@ -63,7 +63,7 @@ class Settings extends Controller {
 					'callback'            => array( $this, 'update_item' ),
 					'permission_callback' => array( $this, 'can_manage_noptin' ),
 					'args'                => array(
-						'name' => array(
+						'name'  => array(
 							'description' => __( 'Setting name.', 'newsletter-optin-box' ),
 							'type'        => 'string',
 							'required'    => true,
