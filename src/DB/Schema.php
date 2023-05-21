@@ -26,6 +26,7 @@ class Schema {
 	 */
 	public function __construct() {
 		add_filter( 'noptin_db_schema', array( $this, 'add_automation_rules_table' ) );
+		add_filter( 'noptin_db_schema', array( $this, 'add_subscribers_table' ) );
 	}
 
 	/**
@@ -150,6 +151,242 @@ class Schema {
 					),
 				),
 
+				// Subscribers.
+				'subscribers'      => array(
+					'object'        => '\Hizzle\Noptin\DB\Subscriber',
+					'singular_name' => 'subscriber',
+					'props'         => array(
+
+						'id'              => array(
+							'type'        => 'BIGINT',
+							'length'      => 20,
+							'nullable'    => false,
+							'extra'       => 'AUTO_INCREMENT',
+							'description' => __( 'Unique identifier for this resource.', 'newsletter-optin-box' ),
+						),
+
+						'first_name'      => array(
+							'type'        => 'VARCHAR',
+							'length'      => 100,
+							'description' => __( "The subscriber's first name.", 'newsletter-optin-box' ),
+							'nullable'    => false,
+							'default'     => '',
+						),
+
+						'last_name'       => array(
+							'type'        => 'VARCHAR',
+							'length'      => 100,
+							'description' => __( "The subscriber's last name.", 'newsletter-optin-box' ),
+							'nullable'    => false,
+							'default'     => '',
+						),
+
+						'email'           => array(
+							'type'        => 'VARCHAR',
+							'length'      => 255,
+							'description' => __( "The subscriber's email address.", 'newsletter-optin-box' ),
+							'nullable'    => false,
+						),
+
+						'status'          => array(
+							'type'        => 'VARCHAR',
+							'length'      => 12,
+							'nullable'    => false,
+							'default'     => 'subscribed',
+							'description' => __( "The subscriber's status.", 'newsletter-optin-box' ),
+							'enum'        => array( 'subscribed', 'unsubscribed', 'pending' ),
+						),
+
+						'source'          => array( // TODO: Copy from meta table (_subscriber_via)
+							'type'        => 'VARCHAR',
+							'length'      => 255,
+							'description' => __( 'The subscription source.', 'newsletter-optin-box' ),
+							'nullable'    => true,
+						),
+
+						'ip_address'      => array( // TODO: Copy from meta table (ip_address)
+							'type'        => 'VARCHAR',
+							'length'      => 46,
+							'description' => __( 'The IP address of the subscriber.', 'newsletter-optin-box' ),
+							'nullable'    => true,
+						),
+
+						'conversion_page' => array( // TODO: Copy from meta table (conversion_page)
+							'type'        => 'VARCHAR',
+							'length'      => 255,
+							'description' => __( 'The page the subscriber converted on.', 'newsletter-optin-box' ),
+							'nullable'    => true,
+						),
+
+						'confirmed'       => array(
+							'type'        => 'TINYINT',
+							'length'      => 1,
+							'nullable'    => false,
+							'default'     => 0,
+							'description' => __( 'Whether the subscriber has confirmed their email address.', 'newsletter-optin-box' ),
+						),
+
+						'confirm_key'     => array(
+							'type'        => 'VARCHAR',
+							'length'      => 32,
+							'description' => __( 'The confirmation key.', 'newsletter-optin-box' ),
+							'nullable'    => false,
+						),
+
+						'date_created'    => array(
+							'type'        => 'DATETIME',
+							'nullable'    => false,
+							'description' => __( 'Creation date for this subscriber.', 'newsletter-optin-box' ),
+						),
+
+						'date_modified'   => array(
+							'type'        => 'DATETIME',
+							'nullable'    => false,
+							'description' => __( 'Last modification date for this subscriber.', 'newsletter-optin-box' ),
+						),
+
+					),
+
+					'keys'          => array(
+						'primary' => array( 'id' ),
+						'unique'  => array( 'confirm_key', 'email' ),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Adds the subscribers table to the schema.
+	 *
+	 * @param array $schema The database schema.
+	 * @return array
+	 */
+	public function add_subscribers_table( $schema ) {
+
+		// Basic props.
+		$props = array(
+
+			'id'         => array(
+				'type'        => 'BIGINT',
+				'length'      => 20,
+				'nullable'    => false,
+				'extra'       => 'AUTO_INCREMENT',
+				'description' => __( 'Unique identifier for this resource.', 'newsletter-optin-box' ),
+			),
+
+			'first_name' => array(
+				'type'        => 'VARCHAR',
+				'length'      => 100,
+				'description' => __( "The subscriber's first name.", 'newsletter-optin-box' ),
+				'nullable'    => false,
+				'default'     => '',
+			),
+
+			'last_name'  => array(
+				'type'        => 'VARCHAR',
+				'length'      => 100,
+				'description' => __( "The subscriber's last name.", 'newsletter-optin-box' ),
+				'nullable'    => false,
+				'default'     => '',
+			),
+
+			'email'      => array(
+				'type'        => 'VARCHAR',
+				'length'      => 255,
+				'description' => __( "The subscriber's email address.", 'newsletter-optin-box' ),
+				'nullable'    => false,
+			),
+		);
+
+		// Custom fields.
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+			if ( noptin_store_custom_field_in_subscribers_table( $custom_field['type'] ) ) {
+				$props = array_merge( $props, noptin_convert_custom_field_to_schema( $custom_field ) );
+			}
+		}
+
+		return array_merge(
+			$schema,
+			array(
+
+				// Subscribers.
+				'subscribers' => array(
+					'object'        => '\Hizzle\Noptin\DB\Subscriber',
+					'singular_name' => 'subscriber',
+					'props'         => array_merge(
+						$props,
+						array(
+							'status'          => array(
+								'type'        => 'VARCHAR',
+								'length'      => 12,
+								'nullable'    => false,
+								'default'     => 'subscribed',
+								'description' => __( "The subscriber's status.", 'newsletter-optin-box' ),
+								'enum'        => array_keys( noptin_get_subscriber_statuses() ),
+							),
+
+							'source'          => array(
+								'type'        => 'VARCHAR',
+								'length'      => 100,
+								'description' => __( 'The subscription source.', 'newsletter-optin-box' ),
+								'nullable'    => true,
+							),
+
+							'ip_address'      => array(
+								'type'        => 'VARCHAR',
+								'length'      => 46,
+								'description' => __( 'The IP address of the subscriber.', 'newsletter-optin-box' ),
+								'nullable'    => true,
+							),
+
+							'conversion_page' => array(
+								'type'        => 'VARCHAR',
+								'length'      => 255,
+								'description' => __( 'The page the subscriber converted on.', 'newsletter-optin-box' ),
+								'nullable'    => true,
+							),
+
+							'confirmed'       => array(
+								'type'        => 'TINYINT',
+								'length'      => 1,
+								'nullable'    => false,
+								'default'     => 0,
+								'description' => __( 'Whether the subscriber has confirmed their email address.', 'newsletter-optin-box' ),
+							),
+
+							'confirm_key'     => array(
+								'type'        => 'VARCHAR',
+								'length'      => 32,
+								'description' => __( 'The confirmation key.', 'newsletter-optin-box' ),
+								'nullable'    => false,
+							),
+
+							'date_created'    => array(
+								'type'        => 'DATETIME',
+								'nullable'    => false,
+								'description' => __( 'Creation date for this subscriber.', 'newsletter-optin-box' ),
+							),
+
+							'date_modified'   => array(
+								'type'        => 'DATETIME',
+								'nullable'    => false,
+								'description' => __( 'Last modification date for this subscriber.', 'newsletter-optin-box' ),
+							),
+
+							'metadata'        => array( // activity, email_campaigns.
+								'type'        => 'TEXT',
+								'description' => __( 'A key value array of additional metadata about the customer', 'newsletter-optin-box' ),
+							),
+						)
+					),
+
+					'keys'          => array(
+						'primary' => array( 'id' ),
+						'unique'  => array( 'confirm_key', 'email' ),
+					),
+				),
 			)
 		);
 	}

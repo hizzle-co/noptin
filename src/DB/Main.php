@@ -16,6 +16,11 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
+	 * @var Migrate The migrator.
+	 */
+	public $migrate;
+
+	/**
 	 * @var Schema The database schema.
 	 */
 	public $schema;
@@ -88,6 +93,9 @@ class Main {
 	 */
 	public function load() {
 
+		// Migrator.
+		$this->migrate = new Migrate();
+
 		// Schema.
 		$this->schema = new Schema();
 
@@ -125,6 +133,11 @@ class Main {
 	 */
 	public function get( $record_id, $collection_name ) {
 
+		// Abort if we already have an error.
+		if ( is_wp_error( $record_id ) ) {
+			return $record_id;
+		}
+
 		// No need to refetch the record if it's already an object.
 		if ( is_a( $record_id, '\Hizzle\Store\Record' ) ) {
 			return $record_id;
@@ -143,9 +156,33 @@ class Main {
 				return new \WP_Error( 'noptin_invalid_collection', sprintf( 'Invalid collection: %s', $collection_name ) );
 			}
 
-			return empty( $collection ) ? false : $collection->get( $record_id );
+			return $collection->get( $record_id );
 		} catch ( \Hizzle\Store\Store_Exception $e ) {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		}
+	}
+
+	/**
+	 * Retrieves an ID by a given prop.
+	 *
+	 * @param string $prop — The prop to search by.
+	 * @param int|string|float $value — The value to search for.
+	 * @param string $collection_name The collection name.
+	 * @return int|false — The ID if found, false otherwise.
+	 */
+	public function get_id_by_prop( $prop, $value, $collection_name ) {
+
+		try {
+
+			$collection = $this->store->get( $collection_name );
+
+			if ( empty( $collection ) ) {
+				return false;
+			}
+
+			return $collection->get_id_by_prop( $prop, $value );
+		} catch ( \Hizzle\Store\Store_Exception $e ) {
+			return false;
 		}
 	}
 

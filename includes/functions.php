@@ -1492,7 +1492,7 @@ function noptin_decrypt( $encoded ) {
  */
 function noptin_limit_length( $string, $limit ) {
 
-	if ( empty( $limit ) || empty( $string ) ) {
+	if ( empty( $limit ) || empty( $string ) || ! is_string( $string ) ) {
 		return $string;
 	}
 

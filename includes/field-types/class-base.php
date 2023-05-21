@@ -27,6 +27,13 @@ abstract class Noptin_Custom_Field_Type {
 	public $type;
 
 	/**
+	 * Whether or not it supports storing values in subscribers table.
+	 *
+	 * @var bool
+	 */
+	public $store_in_subscribers_table = false;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 1.5.5
@@ -39,6 +46,11 @@ abstract class Noptin_Custom_Field_Type {
 		add_filter( "noptin_format_{$this->type}_value", array( $this, 'format_value' ), 10, 2 );
 		add_action( 'noptin_custom_field_settings', array( $this, 'custom_field_settings' ) );
 
+		if ( $this->store_in_subscribers_table ) {
+			add_filter( "noptin_{$this->type}_store_in_subscribers_table", '__return_true' );
+			add_filter( "noptin_filter_{$this->type}_schema", array( $this, 'filter_db_schema' ), 10, 2 );
+			add_filter( "noptin_filter_{$this->type}_meta_to_migrate", array( $this, 'filter_meta_to_migrate' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -79,4 +91,33 @@ abstract class Noptin_Custom_Field_Type {
 		return '' === $value ? '&mdash;' : $value;
 	}
 
+	/**
+	 * Fetches a field's column name.
+	 *
+	 * @since 1.13.0
+	 * @param array $custom_field
+	 * @return string
+	 */
+	public function get_column_name( $custom_field ) {
+
+		if ( ! empty( $custom_field['predefined'] ) ) {
+			return $custom_field['merge_tag'];
+		}
+
+		return 'cf_' . $custom_field['merge_tag'];
+	}
+
+	/**
+	 * Filters the meta to migrate.
+	 *
+	 * @since 1.13.0
+	 * @param array $meta
+	 * @param array $custom_field
+	 * @return array
+	 */
+	public function filter_meta_to_migrate( $schema, $custom_field ) {
+		$schema[ $custom_field['merge_tag'] ] = $this->get_column_name( $custom_field );
+
+		return $schema;
+	}
 }

@@ -4,12 +4,80 @@
  *
  * Contains functions for manipulating Noptin subscribers
  *
- * @since             1.2.7
- * @package           Noptin
+ * @since   1.2.7
+ * @package Noptin
  */
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
+
+/**
+ * Queries the subscribers database.
+ *
+ * @param array $args Query arguments.
+ * @param string $return See Hizzle\Noptin\DB\Main::query for allowed values.
+ * @return int|array|\Hizzle\Noptin\DB\Subscriber[]|\Hizzle\Store\Query|WP_Error
+ */
+function noptin_get_subscribers( $args = array(), $return = 'results' ) {
+	return noptin()->db()->query( 'subscribers', $args, $return );
+}
+
+/**
+ * Fetch a subscriber by subscriber ID.
+ *
+ * @param int|string|\Hizzle\Noptin\DB\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
+ * @return \Hizzle\Noptin\DB\Subscriber|WP_Error Subscriber object if found, error object if not found.
+ */
+function noptin_get_subscriber( $subscriber = 0 ) {
+
+	// Email or confirm key.
+	if ( is_string( $subscriber ) && ! is_numeric( $subscriber ) ) {
+
+		if ( is_email( $subscriber ) ) {
+			$subscriber = noptin_get_subscriber_id_by_email( $subscriber );
+		} else {
+			$subscriber = noptin_get_subscriber_id_by_confirm_key( $subscriber );
+		}
+	}
+
+	return noptin()->db()->get( $subscriber, 'subscribers' );
+}
+
+/**
+ * Fetch subscriber id by email.
+ *
+ * @param string $email Subscriber email.
+ * @return int|false Subscriber id if found, false otherwise.
+ */
+function noptin_get_subscriber_id_by_email( $email ) {
+	return noptin()->db()->get_id_by_prop( 'email', $email, 'subscribers' );
+}
+
+/**
+ * Fetch subscriber id by confirm key.
+ *
+ * @param string $confirm_key Subscriber confirm key.
+ * @return int|false Subscriber id if found, false otherwise.
+ */
+function noptin_get_subscriber_id_by_confirm_key( $confirm_key ) {
+	return noptin()->db()->get_id_by_prop( 'confirm_key', $confirm_key, 'subscribers' );
+}
+
+/**
+ * Deletes a subscriber.
+ *
+ * @param int|\Hizzle\Noptin\DB\Subscriber $subscriber_id Automation Rule ID, or object.
+ * @return bool|WP_Error True on success, error object on failure.
+ */
+function noptin_delete_subscriber( $subscriber_id ) {
+	$subscriber = noptin_get_subscriber( $subscriber_id );
+
+	if ( ! is_wp_error( $subscriber ) ) {
+		return $subscriber->delete();
+	}
+
+	return $subscriber;
+}
 
 /**
  * Retrieve subscriber meta field for a subscriber.
@@ -586,8 +654,8 @@ function clear_noptin_subscriber_cache( $subscriber ) {
  * @access  public
  * @since   1.1.1
  * @param int|string|Noptin_Subscriber|object|array subscriber The subscribers's ID, email, confirm key, a Noptin_Subscriber object,
-	 *                                                                or a subscriber object from the DB.
- * @see Noptin_Subscriber
+ *                                                                or a subscriber object from the DB.
+ * @deprecated 1.13.0 User noptin_get_subscriber
  * @return Noptin_Subscriber
  */
 function get_noptin_subscriber( $subscriber ) {
@@ -600,6 +668,7 @@ function get_noptin_subscriber( $subscriber ) {
  * @access  public
  * @since   1.1.2
  * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
+ * @deprecated 1.13.0 User noptin_get_subscriber
  * @return Noptin_Subscriber
  */
 function get_noptin_subscriber_by_email( $email ) {
@@ -611,6 +680,7 @@ function get_noptin_subscriber_by_email( $email ) {
  *
  * @access  public
  * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
+ * @deprecated 1.13.0 User noptin_get_subscriber_id_by_email
  * @since   1.2.6
  * @return int|null
  */
@@ -624,6 +694,7 @@ function get_noptin_subscriber_id_by_email( $email ) {
  *
  * @access  public
  * @param int $subscriber The subscriber being deleted
+ * @deprecated 1.13.0 User noptin_delete_subscriber
  * @since   1.1.0
  */
 function delete_noptin_subscriber( $subscriber ) {
@@ -861,6 +932,7 @@ add_action( 'noptin_insert_subscriber', 'send_new_noptin_subscriber_double_optin
  *  Returns the name of the subscribers' table
  *
  * @since 1.2.2
+ * @deprecated 1.13.0
  * @return string The name of our subscribers table
  */
 function get_noptin_subscribers_table_name() {
@@ -1242,7 +1314,42 @@ function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false 
  */
 function format_noptin_custom_field_value( $value, $type, $subscriber ) {
 	return apply_filters( "noptin_format_{$type}_value", $value, $subscriber );
-}//TODO: Move custom fields, source, activity and IP address to the subscribers table.
+}
+
+/**
+ * Checks if a custom field should be stored in the subscribers table.
+ *
+ * @param string $field_type
+ * @since 1.13.0
+ * @return bool
+ */
+function noptin_store_custom_field_in_subscribers_table( $field_type ) {
+	return apply_filters( "noptin_{$field_type}_store_in_subscribers_table", false );
+}
+
+/**
+ * Converts a custom field to schema.
+ *
+ * @param array $custom_field
+ * @since 1.13.0
+ * @return array
+ */
+function noptin_convert_custom_field_to_schema( $custom_field ) {
+	$field_type = $custom_field['type'];
+	return apply_filters( "noptin_filter_{$field_type}_schema", array(), $custom_field );
+}
+
+/**
+ * Fetches the meta keys to migrate.
+ *
+ * @param array $custom_field
+ * @since 1.13.0
+ * @return array
+ */
+function noptin_fetch_custom_field_meta_to_migrate( $custom_field ) {
+	$field_type = $custom_field['type'];
+	return apply_filters( "noptin_filter_{$field_type}_meta_to_migrate", array(), $custom_field );
+}
 
 /**
  * Returns an array of available custom fields.
@@ -1638,4 +1745,20 @@ function noptin_record_subscriber_activity( $email_address, $activity ) {
  */
 function noptin_max_allowed_subscribers() {
 	return apply_filters( 'noptin_max_allowed_subscribers', 0 );
+}
+
+/**
+ * Returns known subscriber statuses.
+ *
+ * @return array
+ */
+function noptin_get_subscriber_statuses() {
+	return apply_filters(
+		'noptin_get_subscriber_statuses',
+		array(
+			'subscribed'   => __( 'Subscribed', 'newsletter-optin-box' ),
+			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
+			'pending'      => __( 'Pending', 'newsletter-optin-box' ),
+		)
+	);
 }

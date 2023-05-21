@@ -86,6 +86,16 @@ class Installer {
 		// Verify DB tables.
 		self::verify_base_tables();
 
+		// If this is the first install, add default subscriber.
+		if ( ! get_option( 'noptin_db_schema' ) ) {
+			add_noptin_subscriber( self::get_initial_subscriber_args() );
+		}
+
+		// Migrate old data.
+		if ( defined( 'NOPTIN_MIGRATE_SUBSCRIBERS' ) && NOPTIN_MIGRATE_SUBSCRIBERS ) {
+			do_noptin_background_action( 'noptin_migrate_subscribers' );
+		}
+
 		// Update the schema hash.
 		update_option( 'noptin_db_schema', self::get_schema_hash() );
 
@@ -157,5 +167,35 @@ class Installer {
 	 */
 	public static function has_missing_tables() {
 		return (bool) get_option( 'noptin_schema_missing_tables', false );
+	}
+
+	/**
+	 * Returns initial subscriber args
+	 */
+	protected static function get_initial_subscriber_args() {
+
+		if ( get_current_user_id() > 0 ) {
+			$user = get_user_by( 'id', get_current_user_id() );
+			return array(
+				'email'           => $user->user_email,
+				'name'            => $user->display_name,
+				'_subscriber_via' => 'default_user',
+				'ip_address'      => noptin_get_user_ip(),
+			);
+		}
+
+		$admin_email = sanitize_email( get_bloginfo( 'admin_email' ) );
+		$admin       = get_user_by( 'email', $admin_email );
+		$args        = array(
+			'email'           => $admin_email,
+			'_subscriber_via' => 'default_user',
+		);
+
+		if ( $admin ) {
+			$args['name'] = $admin->display_name;
+		}
+
+		return $args;
+
 	}
 }

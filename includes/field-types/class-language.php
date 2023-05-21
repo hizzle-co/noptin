@@ -29,6 +29,17 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	}
 
 	/**
+	 * Fetches available field options.
+	 *
+	 * @since 1.13.0
+	 * @param array $custom_field
+	 * @return array
+	 */
+	public function get_field_options( $custom_field ) {
+		return $this->get_languages();
+	}
+
+	/**
 	 * Displays the actual markup for this field.
 	 *
 	 * @since 1.8.0

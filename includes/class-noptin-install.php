@@ -54,21 +54,9 @@ class Noptin_Install {
 		// Upgrading from version 1.
 		if ( 1 === $upgrade_from ) {
 			return $this->upgrade_from_1();
+		} else {
+			return $this->upgrade_from_4();
 		}
-
-		// Upgrading from version 2.
-		if ( 2 === $upgrade_from ) {
-			return $this->upgrade_from_2();
-		}
-
-	}
-
-	/**
-	 * Force create the subscribers table
-	 */
-	public function create_subscribers_table() {
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( array( $this->get_subscribers_table_schema() ) );
 	}
 
 	/**
@@ -77,30 +65,6 @@ class Noptin_Install {
 	public function create_subscribers_meta_table() {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
-	}
-
-	/**
-	 * Returns the subscribers table schema
-	 */
-	private function get_subscribers_table_schema() {
-		global $wpdb;
-
-		$table           = $wpdb->prefix . 'noptin_subscribers';
-		$charset_collate = $this->charset_collate;
-
-		return "CREATE TABLE $table (
-			id bigint(20) unsigned NOT NULL auto_increment,
-            first_name varchar(100) NOT NULL default '',
-            second_name varchar(100) NOT NULL default '',
-            email varchar(100) NOT NULL default '',
-            active tinyint(2) NOT NULL default '0',
-            confirm_key varchar(255) NOT NULL default '',
-            confirmed tinyint(2) NOT NULL default '0',
-            date_created date NOT NULL DEFAULT '0000-00-00',
-			PRIMARY KEY  (id),
-			KEY email (email)
-		) $charset_collate;";
-
 	}
 
 	/**
@@ -143,39 +107,40 @@ class Noptin_Install {
 
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
 
-		$this->upgrade_from_2();
+		$this->upgrade_from_4();
 	}
 
 	/**
-	 * Upgrades the db from version 2 to 3
+	 * Upgrades the db from version 2 to 4
 	 */
-	private function upgrade_from_2() {
+	private function upgrade_from_4() {
+		global $wpdb;
 
-		// Create initial subscriber.
-		add_noptin_subscriber( $this->get_initial_subscriber_args() );
+		// Rename second_name to last_name.
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers CHANGE second_name last_name VARCHAR(100) NOT NULL default ''" );
 
-	}
+		// Rename rename active to status.
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers CHANGE active status VARCHAR(12) NOT NULL default 'subscribed'" );
 
-	// TODO: Move source and IP Address to main subscribers table.
+		// Change status values. If value is 0, set to subscribed, if 1 set to pending.
+		$wpdb->query( "UPDATE {$wpdb->prefix}noptin_subscribers SET status = 'subscribed' WHERE status = '0'" );
+		$wpdb->query( "UPDATE {$wpdb->prefix}noptin_subscribers SET status = 'pending' WHERE status = '1'" );
 
-	/**
-	 * Returns initial subscriber args
-	 */
-	public function get_initial_subscriber_args() {
+		// Fetch all subscriber ids then add them to list of subscribers to migrate.
+		$subscriber_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}noptin_subscribers" );
 
-		$admin_email = sanitize_email( get_bloginfo( 'admin_email' ) );
-		$admin       = get_user_by( 'email', $admin_email );
-		$args        = array(
-			'email'           => $admin_email,
-			'_subscriber_via' => 'default_user',
-		);
+		if ( ! empty( $subscriber_ids ) ) {
 
-		if ( $admin ) {
-			$args['name'] = $admin->display_name;
+			// Add migration flag to all subscribers.
+			foreach ( $subscriber_ids as $subscriber_id ) {
+				update_noptin_subscriber_meta( $subscriber_id, '_migrate_subscriber', 1 );
+			}
+
+			// Create recurring CRON job to migrate subscribers.
+			wp_schedule_single_event( time() + 60, 'noptin_migrate_subscribers' );
+
+			define( 'NOPTIN_MIGRATE_SUBSCRIBERS', true );
 		}
-
-		return $args;
-
 	}
 
 	/**
@@ -185,11 +150,7 @@ class Noptin_Install {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		// Create database tables.
-		dbDelta( array( $this->get_subscribers_table_schema() ) );
 		dbDelta( array( $this->get_subscriber_meta_table_schema() ) );
-
-		// Add a default subscriber.
-		add_noptin_subscriber( $this->get_initial_subscriber_args() );
 
 		// Create default subscribe form.
 		$count_forms = wp_count_posts( 'noptin-form' );
@@ -220,5 +181,4 @@ class Noptin_Install {
 
 	}
 
-// TODO: Use dbDelta properly to manage table updates.
 }

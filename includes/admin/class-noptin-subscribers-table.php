@@ -533,7 +533,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		// Prepare selected filters.
 		$selected_filters = $this->get_selected_subscriber_filters();
 
-		// TODO: Add new status for unsubscribed.
 		// Currently, unsubscribed subscribers are treated as pending.
 		$filters = array(
 			'subscription_status' => array(

@@ -52,7 +52,7 @@ class Noptin {
 	 * @var         int Plugin db version
 	 * @since       1.0.0
 	 */
-	public $db_version = 4;
+	public $db_version = 5;
 
 	/**
 	 * Stores the main Noptin instance.
@@ -347,7 +347,7 @@ class Noptin {
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
 
 		// (Maybe) upgrade the database;
-		add_action( 'init', array( $this, 'maybe_upgrade_db' ) );
+		add_action( 'init', array( $this, 'maybe_upgrade_db' ), -1 );
 
 		// css body class.
 		add_filter( 'body_class', array( $this, 'body_class' ) );
@@ -508,7 +508,7 @@ class Noptin {
 		}
 
 		// Ensure all tables we successfully created.
-		$tables = array( 'subscribers_meta', 'subscribers' );
+		$tables = array( 'subscribers_meta' );
 
 		foreach ( $tables as $table ) {
 

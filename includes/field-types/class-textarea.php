@@ -17,6 +17,13 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Custom_Field_Textarea extends Noptin_Custom_Field_Type {
 
 	/**
+	 * Whether or not it supports storing values in subscribers table.
+	 *
+	 * @var bool
+	 */
+	public $store_in_subscribers_table = true;
+
+	/**
 	 * Displays the actual markup for this field.
 	 *
 	 * @since 1.5.5
@@ -55,4 +62,19 @@ class Noptin_Custom_Field_Textarea extends Noptin_Custom_Field_Type {
 		return sanitize_textarea_field( $value );
 	}
 
+	/**
+	 * Filters the database schema.
+	 *
+	 * @since 1.13.0
+	 * @param array $schema
+	 * @param array $field
+	 */
+	public function filter_db_schema( $schema, $custom_field ) {
+		$schema[ $this->get_column_name( $custom_field ) ] = array(
+			'type'        => 'TEXT',
+			'description' => wp_strip_all_tags( $custom_field['label'] ),
+		);
+
+		return $schema;
+	}
 }
