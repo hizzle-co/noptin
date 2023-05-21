@@ -27,11 +27,27 @@ class Settings extends Controller {
 			$this->namespace,
 			'/' . $this->rest_base,
 			array(
+
+				// Read settings.
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'permission_callback' => array( $this, 'can_manage_noptin' ),
 					'args'                => array(),
+				),
+
+				// Updates multiple settings at once.
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_items' ),
+					'permission_callback' => array( $this, 'can_manage_noptin' ),
+					'args'                => array(
+						'settings' => array(
+							'description' => __( 'Settings to update.', 'newsletter-optin-box' ),
+							'type'        => 'object',
+							'required'    => true,
+						),
+					),
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
@@ -54,7 +70,7 @@ class Settings extends Controller {
 						),
 						'value' => array(
 							'description' => __( 'Setting value.', 'newsletter-optin-box' ),
-							'type'        => 'string',
+							'type'        => 'mixed',
 							'required'    => true,
 						),
 					),
@@ -73,6 +89,31 @@ class Settings extends Controller {
 	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_items( $request ) {
+		$options = get_noptin_options();
+		$user    = wp_get_current_user();
+
+		$options['noptin_signup_name']  = $user->display_name;
+		$options['noptin_signup_email'] = $user->user_email;
+
+		return rest_ensure_response( get_noptin_options() );
+	}
+
+	/**
+	 * Updates multiple settings at once.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function update_items( $request ) {
+
+		$settings = $request->get_param( 'settings' );
+
+		foreach ( $settings as $name => $value ) {
+			update_noptin_option( $name, $value );
+		}
+
 		return rest_ensure_response( get_noptin_options() );
 	}
 
