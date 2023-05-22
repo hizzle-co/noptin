@@ -126,6 +126,9 @@ class Noptin_Install {
 		$wpdb->query( "UPDATE {$wpdb->prefix}noptin_subscribers SET status = 'subscribed' WHERE status = '0'" );
 		$wpdb->query( "UPDATE {$wpdb->prefix}noptin_subscribers SET status = 'pending' WHERE status = '1'" );
 
+		// Remove key email.
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers DROP KEY email" );
+
 		// Fetch all subscriber ids then add them to list of subscribers to migrate.
 		$subscriber_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}noptin_subscribers" );
 
