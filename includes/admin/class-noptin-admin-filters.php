@@ -270,7 +270,7 @@ class Noptin_Admin_Filters {
 				}
 
 				if ( 'full_name' === $field ) {
-					$value = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					$value = trim( $subscriber->first_name . ' ' . $subscriber->last_name );
 				} else {
 					$value = maybe_serialize( apply_filters( 'noptin_subscriber_export_field_value', $subscriber->get( $field ), $field, $subscriber ) );
 				}
@@ -325,7 +325,7 @@ class Noptin_Admin_Filters {
 				}
 
 				if ( 'full_name' === $field ) {
-					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->last_name );
 					continue;
 				}
 
@@ -379,7 +379,7 @@ class Noptin_Admin_Filters {
 				}
 
 				if ( 'full_name' === $field ) {
-					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->second_name );
+					$row[ $label ] = trim( $subscriber->first_name . ' ' . $subscriber->last_name );
 					continue;
 				}
 

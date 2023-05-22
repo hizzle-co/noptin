@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @property int $id
  * @property string $first_name
- * @property string $second_name
+ * @property string $last_name
  * @property string $email
  * @property bool   $active
  * @property bool   $confirmed
@@ -303,10 +303,6 @@ class Noptin_Subscriber {
 
 		if ( strtolower( $key ) === 'id' ) {
 			$key = 'id';
-		}
-
-		if ( strtolower( $key ) === 'last_name' ) {
-			$key = 'second_name';
 		}
 
 		if ( isset( $this->data->$key ) ) {

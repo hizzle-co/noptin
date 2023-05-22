@@ -131,12 +131,12 @@ class Noptin_Hooks {
 		$guessable = array(
 			'firstname'     => 'first_name',
 			'fname'         => 'first_name',
-			'secondname'    => 'second_name',
-			'lastname'      => 'second_name',
-			'lname'         => 'second_name',
+			'secondname'    => 'last_name',
+			'lastname'      => 'last_name',
+			'lname'         => 'last_name',
 			'name'          => 'name',
 			'fullname'      => 'name',
-			'familyname'    => 'second_name',
+			'familyname'    => 'last_name',
 			'displayname'   => 'name',
 			'emailaddress'  => 'email',
 			'email'         => 'email',
@@ -150,6 +150,9 @@ class Noptin_Hooks {
 
 			$guessable[ $merge_key ] = $custom_field['merge_tag'];
 			$guessable[ $label_key ] = $custom_field['merge_tag'];
+
+			$guessable[ 'cf' . $merge_key ] = $custom_field['merge_tag'];
+			$guessable[ 'cf' . $label_key ] = $custom_field['merge_tag'];
 		}
 
 		foreach ( array_keys( $guessable ) as $key ) {

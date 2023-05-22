@@ -191,7 +191,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 		$custom_fields                    = $this->get_custom_fields();
 		$custom_fields['_subscriber_via'] = '';
 
-		if ( isset( $query['orderby'] ) && isset( $custom_fields[ $query['orderby'] ] ) && ! in_array( $query['orderby'], array( 'first_name', 'second_name', 'last_name', 'email', 'date_created', 'active' ), true ) ) {
+		if ( isset( $query['orderby'] ) && isset( $custom_fields[ $query['orderby'] ] ) && ! in_array( $query['orderby'], array( 'first_name', 'last_name', 'email', 'date_created', 'active' ), true ) ) {
 			$query['meta_key'] = $query['orderby'];
 			$query['orderby']  = 'meta_value';
 		}
@@ -454,7 +454,7 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			'status'          => array( 'active', false ),
 			'email'           => array( 'email', false ),
 			'first_name'      => array( 'first_name', false ),
-			'last_name'       => array( 'second_name', false ),
+			'last_name'       => array( 'last_name', false ),
 		);
 
 		foreach ( array_keys( $this->get_custom_fields() ) as $custom_field ) {

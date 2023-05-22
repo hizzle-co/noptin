@@ -316,8 +316,7 @@ function get_noptin_subscriber_merge_fields( $subscriber_id ) {
 		}
 	}
 
-	$merge_tags['name']      = trim( $merge_tags['first_name'] . ' ' . $merge_tags['second_name'] );
-	$merge_tags['last_name'] = $merge_tags['second_name'];
+	$merge_tags['name'] = trim( $merge_tags['first_name'] . ' ' . $merge_tags['last_name'] );
 
 	return apply_filters( 'noptin_subscriber_merge_fields', $merge_tags, $subscriber, $meta );
 }
@@ -412,7 +411,7 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 	$database_fields = array(
 		'email'        => $fields['email'],
 		'first_name'   => empty( $fields['first_name'] ) ? '' : $fields['first_name'],
-		'second_name'  => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
+		'last_name'    => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
 		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] : md5( $fields['email'] . wp_generate_password( 32, true, true ) ),
 		'date_created' => ! empty( $fields['date_created'] ) ? gmdate( 'Y-m-d', strtotime( $fields['date_created'] ) ) : current_time( 'Y-m-d' ),
 		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] : ( get_noptin_option( 'double_optin', false ) ? 1 : 0 ),
@@ -483,15 +482,10 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 	if ( isset( $fields['name'] ) ) {
 		$names = noptin_split_subscriber_name( $fields['name'] );
 
-		$fields['first_name']  = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
-		$fields['second_name'] = empty( $fields['second_name'] ) ? $names[1] : trim( $fields['second_name'] );
+		$fields['first_name'] = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
+		$fields['last_name']  = empty( $fields['last_name'] ) ? $names[1] : trim( $fields['last_name'] );
 		unset( $fields['name'] );
 
-	}
-
-	if ( isset( $fields['last_name'] ) ) {
-		$fields['second_name']  = empty( $fields['second_name'] ) ? trim( $fields['last_name'] ) : $fields['second_name'];
-		unset( $fields['last_name'] );
 	}
 
 	if ( isset( $fields['id'] ) ) {
@@ -508,7 +502,7 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 		deactivate_noptin_subscriber( $subscriber );
 	}
 
-	foreach ( noptin_parse_list( 'email first_name second_name confirm_key date_created active confirmed' ) as $field ) {
+	foreach ( noptin_parse_list( 'email first_name last_name confirm_key date_created active confirmed' ) as $field ) {
 		if ( isset( $fields[ $field ] ) ) {
 			$to_update[ $field ] = noptin_clean( $fields[ $field ] );
 			unset( $fields[ $field ] );
@@ -961,7 +955,7 @@ function get_noptin_subscriber_fields() {
 	// Base subscriber fields.
 	$fields = array(
 		'first_name'   => __( 'First Name', 'newsletter-optin-box' ),
-		'second_name'  => __( 'Last Name', 'newsletter-optin-box' ),
+		'last_name'    => __( 'Last Name', 'newsletter-optin-box' ),
 		'full_name'    => __( 'Full Name', 'newsletter-optin-box' ),
 		'email'        => __( 'Email Address', 'newsletter-optin-box' ),
 		'active'       => __( 'Active', 'newsletter-optin-box' ),

@@ -163,13 +163,13 @@ abstract class Noptin_Email_Type {
 		}
 
 		if ( 'last_name' === $field || 'second_name' === $field ) {
-			$value = $this->subscriber->second_name;
+			$value = $this->subscriber->last_name;
 			return $value ? esc_html( $value ) : esc_html( $default );
 		}
 
 		// Full name.
 		if ( 'name' === $field ) {
-			$value = $this->subscriber->first_name . ' ' . $this->subscriber->second_name;
+			$value = $this->subscriber->first_name . ' ' . $this->subscriber->last_name;
 			return $value ? esc_html( $value ) : esc_html( $default );
 		}
 

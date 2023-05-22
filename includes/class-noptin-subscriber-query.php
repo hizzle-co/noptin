@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.2.7
  *
+ * @deprecated
  * @see Noptin_Subscriber_Query::prepare_query() for information on accepted arguments.
  */
 class Noptin_Subscriber_Query {
@@ -173,11 +174,11 @@ class Noptin_Subscriber_Query {
 	 *     @type array        $exclude             An array of subscriber IDs to exclude. Default empty array.
 	 *     @type string       $search              Search keyword. Searches for possible string matches on columns.
 	 *     @type array        $search_columns      Array of column names to be searched. Accepts 'id', 'first_name',
-	 *                                             'second_name', 'email', 'date_created'. Default an array containing all the above.
+	 *                                             'last_name', 'email', 'date_created'. Default an array containing all the above.
 	 *     @type string|array $orderby             Field(s) to sort the retrieved subscribers by. May be a single value,
 	 *                                             an array of values, or a multi-dimensional array with fields as
 	 *                                             keys and orders ('ASC' or 'DESC') as values. Accepted values are
-	 *                                             'id', 'first_name', 'second_name', 'include', 'email, 'active',
+	 *                                             'id', 'first_name', 'last_name', 'include', 'email, 'active',
 	 *                                             'date_created', 'meta_value',
 	 *                                             'meta_value_num', the value of `$meta_key`, or an array key of
 	 *                                             `$meta_query`. To use 'meta_value' or 'meta_value_num', `$meta_key`
@@ -197,7 +198,7 @@ class Noptin_Subscriber_Query {
 	 *                                             is not needed, setting this to false can improve performance.
 	 *                                             Default true.
 	 *     @type string|array $fields              Which fields to return. Single or all fields (string), or array
-	 *                                             of fields. Accepts 'id', 'first_name', 'second_name',
+	 *                                             of fields. Accepts 'id', 'first_name', 'last_name',
 	 *                                             'email', 'confirm_key', 'confirmed', 'date_created', 'active'.
 	 *                                             Use 'all' for all fields. Default 'all'.
 	 * }
@@ -352,10 +353,10 @@ class Noptin_Subscriber_Query {
 
 			$search_columns = array();
 			if ( $qv['search_columns'] ) {
-				$search_columns = array_intersect( $qv['search_columns'], array( 'id', 'first_name', 'second_name', 'email', 'date_created' ) );
+				$search_columns = array_intersect( $qv['search_columns'], array( 'id', 'first_name', 'last_name', 'email', 'date_created' ) );
 			}
 			if ( ! $search_columns ) {
-				$search_columns = array( 'id', 'first_name', 'second_name', 'email', 'date_created' );
+				$search_columns = array( 'id', 'first_name', 'last_name', 'email', 'date_created' );
 			}
 
 			$this->query_where .= $this->get_search_sql( $search, $search_columns );
@@ -561,12 +562,12 @@ class Noptin_Subscriber_Query {
 		$table              = get_noptin_subscribers_table_name();
 
 		$_orderby = '';
-		if ( in_array( $orderby, array( 'first_name', 'second_name', 'email', 'date_created', 'active' ), true ) ) {
+		if ( in_array( $orderby, array( 'first_name', 'last_name', 'email', 'date_created', 'active' ), true ) ) {
 			$_orderby = $orderby;
 		} elseif ( 'id' === strtolower( $orderby ) ) {
 			$_orderby = 'id';
 		} elseif ( 'last_name' === strtolower( $orderby ) ) {
-			$_orderby = 'second_name';
+			$_orderby = 'last_name';
 		} elseif ( 'meta_value' === $orderby || $this->get( 'meta_key' ) === $orderby ) {
 			$_orderby = "$wpdb->noptin_subscribermeta.meta_value";
 		} elseif ( 'meta_value_num' === $orderby ) {

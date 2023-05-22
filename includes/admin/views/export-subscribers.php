@@ -92,7 +92,7 @@
 										<select id="field_order" name='order_by' style='margin-bottom: 4px;'>
 											<option value='id' selected="selected"><?php esc_html_e( 'Subscriber Id', 'newsletter-optin-box' ); ?></option>
 											<option value='first_name'><?php esc_html_e( 'First Name', 'newsletter-optin-box' ); ?></option>
-											<option value='second_name'><?php esc_html_e( 'Last Name', 'newsletter-optin-box' ); ?></option>
+											<option value='last_name'><?php esc_html_e( 'Last Name', 'newsletter-optin-box' ); ?></option>
 											<option value='email'><?php esc_html_e( 'Email Address', 'newsletter-optin-box' ); ?></option>
 											<option value='date_created'><?php esc_html_e( 'Subscription Date', 'newsletter-optin-box' ); ?></option>
 										</select>

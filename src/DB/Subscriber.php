@@ -54,6 +54,36 @@ class Subscriber extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns the subscriber's full name.
+	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_name( $context = 'view' ) {
+		return trim( $this->get_first_name( $context ) . ' ' . $this->get_last_name( $context ) );
+	}
+
+	/**
+	 * Sets the subscriber's full name.
+	 *
+	 * @param string $value Full name.
+	 */
+	public function set_name( $value ) {
+
+		if ( empty( $value ) ) {
+			return;
+		}
+
+		$parts = explode( ' ', $value, 2 );
+
+		$this->set_first_name( array_shift( $parts ) );
+
+		if ( ! empty( $parts ) ) {
+			$this->set_last_name( array_pop( $parts ) );
+		}
+	}
+
+	/**
 	 * Returns the first name.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -395,5 +425,20 @@ class Subscriber extends \Hizzle\Store\Record {
 			$this->set_sent_campaigns( $sent_campaigns );
 			$this->save();
 		}
+	}
+
+	/**
+	 * Retrieves the subscriber's edit URL.
+	 *
+	 * @return string
+	 */
+	public function get_edit_url() {
+		return add_query_arg(
+			array(
+				'page'       => 'noptin-subscribers',
+				'subscriber' => $this->get_id(),
+			),
+			admin_url( 'admin.php' )
+		);
 	}
 }

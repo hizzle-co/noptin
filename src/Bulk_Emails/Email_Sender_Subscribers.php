@@ -233,16 +233,16 @@ class Email_Sender_Subscribers extends Email_Sender {
 	 * @return array
 	 */
 	public function filter_recipient( $recipient, $recipient_id ) {
-		$subscriber = get_noptin_subscriber( $recipient_id );
+		$subscriber = noptin_get_subscriber( $recipient_id );
 
 		if ( ! $subscriber->exists() ) {
 			return $recipient;
 		}
 
 		return array(
-			'name'  => trim( $subscriber->first_name . ' ' . $subscriber->second_name ),
-			'email' => $subscriber->email,
-			'url'   => add_query_arg( 'subscriber', $subscriber->id, admin_url( 'admin.php?page=noptin-subscribers' ) ),
+			'name'  => $subscriber->get_name(),
+			'email' => $subscriber->get_email(),
+			'url'   => $subscriber->get_edit_url(),
 		);
 	}
 }
