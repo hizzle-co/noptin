@@ -200,6 +200,11 @@ class Schema {
 		// Custom fields.
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
+			// Skip first name, last name and email.
+			if ( in_array( $custom_field['merge_tag'], array( 'first_name', 'last_name', 'email' ), true ) ) {
+				continue;
+			}
+
 			if ( noptin_store_custom_field_in_subscribers_table( $custom_field['type'] ) ) {
 				$props = array_merge( $props, noptin_convert_custom_field_to_schema( $custom_field ) );
 			}

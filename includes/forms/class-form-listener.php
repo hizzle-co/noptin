@@ -186,7 +186,7 @@ class Noptin_Form_Listener {
 	 * Note: The returned value is unescaped.
 	 *
 	 * @since 1.6.2
-	 * @param string $field_key The key to retrieve, e.g, email, first_name, birthday etc.
+	 * @param string $field_key The key to retrieve, e.g, email, first_name etc.
 	 * @param mixed $default Optional. The default to return in case the specified field was not submitted in the current request.
 	 */
 	public function get_field_value( $field_key, $default = '' ) {

@@ -19,13 +19,26 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * Magic method to get/set custom fields.
 	 */
 	public function __call( $name, $args ) {
-		if ( 0 === strpos( $name, 'get_cf_' ) ) {
-			$prop = substr( $name, 4 );
-			return $this->get_prop( $prop );
-		} elseif ( 0 === strpos( $name, 'set_cf_' ) ) {
+		if ( 0 === strpos( $name, 'get_' ) ) {
 			$prop  = substr( $name, 4 );
-			$value = apply_filters( 'noptin_sanitize_subscriber_custom_field_value', $args[0], $prop, $this );
-			$this->set_prop( $prop, $value );
+			$field = get_noptin_custom_field( $prop );
+
+			if ( ! empty( $field ) ) {
+				$hook    = 'noptin_subscribers_get_subscriber_' . $field['type'];
+				$context = isset( $args[0] ) ? $args[0] : 'view';
+
+				return apply_filters( $hook, $this->get_prop( $prop ), $field, $this, $context );
+			}
+		} elseif ( 0 === strpos( $name, 'set_' ) ) {
+			$prop  = substr( $name, 4 );
+			$field = get_noptin_custom_field( $prop );
+
+			if ( ! empty( $field ) ) {
+				$value = sanitize_noptin_custom_field_value( $args[0], $this->get_deprecated_subscriber() );
+				$this->set_prop( $prop, $value );
+			}
+
+			return $this;
 		}
 
 		throw new \Exception( 'Call to undefined method ' . __CLASS__ . '::' . $name . '()' );

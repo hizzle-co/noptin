@@ -365,6 +365,9 @@ class Noptin {
 		// Integrations.
 		$this->integrations = new Noptin_Integrations();
 
+		// Custom fields.
+		$this->custom_fields = new Noptin_Custom_Fields();
+
 		// DB.
 		$this->db();
 
@@ -421,9 +424,6 @@ class Noptin {
 
 		// Automation tasks.
 		$this->automation_rules   = new Noptin_Automation_Rules();
-
-		// Custom fields.
-		$this->custom_fields = new Noptin_Custom_Fields();
 
 		/**
 		 * Fires after Noptin inits

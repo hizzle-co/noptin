@@ -15,8 +15,7 @@
 		word-wrap: normal!important;
 	}
 
-	#noptin_subscriber_details .noptin-text,
-	#noptin_subscriber_details .noptin-birthday-div {
+	#noptin_subscriber_details .noptin-text {
 		width: 100%;
 		max-width: 25em !important;
 	}

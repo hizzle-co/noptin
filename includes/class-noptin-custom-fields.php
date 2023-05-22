@@ -20,7 +20,7 @@ class Noptin_Custom_Fields {
 	public function __construct() {
 
 		// Load dependancies.
-		foreach ( array( 'base', 'text', 'textarea', 'birthday', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio' ) as $file ) {
+		foreach ( array( 'base', 'text', 'textarea', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio' ) as $file ) {
 			require_once plugin_dir_path( __FILE__ ) . "field-types/class-$file.php";
 		}
 
@@ -76,15 +76,6 @@ class Noptin_Custom_Fields {
 				'subs_table' => true,
 				'required'   => false,
 				'predefined' => true,
-			),
-			array(
-				'type'       => 'birthday',
-				'merge_tag'  => 'birthday',
-				'label'      => __( 'Birthday', 'newsletter-optin-box' ),
-				'visible'    => true,
-				'subs_table' => false,
-				'required'   => false,
-				'predefined' => false,
 			),
 		);
 

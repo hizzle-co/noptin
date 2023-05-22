@@ -1199,12 +1199,6 @@ function get_noptin_custom_field_types() {
 				'label'      => __( 'Last Name', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Text',
 			),
-			'birthday'   => array(
-				'predefined' => true,
-				'merge_tag'  => 'birthday',
-				'label'      => __( 'Birthday', 'newsletter-optin-box' ),
-				'class'      => 'Noptin_Custom_Field_Birthday',
-			),
 			'language'   => array(
 				'predefined' => true,
 				'merge_tag'  => 'language',
@@ -1366,7 +1360,10 @@ function get_noptin_custom_fields( $public_only = false ) {
 		Noptin_Custom_Fields::default_fields()
 	);
 
-	// Maybe add the localse field.
+	// Remove birthday field.
+	$custom_fields = wp_list_filter( $custom_fields, array( 'type' => 'birthday' ), 'NOT' );
+
+	// Maybe add the locale field.
 	$has_language_field = current( wp_list_filter( $custom_fields, array( 'type' => 'language' ) ) );
 
 	if ( noptin_is_multilingual() && ! $has_language_field ) {
@@ -1426,6 +1423,12 @@ function get_noptin_custom_fields( $public_only = false ) {
  * @return array|false Array of field data or false if the field does not exist.
  */
 function get_noptin_custom_field( $merge_tag ) {
+
+	// Maybe remove the cf_ prefix.
+	if ( 'cf_' === substr( $merge_tag, 0, 3 ) ) {
+		$merge_tag = substr( $merge_tag, 3 );
+	}
+
 	$custom_field = wp_list_filter( get_noptin_custom_fields(), array( 'merge_tag' => trim( $merge_tag ) ) );
 	return current( $custom_field );
 }
