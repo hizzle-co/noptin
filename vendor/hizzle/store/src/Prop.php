@@ -125,6 +125,27 @@ class Prop {
 	public $readonly = false;
 
 	/**
+	 * Whether the prop is saved as a meta key.
+	 *
+	 * @var bool
+	 */
+	public $is_meta_key = false;
+
+	/**
+	 * Whether the meta key supports multiple values.
+	 *
+	 * @var bool
+	 */
+	public $is_meta_key_multiple = false;
+
+	/**
+	 * Dynamic fields are neither saved in the database nor in the meta table.
+	 *
+	 * @var bool
+	 */
+	public $is_dynamic = false;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param string $collection The collection's name, including the prefix.
@@ -156,7 +177,11 @@ class Prop {
 	 * @return Collection|null
 	 */
 	public function get_collection() {
-		return Collection::instance( $this->collection );
+		try {
+			return Collection::instance( $this->collection );
+		} catch ( Store_Exception $e ) {
+			return null;
+		}
 	}
 
 	/**
@@ -183,6 +208,12 @@ class Prop {
 	 * @return string
 	 */
 	public function get_schema() {
+		global $wpdb;
+
+		// Abort for dynamic and meta key props.
+		if ( $this->is_dynamic || $this->is_meta_key ) {
+			return '';
+		}
 
 		// Retrieve from cache.
         if ( ! empty( $this->schema ) ) {
@@ -207,7 +238,10 @@ class Prop {
 
 		$default = is_bool( $this->default ) ? (int) $this->default : $this->default;
 		if ( $default || 0 === $default ) {
-			$string .= ' DEFAULT ' . ( is_string( $default  ) ? '\'' . esc_sql( $default  ) . '\'' : esc_sql( $default  ) );
+			$string  .= $wpdb->prepare(
+				' DEFAULT %s',
+				maybe_serialize( $default )
+			);
 		}
 
 		if ( $this->extra ) {
@@ -262,7 +296,7 @@ class Prop {
 		}
 
 		// Nullable.
-		if ( $this->nullable || null !== $this->default ) {
+		if ( $this->nullable || null !== $this->default || $this->is_meta_key || $this->is_dynamic ) {
 
 			if ( is_array( $schema['type'] ) ) {
 				$schema['type'][] = 'null';
@@ -271,11 +305,6 @@ class Prop {
 			}
 		} else {
 			$schema['required'] = true;
-		}
-
-		// Enum.
-		if ( ! empty( $this->enum ) ) {
-			$schema['enum'] = is_string( $this->enum ) ? call_user_func( $this->enum ) : $this->enum;
 		}
 
 		// Sanitize callback.
@@ -306,6 +335,11 @@ class Prop {
 	 */
 	public function get_query_schema() {
 
+		// Abort for dynamic props.
+		if ( $this->is_dynamic ) {
+			return array();
+		}
+
 		// Retrieve from cache.
         if ( ! empty( $this->query_schema ) ) {
             return $this->query_schema;
@@ -314,6 +348,7 @@ class Prop {
 		$rest_schema  = $this->get_rest_schema();
 		$query_schema = array();
 
+		// Has the value.
 		$query_schema[ $this->name ] = array(
 			'description'       => sprintf(
 				// translators: Placeholder %s is the property name.
@@ -327,17 +362,30 @@ class Prop {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
-		if ( isset( $rest_schema['enum'] ) ) {
-			$query_schema[ $this->name ]['default'] = 'any';
-			$query_schema[ $this->name ]['enum']    = array_merge( array( 'any' ), $rest_schema['enum'] );
-		}
-
 		if ( isset( $rest_schema['format'] ) ) {
 			$query_schema[ $this->name ]['format'] = $rest_schema['format'];
 		}
 
+		// Does not have the value.
+		$query_schema[ "{$this->name}_not" ] = array(
+			'description'       => sprintf(
+				// translators: Placeholder %s is the property name.
+				__( 'Limit response to resources where %s does not have the provided value.', 'hizzle-store' ),
+				$this->name
+			),
+			'type'              => array_merge( array( 'array' ), (array) $rest_schema['type'] ),
+			'items'             => array(
+				'type' => $rest_schema['type'],
+			),
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
+		if ( isset( $rest_schema['format'] ) ) {
+			$query_schema[ "{$this->name}_not" ]['format'] = $rest_schema['format'];
+		}
+
 		// Dates.
-		if ( $this->is_date() ) {
+		if ( $this->is_date() && ! $this->is_meta_key ) {
 
 			$query_schema[ "{$this->name}_before" ] = array(
 				'description'       => sprintf(
@@ -370,7 +418,7 @@ class Prop {
 		}
 
 		// Numbers & Floats.
-		if ( $this->is_float() ) {
+		if ( $this->is_float() && ! $this->is_meta_key ) {
 
 			$query_schema[ "{$this->name}_min" ] = array(
 				'description'       => sprintf(
@@ -454,6 +502,43 @@ class Prop {
 		}
 
 		return '%s';
+	}
+
+	/**
+	 * Sanitizes the property value.
+	 *
+	 * @param mixed $value The value to sanitize.
+	 * @return mixed
+	 */
+	public function sanitize( $value ) {
+
+		// Do we have a custom callback?
+		if ( ! empty( $this->sanitize_callback ) ) {
+			return call_user_func( $this->sanitize_callback, $value );
+		}
+
+		// Abort if not scalar.
+		if ( ! is_scalar( $value ) || null === $value ) {
+			return $value;
+		}
+
+		if ( $this->is_boolean() ) {
+			return (bool) $value;
+		}
+
+		if ( $this->is_numeric() ) {
+			return (int) $value;
+		}
+
+		if ( $this->is_float() ) {
+			return (float) $value;
+		}
+
+		if ( $this->is_date() ) {
+			return gmdate( 'Y-m-d H:i:s', strtotime( $value ) );
+		}
+
+		return sanitize_text_field( $value );
 	}
 
 }

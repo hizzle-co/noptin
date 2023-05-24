@@ -173,6 +173,13 @@ class Schema {
 				'description' => __( 'Unique identifier for this resource.', 'newsletter-optin-box' ),
 			),
 
+			'name'       => array(
+				'type'        => 'VARCHAR',
+				'length'      => 200,
+				'description' => __( "The subscriber's name.", 'newsletter-optin-box' ),
+				'is_dynamic'  => true,
+			),
+
 			'first_name' => array(
 				'type'        => 'VARCHAR',
 				'length'      => 100,
@@ -278,9 +285,28 @@ class Schema {
 								'description' => __( 'Last modification date for this subscriber.', 'newsletter-optin-box' ),
 							),
 
-							'metadata'        => array(
+							'activity'        => array(
 								'type'        => 'TEXT',
-								'description' => __( 'A key value array of additional metadata about the customer', 'newsletter-optin-box' ),
+								'description' => __( 'Subscriber activity', 'newsletter-optin-box' ),
+							),
+
+							'sent_campaigns'  => array(
+								'type'        => 'TEXT',
+								'description' => __( 'An array of sent campaigns', 'newsletter-optin-box' ),
+							),
+
+							'edit_url'        => array(
+								'type'        => 'TEXT',
+								'description' => __( "The subscriber's edit URL.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
+							),
+
+							'unsubscribe_url' => array(
+								'type'        => 'TEXT',
+								'description' => __( "The subscriber's unsubscribe URL.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
 							),
 						)
 					),

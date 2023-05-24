@@ -54,6 +54,7 @@ class Noptin_Subscriber {
 	 *
 	 * Fetches the subscriber's data and passes it to Noptin_Subscriber::init().
 	 *
+	 * @deprecated 1.13.0
 	 * @since 1.2.7
 	 * @see get_noptin_subscriber
 	 * @param int|string|array|stdClass|Noptin_Subscriber $subscriber The subscribers's ID, email, confirm key, a Noptin_Subscriber object,

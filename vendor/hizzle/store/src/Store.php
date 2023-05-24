@@ -81,12 +81,12 @@ class Store {
 
 		// Update the existing instance.
 		foreach ( $collections as $key => $collection ) {
-			if ( ! $collection instanceof Collection ) {
-				$collection['name']  = $key;
-				$collections[ $key ] = new Collection( $namespace, $collection );
-			}
-
 			if ( ! isset( self::$instances[ $namespace ]->collections[ $key ] ) ) {
+				if ( ! $collection instanceof Collection ) {
+					$collection['name']  = $key;
+					$collections[ $key ] = new Collection( $namespace, $collection );
+				}
+
 				self::$instances[ $namespace ]->collections[ $key ] = $collections[ $key ];
 			}
         }
@@ -158,9 +158,10 @@ class Store {
 
 		foreach ( $this->get_collections() as $collection ) {
 			$schema[] = $collection->get_schema();
+			$schema[] = $collection->get_meta_schema();
 		}
 
-		return $schema;
+		return array_filter( $schema );
 	}
 
 }

@@ -66,6 +66,14 @@ class Query {
 	 */
 	public $request;
 
+	/**
+	 * Known fields.
+	 *
+	 * @since 1.0.0
+	 * @var array
+	 */
+	protected $known_fields;
+
 	// SQL clauses
 
 	/**
@@ -85,7 +93,7 @@ class Query {
 	public $query_from;
 
 	/**
-	 * Contains the 'LEFT JOIN' sql clause
+	 * Contains the 'LEFT|Inner JOIN' sql clause
 	 *
 	 * @since 1.0.0
 	 * @var string
@@ -137,6 +145,11 @@ class Query {
 		// Prepare the query.
 		$this->prepare_query( $query );
 
+		// If any JOINs are LEFT JOINs, then all JOINs should be LEFT.
+		if ( false !== strpos( $this->query_join, 'LEFT JOIN' ) ) {
+			$this->query_join = str_replace( 'INNER JOIN', 'LEFT JOIN', $this->query_join );
+		}
+
 		// Run the query.
 		if ( ! empty( $this->query_vars['aggregate'] ) ) {
 			$this->query_aggregate();
@@ -157,12 +170,21 @@ class Query {
 
 	/**
 	 * Sets a query var.
-	 * 
+	 *
 	 * @param string $query_var The query var to set.
 	 * @param mixed  $value The value to set.
 	 */
 	public function set( $query_var, $value ) {
 		$this->query_vars[ $query_var ] = $value;
+	}
+
+	/**
+	 * Retrieves the collection.
+	 *
+	 * @return Collection
+	 */
+	public function get_collection() {
+		return Collection::instance( $this->collection_name );
 	}
 
 	/**
@@ -182,6 +204,9 @@ class Query {
 		$this->query_join  = '';
 		$this->query_vars  = $this->fill_query_vars( $query );
 
+		// Prepare known fields.
+		$this->prepare_known_fields();
+
 		if ( ! empty( $this->query_vars['fields'] ) && 'all' !== $this->query_vars['fields'] ) {
 			$this->query_vars['fields'] = wp_parse_list( $this->query_vars['fields'] );
 		}
@@ -199,26 +224,30 @@ class Query {
 		$this->query_from    = "FROM $table";
 		$this->query_orderby = '';
 		$this->query_groupby = '';
+		$this->query_join    = '';
 
 		// Prepare joins.
 		if ( $collection->is_cpt() ) {
-			$this->query_join .= " LEFT JOIN {$wpdb->posts} ON $table.id = {$wpdb->posts}.ID";
+			$this->query_join .= " INNER JOIN {$wpdb->posts} ON $table.id = {$wpdb->posts}.ID";
 		}
 
 		// Prepare query fields.
 		if ( $aggregate ) {
-			$this->prepare_aggregate_query( $qv, $table );
+			$this->prepare_aggregate_query( $qv );
 		} else {
 			$this->prepare_fields( $qv, $table );
 		}
+
+		// Prepare where query.
+		$this->prepare_where_query( $qv, $table );
+
+		// Prepare meta query. After WHERE and JOINs have been prepared.
+		$this->prepare_meta_query( $qv, $table );
 
 		// Set whether or not to count the total number of found records.
 		if ( ! $aggregate && isset( $qv['count_total'] ) && $qv['count_total'] ) {
 			$this->query_fields = 'SQL_CALC_FOUND_ROWS ' . $this->query_fields;
 		}
-
-		// Prepare where query.
-		$this->prepare_where_query( $qv, $table );
 
 		// Sorting.
 		if ( ! $aggregate ) {
@@ -243,22 +272,20 @@ class Query {
 	 *
 	 * @since 1.0.0
 	 * @param array $qv The query vars.
-	 * @param string $table The table name.
 	 * @global \wpdb $wpdb WordPress database abstraction object.
 	 */
-	protected function prepare_aggregate_query( $qv, $table ) {
-
-		$known_fields       = $this->get_known_fields();
+	protected function prepare_aggregate_query( $qv ) {
 		$aggregate_fields   = $qv['aggregate'];
 		$this->query_fields = array();
-		// TODO: Add support fo query_join.
 
 		// Prepare aggregate fields.
 		foreach ( $aggregate_fields as $field => $function ) {
 
 			// Ensure the field is supported.
-			$field = esc_sql( sanitize_key( $field ) );
-			if ( ! in_array( $field, $known_fields, true ) ) {
+			$field       = esc_sql( sanitize_key( $field ) );
+			$table_field = $this->prefix_field( $field );
+
+			if ( empty( $table_field ) ) {
 				throw new Store_Exception( 'query_invalid_field', __( 'Invalid aggregate field.', 'hizzle-store' ) );
 			}
 
@@ -269,7 +296,6 @@ class Query {
 			}
 
 			$function             = strtolower( $function );
-			$table_field          = $this->prefix_field( $field );
 			$this->query_fields[] = "$function_upper($table_field) AS {$function}_{$field}";
 
 		}
@@ -279,13 +305,14 @@ class Query {
 			foreach ( wp_parse_list( $qv['groupby'] ) as $field ) {
 
 				// Ensure the field is supported.
-				$field = esc_sql( sanitize_key( $field ) );
-				if ( ! in_array( $field, $known_fields, true ) ) {
+				$field       = esc_sql( sanitize_key( $field ) );
+				$table_field = $this->prefix_field( $field );
+				if ( empty( $table_field ) ) {
 					throw new Store_Exception( 'query_invalid_field', __( 'Invalid group by field.', 'hizzle-store' ) );
 				}
 
-				$this->query_groupby .= ', ' . $this->prefix_field( $field );
-				$this->query_fields[] = $this->prefix_field( $field );
+				$this->query_groupby .= ', ' . $table_field;
+				$this->query_fields[] = $table_field;
 			}
 
 			$this->query_groupby = 'GROUP BY ' . ltrim( $this->query_groupby, ',' );
@@ -296,12 +323,12 @@ class Query {
 			foreach ( wp_parse_list( $qv['extra_fields'] ) as $field ) {
 
 				// Ensure the field is supported.
-				$field = esc_sql( sanitize_key( $field ) );
-				if ( ! in_array( $field, $known_fields, true ) ) {
+				$field = $this->prefix_field( esc_sql( sanitize_key( $field ) ) );
+				if ( empty( $field ) ) {
 					throw new Store_Exception( 'query_invalid_field', __( 'Invalid extra field.', 'hizzle-store' ) );
 				}
 
-				$this->query_fields[] = $this->prefix_field( $field );
+				$this->query_fields[] = $field;
 			}
 		}
 
@@ -310,7 +337,7 @@ class Query {
 			throw new Store_Exception( 'query_missing_aggregate_fields', __( 'Missing aggregate fields.', 'hizzle-store' ) );
 		}
 
-		$this->query_fields  = implode( ', ', $this->query_fields );
+		$this->query_fields  = implode( ', ', array_unique( $this->query_fields ) );
 	}
 
 	/**
@@ -324,20 +351,88 @@ class Query {
 	protected function prepare_fields( $qv, $table ) {
 
 		if ( is_array( $qv['fields'] ) ) {
-			$qv['fields'] = array_unique( $qv['fields'] );
 
 			$this->query_fields = array();
 			foreach ( $qv['fields'] as $field ) {
-				$field                = 'id' === strtolower( $field ) ? 'id' : sanitize_key( $field );
-				$this->query_fields[] = $this->prefix_field( $field );
+				$table_field = $this->prefix_field( esc_sql( sanitize_key( $field ) ) );
+
+				if ( empty( $table_field ) ) {
+					throw new Store_Exception( 'query_invalid_field', "Invalid field $field." );
+				}
+				$this->query_fields[] = $table_field;
 			}
-			$this->query_fields = implode( ',', $this->query_fields );
+
+			$this->query_fields = implode( ',', array_unique( $this->query_fields ) );
 		} elseif ( 'all' === $qv['fields'] ) {
 			$this->query_fields = '*';
 		} else {
 			$this->query_fields = "$table.id";
 		}
 
+	}
+
+	/**
+	 * Prepares the meta query.
+	 *
+	 * @since 1.0.0
+	 * @param array $qv The query vars.
+	 */
+	protected function prepare_meta_query( $qv ) {
+		global $wpdb;
+
+		// Abort if the collection does not support meta fields.
+		if ( empty( $this->known_fields['meta'] ) ) {
+			return;
+		}
+
+		$collection = $this->get_collection();
+		$meta_query = array();
+
+		foreach ( $this->known_fields['meta'] as $meta_field ) {
+
+			// = or IN.
+			if ( isset( $qv[ $meta_field ] ) ) {
+				$meta_query[] = array(
+					'key'     => $meta_field,
+					'value'   => $qv[ $meta_field ],
+					'compare' => is_array( $qv[ $meta_field ] ) ? 'IN' : '=',
+				);
+			}
+
+			// != or NOT IN.
+			if ( isset( $qv[ "{$meta_field}_not" ] ) ) {
+				$meta_query[] = array(
+					'key'     => $meta_field,
+					'value'   => $qv[ "{$meta_field}_not" ],
+					'compare' => is_array( $qv[ "{$meta_field}_not" ] ) ? 'NOT IN' : '!=',
+				);
+			}
+		}
+
+		if ( empty( $meta_query ) ) {
+			return;
+		}
+
+		// Meta query.
+		$meta_query = new \WP_Meta_Query( $meta_query );
+		$meta_type  = $collection->get_meta_type();
+		$table      = $collection->is_cpt() ? $wpdb->posts : $collection->get_db_table_name();
+		$id_prop    = $collection->is_cpt() ? 'ID' : 'id';
+
+		if ( ! empty( $meta_query->queries ) ) {
+			$clauses = $meta_query->get_sql( $meta_type, $table, $id_prop, $this );
+
+			if ( empty( $clauses ) ) {
+				return;
+			}
+
+			$this->query_join  .= $clauses['join'];
+			$this->query_where .= $clauses['where'];
+
+			if ( $meta_query->has_or_relation() && false === strpos( $this->query_fields, 'DISTINCT' ) ) {
+				$this->query_fields = 'DISTINCT ' . $this->query_fields;
+			}
+		}
 	}
 
 	/**
@@ -353,14 +448,17 @@ class Query {
 
 		$this->query_where = 'WHERE 1=1';
 
+		$collection = $this->get_collection();
+		$all_fields = array_merge( $this->known_fields['main'], $this->known_fields['post'] );
+
 		// Table fields.
-		foreach ( $this->get_known_fields( 'objects' ) as $key => $field ) {
+		foreach ( $all_fields as $key ) {
 
-			$rest_schema = $field->get_rest_schema();
-			$data_type   = $field->get_data_type();
-			$field_name  = $this->prefix_field( $key );
+			$field_name = $this->prefix_field( $key );
+			$field      = $collection->get_prop( $key );
+			$data_type  = $field->get_data_type();
 
-			// Normal $field = 'x' filters.
+			// = or IN.
 			if ( isset( $qv[ $key ] ) && 'any' !== $qv[ $key ] ) {
 
 				if ( is_array( $qv[ $key ] ) ) {
@@ -368,6 +466,17 @@ class Query {
 					$this->query_where .= " AND $field_name IN ($enums)";
 				} else {
 					$this->query_where .= $wpdb->prepare( " AND $field_name=$data_type", $qv[ $key ] ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+				}
+			}
+
+			// != or NOT IN.
+			if ( isset( $qv[ "{$key}_not" ] ) ) {
+
+				if ( is_array( $qv[ "{$key}_not" ] ) ) {
+					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ "{$key}_not" ] ) ) . "'";
+					$this->query_where .= " AND $field_name NOT IN ($enums)";
+				} else {
+					$this->query_where .= $wpdb->prepare( " AND $field_name<>$data_type", $qv[ "{$key}_not" ] ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
 			}
 
@@ -393,7 +502,7 @@ class Query {
 
 				if ( 2 < count( $date_query ) ) {
 
-					$date_query         = new \WP_Date_Query( $date_query, $this->prefix_field( $key ) );
+					$date_query         = new \WP_Date_Query( $date_query, $field_name );
 					$this->query_where .= $date_query->get_sql();
 				}
 			}
@@ -421,15 +530,14 @@ class Query {
 			trim( $search, '*' );
 
 			$search_columns = array();
-			$known_fields   = $this->get_known_fields();
 			if ( $qv['search_columns'] ) {
-				$search_columns = array_intersect( $qv['search_columns'], $known_fields );
+				$search_columns = array_intersect( $qv['search_columns'], $all_fields );
 			}
 			if ( ! $search_columns ) {
-				$search_columns = $known_fields;
+				$search_columns = $all_fields;
 			}
 
-			$this->query_where .= $this->get_search_sql( $search, $search_columns, $table );
+			$this->query_where .= $this->get_search_sql( $search, $search_columns );
 		}
 
 		// Include.
@@ -451,10 +559,9 @@ class Query {
 	 *
 	 * @param string $string The string to search for.
 	 * @param array  $cols The columns to search in.
-	 * @param string $table_name The table name.
 	 * @return string
 	 */
-	protected function get_search_sql( $string, $cols, $table_name ) {
+	protected function get_search_sql( $string, $cols ) {
 		global $wpdb;
 
 		$searches = array();
@@ -462,10 +569,12 @@ class Query {
 		$like     = '%' . $wpdb->esc_like( $string ) . '%';
 
 		foreach ( $cols as $col ) {
+			$field_name = $this->prefix_field( $col );
+
 			if ( 'id' === $col ) {
-				$searches[] = $wpdb->prepare( "$table_name.$col = %s", $string ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$searches[] = $wpdb->prepare( "$field_name = %s", $string ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			} else {
-				$searches[] = $wpdb->prepare( $this->prefix_field( $col ) . " LIKE %s", $like ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$searches[] = $wpdb->prepare( "$field_name LIKE %s", $like ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			}
 		}
 
@@ -477,10 +586,9 @@ class Query {
 	 *
 	 * @since 1.0.0
 	 * @param array $qv The query vars.
-	 * @param string $table The table name.
 	 * @global \wpdb $wpdb WordPress database abstraction object.
 	 */
-	public function prepare_orderby_query( $qv, $table ) {
+	public function prepare_orderby_query( $qv ) {
 		$qv['order'] = isset( $qv['order'] ) ? strtoupper( $qv['order'] ) : '';
 		$order       = $this->parse_order( $qv['order'] );
 
@@ -508,7 +616,7 @@ class Query {
 				$_order   = $_value;
 			}
 
-			$parsed = $this->parse_orderby( $_orderby, $table );
+			$parsed = $this->parse_orderby( $_orderby );
 
 			if ( ! $parsed ) {
 				continue;
@@ -533,23 +641,19 @@ class Query {
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 *
 	 * @param string $orderby Alias for the field to order by.
-	 * @param string $table The table name.
 	 * @return string Value to use in the ORDER clause, if `$orderby` is valid.
 	 */
-	protected function parse_orderby( $orderby, $table ) {
+	protected function parse_orderby( $orderby ) {
 
-		$_orderby = '';
-		if ( in_array( $orderby, $this->get_known_fields(), true ) ) {
-			$_orderby = $this->prefix_field( $orderby );
-		} elseif ( 'id' === strtolower( $orderby ) ) {
-			$_orderby = "$table.id";
-		} elseif ( 'include' === $orderby && ! empty( $this->query_vars['include'] ) ) {
+		// Orderby include.
+		if ( 'include' === $orderby && ! empty( $this->query_vars['include'] ) ) {
 			$include     = wp_parse_id_list( $this->query_vars['include'] );
 			$include_sql = implode( ',', $include );
-			$_orderby    = "FIELD( $table.id, $include_sql )";
+			$field_name  = $this->prefix_field( 'id' );
+			return "FIELD( $field_name, $include_sql )";
 		}
 
-		return $_orderby;
+		return $this->prefix_field( $orderby );
 	}
 
 	/**
@@ -585,7 +689,7 @@ class Query {
 			'include'        => array(),
 			'exclude'        => array(),
 			'search'         => '',
-			'search_columns' => $this->get_known_fields(),
+			'search_columns' => array(),
 			'orderby'        => array( 'id' ),
 			'order'          => 'DESC',
 			'offset'         => '',
@@ -604,46 +708,38 @@ class Query {
 	}
 
 	/**
-	 * Retrieves an array of all known fields.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string[]|Prop[]
+	 * Prepares known fields for use in a query.
 	 */
-	public function get_known_fields( $return = 'names' ) {
-		$collection = Collection::instance( $this->collection_name );
+	protected function prepare_known_fields() {
 
-		return 'names' === $return ? array_keys( $collection->get_props() ) : $collection->get_props();
+		$this->known_fields = $this->get_collection()->get_known_fields();
 	}
 
 	/**
 	 * Prefixes a field name with the table name.
 	 *
 	 * @since 1.0.0
+	 * @return string|false
 	 */
 	public function prefix_field( $field ) {
-		$collection = Collection::instance( $this->collection_name );
+		global $wpdb;
 
-		if ( $this->is_post_field( $collection, $field ) ) {
-			$table = $GLOBALS['wpdb']->posts;
-			$field = $collection->post_map[ $field ];
-		} else {
+		$collection = $this->get_collection();
+
+		// Main db table field.
+		if ( in_array( $this->known_fields['main'], $field, true ) || 'id' === strtolower( $field ) ) {
 			$table = $collection->get_db_table_name();
+			return "$table.$field";
 		}
 
-		return $table . '.' . $field;
-	}
+		// Posts table fields.
+		if ( in_array( $this->known_fields['post'], $field, true ) ) {
+			$field = $collection->post_map[ $field ];
+			return "$wpdb->posts.$field";
+		}
 
-	/**
-	 * Checks if a given field is a post field.
-	 *
-	 * @since 1.0.0
-	 * @param Collection $collection The collection.
-	 * @param string $field The field name.
-	 * @return bool True if the field is a post field, false otherwise.
-	 */
-	public function is_post_field( $collection, $field ) {
-		return $collection->is_cpt() && isset( $collection->post_map[ $field ] );
+		// Uknown field.
+		return false;
 	}
 
 	/**
@@ -681,7 +777,7 @@ class Query {
 
 		// Run query if it was not short-circuted.
 		if ( null === $this->results ) {
-			$this->request = "SELECT $this->query_fields $this->query_from $this->query_where $this->query_orderby $this->query_limit";
+			$this->request = "SELECT $this->query_fields $this->query_from $this->query_join $this->query_where $this->query_orderby $this->query_limit";
 
 			if ( ( is_array( $this->query_vars['fields'] ) && 1 !== count( $this->query_vars['fields'] ) ) || 'all' === $this->query_vars['fields'] ) {
 				$this->results = $wpdb->get_results( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -731,7 +827,7 @@ class Query {
 
 		// Run query if it was not short-circuted.
 		if ( null === $this->aggregate ) {
-			$this->request   = "SELECT $this->query_fields $this->query_from $this->query_where $this->query_groupby $this->query_limit";
+			$this->request   = "SELECT $this->query_fields $this->query_from $this->query_join $this->query_where $this->query_groupby $this->query_limit";
 			$this->aggregate = $wpdb->get_results( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
 

@@ -36,7 +36,11 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @since 1.0.0
 	 */
 	public function fetch_store() {
-		return Store::instance( trim( $this->namespace, '/v1' ) );
+		try {
+			return Store::instance( trim( $this->namespace, '/v1' ) );
+		} catch ( Store_Exception $e ) {
+			return null;
+		}
 	}
 
 	/**
@@ -126,6 +130,59 @@ class REST_Controller extends \WP_REST_Controller {
 			)
 		);
 
+		// Allow operations by other unique keys.
+		if ( ! empty( $collection->keys['unique'] ) ) {
+
+			$keys = implode( '|', $collection->keys['unique'] );
+
+			// METHODS to READ, UPDATE and DELETE a single record.
+			register_rest_route(
+				$this->namespace,
+				'/' . $this->rest_base . '/(?P<hizzle_get_by>(' . $keys . '))/(?P<hizzle_value>[^/]+)',
+				array(
+					'args'   => array(
+						'hizzle_get_by' => array(
+							'description' => __( 'Unique field to search by.', 'hizzle-store' ),
+							'type'        => 'string',
+							'enum'        => $collection->keys['unique'],
+						),
+						'hizzle_value'  => array(
+							'description' => __( 'URL encoded value to search for.', 'hizzle-store' ),
+							'type'        => array( 'string', 'integer' ),
+						),
+					),
+					array(
+						'methods'             => \WP_REST_Server::READABLE,
+						'callback'            => array( $this, 'get_item' ),
+						'permission_callback' => array( $this, 'get_item_permissions_check' ),
+						'args'                => array(
+							'context' => $this->get_context_param( array( 'default' => 'view' ) ),
+						),
+					),
+					array(
+						'methods'             => \WP_REST_Server::EDITABLE,
+						'callback'            => array( $this, 'update_item' ),
+						'permission_callback' => array( $this, 'update_item_permissions_check' ),
+						'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE ),
+					),
+					array(
+						'methods'             => \WP_REST_Server::DELETABLE,
+						'callback'            => array( $this, 'delete_item' ),
+						'permission_callback' => array( $this, 'delete_item_permissions_check' ),
+						'args'                => $collection->is_cpt() ? array(
+							'force' => array(
+								'default'     => false,
+								'type'        => 'boolean',
+								'description' => __( 'Whether to bypass trash and force deletion.', 'hizzle-store' ),
+							),
+						) : array(),
+					),
+					'schema' => array( $this, 'get_public_item_schema' ),
+				)
+			);
+		}
+
+		// METHOD to deal with batch operations.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base . '/batch',
@@ -139,19 +196,65 @@ class REST_Controller extends \WP_REST_Controller {
 				'schema' => array( $this, 'get_public_batch_schema' ),
 			)
 		);
+
+		// Method to aggregate data.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/aggregate',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'aggregate_items' ),
+					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'args'                => array_merge(
+						$this->get_collection_params(),
+						array(
+							'aggregate'    => array(
+								'type'        => array( 'object' ),
+								'description' => __( 'column => function array of columns to aggregate.', 'hizzle-store' ),
+								'required'    => true,
+							),
+							'groupby'      => array(
+								'type'        => array( 'string', 'array' ),
+								'description' => __( 'Optional. Columns to group results by.', 'hizzle-store' ),
+							),
+							'extra_fields' => array(
+								'type'        => array( 'string', 'array' ),
+								'description' => __( 'Optional. Extra fields to include in the response.', 'hizzle-store' ),
+							),
+						)
+					),
+				),
+				'schema' => '__return_empty_array',
+			)
+		);
 	}
 
 	/**
 	 * Retrieves an object.
 	 *
-	 * @param  int $id Object ID.
+	 * @param  \WP_REST_Request|int $request Request object or object ID.
 	 * @return Record|null Data object or null.
 	 */
-	protected function get_object( $id ) {
+	protected function get_object( $request ) {
 		$collection = $this->fetch_collection();
 
 		// Abort if the collection is non-existent.
 		if ( empty( $collection ) ) {
+			return null;
+		}
+
+		if ( is_numeric( $request ) ) {
+			$id = (int) $request;
+		} elseif ( isset( $request['id'] ) ) {
+			$id = (int) $request['id'];
+		} elseif ( isset( $request['hizzle_get_by'] ) && isset( $request['hizzle_value'] ) ) {
+			$id = $collection->get_id_by_prop( $request['hizzle_get_by'], rawurldecode( $request['hizzle_value'] ) );
+		} else {
+			return null;
+		}
+
+		if ( empty( $id ) ) {
 			return null;
 		}
 
@@ -225,7 +328,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_Error|boolean
 	 */
 	public function get_item_permissions_check( $request ) {
-		$object = $this->get_object( (int) $request['id'] );
+		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'read', $object->get_id() ) ) {
 			return new \WP_Error( 'hizzle_rest_cannot_view', __( 'Sorry, you cannot view this resource.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
@@ -241,7 +344,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return WP_Error|boolean
 	 */
 	public function update_item_permissions_check( $request ) {
-		$object = $this->get_object( (int) $request['id'] );
+		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'edit', $object->get_id() ) ) {
 			return new \WP_Error( 'hizzle_rest_cannot_edit', __( 'Sorry, you are not allowed to edit this resource.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
@@ -257,7 +360,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
-		$object = $this->get_object( (int) $request['id'] );
+		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'delete', $object->get_id() ) ) {
 			return new \WP_Error( 'hizzle_rest_cannot_delete', __( 'Sorry, you are not allowed to delete this resource.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
@@ -279,7 +382,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 		// Only admins can query non-post type collections.
 		if ( empty( $collection ) || empty( $collection->post_type ) ) {
-			return current_user_can( 'manage_options' );
+			return current_user_can( $collection->capabillity );
 		}
 
 		$contexts = array(
@@ -341,10 +444,10 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function get_item( $request ) {
-		$object = $this->get_object( (int) $request['id'] );
+		$object = $this->get_object( $request );
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( "hizzle_rest_{$this->rest_base}_invalid_id", __( 'Invalid ID.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( "hizzle_rest_{$this->rest_base}_not_found", __( 'Not found.', 'hizzle-store' ), array( 'status' => 404 ) );
 		}
 
 		$data = $this->prepare_item_for_response( $object, $request );
@@ -408,10 +511,10 @@ class REST_Controller extends \WP_REST_Controller {
 	 */
 	public function update_item( $request ) {
 
-		$object = $this->get_object( (int) $request['id'] );
+		$object = $this->get_object( $request );
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( "hizzle_rest_{$this->rest_base}_invalid_id", __( 'Invalid ID.', 'hizzle-store' ), array( 'status' => 400 ) );
+			return new \WP_Error( "hizzle_rest_{$this->rest_base}_not_found", __( 'Not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
 
 		$object = $this->save_object( $request, false );
@@ -444,7 +547,14 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function delete_item( $request ) {
-		// TODO:
+		$object = $this->get_object( $request );
+		$force  = isset( $request['force'] ) ? (bool) $request['force'] : false;
+
+		if ( $object->exists() ) {
+			$object->delete( $force );
+		}
+
+		return new \WP_REST_Response( true, 204 );
 	}
 
 	/**
@@ -457,7 +567,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return Record|\WP_Error The prepared item, or WP_Error object on failure.
 	 */
 	protected function prepare_item_for_database( $request, $creating = false ) {
-		$record = $this->get_object( $creating ? 0 : (int) $request['id'] );
+		$record = $this->get_object( $creating ? 0 : $request );
 
 		if ( is_wp_error( $record ) ) {
 			return $record;
@@ -543,9 +653,11 @@ class REST_Controller extends \WP_REST_Controller {
 			'collection' => array(
 				'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
 			),
+			'aggregate'  => array(
+				'href' => rest_url( sprintf( '/%s/%s/aggregate', $this->namespace, $this->rest_base ) ),
+			),
 		);
 
-		// TODO: Add links to aggregate data.
 		// TODO: Add links to related objects.
 		return $links;
 	}
@@ -607,7 +719,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 		if ( $total > $limit ) {
 			/* translators: %s: items limit */
-			return new \WP_Error( 'hizzle_rest_request_entity_too_large', sprintf( __( 'Unable to accept more than %s items for this request.', 'hizzle-pay' ), $limit ), array( 'status' => 413 ) );
+			return new \WP_Error( 'hizzle_rest_request_entity_too_large', sprintf( __( 'Unable to accept more than %s items for this request.', 'hizzle-store' ), $limit ), array( 'status' => 413 ) );
 		}
 
 		return true;
@@ -718,7 +830,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
-						'type'    => 'object',
+						'type' => 'object',
 					),
 				),
 				'update' => array(
@@ -726,7 +838,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
-						'type'    => 'object',
+						'type' => 'object',
 					),
 				),
 				'delete' => array(
@@ -734,13 +846,31 @@ class REST_Controller extends \WP_REST_Controller {
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
-						'type'    => 'integer',
+						'type' => 'integer',
 					),
 				),
 			),
 		);
 
 		return $schema;
+	}
+
+	/**
+	 * Aggregates items.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_Error|WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function aggregate_items( $request ) {
+
+		$collection = $this->fetch_collection();
+
+		try {
+			$query = $collection->query( $request->get_params() );
+			return rest_ensure_response( $query->get_aggregate() );
+		} catch ( Store_Exception $e ) {
+			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		}
 	}
 
 	/**

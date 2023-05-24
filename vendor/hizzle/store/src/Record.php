@@ -49,12 +49,12 @@ class Record {
 	protected $changes = array();
 
 	/**
-	 * Set to _data on construct so we can track and reset data if needed.
+	 * Stores the enum transition information so that we can fire appropriate actions when saving records.
 	 *
 	 * @since 1.0.0
 	 * @var array
 	 */
-	protected $default_data = array();
+	protected $enum_transition = array();
 
 	/**
 	 * This is false until the object is read from the DB.
@@ -97,9 +97,6 @@ class Record {
 			}
 		}
 
-		// Set the default data.
-		$this->default_data = $this->data;
-
 		// If this is a record instance, retrieve the ID.
 		if ( ! empty( $record ) && is_callable( array( $record, 'get_id' ) ) ) {
 			$record = call_user_func( array( $record, 'get_id' ) );
@@ -118,7 +115,7 @@ class Record {
 		// Read the record from the DB.
 		if ( ! empty( $record ) && is_numeric( $record ) ) {
 			$this->set_id( absint( $record ) );
-			Collection::instance( $this->collection_name )->read( $this );
+			$this->get_collection()->read( $this );
 		}
 
 		$this->set_object_read( true );
@@ -155,6 +152,16 @@ class Record {
 	 */
 	public function __toString() {
 		return wp_json_encode( $this->get_data() );
+	}
+
+	/**
+	 * Retrieves the collection.
+	 *
+	 * @since 1.0.0
+	 * @return Collection
+	 */
+	public function get_collection() {
+		return Collection::instance( $this->collection_name );
 	}
 
 	/**
@@ -208,6 +215,30 @@ class Record {
 	}
 
 	/**
+	 * Checks if the property is a meta key.
+	 *
+	 * @since  1.0.0
+	 * @param  string $prop Property name.
+	 * @return bool
+	 */
+	public function is_meta_key( $prop ) {
+		$prop = $this->has_prop( $prop );
+		return $prop && $prop->is_meta_key;
+	}
+
+	/**
+	 * Checks if the property is a dynamic property.
+	 *
+	 * @since  1.0.0
+	 * @param  string $prop Property name.
+	 * @return bool
+	 */
+	public function is_dynamic_prop( $prop ) {
+		$prop = $this->has_prop( $prop );
+		return $prop && $prop->is_dynamic;
+	}
+
+	/**
 	 * Delete an object, set the ID to 0, and return result.
 	 *
 	 * @since  1.0.0
@@ -218,8 +249,7 @@ class Record {
 
 		try {
 
-			$collection = Collection::instance( $this->collection_name );
-			$collection->delete( $this, $force_delete );
+			$this->get_collection()->delete( $this, $force_delete );
 			return true;
 
 		} catch ( Store_Exception $e ) {
@@ -239,13 +269,15 @@ class Record {
 
 		try {
 
-			$collection = Collection::instance( $this->collection_name );
-
+			// Save the data.
 			if ( $this->exists() ) {
-				call_user_func_array( array( $collection, 'update' ), array( &$this ) );
+				call_user_func_array( array( $this->get_collection(), 'update' ), array( &$this ) );
 			} else {
-				call_user_func_array( array( $collection, 'create' ), array( &$this ) );
+				call_user_func_array( array( $this->get_collection(), 'create' ), array( &$this ) );
 			}
+
+			// Fire enum transitions.
+			$this->enum_transitions();
 		} catch ( Store_Exception $e ) {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
@@ -256,73 +288,88 @@ class Record {
 	}
 
 	/**
+	 * Handle the enum transitions.
+	 *
+	 * @since  1.0.0
+	 */
+	protected function enum_transitions() {
+		$transitions = $this->enum_transition;
+
+		// Reset status transition variable.
+		$this->enum_transition = array();
+
+		if ( is_array( $transitions ) ) {
+			foreach ( array_filter( $transitions ) as $prop => $transition ) {
+				try {
+					$this->enum_transition( $prop, $transition );
+				} catch ( \Exception $e ) {
+					_doing_it_wrong( __CLASS__ . '::' . __METHOD__, esc_html( $e->getMessage() ), '1.0.0' );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Handle the enum transition.
+	 *
+	 * @since 1.0.0
+	 * @param string $prop
+	 * @param array $transition
+	 */
+	protected function enum_transition( $prop, $transition ) {
+
+		$from = is_bool( $transition['from'] ) ? ( $transition['from'] ? 'yes' : 'no' ) : $transition['from'];
+		$to   = is_bool( $transition['to'] ) ? ( $transition['to'] ? 'yes' : 'no' ) : $transition['to'];
+
+		// Fire a hook for the enum change.
+		do_action( "{$this->object_type}_{$prop}_set_to_{$to}", $this, $from );
+
+		// Fire another hook.
+		if ( '' !== $transition['from'] && is_string( $transition['from'] ) ) {
+			do_action( "{$this->object_type}_{$prop}_changed_{$from}_to_{$to}", $this );
+			do_action( "{$this->object_type}_{$prop}_changed", $this, $from, $to );
+		}
+	}
+
+	/**
 	 * Returns all data for this object.
 	 *
-	 * @since  2.6.0
+	 * Only returns known props, ignoring unknown ones.
+	 *
+	 * @since  1.0.0
 	 * @return array
 	 */
-	public function get_data() {
+	public function get_data( $context = 'view' ) {
 		$data = array( 'id' => $this->get_id() );
 
-		foreach ( array_keys( $this->data ) as $key ) {
-
-			if ( method_exists( $this, "get_{$key}" ) ) {
-				$data[ $key ] = $this->{"get_{$key}"}();
-			} else {
-				$data[ $key ] = $this->get_prop( $key );
-			}
+		foreach ( $this->get_collection()->get_props() as $prop ) {
+			$data[ $prop->name ] = $this->get( $prop, $context );
 		}
 
 		return $data;
 	}
 
 	/**
-	 * Set all props to default values.
-	 *
-	 * @since 1.0.0
-	 */
-	public function set_defaults() {
-		$this->data    = $this->default_data;
-		$this->changes = array();
-		$this->set_object_read( false );
-	}
-
-	/**
 	 * Set a collection of props in one go, collect any errors, and return the result.
-	 * Only sets using public methods.
+	 * Only sets known props, ignoring unknown ones.
 	 *
 	 * @since  1.0.0
 	 *
 	 * @param array  $props Key value pairs to set. Key is the prop and should map to a setter function name.
 	 * @param bool $skip_null Skip null values.
 	 *
-	 * @return bool|WP_Error
+	 * @return bool
 	 */
 	public function set_props( $props, $skip_null = false ) {
-		$errors = false;
 
 		foreach ( $props as $prop => $value ) {
-			try {
-				/**
-				 * Checks if the prop being set is allowed.
-				 */
-				if ( in_array( $prop, array( 'prop', 'date_prop' ), true ) || ( $skip_null && null === $value ) ) {
-					continue;
-				}
-				$setter = "set_$prop";
-
-				if ( is_callable( array( $this, $setter ) ) ) {
-					$this->{$setter}( $value );
-				}
-			} catch ( Store_Exception $e ) {
-				if ( ! $errors ) {
-					$errors = new \WP_Error();
-				}
-				$errors->add( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+			// Checks if the prop being set is allowed.
+			if ( ! in_array( $prop, array( 'prop', 'date_prop' ), true ) && ! ( $skip_null && null === $value ) ) {
+				$this->set( $prop, $value );
 			}
 		}
 
-		return $errors && count( $errors->get_error_codes() ) ? $errors : true;
+		return true;
 	}
 
 	/**
@@ -346,6 +393,26 @@ class Record {
 	}
 
 	/**
+	 * Checks if we have a given property.
+	 *
+	 * @since 1.0.0
+	 * @param string $key Property key.
+	 * @return Prop|null
+	 */
+	public function has_prop( $key ) {
+
+		if ( $key instanceof Prop ) {
+			return $key;
+		}
+
+		try {
+			return $this->get_collection()->get_prop( $key );
+		} catch ( Store_Exception $e ) {
+			return null;
+		}
+	}
+
+	/**
 	 * Gets a property.
 	 *
 	 * Gets the value from either current pending changes, or the data itself.
@@ -356,10 +423,12 @@ class Record {
 	 * @param  string $context What the value is for. Valid values are view and edit.
 	 * @return mixed
 	 */
-	public function get_prop( $prop, $context = 'view' ) {
+	protected function get_prop( $prop, $context = 'view' ) {
 		$value = null;
+		$prop  = $this->has_prop( $prop );
 
-		if ( array_key_exists( $prop, $this->data ) ) {
+		if ( $prop ) {
+			$prop  = $prop->name;
 			$value = array_key_exists( $prop, $this->changes ) ? $this->changes[ $prop ] : $this->data[ $prop ];
 
 			if ( 'view' === $context ) {
@@ -381,14 +450,41 @@ class Record {
 	 * @param mixed  $value Value of the prop.
 	 */
 	protected function set_prop( $prop, $value ) {
-		if ( array_key_exists( $prop, $this->data ) ) {
-			if ( true === $this->object_read ) {
-				if ( $value !== $this->data[ $prop ] || array_key_exists( $prop, $this->changes ) ) {
-					$this->changes[ $prop ] = $value;
-				}
-			} else {
-				$this->data[ $prop ] = $value;
+		$object = $this->has_prop( $prop );
+
+		// Abort if the prop is not valid.
+		if ( ! $object || $object->is_dynamic ) {
+			return;
+		}
+
+		$prop = $object->name;
+
+		// Sanitize the value.
+		$value = $object->sanitize( $value );
+
+		// Limit length.
+		if ( is_string( $value ) && is_int( $object->length ) ) {
+			$value = $this->limit_length( $value, $object->length );
+		}
+
+		// Set the value.
+		if ( true === $this->object_read ) {
+			if ( $value !== $this->data[ $prop ] || array_key_exists( $prop, $this->changes ) ) {
+				$this->changes[ $prop ] = $value;
 			}
+
+			// If this is an enum or boolean, record the change.
+			if ( $object->is_boolean() || ! empty( $object->enum ) ) {
+
+				if ( ! $this->exists() || $value !== $this->data[ $prop ] ) {
+					$this->enum_transition[ $prop ] = array(
+						'from' => $this->data[ $prop ],
+						'to'   => $value,
+					);
+				}
+			}
+		} else {
+			$this->data[ $prop ] = $value;
 		}
 	}
 
@@ -396,18 +492,64 @@ class Record {
 	 * Sets a prop.
 	 *
 	 * @since 1.0.0
-	 * @param string $prop Name of prop to set.
+	 * @param string|Prop $prop Name of prop to get.
 	 * @param mixed  $value Value of the prop.
 	 */
 	public function set( $prop, $value ) {
 
-		$setter = "set_$prop";
+		$prop = is_string( $prop ) ? $this->has_prop( $prop ) : $prop;
 
-		if ( is_callable( array( $this, $setter ) ) ) {
-			return $this->{$setter}( $value );
+		if ( empty( $prop ) ) {
+			return false;
 		}
 
-		return $this->set_prop( $prop, $value );
+		$key    = $prop->name;
+		$method = "set_$key";
+
+		// Check if we have a setter method.
+		if ( method_exists( $this, $method ) ) {
+			return $this->{$method}( $value );
+		}
+
+		if ( $prop->is_meta_key && $prop->is_meta_key_multiple && ! is_array( $value ) ) {
+			$existing = $this->get( $prop );
+			$existing = is_array( $existing ) ? $existing : array();
+			$value    = array_merge( $existing, array( $value ) );
+		}
+
+		// Set directly to the data if we have it.
+		if ( array_key_exists( $key, $this->data ) ) {
+			return $prop->is_date() ? $this->set_date_prop( $prop, $value ) : $this->set_prop( $prop, $value );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Fetches the value of a given prop.
+	 *
+	 * @since  1.0.0
+	 * @param  string|Prop $prop Name of prop to get.
+	 * @param  string      $context What the value is for. Valid values are view and edit.
+	 * @return mixed
+	 */
+	public function get( $prop, $context = 'view' ) {
+		$prop = is_string( $prop ) ? $this->has_prop( $prop ) : $prop;
+
+		if ( empty( $prop ) ) {
+			return null;
+		}
+
+		$key    = $prop->name;
+		$method = "get_$key";
+
+		// Check if we have a getter method.
+		if ( method_exists( $this, $method ) ) {
+			return $this->{$method}( $context );
+		}
+
+		// Read directly from the data if we have it.
+		return $this->get_prop( $prop, $context );
 	}
 
 	/**
@@ -539,6 +681,34 @@ class Record {
 		}
 
 		return $default;
+	}
+
+	/**
+	 * Limit length of a string.
+	 *
+	 * @param  string  $string string to limit.
+	 * @param  integer $limit Limit size in characters.
+	 * @return string
+	 */
+	protected function limit_length( $string, $limit ) {
+
+		if ( empty( $limit ) || empty( $string ) || ! is_string( $string ) ) {
+			return $string;
+		}
+
+		$str_limit = $limit - 3;
+
+		if ( function_exists( 'mb_strimwidth' ) ) {
+			if ( mb_strlen( $string, 'UTF-8' ) > $limit ) {
+				$string = mb_strimwidth( $string, 0, $str_limit ) . '...';
+			}
+		} else {
+			if ( strlen( $string ) > $limit ) {
+				$string = substr( $string, 0, $str_limit ) . '...';
+			}
+		}
+		return $string;
+
 	}
 
 }

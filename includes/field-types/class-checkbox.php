@@ -92,6 +92,8 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 			'type'        => 'TINYINT',
 			'length'      => 1,
 			'description' => wp_strip_all_tags( $custom_field['label'] ),
+			'nullable'    => false,
+			'default'     => 0,
 		);
 
 		return $schema;

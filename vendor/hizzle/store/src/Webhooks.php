@@ -45,11 +45,28 @@ class Webhooks {
 				continue;
 			}
 
-			// CRUD Events.
-			$this->events[ $collection->hook_prefix( 'created', true ) ] = $collection->get_singular_name() . '.created';
-			$this->events[ $collection->hook_prefix( 'updated', true ) ] = $collection->get_singular_name() . '.updated';
-			$this->events[ $collection->hook_prefix( 'deleted', true ) ] = $collection->get_singular_name() . '.deleted';
+			$collection_name = $collection->get_singular_name();
 
+			// CRUD Events.
+			$this->events[ $collection->hook_prefix( 'created', true ) ] = $collection_name . '.created';
+			$this->events[ $collection->hook_prefix( 'updated', true ) ] = $collection_name . '.updated';
+			$this->events[ $collection->hook_prefix( 'deleted', true ) ] = $collection_name . '.deleted';
+
+			// Custom field changes.
+			foreach ( $collection->get_props() as $prop ) {
+
+				// If this is an enum or boolean, watch for changes.
+				if ( $prop->is_boolean() || is_array( $prop->enum ) ) {
+					$enum = $prop->is_boolean() ? array( 'yes', 'no' ) : $prop->enum;
+					$prop = $prop->name;
+
+					$this->events[ $collection->hook_prefix( "{$prop}_changed", true ) ] = "{$collection_name}.{$prop}.changed";
+
+					foreach ( $enum as $enum_key ) {
+						$this->events[ $collection->hook_prefix( "{$prop}_set_to_{$enum_key}", true ) ] = "{$collection_name}.{$prop}_set_to.{$enum_key}";
+					}
+				}
+			}
 		}
 
 		// For custom events, make sure you pass an object the implements the get_data() method to the hook callback.

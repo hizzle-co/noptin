@@ -41,6 +41,13 @@ class Collection {
 	protected $singular_name;
 
 	/**
+	 * Custom meta table.
+	 *
+	 * @var bool
+	 */
+	protected $use_meta_table = false;
+
+	/**
 	 * CRUD class. Should extend Record.
 	 *
 	 * @var string
@@ -74,6 +81,14 @@ class Collection {
 	 * @var Prop[]
 	 */
 	protected $props = array();
+
+	/**
+	 * Known fields.
+	 *
+	 * @since 1.0.0
+	 * @var array
+	 */
+	protected $known_fields;
 
 	/**
 	 * Indexes. Used by MySQL.
@@ -117,6 +132,7 @@ class Collection {
 	 * @param array  $data An array of relevant data.
 	 */
 	public function __construct( $namespace, $data ) {
+		global $wpdb;
 
 		// Set namespace.
 		$this->namespace = $namespace;
@@ -134,6 +150,12 @@ class Collection {
 				$prop['name']        = $key;
 				$this->props[ $key ] = new Prop( $this->get_full_name(), $prop );
 			}
+		}
+
+		// Register our custom meta table.
+		if ( $this->create_meta_table() ) {
+			$meta_type          = $this->get_meta_type() . 'meta';
+			$wpdb->{$meta_type} = $wpdb->prefix . $meta_type;
 		}
 
 		// Register the collection.
@@ -212,13 +234,49 @@ class Collection {
 	}
 
 	/**
+	 * Retrieves the meta type.
+	 *
+	 * @return string
+	 */
+	public function get_meta_type() {
+		$meta_type = $this->is_cpt() ? 'post' : $this->get_full_name( true );
+		return apply_filters( $this->hook_prefix( 'meta_type' ), $meta_type );
+	}
+
+	/**
 	 * Retrieves the database name.
 	 *
 	 * @return string
 	 */
 	public function get_db_table_name() {
-		$db_table = $GLOBALS['wpdb']->prefix . $this->get_full_name();
+		global $wpdb;
+
+		$db_table = $wpdb->prefix . $this->get_full_name();
 		return apply_filters( $this->hook_prefix( 'db_table_name' ), $db_table );
+	}
+
+	/**
+	 * Retrieves the meta table name.
+	 *
+	 * @return string
+	 */
+	public function get_meta_table_name() {
+		global $wpdb;
+
+		if ( $this->is_cpt() ) {
+			return $wpdb->postmeta;
+		}
+
+		return $wpdb->prefix . $this->get_meta_type() . 'meta';
+	}
+
+	/**
+	 * Checks if we should create a custom meta table.
+	 *
+	 * @return string
+	 */
+	public function create_meta_table() {
+		return $this->use_meta_table && ! $this->is_cpt();
 	}
 
 	/**
@@ -238,6 +296,51 @@ class Collection {
 	 */
 	public function get_props() {
 		return $this->props;
+	}
+
+	/**
+	 * Retrieves known fields.
+	 *
+	 * @return array
+	 */
+	public function get_known_fields() {
+
+		if ( ! empty( $this->known_fields ) ) {
+			return $this->known_fields;
+		}
+
+		$this->known_fields = array(
+			'main'    => array(),
+			'post'    => array(),
+			'meta'    => array(),
+			'dynamic' => array(),
+		);
+
+		foreach ( $this->get_props() as $prop ) {
+
+			// Dynamic properties.
+			if ( $prop->is_dynamic ) {
+				$this->known_fields['dynamic'][] = $prop->name;
+				continue;
+			}
+
+			// Meta keys.
+			if ( $prop->is_meta_key && ( $this->is_cpt() || $this->use_meta_table ) ) {
+				$this->known_fields['meta'][] = $prop->name;
+				continue;
+			}
+
+			// CPT fields.
+			if ( $this->is_cpt() && in_array( $prop->name, $this->post_map, true ) ) {
+				$this->known_fields['post'][] = $prop->name;
+				continue;
+			}
+
+			// Main fields.
+			$this->known_fields['main'][] = $prop->name;
+		}
+
+		return $this->known_fields;
 	}
 
 	/**
@@ -271,14 +374,27 @@ class Collection {
 			return $this->schema;
 		}
 
-		$table  = $this->get_db_table_name();
-		$schema = "CREATE TABLE $table (\n";
+		$table    = $this->get_db_table_name();
+		$schema   = "CREATE TABLE $table (\n";
+		$has_prop = false;
 
 		// Add each property.
-		foreach ( $this->props as $key => $prop ) {
+		foreach ( $this->get_props() as $key => $prop ) {
+
+			// Do not add CPT fields to the schema.
 			if ( ! $this->is_cpt() || ! in_array( $key, $this->post_map, true ) ) {
-				$schema .= $prop->get_schema() . ",\n";
+				$prop_schema = $prop->get_schema();
+
+				if ( ! empty( $prop_schema ) ) {
+					$schema  .= $prop_schema . ",\n";
+					$has_prop = true;
+				}
 			}
+		}
+
+		// Abort if no props were added.
+		if ( ! $has_prop ) {
+			return '';
 		}
 
 		// Add indexes.
@@ -315,6 +431,40 @@ class Collection {
 
 		$this->schema = apply_filters( $this->hook_prefix( 'table_schema' ), $schema, $this );
 		return $this->schema;
+	}
+
+	/**
+	 * Retrieves the meta schema.
+	 *
+	 * @return string
+	 */
+	public function get_meta_schema() {
+		global $wpdb;
+
+		// Abort if we're not using a custom meta table.
+		if ( ! $this->create_meta_table() ) {
+			return '';
+		}
+
+		// Get character collation.
+		$collate = '';
+
+		if ( $wpdb->has_cap( 'collation' ) ) {
+			$collate = $wpdb->get_charset_collate();
+		}
+
+		$table  = $this->get_meta_table_name();
+		$id_col = $this->get_meta_type() . '_id';
+
+		return "CREATE TABLE $table (
+			meta_id bigint(20) unsigned NOT NULL auto_increment,
+			$id_col bigint(20) unsigned NOT NULL default '0',
+			meta_key varchar(255) default NULL,
+			meta_value longtext,
+			PRIMARY KEY  (meta_id),
+			KEY $id_col ($id_col),
+			KEY meta_key (meta_key(191))
+		) $collate;";
 	}
 
 	/**
@@ -376,6 +526,8 @@ class Collection {
 			$schema['properties'][ $prop->name ] = $prop->get_rest_schema();
 		}
 
+		$schema['properties'][ $prop->name ] = array_filter( $schema['properties'][ $prop->name ] );
+
 		$this->rest_schema = apply_filters( $this->hook_prefix( 'rest_schema' ), $schema, $this );
 		return $this->rest_schema;
 	}
@@ -392,9 +544,9 @@ class Collection {
 			return $this->query_schema;
 		}
 
-		$query_schema              = array();
+		$query_schema = array();
 
-		$query_schema['page']      = array(
+		$query_schema['page'] = array(
 			'description'       => __( 'Current page of the collection.', 'hizzle-store' ),
 			'type'              => 'integer',
 			'default'           => 1,
@@ -403,7 +555,7 @@ class Collection {
 			'minimum'           => 1,
 		);
 
-		$query_schema['per_page']  = array(
+		$query_schema['per_page'] = array(
 			'description'       => __( 'Maximum number of items to be returned in result set.', 'hizzle-store' ),
 			'type'              => 'integer',
 			'default'           => 10,
@@ -413,31 +565,31 @@ class Collection {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
-		$query_schema['offset']          = array(
+		$query_schema['offset'] = array(
 			'description'       => __( 'Offset the result set by a specific number of items.', 'hizzle-store' ),
 			'type'              => 'integer',
 			'sanitize_callback' => 'absint',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
-		$query_schema['search']          = array(
+		$query_schema['search'] = array(
 			'description'       => __( 'Limit results to those matching a string.', 'hizzle-store' ),
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
-		$query_schema['search_columns']          = array(
+		$query_schema['search_columns'] = array(
 			'description'       => __( 'An array of props to search in.', 'hizzle-store' ),
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
 			),
 			'validate_callback' => 'rest_validate_request_arg',
-			'default'           => array_keys( $this->props ),
+			'default'           => array(),
 		);
 
-		$query_schema['exclude']         = array(
+		$query_schema['exclude'] = array(
 			'description'       => __( 'Ensure result set excludes specific IDs.', 'hizzle-store' ),
 			'type'              => 'array',
 			'items'             => array(
@@ -447,7 +599,7 @@ class Collection {
 			'sanitize_callback' => 'wp_parse_id_list',
 		);
 
-		$query_schema['include']         = array(
+		$query_schema['include'] = array(
 			'description'       => __( 'Limit result set to specific ids.', 'hizzle-store' ),
 			'type'              => 'array',
 			'items'             => array(
@@ -470,6 +622,8 @@ class Collection {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
+		$all_fields = array_keys( $this->get_known_fields() );
+
 		$query_schema['orderby']         = array(
 			'description'       => __( 'Sort collection by object attribute.', 'hizzle-store' ),
 			'type'              => 'string',
@@ -477,7 +631,7 @@ class Collection {
 			'items'             => array(
 				'type' => 'string',
 			),
-			'enum'              => array_merge( array_keys( $this->props ), array( 'id', 'include' ) ),
+			'enum'              => array_merge( $all_fields['main'], $all_fields['post'], array( 'id', 'include' ) ),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -540,28 +694,24 @@ class Collection {
 	public function get_id_by_prop( $prop, $value ) {
 		global $wpdb;
 
-		if ( '' === $value ) {
+		if ( empty( $value ) || ! in_array( $prop, $this->get_cache_keys(), true ) ) {
 			return false;
 		}
 
 		// Try the cache.
-		$prop  = sanitize_key( $prop );
 		$value = trim( $value );
 		$id    = wp_cache_get( $value, $this->hook_prefix( 'ids_by_' . $prop, true ) );
 
 		// Maybe retrieve from the db.
 		if ( false === $id ) {
 
+			// Fetch the ID.
 			$table = $this->get_db_table_name();
-			$row   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE $prop = %s LIMIT 1", $value ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$id    = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE $prop = %s LIMIT 1", $value ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$id    = empty( $id ) ? 0 : (int) $id;
 
-			if ( ! empty( $row ) ) {
-				$id = $row['id'];
-				$this->update_cache( $row );
-			} else {
-				$id = 0;
-				wp_cache_set( $value, $id, $this->hook_prefix( 'ids_by_' . $prop, true ) );
-			}
+			// Update the cache.
+			wp_cache_set( $value, $id, $this->hook_prefix( 'ids_by_' . $prop, true ) );
 		}
 
 		return (int) $id;
@@ -609,87 +759,237 @@ class Collection {
 	 * @throws Store_Exception If an error occurs.
 	 */
 	public function create( &$record ) {
-		global $wpdb;
 
 		// Fires before creating a record.
 		do_action( $this->hook_prefix( 'before_create', true ), $record );
 
-		$fields  = array();
-		$formats = array();
-
-		// Is this a custom post type?
-		if ( $this->is_cpt() ) {
-
-			// Insert into $wp->posts.
-			$args = array(
-				'post_type' => $this->post_type,
-			);
-
-			foreach ( $this->post_map as $key => $post_field ) {
-				$args[ $post_field ] = $record->{"get_$key"}( 'edit' );
-			}
-
-			$post_id = wp_insert_post( $this->prepare_data( $args ), true );
-
-			// Abort if the post was not created.
-			if ( is_wp_error( $post_id ) ) {
-				throw new Store_Exception( $post_id->get_error_code(), $post_id->get_error_message() );
-			}
-
-			if ( empty( $post_id ) ) {
-				$this->not_saved();
-			}
-
-			$record->set_id( $post_id );
-
-			$fields['id'] = $post_id;
-			$formats[]    = '%d';
-		} elseif ( ! empty( $record->create_with_id ) ) {
-			$fields['id'] = (int) $record->create_with_id;
-			$formats[]    = '%d';
-			$record->set_id( (int) $record->create_with_id );
-		}
-
-		// Save meta data.
-		foreach ( $this->props as $key => $prop ) {
-			$fields[ $key ] = $record->{"get_$key"}( 'edit' );
-			$formats[]      = $prop->get_data_type();
-		}
+		$data = $record->get_data( 'edit' );
 
 		// Save date created in UTC time.
-		if ( ! $this->is_cpt() && isset( $this->props['date_created'] ) && empty( $fields['date_created'] ) ) {
-			$fields['date_created'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
+		if ( ! $this->is_cpt() && array_key_exists( 'date_created', $data ) && empty( $data['date_created'] ) ) {
+			$data['date_created'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
 		}
 
 		// Save date modified in UTC time.
-		if ( ! $this->is_cpt() && isset( $this->props['date_modified'] ) ) {
-			$fields['date_modified'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
+		if ( ! $this->is_cpt() && array_key_exists( 'date_modified', $data ) ) {
+			$data['date_modified'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
 		}
 
-		// Insert values in the db.
-		$result = $wpdb->insert(
-			$this->get_db_table_name(),
-			apply_filters( $this->hook_prefix( 'insert_data', true ), $this->prepare_data( $fields ), $record ),
-			apply_filters( $this->hook_prefix( 'insert_formats', true ), $formats, $record )
-		);
+		$data = $this->prepare_data( $data );
 
-		// If the insert failed, throw an exception.
-		if ( $result ) {
+		// Is this a custom post type?
+		$record_id = $this->save_post( $record, $data );
 
-			if ( ! $record->exists() ) {
-				$record->set_id( $wpdb->insert_id );
+		if ( empty( $record_id ) && ! empty( $record->create_with_id ) ) {
+			$record_id = $record->create_with_id;
+		}
+
+		// Save custom data.
+		$record_id = $this->save_custom( $record, $data, $record_id );
+
+		// Abort if the record ID is empty.
+		if ( empty( $record_id ) ) {
+			$this->not_saved();
+		}
+
+		// Set the record ID.
+		$record->set_id( $record_id );
+
+		// Save meta data.
+		$this->save_meta( $record, $data );
+
+		// Apply changes.
+		$record->apply_changes();
+
+		// Clear the cache.
+		$this->clear_cache( $record->get_data() );
+
+		// Fires after creating a record.
+		do_action( $this->hook_prefix( 'created', true ), $record );
+
+		return true;
+	}
+
+	/**
+	 * Saves custom data for a record to the database.
+	 *
+	 * @param Record $record
+	 * @param array  $data
+	 * @param int $record_id
+	 * @return int
+	 */
+	protected function save_custom( $record, $data, $record_id = 0 ) {
+		global $wpdb;
+
+		// Fires before saving a record.
+		do_action( $this->hook_prefix( 'before_save_custom', true ), $record );
+
+		$all_fields = $this->get_known_fields();
+		$fields     = array();
+		$formats    = array();
+
+		// Save meta data.
+		foreach ( $this->props as $key => $prop ) {
+
+			// Skip non-main fields...
+			if ( ! in_array( $prop->name, $all_fields['main'], true ) ) {
+				continue;
 			}
 
-			$record->apply_changes();
-
-			$this->clear_cache( (object) $record->get_data() );
-
-			do_action( $this->hook_prefix( 'created', true ), $record );
-			return $result;
+			// ... or fields that are already saved.
+			if ( array_key_exists( $key, $data ) ) {
+				$fields[ $key ] = $data[ $key ];
+				$formats[]      = $prop->get_data_type();
+			}
 		}
 
-		return $this->not_saved();
+		// Abort if no fields to save.
+		if ( empty( $fields ) ) {
+			return $record->exists() ? $record->get_id() : $record_id;
+		}
 
+		// Creating a new record?
+		if ( ! $record->exists() ) {
+
+			// Creating with an ID?
+			if ( ! empty( $record_id ) ) {
+				$fields['id'] = (int) $record_id;
+				$formats[]    = '%d';
+			}
+
+			$result = $wpdb->insert(
+				$this->get_db_table_name(),
+				apply_filters( $this->hook_prefix( 'insert_data', true ), $fields, $record ),
+				apply_filters( $this->hook_prefix( 'insert_formats', true ), $formats, $record )
+			);
+
+			return $result ? $wpdb->insert_id : 0;
+		}
+
+		// Update the record.
+		$result = $wpdb->update(
+			$this->get_db_table_name(),
+			apply_filters( $this->hook_prefix( 'update_data', true ), $fields, $record ),
+			array( 'id' => $record->get_id() ),
+			apply_filters( $this->hook_prefix( 'update_formats', true ), $formats, $record ),
+			array( '%d' )
+		);
+
+		return $result ? $record->get_id() : 0;
+	}
+
+	/**
+	 * Saves post data for a record from the database.
+	 *
+	 * @param Record $record
+	 * @param array  $data
+	 * @return int
+	 */
+	protected function save_post( $record, $data ) {
+
+		// Abort if not a CPT.
+		if ( ! $this->is_cpt() ) {
+			return $record->get_id();
+		}
+
+		// Fires before saving a record.
+		do_action( $this->hook_prefix( 'before_save_post', true ), $record );
+
+		$post_data = array();
+
+		foreach ( $this->post_map as $key => $post_field ) {
+			if ( array_key_exists( $key, $data ) ) {
+				$post_data[ $post_field ] = $data[ $key ];
+			}
+		}
+
+		if ( $record->exists() ) {
+
+			// Update the post.
+			if ( ! empty( $post_data ) ) {
+				$post_data['ID'] = $record->get_id();
+				wp_update_post( $post_data );
+			}
+
+			return $record->get_id();
+		}
+
+		$post_data['post_type'] = $this->post_type;
+
+		// Create the post.
+		$post_id = wp_insert_post( $post_data, true );
+
+		// Abort if the post was not created.
+		if ( is_wp_error( $post_id ) ) {
+			throw new Store_Exception( $post_id->get_error_code(), $post_id->get_error_message() );
+		}
+
+		if ( empty( $post_id ) ) {
+			$this->not_saved();
+		}
+
+		return $post_id;
+	}
+
+	/**
+	 * Saves meta data for a record to the database.
+	 *
+	 * @param Record $record
+	 * @param array $data
+	 */
+	protected function save_meta( $record, $data ) {
+
+		// Abort if no meta table.
+		if ( ! $this->use_meta_table && ! $this->is_cpt() ) {
+			return;
+		}
+
+		// Fires before saving a record's meta.
+		do_action( $this->hook_prefix( 'before_save_meta', true ), $record );
+
+		// Meta is not cached with normal data as WP has its own caching.
+		foreach ( $this->props as $prop ) {
+
+			// Abort if not a meta key.
+			if ( ! $prop->is_meta_key || ! array_key_exists( $prop->name, $data ) ) {
+				continue;
+			}
+
+			$current = $this->get_record_meta( $record->get_id(), $prop->name, ! $prop->is_meta_key_multiple );
+			$new     = $data[ $prop->name ];
+			$new     = is_null( $new ) ? '' : $new;
+
+			if ( $prop->is_meta_key_multiple ) {
+
+				$new       = (array) $new;
+				$to_delete = array_diff_key( $current, $new );
+				$to_create = array_diff_key( $new, $current );
+
+				// Add new meta.
+				foreach ( $to_create as $value ) {
+					if ( ! is_null( $value ) && '' !== $value ) {
+						$this->add_record_meta( $record->get_id(), $prop->name, $value );
+					}
+				}
+
+				// Delete old meta.
+				foreach ( $to_delete as $value ) {
+					$this->delete_record_meta( $record->get_id(), $prop->name, $value );
+				}
+			} else {
+
+				// If the value is empty, delete the meta.
+				if ( '' === $new ) {
+					$this->delete_record_meta( $record->get_id(), $prop->name );
+					continue;
+				}
+
+				// If the value is different, update the meta.
+				if ( $current !== $new ) {
+					$this->update_record_meta( $record->get_id(), $prop->name, $new );
+				}
+			}
+		}
 	}
 
 	/**
@@ -699,59 +999,15 @@ class Collection {
 	 * @throws Store_Exception
 	 */
 	public function read( &$record ) {
-		global $wpdb;
 
 		// Fires before reading a record.
 		do_action( $this->hook_prefix( 'before_read', true ), $record );
 
-		// Fetch post data.
-		// Not cached with normal data as WP has its own caching.
-		$extra_data = array();
-		if ( $this->is_cpt() ) {
-			$post = get_post( $record->get_id() );
-
-			if ( empty( $post ) || $this->post_type !== $post->post_type ) {
-				$this->not_found();
-			}
-
-			foreach ( $this->post_map as $key => $post_field ) {
-				$extra_data[ $key ] = $post->$post_field;
-			}
-		}
-
-		// Maybe fetch from cache.
-		$data = wp_cache_get( $record->get_id(), $this->get_full_name() );
-
-		// If not found, read from the db.
-		if ( false === $data ) {
-
-			// Include meta data.
-			$table_name = $this->get_db_table_name();
-			$data       = $wpdb->get_row(
-				$wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $record->get_id() ), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				ARRAY_A
-			);
-
-			// In case of auto-drafts etc.
-			if ( empty( $data ) && $this->is_cpt() ) {
-
-				// Ensure there is always a record to avoid any errors.
-				$this->save_defaults( $record );
-				$data = $record->get_data();
-
-			} elseif ( empty( $data ) ) {
-				$this->not_found();
-			}
-
-			$data = array_merge( $data, $extra_data );
-
-			// Cache the record data.
-			$this->update_cache( $data );
-
-		}
-
-		// Merge meta data and post data.
-		$data = array_merge( $data, $extra_data );
+		$data = array_merge(
+			$this->read_custom( $record ),
+			$this->read_post( $record ),
+			$this->read_meta( $record )
+		);
 
 		// Format the raw data.
 		foreach ( $this->props as $prop ) {
@@ -764,9 +1020,124 @@ class Collection {
 		}
 
 		// Set the record data.
-		// Save data in the record.
 		$data = apply_filters( $this->hook_prefix( 'read_data' ), $data, $record );
 		$record->set_props( $data );
+	}
+
+	/**
+	 * Reads custom data for a record from the database.
+	 *
+	 * @param Record $record
+	 * @return array
+	 */
+	protected function read_custom( $record ) {
+		global $wpdb;
+
+		// Fires before reading a record.
+		do_action( $this->hook_prefix( 'before_read_custom', true ), $record );
+
+		// Maybe fetch from cache.
+		$data = wp_cache_get( $record->get_id(), $this->get_full_name() );
+
+		// If not found, read from the db.
+		if ( false === $data ) {
+
+			// Include meta data.
+			$table_name = $this->get_db_table_name();
+			$raw_data   = $wpdb->get_row(
+				$wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $record->get_id() ), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				ARRAY_A
+			);
+
+			// In case of auto-drafts etc.
+			if ( empty( $raw_data ) && $this->is_cpt() ) {
+
+				// Ensure there is always a record to avoid any errors.
+				$this->save_defaults( $record );
+				$raw_data = $record->get_data();
+
+			} elseif ( empty( $raw_data ) ) {
+				$this->not_found();
+			}
+
+			$data       = array();
+			$all_fields = $this->get_known_fields();
+
+			foreach ( $all_fields['main'] as $key ) {
+				if ( array_key_exists( $key, $raw_data ) ) {
+					$data[ $key ] = $raw_data[ $key ];
+				}
+			}
+
+			// Cache the record data.
+			$this->update_cache( $data );
+
+		}
+
+		return empty( $data ) ? array() : (array) $data;
+	}
+
+	/**
+	 * Reads post data for a record from the database.
+	 *
+	 * @param Record $record
+	 * @return array
+	 */
+	protected function read_post( $record ) {
+
+		// Abort if not a CPT.
+		if ( ! $this->is_cpt() ) {
+			return array();
+		}
+
+		// Fires before reading a record.
+		do_action( $this->hook_prefix( 'before_read_post', true ), $record );
+
+		$post = get_post( $record->get_id() );
+		$data = array();
+
+		if ( empty( $post ) || $this->post_type !== $post->post_type ) {
+			$this->not_found();
+		}
+
+		// Post data is not cached with normal data as WP has its own caching.
+		foreach ( $this->post_map as $key => $post_field ) {
+			$data[ $key ] = $post->$post_field;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Reads meta data for a record from the database.
+	 *
+	 * @param Record $record
+	 * @return array
+	 */
+	protected function read_meta( $record ) {
+
+		// Abort if no meta table.
+		if ( ! $this->use_meta_table && ! $this->is_cpt() ) {
+			return array();
+		}
+
+		// Fires before reading a record.
+		do_action( $this->hook_prefix( 'before_read_meta', true ), $record );
+
+		$meta = array();
+
+		// Meta is not cached with normal data as WP has its own caching.
+		foreach ( $this->props as $prop ) {
+
+			// Abort if not a meta key.
+			if ( ! $prop->is_meta_key ) {
+				continue;
+			}
+
+			$meta[ $prop->name ] = $this->get_record_meta( $record->get_id(), $prop->name, ! $prop->is_meta_key_multiple );
+		}
+
+		return $meta;
 	}
 
 	/**
@@ -776,78 +1147,43 @@ class Collection {
 	 * @throws Store_Exception If an error occurs.
 	 */
 	public function update( &$record ) {
-		global $wpdb;
 
 		// Fires before updating a record.
 		do_action( $this->hook_prefix( 'before_update', true ), $record );
 
-		// Prepare args.
-		$fields    = array();
-		$formats   = array();
-		$post_args = array();
-		$changes   = array_keys( $record->get_changes() );
-
-		// Prepare args.
-		foreach ( $this->props as $key => $prop ) {
-			if ( in_array( $key, $changes, true ) ) {
-
-				// Post fields.
-				if ( $this->is_cpt() && in_array( $key, array_keys( $this->post_map ), true ) ) {
-					$post_args[ $this->post_map[ $key ] ] = $record->{"get_$key"}( 'edit' );
-				} else {
-					$fields[ $key ] = $record->{"get_$key"}( 'edit' );
-					$formats[]      = $prop->get_data_type();
-				}
-			}
-		}
-
-		// Update post.
-		if ( $this->is_cpt() && ! empty( $post_args ) ) {
-
-			$post_args['ID'] = $record->get_id();
-			$result          = wp_update_post( $post_args, true );
-
-			if ( is_wp_error( $result ) ) {
-				throw new Store_Exception( $result->get_error_code(), $result->get_error_message() );
-			}
-
-			if ( ! $result ) {
-				$this->not_saved();
-			}
-		}
+		$changes = array_keys( $record->get_changes() );
 
 		// Update meta data.
 		// Save date modified in UTC time.
 		if ( ! $this->is_cpt() && isset( $this->props['date_modified'] ) ) {
-			$fields['date_modified'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
-			$formats[]               = '%s';
-
-			$record->set_props( array( 'date_modified' => $fields['date_modified'] ) );
+			$changes['date_modified'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
+			$record->set( 'date_modified', $changes['date_modified'] );
 		}
 
-		// Update values in the db if there are changes.
-		if ( ! empty( $fields ) ) {
+		$changes = $this->prepare_data( $changes );
 
-			$result = $wpdb->update(
-				$this->get_db_table_name(),
-				apply_filters( $this->hook_prefix( 'update_data', true ), $this->prepare_data( $fields ), $record ),
-				array( 'id' => $record->get_id() ),
-				apply_filters( $this->hook_prefix( 'update_formats', true ), $formats, $record )
-			);
+		// Is this a custom post type?
+		$this->save_post( $record, $changes );
 
-			if ( ! $result ) {
-				return false;
-			}
+		// Save custom data.
+		if ( 0 === $this->save_custom( $record, $changes, $record->get_id() ) ) {
+			$this->not_saved();
 		}
 
-		$this->clear_cache( (object) $record->get_data() );
+		// Save meta data.
+		$this->save_meta( $record, $changes );
 
+		// Apply changes.
 		$record->apply_changes();
 
+		// Clear the cache.
+		$this->clear_cache( $record->get_data() );
+
+		// Fires after creating a record.
 		do_action( $this->hook_prefix( 'updated', true ), $record );
 
+		return true;
 	}
-
 	/**
 	 * Deletes an object from the database.
 	 *
@@ -863,15 +1199,28 @@ class Collection {
 		do_action( $this->hook_prefix( 'before_delete', true ), $record );
 
 		// Invalidate cache.
-		$this->clear_cache( (object) $record->get_data() );
+		$this->clear_cache( $record->get_data() );
 
 		// If this is a CPT, delete the post.
 		if ( $this->is_cpt() ) {
 			wp_delete_post( $record->get_id(), $delete_permanently );
+
+			if ( $delete_permanently ) {
+				$this->delete_all_record_meta( $record->get_id() );
+			}
 		}
 
 		// Delete the record from the database.
-		$wpdb->delete( $this->get_db_table_name(), array( 'id' => $record->get_id() ), array( '%d' ) );
+		if ( ! $this->is_cpt() || $delete_permanently ) {
+
+			// Delete the record.
+			$wpdb->delete( $this->get_db_table_name(), array( 'id' => $record->get_id() ), array( '%d' ) );
+
+			// Delete meta data.
+			if ( $this->use_meta_table ) {
+				$this->delete_all_record_meta( $record->get_id() );
+			}
+		}
 
 		do_action( $this->hook_prefix( 'deleted', true ), $record, $delete_permanently );
 
@@ -885,9 +1234,16 @@ class Collection {
 	 * @return int|false — The number of rows updated, or false on error.
 	 */
 	public function delete_where( $where ) {
-		global $wpdb;
 
-		return $wpdb->delete( $this->get_db_table_name(), $where );
+		// Fetch matching records.
+		$records = $this->query( $where );
+
+		// Delete each record individually.
+		foreach ( $records as $record ) {
+			$record->delete();
+		}
+
+		return true;
 	}
 
 	/**
@@ -896,7 +1252,114 @@ class Collection {
 	public function delete_all() {
 		global $wpdb;
 
-		$wpdb->query( "TRUNCATE TABLE {$this->get_db_table_name()}" );
+		// Fetch all records.
+		$records = $this->query( array() );
+
+		// Delete each record individually.
+		foreach ( $records as $record ) {
+			$record->delete();
+		}
+
+		// Reset auto increment.
+		$main_table = esc_sql( $this->get_db_table_name() );
+		$wpdb->query( "TRUNCATE TABLE $main_table" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		if ( $this->use_meta_table ) {
+			$meta_table = $this->get_meta_table_name();
+			$wpdb->query( "TRUNCATE TABLE $meta_table" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		}
+
+		return true;
+	}
+
+	/**
+	 * Retrieve record meta field for a record.
+	 *
+	 * @param   int    $record_id  Record ID.
+	 * @param   string $meta_key   The meta key to retrieve. By default, returns data for all keys.
+	 * @param   bool   $single     If true, returns only the first value for the specified meta key. This parameter has no effect if $key is not specified.
+	 * @return  mixed              Will be an array if $single is false. Will be value of meta data field if $single is true.
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function get_record_meta( $record_id, $meta_key = '', $single = false ) {
+		return get_metadata( $this->get_meta_type(), $record_id, $meta_key, $single );
+	}
+
+	/**
+	 * Adds record meta field for a record.
+	 *
+	 * @param   int    $record_id  Record ID.
+	 * @param   string $meta_key   The meta key to update.
+	 * @param   mixed  $meta_value Metadata value. Must be serializable if non-scalar.
+	 * @param   mixed  $unique     Whether the same key should not be added.
+	 * @return  int|false  Meta ID on success, false on failure.
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function add_record_meta( $record_id, $meta_key, $meta_value, $unique = false ) {
+		return add_metadata( $this->get_meta_type(), $record_id, $meta_key, $meta_value, $unique );
+	}
+
+	/**
+	 * Deletes a record meta field for the given record ID.
+	 *
+	 * You can match based on the key, or key and value. Removing based on key and value, will keep from removing duplicate metadata with the same key. It also allows removing all metadata matching the key, if needed.
+	 *
+	 * @param   int    $record_id  Record ID.
+	 * @param   string $meta_key   The meta key to delete.
+	 * @param   mixed  $meta_value Metadata value. Must be serializable if non-scalar.
+	 * @return  bool  True on success, false on failure.
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function delete_record_meta( $record_id, $meta_key, $meta_value = '' ) {
+		return delete_metadata( $this->get_meta_type(), $record_id, $meta_key, $meta_value );
+	}
+
+	/**
+	 * Deletes all record meta fields for the given record ID.
+	 *
+	 * @param   int $record_id  Record ID.
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function delete_all_record_meta( $record_id ) {
+		$all_meta = $this->get_record_meta( $record_id );
+
+		foreach ( $all_meta as $meta_key => $meta_value ) {
+			$this->delete_record_meta( $record_id, $meta_key );
+		}
+	}
+
+	/**
+	 * Determines if a meta field with the given key exists for the given noptin record ID.
+	 *
+	 * @param int    $record_id  ID of the record metadata is for.
+	 * @param string $meta_key       Metadata key.
+	 *
+	 */
+	public function record_meta_exists( $record_id, $meta_key ) {
+		return metadata_exists( $this->get_meta_type(), $record_id, $meta_key );
+	}
+
+	/**
+	 * Updates record meta field for a record.
+	 *
+	 * Use the $prev_value parameter to differentiate between meta fields with the same key and record ID.
+	 *
+	 * If the meta field for the record does not exist, it will be added and its ID returned.
+	 *
+	 * @param   int    $record_id   Record ID.
+	 * @param   string $meta_key    The meta key to update.
+	 * @param   mixed  $meta_value  Metadata value. Must be serializable if non-scalar.
+	 * @param   mixed  $prev_value  Previous value to check before updating.
+	 * @return  mixed  The new meta field ID if a field with the given key didn't exist and was therefore added, true on successful update, false on failure.
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function update_record_meta( $record_id, $meta_key, $meta_value, $prev_value = '' ) {
+		return update_metadata( $this->get_meta_type(), $record_id, $meta_key, $meta_value, $prev_value );
 	}
 
 	/**
@@ -969,6 +1432,8 @@ class Collection {
 	 * @param object $record The raw db record.
 	 */
 	public function clear_cache( $record ) {
+
+		$record = (object) $record;
 
 		foreach ( $this->get_cache_keys() as $key ) {
 			wp_cache_delete( $record->$key, $this->hook_prefix( 'ids_by_' . $key, true ) );

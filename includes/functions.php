@@ -762,7 +762,7 @@ function get_logged_noptin_messages() {
 
 	foreach ( $messages as $message ) {
 		if ( ! is_scalar( $message['msg'] ) ) {
-			$message['msg'] = print_r( $message['msg'], true );
+			$message['msg'] = print_r( $message['msg'], true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 		}
 		$prepared[] = $message;
 	}
@@ -1035,9 +1035,7 @@ function noptin_dump( $data ) {
  * @return bool
  */
 function noptin_automation_rules_table_exists() {
-	global $wpdb;
-
-	return get_noptin_automation_rules_table_name() === $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_automation_rules'" );
+	return true;
 }
 
 /**

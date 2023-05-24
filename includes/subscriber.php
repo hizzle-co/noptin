@@ -34,23 +34,13 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 	if ( is_string( $subscriber ) && ! is_numeric( $subscriber ) ) {
 
 		if ( is_email( $subscriber ) ) {
-			$subscriber = noptin_get_subscriber_id_by_email( $subscriber );
+			$subscriber = get_noptin_subscriber_id_by_email( $subscriber );
 		} else {
-			$subscriber = noptin_get_subscriber_id_by_confirm_key( $subscriber );
+			$subscriber = get_noptin_subscriber_id_by_confirm_key( $subscriber );
 		}
 	}
 
 	return noptin()->db()->get( $subscriber, 'subscribers' );
-}
-
-/**
- * Fetch subscriber id by email.
- *
- * @param string $email Subscriber email.
- * @return int|false Subscriber id if found, false otherwise.
- */
-function noptin_get_subscriber_id_by_email( $email ) {
-	return noptin()->db()->get_id_by_prop( 'email', $email, 'subscribers' );
 }
 
 /**
@@ -59,24 +49,8 @@ function noptin_get_subscriber_id_by_email( $email ) {
  * @param string $confirm_key Subscriber confirm key.
  * @return int|false Subscriber id if found, false otherwise.
  */
-function noptin_get_subscriber_id_by_confirm_key( $confirm_key ) {
+function get_noptin_subscriber_id_by_confirm_key( $confirm_key ) {
 	return noptin()->db()->get_id_by_prop( 'confirm_key', $confirm_key, 'subscribers' );
-}
-
-/**
- * Deletes a subscriber.
- *
- * @param int|\Hizzle\Noptin\DB\Subscriber $subscriber_id Automation Rule ID, or object.
- * @return bool|WP_Error True on success, error object on failure.
- */
-function noptin_delete_subscriber( $subscriber_id ) {
-	$subscriber = noptin_get_subscriber( $subscriber_id );
-
-	if ( ! is_wp_error( $subscriber ) ) {
-		return $subscriber->delete();
-	}
-
-	return $subscriber;
 }
 
 /**
@@ -460,40 +434,29 @@ function add_noptin_subscriber( $fields, $silent = false ) {
 /**
  * Updates a Noptin subscriber
  *
+ * @param int|string|\Hizzle\Noptin\DB\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
+ * @param array $to_update The subscriber fields to update.
+ * @param bool  $silent    Whether to fire the action hooks or not.
  * @access  public
  * @since   1.2.3
  */
-function update_noptin_subscriber( $subscriber_id, $details = array(), $silent = false ) {
-	global $wpdb;
-	$subscriber_id = absint( $subscriber_id );
+function update_noptin_subscriber( $subscriber_id, $to_update = array(), $silent = false ) {
 
-	// Ensure the subscriber exists.
-	$subscriber = get_noptin_subscriber( $subscriber_id );
-	if ( ! $subscriber->exists() ) {
+	// Get the subscriber object.
+	$subscriber = noptin_get_subscriber( $subscriber_id );
+
+	if ( is_wp_error( $subscriber ) ) {
 		return false;
 	}
 
-	// Prepare main variables.
-	$table     = get_noptin_subscribers_table_name();
-	$fields    = noptin_clean( wp_unslash( $details ) );
-	$to_update = array();
+	// Set the subscriber properties.
+	$subscriber->set_props( $to_update );
 
-	// Maybe split name into first and last.
-	if ( isset( $fields['name'] ) ) {
-		$names = noptin_split_subscriber_name( $fields['name'] );
-
-		$fields['first_name'] = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
-		$fields['last_name']  = empty( $fields['last_name'] ) ? $names[1] : trim( $fields['last_name'] );
-		unset( $fields['name'] );
-
-	}
-
-	if ( isset( $fields['id'] ) ) {
-		unset( $fields['id'] );
-	}
+	// Save the subscriber.
+	$subscriber->save();
 
 	// Subscriber email confirmation.
-	if ( ! empty( $fields['confirmed'] ) && empty( $subscriber->confirmed ) && ! $silent ) {
+	if ( ! empty( $fields['confirmed'] ) && ! $subscriber->get_confirmed() && ! $silent ) {
 		confirm_noptin_subscriber_email( $subscriber );
 	}
 
@@ -502,36 +465,8 @@ function update_noptin_subscriber( $subscriber_id, $details = array(), $silent =
 		deactivate_noptin_subscriber( $subscriber );
 	}
 
-	foreach ( noptin_parse_list( 'email first_name last_name confirm_key date_created active confirmed' ) as $field ) {
-		if ( isset( $fields[ $field ] ) ) {
-			$to_update[ $field ] = noptin_clean( $fields[ $field ] );
-			unset( $fields[ $field ] );
-		}
-	}
-
-	if ( ! empty( $to_update ) ) {
-		$wpdb->update( $table, $to_update, array( 'id' => $subscriber_id ) );
-	}
-
-	// Insert additional meta data.
-	foreach ( $fields as $field => $value ) {
-
-		if ( 'name' === $field || 'integration_data' === $field ) {
-			continue;
-		}
-
-		if ( '' === $value ) {
-			delete_noptin_subscriber_meta( $subscriber_id, $field );
-		} else {
-			update_noptin_subscriber_meta( $subscriber_id, $field, $value );
-		}
-	}
-
-	// Clean the cache.
-	$subscriber->clear_cache();
-
 	if ( ! $silent ) {
-		do_action( 'noptin_update_subscriber', $subscriber_id, $details );
+		do_action( 'noptin_update_subscriber', $subscriber_id, $to_update );
 	}
 
 	delete_transient( 'noptin_subscription_sources' );
@@ -674,53 +609,28 @@ function get_noptin_subscriber_by_email( $email ) {
  *
  * @access  public
  * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
- * @deprecated 1.13.0 User noptin_get_subscriber_id_by_email
  * @since   1.2.6
  * @return int|null
  */
 function get_noptin_subscriber_id_by_email( $email ) {
-	$subscriber = new Noptin_Subscriber( $email );
-	return $subscriber->id;
+	return noptin()->db()->get_id_by_prop( 'email', $email, 'subscribers' );
 }
 
 /**
  * Deletes a subscriber
  *
  * @access  public
- * @param int $subscriber The subscriber being deleted
- * @deprecated 1.13.0 User noptin_delete_subscriber
+ * @param int $subscriber_id The subscriber being deleted
  * @since   1.1.0
  */
-function delete_noptin_subscriber( $subscriber ) {
-	global $wpdb;
+function delete_noptin_subscriber( $subscriber_id ) {
+	$subscriber = noptin_get_subscriber( $subscriber_id );
 
-	/**
-	 * Fires immediately before a subscriber is deleted from the database.
-	 *
-	 * @since 1.2.4
-	 *
-	 * @param int      $subscriber       ID of the subscriber to delete.
-	 */
-	do_action( 'delete_noptin_subscriber', $subscriber );
-
-	// Maybe delete WP User connection.
-	$user_id = get_noptin_subscriber_meta( (int) $subscriber, 'wp_user_id', true );
-	if ( ! empty( $user_id ) ) {
-		delete_user_meta( $user_id, 'noptin_subscriber_id' );
+	if ( ! is_wp_error( $subscriber ) ) {
+		return $subscriber->delete();
 	}
 
-	clear_noptin_subscriber_cache( $subscriber );
-
-	$table  = get_noptin_subscribers_table_name();
-	$table2 = get_noptin_subscribers_meta_table_name();
-
-	// Delete the subscriber...
-	$true1 = $wpdb->delete( $table, array( 'id' => $subscriber ), '%d' );
-
-	// ... and its meta data.
-	$true2 = $wpdb->delete( $table2, array( 'noptin_subscriber_id' => $subscriber ), '%d' );
-
-	return $true1 && $true2;
+	return $subscriber;
 }
 
 /**
@@ -1029,6 +939,16 @@ function noptin_generate_user_name( $prefix = '' ) {
  */
 function get_current_noptin_subscriber_id() {
 
+	// If the user is logged in, check with their email address.
+	$user_data = wp_get_current_user();
+	if ( ! empty( $user_data->user_email ) ) {
+		$subscriber_id = get_noptin_subscriber_id_by_email( $user_data->user_email );
+
+		if ( ! empty( $subscriber_id ) ) {
+			return $subscriber_id;
+		}
+	}
+
 	// Try retrieveing subscriber key.
 	$subscriber_key = '';
 	if ( ! empty( $_GET['noptin_key'] ) ) {
@@ -1039,20 +959,10 @@ function get_current_noptin_subscriber_id() {
 
 	// If we have a subscriber key, use it to retrieve the subscriber.
 	if ( ! empty( $subscriber_key ) ) {
-		$subscriber = new Noptin_Subscriber( $subscriber_key );
+		$subscriber_id = get_noptin_subscriber_id_by_confirm_key( $subscriber_key );
 
-		if ( $subscriber->exists() && $subscriber_key === $subscriber->confirm_key ) {
-			return $subscriber->id;
-		}
-	}
-
-	// If the user is logged in, check with their email address.
-	$user_data = wp_get_current_user();
-	if ( ! empty( $user_data->user_email ) ) {
-		$subscriber = get_noptin_subscriber_by_email( $user_data->user_email );
-
-		if ( $subscriber->exists() ) {
-			return $subscriber->id;
+		if ( ! empty( $subscriber_id ) ) {
+			return $subscriber_id;
 		}
 	}
 

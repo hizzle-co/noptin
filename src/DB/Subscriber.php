@@ -16,35 +16,6 @@ defined( 'ABSPATH' ) || exit;
 class Subscriber extends \Hizzle\Store\Record {
 
 	/**
-	 * Magic method to get/set custom fields.
-	 */
-	public function __call( $name, $args ) {
-		if ( 0 === strpos( $name, 'get_' ) ) {
-			$prop  = substr( $name, 4 );
-			$field = get_noptin_custom_field( $prop );
-
-			if ( ! empty( $field ) ) {
-				$hook    = 'noptin_subscribers_get_subscriber_' . $field['type'];
-				$context = isset( $args[0] ) ? $args[0] : 'view';
-
-				return apply_filters( $hook, $this->get_prop( $prop ), $field, $this, $context );
-			}
-		} elseif ( 0 === strpos( $name, 'set_' ) ) {
-			$prop  = substr( $name, 4 );
-			$field = get_noptin_custom_field( $prop );
-
-			if ( ! empty( $field ) ) {
-				$value = sanitize_noptin_custom_field_value( $args[0], $this->get_deprecated_subscriber() );
-				$this->set_prop( $prop, $value );
-			}
-
-			return $this;
-		}
-
-		throw new \Exception( 'Call to undefined method ' . __CLASS__ . '::' . $name . '()' );
-	}
-
-	/**
 	 * Returns the deprecated subscriber object.
 	 *
 	 * @return \Noptin_Subscriber
@@ -99,7 +70,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value First name.
 	 */
 	public function set_first_name( $value ) {
-		$this->set_prop( 'first_name', noptin_limit_length( sanitize_text_field( $value ), 100 ) );
+		$this->set_prop( 'first_name', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -118,7 +89,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value Last name.
 	 */
 	public function set_last_name( $value ) {
-		$this->set_prop( 'last_name', noptin_limit_length( sanitize_text_field( $value ), 100 ) );
+		$this->set_prop( 'last_name', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -137,7 +108,16 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value Email address.
 	 */
 	public function set_email( $value ) {
-		$this->set_prop( 'email', noptin_limit_length( sanitize_email( $value ), 255 ) );
+		$this->set_prop( 'email', sanitize_email( $value ) );
+	}
+
+	/**
+	 * Checks if the subscriber is active.
+	 *
+	 * @return bool
+	 */
+	public function is_active() {
+		return 'subscribed' === $this->get_status();
 	}
 
 	/**
@@ -176,7 +156,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value Source.
 	 */
 	public function set_source( $value ) {
-		$source = is_null( $value ) ? null : noptin_limit_length( sanitize_text_field( $value ), 100 );
+		$source = is_null( $value ) ? null : sanitize_text_field( $value );
 		$this->set_prop( 'source', $source );
 	}
 
@@ -195,7 +175,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value IP address.
 	 */
 	public function set_ip_address( $value ) {
-		$ip_address = is_null( $value ) ? null : noptin_limit_length( sanitize_text_field( $value ), 46 );
+		$ip_address = is_null( $value ) ? null : sanitize_text_field( $value );
 		$this->set_prop( 'ip_address', $ip_address );
 	}
 
@@ -214,7 +194,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value Conversion page.
 	 */
 	public function set_conversion_page( $value ) {
-		$conversion_page = is_null( $value ) ? null : noptin_limit_length( esc_url_raw( $value ), 255 );
+		$conversion_page = is_null( $value ) ? null : esc_url_raw( $value );
 		$this->set_prop( 'conversion_page', $conversion_page );
 	}
 
@@ -258,7 +238,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value Confirmation key.
 	 */
 	public function set_confirm_key( $value ) {
-		$confirm_key = empty( $value ) ? md5( wp_generate_password( 32, false ) . uniqid() ) : noptin_limit_length( sanitize_text_field( $value ), 32 );
+		$confirm_key = empty( $value ) ? md5( wp_generate_password( 32, false ) . uniqid() ) : sanitize_text_field( $value );
 		$this->set_prop( 'confirm_key', $confirm_key );
 	}
 
@@ -303,18 +283,23 @@ class Subscriber extends \Hizzle\Store\Record {
 	/**
 	 * Fetches the subscriber's activity.
 	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
 	 * @return array
 	 */
-	public function get_activity() {
-		$activity = $this->get_meta( 'activity' );
-		return is_array( $activity ) ? $activity : array();
+	public function get_activity( $context = 'view' ) {
+		$activity = json_decode( $this->get_prop( 'activity', $context ), true );
+		return empty( $activity ) ? array() : $activity;
 	}
 
 	/**
 	 * Sets the subscriber's activity.
+	 *
+	 * @param array|string $activity Activity.
 	 */
 	public function set_activity( $activity ) {
-		$this->update_meta( 'activity', $activity );
+		$activity = empty( $activity ) ? array() : $activity;
+		$activity = is_array( $activity ) ? wp_json_encode( $activity ) : $activity;
+		$this->set_prop( 'activity', $activity );
 	}
 
 	/**
@@ -340,17 +325,22 @@ class Subscriber extends \Hizzle\Store\Record {
 	/**
 	 * Fetches the subscriber's sent email campaigns.
 	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
 	 * @return array
 	 */
-	public function get_sent_campaigns() {
-		$sent_campaigns = $this->get_meta( 'sent_campaigns' );
-		return is_array( $sent_campaigns ) ? $sent_campaigns : array();
+	public function get_sent_campaigns( $context = 'view' ) {
+		$sent_campaigns = json_decode( $this->get_prop( 'sent_campaigns', $context ), true );
+		return empty( $sent_campaigns ) ? array() : $sent_campaigns;
 	}
 
 	/**
 	 * Sets the subscriber's sent email campaigns.
+	 *
+	 *  @param array|string $sent_campaigns Sent email campaigns.
 	 */
 	public function set_sent_campaigns( $sent_campaigns ) {
+		$sent_campaigns = empty( $sent_campaigns ) ? array() : $sent_campaigns;
+		$sent_campaigns = is_array( $sent_campaigns ) ? wp_json_encode( $sent_campaigns ) : $sent_campaigns;
 		$this->update_meta( 'sent_campaigns', $sent_campaigns );
 	}
 
@@ -439,6 +429,22 @@ class Subscriber extends \Hizzle\Store\Record {
 				'subscriber' => $this->get_id(),
 			),
 			admin_url( 'admin.php' )
+		);
+	}
+
+	/**
+	 * Returns the unsubscribe URL for the subscriber.
+	 *
+	 * @return string
+	 */
+	public function get_unsubscribe_url() {
+		return get_noptin_action_url(
+			'unsubscribe',
+			noptin_encrypt(
+				wp_json_encode(
+					array( 'sid' => $this->get_id() )
+				)
+			)
 		);
 	}
 }
