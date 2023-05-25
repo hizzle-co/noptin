@@ -234,13 +234,14 @@ class Schema {
 								'nullable'    => false,
 								'default'     => 'subscribed',
 								'description' => __( "The subscriber's status.", 'newsletter-optin-box' ),
-								'enum'        => array_keys( noptin_get_subscriber_statuses() ),
+								'enum'        => 'noptin_get_subscriber_statuses',
 							),
 
 							'source'                   => array(
 								'type'        => 'VARCHAR',
 								'length'      => 100,
 								'description' => __( 'The subscription source.', 'newsletter-optin-box' ),
+								'enum'        => 'noptin_get_subscription_sources',
 								'nullable'    => true,
 							),
 

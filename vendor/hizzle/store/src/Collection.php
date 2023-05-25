@@ -622,7 +622,7 @@ class Collection {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
-		$all_fields = array_keys( $this->get_known_fields() );
+		$all_fields = $this->get_known_fields();
 
 		$query_schema['orderby']         = array(
 			'description'       => __( 'Sort collection by object attribute.', 'hizzle-store' ),
@@ -1151,7 +1151,7 @@ class Collection {
 		// Fires before updating a record.
 		do_action( $this->hook_prefix( 'before_update', true ), $record );
 
-		$changes = array_keys( $record->get_changes() );
+		$changes = $record->get_changes();
 
 		// Update meta data.
 		// Save date modified in UTC time.

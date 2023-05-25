@@ -224,33 +224,6 @@ class Noptin_Admin {
 
 		// Subscribers page.
 		if ( 'noptin-subscribers' === $page ) {
-			$version = filemtime( $this->assets_path . 'js/dist/subscribers.js' );
-			wp_enqueue_script( 'noptin-subscribers', $this->assets_url . 'js/dist/subscribers.js', array( 'sweetalert2', 'postbox' ), $version, true );
-
-			$params = array(
-				'ajaxurl'           => admin_url( 'admin-ajax.php' ),
-				'nonce'             => wp_create_nonce( 'noptin_subscribers' ),
-				'reloading'         => __( 'Reloading the page', 'newsletter-optin-box' ),
-				'close'             => __( 'Close', 'newsletter-optin-box' ),
-				'delete_subscriber' => __( 'Delete subscriber', 'newsletter-optin-box' ),
-				'delete_footer'     => __( 'This will delete the subscriber and all associated data', 'newsletter-optin-box' ),
-				'delete'            => __( 'Delete', 'newsletter-optin-box' ),
-				'double_optin'      => __( 'Send a new double opt-in confirmation email to', 'newsletter-optin-box' ),
-				'send'              => __( 'Send', 'newsletter-optin-box' ),
-				'success'           => __( 'Success', 'newsletter-optin-box' ),
-				'error'             => __( 'Error!', 'newsletter-optin-box' ),
-				'troubleshoot'      => __( 'How to troubleshoot this error.', 'newsletter-optin-box' ),
-				'connect_error'     => __( 'Unable to connect', 'newsletter-optin-box' ),
-				'connect_info'      => __( 'This might be a problem with your server or your internet connection', 'newsletter-optin-box' ),
-				'delete_all'        => __( 'Are you sure you want to delete all subscribers?', 'newsletter-optin-box' ),
-				'no_revert'         => __( "You won't be able to revert this!", 'newsletter-optin-box' ),
-				'deleted'           => __( 'Deleted Subscribers', 'newsletter-optin-box' ),
-				'no_delete'         => __( 'Could not delete subscribers', 'newsletter-optin-box' ),
-				'cancel'            => __( 'Cancel', 'newsletter-optin-box' ),
-			);
-
-			// localize and enqueue the script with all of the variable inserted.
-			wp_localize_script( 'noptin-subscribers', 'noptinSubscribers', $params );
 
 			if ( ! empty( $_GET['import'] ) ) {
 				$version = filemtime( $this->assets_path . 'js/dist/subscribers-import.js' );

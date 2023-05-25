@@ -21,6 +21,7 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'menu_highlight' ), 15 );
 		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
+		add_action( 'admin_menu', array( $this, 'subscribers_menu' ), 33 );
 		add_action( 'admin_menu', array( $this, 'email_campaigns_menu' ), 35 );
 		add_action( 'admin_menu', array( $this, 'automation_rules_menu' ), 40 );
 		add_action( 'admin_menu', array( $this, 'settings_menu' ), 50 );
@@ -150,6 +151,43 @@ class Noptin_Admin_Menus {
 			get_noptin_capability(),
 			'noptin-automation-rules',
 			$cb
+		);
+
+		if ( ! empty( $script ) ) {
+			Noptin_Scripts::add_admin_script( $hook_suffix, $script );
+		}
+	}
+
+	/**
+	 * Subscribers.
+	 */
+	public function subscribers_menu() {
+		$is_component_page = false;
+
+		// Either render the appropriate component...
+		foreach ( Noptin_Subscribers_Admin::get_components() as $component => $details ) {
+
+			if ( isset( $_GET[ $component ] ) ) {
+				$title             = $details['label'];
+				$script            = isset( $details['script'] ) ? $details['script'] : '';
+				$is_component_page = true;
+				break;
+			}
+		}
+
+		// Or the subscriber's overview page.
+		if ( ! $is_component_page ) {
+			$title  = __( 'Email Subscribers', 'newsletter-optin-box' );
+			$script = 'subscribers';
+		}
+
+		$hook_suffix = add_submenu_page(
+			'noptin',
+			apply_filters( 'noptin_admin_subscribers_page_title', $title ),
+			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
+			get_noptin_capability(),
+			'noptin-subscribers',
+			'Noptin_Subscribers_Admin::output'
 		);
 
 		if ( ! empty( $script ) ) {

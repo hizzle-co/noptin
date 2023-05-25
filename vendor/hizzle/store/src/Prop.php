@@ -493,7 +493,7 @@ class Prop {
 	 */
 	public function get_data_type() {
 
-		if ( $this->is_numeric() ) {
+		if ( $this->is_numeric() || $this->is_boolean() ) {
 			return '%d';
 		}
 
@@ -523,6 +523,15 @@ class Prop {
 		}
 
 		if ( $this->is_boolean() ) {
+
+			if ( 'yes' === $value || 'true' === $value || '1' === $value ) {
+				return true;
+			}
+
+			if ( 'no' === $value || 'false' === $value || '0' === $value ) {
+				return false;
+			}
+
 			return (bool) $value;
 		}
 
@@ -541,4 +550,25 @@ class Prop {
 		return sanitize_text_field( $value );
 	}
 
+	/**
+	 * Retrieves available choices.
+	 *
+	 * @return array
+	 */
+	public function get_choices() {
+
+		// Booleans.
+		if ( $this->is_boolean() ) {
+			return array(
+				'yes' => __( 'Yes', 'hizzle-store' ),
+				'no'  => __( 'No', 'hizzle-store' ),
+			);
+		}
+
+		if ( empty( $this->enum ) ) {
+			return array();
+		}
+
+		return is_callable( $this->enum ) ? call_user_func( $this->enum ) : $this->enum;
+	}
 }

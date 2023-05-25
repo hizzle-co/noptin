@@ -60,12 +60,12 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 			$html .= sprintf(
 				'<a href="%s" title="%s" class="noptin-tip noptin-automation-rule-action noptin-automation-rule-action__%s">%s</a>',
 				empty( $data['url'] ) ? '#' : esc_url( $data['url'] ),
-				empty( $data['label'] ) ? '' : $data['label'],
+				empty( $data['label'] ) ? '' : esc_attr( $data['label'] ),
 				esc_attr( $action ),
 				sprintf(
 					'<span class="%s" aria-label="%s"></span>',
 					empty( $data['icon'] ) ? 'dashicons dashicons-admin-generic' : esc_attr( $data['icon'] ),
-					empty( $data['label'] ) ? '' : $data['label']
+					empty( $data['label'] ) ? '' : esc_attr( $data['label'] )
 				)
 			);
 

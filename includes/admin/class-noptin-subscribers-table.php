@@ -73,30 +73,84 @@ class Noptin_Subscribers_Table extends \Hizzle\Store\List_Table {
 	}
 
 	/**
+	 * Displays available actions.
+	 *
+	 * @param  \Hizzle\Noptin\DB\Subscriber $item item.
+	 * @return string
+	 */
+	public function column_actions( $item ) {
+
+		$actions = array(
+			'edit'   => array(
+				'url'   => $item->get_edit_url(),
+				'label' => __( 'Edit', 'newsletter-optin-box' ),
+				'icon'  => 'dashicons dashicons-edit',
+			),
+			'delete' => array(
+				'label' => __( 'Delete', 'newsletter-optin-box' ),
+				'icon'  => 'dashicons dashicons-trash',
+			),
+		);
+
+		$html = '';
+
+		foreach ( $actions as $action => $data ) {
+
+			$html .= sprintf(
+				'<a href="%s" title="%s" class="noptin-tip noptin-record-action noptin-record-action__%s">%s</a>',
+				empty( $data['url'] ) ? '#' : esc_url( $data['url'] ),
+				empty( $data['label'] ) ? '' : esc_attr( $data['label'] ),
+				esc_attr( $action ),
+				sprintf(
+					'<span class="%s" aria-label="%s"></span>',
+					empty( $data['icon'] ) ? 'dashicons dashicons-admin-generic' : esc_attr( $data['icon'] ),
+					empty( $data['label'] ) ? '' : esc_attr( $data['label'] )
+				)
+			);
+
+		}
+
+		$status = sprintf(
+			'<label class="noptin-record-action__switch-wrapper noptin-tip" title="%s">
+				<input type="checkbox" class="noptin-toggle-subscription-status" %s>
+				<span class="noptin-record-action__switch"></span>
+			</label>',
+			esc_attr( __( 'Activate or deactivate this subscriber', 'newsletter-optin-box' ) ),
+			checked( ! empty( $item->is_active() ), true, false )
+		);
+
+		return '<div class="noptin-record-actions">' . $status . $html . '</div>';
+
+	}
+
+	/**
+	 * [OPTIONAL] Return array of bulk actions if has any
+	 *
+	 * @return array
+	 */
+	public function get_bulk_actions() {
+		return array();
+	}
+
+	/**
 	 * Table columns.
 	 *
 	 * @return array
 	 */
 	public function get_columns() {
 
-		$columns = array(
-			'cb' => '<input type="checkbox" />',
+		$columns = array_merge(
+			array(
+				'email' => __( 'Email', 'newsletter-optin-box' ),
+			),
+			$this->get_custom_fields(),
+			array(
+				'status'       => __( 'Status', 'newsletter-optin-box' ),
+				'source'       => __( 'Source', 'newsletter-optin-box' ),
+				'date_created' => __( 'Added', 'newsletter-optin-box' ),
+				'actions'      => __( 'Actions', 'newsletter-optin-box' ),
+			)
 		);
-
-		foreach ( $this->get_custom_fields() as $key => $label ) {
-
-			$columns[ $key ] = $label;
-			if ( 'email' === $key ) {
-				$columns['status'] = __( 'Status', 'newsletter-optin-box' );
-			}
-		}
-
-		if ( ! isset( $columns['status'] ) ) {
-			$columns['status'] = __( 'Status', 'newsletter-optin-box' );
-		}
-
-		$columns['source']       = __( 'Subscribed Via', 'newsletter-optin-box' );
-		$columns['date_created'] = __( 'Added', 'newsletter-optin-box' );
 
 		/**
 		 * Filters the columns shown in a newsletter table.
@@ -116,7 +170,7 @@ class Noptin_Subscribers_Table extends \Hizzle\Store\List_Table {
 			'id'           => array( 'id', true ),
 			'date_created' => array( 'date_created', true ),
 			'source'       => array( 'source', false ),
-			'status'       => array( 'active', false ),
+			'status'       => array( 'status', false ),
 			'email'        => array( 'email', false ),
 			'first_name'   => array( 'first_name', false ),
 			'last_name'    => array( 'last_name', false ),
@@ -150,124 +204,6 @@ class Noptin_Subscribers_Table extends \Hizzle\Store\List_Table {
 		}
 
 		return $fields;
-	}
-
-	/**
-	 * Generates the table navigation above or below the table
-	 *
-	 * @since 3.1.0
-	 * @param string $which
-	 */
-	protected function display_tablenav( $which ) {
-		if ( 'top' === $which ) {
-			parent::display_tablenav( $which );
-			echo '<div id="noptin-subscribers-table-wrap">';
-		} else {
-			echo '</div>';
-			parent::display_tablenav( $which );
-		}
-	}
-
-	/**
-	 * Returns an array of selected subscriber filters.
-	 *
-	 * @since 1.7.4
-	 *
-	 * @return array $array
-	 */
-	public function get_selected_subscriber_filters() {
-
-		$action = 'bulk-' . $this->_args['plural'];
-
-		if ( ! empty( $_POST['noptin-filters'] ) && ! empty( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
-			return noptin_clean( $_POST['noptin-filters'] );
-		}
-
-		return array();
-	}
-
-	/**
-	 * Extra controls to be displayed between bulk actions and pagination.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @param string $which
-	 */
-	public function extra_tablenav( $which ) {
-
-		// Prepare selected filters.
-		$selected_filters = $this->get_selected_subscriber_filters();
-
-		// Currently, unsubscribed subscribers are treated as pending.
-		$filters = array(
-			'subscription_status' => array(
-				'label'   => __( 'Status', 'newsletter-optin-box' ),
-				'options' => array(
-					'active'   => __( 'Subscribed', 'newsletter-optin-box' ),
-					'inactive' => __( 'Pending', 'newsletter-optin-box' ),
-				),
-			),
-
-			'subscription_source' => array(
-				'label'   => __( 'Subscribed Via', 'newsletter-optin-box' ),
-				'options' => noptin_get_subscription_sources(),
-			),
-		);
-
-		// Use radio, select and checkboxes as filters.
-		foreach ( get_noptin_custom_fields() as $custom_field ) {
-
-			// Checkbox
-			if ( 'checkbox' === $custom_field['type'] ) {
-
-				$filters[ $custom_field['merge_tag'] ] = array(
-					'label'   => $custom_field['label'],
-					'options' => array(
-						'1' => __( 'Yes', 'newsletter-optin-box' ),
-						'0' => __( 'No', 'newsletter-optin-box' ),
-					),
-				);
-
-				// Select && Radio
-			} elseif ( 'dropdown' === $custom_field['type'] || 'radio' === $custom_field['type'] ) {
-
-				if ( ! empty( $custom_field['options'] ) ) {
-					$filters[ $custom_field['merge_tag'] ] = array(
-						'label'   => $custom_field['label'],
-						'options' => noptin_newslines_to_array( $custom_field['options'] ),
-					);
-				}
-			} elseif ( 'language' === $custom_field['type'] ) {
-
-				$filters[ $custom_field['merge_tag'] ] = array(
-					'label'   => $custom_field['label'],
-					'options' => apply_filters( 'noptin_multilingual_active_languages', array() ),
-				);
-			}
-		}
-
-		?>
-		<div class="alignleft actions">
-			<?php if ( 'top' === $which ) : ?>
-
-				<?php foreach ( $filters as $filter => $data ) : ?>
-					<select name="noptin-filters[<?php echo esc_attr( $filter ); ?>]" id="noptin_filter_<?php echo esc_attr( $filter ); ?>">
-						<option value="" <?php selected( ! isset( $selected_filters[ $filter ] ) || '' === $selected_filters[ $filter ] ); ?>><?php echo esc_html( wp_strip_all_tags( $data['label'] ) ); ?></option>
-						<?php foreach ( $data['options'] as $value => $label ) : ?>
-							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( isset( $selected_filters[ $filter ] ) && $value === $selected_filters[ $filter ] ); ?>><?php echo esc_html( $label ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				<?php endforeach; ?>
-
-				<?php
-					do_action( 'noptin_restrict_manage_subscribers', $this, $which );
-
-					submit_button( __( 'Filter', 'newsletter-optin-box' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
-				?>
-			<?php endif; ?>
-		</div>
-		<?php
-
 	}
 
 }

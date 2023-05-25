@@ -807,7 +807,7 @@ class Record {
 			);
 		}
 
-		return '<abbr title="' . esc_attr( $date->__toString() ) . '">' . esc_html( $date->context( 'view' ) ) . '</abbr>';
+		return '<abbr title="' . esc_attr( $date->__toString() ) . '">' . esc_html( $date->context( 'view_day' ) ) . '</abbr>';
 	}
 
 }

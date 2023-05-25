@@ -355,18 +355,18 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $activity Activity.
 	 */
 	public function record_activity( $activity ) {
-		$activity   = $this->get_activity();
-		$activity[] = array(
+		$activities   = $this->get_activity();
+		$activities[] = array(
 			'time'    => time(),
 			'content' => $activity,
 		);
 
 		// Only save the last 30 activities.
-		if ( count( $activity ) > 30 ) {
-			$activity = array_slice( $activity, -30 );
+		if ( count( $activities ) > 30 ) {
+			$activities = array_slice( $activities, -30 );
 		}
 
-		$this->set_activity( $activity );
+		$this->set_activity( $activities );
 	}
 
 	/**

@@ -99,7 +99,6 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 
 		if ( ! empty( $available_options ) ) {
 			$max_length = 0;
-			$enum       = array();
 
 			foreach ( array_keys( $available_options ) as $option ) {
 				$option_length = strlen( (string) $option );
@@ -107,12 +106,10 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 				if ( $option_length > $max_length ) {
 					$max_length = $option_length;
 				}
-
-				$enum[] = $option;
 			}
 
 			$schema[ $this->get_column_name( $custom_field ) ]['length'] = $max_length + 1;
-			$schema[ $this->get_column_name( $custom_field ) ]['enum']   = $enum;
+			$schema[ $this->get_column_name( $custom_field ) ]['enum']   = $available_options;
 		}
 
 		return $schema;

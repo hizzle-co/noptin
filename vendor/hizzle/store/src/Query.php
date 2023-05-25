@@ -465,7 +465,9 @@ class Query {
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ $key ] ) ) . "'";
 					$this->query_where .= " AND $field_name IN ($enums)";
 				} else {
-					$this->query_where .= $wpdb->prepare( " AND $field_name=$data_type", $qv[ $key ] ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+					$value = $field->sanitize( $qv[ $key ] );
+					$value = is_bool( $value ) ? (int) $value : $value;
+					$this->query_where .= $wpdb->prepare( " AND $field_name=$data_type", $value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
 			}
 
@@ -476,7 +478,9 @@ class Query {
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ "{$key}_not" ] ) ) . "'";
 					$this->query_where .= " AND $field_name NOT IN ($enums)";
 				} else {
-					$this->query_where .= $wpdb->prepare( " AND $field_name<>$data_type", $qv[ "{$key}_not" ] ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+					$value = $field->sanitize( $qv[ "{$key}_not" ] );
+					$value = is_bool( $value ) ? (int) $value : $value;
+					$this->query_where .= $wpdb->prepare( " AND $field_name<>$data_type", $value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
 			}
 

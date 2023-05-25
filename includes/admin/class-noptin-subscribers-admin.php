@@ -20,7 +20,6 @@ class Noptin_Subscribers_Admin {
 	 * @since 1.5.5
 	 */
 	public static function init_hooks() {
-		add_action( 'noptin_after_register_menus', 'Noptin_Subscribers_Admin::register_menu', 30 );
 		add_action( 'add_meta_boxes_noptin_subscribers', 'Noptin_Subscribers_Admin::register_metaboxes' );
 		add_action( 'noptin_admin_delete_all_subscribers', 'Noptin_Subscribers_Admin::delete_all_subscribers' );
 		add_action( 'noptin_admin_add_subscriber', 'Noptin_Subscribers_Admin::add_subscriber' );
@@ -29,25 +28,6 @@ class Noptin_Subscribers_Admin {
 		add_filter( 'set-screen-option', 'Noptin_Subscribers_Admin::save_subscribers_page_screen_options', 10, 3 );
 		add_action( 'noptin_delete_email_subscriber', 'Noptin_Subscribers_Admin::delete_subscriber' );
 		add_action( 'admin_init', 'Noptin_Subscribers_Admin::maybe_redirect_to_newsletter' );
-	}
-
-	/**
-	 * Registers the admin menu.
-	 *
-	 * @since 1.5.5
-	 */
-	public static function register_menu() {
-
-		$subscribers_page_title = apply_filters( 'noptin_admin_subscribers_page_title', __( 'Email Subscribers', 'newsletter-optin-box' ) );
-		add_submenu_page(
-			'noptin',
-			$subscribers_page_title,
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-subscribers',
-			'Noptin_Subscribers_Admin::output'
-		);
-
 	}
 
 	/**

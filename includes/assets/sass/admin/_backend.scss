@@ -1158,6 +1158,8 @@ a.no-campaign-create-new-campaign {
 
 		td {
 			vertical-align: middle;
+			padding: 13px;
+    		line-height: 26px;
 		}
 	}
 
@@ -1223,6 +1225,90 @@ a.no-campaign-create-new-campaign {
 		color: #b32d2e;
 		display: block;
 		margin-top: 0.8rem;
+	}
+
+	.noptin-record-actions {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+
+		// Each action is a grey button containing a dashicon.
+		.noptin-record-action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			background: #f1f1f1;
+			color: #646970;
+			font-size: 16px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			&:hover {
+				background: #e1e1e1;
+			}
+		}
+
+		// Delete action should be red.
+		.noptin-record-action__delete {
+			color: #b32d2e;
+		}
+
+		// Switch action contain a checkbox. Convert it to a toggle switch which changes depending on the state.
+		.noptin-record-action__switch-wrapper {
+			display: inline-block;
+
+			input {
+				width: 1px;
+				height: 1px;
+				visibility: hidden;
+				opacity: 0;
+			}
+		}
+
+		.noptin-record-action__switch {
+			display: inline-block;
+			position: relative;
+			width: 50px;
+			height: 30px;
+			border-radius: 15px;
+			background: #e1e1e1;
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			input {
+				display: none;
+			}
+
+			&:hover {
+				background: #d1d1d1;
+			}
+
+			&:before {
+				content: '';
+				position: absolute;
+				top: 2px;
+				left: 2px;
+				width: 26px;
+				height: 26px;
+				border-radius: 50%;
+				background: #fff;
+				transition: all 0.2s ease;
+			}
+		}
+
+		input:checked + .noptin-record-action__switch {
+			background: #43a047;
+
+			&:before {
+				left: calc(100% - 2px);
+				transform: translateX(-100%);
+			}
+		}
 	}
 }
 
@@ -1420,25 +1506,6 @@ a.no-campaign-create-new-campaign {
 		margin: 2px 0 5px;
     	font-weight: 700;
 	}
-}
-
-#noptin-subscribers-table #noptin-subscribers-table-wrap {
-
-	th {
-		padding-left: 13px;
-		padding-right: 13px;
-
-		a {
-			padding-left: 0;
-		}
-	}
-
-	td {
-		padding: 13px;
-    	line-height: 26px;
-		vertical-align: middle;
-	}
-
 }
 
 .button.noptin-send-test-email .dashicons-before {

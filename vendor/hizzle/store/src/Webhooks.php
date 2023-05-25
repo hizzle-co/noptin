@@ -58,11 +58,12 @@ class Webhooks {
 				// If this is an enum or boolean, watch for changes.
 				if ( $prop->is_boolean() || is_array( $prop->enum ) ) {
 					$enum = $prop->is_boolean() ? array( 'yes', 'no' ) : $prop->enum;
+					$enum = is_callable( $enum ) ? call_user_func( $enum ) : $enum;
 					$prop = $prop->name;
 
 					$this->events[ $collection->hook_prefix( "{$prop}_changed", true ) ] = "{$collection_name}.{$prop}.changed";
 
-					foreach ( $enum as $enum_key ) {
+					foreach ( array_keys( $enum ) as $enum_key ) {
 						$this->events[ $collection->hook_prefix( "{$prop}_set_to_{$enum_key}", true ) ] = "{$collection_name}.{$prop}_set_to.{$enum_key}";
 					}
 				}
