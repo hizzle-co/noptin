@@ -38,7 +38,7 @@ abstract class Noptin_Email_Type {
 	public $unsubscribe_url = '';
 
 	/**
-	 * @var Noptin_Subscriber
+	 * @var Noptin_Subscriber|\Hizzle\Noptin\DB\Subscriber
 	 */
 	public $subscriber;
 
@@ -162,51 +162,13 @@ abstract class Noptin_Email_Type {
 			return esc_html( $default );
 		}
 
-		if ( 'last_name' === $field || 'second_name' === $field ) {
-			$value = $this->subscriber->last_name;
-			return $value ? esc_html( $value ) : esc_html( $default );
-		}
-
-		// Full name.
-		if ( 'name' === $field ) {
-			$value = $this->subscriber->first_name . ' ' . $this->subscriber->last_name;
-			return $value ? esc_html( $value ) : esc_html( $default );
-		}
-
 		// Avatar URL.
 		if ( 'avatar_url' === $field ) {
-			return get_avatar_url( $this->subscriber->email );
+			return get_avatar_url( $this->subscriber->get( 'email' ) );
 		}
 
-		// Abort if no value.
-		if ( ! $this->subscriber->has_prop( $field ) ) {
-			return esc_html( $default );
-		}
-
-		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
-
-		// Format field value.
-		if ( isset( $all_fields[ $field ] ) ) {
-
-			$value = $this->subscriber->get( $field );
-			if ( 'checkbox' === $all_fields[ $field ] ) {
-				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
-			}
-
-			$value = wp_kses_post(
-				format_noptin_custom_field_value(
-					$this->subscriber->get( $field ),
-					$all_fields[ $field ],
-					$this->subscriber
-				)
-			);
-
-			if ( '&mdash;' !== $value ) {
-				return $value;
-			}
-		}
-
-		return esc_html( $default );
+		$value = $this->subscriber->get( $field );
+		return is_null( $value ) ? esc_html( $default ) : $value;
 	}
 
 	/**
@@ -453,7 +415,7 @@ abstract class Noptin_Email_Type {
 			array(
 				'cid' => $campaign->id,
 				'uid' => empty( $this->user ) ? false : $this->user->ID,
-				'sid' => empty( $this->subscriber ) ? false : $this->subscriber->id,
+				'sid' => empty( $this->subscriber ) ? false : $this->subscriber->get( 'id' ),
 			)
 		);
 

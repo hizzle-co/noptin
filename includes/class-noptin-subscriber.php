@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
- * @property bool   $active
+ * @property string $status
  * @property bool   $confirmed
  * @property string $confirm_key
  * @property string $date_created
@@ -306,6 +306,14 @@ class Noptin_Subscriber {
 			$key = 'id';
 		}
 
+		if ( strtolower( $key ) === 'second_name' ) {
+			$key = 'last_name';
+		}
+
+		if ( strtolower( $key ) === 'name' ) {
+			return trim( $this->first_name . ' ' . $this->last_name );
+		}
+
 		if ( isset( $this->data->$key ) ) {
 			$value = $this->data->$key;
 		} elseif ( ! $this->is_virtual ) {
@@ -346,7 +354,7 @@ class Noptin_Subscriber {
 	 *
 	 */
 	public function send_confirmation_email() {
-		return send_new_noptin_subscriber_double_optin_email( $this->id, $this->to_array(), true );
+		return send_new_noptin_subscriber_double_optin_email( $this->id );
 	}
 
 	/**
@@ -366,7 +374,7 @@ class Noptin_Subscriber {
 	 * @return bool.
 	 */
 	public function is_active() {
-		return $this->is_virtual || empty( $this->active );
+		return $this->is_virtual || 'subscribed' === $this->status;
 	}
 
 	/**

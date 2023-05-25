@@ -29,7 +29,7 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	public function __construct() {
-		add_action( 'noptin_before_deactivate_subscriber', array( $this, 'maybe_trigger' ) );
+		add_action( 'noptin_subscriber_status_set_to_unsubscribed', array( $this, 'maybe_trigger' ) );
 	}
 
 	/**
@@ -54,18 +54,12 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Called when someone unsubscribes from the newsletter.
+	 * Called when someone subscribes to the newsletter.
 	 *
-	 * @param int $subscriber The subscriber in question.
+	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber in question.
 	 */
 	public function maybe_trigger( $subscriber ) {
-		$subscriber = new Noptin_Subscriber( $subscriber );
-
-		// Only trigger if a subscriber is active.
-		if ( $subscriber->is_active() ) {
-			$this->trigger( $subscriber, array() );
-		}
-
+		$this->trigger( $subscriber, $subscriber->get_data() );
 	}
 
 	/**

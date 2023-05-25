@@ -228,7 +228,7 @@ class Schema {
 					'props'         => array_merge(
 						$props,
 						array(
-							'status'          => array(
+							'status'                   => array(
 								'type'        => 'VARCHAR',
 								'length'      => 12,
 								'nullable'    => false,
@@ -237,28 +237,28 @@ class Schema {
 								'enum'        => array_keys( noptin_get_subscriber_statuses() ),
 							),
 
-							'source'          => array(
+							'source'                   => array(
 								'type'        => 'VARCHAR',
 								'length'      => 100,
 								'description' => __( 'The subscription source.', 'newsletter-optin-box' ),
 								'nullable'    => true,
 							),
 
-							'ip_address'      => array(
+							'ip_address'               => array(
 								'type'        => 'VARCHAR',
 								'length'      => 46,
 								'description' => __( 'The IP address of the subscriber.', 'newsletter-optin-box' ),
 								'nullable'    => true,
 							),
 
-							'conversion_page' => array(
+							'conversion_page'          => array(
 								'type'        => 'VARCHAR',
 								'length'      => 255,
 								'description' => __( 'The page the subscriber converted on.', 'newsletter-optin-box' ),
 								'nullable'    => true,
 							),
 
-							'confirmed'       => array(
+							'confirmed'                => array(
 								'type'        => 'TINYINT',
 								'length'      => 1,
 								'nullable'    => false,
@@ -266,45 +266,59 @@ class Schema {
 								'description' => __( 'Whether the subscriber has confirmed their email address.', 'newsletter-optin-box' ),
 							),
 
-							'confirm_key'     => array(
+							'confirm_key'              => array(
 								'type'        => 'VARCHAR',
 								'length'      => 32,
 								'description' => __( 'The confirmation key.', 'newsletter-optin-box' ),
 								'nullable'    => false,
 							),
 
-							'date_created'    => array(
+							'date_created'             => array(
 								'type'        => 'DATETIME',
 								'nullable'    => false,
 								'description' => __( 'Creation date for this subscriber.', 'newsletter-optin-box' ),
 							),
 
-							'date_modified'   => array(
+							'date_modified'            => array(
 								'type'        => 'DATETIME',
 								'nullable'    => false,
 								'description' => __( 'Last modification date for this subscriber.', 'newsletter-optin-box' ),
 							),
 
-							'activity'        => array(
+							'activity'                 => array(
 								'type'        => 'TEXT',
 								'description' => __( 'Subscriber activity', 'newsletter-optin-box' ),
 							),
 
-							'sent_campaigns'  => array(
+							'sent_campaigns'           => array(
 								'type'        => 'TEXT',
 								'description' => __( 'An array of sent campaigns', 'newsletter-optin-box' ),
 							),
 
-							'edit_url'        => array(
+							'edit_url'                 => array(
 								'type'        => 'TEXT',
 								'description' => __( "The subscriber's edit URL.", 'newsletter-optin-box' ),
 								'is_dynamic'  => true,
 								'readonly'    => true,
 							),
 
-							'unsubscribe_url' => array(
+							'unsubscribe_url'          => array(
 								'type'        => 'TEXT',
 								'description' => __( "The subscriber's unsubscribe URL.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
+							),
+
+							'resubscribe_url'          => array(
+								'type'        => 'TEXT',
+								'description' => __( "The subscriber's resubscribe URL.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
+							),
+
+							'confirm_subscription_url' => array(
+								'type'        => 'TEXT',
+								'description' => __( "The subscriber's confirm subscription URL.", 'newsletter-optin-box' ),
 								'is_dynamic'  => true,
 								'readonly'    => true,
 							),

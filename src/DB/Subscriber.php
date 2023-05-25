@@ -137,6 +137,12 @@ class Subscriber extends \Hizzle\Store\Record {
 	 */
 	public function set_status( $value ) {
 		if ( array_key_exists( $value, noptin_get_subscriber_statuses() ) ) {
+
+			// If unsubscribing, record the activity.
+			if ( $this->object_read && $this->is_active() && 'unsubscribed' === $value ) {
+				$this->record_activity( 'Unsubscribed from the newsletter' );
+			}
+
 			$this->set_prop( 'status', $value );
 		}
 	}
@@ -213,7 +219,14 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param bool $value Confirmed status.
 	 */
 	public function set_confirmed( $value ) {
-		$this->set_prop( 'confirmed', (bool) $value );
+		$value = boolval( $value );
+		$this->set_prop( 'confirmed', $value );
+
+		// If the subscriber is confirmed, set the status to subscribed.
+		if ( $value && $this->object_read && $this->exists() && 'subscribed' !== $this->get_status() ) {
+			$this->set_status( 'subscribed' );
+			$this->record_activity( 'Confirmed email address' );
+		}
 	}
 
 	/**
@@ -350,6 +363,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param int $campaign_id Campaign ID.
 	 */
 	public function record_sent_campaign( $campaign_id ) {
+		$campaign_id    = (string) $campaign_id;
 		$sent_campaigns = $this->get_sent_campaigns();
 
 		if ( ! isset( $sent_campaigns[ $campaign_id ] ) ) {
@@ -373,12 +387,18 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param int $campaign_id Campaign ID.
 	 */
 	public function record_opened_campaign( $campaign_id ) {
+		$campaign_id    = (string) $campaign_id;
 		$sent_campaigns = $this->get_sent_campaigns();
 
 		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
 			$sent_campaigns[ $campaign_id ]['opens'][] = time();
 			$this->set_sent_campaigns( $sent_campaigns );
 			$this->save();
+
+			// Fire action.
+			if ( 1 === count( $sent_campaigns[ $campaign_id ]['opens'] ) ) {
+				do_action( 'log_noptin_subscriber_campaign_open', $this->get_id(), $campaign_id );
+			}
 		}
 	}
 
@@ -389,16 +409,24 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $url URL.
 	 */
 	public function record_clicked_link( $campaign_id, $url ) {
+		$campaign_id    = (string) $campaign_id;
 		$sent_campaigns = $this->get_sent_campaigns();
 
 		if ( ! isset( $sent_campaigns[ $campaign_id ] ) ) {
-			$sent_campaigns[ $campaign_id ]['clicks'][] = array(
-				'time' => time(),
-				'url'  => $url,
-			);
+
+			if ( ! isset( $sent_campaigns[ $campaign_id ]['clicks'][ $url ] ) ) {
+				$sent_campaigns[ $campaign_id ]['clicks'][ $url ] = array();
+			}
+
+			$sent_campaigns[ $campaign_id ]['clicks'][ $url ][] = time();
 
 			$this->set_sent_campaigns( $sent_campaigns );
 			$this->save();
+
+			// Fire action.
+			if ( 1 === count( $sent_campaigns[ $campaign_id ]['clicks'][ $url ] ) ) {
+				do_action( 'log_noptin_subscriber_campaign_click', $this->get_id(), $campaign_id, $url );
+			}
 		}
 	}
 
@@ -408,6 +436,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param int $campaign_id Campaign ID.
 	 */
 	public function record_unsubscribed_campaign( $campaign_id ) {
+		$campaign_id    = (string) $campaign_id;
 		$sent_campaigns = $this->get_sent_campaigns();
 
 		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
@@ -440,6 +469,38 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function get_unsubscribe_url() {
 		return get_noptin_action_url(
 			'unsubscribe',
+			noptin_encrypt(
+				wp_json_encode(
+					array( 'sid' => $this->get_id() )
+				)
+			)
+		);
+	}
+
+	/**
+	 * Returns the resubsribe URL for the subscriber.
+	 *
+	 * @return string
+	 */
+	public function get_resubscribe_url() {
+		return get_noptin_action_url(
+			'resubscribe',
+			noptin_encrypt(
+				wp_json_encode(
+					array( 'sid' => $this->get_id() )
+				)
+			)
+		);
+	}
+
+	/**
+	 * Returns the subscription confirmation URL for the subscriber.
+	 *
+	 * @return string
+	 */
+	public function get_confirm_subscription_url() {
+		return get_noptin_action_url(
+			'confirm',
 			noptin_encrypt(
 				wp_json_encode(
 					array( 'sid' => $this->get_id() )

@@ -194,6 +194,11 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 */
 	public function get_subject_email( $subject, $rule, $args ) {
 
+		// Subscriber, customer, etc.
+		if ( is_object( $subject ) && is_callable( array( $subject, 'get_email' ) ) ) {
+			return $subject->get_email();
+		}
+
 		// Maybe fetch from the subscriber.
 		if ( $subject instanceof Noptin_Subscriber ) {
 			return $subject->email;

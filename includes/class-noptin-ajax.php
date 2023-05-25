@@ -37,9 +37,6 @@ class Noptin_Ajax {
 		add_action( 'wp_ajax_noptin_import_subscribers', array( $this, 'import_subscribers' ) );
 		add_action( 'wp_ajax_noptin_prepare_subscriber_fields', array( $this, 'prepare_subscriber_fields' ) );
 
-		// Double opt-in email.
-		add_action( 'wp_ajax_noptin_send_double_optin_email', array( $this, 'send_double_optin_email' ) );
-
 	}
 
 	/**
@@ -93,43 +90,6 @@ class Noptin_Ajax {
 		}
 
 		wp_die( -1, 500 );
-	}
-
-	/**
-	 * Sends a double opt-in email to a subscriber.
-	 *
-	 * @access      public
-	 * @since       1.2.7
-	 * @return      void
-	 */
-	public function send_double_optin_email() {
-
-		// Ensure the nonce is valid...
-		check_ajax_referer( 'noptin_subscribers' );
-
-		// ... and that the user can import subscribers.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		if ( empty( $_POST['email'] ) || ! is_email( $_POST['email'] ) ) {
-			wp_send_json_error( __( 'Subscriber not found', 'newsletter-optin-box' ) );
-			exit;
-		}
-
-		$subscriber = new Noptin_Subscriber( sanitize_email( $_POST['email'] ) );
-		if ( ! $subscriber->exists() ) {
-			wp_send_json_error( __( 'This subscriber no longer exists. They might have been deleted.', 'newsletter-optin-box' ) );
-			exit;
-		}
-
-		if ( ! $subscriber->send_confirmation_email() ) {
-			wp_send_json_error( __( 'An error occured while sending the double opt-in email.', 'newsletter-optin-box' ) );
-			exit;
-		}
-
-		wp_send_json_success( __( 'A double opt-in confirmation email has been sent to the subscriber.', 'newsletter-optin-box' ) );
-
 	}
 
 	/**

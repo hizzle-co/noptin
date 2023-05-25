@@ -247,6 +247,10 @@ class Record {
 	 */
 	public function delete( $force_delete = false ) {
 
+		if ( ! $this->exists() ) {
+			return false;
+		}
+
 		try {
 
 			$this->get_collection()->delete( $this, $force_delete );

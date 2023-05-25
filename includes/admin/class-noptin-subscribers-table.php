@@ -117,16 +117,6 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 			noptin()->admin->show_info( __( 'The selected subscribers have been marked as in-active.', 'newsletter-optin-box' ) );
 
 		}
-
-		if ( 'resend_confirmation' === $action ) {
-
-			foreach ( $_POST['id'] as $id ) {
-				send_new_noptin_subscriber_double_optin_email( $id, false, true );
-			}
-
-			noptin()->admin->show_info( __( 'The selected subscribers have been sent a confirmation email.', 'newsletter-optin-box' ) );
-
-		}
 	}
 
 	/**
@@ -357,16 +347,11 @@ class Noptin_Subscribers_Table extends WP_List_Table {
 	protected function get_bulk_actions() {
 
 		$actions = array(
-			'send_email'          => __( 'Send Email', 'newsletter-optin-box' ),
-			'resend_confirmation' => __( 'Send Confirmation Email', 'newsletter-optin-box' ),
-			'delete'              => __( 'Delete', 'newsletter-optin-box' ),
-			'activate'            => __( 'Mark as active', 'newsletter-optin-box' ),
-			'deactivate'          => __( 'Mark as in-active', 'newsletter-optin-box' ),
+			'send_email' => __( 'Send Email', 'newsletter-optin-box' ),
+			'delete'     => __( 'Delete', 'newsletter-optin-box' ),
+			'activate'   => __( 'Mark as active', 'newsletter-optin-box' ),
+			'deactivate' => __( 'Mark as in-active', 'newsletter-optin-box' ),
 		);
-
-		if ( use_custom_noptin_double_optin_email() ) {
-			unset( $actions['resend_confirmation'] );
-		}
 
 		/**
 		 * Filters the bulk table actions shown on Newsletter tables.

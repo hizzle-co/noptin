@@ -54,14 +54,14 @@ class Migrate {
 
 			$subscriber = noptin_get_subscriber( $subscriber_id );
 
-			if ( ! is_wp_error( $subscriber ) && $subscriber->exists() ) {
+			if ( $subscriber->exists() ) {
 				self::migrate_subscriber( $subscriber );
 			}
 		} while ( time() - $start_time < 20 );
 
 		// If we have more subscribers, schedule another migration.
 		if ( ! empty( $subscriber_ids ) ) {
-			wp_schedule_single_event( time() + 20, 'noptin_migrate_subscribers' );
+			wp_schedule_single_event( time() + 60, 'noptin_migrate_subscribers' );
 		}
 	}
 
@@ -71,6 +71,8 @@ class Migrate {
 	 * @param Subscriber $subscriber The subscriber to migrate.
 	 */
 	public static function migrate_subscriber( $subscriber ) {
+
+		$data = array();
 
 		// Default meta.
 		$meta = array(

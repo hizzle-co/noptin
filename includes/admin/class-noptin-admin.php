@@ -145,7 +145,6 @@ class Noptin_Admin {
 
 		// (maybe) do an action.
 		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
-		add_action( 'noptin_created_new_custom_fields', array( $this, 'noptin_created_new_custom_fields' ) );
 
 		// Runs when saving a new opt-in form.
 		add_action( 'wp_ajax_noptin_save_optin_form', array( $this, 'save_optin_form' ) );
@@ -472,23 +471,6 @@ class Noptin_Admin {
 	}
 
 	/**
-	 * Hide the custom fields notice
-	 *
-	 * @access      public
-	 * @since       1.5.5
-	 */
-	public function noptin_created_new_custom_fields() {
-
-		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'noptin_created_new_custom_fields' ) ) {
-			return;
-		}
-
-		update_option( 'noptin_created_new_custom_fields', 1 );
-		wp_safe_redirect( remove_query_arg( array( '_wpnonce', 'noptin_admin_action' ) ) );
-		exit;
-	}
-
-	/**
 	 * Show notices
 	 *
 	 * @access      public
@@ -498,22 +480,6 @@ class Noptin_Admin {
 
 		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
-		}
-
-		$custom_fields = get_noptin_option( 'custom_fields' );
-
-		if ( empty( $custom_fields ) && ! get_option( 'noptin_created_new_custom_fields' ) && ( empty( $_GET['page'] ) || 'noptin-settings' !== $_GET['page'] ) ) {
-
-			$message = sprintf(
-				'%s<br><br><a class="button button-primary" href="%s">%s</a> <a class="button button-secondary" href="%s">%s</a>',
-				__( 'Noptin has changed the way it handles custom fields to give you more control.', 'newsletter-optin-box' ),
-				esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ),
-				__( 'Set Up Custom Fields', 'newsletter-optin-box' ),
-				wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_created_new_custom_fields' ), 'noptin_created_new_custom_fields' ),
-				__( 'Dismiss this notice forever', 'newsletter-optin-box' )
-			);
-
-			$this->print_notice( 'info', $message );
 		}
 
 		$notices = $this->get_notices();

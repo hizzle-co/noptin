@@ -307,12 +307,16 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	/**
 	 * Prepare smart tags.
 	 *
-	 * @param Noptin_Subscriber|WP_User|WC_Customer $subject
+	 * @param Noptin_Subscriber|\Hizzle\Noptin\DB\Subscriber|WP_User|WC_Customer $subject
 	 * @since 1.9.0
 	 * @return array
 	 */
 	public function prepare_known_smart_tags( $subject ) {
 		$smart_tags = array();
+
+		if ( $subject instanceof \Hizzle\Noptin\DB\Subscriber ) {
+			return $subject->get_data();
+		}
 
 		if ( $this->is_subscriber_based && $subject instanceof Noptin_Subscriber ) {
 
@@ -674,6 +678,9 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		// In case the subject is a subscriber, we need to store the email address.
 		if ( $args['subject'] instanceof Noptin_Subscriber ) {
 			$args['noptin_subject_subscriber'] = $args['subject']->id;
+			unset( $args['subject'] );
+		} elseif ( $args['subject'] instanceof \Hizzle\Noptin\DB\Subscriber ) {
+			$args['noptin_subject_subscriber'] = $args['subject']->get_id();
 			unset( $args['subject'] );
 		} elseif ( $args['subject'] instanceof WP_User ) { // In case the subject is a user, we need to store the user id.
 			$args['noptin_subject_user'] = $args['subject']->ID;

@@ -477,35 +477,15 @@ class Noptin_Page {
 	 * @since       1.2.7
 	 * @return      array
 	 */
-	public function pre_confirm_subscription( $page ) {
+	public function pre_confirm_subscription() {
 
 		// Fetch recipient.
 		$recipient = $this->get_request_recipient();
 
-		// Abort if no subscriber.
-		if ( empty( $recipient['sid'] ) ) {
-			return;
+		// Ensure there's a subscriber.
+		if ( ! empty( $recipient['sid'] ) ) {
+			confirm_noptin_subscriber_email( $recipient['sid'] );
 		}
-
-		$ip_address = noptin_get_user_ip();
-		if ( ! empty( $ip_address ) && '::1' !== $ip_address ) {
-			update_noptin_subscriber_meta( $recipient['sid'], 'ip_address', sanitize_text_field( $ip_address ) );
-		}
-
-		// Confirm them.
-		confirm_noptin_subscriber_email( $recipient['sid'] );
-
-		// If we are redirecting by page id, fetch the page's permalink.
-		if ( is_numeric( $page ) ) {
-			$page = get_permalink( $page );
-		}
-
-		// If we have a redirect, redirect.
-		if ( ! empty( $page ) ) {
-			wp_safe_redirect( $page );
-			exit;
-		}
-
 	}
 
 	/**
@@ -620,6 +600,17 @@ class Noptin_Page {
 		// Provide a way to filter the page.
 		$custom_page = apply_filters( 'noptin_action_page_redirect', $custom_page, $action, $this );
 		do_action( "noptin_pre_page_$action", $custom_page );
+
+		// If we are redirecting by page id, fetch the page's permalink.
+		if ( is_numeric( $custom_page ) ) {
+			$custom_page = get_permalink( $custom_page );
+		}
+
+		// If we have a redirect, redirect.
+		if ( ! empty( $custom_page ) ) {
+			wp_safe_redirect( $custom_page );
+			exit;
+		}
 
 		$template = locate_noptin_template( 'actions-page.php' );
 		if ( isset( $_GET['nte'] ) ) {

@@ -29,10 +29,10 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	public function __construct() {
-		add_action( 'noptin_insert_subscriber', array( $this, 'maybe_trigger' ), 1000 );
+		add_action( 'noptin_subscriber_created', array( $this, 'maybe_trigger' ), 1000 );
 
 		if ( noptin_has_enabled_double_optin() ) {
-			add_action( 'noptin_subscriber_confirmed', array( $this, 'maybe_trigger' ), 1000 );
+			add_action( 'noptin_subscriber_status_set_to_subscribed', array( $this, 'maybe_trigger' ), 1000 );
 		}
 	}
 
@@ -115,7 +115,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 * @since 1.2.8
 	 * @param Noptin_Automation_Rule $rule The rule to check for.
 	 * @param mixed $args Extra args for the action.
-	 * @param Noptin_Subscriber $subject The subject.
+	 * @param \Hizzle\Noptin\DB\Subscriber $subject The subject.
 	 * @param Noptin_Abstract_Action $action The action to run.
 	 * @return bool
 	 */
@@ -143,17 +143,17 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	/**
 	 * Called when someone subscribes to the newsletter.
 	 *
-	 * @param int $subscriber The subscriber in question.
+	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber in question.
 	 */
 	public function maybe_trigger( $subscriber ) {
-		$this->trigger( new Noptin_Subscriber( $subscriber ), array() );
+		$this->trigger( $subscriber, $subscriber->get_data() );
 	}
 
 	/**
 	 * Triggers action callbacks.
 	 *
 	 * @since 1.12.0
-	 * @param Noptin_Subscriber $subject The subject.
+	 * @param \Hizzle\Noptin\DB\Subscriber $subject The subject.
 	 * @param array $args Extra args for the action.
 	 * @return void
 	 */
@@ -190,7 +190,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 			}
 
 			// Set the current email.
-			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
+			$GLOBALS['current_noptin_email'] = $subject->get_email();
 
 			// Are we delaying the action?
 			$delay = $rule->get_delay();
@@ -218,8 +218,8 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function get_test_smart_tags( $rule ) {
 
-		$subject = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
-		$args    = $this->prepare_trigger_args( $subject, array() );
+		$subject = noptin_get_subscriber( get_current_noptin_subscriber_id() );
+		$args    = $this->prepare_trigger_args( $subject, $subject->get_data() );
 
 		return $args['smart_tags'];
 	}

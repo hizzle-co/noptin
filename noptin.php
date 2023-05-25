@@ -503,30 +503,7 @@ class Noptin {
 
 		// Upgrade db if installed version of noptin is lower than current version
 		if ( $installed_version < $this->db_version ) {
-			new Noptin_Install( $installed_version );
-			update_option( 'noptin_db_version', $this->db_version );
-		}
-
-		// Ensure all tables we successfully created.
-		$tables = array( 'subscribers_meta' );
-
-		foreach ( $tables as $table ) {
-
-			$option   = "noptin_{$table}_table_exists";
-			$function = "noptin_{$table}_table_exists";
-
-			// Do not run the query if the table is created.
-			if ( ! get_option( $option ) ) {
-
-				// Check if the table was created.
-				if ( call_user_func( $function ) ) {
-					update_option( $option, 1 );
-
-					// If not, create the table.
-				} else {
-					new Noptin_Install( $table );
-				}
-			}
+			new Noptin_Install( $installed_version, $this->db_version );
 		}
 	}
 

@@ -88,21 +88,6 @@ class Noptin_Subscribers_Admin {
 			'save'
 		);
 
-		// TODO: Fetch new subscriber automation rule emails then display those.
-		if ( 1 !== (int) $subscriber->confirmed && ! use_custom_noptin_double_optin_email() ) {
-
-			add_meta_box(
-				'noptin_subscriber_double_optin',
-				__( 'Confirmation Email', 'newsletter-optin-box' ),
-				'Noptin_Subscribers_Admin::metabox_callback',
-				'noptin_page_noptin-subscribers',
-				'side',
-				'default',
-				'double-optin'
-			);
-
-		}
-
 		if ( apply_filters( 'noptin_enable_geolocation', true ) ) {
 			$ip_address = $subscriber->ip_address;
 			if ( ! empty( $ip_address ) && '::1' !== $ip_address && noptin_locate_ip_address( $ip_address ) ) {
