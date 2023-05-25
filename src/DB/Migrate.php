@@ -99,6 +99,16 @@ class Migrate {
 			}
 		}
 
+		// Subtract timezone offset from date created.
+		$date_created = $subscriber->get_date_created();
+
+		if ( ! empty( $date_created ) ) {
+			$date_created = $date_created->getTimestamp() + ( get_option( 'gmt_offset' ) * 3600 );
+			$subscriber->set_date_created( $date_created );
+		} else {
+			$subscriber->set_date_created( time() );
+		}
+
 		// Fires before saving a migrated subscriber.
 		do_action( 'noptin_before_migrate_subscriber', $subscriber );
 

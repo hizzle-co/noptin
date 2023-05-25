@@ -162,6 +162,22 @@ class List_Table extends \WP_List_Table {
 	}
 
 	/**
+	 * Generates content for a single row of the table
+	 *
+	 * @since 1.2.8
+	 *
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $item The current item.
+	 */
+	public function single_row( $item ) {
+		$class_name = str_replace( '_', '-', $this->collection->hook_prefix( $item->get_id(), true ) );
+
+		echo '<tr class="' . esc_attr( sanitize_html_class( $class_name ) ) . '" data-id="' . absint( $item->get_id() ) . '">';
+		$this->single_row_columns( $item );
+		echo '</tr>';
+
+	}
+
+	/**
 	 * Displays a column.
 	 *
 	 * @param Record $item        item.
@@ -169,32 +185,11 @@ class List_Table extends \WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 
-		$method = 'get_' . $column_name;
-		if ( is_callable( array( $item, $method ) ) ) {
-			$value = $item->$method();
-
-			if ( is_a( $value, '\Hizzle\Store\Date_Time' ) ) {
-				return $value->context( 'view' );
-			}
-
-			if ( is_null( $value ) || '' === $value ) {
-				return '&mdash;';
-			}
-
-			if ( is_bool( $value ) ) {
-				if ( $value ) {
-					return '<span class="dashicons dashicons-yes" style="color: green"></span>';
-				}
-
-				return '<span class="dashicons dashicons-no" style="color: red"></span>';
-			}
-
-			return wp_kses_post( (string) $value );
-		}
+		// Render value.
+		$value = $item->display_prop( $column_name );
 
 		// Allow plugins to display custom columns.
-		do_action( $this->collection->hook_prefix( "table_$column_name" ), $item );
-
+		return apply_filters( $this->collection->hook_prefix( "table_column_$column_name" ), $value, $item );
 	}
 
 	/**

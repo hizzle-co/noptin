@@ -1133,6 +1133,99 @@ a.no-campaign-create-new-campaign {
 	}
 }
 
+#noptin-wrapper .noptin-enhanced-table {
+
+	@media screen and (min-width:782px) {
+		overflow-x: auto;
+		width: 100%;
+
+		.wp-list-table {
+			table-layout: auto;
+		}
+
+		.column-primary {
+			min-width: 320px;
+		}
+
+		.column-actions {
+			width: 160px;
+			text-align: right;
+		}
+
+		th.manage-column:not(.column-primary,.column-cb) {
+			min-width: 100px;
+		}
+
+		td {
+			vertical-align: middle;
+		}
+	}
+
+	.noptin-wrap-primary {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.noptin-record-image {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		img {
+			width: 100%;
+			height: auto;
+			max-height: 100%;
+			object-fit: cover;
+			border-radius: 4px;
+		}
+
+		.dashicons {
+			font-size: 40px;
+			width: 40px;
+			height: 40px;
+		}
+	}
+
+	.noptin-record-name {
+		flex: 1;
+		font-weight: 600;
+
+		.noptin-record-description {
+			font-weight: 400;
+			margin-top: 0.5rem;
+			color: #646970;
+		}
+
+		.row-actions {
+			font-weight: 400;
+		}
+	}
+
+	.noptin-record-meta {
+		display: block;
+		margin-bottom: 0.4rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.noptin-record-meta-key {
+		font-weight: 600;
+	}
+
+	.noptin-record-error {
+		color: #b32d2e;
+		display: block;
+		margin-top: 0.8rem;
+	}
+}
+
 #noptin-automation-rules-table {
 
 	td {
@@ -1344,23 +1437,6 @@ a.no-campaign-create-new-campaign {
 		padding: 13px;
     	line-height: 26px;
 		vertical-align: middle;
-	}
-
-	@media screen and (min-width:782px) {
-		overflow-x: scroll;
-    	width: 98%;
-
-		.wp-list-table {
-			table-layout: auto;
-		}
-
-		.column-email {
-			min-width: 320px;
-		}
-
-		th.manage-column:not(.column-email,.column-cb) {
-			min-width: 100px;
-		}
 	}
 
 }

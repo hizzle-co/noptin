@@ -675,7 +675,7 @@ add_action( 'noptin_subscriber_created', 'send_new_noptin_subscriber_double_opti
  * @return string The name of our subscribers table
  */
 function get_noptin_subscribers_table_name() {
-	_deprecated_function( __FUNCTION__, '1.10.0' );
+	_deprecated_function( __FUNCTION__, '1.13.0' );
 	return $GLOBALS['wpdb']->prefix . 'noptin_subscribers';
 }
 
@@ -686,6 +686,7 @@ function get_noptin_subscribers_table_name() {
  * @return string The name of our subscribers meta table
  */
 function get_noptin_subscribers_meta_table_name() {
+	_deprecated_function( __FUNCTION__, '1.13.0' );
 	return $GLOBALS['wpdb']->prefix . 'noptin_subscriber_meta';
 }
 
@@ -1251,6 +1252,10 @@ function noptin_subscriber_meets_conditional_logic( $conditional_logic, $subscri
  * @return string
  */
 function noptin_format_subscription_source( $source ) {
+
+	if ( is_null( $source ) ) {
+		return __( 'Unknown', 'newsletter-optin-box' );
+	}
 
 	if ( is_numeric( $source ) ) {
 		$title = get_the_title( $source );

@@ -727,13 +727,13 @@ class Query {
 		$collection = $this->get_collection();
 
 		// Main db table field.
-		if ( in_array( $this->known_fields['main'], $field, true ) || 'id' === strtolower( $field ) ) {
+		if ( in_array( $field, $this->known_fields['main'], true ) || 'id' === strtolower( $field ) ) {
 			$table = $collection->get_db_table_name();
 			return "$table.$field";
 		}
 
 		// Posts table fields.
-		if ( in_array( $this->known_fields['post'], $field, true ) ) {
+		if ( in_array( $field, $this->known_fields['post'], true ) ) {
 			$field = $collection->post_map[ $field ];
 			return "$wpdb->posts.$field";
 		}

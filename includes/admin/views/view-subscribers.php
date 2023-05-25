@@ -16,7 +16,7 @@
 
 	<?php noptin()->admin->show_notices(); ?>
 
-	<form id="noptin-subscribers-table" method="POST" action="<?php echo esc_url( remove_query_arg( array( 'delete-subscriber', '_wpnonce' ) ) ); ?>">
+	<form id="noptin-subscribers-table" class="noptin-enhanced-table" method="POST" action="<?php echo esc_url( remove_query_arg( array( 'delete-subscriber', '_wpnonce' ) ) ); ?>">
 		<?php $table->search_box( __( 'Search Subscribers', 'newsletter-optin-box' ), 'post' ); ?>
 		<?php $table->display(); ?>
 	</form>

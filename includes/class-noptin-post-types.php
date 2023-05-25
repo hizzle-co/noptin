@@ -208,7 +208,7 @@ class Noptin_Post_Types {
 
 					// Link to the list of subscribers who signed up using this specific form.
 					$url   = get_noptin_subscribers_overview_url();
-					$url   = esc_url( add_query_arg( '_subscriber_via', $post_id, $url ) );
+					$url   = esc_url( add_query_arg( 'source', $post_id, $url ) );
 					$title = esc_attr__( 'View the list of subscribers who signed up using this form.', 'newsletter-optin-box' );
 					$subs  = "<a href='$url' title='$title'>$subs</a>";
 

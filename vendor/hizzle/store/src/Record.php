@@ -715,4 +715,99 @@ class Record {
 
 	}
 
+	/**
+	 * Displays a given property.
+	 *
+	 * @param string $key The property key.
+	 */
+	public function display_prop( $key ) {
+
+		// Check if we have a special display method for this property.
+		$method = 'the_' . $key;
+
+		if ( method_exists( $this, $method ) ) {
+			return $this->$method();
+		}
+
+		// Retrieve the raw value.
+		$value = $this->get( $key );
+		$prop  = $this->has_prop( $key );
+
+		// Filter value.
+		$value = apply_filters( $this->object_type . '_display_' . $key, $value, $this );
+
+		// In case we have no value.
+		if ( is_null( $value ) || '' === $value || array() === $value ) {
+			return '&ndash;';
+		}
+
+		// Booleans.
+		if ( is_bool( $value ) ) {
+			return sprintf(
+				'<span class="dashicons dashicons-%s" style="color:%s;"></span>',
+				$value ? 'yes' : 'no',
+				$value ? 'green' : 'red'
+			);
+		}
+
+		// Dates.
+		if ( is_a( $value, '\Hizzle\Store\Date_Time' ) ) {
+			return $this->display_date_value( $value, empty( $prop ) ? 'datetime' : $prop->type );
+		}
+
+		// Arrays.
+		if ( ! is_scalar( $value ) ) {
+			$value = wp_json_encode( $value );
+		}
+
+		return wp_kses_post( (string) $value );
+
+	}
+
+	/**
+	 * Displays a date property.
+	 *
+	 * @param \Hizzle\Store\Date_Time $date date.
+	 * @param string $type type.
+	 */
+	protected function display_date_value( $date, $type ) {
+
+		if ( 'date' === $type ) {
+			return esc_html( $date->context( 'view_day' ) );
+		}
+
+		// If less than 24 hours, display the human readable time.
+		$time_diff = time() - $date->getTimestamp();
+
+		if ( $time_diff < WEEK_IN_SECONDS && $time_diff > 0 ) {
+			return sprintf(
+				'<abbr title="%1$s">%2$s</abbr>',
+				esc_attr( $date->__toString() ),
+				esc_html(
+					sprintf(
+						/* translators: %s: human-readable time difference */
+						__( '%s ago', 'hizzle-store' ),
+						human_time_diff( $date->getTimestamp(), time() )
+					)
+				)
+			);
+		}
+
+		if ( $time_diff < 0 && $time_diff < - WEEK_IN_SECONDS ) {
+			return sprintf(
+				'<abbr title="%1$s">%2$s</abbr>',
+				esc_attr( $date->__toString() ),
+				esc_html(
+					sprintf(
+						/* translators: %s: human-readable time difference */
+						__( 'in %s', 'hizzle-store' ),
+						human_time_diff( $date->getTimestamp(), time() )
+					)
+				)
+			);
+		}
+
+		return '<abbr title="' . esc_attr( $date->__toString() ) . '">' . esc_html( $date->context( 'view' ) ) . '</abbr>';
+	}
+
 }
