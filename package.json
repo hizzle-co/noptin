@@ -24,8 +24,8 @@
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
 		"@wordpress/api-fetch": "^6.28.0",
-		"@wordpress/components": "^24.0.0",
-		"@wordpress/dom-ready": "3.33.0",
+		"@wordpress/components": "^25.0.0",
+		"@wordpress/dom-ready": "3.34.0",
 		"@wordpress/icons": "^9.23.0",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
@@ -41,13 +41,13 @@
 		"@babel/preset-env": "^7.21.5",
 		"@mdi/js": "7.2.96",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
-		"@wordpress/babel-preset-default": "7.17.0",
+		"@wordpress/babel-preset-default": "7.18.0",
 		"autoprefixer": "10.4.14",
 		"babel-loader": "9.1.2",
 		"postcss": "8.4.23",
 		"postcss-csso": "6.0.1",
 		"sass": "1.62.1",
-		"webpack": "5.83.1",
+		"webpack": "5.84.1",
 		"webpack-cli": "5.1.1"
 	}
 }
