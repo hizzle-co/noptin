@@ -184,7 +184,7 @@ class Noptin_Settings {
 		}
 
 		$state                   = array_merge( get_noptin_options(), $state );
-		$state['custom_fields']  = get_noptin_custom_fields();
+		$state['custom_fields']  = array_values( get_noptin_custom_fields() );
 		$state['openSections']   = isset( $_GET['integration'] ) ? array( 'settings_section_' . noptin_clean( $_GET['integration'] ) ) : array();
 		$state['currentTab']     = isset( $_GET['tab'] ) ? noptin_clean( $_GET['tab'] ) : 'general';
 		$state['currentSection'] = 'main';
