@@ -91,11 +91,6 @@ class Installer {
 			add_noptin_subscriber( self::get_initial_subscriber_args() );
 		}
 
-		// Migrate old data.
-		if ( defined( 'NOPTIN_MIGRATE_SUBSCRIBERS' ) && NOPTIN_MIGRATE_SUBSCRIBERS ) {
-			do_noptin_background_action( 'noptin_migrate_subscribers' );
-		}
-
 		// Update the schema hash.
 		update_option( 'noptin_db_schema', self::get_schema_hash() );
 

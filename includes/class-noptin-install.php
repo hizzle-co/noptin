@@ -88,9 +88,8 @@ class Noptin_Install {
 			}
 
 			// Create recurring CRON job to migrate subscribers.
-			wp_schedule_single_event( time() + 60, 'noptin_migrate_subscribers' );
+			wp_schedule_single_event( time(), 'noptin_migrate_subscribers' );
 
-			define( 'NOPTIN_MIGRATE_SUBSCRIBERS', true );
 		}
 	}
 

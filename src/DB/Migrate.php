@@ -72,8 +72,6 @@ class Migrate {
 	 */
 	public static function migrate_subscriber( $subscriber ) {
 
-		$data = array();
-
 		// Default meta.
 		$meta = array(
 			'_subscriber_via'      => 'source',
@@ -94,8 +92,7 @@ class Migrate {
 			$meta_value = get_noptin_subscriber_meta( $subscriber->get_id(), $meta_key, true );
 
 			if ( '' !== $meta_value ) {
-				$method = 'set_' . $prop;
-				$subscriber->$method( $meta_value );
+				$subscriber->set( $prop, $meta_value );
 			}
 		}
 
