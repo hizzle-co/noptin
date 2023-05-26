@@ -85,7 +85,7 @@ class Noptin_Formidable_Forms extends FrmFormAction {
         $subscriber = self::get_custom_field_values( $entry, $action->post_content );
 
 		// Set source.
-		$subscriber['_subscriber_via'] = 'Formidable Forms';
+		$subscriber['source'] = 'Formidable Forms';
 
 		// And maybe the conversion page.
 		if ( isset( $_REQUEST['referrer'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended

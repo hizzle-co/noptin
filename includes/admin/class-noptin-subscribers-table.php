@@ -199,7 +199,12 @@ class Noptin_Subscribers_Table extends \Hizzle\Store\List_Table {
 		foreach ( get_noptin_custom_fields() as $field ) {
 
 			if ( ! empty( $field['subs_table'] ) ) {
-				$fields[ $field['merge_tag'] ] = $field['label'];
+
+				// Prepare merge tag.
+				$merge_tag = ! empty( $field['predefined'] ) ? $field['merge_tag'] : 'cf_' . $field['merge_tag'];
+
+				// Add field.
+				$fields[ $merge_tag ] = $field['label'];
 			}
 		}
 

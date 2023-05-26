@@ -153,7 +153,7 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 
 		// Prepare subscriber details.
 		$subscriber = array(
-            '_subscriber_via' => 'Ninja Forms',
+            'source' => 'Ninja Forms',
         );
 
         // Add the subscriber's IP address.

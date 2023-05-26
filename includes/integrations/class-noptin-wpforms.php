@@ -294,8 +294,8 @@ class Noptin_WPForms {
 
 		// Prepare Noptin Fields.
 		$noptin_fields = array(
-			'_subscriber_via' => 'WPForms',
-			'email'           => sanitize_email( $fields[ $email_field_id ]['value'] ),
+			'source' => 'WPForms',
+			'email'  => sanitize_email( $fields[ $email_field_id ]['value'] ),
 		);
 
 		// Add the subscriber's IP address.

@@ -165,7 +165,7 @@ class Noptin_Ajax {
 			foreach ( $data['mapped'] as $noptin => $_imported ) {
 
 				// Manually entered.
-				if ( '-1' === $_imported && '_subscriber_via' !== $noptin ) {
+				if ( '-1' === $_imported && 'source' !== $noptin ) {
 
 					if ( isset( $data['custom'][ $noptin ] ) ) {
 						$subscriber[ $noptin ] = $data['custom'][ $noptin ];
@@ -187,7 +187,7 @@ class Noptin_Ajax {
 				}
 
 				// Source.
-				if ( '_subscriber_via' === $noptin && ( empty( $_imported ) || '-1' === $_imported ) ) {
+				if ( 'source' === $noptin && ( empty( $_imported ) || '-1' === $_imported ) ) {
 					$subscriber[ $noptin ] = 'import';
 					continue;
 				}
@@ -391,7 +391,7 @@ class Noptin_Ajax {
 		}
 
 		if ( is_object( $form ) ) {
-			$filtered['_subscriber_via'] = $form->ID;
+			$filtered['source'] = $form->ID;
 		}
 
 		/**

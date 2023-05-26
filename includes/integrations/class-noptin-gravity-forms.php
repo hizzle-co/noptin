@@ -384,7 +384,7 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 
 		// Prepare subscriber details.
 		$subscriber = array(
-			'_subscriber_via' => 'Gravity Forms',
+			'source'          => 'Gravity Forms',
 			'conversion_page' => $entry['source_url'],
         );
 

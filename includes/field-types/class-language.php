@@ -79,4 +79,21 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 		return esc_html__( 'Not Set', 'newsletter-optin-box' );
 	}
 
+	/**
+	 * Filters the database schema.
+	 *
+	 * @since 1.13.0
+	 * @param array $schema
+	 * @param array $field
+	 */
+	public function filter_db_schema( $schema, $custom_field ) {
+
+		// Call parent.
+		$schema = parent::filter_db_schema( $schema, $custom_field );
+
+		// Set default.
+		$schema[ $this->get_column_name( $custom_field ) ]['default'] = get_locale();
+
+		return $schema;
+	}
 }

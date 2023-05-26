@@ -270,9 +270,9 @@ class Noptin_Subscribers_Admin {
 
 		// Prepare subscriber fields.
 		$subscriber_fields = array(
-			'_subscriber_via' => 'manual',
-			'active'          => (int) $_POST['noptin_fields']['active'],
-			'confirmed'       => (int) $_POST['noptin_fields']['confirmed'],
+			'source'    => 'manual',
+			'active'    => (int) $_POST['noptin_fields']['active'],
+			'confirmed' => (int) $_POST['noptin_fields']['confirmed'],
 		);
 
 		foreach ( get_noptin_custom_fields() as $custom_field ) {

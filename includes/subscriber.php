@@ -275,88 +275,84 @@ function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value 
  * Inserts a new subscriber into the database
  *
  * This function returns the subscriber id if the subscriber exists.
- * It does not update the subscriber though.
+ * It does not update the subscriber though unless the $update_existing argument is set to true.
  *
  * @access  public
  * @since   1.0.5
  * @return int|string Subscriber id on success, error on failure.
  */
-function add_noptin_subscriber( $fields, $silent = false ) {
-	global $wpdb;
+function add_noptin_subscriber( $fields ) {
 
 	if ( empty( $fields['language'] ) && noptin_is_multilingual() ) {
 		$fields['language'] = sanitize_text_field( get_locale() );
 	}
-
-	$table  = get_noptin_subscribers_table_name();
-	$fields = noptin_clean( wp_unslash( apply_filters( 'new_noptin_subscriber_fields', $fields ) ) );
 
 	// Ensure an email address is provided and it doesn't exist already.
 	if ( empty( $fields['email'] ) || ! is_email( $fields['email'] ) ) {
 		return __( 'Please provide a valid email address', 'newsletter-optin-box' );
 	}
 
-	// Abort if the email is not unique.
+	// Sanitize the email.
 	$fields['email'] = sanitize_email( $fields['email'] );
-	$subscriber_id   = get_noptin_subscriber_id_by_email( $fields['email'] );
+
+	// Check if the subscriber already exists.
+	$subscriber_id = get_noptin_subscriber_id_by_email( $fields['email'] );
 	if ( ! empty( $subscriber_id ) ) {
+
+		// Allow updating of existing subscribers.
+		if ( apply_filters( 'noptin_update_existing_subscriber', ! empty( $fields['update_existing'] ), $subscriber_id, $fields ) ) {
+			return update_noptin_subscriber( $subscriber_id, $fields );
+		}
+
 		return (int) $subscriber_id;
 	}
 
-	// Maybe split name into first and last.
-	if ( isset( $fields['name'] ) ) {
-		$names = noptin_split_subscriber_name( $fields['name'] );
+	// Get the subscriber object.
+	$subscriber = noptin_get_subscriber();
 
-		$fields['first_name'] = empty( $fields['first_name'] ) ? $names[0] : trim( $fields['first_name'] );
-		$fields['last_name']  = empty( $fields['last_name'] ) ? $names[1] : trim( $fields['last_name'] );
+	// Set the subscriber properties.
+	$subscriber->set_props( wp_unslash( $fields ) );
+
+	// Set the confirmation key.
+	$subscriber->set_confirm_key( md5( wp_generate_password( 100, true, true ) . uniqid() ) );
+
+	// Set the subscriber status.
+	if ( empty( $fields['status'] ) ) {
+		$subscriber->set_status( get_noptin_option( 'double_optin', false ) ? 'pending' : 'subscribed' );
 	}
 
-	$database_fields = array(
-		'email'        => $fields['email'],
-		'first_name'   => empty( $fields['first_name'] ) ? '' : $fields['first_name'],
-		'last_name'    => empty( $fields['last_name'] ) ? '' : $fields['last_name'],
-		'confirm_key'  => isset( $fields['confirm_key'] ) ? $fields['confirm_key'] : md5( $fields['email'] . wp_generate_password( 32, true, true ) ),
-		'date_created' => ! empty( $fields['date_created'] ) ? gmdate( 'Y-m-d', strtotime( $fields['date_created'] ) ) : current_time( 'Y-m-d' ),
-		'active'       => isset( $fields['active'] ) ? (int) $fields['active'] : ( get_noptin_option( 'double_optin', false ) ? 1 : 0 ),
-		'confirmed'    => ! empty( $fields['confirmed'] ),
-	);
-
-	if ( ! $wpdb->insert( $table, $database_fields, '%s' ) ) {
-		return 'An error occurred. Try again.';
+	// Backwards compatibility (source).
+	if ( isset( $fields['_subscriber_via'] ) ) {
+		$subscriber->set_source( $fields['_subscriber_via'] );
 	}
 
-	$id = $wpdb->insert_id;
-
-	$fields = array_merge( $fields, $database_fields );
-
-	unset( $fields['last_name'] );
-	unset( $fields['name'] );
-
-	// Insert additional meta data.
-	foreach ( $fields as $field => $value ) {
-
-		if ( isset( $database_fields[ $field ] ) || 'integration_data' === $field ) {
-			continue;
-		}
-
-		update_noptin_subscriber_meta( $id, $field, $value );
+	// Backwards compatibility (status).
+	if ( isset( $fields['active'] ) ) {
+		$subscriber->set_status( $fields['active'] ? 'subscribed' : 'pending' );
 	}
 
-	setcookie( 'noptin_email_subscribed', $database_fields['confirm_key'], time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
-	$_GET['noptin_key'] = $database_fields['confirm_key'];
+	// Save the subscriber.
+	$result = $subscriber->save();
+
+	if ( is_wp_error( $result ) ) {
+		return $result->get_error_message();
+	}
+
+	if ( ! $subscriber->exists() ) {
+		return 'An error occurred';
+	}
+
+	// Set cookie.
+	setcookie( 'noptin_email_subscribed', $subscriber->get_confirm_key(), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+
+	$_GET['noptin_key'] = $subscriber->get_confirm_key();
 
 	$cookie = get_noptin_option( 'subscribers_cookie' );
 	if ( ! empty( $cookie ) && is_string( $cookie ) ) {
 		setcookie( $cookie, '1', time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
 	}
 
-	if ( ! $silent ) {
-		do_action( 'noptin_insert_subscriber', $id, $fields );
-	}
-
-	delete_transient( 'noptin_subscription_sources' );
-
-	return $id;
+	return $subscriber->get_id();
 
 }
 

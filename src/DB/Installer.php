@@ -172,18 +172,18 @@ class Installer {
 		if ( get_current_user_id() > 0 ) {
 			$user = get_user_by( 'id', get_current_user_id() );
 			return array(
-				'email'           => $user->user_email,
-				'name'            => $user->display_name,
-				'_subscriber_via' => 'default_user',
-				'ip_address'      => noptin_get_user_ip(),
+				'email'      => $user->user_email,
+				'name'       => $user->display_name,
+				'source'     => 'default_user',
+				'ip_address' => noptin_get_user_ip(),
 			);
 		}
 
 		$admin_email = sanitize_email( get_bloginfo( 'admin_email' ) );
 		$admin       = get_user_by( 'email', $admin_email );
 		$args        = array(
-			'email'           => $admin_email,
-			'_subscriber_via' => 'default_user',
+			'email'  => $admin_email,
+			'source' => 'default_user',
 		);
 
 		if ( $admin ) {

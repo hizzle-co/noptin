@@ -262,7 +262,7 @@ class Noptin_Form_Listener {
 
 		// ... and the source.
 		if ( ! empty( $source ) ) {
-			$subscriber['_subscriber_via'] = noptin_clean( $source );
+			$subscriber['source'] = noptin_clean( $source );
 		}
 
 		// Finally, add connection data.

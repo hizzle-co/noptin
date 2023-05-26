@@ -80,7 +80,7 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		$fields = $record->get( 'fields' );
 
 		$subscriber = array(
-			'_subscriber_via' => 'Elementor',
+			'source' => 'Elementor',
 		);
 
 		// Referral page.

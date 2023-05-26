@@ -257,7 +257,7 @@ class Noptin_Contact_Form_7 {
 
 		// Prepare subscriber details.
 		$subscriber = array(
-            '_subscriber_via' => 'Contact Form 7',
+            'source' => 'Contact Form 7',
         );
 
         // Add the subscriber's IP address.
