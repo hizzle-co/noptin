@@ -77,20 +77,15 @@ class Noptin_Install {
 		// Remove key email.
 		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers DROP KEY email" );
 
-		// Fetch all subscriber ids then add them to list of subscribers to migrate.
-		$subscriber_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}noptin_subscribers" );
+		// Create a _migrate_subscriber meta field for all subscribers.
+		// This will be used to migrate subscribers in the background.
+		$wpdb->query(
+			"INSERT INTO {$wpdb->prefix}noptin_subscriber_meta (noptin_subscriber_id, meta_key, meta_value)
+			SELECT id, '_migrate_subscriber', '1' FROM {$wpdb->prefix}noptin_subscribers"
+		);
 
-		if ( ! empty( $subscriber_ids ) ) {
-
-			// Add migration flag to all subscribers.
-			foreach ( $subscriber_ids as $subscriber_id ) {
-				update_noptin_subscriber_meta( $subscriber_id, '_migrate_subscriber', 1 );
-			}
-
-			// Create recurring CRON job to migrate subscribers.
-			wp_schedule_single_event( time(), 'noptin_migrate_subscribers' );
-
-		}
+		// Create recurring CRON job to migrate subscribers.
+		wp_schedule_single_event( time(), 'noptin_migrate_subscribers' );
 	}
 
 	/**
