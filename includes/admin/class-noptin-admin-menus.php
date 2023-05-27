@@ -192,6 +192,10 @@ class Noptin_Admin_Menus {
 
 		if ( ! empty( $script ) ) {
 			Noptin_Scripts::add_admin_script( $hook_suffix, $script );
+
+			if ( 'subscribers' === $script ) {
+				Noptin_Scripts::add_admin_script( $hook_suffix, 'table' );
+			}
 		}
 	}
 

@@ -16,6 +16,8 @@
 
 	<?php noptin()->admin->show_notices(); ?>
 
+	<div id="noptin-records__overview-app" data-namespace="noptin" data-collection="subscribers"></div>
+
 	<form id="noptin-subscribers-table" class="noptin-enhanced-table" method="GET" action="<?php echo esc_url( add_query_arg( 'page', 'noptin-subscribers', admin_url( 'admin.php' ) ) ); ?>">
 		<input type="hidden" name="page" value="noptin-subscribers" />
 		<?php $table->search_box( __( 'Search Subscribers', 'newsletter-optin-box' ), 'post' ); ?>

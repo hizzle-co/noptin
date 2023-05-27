@@ -133,6 +133,13 @@ class Noptin_Scripts {
 
 		if ( is_string( $script ) ) {
 			$data   = include plugin_dir_path( __FILE__ ) . "assets/js/dist/$script.asset.php";
+
+			// If a matching css file exists, enqueue it.
+			if ( file_exists( plugin_dir_path( __FILE__ ) . "assets/css/$script.css" ) ) {
+				wp_enqueue_style( 'noptin-' . $script, plugin_dir_url( __FILE__ ) . "assets/css/$script.css", array(), $data['version'] );
+			}
+
+			// Prepare the script.
 			$script = array(
 				'handle'       => 'noptin-' . $script,
 				'dependencies' => $data['dependencies'],

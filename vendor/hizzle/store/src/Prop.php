@@ -34,6 +34,13 @@ class Prop {
 	public $name;
 
 	/**
+	 * The prop label.
+	 *
+	 * @var string
+	 */
+	public $label;
+
+	/**
 	 * The prop description.
 	 *
 	 * @var string
@@ -158,6 +165,10 @@ class Prop {
 			if ( property_exists( $this, $key ) ) {
 				$this->$key = $value;
 			}
+		}
+
+		if ( empty( $this->label ) ) {
+			$this->label = ucfirst( str_replace( '_', ' ', $this->name ) );
 		}
 	}
 

@@ -48,6 +48,7 @@ class Noptin_Custom_Field_Number extends Noptin_Custom_Field_Text {
 		$schema[ $this->get_column_name( $custom_field ) ] = array(
 			'type'        => 'DECIMAL',
 			'length'      => '26,8',
+			'label'       => wp_strip_all_tags( $custom_field['label'] ),
 			'description' => wp_strip_all_tags( $custom_field['label'] ),
 		);
 

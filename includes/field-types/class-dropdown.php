@@ -92,6 +92,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 		$schema[ $this->get_column_name( $custom_field ) ] = array(
 			'type'        => 'VARCHAR',
 			'length'      => 255,
+			'label'       => wp_strip_all_tags( $custom_field['label'] ),
 			'description' => wp_strip_all_tags( $custom_field['label'] ),
 		);
 

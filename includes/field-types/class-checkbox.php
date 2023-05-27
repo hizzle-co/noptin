@@ -91,6 +91,7 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 		$schema[ $this->get_column_name( $custom_field ) ] = array(
 			'type'        => 'TINYINT',
 			'length'      => 1,
+			'label'       => wp_strip_all_tags( $custom_field['label'] ),
 			'description' => wp_strip_all_tags( $custom_field['label'] ),
 			'nullable'    => false,
 			'default'     => 0,

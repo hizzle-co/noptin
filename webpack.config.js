@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const WooCommerceDependencyExtractionWebpackPlugin = require('@woocommerce/dependency-extraction-webpack-plugin');
 
 module.exports = {
-	mode: "production",
+	mode: "development",
 
 	entry: {
 		admin: "./includes/assets/js/src/admin.js",
@@ -20,6 +20,7 @@ module.exports = {
 		"blocks-new": "./includes/assets/js/src/blocks-new.js",
 		"blocks-woocommerce-backend": "./includes/assets/js/src/wc/index.js",
 		"blocks-woocommerce-frontend": "./includes/assets/js/src/wc/frontend.js",
+		table: "./includes/assets/js/src/table.js",
 		subscribers: "./includes/assets/js/src/subscribers.js",
 		"subscribers-import": "./includes/assets/js/src/subscribers-import.js",
 		"form-scripts": "./includes/assets/js/src/form-scripts.js",
@@ -47,7 +48,7 @@ module.exports = {
 			{
 				test: /\.css$/,
 				use: ['style-loader', 'css-loader'],
-			  },
+			},
 		]
 	},
 	plugins: [

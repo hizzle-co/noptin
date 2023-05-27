@@ -66,6 +66,7 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 	public function filter_db_schema( $schema, $custom_field ) {
 		$schema[ $this->get_column_name( $custom_field ) ] = array(
 			'type'        => 'DATE',
+			'label'       => wp_strip_all_tags( $custom_field['label'] ),
 			'description' => wp_strip_all_tags( $custom_field['label'] ),
 		);
 

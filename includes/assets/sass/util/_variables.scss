@@ -1,0 +1,32 @@
+// Import Gutenberg variables
+@import '../../../../node_modules/@wordpress/base-styles/_colors.scss';
+@import '../../../../node_modules/@wordpress/base-styles/colors.scss';
+@import '../../../../node_modules/@wordpress/base-styles/variables.scss';
+@import '../../../../node_modules/@wordpress/base-styles/mixins.scss';
+@import '../../../../node_modules/@wordpress/base-styles/breakpoints.scss';
+@import '../../../../node_modules/@wordpress/base-styles/animations.scss';
+@import '../../../../node_modules/@wordpress/base-styles/z-index.scss';
+@import '../../../../node_modules/@wordpress/base-styles/default-custom-properties.scss';
+
+$gap-largest: 40px;
+$gap-larger: 36px;
+$gap-large: 24px;
+$gap: 16px;
+$gap-small: 12px;
+$gap-smaller: 8px;
+$gap-smallest: 4px;
+$spacing: $gap;
+
+// Header
+$header-height: 60px;
+$header-scroll-shadow: 0 8px 8px 0 rgba(85, 93, 102, 0.3);
+
+// Colors.
+$studio-white: #ffffff;
+$studio-noptin-purple-70: #533582;
+$table-border: #e2e4e7;
+$button-border: #b5bfc9;
+$button: #f0f2f4;
+$wp-admin-sidebar: #f1f1f1;
+$error-red: #dc3232;
+$success-green: #46b450;

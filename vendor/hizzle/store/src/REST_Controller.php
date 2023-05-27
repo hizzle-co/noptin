@@ -228,6 +228,20 @@ class REST_Controller extends \WP_REST_Controller {
 				'schema' => '__return_empty_array',
 			)
 		);
+
+		// Method to retrieve the data schema.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/collection_schema',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_collection_table_schema' ),
+					'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				),
+				'schema' => '__return_empty_array',
+			)
+		);
 	}
 
 	/**
@@ -656,6 +670,9 @@ class REST_Controller extends \WP_REST_Controller {
 			'aggregate'  => array(
 				'href' => rest_url( sprintf( '/%s/%s/aggregate', $this->namespace, $this->rest_base ) ),
 			),
+			'schema'     => array(
+				'href' => rest_url( sprintf( '/%s/%s/schema', $this->namespace, $this->rest_base ) ),
+			),
 		);
 
 		// TODO: Add links to related objects.
@@ -859,7 +876,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 * Aggregates items.
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 * @return \WP_Error|WP_REST_Response Response object on success, or WP_Error object on failure.
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	public function aggregate_items( $request ) {
 
@@ -868,6 +885,64 @@ class REST_Controller extends \WP_REST_Controller {
 		try {
 			$query = $collection->query( $request->get_params() );
 			return rest_ensure_response( $query->get_aggregate() );
+		} catch ( Store_Exception $e ) {
+			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		}
+	}
+
+	/**
+	 * Retrieves the collection schema, readable by table components.
+	 *
+	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
+	 */
+	public function get_collection_table_schema() {
+		$collection = $this->fetch_collection();
+
+		try {
+			$schema = array();
+
+			foreach ( $collection->get_props() as $prop ) {
+
+				$enum = array();
+
+				if ( is_callable( $prop->enum ) ) {
+					$enum = call_user_func( $prop->enum );
+				} elseif ( is_array( $prop->enum ) ) {
+					$enum = $prop->enum;
+				}
+
+				$schema[] = array(
+					'name'        => $prop->name,
+					'label'       => $prop->label,
+					'description' => $prop->description,
+					'length'      => $prop->length,
+					'nullable'    => $prop->nullable,
+					'default'     => $prop->default,
+					'enum'        => $enum,
+					'readonly'    => $prop->readonly,
+					'multiple'    => $prop->is_meta_key && $prop->is_meta_key_multiple,
+					'is_dynamic'  => $prop->is_dynamic,
+					'is_boolean'  => $prop->is_boolean(),
+					'is_numeric'  => $prop->is_numeric(),
+					'is_float'    => $prop->is_float(),
+					'is_date'     => $prop->is_date(),
+				);
+
+			}
+
+			$query = $collection->query(
+				array(
+					'fields' => 'id',
+					'number' => 1,
+				)
+			);
+
+			return rest_ensure_response(
+				array(
+					'schema' => $schema,
+					'count'  => $query->get_total(),
+				)
+			);
 		} catch ( Store_Exception $e ) {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
