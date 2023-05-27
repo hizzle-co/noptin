@@ -4,8 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { Fragment, useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { find, first, without, compact, uniq } from 'lodash';
-import { download, upload } from '@wordpress/icons';
+import { without, compact, uniq } from 'lodash';
 import {
 	Card,
 	CardBody,
@@ -110,38 +109,6 @@ const TableCard = ( {
 		'has-search': hasSearch,
 	} );
 
-	// Actions.
-	const tableActions = (onClose) => {
-
-		return (
-			<>
-				{ onClickDownload && (
-					<MenuItem
-						icon={ download }
-						onClick={ () => {
-							onClose();
-							onClickDownload();
-						}}
-					>
-						{ __( 'Export', 'newsletter-optin-box' ) }
-					</MenuItem>
-				) }
-
-				{ onClickImport && (
-					<MenuItem
-						icon={ upload }
-						onClick={ () => {
-							onClose();
-							onClickImport();
-						}}
-					>
-						{ __( 'Import', 'newsletter-optin-box' ) }
-					</MenuItem>
-				) }
-			</>
-		);
-	};
-
 	return (
 		<Card className={ classes }>
 
@@ -149,9 +116,11 @@ const TableCard = ( {
 				<Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
 					{ title }
 				</Text>
+
 				<div className="noptin-table__actions">{ actions }</div>
+
 				{ showMenu && (
-					<EllipsisMenu label={ __( 'Choose which values to display', 'newsletter-optin-box' ) } actions={ tableActions }>
+					<EllipsisMenu label={ __( 'Choose which values to display', 'newsletter-optin-box' ) }>
 						{ () => (
 							<>
 								<MenuGroup label={__( 'Columns', 'newsletter-optin-box' )}>

@@ -5,12 +5,21 @@ import apiFetch from "@wordpress/api-fetch";
 import { useState, useEffect, useMemo } from "@wordpress/element";
 import TableCard from "../table";
 import DisplayCell from "./display-cell";
+import { Notice } from "@wordpress/components";
+
+/**
+ * Local dependencies.
+ */
+import { getSchema } from "../collection/get-schema";
 
 /**
  * Renders a records overview table.
  * @param {Object} props
  * @param {string} props.namespace
  * @param {string} props.collection
+ * @param {string} props.title
+ * @param {string} props.singular
+ * @param {string} props.icon
  * @returns 
  */
 export default function RecordsTable( { namespace, collection, ...extra } ) {
@@ -23,7 +32,7 @@ export default function RecordsTable( { namespace, collection, ...extra } ) {
 
     // Fetch schema on mount.
     useEffect( () => {
-        apiFetch( { path: `${ namespace }/v1/${ collection }/collection_schema` } )
+        getSchema( namespace, collection )
             .then( ( {count, schema } ) => {
                 setTotal( count );
                 setSchema( schema );
@@ -31,7 +40,7 @@ export default function RecordsTable( { namespace, collection, ...extra } ) {
             .catch( ( error ) => {
                 setError( error );
             } )
-    }, [] );
+    }, [namespace, collection] );
 
     // Fetch rows on mount.
     useEffect( () => {
@@ -43,7 +52,7 @@ export default function RecordsTable( { namespace, collection, ...extra } ) {
             .finally( () => {
                 setLoading( false );
             } );
-    }, [] );
+    }, [namespace, collection] );
 
     // Make some columns from the schema.
     const columns = useMemo( () => {

@@ -1,25 +1,71 @@
 <?php
+/**
+ * Displays the subscribers page.
+ *
+ * @since 1.2.4
+ */
 
-	$table = new Noptin_Subscribers_Table();
-	$table->prepare_items();
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
+$components = array(
+	'/'      => array(
+		'title'      => esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
+		'singular'   => esc_html__( 'Email Subscriber', 'newsletter-optin-box' ),
+		'component'  => 'list-records',
+		'collection' => 'subscribers',
+		'namespace'  => 'noptin',
+		'icon'       => 'admin-users',
+	),
+	'add'    => array(
+		'title'      => esc_html__( 'Add New Subscriber', 'newsletter-optin-box' ),
+		'singular'   => esc_html__( 'Add New', 'newsletter-optin-box' ),
+		'component'  => 'create-record',
+		'collection' => 'subscribers',
+		'namespace'  => 'noptin',
+	),
+	'update' => array(
+		'title'      => esc_html__( 'Update Subscriber', 'newsletter-optin-box' ),
+		'singular'   => esc_html__( 'Update', 'newsletter-optin-box' ),
+		'component'  => 'update-record',
+		'collection' => 'subscribers',
+		'namespace'  => 'noptin',
+		'hide'       => true,
+	),
+	'import' => array(
+		'title'      => esc_html__( 'Import Subscribers', 'newsletter-optin-box' ),
+		'singular'   => esc_html__( 'Import', 'newsletter-optin-box' ),
+		'component'  => 'import',
+		'collection' => 'subscribers',
+		'namespace'  => 'noptin',
+	),
+	'export' => array(
+		'title'      => esc_html__( 'Export Subscribers', 'newsletter-optin-box' ),
+		'singular'   => esc_html__( 'Export', 'newsletter-optin-box' ),
+		'component'  => 'export',
+		'collection' => 'subscribers',
+		'namespace'  => 'noptin',
+	),
+);
+
+$config = apply_filters(
+	'noptin_admin_subscribers_page_config',
+	array(
+		'components' => $components,
+		'namespace'  => 'noptin',
+		'collection' => 'subscribers',
+	)
+);
 
 ?>
 
-<div class="wrap noptin-subscribers-page" id="noptin-wrapper">
+<style>.notice{display:none !important;}</style>
 
-	<h1 class="wp-heading-inline">
-		<span><?php echo esc_html( get_admin_page_title() ); ?></span>
-		<a href="<?php echo esc_url( add_query_arg( 'add', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
-	</h1>
+<div class="wrap noptin-subscribers-page" id="noptin-wrapper">
 
 	<?php noptin()->admin->show_notices(); ?>
 
-	<div
-		id="noptin-records__overview-app"
-		data-namespace="noptin"
-		data-collection="subscribers"
-		data-title="<?php esc_attr_e( 'Subscribers', 'newsletter-optin-box' ); ?>"
-	>
+	<div id="noptin-collection__overview-app" data-config="<?php echo esc_attr( wp_json_encode( $config ) ); ?>">
 		<!-- Display a loading animation while the app is loading -->
 		<div class="loading">
 			<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>

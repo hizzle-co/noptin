@@ -412,3 +412,7 @@ th.noptin-table__item {
   font-weight: 400;
   text-transform: none;
 }
+
+.noptin-collection__wrapper.components-navigator-provider {
+  min-height: 100vh;
+}

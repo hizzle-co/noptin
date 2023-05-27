@@ -24,8 +24,6 @@ class Noptin_Subscribers_Admin {
 		add_action( 'noptin_admin_delete_all_subscribers', 'Noptin_Subscribers_Admin::delete_all_subscribers' );
 		add_action( 'noptin_admin_add_subscriber', 'Noptin_Subscribers_Admin::add_subscriber' );
 		add_action( 'noptin_update_admin_edited_subscriber', 'Noptin_Subscribers_Admin::update_edited_subscriber' );
-		add_action( 'load-noptin-newsletter_page_noptin-subscribers', 'Noptin_Subscribers_Admin::add_subscribers_page_screen_options' );
-		add_filter( 'set-screen-option', 'Noptin_Subscribers_Admin::save_subscribers_page_screen_options', 10, 3 );
 		add_action( 'noptin_delete_email_subscriber', 'Noptin_Subscribers_Admin::delete_subscriber' );
 		add_action( 'admin_init', 'Noptin_Subscribers_Admin::maybe_redirect_to_newsletter' );
 	}
@@ -363,37 +361,6 @@ class Noptin_Subscribers_Admin {
 			noptin()->admin->show_error( __( 'Unable to update the subscriber', 'newsletter-optin-box' ) );
 		}
 
-	}
-
-	/**
-	 * Registers screen options for the subscribers page.
-	 *
-	 * @access      public
-	 * @since       1.5.5
-	 */
-	public static function add_subscribers_page_screen_options() {
-
-		if ( 0 !== count( array_intersect_key( self::get_components(), $_GET ) ) ) {
-			return;
-		}
-
-		$args = array(
-			'default' => 10,
-			'option'  => 'noptin_subscribers_per_page',
-		);
-
-		add_screen_option( 'per_page', $args );
-
-	}
-
-	/**
-	 * Saves subscribers page screen options.
-	 *
-	 * @access      public
-	 * @since       1.5.5
-	 */
-	public static function save_subscribers_page_screen_options( $skip, $option, $value ) {
-		return 'noptin_subscribers_per_page' === $option ? $value : $skip;
 	}
 
 	/**

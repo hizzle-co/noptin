@@ -7,23 +7,29 @@ import {render, createRoot} from "@wordpress/element";
 /**
  * Local dependencies.
  */
-import Table from './components/records-table';
+import Collection from './components/collection';
 
 domReady( () => {
 
-	// Fetch rule ID and action and trigger editor div.
-	const app = document.getElementById( 'noptin-records__overview-app' );
+	// Prepare the app container.
+	const app = document.getElementById( 'noptin-collection__overview-app' );
 
 	if ( app ) {
-		const data = {...app.dataset}
+		const config = app.dataset.config;
+		const data = {};
 
-		const Overview = <Table {...data} />
+		// Parse the config.
+		try {
+			data.config = JSON.parse( config );
+		} catch ( e ) {
+			data.config = {};
+		}
 
 		// React 18.
 		if ( createRoot ) {
-			createRoot( app ).render( Overview );
+			createRoot( app ).render( <Collection {...data.config} /> );
 		} else {
-			render( Overview, app );
+			render( <Collection {...data.config} />, app );
 		}
 	}
 } );
