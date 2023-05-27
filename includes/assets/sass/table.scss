@@ -46,13 +46,6 @@
 		text-align: center;
 	}
 
-	.noptin-pagination {
-		margin-bottom: $gap;
-		z-index: 1;
-		background: $studio-white;
-		position: relative;
-	}
-
 	.components-card__header {
 		align-items: center;
 		text-align: left;
@@ -318,91 +311,14 @@ th.noptin-table__item {
 	}
 }
 
-.noptin-pagination {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	justify-content: center;
-	align-items: center;
-
-	@include breakpoint( '<782px' ) {
-		flex-direction: column;
-	}
-
-	input {
-		border-radius: 4px;
-	}
-}
-
-.noptin-pagination__page-arrows {
-	display: flex;
-	flex-direction: row;
-}
-
-.noptin-pagination__page-arrows-buttons {
-	display: inline-flex;
-	align-items: baseline;
-	border: 1px solid $button-border;
-	border-radius: 4px;
-	background: $button;
-
-	.components-button {
-		color: $wp-admin-sidebar;
-		height: 30px;
-		width: 32px;
-		justify-content: center;
-	}
-
-	.components-button:not(:disabled):not([aria-disabled='true']):hover {
-		color: $gray-700;
-	}
-
-	button:first-child {
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-		border-right: 2px solid darken($button, 10%);
-	}
-
-	button:last-child {
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-	}
-
-	.noptin-pagination__link {
-		padding: 4px;
-	}
-}
-
-.noptin-pagination__page-arrows-label {
-	margin-top: calc($spacing / 2);
-	margin-right: calc($spacing / 2);
-}
-
-.noptin-pagination__page-picker {
-	margin-left: $spacing;
-
-	@include breakpoint( '<782px' ) {
-		margin-top: $gap;
-		margin-left: 0;
-	}
-	.noptin-pagination__page-picker-input {
-		margin-left: calc($spacing / 2);
-		width: 60px;
-		height: 34px;
-		box-shadow: none;
-	}
+.noptin-pagination__page-arrows-buttons .components-button-group .components-button {
+	box-shadow: none;
+	border: $border-width solid $gray-300;
 }
 
 .noptin-pagination__per-page-picker {
-	margin-left: $spacing;
-
-	@include breakpoint( '<782px' ) {
-		margin-top: $gap;
-		margin-left: 0;
-	}
 
 	.components-base-control {
-		margin-bottom: 0;
 
 		.components-base-control__field {
 			display: flex;
@@ -422,90 +338,11 @@ th.noptin-table__item {
 		}
 
 		label.components-input-control__label {
-			@include font-size(13, 18px);
+			font-size: 13px;
+			font-size: 0.8125rem;
+			line-height: 18px;
 			font-weight: 400;
 			text-transform: none;
 		}
-	}
-}
-
-.noptin-pagination__page-picker-input.has-error,
-.noptin-pagination__page-picker-input.has-error:focus {
-	border-color: $error-red;
-	box-shadow: 0 0 2px $error-red;
-}
-
-.noptin-ellipsis-menu {
-	text-align: center;
-
-	.noptin-ellipsis-menu__toggle {
-		justify-content: center;
-		vertical-align: middle;
-		width: 24px;
-		padding: 0;
-
-		.gridicon {
-			transform: rotate(90deg);
-		}
-	}
-}
-
-.noptin-ellipsis-menu__popover {
-	text-align: left;
-
-	&:not(.is-mobile)::before,
-	&:not(.is-mobile)::after {
-		margin-left: -16px;
-	}
-
-	.components-popover__content {
-		width: 182px;
-		padding: 2px;
-	}
-
-	.noptin-ellipsis-menu__content {
-		width: 100%;
-
-		.components-button {
-			justify-content: center;
-			width: 100%;
-		}
-	}
-
-	.noptin-ellipsis-menu__title,
-	.noptin-ellipsis-menu__item {
-		padding: 4px 12px;
-	}
-
-	.noptin-ellipsis-menu__item {
-		cursor: pointer;
-		color: $gray-700;
-
-		&:focus {
-			box-shadow: inset 0 0 0 1px #6c7781, inset 0 0 0 2px $studio-white;
-			outline: 2px solid transparent;
-			outline-offset: -2px;
-		}
-
-		.components-form-toggle {
-			margin-right: $gap-smaller;
-		}
-	}
-
-	.components-base-control__label,
-	.noptin-ellipsis-menu__title {
-		color: $gray-900;
-		padding-top: $gap-smaller;
-		padding-bottom: $gap-smaller;
-		@include font-size( 15 );
-		margin-bottom: $gap-smallest;
-	}
-
-	.components-toggle-control .components-base-control__field {
-		margin: $gap-smallest 0;
-	}
-
-	.components-base-control {
-		margin: 0;
 	}
 }

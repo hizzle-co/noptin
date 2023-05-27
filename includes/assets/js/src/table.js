@@ -2,7 +2,7 @@
  * External dependencies.
  */
 import domReady from '@wordpress/dom-ready';
-import {render, createRoot, StrictMode} from "@wordpress/element";
+import {render, createRoot} from "@wordpress/element";
 
 /**
  * Local dependencies.
@@ -17,11 +17,7 @@ domReady( () => {
 	if ( app ) {
 		const data = {...app.dataset}
 
-		const Overview = (
-			<StrictMode>
-				<Table {...data} />
-			</StrictMode>
-		)
+		const Overview = <Table {...data} />
 
 		// React 18.
 		if ( createRoot ) {

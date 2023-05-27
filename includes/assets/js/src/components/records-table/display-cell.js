@@ -1,4 +1,4 @@
-import { ToggleControl } from "@wordpress/components";
+import { FormToggle } from "@wordpress/components";
 import { dateI18n } from "@wordpress/date";
 import getEnumBadge from "./enum-colors";
 
@@ -22,14 +22,7 @@ export default function DisplayCell( { record, name, label, description, length,
 
 	// Boolean values are displayed as a toggle.
 	if ( is_boolean ) {
-		return (
-			<ToggleControl
-				label="&nbsp;"
-				checked={ value }
-				disabled={ readonly }
-				__nextHasNoMarginBottom
-			/>
-		);
+		return <FormToggle checked={ value } disabled={ readonly } onChange={ () => {} } />;
 	}
 
 	// Dates are formatted as a date.

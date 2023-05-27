@@ -9,15 +9,6 @@
  * Colors
  */
 /**
-*  Converts a hex value into the rgb equivalent.
-*
-* @param {string} hex - the hexadecimal value to convert
-* @return {string} comma separated rgb values
-*/
-/**
- * Colors
- */
-/**
  * SCSS Variables.
  *
  * Please use variables from this sheet to ensure consistency across the UI.
@@ -96,23 +87,6 @@
 /**
  * Breakpoints & Media Queries
  */
-:root {
-  --wp-admin-theme-color: #007cba;
-  --wp-admin-theme-color--rgb: 0, 124, 186;
-  --wp-admin-theme-color-darker-10: #006ba1;
-  --wp-admin-theme-color-darker-10--rgb: 0, 107, 161;
-  --wp-admin-theme-color-darker-20: #005a87;
-  --wp-admin-theme-color-darker-20--rgb: 0, 90, 135;
-  --wp-admin-border-width-focus: 2px;
-  --wp-block-synced-color: #7a00df;
-  --wp-block-synced-color--rgb: 122, 0, 223;
-}
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  :root {
-    --wp-admin-border-width-focus: 1.5px;
-  }
-}
-
 /**
  * Breakpoint mixins
  */
@@ -150,12 +124,6 @@
   justify-content: center;
   padding: 16px;
   text-align: center;
-}
-.noptin-table .noptin-pagination {
-  margin-bottom: 16px;
-  z-index: 1;
-  background: #ffffff;
-  position: relative;
 }
 .noptin-table .components-card__header {
   align-items: center;
@@ -418,89 +386,11 @@ th.noptin-table__item {
   font-weight: 600;
 }
 
-.noptin-pagination {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-}
-@media (max-width: 782px) {
-  .noptin-pagination {
-    flex-direction: column;
-  }
-}
-.noptin-pagination input {
-  border-radius: 4px;
-}
-
-.noptin-pagination__page-arrows {
-  display: flex;
-  flex-direction: row;
-}
-
-.noptin-pagination__page-arrows-buttons {
-  display: inline-flex;
-  align-items: baseline;
-  border: 1px solid #b5bfc9;
-  border-radius: 4px;
-  background: #f0f2f4;
-}
-.noptin-pagination__page-arrows-buttons .components-button {
-  color: #f1f1f1;
-  height: 30px;
-  width: 32px;
-  justify-content: center;
-}
-.noptin-pagination__page-arrows-buttons .components-button:not(:disabled):not([aria-disabled=true]):hover {
-  color: #757575;
-}
-.noptin-pagination__page-arrows-buttons button:first-child {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-right: 2px solid #d3d9de;
-}
-.noptin-pagination__page-arrows-buttons button:last-child {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.noptin-pagination__page-arrows-buttons .noptin-pagination__link {
-  padding: 4px;
-}
-
-.noptin-pagination__page-arrows-label {
-  margin-top: 8px;
-  margin-right: 8px;
-}
-
-.noptin-pagination__page-picker {
-  margin-left: 16px;
-}
-@media (max-width: 782px) {
-  .noptin-pagination__page-picker {
-    margin-top: 16px;
-    margin-left: 0;
-  }
-}
-.noptin-pagination__page-picker .noptin-pagination__page-picker-input {
-  margin-left: 8px;
-  width: 60px;
-  height: 34px;
+.noptin-pagination__page-arrows-buttons .components-button-group .components-button {
   box-shadow: none;
+  border: 1px solid #ddd;
 }
 
-.noptin-pagination__per-page-picker {
-  margin-left: 16px;
-}
-@media (max-width: 782px) {
-  .noptin-pagination__per-page-picker {
-    margin-top: 16px;
-    margin-left: 0;
-  }
-}
-.noptin-pagination__per-page-picker .components-base-control {
-  margin-bottom: 0;
-}
 .noptin-pagination__per-page-picker .components-base-control .components-base-control__field {
   display: flex;
   flex-direction: row;
@@ -521,72 +411,4 @@ th.noptin-table__item {
   line-height: 18px;
   font-weight: 400;
   text-transform: none;
-}
-
-.noptin-pagination__page-picker-input.has-error,
-.noptin-pagination__page-picker-input.has-error:focus {
-  border-color: #dc3232;
-  box-shadow: 0 0 2px #dc3232;
-}
-
-.noptin-ellipsis-menu {
-  text-align: center;
-}
-.noptin-ellipsis-menu .noptin-ellipsis-menu__toggle {
-  justify-content: center;
-  vertical-align: middle;
-  width: 24px;
-  padding: 0;
-}
-.noptin-ellipsis-menu .noptin-ellipsis-menu__toggle .gridicon {
-  transform: rotate(90deg);
-}
-
-.noptin-ellipsis-menu__popover {
-  text-align: left;
-}
-.noptin-ellipsis-menu__popover:not(.is-mobile)::before, .noptin-ellipsis-menu__popover:not(.is-mobile)::after {
-  margin-left: -16px;
-}
-.noptin-ellipsis-menu__popover .components-popover__content {
-  width: 182px;
-  padding: 2px;
-}
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__content {
-  width: 100%;
-}
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__content .components-button {
-  justify-content: center;
-  width: 100%;
-}
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__title,
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__item {
-  padding: 4px 12px;
-}
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__item {
-  cursor: pointer;
-  color: #757575;
-}
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__item:focus {
-  box-shadow: inset 0 0 0 1px #6c7781, inset 0 0 0 2px #ffffff;
-  outline: 2px solid transparent;
-  outline-offset: -2px;
-}
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__item .components-form-toggle {
-  margin-right: 8px;
-}
-.noptin-ellipsis-menu__popover .components-base-control__label,
-.noptin-ellipsis-menu__popover .noptin-ellipsis-menu__title {
-  color: #1e1e1e;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  font-size: 15px;
-  font-size: 0.9375rem;
-  margin-bottom: 4px;
-}
-.noptin-ellipsis-menu__popover .components-toggle-control .components-base-control__field {
-  margin: 4px 0;
-}
-.noptin-ellipsis-menu__popover .components-base-control {
-  margin: 0;
 }

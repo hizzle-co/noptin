@@ -12,17 +12,20 @@
 		<a href="<?php echo esc_url( add_query_arg( 'add', 'true', admin_url( 'admin.php?page=noptin-subscribers' ) ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
 	</h1>
 
-	<?php require plugin_dir_path( __FILE__ ) . 'subscriber-tabs.php'; ?>
-
 	<?php noptin()->admin->show_notices(); ?>
 
-	<div id="noptin-records__overview-app" data-namespace="noptin" data-collection="subscribers"></div>
-
-	<form id="noptin-subscribers-table" class="noptin-enhanced-table" method="GET" action="<?php echo esc_url( add_query_arg( 'page', 'noptin-subscribers', admin_url( 'admin.php' ) ) ); ?>">
-		<input type="hidden" name="page" value="noptin-subscribers" />
-		<?php $table->search_box( __( 'Search Subscribers', 'newsletter-optin-box' ), 'post' ); ?>
-		<?php $table->display(); ?>
-	</form>
+	<div
+		id="noptin-records__overview-app"
+		data-namespace="noptin"
+		data-collection="subscribers"
+		data-title="<?php esc_attr_e( 'Subscribers', 'newsletter-optin-box' ); ?>"
+	>
+		<!-- Display a loading animation while the app is loading -->
+		<div class="loading">
+			<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>
+			<span class="spinner"></span>
+		</div>
+	</div>
 
 	<p class="description">
 		<?php

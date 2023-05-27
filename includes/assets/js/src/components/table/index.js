@@ -5,26 +5,28 @@ import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { Fragment, useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { find, first, without, compact, uniq } from 'lodash';
+import { download, upload } from '@wordpress/icons';
 import {
 	Card,
 	CardBody,
 	CardFooter,
 	CardHeader,
 	__experimentalText as Text,
+	MenuGroup,
+	ToggleControl,
+	MenuItem
 } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import EllipsisMenu from '../ellipsis-menu';
-import MenuItem from '../ellipsis-menu/menu-item';
-import MenuTitle from '../ellipsis-menu/menu-title';
 import Pagination from '../pagination';
 import Table from './table';
 import TablePlaceholder from './placeholder';
 import TableSummary, { TableSummaryPlaceholder } from './summary';
 
-const defaultOnQueryChange   =  () => () => () => {};
+const defaultOnQueryChange   =  ( ...query ) => { console.log( query ) };
 const defaultOnColumnsChange = () => () => {};
 
 /**
@@ -44,7 +46,6 @@ const TableCard = ( {
 	isLoading = false,
 	onQueryChange = defaultOnQueryChange,
 	onColumnsChange = defaultOnColumnsChange,
-	onSort,
 	query = {},
 	rowHeader = 0,
 	rows = [],
@@ -53,8 +54,9 @@ const TableCard = ( {
 	summary,
 	title,
 	totalRows,
-	rowKey,
 	emptyMessage = undefined,
+	onClickDownload,
+	onClickImport,
 	...props
 } ) => {
 
@@ -94,15 +96,6 @@ const TableCard = ( {
 		};
 	};
 
-	const onPageChange = ( newPage, direction = 'previous' ) => {
-		if ( props.onPageChange ) {
-			props.onPageChange( parseInt( newPage, 10 ), direction );
-		}
-		if ( onQueryChange ) {
-			onQueryChange( 'paged' )( newPage, direction );
-		}
-	};
-
 	const allHeaders = headers;
 	const visibleRows = rows.map( ( row ) => {
 		return headers
@@ -117,51 +110,78 @@ const TableCard = ( {
 		'has-search': hasSearch,
 	} );
 
+	// Actions.
+	const tableActions = (onClose) => {
+
+		return (
+			<>
+				{ onClickDownload && (
+					<MenuItem
+						icon={ download }
+						onClick={ () => {
+							onClose();
+							onClickDownload();
+						}}
+					>
+						{ __( 'Export', 'newsletter-optin-box' ) }
+					</MenuItem>
+				) }
+
+				{ onClickImport && (
+					<MenuItem
+						icon={ upload }
+						onClick={ () => {
+							onClose();
+							onClickImport();
+						}}
+					>
+						{ __( 'Import', 'newsletter-optin-box' ) }
+					</MenuItem>
+				) }
+			</>
+		);
+	};
+
 	return (
 		<Card className={ classes }>
+
 			<CardHeader>
 				<Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
 					{ title }
 				</Text>
 				<div className="noptin-table__actions">{ actions }</div>
 				{ showMenu && (
-					<EllipsisMenu
-						label={ __(
-							'Choose which values to display',
-							'newsletter-optin-box'
-						) }
-						renderContent={ () => (
-							<Fragment>
-								<MenuTitle>
-									{ __( 'Columns:', 'noptin' ) }
-								</MenuTitle>
-								{ allHeaders.map(
-									( { key, label, required } ) => {
-										if ( required ) {
-											return null;
+					<EllipsisMenu label={ __( 'Choose which values to display', 'newsletter-optin-box' ) } actions={ tableActions }>
+						{ () => (
+							<>
+								<MenuGroup label={__( 'Columns', 'newsletter-optin-box' )}>
+									{ allHeaders.map(
+										( { key, label, required } ) => {
+
+											// Don't allow hiding required cols.
+											if ( required || key === undefined ) {
+												return null;
+											}
+
+											return (
+												<MenuItem onClick={ onColumnToggle( key ) } key={ key }>
+													<ToggleControl
+														checked={ ! hiddenCols.includes( key ) }
+														onChange={ onColumnToggle( key ) }
+														label={ label }
+														__nextHasNoMarginBottom
+													/>
+												</MenuItem>
+											);
 										}
-										return (
-											<MenuItem
-												checked={ ! hiddenCols.includes( key ) }
-												isCheckbox
-												isClickable
-												key={ key }
-												onInvoke={
-													key !== undefined
-														? onColumnToggle( key )
-														: undefined
-												}
-											>
-												{ label }
-											</MenuItem>
-										);
-									}
-								) }
-							</Fragment>
+									) }
+								</MenuGroup>
+							</>
 						) }
-					/>
+					</EllipsisMenu>
 				) }
 			</CardHeader>
+
 			{ /* Ignoring the error to make it backward compatible for now. */ }
 			{ /* @ts-expect-error: size must be one of small, medium, largel, xSmall, extraSmall. */ }
 			<CardBody size={ null }>
@@ -187,13 +207,11 @@ const TableCard = ( {
 						headers={ visibleCols }
 						rowHeader={ rowHeader }
 						caption={ title }
-						query={ query }
-						onSort={
-							onSort ||
-							( onQueryChange( 'sort' ) )
-						}
-						rowKey={ rowKey }
 						emptyMessage={ emptyMessage }
+						sortBy={ query.orderby || 'id' }
+						sortDir={ query.order || 'desc' }
+						onChangeSortBy={ ( orderby ) => onQueryChange( { orderby } ) }
+						onChangeSortDir={ ( order ) => onQueryChange( { order } ) }
 					/>
 				) }
 			</CardBody>
@@ -208,8 +226,8 @@ const TableCard = ( {
 							page={ parseInt( query.paged, 10 ) || 1 }
 							perPage={ rowsPerPage }
 							total={ totalRows }
-							onPageChange={ onPageChange }
-							onPerPageChange={ onQueryChange( 'per_page' ) }
+							onPageChange={ ( page ) => onQueryChange( {page} ) }
+							onPerPageChange={ ( per_page ) => onQueryChange( {per_page} ) }
 						/>
 
 						{ summary && <TableSummary data={ summary } /> }

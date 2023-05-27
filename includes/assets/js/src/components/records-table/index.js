@@ -13,7 +13,7 @@ import DisplayCell from "./display-cell";
  * @param {string} props.collection
  * @returns 
  */
-export default function RecordsTable( { namespace, collection } ) {
+export default function RecordsTable( { namespace, collection, ...extra } ) {
 
     const [ total, setTotal ] = useState( 0 );
     const [ schema, setSchema ] = useState( [] );
@@ -84,19 +84,20 @@ export default function RecordsTable( { namespace, collection } ) {
 
     return (
         <TableCard
-            title="Revenue last week"
             rows={ data }
             headers={ columns }
             rowsPerPage={ 7 }
             totalRows={ total }
             summary={ [] }
             isLoading={ loading }
-            onQueryChange={ ( query ) => { console.log( query )} }
+            onQueryChange={ ( ...query ) => { console.log( query )} }
             onSearch={ ( query ) => { console.log( query )} }
             onSort={ ( query ) => { console.log( query )} }
             onClickDownload={ () => { console.log( 'download' ) } }
             downloadable={ true }
             query={ { page: 1 } }
+            className={ `${namespace}-${collection}-records-table` }
+            { ...extra }
         />
     );
 }
