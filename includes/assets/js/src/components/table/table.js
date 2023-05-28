@@ -55,6 +55,7 @@ const getRowKey = ( row, index ) => {
  */
 const Table = ( {
 	instanceId,
+	query,
 	headers = [],
 	rows = [],
 	ariaHidden,
@@ -62,15 +63,13 @@ const Table = ( {
 	className,
 	rowHeader,
 	emptyMessage,
-	sortBy,
-	sortDir,
-	onChangeSortBy,
-	onChangeSortDir,
+	onQueryChange,
 } ) => {
 	const [ tabIndex, setTabIndex ] = useState( undefined );
 	const [ isScrollableRight, setIsScrollableRight ] = useState( false );
 	const [ isScrollableLeft, setIsScrollableLeft ] = useState( false );
-
+	const sortBy = query.orderby || 'id';
+	const sortDir = query.order || DESC;
 	const container = useRef( null );
 
 	const classes = classnames(
@@ -86,9 +85,9 @@ const Table = ( {
 
 		// Maybe change the sort direction.
 		if ( col === sortBy ) {
-			onChangeSortDir( sortDir === ASC ? DESC : ASC );
+			onQueryChange( { order: sortDir === ASC ? DESC : ASC } );
 		} else {
-			onChangeSortBy( col );
+			onQueryChange( { orderby: col } );
 		}
 	};
 

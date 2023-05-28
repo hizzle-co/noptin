@@ -4,7 +4,6 @@
 import { SelectControl, Button, Flex, FlexItem, ButtonGroup, } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 
 const PER_PAGE_OPTIONS = [ 25, 50, 75, 100 ];
@@ -15,13 +14,11 @@ const PER_PAGE_OPTIONS = [ 25, 50, 75, 100 ];
  * @param {Object} props The component props.
  * @param {number} props.page The current page.
  * @param {number} props.pageCount The total number of pages.
- * @param {boolean} props.showPageArrowsLabel Whether to show the page arrows label.
  * @param {Function} props.onPageChange Callback function when the page changes.
  * @return {WPElement} The page arrows element.
  */
-function PageArrows( { page, showPageArrowsLabel, pageCount, onPageChange }  ) {
+function PageArrows( { page, pageCount, onPageChange }  ) {
 
-	return null;
 	if ( pageCount <= 1 ) {
 		return null;
 	}
@@ -36,28 +33,26 @@ function PageArrows( { page, showPageArrowsLabel, pageCount, onPageChange }  ) {
 		<FlexItem className="noptin-pagination__page-arrows">
 			<Flex wrap gap={2} align="center" justify="center">
 
-				{ showPageArrowsLabel && (
-					<FlexItem role="status" aria-live="polite">
-						{ sprintf(
-							__( 'Page %d of %d', 'newsletter-optin-box' ),
-							page,
-							pageCount
-						) }
-					</FlexItem>
-				) }
+				<FlexItem role="status" aria-live="polite">
+					{ sprintf(
+						__( 'Page %d of %d', 'newsletter-optin-box' ),
+						page,
+						pageCount
+					) }
+				</FlexItem>
 
 				<FlexItem className="noptin-pagination__page-arrows-buttons">
 					<ButtonGroup>
 						<Button
 							disabled={ ! hasPrevious }
-							onClick={ onPageChange( previousPage ) }
+							onClick={ () => onPageChange( previousPage ) }
 							label={ __( 'Previous Page', 'newsletter-optin-box' ) }
 						>
 							<Icon icon={ chevronLeft } />
 						</Button>
 						<Button
 							disabled={ ! hasNext }
-							onClick={ onPageChange( nextPage ) }
+							onClick={ () => onPageChange( nextPage ) }
 							label={ __( 'Next Page', 'newsletter-optin-box' ) }
 						>
 							<Icon icon={ chevronRight } />
@@ -117,16 +112,13 @@ function PerPagePicker( { perPage, total, onChange } ) {
  * Displays the pagination component.
  *
  * @param {Object} props The component props.
- * @param {number} props.page The current page of the collection.
- * @param {Function} props.onPageChange A function to execute when the page is changed.
- * @param {number} props.perPage The amount of results that are being displayed per page.
- * @param {Function} props.onPerPageChange A function to execute when the per page option is changed.
+ * @param {Object} props.query The current query object.
+ * @param {Function} props.onQueryChange Callback function when the query changes.
  * @param {number} props.total The total number of results.
  * @param {string} [props.className] Additional classNames.
  * @param {boolean} [props.showPerPagePicker=true] Whether the per page picker should be rendered.
- * @param {boolean} [props.showPageArrowsLabel=true] Whether the page arrows label should be rendered.
  */
-export default function Pagination( { page, onPageChange = noop, perPage = 10, onPerPageChange = noop, total, className, showPerPagePicker = true, showPageArrowsLabel = true } ) {
+export default function Pagination( { query, onQueryChange, total, className, showPerPagePicker = true } ) {
 
 	// Abort if there are no results.
 	if ( ! total ) {
@@ -134,6 +126,8 @@ export default function Pagination( { page, onPageChange = noop, perPage = 10, o
 	}
 
 	// Calculate the page count.
+	const page = query.page ? parseInt( query.page, 10 ) : 1;
+	const perPage = query.per_page ? parseInt( query.per_page, 25 ) : 25;
 	const pageCount = Math.ceil( total / perPage );
 	const classes = classNames( 'noptin-pagination', className );
 
@@ -142,12 +136,12 @@ export default function Pagination( { page, onPageChange = noop, perPage = 10, o
 
 		// Handle the per page change.
 		const newPerPage = parseInt( perPage, 10 );
-		onPerPageChange( newPerPage ? newPerPage : 1 );
+		onQueryChange( { per_page: newPerPage ? newPerPage : 1 } );
 
 		// Ensure that the page is not out of bounds.
 		const newMaxPage = newPerPage ? Math.ceil( total / newPerPage ) : total;
 		if ( page > newMaxPage ) {
-			onPageChange( newMaxPage );
+			onQueryChange( { page: newMaxPage } );
 		}
 	}
 
@@ -163,7 +157,7 @@ export default function Pagination( { page, onPageChange = noop, perPage = 10, o
 			newPage = pageCount;
 		}
 
-		onPageChange( newPage );
+		onQueryChange( { page: newPage } );
 	}
 
 	// If there is only one page, don't render the pagination unless there are more results than the first perPage option.
@@ -179,7 +173,7 @@ export default function Pagination( { page, onPageChange = noop, perPage = 10, o
 
 		return (
 			<Flex className={ classes } wrap gap={2} align="center" justify="center">
-				<PageArrows page={ page } pageCount={ pageCount } onPageChange={ pageChange } showPageArrowsLabel={ showPageArrowsLabel } />
+				<PageArrows page={ page } pageCount={ pageCount } onPageChange={ pageChange } />
 				{ showPerPagePicker && <PerPagePicker perPage={ perPage } total={ total } onChange={ perPageChange } /> }
 			</Flex>
 		);

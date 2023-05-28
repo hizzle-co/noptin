@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { Fragment, useMemo } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import {
 	Card,
 	CardBody,
@@ -24,8 +24,62 @@ import Table from './table';
 import TablePlaceholder from './placeholder';
 import TableSummary, { TableSummaryPlaceholder } from './summary';
 
-const defaultOnQueryChange   =  ( ...query ) => { console.log( query ) };
-const defaultOnColumnsChange = () => () => {};
+/**
+ * Displays a placeholder table while the data is loading.
+ */
+const Placeholder = ( { headers, rowHeader, caption, query } ) => {
+
+	return (
+		<>
+			<span className="screen-reader-text">
+				{ __( 'Your requested data is loading', 'newsletter-optin-box' ) }
+			</span>
+			<TablePlaceholder
+				headers={ headers }
+				rowHeader={ rowHeader }
+				caption={ caption }
+				query={ query }
+			/>
+		</>
+	);
+};
+
+/**
+ * Displays the table menu.
+ */
+const Menu = ( { allHeaders, toggleHiddenCol } ) => {
+
+	return (
+		<EllipsisMenu label={ __( 'Choose which values to display', 'newsletter-optin-box' ) }>
+			{ () => (
+				<>
+					<MenuGroup label={__( 'Columns', 'newsletter-optin-box' )}>
+						{ allHeaders.map(
+							( { key, label, required, visible } ) => {
+
+								// Don't allow hiding required cols.
+								if ( required || key === undefined ) {
+									return null;
+								}
+
+								return (
+									<MenuItem key={ key }>
+										<ToggleControl
+											checked={ visible }
+											onChange={ () => toggleHiddenCol( key ) }
+											label={ label }
+											__nextHasNoMarginBottom
+										/>
+									</MenuItem>
+								);
+							}
+						) }
+					</MenuGroup>
+				</>
+			) }
+		</EllipsisMenu>
+	);
+};
 
 /**
  * This is an accessible, sortable, and scrollable table for displaying tabular data (like revenue and other analytics data).
@@ -42,8 +96,7 @@ const TableCard = ( {
 	headers = [],
 	ids,
 	isLoading = false,
-	onQueryChange = defaultOnQueryChange,
-	onColumnsChange = defaultOnColumnsChange,
+	onQueryChange = () => {},
 	query = {},
 	rowHeader = 0,
 	rows = [],
@@ -51,7 +104,6 @@ const TableCard = ( {
 	summary,
 	title,
 	totalRows,
-	emptyMessage = undefined,
 	toggleHiddenCol,
 	...props
 } ) => {
@@ -73,6 +125,16 @@ const TableCard = ( {
 		'has-search': hasSearch,
 	} );
 
+	// Common props.
+	const theProps = {
+		headers: visibleCols,
+		caption: title,
+		onQueryChange,
+		rowHeader,
+		query,
+		...props,
+	};
+
 	return (
 		<Card className={ classes }>
 
@@ -83,88 +145,20 @@ const TableCard = ( {
 
 				<div className="noptin-table__actions">{ actions }</div>
 
-				{ showMenu && (
-					<EllipsisMenu label={ __( 'Choose which values to display', 'newsletter-optin-box' ) }>
-						{ () => (
-							<>
-								<MenuGroup label={__( 'Columns', 'newsletter-optin-box' )}>
-									{ allHeaders.map(
-										( { key, label, required, visible } ) => {
+				{ showMenu && <Menu allHeaders={ allHeaders } toggleHiddenCol={ toggleHiddenCol } /> }
 
-											// Don't allow hiding required cols.
-											if ( required || key === undefined ) {
-												return null;
-											}
-
-											return (
-												<MenuItem key={ key }>
-													<ToggleControl
-														checked={ visible }
-														onChange={ () => toggleHiddenCol( key ) }
-														label={ label }
-														__nextHasNoMarginBottom
-													/>
-												</MenuItem>
-											);
-										}
-									) }
-								</MenuGroup>
-							</>
-						) }
-					</EllipsisMenu>
-				) }
 			</CardHeader>
 
-			{ /* Ignoring the error to make it backward compatible for now. */ }
-			{ /* @ts-expect-error: size must be one of small, medium, largel, xSmall, extraSmall. */ }
-			<CardBody size={ null }>
-				{ isLoading ? (
-					<Fragment>
-						<span className="screen-reader-text">
-							{ __(
-								'Your requested data is loading',
-								'newsletter-optin-box'
-							) }
-						</span>
-						<TablePlaceholder
-							numberOfRows={ query.per_page ? query.per_page : 25 }
-							headers={ visibleCols }
-							rowHeader={ rowHeader }
-							caption={ title }
-							query={ query }
-						/>
-					</Fragment>
-				) : (
-					<Table
-						rows={ visibleRows }
-						headers={ visibleCols }
-						rowHeader={ rowHeader }
-						caption={ title }
-						emptyMessage={ emptyMessage }
-						sortBy={ query.orderby || 'id' }
-						sortDir={ query.order || 'desc' }
-						onChangeSortBy={ ( orderby ) => onQueryChange( { orderby } ) }
-						onChangeSortDir={ ( order ) => onQueryChange( { order } ) }
-					/>
-				) }
-			</CardBody>
+			{ isLoading ? <Placeholder { ...theProps } /> : <Table rows={ visibleRows } { ...theProps } /> }
 
 			<CardFooter justify="center">
 				{ isLoading ? (
 					<TableSummaryPlaceholder />
 				) : (
-					<Fragment>
-						<Pagination
-							key={ parseInt( query.paged, 10 ) || 1 }
-							page={ parseInt( query.paged, 10 ) || 1 }
-							perPage={ query.per_page ? query.per_page : 25 }
-							total={ totalRows }
-							onPageChange={ ( page ) => onQueryChange( {page} ) }
-							onPerPageChange={ ( per_page ) => onQueryChange( {per_page} ) }
-						/>
-
+					<>
+						<Pagination query={ query } onQueryChange={ onQueryChange } total={ totalRows } />
 						{ summary && <TableSummary data={ summary } /> }
-					</Fragment>
+					</>
 				) }
 			</CardFooter>
 		</Card>

@@ -9,21 +9,22 @@ import { range } from 'lodash';
 import Table from './table';
 
 /**
- * `TablePlaceholder` behaves like `Table` but displays placeholder boxes instead of data. This can be used while loading.
+ * A table placeholder component.
+ *
+ * @param {Object} props Component props.
+ * @param {Object} props.query The current query.
+ * @param {Array} props.headers The table headers.
  */
-const TablePlaceholder = ( {
-	query,
-	caption,
-	headers,
-	numberOfRows = 5,
-	...props
-} ) => {
-	const rows = range( numberOfRows ).map( () =>
+const TablePlaceholder = ( { query, headers, ...props } ) => {
+
+	const numberOfRows = query.per_page ? parseInt( query.per_page, 10 ) : 25;
+	const rows         = range( numberOfRows ).map( () =>
 		headers.map( () => ( {
 			display: <span className="is-placeholder" />,
 		} ) )
 	);
-	const tableProps = { query, caption, headers, numberOfRows, ...props };
+
+	const tableProps = { query, headers, ...props };
 	return (
 		<Table
 			ariaHidden={ true }
