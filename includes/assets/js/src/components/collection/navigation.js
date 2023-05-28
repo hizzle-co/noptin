@@ -15,21 +15,22 @@ import {
 	__experimentalText as Text,
 	__experimentalUseNavigator as useNavigator,
 } from "@wordpress/components";
+import { useAtom, useAtomValue } from "jotai";
 
 import AppIcon from "./app-icon";
-
+import { recordsQuery, route } from './store';
 
 /**
  * Displays the collection navigation.
  *
  * @param {Object} props Component props.
- * @param {Object} props.components
  * @param {string} props.selected
  * @returns {JSX.Element} Table actions.
  */
-export default function Navigation( { components, selected } ) {
+export default function Navigation( { components } ) {
 
 	const { location } = useNavigator();
+	const [ currentPath, setCurrentPath ] = useAtom( route );
 
 	// Filter out components that don't have a display.
 	const toDisplay = compact( Object.keys( components ).map( ( component ) => {
@@ -91,7 +92,7 @@ export default function Navigation( { components, selected } ) {
 								<NavigatorButton
 									path={ component.key }
 									as={ Button }
-									isPressed={ selected === component.key }
+									isPressed={ currentPath.path === component.key }
 									icon={ component.icon }
 									text={ component.title }
 									id={`noptin-collection-navigation__button-${ component.key }`}

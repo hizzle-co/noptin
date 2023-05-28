@@ -1,7 +1,12 @@
 /**
+ * External dependencies
+ */
+import { Suspense } from '@wordpress/element';
+
+/**
  * Internal dependencies
  */
-import RecordsTable from '../records-table';
+import RecordsTable from './records-table';
 import Export from './export';
 import Import from './import';
 import CreateRecord from './create-record';
@@ -18,7 +23,11 @@ export default function Screen( { path, component, ...props } ) {
 
 	// Display records.
 	if ( 'list-records' === component ) {
-		return <RecordsTable { ...props } />;
+		return (
+			<Suspense fallback="Loading">
+				<RecordsTable { ...props } />
+			</Suspense>
+		)
 	}
 
 	// Export records.

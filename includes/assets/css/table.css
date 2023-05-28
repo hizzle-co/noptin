@@ -416,3 +416,26 @@ th.noptin-table__item {
 .noptin-collection__wrapper.components-navigator-provider {
   min-height: 100vh;
 }
+
+.noptin-collection__upload-wrapper {
+  border: solid 1px #a5d6a7;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  background-color: #e8f5e9;
+  max-width: 600px;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+.noptin-collection__upload-wrapper .components-button {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+.noptin-collection__upload-wrapper .components-base-control__field {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+}

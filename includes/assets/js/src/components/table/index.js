@@ -48,7 +48,6 @@ const TableCard = ( {
 	query = {},
 	rowHeader = 0,
 	rows = [],
-	rowsPerPage,
 	showMenu = true,
 	summary,
 	title,
@@ -163,7 +162,7 @@ const TableCard = ( {
 							) }
 						</span>
 						<TablePlaceholder
-							numberOfRows={ rowsPerPage }
+							numberOfRows={ query.per_page ? query.per_page : 25 }
 							headers={ visibleCols }
 							rowHeader={ rowHeader }
 							caption={ title }
@@ -193,7 +192,7 @@ const TableCard = ( {
 						<Pagination
 							key={ parseInt( query.paged, 10 ) || 1 }
 							page={ parseInt( query.paged, 10 ) || 1 }
-							perPage={ rowsPerPage }
+							perPage={ query.per_page ? query.per_page : 25 }
 							total={ totalRows }
 							onPageChange={ ( page ) => onQueryChange( {page} ) }
 							onPerPageChange={ ( per_page ) => onQueryChange( {per_page} ) }

@@ -3,14 +3,54 @@
  */
 import apiFetch from "@wordpress/api-fetch";
 import { useState, useEffect, useMemo } from "@wordpress/element";
-import { Notice, TextControl, ToggleControl, CardBody } from "@wordpress/components";
-import { __ } from "@wordpress/i18n";
+import { Notice, FormFileUpload, Tip, TextControl, ToggleControl, Placeholder, BaseControl, Flex, FlexItem, CardBody, Button } from "@wordpress/components";
+import { Icon, upload } from "@wordpress/icons";
+import { __, sprintf } from "@wordpress/i18n";
+import papaparse from "papaparse";
 
 /**
  * Local dependencies.
  */
 import {getSchema} from "./get-schema";
 import Wrap from "./wrap";
+
+/**
+ * Displays the file input.
+ *
+ * @param {Object} props
+ */
+function FileInput( { onUpload } ) {
+
+	return (
+		<>
+			<BaseControl
+				label={ __( 'This tool allows you to import existing records from a CSV file.', 'newsletter-optin-box' ) }
+				help={ __( 'The first row of the CSV file should contain the field names.', 'newsletter-optin-box' ) }
+				className="noptin-collection__upload-wrapper"
+			>
+				<FormFileUpload
+					accept="text/csv"
+					onChange={ ( event ) => onUpload( event.currentTarget.files[0] ) }
+					icon={upload}
+					variant="primary"
+				>
+					{ __( 'Select a CSV file', 'newsletter-optin-box' ) }
+				</FormFileUpload>
+
+			</BaseControl>
+
+			<Tip>
+				{ __( ' Have a different file type?', 'newsletter-optin-box' ) }&nbsp;
+				<Button
+					variant="link"
+					href="https://convertio.co/csv-converter/"
+					target="_blank"
+					text={ __( 'Convert it to CSV', 'newsletter-optin-box' ) }
+				/>
+			</Tip>
+		</>
+	);
+}
 
 /**
  * Allows the user to import new records.
@@ -73,25 +113,7 @@ export default function Import( { namespace, collection, title } ) {
 
 				{ ! loading && ! error && (
 					<div>
-
-						<h3>
-							{ __( 'Select the fields to import', 'noptin' ) }
-						</h3>
-
-						{ schema.map( ( field ) => (
-							<ToggleControl
-								key={field.name}
-								label={field.label === field.description ? field.label : `${field.label} (${field.description})`}
-								checked={ toExport.includes( field.name ) }
-								onChange={ () => {
-									if ( toExport.includes( field.name ) ) {
-										setToExport( toExport.filter( ( name ) => name !== field.name ) );
-									} else {
-										setToExport( [ ...toExport, field.name ] );
-									}
-								} }
-							/>
-						) ) }
+						<FileInput onUpload={ ( file ) => { console.log( file ) } } />
 					</div>
 				) }
 			</CardBody>

@@ -28,6 +28,7 @@
 		"@wordpress/components": "^25.0.0",
 		"@wordpress/dom-ready": "3.34.0",
 		"@wordpress/icons": "^9.23.0",
+		"jotai": "^2.1.0",
 		"lodash.find": "4.6.0",
 		"lodash.throttle": "4.1.1",
 		"papaparse": "5.4.1",

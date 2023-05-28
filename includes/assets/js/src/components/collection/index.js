@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState } from "@wordpress/element";
+import { useEffect } from "@wordpress/element";
 import {
 	Notice,
 	Flex,
@@ -11,75 +11,33 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
+import { Provider, useAtomValue, useSetAtom } from "jotai";
 
 /**
  * Internal dependencies.
  */
 import Screen from "./screen";
 import Navigation from "./navigation";
+import * as store from "./store";
+
+console.log( store );
 
 /**
- * Collection overview table.
+ * Renders the Collection.
  * @param {Object} props
- * @param {string} props.namespace
- * @param {string} props.collection
  * @param {Object} props.components
  * @returns 
  */
-export default function Collection( { namespace, collection, components } ) {
-
-	// Set the current collection.
-	const [ currentCollection, setCurrentCollection ] = useState( collection );
-
-	// Set the current namespace.
-	const [ currentNamespace, setCurrentNamespace ] = useState( namespace );
-
-	// Fetch current URL params.
-	const urlParams = new URLSearchParams( window.location.search );
-
-	// Current component state.
-	const [ currentCompoent, setCurrentComponent ] = useState( urlParams.get( 'section' ) || '/' );
-
-	// Add all url param to the current component props.
-	const [ componentProps, setComponentProps ] = useState( {
-		[currentCompoent]: { ...urlParams.entries() }
-	} );
-
-	// If no namespace or collection, abort.
-	if ( ! currentNamespace || ! currentCollection ) {
-		return (
-			<Notice status="error">
-				{ __( 'No namespace or collection provided. Please check your browser console for any errors.', 'newsletter-optin-box' ) }
-			</Notice>
-		);
-	}
-
-	// Render the current component.
-	const renderCompoent = components[ currentCompoent ] ? components[ currentCompoent ] : components[ '/' ];
+const RenderCollection = ( { components } ) => {
 
 	return (
-		<NavigatorProvider
-			initialPath={ components[ currentCompoent ] ? currentCompoent : '/' }
-			as={Flex}
-			direction="column"
-			gap={ 4 }
-			className="noptin-collection__wrapper"
-			style={{ minHeight: '100vh' }}
-		>
-
+		<>
 			<FlexItem>
-				<Navigation
-					components={ components }
-					selected={ renderCompoent }
-					setSelected={ setCurrentComponent }
-					setCollection={ setCurrentCollection }
-					setNamespace={ setCurrentNamespace }
-				/>
+				<Navigation components={ components } />
 			</FlexItem>
 
 			<FlexBlock>
 				{ Object.keys( components ).map( ( component ) => {
-
 					return (
 						<NavigatorScreen key={ component } path={ component }>
 							<Screen path={ component } {...components[ component ]} />
@@ -87,6 +45,53 @@ export default function Collection( { namespace, collection, components } ) {
 					);
 				} ) }
 			</FlexBlock>
-		</NavigatorProvider>
+		</>
+	);
+}
+
+/**
+ * Collection overview table.
+ *
+ * @param {Object} props
+ * @param {string} props.namespace
+ * @param {string} props.collection
+ * @param {Object} props.components
+ * @returns
+ */
+export default function Collection( { namespace, collection, components } ) {
+
+	// Prepare the store.
+	const setCollection = useSetAtom(store.collection);
+	const setNamespace = useSetAtom(store.namespace);
+	const setUrl = useSetAtom(store.url);
+	const route = useAtomValue( store.route );
+
+	// Set the collection and namespace once the component mounts.
+	useEffect( () => {
+		setCollection( collection );
+		setNamespace( namespace );
+	}, [] );
+
+	// Watch for route changes.
+	useEffect( () => {
+		const updateURL = () => setUrl( window.location.href );
+		window.addEventListener('locationchange', updateURL);
+		return () => window.removeEventListener('locationchange', updateURL);
+	}, []);
+
+	// Render the collection.
+	return (
+		<Provider>
+			<NavigatorProvider
+				initialPath={ route.path ? route.path : '/' }
+				as={Flex}
+				direction="column"
+				gap={ 4 }
+				className="noptin-collection__wrapper"
+				style={{ minHeight: '100vh' }}
+			>
+				<RenderCollection components={components} />
+			</NavigatorProvider>
+		</Provider>
 	);
 }
