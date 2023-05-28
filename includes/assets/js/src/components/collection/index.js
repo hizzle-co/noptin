@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from "@wordpress/element";
+import { useEffect, useState } from "@wordpress/element";
 import {
 	Notice,
 	Flex,
@@ -11,7 +11,7 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { Provider, useAtomValue, useSetAtom } from "jotai";
+import { Provider, useAtomValue, useSetAtom, useAtom } from "jotai";
 
 /**
  * Internal dependencies.
@@ -20,27 +20,27 @@ import Screen from "./screen";
 import Navigation from "./navigation";
 import * as store from "./store";
 
-console.log( store );
-
 /**
  * Renders the Collection.
- * @param {Object} props
- * @param {Object} props.components
  * @returns 
  */
-const RenderCollection = ( { components } ) => {
+const RenderCollection = () => {
 
+	const [components] = useAtom( store.components );
+	const theComponents = useAtomValue(store.components);
+
+	console.log( theComponents );
 	return (
 		<>
 			<FlexItem>
-				<Navigation components={ components } />
+				<Navigation />
 			</FlexItem>
 
 			<FlexBlock>
 				{ Object.keys( components ).map( ( component ) => {
 					return (
 						<NavigatorScreen key={ component } path={ component }>
-							<Screen path={ component } {...components[ component ]} />
+							<Screen path={ component } />
 						</NavigatorScreen>
 					);
 				} ) }
@@ -62,14 +62,16 @@ export default function Collection( { namespace, collection, components } ) {
 
 	// Prepare the store.
 	const setCollection = useSetAtom(store.collection);
-	const setNamespace = useSetAtom(store.namespace);
-	const setUrl = useSetAtom(store.url);
-	const route = useAtomValue( store.route );
+	const setNamespace  = useSetAtom(store.namespace);
+	const setComponents = useSetAtom(store.components);
+	const setUrl        = useSetAtom(store.url);
+	const route         = useAtomValue( store.route );
 
 	// Set the collection and namespace once the component mounts.
 	useEffect( () => {
 		setCollection( collection );
 		setNamespace( namespace );
+		setComponents( components );
 	}, [] );
 
 	// Watch for route changes.
@@ -90,7 +92,7 @@ export default function Collection( { namespace, collection, components } ) {
 				className="noptin-collection__wrapper"
 				style={{ minHeight: '100vh' }}
 			>
-				<RenderCollection components={components} />
+				<RenderCollection />
 			</NavigatorProvider>
 		</Provider>
 	);

@@ -18,18 +18,17 @@ import {
 import { useAtom, useAtomValue } from "jotai";
 
 import AppIcon from "./app-icon";
-import { recordsQuery, route } from './store';
+import { recordsQuery, route, components } from './store';
 
 /**
  * Displays the collection navigation.
  *
- * @param {Object} props Component props.
- * @param {string} props.selected
  * @returns {JSX.Element} Table actions.
  */
-export default function Navigation( { components } ) {
+export default function Navigation() {
 
 	const { location } = useNavigator();
+	const allComponents = useAtomValue( components );
 	const [ currentPath, setCurrentPath ] = useAtom( route );
 
 	// Filter out components that don't have a display.

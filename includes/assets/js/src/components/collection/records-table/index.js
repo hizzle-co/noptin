@@ -91,26 +91,23 @@ export function DisplayRecords( { schema: {count, schema }, records: { state, da
 }
 
 /**
- * Renders a records overview table.
- * @param {Object} props
- * @param {string} props.namespace
- * @param {string} props.collection
- * @param {string} props.title
- * @param {string} props.singular
- * @param {string} props.icon
- * @returns 
+ * Renders a records overview table for the matching path.
+ *
+ * @returns The records table.
  */
-export default function RecordsTable( { namespace, collection, ...extra } ) {
+export default function RecordsTable( { path, component } ) {
 
-    const schema  = useAtomValue( store.schema );
-    const records = useAtomValue( store.records );
+    const schema     = useAtomValue( store.schema );
+    const records    = useAtomValue( store.records );
+
+    console.log( { component, schema, records } );
 
     // Show error if any.
     if ( schema.state === 'hasError' || records.state === 'hasError' ) {
         const theError = schema.state === 'hasError' ? schema.error : records.error;
 
         return (
-            <Wrap title={ extra.title }>
+            <Wrap title={ component.title }>
                 <CardBody>
                     <Notice status="error" isDismissible={ false }>
                         <strong>{ __( 'Error:', 'newsletter-optin-box' ) }</strong>&nbsp;
@@ -125,7 +122,7 @@ export default function RecordsTable( { namespace, collection, ...extra } ) {
     if ( schema.state === 'loading' ) {
 
         return (
-            <Wrap title={ extra.title }>
+            <Wrap title={ component.title }>
                 <CardBody>
                     <Spinner />
                 </CardBody>
@@ -133,5 +130,5 @@ export default function RecordsTable( { namespace, collection, ...extra } ) {
         );
     }
 
-    return <DisplayRecords schema={ schema.data } records={ records } extra={ extra } />;
+    return <DisplayRecords schema={ schema.data } records={ records } path={ path } extra={ component } />;
 }
