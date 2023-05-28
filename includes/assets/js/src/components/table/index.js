@@ -3,8 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { Fragment, useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { without, compact, uniq } from 'lodash';
+import { Fragment, useMemo } from '@wordpress/element';
 import {
 	Card,
 	CardBody,
@@ -53,54 +52,18 @@ const TableCard = ( {
 	title,
 	totalRows,
 	emptyMessage = undefined,
-	onClickDownload,
-	onClickImport,
+	toggleHiddenCol,
 	...props
 } ) => {
 
-	console.log( onClickDownload, onClickImport, totalRows );
-
-	// Contains an array of hidden cols.
-	const [ hiddenCols, setHiddenCols ] = useState( [] );
-
-	// Hide cols when headers change.
-	useEffect( () => {
-
-		// Fetch hidden cols.
-		const newHiddenCols = compact( headers.map( ( { key, visible } ) => {
-			if ( typeof visible === 'undefined' || visible ) {
-				return false;
-			}
-			return key;
-		} ) );
-
-		// Combine new hidden cols with existing hidden cols.
-		setHiddenCols( uniq( [ ...hiddenCols, ...newHiddenCols ] ) );
-	}, [ headers ] );
-
-	// Checks if a given col is hidden.
-	const isHiddenCol = useCallback( ( key ) => hiddenCols.includes( key ), [ hiddenCols ] );
-
 	// Returns a list of visible cols.
-	const visibleCols = useMemo( () => headers.filter( ( { key } ) => ! isHiddenCol( key ) ), [ headers, isHiddenCol ] );
-
-	// Toggle a column's visibility.
-	const onColumnToggle = ( key ) => {
-		return () => {
-
-			if ( isHiddenCol( key ) ) {
-				setHiddenCols( without( hiddenCols, key ) );
-			} else {
-				setHiddenCols( [ ...hiddenCols, key ] );
-			}
-		};
-	};
+	const visibleCols = useMemo( () => headers.filter( ( { visible } ) => visible ), [ headers ] );
 
 	const allHeaders = headers;
 	const visibleRows = rows.map( ( row ) => {
 		return headers
-			.map( ( { key }, i ) => {
-				return ! hiddenCols.includes( key ) && row[ i ];
+			.map( ( { visible }, i ) => {
+				return visible && row[ i ];
 			} )
 			.filter( Boolean );
 	} );
@@ -126,7 +89,7 @@ const TableCard = ( {
 							<>
 								<MenuGroup label={__( 'Columns', 'newsletter-optin-box' )}>
 									{ allHeaders.map(
-										( { key, label, required } ) => {
+										( { key, label, required, visible } ) => {
 
 											// Don't allow hiding required cols.
 											if ( required || key === undefined ) {
@@ -134,10 +97,10 @@ const TableCard = ( {
 											}
 
 											return (
-												<MenuItem onClick={ onColumnToggle( key ) } key={ key }>
+												<MenuItem key={ key }>
 													<ToggleControl
-														checked={ ! hiddenCols.includes( key ) }
-														onChange={ onColumnToggle( key ) }
+														checked={ visible }
+														onChange={ () => toggleHiddenCol( key ) }
 														label={ label }
 														__nextHasNoMarginBottom
 													/>

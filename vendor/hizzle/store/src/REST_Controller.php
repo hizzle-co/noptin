@@ -696,7 +696,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		// Filter collection parameters.
-		return apply_filters( "hizzle_rest_{$this->rest_base}_collection_params", $params, $this );
+		return apply_filters( "hizzle_rest_{$this->namespace}_{$this->rest_base}_collection_params", $params, $this );
 	}
 
 	/**
@@ -899,9 +899,15 @@ class REST_Controller extends \WP_REST_Controller {
 		$collection = $this->fetch_collection();
 
 		try {
-			$schema = array();
+			$schema  = array();
+			$default = 'id';
+			$hidden  = array( 'id' );
 
 			foreach ( $collection->get_props() as $prop ) {
+
+				if ( $prop->is_dynamic || ( $prop->is_meta_key && $prop->is_meta_key_multiple ) ) {
+					$hidden[] = $prop->name;
+				}
 
 				$enum = array();
 
@@ -911,7 +917,7 @@ class REST_Controller extends \WP_REST_Controller {
 					$enum = $prop->enum;
 				}
 
-				$schema[] = array(
+				$schema[ $prop->name ] = array(
 					'name'        => $prop->name,
 					'label'       => $prop->label,
 					'description' => $prop->description,
@@ -930,6 +936,21 @@ class REST_Controller extends \WP_REST_Controller {
 
 			}
 
+			// If we have an email, set as default.
+			if ( isset( $schema['email'] ) ) {
+				$default = 'email';
+			} elseif( isset( $schema['name'] ) ) {
+				$default = 'name';
+			}
+
+			// Make sure the default is first.
+			if ( isset( $schema[ $default ] ) ) {
+				$default = $schema[ $default ];
+				unset( $schema[ $default['name'] ] );
+				array_unshift( $schema, $default );
+			}
+
+			// Count records.
 			$query = $collection->query(
 				array(
 					'fields' => 'id',
@@ -938,9 +959,14 @@ class REST_Controller extends \WP_REST_Controller {
 			);
 
 			return rest_ensure_response(
-				array(
-					'schema' => $schema,
-					'count'  => $query->get_total(),
+				apply_filters(
+					'hizzle_rest_' . $this->get_normalized_rest_base() . '_collection_js_params',
+					array(
+						'schema' => array_values( $schema ),
+						'count'  => $query->get_total(),
+						'ignore' => array(),
+						'hidden' => $hidden,
+					)
 				)
 			);
 		} catch ( Store_Exception $e ) {

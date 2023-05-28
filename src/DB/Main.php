@@ -84,6 +84,7 @@ class Main {
 	 */
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'load' ) );
+		add_filter( 'hizzle_rest_noptin_subscribers_collection_js_params', array( $this, 'filter_subscribers_collection_js_params' ) );
 	}
 
 	/**
@@ -347,4 +348,19 @@ class Main {
 
 	}
 
+	/**
+	 * Filters the subscriber's collection JS params.
+	 *
+	 * @param array $params
+	 * @return array
+	 */
+	public function filter_subscribers_collection_js_params( $params ) {
+
+		$params['ignore'] = array_merge(
+			$params['ignore'],
+			array( 'activity', 'sent_campaigns' )
+		);
+
+		return $params;
+	}
 }

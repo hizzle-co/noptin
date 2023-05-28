@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import { useMemo } from "@wordpress/element";
+import { useMemo, useState } from "@wordpress/element";
 import { Notice, Spinner, CardBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useAtom, useAtomValue } from "jotai";
+import { without } from 'lodash';
 
 /**
  * Local dependencies.
@@ -20,19 +21,21 @@ import DisplayCell from "./display-cell";
  * @param {Object} props.schema
  * @param {Number} props.schema.count
  * @param {Array} props.schema.schema
+ * @param {Array} props.schema.ignore
+ * @param {Array} props.schema.hidden
  * @param {Object} props.records
  * @param {String} props.records.state
  * @param {Array} props.records.data
  * @param {Object} props.extra
  * @returns {JSX.Element}
  */
-export function DisplayRecords( { schema: {count, schema }, records: { state, data }, extra } ) {
+export function DisplayRecords( { schema: {count, schema, hidden, ignore }, records: { state, data }, extra } ) {
 
 	// Prepare the current query.
-	const [query, setQuery] = useAtom( store.recordsQuery );
-	const collection        = useAtomValue( store.collection );
-	const namespace         = useAtomValue( store.namespace );
-	const [route, setRoute] = useAtom( store.route );
+	const [query, setQuery]             = useAtom( store.recordsQuery );
+	const collection                    = useAtomValue( store.collection );
+	const namespace                     = useAtomValue( store.namespace );
+	const [ hiddenCols, setHiddenCols ] = useState( hidden );
 
 	// Make some columns from the schema.
 	const columns = useMemo( () => {
@@ -42,13 +45,13 @@ export function DisplayRecords( { schema: {count, schema }, records: { state, da
 		schema.forEach( ( column ) => {
 
 			// Abort if dynamic column.
-			if ( column.is_dynamic ) {
+			if ( ignore.includes( column.name ) ) {
 				return;
 			}
 
 			columns.push( {
 				key: column.name,
-				visible: ! column.is_dynamic && 'id' !== column.name,
+				visible: ! hiddenCols.includes( column.name ),
 				isSortable: ! column.is_dynamic,
 				isNumeric: column.is_numeric || column.is_float,
 				...column
@@ -56,7 +59,7 @@ export function DisplayRecords( { schema: {count, schema }, records: { state, da
 		} );
 
 		return columns;
-	}, [ schema ] );
+	}, [ schema, hiddenCols ] );
 
 	// Convert records into data array.
 	const records = useMemo( () => {
@@ -86,6 +89,14 @@ export function DisplayRecords( { schema: {count, schema }, records: { state, da
 			onQueryChange={ setQuery }
 			query={ query }
 			className={ `${namespace}-${collection}__records-table` }
+			toggleHiddenCol={ ( col ) => {
+
+				if ( hiddenCols.includes( col ) ) {
+					setHiddenCols( without( hiddenCols, col ) );
+				} else {
+					setHiddenCols( [ ...hiddenCols, col ] );
+				}
+			} }
 			{ ...extra }
 		/>
 	);
