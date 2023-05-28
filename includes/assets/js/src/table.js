@@ -3,6 +3,7 @@
  */
 import domReady from '@wordpress/dom-ready';
 import {render, createRoot} from "@wordpress/element";
+import { Provider } from "jotai";
 
 /**
  * Local dependencies.
@@ -25,11 +26,17 @@ domReady( () => {
 			data.config = {};
 		}
 
+		const TheApp = (
+			<Provider>
+				<Collection {...data.config} />
+			</Provider>
+		);
+
 		// React 18.
 		if ( createRoot ) {
-			createRoot( app ).render( <Collection {...data.config} /> );
+			createRoot( app ).render( TheApp );
 		} else {
-			render( <Collection {...data.config} />, app );
+			render( TheApp, app );
 		}
 	}
 } );

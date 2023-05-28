@@ -32,14 +32,14 @@ export default function Navigation() {
 	const [ currentPath, setCurrentPath ] = useAtom( route );
 
 	// Filter out components that don't have a display.
-	const toDisplay = compact( Object.keys( components ).map( ( component ) => {
+	const toDisplay = compact( Object.keys( allComponents ).map( ( component ) => {
 
 		// Don't display components that don't have a display.
-		if ( components[component].hide ) {
+		if ( allComponents[component].hide ) {
 			return null;
 		}
 
-		const newComponent = { ...components[component], key: component };
+		const newComponent = { ...allComponents[component], key: component };
 
 		// Add icon if it doesn't exist.
 		if ( ! newComponent.icon ) {

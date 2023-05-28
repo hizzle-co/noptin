@@ -11,11 +11,13 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { Provider, useAtomValue, useSetAtom, useAtom } from "jotai";
+import { useAtomValue, useSetAtom, useAtom } from "jotai";
+import { useHydrateAtoms } from 'jotai/utils';
 
 /**
  * Internal dependencies.
  */
+import ErrorBoundary from "./error-boundary";
 import Screen from "./screen";
 import Navigation from "./navigation";
 import * as store from "./store";
@@ -40,7 +42,9 @@ const RenderCollection = () => {
 				{ Object.keys( components ).map( ( component ) => {
 					return (
 						<NavigatorScreen key={ component } path={ component }>
-							<Screen path={ component } />
+							<ErrorBoundary>
+								<Screen path={ component } />
+							</ErrorBoundary>
 						</NavigatorScreen>
 					);
 				} ) }
@@ -61,18 +65,15 @@ const RenderCollection = () => {
 export default function Collection( { namespace, collection, components } ) {
 
 	// Prepare the store.
-	const setCollection = useSetAtom(store.collection);
-	const setNamespace  = useSetAtom(store.namespace);
-	const setComponents = useSetAtom(store.components);
 	const setUrl        = useSetAtom(store.url);
 	const route         = useAtomValue( store.route );
 
 	// Set the collection and namespace once the component mounts.
-	useEffect( () => {
-		setCollection( collection );
-		setNamespace( namespace );
-		setComponents( components );
-	}, [] );
+	useHydrateAtoms([
+		[store.collection, collection],
+		[store.namespace, namespace],
+		[store.components, components],
+	]);
 
 	// Watch for route changes.
 	useEffect( () => {
@@ -83,17 +84,17 @@ export default function Collection( { namespace, collection, components } ) {
 
 	// Render the collection.
 	return (
-		<Provider>
-			<NavigatorProvider
-				initialPath={ route.path ? route.path : '/' }
-				as={Flex}
-				direction="column"
-				gap={ 4 }
-				className="noptin-collection__wrapper"
-				style={{ minHeight: '100vh' }}
-			>
+		<NavigatorProvider
+			initialPath={ route.path ? route.path : '/' }
+			as={Flex}
+			direction="column"
+			gap={ 4 }
+			className="noptin-collection__wrapper"
+			style={{ minHeight: '100vh' }}
+		>
+			<ErrorBoundary>
 				<RenderCollection />
-			</NavigatorProvider>
-		</Provider>
+			</ErrorBoundary>
+		</NavigatorProvider>
 	);
 }

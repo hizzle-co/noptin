@@ -58,6 +58,8 @@ const TableCard = ( {
 	...props
 } ) => {
 
+	console.log( onClickDownload, onClickImport, totalRows );
+
 	// Contains an array of hidden cols.
 	const [ hiddenCols, setHiddenCols ] = useState( [] );
 

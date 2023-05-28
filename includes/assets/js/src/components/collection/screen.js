@@ -41,30 +41,34 @@ export default function Screen( { path } ) {
 	}
 
 	const component = allComponents[ path ].component;
+	const args      = {
+		component: allComponents[ path ],
+		path
+	};
 
 	// Display records.
 	if ( 'list-records' === component ) {
-		return <RecordsTable path={path} component={component} />
+		return <RecordsTable {...args} />
 	}
 
 	// Export records.
 	if ( 'export' === component ) {
-		return <Export path={path} component={component} />;
+		return <Export {...args} />;
 	}
 
 	// Import records.
 	if ( 'import' === component ) {
-		return <Import path={path} component={component} />;
+		return <Import {...args} />;
 	}
 
 	// Create a new record.
 	if ( 'create-record' === component ) {
-		return <CreateRecord path={path} component={component} />;
+		return <CreateRecord {...args} />;
 	}
 
 	// Update a record.
 	if ( 'update-record' === component ) {
-		return <UpdateRecord path={path} component={component} />;
+		return <UpdateRecord {...args} />;
 	}
 
 	return path;

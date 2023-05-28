@@ -21,6 +21,7 @@ const PER_PAGE_OPTIONS = [ 25, 50, 75, 100 ];
  */
 function PageArrows( { page, showPageArrowsLabel, pageCount, onPageChange }  ) {
 
+	return null;
 	if ( pageCount <= 1 ) {
 		return null;
 	}
