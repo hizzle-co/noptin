@@ -33,8 +33,7 @@ const records = loadable( atom(async (get) => {
     // Convert the query to a query args string.
     const path = addQueryArgs( `${currentNamespace}/v1/${currentCollection}`, query );
 
-	return await apiFetch( { path } );
-
+	return await apiFetch({ path });
 }));
 
 // Export the records query and records.

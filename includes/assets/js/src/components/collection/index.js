@@ -27,9 +27,7 @@ import * as store from "./store";
 const RenderCollection = () => {
 
 	const [components] = useAtom( store.components );
-	const theComponents = useAtomValue(store.components);
 
-	console.log( theComponents );
 	return (
 		<>
 			<FlexItem>

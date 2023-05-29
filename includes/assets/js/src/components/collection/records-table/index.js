@@ -39,7 +39,13 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 
 	// Updates the query.
 	const updateQuery = ( newQuery ) => {
-		const { path, query } = route; console.log( 'updateQuery', { path, query, newQuery } );
+		const { path, query } = route;
+
+		// If we're not updating the page, reset it.
+		if ( ! newQuery.page ) {
+			newQuery.page = 1;
+		}
+
 		setRoute( { path, query: { ...query, ...newQuery } } );
 	}
 

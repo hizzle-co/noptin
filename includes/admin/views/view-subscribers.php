@@ -9,7 +9,7 @@
 defined( 'ABSPATH' ) || exit;
 
 $components = array(
-	'/'      => array(
+	'/'       => array(
 		'title'      => esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
 		'singular'   => esc_html__( 'Email Subscriber', 'newsletter-optin-box' ),
 		'component'  => 'list-records',
@@ -17,14 +17,14 @@ $components = array(
 		'namespace'  => 'noptin',
 		'icon'       => 'admin-users',
 	),
-	'add'    => array(
+	'/add'    => array(
 		'title'      => esc_html__( 'Add New Subscriber', 'newsletter-optin-box' ),
 		'singular'   => esc_html__( 'Add New', 'newsletter-optin-box' ),
 		'component'  => 'create-record',
 		'collection' => 'subscribers',
 		'namespace'  => 'noptin',
 	),
-	'update' => array(
+	'/update' => array(
 		'title'      => esc_html__( 'Update Subscriber', 'newsletter-optin-box' ),
 		'singular'   => esc_html__( 'Update', 'newsletter-optin-box' ),
 		'component'  => 'update-record',
@@ -32,14 +32,14 @@ $components = array(
 		'namespace'  => 'noptin',
 		'hide'       => true,
 	),
-	'import' => array(
+	'/import' => array(
 		'title'      => esc_html__( 'Import Subscribers', 'newsletter-optin-box' ),
 		'singular'   => esc_html__( 'Import', 'newsletter-optin-box' ),
 		'component'  => 'import',
 		'collection' => 'subscribers',
 		'namespace'  => 'noptin',
 	),
-	'export' => array(
+	'/export' => array(
 		'title'      => esc_html__( 'Export Subscribers', 'newsletter-optin-box' ),
 		'singular'   => esc_html__( 'Export', 'newsletter-optin-box' ),
 		'component'  => 'export',
@@ -63,13 +63,13 @@ $config = apply_filters(
 
 <div class="wrap noptin-subscribers-page" id="noptin-wrapper">
 
-	<?php noptin()->admin->show_notices(); ?>
-
 	<div id="noptin-collection__overview-app" data-config="<?php echo esc_attr( wp_json_encode( $config ) ); ?>">
 		<!-- Display a loading animation while the app is loading -->
 		<div class="loading">
 			<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>
-			<span class="spinner"></span>
+			<span class="spinner">
+				<span class="spinner-icon"></span>
+			</span>
 		</div>
 	</div>
 

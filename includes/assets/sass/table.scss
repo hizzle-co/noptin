@@ -156,10 +156,11 @@
 }
 
 .noptin-table__empty-item {
-	text-align: center;
+	text-align: left;
 	@include font-size( 18 );
 	color: $gray-700;
 	font-weight: bold;
+    padding: 2rem;
 
 	@include breakpoint( '<782px' ) {
 		@include font-size( 13 );

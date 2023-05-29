@@ -2,59 +2,88 @@
  * External dependencies
  */
 import apiFetch from "@wordpress/api-fetch";
-import { useState, useEffect, useMemo } from "@wordpress/element";
-import { Notice, TextControl, ToggleControl, CardBody } from "@wordpress/components";
+import { useState } from "@wordpress/element";
+import { Notice, Spinner, CardBody, CardFooter, Button } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
+import { useAtomValue } from "jotai";
 
 /**
  * Local dependencies.
  */
-import {getSchema} from "./get-schema";
+import { schema, collection, namespace } from "./store";
 import Wrap from "./wrap";
+import Setting from "../setting";
 
 /**
  * Allows the user to export all records.
  *
  * @param {Object} props
- * @param {string} props.namespace
- * @param {string} props.collection
+ * @param {Object} props.component
  */
-export default function CreateRecord( { namespace, collection, title } ) {
+export default function CreateRecord( { component: { title } } ) {
 
-	// Fetch the schema.
-	const [ schema, setSchema ] = useState( [] );
-	const [ error, setError ] = useState( null );
-	const [ loading, setLoading ] = useState( true );
-	const [ toExport, setToExport ] = useState( [] );
+	// Prepare the state.
+	const [ error, setError ]     = useState( null );
+	const [ loading, setLoading ] = useState( false );
+	const [ record, setRecord ]   = useState( {} );
 
-	// Calculates the fields to export.
-	const calculateToExport = ( schema ) => {
-		const toExport = [];
+	// Prepare the store.
+	const currentCollection = useAtomValue( collection );
+	const currentNamespace  = useAtomValue( namespace );
+	const currentSchema	    = useAtomValue( schema );
 
-		schema.map( ( field ) => {
-			if ( ! field.is_dynamic ) {
-				toExport.push( field.name );
-			}
-		});
+	// Show error if any.
+	if ( currentSchema.state === 'hasError' ) {
 
-		setToExport( toExport );
+		return (
+			<Wrap title={ title }>
+				<CardBody>
+					<Notice status="error" isDismissible={ false }>
+						<strong>{ __( 'Error:', 'newsletter-optin-box' ) }</strong>&nbsp;
+						{ currentSchema.error.message }
+					</Notice>
+				</CardBody>
+			</Wrap>
+		);
 	}
 
-	// Fetch the schema.
-	useEffect( () => {
-		getSchema( namespace, collection )
-			.then( ( { schema } ) => {
-				setSchema( schema );
-				calculateToExport( schema );
-			} )
-			.catch( ( error ) => {
-				setError( error );
-			} )
-			.finally( () => {
-				setLoading( false );
-			});
-	}, [namespace, collection] );
+	// Show the loading indicator if we're loading the schema.
+	if ( currentSchema.state === 'loading' ) {
 
+		return (
+			<Wrap title={ title }>
+				<CardBody>
+					<Spinner />
+				</CardBody>
+			</Wrap>
+		);
+	}
+
+	// Saves the record.
+	const saveRecord = () => {
+
+		// Abort if we're already loading.
+		if ( loading ) {
+			return;
+		}
+
+		setLoading( true );
+		setError( null );
+
+		apiFetch( {
+			path: `${currentNamespace}/v1/${currentCollection}`,
+			method: 'POST',
+			data: record,
+		} ).then( ( {id} ) => {
+			// TODO: Switch route to /edit/:id
+		} ).catch( ( error ) => {
+			setError( error );
+		} ).finally( () => {
+			setLoading( false );
+		} );
+	};
+
+	// Display the add record form.
 	return (
 		<Wrap title={title}>
 
@@ -71,30 +100,81 @@ export default function CreateRecord( { namespace, collection, title } ) {
 					</Notice>
 				) }
 
-				{ ! loading && ! error && (
-					<div>
+				{ currentSchema.data.schema.map( ( field ) => {
 
-						<h3>
-							{ __( 'Select the fields to export', 'noptin' ) }
-						</h3>
+					// Abort for readonly and dynamic fields.
+					if ( field.readonly || field.is_dynamic ) {
+						return null;
+					}
 
-						{ schema.map( ( field ) => (
-							<ToggleControl
-								key={field.name}
-								label={field.label === field.description ? field.label : `${field.label} (${field.description})`}
-								checked={ toExport.includes( field.name ) }
-								onChange={ () => {
-									if ( toExport.includes( field.name ) ) {
-										setToExport( toExport.filter( ( name ) => name !== field.name ) );
-									} else {
-										setToExport( [ ...toExport, field.name ] );
-									}
-								} }
+					// Abort for hidden fields.
+					if ( currentSchema.data.hidden && currentSchema.data.hidden.includes( field.name ) ) {
+						return null;
+					}
+
+					// Fields to ignore.
+					if ( currentSchema.data.ignore && currentSchema.data.ignore.includes( field.name ) ) {
+						return null;
+					}
+
+					const preparedSetting = {
+						default: field.default,
+						label: field.label,
+						el: 'input',
+						type: 'text',
+					};
+
+					if ( field.enum && ! Array.isArray( field.enum ) ) {
+						preparedSetting.el = 'select';
+						preparedSetting.options = field.enum;
+					}
+
+					if ( field.isLongText ) {
+						preparedSetting.el = 'textarea';
+					}
+
+					if ( field.is_numeric || field.is_float ) {
+						preparedSetting.type = 'number';
+					}
+
+					if ( field.is_boolean ) {
+						preparedSetting.type = 'toggle';
+					}
+
+					if ( field.description && field.description !== field.label ) {
+						preparedSetting.description = field.description;
+					}
+
+					return (
+						<div style={ { marginBottom: '1.6rem' } } key={ field.name }>
+							<Setting
+								settingKey={ field.name }
+								saved={ record }
+								setAttributes={ ( newAttributes) => setRecord( { ...record, ...newAttributes } ) }
+								setting={ preparedSetting }
 							/>
-						) ) }
-					</div>
+						</div>
+					);
+				} ) }
+
+				{ error && (
+					<Notice status="error">
+						{ error.message }
+					</Notice>
 				) }
 			</CardBody>
+
+			<CardFooter>
+				<Button
+					variant="primary"
+					onClick={ saveRecord }
+					isBusy={ loading }
+					disabled={ loading }
+				>
+					{ __( 'Save', 'newsletter-optin-box' ) }
+					{ loading && <Spinner /> }
+				</Button>
+			</CardFooter>
 		</Wrap>
 	);
 

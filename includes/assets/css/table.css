@@ -244,11 +244,12 @@
 }
 
 .noptin-table__empty-item {
-  text-align: center;
+  text-align: left;
   font-size: 18px;
   font-size: 1.125rem;
   color: #757575;
   font-weight: bold;
+  padding: 2rem;
 }
 @media (max-width: 782px) {
   .noptin-table__empty-item {

@@ -4,14 +4,17 @@ import { atom } from "jotai";
 // Caches the current query by path.
 const queryCache = {};
 
+// We need to store the hash in an atom to force updates.
+const hashAtom = atom( window.location.hash );
+
 // Stores the current route.
 const route = atom(
 
 	// Reads the current route from the URL.
-	() => {
+	( get ) => {
 
 		// Fetch from hash.
-		let url = window.location.hash;
+		let url = get( hashAtom );
 
 		// Maybe remove leading hash.
 		if ( '#' === url[0] ) {
@@ -39,8 +42,15 @@ const route = atom(
 			queryCache[path] = query;
 		}
 
+		const hash = addQueryArgs( path, queryCache[path] || {} );
+
 		// Set this as the URL hash.
 		window.location.hash = addQueryArgs( path, queryCache[path] || {} );
+
+		// Force an update.
+		set( hashAtom, hash );
+
+		console.log( queryCache[path] );
 	}
 )
 
