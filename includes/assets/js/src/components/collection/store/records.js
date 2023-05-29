@@ -11,9 +11,24 @@ import { addQueryArgs } from '@wordpress/url';
  * Local dependencies.
  */
 import { collection, namespace } from "./schema";
+import { route } from "./route";
 
 // Stores the current records query.
-const recordsQuery = atom({per_page: 25, page: 1});
+const recordsQuery = atom(
+
+	// Reads the current route from the URL.
+	( get ) => {
+
+		const { query } = get( route );console.log( query );
+		return { ...{per_page: 25, page: 1}, ...query };
+	},
+
+	// Writes the route to the URL.
+	(get, set, query) => {
+		const { path } = get( route );
+		set( route, { path, query } );
+	}
+)
 
 // Stores the current records.
 const records = loadable( atom(async (get) => {

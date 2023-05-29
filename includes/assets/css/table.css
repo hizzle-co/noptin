@@ -92,6 +92,14 @@
  */
 /* stylelint-disable block-closing-brace-newline-after */
 /* stylelint-enable */
+#noptin-collection__overview-app .noptin-heading-text {
+  line-height: 1.2;
+  margin: 0px;
+  color: currentColor;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 .noptin-table {
   margin-bottom: 40px;
 }
@@ -161,34 +169,8 @@
   text-align: left;
 }
 
-.components-card__body {
-  position: relative;
-}
-
 .noptin-table__table {
   overflow-x: auto;
-}
-.noptin-table__table::after, .noptin-table__table::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 60px;
-  height: 100%;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 1;
-}
-.noptin-table__table::after {
-  right: 0;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff);
-}
-.noptin-table__table::before {
-  left: 0;
-  background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0));
-}
-.noptin-table__table.is-scrollable-right::after, .noptin-table__table.is-scrollable-left::before {
-  opacity: 1;
 }
 .noptin-table__table table {
   border-collapse: collapse;
@@ -309,6 +291,7 @@ th.noptin-table__item {
   background-color: #f8f9fa;
   font-weight: bold;
   white-space: nowrap;
+  min-width: 160px;
 }
 .noptin-table__header.is-left-aligned.is-sortable {
   padding-left: 16px;
@@ -318,22 +301,18 @@ th.noptin-table__item {
   order: 1;
   margin-left: 0;
 }
-.noptin-table__header .components-button.is-button {
+.noptin-table__header .components-button {
   height: auto;
   width: 100%;
-  padding: 8px 24px 8px 0;
+  text-align: left;
   vertical-align: middle;
   line-height: 1;
-  border: none;
+  font-weight: bold;
   background: transparent !important;
   box-shadow: none !important;
-  align-items: center;
 }
-.noptin-table__header .components-button.is-button:hover {
-  box-shadow: none !important;
-}
-.noptin-table__header .components-button.is-button:active {
-  box-shadow: none !important;
+.noptin-table__header .components-button.has-icon {
+  justify-content: flex-start;
 }
 .noptin-table__header.is-sortable {
   padding: 0;

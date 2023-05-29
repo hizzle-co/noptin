@@ -136,12 +136,10 @@ const TableCard = ( {
 	};
 
 	return (
-		<Card className={ classes }>
+		<Card className={ classes } elevation={2} isRounded>
 
 			<CardHeader>
-				<Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
-					{ title }
-				</Text>
+				<h2 className="noptin-heading-text">{ title }</h2>
 
 				<div className="noptin-table__actions">{ actions }</div>
 

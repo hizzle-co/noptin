@@ -66,20 +66,11 @@ const Table = ( {
 	onQueryChange,
 } ) => {
 	const [ tabIndex, setTabIndex ] = useState( undefined );
-	const [ isScrollableRight, setIsScrollableRight ] = useState( false );
-	const [ isScrollableLeft, setIsScrollableLeft ] = useState( false );
 	const sortBy = query.orderby || 'id';
 	const sortDir = query.order || DESC;
 	const container = useRef( null );
 
-	const classes = classnames(
-		'noptin-table__table',
-		className,
-		{
-			'is-scrollable-right': isScrollableRight,
-			'is-scrollable-left': isScrollableLeft,
-		}
-	);
+	const classes = classnames( className, 'noptin-table__table' );
 
 	const setSortBy = ( col ) => {
 
@@ -88,29 +79,6 @@ const Table = ( {
 			onQueryChange( { order: sortDir === ASC ? DESC : ASC } );
 		} else {
 			onQueryChange( { orderby: col } );
-		}
-	};
-
-	const updateTableShadow = () => {
-		const table = container.current;
-
-		if ( table?.scrollWidth && table?.scrollHeight && table?.offsetWidth ) {
-			const scrolledToEnd =
-				table?.scrollWidth - table?.scrollLeft <= table?.offsetWidth;
-			if ( scrolledToEnd && isScrollableRight ) {
-				setIsScrollableRight( false );
-			} else if ( ! scrolledToEnd && ! isScrollableRight ) {
-				setIsScrollableRight( true );
-			}
-		}
-
-		if ( table?.scrollLeft ) {
-			const scrolledToStart = table?.scrollLeft <= 0;
-			if ( scrolledToStart && isScrollableLeft ) {
-				setIsScrollableLeft( false );
-			} else if ( ! scrolledToStart && ! isScrollableLeft ) {
-				setIsScrollableLeft( true );
-			}
 		}
 	};
 
@@ -126,15 +94,7 @@ const Table = ( {
 
 		const scrollable = scrollWidth > clientWidth;
 		setTabIndex( scrollable ? 0 : undefined );
-		updateTableShadow();
-		window.addEventListener( 'resize', updateTableShadow );
-
-		return () => {
-			window.removeEventListener( 'resize', updateTableShadow );
-		};
 	}, [] );
-
-	useEffect( updateTableShadow, [ headers, rows, emptyMessage ] );
 
 	return (
 		<div
@@ -144,7 +104,6 @@ const Table = ( {
 			aria-hidden={ ariaHidden }
 			aria-labelledby={ `caption-${ instanceId }` }
 			role="group"
-			onScroll={ updateTableShadow }
 		>
 			<table>
 				<caption

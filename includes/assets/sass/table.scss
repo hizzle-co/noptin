@@ -2,6 +2,17 @@
 @import 'util/mixins';
 @import 'util/breakpoints';
 
+#noptin-collection__overview-app {
+
+	.noptin-heading-text {
+		line-height: 1.2;
+		margin: 0px;
+		color: currentColor;
+		font-size: 16px;
+		font-weight: 600;
+	}
+}
+
 .noptin-table {
 	margin-bottom: $gap-largest;
 
@@ -90,40 +101,8 @@
 	text-align: left;
 }
 
-.components-card__body {
-	position: relative;
-}
-
 .noptin-table__table {
 	overflow-x: auto;
-
-	&::after,
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		width: 60px;
-		height: 100%;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.3s;
-		z-index: 1;
-	}
-
-	&::after {
-		right: 0;
-		background: linear-gradient(90deg, rgba($white, 0), $white);
-	}
-
-	&::before {
-		left: 0;
-		background: linear-gradient(90deg, $white, rgba($white, 0));
-	}
-
-	&.is-scrollable-right::after,
-	&.is-scrollable-left::before {
-		opacity: 1;
-	}
 
 	table {
 		border-collapse: collapse;
@@ -229,6 +208,7 @@ th.noptin-table__item {
 	background-color: #f8f9fa;
 	font-weight: bold;
 	white-space: nowrap;
+	min-width: 160px;
 
 	&.is-left-aligned.is-sortable {
 		padding-left: $gap;
@@ -239,24 +219,18 @@ th.noptin-table__item {
 		}
 	}
 
-	.components-button.is-button {
+	.components-button {
 		height: auto;
 		width: 100%;
-		padding: $gap-smaller $gap-large $gap-smaller 0;
+		text-align: left;
 		vertical-align: middle;
-		line-height: 1;
-		border: none;
+    	line-height: 1;
+		font-weight: bold;
 		background: transparent !important;
 		box-shadow: none !important;
-		align-items: center;
 
-		// @todo Add interactive styles
-		&:hover {
-			box-shadow: none !important;
-		}
-
-		&:active {
-			box-shadow: none !important;
+		&.has-icon {
+			justify-content: flex-start;
 		}
 	}
 

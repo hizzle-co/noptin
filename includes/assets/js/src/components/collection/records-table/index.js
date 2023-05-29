@@ -86,7 +86,7 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 			totalRows={ count }
 			summary={ [] }
 			isLoading={ state === 'loading' }
-			onQueryChange={ setQuery }
+			onQueryChange={ (newQuery) => setQuery({ ...query, ...newQuery }) }
 			query={ query }
 			className={ `${namespace}-${collection}__records-table` }
 			toggleHiddenCol={ ( col ) => {

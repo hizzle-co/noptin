@@ -59,11 +59,6 @@ export default function Navigation() {
 			}
 		}
 
-		// Add button variant if it doesn't exist.
-		if ( ! newComponent.variant ) {
-			newComponent.variant = 'add' === component ? 'primary' : 'tertiary';
-		}
-
 		return newComponent;
 	} ) );
 
@@ -95,7 +90,6 @@ export default function Navigation() {
 									icon={ component.icon }
 									text={ component.title }
 									id={`noptin-collection-navigation__button-${ component.key }`}
-									variant={ location.path === component.key ? 'primary' : 'tertiary'}
 									__experimentalIsFocusable
 								/>
 							</FlexItem>

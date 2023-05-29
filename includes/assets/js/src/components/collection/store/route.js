@@ -10,10 +10,10 @@ const route = atom(
 	// Reads the current route from the URL.
 	( get ) => {
 
-		const queryArg = getQueryArg( get( url ), 'hizzle_route' );
+		const queryArg = decodeURI( getQueryArg( get( url ), 'hizzle_route' ) );
 		const path     = queryArg ? queryArg.split( '?' )[0] : '/';
 		const query    = path ? getQueryArgs( path ) : {};
-
+console.log( query );
 		return { path, query };
 	},
 

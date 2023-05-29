@@ -65,6 +65,7 @@ export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel,
 						aria-describedby={ labelId } onClick={ onClick }
 						icon={ sortDir !== 'asc' ? chevronDown : chevronUp}
 						text={ textLabel }
+						iconPosition="right"
 					/>
 					<span className="screen-reader-text" id={ labelId }>
 						{ iconLabel }
