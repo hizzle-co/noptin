@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Button } from "@wordpress/components";
 import { plus, cloudUpload, download, trash } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
 import { compact } from "lodash";
@@ -11,14 +10,14 @@ import {
 	FlexBlock,
 	Card,
 	CardHeader,
-	__experimentalNavigatorButton as NavigatorButton,
+	Button,
 	__experimentalText as Text,
 	__experimentalUseNavigator as useNavigator,
 } from "@wordpress/components";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 import AppIcon from "./app-icon";
-import { recordsQuery, route, components } from './store';
+import { route, namespace, collection, components } from './store';
 
 /**
  * Displays the collection navigation.
@@ -27,8 +26,10 @@ import { recordsQuery, route, components } from './store';
  */
 export default function Navigation() {
 
-	const { location } = useNavigator();
+	const { goTo } = useNavigator();
 	const allComponents = useAtomValue( components );
+	const setNamespace = useSetAtom( namespace );
+	const setCollection = useSetAtom( collection );
 	const [ currentPath, setCurrentPath ] = useAtom( route );
 
 	// Filter out components that don't have a display.
@@ -47,6 +48,7 @@ export default function Navigation() {
 			switch (newComponent.component) {
 				case 'create-record':
 					newComponent.icon = plus;
+					break;
 				case 'import':
 					newComponent.icon = cloudUpload;
 					break;
@@ -61,6 +63,23 @@ export default function Navigation() {
 
 		return newComponent;
 	} ) );
+
+	// Set the current path.
+	const navigateTo = ( path ) => {
+
+		// Navigate to the path.
+		setCurrentPath( { path } );
+		goTo( path );
+
+		// Maybe set the namespace and collection.
+		if ( allComponents[path].namespace ) {
+			setNamespace( allComponents[path].namespace );
+		}
+
+		if ( allComponents[path].collection ) {
+			setCollection( allComponents[path].collection );
+		}
+	};
 
 	return (
 		<Card>
@@ -83,9 +102,8 @@ export default function Navigation() {
 					{ toDisplay.map( ( component ) => {
 						return (
 							<FlexItem key={ component.key }>
-								<NavigatorButton
-									path={ component.key }
-									as={ Button }
+								<Button
+									onClick={ () => navigateTo( component.key ) }
 									isPressed={ currentPath.path === component.key }
 									icon={ component.icon }
 									text={ component.title }

@@ -3,13 +3,16 @@
  */
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
+import { useDebouncedCallback } from "use-debounce";
 import {
 	Card,
-	CardBody,
+	SearchControl,
 	CardFooter,
 	CardHeader,
-	__experimentalText as Text,
+	Flex,
+	FlexBlock,
+	FlexItem,
 	MenuGroup,
 	ToggleControl,
 	MenuItem
@@ -108,21 +111,17 @@ const TableCard = ( {
 	...props
 } ) => {
 
+	const [ searchTerm, setSearchTerm ] = useState( query.search ? query.search : '' );
+
 	// Returns a list of visible cols.
 	const visibleCols = useMemo( () => headers.filter( ( { visible } ) => visible ), [ headers ] );
-
-	const allHeaders = headers;
+	const allHeaders  = headers;
 	const visibleRows = rows.map( ( row ) => {
 		return headers
 			.map( ( { visible }, i ) => {
 				return visible && row[ i ];
 			} )
 			.filter( Boolean );
-	} );
-	const classes = classnames( 'noptin-table', className, {
-		'has-actions': !! actions,
-		'has-menu': showMenu,
-		'has-search': hasSearch,
 	} );
 
 	// Common props.
@@ -135,16 +134,46 @@ const TableCard = ( {
 		...props,
 	};
 
+	// Fired when the search text changes.
+	const onSearchTextChange = useDebouncedCallback((value) => {
+		onQueryChange({search: value});
+	}, 1500);
+
 	return (
-		<Card className={ classes } elevation={2} isRounded>
+		<Card className={ classnames( 'noptin-table', className ) } elevation={2}>
 
 			<CardHeader>
-				<h2 className="noptin-heading-text">{ title }</h2>
+				<Flex gap={2} wrap>
 
-				<div className="noptin-table__actions">{ actions }</div>
+					<FlexItem>
+						<h2 className="noptin-heading-text">{ title }</h2>
+					</FlexItem>
 
-				{ showMenu && <Menu allHeaders={ allHeaders } toggleHiddenCol={ toggleHiddenCol } /> }
+					{ hasSearch && (
+						<FlexBlock style={{minWidth: '200px'}}>
+							<SearchControl
+								value={ searchTerm }
+								onChange={ (value) => {
+									setSearchTerm(value);
+									onSearchTextChange(value);
+								}}
+								__nextHasNoMarginBottom
+							/>
+						</FlexBlock>
+					) }
 
+					{ actions && (
+						<FlexItem>
+							{ actions }
+						</FlexItem>
+					) }
+
+					{ showMenu && (
+						<FlexItem>
+							<Menu allHeaders={ allHeaders } toggleHiddenCol={ toggleHiddenCol } />
+						</FlexItem>
+					) }
+				</Flex>
 			</CardHeader>
 
 			{ isLoading ? <Placeholder { ...theProps } /> : <Table rows={ visibleRows } { ...theProps } /> }

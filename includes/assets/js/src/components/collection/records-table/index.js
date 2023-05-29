@@ -32,10 +32,16 @@ import DisplayCell from "./display-cell";
 export function DisplayRecords( { schema: {count, schema, hidden, ignore }, records: { state, data }, extra } ) {
 
 	// Prepare the current query.
-	const [query, setQuery]             = useAtom( store.recordsQuery );
+	const [route, setRoute]             = useAtom( store.route );
 	const collection                    = useAtomValue( store.collection );
 	const namespace                     = useAtomValue( store.namespace );
 	const [ hiddenCols, setHiddenCols ] = useState( hidden );
+
+	// Updates the query.
+	const updateQuery = ( newQuery ) => {
+		const { path, query } = route; console.log( 'updateQuery', { path, query, newQuery } );
+		setRoute( { path, query: { ...query, ...newQuery } } );
+	}
 
 	// Make some columns from the schema.
 	const columns = useMemo( () => {
@@ -86,9 +92,10 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 			totalRows={ count }
 			summary={ [] }
 			isLoading={ state === 'loading' }
-			onQueryChange={ (newQuery) => setQuery({ ...query, ...newQuery }) }
-			query={ query }
+			onQueryChange={ updateQuery }
+			query={ route.query }
 			className={ `${namespace}-${collection}__records-table` }
+			hasSearch={ true }
 			toggleHiddenCol={ ( col ) => {
 
 				if ( hiddenCols.includes( col ) ) {

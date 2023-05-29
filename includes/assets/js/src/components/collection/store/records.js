@@ -13,28 +13,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { collection, namespace } from "./schema";
 import { route } from "./route";
 
-// Stores the current records query.
-const recordsQuery = atom(
-
-	// Reads the current route from the URL.
-	( get ) => {
-
-		const { query } = get( route );console.log( query );
-		return { ...{per_page: 25, page: 1}, ...query };
-	},
-
-	// Writes the route to the URL.
-	(get, set, query) => {
-		const { path } = get( route );
-		set( route, { path, query } );
-	}
-)
-
 // Stores the current records.
 const records = loadable( atom(async (get) => {
 
     // Get the current query.
-    const currentQuery = get(recordsQuery);
+    const { query } = get(route);
 
 	// Get the current namespace.
 	const currentNamespace = get(namespace);
@@ -48,11 +31,11 @@ const records = loadable( atom(async (get) => {
 	}
 
     // Convert the query to a query args string.
-    const path = addQueryArgs( `${currentNamespace}/v1/${currentCollection}`, currentQuery );
+    const path = addQueryArgs( `${currentNamespace}/v1/${currentCollection}`, query );
 
 	return await apiFetch( { path } );
 
 }));
 
 // Export the records query and records.
-export { recordsQuery, records };
+export { records };

@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const WooCommerceDependencyExtractionWebpackPlugin = require('@woocommerce/dependency-extraction-webpack-plugin');
 
 module.exports = {
-	mode: "production",
+	mode: "development",
 
 	entry: {
 		admin: "./includes/assets/js/src/admin.js",

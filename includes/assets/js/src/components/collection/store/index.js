@@ -1,4 +1,4 @@
 export { collection, namespace, schema } from './schema';
-export { recordsQuery, records } from './records';
-export { url, route } from './route';
+export { records } from './records';
+export { route } from './route';
 export { components } from './components';

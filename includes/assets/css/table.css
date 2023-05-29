@@ -133,31 +133,6 @@
   padding: 16px;
   text-align: center;
 }
-.noptin-table .components-card__header {
-  align-items: center;
-  text-align: left;
-  display: grid;
-  width: 100%;
-  grid-template-columns: auto 1fr auto;
-}
-@media (max-width: 960px) {
-  .noptin-table.has-search .noptin-table__actions {
-    grid-gap: 12px;
-    grid-template-columns: auto 1fr;
-    grid-row-start: 2;
-    grid-row-end: 2;
-    grid-column-start: 1;
-    grid-column-end: 4;
-    margin: 0;
-  }
-}
-.noptin-table .noptin-search .noptin-select-control__control {
-  height: 38px;
-}
-.noptin-table .noptin-compare-button {
-  padding: 3px 12px;
-  height: auto;
-}
 .noptin-table .noptin-ellipsis-menu {
   justify-content: flex-end;
   display: flex;

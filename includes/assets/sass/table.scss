@@ -57,39 +57,6 @@
 		text-align: center;
 	}
 
-	.components-card__header {
-		align-items: center;
-		text-align: left;
-		display: grid;
-		width: 100%;
-		grid-template-columns: auto 1fr auto;
-	}
-
-	@include breakpoint( '<960px' ) {
-		&.has-search {
-			.noptin-table__actions {
-				grid-gap: $gap-small;
-				grid-template-columns: auto 1fr;
-				grid-row-start: 2;
-				grid-row-end: 2;
-				grid-column-start: 1;
-				grid-column-end: 4;
-				margin: 0;
-			}
-		}
-	}
-
-	.noptin-search {
-		.noptin-select-control__control {
-			height: 38px;
-		}
-	}
-
-	.noptin-compare-button {
-		padding: 3px $gap-small;
-		height: auto;
-	}
-
 	.noptin-ellipsis-menu {
 		justify-content: flex-end;
 		display: flex;

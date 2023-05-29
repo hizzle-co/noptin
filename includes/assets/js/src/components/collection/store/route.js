@@ -1,37 +1,48 @@
-import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { atom } from "jotai";
 
-// Contains the current URL.
-const url = atom(window.location.href);
+// Caches the current query by path.
+const queryCache = {};
 
 // Stores the current route.
 const route = atom(
 
 	// Reads the current route from the URL.
-	( get ) => {
+	() => {
 
-		const queryArg = decodeURI( getQueryArg( get( url ), 'hizzle_route' ) );
-		const path     = queryArg ? queryArg.split( '?' )[0] : '/';
-		const query    = path ? getQueryArgs( path ) : {};
-console.log( query );
+		// Fetch from hash.
+		let url = window.location.hash;
+
+		// Maybe remove leading hash.
+		if ( '#' === url[0] ) {
+			url = url.substr( 1 );
+		}
+
+		// Ensure it begins with a slash.
+		if ( '/' !== url[0] ) {
+			url = '/';
+		}
+
+		// Fetch the query args.
+		const query = getQueryArgs( url );
+		const path  = url ? url.split( '?' )[0] : '/';
+
 		return { path, query };
 	},
 
 	// Writes the route to the URL.
-	(get, set, { path, query }) => {
+	(get, set, { path, query = false }) => {
 
-		path  = path || '/';
-		query = query || {};
+		path = path || '/';
 
-		// Update the URL.
-		const hizzle_route = addQueryArgs( path, query );
-		const fullURL      = addQueryArgs( window.location.href, { hizzle_route } );
+		if ( false !== query ) {
+			queryCache[path] = query;
+		}
 
-		// Update the URL.
-		window.history.pushState( null, null, fullURL );
-
+		// Set this as the URL hash.
+		window.location.hash = addQueryArgs( path, queryCache[path] || {} );
 	}
 )
 
 // Export the URL and route.
-export { url, route };
+export { route };

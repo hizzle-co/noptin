@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, useState } from "@wordpress/element";
 import {
-	Notice,
 	Flex,
 	FlexBlock,
 	FlexItem,
@@ -11,7 +9,7 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useAtomValue, useSetAtom, useAtom } from "jotai";
+import { useAtomValue, useAtom } from "jotai";
 import { useHydrateAtoms } from 'jotai/utils';
 
 /**
@@ -65,8 +63,7 @@ const RenderCollection = () => {
 export default function Collection( { namespace, collection, components } ) {
 
 	// Prepare the store.
-	const setUrl        = useSetAtom(store.url);
-	const route         = useAtomValue( store.route );
+	const route = useAtomValue( store.route );
 
 	// Set the collection and namespace once the component mounts.
 	useHydrateAtoms([
@@ -74,13 +71,6 @@ export default function Collection( { namespace, collection, components } ) {
 		[store.namespace, namespace],
 		[store.components, components],
 	]);
-
-	// Watch for route changes.
-	useEffect( () => {
-		const updateURL = () => setUrl( window.location.href );
-		window.addEventListener('locationchange', updateURL);
-		return () => window.removeEventListener('locationchange', updateURL);
-	}, []);
 
 	// Render the collection.
 	return (
