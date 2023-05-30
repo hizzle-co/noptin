@@ -542,4 +542,45 @@ class Subscriber extends \Hizzle\Store\Record {
 			)
 		);
 	}
+
+	/**
+	 * Returns the send email URL for the subscriber.
+	 *
+	 * @return string
+	 */
+	public function get_send_email_url() {
+		return get_noptin_email_recipients_url( $this->get_id(), 'noptin' );
+	}
+
+	/**
+	 * Returns the avatar URL for the subscriber.
+	 *
+	 * @return string
+	 */
+	public function get_avatar_url() {
+		return get_avatar_url( $this->get_email(), array( 'size' => 32 ) );
+	}
+
+	/**
+	 * Save should create or update based on object existence.
+	 *
+	 * @since  1.0.0
+	 * @return int|\WP_Error
+	 */
+	public function save() {
+
+		// Confirmation key.
+		$confirm_key = $this->get_confirm_key();
+
+		if ( empty( $confirm_key ) ) {
+			$this->set_confirm_key( md5( wp_generate_password( 100, true, true ) . uniqid() ) );
+		}
+
+		// Check email.
+		if ( ! is_email( $this->get_email() ) ) {
+			return new \WP_Error( 'invalid_email', __( 'Invalid email address.', 'newsletter-optin-box' ) );
+		}
+
+		return parent::save();
+	}
 }

@@ -268,7 +268,7 @@ class REST_Controller extends \WP_REST_Controller {
 			return null;
 		}
 
-		if ( empty( $id ) ) {
+		if ( false === $id ) {
 			return null;
 		}
 
@@ -298,7 +298,11 @@ class REST_Controller extends \WP_REST_Controller {
 				return $object;
 			}
 
-			$object->save();
+			$result = $object->save();
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
 
 			return $this->get_object( $object->get_id() );
 		} catch ( Store_Exception $e ) {
@@ -585,6 +589,10 @@ class REST_Controller extends \WP_REST_Controller {
 
 		if ( is_wp_error( $record ) ) {
 			return $record;
+		}
+
+		if ( empty( $record ) ) {
+			return new \WP_Error( "hizzle_rest_{$this->rest_base}_not_found", __( 'Not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( array_keys( $this->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE ) ) as $arg ) {
@@ -945,6 +953,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 			// Make sure the default is first.
 			if ( isset( $schema[ $default ] ) ) {
+				$schema[ $default ]['is_primary_col'] = true;
 				$default = $schema[ $default ];
 				unset( $schema[ $default['name'] ] );
 				array_unshift( $schema, $default );

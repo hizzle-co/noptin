@@ -3,7 +3,7 @@
  */
 import apiFetch from "@wordpress/api-fetch";
 import { useState } from "@wordpress/element";
-import { Notice, Spinner, CardBody, CardFooter, Button, __experimentalUseNavigator as useNavigator, } from "@wordpress/components";
+import { Notice, Spinner, CardBody, CardFooter, Button, __experimentalUseNavigator as useNavigator, TabPanel, } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useAtomValue, useSetAtom } from "jotai";
 
@@ -13,6 +13,33 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { schema, collection, namespace, route } from "./store";
 import Wrap from "./wrap";
 import Setting from "../setting";
+import OverviewTable from "./overview-table";
+
+/**
+ * Displays the various tabs of the record.
+ */
+function RecordTabs( { currentSchema, record, onChange } ) {
+    initialTabName onSelect
+<TabPanel
+    className="my-tab-panel"
+    activeClass="active-tab"
+    onSelect={ onSelect }
+    tabs={ [
+      {
+        name: 'tab1',
+        title: 'Tab 1',
+        className: 'tab-one',
+      },
+      {
+        name: 'tab2',
+        title: 'Tab 2',
+        className: 'tab-two',
+      },
+    ] }
+  >
+    { ( tab ) => <p>{ tab.title }</p> }
+  </TabPanel>
+}
 
 /**
  * Allows the user to export all records.
@@ -20,7 +47,7 @@ import Setting from "../setting";
  * @param {Object} props
  * @param {Object} props.component
  */
-export default function CreateRecord( { component: { title } } ) {
+export default function UpdateRecord( { component: { title } } ) {
 
 	// Prepare the state.
 	const [ error, setError ]     = useState( null );

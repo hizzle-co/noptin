@@ -26,6 +26,8 @@
 		"@wordpress/api-fetch": "^6.28.0",
 		"@wordpress/base-styles": "^4.25.0",
 		"@wordpress/components": "^25.0.0",
+		"@wordpress/core-data": "^6.11.0",
+		"@wordpress/data-controls": "^3.3.0",
 		"@wordpress/dom-ready": "3.34.0",
 		"@wordpress/icons": "^9.23.0",
 		"jotai": "^2.1.0",

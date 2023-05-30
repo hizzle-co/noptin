@@ -358,8 +358,128 @@ class Main {
 
 		$params['ignore'] = array_merge(
 			$params['ignore'],
-			array( 'activity', 'sent_campaigns' )
+			array( 'activity', 'sent_campaigns', 'avatar_url' )
 		);
+
+		return $params;
+	}
+
+	/**
+	 * Filters the subscriber's collection update params.
+	 *
+	 * @param array $params
+	 * @param Subscriber $subscriber
+	 * @return array
+	 */
+	public function filter_subscribers_collection_update_params( $params, $subscriber ) {
+
+		// View list of sent campaigns.
+		$params['emails'] = array(
+			'title'   => __( 'Emails', 'newsletter-optin-box' ),
+			'element' => 'table',
+			'props'   => array(
+				'actions' => array(
+					'send_email' => array(
+						'label' => __( 'Send Email', 'newsletter-optin-box' ),
+						'url'   => $subscriber->get_send_email_url(),
+					),
+				),
+				'headers' => array(
+					array(
+						'key'     => 'id',
+						'label'   => __( 'ID', 'newsletter-optin-box' ),
+						'visible' => false,
+					),
+					array(
+						'key'        => 'campaign',
+						'label'      => __( 'Campaign', 'newsletter-optin-box' ),
+						'visible'    => true,
+						'is_primary' => true,
+					),
+					array(
+						'key'     => 'sent',
+						'label'   => __( 'Sent at', 'newsletter-optin-box' ),
+						'visible' => true,
+					),
+					array(
+						'key'     => 'opens',
+						'label'   => __( 'Opens', 'newsletter-optin-box' ),
+						'visible' => true,
+					),
+					array(
+						'key'     => 'clicks',
+						'label'   => __( 'Clicks', 'newsletter-optin-box' ),
+						'visible' => true,
+					),
+					array(
+						'key'     => 'unsubscribed',
+						'label'   => __( 'Unsubscribed', 'newsletter-optin-box' ),
+						'visible' => true,
+					),
+				),
+				'rows'    => array(),
+			),
+		);
+
+		foreach ( $subscriber->get_sent_campaigns() as $campaign_id => $details ) {
+
+			$campaign = get_post( $campaign_id );
+			$row      = array(
+				'id'           => array(
+					'display' => $campaign_id,
+					'value'   => $campaign_id,
+				),
+				'campaign'     => array(
+					'display' => $campaign ? $campaign->post_title : __( 'Unknown', 'newsletter-optin-box' ),
+					'url'     => $campaign ? get_edit_post_link( $campaign_id ) : false,
+					'value'   => $campaign_id,
+				),
+				'time'         => array(
+					'display' => array(
+						'el'    => 'break_separated_list',
+						'items' => array(),
+					),
+					'value'   => reset( $details['time'] ),
+				),
+				'opens'        => array(
+					'display' => array(
+						'el'    => 'break_separated_list',
+						'items' => array(),
+					),
+					'value'   => reset( $details['opens'] ),
+				),
+				'clicks'       => array(
+					'display' => array(
+						'el'    => 'break_separated_list',
+						'items' => array(),
+					),
+					'value'   => reset( $details['clicks'] ),
+				),
+				'unsubscribed' => array(
+					'display' => array(
+						'el'   => 'icon',
+						'icon' => empty( $details['unsubscribed'] ) ? 'no' : 'yes',
+					),
+					'value'   => reset( $details['time'] ),
+				),
+			);
+
+			foreach ( array( 'sent', 'opens' ) as $key ) {
+				foreach ( $details[ $key ] as $timestamp ) {
+					$date                   = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
+					$row[ $key ]['items'][] = wp_strip_all_tags( $subscriber->display_date_value( $date, 'date_time' ), true );
+				}
+			}
+
+			foreach ( $details['clicks'] as $url => $timestamps ) {
+				foreach ( $timestamps as $timestamp ) {
+					$date                     = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
+					$row['clicks']['items'][] = esc_url( $url ) . ' &ndash; ' . wp_strip_all_tags( $subscriber->display_date_value( $date, 'date_time' ), true );
+				}
+			}
+
+			$params['emails']['props']['rows'][] = $row;
+		}
 
 		return $params;
 	}

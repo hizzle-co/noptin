@@ -770,7 +770,7 @@ class Record {
 	 * @param \Hizzle\Store\Date_Time $date date.
 	 * @param string $type type.
 	 */
-	protected function display_date_value( $date, $type ) {
+	public function display_date_value( $date, $type ) {
 
 		if ( 'date' === $type ) {
 			return esc_html( $date->context( 'view_day' ) );

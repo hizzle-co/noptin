@@ -19,6 +19,10 @@ import ErrorBoundary from "./error-boundary";
 import Screen from "./screen";
 import Navigation from "./navigation";
 import * as store from "./store";
+import initStore from "../../store-data";
+
+// Initialize the store.
+initStore( 'noptin', 'subscribers' );
 
 /**
  * Renders the Collection.

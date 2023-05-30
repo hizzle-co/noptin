@@ -272,18 +272,21 @@ class Schema {
 								'length'      => 32,
 								'description' => __( 'The confirmation key.', 'newsletter-optin-box' ),
 								'nullable'    => false,
+								'readonly'    => true,
 							),
 
 							'date_created'             => array(
 								'type'        => 'DATETIME',
 								'nullable'    => false,
 								'description' => __( 'Creation date for this subscriber.', 'newsletter-optin-box' ),
+								'readonly'    => true,
 							),
 
 							'date_modified'            => array(
 								'type'        => 'DATETIME',
 								'nullable'    => false,
 								'description' => __( 'Last modification date for this subscriber.', 'newsletter-optin-box' ),
+								'readonly'    => true,
 							),
 
 							'activity'                 => array(
@@ -320,6 +323,20 @@ class Schema {
 							'confirm_subscription_url' => array(
 								'type'        => 'TEXT',
 								'description' => __( "The subscriber's confirm subscription URL.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
+							),
+
+							'send_email_url'           => array(
+								'type'        => 'TEXT',
+								'description' => __( "The subscriber's send email URL.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
+							),
+
+							'avatar_url'               => array(
+								'type'        => 'TEXT',
+								'description' => __( "The subscriber's avatar URL.", 'newsletter-optin-box' ),
 								'is_dynamic'  => true,
 								'readonly'    => true,
 							),
