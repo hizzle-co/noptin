@@ -25,6 +25,18 @@ export const setRecord = ( record ) => ( {
 } );
 
 /**
+ * Edits a record.
+ *
+ * @param {string} id
+ * @param {Object} data
+ */
+export const editRecord = ( id, data ) => ( {
+	type: 'EDIT_RECORD',
+	id,
+	data,
+} );
+
+/**
  * Sets the collection schema.
  *
  * @param {Object} schema

@@ -51,7 +51,7 @@ export default function createResolvers( namespace, collection ) {
          * @return {Object} Action.
          */
         *getSchema() {
-            const path   = `${namespace}/v1/${collection}/schema`;
+            const path   = `${namespace}/v1/${collection}/collection_schema`;
             const schema = yield apiFetch( { path } );
 
             return setSchema( schema );

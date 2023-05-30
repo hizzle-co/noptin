@@ -38,6 +38,18 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 				},
 			};
 
+		case 'EDIT_RECORD':
+			return {
+				...state,
+				editedRecords: {
+					...state.editedRecords,
+					[ action.id ]: {
+						...state.editedRecords[ action.id ],
+						...action.data,
+					},
+				},
+			};
+
 		case 'SET_RECORD_SCHEMA':
 			return {
 				...state,

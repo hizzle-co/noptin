@@ -20,6 +20,7 @@ import Screen from "./screen";
 import Navigation from "./navigation";
 import * as store from "./store";
 import initStore from "../../store-data";
+import { useSchema } from "../../store-data/hooks";
 
 // Initialize the store.
 initStore( 'noptin', 'subscribers' );
@@ -63,6 +64,8 @@ const RenderCollection = () => {
  * @returns
  */
 export default function Collection( { namespace, collection, components } ) {
+
+	console.log( useSchema( namespace, collection ) );
 
 	// Prepare the store.
 	const route = useAtomValue( store.route );

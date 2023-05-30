@@ -13,6 +13,7 @@ import createDynamicActions from './dynamic-actions';
 import { reducer } from './reducer';
 import createResolvers from './resolvers';
 import * as selectors from './selectors';
+export * as hooks from './hooks';
 
 // Cache the stores.
 const stores = {};
