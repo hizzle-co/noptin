@@ -85,6 +85,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 
 		// ... or was already sent the email.
 		if ( ! $this->can_email_subscriber( $campaign, $subscriber ) ) {
+			update_noptin_subscriber_meta( $subscriber->get_id(), '_campaign_' . $campaign->id, 0 );
 			return null;
 		}
 

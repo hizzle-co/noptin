@@ -478,12 +478,6 @@ abstract class Noptin_Email_Type {
 				continue;
 			}
 
-			// Fetch the matching subscriber.
-			$subscriber = noptin_get_subscriber( $email );
-
-			if ( $subscriber->exists() ) {
-				$subscriber->record_sent_campaign( $campaign->id );
-			}
 		}
 
 		// Clear environment.

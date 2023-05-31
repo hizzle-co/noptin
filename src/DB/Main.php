@@ -386,7 +386,7 @@ class Main {
 					'is_primary' => true,
 				),
 				array(
-					'label'   => __( 'Sent at', 'newsletter-optin-box' ),
+					'label'   => __( 'Sent', 'newsletter-optin-box' ),
 					'name'    => 'time',
 					'visible' => true,
 					'is_list' => true,
@@ -394,7 +394,7 @@ class Main {
 					'args'    => array( 'i18n' ),
 				),
 				array(
-					'label'   => __( 'Opened at', 'newsletter-optin-box' ),
+					'label'   => __( 'Opened', 'newsletter-optin-box' ),
 					'name'    => 'opens',
 					'visible' => true,
 					'is_list' => true,

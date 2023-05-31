@@ -195,6 +195,17 @@ class Noptin_Email_Sender {
 			);
 		}
 
+		// Fetch the matching subscriber.
+		if ( ! empty( $args['campaign_id'] ) ) {
+			foreach ( wp_parse_list( $this->recipients ) as $recipient ) {
+				$subscriber = noptin_get_subscriber( $recipient );
+
+				if ( $subscriber->exists() ) {
+					$subscriber->record_sent_campaign( $args['campaign_id'] );
+				}
+			}
+		}
+
 		// Remove our hooks.
 		$this->after_sending();
 

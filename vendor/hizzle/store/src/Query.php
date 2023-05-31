@@ -381,14 +381,15 @@ class Query {
 		global $wpdb;
 
 		// Abort if the collection does not support meta fields.
-		if ( empty( $this->known_fields['meta'] ) ) {
+		if ( empty( $this->known_fields['meta'] ) && empty( $qv['meta_query'] ) ) {
 			return;
 		}
 
-		$collection = $this->get_collection();
-		$meta_query = empty( $qv['meta_query'] ) ? array() : $qv['meta_query'];
+		$collection  = $this->get_collection();
+		$meta_query  = empty( $qv['meta_query'] ) ? array() : $qv['meta_query'];
+		$meta_fields = empty( $this->known_fields['meta'] ) ? array() : $this->known_fields['meta'];
 
-		foreach ( $this->known_fields['meta'] as $meta_field ) {
+		foreach ( $meta_fields as $meta_field ) {
 
 			// = or IN.
 			if ( isset( $qv[ $meta_field ] ) ) {
