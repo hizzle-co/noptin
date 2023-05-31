@@ -86,17 +86,21 @@ export default function TableTab( props ) {
 	}
 
 	// Prepare headers.
+	let rowHeader = 0;
 	const headers = useMemo( () => {
 
 		const headers = [];
 
-		props.tab.headers.forEach( ( header ) => {
+		props.tab.headers.forEach( ( header, index ) => {
+
+			if ( header.is_primary ) {
+				rowHeader = index;
+			}
 
 			headers.push( {
 				key: header.name,
 				label: header.label,
 				visible: true,
-				isPrimary: header.is_primary,
 				isSortable: false,
 				isNumeric: header.is_numeric,
 			});
@@ -132,6 +136,7 @@ export default function TableTab( props ) {
 			rows={ rows }
 			headers={ headers }
 			showFooter={ false }
+			rowHeader={ rowHeader }
 		/>
 	);
 }

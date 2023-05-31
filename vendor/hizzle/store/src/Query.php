@@ -386,7 +386,7 @@ class Query {
 		}
 
 		$collection = $this->get_collection();
-		$meta_query = array();
+		$meta_query = empty( $qv['meta_query'] ) ? array() : $qv['meta_query'];
 
 		foreach ( $this->known_fields['meta'] as $meta_field ) {
 
@@ -702,6 +702,7 @@ class Query {
 			'count_total'    => true,
 			'fields'         => 'all',
 			'aggregate'      => false, // pass an array of property_name and function to aggregate the results.
+			'meta_query'     => array(),
 		);
 
 		if ( isset( $args['number'] ) ) {

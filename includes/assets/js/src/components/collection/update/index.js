@@ -115,3 +115,8 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 }
 
 export default forwardRef( UpdateRecord );
+
+// Upsell tags and lists, 
+// Edit contact details,
+// Overview -> Cards for sent emails, opens, clicks, total spent, avatar, basic info, lists, tags
+// Buttons to delete, save changes, and send email

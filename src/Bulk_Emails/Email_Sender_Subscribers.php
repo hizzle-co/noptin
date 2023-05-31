@@ -76,7 +76,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 	public function send( $campaign, $recipient ) {
 
 		// Fetch the subscriber.
-		$subscriber = get_noptin_subscriber( $recipient );
+		$subscriber = noptin_get_subscriber( $recipient );
 
 		// Bail if the subscriber is not found or is unsubscribed...
 		if ( ! $subscriber->exists() || ! $subscriber->is_active() ) {
@@ -91,10 +91,10 @@ class Email_Sender_Subscribers extends Email_Sender {
 		// Generate and send the actual email.
 		noptin()->emails->newsletter->subscriber = $subscriber;
 
-		$result = noptin()->emails->newsletter->send( $campaign, $campaign->id, $subscriber->email );
+		$result = noptin()->emails->newsletter->send( $campaign, $campaign->id, $subscriber->get_email() );
 
 		// Log the send.
-		update_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, (int) $result );
+		update_noptin_subscriber_meta( $subscriber->get_id(), '_campaign_' . $campaign->id, (int) $result );
 
 		return $result;
 	}
@@ -103,13 +103,13 @@ class Email_Sender_Subscribers extends Email_Sender {
 	 * Checks if a subscriber is valid for a given task.
 	 *
 	 * @param \Noptin_Newsletter_Email $campaign The current campaign.
-	 * @param \Noptin_Subscriber $subscriber The subscriber to check.
+	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber to check.
 	 * @return bool
 	 */
 	public function can_email_subscriber( $campaign, $subscriber ) {
 
 		// Do not send twice.
-		if ( '' !== get_noptin_subscriber_meta( $subscriber->id, '_campaign_' . $campaign->id, true ) ) {
+		if ( '' !== get_noptin_subscriber_meta( $subscriber->get_id(), '_campaign_' . $campaign->id, true ) ) {
 			return null;
 		}
 
@@ -117,7 +117,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 		$options = $campaign->get( 'noptin_subscriber_options' );
 		$options = is_array( $options ) ? $options : array();
 
-		return apply_filters( 'noptin_subscribers_can_email_subscriber_for_campaign', true, $options, $subscriber, $campaign );
+		return apply_filters( 'noptin_subscribers_can_email_subscriber_for_campaign', true, $options, $subscriber->get_deprecated_subscriber(), $campaign );
 	}
 
 	/**
@@ -152,11 +152,10 @@ class Email_Sender_Subscribers extends Email_Sender {
 
 		// Prepare arguments.
 		$args = array(
-			'subscriber_status' => 'active',
-			'number'            => 5,
-			'fields'            => array( 'id' ),
-			'count_total'       => false,
-			'meta_query'        => array(
+			'status'     => 'subscribed',
+			'number'     => 5,
+			'fields'     => 'id',
+			'meta_query' => array(
 				'relation' => 'AND',
 				array(
 					'key'     => '_campaign_' . $campaign->id,
@@ -168,60 +167,34 @@ class Email_Sender_Subscribers extends Email_Sender {
 		// Handle custom fields.
 		$options = $campaign->get( 'noptin_subscriber_options' );
 
-		if ( ! empty( $options ) ) {
-			foreach ( get_noptin_subscriber_filters() as $key => $filter ) {
+		if ( is_array( $options ) ) {
 
-				// Abort if the filter is not set.
-				if ( ! isset( $options[ $key ] ) || '' === $options[ $key ] ) {
-					continue;
+			// Backward compatibility.
+			if ( ! empty( $options['_subscriber_via'] ) ) {
+				$args['source'] = $options['_subscriber_via'];
+				unset( $options['_subscriber_via'] );
+			}
+
+			// Loop through the filters.
+			foreach ( $options as $key => $value ) {
+				if ( '' !== $value ) {
+					$args[ $key ] = $value;
 				}
-
-				// If the filter is a checkbox.
-				if ( isset( $filter['type'] ) && 'checkbox' === $filter['type'] && '1' !== $options[ $key ] ) {
-
-					// Fetch subscribers where key is either zero or not set.
-					$args['meta_query'][] = array(
-						'relation' => 'OR',
-						array(
-							'key'     => $key,
-							'compare' => 'NOT EXISTS',
-						),
-						array(
-							'key'   => $key,
-							'value' => '0',
-						),
-					);
-
-					continue;
-				}
-
-				// Add the filter.
-				$args['meta_query'][] = array(
-					'key'   => $key,
-					'value' => $options[ $key ],
-				);
 			}
 		}
 
 		// (Backwards compatibility) Subscription source.
 		$source = $campaign->get( '_subscriber_via' );
 
-		if ( '' !== $source ) {
-			$args['meta_query'][] = array(
-				'key'   => '_subscriber_via',
-				'value' => $source,
-			);
+		if ( '' !== $source && empty( $options['source'] ) ) {
+			$args['source'] = $source;
 		}
 
 		// Allow other plugins to filter the query.
 		$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $campaign );
 
 		// Run the query...
-		$query = new \Noptin_Subscriber_Query( $args );
-
-		// ... and return the result.
-		return $query->get_results();
-
+		return noptin_get_subscribers( $args );
 	}
 
 	/**

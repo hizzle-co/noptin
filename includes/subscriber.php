@@ -1092,7 +1092,7 @@ function get_noptin_custom_field( $merge_tag ) {
 function get_noptin_subscriber_smart_tags() {
 
 	$smart_tags = array(
-		'_subscriber_via' => array(
+		'source'          => array(
 			'label'             => __( 'Subscription Method', 'newsletter-optin-box' ),
 			'options'           => noptin_get_subscription_sources(),
 			'description'       => __( 'Filter subscribers by how they subscribed.', 'newsletter-optin-box' ),

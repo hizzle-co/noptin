@@ -426,15 +426,15 @@ class Main {
 			'emptyMessage' => __( 'No activity has been recorded yet.', 'newsletter-optin-box' ),
 			'headers'      => array(
 				array(
-					'label'      => __( 'Date', 'newsletter-optin-box' ),
-					'name'       => 'i18n',
-					'visible'    => true,
-					'is_primary' => true,
+					'label'   => __( 'Date', 'newsletter-optin-box' ),
+					'name'    => 'i18n',
+					'visible' => true,
 				),
 				array(
-					'label'   => __( 'Activity', 'newsletter-optin-box' ),
-					'name'    => 'activity',
-					'visible' => true,
+					'label'      => __( 'Activity', 'newsletter-optin-box' ),
+					'name'       => 'activity',
+					'visible'    => true,
+					'is_primary' => true,
 				),
 			),
 			'callback'     => array( $this, 'activity_callback' ),
@@ -476,7 +476,7 @@ class Main {
 					foreach ( $data[ $prop ] as $key => $timestamp ) {
 						$date = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
 						$utc  = $date->utc();
-						$i18n = $date->context( 'view_day' );
+						$i18n = $date->context( 'view' );
 
 						// Use human readable time if the timestamp is less than 24 hours old.
 						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
@@ -523,7 +523,7 @@ class Main {
 			$time = $data['time'];
 			$date = new \Hizzle\Store\Date_Time( "@{$time}", new \DateTimeZone( 'UTC' ) );
 			$utc  = $date->utc();
-			$i18n = $date->context( 'view_day' );
+			$i18n = $date->context( 'view' );
 
 			// Use human readable time if the timestamp is less than 24 hours old.
 			if ( $time > time() - DAY_IN_SECONDS && $time < time() ) {
@@ -538,7 +538,7 @@ class Main {
 				'time'     => $time,
 				'utc'      => $utc,
 				'i18n'     => $i18n,
-				'activity' => $data,
+				'activity' => $data['content'],
 			);
 		}
 
