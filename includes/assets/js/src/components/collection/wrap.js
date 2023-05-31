@@ -9,14 +9,15 @@ import {
     FlexItem,
     FlexBlock,
 } from '@wordpress/components';
+import { forwardRef } from "@wordpress/element";
 
 /**
  * Wraps content.
  */
-const Wrap = ( { actions, className, title, menu, children } ) => {
+const Wrap = ( { actions, className, title, menu, children }, ref ) => {
 
 	return (
-		<Card className={ className }>
+		<Card className={ className } ref={ ref }>
 
 			<CardHeader>
                 <Flex wrap>
@@ -39,4 +40,4 @@ const Wrap = ( { actions, className, title, menu, children } ) => {
 	);
 };
 
-export default Wrap;
+export default forwardRef( Wrap );

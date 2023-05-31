@@ -11,7 +11,7 @@ import RecordsTable from './records-table';
 import Export from './export';
 import Import from './import';
 import CreateRecord from './create-record';
-import UpdateRecord from './update-record';
+import UpdateRecord from './update';
 import Wrap from "./wrap";
 import { useSchema } from "../../store-data/hooks";
 import { useRoute } from "./hooks";

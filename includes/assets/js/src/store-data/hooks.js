@@ -49,7 +49,7 @@ export function useRecord( namespace, collection, recordId ) {
 			editedRecord: store.getEditedRecord( recordId ),
 			hasEdits: store.hasEditsForRecord( recordId ),
 			record: store.getRecord( recordId ),
-			isResolving: () => store.isResolving( 'getRecord', [ recordId ] ),
+			isResolving: () => store.isResolving( 'getRecord', [ recordId ] ) || ! store.hasStartedResolution( 'getRecord', [ recordId ] ),
 			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecord', [ recordId ] ),
 			getResolutionError: () => store.getResolutionError( 'getRecord', [ recordId ] ),
 		}
@@ -74,8 +74,8 @@ export function useRecordSchema( namespace, collection, recordId ) {
 		const store = select( STORE_NAME );
 
 		return {
-			get: store.getRecordSchema( recordId ),
-			isResolving: () => store.isResolving( 'getRecordSchema', [ recordId ] ),
+			data: store.getRecordSchema( recordId ),
+			isResolving: () => store.isResolving( 'getRecordSchema', [ recordId ] ) || ! store.hasStartedResolution( 'getRecordSchema', [ recordId ] ),
 			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecordSchema', [ recordId ] ),
 			getResolutionError: () => store.getResolutionError( 'getRecordSchema', [ recordId ] ),
 		}
