@@ -419,6 +419,46 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	/**
 	 * @inheritdoc
 	 */
+	public function get_orders( $customer_email ) {
+
+		// Get woocommerce orders by email.
+		$orders = wc_get_orders(
+			array(
+				'limit'    => 20,
+				'customer' => $customer_email,
+			)
+		);
+
+		$prepared = array();
+
+		foreach ( $orders as $order ) {
+			$prepared[] = array(
+				'id'                 => $order->get_id(),
+				'title'              => sprintf(
+					'%s %s',
+					$order->get_title(),
+					$order->get_order_number()
+				),
+				'edit_url'           => $order->get_edit_order_url(),
+				'items'              => array_map(
+					array( $this, 'get_order_item_details' ),
+					$order->get_items()
+				),
+				'discount'           => $order->get_total_discount(),
+				'discount_formatted' => $order->get_formatted_line_subtotal( 'discount' ),
+				'total'              => $order->get_total(),
+				'total_formatted'    => $order->get_formatted_order_total(),
+				'date_created_i18n'  => $order->get_date_created()->date_i18n( wc_date_format() . ' ' . wc_time_format() ),
+				'date_created'       => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
+			);
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_order_customer_details( $order_id, $existing_subscriber = false ) {
 
 		// Fetch the order.
@@ -563,12 +603,13 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return array(
-			'item_id'      => $item->get_id(),
-			'product_id'   => $product_id,
-			'variation_id' => $variation_id,
-			'name'         => $item->get_name(),
-			'price'        => $item->get_total(),
-			'quantity'     => $item->get_quantity(),
+			'item_id'         => $item->get_id(),
+			'product_id'      => $product_id,
+			'variation_id'    => $variation_id,
+			'name'            => $item->get_name(),
+			'price'           => $item->get_total(),
+			'total_formatted' => wc_price( $item->get_total() ),
+			'quantity'        => $item->get_quantity(),
 		);
 
 	}

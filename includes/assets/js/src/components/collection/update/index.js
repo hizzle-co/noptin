@@ -1,18 +1,42 @@
 /**
  * External dependencies
  */
-import { forwardRef } from "@wordpress/element";
-import { Notice, Spinner, CardBody, Flex } from "@wordpress/components";
+import { forwardRef, useState } from "@wordpress/element";
+import { Notice, Spinner, CardBody, Flex, FlexItem, NavigableMenu, Button,
+	Card,
+	CardHeader,
+	__experimentalText as Text,
+	TabPanel,
+} from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 
 /**
  * Local dependencies.
  */
 import Wrap from "../wrap";
-import { useRecordSchema } from "../../../store-data/hooks";
+import { useRecord, useSchema } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
 import RecordOverview from "./overview";
-import RecordTabs from "./record-tabs";
+import TableTab from "./table-tab";
+
+/**
+ * Displays a given tab.
+ *
+ * @param {Object} props
+ * @param {Object} props.tab
+ */
+const RenderTab = ( { tab } ) => {
+
+	if ( 'table' === tab.type ) {
+		return <TableTab tab={ tab } />;
+	}
+
+	return (
+		<Wrap title={ tab.title }>
+			<p>Tab content</p>
+		</Wrap>
+    );
+}
 
 /**
  * Allows the user to edit a single record.
@@ -24,10 +48,11 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 
 	// Prepare the state.
 	const { namespace, collection, args } = useRoute();
-	const schema = useRecordSchema( namespace, collection, args.id );
+	const schema = useSchema( namespace, collection );
+	const record = useRecord( namespace, collection, args.id );
 
 	// Show the loading indicator if we're loading the schema.
-	if ( schema.isResolving() ) {
+	if ( record.isResolving() ) {
 
 		return (
 			<Wrap title={ __( 'Loading', 'newsletter-optin-box' ) } ref={ ref }>
@@ -39,8 +64,8 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 	}
 
 	// Show error if any.
-	if ( schema.hasResolutionFailed() ) {
-		const error = schema.getResolutionError();
+	if ( record.hasResolutionFailed() ) {
+		const error = record.getResolutionError();
 
 		return (
 			<Wrap title={ __( 'Error', 'newsletter-optin-box' ) } ref={ ref }>
@@ -53,13 +78,40 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 		);
 	}
 
+	// Prepare the tabs.
+	const tabs = [
+		{
+			title: __( 'Update Details', 'newsletter-optin-box' ),
+			name: 'edit',
+		}
+	]
+
+	// Displays a normal header if there are no tabs.
+	if ( ! Array.isArray( schema.data.tabs ) && tabs ) {
+		Object.keys( schema.data.tabs ).map( ( tab ) => (
+			tabs.push( {
+				...schema.data.tabs[tab],
+				name: tab,
+			} )
+		) );
+	}
+
 	// Display the update record screen.
 	return (
-		<Flex direction="column" gap={ 4 } ref={ ref }>
-			<RecordOverview title={ title } schema={ schema.data.overview } />
-			<RecordTabs schema={ schema.data.tabs } />
-		</Flex>
-	)
+		<div ref={ ref }>
+
+			{ tabs.length === 1 ? (
+				<Wrap title={ tabs[0].title }>
+					<RenderTab tab={ tabs[0] } />
+				</Wrap>
+			) : (
+				<TabPanel className="hizzle-record-tabs" tabs={ tabs }>
+					{ ( tab ) => <RenderTab tab={ tab } /> }
+				</TabPanel>
+			) }
+
+		</div>
+	);
 }
 
 export default forwardRef( UpdateRecord );

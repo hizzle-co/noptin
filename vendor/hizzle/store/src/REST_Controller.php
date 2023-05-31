@@ -192,6 +192,30 @@ class REST_Controller extends \WP_REST_Controller {
 			);
 		}
 
+		// Method to retrieve the data schema.
+		foreach ( $this->get_record_tabs() as $tab_id => $tab ) {
+
+			$tabs[ $tab_id ] = $tab;
+			register_rest_route(
+				$this->namespace,
+				'/' . $this->rest_base . '/(?P<id>[\d]+)/' . $tab_id,
+				array(
+					'args'   => array(
+						'id' => array(
+							'description' => __( 'Unique identifier for the object.', 'hizzle-store' ),
+							'type'        => 'integer',
+						),
+					),
+					array(
+						'methods'             => \WP_REST_Server::READABLE,
+						'callback'            => $tab['callback'],
+						'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					),
+					'schema' => '__return_empty_array',
+				)
+			);
+		}
+	
 		// METHOD to deal with batch operations.
 		register_rest_route(
 			$this->namespace,
@@ -475,7 +499,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$object = $this->get_object( $request );
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( "hizzle_rest_{$this->rest_base}_not_found", __( 'Not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
 		}
 
 		$data = $this->prepare_item_for_response( $object, $request );
@@ -542,7 +566,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$object = $this->get_object( $request );
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( "hizzle_rest_{$this->rest_base}_not_found", __( 'Not found.', 'hizzle-store' ), array( 'status' => 400 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
 
 		$object = $this->save_object( $request, false );
@@ -602,7 +626,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( empty( $record ) ) {
-			return new \WP_Error( "hizzle_rest_{$this->rest_base}_not_found", __( 'Not found.', 'hizzle-store' ), array( 'status' => 400 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( array_keys( $this->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE ) ) as $arg ) {
@@ -679,19 +703,26 @@ class REST_Controller extends \WP_REST_Controller {
 	 */
 	protected function prepare_links( $record, $request ) {
 		$links = array(
-			'self'       => array(
+			'self'              => array(
 				'href' => rest_url( sprintf( '/%s/%s/%d', $this->namespace, $this->rest_base, $record->get_id() ) ),
 			),
-			'collection' => array(
+			'collection'        => array(
 				'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
 			),
-			'aggregate'  => array(
+			'aggregate'         => array(
 				'href' => rest_url( sprintf( '/%s/%s/aggregate', $this->namespace, $this->rest_base ) ),
 			),
-			'schema'     => array(
-				'href' => rest_url( sprintf( '/%s/%s/schema', $this->namespace, $this->rest_base ) ),
+			'collection_schema' => array(
+				'href' => rest_url( sprintf( '/%s/%s/collection_schema', $this->namespace, $this->rest_base ) ),
 			),
 		);
+
+		// Add tab links.
+		foreach ( array_keys( $this->get_record_tabs() ) as $tab ) {
+			$links[ $tab ] = array(
+				'href' => rest_url( sprintf( '/%s/%s/%d/content/%s', $this->namespace, $this->rest_base, $record->get_id(), $tab ) ),
+			);
+		}
 
 		// TODO: Add links to related objects.
 		return $links;
@@ -977,6 +1008,13 @@ class REST_Controller extends \WP_REST_Controller {
 				)
 			);
 
+			$tabs = array();
+
+			foreach ( $this->get_record_tabs() as $tab_id => $tab ) {
+				unset( $tab['callback'] );
+				$tabs[ $tab_id ] = $tab;
+			}
+
 			return rest_ensure_response(
 				apply_filters(
 					'hizzle_rest_' . $this->get_normalized_rest_base() . '_collection_js_params',
@@ -987,6 +1025,7 @@ class REST_Controller extends \WP_REST_Controller {
 						'hidden' => $hidden,
 						'routes' => $this->get_admin_app_routes(),
 						'labels' => (object) $collection->labels,
+						'tabs'   => $tabs,
 					)
 				)
 			);
@@ -1037,11 +1076,29 @@ class REST_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Retrieves the collection overview tabs.
+	 *
+	 * @return array
+	 */
+	public function get_record_tabs() {
+		return apply_filters( $this->prefix_hook( 'record_tabs' ), array() );
+	}
+
+	/**
 	 * Get normalized rest base.
 	 *
 	 * @return string
 	 */
 	protected function get_normalized_rest_base() {
 		return preg_replace( '/\(.*\)\//i', '', trim( $this->namespace, '/v1' ) . '_' . $this->rest_base );
+	}
+
+	/**
+	 * Prefixes a hook with the normalized rest base.
+	 *
+	 * @return string
+	 */
+	protected function prefix_hook( $hook ) {
+		return 'hizzle_rest_' . $this->get_normalized_rest_base() . '_' . $hook;
 	}
 }

@@ -6,5 +6,5 @@ export const DEFAULT_STATE = {
 	record: {},
 	editedRecords: {},
 	schema: {},
-	recordSchema: {},
+	tabContent: {},
 };

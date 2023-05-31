@@ -104,6 +104,7 @@ const TableCard = ( {
 	rowHeader = 0,
 	rows = [],
 	showMenu = true,
+	showFooter = true,
 	summary,
 	title,
 	totalRows,
@@ -178,16 +179,18 @@ const TableCard = ( {
 
 			{ isLoading ? <Placeholder { ...theProps } /> : <Table rows={ visibleRows } { ...theProps } /> }
 
-			<CardFooter justify="center">
-				{ isLoading ? (
-					<TableSummaryPlaceholder />
-				) : (
-					<>
-						<Pagination query={ query } onQueryChange={ onQueryChange } total={ totalRows } />
-						{ summary && <TableSummary data={ summary } /> }
-					</>
-				) }
-			</CardFooter>
+			{ showFooter && (
+				<CardFooter justify="center">
+					{ isLoading ? (
+						<TableSummaryPlaceholder />
+					) : (
+						<>
+							<Pagination query={ query } onQueryChange={ onQueryChange } total={ totalRows } />
+							{ summary && <TableSummary data={ summary } /> }
+						</>
+					) }
+				</CardFooter>
+			) }
 		</Card>
 	);
 };

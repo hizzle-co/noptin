@@ -67,5 +67,6 @@ export const getSchema = ( state ) => state.schema || {};
  * Retrieves the schema for a single record.
  *
  * @param {string} id
+ * @param {string} tab_id
  */
-export const getRecordSchema = ( state, id ) => state.recordSchema[ id ] || {};
+export const getTabContent = ( state, id, tab_id ) => state.tabContent[ `${id}_${tab_id}` ] || {};

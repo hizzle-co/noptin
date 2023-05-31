@@ -59,14 +59,14 @@ const RecordTabs = ( { tabs }, ref ) => {
     /**
      * Prepare the tabs.
      */
-    const tabKeys        = useMemo( Object.keys( tabs ), [ tabs ] );
-    const tabContent     = useMemo( tabKeys.map( ( tabKey ) => ( {...tabs[ tabKey ], name: tabKey } ) ), [ tabs ] );
+    const tabKeys        = useMemo( () => Object.keys( tabs ), [ tabs ] );
+    const tabContent     = useMemo( () => tabKeys.map( ( tabKey ) => ( {...tabs[ tabKey ], name: tabKey } ) ), [ tabKeys ] );
     const initialTabName = args.hizzle_tab || tabKeys[ 0 ];
 
 	// Display the add record form.
 	return (
 		<TabPanel className="hizzle-record-tabs" onSelect={ onSelect } initialTabName={ initialTabName } tabs={ tabContent } ref={ ref }>
-		    { RecordTab }
+		    { () => {} }
 	    </TabPanel>
 	);
 }

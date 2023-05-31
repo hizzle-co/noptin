@@ -13,6 +13,15 @@
 	}
 }
 
+.hizzle-record-tabs {
+
+	> .components-tab-panel__tabs {
+		border: 1px solid #9E9E9E;
+		background-color: #fff;
+		margin-bottom: 1rem;
+	}
+}
+
 .noptin-table {
 	margin-bottom: $gap-largest;
 

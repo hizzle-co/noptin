@@ -52,12 +52,12 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 				},
 			};
 
-		case 'SET_RECORD_SCHEMA':
+		case 'SET_TAB_CONTENT':
 			return {
 				...state,
-				recordSchema: {
-					...state.recordSchema,
-					[ action.id ]: action.schema,
+				tabContent: {
+					...state.tabContent,
+					[ `${action.id}_${action.tab_id}` ]: action.content,
 				},
 			};
 

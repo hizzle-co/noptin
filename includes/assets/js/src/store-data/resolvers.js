@@ -6,7 +6,7 @@ import { apiFetch } from '@wordpress/data-controls';
 /**
  * Internal dependencies
  */
-import { setRecords, setRecord, setSchema, setRecordSchema } from './actions';
+import { setRecords, setRecord, setSchema, setTabContent } from './actions';
 
 /**
  * Creates resolvers for the store.
@@ -57,16 +57,17 @@ export default function createResolvers( namespace, collection ) {
         },
 
         /**
-         * Fetch a single record's schema from the API.
+         * Fetch a single record tab's content from the API.
          *
          * @param {string} id
+         * @param {string} tab_id
          * @return {Object} Action.
          */
-        *getRecordSchema( id ) {
-            const path   = `${namespace}/v1/${collection}/${id}/schema`;
-            const schema = yield apiFetch( { path } );
+        *getTabContent( id, tab_id ) {
+            const path    = `${namespace}/v1/${collection}/${id}/${tab_id}`;
+            const content = yield apiFetch( { path } );
 
-            return setRecordSchema( id, schema );
+            return setTabContent( id, tab_id, content );
         }
     }
 }

@@ -85,6 +85,7 @@ class Main {
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'load' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_collection_js_params', array( $this, 'filter_subscribers_collection_js_params' ) );
+		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'add_record_tabs' ), 1000 );
 	}
 
 	/**
@@ -365,122 +366,182 @@ class Main {
 	}
 
 	/**
-	 * Filters the subscriber's collection update params.
+	 * Adds a emails and activity tabs to the record's overview string.
 	 *
-	 * @param array $params
-	 * @param Subscriber $subscriber
+	 * @param array $tabs
 	 * @return array
 	 */
-	public function filter_subscribers_collection_update_params( $params, $subscriber ) {
+	public function add_record_tabs( $tabs ) {
 
-		// View list of sent campaigns.
-		$params['emails'] = array(
-			'title'   => __( 'Emails', 'newsletter-optin-box' ),
-			'element' => 'table',
-			'props'   => array(
-				'actions' => array(
-					'send_email' => array(
-						'label' => __( 'Send Email', 'newsletter-optin-box' ),
-						'url'   => $subscriber->get_send_email_url(),
-					),
+		// Add emails.
+		$tabs['emails'] = array(
+			'title'        => __( 'Emails', 'newsletter-optin-box' ),
+			'type'         => 'table',
+			'emptyMessage' => __( 'No emails have been sent yet.', 'newsletter-optin-box' ),
+			'headers'      => array(
+				array(
+					'label'      => __( 'Title', 'newsletter-optin-box' ),
+					'name'       => 'title',
+					'visible'    => true,
+					'is_primary' => true,
 				),
-				'headers' => array(
-					array(
-						'key'     => 'id',
-						'label'   => __( 'ID', 'newsletter-optin-box' ),
-						'visible' => false,
-					),
-					array(
-						'key'        => 'campaign',
-						'label'      => __( 'Campaign', 'newsletter-optin-box' ),
-						'visible'    => true,
-						'is_primary' => true,
-					),
-					array(
-						'key'     => 'sent',
-						'label'   => __( 'Sent at', 'newsletter-optin-box' ),
-						'visible' => true,
-					),
-					array(
-						'key'     => 'opens',
-						'label'   => __( 'Opens', 'newsletter-optin-box' ),
-						'visible' => true,
-					),
-					array(
-						'key'     => 'clicks',
-						'label'   => __( 'Clicks', 'newsletter-optin-box' ),
-						'visible' => true,
-					),
-					array(
-						'key'     => 'unsubscribed',
-						'label'   => __( 'Unsubscribed', 'newsletter-optin-box' ),
-						'visible' => true,
-					),
+				array(
+					'label'   => __( 'Sent at', 'newsletter-optin-box' ),
+					'name'    => 'time',
+					'visible' => true,
+					'is_list' => true,
+					'item'    => '%s',
+					'args'    => array( 'i18n' ),
 				),
-				'rows'    => array(),
+				array(
+					'label'   => __( 'Opened at', 'newsletter-optin-box' ),
+					'name'    => 'opens',
+					'visible' => true,
+					'is_list' => true,
+					'item'    => '%s',
+					'args'    => array( 'i18n' ),
+				),
+				array(
+					'label'   => __( 'Clicked on', 'newsletter-optin-box' ),
+					'name'    => 'clicks',
+					'visible' => true,
+					'is_list' => true,
+					'item'    => '%s - %s',
+					'args'    => array( 'key', 'i18n' ),
+				),
+				array(
+					'label'      => __( 'Unsubscribed', 'newsletter-optin-box' ),
+					'name'       => 'unsubscribed',
+					'visible'    => true,
+					'is_boolean' => true,
+				),
 			),
+			'callback'     => array( $this, 'emails_callback' ),
 		);
 
-		foreach ( $subscriber->get_sent_campaigns() as $campaign_id => $details ) {
+		// Add subscriber activity.
+		$tabs['activity'] = array(
+			'title'        => __( 'Activity', 'newsletter-optin-box' ),
+			'type'         => 'table',
+			'emptyMessage' => __( 'No activity has been recorded yet.', 'newsletter-optin-box' ),
+			'headers'      => array(
+				array(
+					'label'      => __( 'Date', 'newsletter-optin-box' ),
+					'name'       => 'i18n',
+					'visible'    => true,
+					'is_primary' => true,
+				),
+				array(
+					'label'   => __( 'Activity', 'newsletter-optin-box' ),
+					'name'    => 'activity',
+					'visible' => true,
+				),
+			),
+			'callback'     => array( $this, 'activity_callback' ),
+		);
 
-			$campaign = get_post( $campaign_id );
-			$row      = array(
-				'id'           => array(
-					'display' => $campaign_id,
-					'value'   => $campaign_id,
-				),
-				'campaign'     => array(
-					'display' => $campaign ? $campaign->post_title : __( 'Unknown', 'newsletter-optin-box' ),
-					'url'     => $campaign ? get_edit_post_link( $campaign_id ) : false,
-					'value'   => $campaign_id,
-				),
-				'time'         => array(
-					'display' => array(
-						'el'    => 'break_separated_list',
-						'items' => array(),
-					),
-					'value'   => reset( $details['time'] ),
-				),
-				'opens'        => array(
-					'display' => array(
-						'el'    => 'break_separated_list',
-						'items' => array(),
-					),
-					'value'   => reset( $details['opens'] ),
-				),
-				'clicks'       => array(
-					'display' => array(
-						'el'    => 'break_separated_list',
-						'items' => array(),
-					),
-					'value'   => reset( $details['clicks'] ),
-				),
-				'unsubscribed' => array(
-					'display' => array(
-						'el'   => 'icon',
-						'icon' => empty( $details['unsubscribed'] ) ? 'no' : 'yes',
-					),
-					'value'   => reset( $details['time'] ),
-				),
-			);
+		return $tabs;
+	}
 
-			foreach ( array( 'sent', 'opens' ) as $key ) {
-				foreach ( $details[ $key ] as $timestamp ) {
-					$date                   = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
-					$row[ $key ]['items'][] = wp_strip_all_tags( $subscriber->display_date_value( $date, 'date_time' ), true );
-				}
-			}
+	/**
+	 * Retrieves the subscriber's emails.
+	 *
+	 * @param array $request
+	 * @return array
+	 */
+	public function emails_callback( $request ) {
 
-			foreach ( $details['clicks'] as $url => $timestamps ) {
-				foreach ( $timestamps as $timestamp ) {
-					$date                     = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
-					$row['clicks']['items'][] = esc_url( $url ) . ' &ndash; ' . wp_strip_all_tags( $subscriber->display_date_value( $date, 'date_time' ), true );
-				}
-			}
+		$subscriber = noptin_get_subscriber( $request['id'] );
+		$emails     = $subscriber->get_sent_campaigns();
 
-			$params['emails']['props']['rows'][] = $row;
+		if ( ! is_array( $emails ) || empty( $emails ) ) {
+			return array();
 		}
 
-		return $params;
+		$prepared = array();
+
+		foreach ( $emails as $campaign_id => $data ) {
+			$post     = get_post( $campaign_id );
+			$campaign = array(
+				'id'           => $campaign_id,
+				'title'        => $post ? $post->post_title : __( 'Unknown', 'newsletter-optin-box' ),
+				'time'         => array(),
+				'opens'        => array(),
+				'clicks'       => array(),
+				'unsubscribed' => $data['unsubscribed'],
+			);
+
+			foreach ( array( 'time', 'opens', 'clicks' ) as $prop ) {
+				if ( isset( $data[ $prop ] ) ) {
+					foreach ( $data[ $prop ] as $key => $timestamp ) {
+						$date = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
+						$utc  = $date->utc();
+						$i18n = $date->context( 'view_day' );
+
+						// Use human readable time if the timestamp is less than 24 hours old.
+						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
+							$i18n = sprintf(
+								/* translators: %s: human readable time difference */
+								__( '%s ago', 'newsletter-optin-box' ),
+								human_time_diff( $timestamp )
+							);
+						}
+
+						$campaign[ $prop ][] = array(
+							'key'  => $key,
+							'utc'  => $utc,
+							'i18n' => $i18n,
+						);
+					}
+				}
+			}
+
+			$prepared[] = $campaign;
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * Retrieves the subscriber's activity.
+	 *
+	 * @param array $request
+	 * @return array
+	 */
+	public function activity_callback( $request ) {
+
+		$subscriber = noptin_get_subscriber( $request['id'] );
+		$activity   = $subscriber->get_activity();
+
+		if ( ! is_array( $activity ) || empty( $activity ) ) {
+			return array();
+		}
+
+		$prepared = array();
+
+		foreach ( $activity as $data ) {
+			$time = $data['time'];
+			$date = new \Hizzle\Store\Date_Time( "@{$time}", new \DateTimeZone( 'UTC' ) );
+			$utc  = $date->utc();
+			$i18n = $date->context( 'view_day' );
+
+			// Use human readable time if the timestamp is less than 24 hours old.
+			if ( $time > time() - DAY_IN_SECONDS && $time < time() ) {
+				$i18n = sprintf(
+					/* translators: %s: human readable time difference */
+					__( '%s ago', 'newsletter-optin-box' ),
+					human_time_diff( $time )
+				);
+			}
+
+			$prepared[] = array(
+				'time'     => $time,
+				'utc'      => $utc,
+				'i18n'     => $i18n,
+				'activity' => $data,
+			);
+		}
+
+		return $prepared;
 	}
 }

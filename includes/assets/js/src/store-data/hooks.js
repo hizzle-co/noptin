@@ -47,7 +47,7 @@ export function useRecord( namespace, collection, recordId ) {
 
 		return {
 			editedRecord: store.getEditedRecord( recordId ),
-			hasEdits: store.hasEditsForRecord( recordId ),
+			hasEdits: store.hasEdits( recordId ),
 			record: store.getRecord( recordId ),
 			isResolving: () => store.isResolving( 'getRecord', [ recordId ] ) || ! store.hasStartedResolution( 'getRecord', [ recordId ] ),
 			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecord', [ recordId ] ),
@@ -64,9 +64,10 @@ export function useRecord( namespace, collection, recordId ) {
  * @param {String} namespace
  * @param {String} collection
  * @param {Object} recordId ID of the requested record.
+ * @param {String} tabID ID of the requested tab.
  * @return {Object} The records resolution.
  */
-export function useRecordSchema( namespace, collection, recordId ) {
+export function useTabContent( namespace, collection, recordId, tabID ) {
 
 	const STORE_NAME = `${namespace}/${collection}`;
 
@@ -74,12 +75,12 @@ export function useRecordSchema( namespace, collection, recordId ) {
 		const store = select( STORE_NAME );
 
 		return {
-			data: store.getRecordSchema( recordId ),
-			isResolving: () => store.isResolving( 'getRecordSchema', [ recordId ] ) || ! store.hasStartedResolution( 'getRecordSchema', [ recordId ] ),
-			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecordSchema', [ recordId ] ),
-			getResolutionError: () => store.getResolutionError( 'getRecordSchema', [ recordId ] ),
+			data: store.getTabContent( recordId, tabID ),
+			isResolving: () => store.isResolving( 'getTabContent', [ recordId, tabID ] ) || ! store.hasStartedResolution( 'getTabContent', [ recordId, tabID ] ),
+			hasResolutionFailed: () => store.hasResolutionFailed( 'getTabContent', [ recordId, tabID ] ),
+			getResolutionError: () => store.getResolutionError( 'getTabContent', [ recordId, tabID ] ),
 		}
-	},[ recordId ]);
+	},[ recordId, tabID ]);
 
 }
 

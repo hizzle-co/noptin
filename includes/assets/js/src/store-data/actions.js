@@ -51,11 +51,13 @@ export const setSchema = ( schema ) => ( {
  * Sets a single record's schema.
  *
  * @param {string} id
- * @param {Object} schema
+ * @param {string} tab_id
+ * @param {Object} content
  * @return {Object} Action.
  */
-export const setRecordSchema = ( id, schema ) => ( {
-	type: 'SET_RECORD_SCHEMA',
-	schema,
+export const setTabContent = ( id, tab_id, content ) => ( {
+	type: 'SET_TAB_CONTENT',
 	id,
+	tab_id,
+	content,
 } );
