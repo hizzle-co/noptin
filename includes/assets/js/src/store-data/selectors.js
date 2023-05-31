@@ -1,18 +1,12 @@
 /**
- * External dependencies
- */
-import { addQueryArgs } from '@wordpress/url';
-
-/**
  * Retrieves records.
  *
- * @param {Object} query
+ * @param {String} queryString
  * @return {Array|null} Records.
  */
-export const getRecords = ( state, query = {} ) => {
+export const getRecords = ( state, queryString ) => {
 
-	// Convert query to string.
-	const queryString = addQueryArgs( '', query );
+	queryString = '' === queryString ? 'all' : queryString;
 
 	// Check if records are already loaded.
 	if ( state.records[ queryString ] ) {

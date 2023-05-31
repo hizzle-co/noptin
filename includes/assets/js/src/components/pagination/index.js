@@ -126,8 +126,8 @@ export default function Pagination( { query, onQueryChange, total, className, sh
 	}
 
 	// Calculate the page count.
-	const page = query.page ? parseInt( query.page, 10 ) : 1;
-	const perPage = query.per_page ? parseInt( query.per_page, 25 ) : 25;
+	const page = query.paged ? parseInt( query.paged, 10 ) : 1;
+	const perPage = query.per_page ? parseInt( query.per_page, 10 ) : 10;
 	const pageCount = Math.ceil( total / perPage );
 	const classes = classNames( 'noptin-pagination', className );
 
@@ -141,7 +141,7 @@ export default function Pagination( { query, onQueryChange, total, className, sh
 		// Ensure that the page is not out of bounds.
 		const newMaxPage = newPerPage ? Math.ceil( total / newPerPage ) : total;
 		if ( page > newMaxPage ) {
-			onQueryChange( { page: newMaxPage } );
+			onQueryChange( { paged: newMaxPage } );
 		}
 	}
 
@@ -157,7 +157,7 @@ export default function Pagination( { query, onQueryChange, total, className, sh
 			newPage = pageCount;
 		}
 
-		onQueryChange( { page: newPage } );
+		onQueryChange( { paged: newPage } );
 	}
 
 	// If there is only one page, don't render the pagination unless there are more results than the first perPage option.

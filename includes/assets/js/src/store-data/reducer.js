@@ -21,11 +21,13 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 				return records;
 			}, {});
 
+			const queryString = '' === action.queryString ? 'all' : action.queryString;
+
 			return {
 				...state,
 				records: {
 					...state.records,
-					[ action.query ]: newRecords,
+					[ queryString ]: newRecords,
 				},
 			};
 

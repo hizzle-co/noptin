@@ -708,6 +708,10 @@ class Query {
 			$args['per_page'] = $args['number'];
 		}
 
+		if ( ! empty( $args['paged'] ) ) {
+			$args['page'] = $args['paged'];
+		}
+
 		return wp_parse_args( $args, $defaults );
 	}
 

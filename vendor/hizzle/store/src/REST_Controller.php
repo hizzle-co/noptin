@@ -16,6 +16,13 @@ defined( 'ABSPATH' ) || exit;
 class REST_Controller extends \WP_REST_Controller {
 
 	/**
+	 * Contains the admin app routes prefix.
+	 *
+	 * @param string
+	 */
+	protected $admin_routes_prefix;
+
+	/**
 	 * Loads the class.
 	 *
 	 * @param string $namespace The store's namespace.
@@ -24,6 +31,9 @@ class REST_Controller extends \WP_REST_Controller {
 	public function __construct( $namespace, $collection ) {
 		$this->namespace = $namespace . '/v1';
 		$this->rest_base = $collection;
+
+		// Set the admin routes prefix.
+		$this->admin_routes_prefix = '/' . $namespace . '/' . $collection;
 
 		// Register rest routes.
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
@@ -975,12 +985,55 @@ class REST_Controller extends \WP_REST_Controller {
 						'count'  => $query->get_total(),
 						'ignore' => array(),
 						'hidden' => $hidden,
+						'routes' => $this->get_admin_app_routes(),
+						'labels' => (object) $collection->labels,
 					)
 				)
 			);
 		} catch ( Store_Exception $e ) {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
+	}
+
+	/**
+	 * Retrieves the collection routes for the admin component.
+	 *
+	 * @return array
+	 */
+	public function get_admin_app_routes() {
+
+		$collection = $this->fetch_collection();
+		$prefix     = $this->admin_routes_prefix;
+
+		return apply_filters(
+			'hizzle_rest_' . $this->get_normalized_rest_base() . '_admin_app_routes',
+			array(
+				$prefix          => array(
+					'title'     => $collection->get_label( 'name', $collection->get_name() ),
+					'component' => 'list-records',
+					'icon'      => 'menu',
+				),
+				"$prefix/add"    => array(
+					'title'     => $collection->get_label( 'add_new', esc_html__( 'Add New', 'hizzle-store' ) ),
+					'component' => 'create-record',
+				),
+				"$prefix/update" => array(
+					'title'     => $collection->get_label( 'edit_item', esc_html__( 'Update Record', 'hizzle-store' ) ),
+					'component' => 'update-record',
+					'hide'      => true,
+				),
+				"$prefix/import" => array(
+					'title'     => $collection->get_label( 'import', esc_html__( 'Import', 'hizzle-store' ) ),
+					'component' => 'import',
+					'hide'      => true,
+				),
+				"$prefix/export" => array(
+					'title'     => $collection->get_label( 'export', esc_html__( 'Export', 'hizzle-store' ) ),
+					'component' => 'export',
+					'hide'      => true,
+				),
+			)
+		);
 	}
 
 	/**

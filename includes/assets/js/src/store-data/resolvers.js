@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { addQueryArgs } from '@wordpress/url';
 import { apiFetch } from '@wordpress/data-controls';
 
 /**
@@ -22,14 +21,14 @@ export default function createResolvers( namespace, collection ) {
         /**
          * Fetches the records from the API.
          *
-         * @param {Object} query
+         * @param {String} queryString
          * @return {Object} Action.
          */
-        *getRecords( query = {} ) {
-            const path    = addQueryArgs( `${namespace}/v1/${collection}`, query );
+        *getRecords( queryString ) {
+            const path    = `${namespace}/v1/${collection}${queryString}`;
             const records = yield apiFetch( { path } );
 
-            return setRecords( records, addQueryArgs( '', query ) );
+            return setRecords( records, queryString );
         },
 
         /**

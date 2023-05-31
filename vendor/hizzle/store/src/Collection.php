@@ -119,6 +119,13 @@ class Collection {
 	protected $query_schema;
 
 	/**
+	 * The collection labels.
+	 *
+	 * @var array
+	 */
+	public $labels = array();
+
+	/**
 	 * A list of class instances
 	 *
 	 * @var Collection[]
@@ -546,13 +553,9 @@ class Collection {
 
 		$query_schema = array();
 
-		$query_schema['page'] = array(
-			'description'       => __( 'Current page of the collection.', 'hizzle-store' ),
-			'type'              => 'integer',
-			'default'           => 1,
-			'sanitize_callback' => 'absint',
-			'validate_callback' => 'rest_validate_request_arg',
-			'minimum'           => 1,
+		$query_schema['paged'] = array(
+			'description' => __( 'Current page of the collection.', 'hizzle-store' ),
+			'type'        => 'integer',
 		);
 
 		$query_schema['per_page'] = array(
@@ -1480,4 +1483,13 @@ class Collection {
 		throw new Store_Exception( $this->hook_prefix( 'not_saved', true ), $message, 404 );
 	}
 
+	/**
+	 * Retrieves a label.
+	 *
+	 * @param string $key The label key.
+	 * @param string $default The default label.
+	 */
+	public function get_label( $key, $default ) {
+		return isset( $this->labels[ $key ] ) ? $this->labels[ $key ] : $default;
+	}
 }

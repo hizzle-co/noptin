@@ -1,8 +1,7 @@
 import { FormToggle, Flex, FlexBlock, FlexItem, __experimentalUseNavigator as useNavigator, Button } from "@wordpress/components";
 import { dateI18n } from "@wordpress/date";
-import { useSetAtom } from "jotai";
 import getEnumBadge from "./enum-colors";
-import { route } from "../store";
+import { useRoute } from "../hooks";
 
 /**
  * Displays the primary column.
@@ -15,10 +14,9 @@ import { route } from "../store";
  */
 const PrimaryColumn = ( { record, name } ) => {
 
-	const { goTo }       = useNavigator();
-	const setCurrentPath = useSetAtom( route );
-	const value          = record[name];
-	const avatarStyle    = {
+	const { namespace, collection, navigate } = useRoute();
+	const value       = record[name];
+	const avatarStyle = {
 		height: '32px',
 		width: '32px',
 		borderRadius: '50%',
@@ -26,8 +24,7 @@ const PrimaryColumn = ( { record, name } ) => {
 	const avatar         = record.avatar_url ? <img src={ record.avatar_url } style={ avatarStyle } alt={ value } /> : null;
 
 	const handleClick = () => {
-		goTo( '/update' );
-		setCurrentPath( { path: '/update', query: { id: record.id } } );
+		navigate( `/${namespace}/${collection}/update`, { id: record.id } );
 	};
 
 	const ColValue = avatar ? (

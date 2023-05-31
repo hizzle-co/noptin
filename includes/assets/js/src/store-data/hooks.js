@@ -3,6 +3,7 @@
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -93,18 +94,18 @@ export function useRecordSchema( namespace, collection, recordId ) {
 export function useRecords( namespace, collection, queryArgs = {} ) {
 
 	const STORE_NAME = `${namespace}/${collection}`;
+	const argsString = addQueryArgs( '', queryArgs );
 
 	return useSelect( ( select ) => {
 		const store = select( STORE_NAME );
 
 		return {
-			get: store.getRecords( queryArgs ),
-			isResolving: () => store.isResolving( 'getRecords', [ queryArgs ] ),
-			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecords', [ queryArgs ] ),
-			getResolutionError: () => store.getResolutionError( 'getRecords', [ queryArgs ] ),
+			data: store.getRecords( argsString ),
+			isResolving: () => store.isResolving( 'getRecords', [ argsString ] ) || ! store.hasStartedResolution( 'getRecords', [ argsString ] ),
+			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecords', [ argsString ] ),
+			getResolutionError: () => store.getResolutionError( 'getRecords', [ argsString ] ),
 		}
-	},[ queryArgs ]);
-
+	}, [argsString]);
 }
 
 /**
@@ -122,8 +123,8 @@ export function useSchema( namespace, collection ) {
 		const store = select( STORE_NAME );
 
 		return {
-			get: store.getSchema(),
-			isResolving: () => store.isResolving( 'getSchema' ),
+			data: store.getSchema(),
+			isResolving: () => store.isResolving( 'getSchema' ) || ! store.hasStartedResolution( 'getSchema' ),
 			hasResolutionFailed: () => store.hasResolutionFailed( 'getSchema' ),
 			getResolutionError: () => store.getResolutionError( 'getSchema' ),
 		}

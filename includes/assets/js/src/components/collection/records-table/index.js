@@ -2,18 +2,18 @@
  * External dependencies
  */
 import { useMemo, useState } from "@wordpress/element";
-import { Notice, Spinner, CardBody } from "@wordpress/components";
+import { Notice, CardBody } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useAtom, useAtomValue } from "jotai";
 import { without } from 'lodash';
 
 /**
  * Local dependencies.
  */
-import * as store from "../store";
 import Wrap from "../wrap";
 import TableCard from "../../table";
 import DisplayCell from "./display-cell";
+import { useSchema, useRecords } from "../../../store-data/hooks";
+import { useRoute } from "../hooks";
 
 /**
  * Displays the records table.
@@ -23,31 +23,18 @@ import DisplayCell from "./display-cell";
  * @param {Array} props.schema.schema
  * @param {Array} props.schema.ignore
  * @param {Array} props.schema.hidden
- * @param {Object} props.records
- * @param {String} props.records.state
- * @param {Array} props.records.data
+ * @param {Array} props.records
+ * @param {Boolean} props.isLoading
+ * @param {Function} props.updateQuery
+ * @param {Object} props.args
  * @param {Object} props.extra
  * @returns {JSX.Element}
  */
-export function DisplayRecords( { schema: {count, schema, hidden, ignore }, records: { state, data }, extra } ) {
+export function DisplayRecords( { schema: {count, schema, hidden, ignore }, records, isLoading, updateQuery, query, extra } ) {
 
 	// Prepare the current query.
-	const [route, setRoute]             = useAtom( store.route );
-	const collection                    = useAtomValue( store.collection );
-	const namespace                     = useAtomValue( store.namespace );
+	const { namespace, collection }     = useRoute();
 	const [ hiddenCols, setHiddenCols ] = useState( hidden );
-
-	// Updates the query.
-	const updateQuery = ( newQuery ) => {
-		const { path, query } = route;
-
-		// If we're not updating the page, reset it.
-		if ( ! newQuery.page ) {
-			newQuery.page = 1;
-		}
-
-		setRoute( { path, query: { ...query, ...newQuery } } );
-	}
 
 	// Make some columns from the schema.
 	const columns = useMemo( () => {
@@ -74,13 +61,13 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 	}, [ schema, hiddenCols ] );
 
 	// Convert records into data array.
-	const records = useMemo( () => {
+	const rows = useMemo( () => {
 
-		if ( ! Array.isArray( data ) ) {
+		if ( ! Array.isArray( records ) ) {
 			return [];
 		}
 
-		return data.map( ( row ) => {
+		return records.map( ( row ) => {
 
 			return columns.map( ( column ) => {
 				return {
@@ -89,17 +76,17 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 				}
 			});
 		});
-	}, [ data, columns ] );
+	}, [ records, columns ] );
 
 	return (
 		<TableCard
-			rows={ records }
+			rows={ rows }
 			headers={ columns }
 			totalRows={ count }
 			summary={ [] }
-			isLoading={ state === 'loading' }
+			isLoading={ isLoading }
 			onQueryChange={ updateQuery }
-			query={ route.query }
+			query={ query }
 			className={ `${namespace}-${collection}__records-table` }
 			hasSearch={ true }
 			toggleHiddenCol={ ( col ) => {
@@ -120,38 +107,46 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
  *
  * @returns The records table.
  */
-export default function RecordsTable( { path, component } ) {
+export default function RecordsTable( { component } ) {
 
-	const schema  = useAtomValue( store.schema );
-	const records = useAtomValue( store.records );
+	const { namespace, collection, args, path, navigate } = useRoute();
+	const records = useRecords( namespace, collection, args );
+	const schema  = useSchema( namespace, collection );
 
 	// Show error if any.
-	if ( schema.state === 'hasError' || records.state === 'hasError' ) {
-		const theError = schema.state === 'hasError' ? schema.error : records.error;
+	if ( records.hasResolutionFailed() ) {
 
+		const error = records.getResolutionError();
 		return (
 			<Wrap title={ component.title }>
 				<CardBody>
 					<Notice status="error" isDismissible={ false }>
-						<strong>{ __( 'Error:', 'newsletter-optin-box' ) }</strong>&nbsp;
-						{ theError.message }
+						{ error.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
 					</Notice>
 				</CardBody>
 			</Wrap>
 		);
 	}
 
-	// Show the loading indicator if we're loading the schema.
-	if ( schema.state === 'loading' ) {
+	// Updates the query.
+	const updateQuery = ( newQuery ) => {
 
-		return (
-			<Wrap title={ component.title }>
-				<CardBody>
-					<Spinner />
-				</CardBody>
-			</Wrap>
-		);
+		// If we're not updating the page, reset it.
+		if ( ! newQuery.paged ) {
+			newQuery.paged = 1;
+		}
+
+		navigate( path, { ...args, ...newQuery } );
 	}
 
-	return <DisplayRecords schema={ schema.data } records={ records } path={ path } extra={ component } />;
+	return (
+		<DisplayRecords
+			schema={ schema.data }
+			records={ records.data }
+			isLoading={ records.isResolving() }
+			updateQuery={ updateQuery }
+			query={ args }
+			extra={ component }
+		/>
+	);
 }

@@ -4,13 +4,13 @@ export {apiFetch} from '@wordpress/data-controls';
  * Sets new records.
  *
  * @param {Array} records
- * @param {string} query
+ * @param {string} queryString
  * @return {Object} Action.
  */
-export const setRecords = ( records, query ) => ( {
+export const setRecords = ( records, queryString ) => ( {
 	type: 'SET_RECORDS',
 	records,
-	query,
+	queryString,
 } );
 
 /**

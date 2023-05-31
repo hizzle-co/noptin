@@ -5,12 +5,13 @@ import {
 	Flex,
 	FlexBlock,
 	FlexItem,
+	Spinner,
+	Notice,
+	CardBody,
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useAtomValue, useAtom } from "jotai";
-import { useHydrateAtoms } from 'jotai/utils';
 
 /**
  * Internal dependencies.
@@ -18,9 +19,10 @@ import { useHydrateAtoms } from 'jotai/utils';
 import ErrorBoundary from "./error-boundary";
 import Screen from "./screen";
 import Navigation from "./navigation";
-import * as store from "./store";
 import initStore from "../../store-data";
+import { useRoute } from "./hooks";
 import { useSchema } from "../../store-data/hooks";
+import Wrap from "./wrap";
 
 // Initialize the store.
 initStore( 'noptin', 'subscribers' );
@@ -31,7 +33,35 @@ initStore( 'noptin', 'subscribers' );
  */
 const RenderCollection = () => {
 
-	const [components] = useAtom( store.components );
+	const { namespace, collection } = useRoute();
+	const schema = useSchema( namespace, collection );
+
+	// Show the loading indicator if we're loading the schema.
+	if ( schema.isResolving() ) {
+
+		return (
+			<Wrap title={ __( 'Loading', 'newsletter-optin-box' ) }>
+				<CardBody>
+					<Spinner />
+				</CardBody>
+			</Wrap>
+		);
+	}
+
+	// Show error if any.
+	if ( schema.hasResolutionFailed() ) {
+		const error = records.getResolutionError();
+
+		return (
+			<Wrap title={ __( 'Error', 'newsletter-optin-box' ) }>
+				<CardBody>
+					<Notice status="error" isDismissible={ false }>
+						{ error.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
+					</Notice>
+				</CardBody>
+			</Wrap>
+		);
+	}
 
 	return (
 		<>
@@ -40,11 +70,11 @@ const RenderCollection = () => {
 			</FlexItem>
 
 			<FlexBlock>
-				{ Object.keys( components ).map( ( component ) => {
+				{ Object.keys( schema.data.routes ).map( ( route ) => {
 					return (
-						<NavigatorScreen key={ component } path={ component }>
+						<NavigatorScreen key={ route } path={ route }>
 							<ErrorBoundary>
-								<Screen path={ component } />
+								<Screen path={ route } />
 							</ErrorBoundary>
 						</NavigatorScreen>
 					);
@@ -58,29 +88,15 @@ const RenderCollection = () => {
  * Collection overview table.
  *
  * @param {Object} props
- * @param {string} props.namespace
- * @param {string} props.collection
- * @param {Object} props.components
+ * @param {string} props.defaultRoute The default route.
  * @returns
  */
-export default function Collection( { namespace, collection, components } ) {
-
-	console.log( useSchema( namespace, collection ) );
-
-	// Prepare the store.
-	const route = useAtomValue( store.route );
-
-	// Set the collection and namespace once the component mounts.
-	useHydrateAtoms([
-		[store.collection, collection],
-		[store.namespace, namespace],
-		[store.components, components],
-	]);
+export default function Collection( { defaultRoute } ) {
 
 	// Render the collection.
 	return (
 		<NavigatorProvider
-			initialPath={ route.path ? route.path : '/' }
+			initialPath={ defaultRoute }
 			as={Flex}
 			direction="column"
 			gap={ 4 }

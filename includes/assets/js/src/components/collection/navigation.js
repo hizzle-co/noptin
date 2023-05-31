@@ -3,7 +3,6 @@
  */
 import { plus, cloudUpload, download, trash } from "@wordpress/icons";
 import { __ } from "@wordpress/i18n";
-import { compact } from "lodash";
 import {
 	Flex,
 	FlexItem,
@@ -12,12 +11,11 @@ import {
 	CardHeader,
 	Button,
 	__experimentalText as Text,
-	__experimentalUseNavigator as useNavigator,
 } from "@wordpress/components";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 import AppIcon from "./app-icon";
-import { route, namespace, collection, components } from './store';
+import { useRoute } from "./hooks";
+import { useSchema } from "../../store-data/hooks";
 
 /**
  * Displays the collection navigation.
@@ -26,60 +24,52 @@ import { route, namespace, collection, components } from './store';
  */
 export default function Navigation() {
 
-	const { goTo } = useNavigator();
-	const allComponents = useAtomValue( components );
-	const setNamespace = useSetAtom( namespace );
-	const setCollection = useSetAtom( collection );
-	const [ currentPath, setCurrentPath ] = useAtom( route );
+	const { namespace, collection, path, navigate } = useRoute();
+	const { data } = useSchema( namespace, collection );
 
-	// Filter out components that don't have a display.
-	const toDisplay = compact( Object.keys( allComponents ).map( ( component ) => {
+	// Filter out routes that don't have a display.
+	const TheRoutes = Object.keys( data.routes ).map( ( route ) => {
 
-		// Don't display components that don't have a display.
-		if ( allComponents[component].hide ) {
+		// Don't display routes that don't have a display.
+		if ( data.routes[ route ].hide ) {
 			return null;
 		}
 
-		const newComponent = { ...allComponents[component], key: component };
+		// Prepare the icon.
+		let icon = data.routes[ route ].icon;
 
 		// Add icon if it doesn't exist.
-		if ( ! newComponent.icon ) {
+		if ( ! icon ) {
 
-			switch (newComponent.component) {
+			switch (data.routes[ route ].component) {
 				case 'create-record':
-					newComponent.icon = plus;
+					icon = plus;
 					break;
 				case 'import':
-					newComponent.icon = cloudUpload;
+					icon = cloudUpload;
 					break;
 				case 'export':
-					newComponent.icon = download;
+					icon = download;
 					break;
 				case 'delete':
-					newComponent.icon = trash;
+					icon = trash;
 					break;
 			}
 		}
 
-		return newComponent;
-	} ) );
+		return (
+			<FlexItem key={ route }>
+				<Button
+					onClick={ () => navigate( route ) }
+					isPressed={ path === route }
+					icon={ icon }
+					text={ data.routes[ route ].title }
+					id={`noptin-collection-navigation__button-${ route }`}
+				/>
+			</FlexItem>
+		);
 
-	// Set the current path.
-	const navigateTo = ( path ) => {
-
-		// Navigate to the path.
-		setCurrentPath( { path } );
-		goTo( path );
-
-		// Maybe set the namespace and collection.
-		if ( allComponents[path].namespace ) {
-			setNamespace( allComponents[path].namespace );
-		}
-
-		if ( allComponents[path].collection ) {
-			setCollection( allComponents[path].collection );
-		}
-	};
+	} );
 
 	return (
 		<Card>
@@ -99,20 +89,7 @@ export default function Navigation() {
 						</Flex>
 					</FlexBlock>
 
-					{ toDisplay.map( ( component ) => {
-						return (
-							<FlexItem key={ component.key }>
-								<Button
-									onClick={ () => navigateTo( component.key ) }
-									isPressed={ currentPath.path === component.key }
-									icon={ component.icon }
-									text={ component.title }
-									id={`noptin-collection-navigation__button-${ component.key }`}
-									__experimentalIsFocusable
-								/>
-							</FlexItem>
-						);
-					})}
+					{ TheRoutes }
 
 				</Flex>
 			</CardHeader>

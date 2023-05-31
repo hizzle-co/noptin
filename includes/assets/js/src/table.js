@@ -3,6 +3,7 @@
  */
 import domReady from '@wordpress/dom-ready';
 import {render, createRoot} from "@wordpress/element";
+import { getQueryArg } from '@wordpress/url';
 import { Provider } from "jotai";
 
 /**
@@ -16,19 +17,23 @@ domReady( () => {
 	const app = document.getElementById( 'noptin-collection__overview-app' );
 
 	if ( app ) {
-		const config = app.dataset.config;
-		const data = {};
+		let defaultRoute = app.dataset.defaultRoute;
 
-		// Parse the config.
-		try {
-			data.config = JSON.parse( config );
-		} catch ( e ) {
-			data.config = {};
+		// Check if we have a hizzle_path query arg.
+		const hizzlePath = getQueryArg( window.location.search, 'hizzle_path' );
+
+		// If it exists, ensure it has 2 slashes, example: /namespace/collection.
+		if ( hizzlePath ) {
+			const parts = hizzlePath.split( '/' );
+
+			if ( parts.length > 1 ) {
+				defaultRoute = hizzlePath;
+			}
 		}
 
 		const TheApp = (
 			<Provider>
-				<Collection {...data.config} />
+				<Collection defaultRoute={defaultRoute} />
 			</Provider>
 		);
 
