@@ -23,9 +23,9 @@ export function useRoute() {
 			}
 		};
 
-		window.addEventListener( 'onpopstate', handleRouteChange );
+		window.addEventListener( 'popstate', handleRouteChange );
 		return () => {
-			window.removeEventListener( 'onpopstate', handleRouteChange );
+			window.removeEventListener( 'popstate', handleRouteChange );
 		};
 	}, [] );
 
@@ -55,8 +55,8 @@ export function useRoute() {
 
 		goTo( path );
 
-		const newArgs = { ...args, hizzle_path: path };
-		const newURL  = addQueryArgs( window.location.href, newArgs );
+		const newArgs = { ...args, hizzle_path: path, page: getQueryArg( window.location.href, 'page' ) };
+		const newURL  = addQueryArgs( window.location.href.split('?')[0], newArgs );
 
 		setURL( newURL );
 		history.pushState( null, null, newURL );

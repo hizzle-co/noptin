@@ -32,12 +32,16 @@ export function useStore( namespace, collection ) {
 export function useRecord( namespace, collection, recordId ) {
 	const STORE_NAME = `${namespace}/${collection}`;
 
-	const { editRecord, updateRecord } = useDispatch( STORE_NAME );
+	// Ensure we have a valid record ID.
+	recordId = parseInt( recordId, 10 );
+
+	const { editRecord, updateRecord, deleteRecord } = useDispatch( STORE_NAME );
 
 	const mutations = useMemo(
 		() => ( {
 			edit: ( record ) => editRecord( recordId, record ),
 			save: ( saveOptions = {} ) => updateRecord( recordId, saveOptions ),
+			delete: () => deleteRecord( recordId ),
 		} ),
 		[ recordId ]
 	);

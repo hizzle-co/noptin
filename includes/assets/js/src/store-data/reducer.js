@@ -16,8 +16,15 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 		case 'SET_RECORDS':
 
 			// Key records by ID for easy access.
+			const cachedRecords = { ...state.record };
+
 			const newRecords = action.records.reduce((records, record) => {
 				records[record.id] = record;
+
+				if ( ! cachedRecords[ record.id ] ) {
+					cachedRecords[ record.id ] = record;
+				}
+
 				return records;
 			}, {});
 
@@ -27,6 +34,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 				...state,
 				records: {
 					...state.records,
+					record: cachedRecords,
 					[ queryString ]: newRecords,
 				},
 			};

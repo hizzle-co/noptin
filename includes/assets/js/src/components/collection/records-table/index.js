@@ -37,11 +37,16 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 	const [ hiddenCols, setHiddenCols ] = useState( hidden );
 
 	// Make some columns from the schema.
+	let rowHeader = 0;
 	const columns = useMemo( () => {
 
 		const columns = [];
 
 		schema.forEach( ( column ) => {
+
+			if ( column.is_primary ) {
+				rowHeader = index;
+			}
 
 			// Abort if dynamic column.
 			if ( ignore.includes( column.name ) ) {
@@ -89,6 +94,7 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 			query={ query }
 			className={ `${namespace}-${collection}__records-table` }
 			hasSearch={ true }
+			rowHeader={ rowHeader }
 			toggleHiddenCol={ ( col ) => {
 
 				if ( hiddenCols.includes( col ) ) {

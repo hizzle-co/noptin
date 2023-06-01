@@ -16,12 +16,29 @@ export default function createDynamicActions( namespace, collection ) {
 		 * @param {Object} data
 		 * @return {Object} Action.
 		 */
-		*createRecord( data ) {
+		*createRecord( data, dispatch ) {
 			const path   = `${namespace}/v1/${collection}`;
 			const method = 'POST';
 			const result = yield apiFetch( { path, method, data } );
 
 			if ( result ) {
+
+				// Invalidate the getRecords selector.
+				yield dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
+
+				// Invalidate the getRecord selector.
+				yield dispatch.invalidateResolutionForStoreSelector( 'getRecord' );
+
+				// Finish the resolution for the getRecord selector, if id matches.
+				yield dispatch.finishResolution( 'getRecord', result.id );
+
+				// Resolve to avoid further network requests.
+				yield dispatch.startResolution( 'getRecord', [ result.id ] );
+				yield dispatch.finishResolution( 'getRecord', [ result.id ] );
+
+				// Set the record.
+				yield dispatch.setRecord( result );
+
 				return {
 					type: 'CREATE_RECORD',
 					result

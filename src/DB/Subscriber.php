@@ -581,6 +581,22 @@ class Subscriber extends \Hizzle\Store\Record {
 			return new \WP_Error( 'invalid_email', __( 'Invalid email address.', 'newsletter-optin-box' ) );
 		}
 
+		// If we're creating, make sure the email doesn't already exist.
+		if ( ! $this->get_id() ) {
+			$subscriber = get_noptin_subscriber_id_by_email( $this->get_email() );
+
+			if ( $subscriber ) {
+				return new \WP_Error( 'email_exists', __( 'This email address is already subscribed.', 'newsletter-optin-box' ) );
+			}
+
+			// If the confirm key exists, generate a new one.
+			$subscriber = get_noptin_subscriber_id_by_confirm_key( $this->get_confirm_key() );
+
+			if ( $subscriber ) {
+				$this->set_confirm_key( md5( wp_generate_password( 100, true, true ) . uniqid() ) );
+			}
+		}
+
 		return parent::save();
 	}
 }

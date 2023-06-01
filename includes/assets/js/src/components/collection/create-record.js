@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import apiFetch from "@wordpress/api-fetch";
 import { useState } from "@wordpress/element";
-import { Notice, Spinner, CardBody, CardFooter, Button, __experimentalUseNavigator as useNavigator, } from "@wordpress/components";
+import { Notice, Spinner, CardBody, CardFooter, Button } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useDispatch } from "@wordpress/data";
 
 /**
  * Local dependencies.
  */
-import { schema, collection, namespace, route } from "./store";
 import Wrap from "./wrap";
 import Setting from "../setting";
+import { useSchema } from "../../store-data/hooks";
+import { useRoute } from "./hooks";
 
 /**
  * Allows the user to export all records.
@@ -23,42 +23,34 @@ import Setting from "../setting";
 export default function CreateRecord( { component: { title } } ) {
 
 	// Prepare the state.
+	const { namespace, collection, navigate } = useRoute();
+	const STORE_NAME              = `${namespace}/${collection}`;
+	const dispatch                = useDispatch( STORE_NAME );
 	const [ error, setError ]     = useState( null );
 	const [ loading, setLoading ] = useState( false );
 	const [ record, setRecord ]   = useState( {} );
-	const { goTo }                = useNavigator();
+	const schema                  = useSchema( namespace, collection );
 
-	// Prepare the store.
-	const currentCollection = useAtomValue( collection );
-	const currentNamespace  = useAtomValue( namespace );
-	const currentSchema	    = useAtomValue( schema );
-	const setCurrentPath    = useSetAtom( route );
+	// A function to create a new record.
+	const onCreateRecord = () => {
 
-	// Show error if any.
-	if ( currentSchema.state === 'hasError' ) {
+		// Save once.
+		if ( loading ) {
+			return;
+		}
 
-		return (
-			<Wrap title={ title }>
-				<CardBody>
-					<Notice status="error" isDismissible={ false }>
-						<strong>{ __( 'Error:', 'newsletter-optin-box' ) }</strong>&nbsp;
-						{ currentSchema.error.message }
-					</Notice>
-				</CardBody>
-			</Wrap>
-		);
-	}
+		setLoading ( true );
 
-	// Show the loading indicator if we're loading the schema.
-	if ( currentSchema.state === 'loading' ) {
-
-		return (
-			<Wrap title={ title }>
-				<CardBody>
-					<Spinner />
-				</CardBody>
-			</Wrap>
-		);
+		dispatch.createRecord( record, dispatch )
+			.then( ( savedRecord ) => {
+				navigate( `/${STORE_NAME}/update`, { id: savedRecord?.result?.id } );
+			} )
+			.catch( ( error ) => {
+				setError( error );
+			} )
+			.finally( () => {
+				setLoading( false );
+			} );
 	}
 
 	// onChange handler.
@@ -70,112 +62,88 @@ export default function CreateRecord( { component: { title } } ) {
 		}
 	}
 
-	// Saves the record.
-	const saveRecord = () => {
-
-		// Abort if we're already loading.
-		if ( loading ) {
-			return;
-		}
-
-		setLoading( true );
-		setError( null );
-
-		apiFetch( {
-			path: `${currentNamespace}/v1/${currentCollection}`,
-			method: 'POST',
-			data: record,
-		} ).then( ( {id} ) => {
-			goTo( '/update' );
-			setCurrentPath( { path: '/update', query: { id } } );
-		} ).catch( ( error ) => {
-			setError( error );
-		} ).finally( () => {
-			setLoading( false );
-		} );
-	};
-
 	// Display the add record form.
 	return (
 		<Wrap title={title}>
+			<form onSubmit={ onCreateRecord }>
+				<CardBody style={{ opacity: loading ? 0.5 : 1 }}>
 
-			<CardBody style={{ opacity: loading ? 0.5 : 1 }}>
+					{ schema.data.schema.map( ( field ) => {
 
-				{ currentSchema.data.schema.map( ( field ) => {
+						// Abort for readonly and dynamic fields.
+						if ( field.readonly || field.is_dynamic ) {
+							return null;
+						}
 
-					// Abort for readonly and dynamic fields.
-					if ( field.readonly || field.is_dynamic ) {
-						return null;
-					}
+						// Abort for hidden fields.
+						if ( schema.data.hidden && schema.data.hidden.includes( field.name ) ) {
+							return null;
+						}
 
-					// Abort for hidden fields.
-					if ( currentSchema.data.hidden && currentSchema.data.hidden.includes( field.name ) ) {
-						return null;
-					}
+						// Fields to ignore.
+						if ( schema.data.ignore && schema.data.ignore.includes( field.name ) ) {
+							return null;
+						}
 
-					// Fields to ignore.
-					if ( currentSchema.data.ignore && currentSchema.data.ignore.includes( field.name ) ) {
-						return null;
-					}
+						const preparedSetting = {
+							default: field.default,
+							label: field.label,
+							el: 'input',
+							type: 'text',
+						};
 
-					const preparedSetting = {
-						default: field.default,
-						label: field.label,
-						el: 'input',
-						type: 'text',
-					};
+						if ( field.enum && ! Array.isArray( field.enum ) ) {
+							preparedSetting.el = 'select';
+							preparedSetting.options = field.enum;
+						}
 
-					if ( field.enum && ! Array.isArray( field.enum ) ) {
-						preparedSetting.el = 'select';
-						preparedSetting.options = field.enum;
-					}
+						if ( field.isLongText ) {
+							preparedSetting.el = 'textarea';
+						}
 
-					if ( field.isLongText ) {
-						preparedSetting.el = 'textarea';
-					}
+						if ( field.is_numeric || field.is_float ) {
+							preparedSetting.type = 'number';
+						}
 
-					if ( field.is_numeric || field.is_float ) {
-						preparedSetting.type = 'number';
-					}
+						if ( field.is_boolean ) {
+							preparedSetting.type = 'toggle';
+						}
 
-					if ( field.is_boolean ) {
-						preparedSetting.type = 'toggle';
-					}
+						if ( field.description && field.description !== field.label ) {
+							preparedSetting.description = field.description;
+						}
 
-					if ( field.description && field.description !== field.label ) {
-						preparedSetting.description = field.description;
-					}
+						return (
+							<div style={ { marginBottom: '1.6rem' } } key={ field.name }>
+								<Setting
+									settingKey={ field.name }
+									saved={ record }
+									setAttributes={ onChange }
+									setting={ preparedSetting }
+								/>
+							</div>
+						);
+					} ) }
 
-					return (
-						<div style={ { marginBottom: '1.6rem' } } key={ field.name }>
-							<Setting
-								settingKey={ field.name }
-								saved={ record }
-								setAttributes={ onChange }
-								setting={ preparedSetting }
-							/>
-						</div>
-					);
-				} ) }
+					{ error && (
+						<Notice status="error">
+							{ error.message }
+						</Notice>
+					) }
+				</CardBody>
 
-				{ error && (
-					<Notice status="error">
-						{ error.message }
-					</Notice>
-				) }
-			</CardBody>
-
-			<CardFooter>
-				<Button
-					variant="primary"
-					onClick={ saveRecord }
-					isBusy={ loading }
-					disabled={ loading }
-				>
-					{ __( 'Save', 'newsletter-optin-box' ) }
-					{ loading && <Spinner /> }
-				</Button>
-			</CardFooter>
+				<CardFooter>
+					<Button
+						variant="primary"
+						onClick={ onCreateRecord }
+						isBusy={ loading }
+						disabled={ loading }
+					>
+						{ __( 'Save', 'newsletter-optin-box' ) }
+						{ loading && <Spinner /> }
+					</Button>
+				</CardFooter>
+			</form>
 		</Wrap>
 	);
 

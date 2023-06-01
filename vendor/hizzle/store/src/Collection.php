@@ -1470,13 +1470,17 @@ class Collection {
 	 * @throws Store_Exception
 	 */
 	protected function not_saved() {
+		global $wpdb;
 
-		$message = apply_filters(
+		// Fetch last db error.
+		$db_error = $wpdb->last_error;
+		$message  = apply_filters(
 			$this->hook_prefix( 'not_saved_message', true ),
 			sprintf(
 				// Translators: %s is the resource type.
-				__( 'Error saving %s.', 'hizzle-store' ),
-				$this->get_singular_name()
+				__( 'Error saving %s: %s.', 'hizzle-store' ),
+				$this->get_singular_name(),
+				empty( $db_error ) ? __( 'Unknown error', 'hizzle-store' ) : $db_error
 			)
 		);
 

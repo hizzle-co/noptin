@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import { useMemo } from "@wordpress/element";
-import { Notice, CardBody, Icon, SandBox } from "@wordpress/components";
+import { useMemo, useState } from "@wordpress/element";
+import { Notice, CardBody, Icon } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
+import { without } from 'lodash';
 
 /**
  * Local dependencies.
@@ -67,6 +68,7 @@ const DisplayCell = ( { name, is_list, item, args, is_primary, url, is_boolean, 
 export default function TableTab( props ) {
 
 	// Prepare the state.
+	const [ hiddenCols, setHiddenCols ] = useState( props.tab.hidden ? props.tab.hidden : [] );
 	const { namespace, collection, args } = useRoute();
 	const tab = useTabContent( namespace, collection, args.id, props.tab.name );
 
@@ -100,14 +102,14 @@ export default function TableTab( props ) {
 			headers.push( {
 				key: header.name,
 				label: header.label,
-				visible: true,
+				visible: ! hiddenCols.includes( header.name ),
 				isSortable: false,
 				isNumeric: header.is_numeric,
 			});
 		} );
 
 		return headers;
-	}, [ props.tab.headers ] );
+	}, [ props.tab.headers, hiddenCols ] );
 
 	// Prepare records.
 	const rows = useMemo( () => {
@@ -137,6 +139,14 @@ export default function TableTab( props ) {
 			headers={ headers }
 			showFooter={ false }
 			rowHeader={ rowHeader }
+			toggleHiddenCol={ ( col ) => {
+
+				if ( hiddenCols.includes( col ) ) {
+					setHiddenCols( without( hiddenCols, col ) );
+				} else {
+					setHiddenCols( [ ...hiddenCols, col ] );
+				}
+			} }
 		/>
 	);
 }

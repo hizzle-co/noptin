@@ -1,14 +1,10 @@
 /**
  * External dependencies
  */
-import { forwardRef, useState } from "@wordpress/element";
-import { Notice, Spinner, CardBody, Flex, FlexItem, NavigableMenu, Button,
-	Card,
-	CardHeader,
-	__experimentalText as Text,
-	TabPanel,
-} from "@wordpress/components";
+import { forwardRef, useCallback } from "@wordpress/element";
+import { Notice, Spinner, CardBody, TabPanel } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
+import { addQueryArgs } from "@wordpress/url";
 
 /**
  * Local dependencies.
@@ -47,9 +43,22 @@ const RenderTab = ( { tab } ) => {
 const UpdateRecord = ( { component: { title } }, ref ) => {
 
 	// Prepare the state.
-	const { namespace, collection, args } = useRoute();
+	const { namespace, collection, args: { hizzle_tab, id } } = useRoute();
+
 	const schema = useSchema( namespace, collection );
-	const record = useRecord( namespace, collection, args.id );
+	const record = useRecord( namespace, collection, id );
+	const tab    = hizzle_tab || 'edit';
+
+	// Fired when a tab is selected.
+	const onTabSelect = useCallback( ( tab ) => {
+
+		// Replace the current URL with the new tab.
+		const newURL = addQueryArgs( window.location.href, { hizzle_tab: tab } );
+
+		// Navigate to the new URL.
+		window.history.replaceState( {}, '', newURL );
+
+	}, [] );
 
 	// Show the loading indicator if we're loading the schema.
 	if ( record.isResolving() ) {
@@ -81,7 +90,7 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 	// Prepare the tabs.
 	const tabs = [
 		{
-			title: __( 'Update Details', 'newsletter-optin-box' ),
+			title: title,
 			name: 'edit',
 		}
 	]
@@ -101,11 +110,11 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 		<div ref={ ref }>
 
 			{ tabs.length === 1 ? (
-				<Wrap title={ tabs[0].title }>
+				<Wrap title={ title }>
 					<RenderTab tab={ tabs[0] } />
 				</Wrap>
 			) : (
-				<TabPanel className="hizzle-record-tabs" tabs={ tabs }>
+				<TabPanel className="hizzle-record-tabs" tabs={ tabs } initialTabName={ tab } onSelect={ onTabSelect }>
 					{ ( tab ) => <RenderTab tab={ tab } /> }
 				</TabPanel>
 			) }
