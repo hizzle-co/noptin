@@ -80,7 +80,7 @@ const RecordTitle = () => {
  */
 export default function Navigation() {
 
-	const { namespace, collection, path, navigate } = useRoute();
+	const { namespace, collection, path, navigate, args } = useRoute();
 	const { data }        = useSchema( namespace, collection );
 	const isEditingRecord = path === `/${namespace}/${collection}/update`;
 

@@ -13,6 +13,7 @@ export function useRoute() {
 
 	// Watch for hash changes.
 	useEffect( () => {
+		console.log( params );
 		const handleRouteChange = () => {
 			setURL( window.location.href );
 
