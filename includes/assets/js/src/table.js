@@ -4,7 +4,6 @@
 import domReady from '@wordpress/dom-ready';
 import {render, createRoot} from "@wordpress/element";
 import { getQueryArg } from '@wordpress/url';
-import { Provider } from "jotai";
 
 /**
  * Local dependencies.
@@ -32,9 +31,7 @@ domReady( () => {
 		}
 
 		const TheApp = (
-			<Provider>
-				<Collection defaultRoute={defaultRoute} />
-			</Provider>
+			<Collection defaultRoute={defaultRoute} />
 		);
 
 		// React 18.

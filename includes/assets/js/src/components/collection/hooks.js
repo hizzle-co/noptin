@@ -1,6 +1,8 @@
 import { __experimentalUseNavigator as useNavigator } from "@wordpress/components";
-import { useState, useEffect, useMemo } from "@wordpress/element";
+import { useMemo, createContext, useContext } from "@wordpress/element";
 import { getQueryArgs, getQueryArg, addQueryArgs } from '@wordpress/url';
+
+export const URLContext = createContext( window.location.href );
 
 /**
  * Resolves the current route.
@@ -9,26 +11,7 @@ import { getQueryArgs, getQueryArg, addQueryArgs } from '@wordpress/url';
  */
 export function useRoute() {
 	const { location, goTo, goBack, goToParent, params } = useNavigator();
-	const [url, setURL] = useState( window.location.href );
-
-	// Watch for hash changes.
-	useEffect( () => {
-		console.log( params );
-		const handleRouteChange = () => {
-			setURL( window.location.href );
-
-			const newPath = getQueryArg( window.location.href, 'hizzle_path' );
-
-			if ( newPath ) {
-				goTo( newPath );
-			}
-		};
-
-		window.addEventListener( 'popstate', handleRouteChange );
-		return () => {
-			window.removeEventListener( 'popstate', handleRouteChange );
-		};
-	}, [] );
+	const [url, setURL] = useContext( URLContext );
 
 	// Current query args.
 	const { hizzle_path, page, ...query } = getQueryArgs( url );
