@@ -96,6 +96,7 @@ const TableCard = ( {
 	actions,
 	className,
 	hasSearch,
+	searchPlaceholder,
 	headers = [],
 	ids,
 	isLoading = false,
@@ -158,6 +159,7 @@ const TableCard = ( {
 									setSearchTerm(value);
 									onSearchTextChange(value);
 								}}
+								placeholder={ searchPlaceholder }
 								__nextHasNoMarginBottom
 							/>
 						</FlexBlock>

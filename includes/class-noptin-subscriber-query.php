@@ -110,6 +110,10 @@ class Noptin_Subscriber_Query {
 	 * @param null|string|array $query Optional. The query variables.
 	 */
 	public function __construct( $query = null ) {
+
+		// Show deprecated class notice.
+		_deprecated_function( __CLASS__, '1.13.0', 'get_noptin_subscribers' );
+
 		if ( ! is_null( $query ) ) {
 			$this->prepare_query( $query );
 			$this->query();

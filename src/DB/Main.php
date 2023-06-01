@@ -367,6 +367,8 @@ class Main {
 			array( 'ip_address', 'conversion_page' )
 		);
 
+		$params['id_prop'] = 'email';
+
 		return $params;
 	}
 

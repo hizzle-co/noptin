@@ -1019,13 +1019,14 @@ class REST_Controller extends \WP_REST_Controller {
 				apply_filters(
 					'hizzle_rest_' . $this->get_normalized_rest_base() . '_collection_js_params',
 					array(
-						'schema' => array_values( $schema ),
-						'count'  => $query->get_total(),
-						'ignore' => array(),
-						'hidden' => $hidden,
-						'routes' => $this->get_admin_app_routes(),
-						'labels' => (object) $collection->labels,
-						'tabs'   => $tabs,
+						'schema'  => array_values( $schema ),
+						'count'   => $query->get_total(),
+						'ignore'  => array(),
+						'hidden'  => $hidden,
+						'routes'  => $this->get_admin_app_routes(),
+						'labels'  => (object) $collection->labels,
+						'id_prop' => 'id',
+						'tabs'    => $tabs,
 					)
 				)
 			);

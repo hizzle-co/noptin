@@ -30,7 +30,7 @@ import { useRoute } from "../hooks";
  * @param {Object} props.extra
  * @returns {JSX.Element}
  */
-export function DisplayRecords( { schema: {count, schema, hidden, ignore }, records, isLoading, updateQuery, query, extra } ) {
+export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels }, records, isLoading, updateQuery, query, extra } ) {
 
 	// Prepare the current query.
 	const { namespace, collection }     = useRoute();
@@ -95,6 +95,8 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore }, reco
 			className={ `${namespace}-${collection}__records-table` }
 			hasSearch={ true }
 			rowHeader={ rowHeader }
+			emptyMessage={ labels?.not_found }
+			searchPlaceholder={ labels?.search_items }
 			toggleHiddenCol={ ( col ) => {
 
 				if ( hiddenCols.includes( col ) ) {

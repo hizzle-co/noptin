@@ -22,7 +22,6 @@ class Noptin_Admin_Filters {
 	public function __construct() {
 
 		add_filter( 'noptin_admin_tools_page_title', array( $this, 'filter_tools_page_titles' ) );
-		add_filter( 'noptin_admin_subscribers_page_title', array( $this, 'filter_subscribers_page_titles' ) );
 
 		// Show subscriber connection on user's list table.
         add_filter( 'manage_users_columns', array( $this, 'modify_users_table' ) );
@@ -49,27 +48,6 @@ class Noptin_Admin_Filters {
 
 		return $title;
 
-	}
-
-	/**
-	 * Filters tools page titles.
-	 * @since       1.2.7
-	 */
-	public function filter_subscribers_page_titles( $title ) {
-
-		if ( ! empty( $_GET['subscriber'] ) ) {
-			$subscriber = new Noptin_Subscriber( $_GET['subscriber'] );
-
-			if ( ! empty( $subscriber->email ) ) {
-				return sprintf(
-					// Translators: %s is the subscriber's email.
-					esc_html__( 'View Noptin Subscriber (%s)', 'newsletter-optin-box' ),
-					sanitize_email( $subscriber->email )
-				);
-			}
-		}
-
-		return $title;
 	}
 
 	/**
