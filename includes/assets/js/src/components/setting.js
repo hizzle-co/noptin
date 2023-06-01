@@ -112,7 +112,12 @@ function useMergeTags(availableSmartTags, onMergeTagClick) {
  * @param {Array} props.availableSmartTags The available smart tags.
  * @return {JSX.Element}
  */
-function InputSetting({ setting, availableSmartTags, ...attributes }) {
+function InputSetting({ setting, availableSmartTags, isPressEnterToChange, ...attributes }) {
+
+	// If press enter to change is undefined, set it to true.
+	if ( isPressEnterToChange === undefined ) {
+		isPressEnterToChange = true;
+	}
 
 	// On add merge tag...
 	const onMergeTagClick = useCallback((mergeTag) => {
@@ -139,7 +144,7 @@ function InputSetting({ setting, availableSmartTags, ...attributes }) {
 				type={inputTypes.includes( setting.type ) ? setting.type : 'text'}
 				placeholder={setting.placeholder ? setting.placeholder : ''}
 				suffix={suffix}
-				isPressEnterToChange
+				isPressEnterToChange={isPressEnterToChange}
 				__nextHasNoMarginBottom
 				__next36pxDefaultSize
 			/>
@@ -400,6 +405,7 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 				{...defaultAttributes}
 				setting={setting}
 				availableSmartTags={'trigger_settings' === prop ? [] : availableSmartTags}
+				isPressEnterToChange={setting.isInputToChange ? false : true}
 			/>
 		);
 	}

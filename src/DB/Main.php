@@ -362,6 +362,11 @@ class Main {
 			array( 'activity', 'sent_campaigns', 'avatar_url' )
 		);
 
+		$params['hidden'] = array_merge(
+			$params['hidden'],
+			array( 'ip_address', 'conversion_page' )
+		);
+
 		return $params;
 	}
 

@@ -327,7 +327,7 @@ class Prop {
 
 		// Default value.
 		if ( null !== $this->default ) {
-			$schema['default'] = $this->default;
+			$schema['default'] = $this->is_boolean() ? (bool) $this->default : $this->default;
 		}
 
 		// Extra REST schema.
