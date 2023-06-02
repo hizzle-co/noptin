@@ -364,7 +364,7 @@ class Main {
 
 		$params['hidden'] = array_merge(
 			$params['hidden'],
-			array( 'ip_address', 'conversion_page' )
+			array( 'ip_address', 'conversion_page', 'confirm_key', 'date_modified' )
 		);
 
 		$params['id_prop'] = 'email';

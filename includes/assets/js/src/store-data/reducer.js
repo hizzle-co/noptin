@@ -10,56 +10,78 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 
 	switch (action.type) {
 
+		/**
+		 * Sets the collection schema.
+		 */
 		case 'SET_SCHEMA':
 			return { ...state, schema: action.schema };
 
+		/**
+		 * Sets record IDs keyed by the query, e.g.: { "page=1": [ 1, 2, 3 ] },
+		 * and records keyed by ID, e.g.: { 1: { id: 1, ... } }
+		 */
 		case 'SET_RECORDS':
 
-			// Key records by ID for easy access.
-			const cachedRecords = { ...state.record };
+			// Prepare constants.
+			const queryString   = '' === action.queryString ? 'all' : action.queryString;
+			const cachedRecords = { ...state.records };
+			const recordIds     = [];
 
-			const newRecords = action.records.reduce((records, record) => {
-				records[record.id] = record;
+			// Loop through the records and add them to the cache.
+			action.records.forEach((record) => {
+				cachedRecords[ record.id ] = record;
+				recordIds.push( record.id );
+			});
 
-				if ( ! cachedRecords[ record.id ] ) {
-					cachedRecords[ record.id ] = record;
-				}
+			return {
+				...state,
+				records: cachedRecords,
+				recordIDs: {
+					...state.recordIDs,
+					[ queryString ]: recordIds,
+				},
+			};
 
-				return records;
-			}, {});
-
-			const queryString = '' === action.queryString ? 'all' : action.queryString;
-
+		/**
+		 * Sets a record keyed by ID, e.g.: { 1: { id: 1, ... } }
+		 */
+		case 'SET_RECORD':
 			return {
 				...state,
 				records: {
 					...state.records,
-					record: cachedRecords,
-					[ queryString ]: newRecords,
-				},
-			};
-
-		case 'SET_RECORD':
-			return {
-				...state,
-				record: {
-					...state.record,
 					[ action.record.id ]: action.record,
 				},
 			};
 
-		case 'EDIT_RECORD':
-			return {
-				...state,
-				editedRecords: {
-					...state.editedRecords,
-					[ action.id ]: {
-						...state.editedRecords[ action.id ],
-						...action.data,
-					},
-				},
-			};
+		/**
+		 * Before deleting a record, we need to remove it from the record IDs.
+		 */
+		case 'BEFORE_DELETE_RECORD':
+			const recordIDsBeforeDelete = { ...state.recordIDs };
 
+			// Loop through the record IDs and remove the deleted record.
+			Object.keys( recordIDsBeforeDelete ).forEach((queryString) => {
+				const index = recordIDsBeforeDelete[ queryString ].indexOf( action.id );
+			
+				if ( -1 !== index ) {
+					recordIDsBeforeDelete[ queryString ].splice( index, 1 );
+				}
+			});
+
+			return { ...state, recordIDs: recordIDsBeforeDelete };
+
+		/**
+		 * Deletes a record keyed by ID, e.g.: { 1: { id: 1, ... } }
+		 */
+		case 'DELETE_RECORD':
+			const records   = { ...state.records };
+			delete records[ action.id ];
+			return { ...state, records, recordIDs };
+
+		/**
+		 * Set tab content key by subscriber ID and tab name, e.g.: { 1_overview:{} } }
+		 */
 		case 'SET_TAB_CONTENT':
 			return {
 				...state,
@@ -70,5 +92,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 			};
 
 	}
+
+	// Return the state.
 	return state;
 }

@@ -25,18 +25,6 @@ export const setRecord = ( record ) => ( {
 } );
 
 /**
- * Edits a record.
- *
- * @param {string} id
- * @param {Object} data
- */
-export const editRecord = ( id, data ) => ( {
-	type: 'EDIT_RECORD',
-	id,
-	data,
-} );
-
-/**
  * Sets the collection schema.
  *
  * @param {Object} schema
@@ -45,6 +33,17 @@ export const editRecord = ( id, data ) => ( {
 export const setSchema = ( schema ) => ( {
 	type: 'SET_SCHEMA',
 	schema,
+} );
+
+/**
+ * Before deleting a record.
+ *
+ * @param {string} id
+ * @return {Object} Action.
+ */
+export const beforeDeleteRecord = ( id ) => ( {
+	type: 'BEFORE_DELETE_RECORD',
+	id,
 } );
 
 /**

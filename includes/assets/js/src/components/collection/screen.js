@@ -64,7 +64,7 @@ export default function Screen( { path } ) {
 
 	// Create a new record.
 	if ( 'create-record' === component ) {
-		return <CreateRecord {...args} />;
+		return <CreateRecord  />;
 	}
 
 	// Update a record.

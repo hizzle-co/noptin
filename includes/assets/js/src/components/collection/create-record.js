@@ -18,10 +18,8 @@ import { useRoute } from "./hooks";
 /**
  * Allows the user to export all records.
  *
- * @param {Object} props
- * @param {Object} props.component
  */
-export default function CreateRecord( { component: { title } } ) {
+export default function CreateRecord() {
 
 	// Prepare the state.
 	const { namespace, collection, navigate } = useRoute();
@@ -33,7 +31,9 @@ export default function CreateRecord( { component: { title } } ) {
 	const schema                  = useSchema( namespace, collection );
 
 	// A function to create a new record.
-	const onCreateRecord = () => {
+	const onCreateRecord = ( e ) => {
+
+		e?.preventDefault();
 
 		// Save once.
 		if ( loading ) {
@@ -44,7 +44,7 @@ export default function CreateRecord( { component: { title } } ) {
 
 		dispatch.createRecord( record, dispatch )
 			.then( ( savedRecord ) => {
-				navigate( `/${STORE_NAME}/update`, { id: savedRecord?.result?.id } );
+				navigate( `/${STORE_NAME}/update`, { id: savedRecord?.record?.id } );
 			} )
 			.catch( ( error ) => {
 				setError( error );
@@ -118,7 +118,7 @@ export default function CreateRecord( { component: { title } } ) {
 
 	// Display the add record form.
 	return (
-		<Wrap title={title}>
+		<Wrap title={schema.data.labels?.new_item}>
 			<form onSubmit={ onCreateRecord }>
 				<CardBody style={{ opacity: loading ? 0.5 : 1 }}>
 

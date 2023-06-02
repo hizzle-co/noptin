@@ -1,19 +1,43 @@
 /**
+ * Internal dependencies
+ */
+import { DEFAULT_STATE } from './default';
+
+/**
+ * Retrieves record IDs.
+ *
+ * @param {String} queryString
+ * @return {Array|null} Records.
+ */
+export const getRecordIDs = ( state = DEFAULT_STATE, queryString ) => {
+
+	queryString = '' === queryString ? 'all' : queryString;
+
+	// Check if records are already loaded.
+	if ( Array.isArray( state.recordIDs[ queryString ] ) ) {
+		return state.recordIDs[ queryString ];
+	}
+
+	return [];
+}
+
+/**
  * Retrieves records.
  *
  * @param {String} queryString
  * @return {Array|null} Records.
  */
-export const getRecords = ( state, queryString ) => {
+export const getRecords = ( state = DEFAULT_STATE, queryString ) => {
 
 	queryString = '' === queryString ? 'all' : queryString;
 
 	// Check if records are already loaded.
-	if ( state.records[ queryString ] ) {
-		return Object.values( state.records[ queryString ] );
+	if ( ! Array.isArray( state.recordIDs[ queryString ] ) ) {
+		return [];
 	}
 
-	return null;
+	// Loop through records to find the record.
+	return state.recordIDs[ queryString ].map( id => state.records[ id ] );
 }
 
 /**
@@ -22,46 +46,14 @@ export const getRecords = ( state, queryString ) => {
  * @param {string} id
  * @return {Object|null} Record.
  */
-export const getRecord = ( state, id ) => {
-
-	// Check if record is already loaded.
-	if ( state.record[ id ] ) {
-		return state.record[ id ];
-	}
-
-	// Loop through records to find the record.
-	for ( const records of Object.values( state.records ) ) {
-		if ( records[ id ] ) {
-			return records[ id ];
-		}
-	}
-
-	// Record not found.
-	return null;
-}
-
-/**
- * Retrieves an edited record.
- *
- * @param {string} id
- * @return {Object|null} Record.
- */
-export const getEditedRecord = ( state, id ) => state.editedRecords[ id ] || {};
-
-/**
- * Checks if we have edits for a record.
- *
- * @param {string} id
- * @return {boolean} True if we have edits.
- */
-export const hasEdits = ( state, id ) => !! state.editedRecords[ id ];
+export const getRecord = ( state = DEFAULT_STATE, id ) => state.records[ id ] || null;
 
 /**
  * Retrieves the schema for the collection.
  *
  * @return {Object|null} schema.
  */
-export const getSchema = ( state ) => state.schema || {};
+export const getSchema = ( state = DEFAULT_STATE ) => state.schema || {};
 
 /**
  * Retrieves the schema for a single record.
@@ -69,4 +61,4 @@ export const getSchema = ( state ) => state.schema || {};
  * @param {string} id
  * @param {string} tab_id
  */
-export const getTabContent = ( state, id, tab_id ) => state.tabContent[ `${id}_${tab_id}` ] || {};
+export const getTabContent = ( state = DEFAULT_STATE, id, tab_id ) => state.tabContent[ `${id}_${tab_id}` ] || {};

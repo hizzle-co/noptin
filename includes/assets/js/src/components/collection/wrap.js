@@ -7,7 +7,6 @@ import {
 	__experimentalText as Text,
     Flex,
     FlexItem,
-    FlexBlock,
 } from '@wordpress/components';
 import { forwardRef } from "@wordpress/element";
 
@@ -20,13 +19,13 @@ const Wrap = ( { actions, className, title, menu, children }, ref ) => {
 		<Card className={ className } ref={ ref }>
 
 			<CardHeader>
-                <Flex wrap>
+                <Flex justify="start" wrap>
 
-                    <FlexBlock>
+                    <FlexItem>
                         <Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
                             { title }
                         </Text>
-                    </FlexBlock>
+                    </FlexItem>
 
                     {actions && <FlexItem className="noptin-screen__actions"> { actions } </FlexItem> }
                 </Flex>

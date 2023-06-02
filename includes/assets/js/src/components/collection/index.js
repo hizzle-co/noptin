@@ -75,7 +75,7 @@ const RenderCollection = () => {
 			<FlexBlock>
 				{Object.keys(schema.data.routes).map((route) => {
 					return (
-						<NavigatorScreen key={route} path={route}>
+						<NavigatorScreen key={route} path={route} style={{overflowX: 'hidden' }}>
 							<ErrorBoundary>
 								<Screen path={route} />
 							</ErrorBoundary>
@@ -96,7 +96,7 @@ const Collection = () => {
 	const { goTo } = useNavigator();
 	const [url, setURL] = useState(window.location.href);
 
-	// Watch for hash changes.
+	// Watch for url changes.
 	useEffect(() => {
 
 		const handleURLChange = () => {
@@ -118,7 +118,6 @@ const Collection = () => {
 	// Render the collection.
 	return (
 		<URLContext.Provider value={[url, setURL]}>
-			{url}
 			<ErrorBoundary>
 				<RenderCollection />
 			</ErrorBoundary>

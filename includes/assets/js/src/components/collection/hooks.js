@@ -2,7 +2,25 @@ import { __experimentalUseNavigator as useNavigator } from "@wordpress/component
 import { useMemo, createContext, useContext } from "@wordpress/element";
 import { getQueryArgs, getQueryArg, addQueryArgs } from '@wordpress/url';
 
+/**
+ * Pass the current URL via context to ensure that the URL is always up to date.
+ */
 export const URLContext = createContext( window.location.href );
+
+/**
+ * Catches last query args per store to ensure that the query args are always up to date.
+ */
+const lastQueryArgs = {};
+
+/**
+ * Adds a slash to the start of a path and removes a slash from the end.
+ */
+const normalizePath = ( path ) => '/' + path.replace( /^\/|\/$/g, '' );
+
+/**
+ * Checks if a given path is a root path.
+ */
+const isRootPath = ( path ) => 3 === normalizePath( path ).split( '/' ).length;
 
 /**
  * Resolves the current route.
@@ -17,7 +35,7 @@ export function useRoute() {
 	const { hizzle_path, page, ...query } = getQueryArgs( url );
 
 	// Get current path.
-	const path = hizzle_path ? hizzle_path : location.path;
+	const path = normalizePath( hizzle_path ? hizzle_path : location.path );
 
 	// Split the first two slashes to get namespace and collection.
 	const parts      = path.split( '/' );
@@ -29,13 +47,31 @@ export function useRoute() {
 		throw new Error( 'Invalid route.' );
 	}
 
+	// Maybe set last query args.
+	if ( isRootPath( path ) && ! lastQueryArgs[ path ] ) {
+		lastQueryArgs[ path ] = query;
+	}
+
 	// Merge the args with the query args.
 	const mergedArgs = useMemo( () => ({ ...params, ...query }), [ params, query ] );
 
 	// Navigates to a new route.
-	const navigate = ( path, args = {} ) => {
-		// Ensure the path begins with a slash.
-		path = '/' === path[0] ? path : '/' + path;
+	const navigate = ( path, args = null ) => {
+
+		// Normalize the path.
+		path = normalizePath( path );
+
+		// Maybe set last query args.
+		if ( isRootPath( path ) ) {
+
+			if ( args ) {
+				lastQueryArgs[ path ] = args;
+			} else if( lastQueryArgs[ path ] ) {
+				args = lastQueryArgs[ path ];
+			}
+		}
+
+		args = args ? args : {};
 
 		goTo( path );
 

@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import {apiFetch} from '@wordpress/data-controls';
 
 /**
@@ -27,25 +30,15 @@ export default function createDynamicActions( namespace, collection ) {
 				yield dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
 
 				// Invalidate the getRecord selector.
-				yield dispatch.invalidateResolutionForStoreSelector( 'getRecord' );
-
-				// Finish the resolution for the getRecord selector, if id matches.
-				yield dispatch.finishResolution( 'getRecord', result.id );
+				yield dispatch.invalidateResolution( 'getRecord', [ result.id ] );
 
 				// Resolve to avoid further network requests.
 				yield dispatch.startResolution( 'getRecord', [ result.id ] );
 				yield dispatch.finishResolution( 'getRecord', [ result.id ] );
 
 				// Set the record.
-				yield dispatch.setRecord( result );
-
-				return {
-					type: 'CREATE_RECORD',
-					result
-				};
+				return setRecord( result );
 			}
-
-			return;
 		},
 
 		/**
@@ -55,20 +48,20 @@ export default function createDynamicActions( namespace, collection ) {
 		 * @param {Object} data
 		 * @return {Object} Action.
 		 */
-		*updateRecord( id, data ) {
+		*updateRecord( id, data, dispatch ) {
 			const path   = `${namespace}/v1/${collection}/${id}`;
 			const method = 'PUT';
 			const result = yield apiFetch( { path, method, data } );
 
 			if ( result ) {
-				return {
-					type: 'UPDATE_RECORD',
-					result,
-					id
-				};
-			}
 
-			return;
+				// Resolve to avoid further network requests.
+				yield dispatch.startResolution( 'getRecord', [ result.id ] );
+				yield dispatch.finishResolution( 'getRecord', [ result.id ] );
+
+				// Set the record.
+				return dispatch.setRecord( result );
+			}
 		},
 
 		/**
@@ -77,19 +70,28 @@ export default function createDynamicActions( namespace, collection ) {
 		 * @param {string} id
 		 * @return {Object} Action.
 		 */
-		*deleteRecord( id ) {
+		*deleteRecord( id, dispatch ) {
+
+			/**
+			 * Fire action before deleting record.
+			 */
+			yield dispatch.beforeDeleteRecord( id );
+
+			// Delete the record.
 			const path   = `${namespace}/v1/${collection}/${id}`;
 			const method = 'DELETE';
 			const result = yield apiFetch( { path, method } );
 
 			if ( result ) {
+
+				// Invalidate the getRecord selector.
+				yield dispatch.invalidateResolution( 'getRecord', [ result.id ] );
+
 				return {
 					type: 'DELETE_RECORD',
 					id
 				};
 			}
-
-			return;
 		},
 	}
 }

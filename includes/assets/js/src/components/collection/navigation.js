@@ -21,13 +21,17 @@ import { useRecord, useSchema } from "../../store-data/hooks";
 /**
  * Displays the collection navigation title.
  */
-const CollectionTitle = ( { append, avatarURL } ) => {
+const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 	const { namespace, collection } = useRoute();
 	const { data } = useSchema( namespace, collection );
 	append = append ? ` - ${append}` : '';
 
 	// Nav title.
 	const navTitle = useMemo( () => {
+
+		if ( isSingle && data.labels?.view_item ) {
+			return `${data.labels.view_item}${append}`;
+		}
 
 		if ( data.labels?.name ) {
 			return `${data.labels.name}${append}`;
@@ -70,7 +74,7 @@ const RecordTitle = () => {
 	const sprintWith = schema.data.id_prop ? record.record[schema.data.id_prop] : record.record.id;
 	const avatarURL  = record.record.avatar_url;
 
-	return <CollectionTitle append={sprintWith} avatarURL={avatarURL} />;
+	return <CollectionTitle append={sprintWith} avatarURL={avatarURL} isSingle />;
 }
 
 /**

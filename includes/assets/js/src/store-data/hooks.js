@@ -35,13 +35,12 @@ export function useRecord( namespace, collection, recordId ) {
 	// Ensure we have a valid record ID.
 	recordId = parseInt( recordId, 10 );
 
-	const { editRecord, updateRecord, deleteRecord } = useDispatch( STORE_NAME );
+	const dispatch = useDispatch( STORE_NAME );
 
 	const mutations = useMemo(
 		() => ( {
-			edit: ( record ) => editRecord( recordId, record ),
-			save: ( saveOptions = {} ) => updateRecord( recordId, saveOptions ),
-			delete: () => deleteRecord( recordId ),
+			save: ( saveOptions = {} ) => dispatch.updateRecord( recordId, saveOptions, dispatch ),
+			delete: () => dispatch.deleteRecord( recordId, dispatch ).catch( (e) => { console.error( e) } ),
 		} ),
 		[ recordId ]
 	);
@@ -50,8 +49,6 @@ export function useRecord( namespace, collection, recordId ) {
 		const store = select( STORE_NAME );
 
 		return {
-			editedRecord: store.getEditedRecord( recordId ),
-			hasEdits: store.hasEdits( recordId ),
 			record: store.getRecord( recordId ),
 			isResolving: () => store.isResolving( 'getRecord', [ recordId ] ) || ! store.hasStartedResolution( 'getRecord', [ recordId ] ),
 			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecord', [ recordId ] ),

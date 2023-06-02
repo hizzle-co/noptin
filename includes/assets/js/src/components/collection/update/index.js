@@ -27,6 +27,10 @@ const RenderTab = ( { tab } ) => {
 		return <TableTab tab={ tab } />;
 	}
 
+	if ( 'overview' === tab.name ) {
+		return <RecordOverview tab={ tab } />;
+	}
+
 	return (
 		<Wrap title={ tab.title }>
 			<p>Tab content</p>
@@ -35,7 +39,7 @@ const RenderTab = ( { tab } ) => {
 }
 
 /**
- * Allows the user to edit a single record.
+ * Allows the user to view a single record.
  *
  * @param {Object} props
  * @param {Object} props.component
@@ -47,7 +51,7 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 
 	const schema = useSchema( namespace, collection );
 	const record = useRecord( namespace, collection, id );
-	const tab    = hizzle_tab || 'edit';
+	const tab    = hizzle_tab || 'overview';
 
 	// Fired when a tab is selected.
 	const onTabSelect = useCallback( ( tab ) => {
@@ -91,7 +95,7 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 	const tabs = [
 		{
 			title: title,
-			name: 'edit',
+			name: 'overview',
 		}
 	]
 
@@ -126,6 +130,5 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 export default forwardRef( UpdateRecord );
 
 // Upsell tags and lists, 
-// Edit contact details,
 // Overview -> Cards for sent emails, opens, clicks, total spent, avatar, basic info, lists, tags
-// Buttons to delete, save changes, and send email
+// Button send email
