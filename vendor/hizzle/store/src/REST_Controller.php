@@ -1068,9 +1068,15 @@ class REST_Controller extends \WP_REST_Controller {
 			'hizzle_rest_' . $this->get_normalized_rest_base() . '_admin_app_routes',
 			array(
 				$prefix          => array(
-					'title'     => $collection->get_label( 'name', $collection->get_name() ),
+					'title'     => $collection->get_label(
+						'view_items',
+						sprintf(
+							//  translators: %s is the collection name.
+							__( 'View %s', 'hizzle-store' ),
+							$collection->get_label( 'name', $collection->get_name() )
+						)
+					),
 					'component' => 'list-records',
-					'icon'      => 'menu',
 				),
 				"$prefix/add"    => array(
 					'title'     => $collection->get_label( 'add_new', esc_html__( 'Add New', 'hizzle-store' ) ),
@@ -1084,12 +1090,6 @@ class REST_Controller extends \WP_REST_Controller {
 				"$prefix/import" => array(
 					'title'     => $collection->get_label( 'import', esc_html__( 'Import', 'hizzle-store' ) ),
 					'component' => 'import',
-					'hide'      => true,
-				),
-				"$prefix/export" => array(
-					'title'     => $collection->get_label( 'export', esc_html__( 'Export', 'hizzle-store' ) ),
-					'component' => 'export',
-					'hide'      => true,
 				),
 			)
 		);

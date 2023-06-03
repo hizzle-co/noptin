@@ -11,6 +11,7 @@ import {
 	Card,
 	CardHeader,
 	Button,
+	Icon,
 	__experimentalText as Text,
 } from "@wordpress/components";
 
@@ -84,7 +85,7 @@ const RecordTitle = () => {
  */
 export default function Navigation() {
 
-	const { namespace, collection, path, navigate, args } = useRoute();
+	const { namespace, collection, path, navigate } = useRoute();
 	const { data }        = useSchema( namespace, collection );
 	const isEditingRecord = path === `/${namespace}/${collection}/update`;
 
@@ -92,12 +93,17 @@ export default function Navigation() {
 	const TheRoutes = Object.keys( data.routes ).map( ( route ) => {
 
 		// Don't display routes that don't have a display.
-		if ( data.routes[ route ].hide ) {
+		if ( data.routes[ route ].hide || path === route ) {
 			return null;
 		}
 
 		// Prepare the icon.
-		let icon = data.routes[ route ].icon;
+		let icon    = data.routes[ route ].icon;
+		let variant = 'secondary';
+
+		if ( `/${namespace}/${collection}` === route ) {
+			variant = 'primary';
+		}
 
 		// Add icon if it doesn't exist.
 		if ( ! icon ) {
@@ -105,6 +111,7 @@ export default function Navigation() {
 			switch (data.routes[ route ].component) {
 				case 'create-record':
 					icon = plus;
+					variant = 'primary';
 					break;
 				case 'import':
 					icon = cloudUpload;
@@ -117,13 +124,10 @@ export default function Navigation() {
 
 		return (
 			<FlexItem key={ route }>
-				<Button
-					onClick={ () => navigate( route ) }
-					isPressed={ path === route }
-					icon={ icon }
-					text={ data.routes[ route ].title }
-					id={`noptin-collection-navigation__button-${ route }`}
-				/>
+				<Button onClick={ () => navigate( route ) } variant={ variant }>
+					{ icon && <Icon icon={ icon } /> }
+					{ data.routes[ route ].title }
+				</Button>
 			</FlexItem>
 		);
 

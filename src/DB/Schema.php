@@ -233,6 +233,7 @@ class Schema {
 						'edit_item'     => __( 'Edit Subscriber', 'newsletter-optin-box' ),
 						'new_item'      => __( 'New Subscriber', 'newsletter-optin-box' ),
 						'view_item'     => __( 'View Subscriber', 'newsletter-optin-box' ),
+						'view_items'    => __( 'View Subscribers', 'newsletter-optin-box' ),
 						'search_items'  => __( 'Search Subscribers', 'newsletter-optin-box' ),
 						'not_found'     => __( 'No subscribers found.', 'newsletter-optin-box' ),
 					),

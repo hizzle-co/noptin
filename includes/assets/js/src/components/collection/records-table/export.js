@@ -125,7 +125,7 @@ const DownloadProgress = ({ fields, back, schema }) => {
 	// Force download.
 	return (
 		<Notice status="success" isDismissible={false}>
-			{__("We've prepared your download. Please click the button below to download the CSV file.", 'newsletter-optin-box')}
+			{__("Done! Click the button below to download all matching records.", 'newsletter-optin-box')}
 			&nbsp; &nbsp;
 			<Button
 				variant="primary"

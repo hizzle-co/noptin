@@ -1,6 +1,6 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { __ } from "@wordpress/i18n";
-import { Notice, CardBody } from "@wordpress/components";
+import { Notice } from "@wordpress/components";
 
 function Fallback({ error }) {
 
