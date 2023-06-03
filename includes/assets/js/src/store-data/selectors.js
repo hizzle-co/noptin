@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { getQueryArg } from '@wordpress/url';
+
+/**
  * Internal dependencies
  */
 import { DEFAULT_STATE } from './default';
@@ -29,7 +34,12 @@ export const getRecordIDs = ( state = DEFAULT_STATE, queryString ) => {
  */
 export const getRecords = ( state = DEFAULT_STATE, queryString ) => {
 
-	queryString = '' === queryString ? 'all' : queryString;
+	queryString   = '' === queryString ? 'all' : queryString;
+	const _fields = getQueryArg( queryString, '_fields' );
+
+	if ( _fields ) {
+		return Array.isArray( state.partialRecords[ queryString ] ) ? state.partialRecords[ queryString ] : [];
+	}
 
 	// Check if records are already loaded.
 	if ( ! Array.isArray( state.recordIDs[ queryString ] ) ) {

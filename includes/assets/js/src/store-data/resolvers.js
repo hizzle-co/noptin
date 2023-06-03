@@ -3,11 +3,12 @@
  */
 import { apiFetch } from '@wordpress/data-controls';
 import { controls } from '@wordpress/data';
+import { getQueryArg } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
-import { setRecords, setRecord, setSchema, setTabContent } from './actions';
+import { setRecords, setRecord, setPartialRecords, setSchema, setTabContent } from './actions';
 
 /**
  * Creates resolvers for the store.
@@ -27,9 +28,14 @@ export default function createResolvers( namespace, collection ) {
 		 */
 		*getRecords( queryString ) {
 			const path    = `${namespace}/v1/${collection}${queryString}`;
+			const _fields = getQueryArg( queryString, '_fields' );
 			const records = yield apiFetch( { path } );
 
 			if ( records ) {
+
+				if ( _fields ) {
+					return setPartialRecords( records, queryString );
+				}
 
 				// Resolve each record to avoid further network requests.
 				const STORE_NAME = `${namespace}/${collection}`;

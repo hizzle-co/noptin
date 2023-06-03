@@ -1,6 +1,19 @@
 export {apiFetch} from '@wordpress/data-controls';
 
 /**
+ * Sets partial records.
+ *
+ * @param {Array} records
+ * @param {string} queryString
+ * @return {Object} Action.
+ */
+export const setPartialRecords = ( records, queryString ) => ( {
+	type: 'SET_PARTIAL_RECORDS',
+	records,
+	queryString,
+} );
+
+/**
  * Sets new records.
  *
  * @param {Array} records

@@ -562,7 +562,7 @@ class Collection {
 			'description'       => __( 'Maximum number of items to be returned in result set.', 'hizzle-store' ),
 			'type'              => 'integer',
 			'default'           => 10,
-			'minimum'           => 1,
+			'minimum'           => -1,
 			'maximum'           => 100,
 			'sanitize_callback' => 'absint',
 			'validate_callback' => 'rest_validate_request_arg',

@@ -8,7 +8,6 @@ import { Notice, CardBody } from "@wordpress/components";
  * Internal dependencies
  */
 import RecordsTable from './records-table';
-import Export from './export';
 import Import from './import';
 import CreateRecord from './create-record';
 import UpdateRecord from './update';
@@ -50,11 +49,6 @@ export default function Screen( { path } ) {
 	// Display records.
 	if ( 'list-records' === component ) {
 		return <RecordsTable {...args} />
-	}
-
-	// Export records.
-	if ( 'export' === component ) {
-		return <Export {...args} />;
 	}
 
 	// Import records.

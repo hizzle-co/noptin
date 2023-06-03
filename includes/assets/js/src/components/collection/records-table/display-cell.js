@@ -1,5 +1,5 @@
 import { FormToggle, Flex, FlexBlock, FlexItem, __experimentalUseNavigator as useNavigator, Button } from "@wordpress/components";
-import { dateI18n } from "@wordpress/date";
+import { dateI18n, getSettings, __experimentalGetSettings } from "@wordpress/date";
 import getEnumBadge from "./enum-colors";
 import { useRoute } from "../hooks";
 
@@ -79,8 +79,9 @@ export default function DisplayCell( { record, name, label, description, length,
 	}
 
 	// Dates are formatted as a date.
-	if ( is_date && value && value.date && value.timezone ) {
-		return dateI18n( 'F j, Y g:i a', value.date );
+	if ( is_date && value ) {
+		const settings = getSettings ? getSettings() : __experimentalGetSettings();
+		return dateI18n( settings.formats.datetime, value );
 	}
 
 	// If we have an enum, display the label.

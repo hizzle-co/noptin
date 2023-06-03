@@ -14,6 +14,7 @@ import TableCard from "../../table";
 import DisplayCell from "./display-cell";
 import { useSchema, useRecords } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
+import ExportButton from "./export";
 
 /**
  * Displays the records table.
@@ -85,6 +86,7 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 
 	return (
 		<TableCard
+			actions={ <ExportButton /> }
 			rows={ rows }
 			headers={ columns }
 			totalRows={ count }

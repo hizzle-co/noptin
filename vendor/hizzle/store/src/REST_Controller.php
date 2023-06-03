@@ -666,11 +666,30 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		$fields = $this->get_fields_for_response( $request );
-		$data   = array();
+		$fields  = $this->get_fields_for_response( $request );
+		$is_edit = 'edit' === $request['context'];
+		$data    = array();
 
 		foreach ( $item->get_data() as $key => $value ) {
 			if ( rest_is_field_included( $key, $fields ) ) {
+
+				// If value is a date, convert it to the ISO8601 format.
+				if ( $value instanceof Date_Time ) {
+					$value = $value->format( 'Y-m-d\TH:i:sP' );
+				}
+
+				// Edit mode.
+				if ( $is_edit ) {
+
+					if ( is_bool( $value ) ) {
+						$value = (int) $value;
+					}
+
+					if ( is_array( $value ) ) {
+						$value = implode( ',', $value );
+					}
+				}
+
 				$data[ $key ] = $value;
 			}
 		}

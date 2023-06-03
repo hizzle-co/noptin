@@ -7,6 +7,7 @@ import { DEFAULT_STATE } from './default';
  * The reducer for the store data
  */
 export const reducer = (state = DEFAULT_STATE, action) => {
+	const queryString = '' === action.queryString ? 'all' : action.queryString;
 
 	switch (action.type) {
 
@@ -17,13 +18,25 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 			return { ...state, schema: action.schema };
 
 		/**
+		 * Sets partial records keyed by query string, e.g.: { "page=1": { 1: { id: 1, ... } } }
+		 */
+		case 'SET_PARTIAL_RECORDS':
+
+			return {
+				...state,
+				partialRecords: {
+					...state.partialRecords,
+					[ queryString ]: action.records,
+				},
+			};
+
+		/**
 		 * Sets record IDs keyed by the query, e.g.: { "page=1": [ 1, 2, 3 ] },
 		 * and records keyed by ID, e.g.: { 1: { id: 1, ... } }
 		 */
 		case 'SET_RECORDS':
 
 			// Prepare constants.
-			const queryString   = '' === action.queryString ? 'all' : action.queryString;
 			const cachedRecords = { ...state.records };
 			const recordIds     = [];
 

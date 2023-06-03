@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { plus, cloudUpload, download, trash } from "@wordpress/icons";
+import { plus, cloudUpload, trash } from "@wordpress/icons";
 import { useMemo } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
 import {
@@ -108,9 +108,6 @@ export default function Navigation() {
 					break;
 				case 'import':
 					icon = cloudUpload;
-					break;
-				case 'export':
-					icon = download;
 					break;
 				case 'delete':
 					icon = trash;

@@ -14,6 +14,11 @@ export const DEFAULT_STATE = {
 	records: {},
 
 	/**
+	 * Contains partial records keyed by query string, e.g.: { "page=1": { 1: { id: 1, ... } } }
+	 */
+	partialRecords: {},
+
+	/**
 	 * Contains the collection schema.
 	 */
 	schema: {},

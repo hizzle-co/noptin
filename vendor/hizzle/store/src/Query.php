@@ -802,14 +802,17 @@ class Query {
 
 		// Maybe init objects.
 		if ( $this->results && 'all' === $this->query_vars['fields'] ) {
-			foreach ( $this->results as $key => $result ) {
+			$results       = $this->results;
+			$this->results = array();
+
+			foreach ( $results as $result ) {
 
 				if ( isset( $result->id ) ) {
 					// Cache object.
 					$collection->update_cache( (array) $result );
 
 					// Replace raw data with Record objects.
-					$this->results[ $key ] = $collection->get( $result->id );
+					$this->results[] = $collection->get( $result->id );
 				}
 			}
 		}
