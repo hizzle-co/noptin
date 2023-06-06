@@ -347,7 +347,7 @@ class Noptin {
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
 
 		// (Maybe) upgrade the database;
-		add_action( 'init', array( $this, 'maybe_upgrade_db' ), -1 );
+		add_action( 'init', array( $this, 'maybe_upgrade_db' ), 0 );
 
 		// css body class.
 		add_filter( 'body_class', array( $this, 'body_class' ) );

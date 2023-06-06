@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 		<!-- Display a loading animation while the app is loading -->
 		<div class="loading">
 			<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>
-			<span class="spinner">
+			<span class="spinner" style="float: none; visibility: visible;">
 				<span class="spinner-icon"></span>
 			</span>
 		</div>

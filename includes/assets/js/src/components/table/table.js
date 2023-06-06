@@ -119,7 +119,7 @@ const Table = ( {
 				</caption>
 				<tbody>
 
-					<tr>
+					<tr className="noptin-table__row">
 						{ headers.map( ( header, i ) => {
 							
 							const { key, label, isSortable, ...props } = header;
@@ -142,7 +142,7 @@ const Table = ( {
 
 					{ hasData ? (
 						rows.map( ( row, i ) => (
-							<tr key={ getRowKey( row, i ) }>
+							<tr className="noptin-table__row" key={ getRowKey( row, i ) }>
 								{ row.map( ( cell, j ) => (
 									<BodyCell
 										{...headers[ j ]}
@@ -155,7 +155,7 @@ const Table = ( {
 							</tr>
 						) )
 					) : (
-						<tr>
+						<tr className="noptin-table__row">
 							<td
 								className="noptin-table__empty-item"
 								colSpan={ headers.length }

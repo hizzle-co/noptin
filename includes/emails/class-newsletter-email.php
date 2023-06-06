@@ -324,8 +324,28 @@ class Noptin_Newsletter_Email {
 	 * @since 1.7.0
 	 * @return string.
 	 */
-	public function get_preview_url() {
-		return get_noptin_action_url( 'preview_newsletter', $this->id, true );
+	public function get_preview_url( $recipient_email = '' ) {
+		return get_noptin_action_url(
+			'browser_preview',
+			noptin_encrypt(
+				wp_json_encode(
+					array(
+						'cid'   => $this->id,
+						'email' => $recipient_email,
+					)
+				)
+			),
+			true
+		);
+	}
+
+	/**
+	 * Generates a browser preview content for this email.
+	 *
+	 * @return string
+	 */
+	public function get_browser_preview_content() {
+		return noptin()->emails->newsletter->generate_preview( $this );
 	}
 
 	/**

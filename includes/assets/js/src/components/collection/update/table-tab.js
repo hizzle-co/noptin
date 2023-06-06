@@ -38,16 +38,24 @@ const DisplayCell = ( { name, is_list, item, args, is_primary, url, is_boolean, 
 						value = sprintf( item, ...replacements );
 					}
 
-					return (
-						<li key={ index }>{ value }</li>
-					);
+					return <li key={ index } dangerouslySetInnerHTML={ { __html: value } } />
 				} ) }
 			</ul>
 		);
 	}
 
 	if ( is_primary && url ) {
-		return <a href={ record[ url ] }>{ record[ name ] }</a>;
+		const recordUrl = record[ url ];
+
+		if ( ! recordUrl ) {
+			return <strong>{ record[ name ] }</strong>;
+		}
+
+		return (
+			<a href={ record[ url ] } style={{textDecoration: 'none'}}>
+				<strong>{ record[ name ] }</strong>
+			</a>
+		);
 	}
 
 	if ( is_boolean ) {

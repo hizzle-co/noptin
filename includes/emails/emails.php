@@ -149,6 +149,31 @@ function noptin_get_new_automation_url() {
 }
 
 /**
+ * Retrieves an email campaign's object.
+ *
+ * @since 1.13.0
+ * @param int $campaign_id
+ * @return Noptin_Automated_Email|Noptin_Newsletter_Email|false
+ */
+function noptin_get_email_campaign_object( $campaign_id ) {
+	$campaign_type = get_post_meta( $campaign_id, 'campaign_type', true );
+
+	if ( empty( $campaign_type ) ) {
+		return false;
+	}
+
+	if ( 'newsletter' === $campaign_type ) {
+		return new Noptin_Newsletter_Email( $campaign_id );
+	}
+
+	if ( 'automation' === $campaign_type ) {
+		return new Noptin_Automated_Email( $campaign_id );
+	}
+
+	return apply_filters( 'noptin_get_email_campaign_object', false, $campaign_id, $campaign_type );
+}
+
+/**
  * Returns an array of email senders.
  *
  * @since 1.5.2

@@ -222,15 +222,6 @@ class Noptin_Admin {
 			wp_enqueue_script( 'noptin-email-campaigns', $this->assets_url . 'js/dist/newsletter-editor.js', array( 'select2', 'sweetalert2', 'postbox' ), $version, true );
 		}
 
-		// Subscribers page.
-		if ( 'noptin-subscribers' === $page ) {
-
-			if ( ! empty( $_GET['import'] ) ) {
-				$version = filemtime( $this->assets_path . 'js/dist/subscribers-import.js' );
-				wp_enqueue_script( 'noptin-import-subscribers', $this->assets_url . 'js/dist/subscribers-import.js', array(), $version, true );
-			}
-		}
-
 	}
 
 	/**

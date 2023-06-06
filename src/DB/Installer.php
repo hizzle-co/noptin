@@ -20,8 +20,8 @@ class Installer {
 	 *
 	 */
 	public function __construct() {
-		add_action( 'init', array( __CLASS__, 'check_version' ), 0 );
-		add_action( 'init', array( __CLASS__, 'create_missing_tables' ), 0 );
+		add_action( 'init', array( __CLASS__, 'check_version' ), 1 );
+		add_action( 'init', array( __CLASS__, 'create_missing_tables' ), 1 );
 	}
 
 	/**

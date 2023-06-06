@@ -391,6 +391,7 @@ class Main {
 					'name'       => 'title',
 					'visible'    => true,
 					'is_primary' => true,
+					'url'        => 'url',
 				),
 				array(
 					'label'   => __( 'Sent', 'newsletter-optin-box' ),
@@ -468,15 +469,21 @@ class Main {
 		$prepared = array();
 
 		foreach ( $emails as $campaign_id => $data ) {
-			$post     = get_post( $campaign_id );
+			$object   = noptin_get_email_campaign_object( $campaign_id );
 			$campaign = array(
 				'id'           => $campaign_id,
-				'title'        => $post ? $post->post_title : __( 'Unknown', 'newsletter-optin-box' ),
+				'title'        => empty( $object ) ? __( 'Unknown', 'newsletter-optin-box' ) : $object->name,
+				'url'          => empty( $object ) ? '' : $object->get_edit_url(),
 				'time'         => array(),
 				'opens'        => array(),
 				'clicks'       => array(),
 				'unsubscribed' => $data['unsubscribed'],
 			);
+
+			// Sent newsletters are not editable.
+			if ( $object && 'newsletter' === $object->type && $object->is_published() ) {
+				$campaign['url'] = $object->get_preview_url( $subscriber->get_email() );
+			}
 
 			foreach ( array( 'time', 'opens', 'clicks' ) as $prop ) {
 				if ( isset( $data[ $prop ] ) ) {

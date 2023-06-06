@@ -101,6 +101,10 @@
 	padding: $gap $gap-large;
 }
 
+.noptin-table__row {
+	position: relative;
+}
+
 .noptin-table__header,
 .noptin-table__item {
 	@include font-size( 13 );
@@ -109,12 +113,17 @@
 
 	> a:only-child {
 		display: block;
-	}
 
-	a {
-		&:hover,
-		&:focus {
-			color: $studio-noptin-purple-70;
+		&::after{
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 1;
+			pointer-events: auto;
+			content: "";
+			background-color: rgba(0,0,0,0);
 		}
 	}
 

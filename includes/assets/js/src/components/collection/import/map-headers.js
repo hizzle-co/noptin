@@ -1,20 +1,8 @@
-/**
- * External dependencies
- */
-import apiFetch from "@wordpress/api-fetch";
-import { useState, useEffect, useMemo, useCallback } from "@wordpress/element";
-import { Notice, FormFileUpload, Tip, TextControl, ToggleControl, SelectControl, BaseControl, Flex, FlexItem, CardBody, Button, FlexBlock } from "@wordpress/components";
-import { upload } from "@wordpress/icons";
-import { __ } from "@wordpress/i18n";
-import Papa from 'papaparse';
 import { compact } from 'lodash';
-
-/**
- * Local dependencies.
- */
-import { useSchema } from "../../store-data/hooks";
-import { useRoute } from "./hooks";
-import Wrap from "./wrap";
+import { __ } from "@wordpress/i18n";
+import { useState, useEffect, useMemo } from "@wordpress/element";
+import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, FlexBlock } from "@wordpress/components";
+import Papa from 'papaparse';
 
 /**
  * Normalizes a string to make it possible to guess the header.
@@ -51,13 +39,14 @@ const normalizeString = ( string ) => {
  * @param {Array} props.ignore The fields to ignore.
  * @param {Array} props.hidden The fields to hide.
  * @param {Function} props.back The callback to call when clicking on the back button.
- * @param {Function} props.setHeaders A callback to call when the headers are set.
+ * @param {Function} props.onContinue A callback to call when the headers are set.
  */
-const MapHeaders = ( { file, schema, ignore, hidden, back, setHeaders } ) => {
+const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 
 	// Prepare state.
 	const [ fileHeaders, setFileHeaders ] = useState( [] );
 	const [ mappedHeaders, setMappedHeaders ] = useState( {} );
+	const [ updateRecords, setUpdateRecords ] = useState( false );
 	const [ error, setError ] = useState( null );
 
 	const fields = useMemo( () => compact( schema.map((field) => {
@@ -218,172 +207,19 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, setHeaders } ) => {
 				);
 			})}
 
-			<Button variant="primary" onClick={ () => setHeaders( mappedHeaders ) }>
+			<div style={{marginBottom: '1.6rem'}}>
+				<ToggleControl
+					label={ __( 'Update existing records', 'newsletter-optin-box' ) }
+					checked={ updateRecords }
+					onChange={ ( newValue ) => setUpdateRecords( newValue ) }
+				/>
+			</div>
+
+			<Button variant="primary" onClick={ () => onContinue( mappedHeaders, updateRecords ) }>
 				{ __( 'Import', 'newsletter-optin-box' ) }
 			</Button>
 		</>
 	)
 }
 
-/**
- * Handles the actual import.
- *
- * @param {Object} props
- * @param {Object} props.file The file to import.
- * @param {Object} props.headers Known fields to file headers mapping.
- * @param {Function} props.back The callback to call when clicking on the back button.
- * @param {string} props.id_prop The property to use as ID.
- */
-const HandleImport = ( { file, headers, back, id_prop } ) => {
-
-	const [ error, setError ] = useState( null );
-	const [ loading, setLoading ] = useState( true );
-
-	// Parses a record.
-	const parseRecord = useCallback(( record ) => {
-		const parsed = {};
-
-		Object.keys( headers ).forEach(( key ) => {
-
-			// Abort if the header is not mapped.
-			if ( '' === headers[ key ].value ) {
-				return;
-			}
-
-			// Are we mapping the field?
-			if ( headers[ key ].mapped ) {
-				parsed[ key ] = record[ headers[ key ].value ];
-			} else if ( undefined !== headers[ key ].customValue ) {
-				parsed[ key ] = headers[ key ].customValue;
-			}
-
-			// If the field is a boolean, convert it.
-			if ( headers[ key ].is_boolean ) {
-				parsed[ key ] = [ '0', '', 'false', 'FALSE', 'no'].includes( parsed[ key ] ) ? false : true;
-			}
-
-		});
-
-		return parsed;
-	}, [ headers ]);
-
-	// Parse the file.
-	useEffect(() => {
-
-		Papa.parse( file, {
-			header: true,
-			skipEmptyLines: 'greedy',
-			step: (results, parser) => {
-	
-				console.log( parseRecord( results.data ) );
-
-			},
-			complete: ( results ) => {
-				console.log( results );
-			},
-			error(error, file) {
-				console.log(error);
-			},
-		});
-
-	}, [ file ]);
-
-	return null;
-}
-
-/**
- * Displays the import tool.
- *
- * @param {Object} props
- * @param {Object} props.file The file to import.
- * @param {Object} props.schema The schema of the collection.
- * @param {Function} props.back The callback to call when clicking on the back button.
- */
-const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, back } ) => {
-
-	const [ mappedHeaders, setMappedHeaders ] = useState( null );
-
-	// If we have no headers, map them.
-	if ( ! mappedHeaders ) {
-		return (
-			<MapHeaders
-				file={ file }
-				schema={ schema }
-				ignore={ ignore }
-				hidden={ hidden }
-				back={ back }
-				setHeaders={ setMappedHeaders }
-			/>
-		);
-	}
-
-	// Display the importer.
-	return <HandleImport file={ file } headers={ mappedHeaders } back={ back } id_prop={ id_prop } />;
-}
-
-/**
- * Displays the file input.
- *
- * @param {Object} props
- */
-const FileInput = ( { onUpload } ) => {
-
-	return (
-		<>
-			<BaseControl
-				label={ __( 'This tool allows you to import existing records from a CSV file.', 'newsletter-optin-box' ) }
-				help={ __( 'The first row of the CSV file should contain the field names/headers.', 'newsletter-optin-box' ) }
-				className="noptin-collection__upload-wrapper"
-			>
-				<FormFileUpload
-					accept="text/csv"
-					onChange={ ( event ) => onUpload( event.currentTarget.files[0] ) }
-					icon={upload}
-					variant="primary"
-				>
-					{ __( 'Select a CSV file', 'newsletter-optin-box' ) }
-				</FormFileUpload>
-
-			</BaseControl>
-
-			<Tip>
-				{ __( ' Have a different file type?', 'newsletter-optin-box' ) }&nbsp;
-				<Button
-					variant="link"
-					href="https://convertio.co/csv-converter/"
-					target="_blank"
-					text={ __( 'Convert it to CSV', 'newsletter-optin-box' ) }
-				/>
-			</Tip>
-		</>
-	);
-}
-
-/**
- * Allows the user to import new records.
- *
- * @param {Object} props
- * @param {Object} props.component
- * @param {string} props.component.title
- */
-export default function Import( { component: { title } } ) {
-
-	// Fetch the schema.
-	const { namespace, collection } = useRoute();
-	const schema = useSchema(namespace, collection);
-	const [ file, setFile ] = useState( null );
-
-	return (
-		<Wrap title={title}>
-
-			<CardBody>
-				{ file ? (
-					<ImportFile file={ file } schema={ schema.data } back={ () => setFile( null )} />
-				) : (
-					<FileInput onUpload={ setFile } />
-				) }
-			</CardBody>
-		</Wrap>
-	);
-
-}
+export default MapHeaders;

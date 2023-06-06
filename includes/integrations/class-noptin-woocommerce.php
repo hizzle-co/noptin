@@ -435,14 +435,16 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			$prepared[] = array(
 				'id'                 => $order->get_id(),
 				'title'              => sprintf(
-					'%s %s',
+					'%s #%s',
 					$order->get_title(),
 					$order->get_order_number()
 				),
 				'edit_url'           => $order->get_edit_order_url(),
-				'items'              => array_map(
-					array( $this, 'get_order_item_details' ),
-					$order->get_items()
+				'items'              => array_values(
+					array_map(
+						array( $this, 'get_order_item_details' ),
+						$order->get_items()
+					)
 				),
 				'discount'           => $order->get_total_discount(),
 				'discount_formatted' => $order->get_formatted_line_subtotal( 'discount' ),

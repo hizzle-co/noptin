@@ -162,11 +162,6 @@ class Noptin_Subscribers_Admin {
 					'show_on_tabs' => true,
 					'label'        => __( 'Custom Fields', 'newsletter-optin-box' ),
 				),
-				'import'        => array(
-					'callback'     => 'Noptin_Subscribers_Admin::render_import_subscribers_page',
-					'show_on_tabs' => true,
-					'label'        => __( 'Import', 'newsletter-optin-box' ),
-				),
 			)
 		);
 
@@ -208,17 +203,6 @@ class Noptin_Subscribers_Admin {
 		}
 
 		do_action( 'noptin_admin_after_single_subscriber_page', $subscriber, noptin()->admin );
-	}
-
-	/**
-	 * Displays the import subscribers.
-	 *
-	 * @since 1.5.5
-	 */
-	public static function render_import_subscribers_page() {
-		do_action( 'noptin_admin_before_subscribers_import_page', noptin()->admin );
-		include plugin_dir_path( __FILE__ ) . 'views/import-subscribers.php';
-		do_action( 'noptin_admin_after_subscribers_import_page', noptin()->admin );
 	}
 
 	/**
