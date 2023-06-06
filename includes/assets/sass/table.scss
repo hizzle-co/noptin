@@ -113,18 +113,6 @@
 
 	> a:only-child {
 		display: block;
-
-		&::after{
-			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			z-index: 1;
-			pointer-events: auto;
-			content: "";
-			background-color: rgba(0,0,0,0);
-		}
 	}
 
 	.is-placeholder {
@@ -133,16 +121,6 @@
 		height: 16px;
 		max-width: 120px;
 		width: 80%;
-	}
-
-	&:not(.is-left-aligned) {
-		text-align: right;
-
-		button {
-			justify-content: flex-end;
-			padding-right: 24px;
-			padding-left: 24px;
-		}
 	}
 
 	&.is-numeric .is-placeholder {
@@ -196,13 +174,10 @@ th.noptin-table__item {
 	white-space: nowrap;
 	min-width: 160px;
 
-	&.is-left-aligned.is-sortable {
-		padding-left: $gap;
-		svg {
-			display: inline-flex;
-			order: 1;
-			margin-left: 0;
-		}
+	&.is-sortable svg {
+		display: inline-flex;
+		order: 1;
+		margin-left: 0;
 	}
 
 	.components-button {

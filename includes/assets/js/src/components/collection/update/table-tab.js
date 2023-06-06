@@ -25,9 +25,9 @@ const DisplayCell = ( { name, is_list, item, args, is_primary, url, is_boolean, 
 	if ( is_list ) {
 
 		if ( ! Array.isArray( record[ name ] ) || 0 === record[ name ].length ) {
-			return "-";
+			return '—';
 		}
-
+	
 		return (
 			<ul>
 				{ record[ name ].map( ( arrayValue, index ) => {
@@ -113,6 +113,7 @@ export default function TableTab( props ) {
 				visible: ! hiddenCols.includes( header.name ),
 				isSortable: false,
 				isNumeric: header.is_numeric,
+				align: header.align,
 			});
 		} );
 

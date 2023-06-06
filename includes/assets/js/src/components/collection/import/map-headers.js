@@ -1,7 +1,7 @@
 import { compact } from 'lodash';
 import { __ } from "@wordpress/i18n";
 import { useState, useEffect, useMemo } from "@wordpress/element";
-import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, FlexBlock } from "@wordpress/components";
+import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, FlexItem } from "@wordpress/components";
 import Papa from 'papaparse';
 
 /**
@@ -28,6 +28,63 @@ const normalizeString = ( string ) => {
 	}
 
 	return string;
+}
+
+/**
+ * Allows the user to map a single header.
+ *
+ * @param {Object} props
+ * @param {Array} props.options The available options.
+ * @param {Object} props.field The field.
+ * @param {string} props.value The current value.
+ * @param {Function} props.setValue The function to set the value.
+ * @param {string} props.customValue The current custom value.
+ * @param {Function} props.setCustomValue The function to set the custom value.
+ */
+const MapHeader = ( { options, field, value, setValue, customValue, setCustomValue } ) => {
+
+	const [ filteredOptions, setFilteredOptions ] = useState( options );
+
+	// Filters the available options.
+	const filterOptions = ( search ) => {
+		setFilteredOptions(
+			options.filter( ( option ) =>
+				option.label
+					.toLowerCase()
+					.includes( search.toLowerCase() )
+			)
+		)
+	}
+
+	return (
+		<Flex style={{marginTop: '1.6rem'}} gap={4} justify="flex-start" wrap>
+
+			<FlexItem style={{width: '320px'}}>
+				<SelectControl
+            		label={ field.label }
+					value={ value }
+           			onChange={ setValue }
+            		options={ options }
+					__next36pxDefaultSize
+					__nextHasNoMarginBottom
+        		/>
+			</FlexItem>
+
+			{ '-1' === value && (
+				<FlexItem style={{width: '320px'}}>
+					<TextControl
+						label={ __( 'Enter value', 'newsletter-optin-box' ) }
+						placeholder={ __( 'Enter a value to assign all imported records', 'newsletter-optin-box' ) }
+						value={ customValue }
+						onChange={ setCustomValue }
+						__next36pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
+				</FlexItem>
+			) }
+
+		</Flex>
+	);
 }
 
 /**
@@ -165,61 +222,53 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 				const value  = header.value || '';
 
 				return (
-					<Flex key={ field.value } style={{marginBottom: '1.6rem'}} wrap>
-
-						<FlexBlock>
-							<SelectControl	
-								label={ field.label }
-								value={ value }
-								options={ selectValues }
-								onChange={ ( newValue ) => {
-									setMappedHeaders({
-										...mappedHeaders,
-										[ field.value ]: {
-											...header,
-											mapped: ! ( [ '', '-1', '-2'].includes( value ) ),
-											value: newValue,
-										}
-									});
-								} }
-							/>
-						</FlexBlock>
-
-						{ '-1' === value && (
-							<FlexBlock>
-								<TextControl
-									label={ __( 'Enter value', 'newsletter-optin-box' ) }
-									value={  header.customValue || '' }
-									onChange={ ( newValue ) => {
-										setMappedHeaders({
-											...mappedHeaders,
-											[ field.value ]: {
-												...header,
-												customValue: newValue,
-											}
-										});
-									} }
-								/>
-							</FlexBlock>
-						) }
-
-					</Flex>
+					<MapHeader
+						key={ field.value }
+						options={ selectValues }
+						field={ field }
+						value={ value }
+						setValue={ ( newValue ) => {
+							setMappedHeaders({
+								...mappedHeaders,
+								[ field.value ]: {
+									...header,
+									mapped: ! ( [ '', '-1', '-2'].includes( value ) ),
+									value: newValue,
+								}
+							});
+						} }
+						customValue={ header.customValue || '' }
+						setCustomValue={ ( newValue ) => {
+							setMappedHeaders({
+								...mappedHeaders,
+								[ field.value ]: {
+									...header,
+									customValue: newValue,
+								}
+							});
+						} }
+					/>
 				);
 			})}
 
-			<div style={{marginBottom: '1.6rem'}}>
+			<div style={{marginTop: '1.6rem'}}>
 				<ToggleControl
 					label={ __( 'Update existing records', 'newsletter-optin-box' ) }
 					checked={ updateRecords }
 					onChange={ ( newValue ) => setUpdateRecords( newValue ) }
+					__nextHasNoMarginBottom
 				/>
 			</div>
 
-			<Button variant="primary" onClick={ () => onContinue( mappedHeaders, updateRecords ) }>
+			<Button style={{marginTop: '1.6rem'}} variant="primary" onClick={ () => onContinue( mappedHeaders, updateRecords ) }>
 				{ __( 'Import', 'newsletter-optin-box' ) }
 			</Button>
+
+			<Button style={{marginTop: '1.6rem'}} variant="link" onClick={ back }>
+				{ __( 'Back', 'newsletter-optin-box' ) }
+			</Button>
 		</>
-	)
+	);
 }
 
 export default MapHeaders;

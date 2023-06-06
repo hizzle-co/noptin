@@ -189,18 +189,6 @@
 .noptin-table__item > a:only-child {
   display: block;
 }
-.noptin-table__header > a:only-child::after,
-.noptin-table__item > a:only-child::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1;
-  pointer-events: auto;
-  content: "";
-  background-color: rgba(0, 0, 0, 0);
-}
 .noptin-table__header .is-placeholder,
 .noptin-table__item .is-placeholder {
   animation: loading-fade 1.6s ease-in-out infinite;
@@ -220,16 +208,6 @@
   .noptin-table__item .is-placeholder {
     animation: none;
   }
-}
-.noptin-table__header:not(.is-left-aligned),
-.noptin-table__item:not(.is-left-aligned) {
-  text-align: right;
-}
-.noptin-table__header:not(.is-left-aligned) button,
-.noptin-table__item:not(.is-left-aligned) button {
-  justify-content: flex-end;
-  padding-right: 24px;
-  padding-left: 24px;
 }
 .noptin-table__header.is-numeric .is-placeholder,
 .noptin-table__item.is-numeric .is-placeholder {
@@ -286,10 +264,7 @@ th.noptin-table__item {
   white-space: nowrap;
   min-width: 160px;
 }
-.noptin-table__header.is-left-aligned.is-sortable {
-  padding-left: 16px;
-}
-.noptin-table__header.is-left-aligned.is-sortable svg {
+.noptin-table__header.is-sortable svg {
   display: inline-flex;
   order: 1;
   margin-left: 0;

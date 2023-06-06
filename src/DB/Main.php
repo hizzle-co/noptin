@@ -400,6 +400,7 @@ class Main {
 					'is_list' => true,
 					'item'    => '%s',
 					'args'    => array( 'i18n' ),
+					'align'   => 'center',
 				),
 				array(
 					'label'   => __( 'Opened', 'newsletter-optin-box' ),
@@ -408,6 +409,7 @@ class Main {
 					'is_list' => true,
 					'item'    => '%s',
 					'args'    => array( 'i18n' ),
+					'align'   => 'center',
 				),
 				array(
 					'label'   => __( 'Clicked on', 'newsletter-optin-box' ),
@@ -416,12 +418,13 @@ class Main {
 					'is_list' => true,
 					'item'    => '%s - %s',
 					'args'    => array( 'key', 'i18n' ),
+					'align'   => 'center',
 				),
 				array(
-					'label'      => __( 'Unsubscribed', 'newsletter-optin-box' ),
-					'name'       => 'unsubscribed',
-					'visible'    => true,
-					'is_boolean' => true,
+					'label'   => __( 'Unsubscribed', 'newsletter-optin-box' ),
+					'name'    => 'unsubscribed',
+					'visible' => true,
+					'align'   => 'right',
 				),
 			),
 			'callback'     => array( $this, 'emails_callback' ),
@@ -477,7 +480,7 @@ class Main {
 				'time'         => array(),
 				'opens'        => array(),
 				'clicks'       => array(),
-				'unsubscribed' => $data['unsubscribed'],
+				'unsubscribed' => empty( $data['unsubscribed'] ) ? '&mdash;' : __( 'Yes', 'newsletter-optin-box' ),
 			);
 
 			// Sent newsletters are not editable.
