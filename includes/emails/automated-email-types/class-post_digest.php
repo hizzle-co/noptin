@@ -793,10 +793,10 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$this->prepare_test_data( $campaign );
 
 		// Maybe set related subscriber.
-		$subscriber = get_noptin_subscriber( sanitize_email( $recipient ) );
+		$subscriber = noptin_get_subscriber( sanitize_email( $recipient ) );
 
 		if ( $subscriber->exists() ) {
-			$this->subscriber = $subscriber;
+			$this->subscriber = $subscriber->get_deprecated_subscriber();
 		}
 
 		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );

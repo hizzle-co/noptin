@@ -477,7 +477,6 @@ abstract class Noptin_Email_Type {
 			if ( empty( $campaign->id ) ) {
 				continue;
 			}
-
 		}
 
 		// Clear environment.
@@ -524,11 +523,20 @@ abstract class Noptin_Email_Type {
 	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $email
 	 */
 	public function prepare_test_data( $email ) {
-		$this->user = wp_get_current_user();
-		$subscriber = get_current_noptin_subscriber_id();
 
-		if ( $subscriber ) {
-			$this->subscriber = new Noptin_Subscriber( $subscriber );
+		$previewer = defined( 'NOPTIN_PREVIEW_EMAIL' ) ? NOPTIN_PREVIEW_EMAIL : false;
+
+		if ( ! empty( $previewer ) ) {
+			$this->user       = get_user_by( 'email', $previewer );
+			$this->subscriber = new Noptin_Subscriber( $previewer );
+		} else {
+
+			$this->user = wp_get_current_user();
+			$subscriber = get_current_noptin_subscriber_id();
+
+			if ( $subscriber ) {
+				$this->subscriber = new Noptin_Subscriber( $subscriber );
+			}
 		}
 
 		do_action( 'noptin_prepare_test_data', $this, $email );

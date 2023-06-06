@@ -320,9 +320,9 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		}
 
 		// Maybe set related subscriber.
-		$subscriber = get_noptin_subscriber( sanitize_email( $recipient ) );
+		$subscriber = noptin_get_subscriber( sanitize_email( $recipient ) );
 
-		$this->subscriber = $subscriber->exists() ? $subscriber : null;
+		$this->subscriber = $subscriber->exists() ? $subscriber->get_deprecated_subscriber() : null;
 
 		// Maybe set related user.
 		$user = get_user_by( 'email', sanitize_email( $recipient ) );

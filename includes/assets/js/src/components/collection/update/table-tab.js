@@ -52,7 +52,7 @@ const DisplayCell = ( { name, is_list, item, args, is_primary, url, is_boolean, 
 		}
 
 		return (
-			<a href={ record[ url ] } style={{textDecoration: 'none'}}>
+			<a href={ record[ url ] } style={{textDecoration: 'none'}} target="_blank">
 				<strong>{ record[ name ] }</strong>
 			</a>
 		);
