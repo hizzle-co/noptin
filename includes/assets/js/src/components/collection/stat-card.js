@@ -52,12 +52,12 @@ const statusStyle = ({ status }) => {
     // Error.
     if ( 'error' === status ) {
         return css`
-            background-color: #f8d7da;
+            background-color: #f8cbcb;
             border-color: #f5c6cb;
-            color: #721c24;
+            color: #cc1818;
 
             & h2 {
-                color: #721c24;
+                color: #cc1818;
             }
         `;
     }
@@ -79,12 +79,11 @@ const statusStyle = ({ status }) => {
  */
 const Container = styled.div`
     ${statusStyle};
-    border-radius: 0.25rem;
     border-width: 1px;
-    border-style: solid;
+    border-style: none;
     padding: 1rem;
     text-align: center;
-    box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
+    box-shadow: 2px 2px 2px rgb(0 0 0 / 5%);
 `
 
 /**

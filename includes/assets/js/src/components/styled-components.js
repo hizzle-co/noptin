@@ -8,25 +8,23 @@ import { css } from '@emotion/react';
  * @param {Object} props
  * @returns {styled} The block button.
  */
-export const BlockButton = styled( Button, { shouldForwardProp: prop => prop !== '__withNoMargin' })`
+export const BlockButton = styled( Button, { shouldForwardProp: prop => ! ['maxWidth', '__withNoMargin'].includes( prop ) })`
 	width: 100%;
 	justify-content: center;
 	font-size: 14px;
 	min-height: 50px;
     margin: ${props => (props.__withNoMargin ? '0' : '1.6rem 0')};
+    max-width: ${props => (props.maxWidth ? props.maxWidth : '100%')};
 `
 
 /**
  * Displays an error Notice.
  */
 export const ErrorNotice = styled.div`
-    background: #fff;
-    border-left: 4px solid #dc3232;
-    border-radius: 0.25rem;
-    color: #dc3232;
-    margin: 0.6rem 0;
-    padding: 0.6rem;
-    width: 100%;
+    border-left: 4px solid #cc1818;
+    margin: 5px 15px 2px 0;
+    padding: 16px 12px;
+    background-color: #f8cbcb;
 `
 
 /**
@@ -55,7 +53,7 @@ const ProgressBarWrapper = styled.div`
  * Renders the progressbar child.
  */
 const progressbarWidthStyle = ({ total, processed }) => {
-    const width = total === processed ? '100%' : ( processed ? `${ ( processed / total ) * 100 }%` : '0%' );
+    const width = total === processed ? '100%' : ( processed ? `${ ( processed / total ) * 100 }%` : '1%' );
 
     return css`width: ${width};`;
 }
@@ -66,7 +64,7 @@ const progressbarWidthStyle = ({ total, processed }) => {
 const ProgressBarInner = styled.div`
     ${progressbarWidthStyle};
     height: 100%;
-    transition: width 0.5s ease-in-out;
+    transition: width 3s ease-in-out;
     animation: position 3s linear infinite;
     position: relative;
     border-radius: 0.25rem;

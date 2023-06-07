@@ -12,7 +12,7 @@ import { Spinner, Button, Flex, FlexItem, } from "@wordpress/components";
  */
 import { useRoute } from "../hooks";
 import StatCard from "../stat-card";
-import { ErrorNotice, HeadingText, ProgressBar } from "../../styled-components";
+import { ErrorNotice, HeadingText, ProgressBar, BlockButton } from "../../styled-components";
 
 /**
  * parses a CSV file.
@@ -35,79 +35,6 @@ const parseCSV = ( file, onComplete, onError ) => {
 }
 
 /**
- * List of chunks to import.
- */
-const chunks = [];
-
-/**
- * Imports chunks of records.
- */
-const importChunks = ( props ) => {
-
-	// Prepare args.
-	const {
-		path,
-		addProcessed,
-		addError,
-		addSkipped,
-		addUpdated,
-		addCreated,
-		addFailed,
-		setDone,
-		updateRecords,
-	} = props;
-
-	// Get the next chunk.
-	const chunk = chunks.shift();
-
-	// If there's no chunk, we're done.
-	if ( ! chunk ) {
-		return setDone( true );
-	}
-
-	// Import the chunk.
-	apiFetch({
-		path: `${path}/batch`,
-		method: 'POST',
-		data: {
-			import: chunk,
-			update: updateRecords,
-		},
-	}).then(( res ) => {
-
-		if ( res.import && res.import.length ) {
-
-			res.import.forEach(( record ) => {
-
-				if ( record.skipped ) {
-					addSkipped( 1 );
-				}
-
-				if ( record.updated ) {
-					addUpdated( 1 );
-				}
-
-				if ( record.created ) {
-					addCreated( 1 );
-				}
-
-				if ( record.is_error ) {
-					addFailed( 1 );
-					addError( record );
-				}
-			});
-		}
-	}).catch(( error ) => {
-		addFailed( chunk.length );
-		addError( error );
-	}).finally(() => {
-		addProcessed( chunk.length );
-		importChunks( props );
-	});
-
-}
-
-/**
  * Imports the file and displays the progress.
  *
  * @param {Object} props
@@ -125,6 +52,9 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 
 	// Whether we're done.
 	const [ done, setDone ] = useState( false );
+
+	// Paused.
+	const [ paused, setPaused ] = useState( false );
 
 	// Whether we've parsed the file.
 	const [ parsed, setParsed ] = useState( false );
@@ -146,6 +76,9 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 
 	// Number of skipped records.
 	const [ skippedRecords, setSkippedRecords ] = useState( 0 );
+
+	// The chunks to import.
+	const [ chunks, setChunks ] = useState( [] );
 
 	/**
 	 * Parses a record.
@@ -180,16 +113,73 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 		return parsed;
 	}, [ headers ] );
 
-	/**
-	 * Adds a chunk of records to the list of chunks to import.
-	 *
-	 * @param {Array} records The records to process.
-	 */
-	const addChunk = useCallback( ( records ) => {
+	// Import chunks.
+	useEffect(() => {
 
-		// Parse the records.
-		chunks.push( records.map(( record ) => parseRecord( record ) ) );
-	}, [ parseRecord ] );
+		// Abort if paused.
+		if ( paused ) {
+			return;
+		}
+
+		const newChunks = [ ...chunks ];
+
+		// Get the next chunk.
+		const chunk = newChunks.shift();
+
+		// If there's no chunk, we're done.
+		if ( ! chunk ) {
+
+			if ( false === done ) {
+				setDone( true );
+			}
+
+			return;
+		}
+
+		if ( true === done ) {
+			setDone( false );
+		}
+
+		// Import the chunk.
+		apiFetch({
+			path: `${namespace}/v1/${collection}/batch`,
+			method: 'POST',
+			data: {
+				import: chunk,
+				update: updateRecords,
+			},
+		}).then(( res ) => {
+
+			if ( res.import && res.import.length ) {
+
+				res.import.forEach(( record ) => {
+
+					if ( record.skipped ) {
+						setSkippedRecords( skippedRecords + 1 )
+					}
+
+					if ( record.updated ) {
+						setUpdatedRecords( updatedRecords + 1 );
+					}
+
+					if ( record.created ) {
+						setCreatedRecords( createdRecords + 1 );
+					}
+
+					if ( record.is_error ) {
+						setFailedRecords( failedRecords + 1 );
+						setErrors( [ ...errors, record ] );
+					}
+				});
+			}
+		}).catch(( error ) => {
+			setFailedRecords( failedRecords + chunk.length );
+			setErrors( [ ...errors, error ] );
+		}).finally(() => {
+			setProcessed( processed + chunk.length );
+			setChunks( newChunks );
+		});
+	}, [ chunks, paused ]);
 
 	// Parse the file.
 	useEffect(() => {
@@ -207,22 +197,17 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 
 				// Create chunks of 10 records per chunk.
 				const batchSize = 10;
+				const newChunks = [];
 				for ( let i = 0; i < results.data.length; i += batchSize ) {
-					addChunk( results.data.slice( i, i + batchSize ) );
+					const records = results.data.slice( i, i + batchSize );
+					newChunks.push( records.map(( record ) => parseRecord( record ) ) );
 				}
 
-				// Import the chunks.
-				importChunks({
-					path: `/${namespace}/${collection}`,
-					addProcessed: ( increment ) => setProcessed( processed + increment ),
-					addError: ( error ) => setErrors( [ ...errors, error ] ),
-					addSkipped: ( increment ) => setSkippedRecords( skippedRecords + increment ),
-					addUpdated: ( increment ) => setUpdatedRecords( updatedRecords + increment ),
-					addCreated: ( increment ) => setCreatedRecords( createdRecords + increment ),
-					addFailed: ( increment ) => setFailedRecords( failedRecords + increment ),
-					setDone,
-					updateRecords,
-				});
+				// Set the chunks.
+				setChunks( newChunks );
+
+				// Start the import.
+				setPaused( false );
 			},
 			( error ) => setErrors( [error] ),
 		);
@@ -258,10 +243,15 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 						{__( 'Importing', 'newsletter-optin-box' )}
 							<code>{file.name}</code>...
 							&nbsp;
-						<Spinner />
+						{ ! paused && <Spinner /> }
+
+						&nbsp; <Button variant="link" onClick={ () => setPaused( ! paused ) }>
+							{ paused ? __( 'Resume', 'newsletter-optin-box' ) : __( 'Pause', 'newsletter-optin-box' ) }
+						</Button>
+
 					</HeadingText>
 
-					<ProgressBar total={total} processed={processed} />
+					{ ! paused && <ProgressBar total={total} processed={processed} /> }
 				</>
 			) }
 
@@ -324,11 +314,23 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 			</Flex>
 
 			{ done && (
-				<Button
+				<BlockButton
 					variant="primary"
 					text={ __( 'View Records', 'newsletter-optin-box' ) }
 					onClick={ () => navigate( `/${namespace}/${collection}` ) }
+					maxWidth="200px"
 				/>
+			) }
+
+			{ errors.length > 0 && (
+				<HeadingText as="h3">
+					{__( 'Errors', 'newsletter-optin-box' )}&nbsp;
+					{ done && (
+						<Button onClick={ () => setErrors([]) } variant="link">
+							{__( 'Clear', 'newsletter-optin-box' )}
+						</Button>
+					) }
+				</HeadingText>
 			) }
 
 			{ errors.map(( error, index ) => <ErrorNotice key={ index }>{ error.message }</ErrorNotice>) }
