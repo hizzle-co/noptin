@@ -91,15 +91,6 @@ class Noptin {
 	public $plugin_url = null;
 
 	/**
-	 * Background Mailer
-	 *
-	 * @var Noptin_Background_Mailer
-	 * @access      public
-	 * @since       1.2.3
-	 */
-	public $bg_mailer = null;
-
-	/**
 	 * White Label
 	 *
 	 * @var Noptin_White_Label
@@ -401,9 +392,6 @@ class Noptin {
 		 * @since 1.0.0
 		 */
 		do_action( 'before_noptin_init', $this );
-
-		// Bg processes.
-		$this->bg_mailer          = new Noptin_Background_Mailer();
 
 		// Init the admin.
 		$this->admin 			  = Noptin_Admin::instance();
