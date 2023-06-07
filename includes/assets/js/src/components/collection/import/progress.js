@@ -150,28 +150,40 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 			},
 		}).then(( res ) => {
 
+			let skipped = 0;
+			let updated = 0;
+			let created = 0;
+			let failed = 0;
+			let errors = [];
+
 			if ( res.import && res.import.length ) {
 
 				res.import.forEach(( record ) => {
 
-					if ( record.skipped ) {
-						setSkippedRecords( skippedRecords + 1 )
+					if ( record.data?.skipped ) {
+						skipped++;
 					}
 
-					if ( record.updated ) {
-						setUpdatedRecords( updatedRecords + 1 );
+					if ( record.data?.updated ) {
+						updated++;
 					}
 
-					if ( record.created ) {
-						setCreatedRecords( createdRecords + 1 );
+					if ( record.data?.created ) {
+						created++;
 					}
 
 					if ( record.is_error ) {
-						setFailedRecords( failedRecords + 1 );
-						setErrors( [ ...errors, record ] );
+						failed++;
+						errors.push( record.data );
 					}
 				});
 			}
+
+			setSkippedRecords( skippedRecords + skipped );
+			setUpdatedRecords( updatedRecords + updated );
+			setCreatedRecords( createdRecords + created );
+			setFailedRecords( failedRecords + failed );
+			setErrors( [ ...errors, ...errors ] );
 		}).catch(( error ) => {
 			setFailedRecords( failedRecords + chunk.length );
 			setErrors( [ ...errors, error ] );
