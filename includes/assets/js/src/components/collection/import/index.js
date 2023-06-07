@@ -35,8 +35,6 @@ export default function Import( { component: { title } } ) {
                 <ImportFile
                     file={ file }
                     schema={ schema.data }
-                    namespace={ namespace }
-                    collection={ collection }
                     back={ () => setFile( null )}
                 />
             );

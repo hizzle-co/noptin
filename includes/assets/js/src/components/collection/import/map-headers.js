@@ -3,6 +3,14 @@ import { __ } from "@wordpress/i18n";
 import { useState, useEffect, useMemo } from "@wordpress/element";
 import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, FlexItem } from "@wordpress/components";
 import Papa from 'papaparse';
+import { BlockButton } from "../../styled-components";
+import styled from '@emotion/styled';
+
+const RestrictedFlexItem = styled( FlexItem )`
+	width: 320px;
+`;
+
+const RestrictedDiv = RestrictedFlexItem.withComponent( 'div' );
 
 /**
  * Normalizes a string to make it possible to guess the header.
@@ -43,23 +51,10 @@ const normalizeString = ( string ) => {
  */
 const MapHeader = ( { options, field, value, setValue, customValue, setCustomValue } ) => {
 
-	const [ filteredOptions, setFilteredOptions ] = useState( options );
-
-	// Filters the available options.
-	const filterOptions = ( search ) => {
-		setFilteredOptions(
-			options.filter( ( option ) =>
-				option.label
-					.toLowerCase()
-					.includes( search.toLowerCase() )
-			)
-		)
-	}
-
 	return (
 		<Flex style={{marginTop: '1.6rem'}} gap={4} justify="flex-start" wrap>
 
-			<FlexItem style={{width: '320px'}}>
+			<RestrictedFlexItem>
 				<SelectControl
             		label={ field.label }
 					value={ value }
@@ -68,10 +63,10 @@ const MapHeader = ( { options, field, value, setValue, customValue, setCustomVal
 					__next36pxDefaultSize
 					__nextHasNoMarginBottom
         		/>
-			</FlexItem>
+			</RestrictedFlexItem>
 
 			{ '-1' === value && (
-				<FlexItem style={{width: '320px'}}>
+				<RestrictedFlexItem>
 					<TextControl
 						label={ __( 'Enter value', 'newsletter-optin-box' ) }
 						placeholder={ __( 'Enter a value to assign all imported records', 'newsletter-optin-box' ) }
@@ -80,7 +75,7 @@ const MapHeader = ( { options, field, value, setValue, customValue, setCustomVal
 						__next36pxDefaultSize
 						__nextHasNoMarginBottom
 					/>
-				</FlexItem>
+				</RestrictedFlexItem>
 			) }
 
 		</Flex>
@@ -260,13 +255,15 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 				/>
 			</div>
 
-			<Button style={{marginTop: '1.6rem'}} variant="primary" onClick={ () => onContinue( mappedHeaders, updateRecords ) }>
-				{ __( 'Import', 'newsletter-optin-box' ) }
-			</Button>
+			<RestrictedDiv>
+				<BlockButton variant="primary" onClick={ () => onContinue( mappedHeaders, updateRecords ) }>
+					{ __( 'Import', 'newsletter-optin-box' ) }
+				</BlockButton>
 
-			<Button style={{marginTop: '1.6rem'}} variant="link" onClick={ back }>
-				{ __( 'Back', 'newsletter-optin-box' ) }
-			</Button>
+				<BlockButton variant="secondary" onClick={ back } __withNoMargin>
+					{ __( 'Back', 'newsletter-optin-box' ) }
+				</BlockButton>
+			</RestrictedDiv>
 		</>
 	);
 }

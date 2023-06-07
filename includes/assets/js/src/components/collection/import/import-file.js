@@ -16,11 +16,9 @@ import Progress from "./progress";
  * @param {Object} props
  * @param {Object} props.file The file to import.
  * @param {Object} props.schema The schema of the collection.
- * @param {string} props.namespace The namespace of the collection.
- * @param {string} props.collection The name of the collection.
  * @param {Function} props.back The callback to call when clicking on the back button.
  */
-const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, namespace, collection, back } ) => {
+const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, back } ) => {
 
 	const [ mappedHeaders, setMappedHeaders ] = useState( null );
     const [ updateRecords, setUpdateRecords ] = useState( false );
@@ -49,8 +47,6 @@ const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, namesp
             headers={ mappedHeaders }
             updateRecords={ updateRecords }
             back={ back }
-            namespace={ namespace }
-            collection={ collection }
             id_prop={ id_prop }
         />
     );

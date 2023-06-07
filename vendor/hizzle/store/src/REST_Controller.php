@@ -781,40 +781,10 @@ class REST_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Check batch limit.
-	 *
-	 * @param array $items Request items.
-	 * @return bool|WP_Error
-	 */
-	protected function check_batch_limit( $items ) {
-		$limit = apply_filters( 'hizzle_rest_batch_items_limit', 100, $this->get_normalized_rest_base() );
-		$total = 0;
-
-		if ( ! empty( $items['create'] ) ) {
-			$total += count( $items['create'] );
-		}
-
-		if ( ! empty( $items['update'] ) ) {
-			$total += count( $items['update'] );
-		}
-
-		if ( ! empty( $items['delete'] ) ) {
-			$total += count( $items['delete'] );
-		}
-
-		if ( $total > $limit ) {
-			/* translators: %s: items limit */
-			return new \WP_Error( 'hizzle_rest_request_entity_too_large', sprintf( __( 'Unable to accept more than %s items for this request.', 'hizzle-store' ), $limit ), array( 'status' => 413 ) );
-		}
-
-		return true;
-	}
-
-	/**
 	 * Bulk create, update and delete items.
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 * @return array Of WP_Error or WP_REST_Response.
+	 * @return \WP_REST_Response|\WP_Error Of WP_Error or WP_REST_Response.
 	 */
 	public function batch_items( $request ) {
 		/**
@@ -824,79 +794,197 @@ class REST_Controller extends \WP_REST_Controller {
 		 */
 		global $wp_rest_server;
 
-		// Get the request params.
-		$items    = array_filter( $request->get_params() );
-		$query    = $request->get_query_params();
-		$response = array();
+		// Prepare items and total.
+		$items = array();
+		$total = 0;
+
+		foreach ( array( 'create', 'update', 'delete', 'import' ) as $action ) {
+			$action_items = $request->get_param( $action );
+
+			if ( ! empty( $action_items ) && is_array( $action_items ) ) {
+				$items[ $action ] = $action_items;
+				$total           += count( $action_items );
+			}
+		}
 
 		// Check batch limit.
-		$limit = $this->check_batch_limit( $items );
-		if ( is_wp_error( $limit ) ) {
-			return $limit;
+		$limit = apply_filters( $this->prefix_hook( 'batch_items_limit' ), 100, $this->get_normalized_rest_base() );
+
+		if ( $total > $limit ) {
+			/* translators: %s: items limit */
+			return new \WP_Error( $this->prefix_hook( 'request_entity_too_large' ), sprintf( __( 'Unable to accept more than %s items for this request.', 'hizzle-store' ), $limit ), array( 'status' => 413 ) );
 		}
 
-		if ( ! empty( $items['create'] ) ) {
-			foreach ( $items['create'] as $item ) {
-				$_item = new \WP_REST_Request( 'POST', $request->get_route() );
+		// Prepare response.
+		$responses = array();
 
-				// Default parameters.
-				$defaults = array();
-				$schema   = $this->get_public_item_schema();
-				foreach ( $schema['properties'] as $arg => $options ) {
-					if ( isset( $options['default'] ) ) {
-						$defaults[ $arg ] = $options['default'];
-					}
-				}
-				$_item->set_default_params( $defaults );
+		// Process the batches.
+		foreach ( $items as $action => $action_items ) {
 
-				// Set request parameters.
-				$_item->set_body_params( $item );
+			if ( ! isset( $responses[ $action ] ) ) {
+				$responses[ $action ] = array();
+			}
 
-				// Set query (GET) parameters.
-				$_item->set_query_params( $query );
+			$method = "{$action}_batch_item";
 
-				$_response = $this->create_item( $_item );
+			// Loop through each item.
+			foreach ( $action_items as $item ) {
 
-				if ( ! is_wp_error( $_response ) ) {
-					$response[] = $wp_rest_server->response_to_data( $_response, '' );
+				// Process the item.
+				$response = rest_ensure_response( $this->$method( $request, $item ) );
+
+				// Check for errors.
+				if ( is_wp_error( $response ) ) {
+					$responses[ $action ][] = array(
+						'is_error' => true,
+						'code'     => $response->get_error_code(),
+						'message'  => $response->get_error_message(),
+						'data'     => $response->get_error_data(),
+					);
+				} else {
+					$responses[ $action ][] = array(
+						'is_error' => false,
+						'data'     => $wp_rest_server->response_to_data( $response, '' ),
+					);
 				}
 			}
 		}
 
-		if ( ! empty( $items['update'] ) ) {
-			foreach ( $items['update'] as $item ) {
-				$_item = new \WP_REST_Request( 'PUT', $request->get_route() );
-				$_item->set_body_params( $item );
-				$_response = $this->update_item( $_item );
+		return rest_ensure_response( $responses );
+	}
 
-				if ( ! is_wp_error( $_response ) ) {
-					$response[] = $wp_rest_server->response_to_data( $_response, '' );
-				}
+	/**
+	 * Create a single item in a batch request.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param array 		  $item    Request item.
+	 * @return \WP_REST_Response|\WP_Error Of WP_Error or WP_REST_Response.
+	 */
+	protected function create_batch_item( $request, $item ) {
+		$new_request = new \WP_REST_Request( 'POST', $request->get_route() );
+
+		// Default parameters.
+		$defaults = array();
+		$schema   = $this->get_public_item_schema();
+		foreach ( $schema['properties'] as $arg => $options ) {
+			if ( isset( $options['default'] ) ) {
+				$defaults[ $arg ] = $options['default'];
 			}
 		}
 
-		if ( ! empty( $items['delete'] ) ) {
-			foreach ( $items['delete'] as $id ) {
-				$id = (int) $id;
+		$new_request->set_default_params( $defaults );
 
-				if ( 0 === $id ) {
-					continue;
-				}
+		// Set request parameters.
+		$new_request->set_body_params( $item );
 
-				$_item = new \WP_REST_Request( 'DELETE', $request->get_route() );
-				$_item->set_query_params(
-					array(
-						'id'    => $id,
-						'force' => true,
-					)
-				);
-				$this->delete_item( $_item );
+		// Set query (GET) parameters.
+		$new_request->set_query_params( $request->get_query_params() );
+
+		// Set headers.
+		$new_request->set_headers( $request->get_headers() );
+
+		// Create item.
+		return $this->create_item( $new_request );
+	}
+
+	/**
+	 * Update a single item in a batch request.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param array 		  $item    Request item.
+	 * @return \WP_REST_Response|\WP_Error Of WP_Error or WP_REST_Response.
+	 */
+	protected function update_batch_item( $request, $item ) {
+		$new_request = new \WP_REST_Request( 'PUT', $request->get_route() );
+
+		// Set request parameters.
+		$new_request->set_body_params( $item );
+
+		// Set query (GET) parameters.
+		$new_request->set_query_params( $request->get_query_params() );
+
+		// Set headers.
+		$new_request->set_headers( $request->get_headers() );
+
+		// Update item.
+		return $this->update_item( $new_request );
+	}
+
+	/**
+	 * Delete a single item in a batch request.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param int 		       $item    Request item.
+	 * @return int Item ID.
+	 */
+	protected function delete_batch_item( $request, $item ) {
+		$new_request = new \WP_REST_Request( 'DELETE', $request->get_route() );
+
+		// Set query (GET) parameters.
+		$new_request->set_query_params(
+			array(
+				'id'    => (int) $item,
+				'force' => true,
+			)
+		);
+
+		// Set headers.
+		$new_request->set_headers( $request->get_headers() );
+
+		// Delete item.
+		$this->delete_item( $new_request );
+
+		return (int) $item;
+	}
+
+	/**
+	 * Imports a single item in a batch request.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param array 		  $item    Request item.
+	 * @return \WP_REST_Response|\WP_Error Of WP_Error or WP_REST_Response.
+	 */
+	protected function import_batch_item( $request, $item ) {
+		$update     = $request->get_param( 'update' );
+		$collection = $this->fetch_collection();
+
+		// Check if we have duplicates.
+		foreach ( $collection->keys['unique'] as $unique_key ) {
+
+			// Abort if the unique key is not set.
+			if ( empty( $item[ $unique_key ] ) ) {
+				continue;
 			}
+
+			// Fetch matching ID if exists.
+			$id = $collection->get_id_by_prop( $unique_key, $item[ $unique_key ] );
+
+			if ( empty( $id ) ) {
+				continue;
+			}
+
+			// Are updates allowed?
+			if ( ! $update ) {
+				return array( 'skipped' => true );
+			}
+
+			// Update item.
+			$item['id'] = $id;
+			$result     = $this->update_batch_item( $request, $item );
+			return is_wp_error( $result ) ? $result : array( 'updated' => true, 'id' => $id );
 		}
 
-		do_action( 'hizzle_rest_batch_items_' . $this->get_normalized_rest_base(), $request, $response );
+		// Create item.
+		$result = rest_ensure_response( $this->create_batch_item( $request, $item ) );
 
-		return rest_ensure_response( $response );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		$data = $result->get_data();
+		$id   = empty( $data['id'] ) ? 0 : $data['id'];
+
+		return array( 'created' => true, 'id' => $id );
 	}
 
 	/**
@@ -927,11 +1015,19 @@ class REST_Controller extends \WP_REST_Controller {
 					),
 				),
 				'delete' => array(
-					'description' => __( 'List of delete resources.', 'hizzle-store' ),
+					'description' => __( 'List of deleted resources.', 'hizzle-store' ),
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
 						'type' => 'integer',
+					),
+				),
+				'import' => array(
+					'description' => __( 'List of imported resources.', 'hizzle-store' ),
+					'type'        => 'array',
+					'context'     => array( 'view', 'edit' ),
+					'items'       => array(
+						'type' => 'object',
 					),
 				),
 			),

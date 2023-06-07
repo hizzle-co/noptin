@@ -5,28 +5,107 @@ import apiFetch from "@wordpress/api-fetch";
 import { useState, useCallback, useEffect } from "@wordpress/element";
 import { __, sprintf } from "@wordpress/i18n";
 import Papa from 'papaparse';
-import { Notice } from "@wordpress/components";
+import { Spinner, Button, Flex, FlexItem, } from "@wordpress/components";
 
 /**
- * Converts an array of strings to bytes.
+ * Internal dependancies.
  */
-const toBytes = ( arr ) => {
-	return arr.reduce( ( acc, str ) => {
-
-		if ( typeof TextEncoder === 'undefined' ) {
-			return acc + str.length + 1;
-		}
-
-		if ( TextEncoder ) {
-			return acc + ( new TextEncoder().encode( str ) ).length + 1;
-		}
-	}, 0 );
-};
+import { useRoute } from "../hooks";
+import StatCard from "../stat-card";
+import { ErrorNotice, HeadingText, ProgressBar } from "../../styled-components";
 
 /**
- * Import batches, grouped by file name.
+ * parses a CSV file.
+ *
+ * @param {Object} file The file to parse.
+ * @param {Function} cb The callback to call when done.
  */
-const importBatches = {};
+const parseCSV = ( file, onComplete, onError ) => {
+
+	Papa.parse( file, {
+		header: true,
+		skipEmptyLines: 'greedy',
+		complete( results ) {
+			onComplete( results );
+		},
+		error( error ) {
+			onError( error );
+		},
+	});
+}
+
+/**
+ * List of chunks to import.
+ */
+const chunks = [];
+
+/**
+ * Imports chunks of records.
+ */
+const importChunks = ( props ) => {
+
+	// Prepare args.
+	const {
+		path,
+		addProcessed,
+		addError,
+		addSkipped,
+		addUpdated,
+		addCreated,
+		addFailed,
+		setDone,
+		updateRecords,
+	} = props;
+
+	// Get the next chunk.
+	const chunk = chunks.shift();
+
+	// If there's no chunk, we're done.
+	if ( ! chunk ) {
+		return setDone( true );
+	}
+
+	// Import the chunk.
+	apiFetch({
+		path: `${path}/batch`,
+		method: 'POST',
+		data: {
+			import: chunk,
+			update: updateRecords,
+		},
+	}).then(( res ) => {
+
+		if ( res.import && res.import.length ) {
+
+			res.import.forEach(( record ) => {
+
+				if ( record.skipped ) {
+					addSkipped( 1 );
+				}
+
+				if ( record.updated ) {
+					addUpdated( 1 );
+				}
+
+				if ( record.created ) {
+					addCreated( 1 );
+				}
+
+				if ( record.is_error ) {
+					addFailed( 1 );
+					addError( record );
+				}
+			});
+		}
+	}).catch(( error ) => {
+		addFailed( chunk.length );
+		addError( error );
+	}).finally(() => {
+		addProcessed( chunk.length );
+		importChunks( props );
+	});
+
+}
 
 /**
  * Imports the file and displays the progress.
@@ -35,183 +114,224 @@ const importBatches = {};
  * @param {Object} props.file The file to import.
  * @param {Object} props.headers Known fields to file headers mapping.
  * @param {Function} props.back The callback to call when clicking on the back button.
- * @param {string} props.id_prop The property to use when checking for duplicates.
  */
-const Progress = ( { file, headers, back, id_prop, updateRecords, namespace, collection } ) => {
+const Progress = ( { file, headers, back, updateRecords } ) => {
 
+	// Prepare route.
+	const { namespace, collection, navigate } = useRoute();
+
+	// Processing errors.
 	const [ errors, setErrors ] = useState( [] );
+
+	// Whether we're done.
 	const [ done, setDone ] = useState( false );
-	const [ updated, setUpdated ] = useState( 0 );
-	const [ failed, setFailed ] = useState( 0 );
-	const [ created, setCreated ] = useState( 0 );
-	const [ imported, setImported ] = useState( 0 );
 
-	// Imports a batch of records.
-	const importBatch = ( cb = () => {} ) => {
-		console.log( importBatches[ file.name ] );
+	// Whether we've parsed the file.
+	const [ parsed, setParsed ] = useState( false );
 
-		setTimeout(() => {
-			cb();
-		}, 1000 );
+	// Total number of records.
+	const [ total, setTotal ] = useState( 0 );
 
-	};
+	// Number of processed records.
+	const [ processed, setProcessed ] = useState( 0 );
 
-	// Set import batches.
-	useEffect(() => {
-		importBatches[ file.name ] = [];
-	}, [file]);
+	// Number of updated records.
+	const [ updatedRecords, setUpdatedRecords ] = useState( 0 );
+
+	// Number of created records.
+	const [ createdRecords, setCreatedRecords ] = useState( 0 );
+
+	// Number of failed records.
+	const [ failedRecords, setFailedRecords ] = useState( 0 );
+
+	// Number of skipped records.
+	const [ skippedRecords, setSkippedRecords ] = useState( 0 );
+
+	/**
+	 * Parses a record.
+	 *
+	 * @param {Object} record The raw record.
+	 * @returns {Object} The parsed record.
+	 */
+	const parseRecord = useCallback( ( record ) => {
+		const parsed = {};
+
+		Object.keys( headers ).forEach(( key ) => {
+
+			// Abort if the header is not mapped.
+			if ( '' === headers[ key ].value ) {
+				return;
+			}
+
+			// Are we mapping the field?
+			if ( headers[ key ].mapped ) {
+				parsed[ key ] = record[ headers[ key ].value ];
+			} else if ( undefined !== headers[ key ].customValue ) {
+				parsed[ key ] = headers[ key ].customValue;
+			}
+
+			// If the field is a boolean, convert it.
+			if ( headers[ key ].is_boolean ) {
+				parsed[ key ] = [ '0', '', 'false', 'FALSE', 'no'].includes( parsed[ key ] ) ? false : true;
+			}
+
+		});
+
+		return parsed;
+	}, [ headers ] );
+
+	/**
+	 * Adds a chunk of records to the list of chunks to import.
+	 *
+	 * @param {Array} records The records to process.
+	 */
+	const addChunk = useCallback( ( records ) => {
+
+		// Parse the records.
+		chunks.push( records.map(( record ) => parseRecord( record ) ) );
+	}, [ parseRecord ] );
 
 	// Parse the file.
 	useEffect(() => {
 
-		let theParser;
+		// Parse the file.
+		parseCSV(
+			file,
+			( results ) => {
 
-		/**
-		 * Parses a record.
-		 *
-		 * @param {Object} record The raw record.
-		 * @returns {Object} The parsed record.
-		 */
-		const parseRecord = ( record ) => {
-			const parsed = {};
+				// Set parsed flag.
+				setParsed( true );
 
-			Object.keys( headers ).forEach(( key ) => {
+				// Set total.
+				setTotal( results.data.length );
 
-				// Abort if the header is not mapped.
-				if ( '' === headers[ key ].value ) {
-					return;
+				// Create chunks of 10 records per chunk.
+				const batchSize = 10;
+				for ( let i = 0; i < results.data.length; i += batchSize ) {
+					addChunk( results.data.slice( i, i + batchSize ) );
 				}
 
-				// Are we mapping the field?
-				if ( headers[ key ].mapped ) {
-					parsed[ key ] = record[ headers[ key ].value ];
-				} else if ( undefined !== headers[ key ].customValue ) {
-					parsed[ key ] = headers[ key ].customValue;
-				}
-
-				// If the field is a boolean, convert it.
-				if ( headers[ key ].is_boolean ) {
-					parsed[ key ] = [ '0', '', 'false', 'FALSE', 'no'].includes( parsed[ key ] ) ? false : true;
-				}
-
-			});
-
-			return parsed;
-		};
-
-		Papa.parse( file, {
-			header: true,
-			skipEmptyLines: 'greedy',
-			chunks(results, parser) {
-
-				// If this is the first step, store the parser.
-				if ( ! theParser ) {
-					theParser = parser;
-				}
-
-				if ( 0 === imported ) {
-					setImported( imported + toBytes( results.meta.fields ) );
-				}
-
-				// Calculate the number of bytes of Object.values( results.data );
-				const bytes = toBytes( Object.values( results.data ) );
-
-				// Update the progress.
-				setImported( imported + bytes );
-
-				// Parse the record.
-				const record = parseRecord( results.data );
-
-				// Add to batch.
-				importBatches[ file.name ].push( record );
-
-				// If batch is 10+...
-				if ( importBatches[ file.name ].length > 9 ) {
-
-					// Pause the parser.
-					parser.pause();
-
-					// and import the batch.
-					importBatch( () => {
-						importBatches[ file.name ] = [];
-						parser.resume();
-					} );
-
-				}
+				// Import the chunks.
+				importChunks({
+					path: `/${namespace}/${collection}`,
+					addProcessed: ( increment ) => setProcessed( processed + increment ),
+					addError: ( error ) => setErrors( [ ...errors, error ] ),
+					addSkipped: ( increment ) => setSkippedRecords( skippedRecords + increment ),
+					addUpdated: ( increment ) => setUpdatedRecords( updatedRecords + increment ),
+					addCreated: ( increment ) => setCreatedRecords( createdRecords + increment ),
+					addFailed: ( increment ) => setFailedRecords( failedRecords + increment ),
+					setDone,
+					updateRecords,
+				});
 			},
-			complete( results ) {
-				console.log( results );
-				importBatch( () => setDone( true ) );
-			},
-			error( error ) {
-				setErrors( [ ...errors, error ] );
-			},
-		});
-
-		return () => theParser && theParser.abort();
+			( error ) => setErrors( [error] ),
+		);
 	}, [ file, headers ]);
 
-	// Progress wrapper styles.
-	const progressWrapperStyles = {
-		width: '100%',
-		height: '20px',
-		background: '#eee',
-		marginBottom: '20px',
-	};
+	// Abort if the file is not parsed.
+	if ( ! parsed ) {
+		return (
+			<HeadingText as="h3">
+				{__( 'Parsing', 'newsletter-optin-box' )}
+				<code>{file.name}</code>...
+				&nbsp;
+				<Spinner />
+			</HeadingText>
+		)
+	}
 
-	// Progress inner styles.
-	const progressInnerStyles = {
-		width: imported ? `${ ( imported / file.size ) * 100 }%` : '0%',
-		height: '100%',
-		background: '#007cba',
-	};
+	// Abort if total == 0.
+	if ( 0 === total ) {
+		return (
+			<ErrorNotice>
+				{ sprintf( __( 'No records found in %s.', 'newsletter-optin-box' ), file.name ) }
+			</ErrorNotice>
+		)
+	}
 
 	return (
 		<div className="noptin-import-progress">
 
 			{ ! done && (
-				<p>
-					{ sprintf( __( 'Importing %s...', 'newsletter-optin-box' ), file.name ) }
-				</p>
+				<>
+					<HeadingText as="h3">
+						{__( 'Importing', 'newsletter-optin-box' )}
+							<code>{file.name}</code>...
+							&nbsp;
+						<Spinner />
+					</HeadingText>
+
+					<ProgressBar total={total} processed={processed} />
+				</>
 			) }
 
 			{ done && (
-				<p>
-					{ sprintf( __( 'Done processing %s.', 'newsletter-optin-box' ), file.name ) }
-				</p>
+				<HeadingText as="h3">
+					{__( 'Processed', 'newsletter-optin-box' )}
+						<code>{file.name}</code>
+				</HeadingText>
 			) }
 
-			{ errors.map(( error, index ) => (
-				<Notice status="error" isDismissible={ false } key={ index }>{ error.message }</Notice>
-			)) }
+			<Flex justify="flex-start" style={{ margin: '1.6rem 0' }} gap={ 4 } wrap>
 
-			{ ! done && (
-				<div style={progressWrapperStyles}>
-					<div style={progressInnerStyles}></div>
-				</div>
-			) }
+				<FlexItem>
+					<StatCard
+						value={ total }
+						label={ __( 'Records Found', 'newsletter-optin-box' ) }
+						status="light"
+					/>
+				</FlexItem>
+
+				{ createdRecords > 0 && (
+					<FlexItem>
+						<StatCard
+							value={ createdRecords }
+							label={ __( 'Records Created', 'newsletter-optin-box' ) }
+							status="success"
+						/>
+					</FlexItem>
+				)}
+
+				{ updatedRecords > 0 && (
+					<FlexItem>
+						<StatCard
+							value={ updatedRecords }
+							label={ __( 'Records Updated', 'newsletter-optin-box' ) }
+							status="success"
+						/>
+					</FlexItem>
+				)}
+
+				{ failedRecords > 0 && (
+					<FlexItem>
+						<StatCard
+							value={ failedRecords }
+							label={ __( 'Records Failed', 'newsletter-optin-box' ) }
+							status="error"
+						/>
+					</FlexItem>
+				)}
+
+				{ skippedRecords > 0 && (
+					<FlexItem>
+						<StatCard
+							value={ skippedRecords }
+							label={ __( 'Records Skipped', 'newsletter-optin-box' ) }
+							status="info"
+						/>
+					</FlexItem>
+				)}
+			</Flex>
 
 			{ done && (
-				<div className="noptin-import-summary">
-					<p>
-						{ sprintf( __( 'Imported %s records.', 'newsletter-optin-box' ), imported ) }
-					</p>
-					<p>
-						{ sprintf( __( 'Updated %s records.', 'newsletter-optin-box' ), updated ) }
-					</p>
-					<p>
-						{ sprintf( __( 'Failed to import %s records.', 'newsletter-optin-box' ), failed ) }
-					</p>
-				</div>
+				<Button
+					variant="primary"
+					text={ __( 'View Records', 'newsletter-optin-box' ) }
+					onClick={ () => navigate( `/${namespace}/${collection}` ) }
+				/>
 			) }
 
-			{ ! done && (
-				<div className="noptin-import-actions">
-					<button className="button button-secondary" onClick={ back }>
-						{ __( 'Back', 'newsletter-optin-box' ) }
-					</button>
-				</div>
-			) }
+			{ errors.map(( error, index ) => <ErrorNotice key={ index }>{ error.message }</ErrorNotice>) }
 
 		</div>
 	);
