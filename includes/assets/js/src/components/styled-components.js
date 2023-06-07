@@ -1,4 +1,4 @@
-import { Button, __experimentalText as Text } from "@wordpress/components";
+import { Button, __experimentalText as Text, TabPanel } from "@wordpress/components";
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
@@ -34,6 +34,15 @@ export const HeadingText = styled( Text )`
     margin-bottom: 1.6rem;
     font-weight: 600;
     font-size: 20px;
+`
+
+/**
+ * Displays a heading text.
+ */
+export const CardHeadingText = styled( Text )`
+    font-weight: 600;
+    font-size: 16px;
+    color: currentColor;
 `
 
 /**
@@ -99,3 +108,46 @@ export const ProgressBar = ( { total, processed } ) => {
         </ProgressBarWrapper>
     );
 };
+
+/**
+ * Renders an avatar
+ */
+export const Avatar = styled.img`
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    box-shadow: 2px 2px 2px rgb(0 0 0 / 5%);
+    background-color: currentColor;
+`
+
+/**
+ * Renders a styled tab panel.
+ */
+export const StyledTabPanel = styled( TabPanel )`
+    & > .components-tab-panel__tabs {
+        border: 1px solid #9E9E9E;
+		background-color: #fff;
+		margin-bottom: 1rem;
+    }
+`
+
+/**
+ * Renders a scrollable table.
+ */
+export const ScrollableTable = styled.div`
+    overflow-x: auto;
+
+    & > table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    & > table > tr:hover,
+    & > tr:focus-within,
+    & > table tr:hover td,
+    & > table tr:focus-within td,
+    & > table tr:hover th,
+    & > table tr:focus-within th {
+        background-color: #f8f9fa;
+    }
+`

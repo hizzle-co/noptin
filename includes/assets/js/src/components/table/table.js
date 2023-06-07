@@ -11,6 +11,7 @@ import { withInstanceId } from '@wordpress/compose';
  */
 import BodyCell from './body-cell';
 import HeaderCell from './header-cell';
+import { ScrollableTable } from '../styled-components';
 
 const ASC = 'asc';
 const DESC = 'desc';
@@ -65,12 +66,8 @@ const Table = ( {
 	emptyMessage,
 	onQueryChange,
 } ) => {
-	const [ tabIndex, setTabIndex ] = useState( undefined );
 	const sortBy = query.orderby || 'id';
 	const sortDir = query.order || DESC;
-	const container = useRef( null );
-
-	const classes = classnames( className, 'noptin-table__table' );
 
 	const setSortBy = ( col ) => {
 
@@ -84,23 +81,10 @@ const Table = ( {
 
 	const hasData = !! rows.length;
 
-	useEffect( () => {
-		const scrollWidth = container.current?.scrollWidth;
-		const clientWidth = container.current?.clientWidth;
-
-		if ( scrollWidth === undefined || clientWidth === undefined ) {
-			return;
-		}
-
-		const scrollable = scrollWidth > clientWidth;
-		setTabIndex( scrollable ? 0 : undefined );
-	}, [] );
-
 	return (
-		<div
-			className={ classes }
-			ref={ container }
-			tabIndex={ tabIndex }
+		<ScrollableTable
+			className={ className }
+			tabIndex="0"
 			aria-hidden={ ariaHidden }
 			aria-labelledby={ `caption-${ instanceId }` }
 			role="group"
@@ -111,11 +95,9 @@ const Table = ( {
 					className="noptin-table__caption screen-reader-text"
 				>
 					{ caption }
-					{ tabIndex === 0 && (
-						<small>
-							{ __( '(scroll to see more)', 'newsletter-optin-box' ) }
-						</small>
-					) }
+					<small>
+						{ __( '(scroll to see more)', 'newsletter-optin-box' ) }
+					</small>
 				</caption>
 				<tbody>
 
@@ -167,7 +149,7 @@ const Table = ( {
 					) }
 				</tbody>
 			</table>
-		</div>
+		</ScrollableTable>
 	);
 };
 

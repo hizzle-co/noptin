@@ -13,6 +13,7 @@ import Papa from 'papaparse';
  */
 import { useSchema, useRecords } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
+import { BlockButton } from "../../styled-components";
 
 /**
  * Fetches records from the API and converts them to CSV.
@@ -31,7 +32,7 @@ const DownloadProgress = ({ fields, back, schema }) => {
 	const newArgs = {
 		...args,
 		_fields: fields.join(','),
-		per_page: -1,
+		number: -1,
 		context: 'edit',
 	}
 
@@ -151,12 +152,12 @@ const DownloadProgress = ({ fields, back, schema }) => {
 const DownloadFields = ({ fields, setFields, schema: { schema, ignore }, next } ) => {
 
 	return (
-		<Flex direction={'column'} gap={3}>
+		<Flex direction={'column'} gap={4}>
 
 			<FlexItem>
-				<Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
-					{__('Select the fields to include in your download', 'newsletter-optin-box')}
-				</Text>
+				<p className="description">
+					{__('Select the fields to include in your exported file', 'newsletter-optin-box')}
+				</p>
 			</FlexItem>
 
 			{schema.map((field) => {
@@ -185,10 +186,10 @@ const DownloadFields = ({ fields, setFields, schema: { schema, ignore }, next } 
 			})}
 
 			<FlexItem>
-				<Button variant="primary" onClick={next}>
+				<BlockButton variant="primary" onClick={next}>
 					<Icon icon={download} />
 					{__('Download', 'newsletter-optin-box')}
-				</Button>
+				</BlockButton>
 			</FlexItem>
 		</Flex>
 	);
@@ -243,13 +244,14 @@ export default function ExportButton() {
 	return (
 		<>
 
-			<Button onClick={() => setOpen(true)} variant="primary">
-				<Icon icon={download} />
-				{ __( 'Download', 'newsletter-optin-box' ) }
-			</Button>
+			<Button
+				onClick={() => setOpen(true)}
+				icon={download}
+				text={ __( 'Export', 'newsletter-optin-box' ) }
+			/>
 
 			{isOpen && (
-				<Modal title="&nbsp;" onRequestClose={() => setOpen(false)}>
+				<Modal title={ __( 'Export', 'newsletter-optin-box' ) } onRequestClose={() => setOpen(false)}>
 					<div className="hizzle-records-export-modal__body">
 						<TheModal />
 					</div>

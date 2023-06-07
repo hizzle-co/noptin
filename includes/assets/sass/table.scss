@@ -2,46 +2,8 @@
 @import 'util/mixins';
 @import 'util/breakpoints';
 
-#noptin-collection__overview-app {
-
-	.noptin-heading-text {
-		line-height: 1.2;
-		margin: 0px;
-		color: currentColor;
-		font-size: 16px;
-		font-weight: 600;
-	}
-}
-
-.hizzle-record-tabs {
-
-	> .components-tab-panel__tabs {
-		border: 1px solid #9E9E9E;
-		background-color: #fff;
-		margin-bottom: 1rem;
-	}
-}
-
 .noptin-table {
 	margin-bottom: $gap-largest;
-
-	.noptin-table__actions {
-		display: inline-flex;
-		justify-content: flex-end;
-		align-items: center;
-
-		> * {
-			margin-right: $gap;
-
-			&:last-child {
-				margin-right: 0;
-			}
-		}
-
-		> div {
-			width: 100%;
-		}
-	}
 
 	.components-card__footer {
 		flex-direction: column;
@@ -77,32 +39,10 @@
 	text-align: left;
 }
 
-.noptin-table__table {
-	overflow-x: auto;
-
-	table {
-		border-collapse: collapse;
-		width: 100%;
-	}
-
-	tr:hover,
-	tr:focus-within {
-		background-color: $gray-200;
-		td,
-		th {
-			background: transparent;
-		}
-	}
-}
-
 .noptin-table__header,
 .noptin-table__item,
 .noptin-table__empty-item {
 	padding: $gap $gap-large;
-}
-
-.noptin-table__row {
-	position: relative;
 }
 
 .noptin-table__header,
@@ -196,7 +136,6 @@ th.noptin-table__item {
 	}
 
 	&.is-sortable {
-		padding: 0;
 
 		svg {
 			visibility: hidden;

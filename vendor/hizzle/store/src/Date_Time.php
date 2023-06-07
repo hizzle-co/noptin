@@ -86,6 +86,12 @@ class Date_Time extends \DateTime {
 	public function context( $context = 'view' ) {
 
 		if ( 'view' === $context ) {
+
+			// If the time is midnight, return just the date.
+			if ( '00:00:00' === $this->format( 'H:i:s' ) ) {
+				return $this->date_i18n( 'F j, Y' );
+			}
+
 			return $this->date_i18n( 'F j, Y @ g:i a' );
 		}
 

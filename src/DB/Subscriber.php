@@ -334,8 +334,13 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @return array
 	 */
 	public function get_activity( $context = 'view' ) {
-		$activity = json_decode( $this->get_prop( 'activity', $context ), true );
-		return empty( $activity ) ? array() : $activity;
+		$activity = $this->get_prop( 'activity', $context );
+
+		if ( is_string( $activity ) ) {
+			$activity = json_decode( $activity, true );
+		}
+
+		return is_array( $activity ) ? $activity : array();
 	}
 
 	/**
@@ -376,8 +381,13 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @return array
 	 */
 	public function get_sent_campaigns( $context = 'view' ) {
-		$sent_campaigns = json_decode( $this->get_prop( 'sent_campaigns', $context ), true );
-		return empty( $sent_campaigns ) ? array() : $sent_campaigns;
+		$sent_campaigns = $this->get_prop( 'sent_campaigns', $context );
+
+		if ( is_string( $sent_campaigns ) ) {
+			$sent_campaigns = json_decode( $sent_campaigns, true );
+		}
+
+		return is_array( $sent_campaigns ) ? $sent_campaigns : array();
 	}
 
 	/**

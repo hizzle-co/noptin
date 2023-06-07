@@ -26,6 +26,7 @@ import Pagination from '../pagination';
 import Table from './table';
 import TablePlaceholder from './placeholder';
 import TableSummary, { TableSummaryPlaceholder } from './summary';
+import { CardHeadingText } from '../styled-components';
 
 /**
  * Displays a placeholder table while the data is loading.
@@ -148,7 +149,7 @@ const TableCard = ( {
 				<Flex gap={2} wrap>
 
 					<FlexItem>
-						<h2 className="noptin-heading-text">{ title }</h2>
+						<CardHeadingText as="h2">{ title }</CardHeadingText>
 					</FlexItem>
 
 					{ hasSearch && (

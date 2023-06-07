@@ -23,7 +23,7 @@ import { useRecord, useSchema } from "../../store-data/hooks";
  * Displays the collection navigation title.
  */
 const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
-	const { namespace, collection } = useRoute();
+	const { namespace, collection, path, navigate } = useRoute();
 	const { data } = useSchema( namespace, collection );
 	append = append ? ` - ${append}` : '';
 
@@ -53,6 +53,25 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 				<Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
 					{navTitle}
 				</Text>
+			</FlexItem>
+			<FlexItem>
+				{ `/${namespace}/${collection}` !== path ? (
+					<Button
+						variant="primary"
+						onClick={ () => navigate( `/${namespace}/${collection}` ) }
+						style={ { marginLeft: '10px' } }
+					>
+						{ data.labels?.name || __( 'View Records', 'newsletter-optin-box' ) }
+					</Button>
+				) : (
+					<Button
+						variant="primary"
+						onClick={ () => navigate( `/${namespace}/${collection}/add` ) }
+						style={ { marginLeft: '10px' } }
+					>
+						{ data.labels?.add_new_item || __( 'Add New', 'newsletter-optin-box' ) }
+					</Button>
+				) }
 			</FlexItem>
 		</Flex>
 	);
@@ -93,7 +112,7 @@ export default function Navigation() {
 	const TheRoutes = Object.keys( data.routes ).map( ( route ) => {
 
 		// Don't display routes that don't have a display.
-		if ( data.routes[ route ].hide || path === route ) {
+		if ( data.routes[ route ].hide || path === route || 'create-record' === data.routes[ route ].component || `/${namespace}/${collection}` === route ) {
 			return null;
 		}
 
@@ -101,18 +120,10 @@ export default function Navigation() {
 		let icon    = data.routes[ route ].icon;
 		let variant = 'secondary';
 
-		if ( `/${namespace}/${collection}` === route ) {
-			variant = 'primary';
-		}
-
 		// Add icon if it doesn't exist.
 		if ( ! icon ) {
 
 			switch (data.routes[ route ].component) {
-				case 'create-record':
-					icon = plus;
-					variant = 'primary';
-					break;
 				case 'import':
 					icon = cloudUpload;
 					break;

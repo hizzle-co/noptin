@@ -1,7 +1,8 @@
-import { FormToggle, Flex, FlexBlock, FlexItem, __experimentalUseNavigator as useNavigator, Button } from "@wordpress/components";
+import { FormToggle, Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
 import { dateI18n, getSettings, __experimentalGetSettings } from "@wordpress/date";
 import getEnumBadge from "./enum-colors";
 import { useRoute } from "../hooks";
+import { Avatar } from "../../styled-components";
 
 /**
  * Displays the primary column.
@@ -15,13 +16,8 @@ import { useRoute } from "../hooks";
 const PrimaryColumn = ( { record, name } ) => {
 
 	const { namespace, collection, navigate } = useRoute();
-	const value       = record[name];
-	const avatarStyle = {
-		height: '32px',
-		width: '32px',
-		borderRadius: '50%',
-	};
-	const avatar         = record.avatar_url ? <img src={ record.avatar_url } style={ avatarStyle } alt={ value } /> : null;
+	const value  = record[name];
+	const avatar = record.avatar_url ? <Avatar src={ record.avatar_url } alt={ value } /> : null;
 
 	const handleClick = () => {
 		navigate( `/${namespace}/${collection}/update`, { id: record.id } );
@@ -75,7 +71,9 @@ export default function DisplayCell( { record, name, label, description, length,
 
 	// Boolean values are displayed as a toggle.
 	if ( is_boolean ) {
-		return <FormToggle checked={ value } disabled={ readonly } onChange={ () => {} } />;
+
+		const icon = value ? 'yes' : 'no';
+		return <Icon size={ 24 } icon={ icon } />;
 	}
 
 	// Dates are formatted as a date.

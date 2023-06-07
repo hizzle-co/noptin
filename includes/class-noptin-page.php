@@ -362,7 +362,6 @@ class Noptin_Page {
 		// Process users.
 		if ( ! empty( $recipient['uid'] ) ) {
 			update_user_meta( $recipient['uid'], 'noptin_unsubscribed', 'unsubscribed' );
-			do_action( 'noptin_unsubscribe_user', $recipient['uid'] );
 		}
 
 		// Process campaigns.
@@ -411,30 +410,18 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function pre_resubscribe_user( $page ) {
-		global $wpdb;
 
 		// Fetch recipient.
 		$recipient = $this->get_request_recipient();
 
 		// Process subscribers.
 		if ( ! empty( $recipient['sid'] ) ) {
-
-			$wpdb->update(
-				get_noptin_subscribers_table_name(),
-				array( 'active' => 0 ),
-				array( 'id' => $recipient['sid'] ),
-				'%d',
-				'%d'
-			);
-
-			do_action( 'noptin_resubscribe_subscriber', $recipient['uid'] );
-
+			resubscribe_noptin_subscriber( $recipient['sid'] );
 		}
 
 		// Process users.
 		if ( ! empty( $recipient['uid'] ) ) {
 			delete_user_meta( $recipient['uid'], 'noptin_unsubscribed' );
-			do_action( 'noptin_resubscribe_user', $recipient['uid'] );
 		}
 
 		// Process campaigns.

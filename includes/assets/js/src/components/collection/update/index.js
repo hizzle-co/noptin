@@ -14,6 +14,7 @@ import { useRecord, useSchema } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
 import RecordOverview from "./overview";
 import TableTab from "./table-tab";
+import { StyledTabPanel } from "../../styled-components";
 
 /**
  * Displays a given tab.
@@ -118,9 +119,9 @@ const UpdateRecord = ( { component: { title } }, ref ) => {
 					<RenderTab tab={ tabs[0] } />
 				</Wrap>
 			) : (
-				<TabPanel className="hizzle-record-tabs" tabs={ tabs } initialTabName={ tab } onSelect={ onTabSelect }>
+				<StyledTabPanel tabs={ tabs } initialTabName={ tab } onSelect={ onTabSelect }>
 					{ ( tab ) => <RenderTab tab={ tab } /> }
-				</TabPanel>
+				</StyledTabPanel>
 			) }
 
 		</div>

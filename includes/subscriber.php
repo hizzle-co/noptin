@@ -437,6 +437,47 @@ function unsubscribe_noptin_subscriber( $subscriber ) {
 }
 
 /**
+ * Resubscribes a subscriber.
+ *
+ * @access public
+ * @since  1.13.0
+ */
+function resubscribe_noptin_subscriber( $subscriber ) {
+
+	// Fetch subscriber.
+	$subscriber = noptin_get_subscriber( $subscriber );
+
+	if ( ! $subscriber->exists() || $subscriber->is_active() ) {
+		return;
+	}
+
+	$subscriber->set_status( 'subscribed' );
+	$subscriber->save();
+}
+
+/**
+ * Sync user when subscription status changes.
+ *
+ * @param \Hizzle\Noptin\DB\Subscriber $subscriber Subscriber object.
+ */
+function sync_user_on_noptin_subscription_status_change( $subscriber ) {
+	$user = get_user_by( 'email', $subscriber->get_email() );
+
+	if ( ! $user ) {
+		return;
+	}
+
+	if ( 'unsubscribed' === $subscriber->get_status() ) {
+		update_user_meta( $user->ID, 'noptin_unsubscribed', 'unsubscribed' );
+		return;
+	}
+
+	delete_user_meta( $user->ID, 'noptin_unsubscribed' );
+}
+add_action( 'noptin_subscriber_status_set_to_subscribed', 'sync_user_on_noptin_subscription_status_change' );
+add_action( 'noptin_subscriber_status_set_to_unsubscribed', 'sync_user_on_noptin_subscription_status_change' );
+
+/**
  * Empties the subscriber cache.
  *
  * @deprecated 1.13.0
@@ -1327,6 +1368,7 @@ function noptin_get_subscription_sources() {
 	$sources['shortcode']  = __( 'Subscription Shortcode', 'newsletter-optin-box' );
 	$sources['users_sync'] = __( 'Users Sync', 'newsletter-optin-box' );
 	$sources['import']     = __( 'Imported', 'newsletter-optin-box' );
+	$sources['default']    = __( 'Default', 'newsletter-optin-box' );
 
 	// Cache.
 	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );
