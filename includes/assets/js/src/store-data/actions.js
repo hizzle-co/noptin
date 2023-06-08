@@ -73,3 +73,16 @@ export const setTabContent = ( id, tab_id, content ) => ( {
 	tab_id,
 	content,
 } );
+
+/**
+ * Sets a single record's overview.
+ *
+ * @param {string} id
+ * @param {Object} overview
+ * @return {Object} Action.
+ */
+export const setRecordOverview = ( id, overview ) => ( {
+	type: 'SET_RECORD_OVERVIEW',
+	id,
+	overview,
+} );

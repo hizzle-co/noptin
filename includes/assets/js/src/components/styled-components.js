@@ -151,3 +151,44 @@ export const ScrollableTable = styled.div`
         background-color: #f8f9fa;
     }
 `
+
+/**
+ * Calculates a loading placeholder size.
+ */
+const placeholderSizeStyle = ({ height, width, maxWidth }) => {
+    height = height ? height : '16px';
+    width = width ? width : '80%';
+    maxWidth = maxWidth ? maxWidth : '120px';
+
+    return css`
+        height: ${height};
+        width: ${width};
+        max-width: ${maxWidth};
+    `;
+}
+
+/**
+ * Displays a loading placeholder with a fading animation.
+ *
+ * @param {Object} props
+ * @param {String} props.height - The height of the placeholder.
+ * @param {String} props.width - The width of the placeholder.
+ * @param {String} props.maxWidth - The max width of the placeholder.
+ */
+export const LoadingPlaceholder = styled.div`
+    ${placeholderSizeStyle};
+    display: inline-block;
+    min-height: 1em;
+    vertical-align: middle;
+    cursor: wait;
+    background-color: currentColor;
+    opacity: .5;
+
+    animation: placeholder-glow 2s ease-in-out infinite;
+
+    @keyframes placeholder-glow {
+        50% {
+            opacity: .2;
+        }
+    }
+`

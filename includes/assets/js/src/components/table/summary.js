@@ -1,3 +1,5 @@
+import { LoadingPlaceholder } from "../styled-components";
+
 /**
  * A component to display summarized table data - the list of data passed in on a single line.
  */
@@ -29,7 +31,7 @@ export const TableSummaryPlaceholder = () => {
 	return (
 		<ul className="noptin-table__summary is-loading" role="complementary">
 			<li className="noptin-table__summary-item">
-				<span className="is-placeholder" />
+				<LoadingPlaceholder />
 			</li>
 		</ul>
 	);

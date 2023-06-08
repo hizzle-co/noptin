@@ -810,4 +810,13 @@ class Record {
 		return '<abbr title="' . esc_attr( $date->__toString() ) . '">' . esc_html( $date->context( 'view_day' ) ) . '</abbr>';
 	}
 
+	/**
+	 * Returns the record's overview.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	public function get_overview() {
+		return array();
+	}
 }

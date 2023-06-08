@@ -140,6 +140,29 @@ class REST_Controller extends \WP_REST_Controller {
 			)
 		);
 
+		// METHODS to READ a record's overview.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/(?P<id>[\d]+)/overview',
+			array(
+				'args'   => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the object.', 'hizzle-store' ),
+						'type'        => 'integer',
+					),
+				),
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_item_overview' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
+					'args'                => array(
+						'context' => $this->get_context_param( array( 'default' => 'view' ) ),
+					),
+				),
+				'schema' => '__return_empty_array',
+			)
+		);
+
 		// Allow operations by other unique keys.
 		if ( ! empty( $collection->keys['unique'] ) ) {
 
@@ -505,6 +528,25 @@ class REST_Controller extends \WP_REST_Controller {
 		$data = $this->prepare_item_for_response( $object, $request );
 
 		return rest_ensure_response( $data );
+
+	}
+
+	/**
+	 * Retrieves one item overview from the collection.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function get_item_overview( $request ) {
+		$object = $this->get_object( $request );
+
+		if ( ! $object || ! $object->exists() ) {
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+		}
+
+		return rest_ensure_response( array_values( $object->get_overview() ) );
 
 	}
 

@@ -100,6 +100,19 @@ export default function createResolvers( namespace, collection ) {
 			const content = yield apiFetch( { path } );
 
 			return setTabContent( id, tab_id, content );
-		}
+		},
+
+		/**
+		 * Retrieves a single record's overview data.
+		 *
+		 * @param {string} id
+		 * @return {Object} Action.
+		 */
+		*getRecordOverview( id ) {
+			const path     = `${namespace}/v1/${collection}/${id}/overview`;
+			const overview = yield apiFetch( { path } );
+
+			return setRecordOverview( id, overview );
+		},
 	}
 }

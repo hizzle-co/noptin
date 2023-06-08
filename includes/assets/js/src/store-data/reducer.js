@@ -104,6 +104,17 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 				},
 			};
 
+		/**
+		 * Set record overview keyed by the record ID.
+		 */
+		case 'SET_RECORD_OVERVIEW':
+			return {
+				...state,
+				recordOverview: {
+					...state.recordOverview,
+					[ action.id ]: action.overview,
+				},
+			};
 	}
 
 	// Return the state.

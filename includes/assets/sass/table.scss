@@ -55,18 +55,6 @@
 		display: block;
 	}
 
-	.is-placeholder {
-		@include placeholder();
-		display: inline-block;
-		height: 16px;
-		max-width: 120px;
-		width: 80%;
-	}
-
-	&.is-numeric .is-placeholder {
-		max-width: 40px;
-	}
-
 	.is-negative {
 		color: $alert-red;
 		font-weight: bold;
@@ -162,14 +150,6 @@ th.noptin-table__item {
 	margin-bottom: 0;
 	margin-left: $gap-smaller;
 	margin-right: $gap-smaller;
-
-	$place-holder-width: 200px;
-	.is-placeholder {
-		@include placeholder();
-		display: inline-block;
-		height: 16px;
-		width: $place-holder-width;
-	}
 
 	.noptin-table__summary-label,
 	.noptin-table__summary-value {

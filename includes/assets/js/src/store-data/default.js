@@ -24,7 +24,12 @@ export const DEFAULT_STATE = {
 	schema: {},
 
 	/**
-	 * Contains tab content key by subscriber ID and tab name, e.g.: { 1: { overview: <p>...</p> } }
+	 * Contains tab content key by record ID and tab name, e.g.: { 1: { overview: <p>...</p> } }
 	 */
 	tabContent: {},
+
+	/**
+	 * Record overview keyed by the record ID.
+	 */
+	recordOverview: {},
 };

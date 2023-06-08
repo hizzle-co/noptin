@@ -7,6 +7,7 @@ import { range } from 'lodash';
  * Internal dependencies
  */
 import Table from './table';
+import { LoadingPlaceholder } from "../styled-components";
 
 /**
  * A table placeholder component.
@@ -20,7 +21,7 @@ const TablePlaceholder = ( { query, headers, ...props } ) => {
 	const numberOfRows = query.per_page ? parseInt( query.per_page, 10 ) : 10;
 	const rows         = range( numberOfRows ).map( () =>
 		headers.map( () => ( {
-			display: <span className="is-placeholder" />,
+			display: <LoadingPlaceholder />,
 		} ) )
 	);
 

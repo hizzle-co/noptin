@@ -1,105 +1,27 @@
 /**
  * External dependencies
  */
-import { forwardRef, useState, useMemo } from "@wordpress/element";
-import { Notice, Spinner, CardBody, Button, Flex, FlexBlock, FlexItem, CardFooter } from "@wordpress/components";
+import { forwardRef, useState } from "@wordpress/element";
+import { Spinner, CardBody, Button, Flex, FlexItem } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { compact } from 'lodash';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
  */
 import { useRecord, useSchema } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
-import Setting from "../../setting";
 import Wrap from "../wrap";
+import EditForm from "./edit-form";
+import OverviewSection from "./overview-section";
 
 /**
- * Displays the edit form.
- *
- * @param {Object} props
- * @param {Object} props.component
+ * Displays an overview section.
  */
-const EditForm = ( { schema, record, error, onSaveRecord, setAttributes } ) => {
-
-	// Prepare form fields.
-	const fields = useMemo( () => ( compact(
-		schema.schema.map( ( field ) => {
-
-			// Abort for readonly and dynamic fields.
-			if ( field.readonly || field.is_dynamic ) {
-				return null;
-			}
-
-			// Abort for hidden fields...
-			if ( schema.hidden && schema.hidden.includes( field.name ) ) {
-				return null;
-			}
-
-			// ... and fields to ignore.
-			if ( schema.ignore && schema.ignore.includes( field.name ) ) {
-				return null;
-			}
-
-			const preparedSetting = {
-				default: field.default,
-				label: field.label,
-				el: 'input',
-				type: 'text',
-				name: field.name,
-				isInputToChange: true,
-			};
-
-			if ( field.enum && ! Array.isArray( field.enum ) ) {
-				preparedSetting.el = 'select';
-				preparedSetting.options = field.enum;
-			}
-
-			if ( field.isLongText ) {
-				preparedSetting.el = 'textarea';
-			}
-
-			if ( field.is_numeric || field.is_float ) {
-				preparedSetting.type = 'number';
-			}
-
-			if ( field.is_boolean ) {
-				preparedSetting.type = 'toggle';
-			}
-
-			if ( field.description && field.description !== field.label ) {
-				preparedSetting.description = field.description;
-			}
-
-			return preparedSetting;
-		} )
-	) ), [ schema ] );
-
-	// Display the add record form.
-	return (
-		<form onSubmit={ onSaveRecord }>
-
-			{ fields.map( ( field ) => (
-				<div style={ { marginBottom: '1.6rem' } } key={ field.name }>
-					<Setting
-						settingKey={ field.name }
-						saved={ record }
-						setAttributes={ setAttributes }
-						setting={ field }
-					/>
-				</div>
-			) ) }
-
-			{ error && (
-				<Notice status="error">
-					{ error.message }
-				</Notice>
-			) }
-
-		</form>
-	);
-
-}
+const Section = styled( FlexItem )`
+	width: 400px;
+	max-width: 100%;
+`
 
 /**
  * Allows the user to edit a single record.
@@ -189,14 +111,11 @@ const RecordOverview = ( { tab: {title} }, ref ) => {
 
 	// Display the add record form.
 	return (
-		<Wrap title={title} actions={ actions } ref={ ref }>
+		<Wrap title={title} ref={ ref }>
 
 			<CardBody>
 				<Flex align="start" wrap>
-					<FlexItem>
-						Overview goes here.
-					</FlexItem>
-					<FlexBlock>
+					<Section>
 						<EditForm
 							schema={ schema.data }
 							record={{ ...record.record, ...edits }}
@@ -204,13 +123,14 @@ const RecordOverview = ( { tab: {title} }, ref ) => {
 							onSaveRecord={ onSaveRecord }
 							setAttributes={ setAttributes }
 						/>
-					</FlexBlock>
+						{ actions }
+					</Section>
+					<Section>
+						<OverviewSection namespace={ namespace } collection={ collection } recordID={ args.id } />
+					</Section>
 				</Flex>
 			</CardBody>
 
-			<CardFooter>
-				{ actions }
-			</CardFooter>
 		</Wrap>
 	);
 

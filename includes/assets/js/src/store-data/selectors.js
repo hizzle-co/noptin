@@ -66,9 +66,16 @@ export const getRecord = ( state = DEFAULT_STATE, id ) => state.records[ id ] ||
 export const getSchema = ( state = DEFAULT_STATE ) => state.schema || {};
 
 /**
- * Retrieves the schema for a single record.
+ * Retrieves a single record tab's content.
  *
  * @param {string} id
  * @param {string} tab_id
  */
 export const getTabContent = ( state = DEFAULT_STATE, id, tab_id ) => state.tabContent[ `${id}_${tab_id}` ] || {};
+
+/**
+ * Retrieves a single record's overview data.
+ *
+ * @param {string} id
+ */
+export const getRecordOverview = ( state = DEFAULT_STATE, id ) => state.recordOverview[ id ] || {};

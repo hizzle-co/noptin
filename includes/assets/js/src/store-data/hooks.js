@@ -70,7 +70,11 @@ export function useRecord( namespace, collection, recordId ) {
  */
 export function useTabContent( namespace, collection, recordId, tabID ) {
 
+	// Prepare the store name.
 	const STORE_NAME = `${namespace}/${collection}`;
+
+	// Ensure we have a valid record ID.
+	recordId = parseInt( recordId, 10 );
 
 	return useSelect( ( select ) => {
 		const store = select( STORE_NAME );
@@ -83,6 +87,34 @@ export function useTabContent( namespace, collection, recordId, tabID ) {
 		}
 	},[ recordId, tabID ]);
 
+}
+
+/**
+ * Resolves the specified record's overview.
+ *
+ * @param {String} namespace
+ * @param {String} collection
+ * @param {Object} recordId ID of the requested record.
+ * @return {Object} The records resolution.
+ */
+export function useRecordOverview( namespace, collection, recordId ) {
+
+	// Prepare the store name.
+	const STORE_NAME = `${namespace}/${collection}`;
+
+	// Ensure we have a valid record ID.
+	recordId = parseInt( recordId, 10 );
+
+	return useSelect( ( select ) => {
+		const store = select( STORE_NAME );
+
+		return {
+			data: store.getRecordOverview( recordId ),
+			isResolving: () => store.isResolving( 'getRecordOverview', [ recordId ] ) || ! store.hasStartedResolution( 'getRecordOverview', [ recordId ] ),
+			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecordOverview', [ recordId ] ),
+			getResolutionError: () => store.getResolutionError( 'getRecordOverview', [ recordId ] ),
+		}
+	},[ recordId ]);
 }
 
 /**
