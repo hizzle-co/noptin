@@ -26,6 +26,7 @@ import initStore from "../../store-data";
 import { useRoute, URLContext } from "./hooks";
 import { useSchema } from "../../store-data/hooks";
 import Wrap from "./wrap";
+import { FullHeight } from "../styled-components";
 
 // Initialize the store.
 initStore('noptin', 'subscribers');
@@ -132,17 +133,19 @@ const Collection = () => {
  * @param {string} props.defaultRoute The default route.
  * @returns 
  */
-const WithNavigationProvider = ({ defaultRoute }) => (
-	<NavigatorProvider
-		initialPath={defaultRoute}
-		as={Flex}
-		direction="column"
-		gap={4}
-		className="noptin-collection__wrapper"
-		style={{ minHeight: '100vh' }}
-	>
-		<Collection />
-	</NavigatorProvider>
-);
+const WithNavigationProvider = ({ defaultRoute }) => {
+	const FullHeightNavigator = FullHeight.withComponent(NavigatorProvider);
+
+	return (
+		<FullHeightNavigator
+			initialPath={defaultRoute}
+			as={Flex}
+			direction="column"
+			gap={4}
+		>
+			<Collection />
+		</FullHeightNavigator>
+	)
+};
 
 export default WithNavigationProvider;

@@ -27,42 +27,10 @@
 		padding: $gap;
 		text-align: center;
 	}
-
-	.noptin-ellipsis-menu {
-		justify-content: flex-end;
-		display: flex;
-	}
-}
-
-.noptin-table__caption {
-	@include font-size( 24 );
-	text-align: left;
-}
-
-.noptin-table__header,
-.noptin-table__item,
-.noptin-table__empty-item {
-	padding: $gap $gap-large;
 }
 
 .noptin-table__header,
 .noptin-table__item {
-	@include font-size( 13 );
-	text-align: left;
-	border-bottom: 1px solid $table-border;
-
-	> a:only-child {
-		display: block;
-	}
-
-	.is-negative {
-		color: $alert-red;
-		font-weight: bold;
-	}
-
-	&.is-sorted {
-		background-color: $gray-100;
-	}
 
 	&.is-checkbox-column {
 		width: 33px;
@@ -75,53 +43,7 @@
 	}
 }
 
-.noptin-table tr:last-child .noptin-table__item {
-	border-bottom: 0;
-}
-
-.noptin-table__empty-item {
-	text-align: left;
-	@include font-size( 18 );
-	color: $gray-700;
-	font-weight: bold;
-    padding: 2rem;
-
-	@include breakpoint( '<782px' ) {
-		@include font-size( 13 );
-	}
-}
-
-th.noptin-table__item {
-	font-weight: normal;
-}
-
 .noptin-table__header {
-	padding: $gap-smaller $gap-large;
-	background-color: #f8f9fa;
-	font-weight: bold;
-	white-space: nowrap;
-	min-width: 160px;
-
-	&.is-sortable svg {
-		display: inline-flex;
-		order: 1;
-		margin-left: 0;
-	}
-
-	.components-button {
-		height: auto;
-		width: 100%;
-		text-align: left;
-		vertical-align: middle;
-    	line-height: 1;
-		font-weight: bold;
-		background: transparent !important;
-		box-shadow: none !important;
-
-		&.has-icon {
-			justify-content: flex-start;
-		}
-	}
 
 	&.is-sortable {
 
@@ -199,8 +121,4 @@ th.noptin-table__item {
 			text-transform: none;
 		}
 	}
-}
-
-.noptin-collection__wrapper.components-navigator-provider {
-	min-height: 100vh;
 }

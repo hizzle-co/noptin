@@ -26,7 +26,7 @@ import Pagination from '../pagination';
 import Table from './table';
 import TablePlaceholder from './placeholder';
 import TableSummary, { TableSummaryPlaceholder } from './summary';
-import { CardHeadingText } from '../styled-components';
+import { CardHeadingText, Bordered } from '../styled-components';
 
 /**
  * Displays a placeholder table while the data is loading.
@@ -142,8 +142,10 @@ const TableCard = ( {
 		onQueryChange({search: value});
 	}, 1500);
 
+	const BorderedCard = Bordered.withComponent(Card);
+
 	return (
-		<Card className={ classnames( 'noptin-table', className ) } elevation={2}>
+		<BorderedCard className={ classnames( 'noptin-table', className ) } elevation={0}>
 
 			<CardHeader>
 				<Flex gap={2} wrap>
@@ -194,7 +196,7 @@ const TableCard = ( {
 					) }
 				</CardFooter>
 			) }
-		</Card>
+		</BorderedCard>
 	);
 };
 

@@ -2,16 +2,13 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useRef, useState, useEffect, } from '@wordpress/element';
-import classnames from 'classnames';
-import { withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import BodyCell from './body-cell';
 import HeaderCell from './header-cell';
-import { ScrollableTable } from '../styled-components';
+import { ScrollableTable, TableRow, TableCellNoData } from '../styled-components';
 
 const ASC = 'asc';
 const DESC = 'desc';
@@ -42,7 +39,6 @@ const getRowKey = ( row, index ) => {
  * Headers are passed in separately as an array of objects with column-related properties.
  *
  * @param {Object} props Component props.
- * @param {string} props.instanceId Instance ID for the component.
  * @param {Array} props.headers Array of objects with column-related properties.
  * @param {Array} props.rows Array of arrays, where each array is a row in the table.
  * @param {boolean} props.ariaHidden Whether the table should be hidden from screen readers.
@@ -55,7 +51,6 @@ const getRowKey = ( row, index ) => {
  * @param {Function} props.onChangeSortBy Callback function for when the sort column is changed.
  */
 const Table = ( {
-	instanceId,
 	query,
 	headers = [],
 	rows = [],
@@ -86,29 +81,19 @@ const Table = ( {
 			className={ className }
 			tabIndex="0"
 			aria-hidden={ ariaHidden }
-			aria-labelledby={ `caption-${ instanceId }` }
+			aria-label={ `${ caption } - ${ __( '(scroll to see more)', 'newsletter-optin-box' ) }` }
 			role="group"
 		>
 			<table>
-				<caption
-					id={ `caption-${ instanceId }` }
-					className="noptin-table__caption screen-reader-text"
-				>
-					{ caption }
-					<small>
-						{ __( '(scroll to see more)', 'newsletter-optin-box' ) }
-					</small>
-				</caption>
 				<tbody>
 
-					<tr className="noptin-table__row">
+					<TableRow className="noptin-table__row">
 						{ headers.map( ( header, i ) => {
 							
 							const { key, label, isSortable, ...props } = header;
 							return (
 								<HeaderCell
 									key={ key }
-									instanceId={ instanceId }
 									columnLabel={ label }
 									columnKey={ key }
 									isSortable={ isSortable && hasData }
@@ -120,11 +105,11 @@ const Table = ( {
 							);
 
 						} ) }
-					</tr>
+					</TableRow>
 
 					{ hasData ? (
 						rows.map( ( row, i ) => (
-							<tr className="noptin-table__row" key={ getRowKey( row, i ) }>
+							<TableRow className="noptin-table__row" key={ getRowKey( row, i ) }>
 								{ row.map( ( cell, j ) => (
 									<BodyCell
 										{...headers[ j ]}
@@ -134,18 +119,14 @@ const Table = ( {
 										isSorted={ sortBy === headers[ j ].key }
 									/>
 								) ) }
-							</tr>
+							</TableRow>
 						) )
 					) : (
-						<tr className="noptin-table__row">
-							<td
-								className="noptin-table__empty-item"
-								colSpan={ headers.length }
-							>
-								{ emptyMessage ??
-									__( 'No data to display', 'newsletter-optin-box' ) }
-							</td>
-						</tr>
+						<TableRow className="noptin-table__row">
+							<TableCellNoData colSpan={ headers.length }>
+								{ emptyMessage ?? __( 'No data to display', 'newsletter-optin-box' ) }
+							</TableCellNoData>
+						</TableRow>
 					) }
 				</tbody>
 			</table>
@@ -153,4 +134,4 @@ const Table = ( {
 	);
 };
 
-export default withInstanceId( Table );
+export default Table;

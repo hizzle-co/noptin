@@ -4,6 +4,10 @@
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import { TableCell } from '../styled-components';
 import { alignmentStyle } from './header-cell';
 
 /**
@@ -13,21 +17,22 @@ import { alignmentStyle } from './header-cell';
  */
 export default function BodyCell( { cell, cellClassName, align, isNumeric, isHeader, isSorted } ){
 
-	const Cell = isHeader ? 'th' : 'td';
+	const Cell = isHeader ? TableCell.withComponent( 'th' ) : TableCell;
 
-	const cellClasses = classnames(
-		'noptin-table__item',
-		cellClassName,
-		{
-			'is-numeric': isNumeric,
-			'is-sorted': isSorted,
-		}
-	);
-
-	const cellStyle = alignmentStyle( align, isNumeric );
+	const cellProps  = {
+		className: classnames(
+			'noptin-table__item',
+			cellClassName,
+			{
+				'is-numeric': isNumeric,
+				'is-sorted': isSorted,
+			}
+		),
+		...alignmentStyle( align, isNumeric ),
+	};
 
 	return (
-		<Cell scope={ isHeader ? 'row' : undefined } style={ cellStyle } className={ cellClasses }>
+		<Cell scope={ isHeader ? 'row' : undefined } isSorted={ isSorted } { ...cellProps }>
 			{ cell.display || null }
 		</Cell>
 	);

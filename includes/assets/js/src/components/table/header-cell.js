@@ -4,7 +4,12 @@
 import { __, sprintf } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { Button } from '@wordpress/components';
-import { chevronUp, chevronDown } from '@wordpress/icons';
+import { chevronUp, chevronDown, Icon } from '@wordpress/icons';
+
+/**
+ * Internal dependencies
+ */
+import { TableHeader } from '../styled-components';
 
 export const alignmentStyle = ( align, isNumeric ) => {
 
@@ -14,10 +19,10 @@ export const alignmentStyle = ( align, isNumeric ) => {
 	}
 
 	if ( 'center' === align || isNumeric ) {
-		return { textAlign: 'center' };
+		return { align: 'center' };
 	}
 
-	return { textAlign: align };
+	return { align };
 }
 
 /**
@@ -25,13 +30,12 @@ export const alignmentStyle = ( align, isNumeric ) => {
  *
  * @param {Object} props Component props.
  */
-export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel, cellClassName, align, isSortable, isNumeric, isSorted, sortDir, onClick, instanceId } ) {
+export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel, cellClassName, align, isSortable, isNumeric, isSorted, sortDir, onClick } ) {
 
 	// Label the header cell for screen readers.
-	const labelId = `header-${ columnKey }-${ instanceId }`;
+	const alignment = alignmentStyle( align, isNumeric );
 
 	// Prepare props.
-	const btnStyle = {};
 	const thProps  = {
 		className: classnames(
 			'noptin-table__header',
@@ -42,7 +46,7 @@ export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel,
 				'is-numeric': isNumeric,
 			}
 		),
-		style: alignmentStyle( align, isNumeric ),
+		...alignment,
 	};
 
 	// Adding aria-sort attribute to the header cell.
@@ -50,12 +54,6 @@ export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel,
 		thProps[ 'aria-sort' ] = 'none';
 		if ( isSorted ) {
 			thProps[ 'aria-sort' ] = sortDir === 'asc' ? 'ascending' : 'descending';
-		}
-
-		if ( 'right' === align ) {
-			btnStyle.justifyContent = 'flex-end';
-			btnStyle.paddingRight   = '24px';
-			btnStyle.paddingLeft    = '24px';
 		}
 	}
 
@@ -78,23 +76,19 @@ export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel,
 		</>
 	);
 
+	const TheIcon = <Icon icon={ sortDir !== 'asc' ? chevronDown : chevronUp } />;
+
 	return (
-		<th role="columnheader" scope="col" key={ columnKey } { ...thProps }>
+		<TableHeader role="columnheader" scope="col" key={ columnKey } isSorted={ isSorted } { ...thProps }>
 			{ ( isSortable ) ? (
-				<>
-					<Button
-						aria-describedby={ labelId } onClick={ onClick }
-						icon={ sortDir !== 'asc' ? chevronDown : chevronUp}
-						text={ textLabel }
-						iconPosition="right"
-					/>
-					<span className="screen-reader-text" id={ labelId }>
-						{ iconLabel }
-					</span>
-				</>
+				<Button onClick={ onClick } label={ iconLabel } showTooltip>
+					{ 'right' === alignment.align && TheIcon }
+					<span> {textLabel} </span>
+					{ 'right' !== alignment.align && TheIcon }
+				</Button>
 			) : (
 				textLabel
 			) }
-		</th>
+		</TableHeader>
 	);
 };
