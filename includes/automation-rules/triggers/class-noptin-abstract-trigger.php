@@ -702,10 +702,10 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		// Maybe fetch the subscriber.
 		if ( empty( $subject ) && ! empty( $args['noptin_subject_subscriber'] ) ) {
-			$subject = get_noptin_subscriber( $args['noptin_subject_subscriber'] );
+			$subject = noptin_get_subscriber( $args['noptin_subject_subscriber'] );
 
 			if ( $subject->exists() ) {
-				$args['subject'] = $subject;
+				$args['subject'] = $subject->get_deprecated_subscriber();
 			} else {
 				throw new Exception( 'Subscriber not found' );
 			}

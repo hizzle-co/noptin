@@ -117,7 +117,7 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 		if ( $subject instanceof Noptin_Subscriber ) {
 			$subscriber = $subject;
 		} else {
-			$subscriber = get_noptin_subscriber( $args['email'] );
+			$subscriber = noptin_get_subscriber( $args['email'] );
 		}
 
 		// Nothing to do here.
@@ -154,16 +154,13 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 			return false;
 		}
 
-		// Check if we have a valid subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			return true;
-		}
+		$email = $this->get_subject_email( $subject, $rule, $args );
 
-		if ( empty( $args['email'] ) ) {
+		if ( empty( $email ) ) {
 			return false;
 		}
 
-		$subscriber = get_noptin_subscriber( $args['email'] );
+		$subscriber = noptin_get_subscriber( $email );
 
 		return $subscriber->exists();
 	}

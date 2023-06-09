@@ -30,6 +30,11 @@ function noptin_get_subscribers( $args = array(), $return = 'results' ) {
  */
 function noptin_get_subscriber( $subscriber = 0 ) {
 
+	// Deprecated subscriber.
+	if ( $subscriber instanceof Noptin_Subscriber ) {
+		$subscriber = $subscriber->id;
+	}
+
 	// Email or confirm key.
 	if ( is_string( $subscriber ) && ! is_numeric( $subscriber ) ) {
 

@@ -199,7 +199,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 			return $subject->get_email();
 		}
 
-		// Maybe fetch from the subscriber.
+		// Maybe fetch from the deprecated subscriber.
 		if ( $subject instanceof Noptin_Subscriber ) {
 			return $subject->email;
 		}

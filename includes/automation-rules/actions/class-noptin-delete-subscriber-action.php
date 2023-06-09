@@ -63,7 +63,7 @@ class Noptin_Delete_Subscriber_Action extends Noptin_Abstract_Action {
 	public function can_run( $subject, $rule, $args ) {
 
 		// Fetch the subscriber.
-		$subscriber = get_noptin_subscriber( $this->get_subject_email( $subject, $rule, $args ) );
+		$subscriber = noptin_get_subscriber( $this->get_subject_email( $subject, $rule, $args ) );
 
 		return $subscriber->exists();
 	}
