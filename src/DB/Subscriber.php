@@ -117,7 +117,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @return bool
 	 */
 	public function is_active() {
-		return 'subscribed' === $this->get_status();
+		return $this->exists() && 'subscribed' === $this->get_status();
 	}
 
 	/**

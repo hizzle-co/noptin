@@ -1652,20 +1652,20 @@ function noptin_get_user_logged_in_status() {
  */
 function noptin_is_wp_user_unsubscribed( $user_id ) {
 
-	// If the user is also a subscriber, ensure they are not unsubscribed.
-	// TODO: Resubscribe users when subscribers resubscribe.
 	$user = get_user_by( 'ID', $user_id );
 
 	if ( $user ) {
 
-		$subscriber = get_noptin_subscriber( $user->user_email );
+		$subscriber = noptin_get_subscriber( $user->user_email );
 
-		if ( $subscriber->exists() && ! $subscriber->is_active() ) {
+		if ( ! $subscriber->is_active() ) {
 			return false;
 		}
+
+		return 'unsubscribed' === get_user_meta( $user_id, 'noptin_unsubscribed', true );
 	}
 
-	return 'unsubscribed' === get_user_meta( $user_id, 'noptin_unsubscribed', true );
+	return false;
 }
 
 /**
