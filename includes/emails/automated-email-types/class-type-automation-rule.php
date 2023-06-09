@@ -249,10 +249,10 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			}
 
 			// Fetch the subscriber.
-			$subscriber = get_noptin_subscriber( $recipient );
+			$subscriber = noptin_get_subscriber( $recipient );
 
 			if ( $subscriber->exists() ) {
-				$this->subscriber = $subscriber;
+				$this->subscriber = $subscriber->get_deprecated_subscriber();
 			}
 
 			// Send the email.

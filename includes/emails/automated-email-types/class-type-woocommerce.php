@@ -1198,10 +1198,10 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		// Maybe set related subscriber.
 		if ( ! empty( $email ) ) {
 
-			$subscriber = get_noptin_subscriber( $email );
+			$subscriber = noptin_get_subscriber( $email );
 
 			if ( $subscriber->exists() ) {
-				$this->subscriber = $subscriber;
+				$this->subscriber = $subscriber->get_deprecated_subscriber();
 			}
 		}
 

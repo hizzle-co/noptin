@@ -39,9 +39,6 @@ class Noptin_Email_Manager {
 	/** @var Noptin_One_Time_Email_Type */
 	public $one_time;
 
-	/** @var Noptin_Mass_Mailer_Subscribers */
-	public $subscribers_mailer;
-
 	/**
 	 * Class constructor.
 	 *
@@ -80,7 +77,6 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type-automation-rule.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer-subscribers.php';
 
 	}
 
@@ -94,7 +90,6 @@ class Noptin_Email_Manager {
 		$this->automated_email_types = new Noptin_Automated_Email_Types();
 		$this->newsletter            = new Noptin_Newsletter_Email_Type();
 		$this->one_time              = new Noptin_One_Time_Email_Type();
-		$this->subscribers_mailer    = new Noptin_Mass_Mailer_Subscribers();
 
 		do_action( 'noptin_email_manager_init', $this );
 	}
