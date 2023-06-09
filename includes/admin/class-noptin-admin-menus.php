@@ -162,41 +162,17 @@ class Noptin_Admin_Menus {
 	 * Subscribers.
 	 */
 	public function subscribers_menu() {
-		$is_component_page = false;
-
-		// Either render the appropriate component...
-		foreach ( Noptin_Subscribers_Admin::get_components() as $component => $details ) {
-
-			if ( isset( $_GET[ $component ] ) ) {
-				$title             = $details['label'];
-				$script            = isset( $details['script'] ) ? $details['script'] : '';
-				$is_component_page = true;
-				break;
-			}
-		}
-
-		// Or the subscriber's overview page.
-		if ( ! $is_component_page ) {
-			$title  = __( 'Email Subscribers', 'newsletter-optin-box' );
-			$script = 'subscribers';
-		}
 
 		$hook_suffix = add_submenu_page(
 			'noptin',
-			apply_filters( 'noptin_admin_subscribers_page_title', $title ),
+			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin-subscribers',
 			'Noptin_Subscribers_Admin::output'
 		);
 
-		if ( ! empty( $script ) ) {
-			Noptin_Scripts::add_admin_script( $hook_suffix, $script );
-
-			if ( 'subscribers' === $script ) {
-				Noptin_Scripts::add_admin_script( $hook_suffix, 'table' );
-			}
-		}
+		Noptin_Scripts::add_admin_script( $hook_suffix, 'table' );
 	}
 
 	/**

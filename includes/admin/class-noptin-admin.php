@@ -68,13 +68,6 @@ class Noptin_Admin {
 	public $assets_path;
 
 	/**
-	 * Admin filters.
-	 *
-	 * @var Noptin_Admin_Filters
-	 */
-	public $filters;
-
-	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -108,8 +101,6 @@ class Noptin_Admin {
 		$this->assets_path = plugin_dir_path( Noptin::$file ) . 'includes/assets/';
 
 		$this->admin_menus = new Noptin_Admin_Menus();
-
-		$this->filters = new Noptin_Admin_Filters();
 
 		// initialize hooks.
 		Noptin_Subscribers_Admin::init_hooks();

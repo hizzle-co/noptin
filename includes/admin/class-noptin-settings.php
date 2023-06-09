@@ -376,12 +376,7 @@ class Noptin_Settings {
 				'label'       => __( 'Footer text', 'newsletter-optin-box' ),
 				'placeholder' => noptin()->mailer->default_footer_text(),
 				'default'     => noptin()->mailer->default_footer_text(),
-				'description' => sprintf(
-					/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
-					__( 'This text appears below all emails. If you are a %1$sNoptin affiliate%2$s, include your affiliate link here and earn commissions for new referrals.', 'newsletter-optin-box' ),
-					'<a href="' . esc_url( noptin_get_upsell_url( 'become-an-affiliate/', 'settings', 'link' ) ) . '">',
-					'</a>'
-				),
+				'description' => __( 'This text appears below all emails.', 'newsletter-optin-box' ),
 			),
 
 			'custom_css'                   => array(

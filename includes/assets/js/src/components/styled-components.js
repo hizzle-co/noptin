@@ -5,6 +5,16 @@ import { css } from '@emotion/react';
 const BORDER_COLOR = '#e2e4e7';
 
 /**
+ * Uses withComponent to compose several styled components into a single component.
+ *
+ * @param {Array} styles An array of styled components.
+ */
+const composeStyles = ( styles ) =>  ( component ) => {
+	const combined = styles.reduceRight( ( acc, style ) => acc.withComponent( style ), styled.div );
+    return combined.withComponent( component );
+}
+
+/**
  * Displays a bordered component.
  */
 export const Bordered = styled.div`
@@ -16,6 +26,39 @@ export const Bordered = styled.div`
  */
 export const FullHeight = styled.div`
 	min-height: 100vh;
+`
+
+/**
+ * Adds a bottom margin to a component.
+ */
+export const withBottomMargin = css`
+	margin-bottom: 1.6rem;
+`
+
+/**
+ * Renders a copied text that slides up then disappears.
+ */
+export const CopiedText = styled.span`
+	color: #13881e;
+	font-size: 12px;
+	display: inline-block;
+	z-index: 1;
+	animation: hizzle-slideUp 1s linear;
+
+	@keyframes hizzle-slideUp {
+		0% {
+			opacity: 0;
+			transform: translateY( 10px );
+		}
+		50% {
+			opacity: 1;
+			transform: translateY( -10px );
+		}
+		100% {
+			opacity: 0;
+			transform: translateY( -20px );
+		}
+	}
 `
 
 /**
@@ -31,6 +74,32 @@ export const BlockButton = styled( Button, { shouldForwardProp: prop => ! ['maxW
 	min-height: 50px;
 	margin: ${props => (props.__withNoMargin ? '0' : '1.6rem 0')};
 	max-width: ${props => (props.maxWidth ? props.maxWidth : '100%')};
+`
+
+/**
+ * Displays an upsell div.
+ */
+export const Upsell = styled.div`
+	border: 4px solid #ff5722;
+	background-color: #fff3f0;
+	padding: 1rem;
+	border-radius: 4px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 100px;
+	box-shadow: 1px 3px 2px 0 #ff5722;
+
+	& p {
+		font-size: 14px;
+	}
+
+	& .components-button {
+		margin-left: 4px;
+	}
+
+	${ withBottomMargin }
 `
 
 /**

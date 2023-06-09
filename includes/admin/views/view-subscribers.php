@@ -24,15 +24,4 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 	</div>
 
-	<p class="description">
-		<?php
-			printf(
-				// translators: %1$s Opening link tag, %2$s Closing link tag.
-				esc_html__( 'Store more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
-				'<a href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
-				'</a>'
-			);
-		?>
-	</p>
-
 </div>

@@ -1,6 +1,7 @@
 import { __experimentalUseNavigator as useNavigator } from "@wordpress/components";
 import { useMemo, createContext, useContext } from "@wordpress/element";
 import { getQueryArgs, getQueryArg, addQueryArgs } from '@wordpress/url';
+import { useSchema } from "../../store-data/hooks";
 
 /**
  * Pass the current URL via context to ensure that the URL is always up to date.
@@ -90,5 +91,30 @@ export function useRoute() {
 		navigate,
 		goBack,
 		goToParent,
+	}
+}
+
+/**
+ * Resolves the current path schema.
+ *
+ * @return {Object} The schema resolution.
+ */
+export function useCurrentPath() {
+	const { path, namespace, collection, args } = useRoute();
+	const { data } = useSchema( namespace, collection );
+
+	const toReturn = { path, namespace, collection, args };
+
+	// Abort if path is not found.
+	if ( ! data?.routes?.[ path ] ) {
+		return {
+			...toReturn,
+			schema: {},
+		}
+	}
+
+	return {
+		...toReturn,
+		schema: data?.routes?.[ path ],
 	}
 }

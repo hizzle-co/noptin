@@ -369,6 +369,33 @@ class Main {
 
 		$params['id_prop'] = 'email';
 
+		$tip = sprintf(
+			// translators: %1$s is the opening link tag, %2$s is the closing link tag.
+			esc_html__( 'Store more information about your subscribers by %1$screating custom fields%2$s.', 'newsletter-optin-box' ),
+			'<a href="' . esc_url_raw( admin_url( 'admin.php?page=noptin-settings&tab=fields' ) ) . '">',
+			'</a>'
+		);
+
+		$upsell      = __( 'The Ultimate Addons Pack allows you to segment your subscribers using lists and tags.', 'newsletter-optin-box' );
+		$upsell_url  = noptin_get_upsell_url( '/ultimate-addons-pack/', 'segment', 'email-subscribers' );
+		$upsell_text = __( 'Learn More', 'newsletter-optin-box' );
+
+		foreach ( array( 'add', 'update', 'import' ) as $route ) {
+			$route = "/noptin/subscribers/$route";
+
+			if ( isset( $params['routes'][ $route ] ) ) {
+				$params['routes'][ $route ]['tip'] = $tip;
+
+				if ( ! defined( 'NOPTIN_ADDONS_PACK_FILE' ) ) {
+					$params['routes'][ $route ]['upsell'] = array(
+						'buttonText' => $upsell_text,
+						'butteonURL' => $upsell_url,
+						'content'    => $upsell,
+					);
+				}
+			}
+		}
+
 		return $params;
 	}
 

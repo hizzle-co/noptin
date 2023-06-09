@@ -1203,7 +1203,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$prefix     = $this->admin_routes_prefix;
 
 		return apply_filters(
-			'hizzle_rest_' . $this->get_normalized_rest_base() . '_admin_app_routes',
+			$this->prefix_hook( 'admin_app_routes' ),
 			array(
 				$prefix          => array(
 					'title'     => $collection->get_label(

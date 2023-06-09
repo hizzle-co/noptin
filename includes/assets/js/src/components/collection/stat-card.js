@@ -17,7 +17,8 @@ const statusStyle = ({ status }) => {
             border-color: #c3e6cb;
             color: #155724;
 
-            & h2 {
+            & h2,
+            & h3 {
                 color: #155724;
             }
         `;
@@ -30,7 +31,8 @@ const statusStyle = ({ status }) => {
             border-color: #bee5eb;
             color: #0c5460;
 
-            & h2 {
+            & h2,
+            & h3 {
                 color: #0c5460;
             }
         `;
@@ -43,7 +45,8 @@ const statusStyle = ({ status }) => {
             border-color: #ffeeba;
             color: #856404;
 
-            & h2 {
+            & h2,
+            & h3 {
                 color: #856404;
             }
         `;
@@ -56,8 +59,23 @@ const statusStyle = ({ status }) => {
             border-color: #f5c6cb;
             color: #cc1818;
 
-            & h2 {
+            & h2,
+            & h3 {
                 color: #cc1818;
+            }
+        `;
+    }
+
+    // Dark.
+    if ( 'dark' === status ) {
+        return css`
+            background-color: #212529;
+            border-color: #212529;
+            color: #f8f9fa;
+
+            & h2,
+            & h3 {
+                color: #f8f9fa;
             }
         `;
     }
@@ -68,7 +86,8 @@ const statusStyle = ({ status }) => {
         border-color: rgb(0 0 0 / 13%);
         color: #212529;
 
-        & h2 {
+        & h2,
+        & h3 {
             color: #212529;
         }
     `;
@@ -81,9 +100,11 @@ const Container = styled.div`
     ${statusStyle};
     border-width: 1px;
     border-style: none;
-    padding: 1rem;
+    padding: 0.25rem;
     text-align: center;
     box-shadow: 2px 2px 2px rgb(0 0 0 / 5%);
+    min-width: 100px;
+    border-radius: 4px;
 `
 
 /**

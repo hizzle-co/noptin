@@ -78,4 +78,4 @@ export const getTabContent = ( state = DEFAULT_STATE, id, tab_id ) => state.tabC
  *
  * @param {string} id
  */
-export const getRecordOverview = ( state = DEFAULT_STATE, id ) => state.recordOverview[ id ] || {};
+export const getRecordOverview = ( state = DEFAULT_STATE, id ) => state.recordOverview[ id ] || [];

@@ -22,8 +22,6 @@ class Noptin_Subscribers_Admin {
 	public static function init_hooks() {
 		add_action( 'add_meta_boxes_noptin_subscribers', 'Noptin_Subscribers_Admin::register_metaboxes' );
 		add_action( 'noptin_admin_delete_all_subscribers', 'Noptin_Subscribers_Admin::delete_all_subscribers' );
-		add_action( 'noptin_admin_add_subscriber', 'Noptin_Subscribers_Admin::add_subscriber' );
-		add_action( 'noptin_update_admin_edited_subscriber', 'Noptin_Subscribers_Admin::update_edited_subscriber' );
 		add_action( 'noptin_delete_email_subscriber', 'Noptin_Subscribers_Admin::delete_subscriber' );
 		add_action( 'admin_init', 'Noptin_Subscribers_Admin::maybe_redirect_to_newsletter' );
 	}
@@ -147,16 +145,6 @@ class Noptin_Subscribers_Admin {
 		return apply_filters(
 			'noptin_admin_subscribers_page_components',
 			array(
-				'subscriber'    => array(
-					'callback'     => 'Noptin_Subscribers_Admin::render_single_subscriber_page',
-					'show_on_tabs' => false,
-					'label'        => __( 'Edit Subscriber', 'newsletter-optin-box' ),
-				),
-				'add'           => array(
-					'callback'     => 'Noptin_Subscribers_Admin::render_add_subscriber_page',
-					'show_on_tabs' => false,
-					'label'        => __( 'Add Subscriber', 'newsletter-optin-box' ),
-				),
 				'custom_fields' => array(
 					'callback'     => 'Noptin_Subscribers_Admin::render_custom_fields_page',
 					'show_on_tabs' => true,
@@ -176,158 +164,6 @@ class Noptin_Subscribers_Admin {
 		do_action( 'noptin_before_subscribers_overview_page', noptin()->admin );
 		include plugin_dir_path( __FILE__ ) . 'views/view-subscribers.php';
 		do_action( 'noptin_after_subscribers_overview_page', noptin()->admin );
-	}
-
-	/**
-	 * Displays a single subscriber.
-	 *
-	 * @param       int $subscriber The subscriber to display.
-	 * @access      public
-	 * @since       1.1.1
-	 * @return      void
-	 */
-	public static function render_single_subscriber_page() {
-
-		$subscriber = isset( $_GET['subscriber'] ) ? (int) $_GET['subscriber'] : 0;
-		$subscriber = new Noptin_Subscriber( $subscriber );
-
-		do_action( 'noptin_admin_before_single_subscriber_page', $subscriber, noptin()->admin );
-
-		if ( $subscriber->exists() ) {
-
-			do_action( 'add_meta_boxes_noptin_subscribers', $subscriber );
-			include plugin_dir_path( __FILE__ ) . 'views/single-subscriber/subscriber.php';
-
-		} else {
-			include plugin_dir_path( __FILE__ ) . 'views/single-subscriber/404.php';
-		}
-
-		do_action( 'noptin_admin_after_single_subscriber_page', $subscriber, noptin()->admin );
-	}
-
-	/**
-	 * Displays the add subscriber page.
-	 *
-	 * @since 1.5.5
-	 */
-	public static function render_add_subscriber_page() {
-		do_action( 'noptin_admin_before_add_subscriber_page', noptin()->admin );
-		include plugin_dir_path( __FILE__ ) . 'views/add-subscriber.php';
-		do_action( 'noptin_admin_after_add_subscriber_page', noptin()->admin );
-	}
-
-	/**
-	 * Saves a submitted subscriber.
-	 *
-	 * @since       1.5.5
-	 */
-	public static function add_subscriber() {
-
-		// Only admins should be able to add subscribers.
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-admin-add-subscriber'] ) ) {
-			return;
-		}
-
-		// Verify nonces to prevent CSRF attacks.
-		if ( ! wp_verify_nonce( $_POST['noptin-admin-add-subscriber'], 'noptin-admin-add-subscriber' ) ) {
-			return;
-		}
-
-		// Prepare subscriber fields.
-		$subscriber_fields = array(
-			'source'    => 'manual',
-			'active'    => (int) $_POST['noptin_fields']['active'],
-			'confirmed' => (int) $_POST['noptin_fields']['confirmed'],
-		);
-
-		foreach ( get_noptin_custom_fields() as $custom_field ) {
-
-			$name  = $custom_field['merge_tag'];
-			$value = isset( $_POST['noptin_fields'][ $name ] ) ? $_POST['noptin_fields'][ $name ] : '';
-
-			$subscriber_fields[ $name ] = sanitize_noptin_custom_field_value( $value, $custom_field['type'], false );
-
-		}
-
-		// Ensure the email address is unique.
-		if ( noptin_email_exists( $subscriber_fields['email'] ) ) {
-			noptin()->admin->show_error( __( 'A subscriber with that email address exists.', 'newsletter-optin-box' ) );
-			return;
-		}
-
-		// Add the subscriber.
-		$result = add_noptin_subscriber( $subscriber_fields );
-
-		// If an error occured, show it.
-		if ( is_string( $result ) ) {
-			noptin()->admin->show_error( $result );
-		} else {
-
-			// Else, show a success message and redirect to the added subscriber.
-			noptin()->admin->show_success( __( 'Subscriber added successfully.', 'newsletter-optin-box' ) );
-
-			wp_safe_redirect(
-				add_query_arg( 'subscriber', (int) $result, admin_url( 'admin.php?page=noptin-subscribers' ) )
-			);
-			exit;
-
-		}
-
-	}
-
-	/**
-	 * Updates a subscriber after they've been edited by admin.
-	 *
-	 * @since       1.5.5
-	 */
-	public static function update_edited_subscriber() {
-
-		// Only admins should be able to edit subscribers.
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['noptin-admin-update-subscriber-nonce'] ) ) {
-			return;
-		}
-
-		// Verify nonces to prevent CSRF attacks.
-		if ( ! wp_verify_nonce( $_POST['noptin-admin-update-subscriber-nonce'], 'noptin-admin-update-subscriber' ) ) {
-			return;
-		}
-
-		// Do we have a subscriber id?
-		if ( empty( $_POST['subscriber_id'] ) ) {
-			return;
-		}
-
-		// Prepare subscriber fields.
-		$subscriber_fields = array(
-			'active'    => (int) $_POST['noptin_fields']['active'],
-			'confirmed' => (int) $_POST['noptin_fields']['confirmed'],
-		);
-		$subscriber        = get_noptin_subscriber( (int) $_POST['subscriber_id'] );
-
-		if ( ! $subscriber->exists() ) {
-			return;
-		}
-
-		// NOTE: We're not filtering visible fields only...
-		// Since admin can also update private fields.
-		foreach ( get_noptin_custom_fields() as $custom_field ) {
-
-			$name  = $custom_field['merge_tag'];
-			$value = isset( $_POST['noptin_fields'][ $name ] ) ? $_POST['noptin_fields'][ $name ] : '';
-
-			$subscriber_fields[ $name ] = sanitize_noptin_custom_field_value( $value, $custom_field['type'], $subscriber );
-
-		}
-
-		// Add the subscriber.
-		$result = update_noptin_subscriber( (int) $_POST['subscriber_id'], $subscriber_fields );
-
-		if ( $result ) {
-			noptin()->admin->show_success( __( 'Subscriber successfully updated', 'newsletter-optin-box' ) );
-		} else {
-			noptin()->admin->show_error( __( 'Unable to update the subscriber', 'newsletter-optin-box' ) );
-		}
-
 	}
 
 	/**

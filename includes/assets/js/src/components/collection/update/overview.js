@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { forwardRef, useState } from "@wordpress/element";
-import { Spinner, CardBody, Button, Flex, FlexItem } from "@wordpress/components";
+import { Spinner, CardBody, Tip, Flex, FlexItem } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import styled from '@emotion/styled';
 
@@ -10,10 +10,12 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import { useRecord, useSchema } from "../../../store-data/hooks";
-import { useRoute } from "../hooks";
+import { useRoute, useCurrentPath } from "../hooks";
 import Wrap from "../wrap";
 import EditForm from "./edit-form";
 import OverviewSection from "./overview-section";
+import { BlockButton } from "../../styled-components";
+import UpsellCard from "../../upsell-card";
 
 /**
  * Displays an overview section.
@@ -33,14 +35,14 @@ const Section = styled( FlexItem )`
 const RecordOverview = ( { tab: {title} }, ref ) => {
 
 	// Prepare the state.
-	const { namespace, collection, navigate, args } = useRoute();
+	const path = useCurrentPath();
+	const { namespace, collection, args } = useRoute();
 
-	const STORE_NAME                = `${namespace}/${collection}`;
-	const [ error, setError ]       = useState( null );
-	const [ saving, setSaving ]     = useState( false );
-	const [ edits, setEdits ]       = useState( {} );
-	const schema                    = useSchema( namespace, collection );
-	const record                    = useRecord( namespace, collection, args.id );
+	const [ error, setError ]   = useState( null );
+	const [ saving, setSaving ] = useState( false );
+	const [ edits, setEdits ]   = useState( {} );
+	const schema                = useSchema( namespace, collection );
+	const record                = useRecord( namespace, collection, args.id );
 
 	// A function to save a record.
 	const onSaveRecord = ( e ) => {
@@ -66,38 +68,12 @@ const RecordOverview = ( { tab: {title} }, ref ) => {
 			} );
 	}
 
-	// A function to delete a record.
-	const onDeleteRecord = () => {
-
-		// Confirm.
-		if ( ! confirm( __( 'Are you sure you want to delete this record?', 'newsletter-optin-box' ) ) ) {
-			return;
-		}
-
-		// Delete the record.
-		record.delete();
-
-		// Navigate back to the list.
-		navigate( STORE_NAME );
-	}
-
 	// Record actions.
 	const actions = (
-		<Flex gap={2} justify="start" wrap>
-			{ Object.keys( edits ).length > 0 && (
-				<FlexItem>
-					<Button variant="primary" onClick={ onSaveRecord } isBusy={ saving }>
-						{ saving ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save', 'newsletter-optin-box' ) }
-						{ saving && <Spinner /> }
-					</Button>
-				</FlexItem>
-			) }
-			<FlexItem>
-				<Button variant="secondary" onClick={ onDeleteRecord } isDestructive>
-					{ __( 'Delete', 'newsletter-optin-box' ) }
-				</Button>
-			</FlexItem>
-		</Flex>
+		<BlockButton variant="primary" onClick={ onSaveRecord } isBusy={ saving }>
+			{ saving ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save Changes', 'newsletter-optin-box' ) }
+			{ saving && <Spinner /> }
+		</BlockButton>
 	);
 
 	// Sets edited attributes.
@@ -124,9 +100,21 @@ const RecordOverview = ( { tab: {title} }, ref ) => {
 							setAttributes={ setAttributes }
 						/>
 						{ actions }
+
+						{ path.schema?.tip && (
+							<Tip>
+								<span dangerouslySetInnerHTML={{ __html: path.schema.tip }} />
+							</Tip>
+						) }
+
 					</Section>
 					<Section>
-						<OverviewSection namespace={ namespace } collection={ collection } recordID={ args.id } />
+						<OverviewSection
+							namespace={ namespace }
+							collection={ collection }
+							recordID={ args.id }
+							upsell={ <UpsellCard upsell={path.schema?.upsell} /> }
+						/>
 					</Section>
 				</Flex>
 			</CardBody>

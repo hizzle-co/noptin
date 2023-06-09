@@ -8,7 +8,7 @@ import { getQueryArg } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { setRecords, setRecord, setPartialRecords, setSchema, setTabContent } from './actions';
+import { setRecords, setRecord, setPartialRecords, setSchema, setTabContent, setRecordOverview } from './actions';
 
 /**
  * Creates resolvers for the store.

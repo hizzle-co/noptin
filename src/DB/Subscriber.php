@@ -498,8 +498,10 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function get_edit_url() {
 		return add_query_arg(
 			array(
-				'page'       => 'noptin-subscribers',
-				'subscriber' => $this->get_id(),
+				'page'        => 'noptin-subscribers',
+				'hizzle_tab'  => 'overview',
+				'hizzle_path' => rawurlencode( '/noptin/subscribers/update' ),
+				'id'          => $this->get_id(),
 			),
 			admin_url( 'admin.php' )
 		);
@@ -609,4 +611,99 @@ class Subscriber extends \Hizzle\Store\Record {
 
 		return parent::save();
 	}
+
+	/**
+	 * Returns the record's overview.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	public function get_overview() {
+		$sent_emails = $this->get_sent_campaigns();
+		$total       = count( $sent_emails );
+		$opens	     = 0;
+		$clicks	     = 0;
+
+		foreach ( $sent_emails as $email ) {
+			if ( ! empty( $email['opens'] ) ) {
+				$opens++;
+			}
+
+			if ( ! empty( $email['clicks'] ) ) {
+				$clicks++;
+			}
+		}
+
+		$overview = array(
+			'stat_cards' => array(
+				'type'  => 'stat_cards',
+				'cards' => array(
+					array(
+						'title' => __( 'Emails Sent', 'newsletter-optin-box' ),
+						'value' => $total,
+					),
+					array(
+						'title' => __( 'Opened', 'newsletter-optin-box' ),
+						'value' => ( $opens && $total ) ? ( round( ( $opens / $total ) * 100, 2 ) . '%' ) : '&mdash;',
+					),
+					array(
+						'title' => __( 'Clicked', 'newsletter-optin-box' ),
+						'value' => ( $clicks && $total ) ? ( round( ( $clicks / $total ) * 100, 2 ) . '%' ) : '&mdash;',
+					),
+				),
+			),
+			'action_links' => array(
+				'type'  => 'action_links',
+				'links' => array(
+					array(
+						'label' => __( 'Send Email', 'newsletter-optin-box' ),
+						'value' => $this->get_send_email_url(),
+						'hide'  => 'subscribed' !== $this->get_status(),
+					),
+					array(
+						'label'  => __( 'Unsubscribe URL', 'newsletter-optin-box' ),
+						'value'  => $this->get_unsubscribe_url(),
+						'action' => 'copy',
+						'hide'   => 'subscribed' !== $this->get_status(),
+					),
+					array(
+						'label'  => __( 'Resubscribe URL', 'newsletter-optin-box' ),
+						'value'  => $this->get_resubscribe_url(),
+						'action' => 'copy',
+						'hide'   => 'unsubscribed' !== $this->get_status(),
+					),
+					array(
+						'label'  => __( 'Confirmation URL', 'newsletter-optin-box' ),
+						'value'  => $this->get_confirm_subscription_url(),
+						'action' => 'copy',
+						'hide'   => $this->get_confirmed(),
+					),
+					array(
+						'label'  => __( 'Delete', 'newsletter-optin-box' ),
+						'value'  => __( 'Are you sure you want to delete this subscriber?', 'newsletter-optin-box' ),
+						'action' => 'delete',
+					),
+				),
+			),
+		);
+
+		// GeoLocation.
+		$geolocation = noptin_locate_ip_address( $this->get_ip_address() );
+
+		if ( is_array( $geolocation ) ) {
+			$fields      = array(
+				'continent' => __( 'Continent', 'newsletter-optin-box' ),
+				'country'   => __( 'Country', 'newsletter-optin-box' ),
+				'state'     => __( 'State', 'newsletter-optin-box' ),
+				'city'      => __( 'City', 'newsletter-optin-box' ),
+				'latitude'  => __( 'Latitude', 'newsletter-optin-box' ),
+				'longitude' => __( 'Longitude', 'newsletter-optin-box' ),
+				'currency'  => __( 'Currency', 'newsletter-optin-box' ),
+				'time zone' => __( 'Time Zone', 'newsletter-optin-box' ),
+			);
+		}
+
+		return apply_filters( 'noptin_subscriber_overview', $overview, $this );
+	}
+
 }
