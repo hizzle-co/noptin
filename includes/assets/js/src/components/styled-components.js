@@ -80,8 +80,7 @@ export const BlockButton = styled( Button, { shouldForwardProp: prop => ! ['maxW
  * Displays an upsell div.
  */
 export const Upsell = styled.div`
-	border: 4px solid #ff5722;
-	background-color: #fff3f0;
+	background-color: #cbeeff;
 	padding: 1rem;
 	border-radius: 4px;
 	display: flex;
@@ -89,10 +88,11 @@ export const Upsell = styled.div`
 	align-items: center;
 	justify-content: center;
 	min-height: 100px;
-	box-shadow: 1px 3px 2px 0 #ff5722;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 
 	& p {
 		font-size: 14px;
+		color: #001012;
 	}
 
 	& .components-button {

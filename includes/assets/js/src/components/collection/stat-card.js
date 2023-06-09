@@ -14,7 +14,6 @@ const statusStyle = ({ status }) => {
     if ( 'success' === status ) {
         return css`
             background-color: #d4edda;
-            border-color: #c3e6cb;
             color: #155724;
 
             & h2,
@@ -27,8 +26,7 @@ const statusStyle = ({ status }) => {
     // Info.
     if ( 'info' === status ) {
         return css`
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
+            background-color: #cbeeff;
             color: #0c5460;
 
             & h2,
@@ -42,7 +40,6 @@ const statusStyle = ({ status }) => {
     if ( 'warning' === status ) {
         return css`
             background-color: #fff3cd;
-            border-color: #ffeeba;
             color: #856404;
 
             & h2,
@@ -56,7 +53,6 @@ const statusStyle = ({ status }) => {
     if ( 'error' === status ) {
         return css`
             background-color: #f8cbcb;
-            border-color: #f5c6cb;
             color: #cc1818;
 
             & h2,
@@ -70,7 +66,6 @@ const statusStyle = ({ status }) => {
     if ( 'dark' === status ) {
         return css`
             background-color: #212529;
-            border-color: #212529;
             color: #f8f9fa;
 
             & h2,
@@ -83,7 +78,6 @@ const statusStyle = ({ status }) => {
     // Default.
     return css`
         background-color: #f8f9fa;
-        border-color: rgb(0 0 0 / 13%);
         color: #212529;
 
         & h2,
@@ -98,8 +92,6 @@ const statusStyle = ({ status }) => {
  */
 const Container = styled.div`
     ${statusStyle};
-    border-width: 1px;
-    border-style: none;
     padding: 0.25rem;
     text-align: center;
     box-shadow: 2px 2px 2px rgb(0 0 0 / 5%);

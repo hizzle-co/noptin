@@ -352,6 +352,13 @@ class Schema {
 								'is_dynamic'  => true,
 								'readonly'    => true,
 							),
+
+							'wp_user_id'               => array(
+								'type'        => 'BIGINT',
+								'description' => __( "The subscriber's WordPress user ID.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
+							),
 						)
 					),
 

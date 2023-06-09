@@ -5,6 +5,7 @@ import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, F
 import Papa from 'papaparse';
 import { BlockButton } from "../../styled-components";
 import styled from '@emotion/styled';
+import { useCurrentPath } from "../hooks";
 
 const RestrictedFlexItem = styled( FlexItem )`
 	width: 320px;
@@ -100,6 +101,7 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 	const [ mappedHeaders, setMappedHeaders ] = useState( {} );
 	const [ updateRecords, setUpdateRecords ] = useState( false );
 	const [ error, setError ] = useState( null );
+	const path = useCurrentPath();
 
 	const fields = useMemo( () => compact( schema.map((field) => {
 
@@ -246,7 +248,7 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 				);
 			})}
 
-			<div style={{marginTop: '1.6rem'}}>
+			<div style={{marginTop: '1.6rem', marginBottom: '1.6rem'}}>
 				<ToggleControl
 					label={ __( 'Update existing records', 'newsletter-optin-box' ) }
 					checked={ updateRecords }
@@ -254,6 +256,12 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 					__nextHasNoMarginBottom
 				/>
 			</div>
+
+			{ path.schema?.tip && (
+				<Tip>
+					<span dangerouslySetInnerHTML={{ __html: path.schema.tip }} />
+				</Tip>
+			) }
 
 			<RestrictedDiv>
 				<BlockButton variant="primary" onClick={ () => onContinue( mappedHeaders, updateRecords ) }>

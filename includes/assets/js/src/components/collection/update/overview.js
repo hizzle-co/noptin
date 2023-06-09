@@ -20,7 +20,7 @@ import UpsellCard from "../../upsell-card";
 /**
  * Displays an overview section.
  */
-const Section = styled( FlexItem )`
+export const Section = styled( FlexItem )`
 	width: 400px;
 	max-width: 100%;
 `
@@ -90,7 +90,7 @@ const RecordOverview = ( { tab: {title} }, ref ) => {
 		<Wrap title={title} ref={ ref }>
 
 			<CardBody>
-				<Flex align="start" wrap>
+				<Flex align="flex-start" wrap>
 					<Section>
 						<EditForm
 							schema={ schema.data }

@@ -574,6 +574,16 @@ class Subscriber extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns the WordPress user ID.
+	 *
+	 * @return int
+	 */
+	public function get_wp_user_id() {
+		$user = get_user_by( 'email', $this->get_email() );
+		return $user ? $user->ID : 0;
+	}
+
+	/**
 	 * Save should create or update based on object existence.
 	 *
 	 * @since  1.0.0
@@ -652,56 +662,71 @@ class Subscriber extends \Hizzle\Store\Record {
 					),
 				),
 			),
-			'action_links' => array(
-				'type'  => 'action_links',
-				'links' => array(
-					array(
-						'label' => __( 'Send Email', 'newsletter-optin-box' ),
-						'value' => $this->get_send_email_url(),
-						'hide'  => 'subscribed' !== $this->get_status(),
-					),
-					array(
-						'label'  => __( 'Unsubscribe URL', 'newsletter-optin-box' ),
-						'value'  => $this->get_unsubscribe_url(),
-						'action' => 'copy',
-						'hide'   => 'subscribed' !== $this->get_status(),
-					),
-					array(
-						'label'  => __( 'Resubscribe URL', 'newsletter-optin-box' ),
-						'value'  => $this->get_resubscribe_url(),
-						'action' => 'copy',
-						'hide'   => 'unsubscribed' !== $this->get_status(),
-					),
-					array(
-						'label'  => __( 'Confirmation URL', 'newsletter-optin-box' ),
-						'value'  => $this->get_confirm_subscription_url(),
-						'action' => 'copy',
-						'hide'   => $this->get_confirmed(),
-					),
-					array(
-						'label'  => __( 'Delete', 'newsletter-optin-box' ),
-						'value'  => __( 'Are you sure you want to delete this subscriber?', 'newsletter-optin-box' ),
-						'action' => 'delete',
-					),
-				),
-			),
 		);
 
-		// GeoLocation.
-		$geolocation = noptin_locate_ip_address( $this->get_ip_address() );
+		// Prepare action links.
+		$action_links = array();
 
-		if ( is_array( $geolocation ) ) {
-			$fields      = array(
-				'continent' => __( 'Continent', 'newsletter-optin-box' ),
-				'country'   => __( 'Country', 'newsletter-optin-box' ),
-				'state'     => __( 'State', 'newsletter-optin-box' ),
-				'city'      => __( 'City', 'newsletter-optin-box' ),
-				'latitude'  => __( 'Latitude', 'newsletter-optin-box' ),
-				'longitude' => __( 'Longitude', 'newsletter-optin-box' ),
-				'currency'  => __( 'Currency', 'newsletter-optin-box' ),
-				'time zone' => __( 'Time Zone', 'newsletter-optin-box' ),
+		// Add link to user profile if the subscriber is a WordPress user.
+		$user_id = $this->get_wp_user_id();
+
+		if ( ! empty( $user_id ) ) {
+			$action_links[] = array(
+				'label' => __( 'View User Profile', 'newsletter-optin-box' ),
+				'value' => get_edit_user_link( $user_id ),
 			);
 		}
+
+		// Send email if the subscriber is active.
+		if ( $this->is_active() ) {
+			$action_links[] = array(
+				'label' => __( 'Send Email', 'newsletter-optin-box' ),
+				'value' => $this->get_send_email_url(),
+			);
+
+			$action_links[] = array(
+				'label'  => __( 'Unsubscribe URL', 'newsletter-optin-box' ),
+				'value'  => $this->get_unsubscribe_url(),
+				'action' => 'copy',
+			);
+		} elseif ( 'unsubscribed' === $this->get_status() ) {
+			$action_links[] = array(
+				'label'  => __( 'Resubscribe URL', 'newsletter-optin-box' ),
+				'value'  => $this->get_resubscribe_url(),
+				'action' => 'copy',
+			);
+		}
+
+		// Email confirmation URL.
+		if ( ! $this->get_confirmed() ) {
+			$action_links[] = array(
+				'label'  => __( 'Email Confirmation URL', 'newsletter-optin-box' ),
+				'value'  => $this->get_confirm_subscription_url(),
+				'action' => 'copy',
+			);
+		}
+
+		// Conversion page.
+		$conversion_page = $this->get_conversion_page();
+
+		if ( ! empty( $conversion_page ) ) {
+			$action_links[] = array(
+				'label' => __( 'Conversion Page', 'newsletter-optin-box' ),
+				'value' => esc_url_raw( $conversion_page ),
+			);
+		}
+
+		// Delete subscriber.
+		$action_links[] = array(
+			'label'  => __( 'Delete', 'newsletter-optin-box' ),
+			'value'  => __( 'Are you sure you want to delete this subscriber?', 'newsletter-optin-box' ),
+			'action' => 'delete',
+		);
+
+		$overview['action_links'] = array(
+			'type'  => 'action_links',
+			'links' => $action_links,
+		);
 
 		return apply_filters( 'noptin_subscriber_overview', $overview, $this );
 	}

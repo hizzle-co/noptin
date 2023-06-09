@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { forwardRef, useState } from "@wordpress/element";
-import { Card, CardBody, Button, Flex, FlexItem, Modal, TextControl } from "@wordpress/components";
+import { Card, CardBody, CardHeader, Button, Flex, FlexItem, Modal, TextControl } from "@wordpress/components";
 import copy from 'copy-to-clipboard';
 import { __ } from "@wordpress/i18n";
 
@@ -11,9 +11,28 @@ import { __ } from "@wordpress/i18n";
  */
 import { useRecordOverview } from "../../../store-data/hooks";
 import { LoadingPlaceholder, CopiedText, withBottomMargin } from "../../styled-components";
+import List from "../../list";
 import StatCard from "../stat-card";
 import { useRecord } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
+
+/**
+ * Displays a card list.
+ *
+ * @param {Object} props
+ * @param {Array} props.items
+ * @param {String} props.title
+ */
+const CardList = ( { items, title } ) => (
+	<Card className={withBottomMargin}>
+		<CardHeader>
+			{title}
+		</CardHeader>
+		<CardBody>
+			<List items={items} />
+		</CardBody>
+	</Card>
+);
 
 /**
  * Displays stat cards.
@@ -154,7 +173,7 @@ const ActionLinks = ( { links } ) => (
 
 			return (
 				<FlexItem key={label}>
-					<Button href={value} variant="secondary">
+					<Button href={value} variant="secondary" target="_blank">
 						{label}
 					</Button>
 				</FlexItem>
@@ -192,7 +211,7 @@ const OverviewSection = ( { namespace, collection, recordID, upsell=null }, ref 
 
 	// Abort if we have an error.
 	if ( overview.hasResolutionFailed() || !Array.isArray( overview.data ) || !overview.data.length ) {
-		return {upsell};
+		return upsell;
 	}
 
 	// Display the overview.
@@ -207,6 +226,9 @@ const OverviewSection = ( { namespace, collection, recordID, upsell=null }, ref 
 						return <ActionLinks key={index} links={data.links} />;
 					case 'card':
 						return <NormalCard key={index} {...data} />;
+					case 'card_list':
+						return <CardList key={index} {...data} />;
+
 					default:
 						return null;
 				}

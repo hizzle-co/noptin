@@ -81,6 +81,9 @@ export function useRoute() {
 
 		setURL( newURL );
 		history.pushState( null, null, newURL );
+
+		// Scroll to the top.
+		window.scrollTo( { top: 0, behavior: 'smooth' } );
 	}
 
 	return {

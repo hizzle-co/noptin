@@ -27,6 +27,12 @@ export default function Import( { component: { title } } ) {
 	const schema = useSchema(namespace, collection);
 	const [ file, setFile ] = useState( null );
 
+    // Sets the current file the scrolls to top.
+    const onUpload = ( file ) => {
+        setFile( file );
+		window.scrollTo( { top: 0, behavior: 'smooth' } );
+    }
+
     const Step = () => {
 
         // If we have a file, import it.
@@ -41,7 +47,7 @@ export default function Import( { component: { title } } ) {
         }
 
         // Otherwise, display the file selector.
-        return <SelectFile onUpload={ setFile } />;
+        return <SelectFile onUpload={ onUpload } />;
     }
 
 	return (

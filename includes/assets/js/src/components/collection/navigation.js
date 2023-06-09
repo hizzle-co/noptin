@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { plus, cloudUpload, trash } from "@wordpress/icons";
+import { cloudUpload, trash } from "@wordpress/icons";
 import { useMemo } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
 import {
@@ -18,6 +18,7 @@ import {
 import AppIcon from "./app-icon";
 import { useRoute } from "./hooks";
 import { useRecord, useSchema } from "../../store-data/hooks";
+import { Avatar } from "../styled-components";
 
 /**
  * Displays the collection navigation title.
@@ -42,7 +43,7 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 	}, [ data, append ] );
 
 	// APP Icon.
-	const appIcon = avatarURL ? <img src={ avatarURL } alt={ navTitle } width={24} height={24} style={{ borderRadius: '50%' }} /> : <AppIcon />;
+	const appIcon = avatarURL ? <Avatar src={ avatarURL } alt={ navTitle } width={24} height={24} /> : <AppIcon />;
 
 	return (
 		<Flex justify="start" wrap>
@@ -61,7 +62,7 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 						onClick={ () => navigate( `/${namespace}/${collection}` ) }
 						style={ { marginLeft: '10px' } }
 					>
-						{ data.labels?.name || __( 'View Records', 'newsletter-optin-box' ) }
+						{ data.labels?.view_items || __( 'View Records', 'newsletter-optin-box' ) }
 					</Button>
 				) : (
 					<Button
@@ -69,7 +70,7 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 						onClick={ () => navigate( `/${namespace}/${collection}/add` ) }
 						style={ { marginLeft: '10px' } }
 					>
-						{ data.labels?.add_new_item || __( 'Add New', 'newsletter-optin-box' ) }
+						{ data.labels?.add_new || __( 'Add New', 'newsletter-optin-box' ) }
 					</Button>
 				) }
 			</FlexItem>

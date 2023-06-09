@@ -573,6 +573,25 @@ function noptin_locate_ip_address_alt( $ip_address ) {
 }
 
 /**
+ * Returns GeoLocation fields.
+ *
+ * @since 1.13.0
+ * @return array
+ */
+function noptin_geolocation_fields() {
+	return array(
+		'continent' => __( 'Continent', 'newsletter-optin-box' ),
+		'country'   => __( 'Country', 'newsletter-optin-box' ),
+		'state'     => __( 'State', 'newsletter-optin-box' ),
+		'city'      => __( 'City', 'newsletter-optin-box' ),
+		'latitude'  => __( 'Latitude', 'newsletter-optin-box' ),
+		'longitude' => __( 'Longitude', 'newsletter-optin-box' ),
+		'currency'  => __( 'Currency', 'newsletter-optin-box' ),
+		'time zone' => __( 'Time Zone', 'newsletter-optin-box' ),
+	);
+}
+
+/**
  * Converts a comma- or space-separated list of scalar values into an array.
  *
  * @since 1.2.3
@@ -1667,7 +1686,7 @@ function noptin_is_email_unsubscribed( $email ) {
 	}
 
 	// Fetch subscriber by email.
-	$subscriber = get_noptin_subscriber( $email );
+	$subscriber = noptin_get_subscriber( $email );
 
 	// If the subscriber is unsubscribed, abort.
 	if ( $subscriber->exists() && ! $subscriber->is_active() ) {

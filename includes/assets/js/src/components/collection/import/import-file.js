@@ -35,6 +35,9 @@ const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, back }
 				onContinue={ ( headers, update ) => {
                     setMappedHeaders( headers );
                     setUpdateRecords( update );
+
+					// Scroll to the top.
+					window.scrollTo( { top: 0, behavior: 'smooth' } );
                 } }
 			/>
 		);

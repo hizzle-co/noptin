@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useState, useMemo } from "@wordpress/element";
-import { Notice, Spinner, CardBody, CardFooter, Button } from "@wordpress/components";
+import { Notice, Spinner, CardBody, Tip, Flex } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";
 import { compact } from 'lodash';
@@ -13,7 +13,10 @@ import { compact } from 'lodash';
 import Wrap from "./wrap";
 import Setting from "../setting";
 import { useSchema } from "../../store-data/hooks";
-import { useRoute } from "./hooks";
+import { useRoute, useCurrentPath } from "./hooks";
+import { Section } from "./update/overview";
+import { BlockButton } from "../styled-components";
+import UpsellCard from "../upsell-card";
 
 /**
  * Allows the user to export all records.
@@ -29,6 +32,7 @@ export default function CreateRecord() {
 	const [ loading, setLoading ] = useState( false );
 	const [ record, setRecord ]   = useState( {} );
 	const schema                  = useSchema( namespace, collection );
+	const path                    = useCurrentPath();
 
 	// A function to create a new record.
 	const onCreateRecord = ( e ) => {
@@ -119,39 +123,48 @@ export default function CreateRecord() {
 	// Display the add record form.
 	return (
 		<Wrap title={schema.data.labels?.new_item}>
-			<form onSubmit={ onCreateRecord }>
-				<CardBody style={{ opacity: loading ? 0.5 : 1 }}>
+			<CardBody style={{ opacity: loading ? 0.5 : 1 }}>
+				<Flex align="flex-start" wrap>
+					<Section>
+						<form onSubmit={ onCreateRecord }>
+							{ fields.map( ( field ) => (
+								<div style={{ marginBottom: '1.6rem' }} key={ field.name }>
+									<Setting
+										settingKey={ field.name }
+										saved={ record }
+										setAttributes={ onChange }
+										setting={ field }
+									/>
+								</div>
+							) ) }
 
-					{ fields.map( ( field ) => (
-						<div style={ { marginBottom: '1.6rem' } } key={ field.name }>
-							<Setting
-								settingKey={ field.name }
-								saved={ record }
-								setAttributes={ onChange }
-								setting={ field }
-							/>
-						</div>
-					) ) }
+							{ path.schema?.tip && (
+								<Tip>
+									<span dangerouslySetInnerHTML={{ __html: path.schema.tip }} />
+								</Tip>
+							) }
 
-					{ error && (
-						<Notice status="error">
-							{ error.message }
-						</Notice>
+							<BlockButton variant="primary" onClick={ onCreateRecord } isBusy={ loading }>
+								{ loading ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save', 'newsletter-optin-box' ) }
+								{ loading && <Spinner /> }
+							</BlockButton>
+
+							{ error && (
+								<Notice status="error">
+									{ error.message }
+								</Notice>
+							) }
+
+						</form>
+					</Section>
+
+					{ path.schema?.upsell && (
+						<Section>
+							<UpsellCard upsell={path.schema?.upsell} />
+						</Section>
 					) }
-				</CardBody>
-
-				<CardFooter>
-					<Button
-						variant="primary"
-						onClick={ onCreateRecord }
-						isBusy={ loading }
-						disabled={ loading }
-					>
-						{ __( 'Save', 'newsletter-optin-box' ) }
-						{ loading && <Spinner /> }
-					</Button>
-				</CardFooter>
-			</form>
+				</Flex>
+			</CardBody>
 		</Wrap>
 	);
 
