@@ -19,11 +19,39 @@ export const getRecordIDs = ( state = DEFAULT_STATE, queryString ) => {
 	queryString = '' === queryString ? 'all' : queryString;
 
 	// Check if records are already loaded.
-	if ( Array.isArray( state.recordIDs[ queryString ] ) ) {
-		return state.recordIDs[ queryString ];
+	if ( Array.isArray( state.recordIDs[ queryString ]?.items ) ) {
+		return state.recordIDs[ queryString ].items;
 	}
 
 	return [];
+}
+
+/**
+ * Retrieves query total.
+ *
+ * @param {String} queryString
+ * @return {Number} Total Records.
+ */
+export const getQueryTotal = ( state = DEFAULT_STATE, queryString ) => {
+
+	queryString = '' === queryString ? 'all' : queryString;
+	const total = state.recordIDs[ queryString ]?.total;
+
+	return total ? total : 0;
+}
+
+/**
+ * Retrieves query summary.
+ *
+ * @param {String} queryString
+ * @return {Object} Summary.
+ */
+export const getQuerySummary = ( state = DEFAULT_STATE, queryString ) => {
+
+	queryString = '' === queryString ? 'all' : queryString;
+	const summary = state.recordIDs[ queryString ]?.summary;
+
+	return summary ? summary : {};
 }
 
 /**
@@ -38,16 +66,16 @@ export const getRecords = ( state = DEFAULT_STATE, queryString ) => {
 	const _fields = getQueryArg( queryString, '_fields' );
 
 	if ( _fields ) {
-		return Array.isArray( state.partialRecords[ queryString ] ) ? state.partialRecords[ queryString ] : [];
+		return Array.isArray( state.partialRecords[ queryString ]?.items ) ? state.partialRecords[ queryString ]?.items : [];
 	}
 
 	// Check if records are already loaded.
-	if ( ! Array.isArray( state.recordIDs[ queryString ] ) ) {
+	if ( ! Array.isArray( state.recordIDs[ queryString ]?.items ) ) {
 		return [];
 	}
 
 	// Loop through records to find the record.
-	return state.recordIDs[ queryString ].map( id => state.records[ id ] );
+	return state.recordIDs[ queryString ].items.map( id => state.records[ id ] );
 }
 
 /**

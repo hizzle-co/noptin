@@ -69,29 +69,14 @@ function PageArrows( { page, pageCount, onPageChange }  ) {
  *
  * @param {Object} props The component props.
  * @param {number} props.perPage The amount of results that are being displayed per page.
- * @param {number} props.total The total number of results.
  * @param {Function} props.onChange A function to execute when the per page option is changed.
  */
-function PerPagePicker( { perPage, total, onChange } ) {
-
-	// Prepare the options list.
-	const options = PER_PAGE_OPTIONS;
-
-	// Ensure that the current perPage value is in the options list.
-	if ( ! options.includes( perPage ) ) {
-		options.push( perPage );
-		options.sort( ( a, b ) => a - b );
-	}
+function PerPagePicker( { perPage, onChange } ) {
 
 	// Prepare the options list for the SelectControl.
-	const pickerOptions = options.map( ( option ) => {
+	const pickerOptions = PER_PAGE_OPTIONS.map( ( option ) => {
 		return { value: option, label: option };
 	} );
-
-	// Allow the user to select "All" if there are less than 100 results.
-	if ( total <= 100 ) {
-		pickerOptions.push( { value: total, label: __( 'All', 'newsletter-optin-box' ) } );
-	}
 
 	return (
 		<FlexItem className="noptin-pagination__per-page-picker">
@@ -127,7 +112,7 @@ export default function Pagination( { query, onQueryChange, total, className, sh
 
 	// Calculate the page count.
 	const page = query.paged ? parseInt( query.paged, 10 ) : 1;
-	const perPage = query.per_page ? parseInt( query.per_page, 10 ) : 10;
+	const perPage = query.per_page ? parseInt( query.per_page, 10 ) : 25;
 	const pageCount = Math.ceil( total / perPage );
 	const classes = classNames( 'noptin-pagination', className );
 
@@ -165,7 +150,7 @@ export default function Pagination( { query, onQueryChange, total, className, sh
 		return (
 			( total > PER_PAGE_OPTIONS[ 0 ] && (
 				<Flex className={ classes } wrap gap={4} align="center" justify="center">
-					<PerPagePicker perPage={ perPage } total={ total } onChange={ perPageChange } />
+					<PerPagePicker perPage={ perPage } onChange={ perPageChange } />
 				</Flex>
 			) ) || null
 		);
@@ -174,7 +159,7 @@ export default function Pagination( { query, onQueryChange, total, className, sh
 		return (
 			<Flex className={ classes } wrap gap={2} align="center" justify="center">
 				<PageArrows page={ page } pageCount={ pageCount } onPageChange={ pageChange } />
-				{ showPerPagePicker && <PerPagePicker perPage={ perPage } total={ total } onChange={ perPageChange } /> }
+				{ showPerPagePicker && <PerPagePicker perPage={ perPage } onChange={ perPageChange } /> }
 			</Flex>
 		);
 }

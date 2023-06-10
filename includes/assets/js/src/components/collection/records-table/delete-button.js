@@ -32,7 +32,7 @@ export default function DeleteButton( { selected, setSelected } ) {
 	const deleteAll  = selected.length === 0;
 	const buttonText = deleteAll ? __( 'Delete All', 'newsletter-optin-box' ) : __( 'Delete Selected', 'newsletter-optin-box' );
 	const modalTitle = deleteAll ? __( 'Delete', 'newsletter-optin-box' ) : __( 'Delete Selected', 'newsletter-optin-box' );
-	const deleteArgs = deleteAll ? args : { ...args, include: selected.join( ',' ) };
+	const deleteArgs = deleteAll ? { ...args, number: -1 } : { include: selected.join( ',' ) };
 
 	const TheModal = () => (
 		<>

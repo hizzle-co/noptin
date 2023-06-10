@@ -31,7 +31,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 			};
 
 		/**
-		 * Sets record IDs keyed by the query, e.g.: { "page=1": [ 1, 2, 3 ] },
+		 * Sets record IDs keyed by the query, e.g.: { "page=1": { items: [ 1, 2, 3 ], summary: {}, total: 3 } },
 		 * and records keyed by ID, e.g.: { 1: { id: 1, ... } }
 		 */
 		case 'SET_RECORDS':
@@ -39,9 +39,11 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 			// Prepare constants.
 			const cachedRecords = { ...state.records };
 			const recordIds     = [];
+			const summary       = action.records.summary;
+			const total         = action.records.total;
 
 			// Loop through the records and add them to the cache.
-			action.records.forEach((record) => {
+			action.records.items.forEach((record) => {
 				cachedRecords[ record.id ] = record;
 				recordIds.push( record.id );
 			});
@@ -51,7 +53,11 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 				records: cachedRecords,
 				recordIDs: {
 					...state.recordIDs,
-					[ queryString ]: recordIds,
+					[ queryString ]: {
+						items: recordIds,
+						summary,
+						total,
+					},
 				},
 			};
 
@@ -75,10 +81,11 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 
 			// Loop through the record IDs and remove the deleted record.
 			Object.keys( recordIDsBeforeDelete ).forEach((queryString) => {
-				const index = recordIDsBeforeDelete[ queryString ].indexOf( action.id );
+				const index = recordIDsBeforeDelete[ queryString ].items.indexOf( action.id );
 			
 				if ( -1 !== index ) {
-					recordIDsBeforeDelete[ queryString ].splice( index, 1 );
+					recordIDsBeforeDelete[ queryString ].items.splice( index, 1 );
+					recordIDsBeforeDelete[ queryString ].total -= 1;
 				}
 			});
 
@@ -90,7 +97,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 		case 'DELETE_RECORD':
 			const records   = { ...state.records };
 			delete records[ action.id ];
-			return { ...state, records, recordIDs };
+			return { ...state, records };
 
 		/**
 		 * Empty caches when deleting multiple records.

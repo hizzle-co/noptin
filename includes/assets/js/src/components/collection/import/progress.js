@@ -2,6 +2,7 @@
  * External dependencies
  */
 import apiFetch from "@wordpress/api-fetch";
+import { useDispatch } from "@wordpress/data";
 import { useState, useCallback, useEffect } from "@wordpress/element";
 import { __, sprintf } from "@wordpress/i18n";
 import Papa from 'papaparse';
@@ -80,6 +81,9 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 	// The chunks to import.
 	const [ chunks, setChunks ] = useState( [] );
 
+	// Dispatch.
+	const dispatch = useDispatch( `${namespace}/${collection}` );
+
 	/**
 	 * Parses a record.
 	 *
@@ -131,6 +135,11 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 
 			if ( false === done ) {
 				setDone( true );
+
+				if ( processed > 0 ) {
+					dispatch.emptyCache( dispatch );
+					navigate( `/${namespace}/${collection}` );
+				}
 			}
 
 			return;

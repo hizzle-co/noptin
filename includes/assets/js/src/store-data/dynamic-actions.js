@@ -4,6 +4,11 @@
 import {apiFetch} from '@wordpress/data-controls';
 
 /**
+ * Internal dependencies
+ */
+import {setRecord} from './actions';
+
+/**
  * Creates dynamic actions for the store.
  * @param {string} namespace The namespace.
  * @param {string} collection The collection.
@@ -108,12 +113,22 @@ export default function createDynamicActions( namespace, collection ) {
 			yield apiFetch( { path, method } );
 
 			// Invalidate related selectors.
+			yield dispatch.emptyCache( dispatch );
+
+			return { type: 'DELETE_RECORDS' };
+		},
+
+		/**
+		 * Empties the cache.
+		 *
+		 * @param {string} queryString
+		 * @return {Object} Action.
+		 */
+		*emptyCache( dispatch ) {
 			yield dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
 			yield dispatch.invalidateResolutionForStoreSelector( 'getRecord' );
 			yield dispatch.invalidateResolutionForStoreSelector( 'getRecordOverview' );
 			yield dispatch.invalidateResolutionForStoreSelector( 'getTabContent' );
-
-			return { type: 'DELETE_RECORDS' };
 		},
 	}
 }

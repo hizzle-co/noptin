@@ -18,7 +18,7 @@ import { LoadingPlaceholder } from "../styled-components";
  */
 const TablePlaceholder = ( { query, headers, ...props } ) => {
 
-	const numberOfRows = query.per_page ? parseInt( query.per_page, 10 ) : 10;
+	const numberOfRows = query.per_page ? parseInt( query.per_page, 10 ) : 25;
 	const rows         = range( numberOfRows ).map( () =>
 		headers.map( () => ( {
 			display: <LoadingPlaceholder />,

@@ -4,7 +4,7 @@
 export const DEFAULT_STATE = {
 
 	/**
-	 * Contains record IDs keyed by the query, e.g.: { "page=1": [ 1, 2, 3 ] }
+	 * Contains record IDs keyed by the query, e.g.: { "page=1": { items: [ 1, 2, 3 ], summary: {}, total: 3 } }
 	 */
 	recordIDs: {},
 

@@ -529,9 +529,21 @@ class REST_Controller extends \WP_REST_Controller {
 			$items[] = $this->prepare_response_for_collection( $data );
 		}
 
-		$response = rest_ensure_response( $items );
+		$response = rest_ensure_response(
+			apply_filters(
+				$this->prefix_hook( 'get_items' ),
+				array(
+					'items'   => $items,
+					'summary' => (object) array(),
+					'total'   => $query->get_total(),
+				),
+				$query,
+				$request,
+				$this
+			)
+		);
 
-		$response->header( 'X-WP-Total', (int) $query->get_total() );
+		$response->header( 'X-WP-Total', $query->get_total() );
 
 		return $response;
 	}
@@ -1209,14 +1221,7 @@ class REST_Controller extends \WP_REST_Controller {
 				array_unshift( $schema, $default );
 			}
 
-			// Count records.
-			$query = $collection->query(
-				array(
-					'fields' => 'id',
-					'number' => 1,
-				)
-			);
-
+			// Remove the callback from the tabs.
 			$tabs = array();
 
 			foreach ( $this->get_record_tabs() as $tab_id => $tab ) {
@@ -1229,7 +1234,6 @@ class REST_Controller extends \WP_REST_Controller {
 					'hizzle_rest_' . $this->get_normalized_rest_base() . '_collection_js_params',
 					array(
 						'schema'  => array_values( $schema ),
-						'count'   => $query->get_total(),
 						'ignore'  => array(),
 						'hidden'  => $hidden,
 						'routes'  => $this->get_admin_app_routes(),

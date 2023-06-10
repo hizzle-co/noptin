@@ -21,7 +21,6 @@ import DeleteButton from "./delete-button";
  * Displays the records table.
  * @param {Object} props
  * @param {Object} props.schema
- * @param {Number} props.schema.count
  * @param {Array} props.schema.schema
  * @param {Array} props.schema.ignore
  * @param {Array} props.schema.hidden
@@ -32,7 +31,7 @@ import DeleteButton from "./delete-button";
  * @param {Object} props.extra
  * @returns {JSX.Element}
  */
-export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels }, records, isLoading, updateQuery, query, extra } ) {
+export function DisplayRecords( { schema: { schema, hidden, ignore, labels }, total, summary, records, isLoading, updateQuery, query, extra } ) {
 
 	// Prepare the current query.
 	const { namespace, collection }     = useRoute();
@@ -120,8 +119,8 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 			actions={ actions }
 			rows={ rows }
 			headers={ columns }
-			totalRows={ count }
-			summary={ [] }
+			totalRows={ total }
+			summary={ summary ? Object.values( summary ) : [] }
 			isLoading={ isLoading }
 			onQueryChange={ updateQuery }
 			query={ query }
@@ -184,6 +183,8 @@ export default function RecordsTable( { component } ) {
 		<DisplayRecords
 			schema={ schema.data }
 			records={ records.data }
+			total={ records.total }
+			summary={ records.summary }
 			isLoading={ records.isResolving() }
 			updateQuery={ updateQuery }
 			query={ args }

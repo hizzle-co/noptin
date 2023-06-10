@@ -34,14 +34,14 @@ export default function createResolvers( namespace, collection ) {
 			if ( records ) {
 
 				if ( _fields ) {
-					return setPartialRecords( records, queryString );
+					return setPartialRecords( records.items, queryString );
 				}
 
 				// Resolve each record to avoid further network requests.
 				const STORE_NAME = `${namespace}/${collection}`;
 
 				// Resolve to avoid further network requests.
-				const resolutionsArgs = records.map( ( record ) => [ record.id ] );
+				const resolutionsArgs = records.items.map( ( record ) => [ record.id ] );
 
 				yield controls.dispatch(
 					STORE_NAME,
