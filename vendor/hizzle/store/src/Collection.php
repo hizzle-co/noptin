@@ -561,7 +561,7 @@ class Collection {
 		$query_schema['per_page'] = array(
 			'description'       => __( 'Maximum number of items to be returned in result set.', 'hizzle-store' ),
 			'type'              => 'integer',
-			'default'           => 10,
+			'default'           => 25,
 			'minimum'           => -1,
 			'maximum'           => 100,
 			'sanitize_callback' => 'absint',

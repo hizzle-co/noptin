@@ -99,13 +99,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'methods'             => \WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array( $this, 'delete_items_permissions_check' ),
-					'args'                => $collection->is_cpt() ? array(
-						'force' => array(
-							'default'     => false,
-							'type'        => 'boolean',
-							'description' => __( 'Whether to bypass trash and force deletion.', 'hizzle-store' ),
-						),
-					) : array(),
+					'args'                => array(),
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)

@@ -3,15 +3,12 @@
  */
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { useMemo, useState } from '@wordpress/element';
-import { useDebouncedCallback } from "use-debounce";
+import { useMemo } from '@wordpress/element';
 import {
 	Card,
-	SearchControl,
 	CardFooter,
 	CardHeader,
 	Flex,
-	FlexBlock,
 	FlexItem,
 	MenuGroup,
 	ToggleControl,
@@ -27,6 +24,7 @@ import Table from './table';
 import TablePlaceholder from './placeholder';
 import TableSummary, { TableSummaryPlaceholder } from './summary';
 import { CardHeadingText, Bordered } from '../styled-components';
+import SearchForm from './search-form';
 
 /**
  * Displays a placeholder table while the data is loading.
@@ -114,8 +112,6 @@ const TableCard = ( {
 	...props
 } ) => {
 
-	const [ searchTerm, setSearchTerm ] = useState( query.search ? query.search : '' );
-
 	// Returns a list of visible cols.
 	const visibleCols = useMemo( () => headers.filter( ( { visible } ) => visible ), [ headers ] );
 	const allHeaders  = headers;
@@ -137,11 +133,6 @@ const TableCard = ( {
 		...props,
 	};
 
-	// Fired when the search text changes.
-	const onSearchTextChange = useDebouncedCallback((value) => {
-		onQueryChange({search: value});
-	}, 1500);
-
 	const BorderedCard = Bordered.withComponent(Card);
 
 	return (
@@ -155,17 +146,11 @@ const TableCard = ( {
 					</FlexItem>
 
 					{ hasSearch && (
-						<FlexBlock style={{minWidth: '200px'}}>
-							<SearchControl
-								value={ searchTerm }
-								onChange={ (value) => {
-									setSearchTerm(value);
-									onSearchTextChange(value);
-								}}
-								placeholder={ searchPlaceholder }
-								__nextHasNoMarginBottom
-							/>
-						</FlexBlock>
+						<SearchForm
+							value={ query.search }
+							onChange={ (value) => onQueryChange({search: value}) }
+							placeholder={ searchPlaceholder }
+						/>
 					) }
 
 					{ actions && (
