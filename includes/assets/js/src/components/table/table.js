@@ -100,6 +100,7 @@ const Table = ( {
 									isSorted={ sortBy === key }
 									sortDir={ sortDir }
 									onClick={ () => setSortBy( key ) }
+									cellClassName={ 'noptin-table-column__' + key.replace( /_/g, '-' ) }
 									{ ...props }
 								/>
 							);
@@ -117,6 +118,7 @@ const Table = ( {
 										cell={ cell }
 										isHeader={ rowHeader === j }
 										isSorted={ sortBy === headers[ j ].key }
+										cellClassName={ 'noptin-table-column__' + headers[ j ]?.key?.replace( /_/g, '-' ) }
 									/>
 								) ) }
 							</TableRow>

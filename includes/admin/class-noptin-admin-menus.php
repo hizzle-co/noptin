@@ -169,7 +169,7 @@ class Noptin_Admin_Menus {
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin-subscribers',
-			'Noptin_Subscribers_Admin::output'
+			array( $this, 'render_subscribers_page' )
 		);
 
 		Noptin_Scripts::add_admin_script( $hook_suffix, 'table' );
@@ -197,6 +197,15 @@ class Noptin_Admin_Menus {
 
 		if ( 'edit_campaign' !== $section && 'automations' === $tab ) {
 			Noptin_Scripts::add_admin_script( $hook_suffix, 'create-automated-email' );
+		}
+	}
+
+	/**
+	 * Displays the subscribers page.
+	 */
+	public function render_subscribers_page() {
+		if ( current_user_can( get_noptin_capability() ) ) {
+			include plugin_dir_path( __FILE__ ) . 'views/view-subscribers.php';
 		}
 	}
 

@@ -15,7 +15,7 @@ import { alignmentStyle } from './header-cell';
  *
  * @param {Object} props Component props.
  */
-export default function BodyCell( { cell, cellClassName, align, isNumeric, isHeader, isSorted } ){
+export default function BodyCell( { cell, cellClassName, align, isNumeric, isHeader, isSorted, minWidth } ){
 
 	const Cell = isHeader ? TableCell.withComponent( 'th' ) : TableCell;
 
@@ -29,6 +29,7 @@ export default function BodyCell( { cell, cellClassName, align, isNumeric, isHea
 			}
 		),
 		...alignmentStyle( align, isNumeric ),
+		minWidth: minWidth || undefined,
 	};
 
 	return (

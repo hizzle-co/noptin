@@ -1,4 +1,4 @@
-import { FormToggle, Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
+import { CheckboxControl, Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
 import { dateI18n, getSettings, __experimentalGetSettings } from "@wordpress/date";
 import getEnumBadge from "./enum-colors";
 import { useRoute } from "../hooks";
@@ -56,7 +56,12 @@ const PrimaryColumn = ( { record, name } ) => {
  * @param {string} props.description The description of the column.
  * @returns
  */
-export default function DisplayCell( { record, name, label, description, length, nullable, readonly, multiple, is_dynamic, is_boolean, is_numeric, is_float, is_date, is_primary_col, ...extra } ) {
+export default function DisplayCell( { record, name, label, description, length, nullable, readonly, multiple, isSelected, onSelectionToggle, is_dynamic, is_boolean, is_numeric, is_float, is_date, is_primary_col, ...extra } ) {
+
+	// Checkbox.
+	if ( 'cb' === name ) {
+		return <CheckboxControl checked={ isSelected } onChange={ onSelectionToggle } __nextHasNoMarginBottom />;
+	}
 
 	const value = record[name];
 

@@ -30,7 +30,7 @@ export const alignmentStyle = ( align, isNumeric ) => {
  *
  * @param {Object} props Component props.
  */
-export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel, cellClassName, align, isSortable, isNumeric, isSorted, sortDir, onClick } ) {
+export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel, cellClassName, minWidth, display, align, isSortable, isNumeric, isSorted, sortDir, onClick } ) {
 
 	// Label the header cell for screen readers.
 	const alignment = alignmentStyle( align, isNumeric );
@@ -47,6 +47,7 @@ export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel,
 			}
 		),
 		...alignment,
+		minWidth: minWidth || undefined,
 	};
 
 	// Adding aria-sort attribute to the header cell.
@@ -66,7 +67,7 @@ export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel,
 	const textLabel = (
 		<>
 			<span aria-hidden={ Boolean(screenReaderLabel) }>
-				{ columnLabel }
+				{ display || columnLabel }
 			</span>
 			{ screenReaderLabel && (
 				<span className="screen-reader-text">

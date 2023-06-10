@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useMemo, useState } from "@wordpress/element";
-import { Notice, CardBody } from "@wordpress/components";
+import { Notice, CardBody, CheckboxControl } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { without } from 'lodash';
 
@@ -36,22 +36,40 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 	// Prepare the current query.
 	const { namespace, collection }     = useRoute();
 	const [ hiddenCols, setHiddenCols ] = useState( hidden );
+	const [ selected, setSelected ]     = useState( [] );
 
 	// Make some columns from the schema.
 	let rowHeader = 0;
 	const columns = useMemo( () => {
+		const isAllSelected = selected.length > 0 && selected.length === records.length;
 
-		const columns = [];
-
-		schema.forEach( ( column ) => {
-
-			if ( column.is_primary ) {
-				rowHeader = index;
+		const columns = [
+			{
+				key: 'cb',
+				visible: true,
+				isSortable: false,
+				isNumeric: false,
+				name: 'cb',
+				minWidth: '20px',
+				display: (
+					<CheckboxControl
+						checked={ isAllSelected }
+						onChange={ () => isAllSelected ? setSelected( [] ) : setSelected( records.map( ( row ) => row.id ) ) }
+						__nextHasNoMarginBottom
+					/>
+				),
 			}
+		];
+
+		schema.forEach( ( column, index ) => {
 
 			// Abort if dynamic column.
 			if ( ignore.includes( column.name ) ) {
 				return;
+			}
+
+			if ( column.is_primary ) {
+				rowHeader = index;
 			}
 
 			columns.push( {
@@ -64,7 +82,7 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 		} );
 
 		return columns;
-	}, [ schema, hiddenCols ] );
+	}, [ schema, hiddenCols, selected ] );
 
 	// Convert records into data array.
 	const rows = useMemo( () => {
@@ -74,15 +92,17 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 		}
 
 		return records.map( ( row ) => {
+			const isSelected = selected.includes( row.id );
+			const onSelectionToggle = () => isSelected ? setSelected( without( selected, row.id ) ) : setSelected( [ ...selected, row.id ] );
 
 			return columns.map( ( column ) => {
 				return {
-					display: <DisplayCell { ...column } record={ row } />,
-					value: row[column.key]
+					display: <DisplayCell { ...column } isSelected={ isSelected } onSelectionToggle={ onSelectionToggle } record={ row } />,
+					value: 'cb' === column.key ? isSelected : row[column.key],
 				}
 			});
 		});
-	}, [ records, columns ] );
+	}, [ records, columns, selected ] );
 
 	return (
 		<TableCard
@@ -96,7 +116,7 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 			query={ query }
 			className={ `${namespace}-${collection}__records-table` }
 			hasSearch={ true }
-			rowHeader={ rowHeader }
+			rowHeader={ rowHeader + 1 }
 			emptyMessage={ labels?.not_found }
 			searchPlaceholder={ labels?.search_items }
 			toggleHiddenCol={ ( col ) => {

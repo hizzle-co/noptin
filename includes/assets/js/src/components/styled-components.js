@@ -329,7 +329,7 @@ const tableCellStyle = ({ align='left', minWidth='160px', isSorted }) => {
  * Displays a table header.
  */
 export const TableHeader = styled.th`
-	padding: 16px 24px;
+	padding: 16px;
 	background-color: #f8f9fa;
 	font-weight: bold;
 	white-space: nowrap;
@@ -353,7 +353,7 @@ export const TableHeader = styled.th`
  * Displays a table cell.
  */
 export const TableCell = styled.td`
-	padding: 16px 24px;
+	padding: 16px;
 	border-bottom: 1px solid ${BORDER_COLOR};
 	font-weight: normal;
 	${tableCellStyle};

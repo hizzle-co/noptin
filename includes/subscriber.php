@@ -1382,30 +1382,6 @@ function noptin_get_subscription_sources() {
 }
 
 /**
- * Returns a URL to delete a subscriber.
- *
- * @param int $subscriber_id
- * @since 1.7.0
- * @return string
- */
-function noptin_subscriber_delete_url( $subscriber_id ) {
-
-	return wp_nonce_url(
-		add_query_arg(
-			array(
-				'subscriber_id'       => $subscriber_id,
-				'page'                => 'noptin-subscribers',
-				'noptin_admin_action' => 'noptin_delete_email_subscriber',
-			),
-			admin_url( 'admin.php' )
-		),
-		'noptin_delete_subscriber',
-		'noptin_nonce'
-	);
-
-}
-
-/**
  * Records a subscriber's activity.
  *
  * @param string $email_address
