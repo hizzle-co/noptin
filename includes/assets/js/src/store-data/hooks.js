@@ -135,6 +135,7 @@ export function useRecords( namespace, collection, queryArgs = {} ) {
 
 		return {
 			data: store.getRecords( argsString ),
+			get: () => store.getRecords( argsString ),
 			isResolving: () => store.isResolving( 'getRecords', [ argsString ] ) || ! store.hasStartedResolution( 'getRecords', [ argsString ] ),
 			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecords', [ argsString ] ),
 			getResolutionError: () => store.getResolutionError( 'getRecords', [ argsString ] ),

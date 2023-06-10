@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useMemo, useState } from "@wordpress/element";
-import { Notice, CardBody, CheckboxControl } from "@wordpress/components";
+import { Notice, CardBody, CheckboxControl, Flex, FlexItem } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { without } from 'lodash';
 
@@ -15,6 +15,7 @@ import DisplayCell from "./display-cell";
 import { useSchema, useRecords } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
 import ExportButton from "./export";
+import DeleteButton from "./delete-button";
 
 /**
  * Displays the records table.
@@ -82,7 +83,7 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 		} );
 
 		return columns;
-	}, [ schema, hiddenCols, selected ] );
+	}, [ schema, hiddenCols, selected, records ] );
 
 	// Convert records into data array.
 	const rows = useMemo( () => {
@@ -104,9 +105,19 @@ export function DisplayRecords( { schema: {count, schema, hidden, ignore, labels
 		});
 	}, [ records, columns, selected ] );
 
+	// Prepares actions.
+	const actions = useMemo( () => (
+		<Flex gap={2} wrap>
+			<FlexItem>
+				<DeleteButton selected={ selected } setSelected={ setSelected }/>
+			</FlexItem>
+			<ExportButton />
+		</Flex>
+	), [ selected ] );
+
 	return (
 		<TableCard
-			actions={ <ExportButton /> }
+			actions={ actions }
 			rows={ rows }
 			headers={ columns }
 			totalRows={ count }

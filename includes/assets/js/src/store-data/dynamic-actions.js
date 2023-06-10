@@ -80,18 +80,40 @@ export default function createDynamicActions( namespace, collection ) {
 			// Delete the record.
 			const path   = `${namespace}/v1/${collection}/${id}`;
 			const method = 'DELETE';
-			const result = yield apiFetch( { path, method } );
 
-			if ( result ) {
+			yield apiFetch( { path, method } );
 
-				// Invalidate the getRecord selector.
-				yield dispatch.invalidateResolution( 'getRecord', [ result.id ] );
+			// Invalidate the getRecord selector.
+			yield dispatch.invalidateResolution( 'getRecord', [ result.id ] );
 
-				return {
-					type: 'DELETE_RECORD',
-					id
-				};
-			}
+			return {
+				type: 'DELETE_RECORD',
+				id
+			};
+		},
+
+		/**
+		 * Deletes multiple records.
+		 *
+		 * @param {string} queryString
+		 * @return {Object} Action.
+		 */
+		*deleteRecords( queryString, dispatch ) {
+
+			// Delete the record.
+			const path   = `${namespace}/v1/${collection}${queryString}`;
+			const method = 'DELETE';
+
+			// Delete the records.
+			yield apiFetch( { path, method } );
+
+			// Invalidate related selectors.
+			yield dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
+			yield dispatch.invalidateResolutionForStoreSelector( 'getRecord' );
+			yield dispatch.invalidateResolutionForStoreSelector( 'getRecordOverview' );
+			yield dispatch.invalidateResolutionForStoreSelector( 'getTabContent' );
+
+			return { type: 'DELETE_RECORDS' };
 		},
 	}
 }

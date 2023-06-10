@@ -280,7 +280,7 @@ class Collection {
 	/**
 	 * Checks if we should create a custom meta table.
 	 *
-	 * @return string
+	 * @return bool
 	 */
 	public function create_meta_table() {
 		return $this->use_meta_table && ! $this->is_cpt();
@@ -604,7 +604,7 @@ class Collection {
 
 		$query_schema['include'] = array(
 			'description'       => __( 'Limit result set to specific ids.', 'hizzle-store' ),
-			'type'              => 'array',
+			'type'              => array( 'array' ),
 			'items'             => array(
 				'type' => 'integer',
 			),
@@ -1237,13 +1237,27 @@ class Collection {
 	 * @return int|false — The number of rows updated, or false on error.
 	 */
 	public function delete_where( $where ) {
+		global $wpdb;
 
 		// Fetch matching records.
-		$records = $this->query( $where );
+		$query = $this->query( $where );
 
 		// Delete each record individually.
-		foreach ( $records as $record ) {
+		foreach ( $query->get_results() as $record ) {
 			$record->delete();
+		}
+
+		// Truncase the tables if there are no more records.
+		$main_table = esc_sql( $this->get_db_table_name() );
+		$has_record = $wpdb->get_var( "SELECT id FROM $main_table LIMIT 1" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		if ( ! $has_record ) {
+			$wpdb->query( "TRUNCATE TABLE $main_table" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+			if ( $this->create_meta_table() ) {
+				$meta_table = $this->get_meta_table_name();
+				$wpdb->query( "TRUNCATE TABLE $meta_table" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			}
 		}
 
 		return true;
@@ -1253,26 +1267,7 @@ class Collection {
 	 * Deletes all objects.
 	 */
 	public function delete_all() {
-		global $wpdb;
-
-		// Fetch all records.
-		$records = $this->query( array() );
-
-		// Delete each record individually.
-		foreach ( $records as $record ) {
-			$record->delete();
-		}
-
-		// Reset auto increment.
-		$main_table = esc_sql( $this->get_db_table_name() );
-		$wpdb->query( "TRUNCATE TABLE $main_table" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
-		if ( $this->use_meta_table ) {
-			$meta_table = $this->get_meta_table_name();
-			$wpdb->query( "TRUNCATE TABLE $meta_table" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		}
-
-		return true;
+		return $this->delete_where( array() );
 	}
 
 	/**

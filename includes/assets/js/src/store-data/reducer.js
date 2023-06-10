@@ -93,6 +93,19 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 			return { ...state, records, recordIDs };
 
 		/**
+		 * Empty caches when deleting multiple records.
+		 */
+		case 'DELETE_RECORDS':
+			return {
+				...state,
+				records: {},
+				recordIDs: {},
+				tabContent: {},
+				recordOverview: {},
+				partialRecords: {},
+			};
+
+		/**
 		 * Set tab content key by subscriber ID and tab name, e.g.: { 1_overview:{} } }
 		 */
 		case 'SET_TAB_CONTENT':

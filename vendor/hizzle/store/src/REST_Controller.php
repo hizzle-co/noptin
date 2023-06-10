@@ -78,7 +78,7 @@ class REST_Controller extends \WP_REST_Controller {
 			return;
 		}
 
-		// METHODS to CREATE new records and READ the entire collection.
+		// METHODS to CREATE new records, READ the entire collection, or DELETE the entire collection.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->rest_base,
@@ -94,6 +94,18 @@ class REST_Controller extends \WP_REST_Controller {
 					'callback'            => array( $this, 'create_item' ),
 					'permission_callback' => array( $this, 'create_item_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE ),
+				),
+				array(
+					'methods'             => \WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_items' ),
+					'permission_callback' => array( $this, 'delete_items_permissions_check' ),
+					'args'                => $collection->is_cpt() ? array(
+						'force' => array(
+							'default'     => false,
+							'type'        => 'boolean',
+							'description' => __( 'Whether to bypass trash and force deletion.', 'hizzle-store' ),
+						),
+					) : array(),
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
@@ -445,6 +457,19 @@ class REST_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Check if a given request has access to delete multiple items.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	public function delete_items_permissions_check() {
+		if ( ! $this->check_record_permissions( 'delete_multiple' ) ) {
+			return new \WP_Error( 'hizzle_rest_cannot_delete', __( 'Sorry, you cannot delete resources.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
+		}
+
+		return true;
+	}
+
+	/**
 	 * Check permissions of posts on REST API.
 	 *
 	 * @since 1.0.0
@@ -461,11 +486,12 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		$contexts = array(
-			'read'   => 'read_private_posts',
-			'create' => 'publish_posts',
-			'edit'   => 'edit_post',
-			'delete' => 'delete_post',
-			'batch'  => 'edit_others_posts',
+			'read'            => 'read_private_posts',
+			'create'          => 'publish_posts',
+			'edit'            => 'edit_post',
+			'delete'          => 'delete_post',
+			'delete_multiple' => 'delete_others_posts',
+			'batch'           => 'edit_others_posts',
 		);
 
 		if ( 'revision' === $collection->post_type ) {
@@ -646,6 +672,32 @@ class REST_Controller extends \WP_REST_Controller {
 
 		if ( $object->exists() ) {
 			$object->delete( $force );
+		}
+
+		return new \WP_REST_Response( true, 204 );
+	}
+
+	/**
+	 * Deletes a collection of items.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function delete_items( $request ) {
+		$collection = $this->fetch_collection();
+
+		try {
+			$params = $request->get_params();
+
+			if ( empty( $params ) ) {
+				$collection->delete_all();
+			} else {
+				$collection->delete_where( $params );
+			}
+		} catch ( Store_Exception $e ) {
+			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
 
 		return new \WP_REST_Response( true, 204 );

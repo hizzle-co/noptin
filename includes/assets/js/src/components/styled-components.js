@@ -9,7 +9,7 @@ const BORDER_COLOR = '#e2e4e7';
  *
  * @param {Array} styles An array of styled components.
  */
-const composeStyles = ( styles ) =>  ( component ) => {
+export const composeStyles = ( styles ) =>  ( component ) => {
 	const combined = styles.reduceRight( ( acc, style ) => acc.withComponent( style ), styled.div );
     return combined.withComponent( component );
 }
