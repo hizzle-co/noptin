@@ -285,7 +285,7 @@ export const TableRow = styled.tr`
 	}
 
 	&:last-child td,
-	&:last-child th {
+	&:last-child th:not(.noptin-table__header) {
 		border-bottom: 0;
 	}
 `

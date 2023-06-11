@@ -252,7 +252,15 @@ const TableCard = ( {
 				/>
 			) }
 
-			{ showFooter && <TableFooter /> }
+			{ showFooter && (
+				<TableFooter
+					isLoading={isLoading}
+					summary={summary}
+					query={query}
+					onQueryChange={onQueryChange}
+					totalRows={totalRows}
+				/>
+			) }
 		</BorderedCard>
 	);
 };

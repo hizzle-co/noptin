@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl } from "@wordpress/components";
-import { useMemo } from "@wordpress/element";
+import { useMemo, useCallback } from "@wordpress/element";
 
 /**
  * Internal dependencies
@@ -55,7 +55,7 @@ export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange,
 	const isAllSelected = selected.length > 0 && selected.length === rowKeys.length;
 
 	// Maybe change the sort direction.
-	const setSortBy = ( col ) => {
+	const setSortBy = useCallback( ( col ) => {
 
 		// Maybe change the sort direction.
 		if ( col === sortBy ) {
@@ -63,51 +63,111 @@ export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange,
 		} else {
 			onQueryChange( { orderby: col } );
 		}
-	};
+	}, [ sortBy, sortDir, onQueryChange ] );
+
+	// Lets users select rows.
+	const selectRows = useMemo(() => {
+		if ( ! canSelectRows ) {
+			return null;
+		}
+
+		return (
+			<HeaderCell
+				columnLabel={ __( 'Toggle selection', 'newsletter-optin-box' ) }
+				columnKey="cb"
+				align="center"
+				minWidth="20px"
+				display={
+					<CheckboxControl
+						checked={ isAllSelected }
+						onChange={ () => setSelected( isAllSelected ? [] : rowKeys ) }
+						__nextHasNoMarginBottom
+					/>
+				}
+				cellClassName="noptin-table-column__cb"
+			/>
+		);
+	}, [ canSelectRows, isAllSelected, rowKeys ] );
+
+	// Prepare the headers.
+	const theHeaders = useMemo( () => headers.map( ( { key, label, isSortable, ...props } ) => (
+		<HeaderCell
+			key={ key }
+			columnLabel={ label }
+			columnKey={ key }
+			isSortable={ isSortable && hasData }
+			isSorted={ sortBy === key }
+			sortDir={ sortDir }
+			setSortBy={ setSortBy }
+			cellClassName={ 'noptin-table-column__' + key.replace( /_/g, '-' ) }
+			{ ...props }
+		/>
+	) ), [ headers, hasData, sortBy, sortDir, setSortBy ] );
 
 	return (
 		<thead>
 			<TableRow className="noptin-table__row">
-
-				{ canSelectRows && (
-					<HeaderCell
-						columnLabel={ __( 'Toggle selection', 'newsletter-optin-box' ) }
-						columnKey="cb"
-						align="center"
-						minWidth="20px"
-						display={
-							<CheckboxControl
-								checked={ isAllSelected }
-								onChange={ () => setSelected( isAllSelected ? [] : rowKeys ) }
-								__nextHasNoMarginBottom
-							/>
-						}
-						cellClassName="noptin-table-column__cb"
-					/>
-				) }
-
-				{ headers.map( ( header ) => {
-
-					const { key, label, isSortable, ...props } = header;
-					return (
-						<HeaderCell
-							key={ key }
-							columnLabel={ label }
-							columnKey={ key }
-							isSortable={ isSortable && hasData }
-							isSorted={ sortBy === key }
-							sortDir={ sortDir }
-							onClick={ () => setSortBy( key ) }
-							cellClassName={ 'noptin-table-column__' + key.replace( /_/g, '-' ) }
-							{ ...props }
-						/>
-					);
-
-				} ) }
+				{ selectRows }
+				{ theHeaders }
 			</TableRow>
 		</thead>
 	);
 }
+
+/**
+ * Displays a single table row.
+ */
+const TheTableRow = ( { sortBy, headers, DisplayCell, canSelectRows, selected, setSelected, row, id } ) => {
+
+	// Lets users select rows.
+	const selectRow = useMemo(() => {
+		if ( ! canSelectRows ) {
+			return null;
+		}
+
+		return (
+			<BodyCell
+				headerKey={ 'cb' }
+				row={ row }
+				header={ { key: 'cb', align: 'center', minWidth: '20px', } }
+				cellClassName={ 'noptin-table__col-cb' }
+				DisplayCell={ () => (
+					<CheckboxControl
+						checked={ selected.includes( id ) }
+						onChange={ () => {
+							if ( selected.includes( id ) ) {
+								setSelected( selected.filter( ( item ) => item !== id ) );
+							} else {
+								setSelected( [ ...selected, id ] );
+							}
+						} }
+						__nextHasNoMarginBottom
+					/>
+				) }
+			/>
+		);
+	}, [ canSelectRows, selected, setSelected, id ] );
+
+	// Prepare the other cells.
+	const displaColumns = useMemo( () => headers.map( ( { key, ...header } ) => (
+		<BodyCell
+			key={ `${id}__${key}` }
+			headerKey={ key }
+			row={ row }
+			header={ header }
+			isSorted={ sortBy === key }
+			cellClassName={ 'noptin-table__col-' + key?.replace( /_/g, '-' ) }
+			DisplayCell={ DisplayCell }
+		/>
+	) ), [ headers, row, sortBy, DisplayCell, id ] );
+
+	return (
+		<TableRow className="noptin-table__row">
+			{ selectRow }
+			{ displaColumns }
+		</TableRow>
+	);
+};
 
 /**
  * A table component, without the Card wrapper.
@@ -171,42 +231,17 @@ const Table = ( {
 							const rowKey = getRowKey( row, i, idProp );
 
 							return (
-								<TableRow className="noptin-table__row" key={ rowKey }>
-
-									{canSelectRows && (
-										<BodyCell
-											headerKey={ 'cb' }
-											row={ row }
-											header={ { key: 'select', align: 'center', minWidth: '20px', } }
-											cellClassName={ 'noptin-table__col-cb' }
-											DisplayCell={ () => (
-												<CheckboxControl
-													checked={ selected.includes( rowKey ) }
-													onChange={ () => {
-														if ( selected.includes( rowKey ) ) {
-															setSelected( selected.filter( ( item ) => item !== rowKey ) );
-														} else {
-															setSelected( [ ...selected, rowKey ] );
-														}
-													} }
-													__nextHasNoMarginBottom
-												/>
-											) }
-										/>
-									)}
-
-									{ headers.map( ( { key, ...header} ) => (
-										<BodyCell
-											key={ `${rowKey}__${key}` }
-											headerKey={ key }
-											row={ row }
-											header={ header }
-											isSorted={ sortBy === key }
-											cellClassName={ 'noptin-table__col-' + key?.replace( /_/g, '-' ) }
-											DisplayCell={ DisplayCell }
-										/>
-									) ) }
-								</TableRow>
+								<TheTableRow
+									key={ rowKey }
+									sortBy={ sortBy }
+									headers={ headers }
+									DisplayCell={ DisplayCell }
+									canSelectRows={ canSelectRows }
+									selected={ selected }
+									setSelected={ setSelected }
+									row={ row }
+									id={ rowKey }
+								/>
 							);
  						} )
 					) : (

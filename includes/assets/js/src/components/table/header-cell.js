@@ -31,7 +31,7 @@ export const alignmentStyle = ( align, isNumeric ) => {
  *
  * @param {Object} props Component props.
  */
-const HeaderCell = ( { columnKey, columnLabel, screenReaderLabel, cellClassName, minWidth, display, align, isSortable, isNumeric, isSorted, sortDir, onClick } ) => {
+const HeaderCell = ( { columnKey, columnLabel, screenReaderLabel, cellClassName, minWidth, display, align, isSortable, isNumeric, isSorted, sortDir, setSortBy } ) => {
 
 	// Label the header cell for screen readers.
 	const alignment = alignmentStyle( align, isNumeric );
@@ -75,7 +75,7 @@ const HeaderCell = ( { columnKey, columnLabel, screenReaderLabel, cellClassName,
 	return (
 		<TableHeader role="columnheader" scope="col" key={ columnKey } isSorted={ isSorted } { ...thProps }>
 			{ ( isSortable ) ? (
-				<Button onClick={ onClick } label={ iconLabel } showTooltip>
+				<Button onClick={ () => setSortBy( columnKey ) } label={ iconLabel } showTooltip>
 					{ 'right' === alignment.align && TheIcon }
 					<span> {textLabel} </span>
 					{ 'right' !== alignment.align && TheIcon }

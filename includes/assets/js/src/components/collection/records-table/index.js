@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useMemo } from "@wordpress/element";
+import { useMemo, useCallback } from "@wordpress/element";
 import { Notice, CardBody, Flex, FlexItem } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 
@@ -24,16 +24,14 @@ import DeleteButton from "./delete-button";
  * @param {Function} props.setSelected
  * @returns {JSX.Element}
  */
-function TableActions( {selected, setSelected} ) {
-	return (
-		<Flex gap={2} wrap>
-			<FlexItem>
-				<DeleteButton selected={ selected } setSelected={ setSelected }/>
-			</FlexItem>
-			<ExportButton />
-		</Flex>
-	);
-}
+const TableActions = ( {selected, setSelected} ) => (
+	<Flex gap={2} wrap>
+		<FlexItem>
+			<DeleteButton selected={ selected } setSelected={ setSelected }/>
+		</FlexItem>
+		<ExportButton />
+	</Flex>
+);
 
 /**
  * Displays the records table.
@@ -52,7 +50,7 @@ function TableActions( {selected, setSelected} ) {
 export function DisplayRecords( { schema: { schema, hidden, ignore, labels }, total, summary, records, isLoading, updateQuery, query, extra } ) {
 
 	// Prepare the current query.
-	const { namespace, collection }     = useRoute();
+	const { namespace, collection } = useRoute();
 
 	// Make some columns from the schema.
 	const columns = useMemo( () => {
@@ -127,7 +125,7 @@ export default function RecordsTable( { component } ) {
 	}
 
 	// Updates the query.
-	const updateQuery = ( newQuery ) => {
+	const updateQuery = useCallback(( newQuery ) => {
 
 		// If we're not updating the page, reset it.
 		if ( ! newQuery.paged ) {
@@ -135,7 +133,7 @@ export default function RecordsTable( { component } ) {
 		}
 
 		navigate( path, { ...args, ...newQuery } );
-	}
+	}, [ navigate, path, args ] );
 
 	return (
 		<DisplayRecords
