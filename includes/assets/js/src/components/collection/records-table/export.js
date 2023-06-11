@@ -14,6 +14,7 @@ import Papa from 'papaparse';
 import { useSchema, useRecords } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
 import { BlockButton } from "../../styled-components";
+import ErrorBoundary from "../error-boundary";
 
 /**
  * Fetches records from the API and converts them to CSV.
@@ -31,7 +32,7 @@ const DownloadProgress = ({ fields, back, schema }) => {
 	// Fetch the records.
 	const newArgs = {
 		...args,
-		_fields: fields.join(','),
+		__fields: fields.join(','),
 		number: -1,
 		context: 'edit',
 	}
@@ -253,7 +254,9 @@ export default function ExportButton() {
 			{isOpen && (
 				<Modal title={ __( 'Export', 'newsletter-optin-box' ) } onRequestClose={() => setOpen(false)}>
 					<div className="hizzle-records-export-modal__body">
-						<TheModal />
+						<ErrorBoundary>
+							<TheModal />
+						</ErrorBoundary>
 					</div>
 				</Modal>
 			)}

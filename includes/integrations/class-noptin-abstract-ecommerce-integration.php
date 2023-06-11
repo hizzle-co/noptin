@@ -647,14 +647,12 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 				array(
 					'label'      => __( 'Title', 'newsletter-optin-box' ),
 					'name'       => 'title',
-					'visible'    => true,
 					'is_primary' => true,
 					'url'        => 'edit_url',
 				),
 				array(
 					'label'   => __( 'Items', 'newsletter-optin-box' ),
 					'name'    => 'items',
-					'visible' => true,
 					'is_list' => true,
 					'item'    => '%s &times; %s - %s',
 					'args'    => array(
@@ -666,19 +664,16 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 				array(
 					'label'      => __( 'Discount', 'newsletter-optin-box' ),
 					'name'       => 'discount_formatted',
-					'visible'    => true,
 					'is_numeric' => true,
 				),
 				array(
 					'label'      => __( 'Total', 'newsletter-optin-box' ),
 					'name'       => 'total_formatted',
-					'visible'    => true,
 					'is_numeric' => true,
 				),
 				array(
-					'label'   => __( 'Date Created', 'newsletter-optin-box' ),
-					'name'    => 'date_created_i18n',
-					'visible' => true,
+					'label' => __( 'Date Created', 'newsletter-optin-box' ),
+					'name'  => 'date_created_i18n',
 				),
 			),
 			'callback'     => array( $this, 'orders_callback' ),

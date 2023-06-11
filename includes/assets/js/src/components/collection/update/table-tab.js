@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import { useMemo, useState } from "@wordpress/element";
+import { useMemo } from "@wordpress/element";
 import { Notice, CardBody, Icon } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
-import { without } from 'lodash';
 
 /**
  * Local dependencies.
@@ -20,17 +19,19 @@ import Wrap from "../wrap";
  * @param {Object} props
  * @returns The cell.
  */
-const DisplayCell = ( { name, is_list, item, args, is_primary, url, is_boolean, record } ) => {
+const DisplayCell = ( { row, header, headerKey } ) => {
+
+	const { is_list, item, args, is_primary, url, is_boolean } = header;
 
 	if ( is_list ) {
 
-		if ( ! Array.isArray( record[ name ] ) || 0 === record[ name ].length ) {
+		if ( ! Array.isArray( row[ headerKey ] ) || 0 === row[ headerKey ].length ) {
 			return '—';
 		}
 	
 		return (
 			<ul>
-				{ record[ name ].map( ( arrayValue, index ) => {
+				{ row[ headerKey ].map( ( arrayValue, index ) => {
 					let value = arrayValue;
 
 					if ( item ) {
@@ -45,25 +46,25 @@ const DisplayCell = ( { name, is_list, item, args, is_primary, url, is_boolean, 
 	}
 
 	if ( is_primary && url ) {
-		const recordUrl = record[ url ];
+		const recordUrl = row[ url ];
 
 		if ( ! recordUrl ) {
-			return <strong>{ record[ name ] }</strong>;
+			return <strong>{ row[ headerKey ] }</strong>;
 		}
 
 		return (
-			<a href={ record[ url ] } style={{textDecoration: 'none'}} target="_blank">
-				<strong>{ record[ name ] }</strong>
+			<a href={ row[ url ] } style={{textDecoration: 'none'}} target="_blank">
+				<strong>{ row[ headerKey ] }</strong>
 			</a>
 		);
 	}
 
 	if ( is_boolean ) {
-		const theIcon = record[ name ] ? 'yes' : 'no';
+		const theIcon = row[ headerKey ] ? 'yes' : 'no';
 		return <Icon icon={ theIcon } />;
 	}
 
-	return <div dangerouslySetInnerHTML={ { __html: record[ name ] } } />;
+	return <div dangerouslySetInnerHTML={ { __html: row[ headerKey ] } } />;
 }
 
 /**
@@ -73,19 +74,18 @@ const DisplayCell = ( { name, is_list, item, args, is_primary, url, is_boolean, 
  * @param {Object} props.tab
  * @returns The records table.
  */
-export default function TableTab( props ) {
+export default function TableTab( {tab} ) {
 
 	// Prepare the state.
-	const [ hiddenCols, setHiddenCols ] = useState( props.tab.hidden ? props.tab.hidden : [] );
 	const { namespace, collection, args } = useRoute();
-	const tab = useTabContent( namespace, collection, args.id, props.tab.name );
+	const tabContent = useTabContent( namespace, collection, args.id, tab.name );
 
 	// Show error if any.
-	if ( tab.hasResolutionFailed() ) {
+	if ( tabContent.hasResolutionFailed() ) {
 
-		const error = tab.getResolutionError();
+		const error = tabContent.getResolutionError();
 		return (
-			<Wrap title={props.tab.title}>
+			<Wrap title={tab.title}>
 				<CardBody>
 					<Notice status="error" isDismissible={ false }>
 						{ error.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
@@ -96,66 +96,22 @@ export default function TableTab( props ) {
 	}
 
 	// Prepare headers.
-	let rowHeader = 0;
-	const headers = useMemo( () => {
-
-		const headers = [];
-
-		props.tab.headers.forEach( ( header, index ) => {
-
-			if ( header.is_primary ) {
-				rowHeader = index;
-			}
-
-			headers.push( {
-				key: header.name,
-				label: header.label,
-				visible: ! hiddenCols.includes( header.name ),
-				isSortable: false,
-				isNumeric: header.is_numeric,
-				align: header.align,
-			});
-		} );
-
-		return headers;
-	}, [ props.tab.headers, hiddenCols ] );
-
-	// Prepare records.
-	const rows = useMemo( () => {
-
-		if ( ! Array.isArray( tab.data ) ) {
-			return [];
-		}
-
-		return tab.data.map( ( row ) => {
-
-			return props.tab.headers.map( ( column ) => {
-
-				return {
-					display: <DisplayCell { ...column } record={ row } />,
-					value: row[column.key]
-				}
-			});
-		});
-	}, [ tab.data ] );
+	const headers = useMemo( () => tab.headers.map( ( header ) => ({
+		key: header.name,
+		label: header.label,
+		isSortable: false,
+		isNumeric: header.is_numeric,
+		...header
+	})) , [ tab.headers ] );
 
 	return (
 		<Table
-			{ ...props.tab }
-			records={ rows }
-			isLoading={ tab.isResolving() }
-			rows={ rows }
+			{ ...tab }
+			isLoading={ tabContent.isResolving() }
+			rows={ tabContent.data }
 			headers={ headers }
 			showFooter={ false }
-			rowHeader={ rowHeader }
-			toggleHiddenCol={ ( col ) => {
-
-				if ( hiddenCols.includes( col ) ) {
-					setHiddenCols( without( hiddenCols, col ) );
-				} else {
-					setHiddenCols( [ ...hiddenCols, col ] );
-				}
-			} }
+			DisplayCell={ DisplayCell }
 		/>
 	);
 }

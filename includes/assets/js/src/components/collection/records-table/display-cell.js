@@ -1,4 +1,4 @@
-import { CheckboxControl, Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
+import { Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
 import { dateI18n, getSettings, __experimentalGetSettings } from "@wordpress/date";
 import getEnumBadge from "./enum-colors";
 import { useRoute } from "../hooks";
@@ -50,52 +50,47 @@ const PrimaryColumn = ( { record, name } ) => {
 /**
  * Displays a single cell in the records table.
  * @param {Object} props
- * @param {Object} props.record The record object.
- * @param {string} props.name  The name of the column.
- * @param {string} props.label The label of the column.
- * @param {string} props.description The description of the column.
+ * @param {Object} props.row The record object.
+ * @param {Object} props.header The header
+ * @param {string} props.headerKey  The name of the column.
  * @returns
  */
-export default function DisplayCell( { record, name, label, description, length, nullable, readonly, multiple, isSelected, onSelectionToggle, is_dynamic, is_boolean, is_numeric, is_float, is_date, is_primary_col, ...extra } ) {
+export default function DisplayCell( { row, header, headerKey } ) {
 
-	// Checkbox.
-	if ( 'cb' === name ) {
-		return <CheckboxControl checked={ isSelected } onChange={ onSelectionToggle } __nextHasNoMarginBottom />;
-	}
-
-	const value = record[name];
+	const value = row[headerKey];
 
 	// Nulls and undefined values are displayed as a dash.
 	if ( value === null || value === undefined || value === '' ) {
 		return <span className="noptin-table__cell--null">&ndash;</span>;
 	}
 
-	if ( is_primary_col && typeof value === 'string' ) {
-		return <PrimaryColumn record={ record } name={ name } />;
+	if ( header.is_primary && typeof value === 'string' ) {
+		return <PrimaryColumn record={ row } name={ headerKey } />;
 	}
 
 	// Boolean values are displayed as a toggle.
-	if ( is_boolean ) {
+	if ( header.is_boolean ) {
 
-		const icon = value ? 'yes' : 'no';
-		return <Icon size={ 24 } icon={ icon } />;
+		const icon  = value ? 'yes' : 'no';
+		const color = value ? '#3a9001' : '#880000';
+		return <Icon size={ 24 } style={{color}} icon={ icon } />;
 	}
 
 	// Dates are formatted as a date.
-	if ( is_date && value ) {
+	if ( header.is_date && value ) {
 		const settings = getSettings ? getSettings() : __experimentalGetSettings();
 		return dateI18n( settings.formats.datetime, value );
 	}
 
 	// If we have an enum, display the label.
-	if ( extra.enum && extra.enum[value] ) {
-		return <span className={ `noptin-badge ${ getEnumBadge( value ) }` }>{ extra.enum[value] }</span>;
+	if ( header.enum && header.enum[value] ) {
+		return <span className={ `noptin-badge ${ getEnumBadge( value ) }` }>{ header.enum[value] }</span>;
 	}
 
 	// Strings, numbers, and floats are displayed as is.
-	if ( is_numeric || is_float || typeof value === 'string' ) {
+	if ( header.is_numeric || header.is_float || typeof value === 'string' ) {
 		return value;
 	}
 
-	return label;
+	return JSON.stringify( value );
 }

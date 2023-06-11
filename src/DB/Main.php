@@ -416,14 +416,12 @@ class Main {
 				array(
 					'label'      => __( 'Title', 'newsletter-optin-box' ),
 					'name'       => 'title',
-					'visible'    => true,
 					'is_primary' => true,
 					'url'        => 'url',
 				),
 				array(
 					'label'   => __( 'Sent', 'newsletter-optin-box' ),
 					'name'    => 'time',
-					'visible' => true,
 					'is_list' => true,
 					'item'    => '%s',
 					'args'    => array( 'i18n' ),
@@ -432,7 +430,6 @@ class Main {
 				array(
 					'label'   => __( 'Opened', 'newsletter-optin-box' ),
 					'name'    => 'opens',
-					'visible' => true,
 					'is_list' => true,
 					'item'    => '%s',
 					'args'    => array( 'i18n' ),
@@ -441,17 +438,15 @@ class Main {
 				array(
 					'label'   => __( 'Clicked on', 'newsletter-optin-box' ),
 					'name'    => 'clicks',
-					'visible' => true,
 					'is_list' => true,
 					'item'    => '%s - %s',
 					'args'    => array( 'key', 'i18n' ),
 					'align'   => 'center',
 				),
 				array(
-					'label'   => __( 'Unsubscribed', 'newsletter-optin-box' ),
-					'name'    => 'unsubscribed',
-					'visible' => true,
-					'align'   => 'right',
+					'label' => __( 'Unsubscribed', 'newsletter-optin-box' ),
+					'name'  => 'unsubscribed',
+					'align' => 'right',
 				),
 			),
 			'callback'     => array( $this, 'emails_callback' ),
@@ -464,14 +459,12 @@ class Main {
 			'emptyMessage' => __( 'No activity has been recorded yet.', 'newsletter-optin-box' ),
 			'headers'      => array(
 				array(
-					'label'   => __( 'Date', 'newsletter-optin-box' ),
-					'name'    => 'i18n',
-					'visible' => true,
+					'label' => __( 'Date', 'newsletter-optin-box' ),
+					'name'  => 'i18n',
 				),
 				array(
 					'label'      => __( 'Activity', 'newsletter-optin-box' ),
 					'name'       => 'activity',
-					'visible'    => true,
 					'is_primary' => true,
 				),
 			),

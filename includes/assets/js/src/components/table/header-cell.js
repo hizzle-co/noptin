@@ -5,6 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { Button } from '@wordpress/components';
 import { chevronUp, chevronDown, Icon } from '@wordpress/icons';
+import { memo } from "@wordpress/element";
 
 /**
  * Internal dependencies
@@ -30,22 +31,14 @@ export const alignmentStyle = ( align, isNumeric ) => {
  *
  * @param {Object} props Component props.
  */
-export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel, cellClassName, minWidth, display, align, isSortable, isNumeric, isSorted, sortDir, onClick } ) {
+const HeaderCell = ( { columnKey, columnLabel, screenReaderLabel, cellClassName, minWidth, display, align, isSortable, isNumeric, isSorted, sortDir, onClick } ) => {
 
 	// Label the header cell for screen readers.
 	const alignment = alignmentStyle( align, isNumeric );
 
 	// Prepare props.
 	const thProps  = {
-		className: classnames(
-			'noptin-table__header',
-			cellClassName,
-			{
-				'is-sortable': isSortable,
-				'is-sorted': isSorted,
-				'is-numeric': isNumeric,
-			}
-		),
+		className: classnames( 'noptin-table__header', cellClassName ),
 		...alignment,
 		minWidth: minWidth || undefined,
 	};
@@ -93,3 +86,5 @@ export default function HeaderCell( { columnKey, columnLabel, screenReaderLabel,
 		</TableHeader>
 	);
 };
+
+export default memo( HeaderCell );

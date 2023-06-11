@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import { useMemo, useState } from "@wordpress/element";
-import { Notice, CardBody, CheckboxControl, Flex, FlexItem } from "@wordpress/components";
+import { useMemo } from "@wordpress/element";
+import { Notice, CardBody, Flex, FlexItem } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
-import { without } from 'lodash';
 
 /**
  * Local dependencies.
@@ -16,6 +15,25 @@ import { useSchema, useRecords } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
 import ExportButton from "./export";
 import DeleteButton from "./delete-button";
+
+/**
+ * Displays the table actions.
+ *
+ * @param {Object} props
+ * @param {Array} props.selected
+ * @param {Function} props.setSelected
+ * @returns {JSX.Element}
+ */
+function TableActions( {selected, setSelected} ) {
+	return (
+		<Flex gap={2} wrap>
+			<FlexItem>
+				<DeleteButton selected={ selected } setSelected={ setSelected }/>
+			</FlexItem>
+			<ExportButton />
+		</Flex>
+	);
+}
 
 /**
  * Displays the records table.
@@ -35,46 +53,21 @@ export function DisplayRecords( { schema: { schema, hidden, ignore, labels }, to
 
 	// Prepare the current query.
 	const { namespace, collection }     = useRoute();
-	const [ hiddenCols, setHiddenCols ] = useState( hidden );
-	const [ selected, setSelected ]     = useState( [] );
 
 	// Make some columns from the schema.
-	let rowHeader = 0;
 	const columns = useMemo( () => {
-		const isAllSelected = selected.length > 0 && selected.length === records.length;
 
-		const columns = [
-			{
-				key: 'cb',
-				visible: true,
-				isSortable: false,
-				isNumeric: false,
-				name: 'cb',
-				minWidth: '20px',
-				display: (
-					<CheckboxControl
-						checked={ isAllSelected }
-						onChange={ () => isAllSelected ? setSelected( [] ) : setSelected( records.map( ( row ) => row.id ) ) }
-						__nextHasNoMarginBottom
-					/>
-				),
-			}
-		];
+		const columns = [];
 
-		schema.forEach( ( column, index ) => {
+		schema.forEach( ( column ) => {
 
 			// Abort if dynamic column.
 			if ( ignore.includes( column.name ) ) {
 				return;
 			}
 
-			if ( column.is_primary ) {
-				rowHeader = index;
-			}
-
 			columns.push( {
 				key: column.name,
-				visible: ! hiddenCols.includes( column.name ),
 				isSortable: ! column.is_dynamic,
 				isNumeric: column.is_numeric || column.is_float,
 				...column
@@ -82,42 +75,12 @@ export function DisplayRecords( { schema: { schema, hidden, ignore, labels }, to
 		} );
 
 		return columns;
-	}, [ schema, hiddenCols, selected, records ] );
-
-	// Convert records into data array.
-	const rows = useMemo( () => {
-
-		if ( ! Array.isArray( records ) ) {
-			return [];
-		}
-
-		return records.map( ( row ) => {
-			const isSelected = selected.includes( row.id );
-			const onSelectionToggle = () => isSelected ? setSelected( without( selected, row.id ) ) : setSelected( [ ...selected, row.id ] );
-
-			return columns.map( ( column ) => {
-				return {
-					display: <DisplayCell { ...column } isSelected={ isSelected } onSelectionToggle={ onSelectionToggle } record={ row } />,
-					value: 'cb' === column.key ? isSelected : row[column.key],
-				}
-			});
-		});
-	}, [ records, columns, selected ] );
-
-	// Prepares actions.
-	const actions = useMemo( () => (
-		<Flex gap={2} wrap>
-			<FlexItem>
-				<DeleteButton selected={ selected } setSelected={ setSelected }/>
-			</FlexItem>
-			<ExportButton />
-		</Flex>
-	), [ selected ] );
+	}, [ schema, ignore ] );
 
 	return (
 		<TableCard
-			actions={ actions }
-			rows={ rows }
+			actions={ TableActions }
+			rows={ records }
 			headers={ columns }
 			totalRows={ total }
 			summary={ summary ? Object.values( summary ) : [] }
@@ -126,17 +89,12 @@ export function DisplayRecords( { schema: { schema, hidden, ignore, labels }, to
 			query={ query }
 			className={ `${namespace}-${collection}__records-table` }
 			hasSearch={ true }
-			rowHeader={ rowHeader + 1 }
 			emptyMessage={ labels?.not_found }
 			searchPlaceholder={ labels?.search_items }
-			toggleHiddenCol={ ( col ) => {
-
-				if ( hiddenCols.includes( col ) ) {
-					setHiddenCols( without( hiddenCols, col ) );
-				} else {
-					setHiddenCols( [ ...hiddenCols, col ] );
-				}
-			} }
+			canSelectRows={ true }
+			idProp="id"
+			DisplayCell={ DisplayCell }
+			initialHiddenHeaders={ hidden }
 			{ ...extra }
 		/>
 	);

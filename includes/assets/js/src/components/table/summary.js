@@ -1,22 +1,19 @@
 import { LoadingPlaceholder } from "../styled-components";
+import { TableSummaryList } from "../styled-components";
 
 /**
  * A component to display summarized table data - the list of data passed in on a single line.
  */
 const TableSummary = ( { data } ) => {
 	return (
-		<ul className="noptin-table__summary" role="complementary">
+		<TableSummaryList role="complementary">
 			{ data.map( ( { label, value }, i ) => (
-				<li className="noptin-table__summary-item" key={ i }>
-					<span className="noptin-table__summary-value">
-						{ value }
-					</span>
-					<span className="noptin-table__summary-label">
-						{ label }
-					</span>
+				<li key={ i }>
+					<strong>{ value }</strong>
+					<span>{ label }</span>
 				</li>
 			) ) }
-		</ul>
+		</TableSummaryList>
 	);
 };
 
@@ -29,10 +26,10 @@ export default TableSummary;
  */
 export const TableSummaryPlaceholder = () => {
 	return (
-		<ul className="noptin-table__summary is-loading" role="complementary">
-			<li className="noptin-table__summary-item">
+		<TableSummaryList role="complementary">
+			<li>
 				<LoadingPlaceholder />
 			</li>
-		</ul>
+		</TableSummaryList>
 	);
 };

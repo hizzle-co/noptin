@@ -2,6 +2,8 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { CheckboxControl } from "@wordpress/components";
+import { useMemo } from "@wordpress/element";
 
 /**
  * Internal dependencies
@@ -15,8 +17,17 @@ const DESC = 'desc';
 
 /**
  * Calculates a row key.
+ *
+ * @param {Object} row The row.
+ * @param {int} index The row index.
+ * @param {string} idProp The ID prop.
  */
-const getRowKey = ( row, index ) => {
+const getRowKey = ( row, index, idProp ) => {
+
+	// If the row has an ID, use that.
+	if ( idProp && row[idProp] ) {
+		return row[idProp];
+	}
 
 	// If the row has an ID, use that.
 	if ( row.id ) {
@@ -33,37 +44,17 @@ const getRowKey = ( row, index ) => {
 }
 
 /**
- * A table component, without the Card wrapper. This is a basic table display, sortable, but no default filtering.
- *
- * Row data should be passed to the component as a list of arrays, where each array is a row in the table.
- * Headers are passed in separately as an array of objects with column-related properties.
+ * Displays a table header.
  *
  * @param {Object} props Component props.
- * @param {Array} props.headers Array of objects with column-related properties.
- * @param {Array} props.rows Array of arrays, where each array is a row in the table.
- * @param {boolean} props.ariaHidden Whether the table should be hidden from screen readers.
- * @param {string} props.caption Caption for the table.
- * @param {string} props.className Additional class names to add to the table.
- * @param {number} props.rowHeader Index of the row header (or false if no header).
- * @param {string} props.emptyMessage Message to display when there are no rows.
- * @param {string} props.sortBy Column key to sort by.
- * @param {string} props.sortDir Sort direction.
- * @param {Function} props.onChangeSortBy Callback function for when the sort column is changed.
  */
-const Table = ( {
-	query,
-	headers = [],
-	rows = [],
-	ariaHidden,
-	caption,
-	className,
-	rowHeader,
-	emptyMessage,
-	onQueryChange,
-} ) => {
-	const sortBy = query.orderby || 'id';
-	const sortDir = query.order || DESC;
+export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange, rows, idProp, canSelectRows, selected, setSelected } ) => {
 
+	// Loop through all rows and retrieve an array of keys.
+	const rowKeys = useMemo( () => rows.map( ( row, index ) => getRowKey( row, index, idProp ) ), [ rows, idProp ] );
+	const isAllSelected = selected.length > 0 && selected.length === rowKeys.length;
+
+	// Maybe change the sort direction.
 	const setSortBy = ( col ) => {
 
 		// Maybe change the sort direction.
@@ -74,55 +65,150 @@ const Table = ( {
 		}
 	};
 
+	return (
+		<thead>
+			<TableRow className="noptin-table__row">
+
+				{ canSelectRows && (
+					<HeaderCell
+						columnLabel={ __( 'Toggle selection', 'newsletter-optin-box' ) }
+						columnKey="cb"
+						align="center"
+						minWidth="20px"
+						display={
+							<CheckboxControl
+								checked={ isAllSelected }
+								onChange={ () => setSelected( isAllSelected ? [] : rowKeys ) }
+								__nextHasNoMarginBottom
+							/>
+						}
+						cellClassName="noptin-table-column__cb"
+					/>
+				) }
+
+				{ headers.map( ( header ) => {
+
+					const { key, label, isSortable, ...props } = header;
+					return (
+						<HeaderCell
+							key={ key }
+							columnLabel={ label }
+							columnKey={ key }
+							isSortable={ isSortable && hasData }
+							isSorted={ sortBy === key }
+							sortDir={ sortDir }
+							onClick={ () => setSortBy( key ) }
+							cellClassName={ 'noptin-table-column__' + key.replace( /_/g, '-' ) }
+							{ ...props }
+						/>
+					);
+
+				} ) }
+			</TableRow>
+		</thead>
+	);
+}
+
+/**
+ * A table component, without the Card wrapper.
+ *
+ * @param {Object} props Component props.
+ * @param {Array} props.headers Array of objects with column-related properties.
+ * @param {Array} props.rows Array of objects, where each array is a row in the table.
+ * @param {string} props.caption Caption for the table.
+ * @param {string} props.emptyMessage Message to display when there are no rows.
+ * @param {string} props.query.sortBy Column key to sort by.
+ * @param {string} props.query.sortDir Sort direction.
+ * @param {Function} props.DisplayCell Callback function to display a single cell.
+ * @param {Function} props.onQueryChange Callback function to change the query.
+ * @param {string} props.idProp The property to use as the row key.
+ */
+const Table = ( {
+	query,
+	headers = [],
+	rows = [],
+	caption,
+	emptyMessage,
+	onQueryChange,
+	DisplayCell,
+	canSelectRows,
+	selected = [],
+	setSelected = () => {},
+	idProp = 'id',
+	...extraProps
+} ) => {
+	const sortBy = query.orderby || 'id';
+	const sortDir = query.order || DESC;
+
 	const hasData = !! rows.length;
 
 	return (
 		<ScrollableTable
-			className={ className }
 			tabIndex="0"
-			aria-hidden={ ariaHidden }
 			aria-label={ `${ caption } - ${ __( '(scroll to see more)', 'newsletter-optin-box' ) }` }
 			role="group"
+			{...extraProps}
 		>
 			<table>
+
+				<TableHeader
+					headers={headers}
+					hasData={hasData}
+					sortBy={sortBy}
+					sortDir={sortDir}
+					onQueryChange={onQueryChange}
+					canSelectRows={canSelectRows}
+					selected={selected}
+					setSelected={setSelected}
+					rows={rows}
+					idProp={idProp}
+				/>
+
 				<tbody>
 
-					<TableRow className="noptin-table__row">
-						{ headers.map( ( header, i ) => {
-							
-							const { key, label, isSortable, ...props } = header;
-							return (
-								<HeaderCell
-									key={ key }
-									columnLabel={ label }
-									columnKey={ key }
-									isSortable={ isSortable && hasData }
-									isSorted={ sortBy === key }
-									sortDir={ sortDir }
-									onClick={ () => setSortBy( key ) }
-									cellClassName={ 'noptin-table-column__' + key.replace( /_/g, '-' ) }
-									{ ...props }
-								/>
-							);
-
-						} ) }
-					</TableRow>
-
 					{ hasData ? (
-						rows.map( ( row, i ) => (
-							<TableRow className="noptin-table__row" key={ getRowKey( row, i ) }>
-								{ row.map( ( cell, j ) => (
-									<BodyCell
-										{...headers[ j ]}
-										key={ getRowKey( row, i ).toString() + j }
-										cell={ cell }
-										isHeader={ rowHeader === j }
-										isSorted={ sortBy === headers[ j ].key }
-										cellClassName={ 'noptin-table-column__' + headers[ j ]?.key?.replace( /_/g, '-' ) }
-									/>
-								) ) }
-							</TableRow>
-						) )
+						rows.map( ( row, i ) => {
+							const rowKey = getRowKey( row, i, idProp );
+
+							return (
+								<TableRow className="noptin-table__row" key={ rowKey }>
+
+									{canSelectRows && (
+										<BodyCell
+											headerKey={ 'cb' }
+											row={ row }
+											header={ { key: 'select', align: 'center', minWidth: '20px', } }
+											cellClassName={ 'noptin-table__col-cb' }
+											DisplayCell={ () => (
+												<CheckboxControl
+													checked={ selected.includes( rowKey ) }
+													onChange={ () => {
+														if ( selected.includes( rowKey ) ) {
+															setSelected( selected.filter( ( item ) => item !== rowKey ) );
+														} else {
+															setSelected( [ ...selected, rowKey ] );
+														}
+													} }
+													__nextHasNoMarginBottom
+												/>
+											) }
+										/>
+									)}
+
+									{ headers.map( ( { key, ...header} ) => (
+										<BodyCell
+											key={ `${rowKey}__${key}` }
+											headerKey={ key }
+											row={ row }
+											header={ header }
+											isSorted={ sortBy === key }
+											cellClassName={ 'noptin-table__col-' + key?.replace( /_/g, '-' ) }
+											DisplayCell={ DisplayCell }
+										/>
+									) ) }
+								</TableRow>
+							);
+ 						} )
 					) : (
 						<TableRow className="noptin-table__row">
 							<TableCellNoData colSpan={ headers.length }>

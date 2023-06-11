@@ -19,19 +19,16 @@ import { LoadingPlaceholder } from "../styled-components";
 const TablePlaceholder = ( { query, headers, ...props } ) => {
 
 	const numberOfRows = query.per_page ? parseInt( query.per_page, 10 ) : 25;
-	const rows         = range( numberOfRows ).map( () =>
-		headers.map( () => ( {
-			display: <LoadingPlaceholder />,
-		} ) )
-	);
+	const rows         = range( numberOfRows ).map( () => ( {} ) );
 
 	const tableProps = { query, headers, ...props };
 	return (
 		<Table
-			ariaHidden={ true }
-			className="is-loading"
-			rows={ rows }
 			{ ...tableProps }
+			rows={ rows }
+			DisplayCell={ LoadingPlaceholder }
+			isLoading
+			aria-hidden="true"
 		/>
 	);
 };

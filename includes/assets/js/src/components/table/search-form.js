@@ -15,7 +15,7 @@ const SearchForm = ( { value, onChange, searchPlaceholder } ) => {
 	// Fired when the search text changes.
 	const onSearchTextChange = useDebouncedCallback((value) => {
 		onChange(value);
-	}, 1500);
+	}, 500);
 
 	return (
 		<FlexBlock style={{minWidth: '200px'}}>

@@ -528,7 +528,12 @@ class REST_Controller extends \WP_REST_Controller {
 				$this->prefix_hook( 'get_items' ),
 				array(
 					'items'   => $items,
-					'summary' => (object) array(),
+					'summary' => (object) array(
+						'total' => array(
+							'label' => $collection->get_label( 'name', $collection->get_name() ),
+							'value' => $query->get_total(),	
+						)
+					),
 					'total'   => $query->get_total(),
 				),
 				$query,
@@ -766,7 +771,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		$fields  = $this->get_fields_for_response( $request );
+		$fields  =isset( $request['__fields'] ) ? wp_parse_list( $request['__fields'] ) : $this->get_fields_for_response( $request );
 		$is_edit = 'edit' === $request['context'];
 		$data    = array();
 
@@ -1209,7 +1214,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 			// Make sure the default is first.
 			if ( isset( $schema[ $default ] ) ) {
-				$schema[ $default ]['is_primary_col'] = true;
+				$schema[ $default ]['is_primary'] = true;
 				$default = $schema[ $default ];
 				unset( $schema[ $default['name'] ] );
 				array_unshift( $schema, $default );

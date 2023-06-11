@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState, useCallback } from '@wordpress/element';
 import {
 	Card,
 	CardFooter,
@@ -14,6 +14,7 @@ import {
 	ToggleControl,
 	MenuItem
 } from '@wordpress/components';
+import { without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,8 +29,14 @@ import SearchForm from './search-form';
 
 /**
  * Displays a placeholder table while the data is loading.
+ *
+ * @param {Object} props Component props.
+ * @param {Array} props.headers Visible table headers.
+ * @param {string} props.caption Table caption.
+ * @param {Object} props.query Query object.
+ * @return {JSX.Element} Placeholder table.
  */
-const Placeholder = ( { headers, rowHeader, caption, query } ) => {
+const Placeholder = ( { headers, caption, query } ) => {
 
 	return (
 		<>
@@ -38,7 +45,6 @@ const Placeholder = ( { headers, rowHeader, caption, query } ) => {
 			</span>
 			<TablePlaceholder
 				headers={ headers }
-				rowHeader={ rowHeader }
 				caption={ caption }
 				query={ query }
 			/>
@@ -48,16 +54,31 @@ const Placeholder = ( { headers, rowHeader, caption, query } ) => {
 
 /**
  * Displays the table menu.
+ *
+ * @param {Object} props Component props.
+ * @param {Array} props.headers Table headers.
+ * @param {Array} props.hiddenHeaders Keys of hidden table headers.
+ * @param {Function} props.setHiddenHeaders Callback to update the hidden table headers.
+ * @return {JSX.Element} Table menu.
  */
-const Menu = ( { allHeaders, toggleHiddenCol } ) => {
+export const Menu = ( { headers, hiddenHeaders, setHiddenHeaders } ) => {
+
+	// Toggle a header.
+	const toggleHiddenCol = useCallback( ( key ) => {
+		setHiddenHeaders(
+			hiddenHeaders.includes( key )
+				? without( hiddenHeaders, key )
+				: [ ...hiddenHeaders, key ]
+		);
+	}, [ headers, hiddenHeaders, setHiddenHeaders ] );
 
 	return (
-		<EllipsisMenu label={ __( 'Choose which values to display', 'newsletter-optin-box' ) }>
+		<EllipsisMenu label={ __( 'Choose the columns to display', 'newsletter-optin-box' ) }>
 			{ () => (
 				<>
 					<MenuGroup label={__( 'Columns', 'newsletter-optin-box' )}>
-						{ allHeaders.map(
-							( { key, label, required, visible } ) => {
+						{ headers.map(
+							( { key, label, required } ) => {
 
 								// Don't allow hiding required cols.
 								if ( required || key === undefined ) {
@@ -67,7 +88,7 @@ const Menu = ( { allHeaders, toggleHiddenCol } ) => {
 								return (
 									<MenuItem key={ key }>
 										<ToggleControl
-											checked={ visible }
+											checked={ ! hiddenHeaders.includes( key ) }
 											onChange={ () => toggleHiddenCol( key ) }
 											label={ label }
 											__nextHasNoMarginBottom
@@ -84,12 +105,80 @@ const Menu = ( { allHeaders, toggleHiddenCol } ) => {
 };
 
 /**
- * This is an accessible, sortable, and scrollable table for displaying tabular data (like revenue and other analytics data).
- * It accepts `headers` for column headers, and `rows` for the table content.
- * `rowHeader` can be used to define the index of the row header (or false if no header).
+ * Displays the table header.
  *
- * `TableCard` serves as Card wrapper & contains a card header, `<Table />`, `<TableSummary />`, and `<Pagination />`.
- * This includes filtering and comparison functionality for report pages.
+ * @param {Object} props Component props.
+ * @param {string} props.title Table title.
+ * @param {boolean} props.hasSearch Whether the table has a search field.
+ * @param {Object} props.query Query object.
+ * @param {Object} props.query.search Search query.
+ * @param {Function} props.onQueryChange Callback to update the query.
+ * @param {string} props.searchPlaceholder Search field placeholder.
+ * @param {Function} props.actions Table actions.
+ * @param {Array} props.selected Selected items.
+ * @param {Function} props.setSelected Callback to update the selected items.
+ * @param {Array} props.headers Table headers.
+ * @param {Array} props.hiddenHeaders Keys of hidden table headers.
+ * @param {Function} props.setHiddenHeaders Callback to update the hidden table headers.
+ */
+export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, selected, setSelected, headers, hiddenHeaders, setHiddenHeaders } ) => {
+	return (
+		<CardHeader>
+			<Flex gap={2} wrap>
+
+				<FlexItem>
+					<CardHeadingText as="h2">{ title }</CardHeadingText>
+				</FlexItem>
+
+				{ hasSearch && (
+					<SearchForm
+						value={ query.search }
+						onChange={ (value) => onQueryChange({search: value}) }
+						placeholder={ searchPlaceholder }
+					/>
+				) }
+
+				{ actions && (
+					<FlexItem>
+						{ actions( { selected, setSelected } ) }
+					</FlexItem>
+				) }
+
+				<FlexItem>
+					<Menu headers={ headers } hiddenHeaders={ hiddenHeaders } setHiddenHeaders={ setHiddenHeaders } />
+				</FlexItem>
+			</Flex>
+		</CardHeader>
+	)
+}
+
+/**
+ * Displays the table footer.
+ *
+ * @param {Object} props Component props.
+ * @param {boolean} props.isLoading Whether the table is loading.
+ * @param {Array} props.summary Table summary.
+ * @param {Object} props.query Query object.
+ * @param {Function} props.onQueryChange Callback to update the query.
+ * @param {number} props.totalRows Total number of rows.
+ * @return {JSX.Element} Table footer.
+ */
+export const TableFooter = ( { isLoading, summary, query, onQueryChange, totalRows } ) => (
+	<CardFooter justify="center">
+		{ isLoading ? (
+			<TableSummaryPlaceholder />
+		) : (
+			<>
+				<Pagination query={ query } onQueryChange={ onQueryChange } total={ totalRows } />
+				{ summary && <TableSummary data={ summary } /> }
+			</>
+		) }
+	</CardFooter>
+);
+
+/**
+ * This is a Card wrapper containing a card header, `<Table />`, `<TableSummary />`, and `<Pagination />`.
+ *
  */
 const TableCard = ( {
 	actions,
@@ -101,34 +190,32 @@ const TableCard = ( {
 	isLoading = false,
 	onQueryChange = () => {},
 	query = {},
-	rowHeader = 0,
+	initialHiddenHeaders = [],
 	rows = [],
 	showMenu = true,
 	showFooter = true,
 	summary,
 	title,
 	totalRows,
-	toggleHiddenCol,
+	canSelectRows,
+	DisplayCell,
 	...props
 } ) => {
 
-	// Returns a list of visible cols.
-	const visibleCols = useMemo( () => headers.filter( ( { visible } ) => visible ), [ headers ] );
-	const allHeaders  = headers;
-	const visibleRows = rows.map( ( row ) => {
-		return headers
-			.map( ( { visible }, i ) => {
-				return visible && row[ i ];
-			} )
-			.filter( Boolean );
-	} );
+	// An array of selected row IDs.
+	const [ selected, setSelected ] = useState( [] );
+
+	// An array of hidden header keys.
+	const [ hiddenHeaders, setHiddenHeaders ] = useState( initialHiddenHeaders );
+
+	// Prepare visible headers.
+	const visibleHeaders = useMemo( () => headers.filter( ( header ) => ! hiddenHeaders.includes( header.key ) ), [ headers, hiddenHeaders ] );
 
 	// Common props.
 	const theProps = {
-		headers: visibleCols,
+		headers: visibleHeaders,
 		caption: title,
 		onQueryChange,
-		rowHeader,
 		query,
 		...props,
 	};
@@ -138,49 +225,34 @@ const TableCard = ( {
 	return (
 		<BorderedCard className={ classnames( 'noptin-table', className ) } elevation={0}>
 
-			<CardHeader>
-				<Flex gap={2} wrap>
+			<TableHeader
+				title={ title }
+				hasSearch={ hasSearch }
+				query={ query }
+				onQueryChange={ onQueryChange }
+				searchPlaceholder={ searchPlaceholder }
+				actions={ actions }
+				selected={ selected }
+				setSelected={ setSelected }
+				headers={ headers }
+				hiddenHeaders={ hiddenHeaders }
+				setHiddenHeaders={ setHiddenHeaders }
+			/>
 
-					<FlexItem>
-						<CardHeadingText as="h2">{ title }</CardHeadingText>
-					</FlexItem>
-
-					{ hasSearch && (
-						<SearchForm
-							value={ query.search }
-							onChange={ (value) => onQueryChange({search: value}) }
-							placeholder={ searchPlaceholder }
-						/>
-					) }
-
-					{ actions && (
-						<FlexItem>
-							{ actions }
-						</FlexItem>
-					) }
-
-					{ showMenu && (
-						<FlexItem>
-							<Menu allHeaders={ allHeaders } toggleHiddenCol={ toggleHiddenCol } />
-						</FlexItem>
-					) }
-				</Flex>
-			</CardHeader>
-
-			{ isLoading ? <Placeholder { ...theProps } /> : <Table rows={ visibleRows } { ...theProps } /> }
-
-			{ showFooter && (
-				<CardFooter justify="center">
-					{ isLoading ? (
-						<TableSummaryPlaceholder />
-					) : (
-						<>
-							<Pagination query={ query } onQueryChange={ onQueryChange } total={ totalRows } />
-							{ summary && <TableSummary data={ summary } /> }
-						</>
-					) }
-				</CardFooter>
+			{ isLoading ? (
+				<Placeholder { ...theProps } />
+			) : (
+				<Table
+					rows={ rows }
+					DisplayCell={ DisplayCell }
+					canSelectRows={ canSelectRows }
+					selected={ selected }
+					setSelected={ setSelected }
+					{ ...theProps }
+				/>
 			) }
+
+			{ showFooter && <TableFooter /> }
 		</BorderedCard>
 	);
 };

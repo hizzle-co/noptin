@@ -200,6 +200,8 @@ export const ProgressBar = ( { total, processed } ) => {
 export const Avatar = styled.img`
 	height: 32px;
 	width: 32px;
+	max-width: 32px;
+    overflow: hidden;
 	border-radius: 50%;
 	box-shadow: 2px 2px 2px rgb(0 0 0 / 5%);
 	background-color: currentColor;
@@ -347,6 +349,17 @@ export const TableHeader = styled.th`
 		box-shadow: none !important;
 		padding: 0;
 	}
+
+	& > .components-button svg {
+		visibility: hidden;
+		margin-left: 4px;
+	}
+
+	&.is-sorted > .components-button svg
+	& > .components-button:hover svg
+	& > .components-button:hover svg {
+		visibility: visible;
+	}
 `
 
 /**
@@ -371,5 +384,25 @@ export const TableCellNoData = styled.td`
 	@media (min-width: 782px) {
 		padding: 2rem;
 		font-size: 1.125rem;
+	}
+`
+
+/**
+ * Displays a table summary.
+ */
+export const TableSummaryList = styled.ul`
+	text-align: center;
+	margin: 0;
+
+	& > li {
+		display: inline-block;
+		margin-bottom: 0;
+		margin-left: 8px;
+		margin-right: 8px;
+	}
+
+	& > li > strong {
+		margin-right: 4px;
+		display: inline-block;
 	}
 `

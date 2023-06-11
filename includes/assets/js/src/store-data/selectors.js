@@ -63,7 +63,7 @@ export const getQuerySummary = ( state = DEFAULT_STATE, queryString ) => {
 export const getRecords = ( state = DEFAULT_STATE, queryString ) => {
 
 	queryString   = '' === queryString ? 'all' : queryString;
-	const _fields = getQueryArg( queryString, '_fields' );
+	const _fields = getQueryArg( queryString, '__fields' );
 
 	if ( _fields ) {
 		return Array.isArray( state.partialRecords[ queryString ]?.items ) ? state.partialRecords[ queryString ]?.items : [];

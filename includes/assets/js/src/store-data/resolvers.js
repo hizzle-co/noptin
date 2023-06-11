@@ -28,7 +28,7 @@ export default function createResolvers( namespace, collection ) {
 		 */
 		*getRecords( queryString ) {
 			const path    = `${namespace}/v1/${collection}${queryString}`;
-			const _fields = getQueryArg( queryString, '_fields' );
+			const _fields = getQueryArg( queryString, '__fields' );
 			const records = yield apiFetch( { path } );
 
 			if ( records ) {
