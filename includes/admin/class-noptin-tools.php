@@ -68,24 +68,16 @@ class Noptin_Tools {
 
 		$tools = array(
 
-			'debug_log'          => array(
+			'debug_log'      => array(
 				'name'   => __( 'Debug Log', 'newsletter-optin-box' ),
 				'button' => __( 'View', 'newsletter-optin-box' ),
 				'desc'   => __( 'View a list of notices and errors logged by Noptin.', 'newsletter-optin-box' ),
 			),
 
-			'custom_content'     => array(
+			'custom_content' => array(
 				'name'   => __( 'Custom Content', 'newsletter-optin-box' ),
 				'button' => __( 'View', 'newsletter-optin-box' ),
 				'desc'   => __( 'View a list of available post types and taxonomies.', 'newsletter-optin-box' ),
-			),
-
-			'delete_subscribers' => array(
-				'name'    => __( 'Delete All Subscribers', 'newsletter-optin-box' ),
-				'button'  => __( 'Delete', 'newsletter-optin-box' ),
-				'desc'    => __( 'Delete all your email subscribers.', 'newsletter-optin-box' ),
-				'url'     => wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_admin_delete_all_subscribers' ), 'noptin-delete-subscribers' ),
-				'confirm' => __( 'Are you sure you want to delete all your email subscribers?', 'newsletter-optin-box' ),
 			),
 
 		);
