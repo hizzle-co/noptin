@@ -29,6 +29,19 @@
 		),
 	);
 
+	$subscribers_today_total = get_noptin_subscribers_count(
+		array(
+			'date_created_after'  => '-1 day',
+			'date_created_before' => 'now',
+		)
+	);
+	$subscribers_week_total  = get_noptin_subscribers_count(
+		array(
+			'date_created_after'  => '-7 days',
+			'date_created_before' => 'now',
+		)
+	);
+
 	add_thickbox();
 ?>
 
@@ -62,18 +75,18 @@
 		<ul class="noptin-cards-list">
 				<li class="noptin-card">
 					<span class="noptin-card-label"><?php esc_html_e( 'Total', 'newsletter-optin-box' ); ?></span>
-					<span class="noptin-card-value"><?php echo (int) $subscribers_total; ?></span>
+					<span class="noptin-card-value"><?php echo (int) get_noptin_subscribers_count(); ?></span>
 				</li>
 				<li class="noptin-card">
-					<span class="noptin-card-label"><?php esc_html_e( 'Today', 'newsletter-optin-box' ); ?></span>
+					<span class="noptin-card-label"><?php esc_html_e( '1 Day', 'newsletter-optin-box' ); ?></span>
 					<span class="noptin-card-value"><?php echo (int) $subscribers_today_total; ?></span>
 				</li>
 				<li class="noptin-card">
-					<span class="noptin-card-label"><?php esc_html_e( 'This Week', 'newsletter-optin-box' ); ?></span>
+					<span class="noptin-card-label"><?php esc_html_e( '7 Days', 'newsletter-optin-box' ); ?></span>
 					<span class="noptin-card-value"><?php echo (int) $subscribers_week_total; ?></span>
 				</li>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo esc_url( $subscribers_url ); ?>"><?php esc_html_e( 'View all subscribers', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo esc_url( get_noptin_new_newsletter_campaign_url() ); ?>"><?php esc_html_e( 'Send them an email', 'newsletter-optin-box' ); ?></a></div>
+		<div class="noptin-card-footer-links"><a href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-subscribers' ) ); ?>"><?php esc_html_e( 'View all subscribers', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo esc_url( get_noptin_new_newsletter_campaign_url() ); ?>"><?php esc_html_e( 'Send them an email', 'newsletter-optin-box' ); ?></a></div>
 	</div>
 
 
@@ -109,7 +122,7 @@
 					</li>
 				<?php endif; ?>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo esc_url( $forms_url ); ?>"><?php esc_html_e( 'View all forms', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo esc_url( $new_form_url ); ?>"><?php esc_html_e( 'Create a new form', 'newsletter-optin-box' ); ?></a></div>
+		<div class="noptin-card-footer-links"><a href="<?php echo esc_url( get_noptin_forms_overview_url() ); ?>"><?php esc_html_e( 'View all forms', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo esc_url( get_noptin_new_form_url() ); ?>"><?php esc_html_e( 'Create a new form', 'newsletter-optin-box' ); ?></a></div>
 	</div>
 
 	<div class="noptin-header">

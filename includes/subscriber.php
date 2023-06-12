@@ -243,37 +243,13 @@ function get_noptin_subscribers_overview_url( $page = 1 ) {
 }
 
 /**
- * Retrieves the subscriber count
+ * Counts the subscribers database.
  *
- * @return  int   $where Restriction string
- * @access  public
- * @since   1.0.5
+ * @param array $args Query arguments.
+ * @return int
  */
-function get_noptin_subscribers_count( $where = '', $meta_key = '', $meta_value = false ) {
-	global $wpdb;
-
-	$extra_sql  = '';
-
-	if ( false !== $meta_value ) {
-		$extra_sql = $wpdb->prepare(
-			"INNER JOIN {$wpdb->prefix}noptin_subscriber_meta ON ( {$wpdb->prefix}noptin_subscribers.id = {$wpdb->prefix}noptin_subscriber_meta.noptin_subscriber_id ) WHERE ( {$wpdb->prefix}noptin_subscriber_meta.meta_key = %s AND {$wpdb->prefix}noptin_subscriber_meta.meta_value = %s )",
-			$meta_key,
-			$meta_value
-		);
-	}
-
-	if ( ! empty( $where ) ) {
-
-		if ( empty( $extra_sql ) ) {
-			$where = "WHERE $where";
-		} else {
-			$where = "$extra_sql AND $where";
-		}
-	} else {
-		$where = "$extra_sql";
-	}
-
-	return $wpdb->get_var( "SELECT COUNT(`id`) FROM {$wpdb->prefix}noptin_subscribers $where;" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+function get_noptin_subscribers_count( $args = array() ) {
+	return (int) noptin_get_subscribers( $args, 'count' );
 }
 
 /**

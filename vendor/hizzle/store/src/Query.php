@@ -245,7 +245,7 @@ class Query {
 		$this->prepare_meta_query( $qv, $table );
 
 		// Set whether or not to count the total number of found records.
-		if ( ! $aggregate && isset( $qv['count_total'] ) && $qv['count_total'] ) {
+		if ( ! $aggregate && empty( $qv['count_only'] ) && isset( $qv['count_total'] ) && $qv['count_total'] ) {
 			$this->query_fields = 'SQL_CALC_FOUND_ROWS ' . $this->query_fields;
 		}
 
@@ -349,6 +349,11 @@ class Query {
 	 * @global \wpdb $wpdb WordPress database abstraction object.
 	 */
 	protected function prepare_fields( $qv, $table ) {
+
+		if ( ! empty( $qv['count_only'] ) ) {
+			$this->query_fields = "DISTINCT COUNT($table.id)";
+			return;
+		}
 
 		if ( is_array( $qv['fields'] ) ) {
 
@@ -701,6 +706,7 @@ class Query {
 			'per_page'       => -1,
 			'page'           => 1,
 			'count_total'    => true,
+			'count_only'     => false,
 			'fields'         => 'all',
 			'aggregate'      => false, // pass an array of property_name and function to aggregate the results.
 			'meta_query'     => array(),
@@ -780,6 +786,12 @@ class Query {
 		global $wpdb;
 
 		$this->total_results = 0;
+
+		// Maybe abort if we're only counting.
+		if ( ! empty( $this->query_vars['count_only'] ) ) {
+			$this->total_results = $wpdb->get_var( "SELECT $this->query_fields $this->query_from $this->query_join $this->query_where" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			return;
+		}
 
 		// Allow third party plugins to modify the query.
 		$collection    = Collection::instance( $this->collection_name );

@@ -215,7 +215,7 @@ class Noptin_Admin {
 	}
 
 	/**
-	 * Downloads subscribers
+	 * Saves a subscription form.
 	 *
 	 * @access      public
 	 * @since       1.0.0

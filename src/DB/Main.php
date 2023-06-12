@@ -308,10 +308,9 @@ class Main {
 	 */
 	public function query( $collection_name, $args = array(), $return = 'results' ) {
 
-		// Do not retrieve all fields if we just want the count.
+		// Do not retrieve any fields if we just want the count.
 		if ( 'count' === $return ) {
-			$args['fields'] = 'id';
-			$args['number'] = 1;
+			$args['count_only'] = true;
 		}
 
 		// Do not count all matches if we just want the results.

@@ -82,15 +82,6 @@ class Noptin_Admin_Menus {
 		 */
 		do_action( 'noptin_before_admin_main_page' );
 
-		$today_date              = current_time( 'Y-m-d' );
-		$forms_url               = esc_url( get_noptin_forms_overview_url() );
-		$new_form_url            = esc_url( get_noptin_new_form_url() );
-		$subscribers_url         = esc_url( get_noptin_subscribers_overview_url() );
-		$subscribers_total       = get_noptin_subscribers_count();
-		$subscribers_today_total = get_noptin_subscribers_count( "`date_created`='$today_date'" );
-		$this_week               = gmdate( 'Y-m-d', strtotime( 'last week sunday' ) );
-		$subscribers_week_total  = get_noptin_subscribers_count( "`date_created`>'$this_week'" );
-
 		if ( is_using_new_noptin_forms() ) {
 			$all_forms = noptin_count_optin_forms();
 		} else {
