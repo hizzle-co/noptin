@@ -357,17 +357,22 @@ class Query {
 
 		if ( is_array( $qv['fields'] ) ) {
 
-			$this->query_fields = array();
+			$query_fields = array();
 			foreach ( $qv['fields'] as $field ) {
 				$table_field = $this->prefix_field( esc_sql( sanitize_key( $field ) ) );
 
 				if ( empty( $table_field ) ) {
 					throw new Store_Exception( 'query_invalid_field', "Invalid field $field." );
 				}
-				$this->query_fields[] = $table_field;
+				$query_fields[] = $table_field;
 			}
 
-			$this->query_fields = implode( ',', array_unique( $this->query_fields ) );
+			$query_fields       = array_unique( $query_fields );
+			$this->query_fields = implode( ',', $query_fields );
+
+			if ( 1 === count( $query_fields ) ) {
+				$this->query_fields = 'DISTINCT ' . $this->query_fields;
+			}
 		} elseif ( 'all' === $qv['fields'] ) {
 			$this->query_fields = '*';
 		} else {

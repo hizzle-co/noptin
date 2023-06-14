@@ -982,9 +982,10 @@ function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false 
  * @see Noptin_Custom_Field_Type::sanitize_value
  * @param mixed $value
  * @param string $type
- * @param Noptin_Subscriber $subscriber
+ * @deprecated 1.13.0
  */
 function format_noptin_custom_field_value( $value, $type, $subscriber ) {
+	_deprecated_function( __FUNCTION__, '1.13.0' );
 	return apply_filters( "noptin_format_{$type}_value", $value, $subscriber );
 }
 
@@ -1219,56 +1220,6 @@ function get_noptin_subscriber_filters() {
 }
 
 /**
- * Checks if a subscriber meets the specified filters.
- *
- * @param array $conditional_logic
- * @param Noptin_Subscriber $subscriber
- * @since 1.8.0
- * @return array
- */
-function noptin_subscriber_meets_conditional_logic( $conditional_logic, $subscriber ) {
-
-	// Abort if no conditional logic is set.
-	if ( empty( $conditional_logic['enabled'] ) ) {
-		return true;
-	}
-
-	// Retrieve the conditional logic.
-	$action      = $conditional_logic['action']; // allow or prevent.
-	$type        = $conditional_logic['type']; // all or any.
-	$rules_met   = 0;
-	$rules_total = count( $conditional_logic['rules'] );
-
-	// Loop through each rule.
-	foreach ( $conditional_logic['rules'] as $rule ) {
-		$is_rule_met = $rule['value'] === $subscriber->get( $rule['type'] );
-		$should_meet = 'is' === $rule['condition'];
-
-		// If the rule is met.
-		if ( $is_rule_met === $should_meet ) {
-
-			// Increment the number of rules met.
-			$rules_met ++;
-
-			// If we're using the "any" condition, we can stop here.
-			if ( 'any' === $type ) {
-				break;
-			}
-		}
-	}
-
-	// Check if the conditions are met.
-	if ( 'all' === $type ) {
-		$is_condition_met = $rules_met === $rules_total;
-	} else {
-		$is_condition_met = $rules_met > 0;
-	}
-
-	// Return the result.
-	return 'allow' === $action ? $is_condition_met : ! $is_condition_met;
-}
-
-/**
  * Retrieves Noptin subscription sources.
  *
  * @param string $source Subscrption source.
@@ -1324,7 +1275,6 @@ add_action( 'noptin_subscriber_updated', 'noptin_clear_subscription_sources_cach
  * @return array
  */
 function noptin_get_subscription_sources() {
-	global $wpdb;
 
 	// Fetch from cache.
 	$sources = get_transient( 'noptin_subscription_sources' );
@@ -1334,8 +1284,14 @@ function noptin_get_subscription_sources() {
 	}
 
 	// Fetch saved sources.
-	$existing = $wpdb->get_col( "SELECT DISTINCT `meta_value` FROM {$wpdb->prefix}noptin_subscriber_meta WHERE `meta_key`='_subscriber_via'" );
-	$sources  = array_combine( $existing, $existing );
+	$existing = noptin()->db()->query(
+		'subscribers',
+		array(
+			'fields' => 'source',
+		)
+	);
+
+	$sources = is_array( $existing ) ? array_combine( $existing, $existing ) : array();
 
 	// Add subscription forms.
 	$forms = get_posts(

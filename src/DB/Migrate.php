@@ -96,7 +96,7 @@ class Migrate {
 			}
 		}
 
-		// Subtract timezone offset from date created.
+		// Add timezone offset from date created.
 		$date_created = $subscriber->get_date_created();
 
 		if ( ! empty( $date_created ) ) {

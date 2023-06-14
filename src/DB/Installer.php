@@ -22,6 +22,7 @@ class Installer {
 	public function __construct() {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_missing_tables' ), 1 );
+		add_action( 'wpmu_drop_tables', array( __CLASS__, 'wpmu_drop_tables' ) );
 	}
 
 	/**
@@ -193,4 +194,23 @@ class Installer {
 		return $args;
 
 	}
+
+	/**
+	 * Drop tables on blog deletion.
+	 *
+	 * @param array $tables
+	 */
+	public static function wpmu_drop_tables( $tables ) {
+
+		foreach ( noptin()->db()->store->get_collections() as $collection ) {
+			$tables[] = $collection->get_db_table_name();
+
+			if ( $collection->create_meta_table() ) {
+				$tables[] = $collection->get_meta_table_name();
+			}
+		}
+
+		return $tables;
+	}
+
 }
