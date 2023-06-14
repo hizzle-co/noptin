@@ -404,13 +404,17 @@ function deactivate_noptin_subscriber( $subscriber ) {
  * @access public
  * @since  1.3.2
  */
-function unsubscribe_noptin_subscriber( $subscriber ) {
+function unsubscribe_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
 
 	// Fetch subscriber.
 	$subscriber = noptin_get_subscriber( $subscriber );
 
 	if ( ! $subscriber->exists() || ! $subscriber->is_active() ) {
 		return;
+	}
+
+	if ( ! empty( $campaign_id ) ) {
+		$subscriber->record_unsubscribed_campaign( $campaign_id );
 	}
 
 	$subscriber->set_status( 'unsubscribed' );

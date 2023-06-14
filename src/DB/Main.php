@@ -494,12 +494,12 @@ class Main {
 			$object   = noptin_get_email_campaign_object( $campaign_id );
 			$campaign = array(
 				'id'           => $campaign_id,
-				'title'        => empty( $object ) ? __( 'Unknown', 'newsletter-optin-box' ) : $object->name,
-				'url'          => empty( $object ) ? '' : $object->get_edit_url(),
+				'title'        => empty( $object ) ? esc_html__( 'Unknown', 'newsletter-optin-box' ) : esc_html( $object->name ),
+				'url'          => empty( $object ) ? '' : esc_url( $object->get_edit_url() ),
 				'time'         => array(),
 				'opens'        => array(),
 				'clicks'       => array(),
-				'unsubscribed' => empty( $data['unsubscribed'] ) ? '&mdash;' : __( 'Yes', 'newsletter-optin-box' ),
+				'unsubscribed' => empty( $data['unsubscribed'] ) ? '&mdash;' : esc_html__( 'Yes', 'newsletter-optin-box' ),
 			);
 
 			// Sent newsletters are not editable.
@@ -518,7 +518,7 @@ class Main {
 						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
 							$i18n = sprintf(
 								/* translators: %s: human readable time difference */
-								__( '%s ago', 'newsletter-optin-box' ),
+								esc_html__( '%s ago', 'newsletter-optin-box' ),
 								human_time_diff( $timestamp )
 							);
 						}
@@ -570,14 +570,17 @@ class Main {
 				);
 			}
 
-			$prepared[] = array(
+			$prepared[ $time ] = array(
 				'time'     => $time,
 				'utc'      => $utc,
 				'i18n'     => $i18n,
-				'activity' => $data['content'],
+				'activity' => wp_kses_post( $data['content'] ),
 			);
 		}
 
-		return $prepared;
+		// Sort by time.
+		ksort( $prepared );
+
+		return array_values( $prepared );
 	}
 }

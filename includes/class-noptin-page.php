@@ -352,21 +352,22 @@ class Noptin_Page {
 	public function pre_unsubscribe_user( $page ) {
 
 		// Fetch recipient.
-		$recipient = $this->get_request_recipient();
+		$recipient   = $this->get_request_recipient();
+		$campaign_id = ! empty( $recipient['cid'] ) ? $recipient['cid'] : 0;
+
+		// Process campaigns.
+		if ( ! empty( $campaign_id ) ) {
+			increment_noptin_campaign_stat( $campaign_id, '_noptin_unsubscribed' );
+		}
 
 		// Process subscribers.
 		if ( ! empty( $recipient['sid'] ) ) {
-			unsubscribe_noptin_subscriber( $recipient['sid'] );
+			unsubscribe_noptin_subscriber( $recipient['sid'], $campaign_id );
 		}
 
 		// Process users.
 		if ( ! empty( $recipient['uid'] ) ) {
 			update_user_meta( $recipient['uid'], 'noptin_unsubscribed', 'unsubscribed' );
-		}
-
-		// Process campaigns.
-		if ( ! empty( $recipient['cid'] ) ) {
-			increment_noptin_campaign_stat( $recipient['cid'], '_noptin_unsubscribed' );
 		}
 
 		// If we are redirecting by page id, fetch the page's permalink.

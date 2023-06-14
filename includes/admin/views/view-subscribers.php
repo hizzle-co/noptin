@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<style>.notice{display:none !important;}</style>
+<style>.notice:not(.noptin-badge), .error:not(.noptin-badge) {display:none !important;}</style>
 
 <div class="wrap noptin-subscribers-page" id="noptin-wrapper">
 

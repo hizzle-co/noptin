@@ -143,6 +143,11 @@ class Subscriber extends \Hizzle\Store\Record {
 				$this->record_activity( 'Unsubscribed from the newsletter' );
 			}
 
+			// If subscribing, record the activity.
+			if ( $this->object_read && 'unsubscribed' === $this->get_status() && 'subscribed' === $value ) {
+				$this->record_activity( 'Re-subscribed to the newsletter' );
+			}
+
 			$this->set_prop( 'status', $value );
 		}
 	}
@@ -435,6 +440,16 @@ class Subscriber extends \Hizzle\Store\Record {
 		$sent_campaigns = $this->get_sent_campaigns();
 
 		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
+
+			// Record activity.
+			$this->record_activity(
+				sprintf(
+					// translators: %s is the campaign name.
+					__( 'Opened email campaign %s', 'newsletter-optin-box' ),
+					'<code>' . get_the_title( $campaign_id ) . '</code>'
+				)
+			);
+
 			$sent_campaigns[ $campaign_id ]['opens'][] = time();
 			$this->set_sent_campaigns( $sent_campaigns );
 			$this->save();
@@ -457,6 +472,16 @@ class Subscriber extends \Hizzle\Store\Record {
 		$sent_campaigns = $this->get_sent_campaigns();
 
 		if ( ! isset( $sent_campaigns[ $campaign_id ] ) ) {
+
+			// Record activity.
+			$this->record_activity(
+				sprintf(
+					// translators: %2 is the campaign name, #1 is the link.
+					__( 'Clicked on link %1$s from campaign %2$s', 'newsletter-optin-box' ),
+					'<code>' . esc_url( $url ) . '</code>',
+					'<code>' . get_the_title( $campaign_id ) . '</code>'
+				)
+			);
 
 			if ( ! isset( $sent_campaigns[ $campaign_id ]['clicks'][ $url ] ) ) {
 				$sent_campaigns[ $campaign_id ]['clicks'][ $url ] = array();

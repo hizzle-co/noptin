@@ -76,16 +76,6 @@ class Noptin_Link_Click_Trigger extends Noptin_Open_Email_Trigger {
 			'url'            => $url,
 		);
 
-		noptin_record_subscriber_activity(
-			$subscriber_id,
-			sprintf(
-				// translators: %2 is the campaign name, #1 is the link.
-				__( 'Clicked on link %1$s from campaign %2$s', 'newsletter-optin-box' ),
-				'<code>' . esc_url( $url ) . '</code>',
-				'<code>' . get_the_title( $campaign_id ) . '</code>'
-			)
-		);
-
 		$this->trigger( $subscriber, $args );
 	}
 
