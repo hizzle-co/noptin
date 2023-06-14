@@ -88,6 +88,13 @@ class Noptin_Tools {
 				'confirm' => __( 'Are you sure you want to delete all your email subscribers?', 'newsletter-optin-box' ),
 			),
 
+			'reset_noptin'       => array(
+				'name'    => __( 'Reset Noptin', 'newsletter-optin-box' ),
+				'button'  => __( 'Reset', 'newsletter-optin-box' ),
+				'desc'    => __( 'Deletes subscribers, campaigns, forms, settings then re-installs Noptin', 'newsletter-optin-box' ),
+				'url'     => wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_admin_reset_data' ), 'noptin-reset-data' ),
+				'confirm' => __( 'Are you sure you want to reset all your data?', 'newsletter-optin-box' ),
+			),
 		);
 
 		/**

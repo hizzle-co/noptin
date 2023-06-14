@@ -1,6 +1,6 @@
 <?php
 
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) && ! defined( 'NOPTIN_RESETING_DATA' ) ) {
 	exit;
 }
 
