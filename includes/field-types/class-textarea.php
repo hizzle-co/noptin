@@ -52,17 +52,6 @@ class Noptin_Custom_Field_Textarea extends Noptin_Custom_Field_Type {
 	}
 
 	/**
-	 * Sanitizes the submitted value.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
-	 */
-	public function sanitize_value( $value, $subscriber ) {
-		return sanitize_textarea_field( $value );
-	}
-
-	/**
 	 * Filters the database schema.
 	 *
 	 * @since 1.13.0

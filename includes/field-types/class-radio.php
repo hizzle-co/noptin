@@ -46,15 +46,4 @@ class Noptin_Custom_Field_Radio extends Noptin_Custom_Field_Dropdown {
 
 	}
 
-	/**
-	 * Sanitizes the submitted value.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
-	 */
-	public function sanitize_value( $value, $subscriber ) {
-		return sanitize_text_field( $value );
-	}
-
 }

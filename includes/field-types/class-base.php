@@ -42,7 +42,6 @@ abstract class Noptin_Custom_Field_Type {
 		$this->type = $type;
 
 		add_action( "noptin_display_{$this->type}_input", array( $this, 'output' ), 10, 2 );
-		add_filter( "noptin_sanitize_{$this->type}_value", array( $this, 'sanitize_value' ), 10, 2 );
 		add_filter( "noptin_format_{$this->type}_value", array( $this, 'format_value' ), 10, 2 );
 		add_action( 'noptin_custom_field_settings', array( $this, 'custom_field_settings' ) );
 
@@ -71,15 +70,6 @@ abstract class Noptin_Custom_Field_Type {
 	abstract public function output( $args, $subscriber );
 
 	/**
-	 * Sanitizes the submitted value.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
-	 */
-	abstract public function sanitize_value( $value, $subscriber );
-
-	/**
 	 * Formats a value for display.
 	 *
 	 * @since 1.5.5
@@ -87,7 +77,6 @@ abstract class Noptin_Custom_Field_Type {
 	 * @param Noptin_Subscriber $subscriber
 	 */
 	public function format_value( $value, $subscriber ) {
-		$value = $this->sanitize_value( $value, $subscriber );
 		return '' === $value ? '&mdash;' : $value;
 	}
 

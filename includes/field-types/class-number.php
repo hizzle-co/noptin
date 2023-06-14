@@ -27,17 +27,6 @@ class Noptin_Custom_Field_Number extends Noptin_Custom_Field_Text {
 	}
 
 	/**
-	 * Sanitizes the submitted value.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
-	 */
-	public function sanitize_value( $value, $subscriber ) {
-		return '' === $value ? '' : floatval( $value );
-	}
-
-	/**
 	 * Filters the database schema.
 	 *
 	 * @since 1.13.0

@@ -71,17 +71,6 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	}
 
 	/**
-	 * Sanitizes the submitted value.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
-	 */
-	public function sanitize_value( $value, $subscriber ) {
-		return sanitize_text_field( $value );
-	}
-
-	/**
 	 * Filters the database schema.
 	 *
 	 * @since 1.13.0
@@ -95,6 +84,11 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 			'label'       => wp_strip_all_tags( $custom_field['label'] ),
 			'description' => wp_strip_all_tags( $custom_field['label'] ),
 		);
+
+		// Sanitize options.
+		if ( is_callable( array( $this, 'sanitize_value' ) ) ) {
+			$schema['sanitize_callback'] = array( $this, 'sanitize_value' );
+		}
 
 		$available_options = $this->get_field_options( $custom_field );
 

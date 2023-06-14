@@ -56,10 +56,9 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	 *
 	 * @since 1.8.0
 	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
 	 */
-	public function sanitize_value( $value, $subscriber ) {
-		return array_key_exists( $value, $this->get_languages() ) ? $value : get_locale();
+	public function sanitize_value( $value ) {
+		return '' === $value || array_key_exists( $value, $this->get_languages() ) ? $value : get_locale();
 	}
 
 	/**

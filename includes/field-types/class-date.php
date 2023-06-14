@@ -27,17 +27,6 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 	}
 
 	/**
-	 * Sanitizes the submitted value.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
-	 */
-	public function sanitize_value( $value, $subscriber ) {
-		return empty( $value ) ? '' : gmdate( 'Y-m-d', strtotime( $value ) );
-	}
-
-	/**
 	 * Formats a value for display.
 	 *
 	 * @since 1.5.5
@@ -45,8 +34,6 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 	 * @param Noptin_Subscriber $subscriber
 	 */
 	public function format_value( $value, $subscriber ) {
-
-		$value = $this->sanitize_value( $value, $subscriber );
 
 		if ( empty( $value ) ) {
 			return '&mdash;';

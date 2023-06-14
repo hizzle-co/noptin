@@ -31,9 +31,8 @@ class Noptin_Custom_Field_Email extends Noptin_Custom_Field_Text {
 	 *
 	 * @since 1.5.5
 	 * @param mixed $value Submitted value
-	 * @param false|Noptin_Subscriber $subscriber
 	 */
-	public function sanitize_value( $value, $subscriber ) {
+	public function sanitize_value( $value ) {
 		return '' === $value ? '' : sanitize_email( $value );
 	}
 
