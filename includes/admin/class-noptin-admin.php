@@ -142,6 +142,8 @@ class Noptin_Admin {
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 
+		add_action( 'noptin_admin_reset_data', array( $this, 'reset_data' ) );
+
 		Noptin_Vue::init_hooks();
 
 		/**
@@ -472,6 +474,31 @@ class Noptin_Admin {
 			wp_kses_post( $message )
 		);
 
+	}
+
+	/**
+	 * Resets data.
+	 */
+	public function reset_data() {
+
+		// Only admins should be able to add subscribers.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['_wpnonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'noptin-reset-data' ) ) {
+			return;
+		}
+
+		// Set flag.
+		define( 'NOPTIN_RESETING_DATA', true );
+
+		// Clear all data.
+		include noptin()->plugin_path . 'uninstall.php';
+
+		// Clear cache.
+		wp_cache_flush();
 	}
 
 }

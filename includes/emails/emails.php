@@ -38,7 +38,12 @@ defined( 'ABSPATH' ) || exit;
  */
 function noptin_send_email( $args, $background = false ) {
 
-	if ( empty( $args['message'] ) || is_wp_error( $args['message'] ) ) {
+	if ( is_wp_error( $args['message'] ) ) {
+		log_noptin_message( $args['message'] );
+		return false;
+	}
+
+	if ( empty( $args['message'] ) ) {
 		return false;
 	}
 
