@@ -523,6 +523,11 @@ class Prop {
 	 */
 	public function sanitize( $value ) {
 
+		// Abort if value is null.
+		if ( null === $value ) {
+			return $value;
+		}
+
 		// Do we have a custom callback?
 		if ( ! empty( $this->sanitize_callback ) ) {
 			return call_user_func( $this->sanitize_callback, $value );
@@ -558,7 +563,12 @@ class Prop {
 			return gmdate( 'Y-m-d H:i:s', strtotime( $value ) );
 		}
 
-		return sanitize_text_field( $value );
+		// Var chars.
+		if ( 'varchar' === strtolower( $this->type ) ) {
+			return sanitize_text_field( $value );
+		}
+
+		return sanitize_textarea_field( $value );
 	}
 
 	/**

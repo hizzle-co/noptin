@@ -288,17 +288,31 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		}
 
 		if ( $this->is_subscriber_based ) {
-			$smart_tags = array_replace(
-				$smart_tags,
-				array(
-					'confirm_subscription_url' => array(
-						'label'       => __( 'Confirm subscription URL', 'newsletter-optin-box' ),
-						'options'     => false,
-						'description' => __( 'Displays a URL to confirm subscripiton to the newsletter', 'newsletter-optin-box' ),
-					),
-				),
-				get_noptin_subscriber_smart_tags()
-			);
+			$collection = noptin()->db()->store->get( 'subscribers' );
+
+			if ( ! empty( $collection ) ) {
+
+				foreach ( $collection->get_props() as $prop ) {
+
+					// Skip activity and sent_campaigns.
+					if ( in_array( $prop->name, array( 'activity', 'sent_campaigns' ), true ) ) {
+						continue;
+					}
+
+					$smart_tag = array(
+						'label'       => empty( $prop->label ) ? '' : $prop->label,
+						'description' => $prop->description,
+					);
+
+					if ( is_callable( $prop->enum ) ) {
+						$smart_tag['options'] = call_user_func( $prop->enum );
+					} elseif ( is_array( $prop->enum ) ) {
+						$smart_tag['options'] = array_combine( $prop->enum, $prop->enum );
+					}
+
+					$smart_tags[ $prop->name ] = $smart_tag;
+				}
+			}
 		}
 
 		return apply_filters( 'noptin_automation_trigger_known_smart_tags', $smart_tags, $this );
@@ -312,35 +326,17 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @return array
 	 */
 	public function prepare_known_smart_tags( $subject ) {
-		$smart_tags = array();
+
+		// Subscribers.
+		if ( $subject instanceof Noptin_Subscriber ) {
+			$subject = noptin_get_subscriber( $subject->id );
+		}
 
 		if ( $subject instanceof \Hizzle\Noptin\DB\Subscriber ) {
 			return $subject->get_data();
 		}
 
-		if ( $this->is_subscriber_based && $subject instanceof Noptin_Subscriber ) {
-
-			$smart_tags['confirm_subscription_url'] = esc_url( get_noptin_action_url( 'confirm', $subject->confirm_key ) );
-
-			foreach ( get_noptin_subscriber_smart_tags() as $merge_tag => $data ) {
-
-				if ( ! isset( $data['type'] ) ) {
-					$smart_tags[ $merge_tag ] = $subject->get( $merge_tag );
-				} else {
-					$value = sanitize_noptin_custom_field_value( $subject->get( $merge_tag ), $data['type'], $subject );
-
-					if ( is_array( $value ) ) {
-						$value = format_noptin_custom_field_value( $subject->get( $merge_tag ), $data['type'], $subject );
-					}
-
-					if ( is_scalar( $value ) ) {
-						$smart_tags[ $merge_tag ] = $value;
-					}
-				}
-			}
-		}
-
-		return $smart_tags;
+		return array();
 	}
 
 	/**

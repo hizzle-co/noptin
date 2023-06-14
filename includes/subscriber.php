@@ -45,7 +45,7 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 		}
 	}
 
-	$subscriber = noptin()->db()->get( $subscriber );
+	$subscriber = noptin()->db()->get( (int) $subscriber );
 	return is_wp_error( $subscriber ) ? noptin()->db()->get( 0 ) : $subscriber;
 }
 
@@ -505,7 +505,7 @@ function get_noptin_subscriber_by_email( $email ) {
  * Retrieves a subscriber id by email
  *
  * @access  public
- * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
+ * @param string email The email to retrieve by.
  * @since   1.2.6
  * @return int|null
  */
@@ -517,7 +517,7 @@ function get_noptin_subscriber_id_by_email( $email ) {
  * Deletes a subscriber
  *
  * @access  public
- * @param int $subscriber_id The subscriber being deleted
+ * @param int|string|\Hizzle\Noptin\DB\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
  * @since   1.1.0
  */
 function delete_noptin_subscriber( $subscriber_id ) {
@@ -968,8 +968,10 @@ function display_noptin_custom_field_input( $custom_field, $subscriber = false )
  * @param mixed $value
  * @param string $type
  * @param false|Noptin_Subscriber $subscriber
+ * @deprecated 1.13.0
  */
 function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false ) {
+	_deprecated_function( __FUNCTION__, '1.13.0' );
 	return apply_filters( "noptin_sanitize_{$type}_value", $value, $subscriber );
 }
 

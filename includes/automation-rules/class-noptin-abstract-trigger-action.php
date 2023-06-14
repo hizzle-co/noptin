@@ -194,19 +194,22 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 */
 	public function get_subject_email( $subject, $rule, $args ) {
 
-		// Subscriber, customer, etc.
-		if ( is_object( $subject ) && is_callable( array( $subject, 'get_email' ) ) ) {
-			return $subject->get_email();
-		}
+		// Objects.
+		if ( is_object( $subject ) ) {
 
-		// Maybe fetch from the deprecated subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			return $subject->email;
-		}
+			// Subscriber, customer, etc.
+			if ( is_callable( array( $subject, 'get_email' ) ) ) {
+				return $subject->get_email();
+			}
 
-		// ... or users.
-		if ( $subject instanceof WP_User ) {
-			return $subject->user_email;
+			// Raw data.
+			if ( isset( $subject->email ) ) {
+				return $subject->email;
+			}
+
+			if ( isset( $subject->user_email ) ) {
+				return $subject->user_email;
+			}
 		}
 
 		// Subject is an email.

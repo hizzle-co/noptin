@@ -63,21 +63,6 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_rule_description( $rule ) {
-
-		$settings = $rule->action_settings;
-
-		if ( empty( $settings['field_value'] ) ) {
-			return __( 'Delete subscriber field', 'newsletter-optin-box' );
-		}
-
-		return __( 'Add/Update subscriber field', 'newsletter-optin-box' );
-
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_settings() {
 		return array(
 
@@ -94,7 +79,6 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 				'label'       => __( 'Field Value', 'newsletter-optin-box' ),
 				'description' => __( 'Enter a value to assign the field', 'newsletter-optin-box' ),
 				'placeholder' => __( 'Sample Value', 'newsletter-optin-box' ),
-				'description' => __( 'Leave blank to delete', 'newsletter-optin-box' ),
 			),
 
 		);
@@ -113,15 +97,8 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 
 		$settings = $rule->action_settings;
 
-		// Fetch the subscriber.
-		if ( $subject instanceof Noptin_Subscriber ) {
-			$subscriber = $subject;
-		} else {
-			$subscriber = noptin_get_subscriber( $args['email'] );
-		}
-
-		// Nothing to do here.
-		if ( empty( $subscriber->id ) ) {
+		// Abort if we do not have field name.
+		if ( empty( $settings['field_name'] ) ) {
 			return;
 		}
 
@@ -131,10 +108,22 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 			return;
 		}
 
-		$field_value = $args['smart_tags']->replace_in_text_field( $settings['field_value'] );
-		$field_value = sanitize_noptin_custom_field_value( $field_value, $custom_field['type'], $subscriber );
+		// Fetch the subscriber email.
+		$subscriber_email = $this->get_subject_email( $subject, $rule, $args );
+		if ( empty( $subscriber_email ) ) {
+			return;
+		}
 
-		update_noptin_subscriber_meta( $subscriber->id, $custom_field['merge_tag'], $field_value );
+		// Fetch the subscriber.
+		$subscriber = noptin_get_subscriber( $subscriber_email );
+
+		// Nothing to do here.
+		if ( ! $subscriber->exists() ) {
+			return;
+		}
+
+		$subscriber->set( $settings['field_name'], $args['smart_tags']->replace_in_text_field( $settings['field_value'] ) );
+		$subscriber->save();
 
 	}
 

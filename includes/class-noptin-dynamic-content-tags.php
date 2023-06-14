@@ -346,38 +346,29 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 */
 	protected function get_subscriber_field( $args = array() ) {
 		$field      = empty( $args['field'] ) ? 'first_name' : $args['field'];
-		$default    = isset( $args['default'] ) ? $args['default'] : '';
-		$subscriber = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+		$default    = isset( $args['default'] ) ? esc_html( $args['default'] ) : '';
+		$subscriber = noptin_get_subscriber( get_current_noptin_subscriber_id() );
 
 		// Ensure the subscriber and the field exist.
-		if ( ! $subscriber->exists() || ! $subscriber->has_prop( $field ) ) {
-			return esc_html( $default );
+		if ( ! $subscriber->exists() ) {
+			return $default;
 		}
 
-		$all_fields = wp_list_pluck( get_noptin_custom_fields(), 'type', 'merge_tag' );
+		$value = $subscriber->get( $field );
 
-		// Format field value.
-		if ( isset( $all_fields[ $field ] ) ) {
-
-			$value = $subscriber->get( $field );
-			if ( 'checkbox' === $all_fields[ $field ] ) {
-				return ! empty( $value ) ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
-			}
-
-			$value = wp_kses_post(
-				format_noptin_custom_field_value(
-					$subscriber->get( $field ),
-					$all_fields[ $field ],
-					$subscriber
-				)
-			);
-
-			if ( '&mdash;' !== $value ) {
-				return $value;
-			}
+		if ( is_null( $value ) || '' === $value || array() === $value ) {
+			return $default;
 		}
 
-		return esc_html( $default );
+		if ( is_bool( $value ) ) {
+			return $value ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
+		}
+
+		if ( is_array( $value ) ) {
+			return implode( ', ', $value );
+		}
+
+		return $value;
 	}
 
 	/*

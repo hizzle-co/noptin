@@ -157,15 +157,21 @@ class Noptin_Page {
 				$default['uid'] = $user->ID;
 			}
 
+			$subscriber_id = get_noptin_subscriber_id_by_email( $recipient );
+
+			if ( $subscriber_id ) {
+				$default['sid'] = $subscriber_id;
+			}
+
 			return $default;
 		}
 
 		// Old format (subscribers).
 		// Fetch the subscriber.
-		$subscriber = Noptin_Subscriber::get_data_by( 'confirm_key', $recipient );
+		$subscriber_id = get_noptin_subscriber_id_by_confirm_key( $recipient );
 
-		if ( $subscriber ) {
-			$default['sid'] = $subscriber->id;
+		if ( $subscriber_id ) {
+			$default['sid'] = $subscriber_id;
 		}
 
 		return $default;

@@ -62,6 +62,9 @@ class Noptin_Subscriber {
 	 */
 	public function __construct( $subscriber = 0 ) {
 
+		// Show deprecated class notice.
+		_deprecated_function( __CLASS__, '1.13.0', 'noptin_get_subscriber' );
+
 		// $subscriber can be...
 		// ... an instance of this class...
 		if ( $subscriber instanceof Noptin_Subscriber ) {
