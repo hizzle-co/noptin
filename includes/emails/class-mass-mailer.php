@@ -215,7 +215,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	}
 
 	/**
-	 * Fetches relevant subscribers for the campaign.
+	 * Fetches relevant recipients for the campaign.
 	 *
 	 * @param Noptin_Newsletter_Email $campaign
 	 *

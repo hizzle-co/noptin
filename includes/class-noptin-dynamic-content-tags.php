@@ -180,6 +180,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 		}
 
+		// Convert booleans.
+		if ( is_bool( $replacement ) ) {
+			$replacement = $replacement ? '1' : '0';
+		}
+
 		if ( ! is_scalar( $replacement ) ) {
 			$replacement = wp_json_encode( $replacement );
 		}

@@ -172,7 +172,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		$this->tags['subscriber_count'] = array(
 			'description' => __( 'Replaced with the total number of subscribers', 'newsletter-optin-box' ),
-			'callback'    => array( $this, 'get_subscriber_count' ),
+			'callback'    => 'get_noptin_subscribers_count',
 		);
 
 		$this->tags['rule'] = array(
@@ -193,15 +193,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'example'     => "button text='Click Here' url='" . home_url() . "' background='brand' color='white' rounding='4px'",
 		);
 
-	}
-
-	/**
-	 * Returns the number of subscribers.
-	 *
-	 * @return int
-	 */
-	public function get_subscriber_count() {
-		return get_noptin_subscribers_count();
 	}
 
 	/**

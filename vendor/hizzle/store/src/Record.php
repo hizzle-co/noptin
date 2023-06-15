@@ -552,8 +552,8 @@ class Record {
 			return $this->{$method}( $context );
 		}
 
-		// Read directly from the data if we have it.
-		return $this->get_prop( $prop, $context );
+		// Force "view" to allow filtering third party props.
+		return $this->get_prop( $prop, 'view' );
 	}
 
 	/**

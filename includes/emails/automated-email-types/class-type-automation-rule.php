@@ -242,18 +242,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			}
 
 			// Fetch the wp user.
-			$user = get_user_by( 'email', $recipient );
-
-			if ( $user ) {
-				$this->user = $user;
-			}
-
-			// Fetch the subscriber.
-			$subscriber = noptin_get_subscriber( $recipient );
-
-			if ( $subscriber->exists() ) {
-				$this->subscriber = $subscriber->get_deprecated_subscriber();
-			}
+			$this->maybe_set_subscriber_and_user( $recipient );
 
 			// Send the email.
 			$key = $recipient . '_' . $campaign->id;
@@ -320,14 +309,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		}
 
 		// Maybe set related subscriber.
-		$subscriber = noptin_get_subscriber( sanitize_email( $recipient ) );
-
-		$this->subscriber = $subscriber->exists() ? $subscriber->get_deprecated_subscriber() : null;
-
-		// Maybe set related user.
-		$user = get_user_by( 'email', sanitize_email( $recipient ) );
-
-		$this->user = $user ? $user : null;
+		$this->maybe_set_subscriber_and_user( $recipient );
 
 		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
 

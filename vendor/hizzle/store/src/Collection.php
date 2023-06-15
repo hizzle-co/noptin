@@ -1331,6 +1331,33 @@ class Collection {
 	}
 
 	/**
+	 * Deletes all record meta fields for the given meta key.
+	 *
+	 * This function selects all records with the given meta key, then deletes the meta key.
+	 * It would be faster to delete the meta key directly, but this function ensures that
+	 * caches are cleared for each record.
+	 *
+	 * @param   string $meta_key  Meta key.
+	 * @access  public
+	 */
+	public function delete_all_meta( $meta_key ) {
+		global $wpdb;
+
+		$meta_table = $this->get_meta_table_name();
+
+		// Select all records with the given meta key.
+		$id_col     = $this->get_meta_type() . '_id';
+		$record_ids = $wpdb->get_col( $wpdb->prepare( "SELECT $id_col FROM $meta_table WHERE meta_key = %s", $meta_key ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		// Delete all meta for each record.
+		foreach ( $record_ids as $record_id ) {
+			$this->delete_record_meta( $record_id, $meta_key );
+		}
+	
+		return true;
+	}
+
+	/**
 	 * Determines if a meta field with the given key exists for the given noptin record ID.
 	 *
 	 * @param int    $record_id  ID of the record metadata is for.

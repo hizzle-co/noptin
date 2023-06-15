@@ -288,31 +288,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		}
 
 		if ( $this->is_subscriber_based ) {
-			$collection = noptin()->db()->store->get( 'subscribers' );
-
-			if ( ! empty( $collection ) ) {
-
-				foreach ( $collection->get_props() as $prop ) {
-
-					// Skip activity and sent_campaigns.
-					if ( in_array( $prop->name, array( 'activity', 'sent_campaigns' ), true ) ) {
-						continue;
-					}
-
-					$smart_tag = array(
-						'label'       => empty( $prop->label ) ? '' : $prop->label,
-						'description' => $prop->description,
-					);
-
-					if ( is_callable( $prop->enum ) ) {
-						$smart_tag['options'] = call_user_func( $prop->enum );
-					} elseif ( is_array( $prop->enum ) ) {
-						$smart_tag['options'] = array_combine( $prop->enum, $prop->enum );
-					}
-
-					$smart_tags[ $prop->name ] = $smart_tag;
-				}
-			}
+			$smart_tags = array_merge( $smart_tags, get_noptin_subscriber_smart_tags() );
 		}
 
 		return apply_filters( 'noptin_automation_trigger_known_smart_tags', $smart_tags, $this );

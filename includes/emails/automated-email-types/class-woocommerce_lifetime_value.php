@@ -292,11 +292,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		$this->customer = $customer;
 		$this->user     = get_user_by( 'id', $customer->get_id() );
 
-		$subscriber = new Noptin_Subscriber( $customer->get_email() );
-
-		if ( $subscriber->exists() ) {
-			$this->subscriber = $subscriber;
-		}
+		$this->maybe_set_subscriber_and_user_from_customer( $customer );
 
 		// Prepare merge tags.
 		foreach ( $this->get_customer_merge_tags() as $tag => $details ) {

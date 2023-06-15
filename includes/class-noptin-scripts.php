@@ -59,6 +59,10 @@ class Noptin_Scripts {
 
 		foreach ( self::$admin_scripts[ $hook ] as $script ) {
 			self::enqueue_script( $script );
+
+			if ( 'table' === $script ) {
+				wp_enqueue_style( 'wp-list-reusable-blocks' );
+			}
 		}
 	}
 

@@ -569,27 +569,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Sends a test email.
-	 *
-	 * @param Noptin_Automated_Email $campaign
-	 * @param string $recipient
-	 * @return bool Whether or not the test email was sent
-	 */
-	public function send_test( $campaign, $recipient ) {
-
-		$this->prepare_test_data( $campaign );
-
-		// Maybe set related subscriber.
-		$subscriber = noptin_get_subscriber( sanitize_email( $recipient ) );
-
-		if ( $subscriber->exists() ) {
-			$this->subscriber = $subscriber->get_deprecated_subscriber();
-		}
-
-		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
-	}
-
-	/**
 	 * Prepares test data.
 	 *
 	 * @param Noptin_Automated_Email $email

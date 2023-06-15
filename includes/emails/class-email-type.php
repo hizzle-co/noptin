@@ -38,7 +38,7 @@ abstract class Noptin_Email_Type {
 	public $unsubscribe_url = '';
 
 	/**
-	 * @var Noptin_Subscriber|\Hizzle\Noptin\DB\Subscriber
+	 * @var \Hizzle\Noptin\DB\Subscriber
 	 */
 	public $subscriber;
 
@@ -53,20 +53,31 @@ abstract class Noptin_Email_Type {
 	public $recipient = array(); // Array containing campaign id, user id and subscriber id.
 
 	/**
-	 * Sends a test email.
-	 *
-	 * @param Noptin_Automated_Email $email
-	 * @param string $recipients
-	 * @return bool Whether or not the preview was sent
-	 */
-	abstract public function send_test( $email, $recipients );
-
-	/**
 	 * Registers relevant hooks.
 	 *
 	 */
 	public function add_hooks() {
 		add_filter( 'noptin_get_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
+	}
+
+	/**
+	 * Sends a test email.
+	 *
+	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
+	 * @param string $recipient
+	 * @return bool Whether or not the test email was sent
+	 */
+	public function send_test( $campaign, $recipient ) {
+
+		$recipient = sanitize_email( $recipient );
+
+		$this->prepare_test_data( $campaign );
+
+		// Maybe set related subscriber.
+		$this->maybe_set_subscriber_and_user( $recipient );
+
+		return $this->send( $campaign, 'test', array( $recipient => false ) );
+
 	}
 
 	/**
@@ -114,33 +125,15 @@ abstract class Noptin_Email_Type {
 	public function get_subscriber_merge_tags() {
 
 		$tags = array();
-		foreach ( get_noptin_custom_fields() as $field ) {
+		foreach ( get_noptin_subscriber_smart_tags() as $smart_tag => $field ) {
 
-			$merge_tag = sanitize_key( $field['merge_tag'] );
-
-			if ( 'first_name' === $merge_tag ) {
-
-				$tags['name'] = array(
-					'description' => __( 'Full Name', 'newsletter-optin-box' ),
-					'callback'    => array( $this, 'get_subscriber_field' ),
-					'example'     => "name default='there'",
-				);
-
+			if ( empty( $field['callback'] ) ) {
+				$field['callback'] = array( $this, 'get_subscriber_field' );
 			}
 
-			$tags[ $merge_tag ] = array(
-				'description' => wp_strip_all_tags( $field['label'] ),
-				'callback'    => array( $this, 'get_subscriber_field' ),
-				'example'     => $merge_tag . " default=''",
-			);
+			$tags[ $smart_tag ] = $field;
 
 		}
-
-		$tags['avatar_url'] = array(
-			'description' => __( 'Avatar URL', 'newsletter-optin-box' ),
-			'callback'    => array( $this, 'get_subscriber_field' ),
-			'example'     => 'avatar_url',
-		);
 
 		return $tags;
 
@@ -154,21 +147,18 @@ abstract class Noptin_Email_Type {
 	 * @return string
 	 */
 	public function get_subscriber_field( $args = array(), $field = 'first_name' ) {
-		$default = isset( $args['default'] ) ? $args['default'] : '';
-		$field   = strtolower( $field );
+		$field = strtolower( $field );
 
 		// Abort if no subscriber.
 		if ( empty( $this->subscriber ) ) {
-			return esc_html( $default );
+			return '';
 		}
 
-		// Avatar URL.
-		if ( 'avatar_url' === $field ) {
-			return get_avatar_url( $this->subscriber->get( 'email' ) );
-		}
+		// Maybe convert to new subscriber object if we have the old one.
+		$subscriber = noptin_get_subscriber( $this->subscriber );
 
-		$value = $this->subscriber->get( $field );
-		return is_null( $value ) ? esc_html( $default ) : $value;
+		// Fetch the value.
+		return $subscriber->get( $field );
 	}
 
 	/**
@@ -419,10 +409,6 @@ abstract class Noptin_Email_Type {
 			)
 		);
 
-		if ( ! empty( $this->subscriber ) ) {
-			$GLOBALS['noptin_subscriber'] = $this->subscriber;
-		}
-
 		// Generate unsubscribe url.
 		$this->unsubscribe_url = get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( $this->recipient ) ) );
 
@@ -497,10 +483,6 @@ abstract class Noptin_Email_Type {
 	 */
 	protected function after_send( $campaign ) {
 
-		if ( ! empty( $this->subscriber ) ) {
-			$GLOBALS['noptin_subscriber'] = false;
-		}
-
 		// Revert recipient.
 		$this->recipient = array();
 
@@ -527,19 +509,45 @@ abstract class Noptin_Email_Type {
 		$previewer = defined( 'NOPTIN_PREVIEW_EMAIL' ) ? NOPTIN_PREVIEW_EMAIL : false;
 
 		if ( ! empty( $previewer ) ) {
-			$this->user       = get_user_by( 'email', $previewer );
-			$this->subscriber = new Noptin_Subscriber( $previewer );
+			$this->maybe_set_subscriber_and_user( $previewer );
 		} else {
 
 			$this->user = wp_get_current_user();
 			$subscriber = get_current_noptin_subscriber_id();
 
 			if ( $subscriber ) {
-				$this->subscriber = new Noptin_Subscriber( $subscriber );
+				$this->subscriber = noptin_get_subscriber( $subscriber );
 			}
 		}
 
 		do_action( 'noptin_prepare_test_data', $this, $email );
 	}
 
+	/**
+	 * Sets subscriber and user for the email.
+	 *
+	 * @param string $email
+	 */
+	protected function maybe_set_subscriber_and_user( $email ) {
+
+		$email = sanitize_email( $email );
+
+		if ( empty( $email ) ) {
+			return;
+		}
+
+		// Set subscriber.
+		$subscriber = noptin_get_subscriber( $email );
+
+		if ( $subscriber->exists() ) {
+			$this->subscriber = $subscriber;
+		}
+
+		// Set user.
+		$user = get_user_by( 'email', $email );
+
+		if ( $user ) {
+			$this->user = $user;
+		}
+	}
 }

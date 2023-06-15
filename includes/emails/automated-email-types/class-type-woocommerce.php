@@ -780,7 +780,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 			case 'custom.newsletter':
 				$email      = $this->customer->get_email();
-				$subscriber = new Noptin_Subscriber( $email );
+				$subscriber = noptin_get_subscriber( $email );
 
 				if ( $subscriber->is_active() && ! noptin_is_email_unsubscribed( $email ) ) {
 					return 'yes';
@@ -1182,31 +1182,41 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		// Generate customer email.
 		$email = '';
 
-		if ( ! empty( $this->order ) ) {
-			$email = $this->order->get_billing_email();
-		}
-
 		// If we have a customer, set-up their info.
 		if ( ! empty( $this->customer ) ) {
 			$email = $this->customer->get_email();
-
-			if ( $this->customer->get_id() ) {
-				$this->user = get_user_by( 'id', $this->customer->get_id() );
-			}
-		}
-
-		// Maybe set related subscriber.
-		if ( ! empty( $email ) ) {
-
-			$subscriber = noptin_get_subscriber( $email );
-
-			if ( $subscriber->exists() ) {
-				$this->subscriber = $subscriber->get_deprecated_subscriber();
-			}
+			$this->maybe_set_subscriber_and_user_from_customer( $this->customer );
+		} elseif ( ! empty( $this->order ) ) {
+			$email = $this->order->get_billing_email();
+			$this->maybe_set_subscriber_and_user( $email );
 		}
 
 		$this->send( $campaign, $key, $this->get_recipients( $campaign, array( '[[customer.email]]' => $email ) ) );
 
+	}
+
+	/**
+	 * Sets subscriber and user for the customer.
+	 *
+	 * @param \WC_Customer $customer
+	 */
+	protected function maybe_set_subscriber_and_user_from_customer( $customer ) {
+
+		if ( empty( $customer ) ) {
+			return;
+		}
+
+		$email = $customer->get_email();
+
+		if ( ! empty( $email ) ) {
+			$this->maybe_set_subscriber_and_user( $email );
+		}
+
+		$user_id = $customer->get_id();
+
+		if ( $user_id ) {
+			$this->user = get_user_by( 'id', $user_id );
+		}
 	}
 
 	/**
@@ -1236,18 +1246,8 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		$this->prepare_test_data( $campaign );
 
-		// Generate customer email.
-		$email = $this->customer->get_email();
-
 		// Maybe set related subscriber.
-		if ( ! empty( $email ) ) {
-
-			$subscriber = noptin_get_subscriber( sanitize_email( $recipient ) );
-
-			if ( $subscriber->exists() ) {
-				$this->subscriber = $subscriber->get_deprecated_subscriber();
-			}
-		}
+		$this->maybe_set_subscriber_and_user_from_customer( $this->customer );
 
 		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
 

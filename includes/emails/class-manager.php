@@ -121,12 +121,7 @@ class Noptin_Email_Manager {
 	public function delete_stats( $post_id ) {
 		global $wpdb;
 
-		$wpdb->delete(
-			get_noptin_subscribers_meta_table_name(),
-			array(
-				'meta_key' => "_campaign_$post_id",
-			)
-		);
+		delete_noptin_subscriber_meta_by_key( "_campaign_$post_id" );
 
 		$wpdb->delete(
 			$wpdb->usermeta,
