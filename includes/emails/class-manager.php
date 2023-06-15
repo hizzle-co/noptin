@@ -36,9 +36,6 @@ class Noptin_Email_Manager {
 	/** @var Noptin_Newsletter_Email_Type */
 	public $newsletter;
 
-	/** @var Noptin_One_Time_Email_Type */
-	public $one_time;
-
 	/**
 	 * Class constructor.
 	 *
@@ -68,10 +65,8 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-automated-email.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-newsletter-email.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-one-time-email.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-newsletter-email-type.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-one-time-email-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'admin/class-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type-automation-rule.php';
@@ -89,7 +84,6 @@ class Noptin_Email_Manager {
 		$this->tags                  = new Noptin_Email_Tags();
 		$this->automated_email_types = new Noptin_Automated_Email_Types();
 		$this->newsletter            = new Noptin_Newsletter_Email_Type();
-		$this->one_time              = new Noptin_One_Time_Email_Type();
 
 		do_action( 'noptin_email_manager_init', $this );
 	}
