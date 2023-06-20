@@ -13,15 +13,13 @@ import { addQueryArgs } from "@wordpress/url";
  */
 import { useRoute } from "../hooks";
 import { BlockButton, ErrorNotice } from "../../styled-components";
+import { useSelected } from "../../table/selected-context";
 
 /**
  * Displays a delete button.
  *
- * @param {Object} props
- * @param {Array} props.selected The selected record IDs.
- * @param {Function} props.setSelected The callback to call when the selected records change.
  */
-export default function DeleteButton( { selected, setSelected } ) {
+export default function DeleteButton() {
 
 	const { namespace, collection, args } = useRoute();
 	const STORE_NAME        = `${namespace}/${collection}`;
@@ -29,6 +27,7 @@ export default function DeleteButton( { selected, setSelected } ) {
 	const [isOpen, setOpen] = useState( false );
 	const [error, setError] = useState( null );
 	const [deleting, setDeleting] = useState( false );
+	const [selected, setSelected] = useSelected();
 	const deleteAll  = selected.length === 0;
 	const buttonText = deleteAll ? __( 'Delete All', 'newsletter-optin-box' ) : __( 'Delete Selected', 'newsletter-optin-box' );
 	const modalTitle = deleteAll ? __( 'Delete', 'newsletter-optin-box' ) : __( 'Delete Selected', 'newsletter-optin-box' );

@@ -10,6 +10,7 @@ import { useMemo, useCallback } from "@wordpress/element";
  */
 import BodyCell from './body-cell';
 import HeaderCell from './header-cell';
+import { useSelected } from './selected-context';
 import { ScrollableTable, TableRow, TableCellNoData } from '../styled-components';
 
 const ASC = 'asc';
@@ -44,15 +45,87 @@ const getRowKey = ( row, index, idProp ) => {
 }
 
 /**
- * Displays a table header.
+ * Lets users select all rows.
  *
  * @param {Object} props Component props.
+ * @param {Array} props.rows The rows.
+ * @param {string} props.idProp The ID prop.
+ * @return {JSX.Element} The select all cell.
  */
-export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange, rows, idProp, canSelectRows, selected, setSelected } ) => {
+const SelectAll = ( { rows, idProp } ) => {
+	const [ selected, setSelected ] = useSelected();
 
 	// Loop through all rows and retrieve an array of keys.
 	const rowKeys = useMemo( () => rows.map( ( row, index ) => getRowKey( row, index, idProp ) ), [ rows, idProp ] );
 	const isAllSelected = selected.length > 0 && selected.length === rowKeys.length;
+
+	// Toggle all rows.
+	const toggleAll = useCallback( () => {
+		setSelected( isAllSelected ? [] : rowKeys );
+	}, [ isAllSelected, rowKeys, setSelected ] );
+
+	return (
+		<HeaderCell
+			columnLabel={ __( 'Toggle selection', 'newsletter-optin-box' ) }
+			columnKey="cb"
+			align="center"
+			minWidth="20px"
+			display={
+				<CheckboxControl
+					checked={ isAllSelected }
+					onChange={ toggleAll }
+					__nextHasNoMarginBottom
+				/>
+			}
+			cellClassName="noptin-table-column__cb"
+		/>
+	);
+}
+
+/**
+ * Lets users select a single row.
+ *
+ * @param {Object} props Component props.
+ * @param {Object} props.row The record row.
+ * @param {string} props.id The ID value.
+ * @return {JSX.Element} The select all cell.
+ */
+const SelectRow = ( { row, id } ) => {
+	const [ selected, setSelected ] = useSelected();
+
+	// Toggle selection.
+	const toggleSelection = useCallback( ( select ) => {
+
+		if ( ! select ) {
+			setSelected( selected.filter( ( item ) => item !== id ) );
+		} else {
+			setSelected( [ ...selected, id ] );
+		}
+	}, [ selected, setSelected, id ] );
+
+	return (
+		<BodyCell
+			headerKey="cb"
+			row={ row }
+			header={ { key: 'cb', align: 'center', minWidth: '20px', } }
+			cellClassName="noptin-table-column__cb"
+			DisplayCell={
+				<CheckboxControl
+					checked={ selected.includes( id ) }
+					onChange={ toggleSelection }
+					__nextHasNoMarginBottom
+				/>
+			}
+		/>
+	);
+}
+
+/**
+ * Displays a table header.
+ *
+ * @param {Object} props Component props.
+ */
+export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange, rows, idProp, canSelectRows } ) => {
 
 	// Maybe change the sort direction.
 	const setSortBy = useCallback( ( col ) => {
@@ -64,30 +137,6 @@ export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange,
 			onQueryChange( { orderby: col } );
 		}
 	}, [ sortBy, sortDir, onQueryChange ] );
-
-	// Lets users select rows.
-	const selectRows = useMemo(() => {
-		if ( ! canSelectRows ) {
-			return null;
-		}
-
-		return (
-			<HeaderCell
-				columnLabel={ __( 'Toggle selection', 'newsletter-optin-box' ) }
-				columnKey="cb"
-				align="center"
-				minWidth="20px"
-				display={
-					<CheckboxControl
-						checked={ isAllSelected }
-						onChange={ () => setSelected( isAllSelected ? [] : rowKeys ) }
-						__nextHasNoMarginBottom
-					/>
-				}
-				cellClassName="noptin-table-column__cb"
-			/>
-		);
-	}, [ canSelectRows, isAllSelected, rowKeys ] );
 
 	// Prepare the headers.
 	const theHeaders = useMemo( () => headers.map( ( { key, label, isSortable, ...props } ) => (
@@ -107,7 +156,7 @@ export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange,
 	return (
 		<thead>
 			<TableRow className="noptin-table__row">
-				{ selectRows }
+				{ ( canSelectRows && hasData ) && <SelectAll rows={ rows } idProp={ idProp } /> }
 				{ theHeaders }
 			</TableRow>
 		</thead>
@@ -117,36 +166,7 @@ export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange,
 /**
  * Displays a single table row.
  */
-const TheTableRow = ( { sortBy, headers, DisplayCell, canSelectRows, selected, setSelected, row, id } ) => {
-
-	// Lets users select rows.
-	const selectRow = useMemo(() => {
-		if ( ! canSelectRows ) {
-			return null;
-		}
-
-		return (
-			<BodyCell
-				headerKey={ 'cb' }
-				row={ row }
-				header={ { key: 'cb', align: 'center', minWidth: '20px', } }
-				cellClassName={ 'noptin-table__col-cb' }
-				DisplayCell={ () => (
-					<CheckboxControl
-						checked={ selected.includes( id ) }
-						onChange={ () => {
-							if ( selected.includes( id ) ) {
-								setSelected( selected.filter( ( item ) => item !== id ) );
-							} else {
-								setSelected( [ ...selected, id ] );
-							}
-						} }
-						__nextHasNoMarginBottom
-					/>
-				) }
-			/>
-		);
-	}, [ canSelectRows, selected, setSelected, id ] );
+const TheTableRow = ( { sortBy, headers, DisplayCell, canSelectRows, hasData, row, id } ) => {
 
 	// Prepare the other cells.
 	const displaColumns = useMemo( () => headers.map( ( { key, ...header } ) => (
@@ -163,7 +183,7 @@ const TheTableRow = ( { sortBy, headers, DisplayCell, canSelectRows, selected, s
 
 	return (
 		<TableRow className="noptin-table__row">
-			{ selectRow }
+			{ ( canSelectRows && hasData ) && <SelectRow row={ row } id={ id } /> }
 			{ displaColumns }
 		</TableRow>
 	);
@@ -192,8 +212,6 @@ const Table = ( {
 	onQueryChange,
 	DisplayCell,
 	canSelectRows,
-	selected = [],
-	setSelected = () => {},
 	idProp = 'id',
 	...extraProps
 } ) => {
@@ -218,8 +236,6 @@ const Table = ( {
 					sortDir={sortDir}
 					onQueryChange={onQueryChange}
 					canSelectRows={canSelectRows}
-					selected={selected}
-					setSelected={setSelected}
 					rows={rows}
 					idProp={idProp}
 				/>
@@ -237,8 +253,7 @@ const Table = ( {
 									headers={ headers }
 									DisplayCell={ DisplayCell }
 									canSelectRows={ canSelectRows }
-									selected={ selected }
-									setSelected={ setSelected }
+									hasData={hasData}
 									row={ row }
 									id={ rowKey }
 								/>

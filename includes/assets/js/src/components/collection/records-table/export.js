@@ -13,7 +13,8 @@ import Papa from 'papaparse';
  */
 import { useSchema, useRecords } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
-import { BlockButton } from "../../styled-components";
+import { useSelected } from "../../table/selected-context";
+import { BlockButton, NoMarginNotice } from "../../styled-components";
 import ErrorBoundary from "../error-boundary";
 
 /**
@@ -28,21 +29,29 @@ const DownloadProgress = ({ fields, back, schema }) => {
 
 	// Prepare state.
 	const { namespace, collection, args } = useRoute();
+	const [selected] = useSelected();
 
 	// Fetch the records.
-	const newArgs = {
-		...args,
-		__fields: fields.join(','),
-		number: -1,
-		context: 'edit',
-	}
+	const exportArgs = selected.length === 0 ? { ...args, number: -1 } : { include: selected.join( ',' ) };
 
-	const records = useRecords(namespace, collection, newArgs);
+	// Add the fields to the args.
+	exportArgs.__fields = fields.join( ',' );
 
+	// Set context to edit.
+	exportArgs.context = 'edit';
+
+	const records = useRecords(namespace, collection, exportArgs);
+console.log( records );
+	return (
+		<Text size={ 16 } as="p">
+			<Spinner style={{marginLeft: 0}} />
+			{__('Fetching records...', 'newsletter-optin-box')}
+		</Text>
+	)
 	// Loop through columns and and try to replace the column name with the label where possible.
 	const columns = useMemo( () => {
 
-		if ( ! records.data.length ) {
+		if ( ! records.data?.length ) {
 			return [];
 		}
 
@@ -60,7 +69,7 @@ const DownloadProgress = ({ fields, back, schema }) => {
 	// Convert data from array of objects to array of arrays.
 	const recordArray = useMemo(() => {
 
-		if (!records.data.length) {
+		if (!records.data?.length) {
 			return [];
 		}
 
@@ -70,7 +79,7 @@ const DownloadProgress = ({ fields, back, schema }) => {
 	}, [records.data]);
 
 	const backButton = (
-		<Button variant="primary" onClick={back}>
+		<Button variant="link" onClick={back}>
 			{__('Go Back', 'newsletter-optin-box')}
 		</Button>
 	);
@@ -90,28 +99,24 @@ const DownloadProgress = ({ fields, back, schema }) => {
 
 		const error = records.getResolutionError();
 		return (
-			<Notice status="error" isDismissible={false} style={{ margin: 0 }}>
-				<p>
-					{error.message || __('An unknown error occurred.', 'newsletter-optin-box')}
-				</p>
-
+			<NoMarginNotice status="error" isDismissible={false}>
+				{error.message || __('An unknown error occurred.', 'newsletter-optin-box')}&nbsp; &nbsp;
 				{backButton}
-			</Notice>
+			</NoMarginNotice>
 		)
 	}
 
 	// If no records, nothing to export.
 	if (!records.data.length) {
 		return (
-			<Notice status="info" isDismissible={false} style={{ margin: 0 }}>
-				<p>
-					{__('Found no records to export.', 'newsletter-optin-box')}
-				</p>
-
+			<NoMarginNotice status="info" isDismissible={false}>
+				{__('Found no records to export.', 'newsletter-optin-box')}&nbsp; &nbsp;
 				{backButton}
-			</Notice>
+			</NoMarginNotice>
 		)
 	}
+
+	return 'Fetching records...';
 
 	// Convert to CSV.
 	const csv = Papa.unparse(
@@ -126,7 +131,7 @@ const DownloadProgress = ({ fields, back, schema }) => {
 
 	// Force download.
 	return (
-		<Notice status="success" isDismissible={false}>
+		<NoMarginNotice status="success" isDismissible={false}>
 			{__("Done! Click the button below to download all matching records.", 'newsletter-optin-box')}
 			&nbsp; &nbsp;
 			<Button
@@ -135,7 +140,7 @@ const DownloadProgress = ({ fields, back, schema }) => {
 				download={ filename }
 				text={ __('Download CSV', 'newsletter-optin-box') }
 			/>
-		</Notice>
+		</NoMarginNotice>
 	);
 }
 
@@ -241,6 +246,10 @@ const TheModal = () => {
 export default function ExportButton() {
 
 	const [isOpen, setOpen] = useState(false);
+	const [selected] = useSelected();
+	const downloadAll  = selected.length === 0;
+	const buttonText = downloadAll ? __( 'Download', 'newsletter-optin-box' ) : __( 'Download Selected', 'newsletter-optin-box' );
+	const modalTitle = downloadAll ? __( 'Download', 'newsletter-optin-box' ) : __( 'Download Selected', 'newsletter-optin-box' );
 
 	return (
 		<>
@@ -248,11 +257,11 @@ export default function ExportButton() {
 			<Button
 				onClick={() => setOpen(true)}
 				icon={download}
-				text={ __( 'Export', 'newsletter-optin-box' ) }
+				text={ buttonText }
 			/>
 
 			{isOpen && (
-				<Modal title={ __( 'Export', 'newsletter-optin-box' ) } onRequestClose={() => setOpen(false)}>
+				<Modal title={ modalTitle } onRequestClose={() => setOpen(false)}>
 					<div className="hizzle-records-export-modal__body">
 						<ErrorBoundary>
 							<TheModal />

@@ -114,14 +114,40 @@ export const Menu = ( { headers, hiddenHeaders, setHiddenHeaders } ) => {
  * @param {Object} props.query.search Search query.
  * @param {Function} props.onQueryChange Callback to update the query.
  * @param {string} props.searchPlaceholder Search field placeholder.
- * @param {Function} props.actions Table actions.
- * @param {Array} props.selected Selected items.
- * @param {Function} props.setSelected Callback to update the selected items.
+ * @param {JSX.Element} props.actions Table actions.
  * @param {Array} props.headers Table headers.
  * @param {Array} props.hiddenHeaders Keys of hidden table headers.
  * @param {Function} props.setHiddenHeaders Callback to update the hidden table headers.
  */
-export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, selected, setSelected, headers, hiddenHeaders, setHiddenHeaders } ) => {
+export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, headers, hiddenHeaders, setHiddenHeaders } ) => {
+
+	// Memoize the actions.
+	const theActions = useMemo( () => (
+		actions ? (
+			<FlexItem>
+				{ actions }
+			</FlexItem>
+		) : null
+	), [ actions ] );
+
+	// Memoize the search field.
+	const theSearch = useMemo( () => (
+		hasSearch ? (
+			<SearchForm
+				value={ query.search }
+				onChange={ ( value ) => onQueryChange( { search: value } ) }
+				placeholder={ searchPlaceholder }
+			/>
+		) : null
+	), [ hasSearch, query.search, onQueryChange, searchPlaceholder ] );
+
+	// Memoize the menu.
+	const theMenu = useMemo( () => (
+		<FlexItem>
+			<Menu headers={ headers } hiddenHeaders={ hiddenHeaders } setHiddenHeaders={ setHiddenHeaders } />
+		</FlexItem>
+	), [ headers, hiddenHeaders, setHiddenHeaders ] );
+
 	return (
 		<CardHeader>
 			<Flex gap={2} wrap>
@@ -130,23 +156,11 @@ export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPla
 					<CardHeadingText as="h2">{ title }</CardHeadingText>
 				</FlexItem>
 
-				{ hasSearch && (
-					<SearchForm
-						value={ query.search }
-						onChange={ (value) => onQueryChange({search: value}) }
-						placeholder={ searchPlaceholder }
-					/>
-				) }
+				{ theSearch }
 
-				{ actions && (
-					<FlexItem>
-						{ actions( { selected, setSelected } ) }
-					</FlexItem>
-				) }
+				{ theActions }
 
-				<FlexItem>
-					<Menu headers={ headers } hiddenHeaders={ hiddenHeaders } setHiddenHeaders={ setHiddenHeaders } />
-				</FlexItem>
+				{ theMenu }
 			</Flex>
 		</CardHeader>
 	)
@@ -202,9 +216,6 @@ const TableCard = ( {
 	...props
 } ) => {
 
-	// An array of selected row IDs.
-	const [ selected, setSelected ] = useState( [] );
-
 	// An array of hidden header keys.
 	const [ hiddenHeaders, setHiddenHeaders ] = useState( initialHiddenHeaders );
 
@@ -232,8 +243,6 @@ const TableCard = ( {
 				onQueryChange={ onQueryChange }
 				searchPlaceholder={ searchPlaceholder }
 				actions={ actions }
-				selected={ selected }
-				setSelected={ setSelected }
 				headers={ headers }
 				hiddenHeaders={ hiddenHeaders }
 				setHiddenHeaders={ setHiddenHeaders }
@@ -246,8 +255,6 @@ const TableCard = ( {
 					rows={ rows }
 					DisplayCell={ DisplayCell }
 					canSelectRows={ canSelectRows }
-					selected={ selected }
-					setSelected={ setSelected }
 					{ ...theProps }
 				/>
 			) }

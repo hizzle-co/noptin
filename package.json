@@ -23,6 +23,7 @@
 	},
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
 	"dependencies": {
+		"@hizzlewp/store": "^0.0.3",
 		"@wordpress/api-fetch": "^6.28.0",
 		"@wordpress/base-styles": "^4.25.0",
 		"@wordpress/components": "^25.0.0",

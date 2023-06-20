@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { memo } from "@wordpress/element";
+import { memo, isValidElement } from "@wordpress/element";
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import { alignmentStyle } from './header-cell';
  * @param {Object} props Component props.
  * @param {Object} props.row The row.
  * @param {Object} props.header The header.
- * @param {Function} props.DisplayCell The display cell component.
+ * @param {Function|Object} props.DisplayCell The display cell component or element.
  * @param {string} props.cellClassName The cell class name.
  * @param {string} props.headerKey The header key.
  * @param {boolean} props.isSorted Whether this is a sorted cell.
@@ -32,9 +32,14 @@ const BodyCell = ( { row, header, DisplayCell, cellClassName, headerKey, isSorte
 		minWidth: header.minWidth || undefined,
 	};
 
+	// Check if we have an element or a component.
+	const isJSX = isValidElement( DisplayCell );
+
 	return (
 		<Cell scope={ header.is_primary ? 'row' : undefined } isSorted={ isSorted } { ...cellProps }>
-			{ DisplayCell && <DisplayCell row={ row } header={ header } headerKey={ headerKey } /> }
+			{ isJSX ? DisplayCell : (
+				<DisplayCell row={ row } header={ header } headerKey={ headerKey } />
+			) }
 		</Cell>
 	);
 }

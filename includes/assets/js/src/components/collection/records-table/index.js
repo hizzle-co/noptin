@@ -10,6 +10,7 @@ import { __ } from "@wordpress/i18n";
  */
 import Wrap from "../wrap";
 import TableCard from "../../table";
+import { SelectedContextProvider } from "../../table/selected-context";
 import DisplayCell from "./display-cell";
 import { useSchema, useRecords } from "../../../store-data/hooks";
 import { useRoute } from "../hooks";
@@ -19,15 +20,12 @@ import DeleteButton from "./delete-button";
 /**
  * Displays the table actions.
  *
- * @param {Object} props
- * @param {Array} props.selected
- * @param {Function} props.setSelected
  * @returns {JSX.Element}
  */
-const TableActions = ( {selected, setSelected} ) => (
+const TableActions = () => (
 	<Flex gap={2} wrap>
 		<FlexItem>
-			<DeleteButton selected={ selected } setSelected={ setSelected }/>
+			<DeleteButton />
 		</FlexItem>
 		<ExportButton />
 	</Flex>
@@ -74,10 +72,13 @@ export function DisplayRecords( { schema: { schema, hidden, ignore, labels }, to
 
 		return columns;
 	}, [ schema, ignore ] );
+	console.log('Before Actions' );
+	// Prepare the actions.
+	const actions = useMemo ( () => <TableActions />, [] );
 
 	return (
 		<TableCard
-			actions={ TableActions }
+			actions={ actions }
 			rows={ records }
 			headers={ columns }
 			totalRows={ total }
@@ -110,14 +111,13 @@ export default function RecordsTable( { component } ) {
 	const schema  = useSchema( namespace, collection );
 
 	// Show error if any.
-	if ( records.hasResolutionFailed() ) {
+	if ( 'ERROR' === records.status ) {
 
-		const error = records.getResolutionError();
 		return (
 			<Wrap title={ component.title }>
 				<CardBody>
 					<Notice status="error" isDismissible={ false }>
-						{ error.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
+						{ records.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
 					</Notice>
 				</CardBody>
 			</Wrap>
@@ -129,22 +129,24 @@ export default function RecordsTable( { component } ) {
 
 		// If we're not updating the page, reset it.
 		if ( ! newQuery.paged ) {
-			newQuery.paged = 1;
+			delete newQuery.paged;
 		}
 
 		navigate( path, { ...args, ...newQuery } );
 	}, [ navigate, path, args ] );
 
 	return (
-		<DisplayRecords
-			schema={ schema.data }
-			records={ records.data }
-			total={ records.total }
-			summary={ records.summary }
-			isLoading={ records.isResolving() }
-			updateQuery={ updateQuery }
-			query={ args }
-			extra={ component }
-		/>
+		<SelectedContextProvider>
+			<DisplayRecords
+				schema={ schema.data }
+				records={ records.data.items }
+				total={ records.data.total }
+				summary={ records.data.summary }
+				isLoading={ records.isResolving }
+				updateQuery={ updateQuery }
+				query={ args }
+				extra={ component }
+			/>
+		</SelectedContextProvider>
 	);
 }

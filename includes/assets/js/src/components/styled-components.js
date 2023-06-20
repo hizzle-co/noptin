@@ -1,4 +1,4 @@
-import { Button, __experimentalText as Text, TabPanel } from "@wordpress/components";
+import { Button, __experimentalText as Text, TabPanel, Notice } from "@wordpress/components";
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
@@ -33,6 +33,13 @@ export const FullHeight = styled.div`
  */
 export const withBottomMargin = css`
 	margin-bottom: 1.6rem;
+`
+
+/**
+ * Returns a notice with zero margin.
+ */
+export const NoMarginNotice = styled( Notice )`
+	margin: 0 !important;
 `
 
 /**

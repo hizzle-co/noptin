@@ -4,22 +4,92 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
+import memoize from 'memize';
 
 /**
- * Internal dependencies
+ * Exports the meta selectors.
  */
-import initStore from './index';
+export const META_SELECTORS = [
+	'getIsResolving',
+	'hasStartedResolution',
+	'hasFinishedResolution',
+	'isResolving',
+	'getCachedResolvers',
+	'getResolutionError',
+	'hasResolutionFailed',
+];
 
 /**
- * Uses the specified store.
+ * Like useSelect, but the selectors return objects containing
+ * both the original data AND the resolution info.
  *
- * @param {String} namespace
- * @param {String} collection
- * @return {Object} The store.
+ * @param {Function} mapQuerySelect see useSelect
+ * @param {Array}    deps           see useSelect
+ *
+ * @see useSelect
+ *
+ * @return {Object} Queried data.
  */
-export function useStore( namespace, collection ) {
-	return initStore( namespace, collection );
+export function useQuerySelect( mapQuerySelect, deps ) {
+	return useSelect( ( select, registry ) => {
+		const resolve = ( store ) => enrichSelectors( select( store ) );
+		return mapQuerySelect( resolve, registry );
+	}, deps );
 }
+
+/**
+ * Transform simple selectors into ones that return an object with the
+ * original return value AND the resolution info.
+ *
+ * @param {Object} selectors Selectors to enrich
+ * @return {Object} Enriched selectors
+ */
+const enrichSelectors = memoize( ( ( selectors ) => {
+	const resolvers = {};
+
+	for ( const selectorName in selectors ) {
+		if ( META_SELECTORS.includes( selectorName ) ) {
+			continue;
+		}
+
+		Object.defineProperty( resolvers, selectorName, {
+			get:
+				() =>
+				( ...args ) => {
+					const { getIsResolving, hasFinishedResolution, getResolutionError, hasResolutionFailed } = selectors;
+					const error = getResolutionError( selectorName, args );
+					const isResolving = !! getIsResolving( selectorName, args );
+					const hasResolved =
+						! isResolving &&
+						hasFinishedResolution( selectorName, args );
+					const data = selectors[ selectorName ]( ...args );
+
+					let status;
+					if ( isResolving ) {
+						status = 'RESOLVING';
+					} else if ( hasResolved ) {
+						if ( hasResolutionFailed() ) {
+							status = 'ERROR';
+						} else {
+							status = 'SUCCESS';
+						}
+					} else {
+						status = 'IDLE';
+					}
+
+					return {
+						data,
+						status,
+						isResolving,
+						hasResolved,
+						error,
+					};
+				},
+		} );
+	}
+
+	return resolvers;
+} ));
 
 /**
  * Resolves the specified record.
@@ -130,18 +200,10 @@ export function useRecords( namespace, collection, queryArgs = {} ) {
 	const STORE_NAME = `${namespace}/${collection}`;
 	const argsString = addQueryArgs( '', queryArgs );
 
-	return useSelect( ( select ) => {
-		const store = select( STORE_NAME );
-
-		return {
-			data: store.getRecords( argsString ),
-			total: store.getQueryTotal( argsString ),
-			summary: store.getQuerySummary( argsString ),
-			isResolving: () => store.isResolving( 'getRecords', [ argsString ] ) || ! store.hasStartedResolution( 'getRecords', [ argsString ] ),
-			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecords', [ argsString ] ),
-			getResolutionError: () => store.getResolutionError( 'getRecords', [ argsString ] ),
-		}
-	}, [argsString]);
+	return useQuerySelect(
+		( query ) => query( STORE_NAME ).getRecords( argsString ),
+		[ namespace, collection, argsString ]
+	);
 }
 
 /**

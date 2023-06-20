@@ -58,24 +58,34 @@ export const getQuerySummary = ( state = DEFAULT_STATE, queryString ) => {
  * Retrieves records.
  *
  * @param {String} queryString
- * @return {Array|null} Records.
+ * @return {Object} Records.
  */
 export const getRecords = ( state = DEFAULT_STATE, queryString ) => {
 
 	queryString   = '' === queryString ? 'all' : queryString;
 	const _fields = getQueryArg( queryString, '__fields' );
 
+	const defaultRecords =  {
+		items: [],
+		summary: {},
+		total: 0,
+	};
+
 	if ( _fields ) {
-		return Array.isArray( state.partialRecords[ queryString ]?.items ) ? state.partialRecords[ queryString ]?.items : [];
+		return Array.isArray( state.partialRecords[ queryString ]?.items ) ? state.partialRecords[ queryString ] : defaultRecords;
 	}
 
 	// Check if records are already loaded.
 	if ( ! Array.isArray( state.recordIDs[ queryString ]?.items ) ) {
-		return [];
+		return defaultRecords;
 	}
 
 	// Loop through records to find the record.
-	return state.recordIDs[ queryString ].items.map( id => state.records[ id ] );
+	return {
+		items: state.recordIDs[ queryString ].items.map( id => state.records[ id ] ),
+		summary: state.recordIDs[ queryString ].summary,
+		total: state.recordIDs[ queryString ].total,
+	};
 }
 
 /**

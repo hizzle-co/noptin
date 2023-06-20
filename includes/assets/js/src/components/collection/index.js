@@ -36,7 +36,7 @@ initStore('noptin', 'subscribers');
  * @returns 
  */
 const RenderCollection = () => {
-
+	console.log('Render Collection: ' );
 	const { namespace, collection } = useRoute();
 	const schema = useSchema(namespace, collection);
 
@@ -94,6 +94,7 @@ const RenderCollection = () => {
  * @returns
  */
 const Collection = () => {
+	console.log('Collection' );
 	const { goTo } = useNavigator();
 	const [url, setURL] = useState(window.location.href);
 
