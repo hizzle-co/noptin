@@ -21,8 +21,6 @@ module.exports = {
 		"blocks-woocommerce-backend": "./includes/assets/js/src/wc/index.js",
 		"blocks-woocommerce-frontend": "./includes/assets/js/src/wc/frontend.js",
 		table: "./includes/assets/js/src/table.js",
-		subscribers: "./includes/assets/js/src/subscribers.js",
-		"subscribers-import": "./includes/assets/js/src/subscribers-import.js",
 		"form-scripts": "./includes/assets/js/src/form-scripts.js",
 		"popups": "./includes/assets/js/src/popups.js",
 		"form-editor": "./includes/assets/js/src/form-editor.js",
