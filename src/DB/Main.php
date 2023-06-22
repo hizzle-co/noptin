@@ -84,6 +84,7 @@ class Main {
 	 */
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'load' ) );
+		add_filter( 'hizzle_rest_noptin_subscribers_admin_app_routes', array( $this, 'filter_subscribers_collection_admin_routes' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_collection_js_params', array( $this, 'filter_subscribers_collection_js_params' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'add_record_tabs' ), 1000 );
 	}
@@ -359,6 +360,28 @@ class Main {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
 
+	}
+
+	/**
+	 * Filters the subscriber's collection routes.
+	 *
+	 * @param array $params
+	 * @return array
+	 */
+	public function filter_subscribers_collection_admin_routes( $routes ) {
+
+		$routes['noptin/subscribers/custom_fields'] = array(
+			'title' => __( 'Custom Fields', 'newsletter-optin-box' ),	
+			'href'  => add_query_arg(
+				array(
+					'page' => 'noptin-settings',
+					'tab'  => 'fields',
+				),
+				admin_url( 'admin.php' )
+			),
+		);
+
+		return $routes;
 	}
 
 	/**

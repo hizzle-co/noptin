@@ -114,9 +114,15 @@ export const Navigation = () => {
 
 						return (
 							<FlexItem key={ route }>
-								<Button onClick={ () => navigateTo( getNewPath( {}, route ) ) } variant="secondary">
-									{ data.routes[ route ].title }
-								</Button>
+								{ data.routes[ route ].href ? (
+									<Button href={ data.routes[ route ].href } variant="secondary">
+										{ data.routes[ route ].title }
+									</Button>
+								) : (
+									<Button onClick={ () => navigateTo( getNewPath( {}, route ) ) } variant="secondary">
+										{ data.routes[ route ].title }
+									</Button>
+								) }
 							</FlexItem>
 						);
 
