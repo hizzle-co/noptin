@@ -4,12 +4,12 @@
 import { useMemo } from "@wordpress/element";
 import { Notice, CardBody, Icon } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
+import { useParams } from 'react-router-dom';
 
 /**
  * Local dependencies.
  */
 import { useTabContent } from "../../../store-data/hooks";
-import { useRoute } from "../hooks";
 import Table from "../../table";
 import Wrap from "../wrap";
 
@@ -72,28 +72,14 @@ const DisplayCell = ( { row, header, headerKey } ) => {
  *
  * @param {Object} props
  * @param {Object} props.tab
+ * @param {String} props.tabName
  * @returns The records table.
  */
-export default function TableTab( {tab} ) {
+export default function TableTab( {tab, tabName} ) {
 
 	// Prepare the state.
-	const { namespace, collection, args } = useRoute();
-	const tabContent = useTabContent( namespace, collection, args.id, tab.name );
-
-	// Show error if any.
-	if ( tabContent.hasResolutionFailed() ) {
-
-		const error = tabContent.getResolutionError();
-		return (
-			<Wrap title={tab.title}>
-				<CardBody>
-					<Notice status="error" isDismissible={ false }>
-						{ error.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
-					</Notice>
-				</CardBody>
-			</Wrap>
-		);
-	}
+	const { namespace, collection, id } = useParams();
+	const tabContent = useTabContent( namespace, collection, id, tabName );
 
 	// Prepare headers.
 	const headers = useMemo( () => tab.headers.map( ( header ) => ({
@@ -104,10 +90,24 @@ export default function TableTab( {tab} ) {
 		...header
 	})) , [ tab.headers ] );
 
+	// Show error if any.
+	if ( 'ERROR' === tabContent.status ) {
+
+		return (
+			<Wrap title={tab.title}>
+				<CardBody>
+					<Notice status="error" isDismissible={ false }>
+						{ tabContent.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
+					</Notice>
+				</CardBody>
+			</Wrap>
+		);
+	}
+
 	return (
 		<Table
 			{ ...tab }
-			isLoading={ tabContent.isResolving() }
+			isLoading={ tabContent.isResolving }
 			rows={ tabContent.data }
 			headers={ headers }
 			showFooter={ false }

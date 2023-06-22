@@ -8,7 +8,7 @@ import { getQueryArg } from '@wordpress/url';
 /**
  * Local dependencies.
  */
-import Collection from './components/collection';
+import { App } from './components/collection';
 
 domReady( () => {
 
@@ -30,15 +30,11 @@ domReady( () => {
 			}
 		}
 
-		const TheApp = (
-			<Collection defaultRoute={defaultRoute} />
-		);
-
 		// React 18.
 		if ( createRoot ) {
-			createRoot( app ).render( TheApp );
+			createRoot( app ).render( <App defaultRoute={defaultRoute} /> );
 		} else {
-			render( TheApp, app );
+			render( <App defaultRoute={defaultRoute} />, app );
 		}
 	}
 } );

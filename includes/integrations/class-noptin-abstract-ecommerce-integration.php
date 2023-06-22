@@ -674,6 +674,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 				array(
 					'label' => __( 'Date Created', 'newsletter-optin-box' ),
 					'name'  => 'date_created_i18n',
+					'align' => 'right',
 				),
 			),
 			'callback'     => array( $this, 'orders_callback' ),

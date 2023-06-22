@@ -33,6 +33,7 @@ export default function createDynamicActions( namespace, collection ) {
 
 				// Invalidate the getRecords selector.
 				yield dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
+				yield dispatch.invalidateResolutionForStoreSelector( 'getPartialRecords' );
 
 				// Invalidate the getRecord selector.
 				yield dispatch.invalidateResolution( 'getRecord', [ result.id ] );
@@ -126,6 +127,7 @@ export default function createDynamicActions( namespace, collection ) {
 		 */
 		*emptyCache( dispatch ) {
 			yield dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
+			yield dispatch.invalidateResolutionForStoreSelector( 'getPartialRecords' );
 			yield dispatch.invalidateResolutionForStoreSelector( 'getRecord' );
 			yield dispatch.invalidateResolutionForStoreSelector( 'getRecordOverview' );
 			yield dispatch.invalidateResolutionForStoreSelector( 'getTabContent' );

@@ -1,8 +1,9 @@
 import { Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
 import { dateI18n, getSettings, __experimentalGetSettings } from "@wordpress/date";
 import getEnumBadge from "./enum-colors";
-import { useRoute } from "../hooks";
 import { Avatar } from "../../styled-components";
+import { useParams } from "react-router-dom";
+import { navigateTo, getNewPath } from "../../navigation";
 
 /**
  * Displays the primary column.
@@ -15,12 +16,13 @@ import { Avatar } from "../../styled-components";
  */
 const PrimaryColumn = ( { record, name } ) => {
 
-	const { namespace, collection, navigate } = useRoute();
+	const { namespace, collection } = useParams();
 	const value  = record[name];
 	const avatar = record.avatar_url ? <Avatar src={ record.avatar_url } alt={ value } /> : null;
 
 	const handleClick = () => {
-		navigate( `/${namespace}/${collection}/update`, { id: record.id } );
+		const newRoute = getNewPath( {}, `/${namespace}/${collection}/${record.id}` );
+		navigateTo( newRoute );
 	};
 
 	const ColValue = avatar ? (

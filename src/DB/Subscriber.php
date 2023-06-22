@@ -624,8 +624,21 @@ class Subscriber extends \Hizzle\Store\Record {
 		}
 
 		// Check email.
-		if ( ! is_email( $this->get_email() ) ) {
-			return new \WP_Error( 'invalid_email', __( 'Invalid email address.', 'newsletter-optin-box' ) );
+		if ( ! is_string( $this->get_email() ) || ! is_email( $this->get_email() ) ) {
+			$email = $this->get_email();
+
+			if ( empty( $email ) || ! is_string( $email ) ) {
+				return new \WP_Error( 'invalid_email', __( 'Invalid email address.', 'newsletter-optin-box' ) );
+			}
+
+			return new \WP_Error(
+				'invalid_email',
+				sprintf(
+					/* translators: %s: email address */
+					__( 'Invalid email address: %s', 'newsletter-optin-box' ),
+					$email
+				)
+			);
 		}
 
 		// If we're creating, make sure the email doesn't already exist.

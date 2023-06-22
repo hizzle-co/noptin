@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import { forwardRef, useState } from "@wordpress/element";
-import { Card, CardBody, CardHeader, Button, Flex, FlexItem, Modal, TextControl } from "@wordpress/components";
+import { useState } from "@wordpress/element";
+import { Card, CardBody, CardHeader, Button, Flex, FlexItem } from "@wordpress/components";
 import copy from 'copy-to-clipboard';
 import { __ } from "@wordpress/i18n";
+import { useParams } from "react-router-dom";
 
 /**
  * Internal dependencies
@@ -13,8 +14,8 @@ import { useRecordOverview } from "../../../store-data/hooks";
 import { LoadingPlaceholder, CopiedText, withBottomMargin } from "../../styled-components";
 import List from "../../list";
 import StatCard from "../stat-card";
-import { useRecord } from "../../../store-data/hooks";
-import { useRoute } from "../hooks";
+import { useCurrentRecord } from "../hooks";
+import { getNewPath, navigateTo } from "../../navigation";
 
 /**
  * Displays a card list.
@@ -83,10 +84,9 @@ const NormalCard = ( { content, buttonText, buttonLink } ) => (
 const DeleteLink = ( { confirm, label } ) => {
 
 	// Prepare the state.
-	const { namespace, collection, navigate, args } = useRoute();
+	const { namespace, collection } = useParams();
 
-	const STORE_NAME = `${namespace}/${collection}`;
-	const record = useRecord( namespace, collection, args.id );
+	const record = useCurrentRecord();
 
 	// A function to delete a record.
 	const onDeleteRecord = () => {
@@ -100,7 +100,7 @@ const DeleteLink = ( { confirm, label } ) => {
 		record.delete();
 
 		// Navigate back to the list.
-		navigate( STORE_NAME );
+		navigateTo( getNewPath( {}, `/${namespace}/${collection}` ) )
 	}
 
 	return (
@@ -185,23 +185,22 @@ const ActionLinks = ( { links } ) => (
 /**
  * Displays a record's overview.
  *
- * @param {Object} props
- * @param {Object} props.component
  */
-const OverviewSection = ( { namespace, collection, recordID, upsell=null }, ref ) => {
+export const OverviewSection = () => {
+
+	const { namespace, collection, id } = useParams();
 
 	// Prepare the overview.
-	const overview = useRecordOverview( namespace, collection, recordID );
+	const overview = useRecordOverview( namespace, collection, id );
 
 	// In case we don't have an overview yet, display a spinner.
-	if ( overview.isResolving() ) {
+	if ( overview.isResolving ) {
 		return (
 			<>
-				{upsell}
 				<Flex className={ withBottomMargin } gap={4} wrap>
 					{[1, 2, 3].map( ( i ) => (
 						<FlexItem key={i}>
-							<LoadingPlaceholder width="100px" height="100px" ref={ref} />
+							<LoadingPlaceholder width="100px" height="100px" />
 						</FlexItem>
 					) )}
 				</Flex>
@@ -210,14 +209,13 @@ const OverviewSection = ( { namespace, collection, recordID, upsell=null }, ref 
 	}
 
 	// Abort if we have an error.
-	if ( overview.hasResolutionFailed() || !Array.isArray( overview.data ) || !overview.data.length ) {
-		return upsell;
+	if ( 'ERROR' === overview.status || !Array.isArray( overview.data ) || ! overview.data.length ) {
+		return null;
 	}
 
 	// Display the overview.
 	return (
-		<div ref={ref}>
-			{upsell}
+		<>
 			{overview.data.map( ( data, index ) => {
 				switch ( data.type ) {
 					case 'stat_cards':
@@ -233,8 +231,6 @@ const OverviewSection = ( { namespace, collection, recordID, upsell=null }, ref 
 						return null;
 				}
 			} )}
-		</div>
+		</>
 	)
 }
-
-export default forwardRef( OverviewSection );

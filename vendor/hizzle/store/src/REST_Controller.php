@@ -942,9 +942,11 @@ class REST_Controller extends \WP_REST_Controller {
 				if ( is_wp_error( $response ) ) {
 					$responses[ $action ][] = array(
 						'is_error' => true,
-						'code'     => $response->get_error_code(),
-						'message'  => $response->get_error_message(),
-						'data'     => $response->get_error_data(),
+						'data'     => array(
+							'code'    => $response->get_error_code(),
+							'message' => $response->get_error_message(),
+							'data'    => $response->get_error_data(),
+						),
 					);
 				} else {
 					$responses[ $action ][] = array(
@@ -1239,6 +1241,7 @@ class REST_Controller extends \WP_REST_Controller {
 						'labels'  => (object) $collection->labels,
 						'id_prop' => 'id',
 						'tabs'    => $tabs,
+						'fills'   => array(),
 					)
 				)
 			);
@@ -1260,26 +1263,6 @@ class REST_Controller extends \WP_REST_Controller {
 		return apply_filters(
 			$this->prefix_hook( 'admin_app_routes' ),
 			array(
-				$prefix          => array(
-					'title'     => $collection->get_label(
-						'view_items',
-						sprintf(
-							//  translators: %s is the collection name.
-							__( 'View %s', 'hizzle-store' ),
-							$collection->get_label( 'name', $collection->get_name() )
-						)
-					),
-					'component' => 'list-records',
-				),
-				"$prefix/add"    => array(
-					'title'     => $collection->get_label( 'add_new', esc_html__( 'Add New', 'hizzle-store' ) ),
-					'component' => 'create-record',
-				),
-				"$prefix/update" => array(
-					'title'     => $collection->get_label( 'edit_item', esc_html__( 'Update Record', 'hizzle-store' ) ),
-					'component' => 'update-record',
-					'hide'      => true,
-				),
 				"$prefix/import" => array(
 					'title'     => $collection->get_label( 'import', esc_html__( 'Import', 'hizzle-store' ) ),
 					'component' => 'import',

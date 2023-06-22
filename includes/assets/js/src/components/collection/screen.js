@@ -10,10 +10,9 @@ import { Notice, CardBody } from "@wordpress/components";
 import RecordsTable from './records-table';
 import Import from './import';
 import CreateRecord from './create-record';
-import UpdateRecord from './update';
+import UpdateRecord from './view-record';
 import Wrap from "./wrap";
-import { useSchema } from "../../store-data/hooks";
-import { useRoute } from "./hooks";
+import { useCurrentSchema } from "./hooks";
 
 /**
  * Displays a single screen.
@@ -24,8 +23,7 @@ import { useRoute } from "./hooks";
 export default function Screen( { path } ) {
 
 	// Prepare the store.
-	const { namespace, collection } = useRoute();
-	const { data } = useSchema( namespace, collection );
+	const { data } = useCurrentSchema();
 
 	// Abort if the component is not found.
 	if ( ! data.routes[ path ] ) {

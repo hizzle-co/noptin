@@ -118,8 +118,9 @@ export const Menu = ( { headers, hiddenHeaders, setHiddenHeaders } ) => {
  * @param {Array} props.headers Table headers.
  * @param {Array} props.hiddenHeaders Keys of hidden table headers.
  * @param {Function} props.setHiddenHeaders Callback to update the hidden table headers.
+ * @param {number} props.totalRows Total number of rows.
  */
-export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, headers, hiddenHeaders, setHiddenHeaders } ) => {
+export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, headers, hiddenHeaders, setHiddenHeaders, totalRows } ) => {
 
 	// Memoize the actions.
 	const theActions = useMemo( () => (
@@ -158,7 +159,7 @@ export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPla
 
 				{ theSearch }
 
-				{ theActions }
+				{ totalRows > 0 && theActions }
 
 				{ theMenu }
 			</Flex>
@@ -231,10 +232,8 @@ const TableCard = ( {
 		...props,
 	};
 
-	const BorderedCard = Bordered.withComponent(Card);
-
 	return (
-		<BorderedCard className={ classnames( 'noptin-table', className ) } elevation={0}>
+		<Card className={ classnames( 'noptin-table', className ) } elevation={0}>
 
 			<TableHeader
 				title={ title }
@@ -246,6 +245,7 @@ const TableCard = ( {
 				headers={ headers }
 				hiddenHeaders={ hiddenHeaders }
 				setHiddenHeaders={ setHiddenHeaders }
+				totalRows={ totalRows }
 			/>
 
 			{ isLoading ? (
@@ -268,7 +268,7 @@ const TableCard = ( {
 					totalRows={totalRows}
 				/>
 			) }
-		</BorderedCard>
+		</Card>
 	);
 };
 

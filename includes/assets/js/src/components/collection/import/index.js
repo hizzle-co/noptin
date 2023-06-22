@@ -3,12 +3,12 @@
  */
 import { useState } from "@wordpress/element";
 import { CardBody } from "@wordpress/components";
+import { __ } from "@wordpress/i18n";
 
 /**
  * Local dependencies.
  */
-import { useSchema } from "../../../store-data/hooks";
-import { useRoute } from "../hooks";
+import { useCurrentSchema } from "../hooks";
 import Wrap from "../wrap";
 import SelectFile from "./select-file";
 import ImportFile from "./import-file";
@@ -16,15 +16,11 @@ import ImportFile from "./import-file";
 /**
  * Allows the user to import new records.
  *
- * @param {Object} props
- * @param {Object} props.component
- * @param {string} props.component.title
  */
-export default function Import( { component: { title } } ) {
+export default function Import() {
 
 	// Fetch the schema.
-	const { namespace, collection } = useRoute();
-	const schema = useSchema(namespace, collection);
+	const { data } = useCurrentSchema();
 	const [ file, setFile ] = useState( null );
 
     // Sets the current file the scrolls to top.
@@ -33,27 +29,18 @@ export default function Import( { component: { title } } ) {
 		window.scrollTo( { top: 0, behavior: 'smooth' } );
     }
 
-    const Step = () => {
-
-        // If we have a file, import it.
-        if ( file ) {
-            return (
-                <ImportFile
-                    file={ file }
-                    schema={ schema.data }
-                    back={ () => setFile( null )}
-                />
-            );
-        }
-
-        // Otherwise, display the file selector.
-        return <SelectFile onUpload={ onUpload } />;
-    }
-
 	return (
-		<Wrap title={title}>
+		<Wrap title={data.labels?.import || __( 'Import', 'newsletter-optin-box' )}>
 			<CardBody>
-				<Step />
+				{ file ? (
+                    <ImportFile
+                        file={ file }
+                        schema={ data }
+                        back={ () => setFile( null )}
+                    />
+                ) : (
+                    <SelectFile onUpload={ onUpload } />
+                ) }
 			</CardBody>
 		</Wrap>
 	);

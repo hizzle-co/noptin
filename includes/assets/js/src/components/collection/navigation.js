@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { cloudUpload, trash } from "@wordpress/icons";
 import { useMemo } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
 import {
@@ -11,28 +10,27 @@ import {
 	Card,
 	CardHeader,
 	Button,
-	Icon,
 	__experimentalText as Text,
 } from "@wordpress/components";
-
-import AppIcon from "./app-icon";
-import { useRoute } from "./hooks";
-import { useRecord, useSchema } from "../../store-data/hooks";
+import { useParams } from 'react-router-dom';
+import { useCurrentSchema, useCurrentRecord } from "./hooks";
 import { Avatar } from "../styled-components";
+import { getPath, getNewPath, navigateTo } from "../navigation";
 
 /**
  * Displays the collection navigation title.
  */
 const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
-	const { namespace, collection, path, navigate } = useRoute();
-	const { data } = useSchema( namespace, collection );
+	const { namespace, collection } = useParams();
+	const { data } = useCurrentSchema();
 	append = append ? ` - ${append}` : '';
+	avatarURL = avatarURL || data?.avatar_url;
 
 	// Nav title.
 	const navTitle = useMemo( () => {
 
-		if ( isSingle && data.labels?.view_item ) {
-			return `${data.labels.view_item}${append}`;
+		if ( isSingle && data.labels?.singular_name ) {
+			return `${data.labels.singular_name}${append}`;
 		}
 
 		if ( data.labels?.name ) {
@@ -42,13 +40,10 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 		return `Noptin${append}`;
 	}, [ data, append ] );
 
-	// APP Icon.
-	const appIcon = avatarURL ? <Avatar src={ avatarURL } alt={ navTitle } width={24} height={24} /> : <AppIcon />;
-
 	return (
 		<Flex justify="start" wrap>
 			<FlexItem>
-				{appIcon}
+				{avatarURL && <Avatar src={ avatarURL } alt={ navTitle } width={24} height={24} />}
 			</FlexItem>
 			<FlexItem>
 				<Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
@@ -56,10 +51,10 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 				</Text>
 			</FlexItem>
 			<FlexItem>
-				{ `/${namespace}/${collection}` !== path ? (
+				{ `/${namespace}/${collection}` !== getPath() ? (
 					<Button
 						variant="primary"
-						onClick={ () => navigate( `/${namespace}/${collection}` ) }
+						onClick={ () => navigateTo( getNewPath( {}, `/${namespace}/${collection}` ) ) }
 						style={ { marginLeft: '10px' } }
 					>
 						{ data.labels?.view_items || __( 'View Records', 'newsletter-optin-box' ) }
@@ -67,7 +62,7 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 				) : (
 					<Button
 						variant="primary"
-						onClick={ () => navigate( `/${namespace}/${collection}/add` ) }
+						onClick={ () => navigateTo( getNewPath( {}, `/${namespace}/${collection}/add` ) ) }
 						style={ { marginLeft: '10px' } }
 					>
 						{ data.labels?.add_new || __( 'Add New', 'newsletter-optin-box' ) }
@@ -83,17 +78,15 @@ const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
  */
 const RecordTitle = () => {
 	// Prepare the state.
-	const { namespace, collection, args: { id } } = useRoute();
+	const { data } = useCurrentSchema();
+	const record = useCurrentRecord();
 
-	const schema = useSchema( namespace, collection );
-	const record = useRecord( namespace, collection, id );
-
-	if ( record.isResolving() || record.hasResolutionFailed() ) {
+	if ( 'SUCCESS' !== record.status ) {
 		return <CollectionTitle />;
 	}
 
-	const sprintWith = schema.data.id_prop ? record.record[schema.data.id_prop] : record.record.id;
-	const avatarURL  = record.record.avatar_url;
+	const sprintWith = data.id_prop ? record.data[data.id_prop] : record.data.id;
+	const avatarURL  = record.data.avatar_url;
 
 	return <CollectionTitle append={sprintWith} avatarURL={avatarURL} isSingle />;
 }
@@ -103,47 +96,10 @@ const RecordTitle = () => {
  *
  * @returns {JSX.Element} Table actions.
  */
-export default function Navigation() {
+export const Navigation = () => {
 
-	const { namespace, collection, path, navigate } = useRoute();
-	const { data }        = useSchema( namespace, collection );
-	const isEditingRecord = path === `/${namespace}/${collection}/update`;
-
-	// Filter out routes that don't have a display.
-	const TheRoutes = Object.keys( data.routes ).map( ( route ) => {
-
-		// Don't display routes that don't have a display.
-		if ( data.routes[ route ].hide || path === route || 'create-record' === data.routes[ route ].component || `/${namespace}/${collection}` === route ) {
-			return null;
-		}
-
-		// Prepare the icon.
-		let icon    = data.routes[ route ].icon;
-		let variant = 'secondary';
-
-		// Add icon if it doesn't exist.
-		if ( ! icon ) {
-
-			switch (data.routes[ route ].component) {
-				case 'import':
-					icon = cloudUpload;
-					break;
-				case 'delete':
-					icon = trash;
-					break;
-			}
-		}
-
-		return (
-			<FlexItem key={ route }>
-				<Button onClick={ () => navigate( route ) } variant={ variant }>
-					{ icon && <Icon icon={ icon } /> }
-					{ data.routes[ route ].title }
-				</Button>
-			</FlexItem>
-		);
-
-	} );
+	const { data } = useCurrentSchema();
+	const { id } = useParams();
 
 	return (
 		<Card>
@@ -151,10 +107,20 @@ export default function Navigation() {
 				<Flex wrap>
 
 					<FlexBlock>
-						{ isEditingRecord ? <RecordTitle /> : <CollectionTitle /> }
+						{ id ? <RecordTitle /> : <CollectionTitle /> }
 					</FlexBlock>
 
-					{ TheRoutes }
+					{ data.routes && Object.keys( data.routes ).map( ( route ) => {
+
+						return (
+							<FlexItem key={ route }>
+								<Button onClick={ () => navigateTo( getNewPath( {}, route ) ) } variant="secondary">
+									{ data.routes[ route ].title }
+								</Button>
+							</FlexItem>
+						);
+
+					} )}
 
 				</Flex>
 			</CardHeader>

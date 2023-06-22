@@ -29,6 +29,55 @@ import { MergeTagsModal } from './merge-tags';
 const inputTypes = ['number', 'search', 'email', 'password', 'tel', 'url'];
 
 /**
+ * Displays an input setting
+ *
+ * @param {Object} props
+ * @param {Function} props.attributes The attributes
+ * @param {Object} props.setting The setting object.
+ * @param {Array} props.availableSmartTags The available smart tags.
+ * @return {JSX.Element}
+ */
+function InputSetting({ setting, availableSmartTags, isPressEnterToChange, ...attributes }) {
+
+	// If press enter to change is undefined, set it to true.
+	if ( isPressEnterToChange === undefined ) {
+		isPressEnterToChange = true;
+	}
+
+	// On add merge tag...
+	const onMergeTagClick = useCallback((mergeTag) => {
+
+		// Add the merge tag to the value.
+		if ( attributes.onChange ) {
+			attributes.onChange(attributes.value ? attributes.value + mergeTag : mergeTag);
+		}
+	}, [attributes.value, attributes.onChange]);
+
+	// Merge tags.
+	const [suffix, modal] = useMergeTags( availableSmartTags, onMergeTagClick );
+
+	if ( setting.disabled ) {
+		attributes.readOnly = true;
+		attributes.onFocus = (e) => e.target.select();
+	}
+
+	return (
+		<>
+			{modal}
+			<InputControl
+				{...attributes}
+				type={inputTypes.includes( setting.type ) ? setting.type : 'text'}
+				placeholder={setting.placeholder ? setting.placeholder : ''}
+				suffix={suffix}
+				isPressEnterToChange={isPressEnterToChange}
+				__nextHasNoMarginBottom
+				__next36pxDefaultSize
+			/>
+		</>
+	);
+}
+
+/**
  * Key value repeater fields.
  */
 const keyValueRepeaterFields = [

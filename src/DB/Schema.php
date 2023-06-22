@@ -236,6 +236,7 @@ class Schema {
 						'view_items'    => __( 'View Subscribers', 'newsletter-optin-box' ),
 						'search_items'  => __( 'Search Subscribers', 'newsletter-optin-box' ),
 						'not_found'     => __( 'No subscribers found.', 'newsletter-optin-box' ),
+						'import'        => __( 'Import Subscribers', 'newsletter-optin-box' ),
 					),
 					'props'         => array_merge(
 						$props,

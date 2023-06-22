@@ -1,11 +1,11 @@
 import { compact } from 'lodash';
 import { __ } from "@wordpress/i18n";
 import { useState, useEffect, useMemo } from "@wordpress/element";
-import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, FlexItem } from "@wordpress/components";
+import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, FlexItem, Slot } from "@wordpress/components";
 import Papa from 'papaparse';
 import { BlockButton } from "../../styled-components";
 import styled from '@emotion/styled';
-import { useCurrentPath } from "../hooks";
+import { useParams } from 'react-router-dom';
 
 const RestrictedFlexItem = styled( FlexItem )`
 	width: 320px;
@@ -68,14 +68,27 @@ const MapHeader = ( { options, field, value, setValue, customValue, setCustomVal
 
 			{ '-1' === value && (
 				<RestrictedFlexItem>
-					<TextControl
-						label={ __( 'Enter value', 'newsletter-optin-box' ) }
-						placeholder={ __( 'Enter a value to assign all imported records', 'newsletter-optin-box' ) }
-						value={ customValue }
-						onChange={ setCustomValue }
-						__next36pxDefaultSize
-						__nextHasNoMarginBottom
-					/>
+					{ field.options ? (
+						<SelectControl
+							label={ __( 'Select value', 'newsletter-optin-box' ) }
+							value={ customValue }
+							onChange={ setCustomValue }
+							options={[
+								{ value: '', label: __( 'Select value', 'newsletter-optin-box' ), disabled: true },
+								...field.options ]
+							}
+							__next36pxDefaultSize
+							__nextHasNoMarginBottom
+						/>
+					) : (
+						<TextControl
+							label={ __( 'Enter value', 'newsletter-optin-box' ) }
+							placeholder={ __( 'Enter a value to assign all imported records', 'newsletter-optin-box' ) }
+							value={ customValue }
+							onChange={ setCustomValue }
+							__nextHasNoMarginBottom
+						/>
+					)}
 				</RestrictedFlexItem>
 			) }
 
@@ -101,7 +114,7 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 	const [ mappedHeaders, setMappedHeaders ] = useState( {} );
 	const [ updateRecords, setUpdateRecords ] = useState( false );
 	const [ error, setError ] = useState( null );
-	const path = useCurrentPath();
+	const { namespace, collection } = useParams();
 
 	const fields = useMemo( () => compact( schema.map((field) => {
 
@@ -114,6 +127,10 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 			value: field.name,
 			label: field.label,
 			is_boolean: field.is_boolean,
+			options: Array.isArray( field.enum ) ? false : Object.keys( field.enum ).map(( key ) => ({
+				value: key,
+				label: field.enum[ key ],
+			})),
 		};
 	})), [ schema, ignore, hidden ]);
 
@@ -229,7 +246,7 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 								...mappedHeaders,
 								[ field.value ]: {
 									...header,
-									mapped: ! ( [ '', '-1', '-2'].includes( value ) ),
+									mapped: ! ( [ '', '-1', '-2'].includes( newValue ) ),
 									value: newValue,
 								}
 							});
@@ -257,11 +274,13 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 				/>
 			</div>
 
-			{ path.schema?.tip && (
-				<Tip>
-					<span dangerouslySetInnerHTML={{ __html: path.schema.tip }} />
-				</Tip>
-			) }
+			<Slot name={`${namespace}_${collection}_import_records_below`}>
+				{ ( fills ) => (
+					fills.map( ( fill, index ) => (
+						<Tip key={ index }>{ fill }</Tip>
+					) )
+				)}
+			</Slot>
 
 			<RestrictedDiv>
 				<BlockButton variant="primary" onClick={ () => onContinue( mappedHeaders, updateRecords ) }>

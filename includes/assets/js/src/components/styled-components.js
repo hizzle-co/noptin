@@ -1,4 +1,4 @@
-import { Button, __experimentalText as Text, TabPanel, Notice } from "@wordpress/components";
+import { Button, __experimentalText as Text, NavigableMenu, Notice } from "@wordpress/components";
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
@@ -208,21 +208,20 @@ export const Avatar = styled.img`
 	height: 32px;
 	width: 32px;
 	max-width: 32px;
+	max-height: 32px;
     overflow: hidden;
 	border-radius: 50%;
 	box-shadow: 2px 2px 2px rgb(0 0 0 / 5%);
-	background-color: currentColor;
 `
 
 /**
- * Renders a styled tab panel.
+ * Renders a styled navigable menu.
  */
-export const StyledTabPanel = styled( TabPanel )`
-	& > .components-tab-panel__tabs {
-		border: 1px solid #9E9E9E;
-		background-color: #fff;
-		margin-bottom: 1rem;
-	}
+export const StyledNavigableMenu = styled( NavigableMenu )`
+	border: 1px solid #9E9E9E;
+	background-color: #fff;
+	margin-bottom: 1rem;
+	padding: 0.3rem;
 `
 
 /**
@@ -316,6 +315,9 @@ const tableCellStyle = ({ align='left', minWidth='160px', isSorted }) => {
 			&:not(:last-child) {
 				border-right: 1px solid ${BORDER_COLOR};
 			}
+			& > .components-button svg {
+				visibility: visible !important;
+			}
 		`;
 	}
 
@@ -362,8 +364,7 @@ export const TableHeader = styled.th`
 		margin-left: 4px;
 	}
 
-	&.is-sorted > .components-button svg
-	& > .components-button:hover svg
+	& > .components-button:hover svg,
 	& > .components-button:hover svg {
 		visibility: visible;
 	}

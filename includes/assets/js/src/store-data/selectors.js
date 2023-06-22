@@ -1,12 +1,18 @@
 /**
  * External dependencies
  */
-import { getQueryArg } from '@wordpress/url';
+import createSelector from 'rememo';
 
 /**
  * Internal dependencies
  */
 import { DEFAULT_STATE } from './default';
+
+const defaultRecords =  {
+	items: [],
+	summary: {},
+	total: 0,
+};
 
 /**
  * Retrieves record IDs.
@@ -19,8 +25,8 @@ export const getRecordIDs = ( state = DEFAULT_STATE, queryString ) => {
 	queryString = '' === queryString ? 'all' : queryString;
 
 	// Check if records are already loaded.
-	if ( Array.isArray( state.recordIDs[ queryString ]?.items ) ) {
-		return state.recordIDs[ queryString ].items;
+	if ( Array.isArray( state.records.queries[ queryString ]?.items ) ) {
+		return state.records.queries[ queryString ].items;
 	}
 
 	return [];
@@ -35,7 +41,7 @@ export const getRecordIDs = ( state = DEFAULT_STATE, queryString ) => {
 export const getQueryTotal = ( state = DEFAULT_STATE, queryString ) => {
 
 	queryString = '' === queryString ? 'all' : queryString;
-	const total = state.recordIDs[ queryString ]?.total;
+	const total = state.records.queries[ queryString ]?.total;
 
 	return total ? total : 0;
 }
@@ -49,7 +55,7 @@ export const getQueryTotal = ( state = DEFAULT_STATE, queryString ) => {
 export const getQuerySummary = ( state = DEFAULT_STATE, queryString ) => {
 
 	queryString = '' === queryString ? 'all' : queryString;
-	const summary = state.recordIDs[ queryString ]?.summary;
+	const summary = state.records.queries[ queryString ]?.summary;
 
 	return summary ? summary : {};
 }
@@ -60,32 +66,36 @@ export const getQuerySummary = ( state = DEFAULT_STATE, queryString ) => {
  * @param {String} queryString
  * @return {Object} Records.
  */
-export const getRecords = ( state = DEFAULT_STATE, queryString ) => {
+export const getRecords = createSelector(
+	( state = DEFAULT_STATE, queryString ) => {
 
-	queryString   = '' === queryString ? 'all' : queryString;
-	const _fields = getQueryArg( queryString, '__fields' );
+		queryString = '' === queryString ? 'all' : queryString;
+		const results = state.records.queries[ queryString ] ?? defaultRecords;
 
-	const defaultRecords =  {
-		items: [],
-		summary: {},
-		total: 0,
-	};
+		// Loop through records to find the record.
+		return {
+			items: results.items.map( id => state.records.byID[ id ] ),
+			summary: results.summary,
+			total: results.total,
+		};
+	},
+	( state = DEFAULT_STATE, queryString ) => [
+		state.records.queries[ '' === queryString ? 'all' : queryString ],
+		state.records.byId,
+	]
+);
 
-	if ( _fields ) {
-		return Array.isArray( state.partialRecords[ queryString ]?.items ) ? state.partialRecords[ queryString ] : defaultRecords;
-	}
+/**
+ * Retrieves partial records.
+ *
+ * @param {String} queryString
+ * @return {Array} Records.
+ */
+export const getPartialRecords = ( state = DEFAULT_STATE, queryString ) => {
 
-	// Check if records are already loaded.
-	if ( ! Array.isArray( state.recordIDs[ queryString ]?.items ) ) {
-		return defaultRecords;
-	}
+	queryString = '' === queryString ? 'all' : queryString;
 
-	// Loop through records to find the record.
-	return {
-		items: state.recordIDs[ queryString ].items.map( id => state.records[ id ] ),
-		summary: state.recordIDs[ queryString ].summary,
-		total: state.recordIDs[ queryString ].total,
-	};
+	return Array.isArray( state.partialRecords[ queryString ] ) ? state.partialRecords[ queryString ] : [];
 }
 
 /**
@@ -94,7 +104,7 @@ export const getRecords = ( state = DEFAULT_STATE, queryString ) => {
  * @param {string} id
  * @return {Object|null} Record.
  */
-export const getRecord = ( state = DEFAULT_STATE, id ) => state.records[ id ] || null;
+export const getRecord = ( state = DEFAULT_STATE, id ) => state.records.byID[ id ] || null;
 
 /**
  * Retrieves the schema for the collection.

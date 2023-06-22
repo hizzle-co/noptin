@@ -17,7 +17,27 @@ export const META_SELECTORS = [
 	'getCachedResolvers',
 	'getResolutionError',
 	'hasResolutionFailed',
+	'getAllRecordData',
 ];
+
+/**
+ * Removes hizzle_path and page from the query string and returns the new query string.
+ *
+ * @param {Object} queryString The query.
+ * @return {String} The new query string.
+ */
+const prepareQueryString = ( queryString ) => {
+	const query = { ...queryString };
+
+	delete query.hizzle_path;
+	delete query.page;
+
+	if ( parseInt( query.paged ) === 1 ) {
+		delete query.paged;
+	}
+
+	return addQueryArgs( '', query );
+}
 
 /**
  * Like useSelect, but the selectors return objects containing
@@ -28,9 +48,9 @@ export const META_SELECTORS = [
  *
  * @see useSelect
  *
- * @return {Object} Queried data.
  */
 export function useQuerySelect( mapQuerySelect, deps ) {
+
 	return useSelect( ( select, registry ) => {
 		const resolve = ( store ) => enrichSelectors( select( store ) );
 		return mapQuerySelect( resolve, registry );
@@ -49,6 +69,7 @@ const enrichSelectors = memoize( ( ( selectors ) => {
 
 	for ( const selectorName in selectors ) {
 		if ( META_SELECTORS.includes( selectorName ) ) {
+			resolvers[ selectorName ] = selectors[ selectorName ];
 			continue;
 		}
 
@@ -56,9 +77,10 @@ const enrichSelectors = memoize( ( ( selectors ) => {
 			get:
 				() =>
 				( ...args ) => {
-					const { getIsResolving, hasFinishedResolution, getResolutionError, hasResolutionFailed } = selectors;
+
+					const { getIsResolving, hasFinishedResolution, getResolutionError, hasResolutionFailed, hasStartedResolution } = selectors;
 					const error = getResolutionError( selectorName, args );
-					const isResolving = !! getIsResolving( selectorName, args );
+					const isResolving = !! getIsResolving( selectorName, args ) || ! hasStartedResolution( selectorName, args );
 					const hasResolved =
 						! isResolving &&
 						hasFinishedResolution( selectorName, args );
@@ -115,18 +137,12 @@ export function useRecord( namespace, collection, recordId ) {
 		[ recordId ]
 	);
 
-	const recordState = useSelect( ( select ) => {
-		const store = select( STORE_NAME );
+	const record = useQuerySelect(
+		( query ) => query( STORE_NAME ).getRecord( recordId ),
+		[ namespace, collection, recordId ]
+	);
 
-		return {
-			record: store.getRecord( recordId ),
-			isResolving: () => store.isResolving( 'getRecord', [ recordId ] ) || ! store.hasStartedResolution( 'getRecord', [ recordId ] ),
-			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecord', [ recordId ] ),
-			getResolutionError: () => store.getResolutionError( 'getRecord', [ recordId ] ),
-		}
-	},[ recordId ] );
-
-	return { ...recordState, ...mutations };
+	return { ...record, ...mutations };
 }
 
 /**
@@ -146,17 +162,10 @@ export function useTabContent( namespace, collection, recordId, tabID ) {
 	// Ensure we have a valid record ID.
 	recordId = parseInt( recordId, 10 );
 
-	return useSelect( ( select ) => {
-		const store = select( STORE_NAME );
-
-		return {
-			data: store.getTabContent( recordId, tabID ),
-			isResolving: () => store.isResolving( 'getTabContent', [ recordId, tabID ] ) || ! store.hasStartedResolution( 'getTabContent', [ recordId, tabID ] ),
-			hasResolutionFailed: () => store.hasResolutionFailed( 'getTabContent', [ recordId, tabID ] ),
-			getResolutionError: () => store.getResolutionError( 'getTabContent', [ recordId, tabID ] ),
-		}
-	},[ recordId, tabID ]);
-
+	return useQuerySelect(
+		( query ) => query( STORE_NAME ).getTabContent( recordId, tabID ),
+		[ namespace, collection, recordId, tabID ]
+	);
 }
 
 /**
@@ -175,16 +184,10 @@ export function useRecordOverview( namespace, collection, recordId ) {
 	// Ensure we have a valid record ID.
 	recordId = parseInt( recordId, 10 );
 
-	return useSelect( ( select ) => {
-		const store = select( STORE_NAME );
-
-		return {
-			data: store.getRecordOverview( recordId ),
-			isResolving: () => store.isResolving( 'getRecordOverview', [ recordId ] ) || ! store.hasStartedResolution( 'getRecordOverview', [ recordId ] ),
-			hasResolutionFailed: () => store.hasResolutionFailed( 'getRecordOverview', [ recordId ] ),
-			getResolutionError: () => store.getResolutionError( 'getRecordOverview', [ recordId ] ),
-		}
-	},[ recordId ]);
+	return useQuerySelect(
+		( query ) => query( STORE_NAME ).getRecordOverview( recordId ),
+		[ namespace, collection, recordId ]
+	);
 }
 
 /**
@@ -198,7 +201,7 @@ export function useRecordOverview( namespace, collection, recordId ) {
 export function useRecords( namespace, collection, queryArgs = {} ) {
 
 	const STORE_NAME = `${namespace}/${collection}`;
-	const argsString = addQueryArgs( '', queryArgs );
+	const argsString = prepareQueryString( queryArgs );
 
 	return useQuerySelect(
 		( query ) => query( STORE_NAME ).getRecords( argsString ),
@@ -207,25 +210,38 @@ export function useRecords( namespace, collection, queryArgs = {} ) {
 }
 
 /**
- * Resolves the store schema.
+ * Resolves the specified partial records.
  *
+ * @param {String} namespace
  * @param {String} collection
  * @param {Object} queryArgs Query arguments.
  * @return {Object} The records resolution.
+ */
+export function usePartialRecords( namespace, collection, queryArgs = {} ) {
+
+	const STORE_NAME = `${namespace}/${collection}`;
+	const argsString = prepareQueryString( queryArgs );
+
+	return useQuerySelect(
+		( query ) => query( STORE_NAME ).getPartialRecords( argsString ),
+		[ namespace, collection, argsString ]
+	);
+}
+
+/**
+ * Resolves the store schema.
+ *
+ * @param {String} namespace The namespace of the store.
+ * @param {String} collection The current collection.
+ * @returns {ReturnType<useQuerySelect>}
  */
 export function useSchema( namespace, collection ) {
 
 	const STORE_NAME = `${namespace}/${collection}`;
 
-	return useSelect( ( select ) => {
-		const store = select( STORE_NAME );
-
-		return {
-			data: store.getSchema(),
-			isResolving: () => store.isResolving( 'getSchema' ) || ! store.hasStartedResolution( 'getSchema' ),
-			hasResolutionFailed: () => store.hasResolutionFailed( 'getSchema' ),
-			getResolutionError: () => store.getResolutionError( 'getSchema' ),
-		}
-	}, []);
+	return useQuerySelect(
+		( query ) => query( STORE_NAME ).getSchema(),
+		[ namespace, collection ]
+	);
 
 }

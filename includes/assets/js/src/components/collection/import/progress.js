@@ -7,11 +7,12 @@ import { useState, useCallback, useEffect } from "@wordpress/element";
 import { __, sprintf } from "@wordpress/i18n";
 import Papa from 'papaparse';
 import { Spinner, Button, Flex, FlexItem, } from "@wordpress/components";
+import { useParams } from "react-router-dom";
 
 /**
  * Internal dependancies.
  */
-import { useRoute } from "../hooks";
+import { useNavigateCollection } from "../hooks";
 import StatCard from "../stat-card";
 import { ErrorNotice, HeadingText, ProgressBar, BlockButton } from "../../styled-components";
 
@@ -46,7 +47,8 @@ const parseCSV = ( file, onComplete, onError ) => {
 const Progress = ( { file, headers, back, updateRecords } ) => {
 
 	// Prepare route.
-	const { namespace, collection, navigate } = useRoute();
+	const { namespace, collection } = useParams();
+	const navigateHome = useNavigateCollection();
 
 	// Processing errors.
 	const [ errors, setErrors ] = useState( [] );
@@ -138,7 +140,7 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 
 				if ( processed > 0 ) {
 					dispatch.emptyCache( dispatch );
-					navigate( `/${namespace}/${collection}` );
+					// navigateHome();
 				}
 			}
 
@@ -338,7 +340,7 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 				<BlockButton
 					variant="primary"
 					text={ __( 'View Records', 'newsletter-optin-box' ) }
-					onClick={ () => navigate( `/${namespace}/${collection}` ) }
+					onClick={ () => navigateHome() }
 					maxWidth="200px"
 				/>
 			) }

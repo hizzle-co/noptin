@@ -4,17 +4,23 @@
 export const DEFAULT_STATE = {
 
 	/**
-	 * Contains record IDs keyed by the query, e.g.: { "page=1": { items: [ 1, 2, 3 ], summary: {}, total: 3 } }
-	 */
-	recordIDs: {},
-
-	/**
 	 * Contains the records keyed by ID, e.g.: { 1: { id: 1, ... } }
 	 */
-	records: {},
+	records: {
+
+		/**
+		 * Record data keyed by ID.
+		 */
+		byID: {},
+
+		/**
+		 * Record IDs keyed by query string, e.g.: { "page=1": { items: [ 1, 2, 3 ], summary: {}, total: 3 } }
+		 */
+		queries: {},
+	},
 
 	/**
-	 * Contains partial records keyed by query string, e.g.: { "page=1": { 1: { id: 1, ... } } }
+	 * Contains partial records keyed by query string, e.g.: { "page=1": [ { id: 1, ... } ] }
 	 */
 	partialRecords: {},
 

@@ -3,7 +3,6 @@
  */
 import { apiFetch } from '@wordpress/data-controls';
 import { controls } from '@wordpress/data';
-import { getQueryArg } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -28,14 +27,9 @@ export default function createResolvers( namespace, collection ) {
 		 */
 		*getRecords( queryString ) {
 			const path    = `${namespace}/v1/${collection}${queryString}`;
-			const _fields = getQueryArg( queryString, '__fields' );
 			const records = yield apiFetch( { path } );
 
 			if ( records ) {
-
-				if ( _fields ) {
-					return setPartialRecords( records.items, queryString );
-				}
 
 				// Resolve each record to avoid further network requests.
 				const STORE_NAME = `${namespace}/${collection}`;
@@ -59,8 +53,21 @@ export default function createResolvers( namespace, collection ) {
 
 				return setRecords( records, queryString );
 			}
+		},
 
-			return setRecords( [], queryString );
+		/**
+		 * Fetches the partial records from the API.
+		 *
+		 * @param {String} queryString
+		 * @return {Object} Action.
+		 */
+		*getPartialRecords( queryString ) {
+			const path    = `${namespace}/v1/${collection}${queryString}`;
+			const records = yield apiFetch( { path } );
+
+			if ( records ) {
+				return setPartialRecords( records.items, queryString );
+			}
 		},
 
 		/**

@@ -1,142 +1,179 @@
 /**
+ * External dependencies
+ */
+import { combineReducers } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import { DEFAULT_STATE } from './default';
 
 /**
- * The reducer for the store data
+ * Reducer managing collection schema state.
+ *
+ * @param {Object} state  Current state.
+ * @param {Object} action Dispatched action.
+ *
+ * @return {Object} Updated state.
  */
-export const reducer = (state = DEFAULT_STATE, action) => {
-	const queryString = '' === action.queryString ? 'all' : action.queryString;
-
-	switch (action.type) {
-
-		/**
-		 * Sets the collection schema.
-		 */
+export function schema( state = {}, action ) {
+	switch ( action.type ) {
 		case 'SET_SCHEMA':
-			return { ...state, schema: action.schema };
+			return action.schema;
+	}
 
-		/**
-		 * Sets partial records keyed by query string, e.g.: { "page=1": { 1: { id: 1, ... } } }
-		 */
+	return state;
+}
+
+/**
+ * Reducer managing partial records state.
+ *
+ * @param {Object} state  Current state, keyed by query string.
+ * @param {Object} action Dispatched action.
+ *
+ * @return {Object} Updated state.
+ */
+export function partialRecords( state = {}, action ) {
+	switch ( action.type ) {
 		case 'SET_PARTIAL_RECORDS':
+			const queryString = '' === action.queryString ? 'all' : action.queryString;
 
 			return {
 				...state,
-				partialRecords: {
-					...state.partialRecords,
-					[ queryString ]: action.records,
-				},
+				[ queryString ]: action.records,
 			};
+	}
 
-		/**
-		 * Sets record IDs keyed by the query, e.g.: { "page=1": { items: [ 1, 2, 3 ], summary: {}, total: 3 } },
-		 * and records keyed by ID, e.g.: { 1: { id: 1, ... } }
-		 */
+	return state;
+}
+
+/**
+ * Reducer managing records state. Keyed by id.
+ *
+ * @param {Object} state  Current state.
+ * @param {Object} action Dispatched action.
+ *
+ * @return {Object} Updated state.
+ */
+export function records( state = { byID: {}, queries: {} }, action ) {
+
+	switch ( action.type ) {
+
+		// Set multiple records.
 		case 'SET_RECORDS':
-
-			// Prepare constants.
-			const cachedRecords = { ...state.records };
-			const recordIds     = [];
-			const summary       = action.records.summary;
-			const total         = action.records.total;
-
-			// Loop through the records and add them to the cache.
-			action.records.items.forEach((record) => {
-				cachedRecords[ record.id ] = record;
-				recordIds.push( record.id );
-			});
+			const queryString = '' === action.queryString ? 'all' : action.queryString;
 
 			return {
-				...state,
-				records: cachedRecords,
-				recordIDs: {
-					...state.recordIDs,
+				byID: {
+					...state.byID,
+					// Key users by their ID.
+					...action.records.items.reduce(
+						( newRecords, record ) => ( {
+							...newRecords,
+							[ record.id ]: record,
+						} ),
+						{}
+					),
+				},
+				queries: {
+					...state.queries,
 					[ queryString ]: {
-						items: recordIds,
-						summary,
-						total,
+						items: action.records.items.map( ( item ) => item.id ),
+						summary: action.records.summary,
+						total: action.records.total,
 					},
 				},
 			};
 
-		/**
-		 * Sets a record keyed by ID, e.g.: { 1: { id: 1, ... } }
-		 */
+		// Set a single record.
 		case 'SET_RECORD':
 			return {
 				...state,
-				records: {
-					...state.records,
+				byID: {
+					...state.byID,
 					[ action.record.id ]: action.record,
 				},
 			};
 
-		/**
-		 * Before deleting a record, we need to remove it from the record IDs.
-		 */
+		// Delete a single record.
 		case 'BEFORE_DELETE_RECORD':
-			const recordIDsBeforeDelete = { ...state.recordIDs };
+
+			const queries = { ...state.queries };
 
 			// Loop through the record IDs and remove the deleted record.
-			Object.keys( recordIDsBeforeDelete ).forEach((queryString) => {
-				const index = recordIDsBeforeDelete[ queryString ].items.indexOf( action.id );
-			
+			Object.keys( queries ).forEach((queryString) => {
+				const index = queries[ queryString ].items.indexOf( action.id );
+
 				if ( -1 !== index ) {
-					recordIDsBeforeDelete[ queryString ].items.splice( index, 1 );
-					recordIDsBeforeDelete[ queryString ].total -= 1;
+					queries[ queryString ].items.splice( index, 1 );
+					queries[ queryString ].total -= 1;
 				}
 			});
 
-			return { ...state, recordIDs: recordIDsBeforeDelete };
+			return { ...state, queries };
 
-		/**
-		 * Deletes a record keyed by ID, e.g.: { 1: { id: 1, ... } }
-		 */
+		// Deletes a single record.
 		case 'DELETE_RECORD':
-			const records   = { ...state.records };
-			delete records[ action.id ];
-			return { ...state, records };
+			const byID = { ...state.byID };
+			delete byID[ action.id ];
+			return { ...state, byID };
 
-		/**
-		 * Empty caches when deleting multiple records.
-		 */
+		// Delete all records.
 		case 'DELETE_RECORDS':
 			return {
 				...state,
-				records: {},
-				recordIDs: {},
-				tabContent: {},
-				recordOverview: {},
-				partialRecords: {},
-			};
-
-		/**
-		 * Set tab content key by subscriber ID and tab name, e.g.: { 1_overview:{} } }
-		 */
-		case 'SET_TAB_CONTENT':
-			return {
-				...state,
-				tabContent: {
-					...state.tabContent,
-					[ `${action.id}_${action.tab_id}` ]: action.content,
-				},
-			};
-
-		/**
-		 * Set record overview keyed by the record ID.
-		 */
-		case 'SET_RECORD_OVERVIEW':
-			return {
-				...state,
-				recordOverview: {
-					...state.recordOverview,
-					[ action.id ]: action.overview,
-				},
+				queries: {},
+				byID: {},
 			};
 	}
 
-	// Return the state.
 	return state;
 }
+
+/**
+ * Reducer managing tab content state.
+ *
+ * @param {Object} state  Current state, keyed by record id and tab name.
+ * @param {Object} action Dispatched action.
+ *
+ * @return {Object} Updated state.
+ */
+export function tabContent( state = {}, action ) {
+	switch ( action.type ) {
+		case 'SET_TAB_CONTENT':
+			return {
+				...state,
+				[ `${action.id}_${action.tab_id}` ]: action.content,
+			};
+	}
+
+	return state;
+}
+
+/**
+ * Reducer managing record overview state.
+ *
+ * @param {Object} state  Current state, keyed by record id.
+ * @param {Object} action Dispatched action.
+ *
+ * @return {Object} Updated state.
+ */
+export function recordOverview( state = {}, action ) {
+	switch ( action.type ) {
+		case 'SET_RECORD_OVERVIEW':
+			return {
+				...state,
+				[ action.id ]: action.overview,
+			};
+	}
+
+	return state;
+}
+
+export default combineReducers( {
+	schema,
+	records,
+	partialRecords,
+	tabContent,
+	recordOverview,
+} );

@@ -1,152 +1,80 @@
 /**
  * External dependencies
  */
+import { SlotFillProvider } from "@wordpress/components";
+
 import {
-	Flex,
-	FlexBlock,
-	FlexItem,
-	Spinner,
-	Notice,
-	CardBody,
-	__experimentalNavigatorProvider as NavigatorProvider,
-	__experimentalNavigatorScreen as NavigatorScreen,
-	__experimentalUseNavigator as useNavigator,
-} from "@wordpress/components";
-import { __ } from "@wordpress/i18n";
-import { useState, useEffect } from "@wordpress/element";
-import { getQueryArg } from "@wordpress/url";
+	unstable_HistoryRouter as HistoryRouter,
+	Route,
+	Routes,
+} from 'react-router-dom';
 
 /**
  * Internal dependencies.
  */
 import ErrorBoundary from "./error-boundary";
-import Screen from "./screen";
-import Navigation from "./navigation";
-import initStore from "../../store-data";
-import { useRoute, URLContext } from "./hooks";
-import { useSchema } from "../../store-data/hooks";
-import Wrap from "./wrap";
-import { FullHeight } from "../styled-components";
-
-// Initialize the store.
-initStore('noptin', 'subscribers');
+import { getHistory } from "../navigation";
+import { Page } from "./page";
+import { ViewRecord, RenderTab } from './view-record';
+import RecordsTable from './records-table';
+import CreateRecord from './create-record';
+import Import from './import';
 
 /**
- * Renders the Collection.
- * @returns 
- */
-const RenderCollection = () => {
-	console.log('Render Collection: ' );
-	const { namespace, collection } = useRoute();
-	const schema = useSchema(namespace, collection);
-
-	// Show the loading indicator if we're loading the schema.
-	if (schema.isResolving()) {
-
-		return (
-			<Wrap title={__('Loading', 'newsletter-optin-box')}>
-				<CardBody>
-					<Spinner />
-				</CardBody>
-			</Wrap>
-		);
-	}
-
-	// Show error if any.
-	if (schema.hasResolutionFailed()) {
-		const error = records.getResolutionError();
-
-		return (
-			<Wrap title={__('Error', 'newsletter-optin-box')}>
-				<CardBody>
-					<Notice status="error" isDismissible={false}>
-						{error.message || __('An unknown error occurred.', 'newsletter-optin-box')}
-					</Notice>
-				</CardBody>
-			</Wrap>
-		);
-	}
-
-	return (
-		<>
-			<FlexItem>
-				<Navigation />
-			</FlexItem>
-
-			<FlexBlock>
-				{Object.keys(schema.data.routes).map((route) => {
-					return (
-						<NavigatorScreen key={route} path={route} style={{overflowX: 'hidden' }}>
-							<ErrorBoundary>
-								<Screen path={route} />
-							</ErrorBoundary>
-						</NavigatorScreen>
-					);
-				})}
-			</FlexBlock>
-		</>
-	);
-}
-
-/**
- * Collection overview table.
- *
- * @returns
- */
-const Collection = () => {
-	console.log('Collection' );
-	const { goTo } = useNavigator();
-	const [url, setURL] = useState(window.location.href);
-
-	// Watch for url changes.
-	useEffect(() => {
-
-		const handleURLChange = () => {
-			setURL(window.location.href);
-
-			const newPath = getQueryArg(window.location.href, 'hizzle_path');
-
-			if (newPath) {
-				goTo(newPath);
-			}
-		};
-
-		window.addEventListener('popstate', handleURLChange);
-		return () => {
-			window.removeEventListener('popstate', handleURLChange);
-		};
-	}, []);
-
-	// Render the collection.
-	return (
-		<URLContext.Provider value={[url, setURL]}>
-			<ErrorBoundary>
-				<RenderCollection />
-			</ErrorBoundary>
-		</URLContext.Provider>
-	);
-}
-
-/**
- * Wraps the navigation provider around the collection.
+ * Displays the entire app.
  *
  * @param {Object} props
  * @param {string} props.defaultRoute The default route.
- * @returns 
  */
-const WithNavigationProvider = ({ defaultRoute }) => {
-	const FullHeightNavigator = FullHeight.withComponent(NavigatorProvider);
+export const App = ( { defaultRoute } ) => {
+
+	// get the basename, usually 'wp-admin/' but can be something else if the site installation changed it
+	const path     = document.location.pathname;
+	const basename = path.substring( 0, path.lastIndexOf( '/' ) );
 
 	return (
-		<FullHeightNavigator
-			initialPath={defaultRoute}
-			as={Flex}
-			direction="column"
-			gap={4}
-		>
-			<Collection />
-		</FullHeightNavigator>
-	)
-};
+		<SlotFillProvider>
+			<ErrorBoundary>
+				<HistoryRouter history={ getHistory( defaultRoute ) }>
+					<Routes basename={ basename }>
 
-export default WithNavigationProvider;
+						<Route
+							path='/:namespace/:collection'
+							exact
+							element={ <Page /> }
+						>
+
+							<Route
+								path=':id'
+								exact
+								element={ <ViewRecord /> }
+							>
+								<Route path=':tab' exact element={ <RenderTab /> } />
+								<Route index element={ <RenderTab /> } />
+							</Route>
+
+							<Route
+								path='add'
+								exact
+								element={ <CreateRecord /> }
+								handle={{
+									title: ( { labels, collection } ) => labels?.add_new_item ?? collection,
+								}}
+							></Route>
+
+							<Route
+								path='import'
+								exact
+								element={ <Import /> }
+							></Route>
+
+							<Route index element={ <RecordsTable /> } />
+
+						</Route>
+
+					</Routes>
+				</HistoryRouter>
+			</ErrorBoundary>
+		</SlotFillProvider>
+	);
+};

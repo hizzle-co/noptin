@@ -2,21 +2,20 @@
  * External dependencies
  */
 import { useState, useMemo } from "@wordpress/element";
-import { Notice, Spinner, CardBody, Tip, Flex } from "@wordpress/components";
+import { Notice, Spinner, CardBody, Tip, Flex, Slot, Snackbar } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";
 import { compact } from 'lodash';
+import { useParams } from 'react-router-dom';
 
 /**
  * Local dependencies.
  */
 import Wrap from "./wrap";
 import Setting from "../setting";
-import { useSchema } from "../../store-data/hooks";
-import { useRoute, useCurrentPath } from "./hooks";
-import { Section } from "./update/overview";
+import { useNavigateCollection, useCurrentSchema } from "./hooks";
+import { Section } from "./view-record/overview";
 import { BlockButton } from "../styled-components";
-import UpsellCard from "../upsell-card";
 
 /**
  * Allows the user to export all records.
@@ -25,14 +24,13 @@ import UpsellCard from "../upsell-card";
 export default function CreateRecord() {
 
 	// Prepare the state.
-	const { namespace, collection, navigate } = useRoute();
-	const STORE_NAME              = `${namespace}/${collection}`;
-	const dispatch                = useDispatch( STORE_NAME );
+	const navigateTo = useNavigateCollection();
+	const { namespace, collection } = useParams();
+	const dispatch                = useDispatch( `${namespace}/${collection}` );
 	const [ error, setError ]     = useState( null );
 	const [ loading, setLoading ] = useState( false );
 	const [ record, setRecord ]   = useState( {} );
-	const schema                  = useSchema( namespace, collection );
-	const path                    = useCurrentPath();
+	const schema                  = useCurrentSchema();
 
 	// A function to create a new record.
 	const onCreateRecord = ( e ) => {
@@ -48,7 +46,7 @@ export default function CreateRecord() {
 
 		dispatch.createRecord( record, dispatch )
 			.then( ( savedRecord ) => {
-				navigate( `/${STORE_NAME}/update`, { id: savedRecord?.record?.id } );
+				navigateTo( savedRecord?.record?.id || '' );
 			} )
 			.catch( ( error ) => {
 				setError( error );
@@ -138,11 +136,13 @@ export default function CreateRecord() {
 								</div>
 							) ) }
 
-							{ path.schema?.tip && (
-								<Tip>
-									<span dangerouslySetInnerHTML={{ __html: path.schema.tip }} />
-								</Tip>
-							) }
+							<Slot name={`${namespace}_${collection}_record_create_below`}>
+								{ ( fills ) => (
+									fills.map( ( fill, index ) => (
+										<Tip key={ index }>{ fill }</Tip>
+									) )
+								)}
+							</Slot>
 
 							<BlockButton variant="primary" onClick={ onCreateRecord } isBusy={ loading }>
 								{ loading ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save', 'newsletter-optin-box' ) }
@@ -158,11 +158,11 @@ export default function CreateRecord() {
 						</form>
 					</Section>
 
-					{ path.schema?.upsell && (
-						<Section>
-							<UpsellCard upsell={path.schema?.upsell} />
-						</Section>
-					) }
+					<Slot name={`${namespace}_${collection}_record_create_upsell`}>
+						{ ( fills ) => (
+							fills.length > 0 && <Section>{fills}</Section>
+						)}
+					</Slot>
 				</Flex>
 			</CardBody>
 		</Wrap>

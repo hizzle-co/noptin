@@ -2,20 +2,23 @@
  * External dependencies
  */
 import { useState, useMemo } from "@wordpress/element";
-import { Notice, ToggleControl, Button, Modal, Spinner, Flex, FlexItem, __experimentalText as Text, } from "@wordpress/components";
+import { ToggleControl, Button, Modal, Spinner, Flex, FlexItem, __experimentalText as Text, } from "@wordpress/components";
 import { Icon, download } from "@wordpress/icons";
-import { __ } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import { compact } from 'lodash';
 import Papa from 'papaparse';
 
 /**
  * Local dependencies.
  */
-import { useSchema, useRecords } from "../../../store-data/hooks";
-import { useRoute } from "../hooks";
+import { usePartialRecords } from "../../../store-data/hooks";
+import { useCurrentSchema } from "../hooks";
 import { useSelected } from "../../table/selected-context";
 import { BlockButton, NoMarginNotice } from "../../styled-components";
 import ErrorBoundary from "../error-boundary";
+import { useQuery } from "../../navigation";
+import { useParams } from "react-router-dom";
+import { useCurrentQueryRecordCount } from "../hooks";
 
 /**
  * Fetches records from the API and converts them to CSV.
@@ -28,7 +31,8 @@ import ErrorBoundary from "../error-boundary";
 const DownloadProgress = ({ fields, back, schema }) => {
 
 	// Prepare state.
-	const { namespace, collection, args } = useRoute();
+	const args = useQuery();
+	const { namespace, collection } = useParams();
 	const [selected] = useSelected();
 
 	// Fetch the records.
@@ -40,14 +44,8 @@ const DownloadProgress = ({ fields, back, schema }) => {
 	// Set context to edit.
 	exportArgs.context = 'edit';
 
-	const records = useRecords(namespace, collection, exportArgs);
-console.log( records );
-	return (
-		<Text size={ 16 } as="p">
-			<Spinner style={{marginLeft: 0}} />
-			{__('Fetching records...', 'newsletter-optin-box')}
-		</Text>
-	)
+	const records = usePartialRecords(namespace, collection, exportArgs);
+
 	// Loop through columns and and try to replace the column name with the label where possible.
 	const columns = useMemo( () => {
 
@@ -85,22 +83,21 @@ console.log( records );
 	);
 
 	// Short spinner if loading.
-	if (records.isResolving()) {
+	if (records.isResolving) {
 		return (
-			<Text size={ 16 } weight={ 600 } as="h2" color="#23282d">
-				<Spinner />
-				{__('Fetching records...', 'newsletter-optin-box')}
+			<Text size={ 16 } as="p">
+				<Spinner style={{marginLeft: 0}} />
+				{__('Preparing records...', 'newsletter-optin-box')}
 			</Text>
-		)
+		);
 	}
 
 	// Show error if any.
-	if (records.hasResolutionFailed()) {
+	if ( 'ERROR' === records.status ) {
 
-		const error = records.getResolutionError();
 		return (
 			<NoMarginNotice status="error" isDismissible={false}>
-				{error.message || __('An unknown error occurred.', 'newsletter-optin-box')}&nbsp; &nbsp;
+				{records.error.message || __('An unknown error occurred.', 'newsletter-optin-box')}&nbsp; &nbsp;
 				{backButton}
 			</NoMarginNotice>
 		)
@@ -116,8 +113,6 @@ console.log( records );
 		)
 	}
 
-	return 'Fetching records...';
-
 	// Convert to CSV.
 	const csv = Papa.unparse(
 		{
@@ -132,7 +127,7 @@ console.log( records );
 	// Force download.
 	return (
 		<NoMarginNotice status="success" isDismissible={false}>
-			{__("Done! Click the button below to download all matching records.", 'newsletter-optin-box')}
+			{__("Done! Click the button below to download records.", 'newsletter-optin-box')}
 			&nbsp; &nbsp;
 			<Button
 				variant="primary"
@@ -208,8 +203,7 @@ const DownloadFields = ({ fields, setFields, schema: { schema, ignore }, next } 
 const TheModal = () => {
 
 	// Prepare state.
-	const { namespace, collection } = useRoute();
-	const schema = useSchema(namespace, collection);
+	const schema = useCurrentSchema();
 	const [fields, setFields] = useState(compact(schema.data.schema.map((field) => (
 		(schema.data.hidden.includes(field.name) || schema.data.ignore.includes(field.name)) ? null : field.name
 	))));
@@ -246,10 +240,19 @@ const TheModal = () => {
 export default function ExportButton() {
 
 	const [isOpen, setOpen] = useState(false);
-	const [selected] = useSelected();
-	const downloadAll  = selected.length === 0;
-	const buttonText = downloadAll ? __( 'Download', 'newsletter-optin-box' ) : __( 'Download Selected', 'newsletter-optin-box' );
-	const modalTitle = downloadAll ? __( 'Download', 'newsletter-optin-box' ) : __( 'Download Selected', 'newsletter-optin-box' );
+	const [selected]  = useSelected();
+	const downloadAll = selected.length === 0;
+	const count       = useCurrentQueryRecordCount();
+	const title       = downloadAll ? __( 'Download', 'newsletter-optin-box' ) : __( 'Download Selected', 'newsletter-optin-box' );
+	const modalTitle  = downloadAll ? sprintf(
+		/* translators: %s: number of records */
+		__( 'Download all %s records', 'newsletter-optin-box' ),
+		count
+	) : sprintf(
+		/* translators: %s: number of records */
+		__( 'Download %s selected records', 'newsletter-optin-box' ),
+		selected.length
+	);
 
 	return (
 		<>
@@ -257,7 +260,7 @@ export default function ExportButton() {
 			<Button
 				onClick={() => setOpen(true)}
 				icon={download}
-				text={ buttonText }
+				text={ title }
 			/>
 
 			{isOpen && (

@@ -369,7 +369,8 @@ class Main {
 	 */
 	public function filter_subscribers_collection_js_params( $params ) {
 
-		$params['ignore'] = array_merge(
+		$params['avatar_url'] = noptin()->plugin_url . 'includes/assets/images/logo.png';
+		$params['ignore']     = array_merge(
 			$params['ignore'],
 			array( 'activity', 'sent_campaigns', 'avatar_url' )
 		);
@@ -392,19 +393,21 @@ class Main {
 		$upsell_url  = noptin_get_upsell_url( '/ultimate-addons-pack/', 'segment', 'email-subscribers' );
 		$upsell_text = __( 'Learn More', 'newsletter-optin-box' );
 
-		foreach ( array( 'add', 'update', 'import' ) as $route ) {
-			$route = "/noptin/subscribers/$route";
+		foreach ( array( 'record_overview', 'record_create', 'import' ) as $route ) {
+			$params['fills'][] = array(
+				'name'    => "noptin_subscribers_{$route}_below",
+				'content' => $tip,
+			);
 
-			if ( isset( $params['routes'][ $route ] ) ) {
-				$params['routes'][ $route ]['tip'] = $tip;
-
-				if ( ! defined( 'NOPTIN_ADDONS_PACK_FILE' ) ) {
-					$params['routes'][ $route ]['upsell'] = array(
+			if ( ! defined( 'NOPTIN_ADDONS_PACK_FILE' ) ) {
+				$params['fills'][] = array(
+					'name'   => "noptin_subscribers_{$route}_upsell",
+					'upsell' => array(
 						'buttonText' => $upsell_text,
-						'butteonURL' => $upsell_url,
+						'buttonURL'  => $upsell_url,
 						'content'    => $upsell,
-					);
-				}
+					),
+				);
 			}
 		}
 
