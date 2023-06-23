@@ -47,6 +47,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 		$fields  = array();
 
 		foreach ( get_noptin_subscriber_filters() as $key => $filter ) {
+
 			$fields[ $key ] = array(
 				'label'       => $filter['label'],
 				'type'        => 'select',
@@ -146,11 +147,6 @@ class Email_Sender_Subscribers extends Email_Sender {
 	 */
 	public function get_recipients( $campaign ) {
 
-		$manual_recipients = $campaign->get_manual_recipients_ids();
-		if ( ! empty( $manual_recipients ) ) {
-			return $manual_recipients;
-		}
-
 		// Prepare arguments.
 		$args = array(
 			'status'     => 'subscribed',
@@ -165,34 +161,39 @@ class Email_Sender_Subscribers extends Email_Sender {
 			),
 		);
 
-		// Handle custom fields.
-		$options = $campaign->get( 'noptin_subscriber_options' );
+		$manual_recipients = $campaign->get_manual_recipients_ids();
+		if ( ! empty( $manual_recipients ) ) {
+			$args['include'] = $manual_recipients;
+		} else {
+			// Handle custom fields.
+			$options = $campaign->get( 'noptin_subscriber_options' );
 
-		if ( is_array( $options ) ) {
+			if ( is_array( $options ) ) {
 
-			// Backward compatibility.
-			if ( ! empty( $options['_subscriber_via'] ) ) {
-				$args['source'] = $options['_subscriber_via'];
-				unset( $options['_subscriber_via'] );
-			}
+				// Backward compatibility.
+				if ( ! empty( $options['_subscriber_via'] ) ) {
+					$args['source'] = $options['_subscriber_via'];
+					unset( $options['_subscriber_via'] );
+				}
 
-			// Loop through the filters.
-			foreach ( $options as $key => $value ) {
-				if ( '' !== $value ) {
-					$args[ $key ] = $value;
+				// Loop through the filters.
+				foreach ( $options as $key => $value ) {
+					if ( '' !== $value ) {
+						$args[ $key ] = $value;
+					}
 				}
 			}
+
+			// (Backwards compatibility) Subscription source.
+			$source = $campaign->get( '_subscriber_via' );
+
+			if ( '' !== $source && empty( $options['source'] ) ) {
+				$args['source'] = $source;
+			}
+
+			// Allow other plugins to filter the query.
+			$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $campaign );
 		}
-
-		// (Backwards compatibility) Subscription source.
-		$source = $campaign->get( '_subscriber_via' );
-
-		if ( '' !== $source && empty( $options['source'] ) ) {
-			$args['source'] = $source;
-		}
-
-		// Allow other plugins to filter the query.
-		$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $campaign );
 
 		// Run the query...
 		return noptin_get_subscribers( $args );

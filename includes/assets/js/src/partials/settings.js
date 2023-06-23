@@ -89,7 +89,6 @@ export default {
 					merge_tag: 'field_' + total,
 					label: 'Field' + total,
 					visible: true,
-					subs_table: false,
 					predefined: false,
 					field_key: Math.random().toString(36).replace(/[^a-z]+/g, '') + this.custom_fields.length,
 					new: true,

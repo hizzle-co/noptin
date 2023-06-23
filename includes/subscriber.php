@@ -1068,7 +1068,6 @@ function get_noptin_custom_fields( $public_only = false ) {
 			'merge_tag'  => 'language',
 			'label'      => __( 'Language', 'newsletter-optin-box' ),
 			'visible'    => false,
-			'subs_table' => false,
 			'required'   => false,
 			'predefined' => true,
 		);
@@ -1087,17 +1086,13 @@ function get_noptin_custom_fields( $public_only = false ) {
 
 		foreach ( $field as $key => $value ) {
 
-			if ( in_array( $key, array( 'visible', 'subs_table', 'predefined', 'required' ), true ) ) {
+			if ( in_array( $key, array( 'visible', 'predefined', 'required' ), true ) ) {
 				$prepared_field[ $key ] = ! empty( $value );
 			} elseif ( in_array( $key, array( 'options' ), true ) ) {
 				$prepared_field[ $key ] = sanitize_textarea_field( $value );
 			} else {
 				$prepared_field[ $key ] = noptin_clean( $value );
 			}
-		}
-
-		if ( 'email' === $field['merge_tag'] ) {
-			$prepared_field['subs_table'] = true;
 		}
 
 		$fields[ $index ] = $prepared_field;

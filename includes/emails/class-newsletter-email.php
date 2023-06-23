@@ -326,7 +326,7 @@ class Noptin_Newsletter_Email {
 	 */
 	public function get_preview_url( $recipient_email = '' ) {
 		return get_noptin_action_url(
-			'browser_preview',
+			'view_in_browser',
 			noptin_encrypt(
 				wp_json_encode(
 					array(

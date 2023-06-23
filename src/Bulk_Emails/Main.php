@@ -130,7 +130,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 					),
 				)
 			);
-noptin_error_log( $campaigns );
+
 			$this->current_campaign = ! empty( $campaigns[0] ) ? new \Noptin_Newsletter_Email( $campaigns[0] ) : 0;
 		}
 
@@ -210,12 +210,13 @@ noptin_error_log( $campaigns );
 		// Increase stats.
 		if ( true === $result ) {
 			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
+
+			// Increase emails sent this hour.
+			$this->increase_emails_sent_this_hour();
 		} elseif ( false === $result ) {
 			increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
 		}
 
-		// Increase emails sent this hour.
-		$this->increase_emails_sent_this_hour();
 	}
 
 	/**
