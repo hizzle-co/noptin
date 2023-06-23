@@ -215,23 +215,6 @@ class Noptin_Page {
 				$subscriber_logged = log_noptin_subscriber_campaign_open( $recipient['sid'], $recipient['cid'] );
 			}
 
-			// Process users.
-			if ( ! empty( $recipient['uid'] ) ) {
-				$opened_campaigns = wp_parse_id_list( get_user_meta( $recipient['uid'], '_opened_noptin_campaigns', true ) );
-
-				if ( ! in_array( (int) $recipient['cid'], $opened_campaigns, true ) ) {
-
-					// Log the campaign open.
-					$opened_campaigns[] = $recipient['cid'];
-					update_user_meta( $recipient['uid'], '_opened_noptin_campaigns', $opened_campaigns );
-
-					// Fire action.
-					do_action( 'log_noptin_user_campaign_open', $recipient['uid'], $recipient['cid'] );
-
-					$user_logged = true;
-				}
-			}
-
 			// Increment stats.
 			if ( ! empty( $subscriber_logged ) || ! empty( $user_logged ) ) {
 				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_opens' );
@@ -254,9 +237,6 @@ class Noptin_Page {
 			return $filter;
 		}
 
-		// Log the open.
-		$this->_log_open();
-
 		// Fetch recipient.
 		$recipient = $this->get_request_recipient();
 
@@ -266,7 +246,7 @@ class Noptin_Page {
 			exit;
 		}
 
-		$destination = str_replace( '&amp;', '&', $recipient['to'] );
+		$destination = rawurldecode( str_replace( array( '#038;', '&amp;' ), '&', $recipient['to'] ) );
 
 		// Ensure we have a campaign.
 		if ( ! empty( $recipient['cid'] ) ) {
@@ -274,28 +254,6 @@ class Noptin_Page {
 			// Process subscribers.
 			if ( ! empty( $recipient['sid'] ) ) {
 				$subscriber_logged = log_noptin_subscriber_campaign_click( $recipient['sid'], $recipient['cid'], $destination );
-			}
-
-			// Process users.
-			if ( ! empty( $recipient['uid'] ) ) {
-
-				$clicked_campaigns = noptin_parse_list( get_user_meta( $recipient['uid'], '_clicked_noptin_campaigns', true ) );
-
-				if ( empty( $clicked_campaigns[ $recipient['cid'] ] ) ) {
-					$clicked_campaigns[ $recipient['cid'] ] = array();
-				}
-
-				if ( ! in_array( $destination, $clicked_campaigns[ $recipient['cid'] ], true ) ) {
-
-					// Log the campaign click.
-					$clicked_campaigns[ $recipient['cid'] ][] = noptin_clean( $destination );
-					update_user_meta( $recipient['uid'], '_clicked_noptin_campaigns', $clicked_campaigns );
-
-					// Fire action.
-					do_action( 'log_noptin_user_campaign_click', $recipient['uid'], $recipient['cid'], $destination );
-
-					$user_logged = true;
-				}
 			}
 
 			// Increment stats.
@@ -554,11 +512,6 @@ class Noptin_Page {
 		 * to render the actions page.
 		 */
 		$custom_page = get_noptin_option( "pages_{$action}_page" );
-
-		// They can also set the page as a URL param.
-		if ( isset( $_GET['rdt'] ) ) {
-			$custom_page = esc_url( urldecode( $_GET['rdt'] ) );
-		}
 
 		// Provide a way to filter the page.
 		$custom_page = apply_filters( 'noptin_action_page_redirect', $custom_page, $action, $this );

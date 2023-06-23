@@ -546,7 +546,8 @@ class Main {
 				$campaign['url'] = $object->get_preview_url( $subscriber->get_email() );
 			}
 
-			foreach ( array( 'time', 'opens', 'clicks' ) as $prop ) {
+			// Time and opens.
+			foreach ( array( 'time', 'opens' ) as $prop ) {
 				if ( isset( $data[ $prop ] ) ) {
 					foreach ( $data[ $prop ] as $key => $timestamp ) {
 						$date = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
@@ -564,6 +565,32 @@ class Main {
 
 						$campaign[ $prop ][] = array(
 							'key'  => $key,
+							'utc'  => $utc,
+							'i18n' => $i18n,
+						);
+					}
+				}
+			}
+
+			// Clicks.
+			if ( isset( $data['clicks'] ) ) {
+				foreach ( $data['clicks'] as $url => $timestamps ) {
+					foreach ( $timestamps as $timestamp ) {
+						$date = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
+						$utc  = $date->utc();
+						$i18n = $date->context( 'view' );
+
+						// Use human readable time if the timestamp is less than 24 hours old.
+						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
+							$i18n = sprintf(
+								/* translators: %s: human readable time difference */
+								esc_html__( '%s ago', 'newsletter-optin-box' ),
+								human_time_diff( $timestamp )
+							);
+						}
+
+						$campaign['clicks'][] = array(
+							'key'  => $url,
 							'utc'  => $utc,
 							'i18n' => $i18n,
 						);
