@@ -63,11 +63,20 @@ class Noptin_Page {
 		}
 
 		// Retrieve the optional value.
-		$value = $this->get_request_value();
+		$value     = $this->get_request_value();
+		$recipient = $this->get_request_recipient();
+
+		if ( ! empty( $recipient['sid'] ) ) {
+			$subscriber = noptin_get_subscriber( $recipient['sid'] );
+
+			if ( $subscriber->exists() ) {
+				$_GET['noptin_key'] = $subscriber->get_confirm_key();
+			}
+		}
 
 		ob_start();
 
-		do_action( "noptin_page_$action", $value );
+		do_action( "noptin_page_$action", $value, $this->get_request_recipient() );
 
 		return ob_get_clean();
 
@@ -108,9 +117,9 @@ class Noptin_Page {
 	/**
 	 * Retrieves the request value
 	 *
-	 * @access      public
-	 * @since       1.2.2
-	 * @return      string
+	 * @access public
+	 * @since  1.2.2
+	 * @return string
 	 */
 	public function get_request_value() {
 		return isset( $_GET['nv'] ) ? sanitize_text_field( urldecode( $_REQUEST['nv'] ) ) : '';

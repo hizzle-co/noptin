@@ -371,7 +371,7 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array() ) {
 	}
 
 	// Set the subscriber properties.
-	$subscriber->set_props( $to_update );
+	$subscriber->set_props( wp_unslash( $to_update ) );
 
 	// Save the subscriber.
 	return $subscriber->save();
@@ -737,16 +737,6 @@ function get_noptin_subscribers_meta_table_name() {
  */
 function get_current_noptin_subscriber_id() {
 
-	// If the user is logged in, check with their email address.
-	$user_data = wp_get_current_user();
-	if ( ! empty( $user_data->user_email ) ) {
-		$subscriber_id = get_noptin_subscriber_id_by_email( $user_data->user_email );
-
-		if ( ! empty( $subscriber_id ) ) {
-			return $subscriber_id;
-		}
-	}
-
 	// Try retrieveing subscriber key.
 	$subscriber_key = '';
 	if ( ! empty( $_GET['noptin_key'] ) ) {
@@ -758,6 +748,16 @@ function get_current_noptin_subscriber_id() {
 	// If we have a subscriber key, use it to retrieve the subscriber.
 	if ( ! empty( $subscriber_key ) ) {
 		$subscriber_id = get_noptin_subscriber_id_by_confirm_key( $subscriber_key );
+
+		if ( ! empty( $subscriber_id ) ) {
+			return $subscriber_id;
+		}
+	}
+
+	// If the user is logged in, check with their email address.
+	$user_data = wp_get_current_user();
+	if ( ! empty( $user_data->user_email ) ) {
+		$subscriber_id = get_noptin_subscriber_id_by_email( $user_data->user_email );
 
 		if ( ! empty( $subscriber_id ) ) {
 			return $subscriber_id;

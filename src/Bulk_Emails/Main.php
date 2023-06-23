@@ -130,7 +130,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 					),
 				)
 			);
-
+noptin_error_log( $campaigns );
 			$this->current_campaign = ! empty( $campaigns[0] ) ? new \Noptin_Newsletter_Email( $campaigns[0] ) : 0;
 		}
 
