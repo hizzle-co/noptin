@@ -1264,8 +1264,7 @@ class REST_Controller extends \WP_REST_Controller {
 			$this->prefix_hook( 'admin_app_routes' ),
 			array(
 				"$prefix/import" => array(
-					'title'     => $collection->get_label( 'import', esc_html__( 'Import', 'hizzle-store' ) ),
-					'component' => 'import',
+					'title' => $collection->get_label( 'import', esc_html__( 'Import', 'hizzle-store' ) ),
 				),
 			)
 		);

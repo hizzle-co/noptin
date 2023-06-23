@@ -371,7 +371,7 @@ class Main {
 	public function filter_subscribers_collection_admin_routes( $routes ) {
 
 		$routes['noptin/subscribers/custom_fields'] = array(
-			'title' => __( 'Custom Fields', 'newsletter-optin-box' ),	
+			'title' => __( 'Custom Fields', 'newsletter-optin-box' ),
 			'href'  => add_query_arg(
 				array(
 					'page' => 'noptin-settings',
