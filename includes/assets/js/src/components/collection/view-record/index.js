@@ -99,7 +99,7 @@ export const ViewRecord = () => {
 	if ( 'ERROR' === record.status ) {
 
 		return (
-			<Wrap title={ __( 'Error', 'newsletter-optin-box' ) } ref={ ref }>
+			<Wrap title={ __( 'Error', 'newsletter-optin-box' ) }>
 				<CardBody>
 					<Notice status="error" isDismissible={ false }>
 						{ record.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }

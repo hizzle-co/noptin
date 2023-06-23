@@ -84,7 +84,7 @@ const RecordTitle = () => {
 	if ( 'SUCCESS' !== record.status ) {
 		return <CollectionTitle />;
 	}
-
+console.log( record );
 	const sprintWith = data.id_prop ? record.data[data.id_prop] : record.data.id;
 	const avatarURL  = record.data.avatar_url;
 

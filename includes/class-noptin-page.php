@@ -246,7 +246,7 @@ class Noptin_Page {
 			exit;
 		}
 
-		$destination = rawurldecode( str_replace( array( '#038;', '&amp;' ), '&', $recipient['to'] ) );
+		$destination = str_replace( array( '#038;', '&#38;', '&amp;' ), '&', rawurldecode( $recipient['to'] ) );
 
 		// Ensure we have a campaign.
 		if ( ! empty( $recipient['cid'] ) ) {

@@ -90,7 +90,7 @@ const enrichSelectors = memoize( ( ( selectors ) => {
 					if ( isResolving ) {
 						status = 'RESOLVING';
 					} else if ( hasResolved ) {
-						if ( hasResolutionFailed() ) {
+						if ( hasResolutionFailed( selectorName, args ) || error ) {
 							status = 'ERROR';
 						} else {
 							status = 'SUCCESS';
