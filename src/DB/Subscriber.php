@@ -471,13 +471,13 @@ class Subscriber extends \Hizzle\Store\Record {
 		$campaign_id    = (string) $campaign_id;
 		$sent_campaigns = $this->get_sent_campaigns();
 
-		if ( ! isset( $sent_campaigns[ $campaign_id ] ) ) {
+		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
 
 			// Record activity.
 			$this->record_activity(
 				sprintf(
 					// translators: %2 is the campaign name, #1 is the link.
-					__( 'Clicked on link %1$s from campaign %2$s', 'newsletter-optin-box' ),
+					__( 'Clicked on %1$s from campaign %2$s', 'newsletter-optin-box' ),
 					'<code>' . esc_url( $url ) . '</code>',
 					'<code>' . get_the_title( $campaign_id ) . '</code>'
 				)
@@ -524,9 +524,12 @@ class Subscriber extends \Hizzle\Store\Record {
 		return add_query_arg(
 			array(
 				'page'        => 'noptin-subscribers',
-				'hizzle_tab'  => 'overview',
-				'hizzle_path' => rawurlencode( '/noptin/subscribers/update' ),
-				'id'          => $this->get_id(),
+				'hizzle_path' => rawurlencode(
+					sprintf(
+						'/noptin/subscribers/%d',
+						$this->get_id()
+					)
+				),
 			),
 			admin_url( 'admin.php' )
 		);

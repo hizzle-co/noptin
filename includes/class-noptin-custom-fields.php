@@ -51,15 +51,6 @@ class Noptin_Custom_Fields {
 
 		$fields = array(
 			array(
-				'type'       => 'email',
-				'merge_tag'  => 'email',
-				'label'      => __( 'Email Address', 'newsletter-optin-box' ),
-				'visible'    => true,
-				'subs_table' => true,
-				'required'   => true,
-				'predefined' => true,
-			),
-			array(
 				'type'       => 'first_name',
 				'merge_tag'  => 'first_name',
 				'label'      => __( 'First Name', 'newsletter-optin-box' ),
@@ -75,6 +66,15 @@ class Noptin_Custom_Fields {
 				'visible'    => true,
 				'subs_table' => true,
 				'required'   => false,
+				'predefined' => true,
+			),
+			array(
+				'type'       => 'email',
+				'merge_tag'  => 'email',
+				'label'      => __( 'Email Address', 'newsletter-optin-box' ),
+				'visible'    => true,
+				'subs_table' => true,
+				'required'   => true,
 				'predefined' => true,
 			),
 		);

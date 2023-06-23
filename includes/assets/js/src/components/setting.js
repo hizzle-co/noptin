@@ -333,13 +333,24 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 
 	// If we have options, convert from object to array.
 	let options = [];
+	let isValueInOptions = false;
 	if ( setting.options ) {
 		options = Object.keys( setting.options ).map( ( key ) => {
+
+			if ( key === value ) {
+				isValueInOptions = true;
+			}
+
 			return {
 				label: setting.options[ key ],
 				value: key,
 			};
 		});
+	}
+
+	// If we have no value and no placeholder, use the first option.
+	if ( ! isValueInOptions && ! setting.placeholder && options.length ) {
+		updateSetting( options[ 0 ].value );
 	}
 
 	// Classname for the field.

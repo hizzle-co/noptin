@@ -29,7 +29,7 @@
 		"@wordpress/components": "^25.0.0",
 		"@wordpress/core-data": "^6.11.0",
 		"@wordpress/data-controls": "^3.3.0",
-		"@wordpress/dom-ready": "3.34.0",
+		"@wordpress/dom-ready": "3.35.0",
 		"@wordpress/icons": "^9.23.0",
 		"copy-to-clipboard": "^3.3.3",
 		"history": "^5.3.0",
@@ -47,20 +47,20 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.8",
-		"@babel/plugin-transform-runtime": "7.21.4",
+		"@babel/plugin-transform-runtime": "7.22.5",
 		"@babel/preset-env": "^7.21.5",
 		"@emotion/babel-plugin": "^11.11.0",
 		"@mdi/js": "7.2.96",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
-		"@wordpress/babel-preset-default": "7.18.0",
+		"@wordpress/babel-preset-default": "7.19.0",
 		"autoprefixer": "10.4.14",
 		"babel-loader": "9.1.2",
 		"css-loader": "^6.7.4",
-		"postcss": "8.4.23",
+		"postcss": "8.4.24",
 		"postcss-csso": "6.0.1",
-		"sass": "1.62.1",
+		"sass": "1.63.6",
 		"style-loader": "^3.3.3",
-		"webpack": "5.84.1",
-		"webpack-cli": "5.1.1"
+		"webpack": "5.88.0",
+		"webpack-cli": "5.1.4"
 	}
 }
