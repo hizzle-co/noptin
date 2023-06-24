@@ -10,14 +10,8 @@ defined( 'ABSPATH' ) || exit;
 
 ?>
 
-<h2 class="screen-reader-text"><?php esc_html_e( 'Welcome Email', 'newsletter-optin-box' ); ?></h2>
-
-<p class="description" style="margin-bottom: 16px;"><?php esc_html_e( 'This email is automatically sent to new subscribers who sign-up via this form. If double opt-in is enabled, then the email will be sent after a subscriber confirms their email address.', 'newsletter-optin-box' ); ?></p>
-
-<?php if ( ! defined( 'NOPTIN_WELCOME_EMAILS_VERSION' ) ) : ?>
-	<div class="card">
-		<h3><?php esc_html_e( 'This is a premium feature', 'newsletter-optin-box' ); ?></h3>
-		<p><?php esc_html_e( "We're sorry, Welcome Emails are not available on your plan. Please buy the ultimate addons pack to send welcome emails and get access to more awesome features.", 'newsletter-optin-box' ); ?></p>
-		<p><a href="<?php echo esc_url( noptin_get_upsell_url( '/ultimate-addons-pack/', 'welcome-emails', 'subscription-forms' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
-	</div>
-<?php endif; ?>
+<div class="card">
+	<h3><?php esc_html_e( 'Welcome new subscribers', 'newsletter-optin-box' ); ?></h3>
+	<p><?php esc_html_e( 'Noptin allows you to send welcome emails to new subscribers. You can also set up a series of welcome emails to act as an email course.', 'newsletter-optin-box' ); ?></p>
+	<p><a href="<?php echo esc_url( noptin_get_upsell_url( '/guide/sending-emails/welcome-emails/', 'welcome-emails', 'subscription-forms' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'Learn More', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
+</div>

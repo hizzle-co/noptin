@@ -309,9 +309,6 @@ class Noptin {
 		// Email manager.
 		$this->emails = new Noptin_Email_Manager();
 
-		// Mailer.
-		$this->mailer = new Noptin_Mailer();
-
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
 

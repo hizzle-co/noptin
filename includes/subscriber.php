@@ -1147,6 +1147,7 @@ function get_noptin_subscriber_smart_tags() {
 				'label'       => wp_strip_all_tags( empty( $prop->label ) ? '' : $prop->label ),
 				'description' => wp_strip_all_tags( $prop->description ),
 				'example'     => $prop->name . ' default=""',
+				'options'     => false,
 			);
 
 			if ( is_callable( $prop->enum ) ) {

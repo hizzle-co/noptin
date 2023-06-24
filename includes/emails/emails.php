@@ -301,23 +301,31 @@ function get_noptin_email_delay_units() {
 }
 
 /**
- * Returns the default footer text.
+ * Returns the global footer text.
  *
  * @since 1.7.0
  * @return string
  */
 function get_noptin_footer_text() {
-	return get_noptin_option( 'footer_text', noptin()->mailer->default_footer_text() );
+	return get_noptin_option( 'footer_text', get_default_noptin_footer_text() );
 }
 
 /**
- * Returns the default permission text.
+ * Returns the default footer text.
  *
  * @since 1.7.0
  * @return string
  */
-function get_noptin_permission_text() {
-	return get_noptin_option( 'permission_text', noptin()->mailer->default_permission_text() );
+function get_default_noptin_footer_text() {
+	return apply_filters(
+		'default_noptin_footer_text',
+		sprintf(
+			/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+			__( '[[blog_name]] &mdash; Powered by [[noptin]] | %1$sUnsubscribe%2$s', 'newsletter-optin-box' ),
+			'<a href="[[unsubscribe_url]]" rel="nofollow" target="_blank">',
+			'</a>'
+		)
+	);
 }
 
 /**

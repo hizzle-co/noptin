@@ -374,8 +374,8 @@ class Noptin_Settings {
 				'el'          => 'textarea',
 				'section'     => 'emails',
 				'label'       => __( 'Footer text', 'newsletter-optin-box' ),
-				'placeholder' => noptin()->mailer->default_footer_text(),
-				'default'     => noptin()->mailer->default_footer_text(),
+				'placeholder' => get_default_noptin_footer_text(),
+				'default'     => get_default_noptin_footer_text(),
 				'description' => __( 'This text appears below all emails.', 'newsletter-optin-box' ),
 			),
 
