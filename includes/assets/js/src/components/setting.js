@@ -348,11 +348,6 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 		});
 	}
 
-	// If we have no value and no placeholder, use the first option.
-	if ( ! isValueInOptions && ! setting.placeholder && options.length ) {
-		updateSetting( options[ 0 ].value );
-	}
-
 	// Classname for the field.
 	const className = setting.fullWidth ? `noptin-component__field noptin-component__field-${settingKey}` : `noptin-component__field-lg noptin-component__field-${settingKey}`;
 
@@ -371,14 +366,12 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 	// Display select control.
 	if ( setting.el === 'select' ) {
 
-		// If we have a placeholder, add it to the options.
-		if ( setting.placeholder ) {
-			options.unshift({
-				label: setting.placeholder,
-				value: '',
-				disabled: true,
-			});
-		}
+		// Add a placeholder option.
+		options.unshift({
+			label: setting.placeholder ? setting.placeholder : __( 'Select an option', 'newsletter-optin-box' ),
+			value: '',
+			disabled: true,
+		});
 
 		return <SelectControl {...defaultAttributes} options={options}  __nextHasNoMarginBottom __next36pxDefaultSize />;
 	}

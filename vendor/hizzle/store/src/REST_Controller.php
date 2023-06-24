@@ -790,7 +790,8 @@ class REST_Controller extends \WP_REST_Controller {
 						$value = (int) $value;
 					}
 
-					if ( is_array( $value ) ) {
+					// Check if this is an array of scalars.
+					if ( is_array( $value ) && ! is_array( current( $value ) ) ) {
 						$value = implode( ',', $value );
 					}
 				}

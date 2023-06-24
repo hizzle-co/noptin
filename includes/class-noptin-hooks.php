@@ -140,8 +140,8 @@ class Noptin_Hooks {
 			'displayname'   => 'name',
 			'emailaddress'  => 'email',
 			'email'         => 'email',
-			'subscribedvia' => '_subscriber_via',
-			'source'        => '_subscriber_via',
+			'subscribedvia' => 'source',
+			'source'        => 'source',
 		);
 
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
