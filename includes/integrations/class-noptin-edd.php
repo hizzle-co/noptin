@@ -168,22 +168,22 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Prepare subscriber details.
 		$noptin_fields = array(
-			'_subscriber_via' => 'edd_checkout',
-			'payment_id'      => $payment_id,
-			'email'           => $payment->email,
-			'address_1'       => $payment->address['line1'],
-			'address_2'       => $payment->address['line2'],
-			'postcode'        => $payment->address['zip'],
-			'city'            => $payment->address['city'],
-			'state'           => $payment->address['state'],
-			'country'         => $payment->address['country'],
-			'wp_user_id'      => $payment->user_id,
-			'first_name'      => $payment->first_name,
-			'last_name'       => $payment->last_name,
+			'source'     => 'edd_checkout',
+			'payment_id' => $payment_id,
+			'email'      => $payment->email,
+			'address_1'  => $payment->address['line1'],
+			'address_2'  => $payment->address['line2'],
+			'postcode'   => $payment->address['zip'],
+			'city'       => $payment->address['city'],
+			'state'      => $payment->address['state'],
+			'country'    => $payment->address['country'],
+			'wp_user_id' => $payment->user_id,
+			'first_name' => $payment->first_name,
+			'last_name'  => $payment->last_name,
 		);
 
 		if ( $existing_subscriber ) {
-			unset( $noptin_fields['_subscriber_via'] );
+			unset( $noptin_fields['source'] );
 			unset( $noptin_fields['payment_id'] );
 		}
 

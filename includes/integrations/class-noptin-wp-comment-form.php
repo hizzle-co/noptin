@@ -104,12 +104,12 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 
 		// Prepare subscriber fields.
 		$noptin_fields = array(
-			'_subscriber_via' => 'comment',
-			'comment_id'      => $comment_id,
-			'email'           => get_comment_author_email( $comment_id ),
-			'name'            => $author,
-			'website'         => get_comment_author_url( $comment_id ),
-			'ip_address'      => get_comment_author_IP( $comment_id ),
+			'source'     => 'comment',
+			'comment_id' => $comment_id,
+			'email'      => get_comment_author_email( $comment_id ),
+			'name'       => $author,
+			'website'    => get_comment_author_url( $comment_id ),
+			'ip_address' => get_comment_author_IP( $comment_id ),
 		);
 
 		$noptin_fields = array_filter( $noptin_fields );
@@ -127,7 +127,7 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 		}
 
 		// Else, update the existing subscriber.
-		unset( $noptin_fields['_subscriber_via'] );
+		unset( $noptin_fields['source'] );
 		return $this->update_subscriber( $subscriber_id, $noptin_fields, $comment_id );
 
 	}

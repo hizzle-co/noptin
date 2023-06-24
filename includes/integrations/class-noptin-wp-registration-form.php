@@ -173,12 +173,12 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 
 		// Prepare subscriber fields.
 		$noptin_fields = array(
-			'_subscriber_via' => 'registration',
-			'wp_user_id'      => $user->ID,
-			'email'           => $user->user_email,
-			'name'            => $user->display_name,
-			'first_name'      => $user->user_firstname,
-			'last_name'       => $user->user_lastname,
+			'source'     => 'registration',
+			'wp_user_id' => $user->ID,
+			'email'      => $user->user_email,
+			'name'       => $user->display_name,
+			'first_name' => $user->user_firstname,
+			'last_name'  => $user->user_lastname,
 		);
 
 		$noptin_fields = array_filter( $noptin_fields );
@@ -196,7 +196,7 @@ class Noptin_WP_Registration_Form extends Noptin_Abstract_Integration {
 		}
 
 		// Else, update the existing subscriber.
-		unset( $noptin_fields['_subscriber_via'] );
+		unset( $noptin_fields['source'] );
 		return $this->update_subscriber( $subscriber_id, $noptin_fields, $user_id );
 
 	}

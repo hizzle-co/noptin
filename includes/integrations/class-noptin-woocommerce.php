@@ -473,8 +473,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		if ( ! $existing_subscriber ) {
 			$noptin_fields = array(
-				'_subscriber_via' => 'woocommerce_checkout',
-				'order_id'        => $order_id,
+				'source'   => 'woocommerce_checkout',
+				'order_id' => $order_id,
 			);
 		}
 

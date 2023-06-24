@@ -154,63 +154,6 @@ class Noptin_Automation_Rule {
 			unset( $this->trigger_settings['conditional_logic'] );
 		}
 
-		// Backwards compatibility (convert settings to conditional logic).
-		// Fetch the trigger.
-		$trigger = noptin()->automation_rules->get_trigger( $this->trigger_id );
-
-		if ( ! empty( $trigger ) && ! empty( $this->trigger_settings ) ) {
-
-			$converted_conditions = $trigger->settings_to_conditional_logic( $this->trigger_settings );
-
-			// Convert the trigger settings to conditional logic.
-			if ( ! empty( $converted_conditions ) ) {
-				$this->conditional_logic['enabled'] = true;
-				$this->conditional_logic['rules']   = array_merge( $this->conditional_logic['rules'], $converted_conditions['conditional_logic'] );
-				$this->trigger_settings             = $converted_conditions['settings'];
-
-				if ( ! empty( $converted_conditions['condition'] ) ) {
-					$this->conditional_logic['type'] = $converted_conditions['condition'];
-				}
-
-				// Save the new settings.
-				noptin()->automation_rules->update_rule(
-					$this,
-					array(
-						'trigger_settings' => array_merge(
-							$converted_conditions['settings'],
-							array( 'conditional_logic' => $this->conditional_logic )
-						),
-					)
-				);
-			}
-		}
-
-		if ( isset( $this->trigger_settings['subscribed_via'] ) ) {
-			$subscription_method = -1 === absint( $this->trigger_settings['subscribed_via'] ) ? '' : $this->trigger_settings['subscribed_via'];
-
-			if ( '' !== $subscription_method ) {
-				$this->conditional_logic['enabled'] = true;
-				$this->conditional_logic['rules'][] = array(
-					'type'      => '_subscriber_via',
-					'condition' => 'is',
-					'value'     => $subscription_method,
-				);
-			}
-
-			unset( $this->trigger_settings['subscribed_via'] );
-
-			// Save them.
-			noptin()->automation_rules->update_rule(
-				$this,
-				array(
-					'trigger_settings' => array_merge(
-						$this->trigger_settings,
-						array( 'conditional_logic' => $this->conditional_logic )
-					),
-				)
-			);
-		}
-
 		// Sanitize trigger and action settings.
 		$this->trigger_settings = $this->sanitize_trigger_settings( $this->trigger_settings );
 		$this->action_settings  = $this->sanitize_action_settings( $this->action_settings );

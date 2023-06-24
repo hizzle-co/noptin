@@ -176,24 +176,6 @@ function noptin_should_show_optins() {
 }
 
 /**
- * Returns opt-in forms stats.
- *
- * @since 1.0.7
- * @return array
- */
-function noptin_get_optin_stats() {
-	global $wpdb;
-	$stats = $wpdb->get_results( "SELECT `meta_value`, COUNT( DISTINCT `noptin_subscriber_id`) AS stats FROM `{$wpdb->prefix}noptin_subscriber_meta` WHERE `meta_key`='_subscriber_via' GROUP BY `meta_value`" );
-
-	if ( ! $stats ) {
-		$stats = array();
-	}
-
-	return wp_list_pluck( $stats, 'stats', 'meta_value' );
-
-}
-
-/**
  * This will replace the first half of a string with "*" characters.
  *
  * @param string $string The string to obfuscate.

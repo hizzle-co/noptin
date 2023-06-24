@@ -108,10 +108,10 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$subscriber_id      = $this->get_order_subscriber( $order_id );
 		$subscriber_details = $this->get_order_customer_details( $order_id, empty( $subscriber_id ) );
 		$subscriber         = array(
-			'_subscriber_via' => $this->subscriber_via,
+			'source' => $this->subscriber_via,
 		);
 
-		foreach ( array( 'email', 'name', 'wp_user_id', 'ip_address', 'first_name', 'last_name', '_subscriber_via' ) as $key ) {
+		foreach ( array( 'email', 'name', 'wp_user_id', 'ip_address', 'first_name', 'last_name', 'source' ) as $key ) {
 			if ( isset( $subscriber_details[ $key ] ) ) {
 				$subscriber[ $key ] = $subscriber_details[ $key ];
 			}

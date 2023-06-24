@@ -176,10 +176,17 @@ class Email_Sender_Subscribers extends Email_Sender {
 					unset( $options['_subscriber_via'] );
 				}
 
-				// Loop through the filters.
-				foreach ( $options as $key => $value ) {
-					if ( '' !== $value ) {
-						$args[ $key ] = $value;
+				// Loop through available filters.
+				foreach ( array_keys( get_noptin_subscriber_filters() ) as $filter ) {
+
+					$filtered = isset( $options[ $filter ] ) ? $options[ $filter ] : '';
+
+					if ( '' === $filtered && 0 === strpos( $filter, 'cf_' ) && isset( $options[ substr( $filter, 3 ) ] ) ) {
+						$filtered = $options[ substr( $filter, 3 ) ];
+					}
+
+					if ( '' !== $filtered ) {
+						$args[ $filter ] = $filtered;
 					}
 				}
 			}

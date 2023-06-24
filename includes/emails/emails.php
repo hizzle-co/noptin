@@ -373,35 +373,6 @@ function decrease_noptin_campaign_stat( $campaign_id, $stat ) {
 }
 
 /**
- * Displays subscribers filter.
- *
- * @since 1.7.0
- * @param Noptin_Newsletter_Email|Noptin_Automated_Email $campaign
- */
-function display_noptin_campaign_subscriber_filter( $campaign ) {
-
-	?>
-
-		<?php foreach ( get_noptin_subscriber_filters() as $key => $filter ) : ?>
-			<label style="width:100%; display: block;" class="noptin-margin-y noptin-subscribers-filter-<?php echo esc_attr( $key ); ?>">
-				<strong><?php echo esc_html( $filter['label'] ); ?></strong>
-				<select name="noptin_email[<?php echo esc_attr( $key ); ?>]" style="display:block; width:100%;">
-					<option value="" <?php selected( '', (string) $campaign->get( $key ) ); ?>><?php esc_html_e( 'Any', 'newsletter-optin-box' ); ?></option>
-					<?php foreach ( $filter['options'] as $option_name => $label ) : ?>
-						<option value="<?php echo esc_attr( $option_name ); ?>" <?php selected( (string) $option_name, (string) $campaign->get( $key ) ); ?>><?php echo esc_html( $label ); ?></option>
-					<?php endforeach; ?>
-				</select>
-				<?php if ( ! empty( $filter['description'] ) ) : ?>
-					<p class="description"><?php echo wp_kses_post( $filter['description'] ); ?></p>
-				<?php endif; ?>
-			</label>
-		<?php endforeach; ?>
-
-	<?php
-
-}
-
-/**
  * Retrieves an email recipient by id and sender.
  *
  * @since 1.10.1

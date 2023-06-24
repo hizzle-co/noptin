@@ -114,19 +114,6 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
-	 * Converts settings to conditional logic.
-	 *
-	 * Useful to migrate the legacy settings to the new conditional logic.
-	 *
-	 * @since 1.10.1
-	 * @param array $settings
-	 * @return false Return false if no conditional logic, or array containing conditional logic and new settings.
-	 */
-	public function settings_to_conditional_logic( $settings ) {
-		return false;
-	}
-
-	/**
 	 * Returns an array of known smart tags with callbacks removed.
 	 *
 	 * @since 1.12.0
