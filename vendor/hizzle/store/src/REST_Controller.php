@@ -771,9 +771,8 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		$fields  =isset( $request['__fields'] ) ? wp_parse_list( $request['__fields'] ) : $this->get_fields_for_response( $request );
-		$is_edit = 'edit' === $request['context'];
-		$data    = array();
+		$fields = isset( $request['__fields'] ) ? wp_parse_list( $request['__fields'] ) : $this->get_fields_for_response( $request );
+		$data   = array();
 
 		foreach ( $item->get_data() as $key => $value ) {
 			if ( rest_is_field_included( $key, $fields ) ) {
@@ -783,8 +782,8 @@ class REST_Controller extends \WP_REST_Controller {
 					$value = $value->format( 'Y-m-d\TH:i:sP' );
 				}
 
-				// Edit mode.
-				if ( $is_edit ) {
+				// Normalize values when exporting.
+				if ( ! empty( $request['__fields'] ) ) {
 
 					if ( is_bool( $value ) ) {
 						$value = (int) $value;
@@ -1177,7 +1176,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 			foreach ( $collection->get_props() as $prop ) {
 
-				if ( $prop->is_dynamic || ( $prop->is_meta_key && $prop->is_meta_key_multiple ) ) {
+				if ( $prop->is_dynamic ) {
 					$hidden[] = $prop->name;
 				}
 

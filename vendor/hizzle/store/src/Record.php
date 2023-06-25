@@ -325,6 +325,31 @@ class Record {
 		$from = is_bool( $transition['from'] ) ? ( $transition['from'] ? 'yes' : 'no' ) : $transition['from'];
 		$to   = is_bool( $transition['to'] ) ? ( $transition['to'] ? 'yes' : 'no' ) : $transition['to'];
 
+		// Props that accept multiple values.
+		if ( is_array( $from ) || is_array( $to ) ) {
+			$from    = is_array( $from ) ? $from : array();
+			$to      = is_array( $to ) ? $to : array();
+			$added   = array_diff( $to, $from );
+			$removed = array_diff( $from, $to );
+
+			// Fire hooks for the added values.
+			foreach ( $added as $value ) {
+				do_action( "{$this->object_type}_added_to_{$prop}", $value, $this );
+			}
+
+			// Fire hooks for the removed values.
+			foreach ( $removed as $value ) {
+				do_action( "{$this->object_type}_removed_from_{$prop}", $value, $this );
+			}
+
+			// Fire hook if the prop is changed.
+			if ( ! empty( $added ) || ! empty( $removed ) ) {
+				do_action( "{$this->object_type}_{$prop}_changed", $this, $from, $to );
+			}
+
+			return;
+		}
+
 		// Fire a hook for the enum change.
 		do_action( "{$this->object_type}_{$prop}_set_to_{$to}", $this, $from );
 
@@ -518,7 +543,7 @@ class Record {
 		if ( $prop->is_meta_key && $prop->is_meta_key_multiple && ! is_array( $value ) ) {
 			$existing = $this->get( $prop );
 			$existing = is_array( $existing ) ? $existing : array();
-			$value    = array_merge( $existing, array( $value ) );
+			$value    = array_merge( $existing, noptin_parse_list( $value, true ) );
 		}
 
 		// Set directly to the data if we have it.

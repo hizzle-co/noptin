@@ -161,7 +161,7 @@ class Collection {
 
 		// Register our custom meta table.
 		if ( $this->create_meta_table() ) {
-			$meta_type          = $this->get_meta_type() . 'meta';
+			$meta_type          = $this->get_meta_type() . '_meta';
 			$wpdb->{$meta_type} = $wpdb->prefix . $meta_type;
 		}
 
@@ -274,7 +274,7 @@ class Collection {
 			return $wpdb->postmeta;
 		}
 
-		return $wpdb->prefix . $this->get_meta_type() . 'meta';
+		return $wpdb->prefix . $this->get_meta_type() . '_meta';
 	}
 
 	/**
@@ -727,7 +727,8 @@ class Collection {
 	 * @return array
 	 */
 	protected function prepare_data( $data ) {
-		$prepared = array();
+		$prepared     = array();
+		$known_fields = $this->get_known_fields();
 
 		foreach ( $data as $key => $value ) {
 
@@ -746,8 +747,10 @@ class Collection {
 				}
 			}
 
-			// Handle arrays.
-			$value = maybe_serialize( $value );
+			// Handle arrays, except for meta keys.
+			if ( ! in_array( $key, $known_fields['meta'], true ) ) {
+				$value = maybe_serialize( $value );
+			}
 
 			$prepared[ $key ] = $value;
 		}
@@ -1358,7 +1361,7 @@ class Collection {
 	}
 
 	/**
-	 * Determines if a meta field with the given key exists for the given noptin record ID.
+	 * Determines if a meta field with the given key exists for the given record ID.
 	 *
 	 * @param int    $record_id  ID of the record metadata is for.
 	 * @param string $meta_key       Metadata key.

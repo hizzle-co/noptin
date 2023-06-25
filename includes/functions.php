@@ -1692,8 +1692,21 @@ function noptin_newslines_to_array( $text ) {
 	}
 
 	$options = array();
+
+	// Split by newlines.
 	foreach ( preg_split( "/\r\n|\n|\r/", $text ) as $option ) {
-		$options[ trim( $option ) ] = wp_strip_all_tags( trim( $option ) );
+
+		// Trim the option.
+		$option = trim( $option );
+
+		// Value and label can be separated by a pipe.
+		if ( strpos( $option, '|' ) !== false ) {
+			list( $value, $label )     = explode( '|', $option );
+			$options[ trim( $value ) ] = wp_strip_all_tags( trim( $label ) );
+			continue;
+		}
+
+		$options[ $option ] = wp_strip_all_tags( $option );
 	}
 
 	return $options;

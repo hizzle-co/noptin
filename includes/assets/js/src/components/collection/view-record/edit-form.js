@@ -50,9 +50,16 @@ export const EditForm = ( { record, error, onSaveRecord, setAttributes } ) => {
 				isInputToChange: true,
 			};
 
-			if ( field.enum && ! Array.isArray( field.enum ) ) {
+			if ( field.multiple && Array.isArray( field.suggestions  ) ) {
+				preparedSetting.el = 'form_token';
+				preparedSetting.suggestions = field.suggestions;
+			} else if ( field.enum && ! Array.isArray( field.enum ) ) {
 				preparedSetting.el = 'select';
 				preparedSetting.options = field.enum;
+
+				if ( field.multiple ) {
+					preparedSetting.el = 'multi_checkbox';
+				}
 			}
 
 			if ( field.isLongText ) {

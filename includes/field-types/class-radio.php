@@ -17,17 +17,14 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Custom_Field_Radio extends Noptin_Custom_Field_Dropdown {
 
 	/**
-	 * Displays the actual markup for this field.
+	 * Displays the single select field.
 	 *
-	 * @since 1.5.5
+	 * @since 1.13.0
 	 * @param array $args Field args
-	 * @param false|Noptin_Subscriber $subscriber
 	 */
-	public function output( $args, $subscriber ) {
+	protected function display_single( $args ) {
 
 		?>
-
-			<label class="noptin-label"><?php echo empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
 
 			<?php foreach ( $this->get_field_options( $args ) as $value => $label ) : ?>
 				<label style="display: block; margin-bottom: 6px;">
@@ -41,9 +38,7 @@ class Noptin_Custom_Field_Radio extends Noptin_Custom_Field_Dropdown {
 					<strong><?php echo esc_html( $label ); ?></strong>
 				</label>
 			<?php endforeach; ?>
-
 		<?php
 
 	}
-
 }

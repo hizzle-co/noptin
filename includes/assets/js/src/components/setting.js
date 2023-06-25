@@ -8,6 +8,7 @@ import {
 	TextareaControl,
 	SelectControl,
 	ToggleControl,
+	FormTokenField,
 	Tip,
 	Button,
 	Flex,
@@ -268,6 +269,49 @@ function KeyValueRepeater({ setting, availableSmartTags, value, onChange, ...att
 }
 
 /**
+ * Displays a multi-checkbox setting.
+ *
+ * @param {Object} props
+ * @param {Function} props.attributes The attributes
+ * @param {Object} props.setting The setting object.
+ * @return {JSX.Element}
+ */
+function MultiCheckbox({ setting, value, options, onChange, ...attributes }) {
+
+	// The base props.
+	const { baseControlProps, controlProps } = useBaseControlProps( attributes );
+
+	// Ensure the value is an array.
+	if ( ! Array.isArray( value ) ) {
+		value = [];
+	}
+
+	// Render the control.
+	return (
+		<BaseControl { ...baseControlProps }>
+
+			<div { ...controlProps }>
+				{options.map((option, index) => (
+					<ToggleControl
+						key={index}
+						label={option.label}
+						checked={value.includes(option.value)}
+						onChange={(newValue) => {
+							if ( newValue ) {
+								onChange([...value, option.value]);
+							} else {
+								onChange(value.filter((v) => v !== option.value));
+							}
+						}}
+					/>
+				))}
+			</div>
+
+		</BaseControl>
+	);
+}
+
+/**
  * Displays a single setting.
  *
  * @param {Object} props
@@ -333,14 +377,8 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 
 	// If we have options, convert from object to array.
 	let options = [];
-	let isValueInOptions = false;
 	if ( setting.options ) {
 		options = Object.keys( setting.options ).map( ( key ) => {
-
-			if ( key === value ) {
-				isValueInOptions = true;
-			}
-
 			return {
 				label: setting.options[ key ],
 				value: key,
@@ -374,6 +412,24 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 		});
 
 		return <SelectControl {...defaultAttributes} options={options}  __nextHasNoMarginBottom __next36pxDefaultSize />;
+	}
+
+	// Display a form token field.
+	if ( setting.el === 'form_token' ) {
+		return (
+			<FormTokenField
+				{...defaultAttributes}
+				value={Array.isArray( defaultAttributes.value ) ? defaultAttributes.value : []}
+				suggestions={ setting.suggestions }
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+			/>
+		);
+	}
+
+	// Displays a multi-checkbox control.
+	if ( setting.el === 'multi_checkbox' ) {
+		return <MultiCheckbox {...defaultAttributes} options={options} />;
 	}
 
 	// Conditional logic editor.

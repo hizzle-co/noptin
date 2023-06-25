@@ -49,11 +49,21 @@
 				$args = array(
 					'el'          => 'textarea',
 					'label'       => __( 'Available Options', 'newsletter-optin-box' ),
-					'description' => __( 'Enter one option per line.', 'newsletter-optin-box' ),
+					'description' => __( 'Enter one option per line. You can use pipes to separate values and labels.', 'newsletter-optin-box' ),
 					'restrict'    => 'fieldAllowsOptions(field)',
 					'placeholder' => implode( PHP_EOL, array( 'Option 1', 'Option 2', 'Option 3' ) ),
 				);
 				Noptin_Vue::render_el( 'field.options', $args );
+
+				// Can user select multiple options?
+				$args = array(
+					'el'          => 'input',
+					'type'        => 'checkbox_alt',
+					'label'       => __( 'Multiple Selection', 'newsletter-optin-box' ),
+					'description' => __( 'Can subscribers select more than 1 option?', 'newsletter-optin-box' ),
+					'restrict'    => 'fieldAllowsOptions(field)',
+				);
+				Noptin_Vue::render_el( 'field.multiple_options', $args );
 
 				do_action( 'noptin_custom_field_settings' );
 

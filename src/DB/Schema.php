@@ -223,9 +223,10 @@ class Schema {
 
 				// Subscribers.
 				'subscribers' => array(
-					'object'        => '\Hizzle\Noptin\DB\Subscriber',
-					'singular_name' => 'subscriber',
-					'labels'        => array(
+					'object'         => '\Hizzle\Noptin\DB\Subscriber',
+					'singular_name'  => 'subscriber',
+					'use_meta_table' => true,
+					'labels'         => array(
 						'name'          => __( 'Subscribers', 'newsletter-optin-box' ),
 						'singular_name' => __( 'Subscriber', 'newsletter-optin-box' ),
 						'add_new'       => __( 'Add New', 'newsletter-optin-box' ),
