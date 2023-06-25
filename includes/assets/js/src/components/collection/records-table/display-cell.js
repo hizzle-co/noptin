@@ -1,9 +1,8 @@
 import { Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
 import { dateI18n, getSettings, __experimentalGetSettings } from "@wordpress/date";
 import getEnumBadge from "./enum-colors";
-import { Avatar } from "../../styled-components";
-import { useParams } from "react-router-dom";
-import { navigateTo, getNewPath } from "../../navigation";
+import { Avatar, Badge } from "../../styled-components";
+import { useNavigateCollection } from "../hooks";
 
 /**
  * Displays the primary column.
@@ -16,14 +15,9 @@ import { navigateTo, getNewPath } from "../../navigation";
  */
 const PrimaryColumn = ( { record, name } ) => {
 
-	const { namespace, collection } = useParams();
-	const value  = record[name];
-	const avatar = record.avatar_url ? <Avatar src={ record.avatar_url } alt={ value } /> : null;
-
-	const handleClick = () => {
-		const newRoute = getNewPath( {}, `/${namespace}/${collection}/${record.id}` );
-		navigateTo( newRoute );
-	};
+	const navigateTo = useNavigateCollection();
+	const value      = record[name];
+	const avatar     = record.avatar_url ? <Avatar src={ record.avatar_url } alt={ value } /> : null;
 
 	const ColValue = avatar ? (
 		<Flex>
@@ -43,7 +37,7 @@ const PrimaryColumn = ( { record, name } ) => {
 	}
 
 	return (
-		<Button variant="link" style={ btnStyle } onClick={ handleClick }>
+		<Button variant="link" style={ btnStyle } onClick={ () => navigateTo( record.id ) }>
 			{ ColValue }
 		</Button>
 	)
@@ -66,6 +60,11 @@ export default function DisplayCell( { row, header, headerKey } ) {
 		return <span className="noptin-table__cell--null">&ndash;</span>;
 	}
 
+	// Empty arrays are displayed as a dash.
+	if ( Array.isArray( value ) && value.length === 0 ) {
+		return <span className="noptin-table__cell--null">&ndash;</span>;
+	}
+
 	if ( header.is_primary && typeof value === 'string' ) {
 		return <PrimaryColumn record={ row } name={ headerKey } />;
 	}
@@ -84,9 +83,22 @@ export default function DisplayCell( { row, header, headerKey } ) {
 		return dateI18n( settings.formats.datetime, value );
 	}
 
+	// Array with enum values are displayed as a badge.
+	if ( header.enum && Array.isArray( value ) ) {
+		return (
+			<Flex gap={2} justify="flex-start" wrap>
+				{ value.map( ( val ) => (
+					<FlexItem key={ val }>
+						<Badge {...getEnumBadge( val )}>{ header.enum[val] || val }</Badge>
+					</FlexItem>
+				) ) }
+			</Flex>
+		)
+	}
+
 	// If we have an enum, display the label.
 	if ( header.enum && header.enum[value] ) {
-		return <span className={ `noptin-badge ${ getEnumBadge( value ) }` }>{ header.enum[value] }</span>;
+		return <Badge {...getEnumBadge( value )}>{ header.enum[value] }</Badge>;
 	}
 
 	// Strings, numbers, and floats are displayed as is.

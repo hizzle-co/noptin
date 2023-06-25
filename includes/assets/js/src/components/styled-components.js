@@ -414,3 +414,29 @@ export const TableSummaryList = styled.ul`
 		display: inline-block;
 	}
 `
+
+/**
+ * Calculates the badge style.
+ */
+const badgeStyle = ({ color, backgroundColor }) => {
+	color = color ? color : '#241c15';
+	backgroundColor = backgroundColor ? backgroundColor : '#efeeea';
+
+	return css`
+		background-color: ${backgroundColor};
+		color: ${color};
+	`;
+}
+
+/**
+ * Displays a badge.
+ */
+export const Badge = styled.span`
+	${badgeStyle}
+	white-space: nowrap;
+	border-radius: 200px;
+	height: 24px;
+	line-height: 24px;
+	padding: 3px 9px;
+	display: inline-block;
+`

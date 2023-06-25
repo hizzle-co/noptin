@@ -140,7 +140,6 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 
 				if ( processed > 0 ) {
 					dispatch.emptyCache( dispatch );
-					// navigateHome();
 				}
 			}
 
