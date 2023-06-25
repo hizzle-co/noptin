@@ -873,66 +873,72 @@ function get_noptin_custom_field_types() {
 	$field_types = apply_filters(
 		'noptin_custom_field_types',
 		array(
-			'email'      => array(
+			'email'          => array(
 				'predefined' => true,
 				'merge_tag'  => 'email',
 				'label'      => __( 'Email Address', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Email',
 			),
-			'first_name' => array(
+			'first_name'     => array(
 				'predefined' => true,
 				'merge_tag'  => 'first_name',
 				'label'      => __( 'First Name', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Text',
 			),
-			'last_name'  => array(
+			'last_name'      => array(
 				'predefined' => true,
 				'merge_tag'  => 'last_name',
 				'label'      => __( 'Last Name', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Text',
 			),
-			'language'   => array(
+			'language'       => array(
 				'predefined' => true,
 				'merge_tag'  => 'language',
 				'label'      => __( 'Language', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Language',
 			),
-			'text'       => array(
+			'text'           => array(
 				'predefined' => false,
 				'label'      => __( 'Text Input', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Text',
 			),
-			'textarea'   => array(
+			'textarea'       => array(
 				'predefined' => false,
 				'label'      => __( 'Textarea Input', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Textarea',
 			),
-			'number'     => array(
+			'number'         => array(
 				'predefined' => false,
 				'label'      => __( 'Number Input', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Number',
 			),
-			'radio'      => array(
+			'radio'          => array(
 				'predefined'       => false,
 				'supports_options' => true,
 				'label'            => __( 'Radio Buttons', 'newsletter-optin-box' ),
 				'class'            => 'Noptin_Custom_Field_Radio',
 			),
-			'dropdown'   => array(
+			'dropdown'       => array(
 				'predefined'       => false,
 				'supports_options' => true,
 				'label'            => __( 'Dropdown', 'newsletter-optin-box' ),
 				'class'            => 'Noptin_Custom_Field_Dropdown',
 			),
-			'date'       => array(
+			'date'           => array(
 				'predefined' => false,
 				'label'      => __( 'Date', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Date',
 			),
-			'checkbox'   => array(
+			'checkbox'       => array(
 				'predefined' => false,
 				'label'      => __( 'Checkbox', 'newsletter-optin-box' ),
 				'class'      => 'Noptin_Custom_Field_Checkbox',
+			),
+			'multi_checkbox' => array(
+				'predefined'       => false,
+				'supports_options' => true,
+				'label'            => __( 'Multiple checkboxes', 'newsletter-optin-box' ),
+				'class'            => 'Noptin_Custom_Field_Multi_Checkbox',
 			),
 		)
 	);

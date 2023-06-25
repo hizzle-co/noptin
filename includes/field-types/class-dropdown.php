@@ -25,6 +25,13 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	public $store_in_subscribers_table = true;
 
 	/**
+	 * Whether or not this field type supports multiple values.
+	 *
+	 * @var bool
+	 */
+	protected $is_multiple = false;
+
+	/**
 	 * Fetches available field options.
 	 *
 	 * @since 1.13.0
@@ -56,7 +63,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 			empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'
 		);
 
-		if ( ! empty( $args['multiple_options'] ) ) {
+		if ( ! empty( $this->is_multiple ) ) {
 			$this->display_multiple( $args );
 		} else {
 			$this->display_single( $args );
@@ -122,7 +129,6 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	 * @param array $field
 	 */
 	public function filter_db_schema( $schema, $custom_field ) {
-		$is_multiple  = ! empty( $custom_field['multiple_options'] );
 		$field_schema = array(
 			'type'              => 'VARCHAR',
 			'label'             => wp_strip_all_tags( $custom_field['label'] ),
@@ -134,7 +140,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 			$field_schema['sanitize_callback'] = array( $this, 'sanitize_value' );
 		}
 
-		if ( $is_multiple ) {
+		if ( $this->is_multiple ) {
 			$field_schema['is_meta_key']          = true;
 			$field_schema['is_meta_key_multiple'] = true;
 		} else {
@@ -154,7 +160,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 				}
 			}
 
-			if ( ! $is_multiple ) {
+			if ( ! $this->is_multiple ) {
 				$field_schema['length'] = $max_length + 1;
 			}
 

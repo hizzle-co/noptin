@@ -55,16 +55,6 @@
 				);
 				Noptin_Vue::render_el( 'field.options', $args );
 
-				// Can user select multiple options?
-				$args = array(
-					'el'          => 'input',
-					'type'        => 'checkbox_alt',
-					'label'       => __( 'Multiple Selection', 'newsletter-optin-box' ),
-					'description' => __( 'Can subscribers select more than 1 option?', 'newsletter-optin-box' ),
-					'restrict'    => 'fieldAllowsOptions(field)',
-				);
-				Noptin_Vue::render_el( 'field.multiple_options', $args );
-
 				do_action( 'noptin_custom_field_settings' );
 
 				// Change visibility.

@@ -20,7 +20,7 @@ class Noptin_Custom_Fields {
 	public function __construct() {
 
 		// Load dependancies.
-		foreach ( array( 'base', 'text', 'textarea', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio' ) as $file ) {
+		foreach ( array( 'base', 'text', 'textarea', 'checkbox', 'multi-checkbox', 'date', 'dropdown', 'email', 'number', 'radio' ) as $file ) {
 			require_once plugin_dir_path( __FILE__ ) . "field-types/class-$file.php";
 		}
 
