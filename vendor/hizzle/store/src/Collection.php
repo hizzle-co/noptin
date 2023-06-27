@@ -881,7 +881,7 @@ class Collection {
 			array( '%d' )
 		);
 
-		return $result ? $record->get_id() : 0;
+		return $record->get_id();
 	}
 
 	/**
@@ -1161,7 +1161,7 @@ class Collection {
 
 		// Update meta data.
 		// Save date modified in UTC time.
-		if ( ! $this->is_cpt() && isset( $this->props['date_modified'] ) ) {
+		if ( ! empty( $changes ) && ! $this->is_cpt() && isset( $this->props['date_modified'] ) ) {
 			$changes['date_modified'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
 			$record->set( 'date_modified', $changes['date_modified'] );
 		}

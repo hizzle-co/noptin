@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Updates a subscriber's custom field.
  *
- * @since       1.2.8
+ * @since 1.2.8
  */
 class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 

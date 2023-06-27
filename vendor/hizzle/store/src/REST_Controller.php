@@ -1203,6 +1203,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'is_numeric'  => $prop->is_numeric(),
 					'is_float'    => $prop->is_float(),
 					'is_date'     => $prop->is_date(),
+					'is_meta'     => $prop->is_meta_key,
 				);
 
 			}

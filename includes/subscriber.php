@@ -1154,6 +1154,7 @@ function get_noptin_subscriber_smart_tags() {
 				'description' => wp_strip_all_tags( $prop->description ),
 				'example'     => $prop->name . ' default=""',
 				'options'     => false,
+				'is_multiple' => $prop->is_meta_key && $prop->is_meta_key_multiple,
 			);
 
 			if ( is_callable( $prop->enum ) ) {

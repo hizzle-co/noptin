@@ -65,7 +65,7 @@ const DisplayRecords = ( { schema: { schema, hidden, ignore, labels }, total, su
 
 			columns.push( {
 				key: column.name,
-				isSortable: ! column.is_dynamic,
+				isSortable: ! column.is_dynamic && ! column.is_meta,
 				isNumeric: column.is_numeric || column.is_float,
 				...column
 			});

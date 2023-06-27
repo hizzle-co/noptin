@@ -157,9 +157,9 @@ class Noptin_Admin {
 	/**
 	 * Register admin scripts
 	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
+	 * @access public
+	 * @since  1.0.0
+	 * @return void
 	 */
 	public function enqueue_scripts() {
 		global $current_screen;

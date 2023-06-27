@@ -8,6 +8,7 @@ import {
 	TextareaControl,
 	SelectControl,
 	ToggleControl,
+	CheckboxControl,
 	FormTokenField,
 	Tip,
 	Button,
@@ -292,7 +293,7 @@ function MultiCheckbox({ setting, value, options, onChange, ...attributes }) {
 
 			<div { ...controlProps }>
 				{options.map((option, index) => (
-					<ToggleControl
+					<CheckboxControl
 						key={index}
 						label={option.label}
 						checked={value.includes(option.value)}
@@ -428,7 +429,7 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 	}
 
 	// Displays a multi-checkbox control.
-	if ( setting.el === 'multi_checkbox' ) {
+	if ( setting.el === 'multi_checkbox' || setting.el === 'multi_checkbox_alt' ) {
 		return <MultiCheckbox {...defaultAttributes} options={options} />;
 	}
 

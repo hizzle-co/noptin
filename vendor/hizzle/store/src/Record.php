@@ -334,12 +334,12 @@ class Record {
 
 			// Fire hooks for the added values.
 			foreach ( $added as $value ) {
-				do_action( "{$this->object_type}_added_to_{$prop}", $value, $this );
+				do_action( "{$this->object_type}_added_to_{$prop}", $this, $value );
 			}
 
 			// Fire hooks for the removed values.
 			foreach ( $removed as $value ) {
-				do_action( "{$this->object_type}_removed_from_{$prop}", $value, $this );
+				do_action( "{$this->object_type}_removed_from_{$prop}", $this, $value );
 			}
 
 			// Fire hook if the prop is changed.
