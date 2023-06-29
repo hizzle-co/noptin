@@ -431,7 +431,7 @@ const badgeStyle = ({ color, backgroundColor }) => {
 /**
  * Displays a badge.
  */
-export const Badge = styled.span`
+export const Badge = styled( 'span', { shouldForwardProp: prop => ! ['color', 'backgroundColor'].includes( prop ) })`
 	${badgeStyle}
 	white-space: nowrap;
 	border-radius: 200px;

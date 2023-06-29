@@ -12,8 +12,8 @@ export default function getEnumBadge( str ) {
     // Try to guess the color from the string.
     if ( ['subscribed', 'active', 'yes', 'true', '1'].includes( str ) ) {
         return {
-            backgroundColor: '#d8eacc',
-            color: '#241c15',
+            backgroundColor: '#78c67a',
+            color: '#111111',
         }
     }
 

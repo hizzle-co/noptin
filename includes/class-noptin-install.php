@@ -86,6 +86,9 @@ class Noptin_Install {
 
 		// Create recurring CRON job to migrate subscribers.
 		wp_schedule_single_event( time(), 'noptin_migrate_subscribers' );
+
+		// Flush cache.
+		wp_cache_flush();
 	}
 
 	/**
