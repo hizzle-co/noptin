@@ -1,10 +1,9 @@
 /**
  * Wordpress dependancies.
  */
-import { SelectControl, Button, Flex, FlexItem, ButtonGroup, } from '@wordpress/components';
+import { SelectControl, Button, Flex, FlexItem, ButtonGroup, Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
-import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 
 const PER_PAGE_OPTIONS = [ 25, 50, 75, 100 ];
 
@@ -48,14 +47,14 @@ function PageArrows( { page, pageCount, onPageChange }  ) {
 							onClick={ () => onPageChange( previousPage ) }
 							label={ __( 'Previous Page', 'newsletter-optin-box' ) }
 						>
-							<Icon icon={ chevronLeft } />
+							<Icon icon="arrow-left-alt2" />
 						</Button>
 						<Button
 							disabled={ ! hasNext }
 							onClick={ () => onPageChange( nextPage ) }
 							label={ __( 'Next Page', 'newsletter-optin-box' ) }
 						>
-							<Icon icon={ chevronRight } />
+							<Icon icon="arrow-right-alt2" />
 						</Button>
 					</ButtonGroup>
 				</FlexItem>

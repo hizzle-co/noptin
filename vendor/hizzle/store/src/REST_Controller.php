@@ -920,6 +920,26 @@ class REST_Controller extends \WP_REST_Controller {
 			return new \WP_Error( $this->prefix_hook( 'request_entity_too_large' ), sprintf( __( 'Unable to accept more than %s items for this request.', 'hizzle-store' ), $limit ), array( 'status' => 413 ) );
 		}
 
+		// Bulk updates.
+		$bulk_update = $request->get_param( 'bulk_update' );
+		$collection  = $this->fetch_collection();
+
+		if ( ! empty( $bulk_update ) ) {
+			$items['update'] = isset( $items['update'] ) ? $items['update'] : array();
+
+			try {
+				$query = $collection->query( $bulk_update['query'] );
+				$merge = $bulk_update['merge'];
+
+				foreach ( $query->get_results() as $item ) {
+					$items['update'][] = array_merge(
+						$merge,
+						array( 'id' => $item->get_id() ),
+					);
+				}
+			} catch ( Store_Exception $e ) {}
+		}
+
 		// Prepare response.
 		$responses = array();
 
@@ -930,7 +950,8 @@ class REST_Controller extends \WP_REST_Controller {
 				$responses[ $action ] = array();
 			}
 
-			$method = "{$action}_batch_item";
+			$method    = "{$action}_batch_item";
+			$skip_data = 'update' === $action && ! empty( $bulk_update );
 
 			// Loop through each item.
 			foreach ( $action_items as $item ) {
@@ -948,7 +969,7 @@ class REST_Controller extends \WP_REST_Controller {
 							'data'    => $response->get_error_data(),
 						),
 					);
-				} else {
+				} else if ( ! $skip_data ) {
 					$responses[ $action ][] = array(
 						'is_error' => false,
 						'data'     => $wp_rest_server->response_to_data( $response, '' ),

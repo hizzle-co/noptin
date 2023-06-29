@@ -62,3 +62,22 @@ export function useCurrentQueryRecordCount() {
 	const records = useCurrentRecords();
 	return records.data.total || 0;
 }
+
+/**
+ * Returns a query for bulk actions.
+ * @param {Array} selected
+ * @returns {Object}
+ */
+export function useQueryOrSelected( selected ) {
+	if ( selected.length > 0 ) {
+		return { include: selected.join( ',' ), number: -1 };
+	}
+
+	const query = { ...getQuery(), number: -1 };;
+
+	[ 'order', 'hizzle_path', 'orderby', 'paged', 'page' ].forEach( ( key ) => {
+		delete query[ key ];
+	} );
+	
+	return query;
+}

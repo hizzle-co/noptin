@@ -16,6 +16,7 @@ import DisplayCell from "./display-cell";
 import { useCurrentSchema, useCurrentRecords } from "../hooks";
 import ExportButton from "./export";
 import DeleteButton from "./delete-button";
+import BulkEditButton from "./bulk-edit-button";
 import { updateQueryString, getQuery } from "../../navigation";
 
 /**
@@ -25,6 +26,9 @@ import { updateQueryString, getQuery } from "../../navigation";
  */
 const TableActions = (
 	<Flex gap={2} wrap>
+		<FlexItem>
+			<BulkEditButton />
+		</FlexItem>
 		<FlexItem>
 			<ExportButton />
 		</FlexItem>

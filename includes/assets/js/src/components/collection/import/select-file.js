@@ -1,5 +1,4 @@
-import { FormFileUpload, Tip, Button, __experimentalText as Text } from "@wordpress/components";
-import { upload, Icon } from "@wordpress/icons";
+import { FormFileUpload, Icon, Tip, Button, __experimentalText as Text } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import styled from '@emotion/styled';
 import { BlockButton } from "../../styled-components";
@@ -32,7 +31,7 @@ const SelectFile = ( { onUpload } ) => {
 					onChange={ ( event ) => onUpload( event.currentTarget.files[0] ) }
 					variant="primary"
 				>
-					<Icon icon={upload} />
+					<Icon icon="cloud-upload" />
 					{ __( 'Select a CSV file', 'newsletter-optin-box' ) }
 				</UploadButton>
 

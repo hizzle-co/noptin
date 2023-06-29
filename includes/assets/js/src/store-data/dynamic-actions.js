@@ -120,6 +120,27 @@ export default function createDynamicActions( namespace, collection ) {
 		},
 
 		/**
+		 * Excecutes a batch action.
+		 *
+		 * @param {Object} data
+		 * @return {Object} Action.
+		 */
+		*batchAction( data, dispatch ) {
+
+			// Prepare data.
+			const path   = `${namespace}/v1/${collection}/batch`;
+			const method = 'POST';
+
+			// Process the action.
+			yield apiFetch( { path, method, data } );
+
+			// Invalidate related selectors.
+			yield dispatch.emptyCache( dispatch );
+
+			return { type: 'BATCH_ACTION' };
+		},
+
+		/**
 		 * Empties the cache.
 		 *
 		 * @param {string} queryString

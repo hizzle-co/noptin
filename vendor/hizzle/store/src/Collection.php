@@ -531,6 +531,28 @@ class Collection {
 		// Add each prop.
 		foreach ( $this->props as $prop ) {
 			$schema['properties'][ $prop->name ] = $prop->get_rest_schema();
+
+			if ( $prop->is_meta_key && $prop->is_meta_key_multiple ) {
+				$schema['properties'][ $prop->name . '::add' ] = array(
+					'description' => sprintf(
+						/* translators: %s: field label */
+						__( 'Add %s', 'hizzle-store' ),
+						strtolower( $prop->description )
+					),
+					'type'        => 'array',
+					'context'     => array( 'edit' ),
+				);
+
+				$schema['properties'][ $prop->name . '::remove' ] = array(
+					'description' => sprintf(
+						/* translators: %s: field label */
+						__( 'Remove %s', 'hizzle-store' ),
+						strtolower( $prop->description )
+					),
+					'type'        => 'array',
+					'context'     => array( 'edit' ),
+				);
+			}
 		}
 
 		$schema['properties'][ $prop->name ] = array_filter( $schema['properties'][ $prop->name ] );

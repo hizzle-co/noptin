@@ -315,7 +315,8 @@ const tableCellStyle = ({ align='left', minWidth='160px', isSorted }) => {
 			&:not(:last-child) {
 				border-right: 1px solid ${BORDER_COLOR};
 			}
-			& > .components-button svg {
+			& > .components-button svg,
+			& > .components-button .dashicon {
 				visibility: visible !important;
 			}
 		`;
@@ -359,13 +360,14 @@ export const TableHeader = styled.th`
 		padding: 0;
 	}
 
-	& > .components-button svg {
+	& > .components-button svg,
+	& > .components-button .dashicon {
 		visibility: hidden;
 		margin-left: 4px;
 	}
 
 	& > .components-button:hover svg,
-	& > .components-button:hover svg {
+	& > .components-button:hover .dashicon {
 		visibility: visible;
 	}
 `

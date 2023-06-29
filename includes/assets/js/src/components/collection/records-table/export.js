@@ -2,8 +2,7 @@
  * External dependencies
  */
 import { useState, useMemo } from "@wordpress/element";
-import { ToggleControl, Button, Modal, Spinner, Flex, FlexItem, __experimentalText as Text, } from "@wordpress/components";
-import { Icon, download } from "@wordpress/icons";
+import { ToggleControl, Button, Icon, Modal, Spinner, Flex, FlexItem, __experimentalText as Text, } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
 import { compact } from 'lodash';
 import Papa from 'papaparse';
@@ -188,7 +187,7 @@ const DownloadFields = ({ fields, setFields, schema: { schema, ignore }, next } 
 
 			<FlexItem>
 				<BlockButton variant="primary" onClick={next}>
-					<Icon icon={download} />
+					<Icon icon="download" />
 					{__('Download', 'newsletter-optin-box')}
 				</BlockButton>
 			</FlexItem>
@@ -259,7 +258,7 @@ export default function ExportButton() {
 
 			<Button
 				onClick={() => setOpen(true)}
-				icon={download}
+				icon="download"
 				text={ title }
 			/>
 

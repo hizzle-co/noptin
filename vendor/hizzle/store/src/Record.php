@@ -526,6 +526,21 @@ class Record {
 	 */
 	public function set( $prop, $value ) {
 
+		// Check if prop ends 
+		$is_adding   = false;
+		$is_removing = false;
+		if ( is_string( $prop ) && $this->get_object_read() ) {
+
+			// Check if prop ends with add.
+			if ( '::add' === substr( $prop, -5 ) ) {
+				$is_adding = true;
+				$prop      = substr( $prop, 0, -5 );
+			} elseif ( '::remove' === substr( $prop, -8 ) ) {
+				$is_removing = true;
+				$prop        = substr( $prop, 0, -8 );
+			}
+		}
+
 		$prop = is_string( $prop ) ? $this->has_prop( $prop ) : $prop;
 
 		if ( empty( $prop ) ) {
@@ -537,13 +552,19 @@ class Record {
 
 		// Check if we have a setter method.
 		if ( method_exists( $this, $method ) ) {
-			return $this->{$method}( $value );
+			return $this->{$method}( $value, $is_adding, $is_removing );
 		}
 
-		if ( $prop->is_meta_key && $prop->is_meta_key_multiple && ! is_array( $value ) ) {
+		if ( $prop->is_meta_key && $prop->is_meta_key_multiple ) {
+			$value    = noptin_parse_list( $value, true );
 			$existing = $this->get( $prop );
 			$existing = is_array( $existing ) ? $existing : array();
-			$value    = array_merge( $existing, noptin_parse_list( $value, true ) );
+
+			if ( $is_adding ) {
+				$value = array_unique( array_merge( $existing, $value ) );
+			} elseif ( $is_removing ) {
+				$value = array_unique( array_diff( $existing, $value ) );
+			}
 		}
 
 		// Set directly to the data if we have it.

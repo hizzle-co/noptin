@@ -4,7 +4,6 @@
 import { useDispatch } from "@wordpress/data";
 import { useState } from "@wordpress/element";
 import { Button, Modal, Spinner } from "@wordpress/components";
-import { trash } from "@wordpress/icons";
 import { __, sprintf } from "@wordpress/i18n";
 import { addQueryArgs } from "@wordpress/url";
 
@@ -87,7 +86,7 @@ export default function DeleteButton() {
 
 			<Button
 				onClick={() => setOpen( true )}
-				icon={trash}
+				icon="trash"
 				text={title}
 				isDestructive
 			/>

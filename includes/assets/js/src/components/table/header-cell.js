@@ -3,8 +3,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { Button } from '@wordpress/components';
-import { chevronUp, chevronDown, Icon } from '@wordpress/icons';
+import { Button, Icon } from '@wordpress/components';
 import { memo } from "@wordpress/element";
 
 /**
@@ -70,7 +69,7 @@ const HeaderCell = ( { columnKey, columnLabel, screenReaderLabel, cellClassName,
 		</>
 	);
 
-	const TheIcon = <Icon icon={ sortDir !== 'asc' ? chevronDown : chevronUp } />;
+	const TheIcon = <Icon icon={ sortDir !== 'asc' ? 'arrow-down-alt2' : 'arrow-up-alt2' } />;
 
 	return (
 		<TableHeader role="columnheader" scope="col" key={ columnKey } isSorted={ isSorted } { ...thProps }>
