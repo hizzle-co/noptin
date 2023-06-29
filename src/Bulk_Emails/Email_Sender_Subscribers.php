@@ -33,35 +33,15 @@ class Email_Sender_Subscribers extends Email_Sender {
 	 */
 	public function display_sending_options( $campaign ) {
 
-		$current = $campaign->get( 'noptin_subscriber_options' );
-
-		if ( empty( $current ) && ! defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
+		if ( ! defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
 			?>
 			<p><?php esc_html_e( 'The add-ons pack allows you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ); ?></p>
 			<p><a href="<?php echo esc_url( noptin_get_upsell_url( '/pricing/', 'filter-subscribers', 'email-campaigns' ) ); ?>" class="button noptin-button-standout" target="_blank"><?php esc_html_e( 'View Pricing', 'newsletter-optin-box' ); ?>&nbsp;<i class="dashicons dashicons-arrow-right-alt"></i></a></p>
 			<?php
-			return;
 		}
 
 		// Render sender options.
-		$fields  = array();
-
-		foreach ( get_noptin_subscriber_filters() as $key => $filter ) {
-
-			$fields[ $key ] = array(
-				'label'       => $filter['label'],
-				'type'        => 'select',
-				'options'     => array_replace(
-					array(
-						'' => __( 'Any', 'newsletter-optin-box' ),
-					),
-					$filter['options']
-				),
-				'description' => empty( $filter['description'] ) ? '' : $filter['description'],
-			);
-		}
-
-		$fields = apply_filters( 'noptin_subscriber_sending_options', $fields, $campaign );
+		$fields = apply_filters( 'noptin_subscriber_sending_options', array(), $campaign, $this );
 
 		$this->display_sending_fields( $campaign, 'noptin_subscriber_options', $fields );
 	}

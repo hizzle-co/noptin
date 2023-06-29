@@ -11,9 +11,9 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "pelago/emogrifier": "3.1.0",
         "symfony/css-selector": "3.4.47",
-        "hizzle/store": "^0"
+        "hizzle/store": "^0",
+        "tijsverkoyen/css-to-inline-styles": "^2.2"
     },
     "autoload": {
         "psr-4": {

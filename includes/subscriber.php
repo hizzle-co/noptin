@@ -1186,6 +1186,66 @@ function get_noptin_subscriber_smart_tags() {
 }
 
 /**
+ * Returns a single smart tag.
+ *
+ * @since 1.13.0
+ * @return array
+ */
+function get_noptin_subscriber_smart_tag( $merge_tag ) {
+
+	$collection = noptin()->db()->store->get( 'subscribers' );
+
+	if ( empty( $collection ) ) {
+		return array();
+	}
+
+	// Fetch the prop.
+	$prop = $collection->get_prop( $merge_tag );
+
+	// If it does not exist, try prepending the cf_ prefix.
+	if ( empty( $prop ) ) {
+		$prop = $collection->get_prop( 'cf_' . $merge_tag );
+	}
+
+	// If it still does not exist, return an empty array.
+	if ( empty( $prop ) ) {
+		return array();
+	}
+
+	$smart_tag = array(
+		'label'       => wp_strip_all_tags( empty( $prop->label ) ? '' : $prop->label ),
+		'description' => wp_strip_all_tags( $prop->description ),
+		'example'     => $prop->name . ' default=""',
+		'merge_tag'   => $prop->name,
+		'options'     => false,
+		'is_multiple' => $prop->is_meta_key && $prop->is_meta_key_multiple,
+	);
+
+	if ( is_callable( $prop->enum ) ) {
+		$smart_tag['options'] = call_user_func( $prop->enum );
+	} elseif ( is_array( $prop->enum ) ) {
+		$smart_tag['options'] = array_combine( $prop->enum, $prop->enum );
+	}
+
+	if ( $prop->is_boolean() ) {
+		$smart_tag['options'] = array(
+			'1' => __( 'Yes', 'newsletter-optin-box' ),
+			'0' => __( 'No', 'newsletter-optin-box' ),
+		);
+
+		$smart_tag['conditional_logic'] = 'string';
+	} elseif ( $prop->is_date() ) {
+		$smart_tag['conditional_logic'] = 'date';
+	} elseif ( $prop->is_float() || ( $prop->is_numeric() && ! $prop->is_boolean() ) ) {
+		$smart_tag['conditional_logic'] = 'number';
+	} else {
+		$smart_tag['conditional_logic'] = 'string';
+	}
+
+	return $smart_tag;
+}
+
+/**
  * Returns available subscriber filters.
  *
  * @since 1.8.0

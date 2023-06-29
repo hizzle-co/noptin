@@ -394,7 +394,7 @@ class Noptin_Email_Generator {
 		}
 
 		// Maybe abort early.
-		if ( ! class_exists( 'DOMDocument' ) || ! class_exists( 'Pelago\Emogrifier\CssInliner' ) ) {
+		if ( ! class_exists( 'DOMDocument' ) || ! class_exists( '\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles' ) ) {
 			return $content;
 		}
 
@@ -412,9 +412,11 @@ class Noptin_Email_Generator {
 				$content
 			);
 
+			// create inliner instance
+			$inliner = new \TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
+
 			// Inline styles.
-			$emogrifier = Pelago\Emogrifier\CssInliner::fromHtml( $content );
-			$content    = $emogrifier->inlineCss( $styles )->render();
+			$content = $inliner->convert( $content, $styles );
 
 			// Restore hrefs.
 			$content = preg_replace_callback(

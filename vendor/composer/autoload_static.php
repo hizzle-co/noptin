@@ -7,13 +7,13 @@ namespace Composer\Autoload;
 class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
 {
     public static $prefixLengthsPsr4 = array (
+        'T' => 
+        array (
+            'TijsVerkoyen\\CssToInlineStyles\\' => 31,
+        ),
         'S' => 
         array (
             'Symfony\\Component\\CssSelector\\' => 30,
-        ),
-        'P' => 
-        array (
-            'Pelago\\' => 7,
         ),
         'H' => 
         array (
@@ -23,13 +23,13 @@ class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
     );
 
     public static $prefixDirsPsr4 = array (
+        'TijsVerkoyen\\CssToInlineStyles\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src',
+        ),
         'Symfony\\Component\\CssSelector\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/css-selector',
-        ),
-        'Pelago\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/pelago/emogrifier/src',
         ),
         'Hizzle\\Store\\' => 
         array (
