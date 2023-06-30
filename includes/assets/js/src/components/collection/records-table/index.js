@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useMemo, useCallback } from "@wordpress/element";
-import { Notice, CardBody, Flex, FlexItem } from "@wordpress/components";
+import { Notice, CardBody, Flex, FlexItem, FlexBlock } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useParams } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ import { useCurrentSchema, useCurrentRecords } from "../hooks";
 import ExportButton from "./export";
 import DeleteButton from "./delete-button";
 import BulkEditButton from "./bulk-edit-button";
+import FiltersButton from "./filters";
 import { updateQueryString, getQuery } from "../../navigation";
 
 /**
@@ -133,13 +134,20 @@ export default function RecordsTable() {
 				</Wrap>
 			) : (
 				<SelectedContextProvider>
-					<DisplayRecords
-						schema={ data }
-						records={ records.data.items }
-						total={ records.data.total }
-						summary={ records.data.summary }
-						isLoading={ records.isResolving }
-					/>
+					<Flex gap={2} direction="column">
+						<FlexItem>
+							<FiltersButton />
+						</FlexItem>
+						<FlexBlock>
+							<DisplayRecords
+								schema={ data }
+								records={ records.data.items }
+								total={ records.data.total }
+								summary={ records.data.summary }
+								isLoading={ records.isResolving }
+							/>
+						</FlexBlock>
+					</Flex>
 				</SelectedContextProvider>
 			) }
 		</>

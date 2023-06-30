@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useDispatch } from "@wordpress/data";
-import { useState, useMemo, Fragment } from "@wordpress/element";
+import { useState, Fragment } from "@wordpress/element";
 import { Button, Modal, Notice, Spinner, Icon } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
 
@@ -12,8 +12,9 @@ import { __, sprintf } from "@wordpress/i18n";
 import { BlockButton, ErrorNotice } from "../../styled-components";
 import { useSelected } from "../../table/selected-context";
 import { useParams } from "react-router-dom";
-import { useCurrentSchema, useCurrentQueryRecordCount, useQueryOrSelected } from "../hooks";
+import { useCurrentQueryRecordCount, useQueryOrSelected } from "../hooks";
 import Setting from "../../setting";
+import { useFilterableFields } from "./filters";
 
 /**
  * Displays the bulk edit form.
@@ -197,34 +198,7 @@ const TheModal = ( {editableFields} ) => {
 export default function BulkEditButton() {
 
 	const [isOpen, setOpen] = useState( false );
-	const { data }          = useCurrentSchema();
-
-	const editableFields = useMemo( () => {
-		return data.schema.filter( ( field ) => {
-	
-			// Remove readonly fields.
-			if ( field.readonly || field.is_dynamic ) {
-				return false;
-			}
-
-			// Remove non-selectable fields.
-			if ( ! field.enum || Array.isArray( field.enum ) ) {
-				return false;
-			}
-
-			// Remove ignorable fields.
-			if ( data.ignore && data.ignore.includes( field.name ) ) {
-				return false;
-			}
-
-			// Remove hidden fields.
-			if ( data.hidden && data.hidden.includes( field.name ) ) {
-				return false;
-			}
-
-			return true;
-		} );
-	}, [ data.schema ] );
+	const editableFields    = useFilterableFields( true );
 
 	// Whether we should display the button.
 	const displayButton = editableFields.length > 0;
@@ -236,7 +210,7 @@ export default function BulkEditButton() {
 				<>
 					<Button
 						onClick={() => setOpen( true )}
-						icon="edit"
+						variant="tertiary"
 						text={__( 'Bulk Edit', 'newsletter-optin-box' )}
 					/>
 

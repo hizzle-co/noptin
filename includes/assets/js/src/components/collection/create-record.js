@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useState, useMemo } from "@wordpress/element";
-import { Notice, Spinner, CardBody, Tip, Flex, Slot, Snackbar } from "@wordpress/components";
+import { Notice, Spinner, CardBody, Tip, Flex, Slot } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useDispatch } from "@wordpress/data";
 import { compact } from 'lodash';

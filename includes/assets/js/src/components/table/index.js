@@ -120,7 +120,7 @@ export const Menu = ( { headers, hiddenHeaders, setHiddenHeaders } ) => {
  * @param {Function} props.setHiddenHeaders Callback to update the hidden table headers.
  * @param {number} props.totalRows Total number of rows.
  */
-export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, headers, hiddenHeaders, setHiddenHeaders, totalRows } ) => {
+export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, filtersButton, headers, hiddenHeaders, setHiddenHeaders, totalRows } ) => {
 
 	// Memoize the actions.
 	const theActions = useMemo( () => (
@@ -156,6 +156,8 @@ export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPla
 				<FlexItem>
 					<CardHeadingText as="h2">{ title }</CardHeadingText>
 				</FlexItem>
+
+				{ filtersButton && <FlexItem>{filtersButton}</FlexItem> }
 
 				{ theSearch }
 
@@ -197,6 +199,7 @@ export const TableFooter = ( { isLoading, summary, query, onQueryChange, totalRo
  */
 const TableCard = ( {
 	actions,
+	filtersButton,
 	className,
 	hasSearch,
 	searchPlaceholder,
@@ -242,6 +245,7 @@ const TableCard = ( {
 				onQueryChange={ onQueryChange }
 				searchPlaceholder={ searchPlaceholder }
 				actions={ actions }
+				filtersButton={ filtersButton }
 				headers={ headers }
 				hiddenHeaders={ hiddenHeaders }
 				setHiddenHeaders={ setHiddenHeaders }

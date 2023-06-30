@@ -258,7 +258,7 @@ export default function ExportButton() {
 
 			<Button
 				onClick={() => setOpen(true)}
-				icon="download"
+				variant="tertiary"
 				text={ title }
 			/>
 

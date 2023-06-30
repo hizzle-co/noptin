@@ -86,6 +86,7 @@ export default function DeleteButton() {
 
 			<Button
 				onClick={() => setOpen( true )}
+				variant="tertiary"
 				icon="trash"
 				text={title}
 				isDestructive

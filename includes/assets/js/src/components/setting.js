@@ -28,7 +28,7 @@ import { MergeTagsModal } from './merge-tags';
 /**
  * Input types.
  */
-const inputTypes = ['number', 'search', 'email', 'password', 'tel', 'url'];
+const inputTypes = ['number', 'search', 'email', 'password', 'tel', 'url', 'date'];
 
 /**
  * Displays an input setting
@@ -409,7 +409,7 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 		options.unshift({
 			label: setting.placeholder ? setting.placeholder : __( 'Select an option', 'newsletter-optin-box' ),
 			value: '',
-			disabled: true,
+			disabled: ! setting.canSelectPlaceholder,
 		});
 
 		return <SelectControl {...defaultAttributes} options={options}  __nextHasNoMarginBottom __next36pxDefaultSize />;

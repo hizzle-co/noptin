@@ -368,10 +368,7 @@ class Prop {
 				__( 'Limit response to resources where %s has the provided value.', 'hizzle-store' ),
 				$this->name
 			),
-			'type'              => array_merge( array( 'array' ), (array) $rest_schema['type'] ),
-			'items'             => array(
-				'type' => $rest_schema['type'],
-			),
+			'type'              => array_unique( array_merge( (array) $rest_schema['type'], array( 'array' ) ) ),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -386,10 +383,7 @@ class Prop {
 				__( 'Limit response to resources where %s does not have the provided value.', 'hizzle-store' ),
 				$this->name
 			),
-			'type'              => array_merge( array( 'array' ), (array) $rest_schema['type'] ),
-			'items'             => array(
-				'type' => $rest_schema['type'],
-			),
+			'type'              => array_unique( array_merge( (array) $rest_schema['type'], array( 'array' ) ) ),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -403,22 +397,20 @@ class Prop {
 			$query_schema[ "{$this->name}_before" ] = array(
 				'description'       => sprintf(
 					// translators: Placeholder %s is the property name.
-					__( 'Limit response to resources where %s is before a given ISO8601 compliant date.', 'hizzle-store' ),
+					__( 'Limit response to resources where %s is before a given strtotime compatible date.', 'hizzle-store' ),
 					$this->name
 				),
 				'type'              => 'string',
-				'format'            => 'date-time',
 				'validate_callback' => 'rest_validate_request_arg',
 			);
 
 			$query_schema[ "{$this->name}_after" ] = array(
 				'description'       => sprintf(
 					// translators: Placeholder %s is the property name.
-					__( 'Limit response to resources where %s is after a given ISO8601 compliant date.', 'hizzle-store' ),
+					__( 'Limit response to resources where %s is after a given strtotime compatible date.', 'hizzle-store' ),
 					$this->name
 				),
 				'type'              => 'string',
-				'format'            => 'date-time',
 				'validate_callback' => 'rest_validate_request_arg',
 			);
 

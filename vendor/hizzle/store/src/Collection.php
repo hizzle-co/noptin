@@ -636,7 +636,9 @@ class Collection {
 
 		// Add each prop.
 		foreach ( $this->props as $prop ) {
-			$query_schema = array_merge( $query_schema, $prop->get_query_schema() );
+			if ( 'id' !== $prop->name ) {
+				$query_schema = array_merge( $query_schema, $prop->get_query_schema() );
+			}
 		}
 
 		$query_schema['order']           = array(

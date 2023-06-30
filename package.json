@@ -7,7 +7,8 @@
 		"test": "test",
 		"csswatch": "sass --no-source-map  --watch includes/assets/sass:includes/assets/css",
 		"compile:css": "sass --no-source-map includes/assets/sass:includes/assets/css && postcss includes/assets/css/*.css -r --no-map",
-		"js": "npx webpack --watch"
+		"js": "npx webpack --watch --mode development",
+		"build:js": "npx webpack --mode production"
 	},
 	"repository": {
 		"type": "git",

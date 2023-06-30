@@ -57,6 +57,13 @@ export function getNewPath(
 		args.hizzle_path = path;
 	}
 
+	// Remove args where value === ''.
+	Object.keys( args ).forEach( ( key ) => {
+		if ( args[ key ] === '' ) {
+			delete args[ key ];
+		}
+	} );
+
 	return addQueryArgs( 'admin.php', args );
 }
 

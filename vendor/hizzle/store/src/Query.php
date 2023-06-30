@@ -59,6 +59,14 @@ class Query {
 	protected $total_results;
 
 	/**
+	 * The field to count.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	public $count_field;
+
+	/**
 	 * The SQL query used to fetch matching records.
 	 *
 	 * @since 1.0.0
@@ -244,11 +252,6 @@ class Query {
 		// Prepare meta query. After WHERE and JOINs have been prepared.
 		$this->prepare_meta_query( $qv, $table );
 
-		// Set whether or not to count the total number of found records.
-		if ( ! $aggregate && empty( $qv['count_only'] ) && isset( $qv['count_total'] ) && $qv['count_total'] ) {
-			$this->query_fields = 'SQL_CALC_FOUND_ROWS ' . $this->query_fields;
-		}
-
 		// Sorting.
 		if ( ! $aggregate ) {
 			$this->prepare_orderby_query( $qv, $table );
@@ -355,6 +358,11 @@ class Query {
 			return;
 		}
 
+		// Check if we need to count the total number of items.
+		if ( ! empty( $qv['count_total'] ) ) {
+			$this->count_field = "DISTINCT COUNT($table.id)";
+		}
+
 		if ( is_array( $qv['fields'] ) ) {
 
 			$query_fields = array();
@@ -398,25 +406,71 @@ class Query {
 		$collection  = $this->get_collection();
 		$meta_query  = empty( $qv['meta_query'] ) ? array() : $qv['meta_query'];
 		$meta_fields = empty( $this->known_fields['meta'] ) ? array() : $this->known_fields['meta'];
+		$table      = $collection->get_db_table_name();
+		$meta_table = $collection->get_meta_table_name();
+		$id_col     = $collection->get_meta_type() . '_id';
+		$not_exists = array();
 
-		foreach ( $meta_fields as $meta_field ) {
+		foreach ( $collection->get_props() as $prop ) {
+
+			if ( ! $prop->is_meta_key ) {
+				continue;
+			}
+
+			$meta_field = $prop->name;
+
+			// Check if this is a multi-value field.
+			if ( $prop->is_meta_key_multiple && isset( $qv[ "{$meta_field}_not" ] ) ) {
+				$value = $qv[ "{$meta_field}_not" ];
+
+				if ( empty( $value ) && ! is_numeric( $value ) ) {
+					continue;
+				}
+
+				if ( is_array( $value ) && 1 < count( $value ) ) {
+					$value = "'" . implode( "','", array_map( 'esc_sql', $value ) ) . "'";
+					$where = "IN ( $value )";
+				} else {
+					$value = is_array( $value ) ? $value[0] : $value;
+					$where = "= '" . esc_sql( $value ) . "'";
+				}
+
+				$not_exists[] = $wpdb->prepare(
+					"( meta_key = %s AND meta_value $where )",
+					$meta_field
+				);
+			}
 
 			// = or IN.
 			if ( isset( $qv[ $meta_field ] ) ) {
+				$value        = is_array( $qv[ $meta_field ] ) && 1 === count( $qv[ $meta_field ] ) ? $qv[ $meta_field ][0] : $qv[ $meta_field ];
 				$meta_query[] = array(
 					'key'     => $meta_field,
-					'value'   => $qv[ $meta_field ],
-					'compare' => is_array( $qv[ $meta_field ] ) ? 'IN' : '=',
+					'value'   => $value,
+					'compare' => is_array( $value ) ? 'IN' : '=',
 				);
 			}
 
 			// != or NOT IN.
-			if ( isset( $qv[ "{$meta_field}_not" ] ) ) {
+			if ( isset( $qv[ "{$meta_field}_not" ] ) && ! $prop->is_meta_key_multiple ) {
+				$value        = is_array( $qv[ "{$meta_field}_not" ] ) && 1 === count( $qv[ "{$meta_field}_not" ] ) ? $qv[ "{$meta_field}_not" ][0] : $qv[ "{$meta_field}_not" ];
 				$meta_query[] = array(
 					'key'     => $meta_field,
-					'value'   => $qv[ "{$meta_field}_not" ],
-					'compare' => is_array( $qv[ "{$meta_field}_not" ] ) ? 'NOT IN' : '!=',
+					'value'   => $value,
+					'compare' => is_array( $value ) ? 'NOT IN' : '!=',
 				);
+			}
+
+		}
+
+		if ( ! empty( $not_exists ) ) {
+
+			if ( 1 === count( $not_exists ) ) {
+				$select             = current( $not_exists );
+				$this->query_where .= " AND $table.id NOT IN ( SELECT DISTINCT $id_col FROM $meta_table WHERE $select )";
+			} else {
+				$select             = implode( ' OR ', $not_exists );
+				$this->query_where .= " AND NOT EXISTS ( SELECT 1 FROM $meta_table WHERE $meta_table.$id_col = $table.id AND ( $select ) )";
 			}
 		}
 
@@ -812,8 +866,8 @@ class Query {
 				$this->results = $wpdb->get_col( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
 
-			if ( isset( $this->query_vars['count_total'] ) && $this->query_vars['count_total'] ) {
-				$this->total_results = (int) $wpdb->get_var( 'SELECT FOUND_ROWS()' );
+			if ( ! empty( $this->count_field ) ) {
+				$this->total_results = (int) $wpdb->get_var( "SELECT $this->count_field $this->query_from $this->query_join $this->query_where" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
 		}
 
