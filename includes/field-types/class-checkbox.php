@@ -75,14 +75,24 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 	 * @param array $field
 	 */
 	public function filter_db_schema( $schema, $custom_field ) {
-		$schema[ $this->get_column_name( $custom_field ) ] = array(
-			'type'        => 'TINYINT',
-			'length'      => 1,
-			'label'       => wp_strip_all_tags( $custom_field['label'] ),
-			'description' => wp_strip_all_tags( $custom_field['label'] ),
-			'nullable'    => false,
-			'default'     => 0,
+		$schema = parent::filter_db_schema( $schema, $custom_field );
+		$column = $this->get_column_name( $custom_field );
+
+		$schema[ $column ] = array_merge(
+			$schema[ $column ],
+			array(
+				'type'     => 'TINYINT',
+				'length'   => 1,
+				'nullable' => false,
+				'default'  => isset( $custom_field['default'] ) ? $custom_field['default'] : 0,
+			)
 		);
+
+		if ( ! empty( $custom_field['default_value'] ) && 'no' !== $custom_field['default_value'] ) {
+			$schema[ $column ]['default'] = 1;
+		} else {
+			$schema[ $column ]['default'] = 0;
+		}
 
 		return $schema;
 	}

@@ -109,4 +109,24 @@ abstract class Noptin_Custom_Field_Type {
 
 		return $schema;
 	}
+
+	/**
+	 * Filters the database schema.
+	 *
+	 * @since 1.13.0
+	 * @param array $schema
+	 * @param array $field
+	 */
+	public function filter_db_schema( $schema, $custom_field ) {
+		$schema[ $this->get_column_name( $custom_field ) ] = array(
+			'type'        => 'TEXT',
+			'label'       => wp_strip_all_tags( $custom_field['label'] ),
+			'description' => wp_strip_all_tags( $custom_field['label'] ),
+		);
+
+		if ( isset( $custom_field['default_value'] ) && '' !== $custom_field['default_value'] ) {
+			$schema[ $this->get_column_name( $custom_field ) ]['default'] = $custom_field['default_value'];
+		}
+		return $schema;
+	}
 }

@@ -129,22 +129,26 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	 * @param array $field
 	 */
 	public function filter_db_schema( $schema, $custom_field ) {
-		$field_schema = array(
-			'type'              => 'VARCHAR',
-			'label'             => wp_strip_all_tags( $custom_field['label'] ),
-			'description'       => wp_strip_all_tags( $custom_field['label'] ),
-			'sanitize_callback' => 'noptin_clean',
+		$schema = parent::filter_db_schema( $schema, $custom_field );
+		$column = $this->get_column_name( $custom_field );
+
+		$schema[ $column ] = array_merge(
+			$schema[ $column ],
+			array(
+				'type'              => 'VARCHAR',
+				'sanitize_callback' => 'noptin_clean',
+			)
 		);
 
 		if ( is_callable( array( $this, 'sanitize_value' ) ) ) {
-			$field_schema['sanitize_callback'] = array( $this, 'sanitize_value' );
+			$schema[ $column ]['sanitize_callback'] = array( $this, 'sanitize_value' );
 		}
 
 		if ( $this->is_multiple ) {
-			$field_schema['is_meta_key']          = true;
-			$field_schema['is_meta_key_multiple'] = true;
+			$schema[ $column ]['is_meta_key']          = true;
+			$schema[ $column ]['is_meta_key_multiple'] = true;
 		} else {
-			$field_schema['length'] = 255;
+			$schema[ $column ]['length'] = 255;
 		}
 
 		$available_options = $this->get_field_options( $custom_field );
@@ -161,13 +165,11 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 			}
 
 			if ( ! $this->is_multiple ) {
-				$field_schema['length'] = $max_length + 1;
+				$schema[ $column ]['length'] = $max_length + 1;
 			}
 
-			$field_schema['enum']   = $available_options;
+			$schema[ $column ]['enum']   = $available_options;
 		}
-
-		$schema[ $this->get_column_name( $custom_field ) ] = $field_schema;
 
 		return $schema;
 	}

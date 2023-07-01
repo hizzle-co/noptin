@@ -72,16 +72,20 @@ class Noptin_Custom_Field_Text extends Noptin_Custom_Field_Type {
 	 * @param array $field
 	 */
 	public function filter_db_schema( $schema, $custom_field ) {
-		$schema[ $this->get_column_name( $custom_field ) ] = array(
-			'type'        => 'VARCHAR',
-			'length'      => 255,
-			'label'       => wp_strip_all_tags( $custom_field['label'] ),
-			'description' => wp_strip_all_tags( $custom_field['label'] ),
+		$schema = parent::filter_db_schema( $schema, $custom_field );
+		$column = $this->get_column_name( $custom_field );
+
+		$schema[ $column ] = array_merge(
+			$schema[ $column ],
+			array(
+				'type'   => 'VARCHAR',
+				'length' => 255,
+			)
 		);
 
 		// Sanitize options.
 		if ( is_callable( array( $this, 'sanitize_value' ) ) ) {
-			$schema['sanitize_callback'] = array( $this, 'sanitize_value' );
+			$schema[ $column ]['sanitize_callback'] = array( $this, 'sanitize_value' );
 		}
 
 		return $schema;

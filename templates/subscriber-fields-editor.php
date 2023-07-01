@@ -55,6 +55,14 @@
 				);
 				Noptin_Vue::render_el( 'field.options', $args );
 
+				// Default value.
+				$args = array(
+					'el'          => 'input',
+					'label'       => __( 'Default value', 'newsletter-optin-box' ),
+					'description' => __( 'Optional. Enter the default value for this field', 'newsletter-optin-box' ),
+				);
+				Noptin_Vue::render_el( 'field.default_value', $args );
+
 				do_action( 'noptin_custom_field_settings' );
 
 				// Change visibility.

@@ -89,9 +89,12 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 
 		// Call parent.
 		$schema = parent::filter_db_schema( $schema, $custom_field );
+		$column = $this->get_column_name( $custom_field );
 
 		// Set default.
-		$schema[ $this->get_column_name( $custom_field ) ]['default'] = get_locale();
+		if ( empty( $schema[ $column ]['default'] ) ) {
+			$schema[ $column ]['default'] = get_locale();
+		}
 
 		return $schema;
 	}

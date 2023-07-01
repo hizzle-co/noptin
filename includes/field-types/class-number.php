@@ -34,11 +34,15 @@ class Noptin_Custom_Field_Number extends Noptin_Custom_Field_Text {
 	 * @param array $field
 	 */
 	public function filter_db_schema( $schema, $custom_field ) {
-		$schema[ $this->get_column_name( $custom_field ) ] = array(
-			'type'        => 'DECIMAL',
-			'length'      => '26,8',
-			'label'       => wp_strip_all_tags( $custom_field['label'] ),
-			'description' => wp_strip_all_tags( $custom_field['label'] ),
+		$schema = parent::filter_db_schema( $schema, $custom_field );
+		$column = $this->get_column_name( $custom_field );
+
+		$schema[ $column ] = array_merge(
+			$schema[ $column ],
+			array(
+				'type'   => 'DECIMAL',
+				'length' => '26,8',
+			)
 		);
 
 		return $schema;
