@@ -953,6 +953,9 @@ class REST_Controller extends \WP_REST_Controller {
 			$method    = "{$action}_batch_item";
 			$skip_data = 'update' === $action && ! empty( $bulk_update );
 
+			// Set a flag for the current action.
+			$GLOBALS[ $collection->get_full_name() . '_batch_action' ] = $action;
+
 			// Loop through each item.
 			foreach ( $action_items as $item ) {
 

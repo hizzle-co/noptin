@@ -127,9 +127,15 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	 * @return bool
 	 */
 	public function can_run( $subject, $rule, $args ) {
+		global $noptin_subscribers_batch_action;
 
 		// Abort if we do not have a campaign.
 		if ( empty( $rule->action_settings['automated_email_id'] ) ) {
+			return false;
+		}
+
+		// ... or if we're importing subscribers.
+		if ( 'import' === $noptin_subscribers_batch_action ) {
 			return false;
 		}
 

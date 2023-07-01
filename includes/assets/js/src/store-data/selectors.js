@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import createSelector from 'rememo';
+import { createSelector } from 'reselect';
 
 /**
  * Internal dependencies
@@ -18,18 +18,11 @@ const defaultRecords =  {
  * Retrieves record IDs.
  *
  * @param {String} queryString
- * @return {Array|null} Records.
+ * @return {Object} Records.
  */
 export const getRecordIDs = ( state = DEFAULT_STATE, queryString ) => {
-
 	queryString = '' === queryString ? 'all' : queryString;
-
-	// Check if records are already loaded.
-	if ( Array.isArray( state.records.queries[ queryString ]?.items ) ) {
-		return state.records.queries[ queryString ].items;
-	}
-
-	return [];
+	return state.records.queries[ queryString ] ?? defaultRecords;
 }
 
 /**
@@ -61,28 +54,31 @@ export const getQuerySummary = ( state = DEFAULT_STATE, queryString ) => {
 }
 
 /**
+ * Retrieves all records.
+ *
+ * @return {Object} Records.
+ */
+export const getAllRecords = ( state = DEFAULT_STATE ) => state.records.byID || {};
+
+/**
+ * Retrieves matching records for the specified query.
+ */
+/**
  * Retrieves records.
  *
  * @param {String} queryString
  * @return {Object} Records.
  */
 export const getRecords = createSelector(
-	( state = DEFAULT_STATE, queryString ) => {
-
-		queryString = '' === queryString ? 'all' : queryString;
-		const results = state.records.queries[ queryString ] ?? defaultRecords;
-
+	getRecordIDs,
+	getAllRecords,
+	( recordIds, allRecords ) => {
 		// Loop through records to find the record.
 		return {
-			items: results.items.map( id => state.records.byID[ id ] ),
-			summary: results.summary,
-			total: results.total,
+			...recordIds,
+			items: recordIds.items.map( id => allRecords[ id ] ),
 		};
-	},
-	( state = DEFAULT_STATE, queryString ) => [
-		state.records.queries[ '' === queryString ? 'all' : queryString ],
-		state.records.byId,
-	]
+	}
 );
 
 /**

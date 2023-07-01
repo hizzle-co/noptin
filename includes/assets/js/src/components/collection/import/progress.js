@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import apiFetch from "@wordpress/api-fetch";
 import { useDispatch } from "@wordpress/data";
 import { useState, useCallback, useEffect } from "@wordpress/element";
 import { __, sprintf } from "@wordpress/i18n";
@@ -137,10 +136,6 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 
 			if ( false === done ) {
 				setDone( true );
-
-				if ( processed > 0 ) {
-					dispatch.emptyCache( dispatch );
-				}
 			}
 
 			return;
@@ -151,56 +146,55 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 		}
 
 		// Import the chunk.
-		apiFetch({
-			path: `${namespace}/v1/${collection}/batch`,
-			method: 'POST',
-			data: {
-				import: chunk,
-				update: updateRecords,
-			},
-		}).then(( res ) => {
+		const batchAction = {
+			import: chunk,
+			update: updateRecords,
+		};
 
-			let skipped = 0;
-			let updated = 0;
-			let created = 0;
-			let failed = 0;
-			let errors = [];
+		dispatch.batchAction( batchAction, dispatch )
+			.then(( { result } ) => {
 
-			if ( res.import && res.import.length ) {
+				let skipped = 0;
+				let updated = 0;
+				let created = 0;
+				let failed = 0;
+				let errors = [];
 
-				res.import.forEach(( record ) => {
+				if ( result?.import && result.import.length ) {
 
-					if ( record.data?.skipped ) {
-						skipped++;
-					}
+					result.import.forEach(( record ) => {
 
-					if ( record.data?.updated ) {
-						updated++;
-					}
+						if ( record.data?.skipped ) {
+							skipped++;
+						}
 
-					if ( record.data?.created ) {
-						created++;
-					}
+						if ( record.data?.updated ) {
+							updated++;
+						}
 
-					if ( record.is_error ) {
-						failed++;
-						errors.push( record.data );
-					}
-				});
-			}
+						if ( record.data?.created ) {
+							created++;
+						}
 
-			setSkippedRecords( skippedRecords + skipped );
-			setUpdatedRecords( updatedRecords + updated );
-			setCreatedRecords( createdRecords + created );
-			setFailedRecords( failedRecords + failed );
-			setErrors( [ ...errors, ...errors ] );
-		}).catch(( error ) => {
-			setFailedRecords( failedRecords + chunk.length );
-			setErrors( [ ...errors, error ] );
-		}).finally(() => {
-			setProcessed( processed + chunk.length );
-			setChunks( newChunks );
-		});
+						if ( record.is_error ) {
+							failed++;
+							errors.push( record.data );
+						}
+					});
+				}
+
+				setSkippedRecords( skippedRecords + skipped );
+				setUpdatedRecords( updatedRecords + updated );
+				setCreatedRecords( createdRecords + created );
+				setFailedRecords( failedRecords + failed );
+				setErrors( [ ...errors, ...errors ] );
+			}).catch(( error ) => {
+				setFailedRecords( failedRecords + chunk.length );
+				setErrors( [ ...errors, error ] );
+			}).finally(() => {
+				setProcessed( processed + chunk.length );
+				setChunks( newChunks );
+			});
 	}, [ chunks, paused ]);
 
 	// Parse the file.

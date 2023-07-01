@@ -132,12 +132,12 @@ export default function createDynamicActions( namespace, collection ) {
 			const method = 'POST';
 
 			// Process the action.
-			yield apiFetch( { path, method, data } );
+			const result = yield apiFetch( { path, method, data } );
 
 			// Invalidate related selectors.
 			yield dispatch.emptyCache( dispatch );
 
-			return { type: 'BATCH_ACTION' };
+			return { type: 'BATCH_ACTION', result };
 		},
 
 		/**
