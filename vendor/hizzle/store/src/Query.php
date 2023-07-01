@@ -405,7 +405,6 @@ class Query {
 
 		$collection  = $this->get_collection();
 		$meta_query  = empty( $qv['meta_query'] ) ? array() : $qv['meta_query'];
-		$meta_fields = empty( $this->known_fields['meta'] ) ? array() : $this->known_fields['meta'];
 		$table      = $collection->get_db_table_name();
 		$meta_table = $collection->get_meta_table_name();
 		$id_col     = $collection->get_meta_type() . '_id';

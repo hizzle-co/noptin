@@ -99,7 +99,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 		$options = $campaign->get( 'noptin_subscriber_options' );
 		$options = is_array( $options ) ? $options : array();
 
-		return apply_filters( 'noptin_subscribers_can_email_subscriber_for_campaign', true, $options, $subscriber->get_deprecated_subscriber(), $campaign );
+		return apply_filters( 'noptin_subscribers_can_email_subscriber_for_campaign', true, $options, $subscriber, $campaign );
 	}
 
 	/**
@@ -109,15 +109,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 	 *
 	 */
 	public function done_sending( $campaign ) {
-		global $wpdb;
-
-		$wpdb->delete(
-			get_noptin_subscribers_meta_table_name(),
-			array(
-				'meta_key' => '_campaign_' . $campaign->id,
-			)
-		);
-
+		noptin()->db()->delete_all_meta_by_key( '_campaign_' . $campaign->id );
 	}
 
 	/**
@@ -159,14 +151,26 @@ class Email_Sender_Subscribers extends Email_Sender {
 				// Loop through available filters.
 				foreach ( array_keys( get_noptin_subscriber_filters() ) as $filter ) {
 
-					$filtered = isset( $options[ $filter ] ) ? $options[ $filter ] : '';
-
-					if ( '' === $filtered && 0 === strpos( $filter, 'cf_' ) && isset( $options[ substr( $filter, 3 ) ] ) ) {
+					// Filter by key.
+					if ( 0 === strpos( $filter, 'cf_' ) && isset( $options[ substr( $filter, 3 ) ] ) ) {
 						$filtered = $options[ substr( $filter, 3 ) ];
+					} else {
+						$filtered = isset( $options[ $filter ] ) ? $options[ $filter ] : '';
 					}
 
-					if ( '' !== $filtered ) {
+					if ( '' !== $filtered && array() !== $filtered ) {
 						$args[ $filter ] = $filtered;
+					}
+
+					// Exclude by key.
+					if ( 0 === strpos( $filter, 'cf_' ) && isset( $options[ substr( $filter, 3 ) . '_not' ] ) ) {
+						$filtered = $options[ substr( $filter, 3 ) . '_not' ];
+					} else {
+						$filtered = isset( $options[ $filter . '_not' ] ) ? $options[ $filter . '_not' ] : '';
+					}
+
+					if ( '' !== $filtered && array() !== $filtered ) {
+						$args[ $filter . '_not' ] = $filtered;
 					}
 				}
 			}

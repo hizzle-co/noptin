@@ -16,15 +16,6 @@ defined( 'ABSPATH' ) || exit;
 class Subscriber extends \Hizzle\Store\Record {
 
 	/**
-	 * Returns the deprecated subscriber object.
-	 *
-	 * @return \Noptin_Subscriber
-	 */
-	public function get_deprecated_subscriber() {
-		return new \Noptin_Subscriber( $this->get_id() );
-	}
-
-	/**
 	 * Returns the subscriber's full name.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
