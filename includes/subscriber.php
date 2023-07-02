@@ -304,6 +304,38 @@ function add_noptin_subscriber( $fields ) {
 		return (int) $subscriber_id;
 	}
 
+	// Backwards compatibility (source).
+	if ( isset( $fields['_subscriber_via'] ) && empty( $fields['source'] ) ) {
+		$fields['source'] = $fields['_subscriber_via'];
+		unset( $fields['_subscriber_via'] );
+	}
+
+	// Set default values.
+	if ( ! empty( $fields['source'] ) ) {
+
+		// Loop through all custom fields.
+		foreach ( get_noptin_subscriber_filters() as $merge_tag => $filter ) {
+
+			// Skip if no options.
+			if ( empty( $filter['options'] ) || empty( $filter['is_multiple'] ) || isset( $fields[ $merge_tag ] ) ) {
+				continue;
+			}
+
+			$default_value = get_option(
+				sprintf(
+					'%s_default_%s',
+					$fields['source'],
+					$merge_tag
+				),
+				'-1'
+			);
+
+			if ( '-1' !== $default_value && '' !== $default_value ) {
+				$fields[ $merge_tag ] = $default_value;
+			}
+		}
+	}
+
 	// Get the subscriber object.
 	$subscriber = noptin_get_subscriber();
 
@@ -316,11 +348,6 @@ function add_noptin_subscriber( $fields ) {
 	// Set the subscriber status.
 	if ( empty( $fields['status'] ) ) {
 		$subscriber->set_status( get_noptin_option( 'double_optin', false ) ? 'pending' : 'subscribed' );
-	}
-
-	// Backwards compatibility (source).
-	if ( isset( $fields['_subscriber_via'] ) ) {
-		$subscriber->set_source( $fields['_subscriber_via'] );
 	}
 
 	// Backwards compatibility (status).

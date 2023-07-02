@@ -131,9 +131,6 @@ class Noptin_Ninja_Forms extends NF_Abstracts_Action {
 		// Prepare Noptin Fields.
 		$noptin_fields = $this->map_fields( $action_settings );
 
-		// Add integration data.
-		$noptin_fields['integration_data'] = compact( 'action_settings', 'data', 'form_id' );
-
 		// Filter the subscriber fields.
 		$noptin_fields = apply_filters( 'noptin_ninja_forms_integration_new_subscriber_fields', $noptin_fields );
 

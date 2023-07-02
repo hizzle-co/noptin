@@ -439,6 +439,55 @@ abstract class Noptin_Abstract_Integration {
 	}
 
 	/**
+	 * Custom fields to subscribe to.
+	 *
+	 * @since 1.13.0
+	 * @param array  $options An array of Noptin options.
+	 * @return array an updated array of Noptin options.
+	 */
+	public function add_multi_checkbox_custom_field_options( $options ) {
+
+		// Loop through all custom fields.
+		foreach ( get_noptin_subscriber_filters() as $merge_tag => $filter ) {
+
+			// Skip if no options.
+			if ( empty( $filter['options'] ) || empty( $filter['is_multiple'] ) ) {
+				continue;
+			}
+
+			$label       = $filter['label'];
+			$option_name = sprintf(
+				'%s_default_%s',
+				empty( $this->subscriber_via ) ? $this->slug : $this->subscriber_via,
+				$merge_tag
+			);
+
+			$options[ $option_name ] = array(
+				'el'          => 'select',
+				'section'     => 'integrations',
+				'label'       => $label,
+				'restrict'    => $this->get_enable_integration_option_name(),
+				'options'     => array_merge(
+					array(
+						'-1' => __( 'Use default', 'newsletter-optin-box' ),
+					),
+					$filter['options']
+				),
+				'default'     => '-1',
+				'description' => sprintf(
+					/* translators: %s is the context, e.g users, customers */
+					__( 'Select the default %s to add new subscribers who sign up via this method.', 'newsletter-optin-box' ),
+					$label
+				),
+				'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),
+			);
+		}
+
+		return $options;
+
+	}
+
+	/**
 	 * Adds an autosubscribe checkbox
 	 *
 	 * @since 1.2.6
@@ -502,6 +551,7 @@ abstract class Noptin_Abstract_Integration {
 		$options = $this->add_autotick_checkbox_integration_option( $options );
 		$options = $this->add_checkbox_position_option( $options );
 		$options = $this->add_checkbox_message_integration_option( $options );
+		$options = $this->add_multi_checkbox_custom_field_options( $options );
 		return $options;
 	}
 
@@ -741,10 +791,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @param mixed $integration_details Subscriber Integration details.
 	 * @since 1.2.6
 	 */
-	protected function add_subscriber( array $subscriber_details, $integration_details = null ) {
-
-		// Append integration details to the subscriber.
-		$subscriber_details['integration_data'] = $integration_details;
+	protected function add_subscriber( $subscriber_details, $integration_details = null ) {
 
 		// Filter the subscriber details for a specific integration.
 		$subscriber_details = apply_filters( "noptin_{$this->slug}_integration_new_subscriber_fields", $subscriber_details, $integration_details, $this );
@@ -764,7 +811,7 @@ abstract class Noptin_Abstract_Integration {
 	 * @param mixed $integration_details Subscriber Integration details.
 	 * @since 1.2.6
 	 */
-	protected function update_subscriber( $subscriber_id, array $subscriber_details, $integration_details = null ) {
+	protected function update_subscriber( $subscriber_id, $subscriber_details, $integration_details = null ) {
 
 		// Append integration details to the subscriber.
 		$subscriber_details['integration_data'] = $integration_details;

@@ -234,9 +234,6 @@ class Noptin_Contact_Form_7 {
 			return;
 		}
 
-		// Add integration data.
-		$noptin_fields['integration_data'] = compact( 'contact_form', 'posted_data' );
-
 		// Filter the subscriber fields.
 		$noptin_fields = apply_filters( 'noptin_contact_form_7_integration_new_subscriber_fields', $noptin_fields, $this );
 

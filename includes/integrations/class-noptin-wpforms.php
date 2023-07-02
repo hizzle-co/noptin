@@ -331,8 +331,6 @@ class Noptin_WPForms {
 			}
 		}
 
-		$noptin_fields['integration_data'] = compact( 'fields', 'entry', 'form_data', 'entry_id' );
-
 		$noptin_fields = apply_filters( 'noptin_wpforms_integration_new_subscriber_fields', array_filter( $noptin_fields ) );
 
 		add_noptin_subscriber( $noptin_fields );

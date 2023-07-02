@@ -410,9 +410,6 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
 			return;
 		}
 
-		// Add integration data.
-		$subscriber['integration_data'] = compact( 'form', 'entry', 'feed' );
-
 		// Filter the subscriber fields.
 		$subscriber = apply_filters( 'noptin_gravity_forms_integration_new_subscriber_fields', $subscriber, $this );
 

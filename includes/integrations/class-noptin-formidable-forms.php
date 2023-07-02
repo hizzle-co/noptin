@@ -103,9 +103,6 @@ class Noptin_Formidable_Forms extends FrmFormAction {
 			return;
 		}
 
-		// Add integration data.
-		$subscriber['integration_data'] = compact( 'action', 'entry' );
-
 		// Filter the subscriber fields.
 		$subscriber = apply_filters( 'noptin_formidable_forms_integration_new_subscriber_fields', $subscriber );
 
