@@ -88,12 +88,7 @@ abstract class Noptin_Custom_Field_Type {
 	 * @return string
 	 */
 	public function get_column_name( $custom_field ) {
-
-		if ( ! empty( $custom_field['predefined'] ) ) {
-			return $custom_field['merge_tag'];
-		}
-
-		return 'cf_' . $custom_field['merge_tag'];
+		return sanitize_key( $custom_field['merge_tag'] );
 	}
 
 	/**

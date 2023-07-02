@@ -1146,12 +1146,6 @@ function get_noptin_custom_fields( $public_only = false ) {
  * @return array|false Array of field data or false if the field does not exist.
  */
 function get_noptin_custom_field( $merge_tag ) {
-
-	// Maybe remove the cf_ prefix.
-	if ( 'cf_' === substr( $merge_tag, 0, 3 ) ) {
-		$merge_tag = substr( $merge_tag, 3 );
-	}
-
 	$custom_field = wp_list_filter( get_noptin_custom_fields(), array( 'merge_tag' => trim( $merge_tag ) ) );
 	return current( $custom_field );
 }
@@ -1228,11 +1222,6 @@ function get_noptin_subscriber_smart_tag( $merge_tag ) {
 
 	// Fetch the prop.
 	$prop = $collection->get_prop( $merge_tag );
-
-	// If it does not exist, try prepending the cf_ prefix.
-	if ( empty( $prop ) ) {
-		$prop = $collection->get_prop( 'cf_' . $merge_tag );
-	}
 
 	// If it still does not exist, return an empty array.
 	if ( empty( $prop ) ) {

@@ -152,22 +152,14 @@ class Email_Sender_Subscribers extends Email_Sender {
 				foreach ( array_keys( get_noptin_subscriber_filters() ) as $filter ) {
 
 					// Filter by key.
-					if ( 0 === strpos( $filter, 'cf_' ) && isset( $options[ substr( $filter, 3 ) ] ) ) {
-						$filtered = $options[ substr( $filter, 3 ) ];
-					} else {
-						$filtered = isset( $options[ $filter ] ) ? $options[ $filter ] : '';
-					}
+					$filtered = isset( $options[ $filter ] ) ? $options[ $filter ] : '';
 
 					if ( '' !== $filtered && array() !== $filtered ) {
 						$args[ $filter ] = $filtered;
 					}
 
 					// Exclude by key.
-					if ( 0 === strpos( $filter, 'cf_' ) && isset( $options[ substr( $filter, 3 ) . '_not' ] ) ) {
-						$filtered = $options[ substr( $filter, 3 ) . '_not' ];
-					} else {
-						$filtered = isset( $options[ $filter . '_not' ] ) ? $options[ $filter . '_not' ] : '';
-					}
+					$filtered = isset( $options[ $filter . '_not' ] ) ? $options[ $filter . '_not' ] : '';
 
 					if ( '' !== $filtered && array() !== $filtered ) {
 						$args[ $filter . '_not' ] = $filtered;
