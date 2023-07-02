@@ -67,6 +67,44 @@ $update      = empty( $form->settings['update_existing'] ) ? '' : $form->setting
 	<input type="text" class="noptin-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $form->settings['redirect'] ) ? esc_attr( $form->settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( /* translators: Example URL */ esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
 </div>
 
+<?php foreach ( get_noptin_multicheck_custom_fields() as $field ) : ?>
+	<?php
+
+		// Skip if no options.
+		if ( empty( $field['options'] ) ) {
+			continue;
+		}
+
+		$current_value = ! isset( $form->settings[ $field['merge_tag'] ] ) ? noptin_parse_list( $field['default_value'], true ) : noptin_parse_list( $form->settings[ $field['merge_tag'] ], true );
+	?>
+	<div class="noptin-text-wrapper form-field-row__cf-<?php echo esc_attr( $field['merge_tag'] ); ?>">
+		<label for="noptin-form__cf-<?php echo esc_attr( $field['label'] ); ?>" class="noptin-field-label">
+			<?php echo esc_html( $field['label'] ); ?>
+			<span title="
+				<?php
+					sprintf(
+						/* translators: %s is the context, e.g hobbies, lists */
+						__( 'Select the %s to add new subscribers who sign up via this form.', 'newsletter-optin-box' ),
+						$field['label']
+					);
+				?>
+				"
+				class="noptin-tip dashicons dashicons-info">
+			</span>
+		</label>
+
+		<input type="hidden" name="noptin_form[settings][<?php echo esc_attr( $field['merge_tag'] ); ?>][]" value="0" />
+		<select id="noptin-form__cf-<?php echo esc_attr( $field['label'] ); ?>" class="noptin-select2" name="noptin_form[settings][<?php echo esc_attr( $field['merge_tag'] ); ?>][]" multiple="multiple" style="width: 30em;">
+			<?php foreach ( noptin_newslines_to_array( $field['options'] ) as $key => $label ) : ?>
+				<option
+					value="<?php echo esc_html( $key ); ?>"
+					<?php selected( in_array( $key, $current_value, true ) ); ?>
+				><?php echo esc_html( $label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+	</div>
+<?php endforeach; ?>
+
 <?php do_action( 'noptin_form_settings_editor', $form ); ?>
 
 <div class="noptin-text-wrapper form-field-row-redirect-url">

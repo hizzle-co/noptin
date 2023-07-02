@@ -308,6 +308,17 @@ class Noptin_Form_Legacy {
 			$defaults['successMessage'] = esc_html__( 'Thanks for subscribing to the newsletter', 'newsletter-optin-box' );
 		}
 
+		// Loop through all custom fields.
+		foreach ( get_noptin_multicheck_custom_fields() as $field ) {
+
+			// Skip if no options.
+			if ( empty( $field['options'] ) ) {
+				continue;
+			}
+
+			$defaults[ $field['merge_tag'] ] = noptin_parse_list( $field['default_value'], true );
+		}
+
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
 
 	}

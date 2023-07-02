@@ -214,7 +214,7 @@ class Noptin_Legacy_Form_Editor {
 	 * Returns setting fields fields
 	 */
 	private function get_setting_fields() {
-		return array(
+		$settings = array(
 
 			// Basic settings.
 			'basic'           => array(
@@ -258,6 +258,43 @@ class Noptin_Legacy_Form_Editor {
 			),
 
 		);
+
+		// Loop through all custom fields.
+		foreach ( get_noptin_multicheck_custom_fields() as $field ) {
+
+			// Skip if no options.
+			if ( empty( $field['options'] ) ) {
+				continue;
+			}
+
+			// Basic settings.
+			$settings[ 'cf_' . $field['merge_tag'] ] = array(
+				'el'       => 'panel',
+				'title'    => $field['label'],
+				'id'       => $field['merge_tag'] . 'Settings',
+				'children' => array(
+
+					'cf-info-text'      => array(
+						'el'      => 'paragraph',
+						'content' => sprintf(
+							/* translators: %s is the context, e.g hobbies, lists */
+							__( 'Select the %s to add new subscribers who sign up via this form.', 'newsletter-optin-box' ),
+							$field['label']
+						),
+						'style'   => 'font-weight: bold;',
+					),
+
+					$field['merge_tag'] => array(
+						'el'      => 'multi_radio_button',
+						'options' => noptin_newslines_to_array( $field['options'] ),
+						'label'   => '',
+					),
+
+				),
+			);
+		}
+
+		return $settings;
 	}
 
 	/**

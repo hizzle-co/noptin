@@ -448,18 +448,18 @@ abstract class Noptin_Abstract_Integration {
 	public function add_multi_checkbox_custom_field_options( $options ) {
 
 		// Loop through all custom fields.
-		foreach ( get_noptin_subscriber_filters() as $merge_tag => $filter ) {
+		foreach ( get_noptin_multicheck_custom_fields() as $field ) {
 
 			// Skip if no options.
-			if ( empty( $filter['options'] ) || empty( $filter['is_multiple'] ) ) {
+			if ( empty( $field['options'] ) ) {
 				continue;
 			}
 
-			$label       = $filter['label'];
+			$label       = $field['label'];
 			$option_name = sprintf(
 				'%s_default_%s',
 				empty( $this->subscriber_via ) ? $this->slug : $this->subscriber_via,
-				$merge_tag
+				$field['merge_tag']
 			);
 
 			$options[ $option_name ] = array(
@@ -471,7 +471,7 @@ abstract class Noptin_Abstract_Integration {
 					array(
 						'-1' => __( 'Use default', 'newsletter-optin-box' ),
 					),
-					$filter['options']
+					$field['options']
 				),
 				'default'     => '-1',
 				'description' => sprintf(

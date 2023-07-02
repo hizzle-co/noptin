@@ -311,27 +311,51 @@ function add_noptin_subscriber( $fields ) {
 	}
 
 	// Set default values.
-	if ( ! empty( $fields['source'] ) ) {
+	$forms = noptin()->forms;
 
-		// Loop through all custom fields.
-		foreach ( get_noptin_subscriber_filters() as $merge_tag => $filter ) {
+	// Loop through all custom fields.
+	foreach ( get_noptin_multicheck_custom_fields() as $field ) {
 
-			// Skip if no options.
-			if ( empty( $filter['options'] ) || empty( $filter['is_multiple'] ) || isset( $fields[ $merge_tag ] ) ) {
-				continue;
+		// Skip if no options.
+		if ( empty( $field['options'] ) || isset( $fields[ $field['merge_tag'] ] ) ) {
+			continue;
+		}
+
+		if ( ! empty( $forms ) && ! empty( $forms->listener ) && ! is_null( $forms->listener->processed_form ) ) {
+			$values = $forms->listener->get_cached( $field['merge_tag'] );
+
+			// Maybe try with the noptin_ prefix.
+			if ( empty( $values ) ) {
+				$values = $forms->listener->get_cached( 'noptin_' . $field['merge_tag'] );
 			}
 
-			$default_value = get_option(
-				sprintf(
-					'%s_default_%s',
-					$fields['source'],
-					$merge_tag
-				),
-				'-1'
-			);
+			if ( ! empty( $_lists ) ) {
+				$fields[ $field['merge_tag'] ] = array_filter( noptin_parse_list( $values, true ) );
+			}
+		} elseif ( ! empty( $fields['source'] ) ) {
+
+			if ( is_numeric( $fields['source'] ) ) {
+
+				// The user subscribed via an opt-in form.
+				$form          = noptin_get_optin_form( $fields['source'] );
+				$default_value = $form->__get( $field['merge_tag'] );
+
+			} else {
+
+				// The user subscribed via other means.
+				$default_value = get_option(
+					sprintf(
+						'%s_default_%s',
+						$fields['source'],
+						$field['merge_tag']
+					),
+					'-1'
+				);
+
+			}
 
 			if ( '-1' !== $default_value && '' !== $default_value ) {
-				$fields[ $merge_tag ] = $default_value;
+				$fields[ $field['merge_tag'] ] = $default_value;
 			}
 		}
 	}
@@ -1137,6 +1161,21 @@ function get_noptin_custom_fields( $public_only = false ) {
 	}
 
 	return $fields;
+}
+
+/**
+ * Returns an array of available multi-checkbox fields.
+ *
+ * @since 1.13.0
+ * @return array
+ */
+function get_noptin_multicheck_custom_fields() {
+	$fields = wp_list_filter(
+		get_noptin_custom_fields(),
+		array( 'type' => 'multi_checkbox' )
+	);
+
+	return apply_filters( 'noptin_multicheck_custom_fields', $fields );
 }
 
 /**
