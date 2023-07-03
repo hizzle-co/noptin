@@ -471,7 +471,7 @@ abstract class Noptin_Abstract_Integration {
 					array(
 						'-1' => __( 'Use default', 'newsletter-optin-box' ),
 					),
-					$field['options']
+					noptin_newslines_to_array( $field['options'] )
 				),
 				'default'     => '-1',
 				'description' => sprintf(

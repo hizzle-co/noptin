@@ -1279,7 +1279,7 @@ function get_noptin_subscriber_smart_tag( $merge_tag ) {
 	if ( is_callable( $prop->enum ) ) {
 		$smart_tag['options'] = call_user_func( $prop->enum );
 	} elseif ( is_array( $prop->enum ) ) {
-		$smart_tag['options'] = array_combine( $prop->enum, $prop->enum );
+		$smart_tag['options'] = $prop->enum;
 	}
 
 	if ( $prop->is_boolean() ) {
