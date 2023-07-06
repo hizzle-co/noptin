@@ -57,7 +57,7 @@
 		"autoprefixer": "10.4.14",
 		"babel-loader": "9.1.2",
 		"css-loader": "^6.7.4",
-		"postcss": "8.4.24",
+		"postcss": "8.4.25",
 		"postcss-csso": "6.0.1",
 		"sass": "1.63.6",
 		"style-loader": "^3.3.3",
