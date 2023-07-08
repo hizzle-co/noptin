@@ -306,7 +306,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		<?php
 
-		if ( defined( 'NOPTIN_WELCOME_EMAILS_FILE' ) ) {
+		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
 			return;
 		}
 

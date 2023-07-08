@@ -50,7 +50,7 @@ class Automated_Email_Campaign_Types extends Controller {
 
 		$prepared = array();
 
-		if ( ! defined( 'NOPTIN_WELCOME_EMAILS_FILE' ) ) {
+		if ( ! defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
 
 			$prepared[] = array(
 				'name'         => 'periodic',
@@ -109,7 +109,7 @@ class Automated_Email_Campaign_Types extends Controller {
 
 		foreach ( noptin()->emails->automated_email_types->types as $automated_email_type ) {
 
-			if ( empty( $automated_email_type->category ) || ( ! defined( 'NOPTIN_WELCOME_EMAILS_FILE' ) && 'automation_rule_new_subscriber' === $automated_email_type->type ) ) {
+			if ( empty( $automated_email_type->category ) || ( ! defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && 'automation_rule_new_subscriber' === $automated_email_type->type ) ) {
 				continue;
 			}
 

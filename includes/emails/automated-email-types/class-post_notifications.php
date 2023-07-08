@@ -145,7 +145,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	 */
 	public function render_metabox( $campaign ) {
 
-		if ( defined( 'NOPTIN_WELCOME_EMAILS_FILE' ) ) {
+		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
 			return;
 		}
 
