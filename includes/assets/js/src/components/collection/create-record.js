@@ -16,6 +16,7 @@ import Setting from "../setting";
 import { useNavigateCollection, useCurrentSchema } from "./hooks";
 import { Section } from "./view-record/overview";
 import { BlockButton } from "../styled-components";
+import { prepareField } from "./records-table/filters";
 
 /**
  * Allows the user to export all records.
@@ -84,37 +85,7 @@ export default function CreateRecord() {
 				return null;
 			}
 
-			const preparedSetting = {
-				default: field.default,
-				label: field.label,
-				el: 'input',
-				type: 'text',
-				name: field.name,
-				isInputToChange: true,
-			};
-
-			if ( field.enum && ! Array.isArray( field.enum ) ) {
-				preparedSetting.el = 'select';
-				preparedSetting.options = field.enum;
-			}
-
-			if ( field.isLongText ) {
-				preparedSetting.el = 'textarea';
-			}
-
-			if ( field.is_numeric || field.is_float ) {
-				preparedSetting.type = 'number';
-			}
-
-			if ( field.is_boolean ) {
-				preparedSetting.type = 'toggle';
-			}
-
-			if ( field.description && field.description !== field.label ) {
-				preparedSetting.description = field.description;
-			}
-
-			return preparedSetting;
+			return prepareField( field );
 		} )
 	) ), [ schema.data ] );
 

@@ -239,9 +239,17 @@ class Schema {
 						'not_found'     => __( 'No subscribers found.', 'newsletter-optin-box' ),
 						'import'        => __( 'Import Subscribers', 'newsletter-optin-box' ),
 					),
-					'props'         => array_merge(
+					'props'          => array_merge(
 						$props,
 						array(
+							'tags'                     => array(
+								'type'                 => 'TEXT',
+								'is_tokens'            => true,
+								'is_meta_key'          => true,
+								'is_meta_key_multiple' => true,
+								'description'          => __( "The subscriber's tags.", 'newsletter-optin-box' ),
+							),
+
 							'status'                   => array(
 								'type'        => 'VARCHAR',
 								'length'      => 12,

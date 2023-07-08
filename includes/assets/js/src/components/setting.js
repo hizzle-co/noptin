@@ -421,7 +421,7 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 			<FormTokenField
 				{...defaultAttributes}
 				value={Array.isArray( defaultAttributes.value ) ? defaultAttributes.value : []}
-				suggestions={ setting.suggestions }
+				suggestions={Array.isArray( setting.suggestions ) ? setting.suggestions : []}
 				__nextHasNoMarginBottom
 				__next40pxDefaultSize
 			/>

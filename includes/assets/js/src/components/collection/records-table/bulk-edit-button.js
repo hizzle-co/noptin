@@ -9,12 +9,12 @@ import { __, sprintf } from "@wordpress/i18n";
 /**
  * Local dependencies.
  */
-import { BlockButton, ErrorNotice } from "../../styled-components";
+import { BlockButton } from "../../styled-components";
 import { useSelected } from "../../table/selected-context";
 import { useParams } from "react-router-dom";
 import { useCurrentQueryRecordCount, useQueryOrSelected } from "../hooks";
 import Setting from "../../setting";
-import { useFilterableFields } from "./filters";
+import { useFilterableFields, prepareField } from "./filters";
 
 /**
  * Displays the bulk edit form.
@@ -28,11 +28,9 @@ const EditForm = ( {editableFields, onSave, changes, setAttributes} ) => {
 			{ editableFields.map( ( field ) => {
 
 				const preparedSetting = {
+					...prepareField( field ),
 					default: '',
 					placeholder: __( 'Do not update', 'newsletter-optin-box' ),
-					label: field.label,
-					name: field.name,
-					isInputToChange: true,
 				};
 
 				let toRemoveSetting = null;
@@ -41,27 +39,12 @@ const EditForm = ( {editableFields, onSave, changes, setAttributes} ) => {
 					preparedSetting.label = sprintf( __( '%s - To Add', 'newsletter-optin-box' ), field.label );
 					preparedSetting.name  = `${ field.name }::add`;
 
-					if ( Array.isArray( field.suggestions  ) ) {
-						preparedSetting.el = 'form_token';
-						preparedSetting.suggestions = field.suggestions;
-					} else {
-						preparedSetting.el = 'multi_checkbox';
-						preparedSetting.options = field.enum;
-					}
-
 					toRemoveSetting = {
 						...preparedSetting,
 						name: `${ field.name }::remove`,
 						label: sprintf( __( '%s - To Remove', 'newsletter-optin-box' ), field.label )
 					}
 
-				} else {
-					preparedSetting.el = 'select';
-					preparedSetting.options = field.enum;
-				}
-
-				if ( field.description && field.description !== field.label ) {
-					preparedSetting.description = field.description;
 				}
 
 				return (

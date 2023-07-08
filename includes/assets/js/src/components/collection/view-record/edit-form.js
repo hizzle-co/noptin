@@ -11,6 +11,7 @@ import { compact } from 'lodash';
  */
 import Setting from "../../setting";
 import { useCurrentSchema } from "../hooks";
+import { prepareField } from "../records-table/filters";
 
 /**
  * Displays the edit form.
@@ -41,44 +42,7 @@ export const EditForm = ( { record, error, onSaveRecord, setAttributes } ) => {
 				return null;
 			}
 
-			const preparedSetting = {
-				default: field.default,
-				label: field.label,
-				el: 'input',
-				type: 'text',
-				name: field.name,
-				isInputToChange: true,
-			};
-
-			if ( field.multiple && Array.isArray( field.suggestions  ) ) {
-				preparedSetting.el = 'form_token';
-				preparedSetting.suggestions = field.suggestions;
-			} else if ( field.enum && ! Array.isArray( field.enum ) ) {
-				preparedSetting.el = 'select';
-				preparedSetting.options = field.enum;
-
-				if ( field.multiple ) {
-					preparedSetting.el = 'multi_checkbox';
-				}
-			}
-
-			if ( field.isLongText ) {
-				preparedSetting.el = 'textarea';
-			}
-
-			if ( field.is_numeric || field.is_float ) {
-				preparedSetting.type = 'number';
-			}
-
-			if ( field.is_boolean ) {
-				preparedSetting.type = 'toggle';
-			}
-
-			if ( field.description && field.description !== field.label ) {
-				preparedSetting.description = field.description;
-			}
-
-			return preparedSetting;
+			return prepareField( field );
 		} )
 	) ), [ data ] );
 

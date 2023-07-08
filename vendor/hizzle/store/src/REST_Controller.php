@@ -1228,8 +1228,12 @@ class REST_Controller extends \WP_REST_Controller {
 					'is_float'    => $prop->is_float(),
 					'is_date'     => $prop->is_date(),
 					'is_meta'     => $prop->is_meta_key,
+					'is_tokens'   => $prop->is_tokens,
 				);
 
+				if ( $prop->is_tokens ) {
+					$schema[ $prop->name ]['suggestions'] = $collection->get_all_meta( $prop->name );
+				}
 			}
 
 			// If we have an email, set as default.

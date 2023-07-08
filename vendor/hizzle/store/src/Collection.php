@@ -1350,9 +1350,9 @@ class Collection {
 	 * @since   1.0.0
 	 */
 	public function delete_all_record_meta( $record_id ) {
-		$all_meta = $this->get_record_meta( $record_id );
+		$all_meta = array_keys( $this->get_record_meta( $record_id ) );
 
-		foreach ( $all_meta as $meta_key => $meta_value ) {
+		foreach ( $all_meta as $meta_key ) {
 			$this->delete_record_meta( $record_id, $meta_key );
 		}
 	}
@@ -1382,6 +1382,22 @@ class Collection {
 		}
 	
 		return true;
+	}
+
+	/**
+	 * Fetches all record meta values for the given meta key.
+	 *
+	 * @param   string $meta_key  Meta key.
+	 * @access  public
+	 */
+	public function get_all_meta( $meta_key ) {
+		global $wpdb;
+
+		$meta_table = $this->get_meta_table_name();
+
+		return $wpdb->get_col(
+			$wpdb->prepare( "SELECT DISTINCT meta_value FROM $meta_table WHERE meta_key = %s", $meta_key ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		);
 	}
 
 	/**

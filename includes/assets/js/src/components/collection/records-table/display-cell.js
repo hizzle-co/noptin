@@ -83,6 +83,19 @@ export default function DisplayCell( { row, header, headerKey } ) {
 		return dateI18n( settings.formats.datetime, value );
 	}
 
+	// Tokens.
+	if ( header.is_tokens && Array.isArray( value ) ) {
+		return (
+			<Flex gap={2} justify="flex-start" wrap>
+				{ value.map( ( val ) => (
+					<FlexItem key={ val }>
+						<Badge {...getEnumBadge( val )}>{ val }</Badge>
+					</FlexItem>
+				) ) }
+			</Flex>
+		)
+	}
+
 	// Array with enum values are displayed as a badge.
 	if ( header.enum && Array.isArray( value ) ) {
 		return (

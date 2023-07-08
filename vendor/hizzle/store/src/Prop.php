@@ -132,6 +132,13 @@ class Prop {
 	public $readonly = false;
 
 	/**
+	 * Whether the prop is saved as a token.
+	 *
+	 * @var bool
+	 */
+	public $is_tokens = false;
+
+	/**
 	 * Whether the prop is saved as a meta key.
 	 *
 	 * @var bool

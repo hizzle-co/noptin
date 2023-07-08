@@ -27,11 +27,9 @@ const EditForm = ( {fields, onApplyFilters, filters, setAttributes} ) => {
                 // If field.is_numeric || field.is_float, show _min and _max fields.
                 // If field.is_date, show _before and _after fields.
 				const mainSetting = {
+					...prepareField( field ),
 					default: '',
 					placeholder: __( 'Any', 'newsletter-optin-box' ),
-					label: field.label,
-					name: field.name,
-					isInputToChange: true,
                     canSelectPlaceholder: true,
 				};
 
@@ -44,8 +42,6 @@ const EditForm = ( {fields, onApplyFilters, filters, setAttributes} ) => {
                         '0': __( 'No', 'newsletter-optin-box' ),
                     };
                 } else if ( field.is_numeric || field.is_float ) {
-                    mainSetting.el   = 'input';
-                    mainSetting.type = 'number';
                     mainSetting.name = `${ field.name }_min`;
                     mainSetting.label = sprintf( __( '%s - Min', 'newsletter-optin-box' ), field.label );
 
@@ -55,8 +51,6 @@ const EditForm = ( {fields, onApplyFilters, filters, setAttributes} ) => {
                         label: sprintf( __( '%s - Max', 'newsletter-optin-box' ), field.label )
                     }
                 } else if ( field.is_date ) {
-                    mainSetting.el   = 'input';
-                    mainSetting.type = 'date';
                     mainSetting.name = `${ field.name }_after`;
                     mainSetting.label = sprintf( __( '%s - After', 'newsletter-optin-box' ), field.label );
 
@@ -67,29 +61,12 @@ const EditForm = ( {fields, onApplyFilters, filters, setAttributes} ) => {
                     }
                 } else {
 
-                    if ( field.multiple ) {
-                        if ( Array.isArray( field.suggestions  ) ) {
-                            mainSetting.el = 'form_token';
-                            mainSetting.suggestions = field.suggestions;
-                        } else {
-                            mainSetting.el = 'multi_checkbox';
-                            mainSetting.options = field.enum;
-                        }
-                    } else {
-                        mainSetting.el = 'select';
-                        mainSetting.options = field.enum;
-                    }
-
 					secondarySetting = {
 						...mainSetting,
 						name: `${ field.name }_not`,
 						label: sprintf( __( '%s - Exclude', 'newsletter-optin-box' ), field.label )
 					}
 
-				}
-
-				if ( field.description && field.description !== field.label ) {
-					mainSetting.description = field.description;
 				}
 
 				return (
@@ -179,6 +156,11 @@ export const useFilterableFields = ( isBulkEditing = false ) => {
                 return false;
             }
 
+			// Allow tokens.
+			if ( field.is_tokens ) {
+				return true;
+			}
+
             // If we're not bulk editing, include numbers and dates.
             if ( ! isBulkEditing && ( field.is_numeric || field.is_float || field.is_date ) ) {
                 return true;
@@ -192,6 +174,54 @@ export const useFilterableFields = ( isBulkEditing = false ) => {
             return true;
         } );
     }, [ data, isBulkEditing ] );
+}
+
+/**
+ * Prepares a field for use in a setting.
+ */
+export const prepareField = ( field ) => {
+
+	const prepared = {
+		default: field.default,
+		label: field.label,
+		el: 'input',
+		type: 'text',
+		name: field.name,
+		isInputToChange: true,
+	};
+
+	// Tokens.
+	if ( field.is_tokens ) {
+		prepared.el = 'form_token';
+		prepared.suggestions = field.suggestions;
+	} else if ( field.enum && ! Array.isArray( field.enum ) ) {
+		prepared.el = 'select';
+		prepared.options = field.enum;
+
+		if ( field.multiple ) {
+			prepared.el = 'multi_checkbox';
+		}
+	} else if ( field.isLongText ) {
+		prepared.el = 'textarea';
+	}
+
+	if ( field.is_numeric || field.is_float ) {
+		prepared.type = 'number';
+	}
+
+	if ( field.is_date ) {
+		prepared.type = 'date';
+	}
+
+	if ( field.is_boolean ) {
+		prepared.type = 'toggle';
+	}
+
+	if ( field.description && field.description !== field.label ) {
+		prepared.description = field.description;
+	}
+
+	return prepared;
 }
 
 /**
