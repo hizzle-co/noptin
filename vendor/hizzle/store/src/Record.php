@@ -503,7 +503,7 @@ class Record {
 			}
 
 			// If this is an enum or boolean, record the change.
-			if ( $object->is_boolean() || ! empty( $object->enum ) ) {
+			if ( $object->is_boolean() || $object->is_tokens || ! empty( $object->enum ) ) {
 
 				if ( ! $this->exists() || $value !== $this->data[ $prop ] ) {
 					$this->enum_transition[ $prop ] = array(
