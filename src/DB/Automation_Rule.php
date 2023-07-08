@@ -355,7 +355,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			}
 
 			// If there are options, make sure the value is one of them.
-			if ( isset( $args['options'] ) ) {
+			if ( ! empty( $args['options'] ) ) {
 				$choices = array_keys( $args['options'] );
 
 				if ( is_array( $value ) ) {
