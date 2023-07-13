@@ -188,6 +188,15 @@ class Noptin_Email_List_Table extends WP_List_Table {
 			if ( ! empty( $description ) ) {
 				$title .= "<p class='description'>$description</div>";
 			}
+
+			if ( ! $item->sends_immediately() ) {
+
+				$title .= sprintf(
+					'<br /><span class="noptin-rule-meta" style="color: green;font-weight: 600;"><span class="noptin-rule-meta-key">%s</span>: <span class="noptin-rule-meta-value">%s</span></span>',
+					esc_html__( 'Delay', 'newsletter-optin-box' ),
+					esc_html( $item->get_sends_after() . ' ' . $item->get_sends_after_unit( true ) )
+				);
+			}
 		} elseif ( $item->is_published() && ! get_post_meta( $item->id, 'completed', true ) ) {
 
 			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );

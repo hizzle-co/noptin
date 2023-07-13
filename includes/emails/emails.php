@@ -286,7 +286,7 @@ function get_noptin_email_templates() {
  * @since 1.7.0
  * @return array
  */
-function get_noptin_email_delay_units() {
+function get_noptin_email_delay_units( $singular = false ) {
 
 	$units = array(
 		'minutes' => __( 'Minute(s)', 'newsletter-optin-box' ),
@@ -297,7 +297,18 @@ function get_noptin_email_delay_units() {
 		'years'   => __( 'Year(s)', 'newsletter-optin-box' ),
 	);
 
-	return apply_filters( 'noptin_email_delay_units', $units );
+	if ( $singular ) {
+		$units = array(
+			'minutes' => __( 'Minute', 'newsletter-optin-box' ),
+			'hours'   => __( 'Hour', 'newsletter-optin-box' ),
+			'days'    => __( 'Day', 'newsletter-optin-box' ),
+			'weeks'   => __( 'Week', 'newsletter-optin-box' ),
+			'months'  => __( 'Month', 'newsletter-optin-box' ),
+			'years'   => __( 'Year', 'newsletter-optin-box' ),
+		);
+	}
+
+	return apply_filters( 'noptin_email_delay_units', $units, $singular );
 }
 
 /**

@@ -380,7 +380,7 @@ class Noptin_Automated_Email {
 	 */
 	public function get_sends_after_unit( $label = false ) {
 
-		$units = get_noptin_email_delay_units();
+		$units = get_noptin_email_delay_units( $label && 1 === $this->get_sends_after() );
 
 		if ( $this->is_legacy ) {
 			$unit = get_post_meta( $this->id, 'noptin_sends_after_unit', true );
