@@ -301,6 +301,7 @@ class Noptin_Form_Legacy {
 
 			// custom css.
 			'CSS'                   => '.noptin-optin-form-wrapper *{}',
+			'tags'                  => '',
 
 		);
 
@@ -379,6 +380,10 @@ class Noptin_Form_Legacy {
 		$return = array();
 
 		foreach ( $data as $key => $value ) {
+
+			if ( 'apTags' === $key ) {
+				$key = 'tags';
+			}
 
 			// convert 'true' to a boolean true.
 			if ( 'false' === $value ) {

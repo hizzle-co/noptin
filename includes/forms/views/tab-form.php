@@ -8,11 +8,14 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-$subscribe   = empty( $form->settings['submit'] ) ? __( 'Subscribe', 'newsletter-optin-box' ) : $form->settings['submit'];
-$form_fields = empty( $form->settings['fields'] ) ? 'email' : $form->settings['fields'];
-$form_fields = noptin_parse_list( $form_fields );
-$inject      = empty( $form->settings['inject'] ) ? '' : $form->settings['inject'];
-$update      = empty( $form->settings['update_existing'] ) ? '' : $form->settings['update_existing'];
+$subscribe    = empty( $form->settings['submit'] ) ? __( 'Subscribe', 'newsletter-optin-box' ) : $form->settings['submit'];
+$form_fields  = empty( $form->settings['fields'] ) ? 'email' : $form->settings['fields'];
+$form_fields  = noptin_parse_list( $form_fields );
+$inject       = empty( $form->settings['inject'] ) ? '' : $form->settings['inject'];
+$update       = empty( $form->settings['update_existing'] ) ? '' : $form->settings['update_existing'];
+$tag_messages = array(
+	'noResults' => __( 'Enter a comma separated list of tags to assign the subscriber', 'newsletter-optin-box' ),
+);
 
 // TODO: Replace form fields select box with a sortable list of checkboxes.
 ?>
@@ -65,6 +68,17 @@ $update      = empty( $form->settings['update_existing'] ) ? '' : $form->setting
 		<span title="<?php esc_attr_e( 'Leave blank if you do not want to redirect users after they sign-up via this form.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 	</label>
 	<input type="text" class="noptin-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $form->settings['redirect'] ) ? esc_attr( $form->settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( /* translators: Example URL */ esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
+</div>
+
+<div class="noptin-text-wrapper form-settings-tags">
+	<label for="noptin-form-tags" class="noptin-field-label">
+		<?php esc_html_e( 'Tags', 'newsletter-optin-box' ); ?>
+		<span title="<?php esc_attr_e( 'Enter the tags to assign new subscribers.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
+	</label>
+	<input type="text" name="noptin_form[settings][tags]" class="noptin-text" value="<?php echo isset( $form->settings['tags'] ) ? esc_attr( $form->settings['tags'] ) : ''; ?>" placeholder="Example tag 1, tag 2, tag 3"/>
+	<p class="description">
+		<?php esc_html_e( 'Enter a comma separated list of tags to assign new subscribers.', 'newsletter-optin-box' ); ?>
+	</p>
 </div>
 
 <?php foreach ( get_noptin_multicheck_custom_fields() as $field ) : ?>

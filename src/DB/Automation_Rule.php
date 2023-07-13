@@ -351,7 +351,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			$value    = isset( $options[ $key ] ) ? $options[ $key ] : $default;
 
 			if ( $is_array && ! is_array( $value ) ) {
-				$value = (array) $value;
+				$value = noptin_parse_list( $value, true );
 			}
 
 			// If there are options, make sure the value is one of them.

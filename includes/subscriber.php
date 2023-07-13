@@ -329,7 +329,7 @@ function add_noptin_subscriber( $fields ) {
 				$values = $forms->listener->get_cached( 'noptin_' . $field['merge_tag'] );
 			}
 
-			if ( ! empty( $_lists ) ) {
+			if ( ! empty( $values ) ) {
 				$fields[ $field['merge_tag'] ] = array_filter( noptin_parse_list( $values, true ) );
 			}
 		} elseif ( ! empty( $fields['source'] ) ) {
@@ -356,6 +356,42 @@ function add_noptin_subscriber( $fields ) {
 
 			if ( '-1' !== $default_value && '' !== $default_value ) {
 				$fields[ $field['merge_tag'] ] = $default_value;
+			}
+		}
+	}
+
+	if ( ! isset( $fields['tags'] ) ) {
+
+		if ( ! empty( $forms ) && ! empty( $forms->listener ) && ! is_null( $forms->listener->processed_form ) ) {
+			$tags = array_filter( noptin_parse_list( $forms->listener->get_cached( 'tags' ), true ) );
+
+			if ( ! empty( $tags ) ) {
+				$fields['tags'] = $tags;
+			}
+		} elseif ( ! empty( $fields['source'] ) ) {
+
+			if ( is_numeric( $fields['source'] ) ) {
+
+				// The user subscribed via an opt-in form.
+				$form = noptin_get_optin_form( $fields['source'] );
+				$tags = $form->__get( 'tags' );
+
+			} else {
+
+				// The user subscribed via other means.
+				$tags = get_option(
+					sprintf(
+						'%s_default_tags',
+						$fields['source']
+					),
+					'-1'
+				);
+
+			}
+
+			$tags = array_filter( noptin_parse_list( $tags, true ) );
+			if ( ! empty( $tags ) ) {
+				$fields['tags'] = $tags;
 			}
 		}
 	}

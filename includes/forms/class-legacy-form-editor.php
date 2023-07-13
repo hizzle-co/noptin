@@ -257,6 +257,23 @@ class Noptin_Legacy_Form_Editor {
 				'children' => $this->get_device_settings(),
 			),
 
+			// Subscriber tags.
+			'tags'            => array(
+				'el'       => 'panel',
+				'title'    => __( 'Tags', 'newsletter-optin-box' ),
+				'id'       => 'apTags',
+				'children' => array(
+
+					'tags' => array(
+						'type'        => 'text',
+						'el'          => 'input',
+						'label'       => __( 'Subscriber Tags', 'newsletter-optin-box' ),
+						'placeholder' => 'Example tag 1, tag 2, tag 3',
+						'tooltip'     => __( 'Enter a comma separated list of tags to assign subscribers who sign up using this form', 'newsletter-optin-box' ),
+					),
+
+				),
+			),
 		);
 
 		// Loop through all custom fields.
@@ -268,7 +285,7 @@ class Noptin_Legacy_Form_Editor {
 			}
 
 			// Basic settings.
-			$settings[ 'cf_' . $field['merge_tag'] ] = array(
+			$settings[ $field['merge_tag'] ] = array(
 				'el'       => 'panel',
 				'title'    => $field['label'],
 				'id'       => $field['merge_tag'] . 'Settings',

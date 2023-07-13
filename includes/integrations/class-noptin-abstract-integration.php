@@ -488,6 +488,34 @@ abstract class Noptin_Abstract_Integration {
 	}
 
 	/**
+	 *Tags to subscribe to.
+	 *
+	 * @since 1.13.0
+	 * @param array  $options An array of Noptin options.
+	 * @return array an updated array of Noptin options.
+	 */
+	public function add_tag_options( $options ) {
+
+		$option_name = sprintf(
+			'%s_default_tags',
+			empty( $this->subscriber_via ) ? $this->slug : $this->subscriber_via
+		);
+
+		$options[ $option_name ] = array(
+			'el'          => 'input',
+			'type'        => 'text',
+			'section'     => 'integrations',
+			'label'       => __( 'Subscriber tags', 'newsletter-optin-box' ),
+			'restrict'    => $this->get_enable_integration_option_name(),
+			'description' => __( 'Enter a comma separated list of tags to assign new subscribers.', 'newsletter-optin-box' ),
+			'placeholder' => 'Example tag 1, tag 2, tag 3',
+		);
+
+		return $options;
+
+	}
+
+	/**
 	 * Adds an autosubscribe checkbox
 	 *
 	 * @since 1.2.6
@@ -551,6 +579,7 @@ abstract class Noptin_Abstract_Integration {
 		$options = $this->add_autotick_checkbox_integration_option( $options );
 		$options = $this->add_checkbox_position_option( $options );
 		$options = $this->add_checkbox_message_integration_option( $options );
+		$options = $this->add_tag_options( $options );
 		$options = $this->add_multi_checkbox_custom_field_options( $options );
 		return $options;
 	}
