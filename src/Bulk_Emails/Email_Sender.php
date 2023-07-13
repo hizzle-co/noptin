@@ -133,7 +133,7 @@ abstract class Email_Sender {
 					<strong><?php echo wp_kses_post( $field['label'] ); ?></strong>
 					<select name="<?php echo esc_attr( $field['name'] ); ?><?php echo $is_multiple ? '[]' : ''; ?>" class="<?php echo esc_attr( $class ); ?>" data-placeholder="<?php echo esc_attr( $placeholder ); ?>" <?php echo $is_multiple ? 'multiple="multiple"' : ''; ?>>
 						<?php foreach ( $field['options'] as $option_key => $option_label ) : ?>
-							<option value="<?php echo esc_attr( $option_key ); ?>" <?php selected( $is_multiple ? in_array( $option_key, $field['value'], true ) : $option_key === $field['value'] ); ?>><?php echo esc_html( $option_label ); ?></option>
+							<option value="<?php echo esc_attr( $option_key ); ?>" <?php selected( $is_multiple ? in_array( $option_key, $field['value'] ) : $option_key == $field['value'] ); ?>><?php echo esc_html( $option_label ); ?></option>
 						<?php endforeach; ?>
 					</select>
 				</label>
