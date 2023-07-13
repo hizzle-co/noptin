@@ -99,6 +99,11 @@ abstract class Email_Sender {
 			$data['value'] = isset( $options[ $field_id ] ) ? $options[ $field_id ] : '';
 			$description   = '';
 
+			// Backwards compatibility.
+			if ( empty( $data['value'] ) && 'source' === $field_id ) {
+				$data['value'] = isset( $options['_subscriber_via'] ) ? $options['_subscriber_via'] : '';
+			}
+
 			if ( ! empty( $data['description'] ) ) {
 				$description = '<span class="noptin-help-text">' . wp_kses_post( $data['description'] ) . '</span>';
 			}
