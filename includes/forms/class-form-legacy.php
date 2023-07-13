@@ -368,7 +368,10 @@ class Noptin_Form_Legacy {
 	 * @return array the sanitized data
 	 */
 	public function sanitize_form_data( $data ) {
-
+		$data     = wp_json_encode( $data );
+		$data     = empty( $data ) ? '{}' : $data;
+		$data     = str_replace( 'noptin_lists', 'lists', $data );
+		$data     = json_decode( $data, true );
 		$defaults = $this->get_defaults();
 
 		// Arrays only please.
