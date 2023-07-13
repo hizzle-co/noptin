@@ -113,13 +113,20 @@ class Noptin_Form {
 		}
 
 		if ( isset( $this->settings['noptin_tags'] ) ) {
-			$this->settings['tags'] = implode( ', ', noptin_parse_list( $this->settings['noptin_tags'], true ) );
+			$this->settings['tags'] = implode( ', ', array_filter( noptin_parse_list( $this->settings['noptin_tags'], true ) ) );
 			unset( $this->settings['noptin_tags'] );
 		}
 
 		if ( isset( $this->settings['noptin_lists'] ) ) {
-			$this->settings['lists'] = implode( ', ', noptin_parse_list( $this->settings['noptin_lists'], true ) );
+			$this->settings['lists'] = array_filter( noptin_parse_list( $this->settings['noptin_lists'], true ) );
 			unset( $this->settings['noptin_lists'] );
+		}
+
+		$settings = wp_json_encode( $this->settings );
+
+		if ( $settings ) {
+			$settings       = str_replace( 'noptin_lists', 'lists', $settings );
+			$this->settings = json_decode( $settings, true );
 		}
 	}
 

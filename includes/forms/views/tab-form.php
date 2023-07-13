@@ -112,7 +112,7 @@ $tag_messages = array(
 			<?php foreach ( noptin_newslines_to_array( $field['options'] ) as $key => $label ) : ?>
 				<option
 					value="<?php echo esc_html( $key ); ?>"
-					<?php selected( in_array( $key, $current_value, true ) ); ?>
+					<?php selected( in_array( (string) $key, $current_value, true ) ); ?>
 				><?php echo esc_html( $label ); ?></option>
 			<?php endforeach; ?>
 		</select>
