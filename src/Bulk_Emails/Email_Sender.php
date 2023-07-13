@@ -149,6 +149,34 @@ abstract class Email_Sender {
 	}
 
 	/**
+	 * Displays a token input field.
+	 *
+	 * @param array $field
+	 */
+	public function display_sending_field_token( $field ) {
+		$field['placeholder'] = ! empty( $field['placeholder'] ) ? $field['placeholder'] : __( 'Enter a comma-separated list of tags', 'newsletter-optin-box' );
+		$messages             = array(
+			'noResults' => __( 'Enter a comma separated list of tags', 'newsletter-optin-box' ),
+		);
+
+		$field['value'] = noptin_parse_list( $field['value'], true );
+
+		?>
+		<p>
+			<label>
+				<strong><?php echo wp_kses_post( $field['label'] ); ?></strong>
+				<select name="<?php echo esc_attr( $field['name'] ); ?>[]" data-placeholder="<?php echo esc_attr( $field['placeholder'] ); ?>" class="widefat noptin-select2" data-tags="true" data-token-separators="[',']" data-messages="<?php echo esc_attr( wp_json_encode( $messages ) ); ?>" multiple="multiple">
+					<?php foreach ( $field['value'] as $token ) : ?>
+						<option value="<?php echo esc_attr( $token ); ?>" selected="selected"><?php echo esc_html( $token ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
+			<?php echo wp_kses_post( $field['description'] ); ?>
+		</p>
+	<?php
+	}
+
+	/**
 	 * Displays multi select setting field.
 	 *
 	 * @param array $field
@@ -213,7 +241,7 @@ abstract class Email_Sender {
 			<p>
 				<label>
 					<strong><?php echo wp_kses_post( $field['label'] ); ?></strong>
-					<input type="text" name="<?php echo esc_attr( $field['name'] ); ?>" value="<?php echo esc_attr( $field['value'] ); ?>" placeholder="<?php echo empty( $data['placeholder'] ) ? '' : esc_attr( $data['placeholder'] ); ?>" class="widefat">
+					<input type="text" name="<?php echo esc_attr( $field['name'] ); ?>" value="<?php echo esc_attr( $field['value'] ); ?>" placeholder="<?php echo empty( $field['placeholder'] ) ? '' : esc_attr( $field['placeholder'] ); ?>" class="widefat">
 				</label>
 				<?php echo wp_kses_post( $field['description'] ); ?>
 			</p>

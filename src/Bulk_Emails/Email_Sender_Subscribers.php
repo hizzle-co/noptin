@@ -144,7 +144,9 @@ class Email_Sender_Subscribers extends Email_Sender {
 
 				// Backward compatibility.
 				if ( ! empty( $options['_subscriber_via'] ) ) {
-					$args['source'] = $options['_subscriber_via'];
+					if ( ! isset( $options['source'] ) ) {
+						$args['source'] = $options['_subscriber_via'];
+					}
 					unset( $options['_subscriber_via'] );
 				}
 
