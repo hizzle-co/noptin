@@ -530,7 +530,9 @@ class REST_Controller extends \WP_REST_Controller {
 					'items'   => $items,
 					'summary' => (object) array(
 						'total' => array(
-							'label' => $collection->get_label( 'name', $collection->get_name() ),
+							'label' => $query->get_total() === 1 ?
+								$collection->get_label( 'singular_name', $collection->get_singular_name() )
+								: $collection->get_label( 'name', $collection->get_name() ),
 							'value' => $query->get_total(),	
 						)
 					),
