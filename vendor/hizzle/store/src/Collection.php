@@ -1181,7 +1181,12 @@ class Collection {
 		// Fires before updating a record.
 		do_action( $this->hook_prefix( 'before_update', true ), $record );
 
-		$changes = $record->get_changes();
+		$raw_changes = array_keys( $record->get_changes() );
+		$changes     = array();
+
+		foreach ( $raw_changes as $key ) {
+			$changes[ $key ] = $record->get( $key, 'edit' );
+		}
 
 		// Update meta data.
 		// Save date modified in UTC time.

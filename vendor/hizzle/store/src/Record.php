@@ -651,6 +651,7 @@ class Record {
 	public function set_metadata( $metadata ) {
 
 		// Maybe decode JSON.
+		$metadata = maybe_unserialize( $metadata );
 		if ( is_string( $metadata ) ) {
 			$metadata = json_decode( $metadata, true );
 		}
