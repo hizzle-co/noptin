@@ -584,14 +584,16 @@ class Record {
 	 * @return mixed
 	 */
 	public function get( $prop, $context = 'view' ) {
-		$prop = is_string( $prop ) ? $this->has_prop( $prop ) : $prop;
 
-		if ( empty( $prop ) ) {
+		if ( is_object( $prop ) ) {
+			$prop = $prop->name;
+		}
+
+		if ( empty( $prop ) || ! is_string( $prop ) ) {
 			return null;
 		}
 
-		$key    = $prop->name;
-		$method = "get_$key";
+		$method = "get_$prop";
 
 		// Check if we have a getter method.
 		if ( method_exists( $this, $method ) ) {
