@@ -636,7 +636,7 @@ class Main {
 				);
 			}
 
-			$prepared[ $time ] = array(
+			$prepared[] = array(
 				'time'     => $time,
 				'utc'      => $utc,
 				'i18n'     => $i18n,
@@ -645,7 +645,7 @@ class Main {
 		}
 
 		// Sort by time.
-		ksort( $prepared );
+		usort( $prepared, 'noptin_sort_by_time_key' );
 
 		return array_values( $prepared );
 	}

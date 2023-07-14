@@ -345,7 +345,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param array|string $activity Activity.
 	 */
 	public function set_activity( $activity ) {
-		$activity = empty( $activity ) ? array() : $activity;
+		$activity = empty( $activity ) ? array() : maybe_unserialize( $activity );
 		$activity = is_array( $activity ) ? wp_json_encode( $activity ) : $activity;
 		$this->set_prop( 'activity', $activity );
 	}

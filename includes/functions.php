@@ -1994,6 +1994,24 @@ function noptin_sort_by_name( $a, $b ) {
 }
 
 /**
+ * Callback to sort arrays by time key.
+ *
+ * @since 2.0.0
+ * @param array $a
+ * @param array $b
+ * @return int
+ */
+function noptin_sort_by_time_key( $a, $b ) {
+	if ( $a['time'] > $b['time'] ) {
+        return 1;
+    } elseif ( $a['time'] < $b['time'] ) {
+        return -1;
+    }
+
+    return 0;
+}
+
+/**
  * Sanitize a merge tag.
  *
  * Strips all non-alphanumeric characters except underscores, hyphens, and dots.
