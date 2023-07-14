@@ -17,13 +17,6 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Custom_Field_Text extends Noptin_Custom_Field_Type {
 
 	/**
-	 * Whether or not it supports storing values in subscribers table.
-	 *
-	 * @var bool
-	 */
-	public $store_in_subscribers_table = true;
-
-	/**
 	 * Retreives the input type.
 	 *
 	 * @since 1.5.5

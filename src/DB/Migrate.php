@@ -82,10 +82,7 @@ class Migrate {
 
 		// Custom fields.
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
-
-			if ( noptin_store_custom_field_in_subscribers_table( $custom_field['type'] ) ) {
-				$meta = array_merge( $meta, noptin_fetch_custom_field_meta_to_migrate( $custom_field ) );
-			}
+			$meta[ $custom_field['merge_tag'] ] = $custom_field['merge_tag'];
 		}
 
 		foreach ( $meta as $meta_key => $prop ) {

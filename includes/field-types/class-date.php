@@ -27,23 +27,6 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 	}
 
 	/**
-	 * Formats a value for display.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Sanitized value
-	 * @param Noptin_Subscriber $subscriber
-	 */
-	public function format_value( $value, $subscriber ) {
-
-		if ( empty( $value ) ) {
-			return '&mdash;';
-		}
-
-		return date_i18n( get_option( 'date_format' ), strtotime( $value ) );
-
-	}
-
-	/**
 	 * Filters the database schema.
 	 *
 	 * @since 1.13.0

@@ -18,13 +18,6 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 
 	/**
-	 * Whether or not it supports storing values in subscribers table.
-	 *
-	 * @var bool
-	 */
-	public $store_in_subscribers_table = true;
-
-	/**
 	 * Whether or not this field type supports multiple values.
 	 *
 	 * @var bool

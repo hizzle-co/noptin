@@ -1095,18 +1095,7 @@ function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false 
  */
 function format_noptin_custom_field_value( $value, $type, $subscriber ) {
 	_deprecated_function( __FUNCTION__, '1.13.0' );
-	return apply_filters( "noptin_format_{$type}_value", $value, $subscriber );
-}
-
-/**
- * Checks if a custom field should be stored in the subscribers table.
- *
- * @param string $field_type
- * @since 1.13.0
- * @return bool
- */
-function noptin_store_custom_field_in_subscribers_table( $field_type ) {
-	return apply_filters( "noptin_{$field_type}_store_in_subscribers_table", false );
+	return (string) $value;
 }
 
 /**
@@ -1119,18 +1108,6 @@ function noptin_store_custom_field_in_subscribers_table( $field_type ) {
 function noptin_convert_custom_field_to_schema( $custom_field ) {
 	$field_type = $custom_field['type'];
 	return apply_filters( "noptin_filter_{$field_type}_schema", array(), $custom_field );
-}
-
-/**
- * Fetches the meta keys to migrate.
- *
- * @param array $custom_field
- * @since 1.13.0
- * @return array
- */
-function noptin_fetch_custom_field_meta_to_migrate( $custom_field ) {
-	$field_type = $custom_field['type'];
-	return apply_filters( "noptin_filter_{$field_type}_meta_to_migrate", array(), $custom_field );
 }
 
 /**
@@ -1177,6 +1154,28 @@ function get_noptin_custom_fields( $public_only = false ) {
 			'field_key' => uniqid( 'noptin_' ) . $index,
 		);
 
+		// Abort if the field has no label.
+		if ( empty( $field['label'] ) ) {
+			continue;
+		}
+
+		// Check if we have a merge tag.
+		if ( empty( $field['merge_tag'] ) ) {
+			$field['merge_tag'] = strtolower( str_replace( '-', '_', sanitize_title( $field['label'] ) ) );
+		}
+
+		$field['merge_tag'] = sanitize_key( $field['merge_tag'] );
+
+		// If the merge tag is too long, truncate it.
+		if ( strlen( $field['merge_tag'] ) > 64 ) {
+			$field['merge_tag'] = substr( $field['merge_tag'], 0, 64 );
+		}
+
+		// If still no merge tag, use noptin_field_{index}.
+		if ( empty( $field['merge_tag'] ) ) {
+			$field['merge_tag'] = 'noptin_field_' . $index;
+		}
+
 		foreach ( $field as $key => $value ) {
 
 			if ( in_array( $key, array( 'visible', 'predefined', 'required' ), true ) ) {
@@ -1188,7 +1187,7 @@ function get_noptin_custom_fields( $public_only = false ) {
 			}
 		}
 
-		$fields[ $index ] = $prepared_field;
+		$fields[] = $prepared_field;
 	}
 
 	// Maybe return public fields only.

@@ -17,13 +17,6 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 
 	/**
-	 * Whether or not it supports storing values in subscribers table.
-	 *
-	 * @var bool
-	 */
-	public $store_in_subscribers_table = true;
-
-	/**
 	 * Displays the actual markup for this field.
 	 *
 	 * @since 1.5.5
@@ -47,23 +40,6 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 			</label>
 
 		<?php
-
-	}
-
-	/**
-	 * Formats a value for display.
-	 *
-	 * @since 1.5.5
-	 * @param mixed $value Sanitized value
-	 * @param Noptin_Subscriber $subscriber
-	 */
-	public function format_value( $value, $subscriber ) {
-
-		if ( ! empty( $value ) ) {
-			return '<span class="dashicons dashicons-yes" style="color: green"></span>';
-		}
-
-		return '<span class="dashicons dashicons-no" style="color: red"></span>';
 
 	}
 

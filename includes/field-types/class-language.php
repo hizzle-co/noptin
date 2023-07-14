@@ -62,23 +62,6 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	}
 
 	/**
-	 * Formats a value for display.
-	 *
-	 * @since 1.8.0
-	 * @param mixed $value Sanitized value
-	 * @param Noptin_Subscriber $subscriber
-	 */
-	public function format_value( $value, $subscriber ) {
-
-		$languages = $this->get_languages();
-		if ( $value && array_key_exists( $value, $languages ) ) {
-			return esc_html( $languages[ $value ] );
-		}
-
-		return esc_html__( 'Not Set', 'newsletter-optin-box' );
-	}
-
-	/**
 	 * Filters the database schema.
 	 *
 	 * @since 1.13.0

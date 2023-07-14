@@ -98,7 +98,12 @@ export default {
 
 		maybeUpdateMergeTag( field ) {
 			if ( ! field.predefined && field.new ) {
+
+				// Generate a merge tag from the label
 				field.merge_tag = field.label.toString().trim().toLowerCase().replace( /[^a-z0-9]+/g,'_' )
+
+				// Limit to 64 characters
+				field.merge_tag = field.merge_tag.substring( 0, 64 )
 			}
 		},
 
