@@ -240,7 +240,7 @@ class Prop {
 
 		$string = $this->name . ' ' . strtoupper( $this->type );
 
-		if ( $this->length ) {
+		if ( $this->length && ! $this->is_date() ) {
 			$string .= '(' . $this->length . ')';
 		}
 

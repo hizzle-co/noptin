@@ -44,6 +44,9 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 			)
 		);
 
+		// Remove the length.
+		unset( $schema[ $column ]['length'] );
+
 		return $schema;
 	}
 }
