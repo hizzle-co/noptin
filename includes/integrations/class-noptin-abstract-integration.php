@@ -467,13 +467,13 @@ abstract class Noptin_Abstract_Integration {
 				'section'     => 'integrations',
 				'label'       => $label,
 				'restrict'    => $this->get_enable_integration_option_name(),
-				'options'     => array_merge(
+				'options'     => array_replace(
 					array(
 						'-1' => __( 'Use default', 'newsletter-optin-box' ),
 					),
 					noptin_newslines_to_array( $field['options'] )
 				),
-				'default'     => '-1',
+				'default'     => '',
 				'description' => sprintf(
 					/* translators: %s is the context, e.g users, customers */
 					__( 'Select the default %s to add new subscribers who sign up via this method.', 'newsletter-optin-box' ),
