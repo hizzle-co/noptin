@@ -80,6 +80,11 @@ export default function DisplayCell( { row, header, headerKey } ) {
 	// Dates are formatted as a date.
 	if ( header.is_date && value ) {
 		const settings = getSettings ? getSettings() : __experimentalGetSettings();
+		// If value contains 10 chars, format as date, otherwise format as datetime.
+		if ( value.length === 10 ) {
+			return dateI18n( settings.formats.date, value );
+		}
+
 		return dateI18n( settings.formats.datetime, value );
 	}
 

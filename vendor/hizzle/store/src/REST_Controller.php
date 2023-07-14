@@ -782,6 +782,11 @@ class REST_Controller extends \WP_REST_Controller {
 				// If value is a date, convert it to the ISO8601 format.
 				if ( $value instanceof Date_Time ) {
 					$value = $value->format( 'Y-m-d\TH:i:sP' );
+
+					// If value contains 00:00:00, remove the time.
+					if ( false !== strpos( $value, '00:00:00' ) ) {
+						$value = substr( $value, 0, 10 );
+					}
 				}
 
 				// Normalize values when exporting.
