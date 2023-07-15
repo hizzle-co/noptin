@@ -317,7 +317,8 @@ class Noptin_Form_Legacy {
 				continue;
 			}
 
-			$defaults[ $field['merge_tag'] ] = noptin_parse_list( $field['default_value'], true );
+			$default_value = ! isset( $field['default_value'] ) ? array() : $field['default_value'];
+			$defaults[ $field['merge_tag'] ] = noptin_parse_list( $default_value, true );
 		}
 
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );

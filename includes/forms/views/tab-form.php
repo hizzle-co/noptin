@@ -89,7 +89,8 @@ $tag_messages = array(
 			continue;
 		}
 
-		$current_value = ! isset( $form->settings[ $field['merge_tag'] ] ) ? noptin_parse_list( $field['default_value'], true ) : noptin_parse_list( $form->settings[ $field['merge_tag'] ], true );
+		$default_value = ! isset( $field['default_value'] ) ? array() : $field['default_value'];
+		$current_value = ! isset( $form->settings[ $field['merge_tag'] ] ) ? noptin_parse_list( $default_value, true ) : noptin_parse_list( $form->settings[ $field['merge_tag'] ], true );
 	?>
 	<div class="noptin-text-wrapper form-field-row__cf-<?php echo esc_attr( $field['merge_tag'] ); ?>">
 		<label for="noptin-form__cf-<?php echo esc_attr( $field['label'] ); ?>" class="noptin-field-label">

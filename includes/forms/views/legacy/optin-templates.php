@@ -35,7 +35,7 @@
 					'border_color'  => '#f8f9fa',
 					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #f8f9fa;',
 				),
-				'image'                 => 'https://cdn.noptin.com/templates/images/avatar.png',
+				'image'                 => noptin()->plugin_url . 'includes/assets/images/avatar.png',
 				'imagePos'              => 'left',
 				'noptinButtonLabel'     => __( 'Sign Up', 'newsletter-optin-box' ),
 				'buttonPosition'        => 'block',
@@ -202,7 +202,7 @@
 
 				'imageMain'             => false,
 				'noptinFormBorderColor' => '#009688',
-				'image'                 => 'https://cdn.noptin.com/templates/images/email-icon.png',
+				'image'                 => noptin()->plugin_url . 'includes/assets/images/email-icon.png',
 				'imagePos'              => 'right',
 				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
 				'buttonPosition'        => 'block',
@@ -413,7 +413,7 @@
 				'formHeight'            => '280px',
 				'noptinFormBg'          => '#4CAF50',
 				'noptinFormBgVideo'     => '',
-				'noptinFormBgImg'       => 'https://github.com/hizzle-co/noptin/raw/master/includes/assets/images/bg1.jpg',
+				'noptinFormBgImg'       => noptin()->plugin_url . 'includes/assets/images/bg1.jpg',
 				'fields'                => array(
 					array(
 						'type'    => array(
@@ -523,7 +523,7 @@
 
 				'imageMain'             => '',
 				'noptinFormBorderColor' => '#424242',
-				'image'                 => 'https://cdn.noptin.com/templates/images/email-icon.png',
+				'image'                 => noptin()->plugin_url . 'includes/assets/images/email-icon.png',
 				'imagePos'              => 'left',
 				'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
 				'buttonPosition'        => 'block',
@@ -777,7 +777,7 @@
 
 				'imageMain'             => false,
 				'noptinFormBorderColor' => '#009688',
-				'image'                 => 'https://raw.githubusercontent.com/hizzle-co/noptin/master/includes/assets/images/heart.png',
+				'image'                 => noptin()->plugin_url . 'includes/assets/images/heart.png',
 				'imagePos'              => 'right',
 				'noptinButtonLabel'     => __( 'Yes Please!', 'newsletter-optin-box' ),
 				'buttonPosition'        => 'block',
@@ -1037,7 +1037,7 @@
 				'formWidth'             => '600px',
 				'formHeight'            => '280px',
 				'noptinFormBg'          => '#607D8B',
-				'noptinFormBgImg'       => 'https://cdn.noptin.com/templates/images/double-bg.png',
+				'noptinFormBgImg'       => noptin()->plugin_url . 'includes/assets/images/double-bg.png',
 				'fields'                => array(
 					array(
 						'type'    => array(
@@ -1182,7 +1182,7 @@
 
 				'imageMain'             => false,
 				'noptinFormBorderColor' => '#4caf50',
-				'image'                 => 'https://cdn.noptin.com/templates/images/mail-icon-alt.png',
+				'image'                 => noptin()->plugin_url . 'includes/assets/images/mail-icon-alt.png',
 				'imagePos'              => 'top',
 				'noptinButtonLabel'     => __( 'Subscribe', 'newsletter-optin-box' ),
 				'buttonPosition'        => 'block',
