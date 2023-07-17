@@ -438,6 +438,18 @@ class Noptin_Admin {
 			return;
 		}
 
+		// Warn addons pack if version is less than 2.0.0
+		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && version_compare( NOPTIN_ADDONS_PACK_VERSION, MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION, '<' ) ) {
+			$this->print_notice(
+				'error',
+				sprintf(
+					// translators: %s: Update URL.
+					__( 'Your Addons Pack is outdated and nolonger works with this version of Noptin. Please update to the latest version to continue using it. <a href="%s">Update Now</a>', 'newsletter-optin-box' ),
+					admin_url( 'update-core.php' )
+				)
+			);
+		}
+
 		$notices = $this->get_notices();
 
 		// Abort if we do not have any notices.

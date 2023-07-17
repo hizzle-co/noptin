@@ -31,6 +31,8 @@ if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
 	define( 'NOPTIN_VERIFY_NONCE', false );
 }
 
+define( 'MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION', '2.0.0' );
+
 /**
  * Plugin main class
  *
@@ -248,15 +250,7 @@ class Noptin {
 		$this->setup_globals();
 
 		// Set up hooks.
-		$this->register_hooks();
-
-		/**
-		 * Fires after Noptin loads.
-		 *
-		 * @param Noptin $noptin The Noptin instance.
-		 * @since 1.0.7
-		 */
-		do_action( 'noptin_load', $this );
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
 
 	}
 
@@ -297,7 +291,6 @@ class Noptin {
 	 * @return      void
 	 */
 	private function setup_globals() {
-		global $wpdb;
 
 		// Set up globals;
 		$this->plugin_path = plugin_dir_path( __FILE__ );
@@ -312,43 +305,20 @@ class Noptin {
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
 
-		// Register our custom meta table.
-		$wpdb->noptin_subscribermeta = $wpdb->prefix . 'noptin_subscriber_meta';
-	}
-
-	/**
-	 * Registers hooks.
-	 *
-	 * @access      public
-	 * @since       1.2.3
-	 * @return      void
-	 */
-	private function register_hooks() {
-
-		// Init the plugin after WP inits
-		add_action( 'init', array( $this, 'init' ), 5 );
-
-		// Init integrations.
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-
-		// Set up localisation.
-		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
-
-		// (Maybe) upgrade the database;
-		add_action( 'init', array( $this, 'maybe_upgrade_db' ), 0 );
-
-		// css body class.
-		add_filter( 'body_class', array( $this, 'body_class' ) );
-
 	}
 
 	/**
 	 * Load integrations after plugins are loaded.
 	 *
-	 * @access      public
-	 * @since       1.3.3
+	 * @access public
+	 * @since  1.3.3
 	 */
 	public function plugins_loaded() {
+
+		// Remove addons pack if version is less than 2.0.0
+		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && version_compare( NOPTIN_ADDONS_PACK_VERSION, MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION, '<' ) ) {
+			remove_action( 'noptin_integrations_load', 'noptin_addons_pack_load' );
+		}
 
 		// Integrations.
 		$this->integrations = new Noptin_Integrations();
@@ -371,6 +341,26 @@ class Noptin {
 
 		// Init scripts.
 		Noptin_Scripts::init();
+
+		// Init the plugin after WP inits
+		add_action( 'init', array( $this, 'init' ), 5 );
+
+		// Set up localisation.
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
+
+		// (Maybe) upgrade the database;
+		add_action( 'init', array( $this, 'maybe_upgrade_db' ), 0 );
+
+		// css body class.
+		add_filter( 'body_class', array( $this, 'body_class' ) );
+
+		/**
+		 * Fires after Noptin loads.
+		 *
+		 * @param Noptin $noptin The Noptin instance.
+		 * @since 1.0.7
+		 */
+		do_action( 'noptin_load', $this );
 	}
 
 	/**

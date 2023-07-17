@@ -573,9 +573,9 @@ class Noptin_Subscriber_Query {
 		} elseif ( 'last_name' === strtolower( $orderby ) ) {
 			$_orderby = 'last_name';
 		} elseif ( 'meta_value' === $orderby || $this->get( 'meta_key' ) === $orderby ) {
-			$_orderby = "$wpdb->noptin_subscribermeta.meta_value";
+			$_orderby = "$wpdb->noptin_subscriber_meta.meta_value";
 		} elseif ( 'meta_value_num' === $orderby ) {
-			$_orderby = "$wpdb->noptin_subscribermeta.meta_value+0";
+			$_orderby = "$wpdb->noptin_subscriber_meta.meta_value+0";
 		} elseif ( 'include' === $orderby && ! empty( $this->query_vars['include'] ) ) {
 			$include     = noptin_parse_int_list( $this->query_vars['include'] );
 			$include_sql = implode( ',', $include );
