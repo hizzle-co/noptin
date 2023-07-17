@@ -9,25 +9,27 @@ const { optinEnabled, defaultText, defaultStatus } = getSetting('noptin_data', '
 
 const Block = ({ checkoutExtensionData }) => {
 
-    if ( ! optinEnabled ) {
-        return null;
-    }
-
     const [checked, setChecked] = useState(defaultStatus);
     const { setExtensionData } = checkoutExtensionData || {};
 
     useEffect(() => {
-        setExtensionData('noptin', 'optin', checked);
+        if ( setExtensionData ) {
+            setExtensionData('noptin', 'optin', checked);
+        }
     }, [checked, setExtensionData]);
 
     return (
-        <CheckboxControl
-            className="wc-block-components-noptin-newsletter-subscription"
-            checked={checked}
-            onChange={setChecked}
-        >
-            <RawHTML>{defaultText}</RawHTML>
-        </CheckboxControl>
+        <>
+            { optinEnabled && (
+                <CheckboxControl
+                    className="wc-block-components-noptin-newsletter-subscription"
+                    checked={checked}
+                    onChange={setChecked}
+                >
+                    <RawHTML>{defaultText}</RawHTML>
+                </CheckboxControl>
+            ) }
+        </>
     );
 };
 

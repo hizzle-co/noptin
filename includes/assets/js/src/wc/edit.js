@@ -22,11 +22,11 @@ export const Edit = () => {
                     { __( 'If the Noptin newsletter subscription checkbox is enabled, it will appear here.', 'newsletter-optin-box' ) }
                 </span>
                 <Button
-                    isPrimary
+                    variant="primary"
                     href={`${adminUrl}admin.php?page=noptin-settings&tab=integrations&section=woocommerce#noptin-settings-section-settings_section_woocommerce`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="wp-block-mailpoet-newsletter-block-placeholder__button"
+                    className="wp-block-noptin-newsletter-block-placeholder__button"
                 >
                     { __( 'Enable/Disable', 'newsletter-optin-box' ) }
                 </Button>
@@ -34,5 +34,3 @@ export const Edit = () => {
         </div>
     );
 };
-
-export const Save = () =>  null;

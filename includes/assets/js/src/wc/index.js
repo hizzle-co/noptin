@@ -9,7 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import { Edit, Save } from './edit';
+import { Edit } from './edit';
 import metadata from './block.json';
 
 // Prepare env.
@@ -38,5 +38,5 @@ registerBlockType( metadata, {
 		foreground: '#874FB9',
 	},
 	edit: Edit,
-	save: Save,
+	save: () =>  null,
 } );

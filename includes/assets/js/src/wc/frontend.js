@@ -13,7 +13,9 @@ import metadata from './block.json';
 // Prepare env.
 const { position } = getSetting('noptin_data');
 
-metadata.parent = [position];
+if ( position ) {
+	metadata.parent = [position];
+}
 
 registerCheckoutBlock({
 	metadata,
