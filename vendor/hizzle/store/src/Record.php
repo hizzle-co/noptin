@@ -541,18 +541,23 @@ class Record {
 			}
 		}
 
-		$prop = is_string( $prop ) ? $this->has_prop( $prop ) : $prop;
+		$key = is_object( $prop ) ? $prop->name : $prop;
 
-		if ( empty( $prop ) ) {
-			return false;
+		if ( empty( $key ) || ! is_string( $key ) ) {
+			return;
 		}
 
-		$key    = $prop->name;
 		$method = "set_$key";
 
 		// Check if we have a setter method.
 		if ( method_exists( $this, $method ) ) {
 			return $this->{$method}( $value, $is_adding, $is_removing );
+		}
+
+		$prop = is_string( $prop ) ? $this->has_prop( $prop ) : $prop;
+
+		if ( empty( $prop ) ) {
+			return false;
 		}
 
 		if ( $prop->is_meta_key && $prop->is_meta_key_multiple ) {
