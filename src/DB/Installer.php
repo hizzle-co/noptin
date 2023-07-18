@@ -175,7 +175,8 @@ class Installer {
 			return array(
 				'email'      => $user->user_email,
 				'name'       => $user->display_name,
-				'source'     => 'default_user',
+				'source'     => 'manual',
+				'tags'       => array(),
 				'ip_address' => noptin_get_user_ip(),
 			);
 		}
@@ -184,7 +185,8 @@ class Installer {
 		$admin       = get_user_by( 'email', $admin_email );
 		$args        = array(
 			'email'  => $admin_email,
-			'source' => 'default_user',
+			'source' => 'manual',
+			'tags'   => array(),
 		);
 
 		if ( $admin ) {
