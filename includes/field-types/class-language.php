@@ -31,7 +31,7 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	/**
 	 * Fetches available field options.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $custom_field
 	 * @return array
 	 */
@@ -64,7 +64,7 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	/**
 	 * Filters the database schema.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $schema
 	 * @param array $field
 	 */

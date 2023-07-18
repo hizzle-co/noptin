@@ -50,7 +50,7 @@ abstract class Noptin_Custom_Field_Type {
 	/**
 	 * Fetches a field's column name.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $custom_field
 	 * @return string
 	 */
@@ -61,7 +61,7 @@ abstract class Noptin_Custom_Field_Type {
 	/**
 	 * Filters the database schema.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $schema
 	 * @param array $field
 	 */

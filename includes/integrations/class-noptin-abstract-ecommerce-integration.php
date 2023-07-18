@@ -143,7 +143,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	 * Returns a given customer's orders.
 	 *
 	 * @param string|int $customer_email The customer's email.
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @return array
 	 */
 	public function get_orders( $customer_email ) {

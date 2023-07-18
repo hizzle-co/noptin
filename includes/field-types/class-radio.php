@@ -19,7 +19,7 @@ class Noptin_Custom_Field_Radio extends Noptin_Custom_Field_Dropdown {
 	/**
 	 * Displays the single select field.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $args Field args
 	 */
 	protected function display_single( $args ) {

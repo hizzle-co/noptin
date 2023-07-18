@@ -54,7 +54,7 @@ class Noptin_Subscriber {
 	 *
 	 * Fetches the subscriber's data and passes it to Noptin_Subscriber::init().
 	 *
-	 * @deprecated 1.13.0
+	 * @deprecated 2.0.0
 	 * @since 1.2.7
 	 * @see get_noptin_subscriber
 	 * @param int|string|array|stdClass|Noptin_Subscriber $subscriber The subscribers's ID, email, confirm key, a Noptin_Subscriber object,
@@ -63,7 +63,7 @@ class Noptin_Subscriber {
 	public function __construct( $subscriber = 0 ) {
 
 		// Show deprecated class notice.
-		_deprecated_function( __CLASS__, '1.13.0', 'noptin_get_subscriber' );
+		_deprecated_function( __CLASS__, '2.0.0', 'noptin_get_subscriber' );
 
 		// $subscriber can be...
 		// ... an instance of this class...

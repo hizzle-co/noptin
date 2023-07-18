@@ -441,7 +441,7 @@ abstract class Noptin_Abstract_Integration {
 	/**
 	 * Custom fields to subscribe to.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array  $options An array of Noptin options.
 	 * @return array an updated array of Noptin options.
 	 */
@@ -490,7 +490,7 @@ abstract class Noptin_Abstract_Integration {
 	/**
 	 *Tags to subscribe to.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array  $options An array of Noptin options.
 	 * @return array an updated array of Noptin options.
 	 */

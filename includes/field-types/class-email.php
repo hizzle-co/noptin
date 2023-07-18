@@ -19,7 +19,7 @@ class Noptin_Custom_Field_Email extends Noptin_Custom_Field_Text {
 	/**
 	 * Retreives the input type.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @return string
 	 */
 	public function get_input_type() {

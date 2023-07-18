@@ -29,7 +29,7 @@ class Noptin_Custom_Field_Date extends Noptin_Custom_Field_Text {
 	/**
 	 * Filters the database schema.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $schema
 	 * @param array $field
 	 */

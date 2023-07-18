@@ -133,7 +133,7 @@ function delete_noptin_subscriber_meta( $subscriber_id, $meta_key, $meta_value =
  *
  * @param   string $meta_key The meta key to delete.
  * @access  public
- * @since   1.13.0
+ * @since   2.0.0
  */
 function delete_noptin_subscriber_meta_by_key( $meta_key ) {
 	return noptin()->db()->delete_all_meta_by_key( $meta_key );
@@ -170,24 +170,24 @@ function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
 /**
  * Retrieves all the campaigns a given subscriber has opened
  *
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  * @since   1.2.0
  * @return  int[] Array of opened campaigns.
  */
 function get_noptin_subscriber_opened_campaigns() {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return array();
 }
 
 /**
  * Checks whether a subscriber opened a given campaign
  *
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  * @access  public
  * @since   1.2.0
  */
 function did_noptin_subscriber_open_campaign() {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return false;
 }
 
@@ -212,24 +212,24 @@ function log_noptin_subscriber_campaign_click( $subscriber_id, $campaign_id, $li
 /**
  * Retrieves all the campaigns a given subscriber has clicked on a link in
  *
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  * @access  public
  * @since   1.2.0
  */
 function get_noptin_subscriber_clicked_campaigns() {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return array();
 }
 
 /**
  * Checks whether a subscriber clicked on a link in a given campaign
  *
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  * @access  public
  * @since   1.2.0
  */
 function did_noptin_subscriber_click_campaign() {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return false;
 }
 
@@ -493,11 +493,11 @@ function confirm_noptin_subscriber_email( $subscriber ) {
 /**
  * De-activates a Noptin subscriber
  *
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  * @since      1.3.1
  */
 function deactivate_noptin_subscriber( $subscriber ) {
-	_deprecated_function( __FUNCTION__, '1.13.0', 'unsubscribe_noptin_subscriber' );
+	_deprecated_function( __FUNCTION__, '2.0.0', 'unsubscribe_noptin_subscriber' );
 	unsubscribe_noptin_subscriber( $subscriber );
 }
 
@@ -528,7 +528,7 @@ function unsubscribe_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
  * Resubscribes a subscriber.
  *
  * @access public
- * @since  1.13.0
+ * @since  2.0.0
  */
 function resubscribe_noptin_subscriber( $subscriber ) {
 
@@ -568,11 +568,11 @@ add_action( 'noptin_subscriber_status_set_to_unsubscribed', 'sync_user_on_noptin
 /**
  * Empties the subscriber cache.
  *
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  * @since      1.2.8
  */
 function clear_noptin_subscriber_cache() {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 }
 
 /**
@@ -582,11 +582,11 @@ function clear_noptin_subscriber_cache() {
  * @since   1.1.1
  * @param int|string|Noptin_Subscriber|object|array subscriber The subscribers's ID, email, confirm key, a Noptin_Subscriber object,
  *                                                                or a subscriber object from the DB.
- * @deprecated 1.13.0 User noptin_get_subscriber
+ * @deprecated 2.0.0 User noptin_get_subscriber
  * @return Noptin_Subscriber
  */
 function get_noptin_subscriber( $subscriber ) {
-	_deprecated_function( __FUNCTION__, '1.13.0', 'noptin_get_subscriber' );
+	_deprecated_function( __FUNCTION__, '2.0.0', 'noptin_get_subscriber' );
 	return new Noptin_Subscriber( $subscriber );
 }
 
@@ -596,11 +596,11 @@ function get_noptin_subscriber( $subscriber ) {
  * @access  public
  * @since   1.1.2
  * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
- * @deprecated 1.13.0 User noptin_get_subscriber
+ * @deprecated 2.0.0 User noptin_get_subscriber
  * @return Noptin_Subscriber
  */
 function get_noptin_subscriber_by_email( $email ) {
-	_deprecated_function( __FUNCTION__, '1.13.0', 'noptin_get_subscriber' );
+	_deprecated_function( __FUNCTION__, '2.0.0', 'noptin_get_subscriber' );
 	return new Noptin_Subscriber( $email );
 }
 
@@ -796,11 +796,11 @@ add_action( 'noptin_subscriber_created', 'send_new_noptin_subscriber_double_opti
  *  Returns the name of the subscribers' table
  *
  * @since 1.2.2
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  * @return string The name of our subscribers table
  */
 function get_noptin_subscribers_table_name() {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return $GLOBALS['wpdb']->prefix . 'noptin_subscribers';
 }
 
@@ -811,7 +811,7 @@ function get_noptin_subscribers_table_name() {
  * @return string The name of our subscribers meta table
  */
 function get_noptin_subscribers_meta_table_name() {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return $GLOBALS['wpdb']->prefix . 'noptin_subscriber_meta';
 }
 
@@ -1077,10 +1077,10 @@ function display_noptin_custom_field_input( $custom_field, $subscriber = false )
  * @param mixed $value
  * @param string $type
  * @param false|Noptin_Subscriber $subscriber
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  */
 function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false ) {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return apply_filters( "noptin_sanitize_{$type}_value", $value, $subscriber );
 }
 
@@ -1091,10 +1091,10 @@ function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false 
  * @see Noptin_Custom_Field_Type::sanitize_value
  * @param mixed $value
  * @param string $type
- * @deprecated 1.13.0
+ * @deprecated 2.0.0
  */
 function format_noptin_custom_field_value( $value, $type, $subscriber ) {
-	_deprecated_function( __FUNCTION__, '1.13.0' );
+	_deprecated_function( __FUNCTION__, '2.0.0' );
 	return (string) $value;
 }
 
@@ -1102,7 +1102,7 @@ function format_noptin_custom_field_value( $value, $type, $subscriber ) {
  * Converts a custom field to schema.
  *
  * @param array $custom_field
- * @since 1.13.0
+ * @since 2.0.0
  * @return array
  */
 function noptin_convert_custom_field_to_schema( $custom_field ) {
@@ -1201,7 +1201,7 @@ function get_noptin_custom_fields( $public_only = false ) {
 /**
  * Returns an array of available multi-checkbox fields.
  *
- * @since 1.13.0
+ * @since 2.0.0
  * @return array
  */
 function get_noptin_multicheck_custom_fields() {
@@ -1283,7 +1283,7 @@ function get_noptin_subscriber_smart_tags() {
 /**
  * Returns a single smart tag.
  *
- * @since 1.13.0
+ * @since 2.0.0
  * @return array
  */
 function get_noptin_subscriber_smart_tag( $merge_tag ) {
@@ -1393,7 +1393,7 @@ function noptin_format_subscription_source( $source ) {
 /**
  * Clears cache of known subscription sources.
  *
- * @since 1.13.0
+ * @since 2.0.0
  * @return array
  */
 function noptin_clear_subscription_sources_cache() {

@@ -209,7 +209,7 @@ class Main {
 	 * @param string   $collection_name The collection name.
 	 * @return  mixed              Will be an array if $single is false. Will be value of meta data field if $single is true.
 	 * @access  public
-	 * @since   1.13.0
+	 * @since   2.0.0
 	 */
 	public function get_record_meta( $record_id, $meta_key = '', $single = false, $collection_name = 'subscribers' ) {
 		$collection = $this->store->get( $collection_name );
@@ -226,7 +226,7 @@ class Main {
 	 * @param string   $collection_name The collection name.
 	 * @return  int|false  Meta ID on success, false on failure.
 	 * @access  public
-	 * @since   1.13.0
+	 * @since   2.0.0
 	 */
 	public function add_record_meta( $record_id, $meta_key, $meta_value, $unique = false, $collection_name = 'subscribers' ) {
 		$collection = $this->store->get( $collection_name );
@@ -412,8 +412,8 @@ class Main {
 			'</a>'
 		);
 
-		$upsell      = __( 'The Ultimate Addons Pack allows you to segment your subscribers using lists and tags.', 'newsletter-optin-box' );
-		$upsell_url  = noptin_get_upsell_url( '/ultimate-addons-pack/', 'segment', 'email-subscribers' );
+		$upsell      = __( 'You can use tags to automate your email marketing.', 'newsletter-optin-box' );
+		$upsell_url  = noptin_get_upsell_url( '/guide/email-subscribers/tagging-subscribers/', 'segment', 'email-subscribers' );
 		$upsell_text = __( 'Learn More', 'newsletter-optin-box' );
 
 		foreach ( array( 'record_overview', 'record_create', 'import' ) as $route ) {
@@ -422,16 +422,14 @@ class Main {
 				'content' => $tip,
 			);
 
-			if ( ! defined( 'NOPTIN_ADDONS_PACK_FILE' ) ) {
-				$params['fills'][] = array(
-					'name'   => "noptin_subscribers_{$route}_upsell",
-					'upsell' => array(
-						'buttonText' => $upsell_text,
-						'buttonURL'  => $upsell_url,
-						'content'    => $upsell,
-					),
-				);
-			}
+			$params['fills'][] = array(
+				'name'   => "noptin_subscribers_{$route}_upsell",
+				'upsell' => array(
+					'buttonText' => $upsell_text,
+					'buttonURL'  => $upsell_url,
+					'content'    => $upsell,
+				),
+			);
 		}
 
 		return $params;

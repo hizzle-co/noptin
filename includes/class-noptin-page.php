@@ -452,7 +452,7 @@ class Noptin_Page {
 	 * Previews an email.
 	 *
 	 * @access public
-	 * @since  1.13.0
+	 * @since  2.0.0
 	 * @return array
 	 */
 	public function browser_preview() {

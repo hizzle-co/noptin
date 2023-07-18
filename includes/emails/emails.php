@@ -156,7 +156,7 @@ function noptin_get_new_automation_url() {
 /**
  * Retrieves an email campaign's object.
  *
- * @since 1.13.0
+ * @since 2.0.0
  * @param int $campaign_id
  * @return Noptin_Automated_Email|Noptin_Newsletter_Email|false
  */

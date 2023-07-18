@@ -112,7 +112,7 @@ class Noptin_Subscriber_Query {
 	public function __construct( $query = null ) {
 
 		// Show deprecated class notice.
-		_deprecated_function( __CLASS__, '1.13.0', 'get_noptin_subscribers' );
+		_deprecated_function( __CLASS__, '2.0.0', 'get_noptin_subscribers' );
 
 		if ( ! is_null( $query ) ) {
 			$this->prepare_query( $query );

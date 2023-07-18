@@ -46,7 +46,7 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 	/**
 	 * Filters the database schema.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $schema
 	 * @param array $field
 	 */

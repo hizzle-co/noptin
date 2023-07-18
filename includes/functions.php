@@ -557,7 +557,7 @@ function noptin_locate_ip_address_alt( $ip_address ) {
 /**
  * Returns GeoLocation fields.
  *
- * @since 1.13.0
+ * @since 2.0.0
  * @return array
  */
 function noptin_geolocation_fields() {

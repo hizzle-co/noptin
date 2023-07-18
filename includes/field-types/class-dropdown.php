@@ -27,7 +27,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	/**
 	 * Fetches available field options.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $custom_field
 	 * @return array
 	 */
@@ -66,7 +66,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	/**
 	 * Displays the single select field.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $args Field args
 	 */
 	protected function display_single( $args ) {
@@ -91,7 +91,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	/**
 	 * Displays the multiple select field.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $args Field args
 	 */
 	protected function display_multiple( $args ) {
@@ -117,7 +117,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	/**
 	 * Filters the database schema.
 	 *
-	 * @since 1.13.0
+	 * @since 2.0.0
 	 * @param array $schema
 	 * @param array $field
 	 */
