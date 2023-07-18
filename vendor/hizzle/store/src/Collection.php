@@ -992,8 +992,8 @@ class Collection {
 			if ( $prop->is_meta_key_multiple ) {
 
 				$new       = (array) $new;
-				$to_delete = array_diff_key( $current, $new );
-				$to_create = array_diff_key( $new, $current );
+				$to_delete = array_diff( $current, $new );
+				$to_create = array_diff( $new, $current );
 
 				// Add new meta.
 				foreach ( $to_create as $value ) {
