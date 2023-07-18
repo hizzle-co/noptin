@@ -526,7 +526,7 @@ class Record {
 	 */
 	public function set( $prop, $value ) {
 
-		// Check if prop ends 
+		// Check if prop ends
 		$is_adding   = false;
 		$is_removing = false;
 		if ( is_string( $prop ) && $this->get_object_read() ) {
