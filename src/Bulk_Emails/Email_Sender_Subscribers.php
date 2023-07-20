@@ -60,7 +60,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 		$subscriber = noptin_get_subscriber( $recipient );
 
 		// Bail if the subscriber is not found or is unsubscribed...
-		if ( ! $subscriber->exists() || ! $subscriber->is_active() ) {
+		if ( ! $subscriber->exists() ) {
 			return null;
 		}
 
@@ -93,6 +93,11 @@ class Email_Sender_Subscribers extends Email_Sender {
 		// Do not send twice.
 		if ( '' !== get_noptin_subscriber_meta( $subscriber->get_id(), '_campaign_' . $campaign->id, true ) ) {
 			return null;
+		}
+
+		// Check if the subscriber is active.
+		if ( ! $subscriber->is_active() ) {
+			return false;
 		}
 
 		// Prepare sender options.

@@ -161,8 +161,8 @@ class Collection {
 
 		// Register our custom meta table.
 		if ( $this->create_meta_table() ) {
-			$meta_type          = $this->get_meta_type() . '_meta';
-			$wpdb->{$meta_type} = $wpdb->prefix . $meta_type;
+			$meta_type          = $this->get_meta_type() . 'meta';
+			$wpdb->{$meta_type} = $this->get_meta_table_name();
 		}
 
 		// Register the collection.
