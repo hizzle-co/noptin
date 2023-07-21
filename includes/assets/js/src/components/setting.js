@@ -351,8 +351,20 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 	}, [ settingKey, prop, saved, setAttributes ] );
 
 	// Simple condition.
-	if ( setting.if && ! saved[ setting.if ] ) {
-		return null;
+	if ( setting.if || setting.restrict ) {
+
+		// Check if we're separating with period.
+		const parts = setting.restrict ? setting.restrict.split( '.' ) : setting.if.split( '.' );
+
+		// If we have two parts, we're checking a nested setting.
+		if ( parts.length === 2 && ! ( saved[ parts[0] ] && saved[ parts[0] ][ parts[1] ] ) ) {
+			return null;
+		}
+
+		// If we have one part, we're checking a root setting.
+		if ( parts.length === 1 && ! saved[ parts[0] ] ) {
+			return null;
+		}
 	}
 
 	// Abort early if condition is not met.
