@@ -448,6 +448,7 @@ class Subscriber extends \Hizzle\Store\Record {
 			// Fire action.
 			if ( 1 === count( $sent_campaigns[ $campaign_id ]['opens'] ) ) {
 				do_action( 'log_noptin_subscriber_campaign_open', $this->get_id(), $campaign_id );
+				increment_noptin_campaign_stat( $campaign_id, '_noptin_opens' );
 			}
 		}
 	}
@@ -486,6 +487,7 @@ class Subscriber extends \Hizzle\Store\Record {
 			// Fire action.
 			if ( 1 === count( $sent_campaigns[ $campaign_id ]['clicks'][ $url ] ) ) {
 				do_action( 'log_noptin_subscriber_campaign_click', $this->get_id(), $campaign_id, $url );
+				increment_noptin_campaign_stat( $campaign_id, '_noptin_clicks' );
 			}
 		}
 	}

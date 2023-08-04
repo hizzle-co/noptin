@@ -1449,7 +1449,7 @@ function noptin_format_date( $date_time ) {
 function noptin_encrypt( $plaintext ) {
 
 	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
-	$salt  = defined( 'AUTH_SALT' ) && AUTH_SALT ? AUTH_SALT : wp_salt(); // backwards compatibility.
+	$salt  = ( defined( 'AUTH_SALT' ) && AUTH_SALT ) ? AUTH_SALT : wp_salt(); // backwards compatibility.
 	$iv    = substr( $salt, 0, $ivlen );
 
 	// Encrypt then encode.
@@ -1477,7 +1477,7 @@ function noptin_decrypt( $encoded ) {
 
 	// Prepare args.
 	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
-	$salt  = defined( 'AUTH_SALT' ) && AUTH_SALT ? AUTH_SALT : wp_salt(); // backwards compatibility.
+	$salt  = ( defined( 'AUTH_SALT' ) && AUTH_SALT ) ? AUTH_SALT : wp_salt(); // backwards compatibility.
 	$iv    = substr( $salt, 0, $ivlen );
 
 	return openssl_decrypt( $decoded, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );

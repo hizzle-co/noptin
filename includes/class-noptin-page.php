@@ -217,19 +217,9 @@ class Noptin_Page {
 		$recipient = $this->get_request_recipient();
 
 		// Ensure we have a campaign.
-		if ( ! empty( $recipient['cid'] ) ) {
-
-			// Process subscribers.
-			if ( ! empty( $recipient['sid'] ) ) {
-				$subscriber_logged = log_noptin_subscriber_campaign_open( $recipient['sid'], $recipient['cid'] );
-			}
-
-			// Increment stats.
-			if ( ! empty( $subscriber_logged ) || ! empty( $user_logged ) ) {
-				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_opens' );
-			}
+		if ( ! empty( $recipient['cid'] ) && ! empty( $recipient['sid'] ) ) {
+			log_noptin_subscriber_campaign_open( $recipient['sid'], $recipient['cid'] );
 		}
-
 	}
 
 	/**
@@ -258,17 +248,8 @@ class Noptin_Page {
 		$destination = str_replace( array( '#038;', '&#38;', '&amp;' ), '&', rawurldecode( $recipient['to'] ) );
 
 		// Ensure we have a campaign.
-		if ( ! empty( $recipient['cid'] ) ) {
-
-			// Process subscribers.
-			if ( ! empty( $recipient['sid'] ) ) {
-				$subscriber_logged = log_noptin_subscriber_campaign_click( $recipient['sid'], $recipient['cid'], $destination );
-			}
-
-			// Increment stats.
-			if ( ! empty( $subscriber_logged ) || ! empty( $user_logged ) ) {
-				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_clicks' );
-			}
+		if ( ! empty( $recipient['cid'] ) && ! empty( $recipient['sid'] ) ) {
+			log_noptin_subscriber_campaign_click( $recipient['sid'], $recipient['cid'], $destination );
 		}
 
 		wp_redirect( $destination );
