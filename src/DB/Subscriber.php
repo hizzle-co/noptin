@@ -392,7 +392,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 *  @param array|string $sent_campaigns Sent email campaigns.
 	 */
 	public function set_sent_campaigns( $sent_campaigns ) {
-		$sent_campaigns = empty( $sent_campaigns ) ? array() : $sent_campaigns;
+		$sent_campaigns = empty( $sent_campaigns ) ? array() : maybe_unserialize( $sent_campaigns );
 		$sent_campaigns = is_array( $sent_campaigns ) ? wp_json_encode( $sent_campaigns ) : $sent_campaigns;
 		$this->set_prop( 'sent_campaigns', $sent_campaigns );
 	}

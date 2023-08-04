@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 2.0.2 =
+* Fix newsletter campaign stats not working.
+
 = 2.0.1 =
 * Fix newsletter subscriber meta not being saved.
 

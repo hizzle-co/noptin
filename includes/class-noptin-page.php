@@ -150,6 +150,9 @@ class Noptin_Page {
 			return $default;
 		}
 
+		// Remove trailing slash.
+		$recipient = trim( $recipient, '/' );
+
 		// Try to decode the recipient.
 		// New recipient format.
 		$decoded = json_decode( noptin_decrypt( $recipient ), true );
