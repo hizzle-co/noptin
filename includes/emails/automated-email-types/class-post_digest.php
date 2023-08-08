@@ -623,13 +623,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$next_send = get_post_meta( $campaign->id, '_noptin_next_send', true );
 
 		if ( $next_send ) {
-			$next_send = '<p class="noptin-list-table-misc noptin-tip" title="' . esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ) . '">' . esc_html(
-				sprintf(
-					// Translators: human friendly diff time.
-					__( 'Next send in %s', 'newsletter-optin-box' ),
-					human_time_diff( $next_send )
-				)
-			) . '</p>';
+			$next_send = sprintf(
+				'<p class="noptin-list-table-misc noptin-tip" title="%s">%s</p>',
+				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ),
+				esc_html( $this->get_formatted_next_send_time( $next_send ) )
+			);
 		}
 
 		// Do not display the next send time if the campaign is paused.
@@ -685,6 +683,62 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				return $about;
 		}
 
+	}
+
+	/**
+	 * Prepares the next send time.
+	 *
+	 * @param int $timestamp
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	private function get_formatted_next_send_time( $timestamp ) {
+
+		$now             = time();
+		$local_timestamp = $timestamp + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+
+		// If past, abort.
+		if ( $timestamp < $now ) {
+			return sprintf(
+				// translators: %1 is the time.
+				__( 'Was supposed to be send %1$s ago', 'newsletter-optin-box' ),
+				human_time_diff( $local_timestamp )
+			);
+		}
+
+		// If less than 24 hours, show human time diff.
+		if ( $timestamp - $now < DAY_IN_SECONDS ) {
+			return sprintf(
+				// translators: %1 is the time.
+				__( 'Next send in %1$s', 'newsletter-optin-box' ),
+				human_time_diff( $timestamp, $now )
+			);
+		}
+
+		// If tomorrow, show tomorrow.
+		if ( $timestamp - $now < 2 * DAY_IN_SECONDS ) {
+			return sprintf(
+				// translators: %1 is the time.
+				__( 'Next send tomorrow at %1$s', 'newsletter-optin-box' ),
+				date_i18n( get_option( 'time_format' ), $local_timestamp )
+			);
+		}
+
+		// If less than a week, show the day.
+		if ( $timestamp - $now < WEEK_IN_SECONDS ) {
+			return sprintf(
+				// translators: %1 is the day, %2 is the time.
+				__( 'Next send on %1$s at %2$s', 'newsletter-optin-box' ),
+				date_i18n( 'l', $local_timestamp ),
+				date_i18n( get_option( 'time_format' ), $local_timestamp )
+			);
+		}
+
+		// Return human time diff.
+		return sprintf(
+			// translators: %1 is the time.
+			__( 'Next send in %1$s', 'newsletter-optin-box' ),
+			human_time_diff( $local_timestamp )
+		);
 	}
 
 	/**
