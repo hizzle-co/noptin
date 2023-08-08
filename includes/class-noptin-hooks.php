@@ -21,7 +21,7 @@ class Noptin_Hooks {
 		add_action( 'init', array( $this, 'maybe_hide_optin_forms' ) );
 
 		// (Maybe) schedule a cron that runs daily.
-		add_action( 'init', array( $this, 'maybe_create_scheduled_event' ) );
+		add_action( 'admin_init', array( $this, 'maybe_create_scheduled_event' ) );
 
 		// (Maybe) subscribe users from custom forms.
 		add_action( 'init', array( $this, 'maybe_subscribe' ), 1000 );

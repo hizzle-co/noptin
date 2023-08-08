@@ -2341,6 +2341,10 @@ a.no-campaign-create-new-campaign {
 	color: green;
     font-weight: bold;
     margin-bottom: 0;
+
+	&.noptin-list-table-misc-error {
+		color: #e65100;
+	}
 }
 
 .noptin-checkbox-zone {

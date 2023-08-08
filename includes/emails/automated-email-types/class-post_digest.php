@@ -62,6 +62,19 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	public $notification_hook = 'noptin_send_post_digest';
 
 	/**
+	 * Registers relevant hooks.
+	 *
+	 */
+	public function add_hooks() {
+
+		parent::add_hooks();
+
+		// Periodically check post digest CRON jobs.
+		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_update_cron_jobs' ) );
+
+	}
+
+	/**
 	 * Retrieves the automated email type name.
 	 *
 	 */
@@ -320,6 +333,20 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			)
 		);
 
+	}
+
+	/**
+	 * Updates CRON jobs.
+	 */
+	public function maybe_update_cron_jobs() {
+
+		foreach ( $this->get_automations() as $automation ) {
+
+			// If the event is still not scheduled, display a warning.
+			if ( ! wp_get_scheduled_event( $this->notification_hook, array( $automation->id ) ) ) {
+				$this->schedule_campaign( $automation );
+			}
+		}
 	}
 
 	/**
@@ -633,6 +660,26 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		// Do not display the next send time if the campaign is paused.
 		if ( ! $campaign->can_send() ) {
 			$next_send = '';
+		}
+
+		// If we have a next send time, but no cron event, display a warning.
+		if ( ! empty( $next_send ) && ! wp_get_scheduled_event( $this->notification_hook, array( $campaign->id ) ) ) {
+
+			// Try rescheduling the event.
+			$this->schedule_campaign( $campaign );
+
+			// If the event is still not scheduled, display a warning.
+			if ( ! wp_get_scheduled_event( $this->notification_hook, array( $campaign->id ) ) ) {
+				$next_send .= sprintf(
+					'<p class="noptin-list-table-misc noptin-list-table-misc-error">%s</p>',
+					esc_attr__( 'The cron event for this campaign is not scheduled. We tried to reschedule it, but it seems that your server is not configured to run cron jobs.', 'newsletter-optin-box' )
+				);
+			} else {
+				$next_send .= sprintf(
+					'<p class="noptin-list-table-misc noptin-list-table-misc-error">%s</p>',
+					esc_attr__( 'The cron event for this campaign is not scheduled. Rescheduling it.', 'newsletter-optin-box' )
+				);
+			}
 		}
 
 		switch ( $campaign->get( 'frequency' ) ) {
