@@ -298,7 +298,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 				<span class="noptin-post-digest-time noptin-inline-block" style="margin-bottom: 10px;">
 					<?php esc_html_e( 'at', 'newsletter-optin-box' ); ?>
-					<input name="noptin_email[time]" class="noptin-schedule-input-time" style="width: 60px;" type="time" value="<?php echo esc_attr( $time ); ?>" placeholder="H:i">
+					<input name="noptin_email[time]" class="noptin-schedule-input-time" style="width: 60px;" type="time" data-default-date="<?php echo esc_attr( $time ); ?>" value="<?php echo esc_attr( $time ); ?>" placeholder="H:i">
 				</span>
 
 			</label>

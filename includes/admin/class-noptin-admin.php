@@ -209,8 +209,8 @@ class Noptin_Admin {
 		// Email campaigns page.
 		if ( 'noptin-email-campaigns' === $page ) {
 			$version = filemtime( $this->assets_path . 'js/dist/newsletter-editor.js' );
-			wp_enqueue_script( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.js', array(), '4.6.3', true );
-			wp_enqueue_style( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.min.css', array(), '4.6.3' );
+			wp_enqueue_script( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.js', array(), '4.6.13', true );
+			wp_enqueue_style( 'flatpickr', $this->assets_url . 'vendor/flatpickr/flatpickr.min.css', array(), '4.6.13' );
 			wp_enqueue_script( 'noptin-email-campaigns', $this->assets_url . 'js/dist/newsletter-editor.js', array( 'select2', 'sweetalert2', 'postbox' ), $version, true );
 		}
 
