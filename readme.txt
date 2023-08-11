@@ -136,6 +136,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 2.0.2 =
 * Fix newsletter campaign stats not working.
+* Test on WordPress 6.3.
+* Do not pass ID when creating a newsletter subscriber.
 
 = 2.0.1 =
 * Fix newsletter subscriber meta not being saved.
