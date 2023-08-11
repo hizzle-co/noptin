@@ -866,6 +866,11 @@ class Collection {
 				continue;
 			}
 
+			// ... OR ID field.
+			if ( 'id' === $prop->name ) {
+				continue;
+			}
+
 			// ... or fields that are already saved.
 			if ( array_key_exists( $key, $data ) ) {
 				$fields[ $key ] = $data[ $key ];
