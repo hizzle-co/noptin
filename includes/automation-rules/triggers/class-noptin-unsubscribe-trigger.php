@@ -72,7 +72,7 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function get_test_smart_tags( $rule ) {
 
-		$subject = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+		$subject = noptin_get_subscriber( get_current_noptin_subscriber_id() );
 		$args    = $this->prepare_trigger_args( $subject, array() );
 
 		return $args['smart_tags'];

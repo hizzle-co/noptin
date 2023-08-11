@@ -86,7 +86,7 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	 */
 	public function maybe_trigger_on_open( $subscriber_id, $campaign_id ) {
 
-		$subscriber = new Noptin_Subscriber( $subscriber_id );
+		$subscriber = noptin_get_subscriber( $subscriber_id );
 
 		$args = array(
 			'campaign_id'    => $campaign_id,
@@ -110,7 +110,7 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 			'campaign_title' => 'Test Campaign',
 		);
 
-		$subject = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+		$subject = noptin_get_subscriber( get_current_noptin_subscriber_id() );
 		$args    = $this->prepare_trigger_args( $subject, $args );
 
 		return $args['smart_tags'];

@@ -69,7 +69,7 @@ class Noptin_Link_Click_Trigger extends Noptin_Open_Email_Trigger {
 	 */
 	public function maybe_trigger_on_click( $subscriber_id, $campaign_id, $url ) {
 
-		$subscriber = new Noptin_Subscriber( $subscriber_id );
+		$subscriber = noptin_get_subscriber( $subscriber_id );
 		$args       = array(
 			'campaign_id'    => $campaign_id,
 			'campaign_title' => get_the_title( $campaign_id ),
@@ -94,7 +94,7 @@ class Noptin_Link_Click_Trigger extends Noptin_Open_Email_Trigger {
 			'url'            => 'https://noptin.com',
 		);
 
-		$subject = new Noptin_Subscriber( get_current_noptin_subscriber_id() );
+		$subject = noptin_get_subscriber( get_current_noptin_subscriber_id() );
 		$args    = $this->prepare_trigger_args( $subject, $args );
 
 		return $args['smart_tags'];

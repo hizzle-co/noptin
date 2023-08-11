@@ -422,7 +422,7 @@ abstract class Noptin_EDD_Trigger extends Noptin_Abstract_Trigger {
 
 			case 'newsletter':
 				$email      = $this->customer->email;
-				$subscriber = new Noptin_Subscriber( $email );
+				$subscriber = noptin_get_subscriber( $email );
 
 				if ( $subscriber->is_active() && ! noptin_is_email_unsubscribed( $email ) ) {
 					return 'yes';
