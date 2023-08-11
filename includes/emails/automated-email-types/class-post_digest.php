@@ -344,7 +344,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 			// If the event is still not scheduled, display a warning.
 			if ( ! wp_get_scheduled_event( $this->notification_hook, array( $automation->id ) ) ) {
-				$this->schedule_campaign( $automation );
+				$this->schedule_campaign( $automation, true );
 			}
 		}
 	}
@@ -356,6 +356,15 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function on_save_campaign( $campaign ) {
 		$this->schedule_campaign( $campaign, true );
+	}
+
+	/**
+	 * Fires before an automation is deleted.
+	 *
+	 * @param Noptin_Automated_Email $campaign
+	 */
+	public function on_delete_campaign( $campaign ) {
+		wp_clear_scheduled_hook( $this->notification_hook, array( $campaign->id ) );
 	}
 
 	/**
@@ -416,7 +425,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				}
 
 				$day       = $days[ (int) $day ];
-				$next_send = strtotime( "$day $time" );
+				$next_send = strtotime( "next $day $time" );
 				break;
 
 			case 'monthly':
@@ -666,7 +675,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		if ( ! empty( $next_send ) && ! wp_get_scheduled_event( $this->notification_hook, array( $campaign->id ) ) ) {
 
 			// Try rescheduling the event.
-			$this->schedule_campaign( $campaign );
+			$this->schedule_campaign( $campaign, true );
 
 			// If the event is still not scheduled, display a warning.
 			if ( ! wp_get_scheduled_event( $this->notification_hook, array( $campaign->id ) ) ) {

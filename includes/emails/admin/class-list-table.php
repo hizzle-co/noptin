@@ -434,11 +434,9 @@ class Noptin_Email_List_Table extends WP_List_Table {
 	 */
 	public function display_rows() {
 		foreach ( $this->query->get_posts() as $post ) {
-
-			if ( 'newsletter' === $this->collection_type ) {
-				$post = new Noptin_Newsletter_Email( $post->ID );
-			} else {
-				$post = new Noptin_Automated_Email( $post->ID );
+			$post = noptin_get_email_campaign_object( $post->ID );
+			if ( empty( $post ) ) {
+				continue;
 			}
 
 			$this->single_row( $post );

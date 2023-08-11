@@ -148,14 +148,10 @@ class Noptin_Emails_Admin {
 		}
 
 		// Retrieve campaign object.
-		if ( empty( $_GET['section'] ) || 'newsletters' === $_GET['section'] ) {
-			$campaign = new Noptin_Newsletter_Email( intval( $_GET['campaign'] ) );
-		} else {
-			$campaign = new Noptin_Automated_Email( intval( $_GET['campaign'] ) );
-		}
+		$campaign = noptin_get_email_campaign_object( intval( $_GET['campaign'] ) );
 
 		// Check if the campaign exists.
-		if ( $campaign->exists() ) {
+		if ( ! empty( $campaign ) && $campaign->exists() ) {
 			$campaign->id     = null;
 			$campaign->status = 'draft';
 			$result           = $campaign->save();
@@ -196,21 +192,24 @@ class Noptin_Emails_Admin {
 			return;
 		}
 
-		$campaign = get_post( intval( $_GET['campaign'] ) );
+		// Retrieve campaign object.
+		$campaign = noptin_get_email_campaign_object( intval( $_GET['campaign'] ) );
 
-		// Ensure this is a noptin campaign.
-		if ( $campaign && 'noptin-campaign' === $campaign->post_type ) {
-
-			// Delete the campaign.
-			wp_delete_post( $campaign->ID, true );
-
-			// Show success info.
-			noptin()->admin->show_info( __( 'The campaign has been deleted.', 'newsletter-optin-box' ) );
-
-			// Redirect to success page.
-			wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
-			exit;
+		if ( empty( $campaign ) || ! $campaign->exists() ) {
+			return;
 		}
+
+		do_action( 'noptin_' . $campaign->type . '_campaign_before_delete', $campaign );
+
+		// Delete the campaign.
+		wp_delete_post( $campaign->id, true );
+
+		// Show success info.
+		noptin()->admin->show_info( __( 'The campaign has been deleted.', 'newsletter-optin-box' ) );
+
+		// Redirect to success page.
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
+		exit;
 
 	}
 
