@@ -156,7 +156,12 @@ class Email_Sender_Subscribers extends Email_Sender {
 				}
 
 				// Loop through available filters.
-				foreach ( array_keys( get_noptin_subscriber_filters() ) as $filter ) {
+				$filters = array_merge(
+					array_keys( get_noptin_subscriber_filters() ),
+					array( 'tags' )
+				);
+
+				foreach ( $filters as $filter ) {
 
 					// Filter by key.
 					$filtered = isset( $options[ $filter ] ) ? $options[ $filter ] : '';

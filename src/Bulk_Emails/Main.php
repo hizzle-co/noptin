@@ -180,6 +180,9 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			return false;
 		}
 
+		// Sleep for a second.
+		sleep( 1 );
+
 		return array_shift( $this->next_recipients );
 	}
 
