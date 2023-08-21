@@ -242,7 +242,7 @@ class Noptin_Form_Element {
 		$button_atts = array(
 			'type'  => 'submit',
 			'id'    => sanitize_html_class( $this->args['html_id'] . '__submit' ),
-			'class' => 'noptin-form-submit btn button btn-primary button-primary',
+			'class' => 'noptin-form-submit btn button btn-primary button-primary wp-element-button',
 			'name'  => 'noptin-submit',
 		);
 

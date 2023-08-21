@@ -807,11 +807,13 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 				return $locale;
 
 			case 'customer.details':
-				if ( ! empty( $this->order ) ) {
+				$order = empty( $this->order ) ? $this->customer->get_last_order() : $this->order;
+
+				if ( ! empty( $order ) ) {
 
 					WC()->mailer();
 					ob_start();
-					do_action( 'woocommerce_email_customer_details', $this->order, false, false, '' );
+					do_action( 'woocommerce_email_customer_details', $order, false, false, '' );
 					return ob_get_clean();
 
 				}
