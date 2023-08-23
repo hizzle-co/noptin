@@ -130,7 +130,7 @@ class Noptin_WooCommerce_Product_Purchased_Trigger extends Noptin_WooCommerce_Tr
 
 		$order = $email_types['woocommerce_product_purchase']->order;
 		$args  = array(
-			'email' => $order->order->get_billing_email(),
+			'email' => $order->get_billing_email(),
 		);
 
 		$args = $this->prepare_trigger_args( $this->get_order_customer( $order ), $args );

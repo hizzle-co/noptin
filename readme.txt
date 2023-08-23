@@ -134,6 +134,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 2.0.3 =
+* Fix error when previewing WooCommerce product purchased automated emails.
+
 = 2.0.2 =
 * Fix newsletter campaign stats not working.
 * Test on WordPress 6.3.
