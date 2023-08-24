@@ -344,6 +344,10 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		// Prepare the options.
 		$prepared_options = array();
 
+		if ( isset( $options['conditional_logic'] ) ) {
+			$prepared_options['conditional_logic'] = $options['conditional_logic'];
+		}
+
 		foreach ( $settings as $key => $args ) {
 
 			$default  = isset( $args['default'] ) ? $args['default'] : '';

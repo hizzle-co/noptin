@@ -59,7 +59,7 @@ class Noptin_Unsubscribe_Trigger extends Noptin_Abstract_Trigger {
 	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber in question.
 	 */
 	public function maybe_trigger( $subscriber ) {
-		$this->trigger( $subscriber, $subscriber->get_data() );
+		$this->trigger( $subscriber, array( 'email' => $subscriber->get_email() ) );
 	}
 
 	/**

@@ -146,7 +146,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber in question.
 	 */
 	public function maybe_trigger( $subscriber ) {
-		$this->trigger( $subscriber, $subscriber->get_data() );
+		$this->trigger( $subscriber, array( 'email' => $subscriber->get_email() ) );
 	}
 
 	/**
@@ -177,14 +177,15 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 
 				// Sends before confirmation.
 				$sends_before_double_optin = empty( $rule->trigger_settings['fire_after_confirmation'] );
+				$has_confirmed             = doing_action( 'noptin_subscriber_status_set_to_subscribed' );
 
 				// If we're sending before confirmation, ensure the subscriber is not active.
-				if ( $sends_before_double_optin && $subject->is_active() ) {
+				if ( $sends_before_double_optin && $has_confirmed ) {
 					continue;
 				}
 
 				// If we're sending after confirmation, ensure the subscriber is active.
-				if ( ! $sends_before_double_optin && ! $subject->is_active() ) {
+				if ( ! $sends_before_double_optin && ! $has_confirmed ) {
 					continue;
 				}
 			}
@@ -219,7 +220,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	public function get_test_smart_tags( $rule ) {
 
 		$subject = noptin_get_subscriber( get_current_noptin_subscriber_id() );
-		$args    = $this->prepare_trigger_args( $subject, $subject->get_data() );
+		$args    = $this->prepare_trigger_args( $subject, array( 'email' => $subject->get_email() ) );
 
 		return $args['smart_tags'];
 	}
