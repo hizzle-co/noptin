@@ -475,7 +475,7 @@ function confirm_noptin_subscriber_email( $subscriber ) {
 	// Fetch subscriber.
 	$subscriber = noptin_get_subscriber( $subscriber );
 
-	if ( ! $subscriber->exists() || $subscriber->get_confirmed() || $subscriber->is_active() ) {
+	if ( ! $subscriber->exists() || $subscriber->get_confirmed() ) {
 		return;
 	}
 
@@ -727,7 +727,7 @@ function send_new_noptin_subscriber_double_optin_email( $id ) {
 	$subscriber = noptin_get_subscriber( $id );
 
 	// Abort if the subscriber is missing or confirmed.
-	if ( ! $subscriber->exists() || $subscriber->get_confirmed() ) {
+	if ( ! $subscriber->exists() || $subscriber->get_confirmed() || $subscriber->is_active() ) {
 		return false;
 	}
 

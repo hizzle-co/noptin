@@ -2064,17 +2064,28 @@ function noptin_get_automation_rules( $args = array(), $return = 'results' ) {
 /**
  * Fetch an automation rule by rule ID.
  *
- * @param int|\Hizzle\Noptin\DB\Automation_Rule $automation_rule_id Automation Rule ID, or object.
+ * @param int|\Hizzle\Noptin\DB\Automation_Rule|Noptin_Automation_Rule $automation_rule_id Automation Rule ID, or object.
  * @return \Hizzle\Noptin\DB\Automation_Rule|WP_Error Automation Rule object if found, error object if not found.
  */
 function noptin_get_automation_rule( $automation_rule_id = 0 ) {
+
+	// If automation rule is already an automation rule object, return it.
+	if ( $automation_rule_id instanceof \Hizzle\Noptin\DB\Automation_Rule ) {
+		return $automation_rule_id;
+	}
+
+	// Deprecated object.
+	if ( $automation_rule_id instanceof Noptin_Automation_Rule ) {
+		$automation_rule_id = $automation_rule_id->id;
+	}
+
 	return noptin()->db()->get( $automation_rule_id, 'automation_rules' );
 }
 
 /**
  * Deletes an automation rule.
  *
- * @param int|\Hizzle\Noptin\DB\Automation_Rule $automation_rule_id Automation Rule ID, or object.
+ * @param int|\Hizzle\Noptin\DB\Automation_Rule|Noptin_Automation_Rule $automation_rule_id Automation Rule ID, or object.
  * @return bool|WP_Error True on success, error object on failure.
  */
 function noptin_delete_automation_rule( $automation_rule_id ) {

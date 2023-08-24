@@ -29,9 +29,8 @@ class Noptin_Automation_Rules {
 	public function __construct() {
 
 		// Handle admin rule CRUD requests.
-		add_action( 'noptin_delete_automation_rule', array( $this, 'admin_delete_automation_rule' ) );
 		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
-		add_action( 'noptin_deleted_automation_rule', array( $this, 'delete_campaign_on_automation_rule_delete' ) );
+		add_action( 'noptin_automation_rule_deleted', array( $this, 'delete_campaign_on_automation_rule_delete' ) );
 
 		// Register core actions.
 		$this->add_action( new Noptin_Custom_Field_Action() );
@@ -236,51 +235,24 @@ class Noptin_Automation_Rules {
 	 * Updates a rule.
 	 *
 	 * @since 1.2.8
-	 * @param int|Noptin_Automation_Rule $rule The rule to update
+	 * @param int|\Hizzle\Noptin\DB\Automation_Rule $rule The rule to update
 	 * @param array $to_update The new $arguments.
-	 * @return bool|Noptin_Automation_Rule
+	 * @return bool|\Hizzle\Noptin\DB\Automation_Rule
 	 */
 	public function update_rule( $rule, $to_update ) {
-		global $wpdb;
 
-		if ( ! is_a( $rule, 'Noptin_Automation_Rule' ) ) {
-			$rule = new Noptin_Automation_Rule( $rule );
-		}
+		$rule = noptin_get_automation_rule( $rule );
 
 		// Does the rule exist?
-		if ( ! $rule->exists() ) {
+		if ( is_wp_error( $rule ) || ! $rule->exists() ) {
 			return false;
 		}
 
-		// Our database fields with defaults set.
-		$fields = array(
-			'action_id'        => $rule->action_id,
-			'action_settings'  => $rule->action_settings,
-			'trigger_id'       => $rule->trigger_id,
-			'trigger_settings' => $rule->trigger_settings,
-			'status'           => $rule->status, // Active, 0 inactive, 2 automated email.
-			'times_run'        => $rule->times_run,
-			'created_at'       => $rule->created_at,
-		);
+		$rule->set_props( $to_update );
+		$rule->set_updated_at( new \Hizzle\Store\Date_Time( 'now', new \DateTimeZone( 'UTC' ) ) );
+		$rule->save();
 
-		foreach ( array_keys( $fields ) as $key ) {
-
-			if ( isset( $to_update[ $key ] ) ) {
-				$fields[ $key ] = $to_update[ $key ];
-				$fields[ $key ] = maybe_serialize( $fields[ $key ] );
-			} else {
-				unset( $fields[ $key ] );
-			}
-		}
-
-		$fields['updated_at'] = current_time( 'mysql' );
-
-		if ( ! $wpdb->update( $this->get_table(), $fields, array( 'id' => $rule->id ) ) ) {
-			return false;
-		}
-
-		wp_cache_delete( $rule->id, 'noptin_automation_rules' );
-		return new Noptin_Automation_Rule( $rule->id );
+		return $rule;
 
 	}
 
@@ -288,27 +260,11 @@ class Noptin_Automation_Rules {
 	 * Deletes a rule.
 	 *
 	 * @since 1.3.0
-	 * @param int|Noptin_Automation_Rule $rule The rule to delete
+	 * @param int|\Hizzle\Noptin\DB\Automation_Rule $rule The rule to delete
 	 * @return bool
 	 */
 	public function delete_rule( $rule ) {
-		global $wpdb;
-
-		$rule = new Noptin_Automation_Rule( $rule );
-
-		// Does the rule exist?
-		if ( ! $rule->exists() ) {
-			return false;
-		}
-
-		wp_cache_delete( $rule->id, 'noptin_automation_rules' );
-
-		$result = $wpdb->delete( $this->get_table(), array( 'id' => $rule->id ), '%d' );
-
-		do_action( 'noptin_deleted_automation_rule', $rule );
-
-		return $result;
-
+		return noptin_delete_automation_rule( $rule );
 	}
 
 	/**
@@ -347,49 +303,16 @@ class Noptin_Automation_Rules {
 	/**
 	 * Deletes a campaign when a rule is deleted.
 	 *
-	 * @var Noptin_Automation_Rule $rule The rule.
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The rule.
 	 */
 	public function delete_campaign_on_automation_rule_delete( $rule ) {
 
-		if ( 'email' !== $rule->action_id || empty( $rule->action_settings['automated_email_id'] ) ) {
+		$action_settings = $rule->get_action_settings();
+		if ( 'email' !== $rule->get_action_id() || empty( $action_settings['automated_email_id'] ) ) {
 			return;
 		}
 
-		wp_delete_post( $rule->action_settings['automated_email_id'], true );
-	}
-
-	/**
-	 * Deletes a rule
-	 *
-	 * @access      public
-	 * @since       1.3.0
-	 * @return      void
-	 */
-	public function admin_delete_automation_rule() {
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['_wpnonce'] ) ) {
-			return;
-		}
-
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'noptin-automation-rule' ) ) {
-			return;
-		}
-
-		$this->delete_rule( intval( $_GET['delete'] ) );
-
-		noptin()->admin->show_info( __( 'The automation rule has been deleted.', 'newsletter-optin-box' ) );
-
-		wp_safe_redirect(
-			add_query_arg(
-				array(
-					'_wpnonce'            => false,
-					'delete'              => false,
-					'noptin_admin_action' => false,
-				)
-			)
-		);
-		exit;
-
+		wp_delete_post( $action_settings['automated_email_id'], true );
 	}
 
 }
