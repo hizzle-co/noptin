@@ -110,37 +110,6 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Checks if settings are met.
-	 *
-	 * @since 1.2.8
-	 * @param Noptin_Automation_Rule $rule The rule to check for.
-	 * @param mixed $args Extra args for the action.
-	 * @param \Hizzle\Noptin\DB\Subscriber $subject The subject.
-	 * @param Noptin_Abstract_Action $action The action to run.
-	 * @return bool
-	 */
-	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
-
-		if ( noptin_has_enabled_double_optin() ) {
-
-			// Sends before confirmation.
-			$sends_before_double_optin = empty( $rule->trigger_settings['fire_after_confirmation'] );
-
-			// If we're sending before confirmation, ensure the subscriber is not active.
-			if ( $sends_before_double_optin && $subject->is_active() ) {
-				return false;
-			}
-
-			// If we're sending after confirmation, ensure the subscriber is active.
-			if ( ! $sends_before_double_optin && ! $subject->is_active() ) {
-				return false;
-			}
-		}
-
-		return parent::is_rule_valid_for_args( $rule, $args, $subject, $action );
-	}
-
-	/**
 	 * Called when someone subscribes to the newsletter.
 	 *
 	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber in question.
