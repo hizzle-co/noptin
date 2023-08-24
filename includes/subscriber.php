@@ -475,7 +475,7 @@ function confirm_noptin_subscriber_email( $subscriber ) {
 	// Fetch subscriber.
 	$subscriber = noptin_get_subscriber( $subscriber );
 
-	if ( ! $subscriber->exists() || $subscriber->get_confirmed() ) {
+	if ( ! $subscriber->exists() || $subscriber->get_confirmed() || $subscriber->is_active() ) {
 		return;
 	}
 
