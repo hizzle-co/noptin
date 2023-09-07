@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { Flex, FlexBlock, FlexItem, Notice, Spinner, SlotFillProvider } from '@wordpress/components';
-import { useState, useEffect, useMemo, useCallback } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import Save from './save';
 import EditSections from './edit-sections';
 import { MergeTagsThickboxModal } from '../merge-tags';
+import ErrorBoundary from '../collection/error-boundary';
 
 /**
  * Displays the editor heading.
@@ -21,9 +22,9 @@ import { MergeTagsThickboxModal } from '../merge-tags';
  * @param {string} props.createNewUrl The create new url.
  * @return {JSX.Element}
  */
-function EditorHeading({id, createNewUrl}) {
+function EditorHeading( { id, createNewUrl } ) {
 
-	const isSaved = !!( id && parseInt(id) > 0 );
+	const isSaved = !!( id && parseInt( id ) > 0 );
 
 	return (
 		<h1 className="wp-heading-inline">
@@ -50,13 +51,13 @@ function EditorHeading({id, createNewUrl}) {
 export function getAvailableSmartTags( smartTags, trigger_settings ) {
 	const tags = [];
 
-	if ( ! smartTags ) {
+	if ( !smartTags ) {
 		return tags;
 	}
 
 	Object.keys( smartTags ).forEach( key => {
 
-		const smartTag = smartTags[ key ];
+		const smartTag = smartTags[key];
 
 		// Check if conditions have been met.
 		if ( smartTag.conditions ) {
@@ -65,17 +66,17 @@ export function getAvailableSmartTags( smartTags, trigger_settings ) {
 			const condition_matched = smartTag.conditions.every( condition => {
 
 				if ( Array.isArray( condition.value ) ) {
-					var matched = condition.value.some( val => val == trigger_settings[ condition.key ] );
+					var matched = condition.value.some( val => val == trigger_settings[condition.key] );
 				} else {
-					var matched = condition.value == trigger_settings[ condition.key ];
+					var matched = condition.value == trigger_settings[condition.key];
 				}
 
 				const should_match = condition.operator === 'is';
 
 				return matched === should_match;
-			});
+			} );
 
-			if ( ! condition_matched ) {
+			if ( !condition_matched ) {
 				return;
 			}
 		}
@@ -96,8 +97,8 @@ export function getAvailableSmartTags( smartTags, trigger_settings ) {
 			placeholder: smartTag.placeholder ? smartTag.placeholder : '',
 			conditional_logic: smartTag.conditional_logic ? smartTag.conditional_logic : false,
 			options: smartTag.options ? smartTag.options : [],
-		})
-	});
+		} )
+	} );
 
 	return tags;
 }
@@ -112,18 +113,7 @@ export function getAvailableSmartTags( smartTags, trigger_settings ) {
  * @param {string} props.createNewUrl The create new url.
  * @returns {JSX.Element}
  */
-export default function AutomationRuleEditor({id, action, trigger, settings, smartTags, createNewUrl}) {
-
-	// Prepare the app.
-	const [automationRule, setAutomationRule] = useState({});
-	const [saving, setSaving] = useState(false);
-	const [loading, setLoading] = useState(1);
-	const [error, setError] = useState(null);
-	const [success, setSuccess] = useState(null);
-	const availableSmartTags = useMemo(() => getAvailableSmartTags(smartTags, automationRule.trigger_settings), [smartTags, automationRule.trigger_settings]);
-
-	// Action ID.
-	const isLoading = loading > 0;
+export default function AutomationRuleEditor( { id, action, trigger, settings, smartTags, createNewUrl } ) {
 
 	// Default automation rule.
 	const defaultAutomationRule = {
@@ -134,37 +124,66 @@ export default function AutomationRuleEditor({id, action, trigger, settings, sma
 		trigger_settings: {},
 	}
 
+	// On mount, read default values from the settings.
+	useEffect( () => {
+		if ( settings ) {
+			Object.values( settings ).forEach( settingGroup => {
+
+				if ( !['trigger_settings', 'action_settings'].includes( settingGroup.prop ) || !settingGroup.settings ) {
+					return;
+				}
+
+				// Loop through the settings and pluck the default values.
+				Object.keys( settingGroup.settings ).forEach( setting => {
+					const settingData = settingGroup.settings[setting];
+
+					if ( typeof settingData.default !== 'undefined' ) {
+						defaultAutomationRule[settingGroup.prop][setting] = settingData.default;
+					}
+				} );
+			} );
+		}
+	}, [settings] );
+
+	// Prepare the app.
+	const [automationRule, setAutomationRule] = useState( { ...defaultAutomationRule } );
+	const [saving, setSaving] = useState( false );
+	const [loading, setLoading] = useState( 1 );
+	const [error, setError] = useState( null );
+	const [success, setSuccess] = useState( null );
+	const availableSmartTags = useMemo( () => getAvailableSmartTags( smartTags, automationRule.trigger_settings || {} ), [smartTags, automationRule.trigger_settings] );
+
+	// Action ID.
+	const isLoading = loading > 0;
+
 	/**
 	 * Load the automation rule whenever the rule ID changes.
 	 */
-	useEffect(() => {
-		if (id > 0) {
+	useEffect( () => {
+		if ( id > 0 ) {
 
 			// Set loading to true.
-			setLoading(loading + 1);
-			setError(null);
-			setSuccess(null);
+			setLoading( loading + 1 );
+			setError( null );
+			setSuccess( null );
 
 			// Fetch the automation rule.
-			apiFetch({
+			apiFetch( {
 				path: `/noptin/v1/automation_rules/${id}`,
-			}).then((response) => {
+			} ).then( ( response ) => {
 				if ( response ) {
-					setAutomationRule(response);
-				} else {
-					setAutomationRule( defaultAutomationRule );
+					setAutomationRule( response );
 				}
-			}).catch((err) => {
-				setAutomationRule(null);
-				setError(err.message);
-			}).finally(() => {
-				setLoading(loading - 1);
-			});
+			} ).catch( ( err ) => {
+				setAutomationRule( null );
+				setError( err.message );
+			} ).finally( () => {
+				setLoading( loading - 1 );
+			} );
 		} else {
-			setAutomationRule( defaultAutomationRule );
-			setLoading(loading - 1);
+			setLoading( loading - 1 );
 		}
-	}, [id]);
+	}, [id] );
 
 	const style = {
 		opacity: isLoading || saving ? 0.5 : 1,
@@ -173,44 +192,46 @@ export default function AutomationRuleEditor({id, action, trigger, settings, sma
 
 	return (
 		<div className="noptin-automation-rule__editor" style={style}>
-			<SlotFillProvider>
-				<EditorHeading id={automationRule.id} createNewUrl={createNewUrl} />
-				<Flex wrap align="top">
+			<ErrorBoundary>
+				<SlotFillProvider>
+					<EditorHeading id={automationRule.id} createNewUrl={createNewUrl} />
+					<Flex wrap align="top">
 
-					<FlexBlock className="noptin-es6-editor__main">
+						<FlexBlock className="noptin-es6-editor__main">
 
-						{error && (
-							<Notice status="error" onDismiss={() => {setError(null)}}>
-								{error}
-							</Notice>
-						)}
+							{error && (
+								<Notice status="error" onDismiss={() => { setError( null ) }}>
+									{error}
+								</Notice>
+							)}
 
-						{success && (
-							<Notice status="success" onDismiss={() => {setSuccess(null)}}>
-								{success}
-							</Notice>
-						)}
+							{success && (
+								<Notice status="success" onDismiss={() => { setSuccess( null ) }}>
+									{success}
+								</Notice>
+							)}
 
-						{isLoading && <Spinner />}
+							{isLoading && <Spinner />}
 
-						{!isLoading && <EditSections settings={settings} automationRule={automationRule} setAutomationRule={setAutomationRule} availableSmartTags={availableSmartTags} /> }
+							{!isLoading && <EditSections settings={settings} automationRule={automationRule} setAutomationRule={setAutomationRule} availableSmartTags={availableSmartTags} />}
 
-					</FlexBlock>
+						</FlexBlock>
 
-					<FlexItem className="noptin-component-editor__sidebar">
-						<Save
-							automationRule={automationRule}
-							setAutomationRule={setAutomationRule}
-							setError={setError}
-							setSuccess={setSuccess}
-							isSaving={saving}
-							setIsSaving={setSaving}
-						/>
-					</FlexItem>
+						<FlexItem className="noptin-component-editor__sidebar">
+							<Save
+								automationRule={automationRule}
+								setAutomationRule={setAutomationRule}
+								setError={setError}
+								setSuccess={setSuccess}
+								isSaving={saving}
+								setIsSaving={setSaving}
+							/>
+						</FlexItem>
 
-				</Flex>
-				{!isLoading && <MergeTagsThickboxModal availableSmartTags={availableSmartTags} /> }
-			</SlotFillProvider>
+					</Flex>
+					{!isLoading && <MergeTagsThickboxModal availableSmartTags={availableSmartTags} />}
+				</SlotFillProvider>
+			</ErrorBoundary>
 		</div>
 	);
 }

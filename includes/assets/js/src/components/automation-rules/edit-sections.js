@@ -1,4 +1,5 @@
 import EditSection from './edit-section';
+import ErrorBoundary from '../collection/error-boundary';
 
 /**
  * Displays a section edit zones.
@@ -24,17 +25,18 @@ export default function EditSections({ settings, availableSmartTags, automationR
 
 	return (
 		<div className="noptin-automation-rule-editor__sections">
-
-			{settingKeys.map( ( settingKey ) => (
-				<EditSection
-					key={settingKey}
-					sectionKey={settingKey}
-					availableSmartTags={availableSmartTags}
-					automationRule={automationRule}
-					setAutomationRule={setAutomationRule}
-					{...settings[ settingKey ]}
-				/>
-			))}
+			<ErrorBoundary>
+				{settingKeys.map( ( settingKey ) => (
+					<EditSection
+						key={settingKey}
+						sectionKey={settingKey}
+						availableSmartTags={availableSmartTags}
+						automationRule={automationRule}
+						setAutomationRule={setAutomationRule}
+						{...settings[ settingKey ]}
+					/>
+				))}
+			</ErrorBoundary>
 		</div>
 	);
 }

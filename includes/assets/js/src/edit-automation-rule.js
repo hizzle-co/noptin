@@ -1,6 +1,7 @@
 import domReady from '@wordpress/dom-ready';
 import AutomationRuleEditor from './components/automation-rules/editor';
 import {render, createRoot, StrictMode} from "@wordpress/element";
+import ErrorBoundary from './components/collection/error-boundary';
 
 domReady( () => {
 
@@ -15,7 +16,9 @@ domReady( () => {
 
 		const Editor = (
 			<StrictMode>
-				<AutomationRuleEditor {...data} />
+				<ErrorBoundary>
+					<AutomationRuleEditor {...data} />
+				</ErrorBoundary>
 			</StrictMode>
 		)
 

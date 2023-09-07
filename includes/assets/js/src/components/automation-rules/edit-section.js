@@ -10,6 +10,7 @@ import { useCallback } from '@wordpress/element';
  */
 import Setting from '../setting';
 import Section from '../section';
+import ErrorBoundary from '../collection/error-boundary';
 
 /**
  * Displays a single edit section.
@@ -45,23 +46,25 @@ export default function EditSection({ sectionKey, label, prop, availableSmartTag
 	}, [ automationRule, setAutomationRule ] );
 
 	return (
-		<Section title={label} className={`noptin-automation-rule-editor__section noptin-automation-rule-editor__section-${sectionKey}`}>
+		<ErrorBoundary>
+			<Section title={label} className={`noptin-automation-rule-editor__section noptin-automation-rule-editor__section-${sectionKey}`}>
 
-			<CardBody>
+				<CardBody>
 
-				{settingKeys.map( ( settingKey ) => (
-					<Setting
-						key={settingKey}
-						settingKey={settingKey}
-						prop={prop}
-						availableSmartTags={availableSmartTags}
-						saved={automationRule}
-						setAttributes={setAttributes}
-						setting={settings[ settingKey]}
-					/>
-				))}
-			</CardBody>
+					{settingKeys.map( ( settingKey ) => (
+						<Setting
+							key={settingKey}
+							settingKey={settingKey}
+							prop={prop}
+							availableSmartTags={availableSmartTags}
+							saved={automationRule}
+							setAttributes={setAttributes}
+							setting={settings[ settingKey]}
+						/>
+					))}
+				</CardBody>
 
-		</Section>
+			</Section>
+		</ErrorBoundary>
 	);
 }

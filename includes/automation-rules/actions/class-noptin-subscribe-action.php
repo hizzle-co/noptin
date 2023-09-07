@@ -80,6 +80,16 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 			);
 		}
 
+		// Source.
+		$settings['source'] = array(
+			'type'        => 'text',
+			'el'          => 'input',
+			'label'       => __( 'Source', 'newsletter-optin-box' ),
+			'map_field'   => true,
+			'default'     => '',
+			'placeholder' => __( 'Optional. Subscription source', 'newsletter-optin-box' ),
+		);
+
 		return $settings;
 	}
 
@@ -124,6 +134,11 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 			}
 
 			$details[ $field['merge_tag'] ] = $smart_tags->replace_in_text_field( $settings[ $field['merge_tag'] ] );
+		}
+
+		// Source.
+		if ( isset( $settings['source'] ) && '' !== $settings['source'] ) {
+			$details['source'] = $smart_tags->replace_in_text_field( $settings['source'] );
 		}
 
 		if ( $subject instanceof Noptin_Subscriber ) {
