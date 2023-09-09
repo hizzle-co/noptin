@@ -442,7 +442,6 @@ $noptin_color: #ff6f00;
 	padding: 20px;
 	align-items: center;
 	justify-content: center;
-	z-index: 100;
 
 	ul {
 		text-align: left !important;
@@ -532,7 +531,6 @@ $noptin_color: #ff6f00;
 /* Form footers */
 .noptin-form-footer {
 	padding: 20px;
-	z-index: 100;
 
 	.noptin-form-fields::after {
 		content: "";

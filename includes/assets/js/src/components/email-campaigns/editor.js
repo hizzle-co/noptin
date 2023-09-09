@@ -24,9 +24,9 @@ import { getAvailableSmartTags } from '../automation-rules/editor';
 export default function EmailCampaignEditor({ saved, settings, smartTags }) {
 
 	// Prepare the app.
-	const availableSmartTags      = useMemo(() => getAvailableSmartTags(smartTags, saved), [smartTags, saved]);
 	const settingKeys             = Object.keys( settings );
 	const [ options, setOptions ] = useState( saved );
+	const availableSmartTags      = useMemo(() => getAvailableSmartTags(smartTags, options), [smartTags, options]);
 
 	/**
 	 * Sets a saved attribute.
