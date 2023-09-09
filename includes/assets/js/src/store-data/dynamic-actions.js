@@ -89,8 +89,8 @@ export default function createDynamicActions( namespace, collection ) {
 
 			yield apiFetch( { path, method } );
 
-			// Invalidate the getRecord selector.
-			yield dispatch.invalidateResolution( 'getRecord', [ result.id ] );
+			// Invalidate related selectors.
+			yield dispatch.emptyCache( dispatch );
 
 			return {
 				type: 'DELETE_RECORD',

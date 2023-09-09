@@ -3,11 +3,15 @@
  */
 import { apiFetch } from '@wordpress/data-controls';
 import { controls } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
 import { setRecords, setRecord, setPartialRecords, setSchema, setTabContent, setRecordOverview } from './actions';
+
+// Add a random query arg to avoid caching.
+const addRandomQueryArg = ( url ) => addQueryArgs( url, { uniqid: Math.random() } );
 
 /**
  * Creates resolvers for the store.
@@ -26,7 +30,7 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getRecords( queryString ) {
-			const path    = `${namespace}/v1/${collection}${queryString}`;
+			const path    = addRandomQueryArg( `${namespace}/v1/${collection}${queryString}` );
 			const records = yield apiFetch( { path } );
 
 			if ( records ) {
@@ -62,7 +66,7 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getPartialRecords( queryString ) {
-			const path    = `${namespace}/v1/${collection}${queryString}`;
+			const path    = addRandomQueryArg( `${namespace}/v1/${collection}${queryString}` );
 			const records = yield apiFetch( { path } );
 
 			if ( records ) {
@@ -77,7 +81,7 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getRecord( id ) {
-			const path   = `${namespace}/v1/${collection}/${id}`;
+			const path   = addRandomQueryArg( `${namespace}/v1/${collection}/${id}` );
 			const record = yield apiFetch( { path } );
 
 			return setRecord( record );
@@ -89,7 +93,7 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getSchema() {
-			const path   = `${namespace}/v1/${collection}/collection_schema`;
+			const path   = addRandomQueryArg( `${namespace}/v1/${collection}/collection_schema` );
 			const schema = yield apiFetch( { path } );
 
 			return setSchema( schema );
@@ -103,7 +107,7 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getTabContent( id, tab_id ) {
-			const path    = `${namespace}/v1/${collection}/${id}/${tab_id}`;
+			const path    = addRandomQueryArg( `${namespace}/v1/${collection}/${id}/${tab_id}` );
 			const content = yield apiFetch( { path } );
 
 			return setTabContent( id, tab_id, content );
@@ -116,7 +120,7 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getRecordOverview( id ) {
-			const path     = `${namespace}/v1/${collection}/${id}/overview`;
+			const path     = addRandomQueryArg( `${namespace}/v1/${collection}/${id}/overview` );
 			const overview = yield apiFetch( { path } );
 
 			return setRecordOverview( id, overview );
