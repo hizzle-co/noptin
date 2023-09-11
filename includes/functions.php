@@ -2097,3 +2097,24 @@ function noptin_delete_automation_rule( $automation_rule_id ) {
 
 	return $automation_rule;
 }
+
+/**
+ * Returns an array of WordPress user custom fields.
+ *
+ * @return array
+ * @since 2.2.0
+ */
+function noptin_get_user_custom_fields() {
+	return apply_filters( 'noptin_users_known_custom_fields', array() );
+}
+
+/**
+ * Returns an array of WordPress post type custom fields.
+ *
+ * @param string $post_type
+ * @return array
+ * @since 2.2.0
+ */
+function noptin_get_post_type_custom_fields( $post_type ) {
+	return apply_filters( 'noptin_post_types_known_custom_fields', array(), $post_type );
+}
