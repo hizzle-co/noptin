@@ -36,6 +36,8 @@
 			<a href="<?php echo esc_url( remove_query_arg( 'campaign', add_query_arg( 'sub_section', 'new_campaign' ) ) ); ?>" class="page-title-action"><?php echo esc_html_e( 'Add New', 'newsletter-optin-box' ); ?></a>
 		<?php endif; ?>
 
+		<a href="<?php echo esc_url( remove_query_arg( 'campaign', add_query_arg( 'sub_section', false ) ) ); ?>" class="page-title-action"><?php echo esc_html_e( 'Go Back', 'newsletter-optin-box' ); ?></a>
+
 		<!-- Title area end -->
 		<hr class="wp-header-end">
 
