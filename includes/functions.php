@@ -1448,12 +1448,13 @@ function noptin_format_date( $date_time ) {
  */
 function noptin_encrypt( $plaintext ) {
 
-	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
-	$salt  = ( defined( 'AUTH_SALT' ) && AUTH_SALT ) ? AUTH_SALT : wp_salt(); // backwards compatibility.
-	$iv    = substr( $salt, 0, $ivlen );
+	$ivlen      = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$salt       = ( defined( 'AUTH_SALT' ) && AUTH_SALT ) ? AUTH_SALT : wp_salt(); // backwards compatibility.
+	$iv         = substr( $salt, 0, $ivlen );
+	$passphrase = defined( 'AUTH_KEY' ) ? AUTH_KEY : wp_salt( 'secure_auth' ); // Local doesn't set AUTH_KEY.
 
 	// Encrypt then encode.
-	$encoded = base64_encode( openssl_encrypt( $plaintext, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv ) );
+	$encoded = base64_encode( openssl_encrypt( $plaintext, 'AES-128-CBC', $passphrase, OPENSSL_RAW_DATA, $iv ) );
 
 	// Make URL safe.
 	return strtr( $encoded, '+/=', '._-' );
@@ -1476,11 +1477,12 @@ function noptin_decrypt( $encoded ) {
 	}
 
 	// Prepare args.
-	$ivlen = openssl_cipher_iv_length( 'AES-128-CBC' );
-	$salt  = ( defined( 'AUTH_SALT' ) && AUTH_SALT ) ? AUTH_SALT : wp_salt(); // backwards compatibility.
-	$iv    = substr( $salt, 0, $ivlen );
+	$ivlen      = openssl_cipher_iv_length( 'AES-128-CBC' );
+	$salt       = ( defined( 'AUTH_SALT' ) && AUTH_SALT ) ? AUTH_SALT : wp_salt(); // backwards compatibility.
+	$iv         = substr( $salt, 0, $ivlen );
+	$passphrase = defined( 'AUTH_KEY' ) ? AUTH_KEY : wp_salt( 'secure_auth' ); // Local doesn't set AUTH_KEY.
 
-	return openssl_decrypt( $decoded, 'AES-128-CBC', AUTH_KEY, OPENSSL_RAW_DATA, $iv );
+	return openssl_decrypt( $decoded, 'AES-128-CBC', $passphrase, OPENSSL_RAW_DATA, $iv );
 }
 // TODO: Show alert when a user clicks on the send button.
 
