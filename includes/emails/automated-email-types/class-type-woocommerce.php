@@ -154,9 +154,10 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'order.status'               => array(
-				'description' => __( 'The order status.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.status',
+				'description'       => __( 'The order status.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.status',
+				'conditional_logic' => 'string',
 			),
 
 			'order.coupon_code'          => array(
@@ -174,15 +175,17 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 			),
 
 			'order.date_paid'            => array(
-				'description' => __( 'The date the order was paid.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.date_paid',
+				'description'       => __( 'The date the order was paid.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.date_paid',
+				'conditional_logic' => 'date',
 			),
 
 			'order.date_completed'       => array(
-				'description' => __( 'The date the order was completed.', 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_order_field' ),
-				'example'     => 'order.date_completed',
+				'description'       => __( 'The date the order was completed.', 'newsletter-optin-box' ),
+				'callback'          => array( $this, 'get_order_field' ),
+				'example'           => 'order.date_completed',
+				'conditional_logic' => 'date',
 			),
 
 			'order.subtotal'             => array(

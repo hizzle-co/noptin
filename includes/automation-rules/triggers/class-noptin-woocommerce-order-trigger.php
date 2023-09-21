@@ -21,6 +21,17 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 	protected $order_action_label;
 
 	/**
+	 * @var array The trigger's order status hooks.
+	 */
+	protected $status_hooks = array(
+		'checkout_order_processed' => 'woocommerce_checkout_order_processed',
+		'payment_complete'         => 'woocommerce_payment_complete',
+		'order_refunded'           => 'woocommerce_order_refunded',
+		'new_order'                => 'woocommerce_new_order',
+		'update_order'             => 'woocommerce_update_order',
+	);
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.9.0
@@ -31,20 +42,11 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 		$this->order_action       = $order_action;
 		$this->order_action_label = $order_action_label;
 
-		$status_hooks = array(
-			'checkout_order_processed' => 'woocommerce_checkout_order_processed',
-			'payment_complete'         => 'woocommerce_payment_complete',
-			'order_refunded'           => 'woocommerce_order_refunded',
-			'new_order'                => 'woocommerce_new_order',
-			'update_order'             => 'woocommerce_update_order',
-		);
-
-		if ( in_array( $order_action, array_keys( $status_hooks ), true ) ) {
-			add_action( $status_hooks[ $order_action ], array( $this, 'init_trigger' ), 10000, 1 );
+		if ( in_array( $order_action, array_keys( $this->status_hooks ), true ) ) {
+			add_action( $this->status_hooks[ $order_action ], array( $this, 'init_trigger' ), 10000, 1 );
 		} else {
 			add_action( 'woocommerce_order_status_' . $order_action, array( $this, 'init_trigger' ), 10000, 1 );
 		}
-
 	}
 
 	/**
@@ -103,13 +105,8 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 			return;
 		}
 
-		if ( $order->get_customer_id() ) {
-			$customer = new WC_Customer( $order->get_customer_id() );
-		} else {
-			$customer = WC()->customer;
-		}
-
-		$args = $this->before_trigger_wc( $order, $customer );
+		$customer = $this->get_order_customer( $order );
+		$args     = $this->before_trigger_wc( $order, $customer );
 
 		$args['order']    = $order;
 		$args['customer'] = $customer;
@@ -166,14 +163,13 @@ class Noptin_WooCommerce_Order_Trigger extends Noptin_WooCommerce_Trigger {
 			throw new Exception( 'The order no longer exists' );
 		}
 
-		$customer = new WC_Customer( $order->get_customer_id() );
-
-		if ( ! $customer->get_id() ) {
-			$customer->set_email( $order->get_billing_email() );
-			$customer->set_billing_email( $order->get_billing_email() );
+		// Maybe check status.
+		if ( ! in_array( $this->order_action, array_keys( $this->status_hooks ), true ) && ! $order->has_status( $this->order_action ) ) {
+			throw new Exception( 'The order status has changed' );
 		}
 
-		$args = $this->before_trigger_wc( $order, $customer );
+		$customer = $this->get_order_customer( $order );
+		$args     = $this->before_trigger_wc( $order, $customer );
 
 		$args['order']    = $order;
 		$args['customer'] = $customer;
