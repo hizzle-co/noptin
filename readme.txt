@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 6.0
 Tested up to: 6.3
 Requires PHP: 7.0
-Version: 2.0.3
-Stable tag: 2.0.3
+Version: 2.0.4
+Stable tag: 2.0.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -133,6 +133,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 2.0.4 =
+* Add back button to newsletter campaign editor screen.
+* Check current WooCommerce order status when triggering a delayed automation rule.
 
 = 2.0.3 =
 * Fix error when previewing WooCommerce product purchased automated emails.
