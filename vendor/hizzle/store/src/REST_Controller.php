@@ -760,6 +760,11 @@ class REST_Controller extends \WP_REST_Controller {
 			}
 		}
 
+		// Add exception for date_created.
+		if ( isset( $request['date_created'] ) ) {
+			$record->set( 'date_created', strtotime( $request['date_created'] ) );
+		}
+
 		return $record;
 	}
 

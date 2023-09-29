@@ -119,7 +119,7 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 	const fields = useMemo( () => compact( schema.map((field) => {
 
 		// If the field is hidden or ignored, don't show it.
-		if ( field.readonly || ignore.includes( field.name ) || hidden.includes( field.name ) ) {
+		if ( 'date_created' !== field.name && ( field.readonly || ignore.includes( field.name ) || ['id'].includes( field.name ) ) ) {
 			return null;
 		}
 
@@ -161,9 +161,10 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 		fileHeaders.forEach(( header ) => {
 
 			const normalizedHeader = normalizeString( header );
+			let partialMatch = false;
 
 			// Loop through the fields.
-			const match = fields.find((field) => {
+			let match = fields.find((field) => {
 
 				const normalizedKey = normalizeString( field.value );
 				const normalizedLabel = normalizeString( field.label );
@@ -171,7 +172,20 @@ const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
 				return normalizedHeader === normalizedKey || normalizedHeader === normalizedLabel;
 			});
 
-			if ( match ) {
+			// If no match, check for a partial match.
+			if ( ! match ) {
+				match = fields.find((field) => {
+
+					const normalizedKey = normalizeString( field.value );
+					const normalizedLabel = normalizeString( field.label );
+
+					return normalizedHeader.includes( normalizedKey ) || normalizedHeader.includes( normalizedLabel ) || normalizedKey.includes( normalizedHeader ) || normalizedLabel.includes( normalizedHeader );
+				});
+
+				partialMatch = true;
+			}
+
+			if ( match && ( ! partialMatch || ! guessedHeaders[ match.value ] ) ) {
 				guessedHeaders[ match.value ] = {
 					mapped: true,
 					value: header,
