@@ -223,6 +223,10 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			$confirm_active = ! empty( $settings['fire_after_confirmation'] );
 		}
 
+		if ( ! empty( $trigger_args['send_email_to_inactive'] ) ) {
+			$confirm_active = false;
+		}
+
 		/** @var Noptin_Automation_Rules_Smart_Tags */
 		$this->smart_tags = isset( $trigger_args['smart_tags'] ) ? $trigger_args['smart_tags'] : null;
 

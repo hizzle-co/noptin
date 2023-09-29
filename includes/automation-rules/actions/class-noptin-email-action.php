@@ -113,6 +113,8 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		$args['rule_id']    = $rule->id;
 		$campaign           = new Noptin_Automated_Email( $rule->action_settings['automated_email_id'] );
 
+		$args['send_email_to_inactive'] = ! empty( $rule->trigger_settings['send_email_to_inactive'] );
+
 		do_action( 'noptin_send_automation_rule_email', $args, $campaign );
 
 	}

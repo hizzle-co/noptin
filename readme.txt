@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 2.0.5 =
+* Allow sending automation rule emails to unsubscribed contacts.
+* Improve newsletter subscribers import.
+
 = 2.0.4 =
 * Add back button to newsletter campaign editor screen.
 * Check current WooCommerce order status when triggering a delayed automation rule.

@@ -38,6 +38,16 @@ if ( empty( $trigger ) ) {
 // Normal settings.
 $trigger_settings = $trigger->get_settings();
 
+// Send to inactive subscribers.
+if ( 'new_subscriber' !== $rule->get_trigger_id() ) {
+	$trigger_settings['send_email_to_inactive'] = array(
+		'label'   => __( 'Also send to unsubscribed contacts', 'newsletter-optin-box' ),
+		'el'      => 'input',
+		'type'    => 'checkbox',
+		'default' => false,
+	);
+}
+
 // Conditional logic.
 $trigger_settings['conditional_logic'] = array(
 	'label'       => __( 'Conditional Logic', 'newsletter-optin-box' ),
