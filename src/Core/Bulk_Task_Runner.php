@@ -21,6 +21,11 @@ abstract class Bulk_Task_Runner {
 	public $cron_hook;
 
 	/**
+	 * The cron health check hook.
+	 */
+	public $cron_health_check_hook;
+
+	/**
 	 * The start time.
 	 *
 	 * Represents when the queue runner was started.
@@ -41,8 +46,15 @@ abstract class Bulk_Task_Runner {
 	 *
 	 */
 	public function __construct() {
+
+		if ( empty( $this->cron_health_check_hook ) ) {
+			$this->cron_health_check_hook = $this->cron_hook . '_health_check';
+		}
+
 		add_action( 'admin_init', array( $this, 'add_wp_cron_event' ) );
 		add_action( $this->cron_hook, array( $this, 'run' ) );
+		add_action( $this->cron_health_check_hook, array( $this, 'handle_cron_healthcheck' ) );
+		add_filter( 'cron_schedules', array( __CLASS__, 'filter_cron_schedules' ) );
 		add_action( 'wp_ajax_' . $this->cron_hook, array( $this, 'maybe_handle_rescheduled' ) );
 		add_action( 'wp_ajax_nopriv_' . $this->cron_hook, array( $this, 'maybe_handle_rescheduled' ) );
 	}
@@ -73,6 +85,9 @@ abstract class Bulk_Task_Runner {
 
 		// Raise the time limit.
 		$this->raise_time_limit( $this->get_time_limit() + 10 );
+
+		// Start cron healthcheck.
+		$this->start_cron_healthcheck();
 	}
 
 	/**
@@ -133,6 +148,8 @@ abstract class Bulk_Task_Runner {
 		// If we have more tasks, complete in the background.
 		if ( ! empty( $task ) ) {
 			wp_remote_get( $this->get_query_url(), $this->get_ajax_args() );
+		} else {
+			$this->end_cron_healthcheck();
 		}
 
 	}
@@ -337,5 +354,59 @@ abstract class Bulk_Task_Runner {
 		$this->run();
 
 		wp_die();
+	}
+
+	/**
+	 * Filter CRON schedules.
+	 *
+	 * @param array $schedules The CRON schedules.
+	 */
+	public static function filter_cron_schedules( $schedules ) {
+
+		// Adds every 5 minutes to the existing schedules.
+		$schedules['every_5_minutes'] = array(
+			'interval' => 300,
+			'display'  => sprintf(
+				/* Translators: %d Number of minutes. */
+				__( 'Every %d Minutes', 'newsletter-optin-box' ),
+				5
+			),
+		);
+
+		return $schedules;
+	}
+
+	/**
+	 * Start cron healthcheck
+	 */
+	protected function start_cron_healthcheck() {
+		if ( ! wp_next_scheduled( $this->cron_health_check_hook ) ) {
+			wp_schedule_event( time(), 'every_5_minutes', $this->cron_health_check_hook );
+		}
+	}
+
+	/**
+	 * Handle cron healthcheck
+	 *
+	 * Restart the background process if not already running
+	 * and data exists in the queue.
+	 */
+	public function handle_cron_healthcheck() {
+		if ( ! $this->is_process_running() ) {
+			$this->run();
+		}
+
+		exit;
+	}
+
+	/**
+	 * End cron healthcheck
+	 */
+	protected function end_cron_healthcheck() {
+		$timestamp = wp_next_scheduled( $this->cron_health_check_hook );
+
+		if ( $timestamp ) {
+			wp_unschedule_event( $timestamp, $this->cron_health_check_hook );
+		}
 	}
 }
