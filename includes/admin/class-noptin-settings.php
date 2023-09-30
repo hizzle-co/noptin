@@ -264,16 +264,6 @@ class Noptin_Settings {
 				'description' => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
 			),
 
-			'admin_email'                  => array(
-				'el'          => 'input',
-				'section'     => 'emails',
-				'type'        => 'text',
-				'label'       => __( 'Notification recipient(s)', 'newsletter-optin-box' ),
-				'class'       => 'regular-text',
-				'default'     => get_option( 'admin_email' ),
-				'description' => __( 'Enter a comma separated list of email address that should receive new subscriber notifications', 'newsletter-optin-box' ),
-			),
-
 			'reply_to'                     => array(
 				'el'          => 'input',
 				'section'     => 'emails',
