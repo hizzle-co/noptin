@@ -385,19 +385,6 @@ class Noptin_Settings {
 				'description' => __( 'This is the message shown to people after they successfully sign up for your newsletter.', 'newsletter-optin-box' ),
 			),
 
-			'ipgeolocation_io_api_key'     => array(
-				'el'          => 'input',
-				'type'        => 'text',
-				'section'     => 'general',
-				'label'       => __( 'GeoLocation API Key', 'newsletter-optin-box' ),
-				'placeholder' => '',
-				'description' => sprintf(
-					// Translators: %s Link to the IP location provider.
-					__( 'Enter your %s API key if you want to GeoLocate your subscribers using their service.', 'newsletter-optin-box' ),
-					'<a href="https://ipgeolocation.io/" target="_blank">ipgeolocation.io</a>'
-				),
-			),
-
 			'double_optin_email_subject'   => array(
 				'el'          => 'input',
 				'section'     => 'emails',

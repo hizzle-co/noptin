@@ -426,6 +426,7 @@ function noptin_get_user_ip() {
  * @since 1.2.3
  * @param string $ip_address Optional. The ip address to located. Default's to the current user's IP Address.
  * @return bool|array
+ * @deprecated
  */
 function noptin_locate_ip_address( $ip_address = '' ) {
 
