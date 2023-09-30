@@ -255,7 +255,7 @@ class Noptin_Ajax {
 			}
 		}
 
-		$result['msg'] = add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) );
+		$result['msg'] = wp_kses_post( add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) ) );
 
 		wp_send_json_success( $result );
 	}

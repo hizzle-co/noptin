@@ -610,7 +610,7 @@ class Noptin_Form_Listener {
 			$html = sprintf(
 				'<div class="noptin-alert noptin-success noptin-alert-%s" role="alert">%s</div>',
 				sanitize_html_class( $this->last_event ),
-				esc_html( $this->get_cached( $key, $message ) )
+				wp_kses_post( $this->get_cached( $key, $message ) )
 			);
 
 		}
