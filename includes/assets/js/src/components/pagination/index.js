@@ -1,7 +1,16 @@
 /**
  * Wordpress dependancies.
  */
-import { SelectControl, Button, Flex, FlexItem, ButtonGroup, Icon } from '@wordpress/components';
+import {
+	SelectControl,
+	__experimentalInputControl as InputControl,
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
+	Button,
+	Flex,
+	FlexItem,
+	ButtonGroup,
+	Icon,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 
@@ -28,16 +37,33 @@ function PageArrows( { page, pageCount, onPageChange }  ) {
 	const hasNext      = page < pageCount;
 	const nextPage     = page + 1;
 
+	const prefix       = (
+		<InputControlPrefixWrapper>
+			{ __( 'Page', 'newsletter-optin-box' ) }
+		</InputControlPrefixWrapper>
+	);
+
 	return (
 		<FlexItem className="noptin-pagination__page-arrows">
 			<Flex wrap gap={2} align="center" justify="center">
 
 				<FlexItem role="status" aria-live="polite">
-					{ sprintf(
-						__( 'Page %d of %d', 'newsletter-optin-box' ),
-						page,
-						pageCount
-					) }
+					<InputControl
+						type="number"
+						value={ page }
+						onChange={ onPageChange }
+						min={ 1 }
+						max={ pageCount }
+						prefix={ prefix }
+						label={ __( 'Page', 'newsletter-optin-box' ) }
+						isPressEnterToChange
+						hideLabelFromVision
+						__next36pxDefaultSize
+					/>
+				</FlexItem>
+
+				<FlexItem>
+					{ sprintf( __( 'of %d', 'newsletter-optin-box' ), pageCount ) }
 				</FlexItem>
 
 				<FlexItem className="noptin-pagination__page-arrows-buttons">
