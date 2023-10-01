@@ -591,7 +591,26 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @return string
 	 */
 	public function get_avatar_url() {
-		return get_avatar_url( $this->get_email(), array( 'size' => 32 ) );
+		$name = $this->get_name();
+
+		// If doesn't have a name, generate from email.
+		if ( empty( $name ) ) {
+			$name = strtok( $this->get_email(), '@' );
+			$name = str_replace( '.', ' ', $name );
+		}
+
+		$color = noptin_get_random_background_color();
+		$args  = array(
+			'default' => sprintf(
+				'https://ui-avatars.com/api/%s/64/%s/%s/2',
+				rawurlencode( $name ),
+				$color[0],
+				$color[1]
+			),
+			'size'    => 64,
+		);
+
+		return get_avatar_url( $this->get_email(), $args );
 	}
 
 	/**

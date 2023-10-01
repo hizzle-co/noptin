@@ -1,8 +1,46 @@
 import { Flex, FlexBlock, FlexItem, Button, Icon } from "@wordpress/components";
 import { dateI18n, getSettings, __experimentalGetSettings } from "@wordpress/date";
+import { getQueryArg, addQueryArgs } from "@wordpress/url";
 import getEnumBadge from "./enum-colors";
 import { Avatar, Badge } from "../../styled-components";
 import { useNavigateCollection } from "../hooks";
+
+/**
+ * Takes an avatar URL then generates consistent colors for the avatar.
+ *
+ * @param {string} avatarUrl The avatar URL.
+ * @return {Object} The generated background and text colors.
+ */
+export const normalizeAvatarColors = ( avatarUrl, fallbackText ) => {
+
+	if ( ! avatarUrl ) {
+		return avatarUrl;
+	}
+
+	const fallback = getQueryArg( avatarUrl, 'd' );
+
+	// Abort if we're not falling back to ui-avatar.
+	if ( ! fallback || ! fallback.includes( 'ui-avatars.com' ) ) {
+		return avatarUrl;
+	}
+
+	const match = fallback.match( /\/api\/(.*?)\/64\// );
+	const text  = ( match && match.length > 1 ) ? match[1] : fallback;
+
+	// Generate unique color for the string.
+	const color = getEnumBadge( fallbackText || text );
+
+	// Replace the colors in the URL.
+	const index = fallback.indexOf( '/64/' );
+
+	if ( index !== -1 ) {
+		return addQueryArgs( avatarUrl, {
+			d: `${ fallback.substring( 0, index + 4 ) }/${ color.backgroundColor.replace( '#', '' ) }/${ color.color.replace( '#', '' ) }`,
+		} );
+	}
+
+	return avatarUrl;
+}
 
 /**
  * Displays the primary column.
@@ -17,7 +55,8 @@ const PrimaryColumn = ( { record, name } ) => {
 
 	const navigateTo = useNavigateCollection();
 	const value      = record[name];
-	const avatar     = record.avatar_url ? <Avatar src={ record.avatar_url } alt={ value } /> : null;
+	const avatar_url = normalizeAvatarColors( record.avatar_url, value );
+	const avatar     = avatar_url ? <Avatar src={ avatar_url } alt={ value } /> : null;
 
 	const ColValue = avatar ? (
 		<Flex>

@@ -2121,3 +2121,26 @@ function noptin_get_user_custom_fields() {
 function noptin_get_post_type_custom_fields( $post_type ) {
 	return apply_filters( 'noptin_post_types_known_custom_fields', array(), $post_type );
 }
+
+/**
+ * Returns random background color.
+ *
+ * @return array
+ * @since 2.2.0
+ */
+function noptin_get_random_background_color() {
+	$red        = wp_rand( 150, 255 );
+	$green      = wp_rand( 150, 255 );
+	$blue       = wp_rand( 150, 255 );
+	$background = sprintf(
+		'%02x%02x%02x',
+		$red,
+		$green,
+		$blue
+	);
+
+	$brightness = ( $red * 299 + $green * 587 + $blue * 114 ) / 1000;
+	$foreground = $brightness > 128 ? '000000' : 'ffffff';
+
+	return array( $background, $foreground );
+}

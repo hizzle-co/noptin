@@ -15,6 +15,7 @@ import {
 import { useParams } from 'react-router-dom';
 import { useCurrentSchema, useCurrentRecord } from "./hooks";
 import { Avatar } from "../styled-components";
+import { normalizeAvatarColors } from "./records-table/display-cell";
 import { getPath, getNewPath, navigateTo } from "../navigation";
 
 /**
@@ -23,8 +24,8 @@ import { getPath, getNewPath, navigateTo } from "../navigation";
 const CollectionTitle = ( { append, avatarURL, isSingle } ) => {
 	const { namespace, collection } = useParams();
 	const { data } = useCurrentSchema();
+	avatarURL = normalizeAvatarColors( avatarURL || data?.avatar_url, append );
 	append = append ? ` - ${append}` : '';
-	avatarURL = avatarURL || data?.avatar_url;
 
 	// Nav title.
 	const navTitle = useMemo( () => {
