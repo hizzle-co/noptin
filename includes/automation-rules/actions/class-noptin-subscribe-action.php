@@ -123,23 +123,17 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 		/** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
-		foreach ( get_noptin_custom_fields() as $field ) {
+		foreach ( $settings as $key => $value ) {
 
-			if ( 'email' === $field['merge_tag'] || ! isset( $settings[ $field['merge_tag'] ] ) || '' === $settings[ $field['merge_tag'] ] ) {
+			if ( '' === $value ) {
 				continue;
 			}
 
-			$details[ $field['merge_tag'] ] = $smart_tags->replace_in_text_field( $settings[ $field['merge_tag'] ] );
+			$details[ $key ] = is_scalar( $value ) ? $smart_tags->replace_in_text_field( $value ) : $value;
 		}
 
-		// Source.
-		if ( isset( $settings['source'] ) && '' !== $settings['source'] ) {
-			$details['source'] = $smart_tags->replace_in_text_field( $settings['source'] );
-		}
-
-		if ( $subject instanceof Noptin_Subscriber ) {
-			$subscriber_id = $subject->id;
-		} else {
+		$subscriber_id = get_noptin_subscriber_id_by_email( $this->get_subject_email( $subject, $rule, $args ) );
+		if ( empty( $subscriber_id ) ) {
 			$subscriber_id = get_noptin_subscriber_id_by_email( $details['email'] );
 		}
 
