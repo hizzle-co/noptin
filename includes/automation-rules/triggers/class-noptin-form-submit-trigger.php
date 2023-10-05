@@ -16,11 +16,6 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	protected $form_provider_slug;
 
 	/**
-	 * @var string The form provider name.
-	 */
-	protected $form_provider_name;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since 1.10.1
@@ -39,6 +34,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		}
 
 		add_action( "noptin_{$form_provider_slug}_form_submitted", array( $this, 'init_trigger' ), 10, 2 );
+		add_filter( 'noptin_subscription_sources', array( $this, 'register_source' ) );
 	}
 
 	/**
@@ -65,6 +61,17 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	public function get_description() {
 		// translators: %s is the form provider.
 		return sprintf( __( 'When a %s form is submitted', 'newsletter-optin-box' ), $this->category );
+	}
+
+	/**
+	 * Registers subscription source.
+	 *
+	 * @param array $sources An array of sources.
+	 * @return array
+	 */
+	public function register_source( $sources ) {
+		$sources[ $this->category ] = $this->category;
+		return $sources;
 	}
 
 	/**
