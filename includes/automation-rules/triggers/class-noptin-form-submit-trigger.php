@@ -119,7 +119,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
     public function get_known_smart_tags() {
 
 		// Get the parent smart tags.
-		$smart_tags  = parent::get_known_smart_tags();
+		$smart_tags = array();
 
 		// Add logged in user info.
 		$smart_tags['current_user_email'] = array(
@@ -161,7 +161,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 			}
 		}
 
-		return $smart_tags;
+		return array_replace( $smart_tags, parent::get_known_smart_tags() );
     }
 
 	/**

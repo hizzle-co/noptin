@@ -65,30 +65,26 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 
 		$settings = array();
 
-		foreach ( get_noptin_custom_fields() as $field ) {
+		foreach ( get_editable_noptin_subscriber_fields() as $key => $field ) {
 
-			$settings[ $field['merge_tag'] ] = array(
+			$label = empty( $field['label'] ) ? $field['description'] : $field['label'];
+
+			$settings[ $key ] = array(
 				'type'        => 'text',
 				'el'          => 'input',
-				'label'       => $field['label'],
+				'label'       => $label,
 				'map_field'   => true,
 				'placeholder' => sprintf(
 					/* translators: %s: The field name. */
 					__( 'Enter %s', 'newsletter-optin-box' ),
-					$field['label']
+					strtolower( $label )
 				),
 			);
-		}
 
-		// Source.
-		$settings['source'] = array(
-			'type'        => 'text',
-			'el'          => 'input',
-			'label'       => __( 'Source', 'newsletter-optin-box' ),
-			'map_field'   => true,
-			'default'     => '',
-			'placeholder' => __( 'Optional. Subscription source', 'newsletter-optin-box' ),
-		);
+			if ( $label !== $field['description'] ) {
+				$settings[ $key ]['description'] = $field['description'];
+			}
+		}
 
 		return $settings;
 	}

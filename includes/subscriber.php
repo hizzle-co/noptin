@@ -389,7 +389,8 @@ function add_noptin_subscriber( $fields ) {
 
 			}
 
-			$tags = array_filter( noptin_parse_list( $tags, true ) );
+			$tags = array_diff( array_filter( noptin_parse_list( $tags, true ) ), array( '-1' ) );
+
 			if ( ! empty( $tags ) ) {
 				$fields['tags'] = $tags;
 			}
@@ -1222,6 +1223,36 @@ function get_noptin_multicheck_custom_fields() {
 function get_noptin_custom_field( $merge_tag ) {
 	$custom_field = wp_list_filter( get_noptin_custom_fields(), array( 'merge_tag' => trim( $merge_tag ) ) );
 	return current( $custom_field );
+}
+
+/**
+ * Returns editable subscriber fields.
+ *
+ * @since 2.0.6
+ * @return array
+ */
+function get_editable_noptin_subscriber_fields() {
+
+	$fields     = array();
+	$collection = noptin()->db()->store->get( 'subscribers' );
+
+	if ( ! empty( $collection ) ) {
+
+		foreach ( $collection->get_props() as $prop ) {
+
+			// Skip activity and sent_campaigns.
+			if ( $prop->readonly || in_array( $prop->name, array( 'id', 'activity', 'sent_campaigns' ), true ) ) {
+				continue;
+			}
+
+			$fields[ $prop->name ] = array(
+				'label'       => wp_strip_all_tags( empty( $prop->label ) ? '' : $prop->label ),
+				'description' => wp_strip_all_tags( $prop->description ),
+			);
+		}
+	}
+
+	return apply_filters( 'editable_noptin_subscriber_fields', $fields );
 }
 
 /**

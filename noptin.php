@@ -321,8 +321,8 @@ class Noptin {
 		}
 
 		// Integrations.
-		$this->integrations = new Noptin_Integrations();
-		//$this->integrations = new \Hizzle\Noptin\Integrations\Main();
+		//$this->integrations = new Noptin_Integrations();
+		$this->integrations = new \Hizzle\Noptin\Integrations\Main();
 
 		// Custom fields.
 		$this->custom_fields = new Noptin_Custom_Fields();
