@@ -28,7 +28,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	/**
 	 * Sets the subscriber's full name.
 	 *
-	 * @param string $value Full name.
+	 * @param string|array $value Full name.
 	 */
 	public function set_name( $value ) {
 
@@ -36,7 +36,7 @@ class Subscriber extends \Hizzle\Store\Record {
 			return;
 		}
 
-		$parts = explode( ' ', $value, 2 );
+		$parts = is_array( $value ) ? $value : explode( ' ', $value, 2 );
 
 		$this->set_first_name( array_shift( $parts ) );
 
