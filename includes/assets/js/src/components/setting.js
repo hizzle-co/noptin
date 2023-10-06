@@ -10,20 +10,21 @@ import {
 	ToggleControl,
 	CheckboxControl,
 	FormTokenField,
+	DropdownMenu,
 	Tip,
 	Button,
 	Flex,
 	FlexBlock,
 	FlexItem,
 } from '@wordpress/components';
+import { next } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useState, useMemo } from '@wordpress/element';
 
 /**
  * Local dependancies.
  */
 import ConditionalLogicEditor from './conditional-logic-editor';
-import { MergeTagsModal } from './merge-tags';
 
 /**
  * Input types.
@@ -51,12 +52,12 @@ function InputSetting({ setting, availableSmartTags, isPressEnterToChange, ...at
 
 		// Add the merge tag to the value.
 		if ( attributes.onChange ) {
-			attributes.onChange(attributes.value ? attributes.value + mergeTag : mergeTag);
+			attributes.onChange(attributes.value ? `${attributes.value} ${mergeTag}`.trim() : mergeTag);
 		}
 	}, [attributes.value, attributes.onChange]);
 
 	// Merge tags.
-	const [suffix, modal] = useMergeTags( availableSmartTags, onMergeTagClick );
+	const suffix = useMergeTags( availableSmartTags, onMergeTagClick );
 
 	if ( setting.disabled ) {
 		attributes.readOnly = true;
@@ -65,7 +66,6 @@ function InputSetting({ setting, availableSmartTags, isPressEnterToChange, ...at
 
 	return (
 		<>
-			{modal}
 			<InputControl
 				{...attributes}
 				type={inputTypes.includes( setting.type ) ? setting.type : 'text'}
@@ -104,54 +104,67 @@ const keyValueRepeaterFields = [
  */
 function useMergeTags(availableSmartTags, onMergeTagClick) {
 
-	// Are we showing the modal?
-	const [showSmartTags, setShowSmartTags] = useState(false);
+	// Dropdown menu controls.
+	const controls = useMemo(() => {
 
-	// Closes the modal.
-	const closeModal = useCallback(() => {
-		setShowSmartTags(false);
-	}, [setShowSmartTags]);
-
-	// Handle merge tag click.
-	const handleMergeTagClick = useCallback((mergeTag) => {
-
-		if ( onMergeTagClick ) {
-			onMergeTagClick(mergeTag);
-			closeModal();
+		if ( ! Array.isArray(availableSmartTags) ) {
+			return [];
 		}
-	});
+
+		// Returns the merge tag value to use.
+		const theValue = ( mergeTag ) => {
+
+			if ( mergeTag.example ) {
+				return mergeTag.example;
+			}
+	
+			let defaultValue = "default value";
+	
+			if ( mergeTag.replacement ) {
+				defaultValue = mergeTag.replacement;
+			}
+	
+			if ( mergeTag.default ) {
+				defaultValue = mergeTag.default;
+			}
+	
+			if ( ! defaultValue ) {
+				return `${mergeTag.smart_tag}`;
+			}
+	
+			return `${mergeTag.smart_tag} default="${defaultValue}"`;
+		}
+
+		return availableSmartTags.map((smartTag) => {
+			return {
+				title: smartTag.label,
+				icon: next,
+				onClick: () => {
+
+					if ( onMergeTagClick ) {
+						onMergeTagClick(`[[${theValue(smartTag)}]]`);
+					}
+				},
+			};
+		});
+	}, [availableSmartTags, onMergeTagClick]);
 
 	// If we have merge tags, show the merge tags button.
-	let suffix = null;
-	let modal  = null;
+	let inserter = null;
 
-	if ( Array.isArray(availableSmartTags) && availableSmartTags.length > 0 ) {
+	if ( controls.length > 0 ) {
 
-		// If we are showing the modal, show the modal.
-		modal = (
-			<MergeTagsModal
-				isOpen={showSmartTags}
-				closeModal={closeModal}
-				availableSmartTags={availableSmartTags}
-				onMergeTagClick={handleMergeTagClick}
-			/>
-		);
-
-		suffix = (
-			<Button
+		inserter = (
+			<DropdownMenu
 				icon="shortcode"
-				variant="tertiary"
-				isPressed={showSmartTags}
+				controls={ controls }
 				label={__( 'Insert merge tag', 'newsletter-optin-box' )}
-				onClick={() => {
-					setShowSmartTags(true);
-				}}
 				showTooltip
 			/>
 		);
 	}
 
-	return [suffix, modal];
+	return inserter;
 }
 
 /**
@@ -178,7 +191,7 @@ function KeyValueRepeater({ setting, availableSmartTags, value, onChange, ...att
 	}, [currentField, value, onChange]);
 
 	// Merge tags.
-	const [suffix, modal] = useMergeTags( availableSmartTags, onMergeTagClick );
+	const [suffix] = useMergeTags( availableSmartTags, onMergeTagClick );
 
 	// The base props.
 	const { baseControlProps, controlProps } = useBaseControlProps( attributes );
@@ -249,7 +262,6 @@ function KeyValueRepeater({ setting, availableSmartTags, value, onChange, ...att
 	// Render the control.
 	return (
 		<BaseControl { ...baseControlProps }>
-			{modal}
 
 			<div { ...controlProps }>
 				{value.map((item, index) => <Item key={index} item={item} index={index} />)}
