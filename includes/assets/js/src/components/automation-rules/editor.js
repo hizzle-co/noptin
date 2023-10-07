@@ -152,7 +152,7 @@ export default function AutomationRuleEditor( { id, action, trigger, settings, s
 	const [error, setError] = useState( null );
 	const [success, setSuccess] = useState( null );
 	const availableSmartTags = getAvailableSmartTags( smartTags, automationRule.trigger_settings || {} );
-console.log( availableSmartTags );
+
 	// Action ID.
 	const isLoading = loading > 0;
 

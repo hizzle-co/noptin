@@ -5,6 +5,7 @@ import { useMemo, useCallback } from "@wordpress/element";
 import { Notice, CardBody, Flex, FlexItem, FlexBlock } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useParams } from 'react-router-dom';
+import { useDispatch } from '@wordpress/data';
 
 /**
  * Local dependencies.
@@ -90,6 +91,12 @@ const DisplayRecords = ( { schema: { schema, hidden, ignore, labels }, total, su
 		updateQueryString( newQuery );
 	}, [] );
 
+	// Refreshes the data.
+	const dispatch = useDispatch( `${namespace}/${collection}` );
+	const refresh  = useCallback( () => {
+		dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
+	}, [ namespace, collection ] );
+
 	return (
 		<TableCard
 			actions={ TableActions }
@@ -99,6 +106,7 @@ const DisplayRecords = ( { schema: { schema, hidden, ignore, labels }, total, su
 			summary={ summary ? Object.values( summary ) : [] }
 			isLoading={ isLoading }
 			onQueryChange={ updateQuery }
+			onRefresh={ refresh }
 			query={ getQuery() }
 			className={ `${namespace}-${collection}__records-table` }
 			hasSearch={ true }

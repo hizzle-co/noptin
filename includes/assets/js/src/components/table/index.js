@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { useMemo, useState, useCallback } from '@wordpress/element';
+import { rotateRight } from '@wordpress/icons';
 import {
 	Card,
 	CardFooter,
@@ -12,7 +13,8 @@ import {
 	FlexItem,
 	MenuGroup,
 	ToggleControl,
-	MenuItem
+	MenuItem,
+	Button,
 } from '@wordpress/components';
 import { without } from 'lodash';
 
@@ -113,6 +115,7 @@ export const Menu = ( { headers, hiddenHeaders, setHiddenHeaders } ) => {
  * @param {Object} props.query Query object.
  * @param {Object} props.query.search Search query.
  * @param {Function} props.onQueryChange Callback to update the query.
+ * @param {Function} props.onRefresh Callback to refresh the table.
  * @param {string} props.searchPlaceholder Search field placeholder.
  * @param {JSX.Element} props.actions Table actions.
  * @param {Array} props.headers Table headers.
@@ -120,7 +123,7 @@ export const Menu = ( { headers, hiddenHeaders, setHiddenHeaders } ) => {
  * @param {Function} props.setHiddenHeaders Callback to update the hidden table headers.
  * @param {number} props.totalRows Total number of rows.
  */
-export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPlaceholder, actions, filtersButton, headers, hiddenHeaders, setHiddenHeaders, totalRows } ) => {
+export const TableHeader = ( { title, hasSearch, query, onQueryChange, onRefresh, searchPlaceholder, actions, filtersButton, headers, hiddenHeaders, setHiddenHeaders, totalRows } ) => {
 
 	// Memoize the actions.
 	const theActions = useMemo( () => (
@@ -156,6 +159,18 @@ export const TableHeader = ( { title, hasSearch, query, onQueryChange, searchPla
 				<FlexItem>
 					<CardHeadingText as="h2">{ title }</CardHeadingText>
 				</FlexItem>
+
+				{ onRefresh && (
+					<FlexItem>
+						<Button
+							icon={ rotateRight }
+							onClick={ onRefresh }
+							variant="tertiary"
+							label={ __( 'Refresh', 'newsletter-optin-box' ) }
+							showTooltip
+						/>
+					</FlexItem>
+				) }
 
 				{ filtersButton && <FlexItem>{filtersButton}</FlexItem> }
 
@@ -207,6 +222,7 @@ const TableCard = ( {
 	ids,
 	isLoading = false,
 	onQueryChange = () => {},
+	onRefresh = false,
 	query = {},
 	initialHiddenHeaders = [],
 	rows = [],
@@ -243,8 +259,9 @@ const TableCard = ( {
 				hasSearch={ hasSearch }
 				query={ query }
 				onQueryChange={ onQueryChange }
+				onRefresh={ isLoading ? false : onRefresh }
 				searchPlaceholder={ searchPlaceholder }
-				actions={ actions }
+				actions={ isLoading ? false : actions }
 				filtersButton={ filtersButton }
 				headers={ headers }
 				hiddenHeaders={ hiddenHeaders }

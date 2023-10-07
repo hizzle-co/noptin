@@ -4,6 +4,10 @@ import { getQueryArg, addQueryArgs } from "@wordpress/url";
 import getEnumBadge from "./enum-colors";
 import { Avatar, Badge } from "../../styled-components";
 import { useNavigateCollection } from "../hooks";
+import { useState } from "@wordpress/element";
+import { __ } from "@wordpress/i18n";
+
+const isObject = ( obj ) => obj && typeof obj === 'object' && obj.constructor === Object;
 
 /**
  * Takes an avatar URL then generates consistent colors for the avatar.
@@ -83,6 +87,40 @@ const PrimaryColumn = ( { record, name } ) => {
 }
 
 /**
+ * Displays badge list.
+ *
+ * @param {Object} props
+ * @param {Array} props.value The value.
+ * @param {Object} props.enums The enums.
+ * @returns {JSX.Element}
+ */
+const BadgeList = ( { value, enums = {} } ) => {
+
+	const [ isOpen, setIsOpen ] = useState( false );
+	const toShow = isOpen ? value : value.slice( 0, 2 );
+	const showToggle = value.length > 2;
+
+	// Display the list.
+	return (
+		<Flex gap={2} justify="flex-start" wrap>
+			{ toShow.map( ( val ) => (
+				<FlexItem key={ val }>
+					<Badge {...getEnumBadge( val )}>{ enums[val] || val }</Badge>
+				</FlexItem>
+			) ) }
+
+			{ showToggle && (
+				<FlexItem>
+					<Button variant="link" onClick={ () => setIsOpen( ! isOpen ) }>
+						{ isOpen ? __( 'Hide', 'newsletter-optin-box' ) : __( 'Show all', 'newsletter-optin-box' ) }
+					</Button>
+				</FlexItem>
+			) }
+		</Flex>
+	);
+}
+
+/**
  * Displays a single cell in the records table.
  * @param {Object} props
  * @param {Object} props.row The record object.
@@ -129,37 +167,22 @@ export default function DisplayCell( { row, header, headerKey } ) {
 
 	// Tokens.
 	if ( header.is_tokens && Array.isArray( value ) ) {
-		return (
-			<Flex gap={2} justify="flex-start" wrap>
-				{ value.map( ( val ) => (
-					<FlexItem key={ val }>
-						<Badge {...getEnumBadge( val )}>{ val }</Badge>
-					</FlexItem>
-				) ) }
-			</Flex>
-		)
+		return <BadgeList value={ value } />;
 	}
 
 	// Array with enum values are displayed as a badge.
 	if ( header.enum && Array.isArray( value ) ) {
-		return (
-			<Flex gap={2} justify="flex-start" wrap>
-				{ value.map( ( val ) => (
-					<FlexItem key={ val }>
-						<Badge {...getEnumBadge( val )}>{ header.enum[val] || val }</Badge>
-					</FlexItem>
-				) ) }
-			</Flex>
-		)
-	}
-
-	// If we have an enum, display the label.
-	if ( header.enum && header.enum[value] ) {
-		return <Badge {...getEnumBadge( value )}>{ header.enum[value] }</Badge>;
+		return <BadgeList value={ value } enums={ header.enum } />;
 	}
 
 	// Strings, numbers, and floats are displayed as is.
 	if ( header.is_numeric || header.is_float || typeof value === 'string' ) {
+
+		// If we have an enum, display the label.
+		if ( isObject( header.enum ) ) {
+			return <Badge {...getEnumBadge( value )}>{ header.enum[value] || value }</Badge>;
+		}
+
 		return value;
 	}
 
