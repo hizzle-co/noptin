@@ -206,6 +206,10 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		$posted         = is_array( $posted ) ? $posted : array();
 		$posted['form'] = $form_id;
 
+		if ( empty( $posted['source'] ) ) {
+			$posted['source'] = $this->category;
+		}
+
 		// Adds the current user info.
 		$current_user                 = wp_get_current_user();
 		$posted['current_user_email'] = $current_user->user_email;

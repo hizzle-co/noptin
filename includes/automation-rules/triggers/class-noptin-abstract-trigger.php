@@ -478,7 +478,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		foreach ( $rule->conditional_logic['rules'] as $rule ) {
 
 			$current_value = $smart_tags->replace_in_text_field( '[[' . $rule['type'] . ']]' );
-			$compare_value = $rule['value'];
+			$compare_value = noptin_clean( $rule['value'] );
 			$comparison    = $rule['condition'];
 
 			// If the rule is met.
