@@ -42,10 +42,8 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$this->object_type  = $collection->type;
 		$this->trigger_id   = $trigger_id;
 		$this->trigger_args = $trigger_args;
-
-		// Maybe set category and integration.
-		$this->category    = $collection->label;
-		$this->integration = $collection->integration;
+		$this->category     = $collection->label;
+		$this->integration  = $collection->integration;
 
 		if ( empty( $trigger_args['subject'] ) ) {
 			$this->is_user_based = true;
@@ -102,6 +100,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 				$args,
 				Store::convert_fields_to_smart_tags(
 					$this->trigger_args['extra_args'],
+					$this->object_type,
 					Store::get_collection_config( $this->object_type ),
 					Store::get_collection_config( $this->object_type, 'smart_tags_prefix' )
 				)

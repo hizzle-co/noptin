@@ -93,6 +93,11 @@ class Noptin {
 	public $plugin_url = null;
 
 	/**
+	 * If this is a test site.
+	 */
+	public $is_test = false;
+
+	/**
 	 * White Label
 	 *
 	 * @var Noptin_White_Label
@@ -295,6 +300,7 @@ class Noptin {
 		// Set up globals;
 		$this->plugin_path = plugin_dir_path( __FILE__ );
 		$this->plugin_url  = plugins_url( '/', __FILE__ );
+		$this->is_test     = 'production' !== wp_get_environment_type();
 
 		// Form manager.
 		$this->forms = new Noptin_Form_Manager();

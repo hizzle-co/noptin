@@ -62,6 +62,7 @@ abstract class Collection {
 			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rules' ) );
 		}
 
+		// Set automation rule smart tags prefix.
 		if ( is_null( $this->smart_tags_prefix ) ) {
 			$this->smart_tags_prefix = $this->type;
 		}

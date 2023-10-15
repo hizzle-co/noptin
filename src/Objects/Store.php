@@ -97,7 +97,7 @@ class Store {
 		$callback = array( __CLASS__, 'handle_field_smart_tag' );
 		$prefix   = $prefix ? self::get_collection_config( $type, 'smart_tags_prefix' ) : false;
 
-		return self::convert_fields_to_smart_tags( $fields, $group, $prefix, $callback );
+		return self::convert_fields_to_smart_tags( $fields, $type, $group, $prefix, $callback );
 	}
 
 	/**
@@ -106,7 +106,7 @@ class Store {
 	 * @since 2.2.0
 	 * @return array
 	 */
-	public static function convert_fields_to_smart_tags( $fields, $group = '', $prefix = false, $callback = false ) {
+	public static function convert_fields_to_smart_tags( $fields, $object_type = '', $group = '', $prefix = false, $callback = false ) {
 
 		$prepared = array();
 
@@ -117,6 +117,11 @@ class Store {
 			// Standardize examples.
 			if ( ! empty( $smart_tag['example'] ) ) {
 				$smart_tag['example'] = $key . ' ' . $smart_tag['example'];
+			}
+
+			// Add collection.
+			if ( ! empty( $object_type ) ) {
+				$smart_tag['object_type'] = $object_type;
 			}
 
 			$prepared[ $key ] = $smart_tag;
@@ -177,32 +182,36 @@ class Store {
 	 *
 	 * @param array $args The args.
 	 * @param string $field The field.
+	 * @param array $config The config.
 	 * @return string The smart tag.
 	 */
-	public static function handle_field_smart_tag( $args, $field ) {
+	public static function handle_field_smart_tag( $args, $field, $config = array() ) {
 		/** @var Record[] $noptin_current_objects */
 		global $noptin_current_objects;
 
-		if ( ! is_array( $noptin_current_objects ) ) {
+		if ( ! is_array( $noptin_current_objects ) || empty( $config['object_type'] ) ) {
 			return '';
 		}
 
-		$collection = strtok( $field, '.' );
+		// Remove prefix.
+		$field = explode( '.', $field );
+		array_shift( $field );
+		$field = implode( '.', $field );
 
 		// Bail if the collection doesn't exist.
-		if ( ! isset( $noptin_current_objects[ $collection ] ) ) {
+		if ( ! isset( $noptin_current_objects[ $config['object_type'] ] ) || empty( $field ) ) {
 			return '';
 		}
 
 		// Fetch the raw value.
-		$raw_value = $noptin_current_objects[ $collection ]->get( strtok( '.' ) );
+		$raw_value = $noptin_current_objects[ $config['object_type'] ]->get( $field );
 
 		// Are we formatting the value?
 		if ( empty( $args['format'] ) || '' === $raw_value || null === $raw_value ) {
 			return $raw_value;
 		}
 
-		return $noptin_current_objects[ $collection ]->format( $raw_value, $args );
+		return $noptin_current_objects[ $config['object_type'] ]->format( $raw_value, $args );
 	}
 
 }
