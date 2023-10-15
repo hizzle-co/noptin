@@ -71,7 +71,7 @@ class Store {
 			return array();
 		}
 
-		return $collection->get_fields();
+		return $collection->get_all_fields();
 	}
 
 	/**

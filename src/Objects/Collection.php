@@ -76,14 +76,14 @@ abstract class Collection {
 	public function load_automation_rules( $rules ) {
 
 		// Register triggers.
-		foreach ( $this->get_triggers() as $key => $args ) {
+		foreach ( $this->get_all_triggers() as $key => $args ) {
 			$rules->add_trigger(
 				new Trigger( $key, $args, $this )
 			);
 		}
 
 		// Register actions.
-		foreach ( $this->get_actions() as $key => $args ) {
+		foreach ( $this->get_all_actions() as $key => $args ) {
 			$rules->add_action(
 				new Action( $this->type, $key, $args )
 			);
@@ -101,13 +101,24 @@ abstract class Collection {
 	}
 
 	/**
+	 * Retrieves all filtered triggers.
+	 *
+	 */
+	public function get_all_triggers() {
+		return apply_filters(
+			'noptin_object_triggers_' . $this->type,
+			$this->get_triggers(),
+			$this
+		);
+	}
+
+	/**
 	 * Triggers actions.
 	 *
 	 * @param string $trigger The trigger name.
 	 * @param array $args The trigger args.
 	 */
 	public function trigger( $trigger, $args ) {
-		noptin_error_log( $args, $trigger );
 		do_action( 'noptin_fire_object_trigger_' . $trigger, $args );
 	}
 
@@ -121,10 +132,34 @@ abstract class Collection {
 	}
 
 	/**
+	 * Retrieves all filtered actions.
+	 *
+	 */
+	public function get_all_actions() {
+		return apply_filters(
+			'noptin_object_actions_' . $this->type,
+			$this->get_actions(),
+			$this
+		);
+	}
+
+	/**
 	 * Retrieves available fields.
 	 *
 	 */
 	abstract public function get_fields();
+
+	/**
+	 * Retrieves all filtered fields.
+	 *
+	 */
+	public function get_all_fields() {
+		return apply_filters(
+			'noptin_object_fields_' . $this->type,
+			$this->get_fields(),
+			$this
+		);
+	}
 
 	/**
 	 * Retrieves a single record.
