@@ -131,26 +131,49 @@ abstract class Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
+	 * @return array|null
+	 */
+	public function get( $tag ) {
+		$tags = $this->all();
+
+		if ( isset( $tags[ $tag ] ) ) {
+			return $tags[ $tag ];
+		}
+
+		foreach ( $tags as $value ) {
+
+			if ( empty( $value['deprecated'] ) ) {
+				continue;
+			}
+
+			if ( in_array( $tag, noptin_parse_list( $value['deprecated'] ), true ) ) {
+				return $value;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * @param array $matches
 	 *
 	 * @return string
 	 */
 	protected function replace_tag( $matches ) {
-		$tags = $this->all();
-		$tag  = $matches[1];
+		$tag    = $matches[1];
+		$config = $this->get( $tag );
 
 		// Abort if tag is not supported.
-		if ( ! isset( $tags[ $tag ] ) ) {
+		if ( empty( $config ) ) {
 			return $matches[0];
 		}
 
 		// (Maybe) Skip non-partial tags.
-		if ( $this->is_partial && empty( $tags[ $tag ]['partial'] ) ) {
+		if ( $this->is_partial && empty( $config['partial'] ) ) {
 			return $matches[0];
 		}
 
 		// Generate replacement.
-		$config      = $tags[ $tag ];
 		$replacement = '';
 
 		// Parse attributes.
@@ -166,7 +189,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 			// call function
 			if ( empty( $config['no_args'] ) ) {
-				$replacement = call_user_func( $config['callback'], $attributes, $tag );
+				$replacement = call_user_func( $config['callback'], $attributes, $tag, $config );
 			} else {
 				$replacement = call_user_func( $config['callback'] );
 			}
@@ -182,7 +205,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		// Convert booleans.
 		if ( is_bool( $replacement ) ) {
-			$replacement = $replacement ? '1' : '0';
+			$replacement = $replacement ? 'yes' : 'no';
 		}
 
 		if ( ! is_scalar( $replacement ) ) {

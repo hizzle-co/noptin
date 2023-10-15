@@ -1281,6 +1281,7 @@ function get_noptin_subscriber_smart_tags() {
 				'example'     => $prop->name . ' default=""',
 				'options'     => false,
 				'is_multiple' => $prop->is_meta_key && $prop->is_meta_key_multiple,
+				'group'       => __( 'Subscriber', 'newsletter-optin-box' ),
 			);
 
 			if ( is_callable( $prop->enum ) ) {

@@ -11,6 +11,8 @@ import {
 	CheckboxControl,
 	FormTokenField,
 	DropdownMenu,
+	MenuGroup,
+	MenuItem,
 	Tip,
 	Button,
 	Flex,
@@ -105,66 +107,85 @@ const keyValueRepeaterFields = [
 function useMergeTags(availableSmartTags, onMergeTagClick) {
 
 	// Dropdown menu controls.
-	const controls = useMemo(() => {
+	const groups = useMemo(() => {
 
 		if ( ! Array.isArray(availableSmartTags) ) {
-			return [];
+			return {};
 		}
 
-		// Returns the merge tag value to use.
-		const theValue = ( mergeTag ) => {
+		const groups = {};
 
-			if ( mergeTag.example ) {
-				return mergeTag.example;
-			}
-	
-			let defaultValue = "default value";
-	
-			if ( mergeTag.replacement ) {
-				defaultValue = mergeTag.replacement;
-			}
-	
-			if ( mergeTag.default ) {
-				defaultValue = mergeTag.default;
-			}
-	
-			if ( ! defaultValue ) {
-				return `${mergeTag.smart_tag}`;
-			}
-	
-			return `${mergeTag.smart_tag} default="${defaultValue}"`;
-		}
+		availableSmartTags.forEach((smartTag) => {
+			const group   = smartTag.group ? smartTag.group : __( 'General', 'newsletter-optin-box' );
+			groups[group] = groups[group] ? groups[group] : [];
 
-		return availableSmartTags.map((smartTag) => {
-			return {
-				title: smartTag.label,
-				icon: next,
-				onClick: () => {
-
-					if ( onMergeTagClick ) {
-						onMergeTagClick(`[[${theValue(smartTag)}]]`);
-					}
-				},
-			};
+			groups[group].push( smartTag );
 		});
-	}, [availableSmartTags, onMergeTagClick]);
+
+		return groups;
+	}, [availableSmartTags]);
+console.log(groups);
+	const totalGroups = Object.keys(groups).length;
 
 	// If we have merge tags, show the merge tags button.
 	let inserter = null;
 
-	if ( controls.length > 0 ) {
+	if ( totalGroups > 0 ) {
 
 		inserter = (
 			<DropdownMenu
 				icon="shortcode"
-				controls={ controls }
 				label={__( 'Insert merge tag', 'newsletter-optin-box' )}
 				showTooltip
-			/>
+			>
+		 		{ ( { onClose } ) => (
+		 			<>
+						{ Object.keys(groups).map((group, index) => (
+							<MenuGroup label={ totalGroups > 1 ? group : undefined} key={index}>
+								{ groups[group].map((item) => (
+									<MenuItem
+										icon={ item.icon || next }
+										iconPosition="left"
+										onClick={ () => {
+											if ( onMergeTagClick ) {
+												onMergeTagClick(`[[${getMergeTagValue(item)}]]`);
+											}
+						
+											onClose();
+										}}
+										key={ item.smart_tag }
+									>
+										{ item.label }
+									</MenuItem>
+								)) }
+							</MenuGroup>
+						)) }
+		 			</>
+		 		) }
+		 	</DropdownMenu>
 		);
 	}
 
 	return inserter;
+}
+
+/**
+ * Returns a merge tag's value.
+ *
+ * @param {Object} smartTag The smart tag.
+ * @return {Array}
+ */
+function getMergeTagValue(smartTag) {
+
+	if ( smartTag.example ) {
+		return smartTag.example;
+	}
+
+	if ( ! smartTag.default ) {
+		return `${smartTag.smart_tag}`;
+	}
+
+	return `${smartTag.smart_tag} default="${smartTag.default}"`;
 }
 
 /**
@@ -178,21 +199,6 @@ function useMergeTags(availableSmartTags, onMergeTagClick) {
  */
 function KeyValueRepeater({ setting, availableSmartTags, value, onChange, ...attributes }) {
 
-	const [currentField, setCurrentField] = useState(false);
-
-	// On add merge tag...
-	const onMergeTagClick = useCallback((mergeTag) => {
-
-		if ( Array.isArray( currentField ) ) {
-			value = [...value];
-			value[currentField[0]][currentField[1]] += mergeTag;
-			onChange(value);
-		}
-	}, [currentField, value, onChange]);
-
-	// Merge tags.
-	const [suffix] = useMergeTags( availableSmartTags, onMergeTagClick );
-
 	// The base props.
 	const { baseControlProps, controlProps } = useBaseControlProps( attributes );
 
@@ -201,38 +207,17 @@ function KeyValueRepeater({ setting, availableSmartTags, value, onChange, ...att
 		value = [];
 	}
 
-	// Displays a single field in the repeater.
-	const Field = useCallback(({ item, field, index, onChange }) => {
-		return (
-			<FlexBlock>
-				<InputControl
-					label={field.label}
-					type={field.type}
-					value={item[field.id] === undefined ? '' : item[field.id]}
-					placeholder={sprintf( __( 'Enter %s', 'noptin-addons-pack' ), field.label )}
-					className="noptin-component__field noptin-condition-field"
-					suffix={suffix}
-					onChange={onChange}
-					onFocus={() => { setCurrentField([index, field.id])}}
-					isPressEnterToChange
-					__nextHasNoMarginBottom
-					__next36pxDefaultSize
-				/>
-			</FlexBlock>
-		);
-	}, [suffix]);
-
 	// Displays a single Item.
 	const Item = useCallback(({ item, index }) => {
 		return (
 			<Flex className="noptin-repeater-item" wrap>
 
 				{keyValueRepeaterFields.map((field, fieldIndex) => (
-					<Field
+					<KeyValueRepeaterField
 						key={fieldIndex}
-						index={index}
-						item={item}
+						availableSmartTags={ availableSmartTags }
 						field={field}
+						value={item[field.id] === undefined ? '' : item[field.id]}
 						onChange={(newValue) => {
 							const newItems = [...value];
 							newItems[index][field.id] = newValue;
@@ -253,6 +238,7 @@ function KeyValueRepeater({ setting, availableSmartTags, value, onChange, ...att
 							newValue.splice(index, 1);
 							onChange(newValue);
 						}}
+						isDestructive
 					/>
 				</FlexItem>
 			</Flex>
@@ -278,6 +264,48 @@ function KeyValueRepeater({ setting, availableSmartTags, value, onChange, ...att
 			</div>
 
 		</BaseControl>
+	);
+}
+
+/**
+ * Displays a key value repeater setting field.
+ *
+ * @param {Object} props
+ * @param {Function} props.onChange The on change handler
+ * @param {String} props.value The current value.
+ * @param {Object} props.field The field object.
+ * @param {Array} props.availableSmartTags The available smart tags.
+ * @return {JSX.Element}
+ */
+function KeyValueRepeaterField({ field, availableSmartTags, value, onChange }) {
+
+	// On add merge tag...
+	const onMergeTagClick = useCallback((mergeTag) => {
+
+		// Add the merge tag to the value.
+		if ( onChange ) {
+			onChange(value ? `${value} ${mergeTag}`.trim() : mergeTag);
+		}
+	}, [value, onChange]);
+
+	// Merge tags.
+	const suffix = useMergeTags( availableSmartTags, onMergeTagClick );
+
+	return (
+		<FlexBlock>
+			<InputControl
+				label={field.label}
+				type={field.type}
+				value={value}
+				placeholder={sprintf( __( 'Enter %s', 'noptin-addons-pack' ), field.label )}
+				className="noptin-component__field noptin-condition-field"
+				suffix={suffix}
+				onChange={onChange}
+				isPressEnterToChange
+				__nextHasNoMarginBottom
+				__next36pxDefaultSize
+			/>
+		</FlexBlock>
 	);
 }
 

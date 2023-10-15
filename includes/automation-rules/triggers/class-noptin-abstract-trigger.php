@@ -126,6 +126,10 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		foreach ( $smart_tags as $key => $value ) {
 			$prepared[ $key ] = $value;
 
+			if ( empty( $prepared[ $key ]['group'] ) ) {
+				$prepared[ $key ]['group'] = __( 'General', 'newsletter-optin-box' );
+			}
+
 			// Remove callback.
 			unset( $prepared[ $key ]['callback'] );
 		}
@@ -140,7 +144,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @return array
 	 */
 	public function get_known_smart_tags() {
-		/** @var WP_Locale $wp_locale */
+		/** @var \WP_Locale $wp_locale */
 		global $wp_locale;
 
 		$smart_tags = array(
@@ -212,6 +216,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 					'yes' => __( 'Logged in', 'newsletter-optin-box' ),
 					'no'  => __( 'Logged out', 'newsletter-optin-box' ),
 				),
+				'group'             => __( 'User', 'newsletter-optin-box' ),
 			);
 		} else {
 			$smart_tags = array_replace(
@@ -221,12 +226,14 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 					'user_id'     => array(
 						'description'       => __( 'User ID', 'newsletter-optin-box' ),
 						'conditional_logic' => 'number',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'user_role'   => array(
 						'description'       => __( 'User Role', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
 						'options'           => wp_roles()->get_names(),
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'user_locale' => array(
@@ -234,41 +241,49 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 						'conditional_logic' => 'string',
 						'example'           => 'user_locale default="en_US"',
 						'options'           => noptin_get_available_languages(),
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'email'       => array(
 						'description'       => __( 'Email Address', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'name'        => array(
 						'description'       => __( 'Display Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'first_name'  => array(
 						'description'       => __( 'First Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'last_name'   => array(
 						'description'       => __( 'Last Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'user_login'  => array(
 						'description'       => __( 'Login Name', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'user_url'    => array(
 						'description'       => __( 'User URL', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 
 					'user_bio'    => array(
 						'description'       => __( 'User Bio', 'newsletter-optin-box' ),
 						'conditional_logic' => 'string',
+						'group'             => __( 'User', 'newsletter-optin-box' ),
 					),
 				)
 			);
@@ -593,6 +608,8 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	public function trigger( $subject, $args ) {
 
 		$args = $this->prepare_trigger_args( $subject, $args );
+
+		$GLOBALS['noptin_current_trigger_args'] = $args;
 
 		foreach ( $this->get_rules() as $rule ) {
 

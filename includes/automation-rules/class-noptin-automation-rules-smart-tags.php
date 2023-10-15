@@ -36,6 +36,10 @@ class Noptin_Automation_Rules_Smart_Tags extends Noptin_Dynamic_Content_Tags {
 
 		$values = array_merge( $extra_args, $trigger->prepare_known_smart_tags( $subject ) );
 
+		if ( ! empty( $extra_args['extra_args'] ) ) {
+			$values = array_merge( $values, $extra_args['extra_args'] );
+		}
+
 		foreach ( $trigger->get_known_smart_tags() as $merge_tag => $tag ) {
 
 			if ( isset( $values[ $merge_tag ] ) && 'subject' !== $merge_tag ) {
