@@ -21,12 +21,13 @@ import {
 } from '@wordpress/components';
 import { next } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
-import { useCallback, useState, useMemo } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 
 /**
  * Local dependancies.
  */
 import ConditionalLogicEditor from './conditional-logic-editor';
+import { compare } from '../utils/operators';
 
 /**
  * Input types.
@@ -124,7 +125,7 @@ function useMergeTags(availableSmartTags, onMergeTagClick) {
 
 		return groups;
 	}, [availableSmartTags]);
-console.log(groups);
+
 	const totalGroups = Object.keys(groups).length;
 
 	// If we have merge tags, show the merge tags button.
@@ -403,6 +404,29 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 
 		// If we have one part, we're checking a root setting.
 		if ( parts.length === 1 && ! saved[ parts[0] ] ) {
+			return null;
+		}
+	}
+
+	// Key value conditions.
+	if ( Array.isArray( setting.conditions ) ) {
+
+		// Check if all conditions are met.
+		const conditionsMet = setting.conditions.every((condition) => {
+			const parts          = condition.key.split( '.' );
+			const operator       = condition.operator ? condition.operator : '==';
+			const compareAgainst = saved[ parts[0] ];
+
+			// If we have two parts, we're checking a nested setting.
+			if ( parts.length === 2 ) {
+				return compareAgainst && compareAgainst[ parts[1] ] && compare( condition.value, operator, compareAgainst[ parts[1] ] );
+			}
+
+			return compare( condition.value, operator, compareAgainst );
+		});
+
+		// If conditions are not met, return null.
+		if ( ! conditionsMet ) {
 			return null;
 		}
 	}
