@@ -77,6 +77,10 @@ abstract class Collection {
 
 		// Register triggers.
 		foreach ( $this->get_all_triggers() as $key => $args ) {
+
+			$args['provides'] = empty( $args['provides'] ) ? array() : noptin_parse_list( $args['provides'] );
+			$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
+
 			$rules->add_trigger(
 				new Trigger( $key, $args, $this )
 			);
@@ -119,6 +123,13 @@ abstract class Collection {
 	 * @param array $args The trigger args.
 	 */
 	public function trigger( $trigger, $args ) {
+
+		$args['provides'] = empty( $args['provides'] ) ? array() : $args['provides'];
+
+		if ( empty( $args['provides']['current_user'] ) ) {
+			$args['provides']['current_user'] = get_current_user_id();
+		}
+
 		do_action( 'noptin_fire_object_trigger_' . $trigger, $args );
 	}
 

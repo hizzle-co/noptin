@@ -230,6 +230,11 @@ class Store {
 			$raw_value = $raw_value ? 'yes' : 'no';
 		}
 
+		// Convert \DateTime to string.
+		if ( $raw_value instanceof \DateTime ) {
+			$raw_value = $raw_value->format( 'Y-m-d H:i:s' );
+		}
+
 		// Are we formatting the value?
 		if ( empty( $args['format'] ) || '' === $raw_value || null === $raw_value ) {
 			return $raw_value;

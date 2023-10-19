@@ -143,14 +143,6 @@ class Users extends People {
 					'type'    => 'date',
 					'example' => "format='datetime'",
 				),
-				'activation_key' => array(
-					'label' => __( 'Activation key', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'status'         => array(
-					'label' => __( 'Status', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
 				'meta'           => array(
 					'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
 					'type'           => 'string',
@@ -172,6 +164,8 @@ class Users extends People {
 				'example' => "format='label'",
 			);
 		}
+
+		return $fields;
 	}
 
 	/**

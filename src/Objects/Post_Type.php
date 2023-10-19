@@ -28,7 +28,7 @@ abstract class Post_Type extends Collection {
 	public function __construct() {
 
 		if ( false === self::$registered_subject ) {
-			Store::add( new Users( 'post_author', __( 'Authors', 'newsletter-optin-box' ), __( 'Author', 'newsletter-optin-box' ) ) );
+			Store::add( new Users( 'post_author', __( 'Authors', 'newsletter-optin-box' ), __( 'Post Author', 'newsletter-optin-box' ) ) );
 			self::$registered_subject = true;
 		}
 
@@ -50,19 +50,6 @@ abstract class Post_Type extends Collection {
 		return array_merge(
 			parent::get_triggers(),
 			array(
-				$this->type . '_created'   => array(
-					'label'       => sprintf(
-						/* translators: %s: Object type label. */
-						__( '%s > Created', 'newsletter-optin-box' ),
-						$this->singular_label
-					),
-					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'When a %s is created', 'newsletter-optin-box' ),
-						$this->singular_label
-					),
-					'subject'     => 'post_author',
-				),
 				$this->type . '_published'   => array(
 					'label'       => sprintf(
 						/* translators: %s: Object type label. */
@@ -157,18 +144,13 @@ abstract class Post_Type extends Collection {
 			return;
 		}
 
-		// Are we creating a new post?
-		if ( 'auto-draft' === $old_status ) {
-			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_created' );
-		}
-
 		// Are we publishing a post?
 		if ( 'publish' === $new_status ) {
 			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_published' );
 		}
 
 		// Are we unpublishing a post?
-		if ( 'publish' === $old_status && 'publish' !== $new_status ) {
+		if ( 'publish' === $old_status ) {
 			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_unpublished' );
 		}
 	}

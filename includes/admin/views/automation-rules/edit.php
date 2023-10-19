@@ -122,7 +122,8 @@ if ( ! empty( $map_fields ) ) {
 	);
 }
 
-$settings = apply_filters( 'noptin_automation_rule_settings', $settings, $rule, $trigger, $rule_action );
+$settings   = apply_filters( 'noptin_automation_rule_settings', $settings, $rule, $trigger, $rule_action );
+$smart_tags = $trigger->get_known_smart_tags_for_js();
 ?>
 <div class="wrap noptin-edit-automation-rule-page" id="noptin-wrapper">
 	<div
@@ -133,7 +134,7 @@ $settings = apply_filters( 'noptin_automation_rule_settings', $settings, $rule, 
 		data-trigger="<?php echo esc_attr( $rule->trigger_id ); ?>"
 		data-create-new-url="<?php echo esc_url( add_query_arg( 'noptin_create_automation_rule', '1', admin_url( 'admin.php?page=noptin-automation-rules' ) ) ); ?>"
 		data-settings="<?php echo esc_attr( wp_json_encode( $settings ) ); ?>"
-		data-smart-tags="<?php echo esc_attr( wp_json_encode( $trigger->get_known_smart_tags_for_js() ) ); ?>"
+		data-smart-tags="<?php echo esc_attr( wp_json_encode( $smart_tags ) ); ?>"
 	>
 		<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>
 		<span class="spinner"></span>

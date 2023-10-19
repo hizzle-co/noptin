@@ -1024,9 +1024,13 @@ function noptin_is_page_built_with_elementor( $post_id ) {
  * @param mixed $data The data to print.
  */
 function noptin_dump( $data ) {
+	// phpcs:disable WordPress.PHP.DevelopmentFunctions
 	echo '<pre>';
 	var_dump( $data );
-	echo '</pre>';
+	echo '<br /><code>';
+	echo esc_html( implode( "\n &gt;&gt;&nbsp;", array_reverse( wp_debug_backtrace_summary( null, 0, false ) ) ) );
+	echo '</code></pre>';
+	// phpcs:enable WordPress.PHP.DevelopmentFunctions
 }
 
 /**

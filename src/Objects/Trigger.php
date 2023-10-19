@@ -117,12 +117,6 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			}
 		}
 
-		// Add current user args.
-		$args = array_merge(
-			$args,
-			Store::smart_tags( 'current_user', true )
-		);
-
 		// Add generic smart tags.
 		return array_merge(
 			$args,
@@ -138,12 +132,6 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 * @since 2.2.0
 	 */
 	public function fire_trigger( $args ) {
-
-		$args['provides'] = empty( $args['provides'] ) ? array() : $args['provides'];
-
-		if ( empty( $args['provides']['current_user'] ) ) {
-			$args['provides']['current_user'] = get_current_user_id();
-		}
 
 		try {
 			$subject = $this->prepare_current_objects( $args );
