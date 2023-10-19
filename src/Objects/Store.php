@@ -203,8 +203,32 @@ class Store {
 			return '';
 		}
 
+		// Meta values.
+		if ( 'meta' === $field && ! empty( $args['key'] ) ) {
+			$field = $field . '.' . $args['key'];
+		}
+
 		// Fetch the raw value.
-		$raw_value = $noptin_current_objects[ $config['object_type'] ]->get( $field );
+		$object = $noptin_current_objects[ $config['object_type'] ];
+		if ( 'newsletter' === $field && is_callable( array( $object, 'get_email' ) ) ) {
+			$email     = call_user_func( array( $object, 'get_email' ) );
+			$raw_value = false;
+
+			if ( is_string( $email ) && is_email( $email ) ) {
+				$subscriber = noptin_get_subscriber( $email );
+				$raw_value  = ( $subscriber->is_active() && ! noptin_is_email_unsubscribed( $email ) );
+			}
+		} elseif ( 'avatar_url' === $field && is_callable( array( $object, 'get_email' ) ) ) {
+			$email     = call_user_func( array( $object, 'get_email' ) );
+			$raw_value = esc_url( get_avatar_url( $email ) );
+		} else {
+			$raw_value = $noptin_current_objects[ $config['object_type'] ]->get( $field );
+		}
+
+		// Convert bools to yes/no.
+		if ( is_bool( $raw_value ) ) {
+			$raw_value = $raw_value ? 'yes' : 'no';
+		}
 
 		// Are we formatting the value?
 		if ( empty( $args['format'] ) || '' === $raw_value || null === $raw_value ) {

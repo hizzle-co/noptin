@@ -140,8 +140,26 @@ abstract class Noptin_Dynamic_Content_Tags {
 			return $tags[ $tag ];
 		}
 
-		foreach ( $tags as $value ) {
+		// Convert first occurence of _ to .
+		$alt_tag = preg_replace( '/_/', '.', $tag, 1 );
 
+		if ( isset( $tags[ $alt_tag ] ) ) {
+			return $tags[ $alt_tag ];
+		}
+
+		foreach ( $tags as $key => $value ) {
+
+			// Check without prefix.
+			if ( -1 !== strpos( $key, '.' ) ) {
+				$without_prefix = explode( '.', $key );
+				array_shift( $without_prefix );
+
+				if ( implode( '.', $without_prefix ) === $tag ) {
+					return $value;
+				}
+			}
+
+			// Check deprecated alternatives.
 			if ( empty( $value['deprecated'] ) ) {
 				continue;
 			}

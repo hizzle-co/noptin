@@ -19,5 +19,7 @@ abstract class Person extends Record {
 	 * Retrieves the person's email address.
 	 *
 	 */
-	abstract public function get_email();
+	public function get_email() {
+		return $this->get( 'email' );
+	}
 }

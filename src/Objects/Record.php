@@ -59,6 +59,12 @@ abstract class Record {
 	 */
 	public function format( $raw_value, $args ) {
 
+		// Format sizes.
+		if ( 'size' === $args['format'] ) {
+			$decimals = isset( $args['decimals'] ) ? $args['decimals'] : 2;
+			return size_format( $raw_value, $decimals );
+		}
+
 		// Format dates.
 		if ( 'date' === $args['format'] ) {
 			$as = isset( $args['as'] ) ? $args['as'] : get_option( 'date_format' );
