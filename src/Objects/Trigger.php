@@ -45,10 +45,6 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$this->category     = $collection->label;
 		$this->integration  = $collection->integration;
 
-		if ( empty( $trigger_args['subject'] ) ) {
-			$this->is_user_based = true;
-		}
-
 		add_action( 'noptin_fire_object_trigger_' . $this->trigger_id, array( $this, 'fire_trigger' ) );
 	}
 
@@ -136,6 +132,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		try {
 			$subject = $this->prepare_current_objects( $args );
 		} catch ( \Exception $e ) {
+			noptin_error_log( $e->getMessage() );
 			return;
 		}
 
@@ -179,7 +176,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		$subject = $collection->get( $subject_id );
 
-		if ( empty( $subject ) || ! $subject->exists() ) {
+		if ( empty( $subject ) || ( 'current_user' !== $collection->type && ! $subject->exists() ) ) {
 			return false;
 		}
 
@@ -285,7 +282,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 				$object = $collection->get( $id );
 
-				if ( empty( $object ) || ! $object->exists() ) {
+				if ( empty( $object ) || ( 'current_user' !== $object_type && ! $object->exists() ) ) {
 					throw new \Exception( $object_type . ' not found' );
 				}
 

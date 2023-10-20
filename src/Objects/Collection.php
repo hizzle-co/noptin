@@ -81,6 +81,10 @@ abstract class Collection {
 			$args['provides'] = empty( $args['provides'] ) ? array() : noptin_parse_list( $args['provides'] );
 			$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
 
+			if ( empty( $args['subject'] ) ) {
+				$args['subject'] = 'current_user';
+			}
+
 			$rules->add_trigger(
 				new Trigger( $key, $args, $this )
 			);
@@ -109,11 +113,7 @@ abstract class Collection {
 	 *
 	 */
 	public function get_all_triggers() {
-		return apply_filters(
-			'noptin_object_triggers_' . $this->type,
-			$this->get_triggers(),
-			$this
-		);
+		return $this->filter( $this->get_triggers(), 'triggers' );
 	}
 
 	/**
@@ -128,6 +128,15 @@ abstract class Collection {
 
 		if ( empty( $args['provides']['current_user'] ) ) {
 			$args['provides']['current_user'] = get_current_user_id();
+		}
+
+		if ( ! isset( $args['subject_id'] ) ) {
+			$user               = wp_get_current_user();
+			$args['subject_id'] = ( isset( $user->ID ) ? (int) $user->ID : 0 );
+
+			if ( empty( $args['email'] ) ) {
+				$args['email'] = $user->user_email;
+			}
 		}
 
 		do_action( 'noptin_fire_object_trigger_' . $trigger, $args );
@@ -147,11 +156,7 @@ abstract class Collection {
 	 *
 	 */
 	public function get_all_actions() {
-		return apply_filters(
-			'noptin_object_actions_' . $this->type,
-			$this->get_actions(),
-			$this
-		);
+		return $this->filter( $this->get_actions(), 'actions' );
 	}
 
 	/**
@@ -165,11 +170,35 @@ abstract class Collection {
 	 *
 	 */
 	public function get_all_fields() {
-		return apply_filters(
-			'noptin_object_fields_' . $this->type,
-			$this->get_fields(),
+		return $this->filter( $this->get_fields(), 'fields' );
+	}
+
+	/**
+	 * Filters the provided value.
+	 *
+	 */
+	protected function filter( $value, $type ) {
+		$value = apply_filters(
+			"noptin_object_{$type}_{$this->type}",
+			$value,
 			$this
 		);
+
+		return apply_filters(
+			"noptin_object_type_{$type}_{$this->object_type}",
+			$value,
+			$this
+		);
+	}
+
+	/**
+	 * Retrieves several items.
+	 *
+	 * @param array $filters The available filters.
+	 * @return int[] $ids The object IDs.
+	 */
+	public function get_all( $filters ) {
+		return array();
 	}
 
 	/**

@@ -38,7 +38,7 @@ abstract class Post_Type extends Collection {
 		add_action( 'wp_after_insert_post', array( $this, 'after_insert_post' ), 100, 4 );
 
 		// Deleted.
-		add_action( 'before_delete_post', array( $this, 'on_delete' ), 100, 2 );
+		add_action( 'before_delete_post', array( $this, 'on_delete' ), 0, 2 );
 	}
 
 	/**
