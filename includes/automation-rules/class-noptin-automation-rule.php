@@ -97,9 +97,13 @@ class Noptin_Automation_Rule {
 	 *
 	 * @since 1.2.8
 	 * @var int|stdClass|Noptin_Automation_Rule $rule
+	 * @deprecated
 	 * @return string
 	 */
 	public function __construct( $rule ) {
+
+		// Show deprecated class notice.
+		_deprecated_function( __CLASS__, '2.0.0', 'noptin_get_automation_rule' );
 
 		if ( empty( $rule ) ) {
 

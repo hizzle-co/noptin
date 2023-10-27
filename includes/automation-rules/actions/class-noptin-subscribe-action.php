@@ -32,14 +32,10 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Retrieve the actions's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$settings = $rule->action_settings;
+		$settings = $rule->get_action_settings();
 
 		// Abort if we have no email address.
 		if ( empty( $settings['email'] ) ) {
@@ -90,13 +86,7 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Returns whether or not the action can run (dependancies are installed).
-	 *
-	 * @since 1.9.0
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function can_run( $subject, $rule, $args ) {
 
@@ -105,17 +95,10 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Add / update the subscriber.
-	 *
-	 * @since 1.3.1
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function run( $subject, $rule, $args ) {
 
-		$settings = wp_unslash( $rule->action_settings );
 		$details  = array(
 			'email' => $this->get_subject_email( $subject, $rule, $args ),
 		);
@@ -123,13 +106,15 @@ class Noptin_Subscribe_Action extends Noptin_Abstract_Action {
 		/** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
-		foreach ( $settings as $key => $value ) {
+		foreach ( array_keys( get_editable_noptin_subscriber_fields() ) as $field ) {
 
-			if ( '' === $value ) {
+			$value = $rule->get_action_setting( $field );
+
+			if ( is_null( $value ) || '' === $value ) {
 				continue;
 			}
 
-			$details[ $key ] = is_scalar( $value ) ? $smart_tags->replace_in_text_field( $value ) : $value;
+			$details[ $field ] = map_deep( $value, array( $smart_tags, 'replace_in_text_field' ) );
 		}
 
 		$subscriber_id = get_noptin_subscriber_id_by_email( $this->get_subject_email( $subject, $rule, $args ) );

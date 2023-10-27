@@ -23,6 +23,27 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	public $is_creating = false;
 
 	/**
+	 * @inheritdoc
+	 */
+	public function __construct( $record = 0, $args = array() ) {
+
+		parent::__construct( $record, $args );
+
+		// Check if we are creating a new rule.
+		if ( empty( $record ) && ! empty( $_GET['noptin-trigger'] ) && ! empty( $_GET['noptin-action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+			$this->is_creating = true;
+
+			$this->set_trigger_id( sanitize_text_field( $_GET['noptin-trigger'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$this->set_action_id( sanitize_text_field( $_GET['noptin-action'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+			// Set default action and trigger settings.
+			$this->set_trigger_settings( array( 'conditional_logic' => noptin_get_default_conditional_logic() ) );
+			$this->set_action_settings( array() );
+		}
+	}
+
+	/**
 	 * Returns the deprecated rule object.
 	 *
 	 * @return \Noptin_Automation_Rule
@@ -58,6 +79,18 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 */
 	public function get_action() {
 		return noptin()->automation_rules->get_action( $this->get_action_id() );
+	}
+
+	/**
+	 * Returns a single action setting.
+	 *
+	 * @param string $key The setting key.
+	 * @return mixed|null
+	 */
+	public function get_action_setting( $key ) {
+
+		$settings = $this->get_action_settings();
+		return isset( $settings[ $key ] ) ? $settings[ $key ] : null;
 	}
 
 	/**
@@ -112,6 +145,18 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns a single trigger setting.
+	 *
+	 * @param string $key The setting key.
+	 * @return mixed|null
+	 */
+	public function get_trigger_setting( $key ) {
+
+		$settings = $this->get_trigger_settings();
+		return isset( $settings[ $key ] ) ? $settings[ $key ] : null;
+	}
+
+	/**
 	 * Returns the trigger settings.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -131,6 +176,17 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		$value = is_array( $value ) ? $value : array();
 		$this->set_prop( 'trigger_settings', $value );
 		$this->sanitize_trigger_settings();
+	}
+
+	/**
+	 * Returns the conditional logic settings.
+	 *
+	 * @return array
+	 */
+	public function get_conditional_logic() {
+		$conditional_logic = $this->get_trigger_setting( 'conditional_logic' );
+
+		return is_array( $conditional_logic ) ? $conditional_logic : array();
 	}
 
 	/**
@@ -246,6 +302,21 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Deletes the rule.
+	 *
+	 * @return int|\WP_Error
+	 */
+	public function delete( $force_delete = true ) {
+		$action = $this->get_action();
+
+		if ( ! empty( $action ) ) {
+			$action->before_delete( $this );
+		}
+
+		return parent::delete();
+	}
+
+	/**
 	 * Fetches the rule's edit url.
 	 *
 	 * @return string
@@ -344,10 +415,6 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		// Prepare the options.
 		$prepared_options = array();
 
-		if ( isset( $options['conditional_logic'] ) ) {
-			$prepared_options['conditional_logic'] = $options['conditional_logic'];
-		}
-
 		foreach ( $settings as $key => $args ) {
 
 			$default  = isset( $args['default'] ) ? $args['default'] : '';
@@ -372,7 +439,35 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			$prepared_options[ $key ] = $value;
 		}
 
+		if ( isset( $options['conditional_logic'] ) ) {
+			$prepared_options['conditional_logic'] = $options['conditional_logic'];
+		}
+
 		$prepared_options = wp_parse_args( $prepared_options, $options );
 		return $prepared_options;
+	}
+
+	/**
+	 * Fires the rule action.
+	 *
+	 * @param \Noptin_Abstract_Trigger $trigger  The trigger.
+	 * @param \Noptin_Abstract_Action $action  The action.
+	 * @param mixed $subject The subject.
+	 * @param array $args The arguments.
+	 * @return array
+	 */
+	public function maybe_run( $subject, $trigger, $action, $args ) {
+
+		// Set the current email.
+		$GLOBALS['current_noptin_email'] = $trigger->get_subject_email( $subject, $this, $args );
+
+		// Are we delaying the action?
+		$delay = $this->get_delay();
+
+		if ( $delay > 0 ) {
+			do_action( 'noptin_delay_automation_rule_execution', $this, $args, $delay );
+		} elseif ( $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
+			$action->maybe_run( $subject, $this, $args );
+		}
 	}
 }

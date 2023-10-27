@@ -59,6 +59,16 @@ class Store {
 	}
 
 	/**
+	 * Retrieves filtered collections.
+	 *
+	 * @param array $args The args.
+	 * @return Collection[] $collections All collections.
+	 */
+	public static function filtered( $args, $operator = 'AND' ) {
+		return wp_list_filter( self::$collections, $args, $operator );
+	}
+
+	/**
 	 * Fetches a collection's fields.
 	 *
 	 * @param string $type The collection type.
@@ -95,7 +105,7 @@ class Store {
 		}
 
 		$callback = array( __CLASS__, 'handle_field_smart_tag' );
-		$prefix   = $prefix ? self::get_collection_config( $type, 'smart_tags_prefix' ) : false;
+		$prefix   = true === $prefix ? self::get_collection_config( $type, 'smart_tags_prefix' ) : $prefix;
 
 		return self::convert_fields_to_smart_tags( $fields, $type, $group, $prefix, $callback );
 	}

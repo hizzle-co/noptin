@@ -47,14 +47,10 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 	}
 
 	/**
-	 * Retrieve the trigger's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$settings = $rule->trigger_settings;
+		$settings = $rule->get_trigger_settings();
 
 		// Ensure we have a product.
 		if ( empty( $settings['product_id'] ) ) {
@@ -128,15 +124,16 @@ class Noptin_WooCommerce_Product_Purchase_Trigger extends Noptin_WooCommerce_Tri
 	 * @inheritdoc
 	 */
 	public function is_rule_valid_for_args( $rule, $args, $subscriber, $action ) {
-		$settings = $rule->trigger_settings;
+		$action     = $rule->get_trigger_setting( 'action' );
+		$product_id = (int) $rule->get_trigger_setting( 'product_id' );
 
 		// Ensure that we have an action for this event.
-		if ( empty( $settings['action'] ) || $settings['action'] !== $args['action'] ) {
+		if ( empty( $action ) || $action !== $args['action'] ) {
 			return false;
 		}
 
 		// Confirm the products match.
-		if ( empty( $settings['product_id'] ) || (int) $settings['product_id'] !== (int) $args['product_id'] ) {
+		if ( empty( $product_id ) || (int) $product_id !== (int) $args['product_id'] ) {
 			return false;
 		}
 

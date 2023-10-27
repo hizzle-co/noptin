@@ -170,7 +170,27 @@ abstract class Collection {
 	 *
 	 */
 	public function get_all_fields() {
-		return $this->filter( $this->get_fields(), 'fields' );
+		$fields = $this->get_fields();
+
+		// Maybe add newsletter subscription status.
+		if ( 'person' === $this->object_type ) {
+			$fields['newsletter'] = array(
+				'label'   => __( 'Newsletter subscription status', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => array(
+					'yes' => __( 'subscribed', 'newsletter-optin-box' ),
+					'no'  => __( 'unsubscribed', 'newsletter-optin-box' ),
+				),
+				'example' => "format='label'",
+			);
+
+			$fields['avatar_url'] = array(
+				'label' => __( 'Avatar URL', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			);
+		}
+
+		return $this->filter( $fields, 'fields' );
 	}
 
 	/**
@@ -211,5 +231,28 @@ abstract class Collection {
 		$class = $this->record_class;
 
 		return new $class( $record );
+	}
+
+	/**
+	 * Retrieves a test object ID.
+	 *
+	 * @since 2.2.0
+	 * @param \Noptin_Automation_Rule $rule
+	 * @return int
+	 */
+	public function get_test_object_id( $rule ) {
+		return 0;
+	}
+
+	/**
+	 * Returns an array of related collections.
+	 *
+	 * @since 2.2.0
+	 * @return array
+	 */
+	public function get_related_collections() {
+		$filtered = Store::filtered( array( 'object_type' => $this->object_type ) );
+		unset( $filtered[ $this->type ] );
+		return $filtered;
 	}
 }

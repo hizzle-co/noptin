@@ -41,6 +41,11 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	protected function replace( $string, $escape_function = '' ) {
+
+		if ( ! is_string( $string ) ) {
+			return $string;
+		}
+
 		$this->escape_function = $escape_function;
 
 		// Replace strings like this: [[tagname attr="value"]].

@@ -11,6 +11,16 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Email_Action extends Noptin_Abstract_Action {
 
 	/**
+	 * Constructor.
+	 *
+	 * @since 1.2.8
+	 * @return string
+	 */
+	public function __construct() {
+		add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_id() {
@@ -39,24 +49,20 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Retrieve the actions's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$settings = $rule->action_settings;
+		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
 
 		// Abort if we have no email id.
-		if ( empty( $settings['automated_email_id'] ) ) {
+		if ( empty( $automated_email_id ) ) {
 			return sprintf(
 				'<span class="noptin-rule-error">%s</span>',
 				esc_html__( 'Error: Email not found', 'newsletter-optin-box' )
 			);
 		}
 
-		$email_campaign = new Noptin_Automated_Email( $settings['automated_email_id'] );
+		$email_campaign = new Noptin_Automated_Email( $automated_email_id );
 
 		// Abort if it doesn't exist.
 		if ( ! $email_campaign->exists() ) {
@@ -95,13 +101,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Sends an email to the subject.
-	 *
-	 * @since 1.3.0
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function run( $subject, $rule, $args ) {
 
@@ -109,30 +109,25 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			$args['email'] = $this->get_subject_email( $subject, $rule, $args );
 		}
 
-		$args['trigger_id'] = $rule->trigger_id;
-		$args['rule_id']    = $rule->id;
-		$campaign           = new Noptin_Automated_Email( $rule->action_settings['automated_email_id'] );
+		$args['trigger_id'] = $rule->get_trigger_id();
+		$args['rule_id']    = $rule->get_id();
+		$campaign           = new Noptin_Automated_Email( $rule->get_action_setting( 'automated_email_id' ) );
 
-		$args['send_email_to_inactive'] = ! empty( $rule->trigger_settings['send_email_to_inactive'] );
+		$args['send_email_to_inactive'] = ! empty( $rule->get_trigger_setting( 'send_email_to_inactive' ) );
 
-		do_action( 'noptin_send_automation_rule_email', $args, $campaign );
+		do_action( 'noptin_send_automation_rule_email_' . $rule->get_trigger_id(), $args, $campaign );
 
 	}
 
 	/**
-	 * Returns whether or not the action can run (dependancies are installed).
-	 *
-	 * @since 1.3.3
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function can_run( $subject, $rule, $args ) {
 		global $noptin_subscribers_batch_action;
 
 		// Abort if we do not have a campaign.
-		if ( empty( $rule->action_settings['automated_email_id'] ) ) {
+		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
+		if ( empty( $automated_email_id ) ) {
 			return false;
 		}
 
@@ -141,9 +136,59 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			return false;
 		}
 
-		$campaign = new Noptin_Automated_Email( $rule->action_settings['automated_email_id'] );
+		$campaign = new Noptin_Automated_Email( $automated_email_id );
 
 		return $campaign->can_send();
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	public function run_if() {
+		// translators: %s is a list of conditions.
+		return __( 'Sends if %s', 'newsletter-optin-box' );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function skip_if() {
+		// translators: %s is a list of conditions.
+		return __( 'Does not send if %s', 'newsletter-optin-box' );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function before_delete( $rule ) {
+		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
+
+		if ( ! empty( $automated_email_id ) ) {
+			remove_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ) );
+			wp_delete_post( $automated_email_id, true );
+			add_action( 'before_delete_post', array( $this, 'delete_automation_rule_on_campaign_delete' ), 10, 2 );
+		}
+	}
+
+	/**
+	 * Deletes a rule when a campaign is deleted.
+	 *
+	 * @var int $campaign_id The campaign id.
+	 * @param \WP_Post $post   Post object.
+	 */
+	public function delete_automation_rule_on_campaign_delete( $campaign_id, $post ) {
+
+		if ( 'noptin-campaign' !== $post->post_type || 'automation' !== get_post_meta( $post->ID, 'campaign_type', true ) ) {
+			return;
+		}
+
+		$campaign = new Noptin_Automated_Email( (int) $campaign_id );
+
+		if ( ! $campaign->exists() || ! $campaign->is_automation_rule() || ! $campaign->get( 'automation_rule' ) ) {
+			return;
+		}
+
+		noptin_delete_automation_rule( intval( $campaign->get( 'automation_rule' ) ) );
+
+	}
 }

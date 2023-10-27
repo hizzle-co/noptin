@@ -86,15 +86,21 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
-	 * Retrieve the triggers's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
-		return noptin_prepare_conditional_logic_for_display( $rule->conditional_logic, $trigger->get_known_smart_tags(), $rule->action_id );
+		$action            = $rule->get_action();
+		$conditional_logic = noptin_prepare_conditional_logic_for_display( $rule->get_conditional_logic(), $this->get_known_smart_tags() );
+
+		if ( empty( $conditional_logic ) || empty( $action ) ) {
+			return '';
+		}
+
+		if ( 'allow' === $conditional_logic['action'] ) {
+			return sprintf( $action->run_if(), $conditional_logic['rules'] );
+		}
+
+		return sprintf( $action->skip_if(), $conditional_logic['rules'] );
 	}
 
 	/**
@@ -437,37 +443,10 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
-	 * Returns all active rules attached to this trigger.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function get_rules() {
-		global $wpdb;
-
-		if ( is_array( $this->rules ) ) {
-			return $this->rules;
-		}
-
-		$this->rules = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}noptin_automation_rules WHERE `trigger_id`=%s AND `status`='1'",
-				$this->get_id()
-			)
-		);
-
-		foreach ( $this->rules as $rule ) {
-			wp_cache_set( $rule->id, $rule, 'noptin_automation_rules', 10 );
-		}
-
-		return $this->rules;
-	}
-
-	/**
 	 * Checks if conditional logic if met.
 	 *
 	 * @since 1.2.8
-	 * @param Noptin_Automation_Rule $rule The rule to check for.
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The rule to check for.
 	 * @param mixed $args Extra args for the action.
 	 * @param mixed $subject The subject.
 	 * @param Noptin_Abstract_Action $action The action to run.
@@ -475,22 +454,23 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 */
 	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
 
+		$conditional_logic = $rule->get_conditional_logic();
 		// Abort if conditional logic is not set.
-		if ( empty( $rule->conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) ) {
+		if ( empty( $conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) ) {
 			return true;
 		}
 
 		// Retrieve the conditional logic.
-		$action      = $rule->conditional_logic['action']; // allow or prevent.
-		$type        = $rule->conditional_logic['type']; // all or any.
+		$action      = $conditional_logic['action']; // allow or prevent.
+		$type        = $conditional_logic['type']; // all or any.
 		$rules_met   = 0;
-		$rules_total = count( $rule->conditional_logic['rules'] );
+		$rules_total = count( $conditional_logic['rules'] );
 
 		/** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
 		// Loop through each rule.
-		foreach ( $rule->conditional_logic['rules'] as $rule ) {
+		foreach ( $conditional_logic['rules'] as $rule ) {
 
 			$current_value = $smart_tags->replace_in_text_field( '[[' . $rule['type'] . ']]' );
 			$compare_value = noptin_clean( $rule['value'] );
@@ -614,28 +594,9 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		foreach ( $this->get_rules() as $rule ) {
 
 			// Retrieve the action.
-			$action = noptin()->automation_rules->get_action( $rule->action_id );
-			if ( empty( $action ) ) {
-				continue;
-			}
-
-			// Prepare the rule.
-			$rule = noptin()->automation_rules->prepare_rule( $rule );
-
-			// Set the current email.
-			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
-
-			// Are we delaying the action?
-			$delay = $rule->get_delay();
-
-			if ( $delay > 0 ) {
-				do_action( 'noptin_delay_automation_rule_execution', $rule, $args, $delay );
-				continue;
-			}
-
-			// Ensure that the rule is valid for the provided args.
-			if ( $this->is_rule_valid_for_args( $rule, $args, $subject, $action ) ) {
-				$action->maybe_run( $subject, $rule, $args );
+			$action = $rule->get_action();
+			if ( ! empty( $action ) ) {
+				$rule->maybe_run( $subject, $this, $action, $args );
 			}
 		}
 

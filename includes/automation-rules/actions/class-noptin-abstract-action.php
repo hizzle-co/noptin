@@ -11,14 +11,27 @@ defined( 'ABSPATH' ) || exit;
 abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 
 	/**
+	 * @var bool
+	 */
+	public $is_action_or_trigger = 'action';
+
+	/**
 	 * Groups rule action into a single string.
 	 *
 	 * @since 1.11.9
 	 * @param array $meta
-	 * @param Noptin_Automation_Rule $rule
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @return string
 	 */
 	public function rule_action_meta( $meta, $rule ) {
+
+		// Add delay.
+		$delay = $rule->get_delay();
+
+		if ( $delay > 0 ) {
+			$meta[ __( 'Delay', 'newsletter-optin-box' ) ] = human_time_diff( time(), time() + $delay );
+		}
+
 		$meta = apply_filters( 'noptin_rule_action_meta_' . $this->get_id(), $meta, $rule, $this );
 		$meta = apply_filters( 'noptin_rule_action_meta', $meta, $rule, $this );
 
@@ -26,38 +39,11 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
-	 * Returns all active rules attached to this action.
-	 *
-	 * @since 1.2.8
-	 * @return array
-	 */
-	public function get_rules() {
-		global $wpdb;
-
-		if ( is_array( $this->rules ) ) {
-			return $this->rules;
-		}
-
-		$this->rules = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}noptin_automation_rules WHERE `action_id`=%s AND `status`='1'",
-				$this->get_id()
-			)
-		);
-
-		foreach ( $this->rules as $rule ) {
-			wp_cache_set( $rule->id, $rule, 'noptin_automation_rules', 10 );
-		}
-
-		return $this->rules;
-	}
-
-	/**
 	 * Returns whether or not the action can run (dependancies are installed).
 	 *
 	 * @since 1.2.8
 	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule that triggered the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return bool
 	 */
@@ -70,7 +56,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.3.0
 	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @param array $args Extra arguments passed to the action.
 	 */
 	public function maybe_run( $subject, $rule, $args ) {
@@ -84,15 +70,15 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 		$this->run( $subject, $rule, $args );
 
 		// Update the run counts.
-		$times_run = (int) $rule->times_run + 1;
-		noptin()->automation_rules->update_rule( $rule, compact( 'times_run' ) );
+		$rule->set_times_run( $rule->get_times_run() + 1 );
+		$rule->save();
 
 		// Record activity.
 		$subject_email = $this->get_subject_email( $subject, $rule, $args );
 		if ( is_email( $subject_email ) ) {
 			$action  = $this->get_name();
-			$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
-			$trigger = $trigger ? $trigger->get_name() : $rule->trigger_id;
+			$trigger = $rule->get_trigger();
+			$trigger = $trigger ? $trigger->get_name() : $rule->get_trigger_id();
 
 			noptin_record_subscriber_activity(
 				$subject_email,
@@ -111,10 +97,38 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.2.8
 	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule that triggered the action.
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return void
 	 */
 	abstract public function run( $subject, $rule, $args );
 
+	/**
+	 * The prefix used for the action's conditional logic.
+	 *
+	 * @return string
+	 */
+	public function run_if() {
+		// translators: %s is a list of conditions.
+		return __( 'Runs if %s', 'newsletter-optin-box' );
+	}
+
+	/**
+	 * The prefix used for the action's conditional logic.
+	 *
+	 * @return string
+	 */
+	public function skip_if() {
+		// translators: %s is a list of conditions.
+		return __( 'Does not run if %s', 'newsletter-optin-box' );
+	}
+
+	/**
+	 * Fired before deleting an automation rule.
+	 *
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule.
+	 */
+	public function before_delete( $rule ) {
+		// Override this method to perform actions before deleting an automation rule.
+	}
 }

@@ -55,20 +55,12 @@ class Noptin_PMPro_Change_Level_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Returns whether or not the action can run (dependancies are installed).
-	 *
-	 * @since 1.10.0
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function can_run( $subject, $rule, $args ) {
 
 		// Check if we have a membership level.
-		$settings = wp_unslash( $rule->action_settings );
-
-		if ( empty( $settings['level'] ) ) {
+		if ( ! $rule->get_action_setting( 'level' ) ) {
 			return false;
 		}
 
@@ -83,28 +75,15 @@ class Noptin_PMPro_Change_Level_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Update a user's membership level.
-	 *
-	 * @since 1.10.0
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function run( $subject, $rule, $args ) {
 
 		// Fetch user.
-		if ( $subject instanceof WP_User ) {
-			$user = $subject;
-		} else {
-			$user = get_user_by( 'email', $this->get_subject_email( $subject, $rule, $args ) );
-		}
+		$user = get_user_by( 'email', $this->get_subject_email( $subject, $rule, $args ) );
 
-		// Fetch level.
-		$settings = wp_unslash( $rule->action_settings );
-		$level    = $settings['level'];
-
-		pmpro_changeMembershipLevel( $level, $user->ID );
+		// Change the level.
+		pmpro_changeMembershipLevel( $rule->get_action_setting( 'level' ), $user->ID );
 	}
 
 }

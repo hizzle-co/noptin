@@ -142,30 +142,24 @@ class Noptin_GeoDirectory_Update_Listing_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Deactivates the subscriber.
-	 *
-	 * @since 1.3.1
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function run( $subject, $rule, $args ) {
 
-		$settings = wp_unslash( $rule->action_settings );
-		$details  = array();
-		$post     = array();
+		$details = array();
 
 		/** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
 		foreach ( array_keys( $this->get_listing_fields() ) as $field_key ) {
 
-			if ( ! isset( $settings[ $field_key ] ) || '' === $settings[ $field_key ] ) {
+			$value = $rule->get_action_setting( $field_key );
+
+			if ( is_null( $value ) || '' === $value ) {
 				continue;
 			}
 
-			$value = $smart_tags->replace_in_content( $settings[ $field_key ] );
+			$value = map_deep( $value, array( $smart_tags, 'replace_in_content' ) );
 
 			if ( 'noptin_post_id' === $field_key && ! empty( $value ) ) {
 				$post = get_post( $value );

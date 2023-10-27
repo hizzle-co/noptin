@@ -20,7 +20,7 @@ class Users extends People {
 	/**
 	 * @var string integration.
 	 */
-	public $integration = 'WordPress';
+	public $integration = 'wordpress'; // phpcs:ignore
 
 	/**
 	 * Constructor.
@@ -78,90 +78,96 @@ class Users extends People {
 	 */
 	public function get_fields() {
 
-		$fields = apply_filters(
-			'noptin_wp_user_fields',
-			array(
-				'id'             => array(
-					'label' => __( 'ID', 'newsletter-optin-box' ),
-					'type'  => 'number',
-				),
-				'role'           => array(
-					'label'   => __( 'Role', 'newsletter-optin-box' ),
-					'type'    => 'string',
-					'options' => wp_roles()->get_names(),
-				),
-				'locale'         => array(
-					'label'   => __( 'Locale', 'newsletter-optin-box' ),
-					'type'    => 'string',
-					'options' => noptin_get_available_languages(),
-					'default' => get_locale(),
-				),
-				'email'          => array(
-					'label' => __( 'Email', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'avatar_url'     => array(
-					'label' => __( 'Avatar URL', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'name'           => array(
-					'label' => __( 'Display name', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'first_name'     => array(
-					'label' => __( 'First name', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'last_name'      => array(
-					'label' => __( 'Last name', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'login'          => array(
-					'label' => __( 'Username', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'url'            => array(
-					'label' => __( 'URL', 'newsletter-optin-box' ),
-					'type'  => 'string',
-				),
-				'bio'            => array(
-					'label'          => __( 'BIO', 'newsletter-optin-box' ),
-					'type'           => 'string',
-					'skip_smart_tag' => true,
-				),
-				'newsletter'     => array(
-					'label'   => __( 'Newsletter subscription status', 'newsletter-optin-box' ),
-					'type'    => 'string',
-					'options' => array(
-						'yes' => __( 'subscribed', 'newsletter-optin-box' ),
-						'no'  => __( 'unsubscribed', 'newsletter-optin-box' ),
-					),
-					'example' => "format='label'",
-				),
-				'registered'     => array(
-					'label'   => __( 'Registration date', 'newsletter-optin-box' ),
-					'type'    => 'date',
-					'example' => "format='datetime'",
-				),
-				'meta'           => array(
-					'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
-					'type'           => 'string',
-					'example'        => 'key="my_key"',
-					'skip_smart_tag' => true,
-				),
+		$fields = array(
+			'id'         => array(
+				'label' => __( 'ID', 'newsletter-optin-box' ),
+				'type'  => 'number',
 			),
-			$this
+			'role'       => array(
+				'label'   => __( 'Role', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => wp_roles()->get_names(),
+			),
+			'locale'     => array(
+				'label'   => __( 'Locale', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => noptin_get_available_languages(),
+				'default' => get_locale(),
+			),
+			'email'      => array(
+				'label' => __( 'Email', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'name'       => array(
+				'label' => __( 'Display name', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'first_name' => array(
+				'label' => __( 'First name', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'last_name'  => array(
+				'label' => __( 'Last name', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'login'      => array(
+				'label' => __( 'Username', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'url'        => array(
+				'label' => __( 'URL', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'bio'        => array(
+				'label'          => __( 'BIO', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'skip_smart_tag' => true,
+			),
+			'registered' => array(
+				'label'   => __( 'Registration date', 'newsletter-optin-box' ),
+				'type'    => 'date',
+				'example' => "format='datetime'",
+			),
+			'meta'       => array(
+				'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'example'        => 'key="my_key"',
+				'skip_smart_tag' => true,
+			),
 		);
+
+		// Add provided fields.
+		foreach ( $this->get_related_collections() as $collection ) {
+
+			/** @var People $collection */
+			$provides = $collection->provides();
+
+			if ( empty( $provides ) || 'wordpress' === $collection->integration ) { // phpcs:ignore
+				continue;
+			}
+
+			$all_fields = $collection->get_all_fields();
+			foreach ( $provides as $key ) {
+				if ( isset( $all_fields[ $key ] ) ) {
+					$all_fields[ $key ]['label'] = $collection->singular_label . ' >> ' . $all_fields[ $key ]['label'];
+
+					$fields[ "{$collection->type}.{$key}" ] = $all_fields[ $key ];
+				}
+			}
+		}
+
+		$fields = apply_filters( 'noptin_wp_user_fields', $fields, $this );
 
 		if ( 'current_user' === $this->type ) {
 			$fields['logged_in'] = array(
-				'label'   => __( 'Log-in status', 'newsletter-optin-box' ),
-				'type'    => 'string',
-				'options' => array(
+				'label'      => __( 'Log-in status', 'newsletter-optin-box' ),
+				'type'       => 'string',
+				'options'    => array(
 					'yes' => __( 'Logged in', 'newsletter-optin-box' ),
 					'no'  => __( 'Logged out', 'newsletter-optin-box' ),
 				),
-				'example' => "format='label'",
+				'example'    => "format='label'",
+				'deprecated' => 'user_logged_in',
 			);
 		}
 
@@ -172,7 +178,32 @@ class Users extends People {
 	 * Adds the current user.
 	 *
 	 */
-	public static function add_current() {
+	public static function add_default() {
+		Store::add( new Users( 'user', __( 'WordPress Users', 'newsletter-optin-box' ), __( 'WordPress User', 'newsletter-optin-box' ) ) );
 		Store::add( new Users( 'current_user', __( 'Current User', 'newsletter-optin-box' ), __( 'Current User', 'newsletter-optin-box' ) ) );
+	}
+
+	/**
+	 * Retrieves a test object ID.
+	 *
+	 * @since 2.2.0
+	 * @param \Noptin_Automation_Rule $rule
+	 * @return int
+	 */
+	public function get_test_object_id( $rule ) {
+
+		if ( is_user_logged_in() ) {
+			return get_current_user_id();
+		}
+
+		// Get last user ID.
+		return current(
+			get_users(
+				array(
+					'number' => 1,
+					'fields' => 'ID',
+				)
+			)
+		);
 	}
 }

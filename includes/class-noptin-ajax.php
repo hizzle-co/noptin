@@ -25,7 +25,7 @@ class Noptin_Ajax {
 		// Save rule.
 		add_action( 'wp_ajax_noptin_save_automation_rule', array( $this, 'save_rule' ) );
 		add_action( 'wp_ajax_noptin_toggle_automation_rule', array( $this, 'toggle_rule' ) );
-		add_action( 'wp_ajax_noptin_delete_automation_rule', array( $this, 'delete_rule' ) );
+		add_action( 'wp_ajax_noptin_delete_automation_rule', array( $this, 'delete_automation_rule' ) );
 
 		// Delete campaign.
 		add_action( 'wp_ajax_noptin_delete_campaign', array( $this, 'delete_campaign' ) );
@@ -400,12 +400,12 @@ class Noptin_Ajax {
 		do_action( 'noptin_before_toggle_automation_rule' );
 
 		// Save them.
-		noptin()->automation_rules->update_rule(
-			absint( $_POST['rule_id'] ),
-			array(
-				'status' => empty( $_POST['enabled'] ) ? 0 : 1,
-			)
-		);
+		$rule = noptin_get_automation_rule( absint( $_POST['rule_id'] ) );
+
+		if ( ! is_wp_error( $rule ) ) {
+			$rule->set_status( empty( $_POST['enabled'] ) ? 0 : 1 );
+			$rule->save();
+		}
 
 		wp_send_json_success( 1 );
 
@@ -417,7 +417,7 @@ class Noptin_Ajax {
 	 * @access public
 	 * @since  1.3.0
 	 */
-	public function delete_rule() {
+	public function delete_automation_rule() {
 
 		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['rule_id'] ) ) {
 			wp_die( -1, 403 );
@@ -427,7 +427,7 @@ class Noptin_Ajax {
 		check_ajax_referer( 'noptin_automation_rules' );
 
 		// Delete the rule.
-		noptin()->automation_rules->delete_rule( absint( $_POST['rule_id'] ) );
+		noptin_delete_automation_rule( absint( $_POST['rule_id'] ) );
 
 		wp_send_json_success( 1 );
 

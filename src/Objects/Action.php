@@ -68,13 +68,10 @@ class Action extends \Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Retrieve the actions's rule table description.
-	 *
-	 * @param \Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$settings = $rule->action_settings;
+		$settings = $rule->get_action_settings();
 		$fields   = Store::fields( $this->object_type );
 		$meta     = array();
 
@@ -138,12 +135,14 @@ class Action extends \Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Run the action.
-	 *
-	 * @param mixed $subject The subject.
-	 * @param \Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @inheritdoc
+	 */
+	public function can_run( $subject, $rule, $args ) {
+		return isset( $this->action_args['callback'] ) && is_callable( $this->action_args['callback'] );
+	}
+
+	/**
+	 * @inheritdoc
 	 */
 	public function run( $subject, $rule, $args ) {
 
@@ -152,17 +151,17 @@ class Action extends \Noptin_Abstract_Action {
 		/** @var \Noptin_Automation_Rules_Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
-		foreach ( wp_unslash( $rule->action_settings ) as $key => $value ) {
+		foreach ( wp_unslash( $rule->get_action_settings() ) as $key => $value ) {
 
 			if ( '' === $value ) {
 				continue;
 			}
 
-			$settings[ $key ] = is_scalar( $value ) ? $smart_tags->replace_in_content( $value ) : $value;
+			$settings[ $key ] = is_string( $value ) ? $smart_tags->replace_in_content( $value ) : $value;
 		}
 
 		call_user_func_array(
-			array( $this->action_args['callback'] ),
+			$this->action_args['callback'],
 			array(
 				$settings,
 				$subject,

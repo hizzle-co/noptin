@@ -330,7 +330,7 @@ class Noptin {
 		//$this->integrations = new Noptin_Integrations();
 		$this->integrations = new \Hizzle\Noptin\Integrations\Main();
 
-		\Hizzle\Noptin\Objects\Users::add_current();
+		\Hizzle\Noptin\Objects\Users::add_default();
 
 		// Custom fields.
 		$this->custom_fields = new Noptin_Custom_Fields();

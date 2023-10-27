@@ -161,8 +161,8 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 		}
 
 		// Prepare the texts.
-		$title       = $trigger->get_rule_description( $item->get_deprecated_rule() );
-		$description = $trigger->get_rule_table_description( $item->get_deprecated_rule() );
+		$title       = $trigger->get_rule_description( $item );
+		$description = $trigger->get_rule_table_description( $item );
 		$image       = $trigger->get_image();
 
 		return sprintf(
@@ -204,8 +204,8 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 		}
 
 		// Prepare the text.
-		$title       = $action->get_rule_description( $item->get_deprecated_rule() );
-		$description = $action->get_rule_table_description( $item->get_deprecated_rule() );
+		$title       = $action->get_rule_description( $item );
+		$description = $action->get_rule_table_description( $item );
 		$image       = $action->get_image();
 
 		return sprintf(

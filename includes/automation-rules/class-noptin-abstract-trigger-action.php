@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 abstract class Noptin_Abstract_Trigger_Action {
 
 	/**
-	 * @var array
+	 * @var \Hizzle\Noptin\DB\Automation_Rule[]
 	 */
 	protected $rules;
 
@@ -19,6 +19,11 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 * @var bool
 	 */
 	public $depricated = false;
+
+	/**
+	 * @var bool
+	 */
+	public $is_action_or_trigger = 'trigger';
 
 	/**
 	 * @var string
@@ -136,7 +141,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 * Retrieve the trigger's or action's rule description.
 	 *
 	 * @since 1.3.0
-	 * @param Noptin_Automation_Rule $rule
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @return string
 	 */
 	public function get_rule_description( $rule ) {
@@ -147,7 +152,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 * Retrieve the trigger's or actions's rule table description.
 	 *
 	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @return string
 	 */
 	public function get_rule_table_description( $rule ) {
@@ -165,12 +170,25 @@ abstract class Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
-	 * Returns all active rules attached to this trigger or action.
+	 * Returns all active rules attached to this action.
 	 *
+	 * @param bool|string $status Can be any, true, or false;
 	 * @since 1.2.8
-	 * @return array
+	 * @return \Hizzle\Noptin\DB\Automation_Rule[]
 	 */
-	abstract public function get_rules();
+	public function get_rules( $status = true ) {
+
+		if ( ! is_array( $this->rules ) ) {
+			$this->rules = noptin_get_automation_rules(
+				array(
+					$this->is_action_or_trigger . '_id' => $this->get_id(),
+					'status'                            => $status,
+				)
+			);
+		}
+
+		return $this->rules;
+	}
 
 	/**
 	 * Checks if there are rules for this trigger.
@@ -188,11 +206,13 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.11.0
 	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return false|string
 	 */
 	public function get_subject_email( $subject, $rule, $args ) {
+
+		$rule = noptin_get_automation_rule( $rule ); // Backwards compatibility.
 
 		// Objects.
 		if ( is_object( $subject ) ) {

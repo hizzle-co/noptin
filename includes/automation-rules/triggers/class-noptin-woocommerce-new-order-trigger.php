@@ -66,25 +66,25 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_rule_description( $rule ) {
-		$settings = $rule->trigger_settings;
-		$actions  = $this->get_order_actions();
+		$action  = $rule->get_trigger_setting( 'action' );
+		$actions = $this->get_order_actions();
 
-		if ( empty( $settings['action'] ) || ! isset( $actions[ $settings['action'] ] ) ) {
+		if ( empty( $action ) || ! isset( $actions[ $action ] ) ) {
 			return __( 'When a subscriber makes a new WooCommerce order', 'newsletter-optin-box' );
 		}
 
-		if ( ! empty( $settings['new_customer'] ) ) {
+		if ( $rule->get_trigger_setting( 'new_customer' ) ) {
 			return sprintf(
 				// translators: %s is the order status.
 				__( "When a first-time customer's WooCommerce order is %s", 'newsletter-optin-box' ),
-				$actions[ $settings['action'] ]
+				$actions[ $action ]
 			);
 		}
 
 		return sprintf(
 			// translators: %s is the order status.
 			__( "When a subscriber's WooCommerce order is %s", 'newsletter-optin-box' ),
-			$actions[ $settings['action'] ]
+			$actions[ $action ]
 		);
 
 	}
@@ -139,15 +139,14 @@ class Noptin_WooCommerce_New_Order_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function is_rule_valid_for_args( $rule, $args, $subscriber, $action ) {
-		$settings = $rule->trigger_settings;
 
 		// Ensure that we have an action for this event.
-		if ( empty( $settings['action'] ) || $settings['action'] !== $args['action'] ) {
+		if ( $rule->get_trigger_setting( 'action' ) !== $args['action'] ) {
 			return false;
 		}
 
 		// Are we firering for new customers only?
-		if ( ! empty( $settings['new_customer'] ) ) {
+		if ( $rule->get_trigger_setting( 'new_customer' ) ) {
 
 			// Fetch the user associated with the order.
 			$user = $this->bridge->get_order_customer_user_id( $args['order_id'] );

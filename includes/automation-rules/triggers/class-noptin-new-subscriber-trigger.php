@@ -58,19 +58,14 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Retrieve the trigger's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$settings = $rule->trigger_settings;
 
 		// Check if we're sending before confirmation.
 		if ( noptin_has_enabled_double_optin() ) {
 
-			if ( empty( $settings['fire_after_confirmation'] ) ) {
+			if ( ! $rule->get_trigger_setting( 'fire_after_confirmation' ) ) {
 				return sprintf(
 					'%s<br>%s',
 					esc_html__( 'Fires before a subscriber confirms their email', 'newsletter-optin-box' ),
@@ -133,19 +128,16 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 		foreach ( $this->get_rules() as $rule ) {
 
 			// Retrieve the action.
-			$action = noptin()->automation_rules->get_action( $rule->action_id );
+			$action = $rule->get_action();
 			if ( empty( $action ) ) {
 				continue;
 			}
-
-			// Prepare the rule.
-			$rule = noptin()->automation_rules->prepare_rule( $rule );
 
 			// Check if we're sending before confirmation or after confirmation.
 			if ( noptin_has_enabled_double_optin() ) {
 
 				// Sends before confirmation.
-				$sends_before_double_optin = empty( $rule->trigger_settings['fire_after_confirmation'] );
+				$sends_before_double_optin = ! $rule->get_trigger_setting( 'fire_after_confirmation' );
 				$has_confirmed             = doing_action( 'noptin_subscriber_status_set_to_subscribed' );
 
 				// If we're sending before confirmation, ensure the subscriber is not active.
@@ -159,21 +151,7 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 				}
 			}
 
-			// Set the current email.
-			$GLOBALS['current_noptin_email'] = $subject->get_email();
-
-			// Are we delaying the action?
-			$delay = $rule->get_delay();
-
-			if ( $delay > 0 ) {
-				do_action( 'noptin_delay_automation_rule_execution', $rule, $args, $delay );
-				continue;
-			}
-
-			// Ensure that the rule is valid for the provided args.
-			if ( $this->is_rule_valid_for_args( $rule, $args, $subject, $action ) ) {
-				$action->maybe_run( $subject, $rule, $args );
-			}
+			$rule->maybe_run( $subject, $this, $action, $args );
 		}
 
 	}

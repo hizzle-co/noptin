@@ -32,14 +32,10 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 	}
 
 	/**
-	 * Retrieve the actions's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$settings = $rule->action_settings;
+		$settings = $rule->get_action_settings();
 
 		// Ensure we have a field name.
 		if ( empty( $settings['field_name'] ) ) {
@@ -71,46 +67,33 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 				'label'       => __( 'Custom Field', 'newsletter-optin-box' ),
 				'description' => __( 'Select the custom field to update', 'newsletter-optin-box' ),
 				'placeholder' => __( 'Select Field', 'newsletter-optin-box' ),
-				'options'     => wp_list_pluck( get_noptin_custom_fields(), 'label', 'merge_tag' ),
+				'options'     => wp_list_pluck( get_editable_noptin_subscriber_fields(), 'label' ),
 			),
 
 			'field_value' => array(
 				'el'          => 'input',
 				'label'       => __( 'Field Value', 'newsletter-optin-box' ),
 				'description' => __( 'Enter a value to assign the field', 'newsletter-optin-box' ),
-				'placeholder' => __( 'Sample Value', 'newsletter-optin-box' ),
 			),
 
 		);
 	}
 
 	/**
-	 * Update a subscriber's custom field.
-	 *
-	 * @since 1.2.8
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @inheritdoc
 	 */
 	public function run( $subject, $rule, $args ) {
 
-		$settings = $rule->action_settings;
+		$field  = $rule->get_action_setting( 'field_name' );
+		$fields = get_editable_noptin_subscriber_fields();
 
-		// Abort if we do not have field name.
-		if ( empty( $settings['field_name'] ) ) {
-			return;
-		}
-
-		// Fetch the custom field.
-		$custom_field = current( wp_list_filter( get_noptin_custom_fields(), array( 'merge_tag' => sanitize_text_field( $settings['field_name'] ) ) ) );
-		if ( empty( $custom_field ) ) {
+		if ( empty( $field ) || ! isset( $fields[ $field ] ) ) {
 			return;
 		}
 
 		// Fetch the subscriber email.
 		$subscriber_email = $this->get_subject_email( $subject, $rule, $args );
-		if ( empty( $subscriber_email ) ) {
+		if ( empty( $subscriber_email ) || ! is_email( $subscriber_email ) ) {
 			return;
 		}
 
@@ -122,24 +105,20 @@ class Noptin_Custom_Field_Action extends Noptin_Abstract_Action {
 			return;
 		}
 
-		$subscriber->set( $settings['field_name'], $args['smart_tags']->replace_in_text_field( $settings['field_value'] ) );
+		$value = map_deep( $rule->get_action_setting( 'field_value' ), array( $args['smart_tags'], 'replace_in_text_field' ) );
+
+		$subscriber->set( $field, $value );
 		$subscriber->save();
 
 	}
 
 	/**
-	 * Returns whether or not the action can run (dependancies are installed).
-	 *
-	 * @since 1.3.3
-	 * @param mixed $subject The subject.
-	 * @param Noptin_Automation_Rule $rule The automation rule used to trigger the action.
-	 * @param array $args Extra arguments passed to the action.
-	 * @return bool
+	 * @inheritdoc
 	 */
 	public function can_run( $subject, $rule, $args ) {
 
 		// Abort if we do not have field name.
-		if ( empty( $rule->action_settings['field_name'] ) ) {
+		if ( ! $rule->get_action_setting( 'field_name' ) ) {
 			return false;
 		}
 

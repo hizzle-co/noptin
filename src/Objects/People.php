@@ -31,7 +31,9 @@ abstract class People extends Collection {
 	 * @param \WP_User $user The user.
 	 * @return Person $person The person.
 	 */
-	abstract public function get_from_user( $user );
+	public function get_from_user( $user ) {
+		return $this->get_from_email( $user->user_email );
+	}
 
 	/**
 	 * Retrieves a single person from an email address.
@@ -40,16 +42,6 @@ abstract class People extends Collection {
 	 * @return Person $person The person.
 	 */
 	abstract public function get_from_email( $email );
-
-	/**
-	 * Retrieves several people.
-	 *
-	 * @param array $filters The available filters.
-	 * @return int[] $people The people IDs.
-	 */
-	public function get_all( $filters ) {
-		return array();
-	}
 
 	/**
 	 * Retrieves fields that can be calculated from an email address.

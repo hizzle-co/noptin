@@ -28,7 +28,7 @@ abstract class Post_Type extends Collection {
 	public function __construct() {
 
 		if ( false === self::$registered_subject ) {
-			Store::add( new Users( 'post_author', __( 'Authors', 'newsletter-optin-box' ), __( 'Post Author', 'newsletter-optin-box' ) ) );
+			Store::add( new Users( 'post_author', __( 'Authors', 'newsletter-optin-box' ), __( 'Author', 'newsletter-optin-box' ) ) );
 			self::$registered_subject = true;
 		}
 
@@ -121,6 +121,48 @@ abstract class Post_Type extends Collection {
 	}
 
 	/**
+	 * Return if auto-saving or not
+	 *
+	 * @return bool True if mid auto-save. False if not mid auto-save.
+	 */
+	protected function doing_autosave() {
+		return defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE;
+	}
+
+	/**
+	 * (Maybe) triggers a create hook.
+	 *
+	 */
+	protected function maybe_trigger_create_hook( $user_id, $post_id, $post, $post_before, $hook ) {
+
+		// Abort if not our post type.
+		if ( $this->type !== $post->post_type || wp_is_post_revision( $post ) ) {
+			return;
+		}
+
+		$old_status = $post_before ? $post_before->post_status : 'auto-draft';
+		$new_status = $post->post_status;
+
+		if ( $this->doing_autosave() && 'auto-draft' === $old_status ) {
+			update_post_meta( $post_id, $hook, 'yes' );
+			return;
+		}
+
+		if ( $old_status === $new_status ) {
+			return;
+		}
+
+		if ( 'yes' === get_post_meta( $post_id, $hook, true ) ) {
+			$this->maybe_trigger( $user_id, $post_id, $hook );
+			return delete_post_meta( $post_id, $hook );
+		}
+
+		if ( 'auto-draft' === $old_status ) {
+			$this->maybe_trigger( $user_id, $post_id, $hook );
+		}
+	}
+
+	/**
 	 * Fired after a post is inserted.
 	 *
 	 * @param int          $post_id     Post ID.
@@ -132,7 +174,7 @@ abstract class Post_Type extends Collection {
 	public function after_insert_post( $post_id, $post, $update, $post_before ) {
 
 		// Abort if not our post type.
-		if ( $this->type !== $post->post_type ) {
+		if ( wp_is_post_revision( $post ) || $this->type !== $post->post_type ) {
 			return;
 		}
 
@@ -162,8 +204,29 @@ abstract class Post_Type extends Collection {
 	 * @param \WP_Post $post    The post object.
 	 */
 	public function on_delete( $post_id, $post ) {
-		if ( $this->type === $post->post_type ) {
+		if ( $this->type === $post->post_type && ! wp_is_post_revision( $post ) ) {
 			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_deleted' );
 		}
+	}
+
+	/**
+	 * Retrieves a test object ID.
+	 *
+	 * @since 2.2.0
+	 * @param \Noptin_Automation_Rule $rule
+	 * @return int
+	 */
+	public function get_test_object_id( $rule ) {
+
+		// Fetch latest id.
+		return current(
+			get_posts(
+				array(
+					'post_type'   => $this->type,
+					'numberposts' => 1,
+					'fields'      => 'ids',
+				)
+			)
+		);
 	}
 }

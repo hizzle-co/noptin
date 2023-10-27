@@ -105,20 +105,27 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		// Add provided args.
 		if ( ! empty( $this->trigger_args['provides'] ) ) {
+			$custom_labels = isset( $this->trigger_args['custom_labels'] ) ? $this->trigger_args['custom_labels'] : array();
+
 			foreach ( noptin_parse_list( $this->trigger_args['provides'] ) as $object_type ) {
-				$args = array_merge(
+				$group  = isset( $custom_labels[ $object_type ] ) ? $custom_labels [ $object_type ] : true;
+				$prefix = false !== strpos( $object_type, '.' ) ? $object_type : true;
+				$args   = array_merge(
 					$args,
-					Store::smart_tags( $object_type, true )
+					Store::smart_tags( strtok( $object_type, '.' ), $group, $prefix )
 				);
 			}
 		}
 
 		// Add generic smart tags.
-		return array_merge(
+		$args = array_merge(
 			$args,
 			parent::get_known_smart_tags()
 		);
 
+		unset( $args['user_logged_in'] );
+
+		return $args;
 	}
 
 	/**
@@ -274,7 +281,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		// Provided objects.
 		if ( ! empty( $args['provides'] ) ) {
 			foreach ( $args['provides'] as $object_type => $id ) {
-				$collection = Store::get( $object_type );
+				$collection = false !== strpos( $object_type, '.' ) ? strtok( $object_type, '.' ) : Store::get( $object_type );
 
 				if ( empty( $collection ) ) {
 					throw new \Exception( 'Collection not registered' );
@@ -282,7 +289,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 				$object = $collection->get( $id );
 
-				if ( empty( $object ) || ( 'current_user' !== $object_type && ! $object->exists() ) ) {
+				if ( empty( $object ) || ( 'current_user' !== $object_type && ! $object->exists() && false !== strpos( $object_type, '.' ) ) ) {
 					throw new \Exception( $object_type . ' not found' );
 				}
 

@@ -75,14 +75,10 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	}
 
 	/**
-	 * Retrieve the trigger's rule table description.
-	 *
-	 * @since 1.11.9
-	 * @param Noptin_Automation_Rule $rule
-	 * @return array
+	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
-		$settings = $rule->trigger_settings;
+		$settings = $rule->get_trigger_settings();
 
 		// Ensure we have a form.
 		if ( empty( $settings['trigger_form'] ) ) {
@@ -277,34 +273,18 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
         foreach ( $this->get_rules() as $rule ) {
 
             // Retrieve the action.
-            $action = noptin()->automation_rules->get_action( $rule->action_id );
-            if ( empty( $action ) ) {
-                continue;
-            }
+			$action = $rule->get_action();
+			if ( empty( $action ) ) {
+				continue;
+			}
 
             // Prepare the rule.
-            $rule = noptin()->automation_rules->prepare_rule( $rule );
+			$trigger_form = $rule->get_trigger_setting( 'trigger_form' );
 
 			// Abort if the forms don't match.
-			if ( empty( $rule->trigger_settings['trigger_form'] ) || absint( $rule->trigger_settings['trigger_form'] ) !== absint( $args['form'] ) ) {
-				continue;
+			if ( ! empty( $trigger_form ) && strval( $trigger_form ) === strval( $args['form'] ) ) {
+				$rule->maybe_run( $args['email'], $this, $action, $args );
 			}
-
-			// Set the current email.
-			$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $rule, $args );
-
-			// Are we delaying the action?
-			$delay = $rule->get_delay();
-
-			if ( $delay > 0 ) {
-				do_action( 'noptin_delay_automation_rule_execution', $rule, $args, $delay );
-				continue;
-			}
-
-            // Ensure that the rule is valid for the provided args.
-            if ( $this->is_rule_valid_for_args( $rule, $args, $args['email'], $action ) ) {
-                $action->maybe_run( $args['email'], $rule, $args );
-            }
         }
 
     }

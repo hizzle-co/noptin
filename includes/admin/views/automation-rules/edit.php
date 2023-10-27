@@ -8,6 +8,14 @@ defined( 'ABSPATH' ) || exit;
 
 $rule = noptin_get_current_automation_rule();
 
+if ( is_wp_error( $rule ) ) {
+	printf(
+		'<div class="notice notice-error"><p>%s</p></div>',
+		esc_html__( 'Rule not found. It might have been deleted.', 'newsletter-optin-box' )
+	);
+	return;
+}
+
 if ( ! $rule->exists() && ! $rule->is_creating ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
@@ -16,7 +24,7 @@ if ( ! $rule->exists() && ! $rule->is_creating ) {
 	return;
 }
 
-$trigger = noptin()->automation_rules->get_trigger( $rule->trigger_id );
+$trigger = $rule->get_trigger();
 if ( empty( $trigger ) ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
@@ -25,7 +33,7 @@ if ( empty( $trigger ) ) {
 	return;
 }
 
-$rule_action  = noptin()->automation_rules->get_action( $rule->action_id );
+$rule_action  = $rule->get_action();
 if ( empty( $rule_action ) ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
@@ -129,9 +137,9 @@ $smart_tags = $trigger->get_known_smart_tags_for_js();
 	<div
 		id="noptin-automation-rule__editor-app"
 		class="noptin-es6-app"
-		data-id="<?php echo esc_attr( $rule->id ); ?>"
-		data-action="<?php echo esc_attr( $rule->action_id ); ?>"
-		data-trigger="<?php echo esc_attr( $rule->trigger_id ); ?>"
+		data-id="<?php echo esc_attr( $rule->get_id() ); ?>"
+		data-action="<?php echo esc_attr( $rule->get_action_id() ); ?>"
+		data-trigger="<?php echo esc_attr( $rule->get_trigger_id() ); ?>"
 		data-create-new-url="<?php echo esc_url( add_query_arg( 'noptin_create_automation_rule', '1', admin_url( 'admin.php?page=noptin-automation-rules' ) ) ); ?>"
 		data-settings="<?php echo esc_attr( wp_json_encode( $settings ) ); ?>"
 		data-smart-tags="<?php echo esc_attr( wp_json_encode( $smart_tags ) ); ?>"

@@ -26,11 +26,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	protected $trigger_id;
 
 	/**
-	 * @var string
-	 */
-	public $notification_hook = 'noptin_send_automation_rule_email';
-
-	/**
 	 * @var Noptin_Automation_Rules_Smart_Tags
 	 */
 	public $smart_tags;
@@ -42,8 +37,9 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * @param \Noptin_Abstract_Trigger $trigger
 	 */
 	public function __construct( $trigger_id, $trigger ) {
-		$this->type       = $trigger_id;
-		$this->trigger_id = str_replace( 'automation_rule_', '', $this->type );
+		$this->type              = $trigger_id;
+		$this->trigger_id        = str_replace( 'automation_rule_', '', $this->type );
+		$this->notification_hook = 'noptin_send_automation_rule_email_' . $this->trigger_id;
 
 		// Set the category.
 		if ( $trigger->depricated ) {
