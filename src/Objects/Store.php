@@ -104,10 +104,11 @@ class Store {
 			$group = self::get_collection_config( $type );
 		}
 
-		$callback = array( __CLASS__, 'handle_field_smart_tag' );
-		$prefix   = true === $prefix ? self::get_collection_config( $type, 'smart_tags_prefix' ) : $prefix;
+		$callback    = array( __CLASS__, 'handle_field_smart_tag' );
+		$object_type = is_string( $prefix ) && false !== strpos( $prefix, '.' ) ? $prefix : $type;
+		$prefix      = true === $prefix ? self::get_collection_config( $type, 'smart_tags_prefix' ) : $prefix;
 
-		return self::convert_fields_to_smart_tags( $fields, $type, $group, $prefix, $callback );
+		return self::convert_fields_to_smart_tags( $fields, $object_type, $group, $prefix, $callback );
 	}
 
 	/**
@@ -203,10 +204,14 @@ class Store {
 			return '';
 		}
 
-		// Remove prefix.
-		$field = explode( '.', $field );
-		array_shift( $field );
-		$field = implode( '.', $field );
+		// If object type has a dot, it's a prefix, remove id.
+		if ( false !== strpos( $config['object_type'], '.' ) ) {
+			$field = substr( $field, strlen( $config['object_type'] ) + 1 );
+		} else {
+			$field = explode( '.', $field );
+			array_shift( $field );
+			$field = implode( '.', $field );
+		}
 
 		// Bail if the collection doesn't exist.
 		if ( ! isset( $noptin_current_objects[ $config['object_type'] ] ) || empty( $field ) ) {

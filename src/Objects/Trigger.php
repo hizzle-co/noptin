@@ -281,7 +281,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		// Provided objects.
 		if ( ! empty( $args['provides'] ) ) {
 			foreach ( $args['provides'] as $object_type => $id ) {
-				$collection = false !== strpos( $object_type, '.' ) ? strtok( $object_type, '.' ) : Store::get( $object_type );
+				$collection = false !== strpos( $object_type, '.' ) ? Store::get( strtok( $object_type, '.' ) ) : Store::get( $object_type );
 
 				if ( empty( $collection ) ) {
 					throw new \Exception( 'Collection not registered' );

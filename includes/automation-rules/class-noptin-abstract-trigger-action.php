@@ -212,8 +212,6 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 */
 	public function get_subject_email( $subject, $rule, $args ) {
 
-		$rule = noptin_get_automation_rule( $rule ); // Backwards compatibility.
-
 		// Objects.
 		if ( is_object( $subject ) ) {
 
