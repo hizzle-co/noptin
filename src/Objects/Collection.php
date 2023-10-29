@@ -93,7 +93,7 @@ abstract class Collection {
 		// Register actions.
 		foreach ( $this->get_all_actions() as $key => $args ) {
 			$rules->add_action(
-				new Action( $this->type, $key, $args )
+				new Action( $key, $args, $this )
 			);
 		}
 

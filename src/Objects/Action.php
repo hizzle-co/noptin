@@ -33,8 +33,8 @@ class Action extends \Noptin_Abstract_Action {
 	/**
 	 * Constructor.
 	 *
-	 * @param string $action_id The trigger id.
-	 * @param array  $action_args The trigger args.
+	 * @param string $action_id The action id.
+	 * @param array  $action_args The action args.
 	 * @param Collection $collection The collection.
 	 * @since 2.2.0
 	 */
@@ -68,15 +68,40 @@ class Action extends \Noptin_Abstract_Action {
 	}
 
 	/**
+	 * Returns the fields needed for this action.
+	 *
+	 * @return array
+	 */
+	protected function get_action_fields() {
+		$fields   = Store::fields( $this->object_type );
+		$prepared = array();
+
+		if ( ! empty( $this->action_args['extra_settings'] ) ) {
+			$prepared = $this->action_args['extra_settings'];
+		}
+
+		foreach ( $fields as $key => $args ) {
+
+			// If needed for this action...
+			if ( ! empty( $args['actions'] ) && in_array( $this->action_id, $args['actions'], true ) ) {
+				$prepared[ $key ] = $args;
+			}
+		}
+
+		return $prepared;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_rule_table_description( $rule ) {
 		$settings = $rule->get_action_settings();
-		$fields   = Store::fields( $this->object_type );
 		$meta     = array();
 
-		foreach ( $fields as $key => $args ) {
-			if ( ! empty( $args['required'] ) && empty( $settings[ $key ] ) ) {
+		foreach ( $this->get_action_fields() as $key => $args ) {
+
+			// If required but not set...
+			if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
 				return sprintf(
 					'<span class="noptin-rule-error">%s</span>',
 					sprintf(
@@ -88,7 +113,13 @@ class Action extends \Noptin_Abstract_Action {
 			}
 
 			if ( ! empty( $args['show_in_meta'] ) || ! empty( $args['required'] ) ) {
-				$meta[ esc_html( $args['label'] ) ] = isset( $settings[ $key ] ) ? esc_html( $settings[ $key ] ) : '';
+				$value = isset( $settings[ $key ] ) ? esc_html( $settings[ $key ] ) : '';
+
+				if ( $value && ! empty( $args['options'] ) ) {
+					$value = isset( $args['options'][ $value ] ) ? $args['options'][ $value ] : $value;
+				}
+
+				$meta[ esc_html( $args['label'] ) ] = $value;
 			}
 		}
 
@@ -100,24 +131,16 @@ class Action extends \Noptin_Abstract_Action {
 	 */
 	public function get_settings() {
 
-		$settings   = array();
-		$all_fields = Store::fields( $this->object_type );
-		$fields     = isset( $this->action_args['fields'] ) ? $this->action_args['fields'] : array_keys( $all_fields );
+		$settings = array();
 
-		// Maybe add extra fields.
-		if ( ! empty( $this->action_args['extra_settings'] ) ) {
-			$settings = $this->action_args['extra_settings'];
-		}
+		foreach ( $this->get_action_fields() as $key => $field ) {
 
-		foreach ( $fields as $field_key ) {
-
-			if ( ! isset( $all_fields[ $field_key ] ) ) {
+			if ( isset( $field['el'] ) ) {
+				$settings[ $key ] = $field;
 				continue;
 			}
 
-			$field = $all_fields[ $field_key ];
-
-			$settings[ $field_key ] = array(
+			$settings[ $key ] = array(
 				'type'        => 'text',
 				'el'          => 'input',
 				'label'       => $field['label'],
@@ -129,6 +152,10 @@ class Action extends \Noptin_Abstract_Action {
 				),
 				'description' => empty( $field['description'] ) ? '' : $field['description'],
 			);
+
+			if ( isset( $field['default'] ) ) {
+				$settings[ $key ]['default'] = $field['default'];
+			}
 		}
 
 		return $settings;
@@ -138,6 +165,16 @@ class Action extends \Noptin_Abstract_Action {
 	 * @inheritdoc
 	 */
 	public function can_run( $subject, $rule, $args ) {
+		$settings = $rule->get_action_settings();
+
+		foreach ( $this->get_action_fields() as $key => $args ) {
+
+			// If required but not set...
+			if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
+				return false;
+			}
+		}
+
 		return isset( $this->action_args['callback'] ) && is_callable( $this->action_args['callback'] );
 	}
 
@@ -151,13 +188,8 @@ class Action extends \Noptin_Abstract_Action {
 		/** @var \Noptin_Automation_Rules_Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
-		foreach ( wp_unslash( $rule->get_action_settings() ) as $key => $value ) {
-
-			if ( '' === $value ) {
-				continue;
-			}
-
-			$settings[ $key ] = is_string( $value ) ? $smart_tags->replace_in_content( $value ) : $value;
+		foreach ( $this->get_action_fields() as $key => $args ) {
+			$settings[ $key ] = $smart_tags->replace_in_content( $rule->get_action_setting( $key ) );
 		}
 
 		call_user_func_array(
