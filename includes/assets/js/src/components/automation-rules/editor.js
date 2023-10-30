@@ -90,6 +90,7 @@ export function getAvailableSmartTags( smartTags, trigger_settings ) {
 		}
 
 		tags.push( {
+			...smartTag,
 			smart_tag: key,
 			label,
 			example: smartTag.example ? smartTag.example : '',
@@ -97,8 +98,6 @@ export function getAvailableSmartTags( smartTags, trigger_settings ) {
 			placeholder: smartTag.placeholder ? smartTag.placeholder : '',
 			conditional_logic: smartTag.conditional_logic ? smartTag.conditional_logic : false,
 			options: smartTag.options ? smartTag.options : [],
-			icon: smartTag.icon,
-			group: smartTag.group,
 		} )
 	} );
 

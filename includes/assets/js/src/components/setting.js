@@ -60,7 +60,7 @@ function InputSetting({ setting, availableSmartTags, isPressEnterToChange, ...at
 	}, [attributes.value, attributes.onChange]);
 
 	// Merge tags.
-	const suffix = useMergeTags( availableSmartTags, onMergeTagClick );
+	const suffix = useMergeTags( { availableSmartTags, onMergeTagClick } );
 
 	if ( setting.disabled ) {
 		attributes.readOnly = true;
@@ -99,16 +99,14 @@ const keyValueRepeaterFields = [
 ];
 
 /**
- * Makes it possible to use the merge tag selector in a field.
+ * Calculates merge tag groups from the available merge tags.
  *
  * @param {Array} availableSmartTags The available smart tags.
- * @param {Function} onMergeTagClick The on merge tag click callback.
- * @return {Array}
+ * @return {Object} The merge tag groups object.
  */
-function useMergeTags(availableSmartTags, onMergeTagClick) {
+export function useMergeTagGroups( availableSmartTags ) {
 
-	// Dropdown menu controls.
-	const groups = useMemo(() => {
+	return useMemo(() => {
 
 		if ( ! Array.isArray(availableSmartTags) ) {
 			return {};
@@ -118,13 +116,40 @@ function useMergeTags(availableSmartTags, onMergeTagClick) {
 
 		availableSmartTags.forEach((smartTag) => {
 			const group   = smartTag.group ? smartTag.group : __( 'General', 'newsletter-optin-box' );
-			groups[group] = groups[group] ? groups[group] : [];
+
+			if ( ! Array.isArray( groups[group] ) ) {
+				groups[group] = [];
+			}
 
 			groups[group].push( smartTag );
 		});
 
 		return groups;
 	}, [availableSmartTags]);
+}
+
+/**
+ * Makes it possible to use the merge tag selector in a field.
+ *
+ * @param {Object} props The merge tag props.
+ * @param {Array} props.availableSmartTags The available smart tags.
+ * @param {Function} props.onMergeTagClick The on merge tag click callback.
+ * @param {Boolean} props.raw Whether or not to return the raw value.
+ * @param {String|JSX.Element} props.icon The icon to display.
+ * @param {String} props.label The screenreader text.
+ * @return {JSX.Element}
+ */
+export function useMergeTags({
+	availableSmartTags = [],
+	onMergeTagClick = () => {},
+	raw = false,
+	icon = 'shortcode',
+	label = __( 'Insert merge tag', 'newsletter-optin-box' ),
+	...dropdownProps
+}) {
+
+	// Dropdown menu controls.
+	const groups = useMergeTagGroups( availableSmartTags );
 
 	const totalGroups = Object.keys(groups).length;
 
@@ -135,9 +160,9 @@ function useMergeTags(availableSmartTags, onMergeTagClick) {
 
 		inserter = (
 			<DropdownMenu
-				icon="shortcode"
-				label={__( 'Insert merge tag', 'newsletter-optin-box' )}
-				showTooltip
+				icon={icon}
+				label={label}
+				{...dropdownProps}
 			>
 		 		{ ( { onClose } ) => (
 		 			<>
@@ -149,7 +174,8 @@ function useMergeTags(availableSmartTags, onMergeTagClick) {
 										iconPosition="left"
 										onClick={ () => {
 											if ( onMergeTagClick ) {
-												onMergeTagClick(`[[${getMergeTagValue(item)}]]`);
+												const value = raw ? item.smart_tag : `[[${getMergeTagValue(item)}]]`;
+												onMergeTagClick( value );
 											}
 						
 											onClose();
@@ -290,7 +316,7 @@ function KeyValueRepeaterField({ field, availableSmartTags, value, onChange }) {
 	}, [value, onChange]);
 
 	// Merge tags.
-	const suffix = useMergeTags( availableSmartTags, onMergeTagClick );
+	const suffix = useMergeTags( { availableSmartTags, onMergeTagClick } );
 
 	return (
 		<FlexBlock>

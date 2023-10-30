@@ -131,10 +131,12 @@ abstract class Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
+	 * Searches a tag from the given list of tags.
+	 *
+	 * @param string $tag
 	 * @return array|null
 	 */
-	public function get( $tag ) {
-		$tags = $this->all();
+	public static function search( $tag, $tags ) {
 
 		if ( isset( $tags[ $tag ] ) ) {
 			return $tags[ $tag ];
@@ -144,7 +146,10 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$alt_tag = preg_replace( '/_/', '.', $tag, 1 );
 
 		if ( isset( $tags[ $alt_tag ] ) ) {
-			return $tags[ $alt_tag ];
+			return array_merge(
+				$tags[ $alt_tag ],
+				array( 'use_tag' => $alt_tag )
+			);
 		}
 
 		foreach ( $tags as $key => $value ) {
@@ -155,21 +160,30 @@ abstract class Noptin_Dynamic_Content_Tags {
 				array_shift( $without_prefix );
 
 				if ( implode( '.', $without_prefix ) === $tag ) {
-					return $value;
+					return array_merge(
+						$value,
+						array( 'use_tag' => $key )
+					);
 				}
 			}
 
 			// Check deprecated alternatives.
-			if ( empty( $value['deprecated'] ) ) {
-				continue;
-			}
-
-			if ( in_array( $tag, noptin_parse_list( $value['deprecated'] ), true ) ) {
-				return $value;
+			if ( ! empty( $value['deprecated'] ) && in_array( $tag, noptin_parse_list( $value['deprecated'] ), true ) ) {
+				return array_merge(
+					$value,
+					array( 'use_tag' => $key )
+				);
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function get( $tag ) {
+		return self::search( $tag, $this->all() );
 	}
 
 	/**
@@ -180,6 +194,10 @@ abstract class Noptin_Dynamic_Content_Tags {
 	protected function replace_tag( $matches ) {
 		$tag    = $matches[1];
 		$config = $this->get( $tag );
+
+		if ( ! empty( $config['use_tag'] ) ) {
+			$tag = $config['use_tag'];
+		}
 
 		// Abort if tag is not supported.
 		if ( empty( $config ) ) {

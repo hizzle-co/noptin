@@ -8,7 +8,10 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useCallback } from '@wordpress/element';
+import { useMergeTags } from './setting';
+import getEnumBadge from './collection/records-table/enum-colors';
+import { Badge } from './styled-components';
 
 // Action.
 const ifOptions = [
@@ -41,15 +44,18 @@ const typeOptions = [
  * @param {String} placeholder
  * @return {Array}
  */
-function addPlaceholder( array, placeholder ) {
-	return [
-		{
-			label: placeholder,
-			value: '',
-			disabled: true,
-		},
-		...array,
-	];
+function usePlaceholder( array, placeholder ) {
+	return useMemo( () => {
+
+		return [
+			{
+				label: placeholder,
+				value: '',
+				disabled: true,
+			},
+			...array,
+		];
+	}, [ array, placeholder ] );
 }
 
 /**
@@ -107,166 +113,172 @@ export function ConditionalLogicTypeSelector({ type, action, ruleCount, setCondi
  * @param {Object} props
  * @param {Object} props.rule
  * @param {Object} props.comparisons
- * @param {String} props.availableConditionTypes
+ * @param {Number} props.index
+ * @param {Object} props.availableSmartTags
  * @param {Function} props.updateRule
  * @param {Function} props.removeRule
  * @param {Boolean} props.isLastRule
- * @param {Boolean} props.isFirstRule
- * @param {String} props.conditionType
  * @return {JSX.Element}
  */
-export function ConditionalLogicRule({ rule, comparisons, availableConditionTypes, updateRule, removeRule, conditionType, isLastRule, isFirstRule }) {
+export function ConditionalLogicRule({ rule, comparisons, availableSmartTags, index, updateRule, removeRule }) {
 
-	// Fetches a condition type.
-	const getConditionType = ( type ) => availableConditionTypes[ type ];
+	const updateValue = useCallback( ( value ) => updateRule( index, 'value', value ), [ index, updateRule ] );
+	const updateCondition = useCallback( ( value ) => updateRule( index, 'condition', value ), [ index, updateRule ] );
+	const localRemoveRule = useCallback( () => removeRule( index ), [ index, removeRule ] );
 
-	// Retrieves the selected condition type.
-	const selectedConditionType = useMemo( () => getConditionType( rule.type ) || {}, [ availableConditionTypes, rule.type ] );
+	// Container for the matching smart tag.
+	const smartTag = useMemo( () => {
+
+		const tag = rule.type;
+
+		if ( availableSmartTags[tag] !== undefined ) {
+			return availableSmartTags[tag];
+		}
+
+		// Convert first occurrence of _ to .
+		const altTag = tag.replace( '_', '.', 1 );
+		if ( availableSmartTags[altTag] !== undefined ) {
+			return availableSmartTags[altTag];
+		}
+
+		for ( const [key, value] of Object.entries( availableSmartTags ) ) {
+			// Check without prefix.
+			if ( key.indexOf( '.' ) !== -1 ) {
+				const withoutPrefix = key.split( '.' ).slice( 1 );
+				if ( withoutPrefix.join( '.' ) === tag ) {
+					return value;
+				}
+			}
+
+			// Converts a space or comma separated list to array.
+			const split = ( string ) => Array.isArray( string ) ? string : string.split( /[\s,]+/ );
+
+			// Check deprecated alternatives.
+			if ( value.deprecated && split(value.deprecated).includes( tag ) ) {
+				return value;
+			}
+		}
+
+		return null;
+	}, [ rule.type, availableSmartTags ] );
+
+	// Returns the label to use for the rule type.
+	const ruleLabel = useMemo( () => {
+
+		// Abort if rule.type is not in available smart tags.
+		if ( ! smartTag ) {
+			return rule.type;
+		}
+
+		const group = smartTag.group || 'General';
+		const label = smartTag.label || rule.type;
+
+		return `${group} >> ${label}`;
+	}, [ rule.type, availableSmartTags ] );
 
 	// Contains available options.
-	const availableOptions = useMemo( () => prepareOptions( selectedConditionType.options ), [ selectedConditionType ] );
+	const availableOptions = usePlaceholder(
+		useOptions( smartTag?.options ),
+		__( 'Select a value', 'newsletter-optin-box' )
+	);
 
 	// Checks whether the selected condition type has options.
-	const hasOptions = availableOptions.length > 0;
+	const hasOptions = availableOptions.length > 1;
 
 	// Contains data type.
-	const dataType = useMemo( () => selectedConditionType.type ? selectedConditionType.type : 'string', [ selectedConditionType ] );
+	const dataType = smartTag?.conditional_logic || 'string';
 
 	// Sets available comparisons for the selected condition.
-	const availableComparisons = useMemo( () => {
-		const types = [];
+	const availableComparisons = usePlaceholder(
+		useMemo( () => {
+			const types = [];
 
-		// Filter object of available condition types to include where key === rule.type.
-		Object.keys( comparisons ).forEach( key => {
-			let comparison_type = comparisons[key].type;
+			// Filter object of available condition types to include where key === rule.type.
+			Object.keys( comparisons ).forEach( key => {
+				let comparison_type = comparisons[key].type;
 
-			if ( hasOptions ) {
+				if ( hasOptions ) {
 
-				if ( 'string' === dataType && 'is' != key  && 'is_not' != key ) {
-					return;
-				}
-
-				if ( 'is_empty' === key || 'is_not_empty' === key || 'is_between' === key ) {
-					return;
-				}
-			}
-
-			if ( 'any' === comparison_type || comparison_type == dataType ) {
-				types.push(
-					{
-						label: comparisons[ key ].name,
-						value: key,
+					if ( 'string' === dataType && 'is' != key  && 'is_not' != key ) {
+						return;
 					}
-				);
-			}
-		});
-		return types;
-	}, [ dataType ] );
 
-	// Sets the default type and the available comparisons.
-	let defaultConditionType = '';
-	const conditionOptions = [];
+					if ( 'is_empty' === key || 'is_not_empty' === key || 'is_between' === key ) {
+						return;
+					}
+				}
 
-	Object.keys( availableConditionTypes ).forEach( ( key ) => {
-		const conditionType = availableConditionTypes[ key ];
-
-		if ( '' === defaultConditionType ) {
-			defaultConditionType = conditionType.type;
-		}
-
-		conditionOptions.push( {
-			label: conditionType.label,
-			value: key,
-		} );
-	} );
-
-	// Handles an update and sets any default values.
-	const handleUpdate = ( key, value ) => {
-		updateRule( key, value );
-
-		if ( 'type' !== key && '' === rule.type ) {
-			updateRule( 'type', defaultConditionType );
-		}
-
-		if ( 'condition' !== key && '' === rule.condition ) {
-			updateRule( 'condition', 'is' );
-		}
-
-		if ( 'type' === key ) {
-			updateRule( 'condition', 'is' );
-			updateRule( 'value', '' );
-		}
-	}
+				if ( 'any' === comparison_type || comparison_type == dataType ) {
+					types.push(
+						{
+							label: comparisons[ key ].name,
+							value: key,
+						}
+					);
+				}
+			});
+			return types;
+		}, [ dataType, comparisons ] ),
+		__( 'Select a comparison', 'newsletter-optin-box' )
+	);
 
 	const skipValue = 'is_empty' === rule.condition || 'is_not_empty' === rule.condition;
-	const showSelect = hasOptions && ! skipValue;
-	const showInput = ! hasOptions && ! skipValue;
 
 	return (
-		<Flex className="noptin-component__field-lg" wrap>
-
-			<FlexItem>
-				<SelectControl
-					label={ __( 'Condition Type', 'newsletter-optin-box' ) }
-					hideLabelFromVision={ true }
-					value={ rule.type ? rule.type : defaultConditionType }
-					options={addPlaceholder( conditionOptions, __( 'Select a condition', 'newsletter-optin-box' ) )}
-					onChange={ ( val ) => handleUpdate( 'type', val ) }
-					size="default"
-					__nextHasNoMarginBottom
-				/>
-			</FlexItem>
-
-			<FlexItem>
-				<SelectControl
-					label={ __( 'Comparison', 'newsletter-optin-box' ) }
-					hideLabelFromVision={ true }
-					value={ rule.condition ? rule.condition : 'is' }
-					options={addPlaceholder( availableComparisons, __( 'Select a comparison', 'newsletter-optin-box' ) )}
-					onChange={ ( val ) => handleUpdate( 'condition', val ) }
-					size="default"
-					__nextHasNoMarginBottom
-				/>
-			</FlexItem>
-
-			<FlexItem>
-
-				{showSelect && (
-					<SelectControl
-						label={ __( 'Value', 'newsletter-optin-box' ) }
-						hideLabelFromVision={ true }
-						value={ rule.value ? rule.value : '' }
-						options={addPlaceholder( availableOptions, __( 'Select a value', 'newsletter-optin-box' ) )}
-						onChange={ ( val ) => updateRule( 'value', val ) }
-						size="default"
-						__nextHasNoMarginBottom
-					/>
-				)}
-
-				{showInput && (
-					<TextControl
-						type={ 'number' === dataType ? 'number' : 'text' }
-						label={ __( 'Value', 'newsletter-optin-box' ) }
-						hideLabelFromVision={ true }
-						value={ rule.value ? rule.value : '' }
-						onChange={ ( val ) => updateRule( 'value', val ) }
-						__nextHasNoMarginBottom
-					/>
-				)}
-			</FlexItem>
-
-			<FlexItem>
-				<Button onClick={ removeRule } icon="trash"/>
-			</FlexItem>
+		<Flex className="noptin-component__field-lg" wrap expanded>
 
 			<FlexBlock>
-				{ ! isLastRule && (
-					<>
-						{conditionType === 'any' && __( 'or', 'newsletter-optin-box' )}
-						{conditionType === 'all' && __( 'and', 'newsletter-optin-box' )}
-					</>
-				)}
+				<Badge {...getEnumBadge( ruleLabel )}>{ ruleLabel }</Badge>
 			</FlexBlock>
+
+			<FlexBlock>
+				<Flex justify="flex-end" wrap>
+					<FlexItem>
+						<SelectControl
+							label={ __( 'Comparison', 'newsletter-optin-box' ) }
+							hideLabelFromVision={ true }
+							value={ rule.condition ? rule.condition : 'is' }
+							options={ availableComparisons }
+							onChange={ updateCondition }
+							size="default"
+							__nextHasNoMarginBottom
+						/>
+					</FlexItem>
+
+					{ ! skipValue && (
+						<FlexBlock>
+
+							{hasOptions && (
+								<SelectControl
+									label={ __( 'Value', 'newsletter-optin-box' ) }
+									hideLabelFromVision={ true }
+									value={ rule.value ? rule.value : '' }
+									options={availableOptions}
+									onChange={ updateValue }
+									size="default"
+									__nextHasNoMarginBottom
+								/>
+							)}
+
+							{!hasOptions && (
+								<TextControl
+									type={ 'number' === dataType ? 'number' : 'text' }
+									label={ __( 'Value', 'newsletter-optin-box' ) }
+									hideLabelFromVision={ true }
+									value={ rule.value ? rule.value : '' }
+									onChange={ updateValue }
+									__nextHasNoMarginBottom
+								/>
+							)}
+						</FlexBlock>
+					)}
+
+					<FlexItem>
+						<Button onClick={ localRemoveRule } icon="trash" variant="tertiary" isDestructive />
+					</FlexItem>
+				</Flex>
+			</FlexBlock>
+
 		</Flex>
 	);
 }
@@ -277,35 +289,32 @@ export function ConditionalLogicRule({ rule, comparisons, availableConditionType
  * @param {Array|Object} options
  * @return {Array}
  */
-function prepareOptions( options ) {
+function useOptions( options ) {
 
-	const prepared = [];
+	return useMemo( () => {
 
-	if ( ! options ) {
-		return prepared;
-	}
+		if ( ! options ) {
+			return [];
+		}
 
-	// Arrays.
-	if ( Array.isArray( options ) ) {
-		options.forEach( ( option, index ) => {
-			prepared.push( {
-				label: option,
-				value: index,
+		// Arrays.
+		if ( Array.isArray( options ) ) {
+			return options.map( ( option, index ) => {
+				return {
+					label: option,
+					value: index,
+				};
 			} );
+		}
+
+		// Objects.
+		return Object.keys( options ).map( ( key ) => {
+			return {
+				label: options[ key ],
+				value: key,
+			};
 		} );
-
-		return prepared;
-	}
-
-	// Objects.
-	Object.keys( options ).forEach( ( key ) => {
-		prepared.push( {
-			label: options[ key ],
-			value: key,
-		} );
-	});
-
-	return prepared;
+	}, [ options ] );
 }
 
 /**
@@ -313,26 +322,50 @@ function prepareOptions( options ) {
  *
  * @param {Object} props
  * @param {Array} props.rules
- * @param {String} props.conditionType
  * @param {Object} props.comparisons
  * @param {Array} props.availableSmartTags
  * @param {Function} props.setConditionalLogicAttribute
  * @return {JSX.Element}
  */
-export function ConditionalLogicRules({ rules, conditionType, comparisons, availableSmartTags, setConditionalLogicAttribute }) {
+export function ConditionalLogicRules({ rules, comparisons, availableSmartTags, setConditionalLogicAttribute }) {
 
-	const theRules = Array.isArray( rules ) ? rules : [];
+	// Filter available smart rules.
+	const theRules = useMemo( () => {
+
+		if ( ! Array.isArray( rules ) ) {
+			return [];
+		}
+
+		return rules.filter( rule => rule.type && rule.type !== '' );
+	}, [ availableSmartTags ] );
+
+	// Filter available smart tags to only include those that support conditional logic.
+	const filteredSmartTags = useMemo( () => {
+		const types = {};
+
+		availableSmartTags.forEach( ( smartTag ) => {
+			if ( smartTag.conditional_logic ) {
+				types[ smartTag.smart_tag ] = {
+					...smartTag,
+					key: smartTag.smart_tag,
+					type: smartTag.conditional_logic,
+				};
+			}
+		} );
+
+		return types;
+	}, [ availableSmartTags ] );
 
 	/**
 	 * Removes a rule from the conditional logic.
 	 *
 	 * @param {Number} index
 	 */
-	const removeRule = ( index ) => {
+	const removeRule = useCallback( ( index ) => {
 		const newRules = [ ...theRules ];
 		newRules.splice( index, 1 );
 		setConditionalLogicAttribute( 'rules', newRules );
-	};
+	}, [ theRules, setConditionalLogicAttribute ] );
 
 	/**
 	 * Updates a rule in the conditional logic.
@@ -341,72 +374,64 @@ export function ConditionalLogicRules({ rules, conditionType, comparisons, avail
 	 * @param {String} key
 	 * @param {String} value
 	 */
-	const updateRule = ( index, key, value ) => {
+	const updateRule = useCallback(( index, key, value ) => {
 		const newRules = [ ...theRules ];
 		newRules[ index ][ key ] = value;
 		setConditionalLogicAttribute( 'rules', newRules );
-	};
+	}, [ theRules, setConditionalLogicAttribute ] );
 
-	// Sets available condition types.
-	const availableConditionTypes = useMemo( () => {
-		const types = {};
-
-		availableSmartTags.forEach( ( smartTag ) => {
-			if ( smartTag.conditional_logic ) {
-				types[ smartTag.smart_tag ] = {
-					key: smartTag.smart_tag,
-					label: smartTag.label,
-					options: smartTag.options,
-					type: smartTag.conditional_logic,
-					placeholder: smartTag.placeholder ? smartTag.placeholder : '',
-				};
-			}
-		} );
-	
-		return types;
-	}, [ availableSmartTags ] );
+	// Merge tags array.
+	const mergeTagsArray = useMemo( () => Object.values( filteredSmartTags ), [ filteredSmartTags ] );
 
 	/**
 	 * Adds a new conditional logic rule.
 	 */
-	const addRule = () => {
-		const type        = Object.keys(availableConditionTypes)[0];
-		const options     = availableConditionTypes[type].options;
-		const placeholder = availableConditionTypes[type].placeholder ? availableConditionTypes[type].placeholder : '';
-		const value       = ( Array.isArray( options ) && options.length) ? Object.keys( options )[0] : placeholder;
+	const addRule = useCallback( ( smartTag ) => {
+		const smartTagObject = filteredSmartTags[smartTag];
+		const options     = smartTagObject?.options || [];
+		const placeholder = smartTagObject?.placeholder || '';
+		let value       = ( Array.isArray( options ) && options.length) ? Object.keys( options )[0] : placeholder;
+
+		// If the smartTag has a default value.
+		if ( smartTagObject?.default ) {
+			value = smartTagObject.default;
+		}
 
 		const newRules = [ ...theRules ];
 		newRules.push( {
-			type,
+			type: smartTag,
 			condition: 'is',
 			value,
 		} );
 		setConditionalLogicAttribute( 'rules', newRules );
-	};
+	}, [ theRules ] );
 
-	const count = theRules.length;
+	// Button to add a new condition.
+	const text         = theRules.length ? __( 'Add a rule', 'newsletter-optin-box' ) : __( 'Add another rule', 'newsletter-optin-box' );
+	const addCondition = useMergeTags({
+		availableSmartTags: mergeTagsArray,
+		onMergeTagClick: addRule,
+		raw: true,
+		icon: 'plus',
+		label:  text,
+		text,
+		toggleProps: { variant: 'secondary' }
+	});
+
 	return (
 		<div className="noptin-conditional-logic-rules">
 			{theRules.map( ( rule, index ) => (
 				<ConditionalLogicRule
 					key={ index }
-					rule={rule}
-					updateRule={ ( key, value ) => updateRule( index, key, value ) }
-					removeRule={ () => removeRule( index ) }
-					availableConditionTypes={ availableConditionTypes }
-					isLastRule={ index === count - 1 }
-					isFirstRule={ index === 0 }
-					conditionType={ conditionType }
+					rule={ rule }
+					index={ index }
+					updateRule={ updateRule }
+					removeRule={ removeRule }
 					comparisons={ comparisons }
+					availableSmartTags={filteredSmartTags}
 				/>
 			) )}
-			<Button
-				className="noptin-add-conditional-rule"
-				onClick={ addRule }
-				variant="secondary"
-			>
-				{ 0 === count ? __( 'Add a rule', 'newsletter-optin-box' ) : __( 'Add another rule', 'newsletter-optin-box' )}
-			</Button>
+			{addCondition}
 		</div>
 	);
 }
@@ -459,7 +484,7 @@ export default function ConditionalLogicEditor({ onChange, value, comparisons, t
 				<>
 
 					<ConditionalLogicTypeSelector
-						ruleCount={ value.rules ? value.rules.length : 0 }
+						ruleCount={ Array.isArray(value.rules) ? value.rules.length : 0 }
 						type={ value.type }
 						action={ value.action }
 						setConditionalLogicAttribute={ setConditionalLogicAttribute }
@@ -467,7 +492,6 @@ export default function ConditionalLogicEditor({ onChange, value, comparisons, t
 
 					<ConditionalLogicRules
 						rules={ value.rules }
-						conditionType={ value.type }
 						comparisons={ comparisons }
 						availableSmartTags={ availableSmartTags }
 						setConditionalLogicAttribute={ setConditionalLogicAttribute }

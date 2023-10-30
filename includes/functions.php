@@ -1910,50 +1910,58 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 	// Loop through each rule.
 	foreach ( $conditional_logic['rules'] as $rule ) {
 
-		if ( isset( $smart_tags[ $rule['type'] ] ) ) {
-			$condition = $smart_tags[ $rule['type'] ];
-			$label     = isset( $condition['label'] ) ? $condition['label'] : $condition['description'];
-			$value     = isset( $rule['value'] ) ? $rule['value'] : '';
-			$data_type = isset( $condition['conditional_logic'] ) ? $condition['conditional_logic'] : false;
+		$condition = Noptin_Dynamic_Content_Tags::search( $rule['type'], $smart_tags );
 
-			if ( 'number' === $data_type ) {
+		if ( empty( $condition ) ) {
+			continue;
+		}
 
-				if ( 'is_between' === $rule['condition'] ) {
-					$value = noptin_parse_list( $value );
-					$value = sprintf(
-						// translators: %s is a number.
-						__( '%1$s and %2$s', 'newsletter-optin-box' ),
-						floatval( $value[0] ),
-						isset( $value[1] ) ? floatval( $value[1] ) : floatval( $value[0] )
-					);
-				} else {
-					$value = floatval( $value );
-				}
-			} elseif ( 'date' === $data_type ) {
+		$label     = isset( $condition['label'] ) ? $condition['label'] : $condition['description'];
+		$value     = isset( $rule['value'] ) ? $rule['value'] : '';
+		$data_type = isset( $condition['conditional_logic'] ) ? $condition['conditional_logic'] : false;
 
-				if ( 'is_date_between' === $rule['condition'] ) {
-					$value = noptin_parse_list( $value );
-					$value = sprintf(
-						// translators: %s is a date.
-						__( '%1$s and %2$s', 'newsletter-optin-box' ),
-						gmdate( 'Y-m-d', strtotime( $value[0] ) ),
-						isset( $value[1] ) ? gmdate( 'Y-m-d', strtotime( $value[1] ) ) : gmdate( 'Y-m-d', strtotime( $value[0] ) )
-					);
-				} else {
-					$value = gmdate( 'Y-m-d', strtotime( $value ) );
-				}
-			} elseif ( isset( $condition['options'] ) && isset( $condition['options'][ $value ] ) ) {
-				$value = $condition['options'][ $value ];
-			}
+		// Add group to label.
+		if ( ! empty( $condition['group'] ) && __( 'General', 'newsletter-optin-box' ) !== $condition['group'] ) {
+			$label = sprintf( '%s >> %s', $condition['group'], $label );
+		}
 
-			if ( isset( $comparisons[ $rule['condition'] ] ) ) {
-				$rules[] = sprintf(
-					'%s %s <code>%s</code>',
-					strtolower( sanitize_text_field( $label ) ),
-					sanitize_text_field( $comparisons[ $rule['condition'] ] ),
-					sanitize_text_field( $value )
+		if ( 'number' === $data_type ) {
+
+			if ( 'is_between' === $rule['condition'] ) {
+				$value = noptin_parse_list( $value );
+				$value = sprintf(
+					// translators: %s is a number.
+					__( '%1$s and %2$s', 'newsletter-optin-box' ),
+					floatval( $value[0] ),
+					isset( $value[1] ) ? floatval( $value[1] ) : floatval( $value[0] )
 				);
+			} else {
+				$value = floatval( $value );
 			}
+		} elseif ( 'date' === $data_type ) {
+
+			if ( 'is_date_between' === $rule['condition'] ) {
+				$value = noptin_parse_list( $value );
+				$value = sprintf(
+					// translators: %s is a date.
+					__( '%1$s and %2$s', 'newsletter-optin-box' ),
+					gmdate( 'Y-m-d', strtotime( $value[0] ) ),
+					isset( $value[1] ) ? gmdate( 'Y-m-d', strtotime( $value[1] ) ) : gmdate( 'Y-m-d', strtotime( $value[0] ) )
+				);
+			} else {
+				$value = gmdate( 'Y-m-d', strtotime( $value ) );
+			}
+		} elseif ( isset( $condition['options'] ) && isset( $condition['options'][ $value ] ) ) {
+			$value = $condition['options'][ $value ];
+		}
+
+		if ( isset( $comparisons[ $rule['condition'] ] ) ) {
+			$rules[] = sprintf(
+				'%s %s <code>%s</code>',
+				strtolower( esc_html( $label ) ),
+				sanitize_text_field( $comparisons[ $rule['condition'] ] ),
+				sanitize_text_field( $value )
+			);
 		}
 	}
 
