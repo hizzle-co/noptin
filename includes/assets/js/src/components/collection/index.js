@@ -14,11 +14,13 @@ import {
  */
 import ErrorBoundary from "./error-boundary";
 import { getHistory } from "../navigation";
-import { Page } from "./page";
-import { ViewRecord, RenderTab } from './view-record';
+import { Page, InnerPage } from "./page";
+import { ViewRecord, ViewInnerRecord, RenderTab, RenderInnerTab } from './view-record';
+import { RecordOverview, InnerRecordOverview } from "./view-record/overview";
 import RecordsTable from './records-table';
-import CreateRecord from './create-record';
+import { CreateRecord, CreateInnerRecord } from './create-record';
 import Import from './import';
+import { SelectedContextProvider } from "../table/selected-context";
 
 /**
  * Displays the entire app.
@@ -34,47 +36,53 @@ export const App = ( { defaultRoute } ) => {
 
 	return (
 		<SlotFillProvider>
-			<ErrorBoundary>
-				<HistoryRouter history={ getHistory( defaultRoute ) }>
-					<Routes basename={ basename }>
+			<SelectedContextProvider>
+				<ErrorBoundary>
+					<HistoryRouter history={ getHistory( defaultRoute ) }>
+						<Routes basename={ basename }>
 
-						<Route
-							path='/:namespace/:collection'
-							exact
-							element={ <Page /> }
-						>
+							<Route path='/:namespace/:collection' exact element={ <Page /> }>
 
-							<Route
-								path=':id'
-								exact
-								element={ <ViewRecord /> }
-							>
-								<Route path=':tab' exact element={ <RenderTab /> } />
-								<Route index element={ <RenderTab /> } />
+								<Route path=':id' exact element={ <ViewRecord /> }>
+									<Route path=':tab' exact element={ <RenderTab /> }>
+										<Route
+											path=':innerNamespace/:innerCollection'
+											exact
+											element={ <InnerPage /> }
+										>
+											<Route path=':innerId' exact element={ <ViewInnerRecord /> }>
+												<Route path=':innerTab' exact element={ <RenderInnerTab /> } />
+												<Route index element={ <InnerRecordOverview /> } />
+											</Route>
+											<Route path='add' exact element={ <CreateInnerRecord /> } />
+										</Route>
+									</Route>
+									<Route index element={ <RecordOverview /> } />
+								</Route>
+
+								<Route
+									path='add'
+									exact
+									element={ <CreateRecord /> }
+									handle={{
+										title: ( { labels, collection } ) => labels?.add_new_item ?? collection,
+									}}
+								></Route>
+
+								<Route
+									path='import'
+									exact
+									element={ <Import /> }
+								></Route>
+
+								<Route index element={ <RecordsTable /> } />
+
 							</Route>
 
-							<Route
-								path='add'
-								exact
-								element={ <CreateRecord /> }
-								handle={{
-									title: ( { labels, collection } ) => labels?.add_new_item ?? collection,
-								}}
-							></Route>
-
-							<Route
-								path='import'
-								exact
-								element={ <Import /> }
-							></Route>
-
-							<Route index element={ <RecordsTable /> } />
-
-						</Route>
-
-					</Routes>
-				</HistoryRouter>
-			</ErrorBoundary>
+						</Routes>
+					</HistoryRouter>
+				</ErrorBoundary>
+			</SelectedContextProvider>
 		</SlotFillProvider>
 	);
 };

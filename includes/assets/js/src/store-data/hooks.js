@@ -6,6 +6,18 @@ import { useMemo } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import memoize from 'memize';
 
+import initStore from "./index";
+
+/**
+ * Selects/inits a given store.
+ *
+ * @param {String} namespace The namespace of the store.
+ * @param {String} collection The current collection.
+ */
+export function useStore( namespace, collection ) {
+	return initStore( namespace, collection );
+}
+
 /**
  * Exports the meta selectors.
  */
@@ -122,7 +134,7 @@ const enrichSelectors = memoize( ( ( selectors ) => {
  * @return {Object} The record resolution.
  */
 export function useRecord( namespace, collection, recordId ) {
-	const STORE_NAME = `${namespace}/${collection}`;
+	const STORE_NAME = useStore( namespace, collection );
 
 	// Ensure we have a valid record ID.
 	recordId = parseInt( recordId, 10 );
@@ -156,14 +168,11 @@ export function useRecord( namespace, collection, recordId ) {
  */
 export function useTabContent( namespace, collection, recordId, tabID ) {
 
-	// Prepare the store name.
-	const STORE_NAME = `${namespace}/${collection}`;
-
 	// Ensure we have a valid record ID.
 	recordId = parseInt( recordId, 10 );
 
 	return useQuerySelect(
-		( query ) => query( STORE_NAME ).getTabContent( recordId, tabID ),
+		( query ) => query( useStore( namespace, collection ) ).getTabContent( recordId, tabID ),
 		[ namespace, collection, recordId, tabID ]
 	);
 }
@@ -178,14 +187,11 @@ export function useTabContent( namespace, collection, recordId, tabID ) {
  */
 export function useRecordOverview( namespace, collection, recordId ) {
 
-	// Prepare the store name.
-	const STORE_NAME = `${namespace}/${collection}`;
-
 	// Ensure we have a valid record ID.
 	recordId = parseInt( recordId, 10 );
 
 	return useQuerySelect(
-		( query ) => query( STORE_NAME ).getRecordOverview( recordId ),
+		( query ) => query( useStore( namespace, collection ) ).getRecordOverview( recordId ),
 		[ namespace, collection, recordId ]
 	);
 }
@@ -200,11 +206,10 @@ export function useRecordOverview( namespace, collection, recordId ) {
  */
 export function useRecords( namespace, collection, queryArgs = {} ) {
 
-	const STORE_NAME = `${namespace}/${collection}`;
 	const argsString = prepareQueryString( queryArgs );
 
 	return useQuerySelect(
-		( query ) => query( STORE_NAME ).getRecords( argsString ),
+		( query ) => query( useStore( namespace, collection ) ).getRecords( argsString ),
 		[ namespace, collection, argsString ]
 	);
 }
@@ -219,11 +224,10 @@ export function useRecords( namespace, collection, queryArgs = {} ) {
  */
 export function usePartialRecords( namespace, collection, queryArgs = {} ) {
 
-	const STORE_NAME = `${namespace}/${collection}`;
 	const argsString = prepareQueryString( queryArgs );
 
 	return useQuerySelect(
-		( query ) => query( STORE_NAME ).getPartialRecords( argsString ),
+		( query ) => query( useStore( namespace, collection ) ).getPartialRecords( argsString ),
 		[ namespace, collection, argsString ]
 	);
 }
@@ -237,10 +241,8 @@ export function usePartialRecords( namespace, collection, queryArgs = {} ) {
  */
 export function useSchema( namespace, collection ) {
 
-	const STORE_NAME = `${namespace}/${collection}`;
-
 	return useQuerySelect(
-		( query ) => query( STORE_NAME ).getSchema(),
+		( query ) => query( useStore( namespace, collection ) ).getSchema(),
 		[ namespace, collection ]
 	);
 

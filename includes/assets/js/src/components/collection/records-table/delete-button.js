@@ -11,44 +11,37 @@ import { addQueryArgs } from "@wordpress/url";
  * Local dependencies.
  */
 import { BlockButton, ErrorNotice } from "../../styled-components";
-import { useSelected } from "../../table/selected-context";
-import { useQuery } from "../../navigation";
-import { useParams } from "react-router-dom";
-import { useCurrentQueryRecordCount } from "../hooks";
+import { useQueryOrSelected } from "../hooks";
 
 /**
  * Displays a delete button.
  *
  */
-export default function DeleteButton() {
+export default function DeleteButton( { namespace, collection, query, count, selected, setSelected } ) {
 
-	const args = useQuery();
-	const { namespace, collection } = useParams();
-	const dispatch          = useDispatch( `${namespace}/${collection}` );
+	const dispatch = useDispatch( `${namespace}/${collection}` );
 	const [isOpen, setOpen] = useState( false );
 	const [error, setError] = useState( null );
 	const [deleting, setDeleting] = useState( false );
-	const [selected, setSelected] = useSelected();
-	const deleteAll  = selected.length === 0;
-	const count      = useCurrentQueryRecordCount();
-	const title      = deleteAll ? __( 'Delete', 'newsletter-optin-box' ) : __( 'Delete Selected', 'newsletter-optin-box' );
-	const deleteArgs = deleteAll ? { ...args, number: -1 } : { include: selected.join( ',' ) };
+	const deleteAll = selected.length === 0;
+	const title = deleteAll ? __( 'Delete', 'newsletter-optin-box' ) : __( 'Delete Selected', 'newsletter-optin-box' );
+	const deleteArgs = useQueryOrSelected( selected, query );
 
 	const TheModal = () => (
 		<>
-			{ deleting ? (
+			{deleting ? (
 				<>
 					<Spinner />
-					{ __( 'Deleting...', 'newsletter-optin-box' ) }
+					{__( 'Deleting...', 'newsletter-optin-box' )}
 				</>
 			) : (
 				<>
-					{ error ? (
+					{error ? (
 						<ErrorNotice>{error.message}</ErrorNotice>
 					) : (
 						<ErrorNotice>
-							{ deleteAll && sprintf( __( 'Are you sure you want to delete %d matching records?', 'newsletter-optin-box' ), count ) }
-							{ ! deleteAll && sprintf( __( 'Are you sure you want to delete %d selected records?', 'newsletter-optin-box' ), selected.length ) }
+							{deleteAll && sprintf( __( 'Are you sure you want to delete %d matching records?', 'newsletter-optin-box' ), count )}
+							{!deleteAll && sprintf( __( 'Are you sure you want to delete %d selected records?', 'newsletter-optin-box' ), selected.length )}
 						</ErrorNotice>
 					)}
 
@@ -70,11 +63,11 @@ export default function DeleteButton() {
 								} );
 						}}
 					>
-						{ __( 'Yes, Delete!', 'newsletter-optin-box' ) }
+						{__( 'Yes, Delete!', 'newsletter-optin-box' )}
 					</BlockButton>
 
 					<BlockButton onClick={() => setOpen( false )} variant="secondary" __withNoMargin>
-						{ __( 'Cancel', 'newsletter-optin-box' ) }
+						{__( 'Cancel', 'newsletter-optin-box' )}
 					</BlockButton>
 				</>
 			)}

@@ -38,7 +38,7 @@ import SearchForm from './search-form';
  * @param {Object} props.query Query object.
  * @return {JSX.Element} Placeholder table.
  */
-const Placeholder = ( { headers, caption, query } ) => {
+const Placeholder = ( { headers, caption, query, storeName } ) => {
 
 	return (
 		<>
@@ -49,6 +49,7 @@ const Placeholder = ( { headers, caption, query } ) => {
 				headers={ headers }
 				caption={ caption }
 				query={ query }
+				storeName={ storeName }
 			/>
 		</>
 	);
@@ -233,6 +234,7 @@ const TableCard = ( {
 	totalRows,
 	canSelectRows,
 	DisplayCell,
+	storeName='default',
 	...props
 } ) => {
 
@@ -248,6 +250,7 @@ const TableCard = ( {
 		caption: title,
 		onQueryChange,
 		query,
+		storeName,
 		...props,
 	};
 

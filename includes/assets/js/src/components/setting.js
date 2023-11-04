@@ -3,6 +3,8 @@
  */
 import {
 	__experimentalInputControl as InputControl,
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
+	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	BaseControl,
 	useBaseControlProps,
 	TextareaControl,
@@ -59,12 +61,23 @@ function InputSetting({ setting, availableSmartTags, isPressEnterToChange, ...at
 		}
 	}, [attributes.value, attributes.onChange]);
 
+	const mergeTagSuffix = useMergeTags( { availableSmartTags, onMergeTagClick } );
+
 	// Merge tags.
-	const suffix = useMergeTags( { availableSmartTags, onMergeTagClick } );
+	if (typeof attributes.suffix === 'string' || attributes.suffix instanceof String) {
+		attributes.suffix = <InputControlSuffixWrapper>{attributes.suffix}</InputControlSuffixWrapper>;
+	} else {
+		attributes.suffix = mergeTagSuffix;
+	}
 
 	if ( setting.disabled ) {
 		attributes.readOnly = true;
 		attributes.onFocus = (e) => e.target.select();
+	}
+
+	// Prefix.
+	if (typeof attributes.prefix === 'string' || attributes.prefix instanceof String) {
+		attributes.prefix = <InputControlPrefixWrapper>{attributes.prefix}</InputControlPrefixWrapper>;
 	}
 
 	return (
@@ -73,7 +86,6 @@ function InputSetting({ setting, availableSmartTags, isPressEnterToChange, ...at
 				{...attributes}
 				type={inputTypes.includes( setting.type ) ? setting.type : 'text'}
 				placeholder={setting.placeholder ? setting.placeholder : ''}
-				suffix={suffix}
 				isPressEnterToChange={isPressEnterToChange}
 				__nextHasNoMarginBottom
 				__next36pxDefaultSize
@@ -496,12 +508,14 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 	const help = setting.description ? <span dangerouslySetInnerHTML={ { __html: setting.description } } /> : '';
 
 	// Default attributes.
+	const customAttributes = setting.customAttributes ? setting.customAttributes : {};
 	const defaultAttributes = {
 		label: setting.label,
 		value: hasValue ? value : '',
 		onChange: updateSetting,
 		className: `${className}`,
 		help: help,
+		...customAttributes,
 	}
 
 	// Display select control.

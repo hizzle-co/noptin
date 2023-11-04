@@ -13,28 +13,95 @@ import { useParams } from 'react-router-dom';
  */
 import Wrap from "./wrap";
 import Setting from "../setting";
-import { useNavigateCollection, useCurrentSchema } from "./hooks";
+import { useNavigateCollection } from "./hooks";
+import { useSchema } from "../../store-data/hooks";
+import { withSchema } from "./page";
 import { Section } from "./view-record/overview";
 import { BlockButton } from "../styled-components";
 import { prepareField } from "./records-table/filters";
 
+export const prepareEditableSchemaFields = ( schema, hidden, ignore ) => ( compact(
+	schema.map( ( field ) => {
+
+		// Abort for readonly and dynamic fields.
+		if ( field.readonly || field.is_dynamic || 'metadata' === field.name ) {
+			return null;
+		}
+
+		// Abort for hidden fields...
+		if ( Array.isArray( hidden ) && hidden.includes( field.name ) ) {
+			return null;
+		}
+
+		// ... and fields to ignore.
+		if ( Array.isArray( ignore ) && ignore.includes( field.name ) ) {
+			return null;
+		}
+
+		return prepareField( field );
+	} )
+) );
+
+export const EditSchemaForm = ({record, onChange, schema, hidden, ignore, onSubmit, loading, children, isInner, slotName, submitText, error } ) => {
+
+	// Prepare form fields.
+	const fields = useMemo( () => prepareEditableSchemaFields( schema, hidden, ignore ), [schema, hidden, ignore] );
+
+	return (
+		<form style={{ opacity: loading ? 0.5 : 1 }} onSubmit={onSubmit}>
+
+			{children}
+
+			{fields.map( ( field ) => (
+				<div style={{ marginBottom: '1.6rem' }} key={field.name}>
+					<Setting
+						settingKey={field.name}
+						saved={record}
+						setAttributes={onChange}
+						setting={field}
+					/>
+				</div>
+			) )}
+
+			<Slot name={isInner ? `${slotName}--inner` : slotName}>
+				{( fills ) => (
+					fills.map( ( fill, index ) => (
+						<Tip key={index}>{fill}</Tip>
+					) )
+				)}
+			</Slot>
+
+			<BlockButton variant="primary" onClick={onSubmit} isBusy={loading}>
+				{submitText}
+				{loading && <Spinner />}
+			</BlockButton>
+
+			{error && (
+				<Notice status="error">
+					{error.message}
+				</Notice>
+			)}
+
+		</form>
+	)
+}
+
 /**
- * Allows the user to export all records.
+ * Displays the record creation form.
  *
  */
-export default function CreateRecord() {
+const CreateRecordForm = withSchema( function CreateRecordForm( { namespace, collection, basePath = '', isInner = false, defaultProps = {}, schema: { schema, hidden, ignore } } ) {
 
 	// Prepare the state.
+	const dispatch = useDispatch( `${namespace}/${collection}` );
+	const [error, setError] = useState( null );
+	const [loading, setLoading] = useState( false );
+	const [record, setRecord] = useState( {} );
 	const navigateTo = useNavigateCollection();
-	const { namespace, collection } = useParams();
-	const dispatch                = useDispatch( `${namespace}/${collection}` );
-	const [ error, setError ]     = useState( null );
-	const [ loading, setLoading ] = useState( false );
-	const [ record, setRecord ]   = useState( {} );
-	const schema                  = useCurrentSchema();
+	const newIgnore = [ ...ignore, ...Object.keys(defaultProps) ];
 
 	// A function to create a new record.
-	const onCreateRecord = ( e ) => {
+	const handleSubmit = ( e ) => {
 
 		e?.preventDefault();
 
@@ -43,11 +110,11 @@ export default function CreateRecord() {
 			return;
 		}
 
-		setLoading ( true );
+		setLoading( true );
 
-		dispatch.createRecord( record, dispatch )
+		dispatch.createRecord( { ...record, ...defaultProps }, dispatch )
 			.then( ( savedRecord ) => {
-				navigateTo( savedRecord?.record?.id || '' );
+				navigateTo( `${basePath}/${savedRecord.record.id}` );
 			} )
 			.catch( ( error ) => {
 				setError( error );
@@ -66,71 +133,49 @@ export default function CreateRecord() {
 		}
 	}
 
-	// Prepare form fields.
-	const fields = useMemo( () => ( compact(
-		schema.data.schema.map( ( field ) => {
+	// Display the add record form.
+	return (
+		<EditSchemaForm
+			record={record}
+			onChange={onChange}
+			onSubmit={handleSubmit}
+			submitText={loading ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save', 'newsletter-optin-box' )}
+			schema={schema}
+			hidden={hidden}
+			ignore={newIgnore}
+			loading={loading}
+			isInner={isInner}
+			slotName={`${namespace}_${collection}_record_create_below`}
+			error={error}
+		/>
+	);
 
-			// Abort for readonly and dynamic fields.
-			if ( field.readonly || field.is_dynamic ) {
-				return null;
-			}
+} );
 
-			// Abort for hidden fields...
-			if ( schema.data.hidden && schema.data.hidden.includes( field.name ) ) {
-				return null;
-			}
+/**
+ * Allows the user to create new records.
+ *
+ */
+export function CreateRecord() {
 
-			// ... and fields to ignore.
-			if ( schema.data.ignore && schema.data.ignore.includes( field.name ) ) {
-				return null;
-			}
-
-			return prepareField( field );
-		} )
-	) ), [ schema.data ] );
+	// Prepare the state.
+	const { namespace, collection } = useParams();
+	const schema = useSchema( namespace, collection );
 
 	// Display the add record form.
 	return (
-		<Wrap title={schema.data.labels?.new_item}>
-			<CardBody style={{ opacity: loading ? 0.5 : 1 }}>
+		<Wrap title={schema.data?.labels?.add_new_item || __( 'Add New Item', 'newsletter-optin-box' )}>
+			<CardBody>
 				<Flex align="flex-start" wrap>
 					<Section>
-						<form onSubmit={ onCreateRecord }>
-							{ fields.map( ( field ) => (
-								<div style={{ marginBottom: '1.6rem' }} key={ field.name }>
-									<Setting
-										settingKey={ field.name }
-										saved={ record }
-										setAttributes={ onChange }
-										setting={ field }
-									/>
-								</div>
-							) ) }
-
-							<Slot name={`${namespace}_${collection}_record_create_below`}>
-								{ ( fills ) => (
-									fills.map( ( fill, index ) => (
-										<Tip key={ index }>{ fill }</Tip>
-									) )
-								)}
-							</Slot>
-
-							<BlockButton variant="primary" onClick={ onCreateRecord } isBusy={ loading }>
-								{ loading ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save', 'newsletter-optin-box' ) }
-								{ loading && <Spinner /> }
-							</BlockButton>
-
-							{ error && (
-								<Notice status="error">
-									{ error.message }
-								</Notice>
-							) }
-
-						</form>
+						<CreateRecordForm
+							namespace={namespace}
+							collection={collection}
+						/>
 					</Section>
 
 					<Slot name={`${namespace}_${collection}_record_create_upsell`}>
-						{ ( fills ) => (
+						{( fills ) => (
 							fills.length > 0 && <Section>{fills}</Section>
 						)}
 					</Slot>
@@ -139,4 +184,33 @@ export default function CreateRecord() {
 		</Wrap>
 	);
 
+}
+
+/**
+ * Allows users to create new records in another collection.
+ */
+export function CreateInnerRecord() {
+
+	// Prepare the state.
+	const { namespace, collection, innerNamespace, innerCollection, id, tab } = useParams();
+
+	const { data } = useSchema( namespace, collection );
+
+	if ( ! tab || ! data ) {
+		return false;
+	}
+
+	const currentTab = data.tabs[tab]; 
+
+	return (
+		<CreateRecordForm
+			namespace={innerNamespace}
+			collection={innerCollection}
+			basePath={ `${id}/${tab}/${innerNamespace}/${innerCollection}` }
+			defaultProps={{ [currentTab.filter_by]: id }}
+			isInner
+		>
+			<Slot name={`${innerNamespace}_${innerCollection}_record_create_upsell--inner`} />
+		</CreateRecordForm>
+	);
 }

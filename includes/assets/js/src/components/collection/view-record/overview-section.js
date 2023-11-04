@@ -5,17 +5,15 @@ import { useState } from "@wordpress/element";
 import { Card, CardBody, CardHeader, Button, Flex, FlexItem } from "@wordpress/components";
 import copy from 'copy-to-clipboard';
 import { __ } from "@wordpress/i18n";
-import { useParams } from "react-router-dom";
 
 /**
  * Internal dependencies
  */
-import { useRecordOverview } from "../../../store-data/hooks";
+import { useRecord, useRecordOverview } from "../../../store-data/hooks";
 import { LoadingPlaceholder, CopiedText, withBottomMargin } from "../../styled-components";
 import List from "../../list";
 import StatCard from "../stat-card";
-import { useCurrentRecord } from "../hooks";
-import { getNewPath, navigateTo } from "../../navigation";
+import { useNavigateCollection } from "../hooks";
 
 /**
  * Displays a card list.
@@ -81,12 +79,11 @@ const NormalCard = ( { content, buttonText, buttonLink } ) => (
 /**
  * Displays a delete link.
  */
-const DeleteLink = ( { confirm, label } ) => {
+const DeleteLink = ( { confirm, label, namespace, collection, id, basePath } ) => {
 
 	// Prepare the state.
-	const { namespace, collection } = useParams();
-
-	const record = useCurrentRecord();
+	const record = useRecord( namespace, collection, id );
+	const navigateTo = useNavigateCollection();
 
 	// A function to delete a record.
 	const onDeleteRecord = () => {
@@ -100,7 +97,7 @@ const DeleteLink = ( { confirm, label } ) => {
 		record.delete();
 
 		// Navigate back to the list.
-		navigateTo( getNewPath( {}, `/${namespace}/${collection}` ) )
+		navigateTo( basePath )
 	}
 
 	return (
@@ -153,7 +150,7 @@ const CopyLink = ( { value, label } ) => {
  * @param {Object} props
  * @param {Array} props.links
  */
-const ActionLinks = ( { links } ) => (
+const ActionLinks = ( { links, ...props } ) => (
 	<Flex className={withBottomMargin} justify="flex-start" gap={2} wrap>
 		{links.map( ( { label, value, action, hide } ) => {
 
@@ -163,12 +160,12 @@ const ActionLinks = ( { links } ) => (
 
 			// Delete record.
 			if ( 'delete' === action ) {
-				return <DeleteLink key={label} label={label} confirm={value} />;
+				return <DeleteLink key={label} label={label} confirm={value} {...props}  />;
 			}
 
 			// Copy a value.
 			if ( 'copy' === action ) {
-				return <CopyLink key={label} label={label} value={value} />;
+				return <CopyLink key={label} label={label} value={value} {...props} />;
 			}
 
 			return (
@@ -186,9 +183,7 @@ const ActionLinks = ( { links } ) => (
  * Displays a record's overview.
  *
  */
-export const OverviewSection = () => {
-
-	const { namespace, collection, id } = useParams();
+export const OverviewSection = ( { namespace, collection, id, basePath } ) => {
 
 	// Prepare the overview.
 	const overview = useRecordOverview( namespace, collection, id );
@@ -221,7 +216,7 @@ export const OverviewSection = () => {
 					case 'stat_cards':
 						return <StatCards key={index} cards={data.cards} />;
 					case 'action_links':
-						return <ActionLinks key={index} links={data.links} />;
+						return <ActionLinks key={index} links={data.links} namespace={namespace} collection={collection} id={id} basePath={basePath} />;
 					case 'card':
 						return <NormalCard key={index} {...data} />;
 					case 'card_list':

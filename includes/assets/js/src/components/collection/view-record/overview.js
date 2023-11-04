@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useState } from "@wordpress/element";
-import { Spinner, CardBody, Tip, Flex, FlexItem, Slot } from "@wordpress/components";
+import { CardBody, Flex, FlexItem, Slot } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
@@ -10,11 +10,11 @@ import { useParams } from 'react-router-dom';
 /**
  * Internal dependencies
  */
-import { useCurrentSchema, useCurrentRecord } from "../hooks";
 import Wrap from "../wrap";
-import { EditForm } from "./edit-form";
 import { OverviewSection } from "./overview-section";
-import { BlockButton } from "../../styled-components";
+import { withSchema } from "../page";
+import { useRecord } from "../../../store-data/hooks";
+import { EditSchemaForm } from "../create-record";
 
 /**
  * Displays an overview section.
@@ -24,21 +24,33 @@ export const Section = styled( FlexItem )`
 	max-width: 100%;
 `
 
+const Wrapper = ( { children, title, isInner } ) => {
+
+	if ( isInner ) {
+		return children;
+	}
+
+	return (
+		<Wrap title={title}>
+			<CardBody>
+				{children}
+			</CardBody>
+		</Wrap>
+	);
+}
+
 /**
  * Allows the user to edit a single record.
  *
  * @param {Object} props
  */
-export const RecordOverview = () => {
+const EditRecordOverview = withSchema( ( { namespace, collection, id, schema, isInner, basePath } ) => {
 
 	// Prepare the state.
-	const { namespace, collection, id } = useParams();
-
-	const [ error, setError ]   = useState( null );
-	const [ saving, setSaving ] = useState( false );
-	const [ edits, setEdits ]   = useState( {} );
-	const { data }              = useCurrentSchema();
-	const record                = useCurrentRecord();
+	const [error, setError] = useState( null );
+	const [saving, setSaving] = useState( false );
+	const [edits, setEdits] = useState( {} );
+	const record = useRecord( namespace, collection, id );
 
 	// A function to save a record.
 	const onSaveRecord = ( e ) => {
@@ -73,46 +85,69 @@ export const RecordOverview = () => {
 		}
 	}
 
+	const fillName = ( name ) => isInner ? `${name}--inner` : name;
+
 	// Display the add record form.
 	return (
-		<Wrap title={ data.labels?.edit_item || __( 'Edit Item', 'newsletter-optin-box' ) }>
+		<Wrapper title={schema.labels?.edit_item || __( 'Edit Item', 'newsletter-optin-box' )} isInner={isInner}>
 
-			<CardBody>
-				<Flex align="flex-start" wrap>
-					<Section>
-						<EditForm
-							record={{ ...record.data, ...edits }}
-							error={ error }
-							onSaveRecord={ onSaveRecord }
-							setAttributes={ setAttributes }
-						/>
+			<Flex align="flex-start" wrap>
+				<Section>
+					<EditSchemaForm
+						record={{ ...record.data, ...edits }}
+						error={error}
+						onSubmit={onSaveRecord}
+						submitText={saving ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save Changes', 'newsletter-optin-box' )}
+						onChange={setAttributes}
+						namespace={namespace}
+						collection={collection}
+						loading={saving}
+						isInner={isInner}
+						slotName={`${namespace}_${collection}_record_overview_below`}
+						{...schema}
+					/>
+				</Section>
+				<Section>
+					<Slot name={fillName( `${namespace}_${collection}_record_overview_upsell` )} />
+					<OverviewSection
+						namespace={namespace}
+						collection={collection}
+						id={id}
+						basePath={basePath}
+					/>
+				</Section>
+			</Flex>
 
-						<BlockButton variant="primary" onClick={ onSaveRecord } isBusy={ saving }>
-							{ saving ? __( 'Saving...', 'newsletter-optin-box' ) : __( 'Save Changes', 'newsletter-optin-box' ) }
-							{ saving && <Spinner /> }
-						</BlockButton>
-
-						<Slot name={`${namespace}_${collection}_record_overview_below`}>
-							{ ( fills ) => (
-								fills.map( ( fill, index ) => (
-									<Tip key={ index }>{ fill }</Tip>
-								) )
-							)}
-						</Slot>
-
-					</Section>
-					<Section>
-						<Slot name={`${namespace}_${collection}_record_overview_upsell`} />
-						<OverviewSection
-							namespace={ namespace }
-							collection={ collection }
-							recordID={ id }
-						/>
-					</Section>
-				</Flex>
-			</CardBody>
-
-		</Wrap>
+		</Wrapper>
 	);
+
+} )
+
+/**
+ * Allows the user to edit a single record.
+ *
+ * @param {Object} props
+ */
+export const RecordOverview = () => {
+
+	// Prepare the state.
+	const { namespace, collection, id } = useParams();
+
+	// Display the add record form.
+	return <EditRecordOverview namespace={namespace} collection={collection} basePath="" id={id} />
+}
+
+/**
+ * Allows the user to edit a single inner record.
+ *
+ * @param {Object} props
+ */
+export const InnerRecordOverview = () => {
+
+	// Prepare the state.
+	const { innerNamespace, innerCollection, innerId, id, tab } = useParams();
+	const basePath = `${id}/${tab}`;
+
+	return <EditRecordOverview namespace={innerNamespace} collection={innerCollection} id={innerId} basePath={basePath} isInner />
 
 }

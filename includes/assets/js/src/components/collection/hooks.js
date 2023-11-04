@@ -1,6 +1,5 @@
-import { useSchema, useRecords, useRecord } from "../../store-data/hooks";
 import { useParams } from 'react-router-dom';
-import { getQuery, getNewPath, navigateTo } from "../navigation";
+import { getNewPath, navigateTo, getPath } from "../navigation";
 
 /**
  * Returns a function to navigate back home.
@@ -14,53 +13,26 @@ export function useNavigateCollection() {
 }
 
 /**
- * Allows components to use the current collection's schema.
+ * Returns a function to append a path to the curren path.
  *
- * @returns {ReturnType<useSchema>}
+ * @returns {Function}
  */
-export function useCurrentSchema() {
-	// Get the collection and namespace from the URL.
-    const { namespace, collection } = useParams();
+export function useAppendNavigation() {
+	return ( suffix = '' ) => {
+		const path = getPath();
 
-	return useSchema( namespace, collection );
-}
+		// Remove trailing slash.
+		if ( path.endsWith( '/' ) ) {
+			path = path.substring( 0, path.length - 1 );
+		}
 
-/**
- * Allows components to use the current collection's record.
- *
- * @returns {ReturnType<useRecord>}
- */
-export function useCurrentRecord() {
+		// Add leading to suffix.
+		if ( ! suffix.startsWith( '/' ) ) {
+			suffix = `/${suffix}`;
+		}
 
-	// Get the collection and namespace from the URL.
-    const { namespace, collection, id } = useParams();
-
-	// Get the records.
-    return useRecord( namespace, collection, id );
-}
-
-/**
- * Allows components to use the current collection's records.
- *
- * @returns {ReturnType<useRecords>}
- */
-export function useCurrentRecords() {
-
-	// Get the collection and namespace from the URL.
-    const { namespace, collection } = useParams();
-
-	// Get the records.
-    return useRecords( namespace, collection, getQuery() );
-}
-
-/**
- * Allows components to use the current collection's total query records.
- *
- * @returns {number}
- */
-export function useCurrentQueryRecordCount() {
-	const records = useCurrentRecords();
-	return records.data.total || 0;
+		navigateTo( getNewPath( {}, `${path}${suffix}` ) )
+	}
 }
 
 /**
@@ -68,16 +40,16 @@ export function useCurrentQueryRecordCount() {
  * @param {Array} selected
  * @returns {Object}
  */
-export function useQueryOrSelected( selected ) {
+export function useQueryOrSelected( selected, query ) {
 	if ( selected.length > 0 ) {
 		return { include: selected.join( ',' ), number: -1 };
 	}
 
-	const query = { ...getQuery(), number: -1 };;
+	const newQuery = { ...query, number: -1 };;
 
 	[ 'order', 'hizzle_path', 'orderby', 'paged', 'page' ].forEach( ( key ) => {
-		delete query[ key ];
+		delete newQuery[ key ];
 	} );
-	
-	return query;
+
+	return newQuery;
 }

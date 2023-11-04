@@ -9,9 +9,8 @@ import { __, sprintf } from "@wordpress/i18n";
  * Local dependencies.
  */
 import { BlockButton } from "../../styled-components";
-import { useQuery, updateQueryString } from "../../navigation";
-import { useCurrentSchema } from "../hooks";
 import Setting from "../../setting";
+import { useSchema } from "../../../store-data/hooks";
 
 /**
  * Displays the bulk edit form.
@@ -35,7 +34,7 @@ const EditForm = ( {fields, onApplyFilters, filters, setAttributes} ) => {
 
 				let secondarySetting = null;
 
-                if ( field.is_boolean ) {console.log(field);
+                if ( field.is_boolean ) {
                     mainSetting.el = 'select';
                     mainSetting.options = {
                         '1': __( 'Yes', 'newsletter-optin-box' ),
@@ -101,13 +100,13 @@ const EditForm = ( {fields, onApplyFilters, filters, setAttributes} ) => {
 /**
  * Displays the bulk edit modal.
  */
-const TheModal = ( {currentFilters, fields, setOpen} ) => {
+const TheModal = ( {currentFilters, fields, setOpen, setQuery} ) => {
 	const [filters, setFilters] = useState( { ...currentFilters } );
 
 	// A function to apply the filters.
 	const onApplyFilters = ( e ) => {
 		e?.preventDefault();
-		updateQueryString( filters );
+		setQuery( filters );
         setOpen( false );
 	}
 
@@ -135,10 +134,15 @@ const TheModal = ( {currentFilters, fields, setOpen} ) => {
 /**
  * Returns a list of filterable fields.
  */
-export const useFilterableFields = ( isBulkEditing = false ) => {
-    const { data } = useCurrentSchema();
+export const useFilterableFields = ( { namespace, collection, isBulkEditing = false } ) => {
+    const { data } = useSchema( namespace, collection );
 
     return useMemo( () => {
+
+		if ( ! data.schema ) {
+			return [];
+		}
+	
         return data.schema.filter( ( field ) => {
 
             // Remove readonly fields.
@@ -147,12 +151,12 @@ export const useFilterableFields = ( isBulkEditing = false ) => {
             }
 
             // Remove ignorable fields.
-            if ( data.ignore && data.ignore.includes( field.name ) ) {
+            if ( Array.isArray( data.ignore ) && data.ignore.includes( field.name ) ) {
 				return false;
 			}
 
             // Remove hidden fields.
-            if ( data.hidden && data.hidden.includes( field.name ) ) {
+            if ( Array.isArray( data.hidden ) && data.hidden.includes( field.name ) ) {
                 return false;
             }
 
@@ -190,6 +194,16 @@ export const prepareField = ( field ) => {
 		isInputToChange: true,
 	};
 
+	// Custom attributes.
+	if ( field.js_props?.setting ) {
+		prepared.customAttributes = field.js_props.setting;
+	}
+
+	// Conditions.
+	if ( field.js_props?.conditions ) {
+		prepared.conditions = field.js_props?.conditions;
+	}
+
 	// Tokens.
 	if ( field.is_tokens ) {
 		prepared.el = 'form_token';
@@ -201,7 +215,7 @@ export const prepareField = ( field ) => {
 		if ( field.multiple ) {
 			prepared.el = 'multi_checkbox';
 		}
-	} else if ( field.isLongText ) {
+	} else if ( field.is_textarea ) {
 		prepared.el = 'textarea';
 	}
 
@@ -225,12 +239,14 @@ export const prepareField = ( field ) => {
 }
 
 /**
- * Returns a list of current filters.
+ * Displays a filters edit button.
+ *
  */
-export const useCurrentFilters = ( fields ) => {
-    const query = useQuery();
+export default function FiltersButton( { query, setQuery, ...props} ) {
 
-    return useMemo( () => {
+	const [isOpen, setOpen] = useState( false );
+	const fields     = useFilterableFields( props );
+    const filters    = useMemo( () => {
 
         // Prepare the filters.
         const filters = {};
@@ -249,17 +265,6 @@ export const useCurrentFilters = ( fields ) => {
 
         return filters;
     }, [ query, fields ] );
-}
-
-/**
- * Displays a filters edit button.
- *
- */
-export default function FiltersButton() {
-
-	const [isOpen, setOpen] = useState( false );
-	const fields     = useFilterableFields();
-    const filters    = useCurrentFilters( fields );
     const numFilters = Object.keys( filters ).length;
     const buttonText = numFilters > 0 ? sprintf( __( 'Filters (%d)', 'newsletter-optin-box' ), numFilters ) : __( 'Filter Records', 'newsletter-optin-box' );
 
@@ -277,7 +282,7 @@ export default function FiltersButton() {
 
 					{isOpen && (
 						<Modal title={__( 'Filter records', 'newsletter-optin-box' )} onRequestClose={() => setOpen( false )}>
-							<TheModal fields={fields} currentFilters={filters} setOpen={setOpen} />
+							<TheModal fields={fields} currentFilters={filters} setOpen={setOpen} setQuery={setQuery} />
 						</Modal>
 					)}
 				</>

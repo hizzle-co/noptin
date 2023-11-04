@@ -5,7 +5,6 @@ import { Notice, Tip, TextControl, ToggleControl, SelectControl, Flex, Button, F
 import Papa from 'papaparse';
 import { BlockButton } from "../../styled-components";
 import styled from '@emotion/styled';
-import { useParams } from 'react-router-dom';
 
 const RestrictedFlexItem = styled( FlexItem )`
 	width: 320px;
@@ -107,14 +106,13 @@ const MapHeader = ( { options, field, value, setValue, customValue, setCustomVal
  * @param {Function} props.back The callback to call when clicking on the back button.
  * @param {Function} props.onContinue A callback to call when the headers are set.
  */
-const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue } ) => {
+const MapHeaders = ( { file, schema, ignore, hidden, back, onContinue, namespace, collection } ) => {
 
 	// Prepare state.
 	const [ fileHeaders, setFileHeaders ] = useState( [] );
 	const [ mappedHeaders, setMappedHeaders ] = useState( {} );
 	const [ updateRecords, setUpdateRecords ] = useState( false );
 	const [ error, setError ] = useState( null );
-	const { namespace, collection } = useParams();
 
 	const fields = useMemo( () => compact( schema.map((field) => {
 

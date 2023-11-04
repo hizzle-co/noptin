@@ -4,7 +4,7 @@ import { getQueryArg, addQueryArgs } from "@wordpress/url";
 import getEnumBadge from "./enum-colors";
 import { Avatar, Badge } from "../../styled-components";
 import { useNavigateCollection } from "../hooks";
-import { useState } from "@wordpress/element";
+import { useState, useCallback } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
 
 const isObject = ( obj ) => obj && typeof obj === 'object' && obj.constructor === Object;
@@ -55,12 +55,13 @@ export const normalizeAvatarColors = ( avatarUrl, fallbackText ) => {
  * @param {string} props.description The description of the column.
  * @returns
  */
-const PrimaryColumn = ( { record, name } ) => {
+const PrimaryColumn = ( { record, name, basePath = '' } ) => {
 
 	const navigateTo = useNavigateCollection();
 	const value      = record[name];
 	const avatar_url = normalizeAvatarColors( record.avatar_url, value );
 	const avatar     = avatar_url ? <Avatar src={ avatar_url } alt={ value } /> : null;
+	const open       = useCallback( () => navigateTo( `${basePath}${record.id}` ), [basePath, record.id] );
 
 	const ColValue = avatar ? (
 		<Flex>
@@ -80,7 +81,7 @@ const PrimaryColumn = ( { record, name } ) => {
 	}
 
 	return (
-		<Button variant="link" style={ btnStyle } onClick={ () => navigateTo( record.id ) }>
+		<Button variant="link" style={ btnStyle } onClick={ open }>
 			{ ColValue }
 		</Button>
 	)
@@ -143,7 +144,7 @@ export default function DisplayCell( { row, header, headerKey } ) {
 	}
 
 	if ( header.is_primary && typeof value === 'string' ) {
-		return <PrimaryColumn record={ row } name={ headerKey } />;
+		return <PrimaryColumn record={ row } name={ headerKey } basePath={ header.basePath || '' } />;
 	}
 
 	// Boolean values are displayed as a toggle.

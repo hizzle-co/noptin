@@ -4,7 +4,6 @@
 import { useMemo } from "@wordpress/element";
 import { Notice, CardBody, Icon } from "@wordpress/components";
 import { __, sprintf } from "@wordpress/i18n";
-import { useParams } from 'react-router-dom';
 
 /**
  * Local dependencies.
@@ -75,11 +74,10 @@ const DisplayCell = ( { row, header, headerKey } ) => {
  * @param {String} props.tabName
  * @returns The records table.
  */
-export default function TableTab( {tab, tabName} ) {
+export default function TableTab( {tab, tabName, namespace, collection, recordId} ) {
 
 	// Prepare the state.
-	const { namespace, collection, id } = useParams();
-	const tabContent = useTabContent( namespace, collection, id, tabName );
+	const tabContent = useTabContent( namespace, collection, recordId, tabName );
 
 	// Prepare headers.
 	const headers = useMemo( () => tab.headers.map( ( header ) => ({

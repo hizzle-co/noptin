@@ -1,12 +1,12 @@
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary, withErrorBoundary } from "react-error-boundary";
 import { __ } from "@wordpress/i18n";
 import { Notice } from "@wordpress/components";
 
-function Fallback({ error }) {
+function Fallback( { error } ) {
 
     return (
         <Notice status="error" isDismissible={false}>
-            <strong>{__('Error:', 'newsletter-optin-box')}</strong>&nbsp;
+            <strong>{__( 'Error:', 'newsletter-optin-box' )}</strong>&nbsp;
             {error.message}
         </Notice>
     );
@@ -17,7 +17,7 @@ function Fallback({ error }) {
  *
  * @returns 
  */
-export default function ErrorBoundaryWrapper({ children }) {
+export default function ErrorBoundaryWrapper( { children } ) {
 
     return (
         <ErrorBoundary FallbackComponent={Fallback}>
@@ -25,3 +25,15 @@ export default function ErrorBoundaryWrapper({ children }) {
         </ErrorBoundary>
     );
 }
+
+/**
+ * Attaches an error boundary to the children.
+ */
+export const withErrorBoundaryWrapper = ( WrappedComponent ) => {
+    return withErrorBoundary(
+        WrappedComponent,
+        {
+            FallbackComponent: Fallback,
+        }
+    );
+};

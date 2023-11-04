@@ -18,7 +18,7 @@ import Progress from "./progress";
  * @param {Object} props.schema The schema of the collection.
  * @param {Function} props.back The callback to call when clicking on the back button.
  */
-const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, back } ) => {
+const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, back, ...props } ) => {
 
 	const [ mappedHeaders, setMappedHeaders ] = useState( null );
     const [ updateRecords, setUpdateRecords ] = useState( false );
@@ -39,6 +39,7 @@ const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, back }
 					// Scroll to the top.
 					window.scrollTo( { top: 0, behavior: 'smooth' } );
                 } }
+				{ ...props }
 			/>
 		);
 	}
@@ -51,6 +52,7 @@ const ImportFile = ( { file, schema: { schema, ignore, hidden, id_prop }, back }
             updateRecords={ updateRecords }
             back={ back }
             id_prop={ id_prop }
+			{ ...props }
         />
     );
 }

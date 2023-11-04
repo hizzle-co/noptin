@@ -10,10 +10,57 @@ import { useParams, Outlet } from 'react-router-dom';
  * Local dependencies.
  */
 import Wrap from "../wrap";
-import { RecordOverview } from "./overview";
+import { RecordOverview, InnerRecordOverview } from "./overview";
 import TableTab from "./table-tab";
 import { StyledNavigableMenu } from "../../styled-components";
-import { useCurrentSchema, useCurrentRecord, useNavigateCollection } from "../hooks";
+import { useNavigateCollection } from "../hooks";
+import { MiniRecordsTable } from "../records-table";
+import { useRecord } from "../../../store-data/hooks";
+import { withSchema } from "../page";
+
+/**
+ * Displays a given tab.
+ *
+ */
+const RenderTabContent = withSchema( function RenderTabContent( { tab, namespace, collection, recordId, schema, isInner } ) {
+
+	// Prepare the state.
+	const record = useRecord( namespace, collection, recordId );
+	const args = {
+		namespace,
+		collection,
+		recordId,
+		tabName: tab,
+	};
+
+	if ( !Array.isArray( schema.tabs ) && schema.tabs[tab] ) {
+		const currentTab = schema.tabs[tab];
+
+		// Tables.
+		if ( 'table' === currentTab.type ) {
+			return <TableTab tab={currentTab} record={record} {...args} />;
+		}
+
+		// Sub collections.
+		if ( 'collection' === currentTab.type ) {
+			return <MiniRecordsTable {...currentTab} defaultProps={{ [currentTab.filter_by]: recordId }} />;
+		}
+
+		// Allow rendering of custom tabs.
+		return (
+			<Slot
+				name={`${namespace}-${collection}-tab-${tab}${isInner ? '--inner' : ''}`}
+				fillProps={{ tab: currentTab, record: record.data }}
+			/>
+		);
+	}
+
+	if ( isInner ) {
+		return <InnerRecordOverview />;
+	}
+
+	return <RecordOverview />;
+} )
 
 /**
  * Displays a given tab.
@@ -22,55 +69,66 @@ import { useCurrentSchema, useCurrentRecord, useNavigateCollection } from "../ho
 export const RenderTab = () => {
 
 	// Prepare the state.
-	const { data }    = useCurrentSchema();
-	const record      = useCurrentRecord();
-	const { tab, namespace, collection } = useParams();
+	const { tab, namespace, collection, id } = useParams();
 
-	if ( ! Array.isArray( data.tabs ) && data.tabs[tab] ) {
-		const currentTab = data.tabs[tab];
-
-		// Tables.
-		if ( 'table' === currentTab.type ) {
-			return <TableTab tab={ currentTab } tabName={ tab } />;
-		}
-
-		// Allow rendering of custom tabs.
-		return (
-			<Slot
-				name={ `${namespace}-${collection}-tab-${tab}` }
-				fillProps={ { tab: currentTab, record: record.data } }
+	return (
+		<div className={`${namespace}-${collection}__${tab || 'overview'}-content`}>
+			<RenderTabContent
+				namespace={namespace}
+				collection={collection}
+				tab={tab}
+				recordId={id}
 			/>
-		);
-	}
-
-	return <RecordOverview />;
+			<Outlet />
+		</div>
+	);
 }
 
 /**
- * Allows the user to view a single record.
+ * Displays a given inner tab.
  *
  */
-export const ViewRecord = () => {
+export const RenderInnerTab = () => {
 
 	// Prepare the state.
-	const { data }    = useCurrentSchema();
-	const record      = useCurrentRecord();
-	const { id, tab } = useParams();
-	const navigateTo  = useNavigateCollection();
+	const { innerNamespace, innerCollection, innerId, innerTab } = useParams();
+
+	return (
+		<div className={`${namespace}-${collection}__${tab || 'overview'}-content`}>
+			<RenderTabContent
+				namespace={innerNamespace}
+				collection={innerCollection}
+				tab={innerTab}
+				recordId={innerId}
+				isInner
+			/>
+		</div>
+	);
+}
+
+/**
+ * Allows the user to view a single inner record.
+ *
+ */
+const InnerRecordContent = withSchema( function InnerRecordContent( { children, recordId, namespace, collection, schema, tab, basePath } ) {
+
+	// Prepare the state.
+	const record = useRecord( namespace, collection, recordId );
+	const navigateTo = useNavigateCollection();
 
 	// Prepare the tabs.
 	const tabs = [
 		{
-			title: data.labels?.edit_item || __( 'Edit Item', 'newsletter-optin-box' ),
+			title: schema?.labels?.edit_item || __( 'Edit Item', 'newsletter-optin-box' ),
 			name: 'overview',
 		}
 	]
 
 	// Displays a normal header if there are no tabs.
-	if ( ! Array.isArray( data.tabs ) ) {
-		Object.keys( data.tabs ).map( ( tab ) => (
+	if ( !Array.isArray( schema?.tabs ) ) {
+		Object.keys( schema.tabs ).map( ( tab ) => (
 			tabs.push( {
-				title: data.tabs[tab].title,
+				title: schema.tabs[tab].title,
 				name: tab,
 			} )
 		) );
@@ -78,15 +136,15 @@ export const ViewRecord = () => {
 
 	// Fired when a tab is selected.
 	const onTabSelect = useCallback( ( tabIndex ) => {
-		const newTab = tabs[ tabIndex ]?.name || 'overview';
-		navigateTo( `${id}/${newTab}` );
-	}, [id] );
+		const newTab = tabs[tabIndex]?.name || 'overview';
+		navigateTo( `${basePath}/${newTab}` );
+	}, [basePath] );
 
 	// Show the loading indicator if we're loading the record.
 	if ( record.isResolving ) {
 
 		return (
-			<Wrap title={ data.labels?.edit_item || __( 'Edit Item', 'newsletter-optin-box' ) }>
+			<Wrap title={schema.labels?.edit_item || __( 'Edit Item', 'newsletter-optin-box' )}>
 				<CardBody>
 					{__( 'Loading', 'newsletter-optin-box' )}
 					<Spinner />
@@ -99,10 +157,10 @@ export const ViewRecord = () => {
 	if ( 'ERROR' === record.status ) {
 
 		return (
-			<Wrap title={ __( 'Error', 'newsletter-optin-box' ) }>
+			<Wrap title={__( 'Error', 'newsletter-optin-box' )}>
 				<CardBody>
-					<Notice status="error" isDismissible={ false }>
-						{ record.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
+					<Notice status="error" isDismissible={false}>
+						{record.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' )}
 					</Notice>
 				</CardBody>
 			</Wrap>
@@ -113,21 +171,66 @@ export const ViewRecord = () => {
 	return (
 		<>
 
-			{ tabs.length > 1 && (
-				<StyledNavigableMenu orientation="horizontal" onNavigate={ onTabSelect }>
-					{ tabs.map( ( recordTab, index ) => (
+			{tabs.length > 1 && (
+				<StyledNavigableMenu orientation="horizontal" onNavigate={onTabSelect}>
+					{tabs.map( ( recordTab, index ) => (
 						<Button
-							key={ recordTab.name }
-							isPressed={ recordTab.name === tab || ( ! tab && 0 === index ) }
-							onClick={ () => onTabSelect( index ) }
+							key={recordTab.name}
+							isPressed={recordTab.name === tab || ( !tab && 0 === index )}
+							onClick={() => onTabSelect( index )}
 						>
-							{ recordTab.title }
+							{recordTab.title}
 						</Button>
-					) ) }
+					) )}
 				</StyledNavigableMenu>
 			)}
 
-			<Outlet />
+			{children}
 		</>
+	);
+} );
+
+/**
+ * Allows the user to view a single record.
+ *
+ */
+export const ViewRecord = () => {
+
+	// Prepare the state.
+	const { namespace, collection, id, tab } = useParams();
+
+	// Display the update record screen.
+	return (
+		<InnerRecordContent
+			namespace={namespace}
+			collection={collection}
+			recordId={id}
+			tab={tab}
+			basePath={ id }
+		>
+			<Outlet />
+		</InnerRecordContent>
+	);
+}
+
+/**
+ * Allows the user to view a single inner record.
+ *
+ */
+export const ViewInnerRecord = () => {
+
+	// Prepare the state.
+	const { innerNamespace, innerCollection, innerTab, innerId, id, tab } = useParams();
+
+	return (
+		<InnerRecordContent
+			namespace={innerNamespace}
+			collection={innerCollection}
+			recordId={innerId}
+			tab={innerTab}
+			basePath={ `${id}/${tab}/${innerNamespace}/${innerCollection}/${innerId}` }
+		>
+			<Outlet />
+		</InnerRecordContent>
 	);
 }

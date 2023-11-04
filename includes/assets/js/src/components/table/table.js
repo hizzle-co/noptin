@@ -52,8 +52,8 @@ const getRowKey = ( row, index, idProp ) => {
  * @param {string} props.idProp The ID prop.
  * @return {JSX.Element} The select all cell.
  */
-const SelectAll = ( { rows, idProp } ) => {
-	const [ selected, setSelected ] = useSelected();
+const SelectAll = ( { rows, idProp, storeName } ) => {
+	const [ selected, setSelected ] = useSelected( storeName );
 
 	// Loop through all rows and retrieve an array of keys.
 	const rowKeys = useMemo( () => rows.map( ( row, index ) => getRowKey( row, index, idProp ) ), [ rows, idProp ] );
@@ -90,8 +90,8 @@ const SelectAll = ( { rows, idProp } ) => {
  * @param {string} props.id The ID value.
  * @return {JSX.Element} The select all cell.
  */
-const SelectRow = ( { row, id } ) => {
-	const [ selected, setSelected ] = useSelected();
+const SelectRow = ( { row, id, storeName } ) => {
+	const [ selected, setSelected ] = useSelected( storeName );
 
 	// Toggle selection.
 	const toggleSelection = useCallback( ( select ) => {
@@ -125,7 +125,7 @@ const SelectRow = ( { row, id } ) => {
  *
  * @param {Object} props Component props.
  */
-export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange, rows, idProp, canSelectRows } ) => {
+export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange, rows, idProp, canSelectRows, storeName } ) => {
 
 	// Maybe change the sort direction.
 	const setSortBy = useCallback( ( col ) => {
@@ -156,7 +156,7 @@ export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange,
 	return (
 		<thead>
 			<TableRow className="noptin-table__row">
-				{ ( canSelectRows && hasData ) && <SelectAll rows={ rows } idProp={ idProp } /> }
+				{ ( canSelectRows && hasData ) && <SelectAll rows={ rows } idProp={ idProp } storeName={ storeName } /> }
 				{ theHeaders }
 			</TableRow>
 		</thead>
@@ -166,7 +166,7 @@ export const TableHeader = ( { headers, hasData, sortBy, sortDir, onQueryChange,
 /**
  * Displays a single table row.
  */
-const TheTableRow = ( { sortBy, headers, DisplayCell, canSelectRows, hasData, row, id } ) => {
+const TheTableRow = ( { sortBy, headers, DisplayCell, canSelectRows, hasData, row, id, storeName } ) => {
 
 	// Prepare the other cells.
 	const displaColumns = useMemo( () => headers.map( ( { key, ...header } ) => (
@@ -183,7 +183,7 @@ const TheTableRow = ( { sortBy, headers, DisplayCell, canSelectRows, hasData, ro
 
 	return (
 		<TableRow className="noptin-table__row">
-			{ ( canSelectRows && hasData ) && <SelectRow row={ row } id={ id } /> }
+			{ ( canSelectRows && hasData ) && <SelectRow row={ row } id={ id } storeName={ storeName } /> }
 			{ displaColumns }
 		</TableRow>
 	);
@@ -209,10 +209,12 @@ const Table = ( {
 	rows = [],
 	caption,
 	emptyMessage,
+	emptyAction,
 	onQueryChange,
 	DisplayCell,
 	canSelectRows,
 	idProp = 'id',
+	storeName,
 	...extraProps
 } ) => {
 	const sortBy = query.orderby || 'id';
@@ -238,6 +240,7 @@ const Table = ( {
 					canSelectRows={canSelectRows}
 					rows={rows}
 					idProp={idProp}
+					storeName={storeName}
 				/>
 
 				<tbody>
@@ -253,6 +256,7 @@ const Table = ( {
 									headers={ headers }
 									DisplayCell={ DisplayCell }
 									canSelectRows={ canSelectRows }
+									storeName={storeName}
 									hasData={hasData}
 									row={ row }
 									id={ rowKey }
@@ -263,6 +267,7 @@ const Table = ( {
 						<TableRow className="noptin-table__row">
 							<TableCellNoData colSpan={ headers.length }>
 								{ emptyMessage ?? __( 'No data to display', 'newsletter-optin-box' ) }
+								{ emptyAction }
 							</TableCellNoData>
 						</TableRow>
 					) }

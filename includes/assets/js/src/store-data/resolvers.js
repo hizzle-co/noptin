@@ -81,6 +81,12 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getRecord( id ) {
+
+			// Error if no ID is provided.
+			if ( ! id ) {
+				throw new Error( 'Record not found.' );
+			}
+
 			const path   = addRandomQueryArg( `${namespace}/v1/${collection}/${id}` );
 			const record = yield apiFetch( { path } );
 
@@ -107,6 +113,12 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getTabContent( id, tab_id ) {
+
+			// Error if no ID is provided.
+			if ( ! id ) {
+				throw new Error( 'Record not found.' );
+			}
+
 			const path    = addRandomQueryArg( `${namespace}/v1/${collection}/${id}/${tab_id}` );
 			const content = yield apiFetch( { path } );
 
@@ -120,6 +132,12 @@ export default function createResolvers( namespace, collection ) {
 		 * @return {Object} Action.
 		 */
 		*getRecordOverview( id ) {
+
+			// Error if no ID is provided.
+			if ( ! id ) {
+				throw new Error( 'Record not found.' );
+			}
+
 			const path     = addRandomQueryArg( `${namespace}/v1/${collection}/${id}/overview` );
 			const overview = yield apiFetch( { path } );
 

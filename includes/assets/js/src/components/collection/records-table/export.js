@@ -10,14 +10,9 @@ import Papa from 'papaparse';
 /**
  * Local dependencies.
  */
-import { usePartialRecords } from "../../../store-data/hooks";
-import { useCurrentSchema } from "../hooks";
-import { useSelected } from "../../table/selected-context";
+import { usePartialRecords, useSchema } from "../../../store-data/hooks";
 import { BlockButton, NoMarginNotice } from "../../styled-components";
 import ErrorBoundary from "../error-boundary";
-import { useQuery } from "../../navigation";
-import { useParams } from "react-router-dom";
-import { useCurrentQueryRecordCount } from "../hooks";
 
 /**
  * Fetches records from the API and converts them to CSV.
@@ -27,18 +22,14 @@ import { useCurrentQueryRecordCount } from "../hooks";
  * @param {Function} args.back The callback to call when clicking on the back button.
  * @param {Array} args.schema The schema of the collection.
  */
-const DownloadProgress = ({ fields, back, schema }) => {
-
-	// Prepare state.
-	const args = useQuery();
-	const { namespace, collection } = useParams();
-	const [selected] = useSelected();
+const DownloadProgress = ({ fields, back, schema, namespace, collection, selected, query }) => {
 
 	// Fetch the records.
-	const exportArgs = selected.length === 0 ? { ...args, number: -1 } : { include: selected.join( ',' ) };
+	const exportArgs = selected.length === 0 ? { ...query } : { include: selected.join( ',' ) };
 
 	// Add the fields to the args.
 	exportArgs.__fields = fields.join( ',' );
+	exportArgs.number = -1;
 
 	// Set context to edit.
 	exportArgs.context = 'edit';
@@ -199,10 +190,10 @@ const DownloadFields = ({ fields, setFields, schema: { schema, ignore }, next } 
  * The modal content.
  *
  */
-const TheModal = () => {
+const TheModal = ( { namespace, collection, ...props} ) => {
 
 	// Prepare state.
-	const schema = useCurrentSchema();
+	const schema = useSchema(namespace, collection);
 	const [fields, setFields] = useState(compact(schema.data.schema.map((field) => (
 		(schema.data.hidden.includes(field.name) || schema.data.ignore.includes(field.name)) ? null : field.name
 	))));
@@ -227,6 +218,9 @@ const TheModal = () => {
 				fields={fields}
 				schema={schema.data.schema}
 				back={() => setStep('fields')}
+				namespace = {namespace}
+				collection = {collection}
+				{...props}
 			/>
 		);
 	}
@@ -236,12 +230,10 @@ const TheModal = () => {
  * Displays a modal allowing users to export all records matching the current collection.
  *
  */
-export default function ExportButton() {
+export default function ExportButton( {  count, selected, ...props } ) {
 
 	const [isOpen, setOpen] = useState(false);
-	const [selected]  = useSelected();
 	const downloadAll = selected.length === 0;
-	const count       = useCurrentQueryRecordCount();
 	const title       = downloadAll ? __( 'Download', 'newsletter-optin-box' ) : __( 'Download Selected', 'newsletter-optin-box' );
 	const modalTitle  = downloadAll ? sprintf(
 		/* translators: %s: number of records */
@@ -266,7 +258,7 @@ export default function ExportButton() {
 				<Modal title={ modalTitle } onRequestClose={() => setOpen(false)}>
 					<div className="hizzle-records-export-modal__body">
 						<ErrorBoundary>
-							<TheModal />
+							<TheModal count={count} selected={selected} {...props} />
 						</ErrorBoundary>
 					</div>
 				</Modal>

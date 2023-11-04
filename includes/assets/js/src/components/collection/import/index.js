@@ -8,10 +8,11 @@ import { __ } from "@wordpress/i18n";
 /**
  * Local dependencies.
  */
-import { useCurrentSchema } from "../hooks";
 import Wrap from "../wrap";
 import SelectFile from "./select-file";
 import ImportFile from "./import-file";
+import { useParams } from "react-router-dom";
+import { useSchema } from "../../../store-data/hooks";
 
 /**
  * Allows the user to import new records.
@@ -20,7 +21,8 @@ import ImportFile from "./import-file";
 export default function Import() {
 
 	// Fetch the schema.
-	const { data } = useCurrentSchema();
+    const { namespace, collection } = useParams();
+	const { data } = useSchema( namespace, collection );
 	const [ file, setFile ] = useState( null );
 
     // Sets the current file the scrolls to top.
@@ -37,6 +39,8 @@ export default function Import() {
                         file={ file }
                         schema={ data }
                         back={ () => setFile( null )}
+                        namespace={ namespace }
+                        collection={ collection }
                     />
                 ) : (
                     <SelectFile onUpload={ onUpload } />

@@ -6,7 +6,6 @@ import { useState, useCallback, useEffect } from "@wordpress/element";
 import { __, sprintf } from "@wordpress/i18n";
 import Papa from 'papaparse';
 import { Spinner, Button, Flex, FlexItem, } from "@wordpress/components";
-import { useParams } from "react-router-dom";
 
 /**
  * Internal dependancies.
@@ -95,10 +94,9 @@ const AnimatedNumber = ( { from = 0, to, duration = 5000 } ) => {
  * @param {Object} props.headers Known fields to file headers mapping.
  * @param {Function} props.back The callback to call when clicking on the back button.
  */
-const Progress = ( { file, headers, back, updateRecords } ) => {
+const Progress = ( { file, headers, back, updateRecords, namespace, collection, basePath = '' } ) => {
 
 	// Prepare route.
-	const { namespace, collection } = useParams();
 	const navigateHome = useNavigateCollection();
 
 	// Processing errors.
@@ -455,7 +453,7 @@ const Progress = ( { file, headers, back, updateRecords } ) => {
 				<BlockButton
 					variant="primary"
 					text={__( 'View Records', 'newsletter-optin-box' )}
-					onClick={() => navigateHome()}
+					onClick={() => navigateHome( basePath )}
 					maxWidth="200px"
 				/>
 			)}

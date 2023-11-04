@@ -196,6 +196,7 @@ class Action extends \Noptin_Abstract_Action {
 			$this->action_args['callback'],
 			array(
 				$settings,
+				$this->action_id,
 				$subject,
 				$rule,
 				$args,

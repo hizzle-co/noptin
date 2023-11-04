@@ -224,7 +224,10 @@ class REST_Controller extends \WP_REST_Controller {
 		// Method to retrieve the data schema.
 		foreach ( $this->get_record_tabs() as $tab_id => $tab ) {
 
-			$tabs[ $tab_id ] = $tab;
+			if ( empty( $tab['callback'] ) ) {
+				continue;
+			}
+
 			register_rest_route(
 				$this->namespace,
 				'/' . $this->rest_base . '/(?P<id>[\d]+)/' . $tab_id,
@@ -1239,8 +1242,10 @@ class REST_Controller extends \WP_REST_Controller {
 					'is_numeric'  => $prop->is_numeric(),
 					'is_float'    => $prop->is_float(),
 					'is_date'     => $prop->is_date(),
+					'is_textarea' => ! $prop->is_date() && '%s' === $prop->get_data_type() && empty( $prop->length ),
 					'is_meta'     => $prop->is_meta_key,
 					'is_tokens'   => $prop->is_tokens,
+					'js_props'    => $prop->js_props,
 				);
 
 				if ( $prop->is_tokens ) {
@@ -1280,7 +1285,7 @@ class REST_Controller extends \WP_REST_Controller {
 						'hidden'  => $hidden,
 						'routes'  => $this->get_admin_app_routes(),
 						'labels'  => (object) $collection->labels,
-						'id_prop' => 'id',
+						'id_prop' => $default,
 						'tabs'    => $tabs,
 						'fills'   => array(),
 					)
@@ -1301,7 +1306,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$collection = $this->fetch_collection();
 		$prefix     = $this->admin_routes_prefix;
 
-		return apply_filters(
+		$routes = apply_filters(
 			$this->prefix_hook( 'admin_app_routes' ),
 			array(
 				"$prefix/import" => array(
@@ -1309,6 +1314,15 @@ class REST_Controller extends \WP_REST_Controller {
 				),
 			)
 		);
+
+		// Add leading / to all routes.
+		$new_routes = array();
+
+		foreach ( $routes as $route => $data ) {
+			$new_routes[ '/' . ltrim( $route, '/' ) ] = $data;
+		}
+
+		return $new_routes;
 	}
 
 	/**

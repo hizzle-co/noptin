@@ -10,22 +10,20 @@ import { __, sprintf } from "@wordpress/i18n";
  * Local dependencies.
  */
 import { BlockButton } from "../../styled-components";
-import { useSelected } from "../../table/selected-context";
-import { useParams } from "react-router-dom";
-import { useCurrentQueryRecordCount, useQueryOrSelected } from "../hooks";
+import { useQueryOrSelected } from "../hooks";
 import Setting from "../../setting";
 import { useFilterableFields, prepareField } from "./filters";
 
 /**
  * Displays the bulk edit form.
  */
-const EditForm = ( {editableFields, onSave, changes, setAttributes} ) => {
+const EditForm = ( { editableFields, onSave, changes, setAttributes } ) => {
 
 	// Display the edit records form.
 	return (
-		<form onSubmit={ onSave }>
+		<form onSubmit={onSave}>
 
-			{ editableFields.map( ( field ) => {
+			{editableFields.map( ( field ) => {
 
 				const preparedSetting = {
 					...prepareField( field ),
@@ -37,40 +35,40 @@ const EditForm = ( {editableFields, onSave, changes, setAttributes} ) => {
 
 				if ( field.multiple ) {
 					preparedSetting.label = sprintf( __( '%s - To Add', 'newsletter-optin-box' ), field.label );
-					preparedSetting.name  = `${ field.name }::add`;
+					preparedSetting.name = `${field.name}::add`;
 
 					toRemoveSetting = {
 						...preparedSetting,
-						name: `${ field.name }::remove`,
+						name: `${field.name}::remove`,
 						label: sprintf( __( '%s - To Remove', 'newsletter-optin-box' ), field.label )
 					}
 
 				}
 
 				return (
-					<Fragment key={ field.name }>
-						<div style={ { marginBottom: '1.6rem' } }>
+					<Fragment key={field.name}>
+						<div style={{ marginBottom: '1.6rem' }}>
 							<Setting
-								settingKey={ preparedSetting.name }
-								saved={ changes }
-								setAttributes={ setAttributes }
-								setting={ preparedSetting }
+								settingKey={preparedSetting.name}
+								saved={changes}
+								setAttributes={setAttributes}
+								setting={preparedSetting}
 							/>
 						</div>
 
-						{ toRemoveSetting && (
-							<div style={ { marginBottom: '1.6rem' } }>
+						{toRemoveSetting && (
+							<div style={{ marginBottom: '1.6rem' }}>
 								<Setting
-									settingKey={ toRemoveSetting.name }
-									saved={ changes }
-									setAttributes={ setAttributes }
-									setting={ toRemoveSetting }
+									settingKey={toRemoveSetting.name}
+									saved={changes}
+									setAttributes={setAttributes}
+									setting={toRemoveSetting}
 								/>
 							</div>
-						) }
+						)}
 					</Fragment>
 				);
-			})}
+			} )}
 		</form>
 	);
 
@@ -79,17 +77,14 @@ const EditForm = ( {editableFields, onSave, changes, setAttributes} ) => {
 /**
  * Displays the bulk edit modal.
  */
-const TheModal = ( {editableFields} ) => {
-	const { namespace, collection } = useParams();
-	const dispatch              = useDispatch( `${namespace}/${collection}` );
-	const [error, setError]     = useState( null );
-	const [saving, setSaving]   = useState( false );
-	const [saved, setSaved]     = useState( false );
-	const [selected ]           = useSelected();
+const TheModal = ( { editableFields, namespace, collection, query, selected, count } ) => {
+	const dispatch = useDispatch( `${namespace}/${collection}` );
+	const [error, setError] = useState( null );
+	const [saving, setSaving] = useState( false );
+	const [saved, setSaved] = useState( false );
 	const [changes, setChanges] = useState( {} );
-	const query                 = useQueryOrSelected( selected );
-	const totalRecords          = useCurrentQueryRecordCount();
-	const hasChanges            = Object.keys( changes ).length > 0;
+	const filterBy = useQueryOrSelected( selected, query );
+	const hasChanges = Object.keys( changes ).length > 0;
 
 	// A function to save records.
 	const onSaveRecords = ( e ) => {
@@ -107,7 +102,7 @@ const TheModal = ( {editableFields} ) => {
 		const batchAction = {
 			bulk_update: {
 				merge: changes,
-				query,
+				query: filterBy,
 			},
 		};
 
@@ -142,32 +137,32 @@ const TheModal = ( {editableFields} ) => {
 		<>
 
 			<EditForm
-				editableFields={ editableFields }
-				changes={ changes }
-				onSave={ onSaveRecords }
-				setAttributes={ setAttributes }
+				editableFields={editableFields}
+				changes={changes}
+				onSave={onSaveRecords}
+				setAttributes={setAttributes}
 			/>
 
-			{ hasChanges && (
-				<BlockButton variant="primary" onClick={ onSaveRecords } isBusy={ saving }>
-					{ ! saving && <Icon icon="cloud-saved" /> }&nbsp;
-					{ sprintf(
+			{hasChanges && (
+				<BlockButton variant="primary" onClick={onSaveRecords} isBusy={saving}>
+					{!saving && <Icon icon="cloud-saved" />}&nbsp;
+					{sprintf(
 						saving ? __( 'Saving %d records...', 'newsletter-optin-box' ) : __( 'Edit %d records', 'newsletter-optin-box' ),
-						selected.length > 0 ? selected.length : totalRecords
+						selected.length > 0 ? selected.length : count
 					)}
-					{ saving && <Spinner /> }
+					{saving && <Spinner />}
 				</BlockButton>
 			)}
 
-			{ error && ! hasChanges && (
+			{error && !hasChanges && (
 				<Notice status="error" isDismissible={true}>
 					{error.message}
 				</Notice>
 			)}
 
-			{ saved && ! hasChanges && (
+			{saved && !hasChanges && (
 				<Notice status="success" isDismissible={true}>
-					{ __( 'Records updated successfully.', 'newsletter-optin-box' ) }
+					{__( 'Records updated successfully.', 'newsletter-optin-box' )}
 				</Notice>
 			)}
 		</>
@@ -178,10 +173,10 @@ const TheModal = ( {editableFields} ) => {
  * Displays a bulk edit button.
  *
  */
-export default function BulkEditButton() {
+export default function BulkEditButton( props ) {
 
 	const [isOpen, setOpen] = useState( false );
-	const editableFields    = useFilterableFields( true );
+	const editableFields = useFilterableFields( props );
 
 	// Whether we should display the button.
 	const displayButton = editableFields.length > 0;
@@ -189,7 +184,7 @@ export default function BulkEditButton() {
 	// Display the button.
 	return (
 		<>
-			{ displayButton && (
+			{displayButton && (
 				<>
 					<Button
 						onClick={() => setOpen( true )}
@@ -199,7 +194,7 @@ export default function BulkEditButton() {
 
 					{isOpen && (
 						<Modal title={__( 'Bulk Edit', 'newsletter-optin-box' )} onRequestClose={() => setOpen( false )}>
-							<TheModal editableFields={editableFields}/>
+							<TheModal editableFields={editableFields} {...props} />
 						</Modal>
 					)}
 				</>

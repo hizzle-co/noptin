@@ -160,6 +160,13 @@ class Prop {
 	public $is_dynamic = false;
 
 	/**
+	 * JS table props.
+	 *
+	 * @var object
+	 */
+	public $js_props = array();
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param string $collection The collection's name, including the prefix.
@@ -177,6 +184,8 @@ class Prop {
 		if ( empty( $this->label ) ) {
 			$this->label = ucfirst( str_replace( '_', ' ', $this->name ) );
 		}
+
+		$this->js_props = (object) $this->js_props;
 	}
 
 	/**
