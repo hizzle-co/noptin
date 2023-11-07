@@ -40,7 +40,7 @@ const CardList = ( { items, title } ) => (
  * @param {Array} props.cards
  */
 const StatCards = ( { cards } ) => (
-	<Flex className={withBottomMargin} gap={2} wrap>
+	<Flex className={withBottomMargin} gap={2} justify="flex-end" wrap>
 		{cards.map( ( { title, value, status } ) => (
 			<FlexItem key={title}>
 				<StatCard
@@ -151,7 +151,7 @@ const CopyLink = ( { value, label } ) => {
  * @param {Array} props.links
  */
 const ActionLinks = ( { links, ...props } ) => (
-	<Flex className={withBottomMargin} justify="flex-start" gap={2} wrap>
+	<Flex className={withBottomMargin} justify="flex-end" gap={2} wrap>
 		{links.map( ( { label, value, action, hide } ) => {
 
 			if ( hide ) {

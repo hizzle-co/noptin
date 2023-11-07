@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { useMemo, useState, useCallback } from '@wordpress/element';
+import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { rotateRight } from '@wordpress/icons';
 import {
 	Card,
@@ -240,6 +240,23 @@ const TableCard = ( {
 
 	// An array of hidden header keys.
 	const [ hiddenHeaders, setHiddenHeaders ] = useState( initialHiddenHeaders );
+
+	// If we have a store name, use it to get the hidden headers from local storage.
+	useEffect( () => {
+		if ( storeName && 'default' !== storeName ) {
+			const storedHiddenHeaders = localStorage.getItem( `noptin-table-${ storeName }-hidden-headers` );
+			if ( storedHiddenHeaders ) {
+				setHiddenHeaders( JSON.parse( storedHiddenHeaders ) );
+			}
+		}
+	}, [ storeName ] );
+
+	// Update the hidden headers in local storage.
+	useEffect( () => {
+		if ( storeName && 'default' !== storeName ) {
+			localStorage.setItem( `noptin-table-${ storeName }-hidden-headers`, JSON.stringify( hiddenHeaders ) );
+		}
+	}, [ hiddenHeaders, storeName ] );
 
 	// Prepare visible headers.
 	const visibleHeaders = useMemo( () => headers.filter( ( header ) => ! hiddenHeaders.includes( header.key ) ), [ headers, hiddenHeaders ] );
