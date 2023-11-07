@@ -52,7 +52,7 @@
 		"@babel/preset-env": "^7.21.5",
 		"@emotion/babel-plugin": "^11.11.0",
 		"@mdi/js": "7.3.67",
-		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
+		"@woocommerce/dependency-extraction-webpack-plugin": "2.3.0",
 		"@wordpress/babel-preset-default": "7.29.0",
 		"autoprefixer": "10.4.16",
 		"babel-loader": "9.1.3",
