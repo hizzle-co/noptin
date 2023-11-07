@@ -526,6 +526,52 @@ function unsubscribe_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
 }
 
 /**
+ * Bounces a subscriber.
+ *
+ * @access public
+ * @since  1.3.2
+ */
+function bounce_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
+
+	// Fetch subscriber.
+	$subscriber = noptin_get_subscriber( $subscriber );
+
+	if ( ! $subscriber->exists() || 'bounced' === $subscriber->get_status() ) {
+		return;
+	}
+
+	if ( ! empty( $campaign_id ) ) {
+		$subscriber->record_bounced_campaign( $campaign_id );
+	}
+
+	$subscriber->set_status( 'bounced' );
+	$subscriber->save();
+}
+
+/**
+ * Bounces a subscriber.
+ *
+ * @access public
+ * @since  1.3.2
+ */
+function noptin_subscriber_complained( $subscriber, $campaign_id = 0 ) {
+
+	// Fetch subscriber.
+	$subscriber = noptin_get_subscriber( $subscriber );
+
+	if ( ! $subscriber->exists() || 'complained' === $subscriber->get_status() ) {
+		return;
+	}
+
+	if ( ! empty( $campaign_id ) ) {
+		$subscriber->record_bounced_campaign( $campaign_id );
+	}
+
+	$subscriber->set_status( 'complained' );
+	$subscriber->save();
+}
+
+/**
  * Resubscribes a subscriber.
  *
  * @access public
@@ -1531,9 +1577,10 @@ function noptin_get_subscriber_statuses() {
 	return apply_filters(
 		'noptin_get_subscriber_statuses',
 		array(
+			'pending'      => __( 'Pending', 'newsletter-optin-box' ),
 			'subscribed'   => __( 'Subscribed', 'newsletter-optin-box' ),
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
-			'pending'      => __( 'Pending', 'newsletter-optin-box' ),
+			'bounced'      => __( 'Bounced', 'newsletter-optin-box' ),
 		)
 	);
 }

@@ -25,7 +25,7 @@ class Controller extends \WP_REST_Controller {
 		$this->rest_base = $rest_base;
 
 		// Register rest routes.
-        $this->register_routes();
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
 	/**

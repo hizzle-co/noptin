@@ -412,6 +412,8 @@ class Subscriber extends \Hizzle\Store\Record {
 				'opens'        => array(),
 				'clicks'       => array(),
 				'unsubscribed' => false,
+				'bounced'      => false,
+				'complained'   => false,
 			);
 		} else {
 			$sent_campaigns[ $campaign_id ]['time'][] = time();
@@ -503,6 +505,38 @@ class Subscriber extends \Hizzle\Store\Record {
 
 		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
 			$sent_campaigns[ $campaign_id ]['unsubscribed'] = true;
+			$this->set_sent_campaigns( $sent_campaigns );
+			$this->save();
+		}
+	}
+
+	/**
+	 * Records a bounced email campaign.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 */
+	public function record_bounced_campaign( $campaign_id ) {
+		$campaign_id    = (string) $campaign_id;
+		$sent_campaigns = $this->get_sent_campaigns();
+
+		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
+			$sent_campaigns[ $campaign_id ]['bounced'] = true;
+			$this->set_sent_campaigns( $sent_campaigns );
+			$this->save();
+		}
+	}
+
+	/**
+	 * Records a complained email campaign.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 */
+	public function record_complained_campaign( $campaign_id ) {
+		$campaign_id    = (string) $campaign_id;
+		$sent_campaigns = $this->get_sent_campaigns();
+
+		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
+			$sent_campaigns[ $campaign_id ]['complained'] = true;
 			$this->set_sent_campaigns( $sent_campaigns );
 			$this->save();
 		}

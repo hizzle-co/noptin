@@ -180,6 +180,11 @@ class Noptin_Settings {
 			} else {
 				$default       = isset( $args['default'] ) ? $args['default'] : '';
 				$state[ $key ] = get_noptin_option( $key, $default );
+
+				// Readonly fields.
+				if ( ! empty( $args['readonly'] ) ) {
+					$state[ $key ] = isset( $args['default'] ) ? $args['default'] : '';
+				}
 			}
 		}
 
@@ -301,6 +306,34 @@ class Noptin_Settings {
 				'class'       => 'regular-text',
 				'placeholder' => __( 'Unlimited', 'newsletter-optin-box' ),
 				'description' => __( 'The maximum number of emails to send per hour. Leave empty to send as many as possible.', 'newsletter-optin-box' ),
+			),
+
+			'bounce_webhook_url'           => array(
+				'el'          => 'input',
+				'type'        => 'text',
+				'section'     => 'emails',
+				'readonly'    => true,
+				'label'       => __( 'Bounce Handler', 'newsletter-optin-box' ),
+				'class'       => 'regular-text',
+				'default'     => noptin()->api()->bounce_handler->service_url( '{{YOUR_SERVICE}}' ),
+				'placeholder' => noptin()->api()->bounce_handler->service_url( '{{YOUR_SERVICE}}' ),
+				'description' => sprintf(
+					// translators: %s is the list of supported services.
+					__( 'Supported services:- %s', 'newsletter-optin-box' ),
+					implode(
+						', ',
+						array_map(
+							function( $args ) {
+								return sprintf(
+									'<a href="%s" target="_blank">%s</a>',
+									esc_url( $args['url'] ),
+									esc_html( $args['name'] )
+								);
+							},
+							noptin()->api()->bounce_handler->get_supported_services()
+						)
+					)
+				),
 			),
 
 			'delete_campaigns'             => array(

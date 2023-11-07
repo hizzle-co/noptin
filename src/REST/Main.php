@@ -26,6 +26,11 @@ class Main {
 	public $settings;
 
 	/**
+	 * @var Bounce_Handler The bounce handler controller.
+	 */
+	public $bounce_handler;
+
+	/**
 	 * Stores the main db instance.
 	 *
 	 * @access private
@@ -55,17 +60,9 @@ class Main {
 	 *
 	 */
 	public function __construct() {
-		add_action( 'rest_api_init', array( $this, 'init' ) );
-	}
-
-	/**
-	 * Loads the DB class.
-	 *
-	 * @return void
-	 */
-	public function init() {
 
 		$this->automated_email_campaign_types = new Automated_Email_Campaign_Types( 'automated-email-campaign-types' );
+		$this->bounce_handler                 = new Bounce_Handler( 'bounce_handler' );
 		$this->settings                       = new Settings( 'settings' );
 
 		// Fire action hook.

@@ -136,6 +136,10 @@ class Noptin_Vue {
 			if ( is_scalar( $val ) && ! in_array( $attr, array( 'restrict', 'description', 'tooltip', 'css_id', 'label', 'el', 'type', 'content', '_class', 'default', 'append' ), true ) ) {
 				$val   = esc_attr( $val );
 				$attrs = "$attrs $attr='$val'";
+
+				if ( 'readonly' === $attr && 'input' === $el['el'] ) {
+					$attrs = "$attrs @click='\$event.target.select()'";
+				}
 			}
 		}
 		$el['attrs'] = $attrs;
