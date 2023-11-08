@@ -159,19 +159,17 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
+	$show = true;
+
+	if ( ! empty( $_COOKIE['noptin_hide'] ) || ( get_noptin_option( 'hide_from_subscribers', false ) && noptin_is_subscriber() ) ) {
+		$show = false;
+	}
+
 	if ( noptin_is_preview() ) {
-		return true;
+		$show = true;
 	}
 
-	if ( get_noptin_option( 'hide_from_subscribers', false ) && noptin_is_subscriber() ) {
-		return false;
-	}
-
-	if ( ! empty( $_COOKIE['noptin_hide'] ) ) {
-		return false;
-	}
-
-	return true;
+	return apply_filters( 'noptin_should_show_optins', $show );
 
 }
 
