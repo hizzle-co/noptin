@@ -86,6 +86,10 @@ class Noptin_Gravity_Forms extends GFFeedAddOn {
     public function init() {
         parent::init();
 
+        $this->_capabilities_settings_page = get_noptin_capability();
+        $this->_capabilities_form_settings = get_noptin_capability();
+        $this->_capabilities_uninstall     = get_noptin_capability();
+
         $this->add_delayed_payment_support(
             array(
                 'option_label' => esc_html__( 'Subscribe to Noptin only when payment is received.', 'newsletter-optin-box' ),

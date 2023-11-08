@@ -142,7 +142,8 @@ class Collection {
 		global $wpdb;
 
 		// Set namespace.
-		$this->namespace = $namespace;
+		$this->capabillity = get_noptin_capability();
+		$this->namespace   = $namespace;
 
 		// Set collection data.
 		foreach ( apply_filters( $this->hook_prefix( 'collection_data' ), $data ) as $key => $value ) {

@@ -314,7 +314,7 @@ function noptin_ob_get_clean( $file, $args = array() ) {
 }
 
 /**
- *  Returns the appropriate capability to check against
+ * Returns the appropriate capability to check against
  *
  * @since 1.2.2
  * @return string capability to check against
@@ -325,6 +325,11 @@ function get_noptin_capability( $capalibilty = 'manage_noptin' ) {
 	if ( current_user_can( 'manage_options' ) ) {
 		return 'manage_options';
 	};
+
+	// Are we allowing editors to manage noptin?
+	if ( get_noptin_option( 'allow_editors', false ) && current_user_can( 'edit_others_posts' ) ) {
+		return 'edit_others_posts';
+	}
 
 	return $capalibilty;
 }

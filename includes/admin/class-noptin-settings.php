@@ -260,6 +260,15 @@ class Noptin_Settings {
 				'default'     => true,
 			),
 
+			'allow_editors'                => array(
+				'label'       => __( 'Allow editors', 'newsletter-optin-box' ),
+				'description' => __( 'Allow editors to access and manage Noptin.', 'newsletter-optin-box' ),
+				'type'        => 'checkbox_alt',
+				'section'     => 'general',
+				'el'          => 'input',
+				'default'     => false,
+			),
+
 			'subscribers_cookie'           => array(
 				'el'          => 'input',
 				'type'        => 'text',
