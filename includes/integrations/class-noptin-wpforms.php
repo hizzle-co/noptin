@@ -272,8 +272,21 @@ class Noptin_WPForms {
 			}
 		}
 
+		$this->do_add_subscriber( $fields, $form_data );
+
 		// Fire an action before we process the form.
 		do_action( 'noptin_wpforms_form_submitted', $form_data['id'], $posted );
+	}
+
+	/**
+	 * Save subscriptions
+	 *
+	 * @param array  $fields    List of fields.
+	 * @param array  $entry     Submitted form entry.
+	 * @param array  $form_data Form data and settings.
+	 * @param int    $entry_id  Saved entry id.
+	 */
+	private function do_add_subscriber( $fields, $form_data ) {
 
 		// Check that the form was configured for email subscriptions.
 		if ( empty( $form_data['settings']['enable_noptin'] ) || '1' !== $form_data['settings']['enable_noptin'] ) {
