@@ -243,7 +243,7 @@ function get_noptin_email_types() {
 		array(
 
 			'normal'     => array(
-				'label'       => __( 'Standard (Recommended)', 'newsletter-optin-box' ),
+				'label'       => __( 'Standard', 'newsletter-optin-box' ),
 				'description' => __( 'Your email will be embedded inside a template', 'newsletter-optin-box' ),
 			),
 

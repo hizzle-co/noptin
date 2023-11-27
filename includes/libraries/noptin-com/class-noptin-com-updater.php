@@ -28,6 +28,7 @@ class Noptin_COM_Updater {
 		add_filter( 'plugins_api', array( __CLASS__, 'plugins_api' ), 20, 3 );
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
+		add_filter( 'noptin_email_types', array( __CLASS__, 'add_email_types' ) );
 	}
 
 	/**
@@ -414,6 +415,29 @@ class Noptin_COM_Updater {
 		}
 
 		return $transient;
+	}
+
+	/**
+	 * Add email types.
+	 *
+	 * @param array $types The email types.
+	 * @return array
+	 */
+	public static function add_email_types( $types ) {
+
+		if ( Noptin_COM::get_active_license_key() ) {
+			return array_merge(
+				array(
+					'visual' => array(
+						'label'       => __( 'Visual', 'newsletter-optin-box' ),
+						'description' => __( 'Compose your email using the block editor', 'newsletter-optin-box' ),
+					),
+				),
+				$types
+			);
+		}
+
+		return $types;
 	}
 
 }
