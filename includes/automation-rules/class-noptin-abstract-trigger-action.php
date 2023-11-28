@@ -215,11 +215,6 @@ abstract class Noptin_Abstract_Trigger_Action {
 		// Objects.
 		if ( is_object( $subject ) ) {
 
-			// Subscriber, customer, etc.
-			if ( is_callable( array( $subject, 'get_email' ) ) ) {
-				return $subject->get_email();
-			}
-
 			// Raw data.
 			if ( isset( $subject->email ) ) {
 				return $subject->email;
@@ -227,6 +222,11 @@ abstract class Noptin_Abstract_Trigger_Action {
 
 			if ( isset( $subject->user_email ) ) {
 				return $subject->user_email;
+			}
+
+			// Subscriber, customer, etc.
+			if ( is_callable( array( $subject, 'get_email' ) ) ) {
+				return $subject->get_email();
 			}
 		}
 
@@ -237,7 +237,13 @@ abstract class Noptin_Abstract_Trigger_Action {
 
 		// ... or the email argument.
 		if ( ! empty( $args['email'] ) ) {
-			return $args['email'];
+			$email = $args['email'];
+
+			if ( isset( $args['smart_tags'] ) && is_callable( array( $args['smart_tags'], 'replace_in_text_field' ) ) ) {
+				$email = $args['smart_tags']->replace_in_text_field( $email );
+			}
+
+			return $email;
 		}
 
 		return apply_filters( 'noptin_automation_action_get_subject_email', false, $subject, $rule, $args );
