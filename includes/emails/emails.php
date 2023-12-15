@@ -243,13 +243,13 @@ function get_noptin_email_types() {
 		array(
 
 			'normal'     => array(
-				'label'       => __( 'Standard', 'newsletter-optin-box' ),
+				'label'       => __( 'Classic', 'newsletter-optin-box' ),
 				'description' => __( 'Your email will be embedded inside a template', 'newsletter-optin-box' ),
 			),
 
 			'plain_text' => array(
 				'label'       => __( 'Plain Text', 'newsletter-optin-box' ),
-				'description' => __( 'Sends a plain text email. It will contain no HTML which means open tracking and click tracking will not work.', 'newsletter-optin-box' ),
+				'description' => __( 'Send a plain text email. It will contain no HTML which means open tracking and click tracking will not work.', 'newsletter-optin-box' ),
 			),
 
 			'raw_html'   => array(
