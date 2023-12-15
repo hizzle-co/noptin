@@ -71,7 +71,7 @@ class Automated_Email_Campaign_Types extends Controller {
 				'title'        => __( 'Subscriber > Created', 'newsletter-optin-box' ),
 				'category'     => 'Subscribers',
 				'description'  => __( 'Sends an email when someone subscribes to the newsletter.', 'newsletter-optin-box' ),
-				'image'        => plugin_dir_url( \Noptin::$file ) . 'includes/assets/images/logo.png',
+				'image'        => noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' ),
 				'create_url'   => '',
 				'upgrade_url'  => 'https://noptin.com/ultimate-addons-pack/?utm_medium=plugin-dashboard&utm_campaign=automated-emails&utm_source=welcome_emails',
 				'is_available' => false,

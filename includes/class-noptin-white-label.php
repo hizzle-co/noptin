@@ -33,12 +33,34 @@ class Noptin_White_Label {
     public $icon;
 
     /**
+     * The plugin logo image URL.
+     */
+    public $logo;
+
+    /**
      * Class constructor.
      */
     public function __construct() {
-        $this->name    = esc_html__( 'Noptin Newsletter', 'newsletter-optin-box' );
+        $this->name    = 'Noptin';
         $this->version = noptin()->version;
         $this->icon    = 'dashicons-forms';
+        $this->logo    = noptin()->plugin_url . 'includes/assets/images/logo.png';
+    }
+
+    /**
+     * Retrieves a white label option.
+     *
+     * @param string $option The option name.
+     * @param mixed  $default The default value.
+     */
+    public function get( $option, $default = '' ) {
+
+        // Check if the property is set.
+        if ( isset( $this->{$option} ) ) {
+            return $this->{$option};
+        }
+
+        return $default;
     }
 
     /**

@@ -93,7 +93,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 		}
 
 		// Default image.
-		return plugin_dir_url( Noptin::$file ) . 'includes/assets/images/logo.png';
+		noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' );
 	}
 
 	/**

@@ -392,7 +392,7 @@ class Main {
 	 */
 	public function filter_subscribers_collection_js_params( $params ) {
 
-		$params['avatar_url'] = noptin()->plugin_url . 'includes/assets/images/logo.png';
+		$params['avatar_url'] = noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' );
 		$params['ignore']     = array_merge(
 			$params['ignore'],
 			array( 'activity', 'sent_campaigns', 'avatar_url' )

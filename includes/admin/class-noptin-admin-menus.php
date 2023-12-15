@@ -44,12 +44,12 @@ class Noptin_Admin_Menus {
 
 		// The main admin page.
 		add_menu_page(
-			noptin()->white_label->name,
-			noptin()->white_label->name,
+			noptin()->white_label->get( 'name', 'Noptin' ),
+			noptin()->white_label->get( 'name', 'Noptin' ),
 			get_noptin_capability(),
 			'noptin',
 			null,
-			noptin()->white_label->icon,
+			noptin()->white_label->get( 'icon', 'dashicons-forms' ),
 			'23.81204129341231'
 		);
 	}
