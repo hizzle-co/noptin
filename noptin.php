@@ -338,6 +338,9 @@ class Noptin {
 		// DB.
 		$this->db();
 
+		// Emails.
+		\Hizzle\Noptin\Emails\Main::init();
+
 		// REST.
 		$this->api();
 

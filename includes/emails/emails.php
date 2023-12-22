@@ -263,6 +263,17 @@ function get_noptin_email_types() {
 }
 
 /**
+ * Returns an array of email sub types.
+ *
+ * @param string $type
+ * @since 2.3.0
+ * @return array
+ */
+function get_noptin_campaign_sub_types( $type ) {
+	return apply_filters( 'noptin_' . $type . '_sub_types', array() );
+}
+
+/**
  * Returns an array of email templates.
  *
  * @since 1.7.0

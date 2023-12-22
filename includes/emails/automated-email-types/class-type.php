@@ -66,7 +66,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 
 		parent::add_hooks();
 
-		add_filter( "noptin_default_automated_email_{$this->type}_recipient", array( $this, 'get_default_recipient' ) );
+		add_filter( "noptin_default_automation_email_{$this->type}_recipient", array( $this, 'get_default_recipient' ) );
 
 		if ( is_callable( array( $this, 'render_metabox' ) ) ) {
 			add_action( "noptin_automated_email_{$this->type}_options", array( $this, 'render_metabox' ) );

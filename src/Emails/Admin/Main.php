@@ -1,0 +1,346 @@
+<?php
+/**
+ * Emails API: Emails Admin.
+ *
+ * Contains the main admin class for Noptin emails
+ *
+ * @since   2.3.0
+ * @package Noptin
+ */
+
+namespace Hizzle\Noptin\Emails\Admin;
+
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * The main admin class for Noptin emails.
+ *
+ * @since 2.3.0
+ * @internal
+ * @ignore
+ */
+class Main {
+
+	/**
+	 * @var string hook suffix
+	 */
+	public static $hook_suffix;
+
+	/**
+	 * Inits the main emails class.
+	 *
+	 */
+	public static function init() {
+
+		add_action( 'noptin_repair_stuck_campaign', array( __CLASS__, 'repair_stuck_campaign' ) );
+		add_action( 'noptin_force_send_campaign', array( __CLASS__, 'force_send_campaign' ) );
+		add_action( 'noptin_duplicate_email_campaign', array( __CLASS__, 'duplicate_email_campaign' ) );
+		add_action( 'noptin_delete_email_campaign', array( __CLASS__, 'delete_email_campaign' ) );
+		add_filter( 'pre_get_users', array( __CLASS__, 'filter_users_by_campaign' ) );
+		add_action( 'admin_menu', array( __CLASS__, 'email_campaigns_menu' ), 35 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+	}
+
+	/**
+	 * Repairs a stuck campaign.
+	 *
+	 * @since 1.13.0
+	 */
+	public static function repair_stuck_campaign() {
+
+		// Only admins should be able to force send campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_repair_stuck_campaign' ) ) {
+			return;
+		}
+
+		// TODO: Implement this.
+	}
+
+	/**
+	 * Manually sends a campaign.
+	 *
+	 * @since 1.11.2
+	 */
+	public static function force_send_campaign() {
+
+		// Only admins should be able to force send campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_force_send_campaign' ) ) {
+			return;
+		}
+
+		// Retrieve campaign object.
+		$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['noptin-campaign'] ) );
+
+		// Abort if not mass email.
+		if ( ! $campaign->exists() || ! $campaign->is_mass_mail() ) {
+			return;
+		}
+
+		define( 'NOPTIN_RESENDING_CAMPAIGN', true );
+
+		// Set status to publish to allow sending.
+		$campaign->status = 'publish';
+		$campaign->save();
+
+		if ( 'publish' === $campaign->status ) {
+			do_action( 'noptin_send_' . $campaign->type, $campaign->id );
+
+			// Fire another hook for the automation type.
+			if ( 'automation' === $campaign->type && isset( $campaign->options['automation_type'] ) ) {
+				do_action( 'noptin_send_' . $campaign->options['automation_type'], $campaign->id );
+			}
+
+			// Check if the campaign exists.
+			noptin()->admin->show_info( __( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ) );
+		}
+
+		// Redirect.
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign', 'sub_section' ) ) );
+		exit;
+	}
+
+	/**
+	 * Duplicates an email campaign.
+	 *
+	 * @since 1.7.0
+	 */
+	public static function duplicate_email_campaign() {
+
+		// Only admins should be able to duplicate campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_duplicate_campaign' ) ) {
+			return;
+		}
+
+		// Retrieve campaign object.
+		$campaign = new \Noptin\Emails\Email( intval( $_GET['campaign'] ) );
+
+		// Check if the campaign exists.
+		if ( $campaign->exists() ) {
+			$duplicate = $campaign->duplicate();
+
+			if ( $duplicate && ! is_wp_error( $duplicate ) ) {
+				noptin()->admin->show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
+				wp_safe_redirect( $campaign->get_edit_url() );
+				exit;
+			}
+
+			if ( is_wp_error( $duplicate ) ) {
+				noptin()->admin->show_error( $duplicate->get_error_message() );
+			} else {
+				noptin()->admin->show_error( __( 'Unable to duplicate the campaign.', 'newsletter-optin-box' ) );
+			}
+		} else {
+			noptin()->admin->show_error( __( 'Campaign not found.', 'newsletter-optin-box' ) );
+		}
+
+		// Redirect.
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
+		exit;
+	}
+
+	/**
+	 * Deletes an email campaign.
+	 *
+	 * @since 1.7.0
+	 */
+	public static function delete_email_campaign() {
+
+		// Only admins should be able to delete campaigns.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
+			return;
+		}
+
+		// Verify nonces to prevent CSRF attacks.
+		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_delete_campaign' ) ) {
+			return;
+		}
+
+		// Retrieve campaign object.
+		$campaign = new \Noptin\Emails\Email( intval( $_GET['campaign'] ) );
+
+		if ( ! $campaign->exists() ) {
+			return;
+		}
+
+		// Delete the campaign.
+		$campaign->delete();
+
+		// Show success info.
+		noptin()->admin->show_info( __( 'The campaign has been deleted.', 'newsletter-optin-box' ) );
+
+		// Redirect to success page.
+		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
+		exit;
+	}
+
+	/**
+	 * Filters the users query.
+	 *
+	 * @param \WP_User_Query $query
+	 */
+	public static function filter_users_by_campaign( $query ) {
+		global $pagenow;
+
+		if ( is_admin() && 'users.php' === $pagenow && isset( $_GET['noptin_meta_key'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+			$meta_query   = $query->get( 'meta_query' );
+			$meta_query   = empty( $meta_query ) ? array() : $meta_query;
+			$meta_query[] = array(
+				'key'   => sanitize_text_field( $_GET['noptin_meta_key'] ),  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				'value' => (int) $_GET['noptin_meta_value'],  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			);
+			$query->set( 'meta_query', $meta_query );
+
+		}
+	} // Recipients, Email Attachments.
+
+	/**
+	 * Email campaigns menu.
+	 */
+	public static function email_campaigns_menu() {
+
+		self::$hook_suffix = add_submenu_page(
+			'noptin',
+			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
+			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
+			get_noptin_capability(),
+			'noptin-email-campaigns',
+			array( __CLASS__, 'render_admin_page' )
+		);
+	}
+
+	/**
+	 * Displays the admin page.
+	 */
+	public static function render_admin_page() {
+
+		$query_args = urldecode_deep( wp_unslash( $_GET ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		// Abort if unknown email type.
+		if ( empty( $query_args['noptin_email_type'] ) ) {
+			$query_args['noptin_email_type'] = \Hizzle\Noptin\Emails\Main::get_default_email_type();
+		}
+
+		if ( empty( $query_args['noptin_email_type'] ) || ! in_array( $query_args['noptin_email_type'], array_keys( \Hizzle\Noptin\Emails\Main::get_email_types() ), true ) ) {
+			printf(
+				'<div class="wrap"><div class="notice notice-error"><p>%s</p></div></div>',
+				esc_html__( 'Unknown email type.', 'newsletter-optin-box' )
+			);
+			return;
+		}
+
+		// Check if we are editing a campaign.
+		if ( isset( $query_args['noptin_campaign'] ) ) {
+			include plugin_dir_path( __FILE__ ) . 'views/campaign.php';
+		} else {
+
+			// Include the campaigns view.
+			include plugin_dir_path( __FILE__ ) . 'views/campaigns.php';
+		}
+	}
+
+	/**
+	 * Enqueues scripts and styles.
+	 *
+	 * @param string $hook The current admin page.
+	 */
+	public static function enqueue_scripts( $hook ) {
+
+		// Abort if not on the email campaigns page.
+		if ( self::$hook_suffix !== $hook ) {
+			return;
+		}
+
+	}
+
+	/**
+	 * Retrieves the current query args.
+	 *
+	 * @return array
+	 */
+	public static function get_query_args() {
+
+		$query_args = urldecode_deep( wp_unslash( $_GET ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		// Abort if unknown email type.
+		if ( empty( $query_args['noptin_email_type'] ) ) {
+			$query_args['noptin_email_type'] = \Hizzle\Noptin\Emails\Main::get_default_email_type();
+		}
+
+		if ( empty( $query_args['noptin_email_type'] ) || ! in_array( $query_args['noptin_email_type'], array_keys( \Hizzle\Noptin\Emails\Main::get_email_types() ), true ) ) {
+			printf(
+				'<div class="wrap"><div class="notice notice-error"><p>%s</p></div></div>',
+				esc_html__( 'Unknown email type.', 'newsletter-optin-box' )
+			);
+			return;
+		}
+	}
+
+	/**
+	 * Checks the screen to load.
+	 *
+	 * @param array $query_args The current query args.
+	 * @return \Hizzle\Noptin\Emails\Email|null
+	 */
+	public static function prepare_edited_campaign( $query_args ) {
+
+		if ( ! isset( $query_args['noptin_campaign'] ) ) {
+			return null;
+		}
+
+		// Retrieve campaign object.
+		$campaign = new \Hizzle\Noptin\Emails\Email( intval( $query_args['noptin_campaign'] ) );
+
+		if ( $campaign->exists() ) {
+			return $campaign;
+		}
+
+		if ( ! empty( $query_args['noptin_campaign'] ) ) {
+			$campaign->admin_screen = '404';
+			return $campaign;
+		}
+
+		// If this is a new campaign...
+		if ( ! $campaign->exists() ) {
+
+			// Set the type.
+			$campaign->type = sanitize_text_field( $query_args['noptin_email_type'] );
+
+			// Set the sub type.
+			if ( ! empty( $query_args['noptin_email_sub_type'] ) ) {
+				$campaign->options[ $campaign->type . '_type' ] = sanitize_text_field( $query_args['noptin_email_sub_type'] );
+			} else {
+				$sub_types = $campaign->get_sub_types();
+
+				if ( ! empty( $sub_types ) ) {
+					include plugin_dir_path( __FILE__ ) . 'sub-type.php';
+					return;
+				}
+			}
+
+			// Set the sender.
+			if ( ! empty( $query_args['noptin_email_sender'] ) ) {
+				$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
+			} elseif ( $campaign->is_mass_mail() ) {
+				include plugin_dir_path( __FILE__ ) . 'sender.php';
+				return;
+			}
+		}
+	}
+}

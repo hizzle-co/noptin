@@ -22,7 +22,6 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
 		add_action( 'admin_menu', array( $this, 'subscribers_menu' ), 33 );
-		add_action( 'admin_menu', array( $this, 'email_campaigns_menu' ), 35 );
 		add_action( 'admin_menu', array( $this, 'automation_rules_menu' ), 40 );
 		add_action( 'admin_menu', array( $this, 'settings_menu' ), 50 );
 		add_action( 'admin_menu', array( $this, 'tools_menu' ), 60 );
@@ -34,7 +33,6 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_head', array( $this, 'hide_welcome_wizard_menu' ), 10 );
 
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
-
 	}
 
 	/**
@@ -164,31 +162,6 @@ class Noptin_Admin_Menus {
 		);
 
 		Noptin_Scripts::add_admin_script( $hook_suffix, 'table' );
-	}
-
-	/**
-	 * Email campaigns menu.
-	 */
-	public function email_campaigns_menu() {
-
-		$section     = noptin()->emails->admin->get_current_section();
-		$tab         = noptin()->emails->admin->get_current_tab();
-		$hook_suffix = add_submenu_page(
-			'noptin',
-			noptin()->emails->admin->get_current_admin_page_title(),
-			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-email-campaigns',
-			array( noptin()->emails->admin, 'render_admin_page' )
-		);
-
-		if ( 'edit_campaign' === $section ) {
-			Noptin_Scripts::add_admin_script( $hook_suffix, 'edit-email-campaign' );
-		}
-
-		if ( 'edit_campaign' !== $section && 'automations' === $tab ) {
-			Noptin_Scripts::add_admin_script( $hook_suffix, 'create-automated-email' );
-		}
 	}
 
 	/**

@@ -31,6 +31,11 @@ class Main {
 	public $bounce_handler;
 
 	/**
+	 * @var Controller[] Rest controllers.
+	 */
+	public $routes = array();
+
+	/**
 	 * Stores the main db instance.
 	 *
 	 * @access private

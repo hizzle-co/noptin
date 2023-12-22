@@ -1428,15 +1428,20 @@ function noptin_get_available_languages() {
  */
 function noptin_format_date( $date_time ) {
 
+	if ( empty( $date_time ) ) {
+		return '&mdash;';
+	}
+
 	$timestamp = strtotime( $date_time );
-	$time_diff = current_time( 'timestamp' ) - $timestamp;
+	$current   = time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+	$time_diff = $current - $timestamp;
 
 	if ( $timestamp && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
 
 		$relative = sprintf(
 			/* translators: %s: Human-readable time difference. */
 			__( '%s ago', 'newsletter-optin-box' ),
-			human_time_diff( $timestamp, current_time( 'timestamp' ) )
+			human_time_diff( $timestamp, $current )
 		);
 
 	} else {
@@ -1445,7 +1450,6 @@ function noptin_format_date( $date_time ) {
 
 	$date = esc_attr( date_i18n( 'Y/m/d g:i:s a', $timestamp ) );
 	return "<abbr title='$date'>$relative<abbr>";
-
 }
 
 /**
