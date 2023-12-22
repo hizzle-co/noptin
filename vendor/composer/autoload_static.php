@@ -38,6 +38,7 @@ class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
         'Hizzle\\Noptin\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+            1 => __DIR__ . '/../..' . '/build',
         ),
     );
 
