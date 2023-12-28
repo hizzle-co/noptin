@@ -28,6 +28,11 @@ class Main {
 	public static $hook_suffix;
 
 	/**
+	 * @var \Hizzle\Noptin\Emails\Email[] Edited campaigns.
+	 */
+	private static $edited_campaigns = array();
+
+	/**
 	 * Inits the main emails class.
 	 *
 	 */
@@ -128,7 +133,7 @@ class Main {
 		}
 
 		// Retrieve campaign object.
-		$campaign = new \Noptin\Emails\Email( intval( $_GET['campaign'] ) );
+		$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['campaign'] ) );
 
 		// Check if the campaign exists.
 		if ( $campaign->exists() ) {
@@ -172,7 +177,7 @@ class Main {
 		}
 
 		// Retrieve campaign object.
-		$campaign = new \Noptin\Emails\Email( intval( $_GET['campaign'] ) );
+		$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['campaign'] ) );
 
 		if ( ! $campaign->exists() ) {
 			return;
@@ -230,13 +235,9 @@ class Main {
 	 */
 	public static function render_admin_page() {
 
-		$query_args = urldecode_deep( wp_unslash( $_GET ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$query_args = self::get_query_args();
 
 		// Abort if unknown email type.
-		if ( empty( $query_args['noptin_email_type'] ) ) {
-			$query_args['noptin_email_type'] = \Hizzle\Noptin\Emails\Main::get_default_email_type();
-		}
-
 		if ( empty( $query_args['noptin_email_type'] ) || ! in_array( $query_args['noptin_email_type'], array_keys( \Hizzle\Noptin\Emails\Main::get_email_types() ), true ) ) {
 			printf(
 				'<div class="wrap"><div class="notice notice-error"><p>%s</p></div></div>',
@@ -267,6 +268,55 @@ class Main {
 			return;
 		}
 
+		$query_args      = self::get_query_args();
+		$edited_campaign = self::prepare_edited_campaign( $query_args );
+		$script          = empty( $edited_campaign ) ? 'view-campaigns' : $edited_campaign->admin_screen;
+		$type            = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );
+		$base_path       = plugin_dir_path( __DIR__ );
+
+		// Load the js.
+		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
+			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
+
+			wp_enqueue_script(
+				'noptin-' . $script,
+				plugins_url( 'assets/js/' . $script . '.js', __DIR__ ),
+				$config['dependencies'],
+				$config['version'],
+				true
+			);
+
+			// Prepare the block editor.
+			if ( 'email-editor' === $script ) {
+				Editor::load( $edited_campaign );
+			}
+
+			// Localize the script.
+			wp_localize_script(
+				'noptin-' . $script,
+				'noptinEmailSettingsMisc',
+				apply_filters(
+					'noptin_email_settings_misc',
+					array(
+						'data'    => (object) ( empty( $type ) ? array() : $type->to_array() ),
+						'senders' => get_noptin_email_senders( true ),
+					)
+				)
+			);
+		}
+
+		// Load the css.
+		wp_enqueue_style( 'wp-components' );
+
+		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/css/style-' . $script . '.css' ) ) {
+			$version = empty( $config ) ? filemtime( plugin_dir_path( __DIR__ ) . 'assets/css/style-' . $script . '.css' ) : $config['version'];
+			wp_enqueue_style(
+				'noptin-' . $script,
+				plugins_url( 'assets/css/style-' . $script . '.css', __DIR__ ),
+				'email-editor' === $script ? array( 'wp-block-editor', 'wp-edit-post', 'wp-format-library' ) : array(),
+				$version
+			);
+		}
 	}
 
 	/**
@@ -283,13 +333,7 @@ class Main {
 			$query_args['noptin_email_type'] = \Hizzle\Noptin\Emails\Main::get_default_email_type();
 		}
 
-		if ( empty( $query_args['noptin_email_type'] ) || ! in_array( $query_args['noptin_email_type'], array_keys( \Hizzle\Noptin\Emails\Main::get_email_types() ), true ) ) {
-			printf(
-				'<div class="wrap"><div class="notice notice-error"><p>%s</p></div></div>',
-				esc_html__( 'Unknown email type.', 'newsletter-optin-box' )
-			);
-			return;
-		}
+		return $query_args;
 	}
 
 	/**
@@ -300,19 +344,29 @@ class Main {
 	 */
 	public static function prepare_edited_campaign( $query_args ) {
 
+		// Abort if no campaign is being edited.
 		if ( ! isset( $query_args['noptin_campaign'] ) ) {
 			return null;
 		}
 
+		// Check if we already have the campaign.
+		$cache_key = md5( wp_json_encode( $query_args ) );
+
+		if ( isset( self::$edited_campaigns[ $cache_key ] ) ) {
+			return self::$edited_campaigns[ $cache_key ];
+		}
+
 		// Retrieve campaign object.
-		$campaign = new \Hizzle\Noptin\Emails\Email( intval( $query_args['noptin_campaign'] ) );
+		self::$edited_campaigns[ $cache_key ] = new \Hizzle\Noptin\Emails\Email( intval( $query_args['noptin_campaign'] ) );
+
+		$campaign = &self::$edited_campaigns[ $cache_key ];
 
 		if ( $campaign->exists() ) {
 			return $campaign;
 		}
 
 		if ( ! empty( $query_args['noptin_campaign'] ) ) {
-			$campaign->admin_screen = '404';
+			$campaign->admin_screen = 'not-found';
 			return $campaign;
 		}
 
@@ -329,8 +383,8 @@ class Main {
 				$sub_types = $campaign->get_sub_types();
 
 				if ( ! empty( $sub_types ) ) {
-					include plugin_dir_path( __FILE__ ) . 'sub-type.php';
-					return;
+					$campaign->admin_screen = 'select-type';
+					return $campaign;
 				}
 			}
 
@@ -338,9 +392,10 @@ class Main {
 			if ( ! empty( $query_args['noptin_email_sender'] ) ) {
 				$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
 			} elseif ( $campaign->is_mass_mail() ) {
-				include plugin_dir_path( __FILE__ ) . 'sender.php';
-				return;
+				$campaign->admin_screen = 'select-sender';
 			}
 		}
+
+		return $campaign;
 	}
 }

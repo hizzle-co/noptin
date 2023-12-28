@@ -20,7 +20,7 @@ class Email {
 	public $is_legacy = false;
 
 	/** @var bool The current admin screen. */
-	public $admin_screen = 'edit';
+	public $admin_screen = 'email-editor';
 
 	/** @var int Unique identifier for the email. */
 	public $id = 0;
@@ -529,6 +529,11 @@ class Email {
 
 		if ( empty( $type ) ) {
 			return $base;
+		}
+
+		// If the type has a parent, add it to the URL.
+		if ( ! empty( $type->parent_type ) && ! empty( $this->parent_id ) ) {
+			$base = add_query_arg( 'noptin_parent_id', $this->parent_id, $base );
 		}
 
 		return add_query_arg( 'noptin_email_type', $type->type, $base );

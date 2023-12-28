@@ -63,6 +63,8 @@ class Main {
 				'label'              => __( 'Newsletter', 'newsletter-optin-box' ),
 				'plural_label'       => __( 'Newsletters', 'newsletter-optin-box' ),
 				'new_campaign_label' => __( 'New Campaign', 'newsletter-optin-box' ),
+				'click_to_add_first' => __( 'Click the button below to send your first newsletter campaign', 'newsletter-optin-box' ),
+				'is_mass_mail'       => true,
 			)
 		);
 
@@ -74,6 +76,7 @@ class Main {
 				'label'              => __( 'Automated Email', 'newsletter-optin-box' ),
 				'plural_label'       => __( 'Automated Emails', 'newsletter-optin-box' ),
 				'new_campaign_label' => __( 'New Automated Email', 'newsletter-optin-box' ),
+				'click_to_add_first' => __( 'Click the button below to set-up your first automated email', 'newsletter-optin-box' ),
 			)
 		);
 	}
@@ -96,6 +99,12 @@ class Main {
 	 * @return Type|false
 	 */
 	public static function get_email_type( $type ) {
+
+		// Abort if email type is empty.
+		if ( empty( $type ) ) {
+			return false;
+		}
+
 		return isset( self::$types[ $type ] ) ? self::$types[ $type ] : false;
 	}
 

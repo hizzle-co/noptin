@@ -29,6 +29,8 @@ class Noptin_COM_Updater {
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
 		add_filter( 'noptin_email_types', array( __CLASS__, 'add_email_types' ) );
+		add_filter( 'noptin_email_settings_misc', array( __CLASS__, 'filter_email_settings' ) );
+		add_filter( 'noptin_automation_sub_types', array( __CLASS__, 'upsell_automation_types' ), 5 );
 	}
 
 	/**
@@ -440,6 +442,86 @@ class Noptin_COM_Updater {
 		return $types;
 	}
 
+	/**
+	 * Filters the email settings.
+	 *
+	 * @param array $settings The email settings.
+	 * @return array
+	 */
+	public static function filter_email_settings( $settings ) {
+
+		// Installed add-ons.
+		$installed_addons    = wp_list_pluck( Noptin_COM::get_installed_addons(), '_filename', 'slug' );
+		$slug                = 'noptin-addons-pack';
+		$settings['license'] = array(
+			'key'          => Noptin_COM::get_active_license_key(),
+			'upgrade_url'  => noptin_get_upsell_url( 'pricing', 'upgrade', 'emails' ),
+			'install_text' => isset( $installed_addons[ $slug ] ) ? __( 'Activate', 'newsletter-optin-box' ) : __( 'Install', 'newsletter-optin-box' ),
+			'install_desc' => isset( $installed_addons[ $slug ] ) ?
+				__( 'Activate the Noptin Addons Pack addon to unlock.', 'newsletter-optin-box' ) :
+				__( 'Install the Noptin Addons Pack addon to unlock.', 'newsletter-optin-box' ),
+			'install_url'  => isset( $installed_addons[ $slug ] ) ?
+				wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $installed_addons[ $slug ] ), 'activate-plugin_' . $installed_addons[ $slug ] ) :
+				wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=noptin-plugin-with-slug-' . $slug ), 'install-plugin_noptin-plugin-with-slug-' . $slug ),
+		);
+
+		// Unset install_text, install_desc and install_url if the license is empty.
+		if ( empty( $settings['license']['key'] ) ) {
+			unset( $settings['license']['install_text'] );
+			unset( $settings['license']['install_url'] );
+			unset( $settings['license']['install_desc'] );
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Upsells automation types.
+	 *
+	 * @param array $types The automation types.
+	 * @return array
+	 */
+	public static function upsell_automation_types( $types ) {
+
+		return array_merge(
+			$types,
+			array(
+				'periodic'                      => array(
+					'label'        => __( 'Periodic', 'newsletter-optin-box' ),
+					'description'  => __( 'Automatically send your subscribers, users, or customers an email every X days.', 'newsletter-optin-box' ),
+					'image'        => array(
+						'icon' => 'calendar',
+						'fill' => '#3f9ef4',
+					),
+					'category'     => 'Mass Mail',
+					'is_mass_mail' => true,
+					'is_installed' => false,
+				),
+				'automation_rule_new_user'      => array(
+					'label'        => __( 'Welcome New Users', 'newsletter-optin-box' ),
+					'description'  => __( 'Welcome new users to your website, introduce yourself, etc.', 'newsletter-optin-box' ),
+					'image'        => array(
+						'icon' => 'admin-users',
+						'fill' => '#404040',
+					),
+					'category'     => 'WordPress',
+					'is_mass_mail' => false,
+					'is_installed' => false,
+				),
+				'automation_rule_set_user_role' => array(
+					'label'        => __( 'User Role Changes', 'newsletter-optin-box' ),
+					'description'  => __( 'Send an email whenever a user role is added, removed, or updated.', 'newsletter-optin-box' ),
+					'image'        => array(
+						'icon' => 'admin-users',
+						'fill' => '#404040',
+					),
+					'category'     => 'WordPress',
+					'is_mass_mail' => false,
+					'is_installed' => false,
+				),
+			)
+		);
+	}
 }
 
 Noptin_COM_Updater::load();

@@ -66,9 +66,8 @@ class Main {
 	 */
 	public function __construct() {
 
-		$this->automated_email_campaign_types = new Automated_Email_Campaign_Types( 'automated-email-campaign-types' );
-		$this->bounce_handler                 = new Bounce_Handler( 'bounce_handler' );
-		$this->settings                       = new Settings( 'settings' );
+		$this->bounce_handler = new Bounce_Handler( 'bounce_handler' );
+		$this->settings       = new Settings( 'settings' );
 
 		// Fire action hook.
 		do_action( 'noptin_rest_api_init', $this );

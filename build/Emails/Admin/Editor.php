@@ -1,51 +1,26 @@
 <?php
 
-namespace Noptin\Emails\Admin;
+namespace Hizzle\Noptin\Emails\Admin;
 
 /**
  * Provides functions to load Gutenberg assets
  */
 class Editor {
-	private $hook_suffix;
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'email_campaigns_menu' ), 37 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'load' ) );
-	}
 
 	/**
 	 * Load Gutenberg
 	 *
-	 * Based on wp-admin/edit-form-blocks.php
+	 * @param \Hizzle\Noptin\Emails\Email $edited_campaign The edited campaign.
 	 *
 	 * @return void
 	 */
-	public function load( $hook_suffix ) {
-
-		if ( $hook_suffix !== $this->hook_suffix ) {
-			return;
-		}
+	public static function load( $edited_campaign ) {
 
 		// TinyMCE.
 		wp_enqueue_editor();
-		$this->setup_media();
-		add_action( 'wp_print_footer_scripts', array( '_WP_Editors', 'print_default_editor_scripts' ), 45 );
+		self::setup_media();
 
-		// Editor scripts.
-		$path   = plugin_dir_path( NOPTIN_PREMIUM_FILE );
-		$config = include $path . 'assets/js/dnd-email/index.asset.php';
-
-		wp_enqueue_script(
-			'noptin-email-editor',
-			plugins_url( 'assets/js/dnd-email/index.js', NOPTIN_PREMIUM_FILE ),
-			$config['dependencies'],
-			$config['version'],
-			true
-		);
-
+		// Prepare iframe styles.
 		$styles  = wp_styles();
 		$to_load = array();
 
@@ -75,16 +50,17 @@ class Editor {
 			}
 		}
 
-		// Localize noptin-email-editor with url to wp-components style.
+		// Localize noptin-email-editor.
 		wp_localize_script(
 			'noptin-email-editor',
 			'noptinEmailEditorSettings',
 			array(
 				'styles'    => (object) $to_load,
-				'settings'  => $this->get_editor_settings(),
+				'settings'  => self::get_editor_settings(),
+				'campaign'  => $edited_campaign->to_array(),
 				'types'     => get_noptin_email_types(),
 				'templates' => get_noptin_email_templates(),
-				'back'      => esc_url( remove_query_arg( 'campaign', add_query_arg( 'sub_section', false ) ) ),
+				'back'      => esc_url( $edited_campaign->get_base_url() ),
 				'user'      => array(
 					'id'        => get_current_user_id(),
 					'canUpload' => current_user_can( 'upload_files' ),
@@ -93,19 +69,11 @@ class Editor {
 			)
 		);
 
-		wp_enqueue_style(
-			'noptin-email-editor',
-			plugins_url( 'assets/js/assets/style-es6-dnd-email.css', NOPTIN_PREMIUM_FILE ),
-			array( 'wp-components', 'wp-block-editor', 'wp-edit-post', 'wp-format-library' ),
-			$config['version']
-		);
-
 		// Add 'block-editor-page' to body class.
-		add_filter( 'admin_body_class', array( $this, 'add_block_editor_body_class' ) );
-
+		add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
 	}
 
-	public function add_block_editor_body_class( $classes ) {
+	public static function add_block_editor_body_class( $classes ) {
 		$classes .= ' block-editor-page is-fullscreen-mode';
 		return $classes;
 	}
@@ -115,13 +83,10 @@ class Editor {
 	 *
 	 * @return Array
 	 */
-	public function get_editor_settings() {
+	public static function get_editor_settings() {
 		// This is copied from core.
 		// phpcs:disable
-		global $editor_styles, $post;
-
-		$color_palette = current( (array) get_theme_support( 'editor-color-palette' ) );
-		$font_sizes    = current( (array) get_theme_support( 'editor-font-sizes' ) );
+		global $editor_styles;
 
 		$max_upload_size = wp_max_upload_size();
 		if ( ! $max_upload_size ) {
@@ -141,27 +106,6 @@ class Editor {
 				),
 			),
 		);
-
-		if ( $editor_styles && current_theme_supports( 'editor-styles' ) ) {
-			foreach ( $editor_styles as $style ) {
-				if ( preg_match( '~^(https?:)?//~', $style ) ) {
-					$response = wp_remote_get( $style );
-					if ( ! is_wp_error( $response ) ) {
-						$styles[] = array(
-							'css' => wp_remote_retrieve_body( $response ),
-						);
-					}
-				} else {
-					$file = get_theme_file_path( $style );
-					if ( is_file( $file ) ) {
-						$styles[] = array(
-							'css'     => file_get_contents( $file ),
-							'baseURL' => get_theme_file_uri( $style ),
-						);
-					}
-				}
-			}
-		}
 
 		$image_size_names = apply_filters(
 			'image_size_names_choose',
@@ -329,28 +273,9 @@ class Editor {
 	 *
 	 * @return void
 	 */
-	public function setup_media() {
+	public static function setup_media() {
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 
 		wp_enqueue_media();
-	}
-
-	/**
-	 * Email campaigns menu.
-	 */
-	public function email_campaigns_menu() {
-
-		$this->hook_suffix = add_submenu_page(
-			'noptin',
-			'Email Campaigns --- New',
-			'Email Campaigns --- New',
-			get_noptin_capability(),
-			'noptin-email-campaigns-new',
-			function() {
-				?>
-				<div id="noptin-email-campaigns__new" class="block-editor"></div>
-				<?php
-			}
-		);
 	}
 }

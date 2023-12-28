@@ -19,14 +19,6 @@
 	$table = new Table( $email_type );
 	$table->prepare_items();
 
-	// Do we have any campaigns?
-	if ( ! $table->has_items() ) {
-		$query_args['noptin_campaign']       = 0;
-		$query_args['noptin_is_first_email'] = 1;
-		include plugin_dir_path( __FILE__ ) . 'campaign.php';
-		return;
-	}
-
 ?>
 
 <div class="wrap noptin noptin-email-campaigns noptin-<?php echo sanitize_html_class( $email_type->type ); ?> noptin-<?php echo sanitize_html_class( $email_type->type ); ?>-main" id="noptin-wrapper">

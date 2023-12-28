@@ -66,6 +66,8 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 
 		parent::add_hooks();
 
+		add_filter( 'noptin_automation_sub_types', array( $this, 'register_automation_type' ) );
+
 		add_filter( "noptin_default_automation_email_{$this->type}_recipient", array( $this, 'get_default_recipient' ) );
 
 		if ( is_callable( array( $this, 'render_metabox' ) ) ) {
@@ -87,7 +89,27 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		if ( is_callable( array( $this, 'on_delete_campaign' ) ) ) {
 			add_action( "noptin_{$this->type}_campaign_before_delete", array( $this, 'on_delete_campaign' ) );
 		}
+	}
 
+	/**
+	 * Registers the email sub types.
+	 *
+	 * @param array $types
+	 * @return array
+	 */
+	public function register_automation_type( $types ) {
+		return array_merge(
+			$types,
+			array(
+				$this->type => array(
+					'label'        => $this->get_name(),
+					'description'  => $this->get_description(),
+					'image'        => $this->get_image(),
+					'category'     => $this->category,
+					'is_mass_mail' => 'Mass Mail' === $this->category,
+				),
+			)
+		);
 	}
 
 	/**
