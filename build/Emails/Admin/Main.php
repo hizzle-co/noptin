@@ -246,8 +246,16 @@ class Main {
 			return;
 		}
 
+		$edited_campaign = self::prepare_edited_campaign( $query_args );
+
 		// Check if we are editing a campaign.
-		if ( isset( $query_args['noptin_campaign'] ) ) {
+		if ( ! empty( $edited_campaign ) ) {
+
+			if ( 'not-found' === $edited_campaign->admin_screen ) {
+				include plugin_dir_path( __FILE__ ) . 'views/404.php';
+				return;
+			}
+
 			include plugin_dir_path( __FILE__ ) . 'views/campaign.php';
 		} else {
 
@@ -379,21 +387,15 @@ class Main {
 			// Set the sub type.
 			if ( ! empty( $query_args['noptin_email_sub_type'] ) ) {
 				$campaign->options[ $campaign->type . '_type' ] = sanitize_text_field( $query_args['noptin_email_sub_type'] );
-			} else {
-				$sub_types = $campaign->get_sub_types();
-
-				if ( ! empty( $sub_types ) ) {
-					$campaign->admin_screen = 'select-type';
-					return $campaign;
-				}
 			}
 
 			// Set the sender.
 			if ( ! empty( $query_args['noptin_email_sender'] ) ) {
 				$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
-			} elseif ( $campaign->is_mass_mail() ) {
-				$campaign->admin_screen = 'select-sender';
 			}
+
+			// Set the author.
+			$campaign->author = get_current_user_id();
 		}
 
 		return $campaign;
