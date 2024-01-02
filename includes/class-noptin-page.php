@@ -36,9 +36,6 @@ class Noptin_Page {
 		// Email click.
 		add_filter( 'noptin_actions_page_template', array( $this, 'email_click' ) );
 
-		// Preview email.
-		add_action( 'noptin_page_view_in_browser', array( $this, 'browser_preview' ) );
-
 		// Filter template.
 		add_action( 'parse_request', array( $this, 'listen' ), 0 );
 
@@ -174,6 +171,8 @@ class Noptin_Page {
 			if ( $subscriber_id ) {
 				$default['sid'] = $subscriber_id;
 			}
+
+			$default['email'] = $recipient;
 
 			return $default;
 		}
@@ -430,44 +429,6 @@ class Noptin_Page {
 		if ( ! empty( $recipient['sid'] ) ) {
 			confirm_noptin_subscriber_email( $recipient['sid'] );
 		}
-	}
-
-	/**
-	 * Previews an email.
-	 *
-	 * @access public
-	 * @since  2.0.0
-	 * @return array
-	 */
-	public function browser_preview() {
-		$request = $this->get_request_recipient();
-
-		// Ensure an email campaign is specified.
-		if ( empty( $request ) || empty( $request['cid'] ) ) {
-			$this->print_paragraph( __( 'Invalid or missing campaign id.', 'newsletter-optin-box' ) );
-			return;
-		}
-
-		// Fetch campaign.
-		$campaign = noptin_get_email_campaign_object( $request['cid'] );
-
-		// Ensure this is a newsletter campaign.
-		if ( empty( $campaign ) || ! $campaign->exists() ) {
-			$this->print_paragraph( __( 'Invalid or missing campaign id.', 'newsletter-optin-box' ) );
-			return;
-		}
-
-		// and that the current user is an administrator
-		if ( ! current_user_can( get_noptin_capability() ) && empty( $request['email'] ) ) {
-			$this->print_paragraph( __( 'Invalid or missing campaign id.', 'newsletter-optin-box' ) );
-			return;
-		}
-
-		define( 'NOPTIN_PREVIEW_EMAIL', isset( $request['email'] ) ? $request['email'] : '' );
-
-		echo $campaign->get_browser_preview_content( $campaign ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		exit;
-
 	}
 
 	public function print_paragraph( $content, $class = 'noptin-padded' ) {

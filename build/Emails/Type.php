@@ -42,6 +42,11 @@ class Type {
 	public $is_mass_mail = false;
 
 	/**
+	 * @var string Checks if this email supports timing.
+	 */
+	public $supports_timing = false;
+
+	/**
 	 * @var string The email type label.
 	 */
 	public $label;

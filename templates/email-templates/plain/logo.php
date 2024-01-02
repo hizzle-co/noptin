@@ -6,7 +6,7 @@
 			<tbody>
 				<tr>
 					<td></td>
-					<td class="container" bgcolor="#FFFFFF" valign="top" style="padding-bottom: 0;">
+					<td class="container" bgcolor="<?php echo esc_attr( $settings['content_background'] ); ?>" valign="top" style="padding-bottom: 0;">
 						<div class="content">
 							<table>
 								<tbody>

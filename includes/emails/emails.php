@@ -82,6 +82,7 @@ function noptin_generate_email_content( $email, $recipient, $track = true ) {
 		'footer_text'  => $email->get( 'footer_text' ),
 		'preview_text' => $email->get( 'preview_text' ),
 		'campaign_id'  => $email->id,
+		'campaign'     => $email,
 		'track'        => $track,
 		'recipient'    => $recipient,
 	);
@@ -295,6 +296,105 @@ function get_noptin_email_templates() {
 	);
 
 	return apply_filters( 'noptin_email_templates', $templates );
+}
+
+/**
+ * Returns an array of email template settings.
+ *
+ * @param string|null $template
+ * @param Hizzle\Noptin\Emails\Email $email
+ * @return array
+ */
+function get_noptin_email_template_settings( $template, $email = null ) {
+	$defaults = get_noptin_email_template_defaults();
+
+	if ( ! isset( $defaults[ $template ] ) ) {
+		return array();
+	}
+
+	$settings = $defaults[ $template ];
+
+	if ( ! empty( $email ) ) {
+		foreach ( $settings as $key => $value ) {
+			$overide = $email->get( $key );
+
+			if ( ! empty( $overide ) ) {
+				$settings[ $key ] = $overide;
+			}
+		}
+	}
+
+	return $settings;
+}
+
+/**
+ * Returns an array of email template defaults.
+ *
+ * @since 1.7.0
+ * @return array
+ */
+function get_noptin_email_template_defaults() {
+
+	$brand_color = get_noptin_option( 'brand_color' );
+	$brand_color = empty( $brand_color ) ? '#1a82e2' : $brand_color;
+
+	$defaults = array(
+		'paste' => array(
+			'color'              => '#111111',
+			'footer_text_color'  => '#666666',
+			'content_background' => '#ffffff',
+			'background_color'   => '#e9ecef',
+			'width'              => '600px',
+			'custom_css'         => '',
+			'font_family'        => 'Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+			'font_size'          => '16px',
+			'font_style'         => 'normal',
+			'font_weight'        => 'normal',
+			'line_height'        => '1.5',
+		),
+		'plain'        => array(
+			'color'              => '#454545',
+			'footer_text_color'  => '#666666',
+			'content_background' => '#ffffff',
+			'background_color'   => '#ffffff',
+			'width'              => '600px',
+			'custom_css'         => '',
+			'font_family'        => 'Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+			'font_size'          => '16px',
+			'font_style'         => 'normal',
+			'font_weight'        => 'normal',
+			'line_height'        => '1.4',
+		),
+		'merriweather' => array(
+			'color'              => '#454545',
+			'footer_text_color'  => '#666666',
+			'content_background' => '#ffffff',
+			'background_color'   => '#d2c7ba',
+			'width'              => '600px',
+			'custom_css'         => '',
+			'font_family'        => '\'Merriweather\', Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+			'font_size'          => '15px',
+			'font_style'         => 'normal',
+			'font_weight'        => 'normal',
+			'line_height'        => '1.5',
+		),
+	);
+
+	foreach ( array_keys( get_noptin_email_templates() ) as $template ) {
+
+		if ( ! isset( $defaults[ $template ] ) ) {
+			$defaults[ $template ] = array();
+		}
+
+		$defaults[ $template ]['link_color'] = $brand_color;
+
+		// Set custom_css is not set.
+		if ( ! isset( $defaults[ $template ]['custom_css'] ) ) {
+			$defaults[ $template ]['custom_css'] = '';
+		}
+	}
+
+	return apply_filters( 'noptin_email_template_defaults', $defaults );
 }
 
 /**

@@ -147,7 +147,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return wp_kses_post( $GLOBALS['noptin_woocommerce_email_template_footer_text'] );
-
 	}
 
 	/**

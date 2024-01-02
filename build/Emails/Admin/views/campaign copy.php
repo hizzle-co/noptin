@@ -1,0 +1,1 @@
+<div id="noptin-email-campaigns__editor" class="block-editor"></div>

@@ -1,4 +1,12 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
+<?php
+
+	defined( 'ABSPATH' ) || exit;
+
+	/**
+	 * @var array $settings
+	 * @var string $email_heading
+	 */
+?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -21,7 +29,7 @@
 						<tbody>
 							<tr>
 								<td></td>
-								<td class="container" bgcolor="#FFFFFF" valign="top">
+								<td class="container" bgcolor="<?php echo esc_attr( $settings['content_background'] ); ?>" valign="top">
 									<!-- content -->
 									<div class="content">
 										<table>

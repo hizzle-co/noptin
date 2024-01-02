@@ -15,9 +15,6 @@ class Noptin_Post_Types {
 	 */
 	public function __construct() {
 
-		// Register post types.
-		$this->register_post_types();
-
 		// And some actions.
 		add_filter( 'post_row_actions', array( $this, 'remove_actions' ), 10, 2 );
 		add_action( 'noptin_reset_form_stats', array( $this, 'reset_form_stats' ), 10, 2 );
@@ -36,68 +33,6 @@ class Noptin_Post_Types {
 
 		// Add custom sortable colums.
 		add_filter( 'manage_edit-noptin-form_sortable_columns', array( $this, 'add_sortable_columns' ) );
-	}
-
-	/**
-	 * Register post types
-	 */
-	public function register_post_types() {
-
-		if ( ! is_blog_installed() || post_type_exists( 'noptin-campaign' ) ) {
-			return;
-		}
-
-		/**
-		 * Fires before custom post types are registered
-		 *
-		 * @since 1.0.0
-		*/
-		do_action( 'noptin_register_post_type' );
-
-		// Email campaign.
-		register_post_type( 'noptin-campaign', $this->get_email_campaign_post_type_details() );
-
-		/**
-		 * Fires after custom post types are registered
-		 *
-		 * @since 1.0.0
-		*/
-		do_action( 'noptin_after_register_post_type' );
-
-	}
-
-	/**
-	 * Returns registration details for noptin-campaigns post type
-	 *
-	 * @access      public
-	 * @since       1.1.2
-	 * @return      array
-	 */
-	public function get_email_campaign_post_type_details() {
-
-		return apply_filters(
-			'noptin_email_campaigns_post_type_details',
-			array(
-				'labels'              => array(),
-				'label'               => __( 'Email Campaigns', 'newsletter-optin-box' ),
-				'description'         => '',
-				'public'              => false,
-				'show_ui'             => false,
-				'map_meta_cap'        => true,
-				'publicly_queryable'  => false,
-				'exclude_from_search' => true,
-				'hierarchical'        => false,
-				'query_var'           => false,
-				'supports'            => array( 'author' ),
-				'has_archive'         => false,
-				'show_in_nav_menus'   => false,
-				'show_in_rest'        => false,
-				'show_in_menu'        => false,
-				'menu_icon'           => '',
-				'can_export'          => false,
-			)
-		);
-
 	}
 
 	/**

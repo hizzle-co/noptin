@@ -396,6 +396,11 @@ class Main {
 
 			// Set the author.
 			$campaign->author = get_current_user_id();
+
+			// Check if we have manual recipients.
+			if ( ! empty( $query_args['noptin_recipients'] ) ) {
+				$campaign->options['manual_recipients_ids'] = noptin_parse_int_list( $query_args['noptin_recipients'] );
+			}
 		}
 
 		return $campaign;

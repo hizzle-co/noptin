@@ -34,6 +34,7 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 
 		// Displays sender options.
 		add_action( 'noptin_sender_options_' . $this->sender, array( $this, 'display_sending_options' ) );
+		add_filter( 'noptin_email_senders', array( $this, 'add_sender_settings' ) );
 
 		// Adds a new email to the queue.
 		add_action( 'noptin_send_email_via_' . $this->sender, array( $this, 'send' ), 10, 2 );
@@ -57,6 +58,27 @@ abstract class Noptin_Mass_Mailer extends Noptin_Background_Process {
 	 * @return bool
 	 */
 	abstract public function display_sending_options( $campaign );
+
+	/**
+	 * Returns the sender settings.
+	 *
+	 * @return array
+	 */
+	public function add_sender_settings( $senders ) {
+		if ( isset( $senders[ $this->sender ] ) ) {
+			$senders[ $this->sender ]['settings'] = $this->get_sender_settings();
+		}
+		return $senders;
+	}
+
+	/**
+	 * Get the sender settings.
+	 *
+	 * @return array
+	 */
+	public function get_sender_settings() {
+		return array();
+	}
 
 	/**
 	 * Displays setting fields.

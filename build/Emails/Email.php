@@ -54,6 +54,11 @@ class Email {
 	public $subject = '';
 
 	/**
+	 * @var string The campaign content.
+	 */
+	public $content = '';
+
+	/**
 	 * @var int The ID for the author of the email.
 	 */
 	public $author;
@@ -76,18 +81,13 @@ class Email {
 		}
 
 		// Loading a saved campaign.
-		if ( is_numeric( $args ) ) {
+		if ( is_numeric( $args ) || $args instanceof \WP_Post ) {
 			$this->init( $args );
 		}
 
 		// Data array.
 		if ( is_array( $args ) ) {
 			$this->init_args( $args );
-		}
-
-		// If no uuid, generate one.
-		if ( empty( $this->options['uuid'] ) ) {
-			$this->options['uuid'] = wp_generate_uuid4();
 		}
 	}
 
@@ -120,6 +120,7 @@ class Email {
 		$this->status    = $post->post_status;
 		$this->name      = $post->post_title;
 		$this->created   = $post->post_date;
+		$this->content   = $post->post_content;
 		$this->type      = get_post_meta( $post->ID, 'campaign_type', true );
 		$this->author    = $post->post_author;
 
@@ -291,9 +292,7 @@ class Email {
 	 * @return bool
 	 */
 	public function supports_timing() {
-
-		$supports_timing = ! in_array( $this->get_sub_type(), array( 'post_digest', 'periodic' ), true );
-		return apply_filters( 'noptin_email_supports_timing', $supports_timing, $this );
+		return apply_filters( 'noptin_email_supports_timing', $this->supports( 'supports_timing' ), $this );
 	}
 
 	/**
@@ -430,7 +429,11 @@ class Email {
 
 		}
 
-		return $this->get( 'content_' . $email_type );
+		if ( isset( $this->options[ 'content_' . $email_type ] ) ) {
+			return $this->options[ 'content_' . $email_type ];
+		}
+
+		return $this->content;
 	}
 
 	/**
@@ -482,6 +485,39 @@ class Email {
 		}
 
 		return $label ? $units[ $unit ] : $unit;
+	}
+
+	/**
+	 * Returns the js data for this email.
+	 *
+	 * return array
+	 */
+	public function get_js_data() {
+		$manual_recipients = array();
+		$email_sender      = $this->get_sender();
+
+		foreach ( $this->get_manual_recipients_ids() as $recipient_id ) {
+
+			$recipient = get_noptin_email_recipient( $recipient_id, $email_sender );
+
+			if ( empty( $recipient ) ) {
+				continue;
+			}
+
+			$recipient['id']     = $recipient_id;
+			$recipient['avatar'] = get_avatar_url( $recipient['email'], array( 'size' => 32 ) );
+			$manual_recipients[] = $recipient;
+		}
+
+		return array(
+			'is_automation_rule'    => $this->is_automation_rule(),
+			'trigger'               => $this->get_trigger(),
+			'supports_timing'       => $this->supports_timing(),
+			'placeholder_recipient' => $this->get_placeholder_recipient(),
+			'email_type'            => Main::get_email_type( $this->type ),
+			'is_mass_mail'          => $this->is_mass_mail(),
+			'manual_recipients'     => $manual_recipients,
+		);
 	}
 
 	/**
@@ -566,13 +602,31 @@ class Email {
 				wp_json_encode(
 					array(
 						'cid'   => $this->id,
-						'uuid'  => $this->options['uuid'],
 						'email' => $recipient_email,
 					)
 				)
 			),
 			true
 		);
+	}
+
+	/**
+	 * Prepares the preview content if needed.
+	 *
+	 * @param string $mode Either 'browser' or 'preview'.
+	 * @param array $recipient The recipient meta info.
+	 * @return true|\WP_Error
+	 */
+	public function prepare_preview( $mode, $recipient ) {
+		try {
+			do_action( 'noptin_prepare_email_preview', $mode, $recipient, $this );
+			do_action( "noptin_prepare_{$this->type}_email_preview", $mode, $recipient, $this );
+			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_preview", $mode, $recipient, $this );
+		} catch ( \Exception $e ) {
+			return new \WP_Error( 'exception', $e->getMessage() );
+		}
+
+		return true;
 	}
 
 	/**
@@ -706,7 +760,7 @@ class Email {
 			'post_title'   => empty( $this->name ) ? $this->subject : $this->name, // Backwards compatibility.
 			'post_status'  => $this->status,
 			'post_author'  => $this->author,
-			'post_content' => $this->get_content( $this->get_email_type() ),
+			'post_content' => $this->content,
 			'meta_input'   => array(
 				'campaign_type' => $this->type,
 				'campaign_data' => array_merge(
@@ -790,14 +844,29 @@ class Email {
 	 * @return bool
 	 */
 	public function is_mass_mail() {
+		return apply_filters( "noptin_{$this->type}_is_mass_mail", $this->supports( 'is_mass_mail' ), $this->get_sub_type(), $this );
+	}
 
-		if ( 'newsletter' === $this->type ) {
-			return true;
+	/**
+	 * Checks if a certain feature is supported for this email.
+	 *
+	 * @return bool
+	 */
+	public function supports( $feature ) {
+
+		$type = Main::get_email_type( $this->type );
+
+		if ( ! $type ) {
+			return false;
 		}
 
-		$sub_type     = $this->get_sub_type();
-		$is_mass_mail = in_array( $sub_type, array( 'post_digest', 'post_notifications', 'periodic' ), true );
+		$sub_type  = $this->get_sub_type();
+		$sub_types = $type->get_sub_types();
 
-		return apply_filters( "noptin_{$this->type}_is_mass_mail", $is_mass_mail, $sub_type, $this );
+		if ( ! empty( $sub_type ) && isset( $sub_types[ $sub_type ] ) && isset( $sub_types[ $sub_type ][ $feature ] ) ) {
+			return $sub_types[ $sub_type ][ $feature ];
+		}
+
+		return isset( $type->{$feature} ) ? $type->{$feature} : false;
 	}
 }

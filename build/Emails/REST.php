@@ -14,178 +14,40 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Main rest class.
  */
-class REST extends \Hizzle\Noptin\REST\Controller {
+class REST extends \WP_REST_Posts_Controller {
 
     /**
-	 * Registers REST routes.
+	 * Registers the routes for posts.
 	 *
-	 * @since 1.0.0
+	 * @since 4.7.0
+	 *
+	 * @see register_rest_route()
 	 */
 	public function register_routes() {
 
-		// Create a new email campaign.
-		register_rest_route(
-			$this->namespace,
-			'/' . $this->rest_base,
-			array(
-				array(
-					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'create_item' ),
-					'permission_callback' => array( $this, 'can_manage_noptin' ),
-					'args'                => array(),
-				),
-				'schema' => array( $this, 'get_public_item_schema' ),
-			)
-		);
-
-        // Update an email campaign.
-        register_rest_route(
-            $this->namespace,
-            '/' . $this->rest_base . '/(?P<id>[\d]+)',
-            array(
-                array(
-                    'methods'             => \WP_REST_Server::EDITABLE,
-                    'callback'            => array( $this, 'update_item' ),
-                    'permission_callback' => array( $this, 'can_manage_noptin' ),
-                    'args'                => array(),
-                ),
-                'schema' => array( $this, 'get_public_item_schema' ),
-            )
-        );
+		parent::register_routes();
 
 		// Send a test email.
 		register_rest_route(
 			$this->namespace,
-			'/' . $this->rest_base . '/send-test',
+			'/' . $this->rest_base . '/(?P<id>[\d]+)/send-test',
 			array(
+				'args'        => array(
+					'id' => array(
+						'description' => __( 'Unique identifier for the post.', 'newsletter-optin-box' ),
+						'type'        => 'integer',
+					),
+				),
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'send_test_email' ),
-					'permission_callback' => array( $this, 'can_manage_noptin' ),
-					'args'                => array(),
+					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE ),
 				),
-				'schema' => array( $this, 'get_public_item_schema' ),
+				'allow_batch' => $this->allow_batch,
+				'schema'      => array( $this, 'get_public_item_schema' ),
 			)
 		);
-	}
-
-    /**
-	 * Retrieves the item's schema, conforming to JSON Schema.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array Item schema data.
-	 */
-	public function get_item_schema() {
-
-		$schema = array(
-			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'Email campaign',
-			'type'       => 'object',
-			'properties' => array(
-				'id'         => array(
-					'description' => 'Unique identifier for the email',
-					'type'        => 'integer',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'parent_id'  => array(
-					'description' => 'Unique identifier for the parent email',
-					'type'        => 'integer',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'author'     => array(
-					'description' => 'The ID for the author of the email',
-					'type'        => 'integer',
-					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
-				),
-				'created'    => array(
-					'description' => 'Schedule date for the email',
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'status'     => array(
-					'description' => 'Email status',
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-					'enum'        => array( 'draft', 'publish', 'future' ),
-				),
-				'subject'    => array(
-					'description' => 'Email subject',
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-					'required'    => true,
-				),
-				'name'       => array(
-					'description' => 'Campaign name',
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'type'       => array(
-					'description' => 'Campaign type',
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-					'default'     => 'newsletter',
-				),
-				'options'    => array(
-					'description' => 'Extra campaign options',
-					'type'        => 'object',
-					'context'     => array( 'view', 'edit' ),
-				),
-				'test_email' => array(
-					'description' => 'The email address to send a test email to',
-					'type'        => 'string',
-					'context'     => array( 'view', 'edit' ),
-				),
-			),
-		);
-
-		return $this->add_additional_fields_schema( $schema );
-	}
-
-	/**
-	 * Creates a single item.
-	 *
-	 * @since 1.0.0
-	 * @param \WP_REST_Request $request Full details about the request.
-	 */
-	public function create_item( $request ) {
-
-		// Prepare the email.
-		$email         = new Email( $request->get_params() );
-		$email->author = get_current_user_id();
-
-		// Create the email.
-		$email->save();
-
-		// Return the email.
-		if ( $email->exists() ) {
-			return rest_ensure_response( $email->to_array() );
-		}
-
-		return new \WP_Error( 'noptin_rest_cannot_create', __( 'Cannot create email', 'newsletter-optin-box' ), array( 'status' => 500 ) );
-	}
-
-	/**
-	 * Updates a single item.
-	 *
-	 * @since 1.0.0
-	 * @param \WP_REST_Request $request Full details about the request.
-	 */
-	public function update_item( $request ) {
-		// Init the email.
-		$email = new Email( $request->get_params() );
-
-		// Abort if the email does not exist.
-		if ( ! $email->exists() ) {
-			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Invalid email', 'newsletter-optin-box' ), array( 'status' => 404 ) );
-		}
-
-		// Update the email.
-		$email->save();
-
-		// Return the email.
-		return rest_ensure_response( $email->to_array() );
 	}
 
 	/**
@@ -196,46 +58,62 @@ class REST extends \Hizzle\Noptin\REST\Controller {
 	 */
 	public function send_test_email( $request ) {
 
-		// Prepare the email.
-		$email = new Email( $request->get_params() );
+		$GLOBALS['current_noptin_email'] = $request->get_param( 'email' );
 
-		// Prepare the test email.
-		$test_email = noptin_parse_list( $request->get_param( 'test_email' ), true );
-		$test_email = ( ! empty( $test_email ) && is_email( $test_email[0] ) ) ? $test_email : array( get_option( 'admin_email' ) );
+		// Check if we have a recipient for the test email.
+		if ( empty( $GLOBALS['current_noptin_email'] ) || ! is_email( $GLOBALS['current_noptin_email'] ) ) {
+			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Please provide a valid email address', 'newsletter-optin-box' ), array( 'status' => 400 ) );
+		}
 
-		// Abort if no subject.
-		if ( empty( $email->subject ) ) {
+		$original = get_post( $request->get_param( 'id' ) );
+		$autosave = wp_get_post_autosave( $request->get_param( 'id' ) );
+		$email    = new Email( $autosave ? $autosave : $original );
+
+		// Abort if the email is not found.
+		if ( ! $email->exists() ) {
+			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Invalid email', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+		}
+
+		// If we have an autosave, use the parent and ID of the original.
+		if ( $autosave ) {
+			$email->id        = $original->ID;
+			$email->parent_id = $original->post_parent;
+		}
+
+		// Ensure we have a subject.
+		$subject = $email->get_subject();
+		if ( empty( $subject ) ) {
 			return new \WP_Error( 'noptin_rest_email_invalid', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ), array( 'status' => 404 ) );
 		}
 
-		foreach ( $test_email as $email_address ) {
+		$user = array(
+			'sid'   => get_current_noptin_subscriber_id(),
+			'uid'   => get_current_user_id(),
+			'email' => $GLOBALS['current_noptin_email'],
+		);
 
-			// Abort if the email address is invalid.
-			if ( ! is_email( $email_address ) ) {
-				return new \WP_Error( 'noptin_rest_email_invalid', __( 'Invalid email address', 'newsletter-optin-box' ), array( 'status' => 400 ) );
-			}
+		// Prepare test content if needed.
+		$prepare_preview = $email->prepare_preview( 'preview', $user );
 
-			// Prepare the preview.
-			$preview = $email->get_browser_preview_content( $email_address );
-
-			// Abort if the preview is empty.
-			if ( empty( $preview ) ) {
-				return new \WP_Error( 'noptin_rest_email_invalid', __( 'The email body cannot be empty.', 'newsletter-optin-box' ), array( 'status' => 404 ) );
-			}
-
-			// Send the email.
-			$result = $email->send( $email_address );
-
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
+		if ( is_wp_error( $prepare_preview ) ) {
+			return $prepare_preview;
 		}
 
-		return rest_ensure_response(
+		// Generate the preview.
+		$preview = noptin_generate_email_content( $email, $user, false );
+
+		if ( is_wp_error( $preview ) ) {
+			wp_die( esc_html( $preview->get_error_message() ) );
+		}
+
+		// Send the email.
+
+		noptin_error_log( $request->get_params() ); return rest_ensure_response(
 			array(
 				'success' => true,
 				'message' => __( 'Your test email has been sent', 'newsletter-optin-box' ),
 			)
 		);
+
 	}
 }

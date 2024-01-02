@@ -1,3 +1,12 @@
+<?php
+
+	defined( 'ABSPATH' ) || exit;
+
+	/**
+	 * @var array $settings
+	 */
+?>
+
 <style type="text/css">
 
 	/**
@@ -13,7 +22,26 @@
 	a {
 		-ms-text-size-adjust: 100%; /* 1 */
 		-webkit-text-size-adjust: 100%; /* 2 */
-		font-family: Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-family: <?php echo esc_html( $settings['font_family'] ); ?>;
+	}
+
+	body,
+	table,
+	td,
+	div,
+	ol,
+	ul,
+	p {
+		font-size: <?php echo esc_attr( $settings['font_size'] ); ?>;
+		line-height: <?php echo esc_attr( $settings['line_height'] ); ?>;
+		color: <?php echo esc_attr( $settings['color'] ); ?>;
+		font-weight: <?php echo esc_attr( $settings['font_weight'] ); ?>;
+		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
+	}
+
+	a {
+		color: <?php echo esc_attr( $settings['link_color'] ); ?>;
+		text-decoration: none;
 	}
 
 	p, figure {

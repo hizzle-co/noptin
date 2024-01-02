@@ -20,9 +20,6 @@ defined( 'ABSPATH' ) || exit;
  */
 class Noptin_Emails_Admin {
 
-	/** @var Noptin_Newsletter_Emails_Admin */
-	public $newsletters_admin;
-
 	/** @var Noptin_Automated_Emails_Admin */
 	public $automations_admin;
 
@@ -33,11 +30,9 @@ class Noptin_Emails_Admin {
 	public function __construct() {
 
 		// Load files.
-		include plugin_dir_path( __FILE__ ) . 'class-newsletter-emails-admin.php';
 		include plugin_dir_path( __FILE__ ) . 'class-automated-emails-admin.php';
 
 		// Init props.
-		$this->newsletters_admin = new Noptin_Newsletter_Emails_Admin();
 		$this->automations_admin = new Noptin_Automated_Emails_Admin();
 	}
 
@@ -52,11 +47,8 @@ class Noptin_Emails_Admin {
 		add_action( 'noptin_duplicate_email_campaign', array( $this, 'duplicate_email_campaign' ) );
 		add_action( 'noptin_delete_email_campaign', array( $this, 'delete_email_campaign' ) );
 		add_filter( 'pre_get_users', array( $this, 'filter_users_by_campaign' ) );
-		add_action( 'wp_ajax_noptin_send_test_email', array( $this, 'send_test_email' ) );
 		add_action( 'add_meta_boxes_noptin_automations', array( $this, 'register_metaboxes' ) );
-		add_action( 'add_meta_boxes_noptin_newsletters', array( $this, 'register_metaboxes' ) );
 
-		$this->newsletters_admin->add_hooks();
 		$this->automations_admin->add_hooks();
 	}
 
@@ -341,76 +333,6 @@ class Noptin_Emails_Admin {
 			$query->set( 'meta_query', $meta_query );
 
 		}
-
-	}
-
-	/**
-	 * Sends a test email
-	 *
-	 * @access      public
-	 * @since       1.1.2
-	 * @return      void
-	 */
-	public function send_test_email() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin-admin-nonce', 'noptin-admin-nonce' );
-
-		// Check capability.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		define( 'NOPTIN_SENDING_TEST_EMAIL', true );
-
-		// Prepare data.
-		$data = wp_unslash( $_POST );
-
-		// Check if we have a recipient for the test email.
-		if ( empty( $data['email'] ) || ! is_email( $data['email'] ) ) {
-			wp_send_json_error( __( 'Please provide a valid email address', 'newsletter-optin-box' ) );
-		}
-
-		$GLOBALS['current_noptin_email'] = $data['email'];
-
-		// Handle automated emails?
-		if ( ! empty( $data['noptin_is_automation'] ) ) {
-			noptin()->emails->automated_email_types->send_test_email( $data['noptin_email'], sanitize_email( $data['email'] ) );
-		}
-
-		// Handle newsletter email.
-		$email = new Noptin_Newsletter_Email( $data['noptin_email'] );
-
-		// Ensure we have a subject.
-		$subject = $email->get_subject();
-		if ( empty( $subject ) ) {
-			wp_send_json_error( __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
-		}
-
-		// Ensure we have content.
-		$content = $email->get_content( $email->get_email_type() );
-		if ( empty( $content ) ) {
-			wp_send_json_error( __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
-		}
-
-		// Try sending the test email.
-		try {
-			$result = noptin()->emails->newsletter->send_test( $email, sanitize_email( $data['email'] ) );
-		} catch ( Exception $e ) {
-			$result = new WP_Error( 'exception', $e->getMessage() );
-		}
-
-		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( $result->get_error_message() );
-		}
-
-		// Successfuly sent the email.
-		if ( $result ) {
-			wp_send_json_success( __( 'Your test email has been sent', 'newsletter-optin-box' ) );
-		}
-
-		// Failed sending the email.
-		wp_send_json_error( __( 'Could not send the test email', 'newsletter-optin-box' ) );
 
 	}
 

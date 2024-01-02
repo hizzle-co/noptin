@@ -81,6 +81,13 @@ class Noptin_Email_Generator {
 	public $campaign_id = false;
 
 	/**
+	 * The campaign for this email.
+	 *
+	 * @var Hizzle\Noptin\Emails\Email
+	 */
+	public $campaign;
+
+	/**
 	 * Whether or not to track the email.
 	 *
 	 * @var bool
@@ -98,7 +105,6 @@ class Noptin_Email_Generator {
 		foreach ( $args as $key => $value ) {
 			$this->$key = $value;
 		}
-
 	}
 
 	/**
@@ -132,7 +138,6 @@ class Noptin_Email_Generator {
 		}
 
 		return apply_filters( 'generate_noptin_email', $email, $this );
-
 	}
 
 	/**
@@ -170,7 +175,6 @@ class Noptin_Email_Generator {
 
 		// Filters a post processed email.
 		return apply_filters( 'noptin_generate_plain_text_email_content', $content, $this );
-
 	}
 
 	/**
@@ -201,6 +205,8 @@ class Noptin_Email_Generator {
 			$this->template = 'none';
 		}
 
+		$settings = get_noptin_email_template_settings( $template, $this->campaign );
+
 		// Check if the template exists.
 		$is_local_template = locate_noptin_template( "email-templates/$template/email-body.php" );
 
@@ -208,15 +214,96 @@ class Noptin_Email_Generator {
 		if ( ! empty( $is_local_template ) ) {
 
 			ob_start();
-			get_noptin_template( "email-templates/$template/email-header.php", array( 'email_heading' => $this->heading ) );
-			get_noptin_template( "email-templates/$template/email-body.php", array( 'content' => $content ) );
-			get_noptin_template( "email-templates/$template/email-footer.php", array( 'footer' => wpautop( $this->footer_text ) ) );
+
+			// Heading.
+			get_noptin_template(
+				"email-templates/$template/email-header.php",
+				array(
+					'email_heading' => $this->heading,
+					'settings'      => $settings,
+				)
+			);
+
+			// Body.
+			get_noptin_template(
+				"email-templates/$template/email-body.php",
+				array(
+					'content'  => $content,
+					'settings' => $settings,
+				)
+			);
+
+			// Footer.
+			get_noptin_template(
+				"email-templates/$template/email-footer.php",
+				array(
+					'footer'   => wpautop( $this->footer_text ),
+					'settings' => $settings,
+				)
+			);
+
 			$email = ob_get_clean();
 
 		}
 
 		// Allow other plugins to filter generated email content.
 		$email = apply_filters( 'noptin_email_after_apply_template', $email, $this );
+
+		// Post-process and return.
+		return $this->post_process( $email );
+	}
+
+	/**
+	 * Generates a visual email.
+	 *
+	 * @return string
+	 */
+	public function generate_visual_email() {
+noptin_dump( $this ); exit;
+		// Prepare vars.
+		$content  = $this->content;
+		$template = 'noptin-visual';
+		$email    = $content;
+
+		$settings = get_noptin_email_template_settings( $template, $this->campaign );
+
+		// Check if the template exists.
+		$is_local_template = locate_noptin_template( "email-templates/$template/email-body.php" );
+
+		// ... then process local template.
+		if ( ! empty( $is_local_template ) ) {
+
+			ob_start();
+
+			// Heading.
+			get_noptin_template(
+				"email-templates/$template/email-header.php",
+				array(
+					'email_heading' => empty( $this->campaign ) ? $this->heading : $this->campaign->get_subject(),
+					'settings'      => $settings,
+				)
+			);
+
+			// Body.
+			get_noptin_template(
+				"email-templates/$template/email-body.php",
+				array(
+					'content'  => $content,
+					'settings' => $settings,
+				)
+			);
+
+			// Footer.
+			get_noptin_template(
+				"email-templates/$template/email-footer.php",
+				array(
+					'settings' => $settings,
+				)
+			);
+
+			$email = ob_get_clean();
+
+		}
 
 		// Post-process and return.
 		return $this->post_process( $email );

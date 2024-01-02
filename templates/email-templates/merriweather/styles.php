@@ -31,9 +31,21 @@
 	a {
 		-ms-text-size-adjust: 100%; /* 1 */
 		-webkit-text-size-adjust: 100%; /* 2 */
-		font-family: 'Merriweather', Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-		font-weight: 400;
-		font-size: 15px;
+		font-family: <?php echo esc_html( $settings['font_family'] ); ?>;
+	}
+
+	body,
+	table,
+	td,
+	div,
+	ol,
+	ul,
+	p {
+		font-size: <?php echo esc_attr( $settings['font_size'] ); ?>;
+		line-height: <?php echo esc_attr( $settings['line_height'] ); ?>;
+		color: <?php echo esc_attr( $settings['color'] ); ?>;
+		font-weight: <?php echo esc_attr( $settings['font_weight'] ); ?>;
+		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
 	}
 
 	h1,
@@ -42,7 +54,7 @@
 	h4,
 	h5,
 	h6 {
-		font-family: 'Merriweather Bold', Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-family: <?php echo esc_html( $settings['font_family'] ); ?>;
 		font-weight: 700;
 	}
 

@@ -32,7 +32,7 @@ abstract class Email_Sender {
 	public function __construct() {
 
 		// Displays sender options.
-		add_action( 'noptin_sender_options_' . $this->sender, array( $this, 'display_sending_options' ) );
+		add_filter( 'noptin_email_senders', array( $this, 'add_sender_settings' ) );
 
 		// Prepares a recipient.
 		add_filter( "noptin_{$this->sender}_email_recipient", array( $this, 'filter_recipient' ), 10, 2 );
@@ -66,13 +66,25 @@ abstract class Email_Sender {
 	abstract public function done_sending( $campaign );
 
 	/**
-	 * Displays newsletter sending options.
+	 * Returns the sender settings.
 	 *
-	 * @param Noptin_Newsletter_Email|Noptin_automated_Email $campaign
-	 *
-	 * @return bool
+	 * @return array
 	 */
-	abstract public function display_sending_options( $campaign );
+	public function add_sender_settings( $senders ) {
+		if ( isset( $senders[ $this->sender ] ) ) {
+			$senders[ $this->sender ]['settings'] = $this->get_sender_settings();
+		}
+		return $senders;
+	}
+
+	/**
+	 * Get the sender settings.
+	 *
+	 * @return array
+	 */
+	public function get_sender_settings() {
+		return array();
+	}
 
 	/**
 	 * Displays setting fields.

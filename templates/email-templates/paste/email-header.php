@@ -1,4 +1,12 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
+<?php
+
+	defined( 'ABSPATH' ) || exit;
+
+	/**
+	 * @var array $settings
+	 * @var string $email_heading
+	 */
+?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -9,7 +17,7 @@
 	<meta name="robots" content="noindex, nofollow" />
 	<?php require plugin_dir_path( __FILE__ ) . 'styles.php'; ?>
 </head>
-<body style="background-color: #e9ecef;">
+<body style="background-color: <?php echo esc_attr( $settings['background_color'] ); ?>">
 
 	<!--[if mso]>
 		<style type=”text/css”>
@@ -23,7 +31,7 @@
 		</style>
 	<![endif]-->
 	<!-- start body -->
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 10px;">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 10px; color: <?php echo esc_attr( $settings['color'] ); ?>">
 
 		<?php require plugin_dir_path( __FILE__ ) . 'logo.php'; ?>
 
@@ -31,16 +39,16 @@
 
 			<!-- start hero -->
 			<tr>
-				<td align="center" bgcolor="#e9ecef">
+				<td align="center" bgcolor="<?php echo esc_attr( $settings['background_color'] ); ?>">
 					<!--[if (gte mso 9)|(IE)]>
-						<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+						<table align="center" border="0" cellpadding="0" cellspacing="0" width="<?php echo esc_attr( $settings['width'] ); ?>">
 							<tr>
-								<td align="center" valign="top" width="600">
+								<td align="center" valign="top" width="<?php echo esc_attr( $settings['width'] ); ?>">
 					<![endif]-->
-					<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: <?php echo esc_attr( $settings['width'] ); ?>;">
 						<tr>
-							<td align="left" bgcolor="#ffffff" style="padding: 36px 24px 0; border-top: 3px solid #d4dadf;">
-								<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;"><?php echo esc_html( $email_heading ); ?></h1>
+							<td align="left" bgcolor="<?php echo esc_attr( $settings['content_background'] ); ?>" style="padding: 36px 24px 0; border-top: 3px solid #d4dadf;">
+								<h1 style="margin: 0; letter-spacing: -1px;"><?php echo esc_html( $email_heading ); ?></h1>
 							</td>
 						</tr>
 					</table>

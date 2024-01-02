@@ -1,4 +1,12 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
+<?php
+
+	defined( 'ABSPATH' ) || exit;
+
+	/**
+	 * @var array $settings
+	 */
+?>
+
 <style type="text/css">
 	/* Based on The MailChimp Reset INLINE: Yes. */
 	/* Client-specific Styles */
@@ -48,7 +56,6 @@
 
 	h1, h2, h3, h4, h5, h6 {
 		font-weight: 700;
-		color: #cecece;
 	}
 
 	h1 {
@@ -102,8 +109,21 @@
 	a {
 		-ms-text-size-adjust: 100%; /* 1 */
 		-webkit-text-size-adjust: 100%; /* 2 */
-		font-family: Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-		color: #454545;
+		font-family: <?php echo esc_html( $settings['font_family'] ); ?>;
+	}
+
+	body,
+	table,
+	td,
+	div,
+	ol,
+	ul,
+	p {
+		font-size: <?php echo esc_attr( $settings['font_size'] ); ?>;
+		line-height: <?php echo esc_attr( $settings['line_height'] ); ?>;
+		color: <?php echo esc_attr( $settings['color'] ); ?>;
+		font-weight: <?php echo esc_attr( $settings['font_weight'] ); ?>;
+		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
 	}
 
 	body {
@@ -111,21 +131,15 @@
 		-ms-text-size-adjust: 100%;
 		width: 100%!important;
 		height: 100%;
-		font-weight: 400;
-		font-size: 100%;
-		line-height: 1.6;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
 		margin: 20px 0 10px;
-		color: #000;
 		line-height: 1.2;
 	}
 
 	div, p, ul, ol {
 		margin-bottom: 10px;
-		font-weight: normal;
-		line-height: 1.4;
 	}
 
 	ul li,
@@ -135,9 +149,15 @@
 	}
 
 	/* Body */
+	body,
+	#backgroundTable {
+		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>
+	}
+
 	table.body-wrap {
 		width: 100%;
 		padding: 30px;
+		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>
 	}
 
 
@@ -145,22 +165,22 @@
 	table.footer-wrap {
 		width: 100%;
 		clear: both!important;
+		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>
 	}
 
 	.footer-wrap .container p {
 		font-size: 12px;
-		color: #666;
+		color: <?php echo esc_attr( $settings['footer_text_color'] ); ?>;
 	}
 
 	table.footer-wrap a {
 		color: #999;
 	}
 
-
 	/* Give it some responsive love */
 	.container {
 		display: block!important;
-		max-width: 600px!important;
+		max-width: <?php echo esc_attr( $settings['width'] ); ?>!important;
 		margin: 0 auto!important; /* makes it centered */
 		clear: both!important;
 	}
@@ -172,7 +192,7 @@
 
 	/* This should also be a block element, so that it will fill 100% of the .container */
 	.content {
-		max-width: 600px;
+		max-width: <?php echo esc_attr( $settings['width'] ); ?>;
 		margin: 0 auto;
 		display: block;
 	}

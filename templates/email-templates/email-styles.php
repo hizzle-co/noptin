@@ -10,6 +10,14 @@
 
 	$brand_color = get_noptin_option( 'brand_color' );
 	$brand_color = empty( $brand_color ) ? '#1a82e2' : $brand_color;
+
+	if ( ! empty( $generator->campaign ) ) {
+		$override = $generator->campaign->get( 'link_color' );
+
+		if ( ! empty( $override ) ) {
+			$brand_color = $override;
+		}
+	}
 ?>
 
 <style type="text/css">
@@ -247,6 +255,15 @@
 	<?php
 		// Note that esc_html() cannot be used because `div &gt; span` is not interpreted properly.
 		echo strip_tags( get_noptin_option( 'custom_css', '' ) ); // phpcs:ignore
+
+		if ( ! empty( $generator->campaign ) ) {
+			$custom_css = $generator->campaign->get( 'custom_css' );
+
+			if ( ! empty( $custom_css ) ) {
+				echo strip_tags( $custom_css ); // phpcs:ignore
+			}
+		}
+
 		do_action( 'noptin_email_styles', $generator );
 	?>
 </style>
