@@ -18,6 +18,7 @@
 			$brand_color = $override;
 		}
 	}
+
 ?>
 
 <style type="text/css">
@@ -28,6 +29,8 @@
 	div[style*="margin: 16px 0;"] {
 		margin: 0 !important;
 	}
+
+	.ExternalClass {width: 100%;}
 
 	/**
 	* Remove extra space added to tables and cells in Outlook.
@@ -68,6 +71,7 @@
 
 	a {
 		color: <?php echo esc_html( $brand_color ); ?>;
+		text-decoration: none;
 	}
 
 	.bg-brand {
@@ -80,13 +84,6 @@
 
 	.image_fix {
 		display: block;
-	}
-
-	p, ul, ol {
-		margin-bottom: 10px;
-		margin-top: 10px;
-		font-weight: normal;
-		line-height: 1.4;
 	}
 
 	ul li,

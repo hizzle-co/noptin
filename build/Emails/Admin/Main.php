@@ -256,6 +256,11 @@ class Main {
 				return;
 			}
 
+			if ( ! $edited_campaign->current_user_can_edit() ) {
+				include plugin_dir_path( __FILE__ ) . 'views/permission-denied.php';
+				return;
+			}
+
 			include plugin_dir_path( __FILE__ ) . 'views/campaign.php';
 		} else {
 
@@ -338,7 +343,12 @@ class Main {
 
 		// Abort if unknown email type.
 		if ( empty( $query_args['noptin_email_type'] ) ) {
-			$query_args['noptin_email_type'] = \Hizzle\Noptin\Emails\Main::get_default_email_type();
+
+			if ( ! empty( $query_args['noptin_campaign'] ) ) {
+				$query_args['noptin_email_type'] = get_post_meta( intval( $query_args['noptin_campaign'] ), 'campaign_type', true );
+			} else {
+				$query_args['noptin_email_type'] = \Hizzle\Noptin\Emails\Main::get_default_email_type();
+			}
 		}
 
 		return $query_args;

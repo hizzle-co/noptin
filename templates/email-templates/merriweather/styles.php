@@ -111,9 +111,8 @@
 		max-width: 100%;
 	}
 
-	p{
+	p, ul, ol, h1, h2, h3, h4, h5, h6  {
 		margin: 1em 0;
-		padding: 5px 0px 5px 0px;
 	}
 
 	.footer p{

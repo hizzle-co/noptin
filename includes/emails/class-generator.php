@@ -259,7 +259,7 @@ class Noptin_Email_Generator {
 	 * @return string
 	 */
 	public function generate_visual_email() {
-noptin_dump( $this ); exit;
+
 		// Prepare vars.
 		$content  = $this->content;
 		$template = 'noptin-visual';
@@ -279,7 +279,7 @@ noptin_dump( $this ); exit;
 			get_noptin_template(
 				"email-templates/$template/email-header.php",
 				array(
-					'email_heading' => empty( $this->campaign ) ? $this->heading : $this->campaign->get_subject(),
+					'email_heading' => $this->campaign->get_subject(),
 					'settings'      => $settings,
 				)
 			);

@@ -39,14 +39,8 @@
 		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
 	}
 
-	a {
-		color: <?php echo esc_attr( $settings['link_color'] ); ?>;
-		text-decoration: none;
-	}
-
-	p, figure {
+	p, ul, ol, h1, h2, h3, h4, h5, h6  {
 		margin: 1em 0;
-		padding: 5px 0px 5px 0px;
 	}
 
 	.footer p{

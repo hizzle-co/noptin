@@ -100,7 +100,7 @@ class Email {
 		$post = get_post( $id );
 
 		// Abort if the post does not exist.
-		if ( empty( $post ) || 'noptin-campaign' !== $post->post_type ) {
+		if ( empty( $post ) || ! in_array( $post->post_type, array( 'noptin-campaign', 'revision' ), true ) ) {
 			$this->id = 0;
 			return false;
 		}
@@ -110,7 +110,25 @@ class Email {
 
 		// Check if we're dealing with a legacy campaign.
 		if ( ! is_array( $data ) ) {
-			$this->is_legacy = true;
+			$all_meta = get_post_meta( $post->ID );
+
+			foreach ( $all_meta as $key => $value ) {
+
+				if ( 'noptin_sends_after' === $key ) {
+					$key = 'sends_after';
+				}
+
+				if ( 'noptin_sends_after_unit' === $key ) {
+					$key = 'sends_after_unit';
+				}
+
+				$this->options[ $key ] = $value[0];
+			}
+
+			$this->options['email_type']     = 'normal';
+			$this->options['content_normal'] = $post->post_content;
+
+			update_post_meta( $post->ID, 'campaign_data', $this->options );
 		} else {
 			$this->options = $data;
 		}
@@ -124,8 +142,15 @@ class Email {
 		$this->type      = get_post_meta( $post->ID, 'campaign_type', true );
 		$this->author    = $post->post_author;
 
-		// Backwards compatibility: Newsletter emails used to store the email subject in the post title.
-		$this->subject = empty( $this->options['subject'] ) ? $post->post_title : $this->options['subject'];
+		// Backwards compatibility.
+		if ( ! isset( $this->options['subject'] ) ) {
+			$this->options['subject'] = $post->post_title;
+
+			// Update the campaign data.
+			update_post_meta( $post->ID, 'campaign_data', $this->options );
+		}
+
+		$this->subject = $this->options['subject'];
 
 		// Add sub-type to options array.
 		$key                   = $this->type . '_type';
@@ -209,8 +234,6 @@ class Email {
 		// Fetch value.
 		if ( isset( $this->$key ) ) {
 			$value = $this->$key;
-		} elseif ( $this->is_legacy ) {
-			$value = $this->exists() ? '' : get_post_meta( $this->id, $key, true );
 		} else {
 			$value = isset( $this->options[ $key ] ) ? $this->options[ $key ] : '';
 		}
@@ -318,7 +341,7 @@ class Email {
 		}
 
 		// Prepare recipient.
-		$recipient = $this->is_legacy ? '' : $this->get( 'recipients' );
+		$recipient = $this->get( 'recipients' );
 
 		// If no recipient, use the default recipient.
 		if ( empty( $recipient ) ) {
@@ -365,12 +388,6 @@ class Email {
 	 * @return bool
 	 */
 	public function get_email_type() {
-
-		// Abort if this is a legacy email type.
-		if ( $this->is_legacy ) {
-			return 'normal';
-		}
-
 		$email_type = $this->get( 'email_type' );
 		return in_array( $email_type, array_keys( get_noptin_email_types() ), true ) ? $email_type : 'normal';
 	}
@@ -381,11 +398,6 @@ class Email {
 	 * @return bool
 	 */
 	public function get_template() {
-
-		// Read from campaign options.
-		if ( ! $this->is_legacy ) {
-			$template = $this->get( 'template' );
-		}
 
 		// Read from settings.
 		if ( empty( $template ) ) {
@@ -417,18 +429,6 @@ class Email {
 	 */
 	public function get_content( $email_type = 'normal' ) {
 
-		// Abort if this is a legacy email type.
-		if ( $this->is_legacy ) {
-
-			if ( ! $this->exists() || 'normal' !== $email_type ) {
-				return '';
-			}
-
-			$post = get_post( $this->id );
-			return empty( $post ) ? '' : $post->post_content;
-
-		}
-
 		if ( isset( $this->options[ 'content_' . $email_type ] ) ) {
 			return $this->options[ 'content_' . $email_type ];
 		}
@@ -456,11 +456,6 @@ class Email {
 	 * @return int
 	 */
 	public function get_sends_after() {
-
-		if ( $this->is_legacy ) {
-			return (int) get_post_meta( $this->id, 'noptin_sends_after', true );
-		}
-
 		return (int) $this->get( 'sends_after' );
 	}
 
@@ -473,12 +468,7 @@ class Email {
 	public function get_sends_after_unit( $label = false ) {
 
 		$units = get_noptin_email_delay_units( $label && 1 === $this->get_sends_after() );
-
-		if ( $this->is_legacy ) {
-			$unit = get_post_meta( $this->id, 'noptin_sends_after_unit', true );
-		} else {
-			$unit = $this->get( 'sends_after_unit' );
-		}
+		$unit  = $this->get( 'sends_after_unit' );
 
 		if ( empty( $unit ) || ! isset( $units[ $unit ] ) ) {
 			$unit = 'hours';
@@ -757,7 +747,7 @@ class Email {
 		$args = array(
 			'post_type'    => 'noptin-campaign',
 			'post_parent'  => $this->parent_id,
-			'post_title'   => empty( $this->name ) ? $this->subject : $this->name, // Backwards compatibility.
+			'post_title'   => empty( $this->name ) ? $this->subject : $this->name,
 			'post_status'  => $this->status,
 			'post_author'  => $this->author,
 			'post_content' => $this->content,
@@ -868,5 +858,20 @@ class Email {
 		}
 
 		return isset( $type->{$feature} ) ? $type->{$feature} : false;
+	}
+
+	/**
+	 * Checks if the current user can edit this email.
+	 *
+	 * @return bool
+	 */
+	public function current_user_can_edit() {
+
+		// Return true if not yet saved.
+		if ( ! $this->exists() ) {
+			return Main::current_user_can_create_new_campaign();
+		}
+
+		return current_user_can( 'edit_post', $this->id );
 	}
 }

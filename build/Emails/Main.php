@@ -288,6 +288,19 @@ class Main {
 	public static function get_email_types() {
 		return self::$types;
 	}
-}
 
-// a:2:{s:12:"email_sender";s:6:"noptin";s:7:"subject";s:0:"";}
+	/**
+	 * Checks if the current user can create a new email.
+	 *
+	 * @return bool
+	 */
+	public static function current_user_can_create_new_campaign() {
+		$post_type = get_post_type_object( 'noptin-campaign' );
+
+		if ( empty( $post_type ) ) {
+			return false;
+		}
+
+		return current_user_can( $post_type->cap->edit_posts );
+	}
+}

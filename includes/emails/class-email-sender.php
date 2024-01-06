@@ -301,7 +301,7 @@ class Noptin_Email_Sender {
 		} else {
 
 			// Only overide if there is an email set in the settings.
-			$from_email = get_noptin_option( 'from_email' );
+			$from_email = get_noptin_option( 'from_email', '' );
 
 			if ( is_email( $from_email ) ) {
 				$email = $from_email;
@@ -314,7 +314,6 @@ class Noptin_Email_Sender {
 		}
 
 		return apply_filters( 'noptin_sender_from_email', sanitize_email( $email ), $this );
-
 	}
 
 	/**

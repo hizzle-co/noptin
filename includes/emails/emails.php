@@ -339,7 +339,20 @@ function get_noptin_email_template_defaults() {
 	$brand_color = empty( $brand_color ) ? '#1a82e2' : $brand_color;
 
 	$defaults = array(
-		'paste' => array(
+		'noptin-visual' => array(
+			'color'             => '#111111',
+			'button_background' => $brand_color,
+			'button_color'      => '#ffffff',
+			'background_color'  => '#ffffff',
+			'custom_css'        => '',
+			'font_family'       => 'Arial, Helvetica, sans-serif',
+			'font_size'         => '14px',
+			'font_style'        => 'normal',
+			'font_weight'       => 'normal',
+			'line_height'       => '1.5',
+			'block_css'         => (object) array(),
+		),
+		'paste'         => array(
 			'color'              => '#111111',
 			'footer_text_color'  => '#666666',
 			'content_background' => '#ffffff',
@@ -352,7 +365,7 @@ function get_noptin_email_template_defaults() {
 			'font_weight'        => 'normal',
 			'line_height'        => '1.5',
 		),
-		'plain'        => array(
+		'plain'         => array(
 			'color'              => '#454545',
 			'footer_text_color'  => '#666666',
 			'content_background' => '#ffffff',
@@ -365,7 +378,7 @@ function get_noptin_email_template_defaults() {
 			'font_weight'        => 'normal',
 			'line_height'        => '1.4',
 		),
-		'merriweather' => array(
+		'merriweather'  => array(
 			'color'              => '#454545',
 			'footer_text_color'  => '#666666',
 			'content_background' => '#ffffff',

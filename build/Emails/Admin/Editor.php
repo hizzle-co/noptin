@@ -100,21 +100,23 @@ class Editor {
 		}
 
 		$editor_settings = array(
-			'availableTemplates'   => get_noptin_email_templates(),
-			'disablePostFormats'   => true,
-			'titlePlaceholder'     => __( 'Add email subject', 'newsletter-optin-box' ),
-			'bodyPlaceholder'      => __( 'Start writing or type / to choose a block', 'newsletter-optin-box' ),
-			'autosaveInterval'     => AUTOSAVE_INTERVAL,
-			'richEditingEnabled'   => user_can_richedit(),
-			'postLock'             => $lock_details,
-			'postLockUtils'        => array(
+			'availableTemplates'                    => get_noptin_email_templates(),
+			'disablePostFormats'                    => true,
+			'titlePlaceholder'                      => __( 'Add email subject', 'newsletter-optin-box' ),
+			'bodyPlaceholder'                       => __( 'Start writing or type / to choose a block', 'newsletter-optin-box' ),
+			'autosaveInterval'                      => AUTOSAVE_INTERVAL,
+			'richEditingEnabled'                    => user_can_richedit(),
+			'postLock'                              => $lock_details,
+			'postLockUtils'                         => array(
 				'nonce'       => wp_create_nonce( 'lock-post_' . $post->ID ),
 				'unlockNonce' => wp_create_nonce( 'update-post_' . $post->ID ),
 				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
 			),
-			'supportsLayout'       => false,
-			'supportsTemplateMode' => false,
-			'enableCustomFields'   => false,
+			'supportsLayout'                        => false,
+			'supportsTemplateMode'                  => false,
+			'enableCustomFields'                    => false,
+			'__experimentalAdditionalBlockPatterns' => array(),
+			'__experimentalBlockPatterns'           => array(),
 		);
 
 		$autosave = wp_get_post_autosave( $post->ID );
@@ -184,6 +186,7 @@ JS;
 		}
 
 		// Localize noptin-email-editor.
+		$current_user = wp_get_current_user();
 		wp_localize_script(
 			'noptin-email-editor',
 			'noptinEmailEditorSettings',
@@ -195,7 +198,8 @@ JS;
 				'templates' => get_noptin_email_templates(),
 				'back'      => esc_url( $edited_campaign->get_base_url() ),
 				'user'      => array(
-					'id'        => get_current_user_id(),
+					'id'        => $current_user->ID,
+					'email'     => $current_user->user_email,
 					'canUpload' => current_user_can( 'upload_files' ),
 				),
 				'logo_url'  => noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' ),
@@ -436,13 +440,20 @@ JS;
 			'post_title'   => 'Auto Draft',
 			'post_status'  => 'auto-draft',
 			'post_author'  => get_current_user_id(),
-			'post_content' => $edited_campaign->get_content( $edited_campaign->get_email_type() ),
+			'post_content' => $edited_campaign->get_content( 'visual' ),
 			'meta_input'   => array(
 				'campaign_type' => $edited_campaign->type,
 				'campaign_data' => array_merge(
 					$edited_campaign->options,
 					array(
-						'subject' => $edited_campaign->subject,
+						'subject'          => $edited_campaign->subject,
+						'recipients'       => $edited_campaign->get_recipients(),
+						'email_sender'     => $edited_campaign->get_sender(),
+						'email_type'       => $edited_campaign->get_email_type(),
+						'template'         => $edited_campaign->get_template(),
+						'content_normal'   => $edited_campaign->get_content( 'normal' ),
+						'sends_after'      => $edited_campaign->get_sends_after(),
+						'sends_after_unit' => $edited_campaign->get_sends_after_unit(),
 					)
 				),
 			),

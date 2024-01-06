@@ -52,6 +52,10 @@
 
 			foreach ( $email_types as $email_type_data ) {
 
+				if ( ! empty( $email_type_data->parent_type ) ) {
+					continue;
+				}
+
 				printf(
 					'<a href="%s" class="%s">%s</a>',
 					esc_url(

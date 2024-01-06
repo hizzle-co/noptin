@@ -103,17 +103,36 @@ class REST extends \WP_REST_Posts_Controller {
 		$preview = noptin_generate_email_content( $email, $user, false );
 
 		if ( is_wp_error( $preview ) ) {
-			wp_die( esc_html( $preview->get_error_message() ) );
+			return $preview;
 		}
 
 		// Send the email.
+		$result = noptin_send_email(
+			array(
+				'recipients'               => $request->get_param( 'email' ),
+				'subject'                  => noptin_parse_email_subject_tags( $subject ),
+				'message'                  => $preview,
+				'campaign_id'              => $request->get_param( 'id' ),
+				'headers'                  => array(),
+				'attachments'              => array(),
+				'reply_to'                 => '',
+				'from_email'               => '',
+				'from_name'                => '',
+				'content_type'             => $email->get_email_type() === 'plain_text' ? 'text' : 'html',
+				'unsubscribe_url'          => get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( $user ) ) ),
+				'disable_template_plugins' => ! ( $email->get_email_type() === 'normal' && $email->get_template() === 'default' ),
+			)
+		);
 
-		noptin_error_log( $request->get_params() ); return rest_ensure_response(
+		if ( empty( $result ) ) {
+			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Unable to send test email', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+		}
+
+		return rest_ensure_response(
 			array(
 				'success' => true,
 				'message' => __( 'Your test email has been sent', 'newsletter-optin-box' ),
 			)
 		);
-
 	}
 }
