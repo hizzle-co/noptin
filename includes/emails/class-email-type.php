@@ -58,6 +58,7 @@ abstract class Noptin_Email_Type {
 	 */
 	public function add_hooks() {
 		add_filter( 'noptin_get_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
+		add_filter( 'noptin_get_default_email_props', array( $this, 'get_default_props' ), 10, 2 );
 	}
 
 	/**
@@ -77,7 +78,87 @@ abstract class Noptin_Email_Type {
 		$this->maybe_set_subscriber_and_user( $recipient );
 
 		return $this->send( $campaign, 'test', array( $recipient => false ) );
+	}
 
+	/**
+	 * Returns default email properties.
+	 *
+	 * @param array $props
+	 * @param \Hizzle\Noptin\Emails\Email $email
+	 * @return array
+	 */
+	public function get_default_props( $props, $email ) {
+
+		if ( $email->type !== $this->type && $email->get_sub_type() !== $this->type ) {
+			return $props;
+		}
+
+		$methods = get_class_methods( $this );
+
+		if ( empty( $methods ) ) {
+			return $props;
+		}
+
+		// Find all methods that begin with default_.
+		foreach ( $methods as $method ) {
+
+			if ( 0 !== strpos( $method, 'default_' ) ) {
+				continue;
+			}
+
+			$prop = str_replace( 'default_', '', $method );
+
+			$props[ $prop ] = call_user_func( array( $this, $method ), $email );
+		}
+
+		return $props;
+	}
+
+	/**
+	 * Returns the default content.
+	 *
+	 */
+	public function default_content_normal() {
+
+		/**
+		 * Filters the default email body
+		 *
+		 * @param string $body The default email body
+		 */
+		return apply_filters( "noptin_default_{$this->type}_body", '' );
+	}
+
+	/**
+	 * Returns the default content.
+	 *
+	 */
+	public function default_content_visual() {
+
+		$normal = $this->default_content_normal();
+
+		if ( ! empty( $normal ) ) {
+			$normal = wpautop( $normal );
+
+			// Convert paragraphs to blocks.
+			$normal = str_replace(
+				array( '<p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '">', '</p>' ),
+				array( '<!-- wp:paragraph -->', '<!-- /wp:paragraph -->' ),
+				$normal
+			);
+
+		} else {
+			$normal = '<!-- wp:paragraph --> <p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '"></p> <!-- /wp:paragraph -->';
+		}
+
+		$footer  = get_noptin_footer_text();
+		$content = '<!-- wp:noptin/group {"style":{"noptin":{"color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group aligncenter" id="block-682e1b03-a2fb-40cd-ae03-0da8a10e05d9"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $normal . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group --> <div class="wp-block-noptin-group aligncenter" id="block-fdb5ab8d-11e4-48d1-b288-acd74d1d3b30"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td><!-- wp:paragraph {"style":{"noptin":{"typography":{"textAlign":"center","fontSize":13}}}} --> <p style="text-align:center;font-size:13px" class="wp-block-paragraph" id="block-18a1bf5c-0e5a-4060-bb97-f13d239afd7c">' . $footer . '</p> <!-- /wp:paragraph --></td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
+
+		/**
+		 * Filters the default email body
+		 *
+		 * @param string $body The default email body
+		 */
+		return apply_filters( "noptin_default_{$this->type}_body_visual", $content );
 	}
 
 	/**

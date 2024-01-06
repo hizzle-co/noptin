@@ -1481,39 +1481,6 @@ a.no-campaign-create-new-campaign {
 	}
 }
 
-#noptin-email-campaigns-table {
-
-	.column-opens,
-	.column-recipients,
-	.column-status,
-	.column-date_sent,
-	.column-clicks {
-		width: 70px;
-		text-align: center;
-	}
-
-	.column-unsubscribed {
-		width: 90px;
-		text-align: center;
-	}
-
-	.column-type {
-		width: 180px;
-	}
-
-	.noptin-stat-percent {
-		font-size: 16px;
-		margin: 2px 0 5px;
-    	font-weight: 700;
-	}
-}
-
-.button.noptin-send-test-email .dashicons-before {
-	vertical-align: middle;
-	margin-right: 4px;
-	color: $noptin_color;
-}
-
 .noptin-sortable-ghost {
 	background-color: #f3f3f3;
 	color: #3c3b3b;
@@ -2254,42 +2221,6 @@ a.no-campaign-create-new-campaign {
 
 }
 
-.noptin-email-types {
-	display: flex;
-	flex-wrap: wrap;
-
-	.noptin-email-type {
-		display: flex;
-    	margin-right: 20px;
-		align-items: center;
-    	min-height: 200px;
-		width: 100%;
-		max-width: 400px;
-	}
-
-	.noptin-email-type-image {
-		flex-shrink: 0;
-		margin-right: 32px;
-		width: 64px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-
-		img {
-			max-width: 100%;
-			border-radius: 50%;
-		}
-	}
-
-	.noptin-email-type-action {
-		display: flex;
-		justify-content: flex-end;
-		align-items: center;
-	}
-
-}
-
 #noptin_automation_save {
 
 	.inside {
@@ -2373,55 +2304,6 @@ a.no-campaign-create-new-campaign {
 		margin-top: 1em;
 	}
 
-}
-
-.noptin-manual-email-recipients {
-	padding: 1rem 0;
-	max-height: 400px;
-    overflow-y: auto;
-}
-
-.noptin-manual-email-recipient {
-
-	display: flex;
-	align-items: center;
-
-	&:not(:last-child) {
-    	margin-bottom: 1rem;
-		border-bottom: 1px solid #f0f0f1;
-    	padding-bottom: 1rem;
-	}
-
-	.avatar {
-		border-radius: 50%;
-		margin-right: 5px;
-	}
-
-	.noptin-manual-email-recipient-name-email {
-		flex: 1;
-		overflow: hidden;
-		margin-right: 5px;
-
-		> * {
-			overflow: hidden;
-			text-overflow: ellipsis;
-    		white-space: nowrap;
-		}
-
-		.noptin-manual-email-recipient-name {
-			font-weight: 600;
-		}
-	}
-
-	.noptin-manual-email-recipient-view {
-		color: gray;
-    	font-size: 16px;
-	}
-
-	.noptin-manual-email-recipient-remove {
-		color: #a00;
-    	font-size: 16px;
-	}
 }
 
 .noptin-switch-label {

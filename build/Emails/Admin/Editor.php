@@ -434,30 +434,46 @@ JS;
 		}
 
 		// Prepare post args.
-		$args = array(
+		$defaults = apply_filters( 'noptin_get_default_email_props', array(), $edited_campaign );
+
+		if ( 'normal' !== $edited_campaign->get_email_type() ) {
+			$defaults = array_merge(
+				get_noptin_email_template_settings( 'noptin-visual', $edited_campaign ),
+				$defaults
+			);
+		} else {
+			$defaults = array_merge(
+				get_noptin_email_template_settings( $edited_campaign->get_template(), $edited_campaign ),
+				$defaults
+			);
+		}
+
+		$args     = array(
 			'post_type'    => 'noptin-campaign',
 			'post_parent'  => $edited_campaign->parent_id,
-			'post_title'   => 'Auto Draft',
+			'post_title'   => empty( $defaults['name'] ) ? 'Auto Draft' : $defaults['name'],
 			'post_status'  => 'auto-draft',
 			'post_author'  => get_current_user_id(),
 			'post_content' => $edited_campaign->get_content( 'visual' ),
 			'meta_input'   => array(
 				'campaign_type' => $edited_campaign->type,
 				'campaign_data' => array_merge(
+					$defaults,
 					$edited_campaign->options,
 					array(
-						'subject'          => $edited_campaign->subject,
+						'subject'          => $edited_campaign->get( 'subject' ),
 						'recipients'       => $edited_campaign->get_recipients(),
 						'email_sender'     => $edited_campaign->get_sender(),
 						'email_type'       => $edited_campaign->get_email_type(),
 						'template'         => $edited_campaign->get_template(),
-						'content_normal'   => $edited_campaign->get_content( 'normal' ),
-						'sends_after'      => $edited_campaign->get_sends_after(),
 						'sends_after_unit' => $edited_campaign->get_sends_after_unit(),
+						'footer_text'      => get_noptin_footer_text(),
 					)
 				),
 			),
 		);
+
+		unset( $args['meta_input']['campaign_data']['name'] );
 
 		// Store subtype in a separate meta key.
 		$args['meta_input'][ $edited_campaign->type . '_type' ] = $edited_campaign->get_sub_type();

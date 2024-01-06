@@ -36,7 +36,25 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 
         // Send newsletter emails.
 		add_action( 'transition_post_status', array( $this, 'maybe_send_campaign' ), 100, 3 );
+	}
 
+	/**
+	 * Returns the default campaign name.
+	 */
+	public function default_name() {
+
+		$name = sprintf(
+			// Translators: %s is the current date.
+			__( 'Newsletter - %s', 'newsletter-optin-box' ),
+			date_i18n( get_option( 'date_format' ) )
+		);
+
+		/**
+		 * Filters the default newsletter name
+		 *
+		 * @param string $name The default newsletter name
+		 */
+		return apply_filters( 'noptin_default_newsletter_name', $name );
 	}
 
 	/**
@@ -87,7 +105,6 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 		if ( 'noptin-campaign' === $post->post_type && get_post_meta( $post->ID, 'campaign_type', true ) === $this->type ) {
 			$this->send_campaign( $post );
 		}
-
 	}
 
 	/**
@@ -122,7 +139,5 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 		} else {
 			do_action( 'noptin_send_email_via_' . $campaign->get_sender(), $campaign, null );
 		}
-
 	}
-
 }

@@ -388,8 +388,9 @@ class Email {
 	 * @return bool
 	 */
 	public function get_email_type() {
-		$email_type = $this->get( 'email_type' );
-		return in_array( $email_type, array_keys( get_noptin_email_types() ), true ) ? $email_type : 'normal';
+		$email_type  = $this->get( 'email_type' );
+		$email_types = array_keys( get_noptin_email_types() );
+		return in_array( $email_type, $email_types, true ) ? $email_type : current( $email_types );
 	}
 
 	/**
@@ -443,7 +444,7 @@ class Email {
 	 */
 	public function sends_immediately() {
 
-		if ( 'immediately' === $this->get( 'when_to_run' ) ) {
+		if ( ! $this->supports_timing() || 'immediately' === $this->get( 'when_to_run' ) ) {
 			return true;
 		}
 
@@ -873,5 +874,20 @@ class Email {
 		}
 
 		return current_user_can( 'edit_post', $this->id );
+	}
+
+	/**
+	 * Checks if the current user can delete this email.
+	 *
+	 * @return bool
+	 */
+	public function current_user_can_delete() {
+
+		// Return true if not yet saved.
+		if ( ! $this->exists() ) {
+			return false;
+		}
+
+		return current_user_can( 'delete_post', $this->id );
 	}
 }

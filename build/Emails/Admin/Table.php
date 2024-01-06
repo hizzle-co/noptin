@@ -160,6 +160,14 @@ class Table extends \WP_List_Table {
 
 		);
 
+		if ( ! $item->current_user_can_edit() ) {
+			unset( $row_actions['edit'] );
+		}
+
+		if ( ! $item->current_user_can_delete() ) {
+			unset( $row_actions['delete'] );
+		}
+
 		if ( ! $item->is_mass_mail() || 'post_notifications' === $item->get_sub_type() ) {
 			unset( $row_actions['send'] );
 		}
@@ -170,8 +178,34 @@ class Table extends \WP_List_Table {
 		}
 
 		$title    = esc_html( $item->name );
-		$edit_url = esc_url( $item->get_edit_url() );
-		$title    = "<div><strong><a href='$edit_url'>$title</a></strong></div>";
+		$edit_url = esc_url( $item->current_user_can_edit() ? $item->get_edit_url() : $item->get_preview_url() );
+		$title    = "<strong><a href='$edit_url'>$title</a></strong>";
+
+		// Email type.
+		$sub_types = $this->email_type->get_sub_types();
+
+		if ( ! empty( $sub_types ) ) {
+			if ( isset( $sub_types[ $item->get_sub_type() ] ) ) {
+
+				$title .= sprintf(
+					'<p class="description">%s</p>',
+					esc_html( $sub_types[ $item->get_sub_type() ]['description'] )
+				);
+
+				if ( $item->name !== $sub_types[ $item->get_sub_type() ]['label'] ) {
+					$title .= sprintf(
+						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+						esc_html__( 'Type', 'newsletter-optin-box' ),
+						esc_html( $sub_types[ $item->get_sub_type() ]['label'] )
+					);
+				}
+			} else {
+				$title .= sprintf(
+					'<div class="noptin-text-error">%s</div>',
+					esc_html__( 'Unknown type', 'newsletter-optin-box' )
+				);
+			}
+		}
 
 		// About automation.
 		if ( 'automation' === $this->email_type->type ) {
@@ -191,15 +225,29 @@ class Table extends \WP_List_Table {
 				$title .= "<p class='description'>$description</div>";
 			}
 
+			if ( ! $item->is_mass_mail() ) {
+				$recipients = $item->get_recipients();
+
+				if ( empty( $recipients ) ) {
+					$title .= '<p class="description" style="color: red;">' . esc_html__( 'No recipients set.', 'newsletter-optin-box' ) . '</p>';
+				} else {
+					$title .= sprintf(
+						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+						esc_html__( 'Recipients', 'newsletter-optin-box' ),
+						esc_html( implode( ', ', noptin_parse_list( $recipients, true ) ) )
+					);
+				}
+			}
+
 			if ( ! $item->sends_immediately() ) {
 
 				$title .= sprintf(
-					'<br /><span class="noptin-rule-meta" style="color: green;font-weight: 600;"><span class="noptin-rule-meta-key">%s</span>: <span class="noptin-rule-meta-value">%s</span></span>',
+					'<div class="noptin-strong noptin-text-success"><span>%s</span>: <span>%s</span></div>',
 					esc_html__( 'Delay', 'newsletter-optin-box' ),
 					esc_html( $item->get_sends_after() . ' ' . $item->get_sends_after_unit( true ) )
 				);
 			}
-		} elseif ( $item->is_published() && ! get_post_meta( $item->id, 'completed', true ) ) {
+		} elseif ( ! get_post_meta( $item->id, 'completed', true ) ) {
 
 			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );
 
@@ -222,6 +270,8 @@ class Table extends \WP_List_Table {
 				delete_post_meta( $item->id, '_bulk_email_last_error' );
 			}
 		}
+
+		$title = '<div class="noptin-v-stack">' . $title . '</div>';
 
 		// Row actions.
 		$row_actions = apply_filters( 'noptin_email_row_actions', $row_actions, $item, $this );
@@ -302,23 +352,6 @@ class Table extends \WP_List_Table {
 	public function column_recipients( $item ) {
 		$total = (int) get_post_meta( $item->id, '_noptin_sends', true ) + (int) get_post_meta( $item->id, '_noptin_fails', true );
 		return apply_filters( 'noptin_email_recipients', $total, $item );
-	}
-
-	/**
-	 * Displays the campaign type
-	 *
-	 * @param  Email $item item.
-	 * @return string
-	 */
-	public function column_type( $item ) {
-
-		$sub_types = $this->email_type->get_sub_types();
-
-		if ( isset( $sub_types[ $item->get_sub_type() ] ) ) {
-			return $sub_types[ $item->get_sub_type() ];
-		}
-
-		return __( 'Unknown', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -491,7 +524,6 @@ class Table extends \WP_List_Table {
 		$columns = array(
 			'cb'           => '<input type="checkbox" />',
 			'title'        => __( 'Campaign', 'newsletter-optin-box' ),
-			'type'         => __( 'Type', 'newsletter-optin-box' ),
 			'status'       => __( 'Status', 'newsletter-optin-box' ),
 			'recipients'   => __( 'Sent', 'newsletter-optin-box' ),
 			'opens'        => __( 'Opened', 'newsletter-optin-box' ),
@@ -506,14 +538,6 @@ class Table extends \WP_List_Table {
 		if ( empty( $track_campaign_stats ) ) {
 			unset( $columns['opens'] );
 			unset( $columns['clicks'] );
-		}
-
-		// Sub types.
-		$sub_types = $this->email_type->get_sub_types();
-		if ( empty( $sub_types ) ) {
-			unset( $columns['type'] );
-		} else {
-			unset( $columns['date_sent'] );
 		}
 
 		return apply_filters( 'manage_noptin_emails_table_columns', $columns, $this );
