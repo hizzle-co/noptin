@@ -58,20 +58,6 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 	}
 
 	/**
-	 * Returns the default content.
-	 *
-	 */
-	public function default_content_normal() {
-
-		/**
-		 * Filters the default newsletter body
-		 *
-		 * @param string $body The default newsletter body
-		 */
-		return apply_filters( 'noptin_default_newsletter_body', '' );
-	}
-
-	/**
 	 * Returns the default plain text content.
 	 *
 	 */

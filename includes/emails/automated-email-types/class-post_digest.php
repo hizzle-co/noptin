@@ -126,6 +126,15 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Prepares the default blocks.
+	 *
+	 * @return string
+	 */
+	protected function prepare_default_blocks() {
+		return '<!-- wp:html -->[[post_digest style=list]]<!-- /wp:html -->';
+	}
+
+	/**
 	 * Returns the default plain text content.
 	 *
 	 */

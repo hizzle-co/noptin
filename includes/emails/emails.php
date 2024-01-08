@@ -343,7 +343,7 @@ function get_noptin_email_template_defaults() {
 			'color'             => '#111111',
 			'button_background' => $brand_color,
 			'button_color'      => '#ffffff',
-			'background_color'  => '#ffffff',
+			'background_color'  => '#e9ecef',
 			'custom_css'        => '',
 			'font_family'       => 'Arial, Helvetica, sans-serif',
 			'font_size'         => '14px',

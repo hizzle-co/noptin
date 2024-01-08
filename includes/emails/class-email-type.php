@@ -129,6 +129,36 @@ abstract class Noptin_Email_Type {
 	}
 
 	/**
+	 * Prepares the default blocks.
+	 *
+	 * @return string
+	 */
+	protected function prepare_default_blocks() {
+
+		$normal = $this->default_content_normal();
+
+		if ( ! empty( $normal ) ) {
+			$normal = wpautop( $normal );
+
+			// Ensure that shortcodes are not wrapped in paragraphs.
+			$normal = shortcode_unautop( $normal );
+
+			// Ensure that merge tags are not wrapped in paragraphs.
+			$normal = Noptin_Email_Generator::merge_tags_unautop( $normal, true );
+
+			// Convert paragraphs to blocks.
+			return str_replace(
+				array( '<p>', '</p>' ),
+				array( '<!-- wp:paragraph --><p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '">', '</p><!-- /wp:paragraph -->' ),
+				$normal
+			);
+
+		}
+
+		return '<!-- wp:paragraph --> <p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '"></p> <!-- /wp:paragraph -->';
+	}
+
+	/**
 	 * Returns the default content.
 	 *
 	 */
@@ -157,7 +187,8 @@ abstract class Noptin_Email_Type {
 		}
 
 		$footer  = get_noptin_footer_text();
-		$content = '<!-- wp:noptin/group {"style":{"noptin":{"color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group aligncenter" id="block-682e1b03-a2fb-40cd-ae03-0da8a10e05d9"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $normal . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group --> <div class="wp-block-noptin-group aligncenter" id="block-fdb5ab8d-11e4-48d1-b288-acd74d1d3b30"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td><!-- wp:paragraph {"style":{"noptin":{"typography":{"textAlign":"center","fontSize":13}}}} --> <p style="text-align:center;font-size:13px" class="wp-block-paragraph" id="block-18a1bf5c-0e5a-4060-bb97-f13d239afd7c">' . $footer . '</p> <!-- /wp:paragraph --></td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
+		$footer  = '<!-- wp:paragraph {"style":{"noptin":{"typography":{"textAlign":"center","fontSize":13},"color":{"text":"#666666","link":"#111111"}}}} --> <p style="text-align:center;font-size:13px;color:#666666" class="wp-block-paragraph" id="block-1a4f5bdb-4e40-4db2-9850-8de49f6dbc4f">' . $footer . '</p> <!-- /wp:paragraph -->';
+		$content = '<!-- wp:noptin/group {"style":{"noptin":{"color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group aligncenter" id="block-682e1b03-a2fb-40cd-ae03-0da8a10e05d9"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $normal . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group --> <div class="wp-block-noptin-group aligncenter" id="block-fdb5ab8d-11e4-48d1-b288-acd74d1d3b30"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
 
 		/**
 		 * Filters the default email body
@@ -201,7 +232,6 @@ abstract class Noptin_Email_Type {
 
 		// Apply email type specific filter then return.
 		return apply_filters( "noptin_{$this->type}_default_$prop", $value );
-
 	}
 
 	/**
@@ -223,7 +253,6 @@ abstract class Noptin_Email_Type {
 		}
 
 		return $tags;
-
 	}
 
 	/**
@@ -318,7 +347,6 @@ abstract class Noptin_Email_Type {
 			),
 
 		);
-
 	}
 
 	/**
@@ -358,7 +386,6 @@ abstract class Noptin_Email_Type {
 		}
 
 		return esc_html( (string) $this->user->get( $field ) );
-
 	}
 
 	/**
@@ -415,7 +442,6 @@ abstract class Noptin_Email_Type {
 		if ( ! empty( $this->unsubscribe_url ) ) {
 			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = $this->unsubscribe_url;
 		}
-
 	}
 
 	/**
@@ -448,7 +474,6 @@ abstract class Noptin_Email_Type {
 		if ( ! empty( $this->unsubscribe_url ) ) {
 			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = '';
 		}
-
 	}
 
 	/**
@@ -477,7 +502,6 @@ abstract class Noptin_Email_Type {
 
 		// Filter and return.
 		return apply_filters( 'noptin_generate_email_preview', $content, $campaign, $this );
-
 	}
 
 	/**
