@@ -139,10 +139,16 @@ abstract class Noptin_Email_Type {
 		if ( ! empty( $normal ) ) {
 			$normal = wpautop( $normal );
 
+			// Ensure that shortcodes are not wrapped in paragraphs.
+			$normal = shortcode_unautop( $normal );
+
+			// Ensure that merge tags are not wrapped in paragraphs.
+			$normal = Noptin_Email_Generator::merge_tags_unautop( $normal, true );
+
 			// Convert paragraphs to blocks.
 			$normal = str_replace(
-				array( '<p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '">', '</p>' ),
-				array( '<!-- wp:paragraph -->', '<!-- /wp:paragraph -->' ),
+				array( '<p>', '</p>' ),
+				array( '<!-- wp:paragraph --><p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '">', '</p><!-- /wp:paragraph -->' ),
 				$normal
 			);
 

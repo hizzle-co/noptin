@@ -31,6 +31,9 @@ class Main {
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
 
+		// Fire hooks.
+		add_action( 'save_post_noptin-campaign', array( __CLASS__, 'on_save_campaign' ), 10, 3 );
+
 		// Register email types.
 		self::register_email_types();
 
@@ -47,6 +50,7 @@ class Main {
 	 */
 	public static function register_rest_fields() {
 
+		// Campaign type.
 		register_rest_field(
             'noptin-campaign',
             'noptin_campaign_type',
@@ -66,8 +70,6 @@ class Main {
 					}
 
 					return $email->get_js_data();
-
-					return Main::get_email_type( get_post_meta( $request['id'], 'campaign_type', true ) );
 				},
 				'schema'       => array(
 					'type'                 => 'object',
@@ -84,6 +86,195 @@ class Main {
 				),
             )
         );
+
+		// Automation rule.
+		register_rest_field(
+			'noptin-campaign',
+			'noptin_automation_rule',
+			array(
+				'get_callback'    => function ( $request ) {
+
+					// Abort if no id.
+					if ( empty( $request['id'] ) ) {
+						return array();
+					}
+
+					$email = new Email( $request['id'] );
+
+					// Abort if email is not found.
+					if ( ! $email->is_automation_rule() ) {
+						return array();
+					}
+
+					$rule = noptin_get_automation_rule( (int) $email->get( 'automation_rule' ) );
+
+					if ( is_wp_error( $rule ) ) {
+						$rule = noptin_get_automation_rule( 0 );
+					}
+
+					if ( ! $rule->exists() ) {
+						$rule->set_action_id( 'email' );
+						$rule->set_trigger_id( $email->get_trigger() );
+						$rule->set_action_settings( array() );
+						$rule->set_trigger_settings( array() );
+					}
+
+					// Fetch the trigger.
+					$trigger = $rule->get_trigger();
+					if ( empty( $trigger ) ) {
+						return array(
+							'error' => __( 'Your website does not support that trigger.', 'newsletter-optin-box' ),
+						);
+					}
+
+					// Normal settings.
+					$trigger_settings = $trigger->get_settings();
+
+					// Send to inactive subscribers.
+					if ( 'new_subscriber' !== $rule->get_trigger_id() ) {
+						$trigger_settings['send_email_to_inactive'] = array(
+							'label'   => __( 'Also send to unsubscribed contacts', 'newsletter-optin-box' ),
+							'el'      => 'input',
+							'type'    => 'checkbox',
+							'default' => false,
+						);
+					}
+
+					// Conditional logic.
+					$trigger_settings['conditional_logic'] = array(
+						'label'       => __( 'Conditional Logic', 'newsletter-optin-box' ),
+						'el'          => 'conditional_logic',
+						'comparisons' => noptin_get_conditional_logic_comparisons(),
+						'toggle_text' => __( 'Optional. Send this email only if certain conditions are met.', 'newsletter-optin-box' ),
+						'fullWidth'   => true,
+						'in_modal'    => true,
+						'default'     => array(
+							'enabled' => false,
+							'action'  => 'allow',
+							'type'    => 'all',
+							'rules'   => array(),
+						),
+					);
+
+					// Heading.
+					$trigger_settings = array_merge(
+						array(
+							'heading' => array(
+								'content' => sprintf(
+									/* translators: %s: Trigger description. */
+									__( 'Noptin will send this email %s', 'newsletter-optin-box' ),
+									$trigger->get_description()
+								),
+								'el'      => 'paragraph',
+							),
+						),
+						$trigger_settings
+					);
+
+					return array(
+						'id'         => $rule->get_id(),
+						'action'     => $rule->get_action_id(),
+						'trigger'    => $rule->get_trigger_id(),
+						'saved'      => (object) $rule->get_trigger_settings(),
+						'settings'   => $trigger_settings,
+						'smart_tags' => $trigger->get_known_smart_tags_for_js(),
+					);
+				},
+				'update_callback' => function ( $value, $data_object ) {
+
+					// Abort if no id.
+					if ( empty( $data_object->ID || 'auto-draft' === $data_object->post_status ) ) {
+						return array();
+					}
+
+					if ( empty( $value ) ) {
+						return;
+					}
+
+					$value = (array) $value;
+					$rule  = noptin_get_automation_rule( empty( $value['id'] ) ? 0 : (int) $value['id'] );
+
+					if ( is_wp_error( $rule ) ) {
+						$rule = noptin_get_automation_rule( 0 );
+					}
+
+					$is_new = $rule->exists();
+					if ( $is_new ) {
+						$rule->set_action_id( 'email' );
+						$rule->set_trigger_id( $value['trigger'] );
+						$rule->set_action_settings( array() );
+						$rule->set_trigger_settings( array() );
+					}
+
+					// Action settings.
+					$old_settings = $rule->get_action_settings();
+					if ( ! isset( $old_settings['automated_email_id'] ) || $old_settings['automated_email_id'] !== $data_object->ID ) {
+						$rule->set_action_settings(
+							array_merge(
+								$old_settings,
+								array(
+									'automated_email_id' => $data_object->ID,
+								)
+							)
+						);
+
+						$is_new = true;
+					}
+
+					// Trigger settings.
+					$rule->set_trigger_settings(
+						array_merge(
+							$rule->get_trigger_settings(),
+							(array) $value['settings']
+						)
+					);
+
+					// Save the rule.
+					$rule->save();
+
+					if ( ! $rule->exists() ) {
+						return new \WP_Error( 'noptin_automation_rule', __( 'Failed to save automation rule.', 'newsletter-optin-box' ) );
+					}
+
+					if ( $is_new ) {
+						$campaign_data = get_post_meta( $data_object->ID, 'campaign_data', true );
+						$campaign_data = ! is_array( $campaign_data ) ? array() : $campaign_data;
+
+						$campaign_data['automation_rule'] = $rule->get_id();
+						update_post_meta( $data_object->ID, 'campaign_data', $campaign_data );
+					}
+
+					return $value;
+				},
+				'schema'          => array(
+					'type'                 => 'object',
+					'description'          => 'The email campaign automation rule info.',
+					'properties'           => array(
+						'id'       => array(
+							'type'        => 'number',
+							'description' => 'The automation rule id.',
+						),
+						'action'   => array(
+							'type'        => 'string',
+							'description' => 'The automation rule action.',
+						),
+						'trigger'  => array(
+							'type'        => 'string',
+							'description' => 'The automation rule trigger.',
+						),
+						'saved'    => array(
+							'type'        => 'object',
+							'description' => 'The automation rule saved settings.',
+						),
+						'settings' => array(
+							'type'        => 'object',
+							'description' => 'The automation rule settings.',
+						),
+					),
+					'additionalProperties' => true,
+				),
+			)
+		);
 	}
 
 	/**
@@ -302,5 +493,30 @@ class Main {
 		}
 
 		return current_user_can( $post_type->cap->edit_posts );
+	}
+
+	/**
+	 * Fires relevant hooks after saving a campaign.
+	 *
+	 * @param \WP_Post $post The post object.
+	 * @param int $post_id The post id.
+	 */
+	public static function on_save_campaign( $post_id, $post ) {
+
+		// Skip revisions.
+		if ( 'revision' === $post->post_type ) {
+			return;
+		}
+
+		$email = new Email( $post_id );
+
+		// Abort if it does not exist.
+		if ( ! $email->exists() ) {
+			return;
+		}
+
+		// Fire hooks.
+		do_action( 'noptin_' . $email->type . '_campaign_saved', $email );
+		do_action( 'noptin_' . $email->get_sub_type() . '_campaign_saved', $email );
 	}
 }

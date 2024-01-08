@@ -40,7 +40,6 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		// Notify customers.
 		add_action( 'noptin_woocommerce_product_refund', array( $this, 'maybe_schedule_refund_notification' ), 100, 4 );
         add_action( 'noptin_woocommerce_product_buy', array( $this, 'maybe_schedule_buy_notification' ), 100, 4 );
-
 	}
 
 	/**
@@ -114,12 +113,20 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		return '[[customer.email]]';
 	}
 
+	public function default_new_customer() {
+		return false;
+	}
+
+	public function default_product_action() {
+		return 'buy';
+	}
+
 	/**
 	 * Displays a metabox.
 	 *
 	 * @param Noptin_Automated_Email $campaign
 	 */
-	public function render_metabox( $campaign ) {
+	public function campaign_options( $options ) {
 
 		// Fetch all products.
 		$integrations = noptin()->integrations->integrations;
@@ -129,64 +136,42 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		}
 
 		$products = $integrations['woocommerce']->get_products();
+		$prepared = array();
 
-		// Prepare selected status.
-		$selected_product = $campaign->get( 'product' );
-		$new_customer     = $campaign->get( 'new_customer' );
-		$action           = $campaign->get( 'product_action' );
+		foreach ( $products as $product ) {
 
-		if ( empty( $action ) ) {
-			$action = 'buy';
+			if ( empty( $product['variations'] ) ) {
+				$prepared[ $product['id'] ] = $product['name'];
+			} else {
+				foreach ( $product['variations'] as $variation ) {
+					$prepared[ $variation['id'] ] = $product['name'] . ' -- ' . $variation['name'];
+				}
+			}
 		}
 
-		?>
-
-			<p>
-				<label>
-					<strong class="noptin-label-span">
-						<?php esc_html_e( 'Send this email when a product...', 'newsletter-optin-box' ); ?>
-					</strong>
-					<select name="noptin_email[product_action]" class="widefat">
-						<option <?php selected( $action, 'buy' ); ?> value="buy"><?php esc_html_e( 'is bought', 'newsletter-optin-box' ); ?></option>
-						<option <?php selected( $action, 'refund' ); ?> value="refund"><?php esc_html_e( 'is refunded', 'newsletter-optin-box' ); ?></option>
-					</select>
-				</label>
-			</p>
-
-			<p>
-				<label>
-					<strong class="noptin-label-span">
-						<?php esc_html_e( 'Product', 'newsletter-optin-box' ); ?>
-					</strong>
-					<select name="noptin_email[product]" class="widefat">
-						<option <?php selected( empty( $selected_product ) ); ?> value="" disabled><?php esc_html_e( 'Select a WooCommerce product', 'newsletter-optin-box' ); ?></option>
-
-						<?php foreach ( $products as $product ) : ?>
-
-							<?php if ( empty( $product['variations'] ) ) : ?>
-								<option <?php selected( $selected_product, $product['id'] ); ?> value="<?php echo esc_attr( $product['id'] ); ?>"><?php echo esc_html( $product['name'] ); ?></option>
-							<?php else : ?>
-								<optgroup><?php echo esc_html( $product['name'] ); ?></optgroup>
-								<?php foreach ( $product['variations'] as $variation ) : ?>
-									<option <?php selected( $selected_product, $variation['id'] ); ?> value="<?php echo esc_attr( $variation['id'] ); ?>"><?php echo esc_html( $variation['name'] ); ?></option>
-								<?php endforeach; ?>
-							<?php endif; ?>
-
-						<?php endforeach; ?>
-
-					</select>
-				</label>
-			</p>
-
-			<p>
-				<label>
-					<input type="checkbox" name="noptin_email[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
-					<strong><?php esc_html_e( 'Only send the first time someone buys this product?', 'newsletter-optin-box' ); ?></strong>
-				</label>
-			</p>
-
-		<?php
-
+		return array_merge(
+			$options,
+			array(
+				'product_action' => array(
+					'el'          => 'select',
+					'label'       => __( 'Send this email when a product...', 'newsletter-optin-box' ),
+					'description' => __( 'This email is automatically sent whenever a customer\'s lifetime value surpases the specified amount.', 'newsletter-optin-box' ),
+					'options'     => array(
+						'buy'    => __( 'is bought', 'newsletter-optin-box' ),
+						'refund' => __( 'is refunded', 'newsletter-optin-box' ),
+					),
+				),
+				'product'        => array(
+					'el'      => 'combobox',
+					'options' => $prepared,
+				),
+				'new_customer'   => array(
+					'el'    => 'input',
+					'type'  => 'checkbox',
+					'label' => __( 'Only send the first time someone buys this product?', 'newsletter-optin-box' ),
+				),
+			)
+		);
 	}
 
 	/**

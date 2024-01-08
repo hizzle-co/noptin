@@ -71,7 +71,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		// Periodically check post digest CRON jobs.
 		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_update_cron_jobs' ) );
-
 	}
 
 	/**
@@ -88,14 +87,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function get_description() {
 		return __( 'Automatically send your subscribers a daily, weekly, monthly or yearly email highlighting your latest content.', 'newsletter-optin-box' );
-	}
-
-	/**
-	 * Retrieves the automated email type image.
-	 *
-	 */
-	public function the_image() {
-		echo '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" fill="#ff5722" x="0px" y="0px" viewBox="0 0 122.88 120.06" xml:space="preserve"><g><path d="M69.66,4.05c0-2.23,2.2-4.05,4.94-4.05c2.74,0,4.94,1.81,4.94,4.05v17.72c0,2.23-2.2,4.05-4.94,4.05 c-2.74,0-4.94-1.81-4.94-4.05V4.05L69.66,4.05z M91.37,57.03c4.26,0,8.33,0.85,12.05,2.39c3.87,1.6,7.34,3.94,10.24,6.84 c2.9,2.9,5.24,6.38,6.84,10.23c1.54,3.72,2.39,7.79,2.39,12.05c0,4.26-0.85,8.33-2.39,12.05c-1.6,3.87-3.94,7.34-6.84,10.24 c-2.9,2.9-6.38,5.24-10.23,6.84c-3.72,1.54-7.79,2.39-12.05,2.39c-4.26,0-8.33-0.85-12.05-2.39c-3.87-1.6-7.34-3.94-10.24-6.84 c-2.9-2.9-5.24-6.38-6.84-10.24c-1.54-3.72-2.39-7.79-2.39-12.05c0-4.26,0.85-8.33,2.39-12.05c1.6-3.87,3.94-7.34,6.84-10.24 c2.9-2.9,6.38-5.24,10.23-6.84C83.04,57.88,87.1,57.03,91.37,57.03L91.37,57.03z M89.01,75.37c0-0.76,0.31-1.45,0.81-1.95l0,0l0,0 c0.5-0.5,1.19-0.81,1.96-0.81c0.77,0,1.46,0.31,1.96,0.81c0.5,0.5,0.81,1.19,0.81,1.96v14.74l11.02,6.54l0.09,0.06 c0.61,0.39,1.01,0.98,1.17,1.63c0.17,0.68,0.09,1.42-0.28,2.06l-0.02,0.03c-0.02,0.04-0.04,0.07-0.07,0.1 c-0.39,0.6-0.98,1-1.62,1.16c-0.68,0.17-1.42,0.09-2.06-0.28l-12.32-7.29c-0.43-0.23-0.79-0.58-1.05-0.99 c-0.26-0.42-0.41-0.91-0.41-1.43h0L89.01,75.37L89.01,75.37L89.01,75.37z M109.75,70.16c-2.4-2.4-5.26-4.33-8.43-5.64 c-3.06-1.27-6.42-1.96-9.95-1.96s-6.89,0.7-9.95,1.96c-3.17,1.31-6.03,3.24-8.43,5.64c-2.4,2.4-4.33,5.26-5.64,8.43 c-1.27,3.06-1.96,6.42-1.96,9.95c0,3.53,0.7,6.89,1.96,9.95c1.31,3.17,3.24,6.03,5.64,8.43c2.4,2.4,5.26,4.33,8.43,5.64 c3.06,1.27,6.42,1.96,9.95,1.96s6.89-0.7,9.95-1.96c3.17-1.31,6.03-3.24,8.43-5.64c4.71-4.71,7.61-11.2,7.61-18.38 c0-3.53-0.7-6.89-1.96-9.95C114.08,75.42,112.15,72.56,109.75,70.16L109.75,70.16z M13.45,57.36c-0.28,0-0.53-1.23-0.53-2.74 c0-1.51,0.22-2.73,0.53-2.73h13.48c0.28,0,0.53,1.23,0.53,2.73c0,1.51-0.22,2.74-0.53,2.74H13.45L13.45,57.36z M34.94,57.36 c-0.28,0-0.53-1.23-0.53-2.74c0-1.51,0.22-2.73,0.53-2.73h13.48c0.28,0,0.53,1.23,0.53,2.73c0,1.51-0.22,2.74-0.53,2.74H34.94 L34.94,57.36z M56.43,57.36c-0.28,0-0.53-1.23-0.53-2.74c0-1.51,0.22-2.73,0.53-2.73h13.48c0.28,0,0.53,1.22,0.53,2.72 c-1.35,0.84-2.65,1.76-3.89,2.75H56.43L56.43,57.36z M13.48,73.04c-0.28,0-0.53-1.23-0.53-2.74c0-1.51,0.22-2.74,0.53-2.74h13.48 c0.28,0,0.53,1.23,0.53,2.74c0,1.51-0.22,2.74-0.53,2.74H13.48L13.48,73.04z M34.97,73.04c-0.28,0-0.53-1.23-0.53-2.74 c0-1.51,0.22-2.74,0.53-2.74h13.48c0.28,0,0.53,1.23,0.53,2.74c0,1.51-0.22,2.74-0.53,2.74H34.97L34.97,73.04z M13.51,88.73 c-0.28,0-0.53-1.23-0.53-2.74c0-1.51,0.22-2.74,0.53-2.74h13.48c0.28,0,0.53,1.23,0.53,2.74c0,1.51-0.22,2.74-0.53,2.74H13.51 L13.51,88.73z M35,88.73c-0.28,0-0.53-1.23-0.53-2.74c0-1.51,0.22-2.74,0.53-2.74h13.48c0.28,0,0.53,1.23,0.53,2.74 c0,1.51-0.22,2.74-0.53,2.74H35L35,88.73z M25.29,4.05c0-2.23,2.2-4.05,4.94-4.05c2.74,0,4.94,1.81,4.94,4.05v17.72 c0,2.23-2.21,4.05-4.94,4.05c-2.74,0-4.94-1.81-4.94-4.05V4.05L25.29,4.05z M5.44,38.74h94.08v-20.4c0-0.7-0.28-1.31-0.73-1.76 c-0.45-0.45-1.09-0.73-1.76-0.73h-9.02c-1.51,0-2.74-1.23-2.74-2.74c0-1.51,1.23-2.74,2.74-2.74h9.02c2.21,0,4.19,0.89,5.64,2.34 c1.45,1.45,2.34,3.43,2.34,5.64v32.39c-1.8-0.62-3.65-1.12-5.55-1.49v-5.06h0.06H5.44v52.83c0,0.7,0.28,1.31,0.73,1.76 c0.45,0.45,1.09,0.73,1.76,0.73h44.71c0.51,1.9,1.15,3.75,1.92,5.53H7.98c-2.2,0-4.19-0.89-5.64-2.34C0.89,101.26,0,99.28,0,97.07 V18.36c0-2.2,0.89-4.19,2.34-5.64c1.45-1.45,3.43-2.34,5.64-2.34h9.63c1.51,0,2.74,1.23,2.74,2.74c0,1.51-1.23,2.74-2.74,2.74H7.98 c-0.7,0-1.31,0.28-1.76,0.73c-0.45,0.45-0.73,1.09-0.73,1.76v20.4H5.44L5.44,38.74z M43.07,15.85c-1.51,0-2.74-1.23-2.74-2.74 c0-1.51,1.23-2.74,2.74-2.74h18.36c1.51,0,2.74,1.23,2.74,2.74c0,1.51-1.23,2.74-2.74,2.74H43.07L43.07,15.85z"/></g></svg>';
 	}
 
 	/**
@@ -190,12 +181,26 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Returns default email properties.
+	 *
+	 * @param array $props
+	 * @param \Hizzle\Noptin\Emails\Email $email
+	 * @return array
+	 */
+	public function get_default_props( $props, $email ) {
+
+		$props['noptin-ap-post-type'] = 'post';
+
+		return parent::get_default_props( $props, $email );
+	}
+
+	/**
 	 * Returns an array of weekdays.
 	 *
 	 * @global WP_Locale $wp_locale WordPress date and time locale object.
 	 * @return array
 	 */
-	public function get_weekdays() {
+	public static function get_weekdays() {
 		global $wp_locale;
 
 		return $wp_locale->weekday;
@@ -245,94 +250,130 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	}
 
 	/**
+	 * Returns a list of days.
+	 *
+	 * @return array
+	 */
+	public static function get_days( $max ) {
+		return array_map(
+			function ( $day ) {
+
+				$ends = array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' );
+				if ( (($day % 100) >= 11) && (($day % 100) <= 13) ) {
+					$ordinal = $day . 'th';
+				} else {
+					$ordinal = $day . $ends[ $day % 10 ];
+				}
+
+				return array(
+					'value'  => "$day",
+					// translators: %d is the day number.
+					'label'  => sprintf( __( '%s day', 'newsletter-optin-box' ), $ordinal ),
+					// translators: %d is the day number.
+					'render' => sprintf( __( '%s day', 'newsletter-optin-box' ), "<strong>$ordinal</strong>" ),
+				);
+			},
+			range( 1, $max )
+		);
+	}
+
+	/**
 	 * Displays a metabox.
 	 *
 	 * @param Noptin_Automated_Email $campaign
 	 */
-	public function render_metabox( $campaign ) {
+	public function campaign_options( $options ) {
+		return array_merge( $options, self::get_campaign_timing_options() );
+	}
 
-		$frequencies = array(
-			'daily'   => __( 'Daily', 'newsletter-optin-box' ),
-			'weekly'  => __( 'Weekly', 'newsletter-optin-box' ),
-			'monthly' => __( 'Monthly', 'newsletter-optin-box' ),
-			'yearly'  => __( 'Yearly', 'newsletter-optin-box' ),
-			'x_days'  => __( 'Every', 'newsletter-optin-box' ),
+	/**
+	 * Retrieves campaign options.
+	 *
+	 * @return array
+	 */
+	public static function get_campaign_timing_options() {
+
+		return array(
+			'frequency' => array(
+				'el'          => 'select',
+				'options'     => array(
+					'daily'   => __( 'Daily', 'newsletter-optin-box' ),
+					'weekly'  => __( 'Weekly', 'newsletter-optin-box' ),
+					'monthly' => __( 'Monthly', 'newsletter-optin-box' ),
+					'yearly'  => __( 'Yearly', 'newsletter-optin-box' ),
+					'x_days'  => __( 'Every X days', 'newsletter-optin-box' ),
+				),
+				'label'       => __( 'Frequency', 'newsletter-optin-box' ),
+				'description' => __( 'How often should this email be sent?', 'newsletter-optin-box' ),
+			),
+			'day'       => array(
+				'el'          => 'select',
+				'options'     => (object) self::get_weekdays(),
+				'label'       => __( 'Day', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Select a day', 'newsletter-optin-box' ),
+				'description' => __( 'What day should this email be sent?', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'value' => 'weekly',
+						'key'   => 'frequency',
+					),
+				),
+			),
+
+			'date'      => array(
+				'el'          => 'combobox',
+				'options'     => self::get_days( 29 ),
+				'label'       => __( 'Day', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Select a day', 'newsletter-optin-box' ),
+				'description' => __( 'What day should this email be sent?', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'value' => 'monthly',
+						'key'   => 'frequency',
+					),
+				),
+			),
+
+			'year_day'  => array(
+				'el'          => 'combobox',
+				'label'       => __( 'Day', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Select a day', 'newsletter-optin-box' ),
+				'description' => __( 'What day should this email be sent?', 'newsletter-optin-box' ),
+				'options'     => self::get_days( 366 ),
+				'conditions'  => array(
+					array(
+						'value' => 'yearly',
+						'key'   => 'frequency',
+					),
+				),
+			),
+
+			'x_days'    => array(
+				'el'               => 'input',
+				'type'             => 'number',
+				'label'            => __( 'Days', 'newsletter-optin-box' ),
+				'placeholder'      => __( 'Enter a number', 'newsletter-optin-box' ),
+				'description'      => __( 'Number of days between each email.', 'newsletter-optin-box' ),
+				'customAttributes' => array(
+					'min'  => 1,
+					'step' => 1,
+					'max'  => 366,
+				),
+				'conditions'       => array(
+					array(
+						'value' => 'x_days',
+						'key'   => 'frequency',
+					),
+				),
+			),
+
+			'time'      => array(
+				'el'          => 'time',
+				'label'       => __( 'Time', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Enter a time', 'newsletter-optin-box' ),
+				'description' => __( 'What time should this email be sent?', 'newsletter-optin-box' ),
+			),
 		);
-
-		$frequency = $campaign->get( 'frequency' );
-		$day       = (string) $campaign->get( 'day' );
-		$dates     = $this->get_month_days();
-		$date      = (string) $campaign->get( 'date' );
-		$year_day  = (string) $campaign->get( 'year_day' );
-		$x_days    = (string) $campaign->get( 'x_days' );
-		$time      = $campaign->get( 'time' );
-
-		?>
-
-		<p>
-			<label>
-				<strong class="noptin-label-span"><?php esc_html_e( 'Send this email...', 'newsletter-optin-box' ); ?></strong>
-
-				<span class="noptin-post-digest-frequency noptin-inline-block" style="margin-bottom: 10px;">
-					<select name="noptin_email[frequency]" id="noptin-post-digest-frequency">
-						<?php foreach ( $frequencies as $key => $label ) : ?>
-							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $frequency ); ?>><?php echo esc_html( $label ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</span>
-
-				<span  class="noptin-post-digest-day noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'weekly' === $frequency ? 'inline-block' : 'none'; ?>">
-					<?php esc_html_e( 'on', 'newsletter-optin-box' ); ?>
-					<select name="noptin_email[day]">
-						<?php foreach ( $this->get_weekdays() as $key => $label ) : ?>
-							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( (string) $key, $day ); ?>><?php echo esc_html( $label ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</span>
-
-				<span class="noptin-post-digest-date noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'monthly' === $frequency ? 'inline-block' : 'none'; ?>">
-					<?php esc_html_e( 'on the', 'newsletter-optin-box' ); ?>
-					<select name="noptin_email[date]">
-						<?php foreach ( $dates as $key => $label ) : ?>
-							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $key, $date ); ?>><?php echo esc_html( $label ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</span>
-
-				<span class="noptin-post-digest-year-day noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'yearly' === $frequency ? 'inline-block' : 'none'; ?>">
-					<?php esc_html_e( 'on day', 'newsletter-optin-box' ); ?>
-					<input name="noptin_email[year_day]" class="noptin-schedule-input-year-day" style="width: 60px;" type="number" value="<?php echo esc_attr( $year_day ); ?>" placeholder="1" min="1" max="365" step="1">
-				</span>
-
-				<span class="noptin-post-digest-x-days noptin-inline-block" style="margin-bottom: 10px; display: <?php echo 'x_days' === $frequency ? 'inline-block' : 'none'; ?>">
-					<input name="noptin_email[x_days]" class="noptin-schedule-input-x-days" style="width: 60px;" type="number" value="<?php echo esc_attr( $x_days ); ?>" placeholder="14" min="1" max="365" step="1">
-					<?php esc_html_e( 'days', 'newsletter-optin-box' ); ?>
-				</span>
-
-				<span class="noptin-post-digest-time noptin-inline-block" style="margin-bottom: 10px;">
-					<?php esc_html_e( 'at', 'newsletter-optin-box' ); ?>
-					<input name="noptin_email[time]" class="noptin-schedule-input-time" style="width: 60px;" type="time" data-default-date="<?php echo esc_attr( $time ); ?>" value="<?php echo esc_attr( $time ); ?>" placeholder="H:i">
-				</span>
-
-			</label>
-		</p>
-
-		<?php
-
-		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ) {
-			return;
-		}
-
-		printf(
-			'<p>%s</p><p>%s</p>',
-			esc_html__( 'By default, this email will only send for new blog posts.', 'newsletter-optin-box' ),
-			sprintf(
-				// translators: %s is the link to the Noptin addons pack.
-				esc_html__( 'Install the %s to send notifications for products and other post types or limit notifications to certain categories, tags, and authors.', 'newsletter-optin-box' ),
-				"<a href='" . esc_url( noptin_get_upsell_url( '/ultimate-addons-pack/', 'post-digests', 'email-campaigns' ) ) . "' target='_blank'>Ultimate Addons Pack</a>"
-			)
-		);
-
 	}
 
 	/**
@@ -460,7 +501,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				$current_year_day = (int) gmdate( 'z' ) + 1;
 
 				if ( $year_day < $current_year_day ) {
-					$send_year++;
+					++$send_year;
 				}
 
 				$next_send = strtotime( "$send_year-01-01 $time" ) + ( $year_day - 1 ) * DAY_IN_SECONDS;
@@ -472,7 +513,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				}
 
 				$current_time = time();
-				$seconds	  = $x_days * DAY_IN_SECONDS;
+				$seconds      = $x_days * DAY_IN_SECONDS;
 
 				if ( $is_saving && ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
 					$current_time = $last_send;
@@ -489,7 +530,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		} else {
 			delete_post_meta( $campaign->id, '_noptin_next_send' );
 		}
-
 	}
 
 	/**
@@ -575,7 +615,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		// Clear environment.
 		$this->after_send( $campaign );
-
 	}
 
 	/**
@@ -738,7 +777,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			default:
 				return $about;
 		}
-
 	}
 
 	/**
@@ -817,7 +855,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			),
 
 		);
-
 	}
 
 	/**
@@ -902,7 +939,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		parent::prepare_test_data( $email );
 
 		$this->post_digest = $email;
-
 	}
 
 	/**
@@ -917,5 +953,4 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 
 		parent::after_send( $campaign );
 	}
-
 }

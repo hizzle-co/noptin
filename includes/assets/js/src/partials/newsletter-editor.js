@@ -6,11 +6,6 @@ export default {
 
 		var $ = jQuery
 
-		//Upsells
-		$('.noptin-filter-recipients').on('click', this.filter_recipients)
-		$('.noptin-filter-post-notifications-post-types').on('click', this.new_post_notifications_filter_post_types)
-		$('.noptin-filter-post-notifications-taxonomies').on('click', this.new_post_notifications_filter_taxonomies)
-
 		// Stop sending a campaign.
 		$('.noptin-stop-campaign').on('click', this.stop_campaign)
 

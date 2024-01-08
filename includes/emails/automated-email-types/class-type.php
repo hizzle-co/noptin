@@ -43,13 +43,6 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	abstract public function get_description();
 
 	/**
-	 * Retrieves the automated email type image.
-	 *
-	 * @deprecated 1.11.0
-	 */
-	public function the_image(){}
-
-	/**
 	 * Returns the image URL or dashicon for the automated email type.
 	 *
 	 * @return string|array
@@ -70,8 +63,8 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 
 		add_filter( "noptin_default_automation_email_{$this->type}_recipient", array( $this, 'get_default_recipient' ) );
 
-		if ( is_callable( array( $this, 'render_metabox' ) ) ) {
-			add_action( "noptin_automated_email_{$this->type}_options", array( $this, 'render_metabox' ) );
+		if ( is_callable( array( $this, 'campaign_options' ) ) ) {
+			add_filter( "noptin_automation_{$this->type}_email_extra_settings", array( $this, 'campaign_options' ) );
 		}
 
 		if ( is_callable( array( $this, 'about_automation' ) ) ) {
@@ -171,7 +164,6 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		}
 
 		return $emails;
-
 	}
 
 	/**
@@ -191,7 +183,6 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 
 		$timestamp        = strtotime( "+ $sends_after $sends_after_unit", time() );
 		return schedule_noptin_background_action( $timestamp, $this->notification_hook, $object_id, $automation->id );
-
 	}
 
 	/**
@@ -218,5 +209,4 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 
 		return $recipients;
 	}
-
 }

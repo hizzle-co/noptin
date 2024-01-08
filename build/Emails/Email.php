@@ -500,7 +500,7 @@ class Email {
 			$manual_recipients[] = $recipient;
 		}
 
-		return array(
+		$data = array(
 			'is_automation_rule'    => $this->is_automation_rule(),
 			'trigger'               => $this->get_trigger(),
 			'supports_timing'       => $this->supports_timing(),
@@ -508,7 +508,22 @@ class Email {
 			'email_type'            => Main::get_email_type( $this->type ),
 			'is_mass_mail'          => $this->is_mass_mail(),
 			'manual_recipients'     => $manual_recipients,
+			'extra_settings'        => (object) apply_filters(
+				'noptin_email_extra_settings',
+				apply_filters(
+					"noptin_{$this->type}_email_extra_settings",
+					apply_filters(
+						"noptin_{$this->type}_{$this->get_sub_type()}_email_extra_settings",
+						array(),
+						$this
+					),
+					$this
+				),
+				$this
+			),
 		);
+
+		return apply_filters( 'noptin_email_js_data', $data, $this );
 	}
 
 	/**
@@ -817,12 +832,6 @@ class Email {
 				wp_clear_scheduled_hook( 'publish_future_post', array( $this->id ) );
 				wp_schedule_single_event( strtotime( get_gmt_from_date( $this->created ) . ' GMT' ), 'publish_future_post', array( $this->id ) );
 			}
-
-			do_action( 'noptin_' . $this->type . '_campaign_saved', $this );
-
-			// Fire another hook for the subtype.
-			do_action( 'noptin_' . $this->get_sub_type() . '_campaign_saved', $this );
-
 			return true;
 		}
 

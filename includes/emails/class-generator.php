@@ -586,7 +586,6 @@ class Noptin_Email_Generator {
 		}
 
 		return $content;
-
 	}
 
 	/**
@@ -601,9 +600,9 @@ class Noptin_Email_Generator {
 	 * @param string $content The content.
 	 * @return string The filtered content.
 	 */
-	public function merge_tags_unautop( $content ) {
+	public static function merge_tags_unautop( $content, $is_blocks = false ) {
 
-		$spaces    = wp_spaces_regexp();
+		$spaces = wp_spaces_regexp();
 
 		// phpcs:disable Squiz.Strings.ConcatenationSpacing.PaddingFound,WordPress.WhiteSpace.PrecisionAlignment.Found -- don't remove regex indentation
 		$pattern =
@@ -611,14 +610,17 @@ class Noptin_Email_Generator {
 			. '<p>'                              // Opening paragraph.
 			. '(?:' . $spaces . ')*+'            // Optional leading whitespace.
 			. '('                                // 1: The shortcode.
-			.     '\\[\\[([\\w\\.]+)(\\ +(?:(?!\\[)[^\\]\n])+)*\\]\\]'
+			.     '\\[\\[(.*?)\\]\\]'
 			. ')'
 			. '(?:' . $spaces . ')*+'            // Optional trailing whitespace.
 			. '<\\/p>'                           // Closing paragraph.
 			. '/';
 		// phpcs:enable
 
-		return preg_replace( $pattern, '$1', $content );
-	}
+		if ( $is_blocks ) {
+			return preg_replace( $pattern, "<!-- wp:html -->$1<!-- /wp:html -->\n", $content );
+		}
 
+		return preg_replace( $pattern, "$1\n", $content );
+	}
 }

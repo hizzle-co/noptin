@@ -35,11 +35,11 @@ class Editor {
 		// Preload common data.
 		$preload_paths = array(
 			'/wp/v2/types?context=view',
+			'/wp/v2/types?context=edit&per_page=100',
 			'/wp/v2/taxonomies?context=view',
 			add_query_arg( 'context', 'edit', $rest_path ),
 			sprintf( '/wp/v2/types/%s?context=edit', 'noptin-campaign' ),
 			'/wp/v2/users/me',
-			array( rest_get_route_for_post_type_items( 'attachment' ), 'OPTIONS' ),
 			array( rest_get_route_for_post_type_items( 'page' ), 'OPTIONS' ),
 			sprintf( '%s/autosaves?context=edit', $rest_path ),
 			'/wp/v2/settings',
@@ -196,6 +196,7 @@ JS;
 				'campaign'  => $edited_campaign->to_array(),
 				'types'     => get_noptin_email_types(),
 				'templates' => get_noptin_email_templates(),
+				'languages' => noptin_get_available_languages(),
 				'back'      => esc_url( $edited_campaign->get_base_url() ),
 				'user'      => array(
 					'id'        => $current_user->ID,
@@ -454,7 +455,7 @@ JS;
 			'post_title'   => empty( $defaults['name'] ) ? 'Auto Draft' : $defaults['name'],
 			'post_status'  => 'auto-draft',
 			'post_author'  => get_current_user_id(),
-			'post_content' => $edited_campaign->get_content( 'visual' ),
+			'post_content' => isset( $defaults['content_visual'] ) ? $defaults['content_visual'] : '',
 			'meta_input'   => array(
 				'campaign_type' => $edited_campaign->type,
 				'campaign_data' => array_merge(
@@ -474,6 +475,7 @@ JS;
 		);
 
 		unset( $args['meta_input']['campaign_data']['name'] );
+		unset( $args['meta_input']['campaign_data']['content_visual'] );
 
 		// Store subtype in a separate meta key.
 		$args['meta_input'][ $edited_campaign->type . '_type' ] = $edited_campaign->get_sub_type();

@@ -102,6 +102,13 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	}
 
 	/**
+	 * Returns the default status.
+	 */
+	public function default_order_status() {
+		return 'paid';
+	}
+
+	/**
 	 * Retrieves allowed order statuses.
 	 *
 	 * @return array
@@ -120,7 +127,6 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
             'failed'     => __( 'Failed', 'newsletter-optin-box' ),
             'deleted'    => __( 'Deleted', 'newsletter-optin-box' ),
         );
-
 	}
 
 	/**
@@ -149,39 +155,22 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	 *
 	 * @param Noptin_Automated_Email $campaign
 	 */
-	public function render_metabox( $campaign ) {
-
-		// Fetch order statuses.
-		$statuses = $this->get_allowed_statuses();
-
-		// Prepare selected status.
-		$status = $this->get_campaign_order_status( $campaign );
-
-		// Are we sending to new customers.
-		$new_customer = $campaign->get( 'new_customer' );
-
-		?>
-			<p>
-				<label>
-					<strong class="noptin-label-span">
-						<?php esc_html_e( 'Send this email whenever an order is:-', 'newsletter-optin-box' ); ?>
-					</strong>
-					<select name="noptin_email[order_status]" id="noptin-automated-email-order-status" class="widefat">
-						<?php foreach ( $statuses as $key => $label ) : ?>
-							<option <?php selected( $status, $key ); ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></option>
-						<?php endforeach; ?>
-					</select>
-				</label>
-			</p>
-
-			<p>
-				<label>
-					<input type="checkbox" name="noptin_email[new_customer]" <?php echo checked( ! empty( $new_customer ) ); ?>" value="1">
-					<strong><?php esc_html_e( 'Only send to new customers?', 'newsletter-optin-box' ); ?></strong>
-				</label>
-			</p>
-		<?php
-
+	public function campaign_options( $options ) {
+		return array_merge(
+			$options,
+			array(
+				'order_status' => array(
+					'el'      => 'combobox',
+					'options' => $this->get_allowed_statuses(),
+					'label'   => __( 'Send this email whenever an order is:-', 'newsletter-optin-box' ),
+				),
+				'new_customer' => array(
+					'el'    => 'input',
+					'type'  => 'checkbox',
+					'label' => __( 'Only send to new customers?', 'newsletter-optin-box' ),
+				),
+			)
+		);
 	}
 
 	/**
