@@ -134,9 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 2.0.6 =
+= 3.0.0 =
 * Allow HTML in newsletter subscription confirmation messages.
 * Add option to allow editors to manage Noptin.
+* New newsletter campaign editor.
 
 = 2.0.5 =
 * Allow sending automation rule emails to unsubscribed contacts.

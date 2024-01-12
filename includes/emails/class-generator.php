@@ -260,8 +260,13 @@ class Noptin_Email_Generator {
 	 */
 	public function generate_visual_email() {
 
+		if ( ! empty( $this->campaign_id ) ) {
+			$GLOBALS['post'] = get_post( $this->campaign_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			setup_postdata( $GLOBALS['post'] );
+		}
+
 		// Prepare vars.
-		$content  = $this->content;
+		$content  = do_blocks( $this->content );
 		$template = 'noptin-visual';
 		$email    = $content;
 
@@ -304,6 +309,8 @@ class Noptin_Email_Generator {
 			$email = ob_get_clean();
 
 		}
+
+		wp_reset_postdata();
 
 		// Post-process and return.
 		return $this->post_process( $email );

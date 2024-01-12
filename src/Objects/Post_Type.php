@@ -2,12 +2,6 @@
 
 namespace Hizzle\Noptin\Objects;
 
-/**
- * Container for a post type object type.
- *
- * @since   1.0.0
- */
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -21,6 +15,11 @@ abstract class Post_Type extends Collection {
 	public $object_type = 'post_type';
 
 	private static $registered_subject = false;
+
+	/**
+	 * @var string $can_list Can list.
+	 */
+	public $can_list = true;
 
 	/**
 	 * Constructor
@@ -213,7 +212,6 @@ abstract class Post_Type extends Collection {
 	 * Retrieves a test object ID.
 	 *
 	 * @since 2.2.0
-	 * @param \Noptin_Automation_Rule $rule
 	 * @return int
 	 */
 	public function get_test_object_id( $rule ) {

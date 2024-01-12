@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\Objects;
-
 /**
  * Container for all collections.
  *
  * @since   1.0.0
  */
+
+namespace Hizzle\Noptin\Objects;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -173,7 +173,6 @@ class Store {
 		}
 
 		return $smart_tag;
-
 	}
 
 	/**
@@ -257,5 +256,4 @@ class Store {
 
 		return $noptin_current_objects[ $config['object_type'] ]->format( $raw_value, $args );
 	}
-
 }

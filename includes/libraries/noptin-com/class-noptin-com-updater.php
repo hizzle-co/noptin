@@ -443,6 +443,22 @@ class Noptin_COM_Updater {
 	}
 
 	/**
+	 * Filters listable objects.
+	 *
+	 * @param boolean $can_list Whether or not you can list objects.
+	 * @param \Hizzle\Noptin\Objects\Collection $collection The collection.
+	 * @return boolean
+	 */
+	public static function can_list( $can_list, $collection ) {
+
+		if ( ! Noptin_COM::get_active_license_key() && 'post' !== $collection->type ) {
+			return false;
+		}
+
+		return $can_list;
+	}
+
+	/**
 	 * Filters the email settings.
 	 *
 	 * @param array $settings The email settings.

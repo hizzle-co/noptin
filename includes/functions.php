@@ -61,7 +61,6 @@ function get_noptin_option( $key, $default = null ) {
 	$value = map_deep( $value, 'noptin_sanitize_booleans' );
 	$value = apply_filters( "get_noptin_option_$key", $value );
 	return apply_filters( 'get_noptin_option', $value, $key );
-
 }
 
 /**
@@ -90,7 +89,6 @@ function update_noptin_option( $key, $value ) {
 	$options         = get_noptin_options();
 	$options[ $key ] = $value;
 	update_noptin_options( $options );
-
 }
 
 /**
@@ -115,7 +113,6 @@ function get_noptin_action_url( $action, $value = false, $empty = false ) {
 		),
 		$home_url
 	);
-
 }
 
 /**
@@ -148,7 +145,6 @@ function noptin_get_post_types() {
 	unset( $return['attachment'] );
 
 	return $return;
-
 }
 
 /**
@@ -170,7 +166,6 @@ function noptin_should_show_optins() {
 	}
 
 	return apply_filters( 'noptin_should_show_optins', $show );
-
 }
 
 /**
@@ -226,7 +221,6 @@ function get_noptin_new_newsletter_campaign_url() {
 		'sub_section' => 'new_campaign',
 	);
 	return add_query_arg( $param, admin_url( '/admin.php' ) );
-
 }
 
 /**
@@ -245,7 +239,6 @@ function get_noptin_newsletter_campaign_url( $id ) {
 		'campaign'    => $id,
 	);
 	return add_query_arg( $param, admin_url( '/admin.php' ) );
-
 }
 
 /**
@@ -269,7 +262,6 @@ function is_noptin_campaign( $post, $campaign_type = false ) {
 	}
 
 	return trim( $campaign_type ) === get_post_meta( $campaign->ID, 'campaign_type', true );
-
 }
 
 /**
@@ -308,7 +300,6 @@ function noptin_ob_get_clean( $file, $args = array() ) {
 	ob_start();
 	include $file;
 	return ob_get_clean();
-
 }
 
 /**
@@ -322,7 +313,7 @@ function get_noptin_capability( $capalibilty = 'manage_noptin' ) {
 
 	if ( current_user_can( 'manage_options' ) ) {
 		return 'manage_options';
-	};
+	}
 
 	// Are we allowing editors to manage noptin?
 	if ( get_noptin_option( 'allow_editors', false ) && current_user_can( 'edit_others_posts' ) ) {
@@ -354,7 +345,6 @@ function get_noptin_template( $template_name, $args = array(), $template_path = 
 
 		include $the_template_path;
 	}
-
 }
 
 /**
@@ -492,19 +482,18 @@ function noptin_locate_ip_address( $ip_address = '' ) {
 	}
 
 	if ( ! empty( $geo['country_name'] ) ) {
-		$geo['country'] 		= $geo['country_name'];
+		$geo['country']         = $geo['country_name'];
 		unset( $geo['country_name'] );
 	}
 
 	if ( ! empty( $geo['state_prov'] ) ) {
-		$geo['state'] 			= $geo['state_prov'];
+		$geo['state']           = $geo['state_prov'];
 		unset( $geo['state_prov'] );
 	}
 
 	$fields = noptin_clean( $geo );
 	set_transient( $transient_name, $fields, HOUR_IN_SECONDS );
 	return $fields;
-
 }
 
 /**
@@ -555,7 +544,6 @@ function noptin_locate_ip_address_alt( $ip_address ) {
 	$location = noptin_clean( $location );
 	set_transient( $transient_name, $location, HOUR_IN_SECONDS );
 	return $location;
-
 }
 
 /**
@@ -664,7 +652,6 @@ function noptin_is_singular( $posts = '' ) {
 
 	// Check if current url is in one of the urls.
 	return in_array( noptin_clean_url(), $posts['urls'], true );
-
 }
 
 /**
@@ -730,14 +717,13 @@ function log_noptin_message( $message, $code = 'error' ) {
 
 	// Add our message.
 	$messages[] = array(
-		'level'	=> $code,
-		'msg'	=> $message,
-		'time'	=> current_time( 'mysql' ),
+		'level' => $code,
+		'msg'   => $message,
+		'time'  => current_time( 'mysql' ),
 	);
 
 	// Then save to the database.
 	return update_option( 'noptin_logged_messages', $messages );
-
 }
 
 /**
@@ -773,7 +759,6 @@ function get_logged_noptin_messages() {
 	}
 
 	return $prepared;
-
 }
 
 /**
@@ -829,7 +814,6 @@ function create_noptin_task( array $args ) {
 
 	// Maybe attach some params to the task.
 	return $task->set_params( $args );
-
 }
 
 /**
@@ -1208,7 +1192,6 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 	$content = preg_replace( '/ +([,.!])/s', '$1', $content );
 
 	return $content;
-
 }
 
 /**
@@ -1252,7 +1235,6 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 	}
 
 	return $result;
-
 }
 
 /**
@@ -1394,7 +1376,6 @@ function noptin_is_preview() {
 	}
 
 	return false;
-
 }
 
 /**
@@ -1517,13 +1498,10 @@ function noptin_limit_length( $string, $limit ) {
 		if ( mb_strlen( $string ) > $limit ) {
 			$string = mb_strimwidth( $string, 0, $str_limit ) . '...';
 		}
-	} else {
-		if ( strlen( $string ) > $limit ) {
+	} elseif ( strlen( $string ) > $limit ) {
 			$string = substr( $string, 0, $str_limit ) . '...';
-		}
 	}
 	return $string;
-
 }
 
 /**
@@ -2148,4 +2126,31 @@ function noptin_get_random_background_color() {
 	$foreground = $brightness > 128 ? '000000' : 'ffffff';
 
 	return array( $background, $foreground );
+}
+
+/**
+ * Implodes an array into a string.
+ *
+ * @param array $strings
+ * @param string $glue
+ */
+function noptin_implode_and( $strings, $glue = ', ' ) {
+
+	if ( empty( $strings ) || ! is_array( $strings ) ) {
+		return '';
+	}
+
+	$last   = array_pop( $strings );
+	$string = implode( $glue, $strings );
+
+	if ( empty( $string ) ) {
+		return $last;
+	}
+
+	return sprintf(
+		// translators: %1$s is a string, %2$s is a string.
+		__( '%1$s and %2$s', 'newsletter-optin-box' ),
+		$string,
+		$last
+	);
 }

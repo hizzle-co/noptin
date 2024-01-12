@@ -198,6 +198,10 @@ JS;
 				'templates' => get_noptin_email_templates(),
 				'languages' => noptin_get_available_languages(),
 				'back'      => esc_url( $edited_campaign->get_base_url() ),
+				'objects'   => (object) apply_filters(
+					'noptin_email_editor_objects',
+					array()
+				),
 				'user'      => array(
 					'id'        => $current_user->ID,
 					'email'     => $current_user->user_email,
@@ -435,7 +439,22 @@ JS;
 		}
 
 		// Prepare post args.
-		$defaults = apply_filters( 'noptin_get_default_email_props', array(), $edited_campaign );
+		$defaults = apply_filters(
+			'noptin_get_default_email_props',
+			array(
+				'block_css' => array(
+					'footer-text' => ' #footer-text a { color: #111111 }',
+				),
+				'subject'          => $edited_campaign->get( 'subject' ),
+				'recipients'       => $edited_campaign->get_recipients(),
+				'email_sender'     => $edited_campaign->get_sender(),
+				'email_type'       => $edited_campaign->get_email_type(),
+				'template'         => $edited_campaign->get_template(),
+				'sends_after_unit' => $edited_campaign->get_sends_after_unit(),
+				'footer_text'      => get_noptin_footer_text(),
+			),
+			$edited_campaign
+		);
 
 		if ( 'normal' !== $edited_campaign->get_email_type() ) {
 			$defaults = array_merge(
@@ -461,15 +480,6 @@ JS;
 				'campaign_data' => array_merge(
 					$defaults,
 					$edited_campaign->options,
-					array(
-						'subject'          => $edited_campaign->get( 'subject' ),
-						'recipients'       => $edited_campaign->get_recipients(),
-						'email_sender'     => $edited_campaign->get_sender(),
-						'email_type'       => $edited_campaign->get_email_type(),
-						'template'         => $edited_campaign->get_template(),
-						'sends_after_unit' => $edited_campaign->get_sends_after_unit(),
-						'footer_text'      => get_noptin_footer_text(),
-					)
 				),
 			),
 		);

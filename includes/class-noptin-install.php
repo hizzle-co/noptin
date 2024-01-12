@@ -25,6 +25,9 @@ class Noptin_Install {
 
 		update_option( 'noptin_db_version', $current_version );
 
+		// Flush permalinks.
+		flush_rewrite_rules();
+
 		// If this is a fresh install.
 		if ( ! $upgrade_from ) {
 			return $this->do_full_install();
@@ -119,7 +122,5 @@ class Noptin_Install {
 		if ( class_exists( 'WooCommerce' ) ) {
 			update_option( 'noptin_use_new_forms', '1' );
 		}
-
 	}
-
 }

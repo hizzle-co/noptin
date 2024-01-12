@@ -152,7 +152,6 @@ abstract class Noptin_Email_Type {
 				array( '<!-- wp:paragraph --><p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '">', '</p><!-- /wp:paragraph -->' ),
 				$normal
 			);
-
 		}
 
 		return '<!-- wp:paragraph --> <p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '"></p> <!-- /wp:paragraph -->';
@@ -164,31 +163,10 @@ abstract class Noptin_Email_Type {
 	 */
 	public function default_content_visual() {
 
-		$normal = $this->default_content_normal();
-
-		if ( ! empty( $normal ) ) {
-			$normal = wpautop( $normal );
-
-			// Ensure that shortcodes are not wrapped in paragraphs.
-			$normal = shortcode_unautop( $normal );
-
-			// Ensure that merge tags are not wrapped in paragraphs.
-			$normal = Noptin_Email_Generator::merge_tags_unautop( $normal, true );
-
-			// Convert paragraphs to blocks.
-			$normal = str_replace(
-				array( '<p>', '</p>' ),
-				array( '<!-- wp:paragraph --><p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '">', '</p><!-- /wp:paragraph -->' ),
-				$normal
-			);
-
-		} else {
-			$normal = '<!-- wp:paragraph --> <p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '"></p> <!-- /wp:paragraph -->';
-		}
-
+		$blocks  = $this->prepare_default_blocks();
 		$footer  = get_noptin_footer_text();
-		$footer  = '<!-- wp:paragraph {"style":{"noptin":{"typography":{"textAlign":"center","fontSize":13},"color":{"text":"#666666","link":"#111111"}}}} --> <p style="text-align:center;font-size:13px;color:#666666" class="wp-block-paragraph" id="block-1a4f5bdb-4e40-4db2-9850-8de49f6dbc4f">' . $footer . '</p> <!-- /wp:paragraph -->';
-		$content = '<!-- wp:noptin/group {"style":{"noptin":{"color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group aligncenter" id="block-682e1b03-a2fb-40cd-ae03-0da8a10e05d9"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $normal . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group --> <div class="wp-block-noptin-group aligncenter" id="block-fdb5ab8d-11e4-48d1-b288-acd74d1d3b30"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
+		$footer  = '<!-- wp:paragraph {"style":{"noptin":{"typography":{"textAlign":"center","fontSize":13},"color":{"text":"#666666","link":"#111111"}}}} --> <p style="text-align:center;font-size:13px;color:#666666" class="wp-block-paragraph" id="footer-text">' . $footer . '</p> <!-- /wp:paragraph -->';
+		$content = '<!-- wp:noptin/group {"style":{"noptin":{"color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group aligncenter" id="main-content-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $blocks . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group --> <div class="wp-block-noptin-group aligncenter" id="main-footer-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
 
 		/**
 		 * Filters the default email body

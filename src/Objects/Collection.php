@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\Objects;
-
 /**
  * Collection of records.
  *
  * @since   1.0.0
  */
+
+namespace Hizzle\Noptin\Objects;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,6 +19,11 @@ abstract class Collection {
 	 * @var string the record class.
 	 */
 	public $record_class = '\Hizzle\Noptin\Objects\Record';
+
+	/**
+	 * @var string icon
+	 */
+	public $icon = 'database';
 
 	/**
 	 * @var string object type.
@@ -51,6 +56,11 @@ abstract class Collection {
 	public $integration;
 
 	/**
+	 * @var string $can_list Can list.
+	 */
+	public $can_list = false;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -65,6 +75,17 @@ abstract class Collection {
 		// Set automation rule smart tags prefix.
 		if ( is_null( $this->smart_tags_prefix ) ) {
 			$this->smart_tags_prefix = $this->type;
+		}
+
+		$this->can_list = apply_filters( 'noptin_object_can_list', $this->can_list, $this );
+
+		// Register object.
+		add_filter( 'noptin_email_editor_objects', array( $this, 'register_object' ) );
+
+		// Register shortcode.
+		if ( $this->can_list ) {
+			$name = $this->plural_type();
+			//add_shortcode( "noptin_{$name}_tag", array( $this, 'handle_list_shortcode' ) );
 		}
 	}
 
@@ -96,7 +117,6 @@ abstract class Collection {
 				new Action( $key, $args, $this )
 			);
 		}
-
 	}
 
 	/**
@@ -143,7 +163,7 @@ abstract class Collection {
 	}
 
 	/**
-	 * Returns a list of available actions.
+	 * Returns a list of available (actions).
 	 *
 	 * @return array $actions The actions.
 	 */
@@ -164,6 +184,15 @@ abstract class Collection {
 	 *
 	 */
 	abstract public function get_fields();
+
+	/**
+	 * Retrieves available filters.
+	 *
+	 * @return array
+	 */
+	public function get_filters() {
+		return array();
+	}
 
 	/**
 	 * Retrieves all filtered fields.
@@ -254,5 +283,91 @@ abstract class Collection {
 		$filtered = Store::filtered( array( 'object_type' => $this->object_type ) );
 		unset( $filtered[ $this->type ] );
 		return $filtered;
+	}
+
+	/**
+	 * (Maybe) Registers the object.
+	 */
+	public function register_object( $objects ) {
+
+		if ( ! $this->can_list ) {
+			return $objects;
+		}
+
+		$objects[ $this->type ] = array(
+			'object_type'    => $this->object_type,
+			'icon'           => $this->icon,
+			'type'           => $this->type,
+			'name'           => $this->plural_type(),
+			'label'          => $this->label,
+			'singular_label' => $this->singular_label,
+			'filters'        => $this->get_filters(),
+			'fields'         => $this->get_all_fields(),
+		);
+
+		return $objects;
+	}
+
+	/**
+	 * Returns the type as a plural string.
+	 */
+	public function plural_type() {
+		return $this->type . 's';
+	}
+
+	/**
+	 * Prepares a query filter.
+	 *
+	 * @param array $filters The filters.
+	 * @param string $key The filter key.
+	 * @return array $filters The prepared filters.
+	 */
+	protected function prepare_query_filter( $filters, $key ) {
+
+		// Abort if no value or items.
+		if ( empty( $filters[ $key ] ) || empty( $filters[ $key ]['items'] ) || ! empty( $filters[ $key ]['disabled'] ) || ! is_array( $filters[ $key ]['items'] ) ) {
+			unset( $filters[ $key ] );
+			return $filters;
+		}
+
+		$prepared = $filters[ $key ]['items'];
+
+		if ( ! empty( $filters[ $key ]['relation'] ) ) {
+			$prepared['relation'] = $filters[ $key ]['relation'];
+		}
+
+		$filters[ $key ] = $prepared;
+		return $filters;
+	}
+
+	/**
+	 * Handles the list shortcode.
+	 *
+	 * @param array $atts The shortcode attributes.
+	 * @return string $template The shortcode HTML.
+	 */
+	public function handle_list_shortcode( $atts, $template ) {
+noptin_dump( $atts ); exit;
+		$atts = shortcode_atts(
+			array(
+				'format' => 'label',
+			),
+			$atts,
+			'noptin_' . $this->plural_type() . '_tag'
+		);
+
+		$items = $this->get_all( array() );
+
+		if ( empty( $items ) ) {
+			return '';
+		}
+
+		$html = '';
+
+		foreach ( $items as $item ) {
+			$html .= $this->get_shortcode_item( $item, $atts );
+		}
+
+		return $html;
 	}
 }

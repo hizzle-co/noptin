@@ -201,6 +201,20 @@ class Email {
 	}
 
 	/**
+	 * Fetches an emaail.
+	 *
+	 * @return Email
+	 */
+	public static function from( $id ) {
+
+		if ( $id instanceof Email ) {
+			return $id;
+		}
+
+		return new Email( $id );
+	}
+
+	/**
 	 * Checks if the email exists.
 	 *
 	 * @return bool
@@ -399,6 +413,8 @@ class Email {
 	 * @return bool
 	 */
 	public function get_template() {
+
+		$template = $this->get( 'template' );
 
 		// Read from settings.
 		if ( empty( $template ) ) {
@@ -716,6 +732,20 @@ class Email {
 		}
 
 		return $emails;
+	}
+
+	/**
+	 * Returns an action URL for this email.
+	 *
+	 * @param string $action The action to perform.
+	 * @return string
+	 */
+	public function get_action_url( $action ) {
+		$param = array(
+			'noptin_email_action' => $action,
+			'noptin_campaign'     => $this->id,
+		);
+		return wp_nonce_url( add_query_arg( $param, $this->get_base_url() ), 'noptin_email_action', 'noptin_email_action_nonce' );
 	}
 
 	/**

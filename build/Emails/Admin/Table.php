@@ -138,15 +138,7 @@ class Table extends \WP_List_Table {
 
 			'send'      => sprintf(
 				'<a href="%s" style="color: green;" onclick="return confirm(\'%s\');">%s</a>',
-				esc_url(
-					add_query_arg(
-						array(
-							'noptin_admin_action' => 'noptin_force_send_campaign',
-							'noptin_nonce'        => wp_create_nonce( 'noptin_force_send_campaign' ),
-						),
-						$item->get_edit_url()
-					)
-				),
+				esc_url( $item->get_action_url( 'force_send_campaign' ) ),
 				esc_attr__( 'Are you sure you want to send this campaign?', 'newsletter-optin-box' ),
 				esc_html__( 'Send Now', 'newsletter-optin-box' )
 			),

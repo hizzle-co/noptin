@@ -1,7 +1,5 @@
 <?php
 
-namespace Hizzle\Noptin\Bulk_Emails;
-
 /**
  * Bulk Emails API: Email Sender.
  *
@@ -10,6 +8,8 @@ namespace Hizzle\Noptin\Bulk_Emails;
  * @since   1.12.0
  * @package Noptin
  */
+
+namespace Hizzle\Noptin\Bulk_Emails;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -157,7 +157,6 @@ abstract class Email_Sender {
 				<?php echo wp_kses_post( $field['description'] ); ?>
 			</p>
 		<?php
-
 	}
 
 	/**
@@ -216,7 +215,6 @@ abstract class Email_Sender {
 				<?php endforeach; ?>
 			</ul>
 		<?php
-
 	}
 
 	/**
@@ -237,7 +235,6 @@ abstract class Email_Sender {
 				<?php echo wp_kses_post( $field['description'] ); ?>
 			</p>
 		<?php
-
 	}
 
 	/**
@@ -258,7 +255,6 @@ abstract class Email_Sender {
 				<?php echo wp_kses_post( $field['description'] ); ?>
 			</p>
 		<?php
-
 	}
 
 	/**
@@ -279,7 +275,6 @@ abstract class Email_Sender {
 				<?php echo wp_kses_post( $field['description'] ); ?>
 			</p>
 		<?php
-
 	}
 
 	/**

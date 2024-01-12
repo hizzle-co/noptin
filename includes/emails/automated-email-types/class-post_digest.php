@@ -544,13 +544,12 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * (Maybe) Send out post digests.
 	 *
-	 * @param int $campaign_id
+	 * @param \Hizzle\Noptin\Emails\Email|int $campaign_id
 	 * @param string $key
 	 */
 	public function maybe_send_notification( $campaign_id ) {
 
-		// Get the campaign.
-		$campaign = new Noptin_Automated_Email( $campaign_id );
+		$campaign = \Hizzle\Noptin\Emails\Email::from( $campaign_id );
 
 		// Ensure that the campaign is still published.
 		if ( ! $campaign->can_send() ) {
@@ -576,46 +575,59 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		$this->posts_found = false;
 		$this->date_query  = $this->get_date_query( $campaign );
 
-		$type    = $campaign->get_email_type();
-		$content = $campaign->get_content( $type );
-
-		// Parse paragraphs.
-		if ( 'normal' === $type ) {
-			$content = wpautop( trim( $content ) );
-		}
-
 		$this->before_send( $campaign );
 
 		// Prepare campaign args.
+		$type = $campaign->get_email_type();
 		$args = array_merge(
 			$campaign->options,
 			array(
 				'parent_id'         => $campaign->id,
 				'status'            => 'publish',
+				'type'              => 'newsletter',
+				'name'              => sprintf( '%1$s [%2$s]', esc_html( $campaign->name ), date_i18n( get_option( 'date_format' ) ) ),
 				'subject'           => noptin_parse_email_subject_tags( $campaign->get_subject(), true ),
 				'heading'           => noptin_parse_email_content_tags( $campaign->get( 'heading' ), true ),
-				'content_' . $type  => trim( noptin_parse_email_content_tags( $content, true ) ),
+				'content'           => noptin_parse_email_content_tags( $campaign->content, true ),
+				'author'            => $campaign->author,
 				'subscribers_query' => array(),
 				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
 				'footer_text'       => noptin_parse_email_content_tags( $campaign->get( 'footer_text' ), true ),
-				'custom_title'      => sprintf( /* translators: %1 campaign name, %2 campaign date */ __( '%1$s [%2$s]', 'newsletter-optin-box' ), esc_html( $campaign->name ), date_i18n( get_option( 'date_format' ) ) ),
 			)
 		);
 
-		// Skip if there are no posts.
-		if ( ! $this->posts_found ) {
-			return;
-		}
+		foreach ( $args as $key => $value ) {
 
-		// Remove unrelated content.
-		foreach ( array( 'content_normal', 'content_plain_text', 'content_raw_html' ) as $content_type ) {
-			if ( 'content_' . $type !== $content_type ) {
-				unset( $args[ $content_type ] );
+			// Check if the key starts with content_.
+			if ( 0 === strpos( $key, 'content_' ) ) {
+
+				// Parse paragraphs.
+				if ( 'content_normal' === $type ) {
+					$value = wpautop( trim( $value ) );
+				}
+
+				$args[ $key ] = trim( noptin_parse_email_content_tags( $value, true ) );
+
+				// Strip HTML.
+				if ( 'content_plain_text' === $type && ! empty( $args[ $key ] ) ) {
+					$args[ $key ] = noptin_convert_html_to_text( $args[ $key ] );
+				}
 			}
 		}
 
+		// Skip if there are no posts.
+		if ( ! $this->posts_found ) {
+			add_filter(
+				'noptin_email_sent_successfully_message',
+				function () {
+					return __( 'No posts found.', 'newsletter-optin-box' );
+				}
+			);
+			return;
+		}
+
 		// Prepare the newsletter.
-		$newsletter = new Noptin_Newsletter_Email( $args );
+		$newsletter = new \Hizzle\Noptin\Emails\Email( $args );
 
 		// Send normal campaign.
 		if ( apply_filters( 'noptin_should_send_post_digest', true, $newsletter, $campaign ) ) {

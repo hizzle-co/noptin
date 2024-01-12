@@ -366,6 +366,9 @@ class Noptin {
 		// css body class.
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 
+		// Post types.
+		add_action( 'init', '\Hizzle\Noptin\Objects\Generic_Post_Type::register', 999 );
+
 		/**
 		 * Fires after Noptin loads.
 		 *

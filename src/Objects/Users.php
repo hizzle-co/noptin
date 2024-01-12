@@ -29,9 +29,9 @@ class Users extends People {
 	 * @return string
 	 */
 	public function __construct( $type, $label, $singular_label ) {
-		$this->label		  = $label;
+		$this->label          = $label;
 		$this->singular_label = $singular_label;
-		$this->type			  = $type;
+		$this->type           = $type;
 		$this->can_email      = false;
 
 		parent::__construct();
@@ -187,7 +187,6 @@ class Users extends People {
 	 * Retrieves a test object ID.
 	 *
 	 * @since 2.2.0
-	 * @param \Noptin_Automation_Rule $rule
 	 * @return int
 	 */
 	public function get_test_object_id( $rule ) {
