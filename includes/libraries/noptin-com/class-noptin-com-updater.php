@@ -31,6 +31,7 @@ class Noptin_COM_Updater {
 		add_filter( 'noptin_email_types', array( __CLASS__, 'add_email_types' ) );
 		add_filter( 'noptin_email_settings_misc', array( __CLASS__, 'filter_email_settings' ) );
 		add_filter( 'noptin_automation_sub_types', array( __CLASS__, 'upsell_automation_types' ), 5 );
+		add_filter( 'noptin_object_can_list', array( __CLASS__, 'can_list' ), PHP_INT_MAX, 2 );
 	}
 
 	/**
@@ -251,7 +252,6 @@ class Noptin_COM_Updater {
 		$local_plugin = current( wp_list_filter( Noptin_COM::get_installed_addons(), array( 'slug' => $slug ) ) );
 
 		return ! empty( $local_plugin ) && version_compare( $local_plugin['Version'], $update_data[ $slug ]['version'], '<' );
-
 	}
 
 	/**
@@ -350,7 +350,6 @@ class Noptin_COM_Updater {
 		$new_response[ $git_url ]['slug'] = $args->slug;
 
 		return (object) $new_response[ $git_url ];
-
 	}
 
 	/**
@@ -388,7 +387,6 @@ class Noptin_COM_Updater {
 				)
 			);
 		}
-
 	}
 
 	/**

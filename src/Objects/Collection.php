@@ -61,6 +61,11 @@ abstract class Collection {
 	public $can_list = false;
 
 	/**
+	 * @var Record|null $current_item Current item.
+	 */
+	public $current_item = null;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -85,7 +90,7 @@ abstract class Collection {
 		// Register shortcode.
 		if ( $this->can_list ) {
 			$name = $this->plural_type();
-			//add_shortcode( "noptin_{$name}_tag", array( $this, 'handle_list_shortcode' ) );
+			add_shortcode( 'noptin_' . $this->plural_type() . '_list', array( $this, 'handle_list_shortcode' ) );
 		}
 	}
 
@@ -347,27 +352,101 @@ abstract class Collection {
 	 * @return string $template The shortcode HTML.
 	 */
 	public function handle_list_shortcode( $atts, $template ) {
-noptin_dump( $atts ); exit;
+
 		$atts = shortcode_atts(
 			array(
-				'format' => 'label',
+				'query'       => 'number=10&order=desc&orderby=date',
+				'columns'     => 1,
+				'skiponempty' => 'no',
+				'responsive'  => 'yes',
 			),
 			$atts,
-			'noptin_' . $this->plural_type() . '_tag'
+			'noptin_' . $this->plural_type() . '_list'
 		);
 
-		$items = $this->get_all( array() );
+		parse_str( rawurldecode( html_entity_decode( $atts['query'] ) ), $query );
+
+		$items = $this->get_all( $query );
 
 		if ( empty( $items ) ) {
+
+			if ( 'yes' === $atts['skiponempty'] ) {
+				$GLOBALS['noptin_email_force_skip'] = true;
+			}
+
 			return '';
 		}
 
-		$html = '';
+		$html    = '<div class="noptin-records__wrapper wp-block-noptin-' . sanitize_html_class( $this->type ) . '-template">';
+		$post    = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
+		$tags    = new Tags( $this->type );
+		$columns = absint( $atts['columns'] );
+		$rows    = ceil( count( $items ) / $columns );
 
-		foreach ( $items as $item ) {
-			$html .= $this->get_shortcode_item( $item, $atts );
+		for ( $row = 0; $row < $rows; $row++ ) {
+			$row_class = 'noptin-records__row';
+
+			if ( $columns > 1 ) {
+				$row_class .= ' noptin-columns';
+
+				if ( 'yes' === $atts['responsive'] ) {
+					$row_class .= ' noptin-is-stacked-on-mobile';
+				}
+			}
+
+			$html .= '<div class="' . esc_attr( $row_class ) . '">';
+
+			for ( $col = 0; $col < $columns; $col++ ) {
+				$index = $row * $columns + $col;
+
+				if ( ! isset( $items[ $index ] ) ) {
+					continue;
+				}
+
+				// Prepare item.
+				$item = $items[ $index ];
+				$this->prepare_item( $item );
+
+				// Generate template.
+				$html .= $tags->replace_record_fields( $this->current_item, $template );
+
+				// Cleanup item.
+				$this->cleanup_item( $item );
+			}
+
+			$html .= '</div>';
+		}
+
+		$html .= '</div>';
+
+		// Restore post.
+		if ( 'post_type' === $this->object_type ) {
+			if ( ! empty( $post ) ) {
+				$GLOBALS['post'] = $post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				setup_postdata( $post );
+			} else {
+				wp_reset_postdata();
+			}
 		}
 
 		return $html;
+	}
+
+	/**
+	 * Prepares a single item.
+	 *
+	 * @param int $item The item.
+	 */
+	protected function prepare_item( $item ) {
+		$this->current_item = $this->get( $item );
+	}
+
+	/**
+	 * Cleans up after a single item.
+	 *
+	 * @param Record|null $previous_item The item.
+	 */
+	protected function cleanup_item( $previous_item ) {
+		$this->current_item = $previous_item;
 	}
 }

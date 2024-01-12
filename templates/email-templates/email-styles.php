@@ -249,6 +249,26 @@
 		border-radius: 6px;
 	}
 
+	.noptin-columns {
+		display: table;
+		width: 100%;
+	}
+
+	.noptin-column {
+		display: table-cell;
+	}
+
+	@media only screen and (max-width: 360px) {
+		.noptin-is-stacked-on-mobile {
+			display: block !important;
+		}
+
+		.noptin-is-stacked-on-mobile.noptin-column {
+			vertical-align: top !important;
+			width: 100% !important;
+		}
+	}
+
 	<?php
 		// Note that esc_html() cannot be used because `div &gt; span` is not interpreted properly.
 		echo strip_tags( get_noptin_option( 'custom_css', '' ) ); // phpcs:ignore

@@ -369,7 +369,7 @@ class Generic_Post_Type extends Post_Type {
 		// If date query is specified, ensure it is enabled.
 		$filters = $this->prepare_query_filter( $filters, 'date_query' );
 
-		return get_posts( $filters );
+		return get_posts( array_filter( $filters ) );
 	}
 
 	/**

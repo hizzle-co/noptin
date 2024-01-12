@@ -11,7 +11,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// TODO: Update post digest guide and show how to modify the posts list and grid.
 ?>
 
 <style type="text/css">

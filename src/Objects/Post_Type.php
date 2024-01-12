@@ -227,4 +227,18 @@ abstract class Post_Type extends Collection {
 			)
 		);
 	}
+
+	/**
+	 * Prepares a single item.
+	 *
+	 * @param int $item The item.
+	 */
+	protected function prepare_item( $item ) {
+		$this->current_item = $this->get( $item );
+
+		if ( $this->current_item->exists() ) {
+			$GLOBALS['post'] = $this->current_item->external;
+			setup_postdata( $this->current_item->external );
+		}
+	}
 }

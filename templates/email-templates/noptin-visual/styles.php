@@ -39,6 +39,8 @@
 		line-height: <?php echo esc_attr( $settings['line_height'] ); ?>;
 		font-weight: <?php echo esc_attr( $settings['font_weight'] ); ?>;
 		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
+		word-wrap: break-word;
+    	word-break: break-all;
 	}
 
 	div,
@@ -55,18 +57,6 @@
 	.noptin-button-link__wrapper {
 		background-color: <?php echo esc_attr( $settings['button_background'] ); ?>;
 		color: <?php echo esc_attr( $settings['button_color'] ); ?>;
-	}
-
-	@media only screen and (max-width: 360px) {
-		.wp-block-noptin-columns.is-stacked-on-mobile {
-			display: block !important;
-		}
-
-		.wp-block-noptin-columns.is-stacked-on-mobile .wp-block-noptin-column {
-			display: block !important;
-			vertical-align: top !important;
-			width: 100% !important;
-		}
 	}
 
 	/**
