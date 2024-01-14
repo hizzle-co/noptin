@@ -377,34 +377,51 @@ abstract class Collection {
 			return '';
 		}
 
-		$html    = '<div class="noptin-records__wrapper wp-block-noptin-' . sanitize_html_class( $this->type ) . '-template">';
 		$post    = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
 		$tags    = new Tags( $this->type );
-		$columns = absint( $atts['columns'] );
-		$rows    = ceil( count( $items ) / $columns );
+		$columns = absint( $atts['columns'] ) ? absint( $atts['columns'] ) : 1;
+		$cols    = array_fill( 0, $columns, array() );
+		$width   = round( 100 / $columns, 10 );
 
-		for ( $row = 0; $row < $rows; $row++ ) {
-			$row_class = 'noptin-records__row';
+		// Loop through the items and add them to the appropriate columns.
+		foreach ( $items as $index => $item ) {
+			$cols[ $index % $columns ][] = $item;
+		}
 
-			if ( $columns > 1 ) {
-				$row_class .= ' noptin-columns';
+		$wrapper_class = 'noptin-records__wrapper noptin-' . sanitize_html_class( $this->plural_type() ) . '__wrapper';
 
-				if ( 'yes' === $atts['responsive'] ) {
-					$row_class .= ' noptin-is-stacked-on-mobile';
-				}
+		if ( $columns > 1 ) {
+			$wrapper_class .= ' noptin-columns noptin-columns__' . absint( $columns );
+
+			if ( 'yes' === $atts['responsive'] ) {
+				$wrapper_class .= ' noptin-is-stacked-on-mobile';
+			}
+		}
+
+		$html = '<div class="' . esc_attr( $wrapper_class ) . '">';
+
+		// Render each column.
+		$column_class = 'noptin-records__column noptin-' . sanitize_html_class( $this->plural_type() ) . '__column';
+
+		if ( $columns > 1 ) {
+			$column_class .= ' noptin-column';
+
+			if ( 'yes' === $atts['responsive'] ) {
+				$column_class .= ' noptin-is-stacked-on-mobile';
+			}
+		}
+
+		foreach ( $cols as $column_items ) {
+
+			$html .= '<div class="' . esc_attr( $column_class ) . '" width="' . esc_attr( $width ) . '%">';
+
+			if ( empty( $column_items ) ) {
+				$html .= '&nbsp;';
 			}
 
-			$html .= '<div class="' . esc_attr( $row_class ) . '">';
-
-			for ( $col = 0; $col < $columns; $col++ ) {
-				$index = $row * $columns + $col;
-
-				if ( ! isset( $items[ $index ] ) ) {
-					continue;
-				}
-
+			// Render each item.
+			foreach ( $column_items as $item ) {
 				// Prepare item.
-				$item = $items[ $index ];
 				$this->prepare_item( $item );
 
 				// Generate template.

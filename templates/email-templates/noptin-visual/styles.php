@@ -139,6 +139,26 @@
 		padding-bottom: 20px;
 	}
 
+	.noptin-columns {
+		display: table;
+		width: 100%;
+	}
+
+	.noptin-column {
+		display: table-cell;
+	}
+
+	@media only screen and (max-width: 360px) {
+		.noptin-is-stacked-on-mobile {
+			display: block !important;
+		}
+
+		.noptin-is-stacked-on-mobile.noptin-column {
+			vertical-align: top !important;
+			width: 100% !important;
+		}
+	}
+
 	<?php
 		if ( ! empty( $settings['block_css'] ) ) {
 

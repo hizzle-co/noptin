@@ -13,6 +13,17 @@ if ( ! is_array( $products ) ) {
 	return;
 }
 
+$col_1_products = array();
+$col_2_products = array();
+
+foreach ( $products as $i => $product ) {
+	if ( noptin_is_even( $i ) ) {
+		$col_1_products[] = $product;
+	} else {
+		$col_2_products[] = $product;
+	}
+}
+
 ?>
 
 <style type="text/css">
@@ -82,21 +93,9 @@ if ( ! is_array( $products ) ) {
 
 </style>
 
-<!--[if true]>
-<table role="presentation" width="100%" style="all:unset;opacity:0;">
-	<tr>
-<![endif]-->
-
-<!--[if false]></td></tr></table><![endif]-->
 <div style="display:table;width:100%;max-width:100%;">
-	<!--[if true]>
-	<td width="50%" v-align="top">
-	<![endif]-->
-	<!--[if !true]><!-->
 	<div class="product-digest-grid-one" style="display:table-cell;vertical-align: top;width:50%;padding-right: 20px;">
-	<!--<![endif]-->
-		<?php foreach ( $products as $i => $product ) : ?>
-			<?php if ( noptin_is_even( $i ) ) : ?>
+		<?php foreach ( $col_1_products as $i => $product ) : ?>
 			<div class="digest-grid-product digest-grid-product-type-<?php echo esc_attr( sanitize_html_class( $product->get_type() ) ); ?>">
 
 				<p class="digest-grid-product-image-container">
@@ -119,23 +118,12 @@ if ( ! is_array( $products ) ) {
 					<strong><?php echo wp_kses_post( $product->get_price_html() ); ?></strong>
 				</p>
 			</div>
-			<?php endif; ?>
 		<?php endforeach; ?>
-	<!--[if !true]><!-->
-	</div>
-	<!--<![endif]-->
 
-	<!--[if true]>
-    </td>
-	<![endif]-->
-	<!--[if true]>
-	<td width="50%" v-align="top">
-	<![endif]-->
-	<!--[if !true]><!-->
-    <div class="product-digest-grid-two" style="display:table-cell;vertical-align: top;width:50%">
-	<!--<![endif]-->
-	<?php foreach ( $products as $i => $product ) : ?>
-		<?php if ( ! noptin_is_even( $i ) ) : ?>
+	</div>
+	<div class="product-digest-grid-two" style="display:table-cell;vertical-align: top;width:50%">
+
+		<?php foreach ( $col_2_products as $i => $product ) : ?>
 			<div class="digest-grid-product digest-grid-product-type-<?php echo esc_attr( sanitize_html_class( $product->get_type() ) ); ?>">
 
 				<p class="digest-grid-product-image-container">
@@ -158,16 +146,7 @@ if ( ! is_array( $products ) ) {
 					<strong><?php echo wp_kses_post( $product->get_price_html() ); ?></strong>
 				</p>
 			</div>
-		<?php endif; ?>
-	<?php endforeach; ?>
-	<!--[if !true]><!-->
-	</div>
-	<!--<![endif]-->
-	<!--[if true]>
-	</td>
-	<![endif]-->
+		<?php endforeach; ?>
+
 </div>
-<!--[if true]>
-	</tr>
-</table>
-<![endif]-->
+</div>
