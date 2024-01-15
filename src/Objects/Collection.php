@@ -413,7 +413,7 @@ abstract class Collection {
 
 		foreach ( $cols as $column_items ) {
 
-			$html .= '<div class="' . esc_attr( $column_class ) . '" width="' . esc_attr( $width ) . '%">';
+			$html .= '<div class="' . esc_attr( $column_class ) . '" style="width: ' . esc_attr( $width ) . '%;">';
 
 			if ( empty( $column_items ) ) {
 				$html .= '&nbsp;';

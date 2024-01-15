@@ -381,10 +381,24 @@ abstract class Noptin_Email_Type {
 	 * @return array
 	 */
 	public function get_flattened_merge_tags() {
-		$merge_tags = array();
+		$raw_tags   = $this->get_merge_tags();
 
-		foreach ( $this->get_merge_tags() as $_merge_tags ) {
-			$merge_tags = array_merge( $merge_tags, $_merge_tags );
+		if ( wp_is_numeric_array( $raw_tags ) ) {
+			return $raw_tags;
+		}
+
+		// Backwards compatibility.
+		$merge_tags = array();
+		foreach ( $raw_tags as $group => $_merge_tags ) {
+			foreach ( $_merge_tags as $tag => $details ) {
+
+				// Set missing categories.
+				if ( empty( $details['group'] ) ) {
+					$details['group'] = $group;
+				}
+
+				$merge_tags[ $tag ] = $details;
+			}
 		}
 
 		return $merge_tags;

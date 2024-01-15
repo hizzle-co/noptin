@@ -2154,3 +2154,31 @@ function noptin_implode_and( $strings, $glue = ', ' ) {
 		$last
 	);
 }
+
+/**
+ * Prepares merge tags for use in JS.
+ *
+ * @param array $merge_tags
+ * @return array
+ */
+function noptin_prepare_merge_tags_for_js( $merge_tags ) {
+
+	if ( ! is_array( $merge_tags ) ) {
+		return array();
+	}
+
+	$prepared = array();
+
+	foreach ( $merge_tags as $key => $value ) {
+		$prepared[ $key ] = $value;
+
+		if ( empty( $prepared[ $key ]['group'] ) ) {
+			$prepared[ $key ]['group'] = __( 'General', 'newsletter-optin-box' );
+		}
+
+		// Remove callback.
+		unset( $prepared[ $key ]['callback'] );
+	}
+
+	return $prepared;
+}

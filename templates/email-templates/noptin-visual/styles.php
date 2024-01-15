@@ -139,6 +139,11 @@
 		padding-bottom: 20px;
 	}
 
+	.noptin-record {
+		margin: 10px;
+		padding: 10px;
+	}
+
 	.noptin-columns {
 		display: table;
 		width: 100%;

@@ -537,6 +537,21 @@ class Email {
 				),
 				$this
 			),
+			'merge_tags'            => (object) noptin_prepare_merge_tags_for_js(
+				apply_filters(
+					'noptin_email_merge_tags',
+					apply_filters(
+						"noptin_{$this->type}_merge_tags",
+						apply_filters(
+							"noptin_{$this->type}_{$this->get_sub_type()}_merge_tags",
+							array(),
+							$this
+						),
+						$this
+					),
+					$this
+				)
+			),
 		);
 
 		return apply_filters( 'noptin_email_js_data', $data, $this );

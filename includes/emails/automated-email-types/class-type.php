@@ -67,6 +67,8 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 			add_filter( "noptin_automation_{$this->type}_email_extra_settings", array( $this, 'campaign_options' ) );
 		}
 
+		add_filter( "noptin_automation_{$this->type}_merge_tags", array( $this, 'get_flattened_merge_tags' ), -1 );
+
 		if ( is_callable( array( $this, 'about_automation' ) ) ) {
 			add_filter( "noptin_automation_table_about_{$this->type}", array( $this, 'about_automation' ), 10, 2 );
 		}

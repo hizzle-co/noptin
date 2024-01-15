@@ -126,21 +126,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @return array
 	 */
 	public function get_known_smart_tags_for_js() {
-		$smart_tags = $this->get_known_smart_tags();
-		$prepared   = array();
-
-		foreach ( $smart_tags as $key => $value ) {
-			$prepared[ $key ] = $value;
-
-			if ( empty( $prepared[ $key ]['group'] ) ) {
-				$prepared[ $key ]['group'] = __( 'General', 'newsletter-optin-box' );
-			}
-
-			// Remove callback.
-			unset( $prepared[ $key ]['callback'] );
-		}
-
-		return $prepared;
+		return noptin_prepare_merge_tags_for_js( $this->get_known_smart_tags() );
 	}
 
 	/**
