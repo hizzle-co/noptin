@@ -530,7 +530,7 @@ class Email {
 					"noptin_{$this->type}_email_extra_settings",
 					apply_filters(
 						"noptin_{$this->type}_{$this->get_sub_type()}_email_extra_settings",
-						array(),
+						noptin()->emails->tags->tags,
 						$this
 					),
 					$this

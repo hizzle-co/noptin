@@ -177,7 +177,6 @@ class Main {
 						'trigger'    => $rule->get_trigger_id(),
 						'saved'      => (object) $rule->get_trigger_settings(),
 						'settings'   => $trigger_settings,
-						'smart_tags' => $trigger->get_known_smart_tags_for_js(),
 					);
 				},
 				'update_callback' => function ( $value, $data_object ) {

@@ -32,7 +32,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		// Add hooks.
 		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ), 10, 2 );
 		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ), 10, 2 );
-
 	}
 
 	/**
@@ -197,7 +196,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'callback'    => array( $this, 'get_button' ),
 			'example'     => "button text='Click Here' url='" . home_url() . "' background='brand' color='white' rounding='4px'",
 		);
-
 	}
 
 	/**
@@ -220,7 +218,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			esc_attr( $width ),
 			esc_attr( $margin )
 		);
-
 	}
 
 	/**
@@ -300,7 +297,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'<a target="_blank" href="%s">Noptin</a>',
 			noptin_get_upsell_url( 'https://noptin.com/', 'powered-by', 'email-campaigns' )
 		);
-
 	}
 
 	/**
@@ -311,5 +307,4 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	public function noptin_company() {
 		return get_noptin_option( 'company', '' );
 	}
-
 }

@@ -41,7 +41,6 @@ abstract class Noptin_Dynamic_Content_Tags {
 		if ( isset( $this->tags[ $tag ] ) ) {
 			unset( $this->tags[ $tag ] );
 		}
-
 	}
 
 	/**

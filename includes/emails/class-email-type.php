@@ -57,6 +57,7 @@ abstract class Noptin_Email_Type {
 	 *
 	 */
 	public function add_hooks() {
+		add_action( 'noptin_prepare_email_preview', array( $this, 'prepare_preview' ), 10, 3 );
 		add_filter( 'noptin_get_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
 		add_filter( 'noptin_get_default_email_props', array( $this, 'get_default_props' ), 10, 2 );
 	}
@@ -380,14 +381,13 @@ abstract class Noptin_Email_Type {
 	 *
 	 * @return array
 	 */
-	public function get_flattened_merge_tags() {
-		$raw_tags   = $this->get_merge_tags();
+	public function get_flattened_merge_tags( $existing = array() ) {
 
-		if ( wp_is_numeric_array( $raw_tags ) ) {
-			return $raw_tags;
+		if ( ! is_array( $existing ) ) {
+			$existing = array();
 		}
 
-		// Backwards compatibility.
+		$raw_tags   = $this->get_merge_tags();
 		$merge_tags = array();
 		foreach ( $raw_tags as $group => $_merge_tags ) {
 			foreach ( $_merge_tags as $tag => $details ) {
@@ -401,7 +401,7 @@ abstract class Noptin_Email_Type {
 			}
 		}
 
-		return $merge_tags;
+		return array_merge( $merge_tags, $existing );
 	}
 
 	/**
@@ -466,6 +466,51 @@ abstract class Noptin_Email_Type {
 		if ( ! empty( $this->unsubscribe_url ) ) {
 			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = '';
 		}
+	}
+
+	/**
+	 * Prepares an email preview.
+	 *
+	 * @param string $mode The preview mode. Either 'browser' or 'preview'.
+	 * @param array $recipient The preview recipient.
+	 * @param \Hizzle\Noptin\Emails\Email $email The email being previewed.
+	 */
+	public function prepare_preview( $mode, $recipient, $email ) {
+
+		if ( $this->type !== $email->type && $this->type !== $email->get_sub_type() ) {
+			return;
+		}
+
+		// Set subscriber.
+		$this->subscriber = null;
+		if ( isset( $recipient['sid'] ) && ! empty( $recipient['sid'] ) ) {
+			$subscriber = noptin_get_subscriber( $recipient['sid'] );
+
+			if ( $subscriber->exists() ) {
+				$this->subscriber = $subscriber;
+			}
+		}
+
+		// Set user.
+		$this->user = null;
+		if ( isset( $recipient['uid'] ) && ! empty( $recipient['uid'] ) ) {
+			$user = get_userdata( $recipient['uid'] );
+
+			if ( $user && $user->exists() ) {
+				$this->user = $user;
+			}
+		}
+
+		// If we have an email.
+		if ( isset( $recipient['email'] ) && ! empty( $recipient['email'] ) ) {
+			$this->maybe_set_subscriber_and_user( $recipient['email'] );
+		}
+
+		// Set-up test data for the preview.
+		$this->prepare_test_data( $email );
+
+		// Prepare enviroment.
+		$this->before_send( $email );
 	}
 
 	/**
@@ -609,13 +654,13 @@ abstract class Noptin_Email_Type {
 	 */
 	public function prepare_test_data( $email ) {
 
-		$previewer = defined( 'NOPTIN_PREVIEW_EMAIL' ) ? NOPTIN_PREVIEW_EMAIL : false;
-
-		if ( ! empty( $previewer ) ) {
-			$this->maybe_set_subscriber_and_user( $previewer );
-		} else {
-
+		// Set user.
+		if ( empty( $this->user ) ) {
 			$this->user = wp_get_current_user();
+		}
+
+		// Set subscriber.
+		if ( empty( $this->subscriber ) ) {
 			$subscriber = get_current_noptin_subscriber_id();
 
 			if ( $subscriber ) {
@@ -632,6 +677,10 @@ abstract class Noptin_Email_Type {
 	 * @param string $email
 	 */
 	protected function maybe_set_subscriber_and_user( $email ) {
+
+		if ( ! is_string( $email ) ) {
+			return;
+		}
 
 		$email = sanitize_email( $email );
 

@@ -357,8 +357,70 @@ class Noptin_Email_Generator {
 		// Inline CSS styles.
 		$content = $this->inline_styles( $content );
 
+		// Remove unused classes and ids.
+		$content = $this->remove_unused_classes_and_ids( $content );
+
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );
+	}
+
+	private function remove_unused_classes_and_ids( $html ) {
+
+		// Check if DOMDocument is available.
+		if ( ! class_exists( 'DOMDocument' ) ) {
+			return $html;
+		}
+
+		// Parse the CSS.
+		preg_match_all( '/\.([a-z0-9_-]+)/i', $html, $classes );
+		preg_match_all( '/#([a-z0-9_-]+)/i', $html, $ids );
+
+		// Convert the arrays to associative arrays for faster lookup.
+		$classes = array_flip( $classes[1] );
+		$ids     = array_flip( $ids[1] );
+
+		// Load the HTML.
+		$doc = new DOMDocument();
+		@$doc->loadHTML( $html );
+
+		// Iterate over all elements.
+		$xpath = new DOMXPath( $doc );
+		foreach ( $xpath->query( '//*' ) as $element ) {
+			// Check if the class is used in the CSS.
+			if ( $element->hasAttribute( 'class' ) ) {
+				$class = $element->getAttribute( 'class' );
+
+				// Split the class attribute.
+				$classes   = empty( $class ) ? array() : explode( ' ', $class );
+				$has_class = false;
+
+				// Loop over all classes.
+				foreach ( $classes as $class ) {
+					if ( isset( $classes[ $class ] ) ) {
+						// Class is used, stop searching.
+						$has_class = true;
+						break;
+					}
+				}
+
+				if ( ! $has_class ) {
+					// Class is not used, remove it.
+					$element->removeAttribute( 'class' );
+				}
+			}
+
+			// Check if the id is used in the CSS.
+			if ( $element->hasAttribute( 'id' ) ) {
+				$id = $element->getAttribute( 'id' );
+				if ( ! isset( $ids[ $id ] ) ) {
+					// Id is not used, remove it.
+					$element->removeAttribute( 'id' );
+				}
+			}
+		}
+
+		// Save the HTML.
+		return $doc->saveHTML();
 	}
 
 	/**
@@ -422,7 +484,6 @@ class Noptin_Email_Generator {
 
 		// Returned the new content.
 		return $_content;
-
 	}
 
 	/**
@@ -449,7 +510,6 @@ class Noptin_Email_Generator {
 		$pre  = $matches[1];
 		$post = $matches[3];
 		return "<a $pre href='$url' $post >";
-
 	}
 
 	/**
@@ -500,7 +560,7 @@ class Noptin_Email_Generator {
 			// Emogrifier urlencodes hrefs, copy the href to a new attribute and restore it after inlining.
 			$content = preg_replace_callback(
 				'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
-				function( $matches ) {
+				function ( $matches ) {
 					return "<a {$matches[1]} data-href=\"{$matches[2]}\" {$matches[3]}>";
 				},
 				$content
@@ -515,7 +575,7 @@ class Noptin_Email_Generator {
 			// Restore hrefs.
 			$content = preg_replace_callback(
 				'/<a(.*?)data-href=["\'](.*?)["\'](.*?)>/mi',
-				function( $matches ) {
+				function ( $matches ) {
 					return "<a {$matches[1]} href=\"{$matches[2]}\" {$matches[3]}>";
 				},
 				$content
@@ -531,7 +591,6 @@ class Noptin_Email_Generator {
             log_noptin_message( $e->getMessage() );
 			return $content;
         }
-
 	}
 
 	/**
@@ -547,7 +606,7 @@ class Noptin_Email_Generator {
 
 			return preg_replace_callback(
 				'/<\/body[^>]*>/',
-				function( $matches ) {
+				function ( $matches ) {
 					return $this->get_tracker() . $matches[0];
 				},
 				$content,
@@ -583,7 +642,7 @@ class Noptin_Email_Generator {
 
 			return preg_replace_callback(
 				'/<body[^>]*>/',
-				function( $matches ) {
+				function ( $matches ) {
 					return $matches[0] . '<div class="preheader" style="display: none !important; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">' . esc_html( $this->preview_text ) . '</div>';
 				},
 				$content,
