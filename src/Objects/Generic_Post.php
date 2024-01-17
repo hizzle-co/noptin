@@ -71,7 +71,7 @@ class Generic_Post extends Record {
 
 		// Content.
 		if ( 'content' === strtolower( $field ) ) {
-			return apply_filters( 'the_content', $this->external->post_content );
+			return $this->filter_content( $this->external->post_content );
 		}
 
 		// Title.
@@ -81,7 +81,7 @@ class Generic_Post extends Record {
 
 		// Excerpt.
 		if ( 'excerpt' === strtolower( $field ) ) {
-			return apply_filters( 'the_excerpt', $this->external->post_excerpt );
+			return apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) );
 		}
 
 		// URL.
@@ -106,5 +106,27 @@ class Generic_Post extends Record {
 		}
 
 		return get_post_meta( $this->external->ID, $field, true );
+	}
+
+	/**
+	 * Filter the content.
+	 */
+	protected function filter_content( $content ) {
+		$callbacks = array(
+			'do_blocks',
+			'wptexturize',
+			'wpautop',
+			'shortcode_unautop',
+			'wp_replace_insecure_home_url',
+			'do_shortcode',
+			'capital_P_dangit',
+			'convert_smilies',
+		);
+
+		foreach ( $callbacks as $callback ) {
+			$content = $callback( $content );
+		}
+
+		return $content;
 	}
 }

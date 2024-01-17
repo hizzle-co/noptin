@@ -327,8 +327,11 @@ class Noptin_Email_Generator {
 		// Inject preheader.
 		$content = $this->inject_preheader( $content );
 
-		// Ensure that merge tags are not wrapped in paragraphs.
-		//$content = $this->merge_tags_unautop( $content );
+		// Ensure that shortcodes are not wrapped in paragraphs.
+		$content = shortcode_unautop( $content );
+
+		// Execute shortcodes.
+		$content = do_shortcode( $content );
 
 		// Do merge tags.
 		$content = noptin_parse_email_content_tags( $content );
@@ -338,12 +341,6 @@ class Noptin_Email_Generator {
 
 		// Track opens.
 		$content = $this->inject_tracking_pixel( $content );
-
-		// Ensure that shortcodes are not wrapped in paragraphs.
-		$content = shortcode_unautop( $content );
-
-		// Execute shortcodes.
-		$content = do_shortcode( $content );
 
 		// Balance tags.
 		$content = force_balance_tags( $content );

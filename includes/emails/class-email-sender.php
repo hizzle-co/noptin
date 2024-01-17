@@ -406,7 +406,7 @@ class Noptin_Email_Sender {
 	 *
 	 * @return string
 	 */
-	protected function get_phpmailer_last_error() {
+	public static function get_phpmailer_last_error() {
 		global $phpmailer;
 
 		/** @var PHPMailer\PHPMailer\PHPMailer $phpmailer */

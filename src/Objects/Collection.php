@@ -307,7 +307,7 @@ abstract class Collection {
 			'label'          => $this->label,
 			'singular_label' => $this->singular_label,
 			'filters'        => $this->get_filters(),
-			'fields'         => $this->get_all_fields(),
+			'merge_tags'     => noptin_prepare_merge_tags_for_js( Store::smart_tags( $this->type, $this->singular_label ) ),
 		);
 
 		return $objects;

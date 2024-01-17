@@ -39,11 +39,6 @@ class Main {
 	public static function init() {
 
 		add_action( 'admin_init', array( __CLASS__, 'maybe_do_action' ) );
-		add_action( 'noptin_repair_stuck_campaign', array( __CLASS__, 'repair_stuck_campaign' ) );
-		add_action( 'noptin_email_action_force_send_campaign', array( __CLASS__, 'force_send_campaign' ) );
-		add_action( 'noptin_duplicate_email_campaign', array( __CLASS__, 'duplicate_email_campaign' ) );
-		add_action( 'noptin_delete_email_campaign', array( __CLASS__, 'delete_email_campaign' ) );
-		add_filter( 'pre_get_users', array( __CLASS__, 'filter_users_by_campaign' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'email_campaigns_menu' ), 35 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 	}
@@ -64,12 +59,18 @@ class Main {
 			wp_verify_nonce( $_REQUEST['noptin_email_action_nonce'], 'noptin_email_action' )
 		) {
 
-			$method = 'admin_' . $_REQUEST['noptin_email_action'];
+			$method   = 'admin_' . $_REQUEST['noptin_email_action'];
+			$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['noptin_campaign'] ) );
+
+			// Abort if not exists.
+			if ( ! $campaign->exists() ) {
+				self::redirect_from_action_with_error( 'Invalid campaign.' );
+			}
 
 			if ( method_exists( __CLASS__, $method ) ) {
 				call_user_func(
 					array( __CLASS__, $method ),
-					new \Hizzle\Noptin\Emails\Email( intval( $_GET['noptin_campaign'] ) )
+					$campaign
 				);
 			} else {
 				self::redirect_from_action_with_error( 'Invalid action.' );
@@ -89,23 +90,14 @@ class Main {
 	}
 
 	/**
-	 * Repairs a stuck campaign.
+	 * Redirects from an action with success.
 	 *
-	 * @since 1.13.0
+	 * @since 1.11.2
 	 */
-	public static function repair_stuck_campaign() {
-
-		// Only admins should be able to force send campaigns.
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
-			return;
-		}
-
-		// Verify nonces to prevent CSRF attacks.
-		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_repair_stuck_campaign' ) ) {
-			return;
-		}
-
-		// TODO: Implement this.
+	public static function redirect_from_action_with_success( $success ) {
+		noptin()->admin->show_success( $success );
+		wp_safe_redirect( remove_query_arg( array( 'noptin_email_action', 'noptin_email_action_nonce', 'noptin_campaign' ) ) );
+		exit;
 	}
 
 	/**
@@ -117,19 +109,24 @@ class Main {
 	public static function admin_force_send_campaign( $campaign ) {
 
 		// Abort if not mass email.
-		if ( ! $campaign->exists() || ! $campaign->is_mass_mail() ) {
+		if ( ! $campaign->is_mass_mail() ) {
 			self::redirect_from_action_with_error( 'Invalid campaign.' );
 		}
 
-		// Only publishers should be able to force send campaigns.
-		if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
-			return;
+		// Check permissions.
+		if ( ! $campaign->current_user_can_edit() ) {
+			self::redirect_from_action_with_error( 'You do not have permission to send this campaign.' );
 		}
 
 		define( 'NOPTIN_RESENDING_CAMPAIGN', true );
 
 		// Set status to publish to allow sending.
 		if ( 'publish' !== $campaign->status ) {
+
+			if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
+				self::redirect_from_action_with_error( 'You do not have permission to send this campaign.' );
+			}
+
 			wp_publish_post( $campaign->id );
 			$campaign->status = 'publish';
 		}
@@ -143,118 +140,107 @@ class Main {
 		}
 
 		// Check if the campaign exists.
-		noptin()->admin->show_info(
-			apply_filters(
-				'noptin_email_sent_successfully_message',
-				__( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ),
-				$campaign
-			)
+		$message = apply_filters(
+			'noptin_email_sent_successfully_message',
+			__( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ),
+			$campaign
 		);
 
-		// Redirect.
-		wp_safe_redirect( remove_query_arg( array( 'noptin_email_action', 'noptin_email_action_nonce', 'noptin_campaign' ) ) );
-		exit;
+		self::redirect_from_action_with_success( $message );
+	}
+
+	/**
+	 * Manually publishes a campaign.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
+	 * @since 1.11.2
+	 */
+	public static function admin_publish_campaign( $campaign ) {
+
+		// Check if the user can publish the campaign.
+		if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
+			self::redirect_from_action_with_error( 'You do not have permission to publish this campaign.' );
+		}
+
+		// Publish the campaign.
+		if ( 'publish' !== $campaign->status ) {
+			wp_publish_post( $campaign->id );
+		}
+
+		self::redirect_from_action_with_success( __( 'The campaign has been published.', 'newsletter-optin-box' ) );
+	}
+
+	/**
+	 * Manually unpublishes a campaign.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
+	 * @since 1.11.2
+	 */
+	public static function admin_unpublish_campaign( $campaign ) {
+
+		// Check if the user can publish the campaign.
+		if ( ! $campaign->current_user_can_edit() ) {
+			self::redirect_from_action_with_error( 'You do not have permission to unpublish this campaign.' );
+		}
+
+		// Unpublish the campaign.
+		if ( 'publish' === $campaign->status ) {
+			wp_update_post(
+				array(
+					'ID'          => $campaign->id,
+					'post_status' => 'draft',
+				)
+			);
+		}
+
+		self::redirect_from_action_with_success( __( 'The campaign has been unpublished.', 'newsletter-optin-box' ) );
 	}
 
 	/**
 	 * Duplicates an email campaign.
 	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @since 1.7.0
 	 */
-	public static function duplicate_email_campaign() {
+	public static function admin_duplicate_campaign( $campaign ) {
 
-		// Only admins should be able to duplicate campaigns.
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
-			return;
+		// Check if the user can publish the campaign.
+		if ( ! $campaign->current_user_can_edit() ) {
+			self::redirect_from_action_with_error( 'You do not have permission to duplicate this campaign.' );
 		}
 
-		// Verify nonces to prevent CSRF attacks.
-		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_duplicate_campaign' ) ) {
-			return;
-		}
+		$duplicate = $campaign->duplicate();
 
-		// Retrieve campaign object.
-		$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['campaign'] ) );
-
-		// Check if the campaign exists.
-		if ( $campaign->exists() ) {
-			$duplicate = $campaign->duplicate();
-
-			if ( $duplicate && ! is_wp_error( $duplicate ) ) {
-				noptin()->admin->show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
-				wp_safe_redirect( $campaign->get_edit_url() );
-				exit;
-			}
-
-			if ( is_wp_error( $duplicate ) ) {
-				noptin()->admin->show_error( $duplicate->get_error_message() );
-			} else {
-				noptin()->admin->show_error( __( 'Unable to duplicate the campaign.', 'newsletter-optin-box' ) );
-			}
-		} else {
-			noptin()->admin->show_error( __( 'Campaign not found.', 'newsletter-optin-box' ) );
+		if ( $duplicate && ! is_wp_error( $duplicate ) ) {
+			noptin()->admin->show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
+			wp_safe_redirect( $campaign->get_edit_url() );
+			exit;
 		}
 
 		// Redirect.
-		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
-		exit;
+		$error = is_wp_error( $duplicate ) ? $duplicate->get_error_message() : __( 'Unable to duplicate the campaign.', 'newsletter-optin-box' );
+		self::redirect_from_action_with_error( $error );
 	}
 
 	/**
 	 * Deletes an email campaign.
 	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @since 1.7.0
 	 */
-	public static function delete_email_campaign() {
+	public static function admin_delete_campaign( $campaign ) {
 
-		// Only admins should be able to delete campaigns.
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['noptin_nonce'] ) ) {
-			return;
-		}
-
-		// Verify nonces to prevent CSRF attacks.
-		if ( ! wp_verify_nonce( $_GET['noptin_nonce'], 'noptin_delete_campaign' ) ) {
-			return;
-		}
-
-		// Retrieve campaign object.
-		$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['campaign'] ) );
-
-		if ( ! $campaign->exists() ) {
-			return;
+		// Check if the user can delete the campaign.
+		if ( ! $campaign->current_user_can_delete() ) {
+			self::redirect_from_action_with_error( 'You do not have permission to delete this campaign.' );
 		}
 
 		// Delete the campaign.
 		$campaign->delete();
 
 		// Show success info.
-		noptin()->admin->show_info( __( 'The campaign has been deleted.', 'newsletter-optin-box' ) );
-
-		// Redirect to success page.
-		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'noptin_nonce', 'campaign' ) ) );
-		exit;
+		self::redirect_from_action_with_success( __( 'The campaign has been deleted.', 'newsletter-optin-box' ) );
 	}
-
-	/**
-	 * Filters the users query.
-	 *
-	 * @param \WP_User_Query $query
-	 */
-	public static function filter_users_by_campaign( $query ) {
-		global $pagenow;
-
-		if ( is_admin() && 'users.php' === $pagenow && isset( $_GET['noptin_meta_key'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
-			$meta_query   = $query->get( 'meta_query' );
-			$meta_query   = empty( $meta_query ) ? array() : $meta_query;
-			$meta_query[] = array(
-				'key'   => sanitize_text_field( $_GET['noptin_meta_key'] ),  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'value' => (int) $_GET['noptin_meta_value'],  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			);
-			$query->set( 'meta_query', $meta_query );
-
-		}
-	} // Recipients, Email Attachments.
 
 	/**
 	 * Email campaigns menu.

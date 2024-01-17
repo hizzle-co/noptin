@@ -65,19 +65,11 @@ class REST extends \WP_REST_Posts_Controller {
 			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Please provide a valid email address', 'newsletter-optin-box' ), array( 'status' => 400 ) );
 		}
 
-		$original = get_post( $request->get_param( 'id' ) );
-		$autosave = wp_get_post_autosave( $request->get_param( 'id' ) );
-		$email    = new Email( $autosave ? $autosave : $original );
+		$email = new Email( $request->get_param( 'id' ) );
 
 		// Abort if the email is not found.
 		if ( ! $email->exists() ) {
 			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Invalid email', 'newsletter-optin-box' ), array( 'status' => 404 ) );
-		}
-
-		// If we have an autosave, use the parent and ID of the original.
-		if ( $autosave ) {
-			$email->id        = $original->ID;
-			$email->parent_id = $original->post_parent;
 		}
 
 		// Ensure we have a subject.
@@ -112,7 +104,7 @@ class REST extends \WP_REST_Posts_Controller {
 				'recipients'               => $request->get_param( 'email' ),
 				'subject'                  => noptin_parse_email_subject_tags( $subject ),
 				'message'                  => $preview,
-				'campaign_id'              => $request->get_param( 'id' ),
+				'campaign_id'              => $email->id,
 				'headers'                  => array(),
 				'attachments'              => array(),
 				'reply_to'                 => '',
@@ -125,7 +117,16 @@ class REST extends \WP_REST_Posts_Controller {
 		);
 
 		if ( empty( $result ) ) {
-			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Unable to send test email', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+			$error = \Noptin_Email_Sender::get_phpmailer_last_error();
+			return new \WP_Error(
+				'noptin_rest_email_invalid',
+				sprintf(
+					// Translators: %s The error message.
+					__( 'Unable to send test email. Error: %s', 'newsletter-optin-box' ),
+					esc_html( $error )
+				),
+				array( 'status' => 404 )
+			);
 		}
 
 		return rest_ensure_response(

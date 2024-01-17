@@ -172,11 +172,11 @@ class Main {
 					);
 
 					return array(
-						'id'         => $rule->get_id(),
-						'action'     => $rule->get_action_id(),
-						'trigger'    => $rule->get_trigger_id(),
-						'saved'      => (object) $rule->get_trigger_settings(),
-						'settings'   => $trigger_settings,
+						'id'       => $rule->get_id(),
+						'action'   => $rule->get_action_id(),
+						'trigger'  => $rule->get_trigger_id(),
+						'saved'    => (object) $rule->get_trigger_settings(),
+						'settings' => $trigger_settings,
 					);
 				},
 				'update_callback' => function ( $value, $data_object ) {

@@ -100,7 +100,7 @@ class Editor {
 		}
 
 		$editor_settings = array(
-			'availableTemplates'                    => get_noptin_email_templates(),
+			'availableTemplates'                    => array(),
 			'disablePostFormats'                    => true,
 			'titlePlaceholder'                      => __( 'Add email subject', 'newsletter-optin-box' ),
 			'bodyPlaceholder'                       => __( 'Start writing or type / to choose a block', 'newsletter-optin-box' ),

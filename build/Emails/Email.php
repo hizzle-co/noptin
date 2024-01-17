@@ -530,7 +530,7 @@ class Email {
 					"noptin_{$this->type}_email_extra_settings",
 					apply_filters(
 						"noptin_{$this->type}_{$this->get_sub_type()}_email_extra_settings",
-						noptin()->emails->tags->tags,
+						array(),
 						$this
 					),
 					$this
@@ -544,7 +544,7 @@ class Email {
 						"noptin_{$this->type}_merge_tags",
 						apply_filters(
 							"noptin_{$this->type}_{$this->get_sub_type()}_merge_tags",
-							array(),
+							noptin()->emails->tags->tags,
 							$this
 						),
 						$this
@@ -667,29 +667,13 @@ class Email {
 	}
 
 	/**
-	 * Generates a browser preview content for this email.
-	 *
-	 * @return string
-	 */
-	public function get_browser_preview_content( $recipient_email = '' ) {
-		$GLOBALS['current_noptin_email'] = $recipient_email;
-
-		// TODO: Implement this.
-	}
-
-	/**
 	 * Returns a link to duplicate the campaign.
 	 *
 	 * @since 1.7.0
 	 * @return string.
 	 */
 	public function get_duplication_url() {
-
-		$param = array(
-			'noptin_admin_action' => 'noptin_duplicate_email_campaign',
-			'noptin_campaign'     => $this->id,
-		);
-		return wp_nonce_url( add_query_arg( $param, $this->get_base_url() ), 'noptin_duplicate_campaign', 'noptin_nonce' );
+		return $this->get_action_url( 'duplicate_campaign' );
 	}
 
 	/**
@@ -770,12 +754,7 @@ class Email {
 	 * @return string.
 	 */
 	public function get_delete_url() {
-
-		$param = array(
-			'noptin_admin_action' => 'noptin_delete_email_campaign',
-			'noptin_campaign'     => $this->id,
-		);
-		return wp_nonce_url( add_query_arg( $param, $this->get_base_url() ), 'noptin_delete_campaign', 'noptin_nonce' );
+		return $this->get_action_url( 'delete_campaign' );
 	}
 
 	/**

@@ -132,6 +132,9 @@ function noptin_parse_email_subject_tags( $subject, $partial = false ) {
  * @return string
  */
 function noptin_parse_email_content_tags( $content, $partial = false ) {
+	// Replace [noptin] with [[noptin]].
+	$content = str_replace( '[noptin]', '[[noptin]]', $content );
+
 	return apply_filters( 'noptin_parse_email_content_tags', $content, $partial );
 }
 

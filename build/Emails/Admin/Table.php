@@ -125,7 +125,7 @@ class Table extends \WP_List_Table {
 
 			'duplicate' => sprintf(
 				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
-				$item->get_duplication_url(), // This is alread escaped via wp_nonce_url.
+				esc_url( $item->get_action_url( 'duplicate_campaign' ) ),
 				esc_attr__( 'Are you sure you want to duplicate this campaign?', 'newsletter-optin-box' ),
 				esc_html__( 'Duplicate', 'newsletter-optin-box' )
 			),
@@ -145,7 +145,7 @@ class Table extends \WP_List_Table {
 
 			'delete'    => sprintf(
 				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
-				$item->get_delete_url(), // This is alread escaped via wp_nonce_url.
+				esc_url( $item->get_action_url( 'delete_campaign' ) ),
 				esc_attr__( 'Are you sure you want to delete this campaign?', 'newsletter-optin-box' ),
 				esc_html__( 'Delete', 'newsletter-optin-box' )
 			),
@@ -154,14 +154,12 @@ class Table extends \WP_List_Table {
 
 		if ( ! $item->current_user_can_edit() ) {
 			unset( $row_actions['edit'] );
+			unset( $row_actions['duplicate'] );
+			unset( $row_actions['send'] );
 		}
 
 		if ( ! $item->current_user_can_delete() ) {
 			unset( $row_actions['delete'] );
-		}
-
-		if ( ! $item->is_mass_mail() || 'post_notifications' === $item->get_sub_type() ) {
-			unset( $row_actions['send'] );
 		}
 
 		// Sent newsletters are not editable.
@@ -291,38 +289,28 @@ class Table extends \WP_List_Table {
 	 * @return void
 	 */
 	public function column_status( $item ) {
-		$status = __( 'Draft', 'newsletter-optin-box' );
-		$class  = 'noptin-badge';
+		$statuses = get_post_statuses();
 
-		if ( 'future' === $item->status ) {
-			$status = __( 'Scheduled', 'newsletter-optin-box' );
-			$class  = 'noptin-badge notification';
-		}
-
-		if ( 'publish' === $item->status ) {
-
-			if ( get_post_meta( $item->id, 'completed', true ) ) {
-				$status = __( 'Sent', 'newsletter-optin-box' );
-				$class  = 'noptin-badge info';
-			} else {
-				$class  = 'noptin-badge success';
-
-				if ( 'newsletter' === $this->email_type->type ) {
-					$status  = __( 'Sending', 'newsletter-optin-box' );
-					$status .= '&mdash;<a class="noptin-stop-campaign" href="#" data-id="' . $item->id . '">' . __( 'stop', 'newsletter-optin-box' ) . '</a>';
-				} else {
-					$status = __( 'Active', 'newsletter-optin-box' );
-				}
-			}
-		}
-
-		$status = apply_filters( 'noptin_admin_table_email_status', $status, $item );
-
-		printf(
-			'<span class="%s">%s</span>',
-			esc_attr( $class ),
-			wp_kses_post( $status )
+		$app = array(
+			'unpublishURL' => $item->get_action_url( 'unpublish_campaign' ),
+			'publishURL'   => $item->get_action_url( 'publish_campaign' ),
+			'canPublish'   => 'publish' !== $item->status && current_user_can( 'publish_post', $item->id ),
+			'canUnpublish' => 'publish' === $item->status && $item->current_user_can_edit(),
+			'canEdit'      => $item->current_user_can_edit(),
+			'id'           => $item->id,
+			'status'       => $item->status,
+			'label'        => isset( $statuses[ $item->status ] ) ? $statuses[ $item->status ] : $item->status,
+			'emailType'    => $this->email_type->type,
+			'completed'    => ! ! get_post_meta( $item->id, 'completed', true ),
 		);
+
+		?>
+			<div class="noptin-email-status__app" data-app="<?php echo esc_attr( wp_json_encode( $app ) ); ?>">
+				<!-- spinner -->
+				<span class="spinner" style="visibility: visible; float: none;"></span>
+				<!-- /spinner -->
+			</div>
+		<?php
 	}
 
 	/**
