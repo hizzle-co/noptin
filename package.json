@@ -51,7 +51,7 @@
 		"@babel/plugin-transform-runtime": "7.23.7",
 		"@babel/preset-env": "^7.21.5",
 		"@emotion/babel-plugin": "^11.11.0",
-		"@mdi/js": "7.3.67",
+		"@mdi/js": "7.4.47",
 		"@woocommerce/dependency-extraction-webpack-plugin": "2.3.0",
 		"@wordpress/babel-preset-default": "7.33.0",
 		"autoprefixer": "10.4.16",
