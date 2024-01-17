@@ -32,7 +32,8 @@ class Main {
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
 
 		// Fire hooks.
-		add_action( 'save_post_noptin-campaign', array( __CLASS__, 'on_save_campaign' ), 10, 3 );
+		add_action( 'save_post_noptin-campaign', array( __CLASS__, 'on_save_campaign' ) );
+		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
 
 		// Register email types.
 		self::register_email_types();
@@ -500,12 +501,7 @@ class Main {
 	 * @param \WP_Post $post The post object.
 	 * @param int $post_id The post id.
 	 */
-	public static function on_save_campaign( $post_id, $post ) {
-
-		// Skip revisions.
-		if ( 'revision' === $post->post_type ) {
-			return;
-		}
+	public static function on_save_campaign( $post_id ) {
 
 		$email = new Email( $post_id );
 
@@ -517,5 +513,27 @@ class Main {
 		// Fire hooks.
 		do_action( 'noptin_' . $email->type . '_campaign_saved', $email );
 		do_action( 'noptin_' . $email->get_sub_type() . '_campaign_saved', $email );
+		wp_delete_post( $post_id, true );
+	}
+
+	/**
+	 * Fires relevant hooks before deleting a campaign.
+	 *
+	 * @param \WP_Post $post The post object.
+	 * @param int $post_id The post id.
+	 */
+	public static function on_delete_campaign( $post_id ) {
+
+		$email = new Email( $post_id );
+
+		// Abort if it does not exist.
+		if ( ! $email->exists() ) {
+			return;
+		}
+
+		// Fire hooks.
+		do_action( 'noptin_' . $email->type . '_campaign_deleted', $email );
+		do_action( 'noptin_' . $email->get_sub_type() . '_campaign_deleted', $email );
+		wp_delete_post( $post_id, true );
 	}
 }

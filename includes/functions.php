@@ -2065,7 +2065,7 @@ function noptin_get_automation_rule( $automation_rule_id = 0 ) {
 		$automation_rule_id = $automation_rule_id->id;
 	}
 
-	return noptin()->db()->get( $automation_rule_id, 'automation_rules' );
+	return noptin()->db()->get( (int) $automation_rule_id, 'automation_rules' );
 }
 
 /**

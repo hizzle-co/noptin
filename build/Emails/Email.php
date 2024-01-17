@@ -36,7 +36,7 @@ class Email {
 	/**
 	 * @var string The campaign status.
 	 */
-	public $status = 'draft'; // Or publish / future.
+	public $status = 'draft';
 
 	/**
 	 * @var string The campaign type.
@@ -100,7 +100,7 @@ class Email {
 		$post = get_post( $id );
 
 		// Abort if the post does not exist.
-		if ( empty( $post ) || ! in_array( $post->post_type, array( 'noptin-campaign', 'revision' ), true ) ) {
+		if ( empty( $post ) || ! in_array( $post->post_type, array( 'noptin-campaign' ), true ) ) {
 			$this->id = 0;
 			return false;
 		}
@@ -299,6 +299,11 @@ class Email {
 
 		// Check if the campaign is already sent.
 		if ( $can_send && '' !== get_post_meta( $this->id, 'completed', true ) ) {
+			$can_send = false;
+		}
+
+		// Check if the campaign is paused.
+		if ( $can_send && '' !== get_post_meta( $this->id, 'paused', true ) ) {
 			$can_send = false;
 		}
 
@@ -701,7 +706,7 @@ class Email {
 			$child->duplicate( array( 'parent_id' => $duplicate->id ) );
 		}
 
-		return $duplicate->id;
+		return $duplicate;
 	}
 
 	/**
@@ -805,26 +810,6 @@ class Email {
 		// Store subtype in a separate meta key.
 		$args['meta_input'][ $this->type . '_type' ] = $this->get_sub_type();
 
-		// Maybe schedule the email.
-		if ( ! empty( $this->created ) && time() < strtotime( $this->created ) ) {
-			$args['edit_date']   = true;
-			$args['post_status'] = 'future';
-		}
-
-		// Are we scheduling the campaign?
-		if ( 'publish' === $this->status && ! empty( $this->created ) && time() < strtotime( $this->created ) ) {
-
-			$datetime = date_create( $this->created, wp_timezone() );
-
-			if ( false !== $datetime ) {
-
-				$args['post_status']   = 'future';
-				$args['post_date']     = $datetime->format( 'Y-m-d H:i:s' );
-				$args['post_date_gmt'] = get_gmt_from_date( $datetime->format( 'Y-m-d H:i:s' ) );
-
-			}
-		}
-
 		// Slash data.
 		// WP expects all data to be slashed and will unslash it (fixes '\' character issues).
 		$args = wp_slash( $args );
@@ -850,7 +835,7 @@ class Email {
 
 		// Schedule the email.
 		if ( is_int( $result ) && $result ) {
-			$this->id = $this->init( $result );
+			$this->init( $result );
 
 			if ( 'future' === $this->status ) {
 				wp_clear_scheduled_hook( 'publish_future_post', array( $this->id ) );

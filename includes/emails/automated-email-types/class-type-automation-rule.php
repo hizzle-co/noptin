@@ -312,7 +312,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$this->maybe_set_subscriber_and_user( $recipient );
 
 		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
-
 	}
 
 	/**
@@ -408,12 +407,25 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * @param string $string
 	 * @return string
 	 */
-	public function replace_in_body( $string ) {
+	public function replace_in_body( $content ) {
 
 		if ( ! empty( $this->smart_tags ) ) {
-			return $this->smart_tags->replace_in_body( $string );
+			return $this->smart_tags->replace_in_body( $content );
 		}
 
-		return $string;
+		return $content;
+	}
+
+	/**
+	 * Fired before deleting an email campaign.
+	 *
+	 * @param Hizzle\Noptin\Emails\Email $campaign
+	 */
+	public function on_delete_campaign( $campaign ) {
+		$rule = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
+
+		if ( $rule->exists() ) {
+			$rule->delete();
+		}
 	}
 }

@@ -1053,32 +1053,6 @@ input:focus+.noptin-switch-slider span {
 
 }
 
-.noptin-newsletter-campaign-form.noptin-fields {
-	max-width: 1020px;
-
-	.noptin-campaign-input,
-	select,
-	textarea {
-		max-width: 100%;
-	}
-
-}
-
-.create-new-campaign {
-	margin-top: 6px;
-}
-
-a.no-campaign-create-new-campaign {
-	display: block;
-	margin: 20px auto;
-	max-width: 400px;
-	font-size: 16px;
-}
-
-.noptin-newsletter_page_noptin-email-campaigns .swal2-container {
-	z-index: 1000060;
-}
-
 .noptin-automation-setup-form.noptin-fields {
 	text-align: left;
 }
@@ -1756,25 +1730,6 @@ a.no-campaign-create-new-campaign {
 			color: grey;
 		}
 	}
-}
-
-.noptin-newsletter-schedule-control {
-	margin-bottom: 20px;
-	margin-top: 16px;
-
-	.noptin-schedule {
-		margin-top: 10px;
-		display: none;
-	}
-
-	.noptin-schedule-input-time {
-		width: 64px;
-	}
-
-	.noptin-schedule-input-date {
-		width: 160px;
-	}
-
 }
 
 .noptin-margin-y {

@@ -9,7 +9,7 @@ use Hizzle\Noptin\Emails\Email;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-}
+	}
 
 /**
  * Email list table class.
@@ -46,6 +46,11 @@ class Table extends \WP_List_Table {
 	 * @param \Hizzle\Noptin\Emails\Type $email_type email type.
 	 */
 	public function __construct( $email_type ) {
+		global $current_screen;
+
+		if ( $current_screen ) {
+			$current_screen->post_type = 'noptin-campaign';
+		}
 
 		$this->email_type = $email_type;
 		$this->per_page   = $this->get_items_per_page( 'noptin_emails_per_page', 25 );
@@ -54,6 +59,7 @@ class Table extends \WP_List_Table {
 
 		parent::__construct(
 			array(
+				'screen'   => $current_screen,
 				'singular' => 'id',
 				'plural'   => 'ids',
 			)
@@ -65,6 +71,8 @@ class Table extends \WP_List_Table {
 	 */
 	public function prepare_query() {
 		global $noptin_campaigns_query;
+
+		$post_type_object = get_post_type_object( 'noptin-campaign' );
 
 		// Prepare query params.
 		$orderby = empty( $_GET['orderby'] ) ? 'id' : sanitize_text_field( $_GET['orderby'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -84,7 +92,17 @@ class Table extends \WP_List_Table {
 		if ( isset( $_GET['noptin_parent_id'] ) ) {
 			$query_args['post_parent'] = intval( $_GET['noptin_parent_id'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
+
+		if ( isset( $_GET['post_status'] ) ) {
+			$query_args['post_status'] = sanitize_text_field( $_GET['post_status'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
 		$query_args = apply_filters( 'manage_noptin_emails_wp_query_args', $query_args, $this );
+
+		// If the current user can't edit others' campaigns, only show their own.
+		if ( ! current_user_can( $post_type_object->cap->edit_others_posts ) ) {
+			$query_args['author'] = get_current_user_id();
+		}
 
 		$noptin_campaigns_query = new \WP_Query( $query_args );
 		$this->query            = $noptin_campaigns_query;
@@ -475,21 +493,16 @@ class Table extends \WP_List_Table {
 			return;
 		}
 
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
 		$action = $this->current_action();
 
 		if ( 'delete' === $action ) {
 
 			foreach ( $_POST['id'] as $id ) {
 				$email = new Email( $id );
-				$email->delete();
+				if ( $email->current_user_can_delete() ) {
+					$email->delete();
+				}
 			}
-
-			noptin()->admin->show_info( __( 'The selected campaigns have been deleted.', 'newsletter-optin-box' ) );
-
 		}
 	}
 

@@ -138,7 +138,7 @@ abstract class Bulk_Task_Runner {
 			$task = $this->get_next_task();
 
 			// Increment the processed tasks counter.
-			$this->processed_tasks++;
+			++ $this->processed_tasks;
 
 		} while ( ! $this->batch_limits_exceeded() );
 
@@ -151,7 +151,6 @@ abstract class Bulk_Task_Runner {
 		} else {
 			$this->end_cron_healthcheck();
 		}
-
 	}
 
 	/**

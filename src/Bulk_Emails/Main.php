@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\Bulk_Emails;
-
 /**
  * Contains the main bulk email sender class.
  *
  * @since   1.0.0
  */
+
+namespace Hizzle\Noptin\Bulk_Emails;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	/**
 	 * The current campaign ID being processed.
 	 *
-	 * @var \Noptin_Newsletter_Email
+	 * @var \Hizzle\Noptin\Emails\Email
 	 */
 	public $current_campaign;
 
@@ -127,11 +127,15 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 							'key'     => 'completed',
 							'compare' => 'NOT EXISTS',
 						),
+						array(
+							'key'     => 'paused',
+							'compare' => 'NOT EXISTS',
+						),
 					),
 				)
 			);
 
-			$this->current_campaign = ! empty( $campaigns[0] ) ? new \Noptin_Newsletter_Email( $campaigns[0] ) : 0;
+			$this->current_campaign = ! empty( $campaigns[0] ) ? new \Hizzle\Noptin\Emails\Email( $campaigns[0] ) : 0;
 		}
 
 		$this->next_recipients = array();
@@ -156,6 +160,14 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 
 		// Ensure the sender is supported.
 		if ( ! $this->has_sender( $this->current_campaign->get_sender() ) ) {
+			update_post_meta( $this->current_campaign->id, 'paused', 1 );
+			update_post_meta(
+				$this->current_campaign->id,
+				'_bulk_email_last_error',
+				array(
+					'message' => __( 'The sender is not supported.', 'newsletter-optin-box' ),
+				)
+			);
 			return false;
 		}
 
@@ -165,8 +177,8 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		}
 
 		// Retrieves the next recipients.
-		$sender                = $this->current_campaign->get_sender();
-		$this->next_recipients = $this->senders[ $sender ]->get_recipients( $this->current_campaign );
+		$sender                = $this->senders[ $this->current_campaign->get_sender() ];
+		$this->next_recipients = $sender->get_recipients( $this->current_campaign );
 
 		// If we have no recipient, mark the campaign as completed.
 		if ( empty( $this->next_recipients ) ) {
@@ -175,7 +187,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			update_post_meta( $this->current_campaign->id, 'completed', 1 );
 
 			// Clean up.
-			$this->senders[ $sender ]->done_sending( $this->current_campaign );
+			$sender->done_sending( $this->current_campaign );
 
 			return false;
 		}
@@ -217,9 +229,19 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			// Increase emails sent this hour.
 			$this->increase_emails_sent_this_hour();
 		} elseif ( false === $result ) {
-			increment_noptin_campaign_stat( $campaign->id, '_noptin_fails' );
+			update_post_meta( $this->current_campaign->id, 'paused', 1 );
+			update_post_meta(
+				$this->current_campaign->id,
+				'_bulk_email_last_error',
+				array(
+					'message' => sprintf(
+						// Translators: %s The error message.
+						__( 'Error sending email: %s', 'newsletter-optin-box' ),
+						esc_html( \Noptin_Email_Sender::get_phpmailer_last_error() )
+					),
+				)
+			);
 		}
-
 	}
 
 	/**

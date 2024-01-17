@@ -2,15 +2,6 @@
 
 namespace Hizzle\Noptin\Bulk_Emails;
 
-/**
- * Bulk Emails API: Email Sender (subscribers).
- *
- * Contains the main email sender class.
- *
- * @since   1.12.0
- * @package Noptin
- */
-
 defined( 'ABSPATH' ) || exit;
 
 /**

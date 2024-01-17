@@ -209,11 +209,17 @@ class Main {
 			self::redirect_from_action_with_error( 'You do not have permission to duplicate this campaign.' );
 		}
 
-		$duplicate = $campaign->duplicate();
+		$args = array();
 
-		if ( $duplicate && ! is_wp_error( $duplicate ) ) {
+		if ( 'newsletter' === $campaign->type ) {
+			$args['status'] = 'draft';
+		}
+
+		$duplicate = $campaign->duplicate( $args );
+
+		if ( $duplicate instanceof \Hizzle\Noptin\Emails\Email && $duplicate->exists() ) {
 			noptin()->admin->show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
-			wp_safe_redirect( $campaign->get_edit_url() );
+			wp_safe_redirect( $duplicate->get_edit_url() );
 			exit;
 		}
 

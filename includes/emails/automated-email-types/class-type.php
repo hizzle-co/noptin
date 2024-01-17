@@ -82,7 +82,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		}
 
 		if ( is_callable( array( $this, 'on_delete_campaign' ) ) ) {
-			add_action( "noptin_{$this->type}_campaign_before_delete", array( $this, 'on_delete_campaign' ) );
+			add_action( "noptin_{$this->type}_campaign_deleted", array( $this, 'on_delete_campaign' ) );
 		}
 	}
 
