@@ -130,28 +130,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Filters automation summary.
-	 *
-	 * @param string $about
-	 * @param Noptin_Automated_Email $campaign
-	 */
-	public function about_automation( $about, $campaign ) {
-
-		if ( ! $campaign->sends_immediately() ) {
-
-			return sprintf(
-				// Translators: %s is the delay.
-				__( 'Sends %s after new content is published', 'newsletter-optin-box' ),
-				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
-			);
-
-		}
-
-		return __( 'Sends immediately new content is published', 'newsletter-optin-box' );
-
-	}
-
-	/**
 	 * Retrieves a URL to the help document.
 	 */
 	public function help_url() {

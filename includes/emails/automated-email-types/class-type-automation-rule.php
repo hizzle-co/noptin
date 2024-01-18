@@ -177,19 +177,27 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * Filters automation summary.
 	 *
 	 * @param string $about
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function about_automation( $about, $campaign ) {
 
 		$trigger = $this->get_trigger();
-		$about   = '';
+		$rule    = noptin_get_automation_rule( absint( $campaign->get( 'automation_rule' ) ) );
 
-		if ( $trigger ) {
-			$about = $trigger->get_about_email();
+		if ( is_wp_error( $rule ) || ! $rule->exists() ) {
+			return $about . sprintf(
+				'<div class="noptin-text-error">%s</div>',
+				esc_html__( 'The automation rule for this email does not exist.', 'newsletter-optin-box' )
+			);
 		}
 
-		return apply_filters( 'noptin_automation_rule_email_about', $about, $campaign );
+		$trigger = $rule->get_trigger();
 
+		if ( $trigger ) {
+			return $about . $trigger->get_rule_table_description( $rule );
+		}
+
+		return $about;
 	}
 
 	/**
@@ -330,60 +338,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		}
 
 		return array();
-	}
-
-	/**
-	 * Sends a notification.
-	 *
-	 * @param Noptin_Automated_Email $campaign
-	 * @param string $key
-	 * @param array|string $recipients
-	 */
-	public function send( $campaign, $key, $recipients ) {
-		$result = false;
-
-		// Prepare environment.
-		$this->before_send( $campaign );
-
-		// Prepare recipients.
-		if ( is_string( $recipients ) ) {
-			$recipients = array( $recipients => true );
-		}
-
-		// Send to each recipient.
-		foreach ( $recipients as $email => $track ) {
-
-			$GLOBALS['current_noptin_email'] = $email;
-
-			// Send the email.
-			$result = noptin_send_email(
-				array(
-					'recipients'               => $email,
-					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
-					'message'                  => noptin_generate_email_content( $campaign, $this->recipient, $track ),
-					'headers'                  => array(),
-					'attachments'              => array(),
-					'reply_to'                 => '',
-					'from_email'               => '',
-					'from_name'                => '',
-					'campaign_id'              => $campaign->id,
-					'content_type'             => $campaign->get_email_type() === 'plain_text' ? 'text' : 'html',
-					'unsubscribe_url'          => $this->unsubscribe_url,
-					'disable_template_plugins' => ! ( $campaign->get_email_type() === 'normal' && $campaign->get_template() === 'default' ),
-				)
-			);
-
-		}
-
-		// Clear environment.
-		$this->after_send( $campaign );
-
-		// Log.
-		if ( 'test' !== $key ) {
-			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
-		}
-
-		return $result;
 	}
 
 	/**

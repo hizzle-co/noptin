@@ -66,14 +66,6 @@ class Noptin_Newsletter_Email_Type extends Noptin_Email_Type {
 	}
 
 	/**
-	 * Returns the URL to create a new campaign.
-	 *
-	 */
-	public function new_campaign_url() {
-		return add_query_arg( 'campaign', '0', admin_url( 'admin.php?page=noptin-email-campaigns&section=newsletters&sub_section=edit_campaign' ) );
-	}
-
-	/**
 	 *  (Maybe) Sends a newsletter campaign.
 	 *
 	 * @param string  $new_status The new campaign status.

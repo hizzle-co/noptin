@@ -29,6 +29,7 @@ class Main {
 
 		// Register post types.
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
+		add_filter( 'post_updated_messages', array( __CLASS__, 'post_updated_messages' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
 
 		// Fire hooks.
@@ -188,7 +189,7 @@ class Main {
 					}
 
 					if ( empty( $value ) ) {
-						return;
+						return array();
 					}
 
 					$value = (array) $value;
@@ -198,7 +199,7 @@ class Main {
 						$rule = noptin_get_automation_rule( 0 );
 					}
 
-					$is_new = $rule->exists();
+					$is_new = ! $rule->exists();
 					if ( $is_new ) {
 						$rule->set_action_id( 'email' );
 						$rule->set_trigger_id( $value['trigger'] );
@@ -225,7 +226,7 @@ class Main {
 					$rule->set_trigger_settings(
 						array_merge(
 							$rule->get_trigger_settings(),
-							(array) $value['settings']
+							(array) $value['saved']
 						)
 					);
 
@@ -391,6 +392,60 @@ class Main {
 	}
 
 	/**
+	 * Post updated messages.
+	 */
+	public static function post_updated_messages( $messages ) {
+		global $post, $post_ID;
+
+		$messages['noptin-campaign'] = array(
+			0  => '', // Unused. Messages start at index 1.
+			1  => sprintf(
+				// Translators: %s: Email campaign permalink.
+				__( 'Email campaign updated. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
+				esc_url( get_permalink( $post_ID ) )
+			),
+			2  => 'Custom field updated.',
+			3  => 'Custom field updated.',
+			4  => sprintf(
+				// Translators: %s: Email campaign permalink.
+				__( 'Email campaign updated. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
+				esc_url( get_permalink( $post_ID ) )
+			),
+			5  => isset( $_GET['revision'] ) ?
+				sprintf(
+					// Translators: %s: Email campaign revision title.
+					__( 'Email campaign restored to revision from %s', 'newsletter-optin-box' ),
+					wp_post_revision_title( (int) $_GET['revision'], false )
+				) :
+				false,
+			6  => sprintf(
+				// Translators: %s: Email campaign permalink.
+				__( 'Email campaign published. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
+				esc_url( get_permalink( $post_ID ) )
+			),
+			7  => __( 'Email campaign saved.', 'newsletter-optin-box' ),
+			8  => sprintf(
+				// Translators: %s: Email campaign permalink.
+				__( 'Email campaign submitted. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
+				esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) )
+			),
+			9  => sprintf(
+				// Translators: %s: Email campaign permalink.
+				__( 'Email campaign scheduled for: <strong>%1$s</strong>. <a href="%2$s">Preview</a>', 'newsletter-optin-box' ),
+				date_i18n( 'M j, Y @ G:i', strtotime( $post->post_date ) ),
+				esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) )
+			),
+			10 => sprintf(
+				// Translators: %s: Email campaign permalink.
+				__( 'Email campaign draft updated. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
+				esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) )
+			),
+		);
+
+		return $messages;
+	}
+
+	/**
 	 * Registers email types.
 	 *
 	 */
@@ -513,7 +568,6 @@ class Main {
 		// Fire hooks.
 		do_action( 'noptin_' . $email->type . '_campaign_saved', $email );
 		do_action( 'noptin_' . $email->get_sub_type() . '_campaign_saved', $email );
-		wp_delete_post( $post_id, true );
 	}
 
 	/**
@@ -534,6 +588,5 @@ class Main {
 		// Fire hooks.
 		do_action( 'noptin_' . $email->type . '_campaign_deleted', $email );
 		do_action( 'noptin_' . $email->get_sub_type() . '_campaign_deleted', $email );
-		wp_delete_post( $post_id, true );
 	}
 }

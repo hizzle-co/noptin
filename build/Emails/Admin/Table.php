@@ -181,7 +181,7 @@ class Table extends \WP_List_Table {
 		}
 
 		// Sent newsletters are not editable.
-		if ( 'newsletter' === $this->email_type->type && $item->is_published() ) {
+		if ( ! $item->is_mass_mail() || ( 'newsletter' === $this->email_type->type && $item->is_published() ) ) {
 			unset( $row_actions['send'] );
 		}
 
@@ -207,6 +207,13 @@ class Table extends \WP_List_Table {
 						esc_html( $sub_types[ $item->get_sub_type() ]['label'] )
 					);
 				}
+
+				// Custom description.
+				$description = wp_kses_post( apply_filters( 'noptin_' . $item->type . '_table_about_' . $item->get_sub_type(), '', $item, $this ) );
+
+				if ( ! empty( $description ) ) {
+					$title .= "<div>$description</div>";
+				}
 			} else {
 				$title .= sprintf(
 					'<div class="noptin-text-error">%s</div>',
@@ -215,47 +222,30 @@ class Table extends \WP_List_Table {
 			}
 		}
 
-		// About automation.
-		if ( 'automation' === $this->email_type->type ) {
-			$description = wp_kses_post( apply_filters( 'noptin_automation_table_about_' . $item->type, '', $item, $this ) );
+		// Recipients.
+		if ( ! $item->is_mass_mail() ) {
+			$recipients = $item->get_recipients();
 
-			$rule = noptin_get_automation_rule( absint( $item->get( 'automation_rule' ) ) );
-
-			if ( $item->is_automation_rule() && ! is_wp_error( $rule ) && $rule->exists() ) {
-				$trigger = $rule->get_trigger();
-
-				if ( $trigger ) {
-					$description .= '<br />' . $trigger->get_rule_table_description( $rule );
-				}
-			}
-
-			if ( ! empty( $description ) ) {
-				$title .= "<p class='description'>$description</div>";
-			}
-
-			if ( ! $item->is_mass_mail() ) {
-				$recipients = $item->get_recipients();
-
-				if ( empty( $recipients ) ) {
-					$title .= '<p class="description" style="color: red;">' . esc_html__( 'No recipients set.', 'newsletter-optin-box' ) . '</p>';
-				} else {
-					$title .= sprintf(
-						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
-						esc_html__( 'Recipients', 'newsletter-optin-box' ),
-						esc_html( implode( ', ', noptin_parse_list( $recipients, true ) ) )
-					);
-				}
-			}
-
-			if ( ! $item->sends_immediately() ) {
-
+			if ( ! empty( $recipients ) ) {
 				$title .= sprintf(
-					'<div class="noptin-strong noptin-text-success"><span>%s</span>: <span>%s</span></div>',
-					esc_html__( 'Delay', 'newsletter-optin-box' ),
-					esc_html( $item->get_sends_after() . ' ' . $item->get_sends_after_unit( true ) )
+					'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+					esc_html__( 'Recipients', 'newsletter-optin-box' ),
+					esc_html( implode( ', ', noptin_parse_list( $recipients, true ) ) )
 				);
 			}
-		} elseif ( ! get_post_meta( $item->id, 'completed', true ) ) {
+		}
+
+		// Delay.
+		if ( ! $item->sends_immediately() ) {
+
+			$title .= sprintf(
+				'<div class="noptin-strong noptin-text-success"><span>%s</span>: <span>%s</span></div>',
+				esc_html__( 'Delay', 'newsletter-optin-box' ),
+				esc_html( $item->get_sends_after() . ' ' . $item->get_sends_after_unit( true ) )
+			);
+		}
+
+		if ( 'newsletter' === $this->email_type->type && ! get_post_meta( $item->id, 'completed', true ) ) {
 
 			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );
 

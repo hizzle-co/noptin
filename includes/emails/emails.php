@@ -154,7 +154,6 @@ function noptin_get_new_automation_url() {
 		),
 		admin_url( '/admin.php' )
 	);
-
 }
 
 /**
@@ -162,24 +161,10 @@ function noptin_get_new_automation_url() {
  *
  * @since 2.0.0
  * @param int $campaign_id
- * @return Noptin_Automated_Email|Noptin_Newsletter_Email|false
+ * @return \Hizzle\Noptin\Emails\Email
  */
 function noptin_get_email_campaign_object( $campaign_id ) {
-	$campaign_type = get_post_meta( $campaign_id, 'campaign_type', true );
-
-	if ( empty( $campaign_type ) ) {
-		return false;
-	}
-
-	if ( 'newsletter' === $campaign_type ) {
-		return new Noptin_Newsletter_Email( $campaign_id );
-	}
-
-	if ( 'automation' === $campaign_type ) {
-		return new Noptin_Automated_Email( $campaign_id );
-	}
-
-	return apply_filters( 'noptin_get_email_campaign_object', false, $campaign_id, $campaign_type );
+	return new \Hizzle\Noptin\Emails\Email( $campaign_id );
 }
 
 /**

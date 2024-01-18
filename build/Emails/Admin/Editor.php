@@ -193,7 +193,6 @@ JS;
 			array(
 				'styles'    => (object) $to_load,
 				'settings'  => self::get_editor_settings(),
-				'campaign'  => $edited_campaign->to_array(),
 				'types'     => get_noptin_email_types(),
 				'templates' => get_noptin_email_templates(),
 				'languages' => noptin_get_available_languages(),

@@ -524,7 +524,7 @@ class Noptin_COM_Updater {
 					'is_mass_mail' => false,
 					'is_installed' => false,
 				),
-				'automation_rule_set_user_role' => array(
+				'automation_rule_add_user_role' => array(
 					'label'        => __( 'User Role Changes', 'newsletter-optin-box' ),
 					'description'  => __( 'Send an email whenever a user role is added, removed, or updated.', 'newsletter-optin-box' ),
 					'image'        => array(

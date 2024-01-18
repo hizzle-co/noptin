@@ -100,7 +100,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return array
 	 */
 	public function get_action_settings( $context = 'view' ) {
-		return $this->get_prop( 'action_settings', $context );
+		$value = $this->get_prop( 'action_settings', $context );
+		return is_array( $value ) ? $value : array();
 	}
 
 	/**
@@ -163,7 +164,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return array
 	 */
 	public function get_trigger_settings( $context = 'view' ) {
-		return $this->get_prop( 'trigger_settings', $context );
+		$value = $this->get_prop( 'trigger_settings', $context );
+		return is_array( $value ) ? $value : array();
 	}
 
 	/**

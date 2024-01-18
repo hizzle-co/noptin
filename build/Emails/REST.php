@@ -105,6 +105,7 @@ class REST extends \WP_REST_Posts_Controller {
 				'subject'                  => noptin_parse_email_subject_tags( $subject ),
 				'message'                  => $preview,
 				'campaign_id'              => $email->id,
+				'campaign'                 => $email,
 				'headers'                  => array(),
 				'attachments'              => array(),
 				'reply_to'                 => '',

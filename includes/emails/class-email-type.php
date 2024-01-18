@@ -590,6 +590,8 @@ abstract class Noptin_Email_Type {
 		// Send to each recipient.
 		foreach ( $recipients as $email => $track ) {
 
+			$GLOBALS['current_noptin_email'] = $email;
+
 			// Send the email.
 			$result = noptin_send_email(
 				array(
@@ -597,6 +599,7 @@ abstract class Noptin_Email_Type {
 					'subject'                  => noptin_parse_email_subject_tags( $campaign->get_subject() ),
 					'message'                  => noptin_generate_email_content( $campaign, $this->recipient, $track ),
 					'campaign_id'              => ! empty( $campaign->id ) ? $campaign->id : 0,
+					'campaign'                 => $campaign,
 					'headers'                  => array(),
 					'attachments'              => array(),
 					'reply_to'                 => '',
@@ -607,10 +610,6 @@ abstract class Noptin_Email_Type {
 					'disable_template_plugins' => ! ( $campaign->get_email_type() === 'normal' && $campaign->get_template() === 'default' ),
 				)
 			);
-
-			if ( empty( $campaign->id ) ) {
-				continue;
-			}
 		}
 
 		// Clear environment.

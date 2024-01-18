@@ -128,34 +128,6 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	}
 
 	/**
-	 * Filters automation summary.
-	 *
-	 * @param string $about
-	 * @param Noptin_Automated_Email $campaign
-	 */
-	public function about_automation( $about, $campaign ) {
-
-		$lifetime_value = floatval( $campaign->get( 'lifetime_value' ) );
-
-		if ( ! $campaign->sends_immediately() ) {
-
-			return sprintf(
-				// Translators: %1$s is the sending delay, %2$s is the lifetime value.
-				__( 'Sends %1$s after a customer reaches a lifetime value of %2$s', 'newsletter-optin-box' ),
-				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) ),
-				wc_price( $lifetime_value )
-			);
-
-		}
-
-		return sprintf(
-			// Translators: %s is the lifetime value.
-			__( 'Sends immediately a customer reaches a lifetime value of %s', 'newsletter-optin-box' ),
-			wc_price( $lifetime_value )
-		);
-	}
-
-	/**
 	 * Retrieves an array of supported merge tags.
 	 *
 	 * @return array

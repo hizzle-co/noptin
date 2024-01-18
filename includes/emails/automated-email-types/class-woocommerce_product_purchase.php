@@ -175,55 +175,6 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	}
 
 	/**
-	 * Filters automation summary.
-	 *
-	 * @param string $about
-	 * @param Noptin_Automated_Email $campaign
-	 */
-	public function about_automation( $about, $campaign ) {
-
-		$selected_product = $campaign->get( 'product' );
-		$new_customer     = $campaign->get( 'new_customer' );
-		$action           = $campaign->get( 'product_action' );
-
-		if ( empty( $selected_product ) ) {
-			return $about;
-		}
-
-		if ( ! $campaign->sends_immediately() ) {
-
-			$about = sprintf(
-				// translators: %s is the sending delay.
-				__( 'Sends %s after', 'newsletter-optin-box' ),
-				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
-			);
-
-		} else {
-
-			$about = __( 'Sends immediately', 'newsletter-optin-box' );
-		}
-
-		// Are we sending to new customers.
-		$new_customer = $campaign->get( 'new_customer' );
-
-		if ( ! empty( $new_customer ) ) {
-			$about .= ' ' . __( 'a first-time customer', 'newsletter-optin-box' );
-		} else {
-			$about .= ' ' . __( 'a customer', 'newsletter-optin-box' );
-		}
-
-		$about .= ' ';
-		$about .= 'refund' === $action ? __( 'is refunded', 'newsletter-optin-box' ) : __( 'buys', 'newsletter-optin-box' );
-
-		// Prepare selected status.
-		$product = get_the_title( $selected_product );
-		$about  .= ' <em style="color: #607D8B;">' . esc_html( $product ) . '</em>';
-
-		return $about;
-
-	}
-
-	/**
 	 * Retrieves an array of supported merge tags.
 	 *
 	 * @return array

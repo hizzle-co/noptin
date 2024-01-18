@@ -174,43 +174,6 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	}
 
 	/**
-	 * Filters automation summary.
-	 *
-	 * @param string $about
-	 * @param Noptin_Automated_Email $campaign
-	 */
-	public function about_automation( $about, $campaign ) {
-
-		if ( ! $campaign->sends_immediately() ) {
-
-			$about = sprintf(
-				// Translators: %s is the sending delay.
-				__( 'Sends %s after', 'newsletter-optin-box' ),
-				(int) $campaign->get_sends_after() . ' ' . esc_html( $campaign->get_sends_after_unit( true ) )
-			);
-
-		} else {
-
-			$about = __( 'Sends immediately', 'newsletter-optin-box' );
-		}
-
-		// Are we sending to new customers.
-		$new_customer = $campaign->get( 'new_customer' );
-
-		if ( ! empty( $new_customer ) ) {
-			$about .= ' ' . __( "a first-time customer's order is", 'newsletter-optin-box' );
-		} else {
-			$about .= ' ' . __( "a customer's order is", 'newsletter-optin-box' );
-		}
-
-		// Prepare selected status.
-		$about .= ' <em style="color: #607D8B;">' . strtolower( $this->get_campaign_order_status( $campaign, true ) ) . '</em>';
-
-		return $about;
-
-	}
-
-	/**
 	 * Notify customers when they make a new order.
 	 *
 	 * @param string $action The order action.

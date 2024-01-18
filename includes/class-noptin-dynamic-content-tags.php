@@ -237,6 +237,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 		}
 
+		// Convert dates.
+		if ( is_a( $replacement, 'DateTime' ) ) {
+			$replacement = $replacement->format( get_option( 'date_format' ) );
+		}
+
 		// Convert booleans.
 		if ( is_bool( $replacement ) ) {
 			$replacement = $replacement ? 'yes' : 'no';

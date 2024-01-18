@@ -132,6 +132,8 @@ class Noptin_Email_Sender {
 	 */
 	public function bg_send( $args ) {
 
+		unset( $args['campaign'] );
+
 		$key  = 'noptin_send_' . md5( wp_json_encode( $args ) );
 		set_transient( $key, $args );
 
@@ -140,7 +142,6 @@ class Noptin_Email_Sender {
 		} else {
 			do_noptin_background_action( 'noptin_send_bg_email', $key );
 		}
-
 	}
 
 	/**
@@ -161,7 +162,9 @@ class Noptin_Email_Sender {
 
 		// Prepare args.
 		foreach ( $args as $key => $value ) {
-			$this->$key = $value;
+			if ( property_exists( $this, $key ) ) {
+				$this->$key = $value;
+			}
 		}
 
 		// Fires before an email is sent.
@@ -201,7 +204,18 @@ class Noptin_Email_Sender {
 				$subscriber = noptin_get_subscriber( $recipient );
 
 				if ( $subscriber->exists() ) {
-					$subscriber->record_sent_campaign( $args['campaign_id'] );
+					if ( empty( $result ) ) {
+						$subscriber->record_activity(
+							sprintf(
+								/* Translators: %1$s Email address, %2$s Email subject & error. */
+								__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
+								is_array( $this->recipients ) ? implode( ', ', array_map( 'sanitize_email', $this->recipients ) ) : sanitize_email( $this->recipients ),
+								wp_specialchars_decode( $this->subject ) . '<code>' . esc_html( $this->get_phpmailer_last_error() ) . '</code>'
+							)
+						);
+					} else {
+						$subscriber->record_sent_campaign( $args['campaign_id'] );
+					}
 				}
 			}
 		}
@@ -246,7 +260,6 @@ class Noptin_Email_Sender {
 
 		$headers = implode( "\r\n", $headers );
 		return apply_filters( 'noptin_sender_email_headers', $headers, $this );
-
 	}
 
 	/**
@@ -260,7 +273,6 @@ class Noptin_Email_Sender {
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
 		add_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000000 );
-
 	}
 
 	/**
@@ -368,7 +380,6 @@ class Noptin_Email_Sender {
 				return 'text/plain';
 
 		}
-
 	}
 
 	/**
@@ -438,5 +449,4 @@ class Noptin_Email_Sender {
 		$this->attachments              = array();
 		$this->disable_template_plugins = true;
 	}
-
 }

@@ -41,7 +41,7 @@ class Email {
 	/**
 	 * @var string The campaign type.
 	 */
-	public $type = 'newsletter'; // Or automation.
+	public $type = 'newsletter';
 
 	/**
 	 * @var string The campaign name.
@@ -575,20 +575,7 @@ class Email {
 				'options' => array_merge(
 					$this->options,
 					array(
-						'subject'               => $this->subject,
-						'is_automation_rule'    => $this->is_automation_rule(),
-						'trigger'               => $this->get_trigger(),
-						'supports_timing'       => $this->supports_timing(),
-						'recipients'            => $this->get_recipients(),
-						'placeholder_recipient' => $this->get_placeholder_recipient(),
-						'email_sender'          => $this->get_sender(),
-						'email_type'            => $this->get_email_type(),
-						'template'              => $this->get_template(),
-						'content_normal'        => $this->get_content( 'normal' ),
-						'when_to_run'           => $this->get( 'when_to_run' ),
-						'sends_after'           => $this->get_sends_after(),
-						'sends_after_unit'      => $this->get_sends_after_unit(),
-						'is_mass_mail'          => $this->is_mass_mail(),
+						'subject' => $this->subject,
 					)
 				),
 			)
