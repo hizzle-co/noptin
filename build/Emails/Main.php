@@ -29,11 +29,10 @@ class Main {
 
 		// Register post types.
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
-		add_filter( 'post_updated_messages', array( __CLASS__, 'post_updated_messages' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
 
 		// Fire hooks.
-		add_action( 'save_post_noptin-campaign', array( __CLASS__, 'on_save_campaign' ) );
+		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
 
 		// Register email types.
@@ -300,7 +299,26 @@ class Main {
 			apply_filters(
 				'noptin_email_campaigns_post_type_details',
 				array(
-					'labels'                => array(),
+					'labels'                => array(
+						'name'                   => __( 'Email Campaigns', 'newsletter-optin-box' ),
+						'singular_name'          => __( 'Email Campaign', 'newsletter-optin-box' ),
+						'add_new'                => __( 'Add New Campaign', 'newsletter-optin-box' ),
+						'add_new_item'           => __( 'Add New Campaign', 'newsletter-optin-box' ),
+						'edit_item'              => __( 'Edit Campaign', 'newsletter-optin-box' ),
+						'new_item'               => __( 'New Campaign', 'newsletter-optin-box' ),
+						'view_item'              => __( 'View Campaign', 'newsletter-optin-box' ),
+						'view_items'             => __( 'View Campaigns', 'newsletter-optin-box' ),
+						'search_items'           => __( 'Search Campaigns', 'newsletter-optin-box' ),
+						'insert_into_item'       => __( 'Insert into campaign', 'newsletter-optin-box' ),
+						'uploaded_to_this_item'  => __( 'Uploaded to this campaign', 'newsletter-optin-box' ),
+						'filter_items_list'      => __( 'Filter campaigns list', 'newsletter-optin-box' ),
+						'items_list'             => __( 'Email campaigns list', 'newsletter-optin-box' ),
+						'item_published'         => __( 'Email campaign published.', 'newsletter-optin-box' ),
+						'item_reverted_to_draft' => __( 'Email campaign reverted to draft.', 'newsletter-optin-box' ),
+						'item_trashed'           => __( 'Email campaign trashed.', 'newsletter-optin-box' ),
+						'item_scheduled'         => __( 'Email campaign scheduled.', 'newsletter-optin-box' ),
+						'item_updated'           => __( 'Email campaign updated.', 'newsletter-optin-box' ),
+					),
 					'label'                 => __( 'Email Campaigns', 'newsletter-optin-box' ),
 					'description'           => '',
 					'public'                => true,
@@ -389,60 +407,6 @@ class Main {
 		 * @since 1.0.0
 		*/
 		do_action( 'noptin_after_register_post_type' );
-	}
-
-	/**
-	 * Post updated messages.
-	 */
-	public static function post_updated_messages( $messages ) {
-		global $post, $post_ID;
-
-		$messages['noptin-campaign'] = array(
-			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf(
-				// Translators: %s: Email campaign permalink.
-				__( 'Email campaign updated. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
-				esc_url( get_permalink( $post_ID ) )
-			),
-			2  => 'Custom field updated.',
-			3  => 'Custom field updated.',
-			4  => sprintf(
-				// Translators: %s: Email campaign permalink.
-				__( 'Email campaign updated. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
-				esc_url( get_permalink( $post_ID ) )
-			),
-			5  => isset( $_GET['revision'] ) ?
-				sprintf(
-					// Translators: %s: Email campaign revision title.
-					__( 'Email campaign restored to revision from %s', 'newsletter-optin-box' ),
-					wp_post_revision_title( (int) $_GET['revision'], false )
-				) :
-				false,
-			6  => sprintf(
-				// Translators: %s: Email campaign permalink.
-				__( 'Email campaign published. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
-				esc_url( get_permalink( $post_ID ) )
-			),
-			7  => __( 'Email campaign saved.', 'newsletter-optin-box' ),
-			8  => sprintf(
-				// Translators: %s: Email campaign permalink.
-				__( 'Email campaign submitted. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
-				esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) )
-			),
-			9  => sprintf(
-				// Translators: %s: Email campaign permalink.
-				__( 'Email campaign scheduled for: <strong>%1$s</strong>. <a href="%2$s">Preview</a>', 'newsletter-optin-box' ),
-				date_i18n( 'M j, Y @ G:i', strtotime( $post->post_date ) ),
-				esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) )
-			),
-			10 => sprintf(
-				// Translators: %s: Email campaign permalink.
-				__( 'Email campaign draft updated. <a href="%s">Preview</a>', 'newsletter-optin-box' ),
-				esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) )
-			),
-		);
-
-		return $messages;
 	}
 
 	/**
@@ -553,21 +517,36 @@ class Main {
 	/**
 	 * Fires relevant hooks after saving a campaign.
 	 *
-	 * @param \WP_Post $post The post object.
-	 * @param int $post_id The post id.
+	 * @param int           $post_id     Post ID.
+	 * @param \WP_Post      $post        Post object.
+	 * @param bool          $update      Whether this is an existing post being updated.
+	 * @param null|\WP_Post $post_before Null for new posts, the WP_Post object prior
+	 *                                  to the update for updated posts.
 	 */
-	public static function on_save_campaign( $post_id ) {
+	public static function on_save_campaign( $post_id, $post, $update, $post_before ) {
 
 		$email = new Email( $post_id );
 
 		// Abort if it does not exist.
-		if ( ! $email->exists() ) {
+		if ( ! $email->exists() || 'auto-draft' === $post->post_status ) {
 			return;
 		}
 
-		// Fire hooks.
-		do_action( 'noptin_' . $email->type . '_campaign_saved', $email );
-		do_action( 'noptin_' . $email->get_sub_type() . '_campaign_saved', $email );
+		// Fire saved hooks.
+		self::fire_email_action_hook( 'saved', $email );
+
+		// Fire published hooks.
+		$new_status = $post->post_status;
+		$old_status = $post_before ? $post_before->post_status : 'new';
+
+		if ( 'publish' === $new_status && 'publish' !== $old_status ) {
+			self::fire_email_action_hook( 'published', $email );
+		}
+
+		// Fire unpublished hooks.
+		if ( 'publish' !== $new_status && 'publish' === $old_status ) {
+			self::fire_email_action_hook( 'unpublished', $email );
+		}
 	}
 
 	/**
@@ -580,13 +559,28 @@ class Main {
 
 		$email = new Email( $post_id );
 
-		// Abort if it does not exist.
-		if ( ! $email->exists() ) {
-			return;
+		// Ensure email exists.
+		if ( $email->exists() ) {
+			self::fire_email_action_hook( 'deleted', $email );
 		}
+	}
 
-		// Fire hooks.
-		do_action( 'noptin_' . $email->type . '_campaign_deleted', $email );
-		do_action( 'noptin_' . $email->get_sub_type() . '_campaign_deleted', $email );
+	/**
+	 * Fires an email action hook.
+	 *
+	 * @param string $action The action name.
+	 * @param Email  $email  The email object.
+	 */
+	private static function fire_email_action_hook( $action, $email ) {
+
+		$type     = $email->type;
+		$sub_type = $email->get_sub_type();
+
+		// Fire saved hooks.
+		do_action( "noptin_{$type}_campaign_{$action}", $email );
+
+		if ( ! empty( $sub_type ) ) {
+			do_action( "noptin_{$type}_{$sub_type}_campaign_{$action}", $email );
+		}
 	}
 }

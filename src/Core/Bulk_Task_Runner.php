@@ -120,11 +120,11 @@ abstract class Bulk_Task_Runner {
 		// Set-up environment.
 		$this->before_run();
 
-		// Fetch the next task.
-		$task = $this->get_next_task();
-
 		// Run the queue.
 		do {
+
+			// Fetch the next task.
+			$task = $this->get_next_task();
 
 			// Stop if there are no more tasks.
 			if ( empty( $task ) ) {
@@ -145,11 +145,40 @@ abstract class Bulk_Task_Runner {
 		// Unlock process.
 		$this->unlock_process();
 
-		// If we have more tasks, complete in the background.
+		// Clear the caches.
+		$this->clear_caches();
+
+		// If we have more tasks, wait 3 minutes then complete in the background.
 		if ( ! empty( $task ) ) {
-			wp_remote_get( $this->get_query_url(), $this->get_ajax_args() );
+			$this->schedule_remaining_tasks();
 		} else {
 			$this->end_cron_healthcheck();
+		}
+	}
+
+	/**
+	 * Schedules the remaining tasks to be run in the background.
+	 */
+	protected function schedule_remaining_tasks() {
+
+		if ( class_exists( '\Noptin\Addons_Pack\Tasks\Main' ) ) {
+			\Noptin\Addons_Pack\Tasks\Main::delete_scheduled_task( $this->cron_hook, array(), 100 );
+		}
+
+		schedule_noptin_background_action( time() + 180, $this->cron_hook );
+	}
+
+	/**
+	 * Running large batches can eat up memory, as WP adds data to its object cache.
+	 *
+	 * If using a persistent object store, this has the side effect of flushing that
+	 * as well, so this is disabled by default. To enable:
+	 *
+	 * add_filter( 'noptin_tasks_runner_flush_cache', '__return_true' );
+	 */
+	protected function clear_caches() {
+		if ( ! wp_using_ext_object_cache() || apply_filters( 'noptin_tasks_runner_flush_cache', false ) ) {
+			wp_cache_flush();
 		}
 	}
 
@@ -225,7 +254,9 @@ abstract class Bulk_Task_Runner {
 	 * @return int The number of seconds.
 	 */
 	protected function get_time_limit() {
-		return absint( apply_filters( $this->cron_hook . '_time_limit', 20 ) );
+		$limit = defined( 'NOPTIN_TASKS_RUNNER_TIME_LIMIT' ) ? NOPTIN_TASKS_RUNNER_TIME_LIMIT : 20;
+
+		return absint( apply_filters( $this->cron_hook . '_time_limit', $limit ) );
 	}
 
 	/**

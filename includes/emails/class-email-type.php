@@ -130,6 +130,14 @@ abstract class Noptin_Email_Type {
 	}
 
 	/**
+	 * Returns the default plain text content.
+	 *
+	 */
+	public function default_content_plain_text() {
+		return noptin_convert_html_to_text( $this->default_content_normal() );
+	}
+
+	/**
 	 * Prepares the default blocks.
 	 *
 	 * @return string
@@ -140,12 +148,6 @@ abstract class Noptin_Email_Type {
 
 		if ( ! empty( $normal ) ) {
 			$normal = wpautop( $normal );
-
-			// Ensure that shortcodes are not wrapped in paragraphs.
-			$normal = shortcode_unautop( $normal );
-
-			// Ensure that merge tags are not wrapped in paragraphs.
-			$normal = Noptin_Email_Generator::merge_tags_unautop( $normal, true );
 
 			// Convert paragraphs to blocks.
 			return str_replace(

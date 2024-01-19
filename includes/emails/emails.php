@@ -100,6 +100,10 @@ function noptin_generate_email_content( $email, $recipient, $track = true ) {
  */
 function noptin_convert_html_to_text( $html ) {
 
+	if ( empty( $html ) ) {
+		return '';
+	}
+
 	// Abort if DOMDocument not loaded.
 	if ( ! class_exists( 'DOMDocument' ) ) {
 		return wp_strip_all_tags( $html );
@@ -110,7 +114,6 @@ function noptin_convert_html_to_text( $html ) {
 	} catch ( Exception $e ) {
 		return wp_strip_all_tags( $html );
 	}
-
 }
 
 /**

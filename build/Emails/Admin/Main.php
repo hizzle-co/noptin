@@ -81,7 +81,7 @@ class Main {
 	/**
 	 * Redirects from an action with an error.
 	 *
-	 * @since 1.11.2
+	 * @since 3.0.0
 	 */
 	public static function redirect_from_action_with_error( $error ) {
 		noptin()->admin->show_error( $error );
@@ -92,7 +92,7 @@ class Main {
 	/**
 	 * Redirects from an action with success.
 	 *
-	 * @since 1.11.2
+	 * @since 3.0.0
 	 */
 	public static function redirect_from_action_with_success( $success ) {
 		noptin()->admin->show_success( $success );
@@ -104,7 +104,7 @@ class Main {
 	 * Manually sends a campaign.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 * @since 1.11.2
+	 * @since 3.0.0
 	 */
 	public static function admin_force_send_campaign( $campaign ) {
 
@@ -150,50 +150,44 @@ class Main {
 	}
 
 	/**
-	 * Manually publishes a campaign.
+	 * Manually resends a campaign.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 * @since 1.11.2
+	 * @since 3.0.0
 	 */
-	public static function admin_publish_campaign( $campaign ) {
+	public static function admin_resend_campaign( $campaign ) {
 
 		// Check if the user can publish the campaign.
 		if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
-			self::redirect_from_action_with_error( 'You do not have permission to publish this campaign.' );
+			self::redirect_from_action_with_error( 'You do not have permission to resend this campaign.' );
 		}
 
-		// Publish the campaign.
-		if ( 'publish' !== $campaign->status ) {
-			wp_publish_post( $campaign->id );
-		}
+		// Resend the campaign.
+		delete_post_meta( $campaign->id, 'completed' );
+		delete_post_meta( $campaign->id, 'paused' );
+		delete_post_meta( $campaign->id, '_bulk_email_last_error' );
+		do_action( 'noptin_newsletter_campaign_published', $campaign );
 
-		self::redirect_from_action_with_success( __( 'The campaign has been published.', 'newsletter-optin-box' ) );
+		self::redirect_from_action_with_success( __( 'Your email has been added to the sending queue and will be sent soon.', 'newsletter-optin-box' ) );
 	}
 
 	/**
-	 * Manually unpublishes a campaign.
+	 * Manually pauses a campaign.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 * @since 1.11.2
+	 * @since 3.0.0
 	 */
-	public static function admin_unpublish_campaign( $campaign ) {
+	public static function admin_pause_campaign( $campaign ) {
 
 		// Check if the user can publish the campaign.
-		if ( ! $campaign->current_user_can_edit() ) {
-			self::redirect_from_action_with_error( 'You do not have permission to unpublish this campaign.' );
+		if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
+			self::redirect_from_action_with_error( 'You do not have permission to pause this campaign.' );
 		}
 
-		// Unpublish the campaign.
-		if ( 'publish' === $campaign->status ) {
-			wp_update_post(
-				array(
-					'ID'          => $campaign->id,
-					'post_status' => 'draft',
-				)
-			);
-		}
+		// Pause the campaign.
+		update_post_meta( $campaign->id, 'paused', 1 );
 
-		self::redirect_from_action_with_success( __( 'The campaign has been unpublished.', 'newsletter-optin-box' ) );
+		self::redirect_from_action_with_success( __( 'The campaign has been paused.', 'newsletter-optin-box' ) );
 	}
 
 	/**

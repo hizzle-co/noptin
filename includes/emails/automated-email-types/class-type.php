@@ -77,12 +77,17 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 			add_action( $this->notification_hook, array( $this, 'maybe_send_notification' ), 10, 2 );
 		}
 
-		if ( is_callable( array( $this, 'on_save_campaign' ) ) ) {
-			add_action( "noptin_{$this->type}_campaign_saved", array( $this, 'on_save_campaign' ) );
-		}
+		$methods = array(
+			'saved'       => 'on_save_campaign',
+			'published'   => 'on_publish_campaign',
+			'unpublished' => 'on_unpublish_campaign',
+			'deleted'     => 'on_delete_campaign',
+		);
 
-		if ( is_callable( array( $this, 'on_delete_campaign' ) ) ) {
-			add_action( "noptin_{$this->type}_campaign_deleted", array( $this, 'on_delete_campaign' ) );
+		foreach ( $methods as $status => $method ) {
+			if ( is_callable( array( $this, $method ) ) ) {
+				add_action( "noptin_automation_{$this->type}_campaign_{$status}", array( $this, $method ) );
+			}
 		}
 	}
 
@@ -127,7 +132,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	/**
 	 * Returns an array of all published automated emails.
 	 *
-	 * @return Noptin_Automated_Email[]
+	 * @return \Hizzle\Noptin\Emails\Email[]
 	 */
 	public function get_automations() {
 
@@ -154,7 +159,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		);
 
 		foreach ( get_posts( $args ) as $post ) {
-			$emails[] = new Noptin_Automated_Email( $post->ID );
+			$emails[] = new \Hizzle\Noptin\Emails\Email( $post );
 		}
 
 		return $emails;

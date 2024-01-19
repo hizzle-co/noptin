@@ -81,7 +81,41 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			$this->senders[ $sender ] = new $class();
 		}
 
+		// Send newsletter emails.
+		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
+
 		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
+	}
+
+	/**
+	 * Sends a newsletter campaign.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign The new campaign object.
+	 */
+	public function send_newsletter_campaign( $campaign ) {
+
+		// Abort if the campaign is not ready to be sent.
+		if ( 'newsletter' !== $campaign->type || ! $campaign->can_send() ) {
+			return;
+		}
+
+		// Log the campaign.
+		log_noptin_message(
+			sprintf(
+				// Translators: %s is the campaign title.
+				__( 'Sending the campaign: "%s"', 'newsletter-optin-box' ),
+				esc_html( $campaign->name )
+			)
+		);
+
+		// Send the campaign.
+		$sender = $campaign->get_sender();
+
+		if ( $this->has_sender( $sender ) ) {
+			$this->send_pending();
+		} else {
+			do_action( 'noptin_send_email_via_' . $campaign->get_sender(), $campaign, null );
+		}
 	}
 
 	/**
@@ -253,6 +287,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		$error = error_get_last();
 
 		if ( ! empty( $this->current_campaign ) && ! empty( $error ) && in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
+			update_post_meta( $this->current_campaign->id, 'paused', 1 );
 			update_post_meta( $this->current_campaign->id, '_bulk_email_last_error', wp_slash( $error ) );
 			$this->unlock_process();
 		}

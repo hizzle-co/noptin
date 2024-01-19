@@ -265,7 +265,6 @@ class Table extends \WP_List_Table {
 						)
 					)
 				);
-				delete_post_meta( $item->id, '_bulk_email_last_error' );
 			}
 		}
 
@@ -300,17 +299,21 @@ class Table extends \WP_List_Table {
 		$statuses = get_post_statuses();
 
 		$app = array(
-			'unpublishURL' => $item->get_action_url( 'unpublish_campaign' ),
-			'publishURL'   => $item->get_action_url( 'publish_campaign' ),
-			'canPublish'   => 'publish' !== $item->status && current_user_can( 'publish_post', $item->id ),
-			'canUnpublish' => 'publish' === $item->status && $item->current_user_can_edit(),
-			'canEdit'      => $item->current_user_can_edit(),
-			'id'           => $item->id,
-			'status'       => $item->status,
-			'label'        => isset( $statuses[ $item->status ] ) ? $statuses[ $item->status ] : $item->status,
-			'emailType'    => $this->email_type->type,
-			'completed'    => ! ! get_post_meta( $item->id, 'completed', true ),
+			'status' => $item->status,
+			'label'  => isset( $statuses[ $item->status ] ) ? $statuses[ $item->status ] : $item->status,
+			'action' => $this->get_email_action( $item ),
 		);
+
+		if ( 'publish' === $item->status && 'newsletter' === $item->type ) {
+
+			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
+				$app['label'] = __( 'Sent', 'newsletter-optin-box' );
+			} elseif ( '' !== get_post_meta( $item->id, 'paused', true ) ) {
+				$app['label'] = __( 'Paused', 'newsletter-optin-box' );
+			} else {
+				$app['label'] = __( 'Sending', 'newsletter-optin-box' );
+			}
+		}
 
 		?>
 			<div class="noptin-email-status__app" data-app="<?php echo esc_attr( wp_json_encode( $app ) ); ?>">
@@ -319,6 +322,54 @@ class Table extends \WP_List_Table {
 				<!-- /spinner -->
 			</div>
 		<?php
+	}
+
+	/**
+	 * Displays the campaign status
+	 *
+	 * @param  Email $item item.
+	 * @return array
+	 */
+	private function get_email_action( $item ) {
+
+		if ( 'publish' === $item->status && current_user_can( 'publish_post', $item->id ) && 'newsletter' === $item->type ) {
+
+			// Resend the newsletter.
+			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
+				return array(
+					'actionUrl'        => $item->get_action_url( 'resend_campaign' ),
+					'buttonText'       => __( 'Resend', 'newsletter-optin-box' ),
+					'modalTitle'       => __( 'Resend Campaign', 'newsletter-optin-box' ),
+					'modalDescription' => __( 'Are you sure you want to resend this campaign?', 'newsletter-optin-box' ),
+					'icon'             => 'update',
+				);
+			}
+
+			// Resume a paused newsletter.
+			if ( '' !== get_post_meta( $item->id, 'paused', true ) ) {
+				return array(
+					'actionUrl'        => $item->get_action_url( 'resend_campaign' ),
+					'buttonText'       => __( 'Resume', 'newsletter-optin-box' ),
+					'modalTitle'       => __( 'Resume Campaign', 'newsletter-optin-box' ),
+					'modalDescription' => __( 'Are you sure you want to resume sending this campaign?', 'newsletter-optin-box' ),
+					'icon'             => 'controls-play',
+				);
+			}
+
+			// Pause a running newsletter.
+			if ( '' === get_post_meta( $item->id, 'paused', true ) ) {
+				return array(
+					'actionUrl'        => $item->get_action_url( 'pause_campaign' ),
+					'buttonText'       => __( 'Pause', 'newsletter-optin-box' ),
+					'modalTitle'       => __( 'Pause Campaign', 'newsletter-optin-box' ),
+					'modalDescription' => __( 'Are you sure you want to pause sending this campaign?', 'newsletter-optin-box' ),
+					'icon'             => 'controls-pause',
+				);
+			}
+		}
+
+		// isDestructive
+		return null;
 	}
 
 	/**

@@ -101,7 +101,6 @@ class Noptin_Task {
 			$this->params,
 			$this->group
 		);
-
 	}
 
 	/**
@@ -128,7 +127,6 @@ class Noptin_Task {
 			$this->params,
 			$this->group
 		);
-
 	}
 
 	/**
@@ -142,6 +140,11 @@ class Noptin_Task {
 	 */
 	public function do_once( $timestamp ) {
 
+		// Try the addons pack task manager first.
+		if ( class_exists( '\Noptin\Addons_Pack\Tasks\Main' ) ) {
+			return \Noptin\Addons_Pack\Tasks\Main::schedule_task( $this->action, $this->params, $timestamp - time() );
+		}
+
 		// Fallback to normal cron jobs if action scheduler is not installed.
 		if ( ! $this->is_usable() || ! function_exists( 'as_schedule_single_action' ) ) {
 			return wp_schedule_single_event( $timestamp, $this->action, $this->params );
@@ -153,7 +156,5 @@ class Noptin_Task {
 			$this->params,
 			$this->group
 		);
-
 	}
-
 }
