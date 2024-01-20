@@ -107,7 +107,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 					'image'           => $this->get_image(),
 					'category'        => $this->category,
 					'is_mass_mail'    => 'Mass Mail' === $this->category,
-					'supports_timing' => 'Mass Mail' !== $this->category,
+					'supports_timing' => 'Mass Mail' !== $this->category || 'post_notifications' === $this->type,
 				),
 			)
 		);

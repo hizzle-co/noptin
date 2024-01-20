@@ -31,7 +31,7 @@
 		</style>
 	<![endif]-->
 	<!-- start body -->
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 10px; color: <?php echo esc_attr( $settings['color'] ); ?>">
+	<table class="body-wrap" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 10px; color: <?php echo esc_attr( $settings['color'] ); ?>">
 
 		<?php require plugin_dir_path( __FILE__ ) . 'logo.php'; ?>
 

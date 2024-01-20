@@ -108,26 +108,32 @@
 	a {
 		-ms-text-size-adjust: 100%; /* 1 */
 		-webkit-text-size-adjust: 100%; /* 2 */
-		font-family: <?php echo esc_html( $settings['font_family'] ); ?>;
 	}
 
-	body,
-	table,
-	td,
 	div,
 	ol,
 	ul,
 	p {
+		font-size: 1em;
+	}
+
+	body,
+	#backgroundTable,
+	table.body-wrap {
+		overflow: auto;
+		box-sizing: border-box;
+		color: <?php echo esc_attr( $settings['color'] ); ?>;
+		font-family: <?php echo wp_kses_post( $settings['font_family'] ); ?>;
 		font-size: <?php echo esc_attr( $settings['font_size'] ); ?>;
 		line-height: <?php echo esc_attr( $settings['line_height'] ); ?>;
-		color: <?php echo esc_attr( $settings['color'] ); ?>;
 		font-weight: <?php echo esc_attr( $settings['font_weight'] ); ?>;
 		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
+		word-wrap: break-word;
+    	word-break: break-all;
+		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>;
 	}
 
 	body {
-		-webkit-text-size-adjust: 100%;
-		-ms-text-size-adjust: 100%;
 		width: 100%!important;
 		height: 100%;
 	}
@@ -148,15 +154,9 @@
 	}
 
 	/* Body */
-	body,
-	#backgroundTable {
-		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>
-	}
-
 	table.body-wrap {
 		width: 100%;
 		padding: 30px;
-		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>
 	}
 
 

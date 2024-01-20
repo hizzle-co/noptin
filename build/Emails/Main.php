@@ -251,7 +251,7 @@ class Main {
 						'add_new_item'           => __( 'Add New Campaign', 'newsletter-optin-box' ),
 						'edit_item'              => __( 'Edit Campaign', 'newsletter-optin-box' ),
 						'new_item'               => __( 'New Campaign', 'newsletter-optin-box' ),
-						'view_item'              => __( 'View Campaign', 'newsletter-optin-box' ),
+						'view_item'              => __( 'Preview Campaign', 'newsletter-optin-box' ),
 						'view_items'             => __( 'View Campaigns', 'newsletter-optin-box' ),
 						'search_items'           => __( 'Search Campaigns', 'newsletter-optin-box' ),
 						'insert_into_item'       => __( 'Insert into campaign', 'newsletter-optin-box' ),

@@ -351,7 +351,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	public function on_delete_campaign( $campaign ) {
 		$rule = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
 
-		if ( $rule->exists() ) {
+		if ( ! is_wp_error( $rule ) && $rule->exists() ) {
 			$rule->delete( false );
 		}
 	}

@@ -14,7 +14,7 @@
 	<body style="background-color: <?php echo esc_attr( $settings['background_color'] ); ?>;">
 
 		<!-- start body -->
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 10px;">
+		<table class="body-wrap" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 10px;">
 
 			<?php require plugin_dir_path( __FILE__ ) . 'logo.php'; ?>
 

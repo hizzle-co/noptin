@@ -34,7 +34,7 @@
 		overflow: auto;
 		box-sizing: border-box;
 		color: <?php echo esc_attr( $settings['color'] ); ?>;
-		font-family: <?php echo esc_html( $settings['font_family'] ); ?>;
+		font-family: <?php echo wp_kses_post( $settings['font_family'] ); ?>;
 		font-size: <?php echo esc_attr( $settings['font_size'] ); ?>;
 		line-height: <?php echo esc_attr( $settings['line_height'] ); ?>;
 		font-weight: <?php echo esc_attr( $settings['font_weight'] ); ?>;

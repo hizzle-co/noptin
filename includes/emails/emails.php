@@ -364,7 +364,7 @@ function get_noptin_email_template_defaults() {
 			'width'              => '600px',
 			'custom_css'         => '',
 			'font_family'        => 'Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-			'font_size'          => '16px',
+			'font_size'          => '15px',
 			'font_style'         => 'normal',
 			'font_weight'        => 'normal',
 			'line_height'        => '1.4',

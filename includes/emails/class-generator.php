@@ -383,6 +383,13 @@ class Noptin_Email_Generator {
 		// Iterate over all elements.
 		$xpath = new DOMXPath( $doc );
 		foreach ( $xpath->query( '//*' ) as $element ) {
+
+			// Remove empty paragraphs or those with only whitespace.
+			if ( 'p' === $element->nodeName && empty( trim( $element->nodeValue ) ) ) {
+				$element->parentNode->removeChild( $element );
+				continue;
+			}
+
 			// Check if the class is used in the CSS.
 			if ( $element->hasAttribute( 'class' ) ) {
 				$class = $element->getAttribute( 'class' );

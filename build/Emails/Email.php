@@ -106,7 +106,13 @@ class Email {
 		}
 
 		// Fetch campaign data.
-		$data = get_post_meta( $post->ID, 'campaign_data', true );
+		$data   = get_post_meta( $post->ID, 'campaign_data', true );
+		$resave = false;
+
+		// If data is stdClass, convert it to an array.
+		if ( is_object( $data ) ) {
+			$data = (array) $data;
+		}
 
 		// Check if we're dealing with a legacy campaign.
 		if ( ! is_array( $data ) ) {
@@ -122,13 +128,17 @@ class Email {
 					$key = 'sends_after_unit';
 				}
 
+				if ( in_array( $key, array( 'campaign_type', '_edit_lock', 'automation_type', 'campaign_data' ), true ) ) {
+					continue;
+				}
+
 				$this->options[ $key ] = $value[0];
 			}
 
 			$this->options['email_type']     = 'normal';
 			$this->options['content_normal'] = $post->post_content;
 
-			update_post_meta( $post->ID, 'campaign_data', $this->options );
+			$resave = true;
 		} else {
 			$this->options = $data;
 		}
@@ -143,10 +153,30 @@ class Email {
 		$this->author    = $post->post_author;
 
 		// Backwards compatibility.
+		// CSS.
+		if ( ! isset( $this->options['custom_css'] ) ) {
+			if ( 'normal' !== $this->get_email_type() ) {
+				$this->options = array_merge(
+					get_noptin_email_template_settings( 'noptin-visual', $this ),
+					$this->options
+				);
+			} else {
+				$this->options = array_merge(
+					get_noptin_email_template_settings( $this->get_template(), $this ),
+					$this->options
+				);
+			}
+
+			$resave = true;
+		}
+
+		// Subject.
 		if ( ! isset( $this->options['subject'] ) ) {
 			$this->options['subject'] = $post->post_title;
+			$resave                   = true;
+		}
 
-			// Update the campaign data.
+		if ( $resave && 'auto-draft' !== $post->post_status ) {
 			update_post_meta( $post->ID, 'campaign_data', $this->options );
 		}
 

@@ -181,11 +181,22 @@ class Table extends \WP_List_Table {
 		}
 
 		// Sent newsletters are not editable.
-		if ( ! $item->is_mass_mail() || ( 'newsletter' === $this->email_type->type && $item->is_published() ) ) {
+		if ( ! $item->is_mass_mail() || $item->supports_timing() || ( 'newsletter' === $this->email_type->type && $item->is_published() ) ) {
 			unset( $row_actions['send'] );
 		}
 
-		$title    = esc_html( $item->name );
+		$item_name = $item->name;
+		$sub_types = $this->email_type->get_sub_types();
+
+		if ( empty( $item_name ) && ! empty( $sub_types ) && isset( $sub_types[ $item->get_sub_type() ] ) ) {
+			$item_name = $sub_types[ $item->get_sub_type() ]['label'];
+		}
+
+		if ( empty( $item_name ) ) {
+			$item_name = __( '(no title)', 'newsletter-optin-box' );
+		}
+
+		$title    = esc_html( $item_name );
 		$edit_url = esc_url( $item->current_user_can_edit() ? $item->get_edit_url() : $item->get_preview_url() );
 		$title    = "<strong><a href='$edit_url'>$title</a></strong>";
 
@@ -200,7 +211,7 @@ class Table extends \WP_List_Table {
 					esc_html( $sub_types[ $item->get_sub_type() ]['description'] )
 				);
 
-				if ( $item->name !== $sub_types[ $item->get_sub_type() ]['label'] ) {
+				if ( $item_name !== $sub_types[ $item->get_sub_type() ]['label'] ) {
 					$title .= sprintf(
 						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 						esc_html__( 'Type', 'newsletter-optin-box' ),
