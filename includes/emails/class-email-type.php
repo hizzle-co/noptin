@@ -63,25 +63,6 @@ abstract class Noptin_Email_Type {
 	}
 
 	/**
-	 * Sends a test email.
-	 *
-	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
-	 * @param string $recipient
-	 * @return bool Whether or not the test email was sent
-	 */
-	public function send_test( $campaign, $recipient ) {
-
-		$recipient = sanitize_email( $recipient );
-
-		$this->prepare_test_data( $campaign );
-
-		// Maybe set related subscriber.
-		$this->maybe_set_subscriber_and_user( $recipient );
-
-		return $this->send( $campaign, 'test', array( $recipient => false ) );
-	}
-
-	/**
 	 * Returns default email properties.
 	 *
 	 * @param array $props
@@ -184,7 +165,7 @@ abstract class Noptin_Email_Type {
 	 *
 	 * @param mixed $value
 	 * @param string $prop
-	 * @param Noptin_Automated_Email $email
+	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
 	public function maybe_set_default( $value, $prop, $email ) {
 
@@ -516,37 +497,9 @@ abstract class Noptin_Email_Type {
 	}
 
 	/**
-	 * Generates a preview email.
-	 *
-	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
-	 * @return string
-	 */
-	public function generate_preview( $campaign ) {
-
-		// Set-up test data for the preview.
-		$this->prepare_test_data( $campaign );
-
-		// Prepare enviroment.
-		$this->before_send( $campaign );
-
-		// Generate content.
-		$content = noptin_generate_email_content( $campaign, $this->recipient, false );
-
-		// Clean environment.
-		$this->after_send( $campaign );
-
-		if ( is_wp_error( $content ) ) {
-			return $content->get_error_message();
-		}
-
-		// Filter and return.
-		return apply_filters( 'noptin_generate_email_preview', $content, $campaign, $this );
-	}
-
-	/**
 	 * Fired before sending a campaign.
 	 *
-	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	protected function before_send( $campaign ) {
 
@@ -574,7 +527,7 @@ abstract class Noptin_Email_Type {
 	/**
 	 * Sends a notification.
 	 *
-	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @param string $key
 	 * @param array|string $recipients
 	 */
@@ -628,7 +581,7 @@ abstract class Noptin_Email_Type {
 	/**
 	 * Fired after sending a campaign.
 	 *
-	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	protected function after_send( $campaign ) {
 
@@ -651,7 +604,7 @@ abstract class Noptin_Email_Type {
 	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email|Noptin_Newsletter_Email $email
+	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
 	public function prepare_test_data( $email ) {
 

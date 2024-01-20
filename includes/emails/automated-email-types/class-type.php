@@ -169,7 +169,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	 * Schedules an automated email.
 	 *
 	 * @param int|string $object_id
-	 * @param Noptin_Automated_Email $automation
+	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 */
 	public function schedule_notification( $object_id, $automation ) {
 
@@ -187,7 +187,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	/**
 	 * Returns an array of email recipients.
 	 *
-	 * @param Noptin_Automated_Email $automation
+	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 * @param array $merge_tags
 	 * @return array
 	 */

@@ -2024,15 +2024,6 @@ function noptin_get_current_automation_rule() {
 		return noptin_get_automation_rule( absint( $_GET['noptin_edit_automation_rule'] ) );
 	}
 
-	// Automated email edit page.
-	$screen_id   = get_current_screen() ? get_current_screen()->id : false;
-	$edit_screen = noptin()->white_label->admin_screen_id() . '_page_noptin-email-campaigns';
-
-	if ( $edit_screen === $screen_id && isset( $_GET['campaign'] ) && is_numeric( $_GET['campaign'] ) ) {
-		$campaign = new Noptin_Automated_Email( (int) $_GET['campaign'] );
-		return noptin_get_automation_rule( absint( $campaign->get( 'automation_rule' ) ) );
-	}
-
 	return noptin_get_automation_rule( 0 );
 }
 

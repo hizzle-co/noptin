@@ -107,7 +107,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	/**
 	 * Displays a metabox.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function campaign_options( $options ) {
 		return array_merge(
@@ -182,7 +182,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	/**
 	 * Checks if a given notification is valid for a given order
 	 *
-	 * @param Noptin_Automated_Email $automation
+	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 * @param WC_Order $order
 	 * @param float $customer_lifetime_value The customers lifetime value.
 	 */
@@ -215,7 +215,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	public function maybe_send_notification( $order_id, $campaign_id ) {
 
 		$order    = wc_get_order( $order_id );
-		$campaign = new Noptin_Automated_Email( $campaign_id );
+		$campaign = noptin_get_email_campaign_object( $campaign_id );
 		$key      = $order_id . '_' . $campaign_id;
 
 		// Ensure the order exists and the campaign is active.

@@ -308,10 +308,10 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 *
 	 * @return int|\WP_Error
 	 */
-	public function delete( $force_delete = true ) {
+	public function delete( $fire_actions = true ) {
 		$action = $this->get_action();
 
-		if ( ! empty( $action ) ) {
+		if ( ! empty( $action ) && $fire_actions ) {
 			$action->before_delete( $this );
 		}
 
@@ -344,7 +344,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	/**
 	 * Returns the related email campaign.
 	 *
-	 * @return false|\Noptin_Automated_Email
+	 * @return false|\Hizzle\Noptin\Emails\Email
 	 */
 	public function get_email_campaign() {
 
@@ -358,7 +358,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			return false;
 		}
 
-		$email = new \Noptin_Automated_Email( $settings['automated_email_id'] );
+		$email = noptin_get_email_campaign_object( $settings['automated_email_id'] );
 
 		return $email->exists() ? $email : false;
 	}

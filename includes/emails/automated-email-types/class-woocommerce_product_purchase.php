@@ -124,7 +124,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	/**
 	 * Displays a metabox.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function campaign_options( $options ) {
 
@@ -253,13 +253,12 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 				$this->schedule_notification( $item['item_id'], $automation );
 			}
 		}
-
 	}
 
 	/**
 	 * Checks if a given notification is valid for a given order
 	 *
-	 * @param Noptin_Automated_Email $automation
+	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 * @param WC_Order $order
 	 * @param int $product_id
 	 * @param string $action
@@ -305,7 +304,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	public function maybe_send_notification( $item_id, $campaign_id ) {
 
 		$order    = wc_get_order( wc_get_order_id_by_order_item_id( $item_id ) );
-		$campaign = new Noptin_Automated_Email( $campaign_id );
+		$campaign = noptin_get_email_campaign_object( $campaign_id );
 		$key      = $item_id . '_' . $campaign_id;
 
 		// Ensure the order exists and the campaign is active.
@@ -346,7 +345,7 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email $email
+	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
 	public function prepare_test_data( $email ) {
 		parent::prepare_test_data( $email );
@@ -356,7 +355,5 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		if ( $product ) {
 			$this->product = $product;
 		}
-
 	}
-
 }

@@ -173,13 +173,12 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 				$this->schedule_notification( $post->ID, $automation );
 			}
 		}
-
 	}
 
 	/**
 	 * Checks if a given notification is valid for a given post
 	 *
-	 * @param Noptin_Automated_Email $automation
+	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 * @param WP_Post $post
 	 */
 	public function is_automation_valid_for( $automation, $post ) {
@@ -193,14 +192,13 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		}
 
 		return apply_filters( 'noptin_new_post_notification_valid_for_post', true, $automation, $post );
-
 	}
 
 	/**
 	 * (Maybe) Send out a new post notification
 	 *
 	 * @param int $object_id
-	 * @param Noptin_Automated_Email $automation
+	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 * @param string $key
 	 */
 	public function maybe_send_notification( $post_id, $campaign_id, $key = '' ) {
@@ -220,7 +218,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		}
 
 		$this->notify( $post_id, $campaign_id, $key );
-
 	}
 
 	/**
@@ -231,7 +228,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		update_post_meta( $post_id, 'noptin_sent_notification_campaign', array( $post_id, $campaign_id ) );
 
 		// Create normal campaign.
-		$campaign = new Noptin_Automated_Email( $campaign_id );
+		$campaign = noptin_get_email_campaign_object( $campaign_id );
 		$type     = $campaign->get_email_type();
 		$content  = $campaign->get_content( $type );
 
@@ -279,7 +276,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		// Clear environment.
 		$this->post = null;
 		$this->after_send( $campaign );
-
 	}
 
 	/**
@@ -424,7 +420,6 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			),
 
 		);
-
 	}
 
 	/**
@@ -517,7 +512,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email $email
+	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
 	public function prepare_test_data( $email ) {
 
@@ -542,15 +537,14 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		// If no post found, abort.
 		if ( ! $this->post ) {
-			throw new Exception( __( 'Could not find a post for this preview.', 'newsletter-optin-box' ) );
+			throw new Exception( esc_html__( 'Could not find a post for this preview.', 'newsletter-optin-box' ) );
 		}
-
 	}
 
 	/**
 	 * Fired after sending a campaign.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	protected function after_send( $campaign ) {
 
@@ -559,5 +553,4 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		parent::after_send( $campaign );
 	}
-
 }

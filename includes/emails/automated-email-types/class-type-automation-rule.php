@@ -204,7 +204,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * (Maybe) Send out an email email.
 	 *
 	 * @param array $trigger_args
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function maybe_send_notification( $trigger_args, $campaign ) {
 
@@ -275,7 +275,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function prepare_test_data( $campaign ) {
 
@@ -284,42 +284,15 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 
 		// Prepare automation rule test data.
 		$trigger = $this->get_trigger();
-		$rule    = new Noptin_Automation_Rule( (int) $campaign->get( 'automation_rule' ) );
+		$rule    = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
 
-		if ( $trigger ) {
+		if ( $trigger && ! is_wp_error( $rule ) ) {
 			try {
 				$this->smart_tags = $trigger->get_test_smart_tags( $rule );
 			} catch ( Exception $e ) {
 				$this->smart_tags = null;
 			}
 		}
-
-	}
-
-	/**
-	 * Sends a test email.
-	 *
-	 * @param Noptin_Automated_Email $campaign
-	 * @param string $recipient
-	 * @return bool Whether or not the test email was sent
-	 */
-	public function send_test( $campaign, $recipient ) {
-
-		// Prepare the test data.
-		$this->prepare_test_data( $campaign );
-
-		// Prepare automation rule test data.
-		$trigger = $this->get_trigger();
-		$rule    = new Noptin_Automation_Rule( (int) $campaign->get( 'automation_rule' ) );
-
-		if ( $trigger ) {
-			$this->smart_tags = $trigger->get_test_smart_tags( $rule );
-		}
-
-		// Maybe set related subscriber.
-		$this->maybe_set_subscriber_and_user( $recipient );
-
-		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
 	}
 
 	/**
@@ -379,7 +352,78 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$rule = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
 
 		if ( $rule->exists() ) {
-			$rule->delete();
+			$rule->delete( false );
 		}
+	}
+
+	/**
+	 * Fires after an automation is saved.
+	 *
+	 * @param Hizzle\Noptin\Emails\Email $campaign
+	 */
+	public function on_save_campaign( $campaign ) {
+		self::sync_campaign_to_rule( $campaign );
+	}
+
+	/**
+	 * Fires after an automation is saved.
+	 *
+	 * @param Hizzle\Noptin\Emails\Email $campaign
+	 * @param array | null $trigger_settings
+	 */
+	public static function sync_campaign_to_rule( $campaign, $trigger_settings = null ) {
+
+		// Abort if no id.
+		if ( ! $campaign->exists() || 'auto-draft' === $campaign->status ) {
+			return array();
+		}
+
+		// Create a matching automation rule if one does not exist.
+		$rule = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
+
+		if ( is_wp_error( $rule ) ) {
+			$rule = noptin_get_automation_rule( 0 );
+		}
+
+		$is_new = ! $rule->exists();
+		if ( $is_new ) {
+			$rule->set_action_id( 'email' );
+			$rule->set_trigger_id( $campaign->get_trigger() );
+			$rule->set_action_settings( array( 'automated_email_id' => $campaign->id ) );
+			$rule->set_trigger_settings( array( 'conditional_logic' => noptin_get_default_conditional_logic() ) );
+		} elseif ( (int) $rule->get_action_setting( 'automated_email_id' ) !== $campaign->id ) {
+			$rule->set_action_settings(
+				array_merge(
+					$rule->get_action_settings(),
+					array( 'automated_email_id' => $campaign->id )
+				)
+			);
+		}
+
+		if ( is_array( $trigger_settings ) ) {
+			$rule->set_trigger_settings(
+				array_merge(
+					$rule->get_trigger_settings(),
+					$trigger_settings
+				)
+			);
+		}
+
+		// Save the rule.
+		$rule->save();
+
+		if ( ! $rule->exists() ) {
+			return new \WP_Error( 'noptin_automation_rule', __( 'Failed to save automation rule.', 'newsletter-optin-box' ) );
+		}
+
+		if ( $is_new ) {
+			$campaign_data = get_post_meta( $campaign->id, 'campaign_data', true );
+			$campaign_data = ! is_array( $campaign_data ) ? array() : $campaign_data;
+
+			$campaign_data['automation_rule'] = $rule->get_id();
+			update_post_meta( $campaign->id, 'campaign_data', $campaign_data );
+		}
+
+		return $rule->get_data();
 	}
 }

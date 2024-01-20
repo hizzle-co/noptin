@@ -1191,13 +1191,12 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 		} else {
 			return apply_filters( 'noptin_woocommere_email_placeholder_image', wc_placeholder_img( $size ), $size, $product );
 		}
-
 	}
 
 	/**
 	 * Sends a notification.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @param string $key
 	 */
 	protected function prepare_and_send( $campaign, $key ) {
@@ -1245,7 +1244,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	/**
 	 * Fired after sending a campaign.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	protected function after_send( $campaign ) {
 
@@ -1259,27 +1258,9 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	}
 
 	/**
-	 * Sends a test email.
-	 *
-	 * @param Noptin_Automated_Email $campaign
-	 * @param string $recipient
-	 * @return bool Whether or not the test email was sent
-	 */
-	public function send_test( $campaign, $recipient ) {
-
-		$this->prepare_test_data( $campaign );
-
-		// Maybe set related subscriber.
-		$this->maybe_set_subscriber_and_user_from_customer( $this->customer );
-
-		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
-
-	}
-
-	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function prepare_test_data( $campaign ) {
 
@@ -1288,7 +1269,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 
 		// Prepare WC data.
 		$this->_prepare_test_data();
-
 	}
 
 	/**

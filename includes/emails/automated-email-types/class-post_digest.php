@@ -45,7 +45,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * The current post digest.
 	 *
-	 * @var Noptin_Automated_Email
+	 * @var \Hizzle\Noptin\Emails\Email
 	 */
 	public $post_digest;
 
@@ -289,7 +289,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * Displays a metabox.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param array $options
 	 */
 	public function campaign_options( $options ) {
 		return array_merge( $options, self::get_campaign_timing_options() );
@@ -402,7 +402,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * Fires after an automation is saved.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function on_save_campaign( $campaign ) {
 		$this->schedule_campaign( $campaign, true );
@@ -411,7 +411,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * Fires before an automation is deleted.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function on_delete_campaign( $campaign ) {
 		wp_clear_scheduled_hook( $this->notification_hook, array( $campaign->id ) );
@@ -420,7 +420,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * Schedules the next send for a given campain.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param Hizzle\Noptin\Emails\Email $campaign
 	 * @param int $is_saving
 	 */
 	public function schedule_campaign( $campaign, $is_saving = false ) {
@@ -641,7 +641,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * Retrieve matching posts since last send.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @return array
 	 */
 	public function get_date_query( $campaign ) {
@@ -804,7 +804,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 * Prepares the next send time.
 	 *
 	 * @param int $timestamp
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	private function get_formatted_next_send_time( $timestamp ) {
 
@@ -952,7 +952,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * Prepares test data.
 	 *
-	 * @param Noptin_Automated_Email $email
+	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
 	public function prepare_test_data( $email ) {
 
@@ -965,7 +965,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	/**
 	 * Fired after sending a campaign.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	protected function after_send( $campaign ) {
 

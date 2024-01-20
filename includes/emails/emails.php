@@ -61,7 +61,7 @@ function noptin_send_email( $args, $background = false ) {
  * Generates the content of an email.
  *
  * @since 1.7.0
- * @param Noptin_Automated_Email|Noptin_Newsletter_Email $email
+ * @param \Hizzle\Noptin\Emails\Email $email
  * @param array $recipient
  * @param bool $track
  * @return string|WP_Error

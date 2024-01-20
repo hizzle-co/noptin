@@ -182,69 +182,14 @@ class Main {
 				},
 				'update_callback' => function ( $value, $data_object ) {
 
-					// Abort if no id.
-					if ( empty( $data_object->ID || 'auto-draft' === $data_object->post_status ) ) {
-						return array();
-					}
-
 					if ( empty( $value ) ) {
 						return array();
 					}
 
-					$value = (array) $value;
-					$rule  = noptin_get_automation_rule( empty( $value['id'] ) ? 0 : (int) $value['id'] );
-
-					if ( is_wp_error( $rule ) ) {
-						$rule = noptin_get_automation_rule( 0 );
-					}
-
-					$is_new = ! $rule->exists();
-					if ( $is_new ) {
-						$rule->set_action_id( 'email' );
-						$rule->set_trigger_id( $value['trigger'] );
-						$rule->set_action_settings( array() );
-						$rule->set_trigger_settings( array() );
-					}
-
-					// Action settings.
-					$old_settings = $rule->get_action_settings();
-					if ( ! isset( $old_settings['automated_email_id'] ) || $old_settings['automated_email_id'] !== $data_object->ID ) {
-						$rule->set_action_settings(
-							array_merge(
-								$old_settings,
-								array(
-									'automated_email_id' => $data_object->ID,
-								)
-							)
-						);
-
-						$is_new = true;
-					}
-
-					// Trigger settings.
-					$rule->set_trigger_settings(
-						array_merge(
-							$rule->get_trigger_settings(),
-							(array) $value['saved']
-						)
+					return \Noptin_Automation_Rule_Email::sync_campaign_to_rule(
+						new \Hizzle\Noptin\Emails\Email( $data_object->ID ),
+						(array) $value['saved']
 					);
-
-					// Save the rule.
-					$rule->save();
-
-					if ( ! $rule->exists() ) {
-						return new \WP_Error( 'noptin_automation_rule', __( 'Failed to save automation rule.', 'newsletter-optin-box' ) );
-					}
-
-					if ( $is_new ) {
-						$campaign_data = get_post_meta( $data_object->ID, 'campaign_data', true );
-						$campaign_data = ! is_array( $campaign_data ) ? array() : $campaign_data;
-
-						$campaign_data['automation_rule'] = $rule->get_id();
-						update_post_meta( $data_object->ID, 'campaign_data', $campaign_data );
-					}
-
-					return $value;
 				},
 				'schema'          => array(
 					'type'                 => 'object',

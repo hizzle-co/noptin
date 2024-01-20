@@ -132,7 +132,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	/**
 	 * Retrieves the set order status for a campaign
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @param bool $label
 	 */
 	public function get_campaign_order_status( $campaign, $label = false ) {
@@ -153,7 +153,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	/**
 	 * Displays a metabox.
 	 *
-	 * @param Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function campaign_options( $options ) {
 		return array_merge(
@@ -208,7 +208,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	/**
 	 * Checks if a given notification is valid for a given order
 	 *
-	 * @param Noptin_Automated_Email $automation
+	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 * @param WC_Order $order
 	 * @param string $action
 	 * @param Noptin_WooCommerce
@@ -253,7 +253,7 @@ class Noptin_WooCommerce_New_Order_Email extends Noptin_WooCommerce_Automated_Em
 	public function maybe_send_notification( $order_id, $campaign_id ) {
 
 		$order    = wc_get_order( $order_id );
-		$campaign = new Noptin_Automated_Email( $campaign_id );
+		$campaign = noptin_get_email_campaign_object( $campaign_id );
 		$key      = $order_id . '_' . $campaign_id;
 
 		// Ensure the order exists and the campaign is active.
