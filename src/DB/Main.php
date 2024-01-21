@@ -299,6 +299,19 @@ class Main {
 	}
 
 	/**
+	 * Get all meta values for the given meta key.
+	 *
+	 * @param   string $meta_key  The meta key.
+	 * @param   string $collection_name The collection name.
+	 * @access  public
+	 * @since   1.0.0
+	 */
+	public function get_all_meta_by_key( $meta_key, $collection_name = 'subscribers' ) {
+		$collection = $this->store->get( $collection_name );
+		return empty( $collection ) ? array() : $collection->get_all_meta( $meta_key );
+	}
+
+	/**
 	 * Determines if a meta field with the given key exists for the given noptin record ID.
 	 *
 	 * @param int    $record_id  ID of the record metadata is for.
