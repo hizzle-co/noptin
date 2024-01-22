@@ -106,8 +106,18 @@ class Email {
 		}
 
 		// Fetch campaign data.
-		$data   = get_post_meta( $post->ID, 'campaign_data', true );
-		$resave = false;
+		$data        = get_post_meta( $post->ID, 'campaign_data', true );
+		$resave      = false;
+		$is_revision = wp_is_post_revision( $post->ID );
+
+		// If this is a revision and no data is found, try to fetch the parent data.
+		if ( $is_revision && empty( $data ) ) {
+			$parent = wp_get_post_parent_id( $post->ID );
+
+			if ( $parent ) {
+				$data = get_post_meta( $parent, 'campaign_data', true );
+			}
+		}
 
 		// If data is stdClass, convert it to an array.
 		if ( is_object( $data ) ) {
@@ -171,16 +181,58 @@ class Email {
 		}
 
 		// Subject.
+		$resave_title = false;
 		if ( ! isset( $this->options['subject'] ) ) {
+
+			if ( ! empty( $this->options['custom_title'] ) ) {
+				$this->name   = $this->options['custom_title'];
+				$resave_title = true;
+
+				unset( $this->options['custom_title'] );
+			}
+
 			$this->options['subject'] = $post->post_title;
 			$resave                   = true;
 		}
 
+		if ( $is_revision ) {
+			$resave       = false;
+			$resave_title = false;
+		}
+
 		if ( $resave && 'auto-draft' !== $post->post_status ) {
-			update_post_meta( $post->ID, 'campaign_data', $this->options );
+			// https://core.trac.wordpress.org/ticket/60314.
+			update_post_meta( $post->ID, 'campaign_data', (object) $this->options );
 		}
 
 		$this->subject = $this->options['subject'];
+
+		// Check if content contains blocks.
+		if ( $resave && ! has_blocks( $this->content ) ) {
+			$this->content = noptin_email_wrap_blocks(
+				empty( $this->content ) ? '' : sprintf(
+					'<!-- wp:html -->%s<!-- /wp:html -->',
+					wpautop( $this->content )
+				),
+				$this->get( 'footer_text' ),
+				$this->get( 'heading' )
+			);
+
+			wp_update_post(
+				array(
+					'ID'           => $post->ID,
+					'post_title'   => $this->name,
+					'post_content' => $this->content,
+				)
+			);
+		} elseif ( $resave_title ) {
+			wp_update_post(
+				array(
+					'ID'         => $post->ID,
+					'post_title' => $this->name,
+				)
+			);
+		}
 
 		// Add sub-type to options array.
 		$key                   = $this->type . '_type';
@@ -228,6 +280,29 @@ class Email {
 
 		// Merge the remaining args into the options array.
 		$this->options = array_merge( $this->options, $args );
+	}
+
+	/**
+	 * Loads autosaved data for the email.
+	 *
+	 * @param \WP_Post $post
+	 */
+	public function load_autosave( $post ) {
+
+		// Fetch campaign data.
+		$data = get_post_meta( $post->ID, 'campaign_data', true );
+
+		// If data is stdClass, convert it to an array.
+		if ( is_object( $data ) ) {
+			$data = (array) $data;
+		}
+
+		if ( is_array( $data ) ) {
+			$this->options = array_merge( $this->options, $data );
+		}
+
+		$this->name    = $post->post_title;
+		$this->content = $post->post_content;
 	}
 
 	/**
@@ -481,11 +556,15 @@ class Email {
 	 */
 	public function get_content( $email_type = 'normal' ) {
 
+		if ( 'visual' === $email_type ) {
+			return $this->content;
+		}
+
 		if ( isset( $this->options[ 'content_' . $email_type ] ) ) {
 			return $this->options[ 'content_' . $email_type ];
 		}
 
-		return $this->content;
+		return '';
 	}
 
 	/**
@@ -815,7 +894,8 @@ class Email {
 			'post_content' => $this->content,
 			'meta_input'   => array(
 				'campaign_type' => $this->type,
-				'campaign_data' => array_merge(
+				// https://core.trac.wordpress.org/ticket/60314.
+				'campaign_data' => (object) array_merge(
 					$this->options,
 					array(
 						'subject' => $this->subject,

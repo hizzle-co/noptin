@@ -489,6 +489,9 @@ JS;
 		// Store subtype in a separate meta key.
 		$args['meta_input'][ $edited_campaign->type . '_type' ] = $edited_campaign->get_sub_type();
 
+		// Convert campaign data to an object. See: https://core.trac.wordpress.org/ticket/60314
+		$args['meta_input']['campaign_data'] = (object) $args['meta_input']['campaign_data'];
+
 		$args['meta_input'] = array_filter( $args['meta_input'] );
 
 		$post_id = wp_insert_post( $args, false, false );

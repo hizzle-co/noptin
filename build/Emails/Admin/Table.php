@@ -211,14 +211,6 @@ class Table extends \WP_List_Table {
 					esc_html( $sub_types[ $item->get_sub_type() ]['description'] )
 				);
 
-				if ( $item_name !== $sub_types[ $item->get_sub_type() ]['label'] ) {
-					$title .= sprintf(
-						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
-						esc_html__( 'Type', 'newsletter-optin-box' ),
-						esc_html( $sub_types[ $item->get_sub_type() ]['label'] )
-					);
-				}
-
 				// Custom description.
 				$description = wp_kses_post( apply_filters( 'noptin_' . $item->type . '_table_about_' . $item->get_sub_type(), '', $item, $this ) );
 
@@ -250,7 +242,7 @@ class Table extends \WP_List_Table {
 		if ( ! $item->sends_immediately() ) {
 
 			$title .= sprintf(
-				'<div class="noptin-strong noptin-text-success"><span>%s</span>: <span>%s</span></div>',
+				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 				esc_html__( 'Delay', 'newsletter-optin-box' ),
 				esc_html( $item->get_sends_after() . ' ' . $item->get_sends_after_unit( true ) )
 			);

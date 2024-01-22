@@ -410,12 +410,12 @@ function get_noptin_email_template_defaults() {
 function get_noptin_email_delay_units( $singular = false ) {
 
 	$units = array(
-		'minutes' => __( 'Minute(s)', 'newsletter-optin-box' ),
-		'hours'   => __( 'Hour(s)', 'newsletter-optin-box' ),
-		'days'    => __( 'Day(s)', 'newsletter-optin-box' ),
-		'weeks'   => __( 'Week(s)', 'newsletter-optin-box' ),
-		'months'  => __( 'Month(s)', 'newsletter-optin-box' ),
-		'years'   => __( 'Year(s)', 'newsletter-optin-box' ),
+		'minutes' => __( 'Minutes', 'newsletter-optin-box' ),
+		'hours'   => __( 'Hours', 'newsletter-optin-box' ),
+		'days'    => __( 'Days', 'newsletter-optin-box' ),
+		'weeks'   => __( 'Weeks', 'newsletter-optin-box' ),
+		'months'  => __( 'Months', 'newsletter-optin-box' ),
+		'years'   => __( 'Years', 'newsletter-optin-box' ),
 	);
 
 	if ( $singular ) {
@@ -479,7 +479,6 @@ function increment_noptin_campaign_stat( $campaign_id, $stat ) {
 	if ( $parent ) {
 		increment_noptin_campaign_stat( $parent->ID, $stat );
 	}
-
 }
 
 /**
@@ -501,7 +500,6 @@ function decrease_noptin_campaign_stat( $campaign_id, $stat ) {
 	if ( $parent ) {
 		decrease_noptin_campaign_stat( $parent->ID, $stat );
 	}
-
 }
 
 /**
@@ -585,37 +583,25 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 	if ( $exit ) {
 		exit;
 	}
-
 }
 
 /**
- * Displays the available merge tags text.
- *
- * @param string $text The text to display.
- * @since 1.10.3
+ * Wraps blocks in a section.
  */
-function noptin_email_display_merge_tags_text( $text = '' ) {
+function noptin_email_wrap_blocks( $blocks, $footer_text = '', $heading_text = '' ) {
 
-	if ( apply_filters( 'noptin_email_has_listed_available_merge_tags', false ) ) {
-		add_thickbox();
-		$atts = array(
-			'href'  => '#TB_inline?width=0&height=550&inlineId=noptin-automation-rule-smart-tags',
-			'class' => 'thickbox',
-		);
-	} else {
-		$atts = array(
-			'href'   => noptin_get_upsell_url( '/guide/sending-emails/email-tags/#available-merge-tags', 'email-tags', 'email-campaigns' ),
-			'target' => '_blank',
-		);
+	$placeholder = esc_attr__( 'Add footer text here', 'newsletter-optin-box' );
+	$footer      = '<!-- wp:paragraph { "placeholder": "' . $placeholder . '","style":{"noptin":{"typography":{"textAlign":"center","fontSize":13},"color":{"text":"#666666","link":"#111111"}}}} --> <p style="text-align:center;font-size:13px;color:#666666" class="wp-block-paragraph" id="footer-text">' . $footer_text . '</p> <!-- /wp:paragraph -->';
+
+	if ( empty( $blocks ) ) {
+		$blocks = '<!-- wp:paragraph --> <p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '"></p> <!-- /wp:paragraph -->';
 	}
 
-	?>
-	<p class="description">
-		<?php echo wp_kses_post( $text ); ?>
-		<?php esc_html_e( 'You can use email tags to provide dynamic values.', 'newsletter-optin-box' ); ?>
-		<a <?php noptin_attr( 'available_email_tags', $atts ); ?>>
-			<?php esc_html_e( 'View available tags', 'newsletter-optin-box' ); ?>
-		</a>
-	</p>
-	<?php
+	// Prepend heading block if we have a heading.
+	if ( ! empty( $heading_text ) ) {
+		$placeholder = esc_attr__( 'Add heading text here', 'newsletter-optin-box' );
+		$blocks      = '<!-- wp:heading { "placeholder": "' . $placeholder . '"--> <h2 class="wp-block-heading" id="heading-text">' . $heading_text . '</h2> <!-- /wp:heading -->' . $blocks;
+	}
+
+	return '<!-- wp:noptin/group {"style":{"noptin":{"color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group aligncenter" id="main-content-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $blocks . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group --> <div class="wp-block-noptin-group aligncenter" id="main-footer-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
 }

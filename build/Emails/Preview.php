@@ -93,6 +93,18 @@ class Preview {
 			'uid' => get_current_user_id(),
 		);
 
+		// Check if we have an autosave.
+		$autosave = wp_get_post_autosave( get_the_ID() );
+
+		if ( ! empty( $autosave ) && is_preview() ) {
+			self::$campaign->load_autosave( $autosave );
+		}
+
+		// Maybe set plain text mode.
+		if ( 'plain_text' === self::$campaign->get_email_type() && ! headers_sent() ) {
+			header( 'Content-Type: text/plain' );
+		}
+
 		// Render the preview.
 		self::render();
 	}

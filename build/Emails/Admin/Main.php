@@ -407,6 +407,14 @@ class Main {
 		$campaign = &self::$edited_campaigns[ $cache_key ];
 
 		if ( $campaign->exists() ) {
+
+			// Maybe convert options to object.
+			$old = get_post_meta( $campaign->id, 'campaign_data', true );
+
+			if ( is_array( $old ) ) {
+				update_post_meta( $campaign->id, 'campaign_data', (object) $old );
+			}
+
 			return $campaign;
 		}
 

@@ -47,6 +47,11 @@ class Type {
 	public $supports_timing = false;
 
 	/**
+	 * @var string Checks if this email supports sub_types.
+	 */
+	public $supports_sub_types = false;
+
+	/**
 	 * @var string The email type label.
 	 */
 	public $label;
@@ -95,6 +100,10 @@ class Type {
 	 * @return array
 	 */
 	public function get_sub_types() {
+
+		if ( ! $this->supports_sub_types ) {
+			return array();
+		}
 
 		if ( null === $this->sub_types ) {
 			$this->sub_types = get_noptin_campaign_sub_types( $this->type );

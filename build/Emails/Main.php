@@ -291,12 +291,11 @@ class Main {
 			'noptin-campaign',
 			'campaign_type',
 			array(
-				'single'            => true,
-				'type'              => 'string',
-				'default'           => 'newsletter',
-				'show_in_rest'      => true,
-				'revisions_enabled' => true,
-				'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
+				'single'        => true,
+				'type'          => 'string',
+				'default'       => 'newsletter',
+				'show_in_rest'  => true,
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
 					return current_user_can( 'edit_post', $post_id );
 				},
 			)
@@ -331,15 +330,19 @@ class Main {
 		);
 
 		foreach ( self::$types as $type ) {
+
+			if ( ! $type->supports_timing ) {
+				continue;
+			}
+
 			register_post_meta(
 				'noptin-campaign',
 				$type->type . '_type',
 				array(
-					'single'            => true,
-					'type'              => 'string',
-					'show_in_rest'      => true,
-					'revisions_enabled' => true,
-					'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
+					'single'        => true,
+					'type'          => 'string',
+					'show_in_rest'  => true,
+					'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
 						return current_user_can( 'edit_post', $post_id );
 					},
 				)
@@ -383,6 +386,7 @@ class Main {
 				'new_campaign_label' => __( 'New Automated Email', 'newsletter-optin-box' ),
 				'click_to_add_first' => __( 'Click the button below to set-up your first automated email', 'newsletter-optin-box' ),
 				'supports_timing'    => true,
+				'supports_sub_types' => true,
 			)
 		);
 	}
