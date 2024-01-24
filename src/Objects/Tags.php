@@ -52,13 +52,8 @@ class Tags extends \Noptin_Dynamic_Content_Tags {
 
 		$noptin_current_objects[ $this->object_type ] = $record;
 
-		$this->escape_function = $escape_function;
-
-		// Replace strings like this: [[tagname attr="value"]].
-		$content = preg_replace_callback( '/\[\[([\w\.\/-]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $content );
-
-		// Call again to take care of nested variables.
-		$content = preg_replace_callback( '/\[\[([\w\.\/-]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $content );
+		// Replace merge tags.
+		$content = $this->replace_with_brackets( $content, $escape_function );
 
 		// Restore the old record.
 		if ( null === $old_record ) {

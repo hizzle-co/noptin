@@ -486,6 +486,30 @@ class Generic_Post_Type extends Post_Type {
 	}
 
 	/**
+	 * Returns the template for the list shortcode.
+	 */
+	protected function get_list_shortcode_template() {
+		$template = array();
+
+		if ( post_type_supports( $this->type, 'title' ) ) {
+			$template['heading'] = $this->field_to_merge_tag( 'title' );
+		}
+
+		if ( post_type_supports( $this->type, 'editor' ) ) {
+			$template['description'] = $this->field_to_merge_tag( 'excerpt' );
+		}
+
+		if ( post_type_supports( $this->type, 'thumbnail' ) ) {
+			$template['image'] = $this->field_to_merge_tag( 'image' );
+		}
+
+		if ( ! is_post_type_viewable( $this->type ) ) {
+			$template['action_url'] = $this->field_to_merge_tag( 'url' );
+		}
+		return $template;
+	}
+
+	/**
 	 * Adds generic post types.
 	 *
 	 */

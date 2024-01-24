@@ -79,7 +79,7 @@ if ( ! is_array( $products ) ) {
 
 				<td class="d-xs-block" width="150" style="width:150px; padding: 0;">
 					<a href="<?php echo esc_url( $product->get_permalink() ); ?>" style="display: block;" target="_blank">
-						<?php echo wp_kses_post( Noptin_WooCommerce_Automated_Email_Type::get_product_image( $product, 'thumbnail' ) ); ?>
+						<?php echo wp_kses_post( $product->get_image( 'thumbnail' ) ); ?>
 					</a>
 				</td>
 

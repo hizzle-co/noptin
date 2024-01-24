@@ -22,6 +22,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 	public $tags = array();
 
 	/**
+	 * @var array An array of section tags.
+	 */
+	public $section_tags = array( 'columns', 'column' );
+
+	/**
 	 * Whether we're only replacing partial merge tags.
 	 */
 	public $is_partial = false;
@@ -214,7 +219,12 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$attributes = array();
 		if ( isset( $matches[2] ) ) {
 			$attribute_string = $matches[2];
-			$attributes       = shortcode_parse_atts( $attribute_string );
+
+			if ( ! empty( $GLOBALS['noptin_dynamic_content_tags_encoded'] ) ) {
+				$attribute_string = html_entity_decode( $attribute_string );
+			}
+
+			$attributes = shortcode_parse_atts( $attribute_string );
 		}
 
 		if ( isset( $config['replacement'] ) ) {
@@ -265,24 +275,85 @@ abstract class Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
+	 * Replaces dynamic content tags in the given string. Uses { and } as delimiters.
+	 *
 	 * @param string $string The string containing dynamic content tags.
 	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
 	 * @return string
 	 */
-	protected function replace( $string, $escape_function = '' ) {
+	protected function replace( $content, $escape_function = '' ) {
 
-		if ( ! is_string( $string ) ) {
-			return $string;
+		return $this->replace_with_regex(
+			$content,
+			$this->get_regex( '{', '}' ),
+			$escape_function
+		);
+	}
+
+	/**
+	 * Replaces dynamic content tags in the given string. Uses [[ and ]] as delimiters.
+	 *
+	 * @param string $string The string containing dynamic content tags.
+	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
+	 * @return string
+	 */
+	protected function replace_with_brackets( $content, $escape_function = '' ) {
+
+		// Replace strings like this: [[tagname attr="value"]].
+		$content = $this->replace_with_regex(
+			$content,
+			$this->get_regex( '[[', ']]' ),
+			$escape_function
+		);
+
+		// Replace HTML-encoded strings like this: [[tagname attr=&quot;value&quot;]].
+		$GLOBALS['noptin_dynamic_content_tags_encoded'] = true;
+
+		$content = $this->replace_with_regex(
+			$content,
+			$this->get_regex( '&#91;&#91;', '&#93;&#93;' ),
+			$escape_function
+		);
+
+		unset( $GLOBALS['noptin_dynamic_content_tags_encoded'] );
+
+		return $content;
+	}
+
+	/**
+	 * @param string $content The content containing dynamic content tags.
+	 * @param string $regex The regex to use for matching tags.
+	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
+	 * @return string
+	 */
+	protected function replace_with_regex( $content, $regex, $escape_function = '' ) {
+
+		if ( ! is_string( $content ) ) {
+			return $content;
 		}
 
 		$this->escape_function = $escape_function;
 
 		// Replace strings like this: {tagname attr="value"}.
-		$string = preg_replace_callback( '/\{(\w+)(\ +(?:(?!\{)[^}\n])+)*\}/', array( $this, 'replace_tag' ), $string );
+		$content = preg_replace_callback( $regex, array( $this, 'replace_tag' ), $content );
 
-		// Call again to take care of nested variables.
-		$string = preg_replace_callback( '/\{(\w+)(\ +(?:(?!\{)[^}\n])+)*\}/', array( $this, 'replace_tag' ), $string );
-		return $string;
+		// Call again to take care of nested variables, e.g, {tagname attr="{value}"}.
+		return preg_replace_callback( $regex, array( $this, 'replace_tag' ), $content );
+	}
+
+	/**
+	 * Retrieves the regexx
+	 *
+	 * @param string $opening_tag
+	 * @param string $closing_tag
+	 */
+	protected function get_regex( $opening_tag, $closing_tag ) {
+
+		return sprintf(
+			'/%1$s(?P<name>\w[\w\.\/-]*\w)(?P<attributes>\ +(?:(?!%1$s)[^}\n])+)*%2$s/',
+			preg_quote( $opening_tag, '/' ),
+			preg_quote( $closing_tag, '/' )
+		);
 	}
 
 	/**
@@ -503,5 +574,4 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		return '';
 	}
-
 }

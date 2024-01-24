@@ -100,7 +100,7 @@ foreach ( $products as $i => $product ) {
 
 				<p class="digest-grid-product-image-container">
 					<a href="<?php echo esc_url( $product->get_permalink() ); ?>" style="display: block;" target="_blank">
-						<?php echo wp_kses_post( Noptin_WooCommerce_Automated_Email_Type::get_product_image( $product, 'medium' ) ); ?>
+						<?php echo wp_kses_post( $product->get_image( 'medium' ) ); ?>
 					</a>
 				</p>
 
@@ -128,7 +128,7 @@ foreach ( $products as $i => $product ) {
 
 				<p class="digest-grid-product-image-container">
 					<a href="<?php echo esc_url( $product->get_permalink() ); ?>" style="display: block;" target="_blank">
-						<?php echo wp_kses_post( Noptin_WooCommerce_Automated_Email_Type::get_product_image( $product, 'medium' ) ); ?>
+						<?php echo wp_kses_post( $product->get_image( 'medium' ) ); ?>
 					</a>
 				</p>
 

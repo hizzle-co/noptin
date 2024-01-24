@@ -86,7 +86,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_filter( 'noptin_automation_trigger_known_smart_tags', array( $this, 'register_automation_smart_tags' ), $this->priority, 2 );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
-
+		add_action( 'noptin_register_post_type_objects', array( $this, 'register_post_type_objects' ), $this->priority );
 	}
 
 	/**
@@ -792,4 +792,10 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	public function register_post_type_objects() {
+		\Hizzle\Noptin\Objects\Store::add( new \Hizzle\Noptin\Objects\Products() );
+	}
 }

@@ -89,7 +89,6 @@ abstract class Collection {
 
 		// Register shortcode.
 		if ( $this->can_list ) {
-			$name = $this->plural_type();
 			add_shortcode( 'noptin_' . $this->plural_type() . '_list', array( $this, 'handle_list_shortcode' ) );
 		}
 	}
@@ -197,6 +196,27 @@ abstract class Collection {
 	 */
 	public function get_filters() {
 		return array();
+	}
+
+	/**
+	 * Returns the template for the list shortcode.
+	 */
+	protected function get_list_shortcode_template() {
+		return array();
+	}
+
+	/**
+	 * Converts a field to a merge tag.
+	 *
+	 * @return string $merge_tag The merge tag.
+	 */
+	protected function field_to_merge_tag( $field, $attributes = '' ) {
+
+		if ( ! empty( $attributes ) ) {
+			$attributes = ' ' . $attributes;
+		}
+
+		return "[[{$this->smart_tags_prefix}.{$field}{$attributes}]]";
 	}
 
 	/**
@@ -308,6 +328,7 @@ abstract class Collection {
 			'singular_label' => $this->singular_label,
 			'filters'        => $this->get_filters(),
 			'merge_tags'     => noptin_prepare_merge_tags_for_js( Store::smart_tags( $this->type, $this->singular_label ) ),
+			'template'       => $this->get_list_shortcode_template(),
 		);
 
 		return $objects;

@@ -141,7 +141,7 @@
 
 	.noptin-record {
 		margin: 10px;
-		padding: 10px;
+		padding: 0;
 	}
 
 	.noptin-columns {

@@ -355,7 +355,7 @@ class Noptin_Email_Generator {
 		$content = $this->inline_styles( $content );
 
 		// Remove unused classes and ids.
-		$content = $this->remove_unused_classes_and_ids( $content );
+		//$content = $this->remove_unused_classes_and_ids( $content );
 
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );
@@ -381,13 +381,35 @@ class Noptin_Email_Generator {
 		@$doc->loadHTML( $html );
 
 		// Iterate over all elements.
-		$xpath = new DOMXPath( $doc );
-		foreach ( $xpath->query( '//*' ) as $element ) {
+		$xpath    = new DOMXPath( $doc );
+		$elements = $xpath->query( '//*' );
+
+		if ( empty( $elements ) ) {
+			return $html;
+		}
+
+		/** @var \DOMNodeList $elements */
+		foreach ( $elements as $element ) {
 
 			// Remove empty paragraphs or those with only whitespace.
-			if ( 'p' === $element->nodeName && empty( trim( $element->nodeValue ) ) ) {
+			if ( 'p' === $element->nodeName && $element->hasChildNodes() ) {
+				$has_content = false;
+
+				foreach ( $element->childNodes as $child ) {
+					// Check if the child is an element or if the <p> tag contains non-whitespace text
+					if ( XML_ELEMENT_NODE === $child->nodeType || ( XML_TEXT_NODE === $child->nodeType && trim( $child->nodeValue ) !== '' ) ) {
+						$has_content = true;
+						break;
+					}
+				}
+
+				// If <p> tag only contains whitespace, remove it
+				if ( ! $has_content ) {
+					$element->parentNode->removeChild( $element );
+				}
+			} elseif ( 'p' === $element->nodeName ) {
+				// If <p> tag has no children, remove it
 				$element->parentNode->removeChild( $element );
-				continue;
 			}
 
 			// Check if the class is used in the CSS.

@@ -324,12 +324,7 @@ JS;
 							array(
 								'name' => 'Grey',
 								'slug' => 'grey',
-								'color' => '#95a5a6',
-							),
-							array(
-								'name'  => __( 'Dark Gray', 'newsletter-optin-box' ),
-								'slug'  => 'dark-gray',
-								'color' => '#111111',
+								'color' => '#666666',
 							),
 							array(
 								'name'  => __( 'Light Gray', 'newsletter-optin-box' ),
