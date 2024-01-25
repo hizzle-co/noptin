@@ -63,16 +63,6 @@ class Noptin_Automation_Rules {
 			$this->add_trigger( new Noptin_PMPro_Membership_Level_Change_Trigger() );
 			$this->add_action( new Noptin_PMPro_Change_Level_Action() );
 		}
-
-		// Register automated email types.
-		foreach ( $this->get_triggers() as $trigger ) {
-			$email_type = 'automation_rule_' . $trigger->get_id();
-
-			noptin()->emails->automated_email_types->register_automated_email_type(
-				$email_type,
-				new Noptin_Automation_Rule_Email( $email_type, $trigger )
-			);
-		}
 	}
 
 	/**
@@ -125,6 +115,18 @@ class Noptin_Automation_Rules {
 	 */
 	public function add_trigger( $trigger ) {
 		$this->triggers[ $trigger->get_id() ] = $trigger;
+
+		if ( empty( noptin()->emails->automated_email_types ) ) {
+			return _doing_it_wrong( __METHOD__, 'Noptin_Automation_Rules::add_trigger should be called after noptin_email_manager_init action', '3.0.0' );
+		}
+
+		// Register email type.
+		$email_type = 'automation_rule_' . $trigger->get_id();
+
+		noptin()->emails->automated_email_types->register_automated_email_type(
+			$email_type,
+			new Noptin_Automation_Rule_Email( $email_type, $trigger )
+		);
 	}
 
 	/**

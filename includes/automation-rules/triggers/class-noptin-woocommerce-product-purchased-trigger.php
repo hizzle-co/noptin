@@ -117,7 +117,7 @@ class Noptin_WooCommerce_Product_Purchased_Trigger extends Noptin_WooCommerce_Tr
 	 * Prepares email test data.
 	 *
 	 * @since 1.11.0
-	 * @param Noptin_Automation_Rule $rule
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @return Noptin_Automation_Rules_Smart_Tags
 	 * @throws Exception
 	 */
@@ -126,7 +126,12 @@ class Noptin_WooCommerce_Product_Purchased_Trigger extends Noptin_WooCommerce_Tr
 		/** @var Noptin_WooCommerce_Automated_Email_Type[] $email_types */
 		$email_types = noptin()->emails->automated_email_types->types;
 
-		$email_types['woocommerce_product_purchase']->_prepare_test_data();
+		$campaign = $rule->get_email_campaign();
+		if ( $campaign ) {
+			$email_types['woocommerce_product_purchase']->prepare_test_data( $campaign );
+		} else {
+			$email_types['woocommerce_product_purchase']->_prepare_test_data();
+		}
 
 		$order = $email_types['woocommerce_product_purchase']->order;
 		$args  = array(

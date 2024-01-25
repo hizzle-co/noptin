@@ -354,6 +354,17 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		$product = wc_get_product( (int) $email->get( 'product' ) );
 		if ( $product ) {
 			$this->product = $product;
+		} else {
+			// Use a random product.
+			$products = wc_get_products(
+				array(
+					'limit' => 1,
+				)
+			);
+
+			if ( ! empty( $products ) ) {
+				$this->product = $products[0];
+			}
 		}
 	}
 }

@@ -382,14 +382,6 @@ class Products extends Generic_Post_Type {
 	public function get_fields() {
 
 		$fields = array(
-			'id'                      => array(
-				'label' => __( 'ID', 'newsletter-optin-box' ),
-				'type'  => 'number',
-			),
-			'parent_id'               => array(
-				'label' => __( 'Parent ID', 'newsletter-optin-box' ),
-				'type'  => 'number',
-			),
 			'name'                    => array(
 				'description' => __( 'Name', 'newsletter-optin-box' ),
 				'type'        => 'string',
@@ -402,8 +394,12 @@ class Products extends Generic_Post_Type {
 				'description' => __( 'Image', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
-			'image_url'               => array(
-				'description' => __( 'Image URL', 'newsletter-optin-box' ),
+			'price'                   => array(
+				'description' => __( 'Price', 'newsletter-optin-box' ),
+				'type'        => 'number',
+			),
+			'price_html'              => array(
+				'description' => __( 'Price HTML', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
 			'url'                     => array(
@@ -418,7 +414,26 @@ class Products extends Generic_Post_Type {
 				'description' => __( 'Add to cart text', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
-
+			'short_description'       => array(
+				'description' => __( 'Short description', 'newsletter-optin-box' ),
+				'type'        => 'string',
+			),
+			'categories'              => array(
+				'description' => __( 'Categories', 'newsletter-optin-box' ),
+				'type'        => 'array',
+			),
+			'tags'                    => array(
+				'description' => __( 'Tags', 'newsletter-optin-box' ),
+				'type'        => 'array',
+			),
+			'id'                      => array(
+				'label' => __( 'ID', 'newsletter-optin-box' ),
+				'type'  => 'number',
+			),
+			'parent_id'               => array(
+				'label' => __( 'Parent ID', 'newsletter-optin-box' ),
+				'type'  => 'number',
+			),
 			'date_created'            => array(
 				'description' => __( 'Date created', 'newsletter-optin-box' ),
 				'type'        => 'string',
@@ -449,20 +464,12 @@ class Products extends Generic_Post_Type {
 				'description' => __( 'Description', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
-			'short_description'       => array(
-				'description' => __( 'Short description', 'newsletter-optin-box' ),
+			'image_url'               => array(
+				'description' => __( 'Image URL', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
 			'sku'                     => array(
 				'description' => __( 'SKU', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'price'                   => array(
-				'description' => __( 'Price', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'price_html'              => array(
-				'description' => __( 'Price HTML', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
 			'regular_price'           => array(
@@ -484,6 +491,11 @@ class Products extends Generic_Post_Type {
 			'total_sales'             => array(
 				'description' => __( 'Total sales', 'newsletter-optin-box' ),
 				'type'        => 'number',
+			),
+			'type'                    => array(
+				'description' => __( 'Type', 'newsletter-optin-box' ),
+				'type'        => 'string',
+				'options'     => wc_get_product_types(),
 			),
 			'tax_status'              => array(
 				'description' => __( 'Tax status', 'newsletter-optin-box' ),
@@ -566,14 +578,6 @@ class Products extends Generic_Post_Type {
 			'purchase_note'           => array(
 				'description' => __( 'Purchase note', 'newsletter-optin-box' ),
 				'type'        => 'string',
-			),
-			'categories'              => array(
-				'description' => __( 'Categories', 'newsletter-optin-box' ),
-				'type'        => 'array',
-			),
-			'tags'                    => array(
-				'description' => __( 'Tags', 'newsletter-optin-box' ),
-				'type'        => 'array',
 			),
 			'downloadable'            => array(
 				'description' => __( 'Downloadable', 'newsletter-optin-box' ),
