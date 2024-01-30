@@ -66,16 +66,14 @@ abstract class Collection {
 	public $current_item = null;
 
 	/**
+	 * @var string $context
+	 */
+	public $context;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
-
-		// Load automation rule.
-		if ( did_action( 'noptin_automation_rules_load' ) ) {
-			$this->load_automation_rules( noptin()->automation_rules );
-		} else {
-			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rules' ) );
-		}
 
 		// Set automation rule smart tags prefix.
 		if ( is_null( $this->smart_tags_prefix ) ) {
@@ -91,6 +89,17 @@ abstract class Collection {
 		if ( $this->can_list ) {
 			add_shortcode( 'noptin_' . $this->plural_type() . '_list', array( $this, 'handle_list_shortcode' ) );
 		}
+
+		if ( empty( $this->context ) ) {
+			$this->context = "noptin/{$this->type}-template";
+		}
+
+		// Load automation rule.
+		if ( did_action( 'noptin_automation_rules_load' ) ) {
+			$this->load_automation_rules( noptin()->automation_rules );
+		} else {
+			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rules' ) );
+		}
 	}
 
 	/**
@@ -104,10 +113,14 @@ abstract class Collection {
 		foreach ( $this->get_all_triggers() as $key => $args ) {
 
 			$args['provides'] = empty( $args['provides'] ) ? array() : noptin_parse_list( $args['provides'] );
-			$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
 
 			if ( empty( $args['subject'] ) ) {
 				$args['subject'] = 'current_user';
+			}
+
+			// Only auto-provide the current user if the subject is not a WordPress user.
+			if ( ! in_array( $args['subject'], Users::$user_types, true ) ) {
+				$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
 			}
 
 			$rules->add_trigger(
@@ -288,14 +301,15 @@ abstract class Collection {
 	}
 
 	/**
-	 * Retrieves a test object ID.
+	 * Retrieves a test object args.
 	 *
 	 * @since 2.2.0
-	 * @param \Noptin_Automation_Rule $rule
-	 * @return int
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @throws \Exception
+	 * @return array
 	 */
-	public function get_test_object_id( $rule ) {
-		return 0;
+	public function get_test_args( $rule ) {
+		return array();
 	}
 
 	/**

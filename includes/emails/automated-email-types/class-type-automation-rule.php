@@ -48,6 +48,9 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			$this->category = $trigger->category;
 		}
 
+		// Set the contexts.
+		$this->contexts = $trigger->contexts;
+
 		$this->add_hooks();
 	}
 
@@ -276,6 +279,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * Prepares test data.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
+	 * @throws \Exception
 	 */
 	public function prepare_test_data( $campaign ) {
 
@@ -284,15 +288,18 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 
 		// Prepare automation rule test data.
 		$trigger = $this->get_trigger();
-		$rule    = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
 
-		if ( $trigger && ! is_wp_error( $rule ) ) {
-			try {
-				$this->smart_tags = $trigger->get_test_smart_tags( $rule );
-			} catch ( Exception $e ) {
-				$this->smart_tags = null;
-			}
+		if ( empty( $trigger ) ) {
+			throw new \Exception( 'Trigger not found' );
 		}
+
+		$rule = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
+
+		if ( is_wp_error( $rule ) || ! $rule->exists() ) {
+			throw new \Exception( 'Automation rule not found' );
+		}
+
+		$this->smart_tags = $trigger->get_test_smart_tags( $rule );
 	}
 
 	/**

@@ -12,6 +12,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class Users extends People {
 
+	public static $user_types = array();
+
 	/**
 	 * @var string the record class.
 	 */
@@ -34,6 +36,7 @@ class Users extends People {
 		$this->type           = $type;
 		$this->can_email      = false;
 
+		self::$user_types[] = $type;
 		parent::__construct();
 	}
 

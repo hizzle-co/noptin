@@ -434,6 +434,31 @@ class Email {
 	}
 
 	/**
+	 * Returns the contexts for this email.
+	 *
+	 * @return string[]
+	 */
+	public function get_contexts() {
+		$type = Main::get_email_type( $this->type );
+
+		if ( empty( $type ) ) {
+			return array();
+		}
+
+		if ( ! $type->supports_sub_types ) {
+			return $type->contexts;
+		}
+
+		$sub_types = $type->get_sub_types();
+
+		if ( isset( $sub_types[ $this->get_sub_type() ]['contexts'] ) ) {
+			return $sub_types[ $this->get_sub_type() ]['contexts'];
+		}
+
+		return $type->contexts;
+	}
+
+	/**
 	 * Checks if this email supports timing.
 	 *
 	 * @return bool
@@ -651,24 +676,40 @@ class Email {
 				),
 				$this
 			),
-			'merge_tags'            => (object) noptin_prepare_merge_tags_for_js(
-				apply_filters(
-					'noptin_email_merge_tags',
-					apply_filters(
-						"noptin_{$this->type}_merge_tags",
-						apply_filters(
-							"noptin_{$this->type}_{$this->get_sub_type()}_merge_tags",
-							noptin()->emails->tags->tags,
-							$this
-						),
-						$this
-					),
-					$this
-				)
-			),
+			'merge_tags'            => (object) noptin_prepare_merge_tags_for_js( $this->get_merge_tags() ),
 		);
 
 		return apply_filters( 'noptin_email_js_data', $data, $this );
+	}
+
+	/**
+	 * Returns the email's merge tags.
+	 *
+	 * @return array
+	 */
+	public function get_merge_tags() {
+		static $tags = array();
+
+		$key = $this->type . '_' . $this->get_sub_type();
+		if ( isset( $tags[ $key ] ) ) {
+			return $tags[ $key ];
+		}
+
+		$tags[ $key ] = apply_filters(
+			'noptin_email_merge_tags',
+			apply_filters(
+				"noptin_{$this->type}_merge_tags",
+				apply_filters(
+					"noptin_{$this->type}_{$this->get_sub_type()}_merge_tags",
+					noptin()->emails->tags->tags,
+					$this
+				),
+				$this
+			),
+			$this
+		);
+
+		return $tags[ $key ];
 	}
 
 	/**
@@ -756,6 +797,9 @@ class Email {
 	 * @return true|\WP_Error
 	 */
 	public function prepare_preview( $mode, $recipient ) {
+
+		Main::init_current_email_recipient( $recipient );
+
 		try {
 			do_action( 'noptin_prepare_email_preview', $mode, $recipient, $this );
 			do_action( "noptin_prepare_{$this->type}_email_preview", $mode, $recipient, $this );

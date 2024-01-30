@@ -383,16 +383,47 @@ class Products extends Generic_Post_Type {
 
 		$fields = array(
 			'name'                    => array(
-				'description' => __( 'Name', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'label' => __( 'Name', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s Name', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s name.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'heading',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'heading',
+					'linksTo'     => $this->field_to_merge_tag( 'url' ),
+				),
 			),
 			'slug'                    => array(
-				'description' => __( 'Slug', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'label' => __( 'Slug', 'newsletter-optin-box' ),
+				'type'  => 'string',
 			),
 			'image'                   => array(
-				'description' => __( 'Image', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'label' => __( 'Image', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Featured Image', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the featured image.', 'newsletter-optin-box' ),
+					'icon'        => 'camera',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'alt'  => $this->field_to_merge_tag( 'name' ),
+						'href' => $this->field_to_merge_tag( 'url' ),
+					),
+					'element'     => 'image',
+				),
 			),
 			'price'                   => array(
 				'description' => __( 'Price', 'newsletter-optin-box' ),
@@ -405,10 +436,44 @@ class Products extends Generic_Post_Type {
 			'url'                     => array(
 				'description' => __( 'URL', 'newsletter-optin-box' ),
 				'type'        => 'string',
+				'block'       => array(
+					'title'       => __( 'Read More', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays a button link to the %s.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'welcome-view-site',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'text' => __( 'Read More', 'newsletter-optin-box' ),
+						'url'  => $this->field_to_merge_tag( 'url' ),
+					),
+					'element'     => 'button',
+				),
 			),
 			'add_to_cart_url'         => array(
 				'description' => __( 'Add to cart URL', 'newsletter-optin-box' ),
 				'type'        => 'string',
+				'block'       => array(
+					'title'       => __( 'Add to cart', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays a button link to add the %s to the cart.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'cart',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'text' => $this->field_to_merge_tag( 'single_add_to_cart_text' ),
+						'url'  => $this->field_to_merge_tag( 'url' ),
+					),
+					'element'     => 'button',
+				),
 			),
 			'single_add_to_cart_text' => array(
 				'description' => __( 'Add to cart text', 'newsletter-optin-box' ),
@@ -417,14 +482,26 @@ class Products extends Generic_Post_Type {
 			'short_description'       => array(
 				'description' => __( 'Short description', 'newsletter-optin-box' ),
 				'type'        => 'string',
+				'block'       => array(
+					'title'       => __( 'Product description', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s short description.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'editor-alignleft',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+				),
 			),
 			'categories'              => array(
 				'description' => __( 'Categories', 'newsletter-optin-box' ),
-				'type'        => 'array',
+				'type'        => 'string',
 			),
 			'tags'                    => array(
 				'description' => __( 'Tags', 'newsletter-optin-box' ),
-				'type'        => 'array',
+				'type'        => 'string',
 			),
 			'id'                      => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
@@ -462,10 +539,6 @@ class Products extends Generic_Post_Type {
 			),
 			'description'             => array(
 				'description' => __( 'Description', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'image_url'               => array(
-				'description' => __( 'Image URL', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
 			'sku'                     => array(

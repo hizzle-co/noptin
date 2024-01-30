@@ -77,6 +77,11 @@ class Type {
 	public $icon = 'email';
 
 	/**
+	 * @var string[] Contexts
+	 */
+	public $contexts = array();
+
+	/**
 	 * @var array The email sub types.
 	 */
 	private $sub_types = null;

@@ -41,4 +41,4 @@
 		</style>
 	<![endif]-->
 	<!-- start body -->
-	<div role="article" aria-label="<?php echo esc_attr( $email_heading ); ?>" <?php language_attributes(); ?> class="wrapper-div">
+	<div role="article" aria-label="<?php echo esc_attr( $email_heading ); ?>" <?php language_attributes(); ?> id="noptin-email-content" class="wrapper-div content">

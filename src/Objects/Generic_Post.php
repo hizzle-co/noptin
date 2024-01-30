@@ -54,6 +54,18 @@ class Generic_Post extends Record {
 			return null;
 		}
 
+		// Check if string begins with tax_.
+		if ( 0 === strpos( $field, 'tax_' ) ) {
+			$taxonomy = substr( $field, 4 );
+			$terms    = wp_get_post_terms( $this->external->ID, $taxonomy, array( 'fields' => 'names' ) );
+
+			if ( is_array( $terms ) && ! empty( $terms ) ) {
+				return implode( ', ', $terms );
+			}
+
+			return '';
+		}
+
 		// ID.
 		if ( 'id' === strtolower( $field ) ) {
 			return $this->external->ID;

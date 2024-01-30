@@ -395,16 +395,46 @@ class Generic_Post_Type extends Post_Type {
 				'label' => __( 'Date', 'newsletter-optin-box' ),
 				'type'  => 'date',
 			),
-			'content'        => array(
-				'label' => __( 'Content', 'newsletter-optin-box' ),
-				'type'  => 'string',
-			),
 			'title'          => array(
 				'label' => __( 'Title', 'newsletter-optin-box' ),
 				'type'  => 'string',
+				'block' => array(
+					'title'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s Title', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s title.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'heading',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'heading',
+					'linksTo'     => $this->field_to_merge_tag( 'url' ),
+				),
 			),
 			'excerpt'        => array(
 				'label' => __( 'Excerpt', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Excerpt', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s excerpt.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'editor-alignleft',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+				),
+			),
+			'content'        => array(
+				'label' => __( 'Content', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
 			'status'         => array(
@@ -422,6 +452,23 @@ class Generic_Post_Type extends Post_Type {
 			'url'            => array(
 				'label' => __( 'URL', 'newsletter-optin-box' ),
 				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Read More', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays a button link to the %s.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'welcome-view-site',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'text' => __( 'Read More', 'newsletter-optin-box' ),
+						'url'  => $this->field_to_merge_tag( 'url' ),
+					),
+					'element'     => 'button',
+				),
 			),
 			'ping_status'    => array(
 				'label'   => __( 'Ping Status', 'newsletter-optin-box' ),
@@ -442,6 +489,19 @@ class Generic_Post_Type extends Post_Type {
 			'featured_image' => array(
 				'label' => __( 'Featured Image URL', 'newsletter-optin-box' ),
 				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Featured Image', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the featured image.', 'newsletter-optin-box' ),
+					'icon'        => 'camera',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'alt'  => $this->field_to_merge_tag( 'name' ),
+						'href' => $this->field_to_merge_tag( 'url' ),
+					),
+					'element'     => 'image',
+				),
 			),
 			'meta'           => array(
 				'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
@@ -450,6 +510,24 @@ class Generic_Post_Type extends Post_Type {
 				'skip_smart_tag' => true,
 			),
 		);
+
+		$taxonomies = wp_list_pluck(
+			wp_list_filter(
+				get_object_taxonomies( $this->type, 'objects' ),
+				array(
+					'public' => true,
+				)
+			),
+			'label',
+			'name'
+		);
+
+		foreach ( $taxonomies as $taxonomy => $label ) {
+			$fields[ 'tax_' . $taxonomy ] = array(
+				'label' => $label,
+				'type'  => 'string',
+			);
+		}
 
 		// Remove unsupported fields.
 		if ( ! post_type_supports( $this->type, 'title' ) ) {

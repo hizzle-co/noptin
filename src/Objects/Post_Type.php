@@ -120,6 +120,36 @@ abstract class Post_Type extends Collection {
 	}
 
 	/**
+	 * Retrieves a test object args.
+	 *
+	 * @since 2.2.0
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function get_test_args( $rule ) {
+
+		// Fetch latest id.
+		$post = current(
+			get_posts(
+				array(
+					'post_type'   => $this->type,
+					'numberposts' => 1,
+				)
+			)
+		);
+
+		if ( empty( $post ) ) {
+			throw new \Exception( 'No ' . esc_html( strtolower( $this->singular_label ) ) . ' found' );
+		}
+
+		return array(
+			'object_id'  => $post->ID,
+			'subject_id' => $post->post_author,
+		);
+	}
+
+	/**
 	 * Return if auto-saving or not
 	 *
 	 * @return bool True if mid auto-save. False if not mid auto-save.
@@ -206,26 +236,6 @@ abstract class Post_Type extends Collection {
 		if ( $this->type === $post->post_type && ! wp_is_post_revision( $post ) ) {
 			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_deleted' );
 		}
-	}
-
-	/**
-	 * Retrieves a test object ID.
-	 *
-	 * @since 2.2.0
-	 * @return int
-	 */
-	public function get_test_object_id( $rule ) {
-
-		// Fetch latest id.
-		return current(
-			get_posts(
-				array(
-					'post_type'   => $this->type,
-					'numberposts' => 1,
-					'fields'      => 'ids',
-				)
-			)
-		);
 	}
 
 	/**

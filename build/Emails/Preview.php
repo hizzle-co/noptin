@@ -93,7 +93,6 @@ class Preview {
 			'uid' => get_current_user_id(),
 		);
 
-
 		// Maybe set plain text mode.
 		if ( 'plain_text' === self::$campaign->get_email_type() && ! headers_sent() ) {
 			header( 'Content-Type: text/plain' );

@@ -327,14 +327,17 @@ class Noptin_Email_Generator {
 		// Inject preheader.
 		$content = $this->inject_preheader( $content );
 
+		// Process list items.
+		$content = $this->handle_item_lists_shortcode( $content );
+
+		// Do merge tags.
+		$content = noptin_parse_email_content_tags( $content );
+
 		// Ensure that shortcodes are not wrapped in paragraphs.
 		$content = shortcode_unautop( $content );
 
 		// Execute shortcodes.
 		$content = do_shortcode( $content );
-
-		// Do merge tags.
-		$content = noptin_parse_email_content_tags( $content );
 
 		// Make links clickable.
 		$content = make_clickable( $content );
@@ -355,10 +358,35 @@ class Noptin_Email_Generator {
 		$content = $this->inline_styles( $content );
 
 		// Remove unused classes and ids.
-		//$content = $this->remove_unused_classes_and_ids( $content );
+		$content = $this->remove_unused_classes_and_ids( $content );
 
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );
+	}
+
+	private function handle_item_lists_shortcode( $content ) {
+		global $shortcode_tags;
+
+		// Save original shortcodes
+		$original_shortcodes = $shortcode_tags;
+
+		// Remove all shortcodes
+		$shortcode_tags = array(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		// Process shortcodes that begin with noptin_ and end with _list.
+		foreach ( $original_shortcodes as $shortcode => $callback ) {
+			if ( strpos( $shortcode, 'noptin_' ) === 0 && strpos( $shortcode, '_list' ) !== false ) {
+				$shortcode_tags[ $shortcode ] = $callback; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			}
+		}
+
+		// Process your content
+		$content = do_shortcode( $content );
+
+		// Restore original shortcodes
+		$shortcode_tags = $original_shortcodes; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		return $content;
 	}
 
 	private function remove_unused_classes_and_ids( $html ) {

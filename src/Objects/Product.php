@@ -94,7 +94,7 @@ class Product extends Record {
 		}
 
 		// Image url.
-		if ( 'image_url' === strtolower( $field ) ) {
+		if ( 'image' === strtolower( $field ) ) {
 			if ( $this->external->get_image_id() ) {
 				return wp_get_attachment_url( $this->external->get_image_id() );
 			}

@@ -31,6 +31,11 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	public $notification_hook = '';
 
 	/**
+	 * @var string[]
+	 */
+	public $contexts = array();
+
+	/**
 	 * Retrieves the automated email type name.
 	 *
 	 */
@@ -108,6 +113,7 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 					'category'        => $this->category,
 					'is_mass_mail'    => 'Mass Mail' === $this->category,
 					'supports_timing' => 'Mass Mail' !== $this->category || 'post_notifications' === $this->type,
+					'contexts'        => $this->contexts,
 				),
 			)
 		);

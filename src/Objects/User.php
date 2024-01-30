@@ -138,6 +138,5 @@ class User extends Person {
 		}
 
 		return $this->external->get( $field );
-
 	}
 }

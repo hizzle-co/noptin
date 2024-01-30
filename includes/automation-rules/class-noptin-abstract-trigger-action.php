@@ -41,6 +41,11 @@ abstract class Noptin_Abstract_Trigger_Action {
 	public $connection;
 
 	/**
+	 * @var string[]
+	 */
+	public $contexts = array();
+
+	/**
 	 * Unique ID for the trigger or action.
 	 *
 	 * Only alphanumerics, dashes and underscrores are allowed.

@@ -22,6 +22,11 @@ class Main {
 	private static $types = array();
 
 	/**
+	 * @var array The current email recipient.
+	 */
+	public static $current_email_recipient = array();
+
+	/**
 	 * Inits the main emails class.
 	 *
 	 */
@@ -531,5 +536,30 @@ class Main {
 		if ( ! empty( $sub_type ) ) {
 			do_action( "noptin_{$type}_{$sub_type}_campaign_{$action}", $email );
 		}
+	}
+
+	/**
+	 * Inits the current email recipient.
+	 *
+	 * @param array $recipient The email recipient.
+	 */
+	public static function init_current_email_recipient( $recipient ) {
+		if ( ! empty( $recipient['email'] ) ) {
+			$GLOBALS['current_noptin_email'] = $recipient['email'];
+		} elseif ( ! empty( $recipient['sid'] ) ) {
+			$subscriber = noptin_get_subscriber( $recipient['sid'] );
+
+			if ( $subscriber->exists() ) {
+				$GLOBALS['current_noptin_email'] = $subscriber->get_email();
+			}
+		} elseif ( ! empty( $recipient['uid'] ) ) {
+			$user = get_userdata( $recipient['uid'] );
+
+			if ( $user && $user->exists() ) {
+				$GLOBALS['current_noptin_email'] = $user->user_email;
+			}
+		}
+
+		self::$current_email_recipient = $recipient;
 	}
 }

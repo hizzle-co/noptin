@@ -187,26 +187,56 @@ JS;
 
 		// Localize noptin-email-editor.
 		$current_user = wp_get_current_user();
+		$objects      = apply_filters( 'noptin_email_editor_objects', array() );
+		$blocks       = array();
+
+		foreach ( $edited_campaign->get_merge_tags() as $tag => $data ) {
+			if ( ! empty( $data['block'] ) ) {
+				$blocks[ $tag ] = array_merge(
+					array(
+						'description' => $data['description'],
+						'mergeTag'    => $tag,
+						'name'        => 'merge-tag/' . preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $tag ) ),
+					),
+					$data['block']
+				);
+			}
+		}
+
+		foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
+			foreach ( $merge_tags as $tag => $data ) {
+				if ( ! empty( $data['block'] ) ) {
+					$blocks[ $tag ] = array_merge(
+						array(
+							'description' => $data['description'],
+							'mergeTag'    => $tag,
+							'name'        => 'merge-tag/' . preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $tag ) ),
+						),
+						$data['block']
+					);
+				}
+			}
+		}
+
 		wp_localize_script(
 			'noptin-email-editor',
 			'noptinEmailEditorSettings',
 			array(
-				'styles'    => (object) $to_load,
-				'settings'  => self::get_editor_settings(),
-				'types'     => get_noptin_email_types(),
-				'templates' => get_noptin_email_templates(),
-				'languages' => noptin_get_available_languages(),
-				'back'      => esc_url( $edited_campaign->get_base_url() ),
-				'objects'   => (object) apply_filters(
-					'noptin_email_editor_objects',
-					array()
-				),
-				'user'      => array(
+				'styles'        => (object) $to_load,
+				'settings'      => self::get_editor_settings(),
+				'types'         => get_noptin_email_types(),
+				'templates'     => get_noptin_email_templates(),
+				'languages'     => noptin_get_available_languages(),
+				'back'          => esc_url( $edited_campaign->get_base_url() ),
+				'objects'       => (object) $objects,
+				'context'       => $edited_campaign->get_contexts(),
+				'dynamicBlocks' => array_values( $blocks ),
+				'user'          => array(
 					'id'        => $current_user->ID,
 					'email'     => $current_user->user_email,
 					'canUpload' => current_user_can( 'upload_files' ),
 				),
-				'logo_url'  => noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' ),
+				'logo_url'      => noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' ),
 			)
 		);
 

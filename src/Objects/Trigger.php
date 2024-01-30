@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\Objects;
-
 /**
  * Generic object trigger.
  *
  * @since 2.2.0
  */
+
+namespace Hizzle\Noptin\Objects;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -44,6 +44,19 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$this->trigger_args = $trigger_args;
 		$this->category     = $collection->label;
 		$this->integration  = $collection->integration;
+
+		// Set the contexts.
+		$this->contexts[] = $collection->context;
+
+		if ( ! empty( $trigger_args['subject'] ) && $trigger_args['subject'] !== $collection->type ) {
+			$this->contexts[] = Store::get_collection_config( $trigger_args['subject'], 'context' );
+		}
+
+		if ( ! empty( $trigger_args['provides'] ) ) {
+			foreach ( $this->trigger_args['provides'] as $object_type ) {
+				$this->contexts[] = Store::get_collection_config( strtok( $object_type, '.' ), 'context' );
+			}
+		}
 
 		add_action( 'noptin_fire_object_trigger_' . $this->trigger_id, array( $this, 'fire_trigger' ) );
 	}
@@ -107,7 +120,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		if ( ! empty( $this->trigger_args['provides'] ) ) {
 			$custom_labels = isset( $this->trigger_args['custom_labels'] ) ? $this->trigger_args['custom_labels'] : array();
 
-			foreach ( noptin_parse_list( $this->trigger_args['provides'] ) as $object_type ) {
+			foreach ( $this->trigger_args['provides'] as $object_type ) {
 				$group  = isset( $custom_labels[ $object_type ] ) ? $custom_labels [ $object_type ] : true;
 				$prefix = false !== strpos( $object_type, '.' ) ? $object_type : true;
 				$args   = array_merge(
@@ -159,7 +172,6 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		}
 
 		$this->trigger( $subject, $args );
-
 	}
 
 	/**
@@ -226,9 +238,9 @@ class Trigger extends \Noptin_Abstract_Trigger {
 					throw new \Exception(
 						sprintf(
 							'%s changed from "%s" to "%s"',
-							$key,
-							$current_value,
-							$original_value
+							esc_html( $key ),
+							esc_html( $current_value ),
+							esc_html( $original_value )
 						)
 					);
 				}
@@ -273,7 +285,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$object = $collection->get( $args['object_id'] );
 
 		if ( empty( $object ) || ! $object->exists() ) {
-			throw new \Exception( $this->object_type . ' not found' );
+			throw new \Exception( esc_html( $this->object_type ) . ' not found' );
 		}
 
 		$noptin_current_objects[ $this->object_type ] = $object;
@@ -290,7 +302,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 				$object = $collection->get( $id );
 
 				if ( empty( $object ) || ( 'current_user' !== $object_type && ! $object->exists() && false !== strpos( $object_type, '.' ) ) ) {
-					throw new \Exception( $object_type . ' not found' );
+					throw new \Exception( esc_html( $this->object_type ) . ' not found' );
 				}
 
 				$noptin_current_objects[ $object_type ] = $object;
@@ -298,5 +310,36 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		}
 
 		return $subject;
+	}
+
+	/**
+	 * Prepares email test data.
+	 *
+	 * @since 3.0.0
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @return \Noptin_Automation_Rules_Smart_Tags
+	 * @throws \Exception
+	 */
+	public function get_test_smart_tags( $rule ) {
+
+		$collection = Store::get( $this->object_type );
+
+		if ( empty( $collection ) ) {
+			throw new \Exception( 'Collection not registered' );
+		}
+
+		$args = $collection->get_test_args( $rule );
+
+		if ( empty( $args ) ) {
+			throw new \Exception( 'No test data available for this trigger.' );
+		}
+
+		// Fetch person.
+		$subject = $this->prepare_current_objects( $args );
+
+		// Prepare args.
+		$prepared = $this->prepare_trigger_args( $subject, $args );
+
+		return $prepared['smart_tags'];
 	}
 }
