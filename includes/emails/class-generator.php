@@ -401,8 +401,8 @@ class Noptin_Email_Generator {
 		preg_match_all( '/#([a-z0-9_-]+)/i', $html, $ids );
 
 		// Convert the arrays to associative arrays for faster lookup.
-		$classes = array_flip( $classes[1] );
-		$ids     = array_flip( $ids[1] );
+		$all_classes = array_flip( $classes[1] );
+		$ids         = array_flip( $ids[1] );
 
 		// Load the HTML.
 		$doc = new DOMDocument();
@@ -445,20 +445,19 @@ class Noptin_Email_Generator {
 				$class = $element->getAttribute( 'class' );
 
 				// Split the class attribute.
-				$classes   = empty( $class ) ? array() : explode( ' ', $class );
-				$has_class = false;
+				$classes = empty( $class ) ? array() : explode( ' ', $class );
+				$styled  = array();
 
 				// Loop over all classes.
 				foreach ( $classes as $class ) {
-					if ( isset( $classes[ $class ] ) ) {
-						// Class is used, stop searching.
-						$has_class = true;
-						break;
+					if ( isset( $all_classes[ $class ] ) ) {
+						$styled[]  = $class;
 					}
 				}
 
-				if ( ! $has_class ) {
-					// Class is not used, remove it.
+				if ( 0 < count( $styled ) ) {
+					$element->setAttribute( 'class', implode( ' ', $styled ) );
+				} else {
 					$element->removeAttribute( 'class' );
 				}
 			}

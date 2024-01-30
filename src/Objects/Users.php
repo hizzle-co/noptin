@@ -131,12 +131,7 @@ class Users extends People {
 				'type'    => 'date',
 				'example' => "format='datetime'",
 			),
-			'meta'       => array(
-				'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
-				'type'           => 'string',
-				'example'        => 'key="my_key"',
-				'skip_smart_tag' => true,
-			),
+			'meta'       => $this->meta_key_tag_config(),
 		);
 
 		// Add provided fields.

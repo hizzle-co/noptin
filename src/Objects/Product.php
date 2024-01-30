@@ -42,9 +42,10 @@ class Product extends Record {
 	 * Retrieves a given field's value.
 	 *
 	 * @param string $field The field.
+	 * @param array  $args  The arguments.
 	 * @return mixed $value The value.
 	 */
-	public function get( $field ) {
+	public function get( $field, $args = array() ) {
 
 		if ( ! $this->exists() ) {
 			return null;
@@ -62,51 +63,34 @@ class Product extends Record {
 
 		// categories.
 		if ( 'categories' === strtolower( $field ) ) {
-			$categories = $this->external->get_category_ids();
-
-			// If we have categories, return category names.
-			if ( is_array( $categories ) ) {
-				$categories = array_map( 'get_term_by', array_fill( 0, count( $categories ), 'id' ), $categories, array_fill( 0, count( $categories ), 'product_cat' ) );
-				$categories = array_map( 'wp_list_pluck', array_fill( 0, count( $categories ), 'name' ), $categories );
-				$categories = array_map( 'reset', $categories );
-			}
-
-			return is_array( $categories ) ? implode( ', ', array_unique( $categories ) ) : '';
+			return $this->prepare_terms( $this->external->get_category_ids(), 'product_cat', ! empty( $args['link'] ) );
 		}
 
 		// tags.
 		if ( 'tags' === strtolower( $field ) ) {
-			$tags = $this->external->get_tag_ids();
-
-			// If we have tags, return tag names.
-			if ( is_array( $tags ) ) {
-				$tags = array_map( 'get_term_by', array_fill( 0, count( $tags ), 'id' ), $tags, array_fill( 0, count( $tags ), 'product_tag' ) );
-				$tags = array_map( 'wp_list_pluck', array_fill( 0, count( $tags ), 'name' ), $tags );
-				$tags = array_map( 'reset', $tags );
-			}
-
-			return is_array( $tags ) ? implode( ', ', array_unique( $tags ) ) : '';
+			return $this->prepare_terms( $this->external->get_tag_ids(), 'product_tag', ! empty( $args['link'] ) );
 		}
 
 		// URL.
 		if ( 'url' === strtolower( $field ) ) {
-			return get_permalink( $this->external );
+			return $this->external->get_permalink();
 		}
 
 		// Image url.
 		if ( 'image' === strtolower( $field ) ) {
+			$image_size = ! empty( $args['image_size'] ) ? $args['image_size'] : 'woocommerce_thumbnail';
 			if ( $this->external->get_image_id() ) {
-				return wp_get_attachment_url( $this->external->get_image_id() );
+				return wp_get_attachment_image_url( $this->external->get_image_id(), $image_size );
 			}
 
 			if ( $this->external->get_parent_id() ) {
 				$parent_product = wc_get_product( $this->external->get_parent_id() );
 				if ( $parent_product && $parent_product->get_image_id() ) {
-					return wp_get_attachment_url( $parent_product->get_image_id() );
+					return wp_get_attachment_image_url( $parent_product->get_image_id(), $image_size );
 				}
 			}
 
-			return wc_placeholder_img_src();
+			return wc_placeholder_img_src( $image_size );
 		}
 
 		// Check if we have a method get_$field.
@@ -126,10 +110,46 @@ class Product extends Record {
 		}
 
 		// Meta.
-		if ( 0 === strpos( $field, 'meta.' ) ) {
-			$field = substr( $field, 5 );
+		if ( 'meta' === $field ) {
+			$field = isset( $args['key'] ) ? $args['key'] : null;
+		}
+
+		// Abort if no field.
+		if ( empty( $field ) ) {
+			return null;
 		}
 
 		return get_post_meta( $this->external->ID, $field, true );
+	}
+
+	private function prepare_terms( $term_ids, $taxonomy, $link ) {
+
+		if ( empty( $term_ids ) || ! is_array( $term_ids ) ) {
+			return '';
+		}
+
+		$terms    = array_map( 'get_term_by', array_fill( 0, count( $term_ids ), 'id' ), $term_ids, array_fill( 0, count( $term_ids ), $taxonomy ) );
+		$prepared = array();
+
+		/** @var \WP_Term $term */
+		foreach ( $terms as $term ) {
+
+			if ( empty( $term ) ) {
+				continue;
+			}
+
+			if ( $link ) {
+				$term_url = get_term_link( $term );
+
+				if ( ! is_wp_error( $term_url ) ) {
+					$prepared[] = sprintf( '<a href="%s">%s</a>, ', $term_url, esc_html( $term->name ) );
+					continue;
+				}
+			}
+
+			$prepared[] = sprintf( '<span>%s</span>, ', esc_html( $term->name ) );
+		}
+
+		return implode( ', ', $prepared );
 	}
 }

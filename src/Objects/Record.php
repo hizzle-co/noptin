@@ -41,7 +41,7 @@ abstract class Record {
 	 * @param string $field The field.
 	 * @return mixed $value The value.
 	 */
-	public function get( $field ) {
+	public function get( $field, $args = array() ) {
 
 		if ( ! $this->exists() ) {
 			return null;

@@ -378,7 +378,8 @@ class Generic_Post_Type extends Post_Type {
 	 */
 	public function get_fields() {
 
-		$fields = array(
+		$is_visible = is_post_type_viewable( $this->type );
+		$fields     = array(
 			'id'             => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
@@ -414,7 +415,7 @@ class Generic_Post_Type extends Post_Type {
 						'ancestor' => array( $this->context ),
 					),
 					'element'     => 'heading',
-					'linksTo'     => $this->field_to_merge_tag( 'url' ),
+					'linksTo'     => $is_visible ? $this->field_to_merge_tag( 'url' ) : null,
 				),
 			),
 			'excerpt'        => array(
@@ -498,17 +499,21 @@ class Generic_Post_Type extends Post_Type {
 					),
 					'defaults'    => array(
 						'alt'  => $this->field_to_merge_tag( 'name' ),
-						'href' => $this->field_to_merge_tag( 'url' ),
+						'href' => $is_visible ? $this->field_to_merge_tag( 'url' ) : '',
 					),
 					'element'     => 'image',
+					'settings'    => array(
+						'size' => array(
+							'label'       => __( 'Image Size', 'newsletter-optin-box' ),
+							'el'          => 'image_size_select',
+							'description' => __( 'Select the image size to display.', 'newsletter-optin-box' ),
+							'placeholder' => __( 'Select image size', 'newsletter-optin-box' ),
+							'default'     => 'thumbnail',
+						),
+					),
 				),
 			),
-			'meta'           => array(
-				'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
-				'type'           => 'string',
-				'example'        => 'key="my_key"',
-				'skip_smart_tag' => true,
-			),
+			'meta'           => $this->meta_key_tag_config(),
 		);
 
 		$taxonomies = wp_list_pluck(
@@ -556,7 +561,7 @@ class Generic_Post_Type extends Post_Type {
 			unset( $fields['featured_image'] );
 		}
 
-		if ( ! is_post_type_viewable( $this->type ) ) {
+		if ( ! $is_visible ) {
 			unset( $fields['url'] );
 		}
 
@@ -570,7 +575,7 @@ class Generic_Post_Type extends Post_Type {
 		$template = array();
 
 		if ( post_type_supports( $this->type, 'title' ) ) {
-			$template['heading'] = $this->field_to_merge_tag( 'title' );
+			$template['heading'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'title' ) );
 		}
 
 		if ( post_type_supports( $this->type, 'editor' ) ) {
@@ -578,11 +583,11 @@ class Generic_Post_Type extends Post_Type {
 		}
 
 		if ( post_type_supports( $this->type, 'thumbnail' ) ) {
-			$template['image'] = $this->field_to_merge_tag( 'image' );
+			$template['image'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'featured_image' ) );
 		}
 
 		if ( ! is_post_type_viewable( $this->type ) ) {
-			$template['action_url'] = $this->field_to_merge_tag( 'url' );
+			$template['button'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'url' ) );
 		}
 		return $template;
 	}

@@ -423,6 +423,15 @@ class Products extends Generic_Post_Type {
 						'href' => $this->field_to_merge_tag( 'url' ),
 					),
 					'element'     => 'image',
+					'settings'    => array(
+						'size' => array(
+							'label'       => __( 'Image Size', 'newsletter-optin-box' ),
+							'el'          => 'image_size_select',
+							'description' => __( 'Select the image size to display.', 'newsletter-optin-box' ),
+							'placeholder' => __( 'Select image size', 'newsletter-optin-box' ),
+							'default'     => 'woocommerce_thumbnail',
+						),
+					),
 				),
 			),
 			'price'                   => array(
@@ -470,7 +479,7 @@ class Products extends Generic_Post_Type {
 					),
 					'defaults'    => array(
 						'text' => $this->field_to_merge_tag( 'single_add_to_cart_text' ),
-						'url'  => $this->field_to_merge_tag( 'url' ),
+						'url'  => $this->field_to_merge_tag( 'add_to_cart_url' ),
 					),
 					'element'     => 'button',
 				),
@@ -498,10 +507,36 @@ class Products extends Generic_Post_Type {
 			'categories'              => array(
 				'description' => __( 'Categories', 'newsletter-optin-box' ),
 				'type'        => 'string',
+				'block'       => array(
+					'title'       => __( 'Categories', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s categories.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'category',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'div',
+				),
 			),
 			'tags'                    => array(
 				'description' => __( 'Tags', 'newsletter-optin-box' ),
 				'type'        => 'string',
+				'block'       => array(
+					'title'       => __( 'Tags', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s tags.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'tag',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'div',
+				),
 			),
 			'id'                      => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
@@ -680,12 +715,7 @@ class Products extends Generic_Post_Type {
 				'description' => __( 'Review count', 'newsletter-optin-box' ),
 				'type'        => 'number',
 			),
-			'meta'                    => array(
-				'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
-				'type'           => 'string',
-				'example'        => 'key="my_key"',
-				'skip_smart_tag' => true,
-			),
+			'meta'                    => $this->meta_key_tag_config(),
 		);
 
 		return apply_filters( 'noptin_post_type_known_custom_fields', $fields, $this->type );
@@ -696,11 +726,10 @@ class Products extends Generic_Post_Type {
 	 */
 	protected function get_list_shortcode_template() {
 		return array(
-			'action_text' => $this->field_to_merge_tag( 'single_add_to_cart_text' ),
-			'action_url'  => $this->field_to_merge_tag( 'add_to_cart_url' ),
-			'image'       => $this->field_to_merge_tag( 'image' ),
+			'button'      => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'add_to_cart_url' ) ),
+			'image'       => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'image' ) ),
 			'description' => $this->field_to_merge_tag( 'short_description' ),
-			'heading'     => $this->field_to_merge_tag( 'name' ),
+			'heading'     => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'name' ) ),
 			'meta'        => $this->field_to_merge_tag( 'price_html' ),
 		);
 	}

@@ -217,11 +217,6 @@ class Store {
 			return '';
 		}
 
-		// Meta values.
-		if ( 'meta' === $field && ! empty( $args['key'] ) ) {
-			$field = $field . '.' . $args['key'];
-		}
-
 		// Fetch the raw value.
 		$object = $noptin_current_objects[ $config['object_type'] ];
 		if ( 'newsletter' === $field && is_callable( array( $object, 'get_email' ) ) ) {
@@ -234,9 +229,9 @@ class Store {
 			}
 		} elseif ( 'avatar_url' === $field && is_callable( array( $object, 'get_email' ) ) ) {
 			$email     = call_user_func( array( $object, 'get_email' ) );
-			$raw_value = esc_url( get_avatar_url( $email ) );
+			$raw_value = esc_url( get_avatar_url( $email, $args ) );
 		} else {
-			$raw_value = $noptin_current_objects[ $config['object_type'] ]->get( $field );
+			$raw_value = $noptin_current_objects[ $config['object_type'] ]->get( $field, $args );
 		}
 
 		// Convert bools to yes/no.

@@ -50,7 +50,10 @@
 		font-size: 1em;
 	}
 
-	.noptin-button-link {
+	#noptin-email-content .noptin-button-link__wrapper .noptin-button-link,
+	#noptin-email-content .noptin-button-link__wrapper .noptin-button-link:hover,
+	#noptin-email-content .noptin-button-link__wrapper .noptin-button-link:focus,
+	#noptin-email-content .noptin-button-link__wrapper .noptin-button-link:active {
 		color: <?php echo esc_attr( $settings['button_color'] ); ?>;
 	}
 
@@ -67,14 +70,20 @@
 	}
 
 	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper {
-		margin: 0px 10px 16px;
+		margin-top: 0px;
+		margin-left: 10px;
+		margin-right: 10px;
+		margin-bottom: 16px;
 	}
 
 	.wp-block-noptin-separator {
 		margin-bottom: 16px;
 	}
 	.wp-block-image {
-		margin: 0 0 16px;
+		margin-top: 0px;
+		margin-left: 0px;
+		margin-right: 0px;
+		margin-bottom: 16px;
 	}
 
 	.noptin-button-link {
@@ -140,17 +149,33 @@
 	}
 
 	.noptin-record {
-		margin: 10px;
-		padding: 0;
+		margin-left: 10px;
+		margin-right: 10px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		padding-left: 0;
+		padding-right: 0;
+		padding-top: 0;
+		padding-bottom: 0;
 	}
 
 	.noptin-columns {
 		display: table;
 		width: 100%;
+		overflow: hidden;
 	}
 
 	.noptin-column {
 		display: table-cell;
+	}
+
+	.noptin-column__inner {
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 
 	@media only screen and (max-width: 360px) {
@@ -161,6 +186,11 @@
 		.noptin-is-stacked-on-mobile.noptin-column {
 			vertical-align: top !important;
 			width: 100% !important;
+		}
+
+		.noptin-is-stacked-on-mobile.noptin-column .noptin-column__inner {
+			margin-left: 0 !important;
+			margin-right: 0 !important;
 		}
 	}
 

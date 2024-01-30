@@ -48,7 +48,7 @@ class Generic_Post extends Record {
 	 * @param string $field The field.
 	 * @return mixed $value The value.
 	 */
-	public function get( $field ) {
+	public function get( $field, $args = array() ) {
 
 		if ( ! $this->exists() ) {
 			return null;
@@ -57,13 +57,7 @@ class Generic_Post extends Record {
 		// Check if string begins with tax_.
 		if ( 0 === strpos( $field, 'tax_' ) ) {
 			$taxonomy = substr( $field, 4 );
-			$terms    = wp_get_post_terms( $this->external->ID, $taxonomy, array( 'fields' => 'names' ) );
-
-			if ( is_array( $terms ) && ! empty( $terms ) ) {
-				return implode( ', ', $terms );
-			}
-
-			return '';
+			return self::prepare_terms( $this->external->ID, $taxonomy, ! empty( $args['link'] ) );
 		}
 
 		// ID.
@@ -108,13 +102,19 @@ class Generic_Post extends Record {
 
 		// Featured image URL.
 		if ( 'featured_image' === strtolower( $field ) ) {
-			$url = get_the_post_thumbnail_url( $this->external );
+			$image_size = ! empty( $args['image_size'] ) ? $args['image_size'] : 'thumbnail';
+			$url        = get_the_post_thumbnail_url( $this->external, $image_size );
 			return $url ? $url : '';
 		}
 
 		// Meta.
-		if ( 0 === strpos( $field, 'meta.' ) ) {
-			$field = substr( $field, 5 );
+		if ( 'meta' === $field ) {
+			$field = isset( $args['key'] ) ? $args['key'] : null;
+		}
+
+		// Abort if no field.
+		if ( empty( $field ) ) {
+			return null;
 		}
 
 		return get_post_meta( $this->external->ID, $field, true );
@@ -140,5 +140,36 @@ class Generic_Post extends Record {
 		}
 
 		return $content;
+	}
+
+	public static function prepare_terms( $id, $taxonomy, $link ) {
+		/** @var \WP_Term[] $terms */
+		$terms = wp_get_post_terms( $id, $taxonomy );
+
+		if ( empty( $terms ) || ! is_array( $terms ) ) {
+			return '';
+		}
+
+		$prepared = array();
+
+		foreach ( $terms as $term ) {
+
+			if ( empty( $term ) ) {
+				continue;
+			}
+
+			if ( $link ) {
+				$term_url = get_term_link( $term );
+
+				if ( ! is_wp_error( $term_url ) ) {
+					$prepared[] = sprintf( '<a href="%s">%s</a>, ', $term_url, esc_html( $term->name ) );
+					continue;
+				}
+			}
+
+			$prepared[] = sprintf( '<span>%s</span>, ', esc_html( $term->name ) );
+		}
+
+		return implode( ', ', $prepared );
 	}
 }

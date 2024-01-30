@@ -210,7 +210,7 @@ JS;
 						array(
 							'description' => $data['description'],
 							'mergeTag'    => $tag,
-							'name'        => 'merge-tag/' . preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $tag ) ),
+							'name'        => self::merge_tag_to_block_name( $tag ),
 						),
 						$data['block']
 					);
@@ -242,6 +242,10 @@ JS;
 
 		// Add 'block-editor-page' to body class.
 		add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
+	}
+
+	public static function merge_tag_to_block_name( $merge_tag ) {
+		return preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $merge_tag ) );
 	}
 
 	public static function add_block_editor_body_class( $classes ) {

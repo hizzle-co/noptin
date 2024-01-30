@@ -501,4 +501,40 @@ abstract class Collection {
 	protected function cleanup_item( $previous_item ) {
 		$this->current_item = $previous_item;
 	}
+
+	protected function meta_key_tag_config() {
+		return array(
+			'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
+			'type'           => 'string',
+			'example'        => 'key="my_key"',
+			'skip_smart_tag' => true,
+			'block'          => array(
+				'title'       => sprintf(
+					/* translators: %s: object type label */
+					__( '%s Meta', 'newsletter-optin-box' ),
+					$this->singular_label
+				),
+				'description' => __( 'Displays a custom field value.', 'newsletter-optin-box' ),
+				'icon'        => 'ellipsis',
+				'metadata'    => array(
+					'ancestor' => array( $this->context ),
+				),
+				'element'     => 'div',
+				'settings'    => array(
+					'key'     => array(
+						'label'       => __( 'Meta Key / Field Key', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'description' => __( 'The meta key or field key to display.', 'newsletter-optin-box' ),
+					),
+					'default' => array(
+						'label'       => __( 'Default Value', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'description' => __( 'The default value to display if the meta key is not set.', 'newsletter-optin-box' ),
+					),
+				),
+			),
+		);
+	}
 }

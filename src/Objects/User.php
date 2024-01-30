@@ -53,7 +53,7 @@ class User extends Person {
 	 * @param string $field The field.
 	 * @return mixed $value The value.
 	 */
-	public function get( $field ) {
+	public function get( $field, $args = array() ) {
 
 		if ( 'logged_in' === $field ) {
 			return $this->exists();
@@ -89,8 +89,13 @@ class User extends Person {
 		}
 
 		// Meta.
-		if ( 0 === strpos( $field, 'meta.' ) ) {
-			$field = substr( $field, 5 );
+		if ( 'meta' === $field ) {
+			$field = isset( $args['key'] ) ? $args['key'] : null;
+		}
+
+		// Abort if no field.
+		if ( empty( $field ) ) {
+			return null;
 		}
 
 		// Related collections.
@@ -101,9 +106,9 @@ class User extends Person {
 			if ( empty( self::$related[ $collection ] ) ) {
 				self::$related[ $collection ] = array();
 			} elseif ( ! empty( self::$related[ $collection ][ $this->external->ID ] ) ) {
-				return self::$related[ $collection ][ $this->external->ID ]->get( $without_prefix );
+				return self::$related[ $collection ][ $this->external->ID ]->get( $without_prefix, $args );
 			} elseif ( ! empty( self::$related[ $collection ][ $this->external->user_email ] ) ) {
-				return self::$related[ $collection ][ $this->external->user_email ]->get( $without_prefix );
+				return self::$related[ $collection ][ $this->external->user_email ]->get( $without_prefix, $args );
 			}
 
 			/** @var People $collection */
@@ -116,7 +121,7 @@ class User extends Person {
 					self::$related[ $collection->object_type ][ $this->external->ID ]         = $record;
 					self::$related[ $collection->object_type ][ $this->external->user_email ] = $record;
 
-					return $record->get( $without_prefix );
+					return $record->get( $without_prefix, $args );
 				}
 
 				$record = $collection->get_from_email( $this->external->user_email );
@@ -125,7 +130,7 @@ class User extends Person {
 					self::$related[ $collection->object_type ][ $this->external->ID ]         = $record;
 					self::$related[ $collection->object_type ][ $this->external->user_email ] = $record;
 
-					return $record->get( $without_prefix );
+					return $record->get( $without_prefix, $args );
 				}
 
 				return null;
