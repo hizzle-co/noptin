@@ -39,20 +39,8 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
 	 * @return string
 	 */
-	protected function replace( $string, $escape_function = '' ) {
-
-		if ( ! is_string( $string ) ) {
-			return $string;
-		}
-
-		$this->escape_function = $escape_function;
-
-		// Replace strings like this: [[tagname attr="value"]].
-		$string = preg_replace_callback( '/\[\[([\w\.\/]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
-
-		// Call again to take care of nested variables.
-		$string = preg_replace_callback( '/\[\[([\w\.\/]+)(\ +(?:(?!\[)[^\]\n])+)*\]\]/', array( $this, 'replace_tag' ), $string );
-		return $string;
+	protected function replace( $content, $escape_function = '' ) {
+		return $this->replace_with_brackets( $content, $escape_function );
 	}
 
 	/**

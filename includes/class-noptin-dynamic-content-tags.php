@@ -218,11 +218,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 		// Parse attributes.
 		$attributes = array();
 		if ( isset( $matches[2] ) ) {
-			$attribute_string = $matches[2];
-
-			if ( ! empty( $GLOBALS['noptin_dynamic_content_tags_encoded'] ) ) {
-				$attribute_string = html_entity_decode( $attribute_string );
-			}
+			$attribute_string = html_entity_decode( $matches[2] );
 
 			$attributes = shortcode_parse_atts( $attribute_string );
 		}
@@ -306,16 +302,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 			$escape_function
 		);
 
-		// Replace HTML-encoded strings like this: [[tagname attr=&quot;value&quot;]].
-		$GLOBALS['noptin_dynamic_content_tags_encoded'] = true;
-
 		$content = $this->replace_with_regex(
 			$content,
 			$this->get_regex( '&#91;&#91;', '&#93;&#93;' ),
 			$escape_function
 		);
-
-		unset( $GLOBALS['noptin_dynamic_content_tags_encoded'] );
 
 		return $content;
 	}

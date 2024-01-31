@@ -194,9 +194,9 @@ JS;
 			if ( ! empty( $data['block'] ) ) {
 				$blocks[ $tag ] = array_merge(
 					array(
-						'description' => $data['description'],
+						'description' => isset( $data['description'] ) ? $data['description'] : $data['label'],
 						'mergeTag'    => $tag,
-						'name'        => 'merge-tag/' . preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $tag ) ),
+						'name'        => self::merge_tag_to_block_name( $tag ),
 					),
 					$data['block']
 				);
@@ -245,7 +245,24 @@ JS;
 	}
 
 	public static function merge_tag_to_block_name( $merge_tag ) {
-		return preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $merge_tag ) );
+
+		// Remove the optional [[ and ]] from the merge tag.
+		$merge_tag = trim( $merge_tag, '[]' );
+
+		// Check if we have a prefix.
+		if ( false === strpos( $merge_tag, '.' ) ) {
+			$prefix = 'merge-tag';
+			$field  = $merge_tag;
+		} else {
+			$prefix = strtok( $merge_tag, '.' );
+			$field  = implode( '.', array_slice( explode( '.', $merge_tag ), 1 ) );
+		}
+
+		return self::sanitize_block_name( $prefix ) . '/' . self::sanitize_block_name( $field );
+	}
+
+	public static function sanitize_block_name( $block_name ) {
+		return preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $block_name ) );
 	}
 
 	public static function add_block_editor_body_class( $classes ) {

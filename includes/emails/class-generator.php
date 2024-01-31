@@ -401,8 +401,9 @@ class Noptin_Email_Generator {
 		preg_match_all( '/#([a-z0-9_-]+)/i', $html, $ids );
 
 		// Convert the arrays to associative arrays for faster lookup.
-		$all_classes = array_flip( $classes[1] );
-		$ids         = array_flip( $ids[1] );
+		$remove_classes = array( 'noptin-block__margin-wrapper' );
+		$all_classes    = array_diff_key( array_flip( $classes[1] ), array_flip( $remove_classes ) );
+		$ids            = array_flip( $ids[1] );
 
 		// Load the HTML.
 		$doc = new DOMDocument();
@@ -419,8 +420,10 @@ class Noptin_Email_Generator {
 		/** @var \DOMNodeList $elements */
 		foreach ( $elements as $element ) {
 
+			$is_block_element = in_array( $element->nodeName, array( 'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li' ), true );
+
 			// Remove empty paragraphs or those with only whitespace.
-			if ( 'p' === $element->nodeName && $element->hasChildNodes() ) {
+			if ( $is_block_element && $element->hasChildNodes() ) {
 				$has_content = false;
 
 				foreach ( $element->childNodes as $child ) {
@@ -435,7 +438,7 @@ class Noptin_Email_Generator {
 				if ( ! $has_content ) {
 					$element->parentNode->removeChild( $element );
 				}
-			} elseif ( 'p' === $element->nodeName ) {
+			} elseif ( $is_block_element ) {
 				// If <p> tag has no children, remove it
 				$element->parentNode->removeChild( $element );
 			}

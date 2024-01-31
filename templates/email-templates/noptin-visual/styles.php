@@ -76,6 +76,7 @@
 		margin-bottom: 16px;
 	}
 
+	.noptin-records__wrapper,
 	.wp-block-noptin-separator {
 		margin-bottom: 16px;
 	}

@@ -51,6 +51,15 @@ class Product extends Record {
 			return null;
 		}
 
+		// Meta.
+		if ( 'meta' === $field ) {
+			if ( ! empty( $args['key'] ) ) {
+				return $this->external->get_meta( $args['key'], true );
+			}
+
+			return '';
+		}
+
 		// ID.
 		if ( 'id' === strtolower( $field ) ) {
 			return $this->external->get_id();
@@ -78,7 +87,7 @@ class Product extends Record {
 
 		// Image url.
 		if ( 'image' === strtolower( $field ) ) {
-			$image_size = ! empty( $args['image_size'] ) ? $args['image_size'] : 'woocommerce_thumbnail';
+			$image_size = ! empty( $args['size'] ) ? $args['size'] : 'woocommerce_thumbnail';
 			if ( $this->external->get_image_id() ) {
 				return wp_get_attachment_image_url( $this->external->get_image_id(), $image_size );
 			}
@@ -109,17 +118,7 @@ class Product extends Record {
 			return $this->external->{$field}();
 		}
 
-		// Meta.
-		if ( 'meta' === $field ) {
-			$field = isset( $args['key'] ) ? $args['key'] : null;
-		}
-
-		// Abort if no field.
-		if ( empty( $field ) ) {
-			return null;
-		}
-
-		return get_post_meta( $this->external->ID, $field, true );
+		return null;
 	}
 
 	private function prepare_terms( $term_ids, $taxonomy, $link ) {
@@ -142,12 +141,12 @@ class Product extends Record {
 				$term_url = get_term_link( $term );
 
 				if ( ! is_wp_error( $term_url ) ) {
-					$prepared[] = sprintf( '<a href="%s">%s</a>, ', $term_url, esc_html( $term->name ) );
+					$prepared[] = sprintf( '<a href="%s">%s</a>', $term_url, esc_html( $term->name ) );
 					continue;
 				}
 			}
 
-			$prepared[] = sprintf( '<span>%s</span>, ', esc_html( $term->name ) );
+			$prepared[] = sprintf( '<span>%s</span>', esc_html( $term->name ) );
 		}
 
 		return implode( ', ', $prepared );

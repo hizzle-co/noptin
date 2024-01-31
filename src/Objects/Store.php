@@ -203,6 +203,8 @@ class Store {
 			return '';
 		}
 
+		$is_product_meta = 'product.meta' === $field;
+
 		// If object type has a dot, it's a prefix, remove it.
 		if ( false !== strpos( $config['object_type'], '.' ) ) {
 			$field = substr( $field, strlen( $config['object_type'] ) + 1 );

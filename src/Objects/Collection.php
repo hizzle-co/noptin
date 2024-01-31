@@ -531,7 +531,7 @@ abstract class Collection {
 						'label'       => __( 'Default Value', 'newsletter-optin-box' ),
 						'el'          => 'input',
 						'type'        => 'text',
-						'description' => __( 'The default value to display if the meta key is not set.', 'newsletter-optin-box' ),
+						'description' => __( 'The default value to display if not set.', 'newsletter-optin-box' ),
 					),
 				),
 			),

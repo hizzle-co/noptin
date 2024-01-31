@@ -251,4 +251,36 @@ abstract class Post_Type extends Collection {
 			setup_postdata( $this->current_item->external );
 		}
 	}
+
+	protected function taxonomy_tag_config( $label, $description, $icon ) {
+
+		return array(
+			'label'       => $label,
+			'description' => $description,
+			'type'        => 'string',
+			'block'       => array(
+				'title'       => $label,
+				'description' => $description,
+				'icon'        => $icon,
+				'metadata'    => array(
+					'ancestor' => array( $this->context ),
+				),
+				'settings'    => array(
+					'link'    => array(
+						'label'       => __( 'Link', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'checkbox',
+						'description' => __( 'Whether to link to the term.', 'newsletter-optin-box' ),
+					),
+					'default' => array(
+						'label'       => __( 'Default Value', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'description' => __( 'The default value to display if not set.', 'newsletter-optin-box' ),
+					),
+				),
+				'element'     => 'div',
+			),
+		);
+	}
 }

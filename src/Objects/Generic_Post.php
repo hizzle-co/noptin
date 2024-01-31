@@ -162,12 +162,12 @@ class Generic_Post extends Record {
 				$term_url = get_term_link( $term );
 
 				if ( ! is_wp_error( $term_url ) ) {
-					$prepared[] = sprintf( '<a href="%s">%s</a>, ', $term_url, esc_html( $term->name ) );
+					$prepared[] = sprintf( '<a href="%s">%s</a> ', $term_url, esc_html( $term->name ) );
 					continue;
 				}
 			}
 
-			$prepared[] = sprintf( '<span>%s</span>, ', esc_html( $term->name ) );
+			$prepared[] = sprintf( '<span>%s</span> ', esc_html( $term->name ) );
 		}
 
 		return implode( ', ', $prepared );

@@ -498,13 +498,13 @@ class Generic_Post_Type extends Post_Type {
 						'ancestor' => array( $this->context ),
 					),
 					'defaults'    => array(
-						'alt'  => $this->field_to_merge_tag( 'name' ),
+						'alt'  => $this->field_to_merge_tag( 'title' ),
 						'href' => $is_visible ? $this->field_to_merge_tag( 'url' ) : '',
 					),
 					'element'     => 'image',
 					'settings'    => array(
 						'size' => array(
-							'label'       => __( 'Image Size', 'newsletter-optin-box' ),
+							'label'       => __( 'Resolution', 'newsletter-optin-box' ),
 							'el'          => 'image_size_select',
 							'description' => __( 'Select the image size to display.', 'newsletter-optin-box' ),
 							'placeholder' => __( 'Select image size', 'newsletter-optin-box' ),
@@ -528,9 +528,27 @@ class Generic_Post_Type extends Post_Type {
 		);
 
 		foreach ( $taxonomies as $taxonomy => $label ) {
-			$fields[ 'tax_' . $taxonomy ] = array(
-				'label' => $label,
-				'type'  => 'string',
+			$icon = 'marker';
+
+			// Check if taxonomy contains the word category.
+			if ( false !== strpos( $taxonomy, 'category' ) ) {
+				$icon = 'category';
+			}
+
+			// Check if taxonomy contains the word tag.
+			if ( false !== strpos( $taxonomy, 'tag' ) ) {
+				$icon = 'tag';
+			}
+
+			$fields[ 'tax_' . $taxonomy ] = $this->taxonomy_tag_config(
+				$label,
+				sprintf(
+					/* translators: %s: Object type label. */
+					__( 'Displays the %1$s %2$s.', 'newsletter-optin-box' ),
+					strtolower( $this->singular_label ),
+					strtolower( $label )
+				),
+				$icon
 			);
 		}
 
@@ -586,7 +604,7 @@ class Generic_Post_Type extends Post_Type {
 			$template['image'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'featured_image' ) );
 		}
 
-		if ( ! is_post_type_viewable( $this->type ) ) {
+		if ( is_post_type_viewable( $this->type ) ) {
 			$template['button'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'url' ) );
 		}
 		return $template;

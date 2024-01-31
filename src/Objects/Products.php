@@ -425,7 +425,7 @@ class Products extends Generic_Post_Type {
 					'element'     => 'image',
 					'settings'    => array(
 						'size' => array(
-							'label'       => __( 'Image Size', 'newsletter-optin-box' ),
+							'label'       => __( 'Resolution', 'newsletter-optin-box' ),
 							'el'          => 'image_size_select',
 							'description' => __( 'Select the image size to display.', 'newsletter-optin-box' ),
 							'placeholder' => __( 'Select image size', 'newsletter-optin-box' ),
@@ -504,39 +504,25 @@ class Products extends Generic_Post_Type {
 					),
 				),
 			),
-			'categories'              => array(
-				'description' => __( 'Categories', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'block'       => array(
-					'title'       => __( 'Categories', 'newsletter-optin-box' ),
-					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Displays the %s categories.', 'newsletter-optin-box' ),
-						strtolower( $this->singular_label )
-					),
-					'icon'        => 'category',
-					'metadata'    => array(
-						'ancestor' => array( $this->context ),
-					),
-					'element'     => 'div',
+			'categories'              => $this->taxonomy_tag_config(
+				__( 'Categories', 'newsletter-optin-box' ),
+				sprintf(
+					/* translators: %s: Object type label. */
+					__( 'Displays the %1$s %2$s.', 'newsletter-optin-box' ),
+					strtolower( $this->singular_label ),
+					strtolower( __( 'Categories', 'newsletter-optin-box' ) )
 				),
+				'category'
 			),
-			'tags'                    => array(
-				'description' => __( 'Tags', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'block'       => array(
-					'title'       => __( 'Tags', 'newsletter-optin-box' ),
-					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Displays the %s tags.', 'newsletter-optin-box' ),
-						strtolower( $this->singular_label )
-					),
-					'icon'        => 'tag',
-					'metadata'    => array(
-						'ancestor' => array( $this->context ),
-					),
-					'element'     => 'div',
+			'tags'                    => $this->taxonomy_tag_config(
+				__( 'Tags', 'newsletter-optin-box' ),
+				sprintf(
+					/* translators: %s: Object type label. */
+					__( 'Displays the %1$s %2$s.', 'newsletter-optin-box' ),
+					strtolower( $this->singular_label ),
+					strtolower( __( 'Tags', 'newsletter-optin-box' ) )
 				),
+				'tag'
 			),
 			'id'                      => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
