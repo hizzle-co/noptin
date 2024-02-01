@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <?php if ( ! class_exists( 'Email_Customizer_Mailer' ) ) : ?>
-	<div class="noptin-no-template-email-footer" style="color: #757575; font-size: 12px;">
+	<div class="noptin-no-template-email-footer" style="color: #757575; font-size: 0.8em;">
 		<br><span>&ndash;</span><br>
 		<?php echo wp_kses_post( $footer ); ?>
 	</div>

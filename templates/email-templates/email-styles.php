@@ -208,7 +208,7 @@
 		vertical-align:top;
 		word-wrap:break-word;
 		margin-right: 4%;
-		font-size: 14px;
+		font-size: 0.9em;
 	}
 
 	table.noptin-wc-product-list  {

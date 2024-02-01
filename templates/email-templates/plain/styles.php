@@ -19,7 +19,6 @@
 		width: 100% !important;
 		margin: 0;
 		padding: 0;
-		font-size: 15px;
 		-webkit-text-size-adjust: 100%;
 		-ms-text-size-adjust: 100%;
 	}
@@ -168,7 +167,7 @@
 	}
 
 	.footer-wrap .container p {
-		font-size: 12px;
+		font-size: 0.8em;
 		color: <?php echo esc_attr( $settings['footer_text_color'] ); ?>;
 	}
 

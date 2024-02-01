@@ -1,18 +1,18 @@
 <?php
 
-namespace Hizzle\Noptin\Objects;
+namespace Hizzle\Noptin\Integrations\WooCommerce;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Container for a product.
  */
-class Products extends Generic_Post_Type {
+class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 
 	/**
 	 * @var string the record class.
 	 */
-	public $record_class = '\Hizzle\Noptin\Objects\Product';
+	public $record_class = '\Hizzle\Noptin\Integrations\WooCommerce';
 
 	/**
 	 * @var string integration.
@@ -27,6 +27,12 @@ class Products extends Generic_Post_Type {
 	 */
 	public function __construct() {
 		parent::__construct( 'product' );
+
+		// Refund.
+		add_action( 'woocommerce_order_refunded', array( $this, 'on_refund' ) );
+
+		// Purchase.
+		add_action( 'woocommerce_order_status_completed', array( $this, 'on_purchase' ) );
 	}
 
 	/**
@@ -369,6 +375,13 @@ class Products extends Generic_Post_Type {
 		foreach ( array( 'include', 'exclude' ) as $key ) {
 			if ( isset( $filters[ $key ] ) && ! is_array( $filters[ $key ] ) ) {
 				$filters[ $key ] = wp_parse_id_list( $filters[ $key ] );
+			}
+		}
+
+		// Parse dates.
+		foreach ( array( 'date_created', 'date_on_sale_from', 'date_on_sale_to' ) as $key ) {
+			if ( isset( $filters[ $key ] ) ) {
+				$filters[ $key ] = Orders::parse_wc_date_query( $filters[ $key ] );
 			}
 		}
 
@@ -718,5 +731,134 @@ class Products extends Generic_Post_Type {
 			'heading'     => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'name' ) ),
 			'meta'        => $this->field_to_merge_tag( 'price_html' ),
 		);
+	}
+
+	/**
+	 * Returns a list of available triggers.
+	 *
+	 * @return array $triggers The triggers.
+	 */
+	public function get_triggers() {
+		return array_merge(
+			parent::get_triggers(),
+			array(
+				'woocommerce_' . $this->type . '_purchased' => array(
+					'label'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Purchased', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'When a %s is purchased', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'subject'     => 'wc_customer',
+				),
+				'woocommerce_' . $this->type . '_refunded' => array(
+					'label'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Refunded', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'When a %s is refunded', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'subject'     => 'wc_customer',
+				),
+			)
+		);
+	}
+
+	/**
+	 * Fired when a product is purchased.
+	 *
+	 * @param int|\WC_Order $order_id The order being acted on.
+	 */
+	public function on_purchase( $order_id ) {
+		$this->on_purchase_or_refund( $order_id, 'purchased' );
+	}
+
+	/**
+	 * Fired when a product is refunded.
+	 *
+	 * @param int|\WC_Order $order_id The order being acted on.
+	 */
+	public function on_refund( $order_id ) {
+		$this->on_purchase_or_refund( $order_id, 'refunded' );
+	}
+
+	/**
+	 * Fired when a product is purchased or refunded.
+	 *
+	 * @param int|\WC_Order $order_id The order being acted on.
+	 * @param string        $action   The action being performed.
+	 */
+	public function on_purchase_or_refund( $order_id, $action ) {
+
+		if ( is_numeric( $order_id ) ) {
+			$order = wc_get_order( $order_id );
+		} else {
+			$order = $order_id;
+		}
+
+		// Ensure we have an order.
+		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
+			return;
+		}
+
+		// Prepare the order customer.
+		$customer = $this->get_order_customer( $order );
+
+		// Loop through the order items.
+		foreach ( $order->get_items() as $item ) {
+
+			// Ensure we have a product.
+			/** @var \WC_Order_Item_Product $item */
+			$product = $item->get_product();
+			if ( empty( $product ) ) {
+				continue;
+			}
+
+			// Ensure we have a product id.
+			$product_id = $product->get_id();
+			if ( empty( $product_id ) ) {
+				continue;
+			}
+
+			// Trigger the event.
+			$this->trigger(
+				'woocommerce_' . $this->type . '_' . $action,
+				array(
+					'email'       => $order->get_billing_email(),
+					'object_id'   => $product_id,
+					'subject_id'  => $customer,
+					'unserialize' => array(
+						'order.status' => $order->get_status(),
+					),
+					'provides'    => array(
+						'order'      => $order->get_id(),
+						'order_item' => $item->get_id(),
+					),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Retrieves the order customer.
+	 *
+	 * @param \WC_Order $order The order being acted on.
+	 */
+	protected function get_order_customer( $order ) {
+		$customer = new \WC_Customer( $order->get_customer_id() );
+
+		if ( $customer->get_id() ) {
+			return $customer->get_id();
+		}
+
+		return 0 - $order->get_id();
 	}
 }

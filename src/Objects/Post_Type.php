@@ -58,9 +58,18 @@ abstract class Post_Type extends Collection {
 					'description' => sprintf(
 						/* translators: %s: Object type label. */
 						__( 'When a %s is published', 'newsletter-optin-box' ),
-						$this->singular_label
+						strtolower( $this->singular_label )
 					),
 					'subject'     => 'post_author',
+					'mail_config' => array(
+						'type'      => 'post_notifications',
+						'post_type' => $this->type,
+						'label'     => sprintf(
+							/* translators: %s: Object type label. */
+							__( 'New %s notification', 'newsletter-optin-box' ),
+							strtolower( $this->singular_label )
+						),
+					),
 				),
 				$this->type . '_unpublished' => array(
 					'label'       => sprintf(
@@ -71,7 +80,7 @@ abstract class Post_Type extends Collection {
 					'description' => sprintf(
 						/* translators: %s: Object type label. */
 						__( 'When a %s is unpublished', 'newsletter-optin-box' ),
-						$this->singular_label
+						strtolower( $this->singular_label )
 					),
 					'subject'     => 'post_author',
 				),
@@ -84,7 +93,7 @@ abstract class Post_Type extends Collection {
 					'description' => sprintf(
 						/* translators: %s: Object type label. */
 						__( 'When a %s is deleted', 'newsletter-optin-box' ),
-						$this->singular_label
+						strtolower( $this->singular_label )
 					),
 					'subject'     => 'post_author',
 				),

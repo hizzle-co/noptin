@@ -222,21 +222,22 @@ JS;
 			'noptin-email-editor',
 			'noptinEmailEditorSettings',
 			array(
-				'styles'        => (object) $to_load,
-				'settings'      => self::get_editor_settings(),
-				'types'         => get_noptin_email_types(),
-				'templates'     => get_noptin_email_templates(),
-				'languages'     => noptin_get_available_languages(),
-				'back'          => esc_url( $edited_campaign->get_base_url() ),
-				'objects'       => (object) $objects,
-				'context'       => $edited_campaign->get_contexts(),
-				'dynamicBlocks' => array_values( $blocks ),
-				'user'          => array(
+				'styles'           => (object) $to_load,
+				'settings'         => self::get_editor_settings(),
+				'types'            => get_noptin_email_types(),
+				'templates'        => get_noptin_email_templates(),
+				'templateDefaults' => get_noptin_email_template_defaults(),
+				'languages'        => noptin_get_available_languages(),
+				'back'             => esc_url( $edited_campaign->get_base_url() ),
+				'objects'          => (object) $objects,
+				'context'          => $edited_campaign->get_contexts(),
+				'dynamicBlocks'    => array_values( $blocks ),
+				'user'             => array(
 					'id'        => $current_user->ID,
 					'email'     => $current_user->user_email,
 					'canUpload' => current_user_can( 'upload_files' ),
 				),
-				'logo_url'      => noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' ),
+				'logo_url'         => noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' ),
 			)
 		);
 
@@ -488,7 +489,7 @@ JS;
 			'noptin_get_default_email_props',
 			array(
 				'block_css' => array(
-					'footer-text' => ' #footer-text a { color: #111111 }',
+					'footer-text' => ' #noptin-email-content .footer-text a { color: #111111 }',
 				),
 				'subject'          => $edited_campaign->get( 'subject' ),
 				'recipients'       => $edited_campaign->get_recipients(),

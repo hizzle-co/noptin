@@ -180,6 +180,13 @@ class Noptin {
 	public $integrations;
 
 	/**
+	 * New integrations class.
+	 *
+	 * @var \Hizzle\Noptin\Integrations\Main
+	 */
+	public $integrations_new;
+
+	/**
 	 * Actions page.
 	 *
 	 * @var Noptin_Actions_Page
@@ -327,8 +334,8 @@ class Noptin {
 		}
 
 		// Integrations.
-		$this->integrations = new Noptin_Integrations();
-		//$this->integrations = new \Hizzle\Noptin\Integrations\Main();
+		$this->integrations     = new Noptin_Integrations();
+		$this->integrations_new = new \Hizzle\Noptin\Integrations\Main();
 
 		\Hizzle\Noptin\Objects\Users::add_default();
 

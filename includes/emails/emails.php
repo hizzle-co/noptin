@@ -315,6 +315,11 @@ function get_noptin_email_template_settings( $template, $email = null ) {
 		}
 	}
 
+	// Convert font_size to px.
+	if ( ! empty( $settings['font_size'] ) && is_numeric( $settings['font_size'] ) ) {
+		$settings['font_size'] = $settings['font_size'] . 'px';
+	}
+
 	return $settings;
 }
 
@@ -334,7 +339,7 @@ function get_noptin_email_template_defaults() {
 			'color'             => '#111111',
 			'button_background' => $brand_color,
 			'button_color'      => '#ffffff',
-			'background_color'  => '#e9ecef',
+			'background_color'  => '#f1f1f1',
 			'custom_css'        => '',
 			'font_family'       => 'Arial, Helvetica, sans-serif',
 			'font_size'         => '14px',
@@ -349,7 +354,6 @@ function get_noptin_email_template_defaults() {
 			'content_background' => '#ffffff',
 			'background_color'   => '#e9ecef',
 			'width'              => '600px',
-			'custom_css'         => '',
 			'font_family'        => 'Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
 			'font_size'          => '16px',
 			'font_style'         => 'normal',
@@ -362,7 +366,6 @@ function get_noptin_email_template_defaults() {
 			'content_background' => '#ffffff',
 			'background_color'   => '#ffffff',
 			'width'              => '600px',
-			'custom_css'         => '',
 			'font_family'        => 'Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
 			'font_size'          => '15px',
 			'font_style'         => 'normal',
@@ -375,7 +378,6 @@ function get_noptin_email_template_defaults() {
 			'content_background' => '#ffffff',
 			'background_color'   => '#d2c7ba',
 			'width'              => '600px',
-			'custom_css'         => '',
 			'font_family'        => '\'Merriweather\', Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
 			'font_size'          => '15px',
 			'font_style'         => 'normal',
@@ -591,17 +593,17 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 function noptin_email_wrap_blocks( $blocks, $footer_text = '', $heading_text = '' ) {
 
 	$placeholder = esc_attr__( 'Add footer text here', 'newsletter-optin-box' );
-	$footer      = '<!-- wp:paragraph { "placeholder": "' . $placeholder . '","style":{"noptin":{"typography":{"textAlign":"center","fontSize":13},"color":{"text":"#666666","link":"#111111"}}}} --> <p style="text-align:center;font-size:13px;color:#666666" class="wp-block-paragraph" id="footer-text">' . $footer_text . '</p> <!-- /wp:paragraph -->';
+	$footer      = '<!-- wp:paragraph { "anchor":"footer-text","placeholder":"' . $placeholder . '","style":{"noptin":{"typography":{"textAlign":"center","fontSize":13},"color":{"text":"#666666","link":"#111111"}}}} --> <p style="text-align:center;font-size:13px;color:#666666" class="wp-block-paragraph footer-text">' . $footer_text . '</p> <!-- /wp:paragraph -->';
 
 	if ( empty( $blocks ) ) {
-		$blocks = '<!-- wp:paragraph --> <p class="wp-block-paragraph" id="block-' . wp_generate_uuid4() . '"></p> <!-- /wp:paragraph -->';
+		$blocks = '<!-- wp:paragraph --> <p class="wp-block-paragraph"></p> <!-- /wp:paragraph -->';
 	}
 
 	// Prepend heading block if we have a heading.
 	if ( ! empty( $heading_text ) ) {
 		$placeholder = esc_attr__( 'Add heading text here', 'newsletter-optin-box' );
-		$blocks      = '<!-- wp:heading { "placeholder": "' . $placeholder . '"--> <h2 class="wp-block-heading" id="heading-text">' . $heading_text . '</h2> <!-- /wp:heading -->' . $blocks;
+		$blocks      = '<!-- wp:heading { "anchor":"heading-text","placeholder":"' . $placeholder . '"--> <h2 class="wp-block-heading heading-text">' . $heading_text . '</h2> <!-- /wp:heading -->' . $blocks;
 	}
 
-	return '<!-- wp:noptin/group {"style":{"noptin":{"color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group aligncenter" id="main-content-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $blocks . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group --> <div class="wp-block-noptin-group aligncenter" id="main-footer-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
+	return '<!-- wp:noptin/group {"anchor":"main-content-wrapper","style":{"noptin":{"align":"center","color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group main-content-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $blocks . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group {"anchor":"main-footer-wrapper","style":{"noptin":{"align":"center","color":{"background":""}}}} --> <div class="wp-block-noptin-group main-footer-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
 }

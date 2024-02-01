@@ -11,7 +11,7 @@
 
 					<!-- start footer text -->
 					<tr>
-						<td align="center" bgcolor="<?php echo esc_attr( $settings['background_color'] ); ?>" style="padding: 12px 24px; font-size: 14px; line-height: 20px; color: <?php echo esc_attr( $settings['footer_text_color'] ); ?>;">
+						<td align="center" bgcolor="<?php echo esc_attr( $settings['background_color'] ); ?>" style="padding: 12px 24px; font-size: 0.8em; line-height: 20px; color: <?php echo esc_attr( $settings['footer_text_color'] ); ?>;">
 							<?php echo wp_kses_post( $footer ); ?>
 						</td>
 					</tr>

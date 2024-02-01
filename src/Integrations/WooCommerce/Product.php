@@ -1,6 +1,6 @@
 <?php
 
-namespace Hizzle\Noptin\Objects;
+namespace Hizzle\Noptin\Integrations\WooCommerce;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 2.2.0
  */
-class Product extends Record {
+class Product extends \Hizzle\Noptin\Objects\Record {
 
 	/**
 	 * @var \WC_Product The external object.
