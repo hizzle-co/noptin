@@ -19,6 +19,7 @@ class Main {
 	 */
 	public function __construct() {
 		add_action( 'noptin_register_post_type_objects', array( $this, 'register_custom_objects' ) );
+		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
 	}
 
 	/**
@@ -31,5 +32,96 @@ class Main {
 		\Hizzle\Noptin\Objects\Store::add( new Orders() );
 		\Hizzle\Noptin\Objects\Store::add( new Order_Items() );
 		\Hizzle\Noptin\Objects\Store::add( new Products() );
+	}
+
+	/**
+	 * Migrates triggers.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $triggers The triggers.
+	 */
+	public function migrate_triggers( $triggers ) {
+		$triggers[] = array(
+			'id'         => 'woocommerce_new_order',
+			'trigger_id' => 'woocommerce_new_order',
+			'callback'   => function ( &$automation_rule ) {
+
+				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
+				$action = $automation_rule->get_trigger_setting( 'action' );
+				$map    = array(
+					'created'    => 'wc_new_order',
+					'pending'    => 'wc_pending',
+					'processing' => 'wc_processing',
+					'held'       => 'wc_on-hold',
+					'paid'       => 'wc_payment_complete',
+					'completed'  => 'wc_completed',
+					'refunded'   => 'wc_order_refunded',
+					'cancelled'  => 'wc_cancelled',
+					'failed'     => 'wc_failed',
+					'deleted'    => 'wc_before_delete_order',
+				);
+
+				// Set the new trigger id.
+				if ( $action && isset( $map[ $action ] ) ) {
+					$automation_rule->set_trigger_id( $map[ $action ] );
+				} else {
+					$automation_rule->set_trigger_id( 'wc_new_order' );
+				}
+
+				// Update the conditional logic.
+				$automation_rule->add_conditional_logic_rules(
+					$automation_rule->get_trigger_setting( 'new_customer' ) ? array(
+						array(
+							'type'      => 'customer.order_count',
+							'condition' => 'is',
+							'value'     => '1',
+						),
+					) : array(),
+					array( 'new_customer', 'action' )
+				);
+			},
+		);
+
+		$triggers[] = array(
+			'id'         => 'woocommerce_product_purchase',
+			'trigger_id' => 'woocommerce_product_purchase',
+			'callback'   => function ( &$automation_rule ) {
+
+				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
+				$action = $automation_rule->get_trigger_setting( 'action' );
+
+				// Set the new trigger id.
+				if ( 'refund' === $action ) {
+					$automation_rule->set_trigger_id( 'woocommerce_product_refunded' );
+				} else {
+					$automation_rule->set_trigger_id( 'woocommerce_product_purchased' );
+				}
+
+				// Update the conditional logic.
+				$automation_rule->add_conditional_logic_rules(
+					$automation_rule->get_trigger_setting( 'product_id' ) ? array(
+						array(
+							'type'      => 'product.id',
+							'condition' => 'is',
+							'value'     => $automation_rule->get_trigger_setting( 'product_id' ),
+						),
+					) : array(),
+					array( 'product_id', 'action' )
+				);
+			},
+		);
+
+		$triggers[] = array(
+			'id'         => 'woocommerce_lifetime_value',
+			'trigger_id' => 'woocommerce_lifetime_value',
+			'callback'   => function ( &$automation_rule ) {
+
+				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
+				$automation_rule->set_trigger_id( 'wc_payment_complete' );
+			},
+		);
+
+		return $triggers;
 	}
 }

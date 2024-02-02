@@ -192,6 +192,29 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Add conditional logic rules.
+	 *
+	 * @param array $rules The rules.
+	 */
+	public function add_conditional_logic_rules( $rules, $delete_settings = array() ) {
+		$conditional_logic = array_merge( noptin_get_default_conditional_logic(), $this->get_conditional_logic() );
+		$existing_rules    = $conditional_logic['enabled'] ? $conditional_logic['rules'] : array();
+
+		$conditional_logic['rules']   = array_merge( $existing_rules, $rules );
+		$conditional_logic['enabled'] = ! empty( $conditional_logic['rules'] );
+
+		$new_settings = $this->get_trigger_settings();
+
+		if ( ! empty( $delete_settings ) ) {
+			foreach ( $delete_settings as $setting ) {
+				unset( $new_settings[ $setting ] );
+			}
+		}
+
+		$this->set_trigger_settings( $new_settings );
+	}
+
+	/**
 	 * Returns the rule status.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.

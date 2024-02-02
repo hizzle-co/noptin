@@ -24,7 +24,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		add_action( 'woocommerce_order_refunded', array( $this, 'on_refund' ) );
 
 		// Purchase.
-		add_action( 'woocommerce_order_status_completed', array( $this, 'on_purchase' ) );
+		add_action( 'woocommerce_payment_complete', array( $this, 'on_purchase' ) );
 	}
 
 	/**

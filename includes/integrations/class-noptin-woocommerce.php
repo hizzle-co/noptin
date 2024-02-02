@@ -82,7 +82,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_filter( 'noptin_email_templates', array( $this, 'register_email_template' ), $this->priority );
 		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
 		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority );
-		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
 		add_filter( 'noptin_automation_trigger_known_smart_tags', array( $this, 'register_automation_smart_tags' ), $this->priority, 2 );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
@@ -196,18 +195,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return $this->get_order_count( $GLOBALS['current_noptin_email'] );
-	}
-
-	/**
-	 * Registers automation rules.
-	 *
-	 * @since 1.3.0
-	 * @param Noptin_Automation_Rules $rules The automation rules class.
-	 */
-	public function register_automation_rules( $rules ) {
-		$rules->add_trigger( new Noptin_WooCommerce_New_Order_Trigger( $this ) );
-		$rules->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger( $this ) );
-		$rules->add_trigger( new Noptin_WooCommerce_Lifetime_Value_Trigger( $this ) );
 	}
 
 	/**
