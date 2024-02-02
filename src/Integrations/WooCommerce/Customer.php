@@ -39,6 +39,7 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 						$external->set_billing_email( $order->get_billing_email() );
 						$external->set_first_name( $order->get_billing_first_name() );
 						$external->set_last_name( $order->get_billing_last_name() );
+						$external->set_display_name( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() );
 					}
 				}
 			} else {
@@ -58,7 +59,7 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 			return false;
 		}
 
-		return $this->external->get_id() > 0;
+		return ! ! $this->external->get_email();
 	}
 
 	/**

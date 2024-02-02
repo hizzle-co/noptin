@@ -13,34 +13,17 @@ defined( 'ABSPATH' ) || exit;
 class Customers extends \Hizzle\Noptin\Objects\People {
 
 	/**
-	 * @var string the record class.
+	 * Class constructor.
 	 */
-	public $record_class = '\Hizzle\Noptin\Integrations\WooCommerce\Customer';
+	public function __construct() {
+		$this->integration    = 'woocommerce';
+		$this->type           = 'customer';
+		$this->label          = __( 'Customers', 'newsletter-optin-box' );
+		$this->singular_label = __( 'Customer', 'newsletter-optin-box' );
+		$this->record_class   = __NAMESPACE__ . '\Customer';
 
-	/**
-	 * @var string type.
-	 */
-	public $type = 'wc_customer';
-
-	/**
-	 * @var string prefix.
-	 */
-	public $smart_tags_prefix = 'customer';
-
-	/**
-	 * @var string label.
-	 */
-	public $label = 'WooCommerce Customers';
-
-	/**
-	 * @var string label.
-	 */
-	public $singular_label = 'WooCommerce Customer';
-
-	/**
-	 * @var string integration.
-	 */
-	public $integration = 'woocommerce';
+		parent::__construct();
+	}
 
 	/**
 	 * Retrieves a single person from a WordPress user.
@@ -87,7 +70,7 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 			),
 			'username'         => array(
 				'label' => __( 'Username', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'type'  => 'string',
 			),
 			'email'            => array(
 				'label' => __( 'Email', 'newsletter-optin-box' ),

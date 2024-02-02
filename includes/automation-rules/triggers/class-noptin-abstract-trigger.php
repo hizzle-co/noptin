@@ -560,7 +560,6 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		$args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
 
 		return $args;
-
 	}
 
 	/**
@@ -585,7 +584,6 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 				$rule->maybe_run( $subject, $this, $action, $args );
 			}
 		}
-
 	}
 
 	/**

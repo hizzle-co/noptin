@@ -10,22 +10,14 @@ defined( 'ABSPATH' ) || exit;
 class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 
 	/**
-	 * @var string the record class.
-	 */
-	public $record_class = '\Hizzle\Noptin\Integrations\WooCommerce';
-
-	/**
-	 * @var string integration.
-	 */
-	public $integration = 'woocommerce';
-
-	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
 	 * @return string
 	 */
 	public function __construct() {
+		$this->record_class = __NAMESPACE__ . '\Product';
+		$this->integration  = 'woocommerce';
 		parent::__construct( 'product' );
 
 		// Refund.
@@ -753,6 +745,39 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					'element'     => 'product',
 				),
 			),
+			'attribute'               => array(
+				'label'          => __( 'Attribute', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'example'        => 'key="my_key"',
+				'skip_smart_tag' => true,
+				'block'          => array(
+					'title'       => sprintf(
+						/* translators: %s: object type label */
+						__( '%s Attribute', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => __( 'Displays an attribute value.', 'newsletter-optin-box' ),
+					'icon'        => 'nametag',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'div',
+					'settings'    => array(
+						'key'     => array(
+							'label'       => __( 'Attribute Key', 'newsletter-optin-box' ),
+							'el'          => 'input',
+							'type'        => 'text',
+							'description' => __( 'The attribute key to display.', 'newsletter-optin-box' ),
+						),
+						'default' => array(
+							'label'       => __( 'Default Value', 'newsletter-optin-box' ),
+							'el'          => 'input',
+							'type'        => 'text',
+							'description' => __( 'The default value to display if not set.', 'newsletter-optin-box' ),
+						),
+					),
+				),
+			),
 			'meta'                    => $this->meta_key_tag_config(),
 		);
 
@@ -779,7 +804,6 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 */
 	public function get_triggers() {
 		return array_merge(
-			parent::get_triggers(),
 			array(
 				'woocommerce_' . $this->type . '_purchased' => array(
 					'label'       => sprintf(
@@ -792,7 +816,8 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 						__( 'When a %s is purchased', 'newsletter-optin-box' ),
 						strtolower( $this->singular_label )
 					),
-					'subject'     => 'wc_customer',
+					'subject'     => 'customer',
+					'provides'    => array( 'order', 'order_item' ),
 				),
 				'woocommerce_' . $this->type . '_refunded' => array(
 					'label'       => sprintf(
@@ -805,9 +830,11 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 						__( 'When a %s is refunded', 'newsletter-optin-box' ),
 						strtolower( $this->singular_label )
 					),
-					'subject'     => 'wc_customer',
+					'subject'     => 'customer',
+					'provides'    => array( 'order', 'order_item' ),
 				),
-			)
+			),
+			parent::get_triggers()
 		);
 	}
 
@@ -849,7 +876,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		}
 
 		// Prepare the order customer.
-		$customer = $this->get_order_customer( $order );
+		$customer = Orders::get_order_customer( $order );
 
 		// Loop through the order items.
 		foreach ( $order->get_items() as $item ) {
@@ -887,17 +914,49 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	}
 
 	/**
-	 * Retrieves the order customer.
+	 * Retrieves a test object args.
 	 *
-	 * @param \WC_Order $order The order being acted on.
+	 * @since 2.2.0
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @throws \Exception
+	 * @return array
 	 */
-	protected function get_order_customer( $order ) {
-		$customer = new \WC_Customer( $order->get_customer_id() );
+	public function get_test_args( $rule ) {
 
-		if ( $customer->get_id() ) {
-			return $customer->get_id();
+		if ( 'woocommerce_' . $this->type . '_purchased' === $rule->get_action_id() ) {
+
+			// Fetch latest order.
+			$order = Orders::get_test_order();
+			$items = $order->get_items();
+			return array(
+				'object_id'  => $order->get_id(),
+				'subject_id' => Orders::get_order_customer( $order ),
+				'provides'   => array(
+					'order'      => $order->get_id(),
+					'order_item' => count( $items ) > 0 ? array_values( $items )[0]->get_id() : 0,
+				),
+			);
 		}
 
-		return 0 - $order->get_id();
+		if ( 'woocommerce_' . $this->type . '_refunded' === $rule->get_action_id() ) {
+
+			// Fetch latest order.
+			$order = Orders::get_test_order(
+				array(
+					'status' => array( 'wc-refunded' ),
+				)
+			);
+			$items = $order->get_items();
+			return array(
+				'object_id'  => $order->get_id(),
+				'subject_id' => Orders::get_order_customer( $order ),
+				'provides'   => array(
+					'order'      => $order->get_id(),
+					'order_item' => count( $items ) > 0 ? array_values( $items )[0]->get_id() : 0,
+				),
+			);
+		}
+
+		return parent::get_test_args( $rule );
 	}
 }

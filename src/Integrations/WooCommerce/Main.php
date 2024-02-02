@@ -27,6 +27,9 @@ class Main {
 	 * @since 3.0.0
 	 */
 	public function register_custom_objects() {
+		\Hizzle\Noptin\Objects\Store::add( new Customers() );
+		\Hizzle\Noptin\Objects\Store::add( new Orders() );
+		\Hizzle\Noptin\Objects\Store::add( new Order_Items() );
 		\Hizzle\Noptin\Objects\Store::add( new Products() );
 	}
 }

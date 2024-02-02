@@ -114,6 +114,11 @@ class Noptin_Automation_Rules {
 	 * @param Noptin_Abstract_Trigger $trigger An ancestor of Noptin_Abstract_Trigger
 	 */
 	public function add_trigger( $trigger ) {
+
+		if ( isset( $this->triggers[ $trigger->get_id() ] ) ) {
+			return _doing_it_wrong( __METHOD__, 'Trigger with id ' . esc_html( $trigger->get_id() ) . ' already exists', '3.0.0' );
+		}
+
 		$this->triggers[ $trigger->get_id() ] = $trigger;
 
 		if ( empty( noptin()->emails->automated_email_types ) ) {

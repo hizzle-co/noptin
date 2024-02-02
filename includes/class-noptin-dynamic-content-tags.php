@@ -190,12 +190,36 @@ abstract class Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function get_all_tags_as_html() {
+		$html = '<table class="noptin-tags-table"><thead><tr><th style="width: 200px;">Tag</th><th>Value</th></tr></thead><tbody>';
+
+		foreach ( $this->all() as $tag => $config ) {
+			$value = $this->replace_with_brackets(
+				'[[' . ( empty( $config['example'] ) ? $tag : $config['example'] ) . ']]',
+				$this->escape_function
+			);
+
+			$html .= '<tr><th style="border: 1px solid #424242;padding: 4px; width: 200px;">' . esc_html( $tag ) . '</th><td style="border: 1px solid #424242;padding: 4px;">' . wp_kses_post( $value ) . '</td></tr>';
+		}
+
+		return $html . '</tbody></table>';
+	}
+
+	/**
 	 * @param array $matches
 	 *
 	 * @return string
 	 */
 	protected function replace_tag( $matches ) {
-		$tag    = $matches[1];
+		$tag = $matches[1];
+
+		// Handle the special [[noptin_all_tags_as_html]] tag.
+		if ( 'noptin_all_tags_as_html' === $tag ) {
+			return $this->get_all_tags_as_html();
+		}
+
 		$config = $this->get( $tag );
 
 		if ( ! empty( $config['use_tag'] ) ) {

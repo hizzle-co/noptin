@@ -60,6 +60,15 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 			return '';
 		}
 
+		// Attribute.
+		if ( 'attribute' === strtolower( $field ) ) {
+			if ( ! empty( $args['key'] ) ) {
+				return $this->external->get_attribute( $args['key'] );
+			}
+
+			return '';
+		}
+
 		// Cross sells.
 		if ( 'cross_sells' === strtolower( $field ) ) {
 			return $this->get_record_ids_or_html(

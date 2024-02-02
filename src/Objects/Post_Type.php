@@ -256,7 +256,7 @@ abstract class Post_Type extends Collection {
 		$this->current_item = $this->get( $item );
 
 		if ( $this->current_item->exists() ) {
-			$GLOBALS['post'] = $this->current_item->external;
+			$GLOBALS['post'] = $this->current_item->external; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $this->current_item->external );
 		}
 	}

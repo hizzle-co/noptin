@@ -10,24 +10,16 @@ defined( 'ABSPATH' ) || exit;
 class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 
 	/**
-	 * @var string the record class.
-	 */
-	public $record_class = '\Hizzle\Noptin\Integrations\WooCommerce';
-
-	/**
-	 * @var string integration.
-	 */
-	public $integration = 'woocommerce';
-
-	public $smart_tags_prefix = 'order';
-
-	/**
 	 * Constructor.
 	 *
 	 * @since 1.0.0
 	 * @return string
 	 */
 	public function __construct() {
+		$this->record_class      = __NAMESPACE__ . '\Order';
+		$this->integration       = 'woocommerce';
+		$this->smart_tags_prefix = 'order';
+
 		parent::__construct( 'shop_order' );
 
 		// State transition.
@@ -43,13 +35,14 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'woocommerce_checkout_order_processed' => __( 'Processed via checkout', 'newsletter-optin-box' ),
 				'woocommerce_payment_complete'         => __( 'Paid', 'newsletter-optin-box' ),
 				'woocommerce_order_refunded'           => __( 'Refunded', 'newsletter-optin-box' ),
+				'woocommerce_before_delete_order'      => __( 'Deleted', 'newsletter-optin-box' ),
 			)
 		);
 
 		foreach ( wc_get_order_statuses() as $status => $label ) {
 			$status = 'wc-' === substr( $status, 0, 3 ) ? substr( $status, 3 ) : $status;
 
-			if ( 'refunded' !== $status && 'draft' !== $status ) {
+			if ( ! in_array( $status, array( 'checkout-draft', 'refunded', 'draft' ), true ) ) {
 				$statuses[ 'woocommerce_order_status_' . $status ] = $label;
 			}
 		}
@@ -764,7 +757,7 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					__( 'When a WooCommerce order is %s', 'newsletter-optin-box' ),
 					strtolower( $label )
 				),
-				'subject'     => 'wc_customer',
+				'subject'     => 'customer',
 				'extra_args'  => array(
 					'previous_status' => array(
 						'description' => __( 'The previous order status.', 'newsletter-optin-box' ),
@@ -812,7 +805,11 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'order.previous_status' => 'new',
 			),
 			'url'        => $order->get_edit_order_url(),
-			'activity'   => $order->get_formatted_order_total(),
+			'activity'   => sprintf(
+				'#%1$s %2$s',
+				$order->get_order_number(),
+				$order->get_formatted_order_total()
+			),
 		);
 
 		// Check if the hook name contains a status change.
@@ -847,5 +844,78 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		}
 
 		return 0 - $order->get_id();
+	}
+
+	/**
+	 * Retrieves a test object args.
+	 *
+	 * @since 2.2.0
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function get_test_args( $rule ) {
+
+		$args = array(
+			'status' => array_keys( wc_get_order_statuses() ),
+		);
+
+		if ( 'wc_payment_complete' === $rule->get_action_id() ) {
+			$args['status'] = array( 'wc-processing', 'wc-completed' );
+		}
+
+		if ( 'wc_order_refunded' === $rule->get_action_id() ) {
+			$args['status'] = array( 'wc-refunded' );
+		}
+
+		foreach ( array_keys( $args['status'] ) as $status ) {
+			$prepared_status = false !== strpos( $status, 'wc-' ) ? substr( $status, 3 ) : $status;
+			if ( $rule->get_action_id() === 'wc_' . $prepared_status ) {
+				$args['status'] = array( $status );
+				break;
+			}
+		}
+
+		$order = self::get_test_order( $args );
+		return array(
+			'email'      => $order->get_billing_email(),
+			'object_id'  => $order->get_id(),
+			'subject_id' => self::get_order_customer( $order ),
+			'extra_args' => array(
+				'order.previous_status' => 'new',
+			),
+		);
+	}
+
+	/**
+	 * Retrieves a test order args.
+	 *
+	 * @since 2.2.0
+	 * @param array $args
+	 * @throws \Exception
+	 * @return \WC_Order
+	 */
+	public static function get_test_order( $args = array() ) {
+
+		// Fetch latest order.
+		$order = current(
+			wc_get_orders(
+				array_merge(
+					array(
+						'limit'  => 1,
+						'order'  => 'DESC',
+						'type'   => 'shop_order',
+						'status' => array( 'wc-processing', 'wc-completed' ),
+					),
+					$args
+				)
+			)
+		);
+
+		if ( empty( $order ) ) {
+			throw new \Exception( 'No order found' );
+		}
+
+		return $order;
 	}
 }

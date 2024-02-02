@@ -28,7 +28,7 @@ abstract class Collection {
 	/**
 	 * @var string object type.
 	 */
-	public $object_type;
+	public $object_type = 'generic';
 
 	/**
 	 * @var string type.

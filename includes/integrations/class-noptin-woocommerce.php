@@ -206,31 +206,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function register_automation_rules( $rules ) {
 		$rules->add_trigger( new Noptin_WooCommerce_New_Order_Trigger( $this ) );
-		$rules->add_trigger( new Noptin_WooCommerce_Product_Purchased_Trigger( $this ) );
-		$rules->add_trigger( new Noptin_WooCommerce_Product_Refunded_Trigger( $this ) );
 		$rules->add_trigger( new Noptin_WooCommerce_Product_Purchase_Trigger( $this ) );
 		$rules->add_trigger( new Noptin_WooCommerce_Lifetime_Value_Trigger( $this ) );
-
-		// Other statuses.
-		$statuses = array_merge(
-			array(
-				'new_order'                => __( 'Created', 'newsletter-optin-box' ),
-				'update_order'             => __( 'Updated', 'newsletter-optin-box' ),
-				'checkout_order_processed' => __( 'Processed via checkout', 'newsletter-optin-box' ),
-				'payment_complete'         => __( 'Paid', 'newsletter-optin-box' ),
-				'order_refunded'           => __( 'Refunded', 'newsletter-optin-box' ),
-			),
-			wc_get_order_statuses()
-		);
-
-		// Add a new trigger for each.
-		foreach ( $statuses as $status => $label ) {
-			$status = 'wc-' === substr( $status, 0, 3 ) ? substr( $status, 3 ) : $status;
-
-			if ( 'refunded' !== $status && 'draft' !== $status ) {
-				$rules->add_trigger( new Noptin_WooCommerce_Order_Trigger( $status, $label ) );
-			}
-		}
 	}
 
 	/**

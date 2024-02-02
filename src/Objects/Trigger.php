@@ -342,4 +342,21 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		return $prepared['smart_tags'];
 	}
+
+	/**
+	 * Prepares trigger args.
+	 *
+	 * @since 1.11.0
+	 * @param mixed $subject The subject.
+	 * @param array $args Extra arguments passed to the action.
+	 * @return array
+	 */
+	public function prepare_trigger_args( $subject, $args ) {
+
+		if ( empty( $args['email'] ) && is_callable( array( $subject, 'get_email' ) ) ) {
+			$args['email'] = $subject->get_email();
+		}
+
+		return parent::prepare_trigger_args( $subject, $args );
+	}
 }

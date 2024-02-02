@@ -95,7 +95,7 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 			return $this->get_record_ids_or_html(
 				$items,
 				$args,
-				__NAMESPACE__ . '\OrderItem::get_order_items_html'
+				__NAMESPACE__ . '\Order_Item::get_order_items_html'
 			);
 		}
 
