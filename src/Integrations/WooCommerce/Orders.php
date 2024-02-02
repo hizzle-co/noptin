@@ -32,7 +32,7 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 
 		// State transition.
 		foreach ( array_keys( $this->order_states() ) as $state ) {
-			add_action( $state, array( $this, 'order_state_changed' ), 11 );
+			add_action( $state, array( $this, 'order_state_changed' ), 11, 3 );
 		}
 	}
 
@@ -40,7 +40,6 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		$statuses = array_merge(
 			array(
 				'woocommerce_new_order'                => __( 'Created', 'newsletter-optin-box' ),
-				'woocommerce_update_order'             => __( 'Updated', 'newsletter-optin-box' ),
 				'woocommerce_checkout_order_processed' => __( 'Processed via checkout', 'newsletter-optin-box' ),
 				'woocommerce_payment_complete'         => __( 'Paid', 'newsletter-optin-box' ),
 				'woocommerce_order_refunded'           => __( 'Refunded', 'newsletter-optin-box' ),
@@ -363,47 +362,47 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	public function get_fields() {
 
 		$fields = array(
-			'number'                    => array(
+			'number'               => array(
 				'label' => __( 'Number', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'transaction_id'                    => array(
+			'transaction_id'       => array(
 				'label' => __( 'Transaction ID', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'coupon_code' 				  => array(
+			'coupon_code'          => array(
 				'label' => __( 'Coupon Code', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'subtotal'                   => array(
+			'subtotal'             => array(
 				'label' => __( 'Subtotal', 'newsletter-optin-box' ),
-				'type'        => 'number',
+				'type'  => 'number',
 			),
-			'total_tax' 			   => array(
+			'total_tax'            => array(
 				'label' => __( 'Total tax', 'newsletter-optin-box' ),
-				'type'        => 'number',
+				'type'  => 'number',
 			),
-			'shipping_total' 		  => array(
+			'shipping_total'       => array(
 				'label' => __( 'Shipping total', 'newsletter-optin-box' ),
-				'type'        => 'number',
+				'type'  => 'number',
 			),
-			'discount_total' 		  => array(
+			'discount_total'       => array(
 				'label' => __( 'Discount total', 'newsletter-optin-box' ),
-				'type'        => 'number',
+				'type'  => 'number',
 			),
-			'total' 				   => array(
+			'total'                => array(
 				'label' => __( 'Total', 'newsletter-optin-box' ),
-				'type'        => 'number',
+				'type'  => 'number',
 			),
-			'item_count' 			   => array(
+			'item_count'           => array(
 				'label' => __( 'Item count', 'newsletter-optin-box' ),
-				'type'        => 'number',
+				'type'  => 'number',
 			),
-			'billing_address' 		=> array(
+			'billing_address'      => array(
 				'label' => __( 'Billing address', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'block'       => array(
-					'title'       => __( 'Billing address', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Order Billing address', 'newsletter-optin-box' ),
 					'description' => __( 'Displays the formatted billing address for the order', 'newsletter-optin-box' ),
 					'icon'        => 'location',
 					'metadata'    => array(
@@ -411,55 +410,55 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					),
 				),
 			),
-			'billing_first_name' 		=> array(
+			'billing_first_name'   => array(
 				'label' => __( 'Billing first name', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_last_name' 		=> array(
+			'billing_last_name'    => array(
 				'label' => __( 'Billing last name', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_company' 			=> array(
+			'billing_company'      => array(
 				'label' => __( 'Billing company', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_address_1' 		=> array(
+			'billing_address_1'    => array(
 				'label' => __( 'Billing address 1', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_address_2' 		=> array(
+			'billing_address_2'    => array(
 				'label' => __( 'Billing address 2', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_city' 				=> array(
+			'billing_city'         => array(
 				'label' => __( 'Billing city', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_state' 			=> array(
+			'billing_state'        => array(
 				'label' => __( 'Billing state', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_postcode' 			=> array(
+			'billing_postcode'     => array(
 				'label' => __( 'Billing postcode', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_country' 			=> array(
-				'label' => __( 'Billing country', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'    => WC()->countries->get_countries(),
+			'billing_country'      => array(
+				'label'   => __( 'Billing country', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => WC()->countries->get_countries(),
 			),
-			'billing_email' 			=> array(
+			'billing_email'        => array(
 				'label' => __( 'Billing email', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'billing_phone' 			=> array(
+			'billing_phone'        => array(
 				'label' => __( 'Billing phone', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_method' 			=> array(
+			'shipping_method'      => array(
 				'label' => __( 'Shipping method', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'block' 	 => array(
+				'type'  => 'string',
+				'block' => array(
 					'title'       => __( 'Shipping method', 'newsletter-optin-box' ),
 					'description' => __( 'Displays the formatted shipping method for the order', 'newsletter-optin-box' ),
 					'icon'        => 'car',
@@ -468,11 +467,11 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					),
 				),
 			),
-			'shipping_address' 			=> array(
+			'shipping_address'     => array(
 				'label' => __( 'Shipping address', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'block'       => array(
-					'title'       => __( 'Shipping address', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Order Shipping address', 'newsletter-optin-box' ),
 					'description' => __( 'Displays the formatted shipping address for the order', 'newsletter-optin-box' ),
 					'icon'        => 'location-alt',
 					'metadata'    => array(
@@ -480,61 +479,61 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					),
 				),
 			),
-			'shipping_first_name' 		=> array(
+			'shipping_first_name'  => array(
 				'label' => __( 'Shipping first name', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_last_name' 		=> array(
+			'shipping_last_name'   => array(
 				'label' => __( 'Shipping last name', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_company' 			=> array(
+			'shipping_company'     => array(
 				'label' => __( 'Shipping company', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_address_1' 		=> array(
+			'shipping_address_1'   => array(
 				'label' => __( 'Shipping address 1', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_address_2' 		=> array(
+			'shipping_address_2'   => array(
 				'label' => __( 'Shipping address 2', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_city' 			=> array(
+			'shipping_city'        => array(
 				'label' => __( 'Shipping city', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_state' 			=> array(
+			'shipping_state'       => array(
 				'label' => __( 'Shipping state', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_postcode' 		=> array(
+			'shipping_postcode'    => array(
 				'label' => __( 'Shipping postcode', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'shipping_country' 			=> array(
-				'label' => __( 'Shipping country', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'    => WC()->countries->get_countries(),
+			'shipping_country'     => array(
+				'label'   => __( 'Shipping country', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => WC()->countries->get_countries(),
 			),
-			'shipping_phone' 			=> array(
+			'shipping_phone'       => array(
 				'label' => __( 'Shipping phone', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'payment_method' 			=> array(
-				'label' => __( 'Payment method', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'   => wp_list_pluck( WC()->payment_gateways()->payment_gateways(), 'method_title', 'id' ),
+			'payment_method'       => array(
+				'label'   => __( 'Payment method', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => wp_list_pluck( WC()->payment_gateways()->payment_gateways(), 'method_title', 'id' ),
 			),
-			'payment_method_title' 		=> array(
+			'payment_method_title' => array(
 				'label' => __( 'Payment method title', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'payment_url'                     => array(
+			'payment_url'          => array(
 				'description' => __( 'Payment URL', 'newsletter-optin-box' ),
 				'type'        => 'string',
 				'block'       => array(
-					'title'       => __( 'Payment Button', 'newsletter-optin-box' ),
+					'title'       => __( 'Pay Order', 'newsletter-optin-box' ),
 					'description' => __( 'Displays a button link to pay for the order.', 'newsletter-optin-box' ),
 					'icon'        => 'money-alt',
 					'metadata'    => array(
@@ -547,7 +546,7 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					'element'     => 'button',
 				),
 			),
-			'view_url' 				   => array(
+			'view_url'             => array(
 				'description' => __( 'View URL', 'newsletter-optin-box' ),
 				'type'        => 'string',
 				'block'       => array(
@@ -564,7 +563,7 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					'element'     => 'button',
 				),
 			),
-			'admin_url' 			   => array(
+			'admin_url'            => array(
 				'description' => __( 'Admin URL', 'newsletter-optin-box' ),
 				'type'        => 'string',
 				'block'       => array(
@@ -581,10 +580,10 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					'element'     => 'button',
 				),
 			),
-			'customer_note' 			=> array(
+			'customer_note'        => array(
 				'label' => __( 'Customer note', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'block' 	 => array(
+				'type'  => 'string',
+				'block' => array(
 					'title'       => __( 'Customer note', 'newsletter-optin-box' ),
 					'description' => __( 'Displays the customer note for the order.', 'newsletter-optin-box' ),
 					'icon'        => 'edit',
@@ -593,227 +592,123 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					),
 				),
 			),
-			'customer_ip_address' 		=> array(
+			'customer_ip_address'  => array(
 				'label' => __( 'Customer IP address', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'customer_user_agent' 		=> array(
+			'customer_user_agent'  => array(
 				'label' => __( 'Customer user agent', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'type'  => 'string',
 			),
-			'items' 				   => array(
+			'items'                => array(
 				'label' => __( 'Items', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'block'       => array(
-					'title'       => __( 'Items', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Order Items', 'newsletter-optin-box' ),
 					'description' => __( 'Displays the items in the order.', 'newsletter-optin-box' ),
 					'icon'        => 'cart',
 					'metadata'    => array(
 						'ancestor' => array( $this->context ),
 					),
-					'settings' => array(
-						'style' => array(
-							'label'       => __( 'Style', 'newsletter-optin-box' ),
-							'description' => __( 'The style of the items.', 'newsletter-optin-box' ),
-							'type'        => 'select',
-							'options'     => array(
-								'list' => __( 'List', 'newsletter-optin-box' ),
-								'grid' => __( 'Grid', 'newsletter-optin-box' ),
-							),
-							'default'     => 'list',
-						),
+					'element'     => 'order_item',
+				),
+			),
+			'cross_sells'          => array(
+				'label' => __( 'Cross sells', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Order Cross sells', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the cross sells for the order.', 'newsletter-optin-box' ),
+					'icon'        => 'products',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'product',
+				),
+			),
+			'upsells'              => array(
+				'label' => __( 'Upsells', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Order Upsells', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the upsells for the order.', 'newsletter-optin-box' ),
+					'icon'        => 'products',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'product',
+				),
+			),
+			'details'              => array(
+				'label' => __( 'Details', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Order Details', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the details for the order.', 'newsletter-optin-box' ),
+					'icon'        => 'info',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
 					),
 				),
 			),
-			'id'                      => array(
+			'customer_details'     => array(
+				'label' => __( 'Customer details', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Customer Details', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the customer details for the order.', 'newsletter-optin-box' ),
+					'icon'        => 'user',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+				),
+			),
+			'id'                   => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'parent_id'               => array(
+			'parent_id'            => array(
 				'label' => __( 'Parent ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'date_created'            => array(
+			'date_created'         => array(
 				'description' => __( 'Date created', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
-			'date_modified'           => array(
+			'date_modified'        => array(
 				'description' => __( 'Date modified', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
-			'date_paid' 			 => array(
+			'date_paid'            => array(
 				'description' => __( 'Date paid', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
-			'date_completed' 		=> array(
+			'date_completed'       => array(
 				'description' => __( 'Date completed', 'newsletter-optin-box' ),
 				'type'        => 'string',
 			),
-			'status'                  => array(
+			'status'               => array(
 				'description' => __( 'Status', 'newsletter-optin-box' ),
 				'type'        => 'string',
+				'options'     => $this->wc_order_statuses(),
 			),
-			'featured'                => array(
-				'description' => __( 'Featured', 'newsletter-optin-box' ),
-				'type'        => 'boolean',
-			),
-			'catalog_visibility'      => array(
-				'description' => __( 'Catalog visibility', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'     => array(
-					'visible' => __( 'Visible', 'newsletter-optin-box' ),
-					'catalog' => __( 'Catalog', 'newsletter-optin-box' ),
-					'search'  => __( 'Search', 'newsletter-optin-box' ),
-					'hidden'  => __( 'Hidden', 'newsletter-optin-box' ),
-				),
-			),
-			'description'             => array(
-				'description' => __( 'Description', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'sku'                     => array(
-				'description' => __( 'SKU', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'regular_price'           => array(
-				'description' => __( 'Regular price', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'sale_price'              => array(
-				'description' => __( 'Sale price', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'date_on_sale_from'       => array(
-				'description' => __( 'Date on sale from', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'date_on_sale_to'         => array(
-				'description' => __( 'Date on sale to', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'total_sales'             => array(
-				'description' => __( 'Total sales', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'type'                    => array(
-				'description' => __( 'Type', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'     => wc_get_product_types(),
-			),
-			'tax_status'              => array(
-				'description' => __( 'Tax status', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'     => array(
-					'taxable'  => __( 'Taxable', 'newsletter-optin-box' ),
-					'shipping' => __( 'Shipping', 'newsletter-optin-box' ),
-					'none'     => __( 'None', 'newsletter-optin-box' ),
-				),
-			),
-			'tax_class'               => array(
-				'description' => __( 'Tax class', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'manage_stock'            => array(
-				'description' => __( 'Manage stock', 'newsletter-optin-box' ),
-				'type'        => 'boolean',
-			),
-			'stock_quantity'          => array(
-				'description' => __( 'Stock quantity', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'stock_status'            => array(
-				'description' => __( 'Stock status', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'     => array(
-					'instock'    => __( 'In stock', 'newsletter-optin-box' ),
-					'outofstock' => __( 'Out of Stock', 'newsletter-optin-box' ),
-				),
-			),
-			'backorders'              => array(
-				'description' => __( 'Backorders', 'newsletter-optin-box' ),
-				'type'        => 'string',
-				'options'     => array(
-					'no'     => __( 'No', 'newsletter-optin-box' ),
-					'notify' => __( 'Notify', 'newsletter-optin-box' ),
-					'yes'    => __( 'Yes', 'newsletter-optin-box' ),
-				),
-			),
-			'low_stock_amount'        => array(
-				'description' => __( 'Low stock amount', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'sold_individually'       => array(
-				'description' => __( 'Sold individually', 'newsletter-optin-box' ),
-				'type'        => 'boolean',
-			),
-			'dimensions'              => array(
-				'description' => __( 'Dimensions', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'weight'                  => array(
-				'description' => __( 'Weight', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'length'                  => array(
-				'description' => __( 'Length', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'width'                   => array(
-				'description' => __( 'Width', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'height'                  => array(
-				'description' => __( 'Height', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'upsell_ids'              => array(
-				'description' => __( 'Upsell IDs', 'newsletter-optin-box' ),
-				'type'        => 'array',
-			),
-			'cross_sell_ids'          => array(
-				'description' => __( 'Cross sell IDs', 'newsletter-optin-box' ),
-				'type'        => 'array',
-			),
-			'reviews_allowed'         => array(
-				'description' => __( 'Reviews allowed', 'newsletter-optin-box' ),
-				'type'        => 'boolean',
-			),
-			'purchase_note'           => array(
-				'description' => __( 'Purchase note', 'newsletter-optin-box' ),
-				'type'        => 'string',
-			),
-			'downloadable'            => array(
-				'description' => __( 'Downloadable', 'newsletter-optin-box' ),
-				'type'        => 'boolean',
-			),
-			'virtual'                 => array(
-				'description' => __( 'Virtual', 'newsletter-optin-box' ),
-				'type'        => 'boolean',
-			),
-			'shipping_class_id'       => array(
-				'description' => __( 'Shipping class ID', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'download_limit'          => array(
-				'description' => __( 'Download limit', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'download_expiry'         => array(
-				'description' => __( 'Download expiry', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'average_rating'          => array(
-				'description' => __( 'Average rating', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'review_count'            => array(
-				'description' => __( 'Review count', 'newsletter-optin-box' ),
-				'type'        => 'number',
-			),
-			'meta'                    => $this->meta_key_tag_config(),
+			'meta'                 => $this->meta_key_tag_config(),
 		);
 
 		return apply_filters( 'noptin_post_type_known_custom_fields', $fields, $this->type );
+	}
+
+	protected function wc_order_statuses() {
+		$statuses = wc_get_order_statuses();
+		$prepared = array();
+
+		// Remove wc- prefix.
+		foreach ( $statuses as $status => $label ) {
+			$status              = 'wc-' === substr( $status, 0, 3 ) ? substr( $status, 3 ) : $status;
+			$prepared[ $status ] = $label;
+		}
+
+		return $prepared;
 	}
 
 	/**
@@ -821,12 +716,31 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 */
 	protected function get_list_shortcode_template() {
 		return array(
-			'button'      => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'add_to_cart_url' ) ),
-			'image'       => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'image' ) ),
-			'description' => $this->field_to_merge_tag( 'short_description' ),
-			'heading'     => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'name' ) ),
-			'meta'        => $this->field_to_merge_tag( 'price_html' ),
+			'button'      => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'view_url' ) ),
+			'description' => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'details' ) ),
+			'heading'     => $this->field_to_merge_tag( 'number' ),
+			'meta'        => $this->field_to_merge_tag( 'total', array( 'format' => 'price' ) ),
 		);
+	}
+
+	/**
+	 * Sanitize a hook name to a trigger id.
+	 *
+	 * @param string $hook The hook name.
+	 * @return string $trigger_id The trigger id.
+	 */
+	private function sanitize_hook_to_trigger_id( $hook ) {
+		// Remove woocommerce_ prefix.
+		if ( false !== strpos( $hook, 'woocommerce_' ) ) {
+			$hook = substr( $hook, 12 );
+		}
+
+		// Remove order_status_ prefix.
+		if ( false !== strpos( $hook, 'order_status_' ) ) {
+			$hook = substr( $hook, 13 );
+		}
+
+		return 'wc_' . sanitize_key( $hook );
 	}
 
 	/**
@@ -835,112 +749,89 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 * @return array $triggers The triggers.
 	 */
 	public function get_triggers() {
-		return array_merge(
-			parent::get_triggers(),
-			array(
-				'woocommerce_' . $this->type . '_purchased' => array(
-					'label'       => sprintf(
-						/* translators: %s: Object type label. */
-						__( '%s > Purchased', 'newsletter-optin-box' ),
-						$this->singular_label
-					),
-					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'When a %s is purchased', 'newsletter-optin-box' ),
-						strtolower( $this->singular_label )
-					),
-					'subject'     => 'wc_customer',
+		$triggers = array();
+
+		foreach ( $this->order_states() as $state => $label ) {
+
+			$triggers[ $this->sanitize_hook_to_trigger_id( $state ) ] = array(
+				'label'       => sprintf(
+					/* translators: %s: Order status label. */
+					__( 'Order > %s', 'newsletter-optin-box' ),
+					$label
 				),
-				'woocommerce_' . $this->type . '_refunded' => array(
-					'label'       => sprintf(
-						/* translators: %s: Object type label. */
-						__( '%s > Refunded', 'newsletter-optin-box' ),
-						$this->singular_label
-					),
-					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'When a %s is refunded', 'newsletter-optin-box' ),
-						strtolower( $this->singular_label )
-					),
-					'subject'     => 'wc_customer',
+				'description' => sprintf(
+					/* translators: %s: Order status label. */
+					__( 'When a WooCommerce order is %s', 'newsletter-optin-box' ),
+					strtolower( $label )
 				),
-			)
-		);
+				'subject'     => 'wc_customer',
+				'extra_args'  => array(
+					'previous_status' => array(
+						'description' => __( 'The previous order status.', 'newsletter-optin-box' ),
+						'type'        => 'string',
+						'options'     => array_merge(
+							array( 'new' => __( 'New', 'newsletter-optin-box' ) ),
+							$this->wc_order_statuses()
+						),
+					),
+				),
+			);
+		}
+
+		return $triggers;
 	}
 
 	/**
-	 * Fired when a product is purchased.
+	 * Fired when an order state changes.
 	 *
 	 * @param int|\WC_Order $order_id The order being acted on.
 	 */
-	public function on_purchase( $order_id ) {
-		$this->on_purchase_or_refund( $order_id, 'purchased' );
-	}
-
-	/**
-	 * Fired when a product is refunded.
-	 *
-	 * @param int|\WC_Order $order_id The order being acted on.
-	 */
-	public function on_refund( $order_id ) {
-		$this->on_purchase_or_refund( $order_id, 'refunded' );
-	}
-
-	/**
-	 * Fired when a product is purchased or refunded.
-	 *
-	 * @param int|\WC_Order $order_id The order being acted on.
-	 * @param string        $action   The action being performed.
-	 */
-	public function on_purchase_or_refund( $order_id, $action ) {
-
+	public function order_state_changed( $order_id, $order = null, $transition = array() ) {
 		if ( is_numeric( $order_id ) ) {
 			$order = wc_get_order( $order_id );
 		} else {
 			$order = $order_id;
 		}
 
-		// Ensure we have an order.
 		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
 			return;
 		}
 
-		// Prepare the order customer.
-		$customer = $this->get_order_customer( $order );
+		// Check that the current action is a valid trigger.
+		$hook = current_filter();
 
-		// Loop through the order items.
-		foreach ( $order->get_items() as $item ) {
-
-			// Ensure we have a product.
-			/** @var \WC_Order_Item_Product $item */
-			$product = $item->get_product();
-			if ( empty( $product ) ) {
-				continue;
-			}
-
-			// Ensure we have a product id.
-			$product_id = $product->get_id();
-			if ( empty( $product_id ) ) {
-				continue;
-			}
-
-			// Trigger the event.
-			$this->trigger(
-				'woocommerce_' . $this->type . '_' . $action,
-				array(
-					'email'       => $order->get_billing_email(),
-					'object_id'   => $product_id,
-					'subject_id'  => $customer,
-					'unserialize' => array(
-						'order.status' => $order->get_status(),
-					),
-					'provides'    => array(
-						'order'      => $order->get_id(),
-						'order_item' => $item->get_id(),
-					),
-				)
-			);
+		if ( ! in_array( $hook, array_keys( $this->get_triggers() ), true ) ) {
+			return;
 		}
+
+		$args = array(
+			'email'      => $order->get_billing_email(),
+			'object_id'  => $order->get_id(),
+			'subject_id' => self::get_order_customer( $order ),
+			'extra_args' => array(
+				'order.previous_status' => 'new',
+			),
+			'url'        => $order->get_edit_order_url(),
+			'activity'   => $order->get_formatted_order_total(),
+		);
+
+		// Check if the hook name contains a status change.
+		if ( false !== strpos( $hook, 'woocommerce_order_status_' ) ) {
+			$args['unserialize'] = array(
+				'order.status' => $order->get_status(),
+			);
+
+			if ( is_array( $transition ) && ! empty( $status_transition['from'] ) ) {
+				$args['extra_args'] = array(
+					'order.previous_status' => $transition['from'],
+				);
+			}
+		}
+
+		$this->trigger(
+			$this->sanitize_hook_to_trigger_id( $hook ),
+			$args
+		);
 	}
 
 	/**
@@ -948,7 +839,7 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 *
 	 * @param \WC_Order $order The order being acted on.
 	 */
-	protected function get_order_customer( $order ) {
+	public static function get_order_customer( $order ) {
 		$customer = new \WC_Customer( $order->get_customer_id() );
 
 		if ( $customer->get_id() ) {

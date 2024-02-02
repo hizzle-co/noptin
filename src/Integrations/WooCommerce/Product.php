@@ -60,6 +60,42 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 			return '';
 		}
 
+		// Cross sells.
+		if ( 'cross_sells' === strtolower( $field ) ) {
+			return $this->get_record_ids_or_html(
+				$this->external->get_cross_sell_ids(),
+				$args,
+				__NAMESPACE__ . '\Product::get_products_html'
+			);
+		}
+
+		// Upsells.
+		if ( 'upsells' === strtolower( $field ) ) {
+			return $this->get_record_ids_or_html(
+				$this->external->get_upsell_ids(),
+				$args,
+				__NAMESPACE__ . '\Product::get_products_html'
+			);
+		}
+
+		// Related.
+		if ( 'related' === strtolower( $field ) ) {
+			$limit = isset( $args['number'] ) ? absint( $args['number'] ) : 10;
+
+			// Backward compatibility.
+			if ( ! empty( $args['limit'] ) ) {
+				$limit = absint( $args['limit'] );
+			}
+
+			$limit = min( $limit, 25 );
+
+			return $this->get_record_ids_or_html(
+				wc_get_related_products( $this->external->get_id(), $limit, $this->external->get_upsell_ids() ),
+				$args,
+				__NAMESPACE__ . '\Product::get_products_html'
+			);
+		}
+
 		// ID.
 		if ( 'id' === strtolower( $field ) ) {
 			return $this->external->get_id();
@@ -150,5 +186,30 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 		}
 
 		return implode( ', ', $prepared );
+	}
+
+	/**
+	 * Get product html to display.
+	 *
+	 * @param array $args
+	 * @param int[] $products
+	 *
+	 * @return string
+	 */
+	public static function get_products_html( $products, $args ) {
+
+		$template = isset( $args['style'] ) ? $args['style'] : 'grid';
+
+		$products = wc_get_products(
+			array(
+				'include'    => $products,
+				'status'     => 'publish',
+				'visibility' => 'catalog',
+			)
+		);
+
+		ob_start();
+		get_noptin_template( 'woocommerce/email-products-' . $template . '.php', compact( 'products' ) );
+		return ob_get_clean();
 	}
 }

@@ -714,6 +714,45 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'description' => __( 'Review count', 'newsletter-optin-box' ),
 				'type'        => 'number',
 			),
+			'related'                 => array(
+				'label' => __( 'Related Products', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Related Products', 'newsletter-optin-box' ),
+					'description' => __( 'Displays related products.', 'newsletter-optin-box' ),
+					'icon'        => 'products',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'product',
+				),
+			),
+			'cross_sells'             => array(
+				'label' => __( 'Cross sells', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Product Cross sells', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the cross sells for the product.', 'newsletter-optin-box' ),
+					'icon'        => 'products',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'product',
+				),
+			),
+			'upsells'                 => array(
+				'label' => __( 'Upsells', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Product Upsells', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the upsells for the product.', 'newsletter-optin-box' ),
+					'icon'        => 'products',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'product',
+				),
+			),
 			'meta'                    => $this->meta_key_tag_config(),
 		);
 

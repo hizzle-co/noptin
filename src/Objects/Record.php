@@ -97,4 +97,39 @@ abstract class Record {
 
 		return apply_filters( 'noptin_objects_record_format_value', $raw_value, $args, $this );
 	}
+
+	/**
+	 * Get record html to display.
+	 *
+	 * @param array $args
+	 * @param int[] $records
+	 * @param string|array $html_callback
+	 * @return string
+	 */
+	public function get_record_ids_or_html( $records, $args, $html_callback ) {
+		$limit = isset( $args['number'] ) ? absint( $args['number'] ) : 6;
+
+		// Backward compatibility.
+		if ( ! empty( $args['limit'] ) ) {
+			$limit = absint( $args['limit'] );
+		}
+
+		// Get record ids.
+		$records = wp_parse_id_list( $records );
+		if ( $limit > 0 && count( $records ) > $limit ) {
+			$records = array_slice( $records, 0, $limit );
+		}
+
+		// Abort if no records.
+		if ( empty( $records ) ) {
+			return '';
+		}
+
+		// Check if we're returning ids.
+		if ( ! empty( $args['return'] ) && 'ids' === $args['return'] ) {
+			return $records;
+		}
+
+		return call_user_func( $html_callback, $records, $args );
+	}
 }
