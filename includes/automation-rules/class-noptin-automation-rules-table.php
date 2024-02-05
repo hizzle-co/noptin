@@ -19,6 +19,18 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 	}
 
 	/**
+	 *  Returns the query args.
+	 */
+	public function get_query_args() {
+		return array_merge(
+			parent::get_query_args(),
+			array(
+				'action_id_not' => 'email',
+			)
+		);
+	}
+
+	/**
 	 * Generates content for a single row of the table
 	 *
 	 * @since 1.2.8
@@ -30,7 +42,6 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 		echo '<tr class="noptin_automation_rule_' . esc_attr( $item->get_id() ) . '" data-id="' . esc_attr( $item->get_id() ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
-
 	}
 
 	/**

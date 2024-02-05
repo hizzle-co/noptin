@@ -85,6 +85,11 @@ $edit_urls = apply_filters( 'noptin_create_automation_rule_edit_urls', $edit_url
 						uasort( $actions, 'noptin_sort_by_name' );
 
 						foreach ( $actions as $rule_action ) {
+
+							if ( 'email' === $rule_action->get_id() ) {
+								continue;
+							}
+
 							printf(
 								'<option value="%s" data-description="%s">%s</option>',
 								esc_attr( $rule_action->get_id() ),
