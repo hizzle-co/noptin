@@ -180,7 +180,6 @@ class Noptin_Automation_Rules_Table extends \Hizzle\Store\List_Table {
 			esc_html( $title ),
 			empty( $description ) ? '' : "<div class='noptin-rule-description'>$description</div>"
 		);
-
 	}
 
 	/**

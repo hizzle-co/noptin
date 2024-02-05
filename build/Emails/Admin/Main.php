@@ -312,7 +312,6 @@ class Main {
 		$edited_campaign = self::prepare_edited_campaign( $query_args );
 		$script          = empty( $edited_campaign ) ? 'view-campaigns' : $edited_campaign->admin_screen;
 		$type            = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );
-		$base_path       = plugin_dir_path( __DIR__ );
 
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
@@ -339,7 +338,44 @@ class Main {
 					'noptin_email_settings_misc',
 					array(
 						'data'    => (object) ( empty( $type ) ? array() : $type->to_array() ),
-						'senders' => get_noptin_email_senders( true ),
+						'senders' => array_merge(
+							array(
+								'manual_recipients' => array(
+									'label'        => __( 'Manual Recipients', 'newsletter-optin-box' ),
+									'description'  => __( 'Send the email to the current user or a comma separated list of email addresses.', 'newsletter-optin-box' ),
+									'image'        => array(
+										'icon' => 'businessperson',
+										'fill' => '#212121',
+									),
+									'is_active'    => true,
+									'is_installed' => true,
+									'settings'     => array(
+										'disableMergeTags' => false,
+										'fields'           => array(
+											'recipients' => array(
+												'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
+												'description' => sprintf(
+													'%s<br /> <br />%s',
+													__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
+													sprintf(
+														/* translators: %s: code */
+														__( 'Add %s after an email to disable open and click tracking for that recipient.', 'newsletter-optin-box' ),
+														'<code>--notracking</code>'
+													)
+												),
+												'type'        => 'text',
+												'placeholder' => sprintf(
+													/* translators: %s: Example */
+													__( 'For example, %s', 'newsletter-optin-box' ),
+													'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
+												),
+											),
+										),
+									),
+								),
+							),
+							get_noptin_email_senders( true )
+						),
 					)
 				)
 			);

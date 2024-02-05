@@ -21,6 +21,12 @@ abstract class Post_Type extends Collection {
 	 */
 	public $can_list = true;
 
+	protected $title_field       = 'title';
+	protected $description_field = 'excerpt';
+	protected $image_field       = 'featured_image';
+	protected $url_field         = 'url';
+	protected $meta_field        = 'date';
+
 	/**
 	 * Constructor
 	 */
@@ -62,12 +68,22 @@ abstract class Post_Type extends Collection {
 					),
 					'subject'     => 'post_author',
 					'mail_config' => array(
-						'type'      => 'post_notifications',
-						'post_type' => $this->type,
-						'label'     => sprintf(
-							/* translators: %s: Object type label. */
-							__( 'New %s notification', 'newsletter-optin-box' ),
-							strtolower( $this->singular_label )
+						'object_type' => $this->object_type,
+						'label'       => ucwords(
+							sprintf(
+								/* translators: %s: Object type label. */
+								__( 'New %s notification', 'newsletter-optin-box' ),
+								$this->singular_label
+							)
+						),
+						'defaults'    => array(
+							'subject'      => $this->field_to_merge_tag( $this->title_field ),
+							'heading'      => $this->field_to_merge_tag( $this->title_field ),
+							'preview_text' => sprintf(
+								/* translators: %s: Object type label. */
+								__( 'A new %s has been published on [[blog_name]].', 'newsletter-optin-box' ),
+								strtolower( $this->singular_label )
+							),
 						),
 					),
 				),

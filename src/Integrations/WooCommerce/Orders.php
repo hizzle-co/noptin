@@ -19,6 +19,10 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		$this->record_class      = __NAMESPACE__ . '\Order';
 		$this->integration       = 'woocommerce';
 		$this->smart_tags_prefix = 'order';
+		$this->icon              = array(
+			'icon' => 'money-alt',
+			'fill' => '#674399',
+		);
 
 		parent::__construct( 'shop_order' );
 

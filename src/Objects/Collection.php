@@ -70,6 +70,13 @@ abstract class Collection {
 	 */
 	public $context;
 
+	// Template.
+	protected $title_field       = '';
+	protected $description_field = '';
+	protected $image_field       = '';
+	protected $url_field         = '';
+	protected $meta_field        = '';
+
 	/**
 	 * Class constructor.
 	 */
@@ -80,13 +87,11 @@ abstract class Collection {
 			$this->smart_tags_prefix = $this->type;
 		}
 
-		$this->can_list = apply_filters( 'noptin_object_can_list', $this->can_list, $this );
-
 		// Register object.
 		add_filter( 'noptin_email_editor_objects', array( $this, 'register_object' ) );
 
 		// Register shortcode.
-		if ( $this->can_list ) {
+		if ( apply_filters( 'noptin_object_can_list', $this->can_list, $this ) ) {
 			add_shortcode( 'noptin_' . $this->plural_type() . '_list', array( $this, 'handle_list_shortcode' ) );
 		}
 
@@ -215,7 +220,29 @@ abstract class Collection {
 	 * Returns the template for the list shortcode.
 	 */
 	protected function get_list_shortcode_template() {
-		return array();
+		$template = array();
+
+		if ( ! empty( $this->title_field ) ) {
+			$template['heading'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->title_field ) );
+		}
+
+		if ( ! empty( $this->description_field ) ) {
+			$template['description'] = $this->field_to_merge_tag( $this->description_field );
+		}
+
+		if ( ! empty( $this->image_field ) ) {
+			$template['image'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->image_field ) );
+		}
+
+		if ( ! empty( $this->url_field ) ) {
+			$template['button'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->url_field ) );
+		}
+
+		if ( ! empty( $this->meta_field ) ) {
+			$template['meta'] = $this->field_to_merge_tag( $this->meta_field );
+		}
+
+		return $template;
 	}
 
 	/**
@@ -224,6 +251,10 @@ abstract class Collection {
 	 * @return string $merge_tag The merge tag.
 	 */
 	protected function field_to_merge_tag( $field, $attributes = '' ) {
+
+		if ( empty( $field ) ) {
+			return '';
+		}
 
 		if ( ! empty( $attributes ) ) {
 			$attributes = ' ' . $attributes;

@@ -200,6 +200,12 @@ class Email {
 			$resave_title = false;
 		}
 
+		// Ensure we have a sender.
+		if ( ! isset( $this->options['email_sender'] ) ) {
+			$this->options['email_sender'] = $this->get_sender();
+			$resave                        = true;
+		}
+
 		if ( $resave && 'auto-draft' !== $post->post_status ) {
 			// https://core.trac.wordpress.org/ticket/60314.
 			update_post_meta( $post->ID, 'campaign_data', (object) $this->options );
@@ -484,21 +490,19 @@ class Email {
 	 */
 	public function get_recipients() {
 
-		// Abort for mass mail.
-		if ( $this->is_mass_mail() ) {
-			return '';
-		}
-
 		// Prepare recipient.
 		$recipient = $this->get( 'recipients' );
 
 		// If no recipient, use the default recipient.
 		if ( empty( $recipient ) ) {
 			$sub_type = $this->get_sub_type();
-			return apply_filters( "noptin_default_{$this->type}_email_{$sub_type}_recipient", '', $this );
+
+			if ( ! empty( $sub_type ) ) {
+				$recipient = apply_filters( "noptin_default_{$this->type}_email_{$sub_type}_recipient", '[[email]]', $this );
+			}
 		}
 
-		return $recipient;
+		return empty( $recipient ) ? '' : $recipient;
 	}
 
 	/**
@@ -526,8 +530,9 @@ class Email {
 	 */
 	public function get_sender() {
 
-		$sender = $this->get( 'email_sender' );
-		$sender = ! empty( $sender ) ? $sender : 'noptin';
+		$sender  = $this->get( 'email_sender' );
+		$default = 'newsletter' === $this->type ? 'noptin' : 'manual_recipients';
+		$sender  = ! empty( $sender ) ? $sender : $default;
 		return apply_filters( 'noptin_email_sender', $sender, $this );
 	}
 
@@ -539,7 +544,7 @@ class Email {
 	public function get_email_type() {
 		$email_type  = $this->get( 'email_type' );
 		$email_types = array_keys( get_noptin_email_types() );
-		return in_array( $email_type, $email_types, true ) ? $email_type : current( $email_types );
+		return in_array( $email_type, $email_types, true ) ? $email_type : get_default_noptin_email_type();
 	}
 
 	/**
@@ -659,9 +664,9 @@ class Email {
 			'is_automation_rule'    => $this->is_automation_rule(),
 			'trigger'               => $this->get_trigger(),
 			'supports_timing'       => $this->supports_timing(),
+			'supports_recipients'   => $this->supports( 'supports_recipients' ),
 			'placeholder_recipient' => $this->get_placeholder_recipient(),
 			'email_type'            => Main::get_email_type( $this->type ),
-			'is_mass_mail'          => $this->is_mass_mail(),
 			'manual_recipients'     => $manual_recipients,
 			'extra_settings'        => (object) apply_filters(
 				'noptin_email_extra_settings',
@@ -994,7 +999,7 @@ class Email {
 	 * @return bool
 	 */
 	public function is_mass_mail() {
-		return apply_filters( "noptin_{$this->type}_is_mass_mail", $this->supports( 'is_mass_mail' ), $this->get_sub_type(), $this );
+		return $this->supports( 'supports_recipients' ) && 'manual_recipients' !== $this->get_sender();
 	}
 
 	/**

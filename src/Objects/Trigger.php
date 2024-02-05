@@ -58,6 +58,10 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			}
 		}
 
+		if ( ! empty( $trigger_args['mail_config'] ) ) {
+			$this->mail_config = $trigger_args['mail_config'];
+		}
+
 		add_action( 'noptin_fire_object_trigger_' . $this->trigger_id, array( $this, 'fire_trigger' ) );
 	}
 
@@ -80,6 +84,16 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 */
 	public function get_description() {
 		return $this->trigger_args['description'];
+	}
+
+	/**
+	 * Retrieve the trigger's or action's image.
+	 *
+	 * @since 1.2.8
+	 * @return string
+	 */
+	public function get_image() {
+		return Store::get_collection_config( $this->object_type, 'icon' );
 	}
 
 	/**

@@ -16,8 +16,17 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 * @return string
 	 */
 	public function __construct() {
-		$this->record_class = __NAMESPACE__ . '\Product';
-		$this->integration  = 'woocommerce';
+		$this->record_class      = __NAMESPACE__ . '\Product';
+		$this->integration       = 'woocommerce';
+		$this->title_field       = 'name';
+		$this->description_field = 'short_description';
+		$this->image_field       = 'image';
+		$this->url_field         = 'add_to_cart_url';
+		$this->meta_field        = 'price_html';
+		$this->icon              = array(
+			'icon' => 'products',
+			'fill' => '#674399',
+		);
 		parent::__construct( 'product' );
 
 		// Refund.
@@ -785,25 +794,13 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	}
 
 	/**
-	 * Returns the template for the list shortcode.
-	 */
-	protected function get_list_shortcode_template() {
-		return array(
-			'button'      => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'add_to_cart_url' ) ),
-			'image'       => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'image' ) ),
-			'description' => $this->field_to_merge_tag( 'short_description' ),
-			'heading'     => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'name' ) ),
-			'meta'        => $this->field_to_merge_tag( 'price_html' ),
-		);
-	}
-
-	/**
 	 * Returns a list of available triggers.
 	 *
 	 * @return array $triggers The triggers.
 	 */
 	public function get_triggers() {
 		return array_merge(
+			parent::get_triggers(),
 			array(
 				'woocommerce_' . $this->type . '_purchased' => array(
 					'label'       => sprintf(
@@ -833,8 +830,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					'subject'     => 'customer',
 					'provides'    => array( 'order', 'order_item' ),
 				),
-			),
-			parent::get_triggers()
+			)
 		);
 	}
 

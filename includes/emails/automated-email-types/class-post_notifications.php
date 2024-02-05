@@ -23,7 +23,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	/**
 	 * @var string
 	 */
-	public $category = 'Mass Mail';
+	public $category = '';
 
 	/**
 	 * @var string

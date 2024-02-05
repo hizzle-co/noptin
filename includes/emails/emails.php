@@ -229,6 +229,21 @@ function get_noptin_email_senders( $full = false ) {
 }
 
 /**
+ * Returns the default email type.
+ *
+ * @since 3.0.0
+ * @return string
+ */
+function get_default_noptin_email_type() {
+
+	if ( noptin_has_active_license_key() ) {
+		return 'visual';
+	}
+
+	return 'normal';
+}
+
+/**
  * Returns an array of email types.
  *
  * @since 1.7.0
@@ -239,6 +254,11 @@ function get_noptin_email_types() {
 	return apply_filters(
 		'noptin_email_types',
 		array(
+
+			'visual'     => array(
+				'label'       => __( 'Visual', 'newsletter-optin-box' ),
+				'description' => __( 'Compose your email using the block editor', 'newsletter-optin-box' ),
+			),
 
 			'normal'     => array(
 				'label'       => __( 'Classic', 'newsletter-optin-box' ),
@@ -257,7 +277,6 @@ function get_noptin_email_types() {
 
 		)
 	);
-
 }
 
 /**

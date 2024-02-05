@@ -53,6 +53,13 @@ abstract class Noptin_Email_Type {
 	public $recipient = array(); // Array containing campaign id, user id and subscriber id.
 
 	/**
+	 * Custom mail configuration.
+	 *
+	 * @var array
+	 */
+	public $mail_config = array();
+
+	/**
 	 * Registers relevant hooks.
 	 *
 	 */
@@ -73,6 +80,11 @@ abstract class Noptin_Email_Type {
 
 		if ( $email->type !== $this->type && $email->get_sub_type() !== $this->type ) {
 			return $props;
+		}
+
+		// Merge defaults set in mail_config.
+		if ( ! empty( $this->mail_config['defaults'] ) ) {
+			$props = array_merge( $props, $this->mail_config['defaults'] );
 		}
 
 		$methods = get_class_methods( $this );
@@ -102,12 +114,17 @@ abstract class Noptin_Email_Type {
 	 */
 	public function default_content_normal() {
 
+		$content_normal = '';
+		if ( ! empty( $this->mail_config['defaults']['content_normal'] ) ) {
+			$content_normal = $this->mail_config['defaults']['content_normal'];
+		}
+
 		/**
 		 * Filters the default email body
 		 *
 		 * @param string $body The default email body
 		 */
-		return apply_filters( "noptin_default_{$this->type}_body", '' );
+		return apply_filters( "noptin_default_{$this->type}_body", $content_normal );
 	}
 
 	/**
@@ -124,6 +141,10 @@ abstract class Noptin_Email_Type {
 	 * @return string
 	 */
 	protected function prepare_default_blocks() {
+
+		if ( ! empty( $this->mail_config['defaults']['blocks'] ) ) {
+			return $this->mail_config['defaults']['blocks'];
+		}
 
 		$normal = $this->default_content_normal();
 
@@ -167,18 +188,6 @@ abstract class Noptin_Email_Type {
 		// Abort if the email is saved or is not our type.
 		if ( ! empty( $value ) || $email->exists() || $email->type !== $this->type ) {
 			return $value;
-		}
-
-		// Set default name, template, and footer texts.
-		switch ( $prop ) {
-
-			case 'footer_text':
-				$value = get_noptin_footer_text();
-				break;
-
-			case 'template':
-				$value = get_noptin_option( 'email_template', 'paste' );
-				break;
 		}
 
 		// Is there a custom method to filter this prop?

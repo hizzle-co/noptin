@@ -25,7 +25,7 @@ class Generic_Post_Type extends Post_Type {
 	 * @since 1.0.0
 	 * @return string
 	 */
-	public function __construct( $type ) {
+	public function __construct( $type, $init = false ) {
 		$post_type = get_post_type_object( $type );
 
 		if ( ! $post_type ) {
@@ -37,10 +37,36 @@ class Generic_Post_Type extends Post_Type {
 		$this->type           = $type;
 
 		// Check if the post type uses a dashicon...
-		if ( ! empty( $post_type->menu_icon ) && false !== strpos( $post_type->menu_icon, 'dashicons' ) ) {
-			$this->icon = str_replace( 'dashicons-', '', $post_type->menu_icon );
-		} else {
-			$this->icon = 'admin-post';
+		if ( 'database' === $this->icon ) {
+			if ( ! empty( $post_type->menu_icon ) && false !== strpos( $post_type->menu_icon, 'dashicons' ) ) {
+				$this->icon = str_replace( 'dashicons-', '', $post_type->menu_icon );
+			} else {
+				$this->icon = 'admin-post';
+			}
+		}
+
+		// Remove unsupported fields.
+		if ( $post_type && $init ) {
+
+			if ( ! post_type_supports( $this->type, 'title' ) ) {
+				$this->title_field = '';
+			}
+
+			if ( ! post_type_supports( $this->type, 'editor' ) ) {
+				$this->description_field = '';
+			}
+
+			if ( ! post_type_supports( $this->type, 'author' ) ) {
+				unset( $fields['author'] );
+			}
+
+			if ( ! post_type_supports( $this->type, 'thumbnail' ) ) {
+				$this->image_field = '';
+			}
+
+			if ( ! is_post_type_viewable( $this->type ) ) {
+				$this->url_field = '';
+			}
 		}
 
 		parent::__construct();
@@ -553,11 +579,11 @@ class Generic_Post_Type extends Post_Type {
 		}
 
 		// Remove unsupported fields.
-		if ( ! post_type_supports( $this->type, 'title' ) ) {
+		if ( 'title' !== $this->title_field ) {
 			unset( $fields['title'] );
 		}
 
-		if ( ! post_type_supports( $this->type, 'editor' ) ) {
+		if ( 'excerpt' !== $this->description_field ) {
 			unset( $fields['content'] );
 			unset( $fields['excerpt'] );
 		}
@@ -575,39 +601,15 @@ class Generic_Post_Type extends Post_Type {
 			unset( $fields['ping_status'] );
 		}
 
-		if ( ! post_type_supports( $this->type, 'thumbnail' ) ) {
+		if ( 'featured_image' !== $this->image_field ) {
 			unset( $fields['featured_image'] );
 		}
 
-		if ( ! $is_visible ) {
+		if ( 'url' !== $this->url_field ) {
 			unset( $fields['url'] );
 		}
 
 		return apply_filters( 'noptin_post_type_known_custom_fields', $fields, $this->type );
-	}
-
-	/**
-	 * Returns the template for the list shortcode.
-	 */
-	protected function get_list_shortcode_template() {
-		$template = array();
-
-		if ( post_type_supports( $this->type, 'title' ) ) {
-			$template['heading'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'title' ) );
-		}
-
-		if ( post_type_supports( $this->type, 'editor' ) ) {
-			$template['description'] = $this->field_to_merge_tag( 'excerpt' );
-		}
-
-		if ( post_type_supports( $this->type, 'thumbnail' ) ) {
-			$template['image'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'featured_image' ) );
-		}
-
-		if ( is_post_type_viewable( $this->type ) ) {
-			$template['button'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'url' ) );
-		}
-		return $template;
 	}
 
 	/**
@@ -624,7 +626,7 @@ class Generic_Post_Type extends Post_Type {
 
 		foreach ( get_post_types( $args ) as $type ) {
 			if ( ! Store::exists( $type ) && 'attachment' !== $type ) {
-				Store::add( new Generic_Post_Type( $type ) );
+				Store::add( new Generic_Post_Type( $type, true ) );
 			}
 		}
 	}

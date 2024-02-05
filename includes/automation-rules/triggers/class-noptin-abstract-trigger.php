@@ -25,53 +25,11 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	public $is_user_based = false;
 
 	/**
-	 * Retrieve the trigger's default email subject.
+	 * Custom mail configuration.
 	 *
-	 * @since 1.11.0
-	 * @return string
+	 * @var array
 	 */
-	public function get_default_email_subject() {
-		return '';
-	}
-
-	/**
-	 * Retrieve the trigger's default email heading.
-	 *
-	 * @since 1.11.0
-	 * @return string
-	 */
-	public function get_default_email_heading() {
-		return '';
-	}
-
-	/**
-	 * Retrieve the trigger's default email content.
-	 *
-	 * @since 1.11.0
-	 * @return string
-	 */
-	public function get_default_email_content() {
-		return '';
-	}
-
-	/**
-	 * Retrieve the trigger's about email.
-	 *
-	 * @since 1.11.0
-	 * @return string
-	 */
-	public function get_about_email() {
-		$description = $this->get_description();
-
-		// Lowercase the first letter.
-		$description = strtolower( $description[0] ) . substr( $description, 1 );
-
-		return sprintf(
-			// translators: %s: Trigger description.
-			__( 'Sends an email %s.', 'newsletter-optin-box' ),
-			$description
-		);
-	}
+	public $mail_config = array();
 
 	/**
 	 * Prepares email test data.
@@ -82,7 +40,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @throws Exception
 	 */
 	public function get_test_smart_tags( $rule ) {
-		throw new Exception( __( 'No test data available for this trigger.', 'newsletter-optin-box' ) );
+		throw new Exception( 'No test data available for this trigger.' );
 	}
 
 	/**
@@ -396,7 +354,6 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 				'conditional_logic' => 'number',
 			),
 		);
-
 	}
 
 	/**
@@ -466,7 +423,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 			if ( noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
 
 				// Increment the number of rules met.
-				$rules_met ++;
+				++ $rules_met;
 
 				// If we're using the "any" condition, we can stop here.
 				if ( 'any' === $type ) {
@@ -645,5 +602,4 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		return $this->prepare_trigger_args( $subject, $args );
 	}
-
 }

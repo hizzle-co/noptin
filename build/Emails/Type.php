@@ -37,9 +37,9 @@ class Type {
 	public $child_type = null;
 
 	/**
-	 * @var string Checks if this is a mass mail.
+	 * @var string Checks if this email supports recipients.
 	 */
-	public $is_mass_mail = false;
+	public $supports_recipients = true;
 
 	/**
 	 * @var string Checks if this email supports timing.

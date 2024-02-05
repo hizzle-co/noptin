@@ -49,7 +49,8 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		}
 
 		// Set the contexts.
-		$this->contexts = $trigger->contexts;
+		$this->contexts    = $trigger->contexts;
+		$this->mail_config = $trigger->mail_config;
 
 		$this->add_hooks();
 	}
@@ -96,7 +97,16 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$trigger = $this->get_trigger();
 
 		if ( $trigger ) {
-			return $trigger->get_about_email();
+			$description = $trigger->get_description();
+
+			// Lowercase the first letter.
+			$description = strtolower( $description[0] ) . substr( $description, 1 );
+
+			return sprintf(
+				// translators: %s: Trigger description.
+				__( 'Sends an email %s.', 'newsletter-optin-box' ),
+				$description
+			);
 		}
 
 		return '';
@@ -116,56 +126,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		}
 
 		return parent::get_image();
-	}
-
-	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function get_default_recipient() {
-		return '[[email]]';
-	}
-
-	/**
-	 * Returns the default subject.
-	 *
-	 */
-	public function default_subject() {
-		$trigger = $this->get_trigger();
-
-		if ( $trigger ) {
-			return $trigger->get_default_email_subject();
-		}
-
-		return '';
-	}
-
-	/**
-	 * Returns the default heading.
-	 *
-	 */
-	public function default_heading() {
-		$trigger = $this->get_trigger();
-
-		if ( $trigger ) {
-			return $trigger->get_default_email_heading();
-		}
-
-		return '';
-	}
-
-	/**
-	 * Returns the default content.
-	 *
-	 */
-	public function default_content_normal() {
-		$trigger = $this->get_trigger();
-
-		if ( $trigger ) {
-			return $trigger->get_default_email_content();
-		}
-
-		return '';
 	}
 
 	/**

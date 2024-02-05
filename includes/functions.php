@@ -2173,3 +2173,13 @@ function noptin_prepare_merge_tags_for_js( $merge_tags ) {
 
 	return $prepared;
 }
+
+/**
+ * Checks if we have an active license key.
+ *
+ * @return bool
+ * @since 3.0.0
+ */
+function noptin_has_active_license_key() {
+	return ! ! Noptin_COM::get_active_license_key();
+}

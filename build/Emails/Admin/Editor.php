@@ -208,7 +208,7 @@ JS;
 				if ( ! empty( $data['block'] ) ) {
 					$blocks[ $tag ] = array_merge(
 						array(
-							'description' => $data['description'],
+							'description' => isset( $data['description'] ) ? $data['description'] : $data['label'],
 							'mergeTag'    => $tag,
 							'name'        => self::merge_tag_to_block_name( $tag ),
 						),

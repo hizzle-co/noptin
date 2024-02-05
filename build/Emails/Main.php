@@ -377,7 +377,6 @@ class Main {
 				'plural_label'       => __( 'Newsletters', 'newsletter-optin-box' ),
 				'new_campaign_label' => __( 'New Campaign', 'newsletter-optin-box' ),
 				'click_to_add_first' => __( 'Click the button below to send your first newsletter campaign', 'newsletter-optin-box' ),
-				'is_mass_mail'       => true,
 			)
 		);
 
