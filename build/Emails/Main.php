@@ -560,5 +560,16 @@ class Main {
 		}
 
 		self::$current_email_recipient = $recipient;
+
+		do_action( 'noptin_init_current_email_recipient', $recipient );
+	}
+
+	/**
+	 * Retrieves the current unsubscribe url.
+	 *
+	 * @return string
+	 */
+	public static function get_current_unsubscribe_url() {
+		return get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( self::$current_email_recipient ) ) );
 	}
 }

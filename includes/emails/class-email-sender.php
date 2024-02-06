@@ -167,6 +167,10 @@ class Noptin_Email_Sender {
 			}
 		}
 
+		if ( empty( $this->unsubscribe_url ) ) {
+			$this->unsubscribe_url = \Hizzle\Noptin\Emails\Main::get_current_unsubscribe_url();
+		}
+
 		// Fires before an email is sent.
 		do_action( 'noptin_before_sending_email', $this );
 

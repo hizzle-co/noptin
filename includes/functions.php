@@ -576,6 +576,10 @@ function noptin_geolocation_fields() {
  */
 function noptin_parse_list( $list, $strict = false ) {
 
+	if ( empty( $list ) ) {
+		return array();
+	}
+
 	if ( ! is_array( $list ) ) {
 
 		if ( $strict ) {

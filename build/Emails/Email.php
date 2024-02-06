@@ -422,6 +422,188 @@ class Email {
 	}
 
 	/**
+	 * Sends the email.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	public function send() {
+
+		// Abort if we can't send the email.
+		if ( ! $this->can_send() ) {
+			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent.', 'newsletter-optin-box' ) );
+		}
+
+		// Make sure we have an email body and subject.
+		if ( empty( $this->subject ) ) {
+			return new \WP_Error( 'noptin_email_no_subject', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
+		}
+
+		$content = $this->get_content( $this->get_email_type() );
+
+		if ( empty( $content ) ) {
+			return new \WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
+		}
+
+		// If this is a mass mail, send it and not a newsletter email,
+		// ... create a newsletter email and send it.
+		if ( $this->is_mass_mail() && 'newsletter' !== $this->type ) {
+
+			// Prepare campaign args.
+			$type = $this->get_email_type();
+			$args = array_merge(
+				$this->options,
+				array(
+					'parent_id'    => $this->id,
+					'status'       => 'publish',
+					'type'         => 'newsletter',
+					'name'         => sprintf( '%1$s [%2$s]', esc_html( $this->name ), date_i18n( get_option( 'date_format' ) ) ),
+					'subject'      => noptin_parse_email_subject_tags( $this->get_subject(), true ),
+					'heading'      => noptin_parse_email_content_tags( $this->get( 'heading' ), true ),
+					'content'      => noptin_parse_email_content_tags( $this->content, true ),
+					'author'       => $this->author,
+					'preview_text' => noptin_parse_email_content_tags( $this->get( 'preview_text' ), true ),
+					'footer_text'  => noptin_parse_email_content_tags( $this->get( 'footer_text' ), true ),
+				)
+			);
+
+			foreach ( $args as $key => $value ) {
+
+				// Check if the key starts with content_.
+				if ( 0 === strpos( $key, 'content_' ) ) {
+
+					// Parse paragraphs.
+					if ( 'content_normal' === $type ) {
+						$value = wpautop( trim( $value ) );
+					}
+
+					$args[ $key ] = trim( noptin_parse_email_content_tags( $value, true ) );
+
+					// Strip HTML.
+					if ( 'content_plain_text' === $type && ! empty( $args[ $key ] ) ) {
+						$args[ $key ] = noptin_convert_html_to_text( $args[ $key ] );
+					}
+				}
+			}
+
+			// Prepare the newsletter.
+			$newsletter = new Email( $args );
+
+			// Maybe skip sending the email.
+			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
+			if ( is_wp_error( $should_send ) || false === $should_send ) {
+				return $should_send;
+			}
+
+			if ( true === $should_send ) {
+				$newsletter->save();
+			}
+
+			return $should_send;
+		}
+
+		// Send mass emails.
+		if ( $this->is_mass_mail() ) {
+			do_action( 'noptin_newsletter_campaign_published', $this );
+			return true;
+		}
+
+		$recipients = noptin_prepare_email_recipients( $this->get_recipients() );
+
+		// Abort if no recipients are found.
+		if ( 1 > count( $recipients ) ) {
+			return new \WP_Error( 'noptin_email_no_recipients', __( 'The email has no valid recipients.', 'newsletter-optin-box' ) );
+		}
+
+		// Send to each recipient.
+		$result = true;
+		foreach ( $recipients as $email => $track ) {
+			$result = $this->send_to(
+				array(
+					'email' => $email,
+					'track' => $track,
+				)
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Sends the email to a single recipient.
+	 *
+	 * @param string|array $recipient
+	 * @return bool|\WP_Error
+	 */
+	public function send_to( $recipient ) {
+
+		// Abort if we can't send the email.
+		if ( ! $this->can_send() ) {
+			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent.', 'newsletter-optin-box' ) );
+		}
+
+		// Make sure we have an email body and subject.
+		if ( empty( $this->subject ) ) {
+			return new \WP_Error( 'noptin_email_no_subject', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
+		}
+
+		$content = $this->get_content( $this->get_email_type() );
+
+		if ( empty( $content ) ) {
+			return new \WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
+		}
+
+		if ( is_string( $recipient ) ) {
+			$recipient = array(
+				'email' => $recipient,
+				'track' => false,
+			);
+		}
+
+		if ( ! is_array( $recipient ) || empty( $recipient['email'] ) || ! is_email( $recipient['email'] ) ) {
+			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
+		}
+
+		$recipient['cid'] = $this->id;
+
+		// Prepare the email recipient.
+		Main::init_current_email_recipient( $recipient );
+
+		do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
+
+		// Generate the subject and body.
+		$subject = noptin_parse_email_subject_tags( $this->get_subject() );
+		$message = noptin_generate_email_content( $this, Main::$current_email_recipient, ! empty( Main::$current_email_recipient['track'] ) );
+
+		// Maybe skip sending the email.
+		$should_send = apply_filters( 'noptin_email_should_send', true, $this );
+		if ( is_wp_error( $should_send ) || false === $should_send ) {
+			return $should_send;
+		}
+
+		// Send the email.
+		$result = noptin_send_email(
+			array(
+				'recipients'               => $recipient['email'],
+				'subject'                  => $subject,
+				'message'                  => $message,
+				'campaign_id'              => $this->id,
+				'campaign'                 => $this,
+				'headers'                  => array(),
+				'attachments'              => array(),
+				'reply_to'                 => '',
+				'from_email'               => '',
+				'from_name'                => '',
+				'content_type'             => $this->get_email_type() === 'plain_text' ? 'text' : 'html',
+				'disable_template_plugins' => ! ( $this->get_email_type() === 'normal' && $this->get_template() === 'default' ),
+			)
+		);
+
+		do_action( 'noptin_after_sending_email', $this, $result );
+
+		return $result;
+	}
+
+	/**
 	 * Checks if this is an automation rule email.
 	 *
 	 * @return bool
@@ -802,6 +984,8 @@ class Email {
 	 * @return true|\WP_Error
 	 */
 	public function prepare_preview( $mode, $recipient ) {
+
+		$recipient['cid'] = $this->id;
 
 		Main::init_current_email_recipient( $recipient );
 

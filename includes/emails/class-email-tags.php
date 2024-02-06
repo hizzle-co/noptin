@@ -115,7 +115,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		$this->tags['unsubscribe_url'] = array(
 			'description' => __( 'The unsubscribe URL.', 'newsletter-optin-box' ),
-			'replacement' => '',
+			'callback'    => '\Hizzle\Noptin\Emails\Main::get_current_unsubscribe_url',
 		);
 
 		$this->tags['blog_name'] = array(

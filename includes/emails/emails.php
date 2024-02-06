@@ -136,7 +136,7 @@ function noptin_parse_email_subject_tags( $subject, $partial = false ) {
  */
 function noptin_parse_email_content_tags( $content, $partial = false ) {
 	// Replace [noptin] with [[noptin]].
-	$content = str_replace( '[noptin]', '[[noptin]]', $content );
+	//$content = str_replace( '[noptin]', '[[noptin]]', $content );
 
 	return apply_filters( 'noptin_parse_email_content_tags', $content, $partial );
 }
@@ -625,4 +625,31 @@ function noptin_email_wrap_blocks( $blocks, $footer_text = '', $heading_text = '
 	}
 
 	return '<!-- wp:noptin/group {"anchor":"main-content-wrapper","style":{"noptin":{"align":"center","color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group main-content-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $blocks . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group {"anchor":"main-footer-wrapper","style":{"noptin":{"align":"center","color":{"background":""}}}} --> <div class="wp-block-noptin-group main-footer-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
+}
+
+/**
+ * Returns an array of email recipients.
+ *
+ * @return array
+ */
+function noptin_prepare_email_recipients( $unprepared ) {
+
+	$recipients = array();
+
+	foreach ( noptin_parse_list( $unprepared, true ) as $recipient ) {
+
+		$track     = false === stripos( $recipient, '--notracking' );
+		$recipient = trim( str_ireplace( '--notracking', '', $recipient ) );
+
+		if ( false !== strpos( $recipient, '[[' ) ) {
+			$recipient = noptin()->emails->tags->replace_in_text_field( $recipient );
+		}
+
+		if ( is_email( $recipient ) ) {
+			$recipients[ $recipient ] = $track;
+			continue;
+		}
+	}
+
+	return $recipients;
 }
