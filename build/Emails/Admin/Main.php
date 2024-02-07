@@ -337,6 +337,7 @@ class Main {
 				apply_filters(
 					'noptin_email_settings_misc',
 					array(
+						'isTest'  => defined( 'NOPTIN_IS_TESTING' ),
 						'data'    => (object) ( empty( $type ) ? array() : $type->to_array() ),
 						'senders' => array_merge(
 							array(
@@ -359,7 +360,7 @@ class Main {
 													__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
 													sprintf(
 														/* translators: %s: code */
-														__( 'Add %s after an email to disable open and click tracking for that recipient.', 'newsletter-optin-box' ),
+														__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
 														'<code>--notracking</code>'
 													)
 												),

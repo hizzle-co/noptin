@@ -222,6 +222,7 @@ JS;
 			'noptin-email-editor',
 			'noptinEmailEditorSettings',
 			array(
+				'isTest'           => defined( 'NOPTIN_IS_TESTING' ),
 				'styles'           => (object) $to_load,
 				'settings'         => self::get_editor_settings(),
 				'types'            => get_noptin_email_types(),

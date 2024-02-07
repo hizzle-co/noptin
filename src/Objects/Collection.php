@@ -96,7 +96,7 @@ abstract class Collection {
 		}
 
 		if ( empty( $this->context ) ) {
-			$this->context = "noptin/{$this->type}-template";
+			$this->context = 'noptin/' . preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $this->type ) ) . '-template';
 		}
 
 		// Load automation rule.

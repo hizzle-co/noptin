@@ -22,6 +22,10 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 		$this->label          = __( 'Order Items', 'newsletter-optin-box' );
 		$this->singular_label = __( 'Order Item', 'newsletter-optin-box' );
 		$this->record_class   = __NAMESPACE__ . '\Order_Item';
+		$this->icon           = array(
+			'icon' => 'cart',
+			'fill' => '#674399',
+		);
 
 		parent::__construct();
 	}
