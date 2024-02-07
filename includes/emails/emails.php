@@ -365,6 +365,7 @@ function get_noptin_email_template_defaults() {
 			'font_style'        => 'normal',
 			'font_weight'       => 'normal',
 			'line_height'       => '1.5',
+			'link_color'        => $brand_color,
 			'block_css'         => (object) array(),
 		),
 		'paste'         => array(
@@ -378,6 +379,7 @@ function get_noptin_email_template_defaults() {
 			'font_style'         => 'normal',
 			'font_weight'        => 'normal',
 			'line_height'        => '1.5',
+			'link_color'         => $brand_color,
 		),
 		'plain'         => array(
 			'color'              => '#454545',
@@ -390,6 +392,7 @@ function get_noptin_email_template_defaults() {
 			'font_style'         => 'normal',
 			'font_weight'        => 'normal',
 			'line_height'        => '1.4',
+			'link_color'         => $brand_color,
 		),
 		'merriweather'  => array(
 			'color'              => '#454545',
@@ -402,6 +405,7 @@ function get_noptin_email_template_defaults() {
 			'font_style'         => 'normal',
 			'font_weight'        => 'normal',
 			'line_height'        => '1.5',
+			'link_color'         => $brand_color,
 		),
 	);
 
@@ -410,8 +414,6 @@ function get_noptin_email_template_defaults() {
 		if ( ! isset( $defaults[ $template ] ) ) {
 			$defaults[ $template ] = array();
 		}
-
-		$defaults[ $template ]['link_color'] = $brand_color;
 
 		// Set custom_css is not set.
 		if ( ! isset( $defaults[ $template ]['custom_css'] ) ) {

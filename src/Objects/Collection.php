@@ -257,6 +257,18 @@ abstract class Collection {
 		}
 
 		if ( ! empty( $attributes ) ) {
+
+			// If we have an array of attributes, convert it to a string.
+			if ( is_array( $attributes ) ) {
+				$prepared = '';
+
+				foreach ( $attributes as $key => $value ) {
+					$prepared .= " {$key}='{$value}'";
+				}
+
+				$attributes = $prepared;
+			}
+
 			$attributes = ' ' . $attributes;
 		}
 

@@ -503,26 +503,46 @@ function deactivate_noptin_subscriber( $subscriber ) {
 }
 
 /**
+ * Updates a subscriber state.
+ *
+ * @access public
+ * @since  3.0.0
+ */
+function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $campaign_id, $callback ) {
+
+	if ( empty( $subscriber_id_or_email ) ) {
+		return;
+	}
+
+	// Fetch subscriber.
+	$subscriber = noptin_get_subscriber( $subscriber_id_or_email );
+
+	if ( is_string( $subscriber_id_or_email ) && is_email( $subscriber_id_or_email ) ) {
+
+		if ( ! $subscriber->exists() ) {
+			$subscriber->set_email( $subscriber_id_or_email );
+		}
+	} elseif ( ! $subscriber->exists() || $status === $subscriber->get_status() ) {
+		return;
+	}
+
+	$subscriber->set_status( $status );
+
+	if ( ! empty( $campaign_id ) && ! empty( $callback ) ) {
+		$subscriber->$callback( $campaign_id );
+	}
+
+	$subscriber->save();
+}
+
+/**
  * Unsubscribes a subscriber.
  *
  * @access public
  * @since  1.3.2
  */
-function unsubscribe_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
-
-	// Fetch subscriber.
-	$subscriber = noptin_get_subscriber( $subscriber );
-
-	if ( ! $subscriber->exists() || ! $subscriber->is_active() ) {
-		return;
-	}
-
-	if ( ! empty( $campaign_id ) ) {
-		$subscriber->record_unsubscribed_campaign( $campaign_id );
-	}
-
-	$subscriber->set_status( 'unsubscribed' );
-	$subscriber->save();
+function unsubscribe_noptin_subscriber( $subscriber_id_or_email, $campaign_id = 0 ) {
+	update_noptin_subscriber_status( $subscriber_id_or_email, 'unsubscribed', $campaign_id, 'record_unsubscribed_campaign' );
 }
 
 /**
@@ -531,21 +551,8 @@ function unsubscribe_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
  * @access public
  * @since  1.3.2
  */
-function bounce_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
-
-	// Fetch subscriber.
-	$subscriber = noptin_get_subscriber( $subscriber );
-
-	if ( ! $subscriber->exists() || 'bounced' === $subscriber->get_status() ) {
-		return;
-	}
-
-	if ( ! empty( $campaign_id ) ) {
-		$subscriber->record_bounced_campaign( $campaign_id );
-	}
-
-	$subscriber->set_status( 'bounced' );
-	$subscriber->save();
+function bounce_noptin_subscriber( $subscriber_id_or_email, $campaign_id = 0 ) {
+	update_noptin_subscriber_status( $subscriber_id_or_email, 'bounced', $campaign_id, 'record_bounced_campaign' );
 }
 
 /**
@@ -554,21 +561,8 @@ function bounce_noptin_subscriber( $subscriber, $campaign_id = 0 ) {
  * @access public
  * @since  1.3.2
  */
-function noptin_subscriber_complained( $subscriber, $campaign_id = 0 ) {
-
-	// Fetch subscriber.
-	$subscriber = noptin_get_subscriber( $subscriber );
-
-	if ( ! $subscriber->exists() || 'complained' === $subscriber->get_status() ) {
-		return;
-	}
-
-	if ( ! empty( $campaign_id ) ) {
-		$subscriber->record_bounced_campaign( $campaign_id );
-	}
-
-	$subscriber->set_status( 'complained' );
-	$subscriber->save();
+function noptin_subscriber_complained( $subscriber_id_or_email, $campaign_id = 0 ) {
+	update_noptin_subscriber_status( $subscriber_id_or_email, 'complained', $campaign_id, 'record_bounced_campaign' );
 }
 
 /**

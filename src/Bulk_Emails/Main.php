@@ -108,6 +108,16 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			)
 		);
 
+		// Check if this is a mass mail.
+		if ( ! $campaign->is_mass_mail() ) {
+			$campaign->send();
+
+			// Update status.
+			update_post_meta( $campaign->id, 'completed', 1 );
+
+			return;
+		}
+
 		// Send the campaign.
 		$sender = $campaign->get_sender();
 

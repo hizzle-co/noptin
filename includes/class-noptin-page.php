@@ -155,6 +155,20 @@ class Noptin_Page {
 		$decoded = json_decode( noptin_decrypt( $recipient ), true );
 
 		if ( ! empty( $decoded ) && is_array( $decoded ) ) {
+
+			if ( isset( $decoded['email'] ) ) {
+				if ( empty( $decoded['sid'] ) ) {
+					$decoded['sid'] = get_noptin_subscriber_id_by_email( $decoded['email'] );
+				}
+
+				if ( empty( $decoded['uid'] ) ) {
+					$user = get_user_by( 'email', $decoded['email'] );
+
+					if ( $user ) {
+						$decoded['uid'] = $user->ID;
+					}
+				}
+			}
 			return $decoded;
 		}
 
@@ -210,7 +224,6 @@ class Noptin_Page {
 		header( 'Content-Length: 42' );
 		echo esc_html( base64_decode( 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEA' ) );
 		exit;
-
 	}
 
 	protected function _log_open() {
@@ -219,8 +232,13 @@ class Noptin_Page {
 		$recipient = $this->get_request_recipient();
 
 		// Ensure we have a campaign.
-		if ( ! empty( $recipient['cid'] ) && ! empty( $recipient['sid'] ) ) {
-			log_noptin_subscriber_campaign_open( $recipient['sid'], $recipient['cid'] );
+		if ( ! empty( $recipient['cid'] ) ) {
+
+			if ( ! empty( $recipient['sid'] ) ) {
+				log_noptin_subscriber_campaign_open( $recipient['sid'], $recipient['cid'] );
+			} else {
+				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_opens' );
+			}
 		}
 	}
 
@@ -250,13 +268,16 @@ class Noptin_Page {
 		$destination = str_replace( array( '#038;', '&#38;', '&amp;' ), '&', rawurldecode( $recipient['to'] ) );
 
 		// Ensure we have a campaign.
-		if ( ! empty( $recipient['cid'] ) && ! empty( $recipient['sid'] ) ) {
-			log_noptin_subscriber_campaign_click( $recipient['sid'], $recipient['cid'], $destination );
+		if ( ! empty( $recipient['cid'] ) ) {
+			if ( ! empty( $recipient['sid'] ) ) {
+				log_noptin_subscriber_campaign_click( $recipient['sid'], $recipient['cid'], $destination );
+			} else {
+				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_clicks' );
+			}
 		}
 
 		wp_redirect( $destination );
 		exit;
-
 	}
 
 	/**
@@ -295,7 +316,6 @@ class Noptin_Page {
 		$msg = str_ireplace( '[[resubscribe_url]]', get_noptin_action_url( 'resubscribe', $key ), $msg );
 
 		echo wp_kses_post( $this->merge( $msg ) );
-
 	}
 
 	/**
@@ -319,11 +339,8 @@ class Noptin_Page {
 		// Process subscribers.
 		if ( ! empty( $recipient['sid'] ) ) {
 			unsubscribe_noptin_subscriber( $recipient['sid'], $campaign_id );
-		}
-
-		// Process users.
-		if ( ! empty( $recipient['uid'] ) ) {
-			update_user_meta( $recipient['uid'], 'noptin_unsubscribed', 'unsubscribed' );
+		} elseif ( ! empty( $recipient['email'] ) ) {
+			unsubscribe_noptin_subscriber( $recipient['email'], $campaign_id );
 		}
 
 		// If we are redirecting by page id, fetch the page's permalink.
@@ -336,7 +353,6 @@ class Noptin_Page {
 			wp_safe_redirect( $page );
 			exit;
 		}
-
 	}
 
 	/**

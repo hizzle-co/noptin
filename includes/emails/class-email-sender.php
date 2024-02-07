@@ -103,6 +103,13 @@ class Noptin_Email_Sender {
 	public $unsubscribe_url = '';
 
 	/**
+	 * The current campaign ID.
+	 *
+	 * @var int
+	 */
+	public $campaign_id;
+
+	/**
 	 * Register relevant hooks.
 	 */
 	public function add_hooks() {
@@ -132,8 +139,14 @@ class Noptin_Email_Sender {
 	 */
 	public function bg_send( $args ) {
 
-		unset( $args['campaign'] );
+		if ( empty( $args['unsubscribe_url'] ) ) {
+			$args['unsubscribe_url'] = \Hizzle\Noptin\Emails\Main::get_current_unsubscribe_url();
+		}
 
+		$allowed_keys = array_keys( get_object_vars( $this ) );
+		$args         = wp_array_slice_assoc( $args, $allowed_keys );
+
+		// Cache the email data.
 		$key  = 'noptin_send_' . md5( wp_json_encode( $args ) );
 		set_transient( $key, $args );
 
@@ -160,19 +173,16 @@ class Noptin_Email_Sender {
 		// Indicate that we're sending an email.
 		$this->sending = true;
 
+		if ( empty( $args['unsubscribe_url'] ) ) {
+			$args['unsubscribe_url'] = \Hizzle\Noptin\Emails\Main::get_current_unsubscribe_url();
+		}
+
 		// Prepare args.
 		foreach ( $args as $key => $value ) {
 			if ( property_exists( $this, $key ) ) {
 				$this->$key = $value;
 			}
 		}
-
-		if ( empty( $this->unsubscribe_url ) ) {
-			$this->unsubscribe_url = \Hizzle\Noptin\Emails\Main::get_current_unsubscribe_url();
-		}
-
-		// Fires before an email is sent.
-		do_action( 'noptin_before_sending_email', $this );
 
 		// Attach our own hooks.
 		$this->before_sending();
@@ -213,7 +223,7 @@ class Noptin_Email_Sender {
 							sprintf(
 								/* Translators: %1$s Email address, %2$s Email subject & error. */
 								__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
-								is_array( $this->recipients ) ? implode( ', ', array_map( 'sanitize_email', $this->recipients ) ) : sanitize_email( $this->recipients ),
+								sanitize_email( $recipient ),
 								wp_specialchars_decode( $this->subject ) . '<code>' . esc_html( $this->get_phpmailer_last_error() ) . '</code>'
 							)
 						);
@@ -226,9 +236,6 @@ class Noptin_Email_Sender {
 
 		// Remove our hooks.
 		$this->after_sending();
-
-		// Hooks after an email is sent.
-		do_action( 'noptin_after_sending_email', $this );
 
 		// Reset class properties.
 		$this->reset();
@@ -272,11 +279,11 @@ class Noptin_Email_Sender {
 	 * @since 1.7.0
 	 */
 	public function before_sending() {
-
 		add_filter( 'wp_mail_from', array( $this, 'get_from_email' ) );
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
 		add_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000000 );
+		do_action( 'noptin_email_sender_before_sending', $this );
 	}
 
 	/**
@@ -412,6 +419,7 @@ class Noptin_Email_Sender {
 		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		remove_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
 		remove_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000000 );
+		do_action( 'noptin_email_sender_after_sending', $this );
 	}
 
 	/**
@@ -452,5 +460,6 @@ class Noptin_Email_Sender {
 		$this->headers                  = array();
 		$this->attachments              = array();
 		$this->disable_template_plugins = true;
+		$this->campaign_id              = 0;
 	}
 }

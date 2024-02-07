@@ -402,35 +402,37 @@ class Email {
 	/**
 	 * Checks if the email can send.
 	 *
-	 * @return bool
+	 * @return bool|\WP_Error
 	 */
-	public function can_send() {
+	public function can_send( $return_wp_error = false ) {
+		$can_send = $this->check_can_send();
 
-		$can_send = $this->is_published() && $this->exists();
-
-		// Check if the campaign is already sent.
-		if ( $can_send && '' !== get_post_meta( $this->id, 'completed', true ) ) {
-			$can_send = false;
+		if ( ! $return_wp_error && is_wp_error( $can_send ) ) {
+			return false;
 		}
 
-		// Check if the campaign is paused.
-		if ( $can_send && '' !== get_post_meta( $this->id, 'paused', true ) ) {
-			$can_send = false;
-		}
-
-		return apply_filters( 'noptin_email_can_send', $can_send, $this );
+		return $can_send;
 	}
 
 	/**
-	 * Sends the email.
+	 * Checks if the email can send.
 	 *
 	 * @return bool|\WP_Error
 	 */
-	public function send() {
+	private function check_can_send() {
 
-		// Abort if we can't send the email.
-		if ( ! $this->can_send() ) {
-			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent.', 'newsletter-optin-box' ) );
+		if ( ! $this->is_published() || ! $this->exists() ) {
+			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent since it is not published.', 'newsletter-optin-box' ) );
+		}
+
+		// Check if the campaign is already sent.
+		if ( '' !== get_post_meta( $this->id, 'completed', true ) ) {
+			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email has already been sent.', 'newsletter-optin-box' ) );
+		}
+
+		// Check if the campaign is paused.
+		if ( '' !== get_post_meta( $this->id, 'paused', true ) ) {
+			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email is paused and cannot be sent.', 'newsletter-optin-box' ) );
 		}
 
 		// Make sure we have an email body and subject.
@@ -444,7 +446,28 @@ class Email {
 			return new \WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
 		}
 
-		// If this is a mass mail, send it and not a newsletter email,
+		return apply_filters( 'noptin_email_can_send', true, $this );
+	}
+
+	/**
+	 * Sends the email.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	public function send() {
+
+		// Abort if we can't send the email.
+		$can_send = $this->can_send( true );
+
+		if ( is_wp_error( $can_send ) ) {
+			return $can_send;
+		}
+
+		if ( ! $can_send ) {
+			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent.', 'newsletter-optin-box' ) );
+		}
+
+		// If this is a mass mail and not a newsletter email,
 		// ... create a newsletter email and send it.
 		if ( $this->is_mass_mail() && 'newsletter' !== $this->type ) {
 
@@ -490,9 +513,6 @@ class Email {
 
 			// Maybe skip sending the email.
 			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
-			if ( is_wp_error( $should_send ) || false === $should_send ) {
-				return $should_send;
-			}
 
 			if ( true === $should_send ) {
 				$newsletter->save();
@@ -521,7 +541,8 @@ class Email {
 				array(
 					'email' => $email,
 					'track' => $track,
-				)
+				),
+				false
 			);
 		}
 
@@ -532,30 +553,28 @@ class Email {
 	 * Sends the email to a single recipient.
 	 *
 	 * @param string|array $recipient
+	 * @param bool $confirm_can_send
 	 * @return bool|\WP_Error
 	 */
-	public function send_to( $recipient ) {
+	public function send_to( $recipient, $confirm_can_send = true ) {
 
-		// Abort if we can't send the email.
-		if ( ! $this->can_send() ) {
-			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent.', 'newsletter-optin-box' ) );
-		}
+		if ( $confirm_can_send ) {
+			// Abort if we can't send the email.
+			$can_send = $this->can_send( true );
 
-		// Make sure we have an email body and subject.
-		if ( empty( $this->subject ) ) {
-			return new \WP_Error( 'noptin_email_no_subject', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
-		}
+			if ( is_wp_error( $can_send ) ) {
+				return $can_send;
+			}
 
-		$content = $this->get_content( $this->get_email_type() );
-
-		if ( empty( $content ) ) {
-			return new \WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
+			if ( ! $can_send ) {
+				return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent.', 'newsletter-optin-box' ) );
+			}
 		}
 
 		if ( is_string( $recipient ) ) {
 			$recipient = array(
 				'email' => $recipient,
-				'track' => false,
+				'track' => true,
 			);
 		}
 
@@ -598,7 +617,13 @@ class Email {
 			)
 		);
 
+		// Log.
+		if ( ! empty( Main::$current_email_recipient['track'] ) ) {
+			increment_noptin_campaign_stat( $this->id, '_noptin_sends' );
+		}
+
 		do_action( 'noptin_after_sending_email', $this, $result );
+		Main::$current_email_recipient = array();
 
 		return $result;
 	}
