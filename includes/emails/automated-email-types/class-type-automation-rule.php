@@ -385,10 +385,16 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 
 		if ( $is_new ) {
 			$campaign_data = get_post_meta( $campaign->id, 'campaign_data', true );
+
+			// If data is stdClass, convert it to an array.
+			if ( is_object( $campaign_data ) ) {
+				$campaign_data = (array) $campaign_data;
+			}
+
 			$campaign_data = ! is_array( $campaign_data ) ? array() : $campaign_data;
 
 			$campaign_data['automation_rule'] = $rule->get_id();
-			update_post_meta( $campaign->id, 'campaign_data', $campaign_data );
+			update_post_meta( $campaign->id, 'campaign_data', (object) $campaign_data );
 		}
 
 		return $rule->get_data();
