@@ -60,6 +60,8 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 * @param array $args Extra arguments passed to the action.
 	 */
 	public function maybe_run( $subject, $rule, $args ) {
+		// Set the current email.
+		$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $this, $args );
 
 		// Ensure that we can run the action.
 		if ( ! $this->can_run( $subject, $rule, $args ) ) {
@@ -67,7 +69,11 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 		}
 
 		// Run the action.
-		$this->run( $subject, $rule, $args );
+		$result = $this->run( $subject, $rule, $args );
+
+		if ( is_wp_error( $result ) ) {
+			log_noptin_message( $result->get_error_message() );
+		}
 
 		// Update the run counts.
 		$rule->set_times_run( $rule->get_times_run() + 1 );
@@ -87,7 +93,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 					__( 'Excecuted automation rule, Trigger: %1$s, Action: %2$s.', 'newsletter-optin-box' ),
 					'<code>' . esc_html( $trigger ) . '</code>',
 					'<code>' . esc_html( $action ) . '</code>'
-				)
+				) . ( is_wp_error( $result ) ? ' <span style="color: red;">' . $result->get_error_message() . '</span>' : '' )
 			);
 		}
 	}
@@ -99,7 +105,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 * @param mixed $subject The subject.
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule.
 	 * @param array $args Extra arguments passed to the action.
-	 * @return void
+	 * @return void|bool|WP_Error
 	 */
 	abstract public function run( $subject, $rule, $args );
 

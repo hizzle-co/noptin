@@ -11,6 +11,11 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Link_Click_Trigger extends Noptin_Open_Email_Trigger {
 
 	/**
+	 * @var string
+	 */
+	public $category = 'Subscribers';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.0
@@ -38,7 +43,7 @@ class Noptin_Link_Click_Trigger extends Noptin_Open_Email_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'When someone clicks on a link in an email', 'newsletter-optin-box' );
+		return __( 'When a subscriber clicks on a link in an email', 'newsletter-optin-box' );
 	}
 
 	/**

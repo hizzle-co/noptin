@@ -482,10 +482,6 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return array
 	 */
 	public function maybe_run( $subject, $trigger, $action, $args ) {
-
-		// Set the current email.
-		$GLOBALS['current_noptin_email'] = $trigger->get_subject_email( $subject, $this, $args );
-
 		// Are we delaying the action?
 		$delay = $this->get_delay();
 

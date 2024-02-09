@@ -582,6 +582,11 @@ class Email {
 			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
 		}
 
+		// Check if the email is unsubscribed.
+		if ( ( ! noptin_has_enabled_double_optin() || 'new_subscriber' !== $this->get_trigger() ) && noptin_is_email_unsubscribed( $recipient['email'] ) ) {
+			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
+		}
+
 		$recipient['cid'] = $this->id;
 
 		// Prepare the email recipient.
@@ -634,7 +639,7 @@ class Email {
 	 * @return bool
 	 */
 	public function is_automation_rule() {
-		return 0 === strpos( $this->get_sub_type(), 'automation_rule_' );
+		return 'automation' === $this->type && 0 === strpos( $this->get_sub_type(), 'automation_rule_' );
 	}
 
 	/**

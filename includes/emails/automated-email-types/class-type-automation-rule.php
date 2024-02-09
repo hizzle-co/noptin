@@ -37,9 +37,8 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 * @param \Noptin_Abstract_Trigger $trigger
 	 */
 	public function __construct( $trigger_id, $trigger ) {
-		$this->type              = $trigger_id;
-		$this->trigger_id        = str_replace( 'automation_rule_', '', $this->type );
-		$this->notification_hook = 'noptin_send_automation_rule_email_' . $this->trigger_id;
+		$this->type       = $trigger_id;
+		$this->trigger_id = str_replace( 'automation_rule_', '', $this->type );
 
 		// Set the category.
 		if ( $trigger->depricated ) {
@@ -53,17 +52,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$this->mail_config = $trigger->mail_config;
 
 		$this->add_hooks();
-	}
-
-	/**
-	 * Registers relevant hooks.
-	 *
-	 */
-	public function add_hooks() {
-		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ), 5 );
-		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ), 5 );
-
-		parent::add_hooks();
 	}
 
 	/**
@@ -164,78 +152,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * (Maybe) Send out an email email.
-	 *
-	 * @param array $trigger_args
-	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 */
-	public function maybe_send_notification( $trigger_args, $campaign ) {
-
-		// Abort if not our email.
-		if ( $this->trigger_id !== $trigger_args['trigger_id'] ) {
-			return;
-		}
-
-		// Ensure the campaign is active.
-		if ( ! $campaign->can_send() ) {
-			return;
-		}
-
-		// Allow sending custom double opt-in emails.
-		$confirm_active = true;
-		if ( 'new_subscriber' === $this->trigger_id && noptin_has_enabled_double_optin() && isset( $trigger_args['rule_id'] ) ) {
-
-			$rule           = noptin_get_automation_rule( $trigger_args['rule_id'] );
-			$settings       = is_wp_error( $rule ) ? array() : $rule->get_action_settings();
-			$confirm_active = ! empty( $settings['fire_after_confirmation'] );
-		}
-
-		if ( ! empty( $trigger_args['send_email_to_inactive'] ) ) {
-			$confirm_active = false;
-		}
-
-		/** @var Noptin_Automation_Rules_Smart_Tags */
-		$this->smart_tags = isset( $trigger_args['smart_tags'] ) ? $trigger_args['smart_tags'] : null;
-
-		foreach ( $this->get_recipients( $campaign, array( '[[email]]' => $trigger_args['email'] ) ) as $recipient => $track ) {
-
-			$this->user       = null;
-			$this->subscriber = null;
-
-			// Prepare the email.
-			if ( ! empty( $this->smart_tags ) ) {
-				$recipient = $this->smart_tags->replace_in_text_field( $recipient );
-			}
-
-			// Abort if not a valid email or is unsubscribed.
-			if ( ! is_email( $recipient ) || ( $confirm_active && noptin_is_email_unsubscribed( $recipient ) ) ) {
-				continue;
-			}
-
-			// Fetch the wp user.
-			$this->maybe_set_subscriber_and_user( $recipient );
-
-			// Send the email.
-			$key = $recipient . '_' . $campaign->id;
-			$this->send( $campaign, $key, array( $recipient => $track ) );
-
-			// Record the activity.
-			noptin_record_subscriber_activity(
-				$recipient,
-				sprintf(
-					// translators: %s is the email name.
-					__( 'Sent the email %1$s', 'newsletter-optin-box' ),
-					'<code>' . esc_html( $campaign->name ) . '</code>'
-				)
-			);
-		}
-
-		$this->user       = null;
-		$this->subscriber = null;
-		$this->smart_tags = null;
-	}
-
-	/**
 	 * Prepares test data.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
@@ -259,7 +175,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			throw new \Exception( 'Automation rule not found' );
 		}
 
-		$this->smart_tags = $trigger->get_test_smart_tags( $rule );
+		noptin()->emails->tags->smart_tags = $trigger->get_test_smart_tags( $rule );
 	}
 
 	/**
@@ -278,36 +194,6 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		}
 
 		return array();
-	}
-
-	/**
-	 * Replaces in subject
-	 *
-	 * @param string $string
-	 * @return string
-	 */
-	public function replace_in_subject( $string ) {
-
-		if ( ! empty( $this->smart_tags ) ) {
-			return $this->smart_tags->replace_in_text_field( $string );
-		}
-
-		return $string;
-	}
-
-	/**
-	 * Replaces in the email body
-	 *
-	 * @param string $string
-	 * @return string
-	 */
-	public function replace_in_body( $content ) {
-
-		if ( ! empty( $this->smart_tags ) ) {
-			return $this->smart_tags->replace_in_body( $content );
-		}
-
-		return $content;
 	}
 
 	/**

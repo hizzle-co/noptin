@@ -25,7 +25,6 @@ class Noptin_Hooks {
 
 		// (Maybe) subscribe users from custom forms.
 		add_action( 'init', array( $this, 'maybe_subscribe' ), 1000 );
-
 	}
 
 	/**
@@ -74,7 +73,6 @@ class Noptin_Hooks {
 			$timestamp = strtotime( 'tomorrow 07:00:00', time() );
 			wp_schedule_event( $timestamp, 'daily', 'noptin_daily_maintenance' );
 		}
-
 	}
 
 	/**

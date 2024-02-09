@@ -136,16 +136,6 @@ class Main {
 					// Normal settings.
 					$trigger_settings = $trigger->get_settings();
 
-					// Send to inactive subscribers.
-					if ( 'new_subscriber' !== $rule->get_trigger_id() ) {
-						$trigger_settings['send_email_to_inactive'] = array(
-							'label'   => __( 'Also send to unsubscribed contacts', 'newsletter-optin-box' ),
-							'el'      => 'input',
-							'type'    => 'checkbox',
-							'default' => false,
-						);
-					}
-
 					// Conditional logic.
 					$trigger_settings['conditional_logic'] = array(
 						'label'       => __( 'Conditional Logic', 'newsletter-optin-box' ),
@@ -163,13 +153,17 @@ class Main {
 					);
 
 					// Heading.
+					$description = $trigger->get_description();
+
+					// Lowercase the first letter.
+					$description = strtolower( $description[0] ) . substr( $description, 1 );
 					$trigger_settings = array_merge(
 						array(
 							'heading' => array(
 								'content' => sprintf(
 									/* translators: %s: Trigger description. */
 									__( 'Noptin will send this email %s', 'newsletter-optin-box' ),
-									$trigger->get_description()
+									$description
 								),
 								'el'      => 'paragraph',
 							),
@@ -509,12 +503,25 @@ class Main {
 	 * @param int $post_id The post id.
 	 */
 	public static function on_delete_campaign( $post_id ) {
+		global $wpdb;
 
 		$email = new Email( $post_id );
 
 		// Ensure email exists.
 		if ( $email->exists() ) {
+
+			// Fire deleted hooks.
 			self::fire_email_action_hook( 'deleted', $email );
+
+			// Delete related stats.
+			delete_noptin_subscriber_meta_by_key( "_campaign_$post_id" );
+
+			$wpdb->delete(
+				$wpdb->usermeta,
+				array(
+					'meta_key' => "_campaign_$post_id",
+				)
+			);
 		}
 	}
 
@@ -571,5 +578,40 @@ class Main {
 	 */
 	public static function get_current_unsubscribe_url() {
 		return get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( self::$current_email_recipient ) ) );
+	}
+
+	/**
+	 * Deletes sent campaigns.
+	 *
+	 */
+	public static function delete_old_emails() {
+
+		$save_days = (int) get_noptin_option( 'delete_campaigns', 0 );
+		if ( empty( $save_days ) ) {
+			return;
+		}
+
+		$args = array(
+			'posts_per_page' => -1,
+			'post_type'      => 'noptin-campaign',
+			'fields'         => 'ids',
+			'date_query'     => array(
+				'before' => "-$save_days days",
+			),
+			'meta_query'     => array(
+				array(
+					'key'   => 'completed',
+					'value' => '1',
+				),
+				array(
+					'key'   => 'campaign_type',
+					'value' => 'newsletter',
+				),
+			),
+		);
+
+		foreach ( get_posts( $args ) as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
 	}
 }

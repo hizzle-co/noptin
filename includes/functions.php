@@ -2187,3 +2187,18 @@ function noptin_prepare_merge_tags_for_js( $merge_tags ) {
 function noptin_has_active_license_key() {
 	return ! ! Noptin_COM::get_active_license_key();
 }
+
+/**
+ * Runs daily maintenance tasks.
+ *
+ * @since 3.0.0
+ */
+function noptin_daily_maintenance() {
+
+	// Delete old emails.
+	\Hizzle\Noptin\Emails\Main::delete_old_emails();
+
+	// Check license status.
+	Noptin_COM::get_active_license_key( true );
+}
+add_action( 'noptin_daily_maintenance', 'noptin_daily_maintenance' );

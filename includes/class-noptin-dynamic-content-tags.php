@@ -22,11 +22,6 @@ abstract class Noptin_Dynamic_Content_Tags {
 	public $tags = array();
 
 	/**
-	 * @var array An array of section tags.
-	 */
-	public $section_tags = array( 'columns', 'column' );
-
-	/**
 	 * Whether we're only replacing partial merge tags.
 	 */
 	public $is_partial = false;
@@ -417,12 +412,12 @@ abstract class Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $text
 	 *
 	 * @return string
 	 */
-	public function replace_in_text_field( $string ) {
-		return $this->replace( $string, 'noptin_clean' );
+	public function replace_in_text_field( $text ) {
+		return $this->replace( $text, 'wp_strip_all_tags' );
 	}
 
 	/**
@@ -571,6 +566,10 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	protected function get_email() {
+
+		if ( ! empty( $GLOBALS['current_noptin_email'] ) ) {
+			return sanitize_email( $GLOBALS['current_noptin_email'] );
+		}
 
 		// Trying retrieving from posted email address.
 		if ( ! empty( noptin()->forms->listener->submitted['email'] ) ) {

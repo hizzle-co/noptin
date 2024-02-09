@@ -13,12 +13,12 @@ class Noptin_Automation_Rules {
 	/**
 	 * @var Noptin_Abstract_Action[] $actions All registered actions.
 	 */
-	private $actions = array();
+	public $actions = array();
 
 	/**
 	 * @var Noptin_Abstract_Trigger[] $triggers All registered triggers.
 	 */
-	private $triggers = array();
+	public $triggers = array();
 
 	/**
 	 * Constructor.

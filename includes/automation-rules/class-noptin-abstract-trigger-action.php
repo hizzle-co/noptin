@@ -213,7 +213,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 * @param mixed $subject The subject.
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.
-	 * @return false|string
+	 * @return string
 	 */
 	public function get_subject_email( $subject, $rule, $args ) {
 
@@ -251,7 +251,6 @@ abstract class Noptin_Abstract_Trigger_Action {
 			return $email;
 		}
 
-		return apply_filters( 'noptin_automation_action_get_subject_email', false, $subject, $rule, $args );
+		return apply_filters( 'noptin_automation_action_get_subject_email', '', $subject, $rule, $args );
 	}
-
 }

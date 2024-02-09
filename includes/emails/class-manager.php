@@ -47,7 +47,6 @@ class Noptin_Email_Manager {
 
 		// Add hooks.
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ) );
-
 	}
 
 	/**
@@ -68,7 +67,6 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type-automation-rule.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer.php';
-
 	}
 
 	/**
@@ -88,72 +86,9 @@ class Noptin_Email_Manager {
 	 *
 	 */
 	public function add_hooks() {
-
-		// Delete related meta whenever a campaign is deleted.
-		add_action( 'delete_post', array( $this, 'delete_stats' ) );
-
-		// Periodically delete sent campaigns.
-		add_action( 'noptin_daily_maintenance', array( $this, 'maybe_delete_campaigns' ) );
-
 		$this->sender->add_hooks();
 		$this->tags->add_hooks();
 		$this->newsletter->add_hooks();
 		$this->automated_email_types->add_hooks();
 	}
-
-	/**
-	 * Deletes campaign stats when the campaign is deleted.
-	 *
-	 * @param int $post_id the campaign whose stats should be deleted.
-	 */
-	public function delete_stats( $post_id ) {
-		global $wpdb;
-
-		delete_noptin_subscriber_meta_by_key( "_campaign_$post_id" );
-
-		$wpdb->delete(
-			$wpdb->usermeta,
-			array(
-				'meta_key' => "_campaign_$post_id",
-			)
-		);
-
-	}
-
-	/**
-	 * Deletes sent campaigns.
-	 *
-	 */
-	public function maybe_delete_campaigns() {
-
-		$save_days = (int) get_noptin_option( 'delete_campaigns', 0 );
-		if ( empty( $save_days ) ) {
-			return;
-		}
-
-		$args = array(
-			'posts_per_page' => -1,
-			'post_type'      => 'noptin-campaign',
-			'fields'         => 'ids',
-			'date_query'     => array(
-				'before' => "-$save_days days",
-			),
-			'meta_query'     => array(
-				array(
-					'key'   => 'completed',
-					'value' => '1',
-				),
-				array(
-					'key'   => 'campaign_type',
-					'value' => 'newsletter',
-				),
-			),
-		);
-
-		foreach ( get_posts( $args ) as $post_id ) {
-			wp_delete_post( $post_id, true );
-		}
-
-	}
-
 }

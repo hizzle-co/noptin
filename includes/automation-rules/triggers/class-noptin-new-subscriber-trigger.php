@@ -153,7 +153,6 @@ class Noptin_New_Subscriber_Trigger extends Noptin_Abstract_Trigger {
 
 			$rule->maybe_run( $subject, $this, $action, $args );
 		}
-
 	}
 
 	/**

@@ -18,6 +18,11 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
     public $is_subscriber_based = true;
 
 	/**
+	 * @var string
+	 */
+	public $category = 'Subscribers';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.3.0
@@ -45,7 +50,7 @@ class Noptin_Open_Email_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'When someone opens an email campaign', 'newsletter-optin-box' );
+		return __( 'When a subscriber opens an email campaign', 'newsletter-optin-box' );
 	}
 
 	/**

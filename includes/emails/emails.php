@@ -135,9 +135,6 @@ function noptin_parse_email_subject_tags( $subject, $partial = false ) {
  * @return string
  */
 function noptin_parse_email_content_tags( $content, $partial = false ) {
-	// Replace [noptin] with [[noptin]].
-	//$content = str_replace( '[noptin]', '[[noptin]]', $content );
-
 	return apply_filters( 'noptin_parse_email_content_tags', $content, $partial );
 }
 
@@ -168,6 +165,21 @@ function noptin_get_new_automation_url() {
  */
 function noptin_get_email_campaign_object( $campaign_id ) {
 	return new \Hizzle\Noptin\Emails\Email( $campaign_id );
+}
+
+/**
+ * Sends an email campaign.
+ *
+ * @since 3.0.0
+ * @param int|\Hizzle\Noptin\Emails\Email $campaign_id
+ * @return bool|\WP_Error
+ */
+function noptin_send_email_campaign( $campaign_id, $alt_smart_tags = null ) {
+	noptin()->emails->tags->smart_tags = $alt_smart_tags;
+	$campaign                          = \Hizzle\Noptin\Emails\Email::from( $campaign_id );
+	$result                            = $campaign->send();
+	noptin()->emails->tags->smart_tags = null;
+	return $result;
 }
 
 /**
