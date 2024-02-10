@@ -486,7 +486,12 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		$delay = $this->get_delay();
 
 		if ( $delay > 0 ) {
-			do_action( 'noptin_delay_automation_rule_execution', $this, $args, $delay );
+			schedule_noptin_background_action(
+				time() + $delay,
+				'noptin_run_delayed_automation_rule',
+				$this->get_id(),
+				$trigger->serialize_trigger_args( $args )
+			);
 		} elseif ( $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
 			$action->maybe_run( $subject, $this, $args );
 		}

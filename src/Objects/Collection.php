@@ -276,6 +276,83 @@ abstract class Collection {
 	}
 
 	/**
+	 * Converts a field to an image block.
+	 *
+	 */
+	public function featured_image_block() {
+		$block_name = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->image_field ) );
+		$class_name = 'wp-block-' . str_replace( '/', '-', $block_name ) . ' ' . $this->image_field;
+
+		ob_start();
+		?>
+			<!-- wp:<?php echo esc_html( $block_name ); ?> -->
+			<table
+				style="border-spacing:0px;border-collapse:collapse;width:100%" border="0"
+				cellpadding="0" cellspacing="0" role="presentation"
+				class="<?php echo esc_html( $class_name ); ?>">
+				<tbody>
+					<tr>
+						<td>
+							<div class="noptin-block__margin-wrapper" style="display:inline-block;max-width:100%">
+								<?php if ( ! empty( $this->url_field ) ) : ?>
+									<a href="<?php echo esc_html( $this->field_to_merge_tag( $this->url_field ) ); ?>" style="display:block;text-decoration:none;max-width:100%;line-height:0">
+								<?php endif; ?>
+									<img
+										src="<?php echo esc_html( $this->field_to_merge_tag( $this->image_field ) ); ?>"
+										alt="<?php echo esc_html( $this->field_to_merge_tag( $this->title_field ) ); ?>"
+										style="max-width:100%" />
+								<?php if ( ! empty( $this->url_field ) ) : ?>
+									</a>
+								<?php endif; ?>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- /wp:<?php echo esc_html( $block_name ); ?> -->
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Converts a field to an image block.
+	 *
+	 */
+	public function read_more_block() {
+		$block_name = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->image_field ) );
+
+		ob_start();
+		?>
+			<!-- wp:<?php echo esc_html( $block_name ); ?> {"style":{"noptin":{"border":{"radius":"5px"},"typography":{"textTransform":"none","textDecoration":"none","textAlign":"center"},"align":"center"}}} -->
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                style="line-height:100%;width:100%;border-collapse:separate;margin:0px"
+                class="wp-block-<?php echo esc_attr( str_replace( '/', '-', $block_name ) ); ?>">
+                <tbody>
+                    <tr>
+                        <td align="center">
+                            <div class="noptin-block__margin-wrapper">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td role="presentation" valign="middle" class="noptin-button-link__wrapper" style="text-align:center;cursor:auto;border-radius:5px">
+                                                <a class="noptin-button-link" href="<?php echo esc_html( $this->field_to_merge_tag( $this->url_field ) ); ?>" style="text-transform:none;text-decoration:none;text-align:center;border-radius:5px;margin:0px;display:block;word-break:break-word">
+													<?php esc_html_e( 'Read more', 'newsletter-optin-box' ); ?>
+												</a>
+											</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+			<!-- /wp:<?php echo esc_html( $block_name ); ?> -->
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
 	 * Retrieves all filtered fields.
 	 *
 	 */

@@ -1911,7 +1911,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 
 		// Add group to label.
 		if ( ! empty( $condition['group'] ) && __( 'General', 'newsletter-optin-box' ) !== $condition['group'] ) {
-			$label = sprintf( '%s >> %s', $condition['group'], $label );
+			$label = sprintf( '<code>%s >> %s</code>', $condition['group'], $label );
 		}
 
 		if ( 'number' === $data_type ) {
@@ -1947,7 +1947,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 		if ( isset( $comparisons[ $rule['condition'] ] ) ) {
 			$rules[] = sprintf(
 				'%s %s <code>%s</code>',
-				strtolower( esc_html( $label ) ),
+				wp_kses_post( $label ),
 				sanitize_text_field( $comparisons[ $rule['condition'] ] ),
 				sanitize_text_field( $value )
 			);

@@ -534,7 +534,7 @@ class Generic_Post_Type extends Post_Type {
 							'el'          => 'image_size_select',
 							'description' => __( 'Select the image size to display.', 'newsletter-optin-box' ),
 							'placeholder' => __( 'Select image size', 'newsletter-optin-box' ),
-							'default'     => 'thumbnail',
+							'default'     => 'large',
 						),
 					),
 				),

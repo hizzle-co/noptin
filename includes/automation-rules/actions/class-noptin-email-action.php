@@ -76,6 +76,10 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 			return false;
 		}
 
+		if ( absint( $campaign->get( 'automation_rule' ) ) !== absint( $rule->get_id() ) ) {
+			return false;
+		}
+
 		if ( ! empty( $args['post_meta'] ) ) {
 			$sent_notification = get_post_meta( $args['post_meta']['id'], $args['post_meta']['key'], true );
 			return ! is_array( $sent_notification ) || (int) $args['post_meta']['id'] !== (int) $sent_notification[0];

@@ -262,6 +262,15 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			);
 		}
 
+		if ( $campaign->sends_immediately() ) {
+			$rule->set_delay( 0 );
+		} else {
+			$interval = '+' . $campaign->get_sends_after() . ' ' . $campaign->get_sends_after_unit();
+			$rule->set_delay( strtotime( $interval ) - time() );
+		}
+
+		$rule->set_status( $campaign->is_published() );
+
 		// Save the rule.
 		$rule->save();
 

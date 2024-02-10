@@ -59,6 +59,11 @@ abstract class Record {
 	 */
 	public function format( $raw_value, $args ) {
 
+		// Format images.
+		if ( 'image' === $args['format'] ) {
+			return sprintf( '<img src="%s" alt="%s" />', esc_url( $raw_value ), esc_attr( $args['alt'] ) );
+		}
+
 		// Format sizes.
 		if ( 'size' === $args['format'] ) {
 			$decimals = isset( $args['decimals'] ) ? $args['decimals'] : 2;

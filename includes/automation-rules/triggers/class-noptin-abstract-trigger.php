@@ -397,6 +397,9 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 */
 	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
 
+		// Set the current email.
+		$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $this, $args );
+
 		$conditional_logic = $rule->get_conditional_logic();
 		// Abort if conditional logic is not set.
 		if ( empty( $conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) ) {

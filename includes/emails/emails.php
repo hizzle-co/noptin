@@ -629,7 +629,7 @@ function noptin_email_wrap_blocks( $blocks, $footer_text = '', $heading_text = '
 	$footer      = '<!-- wp:paragraph { "anchor":"footer-text","placeholder":"' . $placeholder . '","style":{"noptin":{"typography":{"textAlign":"center","fontSize":13},"color":{"text":"#666666","link":"#111111"}}}} --> <p style="text-align:center;font-size:13px;color:#666666" class="wp-block-paragraph footer-text">' . $footer_text . '</p> <!-- /wp:paragraph -->';
 
 	if ( empty( $blocks ) ) {
-		$blocks = '<!-- wp:paragraph --> <p class="wp-block-paragraph"></p> <!-- /wp:paragraph -->';
+		$blocks = noptin_email_wrap_paragraph_block();
 	}
 
 	// Prepend heading block if we have a heading.
@@ -639,6 +639,16 @@ function noptin_email_wrap_blocks( $blocks, $footer_text = '', $heading_text = '
 	}
 
 	return '<!-- wp:noptin/group {"anchor":"main-content-wrapper","style":{"noptin":{"align":"center","color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group main-content-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $blocks . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group {"anchor":"main-footer-wrapper","style":{"noptin":{"align":"center","color":{"background":""}}}} --> <div class="wp-block-noptin-group main-footer-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
+}
+
+/**
+ * Returns a paragraph block.
+ */
+function noptin_email_wrap_paragraph_block( $content = '' ) {
+	return sprintf(
+		'<!-- wp:paragraph --> <p class="wp-block-paragraph">%s</p> <!-- /wp:paragraph -->' . "\n",
+		$content
+	);
 }
 
 /**

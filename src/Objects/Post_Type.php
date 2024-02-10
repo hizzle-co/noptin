@@ -52,6 +52,61 @@ abstract class Post_Type extends Collection {
 	 * @return array $triggers The triggers.
 	 */
 	public function get_triggers() {
+		$content_normal = '';
+		$blocks         = '';
+
+		if ( ! empty( $this->image_field ) ) {
+			$content_normal .= sprintf(
+				'<p>%s</p>',
+				$this->field_to_merge_tag(
+					$this->image_field,
+					array(
+						'size'   => 'large',
+						'format' => 'image',
+						'alt'    => $this->field_to_merge_tag( $this->title_field ),
+					)
+				)
+			);
+
+			$blocks .= $this->featured_image_block();
+		}
+
+		if ( ! empty( $this->description_field ) ) {
+			$content_normal .= sprintf(
+				'<p>%s</p>',
+				$this->field_to_merge_tag( $this->description_field )
+			);
+
+			$block_name = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->description_field ) );
+			$blocks    .= sprintf(
+				'<!-- wp:%s --><p class="wp-block-%s noptin-block__margin-wrapper %s">%s</p><!-- /wp:%s -->',
+				$block_name,
+				str_replace( '/', '-', $block_name ),
+				$this->description_field,
+				$this->field_to_merge_tag( $this->description_field ),
+				$block_name
+			);
+		}
+
+		if ( ! empty( $this->url_field ) ) {
+
+			$content_normal .= sprintf(
+				'<div>[[button url="%s" text="%s"]]</div><p>%s</p><p>%s</p>',
+				$this->field_to_merge_tag( $this->url_field ),
+				__( 'Continue Reading', 'newsletter-optin-box' ),
+				__( "If that doesn't work, copy and paste the following link into your browser:", 'newsletter-optin-box' ),
+				$this->field_to_merge_tag( $this->url_field )
+			);
+
+			$blocks .= sprintf(
+				'%s%s%s',
+				$this->read_more_block(),
+				noptin_email_wrap_paragraph_block( __( "If that doesn't work, copy and paste the following link into your browser:", 'newsletter-optin-box' ) ),
+				noptin_email_wrap_paragraph_block( $this->field_to_merge_tag( $this->url_field ) )
+			);
+
+		}
+
 		return array_merge(
 			parent::get_triggers(),
 			array(
@@ -77,13 +132,15 @@ abstract class Post_Type extends Collection {
 							)
 						),
 						'defaults'    => array(
-							'subject'      => $this->field_to_merge_tag( $this->title_field ),
-							'heading'      => $this->field_to_merge_tag( $this->title_field ),
-							'preview_text' => sprintf(
+							'subject'        => $this->field_to_merge_tag( $this->title_field ),
+							'heading'        => $this->field_to_merge_tag( $this->title_field ),
+							'preview_text'   => sprintf(
 								/* translators: %s: Object type label. */
 								__( 'A new %s has been published on [[blog_name]].', 'newsletter-optin-box' ),
 								strtolower( $this->singular_label )
 							),
+							'blocks'         => $blocks,
+							'content_normal' => $content_normal,
 						),
 					),
 				),

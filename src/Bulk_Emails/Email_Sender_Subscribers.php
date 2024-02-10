@@ -21,9 +21,80 @@ class Email_Sender_Subscribers extends Email_Sender {
 	 * @return array
 	 */
 	public function get_sender_settings() {
+		$fields = array();
+
+		foreach ( get_noptin_subscriber_filters() as $key => $filter ) {
+
+			// Skip status since emails can only be sent to active subscribers.
+			if ( 'status' === $key ) {
+				continue;
+			}
+
+			$is_new_noptin = version_compare( noptin()->version, '3.0.0', '>=' );
+			$multiple      = 2 < count( $filter['options'] );
+			$options       = $is_new_noptin ? $filter['options'] : array_replace(
+				array(
+					'' => __( 'Any', 'newsletter-optin-box' ),
+				),
+				$filter['options']
+			);
+
+			$fields[ $key ] = array(
+				'label'                => $filter['label'],
+				'type'                 => 'select',
+				'placeholder'          => __( 'Any', 'newsletter-optin-box' ),
+				'canSelectPlaceholder' => true,
+				'options'              => $options,
+				'description'          => ( empty( $filter['description'] ) || $filter['label'] === $filter['description'] ) ? '' : $filter['description'],
+			);
+
+			if ( $multiple || $filter['is_multiple'] ) {
+
+				$fields[ $key ]['placeholder'] = __( 'Optional. Leave blank to send to all', 'newsletter-optin-box' );
+				$fields[ $key ]['multiple']    = 'true';
+
+				if ( ! $is_new_noptin ) {
+					$fields[ $key ]['select2'] = 'true';
+					$fields[ $key ]['options'] = $filter['options'];
+				}
+
+				$fields[ $key . '_not' ] = array_merge(
+					$fields[ $key ],
+					array(
+						'label'       => sprintf(
+							// translators: %s is the filter label.
+							__( '%s - Exclude', 'newsletter-optin-box' ),
+							$filter['label']
+						),
+						'description' => '',
+					)
+				);
+			}
+		}
+
+		$all_tags = array();
+
+		if ( is_callable( array( noptin()->db(), 'get_all_meta_by_key' ) ) ) {
+			$all_tags = noptin()->db()->get_all_meta_by_key( 'tags' );
+		}
+
+		$fields['tags'] = array(
+			'label'       => __( 'Tags', 'newsletter-optin-box' ),
+			'type'        => 'token',
+			'description' => __( 'Optional. Filter recipients by their tags.', 'newsletter-optin-box' ),
+			'suggestions' => $all_tags,
+		);
+
+		$fields['tags_not'] = array(
+			'label'       => __( 'Tags - Exclude', 'newsletter-optin-box' ),
+			'type'        => 'token',
+			'description' => __( 'Optional. Exclude recipients by their tags.', 'newsletter-optin-box' ),
+			'suggestions' => $all_tags,
+		);
+
 		return array(
 			'key'    => 'noptin_subscriber_options',
-			'fields' => apply_filters( 'noptin_subscriber_sending_options', array() ),
+			'fields' => apply_filters( 'noptin_subscriber_sending_options', $fields ),
 			'upsell' => array(
 				'link'    => noptin_get_upsell_url( '/pricing/', 'filter-subscribers', 'email-campaigns' ),
 				'message' => __( 'The add-ons pack allows you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ),
