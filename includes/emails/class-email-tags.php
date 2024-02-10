@@ -184,6 +184,14 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'callback'    => array( $this, 'get_button' ),
 			'example'     => "button text='Click Here' url='" . home_url() . "' background='brand' color='white' rounding='4px'",
 		);
+
+		// Ensure we have a replacement for [[email]].
+		if ( ! isset( $this->tags['email'] ) ) {
+			$this->tags['email'] = array(
+				'description' => __( 'Current email address', 'newsletter-optin-box' ),
+				'callback'    => array( $this, 'get_email' ),
+			);
+		}
 	}
 
 	/**

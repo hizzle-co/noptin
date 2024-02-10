@@ -32,7 +32,20 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 	 * @return Customer $person The person.
 	 */
 	public function get_from_user( $user ) {
-		return new Customer( $user ? $user->ID : 0 );
+
+		// Abort if no user.
+		if ( ! $user ) {
+			return new Customer( 0 );
+		}
+
+		$external = new \WC_Customer( $user->ID );
+
+		if ( $external->get_id() > 0 ) {
+			return new Customer( $external );
+		}
+
+		// Fetch for order by email.
+		return $this->get_from_email( $user->user_email );
 	}
 
 	/**
@@ -42,7 +55,23 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 	 * @return Customer $person The person.
 	 */
 	public function get_from_email( $email ) {
-		return $this->get_from_user( get_user_by( 'email', $email ) );
+
+		// Fetch for order by email.
+		$order = wc_get_orders(
+			array(
+				'limit'    => 1,
+				'return'   => 'objects',
+				'orderby'  => 'none',
+				'customer' => $email,
+			)
+		);
+
+		if ( $order ) {
+			$user_id = $order[0]->get_user_id() > 0 ? $order[0]->get_user_id() : 0 - $order[0]->get_id();
+			return new Customer( $user_id );
+		}
+
+		return new Customer( 0 );
 	}
 
 	/**

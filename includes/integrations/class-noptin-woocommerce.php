@@ -83,6 +83,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
 		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority );
 		add_filter( 'noptin_automation_trigger_known_smart_tags', array( $this, 'register_automation_smart_tags' ), $this->priority, 2 );
+		add_action( 'noptin_email_manager_init', array( $this, 'register_merge_tags' ) );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
 	}
@@ -160,6 +161,24 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	}
 
 	/**
+	 * Adds the coupon codes merge tag to emails and forms.
+	 *
+	 * @param \Noptin_Email_Manager|\Noptin_Form_Manager $manager
+	 */
+	public function register_merge_tags( $manager ) {
+		$manager->tags->add_tag(
+			'woocommerce_orders',
+			array(
+				'description'       => __( 'WooCommerce orders', 'newsletter-optin-box' ),
+				'example'           => 'woocommerce_orders',
+				'conditional_logic' => 'number',
+				'partial'           => false,
+				'callback'          => array( $this, 'get_current_subscriber_woocommerce_orders_count' ),
+			)
+		);
+	}
+
+	/**
 	 * Filters known smart tags.
 	 *
 	 * @since 1.11.0
@@ -175,6 +194,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 				'description'       => __( 'WooCommerce orders', 'newsletter-optin-box' ),
 				'example'           => 'woocommerce_orders',
 				'conditional_logic' => 'number',
+				'partial'           => false,
 				'callback'          => array( $this, 'get_current_subscriber_woocommerce_orders_count' ),
 			);
 		}
@@ -582,63 +602,14 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * @inheritdoc
 	 */
 	public function get_order_count( $customer_id_or_email ) {
-
-		if ( empty( $customer_id_or_email ) ) {
-			return 0;
-		}
-
-		if ( is_email( $customer_id_or_email ) && email_exists( $customer_id_or_email ) ) {
-			$customer_id_or_email = email_exists( $customer_id_or_email );
-		}
-
-		if ( is_numeric( $customer_id_or_email ) ) {
-			return (int) wc_get_customer_order_count( $customer_id_or_email );
-		}
-
-		$orders = wc_get_orders(
-			array(
-				'limit'         => -1,
-				'billing_email' => $customer_id_or_email,
-				'return'        => 'ids',
-				'status'        => array_keys( wc_get_order_statuses() ),
-			)
-		);
-
-		return count( $orders );
-
+		return \Hizzle\Noptin\Integrations\WooCommerce\Main::count_customer_orders( $customer_id_or_email );
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_total_spent( $customer_id_or_email ) {
-
-		if ( empty( $customer_id_or_email ) ) {
-			return 0;
-		}
-
-		if ( is_numeric( $customer_id_or_email ) ) {
-			return (float) wc_get_customer_total_spent( $customer_id_or_email );
-		}
-
-		// Fetch all customer orders.
-		$orders = wc_get_orders(
-			array(
-				'limit'         => -1,
-				'billing_email' => $customer_id_or_email,
-				'status'        => wc_get_is_paid_statuses(),
-			)
-		);
-
-		$total = 0;
-
-		// Get the sum of order totals.
-		foreach ( $orders as $order ) {
-			$total += $order->get_total();
-		}
-
-		return $total;
-
+		return \Hizzle\Noptin\Integrations\WooCommerce\Main::calculate_customer_lifetime_value( $customer_id_or_email );
 	}
 
 	/**

@@ -50,6 +50,10 @@ class Noptin_Automation_Rules_Smart_Tags extends Noptin_Dynamic_Content_Tags {
 				$tag['replacement'] = $values['subject_orig'];
 			}
 
+			if ( ! isset( $tag['partial'] ) ) {
+				$tag['partial'] = true;
+			}
+
 			$this->tags[ $merge_tag ] = $tag;
 		}
 

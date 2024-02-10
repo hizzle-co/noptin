@@ -272,13 +272,18 @@ abstract class Noptin_Dynamic_Content_Tags {
 			$replacement = $replacement ? 'yes' : 'no';
 		}
 
+		// Nulls.
+		if ( is_null( $replacement ) ) {
+			$replacement = '';
+		}
+
 		if ( ! is_scalar( $replacement ) ) {
 			$replacement = wp_json_encode( $replacement );
 		}
 
 		$replacement = (string) $replacement;
 
-		if ( ( '' === $replacement || null === $replacement ) && isset( $attributes['default'] ) ) {
+		if ( '' === $replacement && isset( $attributes['default'] ) ) {
 			$replacement = trim( $attributes['default'] );
 		}
 

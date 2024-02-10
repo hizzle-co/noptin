@@ -43,7 +43,7 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 					}
 				}
 			} else {
-				$external = new \WC_Customer( get_user_by( 'id', $external ) );
+				$external = new \WC_Customer( $external );
 			}
 		}
 
@@ -99,7 +99,7 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 		if ( 'first_order_date' === $field ) {
 			$first_order = wc_get_orders(
 				array(
-					'customer' => $this->external->get_id(),
+					'customer' => $this->external->get_id() > 0 ? $this->external->get_id() : $this->external->get_email(),
 					'limit'    => 1,
 					'orderby'  => 'date',
 					'order'    => 'ASC',
@@ -112,6 +112,16 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 
 			$date = $first_order[0]->get_date_created();
 			return $date ? $date->date_i18n( wc_date_format() ) : '';
+		}
+
+		// Order count.
+		if ( 'order_count' === $field && $this->external->get_id() < 1 ) {
+			return Main::count_customer_orders( $this->external->get_email() );
+		}
+
+		// Total spent.
+		if ( 'total_spent' === $field && $this->external->get_id() < 1 ) {
+			return Main::calculate_customer_lifetime_value( $this->external->get_email() );
 		}
 
 		// Check if we have a method get_$field.
