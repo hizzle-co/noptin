@@ -127,6 +127,11 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 	 *
 	 */
 	public function default_name() {
+
+		if ( ! empty( $this->mail_config['label'] ) ) {
+			return $this->mail_config['label'];
+		}
+
 		return $this->get_name();
 	}
 

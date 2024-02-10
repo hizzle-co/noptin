@@ -284,6 +284,9 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			throw new \Exception( 'Collection not registered' );
 		}
 
+		// Prepare current title tag.
+		$GLOBALS['noptin_current_title_tag'] = $collection->field_to_merge_tag( $collection->title_field );
+
 		// Fetch person.
 		$subject = $this->get_collection_subject( $args['subject_id'] );
 

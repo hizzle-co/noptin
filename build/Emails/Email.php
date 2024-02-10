@@ -471,18 +471,21 @@ class Email {
 		// ... create a newsletter email and send it.
 		if ( $this->is_mass_mail() && 'newsletter' !== $this->type ) {
 
+			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
+
 			// Prepare campaign args.
-			$type = $this->get_email_type();
-			$args = array_merge(
+			$type   = $this->get_email_type();
+			$suffix = empty( $GLOBALS['noptin_current_title_tag'] ) ? date_i18n( get_option( 'date_format' ) ) : noptin_parse_email_subject_tags( $GLOBALS['noptin_current_title_tag'] );
+			$args   = array_merge(
 				$this->options,
 				array(
 					'parent_id'    => $this->id,
 					'status'       => 'publish',
 					'type'         => 'newsletter',
-					'name'         => sprintf( '%1$s [%2$s]', esc_html( $this->name ), date_i18n( get_option( 'date_format' ) ) ),
+					'name'         => sprintf( '%1$s - %2$s', esc_html( $this->name ), esc_html( $suffix ) ),
 					'subject'      => noptin_parse_email_subject_tags( $this->get_subject(), true ),
 					'heading'      => noptin_parse_email_content_tags( $this->get( 'heading' ), true ),
-					'content'      => noptin_parse_email_content_tags( $this->content, true ),
+					'content'      => noptin_parse_email_content_tags( \Noptin_Email_Generator::handle_item_lists_shortcode( $this->content ), true ),
 					'author'       => $this->author,
 					'preview_text' => noptin_parse_email_content_tags( $this->get( 'preview_text' ), true ),
 					'footer_text'  => noptin_parse_email_content_tags( $this->get( 'footer_text' ), true ),
@@ -493,6 +496,8 @@ class Email {
 
 				// Check if the key starts with content_.
 				if ( 0 === strpos( $key, 'content_' ) ) {
+
+					$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $value );
 
 					// Parse paragraphs.
 					if ( 'content_normal' === $type ) {
@@ -510,6 +515,10 @@ class Email {
 
 			// Prepare the newsletter.
 			$newsletter = new Email( $args );
+
+			do_action( 'noptin_after_sending_email', $newsletter, null );
+
+			unset( $GLOBALS['current_noptin_email_suffix'] );
 
 			// Maybe skip sending the email.
 			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
@@ -1018,11 +1027,12 @@ class Email {
 		$recipient['cid'] = $this->id;
 
 		Main::init_current_email_recipient( $recipient );
+		$recipient = Main::$current_email_recipient;
 
 		try {
-			do_action( 'noptin_prepare_email_preview', $mode, $recipient, $this );
-			do_action( "noptin_prepare_{$this->type}_email_preview", $mode, $recipient, $this );
-			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_preview", $mode, $recipient, $this );
+			do_action( 'noptin_prepare_email_preview', $this, $mode, $recipient );
+			do_action( "noptin_prepare_{$this->type}_email_preview", $this, $mode, $recipient );
+			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_preview", $this, $mode, $recipient );
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'exception', $e->getMessage() );
 		}

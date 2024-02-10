@@ -31,10 +31,8 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function add_hooks() {
 
-		// Register known tags.
-		$this->register();
-
 		// Add hooks.
+		add_action( 'init', array( $this, 'register' ), 0 );
 		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ), 10, 2 );
 		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ), 10, 2 );
 	}
@@ -85,15 +83,17 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		}
 
 		$this->is_partial = $is_partial;
-		$result           = $this->replace( $content, '' );
+		$content          = $this->replace( $content, '' );
 		$this->is_partial = false;
-		return $result;
+		return $content;
 	}
 
 	/**
 	 * Register template tags
 	 */
 	public function register() {
+		/** @var \WP_Locale $wp_locale */
+		global $wp_locale;
 
 		$this->tags['unsubscribe_url'] = array(
 			'description' => __( 'The unsubscribe URL.', 'newsletter-optin-box' ),
@@ -117,21 +117,39 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		);
 
 		$this->tags['date'] = array(
-			// translators: Example date.
-			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
+			'description' => __( 'The current date', 'newsletter-optin-box' ),
 			'replacement' => date_i18n( get_option( 'date_format' ) ),
 		);
 
 		$this->tags['time'] = array(
-			// translators: Example time.
-			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ) ) . '</strong>' ),
+			'description' => __( 'The current time', 'newsletter-optin-box' ),
 			'replacement' => date_i18n( get_option( 'time_format' ) ),
 		);
 
 		$this->tags['year'] = array(
-			// translators: Example year.
-			'description' => sprintf( __( 'The current year. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( 'Y' ) . '</strong>' ),
+			'description' => __( 'The current year', 'newsletter-optin-box' ),
 			'replacement' => date_i18n( 'Y' ),
+		);
+
+		$this->tags['month'] = array(
+			'description'       => __( 'The current month', 'newsletter-optin-box' ),
+			'replacement'       => current_time( 'm' ),
+			'options'           => $wp_locale->month,
+			'conditional_logic' => 'number',
+		);
+
+		$this->tags['day'] = array(
+			'description'       => __( 'The day of the month', 'newsletter-optin-box' ),
+			'replacement'       => current_time( 'j' ),
+			'options'           => array_combine( range( 1, 31 ), range( 1, 31 ) ),
+			'conditional_logic' => 'number',
+		);
+
+		$this->tags['weekday'] = array(
+			'description'       => __( 'The day of the weekday', 'newsletter-optin-box' ),
+			'replacement'       => current_time( 'w' ),
+			'options'           => $wp_locale->weekday,
+			'conditional_logic' => 'number',
 		);
 
 		$this->tags['noptin'] = array(

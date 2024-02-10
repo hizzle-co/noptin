@@ -64,7 +64,9 @@ abstract class Noptin_Email_Type {
 	 *
 	 */
 	public function add_hooks() {
-		add_action( 'noptin_prepare_email_preview', array( $this, 'prepare_preview' ), 10, 3 );
+		add_action( 'noptin_before_send_email', array( $this, 'before_send' ) );
+		add_action( 'noptin_after_sending_email', array( $this, 'after_send' ) );
+		add_action( 'noptin_prepare_email_preview', array( $this, 'prepare_preview' ) );
 		add_filter( 'noptin_get_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
 		add_filter( 'noptin_get_default_email_props', array( $this, 'get_default_props' ), 10, 2 );
 	}
@@ -458,20 +460,33 @@ abstract class Noptin_Email_Type {
 	/**
 	 * Prepares an email preview.
 	 *
-	 * @param string $mode The preview mode. Either 'browser' or 'preview'.
-	 * @param array $recipient The preview recipient.
 	 * @param \Hizzle\Noptin\Emails\Email $email The email being previewed.
 	 */
-	public function prepare_preview( $mode, $recipient, $email ) {
+	public function prepare_preview( $email ) {
 
 		if ( $this->type !== $email->type && $this->type !== $email->get_sub_type() ) {
 			return;
 		}
 
+		// Prepare enviroment.
+		$this->before_send( $email );
+
+		// Set-up test data for the preview.
+		$this->prepare_test_data( $email );
+	}
+
+	/**
+	 * Prepares the current recipient.
+	 *
+	 * This method exists for backward compatibility.
+	 */
+	private function prepare_current_recipient() {
+		$this->recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
+
 		// Set subscriber.
 		$this->subscriber = null;
-		if ( isset( $recipient['sid'] ) && ! empty( $recipient['sid'] ) ) {
-			$subscriber = noptin_get_subscriber( $recipient['sid'] );
+		if ( ! empty( $this->recipient['sid'] ) ) {
+			$subscriber = noptin_get_subscriber( $this->recipient['sid'] );
 
 			if ( $subscriber->exists() ) {
 				$this->subscriber = $subscriber;
@@ -480,8 +495,8 @@ abstract class Noptin_Email_Type {
 
 		// Set user.
 		$this->user = null;
-		if ( isset( $recipient['uid'] ) && ! empty( $recipient['uid'] ) ) {
-			$user = get_userdata( $recipient['uid'] );
+		if ( ! empty( $this->recipient['uid'] ) ) {
+			$user = get_userdata( $this->recipient['uid'] );
 
 			if ( $user && $user->exists() ) {
 				$this->user = $user;
@@ -489,15 +504,9 @@ abstract class Noptin_Email_Type {
 		}
 
 		// If we have an email.
-		if ( isset( $recipient['email'] ) && ! empty( $recipient['email'] ) ) {
-			$this->maybe_set_subscriber_and_user( $recipient['email'] );
+		if ( ! empty( $this->recipient['email'] ) ) {
+			$this->maybe_set_subscriber_and_user( $this->recipient['email'] );
 		}
-
-		// Set-up test data for the preview.
-		$this->prepare_test_data( $email );
-
-		// Prepare enviroment.
-		$this->before_send( $email );
 	}
 
 	/**
@@ -505,16 +514,14 @@ abstract class Noptin_Email_Type {
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
-	protected function before_send( $campaign ) {
+	public function before_send( $campaign ) {
 
-		// Prepare recipient.
-		$this->recipient = array_filter(
-			array(
-				'cid' => $campaign->id,
-				'uid' => empty( $this->user ) ? false : $this->user->ID,
-				'sid' => empty( $this->subscriber ) ? false : $this->subscriber->get( 'id' ),
-			)
-		);
+		if ( $this->type !== $campaign->type && $this->type !== $campaign->get_sub_type() ) {
+			return;
+		}
+
+		// Backward compatibility.
+		$this->prepare_current_recipient();
 
 		// Generate unsubscribe url.
 		$this->unsubscribe_url = get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( $this->recipient ) ) );
@@ -524,8 +531,6 @@ abstract class Noptin_Email_Type {
 
 		// Indicate that we're sending an email.
 		$this->sending = true;
-
-		do_action( 'noptin_before_send_email', $campaign, $this );
 	}
 
 	/**
@@ -587,7 +592,7 @@ abstract class Noptin_Email_Type {
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
-	protected function after_send( $campaign ) {
+	public function after_send( $campaign ) {
 
 		// Revert recipient.
 		$this->recipient = array();
@@ -601,8 +606,6 @@ abstract class Noptin_Email_Type {
 		$this->user            = null;
 		$this->subscriber      = null;
 		$this->unsubscribe_url = '';
-
-		do_action( 'noptin_after_sending_email', $campaign, $this );
 	}
 
 	/**
@@ -649,14 +652,14 @@ abstract class Noptin_Email_Type {
 		// Set subscriber.
 		$subscriber = noptin_get_subscriber( $email );
 
-		if ( $subscriber->exists() ) {
+		if ( empty( $this->subscriber ) && $subscriber->exists() ) {
 			$this->subscriber = $subscriber;
 		}
 
 		// Set user.
 		$user = get_user_by( 'email', $email );
 
-		if ( $user ) {
+		if ( empty( $this->user ) && $user ) {
 			$this->user = $user;
 		}
 	}

@@ -43,6 +43,10 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 	 */
 	public function run( $subject, $rule, $args ) {
 
+		if ( ! empty( $args['post_meta'] ) ) {
+			update_post_meta( (int) $args['post_meta']['id'], $args['post_meta']['key'], array( (int) $args['post_meta']['id'], (int) $rule->get_action_setting( 'automated_email_id' ) ) );
+		}
+
 		return noptin_send_email_campaign(
 			$rule->get_action_setting( 'automated_email_id' ),
 			isset( $args['smart_tags'] ) ? $args['smart_tags'] : null
@@ -68,7 +72,16 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 
 		$campaign = noptin_get_email_campaign_object( $automated_email_id );
 
-		return $campaign->can_send();
+		if ( ! $campaign->can_send() ) {
+			return false;
+		}
+
+		if ( ! empty( $args['post_meta'] ) ) {
+			$sent_notification = get_post_meta( $args['post_meta']['id'], $args['post_meta']['key'], true );
+			return ! is_array( $sent_notification ) || (int) $args['post_meta']['id'] !== (int) $sent_notification[0];
+		}
+
+		return true;
 	}
 
 	/**

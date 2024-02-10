@@ -634,6 +634,9 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			$newsletter->save();
 		}
 
+		// Remove temp variables.
+		$this->post_digest = null;
+
 		// Clear environment.
 		$this->after_send( $campaign );
 	}
@@ -960,18 +963,5 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 		parent::prepare_test_data( $email );
 
 		$this->post_digest = $email;
-	}
-
-	/**
-	 * Fired after sending a campaign.
-	 *
-	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 */
-	protected function after_send( $campaign ) {
-
-		// Remove temp variables.
-		$this->post_digest = null;
-
-		parent::after_send( $campaign );
 	}
 }

@@ -71,11 +71,11 @@ abstract class Collection {
 	public $context;
 
 	// Template.
-	protected $title_field       = '';
-	protected $description_field = '';
-	protected $image_field       = '';
-	protected $url_field         = '';
-	protected $meta_field        = '';
+	public $title_field       = '';
+	public $description_field = '';
+	public $image_field       = '';
+	public $url_field         = '';
+	public $meta_field        = '';
 
 	/**
 	 * Class constructor.
@@ -250,7 +250,7 @@ abstract class Collection {
 	 *
 	 * @return string $merge_tag The merge tag.
 	 */
-	protected function field_to_merge_tag( $field, $attributes = '' ) {
+	public function field_to_merge_tag( $field, $attributes = '' ) {
 
 		if ( empty( $field ) ) {
 			return '';

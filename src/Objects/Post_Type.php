@@ -21,11 +21,11 @@ abstract class Post_Type extends Collection {
 	 */
 	public $can_list = true;
 
-	protected $title_field       = 'title';
-	protected $description_field = 'excerpt';
-	protected $image_field       = 'featured_image';
-	protected $url_field         = 'url';
-	protected $meta_field        = 'date';
+	public $title_field       = 'title';
+	public $description_field = 'excerpt';
+	public $image_field       = 'featured_image';
+	public $url_field         = 'url';
+	public $meta_field        = 'date';
 
 	/**
 	 * Constructor
@@ -140,6 +140,10 @@ abstract class Post_Type extends Collection {
 				'subject_id' => $user->ID,
 				'url'        => get_edit_post_link( $post_id ),
 				'activity'   => get_the_title( $post_id ),
+				'post_meta'  => array(
+					'id'  => $post_id,
+					'key' => 'noptin_sent_notification_campaign',
+				),
 			)
 		);
 	}

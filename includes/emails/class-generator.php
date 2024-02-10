@@ -324,11 +324,15 @@ class Noptin_Email_Generator {
 	 */
 	public function post_process( $content ) {
 
+		if ( empty( $content ) ) {
+			return $content;
+		}
+
 		// Inject preheader.
 		$content = $this->inject_preheader( $content );
 
 		// Process list items.
-		$content = $this->handle_item_lists_shortcode( $content );
+		$content = self::handle_item_lists_shortcode( $content );
 
 		// Do merge tags.
 		$content = noptin_parse_email_content_tags( $content );
@@ -364,8 +368,12 @@ class Noptin_Email_Generator {
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );
 	}
 
-	private function handle_item_lists_shortcode( $content ) {
+	public static function handle_item_lists_shortcode( $content ) {
 		global $shortcode_tags;
+
+		if ( empty( $content ) ) {
+			return $content;
+		}
 
 		// Save original shortcodes
 		$original_shortcodes = $shortcode_tags;
@@ -392,7 +400,7 @@ class Noptin_Email_Generator {
 	private function remove_unused_classes_and_ids( $html ) {
 
 		// Check if DOMDocument is available.
-		if ( ! class_exists( 'DOMDocument' ) ) {
+		if ( ! class_exists( 'DOMDocument' ) || empty( $content ) ) {
 			return $html;
 		}
 

@@ -150,7 +150,7 @@ class Table extends \WP_List_Table {
 
 			'_preview'  => sprintf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( $item->get_preview_url() ),
+				esc_url( get_preview_post_link( $item->id ) ),
 				esc_html__( 'Preview', 'newsletter-optin-box' )
 			),
 

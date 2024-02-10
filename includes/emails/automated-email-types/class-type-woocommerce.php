@@ -1246,7 +1246,7 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
-	protected function after_send( $campaign ) {
+	public function after_send( $campaign ) {
 
 		// Remove temp variables.
 		$this->customer   = null;

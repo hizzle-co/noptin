@@ -345,10 +345,25 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$this->escape_function = $escape_function;
 
 		// Replace strings like this: {tagname attr="value"}.
-		$content = preg_replace_callback( $regex, array( $this, 'replace_tag' ), $content );
+		$content = $this->preg_replace( $regex, $content );
 
 		// Call again to take care of nested variables, e.g, {tagname attr="{value}"}.
-		return preg_replace_callback( $regex, array( $this, 'replace_tag' ), $content );
+		return $this->preg_replace( $regex, $content );
+	}
+
+	private function preg_replace( $regex, $content ) {
+
+		$replaced = preg_replace_callback(
+			$regex,
+			array( $this, 'replace_tag' ),
+			$content
+		);
+
+		if ( null === $replaced ) {
+			return $content;
+		}
+
+		return $replaced;
 	}
 
 	/**
@@ -360,7 +375,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	protected function get_regex( $opening_tag, $closing_tag ) {
 
 		return sprintf(
-			'/%1$s(?P<name>\w[\w\.\/-]*\w)(?P<attributes>\ +(?:(?!%1$s)[^}\n])+)*%2$s/',
+			'/%1$s(?P<name>\w[\w\.\/-]*\w)(?P<attributes>\ +(?:(?!%1$s)[^%2$s\n])+)*%2$s/',
 			preg_quote( $opening_tag, '/' ),
 			preg_quote( $closing_tag, '/' )
 		);

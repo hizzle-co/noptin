@@ -557,12 +557,14 @@ class Main {
 
 			if ( $subscriber->exists() ) {
 				$GLOBALS['current_noptin_email'] = $subscriber->get_email();
+				$recipient['email']              = $subscriber->get_email();
 			}
 		} elseif ( ! empty( $recipient['uid'] ) ) {
 			$user = get_userdata( $recipient['uid'] );
 
 			if ( $user && $user->exists() ) {
 				$GLOBALS['current_noptin_email'] = $user->user_email;
+				$recipient['email']              = $user->user_email;
 			}
 		}
 

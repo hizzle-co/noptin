@@ -201,7 +201,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	 * @param \Hizzle\Noptin\Emails\Email $automation
 	 * @param string $key
 	 */
-	public function maybe_send_notification( $post_id, $campaign_id, $key = '' ) {
+	public function maybe_send_notification( $post_id, $campaign_id ) {
 
 		// If a notification has already been send abort...
 		if ( $this->was_notification_sent( $post_id ) ) {
@@ -213,69 +213,20 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			return;
 		}
 
-		if ( empty( $key ) ) {
-			$key = $post_id . '_' . $campaign_id;
-		}
-
-		$this->notify( $post_id, $campaign_id, $key );
-	}
-
-	/**
-	 * Send out a new post notification
-	 */
-	protected function notify( $post_id, $campaign_id, $key ) {
-
 		update_post_meta( $post_id, 'noptin_sent_notification_campaign', array( $post_id, $campaign_id ) );
 
-		// Create normal campaign.
-		$campaign = noptin_get_email_campaign_object( $campaign_id );
-		$type     = $campaign->get_email_type();
-		$content  = $campaign->get_content( $type );
+		// Prepare current title tag.
+		$GLOBALS['noptin_current_title_tag'] = esc_html( get_the_title( $post_id ) );
 
 		// Prepare environment.
 		$this->post = get_post( $post_id );
-		$this->before_send( $campaign );
 
-		// Parse paragraphs.
-		if ( 'normal' === $type ) {
-			$content = wpautop( trim( $content ) );
-		}
-
-		// Prepare campaign args.
-		$args = array_merge(
-			$campaign->options,
-			array(
-				'parent_id'         => $campaign->id,
-				'status'            => 'publish',
-				'subject'           => noptin_parse_email_subject_tags( $campaign->get_subject(), true ),
-				'heading'           => noptin_parse_email_content_tags( $campaign->get( 'heading' ), true ),
-				'content_' . $type  => trim( noptin_parse_email_content_tags( $content, true ) ),
-				'associated_post'   => $post_id,
-				'subscribers_query' => array(),
-				'preview_text'      => noptin_parse_email_content_tags( $campaign->get( 'preview_text' ), true ),
-				'footer_text'       => noptin_parse_email_content_tags( $campaign->get( 'footer_text' ), true ),
-				'custom_title'      => sprintf( /* translators: Post title */ __( 'New post notification for "%s"', 'newsletter-optin-box' ), esc_html( get_the_title( $post_id ) ) ),
-			)
-		);
-
-		// Remove unrelated content.
-		foreach ( array( 'content_normal', 'content_plain_text', 'content_raw_html' ) as $content_type ) {
-			if ( 'content_' . $type !== $content_type ) {
-				unset( $args[ $content_type ] );
-			}
-		}
-
-		// Prepare the newsletter.
-		$newsletter = new Noptin_Newsletter_Email( $args );
-
-		// Send normal campaign.
-		if ( apply_filters( 'noptin_should_send_new_post_notification', true, $newsletter, $campaign ) ) {
-			$newsletter->save();
-		}
+		// Send campaign.
+		$campaign = noptin_get_email_campaign_object( $campaign_id );
+		$campaign->send();
 
 		// Clear environment.
 		$this->post = null;
-		$this->after_send( $campaign );
 	}
 
 	/**
@@ -539,18 +490,5 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		if ( ! $this->post ) {
 			throw new Exception( esc_html__( 'Could not find a post for this preview.', 'newsletter-optin-box' ) );
 		}
-	}
-
-	/**
-	 * Fired after sending a campaign.
-	 *
-	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 */
-	protected function after_send( $campaign ) {
-
-		// Remove temp variables.
-		$this->post = null;
-
-		parent::after_send( $campaign );
 	}
 }
