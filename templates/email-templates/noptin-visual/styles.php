@@ -62,6 +62,19 @@
 		color: <?php echo esc_attr( $settings['button_color'] ); ?>;
 	}
 
+	table.noptin-image-block__wrapper {
+		border-spacing: 0;
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	table.noptin-button-block__wrapper {
+		border-collapse: separate;
+		width: 100%;
+		margin: 0;
+		line-height: 100%;
+	}
+
 	/**
 	 * Collapse table borders to avoid space between cells.
 	 */

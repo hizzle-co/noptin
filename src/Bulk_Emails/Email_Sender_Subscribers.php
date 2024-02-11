@@ -97,7 +97,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 			'fields' => apply_filters( 'noptin_subscriber_sending_options', $fields ),
 			'upsell' => array(
 				'link'    => noptin_get_upsell_url( '/pricing/', 'filter-subscribers', 'email-campaigns' ),
-				'message' => __( 'The add-ons pack allows you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ),
+				'message' => __( 'Premium plans allow you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ),
 			),
 		);
 	}

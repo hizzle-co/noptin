@@ -331,14 +331,14 @@ class Noptin_Email_Generator {
 		// Inject preheader.
 		$content = $this->inject_preheader( $content );
 
+		// Ensure that shortcodes are not wrapped in paragraphs.
+		$content = shortcode_unautop( $content );
+
 		// Process list items.
 		$content = self::handle_item_lists_shortcode( $content );
 
 		// Do merge tags.
 		$content = noptin_parse_email_content_tags( $content );
-
-		// Ensure that shortcodes are not wrapped in paragraphs.
-		$content = shortcode_unautop( $content );
 
 		// Execute shortcodes.
 		$content = do_shortcode( $content );
@@ -362,7 +362,7 @@ class Noptin_Email_Generator {
 		$content = $this->inline_styles( $content );
 
 		// Remove unused classes and ids.
-		$content = $this->remove_unused_classes_and_ids( $content );
+		$content = $this->clean_html( $content );
 
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );
@@ -397,10 +397,10 @@ class Noptin_Email_Generator {
 		return $content;
 	}
 
-	private function remove_unused_classes_and_ids( $html ) {
+	private function clean_html( $html ) {
 
 		// Check if DOMDocument is available.
-		if ( ! class_exists( 'DOMDocument' ) || empty( $content ) ) {
+		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
 			return $html;
 		}
 
@@ -446,9 +446,39 @@ class Noptin_Email_Generator {
 				if ( ! $has_content ) {
 					$element->parentNode->removeChild( $element );
 				}
-			} elseif ( $is_block_element ) {
+			} elseif ( $is_block_element && ! $element->hasChildNodes() ) {
 				// If <p> tag has no children, remove it
 				$element->parentNode->removeChild( $element );
+			}
+
+			// If this is a table element with .noptin-image-block__wrapper class,
+			// Remove it if the inner img tag has no src attribute.
+			if ( 'table' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-image-block__wrapper' ) ) {
+				$images = $element->getElementsByTagName( 'img' );
+				if ( 0 === $images->length || ! $images->item( 0 )->hasAttribute( 'src' ) || empty( $images->item( 0 )->getAttribute( 'src' ) ) ) {
+					$element->parentNode->removeChild( $element );
+					continue;
+				}
+			}
+
+			// Unwrap any p tags that contain block elements.
+			if ( 'p' === $element->nodeName && $element->hasChildNodes() ) {
+				$has_block = false;
+
+				foreach ( $element->childNodes as $child ) {
+					if ( in_array( $child->nodeName, array( 'div', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table' ), true ) ) {
+						$has_block = true;
+						break;
+					}
+				}
+
+				if ( $has_block ) {
+					$fragment = $doc->createDocumentFragment();
+					while ( $element->firstChild ) {
+						$fragment->appendChild( $element->firstChild );
+					}
+					$element->parentNode->replaceChild( $fragment, $element );
+				}
 			}
 
 			// Check if the class is used in the CSS.

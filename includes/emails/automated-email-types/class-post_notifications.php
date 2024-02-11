@@ -287,6 +287,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => 'title',
 					'partial'     => true,
+					'hidden'      => true,
 				),
 
 				'post_excerpt'      => array(
@@ -301,6 +302,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => 'excerpt',
 					'partial'     => true,
+					'hidden'      => true,
 				),
 
 				'post_content'      => array(
@@ -315,6 +317,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 					'callback'    => array( $this, 'get_post_field' ),
 					'example'     => 'content',
 					'partial'     => true,
+					'hidden'      => true,
 				),
 
 				'post_author'       => array(

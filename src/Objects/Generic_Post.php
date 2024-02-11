@@ -102,7 +102,7 @@ class Generic_Post extends Record {
 
 		// Featured image URL.
 		if ( 'featured_image' === strtolower( $field ) ) {
-			$image_size = ! empty( $args['image_size'] ) ? $args['image_size'] : 'thumbnail';
+			$image_size = ! empty( $args['size'] ) ? $args['size'] : 'large';
 			$url        = get_the_post_thumbnail_url( $this->external, $image_size );
 			return $url ? $url : '';
 		}

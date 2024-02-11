@@ -453,8 +453,8 @@ class Noptin_COM_Updater {
 				__( 'Activate the Noptin Addons Pack addon to unlock.', 'newsletter-optin-box' ) :
 				__( 'Install the Noptin Addons Pack addon to unlock.', 'newsletter-optin-box' ),
 			'install_url'  => isset( $installed_addons[ $slug ] ) ?
-				wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $installed_addons[ $slug ] ), 'activate-plugin_' . $installed_addons[ $slug ] ) :
-				wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=noptin-plugin-with-slug-' . $slug ), 'install-plugin_noptin-plugin-with-slug-' . $slug ),
+				str_replace( '&amp;', '&', wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $installed_addons[ $slug ] ), 'activate-plugin_' . $installed_addons[ $slug ] ) ) :
+				str_replace( '&amp;', '&', wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=noptin-plugin-with-slug-' . $slug ), 'install-plugin_noptin-plugin-with-slug-' . $slug ) ),
 		);
 
 		// Unset install_text, install_desc and install_url if the license is empty.
