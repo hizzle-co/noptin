@@ -80,6 +80,14 @@ class Email {
 			return;
 		}
 
+		if ( $args instanceof Email ) {
+			foreach ( get_object_vars( $args ) as $key => $value ) {
+				if ( property_exists( $this, $key ) ) {
+					$this->$key = $value;
+				}
+			}
+		}
+
 		// Loading a saved campaign.
 		if ( is_numeric( $args ) || $args instanceof \WP_Post ) {
 			$this->init( $args );

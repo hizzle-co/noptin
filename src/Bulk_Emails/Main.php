@@ -287,7 +287,6 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			// Increase emails sent this hour.
 			$this->increase_emails_sent_this_hour();
 
-			sleep( 10 );
 		} elseif ( false === $result ) {
 			noptin_pause_email_campaign(
 				$this->current_campaign->id,
