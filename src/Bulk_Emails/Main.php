@@ -83,6 +83,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 
 		// Send newsletter emails.
 		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
+		add_action( 'noptin_resume_email_campaign', array( $this, 'send_pending' ), 1000 );
 
 		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
 	}
@@ -145,6 +146,58 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	}
 
 	/**
+	 * Sets the current campaign.
+	 *
+	 */
+	private function set_current_campaign() {
+		$campaigns = get_posts(
+			array(
+				'post_type'      => 'noptin-campaign',
+				'post_status'    => 'publish',
+				'posts_per_page' => 5,
+				'order'          => 'ASC',
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					array(
+						'key'   => 'campaign_type',
+						'value' => 'newsletter',
+					),
+					array(
+						'key'     => 'completed',
+						'compare' => 'NOT EXISTS',
+					),
+					array(
+						'key'     => 'paused',
+						'compare' => 'NOT EXISTS',
+					),
+				),
+			)
+		);
+
+		foreach ( $campaigns as $campaign ) {
+			$campaign = new \Hizzle\Noptin\Emails\Email( $campaign );
+			$can_send = $campaign->can_send( true );
+
+			if ( is_wp_error( $can_send ) ) {
+				noptin_pause_email_campaign(
+					$campaign->id,
+					$can_send->get_error_message()
+				);
+				continue;
+			}
+
+			if ( true === $can_send ) {
+				$this->current_campaign = new \Hizzle\Noptin\Emails\Email( $campaign );
+				break;
+			}
+		}
+
+		if ( empty( $this->current_campaign ) && count( $campaigns ) === 5 ) {
+			$this->schedule_remaining_tasks();
+		}
+	}
+
+	/**
 	 * Fired before running the queue.
 	 *
 	 */
@@ -155,31 +208,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 
 		// Fetch the next campaign.
 		if ( empty( $this->current_campaign ) ) {
-			$campaigns = get_posts(
-				array(
-					'post_type'      => 'noptin-campaign',
-					'post_status'    => 'publish',
-					'posts_per_page' => 1,
-					'order'          => 'ASC',
-					'fields'         => 'ids',
-					'meta_query'     => array(
-						array(
-							'key'   => 'campaign_type',
-							'value' => 'newsletter',
-						),
-						array(
-							'key'     => 'completed',
-							'compare' => 'NOT EXISTS',
-						),
-						array(
-							'key'     => 'paused',
-							'compare' => 'NOT EXISTS',
-						),
-					),
-				)
-			);
-
-			$this->current_campaign = ! empty( $campaigns[0] ) ? new \Hizzle\Noptin\Emails\Email( $campaigns[0] ) : 0;
+			$this->set_current_campaign();
 		}
 
 		$this->next_recipients = array();
@@ -199,19 +228,6 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 
 		// ... or we've reached the max number of emails.
 		if ( $this->exceeded_hourly_limit() ) {
-			return false;
-		}
-
-		// Ensure the sender is supported.
-		if ( ! $this->has_sender( $this->current_campaign->get_sender() ) ) {
-			update_post_meta( $this->current_campaign->id, 'paused', 1 );
-			update_post_meta(
-				$this->current_campaign->id,
-				'_bulk_email_last_error',
-				array(
-					'message' => __( 'The sender is not supported.', 'newsletter-optin-box' ),
-				)
-			);
 			return false;
 		}
 
@@ -260,29 +276,25 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		}
 
 		// Prepare vars.
-		$campaign = $this->current_campaign;
-		$sender   = $campaign->get_sender();
+		$sender = $this->current_campaign->get_sender();
 
 		// Send the email.
-		$result = $this->senders[ $sender ]->send( $campaign, $recipient );
+		$result = $this->senders[ $sender ]->send( $this->current_campaign, $recipient );
 
 		// Increase stats.
 		if ( true === $result ) {
-			increment_noptin_campaign_stat( $campaign->id, '_noptin_sends' );
 
 			// Increase emails sent this hour.
 			$this->increase_emails_sent_this_hour();
+
+			sleep( 10 );
 		} elseif ( false === $result ) {
-			update_post_meta( $this->current_campaign->id, 'paused', 1 );
-			update_post_meta(
+			noptin_pause_email_campaign(
 				$this->current_campaign->id,
-				'_bulk_email_last_error',
-				array(
-					'message' => sprintf(
-						// Translators: %s The error message.
-						__( 'Error sending email: %s', 'newsletter-optin-box' ),
-						esc_html( \Noptin_Email_Sender::get_phpmailer_last_error() )
-					),
+				sprintf(
+					// Translators: %s The error message.
+					__( 'Error sending email: %s', 'newsletter-optin-box' ),
+					esc_html( \Noptin_Email_Sender::get_phpmailer_last_error() )
 				)
 			);
 		}
@@ -297,8 +309,10 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		$error = error_get_last();
 
 		if ( ! empty( $this->current_campaign ) && ! empty( $error ) && in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
-			update_post_meta( $this->current_campaign->id, 'paused', 1 );
-			update_post_meta( $this->current_campaign->id, '_bulk_email_last_error', wp_slash( $error ) );
+			noptin_pause_email_campaign(
+				$this->current_campaign->id,
+				$error['message']
+			);
 			$this->unlock_process();
 		}
 	}

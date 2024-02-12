@@ -1242,7 +1242,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'is_numeric'  => $prop->is_numeric(),
 					'is_float'    => $prop->is_float(),
 					'is_date'     => $prop->is_date(),
-					'is_textarea' => ! $prop->is_date() && '%s' === $prop->get_data_type() && empty( $prop->length ),
+					'is_textarea' => ! $prop->is_date() && ! $prop->is_tokens && '%s' === $prop->get_data_type() && empty( $prop->length ),
 					'is_meta'     => $prop->is_meta_key,
 					'is_tokens'   => $prop->is_tokens,
 					'js_props'    => $prop->js_props,

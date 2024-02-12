@@ -127,9 +127,13 @@ class Email_Sender_Subscribers extends Email_Sender {
 		}
 
 		// Generate and send the actual email.
-		noptin()->emails->newsletter->subscriber = $subscriber;
-
-		$result = noptin()->emails->newsletter->send( $campaign, $campaign->id, $subscriber->get_email() );
+		$result = $campaign->send_to(
+			array(
+				'sid'   => $subscriber->get_id(),
+				'email' => $subscriber->get_email(),
+			),
+			false
+		);
 
 		// Log the send.
 		update_noptin_subscriber_meta( $subscriber->get_id(), '_campaign_' . $campaign->id, (int) $result );

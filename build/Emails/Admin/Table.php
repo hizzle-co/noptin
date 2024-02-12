@@ -226,14 +226,43 @@ class Table extends \WP_List_Table {
 		}
 
 		// Recipients.
-		if ( ! $item->is_mass_mail() ) {
-			$recipients = $item->get_recipients();
+		if ( $item->supports( 'supports_recipients' ) ) {
+			$sender = $item->get_sender();
 
-			if ( ! empty( $recipients ) ) {
+			if ( 'manual_recipients' === $item->get_sender() ) {
+				$recipients = $item->get_recipients();
+
+				if ( ! empty( $recipients ) ) {
+					$title .= sprintf(
+						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+						esc_html__( 'Recipients', 'newsletter-optin-box' ),
+						esc_html( implode( ', ', noptin_parse_list( $recipients, true ) ) )
+					);
+				} else {
+					$title .= sprintf(
+						'<p class="description" style="color: red;">%s</p>',
+						esc_html__( 'No recipients', 'newsletter-optin-box' )
+					);
+				}
+			} elseif ( ! empty( $sender ) ) {
+				$senders = get_noptin_email_senders();
+
+				if ( isset( $senders[ $sender ] ) ) {
+					$title .= sprintf(
+						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+						esc_html__( 'Recipients', 'newsletter-optin-box' ),
+						esc_html( $senders[ $sender ] )
+					);
+				} else {
+					$title .= sprintf(
+						'<p class="description" style="color: red;">%s</p>',
+						esc_html__( 'Unknown sender', 'newsletter-optin-box' )
+					);
+				}
+			} else {
 				$title .= sprintf(
-					'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
-					esc_html__( 'Recipients', 'newsletter-optin-box' ),
-					esc_html( implode( ', ', noptin_parse_list( $recipients, true ) ) )
+					'<p class="description" style="color: red;">%s</p>',
+					esc_html__( 'No recipients', 'newsletter-optin-box' )
 				);
 			}
 		}

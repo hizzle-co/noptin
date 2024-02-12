@@ -538,7 +538,7 @@ class Prop {
 		if ( is_string( $value ) ) {
 
 			if ( isset( $choices[ $value ] ) ) {
-				return $choices[ $value ];
+				return $value;
 			}
 
 			if ( isset( $flipped_choices[ $value ] ) ) {

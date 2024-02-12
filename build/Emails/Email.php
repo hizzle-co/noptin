@@ -435,6 +435,15 @@ class Email {
 			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email is paused and cannot be sent.', 'newsletter-optin-box' ) );
 		}
 
+		// Make sure the sender is valid.
+		if ( $this->supports( 'supports_recipients' ) && $this->is_mass_mail() ) {
+			$sender = $this->get_sender();
+
+			if ( empty( $sender ) || ! array_key_exists( $sender, get_noptin_email_senders() ) ) {
+				return new \WP_Error( 'noptin_email_invalid_sender', __( 'The sender is not supported.', 'newsletter-optin-box' ) );
+			}
+		}
+
 		// Make sure we have an email body and subject.
 		if ( empty( $this->subject ) ) {
 			return new \WP_Error( 'noptin_email_no_subject', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
@@ -610,6 +619,10 @@ class Email {
 		// Maybe skip sending the email.
 		$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 		if ( is_wp_error( $should_send ) || false === $should_send ) {
+			if ( ! $should_send ) {
+				return new \WP_Error( 'noptin_email_skipped', __( 'The email was skipped via a filter', 'newsletter-optin-box' ) );
+			}
+
 			return $should_send;
 		}
 
@@ -622,7 +635,7 @@ class Email {
 				'campaign_id'              => $this->id,
 				'campaign'                 => $this,
 				'headers'                  => array(),
-				'attachments'              => array(),
+				'attachments'              => $this->get_attachments(),
 				'reply_to'                 => '',
 				'from_email'               => '',
 				'from_name'                => '',
@@ -630,11 +643,6 @@ class Email {
 				'disable_template_plugins' => ! ( $this->get_email_type() === 'normal' && $this->get_template() === 'default' ),
 			)
 		);
-
-		// Log.
-		if ( ! empty( Main::$current_email_recipient['track'] ) ) {
-			increment_noptin_campaign_stat( $this->id, '_noptin_sends' );
-		}
 
 		do_action( 'noptin_after_sending_email', $this, $result );
 		Main::$current_email_recipient = array();
@@ -683,6 +691,102 @@ class Email {
 		}
 
 		return $type->contexts;
+	}
+
+	/**
+	 * Returns the attachments for this email.
+	 *
+	 * @return string[]
+	 */
+	public function get_attachments() {
+		$attachments = $this->get( 'attachments' );
+		$attachments = ! is_array( $attachments ) ? array() : array_filter( $attachments );
+
+		if ( ! noptin_has_active_license_key() || empty( $attachments ) ) {
+			return array();
+		}
+
+		$prepared = array();
+		foreach ( $attachments as $attachment ) {
+
+			$attachment = $this->parse_attachment_file_path( trim( $attachment ) );
+
+			// Add if its not a remote file.
+			if ( ! $attachment['remote_file'] ) {
+				$prepared[] = $attachment['file_path'];
+			}
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * Parse file path/url and see if its remote or local.
+	 *
+	 * @param string $file_url
+	 * @return array
+	 */
+	private function parse_attachment_file_path( $file_url ) {
+		$wp_uploads     = wp_upload_dir();
+		$wp_uploads_dir = $wp_uploads['basedir'];
+		$wp_uploads_url = $wp_uploads['baseurl'];
+
+		// Prevent path traversal.
+		$file_url = str_replace( '../', '', $file_url );
+
+		/**
+		 * Replace uploads dir, site url etc with absolute counterparts if we can.
+		 * Note the str_replace on site_url is on purpose, so if https is forced
+		 * via filters we can still do the string replacement on a HTTP file.
+		 */
+		$replacements = array(
+			$wp_uploads_url                  => $wp_uploads_dir,
+			network_site_url( '/', 'https' ) => ABSPATH,
+			str_replace( 'https:', 'http:', network_site_url( '/', 'http' ) ) => ABSPATH,
+			site_url( '/', 'https' )         => ABSPATH,
+			str_replace( 'https:', 'http:', site_url( '/', 'http' ) ) => ABSPATH,
+		);
+
+		$count            = 0;
+		$file_path        = str_replace( array_keys( $replacements ), array_values( $replacements ), $file_url, $count );
+		$parsed_file_path = wp_parse_url( $file_path );
+		$remote_file      = null === $count || 0 === $count; // Remote file only if there were no replacements.
+
+		// Paths that begin with '//' are always remote URLs.
+		if ( '//' === substr( $file_path, 0, 2 ) ) {
+			$file_path = ( is_ssl() ? 'https:' : 'http:' ) . $file_path;
+
+			/**
+			 * Filter the remote filepath for download.
+			 *
+			 * @since 1.0.0
+			 * @param string $file_path File path.
+			 */
+			return array(
+				'remote_file' => true,
+				'file_path'   => $file_path,
+			);
+		}
+
+		// See if path needs an abspath prepended to work.
+		if ( file_exists( ABSPATH . $file_path ) ) {
+			$remote_file = false;
+			$file_path   = ABSPATH . $file_path;
+
+		} elseif ( '/wp-content' === substr( $file_path, 0, 11 ) ) {
+			$remote_file = false;
+			$file_path   = realpath( WP_CONTENT_DIR . substr( $file_path, 11 ) );
+
+			// Check if we have an absolute path.
+		} elseif ( ( ! isset( $parsed_file_path['scheme'] ) || ! in_array( $parsed_file_path['scheme'], array( 'http', 'https', 'ftp' ), true ) ) && isset( $parsed_file_path['path'] ) ) {
+			$remote_file = false;
+			$file_path   = $parsed_file_path['path'];
+		}
+
+		return array(
+			'remote_file' => $remote_file,
+			'file_path'   => $file_path,
+		);
 	}
 
 	/**

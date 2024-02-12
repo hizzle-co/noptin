@@ -40,14 +40,13 @@ function noptin_send_email( $args, $background = false ) {
 
 	if ( is_wp_error( $args['message'] ) ) {
 		log_noptin_message( $args['message'] );
-		return false;
+		return;
 	}
 
 	if ( empty( $args['message'] ) ) {
-		return false;
+		return;
 	}
 
-	$args       = apply_filters( 'noptin_send_email_args', $args );
 	$background = isset( $args['background'] ) ? $args['background'] : $background;
 
 	if ( ! $background ) {
@@ -197,7 +196,7 @@ function get_noptin_email_senders( $full = false ) {
 
 			'noptin'                => array(
 				'label'        => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
-				'description'  => __( 'Send an email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields.', 'newsletter-optin-box' ),
+				'description'  => __( 'Send a bulk email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields.', 'newsletter-optin-box' ),
 				'image'        => array(
 					'icon' => 'email',
 					'fill' => '#008000',
@@ -208,7 +207,7 @@ function get_noptin_email_senders( $full = false ) {
 
 			'woocommerce_customers' => array(
 				'label'        => __( 'WooCommerce Customers', 'newsletter-optin-box' ),
-				'description'  => __( "Send an email to all your WooCommerce customers, customers who've bought specific products, etc.", 'newsletter-optin-box' ),
+				'description'  => __( "Send a bulk email to all your WooCommerce customers, customers who've bought specific products, etc.", 'newsletter-optin-box' ),
 				'image'        => 'https://noptin.com/wp-content/uploads/2023/04/woocommerce-badge-64x64.png',
 				'is_active'    => function_exists( 'WC' ),
 				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
@@ -216,7 +215,7 @@ function get_noptin_email_senders( $full = false ) {
 
 			'wp_users'              => array(
 				'label'        => __( 'WordPress Users', 'newsletter-optin-box' ),
-				'description'  => __( 'Send an email to your WordPress Users. You can filter recipients by their user roles.', 'newsletter-optin-box' ),
+				'description'  => __( 'Send a bulk email to your WordPress Users. You can filter recipients by their user roles.', 'newsletter-optin-box' ),
 				'image'        => array(
 					'icon' => 'wordpress',
 					'fill' => '#464342',
@@ -677,3 +676,28 @@ function noptin_prepare_email_recipients( $unprepared ) {
 
 	return $recipients;
 }
+
+/**
+ * Pauses an email campaign.
+ *
+ * @param int $campaign_id
+ * @param string $reason
+ * @since 3.0.0
+ */
+function noptin_pause_email_campaign( $campaign_id, $reason = '' ) {
+	update_post_meta( $campaign_id, 'paused', 1 );
+	update_post_meta( $campaign_id, '_bulk_email_last_error', array( 'message' => $reason ) );
+	schedule_noptin_background_action( 'noptin_resume_email_campaign', time() + HOUR_IN_SECONDS, $campaign_id );
+}
+
+/**
+ * Resumes an email campaign.
+ *
+ * @param int $campaign_id
+ * @since 3.0.0
+ */
+function noptin_resume_email_campaign( $campaign_id ) {
+	delete_post_meta( $campaign_id, 'paused' );
+	delete_post_meta( $campaign_id, '_bulk_email_last_error' );
+}
+add_action( 'noptin_resume_email_campaign', 'noptin_resume_email_campaign' );

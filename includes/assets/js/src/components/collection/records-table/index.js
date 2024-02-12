@@ -35,9 +35,9 @@ const ModalAddButton = ( { namespace, collection } ) => {
 	// Display the button.
 	return (
 		<Button
-			onClick={() => navigateTo( `${namespace}/${collection}/add` )}
+			onClick={ () => navigateTo( `${ namespace }/${ collection }/add` ) }
 			variant="primary"
-			text={data?.labels?.add_new || __( 'Add New', 'newsletter-optin-box' )}
+			text={ data?.labels?.add_new || __( 'Add New', 'newsletter-optin-box' ) }
 		/>
 	);
 
@@ -52,23 +52,23 @@ const TableActions = ( { namespace, collection, inline, query } ) => {
 
 	const records = useRecords( namespace, collection, query );
 	const count = records.data?.total || 0;
-	const [selected, setSelected]  = useSelected( `${namespace}/${collection}` );
+	const [ selected, setSelected ] = useSelected( `${ namespace }/${ collection }` );
 
 	return (
-		<Flex gap={2} wrap>
-			{inline && (
+		<Flex gap={ 2 } wrap>
+			{ inline && (
 				<FlexItem>
-					<ModalAddButton namespace={namespace} collection={collection} query={query} count={count} selected={selected} />
+					<ModalAddButton namespace={ namespace } collection={ collection } query={ query } count={ count } selected={ selected } />
 				</FlexItem>
-			)}
+			) }
 			<FlexItem>
-				<BulkEditButton namespace={namespace} collection={collection} query={query} count={count} selected={selected} isBulkEditing />
+				<BulkEditButton namespace={ namespace } collection={ collection } query={ query } count={ count } selected={ selected } isBulkEditing />
 			</FlexItem>
 			<FlexItem>
-				<ExportButton namespace={namespace} collection={collection} query={query} count={count} selected={selected} />
+				<ExportButton namespace={ namespace } collection={ collection } query={ query } count={ count } selected={ selected } />
 			</FlexItem>
 			<FlexItem>
-				<DeleteButton namespace={namespace} collection={collection} query={query} count={count} selected={selected} setSelected={setSelected} />
+				<DeleteButton namespace={ namespace } collection={ collection } query={ query } count={ count } selected={ selected } setSelected={ setSelected } />
 			</FlexItem>
 		</Flex>
 	)
@@ -109,7 +109,7 @@ const DisplayRecords = ( {
 		schema.forEach( ( column ) => {
 
 			// Abort if dynamic column.
-			if ( column.is_textarea || ignore.includes( column.name ) || 'hide' === column.js_props?.table ) {
+			if ( ( column.is_textarea && !column.is_tokens ) || ignore.includes( column.name ) || 'hide' === column.js_props?.table ) {
 				return;
 			}
 
@@ -123,7 +123,7 @@ const DisplayRecords = ( {
 		} );
 
 		return columns;
-	}, [schema, ignore] );
+	}, [ schema, ignore ] );
 
 	// Updates the query.
 	const updateQuery = useCallback( ( newQuery ) => {
@@ -134,36 +134,36 @@ const DisplayRecords = ( {
 		}
 
 		updateQueryString( { ...query, ...newQuery } );
-	}, [updateQueryString] );
+	}, [ updateQueryString ] );
 
 	// Refreshes the data.
-	const dispatch = useDispatch( `${namespace}/${collection}` );
+	const dispatch = useDispatch( `${ namespace }/${ collection }` );
 	const refresh = useCallback( () => {
 		dispatch.invalidateResolutionForStoreSelector( 'getRecords' );
-	}, [namespace, collection] );
+	}, [ namespace, collection ] );
 
 	return (
 		<TableCard
-			actions={<TableActions namespace={namespace} collection={collection} inline={inline} query={query} />}
-			rows={records}
-			headers={columns}
-			totalRows={total}
-			summary={summary ? Object.values( summary ) : []}
-			isLoading={isLoading}
-			onQueryChange={updateQuery}
-			onRefresh={refresh}
-			query={query}
-			className={`${namespace}-${collection}__records-table`}
-			hasSearch={true}
-			title={labels?.name}
-			emptyMessage={emptyMessage || labels?.not_found}
-			emptyAction={inline ? <div style={{ marginTop: '1rem' }}><ModalAddButton namespace={namespace} collection={collection} /></div> : null}
-			searchPlaceholder={labels?.search_items}
-			canSelectRows={true}
+			actions={ <TableActions namespace={ namespace } collection={ collection } inline={ inline } query={ query } /> }
+			rows={ records }
+			headers={ columns }
+			totalRows={ total }
+			summary={ summary ? Object.values( summary ) : [] }
+			isLoading={ isLoading }
+			onQueryChange={ updateQuery }
+			onRefresh={ refresh }
+			query={ query }
+			className={ `${ namespace }-${ collection }__records-table` }
+			hasSearch={ true }
+			title={ labels?.name }
+			emptyMessage={ emptyMessage || labels?.not_found }
+			emptyAction={ inline ? <div style={ { marginTop: '1rem' } }><ModalAddButton namespace={ namespace } collection={ collection } /></div> : null }
+			searchPlaceholder={ labels?.search_items }
+			canSelectRows={ true }
 			idProp="id"
-			DisplayCell={DisplayCell}
-			initialHiddenHeaders={hidden}
-			storeName={`${namespace}/${collection}`}
+			DisplayCell={ DisplayCell }
+			initialHiddenHeaders={ hidden }
+			storeName={ `${ namespace }/${ collection }` }
 		/>
 	);
 };
@@ -180,10 +180,10 @@ const TheRecordsTable = withSchema( function TheRecordsTable( { namespace, colle
 	if ( 'ERROR' === records.status ) {
 
 		return (
-			<Wrap title={__( 'Error', 'newsletter-optin-box' )}>
+			<Wrap title={ __( 'Error', 'newsletter-optin-box' ) }>
 				<CardBody>
-					<Notice status="error" isDismissible={false}>
-						{records.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' )}
+					<Notice status="error" isDismissible={ false }>
+						{ records.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
 					</Notice>
 				</CardBody>
 			</Wrap>
@@ -192,16 +192,16 @@ const TheRecordsTable = withSchema( function TheRecordsTable( { namespace, colle
 
 	return (
 		<DisplayRecords
-			schema={schema}
-			records={records.data.items}
-			total={records.data.total}
-			summary={records.data.summary}
-			isLoading={records.isResolving}
-			namespace={namespace}
-			collection={collection}
-			updateQueryString={setQuery}
-			query={query}
-			{...props}
+			schema={ schema }
+			records={ records.data.items }
+			total={ records.data.total }
+			summary={ records.data.summary }
+			isLoading={ records.isResolving }
+			namespace={ namespace }
+			collection={ collection }
+			updateQueryString={ setQuery }
+			query={ query }
+			{ ...props }
 		/>
 	);
 } );
@@ -216,16 +216,16 @@ export default function RecordsTable() {
 	const query = useQuery();
 
 	return (
-		<Flex gap={2} direction="column">
+		<Flex gap={ 2 } direction="column">
 			<FlexItem>
-				<FiltersButton namespace={namespace} collection={collection} query={query} setQuery={updateQueryString} />
+				<FiltersButton namespace={ namespace } collection={ collection } query={ query } setQuery={ updateQueryString } />
 			</FlexItem>
 			<FlexBlock>
 				<TheRecordsTable
-					namespace={namespace}
-					collection={collection}
-					setQuery={updateQueryString}
-					query={query}
+					namespace={ namespace }
+					collection={ collection }
+					setQuery={ updateQueryString }
+					query={ query }
 				/>
 			</FlexBlock>
 		</Flex>
@@ -238,18 +238,18 @@ export default function RecordsTable() {
  * @returns The records table.
  */
 export const MiniRecordsTable = ( { namespace, collection, defaultProps, inline, ...props } ) => {
-	const [filter, setFilter] = useState( defaultProps );
+	const [ filter, setFilter ] = useState( defaultProps );
 	const { id, tab } = useParams();
 
 	return (
 		<TheRecordsTable
-			namespace={namespace}
-			collection={collection}
-			setQuery={setFilter}
-			query={filter}
-			inline={inline}
-			basePath={inline ? `${id}/${tab}/${namespace}/${collection}/` : ''}
-			{...props}
+			namespace={ namespace }
+			collection={ collection }
+			setQuery={ setFilter }
+			query={ filter }
+			inline={ inline }
+			basePath={ inline ? `${ id }/${ tab }/${ namespace }/${ collection }/` : '' }
+			{ ...props }
 		/>
 	);
 };

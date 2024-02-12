@@ -231,6 +231,10 @@ class Noptin_Email_Sender {
 						$subscriber->record_sent_campaign( $args['campaign_id'] );
 					}
 				}
+
+				if ( apply_filters( 'noptin_log_email_send', $result, $this ) ) {
+					increment_noptin_campaign_stat( $args['campaign_id'], '_noptin_sends' );
+				}
 			}
 		}
 

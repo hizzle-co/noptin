@@ -58,6 +58,8 @@ class REST extends \WP_REST_Posts_Controller {
 	 */
 	public function send_test_email( $request ) {
 
+		add_filter( 'noptin_log_email_send', '__return_false', 10000 );
+
 		$GLOBALS['current_noptin_email'] = $request->get_param( 'email' );
 
 		// Check if we have a recipient for the test email.
