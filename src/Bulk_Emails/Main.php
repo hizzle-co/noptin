@@ -25,7 +25,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 *
 	 * @var \Hizzle\Noptin\Emails\Email
 	 */
-	public $current_campaign;
+	private $current_campaign;
 
 	/**
 	 * @var Email_Sender[] $senders
@@ -86,6 +86,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		add_action( 'noptin_resume_email_campaign', array( $this, 'send_pending' ), 1000 );
 
 		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
+		add_action( 'init', array( $this, 'before_run' ), PHP_INT_MAX );
 	}
 
 	/**
@@ -175,7 +176,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		);
 
 		foreach ( $campaigns as $campaign ) {
-			$campaign = new \Hizzle\Noptin\Emails\Email( $campaign );
+			$campaign = noptin_get_email_campaign_object( $campaign );
 			$can_send = $campaign->can_send( true );
 
 			if ( is_wp_error( $can_send ) ) {
@@ -187,7 +188,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			}
 
 			if ( true === $can_send ) {
-				$this->current_campaign = new \Hizzle\Noptin\Emails\Email( $campaign );
+				$this->current_campaign = $campaign;
 				break;
 			}
 		}

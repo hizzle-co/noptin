@@ -163,7 +163,7 @@ function noptin_get_new_automation_url() {
  * @return \Hizzle\Noptin\Emails\Email
  */
 function noptin_get_email_campaign_object( $campaign_id ) {
-	return new \Hizzle\Noptin\Emails\Email( $campaign_id );
+	return \Hizzle\Noptin\Emails\Email::from( $campaign_id );
 }
 
 /**
