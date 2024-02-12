@@ -54,7 +54,9 @@ export function getNewPath(
 ) {
 	const args = { ...currentQuery, ...query };
 	if ( path !== '/' ) {
-		args.hizzle_path = path;
+
+		// Remove double forward slashes.
+		args.hizzle_path = path.replace(/\/{2,}/g, '/');
 	}
 
 	// Remove args where value === ''.
