@@ -13,14 +13,6 @@
 		),
 
 		array(
-			'slug' => 'email-customizer',
-			'name' => 'Email Customizer',
-			'desc' => __( 'Easily replace the plain text WordPress emails with beautiful HTML emails that match your brand colors.', 'newsletter-optin-box' ),
-			'img'  => 'https://ps.w.org/email-customizer/assets/icon-256x256.png',
-			'url'  => admin_url( 'plugin-install.php?tab=plugin-information&plugin=email-customizer&TB_iframe=true&width=772&height=600' ),
-		),
-
-		array(
 			'slug' => 'hizzle-downloads',
 			'name' => 'Hizzle Downloads',
 			'desc' => __( 'Add downloadable files to your site and restrict access by user role or newsletter subscription status.', 'newsletter-optin-box' ),

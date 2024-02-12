@@ -28,7 +28,7 @@ $trigger = $rule->get_trigger();
 if ( empty( $trigger ) ) {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
-		esc_html__( 'Your website does not support that trigger.', 'newsletter-optin-box' )
+		esc_html__( 'Your site does not support this trigger.', 'newsletter-optin-box' )
 	);
 	return;
 }

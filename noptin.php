@@ -263,7 +263,6 @@ class Noptin {
 
 		// Set up hooks.
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
-
 	}
 
 	/**
@@ -292,7 +291,6 @@ class Noptin {
 		} catch ( Exception $e ) {
 			log_noptin_message( $e->getMessage() );
 		}
-
 	}
 
 	/**
@@ -317,7 +315,6 @@ class Noptin {
 
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
-
 	}
 
 	/**
@@ -403,21 +400,21 @@ class Noptin {
 		do_action( 'before_noptin_init', $this );
 
 		// Init the admin.
-		$this->admin 			  = Noptin_Admin::instance();
+		$this->admin = Noptin_Admin::instance();
 		$this->admin->init();
 
 		// Actions page controller.
-		$this->actions_page 	  = new Noptin_Page();
+		$this->actions_page = new Noptin_Page();
 
 		// Post types controller.
-		$this->post_types   	  = new Noptin_Post_Types();
+		$this->post_types = new Noptin_Post_Types();
 
 		// Form types (legacy).
 		$this->popups = new Noptin_Popups();
 		$this->inpost = new Noptin_Inpost();
 
 		// Ajax.
-		$this->ajax 			  = new Noptin_Ajax();
+		$this->ajax = new Noptin_Ajax();
 
 		// Automation tasks.
 		$this->automation_rules   = new Noptin_Automation_Rules();
@@ -472,7 +469,6 @@ class Noptin {
 				break;
 			}
 		}
-
 	}
 
 	/**
@@ -547,11 +543,9 @@ class Noptin {
 		load_plugin_textdomain(
 			'newsletter-optin-box',
 			false,
-			plugin_basename( dirname( __FILE__ ) ) . '/languages/'
+			plugin_basename( __DIR__ ) . '/languages/'
 		);
-
 	}
-
 }
 
 // Kickstart everything.
