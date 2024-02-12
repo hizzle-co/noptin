@@ -86,7 +86,6 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		add_action( 'noptin_resume_email_campaign', array( $this, 'send_pending' ), 1000 );
 
 		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
-		add_action( 'init', array( $this, 'before_run' ), PHP_INT_MAX );
 	}
 
 	/**
