@@ -814,7 +814,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 						strtolower( $this->singular_label )
 					),
 					'subject'     => 'customer',
-					'provides'    => array( 'order', 'order_item' ),
+					'provides'    => array( 'shop_order', 'order_item' ),
 				),
 				'woocommerce_' . $this->type . '_refunded' => array(
 					'label'       => sprintf(
@@ -828,7 +828,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 						strtolower( $this->singular_label )
 					),
 					'subject'     => 'customer',
-					'provides'    => array( 'order', 'order_item' ),
+					'provides'    => array( 'shop_order', 'order_item' ),
 				),
 			)
 		);
@@ -901,7 +901,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 						'order.status' => $order->get_status(),
 					),
 					'provides'    => array(
-						'order'      => $order->get_id(),
+						'shop_order' => $order->get_id(),
 						'order_item' => $item->get_id(),
 					),
 				)
@@ -928,7 +928,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'object_id'  => $order->get_id(),
 				'subject_id' => Orders::get_order_customer( $order ),
 				'provides'   => array(
-					'order'      => $order->get_id(),
+					'shop_order' => $order->get_id(),
 					'order_item' => count( $items ) > 0 ? array_values( $items )[0]->get_id() : 0,
 				),
 			);
@@ -947,7 +947,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'object_id'  => $order->get_id(),
 				'subject_id' => Orders::get_order_customer( $order ),
 				'provides'   => array(
-					'order'      => $order->get_id(),
+					'shop_order' => $order->get_id(),
 					'order_item' => count( $items ) > 0 ? array_values( $items )[0]->get_id() : 0,
 				),
 			);

@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Container for an order.
  */
-class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
+class Orders extends \Hizzle\Noptin\Objects\Collection {
 
 	/**
 	 * Constructor.
@@ -19,12 +19,19 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		$this->record_class      = __NAMESPACE__ . '\Order';
 		$this->integration       = 'woocommerce';
 		$this->smart_tags_prefix = 'order';
+		$this->label             = __( 'Orders', 'newsletter-optin-box' );
+		$this->singular_label    = __( 'Order', 'newsletter-optin-box' );
+		$this->type              = 'shop_order';
+		$this->title_field       = 'number';
+		$this->description_field = 'details';
+		$this->url_field         = 'admin_url';
+		$this->can_list          = true;
 		$this->icon              = array(
 			'icon' => 'money-alt',
 			'fill' => '#674399',
 		);
 
-		parent::__construct( 'shop_order' );
+		parent::__construct();
 
 		// State transition.
 		foreach ( array_keys( $this->order_states() ) as $state ) {
@@ -362,6 +369,24 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 			'number'               => array(
 				'label' => __( 'Number', 'newsletter-optin-box' ),
 				'type'  => 'string',
+				'block' => array(
+					'title'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s Number', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s number.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'heading',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'heading',
+					'linksTo'     => $this->field_to_merge_tag( 'admin_url' ),
+				),
 			),
 			'transaction_id'       => array(
 				'label' => __( 'Transaction ID', 'newsletter-optin-box' ),
@@ -706,18 +731,6 @@ class Orders extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		}
 
 		return $prepared;
-	}
-
-	/**
-	 * Returns the template for the list shortcode.
-	 */
-	protected function get_list_shortcode_template() {
-		return array(
-			'button'      => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'view_url' ) ),
-			'description' => \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( 'details' ) ),
-			'heading'     => $this->field_to_merge_tag( 'number' ),
-			'meta'        => $this->field_to_merge_tag( 'total', array( 'format' => 'price' ) ),
-		);
 	}
 
 	/**

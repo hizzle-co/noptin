@@ -313,13 +313,13 @@ class Trigger extends \Noptin_Abstract_Trigger {
 				$collection = false !== strpos( $object_type, '.' ) ? Store::get( strtok( $object_type, '.' ) ) : Store::get( $object_type );
 
 				if ( empty( $collection ) ) {
-					throw new \Exception( 'Provided collection "' . esc_html( $this->object_type ) . '" not registered' );
+					throw new \Exception( 'Provided collection "' . esc_html( $object_type ) . '" not registered' );
 				}
 
 				$object = $collection->get( $id );
 
 				if ( empty( $object ) || ( 'current_user' !== $object_type && ! $object->exists() && false !== strpos( $object_type, '.' ) ) ) {
-					throw new \Exception( esc_html( $this->object_type ) . ' not found' );
+					throw new \Exception( esc_html( $object_type ) . ' not found' );
 				}
 
 				$noptin_current_objects[ $object_type ] = $object;
