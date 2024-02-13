@@ -620,7 +620,7 @@ class Email {
 		$recipient['cid'] = $this->id;
 
 		// Prepare the email recipient.
-		Main::init_current_email_recipient( $recipient );
+		Main::init_current_email_recipient( $recipient, $this );
 
 		do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
 
@@ -1140,15 +1140,17 @@ class Email {
 	 */
 	public function prepare_preview( $mode, $recipient ) {
 
-		$recipient['cid'] = $this->id;
+		$recipient['cid']  = $this->id;
+		$recipient['mode'] = $mode;
 
-		Main::init_current_email_recipient( $recipient );
+		Main::init_current_email_recipient( $recipient, $this );
 		$recipient = Main::$current_email_recipient;
 
 		try {
-			do_action( 'noptin_prepare_email_preview', $this, $mode, $recipient );
-			do_action( "noptin_prepare_{$this->type}_email_preview", $this, $mode, $recipient );
-			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_preview", $this, $mode, $recipient );
+			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
+			do_action( 'noptin_prepare_email_preview', $this );
+			do_action( "noptin_prepare_{$this->type}_email_preview", $this );
+			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_preview", $this );
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'exception', $e->getMessage() );
 		}

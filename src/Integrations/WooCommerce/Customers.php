@@ -121,6 +121,30 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 				'label' => __( 'Locale', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
+			'billing_address'  => array(
+				'label' => __( 'Billing address', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'billing_city'     => array(
+				'label' => __( 'Billing city', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'billing_state'    => array(
+				'label' => __( 'Billing state', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'billing_postcode' => array(
+				'label' => __( 'Billing postcode', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'billing_country'  => array(
+				'label' => __( 'Billing country', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'billing_phone'    => array(
+				'label' => __( 'Billing phone', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
 		);
 	}
 

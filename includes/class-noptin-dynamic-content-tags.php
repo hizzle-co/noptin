@@ -38,6 +38,10 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 */
 	public function remove_tag( $tag ) {
 
+		if ( is_array( $tag ) ) {
+			array_map( array( $this, 'remove_tag' ), $tag );
+		}
+
 		if ( isset( $this->tags[ $tag ] ) ) {
 			unset( $this->tags[ $tag ] );
 		}

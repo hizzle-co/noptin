@@ -1657,6 +1657,11 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
  */
 function noptin_is_email_unsubscribed( $email ) {
 
+	// Abort if not a valid email.
+	if ( ! is_string( $email ) || ! is_email( $email ) ) {
+		return false;
+	}
+
 	// Fetch user by email.
 	$user = get_user_by( 'email', $email );
 

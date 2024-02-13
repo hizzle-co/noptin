@@ -549,7 +549,7 @@ class Main {
 	 *
 	 * @param array $recipient The email recipient.
 	 */
-	public static function init_current_email_recipient( $recipient ) {
+	public static function init_current_email_recipient( $recipient, $campaign = null ) {
 		if ( ! empty( $recipient['email'] ) ) {
 			$GLOBALS['current_noptin_email'] = $recipient['email'];
 		} elseif ( ! empty( $recipient['sid'] ) ) {
@@ -570,7 +570,7 @@ class Main {
 
 		self::$current_email_recipient = $recipient;
 
-		do_action( 'noptin_init_current_email_recipient', $recipient );
+		do_action( 'noptin_init_current_email_recipient', $campaign );
 	}
 
 	/**

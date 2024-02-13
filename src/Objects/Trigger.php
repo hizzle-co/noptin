@@ -281,7 +281,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$collection = Store::get( $this->object_type );
 
 		if ( empty( $collection ) ) {
-			throw new \Exception( 'Collection not registered' );
+			throw new \Exception( 'Collection "' . esc_html( $this->object_type ) . '" not registered' );
 		}
 
 		// Prepare current title tag.
@@ -313,7 +313,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 				$collection = false !== strpos( $object_type, '.' ) ? Store::get( strtok( $object_type, '.' ) ) : Store::get( $object_type );
 
 				if ( empty( $collection ) ) {
-					throw new \Exception( 'Collection not registered' );
+					throw new \Exception( 'Provided collection "' . esc_html( $this->object_type ) . '" not registered' );
 				}
 
 				$object = $collection->get( $id );

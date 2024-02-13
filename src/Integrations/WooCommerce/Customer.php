@@ -40,6 +40,12 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 						$external->set_first_name( $order->get_billing_first_name() );
 						$external->set_last_name( $order->get_billing_last_name() );
 						$external->set_display_name( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() );
+						$external->set_billing_address_1( $order->get_billing_address_1() );
+						$external->set_billing_city( $order->get_billing_city() );
+						$external->set_billing_state( $order->get_billing_state() );
+						$external->set_billing_postcode( $order->get_billing_postcode() );
+						$external->set_billing_country( $order->get_billing_country() );
+						$external->set_billing_phone( $order->get_billing_phone() );
 					}
 				}
 			} else {
@@ -163,5 +169,22 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 		}
 
 		return parent::format( $raw_value, $format );
+	}
+
+	/**
+	 * Checks if a customer has bought any of the given products.
+	 *
+	 * @param array $product_ids
+	 * @return bool
+	 */
+	public function has_bought( $product_ids ) {
+
+		foreach ( wp_parse_id_list( $product_ids ) as $product_id ) {
+			if ( wc_customer_bought_product( $this->external->get_billing_email(), $this->external->get_id(), $product_id ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

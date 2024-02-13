@@ -105,6 +105,10 @@ abstract class Collection {
 		} else {
 			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rules' ) );
 		}
+
+		// Register merge tags.
+		add_action( 'noptin_before_send_email', array( $this, 'register_temporary_merge_tags' ) );
+		add_action( 'noptin_after_send_email', array( $this, 'register_temporary_merge_tags' ) );
 	}
 
 	/**
@@ -651,5 +655,42 @@ abstract class Collection {
 				),
 			),
 		);
+	}
+
+	/**
+	 * Registers temporary merge tags.
+	 *
+	 */
+	public function register_temporary_merge_tags() {
+		global $noptin_current_objects;
+
+		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
+
+		if ( isset( $recipient[ $this->type ] ) ) {
+
+			if ( ! is_array( $noptin_current_objects ) ) {
+				$noptin_current_objects = array();
+			}
+
+			$noptin_current_objects[ $this->type ] = $this->get( $recipient[ $this->type ] );
+
+			foreach ( Store::smart_tags( $this->type, true ) as $tag => $config ) {
+				noptin()->emails->tags->add_tag( $tag, $config );
+			}
+		}
+	}
+
+	/**
+	 * Unregisters temporary merge tags.
+	 *
+	 */
+	public function unregister_temporary_merge_tags() {
+		global $noptin_current_objects;
+
+		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
+		if ( is_array( $noptin_current_objects ) && isset( $recipient[ $this->type ] ) ) {
+			unset( $noptin_current_objects[ $this->type ] );
+			noptin()->emails->tags->remove_tag( array_keys( Store::smart_tags( $this->type, true ) ) );
+		}
 	}
 }
