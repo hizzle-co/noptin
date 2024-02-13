@@ -381,9 +381,7 @@ class Main {
 				)
 			);
 
-			// wp_set_script_translations( 'noptin-' . $script );
-			// wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box' );
-			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', trailingslashit( noptin()->plugin_path ) . 'languages/' );
+			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box' );
 		}
 
 		// Load the css.

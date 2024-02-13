@@ -613,6 +613,10 @@ class Email {
 			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
 		}
 
+		if ( ! isset( $recipient['track'] ) ) {
+			$recipient['track'] = true;
+		}
+
 		$recipient['cid'] = $this->id;
 
 		// Prepare the email recipient.

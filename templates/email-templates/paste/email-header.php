@@ -47,7 +47,7 @@
 					<![endif]-->
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: <?php echo esc_attr( $settings['width'] ); ?>;">
 						<tr>
-							<td align="left" bgcolor="<?php echo esc_attr( $settings['content_background'] ); ?>" style="padding: 36px 24px 0; border-top: 3px solid #d4dadf;">
+							<td align="left" bgcolor="<?php echo esc_attr( $settings['content_background'] ); ?>" style="padding: 36px 24px 0; border-top: 3px solid <?php echo esc_attr( $settings['link_color'] ); ?>;">
 								<h1 style="margin: 0; letter-spacing: -1px;"><?php echo esc_html( $email_heading ); ?></h1>
 							</td>
 						</tr>

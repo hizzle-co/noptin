@@ -383,7 +383,7 @@ function get_noptin_email_template_defaults() {
 			'color'              => '#111111',
 			'footer_text_color'  => '#666666',
 			'content_background' => '#ffffff',
-			'background_color'   => '#e9ecef',
+			'background_color'   => '#e9eaec',
 			'width'              => '600px',
 			'font_family'        => 'Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
 			'font_size'          => '16px',

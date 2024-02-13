@@ -18,7 +18,7 @@
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: <?php echo esc_attr( $settings['width'] ); ?>;">
 					<!-- start copy -->
 						<tr>
-							<td align="left" bgcolor="<?php echo esc_attr( $settings['content_background'] ); ?>" style="padding: 24px;">
+							<td align="left" bgcolor="<?php echo esc_attr( $settings['content_background'] ); ?>" style="padding: 12px 24px;">
 								<?php echo $content; ?>
 							</td>
 						</tr>
