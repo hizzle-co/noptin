@@ -35,6 +35,10 @@ class Users extends People {
 		$this->singular_label = $singular_label;
 		$this->type           = $type;
 		$this->can_email      = false;
+		$this->icon           = array(
+			'icon' => 'admin-users',
+			'fill' => '#404040',
+		);
 
 		self::$user_types[] = $type;
 		parent::__construct();
@@ -82,56 +86,56 @@ class Users extends People {
 	public function get_fields() {
 
 		$fields = array(
-			'id'         => array(
+			'id'           => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'role'       => array(
+			'role'         => array(
 				'label'   => __( 'Role', 'newsletter-optin-box' ),
 				'type'    => 'string',
 				'options' => wp_roles()->get_names(),
 			),
-			'locale'     => array(
+			'locale'       => array(
 				'label'   => __( 'Locale', 'newsletter-optin-box' ),
 				'type'    => 'string',
 				'options' => noptin_get_available_languages(),
 				'default' => get_locale(),
 			),
-			'email'      => array(
+			'email'        => array(
 				'label' => __( 'Email', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'name'       => array(
+			'display_name' => array(
 				'label' => __( 'Display name', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'first_name' => array(
+			'first_name'   => array(
 				'label' => __( 'First name', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'last_name'  => array(
+			'last_name'    => array(
 				'label' => __( 'Last name', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'login'      => array(
+			'login'        => array(
 				'label' => __( 'Username', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'url'        => array(
+			'url'          => array(
 				'label' => __( 'URL', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'bio'        => array(
+			'description'  => array(
 				'label'          => __( 'BIO', 'newsletter-optin-box' ),
 				'type'           => 'string',
 				'skip_smart_tag' => true,
 			),
-			'registered' => array(
+			'registered'   => array(
 				'label'   => __( 'Registration date', 'newsletter-optin-box' ),
 				'type'    => 'date',
 				'example' => "format='datetime'",
 			),
-			'meta'       => $this->meta_key_tag_config(),
+			'meta'         => $this->meta_key_tag_config(),
 		);
 
 		// Add provided fields.
@@ -202,5 +206,57 @@ class Users extends People {
 				)
 			)
 		);
+	}
+
+	/**
+	 * Retrieves a test object args.
+	 *
+	 * @since 2.2.0
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function get_test_args( $rule ) {
+
+		if ( get_current_user_id() > 0 ) {
+			$user = get_user_by( 'id', get_current_user_id() );
+		} else {
+			$user = current(
+				get_users(
+					array(
+						'number' => 1,
+					)
+				)
+			);
+		}
+
+		if ( empty( $user ) ) {
+			throw new \Exception( 'No user found.' );
+		}
+
+		$args = array(
+			'object_id'  => $user->ID,
+			'subject_id' => $user->ID,
+		);
+
+		if ( 'add_user_role' === $rule->get_trigger_id() ) {
+			$args['extra_args'] = array(
+				'user.added_role' => current( $user->roles ),
+			);
+		}
+
+		if ( 'remove_user_role' === $rule->get_trigger_id() ) {
+			$args['extra_args'] = array(
+				'user.removed_role' => current( $user->roles ),
+			);
+		}
+
+		if ( 'after_password_reset' === $rule->get_trigger_id() ) {
+			$args['extra_args'] = array(
+				'user.new_password' => '{{NEW_PASSWORD}}',
+			);
+		}
+
+		return $args;
 	}
 }

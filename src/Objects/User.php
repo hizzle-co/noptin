@@ -68,16 +68,6 @@ class User extends Person {
 			return $this->external->ID;
 		}
 
-		// Name.
-		if ( 'name' === strtolower( $field ) ) {
-			return $this->external->display_name;
-		}
-
-		// BIO.
-		if ( 'bio' === strtolower( $field ) ) {
-			return $this->external->description;
-		}
-
 		// Locale.
 		if ( 'locale' === strtolower( $field ) ) {
 			return get_user_locale( $this->external );

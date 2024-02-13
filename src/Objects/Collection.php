@@ -384,14 +384,8 @@ abstract class Collection {
 	 *
 	 */
 	protected function filter( $value, $type ) {
-		$value = apply_filters(
-			"noptin_object_{$type}_{$this->type}",
-			$value,
-			$this
-		);
-
 		return apply_filters(
-			"noptin_object_type_{$type}_{$this->object_type}",
+			"noptin_{$this->type}_collection_{$type}",
 			$value,
 			$this
 		);
