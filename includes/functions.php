@@ -216,52 +216,10 @@ function noptin_obfuscate_email_addresses( $string ) {
 function get_noptin_new_newsletter_campaign_url() {
 
 	$param = array(
-		'page'        => 'noptin-email-campaigns',
-		'section'     => 'newsletters',
-		'sub_section' => 'new_campaign',
+		'page'              => 'noptin-email-campaigns',
+		'noptin_email_type' => 'newsletter',
 	);
 	return add_query_arg( $param, admin_url( '/admin.php' ) );
-}
-
-/**
- * Returns a link to edit a newsletter.
- *
- * @since 1.2.0
- * @param int $id The campaign's id.
- * @return string.
- */
-function get_noptin_newsletter_campaign_url( $id ) {
-
-	$param = array(
-		'page'        => 'noptin-email-campaigns',
-		'section'     => 'newsletters',
-		'sub_section' => 'edit_campaign',
-		'campaign'    => $id,
-	);
-	return add_query_arg( $param, admin_url( '/admin.php' ) );
-}
-
-/**
- * Checks if a given post is a noptin campaign.
- *
- * @param int|WP_Post $post The post to check for.
- * @param bool|string $campaign_type Optional. Specify if you need to check for a specific campaign type.
- * @since 1.2.0
- * @return bool.
- */
-function is_noptin_campaign( $post, $campaign_type = false ) {
-
-	$campaign = get_post( $post );
-
-	if ( empty( $campaign ) || 'noptin-campaign' !== $campaign->post_type ) {
-		return false;
-	}
-
-	if ( empty( $campaign_type ) ) {
-		return true;
-	}
-
-	return trim( $campaign_type ) === get_post_meta( $campaign->ID, 'campaign_type', true );
 }
 
 /**
@@ -1015,6 +973,11 @@ function noptin_is_page_built_with_elementor( $post_id ) {
  * @param mixed $data The data to print.
  */
 function noptin_dump( $data ) {
+
+	if ( 1 < func_num_args() ) {
+		$data = func_get_args();
+	}
+
 	// phpcs:disable WordPress.PHP.DevelopmentFunctions
 	echo '<pre>';
 	var_dump( $data );

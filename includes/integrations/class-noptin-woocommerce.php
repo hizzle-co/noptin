@@ -173,6 +173,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 				'example'           => 'woocommerce_orders',
 				'conditional_logic' => 'number',
 				'partial'           => false,
+				'global'            => true,
 				'callback'          => array( $this, 'get_current_subscriber_woocommerce_orders_count' ),
 			)
 		);
@@ -195,6 +196,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 				'example'           => 'woocommerce_orders',
 				'conditional_logic' => 'number',
 				'partial'           => false,
+				'global'            => true,
 				'callback'          => array( $this, 'get_current_subscriber_woocommerce_orders_count' ),
 			);
 		}

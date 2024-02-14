@@ -78,7 +78,14 @@
 					<span class="noptin-card-value"><?php echo (int) $subscribers_week_total; ?></span>
 				</li>
 		</ul>
-		<div class="noptin-card-footer-links"><a href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-subscribers' ) ); ?>"><?php esc_html_e( 'View all subscribers', 'newsletter-optin-box' ); ?></a> | <a href="<?php echo esc_url( get_noptin_new_newsletter_campaign_url() ); ?>"><?php esc_html_e( 'Send them an email', 'newsletter-optin-box' ); ?></a></div>
+		<div class="noptin-card-footer-links">
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=noptin-subscribers' ) ); ?>">
+				<?php esc_html_e( 'View all subscribers', 'newsletter-optin-box' ); ?>
+			</a> | 
+			<a href="<?php echo esc_url( get_noptin_new_newsletter_campaign_url() ); ?>">
+				<?php esc_html_e( 'Send them an email', 'newsletter-optin-box' ); ?>
+			</a>
+		</div>
 	</div>
 
 

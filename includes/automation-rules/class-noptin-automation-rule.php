@@ -336,15 +336,8 @@ class Noptin_Automation_Rule {
 		);
 
 		if ( 'email' === $this->action_id && ! empty( $this->action_settings['automated_email_id'] ) ) {
-			$edit_url = add_query_arg(
-				array(
-					'page'        => 'noptin-email-campaigns',
-					'section'     => 'automations',
-					'sub_section' => 'edit_campaign',
-					'campaign'    => $this->action_settings['automated_email_id'],
-				),
-				admin_url( 'admin.php' )
-			);
+			$email    = noptin_get_email_campaign_object( $this->action_settings['automated_email_id'] );
+			$edit_url = $email->get_edit_url();
 		}
 
 		return apply_filters( 'noptin_automation_rule_edit_url', $edit_url, $this );

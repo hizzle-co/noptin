@@ -15,7 +15,6 @@ $edit_urls = array(
 		),
 		admin_url( 'admin.php' )
 	),
-	'email'   => admin_url( 'admin.php?page=noptin-email-campaigns&section=automations&sub_section=edit_campaign&campaign=automation_rule_NOPTIN_TRIGGER_ID' ),
 );
 
 $edit_urls = apply_filters( 'noptin_create_automation_rule_edit_urls', $edit_urls );

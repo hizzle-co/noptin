@@ -27,6 +27,11 @@ class Main {
 	public static $current_email_recipient = array();
 
 	/**
+	 * @var Email The current email.
+	 */
+	public static $current_email = null;
+
+	/**
 	 * Inits the main emails class.
 	 *
 	 */
@@ -37,6 +42,8 @@ class Main {
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
 
 		// Fire hooks.
+		add_action( 'noptin_before_send_email', array( __CLASS__, 'set_current_email' ), -10 );
+		add_filter( 'noptin_get_last_send_date', array( __CLASS__, 'filter_last_send_date' ) );
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
 
@@ -615,5 +622,61 @@ class Main {
 		foreach ( get_posts( $args ) as $post_id ) {
 			wp_delete_post( $post_id, true );
 		}
+	}
+
+	/**
+	 * Sets the current email.
+	 *
+	 * @param Email $email The current email.
+	 */
+	public static function set_current_email( $email ) {
+		self::$current_email = $email;
+	}
+
+	/**
+	 * Filters the last send date.
+	 *
+	 * @param string $date The last send date.
+	 * @return string
+	 */
+	public static function filter_last_send_date( $date ) {
+
+		if ( ! empty( self::$current_email ) ) {
+			$last_date = get_post_meta( self::$current_email->id, '_noptin_last_send', true );
+
+			if ( ! empty( $last_date ) ) {
+				return $last_date;
+			}
+
+			switch ( self::$current_email->get( 'frequency' ) ) {
+
+				// Get posts published yesterday.
+				case 'daily':
+					return strtotime( '-1 day' );
+
+				// Get posts published in the last 7 days.
+				case 'weekly':
+					return strtotime( '-7 days' );
+
+				// Get posts published in the last 30 days.
+				case 'monthly':
+					return strtotime( '-30 days' );
+
+				// Get posts published in the last 365 days.
+				case 'yearly':
+					return strtotime( '-365 days' );
+
+				// Get posts published last x days.
+				case 'x_days':
+					$days = self::$current_email->get( 'x_days' );
+					if ( empty( $days ) ) {
+						$days = 14;
+					}
+
+					return strtotime( "-$days days" );
+			}
+		}
+
+		return get_noptin_option( 'last_send_date', $date );
 	}
 }

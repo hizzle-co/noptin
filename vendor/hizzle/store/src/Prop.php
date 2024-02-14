@@ -530,10 +530,9 @@ class Prop {
 	 *
 	 * @param string|string[] $value The value to flip.
 	 * @param array $choices The available choices.
-	 * @param array $flipped_choices The flipped choices.
 	 * @return mixed
 	 */
-	public function flip_option( $value, $choices, $flipped_choices ) {
+	public function flip_option( $value, $choices ) {
 
 		if ( is_string( $value ) ) {
 
@@ -541,8 +540,10 @@ class Prop {
 				return $value;
 			}
 
-			if ( isset( $flipped_choices[ $value ] ) ) {
-				return $flipped_choices[ $value ];
+			foreach ( $choices as $key => $val ) {
+				if ( $val === $value ) {
+					return $key;
+				}
 			}
 
 			return $value;
@@ -555,7 +556,7 @@ class Prop {
 		$flipped = array();
 
 		foreach ( $value as $key => $val ) {
-			$flipped[ $key ] = $this->flip_option( $val, $choices, $flipped_choices );
+			$flipped[ $key ] = $this->flip_option( $val, $choices );
 		}
 
 		return $flipped;
@@ -577,7 +578,7 @@ class Prop {
 		// If we have enums and a label has been passed instead of a key.
 		if ( ! empty( $this->enum ) ) {
 			$choices = $this->get_choices();
-			$value   = $this->flip_option( $value, $choices, array_flip( $choices ) );
+			$value   = $this->flip_option( $value, $choices );
 		}
 
 		// Do we have a custom callback?

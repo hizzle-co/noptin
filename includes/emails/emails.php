@@ -138,24 +138,6 @@ function noptin_parse_email_content_tags( $content, $partial = false ) {
 }
 
 /**
- * Returns the URL to create a new automated email.
- *
- * @since 1.7.0
- * @return string
- */
-function noptin_get_new_automation_url() {
-
-	return add_query_arg(
-		array(
-			'page'        => 'noptin-email-campaigns',
-			'section'     => 'automations',
-			'sub_section' => 'new_campaign',
-		),
-		admin_url( '/admin.php' )
-	);
-}
-
-/**
  * Retrieves an email campaign's object.
  *
  * @since 2.0.0
@@ -562,10 +544,10 @@ function get_noptin_email_recipients_url( $recipients, $sender ) {
 
 	return add_query_arg(
 		array(
-			'noptin_recipients' => rawurlencode( $recipients ),
-			'section'           => 'newsletters',
-			'sub_section'       => 'edit_campaign',
-			'campaign'          => rawurlencode( $sender ),
+			'noptin_recipients'   => rawurlencode( $recipients ),
+			'noptin_email_type'   => 'newsletter',
+			'noptin_campaign'     => 0,
+			'noptin_email_sender' => rawurlencode( $sender ),
 		),
 		admin_url( 'admin.php?page=noptin-email-campaigns' )
 	);

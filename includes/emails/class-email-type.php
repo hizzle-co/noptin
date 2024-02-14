@@ -405,7 +405,7 @@ abstract class Noptin_Email_Type {
 			noptin()->emails->tags->add_tag( $tag, $details );
 		}
 
-		// Register subsriber merge tags.
+		// Register subscriber merge tags.
 		if ( ! empty( $this->subscriber ) ) {
 			foreach ( $this->get_subscriber_merge_tags() as $tag => $details ) {
 				noptin()->emails->tags->add_tag( $tag, $details );
@@ -418,11 +418,6 @@ abstract class Noptin_Email_Type {
 				noptin()->emails->tags->add_tag( $tag, $details );
 			}
 		}
-
-		// Unsubscribe URL.
-		if ( ! empty( $this->unsubscribe_url ) ) {
-			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = $this->unsubscribe_url;
-		}
 	}
 
 	/**
@@ -433,8 +428,10 @@ abstract class Noptin_Email_Type {
 	public function unregister_merge_tags() {
 
 		// Unregister general merge tags.
-		foreach ( array_keys( $this->get_flattened_merge_tags() ) as $tag ) {
-			noptin()->emails->tags->remove_tag( $tag );
+		foreach ( $this->get_flattened_merge_tags() as $tag => $config ) {
+			if ( empty( $config['global'] ) ) {
+				noptin()->emails->tags->remove_tag( $tag );
+			}
 		}
 
 		// Unregister subsriber merge tags.

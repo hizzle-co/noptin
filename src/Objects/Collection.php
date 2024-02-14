@@ -494,6 +494,243 @@ abstract class Collection {
 	}
 
 	/**
+	 * Generates date filters.
+	 *
+	 */
+	protected function generate_date_filters() {
+		return array(
+			'since_last_send'  => array(
+				'label'           => __( 'Since Last Send', 'newsletter-optin-box' ),
+				'el'              => 'input',
+				'type'            => 'checkbox',
+				'description'     => sprintf(
+					/* translators: %s: Object type label. */
+					__( 'Only show %s created since last send', 'newsletter-optin-box' ),
+					strtolower( $this->label )
+				),
+				'show_by_default' => true,
+				'default'         => false,
+			),
+			'published_before' => array(
+				'label'       => __( 'Date Before', 'newsletter-optin-box' ),
+				'el'          => 'input',
+				'type'        => 'text',
+				'placeholder' => sprintf(
+					/* translators: %s: Examples. */
+					__( 'Examples: %s', 'newsletter-optin-box' ),
+					implode(
+						', ',
+						array(
+							gmdate( 'Y-m-d' ),
+							'-7 days',
+							'1 year ago',
+						)
+					)
+				),
+				'description' => sprintf(
+					/* translators: %s: Object type label. */
+					__( 'Show %s created before this date.', 'newsletter-optin-box' ),
+					strtolower( $this->label )
+				),
+			),
+			'published_after'  => array(
+				'label'       => __( 'Date After', 'newsletter-optin-box' ),
+				'el'          => 'input',
+				'type'        => 'text',
+				'placeholder' => sprintf(
+					/* translators: %s: Examples. */
+					__( 'Examples: %s', 'newsletter-optin-box' ),
+					implode(
+						', ',
+						array(
+							gmdate( 'Y-m-d' ),
+							'-7 days',
+							'1 year ago',
+						)
+					)
+				),
+				'description' => sprintf(
+					/* translators: %s: Object type label. */
+					__( 'Show %s created after this date.', 'newsletter-optin-box' ),
+					strtolower( $this->label )
+				),
+			),
+		);
+	}
+
+	/**
+	 * Prepares a date query filter.
+	 *
+	 * @param array $filters The filters.
+	 */
+	protected function prepare_date_query_filter( $filters ) {
+		$date_query = array();
+
+		foreach ( array( 'published_before', 'published_after', 'since_last_send' ) as $date ) {
+			if ( isset( $filters[ $date ] ) ) {
+
+				if ( 'since_last_send' === $date ) {
+					$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
+
+					if ( $last_send ) {
+						$date_query['published_after'] = array(
+							'after' => is_numeric( $last_send ) ? gmdate( 'Y-m-d\TH:i:s+00:00', $last_send ) : $last_send,
+						);
+					}
+				} elseif ( ! empty( $filters[ $date ] ) ) {
+					$key          = 'published_before' === $date ? 'before' : 'after';
+					$date_query[] = array(
+						'inclusive' => true,
+						$key        => $filters[ $date ],
+					);
+				}
+
+				unset( $filters[ $date ] );
+			}
+		}
+
+		if ( ! empty( $date_query ) ) {
+			$filters['date_query'] = $date_query;
+		} else {
+			unset( $filters['date_query'] );
+		}
+
+		return $filters;
+	}
+
+	/**
+	 * Generates taxonomy filters.
+	 *
+	 * @param string $post_type The post type.
+	 */
+	protected function generate_taxonomy_filters( $post_type ) {
+		$taxonomies = wp_list_pluck(
+			wp_list_filter(
+				get_object_taxonomies( $post_type, 'objects' ),
+				array(
+					'public' => true,
+				)
+			),
+			'label',
+			'name'
+		);
+
+		$filters = array();
+
+		foreach ( $taxonomies as $taxonomy => $label ) {
+			if ( 'category' === $taxonomy ) {
+				$field     = 'category__in';
+				$field_not = 'category__not_in';
+			} elseif ( 'post_tag' === $taxonomy ) {
+				$field     = 'tag__in';
+				$field_not = 'tag__not_in';
+			} else {
+				$field     = 'tax_in_' . $taxonomy;
+				$field_not = 'tax_not_in_' . $taxonomy;
+			}
+
+			$term_options = get_terms(
+				array(
+					'taxonomy'   => $taxonomy,
+					'hide_empty' => false,
+				)
+			);
+
+			$prepared_options = array();
+
+			foreach ( $term_options as $term ) {
+				$prepared_options[] = array(
+					'value'  => $term->term_id,
+					'label'  => $term->name,
+					'render' => $term->count > 0 ? sprintf(
+						'<span class="noptin-taxonomy-term__name">%s</span> <span class="noptin-taxonomy-term__count">(%d)</span>',
+						$term->name,
+						$term->count
+					) : null,
+				);
+			}
+
+			$filters[ $field ] = array(
+				'label'           => $label,
+				'el'              => 'select',
+				'multiple'        => true,
+				'description'     => sprintf(
+					/* translators: %s: Taxonomy name. */
+					__( 'Filter by %s.', 'newsletter-optin-box' ),
+					strtolower( $label )
+				),
+				'options'         => $prepared_options,
+				'show_by_default' => true,
+			);
+
+			$filters[ $field_not ] = array(
+				'label'       => sprintf(
+					/* translators: %s: Taxonomy name. */
+					__( '%s - Exclude', 'newsletter-optin-box' ),
+					$label
+				),
+				'el'          => 'select',
+				'multiple'    => true,
+				'description' => sprintf(
+					/* translators: %s: Taxonomy name. */
+					__( 'Exclude %s.', 'newsletter-optin-box' ),
+					strtolower( $label )
+				),
+				'options'     => $prepared_options,
+			);
+		}
+
+		return $filters;
+	}
+
+	/**
+	 * Prepares a taxonomy query filter.
+	 *
+	 * @param array $filters The filters.
+	 */
+	protected function prepare_tax_query_filter( $filters ) {
+		$tax_query = array();
+
+		foreach ( $filters as $key => $value ) {
+
+			// Tax in.
+			if ( 0 === strpos( $key, 'tax_in_' ) ) {
+
+				if ( ! empty( $value ) ) {
+					$tax_query[] = array(
+						'taxonomy' => str_replace( 'tax_in_', '', $key ),
+						'terms'    => wp_parse_id_list( $value ),
+					);
+				}
+
+				unset( $filters[ $key ] );
+				continue;
+			}
+
+			// Tax not in.
+			if ( 0 === strpos( $key, 'tax_not_in_' ) ) {
+
+				if ( ! empty( $value ) ) {
+					$tax_query[] = array(
+						'taxonomy' => str_replace( 'tax_not_in_', '', $key ),
+						'terms'    => wp_parse_id_list( $value ),
+						'operator' => 'NOT IN',
+					);
+				}
+
+				unset( $filters[ $key ] );
+				continue;
+			}
+		}
+
+		if ( ! empty( $tax_query ) ) {
+			$filters['tax_query'] = $tax_query;
+		}
+
+		return $filters;
+	}
+
+	/**
 	 * Handles the list shortcode.
 	 *
 	 * @param array $atts The shortcode attributes.

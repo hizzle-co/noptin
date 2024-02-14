@@ -79,246 +79,33 @@ class Generic_Post_Type extends Post_Type {
 	 */
 	public function get_filters() {
 
-		$taxonomies = wp_list_pluck(
-			wp_list_filter(
-				get_object_taxonomies( $this->type, 'objects' ),
-				array(
-					'public' => true,
-				)
-			),
-			'label',
-			'name'
+		return array_merge(
+			$this->generate_date_filters(),
+			$this->generate_taxonomy_filters( $this->type ),
+			array(
+				'author'        => array(
+					'label'       => __( 'Author', 'newsletter-optin-box' ),
+					'el'          => 'input',
+					'type'        => 'text',
+					'description' => __( 'Author ID, or comma-separated list of IDs', 'newsletter-optin-box' ),
+					'placeholder' => 'For example, 1, 3, 4, -5',
+				),
+				'comment_count' => array(
+					'label'       => __( 'Comment Count', 'newsletter-optin-box' ),
+					'el'          => 'input',
+					'type'        => 'text',
+					'description' => __( 'Number of comments, with an optional comparison operator.', 'newsletter-optin-box' ),
+					'placeholder' => 'For example, >= 5',
+				),
+				's'             => array(
+					'label'       => __( 'Search by keyword', 'newsletter-optin-box' ),
+					'el'          => 'input',
+					'type'        => 'text',
+					'description' => __( 'Prepending a term with a hyphen will exclude posts matching that term.', 'newsletter-optin-box' ),
+					'placeholder' => __( 'For example, pillow -sofa', 'newsletter-optin-box' ),
+				),
+			)
 		);
-
-		$label   = noptin_implode_and( $taxonomies );
-		$options = array(
-			'author'        => array(
-				'label'       => __( 'Author', 'newsletter-optin-box' ),
-				'el'          => 'input',
-				'type'        => 'text',
-				'description' => __( 'Author ID, or comma-separated list of IDs', 'newsletter-optin-box' ),
-				'placeholder' => 'For example, 1, 3, 4, 5',
-			),
-			'comment_count' => array(
-				'label'       => __( 'Comment Count', 'newsletter-optin-box' ),
-				'el'          => 'input',
-				'type'        => 'text',
-				'description' => __( 'Number of comments, with an optional comparison operator.', 'newsletter-optin-box' ),
-				'placeholder' => 'For example, >= 5',
-			),
-			'tax_query'     => array(
-				'el'               => 'query_repeater',
-				'label'            => $label,
-				'customAttributes' => array(
-					'fields'    => array(
-						'taxonomy'         => array(
-							'label'       => __( 'Taxonomy', 'newsletter-optin-box' ),
-							'el'          => 'select',
-							'options'     => $taxonomies,
-							'description' => __( 'Taxonomy to filter by.', 'newsletter-optin-box' ),
-							'placeholder' => __( 'Select taxonomy', 'newsletter-optin-box' ),
-						),
-						'field'            => array(
-							'label'       => __( 'Field', 'newsletter-optin-box' ),
-							'el'          => 'select',
-							'options'     => array(
-								'term_id' => __( 'Term ID', 'newsletter-optin-box' ),
-								'name'    => __( 'Name', 'newsletter-optin-box' ),
-								'slug'    => __( 'Slug', 'newsletter-optin-box' ),
-							),
-							'description' => __( 'Select term field to filter by.', 'newsletter-optin-box' ),
-							'placeholder' => __( 'Select field', 'newsletter-optin-box' ),
-							'default'     => 'name',
-						),
-						'terms'            => array(
-							'label'       => __( 'Terms', 'newsletter-optin-box' ),
-							'el'          => 'form_token',
-							'description' => __( 'Use comma-separated list of terms formatted according to the field option.', 'newsletter-optin-box' ),
-						),
-						'operator'         => array(
-							'label'       => __( 'Operator', 'newsletter-optin-box' ),
-							'el'          => 'select',
-							'options'     => array(
-								'IN'         => __( 'IN', 'newsletter-optin-box' ),
-								'NOT IN'     => __( 'NOT IN', 'newsletter-optin-box' ),
-								'AND'        => __( 'AND', 'newsletter-optin-box' ),
-								'EXISTS'     => __( 'EXISTS', 'newsletter-optin-box' ),
-								'NOT EXISTS' => __( 'NOT EXISTS', 'newsletter-optin-box' ),
-							),
-							'description' => __( 'Operator to compare terms.', 'newsletter-optin-box' ),
-							'placeholder' => __( 'Select operator', 'newsletter-optin-box' ),
-							'default'     => 'IN',
-						),
-						'include_children' => array(
-							'label'       => __( 'Include Children', 'newsletter-optin-box' ),
-							'el'          => 'input',
-							'type'        => 'checkbox',
-							'description' => __( 'Whether or not to include children for hierarchical taxonomies.', 'newsletter-optin-box' ),
-							'default'     => true,
-						),
-					),
-					'openModal' => sprintf(
-						/* translators: %s: taxonomies. */
-						__( 'Filter by %s', 'newsletter-optin-box' ),
-						$label
-					),
-				),
-				'default'          => array(
-					'relation' => 'AND',
-					'items'    => array(),
-				),
-			),
-			'date_query'    => array(
-				'el'               => 'query_repeater',
-				'label'            => __( 'Date', 'newsletter-optin-box' ),
-				'customAttributes' => array(
-					'disable'   => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Only show %s published since last send', 'newsletter-optin-box' ),
-						$this->label
-					),
-					'fields'    => array(
-						'after'     => array(
-							'label'       => __( 'After', 'newsletter-optin-box' ),
-							'el'          => 'input',
-							'type'        => 'text',
-							'placeholder' => sprintf(
-								/* translators: %s: Examples. */
-								__( 'Examples: %s', 'newsletter-optin-box' ),
-								implode(
-									', ',
-									array(
-										gmdate( 'Y-m-d' ),
-										'-7 days',
-										'1 year ago',
-									)
-								)
-							),
-							'description' => sprintf(
-								/* translators: %s: Object type label. */
-								__( 'Optional. Show %s published after this date.', 'newsletter-optin-box' ),
-								$this->label
-							),
-						),
-						'before'    => array(
-							'label'       => __( 'Before', 'newsletter-optin-box' ),
-							'el'          => 'input',
-							'type'        => 'text',
-							'placeholder' => sprintf(
-								/* translators: %s: Examples. */
-								__( 'Examples: %s', 'newsletter-optin-box' ),
-								implode(
-									', ',
-									array(
-										gmdate( 'Y-m-d' ),
-										'-7 days',
-										'1 year ago',
-									)
-								)
-							),
-							'description' => sprintf(
-								/* translators: %s: Object type label. */
-								__( 'Optional. Show %s published before this date.', 'newsletter-optin-box' ),
-								$this->label
-							),
-						),
-						'inclusive' => array(
-							'label'       => __( 'Inclusive', 'newsletter-optin-box' ),
-							'el'          => 'input',
-							'type'        => 'checkbox',
-							'description' => __( "Include results from dates specified in 'before' or 'after'.", 'newsletter-optin-box' ),
-							'default'     => false,
-						),
-					),
-					'openModal' => __( 'Filter by date', 'newsletter-optin-box' ),
-				),
-				'default'          => array(
-					'relation' => 'OR',
-					'disabled' => true,
-					'items'    => array(),
-				),
-			),
-			'meta_query'    => array(
-				'el'               => 'query_repeater',
-				'label'            => __( 'Custom fields', 'newsletter-optin-box' ),
-				'customAttributes' => array(
-					'fields'    => array(
-						'key'     => array(
-							'label'       => __( 'Meta key', 'newsletter-optin-box' ),
-							'el'          => 'input',
-							'type'        => 'text',
-							'description' => __( 'Custom field key to filter by.', 'newsletter-optin-box' ),
-						),
-						'compare' => array(
-							'label'       => __( 'Compare', 'newsletter-optin-box' ),
-							'el'          => 'select',
-							'options'     => array(
-								'='           => '=',
-								'!='          => '!=',
-								'>'           => '>',
-								'>='          => '>=',
-								'<'           => '<',
-								'<='          => '<=',
-								'LIKE'        => 'LIKE',
-								'NOT LIKE'    => 'NOT LIKE',
-								'IN'          => 'IN',
-								'NOT IN'      => 'NOT IN',
-								'BETWEEN'     => 'BETWEEN',
-								'NOT BETWEEN' => 'NOT BETWEEN',
-								'EXISTS'      => 'EXISTS',
-								'NOT EXISTS'  => 'NOT EXISTS',
-								'REGEXP'      => 'REGEXP',
-								'NOT REGEXP'  => 'NOT REGEXP',
-								'RLIKE'       => 'RLIKE',
-							),
-							'description' => __( 'Operator to test', 'newsletter-optin-box' ),
-							'placeholder' => __( 'Select operator', 'newsletter-optin-box' ),
-							'default'     => '=',
-						),
-						'value'   => array(
-							'label'       => __( 'Custom field value', 'newsletter-optin-box' ),
-							'el'          => 'select',
-							'description' => __( "Separate multiple values with a comma when compare is 'IN', 'NOT IN', 'BETWEEN', or 'NOT BETWEEN'.", 'newsletter-optin-box' ),
-							'conditions'  => array(
-								array(
-									'key'      => 'compare',
-									'operator' => '!includes',
-									'value'    => array( 'EXISTS', 'NOT EXISTS' ),
-								),
-							),
-						),
-						'type'    => array(
-							'label'   => __( 'Custom field type', 'newsletter-optin-box' ),
-							'el'      => 'select',
-							'options' => array(
-								'NUMERIC'  => __( 'Numeric', 'newsletter-optin-box' ),
-								'BINARY'   => __( 'Binary', 'newsletter-optin-box' ),
-								'CHAR'     => __( 'String', 'newsletter-optin-box' ),
-								'DATE'     => __( 'Date', 'newsletter-optin-box' ),
-								'DATETIME' => __( 'Date and time', 'newsletter-optin-box' ),
-								'DECIMAL'  => __( 'Decimal', 'newsletter-optin-box' ),
-								'SIGNED'   => __( 'Signed', 'newsletter-optin-box' ),
-								'TIME'     => __( 'Time', 'newsletter-optin-box' ),
-								'UNSIGNED' => __( 'Unsigned', 'newsletter-optin-box' ),
-							),
-							'default' => 'CHAR',
-						),
-					),
-					'openModal' => __( 'Filter by custom fields', 'newsletter-optin-box' ),
-				),
-				'default'          => array(
-					'relation' => 'AND',
-					'items'    => array(),
-				),
-			),
-		);
-
-		// Remove tax query if no taxonomies.
-		if ( empty( $taxonomies ) ) {
-			unset( $options['tax_query'] );
-		}
-
-		return $options;
 	}
 
 	/**
@@ -331,11 +118,12 @@ class Generic_Post_Type extends Post_Type {
 
 		$filters = array_merge(
 			array(
-				'post_type' => $this->type,
-				'number'    => 10,
-				'order'     => 'DESC',
-				'orderby'   => 'date',
-				'fields'    => 'ids',
+				'post_type'           => $this->type,
+				'number'              => 10,
+				'order'               => 'DESC',
+				'orderby'             => 'date',
+				'fields'              => 'ids',
+				'ignore_sticky_posts' => true,
 			),
 			$filters
 		);
@@ -360,40 +148,10 @@ class Generic_Post_Type extends Post_Type {
 		}
 
 		// Prepare tax query values.
-		$filters = $this->prepare_query_filter( $filters, 'tax_query' );
-
-		// Prepare meta query values.
-		$filters = $this->prepare_query_filter( $filters, 'meta_query' );
-		if ( ! empty( $filters['meta_query'] ) ) {
-			$prepared = array(
-				'relation' => 'AND',
-			);
-
-			foreach ( $filters['meta_query'] as $index => $meta ) {
-
-				if ( 'relation' === $index ) {
-					$prepared['relation'] = $meta;
-					continue;
-				}
-
-				// Abort if not an array.
-				if ( ! is_array( $meta ) ) {
-					continue;
-				}
-
-				// Ensure value is array if compare is 'IN', 'NOT IN', 'BETWEEN', or 'NOT BETWEEN'.
-				if ( isset( $meta['compare'] ) && isset( $meta['value'] ) && in_array( $meta['compare'], array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ), true ) ) {
-					$meta['value'] = noptin_parse_list( $meta['value'], true );
-				}
-
-				$prepared[] = $meta;
-			}
-
-			$filters['meta_query'] = $prepared;
-		}
+		$filters = $this->prepare_tax_query_filter( $filters );
 
 		// If date query is specified, ensure it is enabled.
-		$filters = $this->prepare_query_filter( $filters, 'date_query' );
+		$filters = $this->prepare_date_query_filter( $filters );
 
 		return get_posts( array_filter( $filters ) );
 	}
