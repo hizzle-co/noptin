@@ -40,12 +40,21 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 						$external->set_first_name( $order->get_billing_first_name() );
 						$external->set_last_name( $order->get_billing_last_name() );
 						$external->set_display_name( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() );
+
+						// Set billing address.
 						$external->set_billing_address_1( $order->get_billing_address_1() );
 						$external->set_billing_city( $order->get_billing_city() );
 						$external->set_billing_state( $order->get_billing_state() );
 						$external->set_billing_postcode( $order->get_billing_postcode() );
 						$external->set_billing_country( $order->get_billing_country() );
 						$external->set_billing_phone( $order->get_billing_phone() );
+
+						// Set shipping address.
+						$external->set_shipping_address_1( $order->get_shipping_address_1() );
+						$external->set_shipping_city( $order->get_shipping_city() );
+						$external->set_shipping_state( $order->get_shipping_state() );
+						$external->set_shipping_postcode( $order->get_shipping_postcode() );
+						$external->set_shipping_country( $order->get_shipping_country() );
 					}
 				}
 			} else {

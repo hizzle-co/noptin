@@ -547,6 +547,7 @@ class Email {
 			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 
 			if ( true === $should_send ) {
+				update_post_meta( $this->id, '_noptin_last_send', time() );
 				$newsletter->save();
 			}
 

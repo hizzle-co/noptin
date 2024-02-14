@@ -677,6 +677,6 @@ class Main {
 			}
 		}
 
-		return get_noptin_option( 'last_send_date', $date );
+		return $date;
 	}
 }

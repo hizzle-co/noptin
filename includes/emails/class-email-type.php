@@ -246,117 +246,6 @@ abstract class Noptin_Email_Type {
 	}
 
 	/**
-	 * Retrieves an array of user merge tags.
-	 *
-	 * @return array
-	 */
-	public function get_user_merge_tags() {
-
-		return array(
-
-			'user.id'           => array(
-				'description' => __( "The user's ID", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => 'user.id',
-			),
-
-			'user.email'        => array(
-				'description' => __( "The user's email address", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => 'user.email',
-			),
-
-			'user.login'        => array(
-				'description' => __( "The user's login name", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => 'user.login',
-			),
-
-			'user.first_name'   => array(
-				'description' => __( "The user's first name", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.first_name default='Jane'",
-			),
-
-			'user.last_name'    => array(
-				'description' => __( "The user's last name", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.last_name default='Doe'",
-			),
-
-			'user.display_name' => array(
-				'description' => __( "The user's display name", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.display_name default='there'",
-			),
-
-			'user.description'  => array(
-				'description' => __( "The user's description", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => 'user.description',
-			),
-
-			'user.url'          => array(
-				'description' => __( "The user's website, if available", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => 'user.url',
-			),
-
-			'user.registered'   => array(
-				'description' => __( "The user's registration date", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => 'user.registered',
-			),
-
-			'user.meta'         => array(
-				'description' => __( "The user's meta field value", 'newsletter-optin-box' ),
-				'callback'    => array( $this, 'get_user_field' ),
-				'example'     => "user.meta key='xyz' default='123'",
-			),
-
-		);
-	}
-
-	/**
-	 * Custom field value of the current User.
-	 *
-	 * @param array $args
-	 * @param string $field
-	 * @return string
-	 */
-	public function get_user_field( $args = array(), $field = 'user.first_name' ) {
-
-		// Prepare vars.
-		$default = isset( $args['default'] ) ? $args['default'] : '';
-		$field   = str_replace( 'user.', 'user_', strtolower( $field ) );
-
-		// Standardize some fields.
-		if ( 'user_id' === $field ) {
-			$field = 'ID';
-		}
-
-		if ( in_array( $field, array( 'user_display_name' ), true ) ) {
-			$field = str_replace( 'user_', '', $field );
-		}
-
-		if ( 'user_meta' === $field ) {
-
-			if ( empty( $args['key'] ) ) {
-				return esc_html( $default );
-			}
-
-			$field = trim( strtolower( $args['key'] ) );
-		}
-
-		// Abort if no user.
-		if ( empty( $this->user ) || ! $this->user->has_prop( $field ) ) {
-			return esc_html( $default );
-		}
-
-		return esc_html( (string) $this->user->get( $field ) );
-	}
-
-	/**
 	 * Retrieves an array of supported merge tags.
 	 *
 	 * @return array
@@ -411,13 +300,6 @@ abstract class Noptin_Email_Type {
 				noptin()->emails->tags->add_tag( $tag, $details );
 			}
 		}
-
-		// Register user merge tags.
-		if ( ! empty( $this->user ) ) {
-			foreach ( $this->get_user_merge_tags() as $tag => $details ) {
-				noptin()->emails->tags->add_tag( $tag, $details );
-			}
-		}
 	}
 
 	/**
@@ -437,13 +319,6 @@ abstract class Noptin_Email_Type {
 		// Unregister subsriber merge tags.
 		if ( ! empty( $this->subscriber ) ) {
 			foreach ( array_keys( $this->get_subscriber_merge_tags() ) as $tag ) {
-				noptin()->emails->tags->remove_tag( $tag );
-			}
-		}
-
-		// Unregister user merge tags.
-		if ( ! empty( $this->user ) ) {
-			foreach ( array_keys( $this->get_user_merge_tags() ) as $tag ) {
 				noptin()->emails->tags->remove_tag( $tag );
 			}
 		}
@@ -487,16 +362,6 @@ abstract class Noptin_Email_Type {
 
 			if ( $subscriber->exists() ) {
 				$this->subscriber = $subscriber;
-			}
-		}
-
-		// Set user.
-		$this->user = null;
-		if ( ! empty( $this->recipient['uid'] ) ) {
-			$user = get_userdata( $this->recipient['uid'] );
-
-			if ( $user && $user->exists() ) {
-				$this->user = $user;
 			}
 		}
 
@@ -600,7 +465,6 @@ abstract class Noptin_Email_Type {
 		// Uregister merge tags.
 		$this->unregister_merge_tags();
 
-		$this->user            = null;
 		$this->subscriber      = null;
 		$this->unsubscribe_url = '';
 	}
@@ -611,11 +475,6 @@ abstract class Noptin_Email_Type {
 	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
 	public function prepare_test_data( $email ) {
-
-		// Set user.
-		if ( empty( $this->user ) ) {
-			$this->user = wp_get_current_user();
-		}
 
 		// Set subscriber.
 		if ( empty( $this->subscriber ) ) {
@@ -651,13 +510,6 @@ abstract class Noptin_Email_Type {
 
 		if ( empty( $this->subscriber ) && $subscriber->exists() ) {
 			$this->subscriber = $subscriber;
-		}
-
-		// Set user.
-		$user = get_user_by( 'email', $email );
-
-		if ( empty( $this->user ) && $user ) {
-			$this->user = $user;
 		}
 	}
 }

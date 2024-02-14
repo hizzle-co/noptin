@@ -136,7 +136,7 @@ class Preview {
 		}
 
 		// Generate the preview.
-		$preview = noptin_generate_email_content( self::$campaign, self::$user, false );
+		$preview = noptin_generate_email_content( self::$campaign, Main::$current_email_recipient, false );
 
 		if ( is_wp_error( $preview ) ) {
 			wp_die( esc_html( $preview->get_error_message() ) );
