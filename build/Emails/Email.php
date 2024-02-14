@@ -472,6 +472,7 @@ class Email {
 	 * @return bool|\WP_Error
 	 */
 	public function send() {
+		$GLOBALS['noptin_email_force_skip'] = null;
 
 		// Abort if we can't send the email.
 		$can_send = $this->can_send( true );
@@ -537,6 +538,11 @@ class Email {
 
 			unset( $GLOBALS['current_noptin_email_suffix'] );
 
+			// Check if the newsletter can be sent.
+			if ( ! empty( $GLOBALS['noptin_email_force_skip'] ) ) {
+				return new \WP_Error( 'noptin_email_skipped', $GLOBALS['noptin_email_force_skip']['message'] );
+			}
+
 			// Maybe skip sending the email.
 			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 
@@ -584,6 +590,8 @@ class Email {
 	 */
 	public function send_to( $recipient, $confirm_can_send = true ) {
 
+		$GLOBALS['noptin_email_force_skip'] = null;
+
 		if ( $confirm_can_send ) {
 			// Abort if we can't send the email.
 			$can_send = $this->can_send( true );
@@ -627,6 +635,11 @@ class Email {
 		// Generate the subject and body.
 		$subject = noptin_parse_email_subject_tags( $this->get_subject() );
 		$message = noptin_generate_email_content( $this, Main::$current_email_recipient, ! empty( Main::$current_email_recipient['track'] ) );
+
+		// Check if the newsletter can be sent.
+		if ( ! empty( $GLOBALS['noptin_email_force_skip'] ) ) {
+			return new \WP_Error( 'noptin_email_skipped', $GLOBALS['noptin_email_force_skip']['message'] );
+		}
 
 		// Maybe skip sending the email.
 		$should_send = apply_filters( 'noptin_email_should_send', true, $this );

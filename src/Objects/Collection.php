@@ -519,7 +519,13 @@ abstract class Collection {
 		if ( empty( $items ) ) {
 
 			if ( 'yes' === $atts['skiponempty'] ) {
-				$GLOBALS['noptin_email_force_skip'] = true;
+				$GLOBALS['noptin_email_force_skip'] = array(
+					'message' => sprintf(
+						/* translators: %s: object type label */
+						__( 'No %s found.', 'newsletter-optin-box' ),
+						strtolower( $this->label )
+					),
+				);
 			}
 
 			return '';
