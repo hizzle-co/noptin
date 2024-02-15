@@ -31,7 +31,7 @@ if ( ! defined( 'NOPTIN_VERIFY_NONCE' ) ) {
 	define( 'NOPTIN_VERIFY_NONCE', false );
 }
 
-define( 'MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION', '2.0.3' );
+define( 'MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION', '3.0.0' );
 
 /**
  * Plugin main class
