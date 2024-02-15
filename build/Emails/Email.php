@@ -113,8 +113,9 @@ class Email {
 			return false;
 		}
 
-		// Fetch campaign data.
-		$data        = get_post_meta( $post->ID, 'campaign_data', true );
+		// Fetch campaign data. See: https://core.trac.wordpress.org/ticket/60314.
+		$data        = get_post_meta( $post->ID, 'campaign_data' );
+		$data        = wp_is_numeric_array( $data ) ? $data[0] : $data;
 		$resave      = false;
 		$is_revision = wp_is_post_revision( $post->ID );
 
@@ -123,7 +124,8 @@ class Email {
 			$parent = wp_get_post_parent_id( $post->ID );
 
 			if ( $parent ) {
-				$data = get_post_meta( $parent, 'campaign_data', true );
+				$data = get_post_meta( $parent, 'campaign_data' );
+				$data = wp_is_numeric_array( $data ) ? $data[0] : $data;
 			}
 		}
 
@@ -294,29 +296,6 @@ class Email {
 
 		// Merge the remaining args into the options array.
 		$this->options = array_merge( $this->options, $args );
-	}
-
-	/**
-	 * Loads autosaved data for the email.
-	 *
-	 * @param \WP_Post $post
-	 */
-	public function load_autosave( $post ) {
-
-		// Fetch campaign data.
-		$data = get_post_meta( $post->ID, 'campaign_data', true );
-
-		// If data is stdClass, convert it to an array.
-		if ( is_object( $data ) ) {
-			$data = (array) $data;
-		}
-
-		if ( is_array( $data ) ) {
-			$this->options = array_merge( $this->options, $data );
-		}
-
-		$this->name    = $post->post_title;
-		$this->content = $post->post_content;
 	}
 
 	/**

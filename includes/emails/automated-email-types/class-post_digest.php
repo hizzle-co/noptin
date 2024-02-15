@@ -198,6 +198,10 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function get_default_props( $props, $email ) {
 
+		if ( $email->type !== $this->type && $email->get_sub_type() !== $this->type ) {
+			return $props;
+		}
+
 		$props['noptin-ap-post-type'] = 'post';
 
 		return parent::get_default_props( $props, $email );
@@ -708,6 +712,11 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 	 */
 	public function about_automation( $about, $campaign ) {
 
+		// Do not display the next send time if the campaign is paused.
+		if ( ! $campaign->can_send() ) {
+			return $about;
+		}
+
 		// Prepare time.
 		$time = $campaign->get( 'time' );
 
@@ -727,11 +736,6 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ),
 				esc_html( $this->get_formatted_next_send_time( $next_send ) )
 			);
-		}
-
-		// Do not display the next send time if the campaign is paused.
-		if ( ! $campaign->can_send() ) {
-			$next_send = '';
 		}
 
 		// If we have a next send time, but no cron event, display a warning.
@@ -754,53 +758,7 @@ class Noptin_Post_Digest extends Noptin_Automated_Email_Type {
 			}
 		}
 
-		switch ( $campaign->get( 'frequency' ) ) {
-
-			case 'daily':
-				return sprintf(
-					// translators: %1 is the time.
-					__( 'Sends a digest of the content published in the previous day, every day at %s', 'newsletter-optin-box' ),
-					esc_html( $time )
-				) . $next_send;
-
-			case 'weekly':
-				return sprintf(
-					// translators: %1 is the day, %2 is the time.
-					__( 'Sends a weekly digest of your latest content every %1$s at %2$s', 'newsletter-optin-box' ),
-					$GLOBALS['wp_locale']->get_weekday( (int) $campaign->get( 'day' ) ),
-					esc_html( $time )
-				) . $next_send;
-
-			case 'monthly':
-				$dates = $this->get_month_days();
-				$date  = (string) $campaign->get( 'date' );
-				return sprintf(
-					// translators: %1 is the day, %2 is the time.
-					__( 'Sends a digest of your latest content on the %1$s of every month at %2$s', 'newsletter-optin-box' ),
-					isset( $dates[ $date ] ) ? $dates[ $date ] : $dates['1'],
-					esc_html( $time )
-				) . $next_send;
-
-			case 'yearly':
-				$day_of_year = (int) $campaign->get( 'year_day' ) - 1;
-				return sprintf(
-					// translators: %1 is the day, %2 is the time.
-					__( 'Sends a digest of your latest content every year on %1$s at %2$s', 'newsletter-optin-box' ),
-					date_i18n( 'F jS', strtotime( "January 1 + {$day_of_year} days" ) ),
-					esc_html( $time )
-				) . $next_send;
-
-			case 'x_days':
-				return sprintf(
-					// translators: %1 is the number of days, %2 is the time.
-					__( 'Sends a digest of your latest content every %1$s days at %2$s', 'newsletter-optin-box' ),
-					(int) $campaign->get( 'x_days' ),
-					esc_html( $time )
-				) . $next_send;
-
-			default:
-				return $about;
-		}
+		return $about . $next_send;
 	}
 
 	/**
