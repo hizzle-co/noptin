@@ -66,7 +66,7 @@ class Noptin_Email_Action extends Noptin_Abstract_Action {
 		}
 
 		// ... or if we're importing subscribers.
-		if ( 'import' === $noptin_subscribers_batch_action ) {
+		if ( 'import' === $noptin_subscribers_batch_action && 'new_subscriber' === $rule->get_trigger_id() ) {
 			return false;
 		}
 

@@ -1117,6 +1117,7 @@ class REST_Controller extends \WP_REST_Controller {
 			// Update item.
 			$item['id'] = $id;
 			$result     = $this->update_batch_item( $request, $item );
+			do_action( $collection->get_full_name() . '_import_item', $item['id'], 'updated' );
 			return is_wp_error( $result ) ? $result : array( 'updated' => true, 'id' => $id );
 		}
 
@@ -1129,7 +1130,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 		$data = $result->get_data();
 		$id   = empty( $data['id'] ) ? 0 : $data['id'];
-
+		do_action( $collection->get_full_name() . '_import_item', $id, 'created' );
 		return array( 'created' => true, 'id' => $id );
 	}
 

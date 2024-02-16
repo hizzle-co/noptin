@@ -70,22 +70,6 @@ abstract class Noptin_WooCommerce_Automated_Email_Type extends Noptin_Automated_
 	}
 
 	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function get_default_recipient() {
-		return '[[customer.email]]';
-	}
-
-	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function default_recipient() {
-		return $this->get_default_recipient();
-	}
-
-	/**
 	 * Formats a datetime merge tag.
 	 *
 	 * Dates should be passed in the site's timezone.

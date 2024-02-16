@@ -105,14 +105,6 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 		return noptin_convert_html_to_text( $this->default_content_normal() );
 	}
 
-	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function get_default_recipient() {
-		return '[[customer.email]]';
-	}
-
 	public function default_new_customer() {
 		return false;
 	}

@@ -97,14 +97,6 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	}
 
 	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function get_default_recipient() {
-		return '[[customer.email]]';
-	}
-
-	/**
 	 * Displays a metabox.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign

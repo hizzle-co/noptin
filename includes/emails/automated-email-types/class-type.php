@@ -66,8 +66,6 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 
 		add_filter( 'noptin_automation_sub_types', array( $this, 'register_automation_type' ) );
 
-		add_filter( "noptin_default_automation_email_{$this->type}_recipient", array( $this, 'get_default_recipient' ) );
-
 		if ( is_callable( array( $this, 'campaign_options' ) ) ) {
 			add_filter( "noptin_automation_{$this->type}_email_extra_settings", array( $this, 'campaign_options' ) );
 		}
@@ -133,14 +131,6 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		}
 
 		return $this->get_name();
-	}
-
-	/**
-	 * Returns the default recipient.
-	 *
-	 */
-	public function get_default_recipient() {
-		return '';
 	}
 
 	/**
