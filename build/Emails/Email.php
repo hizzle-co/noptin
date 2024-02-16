@@ -641,9 +641,9 @@ class Email {
 				'campaign'                 => $this,
 				'headers'                  => array(),
 				'attachments'              => $this->get_attachments(),
-				'reply_to'                 => '',
-				'from_email'               => '',
-				'from_name'                => '',
+				'reply_to'                 => noptin_parse_email_subject_tags( $this->get( 'reply_to' ) ),
+				'from_email'               => noptin_parse_email_subject_tags( $this->get( 'from_email' ) ),
+				'from_name'                => noptin_parse_email_subject_tags( $this->get( 'from_name' ) ),
 				'content_type'             => $this->get_email_type() === 'plain_text' ? 'text' : 'html',
 				'disable_template_plugins' => ! ( $this->get_email_type() === 'normal' && $this->get_template() === 'default' ),
 			)
@@ -822,15 +822,6 @@ class Email {
 
 		// Prepare recipient.
 		$recipient = $this->get( 'recipients' );
-
-		// If no recipient, use the default recipient.
-		if ( empty( $recipient ) ) {
-			$sub_type = $this->get_sub_type();
-
-			if ( ! empty( $sub_type ) ) {
-				$recipient = apply_filters( "noptin_default_{$this->type}_email_{$sub_type}_recipient", '[[email]]', $this );
-			}
-		}
 
 		return empty( $recipient ) ? '' : $recipient;
 	}

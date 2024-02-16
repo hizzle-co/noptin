@@ -493,7 +493,7 @@ JS;
 					'footer-text' => ' #noptin-email-content .footer-text a { color: #111111 }',
 				),
 				'subject'          => $edited_campaign->get( 'subject' ),
-				'recipients'       => $edited_campaign->get_recipients(),
+				'recipients'       => 'automation' === $edited_campaign->type ? '[[email]]' : '',
 				'email_sender'     => $edited_campaign->get_sender(),
 				'email_type'       => $edited_campaign->get_email_type(),
 				'template'         => $edited_campaign->get_template(),

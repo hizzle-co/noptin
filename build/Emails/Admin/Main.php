@@ -337,9 +337,12 @@ class Main {
 				apply_filters(
 					'noptin_email_settings_misc',
 					array(
-						'isTest'  => defined( 'NOPTIN_IS_TESTING' ),
-						'data'    => (object) ( empty( $type ) ? array() : $type->to_array() ),
-						'senders' => array_merge(
+						'isTest'     => defined( 'NOPTIN_IS_TESTING' ),
+						'data'       => (object) ( empty( $type ) ? array() : $type->to_array() ),
+						'from_name'  => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
+						'from_email' => get_noptin_option( 'from_email', '' ),
+						'reply_to'   => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
+						'senders'    => array_merge(
 							array(
 								'manual_recipients' => array(
 									'label'        => __( 'Manual Recipients', 'newsletter-optin-box' ),

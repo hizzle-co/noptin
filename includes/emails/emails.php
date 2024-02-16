@@ -123,6 +123,10 @@ function noptin_convert_html_to_text( $html ) {
  * @return string
  */
 function noptin_parse_email_subject_tags( $subject, $partial = false ) {
+	if ( empty( $subject ) ) {
+		return '';
+	}
+
 	return apply_filters( 'noptin_parse_email_subject_tags', $subject, $partial );
 }
 
@@ -134,6 +138,10 @@ function noptin_parse_email_subject_tags( $subject, $partial = false ) {
  * @return string
  */
 function noptin_parse_email_content_tags( $content, $partial = false ) {
+	if ( empty( $content ) ) {
+		return '';
+	}
+
 	return apply_filters( 'noptin_parse_email_content_tags', $content, $partial );
 }
 
