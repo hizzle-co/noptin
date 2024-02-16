@@ -669,7 +669,7 @@ function noptin_prepare_email_recipients( $unprepared ) {
 function noptin_pause_email_campaign( $campaign_id, $reason = '' ) {
 	update_post_meta( $campaign_id, 'paused', 1 );
 	update_post_meta( $campaign_id, '_bulk_email_last_error', array( 'message' => $reason ) );
-	schedule_noptin_background_action( 'noptin_resume_email_campaign', time() + HOUR_IN_SECONDS, $campaign_id );
+	schedule_noptin_background_action( time() + HOUR_IN_SECONDS, 'noptin_resume_email_campaign', $campaign_id );
 }
 
 /**
