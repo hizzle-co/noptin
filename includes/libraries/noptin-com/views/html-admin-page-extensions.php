@@ -169,10 +169,6 @@
 									<?php echo esc_html( $license->the_activations ); ?>
 								</span>
 
-								<?php if ( ! empty( $license->activations ) ) : ?>
-									<span title="<?php echo esc_attr( implode( ', ', array_keys( (array) $license->activations ) ) ); ?>" class="noptin-tip dashicons dashicons-info"></span>
-								<?php endif; ?>
-
 							</span>
 						<?php endif; ?>
 
