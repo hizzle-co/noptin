@@ -56,10 +56,6 @@ class Generic_Post_Type extends Post_Type {
 				$this->description_field = '';
 			}
 
-			if ( ! post_type_supports( $this->type, 'author' ) ) {
-				unset( $fields['author'] );
-			}
-
 			if ( ! post_type_supports( $this->type, 'thumbnail' ) ) {
 				$this->image_field = '';
 			}
