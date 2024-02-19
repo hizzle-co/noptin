@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 3.0.2 =
+* Fix: Image block has no option to select the image.
+* Fix: Classic email editor has no button to add an image.
+
 = 3.0.1 =
 * Add an automation rule trigger for imported subscribers.
 * Allow setting the sender details per newsletter email.
