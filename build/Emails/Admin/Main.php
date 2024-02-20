@@ -203,7 +203,9 @@ class Main {
 			self::redirect_from_action_with_error( 'You do not have permission to duplicate this campaign.' );
 		}
 
-		$args = array();
+		$args = array(
+			'name' => $campaign->name . ' - ' . __( 'Copy', 'newsletter-optin-box' ),
+		);
 
 		if ( 'newsletter' === $campaign->type ) {
 			$args['status'] = 'draft';

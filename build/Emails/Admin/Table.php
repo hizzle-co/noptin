@@ -188,6 +188,10 @@ class Table extends \WP_List_Table {
 		$item_name = $item->name;
 		$sub_types = $this->email_type->get_sub_types();
 
+		if ( empty( $item_name ) ) {
+			$item_name = $item->subject;
+		}
+
 		if ( empty( $item_name ) && ! empty( $sub_types ) && isset( $sub_types[ $item->get_sub_type() ] ) ) {
 			$item_name = $sub_types[ $item->get_sub_type() ]['label'];
 		}
@@ -223,6 +227,15 @@ class Table extends \WP_List_Table {
 					esc_html__( 'Unknown type', 'newsletter-optin-box' )
 				);
 			}
+		}
+
+		// If name  is different from the subject, show the subject.
+		if ( $item_name !== $item->subject ) {
+			$title .= sprintf(
+				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+				esc_html__( 'Subject', 'newsletter-optin-box' ),
+				esc_html( $item->subject )
+			);
 		}
 
 		// Recipients.
