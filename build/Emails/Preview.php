@@ -88,10 +88,11 @@ class Preview {
 		// Prepare the preview.
 		self::$mode     = 'preview';
 		self::$campaign = new Email( get_post() );
+		$user           = wp_get_current_user();
 		self::$user     = array(
-			'sid' => get_current_noptin_subscriber_id(),
-			'uid' => get_current_user_id(),
-			'cid' => get_the_ID(),
+			'email' => $user->user_email,
+			'sid'   => get_current_noptin_subscriber_id(),
+			'cid'   => get_the_ID(),
 		);
 
 		// If this email sends to newsletter subscribers and the current user is not a subscriber, fetch random subscriber.
@@ -105,7 +106,6 @@ class Preview {
 
 			if ( ! empty( $subscriber ) ) {
 				self::$user['sid'] = $subscriber[0];
-				unset( self::$user['uid'] );
 			}
 		}
 

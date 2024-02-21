@@ -108,7 +108,6 @@ abstract class Collection {
 
 		// Register merge tags.
 		add_action( 'noptin_before_send_email', array( $this, 'register_temporary_merge_tags' ) );
-		add_action( 'noptin_after_send_email', array( $this, 'register_temporary_merge_tags' ) );
 	}
 
 	/**

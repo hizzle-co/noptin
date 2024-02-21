@@ -34,11 +34,14 @@ class Users extends People {
 		$this->label          = $label;
 		$this->singular_label = $singular_label;
 		$this->type           = $type;
-		$this->can_email      = false;
 		$this->icon           = array(
 			'icon' => 'admin-users',
 			'fill' => '#404040',
 		);
+
+		if ( 'user' === $type && noptin_has_active_license_key() ) {
+			$this->email_sender = 'wp_users';
+		}
 
 		self::$user_types[] = $type;
 		parent::__construct();
@@ -267,5 +270,13 @@ class Users extends People {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Retrieves a test ID.
+	 *
+	 */
+	public function get_test_id() {
+		return get_current_user_id();
 	}
 }

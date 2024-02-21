@@ -456,6 +456,10 @@ abstract class Noptin_Email_Type {
 	 */
 	public function after_send( $campaign ) {
 
+		if ( $this->type !== $campaign->type && $this->type !== $campaign->get_sub_type() ) {
+			return;
+		}
+
 		// Revert recipient.
 		$this->recipient = array();
 
