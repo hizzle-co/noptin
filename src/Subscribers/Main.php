@@ -84,26 +84,6 @@ class Main {
 			},
 		);
 
-		$triggers[] = array(
-			'id'         => 'unsubscribe',
-			'trigger_id' => 'unsubscribe',
-			'callback'   => function ( &$automation_rule ) {
-
-				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
-				$automation_rule->set_trigger_id( 'noptin_subscriber_status_set_to_unsubscribed' );
-			},
-		);
-
-		$triggers[] = array(
-			'id'         => 'import_subscriber',
-			'trigger_id' => 'import_subscriber',
-			'callback'   => function ( &$automation_rule ) {
-
-				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
-				$automation_rule->set_trigger_id( 'noptin_subscribers_import_item' );
-			},
-		);
-
 		return $triggers;
 	}
 

@@ -62,6 +62,10 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			$this->mail_config = $trigger_args['mail_config'];
 		}
 
+		if ( ! empty( $trigger_args['previous_name'] ) ) {
+			add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_trigger' ) );
+		}
+
 		add_action( 'noptin_fire_object_trigger_' . $this->trigger_id, array( $this, 'fire_trigger' ) );
 	}
 
@@ -93,6 +97,11 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 * @return string
 	 */
 	public function get_image() {
+
+		if ( ! empty( $this->trigger_args['icon'] ) ) {
+			return $this->trigger_args['icon'];
+		}
+
 		return Store::get_collection_config( $this->object_type, 'icon' );
 	}
 
@@ -375,5 +384,29 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		}
 
 		return parent::prepare_trigger_args( $subject, $args );
+	}
+
+	/**
+	 * Migrates triggers.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $triggers The triggers.
+	 */
+	public function migrate_trigger( $triggers ) {
+
+		$previous_name = $this->trigger_args['previous_name'];
+		$new_name      = $this->get_id();
+		$triggers[]    = array(
+			'id'         => 'rename_' . $previous_name,
+			'trigger_id' => $previous_name,
+			'callback'   => function ( &$automation_rule ) use ( $new_name ) {
+
+				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
+				$automation_rule->set_trigger_id( $new_name );
+			},
+		);
+
+		return $triggers;
 	}
 }
