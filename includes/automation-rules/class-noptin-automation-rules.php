@@ -187,6 +187,7 @@ class Noptin_Automation_Rules {
 				continue;
 			}
 
+			/** @var \Hizzle\Noptin\DB\Automation_Rule[] $rules */
 			$rules = noptin_get_automation_rules(
 				array(
 					'trigger_id' => $migrator['trigger_id'],
@@ -194,8 +195,17 @@ class Noptin_Automation_Rules {
 			);
 
 			foreach ( $rules as $rule ) {
+				$previous_trigger = $rule->get_trigger_id();
 				call_user_func_array( $migrator['callback'], array( &$rule ) );
 				$rule->save();
+
+				if ( $previous_trigger !== $rule->get_trigger_id() && 'email' === $rule->get_action_id() ) {
+					$email_id = $rule->get_action_setting( 'automated_email_id' );
+
+					if ( ! empty( $email_id ) ) {
+						update_post_meta( $email_id, 'automation_type', 'automation_rule_' . $rule->get_trigger_id() );
+					}
+				}
 			}
 
 			$migrated[] = $migrator['id'];

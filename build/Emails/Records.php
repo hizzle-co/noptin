@@ -29,11 +29,12 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 	 * @return string
 	 */
 	public function __construct() {
-		$this->label          = __( 'Email Campaigns', 'newsletter-optin-box' );
-		$this->singular_label = __( 'Email Campaign', 'newsletter-optin-box' );
-		$this->type           = 'noptin-campaign';
-		$this->can_list       = false;
-		$this->icon           = array(
+		$this->label             = __( 'Email Campaigns', 'newsletter-optin-box' );
+		$this->singular_label    = __( 'Email Campaign', 'newsletter-optin-box' );
+		$this->type              = 'noptin-campaign';
+		$this->smart_tags_prefix = 'campaign';
+		$this->can_list          = false;
+		$this->icon              = array(
 			'icon' => 'email',
 			'fill' => '#008000',
 		);
@@ -53,8 +54,9 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 				'type'  => 'number',
 			),
 			'name'                => array(
-				'label' => __( 'Name', 'newsletter-optin-box' ),
-				'type'  => 'string',
+				'label'      => __( 'Name', 'newsletter-optin-box' ),
+				'type'       => 'string',
+				'deprecated' => 'campaign_title',
 			),
 			'subject'             => array(
 				'label' => __( 'Subject', 'newsletter-optin-box' ),

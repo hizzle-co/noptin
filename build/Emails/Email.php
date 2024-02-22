@@ -337,14 +337,14 @@ class Email {
 	 * @param string $key
 	 * @return mixed
 	 */
-	public function get( $key ) {
+	public function get( $key, $call_methods = false ) {
 
 		if ( 'id' === strtolower( $key ) ) {
 			return $this->id;
 		}
 
 		// Fetch value.
-		if ( is_callable( array( $this, "get_$key" ) ) ) {
+		if ( $call_methods && is_callable( array( $this, "get_$key" ) ) ) {
 			return $this->{"get_$key"}();
 		}
 

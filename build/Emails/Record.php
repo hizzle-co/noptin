@@ -46,6 +46,6 @@ class Record extends \Hizzle\Noptin\Objects\Person {
 			return null;
 		}
 
-		return $this->external->get( $field );
+		return $this->external->get( $field, true );
 	}
 }
