@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\DB;
-
 /**
  * Contains the main DB class.
  *
  * @since   1.0.0
  */
+
+namespace Hizzle\Noptin\DB;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -82,7 +82,7 @@ class Main {
 	 * Loads the class.
 	 *
 	 */
-	public function __construct() {
+	private function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'load' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_admin_app_routes', array( $this, 'filter_subscribers_collection_admin_routes' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_collection_js_params', array( $this, 'filter_subscribers_collection_js_params' ) );
@@ -329,19 +329,19 @@ class Main {
 	 *
 	 * @param string $collection The collection name.
 	 * @param array $args Query arguments.
-	 * @param string $return 'results' returns the found records, 'count' returns the total count, 'aggregate' runs an aggregate query, while 'query' returns query object.
+	 * @param string $to_return 'results' returns the found records, 'count' returns the total count, 'aggregate' runs an aggregate query, while 'query' returns query object.
 	 *
 	 * @return int|array|\Hizzle\Store\Record[]|\Hizzle\Store\Query|\WP_Error
 	 */
-	public function query( $collection_name, $args = array(), $return = 'results' ) {
+	public function query( $collection_name, $args = array(), $to_return = 'results' ) {
 
 		// Do not retrieve any fields if we just want the count.
-		if ( 'count' === $return ) {
+		if ( 'count' === $to_return ) {
 			$args['count_only'] = true;
 		}
 
 		// Do not count all matches if we just want the results.
-		if ( 'results' === $return ) {
+		if ( 'results' === $to_return ) {
 			$args['count_total'] = false;
 		}
 
@@ -356,15 +356,15 @@ class Main {
 
 			$query = $collection->query( $args );
 
-			if ( 'results' === $return ) {
+			if ( 'results' === $to_return ) {
 				return $query->get_results();
 			}
 
-			if ( 'count' === $return ) {
+			if ( 'count' === $to_return ) {
 				return $query->get_total();
 			}
 
-			if ( 'aggregate' === $return ) {
+			if ( 'aggregate' === $to_return ) {
 				return $query->get_aggregate();
 			}
 
@@ -372,7 +372,6 @@ class Main {
 		} catch ( \Hizzle\Store\Store_Exception $e ) {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
-
 	}
 
 	/**
@@ -544,18 +543,13 @@ class Main {
 			$object   = noptin_get_email_campaign_object( $campaign_id );
 			$campaign = array(
 				'id'           => $campaign_id,
-				'title'        => empty( $object ) ? esc_html__( 'Unknown', 'newsletter-optin-box' ) : esc_html( $object->name ),
-				'url'          => empty( $object ) ? '' : esc_url( $object->get_edit_url() ),
+				'title'        => empty( $object->name ) ? esc_html__( 'Unknown', 'newsletter-optin-box' ) : esc_html( $object->name ),
+				'url'          => $object->current_user_can_edit() ? $object->get_edit_url() : $object->get_preview_url(),
 				'time'         => array(),
 				'opens'        => array(),
 				'clicks'       => array(),
 				'unsubscribed' => empty( $data['unsubscribed'] ) ? '&mdash;' : esc_html__( 'Yes', 'newsletter-optin-box' ),
 			);
-
-			// Sent newsletters are not editable.
-			if ( $object && 'newsletter' === $object->type && $object->is_published() ) {
-				$campaign['url'] = $object->get_preview_url( $subscriber->get_email() );
-			}
 
 			// Time and opens.
 			foreach ( array( 'time', 'opens' ) as $prop ) {

@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Containers for a WordPress user.
  *
- * @since 2.2.0
+ * @since 3.0.0
  */
 class User extends Person {
 

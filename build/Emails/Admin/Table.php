@@ -434,8 +434,7 @@ class Table extends \WP_List_Table {
 	 * @return int
 	 */
 	public function column_recipients( $item ) {
-		$total = (int) get_post_meta( $item->id, '_noptin_sends', true ) + (int) get_post_meta( $item->id, '_noptin_fails', true );
-		return apply_filters( 'noptin_email_recipients', $total, $item );
+		return $item->get_send_count();
 	}
 
 	/**
@@ -446,12 +445,12 @@ class Table extends \WP_List_Table {
 	 */
 	public function column_opens( $item ) {
 
-		$sends   = $this->column_recipients( $item );
-		$opens   = (int) get_post_meta( $item->id, '_noptin_opens', true );
+		$sends   = $item->get_send_count();
+		$opens   = $item->get_open_count();
 		$percent = ( $sends && $opens ) ? round( ( $opens / $sends ) * 100, 2 ) : 0;
 
 		return $this->display_stat(
-			apply_filters( 'noptin_email_opens', $opens, $item ),
+			$opens,
 			$percent
 		);
 	}
@@ -464,12 +463,12 @@ class Table extends \WP_List_Table {
 	 */
 	public function column_clicks( $item ) {
 
-		$sends   = $this->column_recipients( $item );
-		$clicks  = (int) get_post_meta( $item->id, '_noptin_clicks', true );
+		$sends   = $item->get_send_count();
+		$clicks  = $item->get_click_count();
 		$percent = ( $sends && $clicks ) ? round( ( $clicks / $sends ) * 100, 2 ) : 0;
 
 		return $this->display_stat(
-			apply_filters( 'noptin_email_clicks', $clicks, $item ),
+			$clicks,
 			$percent
 		);
 	}
@@ -482,12 +481,12 @@ class Table extends \WP_List_Table {
 	 */
 	public function column_unsubscribed( $item ) {
 
-		$sends        = $this->column_recipients( $item );
-		$unsubscribed = (int) get_post_meta( $item->id, '_noptin_unsubscribed', true );
+		$sends        = $item->get_send_count();
+		$unsubscribed = $item->get_unsubscribe_count();
 		$percent      = ( $sends && $unsubscribed ) ? round( ( $unsubscribed / $sends ) * 100, 2 ) : 0;
 
 		return $this->display_stat(
-			apply_filters( 'noptin_email_unsubscribed', $unsubscribed, $item ),
+			$unsubscribed,
 			$percent
 		);
 	}

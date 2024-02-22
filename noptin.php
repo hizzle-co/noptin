@@ -342,6 +342,9 @@ class Noptin {
 		// DB.
 		$this->db();
 
+		// Subscribers.
+		$this->subscribers();
+
 		// Emails.
 		\Hizzle\Noptin\Emails\Main::init();
 
@@ -507,6 +510,15 @@ class Noptin {
      */
 	public function db() {
 		return \Hizzle\Noptin\DB\Main::instance();
+	}
+
+	/**
+	 * Returns the new subscribers manager.
+	 *
+	 * @return \Hizzle\Noptin\Subscribers\Main
+	 */
+	public function subscribers() {
+		return \Hizzle\Noptin\Subscribers\Main::instance();
 	}
 
 	/**

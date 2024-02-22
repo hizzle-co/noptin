@@ -36,11 +36,6 @@ class Noptin_Automation_Rules {
 		$this->add_action( new Noptin_Delete_Subscriber_Action() );
 
 		// Register core triggers.
-		$this->add_trigger( new Noptin_New_Subscriber_Trigger() );
-		$this->add_trigger( new Noptin_Import_Subscriber_Trigger() );
-		$this->add_trigger( new Noptin_Open_Email_Trigger() );
-		$this->add_trigger( new Noptin_Link_Click_Trigger() );
-		$this->add_trigger( new Noptin_Unsubscribe_Trigger() );
 		$this->add_trigger( new Noptin_New_Comment_Trigger() );
 		$this->add_trigger( new Noptin_Comment_Reply_Trigger() );
 
@@ -194,7 +189,7 @@ class Noptin_Automation_Rules {
 
 			$rules = noptin_get_automation_rules(
 				array(
-					'trigger_id' => $migrator['trigger'],
+					'trigger_id' => $migrator['trigger_id'],
 				)
 			);
 

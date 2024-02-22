@@ -114,7 +114,7 @@ class Store {
 	/**
 	 * Converts custom fields to a smart tags.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @return array
 	 */
 	public static function convert_fields_to_smart_tags( $fields, $object_type = '', $group = '', $prefix = false, $callback = false ) {
@@ -144,7 +144,7 @@ class Store {
 	/**
 	 * Converts a custom field to a smart tag.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @return array
 	 */
 	public static function convert_field_to_smart_tag( $field, $group = '', $callback = '' ) {

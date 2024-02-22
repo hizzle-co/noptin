@@ -30,7 +30,7 @@ abstract class People extends Collection {
 	 */
 	public function __construct() {
 		if ( ! empty( $this->email_sender ) ) {
-			add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_test_recipient_data' ) );
+			add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
 		}
 
 		parent::__construct();
@@ -66,7 +66,7 @@ abstract class People extends Collection {
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
-	public function prepare_test_data( $email ) {
+	public function prepare_email_test_sender_data( $email ) {
 		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
 
 		// Abort if not test mode.

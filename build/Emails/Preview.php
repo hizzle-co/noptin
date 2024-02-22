@@ -91,23 +91,8 @@ class Preview {
 		$user           = wp_get_current_user();
 		self::$user     = array(
 			'email' => $user->user_email,
-			'sid'   => get_current_noptin_subscriber_id(),
 			'cid'   => get_the_ID(),
 		);
-
-		// If this email sends to newsletter subscribers and the current user is not a subscriber, fetch random subscriber.
-		if ( self::$campaign->is_mass_mail() && 'noptin' === self::$campaign->get_sender() && empty( self::$user['sid'] ) ) {
-			$subscriber = noptin_get_subscribers(
-				array(
-					'number' => 1,
-					'fields' => 'id',
-				)
-			);
-
-			if ( ! empty( $subscriber ) ) {
-				self::$user['sid'] = $subscriber[0];
-			}
-		}
 
 		// Maybe set plain text mode.
 		if ( 'plain_text' === self::$campaign->get_email_type() && ! headers_sent() ) {

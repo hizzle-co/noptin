@@ -50,6 +50,11 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 		}
 	}
 
+	// Fetch subscriber.
+	if ( ! is_numeric( $subscriber ) ) {
+		$subscriber = 0;
+	}
+
 	$subscriber = noptin()->db()->get( (int) $subscriber );
 	return is_wp_error( $subscriber ) ? noptin()->db()->get( 0 ) : $subscriber;
 }

@@ -5,7 +5,7 @@ namespace Hizzle\Noptin\Objects;
 /**
  * Generic object action.
  *
- * @since 2.2.0
+ * @since 3.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -36,7 +36,7 @@ class Action extends \Noptin_Abstract_Action {
 	 * @param string $action_id The action id.
 	 * @param array  $action_args The action args.
 	 * @param Collection $collection The collection.
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 */
 	public function __construct( $action_id, $action_args, $collection ) {
 		$this->object_type = $collection->type;

@@ -208,7 +208,7 @@ abstract class Post_Type extends Collection {
 	/**
 	 * Retrieves a test object args.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @throws \Exception
 	 * @return array

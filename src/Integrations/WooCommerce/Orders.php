@@ -40,14 +40,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	}
 
 	private function order_states() {
-		$statuses = array_merge(
-			array(
-				'woocommerce_new_order'                => __( 'Created', 'newsletter-optin-box' ),
-				'woocommerce_checkout_order_processed' => __( 'Processed via checkout', 'newsletter-optin-box' ),
-				'woocommerce_payment_complete'         => __( 'Paid', 'newsletter-optin-box' ),
-				'woocommerce_order_refunded'           => __( 'Refunded', 'newsletter-optin-box' ),
-				'woocommerce_before_delete_order'      => __( 'Deleted', 'newsletter-optin-box' ),
-			)
+		$statuses = array(
+			'woocommerce_new_order'                => __( 'Created', 'newsletter-optin-box' ),
+			'woocommerce_checkout_order_processed' => __( 'Processed via checkout', 'newsletter-optin-box' ),
+			'woocommerce_payment_complete'         => __( 'Paid', 'newsletter-optin-box' ),
+			'woocommerce_order_refunded'           => __( 'Refunded', 'newsletter-optin-box' ),
+			'woocommerce_before_delete_order'      => __( 'Deleted', 'newsletter-optin-box' ),
 		);
 
 		foreach ( wc_get_order_statuses() as $status => $label ) {

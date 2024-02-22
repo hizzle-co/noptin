@@ -344,6 +344,10 @@ class Email {
 		}
 
 		// Fetch value.
+		if ( is_callable( array( $this, "get_$key" ) ) ) {
+			return $this->{"get_$key"}();
+		}
+
 		if ( isset( $this->$key ) ) {
 			$value = $this->$key;
 		} else {
@@ -1100,15 +1104,26 @@ class Email {
 	 * @since 1.7.0
 	 * @return string.
 	 */
-	public function get_preview_url( $recipient_email = '' ) {
+	public function get_preview_url() {
+		return get_preview_post_link( $this->id );
+	}
+
+	/**
+	 * Returns a link to view the campaign in browser.
+	 *
+	 * @since 1.7.0
+	 * @return string.
+	 */
+	public function get_view_in_browser_url( $recipient = null ) {
+
+		$recipient        = ! is_array( $recipient ) ? Main::$current_email_recipient : $recipient;
+		$recipient['cid'] = $this->id;
+
 		return get_noptin_action_url(
 			'view_in_browser',
 			noptin_encrypt(
 				wp_json_encode(
-					array(
-						'cid'   => $this->id,
-						'email' => $recipient_email,
-					)
+					array_filter( $recipient )
 				)
 			),
 			true
@@ -1379,5 +1394,45 @@ class Email {
 		}
 
 		return current_user_can( 'delete_post', $this->id );
+	}
+
+	/**
+	 * Number of times the email has been sent.
+	 *
+	 * @return int
+	 */
+	public function get_send_count() {
+		$total = (int) get_post_meta( $this->id, '_noptin_sends', true ) + (int) get_post_meta( $this->id, '_noptin_fails', true );
+		return apply_filters( 'noptin_email_recipients', $total, $this );
+	}
+
+	/**
+	 * Number of times the email has been opened.
+	 *
+	 * @return int
+	 */
+	public function get_open_count() {
+		$count = (int) get_post_meta( $this->id, '_noptin_opens', true );
+		return apply_filters( 'noptin_email_opens', $count, $this );
+	}
+
+	/**
+	 * Number of times the email has been clicked.
+	 *
+	 * @return int
+	 */
+	public function get_click_count() {
+		$count = (int) get_post_meta( $this->id, '_noptin_clicks', true );
+		return apply_filters( 'noptin_email_clicks', $count, $this );
+	}
+
+	/**
+	 * Returns the total number of unsubscribes.
+	 *
+	 * @return int
+	 */
+	public function get_unsubscribe_count() {
+		$count = (int) get_post_meta( $this->id, '_noptin_unsubscribed', true );
+		return apply_filters( 'noptin_email_unsubscribes', $count, $this );
 	}
 }

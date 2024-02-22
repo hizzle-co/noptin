@@ -415,7 +415,7 @@ abstract class Collection {
 	/**
 	 * Retrieves a test object args.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @throws \Exception
 	 * @return array
@@ -427,7 +427,7 @@ abstract class Collection {
 	/**
 	 * Returns an array of related collections.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @return array
 	 */
 	public function get_related_collections() {

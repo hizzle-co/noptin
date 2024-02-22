@@ -2006,8 +2006,8 @@ function noptin_get_current_automation_rule() {
  * @param string $return See Hizzle\Noptin\DB\Main::query for allowed values.
  * @return int|array|\Hizzle\Noptin\DB\Automation_Rule[]|\Hizzle\Store\Query|WP_Error
  */
-function noptin_get_automation_rules( $args = array(), $return = 'results' ) {
-	return noptin()->db()->query( 'automation_rules', $args, $return );
+function noptin_get_automation_rules( $args = array(), $to_return = 'results' ) {
+	return noptin()->db()->query( 'automation_rules', $args, $to_return );
 }
 
 /**

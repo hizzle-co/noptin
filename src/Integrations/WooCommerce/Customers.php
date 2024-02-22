@@ -154,4 +154,12 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 	public function provides() {
 		return array( 'order_count', 'total_spent' );
 	}
+
+	/**
+	 * Retrieves a test ID.
+	 *
+	 */
+	public function get_test_id() {
+		return get_current_user_id();
+	}
 }

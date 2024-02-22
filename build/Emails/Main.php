@@ -355,6 +355,8 @@ class Main {
 			);
 		}
 
+		\Hizzle\Noptin\Objects\Store::add( new Records() );
+
 		/**
 		 * Fires after custom post types are registered
 		 *

@@ -3,7 +3,7 @@
 /**
  * Generic object trigger.
  *
- * @since 2.2.0
+ * @since 3.0.0
  */
 
 namespace Hizzle\Noptin\Objects;
@@ -36,7 +36,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 * @param string $trigger_id The trigger id.
 	 * @param array  $trigger_args The trigger args.
 	 * @param Collection $collection The collection.
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 */
 	public function __construct( $trigger_id, $trigger_args, $collection ) {
 		$this->object_type  = $collection->type;
@@ -99,7 +99,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	/**
 	 * Returns an array of known smart tags.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @return array
 	 */
 	public function get_known_smart_tags() {
@@ -159,7 +159,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 * Fires the trigger.
 	 *
 	 * @param array $args The trigger args.
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 */
 	public function fire_trigger( $args ) {
 
@@ -192,7 +192,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 * Fetches the correct subject.
 	 *
 	 * @param mixed $subject_id The subject ID.
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @return false|\WP_User|Record
 	 */
 	protected function get_collection_subject( $subject_id ) {
@@ -219,7 +219,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	/**
 	 * Serializes the trigger args.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @param array $args The args.
 	 * @return false|array
 	 */
@@ -232,7 +232,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	/**
 	 * Unserializes the trigger args.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @param array $args The args.
 	 * @return array|false
 	 */
@@ -267,7 +267,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	/**
 	 * Prepares the object trigger args.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @param array $args The args.
 	 * @return array|false
 	 */

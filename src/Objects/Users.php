@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Containers for WordPress users.
  *
- * @since 2.2.0
+ * @since 3.0.0
  */
 class Users extends People {
 
@@ -198,32 +198,9 @@ class Users extends People {
 	}
 
 	/**
-	 * Retrieves a test object ID.
-	 *
-	 * @since 2.2.0
-	 * @return int
-	 */
-	public function get_test_object_id( $rule ) {
-
-		if ( is_user_logged_in() ) {
-			return get_current_user_id();
-		}
-
-		// Get last user ID.
-		return current(
-			get_users(
-				array(
-					'number' => 1,
-					'fields' => 'ID',
-				)
-			)
-		);
-	}
-
-	/**
 	 * Retrieves a test object args.
 	 *
-	 * @since 2.2.0
+	 * @since 3.0.0
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
 	 * @throws \Exception
 	 * @return array
