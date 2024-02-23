@@ -604,7 +604,7 @@ class Subscriber extends \Hizzle\Store\Record {
 			'confirm',
 			noptin_encrypt(
 				wp_json_encode(
-					array( 'sid' => $this->get_id() )
+					array( 'email' => $this->get_email() )
 				)
 			)
 		);

@@ -20,6 +20,7 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 		$this->type           = 'customer';
 		$this->label          = __( 'Customers', 'newsletter-optin-box' );
 		$this->singular_label = __( 'Customer', 'newsletter-optin-box' );
+		$this->email_sender   = 'woocommerce_customers';
 		$this->record_class   = __NAMESPACE__ . '\Customer';
 
 		parent::__construct();

@@ -65,7 +65,7 @@ abstract class Noptin_Email_Type {
 	 */
 	public function add_hooks() {
 		add_action( 'noptin_before_send_email', array( $this, 'before_send' ) );
-		add_action( 'noptin_after_sending_email', array( $this, 'after_send' ) );
+		add_action( 'noptin_after_send_email', array( $this, 'after_send' ) );
 		add_action( 'noptin_prepare_email_preview', array( $this, 'prepare_preview' ) );
 		add_filter( 'noptin_get_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
 		add_filter( 'noptin_get_default_email_props', array( $this, 'get_default_props' ), 10, 2 );

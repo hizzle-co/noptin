@@ -807,16 +807,20 @@ function send_new_noptin_subscriber_double_optin_email( $id ) {
 		'footer_text' => get_noptin_option( 'double_optin_permission_text', $defaults['permission_text'] ),
 	);
 
-	noptin()->emails->newsletter->subscriber = $subscriber;
-	noptin()->emails->newsletter->register_merge_tags();
+	\Hizzle\Noptin\Emails\Main::init_current_email_recipient(
+		array(
+			'email'      => $subscriber->get_email(),
+			'subscriber' => $subscriber->get_id(),
+		)
+	);
+
+	do_action( 'noptin_register_temporary_merge_tags' );
 
 	$generator     = new Noptin_Email_Generator();
 	$email_body    = $generator->generate( $args );
 	$email_subject = noptin_parse_email_subject_tags( get_noptin_option( 'double_optin_email_subject', $defaults['email_subject'] ) );
 
-	foreach ( array_keys( noptin()->emails->newsletter->get_subscriber_merge_tags() ) as $tag ) {
-		noptin()->emails->tags->remove_tag( $tag );
-	}
+	do_action( 'noptin_unregister_temporary_merge_tags' );
 
 	// Send the email.
 	return noptin_send_email(
@@ -834,7 +838,6 @@ function send_new_noptin_subscriber_double_optin_email( $id ) {
 			'disable_template_plugins' => ! ( 'default' === $args['template'] ),
 		)
 	);
-
 }
 add_action( 'noptin_subscriber_created', 'send_new_noptin_subscriber_double_optin_email' );
 
