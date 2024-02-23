@@ -985,7 +985,6 @@ input:focus+.noptin-switch-slider span {
 	color: #F44336;
 }
 
-#noptin-automations-popup,
 #noptin-wrapper,
 .noptin-settings {
 
@@ -1051,10 +1050,6 @@ input:focus+.noptin-switch-slider span {
 		display: inline-block;
 	}
 
-}
-
-.noptin-automation-setup-form.noptin-fields {
-	text-align: left;
 }
 
 .noptin-full-screen {
@@ -1286,175 +1281,6 @@ input:focus+.noptin-switch-slider span {
 	}
 }
 
-#noptin-automation-rules-table {
-
-	td {
-		vertical-align: middle;
-	}
-
-	@media screen and (min-width:960px) {
-		.column-times_run,
-		.column-created_at,
-		.column-updated_at {
-			width: 100px;
-		}
-
-		.column-actions {
-			width: 160px;
-			text-align: right;
-		}
-	}
-
-	.noptin-rule-action,
-	.noptin-rule-trigger {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.noptin-rule-name {
-		flex: 1;
-		font-weight: 600;
-
-		.noptin-rule-description {
-			font-weight: 400;
-			margin-top: 0.5rem;
-			color: #646970;
-		}
-
-		.row-actions {
-			font-weight: 400;
-		}
-	}
-
-	.noptin-rule-image {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		img {
-			width: 100%;
-			height: auto;
-			max-height: 100%;
-			object-fit: cover;
-			border-radius: 4px;
-		}
-
-		.dashicons {
-			font-size: 40px;
-			width: 40px;
-			height: 40px;
-		}
-	}
-
-	.noptin-rule-meta {
-		display: block;
-		margin-bottom: 0.4rem;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-
-	.noptin-rule-meta-key {
-		font-weight: 600;
-	}
-
-	.noptin-rule-error {
-		color: #b32d2e;
-		display: block;
-		margin-top: 0.8rem;
-	}
-
-	.noptin-automation-rule-actions {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-
-		// Each action is a grey button containing a dashicon.
-		.noptin-automation-rule-action {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 30px;
-			height: 30px;
-			border-radius: 50%;
-			background: #f1f1f1;
-			color: #646970;
-			font-size: 16px;
-			cursor: pointer;
-			transition: all 0.2s ease;
-
-			&:hover {
-				background: #e1e1e1;
-			}
-		}
-
-		// Delete action should be red.
-		.noptin-automation-rule-action__delete {
-			color: #b32d2e;
-		}
-
-		// Switch action contain a checkbox. Convert it to a toggle switch which changes depending on the state.
-		.noptin-automation-rule-action__switch-wrapper {
-			display: inline-block;
-
-			input {
-				width: 1px;
-				height: 1px;
-				visibility: hidden;
-				opacity: 0;
-			}
-		}
-
-		.noptin-automation-rule-action__switch {
-			display: inline-block;
-			position: relative;
-			width: 50px;
-			height: 30px;
-			border-radius: 15px;
-			background: #e1e1e1;
-			cursor: pointer;
-			transition: all 0.2s ease;
-
-			input {
-				display: none;
-			}
-
-			&:hover {
-				background: #d1d1d1;
-			}
-
-			&:before {
-				content: '';
-				position: absolute;
-				top: 2px;
-				left: 2px;
-				width: 26px;
-				height: 26px;
-				border-radius: 50%;
-				background: #fff;
-				transition: all 0.2s ease;
-			}
-		}
-
-		input:checked + .noptin-automation-rule-action__switch {
-			background: #43a047;
-
-			&:before {
-				left: calc(100% - 2px);
-				transform: translateX(-100%);
-			}
-		}
-	}
-}
-
 .noptin-sortable-ghost {
 	background-color: #f3f3f3;
 	color: #3c3b3b;
@@ -1602,113 +1428,6 @@ input:focus+.noptin-switch-slider span {
 	border: none;
     background: transparent;
     color: #b71c1c !important;
-}
-
-#noptin-automation-rule-editor {
-
-	&:not(.noptin-email-editor-fields) {
-		font-size: 15px;
-		margin-bottom: 20px;
-
-		form {
-			max-width: 820px;
-		}
-
-		select {
-			padding: 6px 8px;
-			width: 100%;
-		}
-
-		.select2-container .select2-selection--single {
-			min-height: 32px;
-			padding: 6px 8px;
-			height: auto;
-		}
-
-		.select2-container--default .select2-selection--single .select2-selection__arrow {
-			height: 36px;
-		}
-	}
-
-	.noptin-automation-rule-editor-section {
-		margin-bottom: 1.5rem;
-
-		label:not(.field-wrapper) {
-			font-weight: 500;
-			margin-bottom: 6px;
-		}
-
-		.field-wrapper {
-			display: flex;
-			@media only screen and (max-width: 820px) {
-				flex-flow: column;
-			}
-
-			.noptin-select-label,
-			.noptin-textarea-label,
-			.noptin-label {
-
-				@media only screen and (min-width: 801px) {
-					max-width: 200px;
-    				flex: 1 0 200px;
-				
-					#noptin_automation_trigger_settings & {
-						padding: 0 10px 0 0;
-					}
-				}
-
-    			font-weight: 600;
-			}
-
-			.noptin-content {
-				flex: 1 0 0;
-
-				#noptin_automation_trigger_settings & {
-					padding: 0 10px;
-				}
-			}
-
-			.noptin-multicheckbox-card {
-				max-width: 100%;
-				max-height: 200px;
-				overflow: auto;
-				margin-top: 0;
-			}
-		}
-
-		.noptin-textarea-wrapper {
-			margin-top: 16px;
-			margin-bottom: 32px;
-
-			textarea  {
-				margin-bottom: 0;
-			}
-		}
-
-		.noptin-checkbox_alt-wrapper .description {
-			display: inline-block;
-		}
-
-	}
-
-	.save-automation-rule {
-		float: none;
-	}
-
-	.noptin-save-saved,
-	.noptin-save-error {
-		margin: 15px 0;
-		background: #fff;
-		border-left: 4px solid #fff;
-		border-left-color: #46b450;
-		box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
-		padding: 1px 12px;
-	}
-
-	.noptin-save-error {
-		border-left-color: #dc3232;
-	}
-
 }
 
 .noptin-input-inner {
@@ -2176,20 +1895,6 @@ input:focus+.noptin-switch-slider span {
 
 }
 
-#noptin_automation_save {
-
-	.inside {
-		padding: 0;
-    	margin: 0;
-	}
-
-	.noptin-publishing-actions {
-		padding: 10px;
-		clear: both;
-	}
-
-}
-
 .noptin-label-span {
 	margin-bottom: 4px;
     display: block;
@@ -2205,18 +1910,6 @@ input:focus+.noptin-switch-slider span {
     width: 100%;
     max-width: 400px;
     font-size: 13px;
-}
-
-#noptin_automation_details {
-
-	.form-table, .form-table td, .form-table th, .form-table td p {
-		font-size: 13px;
-	}
-
-}
-
-#noptin_automation_content .inside {
-	padding-top: 20px;
 }
 
 .noptin-inline-block {
