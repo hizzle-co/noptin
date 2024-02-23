@@ -11,13 +11,6 @@ defined( 'ABSPATH' ) || exit;
 abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 	/**
-	 * Whether or not this trigger deals with a subscriber.
-	 *
-	 * @var bool
-	 */
-	public $is_subscriber_based = false;
-
-	/**
 	 * Whether or not this trigger deals with a user.
 	 *
 	 * @var bool
@@ -237,10 +230,6 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 					),
 				)
 			);
-		}
-
-		if ( $this->is_subscriber_based ) {
-			$smart_tags = array_merge( $smart_tags, get_noptin_subscriber_smart_tags() );
 		}
 
 		return apply_filters( 'noptin_automation_trigger_known_smart_tags', $smart_tags, $this );
