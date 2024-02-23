@@ -315,6 +315,9 @@ class Noptin {
 
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
+
+		// Automation rules.
+		\Hizzle\Noptin\Automation_Rules\Main::init();
 	}
 
 	/**

@@ -22,7 +22,6 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
 		add_action( 'admin_menu', array( $this, 'subscribers_menu' ), 33 );
-		add_action( 'admin_menu', array( $this, 'automation_rules_menu' ), 40 );
 		add_action( 'admin_menu', array( $this, 'settings_menu' ), 50 );
 		add_action( 'admin_menu', array( $this, 'tools_menu' ), 60 );
 		add_action( 'admin_menu', array( $this, 'extensions_menu' ), 70 );
@@ -115,39 +114,6 @@ class Noptin_Admin_Menus {
 	}
 
 	/**
-	 * Automation Rules.
-	 */
-	public function automation_rules_menu() {
-
-		if ( isset( $_GET['noptin_create_automation_rule'] ) ) {
-			$title  = __( 'Add New Automation Rule', 'newsletter-optin-box' );
-			$script = 'create-automation-rule';
-			$cb     = array( $this, 'render_create_automation_rule_page' );
-		} elseif ( isset( $_GET['noptin_edit_automation_rule'] ) ) {
-			$title  = __( 'Edit Automation Rule', 'newsletter-optin-box' );
-			$script = 'edit-automation-rule';
-			$cb     = array( $this, 'render_edit_automation_rule_page' );
-		} else {
-			$title  = __( 'Automation Rules', 'newsletter-optin-box' );
-			$script = 'view-automation-rules';
-			$cb     = array( $this, 'render_automation_rules_page' );
-		}
-
-		$hook_suffix = add_submenu_page(
-			'noptin',
-			apply_filters( 'noptin_admin_automation_rules_page_title', $title ),
-			esc_html__( 'Automation Rules', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-automation-rules',
-			$cb
-		);
-
-		if ( ! empty( $script ) ) {
-			Noptin_Scripts::add_admin_script( $hook_suffix, $script );
-		}
-	}
-
-	/**
 	 * Subscribers.
 	 */
 	public function subscribers_menu() {
@@ -170,33 +136,6 @@ class Noptin_Admin_Menus {
 	public function render_subscribers_page() {
 		if ( current_user_can( get_noptin_capability() ) ) {
 			include plugin_dir_path( __FILE__ ) . 'views/view-subscribers.php';
-		}
-	}
-
-	/**
-	 * Displays the create automation rule page.
-	 */
-	public function render_create_automation_rule_page() {
-		if ( current_user_can( get_noptin_capability() ) ) {
-			include plugin_dir_path( __FILE__ ) . 'views/automation-rules/create.php';
-		}
-	}
-
-	/**
-	 * Displays the edit automation rule page.
-	 */
-	public function render_edit_automation_rule_page() {
-		if ( current_user_can( get_noptin_capability() ) ) {
-			include plugin_dir_path( __FILE__ ) . 'views/automation-rules/edit.php';
-		}
-	}
-
-	/**
-	 * Displays the automation rules page.
-	 */
-	public function render_automation_rules_page() {
-		if ( current_user_can( get_noptin_capability() ) ) {
-			include plugin_dir_path( __FILE__ ) . 'views/automation-rules/list.php';
 		}
 	}
 

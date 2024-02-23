@@ -16,11 +16,6 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-	 * @var Automated_Email_Campaign_Types The automated email campaign types.
-	 */
-	public $automated_email_campaign_types;
-
-	/**
 	 * @var Settings The settings controller.
 	 */
 	public $settings;

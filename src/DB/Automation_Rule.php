@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\DB;
-
 /**
  * Container for a single automation rule.
  *
  * @version 1.0.0
  */
+
+namespace Hizzle\Noptin\DB;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -495,5 +495,114 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		} elseif ( $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
 			$action->maybe_run( $subject, $this, $args );
 		}
+	}
+
+	/**
+	 * Fetch rule data for JS.
+	 */
+	public function get_data( $context = 'view' ) {
+
+		$prepared = parent::get_data( $context );
+		$settings = array();
+		$trigger  = $this->get_trigger();
+		if ( ! empty( $trigger ) ) {
+			$prepared['smartTags'] = $trigger->get_known_smart_tags_for_js();
+
+			$trigger_settings = apply_filters( 'noptin_automation_rule_trigger_settings_' . $trigger->get_id(), $trigger->get_settings(), $this, $trigger );
+
+			// Trigger settings.
+			$settings['trigger'] = array(
+				'label'    => __( 'Trigger', 'newsletter-optin-box' ),
+				'prop'     => 'trigger_settings',
+				'settings' => array_merge(
+					array(
+						'action_id_info' => array(
+							'el'      => 'paragraph',
+							'content' => $trigger->get_description(),
+						),
+					),
+					$trigger_settings
+				),
+			);
+
+			// Conditional logic.
+			$settings['conditional_logic'] = array(
+				'label'    => __( 'Conditional Logic', 'newsletter-optin-box' ),
+				'prop'     => 'trigger_settings',
+				'settings' => array(
+					'conditional_logic' => array(
+						'label'       => __( 'Conditional Logic', 'newsletter-optin-box' ),
+						'el'          => 'conditional_logic',
+						'comparisons' => noptin_get_conditional_logic_comparisons(),
+						'fullWidth'   => true,
+						'default'     => array(
+							'enabled' => false,
+							'action'  => 'allow',
+							'type'    => 'all',
+							'rules'   => array(
+								array(
+									'condition' => 'is',
+									'type'      => 'date',
+									'value'     => gmdate( 'Y-m-d' ),
+								),
+							),
+						),
+					),
+				),
+			);
+		}
+
+		$action = $this->get_action();
+		if ( ! empty( $action ) ) {
+			$action_settings = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
+
+			// Map fields.
+			$map_fields = array();
+
+			foreach ( $action_settings as $key => $data ) {
+
+				if ( ! empty( $data['map_field'] ) ) {
+					$map_fields[ $key ] = $data;
+					unset( $action_settings[ $key ] );
+				}
+			}
+
+			// Action settings.
+			$settings['action'] = array(
+				'label'    => __( 'Action', 'newsletter-optin-box' ),
+				'prop'     => 'action_settings',
+				'settings' => array_merge(
+					array(
+						'action_id_info' => array(
+							'el'      => 'paragraph',
+							'content' => $action->get_description(),
+						),
+					),
+					$action_settings
+				),
+			);
+
+			if ( ! empty( $map_fields ) ) {
+				$settings['map_fields'] = array(
+					'label'    => __( 'Map custom fields', 'newsletter-optin-box' ),
+					'prop'     => 'action_settings',
+					'settings' => array_merge(
+						array(
+							'map_field_tip' => array(
+								'content' => __( 'Click on the merge tag button to insert a dynamic value.', 'newsletter-optin-box' ),
+								'el'      => 'paragraph',
+							),
+						),
+						$map_fields
+					),
+				);
+			}
+		}
+
+		$settings = apply_filters( 'noptin_automation_rule_settings', $settings, $this, $trigger, $action );
+
+		$prepared['settings'] = $settings;
+
+		return $prepared;
 	}
 }

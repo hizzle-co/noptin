@@ -36,7 +36,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		$this->can_list       = false;
 		$this->icon           = array(
 			'icon' => 'admin-users',
-			'fill' => '#fb1a62',
+			'fill' => '#50575e',
 		);
 
 		// State transition.
@@ -45,7 +45,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		}
 
 		// Custom fields.
-		foreach ( $this->subscriber_fields() as $merge_tag => $field ) {
+		foreach ( $this->subscriber_fields( true ) as $merge_tag => $field ) {
 			if ( empty( $field['multiple'] ) ) {
 				add_action( "noptin_subscriber_{$merge_tag}_changed", array( $this, 'on_field_change' ), 10, 3 );
 			} else {
@@ -78,11 +78,22 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		return $statuses;
 	}
 
-	private function subscriber_fields() {
+	public static function get_all_tags_as_options() {
+		static $tags = null;
+
+		if ( null === $tags ) {
+			$tags = noptin()->db()->get_all_meta_by_key( 'tags' );
+		}
+
+		return array_combine( $tags, $tags );
+	}
+
+	private function subscriber_fields( $partial = false ) {
 		$fields = array(
 			'tags' => array(
 				'label'    => __( 'Tags', 'newsletter-optin-box' ),
 				'multiple' => true,
+				'options'  => __CLASS__ . '::get_all_tags_as_options',
 			),
 		);
 
@@ -97,7 +108,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			$fields[ $merge_tag ] = array(
 				'label'    => $options['label'],
 				'multiple' => ! empty( $options['is_multiple'] ),
-				'options'  => noptin_newslines_to_array( $options['options'] ),
+				'options'  => $partial ? array() : noptin_newslines_to_array( $options['options'] ),
 			);
 		}
 

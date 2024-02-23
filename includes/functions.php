@@ -1908,8 +1908,16 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 			} else {
 				$value = gmdate( 'Y-m-d', strtotime( $value ) );
 			}
-		} elseif ( isset( $condition['options'] ) && isset( $condition['options'][ $value ] ) ) {
-			$value = $condition['options'][ $value ];
+		} elseif ( isset( $condition['options'] ) ) {
+			if ( is_callable( $condition['options'] ) ) {
+				$options = call_user_func( $condition['options'] );
+			} else {
+				$options = $condition['options'];
+			}
+
+			if ( isset( $options[ $value ] ) ) {
+				$value = $options[ $value ];
+			}
 		}
 
 		if ( isset( $comparisons[ $rule['condition'] ] ) ) {
@@ -2137,6 +2145,11 @@ function noptin_prepare_merge_tags_for_js( $merge_tags ) {
 
 		if ( empty( $prepared[ $key ]['group'] ) ) {
 			$prepared[ $key ]['group'] = __( 'General', 'newsletter-optin-box' );
+		}
+
+		// If options is a callable, call it.
+		if ( isset( $prepared[ $key ]['options'] ) && is_callable( $prepared[ $key ]['options'] ) ) {
+			$prepared[ $key ]['options'] = call_user_func( $prepared[ $key ]['options'] );
 		}
 
 		// Remove callback.
