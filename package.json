@@ -27,7 +27,7 @@
 		"@hizzlewp/store": "^0.0.3",
 		"@wordpress/api-fetch": "^6.28.0",
 		"@wordpress/base-styles": "^4.25.0",
-		"@wordpress/components": "^26.0.0",
+		"@wordpress/components": "^27.0.0",
 		"@wordpress/core-data": "^6.11.0",
 		"@wordpress/data-controls": "^3.3.0",
 		"@wordpress/dom-ready": "3.52.0",
