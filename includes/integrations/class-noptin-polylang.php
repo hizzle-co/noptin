@@ -21,7 +21,6 @@ class Noptin_Polylang {
 		add_filter( 'noptin_form_scripts_params', array( $this, 'filter_ajax_params' ), 5 );
 		add_filter( 'noptin_multilingual_active_languages', array( $this, 'filter_active_languages' ) );
 		add_filter( 'noptin_action_url_home_url', array( $this, 'filter_home_url' ) );
-
 	}
 
 	/**

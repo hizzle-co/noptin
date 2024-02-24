@@ -129,8 +129,8 @@ class Email_Sender_Subscribers extends Email_Sender {
 		// Generate and send the actual email.
 		$result = $campaign->send_to(
 			array(
-				'sid'   => $subscriber->get_id(),
-				'email' => $subscriber->get_email(),
+				'subscriber' => $subscriber->get_id(),
+				'email'      => $subscriber->get_email(),
 			),
 			false
 		);

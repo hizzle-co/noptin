@@ -272,9 +272,7 @@ abstract class Noptin_Email_Type {
 
 		// Unregister general merge tags.
 		foreach ( $this->get_flattened_merge_tags() as $tag => $config ) {
-			if ( empty( $config['global'] ) ) {
-				noptin()->emails->tags->remove_tag( $tag );
-			}
+			noptin()->emails->tags->remove_tag( $tag );
 		}
 
 		// Unsubscribe URL.

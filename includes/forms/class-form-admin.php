@@ -87,7 +87,6 @@ class Noptin_Form_Admin {
 			);
 
 		}
-
 	}
 
 	/**
@@ -236,5 +235,4 @@ class Noptin_Form_Admin {
 
 		return $messages;
 	}
-
 }
