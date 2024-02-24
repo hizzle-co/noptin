@@ -259,7 +259,16 @@ abstract class Noptin_Dynamic_Content_Tags {
 		}
 
 		if ( is_array( $replacement ) ) {
-			if ( ! wp_is_numeric_array( $replacement ) ) {
+
+			$is_all_scalar = array_reduce(
+				$replacement,
+				function ( $carry, $item ) {
+					return $carry && (is_string( $item ) || is_numeric( $item ));
+				},
+				true
+			);
+
+			if ( ! wp_is_numeric_array( $replacement ) || ! $is_all_scalar ) {
 				$replacement = wp_json_encode( $replacement );
 			} else {
 				$replacement = implode( ', ', $replacement );
