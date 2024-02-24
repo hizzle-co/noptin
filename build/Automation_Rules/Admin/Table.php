@@ -1,8 +1,11 @@
 <?php
 /**
- * Displays a list of all rules
+ * Displays a list of all automation rules
  */
 namespace Hizzle\Noptin\Automation_Rules\Admin;
+
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Rules list table class.

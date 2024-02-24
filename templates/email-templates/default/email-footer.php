@@ -17,3 +17,6 @@ defined( 'ABSPATH' ) || exit;
 		<?php echo wp_kses_post( $footer ); ?>
 	</div>
 <?php endif; ?>
+
+</body>
+</html>

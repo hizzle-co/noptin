@@ -5,11 +5,14 @@
 
 namespace Hizzle\Noptin\Emails\Admin;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 use Hizzle\Noptin\Emails\Email;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	include_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
-	}
+}
 
 /**
  * Email list table class.

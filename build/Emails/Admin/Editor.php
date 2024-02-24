@@ -2,6 +2,9 @@
 
 namespace Hizzle\Noptin\Emails\Admin;
 
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Provides functions to load Gutenberg assets
  */

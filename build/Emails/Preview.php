@@ -123,11 +123,34 @@ class Preview {
 		// Generate the preview.
 		$preview = noptin_generate_email_content( self::$campaign, Main::$current_email_recipient, false );
 
+		// Email templates.
+		if ( 'normal' === self::$campaign->get_email_type() && 'default' === self::$campaign->get_template() ) {
+			$preview = self::process_templates( $preview );
+		}
+
 		if ( is_wp_error( $preview ) ) {
 			wp_die( esc_html( $preview->get_error_message() ) );
 		}
 
 		echo $preview; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		exit;
+	}
+
+	private static function process_templates( $preview ) {
+
+		// Email templates.
+		if ( class_exists( '\Mailtpl' ) && is_callable( '\Mailtpl::instance' ) ) {
+			$templates = \Mailtpl::instance();
+
+			if ( ! empty( $templates->mailer ) && is_callable( array( $templates->mailer, 'send_email' ) ) ) {
+				$result = $templates->mailer->send_email( array( 'message' => $preview ) );
+
+				if ( is_array( $result ) && ! empty( $result['message'] ) ) {
+					return $result['message'];
+				}
+			}
+		}
+
+		return $preview;
 	}
 }
