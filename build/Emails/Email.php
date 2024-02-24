@@ -517,7 +517,7 @@ class Email {
 			// Prepare the newsletter.
 			$newsletter = new Email( $args );
 
-			do_action( 'noptin_after_sending_email', $newsletter, null );
+			do_action( 'noptin_after_send_email', $newsletter, null );
 
 			unset( $GLOBALS['current_noptin_email_suffix'] );
 
@@ -653,7 +653,7 @@ class Email {
 			)
 		);
 
-		do_action( 'noptin_after_sending_email', $this, $result );
+		do_action( 'noptin_after_send_email', $this, $result );
 		Main::$current_email_recipient = array();
 
 		return $result;

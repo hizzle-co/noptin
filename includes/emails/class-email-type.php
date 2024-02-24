@@ -205,44 +205,12 @@ abstract class Noptin_Email_Type {
 	/**
 	 * Retrieves an array of subscriber merge tags.
 	 *
+	 * @deprecated 3.1.0
 	 * @return array
 	 */
 	public function get_subscriber_merge_tags() {
-
-		$tags = array();
-		foreach ( get_noptin_subscriber_smart_tags() as $smart_tag => $field ) {
-
-			if ( empty( $field['callback'] ) ) {
-				$field['callback'] = array( $this, 'get_subscriber_field' );
-			}
-
-			$tags[ $smart_tag ] = $field;
-
-		}
-
-		return $tags;
-	}
-
-	/**
-	 * Custom field value of the current subscriber.
-	 *
-	 * @param array $args
-	 * @param string $field
-	 * @return string
-	 */
-	public function get_subscriber_field( $args = array(), $field = 'first_name' ) {
-		$field = strtolower( $field );
-
-		// Abort if no subscriber.
-		if ( empty( $this->subscriber ) ) {
-			return '';
-		}
-
-		// Maybe convert to new subscriber object if we have the old one.
-		$subscriber = noptin_get_subscriber( $this->subscriber );
-
-		// Fetch the value.
-		return $subscriber->get( $field );
+		_deprecated_function( __METHOD__, '3.1.0' );
+		return array();
 	}
 
 	/**
@@ -293,13 +261,6 @@ abstract class Noptin_Email_Type {
 		foreach ( $this->get_flattened_merge_tags() as $tag => $details ) {
 			noptin()->emails->tags->add_tag( $tag, $details );
 		}
-
-		// Register subscriber merge tags.
-		if ( ! empty( $this->subscriber ) ) {
-			foreach ( $this->get_subscriber_merge_tags() as $tag => $details ) {
-				noptin()->emails->tags->add_tag( $tag, $details );
-			}
-		}
 	}
 
 	/**
@@ -312,13 +273,6 @@ abstract class Noptin_Email_Type {
 		// Unregister general merge tags.
 		foreach ( $this->get_flattened_merge_tags() as $tag => $config ) {
 			if ( empty( $config['global'] ) ) {
-				noptin()->emails->tags->remove_tag( $tag );
-			}
-		}
-
-		// Unregister subsriber merge tags.
-		if ( ! empty( $this->subscriber ) ) {
-			foreach ( array_keys( $this->get_subscriber_merge_tags() ) as $tag ) {
 				noptin()->emails->tags->remove_tag( $tag );
 			}
 		}
