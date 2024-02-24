@@ -65,7 +65,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 
 		// Ensure that we can run the action.
 		if ( ! $this->can_run( $subject, $rule, $args ) ) {
-			return;
+			return false;
 		}
 
 		// Run the action.
@@ -96,6 +96,8 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 				) . ( is_wp_error( $result ) ? ' <span style="color: red;">' . $result->get_error_message() . '</span>' : '' )
 			);
 		}
+
+		return $result;
 	}
 
 	/**

@@ -479,22 +479,36 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @param \Noptin_Abstract_Action $action  The action.
 	 * @param mixed $subject The subject.
 	 * @param array $args The arguments.
-	 * @return array
+	 * @return bool|\WP_Error
 	 */
 	public function maybe_run( $subject, $trigger, $action, $args ) {
 		// Are we delaying the action?
 		$delay = $this->get_delay();
 
 		if ( $delay > 0 ) {
-			schedule_noptin_background_action(
+			$result = schedule_noptin_background_action(
 				time() + $delay,
 				'noptin_run_delayed_automation_rule',
 				$this->get_id(),
 				$trigger->serialize_trigger_args( $args )
 			);
+
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+
+			return ! empty( $result );
 		} elseif ( $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
-			$action->maybe_run( $subject, $this, $args );
+			$result = $action->maybe_run( $subject, $this, $args );
+
+			if ( is_wp_error( $result ) || false === $result ) {
+				return $result;
+			}
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
