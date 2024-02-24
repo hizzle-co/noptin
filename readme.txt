@@ -4,8 +4,8 @@ Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter w
 Requires at least: 6.3
 Tested up to: 6.4
 Requires PHP: 7.0
-Version: 3.0.1
-Stable tag: 3.0.1
+Version: 3.1.0
+Stable tag: 3.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -134,7 +134,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
-= 3.0.2 =
+= 3.1.0 =
 * Fix: Image block has no option to select the image.
 * Fix: Classic email editor has no button to add an image.
 

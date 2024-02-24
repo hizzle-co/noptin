@@ -1,5 +1,77 @@
 # Changelog
 
+# 3.1.0
+* Fix: Image block has no option to select the image.
+* Fix: Classic email editor has no button to add an image.
+
+# 3.0.1
+* Add an automation rule trigger for imported subscribers.
+* Allow setting the sender details per newsletter email.
+
+# 3.0.0
+* Allow HTML in newsletter subscription confirmation messages.
+* Add option to allow editors to manage Noptin.
+* New newsletter campaign editor.
+
+# 2.0.5
+* Allow sending automation rule emails to unsubscribed contacts.
+* Improve newsletter subscribers import.
+* Add newsletter CRON health check to auto-send stuck newsletters.
+
+# 2.0.4
+* Add back button to newsletter campaign editor screen.
+* Check current WooCommerce order status when triggering a delayed automation rule.
+
+# 2.0.3
+* Fix error when previewing WooCommerce product purchased automated emails.
+
+# 2.0.2
+* Fix newsletter campaign stats not working.
+* Test on WordPress 6.3.
+* Do not pass ID when creating a newsletter subscriber.
+
+# 2.0.1
+* Fix newsletter subscriber meta not being saved.
+
+# 2.0.0
+* Improved subscriber management screen.
+
+# 1.12.2
+* Make it possible to hide predefined fields from the manage newsletter preferences form.
+
+# 1.12.1
+* Fix: Cannot access protected method Noptin_WooCommerce_Product_Purchased_Trigger::maybe_trigger() error.
+
+# 1.12.0
+* Use alternative method to send bulk newsletter emails.
+* Add an automation rule action to delete newsletter subscribers.
+* Make it possible to fully customize the double opt-in email or set up multiple emails.
+* Fix: Subscriber imports strips out leading zeros.
+
+# 1.11.8
+* Speed improvements.
+
+# 1.11.7
+* Polylang improvements for multilingual newsletters.
+
+# 1.11.6
+* Fix multicheckbox newsletter form field type only sending a single value.
+* Ability to bulk send newsletter subscription confirmation emails.
+
+# 1.11.4
+* Add ability to set custom newsletter subscription form field placeholders.
+* Add option to set custom CSS for newsletter emails.
+* Add automation rule action to create/update a GeoDirectory listing.
+
+# 1.11.3
+* Add Elementor forms automation rule trigger.
+* Add Fluent form automation rule tirgger.
+* Fix: Some subscriber customer field types not working when used to filter newsletter recipients.
+
+# 1.11.2
+* Fix: Post digests show raw CSS in certain WooCommerce templates.
+* Add ability to manually send post digests.
+
 # 1.11.1
 * Fix: Concurrent newsletter campaigns from different sites not sent on a multisite network.
 * Allow setting custom dates for sending post digest newsletters.
