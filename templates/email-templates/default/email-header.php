@@ -19,5 +19,5 @@ defined( 'ABSPATH' ) || exit;
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex, nofollow" />
 </head>
-<body style="background-color: <?php echo esc_attr( $settings['background_color'] ); ?>">
+<body>
 <h1><?php echo wp_kses_post( $email_heading ); ?></h1>
