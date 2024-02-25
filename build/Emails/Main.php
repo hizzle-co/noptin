@@ -272,7 +272,7 @@ class Main {
 					),
 					'label'                 => __( 'Email Campaigns', 'newsletter-optin-box' ),
 					'description'           => '',
-					'public'                => true,
+					'public'                => false,
 					'rest_controller_class' => '\Hizzle\Noptin\Emails\REST',
 					'map_meta_cap'          => true,
 					'capabilities'          => array(
@@ -289,6 +289,7 @@ class Main {
 					'has_archive'           => false,
 					'show_in_rest'          => true,
 					'menu_icon'             => '',
+					'rewrite'               => false,
 				)
 			)
 		);
