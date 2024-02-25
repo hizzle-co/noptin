@@ -1,6 +1,6 @@
 === Simple Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
-Tags: newsletter, email newsletter form, email opt-in, email popup, newsletter widget, email subscription
+Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, woocommerce
 Requires at least: 6.3
 Tested up to: 6.4
 Requires PHP: 7.0
@@ -10,7 +10,7 @@ License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
 
-The fastest (multisite compatible) GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new blog post notifications.
+The fastest GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new post notifications. ★★★★★
 
 == Description ==
 
