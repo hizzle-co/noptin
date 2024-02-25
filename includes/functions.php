@@ -98,18 +98,24 @@ function update_noptin_option( $key, $value ) {
  * @global WP_Rewrite $wp_rewrite WordPress rewrite component.
  * @param   string $action The action to execute.
  * @param   string $value  Optional. The value to pass to the action handler.
- * @param   bool   $empty  Optional. Whether or not to use an empty template.
+ * @param   bool   $use_empty_template  Optional. Whether or not to use an empty template.
  * @access  public
  * @since   1.0.6
  */
-function get_noptin_action_url( $action, $value = false, $empty = false ) {
+function get_noptin_action_url( $action, $value = false, $use_empty_template = false ) {
 
 	$home_url = apply_filters( 'noptin_action_url_home_url', get_home_url() );
+
+	// If home url does not have query vars, add a trailing slash.
+	if ( false === strpos( $home_url, '?' ) ) {
+		$home_url = trailingslashit( $home_url );
+	}
+
 	return add_query_arg(
 		array(
 			'noptin_ns' => rawurlencode( $action ),
 			'nv'        => empty( $value ) ? false : rawurlencode( $value ),
-			'nte'       => $empty,
+			'nte'       => $use_empty_template,
 		),
 		$home_url
 	);
