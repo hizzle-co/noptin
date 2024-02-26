@@ -15,62 +15,6 @@ if ( ! is_array( $products ) ) {
 
 ?>
 
-<style type="text/css">
-
-	.digest-list-product {
-		min-width:100%;
-		width:100%;
-		margin-bottom:0;
-		border-spacing:0;
-	}
-
-	.digest-list-product a {
-		text-decoration:none;
-		color:#333333;
-	}
-
-	.digest-list-product-title {
-		font-size:18px;
-		line-height:1.22;
-		font-weight:700;
-		margin: 0 0 10px !important;
-		word-break: break-word;
-		padding-top: 0 !important;
-	}
-
-	.digest-list-product-excerpt {
-		line-height: 1.33;
-		font-size: 15px;
-		margin: 0 0 10px !important;
-		padding-top: 0 !important;
-		word-break: break-word;
-	}
-
-	.digest-list-product-meta {
-		font-size:13px;
-		color:#757575;
-		margin: 0 !important;
-		word-break: break-word;
-	}
-
-	.digest-list-product-meta a {
-		color:#757575;
-	}
-
-    @media only screen and (max-width: 480px){
-
-        .d-xs-block {
-            display:block !important;
-            width:100% !important;
-        }
-
-        .pl-xs-0 {
-			padding-left: 0 !important;
-        }
-
-    }
-</style>
-
 <?php foreach ( $products as $i => $product ) : ?>
 
 	<table cellspacing="0" cellpadding="0" class="digest-list-product digest-list-product-type-<?php echo esc_attr( sanitize_html_class( $product->get_type() ) ); ?>">

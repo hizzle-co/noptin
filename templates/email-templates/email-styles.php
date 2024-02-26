@@ -241,6 +241,240 @@
 		margin: 5px 0 !important;
 	}
 
+	.digest-list-product {
+		min-width:100%;
+		width:100%;
+		margin-bottom:0;
+		border-spacing:0;
+	}
+
+	.digest-list-product a {
+		text-decoration:none;
+		color:#333333;
+	}
+
+	.digest-list-product-title {
+		font-size:18px;
+		line-height:1.22;
+		font-weight:700;
+		margin: 0 0 10px !important;
+		word-break: break-word;
+		padding-top: 0 !important;
+	}
+
+	.digest-list-product-excerpt {
+		line-height: 1.33;
+		font-size: 15px;
+		margin: 0 0 10px !important;
+		padding-top: 0 !important;
+		word-break: break-word;
+	}
+
+	.digest-list-product-meta {
+		font-size:13px;
+		color:#757575;
+		margin: 0 !important;
+		word-break: break-word;
+	}
+
+	.digest-list-product-meta a {
+		color:#757575;
+	}
+
+    @media only screen and (max-width: 480px){
+
+        .d-xs-block {
+            display:block !important;
+            width:100% !important;
+        }
+
+        .pl-xs-0 {
+			padding-left: 0 !important;
+        }
+
+    }
+
+	.digest-grid-product {
+		word-wrap: break-word;
+		margin-right: 0;
+		font-size: 14px;
+		box-sizing: border-box;
+		margin-bottom:24px;
+		border-spacing:0;
+		border: 1px solid #e0dede;
+		border-radius: 4px;
+		text-align: center;
+	}
+
+	.digest-grid-product-image-container {
+		margin-top: 0;
+		padding-top: 0;
+	}
+
+	.digest-grid-product img {
+		max-width: 100%;
+		height: auto !important;
+	}
+
+	.digest-grid-product a {
+		text-decoration:none;
+		color:#333333;
+	}
+
+	.digest-grid-product-title {
+		font-size:18px;
+		line-height:1.22;
+		font-weight:700;
+		margin: 30px 10px 4px !important;
+		word-break: break-word;
+	}
+
+	.digest-grid-product-excerpt {
+		line-height:1.33;
+		font-size:14px;
+		font-weight: 400;
+		margin: 16px 10px 8px !important;
+		word-break: break-word;
+	}
+
+	.digest-grid-product-meta {
+		font-size:13px;
+		color:#757575;
+		margin: 0 10px 30px !important;
+		word-break: break-word;
+	}
+
+	.digest-grid-product-meta a {
+		color:#757575;
+	}
+
+	@media (max-width: 480px) {
+		.product-digest-grid-one,
+		.product-digest-grid-two {
+			display:block !important;
+  			width:100% !important;
+			margin-right: 0 !important;
+		}
+	}
+
+	.digest-list-title {
+		font-size: 24px;
+		line-height: 1.25;
+		font-weight: 700;
+		margin: 0 0 10px !important;
+		padding-top: 0 !important;
+		word-break: break-word;
+	}
+
+	.digest-list-description {
+		font-size: 15px;
+		line-height: 1.33;
+		margin: 0 0 30px !important;
+		padding-top: 0 !important;
+		word-break: break-word;
+	}
+
+	.digest-list-post {
+		min-width:100%;
+		width:100%;
+		margin-bottom:30px;
+		border-spacing:0;
+	}
+
+	.digest-grid-post {
+		word-wrap: break-word;
+		margin-right: 0;
+		font-size: 14px;
+		box-sizing: border-box;
+		margin-bottom:24px;
+		border-spacing:0;
+		border: 1px solid #e0dede;
+		border-radius: 4px;
+	}
+
+	.digest-list-post a {
+		text-decoration:none;
+		color:#333333;
+	}
+
+	.digest-list-post-title {
+		font-size:18px;
+		line-height:1.22;
+		font-weight:700;
+		margin: 0 0 10px !important;
+		word-break: break-word;
+		padding-top: 0 !important;
+	}
+
+	.digest-list-post-excerpt {
+		line-height: 1.33;
+		font-size: 15px;
+		margin: 0 0 10px !important;
+		padding-top: 0 !important;
+		word-break: break-word;
+	}
+
+	.digest-list-post-meta {
+		font-size:13px;
+		color:#757575;
+		margin: 0 !important;
+		word-break: break-word;
+	}
+
+	.digest-list-post-meta a {
+		color:#757575;
+	}
+
+	.digest-grid-post-image-container {
+		margin-top: 0;
+		padding-top: 0;
+	}
+
+	.digest-grid-post img {
+		max-width: 100%;
+		height: auto !important;
+	}
+
+	.digest-grid-post a {
+		text-decoration:none;
+		color:#333333;
+	}
+
+	.digest-grid-post-title {
+		font-size:18px;
+		line-height:1.22;
+		font-weight:700;
+		margin: 30px 10px 4px !important;
+		word-break: break-word;
+	}
+
+	.digest-grid-post-excerpt {
+		line-height:1.33;
+		font-size:15px;
+		margin: 16px 10px 8px !important;
+		word-break: break-word;
+	}
+
+	.digest-grid-post-meta {
+		font-size:13px;
+		color:#757575;
+		margin: 0 10px 30px !important;
+		word-break: break-word;
+	}
+
+	.digest-grid-post-meta a {
+		color:#757575;
+	}
+
+	@media (max-width: 480px) {
+		.post-digest-grid-one,
+		.post-digest-grid-two {
+			display:block !important;
+  			width:100% !important;
+			margin-right: 0 !important;
+		}
+	}
+
 	.margin-none p {
 		margin: 0;
 	}
