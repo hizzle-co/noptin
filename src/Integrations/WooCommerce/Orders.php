@@ -806,9 +806,10 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		// Check that the current action is a valid trigger.
-		$hook = current_filter();
+		$hook       = current_filter();
+		$trigger_id = $this->sanitize_hook_to_trigger_id( $hook );
 
-		if ( ! in_array( $hook, array_keys( $this->get_triggers() ), true ) ) {
+		if ( ! in_array( $trigger_id, array_keys( $this->get_triggers() ), true ) ) {
 			return;
 		}
 
@@ -841,7 +842,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		$this->trigger(
-			$this->sanitize_hook_to_trigger_id( $hook ),
+			$trigger_id,
 			$args
 		);
 	}
