@@ -1527,6 +1527,8 @@ function noptin_get_subscription_sources() {
 	$sources['import']     = __( 'Imported', 'newsletter-optin-box' );
 	$sources['default']    = __( 'Default', 'newsletter-optin-box' );
 
+	$sources = array_filter( $sources );
+
 	// Cache.
 	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );
 
