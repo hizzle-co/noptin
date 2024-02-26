@@ -11,7 +11,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "symfony/css-selector": "3.4.47",
+        "symfony/css-selector": "5.4.35",
         "hizzle/store": "^0",
         "tijsverkoyen/css-to-inline-styles": "^2.2"
     },
