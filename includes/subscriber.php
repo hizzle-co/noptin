@@ -1558,7 +1558,6 @@ function noptin_record_subscriber_activity( $email_address, $activity ) {
 		$subscriber->record_activity( $activity );
 		$subscriber->save();
 	}
-
 }
 
 /**

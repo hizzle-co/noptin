@@ -601,7 +601,8 @@ class Email {
 		}
 
 		// Check if the email is unsubscribed.
-		if ( ( ! noptin_has_enabled_double_optin() || 'new_subscriber' !== $this->get_trigger() ) && noptin_is_email_unsubscribed( $recipient['email'] ) ) {
+		$is_pending_email = 'noptin_subscriber_status_set_to_pending' === $this->get_trigger();
+		if ( ! $is_pending_email && noptin_is_email_unsubscribed( $recipient['email'] ) ) {
 			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
 		}
 
