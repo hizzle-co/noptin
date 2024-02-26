@@ -134,6 +134,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 3.1.2 =
+* Fix: Automated WooCommerce emails not sending.
+* Fix: Newsletter emails contain wrongly wrapped words.
+
 = 3.1.1 =
 * Fix: PHP notice when using custom email template.
 

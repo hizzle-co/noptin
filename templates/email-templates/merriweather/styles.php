@@ -43,8 +43,6 @@
 		line-height: <?php echo esc_attr( $settings['line_height'] ); ?>;
 		font-weight: <?php echo esc_attr( $settings['font_weight'] ); ?>;
 		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
-		word-wrap: break-word;
-    	word-break: break-all;
 		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>;
 	}
 
