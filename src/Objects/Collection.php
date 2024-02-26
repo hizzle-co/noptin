@@ -70,6 +70,11 @@ abstract class Collection {
 	 */
 	public $context;
 
+	/**
+	 * @var array $provides
+	 */
+	public $provides = array();
+
 	// Template.
 	public $title_field       = '';
 	public $description_field = '';
@@ -91,7 +96,7 @@ abstract class Collection {
 		add_filter( 'noptin_email_editor_objects', array( $this, 'register_object' ) );
 
 		// Register shortcode.
-		if ( apply_filters( 'noptin_object_can_list', $this->can_list, $this ) ) {
+		if ( $this->can_list ) {
 			add_shortcode( 'noptin_' . $this->plural_type() . '_list', array( $this, 'handle_list_shortcode' ) );
 		}
 
@@ -460,6 +465,7 @@ abstract class Collection {
 			'filters'        => $this->get_filters(),
 			'merge_tags'     => noptin_prepare_merge_tags_for_js( Store::smart_tags( $this->type, $this->singular_label ) ),
 			'template'       => $this->get_list_shortcode_template(),
+			'provides'       => $this->provides,
 		);
 
 		return $objects;
@@ -742,22 +748,36 @@ abstract class Collection {
 	 */
 	public function handle_list_shortcode( $atts, $template ) {
 
+		if ( ! noptin_has_active_license_key() ) {
+			return $template;
+		}
+
 		$atts = shortcode_atts(
 			array(
 				'query'       => 'number=10&order=desc&orderby=date',
+				'number'      => 3, // Only used when merge_tag is set.
 				'columns'     => 1,
 				'skiponempty' => 'no',
 				'responsive'  => 'yes',
+				'merge_tag'   => '',
 			),
 			$atts,
 			'noptin_' . $this->plural_type() . '_list'
 		);
 
-		parse_str( rawurldecode( html_entity_decode( $atts['query'] ) ), $query );
+		if ( ! empty( $atts['merge_tag'] ) ) {
+			$tag   = '[[' . $atts['merge_tag'] . ' number="' . $atts['number'] . '" return=ids]]';
+			$items = noptin_parse_email_subject_tags( $tag );
 
-		$items = $this->get_all( $query );
+			if ( $tag !== $items ) {
+				$items = wp_parse_id_list( $items );
+			}
+		} else {
+			parse_str( rawurldecode( html_entity_decode( $atts['query'] ) ), $query );
+			$items = $this->get_all( $query );
+		}
 
-		if ( empty( $items ) ) {
+		if ( ! is_array( $items ) || empty( $items ) ) {
 
 			if ( 'yes' === $atts['skiponempty'] ) {
 				$GLOBALS['noptin_email_force_skip'] = array(
@@ -772,11 +792,18 @@ abstract class Collection {
 			return '';
 		}
 
-		$post    = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
-		$tags    = new Tags( $this->type );
-		$columns = absint( $atts['columns'] ) ? absint( $atts['columns'] ) : 1;
-		$cols    = array_fill( 0, $columns, array() );
-		$width   = round( 100 / $columns, 10 );
+		$post                 = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
+		$tags                 = new Tags( $this->type );
+		$columns              = absint( $atts['columns'] ) ? absint( $atts['columns'] ) : 1;
+		$cols                 = array_fill( 0, $columns, array() );
+		$width                = round( 100 / $columns, 10 );
+		$provided_tags        = array();
+		$provided_collections = array();
+
+		foreach ( $this->provides as $provided_type ) {
+			$provided_tags[ $provided_type ]        = new Tags( $provided_type );
+			$provided_collections[ $provided_type ] = Store::get( $provided_type );
+		}
 
 		// Loop through the items and add them to the appropriate columns.
 		foreach ( $items as $index => $item ) {
@@ -822,6 +849,19 @@ abstract class Collection {
 				// Generate template.
 				$html .= $tags->replace_record_fields( $this->current_item, $template );
 
+				// Replace related fields.
+				foreach ( $provided_collections as $collection_type => $collection ) {
+
+					if ( empty( $collection ) ) {
+						continue;
+					}
+
+					$provided_id = (int) $this->current_item->provide( $collection_type );
+					$collection->prepare_item( $provided_id );
+					$html = $provided_tags[ $collection_type ]->replace_record_fields( $collection->current_item, $html );
+					$collection->cleanup_item( $provided_id );
+				}
+
 				// Cleanup item.
 				$this->cleanup_item( $item );
 			}
@@ -849,7 +889,7 @@ abstract class Collection {
 	 *
 	 * @param int $item The item.
 	 */
-	protected function prepare_item( $item ) {
+	public function prepare_item( $item ) {
 		$this->current_item = $this->get( $item );
 	}
 
@@ -858,7 +898,7 @@ abstract class Collection {
 	 *
 	 * @param Record|null $previous_item The item.
 	 */
-	protected function cleanup_item( $previous_item ) {
+	public function cleanup_item( $previous_item ) {
 		$this->current_item = $previous_item;
 	}
 

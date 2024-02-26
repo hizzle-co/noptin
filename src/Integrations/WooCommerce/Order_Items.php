@@ -19,6 +19,7 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 		$this->can_list       = true;
 		$this->integration    = 'woocommerce';
 		$this->type           = 'order_item';
+		$this->provides       = array( 'product' );
 		$this->label          = __( 'Order Items', 'newsletter-optin-box' );
 		$this->singular_label = __( 'Order Item', 'newsletter-optin-box' );
 		$this->record_class   = __NAMESPACE__ . '\Order_Item';
@@ -121,5 +122,24 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 			),
 			'meta'              => $this->meta_key_tag_config(),
 		);
+	}
+
+	/**
+	 * Returns the template for the list shortcode.
+	 */
+	protected function get_list_shortcode_template() {
+		$template = array(
+			'meta'    => $this->field_to_merge_tag( 'total', 'format="price"' ),
+			'heading' => $this->field_to_merge_tag( 'name' ),
+		);
+		$products = \Hizzle\Noptin\Objects\Store::get( 'product' );
+
+		if ( ! empty( $products ) ) {
+			$template['button']      = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( $products->url_field ) );
+			$template['image']       = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( $products->image_field ) );
+			$template['description'] = $products->field_to_merge_tag( $products->description_field );
+		}
+
+		return $template;
 	}
 }

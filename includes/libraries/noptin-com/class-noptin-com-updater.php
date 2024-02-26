@@ -30,7 +30,6 @@ class Noptin_COM_Updater {
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
 		add_filter( 'noptin_email_settings_misc', array( __CLASS__, 'filter_email_settings' ) );
 		add_filter( 'noptin_automation_sub_types', array( __CLASS__, 'upsell_automation_types' ), 5 );
-		add_filter( 'noptin_object_can_list', array( __CLASS__, 'can_list' ), PHP_INT_MAX, 2 );
 	}
 
 	/**
@@ -414,22 +413,6 @@ class Noptin_COM_Updater {
 		}
 
 		return $transient;
-	}
-
-	/**
-	 * Filters listable objects.
-	 *
-	 * @param boolean $can_list Whether or not you can list objects.
-	 * @param \Hizzle\Noptin\Objects\Collection $collection The collection.
-	 * @return boolean
-	 */
-	public static function can_list( $can_list, $collection ) {
-
-		if ( ! Noptin_COM::get_active_license_key() && 'post' !== $collection->type ) {
-			return false;
-		}
-
-		return $can_list;
 	}
 
 	/**

@@ -221,4 +221,21 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 		get_noptin_template( 'woocommerce/email-products-' . $template . '.php', compact( 'products' ) );
 		return ob_get_clean();
 	}
+
+	/**
+	 * Formats a given field's value.
+	 *
+	 * @param mixed $raw_value The raw value.
+	 * @param array $args The args.
+	 * @return mixed $value The formatted value.
+	 */
+	public function format( $raw_value, $args ) {
+
+		// Format prices.
+		if ( 'price' === $args['format'] ) {
+			return wc_price( $raw_value );
+		}
+
+		return parent::format( $raw_value, $args );
+	}
 }

@@ -173,4 +173,34 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 
 		return array_diff( $cross_sells, $in_order );
 	}
+
+	/**
+	 * Provides a related id.
+	 *
+	 * @param string $collection The collect.
+	 */
+	public function provide( $collection ) {
+		if ( 'customer' === $collection ) {
+			return $this->external->get_customer_id() > 0 ? $this->external->get_customer_id() : 0 - $this->external->get_id();
+		}
+
+		return parent::provide( $collection );
+	}
+
+	/**
+	 * Formats a given field's value.
+	 *
+	 * @param mixed $raw_value The raw value.
+	 * @param array $args The args.
+	 * @return mixed $value The formatted value.
+	 */
+	public function format( $raw_value, $args ) {
+
+		// Format prices.
+		if ( 'price' === $args['format'] ) {
+			return wc_price( $raw_value, array( 'currency' => $this->external->get_currency() ) );
+		}
+
+		return parent::format( $raw_value, $args );
+	}
 }

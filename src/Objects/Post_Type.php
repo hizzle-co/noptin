@@ -329,7 +329,7 @@ abstract class Post_Type extends Collection {
 	 *
 	 * @param int $item The item.
 	 */
-	protected function prepare_item( $item ) {
+	public function prepare_item( $item ) {
 		$this->current_item = $this->get( $item );
 
 		if ( $this->current_item->exists() ) {

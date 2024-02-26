@@ -26,6 +26,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		$this->description_field = 'details';
 		$this->url_field         = 'admin_url';
 		$this->can_list          = true;
+		$this->provides          = array( 'customer' );
 		$this->icon              = array(
 			'icon' => 'money-alt',
 			'fill' => '#674399',

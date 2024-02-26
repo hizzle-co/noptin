@@ -123,4 +123,36 @@ class Order_Item extends \Hizzle\Noptin\Objects\Record {
 		get_noptin_template( 'woocommerce/email-products-' . $template . '.php', compact( 'products' ) );
 		return ob_get_clean();
 	}
+
+	/**
+	 * Provides a related id.
+	 *
+	 * @param string $collection The collect.
+	 */
+	public function provide( $collection ) {
+		if ( 'product' === $collection ) {
+			return $this->external->get_product_id();
+		}
+
+		return parent::provide( $collection );
+	}
+
+	/**
+	 * Formats a given field's value.
+	 *
+	 * @param mixed $raw_value The raw value.
+	 * @param array $args The args.
+	 * @return mixed $value The formatted value.
+	 */
+	public function format( $raw_value, $args ) {
+
+		// Format prices.
+		if ( 'price' === $args['format'] ) {
+			$order    = $this->external->get_order();
+			$currency = $order ? $order->get_currency() : get_woocommerce_currency();
+			return wc_price( $raw_value, array( 'currency' => $currency ) );
+		}
+
+		return parent::format( $raw_value, $args );
+	}
 }

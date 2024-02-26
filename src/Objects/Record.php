@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\Objects;
-
 /**
  * Container for a single record.
  *
  * @since   1.0.0
  */
+
+namespace Hizzle\Noptin\Objects;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -112,7 +112,7 @@ abstract class Record {
 	 * @return string
 	 */
 	public function get_record_ids_or_html( $records, $args, $html_callback ) {
-		$limit = isset( $args['number'] ) ? absint( $args['number'] ) : 6;
+		$limit = isset( $args['number'] ) ? intval( $args['number'] ) : 6;
 
 		// Backward compatibility.
 		if ( ! empty( $args['limit'] ) ) {
@@ -120,7 +120,7 @@ abstract class Record {
 		}
 
 		// Get record ids.
-		$records = wp_parse_id_list( $records );
+		$records = array_unique( wp_parse_id_list( $records ) );
 		if ( $limit > 0 && count( $records ) > $limit ) {
 			$records = array_slice( $records, 0, $limit );
 		}
@@ -136,5 +136,14 @@ abstract class Record {
 		}
 
 		return call_user_func( $html_callback, $records, $args );
+	}
+
+	/**
+	 * Provides a related id.
+	 *
+	 * @param string $collection The collect.
+	 */
+	public function provide( $collection ) {
+		return 0;
 	}
 }
