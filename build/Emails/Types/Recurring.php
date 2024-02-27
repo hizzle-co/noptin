@@ -614,7 +614,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 
 		if ( $next_send ) {
 			$next_send = sprintf(
-				'<p class="noptin-list-table-misc noptin-tip" title="%s">%s</p>',
+				'<div class="noptin-strong noptin-text-success noptin-tip" title="%s">%s</div>',
 				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ),
 				esc_html( $this->get_formatted_next_send_time( $next_send ) )
 			);
@@ -626,14 +626,14 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				$this->schedule_campaign( $campaign, true );
 
 				// If the event is still not scheduled, display a warning.
-				if ( ! wp_get_scheduled_event( $this->notification_hook, $campaign->id ) ) {
+				if ( ! next_scheduled_noptin_background_action( $this->notification_hook, $campaign->id ) ) {
 					$next_send .= sprintf(
-						'<p class="noptin-list-table-misc noptin-list-table-misc-error">%s</p>',
+						'<div class="noptin-strong noptin-text-error">%s</div>',
 						esc_attr__( 'The cron event for this campaign is not scheduled. We tried to reschedule it, but it seems that your server is not configured to run cron jobs.', 'newsletter-optin-box' )
 					);
 				} else {
 					$next_send .= sprintf(
-						'<p class="noptin-list-table-misc noptin-list-table-misc-error">%s</p>',
+						'<div class="noptin-strong noptin-text-error">%s</div>',
 						esc_attr__( 'The cron event for this campaign is not scheduled. Rescheduling it.', 'newsletter-optin-box' )
 					);
 				}
