@@ -81,6 +81,7 @@ abstract class Collection {
 	public $image_field       = '';
 	public $url_field         = '';
 	public $meta_field        = '';
+	public $is_stand_alone    = true;
 
 	/**
 	 * Class constructor.
@@ -92,16 +93,22 @@ abstract class Collection {
 			$this->smart_tags_prefix = $this->type;
 		}
 
-		// Register object.
-		add_filter( 'noptin_email_editor_objects', array( $this, 'register_object' ) );
-
-		// Register shortcode.
-		if ( $this->can_list ) {
-			add_shortcode( 'noptin_' . $this->plural_type() . '_list', array( $this, 'handle_list_shortcode' ) );
-		}
-
 		if ( empty( $this->context ) ) {
 			$this->context = 'noptin/' . preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $this->type ) ) . '-template';
+		}
+
+		if ( $this->can_list ) {
+
+			// Register object.
+			add_filter( 'noptin_email_editor_objects', array( $this, 'register_object' ) );
+
+			// Register shortcode.
+			add_shortcode( 'noptin_' . $this->plural_type() . '_list', array( $this, 'handle_list_shortcode' ) );
+
+			// Register email type.
+			if ( $this->is_stand_alone ) {
+				new Digest( $this );
+			}
 		}
 
 		// Load automation rule.
@@ -451,10 +458,6 @@ abstract class Collection {
 	 */
 	public function register_object( $objects ) {
 
-		if ( ! $this->can_list ) {
-			return $objects;
-		}
-
 		$objects[ $this->type ] = array(
 			'object_type'    => $this->object_type,
 			'icon'           => $this->icon,
@@ -466,6 +469,7 @@ abstract class Collection {
 			'merge_tags'     => noptin_prepare_merge_tags_for_js( Store::smart_tags( $this->type, $this->singular_label ) ),
 			'template'       => $this->get_list_shortcode_template(),
 			'provides'       => $this->provides,
+			'is_stand_alone' => $this->is_stand_alone,
 		);
 
 		return $objects;
