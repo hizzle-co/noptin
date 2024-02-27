@@ -34,7 +34,7 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 
 		$this->collection_label  = $collection->label;
 		$this->collection        = $collection->type;
-		$this->type              = 'latest_' . $this->collection . '_digest';
+		$this->type              = 'latest_' . $collection->plural_type() . '_digest';
 		$this->notification_hook = 'noptin_send_' . $this->type;
 
 		$this->add_hooks();
@@ -86,6 +86,20 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 	}
 
 	/**
+	 * Returns the default content.
+	 *
+	 */
+	public function default_content_normal() {
+		$collection = Store::get( $this->collection );
+
+		if ( empty( $collection ) || 'post_type' !== $collection->object_type ) {
+			return parent::default_content_normal();
+		}
+
+		return '<div>[[posts post_type="' . $collection->type . '" skiponempty=yes since_last_send=yes style=list]]</div>';
+	}
+
+	/**
 	 * Prepares the default blocks.
 	 *
 	 * @return string
@@ -115,5 +129,18 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 	 */
 	public function default_frequency() {
 		return 'monthly';
+	}
+
+	/**
+	 * Registers the email sub types.
+	 *
+	 * @param array $types
+	 * @return array
+	 */
+	public function register_automation_type( $types ) {
+		$types = parent::register_automation_type( $types );
+
+		$types[ $this->type ]['alt_category'] = $this->collection_label;
+		return $types;
 	}
 }

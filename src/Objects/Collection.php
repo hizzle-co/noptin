@@ -587,7 +587,7 @@ abstract class Collection {
 					$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
 
 					if ( $last_send ) {
-						$date_query['published_after'] = array(
+						$date_query[] = array(
 							'after' => is_numeric( $last_send ) ? gmdate( 'Y-m-d\TH:i:s+00:00', $last_send ) : $last_send,
 						);
 					}

@@ -192,6 +192,12 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 				'callback'    => array( $this, 'get_email' ),
 			);
 		}
+
+		$this->tags['posts'] = array(
+			'description' => __( 'Displays a list of posts.', 'newsletter-optin-box' ),
+			'callback'    => array( $this, 'get_posts' ),
+			'example'     => 'posts style="list" post_type="post" limit="10"',
+		);
 	}
 
 	/**
@@ -315,5 +321,405 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function noptin_company() {
 		return get_noptin_option( 'company', '' );
+	}
+
+	/**
+	 * Returns posts.
+	 *
+	 * @param array $args
+	 * @return string
+	 */
+	public function get_posts( $args = array() ) {
+		// Fetch the posts.
+		$posts = $this->get_merge_tag_posts( $args );
+
+		// Abort if we have no posts.
+		if ( empty( $posts ) ) {
+			if ( isset( $args['skiponempty'] ) && 'yes' === $args['skiponempty'] ) {
+				$GLOBALS['noptin_email_force_skip'] = array(
+					'message' => __( 'No posts found.', 'newsletter-optin-box' ),
+				);
+			}
+
+			return '';
+		}
+
+		return $this->get_posts_html( $args, $posts );
+	}
+
+	/**
+	 * Retrieves the content for the posts merge tag.
+	 *
+	 * @param array $args
+	 * @return \WP_Post[]
+	 */
+	public function get_merge_tag_posts( $args = array() ) {
+
+		$post_type = ! empty( $args['post_type'] ) ? $args['post_type'] : 'post';
+		if ( ! noptin_has_active_license_key() ) {
+			$post_type = 'post';
+		}
+
+		$query = array(
+			'numberposts'         => ! empty( $args['limit'] ) ? intval( $args['limit'] ) : 10,
+			'post_type'           => $post_type,
+			'ignore_sticky_posts' => true,
+			'suppress_filters'    => true,
+		);
+
+		if ( ! empty( $args['since_last_send'] ) ) {
+			$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
+
+			if ( $last_send ) {
+				$query['date_query'] = array(
+					array(
+						'after' => is_numeric( $last_send ) ? gmdate( 'Y-m-d\TH:i:s+00:00', $last_send ) : $last_send,
+					),
+				);
+			}
+		}
+
+		if ( ! noptin_has_active_license_key() ) {
+			return get_posts( $query );
+		}
+
+		// Advanced args.
+		$advanced_args = array(
+			'author'              => 'int',
+			'author_name'         => 'string',
+			'author__in'          => 'array_int',
+			'author__not_in'      => 'array_int',
+			'orderby'             => 'string',
+			'order'               => 'string',
+			'meta_key'            => 'string',
+			'meta_value'          => 'string',
+			'meta_value_num'      => 'float',
+			'meta_compare'        => 'string',
+			'nopaging'            => 'bool',
+			'offset'              => 'int',
+			'paged'               => 'int',
+			'page'                => 'int',
+			'ignore_sticky_posts' => 'bool',
+		);
+
+		// Allow to filter post digests by language.
+		if ( function_exists( 'pll_languages_list' ) ) {
+			$advanced_args['lang'] = 'string';
+		}
+
+		foreach ( $advanced_args as $key => $type ) {
+
+			if ( isset( $args[ $key ] ) && '' !== $args[ $key ] ) {
+
+				$value = $args[ $key ];
+
+				if ( 'array_int' === $type ) {
+					$value = noptin_parse_int_list( $value );
+				} elseif ( 'int' === $type ) {
+					$value = intval( $value );
+				} elseif ( 'float' === $type ) {
+					$value = floatval( $value );
+				} elseif ( 'bool' === $type ) {
+					$value = boolval( $value ) && 'false' !== $value;
+				}
+
+				$query[ $key ] = $value;
+
+				if ( 'lang' === $key ) {
+					$query['suppress_filters'] = false;
+				}
+			}
+		}
+
+		// Set the taxonomy query.
+		$tax_query = array();
+
+		foreach ( noptin_parse_list( $post_type ) as $_post_type ) {
+
+			foreach ( get_object_taxonomies( $_post_type ) as $taxonomy ) {
+
+				// Special treatment for tags.
+				if ( 'post_tag' === $taxonomy ) {
+
+					$allowed = array(
+						'tag'           => 'string',
+						'tag_id'        => 'int',
+						'tag__and'      => 'array_int',
+						'tag__in'       => 'array_int',
+						'tag__not_in'   => 'array_int',
+						'tag_slug__and' => 'array_string',
+						'tag_slug__in'  => 'array_string',
+					);
+
+					foreach ( $allowed as $key => $type ) {
+						if ( ! empty( $args[ $key ] ) ) {
+							$value = $args[ $key ];
+						} elseif ( ! empty( $args[ 'post_' . $key ] ) ) {
+							$value = $args[ 'post_' . $key ];
+						} else {
+							continue;
+						}
+
+						if ( 'array_int' === $type ) {
+							$value = wp_parse_id_list( $value );
+						} elseif ( 'array_string' === $type ) {
+							$value = noptin_parse_list( $value, true );
+						} elseif ( 'int' === $type ) {
+							$value = absint( $value );
+						}
+
+						$query[ $key ] = $value;
+					}
+					continue;
+				}
+
+				// Special treatment for categories.
+				if ( 'category' === $taxonomy ) {
+
+					$allowed = array(
+						'cat'              => 'string',
+						'category_name'    => 'string',
+						'category__and'    => 'array_int',
+						'category__in'     => 'array_int',
+						'category__not_in' => 'array_int',
+					);
+
+					if ( isset( $args['category'] ) ) {
+						$args['category_name'] = $args['category'];
+					}
+
+					foreach ( $allowed as $key => $type ) {
+						if ( ! empty( $args[ $key ] ) ) {
+							$value = $args[ $key ];
+						} elseif ( ! empty( $args[ 'post_' . $key ] ) ) {
+							$value = $args[ 'post_' . $key ];
+						} else {
+							continue;
+						}
+
+						if ( 'array_int' === $type ) {
+							$value = wp_parse_id_list( $value );
+						}
+
+						$query[ $key ] = $value;
+					}
+					continue;
+				}
+
+				// Taxonomy slugs.
+				if ( isset( $args[ $taxonomy ] ) ) {
+					$tax_query[] = array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'slug',
+						'terms'    => noptin_parse_list( $args[ $taxonomy ], true ),
+					);
+				}
+
+				// Taxonomy ids.
+				if ( isset( $args[ $taxonomy . '_ids' ] ) ) {
+					$tax_query[] = array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => noptin_parse_int_list( $args[ $taxonomy . '_ids' ] ),
+					);
+				}
+
+				// Taxonomy slugs not in.
+				if ( isset( $args[ $taxonomy . '_not_in' ] ) ) {
+					$tax_query[] = array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'slug',
+						'terms'    => noptin_parse_list( $args[ $taxonomy . '_not_in' ], true ),
+						'operator' => 'NOT IN',
+					);
+				}
+
+				// Taxonomy ids not in.
+				if ( isset( $args[ $taxonomy . '_ids_not_in' ] ) ) {
+					$tax_query[] = array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => noptin_parse_int_list( $args[ $taxonomy . '_ids_not_in' ] ),
+						'operator' => 'NOT IN',
+					);
+				}
+
+				// Taxonomy slugs AND.
+				if ( isset( $args[ $taxonomy . '_and' ] ) ) {
+					$tax_query[] = array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'slug',
+						'terms'    => noptin_parse_list( $args[ $taxonomy . '_and' ], true ),
+						'operator' => 'AND',
+					);
+				}
+
+				// Taxonomy ids AND.
+				if ( isset( $args[ $taxonomy . '_ids_and' ] ) ) {
+					$tax_query[] = array(
+						'taxonomy' => $taxonomy,
+						'field'    => 'term_id',
+						'terms'    => noptin_parse_int_list( $args[ $taxonomy . '_ids_and' ] ),
+						'operator' => 'AND',
+					);
+				}
+			}
+		}
+
+		if ( ! empty( $tax_query ) ) {
+
+			if ( 1 < count( $tax_query ) ) {
+				$tax_query['relation'] = count( noptin_parse_list( $post_type ) ) > 1 ? 'OR' : 'AND';
+			}
+
+			$query['tax_query'] = $tax_query;
+		}
+
+		// Meta query.
+		$query = $this->add_meta_query( $query, $args );
+
+		return get_posts( apply_filters( 'noptin_posts_merge_tag_query', $query, $args, $this ) );
+	}
+
+	/**
+	 * Processes the meta query.
+	 *
+	 * @param array $query
+	 * @param array $args
+	 * @return array
+	 */
+	private function add_meta_query( $query, $args ) {
+
+		// Abort if we have no meta query.
+		if ( empty( $args['meta_query'] ) ) {
+			return $query;
+		}
+
+		// Meta query.
+		wp_parse_str( $args['meta_query'], $meta_query );
+
+		$prepared = array();
+		$flat     = array();
+
+		if ( ! is_array( $meta_query ) ) {
+			return $query;
+		}
+
+		foreach ( $meta_query as $key => $value ) {
+
+			// Relation.
+			if ( 'relation' === $key ) {
+				$prepared['relation'] = $value;
+				continue;
+			}
+
+			// Custom field key.
+			if ( ! is_array( $value ) ) {
+
+				if ( ! is_numeric( $key ) ) {
+					$flat[ $key ] = $value;
+				}
+
+				continue;
+			}
+
+			// Do we have a field key?
+			if ( ! isset( $value['key'] ) ) {
+				continue;
+			}
+
+			$single_query = array(
+				'key'     => $value['key'],
+				'compare' => isset( $value['compare'] ) ? $value['compare'] : '=',
+			);
+
+			// Value.
+			if ( 'EXISTS' !== $single_query['compare'] && 'NOT EXISTS' !== $single_query['compare'] ) {
+
+				// Maybe convert to array.
+				if ( in_array( $single_query['compare'], array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ), true ) ) {
+					$single_query['value'] = noptin_parse_list( $value['value'], true );
+				} else {
+					$single_query['value'] = $value['value'];
+				}
+
+				// Type.
+				if ( isset( $value['type'] ) ) {
+					$single_query['type'] = $value['type'];
+
+					// Dates.
+					if ( in_array( $value['type'], array( 'DATE', 'DATETIME', 'TIME' ), true ) ) {
+
+						// Format.
+						if ( ! isset( $value['format'] ) ) {
+							switch ( $value['type'] ) {
+								case 'DATE':
+									$value['format'] = 'Y-m-d';
+									break;
+								case 'DATETIME':
+									$value['format'] = 'Y-m-d H:i:s';
+									break;
+								case 'TIME':
+									$value['format'] = 'H:i:s';
+									break;
+							}
+						}
+
+						// Value.
+						if ( is_array( $single_query['value'] ) ) {
+							foreach ( $single_query['value'] as $k => $v ) {
+								$single_query['value'][ $k ] = gmdate( strtotime( $v ), $value['format'] );
+							}
+						} else {
+							$single_query['value'] = gmdate( strtotime( $single_query['value'] ), $value['format'] );
+						}
+					}
+				}
+			}
+
+			$prepared[] = $single_query;
+		}
+
+		if ( ! empty( $flat ) ) {
+			$prepared[] = $flat;
+		}
+
+		// Ensure we have relation if more than one query.
+		if ( count( $prepared ) > 1 && ! isset( $prepared['relation'] ) ) {
+			$prepared['relation'] = 'AND';
+		}
+
+		// Add the meta query if we have one.
+		if ( ! empty( $prepared ) ) {
+			$query['meta_query'] = $prepared;
+		}
+
+		return $query;
+	}
+
+	/**
+	 * Get posts html to display.
+	 *
+	 * @param array $args
+	 * @param \WP_Post[] $campaign_posts
+	 *
+	 * @return string
+	 */
+	public static function get_posts_html( $args = array(), $campaign_posts = array() ) {
+
+		$template = isset( $args['style'] ) ? $args['style'] : 'list';
+
+		// Allow overwriting this.
+		$html = apply_filters( 'noptin_post_digest_html', null, $template, $campaign_posts );
+
+		if ( null !== $html ) {
+			return $html;
+		}
+
+		$args['campaign_posts'] = $campaign_posts;
+
+		ob_start();
+		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', $args );
+		return ob_get_clean();
 	}
 }
