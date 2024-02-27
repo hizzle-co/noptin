@@ -219,11 +219,7 @@ class Table extends \WP_List_Table {
 				);
 
 				// Custom description.
-				$description = wp_kses_post( apply_filters( 'noptin_' . $item->type . '_table_about_' . $item->get_sub_type(), '', $item, $this ) );
-
-				if ( ! empty( $description ) ) {
-					$title .= "<div>$description</div>";
-				}
+				$title .= wp_kses_post( apply_filters( 'noptin_' . $item->type . '_table_about_' . $item->get_sub_type(), '', $item, $this ) );
 			} else {
 				$title .= sprintf(
 					'<div class="noptin-text-error">%s</div>',
