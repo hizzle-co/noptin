@@ -57,9 +57,10 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 	 *
 	 */
 	public function get_description() {
+
 		return sprintf(
 			// Translators: %s is the collection label.
-			__( 'Automatically send an email containing the latest %s.', 'newsletter-optin-box' ),
+			__( 'Automatically send a daily, weekly, monthly or yearly email highlighting your latest %s.', 'newsletter-optin-box' ),
 			strtolower( $this->collection_label )
 		);
 	}

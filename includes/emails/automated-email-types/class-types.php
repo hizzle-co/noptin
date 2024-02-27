@@ -82,6 +82,7 @@ class Noptin_Automated_Email_Types {
 
 		// Prepare an array of key and class.
 		$known_types = array(
+			'periodic'           => '\Hizzle\Noptin\Emails\Types\Recurring',
 			'post_notifications' => 'Noptin_New_Post_Notification',
 			'post_digest'        => 'Noptin_Post_Digest',
 		);
