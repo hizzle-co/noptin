@@ -137,7 +137,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 
 		if ( is_wp_error( $rule ) || ! $rule->exists() ) {
 			return $about . sprintf(
-				'<div class="noptin-text-error">%s</div>',
+				'<div class="noptin-strong noptin-text-error">%s</div>',
 				esc_html__( 'The automation rule for this email does not exist.', 'newsletter-optin-box' )
 			);
 		}
@@ -145,7 +145,11 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$trigger = $rule->get_trigger();
 
 		if ( $trigger ) {
-			return $about . $trigger->get_rule_table_description( $rule );
+			$trigger_about = $trigger->get_rule_table_description( $rule );
+
+			if ( ! empty( $trigger_about ) ) {
+				$about .= '<div>' . $trigger_about . '</div>';
+			}
 		}
 
 		return $about;

@@ -23,6 +23,7 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 		$this->label          = __( 'Order Items', 'newsletter-optin-box' );
 		$this->singular_label = __( 'Order Item', 'newsletter-optin-box' );
 		$this->record_class   = __NAMESPACE__ . '\Order_Item';
+		$this->is_stand_alone = false;
 		$this->icon           = array(
 			'icon' => 'cart',
 			'fill' => '#674399',
@@ -135,7 +136,7 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 		$products = \Hizzle\Noptin\Objects\Store::get( 'product' );
 
 		if ( ! empty( $products ) ) {
-			$template['button']      = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( $products->url_field ) );
+			$template['button']      = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( 'url' ) );
 			$template['image']       = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( $products->image_field ) );
 			$template['description'] = $products->field_to_merge_tag( $products->description_field );
 		}

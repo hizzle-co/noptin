@@ -785,6 +785,30 @@ function create_noptin_task( array $args ) {
 }
 
 /**
+ * Delete an action.
+ *
+ * You can pass extra arguments to the hooks, much like you can with `do_action()`.
+ *
+ * @since 3.0.0
+ * @see Noptin_Task
+ * @see create_noptin_task
+ *
+ * @param string $tag    (required). Name of the action hook. Default: none.
+ * @param mixed  ...$arg Optional. Additional arguments to pass to callbacks when the hook triggers.
+ *  @return int|bool The action id on success. False otherwise.
+ */
+function delete_noptin_background_action() {
+	return create_noptin_task( func_get_args() )->delete();
+}
+
+/**
+ * Returns the next scheduled time for an action.
+ */
+function next_scheduled_noptin_background_action() {
+	return create_noptin_task( func_get_args() )->next_scheduled();
+}
+
+/**
  * Enqueue an action to run as soon as possible in the background.
  *
  * This is a wrapper for `do_action()`.

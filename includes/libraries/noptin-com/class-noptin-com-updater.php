@@ -29,7 +29,7 @@ class Noptin_COM_Updater {
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
 		add_filter( 'noptin_email_settings_misc', array( __CLASS__, 'filter_email_settings' ) );
-		add_filter( 'noptin_automation_sub_types', array( __CLASS__, 'upsell_automation_types' ), 5 );
+		add_filter( 'noptin_automation_sub_types', array( __CLASS__, 'upsell_automation_types' ), 11 );
 	}
 
 	/**
@@ -461,17 +461,6 @@ class Noptin_COM_Updater {
 		return array_merge(
 			$types,
 			array(
-				'periodic'                      => array(
-					'label'        => __( 'Periodic', 'newsletter-optin-box' ),
-					'description'  => __( 'Automatically send your subscribers, users, or customers an email every X days.', 'newsletter-optin-box' ),
-					'image'        => array(
-						'icon' => 'calendar',
-						'fill' => '#3f9ef4',
-					),
-					'category'     => 'Mass Mail',
-					'is_mass_mail' => true,
-					'is_installed' => false,
-				),
 				'automation_rule_new_user'      => array(
 					'label'        => __( 'Welcome New Users', 'newsletter-optin-box' ),
 					'description'  => __( 'Welcome new users to your website, introduce yourself, etc.', 'newsletter-optin-box' ),
