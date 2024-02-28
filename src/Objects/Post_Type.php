@@ -199,7 +199,7 @@ abstract class Post_Type extends Collection {
 				'activity'   => get_the_title( $post_id ),
 				'post_meta'  => array(
 					'id'  => $post_id,
-					'key' => 'noptin_sent_notification_campaign',
+					'key' => $this->type . '_published' === $event ? 'noptin_sent_notification_campaign' : '',
 				),
 			)
 		);
@@ -226,7 +226,19 @@ abstract class Post_Type extends Collection {
 		);
 
 		if ( empty( $post ) ) {
-			throw new \Exception( 'No ' . esc_html( strtolower( $this->singular_label ) ) . ' found' );
+			$post = current(
+				get_posts(
+					array(
+						'post_type'   => $this->type,
+						'numberposts' => 1,
+						'post_status' => 'any',
+					)
+				)
+			);
+		}
+
+		if ( empty( $post ) ) {
+			throw new \Exception( 'No test ' . esc_html( strtolower( $this->singular_label ) ) . ' found' );
 		}
 
 		return array(
@@ -336,6 +348,19 @@ abstract class Post_Type extends Collection {
 			$GLOBALS['post'] = $this->current_item->external; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			setup_postdata( $this->current_item->external );
 		}
+	}
+
+	protected function taxonomies() {
+		return wp_list_pluck(
+			wp_list_filter(
+				get_object_taxonomies( $this->type, 'objects' ),
+				array(
+					'public' => true,
+				)
+			),
+			'label',
+			'name'
+		);
 	}
 
 	protected function taxonomy_tag_config( $label, $description, $icon ) {

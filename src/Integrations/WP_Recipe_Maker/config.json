@@ -1,0 +1,11 @@
+{
+	"label": "WP Recipe Maker",
+	"slug": "wp-recipe-maker",
+	"description": "The easy and user-friendly recipe plugin for everyone. Automatic JSON-LD metadata for better SEO will get you more visitors!",
+	"type": "post_type",
+	"plan": "premium",
+	"requires": {
+		"class": "WP_Recipe_Maker"
+	},
+	"url": "http://bootstrapped.ventures/wp-recipe-maker/"
+}

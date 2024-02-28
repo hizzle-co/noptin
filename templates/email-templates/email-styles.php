@@ -86,10 +86,15 @@
 		display: block;
 	}
 
+	ul,
+	ol {
+		padding-left: 16px;
+	}
+
 	ul li,
 	ol li {
 		margin-left: 5px;
-		list-style-position: inside;
+		margin-bottom: 5px;
 	}
 
 	img {

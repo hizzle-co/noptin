@@ -350,9 +350,7 @@ abstract class Collection {
                                     <tbody>
                                         <tr>
                                             <td role="presentation" valign="middle" class="noptin-button-link__wrapper" style="text-align:center;cursor:auto;border-radius:5px">
-                                                <a class="noptin-button-link" href="<?php echo esc_html( $this->field_to_merge_tag( $this->url_field ) ); ?>" style="text-transform:none;text-decoration:none;text-align:center;border-radius:5px;margin:0px;display:block;word-break:break-word">
-													<?php esc_html_e( 'Read more', 'newsletter-optin-box' ); ?>
-												</a>
+                                                <a class="noptin-button-link" href="<?php echo esc_html( $this->field_to_merge_tag( $this->url_field ) ); ?>" style="text-transform:none;text-decoration:none;text-align:center;border-radius:5px;margin:0px;display:block;word-break:break-word"><?php esc_html_e( 'Read more', 'newsletter-optin-box' ); ?></a>
 											</td>
                                         </tr>
                                     </tbody>
@@ -617,17 +615,20 @@ abstract class Collection {
 	 *
 	 * @param string $post_type The post type.
 	 */
-	protected function generate_taxonomy_filters( $post_type ) {
-		$taxonomies = wp_list_pluck(
-			wp_list_filter(
-				get_object_taxonomies( $post_type, 'objects' ),
-				array(
-					'public' => true,
-				)
-			),
-			'label',
-			'name'
-		);
+	protected function generate_taxonomy_filters( $post_type, $taxonomies = null ) {
+
+		if ( ! is_array( $taxonomies ) ) {
+			$taxonomies = wp_list_pluck(
+				wp_list_filter(
+					get_object_taxonomies( $post_type, 'objects' ),
+					array(
+						'public' => true,
+					)
+				),
+				'label',
+				'name'
+			);
+		}
 
 		$filters = array();
 

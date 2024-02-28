@@ -77,7 +77,7 @@ class Generic_Post_Type extends Post_Type {
 
 		return array_merge(
 			$this->generate_date_filters(),
-			$this->generate_taxonomy_filters( $this->type ),
+			$this->generate_taxonomy_filters( $this->type, $this->taxonomies() ),
 			array(
 				'author'        => array(
 					'label'       => __( 'Author', 'newsletter-optin-box' ),
@@ -296,18 +296,7 @@ class Generic_Post_Type extends Post_Type {
 			'meta'           => $this->meta_key_tag_config(),
 		);
 
-		$taxonomies = wp_list_pluck(
-			wp_list_filter(
-				get_object_taxonomies( $this->type, 'objects' ),
-				array(
-					'public' => true,
-				)
-			),
-			'label',
-			'name'
-		);
-
-		foreach ( $taxonomies as $taxonomy => $label ) {
+		foreach ( $this->taxonomies() as $taxonomy => $label ) {
 			$icon = 'marker';
 
 			// Check if taxonomy contains the word category.
