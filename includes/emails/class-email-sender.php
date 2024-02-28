@@ -232,7 +232,7 @@ class Noptin_Email_Sender {
 					}
 				}
 
-				if ( apply_filters( 'noptin_log_email_send', $result, $this ) ) {
+				if ( apply_filters( 'noptin_log_email_send', true, $result, $this ) ) {
 					increment_noptin_campaign_stat( $args['campaign_id'], '_noptin_sends' );
 				}
 			}
