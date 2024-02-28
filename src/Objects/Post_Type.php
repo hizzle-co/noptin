@@ -79,12 +79,10 @@ abstract class Post_Type extends Collection {
 
 			$block_name = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->description_field ) );
 			$blocks    .= sprintf(
-				'<!-- wp:%s --><p class="wp-block-%s noptin-block__margin-wrapper %s">%s</p><!-- /wp:%s -->',
+				'<!-- wp:%1$s {"anchor":"%2$s"} --><p class="wp-block-%2$s noptin-block__margin-wrapper %2$s">%3$s</p><!-- /wp:%1$s -->',
 				$block_name,
 				str_replace( '/', '-', $block_name ),
-				$this->description_field,
-				$this->field_to_merge_tag( $this->description_field ),
-				$block_name
+				$this->field_to_merge_tag( $this->description_field )
 			);
 		}
 

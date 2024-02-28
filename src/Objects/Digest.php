@@ -111,14 +111,16 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 			return '';
 		}
 
-		$name = $collection->plural_type();
+		$name  = $collection->plural_type();
+		$block = str_replace( '_', '-', $name );
+
 		ob_start();
 		?>
-<!-- wp:noptin/<?php echo esc_attr( $name ); ?> -->
-<div class="wp-block-noptin-<?php echo esc_attr( $name ); ?>">
+<!-- wp:noptin/<?php echo esc_attr( $block ); ?> -->
+<div class="wp-block-noptin-<?php echo esc_attr( $block ); ?>">
 [noptin_<?php echo esc_html( $name ); ?>_list query="number=10&amp;order=desc&amp;orderby=date" columns=1 responsive=yes skiponempty=no][/noptin_<?php echo esc_html( $name ); ?>_list]
 </div>
-<!-- /wp:noptin/<?php echo esc_attr( $name ); ?> -->
+<!-- /wp:noptin/<?php echo esc_attr( $block ); ?> -->
 		<?php
 		return ob_get_clean();
 	}
