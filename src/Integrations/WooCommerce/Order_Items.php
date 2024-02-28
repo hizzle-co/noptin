@@ -136,7 +136,7 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 		$products = \Hizzle\Noptin\Objects\Store::get( 'product' );
 
 		if ( ! empty( $products ) ) {
-			$template['button']      = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( $products->url_field ) );
+			$template['button']      = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( 'url' ) );
 			$template['image']       = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $products->field_to_merge_tag( $products->image_field ) );
 			$template['description'] = $products->field_to_merge_tag( $products->description_field );
 		}

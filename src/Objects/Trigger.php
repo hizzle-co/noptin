@@ -58,6 +58,14 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			}
 		}
 
+		foreach ( Store::all() as $_collection ) {
+			if ( in_array( $collection->type, $_collection->provides, true ) ) {
+				$this->contexts[] = $_collection->context;
+			}
+		}
+
+		$this->contexts = array_unique( $this->contexts );
+
 		if ( ! empty( $trigger_args['mail_config'] ) ) {
 			$this->mail_config = $trigger_args['mail_config'];
 		}

@@ -384,4 +384,22 @@ class Generic_Post_Type extends Post_Type {
 			}
 		}
 	}
+
+	/**
+	 * Returns the template for the list shortcode.
+	 */
+	protected function get_list_shortcode_template() {
+		$template = parent::get_list_shortcode_template();
+
+		if ( 'date' === $this->meta_field ) {
+			$template['meta'] = sprintf(
+				// translators: %s: Date and time.
+				__( '%1$s at %2$s', 'newsletter-optin-box' ),
+				$this->field_to_merge_tag( 'date', 'format="date"' ),
+				$this->field_to_merge_tag( 'date', 'format="time"' )
+			);
+		}
+
+		return $template;
+	}
 }
