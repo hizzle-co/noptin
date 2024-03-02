@@ -105,7 +105,7 @@ class Main {
 		$ignore = array( 'activity', 'sent_campaigns', 'date_modified', 'date_created', 'confirm_key' );
 
 		// Abort if all keys in the changes are in the ignore list.
-		if ( empty( array_diff( array_keys( $changes ), $ignore ) ) ) {
+		if ( empty( array_diff( $changes, $ignore ) ) ) {
 			return false;
 		}
 
