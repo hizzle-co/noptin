@@ -142,7 +142,7 @@ class Collection {
 		global $wpdb;
 
 		// Set namespace.
-		$this->capabillity = get_noptin_capability();
+		$this->capabillity = defined( 'get_noptin_capability' ) ? get_noptin_capability() : 'manage_options';
 		$this->namespace   = $namespace;
 
 		// Set collection data.

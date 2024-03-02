@@ -561,7 +561,7 @@ class Record {
 		}
 
 		if ( $prop->is_meta_key && $prop->is_meta_key_multiple ) {
-			$value    = noptin_parse_list( $value, true );
+			$value    = $this->parse_list( $value, true );
 			$existing = $this->get( $prop );
 			$existing = is_array( $existing ) ? $existing : array();
 
@@ -578,6 +578,33 @@ class Record {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Converts a comma- or space-separated list of scalar values into an array.
+	 *
+	 * @since 0.1.2
+	 *
+	 * @param array|string $list List of values.
+	 * @param bool $strict Whether to only split on commas.
+	 * @return array Sanitized array of values.
+	 */
+	private function parse_list( $list, $strict = false ) {
+
+		if ( empty( $list ) ) {
+			return array();
+		}
+
+		if ( ! is_array( $list ) ) {
+
+			if ( $strict ) {
+				$list = preg_split( '/,+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+			} else {
+				$list = preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+			}
+		}
+
+		return map_deep( $list, 'trim' );
 	}
 
 	/**
