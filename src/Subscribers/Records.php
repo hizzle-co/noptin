@@ -138,7 +138,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					/* translators: %s: Object type label and new state */
 					__( 'When a %1$s is %2$s', 'newsletter-optin-box' ),
 					strtolower( $this->singular_label ),
-					strtolower( $label )
+					'noptin_subscriber_saved' === $state ? __( 'created or updated', 'newsletter-optin-box' ) : strtolower( $label )
 				),
 				'subject'     => 'subscriber',
 			);
