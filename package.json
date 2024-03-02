@@ -48,7 +48,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.8",
-		"@babel/plugin-transform-runtime": "7.23.9",
+		"@babel/plugin-transform-runtime": "7.24.0",
 		"@babel/preset-env": "^7.21.5",
 		"@emotion/babel-plugin": "^11.11.0",
 		"@mdi/js": "7.4.47",
