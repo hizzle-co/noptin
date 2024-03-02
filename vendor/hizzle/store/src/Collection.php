@@ -838,6 +838,9 @@ class Collection {
 		// Fires after creating a record.
 		do_action( $this->hook_prefix( 'created', true ), $record );
 
+		// Fires after saving a record.
+		do_action( $this->hook_prefix( 'saved', true ), $record );
+
 		return true;
 	}
 
@@ -1188,6 +1191,7 @@ class Collection {
 		do_action( $this->hook_prefix( 'before_update', true ), $record );
 
 		$raw_changes = array_keys( $record->get_changes() );
+		$has_changes = ! empty( $raw_changes );
 		$changes     = array();
 
 		foreach ( $raw_changes as $key ) {
@@ -1220,8 +1224,14 @@ class Collection {
 		// Clear the cache.
 		$this->clear_cache( $record->get_data() );
 
-		// Fires after creating a record.
-		do_action( $this->hook_prefix( 'updated', true ), $record );
+		if ( $has_changes ) {
+
+			// Fires after updating a record.
+			do_action( $this->hook_prefix( 'updated', true ), $record );
+
+			// Fires after saving a record.
+			do_action( $this->hook_prefix( 'saved', true ), $record );
+		}
 
 		return true;
 	}
