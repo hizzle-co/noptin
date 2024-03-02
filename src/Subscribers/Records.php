@@ -63,6 +63,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	private function subscriber_states() {
 		$statuses = array(
 			'noptin_subscriber_created'      => __( 'Created', 'newsletter-optin-box' ),
+			'noptin_subscriber_saved'        => __( 'Created or updated', 'newsletter-optin-box' ),
 			'noptin_subscribers_import_item' => __( 'Imported', 'newsletter-optin-box' ),
 		);
 
