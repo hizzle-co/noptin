@@ -503,6 +503,8 @@ class Noptin {
 		// Upgrade db if installed version of noptin is lower than current version
 		if ( $installed_version < $this->db_version ) {
 			new Noptin_Install( $installed_version, $this->db_version );
+
+			do_action( 'noptin_upgrade_db', $installed_version, $this->db_version );
 		}
 	}
 
