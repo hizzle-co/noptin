@@ -65,6 +65,11 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 			return $this->external->get_id();
 		}
 
+		// Number.
+		if ( 'number' === strtolower( $field ) ) {
+			return $this->external->get_order_number();
+		}
+
 		// Cross sells.
 		if ( 'cross_sells' === strtolower( $field ) ) {
 			return $this->get_record_ids_or_html(
