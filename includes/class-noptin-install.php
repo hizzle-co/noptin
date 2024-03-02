@@ -47,6 +47,11 @@ class Noptin_Install {
 	private function upgrade_from_1() {
 		global $wpdb;
 
+		// Abort if the table does not exist.
+		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_subscribers'" ) ) {
+			return;
+		}
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers ADD active tinyint(2)  NOT NULL DEFAULT '0'" );
@@ -66,6 +71,11 @@ class Noptin_Install {
 	 */
 	private function upgrade_from_4() {
 		global $wpdb;
+
+		// Abort if the table does not exist.
+		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_subscribers'" ) ) {
+			return;
+		}
 
 		// Rename second_name to last_name.
 		$wpdb->query( "ALTER TABLE {$wpdb->prefix}noptin_subscribers CHANGE second_name last_name VARCHAR(100) NOT NULL default ''" );
