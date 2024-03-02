@@ -44,6 +44,7 @@ class Main {
 	private function __construct() {
 		add_action( 'noptin_init', array( $this, 'init' ) );
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
+		add_filter( 'noptin_subscriber_should_fire_has_changes_hook', array( $this, 'should_fire_has_changes_hook' ), 10, 2 );
 	}
 
 	/**
@@ -87,4 +88,27 @@ class Main {
 		return $triggers;
 	}
 
+	/**
+	 * Should fire has changes hook.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool  $should_fire The should fire.
+	 * @param array $changes An array of changes.
+	 */
+	public function should_fire_has_changes_hook( $should_fire, $changes ) {
+
+		if ( ! $should_fire ) {
+			return $should_fire;
+		}
+
+		$ignore = array( 'activity', 'sent_campaigns', 'date_modified', 'date_created', 'confirm_key' );
+
+		// Abort if all keys in the changes are in the ignore list.
+		if ( empty( array_diff( array_keys( $changes ), $ignore ) ) ) {
+			return false;
+		}
+
+		return $should_fire;
+	}
 }

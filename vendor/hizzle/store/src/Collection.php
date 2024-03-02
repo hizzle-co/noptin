@@ -1191,7 +1191,7 @@ class Collection {
 		do_action( $this->hook_prefix( 'before_update', true ), $record );
 
 		$raw_changes = array_keys( $record->get_changes() );
-		$has_changes = ! empty( $raw_changes );
+		$has_changes = apply_filters( $this->hook_prefix( 'should_fire_has_changes_hook', true ), ! empty( $raw_changes ), $raw_changes, $record );
 		$changes     = array();
 
 		foreach ( $raw_changes as $key ) {
