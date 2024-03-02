@@ -50,7 +50,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 				add_action( "noptin_subscriber_{$merge_tag}_changed", array( $this, 'on_field_change' ), 10, 3 );
 			} else {
 				add_action( "noptin_subscriber_added_to_{$merge_tag}", array( $this, 'on_field_add' ), 10, 2 );
-				add_action( "noptin_subscriber_removed_from_{$merge_tag}", array( $this, 'on_field_remove' ), 10, 2 );
+				add_action( "noptin_subscriber_removed_from_{$merge_tag}", array( $this, 'on_field_add' ), 10, 2 );
 			}
 		}
 
