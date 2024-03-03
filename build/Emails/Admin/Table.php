@@ -346,6 +346,16 @@ class Table extends \WP_List_Table {
 						)
 					)
 				);
+
+				// Add a link to help troubleshoot the error.
+				$title .= sprintf(
+					'<p class="noptin-strong description">%s</p>',
+					sprintf(
+						'<a href="%s" target="_blank" class="noptin-text-success">%s</a>',
+						esc_url( 'https://noptin.com/guide/sending-emails/how-to-fix-emails-not-sending/' ),
+						esc_html__( 'Learn how to troubleshoot email sending errors', 'newsletter-optin-box' )
+					)
+				);
 			}
 		}
 
