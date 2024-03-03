@@ -397,6 +397,18 @@ class Main {
 				'supports_sub_types' => true,
 			)
 		);
+
+		do_action( 'noptin_register_email_types' );
+
+		// Trash emails.
+		self::register_email_type(
+			array(
+				'type'         => 'trash',
+				'plural'       => 'trash',
+				'label'        => __( 'Trash', 'newsletter-optin-box' ),
+				'plural_label' => __( 'Trash', 'newsletter-optin-box' ),
+			)
+		);
 	}
 
 	/**

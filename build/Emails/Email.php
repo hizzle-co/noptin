@@ -1271,6 +1271,40 @@ class Email {
 	}
 
 	/**
+	 * Trash the campaign.
+	 *
+	 * @return Email|null|false The trashed campaign or false on failure.
+	 */
+	public function trash() {
+
+		$result = wp_trash_post( $this->id );
+
+		if ( empty( $result ) ) {
+			return false;
+		}
+
+		$this->status = 'trash';
+		return $this;
+	}
+
+	/**
+	 * Restores the campaign.
+	 *
+	 * @return Email|null|false The restored campaign or false on failure.
+	 */
+	public function restore() {
+
+		$result = wp_untrash_post( $this->id );
+
+		if ( empty( $result ) ) {
+			return false;
+		}
+
+		$this->status = $result->post_status;
+		return $this;
+	}
+
+	/**
 	 * Saves the email.
 	 */
 	public function save() {

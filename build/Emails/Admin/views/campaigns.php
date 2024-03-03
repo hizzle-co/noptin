@@ -19,6 +19,8 @@
 	$table = new Table( $email_type );
 	$table->prepare_items();
 
+	// Check if we have trash campaigns.
+	$trash_count = wp_count_posts( 'noptin-campaign' );
 ?>
 
 <div class="wrap noptin noptin-email-campaigns noptin-<?php echo sanitize_html_class( $email_type->type ); ?> noptin-<?php echo sanitize_html_class( $email_type->type ); ?>-main" id="noptin-wrapper">
@@ -53,6 +55,11 @@
 			foreach ( $email_types as $email_type_data ) {
 
 				if ( ! empty( $email_type_data->parent_type ) ) {
+					continue;
+				}
+
+				// Hide trash if it's empty.
+				if ( 'trash' === $email_type_data->type && empty( $trash_count->trash ) ) {
 					continue;
 				}
 

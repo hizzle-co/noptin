@@ -245,6 +245,46 @@ class Main {
 	}
 
 	/**
+	 * Trashes an email campaign.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
+	 * @since 1.7.0
+	 */
+	public static function admin_trash_campaign( $campaign ) {
+
+		// Check if the user can delete the campaign.
+		if ( ! $campaign->current_user_can_delete() ) {
+			self::redirect_from_action_with_error( 'You do not have permission to trash this campaign.' );
+		}
+
+		// Delete the campaign.
+		$campaign->trash();
+
+		// Show success info.
+		self::redirect_from_action_with_success( __( 'The campaign has been trashed.', 'newsletter-optin-box' ) );
+	}
+
+	/**
+	 * Restores a trashed email campaign.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
+	 * @since 1.7.0
+	 */
+	public static function admin_restore_campaign( $campaign ) {
+
+		// Check if the user can edit the campaign.
+		if ( ! $campaign->current_user_can_edit() ) {
+			self::redirect_from_action_with_error( 'You do not have permission to restore this campaign.' );
+		}
+
+		// Restore the campaign.
+		$campaign->restore();
+
+		// Show success info.
+		self::redirect_from_action_with_success( __( 'The campaign has been restored.', 'newsletter-optin-box' ) );
+	}
+
+	/**
 	 * Email campaigns menu.
 	 */
 	public static function email_campaigns_menu() {
