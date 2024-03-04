@@ -391,7 +391,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		$conditional_logic = $rule->get_conditional_logic();
 		// Abort if conditional logic is not set.
-		if ( empty( $conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) ) {
+		if ( empty( $conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) || empty( $conditional_logic['rules'] ) || ! is_array( $conditional_logic['rules'] ) ) {
 			return true;
 		}
 
