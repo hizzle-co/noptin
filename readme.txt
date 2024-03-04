@@ -136,6 +136,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 3.1.3 =
 * Add help text when newsletter fails sending.
+* Add ability to trash and untrash email campaigns.
 
 = 3.1.2 =
 * Fix: Automated WooCommerce emails not sending.
