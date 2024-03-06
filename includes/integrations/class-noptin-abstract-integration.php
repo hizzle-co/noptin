@@ -201,7 +201,7 @@ abstract class Noptin_Abstract_Integration {
 		$options = apply_filters( 'noptin_single_integration_settings', $options, $slug, $this );
 
 		$_options[ "settings_section_$slug" ] = array(
-			'id'          => "settings_section_$slug",
+			'id'          => "noptin-integration-settings__$slug",
 			'el'          => 'integration_panel',
 			'settings'    => $options,
 			'section'     => 'integrations',
