@@ -141,20 +141,38 @@ abstract class Noptin_Abstract_Integration {
 	/**
 	 * Returns extra texts to append to the hero
 	 *
-	 * @return string
+	 * @return array
 	 * @since 1.2.6
 	 */
 	public function get_hero_extra() {
-
-		$option   = $this->get_enable_integration_option_name();
-		$enabled  = __( 'Enabled', 'newsletter-optin-box' );
-		$disabled = __( 'Disabled', 'newsletter-optin-box' );
-
-		return "
-			<span style='color: #43a047;' v-if='$option'>$enabled</span>
-			<span style='color: #616161;' v-else>$disabled</span>
-		";
-
+		return array(
+			array(
+				'conditions' => array(
+					array(
+						'key'   => $this->get_enable_integration_option_name(),
+						'value' => true,
+					),
+				),
+				'text'       => __( 'Enabled', 'newsletter-optin-box' ),
+				'props'      => array(
+					'style' => array(
+						'color' => '#43a047',
+					),
+				),
+			),
+			array(
+				'conditions' => array(
+					array(
+						'key'   => $this->get_enable_integration_option_name(),
+						'value' => false,
+					),
+				),
+				'text'       => __( 'Disabled', 'newsletter-optin-box' ),
+				'props'      => array(
+					'variant' => 'muted',
+				),
+			),
+		);
 	}
 
 	/**
@@ -184,16 +202,16 @@ abstract class Noptin_Abstract_Integration {
 
 		$_options[ "settings_section_$slug" ] = array(
 			'id'          => "settings_section_$slug",
-			'el'          => 'settings_section',
-			'children'    => $options,
+			'el'          => 'integration_panel',
+			'settings'    => $options,
 			'section'     => 'integrations',
 			'heading'     => sanitize_text_field( $this->name ),
 			'description' => sanitize_text_field( $this->description ),
-			'badge'       => $this->get_hero_extra(),
+			'badges'      => $this->get_hero_extra(),
+			'className'   => 'noptin-integration-settings__' . $slug,
 		);
 
 		return apply_filters( "noptin_{$slug}_integration_settings", $_options, $this );
-
 	}
 
 	/**
@@ -234,11 +252,22 @@ abstract class Noptin_Abstract_Integration {
 		$options[ $option_name ] = array(
 			'el'          => 'input',
 			'type'        => 'text',
-			'restrict'    => sprintf(
-				'%s && %s && %s',
-				$this->get_enable_integration_option_name(),
-				$this->get_autosubscribe_integration_option_name(),
-				empty( $checkbox_positions ) ? 1 : $this->get_checkbox_position_option_name()
+			'conditions'  => array_filter(
+				array(
+					array(
+						'key'   => $this->get_enable_integration_option_name(),
+						'value' => true,
+					),
+					array(
+						'key'   => $this->get_autosubscribe_integration_option_name(),
+						'value' => true,
+					),
+					$checkbox_positions ? array(
+						'key'      => $this->get_checkbox_position_option_name(),
+						'value'    => '',
+						'operator' => '!=',
+					) : false,
+				)
 			),
 			'section'     => 'integrations',
 			'label'       => $title,
@@ -247,7 +276,6 @@ abstract class Noptin_Abstract_Integration {
 		);
 
 		return $options;
-
 	}
 
 	/**
@@ -369,17 +397,21 @@ abstract class Noptin_Abstract_Integration {
 			'section'     => 'integrations',
 			'label'       => $title,
 			'description' => $description,
-			'restrict'    => sprintf(
-				'%s && %s',
-				$this->get_enable_integration_option_name(),
-				$this->get_autosubscribe_integration_option_name()
+			'conditions'  => array(
+				array(
+					'key'   => $this->get_enable_integration_option_name(),
+					'value' => true,
+				),
+				array(
+					'key'   => $this->get_autosubscribe_integration_option_name(),
+					'value' => true,
+				),
 			),
 			'options'     => $checkbox_positions,
 			'placeholder' => $placeholder,
 		);
 
 		return $options;
-
 	}
 
 	/**
@@ -418,15 +450,19 @@ abstract class Noptin_Abstract_Integration {
 			'section'     => 'integrations',
 			'label'       => $title,
 			'description' => $description,
-			'restrict'    => sprintf(
-				'%s && %s',
-				$this->get_enable_integration_option_name(),
-				$this->get_autosubscribe_integration_option_name()
+			'conditions'  => array(
+				array(
+					'key'   => $this->get_enable_integration_option_name(),
+					'value' => true,
+				),
+				array(
+					'key'   => $this->get_autosubscribe_integration_option_name(),
+					'value' => true,
+				),
 			),
 		);
 
 		return $options;
-
 	}
 
 	/**
@@ -484,7 +520,6 @@ abstract class Noptin_Abstract_Integration {
 		}
 
 		return $options;
-
 	}
 
 	/**
@@ -512,7 +547,6 @@ abstract class Noptin_Abstract_Integration {
 		);
 
 		return $options;
-
 	}
 
 	/**
@@ -552,7 +586,6 @@ abstract class Noptin_Abstract_Integration {
 		);
 
 		return $options;
-
 	}
 
 	/**

@@ -1,19 +1,32 @@
 <?php
 
-namespace Hizzle\Noptin\REST;
-
 /**
  * Controller for settings.
  *
  * @version 1.0.0
  */
 
+namespace Hizzle\Noptin\Settings;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Controller for settings.
  */
-class Settings extends Controller {
+class Settings extends \WP_REST_Controller {
+
+	/**
+	 * Loads the class.
+	 *
+	 * @param string $rest_base The rest base.
+	 */
+	public function __construct( $rest_base ) {
+		$this->namespace = 'noptin/v1';
+		$this->rest_base = $rest_base;
+
+		// Register rest routes.
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+	}
 
 	/**
 	 * Registers REST routes.
@@ -78,6 +91,18 @@ class Settings extends Controller {
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
 		);
+	}
+
+	/**
+	 * Checks if the current user can manage noptin.
+	 *
+	 */
+	public function can_manage_noptin() {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+            return new \WP_Error( 'noptin_rest_cannot_view', 'Sorry, you cannot view this resource.', array( 'status' => rest_authorization_required_code() ) );
+        }
+
+        return true;
 	}
 
 	/**

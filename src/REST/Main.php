@@ -16,11 +16,6 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-	 * @var Settings The settings controller.
-	 */
-	public $settings;
-
-	/**
 	 * @var Bounce_Handler The bounce handler controller.
 	 */
 	public $bounce_handler;
@@ -62,7 +57,6 @@ class Main {
 	public function __construct() {
 
 		$this->bounce_handler = new Bounce_Handler( 'bounce_handler' );
-		$this->settings       = new Settings( 'settings' );
 
 		// Fire action hook.
 		do_action( 'noptin_rest_api_init', $this );

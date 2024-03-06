@@ -517,59 +517,70 @@ class Noptin_Page {
 	 */
 	public function add_options( $options ) {
 
-		$options['pages_unsubscribe_page_message'] = array(
-			'el'          => 'textarea',
-			'section'	  => 'messages',
-			'label'       => __( 'Unsubscription Message', 'newsletter-optin-box' ),
-			'placeholder' => $this->default_unsubscription_confirmation_message(),
-			'default'	  => $this->default_unsubscription_confirmation_message(),
-			'description' => __( 'The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+		$options['pages_confirm'] = array(
+			'el'       => 'settings_group',
+			'label'    => __( 'Subscription Confirmation', 'newsletter-optin-box' ),
+			'section'  => 'messages',
+			'settings' => array(
+				'pages_confirm_page_message' => array(
+					'el'          => 'textarea',
+					'label'       => __( 'Confirmation Message', 'newsletter-optin-box' ),
+					'placeholder' => $this->default_subscription_confirmation_message(),
+					'default'     => $this->default_subscription_confirmation_message(),
+					'tooltip'     => __( 'The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+				),
+				'pages_confirm_page' => array(
+					'el'          => 'input',
+					'label'       => __( 'Confirmation Redirect', 'newsletter-optin-box' ),
+					'placeholder' => 'https://example.com/newsletter-confirmed',
+					'tooltip'     => __( 'Where should we redirect subscribers after they confirm their emails?', 'newsletter-optin-box' ),
+				),
+			),
 		);
 
-		$options['pages_unsubscribe_page'] = array(
-			'el'          => 'input',
-			'section'	  => 'messages',
-			'label'       => __( 'Unsubscription Redirect', 'newsletter-optin-box' ),
-			'placeholder' => 'https://example.com/newsletter-unsubscribed',
-			'description' => __( 'Where should we redirect subscribers after they unsubscribe?', 'newsletter-optin-box' ),
+		$options['pages_unsubscribe'] = array(
+			'el'       => 'settings_group',
+			'label'    => __( 'Unsubscription', 'newsletter-optin-box' ),
+			'section'  => 'messages',
+			'settings' => array(
+				'pages_unsubscribe_page_message' => array(
+					'el'          => 'textarea',
+					'label'       => __( 'Unsubscription Message', 'newsletter-optin-box' ),
+					'placeholder' => $this->default_unsubscription_confirmation_message(),
+					'default'     => $this->default_unsubscription_confirmation_message(),
+					'tooltip'     => __( 'The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+				),
+				'pages_unsubscribe_page' => array(
+					'el'          => 'input',
+					'label'       => __( 'Unsubscription Redirect', 'newsletter-optin-box' ),
+					'placeholder' => 'https://example.com/newsletter-unsubscribed',
+					'tooltip'     => __( 'Where should we redirect subscribers after they unsubscribe?', 'newsletter-optin-box' ),
+				),
+			),
 		);
 
-		$options['pages_resubscribe_page_message'] = array(
-			'el'          => 'textarea',
-			'section'	  => 'messages',
-			'label'       => __( 'Re-subscription Message', 'newsletter-optin-box' ),
-			'placeholder' => $this->default_resubscription_confirmation_message(),
-			'default'	  => $this->default_resubscription_confirmation_message(),
-			'description' => __( 'The message to show to subscribers after they resubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
-		);
-
-		$options['pages_resubscribe_page'] = array(
-			'el'          => 'input',
-			'section'	  => 'messages',
-			'label'       => __( 'Re-subscription Redirect', 'newsletter-optin-box' ),
-			'placeholder' => 'https://example.com/newsletter-resubscribed',
-			'description' => __( 'Where should we redirect subscribers after they resubscribe?', 'newsletter-optin-box' ),
-		);
-
-		$options['pages_confirm_page_message'] = array(
-			'el'          => 'textarea',
-			'section'	  => 'messages',
-			'label'       => __( 'Confirmation Message', 'newsletter-optin-box' ),
-			'placeholder' => $this->default_subscription_confirmation_message(),
-			'default'	  => $this->default_subscription_confirmation_message(),
-			'description' => __( 'The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
-		);
-
-		$options['pages_confirm_page'] = array(
-			'el'          => 'input',
-			'section'     => 'messages',
-			'label'       => __( 'Confirmation Redirect', 'newsletter-optin-box' ),
-			'description' => __( 'Where should we redirect subscribers after they confirm their emails?', 'newsletter-optin-box' ),
-			'placeholder' => 'https://example.com/newsletter-confirmed',
+		$options['pages_resubscribe'] = array(
+			'el'       => 'settings_group',
+			'label'    => __( 'Re-subscription', 'newsletter-optin-box' ),
+			'section'  => 'messages',
+			'settings' => array(
+				'pages_resubscribe_page_message' => array(
+					'el'          => 'textarea',
+					'label'       => __( 'Re-subscription Message', 'newsletter-optin-box' ),
+					'placeholder' => $this->default_resubscription_confirmation_message(),
+					'default'     => $this->default_resubscription_confirmation_message(),
+					'tooltip'     => __( 'The message to show to subscribers after they resubscribe. Only used if you do not provide a redirect url below.', 'newsletter-optin-box' ),
+				),
+				'pages_resubscribe_page' => array(
+					'el'          => 'input',
+					'label'       => __( 'Re-subscription Redirect', 'newsletter-optin-box' ),
+					'placeholder' => 'https://example.com/newsletter-resubscribed',
+					'tooltip'     => __( 'Where should we redirect subscribers after they resubscribe?', 'newsletter-optin-box' ),
+				),
+			),
 		);
 
 		return apply_filters( 'noptin_page_settings', $options );
-
 	}
 
 	/**

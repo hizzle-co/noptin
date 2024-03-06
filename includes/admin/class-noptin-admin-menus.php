@@ -22,7 +22,6 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
 		add_action( 'admin_menu', array( $this, 'subscribers_menu' ), 33 );
-		add_action( 'admin_menu', array( $this, 'settings_menu' ), 50 );
 		add_action( 'admin_menu', array( $this, 'tools_menu' ), 60 );
 		add_action( 'admin_menu', array( $this, 'extensions_menu' ), 70 );
 		add_action( 'admin_menu', array( $this, 'documentation_menu' ), 80 );
@@ -137,22 +136,6 @@ class Noptin_Admin_Menus {
 		if ( current_user_can( get_noptin_capability() ) ) {
 			include plugin_dir_path( __FILE__ ) . 'views/view-subscribers.php';
 		}
-	}
-
-	/**
-	 * Registers the settings menu.
-	 */
-	public function settings_menu() {
-		$hook_suffix = add_submenu_page(
-			'noptin',
-			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-settings',
-			'Noptin_Settings::output'
-		);
-
-		Noptin_Scripts::add_admin_script( $hook_suffix, 'settings' );
 	}
 
 	/**

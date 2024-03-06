@@ -32,6 +32,10 @@ function noptin() {
 function get_noptin_options() {
 	$options = get_option( 'noptin_options', array() );
 
+	if ( is_object( $options ) ) {
+		$options = (array) $options;
+	}
+
 	if ( ! is_array( $options ) || empty( $options ) ) {
 		$options = array(
 			'success_message' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
@@ -161,9 +165,15 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
-	$show = true;
+	$show                 = true;
+	$hide_if_subscribed   = get_noptin_option( 'hide_from_subscribers', false );
+	$always_show_to_admin = get_noptin_option( 'always_show_to_admin', true );
 
-	if ( ! empty( $_COOKIE['noptin_hide'] ) || ( get_noptin_option( 'hide_from_subscribers', false ) && noptin_is_subscriber() ) ) {
+	if ( $hide_if_subscribed && current_user_can( get_noptin_capability() ) && $always_show_to_admin ) {
+		$hide_if_subscribed = false;
+	}
+
+	if ( ! empty( $_COOKIE['noptin_hide'] ) || ( $hide_if_subscribed && noptin_is_subscriber() ) ) {
 		$show = false;
 	}
 
@@ -1080,7 +1090,7 @@ function noptin_premium_addons() {
  * @return bool
  */
 function noptin_upsell_integrations() {
-	return apply_filters( 'noptin_upsell_integrations', 0 === count( noptin_premium_addons() ) );
+	return apply_filters( 'noptin_upsell_integrations', ! noptin_has_active_license_key() );
 }
 
 /**

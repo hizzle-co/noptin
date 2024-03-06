@@ -307,6 +307,9 @@ class Noptin {
 		$this->plugin_url  = plugins_url( '/', __FILE__ );
 		$this->is_test     = 'production' !== wp_get_environment_type();
 
+		// Init settings.
+		\Hizzle\Noptin\Settings\Main::init();
+
 		// Form manager.
 		$this->forms = new Noptin_Form_Manager();
 
