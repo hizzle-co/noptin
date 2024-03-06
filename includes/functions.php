@@ -2223,3 +2223,29 @@ function noptin_daily_maintenance() {
 	Noptin_COM::get_active_license_key( true );
 }
 add_action( 'noptin_daily_maintenance', 'noptin_daily_maintenance' );
+
+/**
+ * Merges an array to another array at the specified key.
+ *
+ * @param array $original_array
+ * @param array $new_array
+ * @param string $key
+ */
+function noptin_array_merge_at_key( $original_array, $new_array, $key ) {
+
+	if ( ! isset( $original_array[ $key ] ) ) {
+		return array_merge( $original_array, $new_array );
+	}
+
+	$prepared = array();
+
+	foreach ( $original_array as $original_key => $original_value ) {
+		$prepared[ $original_key ] = $original_value;
+
+		if ( $original_key === $key ) {
+			$prepared = array_merge( $prepared, $new_array );
+		}
+	}
+
+	return $prepared;
+}

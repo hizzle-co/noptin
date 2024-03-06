@@ -228,8 +228,9 @@ class Menu {
 			return self::$settings;
 		}
 
-		$double_optin = get_default_noptin_subscriber_double_optin_email();
-		$settings     = array(
+		$double_optin       = get_default_noptin_subscriber_double_optin_email();
+		$field_map_settings = apply_filters( 'noptin_get_custom_fields_map_settings', array() );
+		$settings           = array(
 
 			'general_info'        => array(
 				'el'       => 'settings_group',
@@ -284,14 +285,14 @@ class Menu {
 						'type'        => 'text',
 						'label'       => __( 'Default Success Message', 'newsletter-optin-box' ),
 						'placeholder' => esc_attr__( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
-						'description' => __( 'This is the message shown to people after they successfully sign up for your newsletter.', 'newsletter-optin-box' ),
+						'tooltip'     => __( 'This is the message shown to people after they successfully sign up for your newsletter.', 'newsletter-optin-box' ),
 					),
 					'subscribers_cookie'    => array(
 						'el'          => 'input',
 						'type'        => 'text',
 						'label'       => __( 'Subscription Cookie', 'newsletter-optin-box' ),
 						'placeholder' => '',
-						'description' => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
+						'tooltip'     => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
 					),
 				),
 			),
@@ -556,89 +557,94 @@ class Menu {
 						'predefined' => false,
 					),
 					'hideLabelFromVision' => true,
-					'fields'              => array(
-						'type'          => array(
-							'el'          => 'select',
-							'label'       => __( 'Field Type', 'newsletter-optin-box' ),
-							'options'     => wp_list_pluck(
-								wp_list_filter(
-									get_noptin_custom_field_types(),
-									array( 'predefined' => false )
+					'fields'              => array_merge(
+						array(
+							'type'          => array(
+								'el'          => 'select',
+								'label'       => __( 'Field Type', 'newsletter-optin-box' ),
+								'options'     => wp_list_pluck(
+									wp_list_filter(
+										get_noptin_custom_field_types(),
+										array( 'predefined' => false )
+									),
+									'label'
 								),
-								'label'
-							),
-							'description' => __( 'Select the field type', 'newsletter-optin-box' ),
-							'default'     => 'text',
-							'conditions'  => array(
-								array(
-									'key'      => 'type',
-									'operator' => '!includes',
-									'value'    => \Noptin_Custom_Fields::predefined_fields(),
-								),
-							),
-						),
-						'label'         => array(
-							'el'          => 'input',
-							'label'       => __( 'Field Name', 'newsletter-optin-box' ),
-							'description' => __( 'Enter a descriptive name for the field, for example, Phone Number', 'newsletter-optin-box' ),
-						),
-						'placeholder'   => array(
-							'el'          => 'input',
-							'label'       => __( 'Placeholder', 'newsletter-optin-box' ),
-							'description' => __( 'Optional. Enter the default placeholder for this field', 'newsletter-optin-box' ),
-							'conditions'  => array(
-								array(
-									'key'      => 'type',
-									'operator' => 'includes',
-									'value'    => array( 'text', 'textarea', 'number', 'email', 'first_name', 'last_name' ),
+								'description' => __( 'Select the field type', 'newsletter-optin-box' ),
+								'default'     => 'text',
+								'conditions'  => array(
+									array(
+										'key'      => 'type',
+										'operator' => '!includes',
+										'value'    => \Noptin_Custom_Fields::predefined_fields(),
+									),
 								),
 							),
-						),
-						'options'       => array(
-							'el'          => 'textarea',
-							'label'       => __( 'Available Options', 'newsletter-optin-box' ),
-							'description' => __( 'Enter one option per line. You can use pipes to separate values and labels.', 'newsletter-optin-box' ),
-							'conditions'  => array(
-								array(
-									'key'      => 'type',
-									'operator' => 'includes',
-									'value'    => \Noptin_Custom_Fields::option_fields(),
+							'label'         => array(
+								'el'          => 'input',
+								'label'       => __( 'Field Name', 'newsletter-optin-box' ),
+								'description' => __( 'Enter a descriptive name for the field, for example, Phone Number', 'newsletter-optin-box' ),
+							),
+							'placeholder'   => array(
+								'el'          => 'input',
+								'label'       => __( 'Placeholder', 'newsletter-optin-box' ),
+								'description' => __( 'Optional. Enter the default placeholder for this field', 'newsletter-optin-box' ),
+								'conditions'  => array(
+									array(
+										'key'      => 'type',
+										'operator' => 'includes',
+										'value'    => array( 'text', 'textarea', 'number', 'email', 'first_name', 'last_name' ),
+									),
 								),
 							),
-							'placeholder' => implode( PHP_EOL, array( 'Option 1', 'Option 2', 'Option 3' ) ),
-						),
-						'default_value' => array(
-							'el'          => 'input',
-							'label'       => __( 'Default value', 'newsletter-optin-box' ),
-							'description' => __( 'Optional. Enter the default value for this field', 'newsletter-optin-box' ),
-						),
-						'visible'       => array(
-							'el'          => 'input',
-							'type'        => 'checkbox_alt',
-							'label'       => __( 'Editable', 'newsletter-optin-box' ),
-							'description' => __( "Can subscriber's view and edit this field?", 'newsletter-optin-box' ),
-							'default'     => true,
-							'conditions'  => array(
-								array(
-									'key'      => 'merge_tag',
-									'operator' => '!=',
-									'value'    => 'email',
+							'options'       => array(
+								'el'          => 'textarea',
+								'label'       => __( 'Available Options', 'newsletter-optin-box' ),
+								'description' => __( 'Enter one option per line. You can use pipes to separate values and labels.', 'newsletter-optin-box' ),
+								'conditions'  => array(
+									array(
+										'key'      => 'type',
+										'operator' => 'includes',
+										'value'    => \Noptin_Custom_Fields::option_fields(),
+									),
 								),
+								'placeholder' => implode( PHP_EOL, array( 'Option 1', 'Option 2', 'Option 3' ) ),
+							),
+							'default_value' => array(
+								'el'          => 'input',
+								'label'       => __( 'Default value', 'newsletter-optin-box' ),
+								'description' => __( 'Optional. Enter the default value for this field', 'newsletter-optin-box' ),
 							),
 						),
-						'required'      => array(
-							'el'          => 'input',
-							'type'        => 'checkbox_alt',
-							'label'       => __( 'Required', 'newsletter-optin-box' ),
-							'description' => __( 'Subscribers MUST fill this field whenever it is added to a subscription form.', 'newsletter-optin-box' ),
-							'conditions'  => array(
-								array(
-									'key'      => 'merge_tag',
-									'operator' => '!=',
-									'value'    => 'email',
+						$field_map_settings,
+						array(
+							'visible'       => array(
+								'el'          => 'input',
+								'type'        => 'checkbox_alt',
+								'label'       => __( 'Editable', 'newsletter-optin-box' ),
+								'description' => __( "Can subscriber's view and edit this field?", 'newsletter-optin-box' ),
+								'default'     => true,
+								'conditions'  => array(
+									array(
+										'key'      => 'merge_tag',
+										'operator' => '!=',
+										'value'    => 'email',
+									),
 								),
 							),
-						),
+							'required'      => array(
+								'el'          => 'input',
+								'type'        => 'checkbox_alt',
+								'label'       => __( 'Required', 'newsletter-optin-box' ),
+								'description' => __( 'Subscribers MUST fill this field whenever it is added to a subscription form.', 'newsletter-optin-box' ),
+								'conditions'  => array(
+									array(
+										'key'      => 'merge_tag',
+										'operator' => '!=',
+										'value'    => 'email',
+									),
+								),
+							),
+						)
 					),
 				),
 			),
@@ -660,6 +666,7 @@ class Menu {
 				$integration_settings[ "settings_section_$slug" ] = array(
 					'id'          => "settings_section_$slug",
 					'heading'     => esc_html( $data->name ),
+					'section'     => 'integrations',
 					'description' => sprintf(
 						// translators: %s is the name of the integration.
 						__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
@@ -677,7 +684,8 @@ class Menu {
 					'settings'    => array(
 						"noptin_{$slug}_install" => array(
 							'el'      => 'paragraph',
-							'content' => '<span class="dashicons dashicons-info" style="margin-right: 10px; color: #03a9f4; "></span>' . sprintf(
+							'raw'     => true,
+							'content' => sprintf(
 								// translators: %s is the name of the integration.
 								esc_html__( 'Install the %s to use it with Noptin.', 'newsletter-optin-box' ),
 								sprintf(

@@ -49,9 +49,8 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$this->order_label = __( 'Orders', 'newsletter-optin-box' );
 
 		// Map subscriber fields to customer fields.
-		add_action( 'noptin_custom_field_settings', array( $this, 'map_customer_to_custom_fields' ), $this->priority );
 		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'add_customer_tab' ), $this->priority );
-
+		add_filter( 'noptin_get_custom_fields_map_settings', array( $this, 'add_field_map_settings' ), $this->priority );
 	}
 
 	/**
@@ -596,35 +595,36 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 	}
 
 	/**
-	 * Maps customer fields to subscriber fields.
+	 * Registers integration options.
 	 *
-	 * @since 1.5.5
+	 * @since 3.2.0
+	 * @param array $settings Current Noptin settings.
+	 * @return array
 	 */
-	public function map_customer_to_custom_fields() {
+	public function add_field_map_settings( $settings ) {
 		$customer_fields = $this->available_customer_fields();
 
-		if ( empty( $customer_fields ) ) {
-			return;
+		if ( ! empty( $customer_fields ) ) {
+			$settings[ $this->slug ] = array(
+				'el'          => 'select',
+				'label'       => sprintf(
+					// translators: %s is the integration name.
+					__( '%s Equivalent', 'newsletter-optin-box' ),
+					$this->name
+				),
+				'conditions'  => array(
+					array(
+						'key'      => 'type',
+						'operator' => '!includes',
+						'value'    => \Noptin_Custom_Fields::predefined_fields(),
+					),
+				),
+				'options'     => $customer_fields,
+				'placeholder' => __( 'Not Mapped', 'newsletter-optin-box' ),
+			);
 		}
 
-		$customer_fields = array_merge(
-			array( '' => __( 'Not Mapped', 'newsletter-optin-box' ) ),
-			$customer_fields
-		);
-
-		$args = array(
-			'el'       => 'select',
-			'label'    => sprintf(
-				// translators: %s is the integration name.
-				__( '%s Equivalent', 'newsletter-optin-box' ),
-				$this->name
-			),
-			'restrict' => '! isFieldPredefined(field) && ' . $this->get_enable_integration_option_name(),
-			'options'  => $customer_fields,
-			'normal'   => false,
-		);
-		Noptin_Vue::render_el( sprintf( 'field.%s', $this->slug ), $args );
-
+		return $settings;
 	}
 
 	/**

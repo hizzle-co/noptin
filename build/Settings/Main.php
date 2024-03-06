@@ -39,12 +39,12 @@ class Main {
 			'options',
 			'noptin_options',
 			array(
-				'type'         => 'object',
-				'description'  => 'Noptin settings',
-				'default'      => array(
+				'type'              => 'object',
+				'description'       => 'Noptin settings',
+				'default'           => array(
 					'success_message' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
 				),
-				'show_in_rest' => array(
+				'show_in_rest'      => array(
 					'schema' => array(
 						'type'                 => 'object',
 						'properties'           => array(
