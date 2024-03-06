@@ -490,18 +490,19 @@ function get_default_noptin_footer_text() {
  * @since 1.7.0
  * @param int $campaign_id
  * @param string $stat
+ * @param int $amount
  */
-function increment_noptin_campaign_stat( $campaign_id, $stat ) {
+function increment_noptin_campaign_stat( $campaign_id, $stat, $amount = 1 ) {
 
 	// Increment stat.
-	$current = (int) get_post_meta( $campaign_id, $stat, true );
-	update_post_meta( $campaign_id, $stat, $current + 1 );
+	$current = (float) get_post_meta( $campaign_id, $stat, true );
+	update_post_meta( $campaign_id, $stat, $current + $amount );
 
 	// Increment parent stat.
 	$parent = get_post_parent( $campaign_id );
 
 	if ( $parent ) {
-		increment_noptin_campaign_stat( $parent->ID, $stat );
+		increment_noptin_campaign_stat( $parent->ID, $stat, $amount );
 	}
 }
 
@@ -691,3 +692,42 @@ function noptin_resume_email_campaign( $campaign_id ) {
 	delete_post_meta( $campaign_id, '_bulk_email_last_error' );
 }
 add_action( 'noptin_resume_email_campaign', 'noptin_resume_email_campaign' );
+
+/**
+ * Supports ecommerce tracking.
+ *
+ * @since 3.0.0
+ * @param int $campaign_id
+ */
+function noptin_supports_ecommerce_tracking() {
+	return apply_filters( 'noptin_supports_ecommerce_tracking', false );
+}
+
+/**
+ * Returns the last email id that referred the current user.
+ *
+ * @since 3.2.0
+ * @return int
+ */
+function noptin_get_referring_email_id() {
+	$cid = noptin_decrypt( $_COOKIE['noptin_cid'] );
+
+	if ( is_numeric( $cid ) ) {
+		return (int) $cid;
+	}
+
+	return 0;
+}
+
+/**
+ * Records an ecommerce purchase.
+ *
+ * @since 3.0.0
+ * @param float $amount
+ */
+function noptin_record_ecommerce_purchase( $amount, $campaign_id ) {
+
+	if ( noptin_has_active_license_key() && get_noptin_option( 'enable_ecommerce_tracking' ) ) {
+		increment_noptin_campaign_stat( $campaign_id, '_revenue', $amount );
+	}
+}

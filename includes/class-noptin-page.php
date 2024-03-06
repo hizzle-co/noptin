@@ -259,6 +259,11 @@ class Noptin_Page {
 		// Fetch recipient.
 		$recipient = $this->get_request_recipient();
 
+		// Add cookie.
+		if ( ! empty( $recipient['cid'] ) ) {
+			setcookie( 'noptin_cid', noptin_encrypt( $recipient['cid'] ), time() + MONTH_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+		}
+
 		// Abort if no destination.
 		if ( empty( $recipient['to'] ) ) {
 			wp_safe_redirect( get_home_url() );

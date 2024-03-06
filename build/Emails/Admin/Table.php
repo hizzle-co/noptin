@@ -520,6 +520,22 @@ class Table extends \WP_List_Table {
 	}
 
 	/**
+	 * Displays the campaign revenue
+	 *
+	 * @param  Email $item item.
+	 * @return string
+	 */
+	public function column_revenue( $item ) {
+
+		$revenue = (float) get_post_meta( $item->id, '_revenue', true );
+		if ( noptin_has_active_license_key() ) {
+			return apply_filters( 'noptin_format_price', $revenue );
+		}
+
+		return '&mdash;';
+	}
+
+	/**
 	 * Displays the campaign unsubscribes
 	 *
 	 * @param  Email $item item.
@@ -731,6 +747,7 @@ class Table extends \WP_List_Table {
 			'recipients'   => __( 'Sent', 'newsletter-optin-box' ),
 			'opens'        => __( 'Opened', 'newsletter-optin-box' ),
 			'clicks'       => __( 'Clicked', 'newsletter-optin-box' ),
+			'revenue'      => __( 'Revenue', 'newsletter-optin-box' ) . ( noptin_has_active_license_key() ? '' : __( 'Pro', 'newsletter-optin-box' ) ),
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
 			'date_sent'    => __( 'Date', 'newsletter-optin-box' ),
 		);
@@ -745,6 +762,11 @@ class Table extends \WP_List_Table {
 		if ( empty( $track_campaign_stats ) ) {
 			unset( $columns['opens'] );
 			unset( $columns['clicks'] );
+			unset( $columns['revenue'] );
+		}
+
+		if ( ! noptin_supports_ecommerce_tracking() || ! get_noptin_option( 'enable_ecommerce_tracking', true ) ) {
+			unset( $columns['revenue'] );
 		}
 
 		return apply_filters( 'manage_noptin_emails_table_columns', $columns, $this );

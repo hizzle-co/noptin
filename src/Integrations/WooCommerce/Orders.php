@@ -806,6 +806,21 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			return;
 		}
 
+		$referring_campaign = $order->get_meta( '_noptin_referring_campaign' );
+
+		if ( empty( $referring_campaign ) ) {
+			$referring_campaign = noptin_get_referring_email_id();
+
+			if ( ! empty( $referring_campaign ) ) {
+				$order->update_meta_data( '_noptin_referring_campaign', $referring_campaign );
+				$order->save();
+			}
+		}
+
+		if ( ! empty( $referring_campaign ) && 'woocommerce_payment_complete' === current_filter() ) {
+			noptin_record_ecommerce_purchase( $order->get_total(), $referring_campaign );
+		}
+
 		// Check that the current action is a valid trigger.
 		$hook       = current_filter();
 		$trigger_id = $this->sanitize_hook_to_trigger_id( $hook );

@@ -1468,6 +1468,10 @@ function noptin_encrypt( $plaintext ) {
  */
 function noptin_decrypt( $encoded ) {
 
+	if ( empty( $encoded ) ) {
+		return '';
+	}
+
 	// Decode.
 	// @see noptin_encrypt()
 	$decoded = base64_decode( strtr( $encoded, '._-', '+/=' ) );
@@ -1482,9 +1486,9 @@ function noptin_decrypt( $encoded ) {
 	$iv         = substr( $salt, 0, $ivlen );
 	$passphrase = defined( 'AUTH_KEY' ) ? AUTH_KEY : wp_salt( 'secure_auth' ); // Local doesn't set AUTH_KEY.
 
-	return openssl_decrypt( $decoded, 'AES-128-CBC', $passphrase, OPENSSL_RAW_DATA, $iv );
+	$result = openssl_decrypt( $decoded, 'AES-128-CBC', $passphrase, OPENSSL_RAW_DATA, $iv );
+	return false === $result ? '' : $result;
 }
-// TODO: Show alert when a user clicks on the send button.
 
 /**
  * Limit length of a string.
