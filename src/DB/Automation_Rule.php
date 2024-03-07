@@ -211,6 +211,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			}
 		}
 
+		$new_settings['conditional_logic'] = $conditional_logic;
 		$this->set_trigger_settings( $new_settings );
 	}
 

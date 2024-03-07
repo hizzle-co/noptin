@@ -208,7 +208,7 @@ class Main {
 
 		foreach ( $migrators as $migrator ) {
 
-			if ( empty( $migrator['id'] ) || in_array( $migrator['id'], $migrated, true ) ) {
+			if ( empty( $migrator['trigger_id'] ) || empty( $migrator['id'] ) || in_array( $migrator['id'], $migrated, true ) ) {
 				continue;
 			}
 
@@ -220,6 +220,12 @@ class Main {
 			);
 
 			foreach ( $rules as $rule ) {
+
+				// Abort if trigger id does not match.
+				if ( $rule->get_trigger_id() !== $migrator['trigger_id'] ) {
+					continue;
+				}
+
 				$previous_trigger = $rule->get_trigger_id();
 				call_user_func_array( $migrator['callback'], array( &$rule ) );
 				$rule->save();
