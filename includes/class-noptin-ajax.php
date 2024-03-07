@@ -18,71 +18,6 @@ class Noptin_Ajax {
 		// Register new subscriber.
 		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
-
-		// Save rule.
-		add_action( 'wp_ajax_noptin_save_automation_rule', array( $this, 'save_rule' ) );
-		add_action( 'wp_ajax_noptin_toggle_automation_rule', array( $this, 'toggle_rule' ) );
-		add_action( 'wp_ajax_noptin_delete_automation_rule', array( $this, 'delete_automation_rule' ) );
-
-		// Delete campaign.
-		add_action( 'wp_ajax_noptin_delete_campaign', array( $this, 'delete_campaign' ) );
-
-		// Stop campaigns.
-		add_action( 'wp_ajax_noptin_stop_campaign', array( $this, 'stop_campaign' ) );
-
-	}
-
-	/**
-	 * Deletes a campaign
-	 *
-	 * @access      public
-	 * @since       1.1.2
-	 * @return      void
-	 */
-	public function delete_campaign() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin_admin_nonce' );
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['id'] ) ) {
-			wp_die( -1, 403 );
-		}
-
-		if ( wp_delete_post( trim( $_GET['id'] ), true ) ) {
-			exit;
-		}
-
-		wp_die( -1, 500 );
-	}
-
-	/**
-	 * Stop sending a campaign
-	 *
-	 * @access      public
-	 * @since       1.2.3
-	 * @return      void
-	 */
-	public function stop_campaign() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin_admin_nonce' );
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['id'] ) ) {
-			wp_die( -1, 403 );
-		}
-
-		$updated = wp_update_post(
-			array(
-				'ID'          => trim( $_GET['id'] ),
-				'post_status' => 'draft',
-			)
-		);
-
-		if ( ! empty( $updated ) ) {
-			exit;
-		}
-
-		wp_die( -1, 500 );
 	}
 
 	/**
@@ -214,23 +149,36 @@ class Noptin_Ajax {
 			$filtered['source'] = $form->ID;
 		}
 
-		/**
-		 * Filters subscriber details when adding a new subscriber via ajax.
-		 *
-		 * @since 1.2.4
-		 */
-		$filtered = apply_filters( 'noptin_add_ajax_subscriber_filter_details', wp_unslash( $filtered ), $form );
-		$inserted = add_noptin_subscriber( $filtered );
+		// Check if the email address already exists.
+		$subscribed_message = false;
+		$inserted           = empty( $filtered['email'] ) ? 0 : get_noptin_subscriber_id_by_email( $filtered['email'] );
+		if ( $inserted ) {
+			$subscribed_message = get_noptin_option( 'already_subscribed_message', __( 'You are already subscribed to the newsletter, thank you!', 'newsletter-optin-box' ) );
+		} else {
+			/**
+			 * Filters subscriber details when adding a new subscriber via ajax.
+			 *
+			 * @since 1.2.4
+			 */
+			$filtered = apply_filters( 'noptin_add_ajax_subscriber_filter_details', wp_unslash( $filtered ), $form );
+			$inserted = add_noptin_subscriber( $filtered );
 
-		if ( is_string( $inserted ) ) {
-			wp_send_json_error( $inserted );
+			if ( is_string( $inserted ) ) {
+				wp_send_json_error( $inserted );
+			}
+
+			do_action( 'noptin_add_ajax_subscriber', $inserted, $form );
+
+			$subscribed_message = get_noptin_option( 'success_message' );
+
+			if ( is_object( $form ) && ! empty( $form->successMessage ) ) {
+				$subscribed_message = $form->successMessage;
+			}
 		}
-
-		do_action( 'noptin_add_ajax_subscriber', $inserted, $form );
 
 		$result = array(
 			'action' => 'msg',
-			'msg'    => get_noptin_option( 'success_message' ),
+			'msg'    => $subscribed_message,
 		);
 
 		if ( empty( $result['msg'] ) ) {
@@ -243,10 +191,7 @@ class Noptin_Ajax {
 			update_post_meta( $form->ID, '_noptin_subscribers_count', $count + 1 );
 
 			// msg.
-			if ( 'message' === $form->subscribeAction ) {
-				$result['msg'] = $form->successMessage;
-			} else {
-				// redirects.
+			if ( 'message' !== $form->subscribeAction ) {
 				$result['action']   = 'redirect';
 				$result['redirect'] = $form->redirectUrl;
 			}
@@ -255,121 +200,5 @@ class Noptin_Ajax {
 		$result['msg'] = wp_kses_post( add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) ) );
 
 		wp_send_json_success( $result );
-	}
-
-	/**
-	 * Saves rules
-	 *
-	 * @access      public
-	 * @since       1.3.0
-	 */
-	public function save_rule() {
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['id'] ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Check nonce.
-		check_ajax_referer( 'noptin_automation_rules' );
-
-		/**
-		 * Runs before saving rules
-		 */
-		do_action( 'noptin_before_save_automation_rule' );
-
-		// Fetch the automation rule.
-		$data = wp_unslash( $_POST );
-		$rule = noptin_get_automation_rule( absint( $data['id'] ) );
-
-		if ( ! empty( $data['is_creating'] ) && ! empty( $data['trigger_id'] ) && ! empty( $data['action_id'] ) ) {
-
-			$rule = noptin_get_automation_rule( 0 );
-			$rule->set_trigger_id( $data['trigger_id'] );
-			$rule->set_action_id( $data['action_id'] );
-		} elseif ( is_wp_error( $rule ) || ! $rule->exists() ) {
-			wp_die( -1, 404 );
-		}
-
-		// Prepare settings.
-		$trigger_settings = isset( $data['trigger_settings'] ) && is_array( $data['trigger_settings'] ) ? $data['trigger_settings'] : array();
-		$action_settings  = isset( $data['action_settings'] ) && is_array( $data['action_settings'] ) ? $data['action_settings'] : array();
-
-		// Prepare the conditional logic.
-		$trigger_settings['conditional_logic'] = noptin_get_default_conditional_logic();
-		if ( ! empty( $data['conditional_logic'] ) ) {
-			$trigger_settings['conditional_logic'] = $data['conditional_logic'];
-		}
-
-		$rule->set_trigger_settings( $trigger_settings );
-		$rule->set_action_settings( $action_settings );
-
-		// Save them.
-		$result = $rule->save();
-
-		if ( is_wp_error( $result ) ) {
-			wp_die( -1, 500 );
-		}
-
-		wp_send_json_success(
-			array(
-				'rule_id'  => $rule->get_id(),
-				'edit_url' => $rule->get_edit_url(),
-			)
-		);
-
-	}
-
-	/**
-	 * Toggles rules.
-	 *
-	 * @access public
-	 * @since  1.3.0
-	 */
-	public function toggle_rule() {
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['rule_id'] ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Check nonce.
-		check_ajax_referer( 'noptin_automation_rules' );
-
-		/**
-		 * Runs before toggling rules
-		 */
-		do_action( 'noptin_before_toggle_automation_rule' );
-
-		// Save them.
-		$rule = noptin_get_automation_rule( absint( $_POST['rule_id'] ) );
-
-		if ( ! is_wp_error( $rule ) ) {
-			$rule->set_status( empty( $_POST['enabled'] ) ? 0 : 1 );
-			$rule->save();
-		}
-
-		wp_send_json_success( 1 );
-
-	}
-
-	/**
-	 * Deletes rules.
-	 *
-	 * @access public
-	 * @since  1.3.0
-	 */
-	public function delete_automation_rule() {
-
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_POST['rule_id'] ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Check nonce.
-		check_ajax_referer( 'noptin_automation_rules' );
-
-		// Delete the rule.
-		noptin_delete_automation_rule( absint( $_POST['rule_id'] ) );
-
-		wp_send_json_success( 1 );
-
 	}
 }

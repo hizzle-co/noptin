@@ -443,7 +443,6 @@ function add_noptin_subscriber( $fields ) {
 	}
 
 	return $subscriber->get_id();
-
 }
 
 /**

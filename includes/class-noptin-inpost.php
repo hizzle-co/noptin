@@ -17,15 +17,11 @@ class Noptin_Inpost {
 	public function __construct() {
 
 		// Appends opt-in forms to the post content.
-		if ( is_using_new_noptin_forms() ) {
-			add_filter( 'the_content', array( $this, 'append_forms_to_content' ) );
-		} else {
-			add_filter( 'the_content', array( $this, 'append_legacy_forms_to_content' ) );
-		}
+		add_filter( 'the_content', array( $this, 'append_forms_to_content' ) );
+		add_filter( 'the_content', array( $this, 'append_legacy_forms_to_content' ) );
 
 		// Hide block content.
 		add_filter( 'pre_render_block', array( $this, 'maybe_hide_block' ), 10, 2 );
-
 	}
 
 	/**
@@ -105,7 +101,6 @@ class Noptin_Inpost {
 		}
 
 		return $content;
-
 	}
 
 	/**
@@ -155,7 +150,6 @@ class Noptin_Inpost {
 		}
 
 		return $content;
-
 	}
 
 	/**
@@ -202,5 +196,4 @@ class Noptin_Inpost {
 		return $pre_render;
 
 	}
-
 }

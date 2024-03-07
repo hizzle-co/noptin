@@ -275,6 +275,30 @@ class Menu {
 				),
 			),
 
+			'subscription_msg'    => array(
+				'el'       => 'settings_group',
+				'label'    => __( 'Subscription', 'newsletter-optin-box' ),
+				'section'  => 'messages',
+				'settings' => array(
+					'success_message'            => array(
+						'el'          => 'input',
+						'type'        => 'text',
+						'label'       => __( 'Default Success Message', 'newsletter-optin-box' ),
+						'placeholder' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
+						'default'     => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
+						'tooltip'     => __( 'This is the message shown to people after they successfully sign up for your newsletter.', 'newsletter-optin-box' ),
+					),
+					'already_subscribed_message' => array(
+						'el'          => 'input',
+						'type'        => 'text',
+						'label'       => __( 'Already subscribed message', 'newsletter-optin-box' ),
+						'placeholder' => __( 'You are already subscribed to the newsletter, thank you!', 'newsletter-optin-box' ),
+						'default'     => __( 'You are already subscribed to the newsletter, thank you!', 'newsletter-optin-box' ),
+						'tooltip'     => __( 'Shown when an existing subscriber tries to sign-up again.', 'newsletter-optin-box' ),
+					),
+				),
+			),
+
 			'subscription_info'   => array(
 				'el'       => 'settings_group',
 				'label'    => __( 'Email Subscribers', 'newsletter-optin-box' ),
@@ -300,13 +324,6 @@ class Menu {
 								'value'    => true,
 							),
 						),
-					),
-					'success_message'       => array(
-						'el'          => 'input',
-						'type'        => 'text',
-						'label'       => __( 'Default Success Message', 'newsletter-optin-box' ),
-						'placeholder' => esc_attr__( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
-						'tooltip'     => __( 'This is the message shown to people after they successfully sign up for your newsletter.', 'newsletter-optin-box' ),
 					),
 					'subscribers_cookie'    => array(
 						'el'          => 'input',
