@@ -529,7 +529,16 @@ class Table extends \WP_List_Table {
 
 		$revenue = (float) get_post_meta( $item->id, '_revenue', true );
 		if ( noptin_has_active_license_key() ) {
-			return apply_filters( 'noptin_format_price', $revenue );
+			$formatted = apply_filters( 'noptin_format_price', $revenue );
+
+			if ( 0 === $revenue ) {
+				return $formatted;
+			}
+
+			return sprintf(
+				'<span class="noptin-strong">%s</span>',
+				$formatted
+			);
 		}
 
 		return sprintf(
