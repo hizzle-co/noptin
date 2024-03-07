@@ -308,8 +308,9 @@ class Schema {
 							),
 
 							'activity'                 => array(
-								'type'        => 'TEXT',
-								'description' => __( 'Subscriber activity', 'newsletter-optin-box' ),
+								'type'              => 'TEXT',
+								'description'       => __( 'Subscriber activity', 'newsletter-optin-box' ),
+								'sanitize_callback' => 'wp_kses_post_deep',
 							),
 
 							'sent_campaigns'           => array(

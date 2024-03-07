@@ -60,6 +60,21 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		return $statuses;
 	}
 
+	public static function is_complete() {
+		$current_hook = current_filter();
+
+		// Check if the order was manually completed via the admin.
+		if ( 'woocommerce_order_status_completed' === $current_hook ) {
+			return true;
+		}
+
+		if ( 'woocommerce_payment_complete' === $current_hook && ! did_action( 'woocommerce_order_status_completed' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * Retrieves available filters.
 	 *
@@ -828,7 +843,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			}
 		}
 
-		if ( ! empty( $referring_campaign ) && 'woocommerce_payment_complete' === current_filter() ) {
+		if ( ! empty( $referring_campaign ) && self::is_complete() ) {
 			noptin_record_ecommerce_purchase( $order->get_total(), $referring_campaign );
 		}
 

@@ -1,5 +1,6 @@
 # Auto detect text files and perform LF normalization
-* text eol=lf
+*.png binary
+*.php text eol=lf
 /tests/ export-ignore
 /.github/ export-ignore
 /.wordpress-org/ export-ignore
