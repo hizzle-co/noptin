@@ -532,7 +532,10 @@ class Table extends \WP_List_Table {
 			return apply_filters( 'noptin_format_price', $revenue );
 		}
 
-		return '&mdash;';
+		return sprintf(
+			'<span title="%s" class="noptin-tip dashicons dashicons-lock"></span>',
+			esc_attr__( 'Activate your license key to start tracking', 'newsletter-optin-box' )
+		);
 	}
 
 	/**
@@ -747,7 +750,13 @@ class Table extends \WP_List_Table {
 			'recipients'   => __( 'Sent', 'newsletter-optin-box' ),
 			'opens'        => __( 'Opened', 'newsletter-optin-box' ),
 			'clicks'       => __( 'Clicked', 'newsletter-optin-box' ),
-			'revenue'      => __( 'Revenue', 'newsletter-optin-box' ) . ( noptin_has_active_license_key() ? '' : __( 'Pro', 'newsletter-optin-box' ) ),
+			'revenue'      => sprintf(
+				'%s <span title="%s" class="noptin-tip dashicons dashicons-info"></span>',
+				__( 'Revenue', 'newsletter-optin-box' ),
+				noptin_has_active_license_key() ?
+				__( 'Revenue is tracked when someone makes a purchase within 2 weeks of clicking on a link in a campaign', 'newsletter-optin-box' ) :
+				__( 'Activate your license key to track and view revenue made per campaign', 'newsletter-optin-box' )
+			),
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
 			'date_sent'    => __( 'Date', 'newsletter-optin-box' ),
 		);

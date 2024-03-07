@@ -261,7 +261,8 @@ class Noptin_Page {
 
 		// Add cookie.
 		if ( ! empty( $recipient['cid'] ) ) {
-			setcookie( 'noptin_cid', noptin_encrypt( $recipient['cid'] ), time() + MONTH_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+			$duration = apply_filters( 'noptin_click_cookie_duration', 14 * DAY_IN_SECONDS );
+			setcookie( 'noptin_cid', noptin_encrypt( $recipient['cid'] ), time() + $duration, COOKIEPATH, COOKIE_DOMAIN );
 		}
 
 		// Abort if no destination.
