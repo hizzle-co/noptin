@@ -13,7 +13,11 @@
 
 		// ... then init tooltips...
 		if ( $.fn.tooltipster ) {
-			$( '.noptin-tip' ).tooltipster();
+			$( '.noptin-tip' ).tooltipster(
+				{
+					interactive: true,
+				}
+			);
 		}
 
 		// ... and select 2.

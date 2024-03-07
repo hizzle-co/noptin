@@ -751,11 +751,8 @@ class Table extends \WP_List_Table {
 			'opens'        => __( 'Opened', 'newsletter-optin-box' ),
 			'clicks'       => __( 'Clicked', 'newsletter-optin-box' ),
 			'revenue'      => sprintf(
-				'%s <span title="%s" class="noptin-tip dashicons dashicons-info"></span>',
-				__( 'Revenue', 'newsletter-optin-box' ),
-				noptin_has_active_license_key() ?
-				__( 'Revenue is tracked when someone makes a purchase within 2 weeks of clicking on a link in a campaign', 'newsletter-optin-box' ) :
-				__( 'Activate your license key to track and view revenue made per campaign', 'newsletter-optin-box' )
+				'%s <span data-tooltip-content="#noptin-revenue-tooltip-content" class="noptin-tip dashicons dashicons-info"></span>',
+				__( 'Revenue', 'newsletter-optin-box' )
 			),
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
 			'date_sent'    => __( 'Date', 'newsletter-optin-box' ),
