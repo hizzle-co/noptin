@@ -796,6 +796,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 * @param int|\WC_Order $order_id The order being acted on.
 	 */
 	public function order_state_changed( $order_id, $order = null, $transition = array() ) {
+
+		// Abort if cleaning draft orders.
+		if ( doing_action( 'woocommerce_cleanup_draft_orders' ) ) {
+			return;
+		}
+
 		if ( is_numeric( $order_id ) ) {
 			$order = wc_get_order( $order_id );
 		} else {
@@ -803,6 +809,11 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
+			return;
+		}
+
+		// Abort if no billing email is set.
+		if ( empty( $order->get_billing_email() ) || empty( $order->get_id() ) ) {
 			return;
 		}
 
