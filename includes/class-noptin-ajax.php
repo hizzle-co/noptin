@@ -19,9 +19,6 @@ class Noptin_Ajax {
 		add_action( 'wp_ajax_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
 		add_action( 'wp_ajax_nopriv_noptin_new_subscriber', array( $this, 'add_subscriber' ) ); // @deprecated
 
-		// Save settings.
-		add_action( 'wp_ajax_noptin_save_options', array( $this, 'save_options' ) );
-
 		// Save rule.
 		add_action( 'wp_ajax_noptin_save_automation_rule', array( $this, 'save_rule' ) );
 		add_action( 'wp_ajax_noptin_toggle_automation_rule', array( $this, 'toggle_rule' ) );
@@ -258,63 +255,6 @@ class Noptin_Ajax {
 		$result['msg'] = wp_kses_post( add_noptin_merge_tags( $result['msg'], get_noptin_subscriber_merge_fields( $inserted ) ) );
 
 		wp_send_json_success( $result );
-	}
-
-	/**
-	 * Saves settings
-	 *
-	 * @access      public
-	 * @since       1.0.8
-	 */
-	public function save_options() {
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( -1, 403 );
-		}
-
-		// Check nonce.
-		check_ajax_referer( 'noptin_admin_nonce' );
-
-		/**
-		 * Runs before saving a settings
-		 */
-		do_action( 'noptin_before_save_options' );
-
-		// Prepare settings.
-		$settings = json_decode( wp_unslash( $_POST['state'] ), true );
-		unset( $settings['noptin_admin_nonce'] );
-		unset( $settings['saved'] );
-		unset( $settings['error'] );
-		unset( $settings['currentTab'] );
-		unset( $settings['currentSection'] );
-		unset( $settings['openSections'] );
-		unset( $settings['fieldTypes'] );
-
-		if ( ! empty( $settings['custom_fields'] ) ) {
-
-			foreach ( $settings['custom_fields'] as $index => $custom_field ) {
-				if ( isset( $custom_field['new'] ) ) {
-					unset( $custom_field['new'] );
-					$settings['custom_fields'][ $index ] = $custom_field;
-				}
-			}
-		}
-
-		/**
-		 * Sanitizes noptin settings.
-		 *
-		 * @param array $settings Noptin settings.
-		 */
-		$settings = apply_filters( 'noptin_sanitize_settings', $settings );
-
-		// Save them.
-		update_noptin_options( $settings );
-
-		// Fire an action.
-		do_action( 'noptin_admin_save_options', $settings );
-
-		wp_send_json_success( 1 );
-
 	}
 
 	/**

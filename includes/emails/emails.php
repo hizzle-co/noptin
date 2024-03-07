@@ -729,5 +729,8 @@ function noptin_record_ecommerce_purchase( $amount, $campaign_id ) {
 
 	if ( noptin_has_active_license_key() && get_noptin_option( 'enable_ecommerce_tracking' ) ) {
 		increment_noptin_campaign_stat( $campaign_id, '_revenue', $amount );
+
+		$lifetime_revenue = (float) get_option( 'noptin_emails_lifetime_revenue', 0 );
+		update_option( 'noptin_emails_lifetime_revenue', $lifetime_revenue + $amount, false );
 	}
 }
