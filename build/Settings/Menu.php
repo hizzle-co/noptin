@@ -101,6 +101,8 @@ class Menu {
 
 		$config = include plugin_dir_path( __FILE__ ) . 'assets/js/settings.asset.php';
 
+		wp_enqueue_media();
+
 		wp_enqueue_script(
 			'noptin-settings',
 			plugins_url( 'assets/js/settings.js', __FILE__ ),
@@ -432,17 +434,16 @@ class Menu {
 					),
 					'logo_url'    => array(
 						'el'      => 'input',
-						'type'    => 'text',
+						'type'    => 'image',
 						'label'   => __( 'Logo', 'newsletter-optin-box' ),
 						'tooltip' => __( 'Enter a full url to your logo. Works best with rectangular images.', 'newsletter-optin-box' ),
 					),
 					'brand_color' => array(
-						'el'          => 'input',
-						'type'        => 'text',
+						'el'          => 'color',
 						'label'       => __( 'Brand Color', 'newsletter-optin-box' ),
 						'placeholder' => '#1a82e2',
 						'default'     => '#1a82e2',
-						'tooltip'     => __( 'Used as the link color and button background.', 'newsletter-optin-box' ),
+						'description' => __( 'Used as the link color and button background.', 'newsletter-optin-box' ),
 					),
 				),
 			),

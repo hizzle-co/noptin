@@ -83,7 +83,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 
 		// Send newsletter emails.
 		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
-		add_action( 'noptin_resume_email_campaign', array( $this, 'send_pending' ), 1000 );
+		add_action( 'noptin_resume_email_campaign', array( $this, 'send_newsletter_campaign' ), 1000 );
 
 		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
 	}
@@ -94,6 +94,8 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 * @param \Hizzle\Noptin\Emails\Email $campaign The new campaign object.
 	 */
 	public function send_newsletter_campaign( $campaign ) {
+
+		$campaign = \Hizzle\Noptin\Emails\Email::from( $campaign );
 
 		// Abort if the campaign is not ready to be sent.
 		if ( 'newsletter' !== $campaign->type || ! $campaign->can_send() ) {
@@ -222,7 +224,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	protected function get_next_task() {
 
 		// Abort if no sendable campaign...
-		if ( empty( $this->current_campaign ) || ! $this->current_campaign->can_send() ) {
+		if ( empty( $this->current_campaign ) || ! $this->current_campaign->can_send() || ! isset( $this->senders[ $this->current_campaign->get_sender() ] ) ) {
 			return false;
 		}
 

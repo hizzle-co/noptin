@@ -30,14 +30,8 @@ class Email_Sender_Subscribers extends Email_Sender {
 				continue;
 			}
 
-			$is_new_noptin = version_compare( noptin()->version, '3.0.0', '>=' );
-			$multiple      = 2 < count( $filter['options'] );
-			$options       = $is_new_noptin ? $filter['options'] : array_replace(
-				array(
-					'' => __( 'Any', 'newsletter-optin-box' ),
-				),
-				$filter['options']
-			);
+			$multiple = 2 < count( $filter['options'] );
+			$options  = $filter['options'];
 
 			$fields[ $key ] = array(
 				'label'                => $filter['label'],
@@ -52,11 +46,6 @@ class Email_Sender_Subscribers extends Email_Sender {
 
 				$fields[ $key ]['placeholder'] = __( 'Optional. Leave blank to send to all', 'newsletter-optin-box' );
 				$fields[ $key ]['multiple']    = 'true';
-
-				if ( ! $is_new_noptin ) {
-					$fields[ $key ]['select2'] = 'true';
-					$fields[ $key ]['options'] = $filter['options'];
-				}
 
 				$fields[ $key . '_not' ] = array_merge(
 					$fields[ $key ],
