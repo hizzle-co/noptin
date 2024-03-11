@@ -573,7 +573,9 @@ class Main {
 	 */
 	public static function init_current_email_recipient( $recipient, $campaign = null ) {
 		if ( ! empty( $recipient['email'] ) ) {
-			$GLOBALS['current_noptin_email'] = $recipient['email'];
+			if ( is_email( $recipient['email'] ) ) {
+				$GLOBALS['current_noptin_email'] = $recipient['email'];
+			}
 		} elseif ( ! empty( $recipient['sid'] ) ) {
 			$subscriber = noptin_get_subscriber( $recipient['sid'] );
 
