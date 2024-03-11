@@ -368,6 +368,7 @@ function get_noptin_email_template_defaults() {
 			'line_height'       => '1.5',
 			'link_color'        => $brand_color,
 			'block_css'         => (object) array(),
+			'background_image'  => '',
 		),
 		'paste'         => array(
 			'color'              => '#111111',

@@ -42,3 +42,11 @@
 	<![endif]-->
 	<!-- start body -->
 	<div role="article" aria-label="<?php echo esc_attr( $email_heading ); ?>" <?php language_attributes(); ?> id="noptin-email-content" class="wrapper-div content">
+
+	<?php if ( is_array( $settings['background_image'] ) && ! empty( $settings['background_image']['url'] ) ) : ?>
+		<!--[if gte mso 9]>
+		<v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
+			<v:fill type="tile" src="<?php echo esc_url( $settings['background_image']['url'] ); ?>" color="<?php echo esc_attr( $settings['background_color'] ); ?>"/>
+		</v:background>
+		<![endif]-->
+	<?php endif; ?>
