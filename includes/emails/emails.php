@@ -655,11 +655,7 @@ function noptin_prepare_email_recipients( $unprepared ) {
 		$track     = false === stripos( $recipient, '--notracking' );
 		$recipient = trim( str_ireplace( '--notracking', '', $recipient ) );
 
-		if ( false !== strpos( $recipient, '[[' ) ) {
-			$recipient = noptin()->emails->tags->replace_in_text_field( $recipient );
-		}
-
-		if ( is_email( $recipient ) ) {
+		if ( ! empty( $recipient ) ) {
 			$recipients[ $recipient ] = $track;
 			continue;
 		}

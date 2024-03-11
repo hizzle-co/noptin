@@ -261,6 +261,16 @@ class Email {
 			wp_publish_post( $this->id );
 		}
 
+		// If is automation rule, set the type.
+		if ( $this->is_automation_rule() ) {
+			$rule = noptin_get_automation_rule( (int) $this->get( 'automation_rule' ) );
+
+			if ( ! is_wp_error( $rule ) && $rule->get_trigger_id() !== $this->get_trigger() ) {
+				$rule->set_trigger_id( $this->get_trigger() );
+				$rule->save();
+			}
+		}
+
 		// Fire action.
 		do_action( 'noptin_init_email', $this, $post );
 
@@ -596,14 +606,8 @@ class Email {
 			);
 		}
 
-		if ( ! is_array( $recipient ) || empty( $recipient['email'] ) || ! is_email( $recipient['email'] ) ) {
+		if ( ! is_array( $recipient ) || empty( $recipient['email'] ) ) {
 			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
-		}
-
-		// Check if the email is unsubscribed.
-		$is_pending_email = 'noptin_subscriber_status_set_to_pending' === $this->get_trigger();
-		if ( ! $is_pending_email && noptin_is_email_unsubscribed( $recipient['email'] ) ) {
-			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
 		}
 
 		if ( ! isset( $recipient['track'] ) ) {
@@ -616,6 +620,23 @@ class Email {
 		Main::init_current_email_recipient( $recipient, $this );
 
 		do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
+
+		// Maybe parse recipient tags.
+		if ( false !== strpos( Main::$current_email_recipient['email'], '[[' ) ) {
+			Main::$current_email_recipient['email'] = noptin()->emails->tags->replace_in_text_field( Main::$current_email_recipient['email'] );
+			$GLOBALS['current_noptin_email']        = Main::$current_email_recipient['email'];
+		}
+
+		// Check if the email is valid.
+		if ( ! is_email( Main::$current_email_recipient['email'] ) ) {
+			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
+		}
+
+		// Check if the email is unsubscribed.
+		$is_pending_email = 'noptin_subscriber_status_set_to_pending' === $this->get_trigger();
+		if ( ! $is_pending_email && noptin_is_email_unsubscribed( Main::$current_email_recipient['email'] ) ) {
+			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
+		}
 
 		// Generate the subject and body.
 		$subject = noptin_parse_email_subject_tags( $this->get_subject() );
@@ -639,7 +660,7 @@ class Email {
 		// Send the email.
 		$result = noptin_send_email(
 			array(
-				'recipients'               => $recipient['email'],
+				'recipients'               => Main::$current_email_recipient['email'],
 				'subject'                  => $subject,
 				'message'                  => $message,
 				'campaign_id'              => $this->id,

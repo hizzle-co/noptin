@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.4
 Tested up to: 6.4
 Requires PHP: 7.2
-Version: 3.2.0
-Stable tag: 3.2.0
+Version: 3.2.1
+Stable tag: 3.2.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -133,6 +133,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 12. State of the art newsletter subscription form editor
 
 == Changelog ==
+
+= 3.2.1 =
+* [[order.billing_email]] merge tag not evaluated when used as an email recipient.
 
 = 3.2.0 =
 * Re-upload broken png images.
