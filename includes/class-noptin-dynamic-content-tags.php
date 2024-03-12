@@ -393,7 +393,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	protected function get_regex( $opening_tag, $closing_tag ) {
 
 		return sprintf(
-			'/%1$s(?P<name>\w[\w\.\/-]*\w)(?P<attributes>\ +(?:(?!%1$s)[^%2$s\n])+)*%2$s/',
+			'/%1$s(?P<name>[\\]?\w[\w\.\/-]*\w)(?P<attributes>\ +(?:(?!%1$s)[^%2$s\n])+)*%2$s/',
 			preg_quote( $opening_tag, '/' ),
 			preg_quote( $closing_tag, '/' )
 		);
