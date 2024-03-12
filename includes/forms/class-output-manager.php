@@ -79,6 +79,11 @@ class Noptin_Form_Output_Manager {
 			$atts[ $msg ] = '';
 		}
 
+		foreach ( get_noptin_custom_fields( true ) as $field ) {
+			$atts[ $field['merge_tag'] . '_label' ]       = '';
+			$atts[ $field['merge_tag'] . '_placeholder' ] = '';
+		}
+
 		return $atts;
 	}
 

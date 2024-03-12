@@ -137,6 +137,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 3.2.1 =
 * [[order.billing_email]] merge tag not evaluated when used as an email recipient.
 * Fix newsletter unsubscribe URL not working on some setups.
+* Do not filter posts by date when previewing a latest posts email.
+* Make it possible to change field labels and placeholders in the subscribe / unsubscribe shortcodes.
 
 = 3.2.0 =
 * Re-upload broken png images.

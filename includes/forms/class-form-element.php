@@ -147,6 +147,21 @@ class Noptin_Form_Element {
 		$fields = prepare_noptin_form_fields( $fields );
 		$wrap   = empty( $this->args['wrap'] ) ? 'p' : sanitize_html_class( $this->args['wrap'] );
 
+		// Change field labels.
+		foreach ( $fields as $key => $field ) {
+			$merge_tag = $field['merge_tag'];
+
+			// Label.
+			if ( ! empty( $this->args[ $merge_tag . '_label' ] ) ) {
+				$fields[ $key ]['label'] = $this->args[ $merge_tag . '_label' ];
+			}
+
+			// Placeholder.
+			if ( ! empty( $this->args[ $merge_tag . '_placeholder' ] ) ) {
+				$fields[ $key ]['placeholder'] = $this->args[ $merge_tag . '_placeholder' ];
+			}
+		}
+
 		echo '<div class="noptin-form-fields">';
 
 		// For each form field...

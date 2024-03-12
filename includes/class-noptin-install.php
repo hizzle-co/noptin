@@ -30,7 +30,7 @@ class Noptin_Install {
 
 		// If this is a fresh install.
 		if ( ! $upgrade_from ) {
-			// return $this->do_full_install();
+			return $this->do_full_install();
 		}
 
 		// Upgrading from version 1.
