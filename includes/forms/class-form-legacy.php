@@ -814,7 +814,7 @@ class Noptin_Form_Legacy {
 				<?php endif; ?>
 
 				<?php if ( ! empty( $this->CSS ) ) : ?>
-					<style><?php echo esc_html( str_ireplace( '.noptin-optin-form-wrapper', ".$id_class .noptin-optin-form-wrapper", str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS ) ) ); ?></style>
+					<style><?php echo strip_tags( str_ireplace( '.noptin-optin-form-wrapper', ".$id_class .noptin-optin-form-wrapper", str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS ) ) ); // phpcs:ignore ?></style>
 				<?php endif; ?>
 
 				<?php $this->render_form(); ?>
