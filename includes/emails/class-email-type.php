@@ -274,11 +274,6 @@ abstract class Noptin_Email_Type {
 		foreach ( $this->get_flattened_merge_tags() as $tag => $config ) {
 			noptin()->emails->tags->remove_tag( $tag );
 		}
-
-		// Unsubscribe URL.
-		if ( ! empty( $this->unsubscribe_url ) ) {
-			noptin()->emails->tags->tags['unsubscribe_url']['replacement'] = '';
-		}
 	}
 
 	/**
