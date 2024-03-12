@@ -707,6 +707,11 @@ function noptin_supports_ecommerce_tracking() {
  * @return int
  */
 function noptin_get_referring_email_id() {
+
+	if ( ! isset( $_COOKIE['noptin_cid'] ) ) {
+		return 0;
+	}
+
 	$cid = noptin_decrypt( $_COOKIE['noptin_cid'] );
 
 	if ( is_numeric( $cid ) ) {

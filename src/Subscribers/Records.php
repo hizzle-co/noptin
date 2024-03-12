@@ -567,7 +567,13 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	public function get_fields() {
 
 		$fields  = array();
-		$buttons = array( 'manage_preferences_url', 'confirm_subscription_url', 'unsubscribe_url', 'resubscribe_url' );
+		$buttons = array(
+			'manage_preferences_url'   => __( 'Manage your preferences', 'newsletter-optin-box' ),
+			'confirm_subscription_url' => __( 'Confirm your subscription', 'newsletter-optin-box' ),
+			'unsubscribe_url'          => __( 'Unsubscribe', 'newsletter-optin-box' ),
+			'resubscribe_url'          => __( 'Resubscribe', 'newsletter-optin-box' ),
+		);
+
 		foreach ( get_noptin_subscriber_smart_tags() as $smart_tag => $field ) {
 
 			$prepared = array(
@@ -581,7 +587,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 				$prepared['options'] = $field['options'];
 			}
 
-			if ( in_array( $smart_tag, $buttons, true ) ) {
+			if ( isset( $buttons[ $smart_tag ] ) ) {
 				$prepared['block'] = array(
 					'title'       => $field['label'],
 					'description' => sprintf(
@@ -594,7 +600,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						'ancestor' => array( $this->context ),
 					),
 					'defaults'    => array(
-						'text' => $field['label'],
+						'text' => $buttons[ $smart_tag ],
 						'url'  => $this->field_to_merge_tag( $smart_tag ),
 					),
 					'element'     => 'button',
