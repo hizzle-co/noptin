@@ -124,6 +124,10 @@ class Email_Sender_Subscribers extends Email_Sender {
 			false
 		);
 
+		if ( is_wp_error( $result ) ) {
+			$result = 0;
+		}
+
 		// Log the send.
 		update_noptin_subscriber_meta( $subscriber->get_id(), '_campaign_' . $campaign->id, (int) $result );
 

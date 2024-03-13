@@ -584,6 +584,43 @@ class Email {
 	 */
 	public function send_to( $recipient, $confirm_can_send = true ) {
 
+		$result = $this->handle_send_to( $recipient, $confirm_can_send );
+
+		if ( is_wp_error( $result ) && ! empty( Main::$current_email_recipient['email'] ) ) {
+			log_noptin_message(
+				sprintf(
+					'Email not send to recipient "%s" for campaign "%s" because: Error: "%s"',
+					Main::$current_email_recipient['email'],
+					$this->name,
+					$result->get_error_message()
+				)
+			);
+
+			noptin_record_subscriber_activity(
+				Main::$current_email_recipient['email'],
+				sprintf(
+					'Email not send to recipient "%s" for campaign "%s" because: Error: "%s"',
+					Main::$current_email_recipient['email'],
+					$this->name,
+					$result->get_error_message()
+				)
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Sends the email to a single recipient.
+	 *
+	 * @param string|array $recipient
+	 * @param bool $confirm_can_send
+	 * @return bool|\WP_Error
+	 */
+	private function handle_send_to( $recipient, $confirm_can_send = true ) {
+
+		Main::$current_email_recipient = array();
+
 		$GLOBALS['noptin_email_force_skip'] = null;
 
 		if ( $confirm_can_send ) {
