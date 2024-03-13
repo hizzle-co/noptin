@@ -121,16 +121,19 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 == Screenshots ==
 1. Noptin overview page
 2. Newsletter optin forms overview page
-3. Write newsletters the same way that you write posts
-4. A newsletter that is currently sending
-5. Paste newsletter template preview
-6. Merriweather newsletter template preview
+3. Setting up a new automated email
+4. Visual newsletter editor.
+5. Raw HTML newsletter editor.
+6. Classic newsletter editor.
 7. Sample newsletter subscription form
 8. Sample newsletter subscription sliding form
 9. Sample newsletter subscription popup form
 10. Automatically send new post notifications to your customers when you publish new posts.
 11. Viewing a single newsletter subscriber
 12. State of the art newsletter subscription form editor
+13. Plain text newsletter editor.
+14. Select recipients for an email.
+15. Viewing a list of all subscribers.
 
 == Changelog ==
 
