@@ -867,7 +867,7 @@ function do_noptin_background_action() {
  *     add_action( 'log_name_after_a_day', 'log_name', 10, 1 );
  *
  *      // Ask Noptin to fire the hook in in the future.
- *      schedule_noptin_background_action( strtotime( '+1 day' ), 'log_name_after_a_day', 'Brian');
+ *      schedule_noptin_background_action( noptin_string_to_timestamp( '+1 day' ), 'log_name_after_a_day', 'Brian');
  *
  * @since 1.2.7
  * @see Noptin_Task
@@ -903,7 +903,7 @@ function schedule_noptin_background_action() {
  *     add_action( 'log_name_every_day', 'log_name', 10, 1 );
  *
  *      // Ask Noptin to fire the hook every x seconds from tomorrow.
- *      schedule_noptin_background_action( DAY_IN_SECONDS, strtotime( '+1 day' ), 'log_name_every_day', 'Brian');
+ *      schedule_noptin_background_action( DAY_IN_SECONDS, noptin_string_to_timestamp( '+1 day' ), 'log_name_every_day', 'Brian');
  *
  * @since 1.2.7
  * @see Noptin_Task
@@ -1420,7 +1420,7 @@ function noptin_format_date( $date_time ) {
 		return '&mdash;';
 	}
 
-	$timestamp = strtotime( $date_time );
+	$timestamp = noptin_string_to_timestamp( $date_time );
 	$current   = time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	$time_diff = $current - $timestamp;
 
@@ -1870,21 +1870,21 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 			return floatval( $current_value ) >= $first_value && floatval( $current_value ) <= $second_value;
 
 		case 'is_before':
-			$current_value   = strtotime( $current_value );
-			$condition_value = strtotime( $condition_value );
+			$current_value   = noptin_string_to_timestamp( $current_value );
+			$condition_value = noptin_string_to_timestamp( $condition_value );
 			return $current_value < $condition_value;
 
 		case 'is_after':
-			$current_value   = strtotime( $current_value );
-			$condition_value = strtotime( $condition_value );
+			$current_value   = noptin_string_to_timestamp( $current_value );
+			$condition_value = noptin_string_to_timestamp( $condition_value );
 			return $current_value > $condition_value;
 
 		case 'is_date_between':
 			$condition_value = noptin_parse_list( $condition_value );
-			$first_value     = strtotime( $condition_value[0] );
-			$second_value    = isset( $condition_value[1] ) ? strtotime( $condition_value[1] ) : $first_value;
+			$first_value     = noptin_string_to_timestamp( $condition_value[0] );
+			$second_value    = isset( $condition_value[1] ) ? noptin_string_to_timestamp( $condition_value[1] ) : $first_value;
 
-			$current_value = strtotime( $current_value );
+			$current_value = noptin_string_to_timestamp( $current_value );
 			return $current_value >= $first_value && $current_value <= $second_value;
 	}
 }
@@ -1946,11 +1946,11 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 				$value = sprintf(
 					// translators: %s is a date.
 					__( '%1$s and %2$s', 'newsletter-optin-box' ),
-					gmdate( 'Y-m-d', strtotime( $value[0] ) ),
-					isset( $value[1] ) ? gmdate( 'Y-m-d', strtotime( $value[1] ) ) : gmdate( 'Y-m-d', strtotime( $value[0] ) )
+					gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[0] ) ),
+					isset( $value[1] ) ? gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[1] ) ) : gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[0] ) )
 				);
 			} else {
-				$value = gmdate( 'Y-m-d', strtotime( $value ) );
+				$value = gmdate( 'Y-m-d', noptin_string_to_timestamp( $value ) );
 			}
 		} elseif ( isset( $condition['options'] ) ) {
 			if ( is_callable( $condition['options'] ) ) {
@@ -2252,4 +2252,34 @@ function noptin_array_merge_at_key( $original_array, $new_array, $key ) {
 	}
 
 	return $prepared;
+}
+
+/**
+ * Convert mysql datetime to PHP timestamp, forcing UTC. Wrapper for strtotime.
+ *
+ * Based on wc_string_to_timestamp().
+ *
+ * @since  3.0.0
+ * @param  string   $time_string    Time string.
+ * @param  int|null $from_timestamp Timestamp to convert from.
+ * @return int
+ */
+function noptin_string_to_timestamp( $time_string, $from_timestamp = null ) {
+	$time_string = $time_string ?? '';
+
+	$original_timezone = date_default_timezone_get();
+
+	// @codingStandardsIgnoreStart
+	date_default_timezone_set( 'UTC' );
+
+	if ( null === $from_timestamp ) {
+		$next_timestamp = strtotime( $time_string );
+	} else {
+		$next_timestamp = strtotime( $time_string, $from_timestamp );
+	}
+
+	date_default_timezone_set( $original_timezone );
+	// @codingStandardsIgnoreEnd
+
+	return $next_timestamp;
 }
