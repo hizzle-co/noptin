@@ -60,7 +60,6 @@ class Noptin_Hooks {
 		if ( ! empty( $_GET['noptin_hide'] ) ) {
 			setcookie( 'noptin_hide', 'true', time() + HOUR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
 		}
-
 	}
 
 	/**

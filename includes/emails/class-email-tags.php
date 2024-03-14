@@ -197,6 +197,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'description' => __( 'Displays a list of posts.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_posts' ),
 			'example'     => 'posts style="list" post_type="post" limit="10"',
+			'partial'     => true,
 		);
 	}
 
