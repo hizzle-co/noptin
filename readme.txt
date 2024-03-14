@@ -2,10 +2,10 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, woocommerce
 Requires at least: 6.4
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.2
-Version: 3.2.1
-Stable tag: 3.2.1
+Version: 3.2.2
+Stable tag: 3.2.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 3.2.2 =
+* Posts digest scheduling improvements.
+* Test on WordPress 6.5.
 
 = 3.2.1 =
 * [[order.billing_email]] merge tag not evaluated when used as an email recipient.
