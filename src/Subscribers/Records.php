@@ -33,7 +33,8 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		$this->singular_label = __( 'Subscriber', 'newsletter-optin-box' );
 		$this->type           = 'subscriber';
 		$this->email_sender   = 'noptin';
-		$this->can_list       = false;
+		$this->is_stand_alone = false;
+		$this->can_list       = true;
 		$this->icon           = array(
 			'icon' => 'admin-users',
 			'fill' => '#50575e',

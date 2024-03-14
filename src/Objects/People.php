@@ -62,6 +62,19 @@ abstract class People extends Collection {
 	}
 
 	/**
+	 * (Maybe) Registers the object.
+	 */
+	public function register_object( $objects ) {
+		$objects = parent::register_object( $objects );
+
+		if ( ! empty( $this->email_sender ) && isset( $objects[ $this->type ] ) ) {
+			$objects[ $this->type ]['sender'] = $this->email_sender;
+		}
+
+		return $objects;
+	}
+
+	/**
 	 * Prepares test data.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $email

@@ -40,7 +40,9 @@ class Users extends People {
 		);
 
 		if ( 'user' === $type && noptin_has_active_license_key() ) {
-			$this->email_sender = 'wp_users';
+			$this->email_sender   = 'wp_users';
+			$this->is_stand_alone = false;
+			$this->can_list       = true;
 		}
 
 		self::$user_types[] = $type;
