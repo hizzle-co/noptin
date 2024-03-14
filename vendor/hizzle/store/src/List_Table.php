@@ -90,7 +90,7 @@ class List_Table extends \WP_List_Table {
 		$action = 'bulk-' . $this->_args['plural'];
 
 		// Check nonce.
-		if ( empty( $_POST['id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
+		if ( empty( $_REQUEST['id'] ) || empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], $action ) ) {
 			return false;
 		}
 
@@ -104,7 +104,7 @@ class List_Table extends \WP_List_Table {
 		if ( 'delete' === $action ) {
 
 			$deleted = 0;
-			foreach ( $_POST['id'] as $id ) {
+			foreach ( $_REQUEST['id'] as $id ) {
 				try {
 					$record = $this->collection->get( (int) $id );
 					$record->delete();
