@@ -1,12 +1,11 @@
 <?php
-
-namespace Hizzle\Noptin\Objects;
-
 /**
  * Generic object action.
  *
  * @since 3.0.0
  */
+
+namespace Hizzle\Noptin\Objects;
 
 defined( 'ABSPATH' ) || exit;
 

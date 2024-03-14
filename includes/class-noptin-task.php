@@ -176,18 +176,20 @@ class Noptin_Task {
 				)
 			);
 
-			if ( empty( $tasks ) || is_wp_error( $tasks ) ) {
-				return false;
+			if ( ! empty( $tasks ) && ! is_wp_error( $tasks ) ) {
+				/** @var \Noptin\Addons_Pack\Tasks\Task[] $tasks */
+				$date = $tasks[0]->get_date_scheduled();
+				return empty( $date ) ? false : $date->getTimestamp();
 			}
-
-			/** @var \Noptin\Addons_Pack\Tasks\Task[] $tasks */
-			$date = $tasks[0]->get_date_scheduled();
-			return empty( $date ) ? false : $date->getTimestamp();
 		}
 
-		// Delete in action scheduler.
+		// Check in action scheduler.
 		if ( $this->is_usable() && function_exists( 'as_next_scheduled_action' ) ) {
-			return as_next_scheduled_action( $this->action, $this->params, $this->group );
+			$timestamp = as_next_scheduled_action( $this->action, $this->params, $this->group );
+
+			if ( is_numeric( $timestamp ) ) {
+				return $timestamp;
+			}
 		}
 
 		return wp_next_scheduled( $this->action, $this->params );
@@ -202,14 +204,16 @@ class Noptin_Task {
 
 		// Try the addons pack task manager.
 		if ( class_exists( '\Noptin\Addons_Pack\Tasks\Main' ) ) {
-			\Noptin\Addons_Pack\Tasks\Main::delete_scheduled_task( $this->action, $this->params, 10 );
+			\Noptin\Addons_Pack\Tasks\Main::delete_scheduled_task( $this->action, $this->params, -1 );
 		}
 
 		wp_clear_scheduled_hook( $this->action, $this->params );
 
 		// Delete in action scheduler.
 		if ( $this->is_usable() && function_exists( 'as_unschedule_action' ) ) {
-			as_unschedule_action( $this->action, $this->params, $this->group );
+			do {
+				$unscheduled_action = as_unschedule_action( $this->action, $this->params, $this->group );
+			} while ( ! empty( $unscheduled_action ) );
 		}
 	}
 }
