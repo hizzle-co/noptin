@@ -47,6 +47,11 @@ class Type {
 	public $supports_timing = false;
 
 	/**
+	 * @var string Checks if this email supports menu order.
+	 */
+	public $supports_menu_order = false;
+
+	/**
 	 * @var string Timing help text.
 	 */
 	public $timing_help_text = null;

@@ -58,6 +58,10 @@ class Table extends \WP_List_Table {
 		$this->email_type = $email_type;
 		$this->per_page   = $this->get_items_per_page( 'noptin_emails_per_page', 25 );
 
+		if ( $this->email_type->supports_menu_order ) {
+			$this->per_page = 1000;
+		}
+
 		parent::__construct(
 			array(
 				'screen'   => $current_screen,
@@ -81,6 +85,11 @@ class Table extends \WP_List_Table {
 		// Prepare query params.
 		$orderby = empty( $_GET['orderby'] ) ? 'id' : sanitize_text_field( $_GET['orderby'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$order   = empty( $_GET['order'] ) ? 'desc' : sanitize_text_field( $_GET['order'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( $this->email_type->supports_menu_order ) {
+			$orderby = 'menu_order';
+			$order   = 'asc';
+		}
 
 		$query_args = array(
 			'post_type'      => 'noptin-campaign',
@@ -116,6 +125,19 @@ class Table extends \WP_List_Table {
 
 		$noptin_campaigns_query = new \WP_Query( $query_args );
 		$this->query            = $noptin_campaigns_query;
+	}
+
+	/**
+	 * Generates content for a single row of the table.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param  Email $item The current item
+	 */
+	public function single_row( $item ) {
+		echo '<tr data-id="' . esc_attr( $item->id ) . '" id="noptin-email-campaign--' . esc_attr( $item->id ) . '">';
+		$this->single_row_columns( $item );
+		echo '</tr>';
 	}
 
 	/**
@@ -599,6 +621,23 @@ class Table extends \WP_List_Table {
 	}
 
 	/**
+	 * Displays a button to re-order the email.
+	 *
+	 * @return string
+	 */
+	public function column_menu_order() {
+
+		if ( ! $this->email_type->supports_menu_order ) {
+			return '';
+		}
+
+		return sprintf(
+			'<span class="noptin-tip dashicons dashicons-move" style="cursor: move;" title="%s"></span>',
+			esc_attr__( 'Re-order', 'newsletter-optin-box' )
+		);
+	}
+
+	/**
 	 * [OPTIONAL] Return array of bult actions if has any
 	 *
 	 * @return array
@@ -778,10 +817,15 @@ class Table extends \WP_List_Table {
 			),
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
 			'date_sent'    => __( 'Date', 'newsletter-optin-box' ),
+			'menu_order'   => '&nbsp;',
 		);
 
 		if ( 'trash' === $this->email_type->type ) {
 			unset( $columns['status'] );
+		}
+
+		if ( ! $this->email_type->supports_menu_order ) {
+			unset( $columns['menu_order'] );
 		}
 
 		// Remove tracking stats.
@@ -806,6 +850,11 @@ class Table extends \WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
+
+		if ( $this->email_type->supports_menu_order ) {
+			return array();
+		}
+
 		$sortable = array(
 			'id'        => array( 'id', true ),
 			'title'     => array( 'post_title', true ),

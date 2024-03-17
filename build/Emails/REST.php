@@ -25,8 +25,6 @@ class REST extends \WP_REST_Posts_Controller {
 	 */
 	public function register_routes() {
 
-		parent::register_routes();
-
 		// Send a test email.
 		register_rest_route(
 			$this->namespace,
@@ -48,6 +46,29 @@ class REST extends \WP_REST_Posts_Controller {
 				'schema'      => array( $this, 'get_public_item_schema' ),
 			)
 		);
+
+		// Reorder emails.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/reorder',
+			array(
+				'methods'             => \WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'reorder_emails' ),
+				'permission_callback' => array( $this, 'create_item_permissions_check' ),
+				'args'                => array(
+					'ids' => array(
+						'description' => __( 'The IDs of the emails to reorder.', 'newsletter-optin-box' ),
+						'type'        => 'array',
+						'items'       => array(
+							'type' => 'integer',
+						),
+					),
+				),
+				'schema'              => array( $this, 'get_public_item_schema' ),
+			)
+		);
+
+		parent::register_routes();
 	}
 
 	/**
@@ -138,5 +159,38 @@ class REST extends \WP_REST_Posts_Controller {
 				'message' => __( 'Your test email has been sent', 'newsletter-optin-box' ),
 			)
 		);
+	}
+
+	/**
+	 * Reorders emails.
+	 *
+	 * @since 1.0.0
+	 * @param \WP_REST_Request $request Full details about the request.
+	 */
+	public function reorder_emails( $request ) {
+
+		$ids = $request->get_param( 'ids' );
+
+		if ( empty( $ids ) || ! is_array( $ids ) ) {
+			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Invalid email IDs', 'newsletter-optin-box' ), array( 'status' => 400 ) );
+		}
+
+		$ids = array_map( 'intval', $ids );
+
+		// Update the menu order.
+		foreach ( $ids as $index => $id ) {
+
+			// Check if user can edit the email.
+			if ( current_user_can( 'edit_post', $id ) ) {
+				wp_update_post(
+					array(
+						'ID'         => $id,
+						'menu_order' => $index + 1,
+					)
+				);
+			}
+		}
+
+		return rest_ensure_response( true );
 	}
 }

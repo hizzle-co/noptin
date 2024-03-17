@@ -359,6 +359,14 @@ class Main {
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
 			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
 
+			if ( 'view-campaigns' === $script ) {
+				// Enqueue jQuery UI core
+				wp_enqueue_script( 'jquery-ui-core' );
+
+				// Enqueue jQuery UI sortable plugin
+				wp_enqueue_script( 'jquery-ui-sortable' );
+			}
+
 			wp_enqueue_script(
 				'noptin-' . $script,
 				plugins_url( 'assets/js/' . $script . '.js', __DIR__ ),
