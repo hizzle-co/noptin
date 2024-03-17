@@ -338,7 +338,7 @@ class Main {
 
 		foreach ( self::$types as $type ) {
 
-			if ( ! $type->supports_timing ) {
+			if ( ! $type->supports_sub_types ) {
 				continue;
 			}
 

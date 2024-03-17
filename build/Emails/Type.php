@@ -47,6 +47,11 @@ class Type {
 	public $supports_timing = false;
 
 	/**
+	 * @var string Timing help text.
+	 */
+	public $timing_help_text = null;
+
+	/**
 	 * @var string Checks if this email supports sub_types.
 	 */
 	public $supports_sub_types = false;

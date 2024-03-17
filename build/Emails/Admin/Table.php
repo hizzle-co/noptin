@@ -272,11 +272,18 @@ class Table extends \WP_List_Table {
 		}
 
 		// If name  is different from the subject, show the subject.
-		if ( $item_name !== $item->subject && ! empty( $preview_url ) ) {
+		if ( $item_name !== $item->subject && ! empty( $item->subject ) && ! empty( $preview_url ) ) {
 			$title .= sprintf(
 				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 				esc_html__( 'Subject', 'newsletter-optin-box' ),
 				esc_html( $item->subject )
+			);
+		}
+
+		if ( empty( $item->subject ) && ! empty( $preview_url ) ) {
+			$title .= sprintf(
+				'<p class="description" style="color: red;">%s</p>',
+				esc_html__( 'No subject', 'newsletter-optin-box' )
 			);
 		}
 
