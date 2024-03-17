@@ -272,7 +272,7 @@ class Table extends \WP_List_Table {
 		}
 
 		// If name  is different from the subject, show the subject.
-		if ( $item_name !== $item->subject ) {
+		if ( $item_name !== $item->subject && ! empty( $preview_url ) ) {
 			$title .= sprintf(
 				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 				esc_html__( 'Subject', 'newsletter-optin-box' ),

@@ -519,29 +519,30 @@ class Main {
 			return $campaign;
 		}
 
-		// If this is a new campaign...
-		if ( ! $campaign->exists() ) {
+		// Set the parent.
+		if ( ! empty( $query_args['noptin_parent_id'] ) ) {
+			$campaign->parent_id = intval( $query_args['noptin_parent_id'] );
+		}
 
-			// Set the type.
-			$campaign->type = sanitize_text_field( $query_args['noptin_email_type'] );
+		// Set the type.
+		$campaign->type = sanitize_text_field( $query_args['noptin_email_type'] );
 
-			// Set the sub type.
-			if ( ! empty( $query_args['noptin_email_sub_type'] ) ) {
-				$campaign->options[ $campaign->type . '_type' ] = sanitize_text_field( $query_args['noptin_email_sub_type'] );
-			}
+		// Set the sub type.
+		if ( ! empty( $query_args['noptin_email_sub_type'] ) ) {
+			$campaign->options[ $campaign->type . '_type' ] = sanitize_text_field( $query_args['noptin_email_sub_type'] );
+		}
 
-			// Set the sender.
-			if ( ! empty( $query_args['noptin_email_sender'] ) ) {
-				$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
-			}
+		// Set the sender.
+		if ( ! empty( $query_args['noptin_email_sender'] ) ) {
+			$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
+		}
 
-			// Set the author.
-			$campaign->author = get_current_user_id();
+		// Set the author.
+		$campaign->author = get_current_user_id();
 
-			// Check if we have manual recipients.
-			if ( ! empty( $query_args['noptin_recipients'] ) ) {
-				$campaign->options['manual_recipients_ids'] = noptin_parse_int_list( $query_args['noptin_recipients'] );
-			}
+		// Check if we have manual recipients.
+		if ( ! empty( $query_args['noptin_recipients'] ) ) {
+			$campaign->options['manual_recipients_ids'] = noptin_parse_int_list( $query_args['noptin_recipients'] );
 		}
 
 		return $campaign;

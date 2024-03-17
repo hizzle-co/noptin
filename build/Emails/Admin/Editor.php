@@ -497,6 +497,7 @@ JS;
 				),
 				'subject'          => $edited_campaign->get( 'subject' ),
 				'recipients'       => 'automation' === $edited_campaign->type ? '[[email]]' : '',
+				'content_visual'   => noptin_email_wrap_blocks( '', get_noptin_footer_text() ),
 				'email_sender'     => $edited_campaign->get_sender(),
 				'email_type'       => $edited_campaign->get_email_type(),
 				'template'         => $edited_campaign->get_template(),
