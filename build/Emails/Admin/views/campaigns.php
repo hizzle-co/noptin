@@ -21,6 +21,7 @@
 
 	// Check if we have trash campaigns.
 	$trash_count = wp_count_posts( 'noptin-campaign' );
+	$parent      = ( empty( $email_type->parent_type ) || empty( $_GET['noptin_parent_id'] ) ) ? false : noptin_get_email_campaign_object( (int) $_GET['noptin_parent_id'] );
 ?>
 
 <div class="wrap noptin noptin-email-campaigns noptin-<?php echo sanitize_html_class( $email_type->type ); ?> noptin-<?php echo sanitize_html_class( $email_type->type ); ?>-main" id="noptin-wrapper">
@@ -74,7 +75,7 @@
 							admin_url( '/admin.php' )
 						)
 					),
-					$email_type->type === $email_type_data->type ? 'nav-tab nav-tab-active' : 'nav-tab',
+					( $email_type->type === $email_type_data->type || $email_type->type === $email_type_data->child_type ) ? 'nav-tab nav-tab-active' : 'nav-tab',
 					esc_html( $email_type_data->plural_label )
 				);
 
@@ -82,6 +83,21 @@
 
 		?>
 	</div>
+
+	<?php if ( $parent ) : ?>
+		<div id="noptin-email-campaigns-parent">
+			<h1 class="wp-heading-inline">
+				<?php echo esc_html( $parent->name ); ?>
+			</h1>
+			<span class="noptin-email-campaigns-parent_edit">
+				<button class="page-title-action button-primary">
+					<span class="dashicons dashicons-edit"></span>
+				</button>
+			</span>
+			<a href="<?php echo esc_url( $parent->get_base_url() ); ?>" class="page-title-action"><?php esc_html_e( 'Back', 'newsletter-optin-box' ); ?></a>
+			<hr class="wp-header-end">
+		</div>
+	<?php endif; ?>
 
 	<!-- Display actual content -->
 	<div class="noptin-email-campaigns-tab-content">

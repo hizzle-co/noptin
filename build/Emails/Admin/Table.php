@@ -142,6 +142,8 @@ class Table extends \WP_List_Table {
 	 */
 	public function column_title( $item ) {
 
+		$preview_url = $item->get_preview_url();
+
 		// Prepare row actions.
 		$row_actions = array(
 
@@ -160,7 +162,7 @@ class Table extends \WP_List_Table {
 
 			'_preview'  => sprintf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( get_preview_post_link( $item->id ) ),
+				esc_url( $preview_url ),
 				esc_html__( 'Preview', 'newsletter-optin-box' )
 			),
 
@@ -179,6 +181,10 @@ class Table extends \WP_List_Table {
 			),
 
 		);
+
+		if ( empty( $preview_url ) ) {
+			unset( $row_actions['_preview'] );
+		}
 
 		if ( ! $item->current_user_can_edit() ) {
 			unset( $row_actions['edit'] );
@@ -233,10 +239,10 @@ class Table extends \WP_List_Table {
 		$title = esc_html( $item_name );
 
 		// Don't link if trash.
-		if ( $is_trash ) {
+		if ( $is_trash || ( empty( $preview_url ) && ! $item->current_user_can_edit() ) ) {
 			$title = "<strong>$title</strong>";
 		} else {
-			$edit_url = esc_url( $item->current_user_can_edit() ? $item->get_edit_url() : $item->get_preview_url() );
+			$edit_url = esc_url( $item->current_user_can_edit() ? $item->get_edit_url() : $preview_url );
 			$title    = "<strong><a href='$edit_url'>$title</a></strong>";
 		}
 
@@ -820,22 +826,6 @@ class Table extends \WP_List_Table {
 
 		if ( $this->has_items() ) {
 			echo '<span class="noptin-email-campaigns__editor--add-new__button"></span>';
-		}
-
-		// If this is a sub type, add a link to go back to the main type.
-		if ( ! empty( $this->email_type->parent_type ) ) {
-			printf(
-				'<a class="button" href="%s">%s</a>',
-				esc_url(
-					add_query_arg(
-						array(
-							'noptin_email_type' => rawurlencode( $this->email_type->parent_type ),
-						),
-						admin_url( '/admin.php?page=noptin-email-campaigns' )
-					)
-				),
-				esc_html__( 'Back', 'newsletter-optin-box' )
-			);
 		}
 	}
 

@@ -473,6 +473,26 @@ class Main {
 	 */
 	public static function prepare_edited_campaign( $query_args ) {
 
+		// If we expect a parent ID, check if it exists.
+		if ( ! empty( $query_args['noptin_email_type'] ) && empty( $query_args['noptin_campaign'] ) ) {
+
+			$type     = \Hizzle\Noptin\Emails\Main::get_email_type( sanitize_text_field( $query_args['noptin_email_type'] ) );
+			$campaign = new \Hizzle\Noptin\Emails\Email( 0 );
+			if ( $type && $type->parent_type ) {
+				if ( empty( $query_args['noptin_parent_id'] ) ) {
+					$campaign->admin_screen = 'not-found';
+					return $campaign;
+				}
+
+				$parent = new \Hizzle\Noptin\Emails\Email( intval( $query_args['noptin_parent_id'] ) );
+
+				if ( ! $parent->exists() ) {
+					$campaign->admin_screen = 'not-found';
+					return $campaign;
+				}
+			}
+		}
+
 		// Abort if no campaign is being edited.
 		if ( ! isset( $query_args['noptin_campaign'] ) ) {
 			return null;

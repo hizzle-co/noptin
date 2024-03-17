@@ -1057,6 +1057,7 @@ class Email {
 			'supports_recipients'   => $this->supports( 'supports_recipients' ),
 			'placeholder_recipient' => $this->get_placeholder_recipient(),
 			'email_type'            => Main::get_email_type( $this->type ),
+			'edit_url'              => $this->get_edit_url(),
 			'manual_recipients'     => $manual_recipients,
 			'extra_settings'        => (object) apply_filters(
 				'noptin_email_extra_settings',
@@ -1157,6 +1158,19 @@ class Email {
 	 */
 	public function get_edit_url() {
 
+		$type = Main::get_email_type( $this->type );
+
+		if ( $type && $type->child_type ) {
+			return add_query_arg(
+				array(
+					'page'              => 'noptin-email-campaigns',
+					'noptin_email_type' => rawurlencode( $type->child_type ),
+					'noptin_parent_id'  => $this->id,
+				),
+				admin_url( '/admin.php' )
+			);
+		}
+
 		$param = array(
 			'noptin_campaign' => $this->id,
 		);
@@ -1170,6 +1184,12 @@ class Email {
 	 * @return string.
 	 */
 	public function get_preview_url() {
+		$type = Main::get_email_type( $this->type );
+
+		if ( $type && $type->child_type ) {
+			return '';
+		}
+
 		return get_preview_post_link( $this->id );
 	}
 
