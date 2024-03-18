@@ -261,16 +261,6 @@ class Email {
 			wp_publish_post( $this->id );
 		}
 
-		// If is automation rule, set the type.
-		if ( $this->is_automation_rule() ) {
-			$rule = noptin_get_automation_rule( (int) $this->get( 'automation_rule' ) );
-
-			if ( ! is_wp_error( $rule ) && $rule->get_trigger_id() !== $this->get_trigger() ) {
-				$rule->set_trigger_id( $this->get_trigger() );
-				$rule->save();
-			}
-		}
-
 		// Fire action.
 		do_action( 'noptin_init_email', $this, $post );
 

@@ -123,17 +123,6 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		$args = array();
 
-		// Add subject smart tags.
-		if ( ! empty( $this->trigger_args['subject'] ) && $this->trigger_args['subject'] !== $this->object_type ) {
-			$args = Store::smart_tags( $this->trigger_args['subject'], true );
-		}
-
-		// Add object args.
-		$args = array_merge(
-			$args,
-			Store::smart_tags( $this->object_type, true )
-		);
-
 		// Add extra args.
 		if ( ! empty( $this->trigger_args['extra_args'] ) ) {
 			$args = array_merge(
@@ -146,6 +135,17 @@ class Trigger extends \Noptin_Abstract_Trigger {
 				)
 			);
 		}
+
+		// Add subject smart tags.
+		if ( ! empty( $this->trigger_args['subject'] ) && $this->trigger_args['subject'] !== $this->object_type ) {
+			$args = Store::smart_tags( $this->trigger_args['subject'], true );
+		}
+
+		// Add object args.
+		$args = array_merge(
+			$args,
+			Store::smart_tags( $this->object_type, true )
+		);
 
 		// Add provided args.
 		if ( ! empty( $this->trigger_args['provides'] ) ) {

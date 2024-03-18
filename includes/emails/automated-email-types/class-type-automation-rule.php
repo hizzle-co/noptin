@@ -231,7 +231,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	public static function sync_campaign_to_rule( $campaign, $trigger_settings = null ) {
 
 		// Abort if no id.
-		if ( ! $campaign->exists() || 'auto-draft' === $campaign->status ) {
+		if ( ! $campaign->exists() || 'publish' !== $campaign->status ) {
 			return array();
 		}
 

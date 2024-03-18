@@ -95,7 +95,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			'tags' => array(
 				'label'    => __( 'Tags', 'newsletter-optin-box' ),
 				'multiple' => true,
-				'options'  => __CLASS__ . '::get_all_tags_as_options',
+				'options'  => null,
 			),
 		);
 
