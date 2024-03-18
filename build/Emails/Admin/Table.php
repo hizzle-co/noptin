@@ -619,9 +619,9 @@ class Table extends \WP_List_Table {
 				esc_html( $value ),
 				esc_html( $percent )
 			);
+		} else {
+			echo esc_html( $value );
 		}
-
-		echo esc_html( $value );
 	}
 
 	/**
