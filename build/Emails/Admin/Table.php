@@ -153,6 +153,13 @@ class Table extends \WP_List_Table {
 		 *
 		 * @param array $this The admin instance
 		 */
+		do_action( 'noptin_display_emails_table_column', $column_name, $item, $this );
+
+		/**
+		 * Displays a given column
+		 *
+		 * @param array $this The admin instance
+		 */
 		do_action( "noptin_display_emails_table_$column_name", $item, $this );
 	}
 
@@ -522,7 +529,6 @@ class Table extends \WP_List_Table {
 	 * Displays the campaign opens
 	 *
 	 * @param  Email $item item.
-	 * @return string
 	 */
 	public function column_opens( $item ) {
 
@@ -530,7 +536,7 @@ class Table extends \WP_List_Table {
 		$opens   = $item->get_open_count();
 		$percent = ( $sends && $opens ) ? round( ( $opens / $sends ) * 100, 2 ) : 0;
 
-		return $this->display_stat(
+		$this->display_stat(
 			$opens,
 			$percent
 		);
@@ -540,7 +546,6 @@ class Table extends \WP_List_Table {
 	 * Displays the campaign clicks
 	 *
 	 * @param  Email $item item.
-	 * @return string
 	 */
 	public function column_clicks( $item ) {
 
@@ -548,7 +553,7 @@ class Table extends \WP_List_Table {
 		$clicks  = $item->get_click_count();
 		$percent = ( $sends && $clicks ) ? round( ( $clicks / $sends ) * 100, 2 ) : 0;
 
-		return $this->display_stat(
+		$this->display_stat(
 			$clicks,
 			$percent
 		);
@@ -586,7 +591,6 @@ class Table extends \WP_List_Table {
 	 * Displays the campaign unsubscribes
 	 *
 	 * @param  Email $item item.
-	 * @return string
 	 */
 	public function column_unsubscribed( $item ) {
 
@@ -594,7 +598,7 @@ class Table extends \WP_List_Table {
 		$unsubscribed = $item->get_unsubscribe_count();
 		$percent      = ( $sends && $unsubscribed ) ? round( ( $unsubscribed / $sends ) * 100, 2 ) : 0;
 
-		return $this->display_stat(
+		$this->display_stat(
 			$unsubscribed,
 			$percent
 		);
@@ -609,15 +613,15 @@ class Table extends \WP_List_Table {
 	 */
 	public function display_stat( $value, $percent ) {
 
-		if ( $percent > 0 && $percent < 100 ) {
-			return sprintf(
+		if ( $percent > 0 && $percent < 101 ) {
+			printf(
 				'<div class="noptin-stat">%s</div><p class="noptin-stat-percent">%s%%</p>',
-				$value,
-				$percent
+				esc_html( $value ),
+				esc_html( $percent )
 			);
 		}
 
-		return $value;
+		echo esc_html( $value );
 	}
 
 	/**

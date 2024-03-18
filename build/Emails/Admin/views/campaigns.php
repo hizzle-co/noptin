@@ -115,7 +115,7 @@
 
 	<!-- Display actual content -->
 	<div class="noptin-email-campaigns-tab-content">
-		<form id="noptin-email-campaigns-table" method="post" style="margin-top: 30px;">
+		<form id="noptin-email-campaigns-table" method="post">
 			<?php foreach ( $query_args as $key => $value ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"/>
 			<?php endforeach; ?>
