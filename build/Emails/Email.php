@@ -599,8 +599,7 @@ class Email {
 			noptin_record_subscriber_activity(
 				Main::$current_email_recipient['email'],
 				sprintf(
-					'Email not send to recipient "%s" for campaign "%s" because: Error: "%s"',
-					Main::$current_email_recipient['email'],
+					'Failed sending the campaign "%s". Error: "%s"',
 					$this->name,
 					$result->get_error_message()
 				)

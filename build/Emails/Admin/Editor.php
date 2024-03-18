@@ -551,12 +551,13 @@ JS;
 		// Maybe calculate menu order.
 		if ( $email_type && $email_type->supports_menu_order ) {
 			$count_args = array(
-				'post_type'   => 'noptin-campaign',
-				'post_parent' => $edited_campaign->parent_id,
-				'fields'      => 'ids',
-				'meta_key'    => 'campaign_type',
-				'meta_value'  => $edited_campaign->type,
+				'post_type'      => 'noptin-campaign',
+				'post_parent'    => $edited_campaign->parent_id,
+				'fields'         => 'ids',
+				'meta_key'       => 'campaign_type',
+				'meta_value'     => $edited_campaign->type,
 				'posts_per_page' => -1,
+				'post_status'    => 'any',
 			);
 
 			$args['menu_order'] = count( get_posts( $count_args ) ) + 1;
