@@ -624,5 +624,4 @@ class Noptin_Page {
 		$message = esc_html__( 'You have successfully subscribed to this newsletter.', 'newsletter-optin-box' );
 		return "<h1>$heading</h1>\n\n<p>$message</p>";
 	}
-
 }

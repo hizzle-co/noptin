@@ -189,7 +189,7 @@ class Noptin {
 	/**
 	 * Actions page.
 	 *
-	 * @var Noptin_Actions_Page
+	 * @var Noptin_Page
 	 * @since       1.7.0
 	 */
 	public $actions_page;

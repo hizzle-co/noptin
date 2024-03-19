@@ -53,6 +53,27 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 		$this->category          = '';
 		$this->type              = 'post_digest';
 		$this->notification_hook = 'noptin_send_post_digest';
+		add_filter( 'noptin_email_can_send', array( $this, 'can_send' ), 10, 2 );
+	}
+
+	/**
+	 * Check if we can send the post digest.
+	 *
+	 * @param bool $can_send
+	 * @param \Hizzle\Noptin\Emails\Email $email
+	 */
+	public function can_send( $can_send, $email ) {
+
+		if ( $can_send && 'automation' === $email->type && $this->type === $email->get_sub_type() && 'visual' !== $email->get_email_type() ) {
+			$content = $email->get_content( $email->get_email_type() );
+
+			// Check if we have [[posts or [[post_digest merge tags.
+			if ( false === strpos( $content, '[[posts' ) && false === strpos( $content, '[[post_digest' ) ) {
+				$can_send = false;
+			}
+		}
+
+		return $can_send;
 	}
 
 	/**

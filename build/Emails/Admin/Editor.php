@@ -203,12 +203,14 @@ JS;
 					),
 					$data['block']
 				);
+
+				unset( $blocks[ $tag ]['metadata']['ancestor'] );
 			}
 		}
 
 		foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
 			foreach ( $merge_tags as $tag => $data ) {
-				if ( ! empty( $data['block'] ) ) {
+				if ( ! empty( $data['block'] ) && ! isset( $blocks[ $tag ] ) ) {
 					$blocks[ $tag ] = array_merge(
 						array(
 							'description' => isset( $data['description'] ) ? $data['description'] : $data['label'],
