@@ -400,6 +400,19 @@ class Main {
 
 		do_action( 'noptin_register_email_types' );
 
+		if ( ! isset( self::$types['sequence'] ) ) {
+			self::register_email_type(
+				array(
+					'type'         => 'sequence',
+					'plural'       => 'sequences',
+					'label'        => __( 'Sequence / Course', 'newsletter-optin-box' ),
+					'plural_label' => __( 'Sequences / Courses', 'newsletter-optin-box' ),
+					'icon'         => 'clock',
+					'upsell'       => __( 'Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc. Install the Ultimate Addons Pack to get started.', 'newsletter-optin-box' ),
+				)
+			);
+		}
+
 		// Trash emails.
 		self::register_email_type(
 			array(

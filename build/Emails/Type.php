@@ -97,6 +97,11 @@ class Type {
 	private $sub_types = null;
 
 	/**
+	 * @var string Checks if this is an upsell.
+	 */
+	public $upsell = false;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param array $args The email type args.

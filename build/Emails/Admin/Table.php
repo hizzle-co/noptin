@@ -80,6 +80,10 @@ class Table extends \WP_List_Table {
 	public function prepare_query() {
 		global $noptin_campaigns_query;
 
+		if ( $this->email_type->upsell ) {
+			return;
+		}
+
 		$post_type_object = get_post_type_object( 'noptin-campaign' );
 
 		// Prepare query params.
@@ -669,7 +673,7 @@ class Table extends \WP_List_Table {
 	 * @return bool
 	 */
 	public function has_items() {
-		return $this->query->have_posts();
+		return $this->email_type->upsell ? false : $this->query->have_posts();
 	}
 
 	/**
@@ -697,9 +701,9 @@ class Table extends \WP_List_Table {
 
 		$this->set_pagination_args(
 			array(
-				'total_items' => $this->query->found_posts,
+				'total_items' => $this->query ? $this->query->found_posts : 0,
 				'per_page'    => $this->per_page,
-				'total_pages' => $this->query->max_num_pages,
+				'total_pages' => $this->query ? $this->query->max_num_pages : 0,
 			)
 		);
 	}
@@ -874,6 +878,10 @@ class Table extends \WP_List_Table {
      * @access protected
      */
     public function extra_tablenav( $which ) {
+
+		if ( $this->email_type->upsell ) {
+			return;
+		}
 
 		if ( 'trash' === $this->email_type->type ) {
 
