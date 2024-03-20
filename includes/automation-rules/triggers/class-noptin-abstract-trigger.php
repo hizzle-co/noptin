@@ -33,7 +33,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @throws Exception
 	 */
 	public function get_test_smart_tags( $rule ) {
-		throw new Exception( 'No test data available for this trigger.' );
+		throw new Exception( 'No test data available for the trigger ' . esc_html( $this->get_name() ) );
 	}
 
 	/**

@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 	/**
-	 * @var Noptin_Automation_Rules_Smart_Tags|null $smart_tags
+	 * @var Noptin_Automation_Rules_Smart_Tags|Noptin_Automation_Rules_Smart_Tags[]|null $smart_tags
 	 */
 	public $smart_tags = null;
 
@@ -46,6 +46,26 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		return $this->replace_with_brackets( $content, $escape_function );
 	}
 
+	private function replace_with_external_tags( $content, $method, $is_partial ) {
+		$smart_tags = $this->smart_tags;
+
+		if ( empty( $smart_tags ) ) {
+			return $content;
+		}
+
+		if ( ! is_array( $smart_tags ) ) {
+			$smart_tags = array( $smart_tags );
+		}
+
+		foreach ( $smart_tags as $smart_tag ) {
+			$smart_tag->is_partial = $is_partial;
+			$content               = $smart_tag->$method( $content );
+			$smart_tag->is_partial = false;
+		}
+
+		return $content;
+	}
+
 	/**
 	 * Replaces in subject
 	 *
@@ -55,11 +75,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function replace_in_subject( $content, $is_partial = false ) {
 
-		if ( ! empty( $this->smart_tags ) ) {
-			$this->smart_tags->is_partial = $is_partial;
-			$content                      = $this->smart_tags->replace_in_text_field( $content );
-			$this->smart_tags->is_partial = false;
-		}
+		$content = $this->replace_with_external_tags( $content, 'replace_in_text_field', $is_partial );
 
 		$this->is_partial = $is_partial;
 		$result           = $this->replace( $content, 'strip_tags' );
@@ -76,11 +92,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	public function replace_in_body( $content, $is_partial = false ) {
 
-		if ( ! empty( $this->smart_tags ) ) {
-			$this->smart_tags->is_partial = $is_partial;
-			$content                      = $this->smart_tags->replace_in_body( $content );
-			$this->smart_tags->is_partial = false;
-		}
+		$content = $this->replace_with_external_tags( $content, 'replace_in_body', $is_partial );
 
 		$this->is_partial = $is_partial;
 		$content          = $this->replace( $content, '' );

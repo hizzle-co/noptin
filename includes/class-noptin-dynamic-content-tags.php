@@ -242,8 +242,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$attributes = array();
 		if ( isset( $matches[2] ) ) {
 			$attribute_string = html_entity_decode( $matches[2] );
-
-			$attributes = shortcode_parse_atts( $attribute_string );
+			$attributes       = shortcode_parse_atts( $attribute_string );
 		}
 
 		if ( isset( $config['replacement'] ) ) {
@@ -392,8 +391,9 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 */
 	protected function get_regex( $opening_tag, $closing_tag ) {
 
+		// https://regex101.com/r/2tTENO/1
 		return sprintf(
-			'/%1$s(?P<name>[\\]?\w[\w\.\/-]*\w)(?P<attributes>\ +(?:(?!%1$s)[^%2$s\n])+)*%2$s/',
+			'/%1$s(?P<name>[\\]?\w[\w\.\/-]*\w)(?P<attributes>\ +(?:(?!%1$s|\n|%2$s).)+)*%2$s/',
 			preg_quote( $opening_tag, '/' ),
 			preg_quote( $closing_tag, '/' )
 		);

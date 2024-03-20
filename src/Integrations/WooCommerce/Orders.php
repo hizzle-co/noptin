@@ -685,6 +685,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 					'metadata'    => array(
 						'ancestor' => array( $this->context ),
 					),
+					'element'     => 'div',
 				),
 			),
 			'customer_details'     => array(
@@ -697,6 +698,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 					'metadata'    => array(
 						'ancestor' => array( $this->context ),
 					),
+					'element'     => 'div',
 				),
 			),
 			'id'                   => array(
