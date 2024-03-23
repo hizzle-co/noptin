@@ -83,6 +83,12 @@ class Action extends \Noptin_Abstract_Action {
 
 			// If needed for this action...
 			if ( ! empty( $args['actions'] ) && in_array( $this->action_id, $args['actions'], true ) ) {
+
+				if ( isset( $args['action_label'] ) ) {
+					$args['label'] = $args['action_label'];
+					unset( $args['action_label'] );
+				}
+
 				$prepared[ $key ] = $args;
 			}
 		}
@@ -133,6 +139,11 @@ class Action extends \Noptin_Abstract_Action {
 		$settings = array();
 
 		foreach ( $this->get_action_fields() as $key => $field ) {
+
+			if ( ! empty( $field['options'] ) ) {
+				$field['el'] = 'select';
+				unset( $field['type'] );
+			}
 
 			if ( isset( $field['el'] ) ) {
 				$settings[ $key ] = $field;
@@ -188,10 +199,14 @@ class Action extends \Noptin_Abstract_Action {
 		$smart_tags = $args['smart_tags'];
 
 		foreach ( $this->get_action_fields() as $key => $args ) {
-			$settings[ $key ] = $smart_tags->replace_in_content( $rule->get_action_setting( $key ) );
+			$saved = $rule->get_action_setting( $key );
+
+			if ( ! is_null( $saved ) && '' !== $saved ) {
+				$settings[ $key ] = $smart_tags->replace_in_content( $rule->get_action_setting( $key ) );
+			}
 		}
 
-		call_user_func_array(
+		return call_user_func_array(
 			$this->action_args['callback'],
 			array(
 				$settings,

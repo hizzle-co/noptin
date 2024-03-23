@@ -355,7 +355,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 */
 	protected function replace_with_regex( $content, $regex, $escape_function = '' ) {
 
-		if ( ! is_string( $content ) ) {
+		if ( ! is_string( $content ) || empty( $content ) ) {
 			return $content;
 		}
 

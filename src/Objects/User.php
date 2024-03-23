@@ -78,6 +78,13 @@ class User extends Person {
 			return current( $this->external->roles );
 		}
 
+		// Custom fields that start with user_cf_.
+		if ( strpos( $field, 'user_cf_' ) === 0 ) {
+			$meta_key = str_replace( 'user_cf_', '', $field );
+			$value    = get_user_meta( $this->external->ID, $meta_key, true );
+			return apply_filters( 'noptin_users_known_custom_field_value', $value, $meta_key, $this->external );
+		}
+
 		// Meta.
 		if ( 'meta' === $field ) {
 			$field = isset( $args['key'] ) ? $args['key'] : null;

@@ -101,6 +101,9 @@ class Users extends People {
 				'type'       => 'string',
 				'options'    => wp_roles()->get_names(),
 				'deprecated' => 'user_role',
+				'actions'    => array( 'add_user', 'add_user_role', 'remove_user_role', 'set_user_role' ),
+				'required'   => true,
+				'default'    => get_option( 'default_role', 'subscriber' ),
 			),
 			'locale'       => array(
 				'label'      => __( 'Locale', 'newsletter-optin-box' ),
@@ -110,8 +113,12 @@ class Users extends People {
 				'deprecated' => 'user_locale',
 			),
 			'email'        => array(
-				'label' => __( 'Email', 'newsletter-optin-box' ),
-				'type'  => 'string',
+				'label'        => __( 'Email', 'newsletter-optin-box' ),
+				'type'         => 'string',
+				'actions'      => array( 'add_user', 'add_user_role', 'remove_user_role', 'set_user_role', 'delete_user' ),
+				'required'     => true,
+				'default'      => '[[email]]',
+				'action_label' => __( 'User ID or email address', 'newsletter-optin-box' ),
 			),
 			'display_name' => array(
 				'label'      => __( 'Display name', 'newsletter-optin-box' ),
@@ -122,11 +129,13 @@ class Users extends People {
 				'label'      => __( 'First name', 'newsletter-optin-box' ),
 				'type'       => 'string',
 				'deprecated' => 'first_name',
+				'actions'    => array( 'add_user' ),
 			),
 			'last_name'    => array(
 				'label'      => __( 'Last name', 'newsletter-optin-box' ),
 				'type'       => 'string',
 				'deprecated' => 'last_name',
+				'actions'    => array( 'add_user' ),
 			),
 			'login'        => array(
 				'label'      => __( 'Username', 'newsletter-optin-box' ),
@@ -143,6 +152,7 @@ class Users extends People {
 				'type'           => 'string',
 				'skip_smart_tag' => true,
 				'deprecated'     => 'user_description',
+				'actions'        => array( 'add_user' ),
 			),
 			'registered'   => array(
 				'label'   => __( 'Registration date', 'newsletter-optin-box' ),
@@ -151,6 +161,12 @@ class Users extends People {
 			),
 			'meta'         => $this->meta_key_tag_config(),
 		);
+
+		// Add known custom fields.
+		foreach ( noptin_get_user_custom_fields() as $field_name => $field ) {
+			$field['actions']                   = array( 'add_user' );
+			$fields[ 'user_cf_' . $field_name ] = $field;
+		}
 
 		// Add provided fields.
 		foreach ( $this->get_related_collections() as $collection ) {
