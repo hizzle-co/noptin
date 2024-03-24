@@ -23,6 +23,11 @@ class Main {
 	private $notices = array();
 
 	/**
+	 * @var array Loaded integration paths.
+	 */
+	private $paths = array();
+
+	/**
 	 * Class Constructor.
 	 */
 	public function __construct() {
@@ -32,6 +37,9 @@ class Main {
 
 		// Admin notices.
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+
+		// Register autoloader.
+		spl_autoload_register( array( $this, 'autoload' ) );
 	}
 
 	/**
@@ -40,47 +48,54 @@ class Main {
 	 */
 	public function load_integrations() {
 
-		$integrations_dir = apply_filters(
-			'noptin_integrations_dir',
-			plugin_dir_path( __FILE__ ) . '*'
-		);
+		$integration_dirs   = apply_filters( 'noptin_integration_dirs', array() );
+		$integration_dirs[] = plugin_dir_path( __FILE__ ) . '*';
 
-		foreach ( glob( $integrations_dir, GLOB_ONLYDIR ) as $integration_dir ) {
+		foreach ( $integration_dirs as $integrations_dir ) {
+			foreach ( glob( $integrations_dir, GLOB_ONLYDIR ) as $integration_dir ) {
 
-			// Get the integration namespace.
-			$namespace = basename( $integration_dir );
+				// Get the integration namespace.
+				$namespace = basename( $integration_dir );
 
-			// Load the config file.
-			$config = wp_json_file_decode( $integration_dir . '/config.json', array( 'associative' => true ) );
-
-			// Check if the integration is usable.
-			if ( empty( $config ) || ! $this->is_integration_usable( $config ) ) {
-				continue;
-			}
-
-			// Load the integration class.
-			$class = 'Hizzle\\Noptin\\Integrations\\' . $namespace . '\\Main';
-
-			if ( class_exists( $class ) ) {
-
-				// Are we loading via a hook?
-				if ( ! empty( $config['hook'] ) ) {
-					add_action( $config['hook'], $class . '::noptin_init', 10, 2 );
-				} else {
-					$this->integrations[ $config['slug'] ] = new $class();
+				// Abort if the integration is already loaded.
+				if ( isset( $this->paths[ $namespace ] ) ) {
+					continue;
 				}
-			}
 
-			// Optionally load premium functionality.
-			$class = 'Hizzle\\Noptin\\Integrations\\' . $namespace . '\\Premium\\Main';
+				// Load the config file.
+				$config = wp_json_file_decode( $integration_dir . '/config.json', array( 'associative' => true ) );
 
-			if ( class_exists( $class ) ) {
+				// Check if the integration is usable.
+				if ( empty( $config ) || ! $this->is_integration_usable( $config ) ) {
+					continue;
+				}
 
-				// Are we loading via a hook?
-				if ( ! empty( $config['hook'] ) ) {
-					add_action( $config['hook'], $class . '::noptin_init', 11, 2 );
-				} else {
-					new $class();
+				$this->paths[ $namespace ] = $integration_dir;
+
+				// Load the integration class.
+				$class_name = 'Hizzle\\Noptin\\Integrations\\' . $namespace . '\\Main';
+
+				if ( class_exists( $class_name ) ) {
+
+					// Are we loading via a hook?
+					if ( ! empty( $config['hook'] ) ) {
+						add_action( $config['hook'], $class_name . '::noptin_init', 10, 2 );
+					} else {
+						$this->integrations[ $config['slug'] ] = new $class_name();
+					}
+				}
+
+				// Optionally load premium functionality.
+				$class_name = 'Hizzle\\Noptin\\Integrations\\' . $namespace . '\\Premium\\Main';
+
+				if ( class_exists( $class_name ) ) {
+
+					// Are we loading via a hook?
+					if ( ! empty( $config['hook'] ) ) {
+						add_action( $config['hook'], $class_name . '::noptin_init', 11, 2 );
+					} else {
+						new $class_name();
+					}
 				}
 			}
 		}
@@ -98,7 +113,6 @@ class Main {
 		}
 
 		foreach ( $config['requires'] as $key => $value ) {
-
 			switch ( $key ) {
 
 				// Specific noptin version.
@@ -205,6 +219,33 @@ class Main {
 
 		foreach ( $this->notices as $notice ) {
 			printf( '<div class="notice notice-error"><p>%s</p></div>', esc_html( $notice ) );
+		}
+	}
+
+	/**
+	 * Autoloads integration classes.
+	 *
+	 * @param string $class_name The class name.
+	 */
+	public function autoload( $class_name ) {
+
+		if ( 0 !== strpos( $class_name, 'Hizzle\\Noptin\\Integrations\\' ) ) {
+			return;
+		}
+
+		// Remove our namespace prefix.
+		$class_name = str_replace( 'Hizzle\\Noptin\\Integrations\\', '', $class_name );
+		$namespace  = substr( $class_name, 0, strpos( $class_name, '\\' ) );
+		$class_name = str_replace( $namespace . '\\', '', $class_name );
+
+		if ( ! isset( $this->paths[ $namespace ] ) ) {
+			return;
+		}
+
+		$path = $this->paths[ $namespace ] . '/' . str_replace( '\\', '/', $class_name ) . '.php';
+
+		if ( file_exists( $path ) ) {
+			require $path;
 		}
 	}
 }
