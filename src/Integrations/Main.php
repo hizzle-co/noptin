@@ -88,7 +88,7 @@ class Main {
 				// Optionally load premium functionality.
 				$class_name = 'Hizzle\\Noptin\\Integrations\\' . $namespace . '\\Premium\\Main';
 
-				if ( class_exists( $class_name ) ) {
+				if ( class_exists( $class_name ) && noptin_has_active_license_key() ) {
 
 					// Are we loading via a hook?
 					if ( ! empty( $config['hook'] ) ) {
