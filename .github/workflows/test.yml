@@ -5,6 +5,14 @@ on: [push]
 jobs:
   php-build:
     runs-on: ubuntu-20.04
+    services:
+        mysql:
+          image: mysql:5.7
+          ports:
+            - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          env:
+            MYSQL_ROOT_PASSWORD: ""
     strategy:
       matrix:
         php-version: ['7.2', '8.2']
@@ -22,6 +30,12 @@ jobs:
           tools: composer, phpunit, wp-cli, phpcs, phpcbf
           coverage: xdebug
 
+      - name: Wait for MySQL to start
+        run: |
+            dockerize -wait tcp://localhost:3306 -timeout 1m
+      - name: Check MySQL connection
+        run: mysql --host=127.0.0.1 --user=root --execute="SELECT 1"
+
       - name: Setup Environment Variables
         run: |
           echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $HOME/.bashrc
@@ -30,8 +44,6 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update && sudo apt-get install subversion
-          sudo sh -c "printf '\ndeb http://ftp.us.debian.org/debian sid main\n' >> /etc/apt/sources.list"
-          sudo apt-get update && sudo apt-get install mysql-client-5.7
 
       - name: Run Tests on ${{ matrix.wordpress-version }}
         run: |
