@@ -1,0 +1,48 @@
+name: PHP Tests
+
+on: [push]
+
+jobs:
+  php-build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php-version: ['7.2', '8.0', '8.2']
+        wordpress-version: ['6.4', 'latest']
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        id: setup-php
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, zip, intl, pdo, pdo_mysql, curl, xml, xmlrpc, gd, exif, opcache, bcmath, soap, sockets, mysqli, json, iconv, phar, posix, pcntl, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo,
+          tools: composer, phpunit, wp-cli, phpcs, phpcbf
+          coverage: xdebug
+
+      - name: Setup MySQL
+        uses: docker://circleci/mysql:5.6
+
+      - name: Setup Environment Variables
+        run: |
+          echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $HOME/.bashrc
+          source $HOME/.bashrc
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install subversion
+          sudo sh -c "printf '\ndeb http://ftp.us.debian.org/debian sid main\n' >> /etc/apt/sources.list"
+          sudo apt-get update && sudo apt-get install mysql-client-5.7
+
+      - name: Run Tests on ${{ matrix.wordpress-version }}
+        run: |
+          bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 ${{ matrix.wordpress-version }} false
+          phpunit
+          WP_MULTISITE=1 phpunit
+
+      - name: Check WP Coding Standards
+        run: |
+            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+            phpcs
