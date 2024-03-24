@@ -31,9 +31,6 @@ jobs:
           tools: composer, phpunit, wp-cli, phpcs, phpcbf
           coverage: xdebug
 
-      - name: Wait for MySQL to start
-        run: |
-            dockerize -wait tcp://localhost:3306 -timeout 1m
       - name: Check MySQL connection
         run: mysql --host=127.0.0.1 --user=root --execute="SELECT 1"
 
