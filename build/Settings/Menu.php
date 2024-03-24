@@ -138,6 +138,13 @@ class Menu {
 			array( 'wp-components' ),
 			$config['version']
 		);
+
+		wp_enqueue_style(
+			'noptin-list',
+			noptin()->plugin_url . '/build/Misc/assets/css/style-list.css',
+			array( 'wp-components' ),
+			$config['version']
+		);
 	}
 
 	/**
