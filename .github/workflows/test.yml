@@ -23,7 +23,7 @@ jobs:
           coverage: xdebug
 
       - name: Setup MySQL
-        uses: docker://circleci/mysql:5.6
+        uses: docker://circleci/mysql:5.7
 
       - name: Setup Environment Variables
         run: |
