@@ -196,7 +196,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 *
 	 * @param array $rules The rules.
 	 */
-	public function add_conditional_logic_rules( $rules, $delete_settings = array() ) {
+	public function add_conditional_logic_rules( $rules, $delete_settings = array(), $overwrite = array() ) {
 		$conditional_logic = array_merge( noptin_get_default_conditional_logic(), $this->get_conditional_logic() );
 		$existing_rules    = $conditional_logic['enabled'] ? $conditional_logic['rules'] : array();
 
@@ -209,6 +209,10 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			foreach ( $delete_settings as $setting ) {
 				unset( $new_settings[ $setting ] );
 			}
+		}
+
+		if ( is_array( $overwrite ) ) {
+			$conditional_logic = array_merge( $conditional_logic, $overwrite );
 		}
 
 		$new_settings['conditional_logic'] = $conditional_logic;
