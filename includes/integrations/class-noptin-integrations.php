@@ -23,7 +23,6 @@ class Noptin_Integrations {
 		// Load integrations.
 		$integrations = array(
 			'nf_init'            => 'load_ninja_forms_integration',
-			'wpforms_loaded'     => 'load_wpforms_integration',
 			'wpcf7_init'         => 'load_contact_form_7_integration',
 			'elementor_pro/init' => 'load_elementor_forms_integration',
 			'gform_loaded'       => 'load_gravity_forms_integration',
@@ -80,16 +79,6 @@ class Noptin_Integrations {
 
 		do_action( 'noptin_integrations_load', $this );
 
-	}
-
-	/**
-	 * Loads WPForms integration
-	 *
-	 * @access      public
-	 * @since       1.2.6
-	 */
-	public function load_wpforms_integration() {
-		new Noptin_WPForms();
 	}
 
 	/**
@@ -279,10 +268,6 @@ class Noptin_Integrations {
 	 * @return array
 	 */
 	public function register_subscription_source( $sources ) {
-
-		if ( did_action( 'wpforms_loaded' ) ) {
-			$sources['WPForms'] = 'WPForms';
-		}
 
 		if ( did_action( 'nf_init' ) ) {
 			$sources['Ninja Forms'] = 'Ninja Forms';
