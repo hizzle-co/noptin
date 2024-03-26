@@ -173,6 +173,61 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function get_settings() {
+
+		$settings = array();
+
+		if ( ! empty( $this->trigger_args['extra_settings'] ) ) {
+			$settings = $this->trigger_args['extra_settings'];
+		}
+
+		return array_merge( $settings, parent::get_settings() );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_rule_table_description( $rule ) {
+		$settings = $rule->get_trigger_settings();
+		$meta     = array();
+
+		if ( ! empty( $this->trigger_args['extra_settings'] ) ) {
+			foreach ( $this->trigger_args['extra_settings'] as $key => $args ) {
+
+				// If required but not set...
+				if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
+					return sprintf(
+						'<span class="noptin-rule-error">%s</span>',
+						sprintf(
+							// translators: %s is the field label.
+							esc_html__( 'Error: "%s" not specified', 'newsletter-optin-box' ),
+							$args['label']
+						)
+					);
+				}
+
+				if ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] || ! is_scalar( $settings[ $key ] ) ) {
+					continue;
+				}
+
+				if ( ! empty( $args['show_in_meta'] ) || ! empty( $args['required'] ) ) {
+					$value = isset( $settings[ $key ] ) ? esc_html( $settings[ $key ] ) : '';
+
+					if ( $value && ! empty( $args['options'] ) ) {
+						$value = isset( $args['options'][ $value ] ) ? $args['options'][ $value ] : $value;
+					}
+
+					$meta[ esc_html( $args['label'] ) ] = $value;
+				}
+			}
+		}
+
+		return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
+	}
+
+	/**
 	 * Fires the trigger.
 	 *
 	 * @param array $args The trigger args.

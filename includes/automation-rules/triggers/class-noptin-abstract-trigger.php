@@ -525,7 +525,16 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		$GLOBALS['noptin_current_trigger_args'] = $args;
 
-		foreach ( $this->get_rules() as $rule ) {
+		if ( isset( $args['rule_id'] ) ) {
+			$rules = array( noptin_get_automation_rules( $args['rule_id'] ) );
+		} else {
+			$rules = $this->get_rules();
+		}
+
+		foreach ( $rules as $rule ) {
+			if ( is_wp_error( $rule ) || ! $rule->exists() || ! $rule->get_status() ) {
+				continue;
+			}
 
 			// Retrieve the action.
 			$action = $rule->get_action();
