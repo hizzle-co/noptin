@@ -1,14 +1,16 @@
 <?php
 
+namespace Hizzle\Noptin\Integrations;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Base E-Commerce integration
  *
- * @since       1.2.6
+ * @since 1.2.6
  */
-abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Integration {
+abstract class Ecommerce_Integration extends \Noptin_Abstract_Integration {
 
 	/**
 	 * @var string The context for subscribers.

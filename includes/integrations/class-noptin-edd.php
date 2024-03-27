@@ -37,8 +37,6 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function initialize() {
 		add_action( 'edd_payment_saved', array( $this, 'add_order_subscriber' ), 50 );
-		add_action( 'edd_complete_purchase', array( $this, 'order_completed' ), 100 );
-		add_action( 'edd_post_refund_payment', array( $this, 'order_refunded' ), 100 );
 	}
 
 	/**
@@ -229,7 +227,6 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 			'no_found_rows' => true,
 		);
 		return get_posts( $args );
-
 	}
 
 	/**
@@ -318,6 +315,5 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return wp_kses_post( $GLOBALS['noptin_edd_email_template_footer_text'] );
-
 	}
 }

@@ -186,7 +186,7 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 	 */
 	public function provide( $collection ) {
 		if ( 'customer' === $collection ) {
-			return $this->external->get_customer_id() > 0 ? $this->external->get_customer_id() : 0 - $this->external->get_id();
+			Orders::get_order_customer( $this->external );
 		}
 
 		return parent::provide( $collection );

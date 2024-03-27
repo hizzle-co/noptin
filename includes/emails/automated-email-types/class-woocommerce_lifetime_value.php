@@ -38,7 +38,7 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 		parent::add_hooks();
 
 		// Notify customers.
-		add_action( 'noptin_woocommerce_order_paid', array( $this, 'maybe_schedule_notification' ), 100, 2 );
+		add_action( 'woocommerce_payment_complete', array( $this, 'maybe_schedule_notification' ), 100 );
 	}
 
 	/**
@@ -136,9 +136,8 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 	 * Notify customers when they make a new order.
 	 *
      * @param int $order_id The order being acted on.
-     * @param Noptin_WooCommerce $bridge The Noptin and WC integration bridge.
 	 */
-	public function maybe_schedule_notification( $order_id, $woocommerce ) {
+	public function maybe_schedule_notification( $order_id ) {
 
 		$order = wc_get_order( $order_id );
 
@@ -153,14 +152,8 @@ class Noptin_WooCommerce_Lifetime_Value_Email extends Noptin_WooCommerce_Automat
 			return;
 		}
 
-		// Fetch the user associated with the order.
-		$user = $woocommerce->get_order_customer_user_id( $order->get_id() );
-		if ( empty( $user ) ) {
-			$user = $woocommerce->get_order_customer_email( $order->get_id() );
-		}
-
 		// Calculate their lifetime value.
-		$lifetime_value = $woocommerce->get_total_spent( $user );
+		$lifetime_value = \Hizzle\Noptin\Integrations\WooCommerce\Main::calculate_customer_lifetime_value( $order->get_user_id() ? $order->get_user() : $order->get_billing_email() );
 
 		foreach ( $automations as $automation ) {
 

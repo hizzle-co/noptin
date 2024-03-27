@@ -46,7 +46,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		// Orders.
 		add_action( 'woocommerce_new_order', array( $this, 'add_order_subscriber' ), 1 );
 		add_action( 'woocommerce_store_api_checkout_order_processed', array( $this, 'add_order_subscriber' ), 1 );
-
 	}
 
 	/**
@@ -58,165 +57,9 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function before_initialize() {
 
-		// Orders.
-		add_action( 'woocommerce_checkout_order_processed', array( $this, 'checkout_processed' ), $this->priority );
-		add_action( 'woocommerce_order_status_completed', array( $this, 'order_completed' ), $this->priority );
-		add_action( 'woocommerce_payment_complete', array( $this, 'order_paid' ), $this->priority );
-		add_action( 'woocommerce_order_refunded', array( $this, 'order_refunded' ), $this->priority );
-		add_action( 'woocommerce_new_order', array( $this, 'order_created' ), $this->priority );
-		add_action( 'woocommerce_update_order', array( $this, 'order_updated' ), $this->priority );
-		add_action( 'woocommerce_order_status_pending', array( $this, 'order_pending' ), $this->priority );
-		add_action( 'woocommerce_order_status_processing', array( $this, 'order_processing' ), $this->priority );
-		add_action( 'woocommerce_order_status_on-hold', array( $this, 'order_held' ), $this->priority );
-		add_action( 'woocommerce_order_status_cancelled', array( $this, 'order_cancelled' ), $this->priority );
-		add_action( 'woocommerce_order_status_failed', array( $this, 'order_failed' ), $this->priority );
-
-		// Products.
-		add_action( 'woocommerce_update_product', array( $this, 'product_updated' ), $this->priority );
-		add_action( 'woocommerce_update_product_variation', array( $this, 'product_updated' ), $this->priority );
-		add_action( 'woocommerce_new_product_variation', array( $this, 'product_updated' ), $this->priority );
-		add_action( 'woocommerce_new_product', array( $this, 'product_updated' ), $this->priority );
-		remove_action( 'save_post', array( $this, 'product_updated' ), $this->priority );
-
 		// Misc.
-		add_filter( 'noptin_email_templates', array( $this, 'register_email_template' ), $this->priority );
-		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
-		add_action( 'noptin_email_styles', array( $this, 'email_styles' ), $this->priority );
-		add_filter( 'noptin_automation_trigger_known_smart_tags', array( $this, 'register_automation_smart_tags' ), $this->priority, 2 );
-		add_action( 'noptin_email_manager_init', array( $this, 'register_merge_tags' ) );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
-	}
-
-	/**
-	 * Registers the email template.
-	 *
-	 * @since 1.7.0
-	 * @param array $templates Available templates.
-	 * @return array
-	 */
-	public function register_email_template( $templates ) {
-		$templates['woocommerce'] = 'WooCommerce';
-		return $templates;
-	}
-
-	/**
-	 * Processes WC email templates.
-	 *
-	 * @since 1.7.0
-	 * @param string $email.
-	 * @param Noptin_Email_Generator $generator
-	 * @return string
-	 */
-	public function maybe_process_template( $email, $generator ) {
-		$GLOBALS['noptin_woocommerce_email_template_footer_text'] = $generator->footer_text;
-
-		if ( 'woocommerce' === $generator->template ) {
-
-			ob_start();
-
-			// Heading.
-			wc_get_template( 'emails/email-header.php', array( 'email_heading' => $generator->heading ) );
-
-			// Content.
-			echo $generator->content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-
-			// Footer.
-			add_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
-			wc_get_template( 'emails/email-footer.php' );
-			remove_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
-
-			$email = ob_get_clean();
-
-		}
-
-		return $email;
-	}
-
-	/**
-	 * Retrieves the email's footer text.
-	 *
-	 * @param array $args
-	 * @return string
-	 */
-	public function email_template_add_extra_footer_text( $text ) {
-
-		if ( empty( $GLOBALS['noptin_woocommerce_email_template_footer_text'] ) ) {
-			return $text;
-		}
-
-		return wp_kses_post( $GLOBALS['noptin_woocommerce_email_template_footer_text'] );
-	}
-
-	/**
-	 * Applies WooCommerce email styles to Noptin templates.
-	 *
-	 * @param Noptin_Email_Generator $generator
-	 */
-	public function email_styles( $generator ) {
-
-		if ( 'normal' === $generator->type && 'woocommerce' === $generator->template ) {
-			wc_get_template( 'emails/email-styles.php' );
-		}
-	}
-
-	/**
-	 * Adds the coupon codes merge tag to emails and forms.
-	 *
-	 * @param \Noptin_Email_Manager|\Noptin_Form_Manager $manager
-	 */
-	public function register_merge_tags( $manager ) {
-		$manager->tags->add_tag(
-			'woocommerce_orders',
-			array(
-				'description'       => __( 'WooCommerce orders', 'newsletter-optin-box' ),
-				'example'           => 'woocommerce_orders',
-				'conditional_logic' => 'number',
-				'partial'           => false,
-				'global'            => true,
-				'callback'          => array( $this, 'get_current_subscriber_woocommerce_orders_count' ),
-			)
-		);
-	}
-
-	/**
-	 * Filters known smart tags.
-	 *
-	 * @since 1.11.0
-	 * @param array $smart_tags
-	 * @param Noptin_Abstract_Trigger $trigger
-	 * @return array
-	 */
-	public function register_automation_smart_tags( $smart_tags, $trigger ) {
-
-		// Add orders count on non-woocommerce triggers.
-		if ( false === strpos( $trigger->get_id(), 'woocommerce' ) ) {
-			$smart_tags['woocommerce_orders'] = array(
-				'description'       => __( 'WooCommerce orders', 'newsletter-optin-box' ),
-				'example'           => 'woocommerce_orders',
-				'conditional_logic' => 'number',
-				'partial'           => false,
-				'global'            => true,
-				'callback'          => array( $this, 'get_current_subscriber_woocommerce_orders_count' ),
-			);
-		}
-
-		return $smart_tags;
-	}
-
-	/**
-	 * Retrieves the current subscriber's WooCommerce orders count.
-	 *
-	 * @since 1.11.0
-	 * @return int
-	 */
-	public function get_current_subscriber_woocommerce_orders_count() {
-
-		if ( empty( $GLOBALS['current_noptin_email'] ) || ! is_email( $GLOBALS['current_noptin_email'] ) ) {
-			return 0;
-		}
-
-		return $this->get_order_count( $GLOBALS['current_noptin_email'] );
 	}
 
 	/**
@@ -235,7 +78,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
 		add_filter( 'noptin_woocommerce_integration_subscription_checkbox_attributes', array( $this, 'add_woocommerce_class_to_checkbox' ) );
-
 	}
 
 	/**
@@ -318,7 +160,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return $this->append_checkbox( $field );
-
 	}
 
 	/**
@@ -330,7 +171,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		if ( 'woocommerce_checkout_after_customer_details' !== $this->get_checkbox_position() ) {
 			echo '<p class="form-row form-row-wide" id="noptin_woocommerce_optin_checkbox">';
 		}
-
 	}
 
 	/**
@@ -342,7 +182,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		if ( 'woocommerce_checkout_after_customer_details' !== $this->get_checkbox_position() ) {
 			echo '</p>';
 		}
-
 	}
 
 	/**
@@ -379,7 +218,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return $order->billing_email;
-
 	}
 
 	/**
@@ -397,7 +235,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return $order->customer_id;
-
 	}
 
 	/**
@@ -569,7 +406,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return $details;
-
 	}
 
 	/**
@@ -597,7 +433,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			'total_formatted' => wc_price( $item->get_total() ),
 			'quantity'        => $item->get_quantity(),
 		);
-
 	}
 
 	/**
@@ -649,7 +484,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
    		}
 
 		return $count;
-
 	}
 
 	/**
@@ -668,7 +502,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		return array_filter(
 			array_map( array( $this, 'get_product_details' ), $products )
 		);
-
 	}
 
 	/**
@@ -716,7 +549,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			}
 
 			$details['variations'][] = $variation;
-
 		}
 
 		if ( empty( $details['variations'] ) ) {
@@ -725,6 +557,5 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		}
 
 		return $details;
-
 	}
 }

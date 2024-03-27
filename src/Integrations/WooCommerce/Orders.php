@@ -897,10 +897,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 * @param \WC_Order $order The order being acted on.
 	 */
 	public static function get_order_customer( $order ) {
-		$customer = new \WC_Customer( $order->get_customer_id() );
+		if ( is_callable( array( $order, 'get_customer_id' ) ) ) {
+			$customer = new \WC_Customer( $order->get_customer_id() );
 
-		if ( $customer->get_id() ) {
-			return $customer->get_id();
+			if ( $customer->get_id() ) {
+				return $customer->get_id();
+			}
 		}
 
 		return 0 - $order->get_id();
