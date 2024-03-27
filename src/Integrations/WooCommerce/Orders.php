@@ -81,21 +81,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 * @return array
 	 */
 	public function get_filters() {
-
-		$types = wc_get_order_types();
-
 		return array(
 			'status'              => array(
 				'label'    => __( 'Order status', 'newsletter-optin-box' ),
 				'el'       => 'select',
 				'multiple' => true,
 				'options'  => wc_get_order_statuses(),
-			),
-			'type'                => array(
-				'label'   => __( 'Order type', 'newsletter-optin-box' ),
-				'el'      => 'select',
-				'options' => array_combine( $types, $types ),
-				'default' => 'shop_order',
 			),
 			'parent'              => array(
 				'label' => __( 'Parent order ID', 'newsletter-optin-box' ),
@@ -301,6 +292,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 
 		$filters = array_merge(
 			array(
+				'type'    => 'shop_order',
 				'status'  => 'publish',
 				'number'  => 10,
 				'order'   => 'DESC',

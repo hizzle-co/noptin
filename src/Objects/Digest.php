@@ -113,12 +113,25 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 
 		$name  = $collection->plural_type();
 		$block = str_replace( '_', '-', $name );
+		$query = array(
+			'number'  => 10,
+			'order'   => 'desc',
+			'orderby' => 'date',
+		);
 
+		foreach ( $collection->get_filters() as $key => $data ) {
+			if ( isset( $data['default'] ) && '' !== $data['default'] && array() !== $data['default']) {
+				$query[ $key ] = $data['default'];
+			}
+		}
+
+		// Convert query to string.
+		$query = http_build_query( $query );
 		ob_start();
 		?>
 <!-- wp:noptin/<?php echo esc_attr( $block ); ?> -->
 <div class="wp-block-noptin-<?php echo esc_attr( $block ); ?>">
-[noptin_<?php echo esc_html( $name ); ?>_list query="number=10&amp;order=desc&amp;orderby=date" columns=1 responsive=yes skiponempty=no][/noptin_<?php echo esc_html( $name ); ?>_list]
+[noptin_<?php echo esc_html( $name ); ?>_list query="<?php echo esc_html( $query ); ?>" columns=1 responsive=yes skiponempty=no][/noptin_<?php echo esc_html( $name ); ?>_list]
 </div>
 <!-- /wp:noptin/<?php echo esc_attr( $block ); ?> -->
 		<?php
