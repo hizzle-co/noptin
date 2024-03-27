@@ -423,6 +423,15 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			throw new \Exception( 'No test data available for this trigger.' );
 		}
 
+		// If we're providing current user and we have a user ID, use it.
+		if ( ! empty( $this->trigger_args['provides'] ) && in_array( 'current_user', $this->trigger_args['provides'], true ) ) {
+			if ( empty( $args['provides'] ) ) {
+				$args['provides'] = array();
+			}
+
+			$args['provides']['current_user'] = get_current_user_id();
+		}
+
 		// Fetch person.
 		$subject = $this->prepare_current_objects( $args );
 
