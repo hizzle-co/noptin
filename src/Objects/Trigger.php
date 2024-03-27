@@ -418,6 +418,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		}
 
 		$args = $collection->get_test_args( $rule );
+		$args = apply_filters( 'noptin_' . $collection->type . '_test_args', $args, $rule, $this->trigger_id );
 
 		if ( empty( $args ) ) {
 			throw new \Exception( 'No test data available for this trigger.' );
