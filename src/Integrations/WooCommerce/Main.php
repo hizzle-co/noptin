@@ -13,6 +13,10 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
+	 * @var Template Email template.
+	 */
+	public $email_template;
+	/**
 	 * Class constructor.
 	 *
 	 * @since 2.2.0
@@ -22,6 +26,7 @@ class Main {
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 		add_filter( 'noptin_format_price', 'wc_price' );
+		$this->email_template = new Template();
 	}
 
 	/**

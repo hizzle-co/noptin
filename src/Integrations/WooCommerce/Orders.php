@@ -81,6 +81,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 * @return array
 	 */
 	public function get_filters() {
+
 		return array(
 			'status'              => array(
 				'label'    => __( 'Order status', 'newsletter-optin-box' ),
@@ -293,7 +294,6 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		$filters = array_merge(
 			array(
 				'type'    => 'shop_order',
-				'status'  => 'publish',
 				'number'  => 10,
 				'order'   => 'DESC',
 				'orderby' => 'date',
@@ -313,8 +313,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			unset( $filters['number'] );
 		}
 
+		if ( ! empty( $filters['status'] ) && ! is_array( $filters['status'] ) ) {
+			$filters['status'] = wp_parse_list( $filters['status'] );
+		}
+
 		// Ensure include and exclude are arrays.
-		foreach ( array( 'status', 'parent_exclude', 'exclude' ) as $key ) {
+		foreach ( array( 'parent_exclude', 'exclude' ) as $key ) {
 			if ( isset( $filters[ $key ] ) && ! is_array( $filters[ $key ] ) ) {
 				$filters[ $key ] = wp_parse_id_list( $filters[ $key ] );
 			}
@@ -914,17 +918,17 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			'status' => array_keys( wc_get_order_statuses() ),
 		);
 
-		if ( 'wc_payment_complete' === $rule->get_action_id() ) {
+		if ( 'wc_payment_complete' === $rule->get_trigger_id() ) {
 			$args['status'] = array( 'wc-processing', 'wc-completed' );
 		}
 
-		if ( 'wc_order_refunded' === $rule->get_action_id() ) {
+		if ( 'wc_order_refunded' === $rule->get_trigger_id() ) {
 			$args['status'] = array( 'wc-refunded' );
 		}
 
 		foreach ( array_keys( $args['status'] ) as $status ) {
 			$prepared_status = false !== strpos( $status, 'wc-' ) ? substr( $status, 3 ) : $status;
-			if ( $rule->get_action_id() === 'wc_' . $prepared_status ) {
+			if ( $rule->get_trigger_id() === 'wc_' . $prepared_status ) {
 				$args['status'] = array( $status );
 				break;
 			}
