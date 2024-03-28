@@ -1431,7 +1431,6 @@ function noptin_format_date( $date_time ) {
 			__( '%s ago', 'newsletter-optin-box' ),
 			human_time_diff( $timestamp, $current )
 		);
-
 	} else {
 		$relative = date_i18n( get_option( 'date_format' ), $timestamp );
 	}

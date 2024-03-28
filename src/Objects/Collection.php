@@ -61,6 +61,11 @@ abstract class Collection {
 	public $can_list = false;
 
 	/**
+	 * @var string $show_tab Whether to display this collection as a custom tab.
+	 */
+	public $show_tab = false;
+
+	/**
 	 * @var Record|null $current_item Current item.
 	 */
 	public $current_item = null;
@@ -111,6 +116,10 @@ abstract class Collection {
 			}
 		}
 
+		if ( $this->show_tab && function_exists( 'add_noptin_subscriber' ) ) {
+			add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'register_custom_tab' ), 40 );
+		}
+
 		// Load automation rule.
 		if ( did_action( 'noptin_automation_rules_load' ) ) {
 			$this->load_automation_rules( noptin()->automation_rules );
@@ -136,7 +145,6 @@ abstract class Collection {
 
 		// Register triggers.
 		foreach ( $this->get_all_triggers() as $key => $args ) {
-
 			$args['provides'] = empty( $args['provides'] ) ? array() : noptin_parse_list( $args['provides'] );
 
 			if ( empty( $args['subject'] ) ) {
@@ -417,6 +425,14 @@ abstract class Collection {
 	}
 
 	/**
+	 * Retrieves several items by email.
+	 *
+	 */
+	public function get_all_by_email( $email_address, $limit = 25 ) {
+		return array();
+	}
+
+	/**
 	 * Retrieves a single record.
 	 *
 	 * @param mixed $record The record.
@@ -426,6 +442,61 @@ abstract class Collection {
 		$class = $this->record_class;
 
 		return new $class( $record );
+	}
+
+	/**
+	 * Registers the custom tab.
+	 *
+	 * @since 3.0.0
+	 * @param array $templates Registers the tab.
+	 * @return array
+	 */
+	public function register_custom_tab( $tabs ) {
+		$tabs[ $this->type ] = array(
+			'title'        => $this->label,
+			'type'         => 'table',
+			'emptyMessage' => sprintf(
+				// translators: %s is the order type name.
+				__( 'No %s found.', 'newsletter-optin-box' ),
+				strtolower( $this->label )
+			),
+			'headers'      => $this->get_custom_tab_headers(),
+			'callback'     => array( $this, 'process_custom_tab' ),
+		);
+
+		return $tabs;
+	}
+
+	/**
+	 * Fetches the custom tab headers.
+	 *
+	 * @since 3.0.0
+	 * @return array
+	 */
+	protected function get_custom_tab_headers() {
+		return array();
+	}
+
+	/**
+	 * Custom tab callback.
+	 *
+	 * @since 3.0.0
+	 * @param array $request
+	 * @return array
+	 */
+	public function process_custom_tab( $request ) {
+
+		$prepared = array();
+
+		foreach ( $this->get_all_by_email( $request['email'] ) as $record ) {
+			$record = $this->get( $record );
+
+			if ( $record->exists() ) {
+				$prepared[] = $record->prepare_custom_tab();
+			}
+		}
+
+		return array_filter( $prepared );
 	}
 
 	/**

@@ -47,8 +47,10 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
         add_action( 'wpforms_process_complete', array( $this, 'process_form' ), 10, 4 );
 
 		// Custom action.
-		add_filter( 'wpforms_builder_settings_sections', array( $this, 'settings_section' ) );
-		add_action( 'wpforms_form_settings_panel_content', array( $this, 'settings_section_content' ), 20 );
+		if ( function_exists( 'add_noptin_subscriber' ) ) {
+			add_filter( 'wpforms_builder_settings_sections', array( $this, 'settings_section' ) );
+			add_action( 'wpforms_form_settings_panel_content', array( $this, 'settings_section_content' ), 20 );
+		}
 	}
 
 	/**
@@ -316,7 +318,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 	private function maybe_add_subscriber( $form_data, $fields ) {
 
 		// Check that the form was configured for email subscriptions.
-		if ( empty( $form_data['settings']['enable_noptin'] ) || '1' !== $form_data['settings']['enable_noptin'] ) {
+		if ( ! function_exists( 'add_noptin_subscriber' ) || empty( $form_data['settings']['enable_noptin'] ) || '1' !== $form_data['settings']['enable_noptin'] ) {
 			return;
 		}
 
@@ -324,7 +326,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 			'source' => 'WPForms',
 		);
 
-		// Add the subscriber's IP address.
+		// Add the user's IP address.
 		$address = noptin_get_user_ip();
 		if ( ! empty( $address ) && '::1' !== $address ) {
 			$prepared['ip_address'] = $address;
