@@ -169,24 +169,7 @@ class Users extends People {
 		}
 
 		// Add provided fields.
-		foreach ( $this->get_related_collections() as $collection ) {
-
-			/** @var People $collection */
-			$provides = $collection->provides();
-
-			if ( empty( $provides ) || 'wordpress' === $collection->integration ) { // phpcs:ignore
-				continue;
-			}
-
-			$all_fields = $collection->get_all_fields();
-			foreach ( $provides as $key ) {
-				if ( isset( $all_fields[ $key ] ) ) {
-					$all_fields[ $key ]['label'] = $collection->singular_label . ' >> ' . $all_fields[ $key ]['label'];
-
-					$fields[ "{$collection->type}.{$key}" ] = $all_fields[ $key ];
-				}
-			}
-		}
+		$fields = $this->add_provided( $fields );
 
 		$fields = apply_filters( 'noptin_wp_user_fields', $fields, $this );
 

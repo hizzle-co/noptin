@@ -18,11 +18,6 @@ class User extends Person {
 	public $external;
 
 	/**
-	 * @var \Record[] Cached records.
-	 */
-	private static $related = array();
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param mixed $external The external object.
@@ -97,41 +92,7 @@ class User extends Person {
 
 		// Related collections.
 		if ( strpos( $field, '.' ) ) {
-			$collection     = strtok( $field, '.' );
-			$without_prefix = str_replace( $collection . '.', '', $field );
-
-			if ( empty( self::$related[ $collection ] ) ) {
-				self::$related[ $collection ] = array();
-			} elseif ( ! empty( self::$related[ $collection ][ $this->external->ID ] ) ) {
-				return self::$related[ $collection ][ $this->external->ID ]->get( $without_prefix, $args );
-			} elseif ( ! empty( self::$related[ $collection ][ $this->external->user_email ] ) ) {
-				return self::$related[ $collection ][ $this->external->user_email ]->get( $without_prefix, $args );
-			}
-
-			/** @var People $collection */
-			$collection = Store::get( $collection );
-
-			if ( $collection && 'person' === $collection->object_type ) {
-				$record = $collection->get_from_user( $this->external );
-
-				if ( $record->exists() ) {
-					self::$related[ $collection->object_type ][ $this->external->ID ]         = $record;
-					self::$related[ $collection->object_type ][ $this->external->user_email ] = $record;
-
-					return $record->get( $without_prefix, $args );
-				}
-
-				$record = $collection->get_from_email( $this->external->user_email );
-
-				if ( $record->exists() ) {
-					self::$related[ $collection->object_type ][ $this->external->ID ]         = $record;
-					self::$related[ $collection->object_type ][ $this->external->user_email ] = $record;
-
-					return $record->get( $without_prefix, $args );
-				}
-
-				return null;
-			}
+			return $this->get_provided( $field, $args );
 		}
 
 		// Try with user_ prefix.

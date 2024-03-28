@@ -580,7 +580,7 @@ abstract class Collection {
 		$date_query = array();
 
 		foreach ( array( 'published_before', 'published_after', 'since_last_send' ) as $date ) {
-			if ( isset( $filters[ $date ] ) ) {
+			if ( ! empty( $filters[ $date ] ) ) {
 
 				if ( 'since_last_send' === $date ) {
 					$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
@@ -590,7 +590,7 @@ abstract class Collection {
 							'after' => is_numeric( $last_send ) ? gmdate( 'Y-m-d\TH:i:s+00:00', $last_send ) : $last_send,
 						);
 					}
-				} elseif ( ! empty( $filters[ $date ] ) ) {
+				} else {
 					$key          = 'published_before' === $date ? 'before' : 'after';
 					$date_query[] = array(
 						'inclusive' => true,
@@ -780,6 +780,16 @@ abstract class Collection {
 			}
 		} else {
 			parse_str( rawurldecode( html_entity_decode( $atts['query'] ) ), $query );
+
+			// loop query and convert booleans.
+			foreach ( $query as $key => $value ) {
+				if ( 'true' === $value ) {
+					$query[ $key ] = true;
+				} elseif ( 'false' === $value ) {
+					$query[ $key ] = false;
+				}
+			}
+
 			$items = $this->get_all( $query );
 		}
 

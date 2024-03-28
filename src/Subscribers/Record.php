@@ -60,6 +60,11 @@ class Record extends \Hizzle\Noptin\Objects\Person {
 			return noptin()->db()->get_record_meta( $this->external->get_id(), trim( $args['key'] ), true );
 		}
 
+		// Related collections.
+		if ( strpos( $field, '.' ) ) {
+			return $this->get_provided( $field, $args );
+		}
+
 		return $this->external->get( $field );
 	}
 }

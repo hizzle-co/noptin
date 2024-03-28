@@ -82,7 +82,7 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 	 *
 	 */
 	public function get_fields() {
-		return array(
+		$fields = array(
 			'id'               => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
@@ -150,6 +150,11 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 				'type'  => 'string',
 			),
 		);
+
+		// Add provided fields.
+		$fields = $this->add_provided( $fields );
+
+		return $fields;
 	}
 
 	/**

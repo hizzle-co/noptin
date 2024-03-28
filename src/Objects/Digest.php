@@ -120,7 +120,12 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 		);
 
 		foreach ( $collection->get_filters() as $key => $data ) {
-			if ( isset( $data['default'] ) && '' !== $data['default'] && array() !== $data['default']) {
+			if ( isset( $data['default'] ) && '' !== $data['default'] && array() !== $data['default'] ) {
+
+				if ( is_bool( $data['default'] ) ) {
+					$data['default'] = $data['default'] ? 'true' : 'false';
+				}
+
 				$query[ $key ] = $data['default'];
 			}
 		}
@@ -129,9 +134,9 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 		$query = http_build_query( $query );
 		ob_start();
 		?>
-<!-- wp:noptin/<?php echo esc_attr( $block ); ?> -->
+<!-- wp:noptin/<?php echo esc_attr( $block ); ?> {"skipOnEmpty":true} -->
 <div class="wp-block-noptin-<?php echo esc_attr( $block ); ?>">
-[noptin_<?php echo esc_html( $name ); ?>_list query="<?php echo esc_html( $query ); ?>" columns=1 responsive=yes skiponempty=no][/noptin_<?php echo esc_html( $name ); ?>_list]
+[noptin_<?php echo esc_html( $name ); ?>_list query="<?php echo esc_html( $query ); ?>" columns=1 responsive=yes skiponempty=yes][/noptin_<?php echo esc_html( $name ); ?>_list]
 </div>
 <!-- /wp:noptin/<?php echo esc_attr( $block ); ?> -->
 		<?php

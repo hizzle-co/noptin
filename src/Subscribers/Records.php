@@ -69,7 +69,6 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		);
 
 		foreach ( noptin_get_subscriber_statuses() as $status => $label ) {
-
 			if ( 'pending' === $status ) {
 				$label = __( 'Pending email confirmation', 'newsletter-optin-box' );
 			}
@@ -128,7 +127,6 @@ class Records extends \Hizzle\Noptin\Objects\People {
 
 		// Statuses.
 		foreach ( $this->subscriber_states() as $state => $label ) {
-
 			$triggers[ $state ] = array(
 				'label'       => sprintf(
 					'%s > %s',
@@ -612,6 +610,9 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		}
 
 		$fields['meta'] = $this->meta_key_tag_config();
+
+		// Add provided fields.
+		$fields = $this->add_provided( $fields );
 
 		return $fields;
 	}

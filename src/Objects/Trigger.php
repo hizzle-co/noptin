@@ -382,6 +382,10 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		// Provided objects.
 		if ( ! empty( $args['provides'] ) ) {
 			foreach ( $args['provides'] as $object_type => $id ) {
+				if ( empty( $id ) ) {
+					continue;
+				}
+
 				$collection = false !== strpos( $object_type, '.' ) ? Store::get( strtok( $object_type, '.' ) ) : Store::get( $object_type );
 
 				if ( empty( $collection ) ) {

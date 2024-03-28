@@ -139,6 +139,11 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 			return Main::calculate_customer_lifetime_value( $this->external->get_email() );
 		}
 
+		// Related collections.
+		if ( strpos( $field, '.' ) ) {
+			return $this->get_provided( $field, $args );
+		}
+
 		// Check if we have a method get_$field.
 		$method = 'get_' . $field;
 		if ( method_exists( $this->external, $method ) ) {

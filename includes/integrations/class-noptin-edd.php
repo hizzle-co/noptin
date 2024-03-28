@@ -25,9 +25,6 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 		$this->order_label = __( 'Payments', 'newsletter-optin-box' );
 		$this->slug        = 'edd';
 		$this->name        = 'Easy Digital Downloads';
-		add_action( 'noptin_automation_rules_load', array( $this, 'register_automation_rules' ), $this->priority );
-		add_filter( 'noptin_email_templates', array( $this, 'register_email_template' ), $this->priority );
-		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), $this->priority, 2 );
 	}
 
 	/**
@@ -194,7 +191,7 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	public function available_customer_fields() {
 		return array(
 			'address_1' => __( 'Billing Address 1', 'newsletter-optin-box' ),
-			'address_1' => __( 'Billing Address 2', 'newsletter-optin-box' ),
+			'address_2' => __( 'Billing Address 2', 'newsletter-optin-box' ),
 			'postcode'  => __( 'Billing Postcode', 'newsletter-optin-box' ),
 			'city'      => __( 'Billing City', 'newsletter-optin-box' ),
 			'state'     => __( 'Billing State', 'newsletter-optin-box' ),
@@ -242,78 +239,5 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 			'name'  => '',
 			'price' => '',
 		);
-	}
-
-	/**
-	 * Registers automation rules.
-	 *
-	 * @since 1.10.3
-	 * @param Noptin_Automation_Rules $rules The automation rules class.
-	 */
-	public function register_automation_rules( $rules ) {
-		$rules->add_trigger( new Noptin_EDD_Download_Purchase_Trigger( $this ) );
-
-		// Add a new trigger for each payment status.
-		foreach ( edd_get_payment_statuses() as $status => $label ) {
-			$rules->add_trigger( new Noptin_EDD_Payment_Trigger( $status, $label ) );
-		}
-	}
-
-	/**
-	 * Registers the email template.
-	 *
-	 * @since 1.10.3
-	 * @param array $templates Available templates.
-	 * @return array
-	 */
-	public function register_email_template( $templates ) {
-		$templates['edd'] = 'EDD';
-		return $templates;
-	}
-
-	/**
-	 * Processes EDD email templates.
-	 *
-	 * @since 1.10.3
-	 * @param string $email.
-	 * @param Noptin_Email_Generator $generator
-	 * @return string
-	 */
-	public function maybe_process_template( $email, $generator ) {
-		$GLOBALS['noptin_edd_email_template_footer_text'] = $generator->footer_text;
-
-		if ( 'edd' === $generator->template ) {
-
-			// Footer.
-			add_filter( 'edd_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
-
-			$emails = EDD()->emails;
-			$html   = $emails->__get( 'html' );
-
-			$emails->__set( 'heading', $generator->heading );
-			$emails->__set( 'html', true );
-			$email = EDD()->emails->build_email( $generator->content );
-
-			$emails->__set( 'html', $html );
-
-			remove_filter( 'edd_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
-		}
-
-		return $email;
-	}
-
-	/**
-	 * Retrieves the email's footer text.
-	 *
-	 * @param array $args
-	 * @return string
-	 */
-	public function email_template_add_extra_footer_text( $text ) {
-
-		if ( empty( $GLOBALS['noptin_edd_email_template_footer_text'] ) ) {
-			return $text;
-		}
-
-		return wp_kses_post( $GLOBALS['noptin_edd_email_template_footer_text'] );
 	}
 }

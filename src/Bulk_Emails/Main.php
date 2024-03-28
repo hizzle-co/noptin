@@ -70,6 +70,19 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		parent::__construct();
 
 		// Init the email senders.
+		add_action( 'noptin_load', array( $this, 'init_email_senders' ) );
+
+		// Send newsletter emails.
+		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
+		add_action( 'noptin_resume_email_campaign', array( $this, 'send_newsletter_campaign' ), 1000 );
+
+		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
+	}
+
+	/**
+	 * Inits the email senders.
+	 */
+	public function init_email_senders() {
 		$senders = apply_filters(
 			'noptin_bulk_email_senders',
 			array(
@@ -80,12 +93,6 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		foreach ( $senders as $sender => $class ) {
 			$this->senders[ $sender ] = new $class();
 		}
-
-		// Send newsletter emails.
-		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
-		add_action( 'noptin_resume_email_campaign', array( $this, 'send_newsletter_campaign' ), 1000 );
-
-		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
 	}
 
 	/**

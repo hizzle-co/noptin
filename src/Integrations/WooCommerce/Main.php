@@ -16,6 +16,7 @@ class Main {
 	 * @var Template Email template.
 	 */
 	public $email_template;
+
 	/**
 	 * Class constructor.
 	 *

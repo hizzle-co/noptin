@@ -200,7 +200,7 @@ function get_noptin_email_senders( $full = false ) {
 				'description'  => __( "Send a bulk email to all your WooCommerce customers, customers who've bought specific products, etc.", 'newsletter-optin-box' ),
 				'image'        => 'https://noptin.com/wp-content/uploads/2023/04/woocommerce-badge-64x64.png',
 				'is_active'    => function_exists( 'WC' ),
-				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
+				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ) || class_exists( '\Hizzle\Noptin\Integrations\WooCommerce\Premium\Email_Sender' ),
 			),
 
 			'wp_users'              => array(

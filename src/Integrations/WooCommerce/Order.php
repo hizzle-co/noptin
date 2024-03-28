@@ -137,7 +137,7 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 
 		// Check if we have a method get_$field.
 		$method = 'get_' . $field;
-		if ( method_exists( $this->external, $method ) ) {
+		if ( is_callable( array( $this->external, $method ) ) ) {
 			$value = $this->external->{$method}();
 
 			if ( is_a( $value, 'WC_DateTime' ) ) {
@@ -147,7 +147,7 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 			return $value;
 		}
 
-		if ( method_exists( $this->external, $field ) ) {
+		if ( is_callable( array( $this->external, $field ) ) ) {
 			return $this->external->{$field}();
 		}
 
@@ -186,7 +186,7 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 	 */
 	public function provide( $collection ) {
 		if ( 'customer' === $collection ) {
-			Orders::get_order_customer( $this->external );
+			return Orders::get_order_customer( $this->external );
 		}
 
 		return parent::provide( $collection );

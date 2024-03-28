@@ -32,14 +32,14 @@ class Main {
 	 */
 	public function __construct() {
 
+		// Register autoloader.
+		spl_autoload_register( array( $this, 'autoload' ) );
+
 		// Load core integrations.
-		add_action( 'noptin_load', array( $this, 'load_integrations' ) );
+		$this->load_integrations();
 
 		// Admin notices.
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
-
-		// Register autoloader.
-		spl_autoload_register( array( $this, 'autoload' ) );
 	}
 
 	/**

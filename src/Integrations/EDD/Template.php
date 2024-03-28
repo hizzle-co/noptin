@@ -1,6 +1,6 @@
 <?php
 
-namespace Hizzle\Noptin\Integrations\WooCommerce;
+namespace Hizzle\Noptin\Integrations\EDD;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -33,22 +33,22 @@ class Template extends \Hizzle\Noptin\Integrations\Template_Integration {
 	 * @return string
 	 */
 	protected function process_template( $heading, $content, $footer ) {
-		$GLOBALS['noptin_woocommerce_email_template_footer_text'] = $footer;
-
-		ob_start();
-
-		// Heading.
-		wc_get_template( 'emails/email-header.php', array( 'email_heading' => $heading ) );
-
-		// Content.
-		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$GLOBALS['noptin_edd_email_template_footer_text'] = $footer;
 
 		// Footer.
-		add_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
-		wc_get_template( 'emails/email-footer.php' );
-		remove_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
+		add_filter( 'edd_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
 
-		return ob_get_clean();
+		$emails = EDD()->emails;
+		$html   = $emails->__get( 'html' );
+
+		$emails->__set( 'heading', $heading );
+		$emails->__set( 'html', true );
+		$email = EDD()->emails->build_email( $content );
+
+		$emails->__set( 'html', $html );
+
+		remove_filter( 'edd_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
+		return $email;
 	}
 
 	/**
@@ -59,11 +59,11 @@ class Template extends \Hizzle\Noptin\Integrations\Template_Integration {
 	 */
 	public function email_template_add_extra_footer_text( $text ) {
 
-		if ( empty( $GLOBALS['noptin_woocommerce_email_template_footer_text'] ) ) {
+		if ( empty( $GLOBALS['noptin_edd_email_template_footer_text'] ) ) {
 			return $text;
 		}
 
-		return wp_kses_post( $GLOBALS['noptin_woocommerce_email_template_footer_text'] );
+		return wp_kses_post( $GLOBALS['noptin_edd_email_template_footer_text'] );
 	}
 
 	/**
