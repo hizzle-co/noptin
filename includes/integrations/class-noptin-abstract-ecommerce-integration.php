@@ -49,7 +49,6 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		$this->order_label = __( 'Orders', 'newsletter-optin-box' );
 
 		// Map subscriber fields to customer fields.
-		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'add_customer_tab' ), $this->priority );
 		add_filter( 'noptin_get_custom_fields_map_settings', array( $this, 'add_field_map_settings' ), $this->priority );
 	}
 
@@ -402,79 +401,5 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		}
 
 		return $settings;
-	}
-
-	/**
-	 * Adds a customer tab to the record's overview string.
-	 *
-	 * @param array $tabs
-	 * @return array
-	 */
-	public function add_customer_tab( $tabs ) {
-
-		$tabs[ $this->slug ] = array(
-			'title'        => $this->order_label . ' (' . $this->name . ')',
-			'type'         => 'table',
-			'emptyMessage' => sprintf(
-				// translators: %s is the order type name.
-				__( 'No %s found.', 'newsletter-optin-box' ),
-				$this->order_label
-			),
-			'headers'      => array(
-				array(
-					'label'      => __( 'Title', 'newsletter-optin-box' ),
-					'name'       => 'title',
-					'is_primary' => true,
-					'url'        => 'edit_url',
-				),
-				array(
-					'label'   => __( 'Items', 'newsletter-optin-box' ),
-					'name'    => 'items',
-					'is_list' => true,
-					'item'    => '%s &times; %s - %s',
-					'args'    => array(
-						'name',
-						'quantity',
-						'total_formatted',
-					),
-				),
-				array(
-					'label'      => __( 'Discount', 'newsletter-optin-box' ),
-					'name'       => 'discount_formatted',
-					'is_numeric' => true,
-				),
-				array(
-					'label'      => __( 'Total', 'newsletter-optin-box' ),
-					'name'       => 'total_formatted',
-					'is_numeric' => true,
-				),
-				array(
-					'label' => __( 'Date Created', 'newsletter-optin-box' ),
-					'name'  => 'date_created_i18n',
-					'align' => 'right',
-				),
-			),
-			'callback'     => array( $this, 'orders_callback' ),
-		);
-
-		return $tabs;
-	}
-
-	/**
-	 * Retrieves the customer orders.
-	 *
-	 * @param array $request
-	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber
-	 * @return array
-	 */
-	public function orders_callback( $request ) {
-
-		$subscriber = noptin_get_subscriber( $request['id'] );
-
-		if ( ! $subscriber->get_email() ) {
-			return array();
-		}
-
-		return $this->get_orders( $subscriber->get_email() );
 	}
 }
