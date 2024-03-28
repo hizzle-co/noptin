@@ -412,7 +412,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 			$comparison    = $rule['condition'];
 
 			// If the rule is met.
-			if ( noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
+			if ( ! $smart_tags->get( $rule['type'] ) || noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
 
 				// Increment the number of rules met.
 				++ $rules_met;
@@ -532,6 +532,8 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		}
 
 		foreach ( $rules as $rule ) {
+
+			// Abort if the rule is not found.
 			if ( is_wp_error( $rule ) || ! $rule->exists() || ! $rule->get_status() ) {
 				continue;
 			}

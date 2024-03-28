@@ -511,6 +511,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			}
 
 			return true;
+		} else {
+			log_noptin_message( 'Automation rule trigger "' . $trigger->get_name() . '" not valid for args.' );
 		}
 
 		return false;
