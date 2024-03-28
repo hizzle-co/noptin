@@ -72,7 +72,6 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 
 		// Add a new trigger for each payment status.
 		foreach ( edd_get_payment_statuses() as $status => $label ) {
-
 			$triggers[ 'edd_' . sanitize_key( $status ) ] = array(
 				'label'       => $this->singular_label . ' > ' . $label,
 				'description' => sprintf(
@@ -326,7 +325,6 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	public function on_create_order( $order_id, $args ) {
 
 		if ( ! empty( $args['email'] ) && ! empty( $args['customer_id'] ) ) {
-
 			$this->trigger(
 				$this->type . '_created',
 				array(
@@ -339,5 +337,69 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Retrieves a test object args.
+	 *
+	 * @since 2.2.0
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function get_test_args( $rule ) {
+
+		if ( false !== strpos( $rule->get_trigger_id(), 'edd_' ) && 'edd_created' !== $rule->get_trigger_id() ) {
+			$args = array(
+				'status__in' => array( substr( $rule->get_trigger_id(), 4 ) ),
+			);
+		} else {
+			$args = array(
+				'status__in' => edd_get_payment_status_keys(),
+			);
+		}
+
+		$order = self::get_test_order( $args );
+		return array(
+			'email'      => $order->email,
+			'object_id'  => $order->id,
+			'subject_id' => $order->customer_id,
+			'extra_args' => array(
+				'order.previous_status' => 'new',
+			),
+			'provides'   => array(
+				'user' => $order->user_id,
+			),
+		);
+	}
+
+	/**
+	 * Retrieves a test order args.
+	 *
+	 * @since 2.2.0
+	 * @param array $args
+	 * @throws \Exception
+	 * @return \EDD\Orders\Order
+	 */
+	public static function get_test_order( $args = array() ) {
+
+		// Fetch latest order.
+		$order = current(
+			edd_get_orders(
+				array_merge(
+					array(
+						'number'     => 1,
+						'status__in' => array( 'complete' ),
+					),
+					$args
+				)
+			)
+		);
+
+		if ( empty( $order ) ) {
+			throw new \Exception( 'No order found' );
+		}
+
+		return $order;
 	}
 }

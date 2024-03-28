@@ -83,8 +83,8 @@ class Downloads extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	public function get_fields() {
 		$product_types = edd_get_download_types();
 
-		$product_types['default'] = $product_types['0'];
-		unset( $product_types['0'] );
+		$product_types['default'] = $product_types[''];
+		unset( $product_types[''] );
 
 		return array(
 			'id'                   => array(
@@ -179,10 +179,10 @@ class Downloads extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'type'  => 'number',
 			),
 			'short_description'    => array(
-				'description' => __( 'Short description', 'newsletter-optin-box' ),
+				'description' => __( 'Excerpt', 'newsletter-optin-box' ),
 				'type'        => 'string',
 				'block'       => array(
-					'title'       => __( 'Product description', 'newsletter-optin-box' ),
+					'title'       => __( 'Excerpt', 'newsletter-optin-box' ),
 					'description' => sprintf(
 						/* translators: %s: Object type label. */
 						__( 'Displays the %s short description.', 'newsletter-optin-box' ),
@@ -305,5 +305,46 @@ class Downloads extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Retrieves a test object args.
+	 *
+	 * @since 2.2.0
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function get_test_args( $rule ) {
+
+		if ( 'edd_' . $this->type . '_purchase' === $rule->get_trigger_id() || 'edd_' . $this->type . '_refunded' === $rule->get_trigger_id() ) {
+
+			$args = array();
+
+			if ( 'edd_' . $this->type . '_refunded' === $rule->get_trigger_id() ) {
+				$args = array( 'status__in' => array( 'refunded', 'partially_refunded' ) );
+			}
+
+			// Fetch latest order.
+			$order = Orders::get_test_order( $args );
+			$items = $order->get_items();
+
+			if ( empty( $items ) ) {
+				throw new \Exception( 'No order item found.' );
+			}
+
+			$item = current( $items );
+			return array(
+				'email'      => $order->email,
+				'object_id'  => $item->product_id,
+				'subject_id' => $order->customer_id,
+				'provides'   => array(
+					'edd_order'      => $item->order_id,
+					'edd_order_item' => $item->id,
+				),
+			);
+		}
+
+		return parent::get_test_args( $rule );
 	}
 }

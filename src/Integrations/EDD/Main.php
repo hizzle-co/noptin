@@ -22,9 +22,9 @@ class Main {
 	 *
 	 * @since       1.2.6
 	 */
-	public function before_initialize() {
+	public function __construct() {
 		$this->email_template = new Template();
-		add_action( 'noptin_register_post_type_objects', array( $this, 'register_custom_objects' ) );
+		add_action( 'init', array( $this, 'register_custom_objects' ), 5 );
 	}
 
 	/**

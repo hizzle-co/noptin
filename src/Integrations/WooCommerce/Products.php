@@ -919,36 +919,31 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 */
 	public function get_test_args( $rule ) {
 
-		if ( 'woocommerce_' . $this->type . '_purchased' === $rule->get_action_id() ) {
+		if ( 'woocommerce_' . $this->type . '_purchased' === $rule->get_trigger_id() || 'woocommerce_' . $this->type . '_refunded' === $rule->get_trigger_id() ) {
+
+			$args = array();
+
+			if ( 'woocommerce_' . $this->type . '_refunded' === $rule->get_trigger_id() ) {
+				$args = array( 'status' => array( 'wc-refunded' ) );
+			}
 
 			// Fetch latest order.
-			$order = Orders::get_test_order();
+			$order = Orders::get_test_order( $args );
 			$items = $order->get_items();
+
+			if ( empty( $items ) ) {
+				throw new \Exception( 'No order item found.' );
+			}
+
+			/** @var \WC_Order_Item_Product $item */
+			$item = current( $items );
 			return array(
-				'object_id'  => $order->get_id(),
+				'email'      => $order->get_billing_email(),
+				'object_id'  => $item->get_product_id(),
 				'subject_id' => Orders::get_order_customer( $order ),
 				'provides'   => array(
 					'shop_order' => $order->get_id(),
-					'order_item' => count( $items ) > 0 ? array_values( $items )[0]->get_id() : 0,
-				),
-			);
-		}
-
-		if ( 'woocommerce_' . $this->type . '_refunded' === $rule->get_action_id() ) {
-
-			// Fetch latest order.
-			$order = Orders::get_test_order(
-				array(
-					'status' => array( 'wc-refunded' ),
-				)
-			);
-			$items = $order->get_items();
-			return array(
-				'object_id'  => $order->get_id(),
-				'subject_id' => Orders::get_order_customer( $order ),
-				'provides'   => array(
-					'shop_order' => $order->get_id(),
-					'order_item' => count( $items ) > 0 ? array_values( $items )[0]->get_id() : 0,
+					'order_item' => $item->get_id(),
 				),
 			);
 		}
