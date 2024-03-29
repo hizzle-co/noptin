@@ -116,10 +116,6 @@ abstract class Collection {
 			}
 		}
 
-		if ( $this->show_tab && function_exists( 'add_noptin_subscriber' ) ) {
-			add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'register_custom_tab' ), 40 );
-		}
-
 		// Load automation rule.
 		if ( did_action( 'noptin_automation_rules_load' ) ) {
 			$this->load_automation_rules( noptin()->automation_rules );
@@ -448,11 +444,10 @@ abstract class Collection {
 	 * Registers the custom tab.
 	 *
 	 * @since 3.0.0
-	 * @param array $templates Registers the tab.
 	 * @return array
 	 */
-	public function register_custom_tab( $tabs ) {
-		$tabs[ $this->type ] = array(
+	public function get_custom_tab_details() {
+		return array(
 			'title'        => $this->label,
 			'type'         => 'table',
 			'emptyMessage' => sprintf(
@@ -461,10 +456,7 @@ abstract class Collection {
 				strtolower( $this->label )
 			),
 			'headers'      => $this->get_custom_tab_headers(),
-			'callback'     => array( $this, 'process_custom_tab' ),
 		);
-
-		return $tabs;
 	}
 
 	/**
@@ -481,14 +473,14 @@ abstract class Collection {
 	 * Custom tab callback.
 	 *
 	 * @since 3.0.0
-	 * @param array $request
+	 * @param string $email_address
 	 * @return array
 	 */
-	public function process_custom_tab( $request ) {
+	public function process_custom_tab( $email_address ) {
 
 		$prepared = array();
 
-		foreach ( $this->get_all_by_email( $request['email'] ) as $record ) {
+		foreach ( $this->get_all_by_email( $email_address ) as $record ) {
 			$record = $this->get( $record );
 
 			if ( $record->exists() ) {

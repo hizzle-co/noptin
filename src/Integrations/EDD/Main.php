@@ -25,6 +25,7 @@ class Main {
 	public function __construct() {
 		$this->email_template = new Template();
 		add_action( 'init', array( $this, 'register_custom_objects' ), 5 );
+		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 	}
 
 	/**

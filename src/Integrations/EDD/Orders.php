@@ -46,9 +46,72 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 * Constructor
 	 */
 	public function __construct() {
+		$this->show_tab = true;
+
 		parent::__construct();
 		add_action( 'edd_transition_order_status', array( $this, 'on_change_status' ), 10, 3 );
 		add_action( 'edd_order_added', array( $this, 'on_create_order' ), 10, 2 );
+	}
+
+	/**
+	 * Retrieves several items by email.
+	 *
+	 */
+	public function get_all_by_email( $email_address, $limit = 25 ) {
+		return edd_get_orders(
+			array(
+				'number' => $limit,
+				'email'  => $email_address,
+			)
+		);
+	}
+
+	/**
+	 * Fetches the custom tab headers.
+	 *
+	 * @since 3.0.0
+	 * @return array
+	 */
+	protected function get_custom_tab_headers() {
+		return array(
+			array(
+				'label'      => $this->singular_label,
+				'name'       => 'order',
+				'is_primary' => true,
+				'url'        => 'url',
+			),
+			array(
+				'label'   => __( 'Items', 'newsletter-optin-box' ),
+				'name'    => 'items',
+				'is_list' => true,
+				'item'    => '%s &times; %s - %s',
+				'args'    => array(
+					'name',
+					'quantity',
+					'total',
+				),
+			),
+			array(
+				'label'    => __( 'Status', 'newsletter-optin-box' ),
+				'name'     => 'status',
+				'is_badge' => true,
+			),
+			array(
+				'label'      => __( 'Discount', 'newsletter-optin-box' ),
+				'name'       => 'discount',
+				'is_numeric' => true,
+			),
+			array(
+				'label'      => __( 'Total', 'newsletter-optin-box' ),
+				'name'       => 'total',
+				'is_numeric' => true,
+			),
+			array(
+				'label' => __( 'Date Created', 'newsletter-optin-box' ),
+				'name'  => 'date',
+				'align' => 'right',
+			),
+		);
 	}
 
 	/**
@@ -295,6 +358,20 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 
 		if ( empty( $customer ) ) {
 			return;
+		}
+
+		$referring_campaign = edd_get_order_meta( $order->id, '_noptin_referring_campaign', true );
+
+		if ( empty( $referring_campaign ) ) {
+			$referring_campaign = noptin_get_referring_email_id();
+
+			if ( ! empty( $referring_campaign ) ) {
+				edd_update_order_meta( $order->id, '_noptin_referring_campaign', $referring_campaign );
+			}
+		}
+
+		if ( ! empty( $referring_campaign ) && 'complete' === $new_status ) {
+			noptin_record_ecommerce_purchase( $order->total, $referring_campaign );
 		}
 
 		$this->trigger(

@@ -27,6 +27,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		$this->url_field         = 'admin_url';
 		$this->can_list          = true;
 		$this->provides          = array( 'customer' );
+		$this->show_tab          = true;
 		$this->icon              = array(
 			'icon' => 'money-alt',
 			'fill' => '#674399',
@@ -332,6 +333,67 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		return wc_get_orders( array_filter( $filters ) );
+	}
+
+	/**
+	 * Retrieves several items by email.
+	 *
+	 */
+	public function get_all_by_email( $email_address, $limit = 25 ) {
+		return wc_get_orders(
+			array(
+				'limit'    => $limit,
+				'customer' => $email_address,
+			)
+		);
+	}
+
+	/**
+	 * Fetches the custom tab headers.
+	 *
+	 * @since 3.0.0
+	 * @return array
+	 */
+	protected function get_custom_tab_headers() {
+		return array(
+			array(
+				'label'      => $this->singular_label,
+				'name'       => 'order',
+				'is_primary' => true,
+				'url'        => 'url',
+			),
+			array(
+				'label'   => __( 'Items', 'newsletter-optin-box' ),
+				'name'    => 'items',
+				'is_list' => true,
+				'item'    => '%s &times; %s - %s',
+				'args'    => array(
+					'name',
+					'quantity',
+					'total',
+				),
+			),
+			array(
+				'label'    => __( 'Status', 'newsletter-optin-box' ),
+				'name'     => 'status',
+				'is_badge' => true,
+			),
+			array(
+				'label'      => __( 'Discount', 'newsletter-optin-box' ),
+				'name'       => 'discount',
+				'is_numeric' => true,
+			),
+			array(
+				'label'      => __( 'Total', 'newsletter-optin-box' ),
+				'name'       => 'total',
+				'is_numeric' => true,
+			),
+			array(
+				'label' => __( 'Date Created', 'newsletter-optin-box' ),
+				'name'  => 'date',
+				'align' => 'right',
+			),
+		);
 	}
 
 	/**

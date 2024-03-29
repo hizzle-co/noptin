@@ -45,6 +45,7 @@ class Main {
 		add_action( 'noptin_init', array( $this, 'init' ) );
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
 		add_filter( 'noptin_subscriber_should_fire_has_changes_hook', array( $this, 'should_fire_has_changes_hook' ), 10, 2 );
+		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', __CLASS__ . '::add_collection_subscriber_tabs' );
 	}
 
 	/**
@@ -89,26 +90,47 @@ class Main {
 	}
 
 	/**
-	 * Should fire has changes hook.
+	 * Registers collection subscriber tabs.
 	 *
-	 * @since 3.0.0
-	 *
-	 * @param bool  $should_fire The should fire.
-	 * @param array $changes An array of changes.
+	 * @param array $tabs
+	 * @return array
 	 */
-	public function should_fire_has_changes_hook( $should_fire, $changes ) {
+	public static function add_collection_subscriber_tabs( $tabs ) {
+		$collections = \Hizzle\Noptin\Objects\Store::filtered( array( 'show_tab' => true ) );
 
-		if ( ! $should_fire ) {
-			return $should_fire;
+		foreach ( $collections as $collection ) {
+			$tabs[ $collection->type ] = array_merge(
+				$collection->get_custom_tab_details(),
+				array( 'callback' => __CLASS__ . '::process_collection_tab' )
+			);
 		}
 
-		$ignore = array( 'activity', 'sent_campaigns', 'date_modified', 'date_created', 'confirm_key' );
+		return $tabs;
+	}
 
-		// Abort if all keys in the changes are in the ignore list.
-		if ( empty( array_diff( $changes, $ignore ) ) ) {
-			return false;
+	/**
+	 * Processes collection subscriber tabs.
+	 *
+	 * @param array $request
+	 * @return array
+	 */
+	public static function process_collection_tab( $request ) {
+		$subscriber = noptin_get_subscriber( $request['id'] );
+
+		if ( empty( $subscriber->get_email() ) ) {
+			return new \WP_Error( 'subscriber_not_found', 'Subscriber not found', array( 'status' => 400 ) );
 		}
 
-		return $should_fire;
+		if ( empty( $request['tab_id'] ) ) {
+			return new \WP_Error( 'tab_id_not_provided', 'Tab not provided', array( 'status' => 400 ) );
+		}
+
+		$collection = \Hizzle\Noptin\Objects\Store::get( $request['tab_id'] );
+
+		if ( empty( $collection ) ) {
+			return new \WP_Error( 'collection_not_found', 'Collection not found', array( 'status' => 400 ) );
+		}
+
+		return $collection->process_custom_tab( $subscriber->get_email() );
 	}
 }

@@ -169,4 +169,44 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 
 		return parent::format( $raw_value, $args );
 	}
+
+	/**
+	 * Prepares custom tab content.
+	 *
+	 */
+	public function prepare_custom_tab() {
+		return array(
+			'order'    => sprintf(
+				'#%s',
+				$this->external->get_number()
+			),
+			'url'      => admin_url( 'edit.php?post_type=download&page=edd-payment-history&view=view-order-details&id=' . $this->external->id ),
+			'items'    => $this->prepare_order_items( $this->external->get_items() ),
+			'discount' => edd_currency_filter( edd_format_amount( $this->external->discount, true, $this->external->currency ), $this->external->currency ),
+			'total'    => edd_currency_filter( edd_format_amount( $this->external->total, true, $this->external->currency ), $this->external->currency ),
+			'date'     => date_i18n( edd_get_date_format( 'datetime' ), strtotime( $this->external->date_created ) ),
+			'status'   => $this->get( 'status_nicename' ),
+		);
+	}
+
+	/**
+	 * Returns an array of order item details.
+	 *
+	 * @param \EDD\Orders\Order_Item[] $items The items.
+	 * @since 1.3.0
+	 * @return array
+	 */
+	private function prepare_order_items( $items ) {
+		$prepared = array();
+
+		foreach ( $items as $item ) {
+			$prepared[] = array(
+				'name'     => $item->product_name,
+				'total'    => edd_currency_filter( edd_format_amount( $item->total, true, $this->external->currency ), $this->external->currency ),
+				'quantity' => $item->quantity,
+			);
+		}
+
+		return $prepared;
+	}
 }

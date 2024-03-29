@@ -23,7 +23,11 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 	 * @param mixed $external The external object.
 	 */
 	public function __construct( $external ) {
-		$this->external = wc_get_order( $external );
+		if ( ! is_a( $external, 'WC_Abstract_Order' ) ) {
+			$external = wc_get_order( $external );
+		}
+
+		$this->external = $external;
 	}
 
 	/**
@@ -207,5 +211,46 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 		}
 
 		return parent::format( $raw_value, $args );
+	}
+
+	/**
+	 * Prepares custom tab content.
+	 *
+	 */
+	public function prepare_custom_tab() {
+		return array(
+			'order'    => sprintf(
+				'%s #%s',
+				$this->external->get_title(),
+				$this->external->get_order_number()
+			),
+			'url'      => $this->external->get_edit_order_url(),
+			'items'    => $this->prepare_order_items( $this->external->get_items() ),
+			'discount' => $this->external->get_formatted_line_subtotal( 'discount' ),
+			'total'    => $this->external->get_formatted_order_total(),
+			'status'   => wc_get_order_status_name( $this->external->get_status() ),
+			'date'     => $this->external->get_date_created()->date_i18n( wc_date_format() . ' ' . wc_time_format() ),
+		);
+	}
+
+	/**
+	 * Returns an array of order item details.
+	 *
+	 * @param \WC_Order_Item_Product[] $items The items.
+	 * @since 1.3.0
+	 * @return array
+	 */
+	private function prepare_order_items( $items ) {
+		$prepared = array();
+
+		foreach ( $items as $item ) {
+			$prepared[] = array(
+				'name'     => $item->get_name(),
+				'total'    => wc_price( $item->get_total() ),
+				'quantity' => $item->get_quantity(),
+			);
+		}
+
+		return $prepared;
 	}
 }
