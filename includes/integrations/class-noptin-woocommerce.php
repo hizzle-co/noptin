@@ -240,48 +240,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	/**
 	 * @inheritdoc
 	 */
-	public function get_orders( $customer_email ) {
-
-		// Get woocommerce orders by email.
-		$orders = wc_get_orders(
-			array(
-				'limit'    => 20,
-				'customer' => $customer_email,
-			)
-		);
-
-		$prepared = array();
-
-		foreach ( $orders as $order ) {
-			$prepared[] = array(
-				'id'                 => $order->get_id(),
-				'title'              => sprintf(
-					'%s #%s',
-					$order->get_title(),
-					$order->get_order_number()
-				),
-				'edit_url'           => $order->get_edit_order_url(),
-				'items'              => array_values(
-					array_map(
-						array( $this, 'get_order_item_details' ),
-						$order->get_items()
-					)
-				),
-				'discount'           => $order->get_total_discount(),
-				'discount_formatted' => $order->get_formatted_line_subtotal( 'discount' ),
-				'total'              => $order->get_total(),
-				'total_formatted'    => $order->get_formatted_order_total(),
-				'date_created_i18n'  => $order->get_date_created()->date_i18n( wc_date_format() . ' ' . wc_time_format() ),
-				'date_created'       => $order->get_date_created()->date( 'Y-m-d H:i:s' ),
-			);
-		}
-
-		return $prepared;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	public function get_order_customer_details( $order_id, $existing_subscriber = false ) {
 
 		// Fetch the order.
@@ -484,78 +442,5 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
    		}
 
 		return $count;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_products() {
-		$products = wc_get_products(
-			array(
-				'limit'  => -1,
-				'return' => 'ids',
-				'status' => 'publish',
-				'parent' => 0,
-			)
-		);
-
-		return array_filter(
-			array_map( array( $this, 'get_product_details' ), $products )
-		);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function get_product_details( $product_id ) {
-		$product = wc_get_product( $product_id );
-
-		if ( empty( $product ) || ! $product->is_purchasable() ) {
-			return array();
-		}
-
-		$details = array(
-			'id'                 => $product->get_id(),
-			'name'               => $product->get_name(),
-			'description'        => $product->get_short_description(),
-			'url'                => $product->get_permalink(),
-			'price'              => $product->get_price(),
-			'type'               => $product->get_type(),
-			'sku'                => $product->get_sku(),
-			'inventory_quantity' => 0,
-			'variations'         => array(),
-		);
-
-		// Gallery images.
-		$images = $product->get_gallery_image_ids();
-
-		// Add featured image to the beginning.
-		array_unshift( $images, $product->get_image_id() );
-
-		// Remove duplicate and empty values.
-		$images = array_unique( array_filter( $images ) );
-
-		// Convert image ids to urls.
-		$details['images'] = array_filter( array_map( 'wp_get_attachment_url', $images ) );
-
-		// Variations.
-		$variations = $product->get_children();
-
-		foreach ( $variations as $variation ) {
-			$variation = $this->get_product_details( $variation );
-
-			if ( empty( $variation ) ) {
-				continue;
-			}
-
-			$details['variations'][] = $variation;
-		}
-
-		if ( empty( $details['variations'] ) ) {
-			unset( $details['variations'] );
-			$details['inventory_quantity'] = $product->get_stock_quantity();
-		}
-
-		return $details;
 	}
 }

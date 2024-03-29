@@ -208,36 +208,4 @@ class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
 	public function order_refunded( $payment ) {
 		parent::order_refunded( $payment->ID );
 	}
-
-	/**
-	 * Returns an array of all published downloads.
-	 *
-	 * @since 1.2.6
-	 * @return array
-	 */
-	public function get_products() {
-
-		$args = array(
-			'fields'        => 'ids',
-			'post_type'     => 'download',
-			'post_status'   => 'publish',
-			'no_found_rows' => true,
-		);
-		return get_posts( $args );
-	}
-
-	/**
-	 * Returns an array of download details.
-	 *
-	 * @param int $download_id The download id.
-	 * @since 1.2.6
-	 * @return array
-	 */
-	public function get_product_details( $download_id ) {
-		return array(
-			'id'    => '',
-			'name'  => '',
-			'price' => '',
-		);
-	}
 }

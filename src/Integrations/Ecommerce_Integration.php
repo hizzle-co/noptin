@@ -120,17 +120,6 @@ abstract class Ecommerce_Integration extends \Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Returns a given customer's orders.
-	 *
-	 * @param string|int $customer_email The customer's email.
-	 * @since 2.0.0
-	 * @return array
-	 */
-	public function get_orders( $customer_email ) {
-		return array();
-	}
-
-	/**
 	 * Returns a given customer's order count.
 	 *
 	 * @param string|int $customer_id_or_email The customer's id or email.
@@ -283,28 +272,6 @@ abstract class Ecommerce_Integration extends \Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Returns an array of product details.
-	 *
-	 * @param int $product_id The product id.
-	 * @since 1.2.6
-	 * @return array
-	 */
-	public function get_product_details( $product_id ) {
-		return array(
-			'id'                 => '',
-			'name'               => '',
-			'description'        => '',
-			'url'                => '',
-			'price'              => '',
-			'type'               => '',
-			'sku'                => '',
-			'inventory_quantity' => '',
-			'images'             => array(), // array of urls.
-			'variations'         => array(), // array of variations, should look similar to the parent array minus the variations key.
-		);
-	}
-
-	/**
 	 * Fired when a product is bought.
 	 *
 	 * @param int $product_id The product id.
@@ -340,26 +307,6 @@ abstract class Ecommerce_Integration extends \Noptin_Abstract_Integration {
 		}
 
 		do_action( "noptin_{$this->slug}_product_refund", $product_id, $item, $order_id, $this );
-	}
-
-	/**
-	 * Checks the post type of a product.
-	 *
-	 * @param int $product_id The product id.
-	 * @since 1.3.0
-	 * @return bool
-	 */
-	public function is_product_post_type( $product_id ) {
-
-		if ( empty( $product_id ) || empty( $this->product_post_type ) ) {
-			return false;
-		}
-
-		if ( is_array( $this->product_post_type ) ) {
-			return in_array( get_post_type( $product_id ), $this->product_post_type, true );
-		}
-
-		return get_post_type( $product_id ) === $this->product_post_type;
 	}
 
 	/**

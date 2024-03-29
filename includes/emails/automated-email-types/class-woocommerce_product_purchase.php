@@ -127,18 +127,13 @@ class Noptin_WooCommerce_Product_Purchase_Email extends Noptin_WooCommerce_Autom
 			return;
 		}
 
-		$products = $integrations['woocommerce']->get_products();
+		$products = wc_get_products( array( 'limit' => -1 ) );
 		$prepared = array();
 
 		foreach ( $products as $product ) {
 
-			if ( empty( $product['variations'] ) ) {
-				$prepared[ $product['id'] ] = $product['name'];
-			} else {
-				foreach ( $product['variations'] as $variation ) {
-					$prepared[ $variation['id'] ] = $product['name'] . ' -- ' . $variation['name'];
-				}
-			}
+			/** @var WC_Product $product */
+			$prepared[ $product->get_id() ] = $product->get_name();
 		}
 
 		return array_merge(
