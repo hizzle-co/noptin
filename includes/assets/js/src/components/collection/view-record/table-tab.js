@@ -11,6 +11,8 @@ import { __, sprintf } from "@wordpress/i18n";
 import { useTabContent } from "../../../store-data/hooks";
 import Table from "../../table";
 import Wrap from "../wrap";
+import getEnumBadge from "../records-table/enum-colors";
+import { Badge } from "../../styled-components";
 
 /**
  * Displays a single cell.
@@ -20,14 +22,14 @@ import Wrap from "../wrap";
  */
 const DisplayCell = ( { row, header, headerKey } ) => {
 
-	const { is_list, item, args, is_primary, url, is_boolean } = header;
+	const { is_list, item, args, is_primary, url, is_boolean, is_badge } = header;
 
 	if ( is_list ) {
 
-		if ( ! Array.isArray( row[ headerKey ] ) || 0 === row[ headerKey ].length ) {
+		if ( !Array.isArray( row[ headerKey ] ) || 0 === row[ headerKey ].length ) {
 			return '—';
 		}
-	
+
 		return (
 			<ul>
 				{ row[ headerKey ].map( ( arrayValue, index ) => {
@@ -47,12 +49,12 @@ const DisplayCell = ( { row, header, headerKey } ) => {
 	if ( is_primary && url ) {
 		const recordUrl = row[ url ];
 
-		if ( ! recordUrl ) {
+		if ( !recordUrl ) {
 			return <strong>{ row[ headerKey ] }</strong>;
 		}
 
 		return (
-			<a href={ row[ url ] } style={{textDecoration: 'none'}} target="_blank">
+			<a href={ row[ url ] } style={ { textDecoration: 'none' } } target="_blank">
 				<strong>{ row[ headerKey ] }</strong>
 			</a>
 		);
@@ -61,6 +63,10 @@ const DisplayCell = ( { row, header, headerKey } ) => {
 	if ( is_boolean ) {
 		const theIcon = row[ headerKey ] ? 'yes' : 'no';
 		return <Icon icon={ theIcon } />;
+	}
+
+	if ( is_badge && row[ headerKey ] ) {
+		return <Badge { ...getEnumBadge( row[ headerKey ] ) }>{ row[ headerKey ] }</Badge>;
 	}
 
 	return <div dangerouslySetInnerHTML={ { __html: row[ headerKey ] } } />;
@@ -74,25 +80,25 @@ const DisplayCell = ( { row, header, headerKey } ) => {
  * @param {String} props.tabName
  * @returns The records table.
  */
-export default function TableTab( {tab, tabName, namespace, collection, recordId} ) {
+export default function TableTab( { tab, tabName, namespace, collection, recordId } ) {
 
 	// Prepare the state.
 	const tabContent = useTabContent( namespace, collection, recordId, tabName );
 
 	// Prepare headers.
-	const headers = useMemo( () => tab.headers.map( ( header ) => ({
+	const headers = useMemo( () => tab.headers.map( ( header ) => ( {
 		key: header.name,
 		label: header.label,
 		isSortable: false,
 		isNumeric: header.is_numeric,
 		...header
-	})) , [ tab.headers ] );
+	} ) ), [ tab.headers ] );
 
 	// Show error if any.
 	if ( 'ERROR' === tabContent.status ) {
 
 		return (
-			<Wrap title={tab.title}>
+			<Wrap title={ tab.title }>
 				<CardBody>
 					<Notice status="error" isDismissible={ false }>
 						{ tabContent.error?.message || __( 'An unknown error occurred.', 'newsletter-optin-box' ) }
