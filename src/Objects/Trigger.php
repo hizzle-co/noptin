@@ -168,7 +168,6 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		);
 
 		unset( $args['user_logged_in'] );
-
 		return $args;
 	}
 

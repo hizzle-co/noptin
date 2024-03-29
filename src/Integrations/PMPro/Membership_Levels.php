@@ -108,7 +108,12 @@ class Membership_Levels extends \Hizzle\Noptin\Objects\Collection {
 					'Year'  => __( 'Year', 'paid-memberships-pro' ),
 				),
 			),
-			'meta'              => $this->meta_key_tag_config(),
+			'meta'              => array(
+				'label'          => __( 'Meta Value', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'example'        => 'key="my_key"',
+				'skip_smart_tag' => true,
+			),
 		);
 	}
 
@@ -149,7 +154,7 @@ class Membership_Levels extends \Hizzle\Noptin\Objects\Collection {
 			$args['custom_labels'] = array();
 		}
 
-		$args['custom_labels'] = array_merge( $args['custom_labels'], array_keys( $provide ) );
+		$args['custom_labels'] = array_merge( $args['custom_labels'], $provide );
 
 		return $args;
 	}
