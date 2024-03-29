@@ -240,7 +240,7 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 	 * @since 1.3.0
 	 * @return array
 	 */
-	private function prepare_order_items( $items ) {
+	protected function prepare_order_items( $items ) {
 		$prepared = array();
 
 		foreach ( $items as $item ) {
