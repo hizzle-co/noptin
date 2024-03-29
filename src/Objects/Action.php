@@ -79,11 +79,11 @@ class Action extends \Noptin_Abstract_Action {
 			$prepared = $this->action_args['extra_settings'];
 		}
 
+		$include = empty( $this->action_args['action_fields'] ) ? array() : $this->action_args['action_fields'];
 		foreach ( $fields as $key => $args ) {
 
 			// If needed for this action...
-			if ( ! empty( $args['actions'] ) && in_array( $this->action_id, $args['actions'], true ) ) {
-
+			if ( in_array( $key, $include, true ) || ( ! empty( $args['actions'] ) && in_array( $this->action_id, $args['actions'], true ) ) ) {
 				if ( isset( $args['action_label'] ) ) {
 					$args['label'] = $args['action_label'];
 					unset( $args['action_label'] );

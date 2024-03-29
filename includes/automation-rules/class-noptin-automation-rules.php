@@ -55,11 +55,6 @@ class Noptin_Automation_Rules {
 			}
 		}
 
-		if ( defined( 'PMPRO_VERSION' ) ) {
-			$this->add_trigger( new Noptin_PMPro_Membership_Level_Change_Trigger() );
-			$this->add_action( new Noptin_PMPro_Change_Level_Action() );
-		}
-
 		// Maybe migrate automation rules.
 		add_action( 'noptin_run_delayed_automation_rule', array( $this, 'run_delayed_automation_rule' ), 10, 2 );
 	}

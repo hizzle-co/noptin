@@ -152,6 +152,10 @@ abstract class Collection {
 				$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
 			}
 
+			$args['provides'] = $this->filter( $args['provides'], 'provided_collections' );
+
+			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this );
+
 			$rules->add_trigger(
 				new Trigger( $key, $args, $this )
 			);
@@ -204,6 +208,8 @@ abstract class Collection {
 				$args['email'] = $user->user_email;
 			}
 		}
+
+		$args = $this->filter( $args, 'trigger_args' );
 
 		do_action( 'noptin_fire_object_trigger_' . $trigger, $args );
 	}

@@ -90,6 +90,30 @@ class Main {
 	}
 
 	/**
+	 * Should fire has changes hook.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool  $should_fire The should fire.
+	 * @param array $changes An array of changes.
+	 */
+	public function should_fire_has_changes_hook( $should_fire, $changes ) {
+
+		if ( ! $should_fire ) {
+			return $should_fire;
+		}
+
+		$ignore = array( 'activity', 'sent_campaigns', 'date_modified', 'date_created', 'confirm_key' );
+
+		// Abort if all keys in the changes are in the ignore list.
+		if ( empty( array_diff( $changes, $ignore ) ) ) {
+			return false;
+		}
+
+		return $should_fire;
+	}
+
+	/**
 	 * Registers collection subscriber tabs.
 	 *
 	 * @param array $tabs

@@ -236,6 +236,13 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	public function fire_trigger( $args ) {
 
 		try {
+			$collection = Store::get( $this->object_type );
+
+			if ( empty( $collection ) ) {
+				throw new \Exception( 'Collection not registered' );
+			}
+
+			$args    = apply_filters( 'noptin_collection_type_trigger_args', $args, $collection, $this );
 			$subject = $this->prepare_current_objects( $args );
 		} catch ( \Exception $e ) {
 			noptin_error_log( $e->getMessage() );
@@ -436,6 +443,9 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 			$args['provides']['current_user'] = get_current_user_id();
 		}
+
+		$args = apply_filters( 'noptin_' . $collection->type . '_collection_trigger_args', $args, $collection );
+		$args = apply_filters( 'noptin_collection_type_trigger_args', $args, $collection, $this );
 
 		// Fetch person.
 		$subject = $this->prepare_current_objects( $args );

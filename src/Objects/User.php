@@ -95,6 +95,13 @@ class User extends Person {
 			return $this->get_provided( $field, $args );
 		}
 
+		// Short circuit.
+		$value = apply_filters( 'noptin_wp_user_field_value', null, $field, $this->external );
+
+		if ( ! is_null( $value ) ) {
+			return $value;
+		}
+
 		// Try with user_ prefix.
 		if ( $this->external->has_prop( 'user_' . $field ) ) {
 			return $this->external->get( 'user_' . $field );
