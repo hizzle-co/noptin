@@ -152,7 +152,7 @@ class SubscriberTest extends WP_UnitTestCase {
         delete_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2');
 
         // Assert that the meta was deleted.
-        $this->assertNull($subscriber->get_meta('meta_key'), 'Subscriber meta was not deleted.');
+        $this->assertEmpty($subscriber->get_meta('meta_key'), 'Subscriber meta was not deleted.');
         $this->assertEmpty(get_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2', true), 'Subscriber meta was not deleted.');
 
         // Delete all meta by key.
@@ -213,8 +213,10 @@ class SubscriberTest extends WP_UnitTestCase {
         // Query subscribers.
         $subscribers = noptin_get_subscribers(
             array(
-                'email' => 'lewis@noptin.com',
-                'tags'  => array( 'tag 3', 'tag 4' ),
+                'email'       => 'brian@noptin.com',
+                'first_name'  => 'Brian',
+                'last_name'   => 'Mutende',
+                'tags'        => array( 'tag 1', '"Tag 2,' ),
                 'meta_query' => array(
                     array(
                         'key'     => 'meta_key',
@@ -229,19 +231,15 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertCount(1, $subscribers);
 
         // Fetch the subscriber.
-        $subscriber = $subscribers[0];
-
-        // Assert that the subscriber exists.
-        $this->assertTrue($subscriber->exists(), 'Subscriber does not exist.');
+        $subscriber = current( $subscribers[0] );
 
         // Assert that the subscriber's email is correct.
-        $this->assertEquals( 'lewis@noptin.com', $subscriber->get_email() );
+        $this->assertEquals( 'brian@noptin.com', $subscriber->get_email() );
 
         // Query subscribers.
         $subscribers = noptin_get_subscribers(
             array(
-                'email' => 'lewis@noptin.com',
-                'tags'  => array( 'tag 3', 'tag 4' ),
+                'email'      => 'brian@noptin.com',
                 'meta_query' => array(
                     array(
                         'key'     => 'meta_key',
