@@ -28,7 +28,9 @@ class SubscriberTest extends WP_UnitTestCase {
         );
     }
 
-    public function wpTearDownAfterClass(){
+    public static function wpTearDownAfterClass(){
+        echo 'Tearing down';
+
         // Delete the test subscriber.
         delete_noptin_subscriber(self::$subscriber_id);
     }
@@ -39,7 +41,7 @@ class SubscriberTest extends WP_UnitTestCase {
 
         // Compare ids.
         $this->assertEquals( get_noptin_subscriber_id_by_email( 'brian@noptin.com' ), self::$subscriber_id, 'get_noptin_subscriber_id_by_email does not match.' );
-        $this->assertEquals( get_current_noptin_subscriber_id(), self::$subscriber_id, 'get_current_noptin_subscriber_id does not match.' );
+        $this->assertEquals( self::$subscriber_id, get_current_noptin_subscriber_id(), 'get_current_noptin_subscriber_id does not match.' );
         $this->assertTrue( noptin_is_subscriber(), 'noptin_is_subscriber does not match.' );
 
         // Test conditional shortcodes.
@@ -120,7 +122,8 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertEquals( 'unsubscribed', $subscriber->get_status(), 'Subscriber is not unsubscribed.' );
 
         // Check if activity is updated.
-        $last_activity = end( $subscriber->get_activity() );
+        $last_activity = $subscriber->get_activity();
+        $last_activity = end( $last_activity );
         $last_activity = $last_activity ? $last_activity['content'] : '';
         $this->assertEquals( 'Unsubscribed from the newsletter', $last_activity, 'Activity was not updated.' );
 

@@ -32,7 +32,7 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 
 	// If subscriber is already a subscriber object, return it.
 	if ( $subscriber instanceof \Hizzle\Noptin\DB\Subscriber ) {
-		return $subscriber;
+		$subscriber = $subscriber->get_id();
 	}
 
 	// Deprecated subscriber.
