@@ -13,11 +13,11 @@ class SubscriberTest extends WP_UnitTestCase {
     /**
      * @var int|string|\WP_Error $subscriber_id
      */
-    protected $subscriber_id;
+    protected static $subscriber_id;
 
-	public function wpSetUpBeforeClass(){
+	public static function wpSetUpBeforeClass(){
         // Create a subscriber for testing.
-        $this->subscriber_id = add_noptin_subscriber(
+        self::$subscriber_id = add_noptin_subscriber(
             array(
                 'email'       => 'brian@noptin.com',
                 'first_name'  => 'Brian',
@@ -30,16 +30,16 @@ class SubscriberTest extends WP_UnitTestCase {
 
     public function wpTearDownAfterClass(){
         // Delete the test subscriber.
-        delete_noptin_subscriber($this->subscriber_id);
+        delete_noptin_subscriber(self::$subscriber_id);
     }
 
     public function testCreateNoptinSubscriber() {
         // If subscriber id is a string, it means that the subscriber was not created.
-        $this->assertIsInt($this->subscriber_id, $this->subscriber_id);
+        $this->assertIsInt(self::$subscriber_id, self::$subscriber_id);
 
         // Compare ids.
-        $this->assertEquals( get_noptin_subscriber_id_by_email( 'brian@noptin.com' ), $this->subscriber_id, 'get_noptin_subscriber_id_by_email does not match.' );
-        $this->assertEquals( get_current_noptin_subscriber_id(), $this->subscriber_id, 'get_current_noptin_subscriber_id does not match.' );
+        $this->assertEquals( get_noptin_subscriber_id_by_email( 'brian@noptin.com' ), self::$subscriber_id, 'get_noptin_subscriber_id_by_email does not match.' );
+        $this->assertEquals( get_current_noptin_subscriber_id(), self::$subscriber_id, 'get_current_noptin_subscriber_id does not match.' );
         $this->assertTrue( noptin_is_subscriber(), 'noptin_is_subscriber does not match.' );
 
         // Test conditional shortcodes.
@@ -50,7 +50,7 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertEquals( '', $is_not_subscriber, 'noptin-show-if-non-subscriber does not match.' );
 
         // Fetch the subscriber.
-        $subscriber = noptin_get_subscriber($this->subscriber_id);
+        $subscriber = noptin_get_subscriber(self::$subscriber_id);
 
         // Assert that the subscriber exists.
         $this->assertTrue($subscriber->exists(), 'Subscriber does not exist.');
@@ -73,8 +73,8 @@ class SubscriberTest extends WP_UnitTestCase {
 
     public function testUpdateNoptinSubscriber() {
         // Update the subscriber.
-        $this->subscriber_id = update_noptin_subscriber(
-            $this->subscriber_id,
+        self::$subscriber_id = update_noptin_subscriber(
+            self::$subscriber_id,
             array(
                 'email'      => 'lewis@noptin.com',
                 'first_name' => 'Lewis',
@@ -84,14 +84,14 @@ class SubscriberTest extends WP_UnitTestCase {
         );
 
         // Check if we have a wp_error object.
-        if ( is_wp_error( $this->subscriber_id ) ) {
-            $this->fail( $this->subscriber_id->get_error_message() );
+        if ( is_wp_error( self::$subscriber_id ) ) {
+            $this->fail( self::$subscriber_id->get_error_message() );
         }
 
-        $this->assertIsInt($this->subscriber_id);
+        $this->assertIsInt(self::$subscriber_id);
 
         // Fetch the subscriber.
-        $subscriber = noptin_get_subscriber($this->subscriber_id);
+        $subscriber = noptin_get_subscriber(self::$subscriber_id);
 
         // Assert that the subscriber exists.
         $this->assertTrue($subscriber->exists(), 'Subscriber does not exist.');
@@ -112,9 +112,9 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertEquals( 'subscribed', $subscriber->get_status(), 'Subscriber is not active.' );
 
         // Update status.
-        update_noptin_subscriber_status($this->subscriber_id, 'unsubscribed');
+        update_noptin_subscriber_status(self::$subscriber_id, 'unsubscribed');
 
-        $subscriber = noptin_get_subscriber( $this->subscriber_id );
+        $subscriber = noptin_get_subscriber( self::$subscriber_id );
 
         // Check the the subscriber is active.
         $this->assertEquals( 'unsubscribed', $subscriber->get_status(), 'Subscriber is not unsubscribed.' );
@@ -125,9 +125,9 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertEquals( 'Unsubscribed from the newsletter', $last_activity, 'Activity was not updated.' );
 
         // Resubscribe them.
-        resubscribe_noptin_subscriber( $this->subscriber_id );
+        resubscribe_noptin_subscriber( self::$subscriber_id );
 
-        $subscriber = noptin_get_subscriber( $this->subscriber_id );
+        $subscriber = noptin_get_subscriber( self::$subscriber_id );
 
         // Check the the subscriber is active.
         $this->assertEquals( 'subscribed', $subscriber->get_status(), 'Subscriber is not subscribed.' );
@@ -136,39 +136,39 @@ class SubscriberTest extends WP_UnitTestCase {
     public function testNoptinSubscriberMeta() {
 
         // Fetch the subscriber.
-        $subscriber = noptin_get_subscriber($this->subscriber_id);
+        $subscriber = noptin_get_subscriber(self::$subscriber_id);
 
         // Add a meta to the subscriber.
         $subscriber->update_meta('meta_key', 'meta_value');
         $subscriber->save();
-        update_noptin_subscriber_meta($this->subscriber_id, 'meta_key_2', 'meta_value_2');
+        update_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2', 'meta_value_2');
 
         // Assert that the meta was added.
         $this->assertEquals('meta_value', $subscriber->get_meta('meta_key'));
-        $this->assertEquals('meta_value', get_noptin_subscriber_meta($this->subscriber_id, 'meta_key', true));
-        $this->assertEquals('meta_value_2', get_noptin_subscriber_meta($this->subscriber_id, 'meta_key_2', true));
+        $this->assertEquals('meta_value', get_noptin_subscriber_meta(self::$subscriber_id, 'meta_key', true));
+        $this->assertEquals('meta_value_2', get_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2', true));
 
         // Update the meta.
         $subscriber->update_meta('meta_key', 'new_meta_value');
-        update_noptin_subscriber_meta($this->subscriber_id, 'meta_key_2', 'new_meta_value_2');
+        update_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2', 'new_meta_value_2');
 
         // Assert that the meta was updated.
         $this->assertEquals('new_meta_value', $subscriber->get_meta('meta_key'));
-        $this->assertEquals('new_meta_value_2', get_noptin_subscriber_meta($this->subscriber_id, 'meta_key_2', true));
+        $this->assertEquals('new_meta_value_2', get_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2', true));
 
         // Delete the meta.
         $subscriber->remove_meta('meta_key');
-        delete_noptin_subscriber_meta($this->subscriber_id, 'meta_key_2');
+        delete_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2');
 
         // Assert that the meta was deleted.
         $this->assertNull($subscriber->get_meta('meta_key'), 'Subscriber meta was not deleted.');
-        $this->assertEmpty(get_noptin_subscriber_meta($this->subscriber_id, 'meta_key_2', true), 'Subscriber meta was not deleted.');
+        $this->assertEmpty(get_noptin_subscriber_meta(self::$subscriber_id, 'meta_key_2', true), 'Subscriber meta was not deleted.');
 
         // Delete all meta by key.
-        update_noptin_subscriber_meta( $this->subscriber_id, 'meta_key_3', 'meta_value_3' );
+        update_noptin_subscriber_meta( self::$subscriber_id, 'meta_key_3', 'meta_value_3' );
         delete_noptin_subscriber_meta_by_key( 'meta_key_3' );
 
-        $this->assertFalse( noptin_subscriber_meta_exists( $this->subscriber_id, 'meta_key_3' ), 'Subscriber meta was not deleted.' );
+        $this->assertFalse( noptin_subscriber_meta_exists( self::$subscriber_id, 'meta_key_3' ), 'Subscriber meta was not deleted.' );
     }
 
     public function testNoptinDoubleOptin() {
@@ -217,7 +217,7 @@ class SubscriberTest extends WP_UnitTestCase {
     }
 
     public function testQueryNoptinSubscribers() {
-        update_noptin_subscriber_meta($this->subscriber_id, 'meta_key', 'meta_value');
+        update_noptin_subscriber_meta(self::$subscriber_id, 'meta_key', 'meta_value');
 
         // Query subscribers.
         $subscribers = noptin_get_subscribers(
@@ -268,7 +268,7 @@ class SubscriberTest extends WP_UnitTestCase {
 
     public function testMiscNoptinSubscriber() {
         // Fetch the subscriber.
-        $subscriber = noptin_get_subscriber($this->subscriber_id);
+        $subscriber = noptin_get_subscriber(self::$subscriber_id);
 
         // Assert that the subscriber exists.
         $this->assertTrue(noptin_email_exists( 'lewis@noptin.com' ), 'Email should exist.');
