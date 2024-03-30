@@ -534,7 +534,7 @@ JS;
 				'campaign_type' => $edited_campaign->type,
 				'campaign_data' => array_merge(
 					$defaults,
-					$edited_campaign->options,
+					$edited_campaign->options
 				),
 			),
 		);

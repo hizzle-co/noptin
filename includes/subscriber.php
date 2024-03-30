@@ -432,14 +432,16 @@ function add_noptin_subscriber( $fields ) {
 		return 'An error occurred';
 	}
 
-	// Set cookie.
-	setcookie( 'noptin_email_subscribed', $subscriber->get_confirm_key(), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
-
 	$_GET['noptin_key'] = $subscriber->get_confirm_key();
 
-	$cookie = get_noptin_option( 'subscribers_cookie' );
-	if ( ! empty( $cookie ) && is_string( $cookie ) ) {
-		setcookie( $cookie, '1', time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+	// Set cookie.
+	if ( ! headers_sent() ) {
+		setcookie( 'noptin_email_subscribed', $subscriber->get_confirm_key(), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+
+		$cookie = get_noptin_option( 'subscribers_cookie' );
+		if ( ! empty( $cookie ) && is_string( $cookie ) ) {
+			setcookie( $cookie, '1', time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+		}
 	}
 
 	return $subscriber->get_id();
