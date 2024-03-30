@@ -16,7 +16,7 @@ jobs:
             MYSQL_ALLOW_EMPTY_PASSWORD: "true"
     strategy:
       matrix:
-        php-version: ['7.2', '8.2']
+        php-version: ['7.2'] # Add PHP 8.2 after figuring out how to use PHPUnit 9
         wordpress-version: ['6.4', 'latest']
     steps:
       - name: Checkout Repository
@@ -28,7 +28,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, zip, intl, pdo, pdo_mysql, curl, xml, xmlrpc, gd, exif, opcache, bcmath, soap, sockets, mysqli, json, iconv, phar, posix, pcntl, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo,
-          tools: composer, phpunit:9.6.18, wp-cli, phpcs, phpcbf, phpunit-polyfills
+          tools: composer, phpunit, wp-cli, phpcs, phpcbf, phpunit-polyfills
           coverage: xdebug
 
       - name: Check MySQL connection
