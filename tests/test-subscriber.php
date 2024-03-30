@@ -28,13 +28,6 @@ class SubscriberTest extends WP_UnitTestCase {
         );
     }
 
-    public static function wpTearDownAfterClass(){
-        echo 'Tearing down';
-
-        // Delete the test subscriber.
-        delete_noptin_subscriber(self::$subscriber_id);
-    }
-
     public function testCreateNoptinSubscriber() {
         // If subscriber id is a string, it means that the subscriber was not created.
         $this->assertIsInt(self::$subscriber_id, self::$subscriber_id);
