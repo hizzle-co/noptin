@@ -714,6 +714,16 @@ class Record {
 	 * @param mixed $value meta value.
 	 */
 	public function update_meta( $meta_key, $value ) {
+		$collection = $this->get_collection();
+
+		if ( $collection->use_meta_table ) {
+			if ( $this->exists() ) {
+				$collection->update_record_meta( $this->get_id(), $meta_key, $value );
+			}
+
+			return;
+		}
+
 		$metadata = $this->get_metadata();
 
 		if ( null === $value ) {
@@ -732,6 +742,16 @@ class Record {
 	 * @param string $meta_key meta key.
 	 */
 	public function remove_meta( $meta_key ) {
+		$collection = $this->get_collection();
+
+		if ( $collection->use_meta_table ) {
+			if ( $this->exists() ) {
+				$collection->delete_record_meta( $this->get_id(), $meta_key );
+			}
+
+			return;
+		}
+
 		$metadata = $this->get_metadata();
 		unset( $metadata[ $meta_key ] );
 		$this->set_metadata( $metadata );
@@ -759,6 +779,16 @@ class Record {
 	 * @return mixed
 	 */
 	public function get_meta( $meta_key, $default = null ) {
+		$collection = $this->get_collection();
+
+		if ( $collection->use_meta_table ) {
+			if ( $this->exists() ) {
+				return $collection->get_record_meta( $this->get_id(), $meta_key, true );
+			}
+
+			return $default;
+		}
+
 		$metadata = $this->get_metadata();
 
 		if ( isset( $metadata[ $meta_key ] ) ) {

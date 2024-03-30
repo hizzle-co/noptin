@@ -45,7 +45,7 @@ class Collection {
 	 *
 	 * @var bool
 	 */
-	protected $use_meta_table = false;
+	public $use_meta_table = false;
 
 	/**
 	 * CRUD class. Should extend Record.
@@ -1508,7 +1508,7 @@ class Collection {
 		}
 
 		foreach ( $this->get_cache_keys() as $key ) {
-			if ( isset( $record[ $key ] ) ) {
+			if ( isset( $record[ $key ] ) && ! empty( $record[ $key ] ) ) {
 				wp_cache_set( $record[ $key ], $record['id'], $this->hook_prefix( 'ids_by_' . $key, true ), WEEK_IN_SECONDS );
 			}
 		}
