@@ -217,22 +217,7 @@ class Main {
 			return new \WP_Error( 'noptin_invalid_level', 'Invalid membership level.' );
 		}
 
-		$custom_level = array(
-			'user_id'         => $user->ID,
-			'membership_id'   => $level->id,
-			'code_id'         => 0,
-			'initial_payment' => $level->initial_payment,
-			'billing_amount'  => $level->billing_amount,
-			'cycle_number'    => $level->cycle_number,
-			'cycle_period'    => $level->cycle_period,
-			'billing_limit'   => $level->billing_limit,
-			'trial_amount'    => $level->trial_amount,
-			'trial_limit'     => $level->trial_limit,
-			'startdate'       => current_time( 'mysql' ),
-			'enddate'         => '0000-00-00 00:00:00',
-		);
-
-		if ( ! pmpro_changeMembershipLevel( $custom_level, $user->ID, 'changed' ) && ! empty( $GLOBALS['pmpro_error'] ) ) {
+		if ( ! pmpro_changeMembershipLevel( $level->id, $user->ID, 'changed' ) && ! empty( $GLOBALS['pmpro_error'] ) ) {
 			return new \WP_Error( 'noptin_pmpro_error', $GLOBALS['pmpro_error'] );
 		}
 	}
