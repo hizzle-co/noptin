@@ -227,15 +227,12 @@ class SubscriberTest extends WP_UnitTestCase {
             )
         );
 
-        foreach ( $subscribers as $subscriber ) {
-            echo ' ' . $subscriber->get_id() . ' ' . $subscriber->get_email();
-        }
 
         // Assert that we have one subscriber.
         $this->assertCount(1, $subscribers);
 
         // Fetch the subscriber.
-        $subscriber = current( $subscribers[0] );
+        $subscriber = current( $subscribers );
 
         // Assert that the subscriber's email is correct.
         $this->assertEquals( 'brian@noptin.com', $subscriber->get_email() );
