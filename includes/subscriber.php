@@ -461,7 +461,16 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array() ) {
 	$subscriber = noptin_get_subscriber( $subscriber_id );
 
 	if ( ! $subscriber->exists() ) {
-		return false;
+		return new \WP_Error( 'noptin_invalid_subscriber', 'Invalid subscriber' );
+	}
+
+	// If we're updating an email, make sure it is unique.
+	if ( ! empty( $to_update['email'] ) ) {
+		$existing = get_noptin_subscriber_id_by_email( $to_update['email'] );
+
+		if ( $existing && $existing !== $subscriber->get_id() ) {
+			return new \WP_Error( 'noptin_email_exists', 'Email already exists' );
+		}
 	}
 
 	// Set the subscriber properties.
@@ -660,7 +669,7 @@ function get_noptin_subscriber_by_email( $email ) {
  * @return int|null
  */
 function get_noptin_subscriber_id_by_email( $email ) {
-	return noptin()->db()->get_id_by_prop( 'email', $email, 'subscribers' );
+	return noptin()->db()->get_id_by_prop( 'email', sanitize_email( $email ), 'subscribers' );
 }
 
 /**
