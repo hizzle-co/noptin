@@ -514,7 +514,7 @@ function deactivate_noptin_subscriber( $subscriber ) {
  * @access public
  * @since  3.0.0
  */
-function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $campaign_id, $callback ) {
+function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $campaign_id = 0, $callback = false ) {
 
 	if ( empty( $subscriber_id_or_email ) ) {
 		return;

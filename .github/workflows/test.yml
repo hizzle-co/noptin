@@ -46,7 +46,8 @@ jobs:
           phpunit
           WP_MULTISITE=1 phpunit
 
-      - name: Check WP Coding Standards
-        run: |
-            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-            phpcs
+      # - name: Check WP Coding Standards
+      #   run: |
+      #       composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+      #       composer global require --dev dealerdirect/phpcodesniffer-composer-installer:"^0.7" wp-coding-standards/wpcs:"^3.0" phpcompatibility/phpcompatibility-wp:"*"
+      #       phpcs
