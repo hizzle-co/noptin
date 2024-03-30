@@ -228,7 +228,7 @@ class SubscriberTest extends WP_UnitTestCase {
         );
 
         foreach ( $subscribers as $subscriber ) {
-            echo $subscriber->get_email();
+            echo ' ' . $subscriber->get_id() . ' ' . $subscriber->get_email();
         }
 
         // Assert that we have one subscriber.
