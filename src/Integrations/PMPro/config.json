@@ -2,10 +2,6 @@
     "label": "Paid Memberships Pro",
     "slug": "paid-memberships-pro",
     "requires": {
-        "plugin_version": {
-            "label": "Paid Memberships Pro",
-            "constant": "PMPRO_VERSION",
-            "version": "3.0.0"
-        }
+        "constant": "PMPRO_VERSION"
     }
 }

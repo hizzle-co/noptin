@@ -37,12 +37,8 @@ jobs:
       - name: Setup Environment Variables
         run: |
           echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $HOME/.bashrc
-          echo "export WP_TESTS_PHPUNIT_POLYFILLS_PATH=$HOME/.composer/vendor/yoast/phpunit-polyfills" >> $HOME/.bashrc
+          echo "WP_TESTS_PHPUNIT_POLYFILLS_PATH=$HOME/.composer/vendor/yoast/phpunit-polyfills" >> $GITHUB_ENV
           source $HOME/.bashrc
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install subversion
 
       - name: Run Tests on ${{ matrix.wordpress-version }}
         run: |
