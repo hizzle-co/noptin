@@ -193,6 +193,7 @@ function get_noptin_email_senders( $full = false ) {
 				),
 				'is_active'    => true,
 				'is_installed' => true,
+				'is_local'     => true,
 			),
 
 			'woocommerce_customers' => array(
@@ -201,6 +202,7 @@ function get_noptin_email_senders( $full = false ) {
 				'image'        => 'https://noptin.com/wp-content/uploads/2023/04/woocommerce-badge-64x64.png',
 				'is_active'    => function_exists( 'WC' ),
 				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ) || class_exists( '\Hizzle\Noptin\Integrations\WooCommerce\Premium\Email_Sender' ),
+				'is_local'     => true,
 			),
 
 			'wp_users'              => array(
@@ -212,6 +214,7 @@ function get_noptin_email_senders( $full = false ) {
 				),
 				'is_active'    => true,
 				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
+				'is_local'     => true,
 			),
 
 		)

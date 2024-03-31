@@ -157,6 +157,11 @@ class Email_Sender_Subscribers extends Email_Sender {
 		$options = $campaign->get( 'noptin_subscriber_options' );
 		$options = is_array( $options ) ? $options : array();
 
+		// Apply generic filter.
+		if ( ! apply_filters( 'noptin_can_email_recipient_for_bulk_campaign', true, $subscriber->get_email(), $options, $campaign ) ) {
+			return false;
+		}
+
 		return apply_filters( 'noptin_subscribers_can_email_subscriber_for_campaign', true, $options, $subscriber, $campaign );
 	}
 
