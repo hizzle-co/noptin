@@ -124,17 +124,6 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		// Get the parent smart tags.
 		$smart_tags = array();
 
-		// Add logged in user info.
-		$smart_tags['current_user_email'] = array(
-			'description'       => __( "Logged in user's email", 'newsletter-optin-box' ),
-			'conditional_logic' => 'string',
-		);
-
-		$smart_tags['current_user_name'] = array(
-			'description'       => __( "Logged in user's name", 'newsletter-optin-box' ),
-			'conditional_logic' => 'string',
-		);
-
 		// Loop through each form and add its fields.
 		foreach ( $this->get_forms() as $form_id => $form ) {
 
@@ -164,6 +153,17 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 				$smart_tags[ $key ]['conditions'][0]['value'][] = $form_id;
 			}
 		}
+
+		// Add logged in user info.
+		$smart_tags['current_user_email'] = array(
+			'description'       => __( "Logged in user's email", 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
+		);
+
+		$smart_tags['current_user_name'] = array(
+			'description'       => __( "Logged in user's name", 'newsletter-optin-box' ),
+			'conditional_logic' => 'string',
+		);
 
 		return array_replace( $smart_tags, parent::get_known_smart_tags() );
     }

@@ -1,0 +1,7 @@
+{
+    "label": "Fluent Forms",
+    "slug": "fluent-forms",
+    "requires": {
+        "class": "\\FluentForm\\App\\Modules\\Form\\FormHandler"
+    }
+}
