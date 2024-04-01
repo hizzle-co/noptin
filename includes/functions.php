@@ -2031,7 +2031,7 @@ function noptin_sort_by_time_key( $a, $b ) {
  */
 function noptin_sanitize_merge_tag( $tag ) {
 	$sanitized_key = strtolower( $tag );
-	return preg_replace( '/[^a-z0-9_\-\.]/', '', $sanitized_key );
+	return preg_replace( '/[^a-z0-9_\/\-\.]/', '', $sanitized_key );
 }
 
 /**

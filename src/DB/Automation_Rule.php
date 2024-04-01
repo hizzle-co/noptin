@@ -487,6 +487,14 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return bool|\WP_Error
 	 */
 	public function maybe_run( $subject, $trigger, $action, $args ) {
+
+		// Check if the rule is valid.
+		if ( ! $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
+			log_noptin_message( 'Automation rule trigger "' . $trigger->get_name() . '" not valid for args.' );
+
+			return false;
+		}
+
 		// Are we delaying the action?
 		$delay = $this->get_delay();
 
@@ -503,19 +511,15 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			}
 
 			return ! empty( $result );
-		} elseif ( $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
-			$result = $action->maybe_run( $subject, $this, $args );
-
-			if ( is_wp_error( $result ) || false === $result ) {
-				return $result;
-			}
-
-			return true;
-		} else {
-			log_noptin_message( 'Automation rule trigger "' . $trigger->get_name() . '" not valid for args.' );
 		}
 
-		return false;
+		$result = $action->maybe_run( $subject, $this, $args );
+
+		if ( is_wp_error( $result ) || false === $result ) {
+			return $result;
+		}
+
+		return true;
 	}
 
 	/**

@@ -191,7 +191,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 
 			// Add home_url to the referrer if it's empty.
 			if ( '_wp_http_referer' === $key ) {
-				$value = esc_url( 0 === strpos( $value, home_url() ) ? $value : home_url( $value ) );
+				$value = 0 === strpos( $value, 'http' ) ? $value : home_url( $value );
 			}
 
 			if ( ! empty( $parent_key ) ) {

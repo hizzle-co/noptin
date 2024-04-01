@@ -23,7 +23,6 @@ class Noptin_Integrations {
 		// Load integrations.
 		$integrations = array(
 			'nf_init'            => 'load_ninja_forms_integration',
-			'wpcf7_init'         => 'load_contact_form_7_integration',
 			'elementor_pro/init' => 'load_elementor_forms_integration',
 			'gform_loaded'       => 'load_gravity_forms_integration',
 			'wpml_loaded'        => 'load_wpml_integration',
@@ -196,16 +195,6 @@ class Noptin_Integrations {
 		if ( class_exists( 'GFAddOn' ) ) {
 			GFAddOn::register( 'Noptin_Gravity_Forms' );
 		}
-	}
-
-	/**
-	 * Loads Contact Form 7 integration
-	 *
-	 * @access      public
-	 * @since       1.3.3
-	 */
-	public function load_contact_form_7_integration() {
-		new Noptin_Contact_Form_7();
 	}
 
 	/**

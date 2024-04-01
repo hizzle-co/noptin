@@ -48,11 +48,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return sprintf(
-			// translators: %s is the form provider.
-			__( '%s > Form Submitted', 'newsletter-optin-box' ),
-			$this->category
-		);
+		return __( 'Form Submitted', 'newsletter-optin-box' );
 	}
 
 	/**
@@ -122,19 +118,25 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
     public function get_known_smart_tags() {
 
 		// Get the parent smart tags.
-		$smart_tags = array();
+		$smart_tags      = array();
+		$current_form_id = empty( $GLOBALS[ $this->get_id() ] ) ? null : $GLOBALS[ $this->get_id() ];
 
 		// Loop through each form and add its fields.
 		foreach ( $this->get_forms() as $form_id => $form ) {
+			if ( ! empty( $current_form_id ) && strval( $current_form_id ) !== strval( $form_id ) ) {
+				continue;
+			}
 
 			// Add the form fields.
 			foreach ( $form['fields'] as $key => $field ) {
 
 				// Sanitize the key.
-				$key = noptin_sanitize_merge_tag( $key );
+				$prefixed = noptin_sanitize_merge_tag( "form_{$form_id}.{$key}" );
+				$key      = noptin_sanitize_merge_tag( $key );
 
-				$field['example']    = $key;
+				$field['example']    = $prefixed;
 				$field['group']      = $form['name'];
+				$field['deprecated'] = $key;
 				$field['conditions'] = array(
 					array(
 						'key'      => 'trigger_form',
@@ -144,14 +146,29 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 				);
 
 				// Add the field as a smart tag.
-				if ( ! isset( $smart_tags[ $key ] ) ) {
-					$smart_tags[ $key ] = $field;
+				if ( ! isset( $smart_tags[ $prefixed ] ) ) {
+					$smart_tags[ $prefixed ] = $field;
 					continue;
 				}
 
 				// Merge the conditions.
-				$smart_tags[ $key ]['conditions'][0]['value'][] = $form_id;
+				$smart_tags[ $prefixed ]['conditions'][0]['value'][] = $form_id;
 			}
+		}
+
+		// Add source if not already added.
+		if ( ! isset( $smart_tags['source'] ) ) {
+			$smart_tags['source'] = array(
+				'description'       => 'Source',
+				'conditional_logic' => 'string',
+			);
+		}
+
+		if ( ! isset( $smart_tags['form'] ) ) {
+			$smart_tags['source'] = array(
+				'description'       => 'Form ID',
+				'conditional_logic' => 'string',
+			);
 		}
 
 		// Add logged in user info.
@@ -199,9 +216,19 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	 * @since 1.10.1
 	 */
 	public function init_trigger( $form_id, $posted ) {
+		$GLOBALS[ $this->get_id() ] = $form_id;
 
-		$posted         = is_array( $posted ) ? $posted : array();
-		$posted['form'] = $form_id;
+		$posted = is_array( $posted ) ? $posted : array();
+
+		// Prefix the form id.
+		foreach ( $posted as $key => $value ) {
+			$posted[ noptin_sanitize_merge_tag( "form_{$form_id}.{$key}" ) ] = $value;
+			unset( $posted[ $key ] );
+		}
+
+		if ( empty( $posted['form'] ) ) {
+			$posted['form'] = $form_id;
+		}
 
 		if ( empty( $posted['source'] ) ) {
 			$posted['source'] = $this->category;
@@ -212,23 +239,19 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		$posted['current_user_email'] = $current_user->user_email;
 		$posted['current_user_name']  = $current_user->display_name;
 
-		// Sanitize the array keys.
-		$posted = array_combine(
-			array_map( 'noptin_sanitize_merge_tag', array_keys( $posted ) ),
-			array_values( $posted )
-		);
-
 		$prepared = array();
 
 		foreach ( $posted as $key => $value ) {
-
 			if ( is_array( $value ) ) {
-
 				if ( ! is_scalar( current( $value ) ) ) {
 					$value = wp_json_encode( $value );
 				} else {
 					$value = implode( ', ', $value );
 				}
+			}
+
+			if ( "form_{$form_id}.email" === $key ) {
+				$prepared['email'] = sanitize_email( $value );
 			}
 
 			if ( is_email( $value ) && empty( $prepared['email'] ) ) {
@@ -248,44 +271,29 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 			return;
 		}
 
-		$this->trigger( $current_user, $prepared );
+		$this->trigger( $prepared['email'], $prepared );
 	}
 
 	/**
-     * Triggers action callbacks.
-     *
-     * @since 1.10.1
-     * @param mixed $subject The subject.
-     * @param array $args Extra arguments passed to the action.
-     * @return void
-     */
-    public function trigger( $subject, $args ) {
+	 * Checks if conditional logic if met.
+	 *
+	 * @since 1.2.8
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The rule to check for.
+	 * @param mixed $args Extra args for the action.
+	 * @param mixed $subject The subject.
+	 * @param Noptin_Abstract_Action $action The action to run.
+	 * @return bool
+	 */
+	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
 
-		if ( isset( $args['subject'] ) ) {
-			$args['subject_orig'] = $args['subject'];
+		// Prepare the rule.
+		$trigger_form = $rule->get_trigger_setting( 'trigger_form' );
+
+		// Abort if the forms don't match.
+		if ( empty( $args['form'] ) || empty( $trigger_form ) || strval( $trigger_form ) !== strval( $args['form'] ) ) {
+			return false;
 		}
 
-        $args['subject'] = $subject;
-
-        $args = apply_filters( 'noptin_automation_trigger_args', $args, $this );
-
-        $args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
-
-        foreach ( $this->get_rules() as $rule ) {
-
-            // Retrieve the action.
-			$action = $rule->get_action();
-			if ( empty( $action ) ) {
-				continue;
-			}
-
-            // Prepare the rule.
-			$trigger_form = $rule->get_trigger_setting( 'trigger_form' );
-
-			// Abort if the forms don't match.
-			if ( ! empty( $trigger_form ) && strval( $trigger_form ) === strval( $args['form'] ) ) {
-				$rule->maybe_run( $args['email'], $this, $action, $args );
-			}
-        }
-    }
+		return parent::is_rule_valid_for_args( $rule, $args, $subject, $action );
+	}
 }

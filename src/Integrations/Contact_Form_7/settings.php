@@ -5,7 +5,7 @@
 	/**
 	 * Returns an array of form tags.
 	 *
-	 * @param WPCF7_ContactForm $contact_form The contact form being edited.
+	 * @param \WPCF7_ContactForm $contact_form The contact form being edited.
 	 * @param string $field_type The field type being mapped.
 	 * @return array
 	 */
@@ -28,7 +28,7 @@
 		);
 	}
 
-	$mapped_fields     = isset( $settings['custom_fields'] ) ? $settings['custom_fields'] : array();
+	$mapped_fields = isset( $settings['custom_fields'] ) ? $settings['custom_fields'] : array();
 
 ?>
 
