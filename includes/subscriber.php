@@ -1295,7 +1295,6 @@ function get_editable_noptin_subscriber_fields() {
 	$collection = noptin()->db()->store->get( 'subscribers' );
 
 	if ( ! empty( $collection ) ) {
-
 		foreach ( $collection->get_props() as $prop ) {
 
 			// Skip activity and sent_campaigns.

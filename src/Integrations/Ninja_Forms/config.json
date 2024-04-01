@@ -1,0 +1,7 @@
+{
+    "label": "Ninja Forms",
+    "slug": "ninja-forms",
+    "requires": {
+        "class": "Ninja_Forms"
+    }
+}

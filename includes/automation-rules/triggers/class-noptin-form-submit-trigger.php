@@ -165,7 +165,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		}
 
 		if ( ! isset( $smart_tags['form'] ) ) {
-			$smart_tags['source'] = array(
+			$smart_tags['form'] = array(
 				'description'       => 'Form ID',
 				'conditional_logic' => 'string',
 			);
