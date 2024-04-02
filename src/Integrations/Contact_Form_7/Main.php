@@ -29,11 +29,14 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 
 		parent::__construct();
 
-		// Register our custom panel.
-		add_filter( 'wpcf7_editor_panels', array( $this, 'add_panel' ) );
+		// Custom action.
+		if ( function_exists( 'add_noptin_subscriber' ) ) {
+			// Register our custom panel.
+			add_filter( 'wpcf7_editor_panels', array( $this, 'add_panel' ) );
 
-		// Save panel settings.
-		add_action( 'wpcf7_after_save', array( $this, 'save_settings' ) );
+			// Save panel settings.
+			add_action( 'wpcf7_after_save', array( $this, 'save_settings' ) );
+		}
 
 		// Process form submission.
 		add_action( 'wpcf7_submit', array( $this, 'process_form' ), 10, 2 );

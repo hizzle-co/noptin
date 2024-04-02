@@ -1899,7 +1899,7 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array() ) {
 
 	// Abort if no conditional logic is set.
-	if ( empty( $conditional_logic['enabled'] ) ) {
+	if ( empty( $conditional_logic['enabled'] ) || empty( $conditional_logic['rules'] ) ) {
 		return array();
 	}
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace Hizzle\Noptin\Integrations\Elementor;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -9,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.3.2
  */
 
-class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Classes\Action_Base {
+class Action extends \ElementorPro\Modules\Forms\Classes\Action_Base {
 
 	/**
 	 * Get Name
@@ -51,7 +53,7 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		// Prepare subscriber.
 		$subscriber = $this->map_fields( $record );
 
-		//  Make sure that we have an email field.
+		// Make sure that we have an email field.
 		if ( empty( $subscriber['email'] ) ) {
 			return;
 		}
@@ -76,6 +78,10 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		// Retrieve form settings.
 		$settings = $record->get( 'form_settings' );
 
+		if ( empty( $settings['noptin_fields_map'] ) ) {
+			return array();
+		}
+
 		// Get submitetd Form data.
 		$fields = $record->get( 'fields' );
 
@@ -94,12 +100,29 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 			$subscriber['ip_address'] = $address;
 		}
 
+		$has_accepted = true;
+
 		foreach ( $settings['noptin_fields_map'] as $map_item ) {
+
+			// Abort if not mapped.
+			if ( empty( $map_item['local_id'] ) ) {
+				continue;
+			}
+
+			// Acceptance field.
+			if ( 'GDPR_consent' === $map_item['remote_id'] && ( empty( $fields[ $map_item['local_id'] ]['value'] ) || 'on' !== $fields[ $map_item['local_id'] ]['value'] ) ) {
+				$has_accepted = false;
+			}
+
 			if ( empty( $fields[ $map_item['local_id'] ]['value'] ) ) {
 				continue;
 			}
 
 			$subscriber[ $map_item['remote_id'] ] = $fields[ $map_item['local_id'] ]['value'];
+		}
+
+		if ( ! $has_accepted ) {
+			unset( $subscriber['email'] );
 		}
 
 		return $subscriber;
@@ -128,31 +151,6 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		$map_fields = array(
 
 			array(
-				'remote_id'    => 'first_name',
-				'remote_label' => __( 'First Name', 'newsletter-optin-box' ),
-				'remote_type'  => 'text',
-			),
-
-			array(
-				'remote_id'    => 'last_name',
-				'remote_label' => __( 'Last Name', 'newsletter-optin-box' ),
-				'remote_type'  => 'text',
-			),
-
-			array(
-				'remote_id'    => 'name',
-				'remote_label' => __( 'Full Name', 'newsletter-optin-box' ),
-				'remote_type'  => 'text',
-			),
-
-			array(
-				'remote_id'       => 'email',
-				'remote_label'    => __( 'Email', 'newsletter-optin-box' ),
-				'remote_type'     => 'email',
-				'remote_required' => true,
-			),
-
-			array(
 				'remote_id'    => 'GDPR_consent',
 				'remote_label' => __( 'GDPR Consent', 'newsletter-optin-box' ),
 				'remote_type'  => 'acceptance',
@@ -160,15 +158,14 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 
 		);
 
-		foreach ( get_noptin_custom_fields() as $custom_field ) {
+		foreach ( get_editable_noptin_subscriber_fields() as $key => $field ) {
 
-            if ( ! $custom_field['predefined'] ) {
-				$map_fields[] = array(
-					'remote_id'    => $custom_field['merge_tag'],
-					'remote_label' => $custom_field['label'],
-					'remote_type'  => $custom_field['type'],
-				);
-            }
+			$map_fields[] = array(
+				'remote_id'       => $key,
+				'remote_label'    => empty( $field['label'] ) ? $field['description'] : $field['label'],
+				'remote_type'     => 'email' === $key ? 'email' : 'text',
+				'remote_required' => 'email' === $key,
+			);
 		}
 
 		// Map Fields.
@@ -176,18 +173,18 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 			'noptin_fields_map',
 			array(
 				'label'     => __( 'Field Mapping', 'newsletter-optin-box' ),
-				'type'      => ElementorPro\Modules\Forms\Controls\Fields_Map::CONTROL_TYPE,
+				'type'      => \ElementorPro\Modules\Forms\Controls\Fields_Map::CONTROL_TYPE,
 				'separator' => 'before',
 				'fields'    => array(
 
 					array(
 						'name' => 'remote_id',
-						'type' => Elementor\Controls_Manager::HIDDEN,
+						'type' => \Elementor\Controls_Manager::HIDDEN,
 					),
 
 					array(
 						'name' => 'local_id',
-						'type' => Elementor\Controls_Manager::SELECT,
+						'type' => \Elementor\Controls_Manager::SELECT,
 					),
 
 				),
@@ -199,14 +196,13 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		do_action( 'noptin_elementor_forms_integration_settings', $widget, $this );
 
 		$widget->end_controls_section();
-
 	}
 
 	/**
 	 * On Export
 	 *
 	 * Clears form settings on export
-	 * @access Public
+	 * @access public
 	 * @param array $element
 	 */
 	public function on_export( $element ) {
@@ -214,7 +210,5 @@ class Noptin_Elementor_Forms_Integration extends \ElementorPro\Modules\Forms\Cla
 		unset( $element['noptin_fields_map'] );
 		$element = apply_filters( 'noptin_elementor_forms_on_export', $element );
 		return $element;
-
 	}
-
 }

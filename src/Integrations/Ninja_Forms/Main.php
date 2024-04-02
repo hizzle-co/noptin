@@ -116,6 +116,12 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 	 * @since 1.5.5
 	 */
 	public function register_action() {
+
+		// Custom action.
+		if ( ! function_exists( 'add_noptin_subscriber' ) ) {
+			return;
+		}
+
 		$ninja_forms                    = \Ninja_Forms::instance();
 		$ninja_forms->actions['noptin'] = new Action();
 	}

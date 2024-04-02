@@ -22,7 +22,6 @@ class Noptin_Integrations {
 
 		// Load integrations.
 		$integrations = array(
-			'elementor_pro/init' => 'load_elementor_forms_integration',
 			'gform_loaded'       => 'load_gravity_forms_integration',
 			'wpml_loaded'        => 'load_wpml_integration',
 			'pll_init'           => 'load_polylang_integration',
@@ -96,31 +95,6 @@ class Noptin_Integrations {
 		if ( class_exists( 'GFAddOn' ) ) {
 			GFAddOn::register( 'Noptin_Gravity_Forms' );
 		}
-	}
-
-	/**
-	 * Loads Elementor forms integration
-	 *
-	 * @access      public
-	 * @since       1.3.2
-	 */
-	public function load_elementor_forms_integration() {
-
-		// Ensure the elementor pro class exists.
-		if ( ! class_exists( '\ElementorPro\Plugin' ) ) {
-			return;
-		}
-
-		// Register the automation rule.
-		$this->integrations['elementor'] = new Noptin_Elementor_Forms();
-
-		// Instantiate the action class
-		$action = new Noptin_Elementor_Forms_Integration();
-
-		// Register the action with form widget
-		/** @var \ElementorPro\Modules\Forms\Module $forms */
-		$forms = \ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' );
-		$forms->actions_registrar->register( $action, $action->get_name() );
 	}
 
 	/**

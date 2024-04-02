@@ -44,7 +44,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		parent::__construct();
 
 		// Process form submission.
-        add_action( 'wpforms_process_complete', array( $this, 'process_form' ), 10, 4 );
+		add_action( 'wpforms_process_complete', array( $this, 'process_form' ), 10, 4 );
 
 		// Custom action.
 		if ( function_exists( 'add_noptin_subscriber' ) ) {
@@ -93,24 +93,24 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 	}
 
 	/**
-     * Prepares form fields.
-     *
-     * @param array[] $fields The form fields.
-     * @return array
-     */
-    private function prepare_fields( $fields ) {
+	 * Prepares form fields.
+	 *
+	 * @param array[] $fields The form fields.
+	 * @return array
+	 */
+	private function prepare_fields( $fields ) {
 
-        $prepared_fields      = array();
+		$prepared_fields      = array();
 		$form_fields_disallow = array( 'divider', 'html', 'pagebreak', 'captcha' );
 
-        // Loop through all fields.
-        foreach ( $fields as $wpforms_field ) {
+		// Loop through all fields.
+		foreach ( $fields as $wpforms_field ) {
 
-            if ( in_array( $wpforms_field['type'], $form_fields_disallow, true ) ) {
+			if ( in_array( $wpforms_field['type'], $form_fields_disallow, true ) ) {
 				continue;
 			}
 
-            $key = sanitize_title( $wpforms_field['label'] );
+			$key = sanitize_title( $wpforms_field['label'] );
 
 			$prepared_fields[ $key ] = array(
 				'description'       => $wpforms_field['label'],
@@ -150,10 +150,10 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 					'conditional_logic' => 'string',
 				);
 			}
-        }
+		}
 
-        return $prepared_fields;
-    }
+		return $prepared_fields;
+	}
 
 	/**
 	 * Process form submissions.
@@ -163,7 +163,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 	 * @param array  $form_data Form data and settings.
 	 * @param int    $entry_id  Saved entry id.
 	 */
-    public function process_form( $fields, $entry, $form_data, $entry_id ) {
+	public function process_form( $fields, $entry, $form_data, $entry_id ) {
 
 		$posted = array();
 		$skip   = array( 'name', 'value', 'value_raw', 'id', 'type' );
@@ -255,48 +255,48 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 								)
 							);
 
-							foreach ( get_editable_noptin_subscriber_fields() as $key => $field ) {
+						foreach ( get_editable_noptin_subscriber_fields() as $key => $field ) {
 
-								wpforms_panel_field(
-									'select',
-									'settings',
-									'noptin_field_' . $key,
-									$instance->form_data,
-									empty( $field['label'] ) ? $field['description'] : $field['label'],
-									array(
-										'field_map'   => array(
-											'address',
-											'checkbox',
-											'date-time',
-											'email',
-											'file-upload',
-											'gdpr-checkbox',
-											'hidden',
-											'likert_scale',
-											'name',
-											'net_promoter_score',
-											'number',
-											'number-slider',
-											'payment-checkbox',
-											'payment-multiple',
-											'payment-select',
-											'payment-single',
-											'payment-total',
-											'phone',
-											'radio',
-											'rating',
-											'richtext',
-											'select',
-											'signature',
-											'text',
-											'textarea',
-											'url',
-										),
-										'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
-										'tooltip'     => ! empty( $field['label'] ) && $field['description'] !== $field['label'] ? $field['description'] : '',
-									)
-								);
-							}
+							wpforms_panel_field(
+								'select',
+								'settings',
+								'noptin_field_' . $key,
+								$instance->form_data,
+								empty( $field['label'] ) ? $field['description'] : $field['label'],
+								array(
+									'field_map'   => array(
+										'address',
+										'checkbox',
+										'date-time',
+										'email',
+										'file-upload',
+										'gdpr-checkbox',
+										'hidden',
+										'likert_scale',
+										'name',
+										'net_promoter_score',
+										'number',
+										'number-slider',
+										'payment-checkbox',
+										'payment-multiple',
+										'payment-select',
+										'payment-single',
+										'payment-total',
+										'phone',
+										'radio',
+										'rating',
+										'richtext',
+										'select',
+										'signature',
+										'text',
+										'textarea',
+										'url',
+									),
+									'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
+									'tooltip'     => ! empty( $field['label'] ) && $field['description'] !== $field['label'] ? $field['description'] : '',
+								)
+							);
+						}
 						?>
 					</div>
 				</div>
@@ -306,7 +306,6 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		</div>
 
 		<?php
-
 	}
 
 	/**

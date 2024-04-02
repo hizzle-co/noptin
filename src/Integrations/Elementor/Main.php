@@ -1,70 +1,49 @@
 <?php
 
+namespace Hizzle\Noptin\Integrations\Elementor;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Handles integrations with Elementor Forms
+ * Handles integrations with Elementor.
  *
- * @since 1.13.3
+ * @since 2.1.0
  */
-class Noptin_Elementor_Forms {
+class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 
-	public $ignore_fields = array( 'step', 'recaptcha', 'recaptcha_v3', 'honeypot', 'html' );
+	/**
+	 * @var string
+	 */
+	public $slug = 'elementor';
+
+	/**
+	 * @var string
+	 */
+	public $name = 'Elementor';
+
+	private $ignore_fields = array( 'step', 'recaptcha', 'recaptcha_v3', 'honeypot', 'html' );
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 
-		// Save subscriber.
-        add_action( 'elementor_pro/forms/new_record', array( $this, 'process_form' ) );
+		parent::__construct();
 
-		// Load automation rule.
-		if ( did_action( 'noptin_automation_rules_load' ) ) {
-			$this->load_automation_rule( noptin()->automation_rules );
-		} else {
-			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rule' ) );
-		}
+		// Process submission.
+		add_action( 'elementor_pro/forms/new_record', array( $this, 'process_form' ) );
 
-		add_filter( 'noptin_elementor_forms', array( $this, 'filter_forms' ) );
+		// Register form action.
+		add_action( 'elementor_pro/init', array( $this, 'register_form_action' ) );
 	}
 
 	/**
-	 * Loads our automation rule.
+	 * Retrieves all forms.
 	 *
-	 * @param Noptin_Automation_Rules $rules The automation rules instance.
-	 */
-	public function load_automation_rule( $rules ) {
-		$rules->add_trigger( new Noptin_Form_Submit_Trigger( 'elementor', 'Elementor' ) );
-	}
-
-	/**
-	 * Filters forms.
-	 *
-	 * @param array $forms An array of forms.
 	 * @return array
 	 */
-	public function filter_forms( $forms ) {
-		global $noptin_elementor_forms;
-
-		// Return cached forms.
-		if ( is_array( $noptin_elementor_forms ) ) {
-			return array_replace( $forms, $noptin_elementor_forms );
-		}
-
-		$noptin_elementor_forms = $this->get_forms();
-
-		return array_replace( $forms, $noptin_elementor_forms );
-	}
-
-	/**
-	 * Fetch all forms.
-	 *
-	 * @param array $forms An array of forms.
-	 * @return array
-	 */
-	public function get_forms() {
+	protected function get_forms() {
 
 		$forms           = array();
 		$elementor_posts = get_posts(
@@ -90,9 +69,9 @@ class Noptin_Elementor_Forms {
 	/**
 	 * Retrieves all inner forms from a given element.
 	 *
-     * @param array $elements An array of elements.
-     */
-	protected function get_all_inner_forms( $elements ) {
+	 * @param array $elements An array of elements.
+	 */
+	private function get_all_inner_forms( $elements ) {
 		$forms = array();
 
 		// Abort if no elements are found.
@@ -128,34 +107,14 @@ class Noptin_Elementor_Forms {
 	}
 
 	/**
-     * @param ElementorPro\Modules\Forms\Classes\Form_Record $record The submitted record.
-     */
-    public function process_form( $record ) {
+	 * Prepares form fields.
+	 *
+	 * @param object[] $fields The form fields.
+	 * @return array
+	 */
+	public function prepare_noptin_automation_rule_fields( $fields ) {
 
-		$form_id = $record->get_form_settings( 'id' );
-
-		if ( empty( $form_id ) ) {
-			return;
-		}
-
-		// Posted fields.
-		$posted = wp_list_pluck( $record->get( 'fields' ), 'value', 'id' );
-
-		// Add meta.
-		$posted = array_merge( wp_list_pluck( $record->get( 'meta' ), 'value' ), $posted );
-
-        do_action( 'noptin_elementor_form_submitted', $form_id, $posted );
-	}
-
-	/**
-     * Prepares form fields.
-     *
-     * @param object[] $fields The form fields.
-     * @return array
-     */
-    public function prepare_noptin_automation_rule_fields( $fields ) {
-
-        $prepared_fields = array(
+		$prepared_fields = array(
 			'page_url'   => array(
 				'description'       => __( 'Page URL', 'newsletter-optin-box' ),
 				'conditional_logic' => 'string',
@@ -170,20 +129,20 @@ class Noptin_Elementor_Forms {
 			),
 		);
 
-        // Loop through all fields.
-        foreach ( $fields as $elementor_field ) {
+		// Loop through all fields.
+		foreach ( $fields as $elementor_field ) {
 
-            // Skip fields with no name.
-            if ( empty( $elementor_field->field_label ) ) {
-                continue;
-            }
+			// Skip fields with no name.
+			if ( empty( $elementor_field->field_label ) && empty( $elementor_field->acceptance_text ) ) {
+				continue;
+			}
 
 			if ( ! empty( $elementor_field->field_type ) && in_array( $elementor_field->field_type, $this->ignore_fields, true ) ) {
 				continue;
 			}
 
-            $field = array(
-				'description'       => $elementor_field->field_label,
+			$field = array(
+				'description'       => empty( $elementor_field->field_label ) ? $elementor_field->acceptance_text : $elementor_field->field_label,
 				'conditional_logic' => 'string',
 			);
 
@@ -193,15 +152,23 @@ class Noptin_Elementor_Forms {
 
 			$options = $this->get_field_options( $elementor_field );
 
+			// Acceptance.
+			if ( ! empty( $elementor_field->field_type ) && 'acceptance' === $elementor_field->field_type ) {
+				$options = array(
+					'on'  => 'Checked',
+					'off' => 'Unchecked',
+				);
+			}
+
 			if ( ! empty( $options ) ) {
 				$field['options'] = $options;
 			}
 
 			$prepared_fields[ $elementor_field->custom_id ] = $field;
-        }
+		}
 
-        return $prepared_fields;
-    }
+		return $prepared_fields;
+	}
 
 	/**
 	 * Retrieves the field options.
@@ -233,5 +200,60 @@ class Noptin_Elementor_Forms {
 		}
 
 		return $options;
+	}
+
+	/**
+	 * @param \ElementorPro\Modules\Forms\Classes\Form_Record $record The submitted record.
+	 */
+	public function process_form( $record ) {
+
+		$form_id = $record->get_form_settings( 'id' );
+
+		if ( empty( $form_id ) ) {
+			return;
+		}
+
+		// Posted fields.
+		$posted = array();
+
+		foreach ( $record->get( 'fields' ) as $field ) {
+			$value = $field['value'];
+
+			if ( ! empty( $field['type'] ) ) {
+				if ( in_array( $field['type'], $this->ignore_fields, true ) ) {
+					continue;
+				}
+
+				if ( 'acceptance' === $field['type'] && empty( $value ) ) {
+					$value = 'off';
+				}
+			}
+
+			$posted[ $field['id'] ] = $value;
+		}
+
+		// Add meta.
+		$posted = array_merge( wp_list_pluck( $record->get( 'meta' ), 'value' ), $posted );
+
+		$this->process_form_submission( $form_id, $posted );
+	}
+
+	/**
+	 * Registers the form action.
+	 */
+	public function register_form_action() {
+
+		// Custom action.
+		if ( ! function_exists( 'add_noptin_subscriber' ) ) {
+			return;
+		}
+
+		// Instantiate the action class
+		$action = new Action();
+
+		// Register the action with form widget
+		/** @var \ElementorPro\Modules\Forms\Module $forms */
+		$forms = \ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' );
+		$forms->actions_registrar->register( $action, $action->get_name() );
 	}
 }
