@@ -22,7 +22,6 @@ class Noptin_Integrations {
 
 		// Load integrations.
 		$integrations = array(
-			'gform_loaded'       => 'load_gravity_forms_integration',
 			'wpml_loaded'        => 'load_wpml_integration',
 			'pll_init'           => 'load_polylang_integration',
 		);
@@ -83,18 +82,6 @@ class Noptin_Integrations {
 	 */
 	public function load_polylang_integration() {
 		new Noptin_Polylang();
-	}
-
-	/**
-	 * Loads Gravity Forms integration
-	 *
-	 * @access      public
-	 * @since       1.3.3
-	 */
-	public function load_gravity_forms_integration() {
-		if ( class_exists( 'GFAddOn' ) ) {
-			GFAddOn::register( 'Noptin_Gravity_Forms' );
-		}
 	}
 
 	/**
