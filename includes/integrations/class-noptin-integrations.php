@@ -22,7 +22,6 @@ class Noptin_Integrations {
 
 		// Load integrations.
 		$integrations = array(
-			'wpml_loaded'        => 'load_wpml_integration',
 			'pll_init'           => 'load_polylang_integration',
 		);
 
@@ -62,16 +61,6 @@ class Noptin_Integrations {
 
 		do_action( 'noptin_integrations_load', $this );
 
-	}
-
-	/**
-	 * Loads WPML integration
-	 *
-	 * @access      public
-	 * @since       1.6.2
-	 */
-	public function load_wpml_integration() {
-		new Noptin_WPML();
 	}
 
 	/**

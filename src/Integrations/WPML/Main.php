@@ -1,14 +1,16 @@
 <?php
 
+namespace Hizzle\Noptin\Integrations\WPML;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with WPML.
  *
- * @since       1.6.2
+ * @since 1.6.2
  */
-class Noptin_WPML {
+class Main {
 
 	/**
 	 * Constructor
@@ -105,5 +107,4 @@ class Noptin_WPML {
 
 		return $languages;
 	}
-
 }
