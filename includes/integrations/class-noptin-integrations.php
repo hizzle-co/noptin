@@ -20,19 +20,6 @@ class Noptin_Integrations {
 	 */
 	public function __construct() {
 
-		// Load integrations.
-		$integrations = array(
-			'pll_init'           => 'load_polylang_integration',
-		);
-
-		foreach ( $integrations as $action => $method ) {
-
-			add_action( $action, array( $this, $method ) );
-			if ( did_action( $action ) ) {
-				call_user_func( array( $this, $method ) );
-			}
-		}
-
 		// WooCommerce integration.
 		if ( class_exists( 'WooCommerce' ) ) {
 			$this->integrations['woocommerce'] = new Noptin_WooCommerce();
@@ -61,16 +48,6 @@ class Noptin_Integrations {
 
 		do_action( 'noptin_integrations_load', $this );
 
-	}
-
-	/**
-	 * Loads Polylang integration
-	 *
-	 * @access      public
-	 * @since       1.6.2
-	 */
-	public function load_polylang_integration() {
-		new Noptin_Polylang();
 	}
 
 	/**

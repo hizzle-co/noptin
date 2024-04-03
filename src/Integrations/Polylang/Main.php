@@ -1,14 +1,16 @@
 <?php
 
+namespace Hizzle\Noptin\Integrations\Polylang;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with Polylang.
  *
- * @since       1.6.2
+ * @since 2.0.0
  */
-class Noptin_Polylang {
+class Main {
 
 	/**
 	 * Constructor
