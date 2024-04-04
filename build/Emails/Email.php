@@ -1254,7 +1254,12 @@ class Email {
 		unset( $args['id'] );
 
 		$duplicate = new Email( array_merge( $args, $override ) );
-		$result    = $duplicate->save();
+
+		if ( isset( $duplicate->options['automation_rule'] ) ) {
+			unset( $duplicate->options['automation_rule'] );
+		}
+
+		$result = $duplicate->save();
 
 		// Check if the duplicate exists.
 		if ( ! $duplicate->exists() ) {

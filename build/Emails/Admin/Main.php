@@ -403,6 +403,7 @@ class Main {
 									),
 									'is_active'    => true,
 									'is_installed' => true,
+									'is_local'     => true,
 									'settings'     => array(
 										'disableMergeTags' => false,
 										'fields'           => array(

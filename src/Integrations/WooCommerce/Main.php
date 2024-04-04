@@ -18,6 +18,11 @@ class Main {
 	public $email_template;
 
 	/**
+	 * @var Migrate Migrates deprecated emails.
+	 */
+	public $migrate;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 2.2.0
@@ -28,6 +33,7 @@ class Main {
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 		add_filter( 'noptin_format_price', 'wc_price' );
 		$this->email_template = new Template();
+		$this->migrate        = new Migrate();
 	}
 
 	/**
@@ -117,16 +123,6 @@ class Main {
 					) : array(),
 					array( 'product_id', 'action' )
 				);
-			},
-		);
-
-		$triggers[] = array(
-			'id'         => 'woocommerce_lifetime_value',
-			'trigger_id' => 'woocommerce_lifetime_value',
-			'callback'   => function ( &$automation_rule ) {
-
-				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
-				$automation_rule->set_trigger_id( 'wc_payment_complete' );
 			},
 		);
 

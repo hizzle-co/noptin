@@ -230,8 +230,10 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 */
 	public static function sync_campaign_to_rule( $campaign, $trigger_settings = null ) {
 
+		$statuses = array( 'publish', 'draft', 'pending' );
+
 		// Abort if no id.
-		if ( ! $campaign->exists() || 'publish' !== $campaign->status ) {
+		if ( ! $campaign->exists() || ! in_array( $campaign->status, $statuses, true ) ) {
 			return array();
 		}
 
@@ -242,10 +244,11 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			$rule = noptin_get_automation_rule( 0 );
 		}
 
+		$rule->set_trigger_id( $campaign->get_trigger() );
+		$rule->set_action_id( 'email' );
+
 		$is_new = ! $rule->exists();
 		if ( $is_new ) {
-			$rule->set_action_id( 'email' );
-			$rule->set_trigger_id( $campaign->get_trigger() );
 			$rule->set_action_settings( array( 'automated_email_id' => $campaign->id ) );
 			$rule->set_trigger_settings( array( 'conditional_logic' => noptin_get_default_conditional_logic() ) );
 		} elseif ( (int) $rule->get_action_setting( 'automated_email_id' ) !== $campaign->id ) {
