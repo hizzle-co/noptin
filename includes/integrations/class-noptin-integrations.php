@@ -30,11 +30,6 @@ class Noptin_Integrations {
 			$this->integrations['edd'] = new Noptin_EDD();
 		}
 
-		// WS Form integration.
-		if ( class_exists( 'WS_Form' ) ) {
-			$this->integrations['ws_form'] = new Noptin_WS_Form();
-		}
-
 		// WP Registration form integration.
 		$this->integrations['wp_registration_form'] = new Noptin_WP_Registration_Form();
 
@@ -42,6 +37,5 @@ class Noptin_Integrations {
 		$this->integrations['wp_comment_form'] = new Noptin_WP_Comment_Form();
 
 		do_action( 'noptin_integrations_load', $this );
-
 	}
 }
