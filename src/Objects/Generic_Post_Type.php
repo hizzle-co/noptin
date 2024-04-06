@@ -47,7 +47,6 @@ class Generic_Post_Type extends Post_Type {
 
 		// Remove unsupported fields.
 		if ( $post_type && $init ) {
-
 			if ( ! post_type_supports( $this->type, 'title' ) ) {
 				$this->title_field = '';
 			}
@@ -169,8 +168,9 @@ class Generic_Post_Type extends Post_Type {
 				'type'  => 'number',
 			),
 			'author'         => array(
-				'label' => __( 'Author ID', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'      => __( 'Author ID', 'newsletter-optin-box' ),
+				'type'       => 'number',
+				'deprecated' => 'post_author_id',
 			),
 			'date'           => array(
 				'label' => __( 'Date', 'newsletter-optin-box' ),
@@ -295,6 +295,12 @@ class Generic_Post_Type extends Post_Type {
 			),
 			'meta'           => $this->meta_key_tag_config(),
 		);
+
+		foreach ( $fields as $key => $args ) {
+			if ( empty( $args['deprecated'] ) ) {
+				$fields[ $key ]['deprecated'] = 'post_' . $key;
+			}
+		}
 
 		foreach ( $this->taxonomies() as $taxonomy => $label ) {
 			$icon = 'marker';

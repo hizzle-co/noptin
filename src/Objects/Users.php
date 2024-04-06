@@ -162,6 +162,15 @@ class Users extends People {
 			'meta'         => $this->meta_key_tag_config(),
 		);
 
+		if ( 'post_author' === $this->type ) {
+			$fields['id']['deprecated']           = 'author_id';
+			$fields['email']['deprecated']        = 'author_email';
+			$fields['display_name']['deprecated'] = 'author_name';
+			$fields['first_name']['deprecated']   = 'author_first_name';
+			$fields['last_name']['deprecated']    = 'author_last_name';
+			$fields['login']['deprecated']        = 'author_login';
+		}
+
 		// Add known custom fields.
 		foreach ( noptin_get_user_custom_fields() as $field_name => $field ) {
 			$field['actions']                   = array( 'add_user' );

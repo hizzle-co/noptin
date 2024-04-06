@@ -44,7 +44,6 @@ class Noptin_Automation_Rules {
 
 		if ( function_exists( 'geodir_get_posttypes' ) ) {
 			foreach ( geodir_get_posttypes() as $post_type ) {
-				$this->add_trigger( new Noptin_GeoDirectory_Listing_Saved_Trigger( $post_type ) );
 				$this->add_trigger( new Noptin_GeoDirectory_Listing_Published_Trigger( $post_type ) );
 				$this->add_action( new Noptin_GeoDirectory_Update_Listing_Action( $post_type ) );
 
