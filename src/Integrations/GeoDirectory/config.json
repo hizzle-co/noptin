@@ -1,0 +1,7 @@
+{
+    "label": "GeoDirectory",
+    "slug": "geodirectory",
+    "requires": {
+        "class": "GeoDirectory"
+    }
+}

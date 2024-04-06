@@ -397,4 +397,39 @@ class Generic_Post_Type extends Post_Type {
 
 		return $template;
 	}
+
+	/**
+	 * Returns a list of available (actions).
+	 *
+	 * @return array $actions The actions.
+	 */
+	public function get_actions() {
+		return array_merge(
+			parent::get_actions(),
+			array(
+				'create_or_update_' . $this->type => array(
+					'id'          => $this->type . '_update',
+					'label'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Create or Update', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Create or update a %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'    => array( $this, 'create_post' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Creates or updates a post.
+	 *
+	 * @param array $args
+	 */
+	public function create_post( $args ) {
+	}
 }

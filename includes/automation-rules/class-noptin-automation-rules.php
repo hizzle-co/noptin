@@ -45,11 +45,6 @@ class Noptin_Automation_Rules {
 		if ( function_exists( 'geodir_get_posttypes' ) ) {
 			foreach ( geodir_get_posttypes() as $post_type ) {
 				$this->add_action( new Noptin_GeoDirectory_Update_Listing_Action( $post_type ) );
-
-				if ( defined( 'GEODIR_PRICING_VERSION' ) ) {
-					$this->add_trigger( new Noptin_GeoDirectory_Listing_Downgraded_Trigger( $post_type ) );
-					$this->add_trigger( new Noptin_GeoDirectory_Listing_Expire_Trigger( $post_type ) );
-				}
 			}
 		}
 
