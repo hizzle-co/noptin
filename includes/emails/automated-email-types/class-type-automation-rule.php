@@ -51,6 +51,10 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$this->contexts    = $trigger->contexts;
 		$this->mail_config = $trigger->mail_config;
 
+		if ( ! empty( $trigger->alias ) ) {
+			add_filter( 'noptin_automation_email_sub_type_automation_rule_' . $trigger->alias, array( $this, 'get_type' ) );
+		}
+
 		$this->add_hooks();
 	}
 
@@ -61,6 +65,15 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	 */
 	public function get_trigger() {
 		return noptin()->automation_rules->get_trigger( $this->trigger_id );
+	}
+
+	/**
+	 * Returns the email type.
+	 *
+	 * @return string
+	 */
+	public function get_type() {
+		return $this->type;
 	}
 
 	/**

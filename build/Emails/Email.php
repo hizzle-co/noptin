@@ -367,7 +367,13 @@ class Email {
 	 * @return string
 	 */
 	public function get_sub_type() {
-		return $this->get( $this->type . '_type' );
+		$sub_type = $this->get( $this->type . '_type' );
+
+		if ( ! empty( $sub_type ) ) {
+			$sub_type = apply_filters( 'noptin_' . $this->type . '_email_sub_type_' . $sub_type, $sub_type, $this );
+		}
+
+		return $sub_type;
 	}
 
 	/**
@@ -741,10 +747,10 @@ class Email {
 			return $type->contexts;
 		}
 
-		$sub_types = $type->get_sub_types();
+		$sub_type = $type->get_sub_type( $this->get_sub_type() );
 
-		if ( isset( $sub_types[ $this->get_sub_type() ]['contexts'] ) ) {
-			return $sub_types[ $this->get_sub_type() ]['contexts'];
+		if ( $sub_type && isset( $sub_type['contexts'] ) ) {
+			return $sub_type['contexts'];
 		}
 
 		return $type->contexts;
@@ -1469,11 +1475,10 @@ class Email {
 			return false;
 		}
 
-		$sub_type  = $this->get_sub_type();
-		$sub_types = $type->get_sub_types();
+		$sub_type = $type->get_sub_type( $this->get_sub_type() );
 
-		if ( ! empty( $sub_type ) && isset( $sub_types[ $sub_type ] ) && isset( $sub_types[ $sub_type ][ $feature ] ) ) {
-			return $sub_types[ $sub_type ][ $feature ];
+		if ( $sub_type && isset( $sub_type[ $feature ] ) ) {
+			return $sub_type[ $feature ];
 		}
 
 		return isset( $type->{$feature} ) ? $type->{$feature} : false;

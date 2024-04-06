@@ -255,14 +255,14 @@ class Table extends \WP_List_Table {
 		}
 
 		$item_name = $item->name;
-		$sub_types = $this->email_type->get_sub_types();
+		$sub_type  = $this->email_type->get_sub_type( $item->get_sub_type() );
 
 		if ( empty( $item_name ) ) {
 			$item_name = $item->subject;
 		}
 
-		if ( empty( $item_name ) && ! empty( $sub_types ) && isset( $sub_types[ $item->get_sub_type() ] ) ) {
-			$item_name = $sub_types[ $item->get_sub_type() ]['label'];
+		if ( empty( $item_name ) && ! empty( $sub_type ) ) {
+			$item_name = $sub_type['label'];
 		}
 
 		if ( empty( $item_name ) ) {
@@ -280,14 +280,11 @@ class Table extends \WP_List_Table {
 		}
 
 		// Email type.
-		$sub_types = $this->email_type->get_sub_types();
-
-		if ( ! empty( $sub_types ) ) {
-			if ( isset( $sub_types[ $item->get_sub_type() ] ) ) {
-
+		if ( false !== $sub_type ) {
+			if ( null !== $sub_type ) {
 				$title .= sprintf(
 					'<p class="description">%s</p>',
-					esc_html( $sub_types[ $item->get_sub_type() ]['description'] )
+					esc_html( $sub_type['description'] )
 				);
 
 				// Custom description.
@@ -364,7 +361,6 @@ class Table extends \WP_List_Table {
 
 		// Delay.
 		if ( ! $item->sends_immediately() && ! $is_trash ) {
-
 			$title .= sprintf(
 				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 				esc_html__( 'Delay', 'newsletter-optin-box' ),
@@ -373,7 +369,6 @@ class Table extends \WP_List_Table {
 		}
 
 		if ( ! $is_trash && 'newsletter' === $this->email_type->type && ! get_post_meta( $item->id, 'completed', true ) ) {
-
 			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );
 
 			if ( is_array( $error ) ) {
@@ -442,7 +437,6 @@ class Table extends \WP_List_Table {
 		);
 
 		if ( 'publish' === $item->status && 'newsletter' === $item->type ) {
-
 			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
 				$app['label'] = __( 'Sent', 'newsletter-optin-box' );
 			} elseif ( '' !== get_post_meta( $item->id, 'paused', true ) ) {

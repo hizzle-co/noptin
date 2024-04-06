@@ -44,7 +44,6 @@ class Noptin_Automation_Rules {
 
 		if ( function_exists( 'geodir_get_posttypes' ) ) {
 			foreach ( geodir_get_posttypes() as $post_type ) {
-				$this->add_trigger( new Noptin_GeoDirectory_Listing_Published_Trigger( $post_type ) );
 				$this->add_action( new Noptin_GeoDirectory_Update_Listing_Action( $post_type ) );
 
 				if ( defined( 'GEODIR_PRICING_VERSION' ) ) {
@@ -135,7 +134,17 @@ class Noptin_Automation_Rules {
 	 * @return Noptin_Abstract_Trigger|null
 	 */
 	public function get_trigger( $trigger_id ) {
-		return empty( $this->triggers[ $trigger_id ] ) ? null : $this->triggers[ $trigger_id ];
+		if ( isset( $this->triggers[ $trigger_id ] ) ) {
+			return $this->triggers[ $trigger_id ];
+		}
+
+		foreach ( $this->triggers as $trigger ) {
+			if ( isset( $trigger->alias ) && $trigger->alias === $trigger_id ) {
+				return $trigger;
+			}
+		}
+
+		return null;
 	}
 
 	/**

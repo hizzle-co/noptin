@@ -70,6 +70,10 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			$this->mail_config = $trigger_args['mail_config'];
 		}
 
+		if ( ! empty( $trigger_args['alias'] ) ) {
+			$this->alias = $trigger_args['alias'];
+		}
+
 		if ( ! empty( $trigger_args['previous_name'] ) ) {
 			add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_trigger' ) );
 		}

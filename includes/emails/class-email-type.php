@@ -287,9 +287,6 @@ abstract class Noptin_Email_Type {
 			return;
 		}
 
-		// Prepare enviroment.
-		$this->before_send( $email );
-
 		// Set-up test data for the preview.
 		$this->prepare_test_data( $email );
 	}

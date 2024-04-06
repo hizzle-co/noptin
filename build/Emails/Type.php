@@ -133,6 +133,39 @@ class Type {
 	}
 
 	/**
+	 * Returns an email sub type.
+	 *
+	 * @return array
+	 */
+	public function get_sub_type( $sub_type ) {
+
+		if ( ! $this->supports_sub_types ) {
+			return false;
+		}
+
+		if ( empty( $sub_type ) ) {
+			return null;
+		}
+
+		$sub_types = $this->get_sub_types();
+		if ( empty( $sub_types ) ) {
+			return null;
+		}
+
+		if ( isset( $sub_types[ $sub_type ] ) ) {
+			return $sub_types[ $sub_type ];
+		}
+
+		foreach ( $sub_types as $custom_type ) {
+			if ( isset( $custom_type['alias'] ) && $sub_type === $custom_type['alias'] ) {
+				return $custom_type;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Returns the email add URL.
 	 *
 	 * @return array

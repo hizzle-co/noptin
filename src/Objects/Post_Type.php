@@ -102,7 +102,6 @@ abstract class Post_Type extends Collection {
 				noptin_email_wrap_paragraph_block( __( "If that doesn't work, copy and paste the following link into your browser:", 'newsletter-optin-box' ) ),
 				noptin_email_wrap_paragraph_block( $this->field_to_merge_tag( $this->url_field ) )
 			);
-
 		}
 
 		return array_merge(
@@ -290,10 +289,10 @@ abstract class Post_Type extends Collection {
 	/**
 	 * Fired after a post is inserted.
 	 *
-	 * @param int          $post_id     Post ID.
-	 * @param WP_Post      $post        Post object.
-	 * @param bool         $update      Whether this is an existing post being updated.
-	 * @param null|WP_Post $post_before Null for new posts, the WP_Post object prior
+	 * @param int           $post_id     Post ID.
+	 * @param \WP_Post      $post        Post object.
+	 * @param bool          $update      Whether this is an existing post being updated.
+	 * @param null|\WP_Post $post_before Null for new posts, the WP_Post object prior
 	 *                                  to the update for updated posts.
 	 */
 	public function after_insert_post( $post_id, $post, $update, $post_before ) {
