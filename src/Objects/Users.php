@@ -85,6 +85,117 @@ class Users extends People {
 	}
 
 	/**
+	 * Retrieves or creates a single person from an email address.
+	 *
+	 * @param string $email The email address.
+	 * @return int|\WP_Error $user The user.
+	 */
+	public static function get_or_create_from_email( $email ) {
+		$user = get_user_by( 'email', $email );
+
+		if ( $user ) {
+			return $user->ID;
+		}
+
+		// Create the user.
+		$user_info['user_email'] = $email;
+
+		if ( empty( $user_info['user_pass'] ) ) {
+			$user_info['user_pass'] = wp_generate_password();
+		}
+
+		$user_info['user_login'] = sanitize_user( self::generate_username( $user_info['user_email'], $user_info ) );
+
+		return wp_insert_user( $user_info );
+	}
+
+	/**
+	 * Create a unique username for a new user.
+	 *
+	 * @since 1.0.0
+	 * @param string $email New user email address.
+	 * @param array  $new_user_args Array of new user args, maybe including first and last names.
+	 * @param string $suffix Append string to username to make it unique.
+	 * @return string Generated username.
+	 */
+	private static function generate_username( $email, $new_user_args = array(), $suffix = '' ) {
+		$username_parts = array();
+
+		if ( ! empty( $new_user_args['first_name'] ) ) {
+			$username_parts[] = sanitize_user( $new_user_args['first_name'], true );
+		}
+
+		if ( ! empty( $new_user_args['last_name'] ) ) {
+			$username_parts[] = sanitize_user( $new_user_args['last_name'], true );
+		}
+
+		// Remove empty parts.
+		$username_parts = array_filter( $username_parts );
+
+		// If there are no parts, e.g. name had unicode chars, or was not provided, fallback to email.
+		if ( empty( $username_parts ) ) {
+			$email_parts    = explode( '@', $email );
+			$email_username = $email_parts[0];
+
+			// Exclude common prefixes.
+			if ( in_array(
+				$email_username,
+				array(
+					'sales',
+					'hello',
+					'mail',
+					'contact',
+					'info',
+					'admin',
+				),
+				true
+			) ) {
+				// Get the domain part.
+				$email_username = $email_parts[1];
+			}
+
+			$username_parts[] = sanitize_user( $email_username, true );
+		}
+
+		$username = strtolower( implode( '.', $username_parts ) );
+
+		if ( $suffix ) {
+			$username .= $suffix;
+		}
+
+		/**
+		 * WordPress 4.4 - filters the list of blocked usernames.
+		 *
+		 * @since 3.7.0
+		 * @param array $usernames Array of blocked usernames.
+		 */
+		$illegal_logins = (array) apply_filters( 'illegal_user_logins', array() );
+
+		// Stop illegal logins and generate a new random username.
+		if ( in_array( strtolower( $username ), array_map( 'strtolower', $illegal_logins ), true ) ) {
+			$new_args = array();
+
+			$new_args['first_name'] = apply_filters(
+				'noptin_generated_user_username',
+				'noptin_user_' . zeroise( wp_rand( 0, 9999 ), 4 ),
+				$email,
+				$new_user_args,
+				$suffix
+			);
+
+			return self::generate_username( $email, $new_args, $suffix );
+		}
+
+		if ( username_exists( $username ) ) {
+			// Generate something unique to append to the username in case of a conflict with another user.
+			$suffix = '-' . zeroise( wp_rand( 0, 9999 ), 4 );
+			return self::generate_username( $email, $new_user_args, $suffix );
+		}
+
+		return apply_filters( 'noptin_generated_user_username', $username, $email, $new_user_args, $suffix );
+	}
+
+	/**
 	 * Retrieves available fields.
 	 *
 	 */

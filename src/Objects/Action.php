@@ -89,6 +89,11 @@ class Action extends \Noptin_Abstract_Action {
 					unset( $args['action_label'] );
 				}
 
+				if ( isset( $args['action_props'] ) && isset( $args['action_props'][ $this->action_id ] ) ) {
+					$args = array_merge( $args, $args['action_props'][ $this->action_id ] );
+					unset( $args['action_props'] );
+				}
+
 				$prepared[ $key ] = $args;
 			}
 		}
@@ -124,7 +129,9 @@ class Action extends \Noptin_Abstract_Action {
 					$value = isset( $args['options'][ $value ] ) ? $args['options'][ $value ] : $value;
 				}
 
-				$meta[ esc_html( $args['label'] ) ] = $value;
+				if ( $value ) {
+					$meta[ esc_html( $args['label'] ) ] = $value;
+				}
 			}
 		}
 
