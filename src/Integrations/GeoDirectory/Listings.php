@@ -41,6 +41,7 @@ class Listings extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 */
 	public function get_fields() {
 
+		$action = 'create_or_update_' . $this->type;
 		$fields = array_merge(
 			parent::get_fields(),
 			array(
@@ -51,10 +52,12 @@ class Listings extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 						'1' => __( 'True', 'newsletter-optin-box' ),
 						'0' => __( 'False', 'newsletter-optin-box' ),
 					),
+					'actions' => array( $action ),
 				),
 				'submit_ip'      => array(
-					'label' => __( 'Submit IP', 'newsletter-optin-box' ),
-					'type'  => 'string',
+					'label'   => __( 'Submit IP', 'newsletter-optin-box' ),
+					'type'    => 'string',
+					'actions' => array( $action ),
 				),
 				'overall_rating' => array(
 					'label' => __( 'Overall Rating', 'newsletter-optin-box' ),
@@ -90,44 +93,54 @@ class Listings extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 					$fields,
 					array(
 						'street'    => array(
-							'label' => __( 'Street', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Street', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'street2'   => array(
-							'label' => __( 'Street2', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Street2', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'city'      => array(
-							'label' => __( 'City', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'City', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'region'    => array(
-							'label' => __( 'Region', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Region', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'country'   => array(
-							'label' => __( 'Country', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Country', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'zip'       => array(
-							'label' => __( 'Zip', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Zip', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'latitude'  => array(
-							'label' => __( 'Latitude', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Latitude', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'longitude' => array(
-							'label' => __( 'Longitude', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Longitude', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'mapview'   => array(
-							'label' => __( 'Map View', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Map View', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 						'mapzoom'   => array(
-							'label' => __( 'Map Zoom', 'newsletter-optin-box' ),
-							'type'  => 'string',
+							'label'   => __( 'Map Zoom', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'actions' => array( $action ),
 						),
 					)
 				);
@@ -136,8 +149,9 @@ class Listings extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 			}
 
 			$fields[ sanitize_key( $custom_field->htmlvar_name ) ] = array(
-				'label' => esc_html( $custom_field->admin_title ),
-				'type'  => 'string',
+				'label'   => esc_html( $custom_field->admin_title ),
+				'type'    => 'string',
+				'actions' => array( $action ),
 			);
 
 			// Packages.
@@ -173,7 +187,7 @@ class Listings extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 			}
 		}
 
-		return $fields;
+		return apply_filters( 'noptin_post_type_known_custom_fields', $fields, $this->type );
 	}
 
 	/**
@@ -411,6 +425,41 @@ class Listings extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 			$args['extra_args'] = array(
 				$this->type . '.saving_type' => 'update',
 			);
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Fetches post args.
+	 *
+	 * @param array $args
+	 */
+	protected function prepare_create_post_args( $args ) {
+		$args = parent::prepare_create_post_args( $args );
+
+		if ( empty( $args['meta_input'] ) ) {
+			unset( $args['meta_input'] );
+		}
+
+		foreach ( \GeoDir_Settings_Cpt_Cf::get_cpt_custom_fields( $this->type ) as $custom_field ) {
+
+			// Address fields.
+			if ( 'address' === $custom_field->field_type ) {
+				foreach ( array( 'street', 'street2', 'city', 'region', 'country', 'zip', 'latitude', 'longitude', 'mapview', 'mapzoom' ) as $address_field ) {
+					if ( isset( $args['meta_input'][ $address_field ] ) ) {
+						$args[ $address_field ] = $args['meta_input'][ $address_field ];
+						unset( $args['meta_input'][ $address_field ] );
+					}
+				}
+
+				continue;
+			}
+
+			if ( isset( $args['meta_input'][ $custom_field->htmlvar_name ] ) ) {
+				$args[ $custom_field->htmlvar_name ] = $args['meta_input'][ $custom_field->htmlvar_name ];
+				unset( $args['meta_input'][ $custom_field->htmlvar_name ] );
+			}
 		}
 
 		return $args;

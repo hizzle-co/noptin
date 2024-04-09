@@ -297,10 +297,9 @@ class Generic_Post_Type extends Post_Type {
 				'type'  => 'number',
 			),
 			'featured_image' => array(
-				'label'   => __( 'Featured Image URL', 'newsletter-optin-box' ),
-				'type'    => 'string',
-				'actions' => array( $action ),
-				'block'   => array(
+				'label' => __( 'Featured Image URL', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
 					'title'       => __( 'Featured Image', 'newsletter-optin-box' ),
 					'description' => __( 'Displays the featured image.', 'newsletter-optin-box' ),
 					'icon'        => 'camera',
@@ -469,17 +468,16 @@ class Generic_Post_Type extends Post_Type {
 	}
 
 	/**
-	 * Creates or updates a post.
+	 * Fetches post args.
 	 *
 	 * @param array $args
 	 */
-	public function create_post( $args ) {
+	protected function prepare_create_post_args( $args ) {
 		$post_info = array(
 			'post_type'  => $this->type,
 			'meta_input' => array(),
 			'tax_input'  => array(),
 		);
-		$featured_image = '';
 
 		foreach ( $args as $key => $value ) {
 			if ( 'id' === $key ) {
@@ -518,11 +516,6 @@ class Generic_Post_Type extends Post_Type {
 
 			if ( in_array( $key, array( 'title', 'excerpt', 'content', 'status' ), true ) ) {
 				$post_info[ "post_$key" ] = $value;
-				continue;
-			}
-
-			if ( 'featured_image' === $key ) {
-				$featured_image = $value;
 				continue;
 			}
 
@@ -570,18 +563,23 @@ class Generic_Post_Type extends Post_Type {
 			unset( $post_info['meta_input'] );
 		}
 
-		$post_info = wp_slash( $post_info );
+		return $post_info;
+	}
+
+	/**
+	 * Creates or updates a post.
+	 *
+	 * @param array $args
+	 */
+	public function create_post( $args ) {
+
+		$post_info = wp_slash( $this->prepare_create_post_args( $args ) );
 		if ( ! empty( $post_info['ID'] ) ) {
 			$post = wp_update_post( $post_info, true );
 		} else {
 			$post = wp_insert_post( $post_info, true );
 		}
 
-		if ( ! is_numeric( $post ) || empty( $featured_image ) ) {
-			return $post;
-		}
-
-		// Set the featured image.
-		
+		return $post;
 	}
 }

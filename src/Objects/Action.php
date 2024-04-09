@@ -67,6 +67,21 @@ class Action extends \Noptin_Abstract_Action {
 	}
 
 	/**
+	 * Retrieve the trigger's or action's image.
+	 *
+	 * @since 1.2.8
+	 * @return string
+	 */
+	public function get_image() {
+
+		if ( ! empty( $this->action_args['icon'] ) ) {
+			return $this->action_args['icon'];
+		}
+
+		return Store::get_collection_config( $this->object_type, 'icon' );
+	}
+
+	/**
 	 * Returns the fields needed for this action.
 	 *
 	 * @return array
@@ -110,6 +125,10 @@ class Action extends \Noptin_Abstract_Action {
 
 		foreach ( $this->get_action_fields() as $key => $args ) {
 
+			if ( empty( $args['label'] ) && ! empty( $args['description'] ) ) {
+				$args['label'] = $args['description'];
+			}
+
 			// If required but not set...
 			if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
 				return sprintf(
@@ -146,6 +165,10 @@ class Action extends \Noptin_Abstract_Action {
 		$settings = array();
 
 		foreach ( $this->get_action_fields() as $key => $field ) {
+			if ( empty( $field['label'] ) && ! empty( $field['description'] ) ) {
+				$field['label'] = $field['description'];
+				unset( $field['description'] );
+			}
 
 			if ( ! empty( $field['options'] ) ) {
 				$field['el'] = 'select';
@@ -162,7 +185,7 @@ class Action extends \Noptin_Abstract_Action {
 				'el'          => 'input',
 				'label'       => $field['label'],
 				'map_field'   => true,
-				'placeholder' => sprintf(
+				'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : sprintf(
 					/* translators: %s: The field name. */
 					__( 'Enter %s', 'newsletter-optin-box' ),
 					strtolower( $field['label'] )
