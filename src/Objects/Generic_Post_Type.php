@@ -163,12 +163,17 @@ class Generic_Post_Type extends Post_Type {
 			'id'             => array(
 				'label'        => __( 'ID', 'newsletter-optin-box' ),
 				'type'         => 'number',
-				'actions'      => array( $action ),
+				'actions'      => array( $action, 'delete_' . $this->type ),
 				'action_props' => array(
-					$action => array(
+					$action                 => array(
 						'label'        => __( 'Post ID', 'newsletter-optin-box' ),
 						'description'  => __( 'Leave blank to create a new post.', 'newsletter-optin-box' ),
 						'show_in_meta' => true,
+					),
+					'delete_' . $this->type => array(
+						'label'       => __( 'Post ID or Slug', 'newsletter-optin-box' ),
+						'description' => __( 'Specify a post ID or slug', 'newsletter-optin-box' ),
+						'required'    => true,
 					),
 				),
 			),
@@ -450,7 +455,7 @@ class Generic_Post_Type extends Post_Type {
 			parent::get_actions(),
 			array(
 				'create_or_update_' . $this->type => array(
-					'id'          => $this->type . '_update',
+					'id'          => 'create_or_update_' . $this->type,
 					'label'       => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Create or Update', 'newsletter-optin-box' ),
@@ -462,6 +467,30 @@ class Generic_Post_Type extends Post_Type {
 						strtolower( $this->singular_label )
 					),
 					'callback'    => array( $this, 'create_post' ),
+				),
+			),
+			array(
+				'delete_' . $this->type => array(
+					'id'             => 'delete_' . $this->type,
+					'label'          => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Delete', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description'    => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Delete a %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'       => array( $this, 'delete_post' ),
+					'extra_settings' => array(
+						'force_delete' => array(
+							'label'       => __( 'Force Delete', 'newsletter-optin-box' ),
+							'description' => __( 'Whether to bypass the trash and force delete the post.', 'newsletter-optin-box' ),
+							'type'        => 'checkbox',
+							'default'     => true,
+						),
+					),
 				),
 			)
 		);
@@ -581,5 +610,29 @@ class Generic_Post_Type extends Post_Type {
 		}
 
 		return $post;
+	}
+
+	/**
+	 * Deletes a post.
+	 *
+	 * @param array $args
+	 */
+	public function delete_post( $args ) {
+
+		if ( empty( $args['id'] ) ) {
+			return new \WP_Error( 'noptin_invalid_post_id', 'Post ID is required.' );
+		}
+
+		if ( is_numeric( $args['id'] ) ) {
+			$post = get_post( $args['id'] );
+		} else {
+			$post = get_page_by_path( $args['id'], OBJECT, $this->type );
+		}
+
+		if ( ! $post ) {
+			return new \WP_Error( 'noptin_post_not_found', 'Post not found.' );
+		}
+
+		return wp_delete_post( $post->ID, ! empty( $args['force_delete'] ) );
 	}
 }

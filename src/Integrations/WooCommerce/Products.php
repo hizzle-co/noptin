@@ -550,10 +550,15 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'type'         => 'number',
 				'actions'      => array( $action ),
 				'action_props' => array(
-					$action => array(
+					$action                 => array(
 						'label'        => __( 'Product ID', 'newsletter-optin-box' ),
 						'description'  => __( 'Leave blank to create a new product.', 'newsletter-optin-box' ),
 						'show_in_meta' => true,
+					),
+					'delete_' . $this->type => array(
+						'label'       => __( 'Post ID or SKU', 'newsletter-optin-box' ),
+						'description' => __( 'Specify a post ID or sku', 'newsletter-optin-box' ),
+						'required'    => true,
 					),
 				),
 			),
@@ -1096,5 +1101,34 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		}
 
 		$product->save();
+	}
+
+	/**
+	 * Deletes a post.
+	 *
+	 * @param array $args
+	 */
+	public function delete_post( $args ) {
+
+		if ( empty( $args['id'] ) ) {
+			return new \WP_Error( 'noptin_invalid_post_id', 'Post ID is required.' );
+		}
+
+		if ( is_numeric( $args['id'] ) ) {
+			$product_id = $args['id'];
+		} else {
+			$product_id = wc_get_product_id_by_sku( $args['id'] );
+		}
+
+		if ( empty( $product_id ) ) {
+			return new \WP_Error( 'noptin_invalid_post_id', 'Post ID is required.' );
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			return new \WP_Error( 'noptin_post_not_found', 'Post not found.' );
+		}
+
+		return $product->delete( ! empty( $args['force_delete'] ) );
 	}
 }
