@@ -737,12 +737,34 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						__( 'Delete a %s', 'newsletter-optin-box' ),
 						strtolower( $this->singular_label )
 					),
-					'callback'       => __CLASS__ . '::process_subscriber_action',
+					'callback'       => 'delete_noptin_subscriber',
 					'extra_settings' => array(
 						'email' => array(
-							'label'   => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
-							'type'    => 'string',
-							'default' => '[[email]]',
+							'label'    => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
+							'type'     => 'string',
+							'default'  => '[[email]]',
+							'required' => true,
+						),
+					),
+				),
+				'unsubscribe'       => array(
+					'id'             => 'unsubscribe',
+					'label'          => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Unsubscribe', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description'    => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Unsubscribe a %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'       => 'unsubscribe_noptin_subscriber',
+					'extra_settings' => array(
+						'email' => array(
+							'label'    => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
+							'type'     => 'string',
+							'default'  => '[[email]]',
 							'required' => true,
 						),
 					),

@@ -40,6 +40,10 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 		$subscriber = $subscriber->id;
 	}
 
+	if ( is_array( $subscriber ) && isset( $subscriber['email'] ) ) {
+		$subscriber = $subscriber['email'];
+	}
+
 	// Email or confirm key.
 	if ( is_string( $subscriber ) && ! is_numeric( $subscriber ) ) {
 
@@ -525,6 +529,10 @@ function deactivate_noptin_subscriber( $subscriber ) {
  */
 function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $campaign_id = 0, $callback = false ) {
 
+	if ( is_array( $subscriber_id_or_email ) && isset( $subscriber_id_or_email['email'] ) ) {
+		$subscriber_id_or_email = $subscriber_id_or_email['email'];
+	}
+
 	if ( empty( $subscriber_id_or_email ) ) {
 		return;
 	}
@@ -532,8 +540,7 @@ function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $cam
 	// Fetch subscriber.
 	$subscriber = noptin_get_subscriber( $subscriber_id_or_email );
 
-	if ( is_string( $subscriber_id_or_email ) && is_email( $subscriber_id_or_email ) ) {
-
+	if ( 'unsubscribed' === $status && is_string( $subscriber_id_or_email ) && is_email( $subscriber_id_or_email ) ) {
 		if ( ! $subscriber->exists() ) {
 			$subscriber->set_email( $subscriber_id_or_email );
 		}
@@ -543,7 +550,7 @@ function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $cam
 
 	$subscriber->set_status( $status );
 
-	if ( ! empty( $campaign_id ) && ! empty( $callback ) ) {
+	if ( ! empty( $campaign_id ) && is_numeric( $campaign_id ) && ! empty( $callback ) ) {
 		$subscriber->$callback( $campaign_id );
 	}
 
