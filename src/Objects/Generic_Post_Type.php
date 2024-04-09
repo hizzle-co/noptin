@@ -487,6 +487,7 @@ class Generic_Post_Type extends Post_Type {
 						'force_delete' => array(
 							'label'       => __( 'Force Delete', 'newsletter-optin-box' ),
 							'description' => __( 'Whether to bypass the trash and force delete the post.', 'newsletter-optin-box' ),
+							'el'          => 'input',
 							'type'        => 'checkbox',
 							'default'     => true,
 						),

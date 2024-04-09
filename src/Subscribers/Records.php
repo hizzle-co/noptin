@@ -574,12 +574,13 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		);
 
 		foreach ( get_noptin_subscriber_smart_tags() as $smart_tag => $field ) {
-
 			$prepared = array(
-				'label'       => $field['label'],
-				'description' => $field['description'],
-				'type'        => $field['conditional_logic'],
-				'deprecated'  => $smart_tag,
+				'label'        => $field['label'],
+				'description'  => $field['description'],
+				'type'         => $field['conditional_logic'],
+				'deprecated'   => $smart_tag,
+				'show_in_meta' => true,
+				'required'     => 'email' === $smart_tag,
 			);
 
 			if ( isset( $field['options'] ) && is_array( $field['options'] ) ) {
@@ -688,6 +689,42 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					'number' => 1,
 					'fields' => 'id',
 				)
+			)
+		);
+	}
+
+	/**
+	 * Returns a list of available (actions).
+	 *
+	 * @return array $actions The actions.
+	 */
+	public function get_actions() {
+		return array_merge(
+			parent::get_actions(),
+			array(
+				'subscribe' => array(
+					'id'             => 'subscribe',
+					'label'          => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Create or Update', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description'    => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Create or update a %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'       => 'add_noptin_subscriber',
+					'extra_settings' => array(
+						'update_existing' => array(
+							'label'   => __( 'Update existing subscribers', 'newsletter-optin-box' ),
+							'el'      => 'input',
+							'type'    => 'checkbox',
+							'default' => true,
+						),
+					),
+					'action_fields'  => array_keys( get_editable_noptin_subscriber_fields() ),
+				),
 			)
 		);
 	}

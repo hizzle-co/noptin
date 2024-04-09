@@ -31,7 +31,6 @@ class Noptin_Automation_Rules {
 		// Register core actions.
 		$this->add_action( new Noptin_Custom_Field_Action() );
 		$this->add_action( new Noptin_Email_Action() );
-		$this->add_action( new Noptin_Subscribe_Action() );
 		$this->add_action( new Noptin_Unsubscribe_Action() );
 		$this->add_action( new Noptin_Delete_Subscriber_Action() );
 
@@ -53,6 +52,10 @@ class Noptin_Automation_Rules {
 	 * @param Noptin_Abstract_Action $action An ancestor of Noptin_Abstract_Action
 	 */
 	public function add_action( $action ) {
+		if ( isset( $this->actions[ $action->get_id() ] ) ) {
+			return _doing_it_wrong( __METHOD__, 'Action with id ' . esc_html( $action->get_id() ) . ' already exists', '3.0.0' );
+		}
+
 		$this->actions[ $action->get_id() ] = $action;
 	}
 
