@@ -29,7 +29,6 @@ class Noptin_Automation_Rules {
 	public function __construct() {
 
 		// Register core actions.
-		$this->add_action( new Noptin_Custom_Field_Action() );
 		$this->add_action( new Noptin_Email_Action() );
 
 		// Register core triggers.

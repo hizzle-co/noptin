@@ -769,6 +769,42 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						),
 					),
 				),
+				'custom-field'      => array(
+					'id'             => 'custom-field',
+					'label'          => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Update Custom Field', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description'    => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Update a %s field', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'       => __CLASS__ . '::update_subscriber_field',
+					'extra_settings' => array(
+						'email'       => array(
+							'label'    => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
+							'type'     => 'string',
+							'default'  => '[[email]]',
+							'required' => true,
+						),
+						'field_name'  => array(
+							'el'          => 'select',
+							'label'       => __( 'Custom Field', 'newsletter-optin-box' ),
+							'description' => __( 'Select the custom field to update', 'newsletter-optin-box' ),
+							'placeholder' => __( 'Select Field', 'newsletter-optin-box' ),
+							'options'     => wp_list_pluck( get_editable_noptin_subscriber_fields(), 'label' ),
+							'required'    => true,
+						),
+						'field_value' => array(
+							'type'         => 'string',
+							'label'        => __( 'Field Value', 'newsletter-optin-box' ),
+							'description'  => __( 'Enter a value to assign the field', 'newsletter-optin-box' ),
+							'show_in_meta' => true,
+						),
+					),
+				),
 			)
 		);
 	}
@@ -778,21 +814,17 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 *
 	 * @param array $args
 	 */
-	public static function process_subscriber_action( $args, $action_id ) {
+	public static function update_subscriber_field( $args ) {
 
 		if ( empty( $args['email'] ) ) {
 			return new \WP_Error( 'noptin_invalid_email', 'Invalid email address or subscriber ID.' );
 		}
 
-		$subscriber = noptin_get_subscriber( $args['email'] );
-
-		if ( ! $subscriber->exists() ) {
-			return new \WP_Error( 'noptin_invalid_email', 'Invalid email address or subscriber ID.' );
-		}
-
-		switch ( $action_id ) {
-			case 'delete_subscriber':
-				return $subscriber->delete();
-		}
+		return update_noptin_subscriber(
+			$args['email'],
+			array(
+				$args['field_name'] => isset( $args['field_value'] ) ? $args['field_value'] : '',
+			)
+		);
 	}
 }
