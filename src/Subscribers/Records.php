@@ -702,7 +702,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		return array_merge(
 			parent::get_actions(),
 			array(
-				'subscribe' => array(
+				'subscribe'         => array(
 					'id'             => 'subscribe',
 					'label'          => sprintf(
 						/* translators: %s: Object type label. */
@@ -725,7 +725,52 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					),
 					'action_fields'  => array_keys( get_editable_noptin_subscriber_fields() ),
 				),
+				'delete_subscriber' => array(
+					'id'             => 'delete_subscriber',
+					'label'          => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Delete', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description'    => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Delete a %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'       => __CLASS__ . '::process_subscriber_action',
+					'extra_settings' => array(
+						'email' => array(
+							'label'   => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
+							'type'    => 'string',
+							'default' => '[[email]]',
+							'required' => true,
+						),
+					),
+				),
 			)
 		);
+	}
+
+	/**
+	 * Processes a subscriber action.
+	 *
+	 * @param array $args
+	 */
+	public static function process_subscriber_action( $args, $action_id ) {
+
+		if ( empty( $args['email'] ) ) {
+			return new \WP_Error( 'noptin_invalid_email', 'Invalid email address or subscriber ID.' );
+		}
+
+		$subscriber = noptin_get_subscriber( $args['email'] );
+
+		if ( ! $subscriber->exists() ) {
+			return new \WP_Error( 'noptin_invalid_email', 'Invalid email address or subscriber ID.' );
+		}
+
+		switch ( $action_id ) {
+			case 'delete_subscriber':
+				return $subscriber->delete();
+		}
 	}
 }
