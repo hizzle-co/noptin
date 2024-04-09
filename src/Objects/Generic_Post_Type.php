@@ -356,7 +356,18 @@ class Generic_Post_Type extends Post_Type {
 				$icon
 			);
 
-			$fields[ 'tax_' . $taxonomy ]['actions'] = array( $action );
+			$fields[ 'tax_' . $taxonomy ]['actions']      = array( $action );
+			$fields[ 'tax_' . $taxonomy ]['action_props'] = array(
+				$action => array(
+					'description'  => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Enter a comma-separated list of %1$s %2$s.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label ),
+						strtolower( $label )
+					),
+					'show_in_meta' => true,
+				),
+			);
 		}
 
 		// Remove unsupported fields.
@@ -477,6 +488,7 @@ class Generic_Post_Type extends Post_Type {
 			}
 
 			if ( 'slug' === $key ) {
+				$value    = sanitize_title( $value );
 				$existing = get_page_by_path( $value, OBJECT, $this->type );
 
 				if ( $existing ) {

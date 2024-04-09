@@ -42,12 +42,6 @@ class Noptin_Automation_Rules {
 		// Handle admin rule CRUD requests.
 		do_action( 'noptin_automation_rules_load', $this );
 
-		if ( function_exists( 'geodir_get_posttypes' ) ) {
-			foreach ( geodir_get_posttypes() as $post_type ) {
-				$this->add_action( new Noptin_GeoDirectory_Update_Listing_Action( $post_type ) );
-			}
-		}
-
 		// Maybe migrate automation rules.
 		add_action( 'noptin_run_delayed_automation_rule', array( $this, 'run_delayed_automation_rule' ), 10, 2 );
 	}
