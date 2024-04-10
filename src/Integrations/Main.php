@@ -296,7 +296,7 @@ class Main {
 								}
 							}
 
-							unset( $integration[ $part ][ $group ][0] );
+							array_shift( $integration[ $part ][ $group ] );
 						}
 					}
 				}
