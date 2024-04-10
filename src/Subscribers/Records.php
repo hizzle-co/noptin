@@ -258,7 +258,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					'description'   => sprintf(
 						/* translators: %s: field label */
                         __( 'When a %1$s is added to %2$s', 'newsletter-optin-box' ),
-                        strtolower( $this->label ),
+                        strtolower( $this->singular_label ),
 						strtolower( $field['label'] )
 					),
 					'subject'       => 'subscriber',
