@@ -96,4 +96,82 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			),
 		);
 	}
+
+	/**
+	 * Returns a list of available (actions).
+	 *
+	 * @return array $actions The actions.
+	 */
+	public function get_actions() {
+		return array_merge(
+			parent::get_actions(),
+			array(
+				'email' => array(
+					'id'            => 'email',
+					'label'         => __( 'Send Email', 'newsletter-optin-box' ),
+					'description'   => __( 'Send Email', 'newsletter-optin-box' ),
+					'callback'      => __CLASS__ . '::run_send_email_action',
+					'can_run'       => __CLASS__ . '::can_run_send_email_action',
+					// translators: %s is a list of conditions.
+					'run_if'        => __( 'Sends if %s', 'newsletter-optin-box' ),
+					// translators: %s is a list of conditions.
+					'skip_if'       => __( 'Does not send if %s', 'newsletter-optin-box' ),
+					'callback_args' => array( 'rule', 'args', 'smart_tags' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Sends an email.
+	 *
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
+	 */
+	public static function run_send_email_action( $rule, $args, $smart_tags ) {
+		if ( ! empty( $args['post_meta'] ) ) {
+			update_post_meta( (int) $args['post_meta']['id'], $args['post_meta']['key'], array( (int) $args['post_meta']['id'], (int) $rule->get_action_setting( 'automated_email_id' ) ) );
+		}
+
+		return noptin_send_email_campaign(
+			$rule->get_action_setting( 'automated_email_id' ),
+			$smart_tags
+		);
+	}
+
+	/**
+	 * Checks if we can send an email.
+	 *
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
+	 */
+	public static function can_run_send_email_action( $subject, $rule, $args ) {
+		global $noptin_subscribers_batch_action;
+
+		// Abort if we do not have a campaign.
+		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
+		if ( empty( $automated_email_id ) ) {
+			return false;
+		}
+
+		// ... or if we're importing subscribers.
+		if ( 'import' === $noptin_subscribers_batch_action && 'noptin_subscribers_import_item' !== $rule->get_trigger_id() ) {
+			return false;
+		}
+
+		$campaign = noptin_get_email_campaign_object( $automated_email_id );
+
+		if ( ! $campaign->can_send() ) {
+			return false;
+		}
+
+		if ( absint( $campaign->get( 'automation_rule' ) ) !== absint( $rule->get_id() ) ) {
+			return false;
+		}
+
+		if ( ! empty( $args['post_meta'] ) ) {
+			$sent_notification = get_post_meta( $args['post_meta']['id'], $args['post_meta']['key'], true );
+			return ! is_array( $sent_notification ) || (int) $args['post_meta']['id'] !== (int) $sent_notification[0];
+		}
+
+		return true;
+	}
 }

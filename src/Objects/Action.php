@@ -215,7 +215,16 @@ class Action extends \Noptin_Abstract_Action {
 			}
 		}
 
-		return isset( $this->action_args['callback'] ) && is_callable( $this->action_args['callback'] );
+		if ( ! isset( $this->action_args['callback'] ) || ! is_callable( $this->action_args['callback'] ) ) {
+			return false;
+		}
+
+		// Check if we have a custom can_run.
+		if ( isset( $this->action_args['can_run'] ) && is_callable( $this->action_args['can_run'] ) ) {
+			return call_user_func_array( $this->action_args['can_run'], array( $subject, $rule, $args ) );
+		}
+
+		return true;
 	}
 
 	/**
@@ -236,16 +245,42 @@ class Action extends \Noptin_Abstract_Action {
 			}
 		}
 
-		return call_user_func_array(
-			$this->action_args['callback'],
-			array(
-				$settings,
-				$this->action_id,
-				$subject,
-				$rule,
-				$args,
-				$smart_tags,
-			)
+		$args = array(
+			'settings'   => $settings,
+			'action_id'  => $this->action_id,
+			'subject'    => $subject,
+			'rule'       => $rule,
+			'args'       => $args,
+			'smart_tags' => $smart_tags,
 		);
+
+		$needed = isset( $this->action_args['callback_args'] ) ? $this->action_args['callback_args'] : array( 'settings', 'action_id', 'subject', 'rule', 'args', 'smart_tags' );
+
+		// Order the arguments.
+		$args = array_merge( array_flip( $needed ), $args );
+
+		// Only pass the needed arguments.
+		$args = array_values( array_intersect_key( $args, array_flip( $needed ) ) );
+
+		// If we have an args limit, apply it.
+		if ( isset( $this->action_args['callback_args_limit'] ) ) {
+			$args = array_slice( $args, 0, $this->action_args['callback_args_limit'] );
+		}
+
+		return call_user_func_array( $this->action_args['callback'], $args );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function run_if() {
+		return isset( $this->action_args['run_if'] ) ? $this->action_args['run_if'] : parent::run_if();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function skip_if() {
+		return isset( $this->action_args['skip_if'] ) ? $this->action_args['skip_if'] : parent::skip_if();
 	}
 }

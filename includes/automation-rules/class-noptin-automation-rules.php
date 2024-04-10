@@ -28,9 +28,6 @@ class Noptin_Automation_Rules {
 	 */
 	public function __construct() {
 
-		// Register core actions.
-		$this->add_action( new Noptin_Email_Action() );
-
 		// Register core triggers.
 		$this->add_trigger( new Noptin_New_Comment_Trigger() );
 		$this->add_trigger( new Noptin_Comment_Reply_Trigger() );
