@@ -13,9 +13,14 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-	 * @var array Available Noptin integrations.
+	 * @var array Installed Noptin integrations.
 	 */
 	public $integrations = array();
+
+	/**
+	 * @var array Known Noptin integrations.
+	 */
+	private $all_integrations = null;
 
 	/**
 	 * @var array Admin notices.
@@ -37,6 +42,8 @@ class Main {
 
 		// Load core integrations.
 		$this->load_integrations();
+
+		add_filter( 'noptin_get_all_known_integrations', array( $this, 'get_all_known_integrations' ), 0 );
 
 		// Admin notices.
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
@@ -247,5 +254,58 @@ class Main {
 		if ( file_exists( $path ) ) {
 			require $path;
 		}
+	}
+
+	/**
+	 * Returns all known integrations.
+	 *
+	 */
+	public function get_all_known_integrations() {
+
+		if ( is_array( $this->all_integrations ) ) {
+			return $this->all_integrations;
+		}
+
+		$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'integrations.json', array( 'associative' => true ) );
+
+		$this->all_integrations = array();
+		if ( empty( $all ) ) {
+			return $this->all_integrations;
+		}
+
+		$old_notices = $this->notices;
+		foreach ( $all as $integration ) {
+			if ( $this->is_integration_usable( $integration ) ) {
+
+				// Prepare actions and triggers.
+				foreach ( array( 'triggers', 'actions' ) as $part ) {
+					if ( ! isset( $integration[ $part ] ) || ! is_array( $integration[ $part ] ) ) {
+						continue;
+					}
+
+					foreach ( $integration[ $part ] as $group => $group_parts ) {
+						if ( 'requires' === $group_parts[0]['id'] ) {
+							if ( ! $this->is_integration_usable( $group_parts[0] ) ) {
+								unset( $integration[ $part ][ $group ] );
+								continue;
+							}
+
+							if ( ! empty( $group_parts[0]['premium'] ) ) {
+								foreach ( $group_parts as $index => $group_part ) {
+									$integration[ $part ][ $group ][ $index ]['premium'] = true;
+								}
+							}
+
+							unset( $integration[ $part ][ $group ][0] );
+						}
+					}
+				}
+
+				$this->all_integrations[] = $integration;
+			}
+		}
+		$this->notices = $old_notices;
+
+		return $this->all_integrations;
 	}
 }

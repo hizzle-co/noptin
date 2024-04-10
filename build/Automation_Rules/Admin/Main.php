@@ -112,8 +112,9 @@ class Main {
 				apply_filters(
 					'noptin_email_settings_misc',
 					array(
-						'isTest' => defined( 'NOPTIN_IS_TESTING' ),
-						'data'   => array(
+						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
+						'integrations' => apply_filters( 'noptin_get_all_known_integrations', array() ),
+						'data'         => array(
 							'add_new'  => add_query_arg(
 								array(
 									'page' => 'noptin-automation-rules',
@@ -157,7 +158,6 @@ class Main {
 		$triggers_data = array();
 
 		foreach ( $triggers as $trigger ) {
-
 			if ( ! empty( $trigger->depricated ) ) {
 				continue;
 			}
@@ -207,7 +207,6 @@ class Main {
 		$migrated = (array) get_option( 'noptin_automation_rule_migrated_triggers', array() );
 
 		foreach ( $migrators as $migrator ) {
-
 			if ( empty( $migrator['trigger_id'] ) || empty( $migrator['id'] ) || in_array( $migrator['id'], $migrated, true ) ) {
 				continue;
 			}

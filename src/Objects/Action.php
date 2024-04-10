@@ -41,7 +41,7 @@ class Action extends \Noptin_Abstract_Action {
 		$this->object_type = $collection->type;
 		$this->action_id   = $action_id;
 		$this->action_args = $action_args;
-		$this->category    = $collection->label;
+		$this->category    = isset( $action_args['category'] ) ? $action_args['category'] : $collection->label;
 		$this->integration = $collection->integration;
 	}
 

@@ -46,6 +46,7 @@ class Main {
 		$triggers['pmpro_membership_level_change'] = array(
 			'id'          => 'pmpro_membership_level_change',
 			'label'       => __( 'PMPro > Change Membership Level', 'newsletter-optin-box' ),
+			'category'    => __( 'Paid Memberships Pro', 'newsletter-optin-box' ),
 			'description' => __( "When a user's membership level changes", 'newsletter-optin-box' ),
 			'subject'     => 'user',
 			'provides'    => array( 'pmpro_membership_level' ),
@@ -167,6 +168,7 @@ class Main {
 				'pmpro_change_membership_level' => array(
 					'id'             => 'pmpro_change_membership_level',
 					'label'          => __( 'PMPro > Add to Membership Level', 'noptin-addons-pack' ),
+					'category'       => __( 'Paid Memberships Pro', 'newsletter-optin-box' ),
 					'description'    => __( "Updates the user's membership level", 'noptin-addons-pack' ),
 					'callback'       => __CLASS__ . '::change_membership_level',
 					'action_fields'  => array( 'email' ),

@@ -42,7 +42,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$this->object_type  = $collection->type;
 		$this->trigger_id   = $trigger_id;
 		$this->trigger_args = $trigger_args;
-		$this->category     = $collection->label;
+		$this->category     = isset( $trigger_args['category'] ) ? $trigger_args['category'] : $collection->label;
 		$this->integration  = $collection->integration;
 
 		// Set the contexts.
