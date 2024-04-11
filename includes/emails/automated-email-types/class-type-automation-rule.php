@@ -206,7 +206,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 
 		if ( $trigger ) {
 			return array(
-				__( 'Trigger', 'newsletter-optin-box' ) => $trigger->get_known_smart_tags(),
+				__( 'General', 'newsletter-optin-box' ) => $trigger->get_known_smart_tags(),
 			);
 		}
 
