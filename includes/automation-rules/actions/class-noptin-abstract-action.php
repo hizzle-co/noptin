@@ -61,6 +61,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 */
 	public function maybe_run( $subject, $rule, $args ) {
 		// Set the current email.
+		$GLOBALS['current_noptin_rule']  = $rule->get_id();
 		$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $this, $args );
 
 		// Ensure that we can run the action.
