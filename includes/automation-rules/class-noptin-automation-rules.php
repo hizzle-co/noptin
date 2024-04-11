@@ -34,9 +34,6 @@ class Noptin_Automation_Rules {
 
 		// Handle admin rule CRUD requests.
 		do_action( 'noptin_automation_rules_load', $this );
-
-		// Maybe migrate automation rules.
-		add_action( 'noptin_run_delayed_automation_rule', array( $this, 'run_delayed_automation_rule' ), 10, 2 );
 	}
 
 	/**
@@ -152,49 +149,5 @@ class Noptin_Automation_Rules {
 	 */
 	public function has_trigger( $trigger_id ) {
 		return is_scalar( $trigger_id ) && ! empty( $this->triggers[ $trigger_id ] );
-	}
-
-	/**
-	 * Runs a delayed automation rule.
-	 *
-	 * @param string $automation_rule The rule id to schedule.
-	 * @param array $args The trigger arguments.
-	 */
-	public function run_delayed_automation_rule( $rule_id, $args ) {
-
-		$rule = noptin_get_automation_rule( $rule_id );
-
-		if ( is_wp_error( $rule ) || ! $rule->exists() ) {
-			throw new \Exception( 'Automation rule not found' );
-		}
-
-		// Fetch the trigger.
-		$trigger = $rule->get_trigger();
-
-		if ( empty( $trigger ) ) {
-			throw new \Exception( 'Invalid or unregistered trigger' );
-		}
-
-		// Fetch the action.
-		$action = $rule->get_action();
-
-		if ( empty( $action ) ) {
-			throw new \Exception( 'Invalid or unregistered action' );
-		}
-
-		// Unserialize the trigger arguments.
-		$args = $trigger->unserialize_trigger_args( $args );
-
-		// Abort if the trigger does not support scheduling.
-		if ( ! is_array( $args ) ) {
-			throw new \Exception( 'Trigger does not support scheduling' );
-		}
-
-		// Ensure that the rule is valid for the provided args.
-		if ( $trigger->is_rule_valid_for_args( $rule, $args, $args['subject'], $action ) ) {
-			$action->maybe_run( $args['subject'], $rule, $args );
-		} else {
-			throw new \Exception( 'Automation rule is no longer valid for the provided arguments' );
-		}
 	}
 }

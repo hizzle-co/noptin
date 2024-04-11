@@ -337,8 +337,8 @@ class Noptin {
 		}
 
 		// Integrations.
-		$this->integrations     = new Noptin_Integrations();
 		$this->integrations_new = new \Hizzle\Noptin\Integrations\Main();
+		$this->integrations     = new Noptin_Integrations();
 
 		\Hizzle\Noptin\Objects\Users::add_default();
 

@@ -117,7 +117,8 @@ class Generic_Post extends Record {
 			return null;
 		}
 
-		return get_post_meta( $this->external->ID, $field, true );
+		$value = get_post_meta( $this->external->ID, $field, true );
+		return apply_filters( 'noptin_post_get_meta', $value, $field, $this->external->ID, $args );
 	}
 
 	/**

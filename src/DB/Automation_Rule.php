@@ -495,6 +495,13 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			return false;
 		}
 
+		// Maybe use an external runner.
+		$result = apply_filters( 'noptin_automation_rule_maybe_run', null, $subject, $this, $args, $trigger, $action );
+
+		if ( null !== $result ) {
+			return $result;
+		}
+
 		// Are we delaying the action?
 		$delay = $this->get_delay();
 
