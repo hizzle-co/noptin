@@ -109,7 +109,6 @@ class Noptin_COM {
 		$details = self::fetch_license_details( $license_key );
 
 		if ( is_wp_error( $details ) ) {
-
 			if ( in_array( 'hizzle_licenses_not_found', $details->get_error_codes(), true ) ) {
 				self::update( 'license_key', '' );
 			}

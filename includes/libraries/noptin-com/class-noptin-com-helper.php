@@ -17,6 +17,9 @@ defined( 'ABSPATH' ) || exit;
  */
 class Noptin_COM_Helper {
 
+	public static $temporary_key    = '';
+	public static $activation_error = '';
+
 	/**
 	 * Loads the helper class, runs on init.
 	 */
@@ -55,6 +58,10 @@ class Noptin_COM_Helper {
 	 */
 	public static function admin_init() {
 
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
+
 		// Handle license deactivation.
 		if ( isset( $_GET['noptin-deactivate-license-nonce'] ) && wp_verify_nonce( rawurldecode( $_GET['noptin-deactivate-license-nonce'] ), 'noptin-deactivate-license' ) ) {
 			self::handle_license_deactivation();
@@ -63,10 +70,9 @@ class Noptin_COM_Helper {
 		}
 
 		// Handle license activation.
-		if ( isset( $_POST['noptin-license'] ) && isset( $_POST['noptin_save_license_key_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['noptin_save_license_key_nonce'] ), 'noptin_save_license_key' ) ) {
-			self::handle_license_save( $_POST['noptin-license'] );
+		if ( isset( $_POST['noptin-license'] ) && isset( $_POST['noptin_save_license_key_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['noptin_save_license_key_nonce'] ) ), 'noptin_save_license_key' ) ) {
+			self::handle_license_save( sanitize_text_field( wp_unslash( $_POST['noptin-license'] ) ) );
 		}
-
 	}
 
 	/**
@@ -104,13 +110,13 @@ class Noptin_COM_Helper {
 
 		// Abort if there was an error.
 		if ( is_wp_error( $result ) ) {
-			return noptin()->admin->show_error(
-				sprintf(
-					/* translators: %s: Error message. */
-					__( 'There was an error activating your license key: %s', 'newsletter-optin-box' ),
-					$result->get_error_message()
-				)
+			self::$temporary_key    = $license_key;
+			self::$activation_error = sprintf(
+				/* translators: %s: Error message. */
+				__( 'There was an error activating your license key: %s', 'newsletter-optin-box' ),
+				$result->get_error_message()
 			);
+			return false;
 		}
 
 		// Save the license key.

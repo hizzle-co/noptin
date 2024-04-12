@@ -310,6 +310,9 @@ class Noptin {
 		// Init settings.
 		\Hizzle\Noptin\Settings\Main::init();
 
+		// Init extensions.
+		\Hizzle\Noptin\Extensions\Main::init();
+
 		// Form manager.
 		$this->forms = new Noptin_Form_Manager();
 

@@ -1,28 +1,27 @@
 <?php
 
 /**
- * Controller for settings.
+ * Controller for extensions.
  *
  * @version 1.0.0
  */
 
-namespace Hizzle\Noptin\Settings;
+namespace Hizzle\Noptin\Extensions;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Controller for settings.
+ * Controller for extensions.
  */
-class Settings extends \WP_REST_Controller {
+class REST extends \WP_REST_Controller {
 
 	/**
 	 * Loads the class.
 	 *
-	 * @param string $rest_base The rest base.
 	 */
-	public function __construct( $rest_base ) {
+	public function __construct() {
 		$this->namespace = 'noptin/v1';
-		$this->rest_base = $rest_base;
+		$this->rest_base = 'extensions';
 
 		// Register rest routes.
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );

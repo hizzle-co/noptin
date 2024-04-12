@@ -281,7 +281,7 @@
 
 	<!-- CRM connections -->
 	<div class="noptin-extension-group noptin-extension-group__connections">
-		<h2 class="noptin-extension-group__title"><?php esc_html_e( 'Integrations', 'newsletter-optin-box' ); ?></h2>
+		<h2 class="noptin-extension-group__title"><?php esc_html_e( 'Connections', 'newsletter-optin-box' ); ?></h2>
 		<p class="noptin-extension-group__description description"><?php esc_html_e( 'These extensions allow you to connect Noptin to your favorite CRM or email software.', 'newsletter-optin-box' ); ?></p>
 
 		<ul class="noptin-extension-group__items">
@@ -316,5 +316,4 @@
 
 		</ul>
 	</div>
-
 </div>
