@@ -40,15 +40,13 @@ class Main {
 		// Register post types.
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
+		add_action( 'noptin_load', array( __CLASS__, 'register_email_types' ), 0 );
 
 		// Fire hooks.
 		add_action( 'noptin_before_send_email', array( __CLASS__, 'set_current_email' ), -10 );
 		add_filter( 'noptin_get_last_send_date', array( __CLASS__, 'filter_last_send_date' ) );
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
-
-		// Register email types.
-		self::register_email_types();
 
 		// Email preview.
 		Preview::init();
@@ -370,7 +368,7 @@ class Main {
 	 * Registers email types.
 	 *
 	 */
-	private static function register_email_types() {
+	public static function register_email_types() {
 
 		// Newsletter emails.
 		self::register_email_type(
