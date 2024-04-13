@@ -53,10 +53,10 @@ class Menu {
 
 		self::$hook_suffix = add_submenu_page(
 			'noptin',
-			esc_html__( 'Extensions ---new', 'newsletter-optin-box' ),
+			esc_html__( 'Extensions', 'newsletter-optin-box' ),
 			$menu_title,
 			get_noptin_capability(),
-			'noptin-addons__new',
+			'noptin-addons',
 			array( __CLASS__, 'render_admin_page' )
 		);
 	}
@@ -149,7 +149,7 @@ class Menu {
 		$installed_addons = wp_list_pluck( \Noptin_COM::get_installed_addons(), '_filename', 'slug' );
 		$groups           = array(
 			__( 'License Key', 'newsletter-optin-box' )  => array(
-				'description' => esc_html__( 'An active license key gives you access to priority support and premium features.', 'newsletter-optin-box' ),
+				'description' => esc_html__( 'An active license key gives you access to priority support, fixes, and all premium features and extensions. Use the tabs on the left to browse and install premium extensions.', 'newsletter-optin-box' ),
 				'license'     => array(
 					'licenseKey' => \Noptin_COM::get_active_license_key(),
 					'info'       => $license,
@@ -157,6 +157,123 @@ class Menu {
 					'nonce'      => wp_create_nonce( 'noptin_save_license_key' ),
 					'purchase'   => noptin_get_upsell_url( 'pricing', 'license', 'extensionsscreen' ),
 					'deactivate' => str_replace( '&amp;', '&', wp_nonce_url( admin_url( 'admin.php?page=noptin-addons' ), 'noptin-deactivate-license', 'noptin-deactivate-license-nonce' ) ),
+				),
+			),
+			__( 'Addons Pack', 'newsletter-optin-box' )  => array(
+				'description'        => esc_html__( 'The addons pack gives you access to the following features.', 'newsletter-optin-box' ),
+				'email-course'       => array(
+					'name'        => 'email-course',
+					'label'       => __( 'Sequences / Courses', 'newsletter-optin-box' ),
+					'description' => __( 'Set-up a series of free or paid emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc.', 'newsletter-optin-box' ),
+					'image_url'   => array(
+						'icon' => 'email',
+						'fill' => '#e91e63',
+					),
+					'button2'     => self::main_action_button( $license, 'noptin-addons-pack', $installed_addons ),
+					'button1'     => array(
+						'href'    => noptin_get_upsell_url(
+							'https://noptin.com/guide/sending-emails/welcome-emails/',
+							'welcome-emails',
+							'extensionsscreen'
+						),
+						'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
+						'variant' => 'secondary',
+					),
+				),
+				'coupon-codes'       => array(
+					'name'        => 'coupon-codes',
+					'label'       => __( 'Coupon Codes', 'newsletter-optin-box' ),
+					'description' => __( 'Make more money by automatically sending new subscribers, users, or customers unique coupon codes.', 'newsletter-optin-box' ),
+					'image_url'   => array(
+						'icon' => 'money',
+						'fill' => '#e91e63',
+					),
+					'button2'     => self::main_action_button( $license, 'noptin-addons-pack', $installed_addons ),
+					'button1'     => array(
+						'href'    => noptin_get_upsell_url(
+							'https://noptin.com/blog/how-to-send-a-unique-woocommerce-coupon-code-to-new-email-subscribers/',
+							'coupon-codes',
+							'extensionsscreen'
+						),
+						'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
+						'variant' => 'secondary',
+					),
+				),
+				'tag-subscribers'    => array(
+					'name'        => 'tag-subscribers',
+					'label'       => __( 'Tag Subscribers', 'newsletter-optin-box' ),
+					'description' => __( 'Tag subscribers based on their actions and send emails to subscribers with specific tags, or automatically send emails to subscribers whenever they are tagged or untagged.', 'newsletter-optin-box' ),
+					'image_url'   => array(
+						'icon' => 'tag',
+						'fill' => '#e91e63',
+					),
+					'button2'     => self::main_action_button( $license, 'noptin-addons-pack', $installed_addons ),
+					'button1'     => array(
+						'href'    => noptin_get_upsell_url(
+							'https://noptin.com/guide/email-subscribers/tagging-subscribers/',
+							'tag-subscribers',
+							'extensionsscreen'
+						),
+						'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
+						'variant' => 'secondary',
+					),
+				),
+				'lists'              => array(
+					'name'        => 'lists',
+					'label'       => __( 'Lists', 'newsletter-optin-box' ),
+					'description' => __( 'Create multiple lists and send emails to subscribers in specific lists, or automatically send emails to subscribers whenever they are added to or removed from specific lists.', 'newsletter-optin-box' ),
+					'image_url'   => array(
+						'icon' => 'category',
+						'fill' => '#e91e63',
+					),
+					'button2'     => self::main_action_button( $license, 'noptin-addons-pack', $installed_addons ),
+					'button1'     => array(
+						'href'    => noptin_get_upsell_url(
+							'https://noptin.com/guide/email-subscribers/subscriber-lists/',
+							'lists',
+							'extensionsscreen'
+						),
+						'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
+						'variant' => 'secondary',
+					),
+				),
+				'manage-preferences' => array(
+					'name'        => 'manage-preferences',
+					'label'       => __( 'Manage Preferences', 'newsletter-optin-box' ),
+					'description' => __( 'Allow subscribers to manage their preferences and unsubscribe from specific lists.', 'newsletter-optin-box' ),
+					'image_url'   => array(
+						'icon' => 'admin-settings',
+						'fill' => '#e91e63',
+					),
+					'button2'     => self::main_action_button( $license, 'noptin-addons-pack', $installed_addons ),
+					'button1'     => array(
+						'href'    => noptin_get_upsell_url(
+							'https://noptin.com/guide/email-subscribers/manage-preferences/',
+							'manage-preferences',
+							'extensionsscreen'
+						),
+						'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
+						'variant' => 'secondary',
+					),
+				),
+				'sync'               => array(
+					'name'        => 'sync',
+					'label'       => __( 'Sync Subscribers', 'newsletter-optin-box' ),
+					'description' => __( 'Sync subscribers between sites, and add newsletter subscription forms on external sites.', 'newsletter-optin-box' ),
+					'image_url'   => array(
+						'icon' => 'marker',
+						'fill' => '#e91e63',
+					),
+					'button2'     => self::main_action_button( $license, 'noptin-addons-pack', $installed_addons ),
+					'button1'     => array(
+						'href'    => noptin_get_upsell_url(
+							'https://noptin.com/guide/email-subscribers/sync-subscribers/',
+							'sync',
+							'extensionsscreen'
+						),
+						'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
+						'variant' => 'secondary',
+					),
 				),
 			),
 			__( 'Integrations', 'newsletter-optin-box' ) => array(

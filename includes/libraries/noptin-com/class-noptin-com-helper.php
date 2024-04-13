@@ -33,13 +33,6 @@ class Noptin_COM_Helper {
 	}
 
 	/**
-	 * Render the helper section content based on context.
-	 */
-	public static function output_extensions_page() {
-		require plugin_dir_path( __FILE__ ) . 'views/html-admin-page-extensions.php';
-	}
-
-	/**
 	 * Enqueue admin scripts and styles.
 	 */
 	public static function admin_enqueue_scripts() {
@@ -322,19 +315,6 @@ class Noptin_COM_Helper {
 
 		return true;
 	}
-
-	/**
-	 * Displays the main action button.
-	 *
-	 * @param object|WP_Error|false $license The active license
-	 * @param string $slug The extension slug.
-	 * @param array $installed_addons The installed addons.
-	 * @param bool  $is_connection Whether this is a connection.
-	 */
-	public static function display_main_action_button( $license, $slug, $installed_addons, $is_connection ) {
-		include plugin_dir_path( __FILE__ ) . 'views/html-extension-action-button.php';
-	}
-
 }
 
 Noptin_COM_Helper::load();

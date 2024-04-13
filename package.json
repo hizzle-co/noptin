@@ -8,7 +8,8 @@
 		"csswatch": "sass --no-source-map  --watch includes/assets/sass:includes/assets/css",
 		"compile:css": "sass --no-source-map includes/assets/sass:includes/assets/css && postcss includes/assets/css/*.css -r --no-map",
 		"js": "npx webpack --watch --mode development",
-		"build:js": "npx webpack --mode production"
+		"build:js": "npx webpack --mode production",
+		"dump:autoload": "composer dump-autoload"
 	},
 	"repository": {
 		"type": "git",

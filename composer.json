@@ -17,7 +17,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Hizzle\\Noptin\\": ["src/", "build/"]
-        }
+            "Hizzle\\Noptin\\": [
+                "src/",
+                "build/"
+            ]
+        },
+        "files": [
+            "includes/functions.php",
+            "build/autoload.php"
+        ]
     }
 }

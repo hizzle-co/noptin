@@ -307,11 +307,6 @@ class Noptin {
 		$this->plugin_url  = plugins_url( '/', __FILE__ );
 		$this->is_test     = 'production' !== wp_get_environment_type();
 
-		// Init settings.
-		\Hizzle\Noptin\Settings\Main::init();
-
-		// Init extensions.
-		\Hizzle\Noptin\Extensions\Main::init();
 
 		// Form manager.
 		$this->forms = new Noptin_Form_Manager();
@@ -322,8 +317,6 @@ class Noptin {
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
 
-		// Automation rules.
-		\Hizzle\Noptin\Automation_Rules\Main::init();
 	}
 
 	/**
@@ -353,9 +346,6 @@ class Noptin {
 
 		// Subscribers.
 		$this->subscribers();
-
-		// Emails.
-		\Hizzle\Noptin\Emails\Main::init();
 
 		// REST.
 		$this->api();
