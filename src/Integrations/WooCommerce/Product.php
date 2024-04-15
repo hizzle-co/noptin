@@ -163,7 +163,7 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 			return $this->external->{$field}();
 		}
 
-		return null;
+		return apply_filters( 'noptin_post_get_meta', null, $field, $this->external->get_id(), $args );
 	}
 
 	private function prepare_terms( $term_ids, $taxonomy, $link ) {
