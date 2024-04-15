@@ -180,48 +180,39 @@ function noptin_send_email_campaign( $campaign_id, $alt_smart_tags = null ) {
 function get_noptin_email_senders( $full = false ) {
 
 	// Prepare senders.
-	$senders = apply_filters(
-		'noptin_email_senders',
-		array(
+	$senders = array(
 
-			'noptin'                => array(
-				'label'        => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
-				'description'  => __( 'Send a bulk email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields.', 'newsletter-optin-box' ),
-				'image'        => array(
-					'icon' => 'email',
-					'fill' => '#008000',
-				),
-				'is_active'    => true,
-				'is_installed' => true,
-				'is_local'     => true,
+		'noptin' => array(
+			'label'        => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
+			'description'  => __( 'Send a bulk email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields.', 'newsletter-optin-box' ),
+			'image'        => array(
+				'icon' => 'email',
+				'fill' => '#008000',
 			),
-
-			'woocommerce_customers' => array(
-				'label'        => __( 'WooCommerce Customers', 'newsletter-optin-box' ),
-				'description'  => __( "Send a bulk email to all your WooCommerce customers, customers who've bought specific products, etc.", 'newsletter-optin-box' ),
-				'image'        => 'https://noptin.com/wp-content/uploads/2023/04/woocommerce-badge-64x64.png',
-				'is_active'    => function_exists( 'WC' ),
-				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ) || class_exists( '\Hizzle\Noptin\Integrations\WooCommerce\Premium\Email_Sender' ),
-				'is_local'     => true,
-			),
-
-			'wp_users'              => array(
-				'label'        => __( 'WordPress Users', 'newsletter-optin-box' ),
-				'description'  => __( 'Send a bulk email to your WordPress Users. You can filter recipients by their user roles.', 'newsletter-optin-box' ),
-				'image'        => array(
-					'icon' => 'wordpress',
-					'fill' => '#464342',
-				),
-				'is_active'    => true,
-				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
-				'is_local'     => true,
-			),
-
-		)
+			'is_installed' => true,
+			'is_local'     => true,
+		),
 	);
 
-	// Filter inactive senders.
-	$senders = wp_list_filter( $senders, array( 'is_active' => true ) );
+	foreach ( noptin()->integrations_new->get_all_known_integrations() as $integration ) {
+		if ( ! empty( $integration['mass_mail'] ) ) {
+			$sender             = $integration['mass_mail']['id'];
+			$senders[ $sender ] = $integration['mass_mail'];
+
+			$senders[ $sender ]['integration']  = $integration['slug'];
+			$senders[ $sender ]['is_installed'] = false;
+
+			if ( empty( $senders[ $sender ]['image'] ) ) {
+				$senders[ $sender ]['image'] = $integration['icon_url'];
+			}
+
+			if ( ! isset( $senders[ $sender ]['is_local'] ) ) {
+				$senders[ $sender ]['is_local'] = true;
+			}
+		}
+	}
+
+	$senders = apply_filters( 'noptin_email_senders', $senders );
 
 	// Are we returning the full array?
 	if ( ! $full ) {

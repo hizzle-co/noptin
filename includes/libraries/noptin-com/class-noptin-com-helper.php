@@ -25,25 +25,10 @@ class Noptin_COM_Helper {
 	 */
 	public static function load() {
 
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 
 		do_action( 'noptin_com_helper_loaded' );
-	}
-
-	/**
-	 * Enqueue admin scripts and styles.
-	 */
-	public static function admin_enqueue_scripts() {
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-		$our_id    = noptin()->white_label->admin_screen_id() . '_page_noptin-addons';
-		$version   = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? time() : noptin()->version;
-
-		if ( $our_id === $screen_id ) {
-			wp_enqueue_style( 'noptin-addons-page', noptin()->plugin_url . 'includes/assets/css/addons-page.css', array(), $version );
-		}
 	}
 
 	/**

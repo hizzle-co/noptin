@@ -276,6 +276,7 @@ class Main {
 		$old_notices = $this->notices;
 		foreach ( $all as $integration ) {
 			if ( $this->is_integration_usable( $integration ) ) {
+				$integration['is_installed'] = isset( $this->integrations[ $integration['slug'] ] );
 
 				// Prepare actions and triggers.
 				foreach ( array( 'triggers', 'actions' ) as $part ) {
