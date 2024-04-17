@@ -58,7 +58,6 @@ class Main {
 			! empty( $_REQUEST['noptin_email_action_nonce'] ) &&
 			wp_verify_nonce( $_REQUEST['noptin_email_action_nonce'], 'noptin_email_action' )
 		) {
-
 			$method   = 'admin_' . $_REQUEST['noptin_email_action'];
 			$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['noptin_campaign'] ) );
 
@@ -122,7 +121,6 @@ class Main {
 
 		// Set status to publish to allow sending.
 		if ( 'publish' !== $campaign->status ) {
-
 			if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
 				self::redirect_from_action_with_error( 'You do not have permission to send this campaign.' );
 			}
@@ -319,7 +317,6 @@ class Main {
 
 		// Check if we are editing a campaign.
 		if ( ! empty( $edited_campaign ) ) {
-
 			if ( 'not-found' === $edited_campaign->admin_screen ) {
 				include plugin_dir_path( __FILE__ ) . 'views/404.php';
 				return;
@@ -387,12 +384,13 @@ class Main {
 				apply_filters(
 					'noptin_email_settings_misc',
 					array(
-						'isTest'     => defined( 'NOPTIN_IS_TESTING' ),
-						'data'       => (object) ( empty( $type ) ? array() : $type->to_array() ),
-						'from_name'  => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
-						'from_email' => get_noptin_option( 'from_email', '' ),
-						'reply_to'   => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
-						'senders'    => array_merge(
+						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
+						'data'         => (object) ( empty( $type ) ? array() : $type->to_array() ),
+						'from_name'    => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
+						'from_email'   => get_noptin_option( 'from_email', '' ),
+						'reply_to'     => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
+						'integrations' => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
+						'senders'      => array_merge(
 							array(
 								'manual_recipients' => array(
 									'label'        => __( 'Manual Recipients', 'newsletter-optin-box' ),
@@ -408,7 +406,7 @@ class Main {
 										'disableMergeTags' => false,
 										'fields'           => array(
 											'recipients' => array(
-												'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
+												'label' => __( 'Recipient(s)', 'newsletter-optin-box' ),
 												'description' => sprintf(
 													'%s<br /> <br />%s',
 													__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
@@ -418,7 +416,7 @@ class Main {
 														'<code>--notracking</code>'
 													)
 												),
-												'type'        => 'text',
+												'type'  => 'text',
 												'placeholder' => sprintf(
 													/* translators: %s: Example */
 													__( 'For example, %s', 'newsletter-optin-box' ),
@@ -463,7 +461,6 @@ class Main {
 
 		// Abort if unknown email type.
 		if ( empty( $query_args['noptin_email_type'] ) ) {
-
 			if ( ! empty( $query_args['noptin_campaign'] ) ) {
 				$query_args['noptin_email_type'] = get_post_meta( intval( $query_args['noptin_campaign'] ), 'campaign_type', true );
 			} else {
@@ -484,7 +481,6 @@ class Main {
 
 		// If we expect a parent ID, check if it exists.
 		if ( ! empty( $query_args['noptin_email_type'] ) && empty( $query_args['noptin_campaign'] ) ) {
-
 			$type     = \Hizzle\Noptin\Emails\Main::get_email_type( sanitize_text_field( $query_args['noptin_email_type'] ) );
 			$campaign = new \Hizzle\Noptin\Emails\Email( 0 );
 			if ( $type && $type->parent_type ) {
