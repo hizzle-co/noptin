@@ -29,7 +29,6 @@ class Noptin_COM_Updater {
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
 		add_filter( 'noptin_email_settings_misc', array( __CLASS__, 'filter_email_settings' ) );
-		add_filter( 'noptin_automation_sub_types', array( __CLASS__, 'upsell_automation_types' ), 11 );
 	}
 
 	/**
@@ -154,9 +153,7 @@ class Noptin_COM_Updater {
 		if ( is_wp_error( $response ) ) {
 			$data['errors'][]  = $response->get_error_message();
 		} else {
-
 			foreach ( $git_urls as $slug => $git_url ) {
-
 				$response = json_decode( wp_json_encode( $response ), true );
 				if ( ! empty( $response[ $git_url ]['error'] ) ) {
 					$data['errors'][] = $response[ $git_url ]['error'];
@@ -205,7 +202,7 @@ class Noptin_COM_Updater {
 			}
 
 			if ( version_compare( $plugin['Version'], $update_data[ $plugin['slug'] ]['version'], '<' ) ) {
-				$count++;
+				++$count;
 			}
 		}
 
@@ -337,7 +334,6 @@ class Noptin_COM_Updater {
 		}
 
 		if ( ! empty( $new_response[ $git_url ]['error'] ) ) {
-
 			if ( ! empty( $new_response[ $git_url ]['error']['error_code'] ) && 'download_file_not_found' === $new_response[ $git_url ]['error']['error_code'] ) {
 				return $response;
 			}
@@ -375,7 +371,6 @@ class Noptin_COM_Updater {
 	public static function need_license_message( $plugin_data, $r ) {
 
 		if ( empty( $r->package ) ) {
-
 			printf(
 				'<span style="display: block;margin-top: 10px;font-weight: 600; color: #a00;">%s</span>',
 				sprintf(
@@ -398,7 +393,6 @@ class Noptin_COM_Updater {
 		// If we are on the update core page, change the update message for unlicensed products.
 		global $pagenow;
 		if ( ( 'update-core.php' === $pagenow ) && $transient && isset( $transient->response ) && ! isset( $_GET['action'] ) ) {
-
 			$notice = sprintf(
 				/* translators: %s: updates page URL. */
 				__( 'To update, please <a href="%s">activate your license key</a>.', 'newsletter-optin-box' ),
@@ -448,43 +442,6 @@ class Noptin_COM_Updater {
 		}
 
 		return $settings;
-	}
-
-	/**
-	 * Upsells automation types.
-	 *
-	 * @param array $types The automation types.
-	 * @return array
-	 */
-	public static function upsell_automation_types( $types ) {
-
-		return array_merge(
-			$types,
-			array(
-				'automation_rule_new_user'      => array(
-					'label'        => __( 'Welcome New Users', 'newsletter-optin-box' ),
-					'description'  => __( 'Welcome new users to your website, introduce yourself, etc.', 'newsletter-optin-box' ),
-					'image'        => array(
-						'icon' => 'admin-users',
-						'fill' => '#404040',
-					),
-					'category'     => 'WordPress',
-					'is_mass_mail' => false,
-					'is_installed' => false,
-				),
-				'automation_rule_add_user_role' => array(
-					'label'        => __( 'User Role Changes', 'newsletter-optin-box' ),
-					'description'  => __( 'Send an email whenever a user role is added, removed, or updated.', 'newsletter-optin-box' ),
-					'image'        => array(
-						'icon' => 'admin-users',
-						'fill' => '#404040',
-					),
-					'category'     => 'WordPress',
-					'is_mass_mail' => false,
-					'is_installed' => false,
-				),
-			)
-		);
 	}
 }
 

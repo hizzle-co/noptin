@@ -307,7 +307,6 @@ class Noptin_COM {
 		$noptin_plugins = array();
 
 		foreach ( get_plugins() as $filename => $data ) {
-
 			$slug = basename( dirname( $filename ) );
 
 			if ( 0 === strpos( $slug, 'noptin-' ) ) {

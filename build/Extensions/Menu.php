@@ -303,7 +303,7 @@ class Menu {
 				) : false,
 			);
 
-			if ( isset( $config['plan'] ) && 'free' === $config['plan'] ) {
+			if ( ! isset( $config['plan'] ) || 'free' === $config['plan'] ) {
 				$groups['Integrations'][ $config['slug'] ]['button2'] = array(
 					'text'      => esc_html__( 'Active', 'newsletter-optin-box' ),
 					'variant'   => 'primary',

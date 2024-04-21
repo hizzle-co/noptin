@@ -273,6 +273,8 @@ class Main {
 			return $this->all_integrations;
 		}
 
+		$installed_addons = wp_list_pluck( \Noptin_COM::get_installed_addons(), '_filename', 'slug' );
+
 		$old_notices = $this->notices;
 		foreach ( $all as $integration ) {
 			if ( $this->is_integration_usable( $integration ) ) {
@@ -302,9 +304,26 @@ class Main {
 					}
 				}
 
+				// Add install info.
+				if ( isset( $integration['plan'] ) && 'free' !== $integration['plan'] ) {
+					$slug                        = 'noptin-' . $integration['slug'];
+					$integration['installation'] = array(
+						'install_text' => isset( $installed_addons[ $slug ] ) ? __( 'Activate', 'newsletter-optin-box' ) : __( 'Install', 'newsletter-optin-box' ),
+						'install_desc' => sprintf(
+							// translators: %s plugin name.
+							isset( $installed_addons[ $slug ] ) ? __( 'Activate the %s integration to unlock.', 'newsletter-optin-box' ) : __( 'Install the %s integration to unlock.', 'newsletter-optin-box' ),
+							$integration['label']
+						),
+						'install_url'  => isset( $installed_addons[ $slug ] ) ?
+							str_replace( '&amp;', '&', wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $installed_addons[ $slug ] ), 'activate-plugin_' . $installed_addons[ $slug ] ) ) :
+							str_replace( '&amp;', '&', wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=noptin-plugin-with-slug-' . $slug ), 'install-plugin_noptin-plugin-with-slug-' . $slug ) ),
+					);
+				}
+
 				$this->all_integrations[] = $integration;
 			}
 		}
+
 		$this->notices = $old_notices;
 
 		return $this->all_integrations;
