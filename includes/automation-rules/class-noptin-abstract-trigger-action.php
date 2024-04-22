@@ -88,10 +88,10 @@ abstract class Noptin_Abstract_Trigger_Action {
 
 		// Integrations.
 		if ( ! empty( $this->integration ) ) {
-			$integration = Noptin_COM::get_integration( $this->integration );
+			$integration = \Hizzle\Noptin\Integrations\Main::get_integration_info( $this->integration );
 
 			if ( ! empty( $integration ) ) {
-				return $integration->image_url;
+				return $integration['icon_url'];
 			}
 		}
 

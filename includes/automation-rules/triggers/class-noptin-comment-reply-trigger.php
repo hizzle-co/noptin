@@ -18,7 +18,7 @@ class Noptin_Comment_Reply_Trigger extends Noptin_New_Comment_Trigger {
 	/**
 	 * @var string
 	 */
-	public $integration = 'registration-form';
+	public $integration = 'wordpress-users';
 
 	/**
 	 * @inheritdoc

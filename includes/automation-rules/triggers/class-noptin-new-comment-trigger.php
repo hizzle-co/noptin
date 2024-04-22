@@ -18,7 +18,7 @@ class Noptin_New_Comment_Trigger extends Noptin_Abstract_Trigger {
 	/**
 	 * @var string
 	 */
-	public $integration = 'registration-form';
+	public $integration = 'wordpress-users';
 
 	/**
 	 * Constructor.

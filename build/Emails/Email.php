@@ -477,7 +477,6 @@ class Email {
 		// If this is a mass mail and not a newsletter email,
 		// ... create a newsletter email and send it.
 		if ( $this->is_mass_mail() && 'newsletter' !== $this->type ) {
-
 			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
 
 			// Prepare campaign args.
@@ -503,7 +502,6 @@ class Email {
 
 				// Check if the key starts with content_.
 				if ( 0 === strpos( $key, 'content_' ) ) {
-
 					$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $value );
 
 					// Parse paragraphs.

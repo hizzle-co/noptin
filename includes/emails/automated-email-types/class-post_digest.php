@@ -204,12 +204,6 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 			return;
 		}
 
-		if ( false === $this->posts_found ) {
-			$GLOBALS['noptin_email_force_skip'] = array(
-				'message' => __( 'No posts found.', 'newsletter-optin-box' ),
-			);
-		}
-
 		$this->post_digest = null;
 		parent::after_send( $campaign );
 	}
@@ -313,7 +307,17 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 
 		// Abort if we have no posts.
 		if ( empty( $posts ) ) {
+			$GLOBALS['noptin_email_force_skip'] = array(
+				'message' => __( 'No posts found.', 'newsletter-optin-box' ),
+				'source'  => 'post_digest',
+			);
+
 			return '';
+		}
+
+		// Unset the force skip.
+		if ( ! empty( $GLOBALS['noptin_email_force_skip'] ) && isset( $GLOBALS['noptin_email_force_skip']['source'] ) && 'post_digest' === $GLOBALS['noptin_email_force_skip']['source'] ) {
+			unset( $GLOBALS['noptin_email_force_skip'] );
 		}
 
 		// We have posts.

@@ -858,7 +858,7 @@ function do_noptin_background_action() {
  * You can pass extra arguments to the hooks, much like you can with `do_action()`.
  *
  * Example usage:
- *
+ * ```php
  *     // The action callback function.
  *     function log_name( $name ) {
  *         // Log the name.
@@ -868,6 +868,7 @@ function do_noptin_background_action() {
  *
  *      // Ask Noptin to fire the hook in in the future.
  *      schedule_noptin_background_action( noptin_string_to_timestamp( '+1 day' ), 'log_name_after_a_day', 'Brian');
+ * ```
  *
  * @since 1.2.7
  * @see Noptin_Task
@@ -2224,6 +2225,11 @@ function noptin_daily_maintenance() {
 
 	// Check license status.
 	Noptin_COM::get_active_license_key( true );
+
+	// Refresh integrations after 10 mins.
+	if ( ! next_scheduled_noptin_background_action( 'noptin_refresh_integrations' ) ) {
+		schedule_noptin_background_action( time() + 600, 'noptin_refresh_integrations' );
+	}
 }
 add_action( 'noptin_daily_maintenance', 'noptin_daily_maintenance' );
 

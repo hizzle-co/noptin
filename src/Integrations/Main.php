@@ -45,6 +45,8 @@ class Main {
 
 		add_filter( 'noptin_get_all_known_integrations', array( $this, 'get_all_known_integrations' ), 0 );
 
+		add_action( 'noptin_refresh_integrations', array( __CLASS__, 'refresh' ) );
+
 		// Admin notices.
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
 	}
@@ -327,5 +329,38 @@ class Main {
 		$this->notices = $old_notices;
 
 		return $this->all_integrations;
+	}
+
+	/**
+	 * Refreshes all known integrations.
+	 *
+	 */
+	public static function refresh() {
+		WP_Filesystem();
+
+		// Fetch the integrations.
+		$result = \Noptin_COM::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/integrations.json' ) );
+		if ( is_array( $result ) ) {
+			$GLOBALS['wp_filesystem']->put_contents( plugin_dir_path( __FILE__ ) . 'integrations.json', wp_json_encode( $result ), FS_CHMOD_FILE );
+		}
+	}
+
+	/**
+	 * Retrieves an integration info.
+	 */
+	public static function get_integration_info( $slug ) {
+		$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'integrations.json', array( 'associative' => true ) );
+
+		if ( empty( $all ) ) {
+			return null;
+		}
+
+		foreach ( $all as $integration ) {
+			if ( $slug === $integration['slug'] ) {
+				return $integration;
+			}
+		}
+
+		return null;
 	}
 }
