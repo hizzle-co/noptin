@@ -72,7 +72,9 @@ class Main {
 
 		// Ensure that the rule is valid for the provided args.
 		if ( $trigger->is_rule_valid_for_args( $rule, $args, $args['subject'], $action ) ) {
-			$action->maybe_run( $args['subject'], $rule, $args );
+			if ( false === $action->maybe_run( $args['subject'], $rule, $args ) ) {
+				throw new \Exception( 'Failed to run automation rule' );
+			}
 		} else {
 			throw new \Exception( 'Automation rule is no longer valid for the provided arguments' );
 		}

@@ -180,7 +180,7 @@ class Noptin_Tools {
 
 		// Verify nonce.
 		if ( ! empty( $_GET['tool'] ) ) {
-			check_admin_referer( 'noptin_tool' );
+			check_admin_referer( 'noptin_tool', 'noptin_tool_nonce' );
 		}
 
 		$tool = empty( $_GET['tool'] ) ? '' : sanitize_text_field( wp_unslash( $_GET['tool'] ) );
