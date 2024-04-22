@@ -1033,7 +1033,6 @@ abstract class Collection {
 		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
 
 		if ( isset( $recipient[ $this->type ] ) ) {
-
 			if ( ! is_array( $noptin_current_objects ) ) {
 				$noptin_current_objects = array();
 			}
