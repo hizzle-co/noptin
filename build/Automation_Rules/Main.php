@@ -94,7 +94,7 @@ class Main {
 	 * @param string $automation_rule The rule id to schedule.
 	 * @param array $args The trigger arguments.
 	 */
-	public function run_delayed_automation_rule( $rule_id, $args ) {
+	public static function run_delayed_automation_rule( $rule_id, $args ) {
 		self::run_automation_rule( $rule_id, $args );
 	}
 }

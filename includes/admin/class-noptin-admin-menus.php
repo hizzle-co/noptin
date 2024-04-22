@@ -22,7 +22,6 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
 		add_action( 'admin_menu', array( $this, 'subscribers_menu' ), 33 );
-		add_action( 'admin_menu', array( $this, 'tools_menu' ), 60 );
 		add_action( 'admin_menu', array( $this, 'documentation_menu' ), 80 );
 
 		// Welcome wizzard.
@@ -138,20 +137,6 @@ class Noptin_Admin_Menus {
 	}
 
 	/**
-	 * Add tools menu item.
-	 */
-	public function tools_menu() {
-		add_submenu_page(
-			'noptin',
-			esc_html( apply_filters( 'noptin_admin_tools_page_title', __( 'Noptin Tools', 'newsletter-optin-box' ) ) ),
-			esc_html__( 'Tools', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-tools',
-			'Noptin_Tools::output'
-		);
-	}
-
-	/**
 	 * Add help menu item.
 	 */
 	public function documentation_menu() {
@@ -165,7 +150,6 @@ class Noptin_Admin_Menus {
 				noptin_get_upsell_url( 'guide/', 'documentation', 'link' ),
 				''
 			);
-
 		}
 	}
 

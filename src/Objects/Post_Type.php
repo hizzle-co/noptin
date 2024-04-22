@@ -41,6 +41,7 @@ abstract class Post_Type extends Collection {
 
 		// Fire triggers.
 		add_action( 'wp_after_insert_post', array( $this, 'after_insert_post' ), 100, 4 );
+		add_action( 'noptin_force_trigger_new_post_notification', array( $this, 'force_trigger_for_post_published' ) );
 
 		// Deleted.
 		add_action( 'before_delete_post', array( $this, 'on_delete' ), 0, 2 );
@@ -319,6 +320,21 @@ abstract class Post_Type extends Collection {
 		if ( 'publish' === $old_status ) {
 			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_unpublished' );
 		}
+	}
+
+	/**
+	 * Fired after a post is inserted.
+	 *
+	 * @param \WP_Post $post Post object.
+	 */
+	public function force_trigger_for_post_published( $post ) {
+
+		// Abort if not our post type.
+		if ( wp_is_post_revision( $post ) || $this->type !== $post->post_type ) {
+			return;
+		}
+
+		$this->maybe_trigger( $post->post_author, $post->ID, $this->type . '_published' );
 	}
 
 	/**

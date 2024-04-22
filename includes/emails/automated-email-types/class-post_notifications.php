@@ -49,6 +49,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 
 		// Notify subscribers.
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule_notification' ), 10, 3 );
+		add_action( 'noptin_force_trigger_new_post_notification', array( $this, 'force_schedule_notification' ) );
 	}
 
 	/**
@@ -159,6 +160,26 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 		if ( $this->was_notification_sent( $post->ID ) ) {
 			return;
 		}
+
+		// Are there any new post automations.
+		$automations = $this->get_automations();
+		if ( empty( $automations ) ) {
+			return;
+		}
+
+		foreach ( $automations as $automation ) {
+
+			// Check if the automation applies here.
+			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $post ) ) {
+				$this->schedule_notification( $post->ID, $automation );
+			}
+		}
+	}
+
+	/**
+	 * Notify subscribers when new content is published
+	 */
+	public function force_schedule_notification( $post ) {
 
 		// Are there any new post automations.
 		$automations = $this->get_automations();
