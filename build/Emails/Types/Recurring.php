@@ -174,9 +174,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		$dates     = array();
 
 		for ( $i = 1; $i < 29; $i++ ) {
-
 			switch ( $i ) {
-
 				case 1:
 				case 21:
 					// translators: %d is the day number.
@@ -359,7 +357,6 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		);
 
 		foreach ( array_unique( $ids ) as $id ) {
-
 			$email = noptin_get_email_campaign_object( $id );
 
 			if ( ! $email->can_send() || $this->type !== $email->get_sub_type() ) {
@@ -451,7 +448,6 @@ class Recurring extends \Noptin_Automated_Email_Type {
 
 		// Get the next send date.
 		switch ( $frequency ) {
-
 			case 'daily':
 				$next_send = noptin_string_to_timestamp( "tomorrow $time" );
 				break;
@@ -559,7 +555,11 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		}
 
 		// Send the email.
-		$campaign->send();
+		$result = $campaign->send();
+
+		if ( is_wp_error( $result ) ) {
+			log_noptin_message( 'Skipped sending campaign:- ' . $campaign->name . '. Reason:- ' . $result->get_error_message() );
+		}
 	}
 
 	/**
@@ -663,26 +663,5 @@ class Recurring extends \Noptin_Automated_Email_Type {
 			__( 'Next send in %1$s', 'newsletter-optin-box' ),
 			human_time_diff( $timestamp )
 		);
-	}
-
-	/**
-	 * Sends a test email.
-	 *
-	 * @param Noptin_Automated_Email $campaign
-	 * @param string $recipient
-	 * @return bool Whether or not the test email was sent
-	 */
-	public function send_test( $campaign, $recipient ) {
-
-		$this->prepare_test_data( $campaign );
-
-		// Maybe set related subscriber.
-		$subscriber = noptin_get_subscriber( sanitize_email( $recipient ) );
-
-		if ( $subscriber->exists() ) {
-			$this->subscriber = $subscriber;
-		}
-
-		return $this->send( $campaign, 'test', array( sanitize_email( $recipient ) => false ) );
 	}
 }

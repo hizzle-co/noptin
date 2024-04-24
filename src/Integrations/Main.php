@@ -276,8 +276,8 @@ class Main {
 		}
 
 		$installed_addons = wp_list_pluck( \Noptin_COM::get_installed_addons(), '_filename', 'slug' );
-
-		$old_notices = $this->notices;
+		$has_license_key  = noptin_has_active_license_key();
+		$old_notices      = $this->notices;
 		foreach ( $all as $integration ) {
 			if ( $this->is_integration_usable( $integration ) ) {
 				$integration['is_installed'] = isset( $this->integrations[ $integration['slug'] ] );
@@ -307,7 +307,7 @@ class Main {
 				}
 
 				// Add install info.
-				if ( isset( $integration['plan'] ) && 'free' !== $integration['plan'] ) {
+				if ( $has_license_key && isset( $integration['plan'] ) && 'free' !== $integration['plan'] ) {
 					$slug                        = 'noptin-' . $integration['slug'];
 					$integration['installation'] = array(
 						'install_text' => isset( $installed_addons[ $slug ] ) ? __( 'Activate', 'newsletter-optin-box' ) : __( 'Install', 'newsletter-optin-box' ),
