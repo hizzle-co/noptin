@@ -149,6 +149,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		// Abort if we do not have a campaign.
 		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
 		if ( empty( $automated_email_id ) ) {
+			log_noptin_message( 'No email campaign found for automation rule:- ' . $rule->get_id(), 'error' );
 			return false;
 		}
 
@@ -160,16 +161,23 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		$campaign = noptin_get_email_campaign_object( $automated_email_id );
 
 		if ( ! $campaign->can_send() ) {
+			log_noptin_message( 'Email campaign cannot be sent:- ' . $campaign->get( 'name' ), 'error' );
 			return false;
 		}
 
 		if ( absint( $campaign->get( 'automation_rule' ) ) !== absint( $rule->get_id() ) ) {
+			log_noptin_message( 'Email campaign does not belong to the automation rule:- ' . $campaign->get( 'name' ), 'error' );
 			return false;
 		}
 
 		if ( ! empty( $args['post_meta'] ) ) {
 			$sent_notification = get_post_meta( $args['post_meta']['id'], $args['post_meta']['key'], true );
-			return ! is_array( $sent_notification ) || (int) $args['post_meta']['id'] !== (int) $sent_notification[0];
+			if ( ! is_array( $sent_notification ) || (int) $args['post_meta']['id'] !== (int) $sent_notification[0] ) {
+				return true;
+			}
+
+			log_noptin_message( 'Email campaign has already been sent:- ' . $campaign->get( 'name' ) . ' :-' . wp_json_encode( $sent_notification, JSON_PRETTY_PRINT ), 'error' );
+			return false;
 		}
 
 		return true;

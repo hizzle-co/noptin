@@ -244,7 +244,7 @@ class Noptin_Tools {
 			wp_die( 'Invalid post ID.' );
 		}
 
-		delete_post_meta( $post->ID, 'noptin_sent_notification_campaign', true );
+		delete_post_meta( $post->ID, 'noptin_sent_notification_campaign' );
 
 		do_action( 'noptin_force_trigger_new_post_notification', $post );
 
