@@ -9,6 +9,11 @@ defined( 'ABSPATH' ) || exit;
         --wp-components-color-accent-darker-10: #3d9541;
         --wp-components-color-accent-darker-20: #368737;
     }
+    .noptin-components-button__pink {
+        --wp-components-color-accent: #e91e63;
+        --wp-components-color-accent-darker-10: #d81b60;
+        --wp-components-color-accent-darker-20: #c2185b;
+    }
     .noptin-components-button__update {
         --wp-components-color-accent: #d63638;
         --wp-components-color-accent-darker-10: #c92f31;

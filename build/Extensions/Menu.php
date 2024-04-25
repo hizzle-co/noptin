@@ -113,9 +113,10 @@ class Menu {
 					'cardGroups'   => self::group_extensions( $license ),
 					'actions'      => array(
 						array(
-							'href'    => noptin_get_upsell_url( $account_url, 'view-account', 'extensionsscreen' ),
-							'variant' => 'primary',
-							'text'    => esc_html__( 'Manage your account', 'newsletter-optin-box' ),
+							'href'      => noptin_get_upsell_url( $account_url, 'view-account', 'extensionsscreen' ),
+							'variant'   => 'primary',
+							'text'      => esc_html__( 'Manage your account', 'newsletter-optin-box' ),
+							'className' => 'noptin-components-button__pink',
 						),
 					),
 					'brand'        => array_merge(
@@ -173,7 +174,7 @@ class Menu {
 					'button1'     => array(
 						'href'    => noptin_get_upsell_url(
 							'https://noptin.com/guide/sending-emails/welcome-emails/',
-							'welcome-emails',
+							'email-courses',
 							'extensionsscreen'
 						),
 						'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
@@ -296,7 +297,7 @@ class Menu {
 				'description' => $config['description'] ?? '',
 				'image_url'   => $config['icon_url'] ?? '',
 				'button2'     => self::main_action_button( $license, "noptin-{$config['slug']}", $installed_addons ),
-				'button1'     => isset( $config['url'] ) ? array(
+				'button1'     => ( isset( $config['url'] ) && false === strpos( $config['url'], 'marketing-automation' ) ) ? array(
 					'href'    => noptin_get_upsell_url( $config['url'], $config['slug'], 'extensionsscreen' ),
 					'text'    => esc_html__( 'Learn More', 'newsletter-optin-box' ),
 					'variant' => 'secondary',
