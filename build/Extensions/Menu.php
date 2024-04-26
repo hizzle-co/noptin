@@ -173,7 +173,7 @@ class Menu {
 					'button2'     => self::main_action_button( $license, 'noptin-addons-pack', $installed_addons ),
 					'button1'     => array(
 						'href'    => noptin_get_upsell_url(
-							'https://noptin.com/guide/sending-emails/welcome-emails/',
+							'https://noptin.com/blog/create-an-email-course-wordpress/',
 							'email-courses',
 							'extensionsscreen'
 						),
