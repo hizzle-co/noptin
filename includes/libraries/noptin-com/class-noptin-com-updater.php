@@ -302,7 +302,7 @@ class Noptin_COM_Updater {
 			'https://noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
-		$key          = 'noptin_version_' . md5( $endpoint );
+		$key          = 'noptin_versions_' . md5( $endpoint );
 		$new_response = get_transient( $key );
 
 		if ( false === $new_response ) {
@@ -320,7 +320,7 @@ class Noptin_COM_Updater {
 			);
 
 			if ( ! is_wp_error( $new_response ) ) {
-				set_transient( $key, $new_response, HOUR_IN_SECONDS );
+				set_transient( $key, $new_response, 5 * MINUTE_IN_SECONDS );
 			}
 		}
 
