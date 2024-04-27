@@ -477,6 +477,34 @@ class Noptin_Legacy_Form_Editor {
 			'options'  => $places,
 		);
 
+		// Add filters for all known taxonomies.
+		foreach ( array_keys( noptin_get_post_types() ) as $post_type ) {
+			$taxonomies = wp_list_pluck(
+				wp_list_filter(
+					get_object_taxonomies( $post_type, 'objects' ),
+					array(
+						'public' => true,
+					)
+				),
+				'label',
+				'name'
+			);
+
+			foreach ( $taxonomies as $taxonomy => $taxonomy_label ) {
+				$return[ 'showTaxonomy_' . $taxonomy ] = array(
+					'el'          => 'input',
+					'label'       => sprintf( __( 'Only show on %s', 'newsletter-optin-box' ), $taxonomy_label ),
+					'restrict'    => '!this.showEverywhere && !this._onlyShowOn',
+					'placeholder' => sprintf(
+						/* translators: %s is the taxonomy label */
+						__( 'Enter a comma-separated list of %s ids, slugs, or names to show this form on', 'newsletter-optin-box' ),
+						$taxonomy_label
+					),
+					'tooltip'     => __( 'Prefix the id with a minus sign to exclude it from the list', 'newsletter-optin-box' ),
+				);
+			}
+		}
+
 		$return['neverShowOn'] = array(
 			'el'          => 'input',
 			'label'       => __( 'Never show on:', 'newsletter-optin-box' ),

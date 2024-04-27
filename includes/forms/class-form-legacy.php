@@ -309,6 +309,24 @@ class Noptin_Form_Legacy {
 			$defaults['successMessage'] = esc_html__( 'Thanks for subscribing to the newsletter', 'newsletter-optin-box' );
 		}
 
+		// Add filters for all known taxonomies.
+		foreach ( array_keys( noptin_get_post_types() ) as $post_type ) {
+			$taxonomies = wp_list_pluck(
+				wp_list_filter(
+					get_object_taxonomies( $post_type, 'objects' ),
+					array(
+						'public' => true,
+					)
+				),
+				'label',
+				'name'
+			);
+
+			foreach ( $taxonomies as $taxonomy => $taxonomy_label ) {
+				$defaults[ 'showTaxonomy_' . $taxonomy ] = '';
+			}
+		}
+
 		// Loop through all custom fields.
 		foreach ( get_noptin_multicheck_custom_fields() as $field ) {
 
@@ -738,6 +756,28 @@ class Noptin_Form_Legacy {
 		// Is this form set to be shown everywhere?
 		if ( $this->showEverywhere ) {
 			return true;
+		}
+
+		// Check taxonomy restrictions.
+		foreach ( array_keys( noptin_get_post_types() ) as $post_type ) {
+			$taxonomies = wp_list_pluck(
+				wp_list_filter(
+					get_object_taxonomies( $post_type, 'objects' ),
+					array(
+						'public' => true,
+					)
+				),
+				'label',
+				'name'
+			);
+
+			foreach ( $taxonomies as $taxonomy => $taxonomy_label ) {
+				if ( ! empty( $this->data[ 'showTaxonomy_' . $taxonomy ] ) ) {
+					$terms = noptin_parse_list( $this->data[ 'showTaxonomy_' . $taxonomy ], true );
+
+					return is_tax( $taxonomy, $terms ) || ( is_singular( $post_type ) && has_term( $terms, $taxonomy ) );
+				}
+			}
 		}
 
 		$places = is_array( $this->showPlaces ) ? $this->showPlaces : array();
