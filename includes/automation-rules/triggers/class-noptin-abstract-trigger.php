@@ -527,7 +527,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		$GLOBALS['noptin_current_trigger_args'] = $args;
 
 		if ( isset( $args['rule_id'] ) ) {
-			$rules = array( noptin_get_automation_rules( $args['rule_id'] ) );
+			$rules = array( noptin_get_automation_rule( $args['rule_id'] ) );
 		} else {
 			$rules = $this->get_rules();
 		}
