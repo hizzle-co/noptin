@@ -343,9 +343,6 @@ class Noptin {
 		// DB.
 		$this->db();
 
-		// Subscribers.
-		$this->subscribers();
-
 		// REST.
 		$this->api();
 

@@ -140,8 +140,8 @@ class Menu {
 		);
 
 		wp_enqueue_style(
-			'noptin-list',
-			noptin()->plugin_url . '/build/Misc/assets/css/style-list.css',
+			'noptin-interface',
+			noptin()->plugin_url . '/build/Misc/assets/css/style-interface.css',
 			array( 'wp-components' ),
 			$config['version']
 		);

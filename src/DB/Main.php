@@ -407,7 +407,7 @@ class Main {
 		$params['avatar_url'] = noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' );
 		$params['ignore']     = array_merge(
 			$params['ignore'],
-			array( 'activity', 'sent_campaigns', 'avatar_url' )
+			array( 'activity', 'sent_campaigns' )
 		);
 
 		$params['hidden'] = array_merge(
@@ -415,6 +415,7 @@ class Main {
 			array( 'ip_address', 'conversion_page', 'confirm_key', 'date_modified' )
 		);
 
+		$params['badges']  = array( 'source', 'status' );
 		$params['id_prop'] = 'email';
 
 		$tip = sprintf(

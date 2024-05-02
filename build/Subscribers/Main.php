@@ -13,39 +13,19 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-	 * Stores the main subscribers instance.
+	 * Registers custom objects.
 	 *
-	 * @access private
-	 * @var    Main $instance The main db instance.
-	 * @since  1.0.0
+	 * @since 3.0.0
 	 */
-	private static $instance = null;
-
-	/**
-	 * Get active instance
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @return Main The main subscribers instance.
-	 */
-	public static function instance() {
-
-		if ( empty( self::$instance ) ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
-
-	/**
-	 * Loads the class.
-	 *
-	 */
-	private function __construct() {
-		add_action( 'noptin_init', array( $this, 'init' ) );
-		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
-		add_filter( 'noptin_subscriber_should_fire_has_changes_hook', array( $this, 'should_fire_has_changes_hook' ), 10, 2 );
+	public static function init() {
+		add_action( 'noptin_init', __CLASS__ . '::register_objects' );
+		add_filter( 'noptin_automation_rule_migrate_triggers', __CLASS__ . '::migrate_triggers' );
+		add_filter( 'noptin_subscriber_should_fire_has_changes_hook', __CLASS__ . '::should_fire_has_changes_hook', 10, 2 );
 		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', __CLASS__ . '::add_collection_subscriber_tabs' );
+
+		if ( is_admin() ) {
+			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
+		}
 	}
 
 	/**
@@ -53,7 +33,7 @@ class Main {
 	 *
 	 * @since 3.0.0
 	 */
-	public function init() {
+	public static function register_objects() {
 		\Hizzle\Noptin\Objects\Store::add( new Records() );
 	}
 
@@ -64,7 +44,7 @@ class Main {
 	 *
 	 * @param array $triggers The triggers.
 	 */
-	public function migrate_triggers( $triggers ) {
+	public static function migrate_triggers( $triggers ) {
 
 		$triggers[] = array(
 			'id'         => 'new_subscriber',
@@ -97,7 +77,7 @@ class Main {
 	 * @param bool  $should_fire The should fire.
 	 * @param array $changes An array of changes.
 	 */
-	public function should_fire_has_changes_hook( $should_fire, $changes ) {
+	public static function should_fire_has_changes_hook( $should_fire, $changes ) {
 
 		if ( ! $should_fire ) {
 			return $should_fire;
@@ -156,5 +136,22 @@ class Main {
 		}
 
 		return $collection->process_custom_tab( $subscriber->get_email() );
+	}
+
+	/**
+	 * Subscribers menu.
+	 */
+	public static function subscribers_menu() {
+
+		$hook_suffix = add_submenu_page(
+			'noptin',
+			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
+			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
+			get_noptin_capability(),
+			'noptin-subscribers',
+			'\Hizzle\Noptin\Misc\Store_UI::render_admin_page'
+		);
+
+		\Hizzle\Noptin\Misc\Store_UI::collection_menu( $hook_suffix, 'noptin/subscribers' );
 	}
 }

@@ -21,7 +21,6 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'menu_highlight' ), 15 );
 		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
-		add_action( 'admin_menu', array( $this, 'subscribers_menu' ), 33 );
 		add_action( 'admin_menu', array( $this, 'documentation_menu' ), 80 );
 
 		// Welcome wizzard.
@@ -108,32 +107,6 @@ class Noptin_Admin_Menus {
 
 		// Backwards compatibility.
 		do_action( 'noptin_after_register_menus', noptin()->admin );
-	}
-
-	/**
-	 * Subscribers.
-	 */
-	public function subscribers_menu() {
-
-		$hook_suffix = add_submenu_page(
-			'noptin',
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-subscribers',
-			array( $this, 'render_subscribers_page' )
-		);
-
-		Noptin_Scripts::add_admin_script( $hook_suffix, 'table' );
-	}
-
-	/**
-	 * Displays the subscribers page.
-	 */
-	public function render_subscribers_page() {
-		if ( current_user_can( get_noptin_capability() ) ) {
-			include plugin_dir_path( __FILE__ ) . 'views/view-subscribers.php';
-		}
 	}
 
 	/**

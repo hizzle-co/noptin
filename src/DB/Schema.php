@@ -358,6 +358,7 @@ class Schema {
 								'description' => __( "The subscriber's avatar URL.", 'newsletter-optin-box' ),
 								'is_dynamic'  => true,
 								'readonly'    => true,
+								'length'      => 200,
 							),
 
 							'wp_user_id'               => array(
