@@ -239,7 +239,7 @@ class REST_Controller extends \WP_REST_Controller {
 						),
 						'tab_id' => array(
 							'description' => __( 'Unique identifier for the matched tab id.', 'hizzle-store' ),
-							'type'        => 'integer',
+							'type'        => 'string',
 						),
 					),
 					array(

@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "hizzle/store",
-            "version": "0.1.3",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/datastore.git",
-                "reference": "608eafaa970e2705eac834f18c4416c78883b15e"
+                "reference": "8d6b66b64670fdbbff26a52764df6764b42484c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/608eafaa970e2705eac834f18c4416c78883b15e",
-                "reference": "608eafaa970e2705eac834f18c4416c78883b15e",
+                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/8d6b66b64670fdbbff26a52764df6764b42484c0",
+                "reference": "8d6b66b64670fdbbff26a52764df6764b42484c0",
                 "shasum": ""
             },
             "require": {
@@ -50,9 +50,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/datastore/issues",
-                "source": "https://github.com/hizzle-co/datastore/tree/0.1.3"
+                "source": "https://github.com/hizzle-co/datastore/tree/0.1.4"
             },
-            "time": "2024-04-28T08:54:52+00:00"
+            "time": "2024-05-03T03:25:01+00:00"
         },
         {
             "name": "symfony/css-selector",
