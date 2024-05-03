@@ -29,9 +29,9 @@
             'dev_requirement' => false,
         ),
         'symfony/css-selector' => array(
-            'pretty_version' => 'v5.4.35',
-            'version' => '5.4.35.0',
-            'reference' => '9e615d367e2bed41f633abb383948c96a2dbbfae',
+            'pretty_version' => 'v5.4.39',
+            'version' => '5.4.39.0',
+            'reference' => '0934c9f1d433776f25c629bdc93f3e157d139e08',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/css-selector',
             'aliases' => array(),
