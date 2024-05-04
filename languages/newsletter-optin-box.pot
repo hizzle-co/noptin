@@ -9,35 +9,36 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-04-27T14:34:55+00:00\n"
+"POT-Creation-Date: 2024-05-04T04:35:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
 
 #. Plugin Name of the plugin
-#: C:\app\laragon\www\noptin\wp-content\plugins\newsletter-optin-box\noptin.php
+#: noptin.php
 msgid "Noptin - WordPress Newsletter Plugin"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: C:\app\laragon\www\noptin\wp-content\plugins\newsletter-optin-box\noptin.php
+#: noptin.php
 msgid "https://noptin.com"
 msgstr ""
 
 #. Description of the plugin
-#: C:\app\laragon\www\noptin\wp-content\plugins\newsletter-optin-box\noptin.php
+#: noptin.php
 msgid "A very fast and lightweight WordPress newsletter plugin"
 msgstr ""
 
 #. Author of the plugin
-#: C:\app\laragon\www\noptin\wp-content\plugins\newsletter-optin-box\noptin.php
+#: noptin.php
 #: templates/actions-page.php:9
 #: includes/assets/js/dist/blocks-woocommerce-backend.js:1
+#: includes/assets/js/src/wc/edit.js:18
 msgid "Noptin Newsletter"
 msgstr ""
 
 #. Author URI of the plugin
-#: C:\app\laragon\www\noptin\wp-content\plugins\newsletter-optin-box\noptin.php
+#: noptin.php
 msgid "https://github.com/picocodes"
 msgstr ""
 
@@ -68,8 +69,8 @@ msgid "Trigger"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:223
+#: build/Subscribers/Records.php:200
 #: src/DB/Automation_Rule.php:604
-#: src/Subscribers/Records.php:200
 msgid "Action"
 msgstr ""
 
@@ -80,15 +81,15 @@ msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:225
 #: build/Emails/Records.php:94
+#: build/Subscribers/Records.php:66
+#: build/Subscribers/Records.php:204
 #: src/Integrations/WooCommerce/Orders.php:46
-#: src/Subscribers/Records.php:66
-#: src/Subscribers/Records.php:204
 msgid "Created"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:226
+#: build/Subscribers/Records.php:203
 #: includes/forms/forms.php:423
-#: src/Subscribers/Records.php:203
 msgid "Updated"
 msgstr ""
 
@@ -106,7 +107,6 @@ msgid "Your website does not support that action."
 msgstr ""
 
 #: build/Automation_Rules/Admin/views/edit.php:46
-#: includes/admin/views/view-subscribers.php:20
 #: includes/admin/views/welcome-wizard.php:13
 msgid "Loading..."
 msgstr ""
@@ -223,6 +223,7 @@ msgstr ""
 #: build/Emails/Admin/Table.php:186
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:9
+#: build/Misc/assets/js/collection.js:231
 msgid "Edit"
 msgstr ""
 
@@ -237,7 +238,7 @@ msgstr ""
 #: build/Emails/Admin/Table.php:199
 #: build/Emails/Main.php:258
 #: includes/class-noptin-post-types.php:57
-#: includes/forms/class-legacy-form-editor.php:1087
+#: includes/forms/class-legacy-form-editor.php:1115
 msgid "Preview"
 msgstr ""
 
@@ -272,7 +273,8 @@ msgstr ""
 #: build/Emails/Admin/Table.php:652
 #: src/DB/Subscriber.php:810
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:178
+#: build/Misc/assets/js/collection.js:231
 msgid "Delete"
 msgstr ""
 
@@ -295,7 +297,7 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:330
 #: build/Emails/Admin/Table.php:345
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Recipients"
 msgstr ""
 
@@ -330,7 +332,7 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:441
 #: build/Emails/Admin/Table.php:813
-#: src/DB/Main.php:471
+#: src/DB/Main.php:472
 msgid "Sent"
 msgstr ""
 
@@ -355,7 +357,7 @@ msgid "Are you sure you want to resend this campaign?"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:483
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:236
 msgid "Resume"
 msgstr ""
 
@@ -368,7 +370,7 @@ msgid "Are you sure you want to resume sending this campaign?"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:494
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:236
 msgid "Pause"
 msgstr ""
 
@@ -389,7 +391,7 @@ msgid "Re-order"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:656
-#: includes/forms/class-legacy-form-editor.php:1088
+#: includes/forms/class-legacy-form-editor.php:1116
 msgid "Publish"
 msgstr ""
 
@@ -437,7 +439,7 @@ msgid "Status"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:814
-#: src/DB/Main.php:479
+#: src/DB/Main.php:480
 #: src/DB/Subscriber.php:745
 msgid "Opened"
 msgstr ""
@@ -455,14 +457,15 @@ msgstr ""
 #: build/Emails/Records.php:90
 #: includes/forms/forms.php:413
 #: includes/subscriber.php:1601
-#: src/DB/Main.php:495
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: src/DB/Main.php:496
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:13
 msgid "Unsubscribed"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:821
 #: includes/subscriber.php:1082
-#: src/DB/Main.php:510
+#: src/DB/Main.php:511
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:190
 #: src/Objects/Generic_Post_Type.php:198
 msgid "Date"
@@ -491,8 +494,9 @@ msgstr ""
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:2
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Misc/assets/js/collection.js:236
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/step.js:64
 msgid "Back"
 msgstr ""
 
@@ -505,8 +509,8 @@ msgid "Activate your license key to track and view revenue made per campaign"
 msgstr ""
 
 #: build/Emails/Admin/views/campaigns.php:138
-#: build/Settings/Menu.php:509
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Settings/Menu.php:504
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Learn more"
 msgstr ""
 
@@ -571,9 +575,10 @@ msgstr ""
 #: src/DB/Automation_Rule.php:562
 #: src/DB/Automation_Rule.php:566
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:57
+#: build/Emails/assets/js/email-editor.js:60
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Conditional Logic"
 msgstr ""
@@ -652,7 +657,8 @@ msgstr ""
 
 #: build/Emails/Main.php:378
 #: includes/forms/class-widget.php:117
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:87
 msgid "Newsletter"
 msgstr ""
 
@@ -685,7 +691,7 @@ msgid "Sequence / Course"
 msgstr ""
 
 #: build/Emails/Main.php:407
-#: build/Extensions/Menu.php:167
+#: build/Extensions/Menu.php:169
 msgid "Sequences / Courses"
 msgstr ""
 
@@ -868,7 +874,7 @@ msgstr ""
 #: build/Emails/Types/Recurring.php:292
 #: build/Emails/Types/Recurring.php:313
 #: includes/emails/emails.php:444
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Day"
 msgstr ""
 
@@ -887,7 +893,7 @@ msgstr ""
 #: build/Emails/Types/Recurring.php:306
 #: build/Emails/Types/Recurring.php:313
 #: includes/emails/emails.php:434
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Days"
 msgstr ""
 
@@ -967,602 +973,854 @@ msgstr ""
 msgid "Manage your account"
 msgstr ""
 
-#: build/Extensions/Menu.php:152
+#: build/Extensions/Menu.php:154
 msgid "License Key"
 msgstr ""
 
-#: build/Extensions/Menu.php:153
+#: build/Extensions/Menu.php:155
 msgid "An active license key gives you access to priority support, fixes, and all premium features and extensions. Use the tabs on the left to browse and install premium extensions."
 msgstr ""
 
-#: build/Extensions/Menu.php:163
+#: build/Extensions/Menu.php:165
 msgid "Addons Pack"
 msgstr ""
 
-#: build/Extensions/Menu.php:164
+#: build/Extensions/Menu.php:166
 msgid "The addons pack gives you access to the following features."
 msgstr ""
 
-#: build/Extensions/Menu.php:168
+#: build/Extensions/Menu.php:170
 msgid "Set-up a series of free or paid emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc."
 msgstr ""
 
-#: build/Extensions/Menu.php:180
-#: build/Extensions/Menu.php:199
-#: build/Extensions/Menu.php:218
-#: build/Extensions/Menu.php:237
-#: build/Extensions/Menu.php:256
-#: build/Extensions/Menu.php:275
-#: build/Extensions/Menu.php:302
-#: build/Extensions/Menu.php:326
-#: build/Settings/Menu.php:592
+#: build/Extensions/Menu.php:182
+#: build/Extensions/Menu.php:201
+#: build/Extensions/Menu.php:220
+#: build/Extensions/Menu.php:239
+#: build/Extensions/Menu.php:258
+#: build/Extensions/Menu.php:277
+#: build/Extensions/Menu.php:304
+#: build/Extensions/Menu.php:328
+#: build/Settings/Menu.php:587
 #: includes/admin/class-noptin-vue.php:641
 #: includes/forms/views/tab-email.php:16
-#: src/DB/Main.php:429
+#: src/DB/Main.php:430
 msgid "Learn More"
 msgstr ""
 
-#: build/Extensions/Menu.php:186
+#: build/Extensions/Menu.php:188
 msgid "Coupon Codes"
 msgstr ""
 
-#: build/Extensions/Menu.php:187
+#: build/Extensions/Menu.php:189
 msgid "Make more money by automatically sending new subscribers, users, or customers unique coupon codes."
 msgstr ""
 
-#: build/Extensions/Menu.php:205
+#: build/Extensions/Menu.php:207
 msgid "Tag Subscribers"
 msgstr ""
 
-#: build/Extensions/Menu.php:206
+#: build/Extensions/Menu.php:208
 msgid "Tag subscribers based on their actions and send emails to subscribers with specific tags, or automatically send emails to subscribers whenever they are tagged or untagged."
 msgstr ""
 
-#: build/Extensions/Menu.php:224
+#: build/Extensions/Menu.php:226
 msgid "Lists"
 msgstr ""
 
-#: build/Extensions/Menu.php:225
+#: build/Extensions/Menu.php:227
 msgid "Create multiple lists and send emails to subscribers in specific lists, or automatically send emails to subscribers whenever they are added to or removed from specific lists."
 msgstr ""
 
-#: build/Extensions/Menu.php:243
+#: build/Extensions/Menu.php:245
 msgid "Manage Preferences"
 msgstr ""
 
-#: build/Extensions/Menu.php:244
+#: build/Extensions/Menu.php:246
 msgid "Allow subscribers to manage their preferences and unsubscribe from specific lists."
 msgstr ""
 
-#: build/Extensions/Menu.php:262
+#: build/Extensions/Menu.php:264
 msgid "Sync Subscribers"
 msgstr ""
 
-#: build/Extensions/Menu.php:263
+#: build/Extensions/Menu.php:265
 msgid "Sync subscribers between sites, and add newsletter subscription forms on external sites."
 msgstr ""
 
-#: build/Extensions/Menu.php:280
-#: build/Settings/Menu.php:169
+#: build/Extensions/Menu.php:282
+#: build/Settings/Menu.php:164
 #: includes/forms/class-legacy-form-editor.php:202
 #: includes/forms/views/editor.php:20
 msgid "Integrations"
 msgstr ""
 
-#: build/Extensions/Menu.php:281
+#: build/Extensions/Menu.php:283
 msgid "These extensions allow you to connect Noptin to your favorite plugins."
 msgstr ""
 
-#: build/Extensions/Menu.php:283
+#: build/Extensions/Menu.php:285
 msgid "Connections"
 msgstr ""
 
-#: build/Extensions/Menu.php:284
+#: build/Extensions/Menu.php:286
 msgid "These extensions allow you to connect Noptin to your favorite CRM or email software."
 msgstr ""
 
-#: build/Extensions/Menu.php:309
-#: build/Extensions/Menu.php:392
+#: build/Extensions/Menu.php:311
+#: build/Extensions/Menu.php:394
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Active"
 msgstr ""
 
 #. translators: %s Integration such as Mailchimp
-#: build/Extensions/Menu.php:321
+#: build/Extensions/Menu.php:323
 msgid "Connect Noptin to %s"
 msgstr ""
 
-#: build/Extensions/Menu.php:350
+#: build/Extensions/Menu.php:352
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/email-editor.js:15
+#: build/Emails/assets/js/email-editor.js:13
 #: build/Emails/assets/js/view-campaigns.js:2
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "View Pricing"
 msgstr ""
 
-#: build/Extensions/Menu.php:359
+#: build/Extensions/Menu.php:361
 msgid "Upgrade"
 msgstr ""
 
-#: build/Extensions/Menu.php:371
+#: build/Extensions/Menu.php:373
 msgid "Install Update"
 msgstr ""
 
-#: build/Extensions/Menu.php:384
+#: build/Extensions/Menu.php:386
 #: build/Settings/Menu.php:68
 #: build/Settings/Menu.php:69
 #: includes/forms/class-legacy-form-editor.php:200
 msgid "Settings"
 msgstr ""
 
-#: build/Extensions/Menu.php:402
+#: build/Extensions/Menu.php:404
 #: includes/libraries/noptin-com/class-noptin-com-updater.php:428
 #: src/Integrations/Main.php:313
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Activate"
 msgstr ""
 
-#: build/Extensions/Menu.php:411
+#: build/Extensions/Menu.php:413
 msgid "Install Now"
 msgstr ""
 
 #: build/Settings/Main.php:45
-#: build/Settings/Menu.php:296
-#: build/Settings/Menu.php:297
+#: build/Settings/Menu.php:291
+#: build/Settings/Menu.php:292
 #: includes/functions.php:41
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:29
 msgid "Thanks for subscribing to our newsletter"
 msgstr ""
 
-#: build/Settings/Menu.php:160
-#: build/Settings/Menu.php:246
-#: build/Settings/Menu.php:348
+#: build/Settings/Menu.php:155
+#: build/Settings/Menu.php:241
+#: build/Settings/Menu.php:343
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
 #: includes/functions.php:1925
 #: includes/functions.php:2191
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/email-editor.js:1
-#: build/Emails/assets/js/email-editor.js:67
+#: build/Emails/assets/js/email-editor.js:65
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/setting.js:129
 msgid "General"
 msgstr ""
 
-#: build/Settings/Menu.php:162
-#: build/Settings/Menu.php:164
-#: src/DB/Main.php:460
+#: build/Settings/Menu.php:157
+#: build/Settings/Menu.php:159
+#: src/DB/Main.php:461
 msgid "Emails"
 msgstr ""
 
-#: build/Settings/Menu.php:165
+#: build/Settings/Menu.php:160
 msgid "Double Opt-In"
 msgstr ""
 
-#: build/Settings/Menu.php:168
-#: build/Settings/Menu.php:587
+#: build/Settings/Menu.php:163
+#: build/Settings/Menu.php:582
 #: src/DB/Main.php:386
 msgid "Custom Fields"
 msgstr ""
 
-#: build/Settings/Menu.php:170
+#: build/Settings/Menu.php:165
 #: includes/forms/views/editor.php:18
 msgid "Messages"
 msgstr ""
 
-#: build/Settings/Menu.php:250
+#: build/Settings/Menu.php:245
 msgid "Show campaign stats"
 msgstr ""
 
-#: build/Settings/Menu.php:251
+#: build/Settings/Menu.php:246
 msgid "Enable this to display opens and clicks on campaigns that you send."
 msgstr ""
 
-#: build/Settings/Menu.php:257
+#: build/Settings/Menu.php:252
 msgid "Enable E-commerce Tracking"
 msgstr ""
 
-#: build/Settings/Menu.php:258
+#: build/Settings/Menu.php:253
 msgid "Enable this to track revenue collected per email campaign."
 msgstr ""
 
-#. translators: button label text should, if possible, be under 16 characters.
-#: build/Settings/Menu.php:261
+#. translators: accessibility text for the footer landmark region.
+#: build/Settings/Menu.php:256
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/email-editor.js:15
+#: build/Emails/assets/js/email-editor.js:13
 #: build/Emails/assets/js/view-campaigns.js:2
 msgid "Activate your license key to unlock"
 msgstr ""
 
-#: build/Settings/Menu.php:278
+#: build/Settings/Menu.php:273
 msgid "Allow editors"
 msgstr ""
 
-#: build/Settings/Menu.php:279
+#: build/Settings/Menu.php:274
 msgid "Allow editors to access and manage Noptin."
 msgstr ""
 
-#: build/Settings/Menu.php:289
+#: build/Settings/Menu.php:284
 msgid "Subscription"
 msgstr ""
 
-#: build/Settings/Menu.php:295
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Settings/Menu.php:290
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:26
 msgid "Default Success Message"
 msgstr ""
 
-#: build/Settings/Menu.php:298
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Settings/Menu.php:293
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:28
 msgid "This is the message shown to people after they successfully sign up for your newsletter."
 msgstr ""
 
-#: build/Settings/Menu.php:303
+#: build/Settings/Menu.php:298
 msgid "Already subscribed message"
 msgstr ""
 
-#: build/Settings/Menu.php:304
-#: build/Settings/Menu.php:305
+#: build/Settings/Menu.php:299
+#: build/Settings/Menu.php:300
 #: includes/class-noptin-ajax.php:156
 #: includes/forms/forms.php:405
 msgid "You are already subscribed to the newsletter, thank you!"
 msgstr ""
 
-#: build/Settings/Menu.php:306
+#: build/Settings/Menu.php:301
 #: includes/forms/forms.php:404
 msgid "Shown when an existing subscriber tries to sign-up again."
 msgstr ""
 
-#: build/Settings/Menu.php:313
-#: includes/admin/class-noptin-admin-menus.php:120
-#: includes/admin/class-noptin-admin-menus.php:121
+#: build/Settings/Menu.php:308
+#: build/Subscribers/Main.php:148
+#: build/Subscribers/Main.php:149
 msgid "Email Subscribers"
 msgstr ""
 
-#: build/Settings/Menu.php:319
+#: build/Settings/Menu.php:314
 msgid "Hide From Subscribers"
 msgstr ""
 
-#: build/Settings/Menu.php:321
+#: build/Settings/Menu.php:316
 msgid "Hide opt-in forms and methods from existing subscribers."
 msgstr ""
 
-#: build/Settings/Menu.php:326
+#: build/Settings/Menu.php:321
 msgid "Always Show to Admin"
 msgstr ""
 
-#: build/Settings/Menu.php:328
+#: build/Settings/Menu.php:323
 msgid "Always show opt-in forms and methods to administrators even if they are already subscribed."
 msgstr ""
 
-#: build/Settings/Menu.php:340
+#: build/Settings/Menu.php:335
 msgid "Subscription Cookie"
 msgstr ""
 
-#: build/Settings/Menu.php:342
+#: build/Settings/Menu.php:337
 msgid "If you are migrating from another email plugin, enter the cookie name they used to identify subscribers."
 msgstr ""
 
-#: build/Settings/Menu.php:355
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Settings/Menu.php:350
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:77
 msgid "\"Reply-to\" Email"
 msgstr ""
 
-#: build/Settings/Menu.php:357
+#: build/Settings/Menu.php:352
 msgid "Where should subscribers reply to in case they need to get in touch with you?"
 msgstr ""
 
-#: build/Settings/Menu.php:364
-#: build/Emails/assets/js/email-editor.js:62
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Settings/Menu.php:359
+#: build/Emails/assets/js/email-editor.js:60
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:70
 msgid "\"From\" Email"
 msgstr ""
 
-#: build/Settings/Menu.php:365
+#: build/Settings/Menu.php:360
 msgid "How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails."
 msgstr ""
 
-#: build/Settings/Menu.php:371
-#: build/Emails/assets/js/email-editor.js:62
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Settings/Menu.php:366
+#: build/Emails/assets/js/email-editor.js:60
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:63
 msgid "\"From\" Name"
 msgstr ""
 
-#: build/Settings/Menu.php:374
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Settings/Menu.php:369
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:66
 msgid "How the sender name appears in outgoing emails"
 msgstr ""
 
-#: build/Settings/Menu.php:381
+#: build/Settings/Menu.php:376
 msgid "Emails Per Hour"
 msgstr ""
 
-#: build/Settings/Menu.php:382
+#: build/Settings/Menu.php:377
 msgid "Unlimited"
 msgstr ""
 
-#: build/Settings/Menu.php:383
+#: build/Settings/Menu.php:378
 msgid "The maximum number of emails to send per hour. Leave empty to send as many as possible."
 msgstr ""
 
-#: build/Settings/Menu.php:391
+#: build/Settings/Menu.php:386
 msgid "Bounce Handler"
 msgstr ""
 
 #. translators: %s is the list of supported services.
-#: build/Settings/Menu.php:396
+#: build/Settings/Menu.php:391
 msgid "Supported services:- %s"
 msgstr ""
 
-#: build/Settings/Menu.php:419
+#: build/Settings/Menu.php:414
 msgid "Auto-Delete Campaigns"
 msgstr ""
 
-#: build/Settings/Menu.php:420
+#: build/Settings/Menu.php:415
 msgid "Never Delete"
 msgstr ""
 
-#: build/Settings/Menu.php:421
+#: build/Settings/Menu.php:416
 msgid "The number of days after which to delete a sent campaign. Leave empty if you do not want to automatically delete campaigns."
 msgstr ""
 
-#: build/Settings/Menu.php:424
+#: build/Settings/Menu.php:419
 msgid "After"
 msgstr ""
 
-#: build/Settings/Menu.php:425
+#: build/Settings/Menu.php:420
 msgid "day"
 msgstr ""
 
-#: build/Settings/Menu.php:425
+#: build/Settings/Menu.php:420
 msgid "days"
 msgstr ""
 
-#: build/Settings/Menu.php:433
+#: build/Settings/Menu.php:428
 msgid "Brand Info"
 msgstr ""
 
-#: build/Settings/Menu.php:438
+#: build/Settings/Menu.php:433
 msgid "Company"
 msgstr ""
 
-#: build/Settings/Menu.php:440
+#: build/Settings/Menu.php:435
 msgid "What is the name of your company or website?"
 msgstr ""
 
-#: build/Settings/Menu.php:445
+#: build/Settings/Menu.php:440
 #: templates/email-templates/merriweather/logo.php:18
 #: templates/email-templates/paste/logo.php:26
 #: templates/email-templates/plain/logo.php:15
 msgid "Logo"
 msgstr ""
 
-#: build/Settings/Menu.php:446
+#: build/Settings/Menu.php:441
 msgid "Enter a full url to your logo. Works best with rectangular images."
 msgstr ""
 
-#: build/Settings/Menu.php:450
+#: build/Settings/Menu.php:445
 msgid "Brand Color"
 msgstr ""
 
-#: build/Settings/Menu.php:453
+#: build/Settings/Menu.php:448
 msgid "Used as the link color and button background."
 msgstr ""
 
+#: build/Settings/Menu.php:455
 #: build/Settings/Menu.php:460
-#: build/Settings/Menu.php:465
 msgid "Email Template"
 msgstr ""
 
-#: build/Settings/Menu.php:466
+#: build/Settings/Menu.php:461
 msgid "Select a template"
 msgstr ""
 
-#: build/Settings/Menu.php:469
+#: build/Settings/Menu.php:464
 msgid "Select \"No Template\" if you are using an email templates plugin."
 msgstr ""
 
-#: build/Settings/Menu.php:473
+#: build/Settings/Menu.php:468
 msgid "Footer text"
 msgstr ""
 
-#: build/Settings/Menu.php:476
+#: build/Settings/Menu.php:471
 msgid "This text appears below all emails."
 msgstr ""
 
-#: build/Settings/Menu.php:480
-#: includes/forms/class-legacy-form-editor.php:669
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Settings/Menu.php:475
+#: includes/forms/class-legacy-form-editor.php:697
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Custom CSS"
 msgstr ""
 
-#: build/Settings/Menu.php:481
+#: build/Settings/Menu.php:476
 msgid "Optional. Add any custom CSS to style your emails."
 msgstr ""
 
-#: build/Settings/Menu.php:488
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: build/Settings/Menu.php:483
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:33
 msgid "Enable Double Opt-in"
 msgstr ""
 
-#: build/Settings/Menu.php:495
+#: build/Settings/Menu.php:490
 msgid "Double Opt-in"
 msgstr ""
 
-#: build/Settings/Menu.php:496
+#: build/Settings/Menu.php:491
 msgid "Require new subscribers to confirm their email addresses."
 msgstr ""
 
-#: build/Settings/Menu.php:503
+#: build/Settings/Menu.php:498
 msgid "Disable default double opt-in email"
 msgstr ""
 
-#: build/Settings/Menu.php:507
+#: build/Settings/Menu.php:502
 msgid "You can disable the default double opt-in email if you wish to use a custom email or set-up different emails."
 msgstr ""
 
-#: build/Settings/Menu.php:518
+#: build/Settings/Menu.php:513
 msgid "Double Opt-in Email"
 msgstr ""
 
-#: build/Settings/Menu.php:536
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Settings/Menu.php:531
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Email Subject"
 msgstr ""
 
-#: build/Settings/Menu.php:539
+#: build/Settings/Menu.php:534
 msgid "The subject of the subscription confirmation email"
 msgstr ""
 
-#: build/Settings/Menu.php:544
+#: build/Settings/Menu.php:539
 msgid "Email Title"
 msgstr ""
 
-#: build/Settings/Menu.php:547
+#: build/Settings/Menu.php:542
 msgid "The title of the email"
 msgstr ""
 
-#: build/Settings/Menu.php:552
+#: build/Settings/Menu.php:547
 msgid "Email Body"
 msgstr ""
 
-#: build/Settings/Menu.php:555
+#: build/Settings/Menu.php:550
 msgid "This is the main content of the email"
 msgstr ""
 
-#: build/Settings/Menu.php:560
+#: build/Settings/Menu.php:555
 msgid "Call to Action"
 msgstr ""
 
-#: build/Settings/Menu.php:563
+#: build/Settings/Menu.php:558
 msgid "The text of the call to action button"
 msgstr ""
 
-#: build/Settings/Menu.php:568
+#: build/Settings/Menu.php:563
 msgid "Extra Text"
 msgstr ""
 
-#: build/Settings/Menu.php:571
+#: build/Settings/Menu.php:566
 msgid "This text is shown after the call to action button"
 msgstr ""
 
-#: build/Settings/Menu.php:576
+#: build/Settings/Menu.php:571
 msgid "Permission Text"
 msgstr ""
 
-#: build/Settings/Menu.php:579
+#: build/Settings/Menu.php:574
 msgid "Remind the subscriber how they signed up."
 msgstr ""
 
-#: build/Settings/Menu.php:591
+#: build/Settings/Menu.php:586
 msgid "Collect more information from your subscribers by adding custom fields. "
 msgstr ""
 
-#: build/Settings/Menu.php:610
+#: build/Settings/Menu.php:605
 msgid "Field Type"
 msgstr ""
 
-#: build/Settings/Menu.php:618
+#: build/Settings/Menu.php:613
 msgid "Select the field type"
 msgstr ""
 
-#: build/Settings/Menu.php:630
+#: build/Settings/Menu.php:625
 msgid "Field Name"
 msgstr ""
 
-#: build/Settings/Menu.php:631
+#: build/Settings/Menu.php:626
 msgid "Enter a descriptive name for the field, for example, Phone Number"
 msgstr ""
 
-#: build/Settings/Menu.php:635
+#: build/Settings/Menu.php:630
 msgid "Placeholder"
 msgstr ""
 
-#: build/Settings/Menu.php:636
+#: build/Settings/Menu.php:631
 msgid "Optional. Enter the default placeholder for this field"
 msgstr ""
 
-#: build/Settings/Menu.php:647
+#: build/Settings/Menu.php:642
 msgid "Available Options"
 msgstr ""
 
-#: build/Settings/Menu.php:648
+#: build/Settings/Menu.php:643
 msgid "Enter one option per line. You can use pipes to separate values and labels."
 msgstr ""
 
-#: build/Settings/Menu.php:660
+#: build/Settings/Menu.php:655
 msgid "Default value"
 msgstr ""
 
-#: build/Settings/Menu.php:661
+#: build/Settings/Menu.php:656
 msgid "Optional. Enter the default value for this field"
 msgstr ""
 
-#: build/Settings/Menu.php:669
+#: build/Settings/Menu.php:664
 msgid "Editable"
 msgstr ""
 
-#: build/Settings/Menu.php:670
+#: build/Settings/Menu.php:665
 msgid "Can subscriber's view and edit this field?"
 msgstr ""
 
-#: build/Settings/Menu.php:683
+#: build/Settings/Menu.php:678
 msgid "Required"
 msgstr ""
 
-#: build/Settings/Menu.php:684
+#: build/Settings/Menu.php:679
 msgid "Subscribers MUST fill this field whenever it is added to a subscription form."
 msgstr ""
 
 #. translators: %s is the name of the integration.
-#: build/Settings/Menu.php:722
+#: build/Settings/Menu.php:717
 msgid "Connects Noptin to %s"
 msgstr ""
 
-#: build/Settings/Menu.php:728
+#: build/Settings/Menu.php:723
 msgid "Not Installed"
 msgstr ""
 
 #. translators: %s is the name of the integration.
-#: build/Settings/Menu.php:740
+#: build/Settings/Menu.php:735
 msgid "Install the %s to use it with Noptin."
 msgstr ""
 
 #. translators: %s is the name of the integration.
-#: build/Settings/Menu.php:746
+#: build/Settings/Menu.php:741
 msgid "%s addon"
 msgstr ""
 
-#: includes/admin/class-noptin-admin-menus.php:57
+#: build/Subscribers/Records.php:32
+#: includes/emails/emails.php:186
+msgid "Noptin Subscribers"
+msgstr ""
+
+#: build/Subscribers/Records.php:33
+#: includes/subscriber.php:1348
+#: src/DB/Schema.php:227
+msgid "Subscriber"
+msgstr ""
+
+#: build/Subscribers/Records.php:67
+msgid "Saved"
+msgstr ""
+
+#: build/Subscribers/Records.php:68
+#: includes/subscriber.php:1543
+msgid "Imported"
+msgstr ""
+
+#: build/Subscribers/Records.php:73
+msgid "Pending email confirmation"
+msgstr ""
+
+#: build/Subscribers/Records.php:95
+#: includes/forms/class-legacy-form-editor.php:263
+#: includes/forms/views/tab-form.php:75
+#: src/Bulk_Emails/Email_Sender_Subscribers.php:71
+#: src/Integrations/EDD/Downloads.php:208
+#: src/Integrations/EDD/Downloads.php:213
+#: src/Integrations/WooCommerce/Products.php:539
+#: src/Integrations/WooCommerce/Products.php:544
+msgid "Tags"
+msgstr ""
+
+#. translators: %s: Object type label and new state
+#: build/Subscribers/Records.php:138
+msgid "When a %1$s is %2$s"
+msgstr ""
+
+#: build/Subscribers/Records.php:140
+msgid "created or updated"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:151
+msgid "Confirm new %s"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:164
+msgid "Welcome new %s"
+msgstr ""
+
+#. translators: %s: new state
+#: build/Subscribers/Records.php:179
+msgid "When a subscriber's status is set to %1$s"
+msgstr ""
+
+#: build/Subscribers/Records.php:185
+msgid "Previous status"
+msgstr ""
+
+#: build/Subscribers/Records.php:186
+msgid "The previous subscriber status."
+msgstr ""
+
+#: build/Subscribers/Records.php:189
+#: src/Integrations/EDD/Orders.php:151
+#: src/Integrations/WooCommerce/Orders.php:857
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:1
+msgid "New"
+msgstr ""
+
+#. translators: %1$s: Object type label, %2$s: Field label.
+#: build/Subscribers/Records.php:217
+msgid "%1$s > %2$s changed"
+msgstr ""
+
+#. translators: %s: field label
+#: build/Subscribers/Records.php:224
+msgid "When %s changes"
+msgstr ""
+
+#: build/Subscribers/Records.php:230
+#: build/Subscribers/Records.php:267
+msgid "New value"
+msgstr ""
+
+#: build/Subscribers/Records.php:237
+msgid "Old value"
+msgstr ""
+
+#. translators: %1$s: Object type label, %2$s: Field label.
+#: build/Subscribers/Records.php:253
+msgid "%1$s > Add to %2$s"
+msgstr ""
+
+#. translators: %s: field label
+#: build/Subscribers/Records.php:260
+msgid "When a %1$s is added to %2$s"
+msgstr ""
+
+#. translators: %1$s: Object type label, %2$s: Field label.
+#: build/Subscribers/Records.php:283
+msgid "%1$s > Removed from %2$s"
+msgstr ""
+
+#. translators: %s: field label
+#: build/Subscribers/Records.php:290
+msgid "When a %1$s is removed from %2$s"
+msgstr ""
+
+#: build/Subscribers/Records.php:297
+msgid "The removed value"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:319
+msgid "%s > Open Email"
+msgstr ""
+
+#: build/Subscribers/Records.php:322
+msgid "When a subscriber opens an email campaign"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:333
+msgid "%s > Link Click"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:338
+msgid "When a %s clicks on a link in an email"
+msgstr ""
+
+#: build/Subscribers/Records.php:345
+msgid "Clicked URL"
+msgstr ""
+
+#. translators: %s: New status.
+#: build/Subscribers/Records.php:392
+msgid "Status set to %1$s"
+msgstr ""
+
+#: build/Subscribers/Records.php:570
+msgid "Manage your preferences"
+msgstr ""
+
+#: build/Subscribers/Records.php:571
+#: includes/subscriber.php:743
+msgid "Confirm your subscription"
+msgstr ""
+
+#: build/Subscribers/Records.php:572
+#: includes/emails/class-generator.php:155
+#: includes/forms/class-output-manager.php:192
+msgid "Unsubscribe"
+msgstr ""
+
+#: build/Subscribers/Records.php:573
+msgid "Resubscribe"
+msgstr ""
+
+#. translators: %s: Object link destination.
+#: build/Subscribers/Records.php:595
+msgid "Displays a button link to %s"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:709
+#: src/Objects/Generic_Post_Type.php:461
+msgid "%s > Create or Update"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:714
+#: src/Objects/Generic_Post_Type.php:466
+msgid "Create or update a %s"
+msgstr ""
+
+#: build/Subscribers/Records.php:720
+msgid "Update existing subscribers"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:732
+#: src/Objects/Generic_Post_Type.php:477
+msgid "%s > Delete"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:737
+#: src/Objects/Generic_Post_Type.php:482
+msgid "Delete a %s"
+msgstr ""
+
+#: build/Subscribers/Records.php:743
+#: build/Subscribers/Records.php:765
+#: build/Subscribers/Records.php:787
+msgid "Subscriber ID or email address"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:754
+msgid "%s > Unsubscribe"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:759
+msgid "Unsubscribe a %s"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:776
+msgid "%s > Update Custom Field"
+msgstr ""
+
+#. translators: %s: Object type label.
+#: build/Subscribers/Records.php:781
+msgid "Update a %s field"
+msgstr ""
+
+#: build/Subscribers/Records.php:794
+msgid "Custom Field"
+msgstr ""
+
+#: build/Subscribers/Records.php:795
+msgid "Select the custom field to update"
+msgstr ""
+
+#: build/Subscribers/Records.php:796
+msgid "Select Field"
+msgstr ""
+
+#: build/Subscribers/Records.php:802
+msgid "Field Value"
+msgstr ""
+
+#: build/Subscribers/Records.php:803
+msgid "Enter a value to assign the field"
+msgstr ""
+
+#: includes/admin/class-noptin-admin-menus.php:56
 msgid "Noptin Dashboard"
 msgstr ""
 
-#: includes/admin/class-noptin-admin-menus.php:58
+#: includes/admin/class-noptin-admin-menus.php:57
 msgid "Dashboard"
 msgstr ""
 
+#: includes/admin/class-noptin-admin-menus.php:102
 #: includes/admin/class-noptin-admin-menus.php:103
-#: includes/admin/class-noptin-admin-menus.php:104
 #: includes/forms/class-form-manager.php:213
 msgid "Subscription Forms"
 msgstr ""
 
-#: includes/admin/class-noptin-admin-menus.php:147
-#: includes/admin/class-noptin-admin-menus.php:148
+#: includes/admin/class-noptin-admin-menus.php:120
+#: includes/admin/class-noptin-admin-menus.php:121
 msgid "Documentation"
 msgstr ""
 
-#: includes/admin/class-noptin-admin-menus.php:172
+#: includes/admin/class-noptin-admin-menus.php:145
 msgid "Noptin Settings Welcome Wizzard"
 msgstr ""
 
-#: includes/admin/class-noptin-admin-menus.php:173
+#: includes/admin/class-noptin-admin-menus.php:146
 msgid "Welcome Wizzard"
 msgstr ""
 
@@ -1635,11 +1893,10 @@ msgstr ""
 
 #: includes/admin/class-noptin-vue.php:431
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Value"
 msgstr ""
 
@@ -1653,8 +1910,9 @@ msgstr ""
 
 #: includes/admin/class-noptin-vue.php:741
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Upload Image"
 msgstr ""
@@ -2105,7 +2363,7 @@ msgstr ""
 #: includes/subscriber.php:1050
 #: includes/subscriber.php:1205
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:169
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Language"
 msgstr ""
 
@@ -2153,11 +2411,12 @@ msgstr ""
 #: includes/functions.php:1234
 #: includes/subscriber.php:1359
 #: includes/subscriber.php:1418
-#: src/DB/Main.php:551
+#: src/DB/Main.php:552
 #: src/Integrations/WooCommerce/Products.php:220
 #: src/Integrations/WooCommerce/Products.php:686
 #: src/Objects/Store.php:160
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:229
 msgid "Yes"
 msgstr ""
 
@@ -2168,7 +2427,8 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:218
 #: src/Integrations/WooCommerce/Products.php:684
 #: src/Objects/Store.php:161
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:229
 msgid "No"
 msgstr ""
 
@@ -2249,12 +2509,14 @@ msgstr ""
 
 #: includes/class-noptin-page.php:599
 #: includes/class-noptin-page.php:623
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:11
 msgid "Thank You"
 msgstr ""
 
 #: includes/class-noptin-page.php:600
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:14
 msgid "You have been unsubscribed from this mailing list and won't receive any emails from us."
 msgstr ""
 
@@ -2267,7 +2529,8 @@ msgid "You have been resubscribed to our newsletter."
 msgstr ""
 
 #: includes/class-noptin-page.php:624
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:12
 msgid "You have successfully subscribed to this newsletter."
 msgstr ""
 
@@ -2285,7 +2548,7 @@ msgstr ""
 
 #: includes/class-noptin-post-types.php:117
 #: includes/forms/class-legacy-form-editor.php:330
-#: includes/forms/class-legacy-form-editor.php:1095
+#: includes/forms/class-legacy-form-editor.php:1123
 #: includes/forms/views/metabox-embed.php:5
 msgid "Shortcode"
 msgstr ""
@@ -2341,8 +2604,9 @@ msgstr ""
 #: includes/class-noptin-scripts.php:196
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:9
-#: build/Misc/assets/js/list.js:13
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:178
+#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/list.js:1
 msgid "Cancel"
 msgstr ""
 
@@ -2542,20 +2806,9 @@ msgstr ""
 msgid "Displays a list of posts."
 msgstr ""
 
-#: includes/emails/class-generator.php:155
-#: includes/forms/class-output-manager.php:192
-#: src/Subscribers/Records.php:572
-msgid "Unsubscribe"
-msgstr ""
-
 #. Translators: %s is the current date.
 #: includes/emails/class-newsletter-email-type.php:35
 msgid "Newsletter - %s"
-msgstr ""
-
-#: includes/emails/emails.php:186
-#: src/Subscribers/Records.php:32
-msgid "Noptin Subscribers"
 msgstr ""
 
 #: includes/emails/emails.php:187
@@ -2612,52 +2865,52 @@ msgid "Merriweather"
 msgstr ""
 
 #: includes/emails/emails.php:432
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Minutes"
 msgstr ""
 
 #: includes/emails/emails.php:433
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Hours"
 msgstr ""
 
 #: includes/emails/emails.php:435
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Weeks"
 msgstr ""
 
 #: includes/emails/emails.php:436
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Months"
 msgstr ""
 
 #: includes/emails/emails.php:437
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Years"
 msgstr ""
 
 #: includes/emails/emails.php:442
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Minute"
 msgstr ""
 
 #: includes/emails/emails.php:443
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Hour"
 msgstr ""
 
 #: includes/emails/emails.php:445
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Week"
 msgstr ""
 
 #: includes/emails/emails.php:446
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Month"
 msgstr ""
 
 #: includes/emails/emails.php:447
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Year"
 msgstr ""
 
@@ -2746,7 +2999,7 @@ msgid "Form draft updated. <a href=\"%s\">Preview form</a>"
 msgstr ""
 
 #: includes/forms/class-form-legacy.php:143
-#: includes/forms/class-form-legacy.php:602
+#: includes/forms/class-form-legacy.php:620
 msgid "This form is incorrectly configured"
 msgstr ""
 
@@ -2765,12 +3018,13 @@ msgstr ""
 
 #: includes/forms/class-form-legacy.php:197
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:17
 msgid "JOIN OUR NEWSLETTER"
 msgstr ""
 
 #: includes/forms/class-form-legacy.php:218
-#: includes/forms/class-legacy-form-editor.php:637
-#: includes/forms/class-legacy-form-editor.php:919
+#: includes/forms/class-legacy-form-editor.php:665
+#: includes/forms/class-legacy-form-editor.php:947
 msgid "Prefix"
 msgstr ""
 
@@ -2824,7 +3078,8 @@ msgstr ""
 #: includes/forms/class-form-manager.php:203
 #: src/DB/Schema.php:228
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:123
+#: build/Misc/assets/js/collection.js:231
 msgid "Add New"
 msgstr ""
 
@@ -2966,8 +3221,8 @@ msgstr ""
 
 #. translators: %s: file name
 #: includes/forms/class-legacy-form-editor.php:201
-#: build/Emails/assets/js/email-editor.js:62
-#: build/Emails/assets/js/email-editor.js:80
+#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:78
 msgid "Design"
 msgstr ""
 
@@ -2985,17 +3240,6 @@ msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:255
 msgid "Device Targeting"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:263
-#: includes/forms/views/tab-form.php:75
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:71
-#: src/Integrations/EDD/Downloads.php:208
-#: src/Integrations/EDD/Downloads.php:213
-#: src/Integrations/WooCommerce/Products.php:539
-#: src/Integrations/WooCommerce/Products.php:544
-#: src/Subscribers/Records.php:95
-msgid "Tags"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:270
@@ -3176,298 +3420,313 @@ msgstr ""
 msgid "Archive pages"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:482
-msgid "Never show on:"
+#: includes/forms/class-legacy-form-editor.php:496
+msgid "Only show on %s"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:486
-msgid "Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids."
+#. translators: %s is the taxonomy label
+#: includes/forms/class-legacy-form-editor.php:500
+msgid "Enter a comma-separated list of %s ids, slugs, or names to show this form on"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:493
-msgid "If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here."
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:509
-msgid "Everyone"
+#: includes/forms/class-legacy-form-editor.php:503
+msgid "Prefix the id with a minus sign to exclude it from the list"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:510
-msgid "Logged in users"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:511
-msgid "Logged out users"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:512
-msgid "specific user roles"
+msgid "Never show on:"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:514
-msgid "Who can see this form?"
+msgid "Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids."
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:519
-msgid "Select user roles"
+#: includes/forms/class-legacy-form-editor.php:521
+msgid "If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here."
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:537
+msgid "Everyone"
+msgstr ""
+
+#: includes/forms/class-legacy-form-editor.php:538
+msgid "Logged in users"
+msgstr ""
+
+#: includes/forms/class-legacy-form-editor.php:539
+msgid "Logged out users"
+msgstr ""
+
+#: includes/forms/class-legacy-form-editor.php:540
+msgid "specific user roles"
+msgstr ""
+
+#: includes/forms/class-legacy-form-editor.php:542
+msgid "Who can see this form?"
+msgstr ""
+
+#: includes/forms/class-legacy-form-editor.php:547
+msgid "Select user roles"
+msgstr ""
+
+#: includes/forms/class-legacy-form-editor.php:565
 msgid "Hide on Mobile"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:543
+#: includes/forms/class-legacy-form-editor.php:571
 msgid "Hide on Desktops"
 msgstr ""
 
 #. translators: %1$s is the name of the integration, %2$s is the link to the integration's website.
-#: includes/forms/class-legacy-form-editor.php:572
+#: includes/forms/class-legacy-form-editor.php:600
 msgid "Install the %1$s to add new subscribers to %2$s."
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:597
-#: build/Emails/assets/js/email-editor.js:61
+#: includes/forms/class-legacy-form-editor.php:625
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Template"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:605
+#: includes/forms/class-legacy-form-editor.php:633
 msgid "Form Appearance"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:613
+#: includes/forms/class-legacy-form-editor.php:641
 msgid "Opt-in Fields"
 msgstr ""
 
 #. translators: %s: file name
-#: includes/forms/class-legacy-form-editor.php:621
+#: includes/forms/class-legacy-form-editor.php:649
 #: src/Integrations/EDD/Downloads.php:123
 #: src/Integrations/WooCommerce/Products.php:431
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:74
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Image"
 msgstr ""
 
 #. translators: Caption accompanying an image of the Mont Blanc, which serves as an example for the Image block.
-#: includes/forms/class-legacy-form-editor.php:629
-#: build/Emails/assets/js/email-editor.js:72
+#: includes/forms/class-legacy-form-editor.php:657
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Button"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:645
-#: includes/forms/class-legacy-form-editor.php:879
-#: build/Emails/assets/js/email-editor.js:67
+#: includes/forms/class-legacy-form-editor.php:673
+#: includes/forms/class-legacy-form-editor.php:907
+#: build/Emails/assets/js/email-editor.js:65
 msgid "Heading"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:653
-#: includes/forms/class-legacy-form-editor.php:959
+#: includes/forms/class-legacy-form-editor.php:681
+#: includes/forms/class-legacy-form-editor.php:987
 msgid "Sub-heading"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:661
-#: includes/forms/class-legacy-form-editor.php:999
+#: includes/forms/class-legacy-form-editor.php:689
+#: includes/forms/class-legacy-form-editor.php:1027
 msgid "Note"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:685
+#: includes/forms/class-legacy-form-editor.php:713
 msgid "Apply a template"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:686
+#: includes/forms/class-legacy-form-editor.php:714
 msgid "Some templates include custom css so remember to check out the Custom CSS panel after you apply a template"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:692
+#: includes/forms/class-legacy-form-editor.php:720
 msgid "Apply a color theme"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:710
+#: includes/forms/class-legacy-form-editor.php:738
 msgid "Preferred Width"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:711
+#: includes/forms/class-legacy-form-editor.php:739
 msgid "The element will resize to 100% width on smaller devices"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:717
+#: includes/forms/class-legacy-form-editor.php:745
 msgid "Minimum Height"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:722
+#: includes/forms/class-legacy-form-editor.php:750
 msgid "Border"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:728
+#: includes/forms/class-legacy-form-editor.php:756
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:95
+#: includes/assets/js/src/blocks.js:159
 msgid "Background Color"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:735
+#: includes/forms/class-legacy-form-editor.php:763
 msgid "Background Image"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:755
+#: includes/forms/class-legacy-form-editor.php:783
 msgid "Show all fields in a single line"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:762
+#: includes/forms/class-legacy-form-editor.php:790
 msgid "Show GDPR checkbox"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:769
+#: includes/forms/class-legacy-form-editor.php:797
 msgid "Consent Text"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:776
+#: includes/forms/class-legacy-form-editor.php:804
 msgid "Hide opt-in fields"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:792
+#: includes/forms/class-legacy-form-editor.php:820
 #: src/Objects/Collection.php:399
 msgid "Avatar URL"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:798
-#: includes/forms/class-legacy-form-editor.php:817
+#: includes/forms/class-legacy-form-editor.php:826
+#: includes/forms/class-legacy-form-editor.php:845
 msgid "Top"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:799
-#: includes/forms/class-legacy-form-editor.php:818
-#: includes/forms/class-legacy-form-editor.php:844
+#: includes/forms/class-legacy-form-editor.php:827
+#: includes/forms/class-legacy-form-editor.php:846
+#: includes/forms/class-legacy-form-editor.php:872
 msgid "Left"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:800
-#: includes/forms/class-legacy-form-editor.php:819
-#: includes/forms/class-legacy-form-editor.php:845
+#: includes/forms/class-legacy-form-editor.php:828
+#: includes/forms/class-legacy-form-editor.php:847
+#: includes/forms/class-legacy-form-editor.php:873
 msgid "Right"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:801
-#: includes/forms/class-legacy-form-editor.php:820
+#: includes/forms/class-legacy-form-editor.php:829
+#: includes/forms/class-legacy-form-editor.php:848
 msgid "Bottom"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:803
+#: includes/forms/class-legacy-form-editor.php:831
 msgid "Avatar Position"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:810
+#: includes/forms/class-legacy-form-editor.php:838
 msgid "Image URL"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:822
+#: includes/forms/class-legacy-form-editor.php:850
 msgid "Image Position"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:837
+#: includes/forms/class-legacy-form-editor.php:865
 msgid "Button Label"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:843
+#: includes/forms/class-legacy-form-editor.php:871
 msgid "Block"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:847
+#: includes/forms/class-legacy-form-editor.php:875
 msgid "Button Position"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:854
+#: includes/forms/class-legacy-form-editor.php:882
 msgid "Button Background"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:860
+#: includes/forms/class-legacy-form-editor.php:888
 msgid "Button Color"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:874
+#: includes/forms/class-legacy-form-editor.php:902
 msgid "Hide heading"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:886
+#: includes/forms/class-legacy-form-editor.php:914
 msgid "Heading Color"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:892
-#: includes/forms/class-legacy-form-editor.php:932
-#: includes/forms/class-legacy-form-editor.php:972
-#: includes/forms/class-legacy-form-editor.php:1012
-#: build/Emails/assets/js/email-editor.js:62
+#: includes/forms/class-legacy-form-editor.php:920
+#: includes/forms/class-legacy-form-editor.php:960
+#: includes/forms/class-legacy-form-editor.php:1000
+#: includes/forms/class-legacy-form-editor.php:1040
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Typography"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:898
-#: includes/forms/class-legacy-form-editor.php:938
-#: includes/forms/class-legacy-form-editor.php:978
-#: includes/forms/class-legacy-form-editor.php:1018
+#: includes/forms/class-legacy-form-editor.php:926
+#: includes/forms/class-legacy-form-editor.php:966
+#: includes/forms/class-legacy-form-editor.php:1006
+#: includes/forms/class-legacy-form-editor.php:1046
 #: includes/forms/views/editor.php:21
 msgid "Advanced"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:914
+#: includes/forms/class-legacy-form-editor.php:942
 msgid "Hide prefix"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:926
+#: includes/forms/class-legacy-form-editor.php:954
 msgid "Prefix Color"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:954
+#: includes/forms/class-legacy-form-editor.php:982
 msgid "Hide sub-heading"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:966
+#: includes/forms/class-legacy-form-editor.php:994
 msgid "Sub-heading Color"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:994
+#: includes/forms/class-legacy-form-editor.php:1022
 msgid "Hide note"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1006
+#: includes/forms/class-legacy-form-editor.php:1034
 msgid "Note Color"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1033
+#: includes/forms/class-legacy-form-editor.php:1061
 msgid "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1034
+#: includes/forms/class-legacy-form-editor.php:1062
 msgid "Enter Your Custom CSS."
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1080
+#: includes/forms/class-legacy-form-editor.php:1108
 msgid "Editing"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1082
+#: includes/forms/class-legacy-form-editor.php:1110
 msgid "Saving"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1083
+#: includes/forms/class-legacy-form-editor.php:1111
 msgid "There was an error saving your form."
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1084
+#: includes/forms/class-legacy-form-editor.php:1112
 msgid "Your changes have been saved successfuly"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1085
+#: includes/forms/class-legacy-form-editor.php:1113
 msgid "There was an error saving your template."
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1086
+#: includes/forms/class-legacy-form-editor.php:1114
 msgid "Your template has been saved successfuly"
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:1089
-#: includes/assets/js/dist/table.js:2
+#: includes/forms/class-legacy-form-editor.php:1117
+#: build/Misc/assets/js/collection.js:225
 msgid "Save Changes"
 msgstr ""
 
 #. Translators: %s Widget name name.
-#: includes/forms/class-legacy-form-editor.php:1098
+#: includes/forms/class-legacy-form-editor.php:1126
 msgid "Use the %s widget to add this form to a widget area"
 msgstr ""
 
@@ -3643,6 +3902,8 @@ msgid "Thank you, your details have been updated."
 msgstr ""
 
 #: includes/forms/views/dynamic-content-tags.php:3
+#: includes/assets/js/src/components/merge-tags.js:109
+#: includes/assets/js/src/components/merge-tags.js:133
 msgid "Smart Tags"
 msgstr ""
 
@@ -3865,7 +4126,8 @@ msgid "Content Upgrades"
 msgstr ""
 
 #: includes/forms/views/legacy/optin-templates.php:1172
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:98
 msgid "Your Email Address"
 msgstr ""
 
@@ -3956,6 +4218,7 @@ msgstr ""
 
 #: includes/forms/views/tab-form.php:51
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:57
 msgid "Button Text"
 msgstr ""
 
@@ -4156,9 +4419,9 @@ msgstr ""
 #. translators: %s: Human-readable time difference.
 #. translators: %s: human readable time difference
 #: includes/functions.php:1432
-#: src/DB/Main.php:566
-#: src/DB/Main.php:592
-#: src/DB/Main.php:639
+#: src/DB/Main.php:567
+#: src/DB/Main.php:593
+#: src/DB/Main.php:640
 msgid "%s ago"
 msgstr ""
 
@@ -4316,11 +4579,12 @@ msgstr ""
 
 #: includes/integrations/class-noptin-abstract-integration.php:518
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/setting.js:525
 msgid "Select an option"
 msgstr ""
 
@@ -4562,11 +4826,6 @@ msgstr ""
 msgid "You won't be subscribed if you don't click on the button below."
 msgstr ""
 
-#: includes/subscriber.php:743
-#: src/Subscribers/Records.php:571
-msgid "Confirm your subscription"
-msgstr ""
-
 #: includes/subscriber.php:746
 msgid "If that doesn't work, copy and paste the following link in your browser:"
 msgstr ""
@@ -4607,18 +4866,13 @@ msgstr ""
 msgid "Multiple checkboxes"
 msgstr ""
 
-#: includes/subscriber.php:1348
-#: src/DB/Schema.php:227
-#: src/Subscribers/Records.php:33
-msgid "Subscriber"
-msgstr ""
-
 #: includes/subscriber.php:1462
-#: src/DB/Main.php:546
+#: src/DB/Main.php:547
 msgid "Unknown"
 msgstr ""
 
 #: includes/subscriber.php:1469
+#: includes/assets/js/src/blocks-new.js:4
 msgid "Newsletter Form"
 msgstr ""
 
@@ -4639,11 +4893,6 @@ msgstr ""
 msgid "Users Sync"
 msgstr ""
 
-#: includes/subscriber.php:1543
-#: src/Subscribers/Records.php:68
-msgid "Imported"
-msgstr ""
-
 #: includes/subscriber.php:1599
 #: build/Emails/assets/js/view-campaigns.js:9
 msgid "Pending"
@@ -4658,7 +4907,7 @@ msgid "Bounced"
 msgstr ""
 
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:39
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:222
 msgid "Any"
 msgstr ""
 
@@ -4670,7 +4919,7 @@ msgstr ""
 #. translators: %s: Taxonomy name.
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
 #: src/Objects/Collection.php:754
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:222
 msgid "%s - Exclude"
 msgstr ""
 
@@ -4709,34 +4958,34 @@ msgid "Click on the merge tag button to insert a dynamic value."
 msgstr ""
 
 #. translators: %1$s is the opening link tag, %2$s is the closing link tag.
-#: src/DB/Main.php:422
+#: src/DB/Main.php:423
 msgid "Store more information about your subscribers by %1$screating custom fields%2$s."
 msgstr ""
 
-#: src/DB/Main.php:427
+#: src/DB/Main.php:428
 msgid "You can use tags to automate your email marketing."
 msgstr ""
 
-#: src/DB/Main.php:462
+#: src/DB/Main.php:463
 msgid "No emails have been sent yet."
 msgstr ""
 
-#: src/DB/Main.php:465
+#: src/DB/Main.php:466
 #: src/Objects/Generic_Post_Type.php:202
 #: build/Emails/assets/js/view-campaigns.js:9
 msgid "Title"
 msgstr ""
 
-#: src/DB/Main.php:487
+#: src/DB/Main.php:488
 msgid "Clicked on"
 msgstr ""
 
-#: src/DB/Main.php:505
-#: src/DB/Main.php:514
+#: src/DB/Main.php:506
+#: src/DB/Main.php:515
 msgid "Activity"
 msgstr ""
 
-#: src/DB/Main.php:507
+#: src/DB/Main.php:508
 msgid "No activity has been recorded yet."
 msgstr ""
 
@@ -4905,7 +5154,7 @@ msgstr ""
 msgid "The subscriber's avatar URL."
 msgstr ""
 
-#: src/DB/Schema.php:365
+#: src/DB/Schema.php:366
 msgid "The subscriber's WordPress user ID."
 msgstr ""
 
@@ -5220,7 +5469,7 @@ msgstr ""
 #: src/Integrations/EDD/Orders.php:84
 #: src/Integrations/WooCommerce/Orders.php:366
 #: src/Integrations/WooCommerce/Orders.php:698
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:123
 msgid "Items"
 msgstr ""
 
@@ -5246,13 +5495,6 @@ msgstr ""
 #: src/Integrations/EDD/Orders.php:148
 #: src/Integrations/WooCommerce/Orders.php:854
 msgid "The previous order status."
-msgstr ""
-
-#: src/Integrations/EDD/Orders.php:151
-#: src/Integrations/WooCommerce/Orders.php:857
-#: src/Subscribers/Records.php:189
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-msgid "New"
 msgstr ""
 
 #: src/Integrations/EDD/Orders.php:175
@@ -5713,47 +5955,47 @@ msgstr ""
 msgid "Locale"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:129
+#: src/Integrations/WooCommerce/Customers.php:131
 #: src/Integrations/WooCommerce/Orders.php:496
 msgid "Billing address"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:133
+#: src/Integrations/WooCommerce/Customers.php:135
 #: src/Integrations/WooCommerce/Orders.php:149
 #: src/Integrations/WooCommerce/Orders.php:528
 msgid "Billing city"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:137
+#: src/Integrations/WooCommerce/Customers.php:139
 #: src/Integrations/WooCommerce/Orders.php:154
 #: src/Integrations/WooCommerce/Orders.php:532
 msgid "Billing state"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:141
+#: src/Integrations/WooCommerce/Customers.php:143
 #: src/Integrations/WooCommerce/Orders.php:159
 #: src/Integrations/WooCommerce/Orders.php:536
 msgid "Billing postcode"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:145
+#: src/Integrations/WooCommerce/Customers.php:147
 #: src/Integrations/WooCommerce/Orders.php:164
 #: src/Integrations/WooCommerce/Orders.php:540
 msgid "Billing country"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:149
+#: src/Integrations/WooCommerce/Customers.php:151
 #: src/Integrations/WooCommerce/Orders.php:549
 msgid "Billing phone"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Integrations/WooCommerce/Customers.php:172
+#: src/Integrations/WooCommerce/Customers.php:174
 msgid "%s > Lifetime Value"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Integrations/WooCommerce/Customers.php:177
+#: src/Integrations/WooCommerce/Customers.php:179
 msgid "When a %s's lifetime value surpasses a certain amount"
 msgstr ""
 
@@ -6238,7 +6480,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:128
 #: src/Integrations/WooCommerce/Products.php:715
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Width"
 msgstr ""
 
@@ -6910,7 +7152,7 @@ msgstr ""
 
 #. translators: %s: plural name of the post type
 #: src/Objects/Generic_Post_Type.php:243
-#: build/Emails/assets/js/email-editor.js:80
+#: build/Emails/assets/js/email-editor.js:78
 msgid "Content"
 msgstr ""
 
@@ -6945,30 +7187,6 @@ msgstr ""
 msgid "%1$s at %2$s"
 msgstr ""
 
-#. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:461
-#: src/Subscribers/Records.php:709
-msgid "%s > Create or Update"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:466
-#: src/Subscribers/Records.php:714
-msgid "Create or update a %s"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:477
-#: src/Subscribers/Records.php:732
-msgid "%s > Delete"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:482
-#: src/Subscribers/Records.php:737
-msgid "Delete a %s"
-msgstr ""
-
 #: src/Objects/Generic_Post_Type.php:488
 msgid "Force Delete"
 msgstr ""
@@ -6978,7 +7196,7 @@ msgid "Whether to bypass the trash and force delete the post."
 msgstr ""
 
 #: src/Objects/Post_Type.php:36
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Authors"
 msgstr ""
 
@@ -7058,180 +7276,6 @@ msgstr ""
 msgid "Security code"
 msgstr ""
 
-#: src/Subscribers/Records.php:67
-msgid "Saved"
-msgstr ""
-
-#: src/Subscribers/Records.php:73
-msgid "Pending email confirmation"
-msgstr ""
-
-#. translators: %s: Object type label and new state
-#: src/Subscribers/Records.php:138
-msgid "When a %1$s is %2$s"
-msgstr ""
-
-#: src/Subscribers/Records.php:140
-msgid "created or updated"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:151
-msgid "Confirm new %s"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:164
-msgid "Welcome new %s"
-msgstr ""
-
-#. translators: %s: new state
-#: src/Subscribers/Records.php:179
-msgid "When a subscriber's status is set to %1$s"
-msgstr ""
-
-#: src/Subscribers/Records.php:185
-msgid "Previous status"
-msgstr ""
-
-#: src/Subscribers/Records.php:186
-msgid "The previous subscriber status."
-msgstr ""
-
-#. translators: %1$s: Object type label, %2$s: Field label.
-#: src/Subscribers/Records.php:217
-msgid "%1$s > %2$s changed"
-msgstr ""
-
-#. translators: %s: field label
-#: src/Subscribers/Records.php:224
-msgid "When %s changes"
-msgstr ""
-
-#: src/Subscribers/Records.php:230
-#: src/Subscribers/Records.php:267
-msgid "New value"
-msgstr ""
-
-#: src/Subscribers/Records.php:237
-msgid "Old value"
-msgstr ""
-
-#. translators: %1$s: Object type label, %2$s: Field label.
-#: src/Subscribers/Records.php:253
-msgid "%1$s > Add to %2$s"
-msgstr ""
-
-#. translators: %s: field label
-#: src/Subscribers/Records.php:260
-msgid "When a %1$s is added to %2$s"
-msgstr ""
-
-#. translators: %1$s: Object type label, %2$s: Field label.
-#: src/Subscribers/Records.php:283
-msgid "%1$s > Removed from %2$s"
-msgstr ""
-
-#. translators: %s: field label
-#: src/Subscribers/Records.php:290
-msgid "When a %1$s is removed from %2$s"
-msgstr ""
-
-#: src/Subscribers/Records.php:297
-msgid "The removed value"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:319
-msgid "%s > Open Email"
-msgstr ""
-
-#: src/Subscribers/Records.php:322
-msgid "When a subscriber opens an email campaign"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:333
-msgid "%s > Link Click"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:338
-msgid "When a %s clicks on a link in an email"
-msgstr ""
-
-#: src/Subscribers/Records.php:345
-msgid "Clicked URL"
-msgstr ""
-
-#. translators: %s: New status.
-#: src/Subscribers/Records.php:392
-msgid "Status set to %1$s"
-msgstr ""
-
-#: src/Subscribers/Records.php:570
-msgid "Manage your preferences"
-msgstr ""
-
-#: src/Subscribers/Records.php:573
-msgid "Resubscribe"
-msgstr ""
-
-#. translators: %s: Object link destination.
-#: src/Subscribers/Records.php:595
-msgid "Displays a button link to %s"
-msgstr ""
-
-#: src/Subscribers/Records.php:720
-msgid "Update existing subscribers"
-msgstr ""
-
-#: src/Subscribers/Records.php:743
-#: src/Subscribers/Records.php:765
-#: src/Subscribers/Records.php:787
-msgid "Subscriber ID or email address"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:754
-msgid "%s > Unsubscribe"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:759
-msgid "Unsubscribe a %s"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:776
-msgid "%s > Update Custom Field"
-msgstr ""
-
-#. translators: %s: Object type label.
-#: src/Subscribers/Records.php:781
-msgid "Update a %s field"
-msgstr ""
-
-#: src/Subscribers/Records.php:794
-msgid "Custom Field"
-msgstr ""
-
-#: src/Subscribers/Records.php:795
-msgid "Select the custom field to update"
-msgstr ""
-
-#: src/Subscribers/Records.php:796
-msgid "Select Field"
-msgstr ""
-
-#: src/Subscribers/Records.php:802
-msgid "Field Value"
-msgstr ""
-
-#: src/Subscribers/Records.php:803
-msgid "Enter a value to assign the field"
-msgstr ""
-
 #: templates/debug-log.php:14
 msgid "Message"
 msgstr ""
@@ -7268,7 +7312,7 @@ msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Emails/assets/js/view-campaigns.js:9
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:222
 msgid "Save"
 msgstr ""
 
@@ -7277,17 +7321,18 @@ msgid "Save Automation"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:225
 msgid "Saving..."
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Emails/assets/js/email-editor.js:15
+#: build/Emails/assets/js/email-editor.js:13
 msgid "Premium Feature"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Emails/assets/js/email-editor.js:15
+#: build/Emails/assets/js/email-editor.js:13
 msgid "Activate license"
 msgstr ""
 
@@ -7308,204 +7353,207 @@ msgid "Seconds"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Only run if"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Do not run if"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "all"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "any"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "If"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "of the following rules are true:"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Select a value"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Select a comparison"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Enter a smart tag"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Comparison"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Enter a value"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Add a conditional logic rule"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Add another rule"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Return to editor"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
 msgid "Optionally enable/disable this trigger depending on specific conditions."
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Edit Conditional Logic"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/setting.js:158
 msgid "Insert merge tag"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Add Item"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:229
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
 msgid "Go Back"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Set Items"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "(new)"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Remove Item"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Move Up"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
 msgid "Move Down"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
+#: build/Misc/assets/js/collection.js:222
 #: build/Settings/assets/js/settings.js:57
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/setting.js:300
 msgid "Add"
 msgstr ""
 
@@ -7535,7 +7583,7 @@ msgid "Add New Automation"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:93
+#: build/Emails/assets/js/email-editor.js:91
 msgid "Unlock Premium Feature"
 msgstr ""
 
@@ -7567,451 +7615,450 @@ msgstr ""
 msgid "Are you sure you want to delete this automation rule?"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:15
+#: build/Emails/assets/js/email-editor.js:13
 msgid "Font family"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Set tags and categories"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "This email will send for all blog posts."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "A paid plan allows you to limit notifications to certain categories, tags, and authors."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Required. The subject of your email."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Email Heading"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "This text will be displayed at the top of the email."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Email Content"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "The content of your email. You can use email tags to provide dynamic values."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Footer Text"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "This text will be displayed at the bottom of the email."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Block Editor"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "A premium plan allows you to edit your emails using a drag and drop block editor."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Type your email content here"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "You can use email tags to provide dynamic values."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Paste the raw HTML of your email here"
 msgstr ""
 
 #. translators: %s: content type label.
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Merge tags"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Merge tags are special placeholders that allow you to personalize your emails. Here are some of the available merge tags:"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "View available merge tags"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Email Settings"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Editor"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Choose the type of email you want to create."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Choose the template you want to use."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Campaign Name"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "For your reference only."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Example: Black Friday Sale"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Preview Text"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "This is the text that appears in the inbox when the email is received."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:61
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Example: Save up to 50%"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "The width of your email's content area."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Add custom CSS to your email. You can also use this field to import custom fonts."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Font size"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Line height"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Attach Files"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "The add-ons pack allows you to attach images, videos, PDFs or other file types to this email."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Email Attachments"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Enter file path or URL"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Upload"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Remove"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Add Attachment"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "You can only attach files that are hosted on your server."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Select unit"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Delay sending this email"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Premium plans allow you to delay (schedule) this email for a given number of minutes, hours, or days."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Timing"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Send after"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Unit"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "This email will be sent after the specified time has elapsed."
 msgstr ""
 
 #. translators: %s: filter label.
-#: build/Emails/assets/js/email-editor.js:62
-#: build/Emails/assets/js/email-editor.js:67
+#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:65
 msgid "Filter %s"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "A premium plan allows you to filter recipients by custom fields etc."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Send To"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Post type"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Select a post type"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "The [[post_digest]] merge tag will display this post type if you do not set a post type in the merge tag."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "New post notifications will only send for this post type."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Filter by terms"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Optional. Select how to filter posts by terms."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Set post type"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "This email will only send for blog posts."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "The addons pack allows you to send notifications for products and other post types or limit notifications to certain categories, tags, and authors."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Post settings"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Send for all authors"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Enter a comma-separated list of author IDs or leave blank to send for all authors."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "All languages"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Optional. Send for posts in the selected language only."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Send From"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Leave blank to use the default name."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Reply To"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:62
+#: build/Emails/assets/js/email-editor.js:60
 msgid "Leave blank to use the default reply email."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:63
+#: build/Emails/assets/js/email-editor.js:61
 msgid "Blocks"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:63
+#: build/Emails/assets/js/email-editor.js:61
 msgid "Overview"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:67
+#: build/Emails/assets/js/email-editor.js:65
 msgid "Paragraph"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:67
+#: build/Emails/assets/js/email-editor.js:65
 msgid "Start with the basic building block of all narrative."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:67
+#: build/Emails/assets/js/email-editor.js:65
 msgid "Introduce new sections and organize content to help readers understand the structure of your content."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Insert an image to make a visual statement."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Prompt readers to take action with a button-style link."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Social Icons"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Display icons linking to your social media profiles or sites."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Social Icon"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Display an icon linking to a social media profile or site."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "RAW"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Add custom HTML code or merge tags to your email."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Section"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Gather blocks in a layout container."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
-#: includes/assets/js/dist/table.js:2
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Columns"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Display content in multiple columns, with blocks added to each column."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Column"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "A single column within a columns block."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Separator"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Create a break between ideas or sections with a horizontal separator."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Spacer"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:72
+#: build/Emails/assets/js/email-editor.js:70
 msgid "Add a blank space between blocks and customize its height."
 msgstr ""
 
 #. translators: %s: block name
-#: build/Emails/assets/js/email-editor.js:74
+#: build/Emails/assets/js/email-editor.js:72
 msgid "Unsupported Block"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:74
+#: build/Emails/assets/js/email-editor.js:72
 msgid "This block is not supported in the email editor."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:74
+#: build/Emails/assets/js/email-editor.js:72
 msgid "Merge Tag"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:74
+#: build/Emails/assets/js/email-editor.js:72
 msgid "Insert additional custom elements with a WordPress shortcode or Noptin Merge tag."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:74
+#: build/Emails/assets/js/email-editor.js:72
 msgid "Merge tag / Shortcode"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:80
+#: build/Emails/assets/js/email-editor.js:78
 msgid "Dynamic"
 msgstr ""
 
 #. translators: %s: plural name of the post type
-#: build/Emails/assets/js/email-editor.js:81
+#: build/Emails/assets/js/email-editor.js:79
 msgid "%s Template"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:81
+#: build/Emails/assets/js/email-editor.js:79
 msgid "Contains the block elements used to render a %s"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:81
+#: build/Emails/assets/js/email-editor.js:79
 msgid "Displays %s in a list or a grid"
 msgstr ""
 
 #. translators: accessibility text for the editor top bar landmark region.
-#: build/Emails/assets/js/email-editor.js:83
+#: build/Emails/assets/js/email-editor.js:81
 msgid "Editor top bar"
 msgstr ""
 
 #. translators: accessibility text for the editor content landmark region.
-#: build/Emails/assets/js/email-editor.js:85
+#: build/Emails/assets/js/email-editor.js:83
 msgid "Editor content"
 msgstr ""
 
 #. translators: accessibility text for the editor settings landmark region.
-#: build/Emails/assets/js/email-editor.js:87
+#: build/Emails/assets/js/email-editor.js:85
 #: build/Settings/assets/js/settings.js:63
 msgid "Editor settings"
 msgstr ""
 
 #. translators: accessibility text for the editor publish landmark region.
-#: build/Emails/assets/js/email-editor.js:89
+#: build/Emails/assets/js/email-editor.js:87
 #: build/Settings/assets/js/settings.js:65
 msgid "Editor publish"
 msgstr ""
 
 #. translators: accessibility text for the editor footer landmark region.
-#: build/Emails/assets/js/email-editor.js:91
+#: build/Emails/assets/js/email-editor.js:89
 #: build/Settings/assets/js/settings.js:67
 msgid "Editor footer"
 msgstr ""
 
 #. translators: accessibility text for the editor secondary sidebar landmark region.
-#: build/Emails/assets/js/email-editor.js:93
+#: build/Emails/assets/js/email-editor.js:91
 #: build/Settings/assets/js/settings.js:69
 msgid "Document Overview"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:93
+#: build/Emails/assets/js/email-editor.js:91
 msgid "This email type is only available to premium license holders."
 msgstr ""
 
@@ -8041,7 +8088,7 @@ msgid "Create"
 msgstr ""
 
 #: build/Emails/assets/js/view-campaigns.js:2
-#: includes/assets/js/dist/table.js:2
+#: build/Misc/assets/js/collection.js:229
 msgid "Show all"
 msgstr ""
 
@@ -8053,64 +8100,352 @@ msgstr ""
 msgid "Published"
 msgstr ""
 
+#: build/Misc/assets/js/collection.js:123
+#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:231
+msgid "An unknown error occurred."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:123
+#: build/Misc/assets/js/collection.js:236
+msgid "View Records"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:123
+#: build/Misc/assets/js/collection.js:222
+msgid "Add New Item"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:123
+msgid "View Item"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:178
+msgid "Are you sure you want to delete this record?"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:178
+msgid "Record deleted successfully."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:178
+#: build/Misc/assets/js/collection.js:231
+msgid "Deleting..."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "%s - Min"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "%s - Max"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "%s - After"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "%s - Before"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "Separate multiple values with a comma."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "Apply Filters"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "Applied Filters (%d)"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "Filter Records"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+msgid "Filter records"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:225
+msgid "Record saved successfully."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:225
+#: build/Misc/assets/js/collection.js:231
+msgid "Edit Item"
+msgstr ""
+
+#. translators: %s: item title.
+#: build/Misc/assets/js/collection.js:229
+msgid "Refresh"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Hide"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Preparing records..."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Found no records to export."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Done! Click the button below to download records."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Download CSV"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Select the fields to include in your exported file"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Download"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:229
+msgid "Download Selected"
+msgstr ""
+
+#. translators: %s: number of records
+#: build/Misc/assets/js/collection.js:230
+msgid "Download all %s records"
+msgstr ""
+
+#. translators: %s: number of records
+#: build/Misc/assets/js/collection.js:231
+msgid "Download %s selected records"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Delete Selected"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Are you sure you want to delete %d matching records?"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Are you sure you want to delete %d selected records?"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Yes, Delete!"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Do not update"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "%s - To Add"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "%s - To Remove"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Saving %d records..."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Edit %d records"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Records updated successfully."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Bulk Edit"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Error"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:231
+msgid "Loading"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:234
+msgid "This tool allows you to import existing records from a CSV file."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:234
+msgid "Select a CSV file"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:234
+msgid "The first row of the CSV file should contain the field names/headers."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:234
+msgid " Have a different file type?"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:234
+msgid "Convert it to CSV"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Select value"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Enter value"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Enter a value to assign all imported records"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Ignore Field"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Manually enter value"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Map Field"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Try again"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Map the headers of your CSV file to known fields."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Update existing records"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Import"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "No records found in %s."
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Importing"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Processed"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Records Found"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Records Created"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Records Updated"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Records Failed"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Records Skipped"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Errors"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Clear"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:236
+msgid "Parsing"
+msgstr ""
+
 #. translators: accessibility text for the footer landmark region.
+#: build/Misc/assets/js/collection.js:248
+#: build/Misc/assets/js/interface.js:13
 #: build/Misc/assets/js/list.js:13
+msgid "Thank you for using Noptin. Please leave us a review 🌟"
+msgstr ""
+
+#: build/Misc/assets/js/list.js:1
 msgid "Inactive :("
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Expires on:"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Lifetime License"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Enter your noptin.com license key to activate premium features"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Don't have a license?"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Plan:"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Email:"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "License Key:"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Activations:"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Created:"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Deactivate"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "This license key is inactive. Please purchase a new license key to receive updates and support."
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Deactivate License"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Are you sure you want to deactivate this license key?"
 msgstr ""
 
-#: build/Misc/assets/js/list.js:13
+#: build/Misc/assets/js/list.js:1
 msgid "Yes, deactivate"
 msgstr ""
 
@@ -8125,434 +8460,165 @@ msgid "Settings content"
 msgstr ""
 
 #: includes/assets/js/dist/blocks-woocommerce-backend.js:1
+#: includes/assets/js/src/wc/edit.js:22
 msgid "If the Noptin newsletter subscription checkbox is enabled, it will appear here."
 msgstr ""
 
 #: includes/assets/js/dist/blocks-woocommerce-backend.js:1
+#: includes/assets/js/src/wc/edit.js:31
 msgid "Enable/Disable"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:9
 msgid "Newsletter Optin"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:22
 msgid "Click the above title to edit it. You can also edit this section by clicking on it."
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:69
+#: includes/assets/js/src/blocks.js:73
 msgid "Redirect Url"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:78
 msgid "Optional. Where should we redirect users after they have successfully signed up?"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:110
 msgid "Title Color"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:125
 msgid "Description Color"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:145
 msgid "Text Color"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:188
 msgid "Write Form title…"
 msgstr ""
 
 #: includes/assets/js/dist/blocks.js:1
+#: includes/assets/js/src/blocks.js:201
 msgid "Write Form Description"
 msgstr ""
 
-#: includes/assets/js/dist/table.js:2
-msgid "Error:"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Hide"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "View Records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Loading"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Error"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "An unknown error occurred."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Add New Item"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "View Item"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Are you sure you want to delete this record?"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Copied to clipboard!"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-#: includes/assets/js/dist/welcome-wizard.js:2
-msgid "Add a rule"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "%s - Min"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "%s - Max"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "%s - After"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "%s - Before"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Apply Filters"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Filters (%d)"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Filter Records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Filter records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Edit Item"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Page"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "of %d"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Previous Page"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Next Page"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Rows per page"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Sort by %s in ascending order"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Sort by %s in descending order"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Toggle selection"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "(scroll to see more)"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "No data to display"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Your requested data is loading"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Choose the columns to display"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Refresh"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Preparing records..."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Found no records to export."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Done! Click the button below to download records."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Download CSV"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Select the fields to include in your exported file"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Download"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Download Selected"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Download all %s records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Download %s selected records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Delete Selected"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Deleting..."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Are you sure you want to delete %d matching records?"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Are you sure you want to delete %d selected records?"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Yes, Delete!"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Do not update"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "%s - To Add"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "%s - To Remove"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Saving %d records..."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Edit %d records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Records updated successfully."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Bulk Edit"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "This tool allows you to import existing records from a CSV file."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Select a CSV file"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "The first row of the CSV file should contain the field names/headers."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid " Have a different file type?"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Convert it to CSV"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Select value"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Enter value"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Enter a value to assign all imported records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Ignore Field"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Manually enter value"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Map Field"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Try again"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Map the headers of your CSV file to known fields."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Update existing records"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Import"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "No records found in %s."
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Importing"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Processed"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Records Found"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Records Created"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Records Updated"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Records Failed"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Records Skipped"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Errors"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Clear"
-msgstr ""
-
-#: includes/assets/js/dist/table.js:2
-msgid "Parsing"
-msgstr ""
-
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/step.js:70
 msgid "Next"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:21
 msgid "Newsletter subscriptions"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:22
 msgid "Let's get you started with Noptin. Configure your subscription preferences"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:36
 msgid "Require users to confirm their email address before they are added to your list"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:40
 msgid "Confirmation Page Message"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:42
 msgid "This is the message shown to people after they confirm their email address."
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:48
 msgid "Unsubscribe Page Message"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:50
 msgid "This is the message shown to people after they unsubscribe from your newsletter."
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:58
 msgid "Email Sending"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:59
 msgid "Who's the sender of the emails you'll be sending?"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:73
 msgid "How the sender email appears in outgoing emails"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:80
 msgid "Where replies to your emails should be sent"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:88
 msgid "Subscribe to our newsletter to get the latest news and updates."
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/constants.js:92
 msgid "Your Name"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/index.js:52
 msgid "That's all!"
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/index.js:53
 msgid "You have successfully completed the settings wizard. You can now go to the settings page to customize your opt-in box."
 msgstr ""
 
-#: includes/assets/js/dist/welcome-wizard.js:2
+#: includes/assets/js/dist/welcome-wizard.js:1
+#: includes/assets/js/src/components/settings-wizard/index.js:59
 msgid "Read Documentation"
+msgstr ""
+
+#: includes/assets/js/src/blocks-new.js:5
+msgid "Displays a newsletter subscription form"
+msgstr ""
+
+#: includes/assets/js/src/blocks-new.js:23
+msgid "Select Newsletter Form"
+msgstr ""
+
+#: includes/assets/js/src/components/merge-tags.js:112
+#: includes/assets/js/src/components/merge-tags.js:134
+msgid "You can use the following smart tags to generate dynamic values."
+msgstr ""
+
+#: includes/assets/js/src/wc/block.json
+msgctxt "block title"
+msgid "Noptin Newsletter Subscription"
+msgstr ""
+
+#: includes/assets/js/src/wc/block.json
+msgctxt "block description"
+msgid "Adds a newsletter subscription checkbox to the checkout."
 msgstr ""

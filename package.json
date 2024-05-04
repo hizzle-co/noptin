@@ -1,6 +1,6 @@
 {
 	"name": "noptin",
-	"version": "3.2.3",
+	"version": "3.3.1",
 	"private": true,
 	"description": "WordPress Newsletter Plugin",
 	"scripts": {
@@ -9,7 +9,8 @@
 		"compile:css": "sass --no-source-map includes/assets/sass:includes/assets/css && postcss includes/assets/css/*.css -r --no-map",
 		"js": "npx webpack --watch --mode development",
 		"build:js": "npx webpack --mode production",
-		"dump:autoload": "composer dump-autoload"
+		"dump:autoload": "composer dump-autoload",
+		"i18n": "wp i18n make-pot . languages/newsletter-optin-box.pot && cd languages && wp i18n update-po newsletter-optin-box.pot && wp i18n make-php . && wp i18n make-mo . && wp i18n make-json ."
 	},
 	"repository": {
 		"type": "git",
