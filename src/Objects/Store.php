@@ -164,7 +164,7 @@ class Store {
 			$smart_tag['is_boolean'] = '1';
 		}
 
-		if ( ! empty( $group ) ) {
+		if ( ! empty( $group ) && empty( $smart_tag['group'] ) ) {
 			$smart_tag['group'] = $group;
 		}
 

@@ -407,7 +407,7 @@ class Main {
 		$params['avatar_url'] = noptin()->white_label->get( 'logo', noptin()->plugin_url . 'includes/assets/images/logo.png' );
 		$params['ignore']     = array_merge(
 			$params['ignore'],
-			array( 'activity', 'sent_campaigns', 'avatar_url' )
+			array( 'activity', 'sent_campaigns' )
 		);
 
 		$params['hidden'] = array_merge(
@@ -415,6 +415,7 @@ class Main {
 			array( 'ip_address', 'conversion_page', 'confirm_key', 'date_modified' )
 		);
 
+		$params['badges']  = array( 'source', 'status' );
 		$params['id_prop'] = 'email';
 
 		$tip = sprintf(
@@ -626,7 +627,7 @@ class Main {
 
 		$prepared = array();
 
-		foreach ( $activity as $data ) {
+		foreach ( $activity as $index => $data ) {
 			$time = $data['time'];
 			$date = new \Hizzle\Store\Date_Time( "@{$time}", new \DateTimeZone( 'UTC' ) );
 			$utc  = $date->utc();
@@ -642,6 +643,7 @@ class Main {
 			}
 
 			$prepared[] = array(
+				'id'       => $index + 1,
 				'time'     => $time,
 				'utc'      => $utc,
 				'i18n'     => $i18n,

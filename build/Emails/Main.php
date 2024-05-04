@@ -40,15 +40,13 @@ class Main {
 		// Register post types.
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
+		add_action( 'noptin_load', array( __CLASS__, 'register_email_types' ), 0 );
 
 		// Fire hooks.
 		add_action( 'noptin_before_send_email', array( __CLASS__, 'set_current_email' ), -10 );
 		add_filter( 'noptin_get_last_send_date', array( __CLASS__, 'filter_last_send_date' ) );
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
-
-		// Register email types.
-		self::register_email_types();
 
 		// Email preview.
 		Preview::init();
@@ -338,7 +336,7 @@ class Main {
 
 		foreach ( self::$types as $type ) {
 
-			if ( ! $type->supports_timing ) {
+			if ( ! $type->supports_sub_types ) {
 				continue;
 			}
 
@@ -370,7 +368,7 @@ class Main {
 	 * Registers email types.
 	 *
 	 */
-	private static function register_email_types() {
+	public static function register_email_types() {
 
 		// Newsletter emails.
 		self::register_email_type(
@@ -395,6 +393,31 @@ class Main {
 				'click_to_add_first' => __( 'Click the button below to set-up your first automated email', 'newsletter-optin-box' ),
 				'supports_timing'    => true,
 				'supports_sub_types' => true,
+			)
+		);
+
+		do_action( 'noptin_register_email_types' );
+
+		if ( ! isset( self::$types['sequence'] ) ) {
+			self::register_email_type(
+				array(
+					'type'         => 'sequence',
+					'plural'       => 'sequences',
+					'label'        => __( 'Sequence / Course', 'newsletter-optin-box' ),
+					'plural_label' => __( 'Sequences / Courses', 'newsletter-optin-box' ),
+					'icon'         => 'clock',
+					'upsell'       => __( 'Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc. Install the Ultimate Addons Pack to get started.', 'newsletter-optin-box' ),
+				)
+			);
+		}
+
+		// Trash emails.
+		self::register_email_type(
+			array(
+				'type'         => 'trash',
+				'plural'       => 'trash',
+				'label'        => __( 'Trash', 'newsletter-optin-box' ),
+				'plural_label' => __( 'Trash', 'newsletter-optin-box' ),
 			)
 		);
 	}
@@ -561,7 +584,9 @@ class Main {
 	 */
 	public static function init_current_email_recipient( $recipient, $campaign = null ) {
 		if ( ! empty( $recipient['email'] ) ) {
-			$GLOBALS['current_noptin_email'] = $recipient['email'];
+			if ( is_email( $recipient['email'] ) ) {
+				$GLOBALS['current_noptin_email'] = $recipient['email'];
+			}
 		} elseif ( ! empty( $recipient['sid'] ) ) {
 			$subscriber = noptin_get_subscriber( $recipient['sid'] );
 
@@ -644,7 +669,7 @@ class Main {
 	 */
 	public static function filter_last_send_date( $date ) {
 
-		if ( ! empty( self::$current_email ) ) {
+		if ( ! did_action( 'noptin_prepare_email_preview' ) && ! empty( self::$current_email ) ) {
 			$last_date = get_post_meta( self::$current_email->id, '_noptin_last_send', true );
 
 			if ( ! empty( $last_date ) ) {

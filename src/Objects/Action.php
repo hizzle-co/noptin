@@ -1,12 +1,11 @@
 <?php
-
-namespace Hizzle\Noptin\Objects;
-
 /**
  * Generic object action.
  *
  * @since 3.0.0
  */
+
+namespace Hizzle\Noptin\Objects;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -42,7 +41,7 @@ class Action extends \Noptin_Abstract_Action {
 		$this->object_type = $collection->type;
 		$this->action_id   = $action_id;
 		$this->action_args = $action_args;
-		$this->category    = $collection->label;
+		$this->category    = isset( $action_args['category'] ) ? $action_args['category'] : $collection->label;
 		$this->integration = $collection->integration;
 	}
 
@@ -68,6 +67,21 @@ class Action extends \Noptin_Abstract_Action {
 	}
 
 	/**
+	 * Retrieve the trigger's or action's image.
+	 *
+	 * @since 1.2.8
+	 * @return string
+	 */
+	public function get_image() {
+
+		if ( ! empty( $this->action_args['icon'] ) ) {
+			return $this->action_args['icon'];
+		}
+
+		return Store::get_collection_config( $this->object_type, 'icon' );
+	}
+
+	/**
 	 * Returns the fields needed for this action.
 	 *
 	 * @return array
@@ -80,10 +94,21 @@ class Action extends \Noptin_Abstract_Action {
 			$prepared = $this->action_args['extra_settings'];
 		}
 
+		$include = empty( $this->action_args['action_fields'] ) ? array() : $this->action_args['action_fields'];
 		foreach ( $fields as $key => $args ) {
 
 			// If needed for this action...
-			if ( ! empty( $args['actions'] ) && in_array( $this->action_id, $args['actions'], true ) ) {
+			if ( in_array( $key, $include, true ) || ( ! empty( $args['actions'] ) && in_array( $this->action_id, $args['actions'], true ) ) ) {
+				if ( isset( $args['action_label'] ) ) {
+					$args['label'] = $args['action_label'];
+					unset( $args['action_label'] );
+				}
+
+				if ( isset( $args['action_props'] ) && isset( $args['action_props'][ $this->action_id ] ) ) {
+					$args = array_merge( $args, $args['action_props'][ $this->action_id ] );
+					unset( $args['action_props'] );
+				}
+
 				$prepared[ $key ] = $args;
 			}
 		}
@@ -99,6 +124,10 @@ class Action extends \Noptin_Abstract_Action {
 		$meta     = array();
 
 		foreach ( $this->get_action_fields() as $key => $args ) {
+
+			if ( empty( $args['label'] ) && ! empty( $args['description'] ) ) {
+				$args['label'] = $args['description'];
+			}
 
 			// If required but not set...
 			if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
@@ -119,7 +148,9 @@ class Action extends \Noptin_Abstract_Action {
 					$value = isset( $args['options'][ $value ] ) ? $args['options'][ $value ] : $value;
 				}
 
-				$meta[ esc_html( $args['label'] ) ] = $value;
+				if ( $value ) {
+					$meta[ esc_html( $args['label'] ) ] = $value;
+				}
 			}
 		}
 
@@ -134,6 +165,15 @@ class Action extends \Noptin_Abstract_Action {
 		$settings = array();
 
 		foreach ( $this->get_action_fields() as $key => $field ) {
+			if ( empty( $field['label'] ) && ! empty( $field['description'] ) ) {
+				$field['label'] = $field['description'];
+				unset( $field['description'] );
+			}
+
+			if ( ! empty( $field['options'] ) ) {
+				$field['el'] = 'select';
+				unset( $field['type'] );
+			}
 
 			if ( isset( $field['el'] ) ) {
 				$settings[ $key ] = $field;
@@ -145,7 +185,7 @@ class Action extends \Noptin_Abstract_Action {
 				'el'          => 'input',
 				'label'       => $field['label'],
 				'map_field'   => true,
-				'placeholder' => sprintf(
+				'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : sprintf(
 					/* translators: %s: The field name. */
 					__( 'Enter %s', 'newsletter-optin-box' ),
 					strtolower( $field['label'] )
@@ -175,7 +215,16 @@ class Action extends \Noptin_Abstract_Action {
 			}
 		}
 
-		return isset( $this->action_args['callback'] ) && is_callable( $this->action_args['callback'] );
+		if ( ! isset( $this->action_args['callback'] ) || ! is_callable( $this->action_args['callback'] ) ) {
+			return false;
+		}
+
+		// Check if we have a custom can_run.
+		if ( isset( $this->action_args['can_run'] ) && is_callable( $this->action_args['can_run'] ) ) {
+			return call_user_func_array( $this->action_args['can_run'], array( $subject, $rule, $args ) );
+		}
+
+		return true;
 	}
 
 	/**
@@ -189,19 +238,49 @@ class Action extends \Noptin_Abstract_Action {
 		$smart_tags = $args['smart_tags'];
 
 		foreach ( $this->get_action_fields() as $key => $args ) {
-			$settings[ $key ] = $smart_tags->replace_in_content( $rule->get_action_setting( $key ) );
+			$saved = $rule->get_action_setting( $key );
+
+			if ( ! is_null( $saved ) && '' !== $saved ) {
+				$settings[ $key ] = $smart_tags->replace_in_content( $rule->get_action_setting( $key ) );
+			}
 		}
 
-		call_user_func_array(
-			$this->action_args['callback'],
-			array(
-				$settings,
-				$this->action_id,
-				$subject,
-				$rule,
-				$args,
-				$smart_tags,
-			)
+		$args = array(
+			'settings'   => $settings,
+			'action_id'  => $this->action_id,
+			'subject'    => $subject,
+			'rule'       => $rule,
+			'args'       => $args,
+			'smart_tags' => $smart_tags,
 		);
+
+		$needed = isset( $this->action_args['callback_args'] ) ? $this->action_args['callback_args'] : array( 'settings', 'action_id', 'subject', 'rule', 'args', 'smart_tags' );
+
+		// Order the arguments.
+		$args = array_merge( array_flip( $needed ), $args );
+
+		// Only pass the needed arguments.
+		$args = array_values( array_intersect_key( $args, array_flip( $needed ) ) );
+
+		// If we have an args limit, apply it.
+		if ( isset( $this->action_args['callback_args_limit'] ) ) {
+			$args = array_slice( $args, 0, $this->action_args['callback_args_limit'] );
+		}
+
+		return call_user_func_array( $this->action_args['callback'], $args );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function run_if() {
+		return isset( $this->action_args['run_if'] ) ? $this->action_args['run_if'] : parent::run_if();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function skip_if() {
+		return isset( $this->action_args['skip_if'] ) ? $this->action_args['skip_if'] : parent::skip_if();
 	}
 }

@@ -44,6 +44,36 @@ class Noptin_Custom_Fields {
 	}
 
 	/**
+	 * Get predefined fields
+	 */
+	public static function predefined_fields() {
+		$predefined_fields = array();
+
+		foreach ( get_noptin_custom_field_types() as $type => $data ) {
+			if ( ! empty( $data['predefined'] ) ) {
+				$predefined_fields[] = $type;
+			}
+		}
+
+		return $predefined_fields;
+	}
+
+	/**
+	 * Get option fields
+	 */
+	public static function option_fields() {
+		$option_fields = array();
+
+		foreach ( get_noptin_custom_field_types() as $type => $data ) {
+			if ( ! empty( $data['supports_options'] ) ) {
+				$option_fields[] = $type;
+			}
+		}
+
+		return $option_fields;
+	}
+
+	/**
 	 * Get default fields
 	 *
 	 */

@@ -203,12 +203,14 @@ JS;
 					),
 					$data['block']
 				);
+
+				unset( $blocks[ $tag ]['metadata']['ancestor'] );
 			}
 		}
 
 		foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
 			foreach ( $merge_tags as $tag => $data ) {
-				if ( ! empty( $data['block'] ) ) {
+				if ( ! empty( $data['block'] ) && ! isset( $blocks[ $tag ] ) ) {
 					$blocks[ $tag ] = array_merge(
 						array(
 							'description' => isset( $data['description'] ) ? $data['description'] : $data['label'],
@@ -488,6 +490,8 @@ JS;
 			return get_post( $edited_campaign->id );
 		}
 
+		$email_type = \Hizzle\Noptin\Emails\Main::get_email_type( $edited_campaign->type );
+
 		// Prepare post args.
 		$defaults = apply_filters(
 			'noptin_get_default_email_props',
@@ -497,6 +501,7 @@ JS;
 				),
 				'subject'          => $edited_campaign->get( 'subject' ),
 				'recipients'       => 'automation' === $edited_campaign->type ? '[[email]]' : '',
+				'content_visual'   => noptin_email_wrap_blocks( '', get_noptin_footer_text() ),
 				'email_sender'     => $edited_campaign->get_sender(),
 				'email_type'       => $edited_campaign->get_email_type(),
 				'template'         => $edited_campaign->get_template(),
@@ -529,7 +534,7 @@ JS;
 				'campaign_type' => $edited_campaign->type,
 				'campaign_data' => array_merge(
 					$defaults,
-					$edited_campaign->options,
+					$edited_campaign->options
 				),
 			),
 		);
@@ -544,6 +549,21 @@ JS;
 		$args['meta_input']['campaign_data'] = (object) $args['meta_input']['campaign_data'];
 
 		$args['meta_input'] = array_filter( $args['meta_input'] );
+
+		// Maybe calculate menu order.
+		if ( $email_type && $email_type->supports_menu_order ) {
+			$count_args = array(
+				'post_type'      => 'noptin-campaign',
+				'post_parent'    => $edited_campaign->parent_id,
+				'fields'         => 'ids',
+				'meta_key'       => 'campaign_type',
+				'meta_value'     => $edited_campaign->type,
+				'posts_per_page' => -1,
+				'post_status'    => 'any',
+			);
+
+			$args['menu_order'] = count( get_posts( $count_args ) ) + 1;
+		}
 
 		$post_id = wp_insert_post( $args, false, false );
 		$post    = get_post( $post_id );

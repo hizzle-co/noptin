@@ -148,6 +148,6 @@ class Recipe extends \Hizzle\Noptin\Objects\Record {
 			return $this->external->{$field}();
 		}
 
-		return null;
+		return apply_filters( 'noptin_post_get_meta', null, $field, $this->external->id(), $args );
 	}
 }

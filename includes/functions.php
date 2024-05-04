@@ -32,6 +32,10 @@ function noptin() {
 function get_noptin_options() {
 	$options = get_option( 'noptin_options', array() );
 
+	if ( is_object( $options ) ) {
+		$options = (array) $options;
+	}
+
 	if ( ! is_array( $options ) || empty( $options ) ) {
 		$options = array(
 			'success_message' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
@@ -161,9 +165,15 @@ function noptin_get_post_types() {
  */
 function noptin_should_show_optins() {
 
-	$show = true;
+	$show                 = true;
+	$hide_if_subscribed   = get_noptin_option( 'hide_from_subscribers', false );
+	$always_show_to_admin = get_noptin_option( 'always_show_to_admin', true );
 
-	if ( ! empty( $_COOKIE['noptin_hide'] ) || ( get_noptin_option( 'hide_from_subscribers', false ) && noptin_is_subscriber() ) ) {
+	if ( $hide_if_subscribed && current_user_can( get_noptin_capability() ) && $always_show_to_admin ) {
+		$hide_if_subscribed = false;
+	}
+
+	if ( ! empty( $_COOKIE['noptin_hide'] ) || ( $hide_if_subscribed && noptin_is_subscriber() ) ) {
 		$show = false;
 	}
 
@@ -848,7 +858,7 @@ function do_noptin_background_action() {
  * You can pass extra arguments to the hooks, much like you can with `do_action()`.
  *
  * Example usage:
- *
+ * ```php
  *     // The action callback function.
  *     function log_name( $name ) {
  *         // Log the name.
@@ -857,7 +867,8 @@ function do_noptin_background_action() {
  *     add_action( 'log_name_after_a_day', 'log_name', 10, 1 );
  *
  *      // Ask Noptin to fire the hook in in the future.
- *      schedule_noptin_background_action( strtotime( '+1 day' ), 'log_name_after_a_day', 'Brian');
+ *      schedule_noptin_background_action( noptin_string_to_timestamp( '+1 day' ), 'log_name_after_a_day', 'Brian');
+ * ```
  *
  * @since 1.2.7
  * @see Noptin_Task
@@ -893,7 +904,7 @@ function schedule_noptin_background_action() {
  *     add_action( 'log_name_every_day', 'log_name', 10, 1 );
  *
  *      // Ask Noptin to fire the hook every x seconds from tomorrow.
- *      schedule_noptin_background_action( DAY_IN_SECONDS, strtotime( '+1 day' ), 'log_name_every_day', 'Brian');
+ *      schedule_noptin_background_action( DAY_IN_SECONDS, noptin_string_to_timestamp( '+1 day' ), 'log_name_every_day', 'Brian');
  *
  * @since 1.2.7
  * @see Noptin_Task
@@ -1080,7 +1091,7 @@ function noptin_premium_addons() {
  * @return bool
  */
 function noptin_upsell_integrations() {
-	return apply_filters( 'noptin_upsell_integrations', 0 === count( noptin_premium_addons() ) );
+	return apply_filters( 'noptin_upsell_integrations', ! noptin_has_active_license_key() );
 }
 
 /**
@@ -1410,7 +1421,7 @@ function noptin_format_date( $date_time ) {
 		return '&mdash;';
 	}
 
-	$timestamp = strtotime( $date_time );
+	$timestamp = noptin_string_to_timestamp( $date_time );
 	$current   = time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	$time_diff = $current - $timestamp;
 
@@ -1421,7 +1432,6 @@ function noptin_format_date( $date_time ) {
 			__( '%s ago', 'newsletter-optin-box' ),
 			human_time_diff( $timestamp, $current )
 		);
-
 	} else {
 		$relative = date_i18n( get_option( 'date_format' ), $timestamp );
 	}
@@ -1458,6 +1468,10 @@ function noptin_encrypt( $plaintext ) {
  */
 function noptin_decrypt( $encoded ) {
 
+	if ( empty( $encoded ) ) {
+		return '';
+	}
+
 	// Decode.
 	// @see noptin_encrypt()
 	$decoded = base64_decode( strtr( $encoded, '._-', '+/=' ) );
@@ -1472,9 +1486,9 @@ function noptin_decrypt( $encoded ) {
 	$iv         = substr( $salt, 0, $ivlen );
 	$passphrase = defined( 'AUTH_KEY' ) ? AUTH_KEY : wp_salt( 'secure_auth' ); // Local doesn't set AUTH_KEY.
 
-	return openssl_decrypt( $decoded, 'AES-128-CBC', $passphrase, OPENSSL_RAW_DATA, $iv );
+	$result = openssl_decrypt( $decoded, 'AES-128-CBC', $passphrase, OPENSSL_RAW_DATA, $iv );
+	return false === $result ? '' : $result;
 }
-// TODO: Show alert when a user clicks on the send button.
 
 /**
  * Limit length of a string.
@@ -1856,21 +1870,21 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 			return floatval( $current_value ) >= $first_value && floatval( $current_value ) <= $second_value;
 
 		case 'is_before':
-			$current_value   = strtotime( $current_value );
-			$condition_value = strtotime( $condition_value );
+			$current_value   = noptin_string_to_timestamp( $current_value );
+			$condition_value = noptin_string_to_timestamp( $condition_value );
 			return $current_value < $condition_value;
 
 		case 'is_after':
-			$current_value   = strtotime( $current_value );
-			$condition_value = strtotime( $condition_value );
+			$current_value   = noptin_string_to_timestamp( $current_value );
+			$condition_value = noptin_string_to_timestamp( $condition_value );
 			return $current_value > $condition_value;
 
 		case 'is_date_between':
 			$condition_value = noptin_parse_list( $condition_value );
-			$first_value     = strtotime( $condition_value[0] );
-			$second_value    = isset( $condition_value[1] ) ? strtotime( $condition_value[1] ) : $first_value;
+			$first_value     = noptin_string_to_timestamp( $condition_value[0] );
+			$second_value    = isset( $condition_value[1] ) ? noptin_string_to_timestamp( $condition_value[1] ) : $first_value;
 
-			$current_value = strtotime( $current_value );
+			$current_value = noptin_string_to_timestamp( $current_value );
 			return $current_value >= $first_value && $current_value <= $second_value;
 	}
 }
@@ -1886,7 +1900,7 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smart_tags = array() ) {
 
 	// Abort if no conditional logic is set.
-	if ( empty( $conditional_logic['enabled'] ) ) {
+	if ( empty( $conditional_logic['enabled'] ) || empty( $conditional_logic['rules'] ) ) {
 		return array();
 	}
 
@@ -1932,11 +1946,11 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 				$value = sprintf(
 					// translators: %s is a date.
 					__( '%1$s and %2$s', 'newsletter-optin-box' ),
-					gmdate( 'Y-m-d', strtotime( $value[0] ) ),
-					isset( $value[1] ) ? gmdate( 'Y-m-d', strtotime( $value[1] ) ) : gmdate( 'Y-m-d', strtotime( $value[0] ) )
+					gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[0] ) ),
+					isset( $value[1] ) ? gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[1] ) ) : gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[0] ) )
 				);
 			} else {
-				$value = gmdate( 'Y-m-d', strtotime( $value ) );
+				$value = gmdate( 'Y-m-d', noptin_string_to_timestamp( $value ) );
 			}
 		} elseif ( isset( $condition['options'] ) ) {
 			if ( is_callable( $condition['options'] ) ) {
@@ -2018,7 +2032,7 @@ function noptin_sort_by_time_key( $a, $b ) {
  */
 function noptin_sanitize_merge_tag( $tag ) {
 	$sanitized_key = strtolower( $tag );
-	return preg_replace( '/[^a-z0-9_\-\.]/', '', $sanitized_key );
+	return preg_replace( '/[^a-z0-9_\/\-\.]/', '', $sanitized_key );
 }
 
 /**
@@ -2211,5 +2225,66 @@ function noptin_daily_maintenance() {
 
 	// Check license status.
 	Noptin_COM::get_active_license_key( true );
+
+	// Refresh integrations after 10 mins.
+	if ( ! next_scheduled_noptin_background_action( 'noptin_refresh_integrations' ) ) {
+		schedule_noptin_background_action( time() + 600, 'noptin_refresh_integrations' );
+	}
 }
 add_action( 'noptin_daily_maintenance', 'noptin_daily_maintenance' );
+
+/**
+ * Merges an array to another array at the specified key.
+ *
+ * @param array $original_array
+ * @param array $new_array
+ * @param string $key
+ */
+function noptin_array_merge_at_key( $original_array, $new_array, $key ) {
+
+	if ( ! isset( $original_array[ $key ] ) ) {
+		return array_merge( $original_array, $new_array );
+	}
+
+	$prepared = array();
+
+	foreach ( $original_array as $original_key => $original_value ) {
+		$prepared[ $original_key ] = $original_value;
+
+		if ( $original_key === $key ) {
+			$prepared = array_merge( $prepared, $new_array );
+		}
+	}
+
+	return $prepared;
+}
+
+/**
+ * Convert mysql datetime to PHP timestamp, forcing UTC. Wrapper for strtotime.
+ *
+ * Based on wc_string_to_timestamp().
+ *
+ * @since  3.0.0
+ * @param  string   $time_string    Time string.
+ * @param  int|null $from_timestamp Timestamp to convert from.
+ * @return int
+ */
+function noptin_string_to_timestamp( $time_string, $from_timestamp = null ) {
+	$time_string = $time_string ?? '';
+
+	$original_timezone = date_default_timezone_get();
+
+	// @codingStandardsIgnoreStart
+	date_default_timezone_set( 'UTC' );
+
+	if ( null === $from_timestamp ) {
+		$next_timestamp = strtotime( $time_string );
+	} else {
+		$next_timestamp = strtotime( $time_string, $from_timestamp );
+	}
+
+	date_default_timezone_set( $original_timezone );
+	// @codingStandardsIgnoreEnd
+
+	return $next_timestamp;
+}

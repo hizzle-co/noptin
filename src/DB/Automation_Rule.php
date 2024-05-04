@@ -196,7 +196,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 *
 	 * @param array $rules The rules.
 	 */
-	public function add_conditional_logic_rules( $rules, $delete_settings = array() ) {
+	public function add_conditional_logic_rules( $rules, $delete_settings = array(), $overwrite = array() ) {
 		$conditional_logic = array_merge( noptin_get_default_conditional_logic(), $this->get_conditional_logic() );
 		$existing_rules    = $conditional_logic['enabled'] ? $conditional_logic['rules'] : array();
 
@@ -211,6 +211,11 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			}
 		}
 
+		if ( is_array( $overwrite ) ) {
+			$conditional_logic = array_merge( $conditional_logic, $overwrite );
+		}
+
+		$new_settings['conditional_logic'] = $conditional_logic;
 		$this->set_trigger_settings( $new_settings );
 	}
 
@@ -482,6 +487,21 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return bool|\WP_Error
 	 */
 	public function maybe_run( $subject, $trigger, $action, $args ) {
+
+		// Check if the rule is valid.
+		if ( ! $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
+			log_noptin_message( 'Automation rule trigger "' . $trigger->get_name() . '" not valid for args.' );
+
+			return false;
+		}
+
+		// Maybe use an external runner.
+		$result = apply_filters( 'noptin_automation_rule_maybe_run', null, $subject, $this, $args, $trigger, $action );
+
+		if ( null !== $result ) {
+			return $result;
+		}
+
 		// Are we delaying the action?
 		$delay = $this->get_delay();
 
@@ -498,17 +518,15 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			}
 
 			return ! empty( $result );
-		} elseif ( $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
-			$result = $action->maybe_run( $subject, $this, $args );
-
-			if ( is_wp_error( $result ) || false === $result ) {
-				return $result;
-			}
-
-			return true;
 		}
 
-		return false;
+		$result = $action->maybe_run( $subject, $this, $args );
+
+		if ( is_wp_error( $result ) || false === $result ) {
+			return $result;
+		}
+
+		return true;
 	}
 
 	/**

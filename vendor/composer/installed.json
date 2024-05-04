@@ -2,23 +2,23 @@
     "packages": [
         {
             "name": "hizzle/store",
-            "version": "0.1.1",
-            "version_normalized": "0.1.1.0",
+            "version": "0.1.4",
+            "version_normalized": "0.1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/datastore.git",
-                "reference": "fcfcd9ab63fe625ddafeabb121547d9da444221f"
+                "reference": "8d6b66b64670fdbbff26a52764df6764b42484c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/fcfcd9ab63fe625ddafeabb121547d9da444221f",
-                "reference": "fcfcd9ab63fe625ddafeabb121547d9da444221f",
+                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/8d6b66b64670fdbbff26a52764df6764b42484c0",
+                "reference": "8d6b66b64670fdbbff26a52764df6764b42484c0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2023-07-20T04:22:23+00:00",
+            "time": "2024-05-03T03:25:01+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,30 +47,30 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/datastore/issues",
-                "source": "https://github.com/hizzle-co/datastore/tree/0.1.1"
+                "source": "https://github.com/hizzle-co/datastore/tree/0.1.4"
             },
             "install-path": "../hizzle/store"
         },
         {
             "name": "symfony/css-selector",
-            "version": "v5.4.35",
-            "version_normalized": "5.4.35.0",
+            "version": "v5.4.39",
+            "version_normalized": "5.4.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "9e615d367e2bed41f633abb383948c96a2dbbfae"
+                "reference": "0934c9f1d433776f25c629bdc93f3e157d139e08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/9e615d367e2bed41f633abb383948c96a2dbbfae",
-                "reference": "9e615d367e2bed41f633abb383948c96a2dbbfae",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/0934c9f1d433776f25c629bdc93f3e157d139e08",
+                "reference": "0934c9f1d433776f25c629bdc93f3e157d139e08",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
                 "symfony/polyfill-php80": "^1.16"
             },
-            "time": "2024-01-23T13:51:25+00:00",
+            "time": "2024-04-18T08:26:06+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -102,7 +102,7 @@
             "description": "Converts CSS selectors to XPath expressions",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/css-selector/tree/v5.4.35"
+                "source": "https://github.com/symfony/css-selector/tree/v5.4.39"
             },
             "funding": [
                 {

@@ -1,0 +1,7 @@
+{
+    "label": "Elementor",
+    "slug": "elementor",
+    "requires": {
+        "constant": "ELEMENTOR_PRO_VERSION"
+    }
+}

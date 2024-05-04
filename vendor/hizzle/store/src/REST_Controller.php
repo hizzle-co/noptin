@@ -230,12 +230,16 @@ class REST_Controller extends \WP_REST_Controller {
 
 			register_rest_route(
 				$this->namespace,
-				'/' . $this->rest_base . '/(?P<id>[\d]+)/' . $tab_id,
+				'/' . $this->rest_base . '/(?P<id>[\d]+)/(?P<tab_id>' . $tab_id . ')',
 				array(
 					'args'   => array(
-						'id' => array(
+						'id'     => array(
 							'description' => __( 'Unique identifier for the object.', 'hizzle-store' ),
 							'type'        => 'integer',
+						),
+						'tab_id' => array(
+							'description' => __( 'Unique identifier for the matched tab id.', 'hizzle-store' ),
+							'type'        => 'string',
 						),
 					),
 					array(

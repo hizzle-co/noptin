@@ -32,12 +32,16 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 
 	// If subscriber is already a subscriber object, return it.
 	if ( $subscriber instanceof \Hizzle\Noptin\DB\Subscriber ) {
-		return $subscriber;
+		$subscriber = $subscriber->get_id();
 	}
 
 	// Deprecated subscriber.
 	if ( $subscriber instanceof Noptin_Subscriber ) {
 		$subscriber = $subscriber->id;
+	}
+
+	if ( is_array( $subscriber ) && isset( $subscriber['email'] ) ) {
+		$subscriber = $subscriber['email'];
 	}
 
 	// Email or confirm key.
@@ -432,18 +436,19 @@ function add_noptin_subscriber( $fields ) {
 		return 'An error occurred';
 	}
 
-	// Set cookie.
-	setcookie( 'noptin_email_subscribed', $subscriber->get_confirm_key(), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
-
 	$_GET['noptin_key'] = $subscriber->get_confirm_key();
 
-	$cookie = get_noptin_option( 'subscribers_cookie' );
-	if ( ! empty( $cookie ) && is_string( $cookie ) ) {
-		setcookie( $cookie, '1', time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+	// Set cookie.
+	if ( ! headers_sent() ) {
+		setcookie( 'noptin_email_subscribed', $subscriber->get_confirm_key(), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+
+		$cookie = get_noptin_option( 'subscribers_cookie' );
+		if ( ! empty( $cookie ) && is_string( $cookie ) ) {
+			setcookie( $cookie, '1', time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+		}
 	}
 
 	return $subscriber->get_id();
-
 }
 
 /**
@@ -460,7 +465,16 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array() ) {
 	$subscriber = noptin_get_subscriber( $subscriber_id );
 
 	if ( ! $subscriber->exists() ) {
-		return false;
+		return new \WP_Error( 'noptin_invalid_subscriber', 'Invalid subscriber' );
+	}
+
+	// If we're updating an email, make sure it is unique.
+	if ( ! empty( $to_update['email'] ) ) {
+		$existing = get_noptin_subscriber_id_by_email( $to_update['email'] );
+
+		if ( $existing && $existing !== $subscriber->get_id() ) {
+			return new \WP_Error( 'noptin_email_exists', 'Email already exists' );
+		}
 	}
 
 	// Set the subscriber properties.
@@ -513,7 +527,11 @@ function deactivate_noptin_subscriber( $subscriber ) {
  * @access public
  * @since  3.0.0
  */
-function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $campaign_id, $callback ) {
+function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $campaign_id = 0, $callback = false ) {
+
+	if ( is_array( $subscriber_id_or_email ) && isset( $subscriber_id_or_email['email'] ) ) {
+		$subscriber_id_or_email = $subscriber_id_or_email['email'];
+	}
 
 	if ( empty( $subscriber_id_or_email ) ) {
 		return;
@@ -522,8 +540,7 @@ function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $cam
 	// Fetch subscriber.
 	$subscriber = noptin_get_subscriber( $subscriber_id_or_email );
 
-	if ( is_string( $subscriber_id_or_email ) && is_email( $subscriber_id_or_email ) ) {
-
+	if ( 'unsubscribed' === $status && is_string( $subscriber_id_or_email ) && is_email( $subscriber_id_or_email ) ) {
 		if ( ! $subscriber->exists() ) {
 			$subscriber->set_email( $subscriber_id_or_email );
 		}
@@ -533,7 +550,7 @@ function update_noptin_subscriber_status( $subscriber_id_or_email, $status, $cam
 
 	$subscriber->set_status( $status );
 
-	if ( ! empty( $campaign_id ) && ! empty( $callback ) ) {
+	if ( ! empty( $campaign_id ) && is_numeric( $campaign_id ) && ! empty( $callback ) ) {
 		$subscriber->$callback( $campaign_id );
 	}
 
@@ -659,7 +676,7 @@ function get_noptin_subscriber_by_email( $email ) {
  * @return int|null
  */
 function get_noptin_subscriber_id_by_email( $email ) {
-	return noptin()->db()->get_id_by_prop( 'email', $email, 'subscribers' );
+	return noptin()->db()->get_id_by_prop( 'email', sanitize_email( $email ), 'subscribers' );
 }
 
 /**
@@ -1285,7 +1302,6 @@ function get_editable_noptin_subscriber_fields() {
 	$collection = noptin()->db()->store->get( 'subscribers' );
 
 	if ( ! empty( $collection ) ) {
-
 		foreach ( $collection->get_props() as $prop ) {
 
 			// Skip activity and sent_campaigns.

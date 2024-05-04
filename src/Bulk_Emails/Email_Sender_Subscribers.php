@@ -30,14 +30,8 @@ class Email_Sender_Subscribers extends Email_Sender {
 				continue;
 			}
 
-			$is_new_noptin = version_compare( noptin()->version, '3.0.0', '>=' );
-			$multiple      = 2 < count( $filter['options'] );
-			$options       = $is_new_noptin ? $filter['options'] : array_replace(
-				array(
-					'' => __( 'Any', 'newsletter-optin-box' ),
-				),
-				$filter['options']
-			);
+			$multiple = 2 < count( $filter['options'] );
+			$options  = $filter['options'];
 
 			$fields[ $key ] = array(
 				'label'                => $filter['label'],
@@ -52,11 +46,6 @@ class Email_Sender_Subscribers extends Email_Sender {
 
 				$fields[ $key ]['placeholder'] = __( 'Optional. Leave blank to send to all', 'newsletter-optin-box' );
 				$fields[ $key ]['multiple']    = 'true';
-
-				if ( ! $is_new_noptin ) {
-					$fields[ $key ]['select2'] = 'true';
-					$fields[ $key ]['options'] = $filter['options'];
-				}
 
 				$fields[ $key . '_not' ] = array_merge(
 					$fields[ $key ],
@@ -135,6 +124,10 @@ class Email_Sender_Subscribers extends Email_Sender {
 			false
 		);
 
+		if ( is_wp_error( $result ) ) {
+			$result = 0;
+		}
+
 		// Log the send.
 		update_noptin_subscriber_meta( $subscriber->get_id(), '_campaign_' . $campaign->id, (int) $result );
 
@@ -163,6 +156,11 @@ class Email_Sender_Subscribers extends Email_Sender {
 		// Prepare sender options.
 		$options = $campaign->get( 'noptin_subscriber_options' );
 		$options = is_array( $options ) ? $options : array();
+
+		// Apply generic filter.
+		if ( ! apply_filters( 'noptin_can_email_recipient_for_bulk_campaign', true, $subscriber->get_email(), $options, $campaign ) ) {
+			return false;
+		}
 
 		return apply_filters( 'noptin_subscribers_can_email_subscriber_for_campaign', true, $options, $subscriber, $campaign );
 	}

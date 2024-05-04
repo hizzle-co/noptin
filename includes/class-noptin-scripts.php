@@ -92,10 +92,6 @@ class Noptin_Scripts {
 		// And EDD too.
 		add_filter( 'edd_load_admin_scripts', '__return_false', 1000 );
 
-		// Sweetalert https://sweetalert2.github.io/.
-		wp_enqueue_script( 'promise-polyfill', $assets_url . '/vendor/sweetalert/promise-polyfill.min.js', array(), '8.1.3', true );
-		wp_enqueue_script( 'sweetalert2', $assets_url . '/vendor/sweetalert/sweetalert2.all.min.js', array( 'promise-polyfill' ), '9.6.0', true );
-
 		// Tooltips https://iamceege.github.io/tooltipster/.
 		wp_enqueue_script( 'tooltipster', $assets_url . '/vendor/tooltipster/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.7', true );
 		wp_enqueue_style( 'tooltipster', $assets_url . '/vendor/tooltipster/tooltipster.bundle.min.css', array(), '4.2.7' );
@@ -209,12 +205,5 @@ class Noptin_Scripts {
 			);
 		}
 
-		if ( 'noptin-settings' === $handle ) {
-			wp_localize_script( $handle, 'noptinSettings', array( 'app' => Noptin_Settings::get_state() ) );
-		}
-
-		if ( 'noptin-edit-automation-rule' === $handle ) {
-			add_thickbox();
-		}
 	}
 }

@@ -79,4 +79,18 @@ class Noptin_White_Label {
     public function is_network_activated() {
         return is_plugin_active_for_network( plugin_basename( noptin()->file ) );
     }
+
+    /**
+     * Returns the whitelabel details.
+     *
+     * @return array
+     */
+    public function get_details() {
+        return array(
+            'name'    => $this->name,
+            'version' => $this->version,
+            'icon'    => $this->icon,
+            'logo'    => $this->logo,
+        );
+    }
 }

@@ -382,9 +382,9 @@ class Query {
 				$this->query_fields = 'DISTINCT ' . $this->query_fields;
 			}
 		} elseif ( 'all' === $qv['fields'] ) {
-			$this->query_fields = '*';
+			$this->query_fields = "$table.*";
 		} else {
-			$this->query_fields = "$table.id";
+			$this->query_fields = "DISTINCT $table.id";
 		}
 
 	}
@@ -492,8 +492,9 @@ class Query {
 
 			$this->query_join  .= $clauses['join'];
 			$this->query_where .= $clauses['where'];
+			$distinct           = false !== strpos( $clauses['where'], 'IN (' );
 
-			if ( $meta_query->has_or_relation() && false === strpos( $this->query_fields, 'DISTINCT' ) ) {
+			if ( ( $distinct || $meta_query->has_or_relation() ) && false === strpos( $this->query_fields, 'DISTINCT' ) ) {
 				$this->query_fields = 'DISTINCT ' . $this->query_fields;
 			}
 		}

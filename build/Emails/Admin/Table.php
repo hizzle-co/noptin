@@ -58,7 +58,9 @@ class Table extends \WP_List_Table {
 		$this->email_type = $email_type;
 		$this->per_page   = $this->get_items_per_page( 'noptin_emails_per_page', 25 );
 
-		$this->prepare_query();
+		if ( $this->email_type->supports_menu_order ) {
+			$this->per_page = 1000;
+		}
 
 		parent::__construct(
 			array(
@@ -67,6 +69,9 @@ class Table extends \WP_List_Table {
 				'plural'   => 'ids',
 			)
 		);
+
+		$this->process_bulk_action();
+		$this->prepare_query();
 	}
 
 	/**
@@ -75,11 +80,20 @@ class Table extends \WP_List_Table {
 	public function prepare_query() {
 		global $noptin_campaigns_query;
 
+		if ( $this->email_type->upsell ) {
+			return;
+		}
+
 		$post_type_object = get_post_type_object( 'noptin-campaign' );
 
 		// Prepare query params.
 		$orderby = empty( $_GET['orderby'] ) ? 'id' : sanitize_text_field( $_GET['orderby'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$order   = empty( $_GET['order'] ) ? 'desc' : sanitize_text_field( $_GET['order'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( $this->email_type->supports_menu_order ) {
+			$orderby = 'menu_order';
+			$order   = 'asc';
+		}
 
 		$query_args = array(
 			'post_type'      => 'noptin-campaign',
@@ -91,6 +105,12 @@ class Table extends \WP_List_Table {
 			'posts_per_page' => $this->per_page,
 			'paged'          => $this->get_pagenum(),
 		);
+
+		// Trash campaigns.
+		if ( 'trash' === $this->email_type->type ) {
+			$query_args['post_status'] = 'trash';
+			unset( $query_args['meta_key'], $query_args['meta_value'] );
+		}
 
 		if ( isset( $_GET['noptin_parent_id'] ) ) {
 			$query_args['post_parent'] = intval( $_GET['noptin_parent_id'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -112,12 +132,32 @@ class Table extends \WP_List_Table {
 	}
 
 	/**
+	 * Generates content for a single row of the table.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param  Email $item The current item
+	 */
+	public function single_row( $item ) {
+		echo '<tr data-id="' . esc_attr( $item->id ) . '" id="noptin-email-campaign--' . esc_attr( $item->id ) . '">';
+		$this->single_row_columns( $item );
+		echo '</tr>';
+	}
+
+	/**
 	 * Default columns.
 	 *
 	 * @param object $item        item.
 	 * @param string $column_name column name.
 	 */
 	public function column_default( $item, $column_name ) {
+
+		/**
+		 * Displays a given column
+		 *
+		 * @param array $this The admin instance
+		 */
+		do_action( 'noptin_display_emails_table_column', $column_name, $item, $this );
 
 		/**
 		 * Displays a given column
@@ -134,6 +174,8 @@ class Table extends \WP_List_Table {
 	 * @return string
 	 */
 	public function column_title( $item ) {
+
+		$preview_url = $item->get_preview_url();
 
 		// Prepare row actions.
 		$row_actions = array(
@@ -153,7 +195,7 @@ class Table extends \WP_List_Table {
 
 			'_preview'  => sprintf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( get_preview_post_link( $item->id ) ),
+				esc_url( $preview_url ),
 				esc_html__( 'Preview', 'newsletter-optin-box' )
 			),
 
@@ -164,18 +206,24 @@ class Table extends \WP_List_Table {
 				esc_html__( 'Send Now', 'newsletter-optin-box' )
 			),
 
-			'delete'    => sprintf(
+			'trash'     => sprintf(
 				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
-				esc_url( $item->get_action_url( 'delete_campaign' ) ),
-				esc_attr__( 'Are you sure you want to delete this campaign?', 'newsletter-optin-box' ),
-				esc_html__( 'Delete', 'newsletter-optin-box' )
+				esc_url( $item->get_action_url( 'trash_campaign' ) ),
+				esc_attr__( 'Are you sure you want to trash this campaign?', 'newsletter-optin-box' ),
+				esc_html__( 'Trash', 'newsletter-optin-box' )
 			),
 
 		);
 
+		if ( empty( $preview_url ) ) {
+			unset( $row_actions['_preview'] );
+		}
+
 		if ( ! $item->current_user_can_edit() ) {
 			unset( $row_actions['edit'] );
 			unset( $row_actions['duplicate'] );
+			unset( $row_actions['send'] );
+		} elseif ( ! current_user_can( 'publish_post', $item->id ) ) {
 			unset( $row_actions['send'] );
 		}
 
@@ -188,34 +236,55 @@ class Table extends \WP_List_Table {
 			unset( $row_actions['send'] );
 		}
 
+		// If trash, only show delete and restore.
+		$is_trash = 'trash' === $this->email_type->type;
+		if ( $is_trash ) {
+			$row_actions = array(
+				'restore' => sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( $item->get_action_url( 'restore_campaign' ) ),
+					esc_html__( 'Restore', 'newsletter-optin-box' )
+				),
+				'delete'  => sprintf(
+					'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
+					esc_url( $item->get_action_url( 'delete_campaign' ) ),
+					esc_attr__( 'Are you sure you want to delete this campaign?', 'newsletter-optin-box' ),
+					esc_html__( 'Delete', 'newsletter-optin-box' )
+				),
+			);
+		}
+
 		$item_name = $item->name;
-		$sub_types = $this->email_type->get_sub_types();
+		$sub_type  = $this->email_type->get_sub_type( $item->get_sub_type() );
 
 		if ( empty( $item_name ) ) {
 			$item_name = $item->subject;
 		}
 
-		if ( empty( $item_name ) && ! empty( $sub_types ) && isset( $sub_types[ $item->get_sub_type() ] ) ) {
-			$item_name = $sub_types[ $item->get_sub_type() ]['label'];
+		if ( empty( $item_name ) && ! empty( $sub_type ) ) {
+			$item_name = $sub_type['label'];
 		}
 
 		if ( empty( $item_name ) ) {
 			$item_name = __( '(no title)', 'newsletter-optin-box' );
 		}
 
-		$title    = esc_html( $item_name );
-		$edit_url = esc_url( $item->current_user_can_edit() ? $item->get_edit_url() : $item->get_preview_url() );
-		$title    = "<strong><a href='$edit_url'>$title</a></strong>";
+		$title = esc_html( $item_name );
+
+		// Don't link if trash.
+		if ( $is_trash || ( empty( $preview_url ) && ! $item->current_user_can_edit() ) ) {
+			$title = "<strong>$title</strong>";
+		} else {
+			$edit_url = esc_url( $item->current_user_can_edit() ? $item->get_edit_url() : $preview_url );
+			$title    = "<strong><a href='$edit_url'>$title</a></strong>";
+		}
 
 		// Email type.
-		$sub_types = $this->email_type->get_sub_types();
-
-		if ( ! empty( $sub_types ) ) {
-			if ( isset( $sub_types[ $item->get_sub_type() ] ) ) {
-
+		if ( false !== $sub_type ) {
+			if ( null !== $sub_type ) {
 				$title .= sprintf(
 					'<p class="description">%s</p>',
-					esc_html( $sub_types[ $item->get_sub_type() ]['description'] )
+					esc_html( $sub_type['description'] )
 				);
 
 				// Custom description.
@@ -233,11 +302,18 @@ class Table extends \WP_List_Table {
 		}
 
 		// If name  is different from the subject, show the subject.
-		if ( $item_name !== $item->subject ) {
+		if ( $item_name !== $item->subject && ! empty( $item->subject ) && ! empty( $preview_url ) ) {
 			$title .= sprintf(
 				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 				esc_html__( 'Subject', 'newsletter-optin-box' ),
 				esc_html( $item->subject )
+			);
+		}
+
+		if ( empty( $item->subject ) && ! empty( $preview_url ) ) {
+			$title .= sprintf(
+				'<p class="description" style="color: red;">%s</p>',
+				esc_html__( 'No subject', 'newsletter-optin-box' )
 			);
 		}
 
@@ -284,8 +360,7 @@ class Table extends \WP_List_Table {
 		}
 
 		// Delay.
-		if ( ! $item->sends_immediately() ) {
-
+		if ( ! $item->sends_immediately() && ! $is_trash ) {
 			$title .= sprintf(
 				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 				esc_html__( 'Delay', 'newsletter-optin-box' ),
@@ -293,8 +368,7 @@ class Table extends \WP_List_Table {
 			);
 		}
 
-		if ( 'newsletter' === $this->email_type->type && ! get_post_meta( $item->id, 'completed', true ) ) {
-
+		if ( ! $is_trash && 'newsletter' === $this->email_type->type && ! get_post_meta( $item->id, 'completed', true ) ) {
 			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );
 
 			if ( is_array( $error ) ) {
@@ -311,6 +385,16 @@ class Table extends \WP_List_Table {
 							isset( $error['file'] ) ? esc_html( $error['file'] ) : 'Uknown',
 							isset( $error['line'] ) ? esc_html( $error['line'] ) : 'Uknown'
 						)
+					)
+				);
+
+				// Add a link to help troubleshoot the error.
+				$title .= sprintf(
+					'<p class="noptin-strong description">%s</p>',
+					sprintf(
+						'<a href="%s" target="_blank" class="noptin-text-success">%s</a>',
+						esc_url( 'https://noptin.com/guide/sending-emails/how-to-fix-emails-not-sending/' ),
+						esc_html__( 'Learn how to troubleshoot email sending errors', 'newsletter-optin-box' )
 					)
 				);
 			}
@@ -353,7 +437,6 @@ class Table extends \WP_List_Table {
 		);
 
 		if ( 'publish' === $item->status && 'newsletter' === $item->type ) {
-
 			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
 				$app['label'] = __( 'Sent', 'newsletter-optin-box' );
 			} elseif ( '' !== get_post_meta( $item->id, 'paused', true ) ) {
@@ -444,7 +527,6 @@ class Table extends \WP_List_Table {
 	 * Displays the campaign opens
 	 *
 	 * @param  Email $item item.
-	 * @return string
 	 */
 	public function column_opens( $item ) {
 
@@ -452,7 +534,7 @@ class Table extends \WP_List_Table {
 		$opens   = $item->get_open_count();
 		$percent = ( $sends && $opens ) ? round( ( $opens / $sends ) * 100, 2 ) : 0;
 
-		return $this->display_stat(
+		$this->display_stat(
 			$opens,
 			$percent
 		);
@@ -462,7 +544,6 @@ class Table extends \WP_List_Table {
 	 * Displays the campaign clicks
 	 *
 	 * @param  Email $item item.
-	 * @return string
 	 */
 	public function column_clicks( $item ) {
 
@@ -470,9 +551,37 @@ class Table extends \WP_List_Table {
 		$clicks  = $item->get_click_count();
 		$percent = ( $sends && $clicks ) ? round( ( $clicks / $sends ) * 100, 2 ) : 0;
 
-		return $this->display_stat(
+		$this->display_stat(
 			$clicks,
 			$percent
+		);
+	}
+
+	/**
+	 * Displays the campaign revenue
+	 *
+	 * @param  Email $item item.
+	 * @return string
+	 */
+	public function column_revenue( $item ) {
+
+		$revenue = (float) get_post_meta( $item->id, '_revenue', true );
+		if ( noptin_has_active_license_key() ) {
+			$formatted = apply_filters( 'noptin_format_price', $revenue );
+
+			if ( 0 === $revenue ) {
+				return $formatted;
+			}
+
+			return sprintf(
+				'<span class="noptin-strong">%s</span>',
+				$formatted
+			);
+		}
+
+		return sprintf(
+			'<span title="%s" class="noptin-tip dashicons dashicons-lock"></span>',
+			esc_attr__( 'Activate your license key to start tracking', 'newsletter-optin-box' )
 		);
 	}
 
@@ -480,7 +589,6 @@ class Table extends \WP_List_Table {
 	 * Displays the campaign unsubscribes
 	 *
 	 * @param  Email $item item.
-	 * @return string
 	 */
 	public function column_unsubscribed( $item ) {
 
@@ -488,7 +596,7 @@ class Table extends \WP_List_Table {
 		$unsubscribed = $item->get_unsubscribe_count();
 		$percent      = ( $sends && $unsubscribed ) ? round( ( $unsubscribed / $sends ) * 100, 2 ) : 0;
 
-		return $this->display_stat(
+		$this->display_stat(
 			$unsubscribed,
 			$percent
 		);
@@ -503,15 +611,32 @@ class Table extends \WP_List_Table {
 	 */
 	public function display_stat( $value, $percent ) {
 
-		if ( $percent > 0 && $percent < 100 ) {
-			return sprintf(
+		if ( $percent > 0 && $percent < 101 ) {
+			printf(
 				'<div class="noptin-stat">%s</div><p class="noptin-stat-percent">%s%%</p>',
-				$value,
-				$percent
+				esc_html( $value ),
+				esc_html( $percent )
 			);
+		} else {
+			echo esc_html( $value );
+		}
+	}
+
+	/**
+	 * Displays a button to re-order the email.
+	 *
+	 * @return string
+	 */
+	public function column_menu_order() {
+
+		if ( ! $this->email_type->supports_menu_order ) {
+			return '';
 		}
 
-		return $value;
+		return sprintf(
+			'<span class="noptin-tip dashicons dashicons-move" style="cursor: move;" title="%s"></span>',
+			esc_attr__( 'Re-order', 'newsletter-optin-box' )
+		);
 	}
 
 	/**
@@ -521,9 +646,18 @@ class Table extends \WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 
-		$actions = array(
-			'delete' => __( 'Delete', 'newsletter-optin-box' ),
-		);
+		if ( 'trash' === $this->email_type->type ) {
+			$actions = array(
+				'restore' => __( 'Restore', 'newsletter-optin-box' ),
+				'delete'  => __( 'Delete', 'newsletter-optin-box' ),
+			);
+		} else {
+			$actions = array(
+				'publish' => __( 'Publish', 'newsletter-optin-box' ),
+				'trash'   => __( 'Move to Trash', 'newsletter-optin-box' ),
+			);
+		}
+
 		return apply_filters( 'manage_noptin_emails_table_bulk_actions', $actions );
 	}
 
@@ -533,7 +667,7 @@ class Table extends \WP_List_Table {
 	 * @return bool
 	 */
 	public function has_items() {
-		return $this->query->have_posts();
+		return $this->email_type->upsell ? false : $this->query->have_posts();
 	}
 
 	/**
@@ -559,15 +693,24 @@ class Table extends \WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$this->process_bulk_action();
-
 		$this->set_pagination_args(
 			array(
-				'total_items' => $this->query->found_posts,
+				'total_items' => $this->query ? $this->query->found_posts : 0,
 				'per_page'    => $this->per_page,
-				'total_pages' => $this->query->max_num_pages,
+				'total_pages' => $this->query ? $this->query->max_num_pages : 0,
 			)
 		);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function current_action() {
+		if ( isset( $_REQUEST['delete_all'] ) || isset( $_REQUEST['delete_all2'] ) ) {
+			return 'delete_all';
+		}
+
+		return parent::current_action();
 	}
 
 	/**
@@ -577,20 +720,81 @@ class Table extends \WP_List_Table {
 
 		$action = 'bulk-' . $this->_args['plural'];
 
-		if ( empty( $_POST['id'] ) || empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
+		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
 			return;
 		}
 
 		$action = $this->current_action();
 
-		if ( 'delete' === $action ) {
+		// Check if we're deleting all trash campaigns.
+		if ( 'delete_all' === $action ) {
+			$trash_campaigns = get_posts(
+				array(
+					'post_type'   => 'noptin-campaign',
+					'post_status' => 'trash',
+					'numberposts' => -1,
+					'fields'      => 'ids',
+				)
+			);
 
-			foreach ( $_POST['id'] as $id ) {
+			foreach ( $trash_campaigns as $id ) {
 				$email = new Email( $id );
 				if ( $email->current_user_can_delete() ) {
 					$email->delete();
 				}
 			}
+
+			noptin()->admin->show_info( __( 'All trash campaigns have been deleted.', 'newsletter-optin-box' ) );
+			return;
+		}
+
+		if ( empty( $_POST['id'] ) ) {
+			return;
+		}
+
+		$notice = '';
+		foreach ( $_POST['id'] as $id ) {
+			$email = new Email( $id );
+
+			// Abort if not exists.
+			if ( ! $email->exists() ) {
+				continue;
+			}
+
+			switch ( $action ) {
+				case 'publish':
+					if ( current_user_can( 'publish_post', $email->id ) ) {
+						wp_publish_post( $email->id );
+					}
+
+					$notice = __( 'The selected campaigns have been published.', 'newsletter-optin-box' );
+					break;
+				case 'trash':
+					if ( $email->current_user_can_delete() ) {
+						$email->trash();
+					}
+
+					$notice = __( 'The selected campaigns have been trashed.', 'newsletter-optin-box' );
+					break;
+				case 'restore':
+					if ( $email->current_user_can_edit() ) {
+						$email->restore();
+					}
+
+					$notice = __( 'The selected campaigns have been restored.', 'newsletter-optin-box' );
+					break;
+				case 'delete':
+					if ( $email->current_user_can_delete() ) {
+						$email->delete();
+					}
+
+					$notice = __( 'The selected campaigns have been deleted.', 'newsletter-optin-box' );
+					break;
+			}
+		}
+
+		if ( ! empty( $notice ) ) {
+			noptin()->admin->show_info( $notice );
 		}
 	}
 
@@ -609,9 +813,22 @@ class Table extends \WP_List_Table {
 			'recipients'   => __( 'Sent', 'newsletter-optin-box' ),
 			'opens'        => __( 'Opened', 'newsletter-optin-box' ),
 			'clicks'       => __( 'Clicked', 'newsletter-optin-box' ),
+			'revenue'      => sprintf(
+				'%s <span data-tooltip-content="#noptin-revenue-tooltip-content" class="noptin-tip dashicons dashicons-info"></span>',
+				__( 'Revenue', 'newsletter-optin-box' )
+			),
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
 			'date_sent'    => __( 'Date', 'newsletter-optin-box' ),
+			'menu_order'   => '&nbsp;',
 		);
+
+		if ( 'trash' === $this->email_type->type ) {
+			unset( $columns['status'] );
+		}
+
+		if ( ! $this->email_type->supports_menu_order ) {
+			unset( $columns['menu_order'] );
+		}
 
 		// Remove tracking stats.
 		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
@@ -619,6 +836,11 @@ class Table extends \WP_List_Table {
 		if ( empty( $track_campaign_stats ) ) {
 			unset( $columns['opens'] );
 			unset( $columns['clicks'] );
+			unset( $columns['revenue'] );
+		}
+
+		if ( ! noptin_supports_ecommerce_tracking() || ! get_noptin_option( 'enable_ecommerce_tracking', true ) ) {
+			unset( $columns['revenue'] );
 		}
 
 		return apply_filters( 'manage_noptin_emails_table_columns', $columns, $this );
@@ -630,6 +852,11 @@ class Table extends \WP_List_Table {
 	 * @return array
 	 */
 	public function get_sortable_columns() {
+
+		if ( $this->email_type->supports_menu_order ) {
+			return array();
+		}
+
 		$sortable = array(
 			'id'        => array( 'id', true ),
 			'title'     => array( 'post_title', true ),
@@ -646,24 +873,21 @@ class Table extends \WP_List_Table {
      */
     public function extra_tablenav( $which ) {
 
-		if ( $this->has_items() ) {
-			echo '<span class="noptin-email-campaigns__editor--add-new__button"></span>';
+		if ( $this->email_type->upsell ) {
+			return;
 		}
 
-		// If this is a sub type, add a link to go back to the main type.
-		if ( ! empty( $this->email_type->parent_type ) ) {
-			printf(
-				'<a class="button" href="%s">%s</a>',
-				esc_url(
-					add_query_arg(
-						array(
-							'noptin_email_type' => rawurlencode( $this->email_type->parent_type ),
-						),
-						admin_url( '/admin.php?page=noptin-email-campaigns' )
-					)
-				),
-				esc_html__( 'Back', 'newsletter-optin-box' )
-			);
+		if ( 'trash' === $this->email_type->type ) {
+
+			if ( $this->has_items() ) {
+				$button_name = 'top' === $which ? 'delete_all' : 'delete_all2';
+				submit_button( __( 'Empty Trash', 'newsletter-optin-box' ), 'apply', $button_name, false );
+			}
+			return;
+		}
+
+		if ( $this->has_items() ) {
+			echo '<span class="noptin-email-campaigns__editor--add-new__button"></span>';
 		}
 	}
 
@@ -671,6 +895,12 @@ class Table extends \WP_List_Table {
 	 * Message to be displayed when there are no items
 	 */
 	public function no_items() {
+
+		if ( 'trash' === $this->email_type->type ) {
+			parent::no_items();
+			return;
+		}
+
 		?>
 			<div id="noptin-email-campaigns__editor--add-new__in-table">
 				<?php parent::no_items(); ?>

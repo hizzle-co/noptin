@@ -27,6 +27,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		$this->url_field         = 'admin_url';
 		$this->can_list          = true;
 		$this->provides          = array( 'customer' );
+		$this->show_tab          = true;
 		$this->icon              = array(
 			'icon' => 'money-alt',
 			'fill' => '#674399',
@@ -60,6 +61,21 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		return $statuses;
 	}
 
+	public static function is_complete() {
+		$current_hook = current_filter();
+
+		// Check if the order was manually completed via the admin.
+		if ( 'woocommerce_order_status_completed' === $current_hook ) {
+			return true;
+		}
+
+		if ( 'woocommerce_payment_complete' === $current_hook && ! did_action( 'woocommerce_order_status_completed' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * Retrieves available filters.
 	 *
@@ -67,20 +83,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 */
 	public function get_filters() {
 
-		$types = wc_get_order_types();
-
 		return array(
 			'status'              => array(
 				'label'    => __( 'Order status', 'newsletter-optin-box' ),
 				'el'       => 'select',
 				'multiple' => true,
 				'options'  => wc_get_order_statuses(),
-			),
-			'type'                => array(
-				'label'   => __( 'Order type', 'newsletter-optin-box' ),
-				'el'      => 'select',
-				'options' => array_combine( $types, $types ),
-				'default' => 'shop_order',
 			),
 			'parent'              => array(
 				'label' => __( 'Parent order ID', 'newsletter-optin-box' ),
@@ -286,7 +294,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 
 		$filters = array_merge(
 			array(
-				'status'  => 'publish',
+				'type'    => 'shop_order',
 				'number'  => 10,
 				'order'   => 'DESC',
 				'orderby' => 'date',
@@ -306,8 +314,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			unset( $filters['number'] );
 		}
 
+		if ( ! empty( $filters['status'] ) && ! is_array( $filters['status'] ) ) {
+			$filters['status'] = wp_parse_list( $filters['status'] );
+		}
+
 		// Ensure include and exclude are arrays.
-		foreach ( array( 'status', 'parent_exclude', 'exclude' ) as $key ) {
+		foreach ( array( 'parent_exclude', 'exclude' ) as $key ) {
 			if ( isset( $filters[ $key ] ) && ! is_array( $filters[ $key ] ) ) {
 				$filters[ $key ] = wp_parse_id_list( $filters[ $key ] );
 			}
@@ -321,6 +333,67 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		return wc_get_orders( array_filter( $filters ) );
+	}
+
+	/**
+	 * Retrieves several items by email.
+	 *
+	 */
+	public function get_all_by_email( $email_address, $limit = 25 ) {
+		return wc_get_orders(
+			array(
+				'limit'    => $limit,
+				'customer' => $email_address,
+			)
+		);
+	}
+
+	/**
+	 * Fetches the custom tab headers.
+	 *
+	 * @since 3.0.0
+	 * @return array
+	 */
+	protected function get_custom_tab_headers() {
+		return array(
+			array(
+				'label'      => $this->singular_label,
+				'name'       => 'order',
+				'is_primary' => true,
+				'url'        => 'url',
+			),
+			array(
+				'label'   => __( 'Items', 'newsletter-optin-box' ),
+				'name'    => 'items',
+				'is_list' => true,
+				'item'    => '%s &times; %s - %s',
+				'args'    => array(
+					'name',
+					'quantity',
+					'total',
+				),
+			),
+			array(
+				'label'    => __( 'Status', 'newsletter-optin-box' ),
+				'name'     => 'status',
+				'is_badge' => true,
+			),
+			array(
+				'label'      => __( 'Discount', 'newsletter-optin-box' ),
+				'name'       => 'discount',
+				'is_numeric' => true,
+			),
+			array(
+				'label'      => __( 'Total', 'newsletter-optin-box' ),
+				'name'       => 'total',
+				'is_numeric' => true,
+			),
+			array(
+				'label' => __( 'Date Created', 'newsletter-optin-box' ),
+				'name'  => 'date',
+				'align' => 'right',
+			),
+		);
 	}
 
 	/**
@@ -670,6 +743,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 					'metadata'    => array(
 						'ancestor' => array( $this->context ),
 					),
+					'element'     => 'div',
 				),
 			),
 			'customer_details'     => array(
@@ -682,6 +756,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 					'metadata'    => array(
 						'ancestor' => array( $this->context ),
 					),
+					'element'     => 'div',
 				),
 			),
 			'id'                   => array(
@@ -796,6 +871,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 * @param int|\WC_Order $order_id The order being acted on.
 	 */
 	public function order_state_changed( $order_id, $order = null, $transition = array() ) {
+
+		// Abort if cleaning draft orders.
+		if ( doing_action( 'woocommerce_cleanup_draft_orders' ) ) {
+			return;
+		}
+
 		if ( is_numeric( $order_id ) ) {
 			$order = wc_get_order( $order_id );
 		} else {
@@ -804,6 +885,26 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 
 		if ( empty( $order ) || ! is_a( $order, 'WC_Order' ) ) {
 			return;
+		}
+
+		// Abort if no billing email is set.
+		if ( empty( $order->get_billing_email() ) || empty( $order->get_id() ) ) {
+			return;
+		}
+
+		$referring_campaign = $order->get_meta( '_noptin_referring_campaign' );
+
+		if ( empty( $referring_campaign ) ) {
+			$referring_campaign = noptin_get_referring_email_id();
+
+			if ( ! empty( $referring_campaign ) ) {
+				$order->update_meta_data( '_noptin_referring_campaign', $referring_campaign );
+				$order->save();
+			}
+		}
+
+		if ( ! empty( $referring_campaign ) && self::is_complete() ) {
+			noptin_record_ecommerce_purchase( $order->get_total(), $referring_campaign );
 		}
 
 		// Check that the current action is a valid trigger.
@@ -854,10 +955,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 * @param \WC_Order $order The order being acted on.
 	 */
 	public static function get_order_customer( $order ) {
-		$customer = new \WC_Customer( $order->get_customer_id() );
+		if ( is_callable( array( $order, 'get_customer_id' ) ) ) {
+			$customer = new \WC_Customer( $order->get_customer_id() );
 
-		if ( $customer->get_id() ) {
-			return $customer->get_id();
+			if ( $customer->get_id() ) {
+				return $customer->get_id();
+			}
 		}
 
 		return 0 - $order->get_id();
@@ -877,17 +980,17 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			'status' => array_keys( wc_get_order_statuses() ),
 		);
 
-		if ( 'wc_payment_complete' === $rule->get_action_id() ) {
+		if ( 'wc_payment_complete' === $rule->get_trigger_id() ) {
 			$args['status'] = array( 'wc-processing', 'wc-completed' );
 		}
 
-		if ( 'wc_order_refunded' === $rule->get_action_id() ) {
+		if ( 'wc_order_refunded' === $rule->get_trigger_id() ) {
 			$args['status'] = array( 'wc-refunded' );
 		}
 
 		foreach ( array_keys( $args['status'] ) as $status ) {
 			$prepared_status = false !== strpos( $status, 'wc-' ) ? substr( $status, 3 ) : $status;
-			if ( $rule->get_action_id() === 'wc_' . $prepared_status ) {
+			if ( $rule->get_trigger_id() === 'wc_' . $prepared_status ) {
 				$args['status'] = array( $status );
 				break;
 			}

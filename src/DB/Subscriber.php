@@ -99,7 +99,9 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @param string $value Email address.
 	 */
 	public function set_email( $value ) {
-		$this->set_prop( 'email', sanitize_email( $value ) );
+		if ( is_email( $value ) ) {
+			$this->set_prop( 'email', sanitize_email( $value ) );
+		}
 	}
 
 	/**

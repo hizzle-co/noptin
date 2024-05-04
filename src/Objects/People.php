@@ -62,6 +62,51 @@ abstract class People extends Collection {
 	}
 
 	/**
+	 * Adds provided fields.
+	 *
+	 * @since 3.0.0
+	 * @return array
+	 */
+	protected function add_provided( $fields ) {
+		foreach ( $this->get_related_collections() as $collection ) {
+
+			/** @var People $collection */
+			$provides = $collection->provides();
+
+			if ( empty( $provides ) || $this->integration === $collection->integration ) {
+				continue;
+			}
+
+			$all_fields = $collection->get_all_fields();
+			foreach ( $provides as $key ) {
+				if ( isset( $all_fields[ $key ] ) ) {
+					$fields[ "{$collection->type}.{$key}" ] = array_merge(
+						$all_fields[ $key ],
+						array(
+							'label' => $collection->singular_label . ' >> ' . $all_fields[ $key ]['label'],
+						)
+					);
+				}
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * (Maybe) Registers the object.
+	 */
+	public function register_object( $objects ) {
+		$objects = parent::register_object( $objects );
+
+		if ( ! empty( $this->email_sender ) && isset( $objects[ $this->type ] ) ) {
+			$objects[ $this->type ]['sender'] = $this->email_sender;
+		}
+
+		return $objects;
+	}
+
+	/**
 	 * Prepares test data.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $email

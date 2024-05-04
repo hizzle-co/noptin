@@ -36,9 +36,15 @@ abstract class Custom_Fields_Integration {
 	 * @param array $custom_fields The known user custom fields.
 	 */
 	public function filter_user_fields( $custom_fields ) {
+		static $fields = null;
+
+		if ( is_null( $fields ) ) {
+			$fields = $this->get_user_fields();
+		}
+
 		return array_merge(
 			$custom_fields,
-			$this->get_user_fields()
+			$fields
 		);
 	}
 
@@ -58,9 +64,15 @@ abstract class Custom_Fields_Integration {
 	 * @param string $post_type The post type.
 	 */
 	public function filter_post_type_fields( $custom_fields, $post_type ) {
+		static $fields = array();
+
+		if ( ! isset( $fields[ $post_type ] ) ) {
+			$fields[ $post_type ] = $this->get_post_type_fields( $post_type );
+		}
+
 		return array_merge(
 			$custom_fields,
-			$this->get_post_type_fields( $post_type )
+			$fields[ $post_type ]
 		);
 	}
 

@@ -1,11 +1,7 @@
 {
-	"label": "WooCommerce",
-	"slug": "woocommerce",
-	"description": "An eCommerce toolkit that helps you sell anything. Beautifully.",
-	"type": "post_type",
-	"plan": "freemium",
-	"requires": {
-		"class": "WooCommerce"
-	},
-	"url": "https://woo.com"
+    "label": "WooCommerce",
+    "slug": "woocommerce",
+    "requires": {
+        "class": "WooCommerce"
+    }
 }

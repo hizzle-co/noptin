@@ -146,4 +146,12 @@ abstract class Record {
 	public function provide( $collection ) {
 		return 0;
 	}
+
+	/**
+	 * Prepares custom tab content.
+	 *
+	 */
+	public function prepare_custom_tab() {
+		return array();
+	}
 }

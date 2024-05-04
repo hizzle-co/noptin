@@ -28,41 +28,12 @@ class Noptin_Automation_Rules {
 	 */
 	public function __construct() {
 
-		// Register core actions.
-		$this->add_action( new Noptin_Custom_Field_Action() );
-		$this->add_action( new Noptin_Email_Action() );
-		$this->add_action( new Noptin_Subscribe_Action() );
-		$this->add_action( new Noptin_Unsubscribe_Action() );
-		$this->add_action( new Noptin_Delete_Subscriber_Action() );
-
 		// Register core triggers.
 		$this->add_trigger( new Noptin_New_Comment_Trigger() );
 		$this->add_trigger( new Noptin_Comment_Reply_Trigger() );
 
 		// Handle admin rule CRUD requests.
 		do_action( 'noptin_automation_rules_load', $this );
-
-		if ( function_exists( 'geodir_get_posttypes' ) ) {
-			foreach ( geodir_get_posttypes() as $post_type ) {
-				$this->add_trigger( new Noptin_GeoDirectory_Listing_Saved_Trigger( $post_type ) );
-				$this->add_trigger( new Noptin_GeoDirectory_Listing_Published_Trigger( $post_type ) );
-				$this->add_action( new Noptin_GeoDirectory_Update_Listing_Action( $post_type ) );
-
-				if ( defined( 'GEODIR_PRICING_VERSION' ) ) {
-					$this->add_trigger( new Noptin_GeoDirectory_Listing_Downgraded_Trigger( $post_type ) );
-					$this->add_trigger( new Noptin_GeoDirectory_Listing_Expire_Trigger( $post_type ) );
-				}
-			}
-		}
-
-		if ( defined( 'PMPRO_VERSION' ) ) {
-			$this->add_trigger( new Noptin_PMPro_Membership_Level_Change_Trigger() );
-			$this->add_action( new Noptin_PMPro_Change_Level_Action() );
-		}
-
-		// Maybe migrate automation rules.
-		add_action( 'admin_init', array( $this, 'migrate_automation_rule_triggers' ) );
-		add_action( 'noptin_run_delayed_automation_rule', array( $this, 'run_delayed_automation_rule' ), 10, 2 );
 	}
 
 	/**
@@ -72,6 +43,10 @@ class Noptin_Automation_Rules {
 	 * @param Noptin_Abstract_Action $action An ancestor of Noptin_Abstract_Action
 	 */
 	public function add_action( $action ) {
+		if ( isset( $this->actions[ $action->get_id() ] ) ) {
+			return _doing_it_wrong( __METHOD__, 'Action with id ' . esc_html( $action->get_id() ) . ' already exists', '3.0.0' );
+		}
+
 		$this->actions[ $action->get_id() ] = $action;
 	}
 
@@ -142,7 +117,17 @@ class Noptin_Automation_Rules {
 	 * @return Noptin_Abstract_Trigger|null
 	 */
 	public function get_trigger( $trigger_id ) {
-		return empty( $this->triggers[ $trigger_id ] ) ? null : $this->triggers[ $trigger_id ];
+		if ( isset( $this->triggers[ $trigger_id ] ) ) {
+			return $this->triggers[ $trigger_id ];
+		}
+
+		foreach ( $this->triggers as $trigger ) {
+			if ( isset( $trigger->alias ) && $trigger->alias === $trigger_id ) {
+				return $trigger;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -164,97 +149,5 @@ class Noptin_Automation_Rules {
 	 */
 	public function has_trigger( $trigger_id ) {
 		return is_scalar( $trigger_id ) && ! empty( $this->triggers[ $trigger_id ] );
-	}
-
-	/**
-	 * Migrates automation rule triggers.
-	 *
-	 * @since 3.0.0
-	 */
-	public function migrate_automation_rule_triggers() {
-		$migrators = apply_filters( 'noptin_automation_rule_migrate_triggers', array(), $this );
-
-		// Nothing to migrate.
-		if ( empty( $migrators ) ) {
-			return;
-		}
-
-		$migrated = (array) get_option( 'noptin_automation_rule_migrated_triggers', array() );
-
-		foreach ( $migrators as $migrator ) {
-
-			if ( empty( $migrator['id'] ) || in_array( $migrator['id'], $migrated, true ) ) {
-				continue;
-			}
-
-			/** @var \Hizzle\Noptin\DB\Automation_Rule[] $rules */
-			$rules = noptin_get_automation_rules(
-				array(
-					'trigger_id' => $migrator['trigger_id'],
-				)
-			);
-
-			foreach ( $rules as $rule ) {
-				$previous_trigger = $rule->get_trigger_id();
-				call_user_func_array( $migrator['callback'], array( &$rule ) );
-				$rule->save();
-
-				if ( $previous_trigger !== $rule->get_trigger_id() && 'email' === $rule->get_action_id() ) {
-					$email_id = $rule->get_action_setting( 'automated_email_id' );
-
-					if ( ! empty( $email_id ) ) {
-						update_post_meta( $email_id, 'automation_type', 'automation_rule_' . $rule->get_trigger_id() );
-					}
-				}
-			}
-
-			$migrated[] = $migrator['id'];
-		}
-
-		update_option( 'noptin_automation_rule_migrated_triggers', $migrated );
-	}
-
-	/**
-	 * Runs a delayed automation rule.
-	 *
-	 * @param string $automation_rule The rule id to schedule.
-	 * @param array $args The trigger arguments.
-	 */
-	public function run_delayed_automation_rule( $rule_id, $args ) {
-
-		$rule = noptin_get_automation_rule( $rule_id );
-
-		if ( is_wp_error( $rule ) || ! $rule->exists() ) {
-			throw new \Exception( 'Automation rule not found' );
-		}
-
-		// Fetch the trigger.
-		$trigger = $rule->get_trigger();
-
-		if ( empty( $trigger ) ) {
-			throw new \Exception( 'Invalid or unregistered trigger' );
-		}
-
-		// Fetch the action.
-		$action = $rule->get_action();
-
-		if ( empty( $action ) ) {
-			throw new \Exception( 'Invalid or unregistered action' );
-		}
-
-		// Unserialize the trigger arguments.
-		$args = $trigger->unserialize_trigger_args( $args );
-
-		// Abort if the trigger does not support scheduling.
-		if ( ! is_array( $args ) ) {
-			throw new \Exception( 'Trigger does not support scheduling' );
-		}
-
-		// Ensure that the rule is valid for the provided args.
-		if ( $trigger->is_rule_valid_for_args( $rule, $args, $args['subject'], $action ) ) {
-			$action->maybe_run( $args['subject'], $rule, $args );
-		} else {
-			throw new \Exception( 'Automation rule is no longer valid for the provided arguments' );
-		}
 	}
 }

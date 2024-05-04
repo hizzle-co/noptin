@@ -72,6 +72,7 @@
 	a {
 		color: <?php echo esc_html( $brand_color ); ?>;
 		text-decoration: none;
+		word-break: break-all;
 	}
 
 	.bg-brand {

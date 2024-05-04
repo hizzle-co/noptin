@@ -13,6 +13,16 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
+	 * @var Template Email template.
+	 */
+	public $email_template;
+
+	/**
+	 * @var Migrate Migrates deprecated emails.
+	 */
+	public $migrate;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 2.2.0
@@ -20,6 +30,10 @@ class Main {
 	public function __construct() {
 		add_action( 'noptin_register_post_type_objects', array( $this, 'register_custom_objects' ) );
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
+		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
+		add_filter( 'noptin_format_price', 'wc_price' );
+		$this->email_template = new Template();
+		$this->migrate        = new Migrate();
 	}
 
 	/**
@@ -29,9 +43,9 @@ class Main {
 	 */
 	public function register_custom_objects() {
 		\Hizzle\Noptin\Objects\Store::add( new Customers() );
-		\Hizzle\Noptin\Objects\Store::add( new Orders() );
-		\Hizzle\Noptin\Objects\Store::add( new Order_Items() );
 		\Hizzle\Noptin\Objects\Store::add( new Products() );
+		\Hizzle\Noptin\Objects\Store::add( new Order_Items() );
+		\Hizzle\Noptin\Objects\Store::add( new Orders() );
 	}
 
 	/**
@@ -109,16 +123,6 @@ class Main {
 					) : array(),
 					array( 'product_id', 'action' )
 				);
-			},
-		);
-
-		$triggers[] = array(
-			'id'         => 'woocommerce_lifetime_value',
-			'trigger_id' => 'woocommerce_lifetime_value',
-			'callback'   => function ( &$automation_rule ) {
-
-				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
-				$automation_rule->set_trigger_id( 'wc_payment_complete' );
 			},
 		);
 

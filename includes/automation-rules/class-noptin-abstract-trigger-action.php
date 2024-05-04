@@ -46,6 +46,13 @@ abstract class Noptin_Abstract_Trigger_Action {
 	public $contexts = array();
 
 	/**
+	 * Trigger id alias.
+	 *
+	 * @var string
+	 */
+	public $alias = null;
+
+	/**
 	 * Unique ID for the trigger or action.
 	 *
 	 * Only alphanumerics, dashes and underscrores are allowed.
@@ -81,10 +88,10 @@ abstract class Noptin_Abstract_Trigger_Action {
 
 		// Integrations.
 		if ( ! empty( $this->integration ) ) {
-			$integration = Noptin_COM::get_integration( $this->integration );
+			$integration = \Hizzle\Noptin\Integrations\Main::get_integration_info( $this->integration );
 
 			if ( ! empty( $integration ) ) {
-				return $integration->image_url;
+				return $integration['icon_url'];
 			}
 		}
 
@@ -187,7 +194,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 		if ( ! is_array( $this->rules ) ) {
 			$this->rules = noptin_get_automation_rules(
 				array(
-					$this->is_action_or_trigger . '_id' => $this->get_id(),
+					$this->is_action_or_trigger . '_id' => empty( $this->alias ) ? $this->get_id() : array( $this->get_id(), $this->alias ),
 					'status'                            => $status,
 				)
 			);

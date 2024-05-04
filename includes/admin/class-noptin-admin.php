@@ -145,6 +145,7 @@ class Noptin_Admin {
 		add_action( 'noptin_admin_reset_data', array( $this, 'reset_data' ) );
 
 		Noptin_Vue::init_hooks();
+		Noptin_Tools::add_hooks();
 
 		/**
 		 * Runs right after registering admin hooks.
@@ -316,17 +317,6 @@ class Noptin_Admin {
 
 			}
 		}
-
-		// Subscriber actions.
-		if ( isset( $_GET['page'] ) && 'noptin-subscribers' === $_GET['page'] ) {
-
-			// Maybe delete an email subscriber.
-			if ( ! empty( $_GET['delete-subscriber'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'noptin-subscriber' ) ) {
-				delete_noptin_subscriber( $_GET['delete-subscriber'] );
-				$this->show_success( __( 'Subscriber successfully deleted', 'newsletter-optin-box' ) );
-			}
-		}
-
 	}
 
 	/**

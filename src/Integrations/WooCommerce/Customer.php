@@ -74,7 +74,15 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 			return false;
 		}
 
-		return ! ! $this->external->get_email();
+		return ! ! $this->get_email();
+	}
+
+	/**
+	 * Retrieves the person's email address.
+	 *
+	 */
+	public function get_email() {
+		return $this->external->get_email();
 	}
 
 	/**
@@ -114,7 +122,7 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 		if ( 'first_order_date' === $field ) {
 			$first_order = wc_get_orders(
 				array(
-					'customer' => $this->external->get_id() > 0 ? $this->external->get_id() : $this->external->get_email(),
+					'customer' => $this->external->get_id() > 0 ? $this->external->get_id() : $this->get_email(),
 					'limit'    => 1,
 					'orderby'  => 'date',
 					'order'    => 'ASC',
@@ -131,12 +139,17 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 
 		// Order count.
 		if ( 'order_count' === $field && $this->external->get_id() < 1 ) {
-			return Main::count_customer_orders( $this->external->get_email() );
+			return Main::count_customer_orders( $this->get_email() );
 		}
 
 		// Total spent.
 		if ( 'total_spent' === $field && $this->external->get_id() < 1 ) {
-			return Main::calculate_customer_lifetime_value( $this->external->get_email() );
+			return Main::calculate_customer_lifetime_value( $this->get_email() );
+		}
+
+		// Related collections.
+		if ( strpos( $field, '.' ) ) {
+			return $this->get_provided( $field, $args );
 		}
 
 		// Check if we have a method get_$field.

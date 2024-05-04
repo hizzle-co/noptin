@@ -1,0 +1,7 @@
+{
+    "label": "Polylang",
+    "slug": "polylang",
+    "requires": {
+        "constant": "POLYLANG_VERSION"
+    }
+}

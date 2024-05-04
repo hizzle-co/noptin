@@ -1,0 +1,7 @@
+{
+    "label": "Paid Memberships Pro",
+    "slug": "paid-memberships-pro",
+    "requires": {
+        "constant": "PMPRO_VERSION"
+    }
+}

@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         3.1.2
+ * Version:         3.3.0
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -46,7 +46,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '3.1.2';
+	public $version = '3.3.0';
 
 	/**
 	 * The current database version.
@@ -189,7 +189,7 @@ class Noptin {
 	/**
 	 * Actions page.
 	 *
-	 * @var Noptin_Actions_Page
+	 * @var Noptin_Page
 	 * @since       1.7.0
 	 */
 	public $actions_page;
@@ -316,8 +316,6 @@ class Noptin {
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
 
-		// Automation rules.
-		\Hizzle\Noptin\Automation_Rules\Main::init();
 	}
 
 	/**
@@ -334,8 +332,8 @@ class Noptin {
 		}
 
 		// Integrations.
-		$this->integrations     = new Noptin_Integrations();
 		$this->integrations_new = new \Hizzle\Noptin\Integrations\Main();
+		$this->integrations     = new Noptin_Integrations();
 
 		\Hizzle\Noptin\Objects\Users::add_default();
 
@@ -344,12 +342,6 @@ class Noptin {
 
 		// DB.
 		$this->db();
-
-		// Subscribers.
-		$this->subscribers();
-
-		// Emails.
-		\Hizzle\Noptin\Emails\Main::init();
 
 		// REST.
 		$this->api();
@@ -503,6 +495,8 @@ class Noptin {
 		// Upgrade db if installed version of noptin is lower than current version
 		if ( $installed_version < $this->db_version ) {
 			new Noptin_Install( $installed_version, $this->db_version );
+
+			do_action( 'noptin_upgrade_db', $installed_version, $this->db_version );
 		}
 	}
 

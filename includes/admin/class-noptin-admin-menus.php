@@ -21,10 +21,6 @@ class Noptin_Admin_Menus {
 		add_action( 'admin_menu', array( $this, 'menu_highlight' ), 15 );
 		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
-		add_action( 'admin_menu', array( $this, 'subscribers_menu' ), 33 );
-		add_action( 'admin_menu', array( $this, 'settings_menu' ), 50 );
-		add_action( 'admin_menu', array( $this, 'tools_menu' ), 60 );
-		add_action( 'admin_menu', array( $this, 'extensions_menu' ), 70 );
 		add_action( 'admin_menu', array( $this, 'documentation_menu' ), 80 );
 
 		// Welcome wizzard.
@@ -114,85 +110,6 @@ class Noptin_Admin_Menus {
 	}
 
 	/**
-	 * Subscribers.
-	 */
-	public function subscribers_menu() {
-
-		$hook_suffix = add_submenu_page(
-			'noptin',
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-subscribers',
-			array( $this, 'render_subscribers_page' )
-		);
-
-		Noptin_Scripts::add_admin_script( $hook_suffix, 'table' );
-	}
-
-	/**
-	 * Displays the subscribers page.
-	 */
-	public function render_subscribers_page() {
-		if ( current_user_can( get_noptin_capability() ) ) {
-			include plugin_dir_path( __FILE__ ) . 'views/view-subscribers.php';
-		}
-	}
-
-	/**
-	 * Registers the settings menu.
-	 */
-	public function settings_menu() {
-		$hook_suffix = add_submenu_page(
-			'noptin',
-			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			esc_html__( 'Settings', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-settings',
-			'Noptin_Settings::output'
-		);
-
-		Noptin_Scripts::add_admin_script( $hook_suffix, 'settings' );
-	}
-
-	/**
-	 * Add tools menu item.
-	 */
-	public function tools_menu() {
-		add_submenu_page(
-			'noptin',
-			esc_html( apply_filters( 'noptin_admin_tools_page_title', __( 'Noptin Tools', 'newsletter-optin-box' ) ) ),
-			esc_html__( 'Tools', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-tools',
-			'Noptin_Tools::output'
-		);
-	}
-
-	/**
-	 * Add extensions menu item.
-	 */
-	public function extensions_menu() {
-		if ( apply_filters( 'noptin_show_addons_page', true ) ) {
-
-			$count_html = Noptin_COM_Updater::get_updates_count_html();
-
-			/* translators: %s: extensions count */
-			$menu_title = sprintf( __( 'Extensions %s', 'newsletter-optin-box' ), $count_html );
-
-			add_submenu_page(
-				'noptin',
-				esc_html__( 'Noptin Extensions', 'newsletter-optin-box' ),
-				$menu_title,
-				get_noptin_capability(),
-				'noptin-addons',
-				array( 'Noptin_COM_Helper', 'output_extensions_page' )
-			);
-
-		}
-	}
-
-	/**
 	 * Add help menu item.
 	 */
 	public function documentation_menu() {
@@ -206,7 +123,6 @@ class Noptin_Admin_Menus {
 				noptin_get_upsell_url( 'guide/', 'documentation', 'link' ),
 				''
 			);
-
 		}
 	}
 

@@ -309,6 +309,24 @@ class Noptin_Form_Legacy {
 			$defaults['successMessage'] = esc_html__( 'Thanks for subscribing to the newsletter', 'newsletter-optin-box' );
 		}
 
+		// Add filters for all known taxonomies.
+		foreach ( array_keys( noptin_get_post_types() ) as $post_type ) {
+			$taxonomies = wp_list_pluck(
+				wp_list_filter(
+					get_object_taxonomies( $post_type, 'objects' ),
+					array(
+						'public' => true,
+					)
+				),
+				'label',
+				'name'
+			);
+
+			foreach ( $taxonomies as $taxonomy => $taxonomy_label ) {
+				$defaults[ 'showTaxonomy_' . $taxonomy ] = '';
+			}
+		}
+
 		// Loop through all custom fields.
 		foreach ( get_noptin_multicheck_custom_fields() as $field ) {
 
@@ -740,6 +758,28 @@ class Noptin_Form_Legacy {
 			return true;
 		}
 
+		// Check taxonomy restrictions.
+		foreach ( array_keys( noptin_get_post_types() ) as $post_type ) {
+			$taxonomies = wp_list_pluck(
+				wp_list_filter(
+					get_object_taxonomies( $post_type, 'objects' ),
+					array(
+						'public' => true,
+					)
+				),
+				'label',
+				'name'
+			);
+
+			foreach ( $taxonomies as $taxonomy => $taxonomy_label ) {
+				if ( ! empty( $this->data[ 'showTaxonomy_' . $taxonomy ] ) ) {
+					$terms = noptin_parse_list( $this->data[ 'showTaxonomy_' . $taxonomy ], true );
+
+					return is_tax( $taxonomy, $terms ) || ( is_singular( $post_type ) && has_term( $terms, $taxonomy ) );
+				}
+			}
+		}
+
 		$places = is_array( $this->showPlaces ) ? $this->showPlaces : array();
 
 		// frontpage.
@@ -814,7 +854,7 @@ class Noptin_Form_Legacy {
 				<?php endif; ?>
 
 				<?php if ( ! empty( $this->CSS ) ) : ?>
-					<style><?php echo esc_html( str_ireplace( '.noptin-optin-form-wrapper', ".$id_class .noptin-optin-form-wrapper", str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS ) ) ); ?></style>
+					<style><?php echo strip_tags( str_ireplace( '.noptin-optin-form-wrapper', ".$id_class .noptin-optin-form-wrapper", str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS ) ) ); // phpcs:ignore ?></style>
 				<?php endif; ?>
 
 				<?php $this->render_form(); ?>

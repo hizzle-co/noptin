@@ -68,7 +68,6 @@ abstract class Form_Integration extends Automation_Integration {
 
 		// Cache forms.
 		$this->forms = $this->get_forms();
-
 		return array_replace( $forms, $this->forms );
 	}
 

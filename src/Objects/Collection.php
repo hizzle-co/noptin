@@ -61,6 +61,11 @@ abstract class Collection {
 	public $can_list = false;
 
 	/**
+	 * @var string $show_tab Whether to display this collection as a custom tab.
+	 */
+	public $show_tab = false;
+
+	/**
 	 * @var Record|null $current_item Current item.
 	 */
 	public $current_item = null;
@@ -136,7 +141,6 @@ abstract class Collection {
 
 		// Register triggers.
 		foreach ( $this->get_all_triggers() as $key => $args ) {
-
 			$args['provides'] = empty( $args['provides'] ) ? array() : noptin_parse_list( $args['provides'] );
 
 			if ( empty( $args['subject'] ) ) {
@@ -144,9 +148,13 @@ abstract class Collection {
 			}
 
 			// Only auto-provide the current user if the subject is not a WordPress user.
-			if ( ! in_array( $args['subject'], Users::$user_types, true ) ) {
+			if ( ! in_array( $args['subject'], Users::$user_types, true ) || 'post_author' === $args['subject'] ) {
 				$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
 			}
+
+			$args['provides'] = $this->filter( $args['provides'], 'provided_collections' );
+
+			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this );
 
 			$rules->add_trigger(
 				new Trigger( $key, $args, $this )
@@ -200,6 +208,8 @@ abstract class Collection {
 				$args['email'] = $user->user_email;
 			}
 		}
+
+		$args = $this->filter( $args, 'trigger_args' );
 
 		do_action( 'noptin_fire_object_trigger_' . $trigger, $args );
 	}
@@ -417,6 +427,14 @@ abstract class Collection {
 	}
 
 	/**
+	 * Retrieves several items by email.
+	 *
+	 */
+	public function get_all_by_email( $email_address, $limit = 25 ) {
+		return array();
+	}
+
+	/**
 	 * Retrieves a single record.
 	 *
 	 * @param mixed $record The record.
@@ -426,6 +444,57 @@ abstract class Collection {
 		$class = $this->record_class;
 
 		return new $class( $record );
+	}
+
+	/**
+	 * Registers the custom tab.
+	 *
+	 * @since 3.0.0
+	 * @return array
+	 */
+	public function get_custom_tab_details() {
+		return array(
+			'title'        => $this->label,
+			'type'         => 'table',
+			'emptyMessage' => sprintf(
+				// translators: %s is the order type name.
+				__( 'No %s found.', 'newsletter-optin-box' ),
+				strtolower( $this->label )
+			),
+			'headers'      => $this->get_custom_tab_headers(),
+		);
+	}
+
+	/**
+	 * Fetches the custom tab headers.
+	 *
+	 * @since 3.0.0
+	 * @return array
+	 */
+	protected function get_custom_tab_headers() {
+		return array();
+	}
+
+	/**
+	 * Custom tab callback.
+	 *
+	 * @since 3.0.0
+	 * @param string $email_address
+	 * @return array
+	 */
+	public function process_custom_tab( $email_address ) {
+
+		$prepared = array();
+
+		foreach ( $this->get_all_by_email( $email_address ) as $record ) {
+			$record = $this->get( $record );
+
+			if ( $record->exists() ) {
+				$prepared[] = $record->prepare_custom_tab();
+			}
+		}
+
+		return array_filter( $prepared );
 	}
 
 	/**
@@ -580,7 +649,7 @@ abstract class Collection {
 		$date_query = array();
 
 		foreach ( array( 'published_before', 'published_after', 'since_last_send' ) as $date ) {
-			if ( isset( $filters[ $date ] ) ) {
+			if ( ! empty( $filters[ $date ] ) ) {
 
 				if ( 'since_last_send' === $date ) {
 					$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
@@ -590,7 +659,7 @@ abstract class Collection {
 							'after' => is_numeric( $last_send ) ? gmdate( 'Y-m-d\TH:i:s+00:00', $last_send ) : $last_send,
 						);
 					}
-				} elseif ( ! empty( $filters[ $date ] ) ) {
+				} else {
 					$key          = 'published_before' === $date ? 'before' : 'after';
 					$date_query[] = array(
 						'inclusive' => true,
@@ -780,6 +849,16 @@ abstract class Collection {
 			}
 		} else {
 			parse_str( rawurldecode( html_entity_decode( $atts['query'] ) ), $query );
+
+			// loop query and convert booleans.
+			foreach ( $query as $key => $value ) {
+				if ( 'true' === $value ) {
+					$query[ $key ] = true;
+				} elseif ( 'false' === $value ) {
+					$query[ $key ] = false;
+				}
+			}
+
 			$items = $this->get_all( $query );
 		}
 
@@ -954,7 +1033,6 @@ abstract class Collection {
 		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
 
 		if ( isset( $recipient[ $this->type ] ) ) {
-
 			if ( ! is_array( $noptin_current_objects ) ) {
 				$noptin_current_objects = array();
 			}

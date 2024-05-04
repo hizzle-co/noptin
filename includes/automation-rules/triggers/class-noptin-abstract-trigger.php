@@ -33,7 +33,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @throws Exception
 	 */
 	public function get_test_smart_tags( $rule ) {
-		throw new Exception( 'No test data available for this trigger.' );
+		throw new Exception( 'No test data available for the trigger ' . esc_html( $this->get_name() ) );
 	}
 
 	/**
@@ -93,9 +93,10 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		$smart_tags = array(
 
 			'cookie'  => array(
-				'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
-				'callback'    => 'Noptin_Dynamic_Content_Tags::get_cookie',
-				'example'     => "cookie name='my_cookie' default='Default Value'",
+				'description'       => __( 'Data from a cookie.', 'newsletter-optin-box' ),
+				'callback'          => 'Noptin_Dynamic_Content_Tags::get_cookie',
+				'example'           => "cookie name='my_cookie' default='Default Value'",
+				'conditional_logic' => 'string',
 			),
 
 			'date'    => array(
@@ -150,86 +151,86 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		);
 
 		if ( ! $this->is_user_based ) {
-			$smart_tags['user_logged_in'] = array(
-				'description'       => __( 'Log-in status', 'newsletter-optin-box' ),
-				'example'           => 'user_logged_in',
-				'conditional_logic' => 'string',
-				'callback'          => 'noptin_get_user_logged_in_status',
-				'options'           => array(
-					'yes' => __( 'Logged in', 'newsletter-optin-box' ),
-					'no'  => __( 'Logged out', 'newsletter-optin-box' ),
-				),
-				'group'             => __( 'User', 'newsletter-optin-box' ),
-			);
+				$smart_tags['user_logged_in'] = array(
+					'description'       => __( 'Log-in status', 'newsletter-optin-box' ),
+					'example'           => 'user_logged_in',
+					'conditional_logic' => 'string',
+					'callback'          => 'noptin_get_user_logged_in_status',
+					'options'           => array(
+						'yes' => __( 'Logged in', 'newsletter-optin-box' ),
+						'no'  => __( 'Logged out', 'newsletter-optin-box' ),
+					),
+					'group'             => __( 'User', 'newsletter-optin-box' ),
+				);
 		} else {
-			$smart_tags = array_replace(
-				$smart_tags,
-				array(
+				$smart_tags = array_replace(
+                    $smart_tags,
+                    array(
 
-					'user_id'     => array(
-						'description'       => __( 'User ID', 'newsletter-optin-box' ),
-						'conditional_logic' => 'number',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'user_id'     => array(
+							'description'       => __( 'User ID', 'newsletter-optin-box' ),
+							'conditional_logic' => 'number',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'user_role'   => array(
-						'description'       => __( 'User Role', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'options'           => wp_roles()->get_names(),
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'user_role'   => array(
+							'description'       => __( 'User Role', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'options'           => wp_roles()->get_names(),
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'user_locale' => array(
-						'description'       => __( 'User Locale', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'example'           => 'user_locale default="en_US"',
-						'options'           => noptin_get_available_languages(),
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'user_locale' => array(
+							'description'       => __( 'User Locale', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'example'           => 'user_locale default="en_US"',
+							'options'           => noptin_get_available_languages(),
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'email'       => array(
-						'description'       => __( 'Email Address', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'email'       => array(
+							'description'       => __( 'Email Address', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'name'        => array(
-						'description'       => __( 'Display Name', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'name'        => array(
+							'description'       => __( 'Display Name', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'first_name'  => array(
-						'description'       => __( 'First Name', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'first_name'  => array(
+							'description'       => __( 'First Name', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'last_name'   => array(
-						'description'       => __( 'Last Name', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'last_name'   => array(
+							'description'       => __( 'Last Name', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'user_login'  => array(
-						'description'       => __( 'Login Name', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'user_login'  => array(
+							'description'       => __( 'Login Name', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'user_url'    => array(
-						'description'       => __( 'User URL', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
+						'user_url'    => array(
+							'description'       => __( 'User URL', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
 
-					'user_bio'    => array(
-						'description'       => __( 'User Bio', 'newsletter-optin-box' ),
-						'conditional_logic' => 'string',
-						'group'             => __( 'User', 'newsletter-optin-box' ),
-					),
-				)
-			);
+						'user_bio'    => array(
+							'description'       => __( 'User Bio', 'newsletter-optin-box' ),
+							'conditional_logic' => 'string',
+							'group'             => __( 'User', 'newsletter-optin-box' ),
+						),
+                    )
+				);
 		}
 
 		return apply_filters( 'noptin_automation_trigger_known_smart_tags', $smart_tags, $this );
@@ -387,11 +388,12 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
 
 		// Set the current email.
+		$GLOBALS['current_noptin_rule']  = $rule->get_id();
 		$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $this, $args );
 
 		$conditional_logic = $rule->get_conditional_logic();
 		// Abort if conditional logic is not set.
-		if ( empty( $conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) ) {
+		if ( empty( $conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) || empty( $conditional_logic['rules'] ) || ! is_array( $conditional_logic['rules'] ) ) {
 			return true;
 		}
 
@@ -406,13 +408,12 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		// Loop through each rule.
 		foreach ( $conditional_logic['rules'] as $rule ) {
-
-			$current_value = $smart_tags->replace_in_text_field( '[[' . $rule['type'] . ']]' );
+			$current_value = $smart_tags->replace_in_text_field( empty( $rule['full'] ) ? '[[' . $rule['type'] . ']]' : $rule['full'] );
 			$compare_value = noptin_clean( $rule['value'] );
 			$comparison    = $rule['condition'];
 
 			// If the rule is met.
-			if ( noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
+			if ( ! $smart_tags->get( $rule['type'] ) || noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
 
 				// Increment the number of rules met.
 				++ $rules_met;
@@ -525,7 +526,18 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		$GLOBALS['noptin_current_trigger_args'] = $args;
 
-		foreach ( $this->get_rules() as $rule ) {
+		if ( isset( $args['rule_id'] ) ) {
+			$rules = array( noptin_get_automation_rule( $args['rule_id'] ) );
+		} else {
+			$rules = $this->get_rules();
+		}
+
+		foreach ( $rules as $rule ) {
+
+			// Abort if the rule is not found.
+			if ( is_wp_error( $rule ) || ! $rule->exists() || ! $rule->get_status() ) {
+				continue;
+			}
 
 			// Retrieve the action.
 			$action = $rule->get_action();

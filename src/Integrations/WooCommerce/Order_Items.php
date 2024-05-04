@@ -71,23 +71,6 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 				'label' => __( 'Total tax', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'item_download_url' => array(
-				'label' => __( 'Item download URL', 'newsletter-optin-box' ),
-				'type'  => 'string',
-				'block' => array(
-					'title'       => __( 'Download Item', 'newsletter-optin-box' ),
-					'description' => __( 'Displays a button link to download the item.', 'newsletter-optin-box' ),
-					'icon'        => 'download',
-					'metadata'    => array(
-						'ancestor' => array( $this->context ),
-					),
-					'defaults'    => array(
-						'text' => __( 'Download Item', 'newsletter-optin-box' ),
-						'url'  => $this->field_to_merge_tag( 'item_download_url' ),
-					),
-					'element'     => 'button',
-				),
-			),
 			'attribute'         => array(
 				'label'          => __( 'Attribute', 'newsletter-optin-box' ),
 				'type'           => 'string',

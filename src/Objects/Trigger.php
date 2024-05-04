@@ -42,7 +42,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$this->object_type  = $collection->type;
 		$this->trigger_id   = $trigger_id;
 		$this->trigger_args = $trigger_args;
-		$this->category     = $collection->label;
+		$this->category     = isset( $trigger_args['category'] ) ? $trigger_args['category'] : $collection->label;
 		$this->integration  = $collection->integration;
 
 		// Set the contexts.
@@ -68,6 +68,10 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		if ( ! empty( $trigger_args['mail_config'] ) ) {
 			$this->mail_config = $trigger_args['mail_config'];
+		}
+
+		if ( ! empty( $trigger_args['alias'] ) ) {
+			$this->alias = $trigger_args['alias'];
 		}
 
 		if ( ! empty( $trigger_args['previous_name'] ) ) {
@@ -123,17 +127,6 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		$args = array();
 
-		// Add subject smart tags.
-		if ( ! empty( $this->trigger_args['subject'] ) && $this->trigger_args['subject'] !== $this->object_type ) {
-			$args = Store::smart_tags( $this->trigger_args['subject'], true );
-		}
-
-		// Add object args.
-		$args = array_merge(
-			$args,
-			Store::smart_tags( $this->object_type, true )
-		);
-
 		// Add extra args.
 		if ( ! empty( $this->trigger_args['extra_args'] ) ) {
 			$args = array_merge(
@@ -146,6 +139,17 @@ class Trigger extends \Noptin_Abstract_Trigger {
 				)
 			);
 		}
+
+		// Add subject smart tags.
+		if ( ! empty( $this->trigger_args['subject'] ) && $this->trigger_args['subject'] !== $this->object_type ) {
+			$args = Store::smart_tags( $this->trigger_args['subject'], true );
+		}
+
+		// Add object args.
+		$args = array_merge(
+			$args,
+			Store::smart_tags( $this->object_type, true )
+		);
 
 		// Add provided args.
 		if ( ! empty( $this->trigger_args['provides'] ) ) {
@@ -168,8 +172,62 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		);
 
 		unset( $args['user_logged_in'] );
-
 		return $args;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_settings() {
+
+		$settings = array();
+
+		if ( ! empty( $this->trigger_args['extra_settings'] ) ) {
+			$settings = $this->trigger_args['extra_settings'];
+		}
+
+		return array_merge( $settings, parent::get_settings() );
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function get_rule_table_description( $rule ) {
+		$settings = $rule->get_trigger_settings();
+		$meta     = array();
+
+		if ( ! empty( $this->trigger_args['extra_settings'] ) ) {
+			foreach ( $this->trigger_args['extra_settings'] as $key => $args ) {
+
+				// If required but not set...
+				if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
+					return sprintf(
+						'<span class="noptin-rule-error">%s</span>',
+						sprintf(
+							// translators: %s is the field label.
+							esc_html__( 'Error: "%s" not specified', 'newsletter-optin-box' ),
+							$args['label']
+						)
+					);
+				}
+
+				if ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] || ! is_scalar( $settings[ $key ] ) ) {
+					continue;
+				}
+
+				if ( ! empty( $args['show_in_meta'] ) || ! empty( $args['required'] ) ) {
+					$value = isset( $settings[ $key ] ) ? esc_html( $settings[ $key ] ) : '';
+
+					if ( $value && ! empty( $args['options'] ) ) {
+						$value = isset( $args['options'][ $value ] ) ? $args['options'][ $value ] : $value;
+					}
+
+					$meta[ esc_html( $args['label'] ) ] = $value;
+				}
+			}
+		}
+
+		return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
 	}
 
 	/**
@@ -181,6 +239,13 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	public function fire_trigger( $args ) {
 
 		try {
+			$collection = Store::get( $this->object_type );
+
+			if ( empty( $collection ) ) {
+				throw new \Exception( 'Collection not registered' );
+			}
+
+			$args    = apply_filters( 'noptin_collection_type_trigger_args', $args, $collection, $this );
 			$subject = $this->prepare_current_objects( $args );
 		} catch ( \Exception $e ) {
 			noptin_error_log( $e->getMessage() );
@@ -327,6 +392,10 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		// Provided objects.
 		if ( ! empty( $args['provides'] ) ) {
 			foreach ( $args['provides'] as $object_type => $id ) {
+				if ( empty( $id ) ) {
+					continue;
+				}
+
 				$collection = false !== strpos( $object_type, '.' ) ? Store::get( strtok( $object_type, '.' ) ) : Store::get( $object_type );
 
 				if ( empty( $collection ) ) {
@@ -363,10 +432,23 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		}
 
 		$args = $collection->get_test_args( $rule );
+		$args = apply_filters( 'noptin_' . $collection->type . '_test_args', $args, $rule, $this->trigger_id );
 
 		if ( empty( $args ) ) {
 			throw new \Exception( 'No test data available for this trigger.' );
 		}
+
+		// If we're providing current user and we have a user ID, use it.
+		if ( ! empty( $this->trigger_args['provides'] ) && in_array( 'current_user', $this->trigger_args['provides'], true ) ) {
+			if ( empty( $args['provides'] ) ) {
+				$args['provides'] = array();
+			}
+
+			$args['provides']['current_user'] = get_current_user_id();
+		}
+
+		$args = apply_filters( 'noptin_' . $collection->type . '_collection_trigger_args', $args, $collection );
+		$args = apply_filters( 'noptin_collection_type_trigger_args', $args, $collection, $this );
 
 		// Fetch person.
 		$subject = $this->prepare_current_objects( $args );

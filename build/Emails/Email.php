@@ -367,7 +367,13 @@ class Email {
 	 * @return string
 	 */
 	public function get_sub_type() {
-		return $this->get( $this->type . '_type' );
+		$sub_type = $this->get( $this->type . '_type' );
+
+		if ( ! empty( $sub_type ) ) {
+			$sub_type = apply_filters( 'noptin_' . $this->type . '_email_sub_type_' . $sub_type, $sub_type, $this );
+		}
+
+		return $sub_type;
 	}
 
 	/**
@@ -471,7 +477,6 @@ class Email {
 		// If this is a mass mail and not a newsletter email,
 		// ... create a newsletter email and send it.
 		if ( $this->is_mass_mail() && 'newsletter' !== $this->type ) {
-
 			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
 
 			// Prepare campaign args.
@@ -497,7 +502,6 @@ class Email {
 
 				// Check if the key starts with content_.
 				if ( 0 === strpos( $key, 'content_' ) ) {
-
 					$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $value );
 
 					// Parse paragraphs.
@@ -574,6 +578,42 @@ class Email {
 	 */
 	public function send_to( $recipient, $confirm_can_send = true ) {
 
+		$result = $this->handle_send_to( $recipient, $confirm_can_send );
+
+		if ( is_wp_error( $result ) && ! empty( Main::$current_email_recipient['email'] ) ) {
+			log_noptin_message(
+				sprintf(
+					'Email not send to recipient "%s" for campaign "%s" because: Error: "%s"',
+					Main::$current_email_recipient['email'],
+					$this->name,
+					$result->get_error_message()
+				)
+			);
+
+			noptin_record_subscriber_activity(
+				Main::$current_email_recipient['email'],
+				sprintf(
+					'Failed sending the campaign "%s". Error: "%s"',
+					$this->name,
+					$result->get_error_message()
+				)
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Sends the email to a single recipient.
+	 *
+	 * @param string|array $recipient
+	 * @param bool $confirm_can_send
+	 * @return bool|\WP_Error
+	 */
+	private function handle_send_to( $recipient, $confirm_can_send = true ) {
+
+		Main::$current_email_recipient = array();
+
 		$GLOBALS['noptin_email_force_skip'] = null;
 
 		if ( $confirm_can_send ) {
@@ -596,14 +636,8 @@ class Email {
 			);
 		}
 
-		if ( ! is_array( $recipient ) || empty( $recipient['email'] ) || ! is_email( $recipient['email'] ) ) {
+		if ( ! is_array( $recipient ) || empty( $recipient['email'] ) ) {
 			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
-		}
-
-		// Check if the email is unsubscribed.
-		$is_pending_email = 'noptin_subscriber_status_set_to_pending' === $this->get_trigger();
-		if ( ! $is_pending_email && noptin_is_email_unsubscribed( $recipient['email'] ) ) {
-			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
 		}
 
 		if ( ! isset( $recipient['track'] ) ) {
@@ -616,6 +650,23 @@ class Email {
 		Main::init_current_email_recipient( $recipient, $this );
 
 		do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
+
+		// Maybe parse recipient tags.
+		if ( false !== strpos( Main::$current_email_recipient['email'], '[[' ) ) {
+			Main::$current_email_recipient['email'] = noptin()->emails->tags->replace_in_text_field( Main::$current_email_recipient['email'] );
+			$GLOBALS['current_noptin_email']        = Main::$current_email_recipient['email'];
+		}
+
+		// Check if the email is valid.
+		if ( ! is_email( Main::$current_email_recipient['email'] ) ) {
+			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
+		}
+
+		// Check if the email is unsubscribed.
+		$is_pending_email = 'noptin_subscriber_status_set_to_pending' === $this->get_trigger();
+		if ( ! $is_pending_email && noptin_is_email_unsubscribed( Main::$current_email_recipient['email'] ) ) {
+			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
+		}
 
 		// Generate the subject and body.
 		$subject = noptin_parse_email_subject_tags( $this->get_subject() );
@@ -639,7 +690,7 @@ class Email {
 		// Send the email.
 		$result = noptin_send_email(
 			array(
-				'recipients'               => $recipient['email'],
+				'recipients'               => Main::$current_email_recipient['email'],
 				'subject'                  => $subject,
 				'message'                  => $message,
 				'campaign_id'              => $this->id,
@@ -694,10 +745,10 @@ class Email {
 			return $type->contexts;
 		}
 
-		$sub_types = $type->get_sub_types();
+		$sub_type = $type->get_sub_type( $this->get_sub_type() );
 
-		if ( isset( $sub_types[ $this->get_sub_type() ]['contexts'] ) ) {
-			return $sub_types[ $this->get_sub_type() ]['contexts'];
+		if ( $sub_type && isset( $sub_type['contexts'] ) ) {
+			return $sub_type['contexts'];
 		}
 
 		return $type->contexts;
@@ -870,7 +921,13 @@ class Email {
 	public function get_email_type() {
 		$email_type  = $this->get( 'email_type' );
 		$email_types = array_keys( get_noptin_email_types() );
-		return in_array( $email_type, $email_types, true ) ? $email_type : get_default_noptin_email_type();
+		$email_type  = in_array( $email_type, $email_types, true ) ? $email_type : get_default_noptin_email_type();
+
+		if ( 'visual' === $email_type && ! noptin_has_active_license_key() ) {
+			$email_type = 'normal';
+		}
+
+		return $email_type;
 	}
 
 	/**
@@ -993,6 +1050,7 @@ class Email {
 			'supports_recipients'   => $this->supports( 'supports_recipients' ),
 			'placeholder_recipient' => $this->get_placeholder_recipient(),
 			'email_type'            => Main::get_email_type( $this->type ),
+			'edit_url'              => $this->get_edit_url(),
 			'manual_recipients'     => $manual_recipients,
 			'extra_settings'        => (object) apply_filters(
 				'noptin_email_extra_settings',
@@ -1093,6 +1151,19 @@ class Email {
 	 */
 	public function get_edit_url() {
 
+		$type = Main::get_email_type( $this->type );
+
+		if ( $type && $type->child_type ) {
+			return add_query_arg(
+				array(
+					'page'              => 'noptin-email-campaigns',
+					'noptin_email_type' => rawurlencode( $type->child_type ),
+					'noptin_parent_id'  => $this->id,
+				),
+				admin_url( '/admin.php' )
+			);
+		}
+
 		$param = array(
 			'noptin_campaign' => $this->id,
 		);
@@ -1106,6 +1177,12 @@ class Email {
 	 * @return string.
 	 */
 	public function get_preview_url() {
+		$type = Main::get_email_type( $this->type );
+
+		if ( $type && $type->child_type ) {
+			return '';
+		}
+
 		return get_preview_post_link( $this->id );
 	}
 
@@ -1181,7 +1258,12 @@ class Email {
 		unset( $args['id'] );
 
 		$duplicate = new Email( array_merge( $args, $override ) );
-		$result    = $duplicate->save();
+
+		if ( isset( $duplicate->options['automation_rule'] ) ) {
+			unset( $duplicate->options['automation_rule'] );
+		}
+
+		$result = $duplicate->save();
 
 		// Check if the duplicate exists.
 		if ( ! $duplicate->exists() ) {
@@ -1271,6 +1353,40 @@ class Email {
 	}
 
 	/**
+	 * Trash the campaign.
+	 *
+	 * @return Email|null|false The trashed campaign or false on failure.
+	 */
+	public function trash() {
+
+		$result = wp_trash_post( $this->id );
+
+		if ( empty( $result ) ) {
+			return false;
+		}
+
+		$this->status = 'trash';
+		return $this;
+	}
+
+	/**
+	 * Restores the campaign.
+	 *
+	 * @return Email|null|false The restored campaign or false on failure.
+	 */
+	public function restore() {
+
+		$result = wp_untrash_post( $this->id );
+
+		if ( empty( $result ) ) {
+			return false;
+		}
+
+		$this->status = $result->post_status;
+		return $this;
+	}
+
+	/**
 	 * Saves the email.
 	 */
 	public function save() {
@@ -1357,11 +1473,10 @@ class Email {
 			return false;
 		}
 
-		$sub_type  = $this->get_sub_type();
-		$sub_types = $type->get_sub_types();
+		$sub_type = $type->get_sub_type( $this->get_sub_type() );
 
-		if ( ! empty( $sub_type ) && isset( $sub_types[ $sub_type ] ) && isset( $sub_types[ $sub_type ][ $feature ] ) ) {
-			return $sub_types[ $sub_type ][ $feature ];
+		if ( $sub_type && isset( $sub_type[ $feature ] ) ) {
+			return $sub_type[ $feature ];
 		}
 
 		return isset( $type->{$feature} ) ? $type->{$feature} : false;

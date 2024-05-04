@@ -11,13 +11,20 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "symfony/css-selector": "5.4.35",
+        "symfony/css-selector": "5.4.39",
         "hizzle/store": "^0",
         "tijsverkoyen/css-to-inline-styles": "^2.2"
     },
     "autoload": {
         "psr-4": {
-            "Hizzle\\Noptin\\": ["src/", "build/"]
-        }
+            "Hizzle\\Noptin\\": [
+                "src/",
+                "build/"
+            ]
+        },
+        "files": [
+            "includes/functions.php",
+            "build/autoload.php"
+        ]
     }
 }

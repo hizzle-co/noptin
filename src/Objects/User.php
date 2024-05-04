@@ -18,11 +18,6 @@ class User extends Person {
 	public $external;
 
 	/**
-	 * @var \Record[] Cached records.
-	 */
-	private static $related = array();
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param mixed $external The external object.
@@ -78,6 +73,13 @@ class User extends Person {
 			return current( $this->external->roles );
 		}
 
+		// Custom fields that start with user_cf_.
+		if ( strpos( $field, 'user_cf_' ) === 0 ) {
+			$meta_key = str_replace( 'user_cf_', '', $field );
+			$value    = get_user_meta( $this->external->ID, $meta_key, true );
+			return apply_filters( 'noptin_users_known_custom_field_value', $value, $meta_key, $this->external );
+		}
+
 		// Meta.
 		if ( 'meta' === $field ) {
 			$field = isset( $args['key'] ) ? $args['key'] : null;
@@ -90,41 +92,14 @@ class User extends Person {
 
 		// Related collections.
 		if ( strpos( $field, '.' ) ) {
-			$collection     = strtok( $field, '.' );
-			$without_prefix = str_replace( $collection . '.', '', $field );
+			return $this->get_provided( $field, $args );
+		}
 
-			if ( empty( self::$related[ $collection ] ) ) {
-				self::$related[ $collection ] = array();
-			} elseif ( ! empty( self::$related[ $collection ][ $this->external->ID ] ) ) {
-				return self::$related[ $collection ][ $this->external->ID ]->get( $without_prefix, $args );
-			} elseif ( ! empty( self::$related[ $collection ][ $this->external->user_email ] ) ) {
-				return self::$related[ $collection ][ $this->external->user_email ]->get( $without_prefix, $args );
-			}
+		// Short circuit.
+		$value = apply_filters( 'noptin_wp_user_field_value', null, $field, $this->external );
 
-			/** @var People $collection */
-			$collection = Store::get( $collection );
-
-			if ( $collection && 'person' === $collection->object_type ) {
-				$record = $collection->get_from_user( $this->external );
-
-				if ( $record->exists() ) {
-					self::$related[ $collection->object_type ][ $this->external->ID ]         = $record;
-					self::$related[ $collection->object_type ][ $this->external->user_email ] = $record;
-
-					return $record->get( $without_prefix, $args );
-				}
-
-				$record = $collection->get_from_email( $this->external->user_email );
-
-				if ( $record->exists() ) {
-					self::$related[ $collection->object_type ][ $this->external->ID ]         = $record;
-					self::$related[ $collection->object_type ][ $this->external->user_email ] = $record;
-
-					return $record->get( $without_prefix, $args );
-				}
-
-				return null;
-			}
+		if ( ! is_null( $value ) ) {
+			return $value;
 		}
 
 		// Try with user_ prefix.

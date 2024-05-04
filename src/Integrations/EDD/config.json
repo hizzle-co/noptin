@@ -1,0 +1,7 @@
+{
+    "label": "Easy Digital Downloads",
+    "slug": "edd",
+    "requires": {
+        "function": "EDD"
+    }
+}

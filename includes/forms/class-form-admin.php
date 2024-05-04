@@ -99,7 +99,7 @@ class Noptin_Form_Admin {
 
 		$version = filemtime( plugin_dir_path( Noptin::$file ) . 'includes/assets/js/dist/optin-editor.js' );
 		wp_enqueue_script( 'noptin-modules', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/modules.js', array(), $version, true );
-		wp_enqueue_script( 'noptin-optin-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/optin-editor.js', array( 'vue', 'select2', 'sweetalert2', 'noptin-modules' ), $version, true );
+		wp_enqueue_script( 'noptin-optin-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/optin-editor.js', array( 'vue', 'select2', 'noptin-modules' ), $version, true );
 
 		require_once plugin_dir_path( __FILE__ ) . 'class-legacy-form-editor.php';
 		$editor = new Noptin_Legacy_Form_Editor( $post->ID, true );

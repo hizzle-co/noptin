@@ -47,7 +47,6 @@ class Generic_Post_Type extends Post_Type {
 
 		// Remove unsupported fields.
 		if ( $post_type && $init ) {
-
 			if ( ! post_type_supports( $this->type, 'title' ) ) {
 				$this->title_field = '';
 			}
@@ -158,28 +157,53 @@ class Generic_Post_Type extends Post_Type {
 	 */
 	public function get_fields() {
 
+		$action     = 'create_or_update_' . $this->type;
 		$is_visible = is_post_type_viewable( $this->type );
 		$fields     = array(
 			'id'             => array(
-				'label' => __( 'ID', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'        => __( 'ID', 'newsletter-optin-box' ),
+				'type'         => 'number',
+				'actions'      => array( $action, 'delete_' . $this->type ),
+				'action_props' => array(
+					$action                 => array(
+						'label'        => __( 'Post ID', 'newsletter-optin-box' ),
+						'description'  => __( 'Leave blank to create a new post.', 'newsletter-optin-box' ),
+						'show_in_meta' => true,
+					),
+					'delete_' . $this->type => array(
+						'label'       => __( 'Post ID or Slug', 'newsletter-optin-box' ),
+						'description' => __( 'Specify a post ID or slug', 'newsletter-optin-box' ),
+						'required'    => true,
+					),
+				),
 			),
 			'parent'         => array(
 				'label' => __( 'Parent ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
 			'author'         => array(
-				'label' => __( 'Author ID', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'        => __( 'Author ID', 'newsletter-optin-box' ),
+				'type'         => 'number',
+				'deprecated'   => 'post_author_id',
+				'actions'      => array( $action ),
+				'action_props' => array(
+					$action => array(
+						'label'        => __( 'Author ID or email address', 'newsletter-optin-box' ),
+						'description'  => __( 'If an email address is provided, the user will be created if they do not already exist.', 'newsletter-optin-box' ),
+						'show_in_meta' => true,
+					),
+				),
 			),
 			'date'           => array(
 				'label' => __( 'Date', 'newsletter-optin-box' ),
 				'type'  => 'date',
 			),
 			'title'          => array(
-				'label' => __( 'Title', 'newsletter-optin-box' ),
-				'type'  => 'string',
-				'block' => array(
+				'label'        => __( 'Title', 'newsletter-optin-box' ),
+				'type'         => 'string',
+				'actions'      => array( $action ),
+				'show_in_meta' => true,
+				'block'        => array(
 					'title'       => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s Title', 'newsletter-optin-box' ),
@@ -199,9 +223,10 @@ class Generic_Post_Type extends Post_Type {
 				),
 			),
 			'excerpt'        => array(
-				'label' => __( 'Excerpt', 'newsletter-optin-box' ),
-				'type'  => 'string',
-				'block' => array(
+				'label'   => __( 'Excerpt', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'actions' => array( $action ),
+				'block'   => array(
 					'title'       => __( 'Excerpt', 'newsletter-optin-box' ),
 					'description' => sprintf(
 						/* translators: %s: Object type label. */
@@ -215,12 +240,15 @@ class Generic_Post_Type extends Post_Type {
 				),
 			),
 			'content'        => array(
-				'label' => __( 'Content', 'newsletter-optin-box' ),
-				'type'  => 'string',
+				'label'   => __( 'Content', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'actions' => array( $action ),
 			),
 			'status'         => array(
-				'label' => __( 'Status', 'newsletter-optin-box' ),
-				'type'  => 'string',
+				'label'   => __( 'Status', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'actions' => array( $action ),
+				'options' => get_post_statuses(),
 			),
 			'comment_status' => array(
 				'label'   => __( 'Comment Status', 'newsletter-optin-box' ),
@@ -260,8 +288,14 @@ class Generic_Post_Type extends Post_Type {
 				),
 			),
 			'slug'           => array(
-				'label' => __( 'Slug', 'newsletter-optin-box' ),
-				'type'  => 'string',
+				'label'        => __( 'Slug', 'newsletter-optin-box' ),
+				'type'         => 'string',
+				'actions'      => array( $action ),
+				'action_props' => array(
+					$action => array(
+						'description' => __( 'If provided and a post with the same slug exists, the post will be updated.', 'newsletter-optin-box' ),
+					),
+				),
 			),
 			'comment_count'  => array(
 				'label' => __( 'Comment Count', 'newsletter-optin-box' ),
@@ -296,6 +330,12 @@ class Generic_Post_Type extends Post_Type {
 			'meta'           => $this->meta_key_tag_config(),
 		);
 
+		foreach ( $fields as $key => $args ) {
+			if ( empty( $args['deprecated'] ) ) {
+				$fields[ $key ]['deprecated'] = 'post_' . $key;
+			}
+		}
+
 		foreach ( $this->taxonomies() as $taxonomy => $label ) {
 			$icon = 'marker';
 
@@ -318,6 +358,19 @@ class Generic_Post_Type extends Post_Type {
 					strtolower( $label )
 				),
 				$icon
+			);
+
+			$fields[ 'tax_' . $taxonomy ]['actions']      = array( $action );
+			$fields[ 'tax_' . $taxonomy ]['action_props'] = array(
+				$action => array(
+					'description'  => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Enter a comma-separated list of %1$s %2$s.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label ),
+						strtolower( $label )
+					),
+					'show_in_meta' => true,
+				),
 			);
 		}
 
@@ -390,5 +443,197 @@ class Generic_Post_Type extends Post_Type {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Returns a list of available (actions).
+	 *
+	 * @return array $actions The actions.
+	 */
+	public function get_actions() {
+		return array_merge(
+			parent::get_actions(),
+			array(
+				'create_or_update_' . $this->type => array(
+					'id'          => 'create_or_update_' . $this->type,
+					'label'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Create or Update', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Create or update a %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'    => array( $this, 'create_post' ),
+				),
+			),
+			array(
+				'delete_' . $this->type => array(
+					'id'             => 'delete_' . $this->type,
+					'label'          => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Delete', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description'    => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Delete a %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'       => array( $this, 'delete_post' ),
+					'extra_settings' => array(
+						'force_delete' => array(
+							'label'       => __( 'Force Delete', 'newsletter-optin-box' ),
+							'description' => __( 'Whether to bypass the trash and force delete the post.', 'newsletter-optin-box' ),
+							'el'          => 'input',
+							'type'        => 'checkbox',
+							'default'     => true,
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Fetches post args.
+	 *
+	 * @param array $args
+	 */
+	protected function prepare_create_post_args( $args ) {
+		$post_info = array(
+			'post_type'  => $this->type,
+			'meta_input' => array(),
+			'tax_input'  => array(),
+		);
+
+		foreach ( $args as $key => $value ) {
+			if ( 'id' === $key ) {
+				$post_info['ID'] = $value;
+				continue;
+			}
+
+			if ( 'slug' === $key ) {
+				$value    = sanitize_title( $value );
+				$existing = get_page_by_path( $value, OBJECT, $this->type );
+
+				if ( $existing ) {
+					$post_info['ID'] = $existing->ID;
+				} else {
+					$post_info['post_name'] = $value;
+				}
+
+				continue;
+			}
+
+			if ( 'author' === $key ) {
+				if ( is_email( $value ) ) {
+					$user = Users::get_or_create_from_email( $value );
+
+					if ( is_wp_error( $user ) ) {
+						return $user;
+					}
+
+					$post_info['post_author'] = $user;
+				} else {
+					$post_info['post_author'] = $value;
+				}
+
+				continue;
+			}
+
+			if ( in_array( $key, array( 'title', 'excerpt', 'content', 'status' ), true ) ) {
+				$post_info[ "post_$key" ] = $value;
+				continue;
+			}
+
+			// Handle taxonomies.
+			if ( 0 === strpos( $key, 'tax_' ) ) {
+				$taxonomy = substr( $key, 4 );
+				$terms    = noptin_parse_list( $value, true );
+
+				if ( 'post_tag' === $taxonomy ) {
+					$post_info['tags_input'] = $terms;
+					continue;
+				}
+
+				// If terms are not ids, convert to ids.
+				$prepared = array();
+
+				foreach ( $terms as $term ) {
+					if ( is_numeric( $term ) ) {
+						$prepared[] = (int) $term;
+					} else {
+						$term = get_term_by( 'name', sanitize_text_field( $term ), $taxonomy );
+
+						if ( $term ) {
+							$prepared[] = (int) $term->term_id;
+						}
+					}
+				}
+
+				if ( ! empty( $prepared ) ) {
+					if ( 'category' === $taxonomy ) {
+						$post_info['post_category'] = $prepared;
+					} else {
+						$post_info['tax_input'][ $taxonomy ] = $prepared;
+					}
+				}
+
+				continue;
+			}
+
+			// Handle custom fields.
+			$post_info['meta_input'][ $key ] = $value;
+		}
+
+		if ( empty( $post_info['meta_input'] ) ) {
+			unset( $post_info['meta_input'] );
+		}
+
+		return $post_info;
+	}
+
+	/**
+	 * Creates or updates a post.
+	 *
+	 * @param array $args
+	 */
+	public function create_post( $args ) {
+
+		$post_info = wp_slash( $this->prepare_create_post_args( $args ) );
+		if ( ! empty( $post_info['ID'] ) ) {
+			$post = wp_update_post( $post_info, true );
+		} else {
+			$post = wp_insert_post( $post_info, true );
+		}
+
+		return $post;
+	}
+
+	/**
+	 * Deletes a post.
+	 *
+	 * @param array $args
+	 */
+	public function delete_post( $args ) {
+
+		if ( empty( $args['id'] ) ) {
+			return new \WP_Error( 'noptin_invalid_post_id', 'Post ID is required.' );
+		}
+
+		if ( is_numeric( $args['id'] ) ) {
+			$post = get_post( $args['id'] );
+		} else {
+			$post = get_page_by_path( $args['id'], OBJECT, $this->type );
+		}
+
+		if ( ! $post ) {
+			return new \WP_Error( 'noptin_post_not_found', 'Post not found.' );
+		}
+
+		return wp_delete_post( $post->ID, ! empty( $args['force_delete'] ) );
 	}
 }

@@ -41,6 +41,14 @@
 		font-style: <?php echo esc_attr( $settings['font_style'] ); ?>;
 	}
 
+	<?php if ( is_array( $settings['background_image'] ) && ! empty( $settings['background_image']['url'] ) ) : ?>
+		.wrapper-div {
+			background-image: url(<?php echo esc_url( $settings['background_image']['url'] ); ?>);
+			background-size: cover;
+			background-repeat: no-repeat;
+		}
+	<?php endif; ?>
+
 	div,
 	ol,
 	ul,

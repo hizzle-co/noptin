@@ -41,6 +41,7 @@ abstract class Post_Type extends Collection {
 
 		// Fire triggers.
 		add_action( 'wp_after_insert_post', array( $this, 'after_insert_post' ), 100, 4 );
+		add_action( 'noptin_force_trigger_new_post_notification', array( $this, 'force_trigger_for_post_published' ) );
 
 		// Deleted.
 		add_action( 'before_delete_post', array( $this, 'on_delete' ), 0, 2 );
@@ -102,7 +103,6 @@ abstract class Post_Type extends Collection {
 				noptin_email_wrap_paragraph_block( __( "If that doesn't work, copy and paste the following link into your browser:", 'newsletter-optin-box' ) ),
 				noptin_email_wrap_paragraph_block( $this->field_to_merge_tag( $this->url_field ) )
 			);
-
 		}
 
 		return array_merge(
@@ -290,10 +290,10 @@ abstract class Post_Type extends Collection {
 	/**
 	 * Fired after a post is inserted.
 	 *
-	 * @param int          $post_id     Post ID.
-	 * @param WP_Post      $post        Post object.
-	 * @param bool         $update      Whether this is an existing post being updated.
-	 * @param null|WP_Post $post_before Null for new posts, the WP_Post object prior
+	 * @param int           $post_id     Post ID.
+	 * @param \WP_Post      $post        Post object.
+	 * @param bool          $update      Whether this is an existing post being updated.
+	 * @param null|\WP_Post $post_before Null for new posts, the WP_Post object prior
 	 *                                  to the update for updated posts.
 	 */
 	public function after_insert_post( $post_id, $post, $update, $post_before ) {
@@ -320,6 +320,21 @@ abstract class Post_Type extends Collection {
 		if ( 'publish' === $old_status ) {
 			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_unpublished' );
 		}
+	}
+
+	/**
+	 * Fired after a post is inserted.
+	 *
+	 * @param \WP_Post $post Post object.
+	 */
+	public function force_trigger_for_post_published( $post ) {
+
+		// Abort if not our post type.
+		if ( wp_is_post_revision( $post ) || $this->type !== $post->post_type ) {
+			return;
+		}
+
+		$this->maybe_trigger( $post->post_author, $post->ID, $this->type . '_published' );
 	}
 
 	/**

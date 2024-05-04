@@ -19,6 +19,25 @@
 	$table = new Table( $email_type );
 	$table->prepare_items();
 
+	// Check if we have trash campaigns.
+	$trash_count = wp_count_posts( 'noptin-campaign' );
+	$parent      = ( empty( $email_type->parent_type ) || empty( $_GET['noptin_parent_id'] ) ) ? false : noptin_get_email_campaign_object( (int) $_GET['noptin_parent_id'] );
+	$app         = '';
+
+	if ( $parent ) {
+		$app = wp_json_encode(
+			array(
+				'title'      => $parent->name,
+				'status'     => $parent->status,
+				'id'         => $parent->id,
+				'modalTitle' => sprintf(
+					/* translators: %s: email type label */
+					esc_html__( 'Edit %s', 'newsletter-optin-box' ),
+					isset( $email_types[ $email_type->parent_type ] ) ? $email_types[ $email_type->parent_type ]->label : __( 'Campaign', 'newsletter-optin-box' )
+				),
+			)
+		);
+	}
 ?>
 
 <div class="wrap noptin noptin-email-campaigns noptin-<?php echo sanitize_html_class( $email_type->type ); ?> noptin-<?php echo sanitize_html_class( $email_type->type ); ?>-main" id="noptin-wrapper">
@@ -56,6 +75,11 @@
 					continue;
 				}
 
+				// Hide trash if it's empty.
+				if ( 'trash' === $email_type_data->type && empty( $trash_count->trash ) ) {
+					continue;
+				}
+
 				printf(
 					'<a href="%s" class="%s">%s</a>',
 					esc_url(
@@ -67,7 +91,7 @@
 							admin_url( '/admin.php' )
 						)
 					),
-					$email_type->type === $email_type_data->type ? 'nav-tab nav-tab-active' : 'nav-tab',
+					( $email_type->type === $email_type_data->type || $email_type->type === $email_type_data->child_type ) ? 'nav-tab nav-tab-active' : 'nav-tab',
 					esc_html( $email_type_data->plural_label )
 				);
 
@@ -76,9 +100,22 @@
 		?>
 	</div>
 
+	<?php if ( $parent ) : ?>
+		<div id="noptin-email-campaigns-parent">
+			<h1 class="wp-heading-inline">
+				<?php echo esc_html( $parent->name ); ?>
+			</h1>
+			<span id="noptin-email-campaigns-parent_edit" data-app="<?php echo esc_attr( $app ); ?>">
+				<span class="spinner" style="visibility: visible; float: none;"></span>
+			</span>
+			<a href="<?php echo esc_url( $parent->get_base_url() ); ?>" class="page-title-action"><?php esc_html_e( 'Back', 'newsletter-optin-box' ); ?></a>
+			<hr class="wp-header-end">
+		</div>
+	<?php endif; ?>
+
 	<!-- Display actual content -->
 	<div class="noptin-email-campaigns-tab-content">
-		<form id="noptin-email-campaigns-table" method="post" style="margin-top: 30px;">
+		<form id="noptin-email-campaigns-table" method="post">
 			<?php foreach ( $query_args as $key => $value ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"/>
 			<?php endforeach; ?>
@@ -86,4 +123,18 @@
 		</form>
 	</div>
 
+</div>
+
+<div style="display: none;">
+	<div id="noptin-revenue-tooltip-content">
+		<?php
+			if ( noptin_has_active_license_key() ) {
+				esc_html_e( 'Revenue is tracked when someone makes a purchase within 2 weeks of clicking on a link in a campaign', 'newsletter-optin-box' );
+			} else {
+				esc_html_e( 'Activate your license key to track and view revenue made per campaign', 'newsletter-optin-box' );
+			}
+		?>
+		<br />
+		<a class="button button-primary" href="<?php echo esc_url( noptin_get_upsell_url( 'guide/sending-emails/tracking-revenue-generated-per-email/', 'email-campaigns', 'revenue-tracking' ) ); ?>" target="_blank"><?php esc_html_e( 'Learn more', 'newsletter-optin-box' ); ?></a>
+	</div>
 </div>

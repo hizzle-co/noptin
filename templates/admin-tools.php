@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 				</th>
 				<td class="noptin-run-tool">
 					<a
-						href="<?php echo isset( $tool['url'] ) ? esc_url( $tool['url'] ) : esc_url( wp_nonce_url( admin_url( 'admin.php?page=noptin-tools&tool=' . $tool_action ), 'noptin_tool' ) ); ?>"
+						href="<?php echo isset( $tool['url'] ) ? esc_url( $tool['url'] ) : esc_url( wp_nonce_url( admin_url( 'admin.php?page=noptin-tools&tool=' . $tool_action ), 'noptin_tool', 'noptin_tool_nonce' ) ); ?>"
 						class="button button-large noptin-button-tool-<?php echo esc_attr( $tool_action ); ?>"
 						<?php if ( ! empty( $tool['confirm'] ) ) : ?>
 						onclick="return confirm('<?php echo esc_attr( $tool['confirm'] ); ?>')"

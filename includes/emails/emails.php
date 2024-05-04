@@ -180,45 +180,39 @@ function noptin_send_email_campaign( $campaign_id, $alt_smart_tags = null ) {
 function get_noptin_email_senders( $full = false ) {
 
 	// Prepare senders.
-	$senders = apply_filters(
-		'noptin_email_senders',
-		array(
+	$senders = array(
 
-			'noptin'                => array(
-				'label'        => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
-				'description'  => __( 'Send a bulk email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields.', 'newsletter-optin-box' ),
-				'image'        => array(
-					'icon' => 'email',
-					'fill' => '#008000',
-				),
-				'is_active'    => true,
-				'is_installed' => true,
+		'noptin' => array(
+			'label'        => __( 'Noptin Subscribers', 'newsletter-optin-box' ),
+			'description'  => __( 'Send a bulk email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields.', 'newsletter-optin-box' ),
+			'image'        => array(
+				'icon' => 'email',
+				'fill' => '#008000',
 			),
-
-			'woocommerce_customers' => array(
-				'label'        => __( 'WooCommerce Customers', 'newsletter-optin-box' ),
-				'description'  => __( "Send a bulk email to all your WooCommerce customers, customers who've bought specific products, etc.", 'newsletter-optin-box' ),
-				'image'        => 'https://noptin.com/wp-content/uploads/2023/04/woocommerce-badge-64x64.png',
-				'is_active'    => function_exists( 'WC' ),
-				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
-			),
-
-			'wp_users'              => array(
-				'label'        => __( 'WordPress Users', 'newsletter-optin-box' ),
-				'description'  => __( 'Send a bulk email to your WordPress Users. You can filter recipients by their user roles.', 'newsletter-optin-box' ),
-				'image'        => array(
-					'icon' => 'wordpress',
-					'fill' => '#464342',
-				),
-				'is_active'    => true,
-				'is_installed' => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
-			),
-
-		)
+			'is_installed' => true,
+			'is_local'     => true,
+		),
 	);
 
-	// Filter inactive senders.
-	$senders = wp_list_filter( $senders, array( 'is_active' => true ) );
+	foreach ( noptin()->integrations_new->get_all_known_integrations() as $integration ) {
+		if ( ! empty( $integration['mass_mail'] ) ) {
+			$sender             = $integration['mass_mail']['id'];
+			$senders[ $sender ] = $integration['mass_mail'];
+
+			$senders[ $sender ]['integration']  = $integration['slug'];
+			$senders[ $sender ]['is_installed'] = false;
+
+			if ( empty( $senders[ $sender ]['image'] ) ) {
+				$senders[ $sender ]['image'] = $integration['icon_url'];
+			}
+
+			if ( ! isset( $senders[ $sender ]['is_local'] ) ) {
+				$senders[ $sender ]['is_local'] = true;
+			}
+		}
+	}
+
+	$senders = apply_filters( 'noptin_email_senders', $senders );
 
 	// Are we returning the full array?
 	if ( ! $full ) {
@@ -368,6 +362,7 @@ function get_noptin_email_template_defaults() {
 			'line_height'       => '1.5',
 			'link_color'        => $brand_color,
 			'block_css'         => (object) array(),
+			'background_image'  => '',
 		),
 		'paste'         => array(
 			'color'              => '#111111',
@@ -490,18 +485,19 @@ function get_default_noptin_footer_text() {
  * @since 1.7.0
  * @param int $campaign_id
  * @param string $stat
+ * @param int $amount
  */
-function increment_noptin_campaign_stat( $campaign_id, $stat ) {
+function increment_noptin_campaign_stat( $campaign_id, $stat, $amount = 1 ) {
 
 	// Increment stat.
-	$current = (int) get_post_meta( $campaign_id, $stat, true );
-	update_post_meta( $campaign_id, $stat, $current + 1 );
+	$current = (float) get_post_meta( $campaign_id, $stat, true );
+	update_post_meta( $campaign_id, $stat, $current + $amount );
 
 	// Increment parent stat.
 	$parent = get_post_parent( $campaign_id );
 
 	if ( $parent ) {
-		increment_noptin_campaign_stat( $parent->ID, $stat );
+		increment_noptin_campaign_stat( $parent->ID, $stat, $amount );
 	}
 }
 
@@ -654,11 +650,7 @@ function noptin_prepare_email_recipients( $unprepared ) {
 		$track     = false === stripos( $recipient, '--notracking' );
 		$recipient = trim( str_ireplace( '--notracking', '', $recipient ) );
 
-		if ( false !== strpos( $recipient, '[[' ) ) {
-			$recipient = noptin()->emails->tags->replace_in_text_field( $recipient );
-		}
-
-		if ( is_email( $recipient ) ) {
+		if ( ! empty( $recipient ) ) {
 			$recipients[ $recipient ] = $track;
 			continue;
 		}
@@ -691,3 +683,50 @@ function noptin_resume_email_campaign( $campaign_id ) {
 	delete_post_meta( $campaign_id, '_bulk_email_last_error' );
 }
 add_action( 'noptin_resume_email_campaign', 'noptin_resume_email_campaign' );
+
+/**
+ * Supports ecommerce tracking.
+ *
+ * @since 3.0.0
+ * @param int $campaign_id
+ */
+function noptin_supports_ecommerce_tracking() {
+	return apply_filters( 'noptin_supports_ecommerce_tracking', false );
+}
+
+/**
+ * Returns the last email id that referred the current user.
+ *
+ * @since 3.2.0
+ * @return int
+ */
+function noptin_get_referring_email_id() {
+
+	if ( ! isset( $_COOKIE['noptin_cid'] ) ) {
+		return 0;
+	}
+
+	$cid = noptin_decrypt( $_COOKIE['noptin_cid'] );
+
+	if ( is_numeric( $cid ) ) {
+		return (int) $cid;
+	}
+
+	return 0;
+}
+
+/**
+ * Records an ecommerce purchase.
+ *
+ * @since 3.0.0
+ * @param float $amount
+ */
+function noptin_record_ecommerce_purchase( $amount, $campaign_id ) {
+
+	if ( noptin_has_active_license_key() && get_noptin_option( 'enable_ecommerce_tracking', true ) ) {
+		increment_noptin_campaign_stat( $campaign_id, '_revenue', $amount );
+
+		$lifetime_revenue = (float) get_option( 'noptin_emails_lifetime_revenue', 0 );
+		update_option( 'noptin_emails_lifetime_revenue', $lifetime_revenue + $amount, false );
+	}
+}

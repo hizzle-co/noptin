@@ -109,7 +109,6 @@ class Noptin_COM {
 		$details = self::fetch_license_details( $license_key );
 
 		if ( is_wp_error( $details ) ) {
-
 			if ( in_array( 'hizzle_licenses_not_found', $details->get_error_codes(), true ) ) {
 				self::update( 'license_key', '' );
 			}
@@ -260,41 +259,6 @@ class Noptin_COM {
 	}
 
 	/**
-	 * Retrieves a single integration.
-	 *
-	 * @param string $slug
-	 * @return object|false
-	 */
-	public static function get_integration( $slug ) {
-		return self::get_by_slug( $slug, self::get_integrations() );
-	}
-
-	/**
-	 * Retrieves all integrations.
-	 *
-	 */
-	public static function get_integrations() {
-
-		// Read from cache.
-		$cached = get_transient( 'noptin_com_integrations' );
-
-		if ( is_array( $cached ) ) {
-			return $cached;
-		}
-
-		// Fetch the integrations.
-		$result = self::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/integrations.json' ) );
-
-		if ( ! is_array( $result ) ) {
-			$result = json_decode( file_get_contents( plugin_dir_path( __FILE__ ) . 'integrations.json' ) );
-		}
-
-		// Cache the integrations.
-		set_transient( 'noptin_com_integrations', $result, 12 * HOUR_IN_SECONDS );
-		return $result;
-	}
-
-	/**
 	 * Retrieves a list of installed extensions.
 	 *
 	 * @return array
@@ -308,7 +272,6 @@ class Noptin_COM {
 		$noptin_plugins = array();
 
 		foreach ( get_plugins() as $filename => $data ) {
-
 			$slug = basename( dirname( $filename ) );
 
 			if ( 0 === strpos( $slug, 'noptin-' ) ) {

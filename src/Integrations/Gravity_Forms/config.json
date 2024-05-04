@@ -1,0 +1,7 @@
+{
+    "label": "Gravity Forms",
+    "slug": "gravity-forms",
+    "requires": {
+        "class": "GFForms"
+    }
+}

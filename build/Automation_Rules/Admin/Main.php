@@ -35,6 +35,7 @@ class Main {
 
 		add_action( 'admin_menu', array( __CLASS__, 'automation_rules_menu' ), 40 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+		add_action( 'admin_init', array( __CLASS__, 'migrate_automation_rule_triggers' ) );
 	}
 
 	/**
@@ -111,8 +112,9 @@ class Main {
 				apply_filters(
 					'noptin_email_settings_misc',
 					array(
-						'isTest' => defined( 'NOPTIN_IS_TESTING' ),
-						'data'   => array(
+						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
+						'integrations' => apply_filters( 'noptin_get_all_known_integrations', array() ),
+						'data'         => array(
 							'add_new'  => add_query_arg(
 								array(
 									'page' => 'noptin-automation-rules',
@@ -156,7 +158,6 @@ class Main {
 		$triggers_data = array();
 
 		foreach ( $triggers as $trigger ) {
-
 			if ( ! empty( $trigger->depricated ) ) {
 				continue;
 			}
@@ -188,5 +189,58 @@ class Main {
 		return array(
 			'automationRule' => $rule->get_data(),
 		);
+	}
+
+	/**
+	 * Migrates automation rule triggers.
+	 *
+	 * @since 3.0.0
+	 */
+	public static function migrate_automation_rule_triggers() {
+		$migrators = apply_filters( 'noptin_automation_rule_migrate_triggers', array() );
+
+		// Nothing to migrate.
+		if ( empty( $migrators ) || absint( get_option( 'noptin_db_version', 0 ) ) < noptin()->db_version ) {
+			return;
+		}
+
+		$migrated = (array) get_option( 'noptin_automation_rule_migrated_triggers', array() );
+
+		foreach ( $migrators as $migrator ) {
+			if ( empty( $migrator['trigger_id'] ) || empty( $migrator['id'] ) || in_array( $migrator['id'], $migrated, true ) ) {
+				continue;
+			}
+
+			/** @var \Hizzle\Noptin\DB\Automation_Rule[] $rules */
+			$rules = noptin_get_automation_rules(
+				array(
+					'trigger_id' => $migrator['trigger_id'],
+				)
+			);
+
+			foreach ( $rules as $rule ) {
+
+				// Abort if trigger id does not match.
+				if ( $rule->get_trigger_id() !== $migrator['trigger_id'] ) {
+					continue;
+				}
+
+				$previous_trigger = $rule->get_trigger_id();
+				call_user_func_array( $migrator['callback'], array( &$rule ) );
+				$rule->save();
+
+				if ( $previous_trigger !== $rule->get_trigger_id() && 'email' === $rule->get_action_id() ) {
+					$email_id = $rule->get_action_setting( 'automated_email_id' );
+
+					if ( ! empty( $email_id ) ) {
+						update_post_meta( $email_id, 'automation_type', 'automation_rule_' . $rule->get_trigger_id() );
+					}
+				}
+			}
+
+			$migrated[] = $migrator['id'];
+		}
+
+		update_option( 'noptin_automation_rule_migrated_triggers', $migrated );
 	}
 }

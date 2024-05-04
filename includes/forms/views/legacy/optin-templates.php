@@ -1037,7 +1037,7 @@
 				'formWidth'             => '600px',
 				'formHeight'            => '280px',
 				'noptinFormBg'          => '#607D8B',
-				'noptinFormBgImg'       => noptin()->plugin_url . 'includes/assets/images/double-bg.png',
+				'noptinFormBgImg'       => '',
 				'fields'                => array(
 					array(
 						'type'    => array(

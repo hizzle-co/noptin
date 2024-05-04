@@ -6,7 +6,6 @@ module.exports = {
 
 	entry: {
 		admin: "./includes/assets/js/src/admin.js",
-		settings: "./includes/assets/js/src/settings.js",
 		"legacy-forms": "./includes/assets/js/src/legacy-forms.js",
 		"legacy-popups": "./includes/assets/js/src/legacy-popups.js",
 		blocks: "./includes/assets/js/src/blocks.js",

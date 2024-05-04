@@ -1,0 +1,53 @@
+name: PHP Tests
+
+on: [push]
+
+jobs:
+  php-build:
+    runs-on: ubuntu-20.04
+    services:
+      mysql:
+          image: mysql:5.7
+          ports:
+            - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          env:
+            MYSQL_ROOT_PASSWORD: ""
+            MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    strategy:
+      matrix:
+        php-version: ['7.2'] # Add PHP 8.2 after figuring out how to use PHPUnit 9
+        wordpress-version: ['6.4', 'latest']
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        id: setup-php
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, zip, intl, pdo, pdo_mysql, curl, xml, xmlrpc, gd, exif, opcache, bcmath, soap, sockets, mysqli, json, iconv, phar, posix, pcntl, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo, dom, filter, hash, openssl, pcre, intl, zip, zlib, calendar, gettext, mysqli, pdo_mysql, soap, sockets, tokenizer, xmlwriter, xmlreader, simplexml, ctype, session, fileinfo,
+          tools: composer, phpunit, wp-cli, phpcs, phpcbf, phpunit-polyfills
+          coverage: xdebug
+
+      - name: Check MySQL connection
+        run: mysql --host=127.0.0.1 --user=root --execute="SELECT 1"
+
+      - name: Setup Environment Variables
+        run: |
+          echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $HOME/.bashrc
+          echo "WP_TESTS_PHPUNIT_POLYFILLS_PATH=$HOME/.composer/vendor/yoast/phpunit-polyfills" >> $GITHUB_ENV
+          source $HOME/.bashrc
+
+      - name: Run Tests on ${{ matrix.wordpress-version }}
+        run: |
+          bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 ${{ matrix.wordpress-version }} false
+          phpunit
+          WP_MULTISITE=1 phpunit
+
+      # - name: Check WP Coding Standards
+      #   run: |
+      #       composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+      #       composer global require --dev dealerdirect/phpcodesniffer-composer-installer:"^0.7" wp-coding-standards/wpcs:"^3.0" phpcompatibility/phpcompatibility-wp:"*"
+      #       phpcs

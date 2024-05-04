@@ -45,7 +45,7 @@ class Collection {
 	 *
 	 * @var bool
 	 */
-	protected $use_meta_table = false;
+	public $use_meta_table = false;
 
 	/**
 	 * CRUD class. Should extend Record.
@@ -142,7 +142,7 @@ class Collection {
 		global $wpdb;
 
 		// Set namespace.
-		$this->capabillity = get_noptin_capability();
+		$this->capabillity = function_exists( 'get_noptin_capability' ) ? get_noptin_capability() : 'manage_options';
 		$this->namespace   = $namespace;
 
 		// Set collection data.
@@ -1508,7 +1508,9 @@ class Collection {
 		}
 
 		foreach ( $this->get_cache_keys() as $key ) {
-			wp_cache_set( $record[ $key ], $record['id'], $this->hook_prefix( 'ids_by_' . $key, true ), WEEK_IN_SECONDS );
+			if ( isset( $record[ $key ] ) && ! empty( $record[ $key ] ) ) {
+				wp_cache_set( $record[ $key ], $record['id'], $this->hook_prefix( 'ids_by_' . $key, true ), WEEK_IN_SECONDS );
+			}
 		}
 
 		// Cache the entire record.
@@ -1525,7 +1527,9 @@ class Collection {
 		$record = (object) $record;
 
 		foreach ( $this->get_cache_keys() as $key ) {
-			wp_cache_delete( $record->$key, $this->hook_prefix( 'ids_by_' . $key, true ) );
+			if ( ! is_null( $record->$key ) ) {
+				wp_cache_delete( $record->$key, $this->hook_prefix( 'ids_by_' . $key, true ) );
+			}
 		}
 
 		wp_cache_delete( $record->id, $this->get_full_name() );

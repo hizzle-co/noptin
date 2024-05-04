@@ -17,12 +17,14 @@ defined( 'ABSPATH' ) || exit;
  */
 class Noptin_COM_Helper {
 
+	public static $temporary_key    = '';
+	public static $activation_error = '';
+
 	/**
 	 * Loads the helper class, runs on init.
 	 */
 	public static function load() {
 
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 
@@ -30,30 +32,13 @@ class Noptin_COM_Helper {
 	}
 
 	/**
-	 * Render the helper section content based on context.
-	 */
-	public static function output_extensions_page() {
-		require plugin_dir_path( __FILE__ ) . 'views/html-admin-page-extensions.php';
-	}
-
-	/**
-	 * Enqueue admin scripts and styles.
-	 */
-	public static function admin_enqueue_scripts() {
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-		$our_id    = noptin()->white_label->admin_screen_id() . '_page_noptin-addons';
-		$version   = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? time() : noptin()->version;
-
-		if ( $our_id === $screen_id ) {
-			wp_enqueue_style( 'noptin-addons-page', noptin()->plugin_url . 'includes/assets/css/addons-page.css', array(), $version );
-		}
-	}
-
-	/**
 	 * Fires after admin screen inits.
 	 */
 	public static function admin_init() {
+
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
 
 		// Handle license deactivation.
 		if ( isset( $_GET['noptin-deactivate-license-nonce'] ) && wp_verify_nonce( rawurldecode( $_GET['noptin-deactivate-license-nonce'] ), 'noptin-deactivate-license' ) ) {
@@ -63,10 +48,9 @@ class Noptin_COM_Helper {
 		}
 
 		// Handle license activation.
-		if ( isset( $_POST['noptin-license'] ) && isset( $_POST['noptin_save_license_key_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['noptin_save_license_key_nonce'] ), 'noptin_save_license_key' ) ) {
-			self::handle_license_save( $_POST['noptin-license'] );
+		if ( isset( $_POST['noptin-license'] ) && isset( $_POST['noptin_save_license_key_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['noptin_save_license_key_nonce'] ) ), 'noptin_save_license_key' ) ) {
+			self::handle_license_save( sanitize_text_field( wp_unslash( $_POST['noptin-license'] ) ) );
 		}
-
 	}
 
 	/**
@@ -104,13 +88,13 @@ class Noptin_COM_Helper {
 
 		// Abort if there was an error.
 		if ( is_wp_error( $result ) ) {
-			return noptin()->admin->show_error(
-				sprintf(
-					/* translators: %s: Error message. */
-					__( 'There was an error activating your license key: %s', 'newsletter-optin-box' ),
-					$result->get_error_message()
-				)
+			self::$temporary_key    = $license_key;
+			self::$activation_error = sprintf(
+				/* translators: %s: Error message. */
+				__( 'There was an error activating your license key: %s', 'newsletter-optin-box' ),
+				$result->get_error_message()
 			);
+			return false;
 		}
 
 		// Save the license key.
@@ -316,19 +300,6 @@ class Noptin_COM_Helper {
 
 		return true;
 	}
-
-	/**
-	 * Displays the main action button.
-	 *
-	 * @param object|WP_Error|false $license The active license
-	 * @param string $slug The extension slug.
-	 * @param array $installed_addons The installed addons.
-	 * @param bool  $is_connection Whether this is a connection.
-	 */
-	public static function display_main_action_button( $license, $slug, $installed_addons, $is_connection ) {
-		include plugin_dir_path( __FILE__ ) . 'views/html-extension-action-button.php';
-	}
-
 }
 
 Noptin_COM_Helper::load();

@@ -364,7 +364,6 @@ function prepare_noptin_form_fields( $fields ) {
 			$prepared[] = $custom_field;
 		}
 	}
-	// TODO: Document how to center email content. Test emails on mobile.
 
 	return $prepared;
 }

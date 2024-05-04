@@ -47,6 +47,16 @@ class Type {
 	public $supports_timing = false;
 
 	/**
+	 * @var string Checks if this email supports menu order.
+	 */
+	public $supports_menu_order = false;
+
+	/**
+	 * @var string Timing help text.
+	 */
+	public $timing_help_text = null;
+
+	/**
 	 * @var string Checks if this email supports sub_types.
 	 */
 	public $supports_sub_types = false;
@@ -87,6 +97,11 @@ class Type {
 	private $sub_types = null;
 
 	/**
+	 * @var string Checks if this is an upsell.
+	 */
+	public $upsell = false;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param array $args The email type args.
@@ -115,6 +130,39 @@ class Type {
 		}
 
 		return $this->sub_types;
+	}
+
+	/**
+	 * Returns an email sub type.
+	 *
+	 * @return array
+	 */
+	public function get_sub_type( $sub_type ) {
+
+		if ( ! $this->supports_sub_types ) {
+			return false;
+		}
+
+		if ( empty( $sub_type ) ) {
+			return null;
+		}
+
+		$sub_types = $this->get_sub_types();
+		if ( empty( $sub_types ) ) {
+			return null;
+		}
+
+		if ( isset( $sub_types[ $sub_type ] ) ) {
+			return $sub_types[ $sub_type ];
+		}
+
+		foreach ( $sub_types as $custom_type ) {
+			if ( isset( $custom_type['alias'] ) && $sub_type === $custom_type['alias'] ) {
+				return $custom_type;
+			}
+		}
+
+		return null;
 	}
 
 	/**
