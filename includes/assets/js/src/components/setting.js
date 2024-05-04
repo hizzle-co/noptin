@@ -28,7 +28,6 @@ import { useCallback, useMemo } from '@wordpress/element';
 /**
  * Local dependancies.
  */
-import ConditionalLogicEditor from './conditional-logic-editor';
 import { compare } from '../utils/operators';
 
 /**
@@ -547,18 +546,6 @@ export default function Setting({ settingKey, setting, availableSmartTags, prop,
 	// Displays a multi-checkbox control.
 	if ( setting.el === 'multi_checkbox' || setting.el === 'multi_checkbox_alt' ) {
 		return <MultiCheckbox {...defaultAttributes} options={options} />;
-	}
-
-	// Conditional logic editor.
-	if ( setting.el === 'conditional_logic' ) {
-		return (
-			<ConditionalLogicEditor
-				{...defaultAttributes}
-				availableSmartTags={availableSmartTags}
-				comparisons={setting.comparisons}
-				toggleText={setting.toggle_text}
-			/>
-		);
 	}
 
 	// Text input field.
