@@ -34,7 +34,7 @@ class Main {
 
 		wp_enqueue_style(
 			'noptin-interface',
-			plugin_dir_path( __FILE__ ) . 'assets/css/style-interface.css',
+			plugins_url( 'assets/css/style-interface.css', __FILE__ ),
 			array(),
 			$config['version']
 		);
