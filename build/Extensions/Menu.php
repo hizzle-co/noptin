@@ -140,12 +140,7 @@ class Menu {
 			$config['version']
 		);
 
-		wp_enqueue_style(
-			'noptin-interface',
-			$url . 'css/style-interface.css',
-			array( 'wp-components' ),
-			$config['version']
-		);
+		\Hizzle\Noptin\Misc\Main::load_interface_styles();
 	}
 
 	/**

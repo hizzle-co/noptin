@@ -71,8 +71,6 @@ class Store_UI {
 			return;
 		}
 
-        Main::load_interface_styles();
-
 		$config = include plugin_dir_path( __FILE__ ) . 'assets/js/collection.asset.php';
 
 		wp_enqueue_script(
@@ -101,5 +99,7 @@ class Store_UI {
 			array( 'wp-components' ),
 			$config['version']
 		);
+
+		Main::load_interface_styles();
 	}
 }
