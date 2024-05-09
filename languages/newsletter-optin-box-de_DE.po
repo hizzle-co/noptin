@@ -3,12 +3,12 @@ msgstr ""
 "Project-Id-Version: Noptin - Simple Newsletter Subscription Forms 1.2.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: Brian Mutende\n"
-"Language-Team: German\n"
+"Language-Team: Deutsch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2020-10-06 05:48+0000\n"
-"PO-Revision-Date: 2024-04-27 14:40+0000\n"
+"PO-Revision-Date: 2024-05-08 05:29+0000\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -980,6 +980,16 @@ msgstr ""
 #: includes/forms/class-legacy-form-editor.php:871
 msgid "Block"
 msgstr "ganze Breite"
+
+#: includes/assets/js/src/wc/block.json
+msgctxt "block description"
+msgid "Adds a newsletter subscription checkbox to the checkout."
+msgstr ""
+
+#: includes/assets/js/src/wc/block.json
+msgctxt "block title"
+msgid "Noptin Newsletter Subscription"
+msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:466
 #: includes/forms/views/tab-settings.php:15
@@ -2379,6 +2389,11 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:867
 #: src/Objects/Generic_Post_Type.php:368
 msgid "Enter a comma-separated list of %1$s %2$s."
+msgstr ""
+
+#. translators: %s is the taxonomy label
+#: includes/forms/class-legacy-form-editor.php:500
+msgid "Enter a comma-separated list of %s ids, slugs, or names to show this form on"
 msgstr ""
 
 #: build/Settings/Menu.php:626
@@ -4019,6 +4034,10 @@ msgstr ""
 msgid "Only show %s created since last send"
 msgstr ""
 
+#: includes/forms/class-legacy-form-editor.php:496
+msgid "Only show on %s"
+msgstr ""
+
 #: includes/forms/views/tab-settings.php:89
 msgid "Only show on: (Optional)"
 msgstr ""
@@ -4419,6 +4438,10 @@ msgstr "Versehen Sie alle ihre Styles mit '.noptin-optin-form-wrapper'. Ansonste
 
 #: includes/forms/class-legacy-form-editor.php:954
 msgid "Prefix Color"
+msgstr ""
+
+#: includes/forms/class-legacy-form-editor.php:503
+msgid "Prefix the id with a minus sign to exclude it from the list"
 msgstr ""
 
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:89
@@ -7285,27 +7308,4 @@ msgstr ""
 #: src/Integrations/GeoDirectory/Listings.php:121
 #: src/Integrations/WPForms/Main.php:132
 msgid "Zip"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:496
-msgid "Only show on %s"
-msgstr ""
-
-#. translators: %s is the taxonomy label
-#: includes/forms/class-legacy-form-editor.php:500
-msgid "Enter a comma-separated list of %s ids, slugs, or names to show this form on"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:503
-msgid "Prefix the id with a minus sign to exclude it from the list"
-msgstr ""
-
-#: includes/assets/js/src/wc/block.json
-msgctxt "block title"
-msgid "Noptin Newsletter Subscription"
-msgstr ""
-
-#: includes/assets/js/src/wc/block.json
-msgctxt "block description"
-msgid "Adds a newsletter subscription checkbox to the checkout."
 msgstr ""

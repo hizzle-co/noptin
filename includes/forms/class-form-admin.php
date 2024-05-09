@@ -219,18 +219,24 @@ class Noptin_Form_Admin {
 	public function post_updated_messages( $messages ) {
 		global $post_ID;
 
+		$preview_form = sprintf(
+			' <a href="%s">%s</a>',
+			esc_url( get_noptin_preview_form_url( $post_ID ) ),
+			__( 'Preview form', 'newsletter-optin-box' )
+		);
+
 		$messages['noptin-form'] = array(
 			0  => '', // Unused. Messages start at index 1.
-			1  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			1  => __( 'Form updated.', 'newsletter-optin-box' ) . $preview_form,
 			2  => __( 'Custom field updated.', 'newsletter-optin-box' ),
 			3  => __( 'Custom field deleted.', 'newsletter-optin-box' ),
-			4  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			4  => __( 'Form updated.', 'newsletter-optin-box' ) . $preview_form,
 			5  => __( 'Form restored.', 'newsletter-optin-box' ),
-			6  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form published. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			7  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form saved. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			8  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form submitted. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			9  => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form scheduled. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
-			10 => sprintf( /* Translators: %s URL to preview the form. */ __( 'Form draft updated. <a href="%s">Preview form</a>', 'newsletter-optin-box' ), esc_url( get_noptin_preview_form_url( $post_ID ) ) ),
+			6  => __( 'Form published.', 'newsletter-optin-box' ) . $preview_form,
+			7  => __( 'Form saved.', 'newsletter-optin-box' ) . $preview_form,
+			8  => __( 'Form submitted.', 'newsletter-optin-box' ) . $preview_form,
+			9  => __( 'Form scheduled.', 'newsletter-optin-box' ) . $preview_form,
+			10 => __( 'Form draft updated.', 'newsletter-optin-box' ) . $preview_form,
 		);
 
 		return $messages;

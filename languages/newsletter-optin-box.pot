@@ -2,35 +2,35 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.3.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/newsletter-optin-box\n"
+"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.3.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-05-04T04:35:59+00:00\n"
+"POT-Creation-Date: 2024-05-08T05:43:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
 
 #. Plugin Name of the plugin
-#: noptin.php
+#: C:\app\laragon\www\noptin\wp-content\plugins\noptin\noptin.php
 msgid "Noptin - WordPress Newsletter Plugin"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: noptin.php
+#: C:\app\laragon\www\noptin\wp-content\plugins\noptin\noptin.php
 msgid "https://noptin.com"
 msgstr ""
 
 #. Description of the plugin
-#: noptin.php
+#: C:\app\laragon\www\noptin\wp-content\plugins\noptin\noptin.php
 msgid "A very fast and lightweight WordPress newsletter plugin"
 msgstr ""
 
 #. Author of the plugin
-#: noptin.php
+#: C:\app\laragon\www\noptin\wp-content\plugins\noptin\noptin.php
 #: templates/actions-page.php:9
 #: includes/assets/js/dist/blocks-woocommerce-backend.js:1
 #: includes/assets/js/src/wc/edit.js:18
@@ -38,7 +38,7 @@ msgid "Noptin Newsletter"
 msgstr ""
 
 #. Author URI of the plugin
-#: noptin.php
+#: C:\app\laragon\www\noptin\wp-content\plugins\noptin\noptin.php
 msgid "https://github.com/picocodes"
 msgstr ""
 

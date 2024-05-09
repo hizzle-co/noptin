@@ -129,7 +129,7 @@ class Menu {
 			)
 		);
 
-		wp_set_script_translations( 'noptin-settings', 'newsletter-optin-box' );
+		wp_set_script_translations( 'noptin-settings', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
 		// Load the css.
 		wp_enqueue_style(

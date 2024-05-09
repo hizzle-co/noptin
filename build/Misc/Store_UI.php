@@ -90,7 +90,7 @@ class Store_UI {
             )
         );
 
-		wp_set_script_translations( 'noptin-collection', 'newsletter-optin-box' );
+		wp_set_script_translations( 'noptin-collection', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
 		// Load the css.
 		wp_enqueue_style(

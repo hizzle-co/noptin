@@ -311,7 +311,6 @@ function get_noptin_template( $template_name, $args = array(), $template_path = 
 	$the_template_path = locate_noptin_template( $template_name, $template_path, $default_path );
 
 	if ( ! empty( $the_template_path ) ) {
-
 		if ( $args && is_array( $args ) ) {
 			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Please, forgive us.
 			extract( $args );
@@ -348,7 +347,6 @@ function locate_noptin_template( $template_name, $template_path = 'noptin', $def
 
 	// Get default template.
 	if ( ! $template && false !== $default_path ) {
-
 		if ( empty( $default_path ) ) {
 			$default_path = get_noptin_plugin_path( 'templates' );
 		}
@@ -555,7 +553,6 @@ function noptin_parse_list( $list, $strict = false ) {
 	}
 
 	if ( ! is_array( $list ) ) {
-
 		if ( $strict ) {
 			$list = preg_split( '/,+/', $list, -1, PREG_SPLIT_NO_EMPTY );
 		} else {
@@ -763,7 +760,6 @@ function get_special_noptin_form_fields() {
 
 	$fields = array();
 	foreach ( get_noptin_custom_fields() as $custom_field ) {
-
 		if ( empty( $custom_field['predefined'] ) ) {
 			$fields[ $custom_field['merge_tag'] ] = $custom_field['label'];
 		}
@@ -965,7 +961,6 @@ function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
 
 	// In case the developer wants to cancel an action by id.
 	if ( is_numeric( $action_name_id_or_array ) ) {
-
 		try {
 			ActionScheduler_DBStore::instance()->cancel_action( (int) $action_name_id_or_array );
 			return true;
@@ -1146,18 +1141,14 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 	preg_match_all( '/\[\[#(\w*)\]\](.*?)\[\[\/\1\]\]/s', $content, $matches );
 
 	if ( ! empty( $matches ) ) {
-
 		foreach ( $matches[1] as $i => $match ) {
-
 			if ( empty( $all_merge_tags[ $match ] ) ) {
 				$content = str_replace( $matches[0][ $i ], '', $content );
 			} else {
-
 				$array       = array();
 				$multi_array = array();
 
 				foreach ( $all_merge_tags as $key => $value ) {
-
 					if ( false !== strpos( $key, $match ) ) {
 						$key = str_replace( $match . '.', '', $key );
 
@@ -1215,7 +1206,6 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 	$result = array();
 
 	foreach ( $array as $key => $value ) {
-
 		$_prefix = '' === $prefix ? "$key" : "$prefix.$key";
 
 		$result[ $_prefix ] = 1;
@@ -1225,7 +1215,6 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 		} elseif ( is_object( $value ) ) {
 			$result = array_merge( $result, flatten_noptin_array( get_object_vars( $value ), $_prefix ) );
 		} else {
-
 			if ( false === $value ) {
 				$value = __( 'No', 'newsletter-optin-box' );
 			}
@@ -1426,7 +1415,6 @@ function noptin_format_date( $date_time ) {
 	$time_diff = $current - $timestamp;
 
 	if ( $timestamp && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
-
 		$relative = sprintf(
 			/* translators: %s: Human-readable time difference. */
 			__( '%s ago', 'newsletter-optin-box' ),
@@ -1594,7 +1582,6 @@ function noptin_kses_post_vue() {
 	$allowed_html = array();
 
 	foreach ( wp_kses_allowed_html( 'post' ) as $tag => $attributes ) {
-
 		if ( ! is_array( $attributes ) ) {
 			continue;
 		}
@@ -1642,7 +1629,6 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 	$user = get_user_by( 'ID', $user_id );
 
 	if ( $user ) {
-
 		$subscriber = noptin_get_subscriber( $user->user_email );
 
 		if ( ! $subscriber->is_active() ) {
@@ -1831,7 +1817,6 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 	$condition_value = strtolower( (string) $condition_value );
 
 	switch ( $comparison ) {
-
 		case 'is':
 			return $current_value === $condition_value;
 
@@ -1910,7 +1895,6 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 
 	// Loop through each rule.
 	foreach ( $conditional_logic['rules'] as $rule ) {
-
 		$condition = Noptin_Dynamic_Content_Tags::search( $rule['type'], $smart_tags );
 
 		if ( empty( $condition ) ) {
@@ -1927,7 +1911,6 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 		}
 
 		if ( 'number' === $data_type ) {
-
 			if ( 'is_between' === $rule['condition'] ) {
 				$value = noptin_parse_list( $value );
 				$value = sprintf(
@@ -1940,7 +1923,6 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 				$value = floatval( $value );
 			}
 		} elseif ( 'date' === $data_type ) {
-
 			if ( 'is_date_between' === $rule['condition'] ) {
 				$value = noptin_parse_list( $value );
 				$value = sprintf(
@@ -2288,3 +2270,14 @@ function noptin_string_to_timestamp( $time_string, $from_timestamp = null ) {
 
 	return $next_timestamp;
 }
+
+function noptin_fallback_english_translation( $translated_text, $text ) {
+
+    // Check if the domain matches your plugin’s text domain
+    if ( empty( $translated_text ) ) {
+        return $text;
+    }
+
+    return $translated_text;
+}
+add_filter( 'gettext_newsletter-optin-box', 'noptin_fallback_english_translation', 10, 2 );
