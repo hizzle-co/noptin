@@ -269,7 +269,7 @@ msgstr ""
 msgid "-- Map Field --"
 msgstr ""
 
-#: includes/admin/welcome.php:73
+#: includes/admin/welcome.php:89
 msgid "1 Day"
 msgstr ""
 
@@ -277,7 +277,7 @@ msgstr ""
 msgid "40% OFF"
 msgstr ""
 
-#: includes/admin/welcome.php:77
+#: includes/admin/welcome.php:93
 msgid "7 Days"
 msgstr ""
 
@@ -359,7 +359,7 @@ msgstr ""
 msgid "Active"
 msgstr "aktiv"
 
-#: includes/admin/welcome.php:95
+#: includes/admin/welcome.php:111
 msgid "Active forms created via the Opt-In Forms Editor"
 msgstr "aktive Formulare, die über den Opt-in-Formular-Editor erstellt wurden "
 
@@ -562,7 +562,7 @@ msgstr ""
 msgid "Alias for [[post_title]]."
 msgstr ""
 
-#: includes/admin/welcome.php:102
+#: includes/admin/welcome.php:118
 #: includes/class-noptin-post-types.php:243
 msgid "All Forms"
 msgstr ""
@@ -1430,7 +1430,7 @@ msgstr ""
 msgid "Coupon Codes"
 msgstr ""
 
-#: includes/admin/welcome.php:124
+#: includes/admin/welcome.php:140
 msgid "Create a new form"
 msgstr ""
 
@@ -2921,7 +2921,7 @@ msgstr "Herzen"
 msgid "Height"
 msgstr ""
 
-#: includes/admin/welcome.php:130
+#: includes/admin/welcome.php:146
 msgid "Here are some of the plugins we recommend"
 msgstr ""
 
@@ -3756,7 +3756,7 @@ msgstr ""
 msgid "Newsletter Form"
 msgstr ""
 
-#: includes/admin/welcome.php:61
+#: includes/admin/welcome.php:77
 msgid "Newsletter Subscribers"
 msgstr "Newsletter-Abonnenten"
 
@@ -3764,7 +3764,7 @@ msgstr "Newsletter-Abonnenten"
 msgid "Newsletter Subscription Form"
 msgstr ""
 
-#: includes/admin/welcome.php:93
+#: includes/admin/welcome.php:109
 msgid "Newsletter Subscription Forms"
 msgstr "Newsletter-Abonnement-Formulare"
 
@@ -4344,7 +4344,7 @@ msgstr ""
 msgid "Popup"
 msgstr ""
 
-#: includes/admin/welcome.php:107
+#: includes/admin/welcome.php:123
 #: includes/class-noptin-post-types.php:231
 #: includes/class-noptin-post-types.php:276
 msgid "Popup Forms"
@@ -4588,7 +4588,7 @@ msgstr ""
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: includes/admin/welcome.php:128
+#: includes/admin/welcome.php:144
 msgid "Recommended Plugins"
 msgstr ""
 
@@ -4945,7 +4945,7 @@ msgstr ""
 msgid "Send the email to the current user or a comma separated list of email addresses."
 msgstr ""
 
-#: includes/admin/welcome.php:86
+#: includes/admin/welcome.php:102
 msgid "Send them an email"
 msgstr "senden Sie ihnen eine eMail"
 
@@ -5118,7 +5118,7 @@ msgstr ""
 msgid "Shortcode"
 msgstr ""
 
-#: includes/admin/welcome.php:111
+#: includes/admin/welcome.php:127
 #: includes/class-noptin-post-types.php:230
 #: includes/class-noptin-post-types.php:275
 msgid "Shortcode Forms"
@@ -5229,7 +5229,7 @@ msgstr ""
 msgid "Sliding"
 msgstr ""
 
-#: includes/admin/welcome.php:119
+#: includes/admin/welcome.php:135
 #: includes/class-noptin-post-types.php:232
 #: includes/class-noptin-post-types.php:277
 msgid "Sliding Forms"
@@ -6375,7 +6375,7 @@ msgstr ""
 msgid "Top Right Alt"
 msgstr ""
 
-#: includes/admin/welcome.php:69
+#: includes/admin/welcome.php:85
 #: src/Integrations/EDD/Orders.php:105
 #: src/Integrations/EDD/Orders.php:220
 #: src/Integrations/EDD/Order_Items.php:83
@@ -6733,11 +6733,11 @@ msgstr "bearbeiten"
 msgid "View a list of notices and errors logged by Noptin."
 msgstr "Logdateien der Notizen und Fehler ansehen, die Noptin aufgezeichnet hat."
 
-#: includes/admin/welcome.php:124
+#: includes/admin/welcome.php:140
 msgid "View all forms"
 msgstr ""
 
-#: includes/admin/welcome.php:83
+#: includes/admin/welcome.php:99
 msgid "View all subscribers"
 msgstr "alle Abonnenten ansehen"
 
@@ -6745,7 +6745,7 @@ msgstr "alle Abonnenten ansehen"
 msgid "View Campaigns"
 msgstr ""
 
-#: includes/admin/welcome.php:146
+#: includes/admin/welcome.php:162
 msgid "View Details"
 msgstr ""
 
@@ -7067,7 +7067,7 @@ msgstr ""
 msgid "Widget"
 msgstr ""
 
-#: includes/admin/welcome.php:115
+#: includes/admin/welcome.php:131
 #: includes/class-noptin-post-types.php:229
 #: includes/class-noptin-post-types.php:274
 msgid "Widget Forms"
@@ -7222,7 +7222,7 @@ msgstr ""
 msgid "Your email has been added to the sending queue and will be sent soon."
 msgstr ""
 
-#: includes/admin/welcome.php:63
+#: includes/admin/welcome.php:79
 msgid "Your email subscribers"
 msgstr "eine Übersicht über Ihre Abonnenten"
 
@@ -7302,4 +7302,9 @@ msgstr ""
 #: includes/functions.php:1918
 msgctxt "number"
 msgid "%1$s and %2$s"
+msgstr ""
+
+#. Translators: %1$s Opening link tag, %2$s Closing link tag.
+#: includes/admin/welcome.php:67
+msgid "Help us translate Noptin to your language. %1$sLearn how%2$s."
 msgstr ""

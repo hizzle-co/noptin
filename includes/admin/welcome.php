@@ -57,6 +57,22 @@
 		</p>
 	</div>
 
+	<?php if ( 'en_US' !== get_locale() ) : ?>
+		<div class="noptin-body">
+			<hr/>
+			<p style="color: green; font-weight: 700;">
+				<?php
+					printf(
+						/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+						esc_html__( 'Help us translate Noptin to your language. %1$sLearn how%2$s.', 'newsletter-optin-box' ),
+						'<a href="https://translate.wordpress.org/projects/wp-plugins/newsletter-optin-box/stable/" target="_blank">',
+						'</a>'
+					);
+				?>
+			</p>
+		</div>
+	<?php endif; ?>
+
 	<div class="noptin-header">
 		<h2><?php esc_html_e( 'Newsletter Subscribers', 'newsletter-optin-box' ); ?></h2>
 		<hr/>

@@ -36,7 +36,7 @@ class Noptin_Install {
 		// Upgrading from version 1.
 		if ( 1 === $upgrade_from ) {
 			return $this->upgrade_from_1();
-		} else {
+		} elseif ( 5 !== $upgrade_from ) {
 			return $this->upgrade_from_4();
 		}
 	}

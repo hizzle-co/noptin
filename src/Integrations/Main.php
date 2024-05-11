@@ -46,6 +46,7 @@ class Main {
 		add_filter( 'noptin_get_all_known_integrations', array( $this, 'get_all_known_integrations' ), 0 );
 
 		add_action( 'noptin_refresh_integrations', array( __CLASS__, 'refresh' ) );
+		add_action( 'noptin_upgrade_db', array( __CLASS__, 'refresh' ) );
 
 		// Admin notices.
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
