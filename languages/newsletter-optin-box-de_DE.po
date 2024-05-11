@@ -92,9 +92,10 @@ msgid "%1$s: %2$s in %3$s on line %4$s"
 msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
+#. translators: %s: Field label.
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
 #: src/Objects/Collection.php:754
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:237
 msgid "%s - Exclude"
 msgstr ""
 
@@ -188,7 +189,6 @@ msgid "%s addon"
 msgstr ""
 
 #. translators: %s: Human-readable time difference.
-#. translators: %s: human readable time difference
 #: includes/functions.php:1420
 #: src/DB/Main.php:567
 #: src/DB/Main.php:593
@@ -348,7 +348,7 @@ msgstr ""
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/email-editor.js:13
-#: build/Emails/assets/js/view-campaigns.js:2
+#: build/Emails/assets/js/view-campaigns.js:5
 msgid "Activate your license key to unlock"
 msgstr ""
 
@@ -414,7 +414,7 @@ msgstr ""
 #: src/DB/Schema.php:228
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:267
 msgid "Add New"
 msgstr "neuer Eintrag"
 
@@ -775,8 +775,8 @@ msgstr ""
 #: build/Emails/Admin/views/campaigns.php:111
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/view-campaigns.js:2
-#: build/Misc/assets/js/collection.js:236
+#: build/Emails/assets/js/view-campaigns.js:5
+#: build/Misc/assets/js/collection.js:272
 #: includes/assets/js/dist/welcome-wizard.js:1
 #: includes/assets/js/src/components/settings-wizard/step.js:64
 msgid "Back"
@@ -1127,9 +1127,9 @@ msgstr ""
 
 #: includes/class-noptin-scripts.php:196
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:255
 #: build/Misc/assets/js/list.js:1
 msgid "Cancel"
 msgstr ""
@@ -1767,7 +1767,8 @@ msgstr ""
 #: src/DB/Subscriber.php:810
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:249
+#: build/Misc/assets/js/collection.js:267
 msgid "Delete"
 msgstr "löschen"
 
@@ -2146,8 +2147,8 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:186
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/view-campaigns.js:9
-#: build/Misc/assets/js/collection.js:231
+#: build/Emails/assets/js/view-campaigns.js:12
+#: build/Misc/assets/js/collection.js:267
 msgid "Edit"
 msgstr ""
 
@@ -2522,13 +2523,6 @@ msgstr ""
 msgid "Everywhere"
 msgstr "… überall anzeigen"
 
-#. translators: Example URL
-#. translators: %s examples
-#: includes/forms/views/tab-form.php:70
-#: includes/forms/views/tab-settings.php:91
-msgid "Example: %s"
-msgstr ""
-
 #: includes/forms/views/tab-settings.php:35
 msgid ""
 "Example: <h2>Free Newsletter</h2>\n"
@@ -2716,9 +2710,11 @@ msgstr ""
 
 #. translators: %s: Example
 #. translators: %s: Placeholder for email recipients.
-#. translators: %s: Example SKU.
+#. translators: %s: The Example
 #: build/Emails/Admin/Main.php:422
 #: build/Emails/Email.php:900
+#: includes/forms/views/tab-form.php:70
+#: includes/forms/views/tab-settings.php:91
 #: src/Integrations/WooCommerce/Products.php:89
 msgid "For example, %s"
 msgstr ""
@@ -3808,7 +3804,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:684
 #: src/Objects/Store.php:161
 #: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "No"
 msgstr ""
 
@@ -4046,7 +4042,7 @@ msgstr "Optimieren Sie Ihre Opt-Ins."
 msgid "Optional. Add any custom CSS to style your emails."
 msgstr ""
 
-#. translators: %s examples
+#. translators: %s: The Example
 #: includes/forms/views/tab-settings.php:92
 msgid "Optional. Enter a comma separated list of URLs or post ids. If set, the form will only show if a user is viewing those pages."
 msgstr ""
@@ -4226,7 +4222,7 @@ msgid "Paste"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:494
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Pause"
 msgstr ""
 
@@ -4272,7 +4268,7 @@ msgid "Payments"
 msgstr ""
 
 #: includes/subscriber.php:1599
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Pending"
 msgstr ""
 
@@ -4601,7 +4597,7 @@ msgid "Recovery URL"
 msgstr ""
 
 #: build/Emails/Types/Recurring.php:30
-#: build/Emails/assets/js/view-campaigns.js:1
+#: build/Emails/assets/js/view-campaigns.js:4
 msgid "Recurring"
 msgstr ""
 
@@ -4739,7 +4735,7 @@ msgid "Resubscribe URL"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:483
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Resume"
 msgstr ""
 
@@ -4799,7 +4795,7 @@ msgid "Sales"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:1117
-#: build/Misc/assets/js/collection.js:225
+#: build/Misc/assets/js/collection.js:243
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
@@ -5301,7 +5297,7 @@ msgstr ""
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:165
 #: src/Objects/Generic_Post_Type.php:248
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Status"
 msgstr ""
 
@@ -6334,7 +6330,7 @@ msgstr ""
 
 #: src/DB/Main.php:466
 #: src/Objects/Generic_Post_Type.php:202
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Title"
 msgstr ""
 
@@ -6775,7 +6771,7 @@ msgstr ""
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/email-editor.js:13
-#: build/Emails/assets/js/view-campaigns.js:2
+#: build/Emails/assets/js/view-campaigns.js:5
 #: build/Misc/assets/js/list.js:1
 msgid "View Pricing"
 msgstr ""
@@ -7119,7 +7115,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:686
 #: src/Objects/Store.php:160
 #: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Yes"
 msgstr ""
 

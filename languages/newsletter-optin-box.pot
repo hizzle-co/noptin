@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-05-10T08:06:06+00:00\n"
+"POT-Creation-Date: 2024-05-11T04:31:44+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -213,17 +213,19 @@ msgstr ""
 
 #. translators: %s: Example
 #. translators: %s: Placeholder for email recipients.
-#. translators: %s: Example SKU.
+#. translators: %s: The Example
 #: build/Emails/Admin/Main.php:422
 #: build/Emails/Email.php:900
+#: includes/forms/views/tab-form.php:70
+#: includes/forms/views/tab-settings.php:91
 #: src/Integrations/WooCommerce/Products.php:89
 msgid "For example, %s"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:186
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/view-campaigns.js:9
-#: build/Misc/assets/js/collection.js:231
+#: build/Emails/assets/js/view-campaigns.js:12
+#: build/Misc/assets/js/collection.js:267
 msgid "Edit"
 msgstr ""
 
@@ -274,7 +276,8 @@ msgstr ""
 #: src/DB/Subscriber.php:810
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:249
+#: build/Misc/assets/js/collection.js:267
 msgid "Delete"
 msgstr ""
 
@@ -357,7 +360,7 @@ msgid "Are you sure you want to resend this campaign?"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:483
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Resume"
 msgstr ""
 
@@ -370,7 +373,7 @@ msgid "Are you sure you want to resume sending this campaign?"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:494
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Pause"
 msgstr ""
 
@@ -434,7 +437,7 @@ msgstr ""
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:165
 #: src/Objects/Generic_Post_Type.php:248
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Status"
 msgstr ""
 
@@ -493,8 +496,8 @@ msgstr ""
 #: build/Emails/Admin/views/campaigns.php:111
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/view-campaigns.js:2
-#: build/Misc/assets/js/collection.js:236
+#: build/Emails/assets/js/view-campaigns.js:5
+#: build/Misc/assets/js/collection.js:272
 #: includes/assets/js/dist/welcome-wizard.js:1
 #: includes/assets/js/src/components/settings-wizard/step.js:64
 msgid "Back"
@@ -803,7 +806,7 @@ msgid "Invalid email IDs"
 msgstr ""
 
 #: build/Emails/Types/Recurring.php:30
-#: build/Emails/assets/js/view-campaigns.js:1
+#: build/Emails/assets/js/view-campaigns.js:4
 msgid "Recurring"
 msgstr ""
 
@@ -1084,7 +1087,7 @@ msgstr ""
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/email-editor.js:13
-#: build/Emails/assets/js/view-campaigns.js:2
+#: build/Emails/assets/js/view-campaigns.js:5
 #: build/Misc/assets/js/list.js:1
 msgid "View Pricing"
 msgstr ""
@@ -1185,7 +1188,7 @@ msgstr ""
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/email-editor.js:13
-#: build/Emails/assets/js/view-campaigns.js:2
+#: build/Emails/assets/js/view-campaigns.js:5
 msgid "Activate your license key to unlock"
 msgstr ""
 
@@ -2416,7 +2419,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:686
 #: src/Objects/Store.php:160
 #: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Yes"
 msgstr ""
 
@@ -2428,7 +2431,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:684
 #: src/Objects/Store.php:161
 #: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "No"
 msgstr ""
 
@@ -2603,9 +2606,9 @@ msgstr ""
 
 #: includes/class-noptin-scripts.php:196
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:255
 #: build/Misc/assets/js/list.js:1
 msgid "Cancel"
 msgstr ""
@@ -3075,7 +3078,7 @@ msgstr ""
 #: src/DB/Schema.php:228
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:267
 msgid "Add New"
 msgstr ""
 
@@ -3717,7 +3720,7 @@ msgid "Your template has been saved successfuly"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:1117
-#: build/Misc/assets/js/collection.js:225
+#: build/Misc/assets/js/collection.js:243
 msgid "Save Changes"
 msgstr ""
 
@@ -4242,13 +4245,6 @@ msgstr ""
 msgid "Leave blank if you do not want to redirect users after they sign-up via this form."
 msgstr ""
 
-#. translators: Example URL
-#. translators: %s examples
-#: includes/forms/views/tab-form.php:70
-#: includes/forms/views/tab-settings.php:91
-msgid "Example: %s"
-msgstr ""
-
 #: includes/forms/views/tab-form.php:76
 msgid "Enter the tags to assign new subscribers."
 msgstr ""
@@ -4355,7 +4351,7 @@ msgstr ""
 msgid "Only show on: (Optional)"
 msgstr ""
 
-#. translators: %s examples
+#. translators: %s: The Example
 #: includes/forms/views/tab-settings.php:92
 msgid "Optional. Enter a comma separated list of URLs or post ids. If set, the form will only show if a user is viewing those pages."
 msgstr ""
@@ -4413,7 +4409,6 @@ msgid "Time Zone"
 msgstr ""
 
 #. translators: %s: Human-readable time difference.
-#. translators: %s: human readable time difference
 #: includes/functions.php:1420
 #: src/DB/Main.php:567
 #: src/DB/Main.php:593
@@ -4894,7 +4889,7 @@ msgid "Users Sync"
 msgstr ""
 
 #: includes/subscriber.php:1599
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Pending"
 msgstr ""
 
@@ -4916,9 +4911,10 @@ msgid "Optional. Leave blank to send to all"
 msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
+#. translators: %s: Field label.
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
 #: src/Objects/Collection.php:754
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:237
 msgid "%s - Exclude"
 msgstr ""
 
@@ -4971,7 +4967,7 @@ msgstr ""
 
 #: src/DB/Main.php:466
 #: src/Objects/Generic_Post_Type.php:202
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Title"
 msgstr ""
 
@@ -7309,8 +7305,8 @@ msgid "Updated at"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Emails/assets/js/view-campaigns.js:9
-#: build/Misc/assets/js/collection.js:222
+#: build/Emails/assets/js/view-campaigns.js:12
+#: build/Misc/assets/js/collection.js:240
 msgid "Save"
 msgstr ""
 
@@ -7319,8 +7315,8 @@ msgid "Save Automation"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:225
+#: build/Misc/assets/js/collection.js:240
+#: build/Misc/assets/js/collection.js:243
 msgid "Saving..."
 msgstr ""
 
@@ -7500,7 +7496,7 @@ msgstr ""
 #: build/Emails/assets/js/email-editor.js:57
 #: build/Emails/assets/js/global.js:45
 #: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 #: build/Settings/assets/js/settings.js:57
 msgid "Go Back"
 msgstr ""
@@ -7581,7 +7577,7 @@ msgid "Add New Automation"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:91
+#: build/Emails/assets/js/email-editor.js:97
 msgid "Unlock Premium Feature"
 msgstr ""
 
@@ -8011,106 +8007,111 @@ msgstr ""
 
 #. translators: %s: plural name of the post type
 #: build/Emails/assets/js/email-editor.js:79
+#: build/Emails/assets/js/email-editor.js:82
 msgid "%s Template"
 msgstr ""
 
+#. translators: %s: Singular label, e.g, "Product"
 #: build/Emails/assets/js/email-editor.js:79
+#: build/Emails/assets/js/email-editor.js:85
 msgid "Contains the block elements used to render a %s"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:79
+#. translators: %s: Collection, e.g, "Products"
+#: build/Emails/assets/js/email-editor.js:82
 msgid "Displays %s in a list or a grid"
 msgstr ""
 
 #. translators: accessibility text for the editor top bar landmark region.
-#: build/Emails/assets/js/email-editor.js:81
+#: build/Emails/assets/js/email-editor.js:87
 msgid "Editor top bar"
 msgstr ""
 
 #. translators: accessibility text for the editor content landmark region.
-#: build/Emails/assets/js/email-editor.js:83
+#: build/Emails/assets/js/email-editor.js:89
 msgid "Editor content"
 msgstr ""
 
 #. translators: accessibility text for the editor settings landmark region.
-#: build/Emails/assets/js/email-editor.js:85
+#: build/Emails/assets/js/email-editor.js:91
 #: build/Settings/assets/js/settings.js:63
 msgid "Editor settings"
 msgstr ""
 
 #. translators: accessibility text for the editor publish landmark region.
-#: build/Emails/assets/js/email-editor.js:87
+#: build/Emails/assets/js/email-editor.js:93
 #: build/Settings/assets/js/settings.js:65
 msgid "Editor publish"
 msgstr ""
 
 #. translators: accessibility text for the editor footer landmark region.
-#: build/Emails/assets/js/email-editor.js:89
+#: build/Emails/assets/js/email-editor.js:95
 #: build/Settings/assets/js/settings.js:67
 msgid "Editor footer"
 msgstr ""
 
 #. translators: accessibility text for the editor secondary sidebar landmark region.
-#: build/Emails/assets/js/email-editor.js:91
+#: build/Emails/assets/js/email-editor.js:97
 #: build/Settings/assets/js/settings.js:69
 msgid "Document Overview"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:91
+#: build/Emails/assets/js/email-editor.js:97
 msgid "This email type is only available to premium license holders."
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:1
+#. translators: %s: description, e.g, "Sends an email after a user subscribes"
+#: build/Emails/assets/js/view-campaigns.js:4
 msgid "Sends an email %s"
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:1
+#: build/Emails/assets/js/view-campaigns.js:4
 msgid "Select Campaign Type"
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:1
+#: build/Emails/assets/js/view-campaigns.js:4
 msgid "Send to"
 msgstr ""
 
 #. translators: %s: campaign type
-#: build/Emails/assets/js/view-campaigns.js:2
+#: build/Emails/assets/js/view-campaigns.js:5
 msgid "%s name"
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:2
+#: build/Emails/assets/js/view-campaigns.js:5
 msgid "Enter a name for your campaign"
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:2
+#: build/Emails/assets/js/view-campaigns.js:5
 msgid "Create"
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:2
-#: build/Misc/assets/js/collection.js:229
+#: build/Emails/assets/js/view-campaigns.js:5
+#: build/Misc/assets/js/collection.js:247
 msgid "Show all"
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Draft"
 msgstr ""
 
-#: build/Emails/assets/js/view-campaigns.js:9
+#: build/Emails/assets/js/view-campaigns.js:12
 msgid "Published"
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:229
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:267
 msgid "An unknown error occurred."
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "View Records"
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:240
 msgid "Add New Item"
 msgstr ""
 
@@ -8127,261 +8128,278 @@ msgid "Record deleted successfully."
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:249
 msgid "Deleting..."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#. translators: %s: Field label.
+#: build/Misc/assets/js/collection.js:225
+msgctxt "Number"
 msgid "%s - Min"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#. translators: %s: Field label.
+#: build/Misc/assets/js/collection.js:228
+msgctxt "Number"
 msgid "%s - Max"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#. translators: %s: Date field label.
+#: build/Misc/assets/js/collection.js:231
+msgctxt "Date"
 msgid "%s - After"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#. translators: %s: Date field label.
+#: build/Misc/assets/js/collection.js:234
+msgctxt "Date"
 msgid "%s - Before"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:234
 msgid "Separate multiple values with a comma."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:237
 msgid "Apply Filters"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#. translators: %d: number of filters applied.
+#: build/Misc/assets/js/collection.js:240
 msgid "Applied Filters (%d)"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:240
 msgid "Filter Records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:240
 msgid "Filter records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:225
+#: build/Misc/assets/js/collection.js:240
+#: build/Misc/assets/js/collection.js:243
 msgid "Record saved successfully."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:225
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:243
+#: build/Misc/assets/js/collection.js:267
 msgid "Edit Item"
 msgstr ""
 
 #. translators: %s: item title.
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Refresh"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Hide"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Preparing records..."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Found no records to export."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Done! Click the button below to download records."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Download CSV"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Select the fields to include in your exported file"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Download"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:229
+#: build/Misc/assets/js/collection.js:247
 msgid "Download Selected"
 msgstr ""
 
 #. translators: %s: number of records
-#: build/Misc/assets/js/collection.js:230
+#: build/Misc/assets/js/collection.js:248
 msgid "Download all %s records"
 msgstr ""
 
 #. translators: %s: number of records
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:249
 msgid "Download %s selected records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:249
 msgid "Delete Selected"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#. translators: %d: Number of records being deleted.
+#: build/Misc/assets/js/collection.js:252
 msgid "Are you sure you want to delete %d matching records?"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#. translators: %d: Number of records being deleted.
+#: build/Misc/assets/js/collection.js:255
 msgid "Are you sure you want to delete %d selected records?"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:255
 msgid "Yes, Delete!"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:255
 msgid "Do not update"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#. translators: %s: Field label, e.g. "Tags".
+#: build/Misc/assets/js/collection.js:258
 msgid "%s - To Add"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#. translators: %s: Field label, e.g. "Tags".
+#: build/Misc/assets/js/collection.js:261
 msgid "%s - To Remove"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#. translators: %d: Number of records being saved.
+#: build/Misc/assets/js/collection.js:264
 msgid "Saving %d records..."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#. translators: %d: Number of records being edited.
+#: build/Misc/assets/js/collection.js:267
 msgid "Edit %d records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:267
 msgid "Records updated successfully."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:267
 msgid "Bulk Edit"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:267
 msgid "Error"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:267
 msgid "Loading"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:270
 msgid "This tool allows you to import existing records from a CSV file."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:270
 msgid "Select a CSV file"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:270
 msgid "The first row of the CSV file should contain the field names/headers."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:270
 msgid " Have a different file type?"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:270
 msgid "Convert it to CSV"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Select value"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Enter value"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Enter a value to assign all imported records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Ignore Field"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Manually enter value"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Map Field"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Try again"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Map the headers of your CSV file to known fields."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
 msgid "Update existing records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:275
 msgid "Import"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#. translators: %s: file name.
+#: build/Misc/assets/js/collection.js:275
 msgid "No records found in %s."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Importing"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Processed"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Records Found"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Records Created"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Records Updated"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Records Failed"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Records Skipped"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Errors"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Clear"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:236
+#: build/Misc/assets/js/collection.js:275
 msgid "Parsing"
 msgstr ""
 
 #. translators: accessibility text for the footer landmark region.
-#: build/Misc/assets/js/collection.js:248
+#: build/Misc/assets/js/collection.js:287
 #: build/Misc/assets/js/interface.js:13
 #: build/Misc/assets/js/list.js:13
 msgid "Thank you for using Noptin. Please leave us a review 🌟"
