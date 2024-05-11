@@ -457,7 +457,7 @@ abstract class Collection {
 			'title'        => $this->label,
 			'type'         => 'table',
 			'emptyMessage' => sprintf(
-				// translators: %s is the order type name.
+				// translators: %s is the object type label, e.g. "orders".
 				__( 'No %s found.', 'newsletter-optin-box' ),
 				strtolower( $this->label )
 			),
@@ -750,14 +750,14 @@ abstract class Collection {
 
 			$filters[ $field_not ] = array(
 				'label'       => sprintf(
-					/* translators: %s: Taxonomy name. */
+					// translators: %s is the filter label, e.g, "Tags".
 					__( '%s - Exclude', 'newsletter-optin-box' ),
 					$label
 				),
 				'el'          => 'select',
 				'multiple'    => true,
 				'description' => sprintf(
-					/* translators: %s: Taxonomy name. */
+					// translators: %s is the filter label, e.g, "Tags".
 					__( 'Exclude %s.', 'newsletter-optin-box' ),
 					strtolower( $label )
 				),
@@ -867,7 +867,7 @@ abstract class Collection {
 			if ( 'yes' === $atts['skiponempty'] ) {
 				$GLOBALS['noptin_email_force_skip'] = array(
 					'message' => sprintf(
-						/* translators: %s: object type label */
+						// translators: %s is the object type label, e.g. "orders".
 						__( 'No %s found.', 'newsletter-optin-box' ),
 						strtolower( $this->label )
 					),

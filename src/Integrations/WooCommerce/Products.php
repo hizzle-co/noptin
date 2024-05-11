@@ -85,7 +85,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'type'        => 'text',
 				'description' => __( 'Does partial matching on the SKU.', 'newsletter-optin-box' ),
 				'placeholder' => sprintf(
-					// translators: %s: Example SKU.
+					// translators: %s: The Example
 					__( 'For example, %s', 'newsletter-optin-box' ),
 					'PROD-'
 				),

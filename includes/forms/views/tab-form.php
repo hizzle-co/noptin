@@ -67,7 +67,7 @@ $tag_messages = array(
 		<?php esc_html_e( 'Redirect URL (Optional)', 'newsletter-optin-box' ); ?>
 		<span title="<?php esc_attr_e( 'Leave blank if you do not want to redirect users after they sign-up via this form.', 'newsletter-optin-box' ); ?>" class="noptin-tip dashicons dashicons-info"></span>
 	</label>
-	<input type="text" class="noptin-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $form->settings['redirect'] ) ? esc_attr( $form->settings['redirect'] ) : ''; ?>" placeholder="<?php echo sprintf( /* translators: Example URL */ esc_attr__( 'Example: %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
+	<input type="text" class="noptin-text" id="noptin-form-redirect-url" name="noptin_form[settings][redirect]" value="<?php echo isset( $form->settings['redirect'] ) ? esc_attr( $form->settings['redirect'] ) : ''; ?>" placeholder="<?php printf( /* translators: %s: The Example */ esc_attr__( 'For example, %s', 'newsletter-optin-box' ), esc_attr( site_url( '/thank-you/' ) ) ); ?>" />
 </div>
 
 <div class="noptin-text-wrapper form-settings-tags">

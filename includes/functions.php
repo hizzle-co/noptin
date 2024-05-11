@@ -1915,7 +1915,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 				$value = noptin_parse_list( $value );
 				$value = sprintf(
 					// translators: %s is a number.
-					__( '%1$s and %2$s', 'newsletter-optin-box' ),
+					_x( '%1$s and %2$s', 'number', 'newsletter-optin-box' ),
 					floatval( $value[0] ),
 					isset( $value[1] ) ? floatval( $value[1] ) : floatval( $value[0] )
 				);
@@ -2270,14 +2270,3 @@ function noptin_string_to_timestamp( $time_string, $from_timestamp = null ) {
 
 	return $next_timestamp;
 }
-
-function noptin_fallback_english_translation( $translated_text, $text ) {
-
-    // Check if the domain matches your plugin’s text domain
-    if ( empty( $translated_text ) ) {
-        return $text;
-    }
-
-    return $translated_text;
-}
-add_filter( 'gettext_newsletter-optin-box', 'noptin_fallback_english_translation', 10, 2 );

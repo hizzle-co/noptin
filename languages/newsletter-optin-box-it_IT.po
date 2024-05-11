@@ -76,12 +76,10 @@ msgstr ""
 msgid "%1$s > Removed from %2$s"
 msgstr ""
 
-#. translators: %s is a number.
 #. translators: %s is a date.
 #. translators: %1$s is a string, %2$s is a string.
-#: includes/functions.php:1935
-#: includes/functions.php:1948
-#: includes/functions.php:2167
+#: includes/functions.php:1930
+#: includes/functions.php:2149
 msgid "%1$s and %2$s"
 msgstr ""
 
@@ -95,8 +93,7 @@ msgstr ""
 msgid "%1$s: %2$s in %3$s on line %4$s"
 msgstr ""
 
-#. translators: %s is the filter label.
-#. translators: %s: Taxonomy name.
+#. translators: %s is the filter label, e.g, "Tags".
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
 #: src/Objects/Collection.php:754
 #: build/Misc/assets/js/collection.js:222
@@ -194,7 +191,7 @@ msgstr ""
 
 #. translators: %s: Human-readable time difference.
 #. translators: %s: human readable time difference
-#: includes/functions.php:1432
+#: includes/functions.php:1420
 #: src/DB/Main.php:567
 #: src/DB/Main.php:593
 #: src/DB/Main.php:640
@@ -630,7 +627,7 @@ msgstr ""
 msgid "An error occurred while sending this campaign. The last error was: %s"
 msgstr ""
 
-#: includes/functions.php:1980
+#: includes/functions.php:1962
 msgid "AND"
 msgstr ""
 
@@ -835,7 +832,7 @@ msgstr ""
 msgid "Before the user leaves"
 msgstr "Prima che l'utente se ne vada"
 
-#: includes/functions.php:1777
+#: includes/functions.php:1763
 msgid "begins with"
 msgstr ""
 
@@ -1199,7 +1196,7 @@ msgstr ""
 msgid "Chosen Option"
 msgstr ""
 
-#: includes/functions.php:534
+#: includes/functions.php:532
 #: src/Integrations/EDD/Customers.php:124
 #: src/Integrations/EDD/Orders.php:294
 #: src/Integrations/GeoDirectory/Listings.php:106
@@ -1357,7 +1354,7 @@ msgstr ""
 msgid "Consent Text"
 msgstr ""
 
-#: includes/functions.php:1769
+#: includes/functions.php:1755
 msgid "contains"
 msgstr ""
 
@@ -1371,7 +1368,7 @@ msgstr ""
 msgid "Content Upgrades"
 msgstr ""
 
-#: includes/functions.php:531
+#: includes/functions.php:529
 msgid "Continent"
 msgstr ""
 
@@ -1408,7 +1405,7 @@ msgstr ""
 msgid "Could not find a post for this preview."
 msgstr ""
 
-#: includes/functions.php:532
+#: includes/functions.php:530
 #: src/Integrations/EDD/Customers.php:132
 #: src/Integrations/EDD/Orders.php:302
 #: src/Integrations/GeoDirectory/Listings.php:116
@@ -1475,7 +1472,7 @@ msgstr ""
 msgid "CSS selector of the items to watch out for clicks"
 msgstr "Selettore CSS degli elementi a cui fare attenzione per i clic"
 
-#: includes/functions.php:537
+#: includes/functions.php:535
 #: src/Integrations/EDD/Orders.php:199
 #: src/Integrations/Gravity_Forms/Main.php:80
 msgid "Currency"
@@ -1503,12 +1500,11 @@ msgstr "CSS personalizzato"
 msgid "Custom Field"
 msgstr ""
 
-#: includes/forms/class-form-admin.php:226
+#: includes/forms/class-form-admin.php:232
 msgid "Custom field deleted."
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:225
+#: includes/forms/class-form-admin.php:231
 msgid "Custom field updated."
 msgstr ""
 
@@ -2064,7 +2060,7 @@ msgstr ""
 msgid "Documentation"
 msgstr ""
 
-#: includes/functions.php:1773
+#: includes/functions.php:1759
 msgid "does not contain"
 msgstr ""
 
@@ -2347,7 +2343,7 @@ msgstr ""
 msgid "End date of sale price, in the site's timezone, with an optional comparison operator."
 msgstr ""
 
-#: includes/functions.php:1781
+#: includes/functions.php:1767
 msgid "ends with"
 msgstr ""
 
@@ -2467,8 +2463,8 @@ msgstr ""
 msgid "Error fetching downloadable file"
 msgstr ""
 
-#: includes/functions.php:441
-#: includes/functions.php:503
+#: includes/functions.php:439
+#: includes/functions.php:501
 msgid "Error fetching GeoLocation information."
 msgstr ""
 
@@ -2549,7 +2545,7 @@ msgstr ""
 msgid "Excerpt"
 msgstr ""
 
-#. translators: %s: Taxonomy name.
+#. translators: %s is the filter label, e.g, "Tags".
 #: src/Objects/Collection.php:761
 msgid "Exclude %s."
 msgstr ""
@@ -2729,11 +2725,6 @@ msgstr ""
 msgid "Form Appearance"
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:233
-msgid "Form draft updated. <a href=\"%s\">Preview form</a>"
-msgstr ""
-
 #: includes/forms/class-form-admin.php:53
 #: includes/forms/class-form-admin.php:64
 msgid "Form Editor"
@@ -2755,24 +2746,8 @@ msgstr ""
 msgid "Form Name"
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:229
-msgid "Form published. <a href=\"%s\">Preview form</a>"
-msgstr ""
-
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:228
+#: includes/forms/class-form-admin.php:234
 msgid "Form restored."
-msgstr ""
-
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:230
-msgid "Form saved. <a href=\"%s\">Preview form</a>"
-msgstr ""
-
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:232
-msgid "Form scheduled. <a href=\"%s\">Preview form</a>"
 msgstr ""
 
 #: includes/class-noptin-post-types.php:100
@@ -2783,23 +2758,12 @@ msgstr ""
 msgid "Form Submitted"
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:231
-msgid "Form submitted. <a href=\"%s\">Preview form</a>"
-msgstr ""
-
 #: includes/class-noptin-post-types.php:117
 msgid "Form Type"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:326
 msgid "Form type"
-msgstr ""
-
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:224
-#: includes/forms/class-form-admin.php:227
-msgid "Form updated. <a href=\"%s\">Preview form</a>"
 msgstr ""
 
 #: includes/forms/class-widget.php:127
@@ -2853,8 +2817,8 @@ msgstr ""
 #: build/Settings/Menu.php:241
 #: build/Settings/Menu.php:343
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
-#: includes/functions.php:1925
-#: includes/functions.php:2191
+#: includes/functions.php:1909
+#: includes/functions.php:2173
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/email-editor.js:1
@@ -3251,20 +3215,20 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: includes/functions.php:1761
+#: includes/functions.php:1747
 msgid "is"
 msgstr ""
 
-#: includes/functions.php:1809
+#: includes/functions.php:1795
 msgid "is after"
 msgstr ""
 
-#: includes/functions.php:1805
+#: includes/functions.php:1791
 msgid "is before"
 msgstr ""
 
-#: includes/functions.php:1801
-#: includes/functions.php:1813
+#: includes/functions.php:1787
+#: includes/functions.php:1799
 msgid "is between"
 msgstr ""
 
@@ -3272,7 +3236,7 @@ msgstr ""
 msgid "Is Complete"
 msgstr ""
 
-#: includes/functions.php:1785
+#: includes/functions.php:1771
 msgid "is empty"
 msgstr ""
 
@@ -3284,19 +3248,19 @@ msgstr ""
 msgid "Is Free"
 msgstr ""
 
-#: includes/functions.php:1793
+#: includes/functions.php:1779
 msgid "is greater than"
 msgstr ""
 
-#: includes/functions.php:1797
+#: includes/functions.php:1783
 msgid "is less than"
 msgstr ""
 
-#: includes/functions.php:1765
+#: includes/functions.php:1751
 msgid "is not"
 msgstr ""
 
-#: includes/functions.php:1789
+#: includes/functions.php:1775
 msgid "is not empty"
 msgstr ""
 
@@ -3375,7 +3339,7 @@ msgstr ""
 msgid "Latest %s"
 msgstr ""
 
-#: includes/functions.php:535
+#: includes/functions.php:533
 #: src/Integrations/GeoDirectory/Listings.php:126
 msgid "Latitude"
 msgstr ""
@@ -3537,7 +3501,7 @@ msgstr ""
 msgid "Logo"
 msgstr ""
 
-#: includes/functions.php:536
+#: includes/functions.php:534
 #: src/Integrations/GeoDirectory/Listings.php:131
 msgid "Longitude"
 msgstr ""
@@ -3819,7 +3783,7 @@ msgid "Next send tomorrow at %1$s"
 msgstr ""
 
 #: includes/class-noptin-dynamic-content-tags.php:550
-#: includes/functions.php:1230
+#: includes/functions.php:1219
 #: includes/subscriber.php:1360
 #: includes/subscriber.php:1419
 #: src/Integrations/WooCommerce/Products.php:218
@@ -3830,8 +3794,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#. translators: %s is the order type name.
-#. translators: %s: object type label
+#. translators: %s is the object type label, e.g. "orders".
 #: src/Objects/Collection.php:461
 #: src/Objects/Collection.php:871
 msgid "No %s found."
@@ -4101,7 +4064,7 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-#: includes/functions.php:1978
+#: includes/functions.php:1960
 msgid "OR"
 msgstr ""
 
@@ -5295,7 +5258,7 @@ msgstr ""
 msgid "Start writing or type / to choose a block"
 msgstr ""
 
-#: includes/functions.php:533
+#: includes/functions.php:531
 #: src/Integrations/EDD/Customers.php:128
 #: src/Integrations/EDD/Orders.php:298
 #: src/Integrations/WPForms/Main.php:131
@@ -6332,7 +6295,7 @@ msgstr ""
 msgid "Time in seconds to delay"
 msgstr "Tempo in secondi per ritardare"
 
-#: includes/functions.php:538
+#: includes/functions.php:536
 msgid "Time Zone"
 msgstr ""
 
@@ -7120,7 +7083,7 @@ msgid "Yellow"
 msgstr ""
 
 #: includes/class-noptin-dynamic-content-tags.php:550
-#: includes/functions.php:1234
+#: includes/functions.php:1223
 #: includes/subscriber.php:1359
 #: includes/subscriber.php:1418
 #: src/DB/Main.php:552
@@ -7303,4 +7266,39 @@ msgstr ""
 #: includes/assets/js/src/wc/block.json
 msgctxt "block description"
 msgid "Adds a newsletter subscription checkbox to the checkout."
+msgstr ""
+
+#: includes/forms/class-form-admin.php:225
+msgid "Preview form"
+msgstr ""
+
+#: includes/forms/class-form-admin.php:230
+#: includes/forms/class-form-admin.php:233
+msgid "Form updated."
+msgstr ""
+
+#: includes/forms/class-form-admin.php:235
+msgid "Form published."
+msgstr ""
+
+#: includes/forms/class-form-admin.php:236
+msgid "Form saved."
+msgstr ""
+
+#: includes/forms/class-form-admin.php:237
+msgid "Form submitted."
+msgstr ""
+
+#: includes/forms/class-form-admin.php:238
+msgid "Form scheduled."
+msgstr ""
+
+#: includes/forms/class-form-admin.php:239
+msgid "Form draft updated."
+msgstr ""
+
+#. translators: %s is a number.
+#: includes/functions.php:1918
+msgctxt "number"
+msgid "%1$s and %2$s"
 msgstr ""

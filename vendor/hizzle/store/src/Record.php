@@ -896,7 +896,7 @@ class Record {
 				esc_attr( $date->__toString() ),
 				esc_html(
 					sprintf(
-						/* translators: %s: human-readable time difference */
+						/* translators: %s: Human-readable time difference. */
 						__( '%s ago', 'hizzle-store' ),
 						human_time_diff( $date->getTimestamp(), time() )
 					)

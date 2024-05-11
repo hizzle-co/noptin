@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-05-08T05:43:50+00:00\n"
+"POT-Creation-Date: 2024-05-10T08:06:06+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -1128,8 +1128,8 @@ msgstr ""
 #: build/Settings/Menu.php:241
 #: build/Settings/Menu.php:343
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
-#: includes/functions.php:1925
-#: includes/functions.php:2191
+#: includes/functions.php:1909
+#: includes/functions.php:2173
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/email-editor.js:1
@@ -2408,7 +2408,7 @@ msgid "Property of the current page or post."
 msgstr ""
 
 #: includes/class-noptin-dynamic-content-tags.php:550
-#: includes/functions.php:1234
+#: includes/functions.php:1223
 #: includes/subscriber.php:1359
 #: includes/subscriber.php:1418
 #: src/DB/Main.php:552
@@ -2421,7 +2421,7 @@ msgid "Yes"
 msgstr ""
 
 #: includes/class-noptin-dynamic-content-tags.php:550
-#: includes/functions.php:1230
+#: includes/functions.php:1219
 #: includes/subscriber.php:1360
 #: includes/subscriber.php:1419
 #: src/Integrations/WooCommerce/Products.php:218
@@ -2953,49 +2953,45 @@ msgstr ""
 msgid "Do you need help?"
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:224
-#: includes/forms/class-form-admin.php:227
-msgid "Form updated. <a href=\"%s\">Preview form</a>"
+#: includes/forms/class-form-admin.php:225
+msgid "Preview form"
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:225
+#: includes/forms/class-form-admin.php:230
+#: includes/forms/class-form-admin.php:233
+msgid "Form updated."
+msgstr ""
+
+#: includes/forms/class-form-admin.php:231
 msgid "Custom field updated."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:226
+#: includes/forms/class-form-admin.php:232
 msgid "Custom field deleted."
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:228
+#: includes/forms/class-form-admin.php:234
 msgid "Form restored."
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:229
-msgid "Form published. <a href=\"%s\">Preview form</a>"
+#: includes/forms/class-form-admin.php:235
+msgid "Form published."
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:230
-msgid "Form saved. <a href=\"%s\">Preview form</a>"
+#: includes/forms/class-form-admin.php:236
+msgid "Form saved."
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:231
-msgid "Form submitted. <a href=\"%s\">Preview form</a>"
+#: includes/forms/class-form-admin.php:237
+msgid "Form submitted."
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:232
-msgid "Form scheduled. <a href=\"%s\">Preview form</a>"
+#: includes/forms/class-form-admin.php:238
+msgid "Form scheduled."
 msgstr ""
 
-#. Translators: %s URL to preview the form.
-#: includes/forms/class-form-admin.php:233
-msgid "Form draft updated. <a href=\"%s\">Preview form</a>"
+#: includes/forms/class-form-admin.php:239
+msgid "Form draft updated."
 msgstr ""
 
 #: includes/forms/class-form-legacy.php:143
@@ -4364,16 +4360,16 @@ msgstr ""
 msgid "Optional. Enter a comma separated list of URLs or post ids. If set, the form will only show if a user is viewing those pages."
 msgstr ""
 
-#: includes/functions.php:441
-#: includes/functions.php:503
+#: includes/functions.php:439
+#: includes/functions.php:501
 msgid "Error fetching GeoLocation information."
 msgstr ""
 
-#: includes/functions.php:531
+#: includes/functions.php:529
 msgid "Continent"
 msgstr ""
 
-#: includes/functions.php:532
+#: includes/functions.php:530
 #: src/Integrations/EDD/Customers.php:132
 #: src/Integrations/EDD/Orders.php:302
 #: src/Integrations/GeoDirectory/Listings.php:116
@@ -4381,14 +4377,14 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: includes/functions.php:533
+#: includes/functions.php:531
 #: src/Integrations/EDD/Customers.php:128
 #: src/Integrations/EDD/Orders.php:298
 #: src/Integrations/WPForms/Main.php:131
 msgid "State"
 msgstr ""
 
-#: includes/functions.php:534
+#: includes/functions.php:532
 #: src/Integrations/EDD/Customers.php:124
 #: src/Integrations/EDD/Orders.php:294
 #: src/Integrations/GeoDirectory/Listings.php:106
@@ -4396,102 +4392,106 @@ msgstr ""
 msgid "City"
 msgstr ""
 
-#: includes/functions.php:535
+#: includes/functions.php:533
 #: src/Integrations/GeoDirectory/Listings.php:126
 msgid "Latitude"
 msgstr ""
 
-#: includes/functions.php:536
+#: includes/functions.php:534
 #: src/Integrations/GeoDirectory/Listings.php:131
 msgid "Longitude"
 msgstr ""
 
-#: includes/functions.php:537
+#: includes/functions.php:535
 #: src/Integrations/EDD/Orders.php:199
 #: src/Integrations/Gravity_Forms/Main.php:80
 msgid "Currency"
 msgstr ""
 
-#: includes/functions.php:538
+#: includes/functions.php:536
 msgid "Time Zone"
 msgstr ""
 
 #. translators: %s: Human-readable time difference.
 #. translators: %s: human readable time difference
-#: includes/functions.php:1432
+#: includes/functions.php:1420
 #: src/DB/Main.php:567
 #: src/DB/Main.php:593
 #: src/DB/Main.php:640
 msgid "%s ago"
 msgstr ""
 
-#: includes/functions.php:1761
+#: includes/functions.php:1747
 msgid "is"
 msgstr ""
 
-#: includes/functions.php:1765
+#: includes/functions.php:1751
 msgid "is not"
 msgstr ""
 
-#: includes/functions.php:1769
+#: includes/functions.php:1755
 msgid "contains"
 msgstr ""
 
-#: includes/functions.php:1773
+#: includes/functions.php:1759
 msgid "does not contain"
 msgstr ""
 
-#: includes/functions.php:1777
+#: includes/functions.php:1763
 msgid "begins with"
 msgstr ""
 
-#: includes/functions.php:1781
+#: includes/functions.php:1767
 msgid "ends with"
 msgstr ""
 
-#: includes/functions.php:1785
+#: includes/functions.php:1771
 msgid "is empty"
 msgstr ""
 
-#: includes/functions.php:1789
+#: includes/functions.php:1775
 msgid "is not empty"
 msgstr ""
 
-#: includes/functions.php:1793
+#: includes/functions.php:1779
 msgid "is greater than"
 msgstr ""
 
-#: includes/functions.php:1797
+#: includes/functions.php:1783
 msgid "is less than"
 msgstr ""
 
-#: includes/functions.php:1801
-#: includes/functions.php:1813
+#: includes/functions.php:1787
+#: includes/functions.php:1799
 msgid "is between"
 msgstr ""
 
-#: includes/functions.php:1805
+#: includes/functions.php:1791
 msgid "is before"
 msgstr ""
 
-#: includes/functions.php:1809
+#: includes/functions.php:1795
 msgid "is after"
 msgstr ""
 
 #. translators: %s is a number.
-#. translators: %s is a date.
-#. translators: %1$s is a string, %2$s is a string.
-#: includes/functions.php:1935
-#: includes/functions.php:1948
-#: includes/functions.php:2167
+#: includes/functions.php:1918
+msgctxt "number"
 msgid "%1$s and %2$s"
 msgstr ""
 
-#: includes/functions.php:1978
+#. translators: %s is a date.
+#. translators: %1$s is a string, %2$s is a string.
+#: includes/functions.php:1930
+#: includes/functions.php:2149
+msgid "%1$s and %2$s"
+msgstr ""
+
+#: includes/functions.php:1960
 msgid "OR"
 msgstr ""
 
-#: includes/functions.php:1980
+#: includes/functions.php:1962
 msgid "AND"
 msgstr ""
 
@@ -4915,8 +4915,7 @@ msgstr ""
 msgid "Optional. Leave blank to send to all"
 msgstr ""
 
-#. translators: %s is the filter label.
-#. translators: %s: Taxonomy name.
+#. translators: %s is the filter label, e.g, "Tags".
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
 #: src/Objects/Collection.php:754
 #: build/Misc/assets/js/collection.js:222
@@ -7004,8 +7003,7 @@ msgstr ""
 msgid "unsubscribed"
 msgstr ""
 
-#. translators: %s is the order type name.
-#. translators: %s: object type label
+#. translators: %s is the object type label, e.g. "orders".
 #: src/Objects/Collection.php:461
 #: src/Objects/Collection.php:871
 msgid "No %s found."
@@ -7049,7 +7047,7 @@ msgstr ""
 msgid "Filter by %s."
 msgstr ""
 
-#. translators: %s: Taxonomy name.
+#. translators: %s is the filter label, e.g, "Tags".
 #: src/Objects/Collection.php:761
 msgid "Exclude %s."
 msgstr ""
