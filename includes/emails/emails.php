@@ -730,3 +730,12 @@ function noptin_record_ecommerce_purchase( $amount, $campaign_id ) {
 		update_option( 'noptin_emails_lifetime_revenue', $lifetime_revenue + $amount, false );
 	}
 }
+
+/**
+ * Returns the maximum number of emails per period.
+ *
+ * @return int Zero if unlimited.
+ */
+function noptin_max_emails_per_period() {
+	return apply_filters( 'noptin_max_emails_per_period', get_noptin_option( 'per_hour', 0 ) );
+}

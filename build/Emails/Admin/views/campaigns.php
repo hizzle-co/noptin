@@ -49,10 +49,9 @@
 
 		// Check if sending has been paused due to limits.
 		$emails_sent_this_hour = (int) get_transient( 'noptin_emails_sent_' . gmdate( 'YmdH' ) );
-		$email_sending_limit   = get_noptin_option( 'per_hour', 0 );
+		$email_sending_limit   = noptin_max_emails_per_period();
 
 		if ( ! empty( $email_sending_limit ) && $emails_sent_this_hour >= $email_sending_limit ) {
-
 			$message = sprintf(
 				/* translators: %1$s: number of emails sent this hour, %2$s: number of emails allowed to be sent per hour */
 				esc_html__( 'Sending has been paused due to sending limits. %1$s emails have been sent this hour. You can send %2$s emails per hour.', 'newsletter-optin-box' ),
@@ -61,7 +60,6 @@
 			);
 
 			noptin()->admin->print_notice( 'error', $message );
-
 		}
 	?>
 

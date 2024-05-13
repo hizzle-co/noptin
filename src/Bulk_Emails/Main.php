@@ -358,7 +358,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 * @return bool
 	 */
 	public function exceeded_hourly_limit() {
-		$limited = get_noptin_option( 'per_hour', 0 );
+		$limited = noptin_max_emails_per_period();
 		return ! empty( $limited ) && $this->emails_sent_this_hour() >= (int) $limited;
 	}
 }
