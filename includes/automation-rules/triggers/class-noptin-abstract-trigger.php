@@ -92,6 +92,13 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		$smart_tags = array(
 
+			'noptin_rule_runs' => array(
+				'description'       => __( 'Automation runs', 'newsletter-optin-box' ),
+				'callback'          => '\Hizzle\Noptin\Tasks\Main::count_rule_runs',
+				'conditional_logic' => 'number',
+				'validate_once'     => true,
+			),
+
 			'cookie'  => array(
 				'description'       => __( 'Data from a cookie.', 'newsletter-optin-box' ),
 				'callback'          => 'Noptin_Dynamic_Content_Tags::get_cookie',

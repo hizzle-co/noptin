@@ -378,5 +378,4 @@ class Schema {
 			)
 		);
 	}
-
 }

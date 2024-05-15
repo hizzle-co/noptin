@@ -720,8 +720,8 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function get_overview() {
 		$sent_emails = $this->get_sent_campaigns();
 		$total       = count( $sent_emails );
-		$opens	     = 0;
-		$clicks	     = 0;
+		$opens       = 0;
+		$clicks      = 0;
 
 		foreach ( $sent_emails as $email ) {
 			if ( ! empty( $email['opens'] ) ) {
@@ -819,5 +819,4 @@ class Subscriber extends \Hizzle\Store\Record {
 
 		return apply_filters( 'noptin_subscriber_overview', $overview, $this );
 	}
-
 }
