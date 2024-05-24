@@ -17,6 +17,11 @@ defined( 'ABSPATH' ) || exit;
 class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 
 	/**
+	 * The cron hook.
+	 */
+	public $cron_hook = 'noptin_run_tasks';
+
+	/**
 	 * Current task.
 	 *
 	 * @var Task
@@ -83,7 +88,11 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 */
 	public function add_wp_cron_event() {
 		if ( ! wp_next_scheduled( $this->cron_hook ) ) {
-			wp_schedule_event( time(), 'every_minute', $this->cron_hook );
+			$result = wp_schedule_event( time(), 'every_minute', $this->cron_hook, array(), true );
+
+			if ( is_wp_error( $result ) ) {
+				log_noptin_message( 'Failed to schedule task runner cron event: ' . $result->get_error_message() );
+			}
 		}
 	}
 
@@ -429,20 +438,15 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 * @return false|\WP_Error|Task
 	 */
 	public static function delete_scheduled_task( $hook, $args = array(), $limit = 1 ) {
-
-		/** @var Task[] $tasks */
-		$tasks = self::query(
+		noptin()->db()->delete_where(
 			array(
 				'status' => 'pending',
 				'number' => $limit,
 				'hook'   => $hook,
 				'args'   => wp_json_encode( $args ),
-			)
+			),
+			'tasks'
 		);
-
-		foreach ( $tasks as $task ) {
-			$task->delete();
-		}
 	}
 
 	public static function delete_old_tasks() {

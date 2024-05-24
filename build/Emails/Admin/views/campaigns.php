@@ -61,6 +61,7 @@
 			);
 
 			noptin()->admin->print_notice( 'error', $message );
+
 		}
 	?>
 

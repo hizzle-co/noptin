@@ -347,7 +347,6 @@ class Main {
 
 		// Run the query.
 		try {
-
 			$collection = $this->store->get( $collection_name );
 
 			if ( empty( $collection ) ) {
