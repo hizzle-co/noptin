@@ -346,6 +346,9 @@ class Noptin_Email_Generator {
 		// Make links clickable.
 		$content = make_clickable( $content );
 
+		// Add class to clickable links.
+		$content = $this->add_class_to_clickable_links( $content );
+
 		// Track opens.
 		$content = $this->inject_tracking_pixel( $content );
 
@@ -517,6 +520,26 @@ class Noptin_Email_Generator {
 		return $doc->saveHTML();
 	}
 
+	public function add_class_to_clickable_links( $content ) {
+
+		// Use regex to add the class to all links that start with http.
+		$content = preg_replace_callback(
+			'/<a\s+href=["\'](http[^"\']*)["\']([^>]*)>(http[^<]*)<\/a>/i',
+			function ( $matches ) {
+				// Add the class to the anchor tag.
+				return sprintf(
+					'<a href="%s" %s class="noptin-raw-link">%s</a>',
+					esc_url( $matches[1] ),
+					$matches[2],
+					esc_html( $matches[3] )
+				);
+			},
+			$content
+		);
+
+		return $content;
+	}
+
 	/**
 	 * Fix any duplicate http in links, can happen due to merge tags
 	 *
@@ -641,6 +664,9 @@ class Noptin_Email_Generator {
 			return $content;
 		}
 
+		// Use preg_replace to remove the CSS comments.
+		$content = preg_replace( '/\/\*.*?\*\//s', '', $content );
+
 		// Maybe abort early.
 		if ( ! class_exists( 'DOMDocument' ) || ! class_exists( '\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles' ) ) {
 			return $content;
@@ -677,10 +703,8 @@ class Noptin_Email_Generator {
 
 			return $content;
 		} catch ( Exception $e ) {
-
 			log_noptin_message( $e->getMessage() );
 			return $content;
-
 		} catch ( Symfony\Component\CssSelector\Exception\SyntaxErrorException $e ) {
             log_noptin_message( $e->getMessage() );
 			return $content;

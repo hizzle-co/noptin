@@ -72,6 +72,9 @@
 	a {
 		color: <?php echo esc_html( $brand_color ); ?>;
 		text-decoration: none;
+	}
+
+	a.noptin-raw-link {
 		word-break: break-all;
 	}
 
