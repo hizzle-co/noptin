@@ -368,6 +368,20 @@ class Table extends \WP_List_Table {
 			);
 		}
 
+		// Error.
+		if ( ! $is_trash && 'automation' === $this->email_type->type && $item->is_published() ) {
+			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );
+
+			if ( is_array( $error ) ) {
+				$title .= sprintf(
+					'<p class="description" style="color: red;">%s</p>',
+					esc_html( $error['message'] )
+				);
+
+				delete_post_meta( $item->id, '_bulk_email_last_error' );
+			}
+		}
+
 		if ( ! $is_trash && 'newsletter' === $this->email_type->type && ! get_post_meta( $item->id, 'completed', true ) ) {
 			$error = get_post_meta( $item->id, '_bulk_email_last_error', true );
 

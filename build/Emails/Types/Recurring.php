@@ -519,6 +519,8 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		}
 
 		if ( ! empty( $next_send ) ) {
+			$next_send -= ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$next_send += MINUTE_IN_SECONDS; // Add a minute to avoid sending the email at the same time as the cron event.
 			schedule_noptin_background_action( $next_send, $this->notification_hook, $campaign->id );
 			update_post_meta( $campaign->id, '_noptin_next_send', $next_send );
 		} else {
@@ -533,6 +535,8 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	 * @param string $key
 	 */
 	public function maybe_send_notification( $campaign_id ) {
+
+		delete_post_meta( $campaign_id, '_bulk_email_last_error' );
 
 		// Get the campaign.
 		$campaign = noptin_get_email_campaign_object( $campaign_id );
@@ -558,6 +562,14 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		$result = $campaign->send();
 
 		if ( is_wp_error( $result ) ) {
+			update_post_meta(
+				$campaign_id,
+				'_bulk_email_last_error',
+				array(
+					'message' => 'Skipped sending campaign. Reason:- ' . $result->get_error_message(),
+				)
+			);
+
 			log_noptin_message( 'Skipped sending campaign:- ' . $campaign->name . '. Reason:- ' . $result->get_error_message() );
 		}
 	}

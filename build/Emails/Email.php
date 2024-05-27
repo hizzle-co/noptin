@@ -479,6 +479,9 @@ class Email {
 		if ( $this->is_mass_mail() && 'newsletter' !== $this->type ) {
 			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
 
+			// Update the last send date.
+			update_post_meta( $this->id, '_noptin_last_send', time() );
+
 			// Prepare campaign args.
 			$type   = $this->get_email_type();
 			$suffix = empty( $GLOBALS['noptin_current_title_tag'] ) ? date_i18n( get_option( 'date_format' ) ) : noptin_parse_email_subject_tags( $GLOBALS['noptin_current_title_tag'] );
@@ -534,7 +537,6 @@ class Email {
 			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 
 			if ( true === $should_send ) {
-				update_post_meta( $this->id, '_noptin_last_send', time() );
 				$newsletter->save();
 			}
 
@@ -1271,8 +1273,10 @@ class Email {
 		}
 
 		// Duplicate any children.
-		foreach ( $this->get_children() as $child ) {
-			$child->duplicate( array( 'parent_id' => $duplicate->id ) );
+		if ( $this->supports( 'child_type' ) ) {
+			foreach ( $this->get_children() as $child ) {
+				$child->duplicate( array( 'parent_id' => $duplicate->id ) );
+			}
 		}
 
 		return $duplicate;
