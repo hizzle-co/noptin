@@ -549,7 +549,11 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 			// Retrieve the action.
 			$action = $rule->get_action();
 			if ( ! empty( $action ) ) {
-				$rule->maybe_run( $subject, $this, $action, $args );
+				$result = $rule->maybe_run( $subject, $this, $action, $args );
+
+				if ( is_wp_error( $result ) ) {
+					log_noptin_message( $result->get_error_message(), 'error' );
+				}
 			}
 		}
 	}
