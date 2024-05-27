@@ -51,6 +51,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		add_action( 'noptin_tasks_after_execute', array( __CLASS__, 'reset_task' ), 0 );
 		add_action( 'noptin_tasks_failed_execution', array( __CLASS__, 'reset_task' ), 0 );
 		add_action( 'noptin_tasks_run_pending', array( $this, 'run_pending' ) );
+		add_filter( 'noptin-addons-pack-modules', array( __CLASS__, 'remove_addons_tasks' ) );
 
 		if ( is_admin() ) {
 			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'filter_admin_tools' ) );
@@ -791,5 +792,16 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Removes the tasks module from the addons pack.
+	 *
+	 * @param array $modules
+	 * @return array
+	 */
+	public static function remove_addons_tasks( $modules ) {
+		unset( $modules['tasks'] );
+		return $modules;
 	}
 }
