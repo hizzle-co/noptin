@@ -49,11 +49,38 @@
 		}
 	<?php endif; ?>
 
-	.ExternalClass {
-		width: 100%;
-	}
+	@media all {
+		.ExternalClass {
+			width: 100%;
+  		}
 
-	.ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td {line-height: 100%;}
+		.ExternalClass,
+		.ExternalClass p,
+		.ExternalClass span,
+		.ExternalClass font,
+		.ExternalClass td,
+		.ExternalClass div {
+			line-height: 100%;
+		}
+
+		.apple-link a {
+			color: inherit !important;
+			font-family: inherit !important;
+			font-size: inherit !important;
+			font-weight: inherit !important;
+			line-height: inherit !important;
+			text-decoration: none !important;
+		}
+
+		#MessageViewBody a {
+			color: inherit;
+			text-decoration: none;
+			font-size: inherit;
+			font-family: inherit;
+			font-weight: inherit;
+			line-height: inherit;
+		}
+	}
 
 	div,
 	ol,
@@ -187,12 +214,14 @@
 
 	.noptin-columns {
 		display: table;
+		table-layout: fixed;
 		width: 100%;
 		overflow: hidden;
 	}
 
 	.noptin-column {
 		display: table-cell;
+		overflow: hidden;
 	}
 
 	.noptin-column__inner {
@@ -204,7 +233,7 @@
 		margin-right: 10px;
 	}
 
-	@media only screen and (max-width: 360px) {
+	@media only screen and (max-width: 575px) {
 		.noptin-is-stacked-on-mobile {
 			display: block!important;
 		}
