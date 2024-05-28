@@ -88,7 +88,6 @@ abstract class Post_Type extends Collection {
 		}
 
 		if ( ! empty( $this->url_field ) ) {
-
 			$content_normal .= sprintf(
 				'<div>[[button url="%s" text="%s"]]</div><p>%s</p><p>%s</p>',
 				$this->field_to_merge_tag( $this->url_field ),

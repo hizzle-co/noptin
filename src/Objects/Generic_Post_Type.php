@@ -360,6 +360,10 @@ class Generic_Post_Type extends Post_Type {
 				$icon
 			);
 
+			if ( ! Generic_Post::is_taxonomy_linkable( $taxonomy ) ) {
+				unset( $fields[ 'tax_' . $taxonomy ]['block']['settings']['link'] );
+			}
+
 			$fields[ 'tax_' . $taxonomy ]['actions']      = array( $action );
 			$fields[ 'tax_' . $taxonomy ]['action_props'] = array(
 				$action => array(

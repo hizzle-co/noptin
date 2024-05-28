@@ -151,10 +151,13 @@ class Generic_Post extends Record {
 			return '';
 		}
 
+		if ( $link ) {
+			$link = self::is_taxonomy_linkable( $taxonomy );
+		}
+
 		$prepared = array();
 
 		foreach ( $terms as $term ) {
-
 			if ( empty( $term ) ) {
 				continue;
 			}
@@ -172,5 +175,18 @@ class Generic_Post extends Record {
 		}
 
 		return implode( ', ', $prepared );
+	}
+
+	public static function is_taxonomy_linkable( $taxonomy ) {
+		// Check if the taxonomy exists
+		if ( ! taxonomy_exists( $taxonomy ) ) {
+			return false;
+		}
+
+		// Get the taxonomy object
+		$taxonomy_object = get_taxonomy( $taxonomy );
+
+		// Check if the taxonomy is public
+		return $taxonomy_object->public;
 	}
 }
