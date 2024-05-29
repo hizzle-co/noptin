@@ -650,7 +650,6 @@ abstract class Collection {
 
 		foreach ( array( 'published_before', 'published_after', 'since_last_send' ) as $date ) {
 			if ( ! empty( $filters[ $date ] ) ) {
-
 				if ( 'since_last_send' === $date ) {
 					$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
 
@@ -863,7 +862,6 @@ abstract class Collection {
 		}
 
 		if ( ! is_array( $items ) || empty( $items ) ) {
-
 			if ( 'yes' === $atts['skiponempty'] ) {
 				$GLOBALS['noptin_email_force_skip'] = array(
 					'message' => sprintf(
@@ -919,7 +917,6 @@ abstract class Collection {
 		}
 
 		foreach ( $cols as $column_items ) {
-
 			$html .= '<div class="' . esc_attr( $column_class ) . '" style="width: ' . esc_attr( $width ) . '%;">';
 
 			if ( empty( $column_items ) ) {
@@ -936,7 +933,6 @@ abstract class Collection {
 
 				// Replace related fields.
 				foreach ( $provided_collections as $collection_type => $collection ) {
-
 					if ( empty( $collection ) ) {
 						continue;
 					}

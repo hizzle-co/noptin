@@ -87,7 +87,7 @@ class Generic_Post extends Record {
 
 		// Excerpt.
 		if ( 'excerpt' === strtolower( $field ) ) {
-			return apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) );
+			return wp_strip_all_tags( apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ) );
 		}
 
 		// URL.
