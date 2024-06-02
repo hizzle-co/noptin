@@ -15,7 +15,6 @@ module.exports = {
 		"form-scripts": "./includes/assets/js/src/form-scripts.js",
 		"popups": "./includes/assets/js/src/popups.js",
 		"form-editor": "./includes/assets/js/src/form-editor.js",
-		"welcome-wizard": "./includes/assets/js/src/welcome-wizard.js",
 	},
 	output: {
 		filename: "[name].js",
