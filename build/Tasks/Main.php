@@ -591,21 +591,21 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => true,
-							'description' => __( 'Primary identifier for this resource.', 'newsletter-optin-box' ),
+							'description' => 'Primary identifier for this resource.',
 						),
 
 						'secondary_id'   => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => true,
-							'description' => __( 'Secondary identifier for this resource.', 'newsletter-optin-box' ),
+							'description' => 'Secondary identifier for this resource.',
 						),
 
 						'status'         => array(
 							'type'        => 'VARCHAR',
 							'length'      => 20,
 							'nullable'    => false,
-							'description' => __( 'The task status.', 'newsletter-optin-box' ),
+							'description' => __( 'Status', 'newsletter-optin-box' ),
 							'enum'        => __CLASS__ . '::get_statuses',
 						),
 
@@ -624,26 +624,26 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 						'date_created'   => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
-							'description' => __( 'Creation date for this task.', 'newsletter-optin-box' ),
+							'description' => 'Creation date',
 							'readonly'    => true,
 						),
 
 						'date_modified'  => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
-							'description' => __( 'Last modification date for this task.', 'newsletter-optin-box' ),
+							'description' => 'Last modification date',
 							'readonly'    => true,
 						),
 
 						'date_scheduled' => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
-							'description' => __( 'Scheduled date for this task.', 'newsletter-optin-box' ),
+							'description' => __( 'Scheduled date', 'newsletter-optin-box' ),
 						),
 
 						'metadata'       => array(
 							'type'        => 'TEXT',
-							'description' => __( 'A key value array of additional metadata about the task', 'newsletter-optin-box' ),
+							'description' => 'A key value array of additional metadata about the task',
 						),
 					),
 

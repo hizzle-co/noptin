@@ -435,7 +435,7 @@ class Task extends \Hizzle\Store\Record {
 		// Delete task.
 		$action_links[] = array(
 			'label'  => __( 'Delete', 'newsletter-optin-box' ),
-			'value'  => __( 'Are you sure you want to delete this task?', 'newsletter-optin-box' ),
+			'value'  => __( 'Are you sure you want to delete this record?', 'newsletter-optin-box' ),
 			'action' => 'delete',
 		);
 
