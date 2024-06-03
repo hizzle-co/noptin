@@ -367,6 +367,7 @@ class Main {
 			wp_enqueue_script(
 				'noptin-' . $script,
 				plugins_url( 'assets/js/' . $script . '.js', __DIR__ ),
+				//array_diff( $config['dependencies'], array( 'react-jsx-runtime' ) ),
 				$config['dependencies'],
 				$config['version'],
 				true
