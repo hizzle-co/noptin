@@ -538,9 +538,22 @@ abstract class Collection {
 			'template'       => $this->get_list_shortcode_template(),
 			'provides'       => $this->provides,
 			'is_stand_alone' => $this->is_stand_alone,
+			'query_defaults' => (object) $this->get_query_defaults(),
 		);
 
 		return $objects;
+	}
+
+	/**
+	 * Retrieves the collection defaults.
+	 *
+	 * @return array
+	 */
+	protected function get_query_defaults() {
+		return apply_filters(
+			"noptin_{$this->type}_collection_query_defaults",
+			array()
+		);
 	}
 
 	/**
@@ -779,7 +792,6 @@ abstract class Collection {
 
 			// Tax in.
 			if ( 0 === strpos( $key, 'tax_in_' ) ) {
-
 				if ( ! empty( $value ) ) {
 					$tax_query[] = array(
 						'taxonomy' => str_replace( 'tax_in_', '', $key ),
@@ -793,7 +805,6 @@ abstract class Collection {
 
 			// Tax not in.
 			if ( 0 === strpos( $key, 'tax_not_in_' ) ) {
-
 				if ( ! empty( $value ) ) {
 					$tax_query[] = array(
 						'taxonomy' => str_replace( 'tax_not_in_', '', $key ),
