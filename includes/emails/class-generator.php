@@ -212,7 +212,6 @@ class Noptin_Email_Generator {
 
 		// ... then process local template.
 		if ( ! empty( $is_local_template ) ) {
-
 			ob_start();
 
 			// Heading.
@@ -276,7 +275,6 @@ class Noptin_Email_Generator {
 
 		// ... then process local template.
 		if ( ! empty( $is_local_template ) ) {
-
 			ob_start();
 
 			// Heading.
@@ -306,7 +304,6 @@ class Noptin_Email_Generator {
 			);
 
 			$email = ob_get_clean();
-
 		}
 
 		wp_reset_postdata();
@@ -360,11 +357,17 @@ class Noptin_Email_Generator {
 		// Make links trackable.
 		$content = $this->make_links_trackable( $content );
 
+		// Backup hrefs.
+		$content = $this->backup_hrefs( $content );
+
 		// Inline CSS styles.
 		$content = $this->inline_styles( $content );
 
 		// Remove unused classes and ids.
 		$content = $this->clean_html( $content );
+
+		// Restore hrefs.
+		$content = $this->restore_hrefs( $content );
 
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );
@@ -525,6 +528,47 @@ class Noptin_Email_Generator {
 
 		// Save the HTML.
 		return $doc->saveHTML();
+	}
+
+	private function backup_hrefs( $html ) {
+		// Check if DOMDocument is available.
+		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
+			return $html;
+		}
+
+		$doc = new DOMDocument();
+		@$doc->loadHTML( $html );
+
+		$xpath    = new DOMXPath( $doc );
+		$elements = $xpath->query( '//*[@href]' );
+
+		if ( empty( $elements ) ) {
+			return $html;
+		}
+
+		foreach ( $elements as $element ) {
+			$element->setAttribute( 'data-href', $element->getAttribute( 'href' ) );
+			$element->removeAttribute( 'href' );
+		}
+
+		return $doc->saveHTML();
+	}
+
+	private function restore_hrefs( $html ) {
+		// Check if DOMDocument is available.
+		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
+			return $html;
+		}
+
+		$new_html = preg_replace_callback(
+			'/<a(.*?)data-href=["\'](.*?)["\'](.*?)>/mi',
+			function ( $matches ) {
+				return "<a{$matches[1]}href=\"{$matches[2]}\"{$matches[3]}>";
+			},
+			$html
+		);
+
+		return empty( $new_html ) ? $html : $new_html;
 	}
 
 	public function add_class_to_clickable_links( $content ) {
