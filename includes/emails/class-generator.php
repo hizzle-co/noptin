@@ -243,7 +243,6 @@ class Noptin_Email_Generator {
 			);
 
 			$email = ob_get_clean();
-
 		}
 
 		// Allow other plugins to filter generated email content.
@@ -430,7 +429,6 @@ class Noptin_Email_Generator {
 
 		/** @var \DOMNodeList $elements */
 		foreach ( $elements as $element ) {
-
 			$is_block_element = in_array( $element->nodeName, array( 'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li' ), true );
 
 			// Remove empty paragraphs or those with only whitespace.
@@ -452,6 +450,15 @@ class Noptin_Email_Generator {
 			} elseif ( $is_block_element && ! $element->hasChildNodes() ) {
 				// If <p> tag has no children, remove it
 				$element->parentNode->removeChild( $element );
+			}
+
+			// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
+			if ( 'table' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-block__wrapper' ) ) {
+				$anchors = $element->getElementsByTagName( 'a' );
+				if ( 0 === $anchors->length || ! $anchors->item( 0 )->hasAttribute( 'href' ) || empty( $anchors->item( 0 )->getAttribute( 'href' ) ) ) {
+					$element->parentNode->removeChild( $element );
+					continue;
+				}
 			}
 
 			// If this is a table element with .noptin-image-block__wrapper class,
@@ -615,7 +622,6 @@ class Noptin_Email_Generator {
 
 		// Skip action page URLs.
 		if ( false === strpos( $url, 'noptin_ns' ) ) {
-
 			$args = array_merge(
 				$this->recipient,
 				array( 'to' => $url )
@@ -677,31 +683,11 @@ class Noptin_Email_Generator {
 
 		try {
 
-			// Emogrifier urlencodes hrefs, copy the href to a new attribute and restore it after inlining.
-			$content = preg_replace_callback(
-				'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
-				function ( $matches ) {
-					return "<a {$matches[1]} data-href=\"{$matches[2]}\" {$matches[3]}>";
-				},
-				$content
-			);
-
 			// create inliner instance
 			$inliner = new \TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
 
 			// Inline styles.
-			$content = $inliner->convert( $content, $styles );
-
-			// Restore hrefs.
-			$content = preg_replace_callback(
-				'/<a(.*?)data-href=["\'](.*?)["\'](.*?)>/mi',
-				function ( $matches ) {
-					return "<a {$matches[1]} href=\"{$matches[2]}\" {$matches[3]}>";
-				},
-				$content
-			);
-
-			return $content;
+			return $inliner->convert( $content, $styles );
 		} catch ( Exception $e ) {
 			log_noptin_message( $e->getMessage() );
 			return $content;
@@ -721,7 +707,6 @@ class Noptin_Email_Generator {
 
 		// Only track if it is permitted.
 		if ( $this->can_track() ) {
-
 			return preg_replace_callback(
 				'/<\/body[^>]*>/',
 				function ( $matches ) {
@@ -730,7 +715,6 @@ class Noptin_Email_Generator {
 				$content,
 				1
 			);
-
 		}
 
 		return $content;
@@ -757,7 +741,6 @@ class Noptin_Email_Generator {
 
 		// Ensure a preview text is set.
 		if ( ! empty( $this->preview_text ) ) {
-
 			return preg_replace_callback(
 				'/<body[^>]*>/',
 				function ( $matches ) {
@@ -766,7 +749,6 @@ class Noptin_Email_Generator {
 				$content,
 				1
 			);
-
 		}
 
 		return $content;
