@@ -457,8 +457,11 @@ class Noptin_Email_Generator {
 
 			// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
 			if ( 'table' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-block__wrapper' ) ) {
-				$anchors = $element->getElementsByTagName( 'a' );
-				if ( 0 === $anchors->length || ! $anchors->item( 0 )->hasAttribute( 'href' ) || empty( $anchors->item( 0 )->getAttribute( 'href' ) ) ) {
+				$anchors           = $element->getElementsByTagName( 'a' );
+				$missing_href      = ! $anchors->item( 0 )->hasAttribute( 'href' ) || empty( $anchors->item( 0 )->getAttribute( 'href' ) );
+				$missing_data_href = ! $anchors->item( 0 )->hasAttribute( 'data-href' ) || empty( $anchors->item( 0 )->getAttribute( 'data-href' ) );
+				$has_either        = ! $missing_href || ! $missing_data_href;
+				if ( 0 === $anchors->length || ! $has_either ) {
 					$element->parentNode->removeChild( $element );
 					continue;
 				}

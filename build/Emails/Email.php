@@ -1229,9 +1229,9 @@ class Email {
 
 		try {
 			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
-			do_action( 'noptin_prepare_email_preview', $this );
-			do_action( "noptin_prepare_{$this->type}_email_preview", $this );
-			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_preview", $this );
+			do_action( "noptin_prepare_email_{$mode}", $this );
+			do_action( "noptin_prepare_{$this->type}_email_{$mode}", $this );
+			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_{$mode}", $this );
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'exception', $e->getMessage() );
 		}

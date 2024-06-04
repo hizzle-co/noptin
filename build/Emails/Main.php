@@ -618,6 +618,26 @@ class Main {
 	}
 
 	/**
+	 * Retrieves the current view in browser url.
+	 *
+	 * @return string
+	 */
+	public static function get_current_view_in_browser_url() {
+		global $noptin_current_objects;
+		$recipient = self::$current_email_recipient;
+
+		if ( is_array( $noptin_current_objects ) ) {
+			foreach ( $noptin_current_objects as $collection => $obj ) {
+				if ( ! isset( $recipient[ $collection ] ) ) {
+					$recipient[ $collection ] = $obj->get( 'id' );
+				}
+			}
+		}
+
+		return get_noptin_action_url( 'view_in_browser', noptin_encrypt( wp_json_encode( $recipient ) ), true );
+	}
+
+	/**
 	 * Deletes sent campaigns.
 	 *
 	 */

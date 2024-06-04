@@ -112,6 +112,11 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			'callback'    => '\Hizzle\Noptin\Emails\Main::get_current_unsubscribe_url',
 		);
 
+		$this->tags['view_in_browser_url'] = array(
+			'description' => __( 'The "View in Browser" URL.', 'newsletter-optin-box' ),
+			'callback'    => '\Hizzle\Noptin\Emails\Main::get_current_view_in_browser_url',
+		);
+
 		$this->tags['blog_name'] = array(
 			'description' => __( 'The website name.', 'newsletter-optin-box' ),
 			'replacement' => get_bloginfo( 'name' ),
