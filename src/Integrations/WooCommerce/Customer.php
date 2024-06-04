@@ -20,6 +20,11 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 	public $external;
 
 	/**
+	 * @var int The order ID.
+	 */
+	protected $order_id = null;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param mixed $external The external object.
@@ -31,7 +36,8 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 				$order = wc_get_order( absint( $external ) );
 
 				if ( $order ) {
-					$external = new \WC_Customer( $order->get_user_id() );
+					$external       = new \WC_Customer( $order->get_user_id() );
+					$this->order_id = $order->get_id();
 
 					// Set customer data from order if customer is not found.
 					if ( ! $external->get_id() ) {
@@ -102,13 +108,35 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 		if ( 'locale' === $field ) {
 			$locale = $this->external->get_meta( 'locale' );
 
-			if ( empty( $locale ) ) {
+			// Read locale from last order.
+			if ( empty( $locale ) && has_filter( 'noptin_woocommerce_order_locale' ) ) {
+				if ( is_null( $this->order_id ) ) {
 
-				if ( $this->external->get_id() ) {
-					$locale = get_user_locale( $this->external->get_id() );
-				} else {
-					$locale = isset( $args['default'] ) ? $args['default'] : '';
+					// Fetch latest order id.
+					$order_id = wc_get_orders(
+						array(
+							'customer' => $this->external->get_id() ? $this->external->get_id() : $this->get_email(),
+							'limit'    => 1,
+							'orderby'  => 'date',
+							'order'    => 'DESC',
+							'return'   => 'ids',
+						)
+					);
+
+					$this->order_id = $order_id ? $order_id[0] : 0;
 				}
+
+				if ( $this->order_id ) {
+					$locale = apply_filters( 'noptin_woocommerce_order_locale', '', $this->order_id );
+				}
+			}
+
+			if ( empty( $locale ) && $this->external->get_id() ) {
+				$locale = get_user_locale( $this->external->get_id() );
+			}
+
+			if ( empty( $locale ) && ! empty( $args['default'] ) ) {
+				$locale = $args['default'];
 			}
 
 			if ( empty( $locale ) ) {

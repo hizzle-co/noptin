@@ -22,6 +22,7 @@ class Main {
 		add_filter( 'noptin_is_multilingual', '__return_true', 5 );
 		add_filter( 'noptin_form_scripts_params', array( $this, 'filter_ajax_params' ), 5 );
 		add_filter( 'noptin_multilingual_active_languages', array( $this, 'filter_active_languages' ) );
+		add_filter( 'noptin_woocommerce_order_locale', array( $this, 'filter_order_locale' ), 10, 2 );
 	}
 
 	/**
@@ -106,5 +107,18 @@ class Main {
 		}
 
 		return $languages;
+	}
+
+	/**
+	 * Filter the locale of an order.
+	 *
+	 * @param string $locale
+	 * @param int    $order_id
+	 * @return string $locale
+	 */
+	public function filter_order_locale( $locale, $order_id ) {
+		$order = wc_get_order( $order_id );
+		$saved = $order ? $order->get_meta( 'wpml_language', true ) : '';
+		return empty( $saved ) ? $locale : $saved;
 	}
 }

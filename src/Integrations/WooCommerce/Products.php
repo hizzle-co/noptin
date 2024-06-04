@@ -36,6 +36,7 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 
 		// Purchase.
 		add_action( 'woocommerce_payment_complete', array( $this, 'on_purchase' ) );
+		add_action( 'woocommerce_order_status_completed', array( $this, 'on_purchase' ) );
 	}
 
 	/**
@@ -921,6 +922,10 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 	 * @param int|\WC_Order $order_id The order being acted on.
 	 */
 	public function on_purchase( $order_id ) {
+		if ( ! Orders::is_complete() ) {
+			return;
+		}
+
 		$this->on_purchase_or_refund( $order_id, 'purchased' );
 	}
 
