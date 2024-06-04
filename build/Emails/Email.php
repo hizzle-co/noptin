@@ -494,30 +494,32 @@ class Email {
 					'name'         => sprintf( '%1$s - %2$s', esc_html( $this->name ), esc_html( $suffix ) ),
 					'subject'      => noptin_parse_email_subject_tags( $this->get_subject(), true ),
 					'heading'      => noptin_parse_email_content_tags( $this->get( 'heading' ), true ),
-					'content'      => noptin_parse_email_content_tags( \Noptin_Email_Generator::handle_item_lists_shortcode( $this->content ), true ),
+					'content'      => 'visual' === $type ? noptin_parse_email_content_tags( \Noptin_Email_Generator::handle_item_lists_shortcode( $this->content ), true ) : '',
 					'author'       => $this->author,
 					'preview_text' => noptin_parse_email_content_tags( $this->get( 'preview_text' ), true ),
 					'footer_text'  => noptin_parse_email_content_tags( $this->get( 'footer_text' ), true ),
 				)
 			);
 
-			foreach ( $args as $key => $value ) {
+			foreach ( array_keys( get_noptin_email_types() ) as $email_type ) {
+				$key = 'content_' . $email_type;
+				if ( $type !== $email_type || ! isset( $args[ $key ] ) ) {
+					$args[ $key ] = '';
+					continue;
+				}
 
-				// Check if the key starts with content_.
-				if ( 0 === strpos( $key, 'content_' ) ) {
-					$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $value );
+				$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $args[ $key ] );
 
-					// Parse paragraphs.
-					if ( 'content_normal' === $type ) {
-						$value = wpautop( trim( $value ) );
-					}
+				// Parse paragraphs.
+				if ( 'content_normal' === $type ) {
+					$value = wpautop( trim( $value ) );
+				}
 
-					$args[ $key ] = trim( noptin_parse_email_content_tags( $value, true ) );
+				$args[ $key ] = trim( noptin_parse_email_content_tags( $value, true ) );
 
-					// Strip HTML.
-					if ( 'content_plain_text' === $type && ! empty( $args[ $key ] ) ) {
-						$args[ $key ] = noptin_convert_html_to_text( $args[ $key ] );
-					}
+				// Strip HTML.
+				if ( 'content_plain_text' === $key && ! empty( $args[ $key ] ) ) {
+					$args[ $key ] = noptin_convert_html_to_text( $args[ $key ] );
 				}
 			}
 

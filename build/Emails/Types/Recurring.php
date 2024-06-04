@@ -536,15 +536,11 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	 */
 	public function maybe_send_notification( $campaign_id ) {
 
-		delete_post_meta( $campaign_id, '_bulk_email_last_error' );
-
 		// Get the campaign.
-		$campaign = noptin_get_email_campaign_object( $campaign_id );
+		$campaign    = noptin_get_email_campaign_object( $campaign_id );
+		$campaign_id = $campaign->id;
 
-		// Ensure that the campaign is still published.
-		if ( ! $campaign->can_send() ) {
-			return;
-		}
+		delete_post_meta( $campaign_id, '_bulk_email_last_error' );
 
 		// Reschedule next send.
 		$campaign->options['next_send'] = '';
@@ -555,6 +551,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 
 		// Don't send if we already sent today.
 		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === gmdate( 'Ymd' ) && ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) ) {
+			$GLOBALS['noptin_email_force_send_error'] = 'Skipped sending campaign. Reason:- Already sent today.';
 			return;
 		}
 
@@ -569,6 +566,8 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					'message' => 'Skipped sending campaign. Reason:- ' . $result->get_error_message(),
 				)
 			);
+
+			$GLOBALS['noptin_email_force_send_error'] = 'Skipped sending campaign. Reason:- ' . $result->get_error_message();
 
 			log_noptin_message( 'Skipped sending campaign:- ' . $campaign->name . '. Reason:- ' . $result->get_error_message() );
 		}
