@@ -331,6 +331,8 @@ class Noptin {
 			remove_action( 'noptin_integrations_load', 'noptin_addons_pack_load' );
 		}
 
+		do_action( 'before_noptin_load', $this );
+
 		// Integrations.
 		$this->integrations_new = new \Hizzle\Noptin\Integrations\Main();
 		$this->integrations     = new Noptin_Integrations();
