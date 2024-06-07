@@ -48,6 +48,9 @@ class Main {
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
 
+		// Add shortcode to display past newsletters.
+		add_shortcode( 'past_noptin_newsletters', array( __CLASS__, 'past_newsletters' ) );
+
 		// Email preview.
 		Preview::init();
 
@@ -335,7 +338,6 @@ class Main {
 		);
 
 		foreach ( self::$types as $type ) {
-
 			if ( ! $type->supports_sub_types ) {
 				continue;
 			}
@@ -726,5 +728,82 @@ class Main {
 		}
 
 		return $date;
+	}
+
+	/**
+	 * Displays past newsletters.
+	 *
+	 * @param array $atts The shortcode attributes.
+	 * @return string
+	 */
+	public static function past_newsletters( $atts ) {
+		$atts = shortcode_atts(
+			array(
+				'limit'        => 20,
+				'with_parents' => 'no',
+				'show'         => 'subject',
+			),
+			$atts
+		);
+
+		$args = array(
+			'posts_per_page' => (int) $atts['limit'],
+			'post_type'      => 'noptin-campaign',
+			'meta_query'     => array(
+				array(
+					'key'     => 'paused',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'   => 'campaign_type',
+					'value' => 'newsletter',
+				),
+			),
+		);
+
+		if ( 'no' === $atts['with_parents'] ) {
+			$args['post_parent'] = 0;
+		}
+
+		$emails = get_posts( $args );
+
+		if ( empty( $emails ) ) {
+			return '';
+		}
+
+		ob_start();
+		?>
+		<div class="noptin-past-newsletters">
+			<ul style="list-style-type: none; padding: 0; margin: 20px 0;">
+				<?php foreach ( $emails as $email_id ) : ?>
+					<?php
+						$email = new Email( $email_id );
+						$date  = gmdate( 'F j, Y', strtotime( $email->created ) );
+						$url   = $email->get_view_in_browser_url(
+							array(
+								'source' => 'past-newsletters',
+							)
+						);
+						$title = $email->name;
+
+						if ( empty( $title ) || 'title' !== $atts['show'] ) {
+							$title = $email->get( 'subject' );
+						}
+					?>
+
+					<li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
+						<a href="<?php echo esc_url( $url ); ?>" style="font-weight: bold;">
+							<?php echo esc_html( $title ); ?>
+						</a>
+						<div style="color: #757575; font-size: 0.9em;">
+							<?php echo esc_html( $date ); ?>
+						</div>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+
+		<?php
+		return ob_get_clean();
 	}
 }
