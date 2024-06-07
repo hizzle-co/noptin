@@ -276,6 +276,13 @@ class Menu {
 						'el'          => 'input',
 						'default'     => false,
 					),
+					'keep_data_on_uninstall'    => array(
+						'label'       => __( 'Keep data on uninstall', 'newsletter-optin-box' ),
+						'description' => __( 'Keep all data when the plugin is uninstalled.', 'newsletter-optin-box' ),
+						'type'        => 'checkbox_alt',
+						'el'          => 'input',
+						'default'     => false,
+					),
 				),
 			),
 
