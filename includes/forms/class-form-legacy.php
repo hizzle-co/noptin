@@ -113,7 +113,7 @@ class Noptin_Form_Legacy {
 		// Init the form.
 		$form = array(
 			'optinName'   => $post->post_title,
-			'optinStatus' => ( 'draft' !== $post->post_status ),
+			'optinStatus' => ( 'publish' === $post->post_status ),
 			'id'          => $post->ID,
 			'optinHTML'   => $post->post_content,
 			'optinType'   => get_post_meta( $post->ID, '_noptin_optin_type', true ),

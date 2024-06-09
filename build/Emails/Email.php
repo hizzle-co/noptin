@@ -1431,6 +1431,13 @@ class Email {
 			wp_remove_targeted_link_rel_filters();
 		}
 
+		$has_kses = false !== has_filter( 'content_save_pre', 'wp_filter_post_kses' );
+
+		if ( $has_kses ) {
+			// Prevent KSES from corrupting blocks in post_content.
+			kses_remove_filters();
+		}
+
 		// Create or update the email.
 		if ( $this->exists() ) {
 			$args['ID'] = $this->id;
@@ -1441,6 +1448,10 @@ class Email {
 
 		if ( $has_filter ) {
 			wp_init_targeted_link_rel_filters();
+		}
+
+		if ( $has_kses ) {
+			kses_init_filters();
 		}
 
 		// Schedule the email.

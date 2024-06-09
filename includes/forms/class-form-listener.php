@@ -128,6 +128,12 @@ class Noptin_Form_Listener {
 			return $this->error->add( 'invalid_email', get_noptin_form_message( 'invalid_email' ) );
 		}
 
+		$source = $this->get_submitted( 'source' );
+
+		if ( is_numeric( $source ) && get_post_meta( (int) $source, 'form_settings', true ) && 'publish' !== get_post_status( (int) $source ) ) {
+			return $this->error->add( 'error', __( 'This form is in-active.', 'newsletter-optin-box' ) );
+		}
+
 		// Validate other required fields.
 		foreach ( $this->get_fields_for_request() as $custom_field ) {
 
