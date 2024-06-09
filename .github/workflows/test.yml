@@ -33,8 +33,8 @@ jobs:
 
       - name: Update MySQL Authentication Method
         run: |
-            sudo mysql -u root -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '';"
-            sudo mysql -u root -e "FLUSH PRIVILEGES;"
+            sudo mysql --host=127.0.0.1 -u root -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '';"
+            sudo mysql --host=127.0.0.1 -u root -e "FLUSH PRIVILEGES;"
   
       - name: Check MySQL connection
         run: mysql --host=127.0.0.1 --user=root --execute="SELECT 1"
