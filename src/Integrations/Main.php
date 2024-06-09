@@ -269,7 +269,11 @@ class Main {
 			return $this->all_integrations;
 		}
 
-		$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'integrations.json', array( 'associative' => true ) );
+		$all = get_option( 'noptin_integrations' );
+
+		if ( ! is_array( $all ) ) {
+			$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'integrations.json', array( 'associative' => true ) );
+		}
 
 		$this->all_integrations = array();
 		if ( empty( $all ) ) {
@@ -337,15 +341,12 @@ class Main {
 	 *
 	 */
 	public static function refresh() {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-		WP_Filesystem();
 
 		// Fetch the integrations.
 		$result = \Noptin_COM::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/integrations.json' ) );
 		if ( is_array( $result ) ) {
-			$GLOBALS['wp_filesystem']->put_contents( plugin_dir_path( __FILE__ ) . 'integrations.json', wp_json_encode( $result ), FS_CHMOD_FILE );
+			$result = json_decode( wp_json_encode( $result ), true );
+			update_option( 'noptin_integrations', $result );
 		}
 	}
 
