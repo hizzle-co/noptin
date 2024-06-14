@@ -367,7 +367,6 @@ class Main {
 			wp_enqueue_script(
 				'noptin-' . $script,
 				plugins_url( 'assets/js/' . $script . '.js', __DIR__ ),
-				//array_diff( $config['dependencies'], array( 'react-jsx-runtime' ) ),
 				$config['dependencies'],
 				$config['version'],
 				true
@@ -395,7 +394,7 @@ class Main {
 							array(
 								'manual_recipients' => array(
 									'label'        => __( 'Manual Recipients', 'newsletter-optin-box' ),
-									'description'  => __( 'Send the email to the current user or a comma separated list of email addresses.', 'newsletter-optin-box' ),
+									'description'  => __( 'Send an email to a comma separated list of email addresses.', 'newsletter-optin-box' ),
 									'image'        => array(
 										'icon' => 'businessperson',
 										'fill' => '#212121',
@@ -541,6 +540,18 @@ class Main {
 		// Set the sender.
 		if ( ! empty( $query_args['noptin_email_sender'] ) ) {
 			$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
+
+			// Check if sender contains a merge tag...
+			if ( false !== strpos( $campaign->options['email_sender'], '[[' ) && false !== strpos( $campaign->options['email_sender'], ']]' ) ) {
+				$campaign->options['recipients']   = $campaign->options['email_sender'];
+				$campaign->options['email_sender'] = 'manual_recipients';
+			}
+
+			// ... or an email address.
+			if ( 0 < strpos( $campaign->options['email_sender'], '@' ) ) {
+				$campaign->options['recipients']   = $campaign->options['email_sender'];
+				$campaign->options['email_sender'] = 'manual_recipients';
+			}
 		}
 
 		// Set the author.

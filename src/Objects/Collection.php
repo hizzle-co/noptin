@@ -154,6 +154,15 @@ abstract class Collection {
 
 			$args['provides'] = $this->filter( $args['provides'], 'provided_collections' );
 
+			$subject = Store::get( $args['subject'] );
+			$subject = $subject ? $subject->get_manual_recipients() : array();
+			if ( ! empty( $subject ) ) {
+				$mail_config                      = $args['mail_config'] ?? array();
+				$manual_recipients                = $mail_config['manual_recipients'] ?? array();
+				$mail_config['manual_recipients'] = array_merge( $subject, $manual_recipients );
+				$args['mail_config']              = $mail_config;
+			}
+
 			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this );
 
 			$rules->add_trigger(
@@ -243,6 +252,13 @@ abstract class Collection {
 	 * @return array
 	 */
 	public function get_filters() {
+		return array();
+	}
+
+	/**
+	 * Retrieves the manual recipients.
+	 */
+	public function get_manual_recipients() {
 		return array();
 	}
 

@@ -322,7 +322,12 @@ class Task extends \Hizzle\Store\Record {
 			$new_task->set_date_scheduled( time() + (int) $task->get_meta( 'interval' ) );
 			$new_task->add_log( 'Task rescheduled from #' . $task->get_id() );
 			$new_task->set_status( 'pending' );
-			$new_task->save();
+			$result = $new_task->save();
+
+			if ( is_wp_error( $result ) ) {
+				$task->add_log( 'Failed to reschedule task: ' . $result->get_error_message() );
+				$task->save();
+			}
 		}
 	}
 

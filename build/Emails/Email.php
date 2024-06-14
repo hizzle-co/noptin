@@ -419,7 +419,7 @@ class Email {
 	private function check_can_send() {
 
 		if ( ! $this->is_published() || ! $this->exists() ) {
-			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent since it is not published.', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_cannot_send', 'The email cannot be sent since it is not published.' );
 		}
 
 		// Check if the campaign is already sent.
@@ -685,7 +685,7 @@ class Email {
 		$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 		if ( is_wp_error( $should_send ) || false === $should_send ) {
 			if ( ! $should_send ) {
-				return new \WP_Error( 'noptin_email_skipped', __( 'The email was skipped via a filter', 'newsletter-optin-box' ) );
+				return new \WP_Error( 'noptin_email_skipped', 'The email was skipped via a filter' );
 			}
 
 			return $should_send;
