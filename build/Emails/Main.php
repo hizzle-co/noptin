@@ -773,8 +773,31 @@ class Main {
 
 		ob_start();
 		?>
+		<style>
+			.noptin-past-newsletters .noptin-past-newsletters__list {
+				list-style-type: none;
+				padding: 0;
+				margin: 20px 0;
+			}
+
+			.noptin-past-newsletters .noptin-past-newsletters__list .noptin-past-newsletters__list-item {
+				margin-bottom: 15px;
+				padding-bottom: 15px;
+				border-bottom: 1px solid #e0e0e0;
+			}
+
+			.noptin-past-newsletters a {
+				font-weight: bold;
+				display: block;
+			}
+
+			.noptin-past-newsletters .noptin-past-newsletters-list-item__date {
+				color: #757575;
+				font-size: 0.9em;
+			}
+		</style>
 		<div class="noptin-past-newsletters">
-			<ul style="list-style-type: none; padding: 0; margin: 20px 0;">
+			<ul class="noptin-past-newsletters__list">
 				<?php foreach ( $emails as $email_id ) : ?>
 					<?php
 						$email = new Email( $email_id );
@@ -791,11 +814,11 @@ class Main {
 						}
 					?>
 
-					<li style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;">
-						<a href="<?php echo esc_url( $url ); ?>" style="font-weight: bold;">
+					<li class="noptin-past-newsletters__list-item">
+						<a href="<?php echo esc_url( $url ); ?>">
 							<?php echo esc_html( $title ); ?>
 						</a>
-						<div style="color: #757575; font-size: 0.9em;">
+						<div class="noptin-past-newsletters-list-item__date">
 							<?php echo esc_html( $date ); ?>
 						</div>
 					</li>
