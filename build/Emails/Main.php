@@ -801,7 +801,7 @@ class Main {
 				<?php foreach ( $emails as $email_id ) : ?>
 					<?php
 						$email = new Email( $email_id );
-						$date  = gmdate( 'F j, Y', strtotime( $email->created ) );
+						$date  = date_i18n( 'F j, Y', strtotime( $email->created ) );
 						$url   = $email->get_view_in_browser_url(
 							array(
 								'source' => 'past-newsletters',
