@@ -98,7 +98,12 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 				'conditional_logic' => 'number',
 				'validate_once'     => true,
 			),
-
+			'current_language' => array(
+				'description'       => __( 'The current language', 'newsletter-optin-box' ),
+				'callback'          => 'get_locale',
+				'conditional_logic' => 'string',
+				'validate_once'     => true,
+			),
 			'cookie'  => array(
 				'description'       => __( 'Data from a cookie.', 'newsletter-optin-box' ),
 				'callback'          => 'Noptin_Dynamic_Content_Tags::get_cookie',

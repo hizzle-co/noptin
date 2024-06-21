@@ -33,6 +33,10 @@ class Noptin_Install {
 			return $this->do_full_install();
 		}
 
+		if ( ! get_option( 'noptin_review_nag' ) ) {
+			update_option( 'noptin_review_nag', time() + WEEK_IN_SECONDS );
+		}
+
 		// Upgrading from version 1.
 		if ( 1 === $upgrade_from ) {
 			return $this->upgrade_from_1();
@@ -132,5 +136,9 @@ class Noptin_Install {
 		if ( class_exists( 'WooCommerce' ) ) {
 			update_option( 'noptin_use_new_forms', '1' );
 		}
+
+		// Save installation date.
+		update_option( 'noptin_install_date', time() );
+		update_option( 'noptin_review_nag', time() + WEEK_IN_SECONDS );
 	}
 }
