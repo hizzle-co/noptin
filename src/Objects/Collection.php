@@ -154,12 +154,27 @@ abstract class Collection {
 
 			$args['provides'] = $this->filter( $args['provides'], 'provided_collections' );
 
-			$subject = Store::get( $args['subject'] );
-			$subject = $subject ? $subject->get_manual_recipients() : array();
-			if ( ! empty( $subject ) ) {
+			$manual_recipients = array();
+			if ( 'current_user' !== $args['subject'] && in_array( 'current_user', $args['provides'], true ) ) {
+				$current_user      = Store::get( 'current_user' );
+
+				if ( $current_user ) {
+					$manual_recipients = array_merge( $manual_recipients, $current_user->get_manual_recipients() );
+				}
+			}
+
+			$subject = $this->type === $args['subject'] ? $this : Store::get( $args['subject'] );
+
+			if ( $subject ) {
+				$manual_recipients = array_merge( $manual_recipients, $subject->get_manual_recipients() );
+			}
+
+			if ( ! empty( $manual_recipients ) ) {
 				$mail_config                      = $args['mail_config'] ?? array();
-				$manual_recipients                = $mail_config['manual_recipients'] ?? array();
-				$mail_config['manual_recipients'] = array_merge( $subject, $manual_recipients );
+				$mail_config['manual_recipients'] = array_merge(
+					$mail_config['manual_recipients'] ?? array(),
+					$manual_recipients
+				);
 				$args['mail_config']              = $mail_config;
 			}
 
