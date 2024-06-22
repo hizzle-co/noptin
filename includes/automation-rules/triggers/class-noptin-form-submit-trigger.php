@@ -135,7 +135,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 				$key      = noptin_sanitize_merge_tag( $key );
 
 				$field['example']    = $prefixed;
-				$field['group']      = $form['name'];
+				$field['group']      = sprintf( '%s - %s', $this->category, $form['name'] );
 				$field['deprecated'] = $key;
 				$field['conditions'] = array(
 					array(

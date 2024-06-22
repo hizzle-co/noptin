@@ -1198,7 +1198,6 @@ function get_noptin_custom_fields( $public_only = false ) {
 	$has_language_field = current( wp_list_filter( $custom_fields, array( 'type' => 'language' ) ) );
 
 	if ( noptin_is_multilingual() && ! $has_language_field ) {
-
 		$custom_fields[] = array(
 			'type'       => 'language',
 			'merge_tag'  => 'language',
@@ -1243,7 +1242,6 @@ function get_noptin_custom_fields( $public_only = false ) {
 		}
 
 		foreach ( $field as $key => $value ) {
-
 			if ( in_array( $key, array( 'visible', 'predefined', 'required' ), true ) ) {
 				$prepared_field[ $key ] = ! empty( $value );
 			} elseif ( in_array( $key, array( 'options' ), true ) ) {
