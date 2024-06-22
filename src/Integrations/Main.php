@@ -192,6 +192,32 @@ class Main {
 					}
 					break;
 
+				// Specific theme.
+				case 'theme':
+					if ( get_template() === $value['template'] ) {
+						break;
+					}
+
+					$current_theme = wp_get_theme();
+					$parent_theme  = $current_theme->exists() ? $current_theme->parent() : false;
+
+					// Check if either the parent or child theme is active.
+					if ( $parent_theme && $parent_theme->get( 'Name' ) === $value['name'] ) {
+						break;
+					}
+
+					if ( $current_theme->get( 'Name' ) !== $value['name'] ) {
+						$this->notices[ $config['label'] ] = sprintf(
+							// translators: %1$s is the integration label, %2$s is the required theme.
+							__( 'The %1$s integration requires the %2$s theme.', 'newsletter-optin-box' ),
+							$config['label'],
+							$value['name']
+						);
+
+						return false;
+					}
+					break;
+
 				// Specific class.
 				case 'class':
 					if ( ! class_exists( $value ) ) {
