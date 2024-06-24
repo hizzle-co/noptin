@@ -77,7 +77,13 @@ class Generic_Post extends Record {
 
 		// Content.
 		if ( 'content' === strtolower( $field ) ) {
-			return $this->filter_content( $this->external->post_content );
+			$content = $this->filter_content( $this->external->post_content );
+
+			// Check if the user has specified the number of paragraphs to display.
+			if ( ! empty( $args['paragraphs'] ) ) {
+				$paragraphs = explode( '</p>', $content );
+				$content    = implode( '</p>', array_slice( $paragraphs, 0, (int) $args['paragraphs'] ) );
+			}
 		}
 
 		// Title.
