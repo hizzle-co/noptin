@@ -18,6 +18,11 @@ class Generic_Post extends Record {
 	public $external;
 
 	/**
+	 * The excerpt limit.
+	 */
+	public $excerpt_length = null;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param mixed $external The external object.
@@ -77,7 +82,16 @@ class Generic_Post extends Record {
 
 		// Content.
 		if ( 'content' === strtolower( $field ) ) {
-			$content = $this->filter_content( $this->external->post_content );
+			$content = $this->external->post_content;
+
+			// Check if the user has specified the number of paragraphs to display.
+			if ( ! empty( $args['paragraphs'] ) ) {
+				$content = excerpt_remove_footnotes( excerpt_remove_blocks( $content ) );
+			} else {
+				$content = do_blocks( $content );
+			}
+
+			$content = $this->filter_content( $content );
 
 			// Check if the user has specified the number of paragraphs to display.
 			if ( ! empty( $args['paragraphs'] ) ) {
@@ -93,7 +107,22 @@ class Generic_Post extends Record {
 
 		// Excerpt.
 		if ( 'excerpt' === strtolower( $field ) ) {
-			return wp_strip_all_tags( apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ) );
+
+			// Are we limiting the excerpt length?
+			if ( ! empty( $args['words'] ) ) {
+				$this->excerpt_length = (int) $args['words'];
+				add_filter( 'excerpt_length', array( $this, 'excerpt_length' ) );
+			}
+
+			$excerpt = wp_strip_all_tags( apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ) );
+
+			// Remove the excerpt length filter.
+			if ( ! empty( $args['words'] ) ) {
+				$this->excerpt_length = null;
+				remove_filter( 'excerpt_length', array( $this, 'excerpt_length' ) );
+			}
+
+			return $excerpt;
 		}
 
 		// URL.
@@ -132,7 +161,6 @@ class Generic_Post extends Record {
 	 */
 	protected function filter_content( $content ) {
 		$callbacks = array(
-			'do_blocks',
 			'wptexturize',
 			'wpautop',
 			'shortcode_unautop',
@@ -194,5 +222,12 @@ class Generic_Post extends Record {
 
 		// Check if the taxonomy is public
 		return $taxonomy_object->public;
+	}
+
+	/**
+	 * Filter the excerpt length.
+	 */
+	public function excerpt_length( $length = 55 ) {
+		return empty( $this->excerpt_length ) ? $length : $this->excerpt_length;
 	}
 }
