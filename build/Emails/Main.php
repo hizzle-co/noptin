@@ -54,6 +54,9 @@ class Main {
 		// Email preview.
 		Preview::init();
 
+		// Templates.
+		Templates::init();
+
 		if ( is_admin() ) {
 			Admin\Main::init();
 		}

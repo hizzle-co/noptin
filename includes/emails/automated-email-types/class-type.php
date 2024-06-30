@@ -106,13 +106,14 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 			array(
 				$this->type => array_merge(
 					array(
-						'label'           => $this->get_name(),
-						'description'     => $this->get_description(),
-						'image'           => $this->get_image(),
-						'category'        => $this->category,
-						'is_mass_mail'    => 'Mass Mail' === $this->category,
-						'supports_timing' => 'Mass Mail' !== $this->category || 'post_notifications' === $this->type,
-						'contexts'        => $this->contexts,
+						'label'                      => $this->get_name(),
+						'description'                => $this->get_description(),
+						'image'                      => $this->get_image(),
+						'category'                   => $this->category,
+						'is_mass_mail'               => 'Mass Mail' === $this->category,
+						'supports_timing'            => 'Mass Mail' !== $this->category || 'post_notifications' === $this->type,
+						'contexts'                   => $this->contexts,
+						'supports_general_templates' => empty( $this->mail_config['defaults']['blocks'] ),
 					),
 					$this->mail_config
 				),

@@ -56,12 +56,13 @@ class Recurring extends \Noptin_Automated_Email_Type {
 			array(
 				$this->type => array_merge(
 					array(
-						'label'           => $this->get_name(),
-						'description'     => $this->get_description(),
-						'image'           => $this->get_image(),
-						'category'        => $this->category,
-						'supports_timing' => false,
-						'contexts'        => $this->contexts,
+						'label'                      => $this->get_name(),
+						'description'                => $this->get_description(),
+						'image'                      => $this->get_image(),
+						'category'                   => $this->category,
+						'supports_timing'            => false,
+						'contexts'                   => $this->contexts,
+						'supports_general_templates' => 'periodic' === $this->type,
 					),
 					$this->mail_config
 				),

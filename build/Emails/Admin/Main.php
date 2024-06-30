@@ -356,7 +356,7 @@ class Main {
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
 			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
 
-			if ( 'view-campaigns' === $script ) {
+			if ( 'view-campaigns' === $script && $type && $type->supports_menu_order ) {
 				// Enqueue jQuery UI core
 				wp_enqueue_script( 'jquery-ui-core' );
 
@@ -429,7 +429,8 @@ class Main {
 							),
 							get_noptin_email_senders( true )
 						),
-					)
+					),
+					$script
 				)
 			);
 
@@ -560,6 +561,11 @@ class Main {
 		// Check if we have manual recipients.
 		if ( ! empty( $query_args['noptin_recipients'] ) ) {
 			$campaign->options['manual_recipients_ids'] = noptin_parse_int_list( $query_args['noptin_recipients'] );
+		}
+
+		// Set the template.
+		if ( ! empty( $query_args['noptin_email_template'] ) ) {
+			$campaign->options['noptin_source_template'] = sanitize_text_field( $query_args['noptin_email_template'] );
 		}
 
 		return $campaign;

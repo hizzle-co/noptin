@@ -97,7 +97,6 @@ abstract class Noptin_Email_Type {
 
 		// Find all methods that begin with default_.
 		foreach ( $methods as $method ) {
-
 			if ( 0 !== strpos( $method, 'default_' ) ) {
 				continue;
 			}

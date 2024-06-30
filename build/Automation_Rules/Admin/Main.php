@@ -126,7 +126,8 @@ class Main {
 							'actions'  => self::prepare_triggers_for_editor( noptin()->automation_rules->get_actions() ),
 							'app'      => 'automation-rule-editor' === $script ? self::prepare_app() : array(),
 						),
-					)
+					),
+					$script
 				)
 			);
 

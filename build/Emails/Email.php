@@ -64,6 +64,11 @@ class Email {
 	public $author;
 
 	/**
+	 * @var int The menu order for the email.
+	 */
+	public $menu_order = 0;
+
+	/**
 	 * @var array Extra email meta.
 	 */
 	public $options = array();
@@ -139,7 +144,6 @@ class Email {
 			$all_meta = get_post_meta( $post->ID );
 
 			foreach ( $all_meta as $key => $value ) {
-
 				if ( 'noptin_sends_after' === $key ) {
 					$key = 'sends_after';
 				}
@@ -163,14 +167,15 @@ class Email {
 			$this->options = $data;
 		}
 
-		$this->id        = $post->ID;
-		$this->parent_id = $post->post_parent;
-		$this->status    = $post->post_status;
-		$this->name      = $post->post_title;
-		$this->created   = $post->post_date;
-		$this->content   = $post->post_content;
-		$this->type      = get_post_meta( $post->ID, 'campaign_type', true );
-		$this->author    = $post->post_author;
+		$this->id         = $post->ID;
+		$this->parent_id  = $post->post_parent;
+		$this->status     = $post->post_status;
+		$this->name       = $post->post_title;
+		$this->created    = $post->post_date;
+		$this->content    = $post->post_content;
+		$this->type       = get_post_meta( $post->ID, 'campaign_type', true );
+		$this->author     = $post->post_author;
+		$this->menu_order = $post->menu_order;
 
 		// Backwards compatibility.
 		// CSS.
@@ -193,7 +198,6 @@ class Email {
 		// Subject.
 		$resave_title = false;
 		if ( ! isset( $this->options['subject'] ) ) {
-
 			if ( ! empty( $this->options['custom_title'] ) ) {
 				$this->name   = $this->options['custom_title'];
 				$resave_title = true;
@@ -223,6 +227,13 @@ class Email {
 
 		$this->subject = $this->options['subject'];
 
+		$has_kses = false !== has_filter( 'content_save_pre', 'wp_filter_post_kses' );
+
+		if ( $has_kses ) {
+			// Prevent KSES from corrupting blocks in post_content.
+			kses_remove_filters();
+		}
+
 		// Check if content contains blocks.
 		if ( $resave && ! has_blocks( $this->content ) ) {
 			$this->content = noptin_email_wrap_blocks(
@@ -248,6 +259,10 @@ class Email {
 					'post_title' => $this->name,
 				)
 			);
+		}
+
+		if ( $has_kses ) {
+			kses_init_filters();
 		}
 
 		// Add sub-type to options array.
@@ -282,7 +297,6 @@ class Email {
 
 		// Reset values.
 		foreach ( $args as $key => $value ) {
-
 			if ( property_exists( $this, $key ) ) {
 				$this->$key = $value;
 				unset( $args[ $key ] );
@@ -773,7 +787,6 @@ class Email {
 
 		$prepared = array();
 		foreach ( $attachments as $attachment ) {
-
 			$attachment = $this->parse_attachment_file_path( trim( $attachment ) );
 
 			// Add if its not a remote file.
@@ -837,7 +850,6 @@ class Email {
 		if ( file_exists( ABSPATH . $file_path ) ) {
 			$remote_file = false;
 			$file_path   = ABSPATH . $file_path;
-
 		} elseif ( '/wp-content' === substr( $file_path, 0, 11 ) ) {
 			$remote_file = false;
 			$file_path   = realpath( WP_CONTENT_DIR . substr( $file_path, 11 ) );
@@ -1035,7 +1047,6 @@ class Email {
 		$email_sender      = $this->get_sender();
 
 		foreach ( $this->get_manual_recipients_ids() as $recipient_id ) {
-
 			$recipient = get_noptin_email_recipient( $recipient_id, $email_sender );
 
 			if ( empty( $recipient ) ) {
