@@ -530,5 +530,4 @@ class Noptin_Admin {
 		// Clear cache.
 		wp_cache_flush();
 	}
-
 }
