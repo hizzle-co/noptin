@@ -139,6 +139,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 3.4.6 =
 * Fix: Unable to manually add newsletter subscribers.
+* Fix: Default confirmation email sent when an unsubscribed contact unsubscribes from your newsletter.
 
 = 3.4.5 =
 * Allow to limit the length of post excerpts shown in newsletters.

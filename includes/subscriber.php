@@ -790,7 +790,7 @@ function send_new_noptin_subscriber_double_optin_email( $id ) {
 	$subscriber = noptin_get_subscriber( $id );
 
 	// Abort if the subscriber is missing or confirmed.
-	if ( ! $subscriber->exists() || $subscriber->get_confirmed() || $subscriber->is_active() ) {
+	if ( ! $subscriber->exists() || $subscriber->get_confirmed() || 'pending' !== $subscriber->get_status() ) {
 		return false;
 	}
 
