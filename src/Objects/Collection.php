@@ -359,6 +359,7 @@ abstract class Collection {
 									<img
 										src="<?php echo esc_html( $this->field_to_merge_tag( $this->image_field ) ); ?>"
 										alt="<?php echo esc_html( $this->field_to_merge_tag( $this->title_field ) ); ?>"
+										border="0"
 										style="max-width:100%" />
 								<?php if ( ! empty( $this->url_field ) ) : ?>
 									</a>

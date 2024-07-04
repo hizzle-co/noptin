@@ -148,7 +148,17 @@ class Generic_Post_Type extends Post_Type {
 		// If date query is specified, ensure it is enabled.
 		$filters = $this->prepare_date_query_filter( $filters );
 
-		return get_posts( array_filter( $filters ) );
+		$filters = array_filter( $filters );
+		$posts   = get_posts( $filters );
+
+		// Debug the query later.
+		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING && ! empty( $GLOBALS['wpdb']->last_query ) ) {
+			noptin_error_log( $filters, 'Post collection args' );
+			noptin_error_log( $GLOBALS['wpdb']->last_query, 'Post collection query' );
+			noptin_error_log( count( $posts ), 'Post collection posts' );
+		}
+
+		return get_posts( $posts );
 	}
 
 	/**

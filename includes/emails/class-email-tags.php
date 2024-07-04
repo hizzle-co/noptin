@@ -595,8 +595,17 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		// Meta query.
 		$query = $this->add_meta_query( $query, $args );
+		$query = apply_filters( 'noptin_posts_merge_tag_query', $query, $args, $this );
+		$posts = get_posts( $query );
 
-		return get_posts( apply_filters( 'noptin_posts_merge_tag_query', $query, $args, $this ) );
+		// Debug the query later.
+		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING && ! empty( $GLOBALS['wpdb']->last_query ) ) {
+			noptin_error_log( $query, 'Posts args' );
+			noptin_error_log( $GLOBALS['wpdb']->last_query, 'Posts query' );
+			noptin_error_log( count( $posts ), 'Posts posts' );
+		}
+
+		return $posts;
 	}
 
 	/**

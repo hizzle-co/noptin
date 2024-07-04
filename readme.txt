@@ -2,10 +2,10 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, woocommerce
 Requires at least: 6.4
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.2
-Version: 3.4.5
-Stable tag: 3.4.5
+Version: 3.4.6
+Stable tag: 3.4.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
