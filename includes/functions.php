@@ -1448,7 +1448,7 @@ function noptin_get_post_excerpt( $post, $limit = 0 ) {
 	}
 
 	// Generate excerpt.
-	$post_excerpt = get_the_excerpt( $post );
+	$post_excerpt = wp_strip_all_tags( get_the_excerpt( $post ) );
 
 	if ( false !== $wp_rss_aggregator_fix ) {
 		add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );

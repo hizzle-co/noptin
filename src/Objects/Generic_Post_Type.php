@@ -237,6 +237,15 @@ class Generic_Post_Type extends Post_Type {
 					'metadata'    => array(
 						'ancestor' => array( $this->context ),
 					),
+					'settings'    => array(
+						'words' => array(
+							'label'       => __( 'Words', 'newsletter-optin-box' ),
+							'el'          => 'input',
+							'type'        => 'number',
+							'description' => __( 'The maximum number of words to display.', 'newsletter-optin-box' ),
+							'placeholder' => '55',
+						),
+					),
 				),
 			),
 			'content'        => array(

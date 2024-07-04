@@ -114,12 +114,24 @@ class Generic_Post extends Record {
 				add_filter( 'excerpt_length', array( $this, 'excerpt_length' ) );
 			}
 
+			// Prevent wp_rss_aggregator from appending the feed name to excerpts.
+			$wp_rss_aggregator_fix = has_filter( 'get_the_excerpt', 'mdwp_MarkdownPost' );
+
+			if ( false !== $wp_rss_aggregator_fix ) {
+				remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+			}
+
 			$excerpt = wp_strip_all_tags( apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ) );
+
+			if ( false !== $wp_rss_aggregator_fix ) {
+				add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
+			}
 
 			// Remove the excerpt length filter.
 			if ( ! empty( $args['words'] ) ) {
 				$this->excerpt_length = null;
 				remove_filter( 'excerpt_length', array( $this, 'excerpt_length' ) );
+				$excerpt = wp_trim_words( $excerpt, $args['words'], '' );
 			}
 
 			return $excerpt;

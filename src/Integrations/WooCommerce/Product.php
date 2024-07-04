@@ -147,10 +147,15 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 			return wc_placeholder_img_src( $image_size );
 		}
 
+		// WooCommerce Wholesale Pro Compat.
+		$this->unhook_wcwp();
+
 		// Check if we have a method get_$field.
 		$method = 'get_' . $field;
 		if ( method_exists( $this->external, $method ) ) {
 			$value = $this->external->{$method}();
+
+			$this->hook_wcwp();
 
 			if ( is_a( $value, 'WC_DateTime' ) ) {
 				return wc_format_datetime( $value );
@@ -160,10 +165,52 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 		}
 
 		if ( method_exists( $this->external, $field ) ) {
-			return $this->external->{$field}();
+			$value = $this->external->{$field}();
+
+			$this->hook_wcwp();
+
+			if ( is_a( $value, 'WC_DateTime' ) ) {
+				return wc_format_datetime( $value );
+			}
+
+			return $value;
 		}
 
 		return apply_filters( 'noptin_post_get_meta', null, $field, $this->external->get_id(), $args );
+	}
+
+	/**
+	 * WooCommerce Wholesale Pro Compat.
+	 */
+	private function unhook_wcwp() {
+
+		if ( ! function_exists( '\\Barn2\\Plugin\\WC_Wholesale_Pro\\woocommerce_wholesale_pro' ) ) {
+			return;
+		}
+
+		add_filter( 'wcwp_disregard_wholesale_pricing', '__return_true', 99 );
+
+		$handler = \Barn2\Plugin\WC_Wholesale_Pro\woocommerce_wholesale_pro()->get_service( 'price_handler' );
+
+		if ( $handler ) {
+			remove_filter( 'woocommerce_product_is_on_sale', array( $handler, 'is_on_sale' ), 99 );
+			remove_filter( 'woocommerce_get_price_html', array( $handler, 'get_price_html' ), 999 );
+		}
+	}
+
+	private function hook_wcwp() {
+		if ( ! function_exists( '\\Barn2\\Plugin\\WC_Wholesale_Pro\\woocommerce_wholesale_pro' ) ) {
+			return;
+		}
+
+		add_filter( 'wcwp_disregard_wholesale_pricing', '__return_true', 99 );
+
+		$handler = \Barn2\Plugin\WC_Wholesale_Pro\woocommerce_wholesale_pro()->get_service( 'price_handler' );
+
+		if ( $handler ) {
+			add_filter( 'woocommerce_product_is_on_sale', array( $handler, 'is_on_sale' ), 99 );
+			add_filter( 'woocommerce_get_price_html', array( $handler, 'get_price_html' ), 999 );
+		}
 	}
 
 	private function prepare_terms( $term_ids, $taxonomy, $link ) {
@@ -177,7 +224,6 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 
 		/** @var \WP_Term $term */
 		foreach ( $terms as $term ) {
-
 			if ( empty( $term ) ) {
 				continue;
 			}
