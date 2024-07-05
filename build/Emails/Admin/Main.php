@@ -356,7 +356,7 @@ class Main {
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
 			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
 
-			if ( 'view-campaigns' === $script ) {
+			if ( 'view-campaigns' === $script && $type && $type->supports_menu_order ) {
 				// Enqueue jQuery UI core
 				wp_enqueue_script( 'jquery-ui-core' );
 
@@ -394,7 +394,7 @@ class Main {
 							array(
 								'manual_recipients' => array(
 									'label'        => __( 'Manual Recipients', 'newsletter-optin-box' ),
-									'description'  => __( 'Send the email to the current user or a comma separated list of email addresses.', 'newsletter-optin-box' ),
+									'description'  => __( 'Send an email to a comma separated list of email addresses.', 'newsletter-optin-box' ),
 									'image'        => array(
 										'icon' => 'businessperson',
 										'fill' => '#212121',
@@ -429,11 +429,12 @@ class Main {
 							),
 							get_noptin_email_senders( true )
 						),
-					)
+					),
+					$script
 				)
 			);
 
-			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box' );
+			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
 
 		// Load the css.
@@ -540,6 +541,18 @@ class Main {
 		// Set the sender.
 		if ( ! empty( $query_args['noptin_email_sender'] ) ) {
 			$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
+
+			// Check if sender contains a merge tag...
+			if ( false !== strpos( $campaign->options['email_sender'], '[[' ) && false !== strpos( $campaign->options['email_sender'], ']]' ) ) {
+				$campaign->options['recipients']   = $campaign->options['email_sender'];
+				$campaign->options['email_sender'] = 'manual_recipients';
+			}
+
+			// ... or an email address.
+			if ( 0 < strpos( $campaign->options['email_sender'], '@' ) ) {
+				$campaign->options['recipients']   = $campaign->options['email_sender'];
+				$campaign->options['email_sender'] = 'manual_recipients';
+			}
 		}
 
 		// Set the author.
@@ -548,6 +561,11 @@ class Main {
 		// Check if we have manual recipients.
 		if ( ! empty( $query_args['noptin_recipients'] ) ) {
 			$campaign->options['manual_recipients_ids'] = noptin_parse_int_list( $query_args['noptin_recipients'] );
+		}
+
+		// Set the template.
+		if ( ! empty( $query_args['noptin_email_template'] ) ) {
+			$campaign->options['noptin_source_template'] = sanitize_text_field( $query_args['noptin_email_template'] );
 		}
 
 		return $campaign;

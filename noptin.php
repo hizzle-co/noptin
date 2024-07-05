@@ -11,7 +11,7 @@
  * Description:     A very fast and lightweight WordPress newsletter plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
- * Version:         3.3.0
+ * Version:         3.4.6
  * Text Domain:     newsletter-optin-box
  * License:         GPLv3
  * License URI:     http://www.gnu.org/licenses/gpl-3.0.txt
@@ -46,7 +46,7 @@ class Noptin {
 	 * @var         string Plugin version
 	 * @since       1.0.0
 	 */
-	public $version = '3.3.0';
+	public $version = '3.4.6';
 
 	/**
 	 * The current database version.
@@ -54,7 +54,7 @@ class Noptin {
 	 * @var         int Plugin db version
 	 * @since       1.0.0
 	 */
-	public $db_version = 5;
+	public $db_version = 6;
 
 	/**
 	 * Stores the main Noptin instance.
@@ -315,7 +315,6 @@ class Noptin {
 
 		// Hooks class.
 		$this->hooks = new Noptin_Hooks();
-
 	}
 
 	/**
@@ -330,6 +329,8 @@ class Noptin {
 		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && version_compare( NOPTIN_ADDONS_PACK_VERSION, MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION, '<' ) ) {
 			remove_action( 'noptin_integrations_load', 'noptin_addons_pack_load' );
 		}
+
+		do_action( 'before_noptin_load', $this );
 
 		// Integrations.
 		$this->integrations_new = new \Hizzle\Noptin\Integrations\Main();
@@ -461,7 +462,6 @@ class Noptin {
 		);
 
 		foreach ( apply_filters( 'noptin_autoload_locations', $locations ) as $location ) {
-
 			if ( file_exists( trailingslashit( $location ) . $file_name ) ) {
 				include trailingslashit( $location ) . $file_name;
 				break;
@@ -507,15 +507,6 @@ class Noptin {
      */
 	public function db() {
 		return \Hizzle\Noptin\DB\Main::instance();
-	}
-
-	/**
-	 * Returns the new subscribers manager.
-	 *
-	 * @return \Hizzle\Noptin\Subscribers\Main
-	 */
-	public function subscribers() {
-		return \Hizzle\Noptin\Subscribers\Main::instance();
 	}
 
 	/**

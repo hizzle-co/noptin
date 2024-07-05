@@ -154,6 +154,30 @@ abstract class Collection {
 
 			$args['provides'] = $this->filter( $args['provides'], 'provided_collections' );
 
+			$manual_recipients = array();
+			if ( 'current_user' !== $args['subject'] && in_array( 'current_user', $args['provides'], true ) ) {
+				$current_user      = Store::get( 'current_user' );
+
+				if ( $current_user ) {
+					$manual_recipients = array_merge( $manual_recipients, $current_user->get_manual_recipients() );
+				}
+			}
+
+			$subject = $this->type === $args['subject'] ? $this : Store::get( $args['subject'] );
+
+			if ( $subject ) {
+				$manual_recipients = array_merge( $manual_recipients, $subject->get_manual_recipients() );
+			}
+
+			if ( ! empty( $manual_recipients ) ) {
+				$mail_config                      = $args['mail_config'] ?? array();
+				$mail_config['manual_recipients'] = array_merge(
+					$mail_config['manual_recipients'] ?? array(),
+					$manual_recipients
+				);
+				$args['mail_config']              = $mail_config;
+			}
+
 			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this );
 
 			$rules->add_trigger(
@@ -247,6 +271,13 @@ abstract class Collection {
 	}
 
 	/**
+	 * Retrieves the manual recipients.
+	 */
+	public function get_manual_recipients() {
+		return array();
+	}
+
+	/**
 	 * Returns the template for the list shortcode.
 	 */
 	protected function get_list_shortcode_template() {
@@ -328,6 +359,7 @@ abstract class Collection {
 									<img
 										src="<?php echo esc_html( $this->field_to_merge_tag( $this->image_field ) ); ?>"
 										alt="<?php echo esc_html( $this->field_to_merge_tag( $this->title_field ) ); ?>"
+										border="0"
 										style="max-width:100%" />
 								<?php if ( ! empty( $this->url_field ) ) : ?>
 									</a>
@@ -457,7 +489,7 @@ abstract class Collection {
 			'title'        => $this->label,
 			'type'         => 'table',
 			'emptyMessage' => sprintf(
-				// translators: %s is the order type name.
+				// translators: %s is the object type label, e.g. "orders".
 				__( 'No %s found.', 'newsletter-optin-box' ),
 				strtolower( $this->label )
 			),
@@ -538,9 +570,22 @@ abstract class Collection {
 			'template'       => $this->get_list_shortcode_template(),
 			'provides'       => $this->provides,
 			'is_stand_alone' => $this->is_stand_alone,
+			'query_defaults' => (object) $this->get_query_defaults(),
 		);
 
 		return $objects;
+	}
+
+	/**
+	 * Retrieves the collection defaults.
+	 *
+	 * @return array
+	 */
+	protected function get_query_defaults() {
+		return apply_filters(
+			"noptin_{$this->type}_collection_query_defaults",
+			array()
+		);
 	}
 
 	/**
@@ -650,7 +695,6 @@ abstract class Collection {
 
 		foreach ( array( 'published_before', 'published_after', 'since_last_send' ) as $date ) {
 			if ( ! empty( $filters[ $date ] ) ) {
-
 				if ( 'since_last_send' === $date ) {
 					$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
 
@@ -750,14 +794,14 @@ abstract class Collection {
 
 			$filters[ $field_not ] = array(
 				'label'       => sprintf(
-					/* translators: %s: Taxonomy name. */
+					// translators: %s is the filter label, e.g, "Tags".
 					__( '%s - Exclude', 'newsletter-optin-box' ),
 					$label
 				),
 				'el'          => 'select',
 				'multiple'    => true,
 				'description' => sprintf(
-					/* translators: %s: Taxonomy name. */
+					// translators: %s is the filter label, e.g, "Tags".
 					__( 'Exclude %s.', 'newsletter-optin-box' ),
 					strtolower( $label )
 				),
@@ -780,7 +824,6 @@ abstract class Collection {
 
 			// Tax in.
 			if ( 0 === strpos( $key, 'tax_in_' ) ) {
-
 				if ( ! empty( $value ) ) {
 					$tax_query[] = array(
 						'taxonomy' => str_replace( 'tax_in_', '', $key ),
@@ -794,7 +837,6 @@ abstract class Collection {
 
 			// Tax not in.
 			if ( 0 === strpos( $key, 'tax_not_in_' ) ) {
-
 				if ( ! empty( $value ) ) {
 					$tax_query[] = array(
 						'taxonomy' => str_replace( 'tax_not_in_', '', $key ),
@@ -863,11 +905,10 @@ abstract class Collection {
 		}
 
 		if ( ! is_array( $items ) || empty( $items ) ) {
-
 			if ( 'yes' === $atts['skiponempty'] ) {
 				$GLOBALS['noptin_email_force_skip'] = array(
 					'message' => sprintf(
-						/* translators: %s: object type label */
+						// translators: %s is the object type label, e.g. "orders".
 						__( 'No %s found.', 'newsletter-optin-box' ),
 						strtolower( $this->label )
 					),
@@ -919,7 +960,6 @@ abstract class Collection {
 		}
 
 		foreach ( $cols as $column_items ) {
-
 			$html .= '<div class="' . esc_attr( $column_class ) . '" style="width: ' . esc_attr( $width ) . '%;">';
 
 			if ( empty( $column_items ) ) {
@@ -936,7 +976,6 @@ abstract class Collection {
 
 				// Replace related fields.
 				foreach ( $provided_collections as $collection_type => $collection ) {
-
 					if ( empty( $collection ) ) {
 						continue;
 					}

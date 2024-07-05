@@ -347,7 +347,6 @@ class Main {
 
 		// Run the query.
 		try {
-
 			$collection = $this->store->get( $collection_name );
 
 			if ( empty( $collection ) ) {
@@ -563,7 +562,7 @@ class Main {
 						// Use human readable time if the timestamp is less than 24 hours old.
 						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
 							$i18n = sprintf(
-								/* translators: %s: human readable time difference */
+								/* translators: %s: Human-readable time difference. */
 								esc_html__( '%s ago', 'newsletter-optin-box' ),
 								human_time_diff( $timestamp )
 							);
@@ -589,7 +588,7 @@ class Main {
 						// Use human readable time if the timestamp is less than 24 hours old.
 						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
 							$i18n = sprintf(
-								/* translators: %s: human readable time difference */
+								/* translators: %s: Human-readable time difference. */
 								esc_html__( '%s ago', 'newsletter-optin-box' ),
 								human_time_diff( $timestamp )
 							);
@@ -636,7 +635,7 @@ class Main {
 			// Use human readable time if the timestamp is less than 24 hours old.
 			if ( $time > time() - DAY_IN_SECONDS && $time < time() ) {
 				$i18n = sprintf(
-					/* translators: %s: human readable time difference */
+					/* translators: %s: Human-readable time difference. */
 					__( '%s ago', 'newsletter-optin-box' ),
 					human_time_diff( $time )
 				);

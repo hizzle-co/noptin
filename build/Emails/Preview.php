@@ -22,6 +22,11 @@ class Preview {
 	public static $mode = 'preview';
 
 	/**
+	 * Whether or not this is a simulation.
+	 */
+	public static $simulation = false;
+
+	/**
 	 * The current campaign.
 	 *
 	 * @var Email
@@ -86,10 +91,11 @@ class Preview {
 		}
 
 		// Prepare the preview.
-		self::$mode     = 'preview';
-		self::$campaign = new Email( get_post() );
-		$user           = wp_get_current_user();
-		self::$user     = array(
+		self::$simulation = ! empty( $_GET['noptin_simulate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		self::$mode       = 'preview';
+		self::$campaign   = new Email( get_post() );
+		$user             = wp_get_current_user();
+		self::$user       = array(
 			'email' => $user->user_email,
 			'cid'   => get_the_ID(),
 		);
@@ -130,6 +136,10 @@ class Preview {
 
 		if ( is_wp_error( $preview ) ) {
 			wp_die( esc_html( $preview->get_error_message() ) );
+		}
+
+		if ( self::$simulation && ! empty( $GLOBALS['noptin_email_force_skip'] ) ) {
+			wp_die( esc_html( $GLOBALS['noptin_email_force_skip']['message'] ) );
 		}
 
 		echo $preview; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

@@ -46,6 +46,7 @@ class Main {
 		add_filter( 'noptin_get_all_known_integrations', array( $this, 'get_all_known_integrations' ), 0 );
 
 		add_action( 'noptin_refresh_integrations', array( __CLASS__, 'refresh' ) );
+		add_action( 'noptin_upgrade_db', array( __CLASS__, 'refresh' ) );
 
 		// Admin notices.
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
@@ -191,6 +192,32 @@ class Main {
 					}
 					break;
 
+				// Specific theme.
+				case 'theme':
+					if ( get_template() === $value['template'] ) {
+						break;
+					}
+
+					$current_theme = wp_get_theme();
+					$parent_theme  = $current_theme->exists() ? $current_theme->parent() : false;
+
+					// Check if either the parent or child theme is active.
+					if ( $parent_theme && $parent_theme->get( 'Name' ) === $value['name'] ) {
+						break;
+					}
+
+					if ( $current_theme->get( 'Name' ) !== $value['name'] ) {
+						$this->notices[ $config['label'] ] = sprintf(
+							// translators: %1$s is the integration label, %2$s is the required theme.
+							__( 'The %1$s integration requires the %2$s theme.', 'newsletter-optin-box' ),
+							$config['label'],
+							$value['name']
+						);
+
+						return false;
+					}
+					break;
+
 				// Specific class.
 				case 'class':
 					if ( ! class_exists( $value ) ) {
@@ -268,7 +295,11 @@ class Main {
 			return $this->all_integrations;
 		}
 
-		$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'integrations.json', array( 'associative' => true ) );
+		$all = get_option( 'noptin_integrations' );
+
+		if ( ! is_array( $all ) ) {
+			$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'integrations.json', array( 'associative' => true ) );
+		}
 
 		$this->all_integrations = array();
 		if ( empty( $all ) ) {
@@ -336,15 +367,12 @@ class Main {
 	 *
 	 */
 	public static function refresh() {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-		WP_Filesystem();
 
 		// Fetch the integrations.
 		$result = \Noptin_COM::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/integrations.json' ) );
 		if ( is_array( $result ) ) {
-			$GLOBALS['wp_filesystem']->put_contents( plugin_dir_path( __FILE__ ) . 'integrations.json', wp_json_encode( $result ), FS_CHMOD_FILE );
+			$result = json_decode( wp_json_encode( $result ), true );
+			update_option( 'noptin_integrations', $result );
 		}
 	}
 

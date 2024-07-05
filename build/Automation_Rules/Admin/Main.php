@@ -126,11 +126,12 @@ class Main {
 							'actions'  => self::prepare_triggers_for_editor( noptin()->automation_rules->get_actions() ),
 							'app'      => 'automation-rule-editor' === $script ? self::prepare_app() : array(),
 						),
-					)
+					),
+					$script
 				)
 			);
 
-			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box' );
+			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
 
 		// Load the css.

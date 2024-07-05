@@ -149,25 +149,27 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		// Abort if we do not have a campaign.
 		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
 		if ( empty( $automated_email_id ) ) {
-			log_noptin_message( 'No email campaign found for automation rule:- ' . $rule->get_id(), 'error' );
-			return false;
+			throw new \Exception( 'No email campaign found for automation rule:- ' . esc_html( $rule->get_id() ) );
 		}
 
 		// ... or if we're importing subscribers.
 		if ( 'import' === $noptin_subscribers_batch_action && 'noptin_subscribers_import_item' !== $rule->get_trigger_id() ) {
-			return false;
+			throw new \Exception( 'Cannot send email campaign while importing subscribers' );
 		}
 
 		$campaign = noptin_get_email_campaign_object( $automated_email_id );
+		$can_send = $campaign->can_send();
 
-		if ( ! $campaign->can_send() ) {
-			log_noptin_message( 'Email campaign cannot be sent:- ' . $campaign->get( 'name' ), 'error' );
-			return false;
+		if ( is_wp_error( $can_send ) ) {
+			throw new \Exception( esc_html( $can_send->get_error_message() ) );
+		}
+
+		if ( ! $can_send ) {
+			throw new \Exception( 'Email campaign cannot be sent:- ' . esc_html( $campaign->get( 'name' ) ) );
 		}
 
 		if ( absint( $campaign->get( 'automation_rule' ) ) !== absint( $rule->get_id() ) ) {
-			log_noptin_message( 'Email campaign does not belong to the automation rule:- ' . $campaign->get( 'name' ), 'error' );
-			return false;
+			throw new \Exception( 'Email campaign does not belong to the automation rule:- ' . esc_html( $campaign->get( 'name' ) ) );
 		}
 
 		if ( ! empty( $args['post_meta'] ) ) {
@@ -176,8 +178,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 				return true;
 			}
 
-			log_noptin_message( 'Email campaign has already been sent:- ' . $campaign->get( 'name' ) . ' :-' . wp_json_encode( $sent_notification, JSON_PRETTY_PRINT ), 'error' );
-			return false;
+			throw new \Exception( 'Email campaign has already been sent:- ' . esc_html( $campaign->get( 'name' ) ) );
 		}
 
 		return true;

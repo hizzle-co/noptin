@@ -33,7 +33,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 * @throws Exception
 	 */
 	public function get_test_smart_tags( $rule ) {
-		throw new Exception( 'No test data available for the trigger ' . esc_html( $this->get_name() ) );
+		// Override in child classes.
 	}
 
 	/**
@@ -92,6 +92,18 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		$smart_tags = array(
 
+			'noptin_rule_runs' => array(
+				'description'       => __( 'Automation runs', 'newsletter-optin-box' ),
+				'callback'          => '\Hizzle\Noptin\Tasks\Main::count_rule_runs',
+				'conditional_logic' => 'number',
+				'validate_once'     => true,
+			),
+			'current_language' => array(
+				'description'       => __( 'The current language', 'newsletter-optin-box' ),
+				'callback'          => 'get_locale',
+				'conditional_logic' => 'string',
+				'validate_once'     => true,
+			),
 			'cookie'  => array(
 				'description'       => __( 'Data from a cookie.', 'newsletter-optin-box' ),
 				'callback'          => 'Noptin_Dynamic_Content_Tags::get_cookie',
@@ -542,7 +554,11 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 			// Retrieve the action.
 			$action = $rule->get_action();
 			if ( ! empty( $action ) ) {
-				$rule->maybe_run( $subject, $this, $action, $args );
+				$result = $rule->maybe_run( $subject, $this, $action, $args );
+
+				if ( is_wp_error( $result ) ) {
+					log_noptin_message( $result->get_error_message(), 'error' );
+				}
 			}
 		}
 	}

@@ -345,7 +345,17 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 			$query['date_query'] = $this->date_query;
 		}
 
-		return get_posts( apply_filters( 'noptin_post_digest_merge_tag_query', $query, $args, $this ) );
+		$query = apply_filters( 'noptin_post_digest_merge_tag_query', $query, $args, $this );
+		$posts = get_posts( $query );
+
+		// Debug the query later.
+		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING && ! empty( $GLOBALS['wpdb']->last_query ) ) {
+			noptin_error_log( $query, 'Post digest args' );
+			noptin_error_log( $GLOBALS['wpdb']->last_query, 'Post digest query' );
+			noptin_error_log( count( $posts ), 'Post digest posts' );
+		}
+
+		return $posts;
 	}
 
 	/**

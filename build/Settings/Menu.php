@@ -129,7 +129,7 @@ class Menu {
 			)
 		);
 
-		wp_set_script_translations( 'noptin-settings', 'newsletter-optin-box' );
+		wp_set_script_translations( 'noptin-settings', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
 		// Load the css.
 		wp_enqueue_style(
@@ -272,6 +272,13 @@ class Menu {
 					'allow_editors'             => array(
 						'label'       => __( 'Allow editors', 'newsletter-optin-box' ),
 						'description' => __( 'Allow editors to access and manage Noptin.', 'newsletter-optin-box' ),
+						'type'        => 'checkbox_alt',
+						'el'          => 'input',
+						'default'     => false,
+					),
+					'keep_data_on_uninstall'    => array(
+						'label'       => __( 'Keep data on uninstall', 'newsletter-optin-box' ),
+						'description' => __( 'Keep all data when the plugin is uninstalled.', 'newsletter-optin-box' ),
 						'type'        => 'checkbox_alt',
 						'el'          => 'input',
 						'default'     => false,

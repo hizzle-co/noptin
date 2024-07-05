@@ -311,7 +311,6 @@ function get_noptin_template( $template_name, $args = array(), $template_path = 
 	$the_template_path = locate_noptin_template( $template_name, $template_path, $default_path );
 
 	if ( ! empty( $the_template_path ) ) {
-
 		if ( $args && is_array( $args ) ) {
 			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Please, forgive us.
 			extract( $args );
@@ -348,7 +347,6 @@ function locate_noptin_template( $template_name, $template_path = 'noptin', $def
 
 	// Get default template.
 	if ( ! $template && false !== $default_path ) {
-
 		if ( empty( $default_path ) ) {
 			$default_path = get_noptin_plugin_path( 'templates' );
 		}
@@ -555,7 +553,6 @@ function noptin_parse_list( $list, $strict = false ) {
 	}
 
 	if ( ! is_array( $list ) ) {
-
 		if ( $strict ) {
 			$list = preg_split( '/,+/', $list, -1, PREG_SPLIT_NO_EMPTY );
 		} else {
@@ -763,7 +760,6 @@ function get_special_noptin_form_fields() {
 
 	$fields = array();
 	foreach ( get_noptin_custom_fields() as $custom_field ) {
-
 		if ( empty( $custom_field['predefined'] ) ) {
 			$fields[ $custom_field['merge_tag'] ] = $custom_field['label'];
 		}
@@ -773,49 +769,53 @@ function get_special_noptin_form_fields() {
 }
 
 /**
- * Creates and returns a new task object.
- *
- * Note that this does not run the task. You will have to manually run it.
- *
- * @since 1.2.7
- * @see Noptin_Task
- *
- * @param array $args Required. A numerical array of task args.
- *                    The first item is the name of the action while the other
- *                    arguments will be passed to the action callbacks as parameters.
- * @return Noptin_Task
- */
-function create_noptin_task( array $args ) {
-
-	// Create a new task.
-	$task = new Noptin_Task( array_shift( $args ) );
-
-	// Maybe attach some params to the task.
-	return $task->set_params( $args );
-}
-
-/**
  * Delete an action.
  *
  * You can pass extra arguments to the hooks, much like you can with `do_action()`.
  *
  * @since 3.0.0
- * @see Noptin_Task
- * @see create_noptin_task
  *
- * @param string $tag    (required). Name of the action hook. Default: none.
+ * @param string $hook    (required). Name of the action hook. Default: none.
  * @param mixed  ...$arg Optional. Additional arguments to pass to callbacks when the hook triggers.
- *  @return int|bool The action id on success. False otherwise.
  */
-function delete_noptin_background_action() {
-	return create_noptin_task( func_get_args() )->delete();
+function delete_noptin_background_action( $hook, ...$args ) {
+
+	// Delete in new task system.
+	\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( $hook, $args, -1 );
+
+	// Delete in wp-cron.
+	wp_clear_scheduled_hook( $hook, $args );
+
+	// Delete in action scheduler.
+	if ( class_exists( 'ActionScheduler_DataController' ) && ActionScheduler_DataController::is_migration_complete() && function_exists( 'as_unschedule_action' ) ) {
+		do {
+			$unscheduled_action = as_unschedule_action( $hook, $args, 'noptin' );
+		} while ( ! empty( $unscheduled_action ) );
+	}
 }
 
 /**
  * Returns the next scheduled time for an action.
  */
-function next_scheduled_noptin_background_action() {
-	return create_noptin_task( func_get_args() )->next_scheduled();
+function next_scheduled_noptin_background_action( $hook, ...$args ) {
+
+	// Fetch from new task system.
+	$task = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( $hook, $args );
+
+	if ( $task ) {
+		return $task->get_date_scheduled() ? $task->get_date_scheduled()->getTimestamp() : time();
+	}
+
+	// Check in action scheduler.
+	if ( class_exists( 'ActionScheduler_DataController' ) && ActionScheduler_DataController::is_migration_complete() && function_exists( 'as_next_scheduled_action' ) ) {
+		$timestamp = as_next_scheduled_action( $hook, $args, 'noptin' );
+
+		if ( is_numeric( $timestamp ) ) {
+			return $timestamp;
+		}
+	}
+
+	return wp_next_scheduled( $hook, $args );
 }
 
 /**
@@ -838,15 +838,12 @@ function next_scheduled_noptin_background_action() {
  *      do_noptin_background_action( 'log_name_in_the_background', 'Brian');
  *
  * @since 1.2.7
- * @see Noptin_Task
- * @see create_noptin_task
  *
  * @param string $tag    (required). Name of the action hook. Default: none.
  * @param mixed  ...$arg Optional. Additional arguments to pass to callbacks when the hook triggers.
- *  @return int|bool The action id on success. False otherwise.
  */
-function do_noptin_background_action() {
-	return create_noptin_task( func_get_args() )->do_async();
+function do_noptin_background_action( $hook, ...$args ) {
+	return \Hizzle\Noptin\Tasks\Main::schedule_task( $hook, $args );
 }
 
 /**
@@ -871,19 +868,14 @@ function do_noptin_background_action() {
  * ```
  *
  * @since 1.2.7
- * @see Noptin_Task
- * @see create_noptin_task
  *
  * @param int    $timestamp (required) The Unix timestamp representing the date
  *                          you want the action to run. Default: none.
- * @param string $tag       (required) Name of the action hook. Default: none.
+ * @param string $hook      (required) Name of the action hook. Default: none.
  * @param mixed  ...$arg    Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
- *  @return int|bool The action id on success. False otherwise.
  */
-function schedule_noptin_background_action() {
-	$args      = func_get_args();
-	$timestamp = array_shift( $args );
-	return create_noptin_task( $args )->do_once( $timestamp );
+function schedule_noptin_background_action( $timestamp, $hook, ...$args ) {
+	return \Hizzle\Noptin\Tasks\Main::schedule_task( $hook, $args, $timestamp - time() );
 }
 
 /**
@@ -907,88 +899,16 @@ function schedule_noptin_background_action() {
  *      schedule_noptin_background_action( DAY_IN_SECONDS, noptin_string_to_timestamp( '+1 day' ), 'log_name_every_day', 'Brian');
  *
  * @since 1.2.7
- * @see Noptin_Task
- * @see create_noptin_task
  *
  * @param int    $interval  (required) How long ( in seconds ) to wait between runs. Default: none.
  * @param int    $timestamp (required) The Unix timestamp representing the date you
  *                          want the action to run for the first time. Default: none.
- * @param string $tag       (required) Name of the action hook. Default: none.
- * @param mixed  ...$arg    Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
+ * @param string $hook       (required) Name of the action hook. Default: none.
+ * @param mixed  ...$args   Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
  * @return int|bool The action id on success. False otherwise.
  */
-function schedule_noptin_recurring_background_action() {
-	$args      = func_get_args();
-	$interval  = array_shift( $args );
-	$timestamp = array_shift( $args );
-	return create_noptin_task( $args )->do_recurring( $timestamp, $interval );
-}
-
-/**
- * Cancels a scheduled action.
- *
- * This is useful if you need to cancel an action that you had previously scheduled via:-
- * - `do_noptin_background_action()`
- * - `schedule_noptin_background_action()`
- * - `schedule_noptin_recurring_background_action()`
- *
- * Pass `all` as the only argument to cancel all actions scheduled by the above functions.
- *
- * @since 1.2.7
- * @see Noptin_Task
- * @see create_noptin_task
- * @see do_noptin_background_action
- * @see schedule_noptin_background_action
- * @see schedule_noptin_recurring_background_action
- *
- * @param int|string|array    $action_name_id_or_array (required) The action to cancel. Accepted args:-
- *                             - **'all'** Cancel all actions.
- *                             - **$hook_name** Pass a string to cancel all actions using that hook.
- *                             - **$action_id** Pass an integer to cancel an action by its id.
- *                             - **$array** You can also pass an array of the above. If any element in the
- *                               array can't be canceled, the function will return false.
- *
- * @return bool True on success. False otherwise.
- */
-function cancel_scheduled_noptin_action( $action_name_id_or_array ) {
-
-	// Ensure the AS db store helper exists.
-	if ( class_exists( 'ActionScheduler_DBStore' ) ) {
-		return false;
-	}
-
-	// In case the developer wants to cancel all actions.
-	if ( 'all' === $action_name_id_or_array ) {
-		ActionScheduler_DBStore::instance()->cancel_actions_by_group( 'noptin' );
-		return true;
-	}
-
-	// In case the developer wants to cancel an action by id.
-	if ( is_numeric( $action_name_id_or_array ) ) {
-
-		try {
-			ActionScheduler_DBStore::instance()->cancel_action( (int) $action_name_id_or_array );
-			return true;
-		} catch ( InvalidArgumentException $e ) {
-			log_noptin_message( $e->getMessage() );
-			return false;
-		}
-	}
-
-	// Developers can also cancel an action by a hook name.
-	if ( is_string( $action_name_id_or_array ) ) {
-		ActionScheduler_DBStore::instance()->cancel_actions_by_hook( $action_name_id_or_array );
-		return true;
-	}
-
-	// You can also pass in an array of hooks/action ids.
-	if ( is_array( $action_name_id_or_array ) ) {
-		$result = array_map( 'cancel_scheduled_noptin_action', $action_name_id_or_array );
-		return ! in_array( false, $result, true );
-	}
-
-	// We have an invalid argument.
-	return false;
+function schedule_noptin_recurring_background_action( $interval, $timestamp, $hook, ...$args ) {
+	return \Hizzle\Noptin\Tasks\Main::schedule_task( $hook, $args, $timestamp - time(), $interval );
 }
 
 /**
@@ -1146,18 +1066,14 @@ function add_noptin_merge_tags( $content, $merge_tags, $strict = true, $strip_mi
 	preg_match_all( '/\[\[#(\w*)\]\](.*?)\[\[\/\1\]\]/s', $content, $matches );
 
 	if ( ! empty( $matches ) ) {
-
 		foreach ( $matches[1] as $i => $match ) {
-
 			if ( empty( $all_merge_tags[ $match ] ) ) {
 				$content = str_replace( $matches[0][ $i ], '', $content );
 			} else {
-
 				$array       = array();
 				$multi_array = array();
 
 				foreach ( $all_merge_tags as $key => $value ) {
-
 					if ( false !== strpos( $key, $match ) ) {
 						$key = str_replace( $match . '.', '', $key );
 
@@ -1215,7 +1131,6 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 	$result = array();
 
 	foreach ( $array as $key => $value ) {
-
 		$_prefix = '' === $prefix ? "$key" : "$prefix.$key";
 
 		$result[ $_prefix ] = 1;
@@ -1225,7 +1140,6 @@ function flatten_noptin_array( $array, $prefix = '' ) {
 		} elseif ( is_object( $value ) ) {
 			$result = array_merge( $result, flatten_noptin_array( get_object_vars( $value ), $_prefix ) );
 		} else {
-
 			if ( false === $value ) {
 				$value = __( 'No', 'newsletter-optin-box' );
 			}
@@ -1426,7 +1340,6 @@ function noptin_format_date( $date_time ) {
 	$time_diff = $current - $timestamp;
 
 	if ( $timestamp && $time_diff > 0 && $time_diff < DAY_IN_SECONDS ) {
-
 		$relative = sprintf(
 			/* translators: %s: Human-readable time difference. */
 			__( '%s ago', 'newsletter-optin-box' ),
@@ -1535,7 +1448,7 @@ function noptin_get_post_excerpt( $post, $limit = 0 ) {
 	}
 
 	// Generate excerpt.
-	$post_excerpt = get_the_excerpt( $post );
+	$post_excerpt = wp_strip_all_tags( get_the_excerpt( $post ) );
 
 	if ( false !== $wp_rss_aggregator_fix ) {
 		add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
@@ -1594,7 +1507,6 @@ function noptin_kses_post_vue() {
 	$allowed_html = array();
 
 	foreach ( wp_kses_allowed_html( 'post' ) as $tag => $attributes ) {
-
 		if ( ! is_array( $attributes ) ) {
 			continue;
 		}
@@ -1642,7 +1554,6 @@ function noptin_is_wp_user_unsubscribed( $user_id ) {
 	$user = get_user_by( 'ID', $user_id );
 
 	if ( $user ) {
-
 		$subscriber = noptin_get_subscriber( $user->user_email );
 
 		if ( ! $subscriber->is_active() ) {
@@ -1831,7 +1742,6 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 	$condition_value = strtolower( (string) $condition_value );
 
 	switch ( $comparison ) {
-
 		case 'is':
 			return $current_value === $condition_value;
 
@@ -1910,7 +1820,6 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 
 	// Loop through each rule.
 	foreach ( $conditional_logic['rules'] as $rule ) {
-
 		$condition = Noptin_Dynamic_Content_Tags::search( $rule['type'], $smart_tags );
 
 		if ( empty( $condition ) ) {
@@ -1927,12 +1836,11 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 		}
 
 		if ( 'number' === $data_type ) {
-
 			if ( 'is_between' === $rule['condition'] ) {
 				$value = noptin_parse_list( $value );
 				$value = sprintf(
 					// translators: %s is a number.
-					__( '%1$s and %2$s', 'newsletter-optin-box' ),
+					_x( '%1$s and %2$s', 'number', 'newsletter-optin-box' ),
 					floatval( $value[0] ),
 					isset( $value[1] ) ? floatval( $value[1] ) : floatval( $value[0] )
 				);
@@ -1940,7 +1848,6 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 				$value = floatval( $value );
 			}
 		} elseif ( 'date' === $data_type ) {
-
 			if ( 'is_date_between' === $rule['condition'] ) {
 				$value = noptin_parse_list( $value );
 				$value = sprintf(

@@ -64,6 +64,11 @@ class Email {
 	public $author;
 
 	/**
+	 * @var int The menu order for the email.
+	 */
+	public $menu_order = 0;
+
+	/**
 	 * @var array Extra email meta.
 	 */
 	public $options = array();
@@ -139,7 +144,6 @@ class Email {
 			$all_meta = get_post_meta( $post->ID );
 
 			foreach ( $all_meta as $key => $value ) {
-
 				if ( 'noptin_sends_after' === $key ) {
 					$key = 'sends_after';
 				}
@@ -163,14 +167,15 @@ class Email {
 			$this->options = $data;
 		}
 
-		$this->id        = $post->ID;
-		$this->parent_id = $post->post_parent;
-		$this->status    = $post->post_status;
-		$this->name      = $post->post_title;
-		$this->created   = $post->post_date;
-		$this->content   = $post->post_content;
-		$this->type      = get_post_meta( $post->ID, 'campaign_type', true );
-		$this->author    = $post->post_author;
+		$this->id         = $post->ID;
+		$this->parent_id  = $post->post_parent;
+		$this->status     = $post->post_status;
+		$this->name       = $post->post_title;
+		$this->created    = $post->post_date;
+		$this->content    = $post->post_content;
+		$this->type       = get_post_meta( $post->ID, 'campaign_type', true );
+		$this->author     = $post->post_author;
+		$this->menu_order = $post->menu_order;
 
 		// Backwards compatibility.
 		// CSS.
@@ -193,7 +198,6 @@ class Email {
 		// Subject.
 		$resave_title = false;
 		if ( ! isset( $this->options['subject'] ) ) {
-
 			if ( ! empty( $this->options['custom_title'] ) ) {
 				$this->name   = $this->options['custom_title'];
 				$resave_title = true;
@@ -223,6 +227,13 @@ class Email {
 
 		$this->subject = $this->options['subject'];
 
+		$has_kses = false !== has_filter( 'content_save_pre', 'wp_filter_post_kses' );
+
+		if ( $has_kses ) {
+			// Prevent KSES from corrupting blocks in post_content.
+			kses_remove_filters();
+		}
+
 		// Check if content contains blocks.
 		if ( $resave && ! has_blocks( $this->content ) ) {
 			$this->content = noptin_email_wrap_blocks(
@@ -248,6 +259,10 @@ class Email {
 					'post_title' => $this->name,
 				)
 			);
+		}
+
+		if ( $has_kses ) {
+			kses_init_filters();
 		}
 
 		// Add sub-type to options array.
@@ -282,7 +297,6 @@ class Email {
 
 		// Reset values.
 		foreach ( $args as $key => $value ) {
-
 			if ( property_exists( $this, $key ) ) {
 				$this->$key = $value;
 				unset( $args[ $key ] );
@@ -419,7 +433,7 @@ class Email {
 	private function check_can_send() {
 
 		if ( ! $this->is_published() || ! $this->exists() ) {
-			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent since it is not published.', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_cannot_send', 'The email cannot be sent since it is not published.' );
 		}
 
 		// Check if the campaign is already sent.
@@ -491,30 +505,32 @@ class Email {
 					'name'         => sprintf( '%1$s - %2$s', esc_html( $this->name ), esc_html( $suffix ) ),
 					'subject'      => noptin_parse_email_subject_tags( $this->get_subject(), true ),
 					'heading'      => noptin_parse_email_content_tags( $this->get( 'heading' ), true ),
-					'content'      => noptin_parse_email_content_tags( \Noptin_Email_Generator::handle_item_lists_shortcode( $this->content ), true ),
+					'content'      => 'visual' === $type ? noptin_parse_email_content_tags( \Noptin_Email_Generator::handle_item_lists_shortcode( $this->content ), true ) : '',
 					'author'       => $this->author,
 					'preview_text' => noptin_parse_email_content_tags( $this->get( 'preview_text' ), true ),
 					'footer_text'  => noptin_parse_email_content_tags( $this->get( 'footer_text' ), true ),
 				)
 			);
 
-			foreach ( $args as $key => $value ) {
+			foreach ( array_keys( get_noptin_email_types() ) as $email_type ) {
+				$key = 'content_' . $email_type;
+				if ( $type !== $email_type || ! isset( $args[ $key ] ) ) {
+					$args[ $key ] = '';
+					continue;
+				}
 
-				// Check if the key starts with content_.
-				if ( 0 === strpos( $key, 'content_' ) ) {
-					$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $value );
+				$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $args[ $key ] );
 
-					// Parse paragraphs.
-					if ( 'content_normal' === $type ) {
-						$value = wpautop( trim( $value ) );
-					}
+				// Parse paragraphs.
+				if ( 'content_normal' === $type ) {
+					$value = wpautop( trim( $value ) );
+				}
 
-					$args[ $key ] = trim( noptin_parse_email_content_tags( $value, true ) );
+				$args[ $key ] = trim( noptin_parse_email_content_tags( $value, true ) );
 
-					// Strip HTML.
-					if ( 'content_plain_text' === $type && ! empty( $args[ $key ] ) ) {
-						$args[ $key ] = noptin_convert_html_to_text( $args[ $key ] );
-					}
+				// Strip HTML.
+				if ( 'content_plain_text' === $key && ! empty( $args[ $key ] ) ) {
+					$args[ $key ] = noptin_convert_html_to_text( $args[ $key ] );
 				}
 			}
 
@@ -534,7 +550,9 @@ class Email {
 			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 
 			if ( true === $should_send ) {
+				// Update the last send date.
 				update_post_meta( $this->id, '_noptin_last_send', time() );
+
 				$newsletter->save();
 			}
 
@@ -681,7 +699,7 @@ class Email {
 		$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 		if ( is_wp_error( $should_send ) || false === $should_send ) {
 			if ( ! $should_send ) {
-				return new \WP_Error( 'noptin_email_skipped', __( 'The email was skipped via a filter', 'newsletter-optin-box' ) );
+				return new \WP_Error( 'noptin_email_skipped', 'The email was skipped via a filter' );
 			}
 
 			return $should_send;
@@ -769,7 +787,6 @@ class Email {
 
 		$prepared = array();
 		foreach ( $attachments as $attachment ) {
-
 			$attachment = $this->parse_attachment_file_path( trim( $attachment ) );
 
 			// Add if its not a remote file.
@@ -833,7 +850,6 @@ class Email {
 		if ( file_exists( ABSPATH . $file_path ) ) {
 			$remote_file = false;
 			$file_path   = ABSPATH . $file_path;
-
 		} elseif ( '/wp-content' === substr( $file_path, 0, 11 ) ) {
 			$remote_file = false;
 			$file_path   = realpath( WP_CONTENT_DIR . substr( $file_path, 11 ) );
@@ -1031,7 +1047,6 @@ class Email {
 		$email_sender      = $this->get_sender();
 
 		foreach ( $this->get_manual_recipients_ids() as $recipient_id ) {
-
 			$recipient = get_noptin_email_recipient( $recipient_id, $email_sender );
 
 			if ( empty( $recipient ) ) {
@@ -1225,9 +1240,9 @@ class Email {
 
 		try {
 			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
-			do_action( 'noptin_prepare_email_preview', $this );
-			do_action( "noptin_prepare_{$this->type}_email_preview", $this );
-			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_preview", $this );
+			do_action( "noptin_prepare_email_{$mode}", $this );
+			do_action( "noptin_prepare_{$this->type}_email_{$mode}", $this );
+			do_action( "noptin_prepare_{$this->type}_{$this->get_sub_type()}_email_{$mode}", $this );
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'exception', $e->getMessage() );
 		}
@@ -1271,8 +1286,10 @@ class Email {
 		}
 
 		// Duplicate any children.
-		foreach ( $this->get_children() as $child ) {
-			$child->duplicate( array( 'parent_id' => $duplicate->id ) );
+		if ( $this->supports( 'child_type' ) ) {
+			foreach ( $this->get_children() as $child ) {
+				$child->duplicate( array( 'parent_id' => $duplicate->id ) );
+			}
 		}
 
 		return $duplicate;
@@ -1425,6 +1442,13 @@ class Email {
 			wp_remove_targeted_link_rel_filters();
 		}
 
+		$has_kses = false !== has_filter( 'content_save_pre', 'wp_filter_post_kses' );
+
+		if ( $has_kses ) {
+			// Prevent KSES from corrupting blocks in post_content.
+			kses_remove_filters();
+		}
+
 		// Create or update the email.
 		if ( $this->exists() ) {
 			$args['ID'] = $this->id;
@@ -1435,6 +1459,10 @@ class Email {
 
 		if ( $has_filter ) {
 			wp_init_targeted_link_rel_filters();
+		}
+
+		if ( $has_kses ) {
+			kses_init_filters();
 		}
 
 		// Schedule the email.

@@ -88,7 +88,7 @@ $hide         = empty( $form->settings['hide'] ) ? array() : $form->settings['hi
 	<label for="noptin-form-show-on" class="noptin-field-label">
 		<?php esc_html_e( 'Only show on: (Optional)', 'newsletter-optin-box' ); ?>
 	</label>
-	<input type="text" class="regular-text" id="noptin-form-show-on" name="noptin_form[settings][only_show]" value="<?php echo isset( $all_settings['only_show'] ) ? esc_attr( $all_settings['only_show'] ) : ''; ?>" placeholder="<?php echo sprintf( /* translators: %s examples*/ esc_attr__( 'Example: %s', 'newsletter-optin-box' ), '3,14,5,' . esc_attr( noptin_clean_url( home_url( 'newsletter' ) ) ) ); ?>" />
+	<input type="text" class="regular-text" id="noptin-form-show-on" name="noptin_form[settings][only_show]" value="<?php echo isset( $all_settings['only_show'] ) ? esc_attr( $all_settings['only_show'] ) : ''; ?>" placeholder="<?php printf( /* translators: %s: The Example */ esc_attr__( 'For example, %s', 'newsletter-optin-box' ), '3,14,5,' . esc_attr( noptin_clean_url( home_url( 'newsletter' ) ) ) ); ?>" />
 	<p class="description"><?php esc_html_e( 'Optional. Enter a comma separated list of URLs or post ids. If set, the form will only show if a user is viewing those pages.', 'newsletter-optin-box' ); ?></p>
 </div>
 

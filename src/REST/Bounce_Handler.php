@@ -1,12 +1,11 @@
 <?php
-
-namespace Hizzle\Noptin\REST;
-
 /**
  * Controller for bounces.
  *
  * @version 1.0.0
  */
+
+namespace Hizzle\Noptin\REST;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -38,7 +37,7 @@ class Bounce_Handler extends Controller {
 							'required'    => true,
 						),
 						'noptin_code' => array(
-							'description' => __( 'Security code', 'newsletter-optin-box' ),
+							'description' => 'Security code',
 							'type'        => 'string',
 							'required'    => true,
 						),
@@ -47,7 +46,6 @@ class Bounce_Handler extends Controller {
 				'schema' => '__return_empty_array',
 			)
 		);
-
 	}
 
 	/**
@@ -161,7 +159,6 @@ class Bounce_Handler extends Controller {
 		}
 
 		return bounce_noptin_subscriber( $email_address, $campaign_id );
-
 	}
 
 	/**

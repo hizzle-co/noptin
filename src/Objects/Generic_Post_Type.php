@@ -148,7 +148,17 @@ class Generic_Post_Type extends Post_Type {
 		// If date query is specified, ensure it is enabled.
 		$filters = $this->prepare_date_query_filter( $filters );
 
-		return get_posts( array_filter( $filters ) );
+		$filters = array_filter( $filters );
+		$posts   = get_posts( $filters );
+
+		// Debug the query later.
+		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING && ! empty( $GLOBALS['wpdb']->last_query ) ) {
+			noptin_error_log( $filters, 'Post collection args' );
+			noptin_error_log( $GLOBALS['wpdb']->last_query, 'Post collection query' );
+			noptin_error_log( count( $posts ), 'Post collection posts' );
+		}
+
+		return get_posts( $posts );
 	}
 
 	/**
@@ -236,6 +246,15 @@ class Generic_Post_Type extends Post_Type {
 					'icon'        => 'editor-alignleft',
 					'metadata'    => array(
 						'ancestor' => array( $this->context ),
+					),
+					'settings'    => array(
+						'words' => array(
+							'label'       => __( 'Words', 'newsletter-optin-box' ),
+							'el'          => 'input',
+							'type'        => 'number',
+							'description' => __( 'The maximum number of words to display.', 'newsletter-optin-box' ),
+							'placeholder' => '55',
+						),
 					),
 				),
 			),
@@ -360,6 +379,10 @@ class Generic_Post_Type extends Post_Type {
 				$icon
 			);
 
+			if ( ! Generic_Post::is_taxonomy_linkable( $taxonomy ) ) {
+				unset( $fields[ 'tax_' . $taxonomy ]['block']['settings']['link'] );
+			}
+
 			$fields[ 'tax_' . $taxonomy ]['actions']      = array( $action );
 			$fields[ 'tax_' . $taxonomy ]['action_props'] = array(
 				$action => array(
@@ -420,8 +443,10 @@ class Generic_Post_Type extends Post_Type {
 			'show_ui' => true,
 		);
 
+		$exclude = apply_filters( 'noptin_post_type_exclude', array( 'elementor_library', 'attachment' ) );
+
 		foreach ( get_post_types( $args ) as $type ) {
-			if ( ! Store::exists( $type ) && 'attachment' !== $type ) {
+			if ( ! Store::exists( $type ) && ! in_array( $type, $exclude, true ) ) {
 				Store::add( new Generic_Post_Type( $type, true ) );
 			}
 		}

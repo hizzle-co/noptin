@@ -212,7 +212,6 @@ class Noptin_Email_Generator {
 
 		// ... then process local template.
 		if ( ! empty( $is_local_template ) ) {
-
 			ob_start();
 
 			// Heading.
@@ -243,7 +242,6 @@ class Noptin_Email_Generator {
 			);
 
 			$email = ob_get_clean();
-
 		}
 
 		// Allow other plugins to filter generated email content.
@@ -277,7 +275,6 @@ class Noptin_Email_Generator {
 
 		// ... then process local template.
 		if ( ! empty( $is_local_template ) ) {
-
 			ob_start();
 
 			// Heading.
@@ -307,7 +304,6 @@ class Noptin_Email_Generator {
 			);
 
 			$email = ob_get_clean();
-
 		}
 
 		wp_reset_postdata();
@@ -346,6 +342,9 @@ class Noptin_Email_Generator {
 		// Make links clickable.
 		$content = make_clickable( $content );
 
+		// Add class to clickable links.
+		$content = $this->add_class_to_clickable_links( $content );
+
 		// Track opens.
 		$content = $this->inject_tracking_pixel( $content );
 
@@ -358,11 +357,17 @@ class Noptin_Email_Generator {
 		// Make links trackable.
 		$content = $this->make_links_trackable( $content );
 
+		// Backup hrefs.
+		$content = $this->backup_hrefs( $content );
+
 		// Inline CSS styles.
 		$content = $this->inline_styles( $content );
 
 		// Remove unused classes and ids.
 		$content = $this->clean_html( $content );
+
+		// Restore hrefs.
+		$content = $this->restore_hrefs( $content );
 
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );
@@ -427,7 +432,6 @@ class Noptin_Email_Generator {
 
 		/** @var \DOMNodeList $elements */
 		foreach ( $elements as $element ) {
-
 			$is_block_element = in_array( $element->nodeName, array( 'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li' ), true );
 
 			// Remove empty paragraphs or those with only whitespace.
@@ -449,6 +453,18 @@ class Noptin_Email_Generator {
 			} elseif ( $is_block_element && ! $element->hasChildNodes() ) {
 				// If <p> tag has no children, remove it
 				$element->parentNode->removeChild( $element );
+			}
+
+			// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
+			if ( 'table' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-block__wrapper' ) ) {
+				$anchors           = $element->getElementsByTagName( 'a' );
+				$missing_href      = ! $anchors->item( 0 )->hasAttribute( 'href' ) || empty( $anchors->item( 0 )->getAttribute( 'href' ) );
+				$missing_data_href = ! $anchors->item( 0 )->hasAttribute( 'data-href' ) || empty( $anchors->item( 0 )->getAttribute( 'data-href' ) );
+				$has_either        = ! $missing_href || ! $missing_data_href;
+				if ( 0 === $anchors->length || ! $has_either ) {
+					$element->parentNode->removeChild( $element );
+					continue;
+				}
 			}
 
 			// If this is a table element with .noptin-image-block__wrapper class,
@@ -515,6 +531,67 @@ class Noptin_Email_Generator {
 
 		// Save the HTML.
 		return $doc->saveHTML();
+	}
+
+	private function backup_hrefs( $html ) {
+		// Check if DOMDocument is available.
+		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
+			return $html;
+		}
+
+		$doc = new DOMDocument();
+		@$doc->loadHTML( $html );
+
+		$xpath    = new DOMXPath( $doc );
+		$elements = $xpath->query( '//*[@href]' );
+
+		if ( empty( $elements ) ) {
+			return $html;
+		}
+
+		foreach ( $elements as $element ) {
+			$element->setAttribute( 'data-href', $element->getAttribute( 'href' ) );
+			$element->removeAttribute( 'href' );
+		}
+
+		return $doc->saveHTML();
+	}
+
+	private function restore_hrefs( $html ) {
+		// Check if DOMDocument is available.
+		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
+			return $html;
+		}
+
+		$new_html = preg_replace_callback(
+			'/<a(.*?)data-href=["\'](.*?)["\'](.*?)>/mi',
+			function ( $matches ) {
+				return "<a{$matches[1]}href=\"{$matches[2]}\"{$matches[3]}>";
+			},
+			$html
+		);
+
+		return empty( $new_html ) ? $html : $new_html;
+	}
+
+	public function add_class_to_clickable_links( $content ) {
+
+		// Use regex to add the class to all links that start with http.
+		$content = preg_replace_callback(
+			'/<a\s+href=["\'](http[^"\']*)["\']([^>]*)>(http[^<]*)<\/a>/i',
+			function ( $matches ) {
+				// Add the class to the anchor tag.
+				return sprintf(
+					'<a href="%s" %s class="noptin-raw-link">%s</a>',
+					esc_url( $matches[1] ),
+					$matches[2],
+					esc_html( $matches[3] )
+				);
+			},
+			$content
+		);
+
+		return $content;
 	}
 
 	/**
@@ -592,7 +669,6 @@ class Noptin_Email_Generator {
 
 		// Skip action page URLs.
 		if ( false === strpos( $url, 'noptin_ns' ) ) {
-
 			$args = array_merge(
 				$this->recipient,
 				array( 'to' => $url )
@@ -641,6 +717,9 @@ class Noptin_Email_Generator {
 			return $content;
 		}
 
+		// Use preg_replace to remove the CSS comments.
+		$content = preg_replace( '/\/\*.*?\*\//s', '', $content );
+
 		// Maybe abort early.
 		if ( ! class_exists( 'DOMDocument' ) || ! class_exists( '\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles' ) ) {
 			return $content;
@@ -651,36 +730,14 @@ class Noptin_Email_Generator {
 
 		try {
 
-			// Emogrifier urlencodes hrefs, copy the href to a new attribute and restore it after inlining.
-			$content = preg_replace_callback(
-				'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
-				function ( $matches ) {
-					return "<a {$matches[1]} data-href=\"{$matches[2]}\" {$matches[3]}>";
-				},
-				$content
-			);
-
 			// create inliner instance
 			$inliner = new \TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
 
 			// Inline styles.
-			$content = $inliner->convert( $content, $styles );
-
-			// Restore hrefs.
-			$content = preg_replace_callback(
-				'/<a(.*?)data-href=["\'](.*?)["\'](.*?)>/mi',
-				function ( $matches ) {
-					return "<a {$matches[1]} href=\"{$matches[2]}\" {$matches[3]}>";
-				},
-				$content
-			);
-
-			return $content;
+			return $inliner->convert( $content, $styles );
 		} catch ( Exception $e ) {
-
 			log_noptin_message( $e->getMessage() );
 			return $content;
-
 		} catch ( Symfony\Component\CssSelector\Exception\SyntaxErrorException $e ) {
             log_noptin_message( $e->getMessage() );
 			return $content;
@@ -697,7 +754,6 @@ class Noptin_Email_Generator {
 
 		// Only track if it is permitted.
 		if ( $this->can_track() ) {
-
 			return preg_replace_callback(
 				'/<\/body[^>]*>/',
 				function ( $matches ) {
@@ -706,7 +762,6 @@ class Noptin_Email_Generator {
 				$content,
 				1
 			);
-
 		}
 
 		return $content;
@@ -733,7 +788,6 @@ class Noptin_Email_Generator {
 
 		// Ensure a preview text is set.
 		if ( ! empty( $this->preview_text ) ) {
-
 			return preg_replace_callback(
 				'/<body[^>]*>/',
 				function ( $matches ) {
@@ -742,7 +796,6 @@ class Noptin_Email_Generator {
 				$content,
 				1
 			);
-
 		}
 
 		return $content;

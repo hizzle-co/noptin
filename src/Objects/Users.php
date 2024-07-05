@@ -196,6 +196,15 @@ class Users extends People {
 	}
 
 	/**
+	 * Retrieves the manual recipients.
+	 */
+	public function get_manual_recipients() {
+		return array(
+			$this->field_to_merge_tag( 'email' ) => 'current_user' === $this->type ? __( 'Logged in user', 'newsletter-optin-box' ) : $this->singular_label,
+		);
+	}
+
+	/**
 	 * Retrieves available fields.
 	 *
 	 */

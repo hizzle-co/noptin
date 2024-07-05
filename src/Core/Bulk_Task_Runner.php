@@ -54,7 +54,7 @@ abstract class Bulk_Task_Runner {
 		add_action( 'admin_init', array( $this, 'add_wp_cron_event' ) );
 		add_action( $this->cron_hook, array( $this, 'run' ) );
 		add_action( $this->cron_health_check_hook, array( $this, 'handle_cron_healthcheck' ) );
-		add_filter( 'cron_schedules', array( __CLASS__, 'filter_cron_schedules' ) );
+		add_filter( 'cron_schedules', array( $this, 'filter_cron_schedules' ) );
 		add_action( 'wp_ajax_' . $this->cron_hook, array( $this, 'maybe_handle_rescheduled' ) );
 		add_action( 'wp_ajax_nopriv_' . $this->cron_hook, array( $this, 'maybe_handle_rescheduled' ) );
 	}

@@ -495,38 +495,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			return false;
 		}
 
-		// Maybe use an external runner.
-		$result = apply_filters( 'noptin_automation_rule_maybe_run', null, $subject, $this, $args, $trigger, $action );
-
-		if ( null !== $result ) {
-			return $result;
-		}
-
-		// Are we delaying the action?
-		$delay = $this->get_delay();
-
-		if ( $delay > 0 ) {
-			$result = schedule_noptin_background_action(
-				time() + $delay,
-				'noptin_run_delayed_automation_rule',
-				$this->get_id(),
-				$trigger->serialize_trigger_args( $args )
-			);
-
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
-
-			return ! empty( $result );
-		}
-
-		$result = $action->maybe_run( $subject, $this, $args );
-
-		if ( is_wp_error( $result ) || false === $result ) {
-			return $result;
-		}
-
-		return true;
+		// Run the automation rule.
+		return \Hizzle\Noptin\Tasks\Main::run_automation_rule( $subject, $this, $args, $trigger );
 	}
 
 	/**

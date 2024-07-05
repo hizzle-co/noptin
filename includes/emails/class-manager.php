@@ -66,7 +66,6 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type-automation-rule.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-mass-mailer.php';
 	}
 
 	/**

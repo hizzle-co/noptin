@@ -88,8 +88,8 @@ class Menu {
 		}
 
 		$license = \Noptin_COM::get_active_license_key( true );
-		$path    = noptin()->plugin_path . '/build/Misc/assets/';
-		$url     = noptin()->plugin_url . '/build/Misc/assets/';
+		$path    = noptin()->plugin_path . 'build/Misc/assets/';
+		$url     = noptin()->plugin_url . 'build/Misc/assets/';
 		$config  = include $path . 'js/list.asset.php';
 
 		wp_enqueue_media();
@@ -130,7 +130,7 @@ class Menu {
 			)
 		);
 
-		wp_set_script_translations( 'noptin-list', 'newsletter-optin-box' );
+		wp_set_script_translations( 'noptin-list', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
 		// Load the css.
 		wp_enqueue_style(

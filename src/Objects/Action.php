@@ -211,12 +211,12 @@ class Action extends \Noptin_Abstract_Action {
 
 			// If required but not set...
 			if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
-				return false;
+				throw new \Exception( sprintf( 'Error: "%s" not specified', esc_html( $args['label'] ) ) );
 			}
 		}
 
 		if ( ! isset( $this->action_args['callback'] ) || ! is_callable( $this->action_args['callback'] ) ) {
-			return false;
+			throw new \Exception( 'Error: Callback not specified' );
 		}
 
 		// Check if we have a custom can_run.

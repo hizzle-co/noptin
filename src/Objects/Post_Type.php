@@ -33,7 +33,7 @@ abstract class Post_Type extends Collection {
 	public function __construct() {
 
 		if ( false === self::$registered_subject ) {
-			Store::add( new Users( 'post_author', __( 'Authors', 'newsletter-optin-box' ), __( 'Author', 'newsletter-optin-box' ) ) );
+			Store::add( new Users( 'post_author', __( 'Authors', 'newsletter-optin-box' ), __( 'Post Author', 'newsletter-optin-box' ) ) );
 			self::$registered_subject = true;
 		}
 
@@ -88,7 +88,6 @@ abstract class Post_Type extends Collection {
 		}
 
 		if ( ! empty( $this->url_field ) ) {
-
 			$content_normal .= sprintf(
 				'<div>[[button url="%s" text="%s"]]</div><p>%s</p><p>%s</p>',
 				$this->field_to_merge_tag( $this->url_field ),

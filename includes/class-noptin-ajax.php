@@ -154,6 +154,11 @@ class Noptin_Ajax {
 		$inserted           = empty( $filtered['email'] ) ? 0 : get_noptin_subscriber_id_by_email( $filtered['email'] );
 		if ( $inserted ) {
 			$subscribed_message = get_noptin_option( 'already_subscribed_message', __( 'You are already subscribed to the newsletter, thank you!', 'newsletter-optin-box' ) );
+
+			// Resubscribe the subscriber if they've unsubscribed.
+			if ( apply_filters( 'noptin_resubscribe_subscriber', true, $inserted, $filtered ) ) {
+				resubscribe_noptin_subscriber( $inserted );
+			}
 		} else {
 			/**
 			 * Filters subscriber details when adding a new subscriber via ajax.
@@ -186,7 +191,6 @@ class Noptin_Ajax {
 		}
 
 		if ( is_object( $form ) ) {
-
 			$count = (int) get_post_meta( $form->ID, '_noptin_subscribers_count', true );
 			update_post_meta( $form->ID, '_noptin_subscribers_count', $count + 1 );
 

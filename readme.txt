@@ -2,10 +2,10 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, woocommerce
 Requires at least: 6.4
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 7.2
-Version: 3.3.0
-Stable tag: 3.3.0
+Version: 3.4.6
+Stable tag: 3.4.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,33 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 3.4.6 =
+* Fix: Unable to manually add newsletter subscribers.
+* Fix: Default confirmation email sent when an unsubscribed contact unsubscribes from your newsletter.
+* Add: WooCommerce Wholesale Pro compatibility.
+
+= 3.4.5 =
+* Allow to limit the length of post excerpts shown in newsletters.
+
+= 3.4.3 =
+* Add [past_noptin_newsletters] shortcode to display past newsletters.
+* Show error when a user tries to submit a private form.
+
+= 3.4.2 =
+* Added a [[view_in_browser_url]] so to allow subscribers to open their newsletters in the browser.
+
+= 3.4.0 =
+* Added a background tasks manager.
+
+= 3.3.3 =
+* Clear integrations cache when updating the plugin.
+
+= 3.3.2 =
+* Fix missing translations showing empty strings.
+
+= 3.3.1 =
+* Allow filtering newsletter subscribers by a comma-separated list of email addresses.
 
 = 3.3.0 =
 * Display a list of all merge tags in the newsletter editor.

@@ -182,7 +182,6 @@ class Noptin_Admin {
 
 		// Codemirror for editor css.
 		if ( 'noptin-form' === $page ) {
-
 			wp_enqueue_code_editor(
 				array(
 					'type'       => 'css',
@@ -194,7 +193,6 @@ class Noptin_Admin {
 					),
 				)
 			);
-
 		}
 
 		// Optin forms editor.
@@ -302,6 +300,13 @@ class Noptin_Admin {
 			do_action( trim( $_REQUEST['noptin_admin_action'] ), $this );
 		}
 
+		// Review nag.
+		if ( isset( $_GET['noptin_review_nag'] ) && isset( $_GET['noptin-review-nag-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['noptin-review-nag-nonce'] ) ), 'noptin-review-nag' ) ) {
+			update_option( 'noptin_review_nag', (int) $_GET['noptin_review_nag'] );
+			wp_safe_redirect( remove_query_arg( array( 'noptin_review_nag', 'noptin-review-nag-nonce' ) ) );
+			exit;
+		}
+
 		// Redirect to welcome page.
 		if ( ! get_option( '_noptin_has_welcomed', false ) && ! wp_doing_ajax() ) {
 
@@ -314,7 +319,6 @@ class Noptin_Admin {
 				// Redirect to the welcome page.
 				wp_safe_redirect( add_query_arg( array( 'page' => 'noptin-settings' ), admin_url( 'admin.php' ) ) );
 				exit;
-
 			}
 		}
 	}
@@ -419,16 +423,51 @@ class Noptin_Admin {
 			return;
 		}
 
-		// Warn addons pack if version is less than 2.0.0
-		if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && version_compare( NOPTIN_ADDONS_PACK_VERSION, MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION, '<' ) ) {
-			$this->print_notice(
-				'error',
-				sprintf(
-					// translators: %s: Update URL.
-					__( 'Your Addons Pack is outdated and nolonger works with this version of Noptin. Please update to the latest version to continue using it. <a href="%s">Update Now</a>', 'newsletter-optin-box' ),
-					admin_url( 'update-core.php' )
-				)
-			);
+		if ( doing_action( 'admin_notices' ) ) {
+
+			// Warn addons pack if version is less than 2.0.0
+			if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && version_compare( NOPTIN_ADDONS_PACK_VERSION, MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION, '<' ) ) {
+				$this->print_notice(
+					'error',
+					sprintf(
+						// translators: %s: Update URL.
+						__( 'Your Addons Pack is outdated and nolonger works with this version of Noptin. Please update to the latest version to continue using it. <a href="%s">Update Now</a>', 'newsletter-optin-box' ),
+						admin_url( 'update-core.php' )
+					)
+				);
+			}
+
+			// If user has been using Noptin for a while, show them a notice to rate the plugin.
+			$review_nag = get_option( 'noptin_review_nag', time() + WEEK_IN_SECONDS );
+			if ( ! empty( $review_nag ) && (int) $review_nag < time() ) {
+				$this->print_notice(
+					'info',
+					sprintf(
+						'%s %s <br><br> %s %s %s',
+						__( 'You have been using Noptin for a while now.', 'newsletter-optin-box' ),
+						sprintf(
+							/* Translators: %1$s Opening link tag, %2$s Closing link tag. */
+							esc_html__( 'Thousands of hours have gone into this plugin. If you love it, Consider %1$sgiving us a 5* rating on WordPress.org%2$s. It takes less than 5 minutes.', 'newsletter-optin-box' ),
+							'<a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5#new-post" target="_blank">',
+							'</a>'
+						),
+						sprintf(
+							'<a href="https://wordpress.org/support/plugin/newsletter-optin-box/reviews/?filter=5#new-post" target="_blank" class="button button-primary">%s</a>',
+							__( 'Rate Noptin', 'newsletter-optin-box' )
+						),
+						sprintf(
+							'<a href="%s" class="button">%s</a>',
+							wp_nonce_url( add_query_arg( 'noptin_review_nag', time() + YEAR_IN_SECONDS ), 'noptin-review-nag', 'noptin-review-nag-nonce' ),
+							__( 'I already did!', 'newsletter-optin-box' )
+						),
+						sprintf(
+							'<a href="%s" class="button button-link">%s</a>',
+							wp_nonce_url( add_query_arg( 'noptin_review_nag', time() + WEEK_IN_SECONDS ), 'noptin-review-nag', 'noptin-review-nag-nonce' ),
+							__( 'Not now', 'newsletter-optin-box' )
+						)
+					)
+				);
+			}
 		}
 
 		$notices = $this->get_notices();
@@ -441,7 +480,6 @@ class Noptin_Admin {
 		$this->clear_notices();
 
 		foreach ( $notices as $type => $messages ) {
-
 			if ( ! is_array( $messages ) ) {
 				continue;
 			}
@@ -466,7 +504,6 @@ class Noptin_Admin {
 			esc_attr( sanitize_html_class( $type ) ),
 			wp_kses_post( $message )
 		);
-
 	}
 
 	/**
@@ -493,5 +530,4 @@ class Noptin_Admin {
 		// Clear cache.
 		wp_cache_flush();
 	}
-
 }

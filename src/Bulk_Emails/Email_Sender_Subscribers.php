@@ -51,7 +51,7 @@ class Email_Sender_Subscribers extends Email_Sender {
 					$fields[ $key ],
 					array(
 						'label'       => sprintf(
-							// translators: %s is the filter label.
+							// translators: %s is the filter label, e.g, "Tags".
 							__( '%s - Exclude', 'newsletter-optin-box' ),
 							$filter['label']
 						),

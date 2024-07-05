@@ -167,7 +167,6 @@ class Subscriber extends \Hizzle\Store\Record {
 			esc_html( $status_badge ),
 			esc_html( $status_label )
 		);
-
 	}
 
 	/**
@@ -720,8 +719,8 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function get_overview() {
 		$sent_emails = $this->get_sent_campaigns();
 		$total       = count( $sent_emails );
-		$opens	     = 0;
-		$clicks	     = 0;
+		$opens       = 0;
+		$clicks      = 0;
 
 		foreach ( $sent_emails as $email ) {
 			if ( ! empty( $email['opens'] ) ) {
@@ -789,6 +788,12 @@ class Subscriber extends \Hizzle\Store\Record {
 		// Email confirmation URL.
 		if ( ! $this->get_confirmed() ) {
 			$action_links[] = array(
+				'label'  => __( 'Send Confirmation Email', 'newsletter-optin-box' ),
+				'value'  => 'send_confirmation_email',
+				'action' => 'remote',
+			);
+
+			$action_links[] = array(
 				'label'  => __( 'Email Confirmation URL', 'newsletter-optin-box' ),
 				'value'  => $this->get_confirm_subscription_url(),
 				'action' => 'copy',
@@ -820,4 +825,32 @@ class Subscriber extends \Hizzle\Store\Record {
 		return apply_filters( 'noptin_subscriber_overview', $overview, $this );
 	}
 
+	/**
+	 * Sends the confirm subscription email.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	public function do_send_confirmation_email() {
+
+		// Check if the subscriber is already confirmed.
+		if ( $this->get_confirmed() ) {
+			return new \WP_Error( 'already_confirmed', 'This subscriber is already confirmed.' );
+		}
+
+		if ( ! use_custom_noptin_double_optin_email() ) {
+			$result = send_new_noptin_subscriber_double_optin_email( $this->get_id() );
+		} else {
+			do_action( 'noptin_subscriber_status_set_to_pending', $this, 'new' );
+			$result = true;
+		}
+
+		if ( empty( $result ) ) {
+			return new \WP_Error( 'failed_to_send', 'Failed to send confirmation email.' );
+		}
+
+		return array(
+			'message' => 'Confirmation email sent.',
+		);
+	}
 }

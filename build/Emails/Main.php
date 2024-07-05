@@ -48,8 +48,14 @@ class Main {
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
 
+		// Add shortcode to display past newsletters.
+		add_shortcode( 'past_noptin_newsletters', array( __CLASS__, 'past_newsletters' ) );
+
 		// Email preview.
 		Preview::init();
+
+		// Templates.
+		Templates::init();
 
 		if ( is_admin() ) {
 			Admin\Main::init();
@@ -335,7 +341,6 @@ class Main {
 		);
 
 		foreach ( self::$types as $type ) {
-
 			if ( ! $type->supports_sub_types ) {
 				continue;
 			}
@@ -618,6 +623,26 @@ class Main {
 	}
 
 	/**
+	 * Retrieves the current view in browser url.
+	 *
+	 * @return string
+	 */
+	public static function get_current_view_in_browser_url() {
+		global $noptin_current_objects;
+		$recipient = self::$current_email_recipient;
+
+		if ( is_array( $noptin_current_objects ) ) {
+			foreach ( $noptin_current_objects as $collection => $obj ) {
+				if ( ! isset( $recipient[ $collection ] ) ) {
+					$recipient[ $collection ] = $obj->get( 'id' );
+				}
+			}
+		}
+
+		return get_noptin_action_url( 'view_in_browser', noptin_encrypt( wp_json_encode( $recipient ) ), true );
+	}
+
+	/**
 	 * Deletes sent campaigns.
 	 *
 	 */
@@ -669,7 +694,7 @@ class Main {
 	 */
 	public static function filter_last_send_date( $date ) {
 
-		if ( ! did_action( 'noptin_prepare_email_preview' ) && ! empty( self::$current_email ) ) {
+		if ( ( Preview::$simulation || ! did_action( 'noptin_prepare_email_preview' ) ) && ! empty( self::$current_email ) ) {
 			$last_date = get_post_meta( self::$current_email->id, '_noptin_last_send', true );
 
 			if ( ! empty( $last_date ) ) {
@@ -706,5 +731,105 @@ class Main {
 		}
 
 		return $date;
+	}
+
+	/**
+	 * Displays past newsletters.
+	 *
+	 * @param array $atts The shortcode attributes.
+	 * @return string
+	 */
+	public static function past_newsletters( $atts ) {
+		$atts = shortcode_atts(
+			array(
+				'limit'        => 20,
+				'with_parents' => 'no',
+				'show'         => 'subject',
+			),
+			$atts
+		);
+
+		$args = array(
+			'posts_per_page' => (int) $atts['limit'],
+			'post_type'      => 'noptin-campaign',
+			'meta_query'     => array(
+				array(
+					'key'     => 'paused',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'   => 'campaign_type',
+					'value' => 'newsletter',
+				),
+			),
+		);
+
+		if ( 'no' === $atts['with_parents'] ) {
+			$args['post_parent'] = 0;
+		}
+
+		$emails = get_posts( $args );
+
+		if ( empty( $emails ) ) {
+			return '';
+		}
+
+		ob_start();
+		?>
+		<style>
+			.noptin-past-newsletters .noptin-past-newsletters__list {
+				list-style-type: none;
+				padding: 0;
+				margin: 20px 0;
+			}
+
+			.noptin-past-newsletters .noptin-past-newsletters__list .noptin-past-newsletters__list-item {
+				margin-bottom: 15px;
+				padding-bottom: 15px;
+				border-bottom: 1px solid #e0e0e0;
+			}
+
+			.noptin-past-newsletters a {
+				font-weight: bold;
+				display: block;
+			}
+
+			.noptin-past-newsletters .noptin-past-newsletters-list-item__date {
+				color: #757575;
+				font-size: 0.9em;
+			}
+		</style>
+		<div class="noptin-past-newsletters">
+			<ul class="noptin-past-newsletters__list">
+				<?php foreach ( $emails as $email_id ) : ?>
+					<?php
+						$email = new Email( $email_id );
+						$date  = date_i18n( 'F j, Y', strtotime( $email->created ) );
+						$url   = $email->get_view_in_browser_url(
+							array(
+								'source' => 'past-newsletters',
+							)
+						);
+						$title = $email->name;
+
+						if ( empty( $title ) || 'title' !== $atts['show'] ) {
+							$title = $email->get( 'subject' );
+						}
+					?>
+
+					<li class="noptin-past-newsletters__list-item">
+						<a href="<?php echo esc_url( $url ); ?>">
+							<?php echo esc_html( $title ); ?>
+						</a>
+						<div class="noptin-past-newsletters-list-item__date">
+							<?php echo esc_html( $date ); ?>
+						</div>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+
+		<?php
+		return ob_get_clean();
 	}
 }

@@ -142,23 +142,23 @@ class Recipes extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				),
 			),
 			'prep_time'            => array(
-				'description' => __( 'Preparation time', 'newsletter-optin-box' ),
+				'description' => 'Preparation time',
 				'type'        => 'string',
 			),
 			'cook_time'            => array(
-				'description' => __( 'Cook time', 'newsletter-optin-box' ),
+				'description' => 'Cook time',
 				'type'        => 'string',
 			),
 			'total_time'           => array(
-				'description' => __( 'Total time', 'newsletter-optin-box' ),
+				'description' => 'Total time',
 				'type'        => 'string',
 			),
 			'custom_time'          => array(
-				'description' => __( 'Custom time', 'newsletter-optin-box' ),
+				'description' => 'Custom time',
 				'type'        => 'string',
 			),
 			'custom_time_label'    => array(
-				'description' => __( 'Custom time label', 'newsletter-optin-box' ),
+				'description' => 'Custom time label',
 				'type'        => 'string',
 			),
 			'post_status'          => array(
@@ -173,9 +173,9 @@ class Recipes extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'description' => __( 'Type', 'newsletter-optin-box' ),
 				'type'        => 'string',
 				'options'     => array(
-					'food'  => __( 'Food Recipe', 'newsletter-optin-box' ),
-					'howto' => __( 'How-to Instructions', 'newsletter-optin-box' ),
-					'other' => __( 'Other (no metadata)', 'newsletter-optin-box' ),
+					'food'  => 'Food Recipe',
+					'howto' => 'How-to Instructions',
+					'other' => 'Other (no metadata)',
 				),
 			),
 			'id'                   => array(
@@ -191,33 +191,31 @@ class Recipes extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'type'        => 'string',
 			),
 			'date_formatted'       => array(
-				'description' => __( 'Date formatted', 'newsletter-optin-box' ),
+				'description' => 'Date formatted',
 				'type'        => 'string',
 			),
 			'cost'                 => array(
-				'description' => __( 'Cost', 'newsletter-optin-box' ),
+				'description' => 'Cost',
 				'type'        => 'string',
 			),
 			'servings'             => array(
-				'description' => __( 'Servings', 'newsletter-optin-box' ),
+				'description' => 'Servings',
 				'type'        => 'boolean',
 			),
 			'servings_unit'        => array(
-				'description' => __( 'Servings unit', 'newsletter-optin-box' ),
+				'description' => 'Servings unit',
 				'type'        => 'string',
 			),
 			'equipment'            => array(
-				'description' => __( 'Equipment', 'newsletter-optin-box' ),
+				'description' => 'Equipment',
 				'type'        => 'string',
 				'block'       => array(
 					'title'       => sprintf(
-						/* translators: %s: Object type label. */
-						__( '%s Equipment.', 'newsletter-optin-box' ),
+						'%s Equipment.',
 						strtolower( $this->singular_label )
 					),
 					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Displays the %s equipment.', 'newsletter-optin-box' ),
+						'Displays the %s equipment.',
 						strtolower( $this->singular_label )
 					),
 					'icon'        => 'admin-tools',
@@ -227,17 +225,15 @@ class Recipes extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				),
 			),
 			'ingredients'          => array(
-				'description' => __( 'Ingredients', 'newsletter-optin-box' ),
+				'description' => 'Ingredients',
 				'type'        => 'string',
 				'block'       => array(
 					'title'       => sprintf(
-						/* translators: %s: Object type label. */
-						__( '%s Ingredients.', 'newsletter-optin-box' ),
+						'%s Ingredients.',
 						strtolower( $this->singular_label )
 					),
 					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Displays the %s ingredients.', 'newsletter-optin-box' ),
+						'Displays the %s ingredients.',
 						strtolower( $this->singular_label )
 					),
 					'icon'        => 'plus',
@@ -247,17 +243,15 @@ class Recipes extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				),
 			),
 			'instructions'         => array(
-				'description' => __( 'Instructions', 'newsletter-optin-box' ),
+				'description' => 'Instructions',
 				'type'        => 'string',
 				'block'       => array(
 					'title'       => sprintf(
-						/* translators: %s: Object type label. */
-						__( '%s Instructions.', 'newsletter-optin-box' ),
+						'%s Instructions.',
 						strtolower( $this->singular_label )
 					),
 					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Displays the %s instructions.', 'newsletter-optin-box' ),
+						'Displays the %s instructions.',
 						strtolower( $this->singular_label )
 					),
 					'icon'        => 'editor-help',
@@ -267,23 +261,23 @@ class Recipes extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				),
 			),
 			'notes'                => array(
-				'description' => __( 'Notes', 'newsletter-optin-box' ),
+				'description' => 'Notes',
 				'type'        => 'string',
 			),
 			'calories'            => array(
-				'description' => __( 'Calories', 'newsletter-optin-box' ),
+				'description' => 'Calories',
 				'type'        => 'number',
 			),
 			'parent_post_id'       => array(
-				'description' => __( 'Parent Post ID', 'newsletter-optin-box' ),
+				'description' => 'Parent Post ID',
 				'type'        => 'number',
 			),
 			'parent_post_url'      => array(
-				'description' => __( 'Parent Post URL', 'newsletter-optin-box' ),
+				'description' => 'Parent Post URL',
 				'type'        => 'string',
 			),
 			'parent_post_language' => array(
-				'description' => __( 'Parent Post Language', 'newsletter-optin-box' ),
+				'description' => 'Parent Post Language',
 				'type'        => 'string',
 			),
 			'meta'                 => $this->meta_key_tag_config(),

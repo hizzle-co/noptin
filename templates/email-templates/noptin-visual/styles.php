@@ -27,10 +27,10 @@
 	body,
 	.wrapper-div {
 		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>;
-		width: 100% !important;
-		height: 100% !important;
-		padding: 0 !important;
-		margin: 0 !important;
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		margin: 0;
 		overflow: auto;
 		box-sizing: border-box;
 		color: <?php echo esc_attr( $settings['color'] ); ?>;
@@ -48,6 +48,39 @@
 			background-repeat: no-repeat;
 		}
 	<?php endif; ?>
+
+	@media all {
+		.ExternalClass {
+			width: 100%;
+  		}
+
+		.ExternalClass,
+		.ExternalClass p,
+		.ExternalClass span,
+		.ExternalClass font,
+		.ExternalClass td,
+		.ExternalClass div {
+			line-height: 100%;
+		}
+
+		.apple-link a {
+			color: inherit !important;
+			font-family: inherit !important;
+			font-size: inherit !important;
+			font-weight: inherit !important;
+			line-height: inherit !important;
+			text-decoration: none !important;
+		}
+
+		#MessageViewBody a {
+			color: inherit;
+			text-decoration: none;
+			font-size: inherit;
+			font-family: inherit;
+			font-weight: inherit;
+			line-height: inherit;
+		}
+	}
 
 	div,
 	ol,
@@ -181,12 +214,14 @@
 
 	.noptin-columns {
 		display: table;
+		table-layout: fixed;
 		width: 100%;
 		overflow: hidden;
 	}
 
 	.noptin-column {
 		display: table-cell;
+		overflow: hidden;
 	}
 
 	.noptin-column__inner {
@@ -198,9 +233,9 @@
 		margin-right: 10px;
 	}
 
-	@media only screen and (max-width: 360px) {
+	@media only screen and (max-width: 575px) {
 		.noptin-is-stacked-on-mobile {
-			display: block !important;
+			display: block!important;
 		}
 
 		.noptin-is-stacked-on-mobile.noptin-column {
@@ -216,7 +251,6 @@
 
 	<?php
 		if ( ! empty( $settings['block_css'] ) ) {
-
 			foreach ( (array) $settings['block_css'] as $block_css ) {
 				// Note that esc_html() cannot be used because `div &gt; span` is not interpreted properly.
 				echo strip_tags( $block_css ); // phpcs:ignore
