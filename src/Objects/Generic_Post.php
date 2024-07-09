@@ -98,6 +98,8 @@ class Generic_Post extends Record {
 				$paragraphs = explode( '</p>', $content );
 				$content    = implode( '</p>', array_slice( $paragraphs, 0, (int) $args['paragraphs'] ) );
 			}
+
+			return $content;
 		}
 
 		// Title.
