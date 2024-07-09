@@ -389,9 +389,16 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
 
 			if ( $last_send ) {
+				if ( is_numeric( $last_send ) ) {
+					$last_send = new DateTime( "@$last_send" );
+					$last_send->setTimezone( wp_timezone() );
+					$last_send = $last_send->format( 'Y-m-d H:i' );
+				}
+
 				$query['date_query'] = array(
 					array(
-						'after' => is_numeric( $last_send ) ? gmdate( 'Y-m-d\TH:i:s+00:00', $last_send ) : $last_send,
+						'inclusive' => true,
+						'after'     => $last_send,
 					),
 				);
 			}
@@ -426,9 +433,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		}
 
 		foreach ( $advanced_args as $key => $type ) {
-
 			if ( isset( $args[ $key ] ) && '' !== $args[ $key ] ) {
-
 				$value = $args[ $key ];
 
 				if ( 'array_int' === $type ) {
@@ -453,12 +458,10 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$tax_query = array();
 
 		foreach ( noptin_parse_list( $post_type ) as $_post_type ) {
-
 			foreach ( get_object_taxonomies( $_post_type ) as $taxonomy ) {
 
 				// Special treatment for tags.
 				if ( 'post_tag' === $taxonomy ) {
-
 					$allowed = array(
 						'tag'           => 'string',
 						'tag_id'        => 'int',
@@ -493,7 +496,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 				// Special treatment for categories.
 				if ( 'category' === $taxonomy ) {
-
 					$allowed = array(
 						'cat'              => 'string',
 						'category_name'    => 'string',

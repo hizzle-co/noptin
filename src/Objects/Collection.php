@@ -699,8 +699,15 @@ abstract class Collection {
 					$last_send = apply_filters( 'noptin_get_last_send_date', 0 );
 
 					if ( $last_send ) {
+						if ( is_numeric( $last_send ) ) {
+							$last_send = new \DateTime( "@$last_send" );
+							$last_send->setTimezone( wp_timezone() );
+							$last_send = $last_send->format( 'Y-m-d H:i' );
+						}
+
 						$date_query[] = array(
-							'after' => is_numeric( $last_send ) ? gmdate( 'Y-m-d\TH:i:s+00:00', $last_send ) : $last_send,
+							'inclusive' => true,
+							'after'     => $last_send,
 						);
 					}
 				} else {
