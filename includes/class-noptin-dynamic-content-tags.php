@@ -144,6 +144,16 @@ abstract class Noptin_Dynamic_Content_Tags {
 			return $tags[ $tag ];
 		}
 
+		// Search deprecated tags.
+		foreach ( $tags as $key => $value ) {
+			if ( ! empty( $value['deprecated'] ) && in_array( $tag, noptin_parse_list( $value['deprecated'] ), true ) ) {
+				return array_merge(
+					$value,
+					array( 'use_tag' => $key )
+				);
+			}
+		}
+
 		// Convert first occurence of _ to .
 		$alt_tag = preg_replace( '/_/', '.', $tag, 1 );
 
@@ -154,6 +164,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 			);
 		}
 
+		// Guess the tag.
 		foreach ( $tags as $key => $value ) {
 
 			// Check without prefix.
@@ -167,14 +178,6 @@ abstract class Noptin_Dynamic_Content_Tags {
 						array( 'use_tag' => $key )
 					);
 				}
-			}
-
-			// Check deprecated alternatives.
-			if ( ! empty( $value['deprecated'] ) && in_array( $tag, noptin_parse_list( $value['deprecated'] ), true ) ) {
-				return array_merge(
-					$value,
-					array( 'use_tag' => $key )
-				);
 			}
 		}
 
@@ -258,7 +261,6 @@ abstract class Noptin_Dynamic_Content_Tags {
 		}
 
 		if ( is_array( $replacement ) ) {
-
 			$is_all_scalar = array_reduce(
 				$replacement,
 				function ( $carry, $item ) {

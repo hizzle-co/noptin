@@ -705,7 +705,7 @@ class Main {
 
 				// Get posts published yesterday.
 				case 'daily':
-					return strtotime( '-1 day' );
+					return strtotime( 'yesterday midnight' );
 
 				// Get posts published in the last 7 days.
 				case 'weekly':

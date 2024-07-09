@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.4
 Tested up to: 6.6
 Requires PHP: 7.2
-Version: 3.4.6
-Stable tag: 3.4.6
+Version: 3.4.7
+Stable tag: 3.4.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 3.4.7 =
+* Fix: [[post_content]] merge tag shows blank.
 
 = 3.4.6 =
 * Fix: Unable to manually add newsletter subscribers.
