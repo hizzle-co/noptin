@@ -911,6 +911,11 @@ abstract class Collection {
 			$items = $this->get_all( $query );
 		}
 
+		// Debug the query later.
+		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING ) {
+			noptin_error_log( $items, 'Item collection results' );
+		}
+
 		if ( ! is_array( $items ) || empty( $items ) ) {
 			if ( 'yes' === $atts['skiponempty'] ) {
 				$GLOBALS['noptin_email_force_skip'] = array(

@@ -158,7 +158,7 @@ class Generic_Post_Type extends Post_Type {
 			noptin_error_log( count( $posts ), 'Post collection posts' );
 		}
 
-		return get_posts( $posts );
+		return $posts;
 	}
 
 	/**
