@@ -194,7 +194,7 @@ class Generic_Post_Type extends Post_Type {
 			'author'         => array(
 				'label'        => __( 'Author ID', 'newsletter-optin-box' ),
 				'type'         => 'number',
-				'deprecated'   => 'post_author_id',
+				'deprecated'   => array( 'post_author_id', 'post_author' ),
 				'actions'      => array( $action ),
 				'action_props' => array(
 					$action => array(
