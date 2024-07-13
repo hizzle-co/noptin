@@ -1527,7 +1527,7 @@ class Collection {
 		$record = (object) $record;
 
 		foreach ( $this->get_cache_keys() as $key ) {
-			if ( ! is_null( $record->$key ) ) {
+			if ( ! is_null( $record->$key ) && '' !== $record->$key ) {
 				wp_cache_delete( $record->$key, $this->hook_prefix( 'ids_by_' . $key, true ) );
 			}
 		}
