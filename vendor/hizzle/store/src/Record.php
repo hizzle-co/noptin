@@ -373,6 +373,11 @@ class Record {
 
 		foreach ( $this->get_collection()->get_props() as $prop ) {
 			$data[ $prop->name ] = $this->get( $prop, $context );
+
+			// Convert dates to ISO8601 format.
+			if ( $data[ $prop->name ] instanceof Date_Time ) {
+				$data[ $prop->name ] = $data[ $prop->name ]->__toString();
+			}
 		}
 
 		return $data;
@@ -653,10 +658,16 @@ class Record {
 			// Create date/time object from passed date value.
 			if ( $value instanceof Date_Time ) {
 				$datetime = $value;
+			} elseif ( is_array( $value ) ) {
+				// Array of date and timezone.
+				$datetime = new Date_Time( $value['date'], new \DateTimeZone( $value['timezone'] ) );
+			} elseif ( is_object( $value ) ) {
+				// Array of date and timezone.
+				$datetime = new Date_Time( $value->date, new \DateTimeZone( $value->timezone ) );
 			} elseif ( is_numeric( $value ) ) {
 				// Timestamps are handled as UTC timestamps in all cases.
 				$datetime = new Date_Time( "@{$value}", new \DateTimeZone( 'UTC' ) );
-			} else {
+			} elseif ( is_string( $value ) ) {
 				// Strings are defined in local WP timezone. Convert to UTC.
 				if ( 1 === preg_match( '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|((-|\+)\d{2}:\d{2}))$/', $value, $date_bits ) ) {
 					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : wp_timezone()->getOffset( new \DateTime( 'now' ) );
@@ -665,6 +676,9 @@ class Record {
 				} else {
 					$datetime = new Date_Time( $value, wp_timezone() );
 				}
+			} else {
+				$this->set_prop( $prop, null );
+				return;
 			}
 
 			// Set local timezone or offset.
@@ -896,7 +910,7 @@ class Record {
 				esc_attr( $date->__toString() ),
 				esc_html(
 					sprintf(
-						/* translators: %s: Human-readable time difference. */
+						/* translators: %s: Human-readable time difference */
 						__( '%s ago', 'hizzle-store' ),
 						human_time_diff( $date->getTimestamp(), time() )
 					)
