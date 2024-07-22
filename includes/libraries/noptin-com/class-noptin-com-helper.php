@@ -73,7 +73,7 @@ class Noptin_COM_Helper {
 		// Activate the license key remotely.
 		$result = Noptin_COM::process_api_response(
 			wp_remote_post(
-				'https://noptin.com/wp-json/hizzle/v1/licenses/' . $license_key . '/activate',
+				'https://my.noptin.com/wp-json/hizzle/v1/licenses/' . $license_key . '/activate',
 				array(
 					'body'    => array(
 						'website' => home_url(),
@@ -123,7 +123,7 @@ class Noptin_COM_Helper {
 		// Deactive the license key remotely.
 		$result = Noptin_COM::process_api_response(
 			wp_remote_post(
-				'https://noptin.com/wp-json/hizzle/v1/licenses/' . $license_key . '/deactivate',
+				'https://my.noptin.com/wp-json/hizzle/v1/licenses/' . $license_key . '/deactivate',
 				array(
 					'body'    => array(
 						'website' => home_url(),

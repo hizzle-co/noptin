@@ -134,7 +134,7 @@ class Noptin_COM_Updater {
 				'downloads'          => rawurlencode( implode( ',', $git_urls ) ),
 				'hash'               => $hash,
 			),
-			'https://noptin.com/wp-json/hizzle_download/v1/versions'
+			'https://my.noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
 		$response = Noptin_COM::process_api_response(
@@ -299,7 +299,7 @@ class Noptin_COM_Updater {
 				'hizzle_license'     => rawurlencode( Noptin_COM::get_active_license_key() ),
 				'downloads'          => rawurlencode( $git_url ),
 			),
-			'https://noptin.com/wp-json/hizzle_download/v1/versions'
+			'https://my.noptin.com/wp-json/hizzle_download/v1/versions'
 		);
 
 		$key          = 'noptin_versions_' . md5( $endpoint );

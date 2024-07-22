@@ -149,7 +149,7 @@ class Noptin_COM {
 		// Fetch details remotely.
 		$license = self::process_api_response(
 			wp_remote_get(
-				"https://noptin.com/wp-json/hizzle/v1/licenses/$license_key/?website=" . rawurlencode( home_url() ),
+				"https://my.noptin.com/wp-json/hizzle/v1/licenses/$license_key/?website=" . rawurlencode( home_url() ),
 				array(
 					'timeout' => 15,
 					'headers' => array(
