@@ -802,7 +802,7 @@ class Collection {
 		}
 
 		// Save date modified in UTC time.
-		if ( ! $this->is_cpt() && array_key_exists( 'date_modified', $data ) ) {
+		if ( ! $this->is_cpt() && array_key_exists( 'date_modified', $data ) && empty( $data['date_modified'] ) ) {
 			$data['date_modified'] = new Date_Time( 'now', new \DateTimeZone( 'UTC' ) );
 		}
 

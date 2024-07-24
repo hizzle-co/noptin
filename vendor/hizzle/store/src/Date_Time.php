@@ -89,14 +89,21 @@ class Date_Time extends \DateTime {
 
 			// If the time is midnight, return just the date.
 			if ( '00:00:00' === $this->format( 'H:i:s' ) ) {
-				return $this->date_i18n( 'F j, Y' );
+				return $this->date_i18n( get_option( 'date_format', 'F j, Y' ) );
 			}
 
-			return $this->date_i18n( 'F j, Y @ g:i a' );
+			return $this->date_i18n(
+				sprintf(
+					/* translators: 1: date, 2: time */
+					_x( '%1$s @ %2$s', 'date and time', 'hizzle-store' ),
+					get_option( 'date_format', 'F j, Y' ),
+					get_option( 'time_format', 'g:i a' )
+				)
+			);
 		}
 
 		if ( 'view_day' === $context ) {
-			return $this->date_i18n( 'F j, Y' );
+			return $this->date_i18n( get_option( 'date_format', 'F j, Y' ) );
 		}
 
 		if ( 'db' === $context ) {

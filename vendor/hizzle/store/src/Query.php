@@ -164,7 +164,6 @@ class Query {
 		} else {
 			$this->query_results();
 		}
-
 	}
 
 	/**
@@ -255,19 +254,43 @@ class Query {
 		// Sorting.
 		if ( ! $aggregate ) {
 			$this->prepare_orderby_query( $qv, $table );
-		}
 
-		// limit
-		if ( isset( $qv['per_page'] ) && (int) $qv['per_page'] > 0 ) {
-			if ( $qv['offset'] ) {
-				$this->query_limit = $wpdb->prepare( 'LIMIT %d, %d', $qv['offset'], $qv['per_page'] );
-			} else {
-				$this->query_limit = $wpdb->prepare( 'LIMIT %d, %d', $qv['per_page'] * ( $qv['page'] - 1 ), $qv['per_page'] );
+			// limit
+			if ( isset( $qv['per_page'] ) && (int) $qv['per_page'] > 0 ) {
+				if ( $qv['offset'] ) {
+					$this->query_limit = $wpdb->prepare( 'LIMIT %d, %d', $qv['offset'], $qv['per_page'] );
+				} else {
+					$this->query_limit = $wpdb->prepare( 'LIMIT %d, %d', $qv['per_page'] * ( $qv['page'] - 1 ), $qv['per_page'] );
+				}
 			}
 		}
 
 		// Fires after preparing the query.
 		do_action_ref_array( $collection->hook_prefix( 'after_prepare_query' ), array( &$this ) );
+	}
+
+	private function get_mysql_timezone_offset() {
+		$offset = get_option( 'gmt_offset', 0 );
+
+		// Ensure offset is a float
+		$offset = floatval( $offset );
+
+		// Get the absolute value of the offset
+		$abs_offset = abs( $offset );
+
+		// Calculate hours and minutes
+		$hours   = floor( $abs_offset );
+		$minutes = ( $abs_offset - $hours ) * 60;
+
+		// Format the offset string
+		$offset_string = sprintf(
+			'%s%02d:%02d',
+			$offset >= 0 ? '+' : '-',
+			$hours,
+			$minutes
+		);
+
+		return $offset_string;
 	}
 
 	/**
@@ -292,20 +315,30 @@ class Query {
 				throw new Store_Exception( 'query_invalid_field', __( 'Invalid aggregate field.', 'hizzle-store' ) );
 			}
 
-			// Ensure the function is supported.
-			$function_upper = strtoupper( $function );
-			if ( ! in_array( $function_upper, array( 'AVG', 'COUNT', 'MAX', 'MIN', 'SUM' ), true ) ) {
-				throw new Store_Exception( 'query_invalid_function', __( 'Invalid aggregate function.', 'hizzle-store' ) );
+			foreach ( wp_parse_list( $function ) as $function ) {
+
+				// Ensure the function is supported.
+				$function_upper = strtoupper( $function );
+				if ( ! in_array( $function_upper, array( 'AVG', 'COUNT', 'MAX', 'MIN', 'SUM' ), true ) ) {
+					throw new Store_Exception( 'query_invalid_function', __( 'Invalid aggregate function.', 'hizzle-store' ) );
+				}
+
+				$function             = strtolower( $function );
+				$this->query_fields[] = "$function_upper($table_field) AS {$function}_{$field}";
 			}
-
-			$function             = strtolower( $function );
-			$this->query_fields[] = "$function_upper($table_field) AS {$function}_{$field}";
-
 		}
 
 		// Prepare groupby fields.
+		$timezone = esc_sql( $this->get_mysql_timezone_offset() );
 		if ( ! empty( $qv['groupby'] ) ) {
-			foreach ( wp_parse_list( $qv['groupby'] ) as $field ) {
+			foreach ( wp_parse_list( $qv['groupby'] ) as $index => $field ) {
+				$cast = false;
+
+				// Check if $index is a string and different from $field
+				if ( is_string( $index ) && $index !== $field ) {
+					$cast  = $field;
+					$field = $index;
+				}
 
 				// Ensure the field is supported.
 				$field       = esc_sql( sanitize_key( $field ) );
@@ -314,8 +347,33 @@ class Query {
 					throw new Store_Exception( 'query_invalid_field', __( 'Invalid group by field.', 'hizzle-store' ) );
 				}
 
-				$this->query_groupby .= ', ' . $table_field;
-				$this->query_fields[] = $table_field;
+				// Handle casting and timezone conversion
+				if ( $cast ) {
+					$field = 'cast_' . $field;
+					switch ( $cast ) {
+						case 'hour':
+							$table_field = "DATE_FORMAT(CONVERT_TZ($table_field, '+00:00', '$timezone'), '%Y-%m-%d %H:00:00')";
+							break;
+						case 'day':
+							$table_field = "DATE(CONVERT_TZ($table_field, '+00:00', '$timezone'))";
+							break;
+						case 'week':
+							$table_field = "DATE(DATE_SUB(CONVERT_TZ($table_field, '+00:00', '$timezone'), INTERVAL WEEKDAY(CONVERT_TZ($table_field, '+00:00', '$timezone')) DAY))";
+							break;
+						case 'month':
+							$table_field = "DATE_FORMAT(CONVERT_TZ($table_field, '+00:00', '$timezone'), '%Y-%m-01')";
+							break;
+						case 'year':
+							$table_field = "DATE_FORMAT(CONVERT_TZ($table_field, '+00:00', '$timezone'), '%Y-01-01')";
+							break;
+						default:
+							// If an unsupported cast is provided, just use the field as is
+							break;
+					}
+				}
+
+				$this->query_groupby .= ', ' . $field;
+				$this->query_fields[] = $table_field . ' AS ' . esc_sql( $field );
 			}
 
 			$this->query_groupby = 'GROUP BY ' . ltrim( $this->query_groupby, ',' );
@@ -340,7 +398,7 @@ class Query {
 			throw new Store_Exception( 'query_missing_aggregate_fields', __( 'Missing aggregate fields.', 'hizzle-store' ) );
 		}
 
-		$this->query_fields  = implode( ', ', array_unique( $this->query_fields ) );
+		$this->query_fields = implode( ', ', array_unique( $this->query_fields ) );
 	}
 
 	/**
@@ -386,7 +444,6 @@ class Query {
 		} else {
 			$this->query_fields = "DISTINCT $table.id";
 		}
-
 	}
 
 	/**
@@ -403,8 +460,8 @@ class Query {
 			return;
 		}
 
-		$collection  = $this->get_collection();
-		$meta_query  = empty( $qv['meta_query'] ) ? array() : $qv['meta_query'];
+		$collection = $this->get_collection();
+		$meta_query = empty( $qv['meta_query'] ) ? array() : $qv['meta_query'];
 		$table      = $collection->get_db_table_name();
 		$meta_table = $collection->get_meta_table_name();
 		$id_col     = $collection->get_meta_type() . '_id';
@@ -459,7 +516,6 @@ class Query {
 					'compare' => is_array( $value ) ? 'NOT IN' : '!=',
 				);
 			}
-
 		}
 
 		if ( ! empty( $not_exists ) ) {
@@ -530,8 +586,8 @@ class Query {
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ $key ] ) ) . "'";
 					$this->query_where .= " AND $field_name IN ($enums)";
 				} else {
-					$value = $field->sanitize( $qv[ $key ] );
-					$value = is_bool( $value ) ? (int) $value : $value;
+					$value              = $field->sanitize( $qv[ $key ] );
+					$value              = is_bool( $value ) ? (int) $value : $value;
 					$this->query_where .= $wpdb->prepare( " AND $field_name=$data_type", $value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
 			}
@@ -543,8 +599,8 @@ class Query {
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ "{$key}_not" ] ) ) . "'";
 					$this->query_where .= " AND $field_name NOT IN ($enums)";
 				} else {
-					$value = $field->sanitize( $qv[ "{$key}_not" ] );
-					$value = is_bool( $value ) ? (int) $value : $value;
+					$value              = $field->sanitize( $qv[ "{$key}_not" ] );
+					$value              = is_bool( $value ) ? (int) $value : $value;
 					$this->query_where .= $wpdb->prepare( " AND $field_name<>$data_type", $value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
 			}
@@ -754,7 +810,7 @@ class Query {
 	 * @return array Complete query variables with undefined ones filled in with defaults.
 	 */
 	public function fill_query_vars( $args ) {
-		$defaults   = array(
+		$defaults = array(
 			'include'        => array(),
 			'exclude'        => array(),
 			'search'         => '',
@@ -914,7 +970,5 @@ class Query {
 			$this->request   = "SELECT $this->query_fields $this->query_from $this->query_join $this->query_where $this->query_groupby $this->query_limit";
 			$this->aggregate = $wpdb->get_results( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
-
 	}
-
 }
