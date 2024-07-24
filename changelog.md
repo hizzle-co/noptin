@@ -1,5 +1,65 @@
 # Changelog
 
+# 3.4.7
+* Fix: [[post_content]] merge tag shows blank.
+
+# 3.4.6
+* Fix: Unable to manually add newsletter subscribers.
+* Fix: Default confirmation email sent when an unsubscribed contact unsubscribes from your newsletter.
+* Add: WooCommerce Wholesale Pro compatibility.
+
+# 3.4.5
+* Allow to limit the length of post excerpts shown in newsletters.
+
+# 3.4.3
+* Add [past_noptin_newsletters] shortcode to display past newsletters.
+* Show error when a user tries to submit a private form.
+
+# 3.4.2
+* Added a [[view_in_browser_url]] so to allow subscribers to open their newsletters in the browser.
+
+# 3.4.0
+* Added a background tasks manager.
+
+# 3.3.3
+* Clear integrations cache when updating the plugin.
+
+# 3.3.2
+* Fix missing translations showing empty strings.
+
+# 3.3.1
+* Allow filtering newsletter subscribers by a comma-separated list of email addresses.
+
+# 3.3.0
+* Display a list of all merge tags in the newsletter editor.
+* Perfomance improvements.
+
+# 3.2.2
+* Posts digest scheduling improvements.
+* Test on WordPress 6.5.
+
+# 3.2.1
+* [[order.billing_email]] merge tag not evaluated when used as an email recipient.
+* Fix newsletter unsubscribe URL not working on some setups.
+* Do not filter posts by date when previewing a latest posts email.
+* Make it possible to change field labels and placeholders in the subscribe / unsubscribe shortcodes.
+
+# 3.2.0
+* Re-upload broken png images.
+* Convert settings page to React.js.
+* Make it possible to track revenue generated per campaign.
+
+# 3.1.3
+* Add help text when newsletter fails sending.
+* Add ability to trash and untrash email campaigns.
+
+# 3.1.2
+* Fix: Automated WooCommerce emails not sending.
+* Fix: Newsletter emails contain wrongly wrapped words.
+
+# 3.1.1
+* Fix: PHP notice when using custom email template.
+
 # 3.1.0
 * Fix: Image block has no option to select the image.
 * Fix: Classic email editor has no button to add an image.
