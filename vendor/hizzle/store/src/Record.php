@@ -375,7 +375,7 @@ class Record {
 			$data[ $prop->name ] = $this->get( $prop, $context );
 
 			// Convert dates to ISO8601 format.
-			if ( $data[ $prop->name ] instanceof Date_Time ) {
+			if ( 'view' === $context && $data[ $prop->name ] instanceof Date_Time ) {
 				$data[ $prop->name ] = $data[ $prop->name ]->__toString();
 			}
 		}

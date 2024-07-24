@@ -312,7 +312,7 @@ class REST_Controller extends \WP_REST_Controller {
 								'required'    => true,
 							),
 							'groupby'      => array(
-								'type'        => array( 'string', 'array' ),
+								'type'        => array( 'string', 'array', 'object' ),
 								'description' => __( 'Optional. Columns to group results by.', 'hizzle-store' ),
 							),
 							'extra_fields' => array(
