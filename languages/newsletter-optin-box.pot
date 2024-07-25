@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.4.6\n"
+"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.4.8\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-07-04T10:50:11+00:00\n"
+"POT-Creation-Date: 2024-07-25T11:33:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -2563,7 +2563,7 @@ msgstr ""
 msgid "Property of the current page or post."
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:550
+#: includes/class-noptin-dynamic-content-tags.php:552
 #: includes/functions.php:1148
 #: includes/subscriber.php:1357
 #: includes/subscriber.php:1416
@@ -2576,7 +2576,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: includes/class-noptin-dynamic-content-tags.php:550
+#: includes/class-noptin-dynamic-content-tags.php:552
 #: includes/functions.php:1144
 #: includes/subscriber.php:1358
 #: includes/subscriber.php:1417
@@ -3355,7 +3355,7 @@ msgstr ""
 #. translators: %s: file name
 #: includes/forms/class-legacy-form-editor.php:201
 #: build/Emails/assets/js/email-editor.js:60
-#: build/Emails/assets/js/email-editor.js:76
+#: build/Emails/assets/js/email-editor.js:74
 msgid "Design"
 msgstr ""
 
@@ -3637,9 +3637,8 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-#. translators: Caption accompanying an image of the Mont Blanc, which serves as an example for the Image block.
 #: includes/forms/class-legacy-form-editor.php:657
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Button"
 msgstr ""
 
@@ -5042,7 +5041,7 @@ msgstr ""
 #. translators: %s is the filter label, e.g, "Tags".
 #. translators: %s: Field label.
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
-#: src/Objects/Collection.php:798
+#: src/Objects/Collection.php:805
 #: build/Misc/assets/js/collection.js:237
 msgid "%s - Exclude"
 msgstr ""
@@ -5393,7 +5392,7 @@ msgstr ""
 #: src/Integrations/EDD/Customers.php:153
 #: src/Integrations/EDD/Orders.php:330
 #: src/Integrations/PMPro/Membership_Levels.php:112
-#: src/Objects/Collection.php:1031
+#: src/Objects/Collection.php:1043
 msgid "Meta Value"
 msgstr ""
 
@@ -6543,14 +6542,14 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:99
 #: src/Integrations/WooCommerce/Products.php:839
-#: src/Objects/Collection.php:1055
+#: src/Objects/Collection.php:1067
 #: src/Objects/Post_Type.php:399
 msgid "Default Value"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:102
 #: src/Integrations/WooCommerce/Products.php:842
-#: src/Objects/Collection.php:1058
+#: src/Objects/Collection.php:1070
 #: src/Objects/Post_Type.php:402
 msgid "The default value to display if not set."
 msgstr ""
@@ -7023,7 +7022,7 @@ msgstr ""
 
 #. translators: %s is the object type label, e.g. "orders".
 #: src/Objects/Collection.php:493
-#: src/Objects/Collection.php:912
+#: src/Objects/Collection.php:924
 msgid "No %s found."
 msgstr ""
 
@@ -7061,29 +7060,29 @@ msgid "Show %s created after this date."
 msgstr ""
 
 #. translators: %s: Taxonomy name.
-#: src/Objects/Collection.php:788
+#: src/Objects/Collection.php:795
 msgid "Filter by %s."
 msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
-#: src/Objects/Collection.php:805
+#: src/Objects/Collection.php:812
 msgid "Exclude %s."
 msgstr ""
 
 #. translators: %s: object type label
-#: src/Objects/Collection.php:1038
+#: src/Objects/Collection.php:1050
 msgid "%s Meta"
 msgstr ""
 
-#: src/Objects/Collection.php:1041
+#: src/Objects/Collection.php:1053
 msgid "Displays a custom field value."
 msgstr ""
 
-#: src/Objects/Collection.php:1049
+#: src/Objects/Collection.php:1061
 msgid "Meta Key / Field Key"
 msgstr ""
 
-#: src/Objects/Collection.php:1052
+#: src/Objects/Collection.php:1064
 msgid "The meta key or field key to display."
 msgstr ""
 
@@ -7176,7 +7175,7 @@ msgstr ""
 
 #. translators: %s: plural name of the post type
 #: src/Objects/Generic_Post_Type.php:262
-#: build/Emails/assets/js/email-editor.js:76
+#: build/Emails/assets/js/email-editor.js:74
 msgid "Content"
 msgstr ""
 
@@ -7609,7 +7608,7 @@ msgid "Add New Automation"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:95
+#: build/Emails/assets/js/email-editor.js:93
 msgid "Unlock Premium Feature"
 msgstr ""
 
@@ -7968,150 +7967,150 @@ msgstr ""
 msgid "Insert an image to make a visual statement."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Prompt readers to take action with a button-style link."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Social Icons"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Display icons linking to your social media profiles or sites."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Social Icon"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Display an icon linking to a social media profile or site."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "RAW"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Add custom HTML code or merge tags to your email."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Section"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Gather blocks in a layout container."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Columns"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Display content in multiple columns, with blocks added to each column."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Column"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "A single column within a columns block."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Separator"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Create a break between ideas or sections with a horizontal separator."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Spacer"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Add a blank space between blocks and customize its height."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Unsupported Block"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "This block is not supported in the email editor."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Merge Tag"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Insert additional custom elements with a WordPress shortcode or Noptin Merge tag."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:70
+#: build/Emails/assets/js/email-editor.js:68
 msgid "Merge tag / Shortcode"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:76
+#: build/Emails/assets/js/email-editor.js:74
 msgid "Dynamic"
 msgstr ""
 
 #. translators: %s: plural name of the post type
-#: build/Emails/assets/js/email-editor.js:77
-#: build/Emails/assets/js/email-editor.js:80
+#: build/Emails/assets/js/email-editor.js:75
+#: build/Emails/assets/js/email-editor.js:78
 msgid "%s Template"
 msgstr ""
 
 #. translators: %s: Singular label, e.g, "Product"
-#: build/Emails/assets/js/email-editor.js:77
-#: build/Emails/assets/js/email-editor.js:83
+#: build/Emails/assets/js/email-editor.js:75
+#: build/Emails/assets/js/email-editor.js:81
 msgid "Contains the block elements used to render a %s"
 msgstr ""
 
 #. translators: %s: Collection, e.g, "Products"
-#: build/Emails/assets/js/email-editor.js:80
+#: build/Emails/assets/js/email-editor.js:78
 msgid "Displays %s in a list or a grid"
 msgstr ""
 
 #. translators: accessibility text for the editor top bar landmark region.
-#: build/Emails/assets/js/email-editor.js:85
+#: build/Emails/assets/js/email-editor.js:83
 msgid "Editor top bar"
 msgstr ""
 
 #. translators: accessibility text for the editor content landmark region.
-#: build/Emails/assets/js/email-editor.js:87
+#: build/Emails/assets/js/email-editor.js:85
 msgid "Editor content"
 msgstr ""
 
 #. translators: accessibility text for the editor settings landmark region.
-#: build/Emails/assets/js/email-editor.js:89
+#: build/Emails/assets/js/email-editor.js:87
 #: build/Settings/assets/js/settings.js:63
 msgid "Editor settings"
 msgstr ""
 
 #. translators: accessibility text for the editor publish landmark region.
-#: build/Emails/assets/js/email-editor.js:91
+#: build/Emails/assets/js/email-editor.js:89
 #: build/Settings/assets/js/settings.js:65
 msgid "Editor publish"
 msgstr ""
 
 #. translators: accessibility text for the editor footer landmark region.
-#: build/Emails/assets/js/email-editor.js:93
+#: build/Emails/assets/js/email-editor.js:91
 #: build/Settings/assets/js/settings.js:67
 msgid "Editor footer"
 msgstr ""
 
 #. translators: accessibility text for the editor secondary sidebar landmark region.
-#: build/Emails/assets/js/email-editor.js:95
+#: build/Emails/assets/js/email-editor.js:93
 #: build/Settings/assets/js/settings.js:69
 msgid "Document Overview"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:95
+#: build/Emails/assets/js/email-editor.js:93
 msgid "This email type is only available to premium license holders."
 msgstr ""
 
@@ -8144,6 +8143,10 @@ msgstr ""
 
 #: build/Emails/assets/js/view-campaigns.js:10
 msgid "Select Template"
+msgstr ""
+
+#: build/Emails/assets/js/view-campaigns.js:10
+msgid "Use Template"
 msgstr ""
 
 #. translators: %s: campaign type
