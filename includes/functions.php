@@ -2137,6 +2137,11 @@ function noptin_daily_maintenance() {
 	if ( ! next_scheduled_noptin_background_action( 'noptin_refresh_integrations' ) ) {
 		schedule_noptin_background_action( time() + 600, 'noptin_refresh_integrations' );
 	}
+
+	// Refresh email templates after 20 mins.
+	if ( ! next_scheduled_noptin_background_action( 'noptin_refresh_email_templates' ) ) {
+		schedule_noptin_background_action( time() + 1200, 'noptin_refresh_email_templates' );
+	}
 }
 add_action( 'noptin_daily_maintenance', 'noptin_daily_maintenance' );
 
