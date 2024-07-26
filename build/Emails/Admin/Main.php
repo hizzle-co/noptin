@@ -364,6 +364,20 @@ class Main {
 				wp_enqueue_script( 'jquery-ui-sortable' );
 			}
 
+			// Prepare the block editor.
+			if ( 'email-editor' === $script ) {
+				$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
+				wp_enqueue_script(
+					'noptin-blocks',
+					plugins_url( 'assets/js/blocks.js', __DIR__ ),
+					$blocks['dependencies'],
+					$blocks['version'],
+					true
+				);
+
+				$config['dependencies'][] = 'noptin-blocks';
+			}
+
 			wp_enqueue_script(
 				'noptin-' . $script,
 				plugins_url( 'assets/js/' . $script . '.js', __DIR__ ),

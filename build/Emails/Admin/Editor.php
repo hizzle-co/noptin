@@ -363,73 +363,7 @@ JS;
 					'background' => true,
 					'link'       => true,
 					'palette'    => array(
-						'theme' => array(
-							array(
-								'name'  => __( 'Primary', 'newsletter-optin-box' ),
-								'slug'  => 'primary',
-								'color' => get_noptin_option( 'brand_color', '#1a82e2' ),
-							),
-							array(
-								'name'  => __( 'White', 'newsletter-optin-box' ),
-								'slug'  => 'white',
-								'color' => '#ffffff',
-							),
-							array(
-								'name'  => __( 'Black', 'newsletter-optin-box' ),
-								'slug'  => 'black',
-								'color' => '#000000',
-							),
-							array(
-								'name' => 'Grey',
-								'slug' => 'grey',
-								'color' => '#666666',
-							),
-							array(
-								'name'  => __( 'Light Gray', 'newsletter-optin-box' ),
-								'slug'  => 'light-gray',
-								'color' => '#f1f1f1',
-							),
-							array(
-								'name' => 'Blue',
-								'slug' => 'blue',
-								'color' => '#3498db',
-							),
-							array(
-								'name' => 'Green',
-								'slug' => 'green',
-								'color' => '#2ecc71',
-							),
-							array(
-								'name' => 'Red',
-								'slug' => 'red',
-								'color' => '#e74c3c',
-							),
-							array(
-								'name' => 'Yellow',
-								'slug' => 'yellow',
-								'color' => '#f1c40f',
-							),
-							array(
-								'name' => 'Orange',
-								'slug' => 'orange',
-								'color' => '#e67e22',
-							),
-							array(
-								'name' => 'Purple',
-								'slug' => 'purple',
-								'color' => '#9b59b6',
-							),
-							array(
-								'name' => 'Pink',
-								'slug' => 'pink',
-								'color' => '#e91e63',
-							),
-							array(
-								'name' => 'Teal',
-								'slug' => 'teal',
-								'color' => '#008080',
-							),
-						),
+						'theme' => self::get_editor_colors(),
 					),
 				),
 				'fontSizes' => true,
@@ -460,6 +394,84 @@ JS;
 		);
 
 		return $editor_settings;
+	}
+
+	/**
+	 * Set up Gutenberg editor colors
+	 *
+	 * @return Array
+	 */
+	private static function get_editor_colors() {
+		return apply_filters(
+			'noptin_editor_colors',
+			array(
+				array(
+					'name'  => __( 'Primary', 'newsletter-optin-box' ),
+					'slug'  => 'primary',
+					'color' => get_noptin_option( 'brand_color', '#1a82e2' ),
+				),
+				array(
+					'name'  => __( 'White', 'newsletter-optin-box' ),
+					'slug'  => 'white',
+					'color' => '#ffffff',
+				),
+				array(
+					'name'  => __( 'Black', 'newsletter-optin-box' ),
+					'slug'  => 'black',
+					'color' => '#000000',
+				),
+				array(
+					'name' => 'Grey',
+					'slug' => 'grey',
+					'color' => '#666666',
+				),
+				array(
+					'name'  => __( 'Light Gray', 'newsletter-optin-box' ),
+					'slug'  => 'light-gray',
+					'color' => '#f1f1f1',
+				),
+				array(
+					'name' => 'Blue',
+					'slug' => 'blue',
+					'color' => '#3498db',
+				),
+				array(
+					'name' => 'Green',
+					'slug' => 'green',
+					'color' => '#2ecc71',
+				),
+				array(
+					'name' => 'Red',
+					'slug' => 'red',
+					'color' => '#e74c3c',
+				),
+				array(
+					'name' => 'Yellow',
+					'slug' => 'yellow',
+					'color' => '#f1c40f',
+				),
+				array(
+					'name' => 'Orange',
+					'slug' => 'orange',
+					'color' => '#e67e22',
+				),
+				array(
+					'name' => 'Purple',
+					'slug' => 'purple',
+					'color' => '#9b59b6',
+				),
+				array(
+					'name' => 'Pink',
+					'slug' => 'pink',
+					'color' => '#e91e63',
+				),
+				array(
+					'name' => 'Teal',
+					'slug' => 'teal',
+					'color' => '#008080',
+				),
+			)
+		);
 	}
 
 	/**
