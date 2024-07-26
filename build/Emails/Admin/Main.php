@@ -351,6 +351,7 @@ class Main {
 		$edited_campaign = self::prepare_edited_campaign( $query_args );
 		$script          = empty( $edited_campaign ) ? 'view-campaigns' : $edited_campaign->admin_screen;
 		$type            = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );
+		$localize_script = 'noptin-' . $script;
 
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
@@ -376,6 +377,7 @@ class Main {
 				);
 
 				$config['dependencies'][] = 'noptin-blocks';
+				$localize_script          = 'noptin-blocks';
 			}
 
 			wp_enqueue_script(
@@ -393,7 +395,7 @@ class Main {
 
 			// Localize the script.
 			wp_localize_script(
-				'noptin-' . $script,
+				$localize_script,
 				'noptinEmailSettingsMisc',
 				apply_filters(
 					'noptin_email_settings_misc',

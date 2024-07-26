@@ -224,7 +224,7 @@ JS;
 		}
 
 		wp_localize_script(
-			'noptin-email-editor',
+			'noptin-blocks',
 			'noptinEmailEditorSettings',
 			array(
 				'isTest'           => defined( 'NOPTIN_IS_TESTING' ),
