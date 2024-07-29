@@ -45,6 +45,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Orders.
 		add_action( 'woocommerce_new_order', array( $this, 'add_order_subscriber' ), 1 );
+		add_action( 'woocommerce_checkout_order_processed', array( $this, 'add_order_subscriber' ), 1 );
 		add_action( 'woocommerce_store_api_checkout_order_processed', array( $this, 'add_order_subscriber' ), 1 );
 	}
 
@@ -129,6 +130,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	public function save_woocommerce_checkout_checkbox_value( $order ) {
 		if ( $this->checkbox_was_checked() ) {
 			$order->update_meta_data( 'noptin_opted_in', 1 );
+		} else {
+			$order->delete_meta_data( 'noptin_opted_in' );
 		}
 	}
 
@@ -140,12 +143,18 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function triggered( $order_id = null ) {
 
-		// This is processed later.
-		if ( 'checkout-draft' === get_post_status( $order_id ) && ! doing_action( 'woocommerce_store_api_checkout_order_processed' ) ) {
+		$order = wc_get_order( $order_id );
+
+		if ( empty( $order ) ) {
 			return false;
 		}
 
-		$checked = get_post_meta( $order_id, 'noptin_opted_in', true );
+		// This is processed later.
+		if ( 'checkout-draft' === $order->get_status() && ! doing_action( 'woocommerce_store_api_checkout_order_processed' ) ) {
+			return false;
+		}
+
+		$checked = $order->get_meta( 'noptin_opted_in', true );
 		return $this->auto_subscribe() || ! empty( $checked );
 	}
 

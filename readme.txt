@@ -137,6 +137,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 3.4.8 =
+* Fix: Newsletter subscribers not added when WooCommerce HPOS is enabled.
+
 = 3.4.7 =
 * Fix: [[post_content]] merge tag shows blank.
 

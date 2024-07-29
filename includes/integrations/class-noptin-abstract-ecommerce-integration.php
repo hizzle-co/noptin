@@ -105,7 +105,7 @@ abstract class Noptin_Abstract_Ecommerce_Integration extends Noptin_Abstract_Int
 		// Either create a new subscriber...
 		if ( empty( $subscriber_id ) ) {
 
-			// Should we process the subsriber?
+			// Should we process the subscriber?
 			if ( ! $this->triggered( $order_id ) ) {
 				return null;
 			}
