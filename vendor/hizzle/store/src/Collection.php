@@ -1227,7 +1227,7 @@ class Collection {
 		if ( $has_changes ) {
 
 			// Fires after updating a record.
-			do_action( $this->hook_prefix( 'updated', true ), $record );
+			do_action( $this->hook_prefix( 'updated', true ), $record, $changes );
 
 			// Fires after saving a record.
 			do_action( $this->hook_prefix( 'saved', true ), $record );

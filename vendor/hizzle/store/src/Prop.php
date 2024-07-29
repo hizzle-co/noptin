@@ -104,25 +104,25 @@ class Prop {
 	public $extra_rest_schema = null;
 
 	/**
-     * The database schema.
-     *
-     * @var string
-     */
-    protected $schema;
+	 * The database schema.
+	 *
+	 * @var string
+	 */
+	protected $schema;
 
 	/**
-     * The REST schema.
-     *
-     * @var array
-     */
-    protected $rest_schema;
+	 * The REST schema.
+	 *
+	 * @var array
+	 */
+	protected $rest_schema;
 
 	/**
-     * The Query schema.
-     *
-     * @var array
-     */
-    protected $query_schema;
+	 * The Query schema.
+	 *
+	 * @var array
+	 */
+	protected $query_schema;
 
 	/**
 	 * Whether the prop is readonly.
@@ -243,9 +243,9 @@ class Prop {
 		}
 
 		// Retrieve from cache.
-        if ( ! empty( $this->schema ) ) {
-            return $this->schema;
-        }
+		if ( ! empty( $this->schema ) ) {
+			return $this->schema;
+		}
 
 		$string = $this->name . ' ' . strtoupper( $this->type );
 
@@ -265,7 +265,7 @@ class Prop {
 
 		$default = is_bool( $this->default ) ? (int) $this->default : $this->default;
 		if ( $default || 0 === $default ) {
-			$string  .= $wpdb->prepare(
+			$string .= $wpdb->prepare(
 				' DEFAULT %s',
 				maybe_serialize( $default )
 			);
@@ -287,9 +287,9 @@ class Prop {
 	public function get_rest_schema() {
 
 		// Retrieve from cache.
-        if ( ! empty( $this->rest_schema ) ) {
-            return $this->rest_schema;
-        }
+		if ( ! empty( $this->rest_schema ) ) {
+			return $this->rest_schema;
+		}
 
 		$schema = array(
 			'description' => $this->description,
@@ -300,7 +300,7 @@ class Prop {
 		// Value type.
 		if ( 'metadata' === $this->name ) {
 			$schema['type'] = array( 'object', 'array' );
-		} elseif( $this->is_meta_key ) {
+		} elseif ( $this->is_meta_key ) {
 			$schema['type'] = $this->is_meta_key_multiple ? 'array' : 'string';
 		} elseif ( $this->is_boolean() ) {
 			$schema['type'] = array( 'boolean', 'int' );
@@ -370,9 +370,9 @@ class Prop {
 		}
 
 		// Retrieve from cache.
-        if ( ! empty( $this->query_schema ) ) {
-            return $this->query_schema;
-        }
+		if ( ! empty( $this->query_schema ) ) {
+			return $this->query_schema;
+		}
 
 		$rest_schema  = $this->get_rest_schema();
 		$query_schema = array();
@@ -612,8 +612,16 @@ class Prop {
 			return (float) $value;
 		}
 
-		if ( $this->is_date() ) {
+		if ( 'date' === $this->type ) {
+			return gmdate( 'Y-m-d', strtotime( $value ) );
+		}
+
+		if ( 'datetime' === $this->type ) {
 			return gmdate( 'Y-m-d H:i:s', strtotime( $value ) );
+		}
+
+		if ( 'timestamp' === $this->type ) {
+			return is_numeric( $value ) ? absint( $value ) : strtotime( $value );
 		}
 
 		// Var chars.

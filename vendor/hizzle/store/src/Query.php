@@ -614,11 +614,15 @@ class Query {
 				);
 
 				if ( ! empty( $qv[ "{$key}_before" ] ) ) {
-					$date_query[] = array( 'before' => $qv[ "{$key}_before" ] );
+					$date_query[] = array(
+						'before' => $this->date_to_gmt( $qv[ "{$key}_before" ], $field ),
+					);
 				}
 
 				if ( ! empty( $qv[ "{$key}_after" ] ) ) {
-					$date_query[] = array( 'after' => $qv[ "{$key}_after" ] );
+					$date_query[] = array(
+						'after' => $this->date_to_gmt( $qv[ "{$key}_after" ], $field ),
+					);
 				}
 
 				if ( ! empty( $qv[ "{$key}_query" ] ) && is_array( $qv[ "{$key}_query" ] ) ) {
@@ -673,6 +677,26 @@ class Query {
 			$ids                = implode( ',', wp_parse_id_list( $qv['exclude'] ) );
 			$this->query_where .= " AND $table.id NOT IN ($ids)";
 		}
+	}
+
+	/**
+	 * @param \Hizzle\Store\Prop $field
+	 */
+	private function date_to_gmt( $date, $field ) {
+		if ( 'datetime' === $field->type || empty( $date ) || ! is_string( $date ) || is_numeric( $date ) ) {
+			return $date;
+		}
+
+		$wp_timezone = wp_timezone();
+
+		// Assume local timezone if not provided.
+		$dt = date_create( $date, $wp_timezone );
+
+		if ( false === $dt ) {
+			return gmdate( 'Y-m-d H:i', false );
+		}
+
+		return $dt->setTimezone( new \DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i' );
 	}
 
 	/**
