@@ -22,12 +22,12 @@ msgstr ""
 "X-Loco-Version: 2.4.0; wp-5.5.1\n"
 
 #: build/Settings/Menu.php:366
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "\"From\" Email"
 msgstr ""
 
 #: build/Settings/Menu.php:373
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "\"From\" Name"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgstr ""
 #. translators: %s: Field label.
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
 #: src/Objects/Collection.php:805
-#: build/Misc/assets/js/collection.js:237
+#: build/Misc/assets/js/collection.js:231
 msgid "%s - Exclude"
 msgstr ""
 
@@ -323,12 +323,11 @@ msgstr ""
 msgid "Activate your license key to track and view revenue made per campaign"
 msgstr ""
 
-#. translators: accessibility text for the footer landmark region.
 #: build/Settings/Menu.php:256
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/email-editor.js:13
+#: build/Emails/assets/js/email-editor.js:51
 #: build/Emails/assets/js/view-campaigns.js:11
 msgid "Activate your license key to unlock"
 msgstr ""
@@ -350,7 +349,7 @@ msgid "Activity"
 msgstr ""
 
 #. translators: %s: code
-#: build/Emails/Admin/Main.php:415
+#: build/Emails/Admin/Main.php:431
 msgid "Add %s after an email to disable send, open and click tracking for that recipient."
 msgstr ""
 
@@ -363,7 +362,7 @@ msgid "Add downloadable files to your site and restrict access by user role or n
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:108
-#: build/Emails/Admin/Editor.php:334
+#: build/Emails/Admin/Editor.php:337
 msgid "Add email subject"
 msgstr ""
 
@@ -387,16 +386,16 @@ msgstr ""
 msgid "Add me to your newsletter and keep me updated whenever you publish new downloads"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:203
+#: includes/integrations/class-noptin-woocommerce.php:212
 msgid "Add me to your newsletter and keep me updated whenever you publish new products"
 msgstr ""
 
 #: build/Tasks/Main.php:555
 #: includes/forms/class-form-manager.php:203
 #: src/DB/Schema.php:228
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Add New"
 msgstr ""
 
@@ -486,7 +485,7 @@ msgstr ""
 msgid "After a time delay"
 msgstr "Dopo un ritardo"
 
-#: includes/integrations/class-noptin-woocommerce.php:115
+#: includes/integrations/class-noptin-woocommerce.php:116
 msgid "After billing details"
 msgstr ""
 
@@ -499,20 +498,20 @@ msgid "After clicking on something"
 msgstr "Dopo aver cliccato su qualcosa"
 
 #: includes/integrations/class-noptin-edd.php:59
-#: includes/integrations/class-noptin-woocommerce.php:117
+#: includes/integrations/class-noptin-woocommerce.php:118
 msgid "After customer details"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:58
-#: includes/integrations/class-noptin-woocommerce.php:114
+#: includes/integrations/class-noptin-woocommerce.php:115
 msgid "After email field"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:120
+#: includes/integrations/class-noptin-woocommerce.php:121
 msgid "After order notes"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:118
+#: includes/integrations/class-noptin-woocommerce.php:119
 msgid "After order review"
 msgstr ""
 
@@ -524,7 +523,7 @@ msgstr ""
 msgid "After post content"
 msgstr "Dopo il contenuto post"
 
-#: includes/integrations/class-noptin-woocommerce.php:116
+#: includes/integrations/class-noptin-woocommerce.php:117
 msgid "After shipping details"
 msgstr ""
 
@@ -616,7 +615,7 @@ msgid "And get notified everytime we publish a new blog post."
 msgstr ""
 
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:39
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:216
 msgid "Any"
 msgstr ""
 
@@ -697,7 +696,7 @@ msgid "Author ID, or comma-separated list of IDs"
 msgstr ""
 
 #: src/Objects/Post_Type.php:36
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Authors"
 msgstr ""
 
@@ -754,10 +753,10 @@ msgid "Average rating"
 msgstr ""
 
 #: build/Emails/Admin/views/campaigns.php:111
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:11
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Back"
 msgstr ""
 
@@ -801,7 +800,7 @@ msgstr ""
 msgid "Before post content"
 msgstr "Inserisci prima del contenuto"
 
-#: includes/integrations/class-noptin-woocommerce.php:119
+#: includes/integrations/class-noptin-woocommerce.php:120
 msgid "Before submit button"
 msgstr ""
 
@@ -819,7 +818,7 @@ msgid "Billing address"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:193
-#: includes/integrations/class-noptin-woocommerce.php:307
+#: includes/integrations/class-noptin-woocommerce.php:316
 msgid "Billing Address 1"
 msgstr ""
 
@@ -828,7 +827,7 @@ msgid "Billing address 1"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:194
-#: includes/integrations/class-noptin-woocommerce.php:308
+#: includes/integrations/class-noptin-woocommerce.php:317
 msgid "Billing Address 2"
 msgstr ""
 
@@ -849,7 +848,7 @@ msgid "Billing Amount"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:196
-#: includes/integrations/class-noptin-woocommerce.php:310
+#: includes/integrations/class-noptin-woocommerce.php:319
 msgid "Billing City"
 msgstr ""
 
@@ -859,7 +858,7 @@ msgstr ""
 msgid "Billing city"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:306
+#: includes/integrations/class-noptin-woocommerce.php:315
 msgid "Billing Company"
 msgstr ""
 
@@ -872,7 +871,7 @@ msgid "Billing company name"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:198
-#: includes/integrations/class-noptin-woocommerce.php:312
+#: includes/integrations/class-noptin-woocommerce.php:321
 msgid "Billing Country"
 msgstr ""
 
@@ -882,7 +881,7 @@ msgstr ""
 msgid "Billing country"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:313
+#: includes/integrations/class-noptin-woocommerce.php:322
 msgid "Billing Country Code"
 msgstr ""
 
@@ -908,7 +907,7 @@ msgstr ""
 msgid "Billing last name"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:305
+#: includes/integrations/class-noptin-woocommerce.php:314
 msgid "Billing Phone"
 msgstr ""
 
@@ -922,7 +921,7 @@ msgid "Billing phone number"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:195
-#: includes/integrations/class-noptin-woocommerce.php:309
+#: includes/integrations/class-noptin-woocommerce.php:318
 msgid "Billing Postcode"
 msgstr ""
 
@@ -933,7 +932,7 @@ msgid "Billing postcode"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:197
-#: includes/integrations/class-noptin-woocommerce.php:311
+#: includes/integrations/class-noptin-woocommerce.php:320
 msgid "Billing State"
 msgstr ""
 
@@ -947,7 +946,7 @@ msgstr ""
 msgid "BIO"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:378
+#: build/Emails/Admin/Editor.php:422
 #: includes/forms/class-legacy-form-editor.php:148
 #: includes/forms/class-widget-legacy.php:52
 msgid "Black"
@@ -1027,7 +1026,6 @@ msgid "Brown"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:657
-#: build/Emails/assets/js/email-editor.js:68
 msgid "Button"
 msgstr "Pulsante"
 
@@ -1094,7 +1092,7 @@ msgstr ""
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:255
+#: build/Misc/assets/js/collection.js:249
 #: build/Misc/assets/js/list.js:1
 msgid "Cancel"
 msgstr ""
@@ -1281,12 +1279,13 @@ msgstr ""
 #: build/Emails/Main.php:152
 #: src/DB/Automation_Rule.php:532
 #: src/DB/Automation_Rule.php:536
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/email-editor.js:60
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/email-editor.js:54
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Conditional Logic"
 msgstr ""
 
@@ -1331,9 +1330,7 @@ msgstr ""
 msgid "contains"
 msgstr ""
 
-#. translators: %s: plural name of the post type
 #: src/Objects/Generic_Post_Type.php:262
-#: build/Emails/assets/js/email-editor.js:74
 msgid "Content"
 msgstr ""
 
@@ -1457,7 +1454,7 @@ msgstr ""
 
 #: build/Settings/Menu.php:482
 #: includes/forms/class-legacy-form-editor.php:697
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Custom CSS"
 msgstr "CSS personalizzato"
 
@@ -1635,7 +1632,7 @@ msgstr ""
 #: build/Emails/Types/Recurring.php:293
 #: build/Emails/Types/Recurring.php:314
 #: includes/emails/emails.php:444
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Day"
 msgstr ""
 
@@ -1646,7 +1643,7 @@ msgstr ""
 #: build/Emails/Types/Recurring.php:307
 #: build/Emails/Types/Recurring.php:314
 #: includes/emails/emails.php:434
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Days"
 msgstr ""
 
@@ -1709,8 +1706,8 @@ msgstr ""
 #: src/DB/Subscriber.php:815
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:249
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:243
+#: build/Misc/assets/js/collection.js:261
 msgid "Delete"
 msgstr ""
 
@@ -1743,8 +1740,8 @@ msgstr ""
 
 #. translators: %s: file name
 #: includes/forms/class-legacy-form-editor.php:201
-#: build/Emails/assets/js/email-editor.js:60
-#: build/Emails/assets/js/email-editor.js:74
+#: build/Emails/assets/js/blocks.js:52
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Design"
 msgstr ""
 
@@ -2075,7 +2072,7 @@ msgstr ""
 #: build/Emails/Admin/Table.php:186
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Edit"
 msgstr ""
 
@@ -2085,7 +2082,7 @@ msgid "Edit %s"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Main.php:47
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 msgid "Edit Automation Rule"
 msgstr ""
 
@@ -2198,8 +2195,8 @@ msgid "Email Exclusive Offers!"
 msgstr ""
 
 #: build/Settings/Menu.php:538
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/email-editor.js:53
 msgid "Email Subject"
 msgstr "Oggetto dell'email"
 
@@ -2338,7 +2335,7 @@ msgstr ""
 msgid "Enter one option per line. You can use pipes to separate values and labels."
 msgstr ""
 
-#: build/Emails/Admin/Main.php:412
+#: build/Emails/Admin/Main.php:428
 msgid "Enter recipients (comma-separated) for this email."
 msgstr ""
 
@@ -2619,7 +2616,7 @@ msgstr ""
 #. translators: %s: Example
 #. translators: %s: Placeholder for email recipients.
 #. translators: %s: The Example
-#: build/Emails/Admin/Main.php:422
+#: build/Emails/Admin/Main.php:438
 #: build/Emails/Email.php:916
 #: includes/forms/views/tab-form.php:70
 #: includes/forms/views/tab-settings.php:91
@@ -2690,7 +2687,7 @@ msgstr ""
 msgid "Form:"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:314
+#: includes/integrations/class-noptin-woocommerce.php:323
 msgid "Formatted Billing Address"
 msgstr ""
 
@@ -2739,13 +2736,13 @@ msgstr ""
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
 #: includes/functions.php:1834
 #: includes/functions.php:2098
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
+#: build/Emails/assets/js/blocks.js:46
 #: build/Emails/assets/js/email-editor.js:1
-#: build/Emails/assets/js/email-editor.js:65
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "General"
 msgstr ""
 
@@ -2810,7 +2807,6 @@ msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:673
 #: includes/forms/class-legacy-form-editor.php:907
-#: build/Emails/assets/js/email-editor.js:65
 msgid "Heading"
 msgstr ""
 
@@ -2877,12 +2873,12 @@ msgid "Hide sub-heading"
 msgstr ""
 
 #: includes/emails/emails.php:443
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Hour"
 msgstr ""
 
 #: includes/emails/emails.php:433
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Hours"
 msgstr ""
 
@@ -2978,12 +2974,10 @@ msgstr ""
 msgid "If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here."
 msgstr ""
 
-#. translators: %s: file name
 #: includes/forms/class-legacy-form-editor.php:649
 #: src/Integrations/EDD/Downloads.php:123
 #: src/Integrations/WooCommerce/Products.php:432
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:74
-#: build/Emails/assets/js/email-editor.js:68
 msgid "Image"
 msgstr "Immagine"
 
@@ -3209,7 +3203,7 @@ msgstr ""
 #: includes/subscriber.php:1050
 #: includes/subscriber.php:1204
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:169
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Language"
 msgstr ""
 
@@ -3269,7 +3263,7 @@ msgstr ""
 
 #: build/Emails/Admin/views/campaigns.php:138
 #: build/Settings/Menu.php:511
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Learn more"
 msgstr ""
 
@@ -3327,7 +3321,7 @@ msgstr ""
 msgid "Light Blue"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:388
+#: build/Emails/Admin/Editor.php:432
 msgid "Light Gray"
 msgstr ""
 
@@ -3439,7 +3433,7 @@ msgstr ""
 msgid "Manage your preferences"
 msgstr ""
 
-#: build/Emails/Admin/Main.php:396
+#: build/Emails/Admin/Main.php:412
 msgid "Manual Recipients"
 msgstr ""
 
@@ -3515,12 +3509,12 @@ msgid "Minimum Height"
 msgstr "Altezza minima"
 
 #: includes/emails/emails.php:442
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Minute"
 msgstr ""
 
 #: includes/emails/emails.php:432
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Minutes"
 msgstr ""
 
@@ -3529,7 +3523,7 @@ msgid "Mode"
 msgstr ""
 
 #: includes/emails/emails.php:446
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Month"
 msgstr ""
 
@@ -3538,7 +3532,7 @@ msgid "Monthly"
 msgstr ""
 
 #: includes/emails/emails.php:436
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Months"
 msgstr ""
 
@@ -3692,8 +3686,8 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:219
 #: src/Integrations/WooCommerce/Products.php:685
 #: src/Objects/Store.php:161
-#: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:216
+#: build/Misc/assets/js/collection.js:241
 msgid "No"
 msgstr ""
 
@@ -3977,7 +3971,7 @@ msgid "Order"
 msgstr ""
 
 #. translators: %1$s is the order id, %2$s is the customer email.
-#: includes/integrations/class-noptin-woocommerce.php:344
+#: includes/integrations/class-noptin-woocommerce.php:353
 msgid "Order #%1$d from %2$s"
 msgstr ""
 
@@ -4086,7 +4080,7 @@ msgid "Paste"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:508
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Pause"
 msgstr ""
 
@@ -4309,7 +4303,7 @@ msgstr ""
 msgid "Price ID"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:368
+#: build/Emails/Admin/Editor.php:412
 msgid "Primary"
 msgstr ""
 
@@ -4434,13 +4428,13 @@ msgstr ""
 msgid "Receive the same tips I used to double my traffic in just two weeks!"
 msgstr ""
 
-#: build/Emails/Admin/Main.php:409
+#: build/Emails/Admin/Main.php:425
 msgid "Recipient(s)"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:330
 #: build/Emails/Admin/Table.php:345
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Recipients"
 msgstr ""
 
@@ -4591,7 +4585,7 @@ msgid "Resubscribe URL"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:497
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Resume"
 msgstr ""
 
@@ -4651,7 +4645,7 @@ msgid "Sales"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:1117
-#: build/Misc/assets/js/collection.js:243
+#: build/Misc/assets/js/collection.js:237
 msgid "Save Changes"
 msgstr ""
 
@@ -4713,11 +4707,12 @@ msgid "Select a template"
 msgstr ""
 
 #: includes/integrations/class-noptin-abstract-integration.php:518
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Select an option"
 msgstr ""
 
@@ -5114,6 +5109,7 @@ msgid "Start date of sale price, in the site's timezone, with an optional compar
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:109
+#: build/Emails/assets/js/blocks.js:5
 msgid "Start writing or type / to choose a block"
 msgstr ""
 
@@ -5438,7 +5434,7 @@ msgid "Teal"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:625
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:53
 msgid "Template"
 msgstr ""
 
@@ -6281,7 +6277,7 @@ msgstr ""
 #: includes/forms/class-legacy-form-editor.php:960
 #: includes/forms/class-legacy-form-editor.php:1000
 #: includes/forms/class-legacy-form-editor.php:1040
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Typography"
 msgstr ""
 
@@ -6392,11 +6388,12 @@ msgid "Upgrade"
 msgstr ""
 
 #: includes/admin/class-noptin-vue.php:741
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Upload Image"
 msgstr ""
 
@@ -6529,11 +6526,12 @@ msgid "Users Sync"
 msgstr ""
 
 #: includes/admin/class-noptin-vue.php:431
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Value"
 msgstr ""
 
@@ -6589,9 +6587,9 @@ msgstr ""
 
 #: build/Extensions/Menu.php:352
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/email-editor.js:13
+#: build/Emails/assets/js/email-editor.js:51
 #: build/Emails/assets/js/view-campaigns.js:11
 #: build/Misc/assets/js/list.js:1
 msgid "View Pricing"
@@ -6649,7 +6647,7 @@ msgid "We'll send you the best business news and informed analysis on what matte
 msgstr ""
 
 #: includes/emails/emails.php:445
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Week"
 msgstr ""
 
@@ -6658,7 +6656,7 @@ msgid "Weekly"
 msgstr ""
 
 #: includes/emails/emails.php:435
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Weeks"
 msgstr ""
 
@@ -6874,7 +6872,7 @@ msgstr ""
 msgid "Whether to link to the term."
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:373
+#: build/Emails/Admin/Editor.php:417
 #: includes/forms/class-legacy-form-editor.php:149
 #: includes/forms/class-widget-legacy.php:53
 msgid "White"
@@ -6896,7 +6894,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:129
 #: src/Integrations/WooCommerce/Products.php:716
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Width"
 msgstr ""
 
@@ -6909,7 +6907,7 @@ msgid "WordPress Users"
 msgstr ""
 
 #: includes/emails/emails.php:447
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Year"
 msgstr ""
 
@@ -6918,7 +6916,7 @@ msgid "Yearly"
 msgstr ""
 
 #: includes/emails/emails.php:437
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Years"
 msgstr ""
 
@@ -6935,8 +6933,8 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:221
 #: src/Integrations/WooCommerce/Products.php:687
 #: src/Objects/Store.php:160
-#: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:216
+#: build/Misc/assets/js/collection.js:241
 msgid "Yes"
 msgstr ""
 
@@ -7279,7 +7277,7 @@ msgstr ""
 msgid "The \"View in Browser\" URL."
 msgstr ""
 
-#: build/Emails/Admin/Main.php:397
+#: build/Emails/Admin/Main.php:413
 msgid "Send an email to a comma separated list of email addresses."
 msgstr ""
 

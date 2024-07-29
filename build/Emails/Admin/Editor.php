@@ -249,6 +249,9 @@ JS;
 
 		// Add 'block-editor-page' to body class.
 		add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
+
+		// Load block library translations.
+		Main::load_script_translations( 'wp-block-library' );
 	}
 
 	public static function merge_tag_to_block_name( $merge_tag ) {

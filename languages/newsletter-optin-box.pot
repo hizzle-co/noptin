@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-07-25T11:33:01+00:00\n"
+"POT-Creation-Date: 2024-07-29T08:33:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -43,7 +43,7 @@ msgid "https://github.com/picocodes"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Main.php:47
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 msgid "Edit Automation Rule"
 msgstr ""
 
@@ -117,31 +117,32 @@ msgid "Learn more about automation rules"
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:108
-#: build/Emails/Admin/Editor.php:334
+#: build/Emails/Admin/Editor.php:337
 msgid "Add email subject"
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:109
+#: build/Emails/assets/js/blocks.js:5
 msgid "Start writing or type / to choose a block"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:368
+#: build/Emails/Admin/Editor.php:412
 msgid "Primary"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:373
+#: build/Emails/Admin/Editor.php:417
 #: includes/forms/class-legacy-form-editor.php:149
 #: includes/forms/class-widget-legacy.php:53
 msgid "White"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:378
+#: build/Emails/Admin/Editor.php:422
 #: includes/forms/class-legacy-form-editor.php:148
 #: includes/forms/class-widget-legacy.php:52
 msgid "Black"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:388
+#: build/Emails/Admin/Editor.php:432
 msgid "Light Gray"
 msgstr ""
 
@@ -190,31 +191,31 @@ msgstr ""
 msgid "Unknown email type."
 msgstr ""
 
-#: build/Emails/Admin/Main.php:396
+#: build/Emails/Admin/Main.php:412
 msgid "Manual Recipients"
 msgstr ""
 
-#: build/Emails/Admin/Main.php:397
+#: build/Emails/Admin/Main.php:413
 msgid "Send an email to a comma separated list of email addresses."
 msgstr ""
 
-#: build/Emails/Admin/Main.php:409
+#: build/Emails/Admin/Main.php:425
 msgid "Recipient(s)"
 msgstr ""
 
-#: build/Emails/Admin/Main.php:412
+#: build/Emails/Admin/Main.php:428
 msgid "Enter recipients (comma-separated) for this email."
 msgstr ""
 
 #. translators: %s: code
-#: build/Emails/Admin/Main.php:415
+#: build/Emails/Admin/Main.php:431
 msgid "Add %s after an email to disable send, open and click tracking for that recipient."
 msgstr ""
 
 #. translators: %s: Example
 #. translators: %s: Placeholder for email recipients.
 #. translators: %s: The Example
-#: build/Emails/Admin/Main.php:422
+#: build/Emails/Admin/Main.php:438
 #: build/Emails/Email.php:916
 #: includes/forms/views/tab-form.php:70
 #: includes/forms/views/tab-settings.php:91
@@ -225,7 +226,7 @@ msgstr ""
 #: build/Emails/Admin/Table.php:186
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Edit"
 msgstr ""
 
@@ -277,8 +278,8 @@ msgstr ""
 #: src/DB/Subscriber.php:815
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:249
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:243
+#: build/Misc/assets/js/collection.js:261
 msgid "Delete"
 msgstr ""
 
@@ -301,7 +302,7 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:330
 #: build/Emails/Admin/Table.php:345
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Recipients"
 msgstr ""
 
@@ -361,7 +362,7 @@ msgid "Are you sure you want to resend this campaign?"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:497
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Resume"
 msgstr ""
 
@@ -374,7 +375,7 @@ msgid "Are you sure you want to resume sending this campaign?"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:508
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Pause"
 msgstr ""
 
@@ -494,10 +495,10 @@ msgid "Sending has been paused due to sending limits. %1$s emails have been sent
 msgstr ""
 
 #: build/Emails/Admin/views/campaigns.php:111
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:11
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Back"
 msgstr ""
 
@@ -511,7 +512,7 @@ msgstr ""
 
 #: build/Emails/Admin/views/campaigns.php:138
 #: build/Settings/Menu.php:511
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Learn more"
 msgstr ""
 
@@ -567,12 +568,13 @@ msgstr ""
 #: build/Emails/Main.php:152
 #: src/DB/Automation_Rule.php:532
 #: src/DB/Automation_Rule.php:536
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/email-editor.js:60
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/email-editor.js:54
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Conditional Logic"
 msgstr ""
 
@@ -865,7 +867,7 @@ msgstr ""
 #: build/Emails/Types/Recurring.php:293
 #: build/Emails/Types/Recurring.php:314
 #: includes/emails/emails.php:444
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Day"
 msgstr ""
 
@@ -884,7 +886,7 @@ msgstr ""
 #: build/Emails/Types/Recurring.php:307
 #: build/Emails/Types/Recurring.php:314
 #: includes/emails/emails.php:434
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Days"
 msgstr ""
 
@@ -1073,9 +1075,9 @@ msgstr ""
 
 #: build/Extensions/Menu.php:352
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/email-editor.js:13
+#: build/Emails/assets/js/email-editor.js:51
 #: build/Emails/assets/js/view-campaigns.js:11
 #: build/Misc/assets/js/list.js:1
 msgid "View Pricing"
@@ -1120,13 +1122,13 @@ msgstr ""
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
 #: includes/functions.php:1834
 #: includes/functions.php:2098
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
+#: build/Emails/assets/js/blocks.js:46
 #: build/Emails/assets/js/email-editor.js:1
-#: build/Emails/assets/js/email-editor.js:65
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "General"
 msgstr ""
 
@@ -1167,12 +1169,11 @@ msgstr ""
 msgid "Enable this to track revenue collected per email campaign."
 msgstr ""
 
-#. translators: accessibility text for the footer landmark region.
 #: build/Settings/Menu.php:256
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
-#: build/Emails/assets/js/email-editor.js:13
+#: build/Emails/assets/js/email-editor.js:51
 #: build/Emails/assets/js/view-campaigns.js:11
 msgid "Activate your license key to unlock"
 msgstr ""
@@ -1260,7 +1261,7 @@ msgid "Where should subscribers reply to in case they need to get in touch with 
 msgstr ""
 
 #: build/Settings/Menu.php:366
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "\"From\" Email"
 msgstr ""
 
@@ -1269,7 +1270,7 @@ msgid "How the sender email appears in outgoing emails. Leave this field blank i
 msgstr ""
 
 #: build/Settings/Menu.php:373
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "\"From\" Name"
 msgstr ""
 
@@ -1376,7 +1377,7 @@ msgstr ""
 
 #: build/Settings/Menu.php:482
 #: includes/forms/class-legacy-form-editor.php:697
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Custom CSS"
 msgstr ""
 
@@ -1409,8 +1410,8 @@ msgid "Double Opt-in Email"
 msgstr ""
 
 #: build/Settings/Menu.php:538
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/email-editor.js:53
 msgid "Email Subject"
 msgstr ""
 
@@ -1835,9 +1836,9 @@ msgstr ""
 #: build/Tasks/Main.php:555
 #: includes/forms/class-form-manager.php:203
 #: src/DB/Schema.php:228
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Add New"
 msgstr ""
 
@@ -1917,7 +1918,7 @@ msgstr ""
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:255
+#: build/Misc/assets/js/collection.js:249
 #: build/Misc/assets/js/list.js:1
 msgid "Cancel"
 msgstr ""
@@ -2044,11 +2045,12 @@ msgid "You will use this as a merge tag in your emails."
 msgstr ""
 
 #: includes/admin/class-noptin-vue.php:431
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Value"
 msgstr ""
 
@@ -2061,11 +2063,12 @@ msgid "Is this field required?"
 msgstr ""
 
 #: includes/admin/class-noptin-vue.php:741
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Upload Image"
 msgstr ""
 
@@ -2519,7 +2522,7 @@ msgstr ""
 #: includes/subscriber.php:1050
 #: includes/subscriber.php:1204
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:169
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Language"
 msgstr ""
 
@@ -2571,8 +2574,8 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:221
 #: src/Integrations/WooCommerce/Products.php:687
 #: src/Objects/Store.php:160
-#: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:216
+#: build/Misc/assets/js/collection.js:241
 msgid "Yes"
 msgstr ""
 
@@ -2583,8 +2586,8 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:219
 #: src/Integrations/WooCommerce/Products.php:685
 #: src/Objects/Store.php:161
-#: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:216
+#: build/Misc/assets/js/collection.js:241
 msgid "No"
 msgstr ""
 
@@ -3010,52 +3013,52 @@ msgid "Merriweather"
 msgstr ""
 
 #: includes/emails/emails.php:432
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Minutes"
 msgstr ""
 
 #: includes/emails/emails.php:433
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Hours"
 msgstr ""
 
 #: includes/emails/emails.php:435
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Weeks"
 msgstr ""
 
 #: includes/emails/emails.php:436
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Months"
 msgstr ""
 
 #: includes/emails/emails.php:437
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Years"
 msgstr ""
 
 #: includes/emails/emails.php:442
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Minute"
 msgstr ""
 
 #: includes/emails/emails.php:443
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Hour"
 msgstr ""
 
 #: includes/emails/emails.php:445
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Week"
 msgstr ""
 
 #: includes/emails/emails.php:446
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Month"
 msgstr ""
 
 #: includes/emails/emails.php:447
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Year"
 msgstr ""
 
@@ -3354,8 +3357,8 @@ msgstr ""
 
 #. translators: %s: file name
 #: includes/forms/class-legacy-form-editor.php:201
-#: build/Emails/assets/js/email-editor.js:60
-#: build/Emails/assets/js/email-editor.js:74
+#: build/Emails/assets/js/blocks.js:52
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Design"
 msgstr ""
 
@@ -3616,7 +3619,7 @@ msgid "Install the %1$s to add new subscribers to %2$s."
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:625
-#: build/Emails/assets/js/email-editor.js:59
+#: build/Emails/assets/js/email-editor.js:53
 msgid "Template"
 msgstr ""
 
@@ -3628,23 +3631,19 @@ msgstr ""
 msgid "Opt-in Fields"
 msgstr ""
 
-#. translators: %s: file name
 #: includes/forms/class-legacy-form-editor.php:649
 #: src/Integrations/EDD/Downloads.php:123
 #: src/Integrations/WooCommerce/Products.php:432
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:74
-#: build/Emails/assets/js/email-editor.js:68
 msgid "Image"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:657
-#: build/Emails/assets/js/email-editor.js:68
 msgid "Button"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:673
 #: includes/forms/class-legacy-form-editor.php:907
-#: build/Emails/assets/js/email-editor.js:65
 msgid "Heading"
 msgstr ""
 
@@ -3784,7 +3783,7 @@ msgstr ""
 #: includes/forms/class-legacy-form-editor.php:960
 #: includes/forms/class-legacy-form-editor.php:1000
 #: includes/forms/class-legacy-form-editor.php:1040
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Typography"
 msgstr ""
 
@@ -3853,7 +3852,7 @@ msgid "Your template has been saved successfuly"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:1117
-#: build/Misc/assets/js/collection.js:243
+#: build/Misc/assets/js/collection.js:237
 msgid "Save Changes"
 msgstr ""
 
@@ -4702,11 +4701,12 @@ msgid "Select the default %s to add new subscribers who sign up via this method.
 msgstr ""
 
 #: includes/integrations/class-noptin-abstract-integration.php:518
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Select an option"
 msgstr ""
 
@@ -4728,12 +4728,12 @@ msgid "Payments"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:58
-#: includes/integrations/class-noptin-woocommerce.php:114
+#: includes/integrations/class-noptin-woocommerce.php:115
 msgid "After email field"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:59
-#: includes/integrations/class-noptin-woocommerce.php:117
+#: includes/integrations/class-noptin-woocommerce.php:118
 msgid "After customer details"
 msgstr ""
 
@@ -4758,32 +4758,32 @@ msgid "Add me to your newsletter and keep me updated whenever you publish new do
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:193
-#: includes/integrations/class-noptin-woocommerce.php:307
+#: includes/integrations/class-noptin-woocommerce.php:316
 msgid "Billing Address 1"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:194
-#: includes/integrations/class-noptin-woocommerce.php:308
+#: includes/integrations/class-noptin-woocommerce.php:317
 msgid "Billing Address 2"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:195
-#: includes/integrations/class-noptin-woocommerce.php:309
+#: includes/integrations/class-noptin-woocommerce.php:318
 msgid "Billing Postcode"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:196
-#: includes/integrations/class-noptin-woocommerce.php:310
+#: includes/integrations/class-noptin-woocommerce.php:319
 msgid "Billing City"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:197
-#: includes/integrations/class-noptin-woocommerce.php:311
+#: includes/integrations/class-noptin-woocommerce.php:320
 msgid "Billing State"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:198
-#: includes/integrations/class-noptin-woocommerce.php:312
+#: includes/integrations/class-noptin-woocommerce.php:321
 msgid "Billing Country"
 msgstr ""
 
@@ -4791,48 +4791,48 @@ msgstr ""
 msgid "Subscribe to marketing opt-in."
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:115
+#: includes/integrations/class-noptin-woocommerce.php:116
 msgid "After billing details"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:116
+#: includes/integrations/class-noptin-woocommerce.php:117
 msgid "After shipping details"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:118
+#: includes/integrations/class-noptin-woocommerce.php:119
 msgid "After order review"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:119
+#: includes/integrations/class-noptin-woocommerce.php:120
 msgid "Before submit button"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:120
+#: includes/integrations/class-noptin-woocommerce.php:121
 msgid "After order notes"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:203
+#: includes/integrations/class-noptin-woocommerce.php:212
 msgid "Add me to your newsletter and keep me updated whenever you publish new products"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:305
+#: includes/integrations/class-noptin-woocommerce.php:314
 msgid "Billing Phone"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:306
+#: includes/integrations/class-noptin-woocommerce.php:315
 msgid "Billing Company"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:313
+#: includes/integrations/class-noptin-woocommerce.php:322
 msgid "Billing Country Code"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:314
+#: includes/integrations/class-noptin-woocommerce.php:323
 msgid "Formatted Billing Address"
 msgstr ""
 
 #. translators: %1$s is the order id, %2$s is the customer email.
-#: includes/integrations/class-noptin-woocommerce.php:344
+#: includes/integrations/class-noptin-woocommerce.php:353
 msgid "Order #%1$d from %2$s"
 msgstr ""
 
@@ -5030,7 +5030,7 @@ msgid "Bounced"
 msgstr ""
 
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:39
-#: build/Misc/assets/js/collection.js:222
+#: build/Misc/assets/js/collection.js:216
 msgid "Any"
 msgstr ""
 
@@ -5042,7 +5042,7 @@ msgstr ""
 #. translators: %s: Field label.
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
 #: src/Objects/Collection.php:805
-#: build/Misc/assets/js/collection.js:237
+#: build/Misc/assets/js/collection.js:231
 msgid "%s - Exclude"
 msgstr ""
 
@@ -6607,7 +6607,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:129
 #: src/Integrations/WooCommerce/Products.php:716
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Width"
 msgstr ""
 
@@ -7173,9 +7173,7 @@ msgstr ""
 msgid "The maximum number of words to display."
 msgstr ""
 
-#. translators: %s: plural name of the post type
 #: src/Objects/Generic_Post_Type.php:262
-#: build/Emails/assets/js/email-editor.js:74
 msgid "Content"
 msgstr ""
 
@@ -7219,7 +7217,7 @@ msgid "Whether to bypass the trash and force delete the post."
 msgstr ""
 
 #: src/Objects/Post_Type.php:36
-#: build/Emails/assets/js/email-editor.js:60
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Authors"
 msgstr ""
 
@@ -7335,7 +7333,7 @@ msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
-#: build/Misc/assets/js/collection.js:240
+#: build/Misc/assets/js/collection.js:234
 msgid "Save"
 msgstr ""
 
@@ -7344,18 +7342,18 @@ msgid "Save Automation"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Misc/assets/js/collection.js:240
-#: build/Misc/assets/js/collection.js:243
+#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:237
 msgid "Saving..."
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Emails/assets/js/email-editor.js:13
+#: build/Emails/assets/js/email-editor.js:51
 msgid "Premium Feature"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
-#: build/Emails/assets/js/email-editor.js:13
+#: build/Emails/assets/js/email-editor.js:51
 msgid "Activate license"
 msgstr ""
 
@@ -7375,248 +7373,273 @@ msgstr ""
 msgid "Seconds"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Only run if"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Do not run if"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "all"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "any"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "If"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "of the following rules are true:"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Select a value"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Select a comparison"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Enter a smart tag"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Comparison"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Enter a value"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Add a conditional logic rule"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Add another rule"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Return to editor"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Optionally enable/disable this trigger depending on specific conditions."
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Edit Conditional Logic"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Insert merge tag"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Add Item"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Misc/assets/js/collection.js:247
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Misc/assets/js/collection.js:241
+#: build/Settings/assets/js/settings.js:51
 msgid "Go Back"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Set Items"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "(new)"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Remove Item"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Move Up"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Move Down"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:57
-#: build/Emails/assets/js/global.js:45
-#: build/Misc/assets/js/collection.js:222
-#: build/Settings/assets/js/settings.js:57
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Add"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Use trigger"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Set-up"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Select a trigger for your automation rule"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Select an action for your automation rule"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:11
 msgid "No preview available"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Add New Automation"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
-#: build/Emails/assets/js/email-editor.js:93
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/email-editor.js:67
 msgid "Unlock Premium Feature"
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 msgid "This automation trigger is only available to premium license holders."
 msgstr ""
 
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:45
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 msgid "Add Automation Rule"
 msgstr ""
 
@@ -7640,477 +7663,417 @@ msgstr ""
 msgid "Are you sure you want to delete this automation rule?"
 msgstr ""
 
+#. translators: accessibility text for the footer landmark region.
+#: build/Emails/assets/js/blocks.js:1
 #: build/Emails/assets/js/email-editor.js:13
 msgid "Font family"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Set tags and categories"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "This email will send for all blog posts."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "A paid plan allows you to limit notifications to certain categories, tags, and authors."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Required. The subject of your email."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Email Heading"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "This text will be displayed at the top of the email."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Email Content"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "The content of your email. You can use email tags to provide dynamic values."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Footer Text"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "This text will be displayed at the bottom of the email."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Block Editor"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "A premium plan allows you to edit your emails using a drag and drop block editor."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Type your email content here"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "You can use email tags to provide dynamic values."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:57
-msgid "Paste the raw HTML of your email here"
-msgstr ""
-
-#. translators: %s: content type label.
-#: build/Emails/assets/js/email-editor.js:59
-msgid "View available merge tags"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Merge tags"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Merge tags are special placeholders that allow you to personalize your emails. Here are some of the available merge tags:"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Choose the template you want to use."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Campaign Name"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "For your reference only."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Example: Black Friday Sale"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Preview Text"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "This is the text that appears in the inbox when the email is received."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Example: Save up to 50%"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Email Settings"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Editor"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Choose the type of email you want to create."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Send Newsletter"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Publish Email"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "You are about to send this newsletter."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "You are about to schedule this newsletter."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Please make sure you have tested it and it is ready to be sent."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:59
-msgid "Enter email subject"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "The width of your email's content area."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Add custom CSS to your email. You can also use this field to import custom fonts."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Font size"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Line height"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Attach Files"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "The add-ons pack allows you to attach images, videos, PDFs or other file types to this email."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Email Attachments"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Enter file path or URL"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Upload"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Remove"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Add Attachment"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "You can only attach files that are hosted on your server."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Select unit"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Delay sending this email"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Premium plans allow you to delay (schedule) this email for a given number of minutes, hours, or days."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Timing"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Send after"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Unit"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "This email will be sent after the specified time has elapsed."
-msgstr ""
-
 #. translators: %s: filter label.
-#: build/Emails/assets/js/email-editor.js:60
-#: build/Emails/assets/js/email-editor.js:65
+#: build/Emails/assets/js/blocks.js:5
+#: build/Emails/assets/js/email-editor.js:54
 msgid "Filter %s"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:60
-msgid "A premium plan allows you to filter recipients by custom fields etc."
+#. translators: %s: file name
+#: build/Emails/assets/js/blocks.js:8
+msgid "Button URL"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Send To"
+#: build/Emails/assets/js/blocks.js:8
+msgid "The URL to link to."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Post type"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Select a post type"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "The [[post_digest]] merge tag will display this post type if you do not set a post type in the merge tag."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "New post notifications will only send for this post type."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Filter by terms"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Optional. Select how to filter posts by terms."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Set post type"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "This email will only send for blog posts."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "The addons pack allows you to send notifications for products and other post types or limit notifications to certain categories, tags, and authors."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Post settings"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Send for all authors"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Enter a comma-separated list of author IDs or leave blank to send for all authors."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "All languages"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Optional. Send for posts in the selected language only."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Send From"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Leave blank to use the default name."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Reply To"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:60
-msgid "Leave blank to use the default reply email."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:61
-msgid "Blocks"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:61
-msgid "Overview"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:65
-msgid "Paragraph"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:65
-msgid "Start with the basic building block of all narrative."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:65
-msgid "Introduce new sections and organize content to help readers understand the structure of your content."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Insert an image to make a visual statement."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
+#: build/Emails/assets/js/blocks.js:8
 msgid "Prompt readers to take action with a button-style link."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Social Icons"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Display icons linking to your social media profiles or sites."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Social Icon"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Display an icon linking to a social media profile or site."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "RAW"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Add custom HTML code or merge tags to your email."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
+#: build/Emails/assets/js/blocks.js:8
 msgid "Section"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Gather blocks in a layout container."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Columns"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Display content in multiple columns, with blocks added to each column."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Column"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "A single column within a columns block."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Separator"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Create a break between ideas or sections with a horizontal separator."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Spacer"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Add a blank space between blocks and customize its height."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "Unsupported Block"
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
-msgid "This block is not supported in the email editor."
-msgstr ""
-
-#: build/Emails/assets/js/email-editor.js:68
+#: build/Emails/assets/js/blocks.js:8
 msgid "Merge Tag"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:68
+#: build/Emails/assets/js/blocks.js:8
 msgid "Insert additional custom elements with a WordPress shortcode or Noptin Merge tag."
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:68
+#: build/Emails/assets/js/blocks.js:8
 msgid "Merge tag / Shortcode"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:74
+#. translators: %s: plural name of the post type
+#: build/Emails/assets/js/blocks.js:52
 msgid "Dynamic"
 msgstr ""
 
 #. translators: %s: plural name of the post type
-#: build/Emails/assets/js/email-editor.js:75
-#: build/Emails/assets/js/email-editor.js:78
+#: build/Emails/assets/js/blocks.js:53
+#: build/Emails/assets/js/blocks.js:56
 msgid "%s Template"
 msgstr ""
 
 #. translators: %s: Singular label, e.g, "Product"
-#: build/Emails/assets/js/email-editor.js:75
-#: build/Emails/assets/js/email-editor.js:81
+#: build/Emails/assets/js/blocks.js:53
+#: build/Emails/assets/js/blocks.js:59
 msgid "Contains the block elements used to render a %s"
 msgstr ""
 
 #. translators: %s: Collection, e.g, "Products"
-#: build/Emails/assets/js/email-editor.js:78
+#: build/Emails/assets/js/blocks.js:56
 msgid "Displays %s in a list or a grid"
 msgstr ""
 
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Set tags and categories"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "This email will send for all blog posts."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "A paid plan allows you to limit notifications to certain categories, tags, and authors."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Required. The subject of your email."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Email Heading"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "This text will be displayed at the top of the email."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Email Content"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "The content of your email. You can use email tags to provide dynamic values."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Footer Text"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "This text will be displayed at the bottom of the email."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Block Editor"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "A premium plan allows you to edit your emails using a drag and drop block editor."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Type your email content here"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "You can use email tags to provide dynamic values."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:51
+msgid "Paste the raw HTML of your email here"
+msgstr ""
+
+#. translators: %s: content type label.
+#: build/Emails/assets/js/email-editor.js:53
+msgid "View available merge tags"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Merge tags"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Merge tags are special placeholders that allow you to personalize your emails. Here are some of the available merge tags:"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Choose the template you want to use."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Campaign Name"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "For your reference only."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Example: Black Friday Sale"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Preview Text"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "This is the text that appears in the inbox when the email is received."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Example: Save up to 50%"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Email Settings"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Editor"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Choose the type of email you want to create."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Send Newsletter"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Publish Email"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "You are about to send this newsletter."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "You are about to schedule this newsletter."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Please make sure you have tested it and it is ready to be sent."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
+msgid "Enter email subject"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "The width of your email's content area."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Add custom CSS to your email. You can also use this field to import custom fonts."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Font size"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Line height"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Attach Files"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "The add-ons pack allows you to attach images, videos, PDFs or other file types to this email."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Email Attachments"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Enter file path or URL"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Upload"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Remove"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Add Attachment"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "You can only attach files that are hosted on your server."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Select unit"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Delay sending this email"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Premium plans allow you to delay (schedule) this email for a given number of minutes, hours, or days."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Timing"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Send after"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Unit"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "This email will be sent after the specified time has elapsed."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "A premium plan allows you to filter recipients by custom fields etc."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Send To"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Post type"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Select a post type"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "The [[post_digest]] merge tag will display this post type if you do not set a post type in the merge tag."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "New post notifications will only send for this post type."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Do not filter by tags, categories, etc"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Only send for some tags, categories, etc"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Do not send for some tags, categories, etc"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Filter by terms"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Optional. Select how to filter posts by terms."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Set post type"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "This email will only send for blog posts."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "The addons pack allows you to send notifications for products and other post types or limit notifications to certain categories, tags, and authors."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Post settings"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Send for all authors"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Enter a comma-separated list of author IDs or leave blank to send for all authors."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "All languages"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Optional. Send for posts in the selected language only."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Send From"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Leave blank to use the default name."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Reply To"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Leave blank to use the default reply email."
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:55
+msgid "Blocks"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:55
+msgid "Overview"
+msgstr ""
+
 #. translators: accessibility text for the editor top bar landmark region.
-#: build/Emails/assets/js/email-editor.js:83
+#: build/Emails/assets/js/email-editor.js:57
 msgid "Editor top bar"
 msgstr ""
 
 #. translators: accessibility text for the editor content landmark region.
-#: build/Emails/assets/js/email-editor.js:85
+#: build/Emails/assets/js/email-editor.js:59
 msgid "Editor content"
 msgstr ""
 
 #. translators: accessibility text for the editor settings landmark region.
-#: build/Emails/assets/js/email-editor.js:87
-#: build/Settings/assets/js/settings.js:63
+#: build/Emails/assets/js/email-editor.js:61
+#: build/Settings/assets/js/settings.js:57
 msgid "Editor settings"
 msgstr ""
 
 #. translators: accessibility text for the editor publish landmark region.
-#: build/Emails/assets/js/email-editor.js:89
-#: build/Settings/assets/js/settings.js:65
+#: build/Emails/assets/js/email-editor.js:63
+#: build/Settings/assets/js/settings.js:59
 msgid "Editor publish"
 msgstr ""
 
 #. translators: accessibility text for the editor footer landmark region.
-#: build/Emails/assets/js/email-editor.js:91
-#: build/Settings/assets/js/settings.js:67
+#: build/Emails/assets/js/email-editor.js:65
+#: build/Settings/assets/js/settings.js:61
 msgid "Editor footer"
 msgstr ""
 
 #. translators: accessibility text for the editor secondary sidebar landmark region.
-#: build/Emails/assets/js/email-editor.js:93
-#: build/Settings/assets/js/settings.js:69
+#: build/Emails/assets/js/email-editor.js:67
+#: build/Settings/assets/js/settings.js:63
 msgid "Document Overview"
 msgstr ""
 
-#: build/Emails/assets/js/email-editor.js:93
+#: build/Emails/assets/js/email-editor.js:67
 msgid "This email type is only available to premium license holders."
 msgstr ""
 
@@ -8163,7 +8126,7 @@ msgid "Create"
 msgstr ""
 
 #: build/Emails/assets/js/view-campaigns.js:11
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Show all"
 msgstr ""
 
@@ -8176,18 +8139,18 @@ msgid "Published"
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:247
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:241
+#: build/Misc/assets/js/collection.js:261
 msgid "An unknown error occurred."
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "View Records"
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:240
+#: build/Misc/assets/js/collection.js:234
 msgid "Add New Item"
 msgstr ""
 
@@ -8200,278 +8163,278 @@ msgid "Record deleted successfully."
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:178
-#: build/Misc/assets/js/collection.js:249
+#: build/Misc/assets/js/collection.js:243
 msgid "Deleting..."
 msgstr ""
 
 #. translators: %s: Field label.
-#: build/Misc/assets/js/collection.js:225
+#: build/Misc/assets/js/collection.js:219
 msgctxt "Number"
 msgid "%s - Min"
 msgstr ""
 
 #. translators: %s: Field label.
-#: build/Misc/assets/js/collection.js:228
+#: build/Misc/assets/js/collection.js:222
 msgctxt "Number"
 msgid "%s - Max"
 msgstr ""
 
 #. translators: %s: Date field label.
-#: build/Misc/assets/js/collection.js:231
+#: build/Misc/assets/js/collection.js:225
 msgctxt "Date"
 msgid "%s - After"
 msgstr ""
 
 #. translators: %s: Date field label.
-#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:228
 msgctxt "Date"
 msgid "%s - Before"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:228
 msgid "Separate multiple values with a comma."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:237
+#: build/Misc/assets/js/collection.js:231
 msgid "Apply Filters"
 msgstr ""
 
 #. translators: %d: number of filters applied.
-#: build/Misc/assets/js/collection.js:240
+#: build/Misc/assets/js/collection.js:234
 msgid "Applied Filters (%d)"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:240
+#: build/Misc/assets/js/collection.js:234
 msgid "Filter Records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:240
+#: build/Misc/assets/js/collection.js:234
 msgid "Filter records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:240
-#: build/Misc/assets/js/collection.js:243
+#: build/Misc/assets/js/collection.js:234
+#: build/Misc/assets/js/collection.js:237
 msgid "Record saved successfully."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:243
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:237
+#: build/Misc/assets/js/collection.js:261
 msgid "Edit Item"
 msgstr ""
 
 #. translators: %s: item title.
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Refresh"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Hide"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Preparing records..."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Found no records to export."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Done! Click the button below to download records."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Download CSV"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Select the fields to include in your exported file"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Download"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:247
+#: build/Misc/assets/js/collection.js:241
 msgid "Download Selected"
 msgstr ""
 
 #. translators: %s: number of records
-#: build/Misc/assets/js/collection.js:248
+#: build/Misc/assets/js/collection.js:242
 msgid "Download all %s records"
 msgstr ""
 
 #. translators: %s: number of records
-#: build/Misc/assets/js/collection.js:249
+#: build/Misc/assets/js/collection.js:243
 msgid "Download %s selected records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:249
+#: build/Misc/assets/js/collection.js:243
 msgid "Delete Selected"
 msgstr ""
 
 #. translators: %d: Number of records being deleted.
-#: build/Misc/assets/js/collection.js:252
+#: build/Misc/assets/js/collection.js:246
 msgid "Are you sure you want to delete %d matching records?"
 msgstr ""
 
 #. translators: %d: Number of records being deleted.
-#: build/Misc/assets/js/collection.js:255
+#: build/Misc/assets/js/collection.js:249
 msgid "Are you sure you want to delete %d selected records?"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:255
+#: build/Misc/assets/js/collection.js:249
 msgid "Yes, Delete!"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:255
+#: build/Misc/assets/js/collection.js:249
 msgid "Do not update"
 msgstr ""
 
 #. translators: %s: Field label, e.g. "Tags".
-#: build/Misc/assets/js/collection.js:258
+#: build/Misc/assets/js/collection.js:252
 msgid "%s - To Add"
 msgstr ""
 
 #. translators: %s: Field label, e.g. "Tags".
-#: build/Misc/assets/js/collection.js:261
+#: build/Misc/assets/js/collection.js:255
 msgid "%s - To Remove"
 msgstr ""
 
 #. translators: %d: Number of records being saved.
-#: build/Misc/assets/js/collection.js:264
+#: build/Misc/assets/js/collection.js:258
 msgid "Saving %d records..."
 msgstr ""
 
 #. translators: %d: Number of records being edited.
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Edit %d records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Records updated successfully."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Bulk Edit"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Error"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:267
+#: build/Misc/assets/js/collection.js:261
 msgid "Loading"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:270
+#: build/Misc/assets/js/collection.js:264
 msgid "This tool allows you to import existing records from a CSV file."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:270
+#: build/Misc/assets/js/collection.js:264
 msgid "Select a CSV file"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:270
+#: build/Misc/assets/js/collection.js:264
 msgid "The first row of the CSV file should contain the field names/headers."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:270
+#: build/Misc/assets/js/collection.js:264
 msgid " Have a different file type?"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:270
+#: build/Misc/assets/js/collection.js:264
 msgid "Convert it to CSV"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Select value"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Enter value"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Enter a value to assign all imported records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Ignore Field"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Manually enter value"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Map Field"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Try again"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Map the headers of your CSV file to known fields."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
+#: build/Misc/assets/js/collection.js:266
 msgid "Update existing records"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:272
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:266
+#: build/Misc/assets/js/collection.js:269
 msgid "Import"
 msgstr ""
 
 #. translators: %s: file name.
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "No records found in %s."
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Importing"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Processed"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Records Found"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Records Created"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Records Updated"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Records Failed"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Records Skipped"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Errors"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Clear"
 msgstr ""
 
-#: build/Misc/assets/js/collection.js:275
+#: build/Misc/assets/js/collection.js:269
 msgid "Parsing"
 msgstr ""
 
 #. translators: accessibility text for the footer landmark region.
-#: build/Misc/assets/js/collection.js:287
+#: build/Misc/assets/js/collection.js:281
 #: build/Misc/assets/js/interface.js:13
 #: build/Misc/assets/js/list.js:13
 msgid "Thank you for using Noptin. Please leave us a review 🌟"
@@ -8538,12 +8501,12 @@ msgid "Yes, deactivate"
 msgstr ""
 
 #. translators: accessibility text for the editor top bar landmark region.
-#: build/Settings/assets/js/settings.js:59
+#: build/Settings/assets/js/settings.js:53
 msgid "Settings top bar"
 msgstr ""
 
 #. translators: accessibility text for the editor content landmark region.
-#: build/Settings/assets/js/settings.js:61
+#: build/Settings/assets/js/settings.js:55
 msgid "Settings content"
 msgstr ""
 

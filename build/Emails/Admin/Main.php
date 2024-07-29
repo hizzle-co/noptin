@@ -586,4 +586,25 @@ class Main {
 
 		return $campaign;
 	}
+
+	public static function load_script_translations( $script ) {
+		/** @var \WP_Scripts $wp_scripts */
+		global $wp_scripts;
+
+		// Check if translations are registered for this script
+		if ( ! isset( $wp_scripts->registered[ $script ] ) ) {
+			return;
+		}
+
+		// Get the translations
+		$translations = $wp_scripts->print_translations( $script, false );
+
+		if ( ! empty( $translations ) ) {
+			// Remove the <script> tags
+			$translations = str_replace( array( '<script>', '</script>' ), '', $translations );
+
+			// Print the translations
+			wp_add_inline_script( 'wp-i18n', $translations, 'after' );
+		}
+	}
 }
