@@ -399,7 +399,7 @@ class Task extends \Hizzle\Store\Record {
 						),
 						admin_url( 'admin.php' )
 					),
-					'task_action',
+					'noptin_task_action',
 					'task_nonce'
 				),
 			);
@@ -415,7 +415,7 @@ class Task extends \Hizzle\Store\Record {
 						),
 						admin_url( 'admin.php' )
 					),
-					'task_action',
+					'noptin_task_action',
 					'task_nonce'
 				),
 			);
@@ -431,7 +431,7 @@ class Task extends \Hizzle\Store\Record {
 						),
 						admin_url( 'admin.php' )
 					),
-					'task_action',
+					'noptin_task_action',
 					'task_nonce'
 				),
 			);

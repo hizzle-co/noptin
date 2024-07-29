@@ -121,7 +121,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			array(
 				'status'                => 'pending',
 				'number'                => 1,
-				'date_scheduled_before' => gmdate( 'Y-m-d H:i:s', time() ),
+				'date_scheduled_before' => current_time( 'Y-m-d H:i:s' ),
 			)
 		);
 
@@ -392,7 +392,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 
 		// Optional since in seconds.
 		if ( ! empty( $args['since'] ) ) {
-			$query['date_created_after'] = gmdate( 'Y-m-d H:i:s', time() - (int) $args['since'] );
+			$query['date_created_after'] = gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - (int) $args['since'] );
 		}
 
 		$cache_key = md5( wp_json_encode( $query ) );
@@ -458,7 +458,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			array(
 				'status'               => array( 'complete', 'canceled' ),
 				'number'               => static::get_batch_size(),
-				'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() - $lifespan ),
+				'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - (int) $lifespan ),
 			)
 		);
 
@@ -487,7 +487,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			array(
 				'status'               => 'running',
 				'number'               => static::get_batch_size(),
-				'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() - $timeout ),
+				'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - (int) $timeout ),
 			)
 		);
 
@@ -777,7 +777,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	public static function hide_tasks_menu() {
 		remove_submenu_page( 'noptin', 'noptin-tasks' );
 
-		if ( isset( $_GET['task_action'] ) && isset( $_GET['task_id'] ) && isset( $_GET['task_nonce'] ) && wp_verify_nonce( $_GET['task_nonce'], 'task_action' ) ) {
+		if ( isset( $_GET['task_action'] ) && isset( $_GET['task_id'] ) && isset( $_GET['task_nonce'] ) && wp_verify_nonce( $_GET['task_nonce'], 'noptin_task_action' ) ) {
 			$action  = sanitize_text_field( wp_unslash( $_GET['task_action'] ) );
 
 			$task = self::get( absint( $_GET['task_id'] ) );
