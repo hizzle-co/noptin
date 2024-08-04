@@ -48,13 +48,15 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		$forms           = array();
 		$elementor_posts = get_posts(
 			array(
-				'post_type'      => 'any',
-				'fields'         => 'ids',
-				'posts_per_page' => -1,
-				'meta_key'       => '_elementor_data',
-				'meta_value'     => 'form_fields',
-				'meta_compare'   => 'LIKE',
-				'post_status'    => array( 'publish', 'draft', 'future', 'pending', 'private' ),
+				'post_type'        => 'any',
+				'fields'           => 'ids',
+				'posts_per_page'   => -1,
+				'meta_key'         => '_elementor_data',
+				'meta_value'       => 'form_fields',
+				'meta_compare'     => 'LIKE',
+				'post_status'      => array( 'publish', 'draft', 'future', 'pending', 'private' ),
+				'suppress_filters' => true, // WPML (also to prevent any posts_where filters from modifying the query)
+				'lang'             => '', // Polylang
 			)
 		);
 

@@ -167,6 +167,10 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 
 		// Order count.
 		if ( 'order_count' === $field && $this->external->get_id() < 1 ) {
+			if ( ! empty( $args['product_id'] ) ) {
+				return self::count_customer_product_purchases( $this->get_email(), $args['product_id'] );
+			}
+
 			return Main::count_customer_orders( $this->get_email() );
 		}
 
@@ -236,5 +240,44 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Counts a customer's product purchases.
+	 *
+	 * @since 3.0.0
+	 */
+	public static function count_customer_product_purchases( $customer_id_or_email, $product_id ) {
+		if ( empty( $customer_id_or_email ) || empty( $product_id ) ) {
+			return 0;
+		}
+
+		if ( is_email( $customer_id_or_email ) && email_exists( $customer_id_or_email ) ) {
+			$customer_id_or_email = email_exists( $customer_id_or_email );
+		}
+
+		/** @var \WC_Order[] $orders */
+		$orders = wc_get_orders(
+			array(
+				'limit'    => -1,
+				'customer' => $customer_id_or_email,
+				'type'     => 'shop_order',
+				'status'   => wc_get_is_paid_statuses(),
+			)
+		);
+
+		$product_purchases = 0;
+		$product_id        = absint( $product_id );
+
+		foreach ( $orders as $order ) {
+			foreach ( $order->get_items() as $item ) {
+				/** @var \WC_Order_Item_Product $item */
+				if ( $item->get_product_id() === $product_id || $item->get_variation_id() === $product_id ) {
+					$product_purchases += $item->get_quantity();
+				}
+			}
+		}
+
+		return $product_purchases;
 	}
 }
