@@ -100,7 +100,7 @@ class Noptin_COM_Updater {
 	private static function update_check( $payload ) {
 
 		// Abort if no downloads installed.
-		if ( empty( $payload ) ) {
+		if ( empty( $payload ) || ! is_array( $payload ) ) {
 			return array();
 		}
 
