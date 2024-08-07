@@ -19,6 +19,14 @@
 			'img'  => 'https://s.w.org/plugins/geopattern-icon/hizzle-downloads.svg',
 			'url'  => admin_url( 'plugin-install.php?tab=plugin-information&plugin=hizzle-downloads&TB_iframe=true&width=772&height=600' ),
 		),
+
+		array(
+			'slug' => 'hizzle-forms',
+			'name' => 'YooForms',
+			'desc' => 'Easily create fast, lightweight and GDPR-compliant contact forms.',
+			'img'  => 'https://ps.w.org/hizzle-forms/assets/icon-256x256.png',
+			'url'  => admin_url( 'plugin-install.php?tab=plugin-information&plugin=hizzle-forms&TB_iframe=true&width=772&height=600' ),
+		),
 	);
 
 	$subscribers_today_total = get_noptin_subscribers_count(
