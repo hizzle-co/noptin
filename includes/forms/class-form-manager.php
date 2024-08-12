@@ -104,6 +104,7 @@ class Noptin_Form_Manager {
 		add_action( 'init', array( $this, 'register_block_type' ) );
 		add_action( 'widgets_init', array( $this, 'register_widget' ) );
 		add_action( 'rest_api_init', array( $this, 'register_endpoint' ) );
+		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor_for_forms' ), 10, 2 );
 
 		// Log form impressions.
 		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
@@ -222,7 +223,7 @@ class Noptin_Form_Manager {
 					'supports'            => array( 'title' ),
 					'has_archive'         => false,
 					'show_in_nav_menus'   => false,
-					'show_in_rest'        => false,
+					'show_in_rest'        => true,
 					'show_in_menu'        => false,
 					'menu_icon'           => '',
 					'can_export'          => false,
@@ -380,4 +381,18 @@ class Noptin_Form_Manager {
 
 	}
 
+	/**
+	 * Disables the block editor for forms.
+	 *
+	 * @param bool $use_block_editor Whether to use the block editor.
+	 * @param string $post_type The post type being edited.
+	 * @return bool
+	 */
+	public function disable_block_editor_for_forms( $use_block_editor, $post_type ) {
+		if ( 'noptin-form' === $post_type ) {
+			return false;
+		}
+
+		return $use_block_editor;
+	}
 }
