@@ -32,7 +32,13 @@ function is_using_new_noptin_forms() {
 function is_legacy_noptin_form( $form_id ) {
 
 	// Check if it was created by the legacy editor.
-	if ( '' !== get_post_meta( $form_id, '_noptin_state', true ) ) {
+	$state = get_post_meta( $form_id, '_noptin_state', true );
+
+	if ( is_object( $state ) ) {
+		$state = (array) $state;
+	}
+
+	if ( is_array( $state ) && ! empty( $state['fields'] ) ) {
 		return true;
 	}
 

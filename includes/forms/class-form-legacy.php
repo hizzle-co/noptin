@@ -120,6 +120,11 @@ class Noptin_Form_Legacy {
 		);
 
 		$state = get_post_meta( $post->ID, '_noptin_state', true );
+
+		if ( is_object( $state ) ) {
+			$state = (array) $state;
+		}
+
 		if ( ! is_array( $state ) ) {
 			$state = array();
 		}

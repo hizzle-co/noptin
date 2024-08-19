@@ -103,10 +103,11 @@ class Main {
 				'data' => apply_filters(
 					'noptin_form_editor_data',
 					array(
-						'form'      => $post->ID,
-						'brand'     => noptin()->white_label->get_details(),
-						'settings'  => self::sidebar_fields(),
-						'templates' => self::get_templates(),
+						'form'         => $post->ID,
+						'brand'        => noptin()->white_label->get_details(),
+						'settings'     => self::sidebar_fields(),
+						'templates'    => self::get_templates(),
+						'default_form' => include plugin_dir_path( __FILE__ ) . 'default-form.php',
 					)
 				),
 			)

@@ -133,9 +133,6 @@ class Noptin_Admin {
 		// (maybe) do an action.
 		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
 
-		// Runs when saving a new opt-in form.
-		add_action( 'wp_ajax_noptin_save_optin_form', array( $this, 'save_optin_form' ) );
-
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 
@@ -150,83 +147,6 @@ class Noptin_Admin {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_admin_init_hooks', $this );
-	}
-
-	/**
-	 * Saves a subscription form.
-	 *
-	 * @access      public
-	 * @since       1.0.0
-	 * @return      void
-	 */
-	public function save_optin_form() {
-
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		// Check nonce.
-		check_ajax_referer( 'noptin_admin_nonce' );
-
-		/**
-		 * Runs before saving a form
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_before_save_form', $this );
-
-		// Prepare the args.
-		$id     = trim( $_POST['state']['id'] );
-		$state  = map_deep( wp_unslash( $_POST['state'] ), 'noptin_sanitize_booleans' );
-		$status = 'draft';
-
-		if ( true === $state['optinStatus'] || 'true' === $state['optinStatus'] ) {
-			$status = 'publish';
-		}
-
-		$postarr = array(
-			'post_title'   => $state['optinName'],
-			'ID'           => $id,
-			'post_content' => '',
-			'post_status'  => $status,
-		);
-
-		$post = wp_update_post( $postarr, true );
-		if ( is_wp_error( $post ) ) {
-			status_header( 400 );
-			wp_die( esc_html( $post->get_error_message() ) );
-		}
-
-		if ( empty( $state['showPostTypes'] ) ) {
-			$state['showPostTypes'] = array();
-		}
-
-		update_post_meta( $id, '_noptin_state', $state );
-		update_post_meta( $id, '_noptin_optin_type', $state['optinType'] );
-
-		// Ensure impressions and subscriptions are set.
-		// to prevent the form from being hidden when the user sorts by those fields.
-		$sub_count  = get_post_meta( $id, '_noptin_subscribers_count', true );
-		$form_views = get_post_meta( $id, '_noptin_form_views', true );
-
-		if ( empty( $sub_count ) ) {
-			update_post_meta( $id, '_noptin_subscribers_count', 0 );
-		}
-
-		if ( empty( $form_views ) ) {
-			update_post_meta( $id, '_noptin_form_views', 0 );
-		}
-
-		/**
-		 * Runs after saving a form
-		 *
-		 * @param array $this The admin instance
-		 */
-		do_action( 'noptin_after_save_form', $this );
-
-		delete_transient( 'noptin_subscription_sources' );
-
-		exit; // This is important.
 	}
 
 	/**

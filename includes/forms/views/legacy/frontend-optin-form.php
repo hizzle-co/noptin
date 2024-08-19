@@ -98,10 +98,12 @@
 
 					<?php do_action( 'before_print_noptin_submit_button', $singleLine, $id ); ?>
 
-					<button
+					<input
 						style="background-color: <?php echo esc_attr( $noptinButtonBg ); ?>; color: <?php echo esc_attr( $noptinButtonColor ); ?>;"
 						type="submit"
-						class="noptin-form-submit <?php echo $singleLine ? '' : esc_attr( 'noptin-form-button-' . $buttonPosition ); ?>"><?php echo wp_kses_post( $noptinButtonLabel ); ?></button>
+						value="<?php echo esc_attr( $noptinButtonLabel ); ?>"
+						class="noptin-form-submit <?php echo $singleLine ? '' : esc_attr( 'noptin-form-button-' . $buttonPosition ); ?>"
+					/>
 				</div>
 				<?php do_action( 'after_print_noptin_form_fields', $singleLine, $id ); ?>
 			<?php endif; ?>

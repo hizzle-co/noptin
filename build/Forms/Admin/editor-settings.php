@@ -17,19 +17,6 @@ $editor_settings = array(
 			'id'       => 'basicSettings',
 			'children' => array(
 
-				// Form type.
-				'optinType'       => array(
-					'el'      => 'select',
-					'label'   => __( 'Form type', 'newsletter-optin-box' ),
-					'tooltip' => __( 'Select how you would like to display the form', 'newsletter-optin-box' ),
-					'options' => array(
-						'popup'    => __( 'Popup', 'newsletter-optin-box' ),
-						'inpost'   => __( 'Shortcode', 'newsletter-optin-box' ),
-						'sidebar'  => __( 'Widget', 'newsletter-optin-box' ),
-						'slide_in' => __( 'Sliding', 'newsletter-optin-box' ),
-					),
-				),
-
 				'inject'          => array(
 					'el'         => 'select',
 					'conditions' => array(

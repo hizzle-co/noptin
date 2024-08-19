@@ -154,7 +154,7 @@ class Noptin_Post_Types {
 				break;
 
 			case 'type':
-				if ( is_using_new_noptin_forms() ) {
+				if ( is_using_new_noptin_forms() || ! is_legacy_noptin_form( $post_id ) ) {
 
 					printf(
 						'<input onClick="this.select();" type="text" value="[noptin form=%d]" readonly="readonly" />',
