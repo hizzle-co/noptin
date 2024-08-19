@@ -46,18 +46,7 @@ class Noptin_Form_Admin {
 	 */
 	public function add_meta_boxes( $post ) {
 
-		if ( is_legacy_noptin_form( $post->ID ) ) {
-
-			add_meta_box(
-				'noptin_form_editor',
-				__( 'Form Editor', 'newsletter-optin-box' ),
-				array( $this, 'display_legacy_form_editor' ),
-				null,
-				'normal',
-				'high'
-			);
-
-		} else {
+		if ( ! is_legacy_noptin_form( $post->ID ) ) {
 
 			add_meta_box(
 				'noptin-form-editor-new',
@@ -87,23 +76,6 @@ class Noptin_Form_Admin {
 			);
 
 		}
-	}
-
-	/**
-	 * Displays the legacy form editing metabox.
-	 *
-	 * @param WP_Post $post
-	 * @since  1.6.2
-	 */
-	public function display_legacy_form_editor( $post ) {
-
-		$version = filemtime( plugin_dir_path( Noptin::$file ) . 'includes/assets/js/dist/optin-editor.js' );
-		wp_enqueue_script( 'noptin-modules', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/modules.js', array(), $version, true );
-		wp_enqueue_script( 'noptin-optin-editor', plugin_dir_url( Noptin::$file ) . 'includes/assets/js/dist/optin-editor.js', array( 'vue', 'select2', 'noptin-modules' ), $version, true );
-
-		require_once plugin_dir_path( __FILE__ ) . 'class-legacy-form-editor.php';
-		$editor = new Noptin_Legacy_Form_Editor( $post->ID, true );
-		$editor->output();
 	}
 
 	/**

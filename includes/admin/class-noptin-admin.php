@@ -130,9 +130,6 @@ class Noptin_Admin {
 		 */
 		do_action( 'noptin_before_admin_init_hooks', $this );
 
-		// Admin scripts.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 0 );
-
 		// (maybe) do an action.
 		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
 
@@ -153,57 +150,6 @@ class Noptin_Admin {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_admin_init_hooks', $this );
-	}
-
-	/**
-	 * Register admin scripts
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function enqueue_scripts() {
-		global $current_screen;
-
-		// Only enque on our pages.
-		$page = '';
-
-		if ( isset( $_GET['page'] ) ) {
-			$page = $_GET['page'];
-		}
-
-		if ( ! empty( $current_screen->post_type ) ) {
-			$page = $current_screen->post_type;
-		}
-
-		if ( empty( $page ) || false === stripos( $page, 'noptin' ) ) {
-			return;
-		}
-
-		// Codemirror for editor css.
-		if ( 'noptin-form' === $page ) {
-			wp_enqueue_code_editor(
-				array(
-					'type'       => 'css',
-					'codemirror' => array(
-						'indentUnit'     => 1,
-						'tabSize'        => 4,
-						'indentWithTabs' => true,
-						'lineNumbers'    => false,
-					),
-				)
-			);
-		}
-
-		// Optin forms editor.
-		$editing_new_form    = isset( $_GET['post'] ) && ! is_legacy_noptin_form( (int) $_GET['post'] );
-		$editing_legacy_form = isset( $_GET['post'] ) && is_legacy_noptin_form( (int) $_GET['post'] );
-		if ( 'noptin-form' === $page ) {
-
-			if ( ! $editing_new_form && ( ! is_using_new_noptin_forms() || $editing_legacy_form ) ) {
-				wp_enqueue_style( 'noptin-modules', $this->assets_url . 'js/dist/modules.css', array(), noptin()->version );
-			}
-		}
 	}
 
 	/**

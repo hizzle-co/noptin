@@ -23,58 +23,68 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-	 * @var string hook suffix
-	 */
-	public static $hook_suffix;
-
-	/**
 	 * Inits the main forms class.
 	 *
 	 */
 	public static function init() {
-
-		add_action( 'admin_menu', array( __CLASS__, 'newsletter_forms_menu' ), 35 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 	}
 
 	/**
-	 * Newsletter forms menu.
+	 * Registers the form editing metabox.
+	 *
+	 * @since       1.6.2
+	 * @param \WP_Post $post
 	 */
-	public static function newsletter_forms_menu() {
+	public static function add_meta_boxes( $post ) {
 
-		self::$hook_suffix = add_submenu_page(
-			'noptin',
-			esc_html__( 'Forms new', 'newsletter-optin-box' ),
-			esc_html__( 'Forms new', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-email-forms__new',
-			array( __CLASS__, 'render_admin_page' )
-		);
+		if ( is_legacy_noptin_form( $post->ID ) ) {
+
+			add_meta_box(
+				'noptin_form_editor',
+				__( 'Form Editor', 'newsletter-optin-box' ),
+				__CLASS__ . '::render_admin_page',
+				null,
+				'normal',
+				'high'
+			);
+
+		}
 	}
 
 	/**
-	 * Displays the admin page.
+	 * Checks if the current page is the forms edit page.
 	 */
-	public static function render_admin_page() {
-		?>
-			<div id="noptin-form-editor" class="wrap">
-				<span class="spinner" style="float: none; visibility: visible;"></span>
-			</div>
-		<?php
+	public static function is_forms_edit_page() {
+		global $pagenow, $post;
+
+		// Check if we're on the post edit or new post page.
+		if ( ! in_array( $pagenow, array( 'post.php', 'post-new.php' ), true ) ) {
+			return false;
+		}
+
+		// Check if the current post type is 'form' (assuming 'form' is your custom post type for forms).
+		if ( ! isset( $post ) || $post->post_type !== 'noptin-form' ) {
+			return false;
+		}
+
+		// If we've made it this far, we're on the forms edit page
+		return true;
 	}
 
 	/**
 	 * Enqueues scripts and styles.
 	 *
-	 * @param string $hook The current admin page.
 	 */
-	public static function enqueue_scripts( $hook ) {
+	public static function enqueue_scripts() {
 		global $post;
 
-		// Abort if not on the email forms page.
-		if ( self::$hook_suffix !== $hook ) {
+		// Check if we're on the post edit screen
+		if ( ! self::is_forms_edit_page() || ! is_legacy_noptin_form( $post->ID ) ) {
 			return;
 		}
+
+		add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
 
 		$config = include plugin_dir_path( __DIR__ ) . 'assets/js/form-editor.asset.php';
 		wp_enqueue_script(
@@ -92,8 +102,8 @@ class Main {
 			array(
 				'data' => apply_filters(
 					'noptin_form_editor_data',
-						array(
-						'form'      => 3316, // empty( $post ) ? null : $post->ID,
+					array(
+						'form'      => $post->ID,
 						'brand'     => noptin()->white_label->get_details(),
 						'settings'  => self::sidebar_fields(),
 						'templates' => self::get_templates(),
@@ -106,7 +116,7 @@ class Main {
 		wp_set_script_translations( 'noptin-form-editor', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
 		// Preload the data.
-		self::preload( 3316 );
+		self::preload( $post->ID );
 
 		// Load the css.
 		wp_enqueue_style( 'wp-components' );
@@ -155,14 +165,14 @@ class Main {
 				$path = '/' . $path;
 				continue;
 			}
-	
+
 			if ( is_array( $path ) && is_string( $path[0] ) && ! str_starts_with( $path[0], '/' ) ) {
 				$path[0] = '/' . $path[0];
 			}
 		}
-	
+
 		unset( $path );
-	
+
 		$preload_data = array_reduce(
 			$preload_paths,
 			'rest_preload_api_request',
@@ -217,6 +227,10 @@ class Main {
 		}
 
 		return array_merge( $custom_templates, $inbuilt_templates );
+	}
 
+	public static function add_block_editor_body_class( $classes ) {
+		$classes .= ' block-editor-page is-fullscreen-mode';
+		return $classes;
 	}
 }
