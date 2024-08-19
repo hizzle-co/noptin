@@ -74,6 +74,10 @@ class Main {
 			$prepared = array();
 			foreach ( $settings['custom_fields'] as $custom_field ) {
 
+				if ( ! empty( $custom_field['label'] ) && empty( $custom_field['merge_tag'] ) ) {
+					$custom_field['merge_tag'] = sanitize_key( preg_replace( '/[^a-z0-9_]/', '_', strtolower( $custom_field['label'] ) ) );
+				}
+
 				// Skip fields that don't have a type, label, or merge tag.
 				if ( empty( $custom_field['type'] ) || empty( $custom_field['label'] ) || empty( $custom_field['merge_tag'] ) ) {
 					continue;

@@ -581,7 +581,8 @@ class Table extends \WP_List_Table {
 
 		$revenue = (float) get_post_meta( $item->id, '_revenue', true );
 		if ( noptin_has_active_license_key() ) {
-			$formatted = apply_filters( 'noptin_format_price', $revenue );
+			$callback  = apply_filters( 'noptin_format_price_callback', '', $revenue );
+			$formatted = empty( $callback ) ? $revenue : call_user_func( $callback, $revenue );
 
 			if ( 0 === $revenue ) {
 				return $formatted;

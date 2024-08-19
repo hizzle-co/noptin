@@ -38,6 +38,8 @@ class Noptin_Custom_Fields {
 			}
 		}
 
+		add_filter( 'noptin_form_editor_data', array( $this, 'form_editor_data' ) );
+
 		// Deprecated functionality.
 		add_action( 'noptin_field_type_optin_markup', array( $this, 'output_preview' ) );
 		add_action( 'noptin_field_type_frontend_optin_markup', array( $this, 'output_frontend' ) );
@@ -118,6 +120,40 @@ class Noptin_Custom_Fields {
 		}
 
 		return apply_filters( 'noptin_default_custom_fields', $fields );
+	}
+
+	/**
+	 * Filters the form editor data.
+	 *
+	 */
+	public function form_editor_data( $data ) {
+		$data['fields'] = array();
+
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+
+			if ( empty( $custom_field['type'] ) || empty( $this->custom_field_types[ $custom_field['type'] ] ) ) {
+				continue;
+			}
+
+			$custom_field['name']  = $custom_field['merge_tag'];
+			$custom_field['id']    = 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
+			$custom_field['value'] = '';
+			$custom_field['vue']   = true;
+
+			/**@var Noptin_Custom_Field_Type */
+			$field = $this->custom_field_types[ $custom_field['type'] ];
+
+			ob_start();
+			$field->output( $custom_field, false );
+			$custom_field['markup']                       = ob_get_clean();
+			$data['fields'][ $custom_field['merge_tag'] ] = array(
+				'label'  => $custom_field['label'],
+				'type'   => $custom_field['type'],
+				'markup' => $custom_field['markup'],
+			);
+		}
+
+		return $data;
 	}
 
 	/**

@@ -97,11 +97,11 @@
 					<input type="hidden" name="noptin_form_id" value="<?php echo esc_attr( $id ); ?>" />
 
 					<?php do_action( 'before_print_noptin_submit_button', $singleLine, $id ); ?>
-					<input
-						value="<?php echo esc_attr( $noptinButtonLabel ); ?>"
-						type="submit"
+
+					<button
 						style="background-color: <?php echo esc_attr( $noptinButtonBg ); ?>; color: <?php echo esc_attr( $noptinButtonColor ); ?>;"
-						class="noptin-form-submit <?php echo $singleLine ? '' : esc_attr( 'noptin-form-button-' . $buttonPosition ); ?>" />
+						type="submit"
+						class="noptin-form-submit <?php echo $singleLine ? '' : esc_attr( 'noptin-form-button-' . $buttonPosition ); ?>"><?php echo wp_kses_post( $noptinButtonLabel ); ?></button>
 				</div>
 				<?php do_action( 'after_print_noptin_form_fields', $singleLine, $id ); ?>
 			<?php endif; ?>

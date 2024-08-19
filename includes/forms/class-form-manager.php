@@ -220,7 +220,7 @@ class Noptin_Form_Manager {
 					'exclude_from_search' => true,
 					'hierarchical'        => false,
 					'query_var'           => false,
-					'supports'            => array( 'title' ),
+					'supports'            => array( 'title', 'custom-fields' ),
 					'has_archive'         => false,
 					'show_in_nav_menus'   => false,
 					'show_in_rest'        => true,

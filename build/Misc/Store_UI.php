@@ -66,6 +66,15 @@ class Store_UI {
 	 */
 	public static function enqueue_scripts( $hook ) {
 
+		$config = include plugin_dir_path( __FILE__ ) . 'assets/js/interface.asset.php';
+
+		wp_register_script(
+			'noptin-interface',
+			plugins_url( 'assets/css/style-interface.css', __FILE__ ),
+			array(),
+			$config['version']
+		);
+
 		// Abort if not on the email subscribers page.
 		if ( ! isset( self::$stores[ $hook ] ) ) {
 			return;
