@@ -49,6 +49,36 @@ class Main {
 			)
 		);
 
+		// Subscribers count.
+		register_post_meta(
+			'noptin-form',
+			'_noptin_subscribers_count',
+			array(
+				'single'        => true,
+				'type'          => 'integer',
+				'default'       => 0,
+				'show_in_rest'  => true,
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			)
+		);
+
+		// Form views.
+		register_post_meta(
+			'noptin-form',
+			'_noptin_form_views',
+			array(
+				'single'        => true,
+				'type'          => 'integer',
+				'default'       => 0,
+				'show_in_rest'  => true,
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			)
+		);
+
 		// Campaign data.
 		register_post_meta(
 			'noptin-form',

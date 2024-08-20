@@ -107,6 +107,10 @@
 		width: 100%;
 	}
 
+	table.noptin-image-block__wrapper img {
+		vertical-align: bottom;
+	}
+
 	table.noptin-button-block__wrapper {
 		border-collapse: separate;
 		width: 100%;
@@ -130,12 +134,6 @@
 
 	.noptin-records__wrapper,
 	.wp-block-noptin-separator {
-		margin-bottom: 16px;
-	}
-	.wp-block-image {
-		margin-top: 0px;
-		margin-left: 0px;
-		margin-right: 0px;
 		margin-bottom: 16px;
 	}
 
