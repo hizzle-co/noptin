@@ -107,5 +107,29 @@ class Main {
 				},
 			)
 		);
+
+		if ( did_action( 'noptin_full_install' ) ) {
+			self::create_default_forms();
+		}
+	}
+
+	/**
+	 * Create default forms
+	 */
+	public static function create_default_forms() {
+		// Create default subscribe form.
+		$count_forms = wp_count_posts( 'noptin-form' );
+
+		if ( 0 < array_sum( (array) $count_forms ) ) {
+			return;
+		}
+
+		$new_form = new \Noptin_Form_Legacy(
+			array(
+				'optinName' => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
+			)
+		);
+
+		$new_form->save();
 	}
 }

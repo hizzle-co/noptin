@@ -113,29 +113,7 @@ class Noptin_Install {
 	 */
 	private function do_full_install() {
 
-		// Create default subscribe form.
-		$count_forms = wp_count_posts( 'noptin-form' );
-		if ( class_exists( 'WooCommerce' ) && empty( $count_forms ) && ! get_option( 'noptin_created_initial_form' ) ) {
-			update_option( 'noptin_created_initial_form', '1' );
-
-			$new_form = new Noptin_Form(
-				array(
-					'title'    => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
-					'settings' => array(
-						'fields' => array( 'email' ),
-						'submit' => __( 'Subscribe', 'newsletter-optin-box' ),
-						'labels' => 'show',
-					),
-				)
-			);
-
-			$new_form->save();
-		}
-
-		// Use the new editor for new installs.
-		if ( class_exists( 'WooCommerce' ) ) {
-			update_option( 'noptin_use_new_forms', '1' );
-		}
+		do_action( 'noptin_full_install' );
 
 		// Save installation date.
 		update_option( 'noptin_install_date', time() );
