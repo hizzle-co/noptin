@@ -26,7 +26,7 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 	public function output( $args, $subscriber ) {
 
 		?>
-
+			<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="0" />
 			<label>
 				<input
 					name="<?php echo esc_attr( $args['name'] ); ?>"

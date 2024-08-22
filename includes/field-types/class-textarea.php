@@ -39,7 +39,7 @@ class Noptin_Custom_Field_Textarea extends Noptin_Custom_Field_Type {
 				<?php else : ?>
 					:placeholder="field.type.label"
 				<?php endif; ?>
-			><?php echo esc_textarea( $args['value'] ); ?></textarea>
+			><?php echo isset( $args['value'] ) ? esc_textarea( $args['value'] ) : ''; ?></textarea>
 		<?php
 
 	}
