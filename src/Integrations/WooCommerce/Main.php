@@ -37,7 +37,7 @@ class Main {
 	}
 
 	public static function price_format_cb() {
-		return 'hpay_format_amount';
+		return 'wc_price';
 	}
 
 	/**
