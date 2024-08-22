@@ -48,7 +48,7 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 			return new Customer( 0 );
 		}
 
-		return new \WC_Customer( $user->ID );
+		return new Customer( $user->ID );
 	}
 
 	/**

@@ -31,9 +31,13 @@ class Main {
 		add_action( 'noptin_register_post_type_objects', array( $this, 'register_custom_objects' ) );
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
-		add_filter( 'noptin_format_price', 'wc_price' );
+		add_filter( 'noptin_format_price_callback', __CLASS__ . '::price_format_cb' );
 		$this->email_template = new Template();
 		$this->migrate        = new Migrate();
+	}
+
+	public static function price_format_cb() {
+		return 'hpay_format_amount';
 	}
 
 	/**
