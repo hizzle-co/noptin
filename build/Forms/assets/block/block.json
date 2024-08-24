@@ -1,0 +1,92 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "noptin/form",
+    "version": "2",
+    "title": "Newsletter Form",
+    "description": "Displays a pre-built newsletter form",
+    "icon": "forms",
+    "category": "widgets",
+    "attributes": {
+        "form": {
+            "type": "string",
+            "default": "0"
+        }
+    },
+    "example": {
+        "attributes": {
+            "form": "0"
+        }
+    },
+    "textdomain": "newsletter-optin-box",
+    "editorScript": "file:../js/block.js",
+    "style": "noptin-form__new",
+    "viewScript": "noptin-form__new",
+    "render": "file:./render.php",
+    "keywords": [
+        "noptin",
+        "newsletter",
+        "optin",
+        "email",
+        "subscribe"
+    ],
+    "supports": {
+        "anchor": false,
+        "align": true,
+        "background": {
+            "backgroundImage": true,
+            "backgroundSize": true
+        },
+        "dimensions": {
+            "minHeight": true
+        },
+        "html": false,
+        "shadow": true,
+        "spacing": {
+            "padding": true,
+            "margin": true,
+            "__experimentalDefaultControls": {
+                "margin": false,
+                "padding": false
+            }
+        },
+        "color": {
+            "text": true,
+            "background": true,
+            "enableContrastChecker": true,
+            "link": true,
+            "gradients": true,
+            "button": true,
+            "__experimentalDefaultControls": {
+                "background": true,
+                "text": true
+            }
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true,
+            "__experimentalFontFamily": true,
+            "__experimentalFontStyle": true,
+            "__experimentalFontWeight": true,
+            "__experimentalLetterSpacing": true,
+            "__experimentalTextTransform": true,
+            "__experimentalTextDecoration": true,
+            "__experimentalWritingMode": true,
+            "__experimentalDefaultControls": {
+                "fontSize": true
+            }
+        },
+        "__experimentalBorder": {
+            "color": true,
+            "radius": true,
+            "style": true,
+            "width": true,
+            "__experimentalDefaultControls": {
+                "color": true,
+                "radius": true,
+                "style": true,
+                "width": true
+            }
+        }
+    }
+}

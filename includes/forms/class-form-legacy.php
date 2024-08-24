@@ -842,6 +842,7 @@ class Noptin_Form_Legacy {
 		$type       = esc_attr( $this->optinType );
 		$id         = $this->id;
 		$id_class   = "noptin-form-id-$id";
+		$html_id    = wp_unique_id( 'noptin-form-' );
 		$type_class = "noptin-$type-main-wrapper";
 
 		if ( 'popup' !== $type ) {
@@ -851,11 +852,32 @@ class Noptin_Form_Legacy {
 
 		}
 
+		$border = $this->formBorder;
+		$colors = array(
+			'background'  => $this->noptinFormBg,
+			'border'      => empty( $border ) || empty( $border['border_color'] ) ? false : $border['border_color'],
+			'button'      => $this->noptinButtonBg,
+			'button-text' => $this->noptinButtonColor,
+			'title'       => $this->titleColor,
+			'description' => $this->descriptionColor,
+			'prefix'      => $this->prefixColor,
+			'note'        => $this->noteColor,
+		);
+
+		$attr = '';
+
+		foreach ( $colors as $key => $color ) {
+			if ( ! empty( $color ) ) {
+				$attr .= " --noptin-$key-color: $color;";
+			}
+		}
+
 		?>
-			<div class="<?php echo esc_attr( "$type_class $id_class" ); ?> noptin-optin-main-wrapper">
+			<div class="<?php echo esc_attr( "$type_class $id_class" ); ?>  noptin-optin-main-wrapper" <?php echo 'popup' === $type ? 'aria-hidden="true" tabindex="-1"' : ''; ?> id="<?php echo esc_attr( $html_id ); ?>" aria-labelledby="<?php echo esc_attr( $html_id ); ?>__title" style="<?php echo esc_attr( $attr ); ?>">
 
 				<?php if ( 'popup' === $type ) : ?>
-					<div class="noptin-popup-optin-inner-wrapper"></div>
+					<div class="noptin-popup__overlay" data-a11y-dialog-hide></div>
+					<div class="noptin-popup__container">
 				<?php endif; ?>
 
 				<?php if ( ! empty( $this->CSS ) ) : ?>
@@ -863,6 +885,17 @@ class Noptin_Form_Legacy {
 				<?php endif; ?>
 
 				<?php $this->render_form(); ?>
+
+				<?php if ( 'popup' === $this->optinType || 'slide_in' === $this->optinType ) : ?>
+					<button
+						class="noptin-popup__close"
+						type="button"
+						data-a11y-dialog-hide
+						aria-label="Close dialog"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				<?php endif; ?>
 
 				<?php if ( 'popup' === $type ) : ?>
 					</div>

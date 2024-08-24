@@ -223,12 +223,9 @@ class Noptin_Form_Output_Manager {
 		// Maybe force a form id.
 		$args['html_id'] = empty( $args['html_id'] ) ? 'noptin-form-' . absint( $this->count ) : $args['html_id'];
 
-		// Set a unique id for these args.
-		$args['unique_id'] = 'noptin_frm_' . md5( wp_json_encode( $args ) );
-
 		// (Maybe) cache this instance.
-		if ( ! $is_form_shortcode && ! get_option( $args['unique_id'] ) ) {
-			update_option( $args['unique_id'], $args, true );
+		if ( ! $is_form_shortcode ) {
+			$args['noptin-config'] = noptin_encrypt( wp_json_encode( $args ) );
 		}
 
 		// Generate the form HTML.

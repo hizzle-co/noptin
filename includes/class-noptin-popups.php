@@ -51,15 +51,13 @@ class Noptin_Popups {
 
 			// Can it be displayed?
 			if ( $form->can_show() ) {
-				echo '<div class="noptin-popup-template-holder">';
 				$form->display();
-				echo '</div>';
 				$displayed = true;
 			}
 		}
 
 		if ( $displayed ) {
-			wp_enqueue_script( 'noptin-legacy-popups' );
+			// wp_enqueue_script( 'noptin-legacy-popups' );
 		}
 
 		/**

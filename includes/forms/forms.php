@@ -356,7 +356,8 @@ function prepare_noptin_form_fields( $fields ) {
 		if ( is_string( $custom_field ) ) {
 			$custom_field = get_noptin_custom_field( $custom_field );
 		} else {
-			$_custom_field = get_noptin_custom_field( $custom_field['type'] );
+			$field_type    = is_array( $custom_field['type'] ) ? $custom_field['type']['type'] : $custom_field['type'];
+			$_custom_field = get_noptin_custom_field( $field_type );
 
 			if ( empty( $_custom_field ) ) {
 				continue;

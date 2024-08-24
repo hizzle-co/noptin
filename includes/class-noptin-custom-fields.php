@@ -212,7 +212,7 @@ class Noptin_Custom_Fields {
 				continue;
 			}
 
-			$custom_field['name']     = $custom_field['merge_tag'];
+			$custom_field['name']     = 'noptin_fields[' . $custom_field['merge_tag'] . ']';
 			$custom_field['id']       = uniqid( sanitize_html_class( $custom_field['merge_tag'] ) );
 			$custom_field['value']    = '';
 			$custom_field['required'] = ! empty( $field['require'] ) && 'false' !== $field['require'];

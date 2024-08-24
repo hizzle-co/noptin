@@ -25,11 +25,6 @@ class Noptin_Form_Manager {
 	public $output_manager;
 
 	/**
-	 * @var Noptin_Form_Listener
-	 */
-	public $listener;
-
-	/**
 	 * @var Noptin_Form_Tags
 	 */
 	public $tags;
@@ -60,7 +55,6 @@ class Noptin_Form_Manager {
 		// Init class properties.
 		$this->output_manager = new Noptin_Form_Output_Manager();
 		$this->tags           = new Noptin_Form_Tags();
-		$this->listener       = new Noptin_Form_Listener();
 		$this->previewer      = new Noptin_Form_Previewer();
 		$this->assets         = new Noptin_Form_Asset_Manager();
 		$this->admin          = new Noptin_Form_Admin();
@@ -76,7 +70,6 @@ class Noptin_Form_Manager {
 
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-element.php'; // Displays opt-in forms.
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-tags.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-form-listener.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-previewer.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form.php'; // Container for a single form.
@@ -101,17 +94,10 @@ class Noptin_Form_Manager {
 		do_action( 'before_init_noptin_form_manager', $this );
 
 		add_action( 'init', array( $this, 'register_post_type' ) );
-		add_action( 'init', array( $this, 'register_block_type' ) );
 		add_action( 'widgets_init', array( $this, 'register_widget' ) );
-		add_action( 'rest_api_init', array( $this, 'register_endpoint' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor_for_forms' ), 10, 2 );
 
-		// Log form impressions.
-		add_action( 'wp_ajax_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
-		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( $this, 'log_form_impression' ) );
-
 		// Init modules.
-		$this->listener->add_hooks();
 		$this->output_manager->add_hooks();
 		$this->assets->add_hooks();
 		$this->tags->add_hooks();
@@ -125,51 +111,6 @@ class Noptin_Form_Manager {
 		 * @since 1.6.2
 		 */
 		do_action( 'init_noptin_form_manager', $this );
-
-	}
-
-	/**
-	 * Register our form block type.
-	 */
-	public function register_block_type() {
-
-		// Bail if register_block_type does not exist (available since WP 5.0)
-		if ( ! function_exists( 'register_block_type' ) ) {
-			return;
-		}
-
-		/**
-		 * Fires before the newsletter sign-up form block type is registered.
-		 *
-		 * @param Noptin_Form_Manager $manager
-		 * @since 1.6.2
-		 */
-		do_action( 'before_register_noptin_form_block_type', $this );
-
-		if ( is_using_new_noptin_forms() ) {
-
-			// Displays a normal sign-up form.
-			register_block_type(
-				'noptin/form',
-				array(
-					'render_callback' => array( $this->output_manager, 'shortcode' ),
-				)
-			);
-
-		} else {
-
-			// Allows users to create forms on the fly.
-			register_block_type( 'noptin/email-optin', array() );
-
-		}
-
-		/**
-		 * Fires after the newsletter sign-up form block type is registered.
-		 *
-		 * @param Noptin_Form_Manager $manager
-		 * @since 1.6.2
-		 */
-		do_action( 'register_noptin_form_block_type', $this );
 
 	}
 
@@ -274,54 +215,6 @@ class Noptin_Form_Manager {
 	}
 
 	/**
-	 * Register an API endpoint for handling a form.
-	 */
-	public function register_endpoint() {
-
-		/**
-		 * Fires before the newsletter sign-up REST API endpoint is registered.
-		 *
-		 * @param Noptin_Form_Manager $manager
-		 * @since 1.6.2
-		 */
-		do_action( 'before_register_noptin_form_api_endpoint', $this );
-
-		register_rest_route(
-			'noptin/v1',
-			'/form',
-			array(
-				'methods'             => 'POST',
-				'permission_callback' => '__return_true',
-				'callback'            => array( $this, 'handle_endpoint' ),
-			)
-		);
-
-		/**
-		 * Fires after the newsletter sign-up REST API endpoint is registered.
-		 *
-		 * @param Noptin_Form_Manager $manager
-		 * @since 1.6.2
-		 */
-		do_action( 'register_noptin_form_api_endpoint', $this );
-	}
-
-	/**
-	 * Process requests to the form endpoint.
-	 *
-	 * @param WP_REST_Request $request
-	 */
-	public function handle_endpoint( $request ) {
-
-		$this->listener->submitted = $request;
-
-		// Force listen.
-		$this->listener->process_request();
-
-		// Send back the result.
-		return rest_ensure_response( $this->listener->get_response_json() );
-	}
-
-	/**
 	 * Displays a subscription form.
 	 *
 	 * @param int|array $form_id_or_configuration An id of a saved form or an array of arguments with which to generate a form on the fly.
@@ -357,28 +250,6 @@ class Noptin_Form_Manager {
 	 */
 	public function get_tags() {
 		return $this->tags->all();
-	}
-
-	/**
-	 * Logs a form view
-	 *
-	 * @access      public
-	 * @since       1.6.2
-	 * @return      void
-	 */
-	public function log_form_impression() {
-
-		// Verify nonce.
-		check_ajax_referer( 'noptin' );
-
-		// Increase view count.
-		if ( ! empty( $_POST['form_id'] ) ) {
-			increment_noptin_form_views( intval( $_POST['form_id'] ) );
-		}
-
-		// Send success.
-		wp_send_json_success();
-
 	}
 
 	/**

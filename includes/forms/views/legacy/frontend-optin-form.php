@@ -94,7 +94,7 @@
 						</div>
 					<?php endif; ?>
 
-					<input type="hidden" name="noptin_form_id" value="<?php echo esc_attr( $id ); ?>" />
+					<input type="hidden" name="source" value="<?php echo esc_attr( $id ); ?>" />
 
 					<?php do_action( 'before_print_noptin_submit_button', $singleLine, $id ); ?>
 
@@ -118,22 +118,9 @@
 				<div style="color:<?php echo esc_attr( $noteColor ); ?>;<?php echo esc_attr( $noteTypography['generated'] ); ?><?php echo esc_attr( $noteAdvanced['generated'] ); ?>" class="noptin-form-note"><?php echo wp_kses_post( do_shortcode( $note ) ); ?></div>
 			<?php endif; ?>
 
-			<div style="border:1px solid rgba(6, 147, 227, 0.8);display:none;padding:10px;margin-top:10px" class="noptin_feedback_success"></div>
-			<div style="border:1px solid rgba(227, 6, 37, 0.8);display:none;padding:10px;margin-top:10px" class="noptin_feedback_error"></div>
+			<div class="noptin-form-notice noptin-response" role="alert"></div>
 		</div>
 
-		<?php if ( 'popup' === $optinType || 'slide_in' === $optinType ) : ?>
-			<span class="noptin-popup-close"
-				title="close"><svg enable-background="new 0 0 24 24" id="Layer_1" version="1.0" viewBox="0 0 24 24"
-					xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-					<g>
-						<path
-							fill="<?php echo esc_attr( $descriptionColor ); ?>"
-							d="M12,2C6.5,2,2,6.5,2,12c0,5.5,4.5,10,10,10s10-4.5,10-10C22,6.5,17.5,2,12,2z M16.9,15.5l-1.4,1.4L12,13.4l-3.5,3.5   l-1.4-1.4l3.5-3.5L7.1,8.5l1.4-1.4l3.5,3.5l3.5-3.5l1.4,1.4L13.4,12L16.9,15.5z" />
-					</g>
-				</svg>
-			</span>
-		<?php endif; ?>
 	</form>
 
 	<?php if ( $imageMain ) : ?>

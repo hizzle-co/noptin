@@ -8,25 +8,21 @@
  * @package           Noptin
  */
 
+namespace Hizzle\Noptin\Forms;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Listens to form submissions.
- *
- * This class only listens to form submissions made from [noptin] shortcode,
- * block, widget, and the new opt-in forms.
- *
- * Legacy opt-in forms are listened in Noptin_Ajax::add_subscriber().
+ * Listens for form submissions.
  *
  * @see show_noptin_form()
- * @see Noptin_Ajax::add_subscriber()
  * @since 1.6.2
  */
-class Noptin_Form_Listener {
+class Listener {
 
 	/**
-	 * @var WP_Error Contains errors resulting from this submission.
+	 * @var \WP_Error Contains errors resulting from this submission.
 	 */
 	public $error;
 
@@ -57,7 +53,7 @@ class Noptin_Form_Listener {
 	public $subscriber_id;
 
 	/**
-	 * @var array|WP_REST_Request An array of submitted data.
+	 * @var array|\WP_REST_Request An array of submitted data.
 	 */
 	public $submitted = array();
 
@@ -72,26 +68,30 @@ class Noptin_Form_Listener {
 	 * @since 1.6.2
 	 * @ignore
 	 */
-	public function add_hooks() {
+	public function __construct() {
 
-		$this->error = new WP_Error();
+		$this->error = new \WP_Error();
 
 		// Prepare submitted data.
 		$submitted  = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
 
-		// Abort if this is not a subscription request.
-		if ( empty( $submitted['noptin_process_request'] ) ) {
-			return;
-		}
-
 		$this->submitted = $submitted;
 
 		// Process subscription requests.
-		add_action( 'init', array( $this, 'process_request' ) );
+		if ( ! empty( $submitted['noptin_process_request'] ) ) {
+			add_action( 'init', array( $this, 'process_request' ) );
+		}
+
+		// User is subscribing via REST.
+		add_action( 'rest_api_init', array( $this, 'register_endpoint' ) );
 
 		// User is subscribing via ajax.
 		add_action( 'wp_ajax_noptin_process_ajax_subscriber', array( $this, 'ajax_add_subscriber' ) );
 		add_action( 'wp_ajax_nopriv_noptin_process_ajax_subscriber', array( $this, 'ajax_add_subscriber' ) );
+
+		// Log form impressions.
+		add_action( 'wp_ajax_noptin_log_form_impression', array( __CLASS__, 'log_form_impression' ) );
+		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( __CLASS__, 'log_form_impression' ) );
 	}
 
 	/**
@@ -115,7 +115,7 @@ class Noptin_Form_Listener {
 		}
 
 		// Spam checks.
-		if ( ! isset( $this->submitted['noptin_timestamp'] ) || $this->submitted['noptin_timestamp'] > ( time() - 2 ) ) {
+		if ( ! isset( $this->submitted['noptin_timestamp'] ) || ! isset( $this->submitted['noptin_submitted'] ) || ( (int) $this->submitted['noptin_timestamp'] + 3 ) > (int) $this->submitted['noptin_submitted'] ) {
 			return $this->error->add( 'error', get_noptin_form_message( 'error' ) );
 		}
 
@@ -130,7 +130,7 @@ class Noptin_Form_Listener {
 
 		$source = $this->get_submitted( 'source' );
 
-		if ( is_numeric( $source ) && get_post_meta( (int) $source, 'form_settings', true ) && 'publish' !== get_post_status( (int) $source ) ) {
+		if ( is_numeric( $source ) && 'noptin-form' === get_post_type( (int) $source ) && 'publish' !== get_post_status( (int) $source ) ) {
 			return $this->error->add( 'error', __( 'This form is in-active.', 'newsletter-optin-box' ) );
 		}
 
@@ -161,7 +161,7 @@ class Noptin_Form_Listener {
 		 *
 		 * @since 1.6.2
 		 *
-		 * @param Noptin_Form_Listener $listener
+		 * @param Listener $listener
 		 */
 		do_action( 'noptin_form_errors', $this );
 
@@ -218,7 +218,7 @@ class Noptin_Form_Listener {
 		 * @see get_noptin_custom_field
 		 * @see get_noptin_custom_fields
 		 * @param array $custom_fields
-		 * @param Noptin_Form_Listener $listener
+		 * @param Listener $listener
 		 *
 		 */
 		return apply_filters( 'custom_noptin_fields_to_process', prepare_noptin_form_fields( $this->get_cached( 'fields' ) ), $this );
@@ -255,6 +255,11 @@ class Noptin_Form_Listener {
 			$subscriber['GDPR_consent'] = 1;
 		}
 
+		// Backwards compatibility.
+		if ( ! empty( $this->submitted['noptin_gdpr_checkbox'] ) ) {
+			$subscriber['GDPR_consent'] = 1;
+		}
+
 		// Add the subscriber's IP address...
 		$address = noptin_get_user_ip();
 		if ( ! empty( $address ) && '::1' !== $address ) {
@@ -272,14 +277,14 @@ class Noptin_Form_Listener {
 		}
 
 		// Finally, add connection data.
-		$subscriber = Noptin_Hooks::add_connections( $subscriber, $this->get_cached( null, array() ) );
+		$subscriber = \Noptin_Hooks::add_connections( $subscriber, $this->get_cached( null, array() ) );
 
 		/**
 		 * Filters subscriber details when adding a new subscriber via a noptin form.
 		 *
 		 * @param array $subscriber Subscriber details
 		 * @param string $source Subscriber source
-		 * @param Noptin_Form_Listener $listener The listener object
+		 * @param Listener $listener The listener object
 		 * @since 1.6.2
 		 */
 		$subscriber = apply_filters( 'noptin_form_subscriber_details', $subscriber, $source, $this );
@@ -308,7 +313,7 @@ class Noptin_Form_Listener {
 			 *
 			 * @param int $subscriber_id
 			 * @param array $subscriber_data
-			 * @param Noptin_Form_Listener $listener The listener object
+			 * @param Listener $listener The listener object
 			 */
 			do_action( 'noptin_form_updated_subscriber', $subscriber_id, $subscriber, $this );
 			return;
@@ -338,7 +343,7 @@ class Noptin_Form_Listener {
 		 *
 		 * @param int $subscriber_id
 		 * @param array $subscriber_data
-		 * @param Noptin_Form_Listener $listener The listener object
+		 * @param Listener $listener The listener object
 		 */
 		do_action( 'noptin_form_subscribed', $subscriber_id, $subscriber, $this );
 	}
@@ -372,7 +377,7 @@ class Noptin_Form_Listener {
 		 * @since 1.6.2
 		 *
 		 * @param string $email
-		 * @param Noptin_Form_Listener $listener
+		 * @param Listener $listener
 		 *
 		 */
 		do_action( 'noptin_form_unsubscribed', $email, $this );
@@ -395,7 +400,7 @@ class Noptin_Form_Listener {
 			 *
 			 * @since 1.6.2
 			 *
-			 * @param Noptin_Form_Listener $listener
+			 * @param Listener $listener
 			 */
 			do_action( 'noptin_form_success', $this );
 
@@ -406,7 +411,7 @@ class Noptin_Form_Listener {
 			 *
 			 * @since 1.6.2
 			 *
-			 * @param Noptin_Form_Listener $listener
+			 * @param Listener $listener
 			 */
 			do_action( 'noptin_form_error', $this );
 
@@ -429,7 +434,7 @@ class Noptin_Form_Listener {
 				 *
 				 * @since 1.6.2
 				 * @see get_default_noptin_form_messages()
-				 * @param Noptin_Form_Listener $listener
+				 * @param Listener $listener
 				 */
 				do_action( "noptin_form_error_$error", $this );
 
@@ -441,7 +446,7 @@ class Noptin_Form_Listener {
 		 *
 		 * @since 1.6.2
 		 *
-		 * @param Noptin_Form_Listener $listener
+		 * @param Listener $listener
 		 */
 		do_action( 'noptin_form_respond', $this );
 
@@ -451,7 +456,6 @@ class Noptin_Form_Listener {
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
 			exit;
 		}
-
 	}
 
 	/**
@@ -478,7 +482,7 @@ class Noptin_Form_Listener {
 		 * @since 1.6.2
 		 *
 		 * @param string $redirect_url
-		 * @param Noptin_Form_Listener $listener
+		 * @param Listener $listener
 		 */
 		return apply_filters( 'noptin_form_redirect_url', trim( $this->get_cached( 'redirect' ) ), $this );
 	}
@@ -507,35 +511,31 @@ class Noptin_Form_Listener {
 
 		// Maybe retrieve from cache.
 		if ( null === $this->cached ) {
+			$this->cached = array();
 
-			// Prepare args.
-			$cached    = array();
-			$source    = $this->get_submitted( 'source' );
-			$cache_key = $this->get_submitted( 'noptin_unique_id' );
+			$config = noptin_decrypt( $this->get_submitted( 'noptin-config' ) );
 
-			if ( empty( $cache_key ) && empty( $source ) ) {
-				return null === $key ? array() : $default;
+			if ( ! empty( $config ) ) {
+				$this->cached = json_decode( $config, true );
 			}
 
+			// Prepare args.
+			$source = $this->get_submitted( 'source' );
+
 			// Retrieve from form settings.
-			if ( is_numeric( $source ) ) {
+			if ( is_numeric( $source ) && 0 < (int) $source ) {
 				$form_settings = get_post_meta( (int) $source, 'form_settings', true );
 
 				if ( ! empty( $form_settings ) ) {
-					$cached = $form_settings;
+					$this->cached = array_merge( $this->cached, $form_settings );
+				}
+
+				$form_state = get_post_meta( (int) $source, '_noptin_state', true );
+
+				if ( is_object( $form_state ) || is_array( $form_state ) ) {
+					$this->cached = array_merge( $this->cached, (array) $form_state );
 				}
 			}
-
-			// Retrieve cache by the submitted cache key.
-			if ( ! empty( $cache_key ) ) {
-				$saved_cache = get_option( $cache_key );
-
-				if ( ! empty( $saved_cache ) ) {
-					$cached = array_merge( $cached, $saved_cache );
-				}
-			}
-
-			$this->cached = $cached;
 		}
 
 		// Are we retrieving the entire cache?
@@ -556,7 +556,7 @@ class Noptin_Form_Listener {
 	public function get_response_html( $force_response = false ) {
 
 		// Check if form was submitted.
-		if ( empty( $this->processed_form ) ) {
+		if ( is_null( $this->processed_form ) ) {
 
 			if ( ! $force_response ) {
 				return '<div class="noptin-form-notice noptin-response" role="alert"></div>';
@@ -629,7 +629,7 @@ class Noptin_Form_Listener {
 		 * @since 1.6.2
 		 *
 		 * @param string $html The complete HTML string of the response, excluding the wrapper element.
-		 * @param Noptin_Form_Listener $listener The listener object
+		 * @param Listener $listener The listener object
 		 */
 		$html = (string) apply_filters( 'noptin_form_response_html', $html, $this );
 
@@ -657,7 +657,6 @@ class Noptin_Form_Listener {
 				'success' => false,
 				'data'    => $html_response,
 			);
-
 		}
 
 		// Prepare the response and an optional redirect URL.
@@ -684,7 +683,54 @@ class Noptin_Form_Listener {
 			'success' => true,
 			'data'    => $response,
 		);
+	}
 
+	/**
+	 * Register an API endpoint for handling a form.
+	 */
+	public function register_endpoint() {
+
+		/**
+		 * Fires before the newsletter sign-up REST API endpoint is registered.
+		 *
+		 * @param Listener $manager
+		 * @since 1.6.2
+		 */
+		do_action( 'before_register_noptin_form_api_endpoint', $this );
+
+		register_rest_route(
+			'noptin/v1',
+			'/form',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => '__return_true',
+				'callback'            => array( $this, 'handle_endpoint' ),
+			)
+		);
+
+		/**
+		 * Fires after the newsletter sign-up REST API endpoint is registered.
+		 *
+		 * @param Listener $manager
+		 * @since 1.6.2
+		 */
+		do_action( 'register_noptin_form_api_endpoint', $this );
+	}
+
+	/**
+	 * Process requests to the form endpoint.
+	 *
+	 * @param \WP_REST_Request $request
+	 */
+	public function handle_endpoint( $request ) {
+
+		$this->submitted = $request;
+
+		// Force listen.
+		$this->process_request();
+
+		// Send back the result.
+		return rest_ensure_response( $this->get_response_json() );
 	}
 
 	/**
@@ -700,4 +746,24 @@ class Noptin_Form_Listener {
 		wp_send_json( $this->get_response_json() );
 	}
 
+	/**
+	 * Logs a form view
+	 *
+	 * @access      public
+	 * @since       1.6.2
+	 * @return      void
+	 */
+	public static function log_form_impression() {
+
+		// Verify nonce.
+		check_ajax_referer( 'noptin_subscription_nonce' );
+
+		// Increase view count.
+		if ( ! empty( $_POST['form_id'] ) ) {
+			increment_noptin_form_views( intval( $_POST['form_id'] ) );
+		}
+
+		// Send success.
+		wp_send_json_success();
+	}
 }

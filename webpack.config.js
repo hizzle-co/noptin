@@ -8,8 +8,6 @@ module.exports = {
 		admin: "./includes/assets/js/src/admin.js",
 		"legacy-forms": "./includes/assets/js/src/legacy-forms.js",
 		"legacy-popups": "./includes/assets/js/src/legacy-popups.js",
-		blocks: "./includes/assets/js/src/blocks.js",
-		"blocks-new": "./includes/assets/js/src/blocks-new.js",
 		"blocks-woocommerce-backend": "./includes/assets/js/src/wc/index.js",
 		"blocks-woocommerce-frontend": "./includes/assets/js/src/wc/frontend.js",
 		"form-scripts": "./includes/assets/js/src/form-scripts.js",

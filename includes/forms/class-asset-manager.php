@@ -40,7 +40,6 @@ class Noptin_Form_Asset_Manager {
 		add_action( 'before_output_noptin_form', array( $this, 'before_output_form' ) );
 		add_action( 'before_output_legacy_noptin_form', array( $this, 'before_output_legacy_form' ) );
 		add_action( 'script_loader_tag', array( $this, 'add_defer_attribute' ), 10, 2 );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_gutenberg_assets' ) );
 	}
 
 	/**
@@ -115,7 +114,7 @@ class Noptin_Form_Asset_Manager {
 		if ( is_using_new_noptin_forms() ) {
 			wp_enqueue_style( 'noptin_form_styles' );
 		} else {
-			wp_enqueue_style( 'noptin_front' );
+			//wp_enqueue_style( 'noptin_front' );
 		}
 
 	}
@@ -132,7 +131,7 @@ class Noptin_Form_Asset_Manager {
 
 		// Maybe load legacy form scripts.
 		if ( apply_filters( 'noptin_load_legacy_form_scripts', ( $this->load_legacy_scripts || ! is_using_new_noptin_forms() ) ) ) {
-			wp_enqueue_script( 'noptin_front' );
+			//wp_enqueue_script( 'noptin_front' );
 
 			if ( is_using_new_noptin_forms() ) {
 				wp_enqueue_style( 'noptin_front' );
@@ -172,64 +171,4 @@ class Noptin_Form_Asset_Manager {
 	public function before_output_legacy_form() {
 		$this->load_legacy_scripts = true;
 	}
-
-	/**
-	 * Load gutenberg files
-	 *
-	 */
-	public function enqueue_gutenberg_assets() {
-		global $pagenow;
-
-		wp_enqueue_style( 'noptin_front' );
-
-		if ( is_using_new_noptin_forms() ) {
-
-			wp_enqueue_script(
-				'noptin-form-block',
-				noptin()->plugin_url . 'includes/assets/js/dist/blocks-new.js',
-				array( 'wp-blocks', 'wp-i18n', 'wp-element', 'underscore', 'wp-components' ),
-				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks-new.js' ),
-				true
-			);
-
-		} elseif ( 'widgets.php' !== $pagenow ) {
-
-			wp_enqueue_script(
-				'noptin-form-block',
-				noptin()->plugin_url . 'includes/assets/js/dist/blocks.js',
-				array( 'wp-blocks', 'wp-editor', 'wp-i18n', 'wp-element', 'underscore', 'wp-components' ),
-				filemtime( noptin()->plugin_path . 'includes/assets/js/dist/blocks.js' ),
-				true
-			);
-
-		}
-
-		$forms = get_posts(
-			array(
-				'numberposts' => -1,
-				'post_status' => array( 'publish' ),
-				'post_type'   => 'noptin-form',
-			)
-		);
-
-		$data = array(
-			array(
-				'label' => __( 'Default Form', 'newsletter-optin-box' ),
-				'value' => 0,
-			),
-			array(
-				'label' => __( 'Single-line / Horizontal Form', 'newsletter-optin-box' ),
-				'value' => -1,
-			),
-		);
-
-		foreach ( $forms as $form ) {
-			$data[] = array(
-				'label' => $form->post_title,
-				'value' => $form->ID,
-			);
-		}
-		wp_localize_script( 'noptin-form-block', 'noptin_forms', $data );
-	}
-
 }

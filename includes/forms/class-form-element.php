@@ -61,7 +61,7 @@ class Noptin_Form_Element {
 	 * @return string
 	 */
 	public function get_response_html() {
-		return noptin()->forms->listener->get_response_html();
+		return \Hizzle\Noptin\Forms\Main::$listener->get_response_html();
 	}
 
 	/**
@@ -379,9 +379,12 @@ class Noptin_Form_Element {
 		noptin_hidden_field( 'noptin_process_request', '1' );
 		noptin_hidden_field( 'noptin_timestamp', time() );
 		noptin_hidden_field( 'noptin_element_id', $this->id );
-		noptin_hidden_field( 'noptin_unique_id', $this->args['unique_id'] );
 		noptin_hidden_field( 'source', $this->args['source'] );
 		noptin_hidden_field( 'form_action', empty( $this->args['is_unsubscribe'] ) ? 'subscribe' : 'unsubscribe' );
+
+		if ( ! empty( $this->args['noptin-config'] ) ) {
+			noptin_hidden_field( 'noptin-config', $this->args['noptin-config'] );
+		}
 
 		// Honeypot.
 		?>

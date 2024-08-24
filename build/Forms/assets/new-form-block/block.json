@@ -1,0 +1,133 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "noptin/email-optin",
+    "version": "2",
+    "title": "Newsletter Optin",
+    "description": "Displays a newsletter subscription form",
+    "icon": "forms",
+    "category": "widgets",
+    "attributes": {
+        "style": {
+            "type": "object",
+            "default": {
+                "color": {
+                    "text": "#32373c",
+                    "background": "#eeeeee"
+                },
+                "elements": {
+                    "button": {
+                        "color": {
+                            "text": "#fafafa",
+                            "background": "#313131"
+                        }
+                    }
+                },
+                "border": {
+                    "color": "#eeeeee",
+                    "radius": "0px",
+                    "style": "solid",
+                    "width": "2px"
+                }
+            }
+        },
+        "button": {
+            "type": "string",
+            "default": "SUBSCRIBE"
+        },
+        "redirect": {
+            "type": "string",
+            "default": ""
+        }
+    },
+    "example": {
+        "attributes": {
+            "content": "Hello world"
+        }
+    },
+    "textdomain": "newsletter-optin-box",
+    "editorScript": "file:../js/new-form-block.js",
+    "style": "file:../css/style-new-form-block.css",
+    "viewScript": "noptin-form__new",
+    "keywords": [
+        "noptin",
+        "newsletter",
+        "optin",
+        "email",
+        "subscribe"
+    ],
+    "supports": {
+        "anchor": true,
+        "align": true,
+        "background": {
+            "backgroundImage": true,
+            "backgroundSize": true
+        },
+        "dimensions": {
+            "minHeight": true
+        },
+        "html": false,
+        "shadow": true,
+        "spacing": {
+            "padding": true,
+            "margin": true,
+            "__experimentalDefaultControls": {
+                "margin": false,
+                "padding": false
+            }
+        },
+        "color": {
+            "text": true,
+            "background": true,
+            "enableContrastChecker": true,
+            "link": true,
+            "gradients": true,
+            "button": true,
+            "__experimentalDefaultControls": {
+                "background": true,
+                "text": true
+            }
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true,
+            "__experimentalFontFamily": true,
+            "__experimentalFontStyle": true,
+            "__experimentalFontWeight": true,
+            "__experimentalLetterSpacing": true,
+            "__experimentalTextTransform": true,
+            "__experimentalTextDecoration": true,
+            "__experimentalWritingMode": true,
+            "__experimentalDefaultControls": {
+                "fontSize": true
+            }
+        },
+        "__experimentalBorder": {
+            "color": true,
+            "radius": true,
+            "style": true,
+            "width": true,
+            "__experimentalDefaultControls": {
+                "color": true,
+                "radius": true,
+                "style": true,
+                "width": true
+            }
+        }
+    },
+    "styles": [
+        {
+            "name": "default",
+            "label": "Default",
+            "isDefault": true
+        },
+        {
+            "name": "noptin-unstyled",
+            "label": "Unstyled"
+        },
+        {
+            "name": "noptin-flex",
+            "label": "Single Line"
+        }
+    ]
+}
