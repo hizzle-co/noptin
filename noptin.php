@@ -202,13 +202,6 @@ class Noptin {
 	public $post_types;
 
 	/**
-	 * Popups class.
-	 *
-	 * @var Noptin_Popups
-	 */
-	public $popups;
-
-	/**
 	 * Inpost class.
 	 *
 	 * @var Noptin_Inpost
@@ -409,7 +402,6 @@ class Noptin {
 		$this->post_types = new Noptin_Post_Types();
 
 		// Form types (legacy).
-		$this->popups = new Noptin_Popups();
 		$this->inpost = new Noptin_Inpost();
 
 		// Ajax.
