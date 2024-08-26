@@ -373,11 +373,6 @@ class Noptin_Form_Element {
 	protected function display_hidden_fields() {
 
 		// Display standard fields.
-		noptin_hidden_field( 'noptin_nonce', wp_create_nonce( 'noptin_subscription_nonce' ) );
-		noptin_hidden_field( 'conversion_page', noptin_get_request_url() );
-		noptin_hidden_field( 'action', 'noptin_process_ajax_subscriber' );
-		noptin_hidden_field( 'noptin_process_request', '1' );
-		noptin_hidden_field( 'noptin_timestamp', time() );
 		noptin_hidden_field( 'noptin_element_id', $this->id );
 		noptin_hidden_field( 'source', $this->args['source'] );
 		noptin_hidden_field( 'form_action', empty( $this->args['is_unsubscribe'] ) ? 'subscribe' : 'unsubscribe' );
@@ -385,12 +380,6 @@ class Noptin_Form_Element {
 		if ( ! empty( $this->args['noptin-config'] ) ) {
 			noptin_hidden_field( 'noptin-config', $this->args['noptin-config'] );
 		}
-
-		// Honeypot.
-		?>
-			<label style="display: none !important;">Leave this field empty if you're not a robot: <input type="text" name="noptin_ign" value="" tabindex="-1" autocomplete="off" /></label>
-		<?php
-
 	}
 
 	/**
@@ -549,10 +538,10 @@ class Noptin_Form_Element {
 	/**
 	 * Returns the listener instance.
 	 *
-	 * @return Noptin_Form_Listener
+	 * @return \Hizzle\Noptin\Forms\Listener
 	 */
 	public function get_listener() {
-		return noptin()->forms->listener;
+		return \Hizzle\Noptin\Forms\Main::$listener;
 	}
 
 	/**

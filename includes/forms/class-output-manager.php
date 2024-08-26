@@ -225,7 +225,7 @@ class Noptin_Form_Output_Manager {
 
 		// (Maybe) cache this instance.
 		if ( ! $is_form_shortcode ) {
-			$args['noptin-config'] = noptin_encrypt( wp_json_encode( $args ) );
+			$args['noptin-config'] = noptin_encrypt( wp_json_encode( array_filter( $args ) ) );
 		}
 
 		// Generate the form HTML.

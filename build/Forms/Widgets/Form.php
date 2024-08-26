@@ -1,14 +1,16 @@
 <?php
 
+namespace Hizzle\Noptin\Forms\Widgets;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Registers the newsletter widget
+ * Registers the newsletter form widget
  *
- * @since       1.0.5
+ * @since 1.0.5
  */
-class Noptin_Sidebar extends WP_Widget {
+class Form extends \WP_Widget {
 
 	/**
 	 * Class Constructor.
@@ -18,9 +20,9 @@ class Noptin_Sidebar extends WP_Widget {
 		// Register widget.
 		parent::__construct(
 			'noptin_widget_premade', // Base ID (forgive the poor naming)
-			__( 'Noptin Newsletter Form', 'newsletter-optin-box' ), // Name
+			__( 'Newsletter Form', 'newsletter-optin-box' ), // Name
 			array(
-				'description' => __( 'Displays a newsletter sign-up form', 'newsletter-optin-box' ),
+				'description' => __( 'Displays a pre-built newsletter form', 'newsletter-optin-box' ),
 			)
 		);
 
@@ -140,7 +142,7 @@ class Noptin_Sidebar extends WP_Widget {
 			 * Runs right after the widget settings form is outputted
 			 *
 			 * @param array $settings Saved settings.
-			 * @param Noptin_Sidebar $widget
+			 * @param Form $widget
 			 */
 			do_action( 'noptin_form_widget_form', $settings, $this );
 		?>
@@ -182,7 +184,7 @@ class Noptin_Sidebar extends WP_Widget {
 		 *
 		 * @param array $new_settings
 		 * @param array $old_settings
-		 * @param Noptin_Sidebar $widget
+		 * @param Form $widget
 		 * @ignore
 		 */
 		return apply_filters( 'noptin_form_widget_update_settings', $new_instance, $old_instance, $this );

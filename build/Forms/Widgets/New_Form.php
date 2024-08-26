@@ -1,11 +1,5 @@
 <?php
-/**
- * Adds a newsletter optin widget
- *
- * Simple WordPress optin form
- *
- * @since             1.0.0
- */
+namespace Hizzle\Noptin\Forms\Widgets;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -15,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since       1.0.0
  */
-class Noptin_Widget extends WP_Widget {
+class New_Form extends \WP_Widget {
 
 	/**
 	 * Available colors.
@@ -56,7 +50,7 @@ class Noptin_Widget extends WP_Widget {
 
 		$widget_ops = array(
 			'classname'   => 'noptin_widget',
-			'description' => __( 'Use this widget to create and add a simple newsletter subscription widget', 'newsletter-optin-box' ),
+			'description' => __( 'Create and display a newsletter subscription form', 'newsletter-optin-box' ),
 		);
 		parent::__construct( 'noptin_widget', 'Noptin New Form', $widget_ops );
 	}
@@ -104,47 +98,123 @@ class Noptin_Widget extends WP_Widget {
 		?>
 	<style>
 
+		.noptin-email-optin-widget {
+			position: relative;
+			text-align: center;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+
+			<?php if ( $bg_color ) : ?>
+				background-color: <?php echo esc_html( $bg_color ); ?>;
+			<?php endif; ?>
+
+			<?php if ( $color ) : ?>
+				color: <?php echo esc_html( $color ); ?>;
+			<?php endif; ?>
+		}
+
+		:root :where(.noptin-email-optin-widget) .noptin_form_input_email {
+			min-height: calc(1.6em + .9rem + 2px);
+			padding: .45rem 1.2rem;
+			font-size: 1rem;
+			font-weight: 300;
+			line-height: 1.6;
+			color: #495057;
+			background-color: #fff;
+			background-clip: padding-box;
+			border: 1px solid #ced4da;
+			border-radius: .25rem;
+			transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			box-shadow: none;
+		}
+
+		:where(.noptin-email-optin-widget) .noptin_form_input_email:focus {
+			color: #495057;
+            background-color: #fff;
+            border-color: #73b1e9;
+            outline: 0;
+		}
+
+		:where(.noptin-email-optin-widget) .noptin_form_submit {
+			padding: .45rem 1.2rem;
+			font-size: 1rem;
+			line-height: 1.6;
+			border-radius: .25rem;
+			color: #fff;
+			background-color: #1e73be;
+			font-weight: 400;
+			background-clip: padding-box;
+			border: 1px solid transparent;
+			box-shadow: none;
+			transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+			box-shadow: none;
+		}
+
+		:where(.noptin-email-optin-widget) .noptin_form_submit:focus,
+		:where(.noptin-email-optin-widget) .noptin_form_submit:hover {
+			box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+		}
+
+		.noptin-email-optin-widget input.noptin_form_input_email {
+			display: block;
+			width: 100%;
+			margin: 0;
+		}
+
+		.noptin-email-optin-widget .noptin_form_submit {
+			position: relative;
+			text-align: center;
+			vertical-align: middle;
+			user-select: none;
+			flex: 1 0 0;
+			text-transform: none;
+			display: block;
+			width: 100%;
+			margin-top: 10px;
+
+			<?php if ( $btn_col ) : ?>
+				background-color: <?php echo esc_html( $btn_col ); ?>;
+			<?php endif; ?>
+		}
+
+        .noptin-email-optin-widget .noptin_form_submit:focus,
+        .noptin-email-optin-widget .noptin_form_submit:hover {
+            outline: 0 !important;
+        }
+
 		<?php
-		if ( $bg_color ) {
-			echo esc_html( $id ) . ' .noptin-email-optin-widget { background-color: ' . esc_html( $bg_color ) . ' !important; }';
-		}
-
-		if ( $color ) {
-			echo esc_html( $id ) . ' .noptin-email-optin-widget { color: ' . esc_html( $color ) . ' !important; }';
-		}
-
 		if ( $h2_col ) {
 			echo esc_html( $id ) . ' .noptin-email-optin-widget .widget-title { color: ' . esc_html( $h2_col ) . ' !important; }';
-		}
-
-		if ( $btn_col ) {
-			echo esc_html( $id ) . ' .noptin-email-optin-widget .noptin-widget-submit-input { background-color: ' . esc_html( $btn_col ) . ' !important; }';
 		}
 		?>
 	</style>
 	<div class="noptin-email-optin-widget <?php echo esc_attr( $class ); ?>">
 		<form>
 
-		<?php
-			if ( ! empty( $instance['title'] ) ) {
-				$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
-				echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
-			}
-		?>
+		<div className="noptin-widget-form-header">
+			<?php
+				if ( ! empty( $instance['title'] ) ) {
+					$title = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
+					echo $args['before_title'] . esc_html( $title ) . $args['after_title']; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+				}
+			?>
 
-		<?php if ( ! empty( $instance['desc'] ) ) : ?>
-			<p class="noptin-widget-desc"><?php echo esc_html( $instance['desc'] ); ?></p>
-		<?php endif; ?>
+			<?php if ( ! empty( $instance['desc'] ) ) : ?>
+				<p class="noptin-widget-desc"><?php echo esc_html( $instance['desc'] ); ?></p>
+			<?php endif; ?>
+		</div>
 
+		<div className="noptin-block-form-footer">
+			<input class="noptin-widget-email-input noptin_form_input_email" name="email" type="email" placeholder="<?php esc_attr_e( 'Email Address', 'newsletter-optin-box' ); ?>" required >
+			<?php do_action( 'before_noptin_quick_widget_submit', $args ); ?>
+			<input class="noptin-widget-submit-input noptin_form_submit" value="<?php echo esc_attr( $submit ); ?>" type="submit">
+		</div>
+		<div class="noptin-response noptin-form-notice" role="alert"></div>
 		<?php if ( ! empty( $instance['redirect'] ) ) : ?>
 			<input class="noptin_form_redirect" name="noptin-redirect" type="hidden" value="<?php echo esc_url( $instance['redirect'] ); ?>"/>
 		<?php endif; ?>
-
-		<input class="noptin-widget-email-input noptin_form_input_email" name="email" type="email" placeholder="<?php esc_attr_e( 'Email Address', 'newsletter-optin-box' ); ?>" required >
-		<?php do_action( 'before_noptin_quick_widget_submit', $args ); ?>
-		<input class="noptin-widget-submit-input" value="<?php echo esc_attr( $submit ); ?>" type="submit">
-		<div class="noptin_feedback_success"></div>
-		<div class="noptin_feedback_error"></div>
+		<input type="hidden" name="source" value="widget" />
 		</form>
 	</div>
 

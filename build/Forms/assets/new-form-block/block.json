@@ -3,8 +3,8 @@
     "apiVersion": 3,
     "name": "noptin/email-optin",
     "version": "2",
-    "title": "Newsletter Optin",
-    "description": "Displays a newsletter subscription form",
+    "title": "Create Newsletter Form",
+    "description": "Create and display a newsletter subscription form",
     "icon": "forms",
     "category": "widgets",
     "attributes": {

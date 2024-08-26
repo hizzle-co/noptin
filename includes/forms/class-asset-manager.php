@@ -34,75 +34,13 @@ class Noptin_Form_Asset_Manager {
 	 * Add hooks
 	 */
 	public function add_hooks() {
+		return;
 		add_action( 'init', array( $this, 'register_scripts' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_stylesheets' ) );
 		add_action( 'wp_footer', array( $this, 'load_scripts' ) );
 		add_action( 'before_output_noptin_form', array( $this, 'before_output_form' ) );
 		add_action( 'before_output_legacy_noptin_form', array( $this, 'before_output_legacy_form' ) );
 		add_action( 'script_loader_tag', array( $this, 'add_defer_attribute' ), 10, 2 );
-	}
-
-	/**
-	 * Register scripts to be enqueued later.
-	 */
-	public function register_scripts() {
-
-		// Scripts params.
-		$params = array(
-			'ajaxurl'     => admin_url( 'admin-ajax.php' ),
-			'resturl'     => esc_url_raw( rest_url( 'noptin/v1/form' ) ),
-			'nonce'       => wp_create_nonce( 'noptin' ),
-			'cookie'      => get_noptin_option( 'subscribers_cookie' ),
-			'connect_err' => __( 'Could not establish a connection to the server.', 'newsletter-optin-box' ),
-			'cookie_path' => COOKIEPATH,
-		);
-		$params = apply_filters( 'noptin_form_scripts_params', $params );
-
-		// JS for new forms/shortcodes/widgets/blocks.
-		wp_register_script(
-			'noptin-form',
-			noptin()->plugin_url . 'includes/assets/js/dist/form-scripts.js',
-			array(),
-			filemtime( noptin()->plugin_path . 'includes/assets/js/dist/form-scripts.js' ),
-			true
-		);
-
-		wp_localize_script( 'noptin-form', 'noptinParams', $params );
-
-		wp_register_style(
-			'noptin_form_styles',
-			noptin()->plugin_url . 'includes/assets/css/form-styles.css',
-			array(),
-			filemtime( noptin()->plugin_path . 'includes/assets/css/form-styles.css' )
-		);
-
-		// JS for legacy forms/shortcodes/widgets/blocks.
-		wp_register_script(
-			'noptin_front',
-			noptin()->plugin_url . 'includes/assets/js/dist/legacy-forms.js',
-			array(),
-			filemtime( noptin()->plugin_path . 'includes/assets/js/dist/legacy-forms.js' ),
-			true
-		);
-
-		wp_register_script(
-			'noptin-legacy-popups',
-			noptin()->plugin_url . 'includes/assets/js/dist/legacy-popups.js',
-			array( 'jquery', 'noptin_front' ),
-			filemtime( noptin()->plugin_path . 'includes/assets/js/dist/legacy-popups.js' ),
-			true
-		);
-
-		wp_localize_script( 'noptin_front', 'noptin', $params );
-
-		// The css used to style the block in the editor backend
-		wp_register_style(
-			'noptin_front',
-			noptin()->plugin_url . 'includes/assets/css/frontend.css',
-			array(),
-			filemtime( noptin()->plugin_path . 'includes/assets/css/frontend.css' )
-		);
-
 	}
 
 	/**

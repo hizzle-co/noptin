@@ -29,17 +29,102 @@ class Main {
 
 		// Load modules.
 		self::$listener = new Listener();
+		Widgets\Main::init();
 
 		if ( is_admin() ) {
 			Admin\Main::init();
 		}
 
 		// Register hooks.
+		add_action( 'init', array( __CLASS__, 'register_post_type' ) );
+		add_filter( 'use_block_editor_for_post_type', array( __CLASS__, 'disable_block_editor_for_forms' ), 10, 2 );
 		add_action( 'register_noptin_form_post_type', array( __CLASS__, 'register_post_meta' ) );
+		add_action( 'init', array( __CLASS__, 'register_scripts' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+		add_filter( 'noptin_load_form_scripts', array( __CLASS__, 'should_enqueue_scripts' ), 20 );
 		add_action( 'init', array( __CLASS__, 'register_blocks' ) );
 	}
 
+	/**
+	 * Register our form post type.
+	 */
+	public static function register_post_type() {
+
+		if ( ! is_blog_installed() || post_type_exists( 'noptin-form' ) ) {
+			return;
+		}
+
+		/**
+		 * Fires before the newsletter form post type is registered.
+		 *
+		 * @since 1.6.2
+		 */
+		do_action( 'before_register_noptin_form_post_type' );
+
+		// Register post type.
+		register_post_type(
+			'noptin-form',
+			apply_filters(
+				'noptin_optin_form_post_type_details',
+				array(
+					'labels'              => array(
+						'name'               => _x( 'Subscription Forms', 'Post type general name', 'newsletter-optin-box' ),
+						'singular_name'      => _x( 'Subscription Form', 'Post type singular name', 'newsletter-optin-box' ),
+						'menu_name'          => _x( 'Subscription Forms', 'Admin Menu text', 'newsletter-optin-box' ),
+						'name_admin_bar'     => _x( 'Subscription Form', 'Add New on Toolbar', 'newsletter-optin-box' ),
+						'add_new'            => __( 'Add New', 'newsletter-optin-box' ),
+						'add_new_item'       => __( 'Add New Form', 'newsletter-optin-box' ),
+						'new_item'           => __( 'New Form', 'newsletter-optin-box' ),
+						'edit_item'          => __( 'Edit Form', 'newsletter-optin-box' ),
+						'view_item'          => __( 'View Form', 'newsletter-optin-box' ),
+						'search_items'       => __( 'Search Forms', 'newsletter-optin-box' ),
+						'parent_item_colon'  => __( 'Parent Forms:', 'newsletter-optin-box' ),
+						'not_found'          => __( 'No forms found.', 'newsletter-optin-box' ),
+						'not_found_in_trash' => __( 'No forms found in Trash.', 'newsletter-optin-box' ),
+					),
+					'label'               => __( 'Subscription Forms', 'newsletter-optin-box' ),
+					'description'         => '',
+					'public'              => false,
+					'show_ui'             => true,
+					'map_meta_cap'        => true,
+					'publicly_queryable'  => false,
+					'exclude_from_search' => true,
+					'hierarchical'        => false,
+					'query_var'           => false,
+					'supports'            => array( 'title', 'custom-fields' ),
+					'has_archive'         => false,
+					'show_in_nav_menus'   => false,
+					'show_in_rest'        => true,
+					'show_in_menu'        => false,
+					'menu_icon'           => '',
+					'can_export'          => false,
+				)
+			)
+		);
+
+		/**
+		 * Fires after the newsletter form post type is registered.
+		 *
+		 * @since 1.6.2
+		 */
+		do_action( 'register_noptin_form_post_type' );
+
+	}
+
+	/**
+	 * Disables the block editor for forms.
+	 *
+	 * @param bool $use_block_editor Whether to use the block editor.
+	 * @param string $post_type The post type being edited.
+	 * @return bool
+	 */
+	public static function disable_block_editor_for_forms( $use_block_editor, $post_type ) {
+		if ( 'noptin-form' === $post_type ) {
+			return false;
+		}
+
+		return $use_block_editor;
+	}
 	/**
 	 * Register post meta
 	 */
@@ -145,12 +230,12 @@ class Main {
 	}
 
 	/**
-	 * Enqueue scripts
+	 * Register scripts
 	 */
-	public static function enqueue_scripts() {
+	public static function register_scripts() {
 		$config = include plugin_dir_path( __FILE__ ) . '/assets/js/form.asset.php';
 
-		wp_enqueue_script(
+		wp_register_script(
 			'noptin-form__new',
 			plugin_dir_url( __FILE__ ) . 'assets/js/form.js',
 			$config['dependencies'],
@@ -171,12 +256,52 @@ class Main {
 
 		wp_localize_script( 'noptin-form__new', 'noptinParams', $params );
 
-		wp_enqueue_style(
+		wp_register_style(
 			'noptin-form__new',
 			plugin_dir_url( __FILE__ ) . 'assets/css/style-form.css',
 			array(),
 			$config['version']
 		);
+	}
+
+	/**
+	 * Enqueue scripts
+	 */
+	public static function should_enqueue_scripts( $should_enqueue ) {
+		global $post;
+
+		// Check if we're in the admin area.
+		if ( $should_enqueue || is_admin() ) {
+			return $should_enqueue;
+		}
+
+		if ( defined( 'IS_NOPTIN_PREVIEW' ) && IS_NOPTIN_PREVIEW ) {
+			return true;
+		}
+
+		if ( is_a( $post, 'WP_Post' ) && ( has_shortcode( $post->post_content, 'noptin' ) || has_shortcode( $post->post_content, 'noptin-form' ) ) ) {
+			return true;
+		}
+
+		if ( is_active_widget( false, false, 'noptin_widget_premade', true ) ) {
+			return true;
+		}
+
+		if ( is_active_widget( false, false, 'noptin_widget', true ) ) {
+			return true;
+		}
+
+		return $should_enqueue;
+	}
+
+	/**
+	 * Enqueue scripts
+	 */
+	public static function enqueue_scripts() {
+		if ( apply_filters( 'noptin_load_form_scripts', false ) ) {
+			wp_enqueue_script( 'noptin-form__new' );
+			wp_enqueue_style( 'noptin-form__new' );
+		}
 	}
 
 	/**
@@ -189,10 +314,14 @@ class Main {
 			return;
 		}
 
+		do_action( 'before_register_noptin_form_block_type' );
+
         // Allows users to create forms on the fly.
         register_block_type( plugin_dir_path( __FILE__ ) . '/assets/new-form-block' );
 
         // Allows users to use existing forms.
         register_block_type( plugin_dir_path( __FILE__ ) . '/assets/block' );
+
+		do_action( 'register_noptin_form_block_type' );
     }
 }

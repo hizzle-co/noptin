@@ -54,13 +54,16 @@ $GLOBALS['post'] = new WP_Post( (object) array( 'filter' => 'raw' ) ); // phpcs:
 			font-size: 14px;
 			margin: 2px 0 5px;
 			color: #646970;
+			text-align: center;
 		}
 	</style>
 </head>
 <body class="page-template-default page">
 	<div id="noptin-form-preview" class="page type-page status-publish hentry post post-content">
 		<p class="description"><?php esc_html_e( 'The form may look slightly different than this when shown in a post, page or widget area.', 'newsletter-optin-box' ); ?></p>
-		<?php show_noptin_form( $form_id ); ?>
+		<div style="max-width: 720px; margin: 0 auto;">
+			<?php show_noptin_form( $form_id ); ?>
+		</div>
 	</div>
 	<?php wp_footer(); ?>
 </body>
