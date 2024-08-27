@@ -20,11 +20,6 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Form_Manager {
 
 	/**
-	 * @var Noptin_Form_Output_Manager
-	 */
-	public $output_manager;
-
-	/**
 	 * @var Noptin_Form_Tags
 	 */
 	public $tags;
@@ -53,14 +48,12 @@ class Noptin_Form_Manager {
 		$this->load_files();
 
 		// Init class properties.
-		$this->output_manager = new Noptin_Form_Output_Manager();
-		$this->tags           = new Noptin_Form_Tags();
-		$this->previewer      = new Noptin_Form_Previewer();
-		$this->assets         = new Noptin_Form_Asset_Manager();
-		$this->admin          = new Noptin_Form_Admin();
+		$this->tags      = new Noptin_Form_Tags();
+		$this->previewer = new Noptin_Form_Previewer();
+		$this->assets    = new Noptin_Form_Asset_Manager();
+		$this->admin     = new Noptin_Form_Admin();
 
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 5 );
-
 	}
 
 	/**
@@ -75,7 +68,6 @@ class Noptin_Form_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-form.php'; // Container for a single form.
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-legacy.php'; // Container for a single legacy form.
 		require_once plugin_dir_path( __FILE__ ) . 'class-asset-manager.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-output-manager.php';
 
 	}
 
@@ -93,7 +85,6 @@ class Noptin_Form_Manager {
 		do_action( 'before_init_noptin_form_manager', $this );
 
 		// Init modules.
-		$this->output_manager->add_hooks();
 		$this->assets->add_hooks();
 		$this->tags->add_hooks();
 		$this->previewer->add_hooks();
@@ -113,29 +104,13 @@ class Noptin_Form_Manager {
 	 * Displays a subscription form.
 	 *
 	 * @param int|array $form_id_or_configuration An id of a saved form or an array of arguments with which to generate a form on the fly.
-	 * @param bool $echo Whether to display the form or return its HTML.
+	 * @param bool $display Whether to display the form or return its HTML.
 	 * @see Noptin_Form_Output_Manager::shortcode()
 	 * @see show_noptin_form()
 	 * @return string
 	 */
-	public function show_form( $form_id_or_configuration = array(), $echo = true ) {
-
-		// If a form id was passed, convert it into arguments.
-		if ( is_numeric( $form_id_or_configuration ) ) {
-			$form_id_or_configuration = array( 'form' => (int) $form_id_or_configuration );
-		}
-
-		// Ensure we have an array.
-		if ( ! is_array( $form_id_or_configuration ) ) {
-			$form_id_or_configuration = array();
-		}
-
-		// Generate the form markup.
-		if ( ! $echo ) {
-			return $this->output_manager->shortcode( $form_id_or_configuration );
-		}
-
-		$this->output_manager->display_form( $form_id_or_configuration );
+	public function show_form( $form_id_or_configuration = array(), $display = true ) {
+		return show_noptin_form( $form_id_or_configuration, $display );
 	}
 
 	/**

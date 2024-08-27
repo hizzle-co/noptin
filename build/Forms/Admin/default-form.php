@@ -122,12 +122,12 @@
         'noteColor'             => '#607D8B',
         'hideOnNoteClick'       => false,
         'noteTypography'        => array(
-            'font_size'   => '14',
-            'font_weight' => '400',
-            'line_height' => '1',
+            'font_size'   => '',
+            'font_weight' => '',
+            'line_height' => '',
             'decoration'  => '',
             'style'       => '',
-            'generated'   => 'font-size: 14px; font-weight: 400; line-height: 1;',
+            'generated'   => '',
         ),
         'noteAdvanced'          => array(
             'padding'   => new stdClass(),

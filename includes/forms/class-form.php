@@ -182,6 +182,8 @@ class Noptin_Form {
 
 		if ( isset( $this->$key ) || ! empty( $this->$key ) ) {
 			$value = $this->$key;
+		} elseif ( isset( $this->settings[ $key ] ) ) {
+			$value = $this->settings[ $key ];
 		} else {
 			$value = null;
 		}
@@ -447,6 +449,39 @@ class Noptin_Form {
 	}
 
 	/**
+	 * Renders the opening wrapper for a form.
+	 *
+	 * @param array $args The args with which to display the opt-in form.
+	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 */
+	public function before_display( $args = array() ) {
+		// Only wrap sliding and popups.
+		if ( isset( $args['popup_atts'] ) ) {
+			?>
+				<div <?php noptin_attr( 'popup_wrapper', $args['popup_atts'] ); ?>>
+					<div class="noptin-popup__overlay" data-a11y-dialog-hide></div>
+					<div class="noptin-popup__container">
+			<?php
+		}
+	}
+
+	/**
+	 * Renders the closing wrapper for a form.
+	 *
+	 * @param array $args The args with which to display the opt-in form.
+	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 */
+	public function after_display( $args = array() ) {
+		// Only wrap sliding and popups.
+		if ( isset( $args['popup_atts'] ) ) {
+			?>
+				</div>
+			</div>
+			<?php
+		}
+	}
+
+	/**
 	 * Returns all form data
 	 *
 	 * @return array an array of form data
@@ -486,4 +521,24 @@ class Noptin_Form {
 
 	}
 
+	/**
+	 * Checks if we can embed this form to the current post/page.
+	 */
+	public function can_embed() {
+		return apply_filters( 'noptin_can_embed_form', ( ! empty( $this->settings['inject'] ) && 'none' !== $this->settings['inject'] ) && $this->can_show(), $this );
+	}
+
+	/**
+	 * Check if this is a slide in form.
+	 */
+	public function is_slide_in() {
+		return ! empty( $form->settings['slide']['enable'] );
+	}
+
+	/**
+	 * Check if this is a popup form.
+	 */
+	public function is_popup() {
+		return ! empty( $form->settings['popup']['enable'] );
+	}
 }

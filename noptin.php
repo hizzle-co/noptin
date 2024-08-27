@@ -202,13 +202,6 @@ class Noptin {
 	public $post_types;
 
 	/**
-	 * Inpost class.
-	 *
-	 * @var Noptin_Inpost
-	 */
-	public $inpost;
-
-	/**
 	 * The main ajax class.
 	 *
 	 * @var Noptin_Ajax
@@ -400,9 +393,6 @@ class Noptin {
 
 		// Post types controller.
 		$this->post_types = new Noptin_Post_Types();
-
-		// Form types (legacy).
-		$this->inpost = new Noptin_Inpost();
 
 		// Ajax.
 		$this->ajax = new Noptin_Ajax();

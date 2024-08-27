@@ -30,6 +30,13 @@ class Main {
 		// Load modules.
 		self::$listener = new Listener();
 		Widgets\Main::init();
+		Popups::init();
+
+		// Adds forms before and after post content.
+		Content_Embedder::init();
+
+		// Renders forms.
+		Renderer::init();
 
 		if ( is_admin() ) {
 			Admin\Main::init();
@@ -305,23 +312,23 @@ class Main {
 	}
 
 	/**
-     * Register blocks
-     */
-    public static function register_blocks() {
+	 * Register blocks
+	 */
+	public static function register_blocks() {
 
-        // Bail if register_block_type does not exist (available since WP 5.0)
+		// Bail if register_block_type does not exist (available since WP 5.0)
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
 		}
 
 		do_action( 'before_register_noptin_form_block_type' );
 
-        // Allows users to create forms on the fly.
-        register_block_type( plugin_dir_path( __FILE__ ) . '/assets/new-form-block' );
+		// Allows users to create forms on the fly.
+		register_block_type( plugin_dir_path( __FILE__ ) . '/assets/new-form-block' );
 
-        // Allows users to use existing forms.
-        register_block_type( plugin_dir_path( __FILE__ ) . '/assets/block' );
+		// Allows users to use existing forms.
+		register_block_type( plugin_dir_path( __FILE__ ) . '/assets/block' );
 
 		do_action( 'register_noptin_form_block_type' );
-    }
+	}
 }

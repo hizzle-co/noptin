@@ -98,13 +98,20 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 			continue;
 		}
 
+		if ( 'class' === $name && is_array( $value ) ) {
+			$value = implode( ' ', $value );
+		}
+
+		if ( is_array( $value ) || is_object( $value ) ) {
+			$value = wp_json_encode( $value );
+		}
+
 		if ( true === $value ) {
 			echo esc_html( $name ) . ' ';
 		} else {
 			printf( '%s="%s" ', esc_html( $name ), esc_attr( trim( $value ) ) );
 		}
 	}
-
 }
 
 /**
@@ -287,12 +294,26 @@ function get_noptin_optin_forms( array $args = array() ) {
  *
  * @param int|array $form_id_or_configuration An id of a saved form or an array of arguments with which to generate a form on the fly.
  * @param bool $echo Whether to display the form or return its HTML.
- * @see Noptin_Form_Manager::shortcode
  * @return string
  * @since 1.6.2
  */
 function show_noptin_form( $form_id_or_configuration = array(), $echo = true ) {
-	return noptin()->forms->show_form( $form_id_or_configuration, $echo );
+	// If a form id was passed, convert it into arguments.
+	if ( is_numeric( $form_id_or_configuration ) ) {
+		$form_id_or_configuration = array( 'form' => (int) $form_id_or_configuration );
+	}
+
+	// Ensure we have an array.
+	if ( ! is_array( $form_id_or_configuration ) ) {
+		$form_id_or_configuration = array();
+	}
+
+	// Generate the form markup.
+	if ( ! $echo ) {
+		return \Hizzle\Noptin\Forms\Renderer::shortcode( $form_id_or_configuration );
+	}
+
+	\Hizzle\Noptin\Forms\Renderer::display_form( $form_id_or_configuration );
 }
 
 /**

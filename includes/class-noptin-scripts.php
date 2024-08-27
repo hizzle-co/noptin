@@ -75,7 +75,7 @@ class Noptin_Scripts {
 		// Load our CSS styles on all pages.
 		$assets_url = plugin_dir_url( __FILE__ ) . 'assets';
 		$version    = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? time() : noptin()->version;
-		//wp_enqueue_style( 'noptin', $assets_url . '/css/admin.css', array(), $version );
+		wp_enqueue_style( 'noptin', $assets_url . '/css/admin.css', array(), $version );
 
 		// Check if the hook suffix contains noptin.
 		if ( false === strpos( $hook, 'noptin' ) && false === strpos( $hook, noptin()->white_label->admin_screen_id() ) && ( empty( $current_screen ) || false === strpos( $current_screen->id, 'noptin' ) ) ) {
@@ -95,14 +95,6 @@ class Noptin_Scripts {
 		// Tooltips https://iamceege.github.io/tooltipster/.
 		wp_enqueue_script( 'tooltipster', $assets_url . '/vendor/tooltipster/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.7', true );
 		wp_enqueue_style( 'tooltipster', $assets_url . '/vendor/tooltipster/tooltipster.bundle.min.css', array(), '4.2.7' );
-
-		// Select 2 https://select2.org/.
-		wp_enqueue_script( 'select2', $assets_url . '/vendor/select2/select2.full.min.js', array( 'jquery' ), '4.0.12', true );
-		wp_enqueue_style( 'select2', $assets_url . '/vendor/select2/select2.min.css', array(), '4.0.12' );
-
-		// Vue js.
-		wp_deregister_script( 'vue' );
-		wp_register_script( 'vue', $assets_url . '/vendor/vue/vue.min.js', array(), '2.6.11', true );
 
 		// Enque media for image uploads.
 		wp_enqueue_media();

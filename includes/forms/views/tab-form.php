@@ -26,7 +26,7 @@ $tag_messages = array(
 	<label for="noptin-form-fields" class="noptin-field-label">
 		<?php esc_html_e( 'Fields to display', 'newsletter-optin-box' ); ?>
 	</label>
-	<select id="noptin-form-fields" class="noptin-select2" name="noptin_form[settings][fields][]" multiple="multiple" style="width: 30em;">
+	<select id="noptin-form-fields" name="noptin_form[settings][fields][]" multiple="multiple" style="width: 30em;">
 		<?php foreach ( get_noptin_custom_fields( true ) as $field ) : ?>
 			<option
 				value="<?php echo esc_html( $field['merge_tag'] ); ?>"
@@ -109,7 +109,7 @@ $tag_messages = array(
 		</label>
 
 		<input type="hidden" name="noptin_form[settings][<?php echo esc_attr( $field['merge_tag'] ); ?>][]" value="0" />
-		<select id="noptin-form__cf-<?php echo esc_attr( $field['label'] ); ?>" class="noptin-select2" name="noptin_form[settings][<?php echo esc_attr( $field['merge_tag'] ); ?>][]" multiple="multiple" style="width: 30em;">
+		<select id="noptin-form__cf-<?php echo esc_attr( $field['label'] ); ?>" name="noptin_form[settings][<?php echo esc_attr( $field['merge_tag'] ); ?>][]" multiple="multiple" style="width: 30em;">
 			<?php foreach ( noptin_newslines_to_array( $field['options'] ) as $key => $label ) : ?>
 				<option
 					value="<?php echo esc_html( $key ); ?>"
