@@ -114,19 +114,25 @@ $popup_types = array(
 		$settings = isset( $form->settings[ $key ] ) ? $form->settings[ $key ] : array();
 
 		$triggers = array(
-			'immeadiate'   => __( 'As soon the page loads', 'newsletter-optin-box' ),
+			'immeadiate'   => __( 'Immediately', 'newsletter-optin-box' ),
 			'before_leave' => __( 'Before the user leaves', 'newsletter-optin-box' ),
-			'on_scroll'    => __( 'After the user scrolls', 'newsletter-optin-box' ),
-			'after_click'  => __( 'When the user clicks on', 'newsletter-optin-box' ),
-			'after_delay'  => __( 'After', 'newsletter-optin-box' ),
+			'on_scroll'    => __( 'After the user starts scrolling', 'newsletter-optin-box' ),
+			'after_click'  => __( 'After clicking on something', 'newsletter-optin-box' ),
+			'after_delay'  => __( 'After a time delay', 'newsletter-optin-box' ),
 		);
 		$trigger  = isset( $settings['trigger'] ) ? $settings['trigger'] : 'immeadiate';
 
 		$directions = array(
 			'top_left'     => __( 'Top Left', 'newsletter-optin-box' ),
+			'left_top'     => __( 'Top Left Alt', 'newsletter-optin-box' ),
 			'top_right'    => __( 'Top Right', 'newsletter-optin-box' ),
+			'right_top'    => __( 'Top Right Alt', 'newsletter-optin-box' ),
+			'center_left'  => __( 'Center Left', 'newsletter-optin-box' ),
+			'center_right' => __( 'Center Right', 'newsletter-optin-box' ),
 			'bottom_left'  => __( 'Bottom Left', 'newsletter-optin-box' ),
-			'bottom_right' => __( 'Bottom Right', 'newsletter-optin-box' ),
+			'left_bottom'  => __( 'Bottom Left Alt', 'newsletter-optin-box' ),
+			'bottom_right' => __( 'Bottom right', 'newsletter-optin-box' ),
+			'right_bottom' => __( 'Bottom right Alt', 'newsletter-optin-box' ),
 		);
 		$direction  = isset( $settings['direction'] ) ? $settings['direction'] : 'bottom_right';
 
@@ -138,7 +144,7 @@ $popup_types = array(
 
 		?>
 
-		<div class="noptin-text-wrapper form-settings-<?php echo esc_attr( $key ); ?>">
+		<div class="noptin-text-wrapper form-settings-<?php echo esc_attr( $key ); ?>" style="display: none;">
 			<label for="noptin-form-enable-<?php echo esc_attr( $key ); ?>" class="noptin-field-label"><?php echo esc_html( $labels[0] ); ?></label>
 
 			<?php noptin_hidden_field( 'noptin_form[settings][' . $key . '][enable]', 0 ); ?>
@@ -148,7 +154,7 @@ $popup_types = array(
 			</label>
 
 			<?php if ( 'slide' === $key ) : ?>
-				<label><span style="vertical-align: middle;"><?php esc_html_e( 'from the', 'noptin-addons-pack' ); ?></span>
+				<label><span style="vertical-align: middle;"><?php esc_html_e( 'from the', 'newsletter-optin-box' ); ?></span>
 					<select id="noptin-form-slide-direction" name="noptin_form[settings][<?php echo esc_attr( $key ); ?>][direction]">
 						<?php foreach ( $directions as $_key => $label ) : ?>
 							<option value="<?php echo esc_attr( $_key ); ?>" <?php selected( $_key, $direction ); ?>><?php echo esc_html( $label ); ?></option>
@@ -158,7 +164,7 @@ $popup_types = array(
 			<?php endif; ?>
 
 			<?php if ( 'bar' === $key ) : ?>
-				<label><span style="vertical-align: middle;"><?php esc_html_e( 'at the', 'noptin-addons-pack' ); ?></span>
+				<label><span style="vertical-align: middle;"><?php esc_html_e( 'at the', 'newsletter-optin-box' ); ?></span>
 					<select id="noptin-form-bar-position" name="noptin_form[settings][<?php echo esc_attr( $key ); ?>][position]">
 						<?php foreach ( $positions as $_key => $label ) : ?>
 							<option value="<?php echo esc_attr( $_key ); ?>" <?php selected( $_key, $position ); ?>><?php echo esc_html( $label ); ?></option>

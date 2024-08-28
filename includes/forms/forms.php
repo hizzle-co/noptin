@@ -376,9 +376,12 @@ function prepare_noptin_form_fields( $fields ) {
 		// Users can pass the merge tag instead of custom field data.
 		if ( is_string( $custom_field ) ) {
 			$custom_field = get_noptin_custom_field( $custom_field );
-		} else {
-			$field_type    = is_array( $custom_field['type'] ) ? $custom_field['type']['type'] : $custom_field['type'];
-			$_custom_field = get_noptin_custom_field( $field_type );
+		} elseif ( is_array( $custom_field ) && ! empty( $custom_field['type'] ) ) {
+			if ( is_array( $custom_field['type'] ) ) {
+				$custom_field = $custom_field['type'];
+			}
+
+			$_custom_field = get_noptin_custom_field( $custom_field['type'] );
 
 			if ( empty( $_custom_field ) ) {
 				continue;

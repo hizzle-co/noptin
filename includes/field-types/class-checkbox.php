@@ -40,7 +40,6 @@ class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
 			</label>
 
 		<?php
-
 	}
 
 	/**

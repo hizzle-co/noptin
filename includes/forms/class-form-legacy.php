@@ -75,7 +75,6 @@ class Noptin_Form_Legacy {
 		$data       = $this->convert_classic_vars( $data );
 		$this->data = apply_filters( 'noptin_get_form_data', $data, $this );
 		$this->id   = $data['id'];
-
 	}
 
 	/**
@@ -340,12 +339,11 @@ class Noptin_Form_Legacy {
 				continue;
 			}
 
-			$default_value = ! isset( $field['default_value'] ) ? array() : $field['default_value'];
+			$default_value                   = ! isset( $field['default_value'] ) ? array() : $field['default_value'];
 			$defaults[ $field['merge_tag'] ] = noptin_parse_list( $default_value, true );
 		}
 
 		return apply_filters( 'noptin_optin_form_default_form_state', $defaults, $this );
-
 	}
 
 	/**
@@ -407,7 +405,6 @@ class Noptin_Form_Legacy {
 		$return = array();
 
 		foreach ( $data as $key => $value ) {
-
 			if ( 'apTags' === $key ) {
 				$key = 'tags';
 			}
@@ -464,7 +461,6 @@ class Noptin_Form_Legacy {
 			return null !== $this->id;
 		}
 		return isset( $this->data[ $key ] ) && null !== $this->data[ $key ];
-
 	}
 
 	/**
@@ -505,15 +501,12 @@ class Noptin_Form_Legacy {
 	public function __set( $key, $value ) {
 
 		if ( 'id' === strtolower( $key ) ) {
-
 			$this->id         = $value;
 			$this->data['id'] = $value;
 			return;
-
 		}
 
 		$this->data[ $key ] = $value;
-
 	}
 
 	/**
@@ -809,7 +802,6 @@ class Noptin_Form_Legacy {
 
 		// Single posts.
 		return is_singular( $places );
-
 	}
 
 	/**
@@ -828,268 +820,15 @@ class Noptin_Form_Legacy {
 	 * @return string html
 	 */
 	public function get_html() {
-		ob_start();
-		$this->display();
-		return ob_get_clean();
+		return show_noptin_form( $this->id, false );
 	}
 
 	/**
-	 * Returns the html required to display the form
+	 * Displays the form.
 	 *
-	 * @return string html
 	 */
 	public function display() {
-		$type       = esc_attr( $this->optinType );
-		$id         = $this->id;
-		$id_class   = "noptin-form-id-$id";
-		$html_id    = wp_unique_id( 'noptin-form-' );
-		$type_class = "noptin-$type-main-wrapper";
-
-		$border = $this->formBorder;
-		$colors = array(
-			'background'  => $this->noptinFormBg,
-			'border'      => empty( $border ) || empty( $border['border_color'] ) ? false : $border['border_color'],
-			'button'      => $this->noptinButtonBg,
-			'button-text' => $this->noptinButtonColor,
-			'title'       => $this->titleColor,
-			'description' => $this->descriptionColor,
-			'prefix'      => $this->prefixColor,
-			'note'        => $this->noteColor,
-		);
-
-		$attr = '';
-
-		foreach ( $colors as $key => $color ) {
-			if ( ! empty( $color ) ) {
-				$attr .= " --noptin-$key-color: $color;";
-			}
-		}
-
-		?>
-			<div class="<?php echo esc_attr( "$type_class $id_class" ); ?>  noptin-optin-main-wrapper" <?php echo 'popup' === $type ? 'aria-hidden="true" tabindex="-1"' : ''; ?> id="<?php echo esc_attr( $html_id ); ?>" aria-labelledby="<?php echo esc_attr( $html_id ); ?>__title" style="<?php echo esc_attr( $attr ); ?>">
-
-				<?php if ( 'popup' === $type ) : ?>
-					<div class="noptin-popup__overlay" data-a11y-dialog-hide></div>
-					<div class="noptin-popup__container">
-				<?php endif; ?>
-
-				<?php if ( ! empty( $this->CSS ) ) : ?>
-					<style><?php echo strip_tags( str_ireplace( '.noptin-optin-form-wrapper', ".$id_class .noptin-optin-form-wrapper", str_ireplace( ".$type_class", ".$type_class.$id_class", $this->CSS ) ) ); // phpcs:ignore ?></style>
-				<?php endif; ?>
-
-				<?php $this->render_form(); ?>
-
-				<?php if ( 'popup' === $this->optinType || 'slide_in' === $this->optinType ) : ?>
-					<button
-						class="noptin-popup__close"
-						type="button"
-						data-a11y-dialog-hide
-						aria-label="Close dialog"
-					>
-						<span aria-hidden="true">&times;</span>
-					</button>
-				<?php endif; ?>
-
-				<?php if ( 'popup' === $type ) : ?>
-					</div>
-				<?php endif; ?>
-
-			</div>
-		<?php
-
-	}
-
-	/**
-	 * Generates HTML
-	 *
-	 * @return string
-	 */
-	protected function render_form() {
-		$data         = $this->data;
-		$data['data'] = $data;
-		$data['form'] = $this;
-		extract( $data ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
-		include plugin_dir_path( __FILE__ ) . 'views/legacy/frontend-optin-form.php';
-	}
-
-	/**
-	 * Renders the opening wrapper for a form.
-	 *
-	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
-	 */
-	public function before_display( $args = array() ) {
-
-		$border = $this->formBorder;
-		$colors = array(
-			'background'  => $this->noptinFormBg,
-			'border'      => empty( $border ) || empty( $border['border_color'] ) ? false : $border['border_color'],
-			'button'      => $this->noptinButtonBg,
-			'button-text' => $this->noptinButtonColor,
-			'title'       => $this->titleColor,
-			'description' => $this->descriptionColor,
-			'prefix'      => $this->prefixColor,
-			'note'        => $this->noteColor,
-		);
-
-		$attr = '';
-
-		foreach ( $colors as $key => $color ) {
-			if ( ! empty( $color ) ) {
-				$attr .= " --noptin-$key-color: $color;";
-			}
-		}
-
-		// Display the opening div tag.
-		echo '<div ';
-
-		noptin_attr(
-			'noptin-optin-main-wrapper',
-			array(
-				'id'              => sprintf( '%s__wrapper', $args['html_id'] ),
-				'class'           => array(
-					'noptin-optin-main-wrapper',
-					sprintf( 'noptin-form-id-%d', $this->id ),
-					sprintf( 'noptin-%s-main-wrapper', $this->optinType ),
-				),
-				'aria-hidden'     => $this->is_slide_in() || $this->is_popup() ? 'true' : false,
-				'tabindex'        => $this->is_slide_in() || $this->is_popup() ? '-1' : false,
-				'aria-labelledby' => sprintf( '%s__title', $args['html_id'] ),
-				'style'           => $attr,
-			),
-			$args
-		);
-
-		echo '>';
-
-		if ( $this->is_popup() ) {
-			echo '<div class="noptin-popup__overlay" data-a11y-dialog-hide></div>';
-			echo '<div class="noptin-popup__container">';
-		}
-
-		if ( ! empty( $this->CSS ) ) {
-			$id_class   = sprintf( 'noptin-form-id-%d', $this->id );
-			$type_class = sprintf( 'noptin-%s-main-wrapper', $this->optinType );
-			printf(
-				'<style>%s</style>',
-				wp_strip_all_tags( // phpcs:ignore
-					str_ireplace(
-						'.noptin-optin-form-wrapper',
-						sprintf( '.%s .noptin-optin-form-wrapper', $id_class ),
-						str_ireplace(
-							".$type_class",
-							".$type_class.$id_class",
-							$this->CSS
-						)
-					)
-				)
-			);
-		}
-
-		$styles = array(
-			'background-color' => $this->noptinFormBg,
-			'background-image' => "url('$this->noptinFormBgImg')",
-			'width'            => $this->formWidth,
-			'min-height'       => $this->formHeight,
-			'color'            => $this->descriptionColor,
-		);
-
-		if ( 'popup' !== $this->optinType && 'slide_in' !== $this->optinType ) {
-			$styles['width'] = '100%';
-		}
-
-		if ( is_numeric( $styles['width'] ) ) {
-			$styles['width'] = $styles['width'] . 'px';
-		}
-
-		if ( is_numeric( $styles['min-height'] ) ) {
-			$styles['min-height'] = $styles['min-height'] . 'px';
-		}
-
-		if ( empty( $noptinFormBgImg ) ) {
-			unset( $styles['background-image'] );
-		}
-
-		$wrapper_styles = '';
-		foreach ( $styles as $prop => $val ) {
-			$val             = esc_attr( $val );
-			$wrapper_styles .= " $prop:$val;";
-		}
-
-		foreach ( noptin_parse_list( 'formBorder prefixAdvanced prefixTypography noteAdvanced noteTypography descriptionAdvanced descriptionTypography titleAdvanced titleTypography noteAdvanced noteTypography' ) as $_autogenerated_prop ) {
-
-			if ( empty( ${$_autogenerated_prop}['generated'] ) ) {
-				${$_autogenerated_prop}['generated'] = '';
-			}
-		}
-
-		$wrapper_styles .= $this->formBorder['generated'];
-
-		$atts = array(
-			'style' => $wrapper_styles,
-			'class' => array( 'noptin-optin-form-wrapper' ),
-		);
-
-		if ( $this->is_slide_in() || $this->is_popup() ) {
-			$trigger                   = defined( 'IS_NOPTIN_PREVIEW' ) ? 'immeadiate' : esc_attr( $this->triggerPopup );
-			$atts['data-trigger']      = $trigger;
-			$atts['data-hide-seconds'] = apply_filters( 'noptin_display_form_every_x_seconds', WEEK_IN_SECONDS, $this ) * 1000;
-
-			if ( 'after_click' === $trigger ) {
-				$atts['data-value'] = $this->cssClassOfClick;
-			}
-
-			if ( 'on_scroll' === $trigger ) {
-				$atts['data-value'] = $this->scrollDepthPercentage;
-			}
-
-			if ( 'after_delay' === $trigger ) {
-				$atts['data-value'] = $this->timeDelayDuration;
-			}
-		}
-
-		if ( $this->is_slide_in() ) {
-			$atts['class'][] = "noptin-slide-from-$this->slideDirection";
-		}
-
-		echo '<div ';
-		noptin_attr( 'noptin-optin-form-wrapper', $atts, $args );
-		echo '>';
-	}
-
-	/**
-	 * Renders the closing wrapper for a form.
-	 *
-	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
-	 */
-	public function after_display( $args = array() ) {
-		if ( ! empty( $this->imageMain ) ) {
-			?>
-			<div class="noptin-form-main-image">
-				<img alt="opt-in image" src="<?php echo esc_url( $this->imageMain ); ?>" />
-			</div>
-		<?php
-		}
-
-		if ( $this->is_slide_in() || $this->is_popup() ) {
-			?>
-				<button
-					class="noptin-popup__close"
-					type="button"
-					data-a11y-dialog-hide
-					aria-label="Close dialog"
-					aria-controls="<?php echo esc_attr( $args['html_id'] ); ?>__wrapper"
-				>
-					<span aria-hidden="true">&times;</span>
-				</button>
-			<?php
-		}
-
-		if ( $this->is_popup() ) {
-			echo '</div>';
-		}
-		echo '</div>';
+		return show_noptin_form( $this->id, true );
 	}
 
 	/**

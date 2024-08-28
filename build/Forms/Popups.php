@@ -33,7 +33,34 @@ class Popups {
 	public static function init() {
 		add_action( 'wp_footer', array( __CLASS__, 'display_popups' ), 5 );
 		add_filter( 'noptin_load_form_scripts', array( __CLASS__, 'maybe_load_form_scripts' ) );
+		add_action( 'after_noptin_popup_display', array( __CLASS__, 'enqueue_scripts' ) );
 		add_action( 'save_post', array( __CLASS__, 'empty_cache' ) );
+	}
+
+	/**
+	 * Enqueues scripts.
+	 */
+	public static function enqueue_scripts() {
+		if ( empty( self::get_popups() ) ) {
+			return;
+		}
+
+		$config = include plugin_dir_path( __FILE__ ) . '/assets/js/popups.asset.php';
+
+		wp_enqueue_style(
+			'noptin-popups',
+			plugin_dir_url( __FILE__ ) . 'assets/css/style-popups.css',
+			array(),
+			$config['version']
+		);
+
+		wp_enqueue_script(
+			'noptin-popups',
+			plugin_dir_url( __FILE__ ) . 'assets/js/popups.js',
+			$config['dependencies'],
+			$config['version'],
+			true
+		);
 	}
 
 	/**
@@ -58,7 +85,7 @@ class Popups {
 
 		do_action( 'before_noptin_popup_display' );
 		foreach ( $popups as $popup ) {
-			$popup->display();
+			show_noptin_form( $popup->id );
 		}
 		do_action( 'after_noptin_popup_display' );
 	}

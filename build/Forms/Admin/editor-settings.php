@@ -105,6 +105,8 @@ $editor_settings = array(
 						'left_top'     => __( 'Top Left Alt', 'newsletter-optin-box' ),
 						'top_right'    => __( 'Top Right', 'newsletter-optin-box' ),
 						'right_top'    => __( 'Top Right Alt', 'newsletter-optin-box' ),
+						'center_left'  => __( 'Center Left', 'newsletter-optin-box' ),
+						'center_right' => __( 'Center Right', 'newsletter-optin-box' ),
 						'bottom_left'  => __( 'Bottom Left', 'newsletter-optin-box' ),
 						'left_bottom'  => __( 'Bottom Left Alt', 'newsletter-optin-box' ),
 						'bottom_right' => __( 'Bottom right', 'newsletter-optin-box' ),
@@ -152,29 +154,35 @@ $editor_settings = array(
 
 				// Time in seconds to delay.
 				'timeDelayDuration'     => array(
-					'type'        => 'text',
-					'el'          => 'input',
-					'label'       => __( 'Delay', 'newsletter-optin-box' ),
-					'description' => __( 'Time in seconds to delay', 'newsletter-optin-box' ),
-					'conditions'  => array(
+					'type'             => 'number',
+					'el'               => 'input',
+					'label'            => __( 'Delay', 'newsletter-optin-box' ),
+					'description'      => __( 'Time in seconds to delay', 'newsletter-optin-box' ),
+					'conditions'       => array(
 						array(
 							'key'   => 'triggerPopup',
 							'value' => 'after_delay',
 						),
 					),
+					'customAttributes' => array(
+						'suffix' => __( 'seconds', 'newsletter-optin-box' ),
+					),
 				),
 
 				// Scroll depth.
 				'scrollDepthPercentage' => array(
-					'type'        => 'text',
-					'el'          => 'input',
-					'label'       => __( 'Scroll depth', 'newsletter-optin-box' ),
-					'description' => __( 'Scroll depth in percentage after which the form will appear', 'newsletter-optin-box' ),
-					'conditions'  => array(
+					'type'             => 'number',
+					'el'               => 'input',
+					'label'            => __( 'Scroll depth', 'newsletter-optin-box' ),
+					'description'      => __( 'Scroll depth in percentage after which the form will appear', 'newsletter-optin-box' ),
+					'conditions'       => array(
 						array(
 							'key'   => 'triggerPopup',
 							'value' => 'on_scroll',
 						),
+					),
+					'customAttributes' => array(
+						'suffix' => '%',
 					),
 				),
 			),
@@ -340,16 +348,9 @@ $editor_settings = array(
 			'children' => array(
 
 				'formWidth'  => array(
-					'el'         => 'unit',
-					'conditions' => array(
-						array(
-							'key'      => 'optinType',
-							'operator' => 'includes',
-							'value'    => array( 'popup', 'slide_in' ),
-						),
-					),
-					'label'      => __( 'Preferred Width', 'newsletter-optin-box' ),
-					'tooltip'    => __( 'The element will resize to 100% width on smaller devices', 'newsletter-optin-box' ),
+					'el'      => 'unit',
+					'label'   => __( 'Preferred Width', 'newsletter-optin-box' ),
+					'tooltip' => __( 'The element will resize to 100% width on smaller devices', 'newsletter-optin-box' ),
 				),
 
 				'formHeight' => array(
@@ -400,18 +401,6 @@ $editor_settings = array(
 								'el'          => 'input',
 								'label'       => __( 'Frontend Label', 'newsletter-optin-box' ),
 								'description' => __( 'Leave empty to use the default label.', 'newsletter-optin-box' ),
-							),
-							'require'    => array(
-								'el'         => 'input',
-								'type'       => 'checkbox_alt',
-								'label'      => __( 'Is this field required?', 'newsletter-optin-box' ),
-								'conditions' => array(
-									array(
-										'key'      => 'type.type',
-										'operator' => '!=',
-										'value'    => 'email',
-									),
-								),
 							),
 						),
 					),

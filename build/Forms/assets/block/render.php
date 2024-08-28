@@ -19,5 +19,5 @@
 ?>
 
 <div <?php echo wp_kses_data( get_block_wrapper_attributes() ); ?>>
-	<?php noptin()->forms->output_manager->display_form( $attributes ); ?>
+	<?php show_noptin_form( $attributes ); ?>
 </div>
