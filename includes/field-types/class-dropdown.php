@@ -53,7 +53,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 		printf(
 			'<label class="noptin-label" for="%s">%s</label>',
 			esc_attr( $args['id'] ),
-			empty( $args['vue'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'
+			empty( $args['react'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'
 		);
 
 		if ( ! empty( $this->is_multiple ) ) {
@@ -79,7 +79,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 			class="noptin-text noptin-form-field"
 			<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
 		>
-			<option <?php selected( empty( $args['value'] ) ); ?> disabled><?php echo empty( $args['vue'] ) ? esc_html( wp_strip_all_tags( $args['label'] ) ) : '{{field.type.label}}'; ?></option>
+			<option <?php selected( empty( $args['value'] ) ); ?> disabled><?php echo empty( $args['react'] ) ? esc_html( wp_strip_all_tags( $args['label'] ) ) : '{{field.type.label}}'; ?></option>
 			<?php foreach ( $this->get_field_options( $args ) as $value => $label ) : ?>
 				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( esc_attr( $value ), esc_attr( $args['value'] ) ); ?>><?php echo esc_html( wp_strip_all_tags( $label ) ); ?></option>
 			<?php endforeach; ?>

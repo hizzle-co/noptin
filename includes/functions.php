@@ -1500,35 +1500,6 @@ function noptin_kses_post_e( $content ) {
 }
 
 /**
- * Returns the HTML allowed for VUE templates.
- */
-function noptin_kses_post_vue() {
-
-	$allowed_html = array();
-
-	foreach ( wp_kses_allowed_html( 'post' ) as $tag => $attributes ) {
-		if ( ! is_array( $attributes ) ) {
-			continue;
-		}
-
-		$attributes['v-if']      = true;
-		$attributes['v-bind']    = true;
-		$attributes[':class']    = true;
-		$attributes['class']     = true;
-		$attributes['style']     = true;
-		$attributes[':style']    = true;
-		$attributes['v-show']    = true;
-		$attributes['v-else']    = true;
-		$attributes['v-else-if'] = true;
-		$attributes['v-for']     = true;
-
-		$allowed_html[ $tag ] = $attributes;
-	}
-
-	return $allowed_html;
-}
-
-/**
  * Returns the current user's logged in status.
  *
  * @return string

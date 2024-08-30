@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.5.0\n"
+"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.5.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-08-20T10:48:05+00:00\n"
+"POT-Creation-Date: 2024-08-30T10:21:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -89,7 +89,7 @@ msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:226
 #: build/Subscribers/Records.php:203
-#: includes/forms/forms.php:429
+#: includes/forms/forms.php:465
 msgid "Updated"
 msgstr ""
 
@@ -131,14 +131,14 @@ msgid "Primary"
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:417
+#: build/Forms/Widgets/New_Form.php:47
 #: includes/forms/class-legacy-form-editor.php:149
-#: includes/forms/class-widget-legacy.php:53
 msgid "White"
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:422
+#: build/Forms/Widgets/New_Form.php:46
 #: includes/forms/class-legacy-form-editor.php:148
-#: includes/forms/class-widget-legacy.php:52
 msgid "Black"
 msgstr ""
 
@@ -218,7 +218,7 @@ msgstr ""
 #: build/Emails/Admin/Main.php:438
 #: build/Emails/Email.php:916
 #: includes/forms/views/tab-form.php:70
-#: includes/forms/views/tab-settings.php:91
+#: includes/forms/views/tab-settings.php:108
 #: src/Integrations/WooCommerce/Products.php:90
 msgid "For example, %s"
 msgstr ""
@@ -317,7 +317,7 @@ msgid "Unknown sender"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:366
-#: build/Forms/Admin/editor-settings.php:157
+#: build/Forms/Admin/editor-settings.php:159
 #: includes/automation-rules/actions/class-noptin-abstract-action.php:32
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "Delay"
@@ -463,7 +463,7 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:835
 #: build/Emails/Records.php:90
-#: includes/forms/forms.php:419
+#: includes/forms/forms.php:455
 #: includes/subscriber.php:1599
 #: src/DB/Main.php:495
 msgid "Unsubscribed"
@@ -654,7 +654,7 @@ msgid "Email campaign updated."
 msgstr ""
 
 #: build/Emails/Main.php:383
-#: includes/forms/class-widget.php:117
+#: build/Forms/Widgets/Form.php:119
 msgid "Newsletter"
 msgstr ""
 
@@ -999,7 +999,6 @@ msgstr ""
 #: build/Extensions/Menu.php:304
 #: build/Extensions/Menu.php:328
 #: build/Settings/Menu.php:594
-#: includes/admin/class-noptin-vue.php:641
 #: includes/forms/views/tab-email.php:16
 #: src/DB/Main.php:429
 msgid "Learn More"
@@ -1046,7 +1045,7 @@ msgid "Sync subscribers between sites, and add newsletter subscription forms on 
 msgstr ""
 
 #: build/Extensions/Menu.php:282
-#: build/Forms/Admin/editor-settings.php:846
+#: build/Forms/Admin/editor-settings.php:841
 #: build/Settings/Menu.php:164
 #: includes/forms/class-legacy-form-editor.php:202
 #: includes/forms/views/editor.php:20
@@ -1114,110 +1113,79 @@ msgstr ""
 msgid "Install Now"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:12
-#: includes/forms/class-form-legacy.php:156
+#: build/Forms/Admin/default-form.php:8
+#: includes/forms/class-form-legacy.php:155
 msgid "I consent to receive promotional emails about your products and services."
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:16
-#: build/Forms/Admin/optin-templates.php:19
-#: build/Forms/Admin/optin-templates.php:192
-#: build/Forms/Admin/optin-templates.php:337
-#: build/Forms/Admin/optin-templates.php:431
-#: build/Forms/Admin/optin-templates.php:513
-#: build/Forms/Admin/optin-templates.php:601
-#: build/Forms/Admin/optin-templates.php:697
-#: build/Forms/Admin/optin-templates.php:767
-#: build/Forms/Admin/optin-templates.php:834
-#: build/Forms/Admin/optin-templates.php:1255
+#: build/Forms/Admin/default-form.php:12
+#: build/Forms/Admin/optin-templates.php:17
+#: build/Forms/Admin/optin-templates.php:153
+#: build/Forms/Admin/optin-templates.php:294
+#: build/Forms/Admin/optin-templates.php:394
+#: build/Forms/Admin/optin-templates.php:475
+#: build/Forms/Admin/optin-templates.php:557
+#: build/Forms/Admin/optin-templates.php:643
+#: build/Forms/Admin/optin-templates.php:711
+#: build/Forms/Admin/optin-templates.php:776
+#: build/Forms/Admin/optin-templates.php:1160
+#: build/Forms/Widgets/New_Form.php:209
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:204
 #: includes/class-noptin-ajax.php:58
 #: includes/class-noptin-custom-fields.php:104
-#: includes/forms/class-form-legacy.php:160
-#: includes/forms/class-widget-legacy.php:143
-#: includes/forms/views/legacy/optin-templates.php:19
-#: includes/forms/views/legacy/optin-templates.php:192
-#: includes/forms/views/legacy/optin-templates.php:337
-#: includes/forms/views/legacy/optin-templates.php:431
-#: includes/forms/views/legacy/optin-templates.php:513
-#: includes/forms/views/legacy/optin-templates.php:601
-#: includes/forms/views/legacy/optin-templates.php:697
-#: includes/forms/views/legacy/optin-templates.php:767
-#: includes/forms/views/legacy/optin-templates.php:834
-#: includes/forms/views/legacy/optin-templates.php:1255
+#: includes/forms/class-form-legacy.php:159
 #: includes/subscriber.php:1032
 msgid "Email Address"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:54
-#: build/Forms/Admin/optin-templates.php:207
-#: build/Forms/Admin/optin-templates.php:287
-#: build/Forms/Admin/optin-templates.php:452
-#: build/Forms/Admin/optin-templates.php:528
-#: build/Forms/Admin/optin-templates.php:1276
-#: includes/forms/class-form-legacy.php:198
-#: includes/forms/views/legacy/optin-templates.php:207
-#: includes/forms/views/legacy/optin-templates.php:287
-#: includes/forms/views/legacy/optin-templates.php:452
-#: includes/forms/views/legacy/optin-templates.php:528
-#: includes/forms/views/legacy/optin-templates.php:1276
+#: build/Forms/Admin/default-form.php:41
+#: build/Forms/Admin/optin-templates.php:168
+#: build/Forms/Admin/optin-templates.php:246
+#: build/Forms/Admin/optin-templates.php:415
+#: build/Forms/Admin/optin-templates.php:490
+#: build/Forms/Admin/optin-templates.php:1181
+#: includes/forms/class-form-legacy.php:195
 msgid "Subscribe Now"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:58
-#: includes/forms/class-form-legacy.php:202
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:17
+#: build/Forms/Admin/default-form.php:45
+#: includes/forms/class-form-legacy.php:199
+#: build/Forms/assets/js/new-form-block.js:1
 msgid "JOIN OUR NEWSLETTER"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:79
-#: build/Forms/Admin/editor-settings.php:569
-#: build/Forms/Admin/editor-settings.php:581
-#: build/Forms/Admin/editor-settings.php:804
-#: includes/forms/class-form-legacy.php:223
+#: build/Forms/Admin/default-form.php:66
+#: build/Forms/Admin/editor-settings.php:564
+#: build/Forms/Admin/editor-settings.php:576
+#: build/Forms/Admin/editor-settings.php:799
+#: includes/forms/class-form-legacy.php:220
 #: includes/forms/class-legacy-form-editor.php:665
 #: includes/forms/class-legacy-form-editor.php:947
 msgid "Prefix"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:100
-#: includes/forms/class-form-legacy.php:244
+#: build/Forms/Admin/default-form.php:87
+#: includes/forms/class-form-legacy.php:241
 msgid "And get notified everytime we publish a new blog post."
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:121
-#: build/Forms/Admin/optin-templates.php:53
-#: build/Forms/Admin/optin-templates.php:149
-#: build/Forms/Admin/optin-templates.php:225
-#: build/Forms/Admin/optin-templates.php:300
-#: build/Forms/Admin/optin-templates.php:365
-#: build/Forms/Admin/optin-templates.php:465
-#: build/Forms/Admin/optin-templates.php:541
-#: build/Forms/Admin/optin-templates.php:629
-#: build/Forms/Admin/optin-templates.php:725
-#: build/Forms/Admin/optin-templates.php:795
-#: build/Forms/Admin/optin-templates.php:862
-#: build/Forms/Admin/optin-templates.php:1072
-#: build/Forms/Admin/optin-templates.php:1137
-#: build/Forms/Admin/optin-templates.php:1200
-#: build/Forms/Admin/optin-templates.php:1289
-#: includes/forms/class-form-legacy.php:265
-#: includes/forms/views/legacy/optin-templates.php:53
-#: includes/forms/views/legacy/optin-templates.php:149
-#: includes/forms/views/legacy/optin-templates.php:225
-#: includes/forms/views/legacy/optin-templates.php:300
-#: includes/forms/views/legacy/optin-templates.php:365
-#: includes/forms/views/legacy/optin-templates.php:465
-#: includes/forms/views/legacy/optin-templates.php:541
-#: includes/forms/views/legacy/optin-templates.php:629
-#: includes/forms/views/legacy/optin-templates.php:725
-#: includes/forms/views/legacy/optin-templates.php:795
-#: includes/forms/views/legacy/optin-templates.php:862
-#: includes/forms/views/legacy/optin-templates.php:1072
-#: includes/forms/views/legacy/optin-templates.php:1137
-#: includes/forms/views/legacy/optin-templates.php:1200
-#: includes/forms/views/legacy/optin-templates.php:1289
+#: build/Forms/Admin/default-form.php:108
+#: build/Forms/Admin/optin-templates.php:51
+#: build/Forms/Admin/optin-templates.php:117
+#: build/Forms/Admin/optin-templates.php:186
+#: build/Forms/Admin/optin-templates.php:259
+#: build/Forms/Admin/optin-templates.php:322
+#: build/Forms/Admin/optin-templates.php:428
+#: build/Forms/Admin/optin-templates.php:503
+#: build/Forms/Admin/optin-templates.php:585
+#: build/Forms/Admin/optin-templates.php:671
+#: build/Forms/Admin/optin-templates.php:739
+#: build/Forms/Admin/optin-templates.php:804
+#: build/Forms/Admin/optin-templates.php:998
+#: build/Forms/Admin/optin-templates.php:1059
+#: build/Forms/Admin/optin-templates.php:1103
+#: build/Forms/Admin/optin-templates.php:1194
+#: includes/forms/class-form-legacy.php:262
 msgid "By subscribing, you agree with our <a href=\"\">privacy policy</a> and our terms of service."
 msgstr ""
 
@@ -1293,205 +1261,232 @@ msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:104
 #: includes/forms/class-legacy-form-editor.php:391
+#: includes/forms/views/tab-settings.php:126
 msgid "Top Left"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:105
 #: includes/forms/class-legacy-form-editor.php:392
+#: includes/forms/views/tab-settings.php:127
 msgid "Top Left Alt"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:106
 #: includes/forms/class-legacy-form-editor.php:393
+#: includes/forms/views/tab-settings.php:128
 msgid "Top Right"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:107
 #: includes/forms/class-legacy-form-editor.php:394
+#: includes/forms/views/tab-settings.php:129
 msgid "Top Right Alt"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:108
-#: includes/forms/class-legacy-form-editor.php:395
-msgid "Bottom Left"
+#: includes/forms/views/tab-settings.php:130
+msgid "Center Left"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:109
-#: includes/forms/class-legacy-form-editor.php:396
-msgid "Bottom Left Alt"
+#: includes/forms/views/tab-settings.php:131
+msgid "Center Right"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:110
-#: includes/forms/class-legacy-form-editor.php:397
-msgid "Bottom right"
+#: includes/forms/class-legacy-form-editor.php:395
+#: includes/forms/views/tab-settings.php:132
+msgid "Bottom Left"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:111
+#: includes/forms/class-legacy-form-editor.php:396
+#: includes/forms/views/tab-settings.php:133
+msgid "Bottom Left Alt"
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:112
+#: includes/forms/class-legacy-form-editor.php:397
+#: includes/forms/views/tab-settings.php:134
+msgid "Bottom right"
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:113
 #: includes/forms/class-legacy-form-editor.php:398
+#: includes/forms/views/tab-settings.php:135
 msgid "Bottom right Alt"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:118
+#: build/Forms/Admin/editor-settings.php:120
 #: includes/forms/class-legacy-form-editor.php:405
 msgid "Show this form"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:120
+#: build/Forms/Admin/editor-settings.php:122
 #: includes/forms/class-legacy-form-editor.php:407
+#: includes/forms/views/tab-settings.php:117
 msgid "Immediately"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:121
+#: build/Forms/Admin/editor-settings.php:123
 #: includes/forms/class-legacy-form-editor.php:408
+#: includes/forms/views/tab-settings.php:118
 msgid "Before the user leaves"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:122
+#: build/Forms/Admin/editor-settings.php:124
 #: includes/forms/class-legacy-form-editor.php:409
+#: includes/forms/views/tab-settings.php:119
 msgid "After the user starts scrolling"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:123
+#: build/Forms/Admin/editor-settings.php:125
 #: includes/forms/class-legacy-form-editor.php:410
+#: includes/forms/views/tab-settings.php:120
 msgid "After clicking on something"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:124
+#: build/Forms/Admin/editor-settings.php:126
 #: includes/forms/class-legacy-form-editor.php:411
+#: includes/forms/views/tab-settings.php:121
 msgid "After a time delay"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:130
+#: build/Forms/Admin/editor-settings.php:132
 msgid "This option only works for users using a mouse. It will not work for touch devices."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:143
+#: build/Forms/Admin/editor-settings.php:145
 msgid "Selector"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:144
+#: build/Forms/Admin/editor-settings.php:146
 #: includes/forms/class-legacy-form-editor.php:419
 msgid "CSS selector of the items to watch out for clicks"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:158
+#: build/Forms/Admin/editor-settings.php:160
 #: includes/forms/class-legacy-form-editor.php:427
 msgid "Time in seconds to delay"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:171
+#: build/Forms/Admin/editor-settings.php:168
+msgid "seconds"
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:176
 msgid "Scroll depth"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:172
+#: build/Forms/Admin/editor-settings.php:177
 #: includes/forms/class-legacy-form-editor.php:435
 msgid "Scroll depth in percentage after which the form will appear"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:186
+#: build/Forms/Admin/editor-settings.php:194
 #: includes/forms/class-legacy-form-editor.php:239
 msgid "Page Targeting"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:192
+#: build/Forms/Admin/editor-settings.php:200
 #: includes/forms/class-legacy-form-editor.php:450
 msgid "Where do you want to show this subscription form?"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:199
+#: build/Forms/Admin/editor-settings.php:207
 #: includes/forms/class-legacy-form-editor.php:457
 msgid "Everywhere"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:211
+#: build/Forms/Admin/editor-settings.php:219
 msgid "Only show on selected pages"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:225
+#: build/Forms/Admin/editor-settings.php:233
 #: includes/forms/class-legacy-form-editor.php:465
 #: includes/forms/views/tab-settings.php:14
 msgid "Front page"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:226
+#: build/Forms/Admin/editor-settings.php:234
 #: includes/forms/class-legacy-form-editor.php:466
 #: includes/forms/views/tab-settings.php:15
 msgid "Blog page"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:227
+#: build/Forms/Admin/editor-settings.php:235
 #: includes/forms/class-legacy-form-editor.php:467
 #: includes/forms/views/tab-settings.php:16
 msgid "Search page"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:228
+#: build/Forms/Admin/editor-settings.php:236
 #: includes/forms/class-legacy-form-editor.php:468
 #: includes/forms/views/tab-settings.php:17
 msgid "Archive pages"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:236
+#: build/Forms/Admin/editor-settings.php:244
 #: includes/forms/class-legacy-form-editor.php:510
 msgid "Never show on:"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:245
+#: build/Forms/Admin/editor-settings.php:253
 #: includes/forms/class-legacy-form-editor.php:514
 msgid "Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:252
+#: build/Forms/Admin/editor-settings.php:260
 #: includes/forms/class-legacy-form-editor.php:521
 msgid "If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:268
+#: build/Forms/Admin/editor-settings.php:276
 #: includes/forms/class-legacy-form-editor.php:537
 msgid "Everyone"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:269
+#: build/Forms/Admin/editor-settings.php:277
 #: includes/forms/class-legacy-form-editor.php:538
 msgid "Logged in users"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:270
+#: build/Forms/Admin/editor-settings.php:278
 #: includes/forms/class-legacy-form-editor.php:539
 msgid "Logged out users"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:271
+#: build/Forms/Admin/editor-settings.php:279
 #: includes/forms/class-legacy-form-editor.php:540
 msgid "specific user roles"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:273
+#: build/Forms/Admin/editor-settings.php:281
 #: includes/forms/class-legacy-form-editor.php:542
 msgid "Who can see this form?"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:279
+#: build/Forms/Admin/editor-settings.php:287
 #: includes/forms/class-legacy-form-editor.php:547
 msgid "Select user roles"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:295
+#: build/Forms/Admin/editor-settings.php:303
 #: includes/forms/class-legacy-form-editor.php:255
 msgid "Device Targeting"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:302
+#: build/Forms/Admin/editor-settings.php:310
 #: includes/forms/class-legacy-form-editor.php:565
 msgid "Hide on Mobile"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:308
+#: build/Forms/Admin/editor-settings.php:316
 #: includes/forms/class-legacy-form-editor.php:571
 msgid "Hide on Desktops"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:317
+#: build/Forms/Admin/editor-settings.php:325
 #: build/Subscribers/Records.php:95
 #: includes/forms/class-legacy-form-editor.php:263
 #: includes/forms/views/tab-form.php:75
@@ -1503,89 +1498,87 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:324
+#: build/Forms/Admin/editor-settings.php:332
 #: includes/forms/class-legacy-form-editor.php:270
 msgid "Subscriber Tags"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:326
+#: build/Forms/Admin/editor-settings.php:334
 #: includes/forms/class-legacy-form-editor.php:272
 msgid "Enter a comma separated list of tags to assign subscribers who sign up using this form"
 msgstr ""
 
 #. translators: %s: file name
-#: build/Forms/Admin/editor-settings.php:333
+#: build/Forms/Admin/editor-settings.php:341
 #: includes/forms/class-legacy-form-editor.php:201
 #: build/Emails/assets/js/blocks.js:52
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Design"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:338
+#: build/Forms/Admin/editor-settings.php:346
 #: includes/forms/class-legacy-form-editor.php:633
 msgid "Form Appearance"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:351
+#: build/Forms/Admin/editor-settings.php:352
 #: includes/forms/class-legacy-form-editor.php:738
 msgid "Preferred Width"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:352
+#: build/Forms/Admin/editor-settings.php:353
 #: includes/forms/class-legacy-form-editor.php:739
 msgid "The element will resize to 100% width on smaller devices"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:357
+#: build/Forms/Admin/editor-settings.php:358
 #: includes/forms/class-legacy-form-editor.php:745
 msgid "Minimum Height"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:366
+#: build/Forms/Admin/editor-settings.php:367
 #: includes/forms/class-legacy-form-editor.php:641
 msgid "Opt-in Fields"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:391
+#: build/Forms/Admin/editor-settings.php:392
 #: build/Settings/Menu.php:612
 msgid "Field Type"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:401
-#: includes/admin/class-noptin-vue.php:410
+#: build/Forms/Admin/editor-settings.php:402
 msgid "Frontend Label"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:402
+#: build/Forms/Admin/editor-settings.php:403
 msgid "Leave empty to use the default label."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:407
-#: includes/admin/class-noptin-vue.php:462
-msgid "Is this field required?"
-msgstr ""
-
-#: build/Forms/Admin/editor-settings.php:423
+#: build/Forms/Admin/editor-settings.php:412
 #: includes/forms/class-legacy-form-editor.php:783
 msgid "Show all fields in a single line"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:435
+#: build/Forms/Admin/editor-settings.php:424
+msgid "Show field labels outside the fields"
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:430
 #: includes/forms/class-legacy-form-editor.php:790
 msgid "Show GDPR checkbox"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:447
+#: build/Forms/Admin/editor-settings.php:442
 #: includes/forms/class-legacy-form-editor.php:797
 msgid "Consent Text"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:463
+#: build/Forms/Admin/editor-settings.php:458
 #: includes/forms/class-legacy-form-editor.php:804
 msgid "Hide opt-in fields"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:472
+#: build/Forms/Admin/editor-settings.php:467
 #: includes/forms/class-legacy-form-editor.php:649
 #: src/Integrations/EDD/Downloads.php:123
 #: src/Integrations/WooCommerce/Products.php:432
@@ -1593,94 +1586,94 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:480
+#: build/Forms/Admin/editor-settings.php:475
 #: includes/forms/class-legacy-form-editor.php:763
 msgid "Background Image"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:487
+#: build/Forms/Admin/editor-settings.php:482
 #: includes/forms/class-legacy-form-editor.php:820
 #: src/Objects/Collection.php:431
 msgid "Avatar URL"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:494
-#: build/Forms/Admin/editor-settings.php:519
+#: build/Forms/Admin/editor-settings.php:489
+#: build/Forms/Admin/editor-settings.php:514
 #: includes/forms/class-legacy-form-editor.php:826
 #: includes/forms/class-legacy-form-editor.php:845
 msgid "Top"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:495
-#: build/Forms/Admin/editor-settings.php:520
-#: build/Forms/Admin/editor-settings.php:552
+#: build/Forms/Admin/editor-settings.php:490
+#: build/Forms/Admin/editor-settings.php:515
+#: build/Forms/Admin/editor-settings.php:547
 #: includes/forms/class-legacy-form-editor.php:827
 #: includes/forms/class-legacy-form-editor.php:846
 #: includes/forms/class-legacy-form-editor.php:872
 msgid "Left"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:496
-#: build/Forms/Admin/editor-settings.php:521
-#: build/Forms/Admin/editor-settings.php:553
+#: build/Forms/Admin/editor-settings.php:491
+#: build/Forms/Admin/editor-settings.php:516
+#: build/Forms/Admin/editor-settings.php:548
 #: includes/forms/class-legacy-form-editor.php:828
 #: includes/forms/class-legacy-form-editor.php:847
 #: includes/forms/class-legacy-form-editor.php:873
 msgid "Right"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:497
-#: build/Forms/Admin/editor-settings.php:522
+#: build/Forms/Admin/editor-settings.php:492
+#: build/Forms/Admin/editor-settings.php:517
 #: includes/forms/class-legacy-form-editor.php:829
 #: includes/forms/class-legacy-form-editor.php:848
 msgid "Bottom"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:499
+#: build/Forms/Admin/editor-settings.php:494
 #: includes/forms/class-legacy-form-editor.php:831
 msgid "Avatar Position"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:511
+#: build/Forms/Admin/editor-settings.php:506
 #: includes/forms/class-legacy-form-editor.php:838
 msgid "Image URL"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:524
+#: build/Forms/Admin/editor-settings.php:519
 #: includes/forms/class-legacy-form-editor.php:850
 msgid "Image Position"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:539
-#: build/Forms/Admin/editor-settings.php:824
+#: build/Forms/Admin/editor-settings.php:534
+#: build/Forms/Admin/editor-settings.php:819
 #: includes/forms/class-legacy-form-editor.php:657
 msgid "Button"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:545
-#: build/Forms/Admin/editor-settings.php:790
-#: build/Forms/Admin/editor-settings.php:832
+#: build/Forms/Admin/editor-settings.php:540
+#: build/Forms/Admin/editor-settings.php:785
+#: build/Forms/Admin/editor-settings.php:827
 msgid "Text"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:551
+#: build/Forms/Admin/editor-settings.php:546
 #: includes/forms/class-legacy-form-editor.php:871
 msgid "Block"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:555
+#: build/Forms/Admin/editor-settings.php:550
 msgid "Position"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:576
+#: build/Forms/Admin/editor-settings.php:571
 #: includes/forms/class-legacy-form-editor.php:942
 msgid "Hide prefix"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:592
-#: build/Forms/Admin/editor-settings.php:641
-#: build/Forms/Admin/editor-settings.php:690
-#: build/Forms/Admin/editor-settings.php:739
+#: build/Forms/Admin/editor-settings.php:587
+#: build/Forms/Admin/editor-settings.php:636
+#: build/Forms/Admin/editor-settings.php:685
+#: build/Forms/Admin/editor-settings.php:734
 #: includes/forms/class-legacy-form-editor.php:920
 #: includes/forms/class-legacy-form-editor.php:960
 #: includes/forms/class-legacy-form-editor.php:1000
@@ -1689,10 +1682,10 @@ msgstr ""
 msgid "Typography"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:603
-#: build/Forms/Admin/editor-settings.php:652
-#: build/Forms/Admin/editor-settings.php:701
-#: build/Forms/Admin/editor-settings.php:750
+#: build/Forms/Admin/editor-settings.php:598
+#: build/Forms/Admin/editor-settings.php:647
+#: build/Forms/Admin/editor-settings.php:696
+#: build/Forms/Admin/editor-settings.php:745
 #: includes/forms/class-legacy-form-editor.php:926
 #: includes/forms/class-legacy-form-editor.php:966
 #: includes/forms/class-legacy-form-editor.php:1006
@@ -1701,95 +1694,95 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:618
-#: build/Forms/Admin/editor-settings.php:630
-#: build/Forms/Admin/editor-settings.php:794
+#: build/Forms/Admin/editor-settings.php:613
+#: build/Forms/Admin/editor-settings.php:625
+#: build/Forms/Admin/editor-settings.php:789
 #: includes/forms/class-legacy-form-editor.php:673
 #: includes/forms/class-legacy-form-editor.php:907
 msgid "Heading"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:625
+#: build/Forms/Admin/editor-settings.php:620
 #: includes/forms/class-legacy-form-editor.php:902
 msgid "Hide heading"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:667
-#: build/Forms/Admin/editor-settings.php:679
+#: build/Forms/Admin/editor-settings.php:662
+#: build/Forms/Admin/editor-settings.php:674
 #: includes/forms/class-legacy-form-editor.php:681
 #: includes/forms/class-legacy-form-editor.php:987
 msgid "Sub-heading"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:674
+#: build/Forms/Admin/editor-settings.php:669
 #: includes/forms/class-legacy-form-editor.php:982
 msgid "Hide sub-heading"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:716
-#: build/Forms/Admin/editor-settings.php:728
-#: build/Forms/Admin/editor-settings.php:814
+#: build/Forms/Admin/editor-settings.php:711
+#: build/Forms/Admin/editor-settings.php:723
+#: build/Forms/Admin/editor-settings.php:809
 #: includes/forms/class-legacy-form-editor.php:689
 #: includes/forms/class-legacy-form-editor.php:1027
 msgid "Note"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:723
+#: build/Forms/Admin/editor-settings.php:718
 #: includes/forms/class-legacy-form-editor.php:1022
 msgid "Hide note"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:765
+#: build/Forms/Admin/editor-settings.php:760
 #: build/Settings/Menu.php:482
 #: includes/forms/class-legacy-form-editor.php:697
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Custom CSS"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:771
+#: build/Forms/Admin/editor-settings.php:766
 #: includes/forms/class-legacy-form-editor.php:1061
 msgid "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:772
+#: build/Forms/Admin/editor-settings.php:767
 #: includes/forms/class-legacy-form-editor.php:1062
 msgid "Enter Your Custom CSS."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:781
+#: build/Forms/Admin/editor-settings.php:776
 msgid "Colors"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:786
-#: build/Forms/Admin/editor-settings.php:828
+#: build/Forms/Admin/editor-settings.php:781
+#: build/Forms/Admin/editor-settings.php:823
 msgid "Background"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:842
+#: build/Forms/Admin/editor-settings.php:837
 #: includes/forms/class-legacy-form-editor.php:750
 msgid "Border"
 msgstr ""
 
 #. translators: %s is the context, e.g hobbies, lists
-#: build/Forms/Admin/editor-settings.php:869
+#: build/Forms/Admin/editor-settings.php:864
 #: includes/forms/class-legacy-form-editor.php:298
 #: includes/forms/views/tab-form.php:102
 msgid "Select the %s to add new subscribers who sign up via this form."
 msgstr ""
 
 #. translators: %s is the taxonomy label
-#: build/Forms/Admin/editor-settings.php:917
+#: build/Forms/Admin/editor-settings.php:912
 #: includes/forms/class-legacy-form-editor.php:500
 msgid "Enter a comma-separated list of %s ids, slugs, or names to show this form on"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:920
+#: build/Forms/Admin/editor-settings.php:915
 #: includes/forms/class-legacy-form-editor.php:503
 msgid "Prefix the id with a minus sign to exclude it from the list"
 msgstr ""
 
 #. translators: %1$s is the name of the integration, %2$s is the link to the integration's website.
-#: build/Forms/Admin/editor-settings.php:941
+#: build/Forms/Admin/editor-settings.php:936
 #: includes/forms/class-legacy-form-editor.php:600
 msgid "Install the %1$s to add new subscribers to %2$s."
 msgstr ""
@@ -1800,335 +1793,531 @@ msgid "Form Editor"
 msgstr ""
 
 #: build/Forms/Admin/optin-templates.php:7
-#: includes/forms/views/legacy/optin-templates.php:7
 msgid "Professional"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:40
-#: build/Forms/Admin/optin-templates.php:616
-#: includes/forms/views/legacy/optin-templates.php:40
-#: includes/forms/views/legacy/optin-templates.php:616
+#: build/Forms/Admin/optin-templates.php:38
+#: build/Forms/Admin/optin-templates.php:572
 msgid "Sign Up"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:46
-#: includes/forms/views/legacy/optin-templates.php:46
+#: build/Forms/Admin/optin-templates.php:44
 msgid "Get Exclusive SEO Tips"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:49
-#: includes/forms/views/legacy/optin-templates.php:49
+#: build/Forms/Admin/optin-templates.php:47
 msgid "Receive the same tips I used to double my traffic in just two weeks!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:102
-#: includes/forms/views/legacy/optin-templates.php:102
+#: build/Forms/Admin/optin-templates.php:76
 msgid "Borderless"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:114
-#: includes/forms/views/legacy/optin-templates.php:114
+#: build/Forms/Admin/optin-templates.php:86
 msgid "Enter your email address here"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:136
-#: includes/forms/class-widget-legacy.php:181
-#: includes/forms/views/legacy/optin-templates.php:136
+#: build/Forms/Admin/optin-templates.php:104
+#: build/Forms/Widgets/New_Form.php:251
 msgid "SUBSCRIBE NOW"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:142
-#: includes/forms/views/legacy/optin-templates.php:142
+#: build/Forms/Admin/optin-templates.php:110
 msgid "Subscribe For Latest Updates"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:145
-#: includes/forms/views/legacy/optin-templates.php:145
+#: build/Forms/Admin/optin-templates.php:113
 msgid "We'll send you the best business news and informed analysis on what matters the most to you."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:180
+#: build/Forms/Admin/optin-templates.php:141
 #: includes/emails/emails.php:259
-#: includes/forms/views/legacy/optin-templates.php:180
 msgid "Classic"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:213
-#: build/Forms/Admin/optin-templates.php:296
-#: build/Forms/Admin/optin-templates.php:534
-#: includes/forms/views/legacy/optin-templates.php:213
-#: includes/forms/views/legacy/optin-templates.php:296
-#: includes/forms/views/legacy/optin-templates.php:534
+#: build/Forms/Admin/optin-templates.php:174
+#: build/Forms/Admin/optin-templates.php:255
+#: build/Forms/Admin/optin-templates.php:496
 msgid "Subscribe To Our Newsletter"
 msgstr ""
 
 #. Translators: %1$s Opening link tag, %2$s Closing link tag.
-#: build/Forms/Admin/optin-templates.php:218
-#: includes/forms/views/legacy/optin-templates.php:218
+#: build/Forms/Admin/optin-templates.php:179
 msgid "Enter your email to receive a weekly round-up of our best posts.  %1$sLearn more! %2$s"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:249
-#: includes/forms/views/legacy/optin-templates.php:249
+#: build/Forms/Admin/optin-templates.php:210
 msgid "Subheading"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:261
-#: includes/forms/views/legacy/optin-templates.php:261
+#: build/Forms/Admin/optin-templates.php:220
 msgid "Enter your name here"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:272
-#: includes/forms/views/legacy/optin-templates.php:272
+#: build/Forms/Admin/optin-templates.php:231
 msgid "Enter your email address"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:293
-#: includes/forms/views/legacy/optin-templates.php:293
+#: build/Forms/Admin/optin-templates.php:252
 msgid "DON'T MISS OUT!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:325
-#: includes/forms/views/legacy/optin-templates.php:325
+#: build/Forms/Admin/optin-templates.php:284
 msgid "Border Top"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:358
-#: includes/forms/views/legacy/optin-templates.php:358
+#: build/Forms/Admin/optin-templates.php:315
 msgid "Join Our Newsletter"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:361
-#: includes/forms/views/legacy/optin-templates.php:361
+#: build/Forms/Admin/optin-templates.php:318
 msgid "get weekly access to our best tips, tricks and updates."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:420
-#: build/Forms/Admin/optin-templates.php:1235
+#: build/Forms/Admin/optin-templates.php:383
+#: build/Forms/Admin/optin-templates.php:1140
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:216
 #: includes/class-noptin-custom-fields.php:88
-#: includes/forms/views/legacy/optin-templates.php:420
-#: includes/forms/views/legacy/optin-templates.php:1235
 #: includes/subscriber.php:1038
 msgid "First Name"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:461
-#: includes/forms/views/legacy/optin-templates.php:461
+#: build/Forms/Admin/optin-templates.php:424
 msgid "Use the custom CSS panel to change the background colors"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:501
-#: includes/forms/views/legacy/optin-templates.php:501
+#: build/Forms/Admin/optin-templates.php:464
 msgid "Rounded Fields"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:537
-#: includes/forms/views/legacy/optin-templates.php:537
+#: build/Forms/Admin/optin-templates.php:499
 msgid "Enter your email to receive a weekly round-up of our best posts. Learn more!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:622
-#: includes/forms/views/legacy/optin-templates.php:622
+#: build/Forms/Admin/optin-templates.php:578
 msgid "Try Applying the Green Color Theme!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:625
-#: includes/forms/views/legacy/optin-templates.php:625
+#: build/Forms/Admin/optin-templates.php:581
 msgid "Click on the design tab to change the appearance of this form."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:712
-#: includes/forms/views/legacy/optin-templates.php:712
+#: build/Forms/Admin/optin-templates.php:658
 msgid "Download Now"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:718
-#: includes/forms/views/legacy/optin-templates.php:718
+#: build/Forms/Admin/optin-templates.php:664
 msgid "Get my FREE book on VueJS"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:756
-#: includes/forms/views/legacy/optin-templates.php:756
+#: build/Forms/Admin/optin-templates.php:702
 msgid "Hearts"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:782
-#: includes/forms/views/legacy/optin-templates.php:782
+#: build/Forms/Admin/optin-templates.php:726
 msgid "Yes Please!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:788
-#: includes/forms/views/legacy/optin-templates.php:788
+#: build/Forms/Admin/optin-templates.php:732
 msgid "Get some love!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:791
-#: includes/forms/views/legacy/optin-templates.php:791
+#: build/Forms/Admin/optin-templates.php:735
 msgid "Use the Custom CSS tab to change the background color of this form."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:849
-#: includes/forms/views/legacy/optin-templates.php:849
+#: build/Forms/Admin/optin-templates.php:791
 msgid "SEND IT MY WAY!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:855
-#: includes/forms/views/legacy/optin-templates.php:855
+#: build/Forms/Admin/optin-templates.php:797
 msgid "Optimize your opt-ins."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:858
-#: includes/forms/views/legacy/optin-templates.php:858
+#: build/Forms/Admin/optin-templates.php:800
 msgid "Collecting emails is easier than ever with this opt-in focused Toolkit.  Get the resources you need sent straight to your inbox."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:901
-#: includes/forms/views/legacy/optin-templates.php:901
+#: build/Forms/Admin/optin-templates.php:833
 #: src/Integrations/EDD/Orders.php:100
 #: src/Integrations/EDD/Order_Items.php:79
 #: src/Integrations/WooCommerce/Orders.php:382
 msgid "Discount"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:912
-#: build/Forms/Admin/optin-templates.php:1109
-#: includes/forms/views/legacy/optin-templates.php:912
-#: includes/forms/views/legacy/optin-templates.php:1109
+#: build/Forms/Admin/optin-templates.php:842
+#: build/Forms/Admin/optin-templates.php:1033
 msgid "Enter your email here"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:927
-#: build/Forms/Admin/optin-templates.php:992
-#: includes/forms/views/legacy/optin-templates.php:927
-#: includes/forms/views/legacy/optin-templates.php:992
+#: build/Forms/Admin/optin-templates.php:857
+#: build/Forms/Admin/optin-templates.php:920
 msgid "GET IT NOW!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:932
-#: includes/forms/views/legacy/optin-templates.php:932
+#: build/Forms/Admin/optin-templates.php:862
 msgid "ENTER YOUR EMAIL AND GET"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:935
-#: includes/forms/views/legacy/optin-templates.php:935
+#: build/Forms/Admin/optin-templates.php:865
 msgid "40% OFF"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:938
-#: includes/forms/views/legacy/optin-templates.php:938
+#: build/Forms/Admin/optin-templates.php:868
 msgid "on orders of $25 or more"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:942
-#: includes/forms/views/legacy/optin-templates.php:942
+#: build/Forms/Admin/optin-templates.php:872
 msgid "Entering your email also makes you eligible to receive future promotional emails."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:966
-#: includes/forms/views/legacy/optin-templates.php:966
+#: build/Forms/Admin/optin-templates.php:896
 msgid "Discount Alt"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:977
-#: build/Forms/Admin/optin-templates.php:1044
-#: includes/forms/views/legacy/optin-templates.php:977
-#: includes/forms/views/legacy/optin-templates.php:1044
+#: build/Forms/Admin/optin-templates.php:905
+#: build/Forms/Admin/optin-templates.php:970
 msgid "Enter Your Email Address"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1001
-#: includes/forms/views/legacy/optin-templates.php:1001
+#: build/Forms/Admin/optin-templates.php:929
 msgid "SUBSCRIBE TO OUR NEWSLETTER & RECEIVE A COUPON"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1005
-#: includes/forms/views/legacy/optin-templates.php:1005
+#: build/Forms/Admin/optin-templates.php:933
 msgid "* $50 MINIMUM PURCHASE"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1033
-#: includes/forms/views/legacy/optin-templates.php:1033
+#: build/Forms/Admin/optin-templates.php:961
 msgid "Two Backgrounds"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1059
-#: build/Forms/Admin/optin-templates.php:1124
-#: build/Forms/Admin/optin-templates.php:1187
+#: build/Forms/Admin/optin-templates.php:985
+#: build/Forms/Admin/optin-templates.php:1046
+#: build/Forms/Admin/optin-templates.php:1090
+#: build/Forms/Renderer.php:191
+#: build/Forms/Renderer.php:592
 #: includes/forms/class-form-element.php:264
-#: includes/forms/class-output-manager.php:73
-#: includes/forms/views/legacy/optin-templates.php:1059
-#: includes/forms/views/legacy/optin-templates.php:1124
-#: includes/forms/views/legacy/optin-templates.php:1187
 #: includes/forms/views/tab-form.php:11
 msgid "Subscribe"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1068
-#: includes/forms/views/legacy/optin-templates.php:1068
+#: build/Forms/Admin/optin-templates.php:994
 msgid "This template uses custom CSS to set a different background for the footer"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1098
-#: includes/forms/views/legacy/optin-templates.php:1098
+#: build/Forms/Admin/optin-templates.php:1024
 msgid "Minimal"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1130
-#: includes/forms/views/legacy/optin-templates.php:1130
+#: build/Forms/Admin/optin-templates.php:1052
 msgid "Free Updates"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1133
-#: includes/forms/views/legacy/optin-templates.php:1133
+#: build/Forms/Admin/optin-templates.php:1055
 msgid "Get free notifications whenever we publish new content."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1161
-#: includes/forms/views/legacy/optin-templates.php:1161
+#: build/Forms/Admin/optin-templates.php:1067
 msgid "Content Upgrades"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1172
-#: includes/forms/views/legacy/optin-templates.php:1172
+#: build/Forms/Admin/optin-templates.php:1076
 msgid "Your Email Address"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1193
-#: includes/forms/views/legacy/optin-templates.php:1193
+#: build/Forms/Admin/optin-templates.php:1096
 msgid "The Marketer's Workbook"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1196
-#: includes/forms/views/legacy/optin-templates.php:1196
+#: build/Forms/Admin/optin-templates.php:1099
 msgid "Enter your email below to receive my best selling marketing ebook."
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1224
-#: includes/forms/views/legacy/optin-templates.php:1224
+#: build/Forms/Admin/optin-templates.php:1131
 msgid "Large Fields"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1245
+#: build/Forms/Admin/optin-templates.php:1150
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:222
 #: includes/class-noptin-custom-fields.php:96
-#: includes/forms/views/legacy/optin-templates.php:1245
 #: includes/subscriber.php:1044
 msgid "Last Name"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1282
-#: includes/forms/views/legacy/optin-templates.php:1282
+#: build/Forms/Admin/optin-templates.php:1187
 msgid "Email Exclusive Offers!"
 msgstr ""
 
-#: build/Forms/Admin/optin-templates.php:1285
-#: includes/forms/views/legacy/optin-templates.php:1285
+#: build/Forms/Admin/optin-templates.php:1190
 msgid "Sign up and we will instantly send you our best exclusive bonuses."
 msgstr ""
 
-#: build/Forms/Main.php:129
+#: build/Forms/Listener.php:134
+#: includes/class-noptin-ajax.php:73
+msgid "This form is in-active."
+msgstr ""
+
+#: build/Forms/Listener.php:609
+msgid "Thanks!"
+msgstr ""
+
+#: build/Forms/Main.php:78
+msgctxt "Post type general name"
+msgid "Subscription Forms"
+msgstr ""
+
+#: build/Forms/Main.php:79
+msgctxt "Post type singular name"
+msgid "Subscription Form"
+msgstr ""
+
+#: build/Forms/Main.php:80
+msgctxt "Admin Menu text"
+msgid "Subscription Forms"
+msgstr ""
+
+#: build/Forms/Main.php:81
+msgctxt "Add New on Toolbar"
+msgid "Subscription Form"
+msgstr ""
+
+#: build/Forms/Main.php:82
+#: build/Tasks/Main.php:555
+#: src/DB/Schema.php:228
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Misc/assets/js/collection.js:123
+#: build/Misc/assets/js/collection.js:261
+msgid "Add New"
+msgstr ""
+
+#: build/Forms/Main.php:83
+msgid "Add New Form"
+msgstr ""
+
+#: build/Forms/Main.php:84
+msgid "New Form"
+msgstr ""
+
+#: build/Forms/Main.php:85
+msgid "Edit Form"
+msgstr ""
+
+#: build/Forms/Main.php:86
+msgid "View Form"
+msgstr ""
+
+#: build/Forms/Main.php:87
+msgid "Search Forms"
+msgstr ""
+
+#: build/Forms/Main.php:88
+msgid "Parent Forms:"
+msgstr ""
+
+#: build/Forms/Main.php:89
+msgid "No forms found."
+msgstr ""
+
+#: build/Forms/Main.php:90
+msgid "No forms found in Trash."
+msgstr ""
+
+#: build/Forms/Main.php:92
+#: includes/admin/class-noptin-admin-menus.php:102
+#: includes/admin/class-noptin-admin-menus.php:103
+msgid "Subscription Forms"
+msgstr ""
+
+#: build/Forms/Main.php:232
 msgid "Newsletter Subscription Form"
+msgstr ""
+
+#: build/Forms/Main.php:259
+msgid "Could not establish a connection to the server."
+msgstr ""
+
+#: build/Forms/Renderer.php:159
+#: build/Subscribers/Records.php:581
+#: includes/emails/class-generator.php:155
+msgid "Unsubscribe"
+msgstr ""
+
+#: build/Forms/Widgets/Form.php:23
+#: includes/subscriber.php:1467
+#: build/Forms/assets/js/block.js:1
+msgid "Newsletter Form"
+msgstr ""
+
+#: build/Forms/Widgets/Form.php:25
+msgid "Displays a pre-built newsletter form"
+msgstr ""
+
+#: build/Forms/Widgets/Form.php:124
+#: build/Forms/Widgets/New_Form.php:261
+msgid "Title:"
+msgstr ""
+
+#: build/Forms/Widgets/Form.php:129
+msgid "Form:"
+msgstr ""
+
+#: build/Forms/Widgets/Form.php:132
+#: build/Forms/assets/js/block.js:1
+msgid "Default form"
+msgstr ""
+
+#: build/Forms/Widgets/Form.php:133
+msgid "Single-line / Horizontal Form"
+msgstr ""
+
+#. translators: %1$s is a link to the newsletter form editor.
+#: build/Forms/Widgets/Form.php:154
+msgid "You can edit or create new newsletter sign-up forms in the <a href=\"%s\">Noptin forms overview</a> page."
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:27
+msgid "Inherit From Theme"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:28
+#: includes/forms/class-legacy-form-editor.php:129
+msgid "Red"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:29
+#: includes/forms/class-legacy-form-editor.php:130
+msgid "Pink"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:30
+#: includes/forms/class-legacy-form-editor.php:131
+#: includes/forms/class-legacy-form-editor.php:133
+msgid "Purple"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:31
+#: includes/forms/class-legacy-form-editor.php:132
+msgid "Deep Purple"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:32
+#: includes/forms/class-legacy-form-editor.php:134
+msgid "Indigo"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:33
+#: includes/forms/class-legacy-form-editor.php:135
+msgid "Blue"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:34
+#: includes/forms/class-legacy-form-editor.php:136
+msgid "Light Blue"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:35
+#: includes/forms/class-legacy-form-editor.php:137
+msgid "Cyan"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:36
+#: includes/forms/class-legacy-form-editor.php:138
+msgid "Teal"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:37
+#: includes/forms/class-legacy-form-editor.php:139
+msgid "Green"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:38
+#: includes/forms/class-legacy-form-editor.php:140
+msgid "Light Green"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:39
+#: includes/forms/class-legacy-form-editor.php:141
+msgid "Lime"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:40
+#: includes/forms/class-legacy-form-editor.php:142
+msgid "Yellow"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:41
+#: includes/forms/class-legacy-form-editor.php:143
+msgid "Amber"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:42
+#: includes/forms/class-legacy-form-editor.php:144
+msgid "Orange"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:43
+#: includes/forms/class-legacy-form-editor.php:145
+msgid "Deep Orange"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:44
+#: includes/forms/class-legacy-form-editor.php:146
+msgid "Brown"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:45
+#: includes/forms/class-legacy-form-editor.php:147
+msgid "Blue Grey"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:48
+#: includes/forms/class-legacy-form-editor.php:150
+msgid "Grey"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:53
+msgid "Create and display a newsletter subscription form"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:90
+msgid "Submit"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:249
+msgid "FREE NEWSLETTER"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:250
+msgid "Subscribe to our newsletter today and be the first to know when we publish a new blog post."
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:274
+msgid "Description:"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:287
+msgid "Redirect:"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:302
+msgid "Background Color:"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:317
+msgid "Title Color:"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:331
+msgid "Text Color:"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:344
+msgid "Button Color:"
+msgstr ""
+
+#: build/Forms/Widgets/New_Form.php:356
+msgid "Submit Button Text:"
 msgstr ""
 
 #: build/Settings/Main.php:45
@@ -2236,12 +2425,12 @@ msgstr ""
 #: build/Settings/Menu.php:306
 #: build/Settings/Menu.php:307
 #: includes/class-noptin-ajax.php:156
-#: includes/forms/forms.php:411
+#: includes/forms/forms.php:447
 msgid "You are already subscribed to the newsletter, thank you!"
 msgstr ""
 
 #: build/Settings/Menu.php:308
-#: includes/forms/forms.php:410
+#: includes/forms/forms.php:446
 msgid "Shown when an existing subscriber tries to sign-up again."
 msgstr ""
 
@@ -2694,12 +2883,6 @@ msgstr ""
 msgid "Confirm your subscription"
 msgstr ""
 
-#: build/Subscribers/Records.php:581
-#: includes/emails/class-generator.php:155
-#: includes/forms/class-output-manager.php:192
-msgid "Unsubscribe"
-msgstr ""
-
 #: build/Subscribers/Records.php:582
 msgid "Resubscribe"
 msgstr ""
@@ -2835,15 +3018,6 @@ msgstr ""
 msgid "Task"
 msgstr ""
 
-#: build/Tasks/Main.php:555
-#: includes/forms/class-form-manager.php:204
-#: src/DB/Schema.php:228
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
-#: build/Misc/assets/js/collection.js:123
-#: build/Misc/assets/js/collection.js:261
-msgid "Add New"
-msgstr ""
-
 #: build/Tasks/Main.php:556
 msgid "Add New Task"
 msgstr ""
@@ -2916,7 +3090,7 @@ msgid "Run"
 msgstr ""
 
 #: build/Tasks/Task.php:408
-#: includes/class-noptin-scripts.php:196
+#: includes/class-noptin-scripts.php:188
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
 #: build/Misc/assets/js/collection.js:178
@@ -2940,12 +3114,6 @@ msgstr ""
 
 #: includes/admin/class-noptin-admin-menus.php:57
 msgid "Dashboard"
-msgstr ""
-
-#: includes/admin/class-noptin-admin-menus.php:102
-#: includes/admin/class-noptin-admin-menus.php:103
-#: includes/forms/class-form-manager.php:214
-msgid "Subscription Forms"
 msgstr ""
 
 #: includes/admin/class-noptin-admin-menus.php:120
@@ -3032,40 +3200,6 @@ msgstr ""
 #: includes/admin/class-noptin-tools.php:215
 #: src/Objects/Generic_Post_Type.php:179
 msgid "Post ID"
-msgstr ""
-
-#: includes/admin/class-noptin-vue.php:420
-msgid "Admin Label"
-msgstr ""
-
-#: includes/admin/class-noptin-vue.php:421
-msgid "You will use this as a merge tag in your emails."
-msgstr ""
-
-#: includes/admin/class-noptin-vue.php:431
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
-#: build/Emails/assets/js/blocks.js:46
-#: build/Emails/assets/js/email-editor.js:51
-#: build/Emails/assets/js/global.js:39
-#: build/Forms/assets/js/form-editor.js:51
-#: build/Misc/assets/js/collection.js:216
-#: build/Settings/assets/js/settings.js:51
-msgid "Value"
-msgstr ""
-
-#: includes/admin/class-noptin-vue.php:441
-msgid "Options"
-msgstr ""
-
-#: includes/admin/class-noptin-vue.php:741
-#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
-#: build/Emails/assets/js/blocks.js:46
-#: build/Emails/assets/js/email-editor.js:51
-#: build/Emails/assets/js/global.js:39
-#: build/Forms/assets/js/form-editor.js:51
-#: build/Misc/assets/js/collection.js:216
-#: build/Settings/assets/js/settings.js:51
-msgid "Upload Image"
 msgstr ""
 
 #: includes/admin/welcome.php:10
@@ -3456,11 +3590,6 @@ msgstr ""
 msgid "The comment type"
 msgstr ""
 
-#: includes/class-noptin-ajax.php:73
-#: includes/forms/class-form-listener.php:134
-msgid "This form is in-active."
-msgstr ""
-
 #: includes/class-noptin-ajax.php:83
 msgid "You must consent to receive promotional emails."
 msgstr ""
@@ -3470,7 +3599,7 @@ msgid "Ensure that you fill all required fields."
 msgstr ""
 
 #: includes/class-noptin-ajax.php:190
-#: includes/forms/class-form-legacy.php:314
+#: includes/forms/class-form-legacy.php:311
 msgid "Thanks for subscribing to the newsletter"
 msgstr ""
 
@@ -3699,7 +3828,7 @@ msgstr ""
 msgid "Use this shortcode to display the form on your website"
 msgstr ""
 
-#: includes/class-noptin-scripts.php:195
+#: includes/class-noptin-scripts.php:187
 msgid "Close"
 msgstr ""
 
@@ -4019,19 +4148,6 @@ msgstr ""
 msgid "Add heading text here"
 msgstr ""
 
-#: includes/forms/class-asset-manager.php:57
-msgid "Could not establish a connection to the server."
-msgstr ""
-
-#: includes/forms/class-asset-manager.php:217
-msgid "Default Form"
-msgstr ""
-
-#: includes/forms/class-asset-manager.php:221
-#: includes/forms/class-widget.php:131
-msgid "Single-line / Horizontal Form"
-msgstr ""
-
 #: includes/forms/class-form-admin.php:62
 msgid "Embed"
 msgstr ""
@@ -4040,106 +4156,50 @@ msgstr ""
 msgid "Do you need help?"
 msgstr ""
 
-#: includes/forms/class-form-admin.php:197
+#: includes/forms/class-form-admin.php:196
 msgid "Preview form"
 msgstr ""
 
-#: includes/forms/class-form-admin.php:202
-#: includes/forms/class-form-admin.php:205
+#: includes/forms/class-form-admin.php:201
+#: includes/forms/class-form-admin.php:204
 msgid "Form updated."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:203
+#: includes/forms/class-form-admin.php:202
 msgid "Custom field updated."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:204
+#: includes/forms/class-form-admin.php:203
 msgid "Custom field deleted."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:206
+#: includes/forms/class-form-admin.php:205
 msgid "Form restored."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:207
+#: includes/forms/class-form-admin.php:206
 msgid "Form published."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:208
+#: includes/forms/class-form-admin.php:207
 msgid "Form saved."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:209
+#: includes/forms/class-form-admin.php:208
 msgid "Form submitted."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:210
+#: includes/forms/class-form-admin.php:209
 msgid "Form scheduled."
 msgstr ""
 
-#: includes/forms/class-form-admin.php:211
+#: includes/forms/class-form-admin.php:210
 msgid "Form draft updated."
 msgstr ""
 
-#: includes/forms/class-form-legacy.php:148
-#: includes/forms/class-form-legacy.php:625
+#: includes/forms/class-form-legacy.php:147
+#: includes/forms/class-form-legacy.php:616
 msgid "This form is incorrectly configured"
-msgstr ""
-
-#: includes/forms/class-form-listener.php:609
-msgid "Thanks!"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:200
-msgctxt "Post type general name"
-msgid "Subscription Forms"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:201
-msgctxt "Post type singular name"
-msgid "Subscription Form"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:202
-msgctxt "Admin Menu text"
-msgid "Subscription Forms"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:203
-msgctxt "Add New on Toolbar"
-msgid "Subscription Form"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:205
-msgid "Add New Form"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:206
-msgid "New Form"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:207
-msgid "Edit Form"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:208
-msgid "View Form"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:209
-msgid "Search Forms"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:210
-msgid "Parent Forms:"
-msgstr ""
-
-#: includes/forms/class-form-manager.php:211
-msgid "No forms found."
-msgstr ""
-
-#: includes/forms/class-form-manager.php:212
-msgid "No forms found in Trash."
 msgstr ""
 
 #: includes/forms/class-form-tags.php:76
@@ -4148,102 +4208,6 @@ msgstr ""
 
 #: includes/forms/class-form-tags.php:81
 msgid "Data from the URL or a submitted form."
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:129
-#: includes/forms/class-widget-legacy.php:34
-msgid "Red"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:130
-#: includes/forms/class-widget-legacy.php:35
-msgid "Pink"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:131
-#: includes/forms/class-legacy-form-editor.php:133
-#: includes/forms/class-widget-legacy.php:36
-msgid "Purple"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:132
-#: includes/forms/class-widget-legacy.php:37
-msgid "Deep Purple"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:134
-#: includes/forms/class-widget-legacy.php:38
-msgid "Indigo"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:135
-#: includes/forms/class-widget-legacy.php:39
-msgid "Blue"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:136
-#: includes/forms/class-widget-legacy.php:40
-msgid "Light Blue"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:137
-#: includes/forms/class-widget-legacy.php:41
-msgid "Cyan"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:138
-#: includes/forms/class-widget-legacy.php:42
-msgid "Teal"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:139
-#: includes/forms/class-widget-legacy.php:43
-msgid "Green"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:140
-#: includes/forms/class-widget-legacy.php:44
-msgid "Light Green"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:141
-#: includes/forms/class-widget-legacy.php:45
-msgid "Lime"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:142
-#: includes/forms/class-widget-legacy.php:46
-msgid "Yellow"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:143
-#: includes/forms/class-widget-legacy.php:47
-msgid "Amber"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:144
-#: includes/forms/class-widget-legacy.php:48
-msgid "Orange"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:145
-#: includes/forms/class-widget-legacy.php:49
-msgid "Deep Orange"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:146
-#: includes/forms/class-widget-legacy.php:50
-msgid "Brown"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:147
-#: includes/forms/class-widget-legacy.php:51
-msgid "Blue Grey"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:150
-#: includes/forms/class-widget-legacy.php:54
-msgid "Grey"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:326
@@ -4291,9 +4255,6 @@ msgid "Apply a color theme"
 msgstr ""
 
 #: includes/forms/class-legacy-form-editor.php:756
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:95
-#: includes/assets/js/src/blocks.js:159
 msgid "Background Color"
 msgstr ""
 
@@ -4363,169 +4324,95 @@ msgstr ""
 msgid "Use the %s widget to add this form to a widget area"
 msgstr ""
 
-#: includes/forms/class-widget-legacy.php:33
-msgid "Inherit From Theme"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:59
-msgid "Use this widget to create and add a simple newsletter subscription widget"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:96
-msgid "Submit"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:179
-msgid "FREE NEWSLETTER"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:180
-msgid "Subscribe to our newsletter today and be the first to know when we publish a new blog post."
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:191
-#: includes/forms/class-widget.php:122
-msgid "Title:"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:204
-msgid "Description:"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:217
-msgid "Redirect:"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:232
-msgid "Background Color:"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:247
-msgid "Title Color:"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:261
-msgid "Text Color:"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:274
-msgid "Button Color:"
-msgstr ""
-
-#: includes/forms/class-widget-legacy.php:286
-msgid "Submit Button Text:"
-msgstr ""
-
-#: includes/forms/class-widget.php:21
-msgid "Noptin Newsletter Form"
-msgstr ""
-
-#: includes/forms/class-widget.php:23
-msgid "Displays a newsletter sign-up form"
-msgstr ""
-
-#: includes/forms/class-widget.php:127
-msgid "Form:"
-msgstr ""
-
-#: includes/forms/class-widget.php:130
-msgid "Default form"
-msgstr ""
-
-#. translators: %1$s is a link to the newsletter form editor.
-#: includes/forms/class-widget.php:152
-msgid "You can edit or create new newsletter sign-up forms in the <a href=\"%s\">Noptin forms overview</a> page."
-msgstr ""
-
-#: includes/forms/forms.php:389
+#: includes/forms/forms.php:425
 msgid "Successfully subscribed"
 msgstr ""
 
-#: includes/forms/forms.php:390
+#: includes/forms/forms.php:426
 msgid "Shown when someone successfully fills the form."
 msgstr ""
 
-#: includes/forms/forms.php:391
+#: includes/forms/forms.php:427
 msgid "Thanks for subscribing to the newsletter."
 msgstr ""
 
-#: includes/forms/forms.php:394
+#: includes/forms/forms.php:430
 msgid "Invalid email address"
 msgstr ""
 
-#: includes/forms/forms.php:395
+#: includes/forms/forms.php:431
 msgid "Shown when someone enters an invalid email address."
 msgstr ""
 
-#: includes/forms/forms.php:396
+#: includes/forms/forms.php:432
 msgid "Please provide a valid email address."
 msgstr ""
 
-#: includes/forms/forms.php:399
+#: includes/forms/forms.php:435
 msgid "Required field missing"
 msgstr ""
 
-#: includes/forms/forms.php:400
+#: includes/forms/forms.php:436
 msgid "Shown when someone does not fill all required fields."
 msgstr ""
 
-#: includes/forms/forms.php:401
+#: includes/forms/forms.php:437
 msgid "Please fill in all the required fields."
 msgstr ""
 
-#: includes/forms/forms.php:404
+#: includes/forms/forms.php:440
 msgid "Terms not Accepted"
 msgstr ""
 
-#: includes/forms/forms.php:405
+#: includes/forms/forms.php:441
 msgid "Shown when someone does not check the acceptance checkbox."
 msgstr ""
 
-#: includes/forms/forms.php:406
+#: includes/forms/forms.php:442
 msgid "Please accept the terms and conditions first."
 msgstr ""
 
-#: includes/forms/forms.php:409
+#: includes/forms/forms.php:445
 msgid "Already subscribed"
 msgstr ""
 
-#: includes/forms/forms.php:414
+#: includes/forms/forms.php:450
 msgid "Generic error"
 msgstr ""
 
-#: includes/forms/forms.php:415
+#: includes/forms/forms.php:451
 msgid "Shown when a generic error occurs."
 msgstr ""
 
-#: includes/forms/forms.php:416
+#: includes/forms/forms.php:452
 msgid "Oops. Something went wrong. Please try again later."
 msgstr ""
 
-#: includes/forms/forms.php:420
+#: includes/forms/forms.php:456
 msgid "Shown when an existing subscriber unsubscribes via this form."
 msgstr ""
 
-#: includes/forms/forms.php:421
+#: includes/forms/forms.php:457
 msgid "You were successfully unsubscribed."
 msgstr ""
 
-#: includes/forms/forms.php:424
+#: includes/forms/forms.php:460
 msgid "Not subscribed"
 msgstr ""
 
-#: includes/forms/forms.php:425
+#: includes/forms/forms.php:461
 msgid "Shown when someone unsubscribes with an email that is not already subscribed."
 msgstr ""
 
-#: includes/forms/forms.php:426
+#: includes/forms/forms.php:462
 msgid "The given email address is not subscribed."
 msgstr ""
 
-#: includes/forms/forms.php:430
+#: includes/forms/forms.php:466
 msgid "Shown when an existing subscriber updates their details via this form."
 msgstr ""
 
-#: includes/forms/forms.php:431
+#: includes/forms/forms.php:467
 msgid "Thank you, your details have been updated."
 msgstr ""
 
@@ -4539,14 +4426,6 @@ msgstr ""
 
 #: includes/forms/views/editor.php:19
 msgid "Welcome Email"
-msgstr ""
-
-#: includes/forms/views/legacy/fields-editor.php:29
-msgid "Delete Field"
-msgstr ""
-
-#: includes/forms/views/legacy/fields-editor.php:34
-msgid "Add Field"
 msgstr ""
 
 #: includes/forms/views/metabox-embed.php:7
@@ -4585,7 +4464,8 @@ msgstr ""
 msgid "Create unsubscribe forms"
 msgstr ""
 
-#: includes/forms/views/preview.php:62
+#: includes/forms/views/preview.php:63
+#: build/Forms/assets/js/form-editor.js:52
 msgid "The form may look slightly different than this when shown in a post, page or widget area."
 msgstr ""
 
@@ -4615,8 +4495,7 @@ msgid "If the field you want to add does not appear above then start by %1$screa
 msgstr ""
 
 #: includes/forms/views/tab-form.php:51
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:57
+#: build/Forms/assets/js/new-form-block.js:1
 msgid "Button Text"
 msgstr ""
 
@@ -4706,53 +4585,93 @@ msgstr ""
 msgid "Edit the messages shown when someone submits this form. %1$sSmart tags%2$s are allowed in the message fields."
 msgstr ""
 
-#: includes/forms/views/tab-settings.php:24
-msgid "Advanced Settings"
+#: includes/forms/views/tab-settings.php:26
+msgid "Popup Settings"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:27
+msgid "Display this form in a popup"
 msgstr ""
 
 #: includes/forms/views/tab-settings.php:28
+msgid "Show the popup"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:32
+msgid "Sliding Settings"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:33
+msgid "Slide this form into view"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:34
+msgid "Slide this form"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:41
+msgid "Advanced Settings"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:45
 msgid "Header Text (Optional)"
 msgstr ""
 
-#: includes/forms/views/tab-settings.php:35
+#: includes/forms/views/tab-settings.php:52
 msgid ""
 "Example: <h2>Free Newsletter</h2>\n"
 "<p>Join {subscriber_count} other subscribers already on our newsletter</p>"
 msgstr ""
 
 #. translators: %1 & 2, opening and closing link.
-#: includes/forms/views/tab-settings.php:41
+#: includes/forms/views/tab-settings.php:58
 msgid "Shown above the form fields. HTML and %1$sSmart tags%2$s are allowed."
 msgstr ""
 
-#: includes/forms/views/tab-settings.php:51
+#: includes/forms/views/tab-settings.php:68
 msgid "Footer Text (Optional)"
 msgstr ""
 
-#: includes/forms/views/tab-settings.php:58
+#: includes/forms/views/tab-settings.php:75
 msgid "Example: We do not spam!"
 msgstr ""
 
 #. translators: %1 & 2, opening and closing link.
-#: includes/forms/views/tab-settings.php:64
+#: includes/forms/views/tab-settings.php:81
 msgid "Shown below the form fields. HTML and %1$sSmart tags%2$s are allowed."
 msgstr ""
 
-#: includes/forms/views/tab-settings.php:74
+#: includes/forms/views/tab-settings.php:91
 msgid "Hide on (Optional)"
 msgstr ""
 
-#: includes/forms/views/tab-settings.php:84
+#: includes/forms/views/tab-settings.php:101
 msgid "Optional. Select the places where this form should be hidden."
 msgstr ""
 
-#: includes/forms/views/tab-settings.php:89
+#: includes/forms/views/tab-settings.php:106
 msgid "Only show on: (Optional)"
 msgstr ""
 
 #. translators: %s: The Example
-#: includes/forms/views/tab-settings.php:92
+#: includes/forms/views/tab-settings.php:109
 msgid "Optional. Enter a comma separated list of URLs or post ids. If set, the form will only show if a user is viewing those pages."
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:140
+msgid "Top of the page"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:141
+msgid "Bottom of the page"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:157
+msgid "from the"
+msgstr ""
+
+#: includes/forms/views/tab-settings.php:167
+msgid "at the"
 msgstr ""
 
 #: includes/functions.php:439
@@ -5263,11 +5182,6 @@ msgstr ""
 #: includes/subscriber.php:1460
 #: src/DB/Main.php:546
 msgid "Unknown"
-msgstr ""
-
-#: includes/subscriber.php:1467
-#: includes/assets/js/src/blocks-new.js:4
-msgid "Newsletter Form"
 msgstr ""
 
 #: includes/subscriber.php:1475
@@ -7752,6 +7666,16 @@ msgstr ""
 #: build/Forms/assets/js/form-editor.js:51
 #: build/Misc/assets/js/collection.js:216
 #: build/Settings/assets/js/settings.js:51
+msgid "Value"
+msgstr ""
+
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Forms/assets/js/form-editor.js:51
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
 msgid "Enter a value"
 msgstr ""
 
@@ -7894,6 +7818,16 @@ msgstr ""
 #: build/Misc/assets/js/collection.js:216
 #: build/Settings/assets/js/settings.js:51
 msgid "Add"
+msgstr ""
+
+#: build/Automation_Rules/assets/js/automation-rule-editor.js:39
+#: build/Emails/assets/js/blocks.js:46
+#: build/Emails/assets/js/email-editor.js:51
+#: build/Emails/assets/js/global.js:39
+#: build/Forms/assets/js/form-editor.js:51
+#: build/Misc/assets/js/collection.js:216
+#: build/Settings/assets/js/settings.js:51
+msgid "Upload Image"
 msgstr ""
 
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
@@ -8437,8 +8371,24 @@ msgstr ""
 msgid "Published"
 msgstr ""
 
-#: build/Forms/assets/js/form-editor.js:52
-msgid "Your form may look different on the front end depending on your theme. Click on any text to edit it."
+#: build/Forms/assets/js/block.js:1
+msgid "An error occurred while fetching forms."
+msgstr ""
+
+#: build/Forms/assets/js/block.js:1
+msgid "Single-line / Horizontal form"
+msgstr ""
+
+#: build/Forms/assets/js/block.js:1
+msgid "Select a newsletter form to display."
+msgstr ""
+
+#: build/Forms/assets/js/block.js:1
+msgid "Select Newsletter Form"
+msgstr ""
+
+#: build/Forms/assets/js/block.js:1
+msgid "Or create a new form"
 msgstr ""
 
 #: build/Forms/assets/js/form-editor.js:52
@@ -8447,6 +8397,30 @@ msgstr ""
 
 #: build/Forms/assets/js/form-editor.js:52
 msgid "Change color theme"
+msgstr ""
+
+#: build/Forms/assets/js/new-form-block.js:1
+msgid "Write Form title…"
+msgstr ""
+
+#: build/Forms/assets/js/new-form-block.js:1
+msgid "Write Form Description"
+msgstr ""
+
+#: build/Forms/assets/js/new-form-block.js:1
+msgid "Click the above title to edit it. You can also edit this section by clicking on it."
+msgstr ""
+
+#: build/Forms/assets/js/new-form-block.js:1
+msgid "Redirect Url"
+msgstr ""
+
+#: build/Forms/assets/js/new-form-block.js:1
+msgid "Optional. Where should we redirect users after they have successfully signed up?"
+msgstr ""
+
+#: build/Forms/assets/js/new-form-block.js:1
+msgid "Use an existing form"
 msgstr ""
 
 #: build/Misc/assets/js/collection.js:123
@@ -8831,58 +8805,69 @@ msgstr ""
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:9
-msgid "Newsletter Optin"
+#: build/Forms/assets/block/block.json
+msgctxt "block title"
+msgid "Newsletter Form"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:22
-msgid "Click the above title to edit it. You can also edit this section by clicking on it."
+#: build/Forms/assets/block/block.json
+msgctxt "block description"
+msgid "Displays a pre-built newsletter form"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:69
-#: includes/assets/js/src/blocks.js:73
-msgid "Redirect Url"
+#: build/Forms/assets/block/block.json
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block keyword"
+msgid "noptin"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:78
-msgid "Optional. Where should we redirect users after they have successfully signed up?"
+#: build/Forms/assets/block/block.json
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block keyword"
+msgid "newsletter"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:110
-msgid "Title Color"
+#: build/Forms/assets/block/block.json
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block keyword"
+msgid "optin"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:125
-msgid "Description Color"
+#: build/Forms/assets/block/block.json
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block keyword"
+msgid "email"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:145
-msgid "Text Color"
+#: build/Forms/assets/block/block.json
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block keyword"
+msgid "subscribe"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:188
-msgid "Write Form title…"
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block title"
+msgid "Create Newsletter Form"
 msgstr ""
 
-#: includes/assets/js/dist/blocks.js:1
-#: includes/assets/js/src/blocks.js:201
-msgid "Write Form Description"
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block description"
+msgid "Create and display a newsletter subscription form"
 msgstr ""
 
-#: includes/assets/js/src/blocks-new.js:5
-msgid "Displays a newsletter subscription form"
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block style label"
+msgid "Default"
 msgstr ""
 
-#: includes/assets/js/src/blocks-new.js:23
-msgid "Select Newsletter Form"
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block style label"
+msgid "Unstyled"
+msgstr ""
+
+#: build/Forms/assets/new-form-block/block.json
+msgctxt "block style label"
+msgid "Single Line"
 msgstr ""
 
 #: includes/assets/js/src/wc/block.json

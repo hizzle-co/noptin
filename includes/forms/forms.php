@@ -171,7 +171,18 @@ function get_noptin_forms_overview_url() {
  * @since   1.0.8
  */
 function get_noptin_optin_field_types() {
-	return apply_filters( 'noptin_field_types', array() );
+	$field_types = array();
+	foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
+
+		$field_types[] = array(
+			'label'            => $custom_field['label'],
+			'type'             => $custom_field['merge_tag'],
+			'supports_label'   => true,
+			'supports_require' => true,
+		);
+	}
+
+	return apply_filters( 'noptin_field_types', $field_types );
 }
 
 /**

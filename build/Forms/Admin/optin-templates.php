@@ -8,8 +8,6 @@
 			'data'  => array(
 				'singleLine'            => true,
 				'formRadius'            => '0px',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#f8f9fa',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
@@ -68,27 +66,7 @@
 					'style'       => '',
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
-				'CSS'                   => '.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
-	position: absolute;
-	right: 10px;
-	top: 6px;
-	bottom: 6px;
-	padding-top: 2px;
-}
-
-.noptin-optin-form-wrapper .noptin-form-header-image img{
-    border-radius: 50%;
-}
-
-.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-header {
-	flex: 0 0 auto;
- 	justify-content: center;
-}
-
-.noptin-optin-form-wrapper form.noptin-form-single-line {
-	justify-content: center
-}
-',
+				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-header-image img{ border-radius: 50%; }',
 			),
 
 		),
@@ -99,8 +77,6 @@
 			'data'  => array(
 				'singleLine'            => true,
 				'formRadius'            => '10px',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#ffffff',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
@@ -119,13 +95,9 @@
 				),
 
 				'imageMain'             => '',
-				'noptinFormBorderColor' => '#ffffff',
 				'formBorder'            => array(
-					'style'         => 'none',
-					'border_radius' => 0,
-					'border_width'  => 0,
-					'border_color'  => '#ffffff',
-					'generated'     => 'border-style: none; border-radius: 0px; border-width: 0px; border-color: #ffffff;',
+					'style'     => 'none',
+					'generated' => 'border-style: none;',
 				),
 				'image'                 => '',
 				'imagePos'              => 'right',
@@ -160,14 +132,7 @@
 					'style'       => '',
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
-				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-field{
-	text-align: center;
- 	font-weight: 500;
-}
-
-.noptin-optin-form-wrapper form .noptin-form-footer .noptin-form-submit{
-	font-weight: 500;
-}',
+				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-field{ text-align: center; }',
 			),
 
 		),
@@ -246,8 +211,6 @@
 			'data'  => array(
 				'singleLine'            => false,
 				'formRadius'            => '0px',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#fafafa',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
@@ -322,8 +285,6 @@
 			'data'  => array(
 				'singleLine'            => true,
 				'formRadius'            => '0px',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#ffffff',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
@@ -377,25 +338,32 @@
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
 				'formBorder'            => array(
-					'style'        => 'solid',
-					'formRadius'   => 0,
-					'border_width' => 4,
-					'border_color' => '#795548',
-					'generated'    => 'border-style: solid; border-radius: 0px; border-width: 4px; border-color: #795548;',
+					'formRadius' => 0,
+					'border'     => array(
+						'top'    => array(
+							'style' => 'solid',
+							'width' => 4,
+							'color' => '#795548',
+						),
+						'left'   => array(
+							'style' => 'none',
+							'width' => 0,
+							'color' => '#795548',
+						),
+						'right'  => array(
+							'style' => 'none',
+							'width' => 0,
+							'color' => '#795548',
+						),
+						'bottom' => array(
+							'style' => 'none',
+							'width' => 0,
+							'color' => '#795548',
+						),
+					),
+					'generated'  => 'border-top-style: solid; border-top-width: 4px; border-top-color: #795548; border-left-style: none; border-right-style: none; border-bottom-style: none;',
 				),
-				'CSS'                   => '.noptin-optin-form-wrapper {
-	border-top-style: solid !important;
-	border-left-style: none !important;
-	border-right-style: none !important;
-	border-bottom-style: none !important;
-	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
-}
-
-.noptin-optin-form-wrapper form .noptin-form-header {
-	text-align: left;
- 	justify-content: left;
-}',
-
+				'CSS'                   => '.noptin-optin-form-wrapper { box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12); }',
 			),
 
 		),
@@ -406,7 +374,6 @@
 				'singleLine'            => true,
 				'formRadius'            => '0px',
 				'formWidth'             => '720px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#4CAF50',
 				'noptinFormBgVideo'     => '',
 				'noptinFormBgImg'       => noptin()->plugin_url . 'includes/assets/images/bg1.jpg',
@@ -499,7 +466,6 @@
 				'singleLine'            => true,
 				'formRadius'            => '20px',
 				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#424242',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
@@ -582,8 +548,6 @@
 			'data'  => array(
 				'singleLine'            => true,
 				'formRadius'            => '0px',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#4CAF50',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
@@ -637,12 +601,11 @@
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
 				'CSS'                   => '@media only screen and (min-width: 768px) {
-	.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-submit{
+	.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields .noptin-form-field-submit{
 		position: absolute;
-		right: 10px;
+		right: 12px;
 		top: 6px;
-		bottom: 6px;
-		padding-top: 2px;
+		margin: 0;
 	}
 }
 
@@ -671,8 +634,6 @@
 			'data'  => array(
 				'singleLine'            => false,
 				'formRadius'            => '8px',
-				'formWidth'             => '520px',
-				'formHeight'            => '250px',
 				'noptinFormBg'          => '#f1f5f8',
 				'noptinFormBgImg'       => '',
 				'noptinFormBgVideo'     => '',
@@ -742,8 +703,6 @@
 			'data'  => array(
 				'singleLine'            => true,
 				'formRadius'            => '0px',
-				'formWidth'             => '520px',
-				'formHeight'            => '250px',
 				'noptinFormBg'          => '#009688',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
@@ -809,8 +768,6 @@
 			'data'  => array(
 				'singleLine'            => true,
 				'formRadius'            => '8px',
-				'formWidth'             => '620px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#fb6970',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
@@ -863,19 +820,9 @@
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
 				'CSS'                   => '/*Custom css*/
-.noptin-optin-form-wrapper .noptin-form-submit{
-	border-radius: 5px !important;
-	font-weight: 400 !important;
-	letter-spacing: .8px !important;
-	font-size: 15px !important;
-}
 
 .noptin-optin-form-wrapper form .noptin-form-fields .noptin-form-field {
-	border-radius: 5px !important;
-	background: 0 0 !important;
-	border: 1px solid #fff !important;
-	font-size: 18px !important;
-	padding: 10px 8px !important;
+	background: 0 0;
 }
 			',
 			),
@@ -887,8 +834,6 @@
 			'data'  => array(
 				'singleLine'            => false,
 				'formRadius'            => '1px',
-				'formWidth'             => '700px',
-				'formHeight'            => '500px',
 				'noptinFormBg'          => '#263238',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
@@ -952,8 +897,6 @@
 			'data'  => array(
 				'singleLine'            => false,
 				'formRadius'            => '0px',
-				'formWidth'             => '600px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#fefcfc',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
@@ -1019,8 +962,6 @@
 			'data'  => array(
 				'singleLine'            => false,
 				'formRadius'            => '0px',
-				'formWidth'             => '600px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#607D8B',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
@@ -1082,13 +1023,11 @@
 		'minimal21565701726'     => array(
 			'title' => __( 'Minimal', 'newsletter-optin-box' ),
 			'data'  => array(
-				'singleLine'            => true,
-				'formRadius'            => '1px',
-				'formWidth'             => '400px',
-				'formHeight'            => '180px',
-				'noptinFormBg'          => '#263238',
-				'noptinFormBgImg'       => '',
-				'fields'                => array(
+				'singleLine'        => true,
+				'formHeight'        => '20px',
+				'noptinFormBg'      => '#fff',
+				'noptinFormBgImg'   => '',
+				'fields'            => array(
 					array(
 						'type'    => array(
 							'label' => __( 'Enter your email here', 'newsletter-optin-box' ),
@@ -1101,43 +1040,25 @@
 					),
 
 				),
-
-				'imageMain'             => false,
-				'noptinFormBorderColor' => '#263238',
-				'image'                 => '',
-				'imagePos'              => 'right',
-				'noptinButtonLabel'     => __( 'Subscribe', 'newsletter-optin-box' ),
-				'buttonPosition'        => 'block',
-				'noptinButtonBg'        => '#607d8b',
-				'noptinButtonColor'     => '#ffffff',
-				'prefix'                => '',
-				'hideTitle'             => true,
-				'title'                 => __( 'Free Updates', 'newsletter-optin-box' ),
-				'titleColor'            => '#607d8b',
-				'hideDescription'       => true,
-				'description'           => __( 'Get free notifications whenever we publish new content.', 'newsletter-optin-box' ),
-				'descriptionColor'      => '#607d8b',
-				'hideNote'              => false,
-				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
-				'noteColor'             => '#607d8b',
-				'titleTypography'       => array(
-					'font_size'   => '20',
-					'font_weight' => '700',
-					'line_height' => '1.5',
-					'decoration'  => '',
-					'style'       => '',
-					'generated'   => 'font-size: 20px; font-weight: 700; line-height: 1.5;',
-				),
-				'descriptionTypography' => array(
-					'font_size'   => '16',
-					'font_weight' => '500',
-					'line_height' => '1.5',
-					'decoration'  => '',
-					'style'       => '',
-					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
-				),
-				'CSS'                   => '.noptin-optin-form-wrapper *{}',
+				'imageMain'         => '',
+				'image'             => '',
+				'imagePos'          => 'right',
+				'noptinButtonLabel' => __( 'Subscribe', 'newsletter-optin-box' ),
+				'buttonPosition'    => 'block',
+				'noptinButtonBg'    => '',
+				'noptinButtonColor' => '',
+				'prefix'            => '',
+				'hideTitle'         => true,
+				'title'             => __( 'Free Updates', 'newsletter-optin-box' ),
+				'titleColor'        => '',
+				'hideDescription'   => true,
+				'description'       => __( 'Get free notifications whenever we publish new content.', 'newsletter-optin-box' ),
+				'descriptionColor'  => '',
+				'hideNote'          => false,
+				'hideOnNoteClick'   => false,
+				'note'              => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'noteColor'         => '',
+				'CSS'               => '.noptin-optin-form-wrapper .noptin-form-footer{ padding: 0px; }',
 			),
 
 		),
@@ -1147,8 +1068,6 @@
 			'data'  => array(
 				'singleLine'            => true,
 				'formRadius'            => '40px',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#ffffff',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
@@ -1166,7 +1085,6 @@
 				),
 
 				'imageMain'             => false,
-				'noptinFormBorderColor' => '#4caf50',
 				'image'                 => noptin()->plugin_url . 'includes/assets/images/mail-icon-alt.png',
 				'imagePos'              => 'top',
 				'noptinButtonLabel'     => __( 'Subscribe', 'newsletter-optin-box' ),
@@ -1200,6 +1118,10 @@
 					'style'       => '',
 					'generated'   => 'font-size: 16px; font-weight: 500; line-height: 1.5;',
 				),
+				'formBorder'            => array(
+					'border_color' => '#f1f1f1',
+					'generated'    => 'border-color: #f1f1f1;',
+				),
 				'CSS'                   => '.noptin-optin-form-wrapper *{}',
 			),
 
@@ -1210,8 +1132,6 @@
 			'data'  => array(
 				'singleLine'            => false,
 				'formRadius'            => '0',
-				'formWidth'             => '520px',
-				'formHeight'            => '280px',
 				'noptinFormBg'          => '#f0c97b',
 				'noptinFormBgImg'       => '',
 				'fields'                => array(
@@ -1288,17 +1208,6 @@
 					'decoration'  => '',
 					'style'       => '',
 					'generated'   => 'font-size: 19px; font-weight: 500; line-height: 1.3;',
-				),
-				'descriptionAdvanced'   => array(
-					'padding'   => array(
-						'left'  => '50',
-						'right' => '50',
-					),
-					'margin'    => array(
-						'top' => '18',
-					),
-					'generated' => 'margin-top: 18px;padding-right: 50px;padding-left: 50px;',
-					'classes'   => '',
 				),
 				'CSS'                   => '.noptin-optin-form-wrapper .noptin-form-footer .noptin-optin-field-wrapper:not(.noptin-optin-field-wrapper-hidden) .noptin-form-field {
 	height: 55px !important;

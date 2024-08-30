@@ -192,8 +192,6 @@ class Noptin_Form_Legacy {
 			'imageMainPos'          => 'right',
 
 			// Button designs.
-			'noptinButtonBg'        => '#313131',
-			'noptinButtonColor'     => '#fefefe',
 			'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
 
 			// Title design.

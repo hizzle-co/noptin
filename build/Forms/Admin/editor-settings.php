@@ -418,6 +418,12 @@ $editor_settings = array(
 					),
 				),
 
+				'showLabels'      => array(
+					'type'  => 'switch',
+					'el'    => 'input',
+					'label' => __( 'Show field labels outside the fields', 'newsletter-optin-box' ),
+				),
+
 				'gdprCheckbox'    => array(
 					'type'       => 'switch',
 					'el'         => 'input',

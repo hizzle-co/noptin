@@ -144,7 +144,7 @@ class Renderer {
 					array(
 						'fields'     => $form->fields,
 						'redirect'   => $form->redirect,
-						'labels'     => 'hide',
+						'labels'     => empty( $form->showLabels ) ? 'hide' : 'show',
 						'acceptance' => $form->gdprCheckbox ? $form->gdprConsentText : '',
 					),
 					$atts
@@ -294,6 +294,7 @@ class Renderer {
 			return array(
 				'noptin-optin-form',
 				$form->singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line',
+				'noptin-label-' . sanitize_html_class( $args['labels'] )
 			);
 		}
 
@@ -332,6 +333,20 @@ class Renderer {
 		return apply_filters( 'noptin_form_css_classes', $classes, $form );
 	}
 
+	private static function get_typography_css( $color, $typography ) {
+		$css = '';
+
+		if ( ! empty( $color ) ) {
+			$css .= 'color: ' . $color . ';';
+		}
+
+		if ( ! empty( $typography['generated'] ) ) {
+			$css .= $typography['generated'];
+		}
+
+		return $css;
+	}
+
 	/**
 	 * Displays additional content before form fields.
 	 *
@@ -344,25 +359,25 @@ class Renderer {
 		}
 
 		if ( $form && is_legacy_noptin_form( $form->id ) ) {
-			$show_header_text = ! $form->hidePrefix || ! $form->hideTitle || ! $form->hideDescription;
+			$show_header_text = ( ! $form->hidePrefix && ! empty( $form->prefix ) ) || ( ! $form->hideTitle && ! empty( $form->title ) ) || ( ! $form->hideDescription && ! empty( $form->description ) );
 			$show_header      = ! empty( $form->image ) || $show_header_text;
 
 			if ( $show_header ) {
 				?>
-					<div class="noptin-form-header <?php echo ! empty( $form->image ) ? esc_attr( $form->imagePos ) : 'no-image'; ?>">
+					<div class="noptin-form-header <?php echo ! empty( $form->image ) ? esc_attr( "noptin-img-{$form->imagePos}" ) : 'no-image'; ?>">
 						<?php if ( $show_header_text ) : ?>
 						<div class="noptin-form-header-text">
 
 							<?php if ( ! $form->hidePrefix ) : ?>
-								<div style="color:<?php echo esc_attr( $form->prefixColor ); ?>;<?php echo esc_attr( $form->prefixTypography['generated'] ); ?><?php echo esc_attr( $form->prefixAdvanced['generated'] ); ?>" class="noptin-form-prefix"><?php echo wp_kses_post( do_shortcode( $form->prefix ) ); ?></div>
+								<div style="<?php echo esc_attr( self::get_typography_css( $form->prefixColor, $form->prefixTypography ) ); ?>" class="noptin-form-prefix"><?php echo wp_kses_post( do_shortcode( $form->prefix ) ); ?></div>
 							<?php endif; ?>
 
 							<?php if ( ! $form->hideTitle ) : ?>
-								<div style="color:<?php echo esc_attr( $form->titleColor ); ?>;<?php echo esc_attr( $form->titleTypography['generated'] ); ?><?php echo esc_attr( $form->titleAdvanced['generated'] ); ?>" class="noptin-form-heading"><?php echo wp_kses_post( do_shortcode( $form->title ) ); ?></div>
+								<div style="<?php echo esc_attr( self::get_typography_css( $form->titleColor, $form->titleTypography ) ); ?>" class="noptin-form-heading"><?php echo wp_kses_post( do_shortcode( $form->title ) ); ?></div>
 							<?php endif; ?>
 
 							<?php if ( ! $form->hideDescription ) : ?>
-								<div style="color:<?php echo esc_attr( $form->descriptionColor ); ?>;<?php echo esc_attr( $form->descriptionTypography['generated'] ); ?><?php echo esc_attr( $form->descriptionAdvanced['generated'] ); ?>" class="noptin-form-description"><?php echo wp_kses_post( do_shortcode( $form->description ) ); ?></div>
+								<div style="<?php echo esc_attr( self::get_typography_css( $form->descriptionColor, $form->descriptionTypography ) ); ?>" class="noptin-form-description"><?php echo wp_kses_post( do_shortcode( $form->description ) ); ?></div>
 							<?php endif; ?>
 
 						</div>
@@ -411,7 +426,7 @@ class Renderer {
 		}
 
 		if ( $form && is_legacy_noptin_form( $form->id ) ) {
-			echo '<div class="noptin-form-footer noptin-label-hide">';
+			echo '<div class="noptin-form-footer">';
 		}
 
 		if ( ! $hide_fields ) {
@@ -470,7 +485,7 @@ class Renderer {
 		if ( $form && is_legacy_noptin_form( $form->id ) ) {
 			?>
 			<?php if ( ! $form->hideNote && ! empty( $form->note ) ) : ?>
-				<div style="color:<?php echo esc_attr( $form->noteColor ); ?>;<?php echo esc_attr( $form->noteTypography['generated'] ); ?><?php echo esc_attr( $form->noteAdvanced['generated'] ); ?>" class="noptin-form-note"><?php echo wp_kses_post( do_shortcode( $form->note ) ); ?></div>
+				<div style="<?php echo esc_attr( self::get_typography_css( $form->noteColor, $form->noteTypography ) ); ?>" class="noptin-form-note"><?php echo wp_kses_post( do_shortcode( $form->note ) ); ?></div>
 			<?php endif; ?>
 			<div class="noptin-form-notice noptin-response" role="alert"></div>
 			</div>
@@ -589,7 +604,7 @@ class Renderer {
 			}
 
 			if ( empty( $form->singleLine ) ) {
-				$button_atts['class'] .= 'noptin-form-button-' . $form->buttonPosition;
+				$button_atts['class'] .= ' noptin-form-button-' . $form->buttonPosition;
 			}
 		}
 
@@ -714,7 +729,10 @@ class Renderer {
 
 		$atts = array(
 			'style' => $wrapper_styles,
-			'class' => array( 'noptin-optin-form-wrapper' ),
+			'class' => array(
+				'noptin-optin-form-wrapper',
+				$form->imageMain ? "noptin-img-{$form->imageMainPos}" : 'no-image',
+			),
 		);
 
 		if ( $form->is_slide_in() || $form->is_popup() ) {

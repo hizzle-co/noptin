@@ -138,7 +138,7 @@ class Noptin_Custom_Fields {
 			$custom_field['name']  = $custom_field['merge_tag'];
 			$custom_field['id']    = 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
 			$custom_field['value'] = '';
-			$custom_field['vue']   = true;
+			$custom_field['react'] = true;
 
 			/**@var Noptin_Custom_Field_Type */
 			$field = $this->custom_field_types[ $custom_field['type'] ];
@@ -174,7 +174,7 @@ class Noptin_Custom_Fields {
 			$custom_field['name']  = $custom_field['merge_tag'];
 			$custom_field['id']    = 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
 			$custom_field['value'] = '';
-			$custom_field['vue']   = true;
+			$custom_field['react'] = true;
 
 			/**@var Noptin_Custom_Field_Type */
 			$field = $this->custom_field_types[ $custom_field['type'] ];
