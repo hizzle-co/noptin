@@ -32,8 +32,8 @@
         'noptinFormBgImg'       => '',
         'noptinFormBgVideo'     => '',
         'noptinFormBg'          => '#eeeeee',
-        'noptinFormBorderColor' => '#eeeeee',
-        'borderSize'            => '4px',
+        // 'noptinFormBorderColor' => '#eeeeee',
+        // 'borderSize'            => '4px',
         'formWidth'             => '620px',
         'formHeight'            => '280px',
 

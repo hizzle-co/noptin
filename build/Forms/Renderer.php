@@ -344,7 +344,7 @@ class Renderer {
 		}
 
 		if ( $form && is_legacy_noptin_form( $form->id ) ) {
-			$show_header_text = ! $form->hidePrefix && ! $form->hideTitle && ! $form->hideDescription;
+			$show_header_text = ! $form->hidePrefix || ! $form->hideTitle || ! $form->hideDescription;
 			$show_header      = ! empty( $form->image ) || $show_header_text;
 
 			if ( $show_header ) {

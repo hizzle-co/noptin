@@ -80,10 +80,6 @@
     border-radius: 50%;
 }
 
-.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields {
-	position: relative;
-}
-
 .noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-header {
 	flex: 0 0 auto;
  	justify-content: center;
@@ -558,10 +554,6 @@
 				),
 				'CSS'                   => '/*Custom css*/
 
-.noptin-optin-form-wrapper .noptin-form-single-line .noptin-form-fields{
- 	position: relative;
-}
-
 .noptin-optin-form-wrapper .noptin-optin-form.noptin-form-single-line .noptin-form-submit{
 	border-radius: 30px;
 }
@@ -661,10 +653,6 @@
  font-size: 16px;
 }
 
-.noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-fields{
- position: relative;
-}
-
 .noptin-optin-form-wrapper form.noptin-form-single-line .noptin-form-header {
 	flex: 0 0 auto;
  	justify-content: center;
@@ -673,10 +661,7 @@
 .noptin-optin-form-wrapper form.noptin-form-single-line {
 	justify-content: center
 }
-
-.noptin-popup-main-wrapper{
- 	background-color: #e4e2dd;
-}',
+',
 			),
 
 		),
