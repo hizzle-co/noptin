@@ -35,8 +35,8 @@ class Noptin_Custom_Field_Text extends Noptin_Custom_Field_Type {
 	 */
 	public function output( $args, $subscriber ) {
 
-		$placeholder     = empty( $args['placeholder'] ) ? $args['label'] : $args['placeholder'];
-		$has_placeholder = ! empty( $args['placeholder'] ) && $placeholder === $args['placeholder'];
+		$placeholder        = empty( $args['placeholder'] ) ? $args['label'] : $args['placeholder'];
+		$has_no_placeholder = empty( $args['placeholder'] ) || $placeholder === $args['label'];
 		?>
 
 			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo empty( $args['react'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
@@ -45,7 +45,7 @@ class Noptin_Custom_Field_Text extends Noptin_Custom_Field_Type {
 				id="<?php echo esc_attr( $args['id'] ); ?>"
 				type="<?php echo esc_attr( $this->get_input_type() ); ?>"
 				value="<?php echo esc_attr( $args['value'] ); ?>"
-				class="noptin-text noptin-form-field <?php echo ! $has_placeholder ? 'noptin-form-field__has-no-placeholder' : 'noptin-form-field__has-placeholder'; ?>"
+				class="noptin-text noptin-form-field <?php echo $has_no_placeholder ? 'noptin-form-field__has-no-placeholder' : 'noptin-form-field__has-placeholder'; ?>"
 				<?php if ( empty( $args['react'] ) ) : ?>
 					placeholder="<?php echo esc_attr( $placeholder ); ?>"
 				<?php else : ?>

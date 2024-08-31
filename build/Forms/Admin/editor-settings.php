@@ -938,6 +938,7 @@ if ( noptin_upsell_integrations() ) {
 						$name
 					),
 					'style'   => 'color:#F44336;',
+					'raw'     => true,
 				),
 			),
 		);

@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.5.1\n"
+"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.5.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-08-30T10:21:03+00:00\n"
+"POT-Creation-Date: 2024-08-31T04:31:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -132,13 +132,11 @@ msgstr ""
 
 #: build/Emails/Admin/Editor.php:417
 #: build/Forms/Widgets/New_Form.php:47
-#: includes/forms/class-legacy-form-editor.php:149
 msgid "White"
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:422
 #: build/Forms/Widgets/New_Form.php:46
-#: includes/forms/class-legacy-form-editor.php:148
 msgid "Black"
 msgstr ""
 
@@ -241,7 +239,6 @@ msgstr ""
 #: build/Emails/Admin/Table.php:199
 #: build/Emails/Main.php:264
 #: includes/class-noptin-post-types.php:57
-#: includes/forms/class-legacy-form-editor.php:1115
 #: build/Forms/assets/js/form-editor.js:52
 msgid "Preview"
 msgstr ""
@@ -398,7 +395,6 @@ msgid "Re-order"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:671
-#: includes/forms/class-legacy-form-editor.php:1116
 msgid "Publish"
 msgstr ""
 
@@ -1047,7 +1043,6 @@ msgstr ""
 #: build/Extensions/Menu.php:282
 #: build/Forms/Admin/editor-settings.php:841
 #: build/Settings/Menu.php:164
-#: includes/forms/class-legacy-form-editor.php:202
 #: includes/forms/views/editor.php:20
 msgid "Integrations"
 msgstr ""
@@ -1098,7 +1093,6 @@ msgstr ""
 #: build/Forms/Admin/editor-settings.php:11
 #: build/Settings/Menu.php:68
 #: build/Settings/Menu.php:69
-#: includes/forms/class-legacy-form-editor.php:200
 msgid "Settings"
 msgstr ""
 
@@ -1159,8 +1153,6 @@ msgstr ""
 #: build/Forms/Admin/editor-settings.php:576
 #: build/Forms/Admin/editor-settings.php:799
 #: includes/forms/class-form-legacy.php:220
-#: includes/forms/class-legacy-form-editor.php:665
-#: includes/forms/class-legacy-form-editor.php:947
 msgid "Prefix"
 msgstr ""
 
@@ -1190,95 +1182,77 @@ msgid "By subscribing, you agree with our <a href=\"\">privacy policy</a> and ou
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:16
-#: includes/forms/class-legacy-form-editor.php:222
 msgid "Basic Options"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:28
-#: includes/forms/class-legacy-form-editor.php:339
 msgid "Inject into post content"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:29
-#: includes/forms/class-legacy-form-editor.php:340
 msgid "Noptin can automatically embed this form into your post content. You can also find the form's shortcode below the form preview"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:31
-#: includes/forms/class-legacy-form-editor.php:342
 msgid "Don't inject"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:32
-#: includes/forms/class-legacy-form-editor.php:343
 msgid "Before post content"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:33
-#: includes/forms/class-legacy-form-editor.php:344
 msgid "After post content"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:34
-#: includes/forms/class-legacy-form-editor.php:345
 msgid "Before and after post content"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:41
-#: includes/forms/class-legacy-form-editor.php:352
 msgid "What should happen after the user subscribes"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:43
-#: includes/forms/class-legacy-form-editor.php:354
 msgid "Display a success message"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:44
-#: includes/forms/class-legacy-form-editor.php:355
 msgid "redirect to a different page"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:52
-#: includes/forms/class-legacy-form-editor.php:363
 msgid "Success message"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:65
-#: includes/forms/class-legacy-form-editor.php:371
 msgid "Redirect url"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:81
-#: includes/forms/class-legacy-form-editor.php:230
 msgid "Trigger Options"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:95
-#: includes/forms/class-legacy-form-editor.php:388
 msgid "The form will slide from..."
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:104
-#: includes/forms/class-legacy-form-editor.php:391
 #: includes/forms/views/tab-settings.php:126
 msgid "Top Left"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:105
-#: includes/forms/class-legacy-form-editor.php:392
 #: includes/forms/views/tab-settings.php:127
 msgid "Top Left Alt"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:106
-#: includes/forms/class-legacy-form-editor.php:393
 #: includes/forms/views/tab-settings.php:128
 msgid "Top Right"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:107
-#: includes/forms/class-legacy-form-editor.php:394
 #: includes/forms/views/tab-settings.php:129
 msgid "Top Right Alt"
 msgstr ""
@@ -1294,60 +1268,50 @@ msgid "Center Right"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:110
-#: includes/forms/class-legacy-form-editor.php:395
 #: includes/forms/views/tab-settings.php:132
 msgid "Bottom Left"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:111
-#: includes/forms/class-legacy-form-editor.php:396
 #: includes/forms/views/tab-settings.php:133
 msgid "Bottom Left Alt"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:112
-#: includes/forms/class-legacy-form-editor.php:397
 #: includes/forms/views/tab-settings.php:134
 msgid "Bottom right"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:113
-#: includes/forms/class-legacy-form-editor.php:398
 #: includes/forms/views/tab-settings.php:135
 msgid "Bottom right Alt"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:120
-#: includes/forms/class-legacy-form-editor.php:405
 msgid "Show this form"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:122
-#: includes/forms/class-legacy-form-editor.php:407
 #: includes/forms/views/tab-settings.php:117
 msgid "Immediately"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:123
-#: includes/forms/class-legacy-form-editor.php:408
 #: includes/forms/views/tab-settings.php:118
 msgid "Before the user leaves"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:124
-#: includes/forms/class-legacy-form-editor.php:409
 #: includes/forms/views/tab-settings.php:119
 msgid "After the user starts scrolling"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:125
-#: includes/forms/class-legacy-form-editor.php:410
 #: includes/forms/views/tab-settings.php:120
 msgid "After clicking on something"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:126
-#: includes/forms/class-legacy-form-editor.php:411
 #: includes/forms/views/tab-settings.php:121
 msgid "After a time delay"
 msgstr ""
@@ -1361,12 +1325,10 @@ msgid "Selector"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:146
-#: includes/forms/class-legacy-form-editor.php:419
 msgid "CSS selector of the items to watch out for clicks"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:160
-#: includes/forms/class-legacy-form-editor.php:427
 msgid "Time in seconds to delay"
 msgstr ""
 
@@ -1379,22 +1341,18 @@ msgid "Scroll depth"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:177
-#: includes/forms/class-legacy-form-editor.php:435
 msgid "Scroll depth in percentage after which the form will appear"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:194
-#: includes/forms/class-legacy-form-editor.php:239
 msgid "Page Targeting"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:200
-#: includes/forms/class-legacy-form-editor.php:450
 msgid "Where do you want to show this subscription form?"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:207
-#: includes/forms/class-legacy-form-editor.php:457
 msgid "Everywhere"
 msgstr ""
 
@@ -1403,92 +1361,75 @@ msgid "Only show on selected pages"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:233
-#: includes/forms/class-legacy-form-editor.php:465
 #: includes/forms/views/tab-settings.php:14
 msgid "Front page"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:234
-#: includes/forms/class-legacy-form-editor.php:466
 #: includes/forms/views/tab-settings.php:15
 msgid "Blog page"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:235
-#: includes/forms/class-legacy-form-editor.php:467
 #: includes/forms/views/tab-settings.php:16
 msgid "Search page"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:236
-#: includes/forms/class-legacy-form-editor.php:468
 #: includes/forms/views/tab-settings.php:17
 msgid "Archive pages"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:244
-#: includes/forms/class-legacy-form-editor.php:510
 msgid "Never show on:"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:253
-#: includes/forms/class-legacy-form-editor.php:514
 msgid "Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids."
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:260
-#: includes/forms/class-legacy-form-editor.php:521
 msgid "If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here."
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:276
-#: includes/forms/class-legacy-form-editor.php:537
 msgid "Everyone"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:277
-#: includes/forms/class-legacy-form-editor.php:538
 msgid "Logged in users"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:278
-#: includes/forms/class-legacy-form-editor.php:539
 msgid "Logged out users"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:279
-#: includes/forms/class-legacy-form-editor.php:540
 msgid "specific user roles"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:281
-#: includes/forms/class-legacy-form-editor.php:542
 msgid "Who can see this form?"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:287
-#: includes/forms/class-legacy-form-editor.php:547
 msgid "Select user roles"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:303
-#: includes/forms/class-legacy-form-editor.php:255
 msgid "Device Targeting"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:310
-#: includes/forms/class-legacy-form-editor.php:565
 msgid "Hide on Mobile"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:316
-#: includes/forms/class-legacy-form-editor.php:571
 msgid "Hide on Desktops"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:325
 #: build/Subscribers/Records.php:95
-#: includes/forms/class-legacy-form-editor.php:263
 #: includes/forms/views/tab-form.php:75
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:71
 #: src/Integrations/EDD/Downloads.php:208
@@ -1499,45 +1440,37 @@ msgid "Tags"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:332
-#: includes/forms/class-legacy-form-editor.php:270
 msgid "Subscriber Tags"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:334
-#: includes/forms/class-legacy-form-editor.php:272
 msgid "Enter a comma separated list of tags to assign subscribers who sign up using this form"
 msgstr ""
 
 #. translators: %s: file name
 #: build/Forms/Admin/editor-settings.php:341
-#: includes/forms/class-legacy-form-editor.php:201
 #: build/Emails/assets/js/blocks.js:52
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Design"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:346
-#: includes/forms/class-legacy-form-editor.php:633
 msgid "Form Appearance"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:352
-#: includes/forms/class-legacy-form-editor.php:738
 msgid "Preferred Width"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:353
-#: includes/forms/class-legacy-form-editor.php:739
 msgid "The element will resize to 100% width on smaller devices"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:358
-#: includes/forms/class-legacy-form-editor.php:745
 msgid "Minimum Height"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:367
-#: includes/forms/class-legacy-form-editor.php:641
 msgid "Opt-in Fields"
 msgstr ""
 
@@ -1555,7 +1488,6 @@ msgid "Leave empty to use the default label."
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:412
-#: includes/forms/class-legacy-form-editor.php:783
 msgid "Show all fields in a single line"
 msgstr ""
 
@@ -1564,22 +1496,18 @@ msgid "Show field labels outside the fields"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:430
-#: includes/forms/class-legacy-form-editor.php:790
 msgid "Show GDPR checkbox"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:442
-#: includes/forms/class-legacy-form-editor.php:797
 msgid "Consent Text"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:458
-#: includes/forms/class-legacy-form-editor.php:804
 msgid "Hide opt-in fields"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:467
-#: includes/forms/class-legacy-form-editor.php:649
 #: src/Integrations/EDD/Downloads.php:123
 #: src/Integrations/WooCommerce/Products.php:432
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:74
@@ -1587,66 +1515,50 @@ msgid "Image"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:475
-#: includes/forms/class-legacy-form-editor.php:763
 msgid "Background Image"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:482
-#: includes/forms/class-legacy-form-editor.php:820
 #: src/Objects/Collection.php:431
 msgid "Avatar URL"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:489
 #: build/Forms/Admin/editor-settings.php:514
-#: includes/forms/class-legacy-form-editor.php:826
-#: includes/forms/class-legacy-form-editor.php:845
 msgid "Top"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:490
 #: build/Forms/Admin/editor-settings.php:515
 #: build/Forms/Admin/editor-settings.php:547
-#: includes/forms/class-legacy-form-editor.php:827
-#: includes/forms/class-legacy-form-editor.php:846
-#: includes/forms/class-legacy-form-editor.php:872
 msgid "Left"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:491
 #: build/Forms/Admin/editor-settings.php:516
 #: build/Forms/Admin/editor-settings.php:548
-#: includes/forms/class-legacy-form-editor.php:828
-#: includes/forms/class-legacy-form-editor.php:847
-#: includes/forms/class-legacy-form-editor.php:873
 msgid "Right"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:492
 #: build/Forms/Admin/editor-settings.php:517
-#: includes/forms/class-legacy-form-editor.php:829
-#: includes/forms/class-legacy-form-editor.php:848
 msgid "Bottom"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:494
-#: includes/forms/class-legacy-form-editor.php:831
 msgid "Avatar Position"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:506
-#: includes/forms/class-legacy-form-editor.php:838
 msgid "Image URL"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:519
-#: includes/forms/class-legacy-form-editor.php:850
 msgid "Image Position"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:534
 #: build/Forms/Admin/editor-settings.php:819
-#: includes/forms/class-legacy-form-editor.php:657
 msgid "Button"
 msgstr ""
 
@@ -1657,7 +1569,6 @@ msgid "Text"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:546
-#: includes/forms/class-legacy-form-editor.php:871
 msgid "Block"
 msgstr ""
 
@@ -1666,7 +1577,6 @@ msgid "Position"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:571
-#: includes/forms/class-legacy-form-editor.php:942
 msgid "Hide prefix"
 msgstr ""
 
@@ -1674,10 +1584,6 @@ msgstr ""
 #: build/Forms/Admin/editor-settings.php:636
 #: build/Forms/Admin/editor-settings.php:685
 #: build/Forms/Admin/editor-settings.php:734
-#: includes/forms/class-legacy-form-editor.php:920
-#: includes/forms/class-legacy-form-editor.php:960
-#: includes/forms/class-legacy-form-editor.php:1000
-#: includes/forms/class-legacy-form-editor.php:1040
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Typography"
 msgstr ""
@@ -1686,10 +1592,6 @@ msgstr ""
 #: build/Forms/Admin/editor-settings.php:647
 #: build/Forms/Admin/editor-settings.php:696
 #: build/Forms/Admin/editor-settings.php:745
-#: includes/forms/class-legacy-form-editor.php:926
-#: includes/forms/class-legacy-form-editor.php:966
-#: includes/forms/class-legacy-form-editor.php:1006
-#: includes/forms/class-legacy-form-editor.php:1046
 #: includes/forms/views/editor.php:21
 msgid "Advanced"
 msgstr ""
@@ -1697,55 +1599,43 @@ msgstr ""
 #: build/Forms/Admin/editor-settings.php:613
 #: build/Forms/Admin/editor-settings.php:625
 #: build/Forms/Admin/editor-settings.php:789
-#: includes/forms/class-legacy-form-editor.php:673
-#: includes/forms/class-legacy-form-editor.php:907
 msgid "Heading"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:620
-#: includes/forms/class-legacy-form-editor.php:902
 msgid "Hide heading"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:662
 #: build/Forms/Admin/editor-settings.php:674
-#: includes/forms/class-legacy-form-editor.php:681
-#: includes/forms/class-legacy-form-editor.php:987
 msgid "Sub-heading"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:669
-#: includes/forms/class-legacy-form-editor.php:982
 msgid "Hide sub-heading"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:711
 #: build/Forms/Admin/editor-settings.php:723
 #: build/Forms/Admin/editor-settings.php:809
-#: includes/forms/class-legacy-form-editor.php:689
-#: includes/forms/class-legacy-form-editor.php:1027
 msgid "Note"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:718
-#: includes/forms/class-legacy-form-editor.php:1022
 msgid "Hide note"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:760
 #: build/Settings/Menu.php:482
-#: includes/forms/class-legacy-form-editor.php:697
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Custom CSS"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:766
-#: includes/forms/class-legacy-form-editor.php:1061
 msgid "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:767
-#: includes/forms/class-legacy-form-editor.php:1062
 msgid "Enter Your Custom CSS."
 msgstr ""
 
@@ -1759,31 +1649,26 @@ msgid "Background"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:837
-#: includes/forms/class-legacy-form-editor.php:750
 msgid "Border"
 msgstr ""
 
 #. translators: %s is the context, e.g hobbies, lists
 #: build/Forms/Admin/editor-settings.php:864
-#: includes/forms/class-legacy-form-editor.php:298
 #: includes/forms/views/tab-form.php:102
 msgid "Select the %s to add new subscribers who sign up via this form."
 msgstr ""
 
 #. translators: %s is the taxonomy label
 #: build/Forms/Admin/editor-settings.php:912
-#: includes/forms/class-legacy-form-editor.php:500
 msgid "Enter a comma-separated list of %s ids, slugs, or names to show this form on"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:915
-#: includes/forms/class-legacy-form-editor.php:503
 msgid "Prefix the id with a minus sign to exclude it from the list"
 msgstr ""
 
 #. translators: %1$s is the name of the integration, %2$s is the link to the integration's website.
 #: build/Forms/Admin/editor-settings.php:936
-#: includes/forms/class-legacy-form-editor.php:600
 msgid "Install the %1$s to add new subscribers to %2$s."
 msgstr ""
 
@@ -2181,98 +2066,78 @@ msgid "Inherit From Theme"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:28
-#: includes/forms/class-legacy-form-editor.php:129
 msgid "Red"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:29
-#: includes/forms/class-legacy-form-editor.php:130
 msgid "Pink"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:30
-#: includes/forms/class-legacy-form-editor.php:131
-#: includes/forms/class-legacy-form-editor.php:133
 msgid "Purple"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:31
-#: includes/forms/class-legacy-form-editor.php:132
 msgid "Deep Purple"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:32
-#: includes/forms/class-legacy-form-editor.php:134
 msgid "Indigo"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:33
-#: includes/forms/class-legacy-form-editor.php:135
 msgid "Blue"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:34
-#: includes/forms/class-legacy-form-editor.php:136
 msgid "Light Blue"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:35
-#: includes/forms/class-legacy-form-editor.php:137
 msgid "Cyan"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:36
-#: includes/forms/class-legacy-form-editor.php:138
 msgid "Teal"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:37
-#: includes/forms/class-legacy-form-editor.php:139
 msgid "Green"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:38
-#: includes/forms/class-legacy-form-editor.php:140
 msgid "Light Green"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:39
-#: includes/forms/class-legacy-form-editor.php:141
 msgid "Lime"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:40
-#: includes/forms/class-legacy-form-editor.php:142
 msgid "Yellow"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:41
-#: includes/forms/class-legacy-form-editor.php:143
 msgid "Amber"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:42
-#: includes/forms/class-legacy-form-editor.php:144
 msgid "Orange"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:43
-#: includes/forms/class-legacy-form-editor.php:145
 msgid "Deep Orange"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:44
-#: includes/forms/class-legacy-form-editor.php:146
 msgid "Brown"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:45
-#: includes/forms/class-legacy-form-editor.php:147
 msgid "Blue Grey"
 msgstr ""
 
 #: build/Forms/Widgets/New_Form.php:48
-#: includes/forms/class-legacy-form-editor.php:150
 msgid "Grey"
 msgstr ""
 
@@ -2331,8 +2196,8 @@ msgstr ""
 #: build/Settings/Menu.php:241
 #: build/Settings/Menu.php:350
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
-#: includes/functions.php:1834
-#: includes/functions.php:2098
+#: includes/functions.php:1805
+#: includes/functions.php:2069
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/blocks.js:46
@@ -3777,8 +3642,6 @@ msgid "Form Name"
 msgstr ""
 
 #: includes/class-noptin-post-types.php:117
-#: includes/forms/class-legacy-form-editor.php:330
-#: includes/forms/class-legacy-form-editor.php:1123
 #: includes/forms/views/metabox-embed.php:5
 #: build/Forms/assets/js/form-editor.js:52
 msgid "Shortcode"
@@ -4210,120 +4073,6 @@ msgstr ""
 msgid "Data from the URL or a submitted form."
 msgstr ""
 
-#: includes/forms/class-legacy-form-editor.php:326
-msgid "Form type"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:327
-msgid "Select how you would like to display the form"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:329
-#: build/Forms/assets/js/form-editor.js:52
-msgid "Popup"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:331
-#: build/Forms/assets/js/form-editor.js:52
-msgid "Widget"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:332
-#: build/Forms/assets/js/form-editor.js:52
-msgid "Sliding"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:496
-msgid "Only show on %s"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:625
-#: build/Emails/assets/js/email-editor.js:53
-msgid "Template"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:713
-msgid "Apply a template"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:714
-msgid "Some templates include custom css so remember to check out the Custom CSS panel after you apply a template"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:720
-msgid "Apply a color theme"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:756
-msgid "Background Color"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:865
-msgid "Button Label"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:875
-msgid "Button Position"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:882
-msgid "Button Background"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:888
-msgid "Button Color"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:914
-msgid "Heading Color"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:954
-msgid "Prefix Color"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:994
-msgid "Sub-heading Color"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1034
-msgid "Note Color"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1108
-msgid "Editing"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1110
-msgid "Saving"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1111
-msgid "There was an error saving your form."
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1112
-msgid "Your changes have been saved successfuly"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1113
-msgid "There was an error saving your template."
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1114
-msgid "Your template has been saved successfuly"
-msgstr ""
-
-#: includes/forms/class-legacy-form-editor.php:1117
-#: build/Misc/assets/js/collection.js:237
-msgid "Save Changes"
-msgstr ""
-
-#. Translators: %s Widget name name.
-#: includes/forms/class-legacy-form-editor.php:1126
-msgid "Use the %s widget to add this form to a widget area"
-msgstr ""
-
 #: includes/forms/forms.php:425
 msgid "Successfully subscribed"
 msgstr ""
@@ -4734,77 +4483,77 @@ msgstr ""
 msgid "%s ago"
 msgstr ""
 
-#: includes/functions.php:1672
+#: includes/functions.php:1643
 msgid "is"
 msgstr ""
 
-#: includes/functions.php:1676
+#: includes/functions.php:1647
 msgid "is not"
 msgstr ""
 
-#: includes/functions.php:1680
+#: includes/functions.php:1651
 msgid "contains"
 msgstr ""
 
-#: includes/functions.php:1684
+#: includes/functions.php:1655
 msgid "does not contain"
 msgstr ""
 
-#: includes/functions.php:1688
+#: includes/functions.php:1659
 msgid "begins with"
 msgstr ""
 
-#: includes/functions.php:1692
+#: includes/functions.php:1663
 msgid "ends with"
 msgstr ""
 
-#: includes/functions.php:1696
+#: includes/functions.php:1667
 msgid "is empty"
 msgstr ""
 
-#: includes/functions.php:1700
+#: includes/functions.php:1671
 msgid "is not empty"
 msgstr ""
 
-#: includes/functions.php:1704
+#: includes/functions.php:1675
 msgid "is greater than"
 msgstr ""
 
-#: includes/functions.php:1708
+#: includes/functions.php:1679
 msgid "is less than"
 msgstr ""
 
-#: includes/functions.php:1712
-#: includes/functions.php:1724
+#: includes/functions.php:1683
+#: includes/functions.php:1695
 msgid "is between"
 msgstr ""
 
-#: includes/functions.php:1716
+#: includes/functions.php:1687
 msgid "is before"
 msgstr ""
 
-#: includes/functions.php:1720
+#: includes/functions.php:1691
 msgid "is after"
 msgstr ""
 
 #. translators: %s is a number.
-#: includes/functions.php:1843
+#: includes/functions.php:1814
 msgctxt "number"
 msgid "%1$s and %2$s"
 msgstr ""
 
 #. translators: %s is a date.
 #. translators: %1$s is a string, %2$s is a string.
-#: includes/functions.php:1855
-#: includes/functions.php:2074
+#: includes/functions.php:1826
+#: includes/functions.php:2045
 msgid "%1$s and %2$s"
 msgstr ""
 
-#: includes/functions.php:1885
+#: includes/functions.php:1856
 msgid "OR"
 msgstr ""
 
-#: includes/functions.php:1887
+#: includes/functions.php:1858
 msgid "AND"
 msgstr ""
 
@@ -8033,6 +7782,10 @@ msgid "Merge tags are special placeholders that allow you to personalize your em
 msgstr ""
 
 #: build/Emails/assets/js/email-editor.js:53
+msgid "Template"
+msgstr ""
+
+#: build/Emails/assets/js/email-editor.js:53
 msgid "Choose the template you want to use."
 msgstr ""
 
@@ -8399,6 +8152,18 @@ msgstr ""
 msgid "Change color theme"
 msgstr ""
 
+#: build/Forms/assets/js/form-editor.js:52
+msgid "Popup"
+msgstr ""
+
+#: build/Forms/assets/js/form-editor.js:52
+msgid "Widget"
+msgstr ""
+
+#: build/Forms/assets/js/form-editor.js:52
+msgid "Sliding"
+msgstr ""
+
 #: build/Forms/assets/js/new-form-block.js:1
 msgid "Write Form title…"
 msgstr ""
@@ -8505,6 +8270,10 @@ msgstr ""
 #: build/Misc/assets/js/collection.js:237
 #: build/Misc/assets/js/collection.js:261
 msgid "Edit Item"
+msgstr ""
+
+#: build/Misc/assets/js/collection.js:237
+msgid "Save Changes"
 msgstr ""
 
 #. translators: %s: item title.
