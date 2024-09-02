@@ -1958,6 +1958,11 @@ function noptin_get_automation_rule( $automation_rule_id = 0 ) {
 		$automation_rule_id = $automation_rule_id->id;
 	}
 
+	if ( ! is_numeric( $automation_rule_id ) ) {
+		noptin_error_log( $automation_rule_id );
+		$automation_rule_id = 0;
+	}
+
 	return noptin()->db()->get( (int) $automation_rule_id, 'automation_rules' );
 }
 
