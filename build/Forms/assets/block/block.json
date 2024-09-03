@@ -20,8 +20,8 @@
     },
     "textdomain": "newsletter-optin-box",
     "editorScript": "file:../js/block.js",
-    "style": "noptin-form__new",
-    "viewScript": "noptin-form__new",
+    "style": "noptin-form",
+    "viewScript": "noptin-form",
     "render": "file:./render.php",
     "keywords": [
         "noptin",

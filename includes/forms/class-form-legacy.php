@@ -146,6 +146,7 @@ class Noptin_Form_Legacy {
 			'id'                    => null,
 			'optinHTML'             => __( 'This form is incorrectly configured', 'newsletter-optin-box' ),
 			'optinType'             => 'inpost',
+			'hideSeconds'           => WEEK_IN_SECONDS,
 
 			// Opt in options.
 			'formRadius'            => '0px',

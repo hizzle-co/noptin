@@ -32,8 +32,8 @@ class Popups {
 	 */
 	public static function init() {
 		add_action( 'wp_footer', array( __CLASS__, 'display_popups' ), 5 );
+		add_action( 'wp_footer', array( __CLASS__, 'enqueue_scripts' ), 6 );
 		add_filter( 'noptin_load_form_scripts', array( __CLASS__, 'maybe_load_form_scripts' ) );
-		add_action( 'after_noptin_popup_display', array( __CLASS__, 'enqueue_scripts' ) );
 		add_action( 'save_post', array( __CLASS__, 'empty_cache' ) );
 	}
 
@@ -41,7 +41,8 @@ class Popups {
 	 * Enqueues scripts.
 	 */
 	public static function enqueue_scripts() {
-		if ( empty( self::get_popups() ) ) {
+
+		if ( empty( self::get_popups() ) && empty( $GLOBALS['noptin_showing_popup'] ) ) {
 			return;
 		}
 
@@ -70,7 +71,12 @@ class Popups {
 	 * @return bool
 	 */
 	public static function maybe_load_form_scripts( $load ) {
-		return $load || ! empty( self::get_popups() );
+		if ( ! empty( self::get_popups() ) || ! empty( $GLOBALS['noptin_showing_popup'] ) ) {
+			self::enqueue_scripts();
+			return true;
+		}
+
+		return $load;
 	}
 
 	/**

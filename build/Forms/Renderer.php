@@ -128,6 +128,11 @@ class Renderer {
 				return;
 			}
 
+			// Set a flag if we're displaying a popup or slide-in.
+			if ( $form->is_popup() || $form->is_slide_in() ) {
+				$GLOBALS['noptin_showing_popup'] = true;
+			}
+
 			// Update view count.
 			if ( ! noptin_is_preview() && ! $form->is_popup() && ! $form->is_slide_in() ) {
 				increment_noptin_form_views( $form->id );
@@ -271,6 +276,11 @@ class Renderer {
 			noptin_hidden_field( 'noptin-config', noptin_encrypt( wp_json_encode( $args['noptin-config'] ) ) );
 		}
 
+		// Form id.
+		if ( $form ) {
+			noptin_hidden_field( 'noptin_form_id', $form->id );
+		}
+
 		echo '</form>';
 
 		// Closing wrapper.
@@ -294,7 +304,7 @@ class Renderer {
 			return array(
 				'noptin-optin-form',
 				$form->singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line',
-				'noptin-label-' . sanitize_html_class( $args['labels'] )
+				'noptin-label-' . sanitize_html_class( $args['labels'] ),
 			);
 		}
 
@@ -477,7 +487,7 @@ class Renderer {
 			echo '</div>';
 
 			// (Maybe) display an acceptance field.
-			if ( ! $is_single_line ) {
+			if ( $is_single_line ) {
 				self::display_consent_field( $args, $form, $wrap );
 			}
 		}
@@ -738,7 +748,7 @@ class Renderer {
 		if ( $form->is_slide_in() || $form->is_popup() ) {
 			$trigger                   = defined( 'IS_NOPTIN_PREVIEW' ) ? 'immeadiate' : esc_attr( $form->triggerPopup );
 			$atts['data-trigger']      = $trigger;
-			$atts['data-hide-seconds'] = apply_filters( 'noptin_display_form_every_x_seconds', WEEK_IN_SECONDS, $form ) * 1000;
+			$atts['data-hide-seconds'] = apply_filters( 'noptin_display_form_every_x_seconds', WEEK_IN_SECONDS, $form->hideSeconds ) * 1000;
 
 			if ( 'after_click' === $trigger ) {
 				$atts['data-value'] = $form->cssClassOfClick;

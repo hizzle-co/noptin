@@ -48,7 +48,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		$forms           = array();
 		$elementor_posts = get_posts(
 			array(
-				'post_type'        => 'any',
+				'post_type'        => get_post_types( array( 'public' => true ) ),
 				'fields'           => 'ids',
 				'posts_per_page'   => -1,
 				'meta_key'         => '_elementor_data',
@@ -135,7 +135,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		foreach ( $fields as $elementor_field ) {
 
 			// Skip fields with no name.
-			if ( empty( $elementor_field->field_label ) && empty( $elementor_field->acceptance_text ) ) {
+			if ( empty( $elementor_field->field_label ) && empty( $elementor_field->placeholder ) && empty( $elementor_field->acceptance_text ) ) {
 				continue;
 			}
 
@@ -143,8 +143,18 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 				continue;
 			}
 
+			$label = '';
+
+			if ( ! empty( $elementor_field->field_label ) ) {
+				$label = $elementor_field->field_label;
+			} elseif ( ! empty( $elementor_field->placeholder ) ) {
+				$label = $elementor_field->placeholder;
+			} else {
+				$label = $elementor_field->acceptance_text;
+			}
+
 			$field = array(
-				'description'       => empty( $elementor_field->field_label ) ? $elementor_field->acceptance_text : $elementor_field->field_label,
+				'description'       => $label,
 				'conditional_logic' => 'string',
 			);
 

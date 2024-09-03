@@ -38,6 +38,9 @@ class Main {
 		// Renders forms.
 		Renderer::init();
 
+		// Previewer.
+		Previewer::init();
+
 		if ( is_admin() ) {
 			Admin\Main::init();
 		}
@@ -115,7 +118,6 @@ class Main {
 		 * @since 1.6.2
 		 */
 		do_action( 'register_noptin_form_post_type' );
-
 	}
 
 	/**
@@ -243,7 +245,7 @@ class Main {
 		$config = include plugin_dir_path( __FILE__ ) . '/assets/js/form.asset.php';
 
 		wp_register_script(
-			'noptin-form__new',
+			'noptin-form',
 			plugin_dir_url( __FILE__ ) . 'assets/js/form.js',
 			$config['dependencies'],
 			$config['version'],
@@ -261,10 +263,10 @@ class Main {
 		);
 		$params = apply_filters( 'noptin_form_scripts_params', $params );
 
-		wp_localize_script( 'noptin-form__new', 'noptinParams', $params );
+		wp_localize_script( 'noptin-form', 'noptinParams', $params );
 
 		wp_register_style(
-			'noptin-form__new',
+			'noptin-form',
 			plugin_dir_url( __FILE__ ) . 'assets/css/style-form.css',
 			array(),
 			$config['version']
@@ -306,8 +308,8 @@ class Main {
 	 */
 	public static function enqueue_scripts() {
 		if ( apply_filters( 'noptin_load_form_scripts', false ) ) {
-			wp_enqueue_script( 'noptin-form__new' );
-			wp_enqueue_style( 'noptin-form__new' );
+			wp_enqueue_script( 'noptin-form' );
+			wp_enqueue_style( 'noptin-form' );
 		}
 	}
 

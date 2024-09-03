@@ -25,16 +25,6 @@ class Noptin_Form_Manager {
 	public $tags;
 
 	/**
-	* @var Noptin_Form_Previewer
-	*/
-	public $previewer;
-
-	/**
-	 * @var Noptin_Form_Asset_Manager
-	 */
-	public $assets;
-
-	/**
 	 * @var Noptin_Form_Admin
 	 */
 	public $admin;
@@ -48,10 +38,8 @@ class Noptin_Form_Manager {
 		$this->load_files();
 
 		// Init class properties.
-		$this->tags      = new Noptin_Form_Tags();
-		$this->previewer = new Noptin_Form_Previewer();
-		$this->assets    = new Noptin_Form_Asset_Manager();
-		$this->admin     = new Noptin_Form_Admin();
+		$this->tags  = new Noptin_Form_Tags();
+		$this->admin = new Noptin_Form_Admin();
 
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 5 );
 	}
@@ -63,12 +51,9 @@ class Noptin_Form_Manager {
 
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-element.php'; // Displays opt-in forms.
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-tags.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-form-previewer.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form.php'; // Container for a single form.
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-legacy.php'; // Container for a single legacy form.
-		require_once plugin_dir_path( __FILE__ ) . 'class-asset-manager.php';
-
 	}
 
 	/**
@@ -85,9 +70,7 @@ class Noptin_Form_Manager {
 		do_action( 'before_init_noptin_form_manager', $this );
 
 		// Init modules.
-		$this->assets->add_hooks();
 		$this->tags->add_hooks();
-		$this->previewer->add_hooks();
 		$this->admin->add_hooks();
 
 		/**
@@ -97,7 +80,6 @@ class Noptin_Form_Manager {
 		 * @since 1.6.2
 		 */
 		do_action( 'init_noptin_form_manager', $this );
-
 	}
 
 	/**

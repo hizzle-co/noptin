@@ -48,7 +48,7 @@
     "textdomain": "newsletter-optin-box",
     "editorScript": "file:../js/new-form-block.js",
     "style": "file:../css/style-new-form-block.css",
-    "viewScript": "noptin-form__new",
+    "viewScript": "noptin-form",
     "keywords": [
         "noptin",
         "newsletter",

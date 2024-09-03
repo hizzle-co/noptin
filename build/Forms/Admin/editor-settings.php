@@ -185,6 +185,18 @@ $editor_settings = array(
 						'suffix' => '%',
 					),
 				),
+
+				// Hide for X seconds.
+				'hideSeconds'           => array(
+					'type'             => 'number',
+					'el'               => 'input',
+					'label'            => __( 'Hide for', 'newsletter-optin-box' ),
+					'description'      => __( 'Hide the form for X seconds after a user closes it', 'newsletter-optin-box' ),
+					'placeholder'      => WEEK_IN_SECONDS,
+					'customAttributes' => array(
+						'suffix' => __( 'seconds', 'newsletter-optin-box' ),
+					),
+				),
 			),
 		),
 
