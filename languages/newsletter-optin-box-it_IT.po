@@ -73,7 +73,7 @@ msgstr ""
 #. translators: %s is a date.
 #. translators: %1$s is a string, %2$s is a string.
 #: includes/functions.php:1826
-#: includes/functions.php:2045
+#: includes/functions.php:2050
 msgid "%1$s and %2$s"
 msgstr ""
 
@@ -386,7 +386,7 @@ msgstr ""
 msgid "Add me to your newsletter and keep me updated whenever you publish new products"
 msgstr ""
 
-#: build/Forms/Main.php:82
+#: build/Forms/Main.php:85
 #: build/Tasks/Main.php:555
 #: src/DB/Schema.php:228
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
@@ -400,11 +400,11 @@ msgstr ""
 msgid "Add New Campaign"
 msgstr ""
 
-#: build/Forms/Main.php:83
+#: build/Forms/Main.php:86
 msgid "Add New Form"
 msgstr "Aggiungi nuovo modulo"
 
-#: build/Forms/Main.php:81
+#: build/Forms/Main.php:84
 msgctxt "Add New on Toolbar"
 msgid "Subscription Form"
 msgstr ""
@@ -447,7 +447,7 @@ msgstr ""
 msgid "Adds a blank vertical space"
 msgstr ""
 
-#: build/Forms/Main.php:80
+#: build/Forms/Main.php:83
 msgctxt "Admin Menu text"
 msgid "Subscription Forms"
 msgstr ""
@@ -457,10 +457,10 @@ msgstr ""
 msgid "Admin URL"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:598
-#: build/Forms/Admin/editor-settings.php:647
-#: build/Forms/Admin/editor-settings.php:696
-#: build/Forms/Admin/editor-settings.php:745
+#: build/Forms/Admin/editor-settings.php:610
+#: build/Forms/Admin/editor-settings.php:659
+#: build/Forms/Admin/editor-settings.php:708
+#: build/Forms/Admin/editor-settings.php:757
 #: includes/forms/views/editor.php:21
 msgid "Advanced"
 msgstr ""
@@ -604,8 +604,8 @@ msgstr ""
 msgid "AND"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:87
-#: includes/forms/class-form-legacy.php:241
+#: build/Forms/Admin/default-form.php:88
+#: includes/forms/class-form-legacy.php:242
 msgid "And get notified everytime we publish a new blog post."
 msgstr ""
 
@@ -614,7 +614,7 @@ msgstr ""
 msgid "Any"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:236
+#: build/Forms/Admin/editor-settings.php:248
 #: includes/forms/views/tab-settings.php:17
 msgid "Archive pages"
 msgstr "Pagine d'archivio"
@@ -725,11 +725,11 @@ msgstr ""
 msgid "Available Options"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:494
+#: build/Forms/Admin/editor-settings.php:506
 msgid "Avatar Position"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:482
+#: build/Forms/Admin/editor-settings.php:494
 #: src/Objects/Collection.php:431
 msgid "Avatar URL"
 msgstr ""
@@ -751,7 +751,7 @@ msgstr ""
 msgid "Background Color:"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:475
+#: build/Forms/Admin/editor-settings.php:487
 msgid "Background Image"
 msgstr "Immagine di sfondo"
 
@@ -932,11 +932,11 @@ msgstr ""
 msgid "Black"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:546
+#: build/Forms/Admin/editor-settings.php:558
 msgid "Block"
 msgstr "Bloccare"
 
-#: build/Forms/Admin/editor-settings.php:234
+#: build/Forms/Admin/editor-settings.php:246
 #: includes/forms/views/tab-settings.php:15
 msgid "Blog page"
 msgstr "Pagina del blog"
@@ -949,7 +949,7 @@ msgstr ""
 msgid "Blue Grey"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:837
+#: build/Forms/Admin/editor-settings.php:849
 msgid "Border"
 msgstr ""
 
@@ -961,8 +961,8 @@ msgstr ""
 msgid "Borderless"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:492
-#: build/Forms/Admin/editor-settings.php:517
+#: build/Forms/Admin/editor-settings.php:504
+#: build/Forms/Admin/editor-settings.php:529
 msgid "Bottom"
 msgstr "Parte inferiore"
 
@@ -1006,8 +1006,8 @@ msgstr ""
 msgid "Brown"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:534
-#: build/Forms/Admin/editor-settings.php:819
+#: build/Forms/Admin/editor-settings.php:546
+#: build/Forms/Admin/editor-settings.php:831
 msgid "Button"
 msgstr "Pulsante"
 
@@ -1020,7 +1020,7 @@ msgstr ""
 msgid "Button Text"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:108
+#: build/Forms/Admin/default-form.php:109
 #: build/Forms/Admin/optin-templates.php:51
 #: build/Forms/Admin/optin-templates.php:117
 #: build/Forms/Admin/optin-templates.php:186
@@ -1036,7 +1036,7 @@ msgstr ""
 #: build/Forms/Admin/optin-templates.php:1059
 #: build/Forms/Admin/optin-templates.php:1103
 #: build/Forms/Admin/optin-templates.php:1194
-#: includes/forms/class-form-legacy.php:262
+#: includes/forms/class-form-legacy.php:263
 msgid "By subscribing, you agree with our <a href=\"\">privacy policy</a> and our terms of service."
 msgstr ""
 
@@ -1289,7 +1289,7 @@ msgstr ""
 msgid "Connects Noptin to %s"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:442
+#: build/Forms/Admin/editor-settings.php:454
 msgid "Consent Text"
 msgstr ""
 
@@ -1326,7 +1326,7 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: build/Forms/Main.php:259
+#: build/Forms/Main.php:261
 msgid "Could not establish a connection to the server."
 msgstr ""
 
@@ -1419,7 +1419,7 @@ msgstr ""
 msgid "Current User"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:760
+#: build/Forms/Admin/editor-settings.php:772
 #: build/Settings/Menu.php:482
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Custom CSS"
@@ -1697,7 +1697,7 @@ msgid "Description:"
 msgstr ""
 
 #. translators: %s: file name
-#: build/Forms/Admin/editor-settings.php:341
+#: build/Forms/Admin/editor-settings.php:353
 #: build/Emails/assets/js/blocks.js:52
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Design"
@@ -1707,7 +1707,7 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:303
+#: build/Forms/Admin/editor-settings.php:315
 msgid "Device Targeting"
 msgstr "Targeting per dispositivo"
 
@@ -2044,7 +2044,7 @@ msgstr ""
 msgid "Edit Campaign"
 msgstr ""
 
-#: build/Forms/Main.php:85
+#: build/Forms/Main.php:88
 msgid "Edit Form"
 msgstr ""
 
@@ -2076,7 +2076,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:12
+#: build/Forms/Admin/default-form.php:13
 #: build/Forms/Admin/optin-templates.php:17
 #: build/Forms/Admin/optin-templates.php:153
 #: build/Forms/Admin/optin-templates.php:294
@@ -2091,7 +2091,7 @@ msgstr ""
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:204
 #: includes/class-noptin-ajax.php:58
 #: includes/class-noptin-custom-fields.php:104
-#: includes/forms/class-form-legacy.php:159
+#: includes/forms/class-form-legacy.php:160
 #: includes/subscriber.php:1032
 msgid "Email Address"
 msgstr "Indirizzo email"
@@ -2247,7 +2247,7 @@ msgstr ""
 msgid "Enter a comma separated list of tags to assign new subscribers."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:334
+#: build/Forms/Admin/editor-settings.php:346
 msgid "Enter a comma separated list of tags to assign subscribers who sign up using this form"
 msgstr ""
 
@@ -2294,7 +2294,7 @@ msgstr ""
 msgid "Enter the tags to assign new subscribers."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:767
+#: build/Forms/Admin/editor-settings.php:779
 msgid "Enter Your Custom CSS."
 msgstr ""
 
@@ -2380,11 +2380,11 @@ msgstr ""
 msgid "Every X days"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:276
+#: build/Forms/Admin/editor-settings.php:288
 msgid "Everyone"
 msgstr "Tutti"
 
-#: build/Forms/Admin/editor-settings.php:207
+#: build/Forms/Admin/editor-settings.php:219
 msgid "Everywhere"
 msgstr "Ovunque"
 
@@ -2504,7 +2504,7 @@ msgstr ""
 msgid "Field Name"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:392
+#: build/Forms/Admin/editor-settings.php:404
 #: build/Settings/Menu.php:612
 msgid "Field Type"
 msgstr ""
@@ -2590,7 +2590,7 @@ msgstr ""
 msgid "Form"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:346
+#: build/Forms/Admin/editor-settings.php:358
 msgid "Form Appearance"
 msgstr ""
 
@@ -2651,12 +2651,12 @@ msgstr ""
 msgid "Frequency"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:233
+#: build/Forms/Admin/editor-settings.php:245
 #: includes/forms/views/tab-settings.php:14
 msgid "Front page"
 msgstr "Prima pagina"
 
-#: build/Forms/Admin/editor-settings.php:402
+#: build/Forms/Admin/editor-settings.php:414
 msgid "Frontend Label"
 msgstr ""
 
@@ -2683,7 +2683,7 @@ msgstr ""
 #: build/Settings/Menu.php:350
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
 #: includes/functions.php:1805
-#: includes/functions.php:2069
+#: includes/functions.php:2074
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/blocks.js:46
@@ -2752,9 +2752,9 @@ msgstr ""
 msgid "Header Text (Optional)"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:613
 #: build/Forms/Admin/editor-settings.php:625
-#: build/Forms/Admin/editor-settings.php:789
+#: build/Forms/Admin/editor-settings.php:637
+#: build/Forms/Admin/editor-settings.php:801
 msgid "Heading"
 msgstr ""
 
@@ -2780,11 +2780,11 @@ msgstr ""
 msgid "Hide From Subscribers"
 msgstr "Nascondi dagli abbonati"
 
-#: build/Forms/Admin/editor-settings.php:620
+#: build/Forms/Admin/editor-settings.php:632
 msgid "Hide heading"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:718
+#: build/Forms/Admin/editor-settings.php:730
 msgid "Hide note"
 msgstr "Nascondi nota"
 
@@ -2792,15 +2792,15 @@ msgstr "Nascondi nota"
 msgid "Hide on (Optional)"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:316
+#: build/Forms/Admin/editor-settings.php:328
 msgid "Hide on Desktops"
 msgstr "Nascondi sui desktop"
 
-#: build/Forms/Admin/editor-settings.php:310
+#: build/Forms/Admin/editor-settings.php:322
 msgid "Hide on Mobile"
 msgstr "Nascondi sul cellulare"
 
-#: build/Forms/Admin/editor-settings.php:458
+#: build/Forms/Admin/editor-settings.php:470
 msgid "Hide opt-in fields"
 msgstr ""
 
@@ -2808,11 +2808,11 @@ msgstr ""
 msgid "Hide opt-in forms and methods from existing subscribers."
 msgstr "nascondi i moduli newsletter agli abbonati."
 
-#: build/Forms/Admin/editor-settings.php:571
+#: build/Forms/Admin/editor-settings.php:583
 msgid "Hide prefix"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:669
+#: build/Forms/Admin/editor-settings.php:681
 msgid "Hide sub-heading"
 msgstr ""
 
@@ -2848,8 +2848,8 @@ msgstr ""
 msgid "https://noptin.com"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:8
-#: includes/forms/class-form-legacy.php:155
+#: build/Forms/Admin/default-form.php:9
+#: includes/forms/class-form-legacy.php:156
 msgid "I consent to receive promotional emails about your products and services."
 msgstr ""
 
@@ -2915,22 +2915,22 @@ msgstr ""
 msgid "If you have received this email by mistake, you can safely delete it."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:260
+#: build/Forms/Admin/editor-settings.php:272
 msgid "If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:467
+#: build/Forms/Admin/editor-settings.php:479
 #: src/Integrations/EDD/Downloads.php:123
 #: src/Integrations/WooCommerce/Products.php:432
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:74
 msgid "Image"
 msgstr "Immagine"
 
-#: build/Forms/Admin/editor-settings.php:519
+#: build/Forms/Admin/editor-settings.php:531
 msgid "Image Position"
 msgstr "Posizione dell'immagine"
 
-#: build/Forms/Admin/editor-settings.php:506
+#: build/Forms/Admin/editor-settings.php:518
 msgid "Image URL"
 msgstr "URL dell'immagine"
 
@@ -2994,7 +2994,7 @@ msgid "Install Now"
 msgstr ""
 
 #. translators: %1$s is the name of the integration, %2$s is the link to the integration's website.
-#: build/Forms/Admin/editor-settings.php:936
+#: build/Forms/Admin/editor-settings.php:948
 msgid "Install the %1$s to add new subscribers to %2$s."
 msgstr ""
 
@@ -3017,7 +3017,7 @@ msgid "Install Update"
 msgstr ""
 
 #: build/Extensions/Menu.php:282
-#: build/Forms/Admin/editor-settings.php:841
+#: build/Forms/Admin/editor-settings.php:853
 #: build/Settings/Menu.php:164
 #: includes/forms/views/editor.php:20
 msgid "Integrations"
@@ -3122,8 +3122,8 @@ msgstr ""
 msgid "Items"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:45
-#: includes/forms/class-form-legacy.php:199
+#: build/Forms/Admin/default-form.php:46
+#: includes/forms/class-form-legacy.php:200
 #: build/Forms/assets/js/new-form-block.js:1
 msgid "JOIN OUR NEWSLETTER"
 msgstr ""
@@ -3232,9 +3232,9 @@ msgstr ""
 msgid "Leave blank to create a new product."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:490
-#: build/Forms/Admin/editor-settings.php:515
-#: build/Forms/Admin/editor-settings.php:547
+#: build/Forms/Admin/editor-settings.php:502
+#: build/Forms/Admin/editor-settings.php:527
+#: build/Forms/Admin/editor-settings.php:559
 msgid "Left"
 msgstr "Sinistra"
 
@@ -3312,7 +3312,7 @@ msgstr ""
 msgid "Logged in user's name"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:277
+#: build/Forms/Admin/editor-settings.php:289
 msgid "Logged in users"
 msgstr "Utenti connessi"
 
@@ -3321,7 +3321,7 @@ msgstr "Utenti connessi"
 msgid "Logged out"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:278
+#: build/Forms/Admin/editor-settings.php:290
 msgid "Logged out users"
 msgstr "Utenti disconnessi"
 
@@ -3441,7 +3441,7 @@ msgstr ""
 msgid "Minimal"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:358
+#: build/Forms/Admin/editor-settings.php:370
 msgid "Minimum Height"
 msgstr "Altezza minima"
 
@@ -3499,7 +3499,7 @@ msgstr ""
 msgid "Never Delete"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:244
+#: build/Forms/Admin/editor-settings.php:256
 msgid "Never show on:"
 msgstr "Non mostrare mai su:"
 
@@ -3532,7 +3532,7 @@ msgstr ""
 msgid "New Comment Reply"
 msgstr ""
 
-#: build/Forms/Main.php:84
+#: build/Forms/Main.php:87
 msgid "New Form"
 msgstr ""
 
@@ -3581,7 +3581,7 @@ msgstr ""
 msgid "Newsletter Subscribers"
 msgstr ""
 
-#: build/Forms/Main.php:232
+#: build/Forms/Main.php:234
 msgid "Newsletter Subscription Form"
 msgstr ""
 
@@ -3643,11 +3643,11 @@ msgstr ""
 msgid "No emails have been sent yet."
 msgstr ""
 
-#: build/Forms/Main.php:90
+#: build/Forms/Main.php:93
 msgid "No forms found in Trash."
 msgstr ""
 
-#: build/Forms/Main.php:89
+#: build/Forms/Main.php:92
 msgid "No forms found."
 msgstr ""
 
@@ -3743,9 +3743,9 @@ msgstr ""
 msgid "Not subscribed"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:711
 #: build/Forms/Admin/editor-settings.php:723
-#: build/Forms/Admin/editor-settings.php:809
+#: build/Forms/Admin/editor-settings.php:735
+#: build/Forms/Admin/editor-settings.php:821
 msgid "Note"
 msgstr "Nota"
 
@@ -3835,7 +3835,7 @@ msgstr ""
 msgid "Opt-In Condition"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:367
+#: build/Forms/Admin/editor-settings.php:379
 msgid "Opt-in Fields"
 msgstr ""
 
@@ -3968,7 +3968,7 @@ msgstr ""
 msgid "Package Name"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:194
+#: build/Forms/Admin/editor-settings.php:206
 msgid "Page Targeting"
 msgstr "Targeting per pagina"
 
@@ -3985,7 +3985,7 @@ msgstr ""
 msgid "Paid Memberships Pro"
 msgstr ""
 
-#: build/Forms/Main.php:88
+#: build/Forms/Main.php:91
 msgid "Parent Forms:"
 msgstr ""
 
@@ -4150,29 +4150,29 @@ msgstr ""
 msgid "Post ID or Slug"
 msgstr ""
 
-#: build/Forms/Main.php:78
+#: build/Forms/Main.php:81
 msgctxt "Post type general name"
 msgid "Subscription Forms"
 msgstr ""
 
-#: build/Forms/Main.php:79
+#: build/Forms/Main.php:82
 msgctxt "Post type singular name"
 msgid "Subscription Form"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:352
+#: build/Forms/Admin/editor-settings.php:364
 msgid "Preferred Width"
 msgstr "Larghezza preferita"
 
-#: build/Forms/Admin/default-form.php:66
-#: build/Forms/Admin/editor-settings.php:564
+#: build/Forms/Admin/default-form.php:67
 #: build/Forms/Admin/editor-settings.php:576
-#: build/Forms/Admin/editor-settings.php:799
-#: includes/forms/class-form-legacy.php:220
+#: build/Forms/Admin/editor-settings.php:588
+#: build/Forms/Admin/editor-settings.php:811
+#: includes/forms/class-form-legacy.php:221
 msgid "Prefix"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:766
+#: build/Forms/Admin/editor-settings.php:778
 msgid "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page"
 msgstr "Prefisso tutti i tuoi stili con '.noptin-optin-form-wrapper' altrimenti si applicheranno a tutti i moduli di opt-in nella pagina"
 
@@ -4526,9 +4526,9 @@ msgstr ""
 msgid "Reviews allowed"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:491
-#: build/Forms/Admin/editor-settings.php:516
-#: build/Forms/Admin/editor-settings.php:548
+#: build/Forms/Admin/editor-settings.php:503
+#: build/Forms/Admin/editor-settings.php:528
+#: build/Forms/Admin/editor-settings.php:560
 msgid "Right"
 msgstr "Destra"
 
@@ -4584,11 +4584,11 @@ msgstr ""
 msgid "Search Campaigns"
 msgstr ""
 
-#: build/Forms/Main.php:87
+#: build/Forms/Main.php:90
 msgid "Search Forms"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:235
+#: build/Forms/Admin/editor-settings.php:247
 #: includes/forms/views/tab-settings.php:16
 msgid "Search page"
 msgstr "Pagina di ricerca"
@@ -4634,7 +4634,7 @@ msgid "Select image size"
 msgstr ""
 
 #. translators: %s is the context, e.g hobbies, lists
-#: build/Forms/Admin/editor-settings.php:864
+#: build/Forms/Admin/editor-settings.php:876
 #: includes/forms/views/tab-form.php:102
 msgid "Select the %s to add new subscribers who sign up via this form."
 msgstr ""
@@ -4663,7 +4663,7 @@ msgstr ""
 msgid "Select the image size to display."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:287
+#: build/Forms/Admin/editor-settings.php:299
 msgid "Select user roles"
 msgstr "Seleziona i ruoli utente"
 
@@ -4869,7 +4869,7 @@ msgstr ""
 msgid "Show %s created before this date."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:412
+#: build/Forms/Admin/editor-settings.php:424
 msgid "Show all fields in a single line"
 msgstr "Mostra tutti i campi in un'unica riga"
 
@@ -4877,7 +4877,7 @@ msgstr "Mostra tutti i campi in un'unica riga"
 msgid "Show campaign stats"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:430
+#: build/Forms/Admin/editor-settings.php:442
 msgid "Show GDPR checkbox"
 msgstr ""
 
@@ -4984,7 +4984,7 @@ msgstr ""
 msgid "Source URL"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:279
+#: build/Forms/Admin/editor-settings.php:291
 msgid "specific user roles"
 msgstr "ruoli utente specifici"
 
@@ -5059,8 +5059,8 @@ msgstr ""
 msgid "Street2"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:662
 #: build/Forms/Admin/editor-settings.php:674
+#: build/Forms/Admin/editor-settings.php:686
 msgid "Sub-heading"
 msgstr ""
 
@@ -5088,8 +5088,8 @@ msgstr ""
 #: build/Forms/Admin/optin-templates.php:985
 #: build/Forms/Admin/optin-templates.php:1046
 #: build/Forms/Admin/optin-templates.php:1090
-#: build/Forms/Renderer.php:191
-#: build/Forms/Renderer.php:592
+#: build/Forms/Renderer.php:196
+#: build/Forms/Renderer.php:602
 #: includes/forms/class-form-element.php:264
 #: includes/forms/views/tab-form.php:11
 msgid "Subscribe"
@@ -5104,13 +5104,13 @@ msgstr ""
 msgid "SUBSCRIBE NOW"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:41
+#: build/Forms/Admin/default-form.php:42
 #: build/Forms/Admin/optin-templates.php:168
 #: build/Forms/Admin/optin-templates.php:246
 #: build/Forms/Admin/optin-templates.php:415
 #: build/Forms/Admin/optin-templates.php:490
 #: build/Forms/Admin/optin-templates.php:1181
-#: includes/forms/class-form-legacy.php:195
+#: includes/forms/class-form-legacy.php:196
 msgid "Subscribe Now"
 msgstr ""
 
@@ -5160,7 +5160,7 @@ msgstr ""
 msgid "Subscriber ID or email address"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:332
+#: build/Forms/Admin/editor-settings.php:344
 msgid "Subscriber Tags"
 msgstr ""
 
@@ -5196,7 +5196,7 @@ msgstr ""
 msgid "Subscription Cookie"
 msgstr ""
 
-#: build/Forms/Main.php:92
+#: build/Forms/Main.php:95
 #: includes/admin/class-noptin-admin-menus.php:102
 #: includes/admin/class-noptin-admin-menus.php:103
 msgid "Subscription Forms"
@@ -5274,7 +5274,7 @@ msgstr ""
 msgid "Tag subscribers based on their actions and send emails to subscribers with specific tags, or automatically send emails to subscribers whenever they are tagged or untagged."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:325
+#: build/Forms/Admin/editor-settings.php:337
 #: build/Subscribers/Records.php:95
 #: includes/forms/views/tab-form.php:75
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:71
@@ -5366,7 +5366,7 @@ msgid "Thanks for subscribing to our newsletter"
 msgstr ""
 
 #: includes/class-noptin-ajax.php:190
-#: includes/forms/class-form-legacy.php:311
+#: includes/forms/class-form-legacy.php:312
 msgid "Thanks for subscribing to the newsletter"
 msgstr "Grazie per esserti iscritto alla newsletter"
 
@@ -5546,7 +5546,7 @@ msgstr ""
 msgid "The default value to display if not set."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:353
+#: build/Forms/Admin/editor-settings.php:365
 msgid "The element will resize to 100% width on smaller devices"
 msgstr "L'elemento ridimensionerà al 100% di larghezza su dispositivi più piccoli"
 
@@ -5591,7 +5591,7 @@ msgstr ""
 msgid "The following addons are currently active: %s."
 msgstr ""
 
-#: includes/forms/views/preview.php:63
+#: build/Forms/Previewer.php:134
 #: build/Forms/assets/js/form-editor.js:52
 msgid "The form may look slightly different than this when shown in a post, page or widget area."
 msgstr ""
@@ -5972,7 +5972,7 @@ msgid "This form is in-active."
 msgstr ""
 
 #: includes/forms/class-form-legacy.php:147
-#: includes/forms/class-form-legacy.php:616
+#: includes/forms/class-form-legacy.php:617
 msgid "This form is incorrectly configured"
 msgstr ""
 
@@ -6051,8 +6051,8 @@ msgstr ""
 msgid "Tools"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:489
-#: build/Forms/Admin/editor-settings.php:514
+#: build/Forms/Admin/editor-settings.php:501
+#: build/Forms/Admin/editor-settings.php:526
 msgid "Top"
 msgstr "Superiore"
 
@@ -6153,10 +6153,10 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:587
-#: build/Forms/Admin/editor-settings.php:636
-#: build/Forms/Admin/editor-settings.php:685
-#: build/Forms/Admin/editor-settings.php:734
+#: build/Forms/Admin/editor-settings.php:599
+#: build/Forms/Admin/editor-settings.php:648
+#: build/Forms/Admin/editor-settings.php:697
+#: build/Forms/Admin/editor-settings.php:746
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Typography"
 msgstr ""
@@ -6201,7 +6201,7 @@ msgstr ""
 msgid "Unlimited"
 msgstr ""
 
-#: build/Forms/Renderer.php:159
+#: build/Forms/Renderer.php:164
 #: build/Subscribers/Records.php:581
 #: includes/emails/class-generator.php:155
 msgid "Unsubscribe"
@@ -6288,7 +6288,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:253
+#: build/Forms/Admin/editor-settings.php:265
 msgid "Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids."
 msgstr ""
 
@@ -6419,7 +6419,7 @@ msgstr ""
 msgid "View Details"
 msgstr ""
 
-#: build/Forms/Main.php:86
+#: build/Forms/Main.php:89
 msgid "View Form"
 msgstr ""
 
@@ -6663,7 +6663,7 @@ msgstr ""
 msgid "When someone replies to someone else's comment"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:200
+#: build/Forms/Admin/editor-settings.php:212
 msgid "Where do you want to show this subscription form?"
 msgstr ""
 
@@ -6728,7 +6728,7 @@ msgstr ""
 msgid "White"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:281
+#: build/Forms/Admin/editor-settings.php:293
 msgid "Who can see this form?"
 msgstr "Chi può vedere questo modulo?"
 
@@ -6916,11 +6916,11 @@ msgid "Zip"
 msgstr ""
 
 #. translators: %s is the taxonomy label
-#: build/Forms/Admin/editor-settings.php:912
+#: build/Forms/Admin/editor-settings.php:924
 msgid "Enter a comma-separated list of %s ids, slugs, or names to show this form on"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:915
+#: build/Forms/Admin/editor-settings.php:927
 msgid "Prefix the id with a minus sign to exclude it from the list"
 msgstr ""
 
@@ -7167,30 +7167,30 @@ msgstr ""
 msgid "Scroll depth"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:219
+#: build/Forms/Admin/editor-settings.php:231
 msgid "Only show on selected pages"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:403
+#: build/Forms/Admin/editor-settings.php:415
 msgid "Leave empty to use the default label."
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:540
-#: build/Forms/Admin/editor-settings.php:785
-#: build/Forms/Admin/editor-settings.php:827
+#: build/Forms/Admin/editor-settings.php:552
+#: build/Forms/Admin/editor-settings.php:797
+#: build/Forms/Admin/editor-settings.php:839
 msgid "Text"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:550
+#: build/Forms/Admin/editor-settings.php:562
 msgid "Position"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:776
+#: build/Forms/Admin/editor-settings.php:788
 msgid "Colors"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:781
-#: build/Forms/Admin/editor-settings.php:823
+#: build/Forms/Admin/editor-settings.php:793
+#: build/Forms/Admin/editor-settings.php:835
 msgid "Background"
 msgstr ""
 
@@ -7205,10 +7205,11 @@ msgid "Center Right"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:168
+#: build/Forms/Admin/editor-settings.php:197
 msgid "seconds"
 msgstr ""
 
-#: build/Forms/Admin/editor-settings.php:424
+#: build/Forms/Admin/editor-settings.php:436
 msgid "Show field labels outside the fields"
 msgstr ""
 
@@ -7323,4 +7324,12 @@ msgstr ""
 #: build/Forms/assets/new-form-block/block.json
 msgctxt "block style label"
 msgid "Single Line"
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:193
+msgid "Hide for"
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:194
+msgid "Hide the form for X seconds after a user closes it"
 msgstr ""
