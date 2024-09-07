@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-03T11:09:27+00:00\n"
+"POT-Creation-Date: 2024-09-07T15:41:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -2038,7 +2038,7 @@ msgstr ""
 
 #: build/Forms/Renderer.php:164
 #: build/Subscribers/Records.php:581
-#: includes/emails/class-generator.php:155
+#: includes/emails/class-generator.php:156
 msgid "Unsubscribe"
 msgstr ""
 

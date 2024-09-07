@@ -6228,7 +6228,7 @@ msgstr ""
 
 #: build/Forms/Renderer.php:164
 #: build/Subscribers/Records.php:581
-#: includes/emails/class-generator.php:155
+#: includes/emails/class-generator.php:156
 msgid "Unsubscribe"
 msgstr ""
 
