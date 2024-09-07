@@ -48,7 +48,7 @@ class Preview {
 
 		// Preview email.
 		add_action( 'noptin_page_view_in_browser', array( __CLASS__, 'view_in_browser' ), 10, 2 );
-		add_filter( 'template_include', array( __CLASS__, 'admin_preview' ) );
+		add_filter( 'template_redirect', array( __CLASS__, 'admin_preview' ), -100 );
 	}
 
 	/**
