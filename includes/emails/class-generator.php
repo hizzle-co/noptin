@@ -151,7 +151,8 @@ class Noptin_Email_Generator {
 		$content = trim( $this->content );
 
 		// Maybe add an unsubscribe url.
-		if ( false === stripos( $content, '[[unsubscribe_url]]' ) ) {
+		$add_unsubscribe_url = apply_filters( 'noptin_add_unsubscribe_url_to_plain_text_email', true, $this );
+		if ( false === stripos( $content, '[[unsubscribe_url]]' ) && true === $add_unsubscribe_url ) {
 			$content .= "\n\n[" . __( 'Unsubscribe', 'newsletter-optin-box' ) . ']([[unsubscribe_url]])';
 		}
 

@@ -707,12 +707,16 @@ class Renderer {
 
 		$styles = array(
 			'background-image' => "url('$form->noptinFormBgImg')",
-			'width'            => $form->formWidth,
+			'max-width'        => $form->formWidth,
 			'min-height'       => $form->formHeight,
 		);
 
-		if ( is_numeric( $styles['width'] ) ) {
-			$styles['width'] = $styles['width'] . 'px';
+		if ( is_numeric( $styles['max-width'] ) ) {
+			$styles['max-width'] = $styles['max-width'] . 'px';
+		}
+
+		if ( empty( $styles['max-width'] ) ) {
+			$styles['max-width'] = '100%';
 		}
 
 		if ( is_numeric( $styles['min-height'] ) ) {
