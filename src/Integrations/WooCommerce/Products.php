@@ -2,8 +2,6 @@
 
 namespace Hizzle\Noptin\Integrations\WooCommerce;
 
-use WC_Post_Types;
-
 defined( 'ABSPATH' ) || exit;
 
 /**

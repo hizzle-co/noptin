@@ -77,13 +77,12 @@ abstract class People extends Collection {
 				continue;
 			}
 
-			$all_fields = $collection->get_all_fields();
-			foreach ( $provides as $key ) {
-				if ( isset( $all_fields[ $key ] ) ) {
+			foreach ( $provides as $key => $field ) {
+				if ( is_array( $field ) ) {
 					$fields[ "{$collection->type}.{$key}" ] = array_merge(
-						$all_fields[ $key ],
+						$field,
 						array(
-							'label' => $collection->singular_label . ' >> ' . $all_fields[ $key ]['label'],
+							'label' => $collection->singular_label . ' >> ' . $field['label'],
 						)
 					);
 				}

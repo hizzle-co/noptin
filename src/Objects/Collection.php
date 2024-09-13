@@ -545,7 +545,7 @@ abstract class Collection {
 	 * Returns an array of related collections.
 	 *
 	 * @since 3.0.0
-	 * @return array
+	 * @return Collection[]
 	 */
 	public function get_related_collections() {
 		$filtered = Store::filtered( array( 'object_type' => $this->object_type ) );
