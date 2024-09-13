@@ -102,8 +102,8 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 				'deprecated' => 'woocommerce_orders',
 			),
 			'total_spent'      => array(
-				'label' => __( 'Lifetime value', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'   => __( 'Lifetime value', 'newsletter-optin-box' ),
+				'type'    => 'number',
 			),
 			'first_order_date' => array(
 				'label' => __( 'First order date', 'newsletter-optin-box' ),
@@ -298,7 +298,16 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 	 * Retrieves fields that can be calculated from an email address.
 	 */
 	public function provides() {
-		return array( 'order_count', 'total_spent' );
+		return array(
+			'purchase_count' => array(
+				'label' => __( 'Number of payments', 'newsletter-optin-box' ),
+				'type'  => 'number',
+			),
+			'purchase_value' => array(
+				'label'   => __( 'Lifetime value', 'newsletter-optin-box' ),
+				'type'    => 'number',
+			)
+		);
 	}
 
 	/**

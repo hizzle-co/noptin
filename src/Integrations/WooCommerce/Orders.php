@@ -936,7 +936,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 				'order.status' => $order->get_status(),
 			);
 
-			if ( is_array( $transition ) && ! empty( $status_transition['from'] ) ) {
+			if ( is_array( $transition ) && ! empty( $transition['from'] ) ) {
 				$args['extra_args'] = array(
 					'order.previous_status' => $transition['from'],
 				);
