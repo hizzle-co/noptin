@@ -102,9 +102,8 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 				'deprecated' => 'woocommerce_orders',
 			),
 			'total_spent'      => array(
-				'label'   => __( 'Lifetime value', 'newsletter-optin-box' ),
-				'type'    => 'number',
-				'example' => "format='price'",
+				'label' => __( 'Lifetime value', 'newsletter-optin-box' ),
+				'type'  => 'number',
 			),
 			'first_order_date' => array(
 				'label' => __( 'First order date', 'newsletter-optin-box' ),

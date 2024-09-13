@@ -424,7 +424,6 @@ abstract class Collection {
 					'yes' => __( 'subscribed', 'newsletter-optin-box' ),
 					'no'  => __( 'unsubscribed', 'newsletter-optin-box' ),
 				),
-				'example' => "format='label'",
 			);
 
 			$fields['avatar_url'] = array(

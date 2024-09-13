@@ -275,9 +275,8 @@ class Users extends People {
 				'actions'        => array( 'add_user' ),
 			),
 			'registered'   => array(
-				'label'   => __( 'Registration date', 'newsletter-optin-box' ),
-				'type'    => 'date',
-				'example' => "format='datetime'",
+				'label' => __( 'Registration date', 'newsletter-optin-box' ),
+				'type'  => 'date',
 			),
 			'meta'         => $this->meta_key_tag_config(),
 		);
@@ -310,7 +309,6 @@ class Users extends People {
 					'yes' => __( 'Logged in', 'newsletter-optin-box' ),
 					'no'  => __( 'Logged out', 'newsletter-optin-box' ),
 				),
-				'example'    => "format='label'",
 				'deprecated' => 'user_logged_in',
 			);
 		}
