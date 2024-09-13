@@ -829,7 +829,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * Sends the confirm subscription email.
 	 *
 	 * @since 1.0.0
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function do_send_confirmation_email() {
 

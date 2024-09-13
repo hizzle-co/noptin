@@ -272,4 +272,91 @@ class SubscriberTest extends WP_UnitTestCase {
         // Assert that the name is correct.
         $this->assertEquals( array( 'Brian', 'Mutende' ), $name );
     }
+
+    public function testSubscriberActivity() {
+        $subscriber = noptin_get_subscriber(self::$subscriber_id);
+        
+        // Test recording activity
+        $subscriber->record_activity('Test activity');
+        $activity = $subscriber->get_activity();
+        $this->assertCount(1, $activity);
+        $this->assertEquals('Test activity', $activity[0]['content']);
+
+        // Test activity limit
+        for ($i = 0; $i < 35; $i++) {
+            $subscriber->record_activity("Activity $i");
+        }
+        $activity = $subscriber->get_activity();
+        $this->assertCount(30, $activity);
+        $this->assertEquals('Activity 34', $activity[0]['content']);
+    }
+    
+    public function testSubscriberCampaigns() {
+        $subscriber = noptin_get_subscriber(self::$subscriber_id);
+        $campaign_id = 123;
+
+        // Test recording sent campaign
+        $subscriber->record_sent_campaign($campaign_id);
+        $sent_campaigns = $subscriber->get_sent_campaigns();
+        $this->assertArrayHasKey($campaign_id, $sent_campaigns);
+
+        // Test recording opened campaign
+        $subscriber->record_opened_campaign($campaign_id);
+        $sent_campaigns = $subscriber->get_sent_campaigns();
+        $this->assertCount(1, $sent_campaigns[$campaign_id]['opens']);
+
+        // Test recording clicked link
+        $url = 'https://example.com';
+        $subscriber->record_clicked_link($campaign_id, $url);
+        $sent_campaigns = $subscriber->get_sent_campaigns();
+        $this->assertArrayHasKey($url, $sent_campaigns[$campaign_id]['clicks']);
+    }
+
+    public function testSubscriberUrls() {
+        $subscriber = noptin_get_subscriber(self::$subscriber_id);
+
+        // Test unsubscribe URL
+        $unsubscribe_url = $subscriber->get_unsubscribe_url();
+        $this->assertStringContainsString('noptin_ns=unsubscribe', $unsubscribe_url);
+
+        // Test resubscribe URL
+        $resubscribe_url = $subscriber->get_resubscribe_url();
+        $this->assertStringContainsString('noptin_ns=resubscribe', $resubscribe_url);
+
+        // Test confirm subscription URL
+        $confirm_url = $subscriber->get_confirm_subscription_url();
+        $this->assertStringContainsString('noptin_ns=confirm', $confirm_url);
+    }
+
+    public function testSubscriberOverview() {
+        $subscriber = noptin_get_subscriber( self::$subscriber_id );
+
+        $overview = $subscriber->get_overview();
+
+        $this->assertArrayHasKey('stat_cards', $overview);
+        $this->assertArrayHasKey('action_links', $overview);
+
+        $this->assertCount(3, $overview['stat_cards']['cards']);
+        $this->assertGreaterThan(0, count($overview['action_links']['links']));
+    }
+
+    public function testSubscriberConfirmationEmail() {
+        $subscriber = noptin_get_subscriber( self::$subscriber_id );
+
+        // Set subscriber as unconfirmed
+        $subscriber->set_confirmed( false );
+        $subscriber->save();
+
+        $result = $subscriber->do_send_confirmation_email();
+        $this->assertArrayHasKey( 'message', $result );
+        $this->assertEquals( 'Confirmation email sent.', $result['message'] );
+
+        // Try sending again (should fail as subscriber is now confirmed)
+        $subscriber->set_confirmed(true);
+        $subscriber->save();
+
+        $result = $subscriber->do_send_confirmation_email();
+        $this->assertWPError( $result );
+        $this->assertEquals( 'already_confirmed', $result->get_error_code() );
+    }
 }
