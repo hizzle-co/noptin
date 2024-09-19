@@ -111,14 +111,17 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * @return array
 	 */
 	public function checkbox_positions() {
-		return array(
-			'after_email_field'                           => __( 'After email field', 'newsletter-optin-box' ),
-			'woocommerce_checkout_billing'                => __( 'After billing details', 'newsletter-optin-box' ),
-			'woocommerce_checkout_shipping'               => __( 'After shipping details', 'newsletter-optin-box' ),
-			'woocommerce_checkout_after_customer_details' => __( 'After customer details', 'newsletter-optin-box' ),
-			'woocommerce_review_order_before_payment'     => __( 'After order review', 'newsletter-optin-box' ),
-			'woocommerce_review_order_before_submit'      => __( 'Before submit button', 'newsletter-optin-box' ),
-			'woocommerce_after_order_notes'               => __( 'After order notes', 'newsletter-optin-box' ),
+		return apply_filters(
+			'noptin_woocommerce_integration_subscription_checkbox_positions',
+			array(
+				'after_email_field'                           => __( 'After email field', 'newsletter-optin-box' ),
+				'woocommerce_checkout_billing'                => __( 'After billing details', 'newsletter-optin-box' ),
+				'woocommerce_checkout_shipping'               => __( 'After shipping details', 'newsletter-optin-box' ),
+				'woocommerce_checkout_after_customer_details' => __( 'After customer details', 'newsletter-optin-box' ),
+				'woocommerce_review_order_before_payment'     => __( 'After order review', 'newsletter-optin-box' ),
+				'woocommerce_review_order_before_submit'      => __( 'Before submit button', 'newsletter-optin-box' ),
+				'woocommerce_after_order_notes'               => __( 'After order notes', 'newsletter-optin-box' ),
+			)
 		);
 	}
 

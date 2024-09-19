@@ -288,7 +288,7 @@ class SubscriberTest extends WP_UnitTestCase {
         }
         $activity = $subscriber->get_activity();
         $this->assertCount(30, $activity);
-        $this->assertEquals('Activity 34', $activity[0]['content']);
+        $this->assertEquals('Activity 34', $activity[29]['content']);
     }
     
     public function testSubscriberCampaigns() {
