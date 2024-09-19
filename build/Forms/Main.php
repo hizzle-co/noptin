@@ -22,6 +22,11 @@ class Main {
 	public static $listener;
 
 	/**
+	 * @var bool Whether the form scripts have been enqueued.
+	 */
+	public static $scripts_loaded = false;
+
+	/**
 	 * Inits the main emails class.
 	 *
 	 */
@@ -274,7 +279,7 @@ class Main {
 	}
 
 	/**
-	 * Enqueue scripts
+	 * Checks if we should enqueue scripts and styles.
 	 */
 	public static function should_enqueue_scripts( $should_enqueue ) {
 		global $post;
@@ -307,9 +312,10 @@ class Main {
 	 * Enqueue scripts
 	 */
 	public static function enqueue_scripts() {
-		if ( apply_filters( 'noptin_load_form_scripts', false ) ) {
+		if ( apply_filters( 'noptin_load_form_scripts', false ) && ! self::$scripts_loaded ) {
 			wp_enqueue_script( 'noptin-form' );
 			wp_enqueue_style( 'noptin-form' );
+			self::$scripts_loaded = true;
 		}
 	}
 

@@ -255,6 +255,9 @@ class New_Form extends \WP_Widget {
 		$btn_col  = ! empty( $instance['btn_col'] ) ? $instance['btn_col'] : 'transparent';
 		$redirect = ! empty( $instance['redirect'] ) ? $instance['redirect'] : '';
 
+		add_filter( 'noptin_load_form_scripts', '__return_true' );
+		\Hizzle\Noptin\Forms\Main::enqueue_scripts();
+
 		?>
 	<p>
 	<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">

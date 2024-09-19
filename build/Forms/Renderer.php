@@ -81,6 +81,9 @@ class Renderer {
 	 * @param array $atts The atts with which to display the opt-in form.
 	 */
 	public static function display_form( $atts = array() ) {
+		add_filter( 'noptin_load_form_scripts', '__return_true' );
+		\Hizzle\Noptin\Forms\Main::enqueue_scripts();
+
 		// Reset shortcode attributes.
 		self::$shortcode_atts = array();
 

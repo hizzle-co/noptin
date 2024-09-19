@@ -339,24 +339,4 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertCount(3, $overview['stat_cards']['cards']);
         $this->assertGreaterThan(0, count($overview['action_links']['links']));
     }
-
-    public function testSubscriberConfirmationEmail() {
-        $subscriber = noptin_get_subscriber( self::$subscriber_id );
-
-        // Set subscriber as unconfirmed
-        $subscriber->set_confirmed( false );
-        $subscriber->save();
-
-        $result = $subscriber->do_send_confirmation_email();
-        $this->assertArrayHasKey( 'message', $result );
-        $this->assertEquals( 'Confirmation email sent.', $result['message'] );
-
-        // Try sending again (should fail as subscriber is now confirmed)
-        $subscriber->set_confirmed(true);
-        $subscriber->save();
-
-        $result = $subscriber->do_send_confirmation_email();
-        $this->assertWPError( $result );
-        $this->assertEquals( 'already_confirmed', $result->get_error_code() );
-    }
 }

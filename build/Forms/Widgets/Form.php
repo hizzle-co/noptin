@@ -109,6 +109,9 @@ class Form extends \WP_Widget {
 	 */
 	public function form( $settings ) {
 
+		add_filter( 'noptin_load_form_scripts', '__return_true' );
+		\Hizzle\Noptin\Forms\Main::enqueue_scripts();
+
 		// ensure $settings is an array
 		if ( ! is_array( $settings ) ) {
 			$settings = array();
