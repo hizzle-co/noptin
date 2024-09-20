@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.5.4\n"
+"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.5.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-07T15:41:37+00:00\n"
+"POT-Creation-Date: 2024-09-20T05:40:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -217,7 +217,7 @@ msgstr ""
 #: build/Emails/Email.php:916
 #: includes/forms/views/tab-form.php:70
 #: includes/forms/views/tab-settings.php:108
-#: src/Integrations/WooCommerce/Products.php:90
+#: src/Integrations/WooCommerce/Products.php:88
 msgid "For example, %s"
 msgstr ""
 
@@ -429,12 +429,12 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:827
 #: build/Tasks/Main.php:608
-#: src/Integrations/EDD/Customers.php:140
+#: src/Integrations/EDD/Customers.php:139
 #: src/Integrations/EDD/Orders.php:95
 #: src/Integrations/EDD/Orders.php:252
 #: src/Integrations/WooCommerce/Orders.php:377
 #: src/Integrations/WooCommerce/Orders.php:787
-#: src/Integrations/WooCommerce/Products.php:581
+#: src/Integrations/WooCommerce/Products.php:579
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:165
 #: src/Objects/Generic_Post_Type.php:267
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
@@ -650,7 +650,7 @@ msgid "Email campaign updated."
 msgstr ""
 
 #: build/Emails/Main.php:383
-#: build/Forms/Widgets/Form.php:119
+#: build/Forms/Widgets/Form.php:122
 msgid "Newsletter"
 msgstr ""
 
@@ -701,7 +701,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Customers.php:96
 #: src/Integrations/WooCommerce/Orders.php:763
 #: src/Integrations/WooCommerce/Order_Items.php:43
-#: src/Integrations/WooCommerce/Products.php:550
+#: src/Integrations/WooCommerce/Products.php:548
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:182
 #: src/Objects/Generic_Post_Type.php:174
 #: src/Objects/Users.php:215
@@ -710,15 +710,15 @@ msgid "ID"
 msgstr ""
 
 #: build/Emails/Records.php:57
-#: src/Integrations/EDD/Customers.php:112
+#: src/Integrations/EDD/Customers.php:111
 #: src/Integrations/EDD/Downloads.php:96
 #: src/Integrations/EDD/Order_Items.php:59
 #: src/Integrations/GeoDirectory/Listings.php:253
 #: src/Integrations/Gravity_Forms/Feed.php:208
 #: src/Integrations/PMPro/Membership_Levels.php:48
 #: src/Integrations/WooCommerce/Order_Items.php:55
-#: src/Integrations/WooCommerce/Products.php:95
-#: src/Integrations/WooCommerce/Products.php:404
+#: src/Integrations/WooCommerce/Products.php:93
+#: src/Integrations/WooCommerce/Products.php:402
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:48
 msgid "Name"
 msgstr ""
@@ -1443,8 +1443,8 @@ msgstr ""
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:71
 #: src/Integrations/EDD/Downloads.php:208
 #: src/Integrations/EDD/Downloads.php:213
-#: src/Integrations/WooCommerce/Products.php:540
-#: src/Integrations/WooCommerce/Products.php:545
+#: src/Integrations/WooCommerce/Products.php:538
+#: src/Integrations/WooCommerce/Products.php:543
 msgid "Tags"
 msgstr ""
 
@@ -1518,7 +1518,7 @@ msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:479
 #: src/Integrations/EDD/Downloads.php:123
-#: src/Integrations/WooCommerce/Products.php:432
+#: src/Integrations/WooCommerce/Products.php:430
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:74
 msgid "Image"
 msgstr ""
@@ -1528,7 +1528,7 @@ msgid "Background Image"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:494
-#: src/Objects/Collection.php:431
+#: src/Objects/Collection.php:430
 msgid "Avatar URL"
 msgstr ""
 
@@ -1889,8 +1889,8 @@ msgstr ""
 #: build/Forms/Admin/optin-templates.php:985
 #: build/Forms/Admin/optin-templates.php:1046
 #: build/Forms/Admin/optin-templates.php:1090
-#: build/Forms/Renderer.php:196
-#: build/Forms/Renderer.php:602
+#: build/Forms/Renderer.php:200
+#: build/Forms/Renderer.php:606
 #: includes/forms/class-form-element.php:264
 #: includes/forms/views/tab-form.php:11
 msgid "Subscribe"
@@ -1952,31 +1952,31 @@ msgstr ""
 msgid "This form is in-active."
 msgstr ""
 
-#: build/Forms/Listener.php:609
+#: build/Forms/Listener.php:620
 msgid "Thanks!"
 msgstr ""
 
-#: build/Forms/Main.php:81
+#: build/Forms/Main.php:86
 msgctxt "Post type general name"
 msgid "Subscription Forms"
 msgstr ""
 
-#: build/Forms/Main.php:82
+#: build/Forms/Main.php:87
 msgctxt "Post type singular name"
 msgid "Subscription Form"
 msgstr ""
 
-#: build/Forms/Main.php:83
+#: build/Forms/Main.php:88
 msgctxt "Admin Menu text"
 msgid "Subscription Forms"
 msgstr ""
 
-#: build/Forms/Main.php:84
+#: build/Forms/Main.php:89
 msgctxt "Add New on Toolbar"
 msgid "Subscription Form"
 msgstr ""
 
-#: build/Forms/Main.php:85
+#: build/Forms/Main.php:90
 #: build/Tasks/Main.php:555
 #: src/DB/Schema.php:228
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
@@ -1985,49 +1985,49 @@ msgstr ""
 msgid "Add New"
 msgstr ""
 
-#: build/Forms/Main.php:86
+#: build/Forms/Main.php:91
 msgid "Add New Form"
 msgstr ""
 
-#: build/Forms/Main.php:87
+#: build/Forms/Main.php:92
 msgid "New Form"
 msgstr ""
 
-#: build/Forms/Main.php:88
+#: build/Forms/Main.php:93
 msgid "Edit Form"
 msgstr ""
 
-#: build/Forms/Main.php:89
+#: build/Forms/Main.php:94
 msgid "View Form"
 msgstr ""
 
-#: build/Forms/Main.php:90
+#: build/Forms/Main.php:95
 msgid "Search Forms"
 msgstr ""
 
-#: build/Forms/Main.php:91
+#: build/Forms/Main.php:96
 msgid "Parent Forms:"
 msgstr ""
 
-#: build/Forms/Main.php:92
+#: build/Forms/Main.php:97
 msgid "No forms found."
 msgstr ""
 
-#: build/Forms/Main.php:93
+#: build/Forms/Main.php:98
 msgid "No forms found in Trash."
 msgstr ""
 
-#: build/Forms/Main.php:95
+#: build/Forms/Main.php:100
 #: includes/admin/class-noptin-admin-menus.php:102
 #: includes/admin/class-noptin-admin-menus.php:103
 msgid "Subscription Forms"
 msgstr ""
 
-#: build/Forms/Main.php:234
+#: build/Forms/Main.php:239
 msgid "Newsletter Subscription Form"
 msgstr ""
 
-#: build/Forms/Main.php:261
+#: build/Forms/Main.php:266
 msgid "Could not establish a connection to the server."
 msgstr ""
 
@@ -2036,7 +2036,7 @@ msgstr ""
 msgid "The form may look slightly different than this when shown in a post, page or widget area."
 msgstr ""
 
-#: build/Forms/Renderer.php:164
+#: build/Forms/Renderer.php:168
 #: build/Subscribers/Records.php:581
 #: includes/emails/class-generator.php:156
 msgid "Unsubscribe"
@@ -2052,26 +2052,26 @@ msgstr ""
 msgid "Displays a pre-built newsletter form"
 msgstr ""
 
-#: build/Forms/Widgets/Form.php:124
-#: build/Forms/Widgets/New_Form.php:261
+#: build/Forms/Widgets/Form.php:127
+#: build/Forms/Widgets/New_Form.php:264
 msgid "Title:"
 msgstr ""
 
-#: build/Forms/Widgets/Form.php:129
+#: build/Forms/Widgets/Form.php:132
 msgid "Form:"
 msgstr ""
 
-#: build/Forms/Widgets/Form.php:132
+#: build/Forms/Widgets/Form.php:135
 #: build/Forms/assets/js/block.js:1
 msgid "Default form"
 msgstr ""
 
-#: build/Forms/Widgets/Form.php:133
+#: build/Forms/Widgets/Form.php:136
 msgid "Single-line / Horizontal Form"
 msgstr ""
 
 #. translators: %1$s is a link to the newsletter form editor.
-#: build/Forms/Widgets/Form.php:154
+#: build/Forms/Widgets/Form.php:157
 msgid "You can edit or create new newsletter sign-up forms in the <a href=\"%s\">Noptin forms overview</a> page."
 msgstr ""
 
@@ -2171,31 +2171,31 @@ msgstr ""
 msgid "Subscribe to our newsletter today and be the first to know when we publish a new blog post."
 msgstr ""
 
-#: build/Forms/Widgets/New_Form.php:274
+#: build/Forms/Widgets/New_Form.php:277
 msgid "Description:"
 msgstr ""
 
-#: build/Forms/Widgets/New_Form.php:287
+#: build/Forms/Widgets/New_Form.php:290
 msgid "Redirect:"
 msgstr ""
 
-#: build/Forms/Widgets/New_Form.php:302
+#: build/Forms/Widgets/New_Form.php:305
 msgid "Background Color:"
 msgstr ""
 
-#: build/Forms/Widgets/New_Form.php:317
+#: build/Forms/Widgets/New_Form.php:320
 msgid "Title Color:"
 msgstr ""
 
-#: build/Forms/Widgets/New_Form.php:331
+#: build/Forms/Widgets/New_Form.php:334
 msgid "Text Color:"
 msgstr ""
 
-#: build/Forms/Widgets/New_Form.php:344
+#: build/Forms/Widgets/New_Form.php:347
 msgid "Button Color:"
 msgstr ""
 
-#: build/Forms/Widgets/New_Form.php:356
+#: build/Forms/Widgets/New_Form.php:359
 msgid "Submit Button Text:"
 msgstr ""
 
@@ -3247,17 +3247,17 @@ msgid "The current time"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:167
-#: src/Objects/Users.php:307
+#: src/Objects/Users.php:306
 msgid "Log-in status"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:172
-#: src/Objects/Users.php:310
+#: src/Objects/Users.php:309
 msgid "Logged in"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:173
-#: src/Objects/Users.php:311
+#: src/Objects/Users.php:310
 msgid "Logged out"
 msgstr ""
 
@@ -3541,8 +3541,8 @@ msgstr ""
 #: includes/subscriber.php:1357
 #: includes/subscriber.php:1416
 #: src/DB/Main.php:551
-#: src/Integrations/WooCommerce/Products.php:221
-#: src/Integrations/WooCommerce/Products.php:687
+#: src/Integrations/WooCommerce/Products.php:219
+#: src/Integrations/WooCommerce/Products.php:685
 #: src/Objects/Store.php:160
 #: build/Misc/assets/js/collection.js:216
 #: build/Misc/assets/js/collection.js:241
@@ -3553,8 +3553,8 @@ msgstr ""
 #: includes/functions.php:1144
 #: includes/subscriber.php:1358
 #: includes/subscriber.php:1417
-#: src/Integrations/WooCommerce/Products.php:219
-#: src/Integrations/WooCommerce/Products.php:685
+#: src/Integrations/WooCommerce/Products.php:217
+#: src/Integrations/WooCommerce/Products.php:683
 #: src/Objects/Store.php:161
 #: build/Misc/assets/js/collection.js:216
 #: build/Misc/assets/js/collection.js:241
@@ -4442,7 +4442,7 @@ msgid "Continent"
 msgstr ""
 
 #: includes/functions.php:530
-#: src/Integrations/EDD/Customers.php:132
+#: src/Integrations/EDD/Customers.php:131
 #: src/Integrations/EDD/Orders.php:302
 #: src/Integrations/GeoDirectory/Listings.php:116
 #: src/Integrations/WPForms/Main.php:133
@@ -4450,14 +4450,14 @@ msgid "Country"
 msgstr ""
 
 #: includes/functions.php:531
-#: src/Integrations/EDD/Customers.php:128
+#: src/Integrations/EDD/Customers.php:127
 #: src/Integrations/EDD/Orders.php:298
 #: src/Integrations/WPForms/Main.php:131
 msgid "State"
 msgstr ""
 
 #: includes/functions.php:532
-#: src/Integrations/EDD/Customers.php:124
+#: src/Integrations/EDD/Customers.php:123
 #: src/Integrations/EDD/Orders.php:294
 #: src/Integrations/GeoDirectory/Listings.php:106
 #: src/Integrations/WPForms/Main.php:130
@@ -4677,12 +4677,12 @@ msgid "Payments"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:58
-#: includes/integrations/class-noptin-woocommerce.php:115
+#: includes/integrations/class-noptin-woocommerce.php:117
 msgid "After email field"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:59
-#: includes/integrations/class-noptin-woocommerce.php:118
+#: includes/integrations/class-noptin-woocommerce.php:120
 msgid "After customer details"
 msgstr ""
 
@@ -4707,32 +4707,32 @@ msgid "Add me to your newsletter and keep me updated whenever you publish new do
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:193
-#: includes/integrations/class-noptin-woocommerce.php:316
+#: includes/integrations/class-noptin-woocommerce.php:319
 msgid "Billing Address 1"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:194
-#: includes/integrations/class-noptin-woocommerce.php:317
+#: includes/integrations/class-noptin-woocommerce.php:320
 msgid "Billing Address 2"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:195
-#: includes/integrations/class-noptin-woocommerce.php:318
+#: includes/integrations/class-noptin-woocommerce.php:321
 msgid "Billing Postcode"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:196
-#: includes/integrations/class-noptin-woocommerce.php:319
+#: includes/integrations/class-noptin-woocommerce.php:322
 msgid "Billing City"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:197
-#: includes/integrations/class-noptin-woocommerce.php:320
+#: includes/integrations/class-noptin-woocommerce.php:323
 msgid "Billing State"
 msgstr ""
 
 #: includes/integrations/class-noptin-edd.php:198
-#: includes/integrations/class-noptin-woocommerce.php:321
+#: includes/integrations/class-noptin-woocommerce.php:324
 msgid "Billing Country"
 msgstr ""
 
@@ -4740,48 +4740,48 @@ msgstr ""
 msgid "Subscribe to marketing opt-in."
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:116
+#: includes/integrations/class-noptin-woocommerce.php:118
 msgid "After billing details"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:117
+#: includes/integrations/class-noptin-woocommerce.php:119
 msgid "After shipping details"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:119
+#: includes/integrations/class-noptin-woocommerce.php:121
 msgid "After order review"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:120
+#: includes/integrations/class-noptin-woocommerce.php:122
 msgid "Before submit button"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:121
+#: includes/integrations/class-noptin-woocommerce.php:123
 msgid "After order notes"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:212
+#: includes/integrations/class-noptin-woocommerce.php:215
 msgid "Add me to your newsletter and keep me updated whenever you publish new products"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:314
+#: includes/integrations/class-noptin-woocommerce.php:317
 msgid "Billing Phone"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:315
+#: includes/integrations/class-noptin-woocommerce.php:318
 msgid "Billing Company"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:322
+#: includes/integrations/class-noptin-woocommerce.php:325
 msgid "Billing Country Code"
 msgstr ""
 
-#: includes/integrations/class-noptin-woocommerce.php:323
+#: includes/integrations/class-noptin-woocommerce.php:326
 msgid "Formatted Billing Address"
 msgstr ""
 
 #. translators: %1$s is the order id, %2$s is the customer email.
-#: includes/integrations/class-noptin-woocommerce.php:353
+#: includes/integrations/class-noptin-woocommerce.php:356
 msgid "Order #%1$d from %2$s"
 msgstr ""
 
@@ -4985,7 +4985,7 @@ msgstr ""
 #. translators: %s is the filter label, e.g, "Tags".
 #. translators: %s: Field label.
 #: src/Bulk_Emails/Email_Sender_Subscribers.php:55
-#: src/Objects/Collection.php:805
+#: src/Objects/Collection.php:804
 #: build/Misc/assets/js/collection.js:231
 msgid "%s - Exclude"
 msgstr ""
@@ -5293,134 +5293,138 @@ msgid "If mapped, only users who consent will join your newsletter."
 msgstr ""
 
 #: src/Integrations/EDD/Customers.php:95
+#: src/Integrations/EDD/Customers.php:164
+#: src/Integrations/WooCommerce/Customers.php:303
 msgid "Number of payments"
 msgstr ""
 
 #: src/Integrations/EDD/Customers.php:99
+#: src/Integrations/EDD/Customers.php:168
 #: src/Integrations/WooCommerce/Customers.php:105
+#: src/Integrations/WooCommerce/Customers.php:307
 msgid "Lifetime value"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:104
+#: src/Integrations/EDD/Customers.php:103
 msgid "Primary email address"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:108
+#: src/Integrations/EDD/Customers.php:107
 msgid "Known email addresses"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:116
+#: src/Integrations/EDD/Customers.php:115
 #: src/Integrations/EDD/Orders.php:286
 msgid "Address 1"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:120
+#: src/Integrations/EDD/Customers.php:119
 #: src/Integrations/EDD/Orders.php:290
 msgid "Address 2"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:136
+#: src/Integrations/EDD/Customers.php:135
 #: src/Integrations/EDD/Orders.php:306
 msgid "ZIP"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:144
+#: src/Integrations/EDD/Customers.php:143
 #: src/Objects/Users.php:278
 msgid "Registration date"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:149
+#: src/Integrations/EDD/Customers.php:147
 msgid "Payment IDs"
 msgstr ""
 
-#: src/Integrations/EDD/Customers.php:153
+#: src/Integrations/EDD/Customers.php:151
 #: src/Integrations/EDD/Orders.php:330
 #: src/Integrations/PMPro/Membership_Levels.php:112
-#: src/Objects/Collection.php:1043
+#: src/Objects/Collection.php:1042
 msgid "Meta Value"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:50
-#: src/Integrations/WooCommerce/Products.php:890
+#: src/Integrations/WooCommerce/Products.php:888
 msgid "%s > Purchased"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:55
-#: src/Integrations/WooCommerce/Products.php:895
+#: src/Integrations/WooCommerce/Products.php:893
 msgid "When a %s is purchased"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:64
-#: src/Integrations/WooCommerce/Products.php:904
+#: src/Integrations/WooCommerce/Products.php:902
 msgid "%s > Refunded"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:69
-#: src/Integrations/WooCommerce/Products.php:909
+#: src/Integrations/WooCommerce/Products.php:907
 msgid "When a %s is refunded"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:101
-#: src/Integrations/WooCommerce/Products.php:409
+#: src/Integrations/WooCommerce/Products.php:407
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:53
 msgid "%s Name"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:106
-#: src/Integrations/WooCommerce/Products.php:414
+#: src/Integrations/WooCommerce/Products.php:412
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:58
 msgid "Displays the %s name."
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:118
-#: src/Integrations/WooCommerce/Products.php:84
-#: src/Integrations/WooCommerce/Products.php:608
+#: src/Integrations/WooCommerce/Products.php:82
+#: src/Integrations/WooCommerce/Products.php:606
 msgid "SKU"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:126
-#: src/Integrations/WooCommerce/Products.php:435
+#: src/Integrations/WooCommerce/Products.php:433
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:77
 #: src/Objects/Generic_Post_Type.php:327
 msgid "Featured Image"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:127
-#: src/Integrations/WooCommerce/Products.php:436
+#: src/Integrations/WooCommerce/Products.php:434
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:78
 #: src/Objects/Generic_Post_Type.php:328
 msgid "Displays the featured image."
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:139
-#: src/Integrations/WooCommerce/Products.php:448
+#: src/Integrations/WooCommerce/Products.php:446
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:90
 #: src/Objects/Generic_Post_Type.php:340
 msgid "Resolution"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:141
-#: src/Integrations/WooCommerce/Products.php:450
+#: src/Integrations/WooCommerce/Products.php:448
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:92
 #: src/Objects/Generic_Post_Type.php:342
 msgid "Select the image size to display."
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:142
-#: src/Integrations/WooCommerce/Products.php:451
+#: src/Integrations/WooCommerce/Products.php:449
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:93
 #: src/Objects/Generic_Post_Type.php:343
 msgid "Select image size"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:149
-#: src/Integrations/WooCommerce/Products.php:467
+#: src/Integrations/WooCommerce/Products.php:465
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:100
 #: src/Objects/Generic_Post_Type.php:281
 #: src/Objects/Users.php:266
@@ -5429,8 +5433,8 @@ msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:152
 #: src/Integrations/EDD/Downloads.php:163
-#: src/Integrations/WooCommerce/Products.php:470
-#: src/Integrations/WooCommerce/Products.php:481
+#: src/Integrations/WooCommerce/Products.php:468
+#: src/Integrations/WooCommerce/Products.php:479
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:103
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:114
 #: src/Objects/Generic_Post_Type.php:284
@@ -5440,15 +5444,15 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:155
-#: src/Integrations/WooCommerce/Products.php:473
+#: src/Integrations/WooCommerce/Products.php:471
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:106
 #: src/Objects/Generic_Post_Type.php:287
 msgid "Displays a button link to the %s."
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:170
-#: src/Integrations/WooCommerce/Products.php:145
-#: src/Integrations/WooCommerce/Products.php:458
+#: src/Integrations/WooCommerce/Products.php:143
+#: src/Integrations/WooCommerce/Products.php:456
 msgid "Price"
 msgstr ""
 
@@ -5469,22 +5473,22 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:188
-#: src/Integrations/WooCommerce/Products.php:520
+#: src/Integrations/WooCommerce/Products.php:518
 msgid "Displays the %s short description."
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:198
 #: src/Integrations/EDD/Downloads.php:203
-#: src/Integrations/WooCommerce/Products.php:530
-#: src/Integrations/WooCommerce/Products.php:535
+#: src/Integrations/WooCommerce/Products.php:528
+#: src/Integrations/WooCommerce/Products.php:533
 msgid "Categories"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: src/Integrations/EDD/Downloads.php:201
 #: src/Integrations/EDD/Downloads.php:211
-#: src/Integrations/WooCommerce/Products.php:533
-#: src/Integrations/WooCommerce/Products.php:543
+#: src/Integrations/WooCommerce/Products.php:531
+#: src/Integrations/WooCommerce/Products.php:541
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:303
 #: src/Objects/Generic_Post_Type.php:375
 msgid "Displays the %1$s %2$s."
@@ -5527,7 +5531,7 @@ msgid "Non Refundable"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:250
-#: src/Integrations/WooCommerce/Products.php:642
+#: src/Integrations/WooCommerce/Products.php:640
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:173
 msgid "Type"
 msgstr ""
@@ -5565,7 +5569,7 @@ msgstr ""
 
 #: src/Integrations/EDD/Orders.php:175
 #: src/Integrations/WooCommerce/Orders.php:767
-#: src/Integrations/WooCommerce/Products.php:567
+#: src/Integrations/WooCommerce/Products.php:565
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:186
 #: src/Objects/Generic_Post_Type.php:191
 msgid "Parent ID"
@@ -5651,19 +5655,19 @@ msgid "Admin URL"
 msgstr ""
 
 #: src/Integrations/EDD/Orders.php:269
-#: src/Integrations/WooCommerce/Customers.php:122
+#: src/Integrations/WooCommerce/Customers.php:121
 #: src/Objects/Users.php:249
 msgid "First name"
 msgstr ""
 
 #: src/Integrations/EDD/Orders.php:273
-#: src/Integrations/WooCommerce/Customers.php:126
+#: src/Integrations/WooCommerce/Customers.php:125
 #: src/Objects/Users.php:255
 msgid "Last name"
 msgstr ""
 
 #: src/Integrations/EDD/Orders.php:277
-#: src/Integrations/WooCommerce/Customers.php:118
+#: src/Integrations/WooCommerce/Customers.php:117
 #: src/Objects/Users.php:236
 msgid "Email"
 msgstr ""
@@ -5717,7 +5721,7 @@ msgstr ""
 
 #: src/Integrations/EDD/Order_Items.php:55
 #: src/Integrations/WooCommerce/Order_Items.php:47
-#: src/Integrations/WooCommerce/Products.php:555
+#: src/Integrations/WooCommerce/Products.php:553
 msgid "Product ID"
 msgstr ""
 
@@ -5951,7 +5955,7 @@ msgid "Membership Level"
 msgstr ""
 
 #: src/Integrations/PMPro/Membership_Levels.php:52
-#: src/Integrations/WooCommerce/Products.php:603
+#: src/Integrations/WooCommerce/Products.php:601
 msgid "Description"
 msgstr ""
 
@@ -6007,66 +6011,66 @@ msgstr ""
 msgid "Number of orders"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:110
+#: src/Integrations/WooCommerce/Customers.php:109
 msgid "First order date"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:114
+#: src/Integrations/WooCommerce/Customers.php:113
 #: src/Objects/Users.php:261
 msgid "Username"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:130
+#: src/Integrations/WooCommerce/Customers.php:129
 #: src/Objects/Users.php:244
 msgid "Display name"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:134
+#: src/Integrations/WooCommerce/Customers.php:133
 #: src/Objects/Users.php:229
 msgid "Locale"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:140
+#: src/Integrations/WooCommerce/Customers.php:139
 #: src/Integrations/WooCommerce/Orders.php:496
 msgid "Billing address"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:144
+#: src/Integrations/WooCommerce/Customers.php:143
 #: src/Integrations/WooCommerce/Orders.php:149
 #: src/Integrations/WooCommerce/Orders.php:528
 msgid "Billing city"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:148
+#: src/Integrations/WooCommerce/Customers.php:147
 #: src/Integrations/WooCommerce/Orders.php:154
 #: src/Integrations/WooCommerce/Orders.php:532
 msgid "Billing state"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:152
+#: src/Integrations/WooCommerce/Customers.php:151
 #: src/Integrations/WooCommerce/Orders.php:159
 #: src/Integrations/WooCommerce/Orders.php:536
 msgid "Billing postcode"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:156
+#: src/Integrations/WooCommerce/Customers.php:155
 #: src/Integrations/WooCommerce/Orders.php:164
 #: src/Integrations/WooCommerce/Orders.php:540
 msgid "Billing country"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Customers.php:160
+#: src/Integrations/WooCommerce/Customers.php:159
 #: src/Integrations/WooCommerce/Orders.php:549
 msgid "Billing phone"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Integrations/WooCommerce/Customers.php:183
+#: src/Integrations/WooCommerce/Customers.php:182
 msgid "%s > Lifetime Value"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Integrations/WooCommerce/Customers.php:188
+#: src/Integrations/WooCommerce/Customers.php:187
 msgid "When a %s's lifetime value surpasses a certain amount"
 msgstr ""
 
@@ -6206,8 +6210,8 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:229
 #: src/Integrations/WooCommerce/Orders.php:771
-#: src/Integrations/WooCommerce/Products.php:304
-#: src/Integrations/WooCommerce/Products.php:573
+#: src/Integrations/WooCommerce/Products.php:302
+#: src/Integrations/WooCommerce/Products.php:571
 msgid "Date created"
 msgstr ""
 
@@ -6217,7 +6221,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:243
 #: src/Integrations/WooCommerce/Orders.php:775
-#: src/Integrations/WooCommerce/Products.php:577
+#: src/Integrations/WooCommerce/Products.php:575
 msgid "Date modified"
 msgstr ""
 
@@ -6395,7 +6399,7 @@ msgid "Displays the items in the order."
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:711
-#: src/Integrations/WooCommerce/Products.php:789
+#: src/Integrations/WooCommerce/Products.php:787
 msgid "Cross sells"
 msgstr ""
 
@@ -6408,7 +6412,7 @@ msgid "Displays the cross sells for the order."
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:724
-#: src/Integrations/WooCommerce/Products.php:802
+#: src/Integrations/WooCommerce/Products.php:800
 msgid "Upsells"
 msgstr ""
 
@@ -6459,416 +6463,416 @@ msgid "Variation ID"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:75
-#: src/Integrations/WooCommerce/Products.php:815
+#: src/Integrations/WooCommerce/Products.php:813
 msgid "Attribute"
 msgstr ""
 
 #. translators: %s: object type label
 #: src/Integrations/WooCommerce/Order_Items.php:82
-#: src/Integrations/WooCommerce/Products.php:822
+#: src/Integrations/WooCommerce/Products.php:820
 msgid "%s Attribute"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:85
-#: src/Integrations/WooCommerce/Products.php:825
+#: src/Integrations/WooCommerce/Products.php:823
 msgid "Displays an attribute value."
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:93
-#: src/Integrations/WooCommerce/Products.php:833
+#: src/Integrations/WooCommerce/Products.php:831
 msgid "Attribute Key"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:96
-#: src/Integrations/WooCommerce/Products.php:836
+#: src/Integrations/WooCommerce/Products.php:834
 msgid "The attribute key to display."
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:99
-#: src/Integrations/WooCommerce/Products.php:839
-#: src/Objects/Collection.php:1067
+#: src/Integrations/WooCommerce/Products.php:837
+#: src/Objects/Collection.php:1066
 #: src/Objects/Post_Type.php:399
 msgid "Default Value"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:102
-#: src/Integrations/WooCommerce/Products.php:842
-#: src/Objects/Collection.php:1070
+#: src/Integrations/WooCommerce/Products.php:840
+#: src/Objects/Collection.php:1069
 #: src/Objects/Post_Type.php:402
 msgid "The default value to display if not set."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:66
+#: src/Integrations/WooCommerce/Products.php:64
 msgid "Product type"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:70
-#: src/Integrations/WooCommerce/Products.php:71
+#: src/Integrations/WooCommerce/Products.php:68
+#: src/Integrations/WooCommerce/Products.php:69
 msgid "Filter by product type."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:74
+#: src/Integrations/WooCommerce/Products.php:72
 msgid "Product IDs"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:76
+#: src/Integrations/WooCommerce/Products.php:74
 msgid "Comma-separated list of product IDs to include."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:79
+#: src/Integrations/WooCommerce/Products.php:77
 msgid "Exclude Product IDs"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:81
+#: src/Integrations/WooCommerce/Products.php:79
 msgid "Comma-separated list of product IDs to exclude."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:87
+#: src/Integrations/WooCommerce/Products.php:85
 msgid "Does partial matching on the SKU."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:98
+#: src/Integrations/WooCommerce/Products.php:96
 msgid "The product name (sometimes referred to as the product title) to match on."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:101
+#: src/Integrations/WooCommerce/Products.php:99
 msgid "Tag"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:107
+#: src/Integrations/WooCommerce/Products.php:105
 msgid "Category"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:113
-#: src/Integrations/WooCommerce/Products.php:706
+#: src/Integrations/WooCommerce/Products.php:111
+#: src/Integrations/WooCommerce/Products.php:704
 msgid "Weight"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:121
-#: src/Integrations/WooCommerce/Products.php:711
+#: src/Integrations/WooCommerce/Products.php:119
+#: src/Integrations/WooCommerce/Products.php:709
 msgid "Length"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:129
-#: src/Integrations/WooCommerce/Products.php:716
+#: src/Integrations/WooCommerce/Products.php:127
+#: src/Integrations/WooCommerce/Products.php:714
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Width"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:137
-#: src/Integrations/WooCommerce/Products.php:721
+#: src/Integrations/WooCommerce/Products.php:135
+#: src/Integrations/WooCommerce/Products.php:719
 msgid "Height"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:154
-#: src/Integrations/WooCommerce/Products.php:618
+#: src/Integrations/WooCommerce/Products.php:152
+#: src/Integrations/WooCommerce/Products.php:616
 msgid "Regular price"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:163
-#: src/Integrations/WooCommerce/Products.php:623
+#: src/Integrations/WooCommerce/Products.php:161
+#: src/Integrations/WooCommerce/Products.php:621
 msgid "Sale price"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:172
-#: src/Integrations/WooCommerce/Products.php:638
+#: src/Integrations/WooCommerce/Products.php:170
+#: src/Integrations/WooCommerce/Products.php:636
 msgid "Total sales"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:173
+#: src/Integrations/WooCommerce/Products.php:171
 msgid "Gets products with that many sales."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:181
-#: src/Integrations/WooCommerce/Products.php:749
+#: src/Integrations/WooCommerce/Products.php:179
+#: src/Integrations/WooCommerce/Products.php:747
 msgid "Virtual"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:184
+#: src/Integrations/WooCommerce/Products.php:182
 msgid "Whether or not the product is virtual."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:187
-#: src/Integrations/WooCommerce/Products.php:744
+#: src/Integrations/WooCommerce/Products.php:185
+#: src/Integrations/WooCommerce/Products.php:742
 msgid "Downloadable"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:190
+#: src/Integrations/WooCommerce/Products.php:188
 msgid "Whether or not the product is downloadable."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:193
-#: src/Integrations/WooCommerce/Products.php:587
+#: src/Integrations/WooCommerce/Products.php:191
+#: src/Integrations/WooCommerce/Products.php:585
 msgid "Featured"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:196
+#: src/Integrations/WooCommerce/Products.php:194
 msgid "Whether or not the product is featured."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:199
-#: src/Integrations/WooCommerce/Products.php:697
+#: src/Integrations/WooCommerce/Products.php:197
+#: src/Integrations/WooCommerce/Products.php:695
 msgid "Sold individually"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:202
+#: src/Integrations/WooCommerce/Products.php:200
 msgid "Whether or not the product is sold individually."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:205
-#: src/Integrations/WooCommerce/Products.php:664
+#: src/Integrations/WooCommerce/Products.php:203
+#: src/Integrations/WooCommerce/Products.php:662
 msgid "Manage stock"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:208
+#: src/Integrations/WooCommerce/Products.php:206
 msgid "Whether or not the product is stock managed."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:211
-#: src/Integrations/WooCommerce/Products.php:734
+#: src/Integrations/WooCommerce/Products.php:209
+#: src/Integrations/WooCommerce/Products.php:732
 msgid "Reviews allowed"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:216
-#: src/Integrations/WooCommerce/Products.php:682
+#: src/Integrations/WooCommerce/Products.php:214
+#: src/Integrations/WooCommerce/Products.php:680
 msgid "Backorders"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:220
-#: src/Integrations/WooCommerce/Products.php:686
+#: src/Integrations/WooCommerce/Products.php:218
+#: src/Integrations/WooCommerce/Products.php:684
 msgid "Notify"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:223
+#: src/Integrations/WooCommerce/Products.php:221
 msgid "Whether or not the product allows backorders."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:226
+#: src/Integrations/WooCommerce/Products.php:224
 msgid "Visibility"
+msgstr ""
+
+#: src/Integrations/WooCommerce/Products.php:227
+#: src/Integrations/WooCommerce/Products.php:593
+msgid "Visible"
+msgstr ""
+
+#: src/Integrations/WooCommerce/Products.php:228
+#: src/Integrations/WooCommerce/Products.php:594
+msgid "Catalog"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:229
 #: src/Integrations/WooCommerce/Products.php:595
-msgid "Visible"
+msgid "Search"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:230
 #: src/Integrations/WooCommerce/Products.php:596
-msgid "Catalog"
-msgstr ""
-
-#: src/Integrations/WooCommerce/Products.php:231
-#: src/Integrations/WooCommerce/Products.php:597
-msgid "Search"
-msgstr ""
-
-#: src/Integrations/WooCommerce/Products.php:232
-#: src/Integrations/WooCommerce/Products.php:598
 msgid "Hidden"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:236
-#: src/Integrations/WooCommerce/Products.php:669
+#: src/Integrations/WooCommerce/Products.php:234
+#: src/Integrations/WooCommerce/Products.php:667
 msgid "Stock quantity"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:244
-#: src/Integrations/WooCommerce/Products.php:674
+#: src/Integrations/WooCommerce/Products.php:242
+#: src/Integrations/WooCommerce/Products.php:672
 msgid "Stock status"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:247
-#: src/Integrations/WooCommerce/Products.php:677
+#: src/Integrations/WooCommerce/Products.php:245
+#: src/Integrations/WooCommerce/Products.php:675
 msgid "In stock"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:248
-#: src/Integrations/WooCommerce/Products.php:678
+#: src/Integrations/WooCommerce/Products.php:246
+#: src/Integrations/WooCommerce/Products.php:676
 msgid "Out of Stock"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:252
-#: src/Integrations/WooCommerce/Products.php:649
+#: src/Integrations/WooCommerce/Products.php:250
+#: src/Integrations/WooCommerce/Products.php:647
 msgid "Tax status"
+msgstr ""
+
+#: src/Integrations/WooCommerce/Products.php:253
+#: src/Integrations/WooCommerce/Products.php:650
+msgid "Taxable"
+msgstr ""
+
+#: src/Integrations/WooCommerce/Products.php:254
+#: src/Integrations/WooCommerce/Products.php:651
+msgid "Shipping"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:255
 #: src/Integrations/WooCommerce/Products.php:652
-msgid "Taxable"
-msgstr ""
-
-#: src/Integrations/WooCommerce/Products.php:256
-#: src/Integrations/WooCommerce/Products.php:653
-msgid "Shipping"
-msgstr ""
-
-#: src/Integrations/WooCommerce/Products.php:257
-#: src/Integrations/WooCommerce/Products.php:654
 msgid "None"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:261
-#: src/Integrations/WooCommerce/Products.php:659
+#: src/Integrations/WooCommerce/Products.php:259
+#: src/Integrations/WooCommerce/Products.php:657
 msgid "Tax class"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:266
+#: src/Integrations/WooCommerce/Products.php:264
 msgid "Shipping class"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:271
-#: src/Integrations/WooCommerce/Products.php:758
+#: src/Integrations/WooCommerce/Products.php:269
+#: src/Integrations/WooCommerce/Products.php:756
 msgid "Download limit"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:279
-#: src/Integrations/WooCommerce/Products.php:763
+#: src/Integrations/WooCommerce/Products.php:277
+#: src/Integrations/WooCommerce/Products.php:761
 msgid "Download expiry"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:287
-#: src/Integrations/WooCommerce/Products.php:768
+#: src/Integrations/WooCommerce/Products.php:285
+#: src/Integrations/WooCommerce/Products.php:766
 msgid "Average rating"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:295
-#: src/Integrations/WooCommerce/Products.php:772
+#: src/Integrations/WooCommerce/Products.php:293
+#: src/Integrations/WooCommerce/Products.php:770
 msgid "Review count"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:296
+#: src/Integrations/WooCommerce/Products.php:294
 msgid "Gets products with that many reviews."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:309
+#: src/Integrations/WooCommerce/Products.php:307
 msgid "Date product was created, in the site's timezone, with an optional comparison operator."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:318
-#: src/Integrations/WooCommerce/Products.php:628
+#: src/Integrations/WooCommerce/Products.php:316
+#: src/Integrations/WooCommerce/Products.php:626
 msgid "Date on sale from"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:323
+#: src/Integrations/WooCommerce/Products.php:321
 msgid "Start date of sale price, in the site's timezone, with an optional comparison operator."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:332
-#: src/Integrations/WooCommerce/Products.php:633
+#: src/Integrations/WooCommerce/Products.php:330
+#: src/Integrations/WooCommerce/Products.php:631
 msgid "Date on sale to"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:337
+#: src/Integrations/WooCommerce/Products.php:335
 msgid "End date of sale price, in the site's timezone, with an optional comparison operator."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:428
+#: src/Integrations/WooCommerce/Products.php:426
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:70
 #: src/Objects/Generic_Post_Type.php:310
 msgid "Slug"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:463
+#: src/Integrations/WooCommerce/Products.php:461
 msgid "Price HTML"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:488
+#: src/Integrations/WooCommerce/Products.php:486
 msgid "Add to cart URL"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:491
+#: src/Integrations/WooCommerce/Products.php:489
 msgid "Add to cart"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Integrations/WooCommerce/Products.php:494
+#: src/Integrations/WooCommerce/Products.php:492
 msgid "Displays a button link to add the %s to the cart."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:509
+#: src/Integrations/WooCommerce/Products.php:507
 msgid "Add to cart text"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:513
+#: src/Integrations/WooCommerce/Products.php:511
 msgid "Short description"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:517
+#: src/Integrations/WooCommerce/Products.php:515
 msgid "Product description"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:556
+#: src/Integrations/WooCommerce/Products.php:554
 msgid "Leave blank to create a new product."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:560
+#: src/Integrations/WooCommerce/Products.php:558
 msgid "Post ID or SKU"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:561
+#: src/Integrations/WooCommerce/Products.php:559
 msgid "Specify a post ID or sku"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:592
+#: src/Integrations/WooCommerce/Products.php:590
 msgid "Catalog visibility"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:613
+#: src/Integrations/WooCommerce/Products.php:611
 msgid "If provided and a product with the same sku exists, the product will be updated."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:692
+#: src/Integrations/WooCommerce/Products.php:690
 msgid "Low stock amount"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:702
+#: src/Integrations/WooCommerce/Products.php:700
 msgid "Dimensions"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:726
+#: src/Integrations/WooCommerce/Products.php:724
 msgid "Upsell IDs"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:730
+#: src/Integrations/WooCommerce/Products.php:728
 msgid "Cross sell IDs"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:739
+#: src/Integrations/WooCommerce/Products.php:737
 msgid "Purchase note"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:754
+#: src/Integrations/WooCommerce/Products.php:752
 msgid "Shipping class ID"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:776
-#: src/Integrations/WooCommerce/Products.php:779
+#: src/Integrations/WooCommerce/Products.php:774
+#: src/Integrations/WooCommerce/Products.php:777
 msgid "Related Products"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:780
+#: src/Integrations/WooCommerce/Products.php:778
 msgid "Displays related products."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:792
+#: src/Integrations/WooCommerce/Products.php:790
 msgid "Product Cross sells"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:793
+#: src/Integrations/WooCommerce/Products.php:791
 msgid "Displays the cross sells for the product."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:805
+#: src/Integrations/WooCommerce/Products.php:803
 msgid "Product Upsells"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Products.php:806
+#: src/Integrations/WooCommerce/Products.php:804
 msgid "Displays the upsells for the product."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Integrations/WooCommerce/Products.php:855
-#: src/Integrations/WooCommerce/Products.php:868
+#: src/Integrations/WooCommerce/Products.php:853
+#: src/Integrations/WooCommerce/Products.php:866
 #: src/Objects/Generic_Post_Type.php:391
 msgid "Enter a comma-separated list of %1$s %2$s."
 msgstr ""
@@ -6965,68 +6969,68 @@ msgid "unsubscribed"
 msgstr ""
 
 #. translators: %s is the object type label, e.g. "orders".
-#: src/Objects/Collection.php:493
-#: src/Objects/Collection.php:924
+#: src/Objects/Collection.php:492
+#: src/Objects/Collection.php:923
 msgid "No %s found."
 msgstr ""
 
-#: src/Objects/Collection.php:630
+#: src/Objects/Collection.php:629
 msgid "Since Last Send"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:635
+#: src/Objects/Collection.php:634
 msgid "Only show %s created since last send"
 msgstr ""
 
-#: src/Objects/Collection.php:642
+#: src/Objects/Collection.php:641
 msgid "Date Before"
 msgstr ""
 
 #. translators: %s: Examples.
-#: src/Objects/Collection.php:647
-#: src/Objects/Collection.php:669
+#: src/Objects/Collection.php:646
+#: src/Objects/Collection.php:668
 msgid "Examples: %s"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:659
+#: src/Objects/Collection.php:658
 msgid "Show %s created before this date."
 msgstr ""
 
-#: src/Objects/Collection.php:664
+#: src/Objects/Collection.php:663
 msgid "Date After"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:681
+#: src/Objects/Collection.php:680
 msgid "Show %s created after this date."
 msgstr ""
 
 #. translators: %s: Taxonomy name.
-#: src/Objects/Collection.php:795
+#: src/Objects/Collection.php:794
 msgid "Filter by %s."
 msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
-#: src/Objects/Collection.php:812
+#: src/Objects/Collection.php:811
 msgid "Exclude %s."
 msgstr ""
 
 #. translators: %s: object type label
-#: src/Objects/Collection.php:1050
+#: src/Objects/Collection.php:1049
 msgid "%s Meta"
 msgstr ""
 
-#: src/Objects/Collection.php:1053
+#: src/Objects/Collection.php:1052
 msgid "Displays a custom field value."
 msgstr ""
 
-#: src/Objects/Collection.php:1061
+#: src/Objects/Collection.php:1060
 msgid "Meta Key / Field Key"
 msgstr ""
 
-#: src/Objects/Collection.php:1064
+#: src/Objects/Collection.php:1063
 msgid "The meta key or field key to display."
 msgstr ""
 
@@ -7233,15 +7237,15 @@ msgstr ""
 msgid "BIO"
 msgstr ""
 
-#: src/Objects/Users.php:326
+#: src/Objects/Users.php:324
 msgid "WordPress Users"
 msgstr ""
 
-#: src/Objects/Users.php:326
+#: src/Objects/Users.php:324
 msgid "WordPress User"
 msgstr ""
 
-#: src/Objects/Users.php:327
+#: src/Objects/Users.php:325
 msgid "Current User"
 msgstr ""
 
