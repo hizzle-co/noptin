@@ -574,6 +574,17 @@ class Listener {
 
 		if ( is_numeric( $source ) ) {
 			$messages = get_post_meta( $source, 'form_messages', true );
+
+			if ( is_legacy_noptin_form( $source ) ) {
+				$form = noptin_get_optin_form( $source );
+
+				// TODO: Allow setting different messages for different actions in the form settings.
+				if ( $form ) {
+					$messages = array(
+						'success' => $form->successMessage,
+					);
+				}
+			}
 		}
 
 		if ( ! is_array( $messages ) ) {
@@ -612,6 +623,8 @@ class Listener {
 			if ( ! empty( $messages[ $key ] ) ) {
 				$message = $messages[ $key ];
 			}
+
+			$message = $this->get_cached( $key, $message );
 
 			$html = sprintf(
 				'<div class="noptin-alert noptin-success noptin-alert-%s" role="alert">%s</div>',

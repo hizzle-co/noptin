@@ -154,6 +154,7 @@ class Renderer {
 						'redirect'   => $form->redirect,
 						'labels'     => empty( $form->showLabels ) ? 'hide' : 'show',
 						'acceptance' => $form->gdprCheckbox ? $form->gdprConsentText : '',
+						'submit'     => $form->noptinButtonLabel,
 					),
 					$atts
 				);
