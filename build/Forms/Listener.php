@@ -79,7 +79,7 @@ class Listener {
 
 		// Process subscription requests.
 		if ( ! empty( $submitted['noptin_process_request'] ) ) {
-			add_action( 'init', array( $this, 'process_request' ) );
+			add_action( 'template_redirect', array( $this, 'process_request' ), -1000 );
 		}
 
 		// User is subscribing via REST.

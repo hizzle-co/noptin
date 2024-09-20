@@ -266,6 +266,11 @@ class Main {
 			'connect_err' => __( 'Could not establish a connection to the server.', 'newsletter-optin-box' ),
 			'cookie_path' => COOKIEPATH,
 		);
+
+		if ( function_exists( 'disable_wp_rest_api' ) ) {
+			$params['resturl'] = $params['ajaxurl'];
+		}
+
 		$params = apply_filters( 'noptin_form_scripts_params', $params );
 
 		wp_localize_script( 'noptin-form', 'noptinParams', $params );
