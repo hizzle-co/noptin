@@ -137,6 +137,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 3.5.8 =
+* Add: Ability to use merge tags as values for conditional logic rules.
+
 = 3.5.7 =
 * Change: Use ajax to register new subscribers whenever the REST API is not working.
 

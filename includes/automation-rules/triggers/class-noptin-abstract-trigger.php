@@ -424,6 +424,10 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 			$compare_value = noptin_clean( $rule['value'] );
 			$comparison    = $rule['condition'];
 
+			if ( is_string( $compare_value ) && strpos( $compare_value, '[[' ) !== false ) {
+				$compare_value = $smart_tags->replace_in_text_field( $compare_value );
+			}
+
 			// If the rule is met.
 			if ( ! $smart_tags->get( $rule['type'] ) || noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
 
