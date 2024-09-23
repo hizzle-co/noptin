@@ -566,7 +566,7 @@ class Renderer {
 		}
 
 		// Display the opening wrapper.
-		self::display_opening_wrapper( 'consent', $wrap );
+		self::display_opening_wrapper( 'consent', $wrap, array(), $form );
 
 		?>
 
@@ -581,7 +581,7 @@ class Renderer {
 		</label>
 		<?php
 		// Display the closing wrapper.
-		self::display_closing_wrapper( 'consent', $wrap );
+		self::display_closing_wrapper( 'consent', $wrap, array(), $form );
 	}
 
 	/**
