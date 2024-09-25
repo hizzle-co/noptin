@@ -320,7 +320,7 @@ function add_noptin_subscriber( $fields ) {
 	}
 
 	// Set default values.
-	$forms = noptin()->forms;
+	$listener = \Hizzle\Noptin\Forms\Main::$listener;
 
 	// Loop through all custom fields.
 	foreach ( get_noptin_multicheck_custom_fields() as $field ) {
@@ -330,12 +330,12 @@ function add_noptin_subscriber( $fields ) {
 			continue;
 		}
 
-		if ( ! empty( $forms ) && ! empty( $forms->listener ) && ! is_null( $forms->listener->processed_form ) ) {
-			$values = $forms->listener->get_cached( $field['merge_tag'] );
+		if ( ! empty( $listener ) && ! is_null( $listener->processed_form ) ) {
+			$values = $listener->get_cached( $field['merge_tag'] );
 
 			// Maybe try with the noptin_ prefix.
 			if ( empty( $values ) ) {
-				$values = $forms->listener->get_cached( 'noptin_' . $field['merge_tag'] );
+				$values = $listener->get_cached( 'noptin_' . $field['merge_tag'] );
 			}
 
 			if ( ! empty( $values ) ) {
@@ -371,8 +371,8 @@ function add_noptin_subscriber( $fields ) {
 
 	if ( ! isset( $fields['tags'] ) ) {
 
-		if ( ! empty( $forms ) && ! empty( $forms->listener ) && ! is_null( $forms->listener->processed_form ) ) {
-			$tags = array_filter( noptin_parse_list( $forms->listener->get_cached( 'tags' ), true ) );
+		if ( ! empty( $listener ) && ! is_null( $listener->processed_form ) ) {
+			$tags = array_filter( noptin_parse_list( $listener->get_cached( 'tags' ), true ) );
 
 			if ( ! empty( $tags ) ) {
 				$fields['tags'] = $tags;

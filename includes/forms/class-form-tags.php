@@ -96,7 +96,8 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function get_form_response() {
-		return noptin()->forms->listener->get_response_html();
+		$listener = \Hizzle\Noptin\Forms\Main::$listener;
+		return $listener ? $listener->get_response_html() : '';
 	}
 
 	/**
@@ -122,7 +123,7 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 		// Prepare value.
 		$default = isset( $args['default'] ) ? $args['default'] : '';
 		$key     = $args['key'];
-		$data    = noptin()->forms->listener->submitted;
+		$data    = \Hizzle\Noptin\Forms\Main::$listener ? \Hizzle\Noptin\Forms\Main::$listener->submitted : array();
 		$value   = isset( $data[ $key ] ) ? wp_unslash( $data[ $key ] ) : $default;
 		$value   = isset( $data['noptin_fields'][ $key ] ) ? wp_unslash( $data['noptin_fields'][ $key ] ) : $value;
 

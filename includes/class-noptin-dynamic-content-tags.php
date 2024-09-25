@@ -607,12 +607,15 @@ abstract class Noptin_Dynamic_Content_Tags {
 		}
 
 		// Trying retrieving from posted email address.
-		if ( ! empty( noptin()->forms->listener->submitted['email'] ) ) {
-			return sanitize_email( noptin()->forms->listener->submitted['email'] );
-		}
+		$listener = \Hizzle\Noptin\Forms\Main::$listener;
+		if ( $listener ) {
+			if ( ! empty( $listener->submitted['email'] ) ) {
+				return sanitize_email( $listener->submitted['email'] );
+			}
 
-		if ( ! empty( noptin()->forms->listener->submitted['noptin_fields']['email'] ) ) {
-			return sanitize_email( noptin()->forms->listener->submitted['noptin_fields']['email'] );
+			if ( ! empty( $listener->submitted['noptin_fields']['email'] ) ) {
+				return sanitize_email( $listener->submitted['noptin_fields']['email'] );
+			}
 		}
 
 		// then , try logged-in user.
