@@ -51,9 +51,31 @@ class Generic_Post extends Record {
 	 * Retrieves a given field's value.
 	 *
 	 * @param string $field The field.
+	 * @param array $args Optional arguments.
 	 * @return mixed $value The value.
 	 */
 	public function get( $field, $args = array() ) {
+		global $post;
+
+		if ( ! $this->exists() ) {
+			return null;
+		}
+
+		$post = $this->external;
+		setup_postdata( $post );
+		$value = $this->do_get( $field, $args );
+		wp_reset_postdata();
+		return $value;
+	}
+
+	/**
+	 * Actually retrieves a given field's value.
+	 *
+	 * @param string $field The field.
+	 * @param array $args Optional arguments.
+	 * @return mixed $value The value.
+	 */
+	protected function do_get( $field, $args = array() ) {
 
 		if ( ! $this->exists() ) {
 			return null;
@@ -123,6 +145,12 @@ class Generic_Post extends Record {
 				remove_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
 			}
 
+			// Register WPBakery shortcodes.
+			if ( is_callable( '\\WPBMap::addAllMappedShortcodes' ) ) {
+				\WPBMap::addAllMappedShortcodes();
+			}
+
+			// Apply filters and strip tags
 			$excerpt = wp_strip_all_tags( apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ) );
 
 			if ( false !== $wp_rss_aggregator_fix ) {

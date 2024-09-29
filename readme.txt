@@ -140,6 +140,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 = 3.5.8 =
 * Add: Ability to use merge tags as values for conditional logic rules.
 * Fix: GDPR consent not required for legacy newsletter subscription forms.
+* Fix: WPBakery shortcodes not processed in new post notification newsletters.
 
 = 3.5.7 =
 * Change: Use ajax to register new subscribers whenever the REST API is not working.
