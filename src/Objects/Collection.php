@@ -1108,4 +1108,11 @@ abstract class Collection {
 			noptin()->emails->tags->remove_tag( array_keys( Store::smart_tags( $this->type, true ) ) );
 		}
 	}
+
+	/**
+	 * Returns the current instance.
+	 */
+	public function get_instance() {
+		return $this;
+	}
 }

@@ -40,6 +40,8 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		);
 
 		parent::__construct();
+		add_filter( 'noptin_automation_rules_email_conditional_logic_skip_tags', array( $this, 'conditional_logic_skip_tags' ), 10, 2 );
+		add_action( 'noptin_automation_rules_email_prepare_skipped_rules', array( $this, 'prepare_skipped_rules' ), 10, 2 );
 	}
 
 	/**
@@ -182,5 +184,43 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		return true;
+	}
+
+	/**
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
+	 */
+	public function conditional_logic_skip_tags( $tags, $rule ) {
+		// Abort if we do not have a campaign.
+		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
+		if ( empty( $automated_email_id ) ) {
+			return $tags;
+		}
+
+		$campaign = noptin_get_email_campaign_object( $automated_email_id );
+
+		if ( ! $campaign->is_mass_mail() ) {
+			return $tags;
+		}
+
+		$collection = apply_filters( 'noptin_' . $campaign->get_sender() . '_email_sender_collection_object', false );
+
+		if ( ! is_object( $collection ) ) {
+			return $tags;
+		}
+
+		$collection_tags = new \Hizzle\Noptin\Objects\Tags( $collection );
+		return array_merge(
+			$tags,
+			array_keys( $collection_tags->tags )
+		);
+	}
+
+	/**
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
+	 */
+	public function prepare_skipped_rules( $conditional_logic, $rule ) {
+		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
+
+		$GLOBALS['noptin_email_' . $automated_email_id . '_extra_conditional_logic'] = $conditional_logic;
 	}
 }

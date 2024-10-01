@@ -20,6 +20,11 @@ class Tags extends \Noptin_Dynamic_Content_Tags {
 	private $object_type;
 
 	/**
+	 * @var null|Record the old record.
+	 */
+	private $old_record;
+
+	/**
 	 * Parses a record's tags.
 	 *
 	 * @param string $object_type The object type.
@@ -32,36 +37,65 @@ class Tags extends \Noptin_Dynamic_Content_Tags {
 
 	/**
 	 * @param Record $record The record.
-	 * @param string $content The content containing dynamic content tags.
-	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
-	 * @return string
 	 */
-	public function replace_record_fields( $record, $content, $escape_function = 'wp_kses_post' ) {
+	public function prepare_record_tags( $record ) {
 		global $noptin_current_objects;
-
-		if ( ! is_string( $content ) || empty( $content ) ) {
-			return $content;
-		}
 
 		// Store the current record.
 		if ( ! is_array( $noptin_current_objects ) ) {
 			$noptin_current_objects = array();
 		}
 
-		$old_record = isset( $noptin_current_objects[ $this->object_type ] ) ? $noptin_current_objects[ $this->object_type ] : null;
+		$this->old_record = isset( $noptin_current_objects[ $this->object_type ] ) ? $noptin_current_objects[ $this->object_type ] : null;
 
 		$noptin_current_objects[ $this->object_type ] = $record;
+	}
 
-		// Replace merge tags.
-		$content = $this->replace_with_brackets( $content, $escape_function );
+	public function restore_record_tags() {
+		global $noptin_current_objects;
 
-		// Restore the old record.
-		if ( null === $old_record ) {
-			unset( $noptin_current_objects[ $this->object_type ] );
-		} else {
-			$noptin_current_objects[ $this->object_type ] = $old_record;
+		// Store the current record.
+		if ( ! is_array( $noptin_current_objects ) ) {
+			$noptin_current_objects = array();
 		}
 
+		// Restore the old record.
+		if ( ! $this->old_record ) {
+			unset( $noptin_current_objects[ $this->object_type ] );
+		} else {
+			$noptin_current_objects[ $this->object_type ] = $this->old_record;
+		}
+	}
+
+	/**
+	 * @param Record $record The record.
+	 * @param string $content The content containing dynamic content tags.
+	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
+	 * @return string
+	 */
+	public function replace_record_fields( $record, $content, $escape_function = 'wp_kses_post' ) {
+		if ( ! is_string( $content ) || empty( $content ) ) {
+			return $content;
+		}
+
+		// Store the current record.
+		$this->prepare_record_tags( $record );
+
+		// Replace merge tags.
+		$content = $this->replace( $content, $escape_function );
+
+		// Restore the old record.
+		$this->restore_record_tags();
+
 		return $content;
+	}
+
+	/**
+	 * @param string $content The string containing dynamic content tags.
+	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
+	 * @return string
+	 */
+	protected function replace( $content, $escape_function = '' ) {
+		return $this->replace_with_brackets( $content, $escape_function );
 	}
 }

@@ -123,8 +123,10 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 			return array();
 		}
 
-		$unique = array_unique( $collection->get_newsletter_recipients( $campaign ) );
-		$unique = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $unique, $campaign );
+		$options = empty( $this->options_key ) ? array() : $campaign->get( $this->options_key );
+		$options = is_array( $options ) ? $options : array();
+		$unique  = array_unique( $collection->get_newsletter_recipients( $options, $campaign ) );
+		$unique  = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $unique, $campaign );
 
 		update_post_meta( $campaign->id, 'contacts_to_send', $unique );
 		return $unique;
@@ -151,56 +153,18 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	public function can_email_contact( $campaign, $person, $options ) {
 
 		// Check per subject conditions.
-		if ( $campaign->is_automation_rule() ) {
-			$trigger           = noptin()->automation_rules->get_trigger( $campaign->get_trigger() );
-			$custom_conditions = get_post_meta( $campaign->id, 'custom_conditional_logic', true );
+		$conditional_logic = $campaign->get( 'extra_conditional_logic' );
+		if ( $conditional_logic && is_array( $conditional_logic ) ) {
+			// Retrieve the conditional logic.
+			$smart_tags = new Tags( $this->collection_type );
 
-			if ( $trigger && is_array( $custom_conditions ) ) {
-				// Retrieve the conditional logic.
-				$action      = $custom_conditions['action']; // allow or prevent.
-				$type        = $custom_conditions['type']; // all or any.
-				$rules_met   = $custom_conditions['met'];
-				$rules_total = $custom_conditions['total'];
-				$smart_tags  = new Tags( $this->collection_type );
+			$smart_tags->prepare_record_tags( $person );
+			$result = $smart_tags->check_conditional_logic( $conditional_logic );
+			$smart_tags->restore_record_tags();
 
-				foreach ( $custom_conditions['rules'] as $rule ) {
-					$current_value = $smart_tags->replace_in_text_field( empty( $rule['full'] ) ? '[[' . $rule['type'] . ']]' : $rule['full'] );
-					$compare_value = noptin_clean( $rule['value'] );
-					$comparison            = $rule['condition'];
-
-					if ( is_string( $compare_value ) && strpos( $compare_value, '[[' ) !== false ) {
-						$compare_value = $smart_tags->replace_in_text_field( $compare_value );
-					}
-
-					// If the rule is met.
-					if ( ! $smart_tags->get( $rule['type'] ) || noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
-
-						// Increment the number of rules met.
-						++ $rules_met;
-
-						// If we're using the "any" condition, we can stop here.
-						if ( 'any' === $type ) {
-							break;
-						}
-					} elseif ( 'all' === $type ) {
-
-						// If we're using the "all" condition, we can stop here.
-						break;
-					}
-				}
-
-				// Check if the conditions are met.
-				if ( 'all' === $type ) {
-					$is_condition_met = $rules_met === $rules_total;
-				} else {
-					$is_condition_met = $rules_met > 0;
-				}
-
-				$failed = 'allow' === $action ? ! $is_condition_met : $is_condition_met;
-
-				if ( $failed ) {
-					return false;
-				}
+			// Check if the conditional logic is met.
+			if ( ! $result ) {
+				return false;
 			}
 		}
 
@@ -289,9 +253,18 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 			return array();
 		}
 
-		return array(
+		$settings = array(
 			'key'    => $this->options_key,
 			'fields' => $this->get_collection()->get_sender_settings(),
 		);
+
+		if ( 'noptin' === $this->sender ) {
+			$settings['upsell'] = array(
+				'link'    => noptin_get_upsell_url( '/pricing/', 'filter-subscribers', 'email-campaigns' ),
+				'message' => __( 'Premium plans allow you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ),
+			);
+		}
+
+		return $settings;
 	}
 }

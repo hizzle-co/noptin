@@ -36,6 +36,8 @@ abstract class People extends Collection {
 	public function __construct() {
 		if ( ! empty( $this->email_sender ) ) {
 			add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
+			add_filter( 'noptin_' . $this->email_sender . '_email_sender_collection_object', array( $this, 'get_instance' ) );
+			add_filter( 'noptin_bulk_email_senders', array( $this, 'add_email_sender' ) );
 		}
 
 		parent::__construct();
@@ -156,7 +158,19 @@ abstract class People extends Collection {
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $email
 	 */
-	public function get_newsletter_recipients( $email ) {
+	public function get_newsletter_recipients( $options, $email ) {
 		return array();
+	}
+
+	/**
+	 * Adds email sender to the list of available email senders.
+	 *
+	 * @param array $senders
+	 * @return array
+	 */
+	public function add_email_sender( $senders ) {
+		$senders[ $this->email_sender ] = new People_List( $this );
+
+		return $senders;
 	}
 }

@@ -29,13 +29,14 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 * @return string
 	 */
 	public function __construct() {
-		$this->label          = __( 'Noptin Subscribers', 'newsletter-optin-box' );
-		$this->singular_label = __( 'Subscriber', 'newsletter-optin-box' );
-		$this->type           = 'subscriber';
-		$this->email_sender   = 'noptin';
-		$this->is_stand_alone = false;
-		$this->can_list       = true;
-		$this->icon           = array(
+		$this->label                = __( 'Noptin Subscribers', 'newsletter-optin-box' );
+		$this->singular_label       = __( 'Subscriber', 'newsletter-optin-box' );
+		$this->type                 = 'subscriber';
+		$this->email_sender         = 'noptin';
+		$this->email_sender_options = 'noptin_subscriber_options';
+		$this->is_stand_alone       = false;
+		$this->can_list             = true;
+		$this->icon                 = array(
 			'icon' => 'admin-users',
 			'fill' => '#50575e',
 		);
@@ -537,6 +538,150 @@ class Records extends \Hizzle\Noptin\Objects\People {
 				)
 			)
 		);
+	}
+
+	/**
+	 * Retrieves newsletter recipients.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $email
+	 * @return int[] $subscribers The subscriber IDs.
+	 */
+	public function get_newsletter_recipients( $options, $email ) {
+		// Prepare arguments.
+		$args = array(
+			'status'     => 'subscribed',
+			'number'     => -1,
+			'fields'     => 'id',
+			'meta_query' => array(
+				'relation' => 'AND',
+				array(
+					'key'     => '_campaign_' . $email->id,
+					'compare' => 'NOT EXISTS',
+				),
+			),
+		);
+
+		$manual_recipients = $email->get_manual_recipients_ids();
+		if ( ! empty( $manual_recipients ) ) {
+			$args['include'] = $manual_recipients;
+		} elseif ( noptin_has_active_license_key() ) {
+
+			if ( is_array( $options ) ) {
+
+				// Backward compatibility.
+				if ( ! empty( $options['_subscriber_via'] ) ) {
+					if ( ! isset( $options['source'] ) ) {
+						$args['source'] = $options['_subscriber_via'];
+					}
+					unset( $options['_subscriber_via'] );
+				}
+
+				// Loop through available filters.
+				$filters = array_merge(
+					array_keys( get_noptin_subscriber_filters() ),
+					array( 'tags' )
+				);
+
+				foreach ( $filters as $filter ) {
+
+					// Filter by key.
+					$filtered = isset( $options[ $filter ] ) ? $options[ $filter ] : '';
+
+					if ( '' !== $filtered && array() !== $filtered ) {
+						$args[ $filter ] = $filtered;
+					}
+
+					// Exclude by key.
+					$filtered = isset( $options[ $filter . '_not' ] ) ? $options[ $filter . '_not' ] : '';
+
+					if ( '' !== $filtered && array() !== $filtered ) {
+						$args[ $filter . '_not' ] = $filtered;
+					}
+				}
+			}
+
+			// (Backwards compatibility) Subscription source.
+			$source = $email->get( '_subscriber_via' );
+
+			if ( '' !== $source && empty( $options['source'] ) ) {
+				$args['source'] = $source;
+			}
+
+			// Allow other plugins to filter the query.
+			$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $email );
+		}
+
+		// Run the query...
+		return noptin_get_subscribers( $args );
+	}
+
+	/**
+	 * Get the sender settings.
+	 *
+	 * @return array
+	 */
+	public function get_sender_settings() {
+		$fields = array();
+
+		foreach ( get_noptin_subscriber_filters() as $key => $filter ) {
+
+			// Skip status since emails can only be sent to active subscribers.
+			if ( 'status' === $key ) {
+				continue;
+			}
+
+			$multiple = 2 < count( $filter['options'] );
+			$options  = $filter['options'];
+
+			$fields[ $key ] = array(
+				'label'                => $filter['label'],
+				'type'                 => 'select',
+				'placeholder'          => __( 'Any', 'newsletter-optin-box' ),
+				'canSelectPlaceholder' => true,
+				'options'              => $options,
+				'description'          => ( empty( $filter['description'] ) || $filter['label'] === $filter['description'] ) ? '' : $filter['description'],
+			);
+
+			if ( $multiple || $filter['is_multiple'] ) {
+
+				$fields[ $key ]['placeholder'] = __( 'Optional. Leave blank to send to all', 'newsletter-optin-box' );
+				$fields[ $key ]['multiple']    = 'true';
+
+				$fields[ $key . '_not' ] = array_merge(
+					$fields[ $key ],
+					array(
+						'label'       => sprintf(
+							// translators: %s is the filter label, e.g, "Tags".
+							__( '%s - Exclude', 'newsletter-optin-box' ),
+							$filter['label']
+						),
+						'description' => '',
+					)
+				);
+			}
+		}
+
+		$all_tags = array();
+
+		if ( is_callable( array( noptin()->db(), 'get_all_meta_by_key' ) ) ) {
+			$all_tags = noptin()->db()->get_all_meta_by_key( 'tags' );
+		}
+
+		$fields['tags'] = array(
+			'label'       => __( 'Tags', 'newsletter-optin-box' ),
+			'type'        => 'token',
+			'description' => __( 'Optional. Filter recipients by their tags.', 'newsletter-optin-box' ),
+			'suggestions' => $all_tags,
+		);
+
+		$fields['tags_not'] = array(
+			'label'       => __( 'Tags - Exclude', 'newsletter-optin-box' ),
+			'type'        => 'token',
+			'description' => __( 'Optional. Exclude recipients by their tags.', 'newsletter-optin-box' ),
+			'suggestions' => $all_tags,
+		);
+
+		return apply_filters( 'noptin_subscriber_sending_options', $fields );
 	}
 
 	/**

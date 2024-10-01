@@ -657,18 +657,24 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 
 			// If the rule is met.
-			if ( ! $this->get( $rule['type'] ) || noptin_is_conditional_logic_met( $current_value, $compare_value, $rule['condition'] ) ) {
+			if ( noptin_is_conditional_logic_met( $current_value, $compare_value, $rule['condition'] ) ) {
 
 				// If we're using the "any" condition, we can stop here.
 				if ( 'any' === $type ) {
 					return 'allow' === $action;
 				}
 			} elseif ( 'all' === $type ) {
-				return 'allow' === $action;
+				return 'allow' !== $action;
 			}
 		}
 
-		return empty( $skipped ) ? 'allow' === $action : $skipped;
+		if ( ! empty( $skipped ) ) {
+			return $skipped;
+		}
+
+		$matched = 'all' === $type;
+
+		return 'allow' === $action ? $matched : ! $matched;
 	}
 
 	/**

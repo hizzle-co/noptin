@@ -70,7 +70,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		parent::__construct();
 
 		// Init the email senders.
-		add_action( 'noptin_load', array( $this, 'init_email_senders' ) );
+		add_action( 'noptin_init', array( $this, 'init_email_senders' ), 100 );
 
 		// Send newsletter emails.
 		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
@@ -85,13 +85,15 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	public function init_email_senders() {
 		$senders = apply_filters(
 			'noptin_bulk_email_senders',
-			array(
-				'noptin' => '\Hizzle\Noptin\Bulk_Emails\Email_Sender_Subscribers',
-			)
+			array()
 		);
 
 		foreach ( $senders as $sender => $class ) {
-			$this->senders[ $sender ] = new $class();
+			if ( is_string( $class ) ) {
+				$class = new $class();
+			}
+
+			$this->senders[ $sender ] = $class;
 		}
 	}
 
