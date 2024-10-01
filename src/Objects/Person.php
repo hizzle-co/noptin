@@ -29,6 +29,20 @@ abstract class Person extends Record {
 	}
 
 	/**
+	 * Retrieves the person's name.
+	 */
+	public function get_name() {
+		return $this->get( 'name' );
+	}
+
+	/**
+	 * Retrieves the person's edit URL.
+	 */
+	public function get_edit_url() {
+		return '';
+	}
+
+	/**
 	 * Retrieves a related field's value.
 	 *
 	 * @param string $field The field.

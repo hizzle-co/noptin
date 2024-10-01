@@ -65,7 +65,7 @@ class Main {
 			'trigger_id' => 'woocommerce_new_order',
 			'callback'   => function ( &$automation_rule ) {
 
-				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
+				/** @var \Hizzle\Noptin\Automation_Rules\Automation_Rule $automation_rule */
 				$action = $automation_rule->get_trigger_setting( 'action' );
 				$map    = array(
 					'created'    => 'wc_new_order',
@@ -106,7 +106,7 @@ class Main {
 			'trigger_id' => 'woocommerce_product_purchase',
 			'callback'   => function ( &$automation_rule ) {
 
-				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
+				/** @var \Hizzle\Noptin\Automation_Rules\Automation_Rule $automation_rule */
 				$action = $automation_rule->get_trigger_setting( 'action' );
 
 				// Set the new trigger id.

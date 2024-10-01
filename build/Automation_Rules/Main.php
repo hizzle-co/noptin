@@ -34,7 +34,7 @@ class Main {
 	 * Runs an automation rule if the Noptin tasks package is installed.
 	 *
 	 * @param int $rule_id
-	 * @return \Hizzle\Noptin\DB\Automation_Rule
+	 * @return Automation_Rule
 	 * @throws \Exception
 	 */
 	public static function run_automation_rule( $rule_id, $args ) {

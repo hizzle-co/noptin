@@ -1917,7 +1917,7 @@ function noptin_sanitize_merge_tag( $tag ) {
  * Returns the automation rule being edited.
  *
  * @since 1.10.1
- * @return \Hizzle\Noptin\DB\Automation_Rule
+ * @return \Hizzle\Noptin\Automation_Rules\Automation_Rule
  */
 function noptin_get_current_automation_rule() {
 
@@ -1934,7 +1934,7 @@ function noptin_get_current_automation_rule() {
  *
  * @param array $args Query arguments.
  * @param string $return See Hizzle\Noptin\DB\Main::query for allowed values.
- * @return int|array|\Hizzle\Noptin\DB\Automation_Rule[]|\Hizzle\Store\Query|WP_Error
+ * @return int|array|\Hizzle\Noptin\Automation_Rules\Automation_Rule[]|\Hizzle\Store\Query|WP_Error
  */
 function noptin_get_automation_rules( $args = array(), $to_return = 'results' ) {
 	return noptin()->db()->query( 'automation_rules', $args, $to_return );
@@ -1943,13 +1943,13 @@ function noptin_get_automation_rules( $args = array(), $to_return = 'results' ) 
 /**
  * Fetch an automation rule by rule ID.
  *
- * @param int|\Hizzle\Noptin\DB\Automation_Rule|Noptin_Automation_Rule $automation_rule_id Automation Rule ID, or object.
- * @return \Hizzle\Noptin\DB\Automation_Rule|WP_Error Automation Rule object if found, error object if not found.
+ * @param int|\Hizzle\Noptin\Automation_Rules\Automation_Rule|Noptin_Automation_Rule $automation_rule_id Automation Rule ID, or object.
+ * @return \Hizzle\Noptin\Automation_Rules\Automation_Rule|WP_Error Automation Rule object if found, error object if not found.
  */
 function noptin_get_automation_rule( $automation_rule_id = 0 ) {
 
 	// If automation rule is already an automation rule object, return it.
-	if ( $automation_rule_id instanceof \Hizzle\Noptin\DB\Automation_Rule ) {
+	if ( $automation_rule_id instanceof \Hizzle\Noptin\Automation_Rules\Automation_Rule ) {
 		return $automation_rule_id;
 	}
 
@@ -1969,7 +1969,7 @@ function noptin_get_automation_rule( $automation_rule_id = 0 ) {
 /**
  * Deletes an automation rule.
  *
- * @param int|\Hizzle\Noptin\DB\Automation_Rule|Noptin_Automation_Rule $automation_rule_id Automation Rule ID, or object.
+ * @param int|\Hizzle\Noptin\Automation_Rules\Automation_Rule|Noptin_Automation_Rule $automation_rule_id Automation Rule ID, or object.
  * @return bool|WP_Error True on success, error object on failure.
  */
 function noptin_delete_automation_rule( $automation_rule_id ) {

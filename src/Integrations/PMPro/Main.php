@@ -65,7 +65,7 @@ class Main {
 	 * Add automation rule test trigger args.
 	 *
 	 * @param array $args
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule
 	 * @param string $trigger_id
 	 */
 	public static function add_trigger_test_args( $args, $rule, $trigger_id ) {

@@ -52,13 +52,13 @@ abstract class Sender_Integration {
 	 *
 	 * @return boolean
 	 */
-	public function check_can_email_recipient( $can_email, $emali_address, $options ) {
+	public function check_can_email_recipient( $can_email, $email_address, $options ) {
 
 		if ( ! $can_email || empty( $options ) ) {
 			return $can_email;
 		}
 
-		return $this->can_email_recipient( $emali_address, $options );
+		return $this->can_email_recipient( $email_address, $options );
 	}
 
 	/**

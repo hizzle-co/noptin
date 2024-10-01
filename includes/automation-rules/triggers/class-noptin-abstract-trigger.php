@@ -388,10 +388,10 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
-	 * Checks if conditional logic if met.
+	 * Checks if the rule is valid for the given args.
 	 *
 	 * @since 1.2.8
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The rule to check for.
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule The rule to check for.
 	 * @param mixed $args Extra args for the action.
 	 * @param mixed $subject The subject.
 	 * @param Noptin_Abstract_Action $action The action to run.
@@ -409,51 +409,24 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 			return true;
 		}
 
-		// Retrieve the conditional logic.
-		$action      = $conditional_logic['action']; // allow or prevent.
-		$type        = $conditional_logic['type']; // all or any.
-		$rules_met   = 0;
-		$rules_total = count( $conditional_logic['rules'] );
-
 		/** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
-		// Loop through each rule.
-		foreach ( $conditional_logic['rules'] as $rule ) {
-			$current_value = $smart_tags->replace_in_text_field( empty( $rule['full'] ) ? '[[' . $rule['type'] . ']]' : $rule['full'] );
-			$compare_value = noptin_clean( $rule['value'] );
-			$comparison    = $rule['condition'];
+		// Check if the conditional logic is met.
+		$is_condition_met = $smart_tags->check_conditional_logic( $conditional_logic, $action->get_conditional_logic_skip_tags( $rule ) );
 
-			if ( is_string( $compare_value ) && strpos( $compare_value, '[[' ) !== false ) {
-				$compare_value = $smart_tags->replace_in_text_field( $compare_value );
-			}
+		if ( is_array( $is_condition_met ) ) {
+			$new_conditional_logic = array_merge(
+				$conditional_logic,
+				array(
+					'rules' => $is_condition_met,
+				)
+			);
 
-			// If the rule is met.
-			if ( ! $smart_tags->get( $rule['type'] ) || noptin_is_conditional_logic_met( $current_value, $compare_value, $comparison ) ) {
-
-				// Increment the number of rules met.
-				++ $rules_met;
-
-				// If we're using the "any" condition, we can stop here.
-				if ( 'any' === $type ) {
-					break;
-				}
-			} elseif ( 'all' === $type ) {
-
-				// If we're using the "all" condition, we can stop here.
-				break;
-			}
+			$action->prepare_skipped_rules( $new_conditional_logic, $rule );
 		}
 
-		// Check if the conditions are met.
-		if ( 'all' === $type ) {
-			$is_condition_met = $rules_met === $rules_total;
-		} else {
-			$is_condition_met = $rules_met > 0;
-		}
-
-		// Return the result.
-		return 'allow' === $action ? $is_condition_met : ! $is_condition_met;
+		return ! empty( $is_condition_met );
 	}
 
 	/**

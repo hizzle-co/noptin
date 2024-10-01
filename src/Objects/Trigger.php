@@ -419,7 +419,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 * Prepares email test data.
 	 *
 	 * @since 3.0.0
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule
 	 * @return \Noptin_Automation_Rules_Smart_Tags
 	 * @throws \Exception
 	 */
@@ -492,7 +492,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			'trigger_id' => $previous_name,
 			'callback'   => function ( &$automation_rule ) use ( $new_name ) {
 
-				/** @var \Hizzle\Noptin\DB\Automation_Rule $automation_rule */
+				/** @var \Hizzle\Noptin\Automation_Rules\Automation_Rule $automation_rule */
 				$automation_rule->set_trigger_id( $new_name );
 			},
 		);

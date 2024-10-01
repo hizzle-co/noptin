@@ -215,7 +215,7 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 			return;
 		}
 
-		/** @var \Hizzle\Noptin\DB\Automation_Rule[] $rules */
+		/** @var \Hizzle\Noptin\Automation_Rules\Automation_Rule[] $rules */
 		$rules = noptin_get_automation_rules(
 			array(
 				'trigger_id' => array( 'woocommerce_lifetime_value', 'woocommerce_lifetime_orders' ),

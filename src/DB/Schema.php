@@ -58,7 +58,7 @@ class Schema {
 
 				// Automation rules.
 				'automation_rules' => array(
-					'object'        => '\Hizzle\Noptin\DB\Automation_Rule',
+					'object'        => '\Hizzle\Noptin\Automation_Rules\Automation_Rule',
 					'singular_name' => 'automation_rule',
 					'props'         => array(
 

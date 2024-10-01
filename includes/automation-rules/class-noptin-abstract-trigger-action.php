@@ -3,6 +3,8 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+use \Hizzle\Noptin\Automation_Rules\Automation_Rule;
+
 /**
  * Base class for triggers and actions.
  *
@@ -11,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 abstract class Noptin_Abstract_Trigger_Action {
 
 	/**
-	 * @var \Hizzle\Noptin\DB\Automation_Rule[]
+	 * @var  Automation_Rule[]
 	 */
 	protected $rules;
 
@@ -154,7 +156,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 * Retrieve the trigger's or action's rule description.
 	 *
 	 * @since 1.3.0
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param Automation_Rule $rule
 	 * @return string
 	 */
 	public function get_rule_description( $rule ) {
@@ -165,7 +167,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 * Retrieve the trigger's or actions's rule table description.
 	 *
 	 * @since 1.11.9
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param Automation_Rule $rule
 	 * @return string
 	 */
 	public function get_rule_table_description( $rule ) {
@@ -187,7 +189,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 *
 	 * @param bool|string $status Can be any, true, or false;
 	 * @since 1.2.8
-	 * @return \Hizzle\Noptin\DB\Automation_Rule[]
+	 * @return Automation_Rule[]
 	 */
 	public function get_rules( $status = true ) {
 
@@ -219,7 +221,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.11.0
 	 * @param mixed $subject The subject.
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule used to trigger the action.
+	 * @param Automation_Rule $rule The automation rule used to trigger the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return string
 	 */

@@ -26,6 +26,11 @@ abstract class People extends Collection {
 	public $email_sender;
 
 	/**
+	 * @var string The email sender options for this collection.
+	 */
+	public $email_sender_options;
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -136,4 +141,22 @@ abstract class People extends Collection {
 	 *
 	 */
 	abstract public function get_test_id();
+
+	/**
+	 * Retrieves email sender settings.
+	 *
+	 * @return array
+	 */
+	public function get_sender_settings() {
+		return array();
+	}
+
+	/**
+	 * Retrieves email recipients.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $email
+	 */
+	public function get_newsletter_recipients( $email ) {
+		return array();
+	}
 }

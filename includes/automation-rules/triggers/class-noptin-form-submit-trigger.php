@@ -278,7 +278,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	 * Checks if conditional logic if met.
 	 *
 	 * @since 1.2.8
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The rule to check for.
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule The rule to check for.
 	 * @param mixed $args Extra args for the action.
 	 * @param mixed $subject The subject.
 	 * @param Noptin_Abstract_Action $action The action to run.

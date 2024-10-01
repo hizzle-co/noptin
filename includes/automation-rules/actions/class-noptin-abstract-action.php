@@ -3,6 +3,8 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+use \Hizzle\Noptin\Automation_Rules\Automation_Rule;
+
 /**
  * Base actions class.
  *
@@ -20,7 +22,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.11.9
 	 * @param array $meta
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param Automation_Rule $rule
 	 * @return string
 	 */
 	public function rule_action_meta( $meta, $rule ) {
@@ -43,7 +45,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.2.8
 	 * @param mixed $subject The subject.
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule that triggered the action.
+	 * @param Automation_Rule $rule The automation rule that triggered the action.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return bool
 	 */
@@ -56,7 +58,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.3.0
 	 * @param mixed $subject The subject.
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param Automation_Rule $rule
 	 * @param array $args Extra arguments passed to the action.
 	 * @throws \Exception
 	 */
@@ -107,7 +109,7 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.2.8
 	 * @param mixed $subject The subject.
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule.
+	 * @param Automation_Rule $rule The automation rule.
 	 * @param array $args Extra arguments passed to the action.
 	 * @return void|bool|WP_Error
 	 */
@@ -136,9 +138,33 @@ abstract class Noptin_Abstract_Action extends Noptin_Abstract_Trigger_Action {
 	/**
 	 * Fired before deleting an automation rule.
 	 *
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule The automation rule.
+	 * @param Automation_Rule $rule The automation rule.
 	 */
 	public function before_delete( $rule ) {
 		// Override this method to perform actions before deleting an automation rule.
+	}
+
+	/**
+	 * Returns the action's conditional logic skip tags.
+	 *
+	 * This will be executed per run instead of per rule.
+	 *
+	 * @since 1.11.0
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule The rule to check for.
+	 * @return array
+	 */
+	public function get_conditional_logic_skip_tags( $rule ) {
+		return apply_filters( 'noptin_automation_rules_' . $this->get_id() . '_conditional_logic_skip_tags', array(), $rule, $this );
+	}
+
+	/**
+	 * Prepares skipped rules.
+	 *
+	 * @since 1.11.0
+	 * @param array $conditional_logic The conditional logic.
+	 * @return void
+	 */
+	public function prepare_skipped_rules( $conditional_logic, $rule ) {
+		do_action( 'noptin_automation_rules_' . $this->get_id() . '_prepare_skipped_rules', $conditional_logic, $rule, $this );
 	}
 }
