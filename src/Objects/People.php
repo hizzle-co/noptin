@@ -35,9 +35,13 @@ abstract class People extends Collection {
 	 */
 	public function __construct() {
 		if ( ! empty( $this->email_sender ) ) {
-			add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
 			add_filter( 'noptin_' . $this->email_sender . '_email_sender_collection_object', array( $this, 'get_instance' ) );
-			add_filter( 'noptin_bulk_email_senders', array( $this, 'add_email_sender' ) );
+
+			if ( ! empty( $this->email_sender_options ) ) {
+				add_filter( 'noptin_bulk_email_senders', array( $this, 'add_email_sender' ) );
+			} else {
+				add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
+			}
 		}
 
 		parent::__construct();
