@@ -421,7 +421,7 @@ class Noptin_COM_Updater {
 		$installed_addons    = wp_list_pluck( Noptin_COM::get_installed_addons(), '_filename', 'slug' );
 		$slug                = 'noptin-addons-pack';
 		$settings['license'] = array(
-			'key'          => '', // Noptin_COM::get_active_license_key(),
+			'key'          => Noptin_COM::get_active_license_key(),
 			'upgrade_url'  => noptin_get_upsell_url( 'pricing', 'upgrade', 'emails' ),
 			'is_usable'    => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
 			'activate_url' => admin_url( 'admin.php?page=noptin-addons' ),
