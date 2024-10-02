@@ -54,24 +54,24 @@ msgid "%1$dth day"
 msgstr ""
 
 #. translators: %1$s: Object type label, %2$s: Field label.
-#: build/Subscribers/Records.php:217
+#: build/Subscribers/Records.php:218
 msgid "%1$s > %2$s changed"
 msgstr ""
 
 #. translators: %1$s: Object type label, %2$s: Field label.
-#: build/Subscribers/Records.php:253
+#: build/Subscribers/Records.php:254
 msgid "%1$s > Add to %2$s"
 msgstr ""
 
 #. translators: %1$s: Object type label, %2$s: Field label.
-#: build/Subscribers/Records.php:283
+#: build/Subscribers/Records.php:284
 msgid "%1$s > Removed from %2$s"
 msgstr ""
 
 #. translators: %s is a date.
 #. translators: %1$s is a string, %2$s is a string.
-#: includes/functions.php:1826
-#: includes/functions.php:2050
+#: includes/functions.php:1833
+#: includes/functions.php:2057
 msgid "%1$s and %2$s"
 msgstr ""
 
@@ -87,14 +87,14 @@ msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
 #. translators: %s: Field label.
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:55
+#: build/Subscribers/Records.php:655
 #: src/Objects/Collection.php:804
 #: build/Misc/assets/js/collection.js:231
 msgid "%s - Exclude"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:718
+#: build/Subscribers/Records.php:863
 #: src/Objects/Generic_Post_Type.php:486
 msgid "%s > Create or Update"
 msgstr ""
@@ -105,7 +105,7 @@ msgid "%s > Created"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:741
+#: build/Subscribers/Records.php:886
 #: src/Objects/Generic_Post_Type.php:502
 msgid "%s > Delete"
 msgstr ""
@@ -131,12 +131,12 @@ msgid "%s > Lifetime Value"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:333
+#: build/Subscribers/Records.php:334
 msgid "%s > Link Click"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:319
+#: build/Subscribers/Records.php:320
 msgid "%s > Open Email"
 msgstr ""
 
@@ -168,12 +168,12 @@ msgid "%s > Unpublished"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:763
+#: build/Subscribers/Records.php:908
 msgid "%s > Unsubscribe"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:785
+#: build/Subscribers/Records.php:930
 msgid "%s > Update Custom Field"
 msgstr ""
 
@@ -284,8 +284,8 @@ msgid "A very fast and lightweight WordPress newsletter plugin"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:223
-#: build/Subscribers/Records.php:200
-#: src/DB/Automation_Rule.php:574
+#: build/Automation_Rules/Automation_Rule.php:574
+#: build/Subscribers/Records.php:201
 msgid "Action"
 msgstr ""
 
@@ -598,7 +598,7 @@ msgstr ""
 msgid "An error occurred while sending this campaign. The last error was: %s"
 msgstr ""
 
-#: includes/functions.php:1858
+#: includes/functions.php:1865
 msgid "AND"
 msgstr ""
 
@@ -607,7 +607,7 @@ msgstr ""
 msgid "And get notified everytime we publish a new blog post."
 msgstr ""
 
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:39
+#: build/Subscribers/Records.php:639
 #: build/Misc/assets/js/collection.js:216
 msgid "Any"
 msgstr ""
@@ -1158,7 +1158,7 @@ msgstr "klassisch"
 msgid "Click on the design tab to change the appearance of this form."
 msgstr ""
 
-#: src/DB/Automation_Rule.php:594
+#: build/Automation_Rules/Automation_Rule.php:594
 msgid "Click on the merge tag button to insert a dynamic value."
 msgstr ""
 
@@ -1185,11 +1185,11 @@ msgstr ""
 msgid "Clicked on %1$s from campaign %2$s"
 msgstr ""
 
-#: build/Subscribers/Records.php:345
+#: build/Subscribers/Records.php:346
 msgid "Clicked URL"
 msgstr ""
 
-#: build/Emails/Records.php:86
+#: build/Emails/Records.php:88
 msgid "Clicks"
 msgstr ""
 
@@ -1251,9 +1251,9 @@ msgstr ""
 msgid "Compose your email using the block editor"
 msgstr ""
 
+#: build/Automation_Rules/Automation_Rule.php:532
+#: build/Automation_Rules/Automation_Rule.php:536
 #: build/Emails/Main.php:152
-#: src/DB/Automation_Rule.php:532
-#: src/DB/Automation_Rule.php:536
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Emails/assets/js/blocks.js:46
 #: build/Emails/assets/js/email-editor.js:51
@@ -1266,11 +1266,11 @@ msgid "Conditional Logic"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:151
+#: build/Subscribers/Records.php:152
 msgid "Confirm new %s"
 msgstr ""
 
-#: build/Subscribers/Records.php:580
+#: build/Subscribers/Records.php:725
 #: includes/subscriber.php:743
 msgid "Confirm your subscription"
 msgstr "jetzt bestätigen"
@@ -1368,7 +1368,7 @@ msgid "Create multiple lists and send emails to subscribers in specific lists, o
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:723
+#: build/Subscribers/Records.php:868
 #: src/Objects/Generic_Post_Type.php:491
 msgid "Create or update a %s"
 msgstr ""
@@ -1378,9 +1378,9 @@ msgid "Create unsubscribe forms"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:225
-#: build/Emails/Records.php:94
-#: build/Subscribers/Records.php:66
-#: build/Subscribers/Records.php:204
+#: build/Emails/Records.php:96
+#: build/Subscribers/Records.php:67
+#: build/Subscribers/Records.php:205
 #: src/Integrations/WooCommerce/Orders.php:46
 msgid "Created"
 msgstr ""
@@ -1389,7 +1389,7 @@ msgstr ""
 msgid "Created Date"
 msgstr ""
 
-#: build/Subscribers/Records.php:140
+#: build/Subscribers/Records.php:141
 msgid "created or updated"
 msgstr ""
 
@@ -1434,7 +1434,7 @@ msgstr ""
 msgid "Custom CSS"
 msgstr "eigenes CSS"
 
-#: build/Subscribers/Records.php:803
+#: build/Subscribers/Records.php:948
 msgid "Custom Field"
 msgstr ""
 
@@ -1668,7 +1668,7 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:366
 #: build/Forms/Admin/editor-settings.php:159
-#: includes/automation-rules/actions/class-noptin-abstract-action.php:32
+#: includes/automation-rules/actions/class-noptin-abstract-action.php:34
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "Delay"
 msgstr ""
@@ -1685,7 +1685,7 @@ msgid "Delete"
 msgstr "löschen"
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:746
+#: build/Subscribers/Records.php:891
 #: src/Objects/Generic_Post_Type.php:507
 msgid "Delete a %s"
 msgstr ""
@@ -1791,7 +1791,7 @@ msgid "Displays a button"
 msgstr ""
 
 #. translators: %s: Object link destination.
-#: build/Subscribers/Records.php:604
+#: build/Subscribers/Records.php:749
 msgid "Displays a button link to %s"
 msgstr ""
 
@@ -1966,12 +1966,12 @@ msgid "does not contain"
 msgstr ""
 
 #. translators: %s is a list of conditions.
-#: includes/automation-rules/actions/class-noptin-abstract-action.php:133
+#: includes/automation-rules/actions/class-noptin-abstract-action.php:135
 msgid "Does not run if %s"
 msgstr ""
 
 #. translators: %s is a list of conditions.
-#: build/Emails/Records.php:118
+#: build/Emails/Records.php:120
 msgid "Does not send if %s"
 msgstr ""
 
@@ -2073,7 +2073,7 @@ msgstr ""
 msgid "Edit the messages shown when someone submits this form. %1$sSmart tags%2$s are allowed in the message fields."
 msgstr ""
 
-#: build/Emails/Records.php:70
+#: build/Emails/Records.php:72
 msgid "Edit URL"
 msgstr ""
 
@@ -2294,7 +2294,7 @@ msgstr ""
 msgid "Enter a time"
 msgstr ""
 
-#: build/Subscribers/Records.php:812
+#: build/Subscribers/Records.php:957
 msgid "Enter a value to assign the field"
 msgstr ""
 
@@ -2371,7 +2371,7 @@ msgid "Error fetching your license key."
 msgstr ""
 
 #. Translators: %s The error message.
-#: src/Bulk_Emails/Main.php:304
+#: src/Bulk_Emails/Main.php:306
 msgid "Error sending email: %s"
 msgstr ""
 
@@ -2525,7 +2525,7 @@ msgstr ""
 msgid "Field Type"
 msgstr ""
 
-#: build/Subscribers/Records.php:811
+#: build/Subscribers/Records.php:956
 msgid "Field Value"
 msgstr ""
 
@@ -2585,7 +2585,7 @@ msgstr ""
 #. translators: %s: Placeholder for email recipients.
 #. translators: %s: The Example
 #: build/Emails/Admin/Main.php:438
-#: build/Emails/Email.php:916
+#: build/Emails/Email.php:922
 #: includes/forms/views/tab-form.php:70
 #: includes/forms/views/tab-settings.php:108
 #: src/Integrations/WooCommerce/Products.php:88
@@ -2698,8 +2698,8 @@ msgstr ""
 #: build/Settings/Menu.php:241
 #: build/Settings/Menu.php:350
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
-#: includes/functions.php:1805
-#: includes/functions.php:2074
+#: includes/functions.php:1812
+#: includes/functions.php:2081
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/blocks.js:46
@@ -2870,7 +2870,7 @@ msgstr ""
 msgid "I consent to receive promotional emails about your products and services."
 msgstr ""
 
-#: build/Emails/Records.php:53
+#: build/Emails/Records.php:55
 #: src/Integrations/EDD/Customers.php:87
 #: src/Integrations/EDD/Downloads.php:91
 #: src/Integrations/EDD/Orders.php:171
@@ -2960,7 +2960,7 @@ msgstr ""
 msgid "Import Subscribers"
 msgstr ""
 
-#: build/Subscribers/Records.php:68
+#: build/Subscribers/Records.php:69
 #: includes/subscriber.php:1541
 msgid "Imported"
 msgstr ""
@@ -3061,8 +3061,8 @@ msgstr ""
 msgid "Invalid email IDs"
 msgstr ""
 
-#: build/Emails/Email.php:658
-#: build/Emails/Email.php:680
+#: build/Emails/Email.php:664
+#: build/Emails/Email.php:686
 msgid "Invalid recipient"
 msgstr ""
 
@@ -3385,7 +3385,7 @@ msgstr ""
 msgid "Manage your license key"
 msgstr ""
 
-#: build/Subscribers/Records.php:579
+#: build/Subscribers/Records.php:724
 msgid "Manage your preferences"
 msgstr ""
 
@@ -3401,7 +3401,7 @@ msgstr ""
 msgid "Manually Added"
 msgstr ""
 
-#: src/DB/Automation_Rule.php:589
+#: build/Automation_Rules/Automation_Rule.php:589
 msgid "Map custom fields"
 msgstr ""
 
@@ -3501,7 +3501,7 @@ msgstr ""
 msgid "Multiple checkboxes"
 msgstr ""
 
-#: build/Emails/Records.php:57
+#: build/Emails/Records.php:59
 #: src/Integrations/EDD/Customers.php:111
 #: src/Integrations/EDD/Downloads.php:96
 #: src/Integrations/EDD/Order_Items.php:59
@@ -3523,7 +3523,7 @@ msgstr ""
 msgid "Never show on:"
 msgstr "… nie anzeigen auf"
 
-#: build/Subscribers/Records.php:189
+#: build/Subscribers/Records.php:190
 #: src/Integrations/EDD/Orders.php:151
 #: src/Integrations/WooCommerce/Orders.php:857
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
@@ -3576,8 +3576,8 @@ msgstr ""
 msgid "New Subscriber"
 msgstr ""
 
-#: build/Subscribers/Records.php:230
-#: build/Subscribers/Records.php:267
+#: build/Subscribers/Records.php:231
+#: build/Subscribers/Records.php:268
 msgid "New value"
 msgstr ""
 
@@ -3808,7 +3808,7 @@ msgstr ""
 msgid "Number of payments"
 msgstr ""
 
-#: build/Subscribers/Records.php:237
+#: build/Subscribers/Records.php:238
 msgid "Old value"
 msgstr ""
 
@@ -3850,7 +3850,7 @@ msgstr "geöffnet"
 msgid "Opened email campaign %s"
 msgstr ""
 
-#: build/Emails/Records.php:82
+#: build/Emails/Records.php:84
 msgid "Opens"
 msgstr ""
 
@@ -3883,11 +3883,11 @@ msgstr ""
 msgid "Optional. Enter the default value for this field"
 msgstr ""
 
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:80
+#: build/Subscribers/Records.php:680
 msgid "Optional. Exclude recipients by their tags."
 msgstr ""
 
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:73
+#: build/Subscribers/Records.php:673
 msgid "Optional. Filter recipients by their tags."
 msgstr ""
 
@@ -3895,7 +3895,7 @@ msgstr ""
 msgid "Optional. If set, users will only join your newsletter if they consent."
 msgstr ""
 
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:47
+#: build/Subscribers/Records.php:647
 msgid "Optional. Leave blank to send to all"
 msgstr ""
 
@@ -3907,7 +3907,7 @@ msgstr ""
 msgid "Optional. Send this email only if certain conditions are met."
 msgstr ""
 
-#: includes/functions.php:1856
+#: includes/functions.php:1863
 msgid "OR"
 msgstr ""
 
@@ -4079,7 +4079,7 @@ msgstr ""
 msgid "Pending"
 msgstr ""
 
-#: build/Subscribers/Records.php:73
+#: build/Subscribers/Records.php:74
 msgid "Pending email confirmation"
 msgstr ""
 
@@ -4203,7 +4203,7 @@ msgstr "Versehen Sie alle ihre Styles mit '.noptin-optin-form-wrapper'. Ansonste
 msgid "Prefix the id with a minus sign to exclude it from the list"
 msgstr ""
 
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:89
+#: src/Objects/People_List.php:264
 msgid "Premium plans allow you to filter newsletter recipients by their subscription method, tags, lists, and custom fields."
 msgstr ""
 
@@ -4222,7 +4222,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: build/Emails/Records.php:66
+#: build/Emails/Records.php:68
 msgid "Preview URL"
 msgstr ""
 
@@ -4231,7 +4231,7 @@ msgstr ""
 msgid "Previous Package"
 msgstr ""
 
-#: build/Subscribers/Records.php:185
+#: build/Subscribers/Records.php:186
 msgid "Previous status"
 msgstr ""
 
@@ -4518,7 +4518,7 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
-#: build/Subscribers/Records.php:582
+#: build/Subscribers/Records.php:727
 msgid "Resubscribe"
 msgstr ""
 
@@ -4573,7 +4573,7 @@ msgid "Rule not found. It might have been deleted."
 msgstr ""
 
 #. translators: %s is a list of conditions.
-#: includes/automation-rules/actions/class-noptin-abstract-action.php:123
+#: includes/automation-rules/actions/class-noptin-abstract-action.php:125
 msgid "Runs if %s"
 msgstr ""
 
@@ -4586,7 +4586,7 @@ msgstr ""
 msgid "Sales"
 msgstr ""
 
-#: build/Subscribers/Records.php:67
+#: build/Subscribers/Records.php:68
 msgid "Saved"
 msgstr ""
 
@@ -4649,7 +4649,7 @@ msgstr ""
 msgid "Select an option"
 msgstr ""
 
-#: build/Subscribers/Records.php:805
+#: build/Subscribers/Records.php:950
 msgid "Select Field"
 msgstr ""
 
@@ -4666,7 +4666,7 @@ msgstr ""
 msgid "Select the %s to add new subscribers who sign up via this form."
 msgstr ""
 
-#: build/Subscribers/Records.php:804
+#: build/Subscribers/Records.php:949
 msgid "Select the custom field to update"
 msgstr ""
 
@@ -4702,8 +4702,8 @@ msgstr ""
 msgid "Send a plain text email. It will contain no HTML which means open tracking and click tracking will not work."
 msgstr ""
 
-#: build/Emails/Records.php:111
-#: build/Emails/Records.php:112
+#: build/Emails/Records.php:113
+#: build/Emails/Records.php:114
 #: src/DB/Subscriber.php:771
 msgid "Send Email"
 msgstr ""
@@ -4730,11 +4730,11 @@ msgid "Sending has been paused due to sending limits. %1$s emails have been sent
 msgstr ""
 
 #. Translators: %s is the campaign title.
-#: src/Bulk_Emails/Main.php:116
+#: src/Bulk_Emails/Main.php:118
 msgid "Sending the campaign: \"%s\""
 msgstr ""
 
-#: build/Emails/Records.php:78
+#: build/Emails/Records.php:80
 msgid "Sends"
 msgstr ""
 
@@ -4744,7 +4744,7 @@ msgid "Sends an email %s."
 msgstr ""
 
 #. translators: %s is a list of conditions.
-#: build/Emails/Records.php:116
+#: build/Emails/Records.php:118
 msgid "Sends if %s"
 msgstr ""
 
@@ -5059,7 +5059,7 @@ msgid "Status Nicename"
 msgstr ""
 
 #. translators: %s: New status.
-#: build/Subscribers/Records.php:392
+#: build/Subscribers/Records.php:393
 msgid "Status set to %1$s"
 msgstr ""
 
@@ -5096,7 +5096,7 @@ msgid "Subheading"
 msgstr "Zwischenüberschrift"
 
 #: build/Emails/Admin/Table.php:308
-#: build/Emails/Records.php:62
+#: build/Emails/Records.php:64
 msgid "Subject"
 msgstr ""
 
@@ -5181,9 +5181,9 @@ msgstr "Abonnenten"
 msgid "Subscriber activity"
 msgstr ""
 
-#: build/Subscribers/Records.php:752
-#: build/Subscribers/Records.php:774
-#: build/Subscribers/Records.php:796
+#: build/Subscribers/Records.php:897
+#: build/Subscribers/Records.php:919
+#: build/Subscribers/Records.php:941
 msgid "Subscriber ID or email address"
 msgstr ""
 
@@ -5303,9 +5303,9 @@ msgid "Tag subscribers based on their actions and send emails to subscribers wit
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:337
-#: build/Subscribers/Records.php:95
+#: build/Subscribers/Records.php:96
+#: build/Subscribers/Records.php:671
 #: includes/forms/views/tab-form.php:75
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:71
 #: src/Integrations/EDD/Downloads.php:208
 #: src/Integrations/EDD/Downloads.php:213
 #: src/Integrations/WooCommerce/Products.php:538
@@ -5313,7 +5313,7 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: src/Bulk_Emails/Email_Sender_Subscribers.php:78
+#: build/Subscribers/Records.php:678
 msgid "Tags - Exclude"
 msgstr ""
 
@@ -5402,7 +5402,7 @@ msgstr ""
 msgid "Thanks for subscribing to the newsletter."
 msgstr ""
 
-#: build/Forms/Listener.php:620
+#: build/Forms/Listener.php:624
 msgid "Thanks!"
 msgstr ""
 
@@ -5590,7 +5590,7 @@ msgid "The email body cannot be empty."
 msgstr ""
 
 #: build/Emails/Email.php:488
-#: build/Emails/Email.php:646
+#: build/Emails/Email.php:652
 msgid "The email cannot be sent."
 msgstr ""
 
@@ -5598,7 +5598,7 @@ msgstr ""
 msgid "The email has already been sent."
 msgstr ""
 
-#: build/Emails/Email.php:572
+#: build/Emails/Email.php:578
 msgid "The email has no valid recipients."
 msgstr ""
 
@@ -5606,7 +5606,7 @@ msgstr ""
 msgid "The email is paused and cannot be sent."
 msgstr ""
 
-#: build/Emails/Email.php:686
+#: build/Emails/Email.php:692
 msgid "The email is unsubscribed"
 msgstr ""
 
@@ -5798,7 +5798,7 @@ msgstr ""
 msgid "The previous order status."
 msgstr ""
 
-#: build/Subscribers/Records.php:186
+#: build/Subscribers/Records.php:187
 msgid "The previous subscriber status."
 msgstr ""
 
@@ -5810,7 +5810,7 @@ msgstr ""
 msgid "The property of the currently logged-in user."
 msgstr ""
 
-#: build/Subscribers/Records.php:297
+#: build/Subscribers/Records.php:298
 msgid "The removed value"
 msgstr ""
 
@@ -6145,9 +6145,9 @@ msgid "Trial Limit"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:222
+#: build/Automation_Rules/Automation_Rule.php:517
 #: includes/admin/class-noptin-tools.php:91
 #: includes/admin/class-noptin-tools.php:219
-#: src/DB/Automation_Rule.php:517
 msgid "Trigger"
 msgstr ""
 
@@ -6231,13 +6231,13 @@ msgid "Unlimited"
 msgstr ""
 
 #: build/Forms/Renderer.php:168
-#: build/Subscribers/Records.php:581
+#: build/Subscribers/Records.php:726
 #: includes/emails/class-generator.php:156
 msgid "Unsubscribe"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:768
+#: build/Subscribers/Records.php:913
 msgid "Unsubscribe a %s"
 msgstr ""
 
@@ -6246,7 +6246,7 @@ msgid "Unsubscribe URL"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:835
-#: build/Emails/Records.php:90
+#: build/Emails/Records.php:92
 #: includes/forms/forms.php:455
 #: includes/subscriber.php:1599
 #: src/DB/Main.php:495
@@ -6270,11 +6270,11 @@ msgid "Unsubscription Redirect"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:790
+#: build/Subscribers/Records.php:935
 msgid "Update a %s field"
 msgstr ""
 
-#: build/Subscribers/Records.php:729
+#: build/Subscribers/Records.php:874
 msgid "Update existing subscribers"
 msgstr ""
 
@@ -6287,7 +6287,7 @@ msgid "Update Listing"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:226
-#: build/Subscribers/Records.php:203
+#: build/Subscribers/Records.php:204
 #: includes/forms/forms.php:465
 msgid "Updated"
 msgstr ""
@@ -6452,7 +6452,7 @@ msgstr ""
 msgid "View Form"
 msgstr ""
 
-#: build/Emails/Records.php:74
+#: build/Emails/Records.php:76
 msgid "View in browser"
 msgstr ""
 
@@ -6550,7 +6550,7 @@ msgid "Welcome Email"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:164
+#: build/Subscribers/Records.php:165
 msgid "Welcome new %s"
 msgstr ""
 
@@ -6581,27 +6581,27 @@ msgid "What time should this email be sent?"
 msgstr ""
 
 #. translators: %s: field label
-#: build/Subscribers/Records.php:224
+#: build/Subscribers/Records.php:225
 msgid "When %s changes"
 msgstr ""
 
 #. translators: %s: Object type label and new state
-#: build/Subscribers/Records.php:138
+#: build/Subscribers/Records.php:139
 msgid "When a %1$s is %2$s"
 msgstr ""
 
 #. translators: %s: field label
-#: build/Subscribers/Records.php:260
+#: build/Subscribers/Records.php:261
 msgid "When a %1$s is added to %2$s"
 msgstr ""
 
 #. translators: %s: field label
-#: build/Subscribers/Records.php:290
+#: build/Subscribers/Records.php:291
 msgid "When a %1$s is removed from %2$s"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: build/Subscribers/Records.php:338
+#: build/Subscribers/Records.php:339
 msgid "When a %s clicks on a link in an email"
 msgstr ""
 
@@ -6657,12 +6657,12 @@ msgstr ""
 msgid "When a %s's lifetime value surpasses a certain amount"
 msgstr ""
 
-#: build/Subscribers/Records.php:322
+#: build/Subscribers/Records.php:323
 msgid "When a subscriber opens an email campaign"
 msgstr ""
 
 #. translators: %s: new state
-#: build/Subscribers/Records.php:179
+#: build/Subscribers/Records.php:180
 msgid "When a subscriber's status is set to %1$s"
 msgstr ""
 
@@ -6974,7 +6974,7 @@ msgid "Form draft updated."
 msgstr ""
 
 #. translators: %s is a number.
-#: includes/functions.php:1814
+#: includes/functions.php:1821
 msgctxt "number"
 msgid "%1$s and %2$s"
 msgstr ""

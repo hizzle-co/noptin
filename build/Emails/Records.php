@@ -198,7 +198,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 
 		$campaign = noptin_get_email_campaign_object( $automated_email_id );
 
-		if ( ! $campaign->is_mass_mail() ) {
+		if ( ! $campaign->is_mass_mail() || ! noptin_has_active_license_key() ) {
 			return $tags;
 		}
 
@@ -219,6 +219,10 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
 	 */
 	public function prepare_skipped_rules( $conditional_logic, $rule ) {
+		if ( ! noptin_has_active_license_key() ) {
+			return;
+		}
+
 		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
 
 		$GLOBALS['noptin_email_' . $automated_email_id . '_extra_conditional_logic'] = $conditional_logic;
