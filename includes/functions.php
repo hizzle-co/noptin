@@ -1791,10 +1791,17 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 
 	// Loop through each rule.
 	foreach ( $conditional_logic['rules'] as $rule ) {
+		if ( empty( $rule['type'] ) ) {
+			continue;
+		}
+
 		$condition = Noptin_Dynamic_Content_Tags::search( $rule['type'], $smart_tags );
 
 		if ( empty( $condition ) ) {
-			continue;
+			$condition = array(
+				'description'       => '[[' . $rule['type'] . ']]',
+				'conditional_logic' => 'string',
+			);
 		}
 
 		$label     = isset( $condition['label'] ) ? $condition['label'] : $condition['description'];

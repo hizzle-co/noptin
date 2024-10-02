@@ -208,7 +208,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			return $tags;
 		}
 
-		$collection_tags = new \Hizzle\Noptin\Objects\Tags( $collection );
+		$collection_tags = new \Hizzle\Noptin\Objects\Tags( $collection->type );
 		return array_merge(
 			$tags,
 			array_keys( $collection_tags->tags )
