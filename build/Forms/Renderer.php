@@ -232,7 +232,7 @@ class Renderer {
 
 		// (Maybe) cache this instance.
 		if ( empty( $form ) ) {
-			$args['noptin-config'] = noptin_encrypt( wp_json_encode( array_filter( $args ) ) );
+			$args['noptin-config'] = array_filter( $args );
 		}
 
 		// Run before output hook.
