@@ -476,6 +476,12 @@ class Listener {
 	 */
 	public function get_redirect_url() {
 
+		$url = trim( $this->get_cached( 'redirectUrl' ) );
+
+		if ( empty( $url ) ) {
+			$url = trim( $this->get_cached( 'redirect' ) );
+		}
+
 		/**
 		 * Filter's a shortcode/form's redirect URL.
 		 *
@@ -484,7 +490,7 @@ class Listener {
 		 * @param string $redirect_url
 		 * @param Listener $listener
 		 */
-		return apply_filters( 'noptin_form_redirect_url', trim( $this->get_cached( 'redirect' ) ), $this );
+		return apply_filters( 'noptin_form_redirect_url', $url, $this );
 	}
 
 	/**
