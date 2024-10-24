@@ -180,22 +180,6 @@ class Schema {
 				'is_dynamic'  => true,
 			),
 
-			'first_name' => array(
-				'type'        => 'VARCHAR',
-				'length'      => 100,
-				'description' => __( "The subscriber's first name.", 'newsletter-optin-box' ),
-				'nullable'    => false,
-				'default'     => '',
-			),
-
-			'last_name'  => array(
-				'type'        => 'VARCHAR',
-				'length'      => 100,
-				'description' => __( "The subscriber's last name.", 'newsletter-optin-box' ),
-				'nullable'    => false,
-				'default'     => '',
-			),
-
 			'email'      => array(
 				'type'        => 'VARCHAR',
 				'length'      => 255,
@@ -208,7 +192,7 @@ class Schema {
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
 			// Skip first name, last name and email.
-			if ( ! in_array( $custom_field['merge_tag'], array( 'first_name', 'last_name', 'email' ), true ) ) {
+			if ( ! in_array( $custom_field['merge_tag'], array( 'email' ), true ) ) {
 				$props = array_merge( $props, noptin_convert_custom_field_to_schema( $custom_field ) );
 			}
 		}

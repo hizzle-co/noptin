@@ -142,14 +142,28 @@ class Action extends \Noptin_Abstract_Action {
 			}
 
 			if ( ! empty( $args['show_in_meta'] ) || ! empty( $args['required'] ) ) {
-				$value = isset( $settings[ $key ] ) ? esc_html( $settings[ $key ] ) : '';
+				$value = isset( $settings[ $key ] ) ? $settings[ $key ] : '';
 
 				if ( $value && ! empty( $args['options'] ) ) {
-					$value = isset( $args['options'][ $value ] ) ? $args['options'][ $value ] : $value;
+					$new_value = array();
+
+					foreach ( (array) $value as $v ) {
+						if ( isset( $args['options'][ $v ] ) ) {
+							$new_value[] = $args['options'][ $v ];
+						} else {
+							$new_value[] = $v;
+						}
+					}
+
+					$value = $new_value;
+				}
+
+				if ( is_array( $value ) ) {
+					$value = implode( ', ', $value );
 				}
 
 				if ( $value ) {
-					$meta[ esc_html( $args['label'] ) ] = $value;
+					$meta[ esc_html( $args['label'] ) ] = esc_html( $value );
 				}
 			}
 		}

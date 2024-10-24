@@ -1256,6 +1256,10 @@ function get_noptin_custom_fields( $public_only = false ) {
 			}
 		}
 
+		if ( 'first_name' === $field['merge_tag'] || 'last_name' === $field['merge_tag'] ) {
+			$prepared_field['predefined'] = false;
+		}
+
 		$fields[] = $prepared_field;
 	}
 

@@ -88,7 +88,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'First Name', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'required'   => false,
-				'predefined' => true,
+				'predefined' => false,
 			),
 			array(
 				'type'       => 'last_name',
@@ -96,7 +96,7 @@ class Noptin_Custom_Fields {
 				'label'      => __( 'Last Name', 'newsletter-optin-box' ),
 				'visible'    => true,
 				'required'   => false,
-				'predefined' => true,
+				'predefined' => false,
 			),
 			array(
 				'type'       => 'email',

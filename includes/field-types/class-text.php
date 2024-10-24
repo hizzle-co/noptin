@@ -77,6 +77,12 @@ class Noptin_Custom_Field_Text extends Noptin_Custom_Field_Type {
 			)
 		);
 
+		if ( 'first_name' === $custom_field['merge_tag'] || 'last_name' === $custom_field['merge_tag'] ) {
+			$schema[ $column ]['length']   = 100;
+			$schema[ $column ]['nullable'] = false;
+			$schema[ $column ]['default']  = '';
+		}
+
 		// Sanitize options.
 		if ( is_callable( array( $this, 'sanitize_value' ) ) ) {
 			$schema[ $column ]['sanitize_callback'] = array( $this, 'sanitize_value' );
