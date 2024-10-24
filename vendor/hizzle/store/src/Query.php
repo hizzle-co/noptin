@@ -312,7 +312,7 @@ class Query {
 			$table_field = $this->prefix_field( $field );
 
 			if ( empty( $table_field ) ) {
-				throw new Store_Exception( 'query_invalid_field', __( 'Invalid aggregate field.', 'hizzle-store' ) );
+				throw new Store_Exception( 'query_invalid_field', 'Invalid aggregate field.' );
 			}
 
 			foreach ( wp_parse_list( $function ) as $function ) {
@@ -320,7 +320,7 @@ class Query {
 				// Ensure the function is supported.
 				$function_upper = strtoupper( $function );
 				if ( ! in_array( $function_upper, array( 'AVG', 'COUNT', 'MAX', 'MIN', 'SUM' ), true ) ) {
-					throw new Store_Exception( 'query_invalid_function', __( 'Invalid aggregate function.', 'hizzle-store' ) );
+					throw new Store_Exception( 'query_invalid_function', 'Invalid aggregate function.' );
 				}
 
 				$function             = strtolower( $function );
@@ -344,7 +344,7 @@ class Query {
 				$field       = esc_sql( sanitize_key( $field ) );
 				$table_field = $this->prefix_field( $field );
 				if ( empty( $table_field ) ) {
-					throw new Store_Exception( 'query_invalid_field', __( 'Invalid group by field.', 'hizzle-store' ) );
+					throw new Store_Exception( 'query_invalid_field', 'Invalid group by field.' );
 				}
 
 				// Handle casting and timezone conversion
@@ -386,7 +386,7 @@ class Query {
 				// Ensure the field is supported.
 				$field = $this->prefix_field( esc_sql( sanitize_key( $field ) ) );
 				if ( empty( $field ) ) {
-					throw new Store_Exception( 'query_invalid_field', __( 'Invalid extra field.', 'hizzle-store' ) );
+					throw new Store_Exception( 'query_invalid_field', 'Invalid extra field.' );
 				}
 
 				$this->query_fields[] = $field;
@@ -395,10 +395,10 @@ class Query {
 
 		// Abort if no fields were aggregated.
 		if ( empty( $this->query_fields ) ) {
-			throw new Store_Exception( 'query_missing_aggregate_fields', __( 'Missing aggregate fields.', 'hizzle-store' ) );
+			throw new Store_Exception( 'query_missing_aggregate_fields', 'Missing aggregate fields.' );
 		}
 
-		$this->query_fields = implode( ', ', array_unique( $this->query_fields ) );
+		$this->query_fields = implode( ', ', array_unique( (array) $this->query_fields ) );
 	}
 
 	/**

@@ -365,6 +365,10 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 */
 	public function subscriber_state_changed( $subscriber, $from = null ) {
 
+		if ( is_numeric( $subscriber ) ) {
+			$subscriber = noptin_get_subscriber( $subscriber );
+		}
+
 		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
 			return;
 		}

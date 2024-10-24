@@ -104,7 +104,7 @@ class Store {
 	public static function instance( $namespace ) {
 
 		if ( ! isset( self::$instances[ $namespace ] ) ) {
-			throw new Store_Exception( 'missing_store', wp_sprintf( 'Store %s not found.', $namespace ) );
+			throw new Store_Exception( 'missing_store', wp_sprintf( 'Store %s not found.', esc_html( $namespace ) ) );
 		}
 
 		return self::$instances[ $namespace ];

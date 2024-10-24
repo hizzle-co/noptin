@@ -1195,6 +1195,8 @@ class REST_Controller extends \WP_REST_Controller {
 			return is_wp_error( $result ) ? $result : array( 'updated' => true, 'id' => $id );
 		}
 
+		do_action( $collection->get_full_name() . '_before_import_item', $item );
+
 		// Create item.
 		$result = rest_ensure_response( $this->create_batch_item( $request, $item ) );
 
@@ -1355,14 +1357,15 @@ class REST_Controller extends \WP_REST_Controller {
 				apply_filters(
 					'hizzle_rest_' . $this->get_normalized_rest_base() . '_collection_js_params',
 					array(
-						'schema'  => array_values( $schema ),
-						'ignore'  => array(),
-						'hidden'  => $hidden,
-						'routes'  => $this->get_admin_app_routes(),
-						'labels'  => (object) $collection->labels,
-						'id_prop' => $default,
-						'tabs'    => $tabs,
-						'fills'   => array(),
+						'schema'   => array_values( $schema ),
+						'ignore'   => array(),
+						'hidden'   => $hidden,
+						'routes'   => $this->get_admin_app_routes(),
+						'labels'   => (object) $collection->labels,
+						'settings' => empty( $collection->settings ) ? null : $collection->settings,
+						'id_prop'  => $default,
+						'tabs'     => $tabs,
+						'fills'    => array(),
 					)
 				)
 			);
