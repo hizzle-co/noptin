@@ -57,6 +57,14 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			$smart_tags = array( $smart_tags );
 		}
 
+		// Ensure we only replace with callable smart tags.
+		$smart_tags = array_filter(
+			$smart_tags,
+			function ( $smart_tag ) use ( $method ) {
+				return is_object( $smart_tag ) && is_callable( array( $smart_tag, $method ) );
+			}
+		);
+
 		foreach ( $smart_tags as $smart_tag ) {
 			$smart_tag->is_partial = $is_partial;
 			$content               = $smart_tag->$method( $content );
@@ -587,7 +595,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		}
 
 		if ( ! empty( $tax_query ) ) {
-
 			if ( 1 < count( $tax_query ) ) {
 				$tax_query['relation'] = count( noptin_parse_list( $post_type ) ) > 1 ? 'OR' : 'AND';
 			}
@@ -644,7 +651,6 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 			// Custom field key.
 			if ( ! is_array( $value ) ) {
-
 				if ( ! is_numeric( $key ) ) {
 					$flat[ $key ] = $value;
 				}
