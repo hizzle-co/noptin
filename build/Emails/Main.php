@@ -411,10 +411,25 @@ class Main {
 					'label'        => __( 'Sequence / Course', 'newsletter-optin-box' ),
 					'plural_label' => __( 'Sequences / Courses', 'newsletter-optin-box' ),
 					'icon'         => 'clock',
-					'upsell'       => __( 'Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc. Install the Ultimate Addons Pack to get started.', 'newsletter-optin-box' ),
+					'upsell'       => __( 'Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc.', 'newsletter-optin-box' ),
 				)
 			);
 		}
+
+		self::register_email_type(
+			array(
+				'type'                => 'email_template',
+				'plural'              => 'email_templates',
+				'label'               => __( 'Template', 'newsletter-optin-box' ),
+				'plural_label'        => __( 'Templates', 'newsletter-optin-box' ),
+				'new_campaign_label'  => __( 'New Email Template', 'newsletter-optin-box' ),
+				'click_to_add_first'  => __( 'Click the button below to set-up your first email template', 'newsletter-optin-box' ),
+				'upsell'              => noptin_has_active_license_key() ? false : __( 'Create your own reusable email templates.', 'newsletter-optin-box' ),
+				'supports_recipients' => false,
+				'supports_menu_order' => true,
+				'icon'                => 'admin-page',
+			)
+		);
 
 		// Trash emails.
 		self::register_email_type(
