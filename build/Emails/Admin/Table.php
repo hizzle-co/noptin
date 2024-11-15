@@ -187,9 +187,16 @@ class Table extends \WP_List_Table {
 			),
 
 			'duplicate' => sprintf(
-				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
-				esc_url( $item->get_action_url( 'duplicate_campaign' ) ),
-				esc_attr__( 'Are you sure you want to duplicate this campaign?', 'newsletter-optin-box' ),
+				'<span data-app="%s" class="noptin-duplicate-campaign">%s</span>',
+				esc_attr(
+					wp_json_encode(
+						array(
+							'name'    => $item->name,
+							'subject' => $item->subject,
+							'url'     => $item->get_action_url( 'duplicate_campaign' ),
+						)
+					)
+				),
 				esc_html__( 'Duplicate', 'newsletter-optin-box' )
 			),
 
@@ -419,7 +426,7 @@ class Table extends \WP_List_Table {
 		// Row actions.
 		$row_actions = apply_filters( 'noptin_email_row_actions', $row_actions, $item, $this );
 		if ( ! empty( $row_actions ) ) {
-			$title .= '<div class="row-actions">' . $this->row_actions( $row_actions ) . '</div>';
+			$title .= $this->row_actions( $row_actions );
 		}
 
 		return $title;

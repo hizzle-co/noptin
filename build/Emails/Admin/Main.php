@@ -209,6 +209,14 @@ class Main {
 			$args['status'] = 'draft';
 		}
 
+		if ( isset( $_GET['name'] ) ) {
+			$args['name'] = sanitize_text_field( wp_unslash( rawurldecode( $_GET['name'] ) ) );
+		}
+
+		if ( isset( $_GET['subject'] ) ) {
+			$args['subject'] = sanitize_text_field( wp_unslash( rawurldecode( $_GET['subject'] ) ) );
+		}
+
 		$duplicate = $campaign->duplicate( $args );
 
 		if ( $duplicate instanceof \Hizzle\Noptin\Emails\Email && $duplicate->exists() ) {
