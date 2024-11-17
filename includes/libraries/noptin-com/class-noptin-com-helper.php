@@ -99,6 +99,7 @@ class Noptin_COM_Helper {
 
 		// Save the license key.
 		Noptin_COM::update( 'license_key', $license_key );
+		Noptin_COM::update( 'active_license_keys', '' );
 
 		Noptin_COM_Updater::flush_updates_cache();
 

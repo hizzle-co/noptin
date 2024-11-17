@@ -137,6 +137,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 3.6.4 =
+* Fix: Show extra confirmation when duplicating an email campaign.
+
 = 3.6.3 =
 * Add: Ability to create custom newsletter templates.
 
