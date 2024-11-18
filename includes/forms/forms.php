@@ -471,6 +471,12 @@ function get_default_noptin_form_messages() {
 				'label'       => __( 'Updated', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when an existing subscriber updates their details via this form.', 'newsletter-optin-box' ),
 				'default'     => __( 'Thank you, your details have been updated.', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'key'   => 'update_existing',
+						'value' => true,
+					),
+				),
 			),
 		)
 	);

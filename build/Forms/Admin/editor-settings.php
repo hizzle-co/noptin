@@ -30,6 +30,12 @@ $editor_settings = array(
 			'id'       => 'basicSettings',
 			'children' => array(
 
+				'update_existing' => array(
+					'type'  => 'checkbox',
+					'el'    => 'input',
+					'label' => __( 'Update existing subscribers if they match the submitted email address.', 'newsletter-optin-box' ),
+				),
+
 				'inject'          => array(
 					'el'         => 'select',
 					'conditions' => array(
@@ -76,7 +82,7 @@ $editor_settings = array(
 		),
 
 		// Messages.
-		'messages'       => array(
+		'messages'        => array(
 			'el'       => 'panel',
 			'title'    => __( 'Messages', 'newsletter-optin-box' ),
 			'id'       => 'messagesSettings',
