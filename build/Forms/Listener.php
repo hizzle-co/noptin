@@ -588,11 +588,12 @@ class Listener {
 			if ( is_legacy_noptin_form( $source ) ) {
 				$form = noptin_get_optin_form( $source );
 
-				// TODO: Allow setting different messages for different actions in the form settings.
 				if ( $form ) {
-					$messages = array(
-						'success' => $form->successMessage,
-					);
+					$messages = array();
+
+					foreach ( array_keys( get_default_noptin_form_messages() ) as $message_id ) {
+						$messages[ $message_id ] = $form->__get( "{$message_id}Message" );
+					}
 				}
 			}
 		}
@@ -600,6 +601,8 @@ class Listener {
 		if ( ! is_array( $messages ) ) {
 			$messages = array();
 		}
+
+		$messages = array_filter( $messages );
 
 		// Were there any errors?
 		if ( $this->error->has_errors() ) {

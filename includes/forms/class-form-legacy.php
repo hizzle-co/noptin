@@ -169,7 +169,6 @@ class Noptin_Form_Legacy {
 			'inject'                => '0',
 			'buttonPosition'        => 'block',
 			'subscribeAction'       => 'message', // redirect.
-			'successMessage'        => get_noptin_option( 'success_message' ),
 			'redirectUrl'           => '',
 
 			// Form Design.

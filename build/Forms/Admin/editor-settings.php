@@ -6,6 +6,27 @@
 
 defined( 'ABSPATH' ) || exit;
 
+$confirmation_messages = array();
+
+foreach ( get_default_noptin_form_messages() as $message_id => $message_details ) {
+	$confirmation_messages[ "{$message_id}Message" ] = array(
+		'type'        => 'text',
+		'el'          => 'input',
+		'label'       => $message_details['label'],
+		'description' => $message_details['description'],
+		'placeholder' => $message_details['default'],
+	);
+
+	if ( 'success' === $message_id ) {
+		$confirmation_messages['successMessage']['conditions'] = array(
+			array(
+				'key'   => 'subscribeAction',
+				'value' => 'message',
+			),
+		);
+	}
+}
+
 $editor_settings = array(
 	'settings'     => array(
 		'label'           => __( 'Settings', 'newsletter-optin-box' ),
@@ -45,26 +66,13 @@ $editor_settings = array(
 					),
 				),
 
-				// Success message after subscription.
-				'successMessage'  => array(
-					'type'       => 'textarea',
-					'el'         => 'textarea',
-					'label'      => __( 'Success message', 'newsletter-optin-box' ),
-					'conditions' => array(
-						array(
-							'key'   => 'subscribeAction',
-							'value' => 'message',
-						),
-					),
-				),
-
 				// Where should we redirect the user after subscription?
 				'redirectUrl'     => array(
-					'type'       => 'text',
-					'el'         => 'input',
-					'label'      => __( 'Redirect url', 'newsletter-optin-box' ),
-					'placeholde' => 'http://example.com/success',
-					'conditions' => array(
+					'type'        => 'text',
+					'el'          => 'input',
+					'label'       => __( 'Redirect url', 'newsletter-optin-box' ),
+					'placeholder' => 'http://example.com/success',
+					'conditions'  => array(
 						array(
 							'key'   => 'subscribeAction',
 							'value' => 'redirect',
@@ -73,6 +81,14 @@ $editor_settings = array(
 				),
 
 			),
+		),
+
+		// Messages.
+		'messages'       => array(
+			'el'       => 'panel',
+			'title'    => __( 'Messages', 'newsletter-optin-box' ),
+			'id'       => 'messagesSettings',
+			'children' => $confirmation_messages,
 		),
 
 		// Trigger Options.
