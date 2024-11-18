@@ -15,16 +15,8 @@ foreach ( get_default_noptin_form_messages() as $message_id => $message_details 
 		'label'       => $message_details['label'],
 		'description' => $message_details['description'],
 		'placeholder' => $message_details['default'],
+		'conditions'  => $message_details['conditions'] ?? array(),
 	);
-
-	if ( 'success' === $message_id ) {
-		$confirmation_messages['successMessage']['conditions'] = array(
-			array(
-				'key'   => 'subscribeAction',
-				'value' => 'message',
-			),
-		);
-	}
 }
 
 $editor_settings = array(

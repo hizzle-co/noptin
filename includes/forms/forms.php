@@ -425,6 +425,12 @@ function get_default_noptin_form_messages() {
 				'label'       => __( 'Successfully subscribed', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when someone successfully fills the form.', 'newsletter-optin-box' ),
 				'default'     => __( 'Thanks for subscribing to the newsletter.', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'key'   => 'subscribeAction',
+						'value' => 'message',
+					),
+				),
 			),
 			'invalid_email'          => array(
 				'label'       => __( 'Invalid email address', 'newsletter-optin-box' ),
