@@ -150,11 +150,12 @@ class Renderer {
 			} else {
 				$atts = array_merge(
 					array(
-						'fields'     => $form->fields,
-						'redirect'   => $form->redirect,
-						'labels'     => empty( $form->showLabels ) ? 'hide' : 'show',
-						'acceptance' => $form->gdprCheckbox ? $form->gdprConsentText : '',
-						'submit'     => $form->noptinButtonLabel,
+						'fields'         => $form->fields,
+						'redirect'       => $form->redirect,
+						'labels'         => empty( $form->showLabels ) ? 'hide' : 'show',
+						'acceptance'     => $form->gdprCheckbox ? $form->gdprConsentText : '',
+						'is_unsubscribe' => !! $form->is_unsubscribe,
+						'submit'         => $form->noptinButtonLabel,
 					),
 					$atts
 				);

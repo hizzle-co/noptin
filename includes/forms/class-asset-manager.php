@@ -87,7 +87,7 @@ class Noptin_Form_Asset_Manager {
 	 * @return string
 	 */
 	public function add_defer_attribute( $tag, $handle ) {
-		if ( ! in_array( $handle, array( 'noptin-form', 'noptin-popups' ), true ) || stripos( $tag, ' defer' ) !== false ) {
+		if ( ! in_array( $handle, array( 'noptin-form' ), true ) || stripos( $tag, ' defer' ) !== false ) {
 			return $tag;
 		}
 

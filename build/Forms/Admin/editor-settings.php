@@ -30,10 +30,22 @@ $editor_settings = array(
 			'id'       => 'basicSettings',
 			'children' => array(
 
+				'is_unsubscribe' => array(
+					'type'  => 'checkbox', 
+					'el'    => 'input',
+					'label' => __( 'This is an unsubscribe form.', 'newsletter-optin-box' ),
+				),
+
 				'update_existing' => array(
 					'type'  => 'checkbox',
 					'el'    => 'input',
 					'label' => __( 'Update existing subscribers if they match the submitted email address.', 'newsletter-optin-box' ),
+					'conditions'  => array(
+						array(
+							'key'   => 'is_unsubscribe',
+							'value' => false,
+						),
+					),
 				),
 
 				'inject'          => array(

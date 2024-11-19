@@ -430,6 +430,10 @@ function get_default_noptin_form_messages() {
 						'key'   => 'subscribeAction',
 						'value' => 'message',
 					),
+					array(
+						'key'   => 'is_unsubscribe',
+						'value' => false,
+					),
 				),
 			),
 			'invalid_email'          => array(
@@ -451,6 +455,12 @@ function get_default_noptin_form_messages() {
 				'label'       => __( 'Already subscribed', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when an existing subscriber tries to sign-up again.', 'newsletter-optin-box' ),
 				'default'     => __( 'You are already subscribed to the newsletter, thank you!', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'key'   => 'is_unsubscribe',
+						'value' => false,
+					),
+				),
 			),
 			'error'                  => array(
 				'label'       => __( 'Generic error', 'newsletter-optin-box' ),
@@ -461,11 +471,23 @@ function get_default_noptin_form_messages() {
 				'label'       => __( 'Unsubscribed', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when an existing subscriber unsubscribes via this form.', 'newsletter-optin-box' ),
 				'default'     => __( 'You were successfully unsubscribed.', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'key'   => 'is_unsubscribe',
+						'value' => true,
+					),
+				),
 			),
 			'not_subscribed'         => array(
 				'label'       => __( 'Not subscribed', 'newsletter-optin-box' ),
 				'description' => __( 'Shown when someone unsubscribes with an email that is not already subscribed.', 'newsletter-optin-box' ),
 				'default'     => __( 'The given email address is not subscribed.', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'key'   => 'is_unsubscribe',
+						'value' => true,
+					),
+				),
 			),
 			'updated'                => array(
 				'label'       => __( 'Updated', 'newsletter-optin-box' ),
@@ -475,6 +497,10 @@ function get_default_noptin_form_messages() {
 					array(
 						'key'   => 'update_existing',
 						'value' => true,
+					),
+					array(
+						'key'   => 'is_unsubscribe',
+						'value' => false,
 					),
 				),
 			),
