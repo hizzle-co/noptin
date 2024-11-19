@@ -496,6 +496,17 @@ $editor_settings = array(
 					'label' => __( 'Hide opt-in fields', 'newsletter-optin-box' ),
 				),
 
+				'hideEmail' => array(
+					'type'  => 'switch',
+					'el'    => 'input',
+					'label' => __( 'Hide email field if the email address is already known', 'newsletter-optin-box' ),
+					'conditions' => array(
+						array(
+							'key'   => 'hideFields',
+							'value' => false,
+						),
+					),
+				),
 			),
 		),
 

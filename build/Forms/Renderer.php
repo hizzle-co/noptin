@@ -146,9 +146,10 @@ class Renderer {
 
 			// Merge form settings with passed attributes.
 			if ( ! is_legacy_noptin_form( (int) $atts['form'] ) ) {
-				$atts = array_merge( $form->settings, $atts );
+				$atts = array_merge( $atts, $form->settings );
 			} else {
 				$atts = array_merge(
+					$atts,
 					array(
 						'fields'         => $form->fields,
 						'redirect'       => $form->redirect,
@@ -156,8 +157,7 @@ class Renderer {
 						'acceptance'     => $form->gdprCheckbox ? $form->gdprConsentText : '',
 						'is_unsubscribe' => !! $form->is_unsubscribe,
 						'submit'         => $form->noptinButtonLabel,
-					),
-					$atts
+					)
 				);
 			}
 		}
@@ -424,6 +424,17 @@ class Renderer {
 		$is_legacy_form = $form && is_legacy_noptin_form( $form->id );
 		$hide_fields    = $is_legacy_form && ! empty( $form->hideFields );
 		$is_single_line = $is_legacy_form && $form->singleLine;
+		$current_email  = '';
+
+		if ( $is_legacy_form && ! empty( $form->hideEmail ) ) {
+			$subscriber = noptin_get_subscriber( (int) get_current_noptin_subscriber_id() );
+
+			if ( $subscriber->exists() ) {
+				$current_email = $subscriber->get_email();
+			} elseif ( get_current_user_id() ) {
+				$current_email = wp_get_current_user()->user_email;
+			}
+		}
 
 		// Change field labels.
 		foreach ( $fields as $key => $field ) {
@@ -451,6 +462,11 @@ class Renderer {
 
 			// For each form field...
 			foreach ( $fields as $custom_field ) {
+
+				if ( $current_email && 'email' === $custom_field['merge_tag'] ) {
+					printf( '<input type="hidden" name="noptin_fields[email]" value="%s">', esc_attr( $current_email ) );
+					continue;
+				}
 
 				// Wrap the HTML name field into noptin_fields[ $merge_tag ];
 				$custom_field['wrap_name'] = true;

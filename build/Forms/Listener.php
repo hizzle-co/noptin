@@ -290,9 +290,10 @@ class Listener {
 		$subscriber = apply_filters( 'noptin_form_subscriber_details', $subscriber, $source, $this );
 
 		// Does the subscriber exist already?
-		$subscriber_id = get_noptin_subscriber_id_by_email( sanitize_email( $subscriber['email'] ) );
-		if ( ! empty( $subscriber_id ) ) {
+		$subscriber_obj = noptin_get_subscriber( (int) get_noptin_subscriber_id_by_email( sanitize_email( $subscriber['email'] ) ) );
+		if ( $subscriber_obj->exists() ) {
 
+			$subscriber_id = $subscriber_obj->get_id();
 			$this->subscriber_id = $subscriber_id;
 
 			// Maybe abort...
@@ -300,6 +301,11 @@ class Listener {
 			if ( empty( $update_existing ) ) {
 				$this->last_event = 'already_subscribed';
 				return;
+			}
+
+			// If status is "unsubscribed", set it to "subscribed".
+			if ( 'unsubscribed' === $subscriber_obj->get_status() ) {
+				$subscriber['status'] = 'subscribed';
 			}
 
 			// ... or update the subscriber.
