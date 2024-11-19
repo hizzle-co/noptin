@@ -278,6 +278,121 @@ function get_noptin_subscribers_count( $args = array() ) {
 }
 
 /**
+ * Prepares subscriber source fields.
+ *
+ * @access public
+ * @since  1.0.5
+ * @return array Prepared fields.
+ */
+function prepare_noptin_subscriber_source_fields( $source, $fields = array() ) {
+
+	// Set default values.
+	$listener = \Hizzle\Noptin\Forms\Main::$listener;
+	$fields   = array();
+
+	// Loop through all custom fields.
+	foreach ( get_noptin_multicheck_custom_fields() as $field ) {
+
+		// Skip if no options.
+		if ( empty( $field['options'] ) ) {
+			continue;
+		}
+
+		if ( ! empty( $listener ) && ! is_null( $listener->processed_form ) ) {
+			$values = $listener->get_cached( $field['merge_tag'] );
+
+			// Maybe try with the noptin_ prefix.
+			if ( empty( $values ) ) {
+				$values = $listener->get_cached( 'noptin_' . $field['merge_tag'] );
+			}
+
+			if ( ! empty( $values ) ) {
+				$fields[ $field['merge_tag'] ] = array_unique(
+					array_merge(
+						array_diff( array_filter( noptin_parse_list( $values, true ) ), array( '-1' ) ),
+						( isset( $fields[ $field['merge_tag'] ] ) && is_array( $fields[ $field['merge_tag'] ] ) ) ? $fields[ $field['merge_tag'] ] : array()
+					)
+				);
+			}
+		} elseif ( ! empty( $source ) ) {
+
+			if ( is_numeric( $source ) ) {
+
+				// The user subscribed via an opt-in form.
+				$form          = noptin_get_optin_form( $source );
+				$default_value = $form->__get( $field['merge_tag'] );
+
+			} else {
+
+				// The user subscribed via other means.
+				$default_value = get_option(
+					sprintf(
+						'%s_default_%s',
+						$source,
+						$field['merge_tag']
+					),
+					'-1'
+				);
+
+			}
+
+			if ( '-1' !== $default_value && '' !== $default_value ) {
+				$fields[ $field['merge_tag'] ] = array_unique(
+					array_merge(
+						array_diff( array_filter( noptin_parse_list( $default_value, true ) ), array( '-1' ) ),
+						( isset( $fields[ $field['merge_tag'] ] ) && is_array( $fields[ $field['merge_tag'] ] ) ) ? $fields[ $field['merge_tag'] ] : array()
+					)
+				);
+			}
+		}
+	}
+
+	if ( ! isset( $fields['tags'] ) ) {
+
+		if ( ! empty( $listener ) && ! is_null( $listener->processed_form ) ) {
+			$tags = array_filter( noptin_parse_list( $listener->get_cached( 'tags' ), true ) );
+
+			if ( ! empty( $tags ) ) {
+				$fields['tags'] = $tags;
+			}
+		} elseif ( ! empty( $fields['source'] ) ) {
+
+			if ( is_numeric( $fields['source'] ) ) {
+
+				// The user subscribed via an opt-in form.
+				$form = noptin_get_optin_form( $fields['source'] );
+				$tags = $form->__get( 'tags' );
+
+			} else {
+
+				// The user subscribed via other means.
+				$tags = get_option(
+					sprintf(
+						'%s_default_tags',
+						$fields['source']
+					),
+					'-1'
+				);
+
+			}
+
+			$tags = array_diff( array_filter( noptin_parse_list( $tags, true ) ), array( '-1' ) );
+
+			if ( ! empty( $tags ) ) {
+				$fields['tags'] = array_unique(
+					array_merge(
+						$tags,
+						( isset( $fields['tags'] ) && is_array( $fields['tags'] ) ) ? $fields['tags'] : array()
+					)
+				);
+			}
+		}
+	}
+
+	return $fields;
+}
+
+/**
  * Inserts a new subscriber into the database
  *
  * This function returns the subscriber id if the subscriber exists.
@@ -320,91 +435,7 @@ function add_noptin_subscriber( $fields ) {
 	}
 
 	// Set default values.
-	$listener = \Hizzle\Noptin\Forms\Main::$listener;
-
-	// Loop through all custom fields.
-	foreach ( get_noptin_multicheck_custom_fields() as $field ) {
-
-		// Skip if no options.
-		if ( empty( $field['options'] ) || isset( $fields[ $field['merge_tag'] ] ) ) {
-			continue;
-		}
-
-		if ( ! empty( $listener ) && ! is_null( $listener->processed_form ) ) {
-			$values = $listener->get_cached( $field['merge_tag'] );
-
-			// Maybe try with the noptin_ prefix.
-			if ( empty( $values ) ) {
-				$values = $listener->get_cached( 'noptin_' . $field['merge_tag'] );
-			}
-
-			if ( ! empty( $values ) ) {
-				$fields[ $field['merge_tag'] ] = array_filter( noptin_parse_list( $values, true ) );
-			}
-		} elseif ( ! empty( $fields['source'] ) ) {
-
-			if ( is_numeric( $fields['source'] ) ) {
-
-				// The user subscribed via an opt-in form.
-				$form          = noptin_get_optin_form( $fields['source'] );
-				$default_value = $form->__get( $field['merge_tag'] );
-
-			} else {
-
-				// The user subscribed via other means.
-				$default_value = get_option(
-					sprintf(
-						'%s_default_%s',
-						$fields['source'],
-						$field['merge_tag']
-					),
-					'-1'
-				);
-
-			}
-
-			if ( '-1' !== $default_value && '' !== $default_value ) {
-				$fields[ $field['merge_tag'] ] = $default_value;
-			}
-		}
-	}
-
-	if ( ! isset( $fields['tags'] ) ) {
-
-		if ( ! empty( $listener ) && ! is_null( $listener->processed_form ) ) {
-			$tags = array_filter( noptin_parse_list( $listener->get_cached( 'tags' ), true ) );
-
-			if ( ! empty( $tags ) ) {
-				$fields['tags'] = $tags;
-			}
-		} elseif ( ! empty( $fields['source'] ) ) {
-
-			if ( is_numeric( $fields['source'] ) ) {
-
-				// The user subscribed via an opt-in form.
-				$form = noptin_get_optin_form( $fields['source'] );
-				$tags = $form->__get( 'tags' );
-
-			} else {
-
-				// The user subscribed via other means.
-				$tags = get_option(
-					sprintf(
-						'%s_default_tags',
-						$fields['source']
-					),
-					'-1'
-				);
-
-			}
-
-			$tags = array_diff( array_filter( noptin_parse_list( $tags, true ) ), array( '-1' ) );
-
-			if ( ! empty( $tags ) ) {
-				$fields['tags'] = $tags;
-			}
-		}
-	}
+	$fields = prepare_noptin_subscriber_source_fields( $fields['source'] ?? 'manual', $fields );
 
 	// Get the subscriber object.
 	$subscriber = noptin_get_subscriber();

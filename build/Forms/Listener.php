@@ -250,6 +250,52 @@ class Listener {
 
 		}
 
+		// Does the subscriber exist already?
+		$subscriber_obj = noptin_get_subscriber( (int) get_noptin_subscriber_id_by_email( sanitize_email( $subscriber['email'] ) ) );
+		if ( $subscriber_obj->exists() ) {
+
+			$subscriber_id = $subscriber_obj->get_id();
+			$this->subscriber_id = $subscriber_id;
+
+			// Maybe abort...
+			$update_existing = $this->get_cached( 'update_existing' );
+			if ( empty( $update_existing ) ) {
+				$this->last_event = 'already_subscribed';
+				return;
+			}
+
+			// If status is "unsubscribed", set it to "subscribed".
+			if ( 'unsubscribed' === $subscriber_obj->get_status() ) {
+				$subscriber['status'] = 'subscribed';
+			}
+
+			// Update the subscriber properties.
+			$subscriber_obj->set_props( wp_unslash( $subscriber ) );
+
+			// Set default values.
+			foreach ( prepare_noptin_subscriber_source_fields( $source, array() ) as $merge_tag => $to_add ) {
+				noptin_error_log( array( $subscriber_obj->get( $merge_tag ), $subscriber_obj->get_changes(), 'CURRENT' ), 'CURRENT' );
+				$subscriber_obj->set( $merge_tag . '::add', $to_add );
+			}
+
+			// Save the subscriber.
+			$subscriber_obj->save();
+
+			$this->last_event = 'updated';
+
+			/**
+			 * Fires right after a newsletter form was used to update an existing subscriber.
+			 *
+			 * @since 1.6.2
+			 *
+			 * @param int $subscriber_id
+			 * @param array $subscriber_data
+			 * @param Listener $listener The listener object
+			 */
+			do_action( 'noptin_form_updated_subscriber', $subscriber_id, $subscriber, $this );
+			return;
+		}
+
 		// GDPR acceptance text.
 		if ( ! empty( $this->submitted['GDPR_consent'] ) ) {
 			$subscriber['GDPR_consent'] = 1;
@@ -288,42 +334,6 @@ class Listener {
 		 * @since 1.6.2
 		 */
 		$subscriber = apply_filters( 'noptin_form_subscriber_details', $subscriber, $source, $this );
-
-		// Does the subscriber exist already?
-		$subscriber_obj = noptin_get_subscriber( (int) get_noptin_subscriber_id_by_email( sanitize_email( $subscriber['email'] ) ) );
-		if ( $subscriber_obj->exists() ) {
-
-			$subscriber_id = $subscriber_obj->get_id();
-			$this->subscriber_id = $subscriber_id;
-
-			// Maybe abort...
-			$update_existing = $this->get_cached( 'update_existing' );
-			if ( empty( $update_existing ) ) {
-				$this->last_event = 'already_subscribed';
-				return;
-			}
-
-			// If status is "unsubscribed", set it to "subscribed".
-			if ( 'unsubscribed' === $subscriber_obj->get_status() ) {
-				$subscriber['status'] = 'subscribed';
-			}
-
-			// ... or update the subscriber.
-			update_noptin_subscriber( $subscriber_id, $subscriber );
-			$this->last_event = 'updated';
-
-			/**
-			 * Fires right after a newsletter form was used to update an existing subscriber.
-			 *
-			 * @since 1.6.2
-			 *
-			 * @param int $subscriber_id
-			 * @param array $subscriber_data
-			 * @param Listener $listener The listener object
-			 */
-			do_action( 'noptin_form_updated_subscriber', $subscriber_id, $subscriber, $this );
-			return;
-		}
 
 		// Add the subscriber.
 		$subscriber_id = add_noptin_subscriber( $subscriber );

@@ -566,9 +566,9 @@ class Record {
 		}
 
 		if ( $prop->is_meta_key && $prop->is_meta_key_multiple ) {
-			$value    = $this->parse_list( $value, true );
+			$value    = array_values( $this->parse_list( $value, true ) );
 			$existing = $this->get( $prop );
-			$existing = is_array( $existing ) ? $existing : array();
+			$existing = is_array( $existing ) ? array_values( $existing ) : array();
 
 			if ( $is_adding ) {
 				$value = array_unique( array_merge( $existing, $value ) );
