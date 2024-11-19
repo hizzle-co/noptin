@@ -202,13 +202,6 @@ class Noptin {
 	public $post_types;
 
 	/**
-	 * The main ajax class.
-	 *
-	 * @var Noptin_Ajax
-	 */
-	public $ajax;
-
-	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -393,9 +386,6 @@ class Noptin {
 
 		// Post types controller.
 		$this->post_types = new Noptin_Post_Types();
-
-		// Ajax.
-		$this->ajax = new Noptin_Ajax();
 
 		// Automation tasks.
 		$this->automation_rules   = new Noptin_Automation_Rules();
