@@ -478,6 +478,59 @@ class Noptin_Email_Generator {
 				}
 			}
 
+			// Move padding styles from button links to wrapper td
+			if ( 'a' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-link' ) ) {
+				$style = $element->getAttribute( 'style' );
+				if ( ! empty( $style ) ) {
+					$padding_styles = array();
+
+					// Match all padding styles
+					if ( preg_match( '/padding-top:[^;]+;/', $style, $matches ) ) {
+						$padding_styles[] = $matches[0];
+					}
+					if ( preg_match( '/padding-right:[^;]+;/', $style, $matches ) ) {
+						$padding_styles[] = $matches[0]; 
+					}
+					if ( preg_match( '/padding-bottom:[^;]+;/', $style, $matches ) ) {
+						$padding_styles[] = $matches[0];
+					}
+					if ( preg_match( '/padding-left:[^;]+;/', $style, $matches ) ) {
+						$padding_styles[] = $matches[0];
+					}
+					if ( preg_match( '/padding:[^;]+;/', $style, $matches ) ) {
+						$padding_styles[] = $matches[0];
+					}
+
+					// Remove padding styles from link
+					foreach ( $padding_styles as $padding ) {
+						$style = str_replace( $padding, '', $style );
+					}
+
+					$element->setAttribute( 'style', $style );
+
+					// Add padding styles to wrapper td
+					if ( ! empty( $padding_styles ) ) {
+						$parent = $element->parentNode;
+						while ( $parent && 'td' !== $parent->nodeName ) {
+							$parent = $parent->parentNode;
+						}
+
+						if ( $parent && $parent->hasAttribute( 'class' ) && false !== strpos( $parent->getAttribute( 'class' ), 'noptin-button-link__wrapper' ) ) {
+							$td_style = $parent->getAttribute( 'style' );
+							$td_style = rtrim( $td_style, ';' );
+							foreach ( $padding_styles as $padding ) {
+								// Extract property name (e.g. padding-top)
+								if ( preg_match( '/^([^:]+):/', $padding, $matches ) ) {
+									$td_style = preg_replace( '/' . preg_quote( $matches[1], '/' ) . ':[^;]+;/', '', $td_style );
+									$td_style = rtrim( $td_style, ';' ) . ';' . $padding;
+								}
+							}
+							$parent->setAttribute( 'style', $td_style );
+						}
+					}
+				}
+			}
+
 			// Unwrap any p tags that contain block elements.
 			if ( 'p' === $element->nodeName && $element->hasChildNodes() ) {
 				$has_block = false;

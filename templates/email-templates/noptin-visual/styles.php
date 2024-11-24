@@ -99,6 +99,10 @@
 	.noptin-button-link__wrapper {
 		background-color: <?php echo esc_attr( $settings['button_background'] ); ?>;
 		color: <?php echo esc_attr( $settings['button_color'] ); ?>;
+		padding-top: 10px;
+		padding-right: 25px;
+		padding-bottom: 10px;
+		padding-left: 25px;
 	}
 
 	table.noptin-image-block__wrapper {
@@ -137,12 +141,6 @@
 		margin-bottom: 16px;
 	}
 
-	.noptin-button-link {
-		padding-top: 10px;
-		padding-right: 25px;
-		padding-bottom: 10px;
-		padding-left: 25px;
-	}
 
 	h1, h2, h3, h4, h5, h6 {
 		font-weight: 700;
