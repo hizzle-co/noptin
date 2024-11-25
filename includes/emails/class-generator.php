@@ -506,6 +506,9 @@ class Noptin_Email_Generator {
 						$style = str_replace( $padding, '', $style );
 					}
 
+					// Backwards compatibility:- Remove word-break: break-word;
+					$style = str_replace( 'word-break: break-word;', '', $style );
+
 					$element->setAttribute( 'style', $style );
 
 					// Add padding styles to wrapper td
@@ -529,6 +532,11 @@ class Noptin_Email_Generator {
 						}
 					}
 				}
+			}
+
+			// Remove target="_blank" from links.
+			if ( 'a' === $element->nodeName && $element->hasAttribute( 'target' ) ) {
+				$element->removeAttribute( 'target' );
 			}
 
 			// Unwrap any p tags that contain block elements.

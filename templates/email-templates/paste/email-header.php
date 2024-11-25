@@ -20,7 +20,7 @@
 <body style="background-color: <?php echo esc_attr( $settings['background_color'] ); ?>">
 
 	<!--[if mso]>
-		<style type=”text/css”>
+		<style type="text/css">
 			table,
 			td,
 			div,

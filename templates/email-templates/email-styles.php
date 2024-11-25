@@ -267,7 +267,6 @@
 		line-height:1.22;
 		font-weight:700;
 		margin: 0 0 10px !important;
-		word-break: break-word;
 		padding-top: 0 !important;
 	}
 
@@ -276,14 +275,12 @@
 		font-size: 15px;
 		margin: 0 0 10px !important;
 		padding-top: 0 !important;
-		word-break: break-word;
 	}
 
 	.digest-list-product-meta {
 		font-size:13px;
 		color:#757575;
 		margin: 0 !important;
-		word-break: break-word;
 	}
 
 	.digest-list-product-meta a {
@@ -335,7 +332,6 @@
 		line-height:1.22;
 		font-weight:700;
 		margin: 30px 10px 4px !important;
-		word-break: break-word;
 	}
 
 	.digest-grid-product-excerpt {
@@ -343,14 +339,12 @@
 		font-size:14px;
 		font-weight: 400;
 		margin: 16px 10px 8px !important;
-		word-break: break-word;
 	}
 
 	.digest-grid-product-meta {
 		font-size:13px;
 		color:#757575;
 		margin: 0 10px 30px !important;
-		word-break: break-word;
 	}
 
 	.digest-grid-product-meta a {
@@ -372,7 +366,6 @@
 		font-weight: 700;
 		margin: 0 0 10px !important;
 		padding-top: 0 !important;
-		word-break: break-word;
 	}
 
 	.digest-list-description {
@@ -380,7 +373,6 @@
 		line-height: 1.33;
 		margin: 0 0 30px !important;
 		padding-top: 0 !important;
-		word-break: break-word;
 	}
 
 	.digest-list-post {
@@ -411,7 +403,6 @@
 		line-height:1.22;
 		font-weight:700;
 		margin: 0 0 10px !important;
-		word-break: break-word;
 		padding-top: 0 !important;
 	}
 
@@ -420,14 +411,12 @@
 		font-size: 15px;
 		margin: 0 0 10px !important;
 		padding-top: 0 !important;
-		word-break: break-word;
 	}
 
 	.digest-list-post-meta {
 		font-size:13px;
 		color:#757575;
 		margin: 0 !important;
-		word-break: break-word;
 	}
 
 	.digest-list-post-meta a {
@@ -454,21 +443,18 @@
 		line-height:1.22;
 		font-weight:700;
 		margin: 30px 10px 4px !important;
-		word-break: break-word;
 	}
 
 	.digest-grid-post-excerpt {
 		line-height:1.33;
 		font-size:15px;
 		margin: 16px 10px 8px !important;
-		word-break: break-word;
 	}
 
 	.digest-grid-post-meta {
 		font-size:13px;
 		color:#757575;
 		margin: 0 10px 30px !important;
-		word-break: break-word;
 	}
 
 	.digest-grid-post-meta a {

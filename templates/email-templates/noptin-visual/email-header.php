@@ -30,7 +30,7 @@
 <body class="body" xml:lang="en">
 
 	<!--[if mso]>
-		<style type=”text/css”>
+		<style type="text/css">
 			table,
 			td,
 			div,
