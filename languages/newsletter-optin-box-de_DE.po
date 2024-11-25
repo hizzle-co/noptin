@@ -42,11 +42,11 @@ msgstr "%1$s > Aktualisieren %2$s"
 msgid "Email confirmation status"
 msgstr "Status der E-Mail-Bestätigung"
 
-#: build/Forms/Admin/editor-settings.php:194
+#: build/Forms/Admin/editor-settings.php:220
 msgid "Hide the form for X seconds after a user closes it"
 msgstr "Das Formular für X Sekunden ausblenden, nachdem ein Benutzer es geschlossen hat"
 
-#: build/Forms/Admin/editor-settings.php:193
+#: build/Forms/Admin/editor-settings.php:219
 msgid "Hide for"
 msgstr "Ausblenden für"
 
@@ -163,46 +163,46 @@ msgstr "Erstellen und Anzeigen eines Newsletter-Abonnementformulars"
 msgid "Displays a pre-built newsletter form"
 msgstr "Zeigt ein vorgefertigtes Newsletter-Formular an"
 
-#: build/Forms/Admin/editor-settings.php:436
+#: build/Forms/Admin/editor-settings.php:462
 msgid "Show field labels outside the fields"
 msgstr "Feldbeschriftungen außerhalb der Felder anzeigen"
 
-#: build/Forms/Admin/editor-settings.php:168
-#: build/Forms/Admin/editor-settings.php:197
+#: build/Forms/Admin/editor-settings.php:194
+#: build/Forms/Admin/editor-settings.php:223
 msgid "seconds"
 msgstr "Sekunden"
 
-#: build/Forms/Admin/editor-settings.php:109
+#: build/Forms/Admin/editor-settings.php:135
 #: includes/forms/views/tab-settings.php:131
 msgid "Center Right"
 msgstr "Mitte rechts"
 
-#: build/Forms/Admin/editor-settings.php:108
+#: build/Forms/Admin/editor-settings.php:134
 #: includes/forms/views/tab-settings.php:130
 msgid "Center Left"
 msgstr "Mitte-Links"
 
-#: build/Forms/Admin/editor-settings.php:562
+#: build/Forms/Admin/editor-settings.php:599
 msgid "Position"
 msgstr "Position"
 
-#: build/Forms/Admin/editor-settings.php:415
+#: build/Forms/Admin/editor-settings.php:441
 msgid "Leave empty to use the default label."
 msgstr "Lassen Sie das Feld leer, um die Standardbeschriftung zu verwenden."
 
-#: build/Forms/Admin/editor-settings.php:231
+#: build/Forms/Admin/editor-settings.php:257
 msgid "Only show on selected pages"
 msgstr "Nur auf ausgewählten Seiten anzeigen"
 
-#: build/Forms/Admin/editor-settings.php:176
+#: build/Forms/Admin/editor-settings.php:202
 msgid "Scroll depth"
 msgstr "Bildlauftiefe"
 
-#: build/Forms/Admin/editor-settings.php:145
+#: build/Forms/Admin/editor-settings.php:171
 msgid "Selector"
 msgstr "Auswahl"
 
-#: build/Forms/Admin/editor-settings.php:132
+#: build/Forms/Admin/editor-settings.php:158
 msgid "This option only works for users using a mouse. It will not work for touch devices."
 msgstr "Diese Option funktioniert nur für Benutzer, die eine Maus verwenden. Sie funktioniert nicht für Touch-Geräte."
 
@@ -247,7 +247,7 @@ msgstr "Noptin bewerten"
 msgid "You have been using Noptin for a while now."
 msgstr "Sie verwenden Noptin nun schon eine Weile."
 
-#: build/Emails/Admin/Main.php:413
+#: build/Emails/Admin/Main.php:421
 msgid "Send an email to a comma separated list of email addresses."
 msgstr "Senden Sie eine E-Mail an eine durch Kommata getrennte Liste von E-Mail-Adressen."
 
@@ -418,12 +418,12 @@ msgstr "Vorschau des Formulars anzeigen"
 msgid "Leave blank to create a new product."
 msgstr "Lassen Sie das Feld leer, um ein neues Produkt zu erstellen."
 
-#: build/Forms/Admin/editor-settings.php:927
+#: build/Forms/Admin/editor-settings.php:964
 msgid "Prefix the id with a minus sign to exclude it from the list"
 msgstr "Stellen Sie der ID ein Minuszeichen voran, um sie aus der Liste auszuschließen"
 
 #. translators: %s is the taxonomy label
-#: build/Forms/Admin/editor-settings.php:924
+#: build/Forms/Admin/editor-settings.php:961
 msgid "Enter a comma-separated list of %s ids, slugs, or names to show this form on"
 msgstr "Geben Sie eine durch Komma getrennte Liste von %s ids, slugs oder Namen ein, die dieses Formular anzeigen sollen"
 
@@ -881,11 +881,11 @@ msgstr "Sequenz / Kurs"
 msgid "Edit %s"
 msgstr "%s bearbeiten"
 
-#: build/Emails/Admin/Table.php:653
+#: build/Emails/Admin/Table.php:660
 msgid "Re-order"
 msgstr "Nachbestellen"
 
-#: build/Emails/Admin/Table.php:316
+#: build/Emails/Admin/Table.php:323
 msgid "No subject"
 msgstr "Kein Betreff"
 
@@ -966,19 +966,19 @@ msgstr "Aktivieren Sie Ihren Lizenzschlüssel, um die Einnahmen pro Kampagne zu 
 msgid "Revenue is tracked when someone makes a purchase within 2 weeks of clicking on a link in a campaign"
 msgstr "Der Umsatz wird erfasst, wenn jemand innerhalb von 2 Wochen nach dem Klick auf einen Link in einer Kampagne einen Kauf tätigt"
 
-#: build/Emails/Admin/Table.php:833
+#: build/Emails/Admin/Table.php:840
 msgid "Revenue"
 msgstr "Umsatz"
 
-#: build/Emails/Admin/Table.php:792
+#: build/Emails/Admin/Table.php:799
 msgid "The selected campaigns have been trashed."
 msgstr "Die ausgewählten Kampagnen wurden gelöscht."
 
-#: build/Emails/Admin/Table.php:785
+#: build/Emails/Admin/Table.php:792
 msgid "The selected campaigns have been published."
 msgstr "Die ausgewählten Kampagnen sind veröffentlicht worden."
 
-#: build/Emails/Admin/Table.php:599
+#: build/Emails/Admin/Table.php:606
 msgid "Activate your license key to start tracking"
 msgstr "Aktivieren Sie Ihren Lizenzschlüssel, um mit der Verfolgung zu beginnen"
 
@@ -995,42 +995,42 @@ msgstr "erstellt oder aktualisiert"
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: build/Emails/Admin/Table.php:899
+#: build/Emails/Admin/Table.php:906
 msgid "Empty Trash"
 msgstr "Papierkorb leeren"
 
-#: build/Emails/Admin/Table.php:762
+#: build/Emails/Admin/Table.php:769
 msgid "All trash campaigns have been deleted."
 msgstr "Alle Papierkorb-Kampagnen wurden gelöscht."
 
-#: build/Emails/Admin/Table.php:672
+#: build/Emails/Admin/Table.php:679
 msgid "Move to Trash"
 msgstr "In den Papierkorb verschieben"
 
-#: build/Emails/Admin/Table.php:411
+#: build/Emails/Admin/Table.php:418
 msgid "Learn how to troubleshoot email sending errors"
 msgstr "Lernen Sie, wie man Fehler beim E-Mail-Versand behebt"
 
-#: build/Emails/Admin/Table.php:246
-#: build/Emails/Admin/Table.php:666
+#: build/Emails/Admin/Table.php:253
+#: build/Emails/Admin/Table.php:673
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: build/Emails/Admin/Table.php:213
+#: build/Emails/Admin/Table.php:220
 #: build/Emails/Main.php:439
 #: build/Emails/Main.php:440
 msgid "Trash"
 msgstr "Papierkorb"
 
-#: build/Emails/Admin/Table.php:212
+#: build/Emails/Admin/Table.php:219
 msgid "Are you sure you want to trash this campaign?"
 msgstr "Sind Sie sicher, dass Sie diese Kampagne in den Papierkorb werfen wollen?"
 
-#: build/Emails/Admin/Main.php:282
+#: build/Emails/Admin/Main.php:290
 msgid "The campaign has been restored."
 msgstr "Die Kampagne wurde wiederhergestellt."
 
-#: build/Emails/Admin/Main.php:262
+#: build/Emails/Admin/Main.php:270
 msgid "The campaign has been trashed."
 msgstr "Die Kampagne ist im Eimer."
 
@@ -1197,6 +1197,7 @@ msgid "Preview URL"
 msgstr "Vorschau"
 
 #: build/Emails/Admin/Main.php:205
+#: build/Emails/assets/js/view-campaigns.js:18
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -1208,18 +1209,18 @@ msgstr "Zusammenfassung"
 msgid "Test"
 msgstr "Test"
 
-#: build/Forms/Admin/editor-settings.php:788
+#: build/Forms/Admin/editor-settings.php:825
 msgid "Colors"
 msgstr "Farben"
 
-#: build/Forms/Admin/editor-settings.php:793
-#: build/Forms/Admin/editor-settings.php:835
+#: build/Forms/Admin/editor-settings.php:830
+#: build/Forms/Admin/editor-settings.php:872
 msgid "Background"
 msgstr "Hintergrund"
 
-#: build/Forms/Admin/editor-settings.php:552
-#: build/Forms/Admin/editor-settings.php:797
-#: build/Forms/Admin/editor-settings.php:839
+#: build/Forms/Admin/editor-settings.php:589
+#: build/Forms/Admin/editor-settings.php:834
+#: build/Forms/Admin/editor-settings.php:876
 msgid "Text"
 msgstr "Text"
 
@@ -2473,7 +2474,7 @@ msgstr "Optional. Filtern Sie die Empfänger nach ihren Tags."
 msgid "Optional. Leave blank to send to all"
 msgstr "Optional. Leer lassen, um an alle zu senden"
 
-#: includes/subscriber.php:1609
+#: includes/subscriber.php:1640
 msgid "Bounced"
 msgstr "Unzustellbar"
 
@@ -2759,69 +2760,69 @@ msgstr "Die E-Mail wurde bereits verschickt."
 msgid "You do not have permission to edit this campaign. %1$sGo back to the campaigns overview page%2$s."
 msgstr "Sie haben nicht die Berechtigung, diese Kampagne zu bearbeiten. %1$sGehen Sie zurück zur Übersichtsseite der Kampagnen%2$s."
 
-#: build/Emails/Admin/Table.php:510
+#: build/Emails/Admin/Table.php:517
 msgid "Are you sure you want to pause sending this campaign?"
 msgstr "Sind Sie sicher, dass Sie den Versand dieser Kampagne unterbrechen möchten?"
 
-#: build/Emails/Admin/Table.php:509
+#: build/Emails/Admin/Table.php:516
 msgid "Pause Campaign"
 msgstr "Kampagne pausieren"
 
-#: build/Emails/Admin/Table.php:499
+#: build/Emails/Admin/Table.php:506
 msgid "Are you sure you want to resume sending this campaign?"
 msgstr "Sind Sie sicher, dass Sie den Versand dieser Kampagne fortsetzen möchten?"
 
-#: build/Emails/Admin/Table.php:498
+#: build/Emails/Admin/Table.php:505
 msgid "Resume Campaign"
 msgstr "Kampagne wieder aufnehmen"
 
-#: build/Emails/Admin/Table.php:488
+#: build/Emails/Admin/Table.php:495
 msgid "Are you sure you want to resend this campaign?"
 msgstr "Sind Sie sicher, dass Sie diese Kampagne erneut versenden möchten?"
 
-#: build/Emails/Admin/Table.php:487
+#: build/Emails/Admin/Table.php:494
 msgid "Resend Campaign"
 msgstr "Kampagne erneut senden"
 
-#: build/Emails/Admin/Table.php:486
+#: build/Emails/Admin/Table.php:493
 msgid "Resend"
 msgstr "Erneut senden"
 
-#: build/Emails/Admin/Table.php:457
+#: build/Emails/Admin/Table.php:464
 msgid "Paused"
 msgstr "Pausiert"
 
-#: build/Emails/Admin/Table.php:351
+#: build/Emails/Admin/Table.php:358
 msgid "Unknown sender"
 msgstr "Unbekannter Absender"
 
-#: build/Emails/Admin/Table.php:336
-#: build/Emails/Admin/Table.php:357
+#: build/Emails/Admin/Table.php:343
+#: build/Emails/Admin/Table.php:364
 msgid "No recipients"
 msgstr "Keine Empfänger"
 
-#: build/Emails/Admin/Table.php:299
+#: build/Emails/Admin/Table.php:306
 msgid "Unknown type"
 msgstr "Unbekannte Art"
 
-#: build/Emails/Admin/Table.php:269
+#: build/Emails/Admin/Table.php:276
 msgid "(no title)"
 msgstr "(Kein Titel)"
 
 #. translators: %s: code
-#: build/Emails/Admin/Main.php:431
+#: build/Emails/Admin/Main.php:439
 msgid "Add %s after an email to disable send, open and click tracking for that recipient."
 msgstr "Fügen Sie %s nach einer E-Mail ein, um die Sende-, Öffnungs- und Klickverfolgung für diesen Empfänger zu deaktivieren."
 
-#: build/Emails/Admin/Main.php:428
+#: build/Emails/Admin/Main.php:436
 msgid "Enter recipients (comma-separated) for this email."
 msgstr "Geben Sie die Empfänger (kommagetrennt) für diese E-Mail ein."
 
-#: build/Emails/Admin/Main.php:412
+#: build/Emails/Admin/Main.php:420
 msgid "Manual Recipients"
 msgstr "Manuelle Empfänger"
 
-#: build/Emails/Admin/Main.php:311
+#: build/Emails/Admin/Main.php:319
 msgid "Unknown email type."
 msgstr "Unbekannter E-Mail-Typ."
 
@@ -2874,12 +2875,12 @@ msgstr "Der Cron-Event für diese Kampagne ist nicht geplant. Wir haben versucht
 msgid "View Subscriber"
 msgstr "Abonnenten anzeigen"
 
-#: build/Emails/Admin/Table.php:508
+#: build/Emails/Admin/Table.php:515
 #: build/Misc/assets/js/collection.js:269
 msgid "Pause"
 msgstr "Pause"
 
-#: build/Emails/Admin/Table.php:497
+#: build/Emails/Admin/Table.php:504
 #: build/Misc/assets/js/collection.js:269
 msgid "Resume"
 msgstr "Fortsetzen"
@@ -3059,7 +3060,7 @@ msgstr "Bisher keine E-Mails gesendet."
 msgid "You can use tags to automate your email marketing."
 msgstr "Sie können Tags verwenden, um Ihr E-Mail-Marketing zu automatisieren."
 
-#: includes/subscriber.php:1098
+#: includes/subscriber.php:1129
 msgid "Multiple checkboxes"
 msgstr "Mehrere Checkboxen"
 
@@ -3105,12 +3106,12 @@ msgid "Noptin allows you to send welcome emails to new subscribers. You can also
 msgstr "Noptin ermöglicht es Ihnen, Willkommens-E-Mails an neue Abonnenten zu senden. Sie können auch eine Reihe von Willkommens-E-Mails als E-Mail-Kurs einrichten."
 
 #. translators: %s is the context, e.g hobbies, lists
-#: build/Forms/Admin/editor-settings.php:876
+#: build/Forms/Admin/editor-settings.php:913
 #: includes/forms/views/tab-form.php:102
 msgid "Select the %s to add new subscribers who sign up via this form."
 msgstr "Wählen Sie die %s, um neue Abonnenten hinzuzufügen, die sich über dieses Formular anmelden."
 
-#: build/Forms/Admin/editor-settings.php:346
+#: build/Forms/Admin/editor-settings.php:372
 msgid "Enter a comma separated list of tags to assign subscribers who sign up using this form"
 msgstr "Geben Sie eine durch Kommata getrennte Liste von Tags ein, die Sie Abonnenten zuweisen möchten, die sich über dieses Formular anmelden"
 
@@ -3124,8 +3125,8 @@ msgstr "Stunde"
 msgid "Minute"
 msgstr "Minute"
 
-#: build/Emails/Admin/Table.php:366
-#: build/Forms/Admin/editor-settings.php:159
+#: build/Emails/Admin/Table.php:373
+#: build/Forms/Admin/editor-settings.php:185
 #: includes/automation-rules/actions/class-noptin-abstract-action.php:34
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "Delay"
@@ -3252,12 +3253,12 @@ msgid "Optional. Send this email only if certain conditions are met."
 msgstr "Optional. Senden Sie diese E-Mail nur, wenn bestimmte Bedingungen erfüllt sind."
 
 #. translators: %1$s is the error type, %2$s is the error message, %3$s is the error file and %4$s is the error line.
-#: build/Emails/Admin/Table.php:396
+#: build/Emails/Admin/Table.php:403
 msgid "%1$s: %2$s in %3$s on line %4$s"
 msgstr "%1$s: %2$s in %3$s auf Zeile %4$s"
 
 #. translators: %s is the error message.
-#: build/Emails/Admin/Table.php:393
+#: build/Emails/Admin/Table.php:400
 msgid "An error occurred while sending this campaign. The last error was: %s"
 msgstr "Beim Senden dieser Kampagne ist ein Fehler aufgetreten. Der letzte Fehler war: %s"
 
@@ -3304,7 +3305,7 @@ msgstr "Ihre Website unterstützt diese Aktion nicht."
 msgid "Your site does not support this trigger."
 msgstr "Ihre Website unterstützt diesen Trigger nicht."
 
-#: build/Emails/Admin/Table.php:308
+#: build/Emails/Admin/Table.php:315
 #: build/Emails/Records.php:64
 msgid "Subject"
 msgstr "Betreff"
@@ -3390,11 +3391,11 @@ msgstr "Erstellen oder aktualisieren Sie ein %s"
 msgid "Optional. Add any custom CSS to style your emails."
 msgstr "Optional. Fügen Sie ein benutzerdefiniertes CSS hinzu, um Ihre E-Mails zu gestalten."
 
-#: build/Emails/Admin/Table.php:206
+#: build/Emails/Admin/Table.php:213
 msgid "Send Now"
 msgstr "Jetzt senden"
 
-#: build/Emails/Admin/Table.php:205
+#: build/Emails/Admin/Table.php:212
 msgid "Are you sure you want to send this campaign?"
 msgstr "Sind Sie sicher, dass Sie diese Kampagne versenden möchten?"
 
@@ -3594,26 +3595,26 @@ msgstr "Preis ID"
 msgid "Quantity"
 msgstr "Menge"
 
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:237
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:238
 msgid "Manage your license key"
 msgstr "Verwalten Sie Ihren Lizenzschlüssel"
 
 #. translators: %s: Addon names.
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:231
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:232
 msgid "The following addons are currently active: %s."
 msgstr "Die folgenden Addons sind derzeit aktiv: %s."
 
 #. translators: %s: Addon name.
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:225
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:226
 msgid "The following addon is currently active: %s"
 msgstr "Das folgende Addon ist derzeit aktiv: %s"
 
 #. translators: %s: Error message.
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:216
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:217
 msgid "There was an error checking your license key: %s"
 msgstr "Bei der Überprüfung Ihres Lizenzschlüssels ist ein Fehler aufgetreten: %s"
 
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:210
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:211
 msgid "You need an active license key to keep using premium Noptin Addons."
 msgstr "Sie benötigen einen aktiven Lizenzschlüssel, um Premium Noptin Addons weiterhin nutzen zu können."
 
@@ -3991,7 +3992,7 @@ msgstr "Geben Sie einen beschreibenden Namen für das Feld ein, z.B. Rufnummer"
 msgid "Select the field type"
 msgstr "Wählen Sie den Feldtyp"
 
-#: build/Forms/Admin/editor-settings.php:404
+#: build/Forms/Admin/editor-settings.php:430
 #: build/Settings/Menu.php:612
 msgid "Field Type"
 msgstr "Feldtyp"
@@ -4067,85 +4068,85 @@ msgid "Trigger"
 msgstr "Auslöser"
 
 #: build/Subscribers/Records.php:69
-#: includes/subscriber.php:1550
+#: includes/subscriber.php:1581
 msgid "Imported"
 msgstr "Importiert"
 
-#: includes/subscriber.php:1549
+#: includes/subscriber.php:1580
 msgid "Users Sync"
 msgstr "Benutzer Sync"
 
-#: includes/subscriber.php:1548
+#: includes/subscriber.php:1579
 msgid "Subscription Shortcode"
 msgstr "Shortcode für Abonnements"
 
-#: includes/subscriber.php:1547
+#: includes/subscriber.php:1578
 msgid "Manually Added"
 msgstr "Manuell hinzugefügt"
 
-#: includes/subscriber.php:1484
-#: includes/subscriber.php:1551
+#: includes/subscriber.php:1515
+#: includes/subscriber.php:1582
 #: build/Emails/assets/js/view-campaigns.js:10
 msgid "Default"
 msgstr "Standard"
 
 #: build/Forms/Widgets/Form.php:23
-#: includes/subscriber.php:1476
+#: includes/subscriber.php:1507
 #: build/Forms/assets/js/block.js:1
 msgid "Newsletter Form"
 msgstr "Newsletter Formular"
 
-#: includes/subscriber.php:1092
+#: includes/subscriber.php:1123
 msgid "Checkbox"
 msgstr "Checkbox"
 
-#: includes/subscriber.php:1082
+#: includes/subscriber.php:1113
 msgid "Dropdown"
 msgstr "Dropdown"
 
-#: includes/subscriber.php:1076
+#: includes/subscriber.php:1107
 msgid "Radio Buttons"
 msgstr "Radio Button"
 
-#: includes/subscriber.php:1070
+#: includes/subscriber.php:1101
 msgid "Number Input"
 msgstr "Anzahl eingeben"
 
-#: includes/subscriber.php:1065
+#: includes/subscriber.php:1096
 msgid "Textarea Input"
 msgstr "Texteingabe Eingang"
 
-#: includes/subscriber.php:1060
+#: includes/subscriber.php:1091
 msgid "Text Input"
 msgstr "Texteingabe"
 
-#: includes/subscriber.php:749
+#: includes/subscriber.php:780
 msgid "You are receiving this email because we got your request to subscribe to our newsletter. If you don't want to join the newsletter, you can safely delete this email"
 msgstr "Sie erhalten diese E-Mail, weil wir Ihre Anfrage, unseren Newsletter zu abonnieren, erhalten haben. Wenn Sie sich nicht für den Newsletter anmelden möchten, können Sie diese E-Mail getrost löschen"
 
-#: includes/subscriber.php:747
+#: includes/subscriber.php:778
 msgid "Cheers,"
 msgstr "Grüße,"
 
 #: build/Subscribers/Records.php:729
-#: includes/subscriber.php:743
+#: includes/subscriber.php:774
 msgid "Confirm your subscription"
 msgstr "Bestätige Dein Abonnement"
 
-#: includes/subscriber.php:741
+#: includes/subscriber.php:772
 msgid "You won't be subscribed if you don't click on the button below."
 msgstr "Sie werden nicht abonniert, wenn Sie nicht auf die Schaltfläche unten klicken."
 
-#: includes/subscriber.php:740
+#: includes/subscriber.php:771
 msgid "If you have received this email by mistake, you can safely delete it."
 msgstr "Wenn Sie diese E-Mail versehentlich erhalten haben, können Sie sie getrost löschen."
 
-#: includes/subscriber.php:739
+#: includes/subscriber.php:770
 msgid "Tap the button below to confirm your subscription to our newsletter."
 msgstr "Tippen Sie auf die Schaltfläche unten, um Ihr Abonnement für unseren Newsletter zu bestätigen."
 
-#: includes/subscriber.php:735
-#: includes/subscriber.php:736
+#: includes/subscriber.php:766
+#: includes/subscriber.php:767
 msgid "Please confirm your subscription"
 msgstr "Bitte bestätigen Sie Ihr Abonnement"
 
@@ -4227,22 +4228,22 @@ msgid "Error fetching downloadable file"
 msgstr "Fehler beim Abrufen der herunterladbaren Datei"
 
 #. translators: %1$s: helper url, %2$d: number of extensions
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:274
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:275
 msgid "Note: You currently have <a href=\"%1$s\">%2$d paid extension</a> which should be updated first before updating Noptin."
 msgid_plural "Note: You currently have <a href=\"%1$s\">%2$d paid extensions</a> which should be updated first before updating Noptin."
 msgstr[0] "Hinweis: Sie haben derzeit die <a href=\"%1$s\">kostenpflichtige Erweiterung%2$d </a>, die zuerst aktualisiert werden sollte, bevor Sie Noptin aktualisieren."
 msgstr[1] "Hinweis: Sie haben derzeit <a href=\"%1$s\">%2$d kostenpflichtige Erweiterungen</a>, die zuerst aktualisiert werden sollten, bevor Sie Noptin aktualisieren."
 
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:155
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:156
 msgid "License key deactivated successfully. You will no longer receive product updates and support for this site."
 msgstr "Der Lizenzschlüssel wurde erfolgreich deaktiviert. Sie erhalten keine Produkt-Updates und keinen Support mehr für diese Website."
 
 #. translators: %s: Error message.
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:144
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:145
 msgid "There was an error deactivating your license key: %s"
 msgstr "Beim Deaktivieren Ihres Lizenzschlüssels ist ein Fehler aufgetreten: %s"
 
-#: includes/libraries/noptin-com/class-noptin-com-helper.php:105
+#: includes/libraries/noptin-com/class-noptin-com-helper.php:106
 msgid "Your license key has been activated successfully. You will now receive updates and support for this website."
 msgstr "Ihr Lizenzschlüssel wurde erfolgreich aktiviert. Sie erhalten jetzt Updates und Support für diese Website."
 
@@ -4278,7 +4279,7 @@ msgstr "Geben Sie eine kommagetrennte Liste von Tags ein, die Sie neuen Abonnent
 msgid "Enable Double Opt-in"
 msgstr "Double Opt-in aktivieren"
 
-#: build/Forms/Admin/editor-settings.php:337
+#: build/Forms/Admin/editor-settings.php:363
 #: build/Subscribers/Records.php:96
 #: build/Subscribers/Records.php:675
 #: includes/forms/views/tab-form.php:75
@@ -4688,6 +4689,7 @@ msgstr "Alle Felder in einer einzigen Zeile anzeigen."
 msgid "Display field labels outside the fields."
 msgstr "Feldbeschriftungen außerhalb der Felder anzeigen."
 
+#: build/Forms/Admin/editor-settings.php:42
 #: includes/forms/views/tab-form.php:140
 msgid "Update existing subscribers if they match the submitted email address."
 msgstr "Aktualisieren Sie bestehende Abonnenten, wenn sie mit der angegebenen E-Mail-Adresse übereinstimmen."
@@ -5032,95 +5034,94 @@ msgstr "Sie können die folgenden Smart Tags in Ihren Formularnachrichten und -i
 msgid "Smart Tags"
 msgstr "Intelligente Tags"
 
-#: includes/forms/forms.php:467
+#: includes/forms/forms.php:495
 msgid "Thank you, your details have been updated."
 msgstr "Vielen Dank, Ihre Daten wurden aktualisiert."
 
-#: includes/forms/forms.php:466
+#: includes/forms/forms.php:494
 msgid "Shown when an existing subscriber updates their details via this form."
 msgstr "Wird angezeigt, wenn ein bestehender Abonnent seine Daten über dieses Formular aktualisiert."
 
-#: includes/forms/forms.php:462
+#: includes/forms/forms.php:484
 msgid "The given email address is not subscribed."
 msgstr "Die angegebene E-Mail-Adresse ist nicht abonniert."
 
-#: includes/forms/forms.php:461
+#: includes/forms/forms.php:483
 msgid "Shown when someone unsubscribes with an email that is not already subscribed."
 msgstr "Wird angezeigt, wenn sich jemand mit einer E-Mail abmeldet, die noch nicht abonniert ist."
 
-#: includes/forms/forms.php:460
+#: includes/forms/forms.php:482
 msgid "Not subscribed"
 msgstr "Nicht abonniert"
 
-#: includes/forms/forms.php:457
+#: includes/forms/forms.php:473
 msgid "You were successfully unsubscribed."
 msgstr "Du hast dich erfolgreich abgemeldet."
 
-#: includes/forms/forms.php:456
+#: includes/forms/forms.php:472
 msgid "Shown when an existing subscriber unsubscribes via this form."
 msgstr "Wird angezeigt, wenn ein bestehender Abonnent sich über dieses Formular abmeldet."
 
-#: includes/forms/forms.php:452
+#: includes/forms/forms.php:468
 msgid "Oops. Something went wrong. Please try again later."
 msgstr "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
 
-#: includes/forms/forms.php:451
+#: includes/forms/forms.php:467
 msgid "Shown when a generic error occurs."
 msgstr "Wird angezeigt, wenn ein allgemeiner Fehler auftritt."
 
-#: includes/forms/forms.php:450
+#: includes/forms/forms.php:466
 msgid "Generic error"
 msgstr "Generischer Fehler"
 
 #: build/Settings/Menu.php:306
 #: build/Settings/Menu.php:307
-#: includes/class-noptin-ajax.php:156
-#: includes/forms/forms.php:447
+#: includes/forms/forms.php:457
 msgid "You are already subscribed to the newsletter, thank you!"
 msgstr "Sie sind bereits für den Newsletter angemeldet, vielen Dank!"
 
 #: build/Settings/Menu.php:308
-#: includes/forms/forms.php:446
+#: includes/forms/forms.php:456
 msgid "Shown when an existing subscriber tries to sign-up again."
 msgstr "Wird angezeigt, wenn ein bestehender Abonnent versucht, sich erneut anzumelden."
 
-#: includes/forms/forms.php:445
+#: includes/forms/forms.php:455
 msgid "Already subscribed"
 msgstr "Bereits abonniert"
 
-#: includes/forms/forms.php:442
+#: includes/forms/forms.php:452
 msgid "Please accept the terms and conditions first."
 msgstr "Bitte akzeptieren Sie zunächst die Allgemeinen Geschäftsbedingungen."
 
-#: includes/forms/forms.php:441
+#: includes/forms/forms.php:451
 msgid "Shown when someone does not check the acceptance checkbox."
 msgstr "Wird angezeigt, wenn jemand das Kontrollkästchen für die Annahme nicht aktiviert hat."
 
-#: includes/forms/forms.php:440
+#: includes/forms/forms.php:450
 msgid "Terms not Accepted"
 msgstr "Nicht akzeptierte Bedingungen"
 
-#: includes/forms/forms.php:437
+#: includes/forms/forms.php:447
 msgid "Please fill in all the required fields."
 msgstr "Bitte füllen Sie alle erforderlichen Felder aus."
 
-#: includes/forms/forms.php:436
+#: includes/forms/forms.php:446
 msgid "Shown when someone does not fill all required fields."
 msgstr "Wird angezeigt, wenn jemand nicht alle Pflichtfelder ausfüllt."
 
-#: includes/forms/forms.php:435
+#: includes/forms/forms.php:445
 msgid "Required field missing"
 msgstr "Pflichtfeld fehlt"
 
-#: includes/forms/forms.php:432
+#: includes/forms/forms.php:442
 msgid "Please provide a valid email address."
 msgstr "Bitte geben Sie eine gültige E-Mail-Adresse an."
 
-#: includes/forms/forms.php:431
+#: includes/forms/forms.php:441
 msgid "Shown when someone enters an invalid email address."
 msgstr "Wird angezeigt, wenn jemand eine ungültige E-Mail-Adresse eingibt."
 
-#: includes/forms/forms.php:430
+#: includes/forms/forms.php:440
 msgid "Invalid email address"
 msgstr "Ungültige E-Mail-Adresse"
 
@@ -5209,158 +5210,158 @@ msgstr "Senden"
 msgid "Inherit From Theme"
 msgstr "Vererben von Theme"
 
-#: build/Emails/Admin/Table.php:671
+#: build/Emails/Admin/Table.php:678
 msgid "Publish"
 msgstr "Veröffentlichen"
 
-#: build/Forms/Admin/editor-settings.php:779
+#: build/Forms/Admin/editor-settings.php:816
 msgid "Enter Your Custom CSS."
 msgstr "Geben Sie Ihr benutzerdefiniertes CSS ein."
 
-#: build/Forms/Admin/editor-settings.php:778
+#: build/Forms/Admin/editor-settings.php:815
 msgid "Prefix all your styles with '.noptin-optin-form-wrapper' or else they will apply to all opt-in forms on the page"
 msgstr "Stellen Sie all Ihren Stilen den Zusatz '.noptin-optin-form-wrapper' voran, sonst gelten sie für alle Opt-in-Formulare auf der Seite"
 
-#: build/Forms/Admin/editor-settings.php:730
+#: build/Forms/Admin/editor-settings.php:767
 msgid "Hide note"
 msgstr "Notiz ausblenden"
 
-#: build/Forms/Admin/editor-settings.php:681
+#: build/Forms/Admin/editor-settings.php:718
 msgid "Hide sub-heading"
 msgstr "Unterüberschrift ausblenden"
 
-#: build/Forms/Admin/editor-settings.php:583
+#: build/Forms/Admin/editor-settings.php:620
 msgid "Hide prefix"
 msgstr "Präfix ausblenden"
 
-#: build/Forms/Admin/editor-settings.php:610
-#: build/Forms/Admin/editor-settings.php:659
-#: build/Forms/Admin/editor-settings.php:708
-#: build/Forms/Admin/editor-settings.php:757
+#: build/Forms/Admin/editor-settings.php:647
+#: build/Forms/Admin/editor-settings.php:696
+#: build/Forms/Admin/editor-settings.php:745
+#: build/Forms/Admin/editor-settings.php:794
 #: includes/forms/views/editor.php:21
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: build/Forms/Admin/editor-settings.php:599
-#: build/Forms/Admin/editor-settings.php:648
-#: build/Forms/Admin/editor-settings.php:697
-#: build/Forms/Admin/editor-settings.php:746
+#: build/Forms/Admin/editor-settings.php:636
+#: build/Forms/Admin/editor-settings.php:685
+#: build/Forms/Admin/editor-settings.php:734
+#: build/Forms/Admin/editor-settings.php:783
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Typography"
 msgstr "Typografie"
 
-#: build/Forms/Admin/editor-settings.php:632
+#: build/Forms/Admin/editor-settings.php:669
 msgid "Hide heading"
 msgstr "Überschrift ausblenden"
 
-#: build/Forms/Admin/editor-settings.php:558
+#: build/Forms/Admin/editor-settings.php:595
 msgid "Block"
 msgstr "Block"
 
-#: build/Forms/Admin/editor-settings.php:531
+#: build/Forms/Admin/editor-settings.php:568
 msgid "Image Position"
 msgstr "Bildposition"
 
-#: build/Forms/Admin/editor-settings.php:518
+#: build/Forms/Admin/editor-settings.php:555
 msgid "Image URL"
 msgstr "Bild-URL"
 
-#: build/Forms/Admin/editor-settings.php:506
+#: build/Forms/Admin/editor-settings.php:543
 msgid "Avatar Position"
 msgstr "Avatar Position"
 
-#: build/Forms/Admin/editor-settings.php:504
-#: build/Forms/Admin/editor-settings.php:529
+#: build/Forms/Admin/editor-settings.php:541
+#: build/Forms/Admin/editor-settings.php:566
 msgid "Bottom"
 msgstr "Unten"
 
-#: build/Forms/Admin/editor-settings.php:503
-#: build/Forms/Admin/editor-settings.php:528
-#: build/Forms/Admin/editor-settings.php:560
+#: build/Forms/Admin/editor-settings.php:540
+#: build/Forms/Admin/editor-settings.php:565
+#: build/Forms/Admin/editor-settings.php:597
 msgid "Right"
 msgstr "Rechts"
 
-#: build/Forms/Admin/editor-settings.php:502
-#: build/Forms/Admin/editor-settings.php:527
-#: build/Forms/Admin/editor-settings.php:559
+#: build/Forms/Admin/editor-settings.php:539
+#: build/Forms/Admin/editor-settings.php:564
+#: build/Forms/Admin/editor-settings.php:596
 msgid "Left"
 msgstr "Links"
 
-#: build/Forms/Admin/editor-settings.php:501
-#: build/Forms/Admin/editor-settings.php:526
+#: build/Forms/Admin/editor-settings.php:538
+#: build/Forms/Admin/editor-settings.php:563
 msgid "Top"
 msgstr "Top"
 
-#: build/Forms/Admin/editor-settings.php:470
+#: build/Forms/Admin/editor-settings.php:496
 msgid "Hide opt-in fields"
 msgstr "Opt-in-Felder ausblenden"
 
-#: build/Forms/Admin/editor-settings.php:454
+#: build/Forms/Admin/editor-settings.php:480
 msgid "Consent Text"
 msgstr "Einverständnis Text"
 
-#: build/Forms/Admin/editor-settings.php:442
+#: build/Forms/Admin/editor-settings.php:468
 msgid "Show GDPR checkbox"
 msgstr "GDPR-Kontrollkästchen anzeigen"
 
-#: build/Forms/Admin/editor-settings.php:424
+#: build/Forms/Admin/editor-settings.php:450
 msgid "Show all fields in a single line"
 msgstr "Alle Felder in einer einzigen Zeile anzeigen"
 
-#: build/Forms/Admin/editor-settings.php:487
+#: build/Forms/Admin/editor-settings.php:524
 msgid "Background Image"
 msgstr "Hintergrundbild"
 
-#: build/Forms/Admin/editor-settings.php:849
+#: build/Forms/Admin/editor-settings.php:886
 msgid "Border"
 msgstr "Ränder"
 
-#: build/Forms/Admin/editor-settings.php:370
+#: build/Forms/Admin/editor-settings.php:396
 msgid "Minimum Height"
 msgstr "Minimale Höhe"
 
-#: build/Forms/Admin/editor-settings.php:365
+#: build/Forms/Admin/editor-settings.php:391
 msgid "The element will resize to 100% width on smaller devices"
 msgstr "Das Element wird auf kleineren Geräten auf 100% Breite verkleinert"
 
-#: build/Forms/Admin/editor-settings.php:364
+#: build/Forms/Admin/editor-settings.php:390
 msgid "Preferred Width"
 msgstr "Bevorzugte Breite"
 
-#: build/Forms/Admin/editor-settings.php:772
+#: build/Forms/Admin/editor-settings.php:809
 #: build/Settings/Menu.php:482
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Custom CSS"
 msgstr "Benutzerdefiniertes CSS"
 
-#: build/Forms/Admin/editor-settings.php:723
-#: build/Forms/Admin/editor-settings.php:735
-#: build/Forms/Admin/editor-settings.php:821
+#: build/Forms/Admin/editor-settings.php:760
+#: build/Forms/Admin/editor-settings.php:772
+#: build/Forms/Admin/editor-settings.php:858
 msgid "Note"
 msgstr "Anmerkung"
 
-#: build/Forms/Admin/editor-settings.php:674
-#: build/Forms/Admin/editor-settings.php:686
+#: build/Forms/Admin/editor-settings.php:711
+#: build/Forms/Admin/editor-settings.php:723
 msgid "Sub-heading"
 msgstr "Unterrubrik"
 
-#: build/Forms/Admin/editor-settings.php:546
-#: build/Forms/Admin/editor-settings.php:831
+#: build/Forms/Admin/editor-settings.php:583
+#: build/Forms/Admin/editor-settings.php:868
 msgid "Button"
 msgstr "Button"
 
-#: build/Forms/Admin/editor-settings.php:479
+#: build/Forms/Admin/editor-settings.php:516
 #: src/Integrations/EDD/Downloads.php:123
 #: src/Integrations/WooCommerce/Products.php:430
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:74
 msgid "Image"
 msgstr "Bild"
 
-#: build/Forms/Admin/editor-settings.php:379
+#: build/Forms/Admin/editor-settings.php:405
 msgid "Opt-in Fields"
 msgstr "Opt-in Felder"
 
-#: build/Forms/Admin/editor-settings.php:358
+#: build/Forms/Admin/editor-settings.php:384
 msgid "Form Appearance"
 msgstr "Formular Darstellung"
 
@@ -5369,229 +5370,225 @@ msgid "Subscriber tags"
 msgstr "Abonnenten-Schlagworte"
 
 #. translators: %1$s is the name of the integration, %2$s is the link to the integration's website.
-#: build/Forms/Admin/editor-settings.php:948
+#: build/Forms/Admin/editor-settings.php:985
 msgid "Install the %1$s to add new subscribers to %2$s."
 msgstr "Installieren Sie die %1$s, um neue Abonnenten zu %2$s hinzuzufügen."
 
-#: build/Forms/Admin/editor-settings.php:328
+#: build/Forms/Admin/editor-settings.php:354
 msgid "Hide on Desktops"
 msgstr "Auf Desktops ausblenden"
 
-#: build/Forms/Admin/editor-settings.php:322
+#: build/Forms/Admin/editor-settings.php:348
 msgid "Hide on Mobile"
 msgstr "Mobil ausblenden"
 
-#: build/Forms/Admin/editor-settings.php:299
+#: build/Forms/Admin/editor-settings.php:325
 msgid "Select user roles"
 msgstr "Benutzerrollen auswählen"
 
-#: build/Forms/Admin/editor-settings.php:293
+#: build/Forms/Admin/editor-settings.php:319
 msgid "Who can see this form?"
 msgstr "Wer kann dieses Formular sehen?"
 
-#: build/Forms/Admin/editor-settings.php:291
+#: build/Forms/Admin/editor-settings.php:317
 msgid "specific user roles"
 msgstr "bestimmte Benutzerrollen"
 
-#: build/Forms/Admin/editor-settings.php:290
+#: build/Forms/Admin/editor-settings.php:316
 msgid "Logged out users"
 msgstr "Abgemeldete Benutzer"
 
-#: build/Forms/Admin/editor-settings.php:289
+#: build/Forms/Admin/editor-settings.php:315
 msgid "Logged in users"
 msgstr "Angemeldete Benutzer"
 
-#: build/Forms/Admin/editor-settings.php:288
+#: build/Forms/Admin/editor-settings.php:314
 msgid "Everyone"
 msgstr "Jeder"
 
-#: build/Forms/Admin/editor-settings.php:272
+#: build/Forms/Admin/editor-settings.php:298
 msgid "If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here."
 msgstr "Wenn Sie hier Beiträge angeben, werden alle anderen Targeting-Regeln ignoriert, und dieses Formular wird nur bei den Beiträgen oder URLs angezeigt, die Sie hier angeben."
 
-#: build/Forms/Admin/editor-settings.php:265
+#: build/Forms/Admin/editor-settings.php:291
 msgid "Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids."
 msgstr "Verwenden Sie ein Komma, um Post-IDs oder URLs zu trennen, bei denen dieses Formular nicht angezeigt werden soll. Es werden alle Beitragstypen (Seite, Produkte usw.) unterstützt, nicht nur Blogbeiträge."
 
-#: build/Forms/Admin/editor-settings.php:256
+#: build/Forms/Admin/editor-settings.php:282
 msgid "Never show on:"
 msgstr "Niemals auftauchen:"
 
-#: build/Forms/Admin/editor-settings.php:248
+#: build/Forms/Admin/editor-settings.php:274
 #: includes/forms/views/tab-settings.php:17
 msgid "Archive pages"
 msgstr "Archiv Seiten"
 
-#: build/Forms/Admin/editor-settings.php:247
+#: build/Forms/Admin/editor-settings.php:273
 #: includes/forms/views/tab-settings.php:16
 msgid "Search page"
 msgstr "Suchseite"
 
-#: build/Forms/Admin/editor-settings.php:246
+#: build/Forms/Admin/editor-settings.php:272
 #: includes/forms/views/tab-settings.php:15
 msgid "Blog page"
 msgstr "Blogseite"
 
-#: build/Forms/Admin/editor-settings.php:245
+#: build/Forms/Admin/editor-settings.php:271
 #: includes/forms/views/tab-settings.php:14
 msgid "Front page"
 msgstr "Startseite"
 
-#: build/Forms/Admin/editor-settings.php:219
+#: build/Forms/Admin/editor-settings.php:245
 msgid "Everywhere"
 msgstr "Überall"
 
-#: build/Forms/Admin/editor-settings.php:212
+#: build/Forms/Admin/editor-settings.php:238
 msgid "Where do you want to show this subscription form?"
 msgstr "Wo möchten Sie dieses Anmeldeformular anzeigen?"
 
-#: build/Forms/Admin/editor-settings.php:177
+#: build/Forms/Admin/editor-settings.php:203
 msgid "Scroll depth in percentage after which the form will appear"
 msgstr "Scrolltiefe in Prozent, ab der das Formular angezeigt wird"
 
-#: build/Forms/Admin/editor-settings.php:160
+#: build/Forms/Admin/editor-settings.php:186
 msgid "Time in seconds to delay"
 msgstr "Zeit in Sekunden zur Verzögerung"
 
-#: build/Forms/Admin/editor-settings.php:146
+#: build/Forms/Admin/editor-settings.php:172
 msgid "CSS selector of the items to watch out for clicks"
 msgstr "CSS-Selektor der Elemente, auf die Sie achten müssen, wenn Sie klicken"
 
-#: build/Forms/Admin/editor-settings.php:126
+#: build/Forms/Admin/editor-settings.php:152
 #: includes/forms/views/tab-settings.php:121
 msgid "After a time delay"
 msgstr "Nach einer Zeitverzögerung"
 
-#: build/Forms/Admin/editor-settings.php:125
+#: build/Forms/Admin/editor-settings.php:151
 #: includes/forms/views/tab-settings.php:120
 msgid "After clicking on something"
 msgstr "Nachdem Sie auf etwas geklickt haben"
 
-#: build/Forms/Admin/editor-settings.php:124
+#: build/Forms/Admin/editor-settings.php:150
 #: includes/forms/views/tab-settings.php:119
 msgid "After the user starts scrolling"
 msgstr "Nachdem der Benutzer mit dem Blättern begonnen hat"
 
-#: build/Forms/Admin/editor-settings.php:123
+#: build/Forms/Admin/editor-settings.php:149
 #: includes/forms/views/tab-settings.php:118
 msgid "Before the user leaves"
 msgstr "Bevor der Benutzer geht"
 
-#: build/Forms/Admin/editor-settings.php:122
+#: build/Forms/Admin/editor-settings.php:148
 #: includes/forms/views/tab-settings.php:117
 msgid "Immediately"
 msgstr "Sofort"
 
-#: build/Forms/Admin/editor-settings.php:120
+#: build/Forms/Admin/editor-settings.php:146
 msgid "Show this form"
 msgstr "Dieses Formular anzeigen"
 
-#: build/Forms/Admin/editor-settings.php:113
+#: build/Forms/Admin/editor-settings.php:139
 #: includes/forms/views/tab-settings.php:135
 msgid "Bottom right Alt"
 msgstr "Unten rechts Alt"
 
-#: build/Forms/Admin/editor-settings.php:112
+#: build/Forms/Admin/editor-settings.php:138
 #: includes/forms/views/tab-settings.php:134
 msgid "Bottom right"
 msgstr "Unten rechts"
 
-#: build/Forms/Admin/editor-settings.php:111
+#: build/Forms/Admin/editor-settings.php:137
 #: includes/forms/views/tab-settings.php:133
 msgid "Bottom Left Alt"
 msgstr "Unten links Alt"
 
-#: build/Forms/Admin/editor-settings.php:110
+#: build/Forms/Admin/editor-settings.php:136
 #: includes/forms/views/tab-settings.php:132
 msgid "Bottom Left"
 msgstr "Unten links"
 
-#: build/Forms/Admin/editor-settings.php:107
+#: build/Forms/Admin/editor-settings.php:133
 #: includes/forms/views/tab-settings.php:129
 msgid "Top Right Alt"
 msgstr "Rechts oben Alt"
 
-#: build/Forms/Admin/editor-settings.php:106
+#: build/Forms/Admin/editor-settings.php:132
 #: includes/forms/views/tab-settings.php:128
 msgid "Top Right"
 msgstr "Oben rechts"
 
-#: build/Forms/Admin/editor-settings.php:105
+#: build/Forms/Admin/editor-settings.php:131
 #: includes/forms/views/tab-settings.php:127
 msgid "Top Left Alt"
 msgstr "Oben links Alt"
 
-#: build/Forms/Admin/editor-settings.php:104
+#: build/Forms/Admin/editor-settings.php:130
 #: includes/forms/views/tab-settings.php:126
 msgid "Top Left"
 msgstr "Oben links"
 
-#: build/Forms/Admin/editor-settings.php:95
+#: build/Forms/Admin/editor-settings.php:121
 msgid "The form will slide from..."
 msgstr "Das Formular gleitet von..."
 
-#: build/Forms/Admin/editor-settings.php:65
+#: build/Forms/Admin/editor-settings.php:83
 msgid "Redirect url"
 msgstr "Weiterleitungs-URL"
 
-#: build/Forms/Admin/editor-settings.php:52
-msgid "Success message"
-msgstr "Erfolgsmeldung"
-
-#: build/Forms/Admin/editor-settings.php:44
+#: build/Forms/Admin/editor-settings.php:75
 msgid "redirect to a different page"
 msgstr "zu einer anderen Seite umleiten"
 
-#: build/Forms/Admin/editor-settings.php:43
+#: build/Forms/Admin/editor-settings.php:74
 msgid "Display a success message"
 msgstr "Eine Erfolgsmeldung anzeigen"
 
-#: build/Forms/Admin/editor-settings.php:41
+#: build/Forms/Admin/editor-settings.php:72
 msgid "What should happen after the user subscribes"
 msgstr "Was sollte passieren, nachdem der Benutzer sich angemeldet hat"
 
-#: build/Forms/Admin/editor-settings.php:34
+#: build/Forms/Admin/editor-settings.php:65
 msgid "Before and after post content"
 msgstr "Inhalt vor und nach dem Beitrag"
 
-#: build/Forms/Admin/editor-settings.php:33
+#: build/Forms/Admin/editor-settings.php:64
 msgid "After post content"
 msgstr "Nach dem Beitrag Inhalt"
 
-#: build/Forms/Admin/editor-settings.php:32
+#: build/Forms/Admin/editor-settings.php:63
 msgid "Before post content"
 msgstr "Bevor Sie den Inhalt posten"
 
-#: build/Forms/Admin/editor-settings.php:31
+#: build/Forms/Admin/editor-settings.php:62
 msgid "Don't inject"
 msgstr "Spritzen Sie nicht"
 
-#: build/Forms/Admin/editor-settings.php:29
+#: build/Forms/Admin/editor-settings.php:60
 msgid "Noptin can automatically embed this form into your post content. You can also find the form's shortcode below the form preview"
 msgstr "Noptin kann dieses Formular automatisch in den Inhalt Ihres Beitrags einbetten. Sie finden den Shortcode des Formulars auch unterhalb der Formularvorschau"
 
-#: build/Forms/Admin/editor-settings.php:28
+#: build/Forms/Admin/editor-settings.php:59
 msgid "Inject into post content"
 msgstr "In den Inhalt eines Beitrags einfügen"
 
-#: build/Forms/Admin/editor-settings.php:315
+#: build/Forms/Admin/editor-settings.php:341
 msgid "Device Targeting"
 msgstr "Gerät Targeting"
 
-#: build/Forms/Admin/editor-settings.php:206
+#: build/Forms/Admin/editor-settings.php:232
 msgid "Page Targeting"
 msgstr "Seite Targeting"
 
-#: build/Forms/Admin/editor-settings.php:81
+#: build/Forms/Admin/editor-settings.php:107
 msgid "Trigger Options"
 msgstr "Auslöser Optionen"
 
-#: build/Forms/Admin/editor-settings.php:16
+#: build/Forms/Admin/editor-settings.php:29
 msgid "Basic Options"
 msgstr "Grundeinstellungen"
 
 #. translators: %s: file name
-#: build/Forms/Admin/editor-settings.php:353
+#: build/Forms/Admin/editor-settings.php:379
 #: build/Emails/assets/js/blocks.js:52
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Design"
@@ -5743,11 +5740,11 @@ msgctxt "Post type general name"
 msgid "Subscription Forms"
 msgstr "Anmeldeformulare"
 
-#: build/Forms/Listener.php:630
+#: build/Forms/Listener.php:649
 msgid "Thanks!"
 msgstr "Danke!"
 
-#: build/Forms/Admin/default-form.php:109
+#: build/Forms/Admin/default-form.php:108
 #: build/Forms/Admin/optin-templates.php:51
 #: build/Forms/Admin/optin-templates.php:117
 #: build/Forms/Admin/optin-templates.php:186
@@ -5763,36 +5760,36 @@ msgstr "Danke!"
 #: build/Forms/Admin/optin-templates.php:1059
 #: build/Forms/Admin/optin-templates.php:1103
 #: build/Forms/Admin/optin-templates.php:1194
-#: includes/forms/class-form-legacy.php:263
+#: includes/forms/class-form-legacy.php:262
 msgid "By subscribing, you agree with our <a href=\"\">privacy policy</a> and our terms of service."
 msgstr "Indem Sie sich anmelden, erklären Sie sich mit unserer <a href=\"\">Datenschutzrichtlinie</a> und unseren Nutzungsbedingungen einverstanden."
 
-#: build/Forms/Admin/default-form.php:88
-#: includes/forms/class-form-legacy.php:242
+#: build/Forms/Admin/default-form.php:87
+#: includes/forms/class-form-legacy.php:241
 msgid "And get notified everytime we publish a new blog post."
 msgstr "Und lassen Sie sich jedes Mal benachrichtigen, wenn wir einen neuen Blogbeitrag veröffentlichen."
 
-#: build/Forms/Admin/default-form.php:67
-#: build/Forms/Admin/editor-settings.php:576
-#: build/Forms/Admin/editor-settings.php:588
-#: build/Forms/Admin/editor-settings.php:811
-#: includes/forms/class-form-legacy.php:221
+#: build/Forms/Admin/default-form.php:66
+#: build/Forms/Admin/editor-settings.php:613
+#: build/Forms/Admin/editor-settings.php:625
+#: build/Forms/Admin/editor-settings.php:848
+#: includes/forms/class-form-legacy.php:220
 msgid "Prefix"
 msgstr "Präfix"
 
-#: build/Forms/Admin/default-form.php:46
-#: includes/forms/class-form-legacy.php:200
+#: build/Forms/Admin/default-form.php:45
+#: includes/forms/class-form-legacy.php:199
 #: build/Forms/assets/js/new-form-block.js:1
 msgid "JOIN OUR NEWSLETTER"
 msgstr "ABONNIERE UNSEREN NEWSLETTER"
 
-#: build/Forms/Admin/default-form.php:42
+#: build/Forms/Admin/default-form.php:41
 #: build/Forms/Admin/optin-templates.php:168
 #: build/Forms/Admin/optin-templates.php:246
 #: build/Forms/Admin/optin-templates.php:415
 #: build/Forms/Admin/optin-templates.php:490
 #: build/Forms/Admin/optin-templates.php:1181
-#: includes/forms/class-form-legacy.php:196
+#: includes/forms/class-form-legacy.php:195
 msgid "Subscribe Now"
 msgstr "Jetzt abonnieren"
 
@@ -5802,7 +5799,7 @@ msgid "I consent to receive promotional emails about your products and services.
 msgstr "Ich bin damit einverstanden, Werbe-E-Mails über Ihre Produkte und Dienstleistungen zu erhalten."
 
 #: includes/forms/class-form-legacy.php:147
-#: includes/forms/class-form-legacy.php:617
+#: includes/forms/class-form-legacy.php:612
 msgid "This form is incorrectly configured"
 msgstr "Dieses Formular ist falsch konfiguriert"
 
@@ -5903,7 +5900,7 @@ msgstr "Noptin Abonnenten"
 msgid "Sending the campaign: \"%s\""
 msgstr "Senden Sie die Kampagne: \"%s\""
 
-#: build/Forms/Admin/editor-settings.php:494
+#: build/Forms/Admin/editor-settings.php:531
 #: src/Objects/Collection.php:430
 msgid "Avatar URL"
 msgstr "Avatar-URL"
@@ -5956,7 +5953,7 @@ msgstr "Die Mail-Funktion hat false zurückgegeben."
 #. translators: %s: Example
 #. translators: %s: Placeholder for email recipients.
 #. translators: %s: The Example
-#: build/Emails/Admin/Main.php:438
+#: build/Emails/Admin/Main.php:446
 #: build/Emails/Email.php:922
 #: includes/forms/views/tab-form.php:70
 #: includes/forms/views/tab-settings.php:108
@@ -6067,7 +6064,7 @@ msgstr "Beitrag"
 msgid "Cheers"
 msgstr "Prost"
 
-#: includes/subscriber.php:746
+#: includes/subscriber.php:777
 msgid "If that doesn't work, copy and paste the following link in your browser:"
 msgstr "Wenn das nicht funktioniert, kopieren Sie den folgenden Link und fügen ihn in Ihren Browser ein:"
 
@@ -6146,17 +6143,17 @@ msgstr "Senden Sie Ihren Abonnenten automatisch eine tägliche, wöchentliche, m
 msgid "Post Digest"
 msgstr "Beitrag Digest"
 
-#: build/Emails/Admin/Main.php:425
+#: build/Emails/Admin/Main.php:433
 msgid "Recipient(s)"
 msgstr "Empfänger"
 
-#: build/Forms/Admin/editor-settings.php:625
-#: build/Forms/Admin/editor-settings.php:637
-#: build/Forms/Admin/editor-settings.php:801
+#: build/Forms/Admin/editor-settings.php:662
+#: build/Forms/Admin/editor-settings.php:674
+#: build/Forms/Admin/editor-settings.php:838
 msgid "Heading"
 msgstr "Überschrift"
 
-#: build/Forms/Admin/editor-settings.php:344
+#: build/Forms/Admin/editor-settings.php:370
 msgid "Subscriber Tags"
 msgstr "Abonnenten-Tags"
 
@@ -6182,20 +6179,20 @@ msgstr "Es gibt keine Kampagne mit dieser ID. %1$sGehen Sie zurück zur Kampagne
 msgid "Your email has been added to the sending queue and will be sent soon."
 msgstr "Ihre E-Mail wurde in die Warteschlange für den Versand aufgenommen und wird in Kürze versendet."
 
-#: build/Emails/Admin/Table.php:836
-#: includes/subscriber.php:1087
+#: build/Emails/Admin/Table.php:843
+#: includes/subscriber.php:1118
 #: src/DB/Main.php:510
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:190
 #: src/Objects/Generic_Post_Type.php:208
 msgid "Date"
 msgstr "Datum"
 
-#: build/Emails/Admin/Table.php:830
+#: build/Emails/Admin/Table.php:837
 #: src/DB/Subscriber.php:748
 msgid "Clicked"
 msgstr "Geklickt"
 
-#: build/Emails/Admin/Table.php:829
+#: build/Emails/Admin/Table.php:836
 #: src/DB/Main.php:479
 #: src/DB/Subscriber.php:744
 msgid "Opened"
@@ -6221,39 +6218,36 @@ msgstr "Typ"
 msgid "Name"
 msgstr "Name"
 
-#: build/Emails/Admin/Table.php:799
+#: build/Emails/Admin/Table.php:806
 msgid "The selected campaigns have been restored."
 msgstr "Die ausgewählten Kampagnen wurden wiederhergestellt."
 
-#: build/Emails/Admin/Table.php:459
+#: build/Emails/Admin/Table.php:466
 msgid "Sending"
 msgstr "Senden"
 
-#: build/Emails/Admin/Table.php:455
-#: build/Emails/Admin/Table.php:828
+#: build/Emails/Admin/Table.php:462
+#: build/Emails/Admin/Table.php:835
 #: src/DB/Main.php:471
 msgid "Sent"
 msgstr "Gesendet"
 
-#: build/Emails/Admin/Table.php:251
+#: build/Emails/Admin/Table.php:258
 msgid "Are you sure you want to delete this campaign?"
 msgstr "Sind Sie sicher, dass Sie diese Kampagne löschen möchten?"
 
-#: build/Emails/Admin/Table.php:193
+#: build/Emails/Admin/Table.php:200
+#: build/Emails/assets/js/view-campaigns.js:18
 msgid "Duplicate"
 msgstr "Duplizieren"
-
-#: build/Emails/Admin/Table.php:192
-msgid "Are you sure you want to duplicate this campaign?"
-msgstr "Sind Sie sicher, dass Sie diese Kampagne duplizieren möchten?"
 
 #: build/Emails/Main.php:423
 #: build/Emails/assets/js/email-editor.js:53
 msgid "Template"
 msgstr "Template"
 
-#: build/Emails/Admin/Table.php:330
-#: build/Emails/Admin/Table.php:345
+#: build/Emails/Admin/Table.php:337
+#: build/Emails/Admin/Table.php:352
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Recipients"
 msgstr "Empfänger"
@@ -6273,8 +6267,7 @@ msgid "You need to provide a subject for your email."
 msgstr "Sie müssen einen Betreff für Ihre E-Mail angeben."
 
 #: build/Emails/REST.php:88
-#: includes/class-noptin-ajax.php:130
-#: includes/subscriber.php:298
+#: includes/subscriber.php:413
 msgid "Please provide a valid email address"
 msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein"
 
@@ -6295,15 +6288,15 @@ msgstr "Automatisierte E-Mails"
 msgid "Newsletters"
 msgstr "Newsletter"
 
-#: build/Emails/Admin/Main.php:242
+#: build/Emails/Admin/Main.php:250
 msgid "The campaign has been deleted."
 msgstr "Die Kampagne wurde gelöscht."
 
-#: build/Emails/Admin/Main.php:221
+#: build/Emails/Admin/Main.php:229
 msgid "Unable to duplicate the campaign."
 msgstr "Sie können die Kampagne nicht duplizieren."
 
-#: build/Emails/Admin/Main.php:215
+#: build/Emails/Admin/Main.php:223
 msgid "The campaign has been duplicated."
 msgstr "Die Kampagne wurde vervielfältigt."
 
@@ -6361,15 +6354,15 @@ msgstr "Shortcode"
 msgid "Form Name"
 msgstr "Formularname"
 
-#: build/Emails/Admin/Table.php:199
+#: build/Emails/Admin/Table.php:206
 #: build/Emails/Main.php:264
 #: includes/class-noptin-post-types.php:57
 #: build/Forms/assets/js/form-editor.js:52
 msgid "Preview"
 msgstr "Vorschau"
 
-#: build/Emails/Admin/Main.php:292
-#: build/Emails/Admin/Main.php:293
+#: build/Emails/Admin/Main.php:300
+#: build/Emails/Admin/Main.php:301
 #: build/Emails/Main.php:258
 #: build/Emails/Main.php:277
 #: build/Emails/Records.php:32
@@ -6512,8 +6505,8 @@ msgid "Data from a cookie."
 msgstr "Daten aus einem Cookie."
 
 #: includes/class-noptin-custom-fields.php:115
-#: includes/subscriber.php:1055
-#: includes/subscriber.php:1209
+#: includes/subscriber.php:1086
+#: includes/subscriber.php:1240
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:169
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Language"
@@ -6525,21 +6518,7 @@ msgstr "Sprache"
 msgid "Every %d Minutes"
 msgstr "Alle %d Minuten"
 
-#: includes/class-noptin-ajax.php:190
-#: includes/forms/class-form-legacy.php:312
-msgid "Thanks for subscribing to the newsletter"
-msgstr "Danke, dass Sie den Newsletter abonniert haben"
-
-#: includes/class-noptin-ajax.php:122
-msgid "Ensure that you fill all required fields."
-msgstr "Stellen Sie sicher, dass Sie alle erforderlichen Felder ausfüllen."
-
-#: includes/class-noptin-ajax.php:83
-msgid "You must consent to receive promotional emails."
-msgstr "Sie müssen zustimmen, Werbe-E-Mails zu erhalten."
-
 #: build/Forms/Listener.php:134
-#: includes/class-noptin-ajax.php:73
 msgid "This form is in-active."
 msgstr "Dieses Formular ist inaktiv."
 
@@ -6563,7 +6542,7 @@ msgstr "Abonnenten zeigen"
 msgid "URL"
 msgstr "URL"
 
-#: build/Emails/Admin/Table.php:826
+#: build/Emails/Admin/Table.php:833
 #: build/Emails/Admin/views/campaigns.php:36
 msgid "Campaign"
 msgstr "Kampagne"
@@ -6582,7 +6561,7 @@ msgstr "Bezahlt"
 
 #: build/Automation_Rules/Admin/Table.php:226
 #: build/Subscribers/Records.php:204
-#: includes/forms/forms.php:465
+#: includes/forms/forms.php:493
 msgid "Updated"
 msgstr "Aktualisiert"
 
@@ -6617,7 +6596,7 @@ msgstr "Aktionen"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: build/Forms/Renderer.php:168
+#: build/Forms/Renderer.php:169
 #: build/Subscribers/Records.php:730
 #: includes/emails/class-generator.php:156
 msgid "Unsubscribe"
@@ -6731,7 +6710,7 @@ msgid "Subscribers"
 msgstr "Abonnenten"
 
 #: build/Subscribers/Records.php:33
-#: includes/subscriber.php:1355
+#: includes/subscriber.php:1386
 #: src/DB/Schema.php:211
 msgid "Subscriber"
 msgstr "Abonnent"
@@ -6740,7 +6719,7 @@ msgstr "Abonnent"
 msgid "Are you sure you want to delete this subscriber?"
 msgstr "Sind Sie sicher, dass Sie diesen Abonnenten löschen wollen?"
 
-#: includes/subscriber.php:1469
+#: includes/subscriber.php:1500
 #: src/DB/Main.php:546
 msgid "Unknown"
 msgstr "Unbekannt"
@@ -6792,10 +6771,10 @@ msgstr "Land"
 msgid "Continent"
 msgstr "Kontinent"
 
-#: build/Emails/Admin/Table.php:835
+#: build/Emails/Admin/Table.php:842
 #: build/Emails/Records.php:92
-#: includes/forms/forms.php:455
-#: includes/subscriber.php:1608
+#: includes/forms/forms.php:471
+#: includes/subscriber.php:1639
 #: src/DB/Main.php:495
 msgid "Unsubscribed"
 msgstr "Abgemeldet"
@@ -6849,17 +6828,16 @@ msgstr "Aktiv"
 #: build/Forms/Admin/optin-templates.php:1160
 #: build/Forms/Widgets/New_Form.php:209
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:204
-#: includes/class-noptin-ajax.php:58
 #: includes/class-noptin-custom-fields.php:104
 #: includes/forms/class-form-legacy.php:160
-#: includes/subscriber.php:1037
+#: includes/subscriber.php:1068
 msgid "Email Address"
 msgstr "E-Mail-Adresse"
 
 #: build/Forms/Admin/optin-templates.php:1150
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:222
 #: includes/class-noptin-custom-fields.php:96
-#: includes/subscriber.php:1049
+#: includes/subscriber.php:1080
 msgid "Last Name"
 msgstr "Nachname"
 
@@ -6867,7 +6845,7 @@ msgstr "Nachname"
 #: build/Forms/Admin/optin-templates.php:1140
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:216
 #: includes/class-noptin-custom-fields.php:88
-#: includes/subscriber.php:1043
+#: includes/subscriber.php:1074
 msgid "First Name"
 msgstr "Vorname"
 
@@ -6899,7 +6877,7 @@ msgstr "Speichern Sie mehr Informationen über Ihre Abonnenten, indem Sie %1$sbe
 msgid "Learn More"
 msgstr "Mehr erfahren"
 
-#: build/Forms/Admin/editor-settings.php:414
+#: build/Forms/Admin/editor-settings.php:440
 msgid "Frontend Label"
 msgstr "Fronted-Beschriftung"
 
@@ -6910,8 +6888,8 @@ msgstr "Zurück zur Seite Tools"
 #: build/Forms/Admin/optin-templates.php:985
 #: build/Forms/Admin/optin-templates.php:1046
 #: build/Forms/Admin/optin-templates.php:1090
-#: build/Forms/Renderer.php:200
-#: build/Forms/Renderer.php:606
+#: build/Forms/Renderer.php:201
+#: build/Forms/Renderer.php:623
 #: includes/forms/class-form-element.php:264
 #: includes/forms/views/tab-form.php:11
 msgid "Subscribe"
@@ -6923,8 +6901,8 @@ msgstr "Sehen Sie sich eine Liste der von Noptin protokollierten Hinweise und Fe
 
 #: includes/class-noptin-dynamic-content-tags.php:560
 #: includes/functions.php:1144
-#: includes/subscriber.php:1367
-#: includes/subscriber.php:1426
+#: includes/subscriber.php:1398
+#: includes/subscriber.php:1457
 #: src/Integrations/WooCommerce/Products.php:217
 #: src/Integrations/WooCommerce/Products.php:683
 #: src/Objects/Store.php:161
@@ -6935,8 +6913,8 @@ msgstr "Nein"
 
 #: includes/class-noptin-dynamic-content-tags.php:560
 #: includes/functions.php:1148
-#: includes/subscriber.php:1366
-#: includes/subscriber.php:1425
+#: includes/subscriber.php:1397
+#: includes/subscriber.php:1456
 #: src/DB/Main.php:551
 #: src/Integrations/WooCommerce/Products.php:219
 #: src/Integrations/WooCommerce/Products.php:685
@@ -6946,7 +6924,7 @@ msgstr "Nein"
 msgid "Yes"
 msgstr "Ja"
 
-#: build/Emails/Admin/Table.php:827
+#: build/Emails/Admin/Table.php:834
 #: build/Tasks/Main.php:608
 #: src/Integrations/EDD/Customers.php:139
 #: src/Integrations/EDD/Orders.php:95
@@ -6961,16 +6939,16 @@ msgstr "Ja"
 msgid "Status"
 msgstr "Status"
 
-#: includes/subscriber.php:1606
+#: includes/subscriber.php:1637
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: includes/subscriber.php:1607
+#: includes/subscriber.php:1638
 msgid "Subscribed"
 msgstr "Abonniert"
 
-#: build/Emails/Admin/Table.php:806
+#: build/Emails/Admin/Table.php:813
 msgid "The selected campaigns have been deleted."
 msgstr "Die ausgewählten Kampagnen wurden gelöscht."
 
@@ -7186,13 +7164,14 @@ msgstr "Fordern Sie neue Abonnenten auf, ihre E-Mail-Adressen zu bestätigen."
 msgid "Double Opt-in"
 msgstr "Double Opt-in"
 
+#: build/Forms/Admin/editor-settings.php:99
 #: build/Settings/Menu.php:165
 #: includes/forms/views/editor.php:18
 msgid "Messages"
 msgstr "Nachrichten"
 
 #: build/Extensions/Menu.php:282
-#: build/Forms/Admin/editor-settings.php:853
+#: build/Forms/Admin/editor-settings.php:890
 #: build/Settings/Menu.php:164
 #: includes/forms/views/editor.php:20
 msgid "Integrations"
@@ -7261,7 +7240,7 @@ msgid "Tools"
 msgstr "Werkzeuge"
 
 #: build/Extensions/Menu.php:386
-#: build/Forms/Admin/editor-settings.php:11
+#: build/Forms/Admin/editor-settings.php:24
 #: build/Settings/Menu.php:68
 #: build/Settings/Menu.php:69
 msgid "Settings"
@@ -7286,8 +7265,8 @@ msgstr "Dashboard"
 msgid "Noptin Dashboard"
 msgstr "Noptin Dashboard"
 
-#: build/Emails/Admin/Table.php:252
-#: build/Emails/Admin/Table.php:667
+#: build/Emails/Admin/Table.php:259
+#: build/Emails/Admin/Table.php:674
 #: build/Tasks/Task.php:442
 #: src/DB/Subscriber.php:815
 #: build/Automation_Rules/assets/js/automation-rules.js:1
@@ -7376,4 +7355,12 @@ msgstr ""
 #: includes/assets/js/src/wc/block.json
 msgctxt "block description"
 msgid "Adds a newsletter subscription checkbox to the checkout."
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:36
+msgid "This is an unsubscribe form."
+msgstr ""
+
+#: build/Forms/Admin/editor-settings.php:502
+msgid "Hide email field if the email address is already known"
 msgstr ""
