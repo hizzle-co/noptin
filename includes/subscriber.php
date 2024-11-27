@@ -288,7 +288,6 @@ function prepare_noptin_subscriber_source_fields( $source, $fields = array() ) {
 
 	// Set default values.
 	$listener = \Hizzle\Noptin\Forms\Main::$listener;
-	$fields   = array();
 
 	// Loop through all custom fields.
 	foreach ( get_noptin_multicheck_custom_fields() as $field ) {

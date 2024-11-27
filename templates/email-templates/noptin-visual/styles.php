@@ -24,12 +24,18 @@
 		-webkit-text-size-adjust: 100%; /* 2 */
 	}
 
+	/* Client-specific Styles */
+	#outlook a {
+		padding:0;
+	}
+
 	body,
 	.wrapper-div {
 		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>;
 		width: 100%;
 		height: 100%;
 		margin: 0;
+		padding: 0;
 		overflow: auto;
 		box-sizing: border-box;
 		color: <?php echo esc_attr( $settings['color'] ); ?>;
