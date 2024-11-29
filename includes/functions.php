@@ -552,6 +552,10 @@ function noptin_parse_list( $list, $strict = false ) {
 		return array();
 	}
 
+	if ( wp_is_numeric_array( $list ) ) {
+		$list = implode( ',', $list );
+	}
+
 	if ( ! is_array( $list ) ) {
 		if ( $strict ) {
 			$list = preg_split( '/,+/', $list, -1, PREG_SPLIT_NO_EMPTY );
