@@ -354,15 +354,6 @@ class Menu {
 			);
 		}
 
-		// If this is a connection, show the upgrade button.
-		if ( ! $is_connection && false !== strpos( $license->product_sku, 'connect' ) ) {
-			return array(
-				'href'    => noptin_get_upsell_url( 'pricing', str_replace( 'noptin-', '', $slug ), 'extensionsscreen' ),
-				'text'    => esc_html__( 'Upgrade', 'newsletter-optin-box' ),
-				'variant' => 'primary',
-			);
-		}
-
 		// If installed...
 		if ( isset( $installed_addons[ $slug ] ) ) {
 			$installed_plugin = $installed_addons[ $slug ];
