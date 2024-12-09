@@ -433,6 +433,18 @@ class Noptin_Email_Generator {
 
 		/** @var \DOMNodeList $elements */
 		foreach ( $elements as $element ) {
+			// If element has data-remove attribute, remove closest parent element that has the same selector.
+			if ( $element->hasAttribute( 'data-remove' ) ) {
+				$selector = $element->getAttribute( 'data-remove' );
+				$parent   = $element->parentNode;
+				while ( $parent && ! ( $parent->nodeName === $selector || ( $parent->hasAttribute( 'class' ) && strpos( $parent->getAttribute( 'class' ), $selector ) !== false ) || ( $parent->hasAttribute( 'id' ) && $parent->getAttribute( 'id' ) === $selector ) ) ) {
+					$parent = $parent->parentNode;
+				}
+				if ( $parent ) {
+					$parent->parentNode->removeChild( $parent );
+				}
+			}
+
 			$is_block_element = in_array( $element->nodeName, array( 'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li' ), true );
 
 			// Remove empty paragraphs or those with only whitespace.

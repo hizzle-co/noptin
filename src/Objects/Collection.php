@@ -877,12 +877,13 @@ abstract class Collection {
 
 		$atts = shortcode_atts(
 			array(
-				'query'       => 'number=10&order=desc&orderby=date',
-				'number'      => 3, // Only used when merge_tag is set.
-				'columns'     => 1,
-				'skiponempty' => 'no',
-				'responsive'  => 'yes',
-				'merge_tag'   => '',
+				'query'                        => 'number=10&order=desc&orderby=date',
+				'number'                       => 3, // Only used when merge_tag is set.
+				'columns'                      => 1,
+				'skiponempty'                  => 'no',
+				'hide_parent_section_on_empty' => 'no',
+				'responsive'                   => 'yes',
+				'merge_tag'                    => '',
 			),
 			$atts,
 			'noptin_' . $this->plural_type() . '_list'
@@ -924,6 +925,10 @@ abstract class Collection {
 						strtolower( $this->label )
 					),
 				);
+			}
+
+			if ( 'yes' === $atts['hide_parent_section_on_empty'] ) {
+				return '<div data-remove="wp-block-noptin-group"></div>';
 			}
 
 			return '';
