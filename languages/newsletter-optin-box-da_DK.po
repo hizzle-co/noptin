@@ -73,8 +73,8 @@ msgstr ""
 
 #. translators: %s is a date.
 #. translators: %1$s is a string, %2$s is a string.
-#: includes/functions.php:1833
-#: includes/functions.php:2057
+#: includes/functions.php:1837
+#: includes/functions.php:2061
 msgid "%1$s and %2$s"
 msgstr ""
 
@@ -186,7 +186,7 @@ msgid "%s addon"
 msgstr ""
 
 #. translators: %s: Human-readable time difference.
-#: includes/functions.php:1345
+#: includes/functions.php:1349
 #: src/DB/Main.php:566
 #: src/DB/Main.php:592
 #: src/DB/Main.php:639
@@ -212,7 +212,7 @@ msgid "%s Equivalent"
 msgstr ""
 
 #. translators: %s: object type label
-#: src/Objects/Collection.php:1049
+#: src/Objects/Collection.php:1054
 msgid "%s Meta"
 msgstr ""
 
@@ -301,7 +301,7 @@ msgstr ""
 msgid "Actions"
 msgstr "Handling:"
 
-#: build/Extensions/Menu.php:404
+#: build/Extensions/Menu.php:395
 #: includes/libraries/noptin-com/class-noptin-com-updater.php:428
 #: src/Integrations/Main.php:344
 #: build/Misc/assets/js/list.js:1
@@ -335,7 +335,7 @@ msgid "Activate your license key to unlock"
 msgstr ""
 
 #: build/Extensions/Menu.php:311
-#: build/Extensions/Menu.php:394
+#: build/Extensions/Menu.php:385
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Active"
@@ -606,7 +606,7 @@ msgstr ""
 msgid "An error occurred while sending this campaign. The last error was: %s"
 msgstr ""
 
-#: includes/functions.php:1865
+#: includes/functions.php:1869
 msgid "AND"
 msgstr ""
 
@@ -791,7 +791,7 @@ msgstr "Før send-knappen"
 msgid "Before the user leaves"
 msgstr "Før brugeren går videre"
 
-#: includes/functions.php:1659
+#: includes/functions.php:1663
 msgid "begins with"
 msgstr ""
 
@@ -992,7 +992,7 @@ msgstr "Alt nederst til højre"
 msgid "Bounce Handler"
 msgstr ""
 
-#: includes/subscriber.php:1640
+#: includes/subscriber.php:1639
 msgid "Bounced"
 msgstr ""
 
@@ -1100,7 +1100,7 @@ msgstr ""
 msgid "Check to display a subscription checkbox instead of automatically subscribing new %s"
 msgstr "Ving af for at vise et afkrydsningsfelt, i  stedet for automatisk at tilføje nye %s"
 
-#: includes/subscriber.php:1123
+#: includes/subscriber.php:1122
 msgid "Checkbox"
 msgstr "Afkrydsningsfelt"
 
@@ -1120,7 +1120,7 @@ msgstr ""
 msgid "Cheers"
 msgstr ""
 
-#: includes/subscriber.php:778
+#: includes/subscriber.php:777
 msgid "Cheers,"
 msgstr "Venlig hilsen,"
 
@@ -1266,7 +1266,7 @@ msgid "Confirm new %s"
 msgstr ""
 
 #: build/Subscribers/Records.php:729
-#: includes/subscriber.php:774
+#: includes/subscriber.php:773
 msgid "Confirm your subscription"
 msgstr "Bekræft din tilmelding"
 
@@ -1297,7 +1297,7 @@ msgstr ""
 msgid "Consent Text"
 msgstr "Betingelser"
 
-#: includes/functions.php:1651
+#: includes/functions.php:1655
 msgid "contains"
 msgstr ""
 
@@ -1525,7 +1525,7 @@ msgid "Data from the URL or a submitted form."
 msgstr ""
 
 #: build/Emails/Admin/Table.php:843
-#: includes/subscriber.php:1118
+#: includes/subscriber.php:1117
 #: src/DB/Main.php:510
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:190
 #: src/Objects/Generic_Post_Type.php:208
@@ -1636,8 +1636,8 @@ msgstr "Dyb orange"
 msgid "Deep Purple"
 msgstr "Mørk lilla"
 
-#: includes/subscriber.php:1515
-#: includes/subscriber.php:1582
+#: includes/subscriber.php:1514
+#: includes/subscriber.php:1581
 #: build/Emails/assets/js/view-campaigns.js:10
 msgid "Default"
 msgstr ""
@@ -1653,7 +1653,7 @@ msgstr "Standard succésmeddelelse"
 
 #: src/Integrations/WooCommerce/Order_Items.php:99
 #: src/Integrations/WooCommerce/Products.php:837
-#: src/Objects/Collection.php:1066
+#: src/Objects/Collection.php:1071
 #: src/Objects/Post_Type.php:399
 msgid "Default Value"
 msgstr ""
@@ -1705,7 +1705,7 @@ msgstr "Beskrivelse:"
 
 #. translators: %s: file name
 #: build/Forms/Admin/editor-settings.php:379
-#: build/Emails/assets/js/blocks.js:52
+#: build/Emails/assets/js/blocks.js:53
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Design"
 msgstr "Design"
@@ -1816,7 +1816,7 @@ msgstr ""
 msgid "Displays a button link to view the order."
 msgstr ""
 
-#: src/Objects/Collection.php:1052
+#: src/Objects/Collection.php:1057
 msgid "Displays a custom field value."
 msgstr ""
 
@@ -1957,7 +1957,7 @@ msgstr ""
 msgid "Documentation"
 msgstr ""
 
-#: includes/functions.php:1655
+#: includes/functions.php:1659
 msgid "does not contain"
 msgstr ""
 
@@ -2018,7 +2018,7 @@ msgstr "Hent nu"
 msgid "Downloadable"
 msgstr ""
 
-#: includes/subscriber.php:1113
+#: includes/subscriber.php:1112
 msgid "Dropdown"
 msgstr ""
 
@@ -2099,7 +2099,7 @@ msgstr ""
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:204
 #: includes/class-noptin-custom-fields.php:104
 #: includes/forms/class-form-legacy.php:160
-#: includes/subscriber.php:1068
+#: includes/subscriber.php:1067
 msgid "Email Address"
 msgstr "E-mailadresse"
 
@@ -2236,7 +2236,7 @@ msgstr ""
 msgid "End date of sale price, in the site's timezone, with an optional comparison operator."
 msgstr ""
 
-#: includes/functions.php:1663
+#: includes/functions.php:1667
 msgid "ends with"
 msgstr ""
 
@@ -2546,7 +2546,7 @@ msgstr ""
 #: build/Forms/Admin/optin-templates.php:1140
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:216
 #: includes/class-noptin-custom-fields.php:88
-#: includes/subscriber.php:1074
+#: includes/subscriber.php:1073
 msgid "First Name"
 msgstr "Fornavn"
 
@@ -2685,8 +2685,8 @@ msgstr "CDPR accept"
 #: build/Settings/Menu.php:241
 #: build/Settings/Menu.php:350
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
-#: includes/functions.php:1812
-#: includes/functions.php:2081
+#: includes/functions.php:1816
+#: includes/functions.php:2085
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/blocks.js:46
@@ -2896,7 +2896,7 @@ msgstr ""
 msgid "If provided and a product with the same sku exists, the product will be updated."
 msgstr ""
 
-#: includes/subscriber.php:777
+#: includes/subscriber.php:776
 msgid "If that doesn't work, copy and paste the following link in your browser:"
 msgstr "Hvis det ikke fungerer, kan du kopiere adressen ind i din browsers adressefelt"
 
@@ -2915,7 +2915,7 @@ msgstr ""
 msgid "If you are migrating from another email plugin, enter the cookie name they used to identify subscribers."
 msgstr "Skriv navnet på den cookie som identificerer abonnenter, hvis du tidligere har brugt en anden udvidelse."
 
-#: includes/subscriber.php:771
+#: includes/subscriber.php:770
 msgid "If you have received this email by mistake, you can safely delete it."
 msgstr "Har du modtaget denne e-mail ved en fejl, kan du slette den."
 
@@ -2948,7 +2948,7 @@ msgid "Import Subscribers"
 msgstr ""
 
 #: build/Subscribers/Records.php:69
-#: includes/subscriber.php:1581
+#: includes/subscriber.php:1580
 msgid "Imported"
 msgstr "Importeret"
 
@@ -2993,7 +2993,7 @@ msgstr ""
 msgid "Install"
 msgstr ""
 
-#: build/Extensions/Menu.php:413
+#: build/Extensions/Menu.php:404
 msgid "Install Now"
 msgstr ""
 
@@ -3016,7 +3016,7 @@ msgstr ""
 msgid "Install the Noptin Addons Pack addon to unlock."
 msgstr ""
 
-#: build/Extensions/Menu.php:373
+#: build/Extensions/Menu.php:364
 msgid "Install Update"
 msgstr ""
 
@@ -3062,20 +3062,20 @@ msgstr ""
 msgid "IP Address"
 msgstr "IP-adresse"
 
-#: includes/functions.php:1643
+#: includes/functions.php:1647
 msgid "is"
 msgstr ""
 
-#: includes/functions.php:1691
+#: includes/functions.php:1695
 msgid "is after"
 msgstr ""
 
-#: includes/functions.php:1687
+#: includes/functions.php:1691
 msgid "is before"
 msgstr ""
 
-#: includes/functions.php:1683
-#: includes/functions.php:1695
+#: includes/functions.php:1687
+#: includes/functions.php:1699
 msgid "is between"
 msgstr ""
 
@@ -3083,7 +3083,7 @@ msgstr ""
 msgid "Is Complete"
 msgstr ""
 
-#: includes/functions.php:1667
+#: includes/functions.php:1671
 msgid "is empty"
 msgstr ""
 
@@ -3095,19 +3095,19 @@ msgstr ""
 msgid "Is Free"
 msgstr ""
 
-#: includes/functions.php:1675
+#: includes/functions.php:1679
 msgid "is greater than"
 msgstr ""
 
-#: includes/functions.php:1679
+#: includes/functions.php:1683
 msgid "is less than"
 msgstr ""
 
-#: includes/functions.php:1647
+#: includes/functions.php:1651
 msgid "is not"
 msgstr ""
 
-#: includes/functions.php:1671
+#: includes/functions.php:1675
 msgid "is not empty"
 msgstr ""
 
@@ -3145,8 +3145,8 @@ msgid "Known email addresses"
 msgstr ""
 
 #: includes/class-noptin-custom-fields.php:115
-#: includes/subscriber.php:1086
-#: includes/subscriber.php:1240
+#: includes/subscriber.php:1085
+#: includes/subscriber.php:1239
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:169
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Language"
@@ -3167,7 +3167,7 @@ msgstr ""
 #: build/Forms/Admin/optin-templates.php:1150
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:222
 #: includes/class-noptin-custom-fields.php:96
-#: includes/subscriber.php:1080
+#: includes/subscriber.php:1079
 msgid "Last Name"
 msgstr "Efternavn"
 
@@ -3384,7 +3384,7 @@ msgstr ""
 msgid "Manual Subscription"
 msgstr "Tilføj abonnenter manuelt"
 
-#: includes/subscriber.php:1578
+#: includes/subscriber.php:1577
 msgid "Manually Added"
 msgstr "Tilføjet manuelt"
 
@@ -3429,14 +3429,14 @@ msgstr "Besked"
 msgid "Messages"
 msgstr ""
 
-#: src/Objects/Collection.php:1060
+#: src/Objects/Collection.php:1065
 msgid "Meta Key / Field Key"
 msgstr ""
 
 #: src/Integrations/EDD/Customers.php:151
 #: src/Integrations/EDD/Orders.php:330
 #: src/Integrations/PMPro/Membership_Levels.php:112
-#: src/Objects/Collection.php:1042
+#: src/Objects/Collection.php:1047
 msgid "Meta Value"
 msgstr ""
 
@@ -3485,7 +3485,7 @@ msgstr ""
 msgid "Move to Trash"
 msgstr ""
 
-#: includes/subscriber.php:1129
+#: includes/subscriber.php:1128
 msgid "Multiple checkboxes"
 msgstr ""
 
@@ -3582,7 +3582,7 @@ msgid "Newsletter - %s"
 msgstr ""
 
 #: build/Forms/Widgets/Form.php:23
-#: includes/subscriber.php:1507
+#: includes/subscriber.php:1506
 #: build/Forms/assets/js/block.js:1
 msgid "Newsletter Form"
 msgstr ""
@@ -3628,9 +3628,9 @@ msgid "Next send tomorrow at %1$s"
 msgstr ""
 
 #: includes/class-noptin-dynamic-content-tags.php:560
-#: includes/functions.php:1144
-#: includes/subscriber.php:1398
-#: includes/subscriber.php:1457
+#: includes/functions.php:1148
+#: includes/subscriber.php:1397
+#: includes/subscriber.php:1456
 #: src/Integrations/WooCommerce/Products.php:217
 #: src/Integrations/WooCommerce/Products.php:683
 #: src/Objects/Store.php:161
@@ -3641,7 +3641,7 @@ msgstr "Nej"
 
 #. translators: %s is the object type label, e.g. "orders".
 #: src/Objects/Collection.php:492
-#: src/Objects/Collection.php:923
+#: src/Objects/Collection.php:924
 msgid "No %s found."
 msgstr ""
 
@@ -3776,7 +3776,7 @@ msgstr ""
 msgid "Number"
 msgstr ""
 
-#: includes/subscriber.php:1101
+#: includes/subscriber.php:1100
 msgid "Number Input"
 msgstr ""
 
@@ -3897,7 +3897,7 @@ msgstr ""
 msgid "Optional. Send this email only if certain conditions are met."
 msgstr ""
 
-#: includes/functions.php:1863
+#: includes/functions.php:1867
 msgid "OR"
 msgstr ""
 
@@ -4065,7 +4065,7 @@ msgstr ""
 msgid "Payments"
 msgstr "Betaling"
 
-#: includes/subscriber.php:1637
+#: includes/subscriber.php:1636
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Pending"
 msgstr "Igang"
@@ -4110,8 +4110,8 @@ msgstr ""
 msgid "Please accept the terms and conditions first."
 msgstr ""
 
+#: includes/subscriber.php:765
 #: includes/subscriber.php:766
-#: includes/subscriber.php:767
 msgid "Please confirm your subscription"
 msgstr "Bekræft din tilmelding"
 
@@ -4124,7 +4124,7 @@ msgid "Please install the appropriate integration to automatically add new subsc
 msgstr ""
 
 #: build/Emails/REST.php:88
-#: includes/subscriber.php:413
+#: includes/subscriber.php:412
 msgid "Please provide a valid email address"
 msgstr "Indtast venligst en gyldig e-mail adresse"
 
@@ -4310,7 +4310,7 @@ msgstr ""
 msgid "Quantity"
 msgstr ""
 
-#: includes/subscriber.php:1107
+#: includes/subscriber.php:1106
 msgid "Radio Buttons"
 msgstr ""
 
@@ -4764,7 +4764,7 @@ msgstr ""
 msgid "Set-up a series of free or paid emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc."
 msgstr ""
 
-#: build/Extensions/Menu.php:386
+#: build/Extensions/Menu.php:377
 #: build/Forms/Admin/editor-settings.php:24
 #: build/Settings/Menu.php:68
 #: build/Settings/Menu.php:69
@@ -5148,7 +5148,7 @@ msgstr "ABONNÉR PÅ VORES NYHEDSBREV OG MODTAG EN RABATKUPON"
 msgid "Subscribe to our newsletter today and be the first to know when we publish a new blog post."
 msgstr "Abonnér på vores nyhedsbrev og få at vide hver gang der er nye blogindlæg"
 
-#: includes/subscriber.php:1638
+#: includes/subscriber.php:1637
 msgid "Subscribed"
 msgstr ""
 
@@ -5157,7 +5157,7 @@ msgid "subscribed"
 msgstr ""
 
 #: build/Subscribers/Records.php:33
-#: includes/subscriber.php:1386
+#: includes/subscriber.php:1385
 #: src/DB/Schema.php:211
 msgid "Subscriber"
 msgstr "Abonnent"
@@ -5238,7 +5238,7 @@ msgctxt "Subscription forms that slide into view"
 msgid "Sliding"
 msgstr "Glidende"
 
-#: includes/subscriber.php:1579
+#: includes/subscriber.php:1578
 msgid "Subscription Shortcode"
 msgstr ""
 
@@ -5301,7 +5301,7 @@ msgstr ""
 msgid "Tags - Exclude"
 msgstr ""
 
-#: includes/subscriber.php:770
+#: includes/subscriber.php:769
 msgid "Tap the button below to confirm your subscription to our newsletter."
 msgstr "Bekræft dit abonnement på nyhedsbrevet ved at klikke på knappen nedenfor."
 
@@ -5349,11 +5349,11 @@ msgstr ""
 msgid "Text Color:"
 msgstr "Tekstfarve:"
 
-#: includes/subscriber.php:1091
+#: includes/subscriber.php:1090
 msgid "Text Input"
 msgstr ""
 
-#: includes/subscriber.php:1096
+#: includes/subscriber.php:1095
 msgid "Textarea Input"
 msgstr ""
 
@@ -5549,7 +5549,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:102
 #: src/Integrations/WooCommerce/Products.php:840
-#: src/Objects/Collection.php:1069
+#: src/Objects/Collection.php:1074
 #: src/Objects/Post_Type.php:402
 msgid "The default value to display if not set."
 msgstr ""
@@ -5644,7 +5644,7 @@ msgstr ""
 msgid "The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below."
 msgstr "Abonnenterne får vist denne besked, når de har afmeldt nyhedsbrevet. Bruges kun, hvis du ikke angiver en viderestilling nedenunder."
 
-#: src/Objects/Collection.php:1063
+#: src/Objects/Collection.php:1068
 msgid "The meta key or field key to display."
 msgstr ""
 
@@ -6181,7 +6181,7 @@ msgstr ""
 msgid "Unique identifier for this resource."
 msgstr ""
 
-#: includes/subscriber.php:1500
+#: includes/subscriber.php:1499
 #: src/DB/Main.php:546
 msgid "Unknown"
 msgstr "Ukendt"
@@ -6221,7 +6221,7 @@ msgstr "afmeld dem"
 #: build/Emails/Admin/Table.php:842
 #: build/Emails/Records.php:92
 #: includes/forms/forms.php:471
-#: includes/subscriber.php:1639
+#: includes/subscriber.php:1638
 #: src/DB/Main.php:495
 msgid "Unsubscribed"
 msgstr "Afmeldt"
@@ -6266,10 +6266,6 @@ msgstr ""
 #: includes/forms/forms.php:493
 msgid "Updated"
 msgstr "Opdateret"
-
-#: build/Extensions/Menu.php:361
-msgid "Upgrade"
-msgstr ""
 
 #: build/Emails/Main.php:268
 msgid "Uploaded to this campaign"
@@ -6386,7 +6382,7 @@ msgstr ""
 msgid "users"
 msgstr "brugere"
 
-#: includes/subscriber.php:1580
+#: includes/subscriber.php:1579
 msgid "Users Sync"
 msgstr ""
 
@@ -6777,9 +6773,9 @@ msgid "Yellow"
 msgstr "Gul"
 
 #: includes/class-noptin-dynamic-content-tags.php:560
-#: includes/functions.php:1148
-#: includes/subscriber.php:1397
-#: includes/subscriber.php:1456
+#: includes/functions.php:1152
+#: includes/subscriber.php:1396
+#: includes/subscriber.php:1455
 #: src/DB/Main.php:551
 #: src/Integrations/WooCommerce/Products.php:219
 #: src/Integrations/WooCommerce/Products.php:685
@@ -6799,7 +6795,7 @@ msgstr "Ja tak!"
 msgid "You are already subscribed to the newsletter, thank you!"
 msgstr ""
 
-#: includes/subscriber.php:780
+#: includes/subscriber.php:779
 msgid "You are receiving this email because we got your request to subscribe to our newsletter. If you don't want to join the newsletter, you can safely delete this email"
 msgstr "Du modtager denne e-mail, fordi du har tilmeldt dig vores nyhedsbrev. Hvis du ikke ønsker at blive tilmeldt, kan du slette denne e-mail."
 
@@ -6855,7 +6851,7 @@ msgstr "Indtast en overskrift"
 msgid "You were successfully unsubscribed."
 msgstr ""
 
-#: includes/subscriber.php:772
+#: includes/subscriber.php:771
 msgid "You won't be subscribed if you don't click on the button below."
 msgstr "Du er ikke tilmeldt før du klikker på knappen nedenfor."
 
@@ -6966,7 +6962,7 @@ msgid "Form draft updated."
 msgstr ""
 
 #. translators: %s is a number.
-#: includes/functions.php:1821
+#: includes/functions.php:1825
 msgctxt "number"
 msgid "%1$s and %2$s"
 msgstr ""
