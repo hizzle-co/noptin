@@ -222,6 +222,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 			return $this->get_all_tags_as_html();
 		}
 
+		// Handle the special [[site_admin_email]] tag.
+		if ( 'site_admin_email' === $tag ) {
+			return get_option( 'admin_email' );
+		}
+
 		$config = $this->get( $tag );
 
 		if ( ! empty( $config['use_tag'] ) ) {
