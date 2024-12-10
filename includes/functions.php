@@ -552,7 +552,7 @@ function noptin_parse_list( $list, $strict = false ) {
 		return array();
 	}
 
-	if ( wp_is_numeric_array( $list ) ) {
+	if ( wp_is_numeric_array( $list ) && is_scalar( $list[0] ) ) {
 		$list = implode( ',', $list );
 	}
 
