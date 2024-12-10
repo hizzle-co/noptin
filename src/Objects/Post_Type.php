@@ -179,8 +179,33 @@ abstract class Post_Type extends Collection {
 	 * @param string $event   The event.
 	 */
 	protected function maybe_trigger( $user_id, $post_id, $event ) {
+		static $triggers = array();
+
+		// Trigger only once per post.
+		if ( ! isset( $triggers[ $event ] ) ) {
+			$triggers[ $event ] = array();
+		}
+
+		if ( in_array( $post_id, $triggers[ $event ] ) ) {
+			return;
+		}
+
+		$triggers[ $event ][] = $post_id;
 
 		$user = get_user_by( 'id', $user_id );
+
+		if ( empty( $user ) && get_current_user_id() ) {
+			$user = get_user_by( 'id', get_current_user_id() );
+		}
+
+		if ( empty( $user ) ) {
+			// Assume site admin.
+			$user = get_user_by( 'email', get_option( 'admin_email' ) );
+		}
+
+		if ( empty( $user ) ) {
+			$user = get_user_by( 'id', 1 );
+		}
 
 		if ( empty( $user ) ) {
 			return;
@@ -328,8 +353,12 @@ abstract class Post_Type extends Collection {
 	 */
 	public function force_trigger_for_post_published( $post ) {
 
+		if ( is_numeric( $post ) ) {
+			$post = get_post( $post );
+		}
+
 		// Abort if not our post type.
-		if ( wp_is_post_revision( $post ) || $this->type !== $post->post_type ) {
+		if ( ! $post || wp_is_post_revision( $post ) || $this->type !== $post->post_type ) {
 			return;
 		}
 

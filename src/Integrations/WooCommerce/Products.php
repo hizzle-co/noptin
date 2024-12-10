@@ -35,6 +35,9 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		// Purchase.
 		add_action( 'woocommerce_payment_complete', array( $this, 'on_purchase' ) );
 		add_action( 'woocommerce_order_status_completed', array( $this, 'on_purchase' ) );
+
+		// Products.
+		add_action( 'woocommerce_new_product', array( $this, 'on_product_created' ), 10, 2 );
 	}
 
 	/**
@@ -1133,5 +1136,52 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 		}
 
 		return $product->delete( ! empty( $args['force_delete'] ) );
+	}
+
+	/**
+	 * Fired after a post is inserted.
+	 *
+	 * @param int           $post_id     Post ID.
+	 * @param \WP_Post      $post        Post object.
+	 * @param bool          $update      Whether this is an existing post being updated.
+	 * @param null|\WP_Post $post_before Null for new posts, the WP_Post object prior
+	 *                                  to the update for updated posts.
+	 */
+	public function after_insert_post( $post_id, $post, $update, $post_before ) {
+
+		// Abort if not our post type.
+		if ( wp_is_post_revision( $post ) || $this->type !== $post->post_type ) {
+			return;
+		}
+
+		$old_status = $post_before ? $post_before->post_status : 'auto-draft';
+		$new_status = $post->post_status;
+
+		// Abort if the two match.
+		if ( $old_status === $new_status ) {
+			return;
+		}
+
+		// Are we publishing a post?
+		if ( 'publish' === $new_status && did_action( 'woocommerce_process_product_meta' ) ) {
+			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_published' );
+		}
+
+		// Are we unpublishing a post?
+		if ( 'publish' === $old_status ) {
+			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_unpublished' );
+		}
+	}
+
+	/**
+	 * On product created.
+	 *
+	 * @param int $product_id The product ID.
+	 * @param \WC_Product $product The product object.
+	 */
+	public function on_product_created( $product_id, $product ) {
+		if ( $product->get_status() === 'publish' ) {
+			parent::force_trigger_for_post_published( $product_id );
+		}
 	}
 }
