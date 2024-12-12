@@ -9,5 +9,5 @@ jobs:
     steps:
       - uses: "actions/checkout@master"
       - name: "TODO to Issue"
-        uses: "alstr/todo-to-issue-action@v5.1.7"
+        uses: "alstr/todo-to-issue-action@v5.1.9"
         id: "todo"
