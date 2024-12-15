@@ -324,6 +324,35 @@ class Noptin_Page {
 		echo wp_kses_post( $this->merge( $msg ) );
 	}
 
+	private function maybe_autosubmit_form() {
+		if ( ! empty( $_GET['noptin-autosubmit'] ) ) {
+			return;
+		}
+
+		$url = add_query_arg( 'noptin-autosubmit', '1' );
+		?>
+		<!DOCTYPE html>
+		<html>
+			<head>
+				<title>Confirm Action</title>
+			</head>
+			<body>
+				<form id="noptin-autosubmit-form" method="post" action="<?php echo esc_url( $url ); ?>">
+					<input type="hidden" name="noptin-autosubmit" value="1">
+					<p><?php esc_html_e( 'Please click the button below if you are not automatically redirected', 'newsletter-optin-box' ); ?></p>
+					<button type="submit">
+						<?php esc_html_e( 'Continue', 'newsletter-optin-box' ); ?>
+					</button>
+				</form>
+				<script>
+					document.getElementById('noptin-autosubmit-form').submit();
+				</script>
+			</body>
+		</html>
+		<?php
+		exit;
+	}
+
 	/**
 	 * Unsubscribes a user
 	 *
@@ -332,6 +361,9 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function pre_unsubscribe_user( $page ) {
+
+		// Prevent accidental unsubscribes.
+		$this->maybe_autosubmit_form();
 
 		// Fetch recipient.
 		$recipient   = $this->get_request_recipient();
@@ -390,6 +422,9 @@ class Noptin_Page {
 	 */
 	public function pre_resubscribe_user( $page ) {
 
+		// Prevent accidental unsubscribes.
+		$this->maybe_autosubmit_form();
+
 		// Fetch recipient.
 		$recipient = $this->get_request_recipient();
 
@@ -443,6 +478,9 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function pre_confirm_subscription() {
+
+		// Prevent accidental unsubscribes.
+		$this->maybe_autosubmit_form();
 
 		// Fetch recipient.
 		$recipient = $this->get_request_recipient();

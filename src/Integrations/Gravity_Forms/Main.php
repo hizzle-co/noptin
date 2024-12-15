@@ -176,6 +176,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 			'ip'             => $entry['ip'],
 			'currency'       => $entry['currency'],
 			'user_agent'     => $entry['user_agent'],
+			'source_url'     => $entry['source_url'],
 		);
 		$feed        = Feed::get_instance();
 

@@ -343,6 +343,7 @@ class Menu {
 	 * @param bool  $is_connection Whether this is a connection.
 	 */
 	public static function main_action_button( $license, $slug, $installed_addons, $is_connection = false ) {
+
 		$has_license = $license && ! is_wp_error( $license ) && $license->is_active && ! $license->has_expired;
 
 		// No license? Show the pricing button.

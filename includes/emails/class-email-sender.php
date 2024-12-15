@@ -269,7 +269,7 @@ class Noptin_Email_Sender {
 		$headers[]  = "Content-Type:$content";
 
 		if ( ! empty( $this->unsubscribe_url ) ) {
-			$url       = $this->unsubscribe_url;
+			$url       = add_query_arg( 'noptin-autosubmit', '1', $this->unsubscribe_url );
 			$headers[] = "List-Unsubscribe:<$url>";
 		}
 
