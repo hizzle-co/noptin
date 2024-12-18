@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-10T12:12:11+00:00\n"
+"POT-Creation-Date: 2024-12-18T08:23:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -237,7 +237,7 @@ msgstr ""
 #. translators: %s: Placeholder for email recipients.
 #. translators: %s: The Example
 #: build/Emails/Admin/Main.php:446
-#: build/Emails/Email.php:922
+#: build/Emails/Email.php:925
 #: includes/forms/views/tab-form.php:70
 #: includes/forms/views/tab-settings.php:108
 #: src/Integrations/WooCommerce/Products.php:91
@@ -562,20 +562,20 @@ msgid "The email body cannot be empty."
 msgstr ""
 
 #: build/Emails/Email.php:488
-#: build/Emails/Email.php:652
+#: build/Emails/Email.php:655
 msgid "The email cannot be sent."
 msgstr ""
 
-#: build/Emails/Email.php:578
+#: build/Emails/Email.php:581
 msgid "The email has no valid recipients."
 msgstr ""
 
-#: build/Emails/Email.php:664
-#: build/Emails/Email.php:686
+#: build/Emails/Email.php:667
+#: build/Emails/Email.php:689
 msgid "Invalid recipient"
 msgstr ""
 
-#: build/Emails/Email.php:692
+#: build/Emails/Email.php:695
 msgid "The email is unsubscribed"
 msgstr ""
 
@@ -1086,7 +1086,7 @@ msgid "These extensions allow you to connect Noptin to your favorite CRM or emai
 msgstr ""
 
 #: build/Extensions/Menu.php:311
-#: build/Extensions/Menu.php:385
+#: build/Extensions/Menu.php:386
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 msgid "Active"
@@ -1097,7 +1097,7 @@ msgstr ""
 msgid "Connect Noptin to %s"
 msgstr ""
 
-#: build/Extensions/Menu.php:352
+#: build/Extensions/Menu.php:353
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
@@ -1107,25 +1107,25 @@ msgstr ""
 msgid "View Pricing"
 msgstr ""
 
-#: build/Extensions/Menu.php:364
+#: build/Extensions/Menu.php:365
 msgid "Install Update"
 msgstr ""
 
-#: build/Extensions/Menu.php:377
+#: build/Extensions/Menu.php:378
 #: build/Forms/Admin/editor-settings.php:24
 #: build/Settings/Menu.php:68
 #: build/Settings/Menu.php:69
 msgid "Settings"
 msgstr ""
 
-#: build/Extensions/Menu.php:395
+#: build/Extensions/Menu.php:396
 #: includes/libraries/noptin-com/class-noptin-com-updater.php:428
 #: src/Integrations/Main.php:344
 #: build/Misc/assets/js/list.js:1
 msgid "Activate"
 msgstr ""
 
-#: build/Extensions/Menu.php:404
+#: build/Extensions/Menu.php:405
 msgid "Install Now"
 msgstr ""
 
@@ -3309,22 +3309,22 @@ msgid "Data from a cookie."
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:115
-#: includes/emails/class-email-tags.php:145
+#: includes/emails/class-email-tags.php:139
 msgid "The current date"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:123
-#: includes/emails/class-email-tags.php:155
+#: includes/emails/class-email-tags.php:149
 msgid "The current year"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:131
-#: includes/emails/class-email-tags.php:160
+#: includes/emails/class-email-tags.php:154
 msgid "The current month"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:140
-#: includes/emails/class-email-tags.php:167
+#: includes/emails/class-email-tags.php:161
 msgid "The day of the month"
 msgstr ""
 
@@ -3333,7 +3333,7 @@ msgid "The day of the week"
 msgstr ""
 
 #: includes/automation-rules/triggers/class-noptin-abstract-trigger.php:158
-#: includes/emails/class-email-tags.php:150
+#: includes/emails/class-email-tags.php:144
 msgid "The current time"
 msgstr ""
 
@@ -3639,85 +3639,93 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: includes/class-noptin-page.php:528
+#: includes/class-noptin-page.php:342
+msgid "Please click the button below if you are not automatically redirected"
+msgstr ""
+
+#: includes/class-noptin-page.php:344
+msgid "Continue"
+msgstr ""
+
+#: includes/class-noptin-page.php:566
 msgid "Subscription Confirmation"
 msgstr ""
 
-#: includes/class-noptin-page.php:533
+#: includes/class-noptin-page.php:571
 #: src/Integrations/PMPro/Membership_Levels.php:56
 msgid "Confirmation Message"
 msgstr ""
 
-#: includes/class-noptin-page.php:536
+#: includes/class-noptin-page.php:574
 msgid "The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below."
 msgstr ""
 
-#: includes/class-noptin-page.php:540
+#: includes/class-noptin-page.php:578
 msgid "Confirmation Redirect"
 msgstr ""
 
-#: includes/class-noptin-page.php:542
+#: includes/class-noptin-page.php:580
 msgid "Where should we redirect subscribers after they confirm their emails?"
 msgstr ""
 
-#: includes/class-noptin-page.php:549
+#: includes/class-noptin-page.php:587
 msgid "Unsubscription"
 msgstr ""
 
-#: includes/class-noptin-page.php:554
+#: includes/class-noptin-page.php:592
 msgid "Unsubscription Message"
 msgstr ""
 
-#: includes/class-noptin-page.php:557
+#: includes/class-noptin-page.php:595
 msgid "The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below."
 msgstr ""
 
-#: includes/class-noptin-page.php:561
+#: includes/class-noptin-page.php:599
 msgid "Unsubscription Redirect"
 msgstr ""
 
-#: includes/class-noptin-page.php:563
+#: includes/class-noptin-page.php:601
 msgid "Where should we redirect subscribers after they unsubscribe?"
 msgstr ""
 
-#: includes/class-noptin-page.php:570
+#: includes/class-noptin-page.php:608
 msgid "Re-subscription"
 msgstr ""
 
-#: includes/class-noptin-page.php:575
+#: includes/class-noptin-page.php:613
 msgid "Re-subscription Message"
 msgstr ""
 
-#: includes/class-noptin-page.php:578
+#: includes/class-noptin-page.php:616
 msgid "The message to show to subscribers after they resubscribe. Only used if you do not provide a redirect url below."
 msgstr ""
 
-#: includes/class-noptin-page.php:582
+#: includes/class-noptin-page.php:620
 msgid "Re-subscription Redirect"
 msgstr ""
 
-#: includes/class-noptin-page.php:584
+#: includes/class-noptin-page.php:622
 msgid "Where should we redirect subscribers after they resubscribe?"
 msgstr ""
 
-#: includes/class-noptin-page.php:599
-#: includes/class-noptin-page.php:623
+#: includes/class-noptin-page.php:637
+#: includes/class-noptin-page.php:661
 msgid "Thank You"
 msgstr ""
 
-#: includes/class-noptin-page.php:600
+#: includes/class-noptin-page.php:638
 msgid "You have been unsubscribed from this mailing list and won't receive any emails from us."
 msgstr ""
 
-#: includes/class-noptin-page.php:611
+#: includes/class-noptin-page.php:649
 msgid "Thank You, Again!"
 msgstr ""
 
-#: includes/class-noptin-page.php:612
+#: includes/class-noptin-page.php:650
 msgid "You have been resubscribed to our newsletter."
 msgstr ""
 
-#: includes/class-noptin-page.php:624
+#: includes/class-noptin-page.php:662
 msgid "You have successfully subscribed to this newsletter."
 msgstr ""
 
@@ -3808,7 +3816,7 @@ msgid "Displays your latest content."
 msgstr ""
 
 #: includes/emails/automated-email-types/class-post_digest.php:311
-#: includes/emails/class-email-tags.php:366
+#: includes/emails/class-email-tags.php:360
 msgid "No posts found."
 msgstr ""
 
@@ -3930,60 +3938,60 @@ msgstr ""
 msgid "The mail function returned false."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:119
+#: includes/emails/class-email-tags.php:113
 msgid "The unsubscribe URL."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:124
+#: includes/emails/class-email-tags.php:118
 msgid "The \"View in Browser\" URL."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:129
+#: includes/emails/class-email-tags.php:123
 msgid "The website name."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:134
+#: includes/emails/class-email-tags.php:128
 msgid "The website description."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:139
+#: includes/emails/class-email-tags.php:133
 msgid "The website URL."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:174
+#: includes/emails/class-email-tags.php:168
 msgid "The day of the weekday"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:181
+#: includes/emails/class-email-tags.php:175
 msgid "Displays a personalized link to the Noptin website."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:186
+#: includes/emails/class-email-tags.php:180
 msgid "The company name that you set in Noptin > Settings > Emails."
 msgstr ""
 
-#: includes/emails/class-email-tags.php:191
+#: includes/emails/class-email-tags.php:185
 #: includes/forms/class-form-tags.php:87
 msgid "Replaced with the total number of subscribers"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:196
+#: includes/emails/class-email-tags.php:190
 msgid "Displays a horizontal rule"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:202
+#: includes/emails/class-email-tags.php:196
 msgid "Adds a blank vertical space"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:208
+#: includes/emails/class-email-tags.php:202
 msgid "Displays a button"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:216
+#: includes/emails/class-email-tags.php:210
 msgid "Current email address"
 msgstr ""
 
-#: includes/emails/class-email-tags.php:222
+#: includes/emails/class-email-tags.php:216
 msgid "Displays a list of posts."
 msgstr ""
 
