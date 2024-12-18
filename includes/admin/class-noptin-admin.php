@@ -331,7 +331,8 @@ class Noptin_Admin {
 							wp_nonce_url( add_query_arg( 'noptin_review_nag', time() + WEEK_IN_SECONDS ), 'noptin-review-nag', 'noptin-review-nag-nonce' ),
 							__( 'Not now', 'newsletter-optin-box' )
 						)
-					)
+					),
+					wp_nonce_url( add_query_arg( 'noptin_review_nag', time() + YEAR_IN_SECONDS ), 'noptin-review-nag', 'noptin-review-nag-nonce' )
 				);
 			}
 		}
@@ -363,7 +364,17 @@ class Noptin_Admin {
 	 * @param string $message
 	 * @since       1.5.5
 	 */
-	public function print_notice( $type, $message ) {
+	public function print_notice( $type, $message, $custom_dismiss_url = '' ) {
+
+		if ( ! empty( $custom_dismiss_url ) ) {
+			printf(
+				'<div class="notice notice-%s noptin-notice" style="position: relative;"><p>%s</p><a href="%s" class="notice-dismiss" style="text-decoration: none;">&nbsp;</a></div>',
+				esc_attr( sanitize_html_class( $type ) ),
+				wp_kses_post( $message ),
+				esc_url( $custom_dismiss_url )
+			);
+			return;
+		}
 
 		printf(
 			'<div class="notice notice-%s noptin-notice is-dismissible"><p>%s</p></div>',
