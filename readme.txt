@@ -137,6 +137,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 3.6.7 =
+* Fix: Parse partial merge tags for bulk emails.
+
 = 3.6.6 =
 * Add: Ability to hide whole sections in post notification newsletters when no posts are found.
 

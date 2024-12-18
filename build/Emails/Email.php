@@ -509,6 +509,9 @@ class Email {
 					'author'       => $this->author,
 					'preview_text' => noptin_parse_email_content_tags( $this->get( 'preview_text' ), true ),
 					'footer_text'  => noptin_parse_email_content_tags( $this->get( 'footer_text' ), true ),
+					'reply_to'     => noptin_parse_email_subject_tags( $this->get( 'reply_to' ), true ),
+					'from_email'   => noptin_parse_email_subject_tags( $this->get( 'from_email' ), true ),
+					'from_name'    => noptin_parse_email_subject_tags( $this->get( 'from_name' ), true ),
 				)
 			);
 
