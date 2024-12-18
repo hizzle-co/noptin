@@ -680,7 +680,7 @@ class Email {
 
 		// Maybe parse recipient tags.
 		if ( false !== strpos( Main::$current_email_recipient['email'], '[[' ) ) {
-			Main::$current_email_recipient['email'] = noptin()->emails->tags->replace_in_text_field( Main::$current_email_recipient['email'] );
+			Main::$current_email_recipient['email'] = noptin_parse_email_subject_tags( Main::$current_email_recipient['email'] );
 			$GLOBALS['current_noptin_email']        = Main::$current_email_recipient['email'];
 		}
 
