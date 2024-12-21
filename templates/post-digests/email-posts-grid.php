@@ -46,7 +46,7 @@ defined( 'ABSPATH' ) || exit;
 				<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
 					<p class="digest-grid-post-image-container">
 						<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" style="display: block;" target="_blank">
-							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $campaign_post, 'medium' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $campaign_post ) ); ?>" style="width: 100%; max-width: 100%; height: auto; margin: auto; display: block;">
+							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $campaign_post, 'medium' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $campaign_post ) ); ?>" style="width: 300px; max-width: 100%; height: auto; margin: auto; display: block;">
 						</a>
 					</p>
 				<?php endif; ?>

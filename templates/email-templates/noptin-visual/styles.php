@@ -113,6 +113,9 @@
 	table.noptin-image-block__wrapper {
 		border-spacing: 0;
 		border-collapse: collapse;
+	}
+
+	table.noptin-image-block__wrapper:not(.noptin-image-block__wrapper-is-aligned) {
 		width: 100%;
 	}
 
