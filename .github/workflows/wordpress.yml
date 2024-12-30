@@ -9,9 +9,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@master
+    - name: Install SVN
+      run: sudo apt-get install subversion -y
     - name: WordPress Plugin Deploy
       id: deploy
-      uses: 10up/action-wordpress-plugin-deploy@stable
+      uses: 10up/action-wordpress-plugin-deploy@master
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
