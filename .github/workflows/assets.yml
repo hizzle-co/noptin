@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - name: Configure Git safe directory
+      run: git config --global --add safe.directory /github/workspace
     - name: Install SVN
       run: sudo apt-get install subversion -y
     - name: WordPress.org plugin asset/readme update
