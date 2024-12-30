@@ -79,7 +79,7 @@ msgid "%1$s and %2$s"
 msgstr ""
 
 #. translators: %s: Date and time.
-#: src/Objects/Generic_Post_Type.php:464
+#: src/Objects/Generic_Post_Type.php:465
 msgid "%1$s at %2$s"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:867
-#: src/Objects/Generic_Post_Type.php:486
+#: src/Objects/Generic_Post_Type.php:487
 msgid "%s > Create or Update"
 msgstr ""
 
@@ -109,7 +109,7 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:890
-#: src/Objects/Generic_Post_Type.php:502
+#: src/Objects/Generic_Post_Type.php:503
 msgid "%s > Delete"
 msgstr ""
 
@@ -234,7 +234,7 @@ msgid "%s Summary."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:219
+#: src/Objects/Generic_Post_Type.php:220
 msgid "%s Title"
 msgstr ""
 
@@ -663,19 +663,19 @@ msgid "Attribute Key"
 msgstr ""
 
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:121
-#: src/Objects/Generic_Post_Type.php:82
+#: src/Objects/Generic_Post_Type.php:83
 msgid "Author"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:195
+#: src/Objects/Generic_Post_Type.php:196
 msgid "Author ID"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:201
+#: src/Objects/Generic_Post_Type.php:202
 msgid "Author ID or email address"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:85
+#: src/Objects/Generic_Post_Type.php:86
 msgid "Author ID, or comma-separated list of IDs"
 msgstr ""
 
@@ -1185,8 +1185,8 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:277
-#: src/Objects/Generic_Post_Type.php:306
+#: src/Objects/Generic_Post_Type.php:278
+#: src/Objects/Generic_Post_Type.php:307
 msgid "Closed"
 msgstr ""
 
@@ -1214,8 +1214,8 @@ msgstr ""
 msgid "Comma-separated list of product IDs to include."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:89
-#: src/Objects/Generic_Post_Type.php:320
+#: src/Objects/Generic_Post_Type.php:90
+#: src/Objects/Generic_Post_Type.php:321
 msgid "Comment Count"
 msgstr ""
 
@@ -1223,7 +1223,7 @@ msgstr ""
 msgid "Comment Form"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:273
+#: src/Objects/Generic_Post_Type.php:274
 msgid "Comment Status"
 msgstr ""
 
@@ -1294,7 +1294,7 @@ msgstr ""
 msgid "contains"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:262
+#: src/Objects/Generic_Post_Type.php:263
 msgid "Content"
 msgstr ""
 
@@ -1358,7 +1358,7 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:872
-#: src/Objects/Generic_Post_Type.php:491
+#: src/Objects/Generic_Post_Type.php:492
 msgid "Create or update a %s"
 msgstr ""
 
@@ -1521,7 +1521,7 @@ msgstr ""
 #: includes/subscriber.php:1117
 #: src/DB/Main.php:510
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:190
-#: src/Objects/Generic_Post_Type.php:208
+#: src/Objects/Generic_Post_Type.php:209
 msgid "Date"
 msgstr ""
 
@@ -1673,7 +1673,7 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:895
-#: src/Objects/Generic_Post_Type.php:507
+#: src/Objects/Generic_Post_Type.php:508
 msgid "Delete a %s"
 msgstr ""
 
@@ -1799,7 +1799,7 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:155
 #: src/Integrations/WooCommerce/Products.php:474
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:106
-#: src/Objects/Generic_Post_Type.php:287
+#: src/Objects/Generic_Post_Type.php:288
 msgid "Displays a button link to the %s."
 msgstr ""
 
@@ -1838,12 +1838,12 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:534
 #: src/Integrations/WooCommerce/Products.php:544
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:303
-#: src/Objects/Generic_Post_Type.php:375
+#: src/Objects/Generic_Post_Type.php:376
 msgid "Displays the %1$s %2$s."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:243
+#: src/Objects/Generic_Post_Type.php:244
 msgid "Displays the %s excerpt."
 msgstr ""
 
@@ -1871,7 +1871,7 @@ msgid "Displays the %s summary."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:224
+#: src/Objects/Generic_Post_Type.php:225
 msgid "Displays the %s title."
 msgstr ""
 
@@ -1898,7 +1898,7 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:127
 #: src/Integrations/WooCommerce/Products.php:437
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:78
-#: src/Objects/Generic_Post_Type.php:328
+#: src/Objects/Generic_Post_Type.php:329
 msgid "Displays the featured image."
 msgstr ""
 
@@ -2252,7 +2252,7 @@ msgstr ""
 #. translators: %s: Object type label.
 #: src/Integrations/WooCommerce/Products.php:856
 #: src/Integrations/WooCommerce/Products.php:869
-#: src/Objects/Generic_Post_Type.php:391
+#: src/Objects/Generic_Post_Type.php:392
 msgid "Enter a comma-separated list of %1$s %2$s."
 msgstr ""
 
@@ -2404,8 +2404,8 @@ msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:182
 #: src/Integrations/EDD/Downloads.php:185
-#: src/Objects/Generic_Post_Type.php:236
-#: src/Objects/Generic_Post_Type.php:240
+#: src/Objects/Generic_Post_Type.php:237
+#: src/Objects/Generic_Post_Type.php:241
 msgid "Excerpt"
 msgstr ""
 
@@ -2470,11 +2470,11 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:126
 #: src/Integrations/WooCommerce/Products.php:436
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:77
-#: src/Objects/Generic_Post_Type.php:327
+#: src/Objects/Generic_Post_Type.php:328
 msgid "Featured Image"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:324
+#: src/Objects/Generic_Post_Type.php:325
 msgid "Featured Image URL"
 msgstr ""
 
@@ -2570,11 +2570,11 @@ msgstr ""
 msgid "For example, %s"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:100
+#: src/Objects/Generic_Post_Type.php:101
 msgid "For example, pillow -sofa"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:513
+#: src/Objects/Generic_Post_Type.php:514
 msgid "Force Delete"
 msgstr ""
 
@@ -2859,7 +2859,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Order_Items.php:43
 #: src/Integrations/WooCommerce/Products.php:551
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:182
-#: src/Objects/Generic_Post_Type.php:174
+#: src/Objects/Generic_Post_Type.php:175
 #: src/Objects/Users.php:215
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "ID"
@@ -2869,7 +2869,7 @@ msgstr ""
 msgid "ID of the level being cancelled if specified"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:202
+#: src/Objects/Generic_Post_Type.php:203
 msgid "If an email address is provided, the user will be created if they do not already exist."
 msgstr ""
 
@@ -2878,7 +2878,7 @@ msgstr ""
 msgid "If mapped, only users who consent will join your newsletter."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:315
+#: src/Objects/Generic_Post_Type.php:316
 msgid "If provided and a post with the same slug exists, the post will be updated."
 msgstr ""
 
@@ -3218,7 +3218,7 @@ msgstr ""
 msgid "Leave blank if you do not want to redirect users after they sign-up via this form."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:180
+#: src/Objects/Generic_Post_Type.php:181
 msgid "Leave blank to create a new post."
 msgstr ""
 
@@ -3767,7 +3767,7 @@ msgstr ""
 msgid "Number Input"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:92
+#: src/Objects/Generic_Post_Type.php:93
 msgid "Number of comments, with an optional comparison operator."
 msgstr ""
 
@@ -3810,8 +3810,8 @@ msgstr ""
 msgid "Oops. Something went wrong. Please try again later."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:276
-#: src/Objects/Generic_Post_Type.php:305
+#: src/Objects/Generic_Post_Type.php:277
+#: src/Objects/Generic_Post_Type.php:306
 msgid "Open"
 msgstr ""
 
@@ -3992,7 +3992,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Orders.php:767
 #: src/Integrations/WooCommerce/Products.php:568
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:186
-#: src/Objects/Generic_Post_Type.php:191
+#: src/Objects/Generic_Post_Type.php:192
 msgid "Parent ID"
 msgstr ""
 
@@ -4071,7 +4071,7 @@ msgstr ""
 msgid "PHP Snippet"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:302
+#: src/Objects/Generic_Post_Type.php:303
 msgid "Ping Status"
 msgstr ""
 
@@ -4136,7 +4136,7 @@ msgid "Post Digest"
 msgstr ""
 
 #: includes/admin/class-noptin-tools.php:215
-#: src/Objects/Generic_Post_Type.php:179
+#: src/Objects/Generic_Post_Type.php:180
 msgid "Post ID"
 msgstr ""
 
@@ -4144,7 +4144,7 @@ msgstr ""
 msgid "Post ID or SKU"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:184
+#: src/Objects/Generic_Post_Type.php:185
 msgid "Post ID or Slug"
 msgstr ""
 
@@ -4178,7 +4178,7 @@ msgstr "Prefisso tutti i tuoi stili con '.noptin-optin-form-wrapper' altrimenti 
 msgid "Premium plans allow you to filter newsletter recipients by their subscription method, tags, lists, and custom fields."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:99
+#: src/Objects/Generic_Post_Type.php:100
 msgid "Prepending a term with a hyphen will exclude posts matching that term."
 msgstr ""
 
@@ -4329,8 +4329,8 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:482
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:103
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:114
-#: src/Objects/Generic_Post_Type.php:284
-#: src/Objects/Generic_Post_Type.php:295
+#: src/Objects/Generic_Post_Type.php:285
+#: src/Objects/Generic_Post_Type.php:296
 msgid "Read More"
 msgstr ""
 
@@ -4480,7 +4480,7 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:139
 #: src/Integrations/WooCommerce/Products.php:449
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:90
-#: src/Objects/Generic_Post_Type.php:340
+#: src/Objects/Generic_Post_Type.php:341
 msgid "Resolution"
 msgstr ""
 
@@ -4574,7 +4574,7 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:96
+#: src/Objects/Generic_Post_Type.php:97
 msgid "Search by keyword"
 msgstr ""
 
@@ -4627,7 +4627,7 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:142
 #: src/Integrations/WooCommerce/Products.php:452
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:93
-#: src/Objects/Generic_Post_Type.php:343
+#: src/Objects/Generic_Post_Type.php:344
 msgid "Select image size"
 msgstr ""
 
@@ -4657,7 +4657,7 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:141
 #: src/Integrations/WooCommerce/Products.php:451
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:92
-#: src/Objects/Generic_Post_Type.php:342
+#: src/Objects/Generic_Post_Type.php:343
 msgid "Select the image size to display."
 msgstr ""
 
@@ -4961,7 +4961,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:429
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:70
-#: src/Objects/Generic_Post_Type.php:310
+#: src/Objects/Generic_Post_Type.php:311
 msgid "Slug"
 msgstr ""
 
@@ -4986,7 +4986,7 @@ msgstr "ruoli utente specifici"
 msgid "Specify a post ID or sku"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:185
+#: src/Objects/Generic_Post_Type.php:186
 msgid "Specify a post ID or slug"
 msgstr ""
 
@@ -5015,7 +5015,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Orders.php:787
 #: src/Integrations/WooCommerce/Products.php:582
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:165
-#: src/Objects/Generic_Post_Type.php:267
+#: src/Objects/Generic_Post_Type.php:268
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Status"
@@ -6005,7 +6005,7 @@ msgid "Times Run"
 msgstr ""
 
 #: src/DB/Main.php:465
-#: src/Objects/Generic_Post_Type.php:212
+#: src/Objects/Generic_Post_Type.php:213
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Title"
 msgstr ""
@@ -6259,7 +6259,7 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:149
 #: src/Integrations/WooCommerce/Products.php:468
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:100
-#: src/Objects/Generic_Post_Type.php:281
+#: src/Objects/Generic_Post_Type.php:282
 #: src/Objects/Users.php:266
 msgid "URL"
 msgstr ""
@@ -6691,7 +6691,7 @@ msgstr ""
 msgid "Whether the subscriber has confirmed their email address."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:514
+#: src/Objects/Generic_Post_Type.php:515
 msgid "Whether to bypass the trash and force delete the post."
 msgstr ""
 
@@ -7118,11 +7118,11 @@ msgstr ""
 msgid "Send Confirmation Email"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:252
+#: src/Objects/Generic_Post_Type.php:253
 msgid "Words"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:255
+#: src/Objects/Generic_Post_Type.php:256
 msgid "The maximum number of words to display."
 msgstr ""
 

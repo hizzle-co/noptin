@@ -501,7 +501,7 @@ class Noptin_Email_Generator {
 						$padding_styles[] = $matches[0];
 					}
 					if ( preg_match( '/padding-right:[^;]+;/', $style, $matches ) ) {
-						$padding_styles[] = $matches[0]; 
+						$padding_styles[] = $matches[0];
 					}
 					if ( preg_match( '/padding-bottom:[^;]+;/', $style, $matches ) ) {
 						$padding_styles[] = $matches[0];
@@ -793,6 +793,11 @@ class Noptin_Email_Generator {
 
 		// Use preg_replace to remove the CSS comments.
 		$content = preg_replace( '/\/\*.*?\*\//s', '', $content );
+
+		// Check if mbstring extension is loaded.
+		if ( ! extension_loaded( 'mbstring' ) || ! function_exists( 'mb_encode_numericentity' ) ) {
+			return $content;
+		}
 
 		// Maybe abort early.
 		if ( ! class_exists( 'DOMDocument' ) || ! class_exists( '\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles' ) ) {
