@@ -13,7 +13,7 @@
     "require": {
         "symfony/css-selector": "5.4.45",
         "hizzle/store": "^0",
-        "tijsverkoyen/css-to-inline-styles": "^2.2"
+        "tijsverkoyen/css-to-inline-styles": "2.2.7"
     },
     "autoload": {
         "psr-4": {
