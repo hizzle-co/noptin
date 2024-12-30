@@ -28,13 +28,14 @@ class Generic_Post_Type extends Post_Type {
 	public function __construct( $type, $init = false ) {
 		$post_type = get_post_type_object( $type );
 
-		if ( ! $post_type ) {
+		if ( is_null( $post_type ) ) {
 			_doing_it_wrong( __METHOD__, sprintf( 'Post type %s does not exist.', esc_html( $type ) ), esc_html( noptin()->version ) );
+		} else {
+			$this->label          = $post_type->labels->name;
+			$this->singular_label = $post_type->labels->singular_name;
 		}
 
-		$this->label          = $post_type->labels->name;
-		$this->singular_label = $post_type->labels->singular_name;
-		$this->type           = $type;
+		$this->type = $type;
 
 		// Check if the post type uses a dashicon...
 		if ( 'database' === $this->icon ) {

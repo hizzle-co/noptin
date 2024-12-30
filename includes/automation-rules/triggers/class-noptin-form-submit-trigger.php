@@ -119,7 +119,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 
 		// Get the parent smart tags.
 		$smart_tags      = array();
-		$current_form_id = empty( $GLOBALS[ $this->get_id() ] ) ? null : $GLOBALS[ $this->get_id() ];
+		$current_form_id = empty( $GLOBALS[ 'noptin_' . $this->get_id() ] ) ? null : $GLOBALS[ 'noptin_' . $this->get_id() ];
 
 		// Loop through each form and add its fields.
 		foreach ( $this->get_forms() as $form_id => $form ) {
@@ -216,7 +216,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 	 * @since 1.10.1
 	 */
 	public function init_trigger( $form_id, $posted ) {
-		$GLOBALS[ $this->get_id() ] = $form_id;
+		$GLOBALS[ 'noptin_' . $this->get_id() ] = $form_id;
 
 		$posted = is_array( $posted ) ? $posted : array();
 
