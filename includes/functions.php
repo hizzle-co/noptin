@@ -2187,3 +2187,34 @@ function noptin_string_to_timestamp( $time_string, $from_timestamp = null ) {
 
 	return $next_timestamp;
 }
+
+/**
+ * Returns the smallest registered image size that is at least 150px wide.
+ *
+ * @since 3.4.0
+ * @return string Image size name
+ */
+function noptin_get_smallest_acceptable_image_size( $minimum_width = 150 ) {
+	static $smallest_size_cache = array();
+
+	if ( isset( $smallest_size_cache[ $minimum_width ] ) ) {
+		return $smallest_size_cache[ $minimum_width ];
+	}
+
+	$smallest_width = PHP_INT_MAX;
+	$smallest_size  = 'full';
+
+	// Find smallest width >= 150px.
+	foreach ( wp_get_registered_image_subsizes() as $size => $size_data ) {
+		$width = absint( $size_data['width'] );
+
+		if ( $width >= $minimum_width && $width < $smallest_width ) {
+			$smallest_width = $width;
+			$smallest_size = $size;
+		}
+	}
+
+	$smallest_size_cache[ $minimum_width ] = $smallest_size;
+
+	return $smallest_size;
+}

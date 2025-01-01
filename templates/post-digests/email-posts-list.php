@@ -35,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
 				<?php if ( has_post_thumbnail( $campaign_post ) ) : ?>
 					<td class="d-xs-block" width="150" style="width:150px; padding: 0;">
 						<a href="<?php echo esc_url( get_permalink( $campaign_post ) ); ?>" style="display: block;" target="_blank">
-							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $campaign_post, 'thumbnail' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $campaign_post ) ); ?>" style="width: 150px; max-width: 100%; height: auto; margin: auto; display: block;">
+							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $campaign_post, 'thumbnail' ) ); ?>" alt="<?php echo esc_attr( get_the_title( $campaign_post ) ); ?>" style="width: 150px; height: auto; margin: auto; display: block;">
 						</a>
 					</td>
 				<?php endif; ?>
