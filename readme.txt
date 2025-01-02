@@ -8,9 +8,9 @@ Version: 3.6.11
 Stable tag: 3.6.11
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-Donate link: https://noptin.com/products/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
+Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
 
-The fastest GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new post notifications. ★★★★★
+The fastest GDPR-compliant automation and newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new post notifications. ★★★★★
 
 == Description ==
 
@@ -99,7 +99,7 @@ You can also send beautiful newsletters from WordPress to all your subscribers a
 == Frequently Asked Questions ==
 = Can I connect to my email service provider? =
 
-Yes. We have [addons](https://noptin.com/products/) for Mailchimp, ConvertKit, Campaign Monitor, and Drip.
+Yes. We have [addons](https://noptin.com/integrations/#crm-integrations) for Mailchimp, ConvertKit, Campaign Monitor, ActiveCampaign, AWeber, Constant Contact, GetResponse, HubSpot, Klaviyo, Sendgrid, Sendlane, Sendy and many more.
 
 = How can I get in touch? =
 
