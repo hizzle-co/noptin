@@ -453,6 +453,7 @@ class Main {
 							),
 							get_noptin_email_senders( true )
 						),
+						'assets_url' => plugins_url( 'static/images/', __DIR__ ),
 					),
 					$script
 				)

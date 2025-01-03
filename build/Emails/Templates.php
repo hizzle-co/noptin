@@ -82,12 +82,14 @@ class Templates {
 		}
 
 		$local_templates = array();
-		foreach ( self::get_local_templates() as $template ) {
-			$local_templates[] = array(
-				'id'   => $template->id,
-				'slug' => $template->name,
-				'name' => empty( $template->name ) ? $template->subject : $template->name,
-			);
+		if ( apply_filters( 'noptin_show_local_templates', true ) ) {
+			foreach ( self::get_local_templates() as $template ) {
+				$local_templates[] = array(
+					'id'   => $template->id,
+					'slug' => $template->name,
+					'name' => empty( $template->name ) ? $template->subject : $template->name,
+				);
+			}
 		}
 
 		if ( ! empty( $local_templates ) ) {

@@ -132,6 +132,7 @@
 
 	table.noptin-button-block__wrapper table {
 		border-collapse: separate;
+		border-spacing: 0;
 	}
 
 	/**
