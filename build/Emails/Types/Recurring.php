@@ -338,6 +338,14 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					),
 				),
 			),
+			'skip_days'      => array(
+				'el'          => 'select',
+				'options'     => (object) self::get_weekdays(),
+				'label'       => __( 'Skip days', 'newsletter-optin-box' ),
+				'placeholder' => __( 'Select days', 'newsletter-optin-box' ),
+				'description' => __( 'Select days to skip sending this email.', 'newsletter-optin-box' ),
+				'multiple'    => true,
+			),
 		);
 	}
 
@@ -556,6 +564,23 @@ class Recurring extends \Noptin_Automated_Email_Type {
 			return;
 		}
 
+		// Don't send if we are not supposed to send today.
+		$skip_days = wp_parse_id_list( $campaign->get( 'skip_days' ) );
+		$today     = (int) gmdate( 'w' );
+
+		if ( in_array( $today, $skip_days, true ) && ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) ) {
+			update_post_meta(
+				$campaign_id,
+				'_bulk_email_last_error',
+				array(
+					'message' => 'Skipped sending campaign. Reason:- Today is a skip day.',
+				)
+			);
+
+			$GLOBALS['noptin_email_force_send_error'] = 'Skipped sending campaign. Reason:- Today is a skip day.';
+			return;
+		}
+
 		// Send the email.
 		$result = $campaign->send();
 
@@ -593,10 +618,14 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		if ( $next_send ) {
 			$scheduled = next_scheduled_noptin_background_action( $this->notification_hook, $campaign->id );
 			$next_send = $scheduled ? $scheduled : $next_send;
+			$skip_days = wp_parse_id_list( $campaign->get( 'skip_days' ) );
+			$error     = ( $next_send < time() || in_array( (int) gmdate( 'w', $next_send ), $skip_days, true ) ) ? 'noptin-text-warning' : 'noptin-text-success';
+
 			$next_send = sprintf(
-				'<div class="noptin-strong noptin-text-success noptin-tip" title="%s">%s</div>',
+				'<div class="noptin-strong %s noptin-tip" title="%s">%s</div>',
+				$error,
 				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ),
-				esc_html( $this->get_formatted_next_send_time( $next_send ) )
+				esc_html( $this->get_formatted_next_send_time( $next_send, wp_parse_id_list( $campaign->get( 'skip_days' ) ) ) )
 			);
 
 			// If we have a next send time, but no cron event, display a warning.
@@ -618,6 +647,23 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					);
 				}
 			}
+
+			// Display a list of skip days.
+			if ( ! empty( $skip_days ) ) {
+				$skip_days = array_map(
+					function ( $day ) {
+						global $wp_locale;
+						return $wp_locale->weekday[ $day ];
+					},
+					$skip_days
+				);
+
+				$next_send .= sprintf(
+					'</div><div><span class="noptin-strong">%s</span>: <span>%s</span>',
+					esc_html__( 'Skip days', 'newsletter-optin-box' ),
+					esc_attr( implode( ', ', $skip_days ) )
+				);
+			}
 		}
 
 		return $about . $next_send;
@@ -628,7 +674,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	 *
 	 * @param int $timestamp
 	 */
-	private function get_formatted_next_send_time( $timestamp ) {
+	private function get_formatted_next_send_time( $timestamp, $skip_days = array() ) {
 
 		$now = time();
 
@@ -638,6 +684,16 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				// translators: %1 is the time.
 				__( 'Was supposed to be send %1$s ago', 'newsletter-optin-box' ),
 				human_time_diff( $timestamp, $now )
+			);
+		}
+
+		// If next send is a skip day, let the user know.
+		if ( in_array( (int) gmdate( 'w', $timestamp ), $skip_days, true ) ) {
+			return sprintf(
+				// translators: %1$s is the day.
+				__( 'This email will skip sending on %1$s since %2$s is a skip day.', 'newsletter-optin-box' ),
+				date_i18n( get_option( 'date_format' ), $timestamp ),
+				date_i18n( 'l', $timestamp )
 			);
 		}
 
