@@ -3595,8 +3595,8 @@ msgid "Newsletters"
 msgstr ""
 
 #. translators: %1 is the time.
-#: build/Emails/Types/Recurring.php:648
-#: build/Emails/Types/Recurring.php:675
+#: build/Emails/Types/Recurring.php:704
+#: build/Emails/Types/Recurring.php:731
 msgid "Next send in %1$s"
 msgstr ""
 
@@ -3605,12 +3605,12 @@ msgid "Next send is"
 msgstr ""
 
 #. translators: %1 is the day, %2 is the time.
-#: build/Emails/Types/Recurring.php:666
+#: build/Emails/Types/Recurring.php:722
 msgid "Next send on %1$s at %2$s"
 msgstr ""
 
 #. translators: %1 is the time.
-#: build/Emails/Types/Recurring.php:657
+#: build/Emails/Types/Recurring.php:713
 msgid "Next send tomorrow at %1$s"
 msgstr ""
 
@@ -5459,11 +5459,11 @@ msgstr ""
 msgid "The confirmation key."
 msgstr ""
 
-#: build/Emails/Types/Recurring.php:617
+#: build/Emails/Types/Recurring.php:646
 msgid "The cron event for this campaign is not scheduled. Rescheduling it."
 msgstr ""
 
-#: build/Emails/Types/Recurring.php:612
+#: build/Emails/Types/Recurring.php:641
 msgid "The cron event for this campaign is not scheduled. We tried to reschedule it, but it seems that your server is not configured to run cron jobs."
 msgstr ""
 
@@ -6461,7 +6461,7 @@ msgid "Visual"
 msgstr ""
 
 #. translators: %1 is the time.
-#: build/Emails/Types/Recurring.php:639
+#: build/Emails/Types/Recurring.php:685
 msgid "Was supposed to be send %1$s ago"
 msgstr ""
 
@@ -7373,4 +7373,22 @@ msgstr ""
 
 #: includes/class-noptin-page.php:344
 msgid "Continue"
+msgstr ""
+
+#: build/Emails/Types/Recurring.php:344
+#: build/Emails/Types/Recurring.php:663
+msgid "Skip days"
+msgstr ""
+
+#: build/Emails/Types/Recurring.php:345
+msgid "Select days"
+msgstr ""
+
+#: build/Emails/Types/Recurring.php:346
+msgid "Select days to skip sending this email."
+msgstr ""
+
+#. translators: %1$s is the day.
+#: build/Emails/Types/Recurring.php:694
+msgid "This email will skip sending on %1$s since %2$s is a skip day."
 msgstr ""

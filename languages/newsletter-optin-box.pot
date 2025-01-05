@@ -1,15 +1,15 @@
-# Copyright (C) 2024 Noptin Newsletter
+# Copyright (C) 2025 Noptin Newsletter
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.6.9\n"
+"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-30T12:32:32+00:00\n"
+"POT-Creation-Date: 2025-01-05T06:51:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -945,32 +945,50 @@ msgstr ""
 msgid "The date and time the next email will be sent."
 msgstr ""
 
-#: build/Emails/Types/Recurring.php:612
+#: build/Emails/Types/Recurring.php:344
+#: build/Emails/Types/Recurring.php:663
+msgid "Skip days"
+msgstr ""
+
+#: build/Emails/Types/Recurring.php:345
+msgid "Select days"
+msgstr ""
+
+#: build/Emails/Types/Recurring.php:346
+msgid "Select days to skip sending this email."
+msgstr ""
+
+#: build/Emails/Types/Recurring.php:641
 msgid "The cron event for this campaign is not scheduled. We tried to reschedule it, but it seems that your server is not configured to run cron jobs."
 msgstr ""
 
-#: build/Emails/Types/Recurring.php:617
+#: build/Emails/Types/Recurring.php:646
 msgid "The cron event for this campaign is not scheduled. Rescheduling it."
 msgstr ""
 
 #. translators: %1 is the time.
-#: build/Emails/Types/Recurring.php:639
+#: build/Emails/Types/Recurring.php:685
 msgid "Was supposed to be send %1$s ago"
 msgstr ""
 
+#. translators: %1$s is the day.
+#: build/Emails/Types/Recurring.php:694
+msgid "This email will skip sending on %1$s since %2$s is a skip day."
+msgstr ""
+
 #. translators: %1 is the time.
-#: build/Emails/Types/Recurring.php:648
-#: build/Emails/Types/Recurring.php:675
+#: build/Emails/Types/Recurring.php:704
+#: build/Emails/Types/Recurring.php:731
 msgid "Next send in %1$s"
 msgstr ""
 
 #. translators: %1 is the time.
-#: build/Emails/Types/Recurring.php:657
+#: build/Emails/Types/Recurring.php:713
 msgid "Next send tomorrow at %1$s"
 msgstr ""
 
 #. translators: %1 is the day, %2 is the time.
-#: build/Emails/Types/Recurring.php:666
+#: build/Emails/Types/Recurring.php:722
 msgid "Next send on %1$s at %2$s"
 msgstr ""
 
@@ -7730,19 +7748,19 @@ msgstr ""
 msgid "Prompt readers to take action with a button-style link."
 msgstr ""
 
-#: build/Emails/assets/js/blocks.js:8
+#: build/Emails/assets/js/blocks.js:46
 msgid "Section"
 msgstr ""
 
-#: build/Emails/assets/js/blocks.js:8
+#: build/Emails/assets/js/blocks.js:46
 msgid "Merge Tag"
 msgstr ""
 
-#: build/Emails/assets/js/blocks.js:8
+#: build/Emails/assets/js/blocks.js:46
 msgid "Insert additional custom elements with a WordPress shortcode or Noptin Merge tag."
 msgstr ""
 
-#: build/Emails/assets/js/blocks.js:8
+#: build/Emails/assets/js/blocks.js:46
 msgid "Merge tag / Shortcode"
 msgstr ""
 
