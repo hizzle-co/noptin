@@ -558,7 +558,7 @@ class Listener {
 					$this->cached = array_merge( $this->cached, (array) $form_state );
 				}
 
-				if ( ! empty( $this->cached['gdprCheckbox'] ) && ! empty( $this->cached['gdprConsentText'] ) ) {
+				if ( ! empty( $this->cached['gdprCheckbox'] ) && 'false' !== $this->cached['gdprCheckbox'] && ! empty( $this->cached['gdprConsentText'] ) ) {
 					$this->cached['acceptance'] = $this->cached['gdprCheckbox'] ? $this->cached['gdprConsentText'] : '';
 				}
 			}

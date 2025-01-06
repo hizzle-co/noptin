@@ -268,7 +268,12 @@ class Generic_Post_Type extends Post_Type {
 				'label'   => __( 'Status', 'newsletter-optin-box' ),
 				'type'    => 'string',
 				'actions' => array( $action ),
-				'options' => get_post_statuses(),
+				'options' => array_merge(
+					get_post_statuses(),
+					array(
+						'future' => __( 'Scheduled', 'newsletter-optin-box' ),
+					)
+				),
 			),
 			'comment_status' => array(
 				'label'   => __( 'Comment Status', 'newsletter-optin-box' ),
@@ -477,6 +482,7 @@ class Generic_Post_Type extends Post_Type {
 	 * @return array $actions The actions.
 	 */
 	public function get_actions() {
+		$is_vowel = in_array( strtolower( $this->singular_label[0] ), array( 'a', 'e', 'i', 'o', 'u' ), true );
 		return array_merge(
 			parent::get_actions(),
 			array(
@@ -487,11 +493,17 @@ class Generic_Post_Type extends Post_Type {
 						__( '%s > Create or Update', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Create or update a %s', 'newsletter-optin-box' ),
-						strtolower( $this->singular_label )
-					),
+					'description' => $is_vowel ?
+						sprintf(
+							/* translators: %s: Object type label. */
+							__( 'Create or update an %s', 'newsletter-optin-box' ),
+							strtolower( $this->singular_label )
+						) :
+						sprintf(
+							/* translators: %s: Object type label. */
+							__( 'Create or update a %s', 'newsletter-optin-box' ),
+							strtolower( $this->singular_label )
+						),
 					'callback'    => array( $this, 'create_post' ),
 				),
 			),
@@ -503,11 +515,17 @@ class Generic_Post_Type extends Post_Type {
 						__( '%s > Delete', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description'    => sprintf(
-						/* translators: %s: Object type label. */
-						__( 'Delete a %s', 'newsletter-optin-box' ),
-						strtolower( $this->singular_label )
-					),
+					'description'    => $is_vowel ?
+						sprintf(
+							/* translators: %s: Object type label. */
+							__( 'Delete an %s', 'newsletter-optin-box' ),
+							strtolower( $this->singular_label )
+						) :
+						sprintf(
+							/* translators: %s: Object type label. */
+							__( 'Delete a %s', 'newsletter-optin-box' ),
+							strtolower( $this->singular_label )
+						),
 					'callback'       => array( $this, 'delete_post' ),
 					'extra_settings' => array(
 						'force_delete' => array(
@@ -537,7 +555,15 @@ class Generic_Post_Type extends Post_Type {
 
 		foreach ( $args as $key => $value ) {
 			if ( 'id' === $key ) {
-				$post_info['ID'] = $value;
+				if ( is_numeric( $value ) ) {
+					$post_info['ID'] = $value;
+				}
+
+				$existing = get_page_by_path( sanitize_title( $value ), OBJECT, $this->type );
+
+				if ( $existing ) {
+					$post_info['ID'] = $existing->ID;
+				}
 				continue;
 			}
 
@@ -570,7 +596,7 @@ class Generic_Post_Type extends Post_Type {
 				continue;
 			}
 
-			if ( in_array( $key, array( 'title', 'excerpt', 'content', 'status' ), true ) ) {
+			if ( in_array( $key, array( 'title', 'excerpt', 'content', 'status', 'parent', 'date' ), true ) ) {
 				$post_info[ "post_$key" ] = $value;
 				continue;
 			}
@@ -614,6 +640,8 @@ class Generic_Post_Type extends Post_Type {
 			// Handle custom fields.
 			$post_info['meta_input'][ $key ] = $value;
 		}
+
+		$post_info = apply_filters( 'noptin_post_prepare_create_post_args', $post_info, $args );
 
 		if ( empty( $post_info['meta_input'] ) ) {
 			unset( $post_info['meta_input'] );
