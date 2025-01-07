@@ -231,7 +231,7 @@ class Store {
 			$email     = call_user_func( array( $object, 'get_email' ) );
 			$raw_value = esc_url( get_avatar_url( $email, $args ) );
 		} else {
-			$raw_value = $noptin_current_objects[ $config['object_type'] ]->get( $field, $args );
+			$raw_value = $object->get( $field, $args );
 		}
 
 		// Convert bools to yes/no.
@@ -249,6 +249,6 @@ class Store {
 			return $raw_value;
 		}
 
-		return $noptin_current_objects[ $config['object_type'] ]->format( $raw_value, $args );
+		return $object->format( $raw_value, $args );
 	}
 }
