@@ -125,7 +125,8 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 */
 	public function get_known_smart_tags() {
 
-		$args = array();
+		$added = array( $this->object_type );
+		$args  = array();
 
 		// Add extra args.
 		if ( ! empty( $this->trigger_args['extra_args'] ) ) {
@@ -142,7 +143,8 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		// Add subject smart tags.
 		if ( ! empty( $this->trigger_args['subject'] ) && $this->trigger_args['subject'] !== $this->object_type ) {
-			$args = Store::smart_tags( $this->trigger_args['subject'], true );
+			$args    = Store::smart_tags( $this->trigger_args['subject'], true );
+			$added[] = $this->trigger_args['subject'];
 		}
 
 		// Add object args.
@@ -156,13 +158,23 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			$custom_labels = isset( $this->trigger_args['custom_labels'] ) ? $this->trigger_args['custom_labels'] : array();
 
 			foreach ( $this->trigger_args['provides'] as $object_type ) {
-				$group  = isset( $custom_labels[ $object_type ] ) ? $custom_labels [ $object_type ] : true;
-				$prefix = false !== strpos( $object_type, '.' ) ? $object_type : true;
-				$args   = array_merge(
+				$added[] = $object_type;
+				$group   = isset( $custom_labels[ $object_type ] ) ? $custom_labels [ $object_type ] : true;
+				$prefix  = false !== strpos( $object_type, '.' ) ? $object_type : true;
+				$args    = array_merge(
 					$args,
 					Store::smart_tags( strtok( $object_type, '.' ), $group, $prefix )
 				);
 			}
+		}
+
+		// Add auto-provided args.
+		$collection = Store::get( $this->object_type );
+		if ( $collection && $collection->provides && empty( $this->trigger_args['skip_collection_provides'] ) ) {
+			$args = array_merge(
+				$args,
+				$this->add_auto_provided_smart_tags( $this->object_type, $added, $collection->singular_label, true )
+			);
 		}
 
 		// Add generic smart tags.
@@ -173,6 +185,59 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		unset( $args['user_logged_in'] );
 		return $args;
+	}
+
+	/**
+	 * Auto-provides objects.
+	 *
+	 * @param string $object_type The object type, e.g order.product.
+	 * @param array $added The added object types.
+	 * @param string $label The label prefix.
+	 * @param bool $is_start Whether this is the start.
+	 */
+	private function add_auto_provided_smart_tags( $object_type, $added, $label, $is_start = false ) {
+
+		// Abort if already provided.
+		if ( ! in_array( $object_type, $added, true ) ) {
+			return array();
+		}
+
+		$object_type_parts = explode( '.', $object_type );
+		$collection        = Store::get( end( $object_type_parts ) );
+
+		if ( empty( $collection ) || empty( $collection->provides ) ) {
+			return array();
+		}
+
+		$smart_tags = array();
+		foreach ( $collection->provides as $provided_object_type ) {
+			$use_key = $is_start ? $provided_object_type : "{$object_type}.{$provided_object_type}";
+
+			// Example. $object_type.$provided_object_type order.product.post_author
+			if ( in_array( $use_key, $added, true ) ) {
+				continue;
+			}
+
+			$provided_collection = Store::get( $provided_object_type );
+
+			if ( empty( $provided_collection ) ) {
+				continue;
+			}
+
+			$added[]    = $use_key;
+			$new_label  = sprintf( '%s > %s', $label, $provided_collection->singular_label );
+			$smart_tags = array_merge(
+				$smart_tags,
+				Store::smart_tags(
+					$provided_object_type,
+					$new_label,
+					$is_start ? true : $use_key
+				),
+				$this->add_auto_provided_smart_tags( $use_key, $added, $new_label )
+			);
+		}
+
+		return $smart_tags;
 	}
 
 	/**
@@ -389,16 +454,16 @@ class Trigger extends \Noptin_Abstract_Trigger {
 
 		$noptin_current_objects[ $this->object_type ] = $object;
 
-		// Provided objects.
+		// Manually provided objects.
 		if ( ! empty( $args['provides'] ) ) {
 			foreach ( $args['provides'] as $object_type => $id ) {
 				if ( empty( $id ) ) {
 					continue;
 				}
 
-				$collection = false !== strpos( $object_type, '.' ) ? Store::get( strtok( $object_type, '.' ) ) : Store::get( $object_type );
+				$provided_collection = false !== strpos( $object_type, '.' ) ? Store::get( strtok( $object_type, '.' ) ) : Store::get( $object_type );
 
-				if ( empty( $collection ) ) {
+				if ( empty( $provided_collection ) ) {
 					throw new \Exception( 'Provided collection "' . esc_html( $object_type ) . '" not registered' );
 				}
 
@@ -412,7 +477,62 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			}
 		}
 
+		// Auto provided objects.
+		if ( $collection->provides && empty( $this->trigger_args['skip_collection_provides'] ) ) {
+			$this->auto_provide( $noptin_current_objects[ $this->object_type ], $this->object_type, true );
+		}
+
 		return $subject;
+	}
+
+	/**
+	 * Auto-provides objects.
+	 *
+	 * @param \Hizzle\Noptin\Objects\Record $object The object.
+	 * @param string $object_type The object type, e.g order.product.
+	 * @param bool $is_start Whether this is the start.
+	 */
+	private function auto_provide( $object, $object_type, $is_start = false ) {
+		global $noptin_current_objects;
+
+		// Abort if already provided.
+		if ( ! is_array( $noptin_current_objects ) || empty( $noptin_current_objects[ $object_type ] ) ) {
+			return;
+		}
+
+		$collection = Store::get( end( explode( '.', $object_type ) ) );
+
+		// We can be lenient here.
+		if ( empty( $collection ) || empty( $collection->provides ) ) {
+			return;
+		}
+
+		foreach ( $collection->provides as $provided_object_type ) {
+			$use_key = $is_start ? $provided_object_type : "{$object_type}.{$provided_object_type}";
+
+			// Example. $object_type.$provided_object_type = order.product.post_author
+			if ( isset( $noptin_current_objects[ $use_key ] ) ) {
+				continue;
+			}
+
+			$provided_collection = Store::get( $provided_object_type );
+
+			// We can be lenient here.
+			if ( empty( $provided_collection ) ) {
+				continue;
+			}
+
+			$record = $object->provide( $provided_object_type );
+			$record = ! empty( $record ) ? $provided_collection->get( $record ) : $record;
+
+			if ( ! empty( $record ) && $record->exists() ) {
+				// E.g, order.product.post_author.
+				$noptin_current_objects[ $use_key ] = $record;
+
+				// Useful for nested provides, e.g order.product.post_author.subscriber.
+				$this->auto_provide( $record, $use_key );
+			}
+		}
 	}
 
 	/**
