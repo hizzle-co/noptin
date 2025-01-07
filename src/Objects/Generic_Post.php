@@ -272,4 +272,17 @@ class Generic_Post extends Record {
 	public function excerpt_length( $length = 55 ) {
 		return empty( $this->excerpt_length ) ? $length : $this->excerpt_length;
 	}
+
+	/**
+	 * Provides a related id.
+	 *
+	 * @param string $collection The collect.
+	 */
+	public function provide( $collection ) {
+		if ( 'post_author' === $collection ) {
+			return $this->external->post_author;
+		}
+
+		return parent::provide( $collection );
+	}
 }

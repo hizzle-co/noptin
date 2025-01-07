@@ -66,6 +66,10 @@ class Generic_Post_Type extends Post_Type {
 		}
 
 		parent::__construct();
+
+		if ( $post_type && post_type_supports( $this->type, 'author' ) ) {
+			$this->provides[] = 'post_author';
+		}
 	}
 
 	/**
@@ -662,10 +666,21 @@ class Generic_Post_Type extends Post_Type {
 			$post = wp_update_post( $post_info, true );
 		} else {
 			$post = wp_insert_post( $post_info, true );
+
+			if ( ! is_wp_error( $post ) ) {
+				$this->after_create_post( get_post( $post ) );
+			}
 		}
 
 		return $post;
 	}
+
+	/**
+	 * Called after a post is created.
+	 *
+	 * @param \WP_Post $post
+	 */
+	public function after_create_post( $post ) {}
 
 	/**
 	 * Deletes a post.
