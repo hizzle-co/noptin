@@ -236,7 +236,11 @@ class Store {
 
 		// Convert bools to yes/no.
 		if ( is_bool( $raw_value ) ) {
-			$raw_value = $raw_value ? 'yes' : 'no';
+			if ( ! $raw_value ) {
+				$raw_value = isset( $field['options'] ) && isset( $field['options']['no'] ) ? 'no' : '';
+			} else {
+				$raw_value = 'yes';
+			}
 		}
 
 		// Convert \DateTime to string.
