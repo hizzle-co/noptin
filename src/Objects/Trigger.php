@@ -500,7 +500,8 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			return;
 		}
 
-		$collection = Store::get( end( explode( '.', $object_type ) ) );
+		$object_parts = explode( '.', $object_type );
+		$collection   = Store::get( end( $object_parts ) );
 
 		// We can be lenient here.
 		if ( empty( $collection ) || empty( $collection->provides ) ) {

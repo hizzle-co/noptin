@@ -231,17 +231,21 @@ abstract class Noptin_Abstract_Trigger_Action {
 		if ( is_object( $subject ) ) {
 
 			// Raw data.
-			if ( isset( $subject->email ) ) {
+			if ( isset( $subject->email ) && ! empty( $subject->email ) ) {
 				return $subject->email;
 			}
 
-			if ( isset( $subject->user_email ) ) {
+			if ( isset( $subject->user_email ) && ! empty( $subject->user_email ) ) {
 				return $subject->user_email;
 			}
 
 			// Subscriber, customer, etc.
 			if ( is_callable( array( $subject, 'get_email' ) ) ) {
-				return $subject->get_email();
+				$email = $subject->get_email();
+
+				if ( ! empty( $email ) ) {
+					return $email;
+				}
 			}
 		}
 
