@@ -38,7 +38,7 @@ class Main {
 	public function __construct() {
 
 		// Register autoloader.
-		spl_autoload_register( array( $this, 'autoload' ) );
+		spl_autoload_register( array( $this, 'autoload' ), true, true );
 
 		// Load core integrations.
 		$this->load_integrations();

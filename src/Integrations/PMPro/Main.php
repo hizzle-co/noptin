@@ -24,7 +24,7 @@ class Main {
 		add_filter( 'noptin_user_collection_actions', __CLASS__ . '::load_actions', 5 );
 		add_action( 'pmpro_after_change_membership_level', __CLASS__ . '::after_change_membership_level', 100, 3 );
 		add_action( 'pmpro_checkout_before_change_membership_level', __CLASS__ . '::remove_trigger' );
-		add_action( 'pmpro_after_checkout', __CLASS__ . '::after_checkout', 15 );
+		add_action( 'pmpro_after_checkout', __CLASS__ . '::after_checkout', 100, 2 );
 	}
 
 	/**
@@ -150,9 +150,21 @@ class Main {
 	 * Fires on checkout after usermeta is saved.
 	 *
 	 * @param int $user_id of user who checked out.
+	 * @param \MemberOrder $order — The order to complete the checkout for.
 	 */
-	public static function after_checkout( $user_id ) {
-		self::after_change_membership_level( $_REQUEST['level'], $user_id );
+	public static function after_checkout( $user_id, $order = false ) {
+		global $pmpro_level;
+
+		if ( ! $pmpro_level && ! $order ) {
+			$order = new \MemberOrder();
+			$order = new \MemberOrder( $order->getLastMemberOrder( $user_id ) );
+		}
+
+		$membership_level = $pmpro_level ? $pmpro_level : $order->getMembershipLevel();
+
+		if ( ! empty( $membership_level ) ) {
+			self::after_change_membership_level( $membership_level->id, $user_id );
+		}
 	}
 
 	/**

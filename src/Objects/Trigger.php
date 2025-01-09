@@ -467,7 +467,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 					throw new \Exception( 'Provided collection "' . esc_html( $object_type ) . '" not registered' );
 				}
 
-				$object = $collection->get( $id );
+				$object = $provided_collection->get( $id );
 
 				if ( empty( $object ) || ( 'current_user' !== $object_type && ! $object->exists() && false !== strpos( $object_type, '.' ) ) ) {
 					throw new \Exception( esc_html( $object_type ) . ' not found' );

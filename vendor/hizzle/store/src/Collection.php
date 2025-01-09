@@ -594,7 +594,7 @@ class Collection {
 			'default'           => 25,
 			'minimum'           => -1,
 			'maximum'           => 100,
-			'sanitize_callback' => 'absint',
+			'sanitize_callback' => __CLASS__ . '::intval',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -672,6 +672,10 @@ class Collection {
 
 		$this->query_schema = apply_filters( $this->hook_prefix( 'query_schema' ), $query_schema, $this );
 		return $this->query_schema;
+	}
+
+	public static function intval( $value ) {
+		return intval( $value );
 	}
 
 	/**
