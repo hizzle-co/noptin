@@ -205,8 +205,11 @@
 	.wp-block-noptin-group {
 		margin-left: auto;
 		margin-right: auto;
-		margin-top: 20px;
 		margin-bottom: 20px;
+	}
+
+	.wp-block-noptin-group:first-child {
+		margin-top: 20px;
 	}
 
 	.noptin-block-group__inner {
