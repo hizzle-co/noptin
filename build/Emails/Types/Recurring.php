@@ -625,7 +625,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				'<div class="noptin-strong %s noptin-tip" title="%s">%s</div>',
 				$error,
 				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ),
-				esc_html( $this->get_formatted_next_send_time( $next_send, wp_parse_id_list( $campaign->get( 'skip_days' ) ) ) )
+				wp_kses_post( $this->get_formatted_next_send_time( $next_send, wp_parse_id_list( $campaign->get( 'skip_days' ) ) ) )
 			);
 
 			// If we have a next send time, but no cron event, display a warning.
@@ -681,9 +681,20 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		// If past, abort.
 		if ( $timestamp < $now ) {
 			return sprintf(
-				// translators: %1 is the time.
-				__( 'Was supposed to be send %1$s ago', 'newsletter-optin-box' ),
-				human_time_diff( $timestamp, $now )
+				'%s. %s',
+				sprintf(
+					// translators: %1 is the time.
+					__( 'Was supposed to be send %1$s ago', 'newsletter-optin-box' ),
+					human_time_diff( $timestamp, $now )
+				),
+				sprintf(
+					'<a href="https://cronwp.com" target="_blank">%s</a>',
+					sprintf(
+						// translators: %s is the cron URL.
+						__( 'Set up an external cron job for "%s" to fix such issues.', 'newsletter-optin-box' ),
+						home_url( '/' ) . 'wp-cron.php'
+					)
+				)
 			);
 		}
 

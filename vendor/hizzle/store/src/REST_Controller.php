@@ -557,6 +557,12 @@ class REST_Controller extends \WP_REST_Controller {
 			$items[] = $this->prepare_response_for_collection( $data );
 		}
 
+		$per_page = (int) $query->query_vars['per_page'];
+		$total	  = (int) $query->get_total();
+		$paged    = (int) $query->query_vars['page'];
+
+		$max_pages = $total > 0 && $per_page > 1 ? ceil( $total / $per_page ) : 1;
+
 		$response = rest_ensure_response(
 			apply_filters(
 				$this->prefix_hook( 'get_items' ),
@@ -570,7 +576,7 @@ class REST_Controller extends \WP_REST_Controller {
 							'value' => $query->get_total(),
 						),
 					),
-					'total'   => $query->get_total(),
+					'total'   => $total,
 				),
 				$query,
 				$request,
@@ -578,7 +584,42 @@ class REST_Controller extends \WP_REST_Controller {
 			)
 		);
 
-		$response->header( 'X-WP-Total', $query->get_total() );
+		/*
+		$response = rest_ensure_response(
+			apply_filters(
+				$this->prefix_hook( 'get_items' ),
+				$items,
+				$query,
+				$request,
+				$this
+			)
+		);
+		*/
+
+		// Add headers.
+		$response->header( 'X-WP-Total', $total );
+		$response->header( 'X-WP-TotalPages', $max_pages );
+
+		$request_params = $request->get_query_params();
+		$collection_url = rest_url( $this->namespace . '/' . $this->rest_base );
+		$base           = add_query_arg( urlencode_deep( $request_params ), $collection_url );
+
+		if ( $paged > 1 ) {
+			$prev_page = $paged - 1;
+
+			if ( $prev_page > $max_pages ) {
+				$prev_page = $max_pages;
+			}
+
+			$prev_link = add_query_arg( 'paged', $prev_page, $base );
+			$response->link_header( 'prev', $prev_link );
+		}
+
+		if ( $max_pages > $paged ) {
+			$next_page = $paged + 1;
+			$next_link = add_query_arg( 'paged', $next_page, $base );
+			$response->link_header( 'next', $next_link );
+		}
 
 		return $response;
 	}
@@ -594,8 +635,12 @@ class REST_Controller extends \WP_REST_Controller {
 	public function get_item( $request ) {
 		$object = $this->get_object( $request );
 
+		if ( is_wp_error( $object ) ) {
+			return $object;
+		}
+
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
 
 		$data = $this->prepare_item_for_response( $object, $request );
@@ -615,8 +660,12 @@ class REST_Controller extends \WP_REST_Controller {
 	public function get_item_overview( $request ) {
 		$object = $this->get_object( $request );
 
+		if ( is_wp_error( $object ) ) {
+			return $object;
+		}
+
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
 
 		return rest_ensure_response( array_values( $object->get_overview() ) );
@@ -634,8 +683,12 @@ class REST_Controller extends \WP_REST_Controller {
 	public function remote_action( $request ) {
 		$object = $this->get_object( $request );
 
+		if ( is_wp_error( $object ) ) {
+			return $object;
+		}
+
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
 
 		$action = $request['action'];
@@ -718,6 +771,10 @@ class REST_Controller extends \WP_REST_Controller {
 
 		$object = $this->get_object( $request );
 
+		if ( is_wp_error( $object ) ) {
+			return $object;
+		}
+
 		if ( ! $object || ! $object->exists() ) {
 			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
 		}
@@ -755,9 +812,15 @@ class REST_Controller extends \WP_REST_Controller {
 		$object = $this->get_object( $request );
 		$force  = isset( $request['force'] ) ? (bool) $request['force'] : false;
 
-		if ( $object->exists() ) {
-			$object->delete( $force );
+		if ( is_wp_error( $object ) ) {
+			return $object;
 		}
+
+		if ( empty( $object ) || ! $object->exists() ) {
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
+		}
+
+		$object->delete( $force );
 
 		return new \WP_REST_Response( true, 204 );
 	}

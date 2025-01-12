@@ -123,6 +123,10 @@
 		vertical-align: bottom;
 	}
 
+	table.noptin-image-block__wrapper div {
+		overflow: hidden;
+	}
+
 	table.noptin-button-block__wrapper {
 		border-collapse: separate;
 		width: 100%;

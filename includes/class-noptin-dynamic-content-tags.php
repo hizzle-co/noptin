@@ -670,7 +670,13 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 
 			// If the rule is met.
-			if ( noptin_is_conditional_logic_met( $current_value, $compare_value, $rule['condition'] ) ) {
+			$is_met = noptin_is_conditional_logic_met( $current_value, $compare_value, $rule['condition'] );
+
+			if ( ! $is_met ) {
+				noptin_error_log( 'Conditional logic rule not met: ' . json_encode( compact( 'current_value', 'compare_value', 'rule' ) ) );
+			}
+
+			if ( $is_met ) {
 
 				// If we're using the "any" condition, we can stop here.
 				if ( 'any' === $type ) {
