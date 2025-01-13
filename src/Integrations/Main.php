@@ -43,6 +43,9 @@ class Main {
 		// Load core integrations.
 		$this->load_integrations();
 
+		// Some integrations are only available on teh init hook.
+		add_action( 'init', array( $this, 'load_integrations' ), 20 );
+
 		add_filter( 'noptin_get_all_known_integrations', array( $this, 'get_all_known_integrations' ), 0 );
 
 		add_action( 'noptin_refresh_integrations', array( __CLASS__, 'refresh' ) );
