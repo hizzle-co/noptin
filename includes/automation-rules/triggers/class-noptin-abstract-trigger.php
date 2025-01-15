@@ -110,7 +110,23 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 				'example'           => "cookie name='my_cookie' default='Default Value'",
 				'conditional_logic' => 'string',
 			),
-
+			'ip'      => array(
+				// translators: %s is the current IP address.
+				'description' => sprintf( __( 'The visitor\'s IP address. Example: %s.', 'newsletter-optin-box' ), '<strong>' . noptin_get_user_ip() . '</strong>' ),
+				'callback'    => 'noptin_get_user_ip',
+				'no_args'     => true,
+			),
+			'user_agent' => array(
+				'description'       => __( 'The current user agent', 'newsletter-optin-box' ),
+				'replacement'       => esc_html( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+				'conditional_logic' => 'string',
+				'placeholder'       => esc_html( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+			),
+			'referer' => array(
+				'description' => __( 'The current referer', 'newsletter-optin-box' ),
+				'callback'    => 'wp_get_raw_referer',
+				'no_args'     => true,
+			),
 			'date'    => array(
 				'description'       => __( 'The current date', 'newsletter-optin-box' ),
 				'callback'          => 'Noptin_Dynamic_Content_Tags::get_date',
