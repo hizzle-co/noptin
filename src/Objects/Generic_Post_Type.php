@@ -453,10 +453,11 @@ class Generic_Post_Type extends Post_Type {
 			'show_ui' => true,
 		);
 
-		$exclude = apply_filters( 'noptin_post_type_exclude', array( 'elementor_library', 'attachment' ) );
+		$exclude = apply_filters( 'noptin_post_type_exclude', array( 'attachment', 'elementor_library', 'e-floating-buttons' ) );
 
 		foreach ( get_post_types( $args ) as $type ) {
-			if ( ! Store::exists( $type ) && ! in_array( $type, $exclude, true ) ) {
+			$register = apply_filters( 'noptin_register_post_type_object_' . $type, true );
+			if ( $register && ! Store::exists( $type ) && ! in_array( $type, $exclude, true ) ) {
 				Store::add( new Generic_Post_Type( $type, true ) );
 			}
 		}

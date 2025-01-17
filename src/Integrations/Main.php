@@ -210,13 +210,6 @@ class Main {
 					}
 
 					if ( $current_theme->get( 'Name' ) !== $value['name'] ) {
-						$this->notices[ $config['label'] ] = sprintf(
-							// translators: %1$s is the integration label, %2$s is the required theme.
-							__( 'The %1$s integration requires the %2$s theme.', 'newsletter-optin-box' ),
-							$config['label'],
-							$value['name']
-						);
-
 						return false;
 					}
 					break;
