@@ -1391,6 +1391,10 @@ function get_noptin_subscriber_smart_tags() {
 				$smart_tag['options'] = $prop->enum;
 			}
 
+			if ( isset( $prop->default ) ) {
+				$smart_tag['default'] = $prop->default;
+			}
+
 			if ( $prop->is_boolean() ) {
 				$smart_tag['options'] = array(
 					'1' => __( 'Yes', 'newsletter-optin-box' ),

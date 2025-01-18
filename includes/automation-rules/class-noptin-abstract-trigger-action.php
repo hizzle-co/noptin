@@ -175,6 +175,16 @@ abstract class Noptin_Abstract_Trigger_Action {
 	}
 
 	/**
+	 * Retrieves the map fields section title.
+	 *
+	 * @since 1.11.9
+	 * @return string
+	 */
+	public function get_map_fields_section_title() {
+		return __( 'Map custom fields', 'newsletter-optin-box' );
+	}
+
+	/**
 	 * Retrieve the trigger's settings.
 	 *
 	 * @since 1.2.8

@@ -562,11 +562,34 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			$map_fields = array();
 
 			foreach ( $action_settings as $key => $data ) {
+				if ( isset( $data['description'] ) && isset( $data['label'] ) && $data['description'] === $data['label'] ) {
+					unset( $data['description'] );
+				}
 
 				if ( ! empty( $data['map_field'] ) ) {
 					$map_fields[ $key ] = $data;
 					unset( $action_settings[ $key ] );
 				}
+			}
+
+			// If less than 3 map fields, include them in action settings instead of separate section
+			if ( count( $map_fields ) > 0 && count( $map_fields ) < 3 ) {
+				$action_settings = array_merge(
+					$action_settings,
+					array(
+						'map_field_tip' => array(
+							'content' => sprintf(
+								// translators: %s: The merge tag button.
+								esc_html__( 'Click the %s button to add dynamic values. You can combine multiple values in a single field.', 'newsletter-optin-box' ),
+								'<strong><code>[/]</code></strong>'
+							),
+							'el'      => 'paragraph',
+							'raw'     => true,
+						),
+					),
+					$map_fields
+				);
+				$map_fields      = array();
 			}
 
 			// Action settings.
@@ -586,13 +609,18 @@ class Automation_Rule extends \Hizzle\Store\Record {
 
 			if ( ! empty( $map_fields ) ) {
 				$settings['map_fields'] = array(
-					'label'    => __( 'Map custom fields', 'newsletter-optin-box' ),
+					'label'    => $action->get_map_fields_section_title(),
 					'prop'     => 'action_settings',
 					'settings' => array_merge(
 						array(
 							'map_field_tip' => array(
-								'content' => __( 'Click on the merge tag button to insert a dynamic value.', 'newsletter-optin-box' ),
+								'content' => sprintf(
+									// translators: %s: The merge tag button.
+									esc_html__( 'Click the %s button to add dynamic values from your trigger. You can add multiple values to a single field.', 'newsletter-optin-box' ),
+									'<strong><code>[/]</code></strong>'
+								),
 								'el'      => 'paragraph',
+								'raw'     => true,
 							),
 						),
 						$map_fields

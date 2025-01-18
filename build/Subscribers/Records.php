@@ -731,6 +731,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			'resubscribe_url'          => __( 'Resubscribe', 'newsletter-optin-box' ),
 		);
 
+		$skip_settings = array( 'first_name', 'last_name', 'source' );
 		foreach ( get_noptin_subscriber_smart_tags() as $smart_tag => $field ) {
 			$prepared = array(
 				'label'        => $field['label'],
@@ -740,6 +741,10 @@ class Records extends \Hizzle\Noptin\Objects\People {
 				'show_in_meta' => true,
 				'required'     => 'email' === $smart_tag,
 			);
+
+			if ( in_array( $smart_tag, $skip_settings, true ) ) {
+				$prepared['hide_action'] = 'true';
+			}
 
 			if ( isset( $field['options'] ) && is_array( $field['options'] ) ) {
 				$prepared['options'] = $field['options'];
@@ -763,6 +768,10 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					),
 					'element'     => 'button',
 				);
+			}
+
+			if ( isset( $field['default'] ) && '' !== $field['default'] ) {
+				$prepared['default'] = $field['default'];
 			}
 
 			$fields[ $smart_tag ] = $prepared;
@@ -872,7 +881,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						__( 'Create or update a %s', 'newsletter-optin-box' ),
 						strtolower( $this->singular_label )
 					),
-					'callback'       => 'add_noptin_subscriber',
+					'callback'       => __CLASS__ . '::add_noptin_subscriber',
 					'extra_settings' => array(
 						'update_existing' => array(
 							'label'   => __( 'Update existing subscribers', 'newsletter-optin-box' ),
@@ -882,6 +891,8 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						),
 					),
 					'action_fields'  => array_keys( get_editable_noptin_subscriber_fields() ),
+					'advanced_fields' => array( 'confirmed', 'status', 'ip_address', 'conversion_page' ),
+					'callback_args'  => array( 'settings', 'rule' ),
 				),
 				'delete_subscriber' => array(
 					'id'             => 'delete_subscriber',
@@ -1081,6 +1092,24 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		}
 
 		return $actions;
+	}
+
+	/**
+	 * Processes a subscriber action.
+	 *
+	 * @param array $args
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule — The automation rule.
+	 */
+	public static function add_noptin_subscriber( $args, $rule ) {
+		if ( empty( $args['source'] ) ) {
+			$trigger = $rule->get_trigger();
+
+			if ( $trigger && ! empty( $trigger->category ) ) {
+				$args['source'] = $trigger->category;
+			}
+		}
+
+		return add_noptin_subscriber( $args );
 	}
 
 	/**

@@ -692,7 +692,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					sprintf(
 						// translators: %s is the cron URL.
 						__( 'Set up an external cron job for "%s" to fix such issues.', 'newsletter-optin-box' ),
-						home_url( '/' ) . 'wp-cron.php'
+						trailingslashit( get_site_url() ) . 'wp-cron.php'
 					)
 				)
 			);

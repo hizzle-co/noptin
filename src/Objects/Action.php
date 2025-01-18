@@ -30,6 +30,11 @@ class Action extends \Noptin_Abstract_Action {
 	public $action_args;
 
 	/**
+	 * @var string $singular_label
+	 */
+	public $singular_label;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $action_id The action id.
@@ -38,11 +43,12 @@ class Action extends \Noptin_Abstract_Action {
 	 * @since 3.0.0
 	 */
 	public function __construct( $action_id, $action_args, $collection ) {
-		$this->object_type = $collection->type;
-		$this->action_id   = $action_id;
-		$this->action_args = $action_args;
-		$this->category    = isset( $action_args['category'] ) ? $action_args['category'] : $collection->label;
-		$this->integration = $collection->integration;
+		$this->object_type    = $collection->type;
+		$this->action_id      = $action_id;
+		$this->action_args    = $action_args;
+		$this->category       = isset( $action_args['category'] ) ? $action_args['category'] : $collection->label;
+		$this->integration    = $collection->integration;
+		$this->singular_label = $collection->singular_label;
 	}
 
 	/**
@@ -124,7 +130,6 @@ class Action extends \Noptin_Abstract_Action {
 		$meta     = array();
 
 		foreach ( $this->get_action_fields() as $key => $args ) {
-
 			if ( empty( $args['label'] ) && ! empty( $args['description'] ) ) {
 				$args['label'] = $args['description'];
 			}
@@ -174,17 +179,41 @@ class Action extends \Noptin_Abstract_Action {
 	/**
 	 * @inheritdoc
 	 */
+	public function get_map_fields_section_title() {
+		if ( isset( $this->action_args['map_fields_section_title'] ) ) {
+			return $this->action_args['map_fields_section_title'];
+		}
+
+		return sprintf(
+			/* translators: %s: Object type label. */
+			__( '%s Information', 'newsletter-optin-box' ),
+			$this->singular_label
+		);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_settings() {
 
 		$settings = array();
 
 		foreach ( $this->get_action_fields() as $key => $field ) {
+			if ( ! empty( $field['hide_action'] ) ) {
+				continue;
+			}
+
+			if ( ! empty( $this->action_args['advanced_fields'] ) && in_array( $key, $this->action_args['advanced_fields'], true ) ) {
+				$field['advanced'] = true;
+			}
+
 			if ( empty( $field['label'] ) && ! empty( $field['description'] ) ) {
 				$field['label'] = $field['description'];
 				unset( $field['description'] );
 			}
 
-			if ( ! empty( $field['options'] ) ) {
+			if ( ! empty( $field['options'] ) && is_array( $field['options'] ) ) {
+				$field['map_field'] = true;
 				$field['el'] = 'select';
 				unset( $field['type'] );
 			}
@@ -199,12 +228,9 @@ class Action extends \Noptin_Abstract_Action {
 				'el'          => 'input',
 				'label'       => $field['label'],
 				'map_field'   => true,
-				'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : sprintf(
-					/* translators: %s: The field name. */
-					__( 'Enter %s', 'newsletter-optin-box' ),
-					strtolower( $field['label'] )
-				),
+				'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
 				'description' => empty( $field['description'] ) ? '' : $field['description'],
+				'advanced'    => isset( $field['advanced'] ) ? $field['advanced'] : false,
 			);
 
 			if ( isset( $field['default'] ) ) {
