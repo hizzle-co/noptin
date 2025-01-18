@@ -460,9 +460,17 @@ class Automation_Rule extends \Hizzle\Store\Record {
 				$choices = array_keys( $args['options'] );
 
 				if ( is_array( $value ) ) {
-					$value = array_values( array_intersect( $value, $choices ) );
+					// Allow merge tags in array values
+					$filtered = array();
+					foreach ( $value as $single_value ) {
+						if ( in_array( $single_value, $choices ) || preg_match( '/\[\[.*?\]\]/', $single_value ) ) {  // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+							$filtered[] = $single_value;
+						}
+					}
+					$value = $filtered;
 				} else {
-					$value = in_array( $value, $choices ) ? $value : $default; // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
+					// Allow merge tags in single value
+					$value = ( in_array( $value, $choices ) || preg_match( '/\[\[.*?\]\]/', $value ) ) ? $value : $default;  // phpcs:ignore WordPress.PHP.StrictInArray.MissingTrueStrict
 				}
 			}
 
