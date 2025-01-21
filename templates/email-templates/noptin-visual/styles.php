@@ -158,7 +158,8 @@
 	h3:first-child,
 	h4:first-child, 
 	h5:first-child, 
-	h6:first-child {
+	h6:first-child,
+	.noptin-image-block__wrapper:first-child .noptin-block__margin-wrapper {
 		margin-top: 10px;
 	}
 
@@ -217,13 +218,12 @@
 		margin-bottom: 20px;
 	}
 
-	.wp-block-noptin-group:first-child {
-		margin-top: 20px;
+	.wp-block-noptin-group > table {
+		overflow: hidden;
 	}
 
-	.noptin-block-group__inner {
-		padding-top: 20px;
-		padding-bottom: 20px;
+	.wp-block-noptin-group:first-child {
+		margin-top: 20px;
 	}
 
 	.noptin-record {
