@@ -229,6 +229,7 @@ JS;
 			array(
 				'isTest'           => defined( 'NOPTIN_IS_TESTING' ),
 				'styles'           => (object) $to_load,
+				'css'              => self::get_editor_styles(),
 				'settings'         => self::get_editor_settings(),
 				'types'            => get_noptin_email_types(),
 				'templates'        => get_noptin_email_templates(),
@@ -591,5 +592,39 @@ JS;
 		}
 
 		return $post;
+	}
+
+	/**
+	 * Returns the editor styles.
+	 *
+	 * @return string
+	 */
+	public static function get_editor_styles() {
+		$settings = array(
+			'background_color'  => '{{background_color}}',
+			'color'             => '{{color}}',
+			'font_family'       => '{{font_family}}',
+			'font_size'         => '{{font_size}}',
+			'line_height'       => '{{line_height}}',
+			'font_weight'       => '{{font_weight}}',
+			'font_style'        => '{{font_style}}',
+			'background_image'  => '{{background_image}}',
+			'button_color'      => '{{button_color}}',
+			'button_background' => '{{button_background}}',
+		);
+		ob_start();
+		get_noptin_template( 'email-templates/noptin-visual/styles.php', array( 'settings' => $settings ) );
+		$css = ob_get_clean();
+
+		// Extract only CSS between style tags
+		preg_match_all( '/<style[^>]*>(.*?)<\/style>/is', $css, $matches );
+		$css = implode( "\n", $matches[1] );
+
+		// Remove comments and whitespace
+		$css = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css );
+		$css = str_replace( array( "\r\n", "\r", "\n", "\t" ), '', $css );
+		$css = preg_replace( '/\s+/', ' ', $css );
+
+		return trim( $css );
 	}
 }
