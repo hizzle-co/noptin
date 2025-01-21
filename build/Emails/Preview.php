@@ -79,6 +79,7 @@ class Preview {
 	 * Admin preview.
 	 */
 	public static function admin_preview( $template ) {
+		remove_filter( 'get_post_metadata', '_wp_preview_meta_filter' );
 
 		// Check if we are previewing the post type noptin-campaign.
 		if ( ! is_singular( 'noptin-campaign' ) ) {
