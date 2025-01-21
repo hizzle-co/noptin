@@ -241,12 +241,9 @@
 	}
 
 	.noptin-column__inner {
-		padding-left: 10px;
-		padding-right: 10px;
-		padding-top: 10px;
-		padding-bottom: 10px;
 		margin-left: 10px;
 		margin-right: 10px;
+		overflow: hidden;
 	}
 
 	@media only screen and (max-width: 575px) {
