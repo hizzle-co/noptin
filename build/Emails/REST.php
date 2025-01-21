@@ -72,6 +72,22 @@ class REST extends \WP_REST_Posts_Controller {
 	}
 
 	/**
+	 * Checks if a given request has access to update a post.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
+	 */
+	public function update_item_permissions_check( $request ) {
+		if ( current_user_can( get_noptin_capability() ) ) {
+			add_filter( 'is_protected_meta', '__return_false', PHP_INT_MAX );
+		}
+
+		return parent::update_item_permissions_check( $request );
+	}
+
+	/**
 	 * Sends a test email.
 	 *
 	 * @since 1.0.0
