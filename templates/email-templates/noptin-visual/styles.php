@@ -159,15 +159,25 @@
 	h4:first-child, 
 	h5:first-child, 
 	h6:first-child,
+	.noptin-columns:first-child,
 	.noptin-image-block__wrapper:first-child .noptin-block__margin-wrapper {
 		margin-top: 10px;
+	}
+
+	.noptin-columns {
+		margin-bottom: 16px;
+	}
+
+	.noptin-column__inner > .noptin-image-block__wrapper:first-child .noptin-block__margin-wrapper {
+		margin-left: 0;
+		margin-right: 0;
+		margin-top: 0;
 	}
 
 	.noptin-records__wrapper,
 	.wp-block-noptin-separator {
 		margin-bottom: 16px;
 	}
-
 
 	h1, h2, h3, h4, h5, h6 {
 		font-weight: 700;
