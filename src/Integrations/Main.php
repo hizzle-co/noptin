@@ -383,7 +383,7 @@ class Main {
 		}
 
 		foreach ( $all as $integration ) {
-			if ( $slug === $integration['slug'] ) {
+			if ( $slug === $integration['slug'] || str_replace( '-', '_', $slug ) === $integration['slug'] ) {
 				return $integration;
 			}
 		}

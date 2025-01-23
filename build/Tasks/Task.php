@@ -284,6 +284,11 @@ class Task extends \Hizzle\Store\Record {
 			throw new \Exception( 'Invalid task: no hook' );
 		}
 
+		// Ensure there are callbacks attached to the hook.
+		if ( ! has_action( $hook ) ) {
+			throw new \Exception( sprintf( 'Invalid task: no callbacks attached to hook "%s"', $hook ) );
+		}
+
 		$args = json_decode( $this->get_args(), true );
 
 		if ( ! is_array( $args ) ) {

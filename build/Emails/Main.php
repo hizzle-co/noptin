@@ -47,6 +47,7 @@ class Main {
 		add_filter( 'noptin_get_last_send_date', array( __CLASS__, 'filter_last_send_date' ) );
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
+		add_filter( 'rest_pre_insert_noptin-campaign', array( __CLASS__, 'filter_campaign_rest_request' ), 10, 2 );
 
 		// Add shortcode to display past newsletters.
 		add_shortcode( 'past_noptin_newsletters', array( __CLASS__, 'past_newsletters' ) );
@@ -277,7 +278,7 @@ class Main {
 					'label'                 => __( 'Email Campaigns', 'newsletter-optin-box' ),
 					'description'           => '',
 					'public'                => false,
-					'rest_controller_class' => '\Hizzle\Noptin\Emails\REST',
+					'rest_controller_class' => __NAMESPACE__ . '\REST',
 					'map_meta_cap'          => true,
 					'capabilities'          => array(
 						'read'      => 'edit_posts',
@@ -846,5 +847,39 @@ class Main {
 
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Filters the campaign rest request.
+	 *
+	 * @param object $prepared_post The prepared post object.
+	 * @param \WP_REST_Request $request The request object.
+	 * @return object
+	 */
+	public static function filter_campaign_rest_request( $prepared_post, $request ) {
+		// Only filter Noptin campaign posts.
+		if ( 'noptin-campaign' !== $prepared_post->post_type ) {
+			return $prepared_post;
+		}
+
+		// Get the request parameters.
+		$params = $request->get_params();
+
+		// If meta is being updated, filter out Elementor fields
+		if ( isset( $params['meta'] ) && is_array( $params['meta'] ) ) {
+			$filtered_meta = array_filter(
+				$params['meta'], 
+				function( $key ) {
+					// Filter out protected meta keys.
+					return strpos( $key, '_' ) !== 0;
+				},
+				ARRAY_FILTER_USE_KEY
+			);
+
+			// Update the request with filtered meta.
+			$request->set_param( 'meta', $filtered_meta );
+		}
+
+		return $prepared_post;
 	}
 }
