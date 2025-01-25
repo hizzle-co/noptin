@@ -492,6 +492,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 				'label' => __( 'Item count', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
+			'locale'               => array(
+				'label'   => __( 'Locale', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => noptin_get_available_languages(),
+				'default' => get_locale(),
+			),
 			'billing_address'      => array(
 				'label' => __( 'Billing address', 'newsletter-optin-box' ),
 				'type'  => 'string',
@@ -790,6 +796,10 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			),
 			'meta'                 => $this->meta_key_tag_config(),
 		);
+
+		if ( ! noptin_is_multilingual() ) {
+			unset( $fields['locale'] );
+		}
 
 		return apply_filters( 'noptin_post_type_known_custom_fields', $fields, $this->type );
 	}

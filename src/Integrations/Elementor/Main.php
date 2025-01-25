@@ -36,8 +36,6 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 
 		// Register form action.
 		add_action( 'elementor_pro/init', array( $this, 'register_form_action' ) );
-		add_filter( 'noptin_register_post_type_object_elementor_library', '__return_false' );
-		add_filter( 'noptin_register_post_type_object_e-floating-buttons', '__return_false' );
 	}
 
 	/**

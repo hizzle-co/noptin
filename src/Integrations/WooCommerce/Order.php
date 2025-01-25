@@ -55,6 +55,11 @@ class Order extends \Hizzle\Noptin\Objects\Record {
 			return null;
 		}
 
+		// Locale.
+		if ( 'locale' === $field ) {
+			return apply_filters( 'noptin_woocommerce_order_locale', get_locale(), $this->external->get_id() );
+		}
+
 		// Meta.
 		if ( 'meta' === $field ) {
 			if ( ! empty( $args['key'] ) ) {
