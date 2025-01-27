@@ -355,6 +355,11 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		$task->set_date_scheduled( time() + $delay );
 		$task->set_subject( $email );
 		$task->set_primary_id( $rule->get_id() );
+
+		if ( isset( $args['automation_rule_secondary_id'] ) ) {
+			$task->set_secondary_id( $args['automation_rule_secondary_id'] );
+		}
+
 		$task->save();
 
 		self::$scheduled_tasks[] = $unique_check;

@@ -498,6 +498,10 @@
 		}
 	}
 
+	.screen-reader-text {
+		display: none;
+	}
+
 	<?php
 		// Note that esc_html() cannot be used because `div &gt; span` is not interpreted properly.
 		echo strip_tags( get_noptin_option( 'custom_css', '' ) ); // phpcs:ignore
