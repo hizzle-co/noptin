@@ -24,7 +24,6 @@ class Noptin_Automation_Rules {
 	 * Constructor.
 	 *
 	 * @since 1.2.8
-	 * @return string
 	 */
 	public function __construct() {
 
@@ -58,7 +57,7 @@ class Noptin_Automation_Rules {
 	 * @return bool whether or not the action exists.
 	 */
 	public function has_action( $action_id ) {
-		return is_scalar( $action_id ) && ! empty( $this->actions[ $action_id ] );
+		return is_scalar( $action_id ) && ! empty( $this->get_action( $action_id ) );
 	}
 
 	/**
@@ -69,7 +68,17 @@ class Noptin_Automation_Rules {
 	 * @return Noptin_Abstract_Action|null
 	 */
 	public function get_action( $action_id ) {
-		return empty( $this->actions[ $action_id ] ) ? null : $this->actions[ $action_id ];
+		if ( isset( $this->actions[ $action_id ] ) ) {
+			return $this->actions[ $action_id ];
+		}
+
+		foreach ( $this->actions as $action ) {
+			if ( isset( $action->alias ) && $action->alias === $action_id ) {
+				return $action;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -148,6 +157,6 @@ class Noptin_Automation_Rules {
 	 * @return bool whether or not the trigger exists.
 	 */
 	public function has_trigger( $trigger_id ) {
-		return is_scalar( $trigger_id ) && ! empty( $this->triggers[ $trigger_id ] );
+		return is_scalar( $trigger_id ) && ! empty( $this->get_trigger( $trigger_id ) );
 	}
 }
