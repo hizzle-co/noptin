@@ -134,10 +134,21 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			update_post_meta( (int) $args['post_meta']['id'], $args['post_meta']['key'], array( (int) $args['post_meta']['id'], (int) $rule->get_action_setting( 'automated_email_id' ) ) );
 		}
 
-		return noptin_send_email_campaign(
+		$result = noptin_send_email_campaign(
 			$rule->get_action_setting( 'automated_email_id' ),
 			$smart_tags
 		);
+
+		if ( is_wp_error( $result ) ) {
+			throw new \Exception( $result->get_error_message() );
+		}
+
+		if ( empty( $result ) ) {
+			$error = \Noptin_Email_Sender::get_phpmailer_last_error();
+			throw new \Exception( 'Failed sending an email' . ( $error ? ': ' . $error : '' ) );
+		}
+
+		return $result;
 	}
 
 	/**

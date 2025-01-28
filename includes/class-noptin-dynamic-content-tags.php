@@ -426,7 +426,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	/**
 	 * @param string $string
 	 *
-	 * @return string
+	 * @return string|mixed
 	 */
 	public function replace_in_content( $string ) {
 		return $this->replace( $string, 'wp_kses_post' );

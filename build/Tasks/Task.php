@@ -109,6 +109,29 @@ class Task extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Get the lookup key.
+	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_lookup_key( $context = 'view' ) {
+		return $this->get_prop( 'lookup_key', $context );
+	}
+
+	/**
+	 * Set the lookup key.
+	 *
+	 * @param string $value lookup key.
+	 */
+	public function set_lookup_key( $value ) {
+		if ( is_string( $value ) ) {
+			$this->set_prop( 'lookup_key', substr( $value, 0, 191 ) );
+		} else {
+			$this->set_prop( 'lookup_key', null );
+		}
+	}
+
+	/**
 	 * Get the args.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -252,6 +275,10 @@ class Task extends \Hizzle\Store\Record {
 	 *
 	 */
 	public function process() {
+		global $current_noptin_task;
+		$old_task = $current_noptin_task;
+		$current_noptin_task = $this;
+
 		try {
 			do_action( 'noptin_tasks_before_execute', $this );
 
@@ -269,6 +296,8 @@ class Task extends \Hizzle\Store\Record {
 			$this->task_failed( $this, $e );
 			do_action( 'noptin_tasks_failed_execution', $this, $e );
 		}
+
+		$current_noptin_task = $old_task;
 	}
 
 	/**

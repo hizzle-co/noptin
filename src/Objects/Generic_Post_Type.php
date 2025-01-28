@@ -79,10 +79,16 @@ class Generic_Post_Type extends Post_Type {
 	 */
 	public function get_filters() {
 
-		return array_merge(
+		$filters = array_merge(
 			$this->generate_date_filters(),
 			$this->generate_taxonomy_filters( $this->type, $this->taxonomies() ),
 			array(
+				'locale'        => array(
+					'label'       => __( 'Locale', 'newsletter-optin-box' ),
+					'el'          => 'select',
+					'description' => __( 'The locale to filter posts by.', 'newsletter-optin-box' ),
+					'options'     => noptin_get_available_languages(),
+				),
 				'author'        => array(
 					'label'       => __( 'Author', 'newsletter-optin-box' ),
 					'el'          => 'input',
@@ -106,6 +112,12 @@ class Generic_Post_Type extends Post_Type {
 				),
 			)
 		);
+
+		if ( ! noptin_is_multilingual() ) {
+			unset( $filters['locale'] );
+		}
+
+		return apply_filters( 'noptin_post_type_filters', $filters, $this->type );
 	}
 
 	/**

@@ -565,6 +565,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		$action = $this->get_action();
 		if ( ! empty( $action ) ) {
 			$action_settings = apply_filters( 'noptin_automation_rule_action_settings_' . $action->get_id(), $action->get_settings(), $this, $action );
+			$other_sections  = array();
 
 			// Map fields.
 			$map_fields = array();
@@ -576,6 +577,10 @@ class Automation_Rule extends \Hizzle\Store\Record {
 
 				if ( ! empty( $data['map_field'] ) ) {
 					$map_fields[ $key ] = $data;
+					unset( $action_settings[ $key ] );
+				} elseif ( ! empty( $data['settings'] ) && empty( $data['el'] ) ) {
+					$data['prop'] = $data['prop'] ?? 'action_settings';
+					$other_sections[ $key ] = $data;
 					unset( $action_settings[ $key ] );
 				}
 			}
@@ -635,6 +640,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 					),
 				);
 			}
+
+			$settings = array_merge( $settings, $other_sections );
 		}
 
 		$settings = apply_filters( 'noptin_automation_rule_settings', $settings, $this, $trigger, $action );

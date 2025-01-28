@@ -355,6 +355,12 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		$task->set_date_scheduled( time() + $delay );
 		$task->set_subject( $email );
 		$task->set_primary_id( $rule->get_id() );
+
+		if ( isset( $args['automation_rule_secondary_id'] ) ) {
+			$task->set_secondary_id( $args['automation_rule_secondary_id'] );
+		}
+
+		$task->set_lookup_key( $args['automation_rule_lookup_key'] ?? $trigger->get_id() );
 		$task->save();
 
 		self::$scheduled_tasks[] = $unique_check;
@@ -609,6 +615,13 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 							'enum'        => __CLASS__ . '::get_statuses',
 						),
 
+						'lookup_key'     => array(
+							'type'        => 'VARCHAR',
+							'length'      => 191,
+							'nullable'    => true,
+							'description' => 'The lookup key.',
+						),
+
 						'args'           => array(
 							'type'        => 'TEXT',
 							'description' => __( 'The args to pass to the hook.', 'newsletter-optin-box' ),
@@ -653,6 +666,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 						'subject'        => array( 'subject' ),
 						'primary_id'     => array( 'primary_id' ),
 						'secondary_id'   => array( 'secondary_id' ),
+						'lookup_key'     => array( 'lookup_key' ),
 						'date_scheduled' => array( 'date_scheduled' ),
 						'hook'           => array( 'hook' ),
 					),
