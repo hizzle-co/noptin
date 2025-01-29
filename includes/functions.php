@@ -1328,6 +1328,21 @@ function noptin_get_available_languages() {
 }
 
 /**
+ * Converts a language locale to a language slug.
+ *
+ * @param string $locale
+ * @return string
+ */
+function noptin_convert_language_locale_to_slug( $locale ) {
+
+	if ( empty( $locale ) ) {
+		return '';
+	}
+
+	return apply_filters( 'noptin_convert_language_locale_to_slug', $locale );
+}
+
+/**
  * Formats a date for display.
  *
  * @param string $date_time.

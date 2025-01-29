@@ -83,10 +83,10 @@ class Generic_Post_Type extends Post_Type {
 			$this->generate_date_filters(),
 			$this->generate_taxonomy_filters( $this->type, $this->taxonomies() ),
 			array(
-				'locale'        => array(
-					'label'       => __( 'Locale', 'newsletter-optin-box' ),
+				'lang'          => array(
+					'label'       => __( 'Language', 'newsletter-optin-box' ),
 					'el'          => 'select',
-					'description' => __( 'The locale to filter posts by.', 'newsletter-optin-box' ),
+					'description' => __( 'The language to filter posts by.', 'newsletter-optin-box' ),
 					'options'     => noptin_get_available_languages(),
 				),
 				'author'        => array(
@@ -114,7 +114,7 @@ class Generic_Post_Type extends Post_Type {
 		);
 
 		if ( ! noptin_is_multilingual() ) {
-			unset( $filters['locale'] );
+			unset( $filters['lang'] );
 		}
 
 		return apply_filters( 'noptin_post_type_filters', $filters, $this->type );
@@ -130,12 +130,12 @@ class Generic_Post_Type extends Post_Type {
 
 		$filters = array_merge(
 			array(
-				'post_type'           => $this->type,
-				'number'              => 10,
-				'order'               => 'DESC',
-				'orderby'             => 'date',
-				'fields'              => 'ids',
-				'ignore_sticky_posts' => true,
+				'post_type'        => $this->type,
+				'number'           => 10,
+				'order'            => 'DESC',
+				'orderby'          => 'date',
+				'fields'           => 'ids',
+				'suppress_filters' => false,
 			),
 			$filters
 		);
@@ -165,6 +165,11 @@ class Generic_Post_Type extends Post_Type {
 		// If date query is specified, ensure it is enabled.
 		$filters = $this->prepare_date_query_filter( $filters );
 
+		if ( ! empty( $filters['lang'] ) ) {
+			$filters['lang'] = noptin_convert_language_locale_to_slug( $filters['lang'] );
+		}
+
+		$filters = apply_filters( 'noptin_post_type_get_all_filters', $filters, $this->type );
 		$filters = array_filter( $filters );
 		$posts   = get_posts( $filters );
 
