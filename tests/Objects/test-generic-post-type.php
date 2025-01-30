@@ -19,7 +19,7 @@ class Test_Generic_Post_Type extends \WP_UnitTestCase {
      */
     public function set_up() {
         parent::set_up();
-        $this->post_type = new Generic_Post_Type('post', true);
+        $this->post_type = \Hizzle\Noptin\Objects\Store::get( 'post' );
     }
 
     /**
@@ -219,7 +219,7 @@ class Test_Generic_Post_Type extends \WP_UnitTestCase {
         // Test filtering by custom taxonomy
         $custom_tax = 'test_taxonomy';
         register_taxonomy($custom_tax, 'post');
-        
+
         $term1 = $this->factory->term->create([
             'taxonomy' => $custom_tax,
             'name'    => 'Term 1'
