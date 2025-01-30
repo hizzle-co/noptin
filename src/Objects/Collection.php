@@ -217,11 +217,12 @@ abstract class Collection {
 	 * @param array $args The trigger args.
 	 */
 	public function trigger( $trigger, $args ) {
+		global $noptin_current_task_user;
 
 		$args['provides'] = empty( $args['provides'] ) ? array() : $args['provides'];
 
 		if ( empty( $args['provides']['current_user'] ) ) {
-			$args['provides']['current_user'] = get_current_user_id();
+			$args['provides']['current_user'] = ! is_numeric( $noptin_current_task_user ) ? get_current_user_id() : $noptin_current_task_user;
 		}
 
 		if ( ! isset( $args['subject_id'] ) ) {

@@ -151,6 +151,40 @@ class Task extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Get a single arg.
+	 *
+	 * @param string $key The arg key.
+	 * @param mixed $default The default value.
+	 * @return mixed
+	 */
+	public function get_arg( $key, $default = null ) {
+		$args = json_decode( $this->get_args(), true );
+
+		if ( ! is_array( $args ) ) {
+			return $default;
+		}
+
+		return array_key_exists( $key, $args ) ? $args[ $key ] : $default;
+	}
+
+	/**
+	 * Set a single arg.
+	 *
+	 * @param string $key The arg key.
+	 * @param mixed $value The arg value.
+	 */
+	public function set_arg( $key, $value ) {
+		$args = json_decode( $this->get_args(), true );
+
+		if ( ! is_array( $args ) ) {
+			$args = array();
+		}
+
+		$args[ $key ] = $value;
+		$this->set_args( wp_json_encode( $args ) );
+	}
+
+	/**
 	 * Get the args hash.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -306,6 +340,10 @@ class Task extends \Hizzle\Store\Record {
 	 * @throws \Exception When the task is invalid.
 	 */
 	protected function run() {
+		global $noptin_current_task_user;
+		$old_user = $noptin_current_task_user;
+
+		$noptin_current_task_user = $this->get_arg( 'current_task_user' );
 
 		// Abort if no hook.
 		$hook = $this->get_hook();
@@ -330,6 +368,8 @@ class Task extends \Hizzle\Store\Record {
 		} else {
 			do_action( $hook, $this, $args );
 		}
+
+		unset( $GLOBALS['noptin_current_task_user'] );
 	}
 
 	/**
@@ -395,6 +435,11 @@ class Task extends \Hizzle\Store\Record {
 	 * @inheritDoc
 	 */
 	public function save() {
+
+		if ( ! $this->exists() && is_null( $this->get_arg( 'current_task_user' ) ) ) {
+			$this->set_arg( 'current_task_user', get_current_user_id() );
+		}
+
 		$result = parent::save();
 
 		if ( $this->exists() && $this->get_status() === 'pending' && $this->has_expired() ) {
