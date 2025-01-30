@@ -42,6 +42,7 @@ abstract class Post_Type extends Collection {
 		// Fire triggers.
 		add_action( 'wp_after_insert_post', array( $this, 'after_insert_post' ), 100, 4 );
 		add_action( 'noptin_force_trigger_new_post_notification', array( $this, 'force_trigger_for_post_published' ) );
+		add_action( 'bg_noptin_' . $this->type . '_trigger', array( $this, 'bg_trigger' ) );
 
 		// Deleted.
 		add_action( 'before_delete_post', array( $this, 'on_delete' ), 0, 2 );
@@ -382,6 +383,39 @@ abstract class Post_Type extends Collection {
 		}
 
 		$this->maybe_trigger( $post->post_author, $post->ID, $this->type . '_published' );
+	}
+
+	/**
+	 * Maybe trigger a post published event.
+	 *
+	 * @param \Hizzle\Noptin\Tasks\Task $task The task.
+	 */
+	public function bg_trigger( $task ) {
+		$this->maybe_trigger( $task->get_secondary_id(), $task->get_primary_id(), $task->get_subject() );
+	}
+
+	/**
+	 * Delays the post published event.
+	 *
+	 * @param \WP_Post $post Post object.
+	 */
+	protected function delay_post_trigger( $post, $trigger, $delay = MINUTE_IN_SECONDS ) {
+		if ( $this->type === $post->post_type ) {
+			$task = \Hizzle\Noptin\Tasks\Main::get();
+
+			if ( is_wp_error( $task ) ) {
+				return;
+			}
+
+			$task->set_status( 'pending' );
+			$task->set_primary_id( $post->ID );
+			$task->set_secondary_id( $post->post_author );
+			$task->set_subject( $trigger );
+			$task->set_hook( 'bg_noptin_' . $this->type . '_trigger' );
+			$task->set_args_hash( md5( wp_json_encode( array( $post->ID, $post->post_author ) ) ) );
+			$task->set_date_scheduled( time() + $delay );
+			$task->save();
+		}
 	}
 
 	/**
